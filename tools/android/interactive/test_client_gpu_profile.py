@@ -660,6 +660,311 @@ class PolicyTests(unittest.TestCase):
         self.assertTrue(gpu.cleanup_probes(owner)); self.assertIs(receipt['probe_cleanup_safe'], False)
 
 
+
+class ProbePrefixReuseTests(unittest.TestCase):
+    """Real cache files and locks; native probe/cleanup results are fixture inputs."""
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.owner, self.environment = make_owner(self.root)
+        self.owner.ctx.secrets = []
+        self.owner.ctx.report['asset_sha256']['runtime-lock.json'] = '1' * 64
+        self.owner.ctx.report['wine_initialization'] = {'runtime_lock_sha256': '1' * 64}
+        self.owner.args.wine.write_bytes(b'fixed Wine executable')
+        self.owner.args.wineserver.write_bytes(b'fixed Wine server executable')
+        self.owner.ctx.run.return_value = {'exit_code': 0}
+        self.attempt = 0
+        self.native_stopped = mock.patch.object(base, 'verify_wine_stopped', return_value={
+            'prefix_lock_free': True, 'server_socket_inactive': True})
+        self.stopped = self.native_stopped.start(); self.addCleanup(self.native_stopped.stop)
+
+    def receipt(self):
+        return {'probe_cleanup_safe': True, 'archive_sha256': '2' * 64,
+                'manifest_sha256': '3' * 64}
+
+    def cache(self, receipt=None):
+        receipt = receipt or self.receipt()
+        cache = gpu.ProbePrefixCache(self.owner, self.environment, receipt)
+        self.addCleanup(cache.release)
+        return cache, receipt
+
+    def run_probe(self, *, complete=True, passed=True, cleanup_error=False):
+        self.attempt += 1
+        directory = self.owner.root / ('attempt-' + str(self.attempt)); directory.mkdir()
+        process_owner = mock.Mock(environment={'COH_WINE_SESSION': 'private-' + str(self.attempt)},
+            receipt={'complete': complete, 'remaining': 0 if complete else 1})
+        value = wgl_result() if passed else dict(wgl_result(), passed=False, status='failed', failure='fresh_failure')
+        output = marker(gpu.WGL_PREFIX, value)
+        child = SimpleNamespace(reader=mock.Mock(), writer=mock.Mock(), process=mock.Mock(),
+            output=bytearray(output.encode()), overflow=False, completion={'output_capture_open': True},
+            text=lambda: output)
+        child.process.poll.return_value = 0
+        child.reader.is_alive.return_value = False; child.writer.is_alive.return_value = False
+        def execute(_owner, _label, _command, environment, *args, **kwargs):
+            prefix = Path(environment['WINEPREFIX'])
+            (prefix / 'system.reg').write_text('current private registry')
+            return child
+        receipt = self.receipt()
+        with mock.patch.object(device, 'DeviceWineProcessOwner', return_value=process_owner), \
+                mock.patch.object(gpu, 'run_probe', side_effect=execute) as execute_probe:
+            if not complete or cleanup_error:
+                with self.assertRaises(gpu.GPUCleanupError):
+                    gpu.private_wgl_probe(self.owner, self.environment, directory/'probe.exe', directory, receipt)
+            elif not passed:
+                with self.assertRaises(gpu.GPUProfileError):
+                    gpu.private_wgl_probe(self.owner, self.environment, directory/'probe.exe', directory, receipt)
+            else:
+                self.assertEqual(value, gpu.private_wgl_probe(
+                    self.owner, self.environment, directory/'probe.exe', directory, receipt))
+        self.assertEqual(1, execute_probe.call_count)
+        self.assertEqual('/accepted-prefix', self.environment['WINEPREFIX'])
+        return receipt, Path(execute_probe.call_args.args[3]['WINEPREFIX'])
+
+    def test_each_reused_initialized_prefix_still_executes_current_wgl_probe(self):
+        first, prefix = self.run_probe()
+        second, again = self.run_probe()
+        self.assertEqual(prefix, again)
+        self.assertFalse(first['probe_prefix_cache']['reused'])
+        self.assertTrue(second['probe_prefix_cache']['reused'])
+        for receipt in (first, second):
+            self.assertTrue(receipt['probe_prefix_cache']['published_closed'])
+            self.assertFalse(receipt['probe_prefix_cache']['hardware_result_reused'])
+            self.assertEqual(wgl_result(), receipt['wine_gl_probe'])
+        self.assertEqual(3, self.stopped.call_count)  # each close, plus prior close check
+        self.assertTrue(prefix.is_dir())
+
+    def test_busy_or_interrupted_prefix_is_preserved_and_never_reused(self):
+        first, prefix = self.run_probe(complete=False)
+        self.assertFalse(first['probe_prefix_cache']['published_closed'])
+        second, fresh = self.run_probe()
+        self.assertNotEqual(prefix, fresh)
+        self.assertTrue(prefix.is_dir())
+        self.assertFalse(second['probe_prefix_cache']['reused'])
+        self.assertIn('did not prove closed', second['probe_prefix_cache']['reuse_refused'])
+
+    def test_changed_prefix_retains_old_generation_and_uses_fresh_private_one(self):
+        first, prefix = self.run_probe()
+        (prefix / 'system.reg').write_text('changed by somebody else')
+        second, fresh = self.run_probe()
+        self.assertNotEqual(prefix, fresh)
+        self.assertEqual('changed by somebody else', (prefix / 'system.reg').read_text())
+        self.assertFalse(second['probe_prefix_cache']['reused'])
+
+    def test_live_native_prefix_lock_never_redirects_shutdown_to_old_owner(self):
+        first, prefix = self.run_probe()
+        self.stopped.side_effect = [base.DiagnosticError('live native owner'),
+            {'prefix_lock_free': True, 'server_socket_inactive': True}]
+        second, fresh = self.run_probe()
+        self.assertNotEqual(prefix, fresh)
+        self.assertTrue(prefix.is_dir())
+        self.assertIn('not independently stopped', second['probe_prefix_cache']['reuse_refused'])
+        self.assertEqual(str(fresh), self.owner.ctx.run.call_args.kwargs['env']['WINEPREFIX'])
+
+    def test_exclusive_cache_lock_falls_back_without_modifying_locked_generation(self):
+        cache, first = self.cache()
+        prefix = cache.checkout(self.environment, first)
+        before = cache.marker.read_bytes()
+        contender, second = self.cache()
+        self.assertIsNone(contender.checkout(self.environment, second))
+        self.assertEqual(before, cache.marker.read_bytes())
+        self.assertTrue(prefix.is_dir())
+        self.assertIsNone(contender.fd)
+
+    def test_runtime_or_gpu_identity_change_starts_a_separate_generation(self):
+        first, prefix = self.run_probe()
+        self.owner.args.wine.write_bytes(b'changed Wine executable')
+        second, fresh = self.run_probe()
+        self.assertNotEqual(prefix, fresh)
+        self.assertFalse(second['probe_prefix_cache']['reused'])
+        self.assertTrue(prefix.is_dir())
+        cache, receipt = self.cache()
+        receipt['archive_sha256'] = '4' * 64
+        another = cache.checkout(self.environment, receipt)
+        self.assertNotEqual(another, fresh)
+        self.assertFalse(receipt['probe_prefix_cache']['reused'])
+
+    def test_invalid_receipt_and_linked_generation_are_preserved(self):
+        first, prefix = self.run_probe()
+        marker_path = next(self.owner.root.glob('gpu-probe-prefix-*.json'))
+        original = marker_path.read_bytes()
+        marker_path.write_bytes(b'{invalid')
+        cache, receipt = self.cache()
+        self.assertIsNone(cache.checkout(self.environment, receipt))
+        self.assertEqual(b'{invalid', marker_path.read_bytes())
+        marker_path.write_bytes(original)
+        moved = prefix.with_name('outside'); prefix.rename(moved); prefix.symlink_to(moved, target_is_directory=True)
+        cache2, receipt2 = self.cache()
+        fresh = cache2.checkout(self.environment, receipt2)
+        self.assertNotEqual(prefix, fresh)
+        self.assertTrue(prefix.is_symlink())
+        self.assertEqual('current private registry', (moved / 'system.reg').read_text())
+
+    def test_current_wgl_failure_cannot_publish_old_cached_hardware_success(self):
+        first, prefix = self.run_probe()
+        second, same = self.run_probe(passed=False)
+        self.assertEqual(prefix, same)
+        self.assertTrue(second['probe_prefix_cache']['reused'])
+        self.assertFalse(second['probe_prefix_cache']['published_closed'])
+        self.assertFalse(second['wine_gl_probe']['passed'])
+        marker_path = next(self.owner.root.glob('gpu-probe-prefix-*.json'))
+        self.assertEqual('busy', json.loads(marker_path.read_bytes())['state'])
+
+    def test_symlink_entries_are_recorded_but_never_traversed_and_limit_falls_back(self):
+        cache, receipt = self.cache()
+        prefix = cache.checkout(self.environment, receipt)
+        outside = self.root / 'outside'; outside.mkdir(); (outside / 'keep').write_text('player data')
+        (prefix / 'z:').symlink_to(outside, target_is_directory=True)
+        inventory = cache.inventory(prefix)
+        self.assertEqual(1, inventory['entries'])
+        with mock.patch.object(cache, 'LIMIT', 0), self.assertRaisesRegex(gpu.GPUProfileError, 'bound'):
+            cache.inventory(prefix)
+        self.assertEqual('player data', (outside / 'keep').read_text())
+
+    def test_cancellation_during_reuse_releases_lock_without_republishing_marker(self):
+        self.run_probe()
+        marker_path = next(self.owner.root.glob('gpu-probe-prefix-*.json'))
+        before = marker_path.read_bytes()
+        cache, receipt = self.cache()
+        self.owner.ctx.check.side_effect = base.Cancelled('Stop requested')
+        with self.assertRaises(base.Cancelled):
+            cache.checkout(self.environment, receipt)
+        self.assertIsNone(cache.fd)
+        self.assertEqual(before, marker_path.read_bytes())
+        self.owner.ctx.check.side_effect = None
+        other, other_receipt = self.cache()
+        self.assertIsNotNone(other.checkout(self.environment, other_receipt))
+        self.assertTrue(other_receipt['probe_prefix_cache']['reused'])
+
+    def test_directory_inventory_mutation_cannot_publish_a_closed_generation(self):
+        cache, receipt = self.cache()
+        prefix = cache.checkout(self.environment, receipt)
+        import os
+        original = os.scandir
+        def scan(path):
+            result = original(path)
+            if Path(path) == prefix:
+                (prefix / 'concurrent-file').write_text('changed')
+            return result
+        with mock.patch.object(os, 'scandir', scan), \
+                self.assertRaisesRegex(gpu.GPUProfileError, 'parent changed'):
+            cache.close()
+        self.assertEqual('busy', json.loads(cache.marker.read_bytes())['state'])
+        self.assertFalse(receipt['probe_prefix_cache']['published_closed'])
+
+    def test_replacement_after_checkout_never_launches_or_shuts_down_unknown_prefix(self):
+        self.run_probe()
+        directory = self.owner.root / 'next-attempt'; directory.mkdir()
+        external = self.root / 'external'; external.mkdir(); (external / 'keep').write_text('player data')
+        original = gpu.ProbePrefixCache.checkout
+        caches = []
+        def replaced(cache, *args):
+            prefix = original(cache, *args)
+            caches.append(cache)
+            prefix.rename(prefix.with_name('original-prefix'))
+            prefix.symlink_to(external, target_is_directory=True)
+            return prefix
+        self.owner.ctx.run.reset_mock()
+        owner = mock.Mock(environment={'COH_WINE_SESSION': 'new-private'}, receipt={'complete': True})
+        with mock.patch.object(gpu.ProbePrefixCache, 'checkout', replaced), \
+                mock.patch.object(device, 'DeviceWineProcessOwner', return_value=owner), \
+                mock.patch.object(gpu, 'run_probe', side_effect=AssertionError('unowned native launch')) as native, \
+                self.assertRaises(gpu.GPUProfileError):
+            gpu.private_wgl_probe(self.owner, self.environment, directory/'probe.exe', directory, self.receipt())
+        native.assert_not_called(); self.owner.ctx.run.assert_not_called()
+        self.assertIsNone(caches[0].fd)
+        self.assertEqual('player data', (external / 'keep').read_text())
+
+    def test_root_replacement_after_checkout_releases_lock_before_native_setup(self):
+        self.run_probe()
+        directory = self.owner.root / 'next-attempt'; directory.mkdir()
+        original = gpu.ProbePrefixCache.checkout
+        caches = []
+        def replaced(cache, *args):
+            prefix = original(cache, *args)
+            caches.append(cache)
+            self.owner.root.rename(self.root / 'original-diagnostic')
+            self.owner.root.mkdir(); (self.owner.root / 'keep').write_text('unrelated data')
+            return prefix
+        self.owner.ctx.run.reset_mock()
+        owner = mock.Mock(environment={'COH_WINE_SESSION': 'new-private'}, receipt={'complete': True})
+        with mock.patch.object(gpu.ProbePrefixCache, 'checkout', replaced), \
+                mock.patch.object(device, 'DeviceWineProcessOwner', return_value=owner), \
+                mock.patch.object(gpu, 'run_probe', side_effect=AssertionError('unowned native launch')) as native, \
+                self.assertRaises(gpu.GPUProfileError):
+            gpu.private_wgl_probe(self.owner, self.environment, directory/'probe.exe', directory, self.receipt())
+        native.assert_not_called(); self.owner.ctx.run.assert_not_called()
+        self.assertIsNone(caches[0].fd)
+        self.assertEqual('unrelated data', (self.owner.root / 'keep').read_text())
+
+    def test_replacement_during_close_inventory_is_preserved_without_safe_cleanup_claim(self):
+        original = gpu.ProbePrefixCache.inventory
+        external = self.root / 'external'; external.mkdir()
+        (external / 'keep').write_text('player data')
+        caches = []
+        def replaced(cache, prefix):
+            caches.append(cache)
+            prefix.rename(prefix.with_name('original-prefix'))
+            prefix.symlink_to(external, target_is_directory=True)
+            return original(cache, prefix)
+        with mock.patch.object(gpu.ProbePrefixCache, 'inventory', replaced):
+            receipt, prefix = self.run_probe(cleanup_error=True)
+        self.assertFalse(receipt['probe_cleanup_safe'])
+        self.assertIn('publication_refused', receipt['probe_prefix_cache'])
+        self.assertFalse(receipt['probe_prefix_cache']['published_closed'])
+        self.assertEqual('busy', json.loads(caches[0].marker.read_bytes())['state'])
+        self.assertIsNone(caches[0].fd)
+        self.assertTrue(prefix.is_symlink())
+        self.assertEqual('player data', (external / 'keep').read_text())
+
+    def test_root_replacement_during_close_preserves_unknown_directory(self):
+        original = gpu.ProbePrefixCache.inventory
+        caches = []
+        def replaced(cache, prefix):
+            caches.append(cache)
+            self.owner.root.rename(self.root / 'original-diagnostic')
+            self.owner.root.mkdir(); (self.owner.root / 'keep').write_text('unrelated data')
+            return original(cache, prefix)
+        with mock.patch.object(gpu.ProbePrefixCache, 'inventory', replaced):
+            receipt, _ = self.run_probe(cleanup_error=True)
+        self.assertFalse(receipt['probe_cleanup_safe'])
+        self.assertIn('publication_refused', receipt['probe_prefix_cache'])
+        self.assertFalse(receipt['probe_prefix_cache']['published_closed'])
+        self.assertIsNone(caches[0].fd)
+        self.assertEqual('unrelated data', (self.owner.root / 'keep').read_text())
+        marker_path = next((self.root / 'original-diagnostic').glob('gpu-probe-prefix-*.json'))
+        self.assertEqual('busy', json.loads(marker_path.read_bytes())['state'])
+
+    def test_prefix_replacement_after_inventory_cannot_publish_closed_generation(self):
+        original = gpu.ProbePrefixCache.inventory
+        def replaced(cache, prefix):
+            inventory = original(cache, prefix)
+            prefix.rename(prefix.with_name('original-prefix'))
+            prefix.mkdir(); (prefix / 'keep').write_text('unrelated data')
+            return inventory
+        with mock.patch.object(gpu.ProbePrefixCache, 'inventory', replaced):
+            receipt, prefix = self.run_probe(cleanup_error=True)
+        self.assertFalse(receipt['probe_cleanup_safe'])
+        self.assertFalse(receipt['probe_prefix_cache']['published_closed'])
+        self.assertEqual('unrelated data', (prefix / 'keep').read_text())
+
+    def test_optional_cache_publication_io_failure_preserves_proved_stopped_prefix(self):
+        original = gpu.ProbePrefixCache.publish
+        caches = []
+        def publish(cache, value):
+            caches.append(cache)
+            if value['state'] == 'closed':
+                raise OSError('filesystem full')
+            return original(cache, value)
+        with mock.patch.object(gpu.ProbePrefixCache, 'publish', publish):
+            receipt, prefix = self.run_probe()
+        self.assertTrue(receipt['probe_cleanup_safe'])
+        self.assertTrue(receipt['probe_prefix_cache']['preserved_after_publication_error'])
+        self.assertFalse(receipt['probe_prefix_cache']['published_closed'])
+        self.assertEqual('busy', json.loads(caches[-1].marker.read_bytes())['state'])
+        self.assertIsNone(caches[-1].fd)
+        self.assertTrue(prefix.is_dir())
+        self.assertEqual(2, self.stopped.call_count)
+
 def os_environment():
     import os
     return os.environ.copy()

@@ -103,7 +103,7 @@ def client_contract(runtime, assets, document, *, context=None):
     # The completed importer verified the original archive. Recheck every loose
     # animation's unchanged link, size, date and read-only source. The original
     # body hashes are independently checked by verify_package above.
-    ancestors = set()
+    ancestors = {}
     for name, record in document['files'].items():
         _check(context)
         logical = Path(name)
@@ -113,14 +113,33 @@ def client_contract(runtime, assets, document, *, context=None):
                 parent /= component
                 if parent not in ancestors:
                     _regular_directory(parent, owner)
-                    ancestors.add(parent)
+                    info = parent.lstat()
+                    ancestors[parent] = (info.st_dev, info.st_ino, info.st_uid,
+                        info.st_mode, info.st_mtime_ns, info.st_ctime_ns)
         original, loose = source / logical, runtime / 'data' / logical
         info = _regular(original, owner)
+        try:
+            loose_info = loose.lstat()
+        except FileNotFoundError as error:
+            raise ValueError('Client loose animation binding differs: ' + name) from error
+        require(stat.S_ISLNK(loose_info.st_mode) and loose_info.st_uid == owner,
+                'Client loose animation binding differs: ' + name)
+        # The importer writes absolute links to the already checked original
+        # parents. Their exact spelling proves this direct binding without
+        # resolving the same ancestry thousands of times. Noncanonical links
+        # retain the existing strict resolution path.
+        link = Path(os.readlink(loose))
+        direct = link.is_absolute() and link == original
         require(not info.st_mode & 0o222 and info.st_size == record['bytes']
                 and int(info.st_mtime) == record['timestamp']
-                and loose.is_symlink() and loose.lstat().st_uid == owner
-                and loose.resolve(strict=True) == original,
+                and (direct or loose.resolve(strict=True) == original),
                 'Client loose animation binding differs: ' + name)
+    for parent, before in ancestors.items():
+        _check(context)
+        info = parent.lstat()
+        require((info.st_dev, info.st_ino, info.st_uid, info.st_mode,
+                 info.st_mtime_ns, info.st_ctime_ns) == before,
+                'Client animation parent changed during verification')
     return {'format': 1, 'role': ROLE, 'runtime': str(runtime),
             'source_data': str(source), 'import': imported,
             'game_sha256': pin['sha256'],

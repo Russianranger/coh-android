@@ -215,7 +215,7 @@ class AnimationRuntimeCompatibilityTests(unittest.TestCase):
         tree = ast.parse((ROOT / 'android/guest/local_character_server.py').read_text())
         server = next(node for node in tree.body if isinstance(node, ast.ClassDef)
                       and node.name == 'LocalCharacterServer')
-        for method in ('prepare_runtime', 'prepare_kings_row_runtime'):
+        for method in ('prepare_atlas_data', 'prepare_kings_row_runtime'):
             body = next(node for node in server.body if isinstance(node, ast.FunctionDef) and node.name == method)
             calls = [node for node in ast.walk(body) if isinstance(node, ast.Call)
                      and ast.unparse(node.func) == 'server_animation_package.install']

@@ -61,6 +61,7 @@ def read_finish_request(path, session, pid):
 
 class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
     ISOLATE_FOCUSED_RENDER_PIPELINE = False
+    MANUAL_SESSION = False
 
     def __init__(self, args, context):
         super().__init__(args, context)
@@ -69,6 +70,10 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
     def interaction_deadline(self, deadline, launch):
         """Modes may bound a validated phase; ordinary menu/creation stay fixed."""
         return deadline
+
+    def interaction_dependencies_ready(self):
+        """Subclass-owned local world readiness; input waits for both producers."""
+        return True
 
     def record_observer_timing(self, name, started):
         metrics = self.ctx.report.setdefault('client_observer_metrics', {}).setdefault(name,
@@ -256,7 +261,7 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
             'shared_wine_environment_modified': False,
             'native_execution_validated': False, 'physical_fps_improvement_validated': False}
         command = self.launcher_command()
-        graphics_profile = ('performance' if command[-1] == '--character-creation'
+        graphics_profile = ('performance' if command[-1] in ('--character-creation', '--character-manual')
             and environment.get('COH_CLIENT_GRAPHICS_PROFILE') == 'performance' else 'standard')
         startup.apply_client_gameplay_environment(self, environment, label, graphics_profile)
         if self.ISOLATE_FOCUSED_RENDER_PIPELINE is True and getattr(self, 'client_render_pipeline', False) is True:
@@ -328,14 +333,14 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
             'steady_state_registry_queries': False, 'final_registry_rechecked': False,
             'main_loop_entry_proof_scope': 'current_reset_attempt_before_infinite_native_main_loop',
             'live_process_console_and_window_checks_preserved': True}
-        ready_at = None
+        ready_at = client_ready_at = None
         console = None
         finish_request = None
         try:
             while True:
                 self.ctx.check()
                 if self.client.process.poll() is not None:
-                    if retries.prepare(ready_at):
+                    if retries.prepare(client_ready_at):
                         next_registry = next_progress = 0
                         registry_output = ''
                         console = None
@@ -343,7 +348,7 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                     require(False, 'Actual CoH client exited during startup or observation')
                 require(self.xserver.process.poll() is None, 'Owned presentation display exited')
                 now = time.monotonic()
-                require(ready_at is not None or now < deadline,
+                require(client_ready_at is not None or now < deadline,
                         'Actual CoH startup exceeded its bounded deadline')
                 # Decoding and scanning a growing multi-MiB log at 10Hz steals
                 # startup time. Use the existing five-second evidence poll;
@@ -369,7 +374,7 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                     # entry, so query after this attempt's console has both
                     # prerequisites. Keep the reset, live PID/window, ordinary
                     # registry proof and post-readiness checks intact.
-                    registry_due = ready_at is None and now >= next_registry
+                    registry_due = client_ready_at is None and now >= next_registry
                     console_ready = ('Renderer initialization complete' in output
                                      and 'Loaded all data!' in output)
                     if registry_due and not console_ready:
@@ -379,38 +384,59 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                         next_registry = time.monotonic() + 20
                     evidence = startup_evidence(output, registry_output, windows, launch)
                     self.ctx.report.update(evidence)
-                    if evidence['startup_observed'] and evidence['renderer_initialized'] and evidence['all_data_loaded']:
+                    client_ready = (evidence['startup_observed'] and evidence['renderer_initialized']
+                                    and evidence['all_data_loaded'])
+                    if client_ready and client_ready_at is None:
+                        client_ready_at = time.monotonic()
+                        require(client_ready_at-started <= self.args.startup_timeout_seconds,
+                                'Actual CoH startup exceeded its bounded deadline')
+                        self.ctx.report['client_independent_startup_elapsed_seconds'] = round(client_ready_at-started, 3)
+                    require(client_ready_at is None or client_ready,
+                            'Actual CoH window or startup evidence disappeared during observation')
+                    # The local map retains its independent native readiness
+                    # deadline. A completed Game startup must not consume that
+                    # allowance, and both owned producers must be ready for input.
+                    dependencies_ready = self.interaction_dependencies_ready()
+                    if dependencies_ready and client_ready:
                         if ready_at is None:
                             ready_at = time.monotonic()
-                            require(ready_at-started <= self.args.startup_timeout_seconds,
-                                    'Actual CoH startup exceeded its bounded deadline')
                             deadline = ready_at + self.args.interaction_seconds
-                            self.ctx.report['startup_elapsed_seconds'] = round(ready_at-started, 3)
+                            if self.MANUAL_SESSION:
+                                # Startup is complete. Keep cancellation/process/output guards,
+                                # but explicit Finish/Abort owns idle-login and gameplay lifetime.
+                                deadline = self.ctx.deadline = float('inf')
+                                self.ctx.report.update(manual_session=True, interaction_timeout_seconds=0,
+                                    minimum_observation_seconds=0, interaction_end_policy='explicit_finish_or_abort')
+                            self.ctx.report['startup_elapsed_seconds'] = round(client_ready_at-started, 3)
+                            self.ctx.report['startup_dependencies_join_elapsed_seconds'] = round(ready_at-started, 3)
                             shot = self.capture('client-startup')
                             require(shot and shot['distinct_colors_capped'] >= 8, 'Actual client desktop capture is blank')
                             self.ctx.event('client_startup_observed', session_id=self.args.session_id,
                                            client_pid=launch['pid'], menu_visual_validated=False)
-                            self.ctx.passed(**evidence, startup_elapsed_seconds=round(ready_at-started, 3))
+                            self.ctx.passed(**evidence, startup_elapsed_seconds=round(client_ready_at-started, 3),
+                                startup_dependencies_join_elapsed_seconds=round(ready_at-started, 3))
                             self.ctx.stage('actual_client_interaction')
                             self.ctx.event('client_interaction_ready', session_id=self.args.session_id,
-                                client_pid=launch['pid'], minimum_observation_seconds=self.args.observation_seconds,
-                                interaction_timeout_seconds=self.args.interaction_seconds)
+                                client_pid=launch['pid'], minimum_observation_seconds=0 if self.MANUAL_SESSION else self.args.observation_seconds,
+                                interaction_timeout_seconds=0 if self.MANUAL_SESSION else self.args.interaction_seconds,
+                                manual_session=self.MANUAL_SESSION)
                         deadline = self.interaction_deadline(deadline, launch)
                         if finish_request is None:
                             finish_request = read_finish_request(self.finish_path, self.args.session_id, launch['pid'])
                             if finish_request is not None:
                                 self.ctx.report['interaction_finish_request'] = finish_request
                         elapsed = time.monotonic() - ready_at
-                        if elapsed >= self.args.observation_seconds and (finish_request is not None or time.monotonic() >= deadline):
+                        if (self.MANUAL_SESSION or elapsed >= self.args.observation_seconds) and (finish_request is not None or not self.MANUAL_SESSION and time.monotonic() >= deadline):
                             reason = 'finish_requested' if finish_request is not None else 'interaction_timeout'
                             self.ctx.event('client_interaction_finishing', session_id=self.args.session_id,
                                            client_pid=launch['pid'], completion_reason=reason)
                             self.ctx.report['observation_seconds'] = round(elapsed, 3)
-                            evidence = self.finish_observation(launch, registry_output, deadline)
+                            evidence = self.finish_observation(launch, registry_output, min(deadline, time.monotonic() + 30) if self.MANUAL_SESSION else deadline)
                             self.ctx.report['observation_seconds'] = round(time.monotonic()-ready_at, 3)
                             self.ctx.report.update(interaction_session_completed=True, input_effect_verified=False,
                                 interaction_completion_reason=reason)
-                            self.ctx.passed(**evidence, bounded_live_observation=True,
+                            self.ctx.passed(**evidence, bounded_live_observation=not self.MANUAL_SESSION,
+                                user_controlled_observation=self.MANUAL_SESSION,
                                 interaction_session_completed=True, input_effect_verified=False,
                                 interaction_completion_reason=reason)
                             self.startup_complete = True

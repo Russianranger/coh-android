@@ -265,7 +265,7 @@ final class ClientAcceptance {
                 && ("finish_requested".equals(reason) || "interaction_timeout".equals(reason));
     }
 
-    /** Reopen may grant a new 20 minute window only after an owned native connection. */
+    /** Observation belongs to the accepted owned session, including explicit manual policy. */
     static boolean clientObservationAccepted(Object value, List<?> acceptedBudgets, String session,
             long clientPid, long windowStarted, long windowEnded, long budgetDeadline,
             long launcherStarted, long operationStarted) {
@@ -277,17 +277,20 @@ final class ClientAcceptance {
         Object seconds = report.get("observation_seconds");
         if (!(seconds instanceof Number)) return false;
         double observed = ((Number) seconds).doubleValue();
-        if (!Double.isFinite(observed) || observed < 30) return false;
+        boolean manual = yes(report.get("manual_session"));
+        if (!Double.isFinite(observed) || observed < (manual ? 0 : 30)) return false;
+        if (manual && (acceptedBudgets == null || acceptedBudgets.isEmpty()
+                || !"finish_requested".equals(report.get("interaction_completion_reason")))) return false;
         if (acceptedBudgets == null || acceptedBudgets.isEmpty()) return observed <= 1210;
         Object rows = report.get("character_session_budgets");
         if (!(rows instanceof List) || ((List<?>) rows).size() != acceptedBudgets.size()
-                || acceptedBudgets.size() > 2 || !number(report.get("interaction_timeout_seconds"), 1200)
+                || acceptedBudgets.size() > 2 || !number(report.get("interaction_timeout_seconds"), manual ? 0 : 1200)
                 || session == null || !session.matches("[0-9a-f]{32}") || clientPid <= 0
                 || operationStarted < 0 || launcherStarted < operationStarted || windowStarted < launcherStarted
-                || windowEnded < windowStarted || budgetDeadline <= windowStarted
+                || windowEnded < windowStarted || (!manual && budgetDeadline <= windowStarted)
                 || budgetDeadline - operationStarted > 5400000 || budgetDeadline - launcherStarted > 2100000
-                || windowEnded - budgetDeadline > 10000
-                || observed > (budgetDeadline - windowStarted) / 1000.0 + 10
+                || !manual && windowEnded - budgetDeadline > 10000
+                || !manual && observed > (budgetDeadline - windowStarted) / 1000.0 + 10
                 || observed > (windowEnded - windowStarted) / 1000.0 + 10) return false;
         // These events were accepted by ClientSessionBudget.apply during this
         // operation, after the current character-connected/relocated event.
@@ -304,6 +307,10 @@ final class ClientAcceptance {
                         && yes(row.get("zoning_enabled")) && yes(accepted.get("zoning_enabled"))) || !number(row.get("revision"), i + 1)
                     || !"THORHERO".equals(row.get("name")) || !"COHLOCAL".equals(row.get("account"))
                     || !(i == 0 ? "connected" : "grounded").equals(row.get("phase"))) return false;
+            if (manual != yes(row.get("manual_session")) || manual != yes(accepted.get("manual_session"))
+                    || manual && (!number(row.get("deadline_utc_ms"), 0)
+                        || !number(row.get("save_request_deadline_utc_ms"), 0)
+                        || !number(row.get("movement_deadline_utc_ms"), 0) || budgetDeadline != 0)) return false;
             for (String name : integers) {
                 Object reported = row.get(name), approved = accepted.get(name);
                 if (!(reported instanceof Integer || reported instanceof Long)

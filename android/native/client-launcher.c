@@ -119,7 +119,7 @@ static int quoted(char *out, size_t limit, const char *text) {
    graphics overlay. Other diagnostic/cache profiles retain their baseline. */
 static const char *graphics_policy(int argc, const char *mode, const char *selected) {
     if(selected && strcmp(selected,"standard") && strcmp(selected,"performance")) return NULL;
-    if(argc==5 && mode && !strcmp(mode,"--character-creation") && selected && !strcmp(selected,"performance"))
+    if(argc==5 && mode && (!strcmp(mode,"--character-creation") || !strcmp(mode,"--character-manual")) && selected && !strcmp(selected,"performance"))
         return "performance";
     return "standard";
 }
@@ -139,7 +139,16 @@ static const char *launch_policy(int argc, const char *mode, int *generate, unsi
         *lifetime_ms=36*60*1000;
         return " -noversioncheck 1";
     }
+    /* The owned guest supervises startup, explicit Finish/Abort and cleanup.
+       A manual session has no gameplay or idle-login expiry. */
+    if(!strcmp(mode,"--character-manual")) {
+        *lifetime_ms=0;
+        return " -noversioncheck 1";
+    }
     return NULL;
+}
+static int lifetime_expired(unsigned long lifetime_ms, unsigned long long now, unsigned long long deadline) {
+    return lifetime_ms != 0 && now >= deadline;
 }
 int main(int argc, char **argv) {
     HANDLE saved[3]={GetStdHandle(STD_INPUT_HANDLE), GetStdHandle(STD_OUTPUT_HANDLE), GetStdHandle(STD_ERROR_HANDLE)};
@@ -201,7 +210,7 @@ int main(int argc, char **argv) {
     if(generate) FreeConsole();
     deadline=GetTickCount64()+lifetime_ms;
     while(WaitForSingleObject(pi.hProcess,500)==WAIT_TIMEOUT) {
-        if(GetTickCount64()>=deadline) {
+        if(lifetime_expired(lifetime_ms,GetTickCount64(),deadline)) {
             if(attached) console_capture(screen,pipe);
             snprintf(message,sizeof(message),"COH_CLIENT_LAUNCHER_TIMEOUT_V1 {\"session_id\":\"%s\",\"pid\":%lu,\"lifetime_ms\":%lu,\"deadline_tick_ms\":%llu}\n",
                 argv[1],(unsigned long)pi.dwProcessId,lifetime_ms,(unsigned long long)deadline);

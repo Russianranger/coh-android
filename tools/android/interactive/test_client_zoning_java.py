@@ -177,7 +177,7 @@ class ClientZoningRuntimeTests(unittest.TestCase):
             'private JSONObject zoningRequest(', 'public synchronized boolean requestPrepareZoning(',
             'public synchronized boolean requestTravelZoning('))
         runtime=runtime.replace('import java.io.*;', 'import java.io.*;\nimport java.nio.charset.StandardCharsets;')
-        runtime=runtime.replace('boolean canSave(long n){return true;}', 'boolean canSave(long n){return true;}long movementDeadline(){return Long.MAX_VALUE/2;}')
+        runtime=runtime.replace('boolean canSave(long n){return true;}', 'boolean canSave(long n){return true;}boolean manualPolicy;boolean manual(){return manualPolicy;}long movementDeadline(){return manualPolicy?0:Long.MAX_VALUE/2;}')
         runtime=runtime.replace(' JSONObject getJSONObject(String name)', ' Object opt(String name){return get(name);}\n public JSONObject put(String key,Object value){super.put(key,value);return this;}\n JSONObject getJSONObject(String name)')
         runtime=runtime.replace(' void requestFullUpdate()throws IOException {}', ' void sendMapMove(int map,long epoch)throws IOException {sendPerformanceCommand("mapmove "+map,epoch);}\n void requestFullUpdate()throws IOException {}')
         runtime=runtime.replace('  String zoningStatus(){return zoning.phase();}', '''
@@ -192,9 +192,9 @@ class ClientZoningRuntimeTests(unittest.TestCase):
   void write(File path,byte[] bytes){receipts.add(path.getName()+":"+new String(bytes,StandardCharsets.UTF_8));}
 ''' + actual)
         test=r'''
- static void zoningQueue(boolean resume) throws Exception {
+ static void zoningQueue(boolean resume,boolean manual) throws Exception {
   String owner="0123456789abcdef0123456789abcdef";
-  ClientRuntime r=new ClientRuntime();r.world();r.session=owner;long now=System.currentTimeMillis();
+  ClientRuntime r=new ClientRuntime();r.world();r.session=owner;r.sessionBudget.manualPolicy=manual;long now=System.currentTimeMillis();
   try {
    Map<String,Object> enabled=new LinkedHashMap<>();enabled.put("type","character_zoning");enabled.put("format",1);enabled.put("session_id",owner);
    enabled.put("client_pid",17);enabled.put("character_id",1);enabled.put("epoch",0);enabled.put("current_map_id",1);enabled.put("target_map_id",101);
@@ -221,7 +221,7 @@ class ClientZoningRuntimeTests(unittest.TestCase):
    observation.put("observed_monotonic_ms",1000L);require(!r.recordZoningPreparation(observation));require(r.zoningPreparationObservations.size()==128&&r.zoningPreparationObservationLimitReached);
    require(r.zoning.phase().equals("preparing")&&!r.zoning.blocksInput());require(r.canRequestSaveLogout());require(r.canSendPerformanceCommand());
    Map<String,Object> ready=new LinkedHashMap<>(enabled);ready.put("epoch",1);ready.put("status","ready");ready.put("generated_utc_ms",System.currentTimeMillis()+1);ready.put("destination_ready",true);
-   require(r.zoning.accept(ready,owner,17,1,System.currentTimeMillis()+1,20,2));require(!r.canTravelZoning());r.zoningDepartureDeadlineUtc=System.currentTimeMillis()+600000;require(r.canTravelZoning());
+   require(r.zoning.accept(ready,owner,17,1,System.currentTimeMillis()+1,20,2));require(r.canTravelZoning()==manual);r.zoningDepartureDeadlineUtc=System.currentTimeMillis()+600000;require(r.canTravelZoning());
    r.markZoningTime("ready");r.decoder.hold=true;
    if(resume){
     r.setUiVisible(false);require(!r.automaticTravel&&!r.requestZoning()&&!r.requestTravelZoning());
@@ -242,7 +242,7 @@ class ClientZoningRuntimeTests(unittest.TestCase):
  }
 '''
         start=runtime.index(' public static void main(String[] args)throws Exception {')
-        runtime=runtime[:start]+test+' public static void main(String[] args)throws Exception {zoningQueue(false);zoningQueue(true);System.out.println("PASS runtime zoning");}\n}\n'
+        runtime=runtime[:start]+test+' public static void main(String[] args)throws Exception {zoningQueue(false,false);zoningQueue(true,false);zoningQueue(false,true);zoningQueue(true,true);System.out.println("PASS runtime zoning");}\n}\n'
         with tempfile.TemporaryDirectory(prefix='coh-zoning-runtime-') as temp:
             host=Path(temp)/'SidebarRuntimeHost.java';host.write_text(runtime)
             subprocess.run(['java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8','-d',temp,

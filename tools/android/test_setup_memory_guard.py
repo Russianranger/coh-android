@@ -299,6 +299,61 @@ public final class SetupMemoryGuardHost {
         env.guard.read(1);
         need(status(env.guard).equals("running")&&((Number)early.get("read_bytes")).longValue()==0,"Exported receipts are independent snapshots");
     }
+    static SetupMemoryGuard.Sample ample() {
+        return memory(8*1024*MIB,16*1024*MIB,128*MIB,false,64*MIB,256*MIB);
+    }
+    static void ampleReads()throws IOException {
+        Environment fast=new Environment();fast.source=e->ample();fast.guard.admit();
+        Environment normal=new Environment();normal.guard.admit();
+        for(int i=0;i<16384;i++){fast.input(65536);normal.input(65536);}
+        need(fast.waited==8192&&normal.waited==32000,"One GiB of guarded accounting has measured 125 versus 32 MiB/s pacing, without allocating its payload");
+        need(number(fast.guard,"read_bytes")==1024*MIB&&number(fast.guard,"written_bytes")==0,"Faster pacing keeps all aggregate guarded read accounting");
+        need(fast.samples==normal.samples&&fast.samples==1025,"Ample memory cannot skip one-MiB pressure checks");
+        need(number(fast.guard,"ample_combined_io_windows")==256&&number(fast.guard,"normal_combined_io_windows")==0,"Report actual faster windows");
+        need(number(normal.guard,"normal_combined_io_windows")==256,"Keep legacy healthy pacing when faster admission fails");
+        need(number(fast.guard,"ample_combined_io_bytes_per_second")==125*MIB,"Integer-millisecond policy reports its exact rate");
+    }
+    static void ampleBoundary()throws IOException {
+        for(int mode=0;mode<5;mode++) {
+            Environment env=new Environment();final int selected=mode;
+            env.source=e->memory((4*1024+128)*MIB-(selected==1?1:0),16*1024*MIB,128*MIB,false,
+                (selected==2?192*MIB+1:selected==3?192*MIB:64*MIB),256*MIB);
+            if(mode==4)env.source=e->memory(8*1024*MIB,16*1024*MIB,128*MIB,false,33*MIB,64*MIB);
+            env.guard.admit();env.input(4*MIB);
+            need(env.waited==(mode==1||mode==2||mode==4?125:32),"Fast admission requires both exact four-reserve RAM and heap boundaries");
+        }
+    }
+    static void ampleChanges()throws IOException {
+        Environment env=new Environment();env.source=e->ample();env.guard.admit();env.input(4*MIB);
+        env.source=e->memory(1536*MIB,16*1024*MIB,128*MIB,false,64*MIB,256*MIB);env.input(4*MIB);
+        need(env.waited==532&&number(env.guard,"pressure_combined_io_windows")==1,"One-MiB sample drops ample throughput to the retained 8 MiB/s pressure rate");
+        env.source=e->memory(4*1024*MIB,16*1024*MIB,128*MIB,false,64*MIB,256*MIB);env.input(4*MIB);
+        need(env.waited==657&&number(env.guard,"normal_combined_io_windows")==1,"Normal headroom restores only legacy 32 MiB/s");
+        env.source=e->ample();env.input(4*MIB);
+        need(env.waited==689&&number(env.guard,"ample_combined_io_windows")==2,"A fresh ample sample can restore faster pacing");
+        env.source=e->pressure();env.now+=250;long bytes=number(env.guard,"read_bytes");
+        reject(()->env.input(65536));need(number(env.guard,"read_bytes")==bytes,"Actual pressure still stops before further payload input");
+    }
+    static void ampleWrites()throws IOException {
+        Environment env=new Environment();env.source=e->ample();env.guard.admit();
+        for(int i=0;i<128;i++)env.output(65536);
+        need(env.waited==64&&env.syncCallbacks==1,"Faster pacing retains eight-MiB file sync and the 25-ms write pause");
+        need(number(env.guard,"maximum_active_dirty_bytes")==8*MIB&&number(env.guard,"active_dirty_bytes")==0,"No larger dirty write window is introduced");
+        need(number(env.guard,"paced_write_windows")==1&&number(env.guard,"write_window_pace_ms")==25,"Independent write pacing remains active");
+        need(number(env.guard,"combined_io_paced_ms")==39,"Separate aggregate pacing from retained write-window pacing");
+    }
+    static void ampleCancel()throws IOException {
+        Environment env=new Environment();env.source=e->ample();env.guard.admit();env.cancelAfter=1;
+        need(reject(()->env.input(4*MIB))==env.cancellation&&env.waited==32,"Fast pacing remains cancellable at its first bounded wait");
+        need(number(env.guard,"combined_io_paced_windows")==0,"Cancelled pacing cannot claim a completed window");
+    }
+    static void noPayloadBufferGrowth() {
+        for(java.lang.reflect.Field field:SetupMemoryGuard.class.getDeclaredFields()) {
+            Class<?> type=field.getType();
+            need(type.isPrimitive()||type==String.class||type.isInterface(),"Guard owns counters and callback references, never payload buffers or collections");
+            need(!java.util.Collection.class.isAssignableFrom(type)&&!java.util.Map.class.isAssignableFrom(type),"Faster pacing cannot allocate an unbounded queue");
+        }
+    }
     public static void main(String[] args)throws Exception {
         String mode=args[0];
         switch(mode) {
@@ -326,6 +381,12 @@ public final class SetupMemoryGuardHost {
             case "byte_limits":byteLimits();break;
             case "reserve":reservePolicy();break;
             case "receipt":receiptSnapshot();break;
+            case "ample_reads":ampleReads();break;
+            case "ample_boundary":ampleBoundary();break;
+            case "ample_changes":ampleChanges();break;
+            case "ample_writes":ampleWrites();break;
+            case "ample_cancel":ampleCancel();break;
+            case "no_buffer_growth":noPayloadBufferGrowth();break;
             default:invalidSample(mode);
         }
         System.out.println("PASS "+mode);
@@ -407,6 +468,24 @@ class SetupMemoryGuardTests(unittest.TestCase):
 
     def test_receipts_are_truthful_independent_snapshots(self):
         self.check('receipt')
+
+    def test_ample_ram_reduces_only_artificial_read_pacing_with_same_sampling(self):
+        self.check('ample_reads')
+
+    def test_faster_pacing_requires_exact_system_and_heap_headroom(self):
+        self.check('ample_boundary')
+
+    def test_fresh_memory_samples_downgrade_and_restore_pacing_without_bypassing_pressure(self):
+        self.check('ample_changes')
+
+    def test_ample_ram_keeps_eight_mib_fsync_dirty_limit_and_independent_write_pacing(self):
+        self.check('ample_writes')
+
+    def test_fast_pacing_retains_cancellation_before_completing_window(self):
+        self.check('ample_cancel')
+
+    def test_guard_adds_no_payload_buffers_or_queue_allocation(self):
+        self.check('no_buffer_growth')
 
 
 if __name__ == '__main__':

@@ -51,6 +51,35 @@ class WorldInstallTests(unittest.TestCase):
         path = self.work / name; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(raw)
         return path
 
+    def test_target_resolution_catalog_cost_tracks_parents_not_leaf_count(self):
+        names = {'data/object_library/shared/leaf-%04d.geo' % index: {} for index in range(2000)}
+        (self.work / 'data/object_library/shared').mkdir(parents=True)
+        original = Path.lstat
+        calls = []
+        def lstat(path, *args, **kwargs):
+            calls.append(path)
+            return original(path, *args, **kwargs)
+        with patch.object(Path, 'lstat', lstat):
+            targets = world.resolve_targets(self.work, names, self.context)
+        self.assertEqual({name: self.work / name for name in names}, targets)
+        self.assertLess(len(calls), 32)
+
+    def test_changed_parent_catalog_is_refused_before_resolved_targets_escape(self):
+        parent = self.work / 'data/object_library'; parent.mkdir()
+        original = os.scandir
+        changed = False
+        def scan(path):
+            nonlocal changed
+            result = original(path)
+            if Path(path) == parent and not changed:
+                (parent / 'case-alias').mkdir()
+                changed = True
+            return result
+        with patch.object(os, 'scandir', scan), \
+                self.assertRaisesRegex(world.client.base.DiagnosticError, 'parent changed'):
+            world.resolve_targets(self.work, {'data/object_library/new.geo': {}}, self.context)
+        self.assertTrue(changed)
+
     def test_first_install_invalidates_only_affected_private_geobin_then_reuses_regenerated_cache(self):
         affected = [self.leaf('data/geobin/maps/city_zones/city_01_01/city_01_01.bin'),
             self.leaf('data/geobin/maps/city_zones/city_01_01/city_01_01.bounds'),

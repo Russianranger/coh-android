@@ -5,14 +5,18 @@ import java.util.Map;
 /** One-way deadlines for the current native character, never a gameplay proof. */
 public final class ClientSessionBudget {
     private int revision;
+    private final boolean manual;
+    public ClientSessionBudget() { this(false); }
+    public ClientSessionBudget(boolean manual) { this.manual = manual; }
+    public synchronized boolean manual() { return manual; }
     private long deadline, saveDeadline, movementDeadline;
     public synchronized int revision() { return revision; }
     public synchronized String phase() { return revision == 2 ? "grounded" : revision == 1 ? "connected" : "menu"; }
     public synchronized long deadline() { return deadline; }
     public synchronized long saveDeadline() { return saveDeadline; }
     public synchronized long movementDeadline() { return movementDeadline; }
-    public synchronized boolean canMove(long now) { return revision >= 1 && now < movementDeadline; }
-    public synchronized boolean canSave(long now) { return revision >= 1 && now < saveDeadline; }
+    public synchronized boolean canMove(long now) { return revision >= 1 && (manual || now < movementDeadline); }
+    public synchronized boolean canSave(long now) { return revision >= 1 && (manual || now < saveDeadline); }
 
     private static long integer(Object value) {
         return value instanceof Integer || value instanceof Long ? ((Number)value).longValue() : -1;
@@ -27,7 +31,7 @@ public final class ClientSessionBudget {
             long wallNow, long uptimeNow, long hardCapUptime, boolean zoning, int connectedMap) {
         if (event == null || session == null || !session.matches("[0-9a-f]{32}") || pid <= 0
                 || wallNow <= 0 || wallNow > Long.MAX_VALUE - 1201000
-                || uptimeNow < 0 || uptimeNow > Long.MAX_VALUE - 1201000 || hardCapUptime <= uptimeNow
+                || uptimeNow < 0 || uptimeNow > Long.MAX_VALUE - 1201000 || !manual && hardCapUptime <= uptimeNow
                 || !"character_session_budget".equals(event.get("type"))
                 || integer(event.get("format")) != 1 || !session.equals(event.get("session_id"))
                 || integer(event.get("client_pid")) != pid || integer(event.get("character_id")) != 1
@@ -40,6 +44,21 @@ public final class ClientSessionBudget {
         long next = integer(event.get("revision")), generated = integer(event.get("generated_utc_ms"));
         long end = integer(event.get("deadline_utc_ms")), save = integer(event.get("save_request_deadline_utc_ms"));
         long movement = integer(event.get("movement_deadline_utc_ms"));
+        if (manual) {
+            if (!Boolean.TRUE.equals(event.get("manual_session")) || next != revision + 1 || next > 2
+                    || generated <= 0 || generated > wallNow + 1000 || wallNow-generated > 120000
+                    || end != 0 || save != 0 || movement != 0
+                    || !(next == 1 ? "connected" : "grounded").equals(event.get("phase"))) return false;
+            if (next == 2 && (connectedMap != 1 || !grounded || relocationSentUtc <= 0
+                    || relocationSentUtc > wallNow + 1000 || wallNow-relocationSentUtc > 600000
+                    || !Boolean.TRUE.equals(event.get("ordinary_stuck_observed"))
+                    || !Boolean.TRUE.equals(event.get("stable_ground_verified"))
+                    || !Boolean.TRUE.equals(event.get("recovery_requested"))
+                    || !Boolean.TRUE.equals(event.get("recovery_verified")))) return false;
+            revision = (int)next;
+            return true;
+        }
+        if (Boolean.TRUE.equals(event.get("manual_session"))) return false;
         if (next != revision + 1 || next > 2 || generated <= 0 || generated > wallNow + 1000
                 || wallNow - generated > 120000 || end <= wallNow || end - generated > 1200000
                 || end - wallNow > hardCapUptime - uptimeNow) return false;

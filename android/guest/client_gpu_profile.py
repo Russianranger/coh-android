@@ -7,6 +7,7 @@ Game rendering, Android presentation, or physical FPS. Probe failures fall back
 before Game starts; cancellation or unverifiable cleanup stops the operation.
 """
 import hashlib
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -362,7 +363,211 @@ def verify_private_prefix(prefix, identity):
             'Private GPU probe prefix changed before cleanup')
 
 
+class ProbePrefixCache:
+    """Lease only an initialized, closed probe prefix; never cache GPU results.
+
+    A durable busy marker precedes every native launch. Interrupted/changed
+    generations are preserved and never reused. The flock is private to this
+    operation and close-on-exec. All Wine/Vulkan checks still execute now.
+    """
+    POLICY = 'closed_owned_gpu_probe_prefix_v1'
+    LIMIT = 16384
+
+    def __init__(self, owner, environment, receipt):
+        self.owner, self.fd, self.prefix, self.root_identity = owner, None, None, None
+        self.prefix_identity = None
+        self.report = receipt.setdefault('probe_prefix_cache', {
+            'policy': self.POLICY, 'reused': False, 'published_closed': False,
+            'fresh_wgl_probe_required': True, 'hardware_result_reused': False})
+        self.marker = None
+        self.identity = None
+
+    @staticmethod
+    def state(info):
+        return [info.st_dev, info.st_ino, info.st_uid, info.st_gid, info.st_mode,
+                info.st_size, info.st_mtime_ns, info.st_ctime_ns, info.st_nlink]
+
+    @staticmethod
+    def owned_directory(path):
+        info = path.lstat()
+        require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.geteuid()
+                and not info.st_mode & 0o022, 'Unowned GPU prefix cache directory')
+        return [info.st_dev, info.st_ino, info.st_uid]
+
+    def inventory(self, prefix):
+        root = self.owned_directory(prefix)
+        directories = {prefix: self.state(prefix.lstat())}
+        pending, rows, regular_bytes = [prefix], [], 0
+        while pending:
+            self.owner.ctx.check()
+            current = pending.pop()
+            require(self.state(current.lstat()) == directories[current],
+                    'GPU prefix directory changed during inventory')
+            with os.scandir(current) as entries:
+                for entry in entries:
+                    info = entry.stat(follow_symlinks=False)
+                    require(info.st_uid == os.geteuid(), 'Foreign GPU probe prefix entry')
+                    path = Path(entry.path)
+                    row = [path.relative_to(prefix).as_posix(), self.state(info)]
+                    if stat.S_ISDIR(info.st_mode):
+                        directories[path] = self.state(info)
+                        pending.append(path)
+                    elif stat.S_ISLNK(info.st_mode):
+                        # Wine owns drive/DLL symlinks. Record their exact text;
+                        # never traverse them into the game prefix or runtime.
+                        row.append(os.readlink(path))
+                    else:
+                        require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1,
+                                'Nonregular or shared GPU prefix entry')
+                        regular_bytes += info.st_size
+                    rows.append(row)
+                    require(len(rows) <= self.LIMIT and regular_bytes <= 1024**3,
+                            'GPU probe prefix inventory exceeds bound')
+        require(self.owned_directory(prefix) == root and all(
+            self.state(path.lstat()) == before for path, before in directories.items()),
+            'GPU prefix root or parent changed during inventory')
+        rows.sort(key=lambda row: row[0])
+        raw = json.dumps(rows, separators=(',', ':'), ensure_ascii=True).encode()
+        return {'directory': root, 'root_state': directories[prefix],
+                'entries': len(rows), 'regular_bytes': regular_bytes,
+                'inventory_sha256': hashlib.sha256(raw).hexdigest()}
+
+    def verify_stopped(self, prefix):
+        import diagnostic as base
+        try:
+            return base.verify_wine_stopped(prefix)
+        except base.DiagnosticError as error:
+            raise GPUProfileError('GPU prefix is not independently stopped: ' + str(error)) from error
+
+    def publish(self, value):
+        require(self.owned_directory(self.owner.root) == self.root_identity,
+                'GPU prefix cache parent changed')
+        raw = json.dumps(value, sort_keys=True, separators=(',', ':')).encode()
+        require(len(raw) <= 4096, 'GPU prefix receipt exceeds bound')
+        temporary = self.marker.with_name(self.marker.name + '.pending-' + os.urandom(8).hex())
+        try:
+            fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+            with os.fdopen(fd, 'wb') as output:
+                output.write(raw); output.flush(); os.fsync(output.fileno())
+            if os.path.lexists(self.marker):
+                info = self.marker.lstat()
+                require(stat.S_ISREG(info.st_mode) and info.st_uid == os.geteuid()
+                        and info.st_nlink == 1 and stat.S_IMODE(info.st_mode) == 0o600,
+                        'GPU prefix receipt changed before publication')
+            os.replace(temporary, self.marker)
+            directory_fd = os.open(self.owner.root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
+        finally:
+            temporary.unlink(missing_ok=True)
+
+    def checkout(self, environment, receipt):
+        try:
+            import diagnostic as base
+            root = self.owner.root
+            self.root_identity = self.owned_directory(root)
+            report = self.owner.ctx.report
+            runtime = report.get('asset_sha256', {}).get('runtime-lock.json')
+            require(re.fullmatch('[0-9a-f]{64}', str(runtime)) is not None
+                    and report.get('wine_initialization', {}).get('runtime_lock_sha256') == runtime,
+                    'GPU prefix reuse lacks current authenticated Wine/FEX runtime')
+            require(all(re.fullmatch('[0-9a-f]{64}', str(receipt.get(key)))
+                        for key in ('archive_sha256', 'manifest_sha256')),
+                    'GPU prefix reuse lacks exact GPU producer')
+            self.identity = {'runtime_lock_sha256': runtime,
+                'gpu_archive_sha256': receipt['archive_sha256'],
+                'gpu_manifest_sha256': receipt['manifest_sha256'],
+                'kernel': list(os.uname()), 'fex_rootfs': environment.get('FEX_ROOTFS'),
+                'wine_commands': {str(path): base.file_hash(path) for path in
+                    (self.owner.args.wine, self.owner.args.wineserver)}}
+            key = hashlib.sha256(json.dumps(self.identity, sort_keys=True).encode()).hexdigest()[:24]
+            lock = root / ('gpu-probe-prefix-' + key + '.lock')
+            self.fd = os.open(lock, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW | os.O_CLOEXEC, 0o600)
+            info = os.fstat(self.fd)
+            require(stat.S_ISREG(info.st_mode) and info.st_uid == os.geteuid()
+                    and info.st_nlink == 1 and info.st_size == 0 and stat.S_IMODE(info.st_mode) == 0o600,
+                    'Unowned GPU prefix lock')
+            fcntl.flock(self.fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            self.marker = root / ('gpu-probe-prefix-' + key + '.json')
+            saved = None
+            if os.path.lexists(self.marker):
+                info = checked_regular(self.marker, 4096)
+                require(info.st_uid == os.geteuid() and info.st_nlink == 1
+                        and stat.S_IMODE(info.st_mode) == 0o600, 'Unowned GPU prefix receipt')
+                saved = unique_json(self.marker.read_bytes())
+                require(saved.get('format') == 1 and saved.get('policy') == self.POLICY
+                        and saved.get('identity') == self.identity
+                        and re.fullmatch('gpu-probe-prefix-' + key + '-[0-9a-f]{32}', str(saved.get('prefix'))),
+                        'Unrecognized GPU prefix receipt')
+                candidate = root / saved['prefix']
+                if saved.get('state') == 'closed':
+                    try:
+                        require(saved.get('inventory') == self.inventory(candidate),
+                                'Closed GPU prefix inventory changed')
+                        self.report['prior_native_prefix_shutdown'] = self.verify_stopped(candidate)
+                        self.prefix = candidate
+                        self.prefix_identity = saved['inventory']['directory']
+                        self.report['reused'] = True
+                    except (OSError, GPUProfileError) as error:
+                        self.report['reuse_refused'] = str(error)[:300]
+                else:
+                    self.report['reuse_refused'] = 'Prior GPU probe prefix did not prove closed ownership'
+            if self.prefix is None:
+                count = sum(1 for p in root.iterdir()
+                    if re.fullmatch('gpu-probe-prefix-[0-9a-f]{24}-[0-9a-f]{32}', p.name))
+                require(count < 8, 'GPU prefix retained generation bound reached')
+                self.prefix = root / ('gpu-probe-prefix-' + key + '-' + os.urandom(16).hex())
+                self.prefix.mkdir(mode=0o700)
+                self.prefix_identity = self.owned_directory(self.prefix)
+            self.publish({'format': 1, 'policy': self.POLICY, 'identity': self.identity,
+                'prefix': self.prefix.name, 'state': 'busy'})
+            self.report['generation'] = self.prefix.name
+            self.verify_checkout()
+            return self.prefix
+        except (OSError, GPUProfileError, AttributeError, ValueError) as error:
+            self.report['reuse_unavailable'] = str(error)[:300]
+            self.release()
+            if self.root_identity is not None:
+                require(self.owned_directory(self.owner.root) == self.root_identity,
+                        'GPU prefix cache parent changed during checkout')
+            return None
+        except BaseException:
+            self.release()
+            raise
+
+    def close(self):
+        self.verify_checkout()
+        self.report['current_native_prefix_shutdown'] = self.verify_stopped(self.prefix)
+        inventory = self.inventory(self.prefix)
+        self.verify_checkout()
+        self.publish({'format': 1, 'policy': self.POLICY, 'identity': self.identity,
+            'prefix': self.prefix.name, 'state': 'closed', 'inventory': inventory})
+        self.report.update(published_closed=True, inventory=inventory)
+
+    def verify_checkout(self):
+        require(self.owned_directory(self.owner.root) == self.root_identity
+                and self.owned_directory(self.prefix) == self.prefix_identity,
+                'GPU prefix cache parent or prefix changed after checkout')
+
+    def release(self):
+        if self.fd is not None:
+            os.close(self.fd)
+            self.fd = None
+
+
 def private_wgl_probe(owner, environment, executable, directory, receipt):
+    cache = ProbePrefixCache(owner, environment, receipt)
+    try:
+        return _private_wgl_probe(owner, environment, executable, directory, receipt, cache)
+    finally:
+        # Checkout owns a flock before any prefix/environment setup. Even a
+        # changed path or cancelled setup must release it without native launch.
+        cache.release()
+
+
+def _private_wgl_probe(owner, environment, executable, directory, receipt, cache):
     """Separate prefix/token prevents probe cleanup from touching the running server."""
     import diagnostic as base
     from game_device_diagnostic import DeviceWineProcessOwner
@@ -372,9 +577,16 @@ def private_wgl_probe(owner, environment, executable, directory, receipt):
     owners = getattr(owner, 'gpu_probe_owners', None)
     if owners is None:
         owners = owner.gpu_probe_owners = []
-    prefix = directory / 'wineprefix'
-    prefix.mkdir(mode=0o700)
-    prefix_identity = (prefix.stat().st_dev, prefix.stat().st_ino)
+    prefix = cache.checkout(environment, receipt)
+    if prefix is None:
+        prefix = directory / 'wineprefix'
+        prefix.mkdir(mode=0o700)
+    if cache.fd is not None:
+        cache.verify_checkout()
+    prefix_info = prefix.lstat()
+    require(stat.S_ISDIR(prefix_info.st_mode) and prefix_info.st_uid == os.geteuid(),
+            'Private GPU probe prefix changed before launch')
+    prefix_identity = (prefix_info.st_dev, prefix_info.st_ino)
     process_owner.gpu_prefix_identity = prefix_identity
     probe_environment = dict(environment)
     probe_environment.update(process_owner.environment)
@@ -382,6 +594,9 @@ def private_wgl_probe(owner, environment, executable, directory, receipt):
     owners.append((process_owner, probe_environment, prefix, receipt))
     started = time.monotonic()
     try:
+        if cache.fd is not None:
+            cache.verify_checkout()
+        verify_private_prefix(prefix, prefix_identity)
         child = run_probe(owner, 'gpu-wine-prerequisites', [owner.args.wine, base.windows_path(executable)],
                           probe_environment, 90, allow_background_output=True)
         probe_error = getattr(child, 'gpu_probe_error', None)
@@ -394,6 +609,8 @@ def private_wgl_probe(owner, environment, executable, directory, receipt):
         # Only this prefix is shut down. The accepted Game/server prefix and its
         # current lifecycle/readiness markers are never read or modified here.
         try:
+            if cache.fd is not None:
+                cache.verify_checkout()
             verify_private_prefix(prefix, prefix_identity)
             shutdown = owner.ctx.run('gpu-probe-prefix-stop', [owner.args.wineserver, '-k'], timeout=3,
                                      env=probe_environment, cleanup=True, check=False)
@@ -415,12 +632,46 @@ def private_wgl_probe(owner, environment, executable, directory, receipt):
                 owner.ctx.record(child, refresh=True)
                 record_wgl_probe(child, receipt)
             verify_private_prefix(prefix, prefix_identity)
-            shutil.rmtree(prefix)
+            # Reuse initialization only after successful current native pixels,
+            # leader/output EOF and complete private-token cleanup. A failed
+            # current probe never leaves a closed reusable generation.
+            cacheable = (cache.fd is not None and 'child' in locals()
+                and child.process.poll() == 0 and not child.overflow
+                and len(child.output) <= PROBE_OUTPUT_LIMIT
+                and getattr(child, 'gpu_probe_error', None) is None)
+            if cacheable:
+                try:
+                    validate_wgl_probe(child.text())
+                except GPUProfileError:
+                    cacheable = False
+            if cacheable:
+                try:
+                    cache.close()
+                except GPUProfileError as error:
+                    # An integrity refusal must never become authority to
+                    # delete the path whose ownership just became uncertain.
+                    receipt['probe_prefix_cache']['publication_refused'] = str(error)[:300]
+                    raise
+                except OSError as error:
+                    # Optional cache publication can fail on a full filesystem.
+                    # Preserve the prefix; only complete current ownership and
+                    # native shutdown checks allow the GPU attempt to proceed.
+                    receipt['probe_prefix_cache']['publication_refused'] = str(error)[:300]
+                    cache.verify_checkout()
+                    cache.verify_stopped(prefix)
+                    receipt['probe_prefix_cache']['preserved_after_publication_error'] = True
+            if not cacheable:
+                if cache.fd is not None:
+                    cache.verify_checkout()
+                verify_private_prefix(prefix, prefix_identity)
+                shutil.rmtree(prefix)
             receipt['probe_cleanup_safe'] = True
         except BaseException as error:
             receipt['probe_cleanup_safe'] = False
             receipt['probe_process_cleanup'] = process_owner.receipt
             raise GPUCleanupError('GPU probe cleanup needs attention: ' + str(error)[:300]) from error
+        finally:
+            cache.release()
     check_probe_owner(owner)
     require(len(child.output) <= PROBE_OUTPUT_LIMIT and not child.overflow,
             'GPU probe output exceeded its bound')

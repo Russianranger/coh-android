@@ -170,6 +170,15 @@ def install(worktree, assets, context, *, collision_only=False, audio=False):
             pass
     reused = all(row['stat'] is not None for row in before.values()) and saved == {
         'identity': identity, 'inputs': document['inputs'], 'outputs': before}
+    # APK wrapper updates create new source inodes. They do not invalidate a
+    # complete byte proof of unchanged installed leaves when this process has
+    # freshly authenticated both current source files to the same exact pins.
+    rebound = (not reused and isinstance(saved, dict)
+        and saved.get('identity') == identity and saved.get('outputs') == before
+        and all(row['stat'] is not None for row in before.values())
+        and all(client.verified_asset_matches(assets / name, document['pins'][name])
+                for name in (archive_name, manifest_name)))
+    reused = reused or rebound
     installed = decoded = 0
     if not reused:
         for name, target in targets.items():
@@ -216,7 +225,7 @@ def install(worktree, assets, context, *, collision_only=False, audio=False):
     after = world.output_state(worktree, targets, files, context)
     require(all(row['stat'] is not None for row in after.values()) and all(before[name]['stat'] is None
             or after[name] == before[name] for name in files), 'Zone output changed or disappeared')
-    if not reused:
+    if not reused or rebound:
         previous = world.file_state(marker, MAX_RECEIPT, installed=True) if os.path.lexists(marker) else None
         fd, name = tempfile.mkstemp(prefix='.zone-receipt-', dir=worktree)
         temporary = Path(name)
@@ -236,6 +245,7 @@ def install(worktree, assets, context, *, collision_only=False, audio=False):
     return {'format': 1, 'version': VERSION, 'scope': identity['selection'], 'file_count': len(files),
         'files_sha256': identity['files_sha256'], 'manifest_sha256': document['pins'][manifest_name]['sha256'],
         'installed_files': installed, 'decoded_payload_bytes': decoded, 'fingerprint_reused': reused,
+        'source_generation_rebound': bool(rebound),
         'imported_files_modified': False, 'prepared_caches_modified': False,
         'runtime_visual_validated': False, 'physical_zoning_verified': False,
         'elapsed_seconds': round(time.monotonic() - started, 6)}

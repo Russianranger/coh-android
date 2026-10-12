@@ -217,7 +217,7 @@ def install(assets, runtime, *, context=None, mapserver_package=None):
     assets, runtime = Path(assets), Path(runtime)
     if not (assets / PAYLOAD).exists() and not (assets / MANIFEST).exists():
         return {'format': 1, 'status': 'ordinary_fx_loader', 'installed_files': 0}
-    require(re.fullmatch(r'local-login-server-[0-9a-f]{32}(?:-kings-row)?', runtime.name) is not None,
+    require(re.fullmatch(r'local-login-server-[0-9a-f]{32}(?:-kings-row|-atlas-park)?', runtime.name) is not None,
             'FX projection is restricted to the owned Atlas/Kings server namespace')
     value, raw = verify_package(assets)
     verify_consumer(runtime, mapserver_package)

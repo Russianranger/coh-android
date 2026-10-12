@@ -1,0 +1,54 @@
+{
+  "format": 1,
+  "scope": "current_working_tree_client_preparation_host_regressions",
+  "base_commit": "0b224087f618a47cbfa4ecfec56d3e4817975c68",
+  "executed_utc": "2026-10-12T23:32:21.552884+00:00",
+  "command": "python -m unittest tools.android.interactive.test_atlas_world_assets tools.android.interactive.test_client_visual_assets tools.android.interactive.test_zone_asset_package tools.android.interactive.test_texture_header_index tools.android.interactive.test_client_animation_package tools.android.interactive.test_client_gpu_profile -q",
+  "result": {
+    "tests_run": 186,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed_seconds": 9.881
+  },
+  "source_sha256": {
+    "android/guest/atlas_world_assets.py": "b36dbb96b36b7dc20b613d7bd86592f835e890a9a8766bed08eb557e1f8816a3",
+    "android/guest/client_visual_assets.py": "b732478e4c33b7e15c8b55c14937a5e557b3d79f637a2f58109ef2f58c3962bb",
+    "android/guest/zone_asset_package.py": "eba33c606c047b2a4b95c6965e717c0fa649f29dd82878f649ea63b258e6b4b6",
+    "android/guest/texture_header_index.py": "5f4b7601c3a98d6f4eaeff1c95496e544d336f783826bea15a674bae6e01a2c5",
+    "android/guest/client_animation_package.py": "c11559a9c95ff3efb9e9518b5ba585369a48c6a0a3235701c0e44ae50d183f64",
+    "android/guest/client_gpu_profile.py": "c2711d74ff058852af6a2eeb9b5d621abfcef39a79aa4befadacfd4671aef230",
+    "tools/android/interactive/test_atlas_world_assets.py": "a02b6ca271b816a4fa8de2c274c1d1152c61de6984f72ccc76b1bcd3a6c95bab",
+    "tools/android/interactive/test_client_visual_assets.py": "8d6f330b225576e0f53234b5726e16e4c93aa90836d97164b028101fa1c4bc67",
+    "tools/android/interactive/test_zone_asset_package.py": "b024a7fef024dfead9db9fb570a89e97d6e126a96c503c03670cbe11ebf02867",
+    "tools/android/interactive/test_texture_header_index.py": "3269228616549797116b04bb236fc9e51fd58274531c6eb3df3c2adda743df09",
+    "tools/android/interactive/test_client_animation_package.py": "2b96b5c28b8faa799482762c28aec0e78a96ee92d3abde19e0f68e736ae191c9",
+    "tools/android/interactive/test_client_gpu_profile.py": "67ebf8b01df5e7d6cb245103751da5c819f57b9a0c9a8cc8a4c541c470d96d78"
+  },
+  "evidence_limits": [
+    "Host fixtures; current hardware and native Wine GPU execution not performed.",
+    "Fresh WGL fixture results are deliberately not physical GPU qualification.",
+    "No successor physical startup savings measured.",
+    "Whole-repository CI and APK/publication qualification remain separate."
+  ],
+  "additional_relevant_regressions": {
+    "command": "PYTHONPATH=tools/android/interactive:android/guest python -m unittest tools.android.interactive.test_atlas_beacon_package tools.android.interactive.test_atlas_beacon_inputs tools.android.interactive.test_kings_row_beacons tools.android.interactive.test_stable_worktree_identity tools.android.interactive.test_client_gpu_runtime_package -q",
+    "result": {
+      "tests_run": 68,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_seconds": 13.471
+    },
+    "scope": "Fresh host fixtures; initial invocation without required PYTHONPATH had two import errors, corrected invocation passed."
+  },
+  "gpu_prefix_cache_regressions": {
+    "tests_added": 17,
+    "real_filesystem_and_flock": true,
+    "native_wgl_result_fixture": true,
+    "native_process_cleanup_fixture": true,
+    "native_prefix_stopped_fixture": true,
+    "current_native_hardware_executed": false,
+    "independent_source_review": "text_input agent reviewed prelaunch ownership, cache publication failure and cleanup safety; identified races fixed and covered by regression tests."
+  }
+}

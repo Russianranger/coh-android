@@ -1,4 +1,4 @@
-"""Bounded reopen phases; neither network timeout nor character-save proof."""
+"""Owned reopen phases: manual sessions and retained historical bounded policy."""
 import math
 import re
 
@@ -26,16 +26,19 @@ def utc_milliseconds(value):
 
 
 class SessionBudget:
-    """Connection grants a finite play/save window; optional recovery can shorten it."""
+    """Validate connection identity; explicit manual policy has no gameplay deadline."""
     def __init__(self, session_id, client_pid, launcher_started, operation_deadline,
-                 *, presentation_ready=None, supported_maps=(1,)):
+                 *, presentation_ready=None, supported_maps=(1,), manual=False):
         require(supported_maps in ((1,), (1, 101), (1, 5, 101)), 'Unreviewed reopen budget maps')
+        require(type(manual) is bool, 'Invalid manual session policy')
+        self.manual = manual
         self.supported_maps = supported_maps
         self.map_id = 1
         require(isinstance(session_id, str) and re.fullmatch(r'[0-9a-f]{32}', session_id)
                 and type(client_pid) is int and 0 < client_pid <= 4294967295,
                 'Invalid reopen budget session or owned client identity')
-        require(finite_seconds(launcher_started) and finite_seconds(operation_deadline),
+        require(finite_seconds(launcher_started) and (finite_seconds(operation_deadline) or manual
+                and type(operation_deadline) in (int, float) and operation_deadline == math.inf),
                 'Invalid reopen budget launcher or operation deadline')
         require(presentation_ready is None or finite_seconds(presentation_ready)
                 and presentation_ready <= launcher_started,
@@ -49,7 +52,9 @@ class SessionBudget:
             # launcher, operation, neutral-wait or ordinary-save allowances.
             self.hardcap = min(self.hardcap,
                                presentation_ready + PRESENTATION_BUDGET_SECONDS)
-        require(finite_seconds(self.hardcap) and self.hardcap > launcher_started,
+        if manual:
+            self.hardcap = math.inf
+        require(manual or finite_seconds(self.hardcap) and self.hardcap > launcher_started,
                 'Reopen budget has no reserved launcher/operation lifetime')
         self.revision = 0
         self.deadline = None
@@ -81,8 +86,8 @@ class SessionBudget:
         self.map_id = proof['map_id']
 
     def event(self, phase, now, now_utc_ms, deadline, *, save_ms=0, movement_ms=0):
-        deadline_ms = now_utc_ms + int(round((deadline - now) * 1000))
-        require(utc_milliseconds(deadline_ms) and now_utc_ms < deadline_ms,
+        deadline_ms = 0 if self.manual else now_utc_ms + int(round((deadline - now) * 1000))
+        require(self.manual or utc_milliseconds(deadline_ms) and now_utc_ms < deadline_ms,
                 'Reopen phase deadline is exhausted')
         value = {'format': 1, 'session_id': self.session_id, 'client_pid': self.client_pid,
             'character_id': 1, 'name': 'THORHERO', 'account': 'COHLOCAL', 'map_id': self.map_id,
@@ -90,6 +95,8 @@ class SessionBudget:
             'deadline_utc_ms': deadline_ms, 'save_request_deadline_utc_ms': save_ms,
             'movement_deadline_utc_ms': movement_ms, 'native_client_ready_observed': True,
             'reopen_verified': True}
+        if self.manual:
+            value['manual_session'] = True
         if self.supported_maps != (1,):
             value['zoning_enabled'] = True
         if self.supported_maps == (1, 5, 101):
@@ -105,6 +112,9 @@ class SessionBudget:
         self.identity(proof)
         if self.revision:
             return None
+        if self.manual:
+            self.revision, self.deadline = 1, float('inf')
+            return self.event('connected', now, now_utc_ms, self.deadline)
         deadline = min(now + CONNECTED_SECONDS, self.hardcap)
         require(deadline > now, 'Native connection arrived after the reserved session lifetime')
         finish_ms = now_utc_ms + int(round((deadline - now) * 1000))
@@ -138,6 +148,9 @@ class SessionBudget:
         if self.revision == 2:
             require(receipt == self.receipt, 'Ground budget recovery receipt changed after acceptance')
             return None
+        if self.manual:
+            self.revision, self.receipt = 2, dict(receipt)
+            return self.event('grounded', now, now_utc_ms, self.deadline)
         require(now < self.deadline, 'Ground budget cannot revive the expired connected deadline')
         hardcap_ms = now_utc_ms + int(round((min(self.hardcap, self.deadline) - now) * 1000))
         finish_ms = min(receipt['sent_utc_ms'] + RECOVERY_MAX_AGE_MS, hardcap_ms)

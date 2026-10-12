@@ -101,6 +101,41 @@ class ZonePackageTests(unittest.TestCase):
             reused = zones.install(self.work, self.assets, self.ctx)
         self.assertTrue(reused['fingerprint_reused']); self.assertEqual(reused['installed_files'], 0)
 
+    def test_new_runtime_sources_rebind_exact_world_and_audio_output_proofs(self):
+        self.publish_audio()
+        for audio in (False, True):
+            zones.install(self.work, self.assets, self.ctx, audio=audio)
+        for name in (zones.ARCHIVE, zones.MANIFEST, zones.AUDIO_ARCHIVE, zones.AUDIO_MANIFEST):
+            path = self.assets / name; raw = path.read_bytes()
+            path.unlink(); path.write_bytes(raw)
+            client._VERIFIED_ASSET_STATES[str(path)] = (self.pin(raw), client.asset_fingerprint(path))
+        with mock.patch.object(zones.world, 'verify_target', side_effect=AssertionError('duplicate output hash')), \
+                mock.patch.object(zones.zipfile, 'ZipFile', side_effect=AssertionError('duplicate archive read')):
+            for audio in (False, True):
+                result = zones.install(self.work, self.assets, self.ctx, audio=audio)
+                self.assertTrue(result['source_generation_rebound'])
+                self.assertTrue(result['fingerprint_reused'])
+                self.assertEqual(0, result['installed_files'])
+
+    def test_rebound_sources_do_not_authorize_rewritten_output_or_unverified_archive(self):
+        zones.install(self.work, self.assets, self.ctx)
+        for name in (zones.ARCHIVE, zones.MANIFEST):
+            path = self.assets / name; raw = path.read_bytes()
+            path.unlink(); path.write_bytes(raw)
+        with mock.patch.object(zones.world, 'verify_target', wraps=zones.world.verify_target) as verify:
+            result = zones.install(self.work, self.assets, self.ctx)
+        self.assertFalse(result['fingerprint_reused'])
+        self.assertEqual(len(self.files), verify.call_count)
+        for name in (zones.ARCHIVE, zones.MANIFEST):
+            path = self.assets / name; raw = path.read_bytes()
+            path.unlink(); path.write_bytes(raw)
+            client._VERIFIED_ASSET_STATES[str(path)] = (self.pin(raw), client.asset_fingerprint(path))
+        target = self.work / next(iter(self.files)); before = target.stat()
+        target.chmod(0o644); target.write_bytes(b'x' * before.st_size); target.chmod(0o444)
+        os.utime(target, ns=(before.st_mtime_ns, before.st_mtime_ns))
+        with self.assertRaisesRegex(client.base.DiagnosticError, 'conflicts'):
+            zones.install(self.work, self.assets, self.ctx)
+
     def test_kings_server_gets_exact_geometry_subset_only(self):
         receipt = zones.install(self.work, self.assets, self.ctx, collision_only=True)
         self.assertEqual(receipt['installed_files'], 52)

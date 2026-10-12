@@ -88,6 +88,59 @@ public final class ClientRuntime {
     private volatile JSONObject characterSavedEvent, characterConnectedEvent;
     private volatile boolean saveLogoutRequested;
     private volatile boolean characterSavedReady;
+    private boolean manualTestActive,manualTestOpeningCaptured;
+    private long manualTestStartedUptime,manualTestFrameWatermark,manualTestCapturesAccepted;
+    private final List<Map<String,Object>> manualTestEvents = new ArrayList<>();
+    public synchronized boolean manualTestActive() { return manualTestActive; }
+    public synchronized boolean canStartManualTest() {
+        return reopen && inputReady && characterConnectedEvent != null && !manualTestActive
+                && !saveLogoutRequested && !finished && !finishRequested && !cancelled
+                && !producerCompleted && manualTestEvents.size() < 64;
+    }
+    public synchronized boolean startManualTest() {
+        if (!canStartManualTest()) return false;
+        manualTestStartedUptime=SystemClock.uptimeMillis();manualTestFrameWatermark=decodedFrames;
+        manualTestOpeningCaptured=false;manualTestCapturesAccepted=0;
+        manualTestActive = true; recordManualTest("start", "user");
+        stage("Test capture started", "Play at your own pace. Tap Stop test to end this capture; Save / Logout and Finish remain separate.");
+        notifyInputState(); return true;
+    }
+    public synchronized boolean stopManualTest() {
+        if (!stopManualTest("user")) return false;
+        stage("Test capture stopped", "Capture timestamps are retained. Save / Logout when ready, then Finish and export the report.");
+        return true;
+    }
+    private synchronized boolean stopManualTest(String reason) {
+        if (!manualTestActive) return false;
+        manualTestActive = false; recordManualTest("stop", reason); notifyInputState(); return true;
+    }
+    private boolean manualCaptureEligible(long captured,long sequence) {
+        return manualTestActive && captured>=manualTestStartedUptime && sequence>manualTestFrameWatermark;
+    }
+    private void recordManualTest(String action, String reason) {
+        Map<String,Object> row = new LinkedHashMap<>();
+        row.put("test_id", manualTestEvents.size()/2+1);
+        row.put("action", action); row.put("reason", reason); row.put("session_id", session);
+        row.put("client_pid", observedClientPid); row.put("character_id", 1);
+        row.put("map_id", zoningEnabled() ? zoning.currentMap() : characterConnectedEvent.optInt("map_id", -1));
+        row.put("utc_ms", System.currentTimeMillis()); row.put("uptime_ms", SystemClock.uptimeMillis());
+        row.put("input_sent", inputSent); row.put("decoded_frames", decodedFrames);
+        row.put("capture_not_before_uptime_ms",manualTestStartedUptime);row.put("capture_frame_watermark",manualTestFrameWatermark);
+        row.put("captures_accepted",manualTestCapturesAccepted);
+        manualTestEvents.add(row); recordLifecycle("manual_test_" + action + " reason=" + reason); checkpoint();
+    }
+    /** Capture only evidence still needed, or an explicitly requested test. */
+    public synchronized boolean needsSurfaceCapture() {
+        if (finished || producerCompleted || cancelled || clientWindowObservedUptime < 0 || clientWindowEndedUptime >= 0) return false;
+        long now = SystemClock.uptimeMillis();
+        return manualTestActive || surfaceSamples.size() < 3
+                || loginObservedUptime >= 0 && loginSamples.size() < 3
+                || connectedObservedUptime >= 0 && connectedSamples.size() < 3
+                || relocatedObservedUptime >= 0 && relocationSamples.size() < 3
+                || characterObservedUptime >= 0 && characterSamples.size() < 3
+                || "capturing".equals(zoning.phase()) || contactCapture.pending(now)
+                || taskAcceptedCapture.pending(now) || taskCompletedCapture.pending(now);
+    }
     private final List<Map<String, Object>> interactionSamples = new ArrayList<>();
     private final List<byte[]> interactionPngs = new ArrayList<>();
     private final ContactCaptureWindow contactCapture = new ContactCaptureWindow();
@@ -123,7 +176,7 @@ public final class ClientRuntime {
     private final List<Map<String,Object>> zoningSamples = new ArrayList<>();
     private final List<byte[]> zoningPngs = new ArrayList<>();
     private volatile long inputSent, inputFailed, readyDeadlineUptimeMillis;
-    private final ClientSessionBudget sessionBudget = new ClientSessionBudget();
+    private final ClientSessionBudget sessionBudget = new ClientSessionBudget(true);
     private final List<Map<String,Object>> sessionBudgetEvents = new ArrayList<>();
     private volatile long launcherBudgetStartedUptime = -1, relocationSentUtcMillis;
     private volatile boolean deadlineInputSuppressed, interactionReadyObserved;
@@ -571,7 +624,7 @@ public final class ClientRuntime {
             while (!process.waitFor(200, TimeUnit.MILLISECONDS)) {
                 check();
                 if (receiverFailure != null) throw new IOException("Local display connection failed: " + receiverFailure);
-                if (System.nanoTime() > deadline) throw new IOException("Character session exceeded its 5500 second runtime limit");
+                if ((!reopen || !interactionReadyObserved) && System.nanoTime() > deadline) throw new IOException("Character startup exceeded its 5500 second runtime limit");
             }
             processExit = process.exitValue();
             output.join(2000); check();
@@ -679,6 +732,25 @@ public final class ClientRuntime {
     public boolean sendKey(String selectedSession, int keysym, boolean down) {
         if (keysym <= 0) return false;
         return queueInput(selectedSession, (active, epoch) -> active.sendKey(keysym, down, epoch), down);
+    }
+    /** Keep field replacement and paced characters in one owned worker task. */
+    public synchronized boolean sendText(String selectedSession, String value, boolean replace) {
+        if (!ClientInput.validText(value)) return false;
+        final long selectedPid = observedClientPid;
+        return queueInput(selectedSession, (active, epoch) -> {
+            synchronized (ClientRuntime.this) {
+                if (!selectedSession.equals(session) || observedClientPid != selectedPid)
+                    throw new InteractiveRfbClient.InputCancelledException();
+            }
+            recordLifecycle("text_entry_dispatch");
+            try {
+                active.sendText(value, replace, epoch);
+                recordLifecycle("text_entry_submitted native_effect_verified=false");
+            } catch (InteractiveRfbClient.InputCancelledException cancelledInput) {
+                recordLifecycle("text_entry_cancelled");
+                throw cancelledInput;
+            }
+        }, true);
     }
     /** Ordinary paired Enter remains available in the owned login input phase. */
     public synchronized boolean requestEnter(String selectedSession) {
@@ -838,12 +910,12 @@ public final class ClientRuntime {
     }
     public synchronized boolean canPrepareZoning() {
         return zoningEnabled() && !stuckRequested && zoning.canPrepare() && canSendPerformanceCommand()
-                && sessionBudget.movementDeadline()-SystemClock.uptimeMillis()>60000;
+                && (sessionBudget.manual() || sessionBudget.movementDeadline()-SystemClock.uptimeMillis()>60000);
     }
     public synchronized boolean canTravelZoning() {
         return zoningEnabled() && !stuckRequested && zoning.canTravel() && canSendPerformanceCommand()
-                && zoningDepartureDeadlineUtc>System.currentTimeMillis()
-                && sessionBudget.movementDeadline()-SystemClock.uptimeMillis()>60000;
+                && (sessionBudget.manual() || zoningDepartureDeadlineUtc>System.currentTimeMillis())
+                && (sessionBudget.manual() || sessionBudget.movementDeadline()-SystemClock.uptimeMillis()>60000);
     }
     private JSONObject zoningRequest(String action,long stamp) throws Exception {
         return new JSONObject().put("format",1).put("session_id",session).put("client_pid",observedClientPid)
@@ -877,7 +949,7 @@ public final class ClientRuntime {
             synchronized(ClientRuntime.this){
                 if(!zoning.commandInFlight()||zoning.epoch()!=selectedEpoch||observedClientPid!=selectedPid
                         ||!selectedSession.equals(session)||!uiVisible||saveLogoutRequested
-                        ||zoningDepartureDeadlineUtc<=System.currentTimeMillis()||!sessionBudget.canMove(SystemClock.uptimeMillis()))
+                        ||!sessionBudget.manual()&&zoningDepartureDeadlineUtc<=System.currentTimeMillis()||!sessionBudget.canMove(SystemClock.uptimeMillis()))
                     throw new InteractiveRfbClient.InputCancelledException();
             }
             active.sendMapMove(target,inputEpoch);
@@ -930,6 +1002,7 @@ public final class ClientRuntime {
             if(!accepts(selectedSession,selectedPid,characterId,captured,sequence))return false;
             lastCapture=captured;lastSequence=sequence;count++;return true;
         }
+        boolean pending(long now){return batch>0 && count<FRAMES_PER_REQUEST && now<=deadline;}
         int batch(){return batch;}
         int count(){return count;}
     }
@@ -951,7 +1024,7 @@ public final class ClientRuntime {
         contactRequests.add(request);
         recordLifecycle("stationary_contact_view_capture_requested batch="+contactCapture.batch());
         requestContactFullUpdate();
-        stage("Capturing contact view", "Keep the contact dialog visible while three fresh Android views are captured. Read a response, then close it normally and Save before the countdown expires.");
+        stage("Capturing contact view", "Keep the contact dialog visible while three fresh Android views are captured. Read a response, then close it normally and Save when ready.");
         notifyInputState();return true;
     }
     private void requestContactFullUpdate() {
@@ -1255,6 +1328,7 @@ public final class ClientRuntime {
                 throw new IOException("Could not record completed character logout delivery", failure);
             }
         })) return false;
+        stopManualTest("save_logout");
         saveLogoutRequested = true;
         recordLifecycle("ordinary_character_logout_requested");
         stage("Saving character", "The ordinary /quittologin command is queued. Wait for logout and committed database verification, then three fresh Android captures.");
@@ -1268,6 +1342,7 @@ public final class ClientRuntime {
             stage("Waiting for saved character", "Finish becomes available after THORHERO is committed to the database and three fresh Android views are captured.");
             return false;
         }
+        stopManualTest("finish");
         finishRequested = true; inputReady = false; cancelPendingInput();
         inputWorker.getQueue().clear(); notifyInputState();
         try {
@@ -1388,8 +1463,10 @@ public final class ClientRuntime {
                 || captured - ((Number) characterSamples.get(characterSamples.size()-1).get("captured_elapsed_ms")).longValue() >= 1000);
         boolean afterInput = inputSent > 0 && captured >= lastInputUptime
                 && ((Number) sequence).longValue() > lastInputFrameWatermark;
-        boolean interactionSample = readyDeadlineUptimeMillis > 0 && (interactionSamples.isEmpty()
-                || (afterInput && inputSent > lastCapturedInputCount) || (finishRequested && !finishCaptureRetained));
+        boolean manualSample=manualCaptureEligible(captured,((Number)sequence).longValue());
+        boolean interactionSample = (manualSample && !manualTestOpeningCaptured)
+                || (manualSample || !reopen && readyDeadlineUptimeMillis > 0) && (interactionSamples.isEmpty()
+                    || (afterInput && inputSent > lastCapturedInputCount) || (finishRequested && !finishCaptureRetained));
         boolean contactSample = characterConnectedEvent!=null && !saveLogoutRequested && characterSavedEvent==null
                 && (!stuckRequested || relocationCapturedReady) && sessionBudget.canMove(SystemClock.uptimeMillis())
                 && contactCapture.accepts(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),captured,((Number)sequence).longValue());
@@ -1438,7 +1515,7 @@ public final class ClientRuntime {
                     if(window.count()<ContactCaptureWindow.FRAMES_PER_REQUEST)requestContactFullUpdate();
                     else {
                         stage(completed?"Completed task view captured":"Accepted task view captured",
-                                completed?"Three completed-task views were saved for review. Release controls for 60 seconds, then Save character / log out and Finish after verification."
+                                completed?"Three completed-task views were saved for review. Release controls, then Save character / log out and Finish after verification."
                                         :"Three accepted-task views were saved for review. Close the journal and contact dialog with B, then tap Complete accepted task once.");
                         notifyInputState();
                     }
@@ -1452,7 +1529,7 @@ public final class ClientRuntime {
                 contactSamples.add(contact);contactPngs.add(png.clone());
                 if(contactCapture.count()<ContactCaptureWindow.FRAMES_PER_REQUEST)requestContactFullUpdate();
                 if(contactCapture.count()==ContactCaptureWindow.FRAMES_PER_REQUEST) {
-                    stage("Contact view captured", "Three fresh Android views were saved for review. Confirm the NPC and readable dialog, choose a normal response or Goodbye, then release controls for 60 seconds before Save.");
+                    stage("Contact view captured", "Three fresh Android views were saved for review. Confirm the NPC and readable dialog, choose a normal response or Goodbye, then release controls before Save.");
                     notifyInputState();
                 }
             }
@@ -1479,7 +1556,7 @@ public final class ClientRuntime {
                     retainCheckpointPng(connected,connectedPngs.get(connectedPngs.size()-1));recordLifecycle("character_connected_views_verified");
                     if (Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
                         stage("Atlas connected for startup timing", "THORHERO connected and fresh Android views were captured. Note your loading time, then Stop and export this startup-only session. Existing tasks are preserved; no task or movement retest is requested.");
-                    else if(zoningEnabled())stage("Ready for zone travel","Use the monorail station to choose Kings Row or Atlas Park. Preparation happens on demand. Keep current graphics settings; use ordinary Save and Finish before the session cutoff.");
+                    else if(zoningEnabled())stage("Ready for zone travel","Use the monorail station to choose Kings Row or Atlas Park. Preparation happens on demand. Keep current graphics settings; tap Start test and Stop test for optional capture, then use ordinary Save and Finish when ready.");
                     else stage("Atlas ready for task check", "THORHERO connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
                     notifyInputState();
                 }
@@ -1492,7 +1569,7 @@ public final class ClientRuntime {
                 relocationSamples.add(relocated); relocationPngs.add(png.clone());
                 if (relocationSamples.size() == 3) {
                     relocationCapturedReady = true;
-                    stage("Atlas position verified", "The server observed two stable positions after /stuck and three fresh Android views were captured. Follow the movement and Save countdowns below. Release controls for 60 seconds before Save; keep still through logout, then tap Finish after Saved character verified.");
+                    stage("Atlas position verified", "The server observed two stable positions after /stuck and three fresh Android views were captured. Release controls before Save; keep still through logout, then tap Finish after Saved character verified.");
                     notifyInputState();
                 }
             }
@@ -1517,6 +1594,10 @@ public final class ClientRuntime {
                 interactive.put("input_frame_watermark", lastInputFrameWatermark);
                 interactive.put("post_input_frame_observed", afterInput);
                 interactive.put("input_effect_verified", false);
+                if (manualSample) {
+                    interactive.put("manual_test_id", manualTestEvents.size()/2+1);
+                    manualTestOpeningCaptured=true;manualTestCapturesAccepted++;
+                }
                 interactive.put("finish_requested", finishRequested);
                 if (interactionSamples.size() == 8) {
                     // Keep the first available view plus the seven latest interaction views.
@@ -1559,6 +1640,7 @@ public final class ClientRuntime {
                 .put("runtime_manifest_sha256",manifestHash).put("client_pid",observedClientPid)
                 .put("started_uptime_ms",startedUptime).put("checkpoint_uptime_ms",SystemClock.uptimeMillis())
                 .put("checkpoint_utc_ms",System.currentTimeMillis()).put("passed",false).put("interrupted_unverified",true)
+                .put("manual_test_events",new JSONArray(manualTestEvents)).put("manual_test_active",manualTestActive)
                 .put("finish_requested",finishRequested).put("save_logout_requested",saveLogoutRequested)
                 .put("character_saved_views_observed",characterSavedReady).put("character_connected_event",characterConnectedEvent)
                 .put("character_saved_event",characterSavedEvent).put("zoning_events",new JSONArray(zoningEvents))
@@ -1820,9 +1902,8 @@ public final class ClientRuntime {
                         if (reopen && "character_session_budget".equals(event.optString("type"))
                                 && !cancelled && !finished && !producerCompleted) {
                             long now = SystemClock.uptimeMillis();
-                            // The display event precedes Wine launcher startup. Allow
-                            // up to one minute of transport/setup here; the guest's
-                            // actual emitted deadline is capped at launcher +34min.
+                            // Historical bounds are supplied only for legacy validation.
+                            // Manual policy requires exact zero deadlines and owned identity.
                             long hardCap = Math.min(startedUptime + 5400000,
                                     launcherBudgetStartedUptime < 0 ? now : launcherBudgetStartedUptime + 2100000);
                             @SuppressWarnings("unchecked") Map<String,Object> value = (Map<String,Object>)jsonValue(event);
@@ -1836,19 +1917,20 @@ public final class ClientRuntime {
                                 notifyInputState();
                             } else {
                                 recordLifecycle("character_session_budget_rejected");
-                                stage("Session deadline not verified", "The current character's phase deadline could not be verified. Save remains guarded by the current session evidence; export this session after cleanup if it stays unavailable.");
+                                stage("Session ownership not verified", "The current character's session policy could not be verified. Save remains guarded by the current session evidence; export this session after cleanup if it stays unavailable.");
                             }
                         }
                         if ("client_interaction_ready".equals(event.optString("type"))
                                 && session.equals(event.optString("session_id")) && observedClientPid > 0
                                 && observedClientPid == event.optLong("client_pid", -1)
-                                && event.optInt("minimum_observation_seconds", -1) == 30
-                                && event.optInt("interaction_timeout_seconds", -1) == 1200
+                                && event.optInt("minimum_observation_seconds", -1) == (reopen ? 0 : 30)
+                                && event.optInt("interaction_timeout_seconds", -1) == (reopen ? 0 : 1200)
+                                && (!reopen || event.optBoolean("manual_session"))
                                 && !interactionReadyObserved && !cancelled && !finished) {
                             interactionReadyObserved = true;
-                            if (sessionBudget.revision() == 0) readyDeadlineUptimeMillis = SystemClock.uptimeMillis() + 1200000;
+                            if (sessionBudget.revision() == 0) readyDeadlineUptimeMillis = reopen ? 0 : SystemClock.uptimeMillis() + 1200000;
                             inputReady = true; recordLifecycle("interaction_ready"); notifyInputState();
-                            stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select the existing THORHERO and click Enter Game. Do not create or delete a character. Twenty minutes remain." : "Log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
+                            stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select the existing THORHERO and click Enter Game. Do not create or delete a character. Login and gameplay have no countdown. Tap Start test when ready, then Stop test to end capture; Save / Logout and Finish preserve the character and report." : "Log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
                         }
                         // Keep the actionable save/Finish instruction visible while
                         // the guest continues its generic five-second live heartbeat.
@@ -2225,6 +2307,9 @@ public final class ClientRuntime {
                 wrapper.put("connected_captures", new JSONArray(connectedSamples));
                 wrapper.put("relocation_captures", new JSONArray(relocationSamples));
                 wrapper.put("interaction_captures", new JSONArray(interactionSamples));
+                    wrapper.put("manual_test_events", new JSONArray(manualTestEvents));
+                    wrapper.put("manual_test_active_at_finalization", manualTestActive);
+                    wrapper.put("manual_session", reopen);
                 List<Map<String,Object>> requests = new ArrayList<>();
                 for(Map<String,Object> original:contactRequests) {
                     Map<String,Object> request=new LinkedHashMap<>(original);
@@ -2378,6 +2463,7 @@ public final class ClientRuntime {
                     .put("character_saved_event",characterSavedEvent==null?JSONObject.NULL:characterSavedEvent)
                     .put("character_connected_event",characterConnectedEvent==null?JSONObject.NULL:characterConnectedEvent)
                     .put("save_logout_requested",saveLogoutRequested)
+                    .put("manual_test_events",new JSONArray(manualTestEvents)).put("manual_test_active",manualTestActive)
                     .put("scope","Failed-session diagnostic carrier only; original guest/checkpoint observations are retained without conferring any pass.");
             byte[] output;synchronized(this){output=log.toString().getBytes(StandardCharsets.UTF_8);}
             latestReport=ClientReports.retainTerminalFailure(home.getParentFile(),operationDir,

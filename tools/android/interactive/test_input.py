@@ -43,13 +43,14 @@ public class InputHarness {
     }
     final java.util.concurrent.CountDownLatch neutralSent=new java.util.concurrent.CountDownLatch(1);
     final java.util.concurrent.CountDownLatch commandKeySent=new java.util.concurrent.CountDownLatch(1);
+    final java.util.List<Long> keyTimes=new java.util.ArrayList<>();
     ByteArrayOutputStream output=new ByteArrayOutputStream(){
       private int flushed;
       @Override public void write(int value){super.write(value);Thread.yield();}
       @Override public synchronized void flush(){
         byte[] bytes=toByteArray();
         if(bytes.length-flushed==6 && bytes[flushed]==5 && bytes[flushed+1]==0)neutralSent.countDown();
-        if(bytes.length-flushed==8 && bytes[flushed]==4 && bytes[flushed+1]==1)commandKeySent.countDown();
+        if(bytes.length-flushed==8 && bytes[flushed]==4){keyTimes.add(System.nanoTime());if(bytes[flushed+1]==1)commandKeySent.countDown();}
         flushed=bytes.length;
       }
     };
@@ -108,6 +109,34 @@ public class InputHarness {
             walking.update(0,0,true,owners,rejectFirst);check(!owners.contains(110001));
             check(attempts[0]==3);
           }
+        } else if(mode.equals("text_replace") || mode.equals("text_append")) {
+          ref[0].sendKey(0xffe1,true); // A held modifier must be released first.
+          ref[0].sendText("CoH 1!",mode.equals("text_replace"),ref[0].inputEpoch());
+          for(int i=2;i<keyTimes.size();i++)check(keyTimes.get(i)-keyTimes.get(i-1)>=110_000_000L);
+        } else if(mode.equals("text_max")) {
+          ref[0].sendText("12345678901234567890123456789012",false,ref[0].inputEpoch());
+        } else if(mode.equals("text_invalid")) {
+          int before=output.size(),rejected=0;
+          for(String value:new String[]{null,"","\n","\t","\u00e9","\u007f",new String(new char[33]).replace('\0','a')}) {
+            try{ref[0].sendText(value,true,ref[0].inputEpoch());}catch(IOException expected){rejected++;}
+          }
+          long stale=ref[0].inputEpoch();ref[0].cancelPendingInput();
+          try{ref[0].sendText("secret",true,stale);}catch(InteractiveRfbClient.InputCancelledException expected){rejected++;}
+          check(rejected==8&&output.size()==before);
+        } else if(mode.equals("text_cancel") || mode.equals("text_cancel_replace")) {
+          final long epoch=ref[0].inputEpoch();final boolean[] cancelled={false};
+          Thread pending=new Thread(()->{try{ref[0].sendText("secret",mode.equals("text_cancel_replace"),epoch);}
+            catch(InteractiveRfbClient.InputCancelledException expected){cancelled[0]=true;}
+            catch(IOException error){throw new IllegalStateException(error);}});
+          pending.start();check(commandKeySent.await(1,java.util.concurrent.TimeUnit.SECONDS));
+          ref[0].cancelPendingInput();pending.join(1000);check(!pending.isAlive()&&cancelled[0]);
+          int after=output.size();ref[0].releaseAllInputs();check(output.size()==after);
+        } else if(mode.equals("text_atomic")) {
+          final long epoch=ref[0].inputEpoch();
+          Thread pending=new Thread(()->{try{ref[0].sendText("abc",false,epoch);}
+            catch(IOException error){throw new IllegalStateException(error);}});
+          pending.start();check(commandKeySent.await(1,java.util.concurrent.TimeUnit.SECONDS));
+          ref[0].sendEnter(epoch);pending.join(2000);check(!pending.isAlive());
         } else if(mode.equals("enter")) {
           long before=System.nanoTime();ref[0].sendEnter(ref[0].inputEpoch());
           check(System.nanoTime()-before>=220_000_000L);
@@ -180,7 +209,7 @@ public class InputHarness {
             worker.submit(()->{try{ref[0].sendPointer(1,1,0);}catch(IOException e){throw new IllegalStateException(e);}});
             // App-owned dialog focus loss orders its release after the valid target tap.
             worker.submit(()->{try{ref[0].releaseAllInputs();}catch(IOException e){throw new IllegalStateException(e);}});
-            worker.submit(()->{try{ref[0].sendKey('A',true);ref[0].sendKey('A',false);}
+            worker.submit(()->{try{ref[0].sendText("A",false,ref[0].inputEpoch());}
               catch(IOException e){throw new IllegalStateException(e);}}).get(3,java.util.concurrent.TimeUnit.SECONDS);
           }finally{worker.shutdownNow();}
         } else if(mode.equals("cancel")){
@@ -311,6 +340,30 @@ class InputTests(unittest.TestCase):
     def test_sidebar_enter_sends_one_settled_pair_without_chat_or_text(self):
         self.assertEqual([struct.pack('>BBHI',4,down,0,0xff0d) for down in (1,0)],
                          self.messages(self.run_harness('enter'))[1:-1])
+
+    def test_text_replace_paces_ctrl_a_then_each_character_and_releases_old_modifiers(self):
+        keys=[(0xffe1,1),(0xffe1,0),(0xffe3,1),(ord('a'),1),(ord('a'),0),(0xffe3,0)]
+        keys += [(ord(char),down) for char in 'CoH 1!' for down in (1,0)]
+        self.assertEqual(keys,self.walking_keys('text_replace'))
+
+    def test_text_append_paces_printable_login_text_without_replacing_or_submitting(self):
+        self.assertEqual([(0xffe1,1),(0xffe1,0)] + [(ord(char),down) for char in 'CoH 1!' for down in (1,0)],
+                         self.walking_keys('text_append'))
+
+    def test_text_maximum_32_characters_arrive_without_queue_splitting_or_loss(self):
+        self.assertEqual([(ord(char),down) for char in '12345678901234567890123456789012' for down in (1,0)],
+                         self.walking_keys('text_max'))
+
+    def test_invalid_and_stale_text_write_nothing(self):
+        self.assertEqual([],self.walking_keys('text_invalid'))
+
+    def test_text_cancellation_releases_character_and_control_without_external_release(self):
+        self.assertEqual([(ord('s'),1),(ord('s'),0)],self.walking_keys('text_cancel'))
+        self.assertEqual([(0xffe3,1),(0xffe3,0)],self.walking_keys('text_cancel_replace'))
+
+    def test_enter_cannot_interleave_with_atomic_text_transaction(self):
+        self.assertEqual([(key,down) for key in [ord('a'),ord('b'),ord('c'),0xff0d] for down in (1,0)],
+                         self.walking_keys('text_atomic'))
 
     def test_fixed_performance_commands_release_held_control_then_type_atomic_chat(self):
         control=[struct.pack('>BBHI',4,down,0,0xffe3) for down in (1,0)]

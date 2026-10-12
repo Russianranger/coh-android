@@ -84,7 +84,7 @@ class HostActivity extends BaseActivity {
     Button enterKey,showFps,fps10,fps30,typeText;
     Button captureContact=new Button("",()->{}),openTaskContact=new Button("",()->{}),captureAcceptedTask=new Button("",()->{});
     Button completeTask=new Button("",()->{}),captureCompletedTask=new Button("",()->{}),saveLogout=new Button("",()->{});
-    boolean inputActive=true,textDialogVisible,movementSuppressed,deadlineMovementSuppressed;
+    boolean inputActive=true,textDialogVisible,movementSuppressed,deadlineMovementSuppressed,orderedInputRelease;
     String shownSession=state.session;float rightX,rightY;int textRequests;
     final ClientInput.KeyOwners heldKeys=new ClientInput.KeyOwners();
     final ClientInput.WalkingKeys walkingKeys=new ClientInput.WalkingKeys();
@@ -165,7 +165,7 @@ public class SidebarHost {
         case "start_login":
             ui.state.sessionPhase="menu";ui.state.canSaveLogout=false;ui.refresh();
             ui.key(KeyEvent.KEYCODE_BUTTON_START,0,0);ui.key(KeyEvent.KEYCODE_BUTTON_START,1,0);
-            need(ui.service.enterRequests==1);noCommands(ui);break;
+            need(ui.service.enterRequests==1&&ui.service.cancellations==0&&ui.service.orderedReleases>0);noCommands(ui);break;
         case "start_transition":
             ui.inputActive=false;ui.key(KeyEvent.KEYCODE_BUTTON_START,0,0);
             ui.inputActive=true;ui.key(KeyEvent.KEYCODE_BUTTON_START,0,1);need(ui.service.enterRequests==0);

@@ -42,14 +42,16 @@ public final class ClientActivity extends Activity {
     private final Set<Integer> heldButtons=new HashSet<>();
     private float rightX,rightY;
     private boolean inputActive,textDialogVisible,movementSuppressed,deadlineMovementSuppressed;
+    private boolean orderedInputRelease;
     private AlertDialog activeTextDialog;
     private long lastTick;
     private final Runnable inputTick=new Runnable(){@Override public void run(){
         long now=SystemClock.uptimeMillis();float elapsed=Math.min(64,Math.max(0,now-lastTick));lastTick=now;
         if(gameInputOpen()&&hasWindowFocus()&&!textDialogVisible&&(rightX!=0||rightY!=0))display.movePointer(rightX*elapsed*0.55f,rightY*elapsed*0.55f);
-        refreshDeadlineControls();updateCounter();inputHandler.postDelayed(this,32);
+        refreshDeadlineControls();refreshTestControls();updateCounter();inputHandler.postDelayed(this,32);
     }};
     private boolean bound,exporting,captureEnabled,importWaiting;
+    private Button startTest,stopTest;
     private TextView assetPackStatus;
     private boolean assetStatusChecking,assetStatusLoaded,assetStatusDirty;
     private String pendingExport,pendingAction,shownSession="";
@@ -112,6 +114,8 @@ public final class ClientActivity extends Activity {
         resumeCreation=button("Resume first character creation",this::confirmResumeCreation);resumeCreation.setVisibility(View.GONE);controls.addView(resumeCreation);
         profileStatus=text("Checking saved character profile…",12,false);controls.addView(profileStatus);
         returnGround=button("Return to safe ground (optional)",()->{releaseControls();if(service!=null)service.requestReturnToSafeGround();});controls.addView(returnGround);
+        startTest=button("Start test",()->{if(service!=null)service.startManualTest();});controls.addView(startTest);
+        stopTest=button("Stop test",()->{if(service!=null)service.stopManualTest();});controls.addView(stopTest);
         captureContact=button("Capture contact dialog",()->{releaseControls();if(service!=null)service.requestContactCapture();});controls.addView(captureContact);
         openTaskContact=button("Open task contact",()->{releaseControls();if(service!=null)service.requestOpenTaskContact();});controls.addView(openTaskContact);
         captureAcceptedTask=button("Capture accepted task",()->{releaseControls();if(service!=null)service.requestTaskCapture(false);});controls.addView(captureAcceptedTask);
@@ -142,7 +146,7 @@ public final class ClientActivity extends Activity {
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("Import every required asset-pack part, then apply Set up / update runtime. On a fresh install, create THORHERO and complete its ordinary save before Reopen. Use COHLOCAL / offline. Keep the accepted GPU, Performance and 800×600 settings. Choose Kings Row at the actual monorail station; preparation happens on demand. After the trip, release controls for the normal 60-second neutral wait, Save character / log out, wait for Saved character verified, then Finish and Reports / export. Recover interrupted reports after an interruption. Export early if loading stalls; Reopen resumes the last verified save.",12,false));
+        controls.addView(text("Import every required asset-pack part, then apply Set up / update runtime. On a fresh install, create THORHERO and complete its ordinary save before Reopen. Use COHLOCAL / offline. Keep the accepted GPU, Performance and 800×600 settings. Choose Kings Row at the actual monorail station; preparation happens on demand. Tap Start test when ready and Stop test when finished; neither starts a countdown. After the trip, release controls, Save character / log out, wait for Saved character verified, then Finish and Reports / export. Recover interrupted reports after an interruption. Export early if loading stalls; Reopen resumes the last verified save.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
         TextView caption=text("CITY OF HEROES · PARAGON CITY",12,true);right.addView(caption);
@@ -151,12 +155,12 @@ public final class ClientActivity extends Activity {
         cursor=new CursorOverlay();viewport.addView(cursor,new FrameLayout.LayoutParams(-1,-1));
         display.setInputListener(new ClientSurface.InputListener(){
             @Override public void onPointer(String session,int x,int y,int buttons){if(service!=null)service.sendPointer(session,x,y,buttons);}
-            @Override public void onReleaseAll(String session){resetLocalInputs();releaseRemoteInputs(session,!textDialogVisible&&!movementSuppressed&&!commandInputBusy());}
+            @Override public void onReleaseAll(String session){resetLocalInputs();releaseRemoteInputs(session,!orderedInputRelease&&!textDialogVisible&&!movementSuppressed&&!commandInputBusy());}
             @Override public void onCursor(float x,float y,boolean visible){cursor.move(x,y,visible);}
         });
         right.addView(text("After Atlas connection: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text · Start: Enter",12,false));
 
-        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
+        startTest.setEnabled(false);stopTest.setEnabled(false);setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
     }
     private TextView text(String value,int size,boolean bold){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(Color.rgb(221,234,245));t.setPadding(0,dp(3),0,dp(7));if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
     private Button button(String label,Runnable click){Button b=new Button(this);b.setText(label);b.setAllCaps(false);b.setTextSize(13);b.setOnClickListener(v->click.run());return b;}
@@ -211,19 +215,20 @@ public final class ClientActivity extends Activity {
     private void travelToZone(){
         if(service==null||!service.canRequestZoning()||textDialogVisible||!hasWindowFocus())return;
         releaseControls(true);
-        if(!service.requestZoning())Toast.makeText(this,"Travel is unavailable, or the movement window has ended.",Toast.LENGTH_SHORT).show();
+        if(!service.requestZoning())Toast.makeText(this,"Travel is unavailable while the current operation finishes.",Toast.LENGTH_SHORT).show();
         refreshMovementControls();refreshDeadlineControls();
     }
     private void sendPerformanceCommand(ClientInput.PerformanceCommand command){
         if(command==null||!canSendPerformanceCommand())return;
         releaseControls(true);
         if(!service.requestPerformanceCommand(command))
-            Toast.makeText(this,"Wait for Atlas input to be ready, then retry.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Wait for world input to be ready, then retry.",Toast.LENGTH_SHORT).show();
         refreshMovementControls();refreshDeadlineControls();
     }
     private void sendEnter(){
         if(!ownedInputOpen())return;
-        releaseControls(true);
+        // Keep a preceding field tap or Send Text transaction ahead of Enter.
+        releaseControls(false);
         if(!service.requestEnter())
             Toast.makeText(this,"Enter was not queued. Wait for input ready and retry.",Toast.LENGTH_SHORT).show();
     }
@@ -301,7 +306,7 @@ public final class ClientActivity extends Activity {
         if(next.busy)assetStatusDirty=true;
         if(!next.busy&&!next.storageBusy&&!assetStatusChecking&&(!assetStatusLoaded||assetStatusDirty))refreshAssetPackStatus();
         if(next.busy&&next.session.isEmpty())display.clearFrames();
-        state=next;boolean capture=next.busy&&!next.session.isEmpty();if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
+        state=next;refreshTestControls();setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         recoverReports.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&!ClientRuntime.operationInProgress());
         boolean diagnostics=diagnosticControlsReady(next,service!=null,exporting,ClientRuntime.operationInProgress());
         boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);gpuProfile.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
@@ -318,6 +323,13 @@ public final class ClientActivity extends Activity {
     static boolean diagnosticControlsReady(ClientService.State state,boolean serviceAvailable,boolean exporting,boolean operationOwned){
         return state!=null&&serviceAvailable&&!state.busy&&!state.storageBusy&&!state.reportExporting&&!exporting&&!operationOwned;
     }
+    private void refreshTestControls(){
+        boolean available=service!=null&&state!=null&&state.busy;
+        if(startTest!=null)startTest.setEnabled(available&&service.canStartManualTest());
+        if(stopTest!=null)stopTest.setEnabled(available&&service.manualTestActive());
+        boolean capture=available&&service.needsSurfaceCapture();
+        if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}
+    }
     private void updateCounter(){
         if(state==null||counter==null)return;
         long remaining=state.readyDeadlineUptimeMillis>0?Math.max(0,(state.readyDeadlineUptimeMillis-SystemClock.uptimeMillis()+999)/1000):0;
@@ -332,13 +344,15 @@ public final class ClientActivity extends Activity {
                         "\nStand still · Save cutoff in "+save+"s":
                         "\nMove for up to "+movement+"s · Save cutoff in "+save+"s";
                 timing+="\nSave proof and Finish: "+remaining+"s remaining";
-            }else timing="\n"+("connected".equals(state.sessionPhase)?"Character connected":"Login window")+" · "+remaining+"s remaining";
+            }else timing="\n"+("connected".equals(state.sessionPhase)?"Character connected":"Login window")+" · "+(state.readyDeadlineUptimeMillis==0?"No countdown":remaining+"s remaining");
         }
         setTextIfChanged(counter,"Android captures: "+state.certified+" · Inputs sent: "+state.inputSent
-                +(state.inputFailed>0?" · Input failures: "+state.inputFailed:"")+timing);
+                +(state.inputFailed>0?" · Input failures: "+state.inputFailed:"")+timing
+                +(service!=null&&service.manualTestActive()?"\nTest capture active · tap Stop test when finished":""));
     }
     private void showTextInput(){
         if(!gameInputOpen()||service==null||textDialogVisible)return;
+        final String targetSession=shownSession;
         // This app-owned dialog must not discard the preceding account-field tap
         // while its neutral preposition is settling on the input worker.
         textDialogVisible=true;releaseControls();refreshMovementControls();
@@ -353,20 +367,10 @@ public final class ClientActivity extends Activity {
                 .setView(entry).setNegativeButton("Cancel",null).setPositiveButton("Send",(d,w)->{
                     String value=field.getText().toString();
                     if(!ClientInput.validText(value)){Toast.makeText(this,"Use 1–32 printable English characters.",Toast.LENGTH_SHORT).show();return;}
-                    if(!inputActive||service==null)return;
-                    boolean queued=true;
-                    if(replace.isChecked()) {
-                        queued=service.sendKey(shownSession,0xffe3,true)
-                                && service.sendKey(shownSession,'a',true)
-                                && service.sendKey(shownSession,'a',false)
-                                && service.sendKey(shownSession,0xffe3,false);
-                    }
-                    for(int i=0;queued&&i<value.length();i++){
-                        int key=value.charAt(i);
-                        if(!service.sendKey(shownSession,key,true)){queued=false;break;}
-                        if(!service.sendKey(shownSession,key,false)){queued=false;break;}
-                    }
-                    if(!queued){service.releaseAllInputs(shownSession);Toast.makeText(this,"Text was not fully sent. Wait for input ready and retry.",Toast.LENGTH_SHORT).show();}
+                    if(!inputActive||service==null||!targetSession.equals(shownSession))return;
+                    boolean queued=service.sendText(targetSession,value,replace.isChecked());
+                    if(!queued){service.releaseAllInputs(targetSession);Toast.makeText(this,"Text was not queued. Wait for input ready and retry.",Toast.LENGTH_SHORT).show();}
+                    else Toast.makeText(this,"Sending text. Check the game field before pressing Enter.",Toast.LENGTH_SHORT).show();
                     field.setText("");
                 }).create();
         activeTextDialog=dialog;
@@ -397,7 +401,10 @@ public final class ClientActivity extends Activity {
     }
     private void releaseControls(boolean discardPending){
         resetLocalInputs();
-        if(display!=null)display.releaseInput();
+        // Surface callbacks must preserve the same ordering decision as their
+        // caller, especially Enter after a still-running text transaction.
+        boolean previous=orderedInputRelease;orderedInputRelease=previous||!discardPending;
+        try{if(display!=null)display.releaseInput();}finally{orderedInputRelease=previous;}
         releaseRemoteInputs(shownSession,discardPending);
     }
     @Override public void onWindowFocusChanged(boolean focus){super.onWindowFocusChanged(focus);if(!focus){releaseControls();startButton.reset();}refreshMovementControls();refreshPerformanceControls();}

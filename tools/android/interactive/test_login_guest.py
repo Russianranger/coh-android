@@ -34,7 +34,7 @@ class LauncherPolicyTests(unittest.TestCase):
         # monotonic clock, so a policy-only change cannot hide a fixed main-loop
         # bound that still consumes character interaction time during startup.
         deadline = re.search(r'    deadline=([^;]+);', source).group(1)
-        expired = re.search(r'        if\((GetTickCount64\(\)>=deadline)\)', source).group(1)
+        expired = re.search(r'        if\((lifetime_expired\(lifetime_ms,GetTickCount64\(\),deadline\))\)', source).group(1)
         harness = ('#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n' + policy
             + 'static unsigned long long clock_ms=123456; '
             + 'static unsigned long long GetTickCount64(void) { return clock_ms; }\n'
@@ -61,6 +61,13 @@ class LauncherPolicyTests(unittest.TestCase):
             with self.subTest(arguments=arguments):
                 actual = subprocess.check_output([str(self.binary), *arguments], text=True)
                 self.assertEqual(actual, expected)
+
+    def test_manual_character_lifetime_is_user_controlled_after_long_idle(self):
+        for elapsed in (0, 2160000, 5500000, 86400000, 604800000):
+            value = subprocess.check_output([str(self.binary), '5', '--character-manual', str(elapsed)], text=True)
+            self.assertEqual(value, '0|0| -noversioncheck 1|0')
+        value = subprocess.check_output([str(self.binary), '6', '--character-manual'], text=True)
+        self.assertEqual(value, '0|1200000|INVALID|0')
 
     def test_character_deadline_retains_post_startup_interaction_and_stays_bounded(self):
         # The failed hosted run spent 419s reaching the menu. Also cover the

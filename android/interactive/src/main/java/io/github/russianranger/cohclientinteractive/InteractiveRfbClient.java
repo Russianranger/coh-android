@@ -214,6 +214,33 @@ public final class InteractiveRfbClient implements Closeable {
         writeKey(keysym, down);
     }
 
+    /** One field-entry transaction; native UI frames must observe each key and modifier. */
+    public synchronized void sendText(String value, boolean replace, long expectedEpoch) throws IOException {
+        // Validate before releasing or writing anything. This transport also has
+        // standalone users, so it repeats the public 32-character ASCII bound.
+        if (value == null || value.isEmpty() || value.length() > 32)
+            throw new IOException("Invalid text entry");
+        for (int i = 0; i < value.length(); i++)
+            if (value.charAt(i) < 32 || value.charAt(i) > 126) throw new IOException("Invalid text entry");
+        requireCurrentInput(expectedEpoch);
+        try {
+            releaseAllInputs();
+            // Also settle a modifier released above before typing into the game.
+            awaitInputTime(System.nanoTime() + 120_000_000L, expectedEpoch);
+            if (replace) {
+                sendKey(0xffe3, true, expectedEpoch);
+                awaitInputTime(System.nanoTime() + 120_000_000L, expectedEpoch);
+                tapCommandKey('a', expectedEpoch);
+                sendKey(0xffe3, false, expectedEpoch);
+                awaitInputTime(System.nanoTime() + 120_000_000L, expectedEpoch);
+            }
+            for (int i = 0; i < value.length(); i++) tapCommandKey(value.charAt(i), expectedEpoch);
+        } finally {
+            // Cancellation between down/up must not strand Ctrl or a character.
+            releaseAllInputs();
+        }
+    }
+
     /** Ordinary game logout, queued as one command so touch/key events cannot interleave. */
     public synchronized void sendSaveLogout(long expectedEpoch) throws IOException {
         sendChatCommand("/quittologin", expectedEpoch);

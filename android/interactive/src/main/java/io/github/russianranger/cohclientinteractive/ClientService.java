@@ -129,6 +129,11 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&active!=null&&session.equals(selectedSession)
                 &&active.sendKey(selectedSession,keysym,down);
     }
+    public boolean sendText(String selectedSession,String value,boolean replace){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null
+                &&session.equals(selectedSession)&&ClientInput.validText(value)&&active.sendText(selectedSession,value,replace);
+    }
     public boolean sendPointer(String selectedSession,int x,int y,int mask){
         ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&active!=null&&session.equals(selectedSession)
                 &&active.sendPointer(selectedSession,x,y,mask);
@@ -177,6 +182,11 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;
         return busy&&uiVisible&&inputReady&&active!=null&&active.canCaptureContact();
     }
+    public boolean canStartManualTest(){ClientRuntime r=runtime;return busy&&uiVisible&&r!=null&&r.canStartManualTest();}
+    public boolean manualTestActive(){ClientRuntime r=runtime;return busy&&r!=null&&r.manualTestActive();}
+    public boolean startManualTest(){ClientRuntime r=runtime;return busy&&uiVisible&&r!=null&&r.startManualTest();}
+    public boolean stopManualTest(){ClientRuntime r=runtime;return busy&&r!=null&&r.stopManualTest();}
+    public boolean needsSurfaceCapture(){ClientRuntime r=runtime;return busy&&r!=null&&r.needsSurfaceCapture();}
     public boolean requestContactCapture(){
         ClientRuntime active=runtime;
         return busy&&uiVisible&&inputReady&&active!=null&&active.requestContactCapture();
@@ -210,7 +220,7 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;
         if(!busy||stopping||finishing||active==null||!active.requestFinish())return false;
         inputReady=false;finishing=true;stage="Finishing session";
-        detail="Releasing input and closing the client after the minimum observation. Cleanup and evidence export follow.";
+        detail="Releasing input and closing the saved client. Cleanup and evidence export follow.";
         publish();notifyStatus();return true;
     }
     private void lifecycle(String event){ClientRuntime r=runtime;if(r!=null&&busy)r.recordLifecycle(event);}
@@ -776,7 +786,7 @@ public final class ClientService extends Service {
         selectedSession=session;
         if(setup){setupStartedUtc=System.currentTimeMillis();lastSetupCheckpointUptime=0;lastSetupPhase="";setupFailureReport=null;setupWorkerOwnsWake=true;setupAppVersion=setupAppVersion();String appId=getPackageName();setupAppId=appId.substring(0,Math.min(160,appId.length()));}
         startForeground(NOTICE,notification());
-        wake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:operation");dispatchWake=wake;wake.acquire(95*60*1000L);
+        wake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:operation");dispatchWake=wake;wake.acquire();
         final PowerManager.WakeLock operationWake=dispatchWake;
         publish();
         ClientRuntime instance=new ClientRuntime(this,new ClientRuntime.Listener(){

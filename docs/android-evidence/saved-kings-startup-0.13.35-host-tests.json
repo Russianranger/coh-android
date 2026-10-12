@@ -1,0 +1,49 @@
+{
+  "format": 1,
+  "scope": "current_working_tree_saved_kings_startup_host_regressions",
+  "base_commit": "0b224087f618a47cbfa4ecfec56d3e4817975c68",
+  "executed_utc": "2026-10-12T23:35:18.140228+00:00",
+  "command": "COH_ANIMATION_TEST_DONOR_APK=/workspace/scratch/5d16603ca7ff/COH-Atlas-Gameplay-0.13.29.apk PYTHONPATH=tools/android/interactive python -m unittest test_animation_runtime_compatibility test_saved_map_preparation test_saved_map_startup test_manual_session test_startup_schedule test_character_server_logs test_monorail_observer test_character_monorail test_character_zoning test_beacon_runtime_profiles test_zone_asset_package test_server_worktree_reuse test_kings_preparation_budgets test_saved_map_preparation_proof -q",
+  "result": {
+    "tests_run": 236,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed_seconds": 12.117
+  },
+  "authenticated_animation_donor": {
+    "version": "0.13.29",
+    "bytes": 41199716,
+    "sha256": "b417827778f451335ec5299b92e4ba2f6d2a30d6c7706d4a2a4405139236171b",
+    "native_process_executed": false
+  },
+  "source_sha256": {
+    "android/guest/local_character_server.py": "fa168b14aa2115c9129bba78afedb32dea7b8c22177a43ccf4f83598e237abac",
+    "android/guest/character_server_data_cache.py": "4d1e067fc32662c1dc2da53e36e02c0342958d5f08f3df01bf752c84d03d461a",
+    "android/guest/character_zoning.py": "51140d622a614fb8d2a5b058ce40898c915d731d36309241d778cba277514fc8",
+    "android/guest/character_creation_diagnostic.py": "81d4f8f86008e17e24f36cdb2dd9c0aeb93d19cf030ef0bb7429961738765e24",
+    "android/guest/server_fx_catalog.py": "e0f347e156548b6a78e4f5cb6beba48d053e244e508cfb5d105c316e0fa7148a",
+    "android/guest/client_interactive_diagnostic.py": "f56eb4a80284dc197f1213b01264e872db9c81f37eaec2babfc36af943c2d08c",
+    "tools/android/interactive/test_saved_map_preparation.py": "44cf437022b86b6c5e7ef015257af39013a33c834924d7ae7a68b8227cf9b147",
+    "tools/android/interactive/test_animation_runtime_compatibility.py": "cd40499a8d9e8ca042e944c3cb5a212006748a637bc0d4deaacec30780550ebe",
+    "tools/android/interactive/qualify_saved_map_preparation.py": "ad6d5885e8f1d132bca8720e85c5518434e196e8504d6b045bfd087251d61ead",
+    "tools/android/interactive/test_saved_map_preparation_proof.py": "28e45d84307e363d09559c6a5c58ef305fd2016bd387b811d9eb538ee52a9ca7"
+  },
+  "same_run_small_cache_fixture": {
+    "fixture_immutable_leaves": 4002,
+    "cold_seconds": 0.624156,
+    "warm_seconds": 0.003152,
+    "cold_symlink_creations": 4002,
+    "warm_symlink_creations": 0,
+    "warm_immutable_directory_checks": 25,
+    "device_speedup_estimate": false
+  },
+  "evidence_limits": [
+    "Read-only selected PostgreSQL rows and native status/progress are controlled fixtures; no device database or live character was changed.",
+    "Actual public native bytes and compatibility receipts were authenticated and inspected; native MapServer or Game execution was not performed.",
+    "Complete original-asset qualification runs separately against candidate, signed and public package bytes.",
+    "New saved-Kings overlap is covered by owned-process and readiness fixtures; physical CPU contention, startup savings and peak memory remain unmeasured.",
+    "Prior 0.13.34 physical evidence demonstrates Kings entry and committed save, not successor performance.",
+    "Atlas direct startup retains its qualified serial schedule; overlap is restricted to saved Kings map 5."
+  ]
+}

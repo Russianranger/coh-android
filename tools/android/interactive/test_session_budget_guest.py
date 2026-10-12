@@ -154,6 +154,7 @@ class SessionBudgetGuestTests(unittest.TestCase):
 
     def test_reopen_hook_emits_current_native_phases_once_and_returns_effective_deadline(self):
         diagnostic = reopen.CharacterReopenDiagnostic.__new__(reopen.CharacterReopenDiagnostic)
+        diagnostic.MANUAL_SESSION = False  # Exercise the retained historical policy explicitly.
         diagnostic.args = SimpleNamespace(session_id=SESSION)
         diagnostic.ctx = SimpleNamespace(deadline=5400,
             report={'character_reopen': proof()}, event=Mock())
@@ -178,6 +179,7 @@ class SessionBudgetGuestTests(unittest.TestCase):
     def test_slow_poll_cannot_admit_first_connection_at_or_after_menu_expiry(self):
         for now in (1802, 1802.001):
             diagnostic = reopen.CharacterReopenDiagnostic.__new__(reopen.CharacterReopenDiagnostic)
+            diagnostic.MANUAL_SESSION = False  # Exercise the retained historical policy explicitly.
             diagnostic.args = SimpleNamespace(session_id=SESSION)
             diagnostic.ctx = SimpleNamespace(deadline=5400,
                 report={'character_reopen': proof()}, event=Mock())
@@ -195,6 +197,7 @@ class SessionBudgetGuestTests(unittest.TestCase):
     def test_slow_ground_poll_cannot_revive_expired_connected_phase(self):
         for now, accepted in ((1200, True), (1600, False), (1600.001, False)):
             diagnostic = reopen.CharacterReopenDiagnostic.__new__(reopen.CharacterReopenDiagnostic)
+            diagnostic.MANUAL_SESSION = False  # Exercise the retained historical policy explicitly.
             diagnostic.args = SimpleNamespace(session_id=SESSION)
             value = proof(); value['client_ready_observed_utc_ms'] = UTC_START + 400000
             diagnostic.ctx = SimpleNamespace(deadline=5400,
@@ -256,6 +259,7 @@ class SessionBudgetGuestTests(unittest.TestCase):
 
         diagnostic = reopen.StartupOnlyCharacterReopenDiagnostic.__new__(
             reopen.StartupOnlyCharacterReopenDiagnostic)
+        diagnostic.MANUAL_SESSION = False  # Exercise the retained historical policy explicitly.
         diagnostic.args = SimpleNamespace(session_id=SESSION)
         diagnostic.ctx = SimpleNamespace(deadline=5400,
             report={'character_reopen': proof()}, event=Mock())
@@ -351,6 +355,7 @@ class SessionBudgetGuestTests(unittest.TestCase):
 
     def test_reopen_hook_refuses_missing_owned_presentation_clock(self):
         diagnostic = reopen.CharacterReopenDiagnostic.__new__(reopen.CharacterReopenDiagnostic)
+        diagnostic.MANUAL_SESSION = False  # Exercise the retained historical policy explicitly.
         diagnostic.args = SimpleNamespace(session_id=SESSION)
         diagnostic.ctx = SimpleNamespace(deadline=5400,
             report={'character_reopen': proof()}, event=Mock())

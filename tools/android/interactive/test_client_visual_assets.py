@@ -220,6 +220,44 @@ class InstallerTests(unittest.TestCase):
             self.assertEqual(self.target(name).read_bytes(), raw)
             self.assertEqual(stat.S_IMODE(self.target(name).stat().st_mode), 0o444)
 
+    def rebind_sources(self, authenticate=True):
+        for name in (visual.ARCHIVE, visual.MANIFEST):
+            path = self.assets / name
+            raw = path.read_bytes()
+            path.unlink(); path.write_bytes(raw)
+            client._VERIFIED_ASSET_STATES.pop(str(path), None)
+            if authenticate:
+                client._VERIFIED_ASSET_STATES[str(path)] = (
+                    {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()},
+                    client.asset_fingerprint(path))
+        (self.work / 'client-work.json').write_text('{"wrapper":"updated"}')
+
+    def test_current_authenticated_sources_rebind_unchanged_payload_proof(self):
+        self.run_install()
+        self.rebind_sources()
+        with mock.patch.object(visual.world, 'verify_target', side_effect=AssertionError('duplicate payload hash')), \
+                mock.patch.object(visual.zipfile, 'ZipFile', side_effect=AssertionError('duplicate archive read')):
+            rebound = self.run_install()
+        self.assertTrue(rebound['fingerprint_reused'])
+        self.assertTrue(rebound['source_generation_rebound'])
+        self.assertEqual((0, 0), (rebound['verified_existing_bytes'], rebound['archive_read_bytes']))
+        self.assertFalse(self.run_install()['source_generation_rebound'])
+
+    def test_source_rebind_requires_current_hash_and_unchanged_output_fingerprints(self):
+        self.run_install()
+        self.rebind_sources(authenticate=False)
+        with mock.patch.object(visual.world, 'verify_target', wraps=visual.world.verify_target) as verify:
+            full = self.run_install()
+        self.assertFalse(full['fingerprint_reused'])
+        self.assertEqual(2, verify.call_count)
+        self.rebind_sources()
+        leaf = self.target(next(iter(self.members)))
+        old_time = leaf.stat().st_mtime_ns
+        leaf.chmod(0o644); leaf.write_bytes(b'x' * leaf.stat().st_size); leaf.chmod(0o444)
+        os.utime(leaf, ns=(old_time, old_time))
+        with self.assertRaisesRegex((ValueError, DiagnosticError), 'conflicts'):
+            self.run_install()
+
     def test_conflicting_existing_leaf_is_preserved(self):
         name = next(iter(self.members)); target = self.target(name)
         target.write_bytes(b'x' * self.files[name]['bytes']); target.chmod(0o444)

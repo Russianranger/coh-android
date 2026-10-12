@@ -60,8 +60,9 @@ def historical_repair_owned(*context):
     from classify_client_map_startup_change import client_map_startup_owned
     from classify_client_report_loading_change import client_report_loading_owned
     from classify_client_saved_map_reopen_change import client_saved_map_reopen_owned
+    from classify_client_manual_session_change import client_manual_session_owned
     return (client_animation_repair_owned(*context) or client_profile_recovery_owned(*context)
-        or client_map_startup_owned(*context) or client_report_loading_owned(*context) or client_saved_map_reopen_owned(*context))
+        or client_map_startup_owned(*context) or client_report_loading_owned(*context) or client_saved_map_reopen_owned(*context) or client_manual_session_owned(*context))
 
 
 def main():

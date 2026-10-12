@@ -46,11 +46,16 @@ PREPARATION_FIELDS = (
     'python_preparation_elapsed_ms', 'runtime_preparation_elapsed_ms', 'python_preparation_completed',
     'python_preparation_deadline_utc_ms', 'native_ready_started_utc_ms',
     'native_ready_finished_utc_ms', 'native_ready_elapsed_ms', 'native_ready_deadline_utc_ms',
-    'departure_deadline_utc_ms', 'session_deadline_utc_ms', 'session_budget_extended')
+    'departure_deadline_utc_ms', 'session_deadline_utc_ms', 'session_budget_extended', 'manual_session')
 
 
-def travel_window(deadline, now, now_ms, preparation_seconds):
+def travel_window(deadline, now, now_ms, preparation_seconds, *, manual=False):
     """Reserve arrival, neutral wait and ordinary save within the existing cap."""
+    if manual:
+        return {'preparation_budget_seconds': preparation_seconds,
+            'transfer_budget_seconds': TRANSFER_SECONDS,
+            'departure_deadline_utc_ms': 0, 'session_deadline_utc_ms': 0,
+            'session_budget_extended': False, 'manual_session': True}
     require(type(deadline) in (int, float) and math.isfinite(deadline),
             'Zoning requires the existing connected session budget')
     movement_end = deadline - (session_budget.NEUTRAL_RESERVE_MS
@@ -318,6 +323,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         # selected SQL rows before character_position selects the saved map.
         # This event is observational: it cannot authorize relocation or login.
         super().capture_baseline()
+        prepared = getattr(self, 'startup_preparation_map_id', self.active_map_id)
+        require(self.active_map_id == prepared,
+                'Saved destination changed during startup; preserve data and export')
         destination = MAPS[self.active_map_id]
         position = self.creation_report['baseline']['saved_position']
         self.zoning_report['saved_startup'] = {
@@ -334,8 +342,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             sql_game_mutations_performed=False)
         self.persist_startup_observation()
 
-    def prepare_runtime(self):
-        super().prepare_runtime()
+    def qualify_monorail_preparation(self):
         if 'native_monorail' not in self.map_package:
             return
         monorail_contract.embedded_receipt(self.map_package)
@@ -347,6 +354,19 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.zoning_report.update(monorail_enabled=True, new_city_asset_coverage=True,
             station_line='ParagonCityMonorail', station_maps=[1, 5],
             readiness_transport='immediate_owned_native_console')
+
+    def initial_map_preparation(self):
+        # The persistent cluster is already open and eligibility checked. Bind
+        # its full identity and saved position before deciding which expensive
+        # native world provider to prepare; no SQL writes or default relocation.
+        self.qualify_monorail_preparation()
+        self.capture_baseline()
+        self.startup_preparation_map_id = self.active_map_id
+        return self.active_map_id
+
+    def prepare_runtime(self):
+        super().prepare_runtime()
+        self.qualify_monorail_preparation()
 
     def monorail_environment(self, map_id):
         return {monorail_events.ENVIRONMENT: self.owner.args.session_id,
@@ -498,95 +518,199 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                                         target, allow_missing=True)
             require(baseline.get('not_started') is True, 'Saved destination already has an unowned MapServer')
             self._spawn_map(target)
-            deadline = min(self.ctx.deadline, time.monotonic() + character.MAP_STARTUP_SECONDS)
-            next_query = next_message = 0
-            while True:
-                self.ctx.check()
-                now = time.monotonic()
-                require(now < deadline, 'Saved ' + destination['name'] + ' startup timed out; preserve data and export')
-                current = self._map_progress(target)
-                if self.live_progress(current) and now >= next_query:
-                    next_query = now + 15
-                    sample = parse_map_status(self.query(['-getstatus', '1', str(target)], 'zoning-reopen-ready'), target)
-                    after = self._map_progress(target)
-                    if ready(sample, target) and self.live_progress(after):
-                        character.progress.compare_records(after, current)
-                        self.maps[target]['ready'] = True
-                        self._activate(target)
-                        self.creation_report.update(map_ready=True, map_startup_guard={'passed': True,
-                            'protocol': sample, 'before': current, 'after': after,
-                            'requires_completed_tick_before_protocol': True})
-                        self.report['mapserver_started'] = self.ctx.report['mapserver_started'] = True
-                        startup = self.zoning_report.get('saved_startup')
-                        if startup is not None:
-                            startup.update(native_ready_verified=True, native_map=sample,
-                                native_maps_started=sorted(self.maps))
-                        self.sample_startup_observation(force=True)
-                        self.ctx.passed(atlas_ready=True, map=sample, loopback_only=True)
-                        break
-                if now >= next_message:
-                    self.ctx.event('stage', status='running',
-                        message='Preparing ' + destination['name'] + ' for saved THORHERO',
-                        map_id=target, map_name=destination['name'], world=destination['world'],
-                        port=destination['port'])
-                    next_message = now + 5
+            launched = self.maps[target]
+            self.creation_report['map_ready'] = False
+            self.report['mapserver_started'] = self.ctx.report['mapserver_started'] = True
+            started = launched.get('launch_monotonic', time.monotonic())
+            self.initial_map_startup = {'map_id': target, 'ready': False,
+                'deadline': min(self.ctx.deadline, started + character.MAP_STARTUP_SECONDS),
+                'started_monotonic': started, 'next_query': 0, 'next_message': 0, 'next_observation': 0,
+                'overlap_enabled': target == 5 and getattr(self, 'overlap_client_initialization', False) is True}
+            rows = self.ctx.report.get('stages', [])
+            self.initial_map_stage = rows[-1] if rows and rows[-1].get('stage') == 'local_atlas_startup' else None
+            if self.initial_map_startup['overlap_enabled']:
+                self._activate(target)
+                self.ready_floor_ms = self.map_launch_utc_ms - 999
+                self.creation_report['startup_overlap'] = {
+                    'format': 1, 'policy': 'owned_kings_map_and_client_initialization_v1',
+                    'map_id': target, 'native_map_launch_utc_ms': self.map_launch_utc_ms,
+                    'native_map_launch_monotonic': started,
+                    'client_preparation_overlap_started_monotonic': time.monotonic(),
+                    'private_map_preparation_complete': True,
+                    'native_map_ready_verified': False, 'client_input_admitted': False,
+                    'native_processes_share_mutable_data': False,
+                    'initializing_progress_observations': [],
+                    'physical_loading_gain_validated': False,
+                    'peak_memory_effect_measured': False}
+                self.sample_startup_observation(force=True)
+                return
+            while not self.poll_initial_map_startup():
                 time.sleep(.2)
         startup = self.zoning_report.get('saved_startup')
         if startup is not None:
             startup.update(native_ready_verified=True, native_maps_started=sorted(self.maps))
         self.ready_floor_ms = self.map_launch_utc_ms - 999
 
+    def client_startup_assets_allowed(self):
+        """Only a completely prepared owned world can overlap client loading."""
+        startup = getattr(self, 'initial_map_startup', None)
+        if not startup or startup['ready'] or startup['overlap_enabled'] is not True:
+            return False
+        target = startup['map_id']
+        owned = self.maps.get(target)
+        require(target == self.active_map_id == self.startup_preparation_map_id == 5
+                and owned is not None and owned.get('runtime') == self.kings_row_runtime
+                and self.creation_report.get('kings_row_beacon_graph', {}).get('verified') is True
+                and owned['process'].process.poll() is None and not owned['process'].overflow,
+                'Client overlap lacks the prepared owned saved Kings Row process')
+        return True
+
+    def poll_initial_map_startup(self):
+        """Main-thread readiness join; never grant entry from process launch alone."""
+        startup = getattr(self, 'initial_map_startup', None)
+        if startup is None:
+            return self.creation_report.get('map_ready') is True
+        if startup['ready']:
+            return True
+        self.ctx.check()
+        now = time.monotonic()
+        target = startup['map_id']; destination = MAPS[target]
+        require(now < startup['deadline'],
+                'Saved ' + destination['name'] + ' startup timed out; preserve data and export')
+        current = self._map_progress(target)
+        self.observe_initial_map_progress(current, now)
+        if self.live_progress(current) and now >= startup['next_query']:
+            startup['next_query'] = now + 15
+            sample = parse_map_status(self.query(['-getstatus', '1', str(target)], 'zoning-reopen-ready'), target)
+            after = self._map_progress(target)
+            if ready(sample, target) and self.live_progress(after):
+                character.progress.compare_records(after, current)
+                self.maps[target]['ready'] = True
+                self._activate(target)
+                self.creation_report.update(map_ready=True, map_startup_guard={'passed': True,
+                    'protocol': sample, 'before': current, 'after': after,
+                    'requires_completed_tick_before_protocol': True})
+                startup['ready'] = True
+                completed = time.monotonic()
+                saved = self.zoning_report.get('saved_startup')
+                if saved is not None:
+                    saved.update(native_ready_verified=True, native_map=sample,
+                        native_maps_started=sorted(self.maps))
+                overlap = self.creation_report.get('startup_overlap')
+                if overlap is not None:
+                    client = getattr(self.owner, 'client', None)
+                    client_started = getattr(client, 'started', None)
+                    overlap.update(native_map_ready_verified=True,
+                        native_map_ready_utc_ms=int(time.time() * 1000),
+                        native_map_ready_monotonic=completed,
+                        native_map_ready_seconds=round(completed - startup['started_monotonic'], 6),
+                        native_ready_timing_is_sampled_upper_bound=True,
+                        native_client_launch_monotonic=client_started,
+                        observed_native_process_overlap_seconds=(round(max(0, completed
+                            - max(client_started, startup['started_monotonic'])), 6)
+                            if type(client_started) in (int, float) else 0),
+                        observed_client_preparation_overlap_seconds=round(max(0, completed
+                            - overlap['client_preparation_overlap_started_monotonic']), 6),
+                        observed_native_initialization_overlap_lower_bound_seconds=(round(max(0,
+                            overlap.get('last_initializing_progress_observed_monotonic', client_started)
+                            - client_started), 6) if type(client_started) in (int, float) else 0),
+                        overlap_scope='owned_process_residency_until_sampled_readiness; '
+                                      'initialization_overlap_requires_zero_tick_progress_witness; '
+                                      'not_an_isolated_cpu_speedup_measurement')
+                    # Complete the map's original stage record. The current
+                    # stage belongs to client loading and must not be marked
+                    # passed by an independent MapServer readiness observation.
+                    stage = getattr(self, 'initial_map_stage', None)
+                    if stage is not None:
+                        stage.update(status='passed', finished_utc=base.utc(), map_ready=True,
+                            map_id=target, map=sample, readiness_completed_during_client_initialization=True)
+                    self.ctx.event('saved_map_native_ready', session_id=self.owner.args.session_id,
+                        map_id=target, map_name=destination['name'], world=destination['world'],
+                        port=destination['port'], native_ready_verified=True,
+                        elapsed_seconds=overlap['native_map_ready_seconds'])
+                else:
+                    self.ctx.passed(atlas_ready=True, map=sample, loopback_only=True)
+                self.sample_startup_observation(force=True)
+                return True
+        if now >= startup['next_message']:
+            self.ctx.event('stage', status='running',
+                message='Starting ' + destination['name'] + (' and City of Heroes' if startup['overlap_enabled'] else ' for saved THORHERO'),
+                map_id=target, map_name=destination['name'], world=destination['world'], port=destination['port'])
+            startup['next_message'] = now + 5
+        return False
+
+    def observe_initial_map_progress(self, sample, now):
+        overlap = self.creation_report.get('startup_overlap')
+        if overlap is None or not isinstance(sample, dict) or sample.get('available') is not True:
+            return
+        if type(sample.get('tick_completed')) is int and sample['tick_completed'] == 0:
+            overlap['last_initializing_progress_observed_monotonic'] = now
+            stages = overlap['initializing_progress_observations']
+            if (not stages or stages[-1]['stage'] != sample.get('stage')) and len(stages) < 64:
+                stages.append({'stage': sample.get('stage'), 'observed_monotonic': now,
+                    'observed_utc_ms': int(time.time() * 1000), 'completed_ticks': 0})
+        elif self.live_progress(sample) and 'first_completed_tick_observed_monotonic' not in overlap:
+            overlap.update(first_completed_tick_observed_monotonic=now,
+                first_completed_tick_observed_utc_ms=int(time.time() * 1000),
+                first_completed_tick_observed_seconds=round(now - self.initial_map_startup['started_monotonic'], 6),
+                first_tick_observation_is_sampled_upper_bound=True,
+                first_tick_alone_grants_readiness=False)
+
     def _spawn_map(self, map_id):
         require(supported(map_id) and map_id not in self.maps and len(self.maps) < 2,
                 'Duplicate or unreviewed zoning MapServer launch')
-        map_runtime = self.runtime
-        if map_id == 5:
-            bounded = self.pending is not None and self.pending['to_map_id'] == map_id
-            if bounded:
-                self._check_preparation_deadline()
-                runtime_started = time.monotonic()
-                original_check = self.ctx.check
-                def check_python_preparation():
-                    original_check()  # Retain overall cancellation, output and server-health checks.
-                    self._check_preparation_deadline()
-                    require(not (self.owner.args.state / 'character-logout.json').exists(),
-                            'Preparation cancelled for the requested ordinary save')
-                # The existing mirror/hash/install loops are cooperative. Scope
-                # their phase clock to this call and restore the shared context
-                # before readiness, ordinary saves or cleanup use it again.
-                self.ctx.check = check_python_preparation
-                try:
-                    prepared = self.prepare_kings_row_runtime()
-                finally:
-                    self.ctx.check = original_check
-                    now = time.monotonic()
-                    self.pending.update(python_preparation_finished_utc_ms=int(time.time() * 1000),
-                        python_preparation_elapsed_ms=round((now - self.pending['preparation_started_monotonic']) * 1000),
-                        runtime_preparation_elapsed_ms=round((now - runtime_started) * 1000),
-                        python_preparation_completed=False)
-            else:
-                prepared = self.prepare_kings_row_runtime()
+        def prepare_destination():
+            if map_id != 5:
+                return self.prepare_atlas_runtime()
+            prepared = self.prepare_kings_row_runtime()
             require(prepared.get('graph', {}).get('verified') is True
                     and prepared['graph'].get('map_id') == 5, 'Kings Row native graph installation failed')
-            map_runtime = prepared['runtime']
-            if bounded:
-                # Preparation may block for minutes. A clock sampled before
-                # that work cannot admit a new native process or authorize a
-                # station departure after its phase/save reserves expire.
-                now = time.monotonic()
-                now_ms = int(time.time() * 1000)
-                pending = self.pending
+            return prepared['runtime']
+
+        bounded = (self.pending is not None and self.pending['to_map_id'] == map_id
+                   and (map_id == 5 or getattr(self, 'atlas_preparation_deferred', False)))
+        if bounded:
+            self._check_preparation_deadline()
+            runtime_started = time.monotonic()
+            if map_id != 5:
+                # Deferred Atlas consumes its existing shared preparation
+                # allowance; this does not increase the native bridge timeout.
+                self.pending.update(preparation_phase='python_inputs',
+                    python_preparation_started_utc_ms=int(time.time() * 1000),
+                    python_preparation_deadline_utc_ms=self.pending['preparation_deadline_utc_ms'])
+            original_check = self.ctx.check
+            def check_python_preparation():
+                original_check()
                 self._check_preparation_deadline()
                 require(not (self.owner.args.state / 'character-logout.json').exists(),
                         'Preparation cancelled for the requested ordinary save')
-                pending.update(python_preparation_completed=True,
-                               preparation_phase='native_readiness', native_ready_started_utc_ms=now_ms,
-                               native_ready_started_monotonic=now)
-                pending['deadline'] = min(now + pending['native_ready_budget_seconds'],
-                    pending['preparation_overall_deadline'], pending['departure_deadline_monotonic'])
-                pending['native_ready_deadline_utc_ms'] = now_ms + int((pending['deadline'] - now) * 1000)
-                self._preparation_observation()
-                self._check_preparation_deadline()
+            self.ctx.check = check_python_preparation
+            try:
+                self.ctx.check()
+                map_runtime = prepare_destination()
+            finally:
+                self.ctx.check = original_check
+                now = time.monotonic()
+                self.pending.update(python_preparation_finished_utc_ms=int(time.time() * 1000),
+                    python_preparation_elapsed_ms=round((now - self.pending['preparation_started_monotonic']) * 1000),
+                    runtime_preparation_elapsed_ms=round((now - runtime_started) * 1000),
+                    python_preparation_completed=False)
+            now = time.monotonic()
+            now_ms = int(time.time() * 1000)
+            pending = self.pending
+            self._check_preparation_deadline()
+            require(not (self.owner.args.state / 'character-logout.json').exists(),
+                    'Preparation cancelled for the requested ordinary save')
+            pending.update(python_preparation_completed=True,
+                           preparation_phase='native_readiness', native_ready_started_utc_ms=now_ms,
+                           native_ready_started_monotonic=now)
+            pending['deadline'] = min(now + pending['native_ready_budget_seconds'],
+                pending['preparation_overall_deadline'], pending['departure_deadline_monotonic'])
+            pending['native_ready_deadline_utc_ms'] = now_ms + int((pending['deadline'] - now) * 1000)
+            self._preparation_observation()
+            self._check_preparation_deadline()
+        else:
+            map_runtime = prepare_destination()
         character.game.check_game_port(MAPS[map_id]['port'], socket.SOCK_DGRAM)
         path = self.runtime / ('character-zoning-' + str(map_id) + '-progress.bin')
         require(not path.exists() and not path.is_symlink(), 'Stale zoning map progress file')
@@ -608,12 +732,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         if self.pending is not None:
             self._check_preparation_deadline()
         launch_ms = int(time.time() * 1000)
+        launch_monotonic = time.monotonic()
         process = self.ctx.start('local-character-zoning-' + str(map_id), ['/usr/bin/env', '--chdir=' + str(map_runtime),
             self.owner.args.wine, base.windows_path(map_runtime / 'MapServer.exe'), '-nogui', '-db', '127.0.0.1',
             '-nosharedmemory', '-nostats', '-udp', str(MAPS[map_id]['port']), '-tcp', '0', '-map_id', str(map_id),
             '-idleExitTimeout', '0', '-donotautogroup'], env=environment)
         self.maps[map_id] = {'process': process, 'progress_path': path, 'previous': None,
-                             'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing}
+                             'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing,
+                             'runtime': map_runtime, 'launch_monotonic': launch_monotonic}
 
     def _check_preparation_deadline(self):
         """Read fresh clocks; phase allowances cannot extend the connected cap."""
@@ -621,7 +747,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         pending = self.pending
         require(pending is not None, 'Zoning preparation has no current request')
         phase = pending.get('preparation_phase', 'native_readiness')
-        message = ('Kings Row Python preparation timed out before native startup; save in Atlas and export'
+        destination = 'Kings Row' if pending.get('to_map_id') == 5 else 'Atlas Park'
+        message = (destination + ' Python preparation timed out before native startup; preserve the current map and export'
                    if phase == 'python_inputs' else
                    'Zoning native readiness timed out before departure; save on the current map and export')
         if pending.get('phase') == 'arrival':
@@ -696,6 +823,17 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
 
     def health(self):
         super().health()
+        startup = getattr(self, 'initial_map_startup', None)
+        if startup is not None and not startup['ready']:
+            now = time.monotonic()
+            require(now < startup['deadline'],
+                    'Saved map native startup timed out; preserve data and export')
+            if now >= startup['next_observation']:
+                startup['next_observation'] = now + 5
+                # No process launch or ctx.check recursion in health. This
+                # small native record also distinguishes initialization from
+                # an already-ready MapServer resident beside the client.
+                self.observe_initial_map_progress(self._map_progress(startup['map_id']), now)
         # Read-only health checks never spawn a process or recurse through ctx.check.
         for map_id, owned in self.maps.items():
             if map_id == self.active_map_id:
@@ -814,7 +952,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         budgets = preparation_budgets(target, resident)
         now = time.monotonic()
         window = travel_window(getattr(getattr(self.owner, 'session_budget', None), 'deadline', None),
-            now, now_ms, budgets['preparation_budget_seconds'])
+            now, now_ms, budgets['preparation_budget_seconds'],
+            manual=getattr(self.owner, 'MANUAL_SESSION', False))
         initial_seconds = budgets['python_preparation_budget_seconds'] or budgets['native_ready_budget_seconds']
         # The native bridge starts its own clock when it emits the station
         # request, before the guest can observe it. Never grant that unseen
@@ -835,7 +974,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             preparation_absolute_cap_basis=('validated_request_utc_ms' if budgets['python_preparation_budget_seconds']
                                             else 'accepted_preparation_clock'),
             preparation_request_age_ms=request_age_ms,
-            departure_deadline_monotonic=now + (window['departure_deadline_utc_ms'] - now_ms) / 1000,
+            departure_deadline_monotonic=(float('inf') if window.get('manual_session') else
+                now + (window['departure_deadline_utc_ms'] - now_ms) / 1000),
             preparation_kind='resident_warm' if resident else 'cold',
             preparation_phase='python_inputs' if budgets['python_preparation_budget_seconds'] else 'native_readiness')
         self.pending.update(budgets)
@@ -864,7 +1004,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         require(value['to_map_id'] == self.pending['to_map_id']
                 and value['sent_utc_ms'] >= self.pending['ready_utc_ms'],
                 'Zoning command preceded destination readiness')
-        require(now_ms < self.pending['departure_deadline_utc_ms']
+        require(self.pending.get('manual_session') or now_ms < self.pending['departure_deadline_utc_ms']
                 and value['sent_utc_ms'] < self.pending['departure_deadline_utc_ms'],
                 'Zoning command exceeded the reserved arrival and ordinary-save budget')
         require(self.live_progress(self._map_progress(value['to_map_id'])), 'Prepared destination became stale')

@@ -44,6 +44,7 @@ def save_verified(proof, session):
 
 
 class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
+    MANUAL_SESSION = True
     STARTUP_ONLY = False
     ZONING = False
     ISOLATE_FOCUSED_RENDER_PIPELINE = True
@@ -59,7 +60,13 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
             return character.LocalCharacterTaskReopenServer(self)
         return character.LocalCharacterReopenServer(self)
 
+    def launcher_command(self):
+        command = super().launcher_command()
+        require(command[-1] == '--character-creation', 'Unexpected character launcher policy')
+        return command[:-1] + ['--character-manual']
+
     def initialize(self):
+        self.local_server.report['version_policy']['native_launcher_mode'] = '--character-manual'
         self.ctx.report['startup_only_reopen'] = self.STARTUP_ONLY
         if self.STARTUP_ONLY:
             self.ctx.report.update(task_gate_required=False,
@@ -105,7 +112,7 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
                 'Reopen phase budget lacks the current validated graphical character')
         now, utc_ms = time.monotonic(), int(time.time() * 1000)
         if not hasattr(self, 'session_budget'):
-            require(session_budget.finite_seconds(deadline) and now < deadline,
+            require(self.MANUAL_SESSION or session_budget.finite_seconds(deadline) and now < deadline,
                     'Native connection arrived after the current menu deadline')
             presentation_ready = getattr(self, 'presentation_ready_monotonic', None)
             require(session_budget.finite_seconds(presentation_ready),
@@ -114,7 +121,7 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
                                else (1, 101)} if self.ZONING else {})
             self.session_budget = session_budget.SessionBudget(self.args.session_id, launch['pid'],
                 self.launcher_started_monotonic, self.ctx.deadline,
-                presentation_ready=presentation_ready, **budget_options)
+                presentation_ready=presentation_ready, manual=self.MANUAL_SESSION, **budget_options)
         events = [self.session_budget.connected(proof, now, utc_ms)]
         if getattr(self, 'relocated_announced', False):
             if self.session_budget.revision < 2:

@@ -102,6 +102,32 @@ class ClientAnimationPackageTests(unittest.TestCase):
         self.assertEqual({name: (self.source / name).read_bytes() for name in self.files}, before)
         self.assertEqual(set(p.name for p in (self.work / 'piggs').iterdir()), {animation.PIGG, package.MARKER})
 
+    def test_exact_import_links_do_not_repeat_ancestor_resolution(self):
+        original = Path.resolve
+        calls = []
+        def resolve(path, *args, **kwargs):
+            calls.append(path)
+            return original(path, *args, **kwargs)
+        with mock.patch.object(Path, 'resolve', resolve):
+            result = self.install()
+        self.assertEqual(len(self.files), result['client_contract']['loose_animation_count'])
+        self.assertFalse(any(path.suffix == '.anim' for path in calls))
+
+    def test_changed_loose_parent_is_refused_even_with_direct_import_links(self):
+        original = os.readlink
+        changed = False
+        def readlink(path, *args, **kwargs):
+            nonlocal changed
+            result = original(path, *args, **kwargs)
+            if str(path).endswith('.anim') and not changed:
+                (Path(path).parent / 'new-entry').write_bytes(b'changed directory')
+                changed = True
+            return result
+        with mock.patch.object(os, 'readlink', readlink), \
+                self.assertRaisesRegex(ValueError, 'parent changed'):
+            self.install()
+        self.assertTrue(changed)
+
     def test_missing_optional_inputs_leave_worktree_untouched(self):
         self.pigg.unlink(); self.manifest.unlink()
         before = set(self.work.iterdir())

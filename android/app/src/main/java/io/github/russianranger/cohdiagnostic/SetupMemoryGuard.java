@@ -23,7 +23,7 @@ final class SetupMemoryGuard {
     }
     private static final long MIB=1024L*1024, POLL_BYTES=MIB, POLL_MS=250;
     private static final long WRITE_WINDOW=8*MIB, PACE_MS=25, PAUSE_SLICE_MS=200;
-    private static final long IO_WINDOW=4*MIB, IO_HEALTHY_MS=125, IO_PRESSURE_MS=500, MAX_IO_CALLBACK_BYTES=64*MIB;
+    private static final long IO_WINDOW=4*MIB, IO_AMPLE_MS=32, IO_HEALTHY_MS=125, IO_PRESSURE_MS=500, MAX_IO_CALLBACK_BYTES=64*MIB;
     private static final long MAX_PRESSURE_PAUSE_MS=15000, MAX_TOTAL_PAUSE_MS=60000;
     private final Sensor sensor;
     private final Clock clock;
@@ -36,6 +36,7 @@ final class SetupMemoryGuard {
     private long available,total,threshold,reserve,heapUsed,heapLimit;
     private boolean lowMemory;
     private long ioWindowBytes,ioWindowStarted=-1,ioPacedWindows,ioPacedMillis;
+    private long ampleIoWindows,normalIoWindows,pressureIoWindows;
     private String status="not_started";
 
     SetupMemoryGuard(Sensor sensor,Clock clock,Waiter waiter,Check check) {
@@ -144,12 +145,20 @@ final class SetupMemoryGuard {
     private void boundedIo(long bytes) throws IOException {
         if(bytes<0||bytes>MAX_IO_CALLBACK_BYTES)throw new IOException("Runtime setup I/O callback exceeds its bound");
     }
+    private long ioIntervalMillis() {
+        long headroom=available-threshold;
+        if(headroom<2*reserve)return IO_PRESSURE_MS;
+        // Higher throughput changes only a wait, never buffer or dirty-page
+        // bounds. Retain the previous rate unless both RAM and heap are ample.
+        if(!lowMemory&&headroom>=4*reserve&&heapLimit-heapUsed>=Math.max(32*MIB,heapLimit/4))return IO_AMPLE_MS;
+        return IO_HEALTHY_MS;
+    }
     private void paceIo(long bytes) throws IOException {
         long time=now();
         if(ioWindowStarted<0)ioWindowStarted=time;
         ioWindowBytes=add(ioWindowBytes,bytes);
         while(ioWindowBytes>=IO_WINDOW) {
-            long interval=available-threshold<2*reserve?IO_PRESSURE_MS:IO_HEALTHY_MS;
+            long interval=ioIntervalMillis();
             long elapsed=now()-ioWindowStarted;
             while(elapsed<interval) {
                 long before=now();pause(Math.min(PAUSE_SLICE_MS,interval-elapsed));
@@ -157,8 +166,11 @@ final class SetupMemoryGuard {
                 if(after<=before){status="unavailable";throw new IOException("Setup I/O wait clock is unavailable");}
                 ioPacedMillis=add(ioPacedMillis,after-before);beforeIo();
                 elapsed=now()-ioWindowStarted;
-                interval=available-threshold<2*reserve?IO_PRESSURE_MS:IO_HEALTHY_MS;
+                interval=ioIntervalMillis();
             }
+            if(interval==IO_AMPLE_MS)ampleIoWindows++;
+            else if(interval==IO_PRESSURE_MS)pressureIoWindows++;
+            else normalIoWindows++;
             ioWindowBytes-=IO_WINDOW;ioPacedWindows++;ioWindowStarted=now();
         }
     }
@@ -177,6 +189,11 @@ final class SetupMemoryGuard {
         result.put("write_window_pace_ms",PACE_MS);result.put("file_sync_policy","each closed regular file; active large file at write window");
         result.put("combined_io_window_bytes",IO_WINDOW);result.put("maximum_io_callback_bytes",MAX_IO_CALLBACK_BYTES);
         result.put("healthy_combined_io_bytes_per_second",32*MIB);result.put("pressure_combined_io_bytes_per_second",8*MIB);
+        result.put("ample_combined_io_bytes_per_second",125*MIB);
+        result.put("ample_memory_system_headroom_reserves",4);
+        result.put("ample_memory_heap_headroom_minimum_bytes",32*MIB);result.put("ample_memory_heap_headroom_divisor",4);
+        result.put("ample_combined_io_windows",ampleIoWindows);result.put("normal_combined_io_windows",normalIoWindows);
+        result.put("pressure_combined_io_windows",pressureIoWindows);
         result.put("combined_io_paced_windows",ioPacedWindows);result.put("combined_io_paced_ms",ioPacedMillis);
         result.put("checks",checks);result.put("samples",samples);result.put("read_bytes",readBytes);
         result.put("read_bytes_scope","aggregate guarded input bytes, including compressed source and decoded archive reads; not unique storage bytes");

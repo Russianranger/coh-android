@@ -82,8 +82,8 @@ class CharacterContext(login.LoginContext):
 class TextureHeaderPreparation:
     """One cooperative client-only worker, with main-thread evidence publication.
 
-    Wine registration and every service readiness proof have finished before
-    this starts. The worker never accesses the Wine prefix or private server
+    Wine registration and private MapServer input preparation finish before
+    this starts. Saved Kings Row native readiness may continue independently. The worker never accesses the Wine prefix or private server
     caches, starts children, changes Wine environment, or invokes server health.
     """
     def __init__(self, diagnostic):
@@ -171,24 +171,46 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         self.ctx.report['atlas_world_supplement'] = world.install(self.work, self.args.assets, self.ctx)
 
     def start_wine(self):
-        # The inherited path registers Wine, verifies ODBC, starts DbServer and
-        # requires Atlas's completed tick plus the real protocol readiness proof.
-        # Client-only texture work must never delay any of those server stages.
+        if (self.ctx.report.get('native_responsiveness_candidate')
+                and callable(getattr(self.local_server, 'client_startup_assets_allowed', None))):
+            # Each native process keeps its own complete data/cache tree. Only
+            # the saved-Kings implementation opts into this supervised join.
+            self.local_server.overlap_client_initialization = True
+        # Register Wine and ODBC, start DbServer, and prepare the saved world.
+        # Atlas retains serial readiness. Saved Kings Row can run its owned
+        # native initialization alongside client preparation and menu loading.
         super().start_wine()
         # Only the explicit new executable can consume this optional index.
         # The preserved stock startup/creation entry points keep their path.
         if not self.ctx.report.get('native_responsiveness_candidate'):
             return
         require(self.local_server.report.get('server_ready') is True
-                and self.local_server.creation_report.get('map_ready') is True,
-                'Client texture preparation requires current owned server readiness')
+                and self.client_preparation_server_ready(),
+                'Client texture preparation requires owned server readiness or a completely prepared owned startup')
         self.ctx.check()
         self.prepare_client_visual_inputs()
         self.texture_header_preparation = TextureHeaderPreparation(self)
         self.texture_header_preparation.start()
 
+    def client_preparation_server_ready(self):
+        if self.local_server.creation_report.get('map_ready') is True:
+            return True
+        allowed = getattr(self.local_server, 'client_startup_assets_allowed', None)
+        return callable(allowed) and allowed()
+
+    def interaction_dependencies_ready(self):
+        join = getattr(self.local_server, 'poll_initial_map_startup', None)
+        ready = join() if callable(join) else self.local_server.creation_report.get('map_ready') is True
+        if ready:
+            overlap = self.local_server.creation_report.get('startup_overlap')
+            if (overlap is not None and all(self.ctx.report.get(name) is True
+                    for name in ('startup_observed', 'renderer_initialized', 'all_data_loaded'))):
+                overlap.update(client_input_admitted=True,
+                    client_and_map_readiness_join_monotonic=time.monotonic())
+        return ready
+
     def prepare_client_visual_inputs(self):
-        """Expose qualified client-only assets after the owned Atlas is ready.
+        """Expose qualified client assets after the private server inputs are sealed.
 
         Historical wrappers have none of these optional inputs. A present but
         incomplete bundle is an error, rather than a partially rendered launch.
@@ -205,8 +227,8 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
                 <= set(self.ctx.report.get('asset_sha256', {})),
                 'Client visual/animation bundle is absent from verified asset pins')
         require(self.local_server.report.get('server_ready') is True
-                and self.local_server.creation_report.get('map_ready') is True,
-                'Client visual/animation preparation requires current owned Atlas readiness')
+                and self.client_preparation_server_ready(),
+                'Client visual/animation preparation requires a prepared owned server')
         import client_visual_assets
         import client_animation_package
         self.ctx.stage('client_visual_assets')
@@ -255,7 +277,9 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             concurrent = max(0, min(waited_at, finished, probe_finished)
                              - max(preparation.started, probe.started))
         self.ctx.report['client_texture_startup_schedule'] = {
-            'status': status, 'preparation_phase': 'after_current_owned_atlas_readiness',
+            'status': status, 'preparation_phase': ('during_owned_saved_kings_native_startup'
+                if self.local_server.creation_report.get('startup_overlap') is not None
+                else 'after_current_owned_atlas_readiness'),
             'overlapped_stage': 'win32_runtime_dll',
             'worker_started': preparation.thread_started, 'worker_joined': True,
             'shared_wine_prefix_access': False, 'private_server_cache_access': False,

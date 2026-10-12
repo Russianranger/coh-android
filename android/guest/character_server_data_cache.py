@@ -267,6 +267,15 @@ class ServerDataCache:
                     examined += 1
                     require(examined <= CHANGED_ENTRY_LIMIT,
                             'Changed Atlas directory entry bound exceeded')
+                    relative = (Path(name) / entry.name).as_posix()
+                    projection = self.identity.get('server_input_projection', {})
+                    excluded = projection.get('excluded_top_level_directories', [])
+                    if (not name and entry.name.casefold() in excluded
+                            and relative not in directory_names):
+                        # A new projected generation omits this native-excluded
+                        # directory. Migrated full generations still record it
+                        # and therefore keep their complete original checks.
+                        continue
                     expected.add(entry.name)
             actual = set()
             with os.scandir(target) as entries:

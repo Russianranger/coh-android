@@ -60,6 +60,25 @@ STOCK_DAYJOB_DATA_INPUTS = {
 }
 
 
+# The accepted native consumer explicitly excludes this folder before loading
+# data. This projection is scoped to those exact already-qualified bytes; a
+# different future consumer keeps the complete mirror until separately proved.
+SERVER_TEXTURE_EXCLUSION_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363'
+SERVER_TEXTURE_EXCLUSION_SOURCE = '2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d'
+
+
+def server_input_projection(package):
+    if (not isinstance(package, dict) or package.get('source_commit') != device.SOURCE_COMMIT
+            or package.get('files', {}).get('MapServer.exe', {}).get('sha256') != SERVER_TEXTURE_EXCLUSION_MAP):
+        return None
+    return {'policy': 'exact_native_excluded_texture_directory_v1',
+            'excluded_top_level_directories': ['texture_library'],
+            'native_consumer_sha256': SERVER_TEXTURE_EXCLUSION_MAP,
+            'native_source_path': 'MapServer/src/svr/svr_init.c',
+            'native_source_sha256': SERVER_TEXTURE_EXCLUSION_SOURCE,
+            'client_inputs_modified': False, 'native_bytes_changed': False}
+
+
 def stock_power_delta(previous, current, attributes):
     """Describe a bounded selected-row difference; this cannot accept a save.
 
@@ -1050,23 +1069,13 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'files': cache_native_package['files']})).hexdigest()}
         if required_geometry is not None:
             identity['required_geometry'] = required_geometry
-        self.data_cache = server_data_cache.ServerDataCache(self.owner.root, identity,
-            self.owner.args.session_id, self.ctx,
-            legacy_identity_validator=lambda old: self.legacy_data_identity_matches(old, identity, receipt))
-        reused = self.data_cache.checkout(self.runtime / 'data')
-        checkpoint('server_data_cache_checkout')
-        if reused:
-            for name in self.schema['files']:
-                server_data_cache.ServerDataCache.restore_schema(self.schema_dir / name,
-                                                                  self.runtime / name, self.runtime)
-            staged = dict(self.data_cache.record['stats'], linked_immutable_files=0,
-                          copied_private_files=0, preserved_schema_files=len(self.schema['files']))
-            checkpoint('warm_schema_restore')
-        else:
-            staged = self.stage_map_data(source, self.runtime / 'data', cache_recorder=self.data_cache)
-            checkpoint('cold_server_data_mirror')
-            self.data_cache.seal(self.runtime / 'data', staged)
-            checkpoint('cold_server_data_receipt_seal')
+        projection = server_input_projection(self.map_package)
+        if projection is not None:
+            identity['server_input_projection'] = projection
+            self.creation_report['server_input_projection'] = dict(projection)
+        self.server_data_identity = identity
+        self.server_data_receipt = receipt
+        initial_map = self.initial_map_preparation()
         for name, record in self.map_package['files'].items():
             target = self.runtime / name
             if target.exists():
@@ -1079,17 +1088,54 @@ class LocalCharacterServer(login.LocalLoginServer):
         if self.manual_atlas_startup is not None:
             self.creation_report['manual_atlas_startup'] = self.manual_atlas_startup
         checkpoint('native_dependencies_and_manual_atlas')
+        if initial_map == 5:
+            # PostgreSQL has selected Kings Row before the native DbServer
+            # starts. Its accepted schema-only layout does not need a second
+            # complete Atlas map tree, graph or definition/animation providers.
+            self.atlas_preparation_deferred = True
+            self.creation_report['atlas_preparation_deferred'] = {
+                'reason': 'saved_character_starts_in_kings_row', 'map_id': 5,
+                'dbserver_layout': 'accepted_schema_only_private_runtime',
+                'atlas_native_started': False, 'atlas_data_mirror_started': False,
+                'atlas_graph_prepared': False, 'sql_game_mutations_performed': False}
+            return
+        self.prepare_atlas_data(self.runtime, identity, receipt, prepared_at, phases, checkpoint)
+
+    def initial_map_preparation(self):
+        """Creation and the legacy Atlas reopen retain their qualified layout."""
+        return 1
+
+    def prepare_atlas_data(self, runtime, identity, receipt, prepared_at, phases, checkpoint):
+        """Prepare exactly one private Atlas provider, on initial use or demand."""
+        source = self.owner.work / 'data'
+        self.data_cache = server_data_cache.ServerDataCache(self.owner.root, identity,
+            self.owner.args.session_id, self.ctx,
+            legacy_identity_validator=lambda old: self.legacy_data_identity_matches(old, identity, receipt))
+        reused = self.data_cache.checkout(runtime / 'data')
+        checkpoint('server_data_cache_checkout')
+        if reused:
+            for name in self.schema['files']:
+                server_data_cache.ServerDataCache.restore_schema(self.schema_dir / name,
+                                                                  runtime / name, runtime)
+            staged = dict(self.data_cache.record['stats'], linked_immutable_files=0,
+                          copied_private_files=0, preserved_schema_files=len(self.schema['files']))
+            checkpoint('warm_schema_restore')
+        else:
+            staged = self.stage_map_data(source, runtime / 'data', cache_recorder=self.data_cache)
+            checkpoint('cold_server_data_mirror')
+            self.data_cache.seal(runtime / 'data', staged)
+            checkpoint('cold_server_data_receipt_seal')
         if self.map_package.get('native_monorail') is not None:
             # A reviewed MapServer-only bridge must retain the exact parser and
             # schema ancestry before donor caches can accelerate a fresh install.
             # Fail closed on an unproved binary instead of quietly parsing cold.
             self.creation_report['server_cache_native_compatibility'] = server_cache_package.verify_mapserver_compatibility(
-                self.runtime / 'MapServer.exe', self.map_package)
+                runtime / 'MapServer.exe', self.map_package)
         try:
-            donor_identity = server_cache_package.build_expected_identity(self.runtime / 'data',
-                self.runtime / 'MapServer.exe', mapserver_package=self.map_package)
+            donor_identity = server_cache_package.build_expected_identity(runtime / 'data',
+                runtime / 'MapServer.exe', mapserver_package=self.map_package)
             self.creation_report['prepared_server_caches'] = server_cache_package.install(
-                self.owner.args.assets / server_cache_package.ARCHIVE, self.runtime / 'data',
+                self.owner.args.assets / server_cache_package.ARCHIVE, runtime / 'data',
                 donor_identity, context=self.ctx)
         except (ValueError, OSError) as failure:
             # Derived caches are optional. Exact native/source mismatches leave
@@ -1098,7 +1144,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'status': 'skipped_native_fallback', 'reason': str(failure)[:300], 'installed_files': 0}
         checkpoint('prepared_server_definition_caches')
         self.creation_report['server_fx_catalog'] = server_fx_catalog.install(
-            self.owner.args.assets, self.runtime, context=self.ctx,
+            self.owner.args.assets, runtime, context=self.ctx,
             mapserver_package=self.map_package)
         self.ctx.report['server_fx_catalog'] = self.creation_report['server_fx_catalog']
         checkpoint('server_fx_catalog')
@@ -1110,7 +1156,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         if animation.exists() or animation_manifest.exists():
             import server_animation_package
             installed = server_animation_package.install(animation, animation_manifest,
-                self.runtime, context=self.ctx, mapserver_package=self.map_package)
+                runtime, context=self.ctx, mapserver_package=self.map_package)
             self.creation_report['server_animation_pack'] = installed
             self.ctx.report['server_animation_pack'] = installed
         checkpoint('server_animation_pack')
@@ -1119,7 +1165,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         if beacon_archive.exists() or beacon_manifest.exists():
             import atlas_beacon_package
             installed = atlas_beacon_package.install(beacon_archive, beacon_manifest,
-                self.runtime, context=self.ctx,
+                runtime, context=self.ctx,
                 imported_inputs_readonly=receipt.get('imported_inputs_readonly'),
                 mapserver_package=self.map_package,
                 input_proof_sink=lambda proof: setattr(self, 'atlas_collision_input_proof', proof),
@@ -1134,11 +1180,53 @@ class LocalCharacterServer(login.LocalLoginServer):
             'preparation_elapsed_seconds': round(time.monotonic() - prepared_at, 6),
             'preparation_phase_seconds': dict(phases),
             'server_data_cache': self.data_cache.summary, **staged}
-        self.record_startup_preparation(1, self.runtime,
+        self.record_startup_preparation(1, runtime,
             self.creation_report.get('server_fx_catalog', {}),
             self.creation_report.get('server_animation_pack', {}),
             self.creation_report.get('atlas_beacon_graph', {}),
             self.creation_report['private_map_data']['preparation_elapsed_seconds'], phases)
+
+    def prepare_atlas_runtime(self):
+        """Build Atlas only when a saved Kings character actually requests it.
+
+        The live DbServer keeps its original schema and credential paths. The
+        new Atlas process receives its own data/cache/config tree; no mutable
+        directory is renamed under a running native service.
+        """
+        if not getattr(self, 'atlas_preparation_deferred', False):
+            return self.runtime
+        if getattr(self, 'atlas_map_runtime', None) is not None:
+            require(getattr(self, 'atlas_runtime_prepared', False),
+                    'Earlier Atlas preparation did not complete; preserve data and export')
+            return self.atlas_map_runtime
+        target = self.runtime.with_name(self.runtime.name + '-atlas-park')
+        require(not target.exists() and not target.is_symlink(), 'Atlas session runtime already exists')
+        target.mkdir(mode=0o700)
+        (target / 'data').mkdir(mode=0o700)
+        (target / 'tools').mkdir(mode=0o700)
+        # Record ownership immediately so failed preparation remains attributable
+        # and only proved cleanup can return a checked-out cache generation.
+        self.atlas_map_runtime = target
+        for name in self.schema['files']:
+            destination = target / name
+            destination.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            server_data_cache.ServerDataCache.restore_schema(self.schema_dir / name, destination, target)
+        self.copy_kings_native_dependencies(target)
+        started = phase_at = time.monotonic()
+        phases = {}
+        def checkpoint(name):
+            nonlocal phase_at
+            now = time.monotonic()
+            phases[name], phase_at = round(now - phase_at, 6), now
+        self.prepare_atlas_data(target, self.server_data_identity, self.server_data_receipt,
+                                started, phases, checkpoint)
+        config = target / 'data/server/db/servers.cfg'
+        server_data_cache.ServerDataCache.restore_schema(self.runtime / 'data/server/db/servers.cfg', config, target)
+        self.atlas_runtime_prepared = True
+        self.creation_report['atlas_preparation_deferred'].update(
+            atlas_data_mirror_started=True, atlas_graph_prepared=True,
+            completed_on_demand=True, runtime=target.name)
+        return target
 
     def persist_startup_observation(self):
         """Retain bounded activation evidence even before character acceptance."""
@@ -1220,7 +1308,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             if row is None or child is None:
                 continue
             runtime = (getattr(self, 'kings_row_runtime', None) if map_id == 5
-                       else getattr(self, 'runtime', None))
+                       else getattr(self, 'atlas_map_runtime', getattr(self, 'runtime', None)))
             if row['launcher_pid'] is None:
                 if runtime is not None:
                     actual = server_cache_package.file_pin(Path(runtime) / 'MapServer.exe')
@@ -1292,6 +1380,14 @@ class LocalCharacterServer(login.LocalLoginServer):
         """
         if not isinstance(previous, dict):
             return False
+        if 'server_input_projection' in current and 'server_input_projection' not in previous:
+            # Retain a fully authenticated closed full-tree generation. Extra
+            # immutable client textures are harmless to this exact native
+            # consumer, and need not force another costly cold mirror.
+            current = dict(current)
+            current.pop('server_input_projection')
+            if previous == current:
+                return True
         added = {'native_closure_sha256', 'server_cache_compatibility_sha256'}
         expected = set(current) - added
         expected.update(('client_work_receipt_sha256', 'map_manifest_sha256'))
@@ -1342,7 +1438,7 @@ class LocalCharacterServer(login.LocalLoginServer):
     def cleanup_config(self):
         super().cleanup_config()
         if hasattr(self, 'data_cache'):
-            self.data_cache.release(self.runtime / 'data', self.owner.cleanup_status)
+            self.data_cache.release(getattr(self, 'atlas_map_runtime', self.runtime) / 'data', self.owner.cleanup_status)
         if hasattr(self, 'kings_row_data_cache'):
             self.kings_row_data_cache.release(self.kings_row_runtime / 'data', self.owner.cleanup_status)
 
@@ -1413,11 +1509,15 @@ class LocalCharacterServer(login.LocalLoginServer):
         require(not target.exists() and not target.is_symlink(), 'Kings Row session runtime already exists')
         target.mkdir(mode=0o700); (target / 'data').mkdir(mode=0o700)
         self.kings_row_runtime = target
-        identity = dict(self.data_cache.identity,
+        source_identity = (self.server_data_identity if hasattr(self, 'server_data_identity')
+                           else self.data_cache.identity)
+        identity = dict(source_identity,
             map_id=5, kings_collision_sha256=self.zone_asset_document['kings_row_collision_files_sha256'],
             kings_graph_manifest=self.kings_row_beacon_lock['manifest'])
+        receipt = getattr(self, 'server_data_receipt', self.ctx.report.get('client_worktree', {}))
         cache = server_data_cache.ServerDataCache(self.owner.root, identity,
-            self.owner.args.session_id, self.ctx)
+            self.owner.args.session_id, self.ctx,
+            legacy_identity_validator=lambda old: self.legacy_data_identity_matches(old, identity, receipt))
         self.kings_row_data_cache = cache
         reused = cache.checkout(target / 'data')
         checkpoint('server_data_cache_checkout')
@@ -1474,7 +1574,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.owner.args.assets / kings_row_beacon_package.MANIFEST, target, context=self.ctx,
             imported_inputs_readonly=True, lock_path=self.owner.args.assets / kings_row_beacon_package.LOCK,
             source_input_proof=getattr(self, 'atlas_collision_input_proof', None),
-            source_cache_identity=self.data_cache.identity, owner_root=self.owner.root)
+            source_cache_identity=source_identity, owner_root=self.owner.root)
         checkpoint('kings_row_beacon_graph')
         self.kings_row_beacon_graph = graph
         report = {'runtime': target.name, 'geometry': geometry, 'graph': graph,
@@ -1515,6 +1615,10 @@ class LocalCharacterServer(login.LocalLoginServer):
         max_bytes = device.DATA_BYTES + 1024**3 + world.PAYLOAD_BYTES + avatar.PAYLOAD_BYTES + visual.PAYLOAD_BYTES
         result = {'files': 0, 'bytes': 0, 'directories': 0, 'linked_immutable_files': 0,
                   'copied_private_files': 0, 'preserved_schema_files': 0}
+        projection = server_input_projection(getattr(self, 'map_package', None))
+        excluded = set(projection['excluded_top_level_directories']) if projection else set()
+        if projection is not None:
+            self.creation_report['server_input_projection'] = dict(projection)
         pending = [(source, target)]
         next_message = time.monotonic() + 5
         while pending:
@@ -1523,6 +1627,11 @@ class LocalCharacterServer(login.LocalLoginServer):
             require(not destination.is_symlink(), 'Linked private destination refused')
             info = current.lstat()
             relative = current.relative_to(source)
+            if len(relative.parts) == 1 and relative.parts[0].casefold() in excluded:
+                require(stat.S_ISDIR(info.st_mode), 'Native-excluded input is not a real directory')
+                # No leaf enumeration, hashing, copies or links for a folder
+                # this exact MapServer excludes from its own FolderCache.
+                continue
             if relative.as_posix().casefold() in getattr(self, 'zone_asset_exclusions', set()):
                 # This same client tree may already contain all-zone visuals
                 # from an earlier session. Atlas's strict graph proof must stay
@@ -1567,7 +1676,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                     destination.symlink_to(resolved)
                     result['linked_immutable_files'] += 1
             if time.monotonic() >= next_message:
-                self.ctx.event('stage', status='running', message='Preparing Atlas data directories', files=result['files'])
+                self.ctx.event('stage', status='running', message='Preparing private map data directories', files=result['files'])
                 next_message = time.monotonic() + 5
         # The helper is also used by isolated staging callers without a server
         # session report. Integrity verification still runs unconditionally.
@@ -1802,6 +1911,28 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.character_next = now + POLL_SECONDS
         self.health(); self.sample_progress()
         if self.auth_id is None: return None
+        if (getattr(self.owner, 'MANUAL_SESSION', False) and self.requires_saved_character
+                and not self.creation_report['connected_on_atlas']):
+            # Baseline SQL already authenticated the existing identity. Waiting
+            # at character selection must not repeatedly spawn translated status
+            # probes until their operation-count limit expires. A current native
+            # READY record only triggers the unchanged full SQL/protocol proof;
+            # it never grants character connection by itself.
+            baseline = self.creation_report.get('baseline', {})
+            require(self.creation_report.get('existing_character_verified') is True
+                    and type(baseline.get('character_id')) is int
+                    and baseline['character_id'] == self.CHARACTER_ID
+                    and type(baseline.get('auth_id')) is int and baseline['auth_id'] == self.auth_id,
+                    'Manual connection wait lacks the verified saved character identity')
+            self.creation_report['character_id'] = baseline['character_id']
+            if self.native_ready_record() is None:
+                policy = self.ctx.report.setdefault('character_observer_metrics', {}).setdefault(
+                    'manual_login_wait', {'policy': 'native_ready_triggers_full_sql_and_protocol_proof',
+                        'translated_status_probes_skipped': 0, 'sql_inventory_reads_skipped': 0,
+                        'baseline_identity_verified': True, 'connection_claimed': False})
+                policy['translated_status_probes_skipped'] += 1
+                policy['sql_inventory_reads_skipped'] += 1
+                return None
         # After this session's native Atlas connection has been proved, neither
         # SQL inventory nor another translated MapServer.exe -getstatus process
         # adds gameplay liveness: owned service/process checks and current native
@@ -1913,6 +2044,24 @@ class LocalCharacterServer(login.LocalLoginServer):
             base.private_write(target / 'character-saved-snapshot.json', json.dumps(self.snapshot, indent=2) + '\n')
         self.collect_server_logs(target)
 
+    def server_log_roots(self):
+        """Only runtimes created by this server session may supply native logs."""
+        roots = [(self.runtime, '')] if self.runtime is not None else []
+        for attribute, label in (('atlas_map_runtime', 'map-1'), ('kings_row_runtime', 'map-5')):
+            path = getattr(self, attribute, None)
+            if path is not None and path != self.runtime:
+                require(path.parent == self.runtime.parent,
+                        'Character map log runtime escaped the owned session root')
+                roots.append((path, label))
+        return roots
+
+    def server_log_location(self, path):
+        matches = [(root, prefix) for root, prefix in self.server_log_roots() if root in path.parents]
+        require(len(matches) == 1, 'Server log path escaped its owned runtime')
+        root, prefix = matches[0]
+        relative = path.relative_to(root).as_posix()
+        return root, (prefix + '/' + relative if prefix else relative)
+
     def server_log_paths(self):
         """Enumerate the owned logger tree, never the immutable game data tree.
 
@@ -1926,7 +2075,11 @@ class LocalCharacterServer(login.LocalLoginServer):
         if not self.runtime.exists():
             return [], {'directories': 0, 'entries': 0}
         paths, counts = [], {'directories': 0, 'entries': 0}
-        pending = [(self.runtime, False)]
+        pending = []
+        for root, _ in self.server_log_roots():
+            require(not root.is_symlink(), 'Linked server log runtime refused')
+            if root.exists():
+                pending.append((root, False))
         while pending:
             directory, recursive = pending.pop()
             descriptor = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
@@ -1977,7 +2130,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                         'Character server log changed or exceeded bound while reading')
             finally:
                 os.close(descriptor)
-            records.append((path.relative_to(self.runtime).as_posix(), raw.decode('utf-8', errors='replace')))
+            records.append((self.server_log_location(path)[1], raw.decode('utf-8', errors='replace')))
         metrics = self.ctx.report.setdefault('character_observer_metrics', {}).setdefault('native_log_reads',
             {'scope': 'owned_runtime_root_and_complete_logs_subtree', 'reads': 0, 'total_ms': 0, 'max_ms': 0})
         elapsed_ms = round((time.monotonic() - started) * 1000, 3)
@@ -2006,11 +2159,12 @@ class LocalCharacterServer(login.LocalLoginServer):
                     for path in paths:
                         # current_logs() already rejects linked leaves; preserve
                         # that protection and also reject linked parents/owners.
+                        log_root, name = self.server_log_location(path)
                         current = path.parent
                         while True:
                             require(current.is_dir() and not current.is_symlink(), 'Linked server log directory refused')
-                            if current == self.runtime: break
-                            require(self.runtime in current.parents, 'Server log path escaped its owned runtime')
+                            if current == log_root: break
+                            require(log_root in current.parents, 'Server log path escaped its owned runtime')
                             current = current.parent
                         descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
                         try:
@@ -2037,7 +2191,6 @@ class LocalCharacterServer(login.LocalLoginServer):
                                 and exported_total <= SERVER_LOG_TOTAL_LIMIT
                                 and len(redacted) <= SERVER_LOG_FILE_LIMIT,
                                 'Character server logs exceeded export bound')
-                        name = path.relative_to(self.runtime).as_posix()
                         manifest['files'][name] = {'source_bytes': len(raw),
                             'source_sha256': hashlib.sha256(raw).hexdigest(), 'exported_bytes': len(redacted),
                             'exported_sha256': hashlib.sha256(redacted).hexdigest(),

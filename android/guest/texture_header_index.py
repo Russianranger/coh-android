@@ -62,6 +62,8 @@ def rebind_legacy_pack(contents, old_identity, identity, records):
 
 
 def texture_inputs(work, context):
+    from character_server_data_cache import CheckedInputResolver
+    from diagnostic import DiagnosticError
     data = work / 'data'
     root = data / 'texture_library'
     require(root.is_dir() and not root.is_symlink(), 'Private texture directory unavailable')
@@ -70,11 +72,11 @@ def texture_inputs(work, context):
             'Missing or oversized verified client worktree')
     client = json.loads(marker.read_bytes())
     imported = Path(client['source_data']).resolve()
-    # Resolve the shared private root once; every leaf still gets its original
-    # strict resolution, readonly metadata checks and complete inventory entry.
-    # Recheck the root after the walk so a changed ancestor is never accepted
-    # because of this cached comparison path.
+    # Resolve real parents once during this invocation. Every leaf still gets
+    # fresh no-follow metadata, containment and readonly checks. Parent changes
+    # are refused after the walk; no persistent inventory authority is assumed.
     private = data.resolve(strict=True)
+    resolver = CheckedInputResolver((imported, private), context)
     inventory, records = [], []
     for current, directories, files in os.walk(root, followlinks=False):
         context.check()
@@ -91,10 +93,11 @@ def texture_inputs(work, context):
             if not name.lower().endswith('.texture') or name.startswith('_'):
                 continue
             path = directory / name
-            resolved = path.resolve(strict=True)
-            require(resolved.is_relative_to(imported) or resolved.is_relative_to(private),
-                    'Texture link escapes verified immutable input')
-            info = resolved.stat()
+            try:
+                resolved, info = resolver.leaf(path)
+            except DiagnosticError as error:
+                raise ValueError('Texture link escapes verified immutable input or changed parent: '
+                                 + str(error)) from error
             require(stat.S_ISREG(info.st_mode) and not info.st_mode & 0o222,
                     'Texture index requires readonly regular inputs')
             relative = (relative_directory + '/' + name).lower()
@@ -106,6 +109,10 @@ def texture_inputs(work, context):
             records.append((relative, path))
             require(len(records) <= MAX_RECORDS, 'Texture inventory exceeds native bound')
     require(data.resolve(strict=True) == private, 'Private texture root changed while indexing')
+    try:
+        resolver.verify()
+    except DiagnosticError as error:
+        raise ValueError('Texture input parent changed while indexing: ' + str(error)) from error
     records.sort(key=lambda item: item[0])
     require(records and len({name for name, _ in records}) == len(records),
             'Empty or ambiguous texture inventory')

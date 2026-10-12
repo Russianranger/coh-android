@@ -1,4 +1,119 @@
-# CURRENT — .34 saved Kings Row reopen and report recovery — published and independently audited — 2026-10-12 UTC
+# CURRENT — .35 startup critical-path continuation — ready for required native/full integration qualification
+
+The latest physical .34 test successfully reopened THORHERO directly in Kings Row,
+committed an ordinary save there, and exported a usable complete outer ZIP.
+**THORHERO remains saved in Kings Row, static map 5 / UDP 7003.** Preserve the
+existing profile, position, runtime/prefix, and all four Assets 1.0.0 volumes.
+The user now makes whole-startup **under five minutes the highest priority** and
+explicitly replaces timed gameplay/capture gates with user-operated Start test /
+Stop test controls. This supersedes earlier finite gameplay-session requirements;
+bounded stalled startup, individual transfers/queries, cancellation, report sizes
+and exact process ownership remain necessary operational checks.
+
+Recovery began from clean local and remote continuation head
+`0b224087f618a47cbfa4ecfec56d3e4817975c68`. Published .34 assembly remains
+`46904ced3d7efb6218ecf92d9e44ad597d3146d0`; no successful .34 publication is rerun.
+Draft PR #1 and main remain unchanged in status. Candidate .35 / code 50 is not
+published at this checkpoint and has no device performance qualification. Its
+marker enables qualification and publication only after every required native,
+SQL, actual-assets, signature/reconstruction and public-byte gate succeeds.
+
+## Physical evidence and priorities
+
+[Report analysis](COH-PHYSICAL-STARTUP-0.13.34.md) and
+[exact archive identities and measurements](android-evidence/coh-physical-startup-0.13.34-analysis.json).
+Android operation to client input readiness was 1,398.724 s (23:18.7), consistent
+with the user's approximately 24 minutes before login. PostgreSQL itself started
+in 0.496 s; the 362.308 s Local DbServer stage included 331.595 s of preparation
+and 29.947 s of native DbServer readiness. The 507.917 s Kings stage included
+269.820 s preparation and 236.365 s observed native readiness. Two cold private
+mirrors consumed 505.529 s. Native Kings console startup was 232.543 s, with a
+99.481 s sequencer interval. Native client startup took another 213.596 s.
+These nested measurements are not additive independent phases.
+
+Both cache reuse receipts refused an identity-or-cleanup condition; they do not
+establish which previous condition differed. Current-session cleanup independently
+failed on EACCES while inspecting a live Wine worker after TERM, despite a normal
+prefix shutdown. The committed save remains successful. Current outer and guest
+archives remain readable and useful; overall Character Check did not pass.
+
+The existing implementation already launches map processes on demand and reuses
+resident destinations within a session. Native dynamic map launching does not
+remove each new process's definition/sequencer/physics initialization. Sequential
+native Map (236 s) plus Game (214 s) alone exceeds five minutes, so eliminating
+file preparation without changing their schedule cannot reach the total target.
+
+## Candidate work and qualification boundaries
+
+Implemented minimal DbServer preparation before authoritative saved-map
+selection, native-excluded texture projection for new server mirrors, overlapping
+owned Kings Map/Game startup while withholding input until both proofs pass, and
+source-generation/unchanged-output reuse for client prerequisites. Direct Atlas
+startup retains its qualified serial path. Deferred Atlas preparation runs only
+when an actual transfer requests it, with its original independent bounds. No startup
+improvement is yet measured on the Thor. No player-data repair SQL, relocation,
+/stuck, character recreation, or asset reset is authorized by these optimizations.
+
+Saved-character gameplay observation is explicitly user controlled. Required identity /
+entry / save proof captures remain; optional repeated PNG capture occurs only
+between Start test and Stop test. The old native launcher's 36-minute lifetime
+also requires a freshly compiled and genuinely Windows-executed helper. Native
+Game, MapServer, DbServer, GPU, Wine/FEX, animation/FX and Assets 1.0.0 remain exact
+retained components unless a separately qualified replacement is recorded.
+
+Send Text now uses a paced, cancellable RFB transaction with modifier cleanup;
+Enter/Start preserves queued text and field taps, and the editor stays bound to
+its originating session. No text/password values are recorded. Runtime update I/O
+pacing is faster only with ample current RAM and Java heap headroom,
+retaining pressure control, bounded buffers, cancellation and write synchronization.
+
+Wine cleanup now records exact readable worker ownership even when its leader has
+already exited, before TERM can make that environment unreadable. Each worker
+must independently prove token, prefix, UID/TGID, PID/start time, namespace and
+process group/session. Later environment-only EACCES can use only that exact
+unchanged authenticated worker; missing/reused/foreign workers still fail closed.
+Optional per-group observation failures do not discard other valid group proofs.
+Local focused cleanup tests pass; new and inherited real /proc tests encountered
+unrelated same-UID namespace denials in this shared host and require clean hosted
+execution. That failure is not relabelled as a pass or bypassed by broader killing.
+
+An isolated native phase profiler distinguishes BIN decode, sequencer animation
+attachment/postprocessing and finalization, and enables the freshness observer in
+the actual Utilities translation unit. It is a nonshipping source qualification
+stage until fresh Win32/native consumer and Atlas/Kings parity gates are available;
+its host tests do not constitute a device speed improvement.
+
+## Fresh host evidence before CI
+
+- [Saved-Kings preparation/overlap](COH-SAVED-KINGS-STARTUP-0.13.35.md): 236 focused tests passed, no failures/errors/skips; includes authenticated historical .29 native fixture bytes.
+- [Client preparation and isolated probe prefix](COH-CLIENT-PREPARATION-0.13.35.md): 186 focused tests and 68 related regressions passed. Metadata-call reductions are measured host fixtures, not device time savings.
+- Manual controls and lifecycle: 271 focused tests passed; final 28-case integration rerun passed. Text input wire/routing/sidebar/buffer suites passed (40/18/13/5). Runtime setup guard/copy/reuse: 73 passed. These overlap other inventories and must not be summed into a fabricated unique count.
+- Root freshly executed eight report/storage suites: 218 tests passed in 38.408 s, no skips. The command used current `test_client_report_lifecycle_java`, `test_client_report_recovery_java`, `test_client_report_controls_java`, `test_completed_guest_report_java`, `test_profile_failure_presentation`, `test_storage_ui`, `test_storage_recovery_ui`, and `test_storage_audit`.
+- Native helper source/receipt review completed independently. A genuine Windows helper execution and actual retained minimal DbServer startup/restart are required in the successor workflow; neither is claimed by host mocks. The Db fixture uses only a new disposable PostgreSQL cluster and synthetic identity/location.
+- Independent startup source review completed with 96 additional focused tests passing and no blockers in saved-map selection, overlap readiness, projection/cache migration or player-data preservation.
+- Packaging/source guard checks: 30 passed; exact routing regressions: 100 passed. The current inventory is 201 freshly executable suites (2,769 loader scenarios) and 7 immutable inherited suites (95 historical tests); these inventory counts do not claim a completed integration run.
+- Required CI then executes all current suites, strict PostgreSQL identity/save fixtures, full original Assets 1.0.0 cold/warm Kings and deferred Atlas preparation, signed APK reconstruction, and independent public-byte audit. Historical immutable qualification is reported separately.
+
+The staged native phase profiler remains nonshipping. The first .35 reopen may
+still need cold preparation because the preceding .34 cleanup was incomplete.
+Warm reuse requires the current generation's exact proof and safe cleanup; unknown
+old trees and prefixes are preserved. Concurrent Game/Map loading may increase
+transient CPU/RAM contention; no device RSS/PSS, FPS or thermal gain is claimed.
+
+## Next physical acceptance
+
+After all successor qualification and public-byte audit gates pass: install over
+existing data, update the runtime once, reopen the saved Kings character, record
+operation-to-input time and native/preparation phases separately, test Send Text /
+L3 for login, then tap Start test and Stop test around a short Kings session.
+Use ordinary Save/Logout and export the complete outer ZIP. Login/idle time must
+not expire a diagnostic gameplay window. Retain the same GPU/fidelity/controller
+settings for comparison. Startup and zone loading remain the primary optimization
+work; no sub-five-minute outcome is claimed before actual Thor measurement.
+
+---
+
+# HISTORICAL PUBLISHED — .34 saved Kings Row reopen and report recovery — published and independently audited — 2026-10-12 UTC
 
 **0.13.34 / code 49 is published, signed and independently public-byte audited.**
 Assembly source: `46904ced3d7efb6218ecf92d9e44ad597d3146d0` on

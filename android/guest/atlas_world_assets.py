@@ -324,21 +324,41 @@ def publish_reuse(worktree, value, context):
 
 
 def resolve_targets(worktree, files, context):
-    directories, targets = {}, {}
+    # The same directories appear in thousands of reviewed leaf paths. Inspect
+    # each real parent once per resolution pass, then recheck its complete
+    # metadata before returning. Repeating exists()/is_symlink() for every path
+    # component is especially expensive through Android's PRoot boundary.
+    real_directory(worktree)
+    directories, observed, targets = {}, {}, {}
+
+    def names_in(directory):
+        if directory in directories:
+            return directories[directory]
+        try:
+            info = directory.lstat()
+        except FileNotFoundError:
+            observed[directory] = None
+            directories[directory] = None
+            return None
+        require(stat.S_ISDIR(info.st_mode),
+                'Linked or non-directory world destination refused')
+        observed[directory] = fingerprint(info)
+        names = {}
+        with os.scandir(directory) as entries:
+            for item in entries:
+                names.setdefault(item.name.casefold(), []).append(item.name)
+        directories[directory] = names
+        return names
+
     for name in sorted(files):
         context.check()
         target = worktree
         parts = Path(name).parts
         for index, part in enumerate(parts):
             actual = part
-            if target.exists() or target.is_symlink():
-                if target not in directories:
-                    real_directory(target)
-                    names = {}
-                    for item in target.iterdir():
-                        names.setdefault(item.name.casefold(), []).append(item.name)
-                    directories[target] = names
-                matches = directories[target].get(part.casefold(), [])
+            names = names_in(target)
+            if names is not None:
+                matches = names.get(part.casefold(), [])
                 require(len(matches) <= 1, 'Ambiguous case-conflicting world destination refused')
                 if matches:
                     if index < len(parts) - 1:
@@ -351,6 +371,13 @@ def resolve_targets(worktree, files, context):
                         require(matches == [part], 'Case-conflicting world leaf refused')
             target /= actual
         targets[name] = target
+    for directory, before in observed.items():
+        context.check()
+        try:
+            after = fingerprint(directory.lstat())
+        except FileNotFoundError:
+            after = None
+        require(after == before, 'World destination parent changed during resolution')
     return targets
 
 

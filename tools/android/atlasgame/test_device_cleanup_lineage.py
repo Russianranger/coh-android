@@ -103,13 +103,121 @@ class CleanupLineageTests(unittest.TestCase):
         self.assertEqual(receipt['kill_signals'], 0)
         self.assertGreaterEqual(receipt['lineage_ownership_rechecks'], 2)
         self.assertEqual(receipt['permission_observations'][0]['resolution'],
-                         'verified_live_leader_and_worker_lineage')
+                         'verified_authenticated_worker_lineage')
         send.assert_called_once_with(19, signal.SIGTERM, None, 0)
         self.assertNotIn(self.owner.environment[self.owner.ENV_KEY], json.dumps(receipt))
         self.assertNotIn('private environment denied', json.dumps(receipt))
 
     def test_matching_shape_without_prior_live_authentication_stays_closed(self):
         self.dead_leader()
+        self.assert_signal_rejected()
+
+    def test_readable_worker_under_dead_leader_is_authenticated_before_term(self):
+        # Physical .34 read and signaled six workers before a post-TERM EACCES.
+        # No live-leader snapshot existed. The worker itself must provide the
+        # complete proof while it is still readable; no guessed lineage needed.
+        self.dead_leader()
+        self.owner.live_lineage['prefix'] = self.prefix
+        denied = False
+        original = self.owner.has_token
+        def token(path):
+            if denied and path == self.task:
+                raise PermissionError(13, 'environment denied after TERM')
+            return original(path)
+        def signal_worker(_fd, sig, *_args):
+            nonlocal denied
+            if sig == signal.SIGTERM:
+                denied = True
+            else:
+                self.worker_stat['state'] = 'Z'
+                self.write_stat(self.task, self.worker_stat)
+        with patch.object(self.owner, 'has_token', side_effect=token), \
+                patch.object(guest.os, 'pidfd_open', return_value=19), patch.object(guest.os, 'close'), \
+                patch.object(guest.signal, 'pidfd_send_signal', side_effect=signal_worker):
+            receipt = self.owner.cleanup(time.monotonic() + 4)
+        self.assertTrue(receipt['complete'])
+        self.assertEqual((receipt['term_signals'], receipt['kill_signals']), (1, 1))
+        self.assertEqual(receipt['live_lineage_observation']['authenticated_dead_leader_workers'], 1)
+        self.assertGreater(receipt['lineage_ownership_rechecks'], 0)
+        self.assertNotIn('prefix', receipt['live_lineage_observation'])
+        self.assertNotIn(self.owner.environment[self.owner.ENV_KEY], json.dumps(receipt))
+
+    def test_dead_leader_observation_requires_exact_worker_prefix_and_namespace(self):
+        self.dead_leader()
+        self.owner.live_lineage['prefix'] = self.prefix
+        for failure in ('prefix', 'namespace', 'uid', 'session'):
+            with self.subTest(failure=failure):
+                self.owner.live_lineage['groups'].clear()
+                original = (self.task / 'environ').read_bytes()
+                if failure == 'prefix':
+                    (self.task / 'environ').write_bytes(self.owner.needle + b'\0WINEPREFIX=/other\0')
+                if failure == 'namespace':
+                    (self.task / 'ns/pid').unlink()
+                    (self.task / 'ns/pid').symlink_to('pid:[222]')
+                if failure == 'uid':
+                    self.worker_status['uid'] = 43
+                    self.write_status(self.task, self.worker_status)
+                if failure == 'session':
+                    self.worker_stat['session'] = 999
+                    self.write_stat(self.task, self.worker_stat)
+                try:
+                    self.owner.inspect(123, time.monotonic() + 1)
+                except guest.base.DiagnosticError:
+                    pass
+                self.assertEqual(self.owner.live_lineage['groups'], {})
+                self.assert_signal_rejected()
+                (self.task / 'environ').write_bytes(original)
+                if failure == 'namespace':
+                    (self.task / 'ns/pid').unlink()
+                    (self.task / 'ns/pid').symlink_to('pid:[111]')
+                self.worker_status['uid'] = 42
+                self.worker_stat['session'] = 123
+                self.write_status(self.task, self.worker_status)
+                self.write_stat(self.task, self.worker_stat)
+
+    def test_second_authenticated_worker_survives_first_worker_exit(self):
+        self.dead_leader()
+        self.owner.live_lineage['prefix'] = self.prefix
+        second = self.group / 'task/125'
+        self.write_process(second, dict(self.worker_stat, pid=125, starttime=12),
+                           dict(self.worker_status, pid=125, namespace_pids=[125]))
+        self.assertIsNotNone(self.owner.inspect(123, time.monotonic() + 1))
+        self.assertEqual(set(self.owner.live_lineage['groups'][(123, 10)]['workers']), {(124, 11), (125, 12)})
+        self.worker_stat['state'] = 'Z'
+        self.write_stat(self.task, self.worker_stat)
+        original = self.owner.has_token
+        with patch.object(self.owner, 'has_token', side_effect=lambda path:
+                (_ for _ in ()).throw(PermissionError(13, 'environment denied'))
+                if path == second else original(path)):
+            self.assertIsNotNone(self.owner.inspect(123, time.monotonic() + 1))
+        self.assertEqual(self.owner.receipt['permission_observations'][-1]['resolution'],
+                         'verified_authenticated_worker_lineage')
+
+    def test_one_unreadable_observation_does_not_discard_other_complete_proofs(self):
+        unrelated = self.root / '122'
+        unrelated.mkdir()
+        original = guest.DeviceWineProcessOwner.inspect
+        def inspect(owner, pid, deadline=None):
+            if pid == 122:
+                raise PermissionError(13, 'unrelated unreadable process')
+            return original(owner, pid, deadline)
+        with patch.object(guest.DeviceWineProcessOwner, 'inspect', new=inspect):
+            self.owner.observe_live_lineage(time.monotonic() + 1, prefix=self.prefix)
+        self.assertEqual(self.owner.live_lineage['unavailable_samples'], 1)
+        self.assertIn((123, 10), self.owner.live_lineage['groups'])
+        self.assertEqual(self.owner.receipt['inspection_failures'], 0)
+        self.dead_leader()
+        with self.deny_worker():
+            self.assertIsNotNone(self.owner.inspect(123, time.monotonic() + 1))
+
+    def test_readable_dead_worker_prefix_change_revokes_cached_proof(self):
+        self.dead_leader()
+        self.owner.live_lineage['prefix'] = self.prefix
+        self.assertIsNotNone(self.owner.inspect(123, time.monotonic() + 1))
+        self.assertIn((124, 11), self.owner.live_lineage['groups'][(123, 10)]['workers'])
+        (self.task / 'environ').write_bytes(self.owner.needle + b'\0WINEPREFIX=/different\0')
+        self.assertIsNotNone(self.owner.inspect(123, time.monotonic() + 1))
+        self.assertEqual(self.owner.live_lineage['groups'][(123, 10)]['workers'], {})
         self.assert_signal_rejected()
 
     def test_unseen_worker_in_authenticated_group_stays_closed(self):
@@ -231,6 +339,13 @@ class CleanupLineageTests(unittest.TestCase):
 
     @unittest.skipIf(os.name == 'nt', 'Exact /proc task proof requires Linux')
     def test_real_pthread_leader_death_drains_only_authenticated_worker(self):
+        self.real_pthread_cleanup(False)
+
+    @unittest.skipIf(os.name == 'nt', 'Exact /proc task proof requires Linux')
+    def test_real_pthread_dead_leader_worker_proof_before_shutdown(self):
+        self.real_pthread_cleanup(True)
+
+    def real_pthread_cleanup(self, authenticate_after_leader_exit):
         source = self.root / 'lineage-fixture.c'
         source.write_text('''#include <pthread.h>
 #include <signal.h>
@@ -264,16 +379,48 @@ int main(int argc, char **argv) {
             children.append(sentinel)
             for child in children:
                 self.assertEqual(child.stdout.readline(), b'worker_ready\n')
-            owner.observe_live_lineage(time.monotonic() + 1, prefix=self.prefix)
+            if authenticate_after_leader_exit:
+                # Restrict only enumeration to these two actual children. This
+                # shared development host runs other same-UID agents whose
+                # namespaces are deliberately unreadable. All fixture proc
+                # fields, namespaces, environments and pidfd signals remain
+                # real kernel operations; the inherited test below still scans
+                # full /proc in clean CI. No production exclusion is added.
+                view = self.root / 'native-proc-inventory'
+                view.mkdir()
+                own = guest.base.WineProcessOwner.process_stat(Path('/proc/self'))
+                (view / 'self').symlink_to(Path('/proc') / str(own['pid']), target_is_directory=True)
+                for child in children:
+                    matches = []
+                    for candidate in Path('/proc').iterdir():
+                        if not candidate.name.isdecimal():
+                            continue
+                        try:
+                            status = guest.base.WineProcessOwner.status(candidate)
+                            identity = guest.base.WineProcessOwner.process_stat(candidate)
+                        except (OSError, ValueError, KeyError, IndexError):
+                            continue
+                        visible = status['namespace_pids'][-1] if status['namespace_pids'] else status['pid']
+                        if (status['uid'] == owner.real_uid and visible == child.pid
+                                and identity['parent'] == own['pid']):
+                            matches.append(candidate)
+                    self.assertEqual(len(matches), 1, 'Native child PID namespace mapping must be unique')
+                    (view / matches[0].name).symlink_to(matches[0], target_is_directory=True)
+                owner.proc_root = view
+                owner.initialized = False
+                owner.initialize()
+            if not authenticate_after_leader_exit:
+                owner.observe_live_lineage(time.monotonic() + 1, prefix=self.prefix)
             # PRoot/container Popen PIDs can differ from the host /proc view.
             # Use the same authenticated namespace mapping as the runtime.
             identity = [value for value in owner.scan(time.monotonic() + 1) if value['pid'] == owned.pid]
             self.assertEqual(len(identity), 1)
-            group = Path('/proc') / str(identity[0]['proc_pid'])
+            group = owner.proc_root / str(identity[0]['proc_pid'])
             starttime = owner.process_stat(group)['starttime']
-            proof = owner.live_lineage['groups'].get((identity[0]['proc_pid'], starttime))
-            self.assertIsNotNone(proof, owner.live_lineage['last_unavailable_type'])
-            self.assertGreaterEqual(len(proof['workers']), 2)
+            if not authenticate_after_leader_exit:
+                proof = owner.live_lineage['groups'].get((identity[0]['proc_pid'], starttime))
+                self.assertIsNotNone(proof, owner.live_lineage['last_unavailable_type'])
+                self.assertGreaterEqual(len(proof['workers']), 2)
             for child in children:
                 child.stdin.write(b'x')
                 child.stdin.flush()
@@ -282,6 +429,13 @@ int main(int argc, char **argv) {
             while owner.process_stat(group)['state'] != 'Z':
                 self.assertLess(time.monotonic(), deadline, 'Native pthread leader did not exit')
                 time.sleep(.01)
+            if authenticate_after_leader_exit:
+                self.assertEqual(owner.live_lineage['groups'], {})
+                owner.observe_live_lineage(time.monotonic() + 1, prefix=self.prefix)
+                proof = owner.live_lineage['groups'].get((identity[0]['proc_pid'], starttime))
+                self.assertIsNotNone(proof, owner.live_lineage['last_unavailable_type'])
+                self.assertEqual(proof['stat']['state'], 'Z')
+                self.assertGreaterEqual(len(proof['workers']), 1)
             original = owner.has_token
             def denied(path):
                 if path.parent.parent == group and path.parent.name == 'task':

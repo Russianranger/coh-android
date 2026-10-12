@@ -255,25 +255,29 @@ class TextureIndexTests(unittest.TestCase):
         self.assertEqual('1', env['COH_STARTUP_DIAGNOSTIC_BOUND'])
         self.assertNotIn(b'original', pack)
 
-    def test_each_leaf_keeps_strict_resolution_with_one_shared_root_proof(self):
+    def test_each_leaf_keeps_fresh_metadata_without_repeated_parent_resolution(self):
+        from character_server_data_cache import CheckedInputResolver
         folder = self.work / 'data/texture_library/test'
         for index in range(40):
             target = folder / ('local-%02d.texture' % index)
             target.write_bytes(texture(target.stem))
             target.chmod(0o444)
         original = Path.resolve
-        calls = []
+        original_leaf = CheckedInputResolver.leaf
+        calls, leaves = [], []
         def resolve(path, *args, **kwargs):
             calls.append((path, args, kwargs))
             return original(path, *args, **kwargs)
-        with mock.patch.object(Path, 'resolve', resolve):
+        def leaf(resolver, path):
+            leaves.append(path)
+            return original_leaf(resolver, path)
+        with mock.patch.object(Path, 'resolve', resolve), \
+                mock.patch.object(CheckedInputResolver, 'leaf', leaf):
             records, inventory, client = module.texture_inputs(self.work, Context())
-        leaves = [call for call in calls if call[0].suffix == '.texture']
         self.assertEqual(42, len(records))
-        self.assertEqual({path for _, path in records}, {path for path, _, _ in leaves})
+        self.assertEqual({path for _, path in records}, set(leaves))
         self.assertEqual(42, len(leaves))
-        self.assertTrue(all(arguments == () and keywords == {'strict': True}
-                            for _, arguments, keywords in leaves))
+        self.assertEqual([], [call for call in calls if call[0].suffix == '.texture'])
         roots = [call for call in calls if call[0] == self.work / 'data']
         self.assertEqual(2, len(roots))
         self.assertTrue(all(keywords == {'strict': True} for _, _, keywords in roots))
@@ -281,19 +285,20 @@ class TextureIndexTests(unittest.TestCase):
         self.assertEqual(self.client, client)
 
     def test_cached_private_root_cannot_accept_an_ancestor_replacement(self):
-        original = Path.resolve
+        from character_server_data_cache import CheckedInputResolver
+        original = CheckedInputResolver.leaf
         replaced = False
         data = self.work / 'data'
         moved = self.work / 'moved-data'
-        def resolve(path, *args, **kwargs):
+        def leaf(resolver, path):
             nonlocal replaced
-            result = original(path, *args, **kwargs)
+            result = original(resolver, path)
             if path.suffix == '.texture' and not replaced:
                 data.rename(moved)
                 data.symlink_to(moved, target_is_directory=True)
                 replaced = True
             return result
-        with mock.patch.object(Path, 'resolve', resolve), \
+        with mock.patch.object(CheckedInputResolver, 'leaf', leaf), \
                 self.assertRaisesRegex(ValueError, 'root changed'):
             module.texture_inputs(self.work, Context())
         self.assertTrue(replaced)

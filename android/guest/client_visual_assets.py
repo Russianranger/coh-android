@@ -353,6 +353,21 @@ def install(worktree, assets, context):
     saved = marker_state(worktree)
     reused = all(row['stat'] is not None for row in before.values()) and saved == {
         'identity': identity, 'inputs': inputs, 'outputs': before}
+    # A runtime update can replace the archive inode and wrapper receipt while
+    # preserving every original payload. The current verify_assets pass must
+    # authenticate both exact inputs again; then the prior full-byte output
+    # proof remains valid only when every current leaf fingerprint is identical.
+    rebound = (not reused and isinstance(saved, dict)
+        and isinstance(saved.get('identity'), dict)
+        and {k: v for k, v in saved['identity'].items() if k != 'client_work_sha256'}
+            == {k: v for k, v in identity.items() if k != 'client_work_sha256'}
+        and saved.get('outputs') == before
+        and all(row['stat'] is not None for row in before.values())
+        and client.verified_asset_matches(assets / ARCHIVE,
+            {'bytes': ARCHIVE_BYTES, 'sha256': ARCHIVE_SHA256})
+        and client.verified_asset_matches(assets / MANIFEST,
+            {'bytes': inputs[MANIFEST][2], 'sha256': MANIFEST_SHA256}))
+    reused = reused or rebound
     installed = verified_bytes = decoded_bytes = 0
     if not reused:
         for name, target in targets.items():
@@ -402,7 +417,7 @@ def install(worktree, assets, context):
     final = {'identity': identity, 'inputs': inputs, 'outputs': after}
     require(identity['client_work_sha256'] == hashlib.sha256(
         world.read_regular(worktree / 'client-work.json', 1024**2)).hexdigest(), 'Verified client identity changed')
-    if not reused:
+    if not reused or rebound:
         publish_marker(worktree, final, context)
     unresolved = sorted({row['target'] for section in ('closure', 'sweep_extension', 'appearance_extension', 'ui_repair_extension', 'ui_sweep_extension')
         for row in document.get(section, {}).get('unresolved_dependencies', [])})
@@ -421,7 +436,8 @@ def install(worktree, assets, context):
         'retained_ui_sweep_baseline_file_count': 9613, 'added_ui_sweep_file_count': UI_SWEEP_FILE_COUNT,
         'added_ui_sweep_payload_bytes': UI_SWEEP_PAYLOAD_BYTES,
         'retained_baseline_payloads_preserved': True,
-        'reuse_validation': POLICY, 'fingerprint_reused': bool(reused), 'decoded_files': installed,
+        'reuse_validation': POLICY, 'fingerprint_reused': bool(reused),
+        'source_generation_rebound': bool(rebound), 'decoded_files': installed,
         'decoded_payload_bytes': decoded_bytes, 'verified_existing_bytes': verified_bytes,
         'archive_read_bytes': 0 if reused else ARCHIVE_BYTES, 'worktree': worktree.name,
         'normalized_mtime_epoch': client.CACHE_EPOCH, 'imported_files_modified': False,

@@ -1,0 +1,57 @@
+{
+  "format": 1,
+  "scope": "isolated_host_metadata_microbenchmark_not_AYN_Thor",
+  "physical_gain_claimed": false,
+  "source_baseline": "0b224087f618a47cbfa4ecfec56d3e4817975c68",
+  "fixture": {
+    "texture_leaves": 4000,
+    "logical_leaf_directories": 100,
+    "source_leaf_directories": 100,
+    "leaf_mode": "readonly_original_regular_files_with_private_symlinks",
+    "cache": "same_fixture_old_then_new_filesystem_warm_state_uncontrolled"
+  },
+  "target_resolution": {
+    "baseline": {
+      "elapsed_seconds": 0.126007,
+      "metadata_calls": {
+        "stat": 16715,
+        "lstat": 0,
+        "readlink": 0
+      }
+    },
+    "changed": {
+      "elapsed_seconds": 0.091808,
+      "metadata_calls": {
+        "stat": 210,
+        "lstat": 0,
+        "readlink": 0
+      }
+    },
+    "exact_resolved_targets_equal": true
+  },
+  "texture_inventory": {
+    "baseline": {
+      "elapsed_seconds": 0.212453,
+      "metadata_calls": {
+        "stat": 4207,
+        "lstat": 48111,
+        "readlink": 4000
+      }
+    },
+    "changed": {
+      "elapsed_seconds": 0.240936,
+      "metadata_calls": {
+        "stat": 12617,
+        "lstat": 111,
+        "readlink": 4000
+      }
+    },
+    "exact_records_inventory_digest_and_client_equal": true,
+    "inventory_sha256": "bb117ca941dfcd805c3eca3081b818324bace16791df62b4fb339c7a6372152e"
+  },
+  "limits": [
+    "Instrumented Python calls, not kernel tracing.",
+    "Timings are one paired host sample; device critical-path savings require fresh physical measurement.",
+    "No native process, PostgreSQL, player profile, runtime cache or imported assets used."
+  ]
+}
