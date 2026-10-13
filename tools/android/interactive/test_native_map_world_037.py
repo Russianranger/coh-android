@@ -121,6 +121,34 @@ class EvidenceRefusal(unittest.TestCase):
             ('server_only','candidate-forward','candidate'),('server_only','candidate-reverse','candidate'),
             ('server_only','baseline-reverse','baseline'),('full','generation','stock'),
             ('full','baseline-forward','baseline'),('full','candidate-forward','candidate')])
+    def test_warm_clone_excludes_stale_progress_native_logs_and_private_config(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source=root/'generated';source.mkdir()
+            immutable=source/'data/defs/x.txt';immutable.parent.mkdir(parents=True);immutable.write_text('immutable definition')
+            config=source/gate.CONFIG;config.parent.mkdir(parents=True);config.write_text('private current SQL credentials')
+            native=source/'MapServer.exe';native.write_bytes(b'old observed native')
+            cache=source/'data/bin/x.bin';cache.parent.mkdir(parents=True);cache.write_bytes(b'generated BIN')
+            (source/'world-progress.bin').write_bytes(b'stale mapping')
+            (source/'logs').mkdir();(source/'logs/map.log').write_text('old current session console')
+            original_files={p.relative_to(source).as_posix():{**gate.pin(p),'mtime_ns':p.stat().st_mtime_ns//100*100}
+                for p in (immutable,config,native,cache)}
+            original_files['data/bin/x.bin']={'bytes':4,'sha256':hashlib.sha256(b'old!').hexdigest(),'mtime_ns':0}
+            destination=root/'warm';generated={'data/bin/x.bin':gate.pin(cache)}
+            proof=gate.clone_provider(source,{'files':original_files},destination,generated)
+            self.assertTrue(proof['operational_members_excluded'])
+            self.assertTrue(proof['generated_cache_byte_identity_checked'])
+            self.assertEqual((destination/'data/bin/x.bin').read_bytes(),b'generated BIN')
+            self.assertEqual((destination/'data/defs/x.txt').read_text(),'immutable definition')
+            self.assertFalse((destination/'world-progress.bin').exists())
+            self.assertFalse((destination/'logs').exists())
+            self.assertFalse((destination/gate.CONFIG).exists())
+            self.assertFalse((destination/'MapServer.exe').exists())
+    def test_native_paths_enforce_UTF16_MAX_PATH_and_short_case_names(self):
+        root=Path('C:/coh-world-38477608206/m10') if os.name=='nt' else Path('/tmp/coh-world-38477608206/m10')
+        short=gate.native_path(root,'data/maps/City_Zones/City_01_02.txt')
+        self.assertLess(len(str(short.absolute()).encode('utf-16-le'))//2,260)
+        with self.assertRaises(ValueError):gate.native_path(root/'too-long-extra-case-name', 'data/'+'x'*220)
+        with self.assertRaises(ValueError):gate.native_path(root,'data/'+'😀'*115)
     def test_FX_claim_requires_actual_successful_decode_and_stock_freshness(self):
         observation={'profile_rows':[{'phase':'bin_decode','input_token':'8a842dea','success':True,'elapsed_us':12}],
             'freshness_rows':[{'input_token':'ca526c44','outcome':'freshness_accepted'}]}

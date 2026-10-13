@@ -98,7 +98,7 @@ def extract_provider(archive_path,provider,destination):
             inputs.safe_windows_name(member.name);record=provider['files'].get(member.name)
             require(member.isfile() and not member.issym() and not member.islnk() and record is not None
                     and member.name not in seen and member.size==record['bytes'],'Provider member is unsafe or unpinned')
-            seen.add(member.name);path=destination/member.name;path.parent.mkdir(parents=True,exist_ok=True)
+            seen.add(member.name);path=native_path(destination,member.name);path.parent.mkdir(parents=True,exist_ok=True)
             with archive.extractfile(member) as source,path.open('xb') as target:
                 shutil.copyfileobj(source,target,1024**2)
             require(pin(path)=={k:record[k] for k in ('bytes','sha256')},'Provider leaf digest differs')
@@ -106,6 +106,55 @@ def extract_provider(archive_path,provider,destination):
             require(path.stat().st_mtime_ns//100==record['mtime_ns']//100,'Native provider timestamps were not preserved')
     require(seen==set(provider['files']),'Prepared provider archive omitted pinned leaves')
     return destination
+
+
+def native_path(root,relative):
+    """Keep legacy native Win32 consumers below MAX_PATH including the NUL."""
+    inputs.safe_windows_name(relative)
+    path=Path(root)/relative
+    require(len(str(path.absolute()).encode('utf-16-le'))//2<260,
+            'Native provider path exceeds MAX_PATH headroom')
+    return path
+
+
+def clone_provider(source,provider,destination,generated_cache=None):
+    """Copy only pinned provider members into a fresh closed-process consumer.
+
+    Actual BIN bodies may come from the separately qualified generator. The
+    subsequent complete provider/content census authenticates immutable bytes
+    before native launch. No progress mapping, native log, private configuration
+    or other generated operational file becomes a warm input by directory copy.
+    """
+    source,destination=Path(source),Path(destination)
+    require(source.is_dir() and not source.is_symlink() and not destination.exists(),
+            'Fresh unlinked warm consumer destination required')
+    names=provider['files'];require(0<len(names)<=inputs.MAX_FILES,'Warm input membership bound differs')
+    if generated_cache is not None:
+        require(set(generated_cache)<=set(names),'Generated BIN membership escapes original provider')
+    destination.mkdir();copied=0
+    for name in sorted(names):
+        if name in (CONFIG,'MapServer.exe'):continue
+        original=native_path(source,name);target=native_path(destination,name)
+        require(not original.is_symlink() and all(not p.is_symlink() for p in original.parents),
+                'Linked original warm provider input refused')
+        info=original.lstat();require(stat.S_ISREG(info.st_mode) and info.st_nlink==1,
+                                    'Private regular warm provider source required')
+        expected=(generated_cache or {}).get(name,names[name])
+        require(info.st_size==expected['bytes'],'Warm source size differs from authenticated membership')
+        if name not in (generated_cache or {}):
+            require(info.st_mtime_ns//100==names[name]['mtime_ns']//100,
+                    'Immutable provider date changed before warm copy')
+        target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(original,target)
+        later=original.lstat()
+        require((later.st_dev,later.st_ino,later.st_size,later.st_mtime_ns)==
+                (info.st_dev,info.st_ino,info.st_size,info.st_mtime_ns)
+                and target.stat().st_size==expected['bytes'] and target.stat().st_mtime_ns//100==info.st_mtime_ns//100,
+                'Warm input changed during bounded regular copy')
+        if name in (generated_cache or {}):require(pin(target)==generated_cache[name],'Warm generated BIN digest changed')
+        copied+=1
+    return {'copied_provider_files':copied,'operational_members_excluded':True,
+            'private_configuration_copied':False,'generated_cache_byte_identity_checked':generated_cache is not None,
+            'immutable_content_census_required_before_launch':True}
 
 
 def cache_snapshot(runtime):
@@ -369,20 +418,26 @@ def run(args):
             # warm consumer then uses an independent copy of its resulting bytes.
             generated=None;decision_control=None
             original_provider=None;animation_reference=None
-            for variant,phase,role,native in phase_plan(args.baseline,args.candidate):
+            for case_index,(variant,phase,role,native) in enumerate(phase_plan(args.baseline,args.candidate)):
                 if role=='stock':
                     if generated is not None:shutil.rmtree(generated)
                     generated=None;decision_control=None
                     seed=extract_provider(args.inputs/('provider-'+str(map_id)+'.tar.gz'),manifest['providers'][str(map_id)],
-                        work/('seed-'+str(map_id)+'-'+variant))
+                        work/('s'+str(map_id)+str(case_index)))
                     require(pin(seed/'data/bin/fxinfo.bin')==inputs.FX_VARIANTS['server_only'],
                             'Actual public Map provider does not contain qualified SERVER-only FX')
-                    if variant=='full':shutil.copyfile(args.inputs/'full-fxinfo.bin',seed/'data/bin/fxinfo.bin')
-                label=str(map_id)+'-'+variant+'-'+phase;current=work/label
-                shutil.copytree(seed if generated is None else generated,current)
+                label=str(map_id)+'-'+variant+'-'+phase;current=work/('m'+str(map_id)+str(case_index))
+                clone=clone_provider(seed if generated is None else generated,manifest['providers'][str(map_id)],current,
+                    cache_snapshot(generated) if generated is not None else None)
+                # The full variant changes precisely this original BIN and
+                # preserves its controlled source date before native generation.
+                if generated is None and variant=='full':
+                    shutil.copyfile(args.inputs/'full-fxinfo.bin',current/'data/bin/fxinfo.bin')
+                    stamp=manifest['providers'][str(map_id)]['files']['data/bin/fxinfo.bin']['mtime_ns']
+                    os.utime(current/'data/bin/fxinfo.bin',ns=(stamp,stamp))
                 logs=work/(label+'-logs');logs.mkdir();case_output=output/label;case_output.mkdir()
                 log_context={'runtime':current,'logs':logs,'output':case_output,'retained':False};log_contexts.append(log_context)
-                db=extract_provider(args.inputs/'provider-db.tar.gz',manifest['providers']['db'],work/(label+'-db'))
+                db=extract_provider(args.inputs/'provider-db.tar.gz',manifest['providers']['db'],work/('d'+str(map_id)+str(case_index)))
                 config=db/CONFIG;config.write_text(minimal.guest_config(config.read_text(),cluster.meta['database'],cluster.connection_string(args.driver)))
                 target=current/'MapServer.exe';shutil.copyfile(native,target)
                 (current/CONFIG).write_bytes(config.read_bytes())
@@ -394,6 +449,7 @@ def run(args):
                         'Full/compact world variants do not share exact non-BIN source provider')
                 raw_before={n:(current/n).read_bytes() for n in before} if role=='stock' else {}
                 current_before={'cache':before,'provider':provider_before,'native':pin(target)}
+                current_before['regular_provider_clone']=clone
                 write(case_output/'before-launch.json',current_before)
                 case_children=[];case_observers=[]
                 env={k:v for k,v in os.environ.items() if not k.startswith(('COH_','PG'))}

@@ -11,26 +11,97 @@ on:
 permissions: {contents: read, actions: read}
 concurrency:
   group: native-map-world-037-${{ github.ref }}
-  cancel-in-progress: false
+  # Only a reviewed push on this dedicated branch supersedes its unpublished
+  # source. Manual dispatch preserves an existing qualification run.
+  cancel-in-progress: ${{ github.event_name == 'push' && github.ref == 'refs/heads/codex/native-map-world-037' }}
 jobs:
   prepare:
     runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with: {persist-credentials: false}
       - name: Validate native world evidence boundaries and hostile provider cases
         run: python3 -m unittest discover -s tools/android/interactive -p test_native_map_world_037.py
-      - name: Admit large original assets and owned prepared provider storage
-        run: |
-          test "${RUNNER_ENVIRONMENT:-}" = github-hosted
-          sudo rm -rf -- /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL
-          python3 -c "import shutil; assert shutil.disk_usage('.').free >= 30*1024**3"
-      - name: Prepare public audited .36 Atlas and Kings provider bytes using actual packaged scripts
+      - name: Authenticate exact successful original prepared provider artifact and unchanged producer
         env: {GH_TOKEN: '${{ github.token }}'}
-        run: >-
-          python3 tools/android/interactive/prepare_native_map_world_inputs_037.py
-          --cache out/original-assets --output out/prepared-worlds
+        run: |
+          mkdir -p out/prepared-attribution
+          gh api repos/Russianranger/coh-android/actions/runs/38477608206 > out/prepared-attribution/run.json
+          gh api repos/Russianranger/coh-android/actions/runs/38477608206/jobs > out/prepared-attribution/jobs.json
+          gh api repos/Russianranger/coh-android/actions/artifacts/11856696807 > out/prepared-attribution/artifact.json
+          gh api 'repos/Russianranger/coh-android/contents/tools/android/interactive/prepare_native_map_world_inputs_037.py?ref=0ed6bd74bb61478c1028c29fdffa252f18707dd9' > out/prepared-attribution/producer-source.json
+          python3 - <<'PY'
+          import base64, hashlib, json, pathlib, shutil
+          root=pathlib.Path('out/prepared-attribution')
+          run=json.loads((root/'run.json').read_text());jobs=json.loads((root/'jobs.json').read_text())['jobs']
+          artifact=json.loads((root/'artifact.json').read_text());source=json.loads((root/'producer-source.json').read_text())
+          assert run['id']==38477608206 and run['head_sha']=='0ed6bd74bb61478c1028c29fdffa252f18707dd9'
+          assert run['head_branch']=='codex/native-map-world-037' and run['path']=='.github/workflows/android-native-map-world-037.yml'
+          prepare=[j for j in jobs if j['id']==115572069249 and j['name']=='prepare']
+          assert len(prepare)==1 and prepare[0]['status']=='completed' and prepare[0]['conclusion']=='success'
+          assert artifact['id']==11856696807 and artifact['name']=='coh-native-world-037-prepared-public-providers'
+          assert artifact['size_in_bytes']==2070662208 and artifact['digest']=='sha256:d61ba32c646bd3f8815a92759abba737e997a3b9de489d26126bf3015f1e6d2c'
+          assert artifact['expired'] is False and artifact['workflow_run']['id']==38477608206
+          assert artifact['workflow_run']['head_sha']==run['head_sha']
+          assert source['encoding']=='base64' and source['path']=='tools/android/interactive/prepare_native_map_world_inputs_037.py'
+          raw=base64.b64decode(source['content']);local=pathlib.Path(source['path']).read_bytes()
+          assert len(raw)==13080 and hashlib.sha256(raw).hexdigest()=='0e9a7eb952464bb3aa8fc31320da3eb55cc401842044929b95f068959ff42c77'
+          assert local==raw
+          assert shutil.disk_usage('.').free >= 6*1024**3
+          (root/'admission.json').write_text(json.dumps({'source':run['head_sha'],'run_id':run['id'],
+              'original_overall_run_conclusion':run['conclusion'],'successful_prepare_job_id':prepare[0]['id'],
+              'artifact_id':artifact['id'],'artifact_zip_bytes':artifact['size_in_bytes'],'artifact_zip_digest':artifact['digest'],
+              'prepare_source_bytes_unchanged':True,'actual_preparation_reexecuted':False,
+              'original_native_qualification_claimed_passed':False},indent=2)+'\n')
+          PY
+      - name: Recover and verify exact original prepared ZIP and every provider member
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          gh api repos/Russianranger/coh-android/actions/artifacts/11856696807/zip > out/prepared-attribution/artifact.zip
+          python3 - <<'PY'
+          import hashlib, json, pathlib, stat, sys, tarfile, zipfile
+          sys.path.insert(0,'tools/android/interactive')
+          import qualify_native_map_world_037 as gate
+          source=pathlib.Path('out/prepared-attribution/artifact.zip')
+          assert source.stat().st_size==2070662208
+          with source.open('rb') as stream:
+              assert hashlib.file_digest(stream,'sha256').hexdigest()=='d61ba32c646bd3f8815a92759abba737e997a3b9de489d26126bf3015f1e6d2c'
+          output=pathlib.Path('out/prepared-worlds');output.mkdir()
+          names={'provider-db.tar.gz','provider-1.tar.gz','provider-5.tar.gz','full-fxinfo.bin',
+              'COH-Atlas-Gameplay-0.13.36.apk',gate.inputs.MANIFEST}
+          with zipfile.ZipFile(source) as archive:
+              assert set(archive.namelist())==names and len(archive.namelist())==len(names)
+              for member in archive.infolist():
+                  assert not member.is_dir() and not member.flag_bits&1
+                  assert stat.S_IFMT(member.external_attr>>16) in (0,stat.S_IFREG)
+                  assert 0<member.file_size<=4*1024**3
+                  with archive.open(member) as stream,(output/member.filename).open('xb') as target:
+                      import shutil
+                      shutil.copyfileobj(stream,target,1024**2)
+          manifest=gate.read_manifest(output/gate.inputs.MANIFEST)
+          assert gate.pin(output/'COH-Atlas-Gameplay-0.13.36.apk')==gate.inputs.APK
+          assert gate.pin(output/'full-fxinfo.bin')==gate.inputs.FX_VARIANTS['full']
+          census={}
+          for key,provider in manifest['providers'].items():
+              archive_path=output/('provider-'+key+'.tar.gz');assert gate.pin(archive_path)==provider['archive']
+              seen=set()
+              with tarfile.open(archive_path,'r:gz') as archive:
+                  for member in archive:
+                      gate.inputs.safe_windows_name(member.name);record=provider['files'].get(member.name)
+                      assert member.isfile() and not member.issym() and not member.islnk()
+                      assert record is not None and member.name not in seen and member.size==record['bytes']
+                      seen.add(member.name)
+                      with archive.extractfile(member) as stream:
+                          assert hashlib.file_digest(stream,'sha256').hexdigest()==record['sha256']
+              assert seen==set(provider['files'])
+              census[key]={'files':len(seen),'archive_pin':provider['archive'],'all_actual_leaf_sha256_checked':True}
+          pathlib.Path('out/prepared-attribution/actual-recovered-inputs.json').write_text(json.dumps({
+              'status':'exact_successful_preparation_recovered','source':'0ed6bd74bb61478c1028c29fdffa252f18707dd9',
+              'artifact_id':11856696807,'manifest_pin':gate.pin(output/gate.inputs.MANIFEST),'providers':census,
+              'Linux_preparation_reexecuted':False,'native_cases_reused_or_relabelled':False},indent=2)+'\n')
+          source.unlink()
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: coh-native-world-037-prepared-public-providers
@@ -38,6 +109,14 @@ jobs:
           compression-level: 0
           retention-days: 90
           if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-native-world-037-original-preparation-attribution
+          path: |
+            out/prepared-attribution/*.json
+          retention-days: 90
+          if-no-files-found: warn
   native-worlds:
     needs: prepare
     runs-on: windows-2022
