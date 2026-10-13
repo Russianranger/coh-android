@@ -5,7 +5,6 @@ on:
     paths:
       - 'native-android/oracle/**'
       - 'native-android/tools/dds_gate.py'
-      - 'native-android/tools/dds_diagnostics.py'
       - 'native-android/include/coh_native_core.h'
       - 'native-android/tools/corpus/**'
       - 'native-android/src/coh_dds.c'
@@ -34,7 +33,7 @@ jobs:
           python3 native-android/tools/dds_gate.py prepare --corpus native-android/results/real-corpus --library native-android/results/host/libcoh_native_core.so --output native-android/results/parity-cases --legacy
       - name: Prepare supplemental SDK behavior probes
         run: |
-          python3 native-android/tools/dds_diagnostics.py --output native-android/results/diagnostics
+          python3 native-android/oracle/generate_edge_cases.py --output native-android/results/diagnostics
           python3 native-android/tools/dds_gate.py prepare --legacy --corpus native-android/results/diagnostics --library native-android/results/host/libcoh_native_core.so --output native-android/results/diagnostic-cases
       - uses: actions/upload-artifact@v4
         with:

@@ -1,0 +1,52 @@
+
+readDXTC.section.bin:     file format binary
+
+
+Disassembly of section .data:
+
+000012f9 <.data+0x12f9>:
+    12f9:	8b 75 08             	mov    0x8(%ebp),%esi
+    12fc:	8b 46 04             	mov    0x4(%esi),%eax
+    12ff:	66 83 78 34 04       	cmpw   $0x4,0x34(%eax)
+    1304:	0f 85 d4 01 00 00    	jne    0x14de
+    130a:	81 7c 24 18 44 58 54 	cmpl   $0x31545844,0x18(%esp)
+    1311:	31 
+    1312:	74 0c                	je     0x1320
+    1314:	8a 4c 24 22          	mov    0x22(%esp),%cl
+    1318:	84 c9                	test   %cl,%cl
+    131a:	0f 85 be 01 00 00    	jne    0x14de
+    1320:	66 8b 40 32          	mov    0x32(%eax),%ax
+    1324:	66 3d 10 00          	cmp    $0x10,%ax
+    1328:	0f 85 d1 00 00 00    	jne    0x13ff
+    132e:	8b 5c 24 50          	mov    0x50(%esp),%ebx
+    1332:	c1 e3 04             	shl    $0x4,%ebx
+    1335:	8b c3                	mov    %ebx,%eax
+    1337:	0f af 44 24 78       	imul   0x78(%esp),%eax
+    133c:	8d 3c 40             	lea    (%eax,%eax,2),%edi
+    133f:	c1 ef 03             	shr    $0x3,%edi
+    1342:	57                   	push   %edi
+
+
+readDXTC.section.bin:     file format binary
+
+
+Disassembly of section .data:
+
+000014ba <.data+0x14ba>:
+    14ba:	8b 46 04             	mov    0x4(%esi),%eax
+    14bd:	8b 7c 24 28          	mov    0x28(%esp),%edi
+    14c1:	66 c7 40 34 03 00    	movw   $0x3,0x34(%eax)
+    14c7:	8b 0f                	mov    (%edi),%ecx
+    14c9:	51                   	push   %ecx
+    14ca:	e8 00 00 00 00       	call   0x14cf
+    14cf:	8b 54 24 5c          	mov    0x5c(%esp),%edx
+    14d3:	83 c4 04             	add    $0x4,%esp
+    14d6:	89 17                	mov    %edx,(%edi)
+    14d8:	89 9e a8 3d 00 00    	mov    %ebx,0x3da8(%esi)
+    14de:	8b 44 24 50          	mov    0x50(%esp),%eax
+    14e2:	5f                   	pop    %edi
+    14e3:	5e                   	pop    %esi
+    14e4:	5b                   	pop    %ebx
+    14e5:	8b e5                	mov    %ebp,%esp
+    14e7:	5d                   	pop    %ebp
+    14e8:	c3                   	ret

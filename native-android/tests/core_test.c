@@ -46,7 +46,7 @@ int main(void){
     memcpy(dds+84,"DXT5",4);dds[128]=20;dds[129]=200;memset(dds+130,0,6);
     CHECK(coh_dds_rgba(dds,144,0,rgba+4,64)==0 && rgba[7]==20);
     /* Legacy CPU rounded interpolation differs intentionally from generic BC. */
-    unsigned char legacy[64],generic[64];memcpy(dds+84,"DXT1",4);le32(dds+28,1);
+    unsigned char legacy[64],generic[64];memcpy(dds+84,"DXT1",4);le32(dds+28,1);le32(dds+8,0xa1007);
     dds[128]=0x00;dds[129]=0xf8;dds[130]=0;dds[131]=0;le32(dds+132,0xaaaaaaaau);
     CHECK(coh_dds_rgba_legacy(dds,136,0,legacy,64)==0);
     CHECK(coh_dds_rgba(dds,136,0,generic,64)==0);
@@ -58,6 +58,14 @@ int main(void){
     CHECK(coh_dds_rgba(dds,136,0,generic,64)==0);
     CHECK(legacy[2]==3 && generic[2]==2);
     CHECK(coh_dds_rgba_legacy(dds,135,0,legacy,64)==1);
+    le32(dds+8,0);memset(legacy,0xa5,64);
+    CHECK(coh_dds_rgba_legacy(dds,136,0,legacy,64)==2);CHECK(legacy[0]==0xa5);
+    le32(dds+8,0xa1007);dds[128]=0;dds[129]=0;dds[130]=0xff;dds[131]=0xff;le32(dds+132,0xffffffffu);
+    CHECK(coh_dds_rgba_legacy(dds,136,0,legacy,64)==0 && legacy[0]==0 && legacy[3]==255);
+    CHECK(coh_dds_rgba(dds,136,0,generic,64)==0 && generic[3]==0);
+    memcpy(dds+84,"DXT5",4);memset(dds+128,0,16);dds[136]=0xff;dds[137]=0xff;
+    CHECK(coh_dds_rgba_legacy(dds,144,0,legacy,64)==0 && legacy[0]==255 && legacy[3]==255);
+    CHECK(coh_dds_rgba(dds,144,0,generic,64)==0 && generic[0]==255 && generic[3]==0);
     printf("{\"passed\":true,\"checks\":%u,\"pointer_bytes\":%zu,\"long_bytes\":%zu,\"platform\":\"%s\"}\n",checks,sizeof(void*),sizeof(long),
 #ifdef __ANDROID__
         "Android Bionic"

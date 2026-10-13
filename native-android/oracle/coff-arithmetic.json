@@ -1,5 +1,5 @@
 {
-  "status": "static deconstruction inference; full SDK oracle execution pending",
+  "status": "Static deconstruction: palette arithmetic checked against 111 actual original Win32 SDK real mip golden outputs; alpha-depth edge cases pending targeted original probes",
   "library": "upstream/ouroboros/3rdparty/nvdxt/Release/nvDXTlibMT_S.lib",
   "library_sha256": "1e9988ad52a01f44368d8d4150990ef2a033536a7a705424f04333143cd63b73",
   "archive_member": "./ReleaseMT_STATIC_CPPLIB/dxt_interface.obj",
@@ -38,6 +38,17 @@
       "relocation_offset": 9744,
       "relocations": 51,
       "code_sha256": "081787fd024f7573e793d40ed82109557dfe012c475b6658f3f6c8a3462b7c50"
+    },
+    {
+      "symbol": "?readDXTC@@YAJPAUGlobals@@@Z",
+      "archive_member": "./ReleaseMT_STATIC_CPPLIB/Compdcmp.obj",
+      "archive_member_sha256": "70a8906326f2fe5414564475fb1fe1f05df4095d29ee7fb90004d2b8d5308d57",
+      "symbol_offset": 0,
+      "section_index": 92,
+      "section_name": ".text",
+      "code_bytes": 5634,
+      "object_file_offset": 17498,
+      "code_sha256": "e6bcd0092d3a1c02feae68a1dcd281d61a022f5da4d8b0ad77767e54979bf79a"
     }
   ],
   "inferences": [
@@ -96,7 +107,22 @@
         "0xca6..0xcf4"
       ],
       "formula": "DXT1 assigns whole palette word; DXT3/5 preserves existing alpha then ORs RGB palette, including RGB when alpha is zero"
+    },
+    {
+      "function": "readDXTC",
+      "offsets": [
+        "0x12ff..0x1320",
+        "0x14ba..0x14c7"
+      ],
+      "formula": "When output is four channels, original DXT1 FourCC unconditionally selects RGB stripping and sets depth3. DXT3/5 retain four channels only if nonzero alpha was observed. This edge condition requires fixture-specific whole-SDK probes."
     }
   ],
-  "reproduce": "ar pP upstream/ouroboros/3rdparty/nvdxt/Release/nvDXTlibMT_S.lib ./ReleaseMT_STATIC_CPPLIB/dxt_interface.obj; extract each indexed COFF section raw bytes; objdump -D -b binary -m i386 (selected range for DXTCdecode)"
+  "reproduce": "ar pP upstream/ouroboros/3rdparty/nvdxt/Release/nvDXTlibMT_S.lib ./ReleaseMT_STATIC_CPPLIB/dxt_interface.obj; extract each indexed COFF section raw bytes; objdump -D -b binary -m i386 (selected range for DXTCdecode)",
+  "palette_validation": {
+    "reference_run": 38444717483,
+    "reference_commit": "74789ff97fb4dc5e533040817f7d5fd15b1fec84",
+    "scope": "Audited equations independently predicted actual original SDK output for real DXT1/5 inputs; does not qualify uncovered alpha-depth edges or substitute for native-core comparison",
+    "passed_cases": 111,
+    "rgba_bytes": 7013800
+  }
 }

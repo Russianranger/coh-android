@@ -5,10 +5,10 @@ import json
 from pathlib import Path
 import struct
 
-def dds(code, block, pixel_flags=4):
+def dds(code, block, pixel_flags=4, width=4, height=4):
     header = bytearray(128)
     header[:4] = b"DDS "
-    for offset, value in ((4,124),(8,0x81007),(12,4),(16,4),(20,len(block)),(28,1),(76,32),(80,pixel_flags),(108,0x1000)):
+    for offset, value in ((4,124),(8,0xA1007),(12,height),(16,width),(20,len(block)),(28,1),(76,32),(80,pixel_flags),(108,0x1000)):
         struct.pack_into("<I", header, offset, value)
     header[84:88] = code.encode("ascii")
     return bytes(header) + block
@@ -35,6 +35,14 @@ def main():
     selectors = sum((i%8)<<(i*3) for i in range(16)).to_bytes(6,"little")
     for pair in ((211,17),(17,211),(0,0),(255,255),(1,0),(0,1)):
         cases[f"synthetic-dxt5-alpha-{pair[0]}-{pair[1]}"] = dds("DXT5",bytes(pair)+selectors+color_round)
+    for width,height in ((1,1),(2,2)):
+        visible={y*4+x for y in range(height)for x in range(width)}
+        for visible_alpha in (0,255):
+            # Endpoint0=255/index0, endpoint1=0/index1. All padding pixels have
+            # the opposite alpha, identifying whether SDK stripping scans them.
+            bits=sum((0 if (i in visible)==bool(visible_alpha) else 1)<<(i*3)for i in range(16))
+            block=bytes([255,0])+bits.to_bytes(6,"little")+color_white
+            cases[f"synthetic-dxt5-visible-{width}x{height}-alpha{visible_alpha}"]=dds("DXT5",block,width=width,height=height)
     for name, data in cases.items():
         (a.output/(name+".dds")).write_bytes(data)
     print(json.dumps({"synthetic_cases":len(cases),"scope":"DXT1 CPU alpha stripping, DXT3/5 endpoint order, all-zero alpha and rounding probes; not game assets"}))

@@ -27,6 +27,7 @@ static void rgb565(uint16_t v,uint8_t *c){
 }
 static int decode_rgba(const uint8_t *p,size_t n,uint32_t level,uint8_t *out,size_t capacity,int legacy){
     CohDdsMip v;int status=coh_dds_mip(p,n,level,&v);if(status)return status;
+    if(legacy && !(u32(p+8)&0x20000u))return 2; /* qualified producer mip-count contract */
     if(!out||capacity<v.rgba_bytes)return 1;
     /* Caller must supply a disjoint output buffer. No input/output overlap. */
     uintptr_t a=(uintptr_t)p,b=(uintptr_t)out;
@@ -55,6 +56,13 @@ static int decode_rgba(const uint8_t *p,size_t n,uint32_t level,uint8_t *out,siz
             if(v.format==5)dst[3]=alpha[(abits>>(i*3))&7];
         }
         block+=v.format==1?8:16;
+    }
+    if(legacy){
+        /* The raw SDK consumer expands depth3 with opaque alpha. nvDXT always
+         * strips DXT1 alpha, and strips DXT3/5 when visible alpha is all zero. */
+        int has_alpha=0;
+        if(v.format!=1)for(size_t i=3;i<v.rgba_bytes;i+=4)has_alpha|=out[i];
+        if(!has_alpha)for(size_t i=3;i<v.rgba_bytes;i+=4)out[i]=255;
     }
     return 0;
 }
