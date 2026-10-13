@@ -1,0 +1,101 @@
+name: Native Atlas and Kings world parity for retained Map metadata candidate
+on:
+  push:
+    branches: [codex/native-map-world-037]
+    paths:
+      - .github/workflows/android-native-map-world-037.yml
+      - tools/android/interactive/prepare_native_map_world_inputs_037.py
+      - tools/android/interactive/qualify_native_map_world_037.py
+      - tools/android/interactive/test_native_map_world_037.py
+  workflow_dispatch:
+permissions: {contents: read, actions: read}
+concurrency:
+  group: native-map-world-037-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Validate native world evidence boundaries and hostile provider cases
+        run: python3 -m unittest discover -s tools/android/interactive -p test_native_map_world_037.py
+      - name: Admit large original assets and owned prepared provider storage
+        run: |
+          test "${RUNNER_ENVIRONMENT:-}" = github-hosted
+          sudo rm -rf -- /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL
+          python3 -c "import shutil; assert shutil.disk_usage('.').free >= 30*1024**3"
+      - name: Prepare public audited .36 Atlas and Kings provider bytes using actual packaged scripts
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: >-
+          python3 tools/android/interactive/prepare_native_map_world_inputs_037.py
+          --cache out/original-assets --output out/prepared-worlds
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-native-world-037-prepared-public-providers
+          path: out/prepared-worlds/
+          compression-level: 0
+          retention-days: 90
+          if-no-files-found: error
+  native-worlds:
+    needs: prepare
+    runs-on: windows-2022
+    timeout-minutes: 180
+    steps:
+      - name: Preserve committed source bytes on Windows
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/download-artifact@v4
+        with: {name: coh-native-world-037-prepared-public-providers, path: out/prepared-worlds}
+      - name: Reuse exact successful native builds without recompilation
+        shell: bash
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          mkdir -p out/retained-history out/candidate-history
+          gh api repos/Russianranger/coh-android/actions/runs/38345782437 > out/retained-history/run.json
+          gh api repos/Russianranger/coh-android/actions/runs/38345782437/jobs > out/retained-history/jobs.json
+          gh api repos/Russianranger/coh-android/actions/artifacts/11788852713 > out/retained-history/artifact.json
+          gh api repos/Russianranger/coh-android/actions/artifacts/11788852713/zip > out/retained-history/artifact.zip
+          python tools/reuse_native_startup_profile.py --archive out/retained-history/artifact.zip --output out/native-baseline --run-metadata out/retained-history/run.json --jobs-metadata out/retained-history/jobs.json --artifact-metadata out/retained-history/artifact.json > out/retained-history/reuse-admission.json
+          gh api repos/Russianranger/coh-android/actions/runs/38350813669 > out/candidate-history/run.json
+          gh api repos/Russianranger/coh-android/actions/runs/38350813669/jobs > out/candidate-history/jobs.json
+          gh api repos/Russianranger/coh-android/actions/artifacts/11790609618 > out/candidate-history/artifact.json
+          gh api repos/Russianranger/coh-android/actions/artifacts/11790609618/zip > out/candidate-history/artifact.zip
+          python tools/reuse_native_map_prefetch.py --archive out/candidate-history/artifact.zip --output out/native-candidate --baseline out/native-baseline --run-metadata out/candidate-history/run.json --jobs-metadata out/candidate-history/jobs.json --artifact-metadata out/candidate-history/artifact.json > out/candidate-history/reuse-admission.json
+      - name: Validate portable parsers before genuine native execution
+        run: python -m unittest discover -s tools/android/interactive -p test_native_map_world_037.py
+      - name: Install the public APK exact x86 PostgreSQL ODBC driver
+        shell: pwsh
+        run: |
+          python -c "import hashlib,pathlib,zipfile; p=pathlib.Path('out/psqlodbc_x86.msi'); raw=zipfile.ZipFile('out/prepared-worlds/COH-Atlas-Gameplay-0.13.36.apk').read('assets/runtime/psqlodbc_x86.msi'); assert hashlib.sha256(raw).hexdigest()=='1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773'; p.write_bytes(raw)"
+          $installer = Start-Process -FilePath msiexec.exe -ArgumentList @('/i', (Resolve-Path 'out/psqlodbc_x86.msi').Path, '/qn', '/norestart') -PassThru -Wait
+          if ($installer.ExitCode -notin @(0,3010)) { throw "Pinned x86 ODBC installer failed: $($installer.ExitCode)" }
+          $driver = Get-OdbcDriver -Platform '32-bit' | Where-Object { $_.Name -eq 'PostgreSQL Unicode' }
+          if (-not $driver) { throw 'Required x86 PostgreSQL Unicode driver missing' }
+      - name: Qualify actual full and SERVER-only FX Atlas and Kings worlds on disposable PostgreSQL
+        shell: pwsh
+        run: |
+          if (-not $env:PGBIN -or -not (Test-Path "$env:PGBIN/pg_ctl.exe")) { throw 'Hosted runner PostgreSQL bin unavailable' }
+          python tools/android/interactive/qualify_native_map_world_037.py --inputs out/prepared-worlds --baseline out/native-baseline --candidate out/native-candidate --repository-commit "$env:GITHUB_SHA" --bin "$env:PGBIN" --driver 'PostgreSQL Unicode' --work "C:/coh-world-$env:GITHUB_RUN_ID" --output out/native-world-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-native-world-037-executed-evidence
+          path: out/native-world-evidence/
+          retention-days: 90
+          if-no-files-found: warn
+      - name: Remove downloaded ZIP duplicates from native build attribution
+        if: always()
+        shell: pwsh
+        run: Remove-Item -LiteralPath 'out/retained-history/artifact.zip','out/candidate-history/artifact.zip' -Force -ErrorAction SilentlyContinue
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-native-world-037-retained-build-attribution
+          path: |
+            out/retained-history/
+            out/candidate-history/
+          retention-days: 90
+          if-no-files-found: warn
