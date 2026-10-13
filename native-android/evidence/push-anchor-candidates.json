@@ -1,0 +1,54 @@
+{
+  "sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+  "method": "literal x86 PUSH immediate-byte candidates in executable sections, instruction validity still requires disassembly",
+  "anchors": [
+    {
+      "name": "nvDXT",
+      "string_va": "0xa94b00",
+      "section": ".text",
+      "candidate_pushes": [
+        {
+          "va": "0x62e66c",
+          "file_offset": 2284140,
+          "candidate_frame_entry": "0x62e640"
+        }
+      ]
+    },
+    {
+      "name": "PhysX preload",
+      "string_va": "0xadf2a4",
+      "section": ".text",
+      "candidate_pushes": [
+        {
+          "va": "0x8f67b6",
+          "file_offset": 5200822,
+          "candidate_frame_entry": "0x8f6790"
+        }
+      ]
+    },
+    {
+      "name": "PhysX DLL",
+      "string_va": "0xadf284",
+      "section": ".text",
+      "candidate_pushes": [
+        {
+          "va": "0x8f67a1",
+          "file_offset": 5200801,
+          "candidate_frame_entry": "0x8f6790"
+        }
+      ]
+    },
+    {
+      "name": "WGL failure",
+      "string_va": "0xa9e63c",
+      "section": ".text",
+      "candidate_pushes": [
+        {
+          "va": "0x67bcc8",
+          "file_offset": 2601160,
+          "candidate_frame_entry": "0x67bc40"
+        }
+      ]
+    }
+  ]
+}

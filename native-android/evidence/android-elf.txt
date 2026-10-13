@@ -1,0 +1,196 @@
+
+File: /workspace/scratch/119099198117/phase2-evidence/android-arm64/coh-native-core-tests
+Format: elf64-littleaarch64
+Arch: aarch64
+AddressSize: 64bit
+LoadName: <Not found>
+ElfHeader {
+  Ident {
+    Magic: (7F 45 4C 46)
+    Class: 64-bit (0x2)
+    DataEncoding: LittleEndian (0x1)
+    FileVersion: 1
+    OS/ABI: SystemV (0x0)
+    ABIVersion: 0
+    Unused: (00 00 00 00 00 00 00)
+  }
+  Type: SharedObject (0x3)
+  Machine: EM_AARCH64 (0xB7)
+  Version: 1
+  Entry: 0x58F8
+  ProgramHeaderOffset: 0x40
+  SectionHeaderOffset: 0x34E0
+  Flags [ (0x0)
+  ]
+  HeaderSize: 64
+  ProgramHeaderEntrySize: 56
+  ProgramHeaderCount: 11
+  SectionHeaderEntrySize: 64
+  SectionHeaderCount: 25
+  StringTableSectionIndex: 23
+}
+ProgramHeaders [
+  ProgramHeader {
+    Type: PT_PHDR (0x6)
+    Offset: 0x40
+    VirtualAddress: 0x40
+    PhysicalAddress: 0x40
+    FileSize: 616
+    MemSize: 616
+    Flags [ (0x4)
+      PF_R (0x4)
+    ]
+    Alignment: 8
+  }
+  ProgramHeader {
+    Type: PT_INTERP (0x3)
+    Offset: 0x2A8
+    VirtualAddress: 0x2A8
+    PhysicalAddress: 0x2A8
+    FileSize: 21
+    MemSize: 21
+    Flags [ (0x4)
+      PF_R (0x4)
+    ]
+    Alignment: 1
+  }
+  ProgramHeader {
+    Type: PT_LOAD (0x1)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 6392
+    MemSize: 6392
+    Flags [ (0x4)
+      PF_R (0x4)
+    ]
+    Alignment: 16384
+  }
+  ProgramHeader {
+    Type: PT_LOAD (0x1)
+    Offset: 0x18F8
+    VirtualAddress: 0x58F8
+    PhysicalAddress: 0x58F8
+    FileSize: 4136
+    MemSize: 4136
+    Flags [ (0x5)
+      PF_R (0x4)
+      PF_X (0x1)
+    ]
+    Alignment: 16384
+  }
+  ProgramHeader {
+    Type: PT_LOAD (0x1)
+    Offset: 0x2920
+    VirtualAddress: 0xA920
+    PhysicalAddress: 0xA920
+    FileSize: 480
+    MemSize: 1760
+    Flags [ (0x6)
+      PF_R (0x4)
+      PF_W (0x2)
+    ]
+    Alignment: 16384
+  }
+  ProgramHeader {
+    Type: PT_LOAD (0x1)
+    Offset: 0x2B00
+    VirtualAddress: 0xEB00
+    PhysicalAddress: 0xEB00
+    FileSize: 24
+    MemSize: 36
+    Flags [ (0x6)
+      PF_R (0x4)
+      PF_W (0x2)
+    ]
+    Alignment: 16384
+  }
+  ProgramHeader {
+    Type: PT_DYNAMIC (0x2)
+    Offset: 0x2920
+    VirtualAddress: 0xA920
+    PhysicalAddress: 0xA920
+    FileSize: 368
+    MemSize: 368
+    Flags [ (0x6)
+      PF_R (0x4)
+      PF_W (0x2)
+    ]
+    Alignment: 8
+  }
+  ProgramHeader {
+    Type: PT_GNU_RELRO (0x6474E552)
+    Offset: 0x2920
+    VirtualAddress: 0xA920
+    PhysicalAddress: 0xA920
+    FileSize: 480
+    MemSize: 1760
+    Flags [ (0x4)
+      PF_R (0x4)
+    ]
+    Alignment: 1
+  }
+  ProgramHeader {
+    Type: PT_GNU_EH_FRAME (0x6474E550)
+    Offset: 0x16E8
+    VirtualAddress: 0x16E8
+    PhysicalAddress: 0x16E8
+    FileSize: 108
+    MemSize: 108
+    Flags [ (0x4)
+      PF_R (0x4)
+    ]
+    Alignment: 4
+  }
+  ProgramHeader {
+    Type: PT_GNU_STACK (0x6474E551)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0
+    MemSize: 0
+    Flags [ (0x6)
+      PF_R (0x4)
+      PF_W (0x2)
+    ]
+    Alignment: 0
+  }
+  ProgramHeader {
+    Type: PT_NOTE (0x4)
+    Offset: 0x2C0
+    VirtualAddress: 0x2C0
+    PhysicalAddress: 0x2C0
+    FileSize: 152
+    MemSize: 152
+    Flags [ (0x4)
+      PF_R (0x4)
+    ]
+    Alignment: 4
+  }
+]
+DynamicSection [ (23 entries)
+  Tag                Type       Name/Value
+  0x0000000000000001 NEEDED     Shared library: [libm.so]
+  0x0000000000000001 NEEDED     Shared library: [libdl.so]
+  0x0000000000000001 NEEDED     Shared library: [libc.so]
+  0x000000000000001E FLAGS      BIND_NOW 
+  0x000000006FFFFFFB FLAGS_1    NOW PIE 
+  0x0000000000000015 DEBUG      0x0
+  0x0000000000000007 RELA       0x4F8
+  0x0000000000000008 RELASZ     120 (bytes)
+  0x0000000000000009 RELAENT    24 (bytes)
+  0x000000006FFFFFF9 RELACOUNT  4
+  0x0000000000000017 JMPREL     0x570
+  0x0000000000000002 PLTRELSZ   168 (bytes)
+  0x0000000000000003 PLTGOT     0xAAB0
+  0x0000000000000014 PLTREL     RELA
+  0x0000000000000006 SYMTAB     0x358
+  0x000000000000000B SYMENT     24 (bytes)
+  0x0000000000000005 STRTAB     0x484
+  0x000000000000000A STRSZ      110 (bytes)
+  0x000000006FFFFEF5 GNU_HASH   0x468
+  0x000000006FFFFFF0 VERSYM     0x430
+  0x000000006FFFFFFE VERNEED    0x444
+  0x000000006FFFFFFF VERNEEDNUM 1
+  0x0000000000000000 NULL       0x0
+]

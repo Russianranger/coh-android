@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "scope": "Host Linux LP64 only; synthetic asset records, independent OpenSSL algorithm oracle; no Thor/full client result",
+  "pointer_bytes": 8,
+  "long_bytes": 8,
+  "high_address_tested": true,
+  "library_sha256": "5450d8822c5e73b99262088e3fb7c4aff40b3d2a25d63b21bbecf7af0e39590e",
+  "counts": {
+    "known_vectors": 34,
+    "unaligned_vector_cases": 272,
+    "oracle_cases": 2000,
+    "oracle_blocks": 32716,
+    "truncation_cases": 11184,
+    "mutation_cases": 48,
+    "geometry_versions": 6,
+    "pack_cases": 6
+  }
+}
