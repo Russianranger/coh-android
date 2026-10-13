@@ -16,8 +16,13 @@ import sys
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(ROOT/'tools/android/atlasgame'),str(ROOT/'android/guest')]
-import prepare_server_caches as preload
-import prepare_server_fx_catalog as fx
+# Observation parsers are also validated on Windows. The actual Wine process
+# supervisor depends on POSIX fcntl and is admitted only for Linux execution.
+if os.name == 'posix':
+    import prepare_server_caches as preload
+    import prepare_server_fx_catalog as fx
+else:
+    preload = fx = None
 import package_native_startup_profile as package
 from map_startup_namespace_certificate import require
 
@@ -91,6 +96,8 @@ def prefetch_observation(raw):
 
 
 def qualify(args):
+    require(os.name=='posix' and preload is not None and fx is not None,
+        'Actual owned Wine qualification requires a POSIX host')
     require(re.fullmatch('[0-9a-f]{40}',args.repository_commit) and 30<=args.timeout_seconds<=3600,
             'Exact source and bounded host qualification duration required')
     if getattr(args,'reuse_completed_windows_package',False):
