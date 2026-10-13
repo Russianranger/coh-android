@@ -1,0 +1,56 @@
+# Phase 8: complete source character assembly
+
+This isolated `org.coh.characterprobe` package, version `0.1.0-phase8`, expands the accepted Thor animation probe into the complete source-selected Arachnos Wretch character. It reconstructs actor morphology, all costume draw instances, actual texture overrides and a source-defined COLORBLEND_DUAL renderer profile. It is a bounded native character probe for Android Bionic ARM64.
+
+## Real costume and asset recovery
+
+The authored costume has ten visible categories and eleven real draw instances: pants, chest, head, left glove, both boots, belt, hair, neck, sleeves and shoulder assembly. The selected right glove model is absent from the original asset; original lookup accepts `None`. The probe retains that asymmetry and does not invent a mirrored model.
+
+The fixture has 2,626 vertices, 2,986 triangles, 620 genuine blended vertices and 45 per-draw bone palette entries. The head uses older GEO version two; other costume files use version three. Missing bone-info geometry uses the recovered original one-bone adapter. Original geometry expansion is checked against unchanged source functions across 66 channels and 40,470 scalar elements. Canonical geometry preserves the original UV flip and byte-weight conversion.
+
+Seventeen real mip-zero runtime textures supply the source-selected low-profile materials, including actual `grey.texture` and `white.texture` assets. Large release archives are read using bounded HTTP ranges, stable ETags, exact ZIP envelopes, CRC and complete member SHA256 pins; whole archive hashes remain release-declared rather than locally verified. All five JNI assets have exact byte and SHA256 manifests.
+
+See [the binding contract](character-probe/contract/README.md), [material resolution](character-probe/contract/MATERIALS.md) and [asset provenance](tools/character_fixture/PROVENANCE.md).
+
+## Actor morphology and source operation order
+
+The real huge base skeleton and run clip remain unchanged. The native actor computes Wretch's actual costume body parameters and type parameters, including entity geometry scale 1.3, from a bounded source-scale input. The `COHMOR01` fixture retains 99 original large/skinny model-scale triples and appearance/type parameters; it contains no sampled palettes.
+
+Morph translations are added before animation-delta subtraction. Limb scale/unscale operations and root/hip corrections preserve original order. Entity scale is applied at the outer root before hierarchy composition. Render bone scale applies as `parent_world * (local_node * bone_scale)` and does not propagate into children; source traversal stores the unscaled node world matrix. Palettes then perform inverse-bind and attachment translations as two original point transforms.
+
+The accepted raw animation implementation is included once by the new character module. Accepted Phase 6/7 files are preserved. The unchanged source actor oracle executes original morphology, node-animation and scale/unscale functions under documented neutral single-clip compatibility helpers. The independent Python reference consumes those source local channels, then computes full hierarchy, node scales, per-draw socket palettes and all skinned vertex positions/normals. It does not call the portable sampler.
+
+## Source-selected material profile and draw state
+
+The probe disables original MULTITEX and BUMPMAPS capabilities, selecting genuine source COLORBLEND_DUAL paths for the costume's six X_* material identities. Five use automatic MULTI fallback; Chest first demotes to the older bump-dual path and then suppresses bump mapping. Actual Base1/detail-mask identities and original costume colors are retained. White and non-swappable masks follow source override rules.
+
+Stored fallback lighting factors are metadata; the original boned dual path directly uploads actor lighting and does not apply those stored half factors. The probe uses controlled lighting, nearest mip-zero sampling and clamp addressing. Advanced multi-layer, bump and reflection variants remain unqualified.
+
+Source clockwise front faces and back culling are used except genuine DoubleSided Hair and Neck. Hair's actual mask retains alpha 0–216 and source-over blending. Depth writes remain enabled: original GEO alpha-sorting suppression and disabled custom-override alpha detection do not support inventing automatic late hair or disabled depth writes. The probe uses deterministic declared draw order; original whole-scene type/distance sorting remains outside this gate. [The alpha-order audit](character-probe/contract/alpha-order-source-audit.md) preserves this distinction.
+
+## Native qualification design
+
+Six checkpoints at frames 1, 1.5, 5.25, 12.5, 24.5 and 25 check the full 60-node actor hierarchy, morphology, all eleven palettes and 2,626 vertex outputs. GPU transform feedback checks every position and normal. Each draw receives a standalone GPU-versus-independent-reference image check; six assembled images also compare RGBA outside the reported two-pixel triangle-edge guard. Every part requires useful standalone coverage. Float tolerance remains 1e-4 and RGBA tolerance two byte units.
+
+Sixty-six material cases exercise actual costume colors, masks, alpha, fog and blending; forty-four use real texture pairs and twenty-two add an explicitly controlled secondary swatch. The accepted GLSL shader sources remain unchanged. GPU-skinned and reference-geometry image paths share vertex lighting; transform feedback independently checks geometry and normals.
+
+Each JNI call creates and releases two EGL contexts. Each context samples original raw keys and presents 45 animated frames, requiring a source clock wrap, distinct palettes and visible GPU image changes. The camera fits all preview frames plus fractional checkpoints. Final-window RGB checks follow the preview. Java preserves actual two-axis resize, generation/request guards, sticky active failures, obsolete-result exclusion and immutable foreground export.
+
+## Qualification status
+
+Original source actor checks passed 11,469 float comparisons at six checkpoints with zero error. Native structural compilation passed with primary Khronos GLES/EGL headers and limited Android-window declarations; actual SDK/NDK compilation and GPU execution are the hosted Android gate, currently pending. Physical Thor acceptance of this package is pending. Accepted Thor Phase 7 remains in [its receipt](evidence/phase7/thor-qualification.json).
+
+## Thor acceptance procedure
+
+1. Install **CoH Native Character Probe** beside the previous probes.
+2. Confirm the complete Wretch appears and animates during each check. Wait, use **Resize surface**, then **Recreate surface**, waiting for each check.
+3. Press Home, return and wait for the current foreground check. **Run check** replays the bounded animation.
+4. Confirm **CHARACTER GATE PASSED**, then export JSON and return it with a screenshot. Preserve failed-session exports before restarting.
+
+Accept only actual ARM64 Thor/Adreno evidence with matching five-asset hashes, nonzero per-part transform/image coverage, all actor/material comparisons passing, clean errors/cleanup, two actual widths and heights, separate Surface generations and foreground recovery.
+
+## Limits and following work
+
+This gate covers one complete source character in a controlled source renderer profile and one real animation clip. It does not execute the full movement-driven sequencer, transitions, aiming, collision, cloth/effects, player customization or the complete Windows Game. Original Cg/driver capture, high-quality materials, mip/filter families and original scene sorting remain separate. Unexpected GPU reset, process death and continuous frame pacing are unqualified. It makes no playable-client FPS, startup or zoning claim.
+
+Following device acceptance, recover and qualify scene rendering, camera/world transforms and remaining material passes before native input, networking and playable-client integration.

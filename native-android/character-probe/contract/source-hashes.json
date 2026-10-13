@@ -1,0 +1,134 @@
+{
+  "format": "phase8-character-binding-source-pins-v1",
+  "repository_checkout_head": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "files": [
+    {
+      "path": "upstream/i24/data/defs/v_villain_costumes/v_arachnos_henchmen.nd",
+      "bytes": 69941,
+      "sha256": "db73b840f0339fb211ac75bcb3680f85de8ff60daf23793f9480fd6a5f02f419",
+      "git_blob": "483ff3ee6d49a04bf105e3c0bdd71913e2fe0346"
+    },
+    {
+      "path": "upstream/i24/data/defs/ui/bodyparts.bp",
+      "bytes": 5218,
+      "sha256": "21aedaa7b4c901a6e6b8a1a7684f343dba675adc0472bdc6053d378ece37558d",
+      "git_blob": "899dd71bfa0553485555338c658dfa753e8f4f85"
+    },
+    {
+      "path": "upstream/i24/data/ent_types/v_arachnos_wretch.txt",
+      "bytes": 1203,
+      "sha256": "33c3e292cf87c4334259a51d1387718cf3bc887517498b5903e61a988cd6468c",
+      "git_blob": "673efd4b86a9ba0cda7409915ae68390117c0bcf"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/bones.h",
+      "bytes": 3012,
+      "sha256": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+      "git_blob": "1c58b91aea72e40ed66511d6f8ba80d671a658f7"
+    },
+    {
+      "path": "upstream/ouroboros/Common/gameData/BodyPart.c",
+      "bytes": 4246,
+      "sha256": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "git_blob": "08120a0491aeb3eebc915380585d4ff343640f7f"
+    },
+    {
+      "path": "upstream/ouroboros/Common/entity/costume.c",
+      "bytes": 147848,
+      "sha256": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+      "git_blob": "a1703bed61f06f92fdc7b25ace0c4b6b1adc8131"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/entity/costume_client.c",
+      "bytes": 31319,
+      "sha256": "b89818e2c2c834efd14f90e8af882d572b9c24337f9f2a699150d2d1648925f2",
+      "git_blob": "5d942af926a39f1e3b281642001f4223faa9c43f"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/entity/entclient.c",
+      "bytes": 129281,
+      "sha256": "a11e3b84a2dc87daf2302df674f5af15260c32180494ca1b75af9e44786c7c2d",
+      "git_blob": "3e1db3120349681c275ff5139010abe244223e0d"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/model_cache.c",
+      "bytes": 18214,
+      "sha256": "23297301f34737585d65e39fc8b01445e5b4a8f665ac9cb49e9101f6f2cf299b",
+      "git_blob": "fe9480bd52a45006cced14f2c30d3b51cedcd6e9"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/anim.c",
+      "bytes": 88082,
+      "sha256": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+      "git_blob": "86ee0b4c9fbbb90aaf28f14a0b0664ee1098ca80"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/rendertree.c",
+      "bytes": 128217,
+      "sha256": "9160762900e4f1a9124b7e852e8f98b0336934343eceddbaf37775c03c9c0e32",
+      "git_blob": "ac721e5583eac2be2f01cc5510c8978f92b1d07e"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/seqregistration.c",
+      "bytes": 34480,
+      "sha256": "9ccf1b75e4def1a549e7bc2adc9227548111140807ab969ededacc031bdddb98",
+      "git_blob": "44ff63fd244e88afb5f6e64304a233e4a2bbe6fa"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/seqanimate.c",
+      "bytes": 28057,
+      "sha256": "a4926555f4da4052058f06d28a195edcedae16cb7e905c05e8963afe9915ed22",
+      "git_blob": "160e1ea481dfdd3b14c1a62cccb3edd50467e563"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/seqskeleton.c",
+      "bytes": 38072,
+      "sha256": "b0c01576fa013f05d507e0f638550866810dd63cfb1ee1106cf9f96f7477a47c",
+      "git_blob": "bea426ba4b397b5ee2cd7aa2609482311993534c"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/model.c",
+      "bytes": 15456,
+      "sha256": "5a5fb0d03c94450b108436c4d67e1503246e72627cc6155d23ddc1e557755072",
+      "git_blob": "1ea29021d5ead27d1ed72a1d09b330e54b0bdcf9"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/graphics/gfx.c",
+      "bytes": 58931,
+      "sha256": "9965ea6a472a8b693015540a53142cdf023a2399ecc9dc88f338c5f0b4f42a7e",
+      "git_blob": "ed836bf84948ec379d4eb4161472abb7a87b2edc"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_tricks.c",
+      "bytes": 21101,
+      "sha256": "216c067b615a7979ade777d0dac85bd5374ab7929bbac4cc2f9b693363a7da65",
+      "git_blob": "f28c7444ffde680e4fb9d78d45eba2a405cd84ef"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/wcw_statemgmt.c",
+      "bytes": 141028,
+      "sha256": "d71db41cf955abe9c3fb188f3e784d033bc2a2fbd912e0964df334e5d783b879",
+      "git_blob": "a7c7627a7960d0ccbee5a87acb0efed40ae4f3b8"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_state.c",
+      "bytes": 48356,
+      "sha256": "6d80cb17585e40a3e1dea7f51d2d9d1129af2569ed6b9fe770dc7aaea734ea0d",
+      "git_blob": "22518c3b4bb885faac1857ced9e3a3e507c2a064"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_bonedmodel.c",
+      "bytes": 20404,
+      "sha256": "e64ec178a7fc90b260da7c9be8aadbd5014c2dd0e909ae221630b5ea4ae74325",
+      "git_blob": "eb68bde128c10870dc00f4f70b9081a1ab631907"
+    },
+    {
+      "path": "upstream/i24/data/tricks/hero_bump.txt",
+      "bytes": 168101,
+      "sha256": "ca7e291d4c7b76f48eb6265b1168c6bbb9e77383a2f12591bde1e3cc25fea00d",
+      "git_blob": "bd70d9a42fcc88a171dd8fd0fd87b2ca27270dcf"
+    }
+  ],
+  "upstream_working_files_modified": false,
+  "original_runtime_capture": false
+}

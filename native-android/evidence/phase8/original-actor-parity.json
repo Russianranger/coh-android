@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "source_kernel_count": 30,
+  "new_actor_functions": [
+    {
+      "source": "mathutil.h",
+      "function": "mulMat3Inline"
+    },
+    {
+      "source": "mathutil.c",
+      "function": "mulMat3"
+    },
+    {
+      "source": "mathutil.c",
+      "function": "scaleMat3Vec3"
+    },
+    {
+      "source": "seqregistration.c",
+      "function": "unscaleBone"
+    },
+    {
+      "source": "seqregistration.c",
+      "function": "scaleBone"
+    },
+    {
+      "source": "seqskeleton.c",
+      "function": "changeBoneScaleEx"
+    },
+    {
+      "source": "seqanimate.c",
+      "function": "animGetNextFrame"
+    },
+    {
+      "source": "seqanimate.c",
+      "function": "computeHipCorrectionScale"
+    },
+    {
+      "source": "seqanimate.c",
+      "function": "animateGfxNodeBone"
+    }
+  ],
+  "source_pins": {
+    "mathutil.h": {
+      "sha256_lf": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "functions": {
+        "mulMat3Inline": "588b61c732ce238dbde15f6ee3e682a5034c8bb36270e1d4503b55dffe375d16"
+      }
+    },
+    "mathutil.c": {
+      "sha256_lf": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "functions": {
+        "mulMat3": "2a2726749f2a887ee256cbc2d419b3f59dff205531d573cf545529aa203da4c9",
+        "scaleMat3Vec3": "a25503311cdffb1c03ac89fa2019cb87e4a732f3c4e036d7ef033c3e0824ded9"
+      }
+    },
+    "seqregistration.c": {
+      "sha256_lf": "9ccf1b75e4def1a549e7bc2adc9227548111140807ab969ededacc031bdddb98",
+      "functions": {
+        "unscaleBone": "fe426803f8423a49b95d5b2036fd9643b42d59f6d220a4bfcd282d7051ea087c",
+        "scaleBone": "7ba5fa545d632ee9e7e1d91ae5ecfbc7e23c738c9ad586c1b467cc6880ede11c"
+      }
+    },
+    "seqskeleton.c": {
+      "sha256_lf": "b0c01576fa013f05d507e0f638550866810dd63cfb1ee1106cf9f96f7477a47c",
+      "functions": {
+        "changeBoneScaleEx": "f6adcdb092cb3cdb75a2746b0c54181efb0cdacf8493a892fa5d7ed380627573"
+      }
+    },
+    "seqanimate.c": {
+      "sha256_lf": "a4926555f4da4052058f06d28a195edcedae16cb7e905c05e8963afe9915ed22",
+      "functions": {
+        "animGetNextFrame": "3eff2f5cd3bc3b3dcebfff06fcc6f7166a4855b5698d1c95d6f6375b6b7dc4c2",
+        "computeHipCorrectionScale": "e2f76156a894d1baee36efdf2704dbd37fe4a6fe8c30f6dea794e6ee7bf54c7f",
+        "animateGfxNodeBone": "bbc330df7c4c0ab35791e38afb52bb33ea508178d7907fcc3352d2d29cb3650e"
+      }
+    }
+  },
+  "original_appearance_computed": true,
+  "native_runtime_raw_keys": true,
+  "compatibility_helpers": "single clip; no transition blending; zero aiming; no character creator; absent scale models represented by their source unit default",
+  "stages": {
+    "morph_scales": {
+      "components": 297,
+      "maximum_absolute_error": 0.0
+    },
+    "actor_root": {
+      "components": 12,
+      "maximum_absolute_error": 0.0
+    },
+    "morph_local": {
+      "components": 2520,
+      "maximum_absolute_error": 0.0
+    },
+    "world": {
+      "components": 4320,
+      "maximum_absolute_error": 0.0
+    },
+    "socket_palette": {
+      "components": 4320,
+      "maximum_absolute_error": 0.0
+    }
+  },
+  "float_tolerance": "2e-6 absolute + 2e-6 relative",
+  "samples_sha256": "a2b4a9e6ebaefcf0e8ce0679eb2109f73677af3eb4c29f101f9b465d663742ff"
+}

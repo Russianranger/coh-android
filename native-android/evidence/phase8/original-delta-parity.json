@@ -1,0 +1,455 @@
+{
+  "format": 1,
+  "passed": true,
+  "oracle": "unchanged original uncompressDeltas with retained host shims",
+  "source_sha256_lf": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+  "function_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+  "original_client_execution": false,
+  "mesh_count": 11,
+  "meshes": [
+    {
+      "model": "GEO_Hips_Wretch",
+      "source_geo_version": 3,
+      "vertices": 318,
+      "triangles": 370,
+      "source_geo_sha256": "5bcf165d4370eb1a8aa7d354e9ef95303db08b0911ee63c2c83ae5cacb9cdd96",
+      "canonical_sha256": "5f9a13182724b4f6f9463622eefc3fc5288c420608791e056421ada8612953ca",
+      "checks": [
+        {
+          "channel": "indices",
+          "elements": 1110,
+          "byte_exact": true
+        },
+        {
+          "channel": "positions",
+          "elements": 954,
+          "byte_exact": true
+        },
+        {
+          "channel": "normals",
+          "elements": 954,
+          "byte_exact": true
+        },
+        {
+          "channel": "uvs",
+          "elements": 636,
+          "byte_exact": true
+        },
+        {
+          "channel": "weights",
+          "elements": 636,
+          "byte_exact": true
+        },
+        {
+          "channel": "palette_slots",
+          "elements": 636,
+          "byte_exact": true
+        }
+      ]
+    },
+    {
+      "model": "GEO_Chest_Wretch",
+      "source_geo_version": 3,
+      "vertices": 409,
+      "triangles": 520,
+      "source_geo_sha256": "3c7cb07689f5f9fd3f4104898c156a129fb3f7033d3c10d980089c88fa7f3ac7",
+      "canonical_sha256": "ac2d6e9a8b55a1bd2c27ae88cadd4e7c0d0c1a159acf6495454e01945f0e60d1",
+      "checks": [
+        {
+          "channel": "indices",
+          "elements": 1560,
+          "byte_exact": true
+        },
+        {
+          "channel": "positions",
+          "elements": 1227,
+          "byte_exact": true
+        },
+        {
+          "channel": "normals",
+          "elements": 1227,
+          "byte_exact": true
+        },
+        {
+          "channel": "uvs",
+          "elements": 818,
+          "byte_exact": true
+        },
+        {
+          "channel": "weights",
+          "elements": 818,
+          "byte_exact": true
+        },
+        {
+          "channel": "palette_slots",
+          "elements": 818,
+          "byte_exact": true
+        }
+      ]
+    },
+    {
+      "model": "GEO_Head_Wretch",
+      "source_geo_version": 2,
+      "vertices": 160,
+      "triangles": 263,
+      "source_geo_sha256": "3902266f1bd50f702ebb91dad8c818b9913b46310e169dbb6d144f0d1b02a850",
+      "canonical_sha256": "8a4015e2c4dc369dec8e190cde85bcfa7cb05c4a0f4fedfdff04b8d1e7f0241d",
+      "checks": [
+        {
+          "channel": "indices",
+          "elements": 789,
+          "byte_exact": true
+        },
+        {
+          "channel": "positions",
+          "elements": 480,
+          "byte_exact": true
+        },
+        {
+          "channel": "normals",
+          "elements": 480,
+          "byte_exact": true
+        },
+        {
+          "channel": "uvs",
+          "elements": 320,
+          "byte_exact": true
+        },
+        {
+          "channel": "weights",
+          "elements": 320,
+          "byte_exact": true
+        },
+        {
+          "channel": "palette_slots",
+          "elements": 320,
+          "byte_exact": true
+        }
+      ]
+    },
+    {
+      "model": "GEO_LarmL_Wretch",
+      "source_geo_version": 3,
+      "vertices": 370,
+      "triangles": 349,
+      "source_geo_sha256": "4853fe4eb9a347fc6ab794bd603055a2fd3c7f47acc6bb65e0829da54759e059",
+      "canonical_sha256": "e44b40f435014c9a38bfa09bcba43d395f7fef45847bfca9b392c4ff90453489",
+      "checks": [
+        {
+          "channel": "indices",
+          "elements": 1047,
+          "byte_exact": true
+        },
+        {
+          "channel": "positions",
+          "elements": 1110,
+          "byte_exact": true
+        },
+        {
+          "channel": "normals",
+          "elements": 1110,
+          "byte_exact": true
+        },
+        {
+          "channel": "uvs",
+          "elements": 740,
+          "byte_exact": true
+        },
+        {
+          "channel": "weights",
+          "elements": 740,
+          "byte_exact": true
+        },
+        {
+          "channel": "palette_slots",
+          "elements": 740,
+          "byte_exact": true
+        }
+      ]
+    },
+    {
+      "model": "GEO_LlegR_Wretch",
+      "source_geo_version": 3,
+      "vertices": 230,
+      "triangles": 212,
+      "source_geo_sha256": "79042aaf21e0876bd0d682466ec07c055aa71237ace5bea4eb79a3fa886d52df",
+      "canonical_sha256": "825fcbcfe8480c6bc19c87fbe8e92b67d7cc89dfb83879eb5edaca18ac84044e",
+      "checks": [
+        {
+          "channel": "indices",
+          "elements": 636,
+          "byte_exact": true
+        },
+        {
+          "channel": "positions",
+          "elements": 690,
+          "byte_exact": true
+        },
+        {
+          "channel": "normals",
+          "elements": 690,
+          "byte_exact": true
+        },
+        {
+          "channel": "uvs",
+          "elements": 460,
+          "byte_exact": true
+        },
+        {
+          "channel": "weights",
+          "elements": 460,
+          "byte_exact": true
+        },
+        {
+          "channel": "palette_slots",
+          "elements": 460,
+          "byte_exact": true
+        }
+      ]
+    },
+    {
+      "model": "GEO_LlegL_Wretch",
+      "source_geo_version": 3,
+      "vertices": 230,
+      "triangles": 212,
+      "source_geo_sha256": "79042aaf21e0876bd0d682466ec07c055aa71237ace5bea4eb79a3fa886d52df",
+      "canonical_sha256": "184e999fc69e9fb1d9c49e211b8653ea4f113711250bfabeafeabf613a13e428",
+      "checks": [
+        {
+          "channel": "indices",
+          "elements": 636,
+          "byte_exact": true
+        },
+        {
+          "channel": "positions",
+          "elements": 690,
+          "byte_exact": true
+        },
+        {
+          "channel": "normals",
+          "elements": 690,
+          "byte_exact": true
+        },
+        {
+          "channel": "uvs",
+          "elements": 460,
+          "byte_exact": true
+        },
+        {
+          "channel": "weights",
+          "elements": 460,
+          "byte_exact": true
+        },
+        {
+          "channel": "palette_slots",
+          "elements": 460,
+          "byte_exact": true
+        }
+      ]
+    },
+    {
+      "model": "GEO_Belt_Wretch",
+      "source_geo_version": 3,
+      "vertices": 98,
+      "triangles": 76,
+      "source_geo_sha256": "68ed06e1338cab1920f173095ff835b574c3103a44b51ae34d61f04c38088a51",
+      "canonical_sha256": "8f2649ab4380b604350f97ef08fb2f128c1dd33643ed9033266b26d55e860f18",
+      "checks": [
+        {
+          "channel": "indices",
+          "elements": 228,
+          "byte_exact": true
+        },
+        {
+          "channel": "positions",
+          "elements": 294,
+          "byte_exact": true
+        },
+        {
+          "channel": "normals",
+          "elements": 294,
+          "byte_exact": true
+        },
+        {
+          "channel": "uvs",
+          "elements": 196,
+          "byte_exact": true
+        },
+        {
+          "channel": "weights",
+          "elements": 196,
+          "byte_exact": true
+        },
+        {
+          "channel": "palette_slots",
+          "elements": 196,
+          "byte_exact": true
+        }
+      ]
+    },
+    {
+      "model": "GEO_Hair_Jack",
+      "source_geo_version": 3,
+      "vertices": 322,
+      "triangles": 288,
+      "source_geo_sha256": "e54994a75197f831529e90dd3c719c6d89e4f95861f46efd4181a713814e8669",
+      "canonical_sha256": "c726d558660b4060315403d0ea439efc73f77a4c27f7d5e6d670147915051fd1",
+      "checks": [
+        {
+          "channel": "indices",
+          "elements": 864,
+          "byte_exact": true
+        },
+        {
+          "channel": "positions",
+          "elements": 966,
+          "byte_exact": true
+        },
+        {
+          "channel": "normals",
+          "elements": 966,
+          "byte_exact": true
+        },
+        {
+          "channel": "uvs",
+          "elements": 644,
+          "byte_exact": true
+        },
+        {
+          "channel": "weights",
+          "elements": 644,
+          "byte_exact": true
+        },
+        {
+          "channel": "palette_slots",
+          "elements": 644,
+          "byte_exact": true
+        }
+      ]
+    },
+    {
+      "model": "GEO_Neck_Wretch",
+      "source_geo_version": 3,
+      "vertices": 308,
+      "triangles": 414,
+      "source_geo_sha256": "ca324fb1619454bdf496b847055d3b1a5a9b115326326201aada124e29e6ab97",
+      "canonical_sha256": "5f7c30c0d55e4a2fa197937f5615107729a25e442ca35822da1a5fc4a3db7b94",
+      "checks": [
+        {
+          "channel": "indices",
+          "elements": 1242,
+          "byte_exact": true
+        },
+        {
+          "channel": "positions",
+          "elements": 924,
+          "byte_exact": true
+        },
+        {
+          "channel": "normals",
+          "elements": 924,
+          "byte_exact": true
+        },
+        {
+          "channel": "uvs",
+          "elements": 616,
+          "byte_exact": true
+        },
+        {
+          "channel": "weights",
+          "elements": 616,
+          "byte_exact": true
+        },
+        {
+          "channel": "palette_slots",
+          "elements": 616,
+          "byte_exact": true
+        }
+      ]
+    },
+    {
+      "model": "GEO_Sleeves_Wretch",
+      "source_geo_version": 3,
+      "vertices": 116,
+      "triangles": 198,
+      "source_geo_sha256": "7d56d6fe65a1be2d02fe66e078b4c7b6a3998177dce47e8ac35b34a77baa413c",
+      "canonical_sha256": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661",
+      "checks": [
+        {
+          "channel": "indices",
+          "elements": 594,
+          "byte_exact": true
+        },
+        {
+          "channel": "positions",
+          "elements": 348,
+          "byte_exact": true
+        },
+        {
+          "channel": "normals",
+          "elements": 348,
+          "byte_exact": true
+        },
+        {
+          "channel": "uvs",
+          "elements": 232,
+          "byte_exact": true
+        },
+        {
+          "channel": "weights",
+          "elements": 232,
+          "byte_exact": true
+        },
+        {
+          "channel": "palette_slots",
+          "elements": 232,
+          "byte_exact": true
+        }
+      ]
+    },
+    {
+      "model": "GEO_Spadr_Wretch",
+      "source_geo_version": 3,
+      "vertices": 65,
+      "triangles": 84,
+      "source_geo_sha256": "ceb48327f26dbbf0590fd712538ad83afb9f1e7d53f7f82d3f90a5cebd2c4cda",
+      "canonical_sha256": "44ee97923e7158990dddbcccaf50cc477a2218d0f8f4cab3cb50e41df147de7c",
+      "checks": [
+        {
+          "channel": "indices",
+          "elements": 252,
+          "byte_exact": true
+        },
+        {
+          "channel": "positions",
+          "elements": 195,
+          "byte_exact": true
+        },
+        {
+          "channel": "normals",
+          "elements": 195,
+          "byte_exact": true
+        },
+        {
+          "channel": "uvs",
+          "elements": 130,
+          "byte_exact": true
+        },
+        {
+          "channel": "weights",
+          "elements": 130,
+          "byte_exact": true
+        },
+        {
+          "channel": "palette_slots",
+          "elements": 130,
+          "byte_exact": true
+        }
+      ]
+    }
+  ],
+  "vertices": 2626,
+  "triangles": 2986,
+  "channel_checks": 66,
+  "scalar_elements": 40470
+}

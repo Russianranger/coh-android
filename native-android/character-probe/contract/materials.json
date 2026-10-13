@@ -1,0 +1,933 @@
+{
+  "format": "phase8-wretch-resolved-materials-v1",
+  "part_count": 11,
+  "profile": {
+    "GFXF_MULTITEX": false,
+    "GFXF_BUMPMAPS": false,
+    "vertex_shaders": true,
+    "fragment_program": "colorblenddualfp.cg",
+    "BIT_HIGH_QUALITY": false,
+    "BIT_SHADOWMAP": false,
+    "BIT_DEBUG": false,
+    "lighting": "controlled character lighting; unmodified by stored TexOpt scales in original dual boned branch"
+  },
+  "source_pins": [
+    {
+      "path": "upstream/i24/data/tricks/v_shaders/arachnos/henchmen/arachnos_wretch.txt",
+      "bytes": 6492,
+      "sha256": "907b56ff2925ba8426cced7ef071a47394b9da92771c8ae10b0abed270a34cd6"
+    },
+    {
+      "path": "upstream/i24/data/tricks/v_shaders/arachnos/wolf_spiders/wolf_spiders.txt",
+      "bytes": 24688,
+      "sha256": "b239987f2fd9d497e4415da97b552d64a0121f1dd63404a90e536a3f84f505f9"
+    },
+    {
+      "path": "upstream/i24/data/tricks/v_enemy.txt",
+      "bytes": 18510,
+      "sha256": "1a2c47de53d1ef497a9b1bba4a084c73996826a6284a31cebd348f30afe66600"
+    },
+    {
+      "path": "upstream/i24/data/tricks/hero_bump.txt",
+      "bytes": 168101,
+      "sha256": "ca7e291d4c7b76f48eb6265b1168c6bbb9e77383a2f12591bde1e3cc25fea00d"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/tricks.c",
+      "bytes": 57263,
+      "sha256": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/tex.c",
+      "bytes": 113372,
+      "sha256": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/rendermodel.c",
+      "bytes": 29650,
+      "sha256": "ddff22bbd6e9dce14425d9cebf5aa25f01c3999bfd61875a9d0a452fce787f35"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/model.c",
+      "bytes": 15456,
+      "sha256": "5a5fb0d03c94450b108436c4d67e1503246e72627cc6155d23ddc1e557755072"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/rendertree.c",
+      "bytes": 128217,
+      "sha256": "9160762900e4f1a9124b7e852e8f98b0336934343eceddbaf37775c03c9c0e32"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_bonedmodel.c",
+      "bytes": 20404,
+      "sha256": "e64ec178a7fc90b260da7c9be8aadbd5014c2dd0e909ae221630b5ea4ae74325"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_state.c",
+      "bytes": 48356,
+      "sha256": "6d80cb17585e40a3e1dea7f51d2d9d1129af2569ed6b9fe770dc7aaea734ea0d"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_init.c",
+      "bytes": 17221,
+      "sha256": "4203ba947fa608bcd21b7b9544ce84e6dcd5aabba28d82a123f474b6a232747f"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_tricks.c",
+      "bytes": 21101,
+      "sha256": "216c067b615a7979ade777d0dac85bd5374ab7929bbac4cc2f9b693363a7da65"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/colorblenddualfp.cg",
+      "bytes": 3263,
+      "sha256": "c59cea85cfed047397c88b7258230ef178be477ccab3af1a7db5681e993d66af"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/functions.cgh",
+      "bytes": 37969,
+      "sha256": "5b602cf7f03b7ce7a6ea4e02fc34c1a2a33331a9c3a6516762b8823679f9a6ca"
+    }
+  ],
+  "notes": [
+    "six authored X_* costume composite identities are retained; both boots share one",
+    "none and texture_name* are cleared before TexOpt family selection",
+    "chest Mask none removes second material; it demotes to an old dual+bump family before no-bump filtering",
+    "other five X_* families retain masks and choose the source automatic dual-color fallback",
+    "fixed authored DualColor1 masks are non-swappable; a costume generic white cannot replace them",
+    "belt DualColor1 texture_name is cleared; source white is retained",
+    "stock white is required by texFindNeededBinds and loaded as white.tga by texMakeWhite; retain actual acquired pixels/dimensions/hash",
+    "BMB_NV1XWORLD is a legacy register-combiner choice; it adds no Cg dual fragment operation",
+    "Collar2x makes Hair and Neck double-sided; it supplies no alpha cutout or alpha reference",
+    "probe nearest/mip0/clamp samplers and controlled lights are explicit validation inputs, not captured runtime state",
+    "advanced MULTI masks, reflections, bump maps, specular, original driver texture decompression and draw sorting remain unqualified"
+  ],
+  "parts": [
+    {
+      "part_index": 0,
+      "part": "Pants",
+      "costume_composite_alias": "X_Arachnos_Wretch_Hips",
+      "base_alias": "Hips_Arachnos_Wretch_01",
+      "dual_alias": "Hips_Arachnos_Crab_01_Mask",
+      "effective_colors_rgb": [
+        [
+          190,
+          170,
+          150
+        ],
+        [
+          160,
+          150,
+          160
+        ]
+      ],
+      "draw_alpha": 255,
+      "shader_family": "COLORBLEND_DUAL",
+      "blend_bits": [
+        "BMB_NV1XWORLD"
+      ],
+      "resolution": "MULTI automatic fallback",
+      "source_material_file": "upstream/i24/data/tricks/v_shaders/arachnos/henchmen/arachnos_wretch.txt",
+      "costume_generic_override": "white",
+      "costume_generic_override_applied": false,
+      "stored_fallback_ambient_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "stored_fallback_diffuse_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "draw_ambient_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "draw_diffuse_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "double_sided": false,
+      "front_face": "CW",
+      "cull_face": "BACK",
+      "depth_write": true,
+      "blend_source": "SRC_ALPHA",
+      "blend_destination": "ONE_MINUS_SRC_ALPHA",
+      "alpha_sort_flag": false,
+      "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
+      "source_object_trick": null,
+      "alpha_ref": 0.0,
+      "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
+      "sampler": {
+        "min_filter": "NEAREST",
+        "mag_filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE",
+        "mip": 0
+      },
+      "uv_scale_base": [
+        1,
+        1
+      ],
+      "uv_scale_dual": [
+        1,
+        1
+      ],
+      "uv_scroll": [
+        0,
+        0
+      ],
+      "full_quality_material_qualified": false
+    },
+    {
+      "part_index": 1,
+      "part": "Chest",
+      "costume_composite_alias": "X_Arachnos_Wretch_Chest",
+      "base_alias": "Chest_Arachnos_Wretch_01",
+      "dual_alias": "Chest_Wolf_01b",
+      "effective_colors_rgb": [
+        [
+          70,
+          70,
+          70
+        ],
+        [
+          200,
+          200,
+          200
+        ]
+      ],
+      "draw_alpha": 255,
+      "shader_family": "COLORBLEND_DUAL",
+      "blend_bits": [
+        "BMB_NV1XWORLD"
+      ],
+      "resolution": "setupTexOpt single-material demotion; bump capability disabled",
+      "source_material_file": "upstream/i24/data/tricks/v_shaders/arachnos/henchmen/arachnos_wretch.txt",
+      "costume_generic_override": "Chest_Wolf_01b",
+      "costume_generic_override_applied": false,
+      "stored_fallback_ambient_scale": [
+        1,
+        1,
+        1
+      ],
+      "stored_fallback_diffuse_scale": [
+        1,
+        1,
+        1
+      ],
+      "draw_ambient_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "draw_diffuse_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "double_sided": false,
+      "front_face": "CW",
+      "cull_face": "BACK",
+      "depth_write": true,
+      "blend_source": "SRC_ALPHA",
+      "blend_destination": "ONE_MINUS_SRC_ALPHA",
+      "alpha_sort_flag": false,
+      "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
+      "source_object_trick": null,
+      "alpha_ref": 0.0,
+      "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
+      "sampler": {
+        "min_filter": "NEAREST",
+        "mag_filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE",
+        "mip": 0
+      },
+      "uv_scale_base": [
+        1,
+        1
+      ],
+      "uv_scale_dual": [
+        1,
+        1
+      ],
+      "uv_scroll": [
+        0,
+        0
+      ],
+      "full_quality_material_qualified": false
+    },
+    {
+      "part_index": 2,
+      "part": "Head",
+      "costume_composite_alias": null,
+      "base_alias": "Face_Skin_Wretch_base",
+      "dual_alias": "white",
+      "effective_colors_rgb": [
+        [
+          179,
+          140,
+          120
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "draw_alpha": 255,
+      "shader_family": "COLORBLEND_DUAL",
+      "blend_bits": [
+        "BMB_NV1XWORLD"
+      ],
+      "resolution": "old-style costume base and swappable generic override; bump capability disabled",
+      "source_material_file": "upstream/i24/data/tricks/v_enemy.txt",
+      "costume_generic_override": "white",
+      "costume_generic_override_applied": true,
+      "stored_fallback_ambient_scale": null,
+      "stored_fallback_diffuse_scale": null,
+      "draw_ambient_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "draw_diffuse_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "double_sided": false,
+      "front_face": "CW",
+      "cull_face": "BACK",
+      "depth_write": true,
+      "blend_source": "SRC_ALPHA",
+      "blend_destination": "ONE_MINUS_SRC_ALPHA",
+      "alpha_sort_flag": false,
+      "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
+      "source_object_trick": null,
+      "alpha_ref": 0.0,
+      "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
+      "sampler": {
+        "min_filter": "NEAREST",
+        "mag_filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE",
+        "mip": 0
+      },
+      "uv_scale_base": [
+        1,
+        1
+      ],
+      "uv_scale_dual": [
+        1,
+        1
+      ],
+      "uv_scroll": [
+        0,
+        0
+      ],
+      "full_quality_material_qualified": false
+    },
+    {
+      "part_index": 3,
+      "part": "Gloves",
+      "costume_composite_alias": "X_Wretch_Glove_Armor",
+      "base_alias": "Glove_Wretch_Armor",
+      "dual_alias": "glove_wolf_01b",
+      "effective_colors_rgb": [
+        [
+          24,
+          24,
+          24
+        ],
+        [
+          85,
+          85,
+          85
+        ]
+      ],
+      "draw_alpha": 255,
+      "shader_family": "COLORBLEND_DUAL",
+      "blend_bits": [
+        "BMB_NV1XWORLD"
+      ],
+      "resolution": "MULTI automatic fallback",
+      "source_material_file": "upstream/i24/data/tricks/v_shaders/arachnos/henchmen/arachnos_wretch.txt",
+      "costume_generic_override": "white",
+      "costume_generic_override_applied": false,
+      "stored_fallback_ambient_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "stored_fallback_diffuse_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "draw_ambient_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "draw_diffuse_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "double_sided": false,
+      "front_face": "CW",
+      "cull_face": "BACK",
+      "depth_write": true,
+      "blend_source": "SRC_ALPHA",
+      "blend_destination": "ONE_MINUS_SRC_ALPHA",
+      "alpha_sort_flag": false,
+      "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
+      "source_object_trick": null,
+      "alpha_ref": 0.0,
+      "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
+      "sampler": {
+        "min_filter": "NEAREST",
+        "mag_filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE",
+        "mip": 0
+      },
+      "uv_scale_base": [
+        1,
+        1
+      ],
+      "uv_scale_dual": [
+        1,
+        1
+      ],
+      "uv_scroll": [
+        0,
+        0
+      ],
+      "full_quality_material_qualified": false
+    },
+    {
+      "part_index": 4,
+      "part": "BootsRight",
+      "costume_composite_alias": "X_Arachnos_Wretch_Boot",
+      "base_alias": "Boot_Arachnos_Wretch_01",
+      "dual_alias": "Boot_Arachnos_Wretch_Mask",
+      "effective_colors_rgb": [
+        [
+          190,
+          170,
+          150
+        ],
+        [
+          85,
+          85,
+          85
+        ]
+      ],
+      "draw_alpha": 255,
+      "shader_family": "COLORBLEND_DUAL",
+      "blend_bits": [
+        "BMB_NV1XWORLD"
+      ],
+      "resolution": "MULTI automatic fallback",
+      "source_material_file": "upstream/i24/data/tricks/v_shaders/arachnos/henchmen/arachnos_wretch.txt",
+      "costume_generic_override": "white",
+      "costume_generic_override_applied": false,
+      "stored_fallback_ambient_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "stored_fallback_diffuse_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "draw_ambient_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "draw_diffuse_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "double_sided": false,
+      "front_face": "CW",
+      "cull_face": "BACK",
+      "depth_write": true,
+      "blend_source": "SRC_ALPHA",
+      "blend_destination": "ONE_MINUS_SRC_ALPHA",
+      "alpha_sort_flag": false,
+      "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
+      "source_object_trick": null,
+      "alpha_ref": 0.0,
+      "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
+      "sampler": {
+        "min_filter": "NEAREST",
+        "mag_filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE",
+        "mip": 0
+      },
+      "uv_scale_base": [
+        1,
+        1
+      ],
+      "uv_scale_dual": [
+        1,
+        1
+      ],
+      "uv_scroll": [
+        0,
+        0
+      ],
+      "full_quality_material_qualified": false
+    },
+    {
+      "part_index": 5,
+      "part": "BootsLeft",
+      "costume_composite_alias": "X_Arachnos_Wretch_Boot",
+      "base_alias": "Boot_Arachnos_Wretch_01",
+      "dual_alias": "Boot_Arachnos_Wretch_Mask",
+      "effective_colors_rgb": [
+        [
+          190,
+          170,
+          150
+        ],
+        [
+          85,
+          85,
+          85
+        ]
+      ],
+      "draw_alpha": 255,
+      "shader_family": "COLORBLEND_DUAL",
+      "blend_bits": [
+        "BMB_NV1XWORLD"
+      ],
+      "resolution": "MULTI automatic fallback",
+      "source_material_file": "upstream/i24/data/tricks/v_shaders/arachnos/henchmen/arachnos_wretch.txt",
+      "costume_generic_override": "white",
+      "costume_generic_override_applied": false,
+      "stored_fallback_ambient_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "stored_fallback_diffuse_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "draw_ambient_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "draw_diffuse_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "double_sided": false,
+      "front_face": "CW",
+      "cull_face": "BACK",
+      "depth_write": true,
+      "blend_source": "SRC_ALPHA",
+      "blend_destination": "ONE_MINUS_SRC_ALPHA",
+      "alpha_sort_flag": false,
+      "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
+      "source_object_trick": null,
+      "alpha_ref": 0.0,
+      "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
+      "sampler": {
+        "min_filter": "NEAREST",
+        "mag_filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE",
+        "mip": 0
+      },
+      "uv_scale_base": [
+        1,
+        1
+      ],
+      "uv_scale_dual": [
+        1,
+        1
+      ],
+      "uv_scroll": [
+        0,
+        0
+      ],
+      "full_quality_material_qualified": false
+    },
+    {
+      "part_index": 6,
+      "part": "Belt",
+      "costume_composite_alias": "X_WolfArmor_Belt",
+      "base_alias": "belt_wolf_01",
+      "dual_alias": "white",
+      "effective_colors_rgb": [
+        [
+          34,
+          34,
+          34
+        ],
+        [
+          84,
+          84,
+          84
+        ]
+      ],
+      "draw_alpha": 255,
+      "shader_family": "COLORBLEND_DUAL",
+      "blend_bits": [
+        "BMB_NV1XWORLD"
+      ],
+      "resolution": "MULTI automatic fallback",
+      "source_material_file": "upstream/i24/data/tricks/v_shaders/arachnos/wolf_spiders/wolf_spiders.txt",
+      "costume_generic_override": "white",
+      "costume_generic_override_applied": false,
+      "stored_fallback_ambient_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "stored_fallback_diffuse_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "draw_ambient_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "draw_diffuse_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "double_sided": false,
+      "front_face": "CW",
+      "cull_face": "BACK",
+      "depth_write": true,
+      "blend_source": "SRC_ALPHA",
+      "blend_destination": "ONE_MINUS_SRC_ALPHA",
+      "alpha_sort_flag": false,
+      "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
+      "source_object_trick": null,
+      "alpha_ref": 0.0,
+      "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
+      "sampler": {
+        "min_filter": "NEAREST",
+        "mag_filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE",
+        "mip": 0
+      },
+      "uv_scale_base": [
+        1,
+        1
+      ],
+      "uv_scale_dual": [
+        1,
+        1
+      ],
+      "uv_scroll": [
+        0,
+        0
+      ],
+      "full_quality_material_qualified": false
+    },
+    {
+      "part_index": 7,
+      "part": "Hair",
+      "costume_composite_alias": null,
+      "base_alias": "Hair_Wretch",
+      "dual_alias": "Hair_Wretch_Mask",
+      "effective_colors_rgb": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "draw_alpha": 255,
+      "shader_family": "COLORBLEND_DUAL",
+      "blend_bits": [
+        "BMB_NV1XWORLD"
+      ],
+      "resolution": "old-style costume base and swappable generic override; bump capability disabled",
+      "source_material_file": null,
+      "costume_generic_override": "Hair_Wretch_Mask",
+      "costume_generic_override_applied": true,
+      "stored_fallback_ambient_scale": null,
+      "stored_fallback_diffuse_scale": null,
+      "draw_ambient_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "draw_diffuse_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "double_sided": true,
+      "front_face": "CW",
+      "cull_face": "BACK",
+      "depth_write": true,
+      "blend_source": "SRC_ALPHA",
+      "blend_destination": "ONE_MINUS_SRC_ALPHA",
+      "alpha_sort_flag": false,
+      "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
+      "source_object_trick": "Collar2x",
+      "alpha_ref": 0.0,
+      "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
+      "sampler": {
+        "min_filter": "NEAREST",
+        "mag_filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE",
+        "mip": 0
+      },
+      "uv_scale_base": [
+        1,
+        1
+      ],
+      "uv_scale_dual": [
+        1,
+        1
+      ],
+      "uv_scroll": [
+        0,
+        0
+      ],
+      "full_quality_material_qualified": false
+    },
+    {
+      "part_index": 8,
+      "part": "Neck",
+      "costume_composite_alias": "X_Wretch_neck",
+      "base_alias": "neck_wretch_01",
+      "dual_alias": "neck_wolf_01b",
+      "effective_colors_rgb": [
+        [
+          85,
+          85,
+          95
+        ],
+        [
+          200,
+          200,
+          200
+        ]
+      ],
+      "draw_alpha": 255,
+      "shader_family": "COLORBLEND_DUAL",
+      "blend_bits": [
+        "BMB_NV1XWORLD"
+      ],
+      "resolution": "MULTI automatic fallback",
+      "source_material_file": "upstream/i24/data/tricks/v_shaders/arachnos/henchmen/arachnos_wretch.txt",
+      "costume_generic_override": "white",
+      "costume_generic_override_applied": false,
+      "stored_fallback_ambient_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "stored_fallback_diffuse_scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "draw_ambient_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "draw_diffuse_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "double_sided": true,
+      "front_face": "CW",
+      "cull_face": "BACK",
+      "depth_write": true,
+      "blend_source": "SRC_ALPHA",
+      "blend_destination": "ONE_MINUS_SRC_ALPHA",
+      "alpha_sort_flag": false,
+      "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
+      "source_object_trick": "Collar2x",
+      "alpha_ref": 0.0,
+      "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
+      "sampler": {
+        "min_filter": "NEAREST",
+        "mag_filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE",
+        "mip": 0
+      },
+      "uv_scale_base": [
+        1,
+        1
+      ],
+      "uv_scale_dual": [
+        1,
+        1
+      ],
+      "uv_scroll": [
+        0,
+        0
+      ],
+      "full_quality_material_qualified": false
+    },
+    {
+      "part_index": 9,
+      "part": "Sleeves",
+      "costume_composite_alias": null,
+      "base_alias": "Sleeves_Skin_Wretch_Base",
+      "dual_alias": "white",
+      "effective_colors_rgb": [
+        [
+          179,
+          140,
+          120
+        ],
+        [
+          115,
+          115,
+          115
+        ]
+      ],
+      "draw_alpha": 255,
+      "shader_family": "COLORBLEND_DUAL",
+      "blend_bits": [
+        "BMB_NV1XWORLD"
+      ],
+      "resolution": "old-style costume base and swappable generic override; bump capability disabled",
+      "source_material_file": "upstream/i24/data/tricks/v_enemy.txt",
+      "costume_generic_override": "white",
+      "costume_generic_override_applied": true,
+      "stored_fallback_ambient_scale": null,
+      "stored_fallback_diffuse_scale": null,
+      "draw_ambient_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "draw_diffuse_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "double_sided": false,
+      "front_face": "CW",
+      "cull_face": "BACK",
+      "depth_write": true,
+      "blend_source": "SRC_ALPHA",
+      "blend_destination": "ONE_MINUS_SRC_ALPHA",
+      "alpha_sort_flag": false,
+      "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
+      "source_object_trick": null,
+      "alpha_ref": 0.0,
+      "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
+      "sampler": {
+        "min_filter": "NEAREST",
+        "mag_filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE",
+        "mip": 0
+      },
+      "uv_scale_base": [
+        1,
+        1
+      ],
+      "uv_scale_dual": [
+        1,
+        1
+      ],
+      "uv_scroll": [
+        0,
+        0
+      ],
+      "full_quality_material_qualified": false
+    },
+    {
+      "part_index": 10,
+      "part": "Shoulders",
+      "costume_composite_alias": null,
+      "base_alias": "Glove_Skin_Wretch_Base",
+      "dual_alias": "white",
+      "effective_colors_rgb": [
+        [
+          179,
+          140,
+          120
+        ],
+        [
+          24,
+          24,
+          24
+        ]
+      ],
+      "draw_alpha": 255,
+      "shader_family": "COLORBLEND_DUAL",
+      "blend_bits": [
+        "BMB_NV1XWORLD"
+      ],
+      "resolution": "old-style costume base and swappable generic override; bump capability disabled",
+      "source_material_file": "upstream/i24/data/tricks/v_enemy.txt",
+      "costume_generic_override": "white",
+      "costume_generic_override_applied": true,
+      "stored_fallback_ambient_scale": null,
+      "stored_fallback_diffuse_scale": null,
+      "draw_ambient_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "draw_diffuse_multiplier": [
+        1,
+        1,
+        1
+      ],
+      "double_sided": false,
+      "front_face": "CW",
+      "cull_face": "BACK",
+      "depth_write": true,
+      "blend_source": "SRC_ALPHA",
+      "blend_destination": "ONE_MINUS_SRC_ALPHA",
+      "alpha_sort_flag": false,
+      "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
+      "source_object_trick": null,
+      "alpha_ref": 0.0,
+      "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
+      "sampler": {
+        "min_filter": "NEAREST",
+        "mag_filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE",
+        "mip": 0
+      },
+      "uv_scale_base": [
+        1,
+        1
+      ],
+      "uv_scale_dual": [
+        1,
+        1
+      ],
+      "uv_scroll": [
+        0,
+        0
+      ],
+      "full_quality_material_qualified": false
+    }
+  ],
+  "original_windows_pixel_capture": false
+}
