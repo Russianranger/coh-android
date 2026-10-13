@@ -366,6 +366,34 @@ def animation_consumption(raw,pig_pin):
             'loaded_subset_only':True,'whole_inventory_loaded_claimed':False,'native_PIG_IO_trace_observed':False}
 
 
+def owned_process_class(base_process):
+    """Isolate each native Windows console without changing observer bounds."""
+    class OwnedProcess(base_process):
+        def __init__(self,command,cwd,logs,label,*,env=None,interactive=False):
+            if os.name!='nt':
+                super().__init__(command,cwd,logs,label,env=env,interactive=interactive)
+                return
+            self.label,self.started=label,time.monotonic()
+            self.stdout,self.stderr=logs/(label+'-stdout.log'),logs/(label+'-stderr.log')
+            self.handles=[self.stdout.open('xb'),self.stderr.open('xb')]
+            try:
+                # A shared runner console can have more than the observer's
+                # 32 verified peers. Own a fresh console; keep both output
+                # handles file-backed and retain this exact Popen handle.
+                self.child=subprocess.Popen(command,cwd=cwd,env=env,
+                    stdin=subprocess.PIPE if interactive else subprocess.DEVNULL,
+                    stdout=self.handles[0],stderr=self.handles[1],
+                    creationflags=subprocess.CREATE_NEW_CONSOLE)
+            except Exception:
+                self.close()
+                raise
+            self.forced_stop=False
+        def stop(self):
+            if self.child.poll() is None:self.forced_stop=True;self.child.terminate();self.child.wait(timeout=15)
+            self.close()
+    return OwnedProcess
+
+
 def run(args):
     require(os.name=='nt','Genuine world gate requires Windows')
     require(re.fullmatch('[0-9a-f]{40}',args.repository_commit) and 30<=args.timeout_seconds<=1800,
@@ -394,10 +422,7 @@ def run(args):
         'shipping_allowed':False,'freshness_bypass_enabled':False,'source_hashing_warms_host_filesystem_cache':True,
         'owned_cleanup_verified':False,'generated_cache_authorizes_Android_reuse':False}
     cluster=None;children=[];observers=[];secrets=[];current=None;current_before=None;log_contexts=[]
-    class OwnedProcess(network.Process):
-        def stop(self):
-            if self.child.poll() is None:self.forced_stop=True;self.child.terminate();self.child.wait(timeout=15)
-            self.close()
+    OwnedProcess=owned_process_class(network.Process)
     def start(command,runtime,logs,label,env):
         p=OwnedProcess(command,runtime,logs,label,env=env);children.append(p);return p
     def stop_case(case_children,case_observers):

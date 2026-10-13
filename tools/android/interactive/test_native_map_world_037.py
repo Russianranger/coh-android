@@ -10,6 +10,7 @@ import struct
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch,Mock
 
 import prepare_native_map_world_inputs_037 as inputs
 import qualify_native_map_world_037 as gate
@@ -24,6 +25,42 @@ def parse6(payload=b'\x00\x00\x00\x00',date=1800,crc=23):
 
 
 class EvidenceRefusal(unittest.TestCase):
+    def test_windows_native_popen_owns_console_and_file_backed_handles(self):
+        class Base:
+            def close(self):
+                for handle in self.handles:handle.close()
+        owned=gate.owned_process_class(Base)
+        with tempfile.TemporaryDirectory() as directory:
+            logs=Path(directory);command=['MapServer.exe','-map','5'];env={'COH_GAME_LOOPBACK_ONLY':'1'}
+            child=Mock();child.stdin=None
+            with patch.object(gate.os,'name','nt'),patch.object(gate.subprocess,'CREATE_NEW_CONSOLE',16,create=True),patch.object(gate.subprocess,'Popen',return_value=child) as popen:
+                process=owned(command,logs,logs,'map',env=env)
+                popen.assert_called_once_with(command,cwd=logs,env=env,stdin=gate.subprocess.DEVNULL,
+                    stdout=process.handles[0],stderr=process.handles[1],creationflags=16)
+                self.assertIs(process.child,child)
+                self.assertEqual([Path(h.name).name for h in process.handles],['map-stdout.log','map-stderr.log'])
+                self.assertFalse(any(h.closed for h in process.handles))
+            process.close()
+            self.assertTrue(all(h.closed for h in process.handles))
+    def test_windows_launch_failure_closes_exact_opened_handles(self):
+        closed=[]
+        class Base:
+            def close(self):
+                closed.extend(self.handles)
+                for handle in self.handles:handle.close()
+        with tempfile.TemporaryDirectory() as directory:
+            logs=Path(directory)
+            with patch.object(gate.os,'name','nt'),patch.object(gate.subprocess,'CREATE_NEW_CONSOLE',16,create=True),patch.object(gate.subprocess,'Popen',side_effect=OSError('launch failure')):
+                with self.assertRaises(OSError):gate.owned_process_class(Base)(['MapServer.exe'],logs,logs,'failed')
+            self.assertEqual(len(closed),2)
+            self.assertTrue(all(h.closed for h in closed))
+    def test_linux_native_process_uses_existing_base_constructor(self):
+        class Base:
+            def __init__(self,*args,**kwargs):self.forwarded=(args,kwargs)
+        with patch.object(gate.os,'name','posix'),patch.object(gate.subprocess,'Popen') as popen:
+            process=gate.owned_process_class(Base)(['command'],'cwd','logs','label',env={'a':'b'},interactive=True)
+            self.assertEqual(process.forwarded,((['command'],'cwd','logs','label'),{'env':{'a':'b'},'interactive':True}))
+            popen.assert_not_called()
     def status(self,map_id=5,port=7003,fields=''):
         return f'{map_id} maps/City_Zones/City_01_02/City_01_02.txt S: 1 / 1 Ip: 127.0.0.1:{port} Mem: 512 {fields}\n'
     def console(self,map_id=5):
