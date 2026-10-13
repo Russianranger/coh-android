@@ -98,6 +98,10 @@ SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT, MARKER, 'docs/'+NOTES_
     'tools/android/interactive/classify_client_zone_startup_change.py',
     'tools/android/interactive/native_startup_metadata_admission.py',
     'tools/android/interactive/test_native_startup_metadata_admission.py',
+    'android/guest/native_startup_metadata_contract.py',
+    'tools/android/interactive/native_startup_component_migration.py',
+    'tools/android/interactive/test_native_startup_metadata_contract.py',
+    'tools/android/interactive/test_native_startup_component_migration.py',
     'tools/android/interactive/test_manual_report_acceptance.py',
     'tools/android/interactive/fixtures/thor-manual-report-0.13.36-20261013.json'}) | REVIEWED_JAVA_CHANGES | ADDED_JAVA_SOURCES | GUEST_SOURCE_CHANGES | REVIEWED_TEST_CHANGES | ROUTING_SOURCE_CHANGES | NATIVE_SOURCE_FILES
 REVIEWED_DONOR_SOURCE_CHANGES = REVIEWED_JAVA_CHANGES | GUEST_SOURCE_CHANGES | REVIEWED_TEST_CHANGES | ROUTING_SOURCE_CHANGES

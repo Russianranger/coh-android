@@ -5,10 +5,14 @@
   "asset_version": "1.0.0",
   "qualification_enabled": false,
   "publish_enabled": false,
-  "reviewed_source_integrated": false,
+  "reviewed_source_integrated": true,
   "native_promotions": {
-    "game": {"enabled": false},
-    "mapserver": {"enabled": false}
+    "game": {
+      "enabled": false
+    },
+    "mapserver": {
+      "enabled": false
+    }
   },
   "java_recompile_required": true,
   "asset_rebuild_required": false,

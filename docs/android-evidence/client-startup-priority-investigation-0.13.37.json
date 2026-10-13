@@ -1,0 +1,208 @@
+{
+  "format": 1,
+  "scope": "read_only_physical_report_and_exact_source_priority_investigation",
+  "investigation_name": "client_priority_037",
+  "repository_head_examined": "31c9f75cc80907ccb49e75d6323b9adac9559386",
+  "physical_APK_version": "0.13.36",
+  "physical_APK_source": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+  "source_unchanged": true,
+  "no_native_build_or_execution_performed": true,
+  "no_process_priority_mutation_performed": true,
+  "sessions": [
+    {
+      "archive": {
+        "path": "/workspace/scratch/5d16603ca7ff/upload/coh-atlas-gameplay-20261013-203328.zip",
+        "bytes": 14532110,
+        "sha256": "0a0338d7b9140e96c15dfd47ba45f3caef2f1df3243563d22e334d3e294d64e1"
+      },
+      "guest_report": {
+        "path": "/workspace/scratch/5d16603ca7ff/physical037-analysis/203328/guest/latest-report.json",
+        "bytes": 313665,
+        "sha256": "00d83ec8830ab74bcb5e649bc31b9957a407ead858204d131616dec3a037ffee"
+      },
+      "session_id": "65a10604bf53486299b97177b11c0711",
+      "native_windows_Game_pid": 624,
+      "native_windows_Game_pid_is_not_linux_proc_pid": true,
+      "Game_executable_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+      "native_Game_startup_seconds": 264.461,
+      "client_launcher_started_utc": "2026-10-13T20:24:41.394149+00:00",
+      "explicit_nice_field_count": 0,
+      "explicit_nice_values": [],
+      "explicit_nice_field_scopes": [],
+      "Game_linux_task_sched_samples": 0,
+      "Game_linux_thread_identity_before_after_all_data": null,
+      "Game_Windows_priority_class_readback": null,
+      "live_lineage_observation": {
+        "samples": 5,
+        "unavailable_samples": 141,
+        "last_unavailable_type": "FileNotFoundError",
+        "last_unavailable_operation": "pid_namespace",
+        "authenticated_dead_leader_workers": 0,
+        "worker_authentication_failures": 0,
+        "authenticated_groups": 0,
+        "authenticated_workers": 0
+      }
+    },
+    {
+      "archive": {
+        "path": "/workspace/scratch/5d16603ca7ff/upload/coh-atlas-gameplay-20261013-205557.zip",
+        "bytes": 14546840,
+        "sha256": "00649331021e6999fbcb38c1078852bd2e0f95185a35ad7ef3d049b7613b92ca"
+      },
+      "guest_report": {
+        "path": "/workspace/scratch/5d16603ca7ff/physical037-analysis/205557/guest/latest-report.json",
+        "bytes": 566155,
+        "sha256": "34ea5922b2f3e3f8fd1c5ccf40046c09e6de6b9c6dc4d5114043251055d328b8"
+      },
+      "session_id": "1682f2cf28bb467a9473f2f1a426036e",
+      "native_windows_Game_pid": 844,
+      "native_windows_Game_pid_is_not_linux_proc_pid": true,
+      "Game_executable_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+      "native_Game_startup_seconds": 264.197,
+      "client_launcher_started_utc": "2026-10-13T20:37:22.466193+00:00",
+      "explicit_nice_field_count": 174,
+      "explicit_nice_values": [
+        5
+      ],
+      "explicit_nice_field_scopes": [
+        "/character_zoning/preparation_schedulers/0/samples/*/processes/*/tasks/*/nice"
+      ],
+      "Game_linux_task_sched_samples": 0,
+      "Game_linux_thread_identity_before_after_all_data": null,
+      "Game_Windows_priority_class_readback": null,
+      "live_lineage_observation": {
+        "samples": 1,
+        "unavailable_samples": 251,
+        "last_unavailable_type": "FileNotFoundError",
+        "last_unavailable_operation": "pid_namespace",
+        "authenticated_dead_leader_workers": 0,
+        "worker_authentication_failures": 0,
+        "authenticated_groups": 0,
+        "authenticated_workers": 0
+      }
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/client-priority-037-evidence/wine-source/dlls/kernelbase/process.c",
+      "bytes": 67399,
+      "sha256": "703568c2809695b1942b36c621e6df3923c0943f7c3d79456c9d661edf71f450",
+      "url": "https://raw.githubusercontent.com/wine-mirror/wine/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/kernelbase/process.c"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/client-priority-037-evidence/wine-source/dlls/ntdll/unix/process.c",
+      "bytes": 63909,
+      "sha256": "79abb23b6c027c5330c5de68abc5b195f89eeeaf14270577dfe4161d5868dd8e",
+      "url": "https://raw.githubusercontent.com/wine-mirror/wine/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/ntdll/unix/process.c"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/client-priority-037-evidence/wine-source/server/process.c",
+      "bytes": 66118,
+      "sha256": "216b23a7274f1811fa30dfd84b1caf082710601f3d7d3cba025c75434d00967c",
+      "url": "https://raw.githubusercontent.com/wine-mirror/wine/b073859675060c9211fcbccfd90e4e87520dc2c2/server/process.c"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/client-priority-037-evidence/wine-source/server/thread.c",
+      "bytes": 67116,
+      "sha256": "55057ca669b80ae5ac519452b81e9f5a3a141b32905fe06c854621515a33e22d",
+      "url": "https://raw.githubusercontent.com/wine-mirror/wine/b073859675060c9211fcbccfd90e4e87520dc2c2/server/thread.c"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/client-priority-037-evidence/runtime-build-Dockerfile",
+      "bytes": 5780,
+      "sha256": "d437d2e3665d177673e9a73a5eaf9703339643858b0c78b61837d423a59b2dda",
+      "url": "https://raw.githubusercontent.com/Russianranger/lsb-android/ba052de14f3e10bffe114d209095ade70d56f529/native/fex/Dockerfile"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/client-priority-037-evidence/fex-wow64-Module.cpp",
+      "bytes": 39320,
+      "sha256": "775b78cce63659e5354acbca93fae33df2f708f3f3df07ffec5b51c61b19bf4f",
+      "url": "https://raw.githubusercontent.com/FEX-Emu/FEX/320c5f18475b0c8a7e99c51a5fdc5b5e35b147ab/Source/Windows/WOW64/Module.cpp"
+    }
+  ],
+  "native_source_pins": [
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/coh-android-037/upstream/ouroboros/Game/src/game.c",
+      "bytes": 72206,
+      "sha256": "7a970aa0db124fb68ec37e8b4eb6f5907c4883f9f17a5475ec5b58e5dfa9adde"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/coh-android-037/upstream/ouroboros/Game/src/main.c",
+      "bytes": 9930,
+      "sha256": "0291ebfc9c375bf952a3cd5db23f475942bea8561487ab26b085f7aa462c9c8c"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/coh-android-037/upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c",
+      "bytes": 92002,
+      "sha256": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/coh-android-037/android/native/client-launcher.c",
+      "bytes": 12770,
+      "sha256": "1a9b64f233399939f889f6da63004625d4ba9dd72040d17c5ad75e809870bbe8"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/coh-android-037/docs/COH-ZONE-PREPARATION-RESEARCH-0.13.27.md",
+      "bytes": 19583,
+      "sha256": "5ad1002987b1a31cfd21cc3e820154e896541af42d0a9e154e92d5a3ba7789c7"
+    }
+  ],
+  "native_priority_source": {
+    "game_beforeParseArgs": {
+      "create_bins": "ABOVE_NORMAL_PRIORITY_CLASS",
+      "production": "NORMAL_PRIORITY_CLASS",
+      "development": "IDLE_PRIORITY_CLASS",
+      "position": "before normal parseArgs and data initialization"
+    },
+    "game_mainLoop": {
+      "development": "BELOW_NORMAL_PRIORITY_CLASS",
+      "position": "after all client data and pre-loop setup"
+    },
+    "game_updateThreadPriority": {
+      "scope": "production mode only",
+      "foreground": "NORMAL or optional ABOVE_NORMAL",
+      "background": "BELOW_NORMAL"
+    },
+    "mode_decision": "isDevelopmentMode tests absence of piggs/texts.pigg and g_force_production_mode; launcher does not force production mode",
+    "actual_Windows_priority_readback_available": false
+  },
+  "pinned_Wine_priority_path": {
+    "wine_commit": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+    "kernelbase_process_c": "SetPriorityClass converts Win32 class to PROCESS_PRIOCLASS enum and calls NtSetInformationProcess",
+    "ntdll_unix_process_c": "ProcessPriorityClass sends SET_PROCESS_INFO_PRIORITY through wineserver",
+    "server_process_c": "set_process_info only stores process->priority for this field",
+    "linux_setpriority_or_scheduler_called_by_that_path": false,
+    "thread_metadata_setter": "server/thread.c stores thread->priority; separate affinity path calls sched_setaffinity",
+    "runtime_recipe": "pins exact Wine commit; patches exit grace, libwow64fex registration, NtSuspendProcess backport, translator CPU features and x87 flags; no scheduling priority patch"
+  },
+  "assessment": {
+    "physical_Game_nice_19_or_sched_idle_established": false,
+    "physical_startup_scheduling_contention_established": false,
+    "startup_priority_correction_recommended": false,
+    "reason": "The proposed Windows class change does not alter Linux scheduling in the pinned runtime, and current reports have no exact Game task nice or runqueue evidence. Avoid a new mutation on an unsupported performance premise.",
+    "memory_implication_of_no_change": "none",
+    "physical_time_savings_measured": null,
+    "Windows_IDLE_class_not_proof_of_linux_nice_19": true
+  },
+  "optional_future_read_only_measurement": {
+    "sample_scope": "If a new private launch-family token is added, combine it with existing diagnostic token and exact WINEPREFIX; require own real UID and unchanged PID/TID/TGID/starttimes before and after reads. This initially binds the owned client launch family, not automatically one Game process.",
+    "windows_pid_binding": "current native launch console marker session and Windows PID; do not use this number directly as Linux /proc PID",
+    "bounded_samples": "up to 64 samples; no faster than one per five seconds during startup; one final after native all_data/main-loop identity, stop at finish or failure",
+    "task_fields": [
+      "nice",
+      "scheduling_policy",
+      "utime_ticks",
+      "stime_ticks",
+      "minor_faults",
+      "major_faults",
+      "schedstat_runtime_ns",
+      "schedstat_runqueue_wait_ns",
+      "cgroup",
+      "autogroup"
+    ],
+    "permission_failures": "record unavailable with error type; no signal, setpriority, affinity, cgroup write or inferred process ownership",
+    "extra_native_readback": "optional GetPriorityClass on launcher-owned child HANDLE at startup and all_data; retained current PID/creation time",
+    "interpretation": "CPU and queue wait are per task and not pure FEX/IO costs; unknown values are explicit; no new startup gate or timer",
+    "exact_Game_binding_required": "Require separately qualified Windows Game PID to Linux process binding before labeling task samples Game-only. If unavailable, label launch-family scope, preserve component ambiguity, and do not select by PID number or executable name alone."
+  }
+}
