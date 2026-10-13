@@ -1,0 +1,88 @@
+name: Native Android Surface texture probe
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/surface-probe/**
+      - native-android/src/coh_dds.c
+      - native-android/include/coh_native_core.h
+      - native-android/tools/prepare_surface_fixture.py
+      - native-android/tools/corpus/**
+      - .github/workflows/native-surface-probe.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-surface-probe-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  package-and-emulator:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+      - name: Install pinned Android build components
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
+      - name: Recover hash-pinned real texture fixture
+        run: |
+          python3 native-android/tools/corpus/acquire.py --output native-android/results/real-corpus
+          python3 native-android/tools/prepare_surface_fixture.py --corpus native-android/results/real-corpus --output native-android/surface-probe/app/src/main/assets
+      - name: Assemble isolated ARM64 test APK
+        run: |
+          python3 native-android/surface-probe/gradle.py :app:assembleDebug :app:lintDebug
+          mkdir -p native-android/results/surface-probe
+          cp native-android/surface-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/surface-probe/CoH-Native-Surface-Probe-0.1.0-arm64.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs native-android/results/surface-probe/CoH-Native-Surface-Probe-0.1.0-arm64.apk > native-android/results/surface-probe/apk-signature.txt
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging native-android/results/surface-probe/CoH-Native-Surface-Probe-0.1.0-arm64.apk > native-android/results/surface-probe/apk-badging.txt
+      - name: Assemble separate emulator test APK
+        run: |
+          python3 native-android/surface-probe/gradle.py -PprobeAbis=x86_64 :app:assembleDebug
+          cp native-android/surface-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/surface-probe/CoH-Native-Surface-Probe-0.1.0-emulator-x86_64.apk
+      - name: Verify package ABI and record exact build inputs
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, struct, zipfile
+          root = pathlib.Path('native-android/results/surface-probe')
+          assets = pathlib.Path('native-android/surface-probe/app/src/main/assets')
+          artifacts = []
+          for label, abi, machine in [('arm64', 'arm64-v8a', 183), ('emulator-x86_64', 'x86_64', 62)]:
+              path = root / ('CoH-Native-Surface-Probe-0.1.0-' + label + '.apk')
+              with zipfile.ZipFile(path) as apk:
+                  native = [name for name in apk.namelist() if name.startswith('lib/') and name.endswith('.so')]
+                  assert native == ['lib/' + abi + '/libcoh_surface_probe.so'], native
+                  elf = apk.read(native[0])
+                  assert elf[:6] == b'\x7fELF\x02\x01' and struct.unpack_from('<H', elf, 18)[0] == machine
+              artifacts.append({'file': path.name, 'bytes': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'abi': abi, 'elf_machine': machine})
+          fixture_files = [{'file': str(path.relative_to(assets)), 'bytes': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()} for path in sorted(assets.rglob('*')) if path.is_file()]
+          assert fixture_files, 'Fixture preparation produced no assets'
+          receipt = {'schema': 1, 'source_commit': os.environ['GITHUB_SHA'], 'workflow_run_id': os.environ['GITHUB_RUN_ID'], 'application_id': 'org.coh.nativeprobe', 'min_sdk': 26, 'target_sdk': 35, 'compile_sdk': 35, 'gradle': '8.9', 'gradle_distribution_sha256': 'd725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab', 'android_gradle_plugin': '8.7.3', 'ndk': '28.2.13676358', 'cmake': '3.22.1', 'signing': 'isolated CI debug key; not the production launcher key', 'artifacts': artifacts, 'fixture_assets': fixture_files, 'thor_device_execution_verified': False}
+          (root/'build-receipt.json').write_text(json.dumps(receipt, indent=2)+'\n')
+          (root/'SHA256SUMS').write_text(''.join(item['sha256']+'  '+item['file']+'\n' for item in artifacts))
+          for path in assets.glob('*.json'):
+              (root/path.name).write_bytes(path.read_bytes())
+          PY
+      - name: Enable hosted emulator acceleration
+        run: |
+          test -c /dev/kvm
+          sudo chmod 666 /dev/kvm
+      - name: Android 13 Surface lifecycle and pixel smoke test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/surface-probe/emulator_smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-android-surface-probe-evidence
+          path: native-android/results/surface-probe/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,8 @@
+.gradle/
+.tooling/
+local.properties
+**/build/
+**/.cxx/
+app/src/main/assets/*.dds
+app/src/main/assets/*.rgba
+app/src/main/assets/*.json
