@@ -1,0 +1,1299 @@
+{
+  "schema": "coh-native-material-device-acceptance-v1",
+  "review_date": "2026-10-13",
+  "status": "accepted",
+  "qualification_passed": true,
+  "scope": "AYN Thor ARM64 real sleeve mesh, controlled skinning poses, dual-color material and normal Surface lifecycle",
+  "source_report": {
+    "filename": "COH-NativeMaterial-20261013-160110.json",
+    "bytes": 168606,
+    "sha256": "a0e900ea16a4c78099ce4d6983dd0f720ef7d198a6aec97eb42725e8a8265884",
+    "raw_report_preserved": true
+  },
+  "screenshot": {
+    "filename": "1006612891.jpg",
+    "sha256": "0e02e63b7e8d87a32ab6a1694a36e4b874d325c8169f6508547c1f8ae3e57218",
+    "visually_reviewed": true,
+    "observations": [
+      "Real textured sleeve visibly rendered",
+      "Earlier qualification-pending status precedes the final exported passing lifecycle report"
+    ],
+    "unredacted_image_published": false
+  },
+  "delivered_build": {
+    "application_id": "org.coh.materialprobe",
+    "version": "0.1.0-phase6",
+    "source_commit": "6ba92ede53bf48814bf2a02aceedebd3934eef10",
+    "workflow_run": 38461198804,
+    "apk_bytes": 314985,
+    "apk_sha256": "478c16eb36ef13e87ee17fbe08760dc610366cc50ce46e2f568f44ce99a3d4e5",
+    "provenance": "Delivered APK build receipt; uploaded report measures fixture hashes, not APK digest or source commit"
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "device": "kalama",
+    "hardware": "qcom",
+    "sdk": 33,
+    "release": "13",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "native_abi": {
+    "pointer_bytes": 8,
+    "long_bytes": 8,
+    "platform": "Android Bionic"
+  },
+  "graphics": {
+    "gl_vendor": "Qualcomm",
+    "gl_renderer": "Adreno (TM) 740",
+    "gl_version": "OpenGL ES 3.2 V@0676.53 (GIT@69e13475cb, I1df7ad3aa9, 1703680572) (Date:12/27/23)",
+    "glsl_version": "OpenGL ES GLSL ES 3.20",
+    "egl_vendor": "Android",
+    "egl_version": "1.5 Android META-EGL"
+  },
+  "fixture": {
+    "format": 1,
+    "oracle_kind": "source-semantic-scalar",
+    "original_cg_execution": false,
+    "original_gpu_driver_texture_capture": false,
+    "name": "GEO_Sleeves_Wretch default material probe",
+    "source_release": "coh-assets-v1.0.0",
+    "model": {
+      "version": 3,
+      "model": "GEO_Sleeves_Wretch",
+      "vertex_count": 116,
+      "triangle_count": 198,
+      "index_count": 594,
+      "bone_count": 3,
+      "bone_global_ids": [
+        9,
+        5,
+        7
+      ],
+      "bone_global_names": [
+        "BONEID_LARMR",
+        "BONEID_COL_R",
+        "BONEID_UARMR"
+      ],
+      "weight_source_expression": "float(byte) * 1.f / 255.f (float32 division)",
+      "weight_byte_values": [
+        0,
+        1,
+        2,
+        5,
+        14,
+        19,
+        23,
+        25,
+        102,
+        104,
+        127,
+        149,
+        165,
+        204,
+        234,
+        255
+      ],
+      "source_encoded_matrix_indices": [
+        0,
+        3,
+        6
+      ],
+      "genuinely_blended_vertices": 37,
+      "bounds": {
+        "minimum": [
+          0.626953125,
+          0.1051025390625,
+          -0.38983154296875
+        ],
+        "maximum": [
+          2.71832275390625,
+          1.04559326171875,
+          0.54400634765625
+        ]
+      },
+      "texture_names": [
+        "Sleeves_Wretch_Base.tga"
+      ],
+      "gpu_uv_transform": "V=float32(1-V), modelFixup before GPU upload",
+      "fixture_material_bind_scales": {
+        "base": [
+          1,
+          1
+        ],
+        "generic": [
+          1,
+          1
+        ],
+        "scope": "unit binds for this controlled fixture"
+      },
+      "canonical_format": "COHMESH1",
+      "canonical_header_bytes": 64,
+      "canonical_vertex_stride": 48
+    },
+    "poses": [
+      {
+        "index": 0,
+        "name": "identity palette",
+        "palette_sha256": "3e359011f7ed4c647f89489eb068a3b052707ff5565bd190f35344cbe9ac659f",
+        "golden_sha256": "aec656f29f532a1a40c9b7f75f92f6826fc83995fbfb5d346cda3a9cae99e6e1",
+        "role": "controlled validation transforms; not original animation playback"
+      },
+      {
+        "index": 1,
+        "name": "controlled palette",
+        "palette_sha256": "e7138f295ae94742380a3a37df93d9fad79a16aee703beacdda3d3909a7972d7",
+        "golden_sha256": "d48f96c571aad5de5962e7522771cca0c28762d3d2fbbff41543825dfd381b61",
+        "role": "controlled validation transforms; not original animation playback"
+      }
+    ],
+    "textures": [
+      {
+        "wrapper_sha256": "c778b30db7d2013eb8a4f296d84f78f85d6718b85f3f2b8cbc1f53a0fc463305",
+        "dds_sha256": "a6291e34eac01da70796eb942cb5f3ca2a3481712c92276ed1210fd1a36f1039",
+        "dds_format": "DXT5",
+        "width": 256,
+        "height": 256,
+        "mip": 0,
+        "decoder": "coh_dds_rgba (generic BC with alpha; original GPU upload role)"
+      },
+      {
+        "wrapper_sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013",
+        "dds_sha256": "39223f29563cb8f462a468ae3f3da4a58c99aada331f28110849fb75dc1424b7",
+        "dds_format": "ARGB8888",
+        "width": 8,
+        "height": 8,
+        "mip": 0,
+        "decoder": "bounded offline ARGB8888 BGRA-to-RGBA converter; native core uncompressed DDS support remains pending"
+      }
+    ],
+    "material": {
+      "oracle_kind": "source-semantic-scalar",
+      "original_cg_execution": false,
+      "original_gpu_driver_texture_capture": false,
+      "format": "COHMAT6",
+      "reference_width": 64,
+      "reference_height": 64,
+      "case_count": 18,
+      "real_pair_case_count": 14,
+      "controlled_swatch_case_count": 4,
+      "controlled_swatch": {
+        "rgba": [
+          51,
+          153,
+          230,
+          128
+        ],
+        "dimensions": [
+          1,
+          1
+        ],
+        "role": "explicit diagnostic shader input; not a game asset"
+      },
+      "cases": [
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0,
+          "flags": 0,
+          "name": "untinted_material",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "98747cde8e63bf656e4e9c94c164a80553d3ecad2d355e458044f3b231c415fa",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            0.125,
+            0.75,
+            0.25,
+            1
+          ],
+          "const1": [
+            0.875,
+            0.25,
+            0.5,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0,
+          "flags": 0,
+          "name": "dual_tint_mask",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "66b8f057ea26ebb4be0c39180957a6d3fec9a67eec0c9ed3a1f5fc442a74f1a0",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            0.125,
+            0.375,
+            0.625,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0,
+          "flags": 0,
+          "name": "colored_vertex_lighting",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "9adde0b599d8097a3be538ff5a20f5bcd6d02e31fb44aba9cf8cbc3c4c5548c8",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 15,
+          "alpha_ref": 0,
+          "flags": 0,
+          "name": "mid_fog",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "cbc9673b1a9f3e1d43d2652768bc5c9afaef077ba1302623d7f6cfada6abc842",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 30,
+          "alpha_ref": 0,
+          "flags": 0,
+          "name": "full_fog",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "ec13823d5a5f8bd8fbd4c837ce74ff1e48d8036a4718590cdd8732b696b31eed",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 5,
+          "alpha_ref": 0,
+          "flags": 0,
+          "name": "fog_start_clamp",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "98747cde8e63bf656e4e9c94c164a80553d3ecad2d355e458044f3b231c415fa",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0,
+          "flags": 1,
+          "name": "zero_fade_discard",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "f297fe6398c4663ff553b878932bf8148b2e9fb96c2961b26aedd58a1967533f",
+          "discarded_pixels": 4096,
+          "passed_pixels": 0
+        },
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            0.5
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0,
+          "flags": 1,
+          "name": "half_fade_source_over",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "0a087f14d15321ddd610f26a6468ad6ff21e66c9ea34619d94796465115c98c6",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0,
+          "flags": 1,
+          "name": "full_fade_source_over",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "98747cde8e63bf656e4e9c94c164a80553d3ecad2d355e458044f3b231c415fa",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            0.5
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0.5,
+          "flags": 1,
+          "name": "strict_half_alpha_ref",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "f297fe6398c4663ff553b878932bf8148b2e9fb96c2961b26aedd58a1967533f",
+          "discarded_pixels": 4096,
+          "passed_pixels": 0
+        },
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0.6000000238418579,
+          "flags": 1,
+          "name": "cutout_ref_0_6",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "98747cde8e63bf656e4e9c94c164a80553d3ecad2d355e458044f3b231c415fa",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            1,
+            0.75,
+            0.5,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0,
+          "flags": 1,
+          "name": "bright_source_over",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "f4c795f4b170579e9cf3903b7dfe00d3d431662f30f0566afdc42b7f2aaff93a",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            0.75,
+            0.125,
+            0.5,
+            0.5
+          ],
+          "const1": [
+            0.25,
+            0.625,
+            0.875,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.5,
+            0.125,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 15,
+          "alpha_ref": 0,
+          "flags": 1,
+          "name": "tinted_fog_fade",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "0f0bcb363402ebd006cc12fe479a64efc5cdc84298db6ec31751bb60c126ab0f",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "const1": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 1,
+          "flags": 1,
+          "name": "no_coverage_ref_one",
+          "dual_texture_mode": "original_asset",
+          "expected_rgba_sha256": "f297fe6398c4663ff553b878932bf8148b2e9fb96c2961b26aedd58a1967533f",
+          "discarded_pixels": 4096,
+          "passed_pixels": 0
+        },
+        {
+          "const0": [
+            0.125,
+            0.875,
+            0.25,
+            1
+          ],
+          "const1": [
+            0.875,
+            0.125,
+            0.75,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0,
+          "flags": 2,
+          "name": "controlled_dual_rgb_and_alpha",
+          "dual_texture_mode": "controlled_swatch",
+          "expected_rgba_sha256": "693c3ffc3ed77e034832f942cf36c1d66644054d75a69bdd030564fa1c24457e",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            0.125,
+            0.875,
+            0.25,
+            0.5
+          ],
+          "const1": [
+            0.875,
+            0.125,
+            0.75,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0,
+          "flags": 3,
+          "name": "controlled_dual_half_fade_blend",
+          "dual_texture_mode": "controlled_swatch",
+          "expected_rgba_sha256": "68ac2275fbfa9c72c2e7ab8016d7fda6c71f0bc32d9b5d74f5c1bd6ecf7415b2",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            0.125,
+            0.875,
+            0.25,
+            1
+          ],
+          "const1": [
+            0.875,
+            0.125,
+            0.75,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0.5,
+          "flags": 2,
+          "name": "controlled_dual_ref_half_pass",
+          "dual_texture_mode": "controlled_swatch",
+          "expected_rgba_sha256": "693c3ffc3ed77e034832f942cf36c1d66644054d75a69bdd030564fa1c24457e",
+          "discarded_pixels": 0,
+          "passed_pixels": 4096
+        },
+        {
+          "const0": [
+            0.125,
+            0.875,
+            0.25,
+            1
+          ],
+          "const1": [
+            0.875,
+            0.125,
+            0.75,
+            1
+          ],
+          "vertex_color": [
+            0.25,
+            0.25,
+            0.25,
+            1
+          ],
+          "fog_params": [
+            0,
+            0,
+            20,
+            0.10000000149011612
+          ],
+          "fog_color": [
+            0.125490203499794,
+            0.250980406999588,
+            0.3764705955982208,
+            1
+          ],
+          "clear": [
+            0.125490203499794,
+            0.3764705955982208,
+            0.6274510025978088,
+            0.501960813999176
+          ],
+          "fog_coord": 0,
+          "alpha_ref": 0.6000000238418579,
+          "flags": 3,
+          "name": "controlled_dual_ref_point6_discard",
+          "dual_texture_mode": "controlled_swatch",
+          "expected_rgba_sha256": "f297fe6398c4663ff553b878932bf8148b2e9fb96c2961b26aedd58a1967533f",
+          "discarded_pixels": 4096,
+          "passed_pixels": 0
+        }
+      ]
+    },
+    "material_binding": {
+      "source": "upstream/i24/data/defs/v_villain_costumes/v_arachnos_henchmen.nd",
+      "source_sha256": "db73b840f0339fb211ac75bcb3680f85de8ff60daf23793f9480fd6a5f02f419",
+      "part_line": 973,
+      "enttype": "V_Arachnos_Wretch",
+      "npc": "Arachnos_Wretch",
+      "part": "Sleeves",
+      "primary_geometry_texname": "Sleeves_Wretch_Base.tga",
+      "secondary_resolution": "stock texBindSetup generic layer grey_tex fallback",
+      "scope": "real GEO default material; not the Arachnos NPC costume override",
+      "secondary_geometry_alias": "grey",
+      "secondary_asset": "assets/texture_library/world/filler/grey.texture",
+      "npc_override_excluded": {
+        "texture1": "Skin_Wretch_Base",
+        "texture2": "none",
+        "resolved_texture1": "Sleeves_Skin_Wretch_Base",
+        "texture2_none_resolution": "white_tex in Game/src/entity/entclient.c:3423-3425"
+      },
+      "source_contracts": [
+        {
+          "file": "upstream/ouroboros/Game/src/render/tex.c",
+          "lines": [
+            1036,
+            1045
+          ],
+          "role": "default generic layer fallback grey_tex"
+        },
+        {
+          "file": "upstream/ouroboros/Game/src/render/tex.c",
+          "lines": [
+            2774,
+            2791
+          ],
+          "role": "stock grey asset resolved by texFind/texLoad"
+        }
+      ]
+    },
+    "assets": {
+      "mesh.bin": {
+        "bytes": 8020,
+        "sha256": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661"
+      },
+      "poses.bin": {
+        "bytes": 5920,
+        "sha256": "e9bc690e7ea7cb454251d7bdbb34f403890cb21e6b70fe83de0b0f1892d67b0a"
+      },
+      "texture0.rgba": {
+        "bytes": 262144,
+        "sha256": "68207c4bd81ed03ed80847957cd0300068f8a5b40bffc333a90560c6ea610b06"
+      },
+      "texture1.rgba": {
+        "bytes": 256,
+        "sha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7"
+      },
+      "material-reference.bin": {
+        "bytes": 296976,
+        "sha256": "392c7006750c05074fe4277b0a17bedd2c86704077a49721aaea21f371f71d9d"
+      }
+    },
+    "real_geometry_sha256": "7d56d6fe65a1be2d02fe66e078b4c7b6a3998177dce47e8ac35b34a77baa413c",
+    "native_generator_library_sha256": "f41ab25644010d34d70a70fc732fa98c34ef85a5c376f3c067f34ea66fe10ba2",
+    "native_gameplay_validated": false,
+    "original_animation_playback_validated": false,
+    "verified_assets": {
+      "mesh.bin": {
+        "sha256": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661",
+        "bytes": 8020
+      },
+      "poses.bin": {
+        "sha256": "e9bc690e7ea7cb454251d7bdbb34f403890cb21e6b70fe83de0b0f1892d67b0a",
+        "bytes": 5920
+      },
+      "texture0.rgba": {
+        "sha256": "68207c4bd81ed03ed80847957cd0300068f8a5b40bffc333a90560c6ea610b06",
+        "bytes": 262144
+      },
+      "texture1.rgba": {
+        "sha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7",
+        "bytes": 256
+      },
+      "material-reference.bin": {
+        "sha256": "392c7006750c05074fe4277b0a17bedd2c86704077a49721aaea21f371f71d9d",
+        "bytes": 296976
+      }
+    },
+    "verified_total_bytes": 573316
+  },
+  "qualification": {
+    "passed": true,
+    "pending_requirements": [],
+    "successful_runs": 8,
+    "failed_runs": 0,
+    "successful_surface_generations": 4,
+    "successful_actual_dimensions": 2,
+    "successful_widths": 2,
+    "successful_heights": 2,
+    "current_surface_passed": true,
+    "native_context_recreation": "required in each passing native run",
+    "limits": "Device-specific diagnostic material and pose gate only; not full client/gameplay qualification"
+  },
+  "independently_recomputed": {
+    "native_successful_runs": 8,
+    "egl_context_lifetimes": 16,
+    "transform_components": 22272,
+    "transform_mismatches": 0,
+    "stock_normal_components": 11136,
+    "stock_normal_mismatches": 0,
+    "skin_compared_pixels": 3977200,
+    "skin_interior_pixels": 270144,
+    "skin_edge_excluded_pixels": 741392,
+    "skin_mismatches": 0,
+    "material_pixels": 1179648,
+    "material_mismatches": 0,
+    "material_cases": 288,
+    "window_samples": 784,
+    "window_mismatches": 0,
+    "gl_errors": 0,
+    "surface_dimensions": [
+      [
+        1413,
+        291
+      ],
+      [
+        1884,
+        389
+      ]
+    ],
+    "surface_generations": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "all_gpu_objects_released": true,
+    "successful_swaps": 16,
+    "max_transform_error": 2.38418579e-07,
+    "max_position_error": 2.38418579e-07,
+    "max_normal_error": 1.1920929e-07,
+    "stock_normal_max_error": 1.1920929e-07,
+    "skin_max_byte_error": 0,
+    "material_max_byte_error": 1,
+    "background_foreground_recovery": {
+      "previous_generation": 2,
+      "new_generation": 3,
+      "successful_request": 10,
+      "sequence": [
+        "activity_paused",
+        "surface_destroyed",
+        "activity_stopped",
+        "activity_resumed",
+        "surface_created",
+        "surface_changed",
+        "probe_requested",
+        "probe_completed"
+      ]
+    }
+  },
+  "runs": [
+    {
+      "request": 1,
+      "generation": 1,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 151,
+      "cycles": 2
+    },
+    {
+      "request": 2,
+      "generation": 1,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "manual",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 199,
+      "cycles": 2
+    },
+    {
+      "request": 4,
+      "generation": 1,
+      "surface": [
+        1413,
+        291
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 178,
+      "cycles": 2
+    },
+    {
+      "request": 7,
+      "generation": 2,
+      "surface": [
+        1413,
+        291
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 187,
+      "cycles": 2
+    },
+    {
+      "request": 10,
+      "generation": 3,
+      "surface": [
+        1413,
+        291
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 260,
+      "cycles": 2
+    },
+    {
+      "request": 11,
+      "generation": 3,
+      "surface": [
+        1413,
+        291
+      ],
+      "reason": "manual",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 254,
+      "cycles": 2
+    },
+    {
+      "request": 13,
+      "generation": 3,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 227,
+      "cycles": 2
+    },
+    {
+      "request": 16,
+      "generation": 4,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 223,
+      "cycles": 2
+    }
+  ],
+  "limits": [
+    "Controlled palettes are not original rig or animation playback; those require Phase 7",
+    "Source-semantic scalar material oracle does not execute original Cg on original GPU",
+    "Shared vertex-lighting shader in skin/reference image paths; independent transform feedback checks position and normal",
+    "Controlled double-sided mip0 geometry and offline RGBA conversion; original culling, texture driver and full material/scene families remain unqualified",
+    "Normal Surface recovery only; no unexpected GPU reset, process death, frame pacing, gameplay, FPS or load-time claim"
+  ]
+}
