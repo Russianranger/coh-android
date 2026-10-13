@@ -75,7 +75,13 @@ def cache_snapshot(runtime):
 def qualify(args):
     require(re.fullmatch('[0-9a-f]{40}',args.repository_commit) and 30<=args.timeout_seconds<=3600,
             'Exact source and bounded host qualification duration required')
-    build=package.validate(args.package,args.repository_commit)
+    if getattr(args,'reuse_completed_windows_package',False):
+        import reuse_native_startup_profile as reuse
+        build=reuse.validate_package(args.package)
+        native_reuse=reuse.provenance()
+    else:
+        build=package.validate(args.package,args.repository_commit)
+        native_reuse=None
     require(not args.work.exists() and not args.output.exists(),'Fresh isolated native qualification directories required')
     args.work=args.work.resolve();args.output=args.output.resolve();args.runtime=args.runtime.resolve()
     control=fx.validate_control_fixture(package.read(args.control_fixture))
@@ -104,7 +110,8 @@ def qualify(args):
         ids_before=preload.package.identifier_snapshot(runtime/'data')
         try:
             phase=preload.run_phase(args,runtime,launcher,env,args.output,stage,
-                {'diagnostic_source':args.repository_commit,'native':native_pin},trace=False)
+                {'qualification_source':args.repository_commit,'native_source':build['repository_commit'],
+                 'native':native_pin},trace=False)
         except BaseException:
             failure=args.output/'evidence'/(stage+'-failure-cleanup');failure.mkdir(exist_ok=True)
             try:preload.stop_owned_prefix(env,failure,normal_launcher_exit_observed_first=False)
@@ -127,13 +134,15 @@ def qualify(args):
     require(records['control']['phase']['definition_counts']==records['profile']['phase']['definition_counts'],
             'Control/profile native definition counts differ')
     value={'format':1,'role':'nonshipping_native_startup_profile_Wine_preload_parity','status':'passed',
-        'repository_commit':args.repository_commit,'build_package':package.pin(args.package/package.MANIFEST),
+        'repository_commit':args.repository_commit,'native_package_source_commit':build['repository_commit'],
+        'retained_native_build':native_reuse,'build_package':package.pin(args.package/package.MANIFEST),
         'publication_allowed':False,'native_preload_processes':2,'actual_Wine_native_preload_executed':True,
         'map_world_entry_executed':False,'native_game_executed':False,'atlas_kings_collision_parity_executed':False,
         'physical_device_executed':False,'player_database_used':False,'PostgreSQL_started':False,
         'records':records,'observations':outputs['profile'],'scope':'Completed TSR definition preload and exact BIN/identifier parity only; no maps or gameplay',
         'caveat':'Elapsed host wall times include emulator/system work and are not comparable to Thor measurements',
-        'source_files':{n:package.pin(ROOT/n) for n in ('tools/qualify_native_startup_profile.py','android/native/server-cache-launcher.c')}}
+        'source_files':{n:package.pin(ROOT/n) for n in ('tools/qualify_native_startup_profile.py','android/native/server-cache-launcher.c',
+            *(('tools/reuse_native_startup_profile.py',) if native_reuse is not None else ()))}}
     package.write(args.output/REPORT,value)
     return value
 
@@ -142,4 +151,5 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('package','runtime','control-fixture','work','output'):p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--repository-commit',required=True);p.add_argument('--wine',default='wine');p.add_argument('--timeout-seconds',type=int,default=1800)
+    p.add_argument('--reuse-completed-windows-package',action='store_true')
     value=qualify(p.parse_args());print(json.dumps({'status':value['status'],'publication_allowed':False,'native_preload_processes':2}))

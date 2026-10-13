@@ -8,7 +8,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import sys
 import map_startup_namespace_certificate as namespace
 import prepare_map_startup_observer_source as safe
@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = 'Game/src/render/thread/rt_cgfx.c'
 HEADER = 'coh_native_cg_profile.h'
 OVERLAY = 'database/native-startup-profile/overlay/' + HEADER
-TARGET = str(Path(SOURCE).parent / HEADER)
+TARGET = str(PurePosixPath(SOURCE).parent / HEADER)
 RECEIPT = 'native-cg-profile-build-input.json'
 
 
