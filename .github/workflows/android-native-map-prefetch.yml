@@ -1,0 +1,92 @@
+name: Build one nonshipping Map animation metadata prefetch candidate
+on:
+  push:
+    branches: [codex/native-map-prefetch-036]
+    paths:
+      - .github/workflows/android-native-map-prefetch.yml
+      - tools/prepare_native_map_metadata_prefetch_source.py
+      - tools/test_native_map_metadata_prefetch.py
+      - tools/package_native_map_prefetch.py
+      - tools/test_package_native_map_prefetch.py
+      - tools/qualify_native_startup_profile.py
+  workflow_dispatch:
+permissions: {contents: read, actions: read}
+concurrency:
+  group: native-map-prefetch-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  native-candidate:
+    if: github.repository == 'Russianranger/coh-android'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 90
+    steps:
+      - name: Preserve exact authenticated source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Recover completed control and observed builds without recompilation
+        env: {GH_TOKEN: '${{ github.token }}'}
+        shell: pwsh
+        run: |
+          python -c "from pathlib import Path; import subprocess; p=Path('out/native-history');p.mkdir(parents=True); pairs=[('run.json','runs/38345782437'),('jobs.json','runs/38345782437/jobs'),('artifact.json','artifacts/11788852713'),('artifact.zip','artifacts/11788852713/zip')]; [(subprocess.run(['gh','api','repos/Russianranger/coh-android/actions/'+url],stdout=(p/name).open('wb'),check=True)) for name,url in pairs]"
+          if ($LASTEXITCODE -ne 0) { throw 'Exact retained native artifact download failed' }
+          python tools/reuse_native_startup_profile.py --archive out/native-history/artifact.zip --output out/native-profile --run-metadata out/native-history/run.json --jobs-metadata out/native-history/jobs.json --artifact-metadata out/native-history/artifact.json
+          if ($LASTEXITCODE -ne 0) { throw 'Original Windows native provenance admission failed' }
+      - name: Authenticate unchanged animation certificate inputs
+        shell: pwsh
+        run: |
+          python tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+          if ($LASTEXITCODE -ne 0) { throw 'Original animation inputs failed' }
+      - name: Stage exact retained Map source and one isolated metadata scheduling change
+        shell: pwsh
+        run: |
+          python tools/prepare_map_startup_source.py --output C:/native-map-prefetch --animations-pigg out/native-inputs/server-animations.pigg --animation-manifest out/native-inputs/server-animation-manifest.json
+          if ($LASTEXITCODE -ne 0) { throw 'Retained Map source failed' }
+          python tools/prepare_native_startup_profile_source.py --source-staging C:/native-map-prefetch
+          if ($LASTEXITCODE -ne 0) { throw 'Retained Map observer source failed' }
+          python tools/prepare_native_map_metadata_prefetch_source.py --source-staging C:/native-map-prefetch
+          if ($LASTEXITCODE -ne 0) { throw 'Exact metadata scheduling source failed' }
+      - name: Execute actual Win32 original and candidate freshness control flow
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation missing' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/test_native_map_metadata_prefetch.py --windows-qualify --output out/contracts/native-map-prefetch-checks.json
+          if errorlevel 1 exit /b 1
+          python -m unittest discover -s tools -p test_package_native_map_prefetch.py
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/map-prefetch.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\map-prefetch.cmd
+          if ($LASTEXITCODE -ne 0) { throw 'Actual Win32 freshness equivalence qualification failed' }
+      - name: Compile only the new Map candidate with unchanged native configuration
+        working-directory: C:/native-map-prefetch
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Candidate Map configuration failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target MapServer
+          if ($LASTEXITCODE -ne 0) { throw 'Candidate Map build failed' }
+      - name: Bind Win32 imports source fixture and exact retained native baseline
+        shell: pwsh
+        run: |
+          python tools/package_native_map_prefetch.py --source C:/native-map-prefetch --baseline out/native-profile --checks out/contracts/native-map-prefetch-checks.json --output out/native-prefetch --repository-commit '${{ github.sha }}' --run-url 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+          if ($LASTEXITCODE -ne 0) { throw 'Experimental native package failed validation' }
+      - uses: actions/upload-artifact@v4
+        with: {name: coh-nonshipping-map-metadata-prefetch, path: out/native-prefetch/, if-no-files-found: error, retention-days: 90}
+      - uses: actions/upload-artifact@v4
+        with: {name: coh-map-prefetch-retained-control, path: out/native-profile/, if-no-files-found: error, retention-days: 90}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: coh-map-prefetch-native-contract-evidence, path: out/contracts/, if-no-files-found: warn, retention-days: 90}
+      - name: Record pending acceptance gates without executing a known incomplete fixture
+        shell: pwsh
+        run: Write-Output 'Only the new Win32 Map build and extracted freshness fixture execute here. Original BIN fixture deltas are under investigation. Genuine paired preload, Atlas/Kings world startup, collision behavior, and physical timing remain separate pending gates. APK publication is prohibited.'
