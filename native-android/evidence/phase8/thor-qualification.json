@@ -1,0 +1,454 @@
+{
+  "schema": "coh-native-character-device-acceptance-v1",
+  "review_date": "2026-10-13",
+  "status": "native-character-resize-recreation-accepted; background-return-not-evidenced",
+  "qualification_passed": false,
+  "reported_app_qualification_passed": true,
+  "user_reported_all_passed": true,
+  "native_character_gate_passed": true,
+  "resize_gate_passed": true,
+  "explicit_surface_recreation_gate_passed": true,
+  "background_return_gate_passed": false,
+  "pending_requirements": [
+    "same-session background/return export with pause, surface destruction, stop, resume, new surface and passing current foreground run"
+  ],
+  "scope": "AYN Thor ARM64 complete source-selected Wretch assembly, actual actor morphology, 60-node rig, 11 draws, 17 textures, COLORBLEND_DUAL fallback, single run clip and native surface resize/recreation; HOME background return not present in this immutable export",
+  "source_report": {
+    "filename": "COH-NativeCharacter-20261013-181750.json",
+    "bytes": 455033,
+    "sha256": "34ca5dc1ba1403e290e23a9b8721d14ed4de7055339d61ba28f9fe68f102ddcf",
+    "snapshot_updated_at": "2026-10-13T18:17:50.557-05:00",
+    "raw_report_preserved": true
+  },
+  "screenshot": {
+    "filename": "Screenshot_20261013-181650.png",
+    "bytes": 171106,
+    "sha256": "a6adb0118b291e02be81bde7b94f0d5271abe5775e346cc21a7c96ab0862ede3",
+    "visually_reviewed": true,
+    "observations": [
+      "Complete textured Wretch visible during animation preview",
+      "Screenshot shows QUALIFICATION PENDING and surface generation 1; immutable export later contains three passing runs ending at generation 2",
+      "Screenshot is in-progress visual evidence only; audited JSON provides completed native checks"
+    ],
+    "unredacted_image_published": false
+  },
+  "delivered_build": {
+    "application_id": "org.coh.characterprobe",
+    "version": "0.1.0-phase8",
+    "source_commit": "608eeffa7ececad26bfce5fc2ef00a3cbc81e243",
+    "workflow_run": 38481572798,
+    "apk_filename": "CoH-Native-Character-Probe-0.1.0-arm64.apk",
+    "apk_bytes": 1999956,
+    "apk_sha256": "7b63e2de27eb84f678fecf2d91e37eb2d2eaf18728e4aa17abe98ef07c9ee71e",
+    "native_library": {
+      "file": "lib/arm64-v8a/libcoh_character_probe.so",
+      "bytes": 109824,
+      "sha256": "2900b4c720c8e276d3bc687cfd6ecb1d2fab1b196f1c72384c3ada078e2a2016"
+    },
+    "provenance": "Delivered APK independently matches build receipt and all report fixture assets/metadata. Uploaded report measures fixture identity, not its installed APK digest or source commit."
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "device": "kalama",
+    "hardware": "qcom",
+    "sdk": 33,
+    "release": "13",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "graphics": {
+    "gl_vendor": "Qualcomm",
+    "gl_renderer": "Adreno (TM) 740",
+    "gl_version": "OpenGL ES 3.2 V@0676.53 (GIT@69e13475cb, I1df7ad3aa9, 1703680572) (Date:12/27/23)",
+    "glsl_version": "OpenGL ES GLSL ES 3.20",
+    "egl_vendor": "Android",
+    "egl_version": "1.5 Android META-EGL"
+  },
+  "native_abi": {
+    "pointer_bytes": 8,
+    "long_bytes": 8,
+    "platform": "Android Bionic"
+  },
+  "fixture": {
+    "container": "COHCHAR8",
+    "part_count": 11,
+    "costume_category_count": 10,
+    "vertex_count": 2626,
+    "triangle_count": 2986,
+    "index_count": 8958,
+    "genuinely_blended_vertices": 620,
+    "palette_matrix_count": 45,
+    "texture_count": 17,
+    "sample_count": 6,
+    "hierarchy_bones": 60,
+    "base_tracks": 60,
+    "motion_tracks": 44,
+    "frame_samples": [
+      1,
+      1.5,
+      5.25,
+      12.5,
+      24.5,
+      25
+    ],
+    "verified_assets": {
+      "character.bin": {
+        "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7",
+        "bytes": 4261100
+      },
+      "rig.bin": {
+        "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5",
+        "bytes": 11642
+      },
+      "morph.bin": {
+        "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02",
+        "bytes": 3028
+      },
+      "material-reference.bin": {
+        "sha256": "371af14de5ee603ad41fa82b4a02d5dfb29a4eb61ec58a0a2436b67b2edccfaa",
+        "bytes": 1089856
+      },
+      "character-reference.bin": {
+        "sha256": "0cb625fe9b01203bcd6f552398f4816987988c43c133743a579e8e670a471c07",
+        "bytes": 438216
+      }
+    },
+    "verified_total_bytes": 5803842,
+    "metadata_matches_delivered_apk": true,
+    "reference_palettes_drive_rendering": false,
+    "original_cg_execution": false,
+    "high_quality_materials_qualified": false
+  },
+  "reported_qualification": {
+    "passed": true,
+    "pending_requirements": [],
+    "successful_runs": 3,
+    "failed_runs": 0,
+    "successful_surface_generations": 2,
+    "successful_actual_dimensions": 2,
+    "successful_widths": 2,
+    "successful_heights": 2,
+    "current_surface_passed": true,
+    "native_context_recreation": "required in each passing native run",
+    "limits": "Device-specific complete character assembly and single-clip diagnostic gate only; not full client/gameplay qualification"
+  },
+  "independently_recomputed": {
+    "native_successful_runs": 3,
+    "egl_context_lifetimes": 6,
+    "surface_generations": [
+      1,
+      2
+    ],
+    "surface_dimensions": [
+      [
+        1413,
+        291
+      ],
+      [
+        1884,
+        389
+      ]
+    ],
+    "same_session_all_runs_verified": true,
+    "all_runs_nonobsolete": true,
+    "all_gpu_objects_released": true,
+    "successful_swaps": 6,
+    "counts": {
+      "transform_vertices": 94536,
+      "transform_components": 567216,
+      "stock_normal_components": 283608,
+      "animation_samples": 36,
+      "hierarchy_parent_comparisons": 360,
+      "local_components": 15120,
+      "world_components": 25920,
+      "scaled_world_components": 25920,
+      "btt_components": 1080,
+      "morph_scale_components": 1152,
+      "palette_components": 19440,
+      "part_palettes_sampled": 396,
+      "base_fallback_samples": 576,
+      "animation_clock_cases": 48,
+      "skin_compared_pixels": 7362636,
+      "skin_interior_pixels": 122580,
+      "skin_edge_excluded_pixels": 2074548,
+      "standalone_compared_pixels": 92791584,
+      "material_cases": 396,
+      "real_material_cases": 264,
+      "synthetic_semantic_cases": 132,
+      "material_pixels": 1622016,
+      "material_blended_cases": 198,
+      "material_discard_clear_pixels": 595902,
+      "window_samples": 294,
+      "preview_frames": 270,
+      "preview_clock_steps": 270,
+      "preview_clock_wraps": 6,
+      "preview_image_samples": 18,
+      "preview_changed_image_samples": 12,
+      "preview_pixels_changed_from_first": 782190,
+      "preview_elapsed_ms": 9001,
+      "cpu_stage_components": 88632
+    },
+    "mismatches": {
+      "transform_mismatches": 0,
+      "position_mismatches": 0,
+      "normal_mismatches": 0,
+      "stock_normal_mismatches": 0,
+      "skin_mismatches": 0,
+      "material_mismatches": 0,
+      "window_mismatches": 0,
+      "standalone_mismatches": 0,
+      "local_mismatches": 0,
+      "world_mismatches": 0,
+      "scaled_world_mismatches": 0,
+      "btt_mismatches": 0,
+      "morph_scale_mismatches": 0,
+      "palette_mismatches": 0,
+      "animation_clock_mismatches": 0,
+      "gl_errors": 0,
+      "first_gl_error": 0,
+      "egl_error": 0
+    },
+    "max_errors": {
+      "max_transform_error": 1.43051147e-06,
+      "max_position_error": 1.43051147e-06,
+      "max_normal_error": 2.08616257e-07,
+      "max_normal_length_error": 1.78813934e-07,
+      "stock_normal_max_error": 2.38418579e-07,
+      "stock_normal_max_length_error": 1.78813934e-07,
+      "skin_max_byte_error": 0,
+      "material_max_byte_error": 1,
+      "standalone_max_byte_error": 1,
+      "local_max_error": 0,
+      "world_max_error": 7.15255737e-07,
+      "scaled_world_max_error": 7.15255737e-07,
+      "btt_max_error": 2.38418579e-07,
+      "morph_scale_max_error": 0,
+      "palette_max_error": 1.43051147e-06
+    },
+    "parts": [
+      {
+        "index": 0,
+        "category": "Pants",
+        "model_name": "GEO_Hips_Wretch",
+        "source_vertices": 318,
+        "palette_matrices": 5,
+        "gpu_vertices_compared": 11448,
+        "palette_components_compared": 2160,
+        "standalone_interior_pixels": 615732,
+        "standalone_image_pixels_compared": 7997880,
+        "standalone_image_mismatches": 0
+      },
+      {
+        "index": 1,
+        "category": "Chest",
+        "model_name": "GEO_Chest_Wretch",
+        "source_vertices": 409,
+        "palette_matrices": 9,
+        "gpu_vertices_compared": 14724,
+        "palette_components_compared": 3888,
+        "standalone_interior_pixels": 780186,
+        "standalone_image_pixels_compared": 7578600,
+        "standalone_image_mismatches": 0
+      },
+      {
+        "index": 2,
+        "category": "Head",
+        "model_name": "GEO_Head_Wretch__NOLOD",
+        "source_vertices": 160,
+        "palette_matrices": 2,
+        "gpu_vertices_compared": 5760,
+        "palette_components_compared": 864,
+        "standalone_interior_pixels": 166728,
+        "standalone_image_pixels_compared": 8616738,
+        "standalone_image_mismatches": 0
+      },
+      {
+        "index": 3,
+        "category": "Gloves",
+        "model_name": "GEO_LarmL_Wretch",
+        "source_vertices": 370,
+        "palette_matrices": 7,
+        "gpu_vertices_compared": 13320,
+        "palette_components_compared": 3024,
+        "standalone_interior_pixels": 161634,
+        "standalone_image_pixels_compared": 8593422,
+        "standalone_image_mismatches": 0
+      },
+      {
+        "index": 4,
+        "category": "BootsRight",
+        "model_name": "GEO_LlegR_Wretch",
+        "source_vertices": 230,
+        "palette_matrices": 3,
+        "gpu_vertices_compared": 8280,
+        "palette_components_compared": 1296,
+        "standalone_interior_pixels": 404940,
+        "standalone_image_pixels_compared": 8442930,
+        "standalone_image_mismatches": 0
+      },
+      {
+        "index": 5,
+        "category": "BootsLeft",
+        "model_name": "GEO_LlegL_Wretch",
+        "source_vertices": 230,
+        "palette_matrices": 3,
+        "gpu_vertices_compared": 8280,
+        "palette_components_compared": 1296,
+        "standalone_interior_pixels": 281082,
+        "standalone_image_pixels_compared": 8599998,
+        "standalone_image_mismatches": 0
+      },
+      {
+        "index": 6,
+        "category": "Belt",
+        "model_name": "GEO_Belt_Wretch",
+        "source_vertices": 98,
+        "palette_matrices": 1,
+        "gpu_vertices_compared": 3528,
+        "palette_components_compared": 432,
+        "standalone_interior_pixels": 1111692,
+        "standalone_image_pixels_compared": 8543538,
+        "standalone_image_mismatches": 0
+      },
+      {
+        "index": 7,
+        "category": "Hair",
+        "model_name": "GEO_Hair_Jack__Collar2x",
+        "source_vertices": 322,
+        "palette_matrices": 1,
+        "gpu_vertices_compared": 11592,
+        "palette_components_compared": 432,
+        "standalone_interior_pixels": 30552,
+        "standalone_image_pixels_compared": 8784264,
+        "standalone_image_mismatches": 0
+      },
+      {
+        "index": 8,
+        "category": "Neck",
+        "model_name": "GEO_Neck_Wretch__Collar2x",
+        "source_vertices": 308,
+        "palette_matrices": 4,
+        "gpu_vertices_compared": 11088,
+        "palette_components_compared": 1728,
+        "standalone_interior_pixels": 870114,
+        "standalone_image_pixels_compared": 7951422,
+        "standalone_image_mismatches": 0
+      },
+      {
+        "index": 9,
+        "category": "Sleeves",
+        "model_name": "GEO_Sleeves_Wretch",
+        "source_vertices": 116,
+        "palette_matrices": 3,
+        "gpu_vertices_compared": 4176,
+        "palette_components_compared": 1296,
+        "standalone_interior_pixels": 355542,
+        "standalone_image_pixels_compared": 8558274,
+        "standalone_image_mismatches": 0
+      },
+      {
+        "index": 10,
+        "category": "Shoulders",
+        "model_name": "GEO_Spadr_Wretch",
+        "source_vertices": 65,
+        "palette_matrices": 7,
+        "gpu_vertices_compared": 2340,
+        "palette_components_compared": 3024,
+        "standalone_interior_pixels": 73266,
+        "standalone_image_pixels_compared": 9124518,
+        "standalone_image_mismatches": 0
+      }
+    ]
+  },
+  "lifecycle": {
+    "event_names": [
+      "activity_created",
+      "activity_resumed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "resize_requested",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "surface_recreation_requested",
+      "surface_destroyed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed"
+    ],
+    "actual_resize_callbacks_verified": true,
+    "explicit_recreation_destroy_create_order_verified": true,
+    "activity_pause_observed": false,
+    "activity_stop_observed": false,
+    "background_resume_and_new_surface_observed": false,
+    "latest_completed_generation": 2,
+    "latest_completed_request": 6,
+    "current_surface_passed": true,
+    "last_recorded_activity_state": "resumed",
+    "background_return_qualification_pending": true,
+    "explanation": "Export snapshot contains initial resume, resize and explicit Surface recreation only. No pause/stop/second resume exists in these exported bytes. Picker lifecycle after export cannot rewrite the immutable exported snapshot."
+  },
+  "tolerances": {
+    "transform_absolute": 0.0001,
+    "rgba_bytes": 2,
+    "triangle_edge_exclusion_pixels": 2,
+    "standalone_minimum_interior_pixels_per_part_pose": 64,
+    "skin_fbo_width": 512,
+    "skin_fbo_height": 512
+  },
+  "sampler_policy": {
+    "character": "GL_LINEAR",
+    "material_and_window_diagnostics": "GL_NEAREST",
+    "mips": "base level only; original mip chain unqualified"
+  },
+  "limits": [
+    "No full client, scene traversal, collision, input, networking or gameplay qualification",
+    "No FPS, startup or zoning measurement",
+    "No full sequencer, high-quality materials, original Cg execution or original Windows framebuffer comparison",
+    "Normal per-cycle native context release and explicit Surface recreation are proved; HOME background/return is not proved by this export"
+  ],
+  "privacy": {
+    "device_fingerprint_omitted": true,
+    "session_identifier_and_pid_omitted": true,
+    "raw_report_and_screenshot_not_published": true
+  },
+  "audit": {
+    "passed": true,
+    "assertions_passed": 2543,
+    "validator_source_sha256": "724c797d817b22f1bcbd41985d4eb35ee9ea9409bf24847d22991356f9c8bd42",
+    "adaptations": [
+      "Physical-device emulator_detected=false",
+      "Manual device run omits CI auto_smoke_completed event; native numeric, per-part coverage, cleanup, resize and recreation checks unchanged"
+    ],
+    "checks": [
+      {
+        "check": "Unchanged native/source fixture, numerical tolerances, all-part coverage, material, temporal preview and resize/recreation validator",
+        "passed": true,
+        "assertions": 385
+      },
+      {
+        "check": "Exact five fixture hashes and lengths compared with delivered ARM64 APK",
+        "passed": true,
+        "assertions": 18
+      },
+      {
+        "check": "All evidence numbers finite",
+        "passed": true,
+        "assertions": 2020
+      },
+      {
+        "check": "Independent physical-device, every-run, event, viewport, source-count, metadata and ELF checks",
+        "passed": true,
+        "assertions": 117
+      }
+    ]
+  }
+}

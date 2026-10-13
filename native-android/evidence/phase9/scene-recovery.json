@@ -1,0 +1,380 @@
+{
+  "schema": "coh-native-scene-deconstruction-v1",
+  "phase": 9,
+  "analysis_only": true,
+  "implementation_started": false,
+  "android_build_started": false,
+  "rendering_qualified": false,
+  "observed_native_android_branch_head": "501ed9a29833434d5321efc8ec0cd92065bdc7fe",
+  "local_git_head_used_for_immutable_blob_reads": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "scope": "One source-selected two-wide modern bench branch from Atlas authored scene; preserve every ancestor transform and inherited source property, omit sibling branches explicitly",
+  "selected_model_root": "modern_bench_2wide",
+  "selected_root_geometry_instances_expected": 1,
+  "actual_geo_submesh_draw_calls": null,
+  "source_pins": [
+    {
+      "path": "upstream/ouroboros/Common/group/groupfileload.c",
+      "bytes": 63848,
+      "sha256": "5fc2891ed78626b9fa38b181fd5fc975b69f000bf2f79bbb3c5527c86503e8d7",
+      "git_blob_sha": "821b4cdc2c5ccd5a914148cb85e1177a157920ac",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c",
+      "bytes": 37198,
+      "sha256": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "git_blob_sha": "a4ed82b07906da4bb6cfd1ed562b353e147faf69",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+      "bytes": 47551,
+      "sha256": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "git_blob_sha": "8cbfbdc5d68f3b35043fb176753fd7fbad953c7b",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h",
+      "bytes": 30934,
+      "sha256": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "git_blob_sha": "9231f1c3fa383e499488ecbf0192becf0aee9d46",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/graphics/groupdrawinline.c",
+      "bytes": 64782,
+      "sha256": "894a0f0f25f56a6659b66d6419f5089cb08d041c8b10371e7a154cae3f331824",
+      "git_blob_sha": "a94ec17ad82597e7492402133546c94f806977eb",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/graphics/gfx.c",
+      "bytes": 58931,
+      "sha256": "9965ea6a472a8b693015540a53142cdf023a2399ecc9dc88f338c5f0b4f42a7e",
+      "git_blob_sha": "ed836bf84948ec379d4eb4161472abb7a87b2edc",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/graphics/gfxwindow.c",
+      "bytes": 13754,
+      "sha256": "50b5f850e5fad03fc4015d932ead2e9ead6a26bc9bd23ba7990c5c0c27f23ab4",
+      "git_blob_sha": "bad28de7e6e7ab53c3a2926668f29893d2181279",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/renderUtil.c",
+      "bytes": 67537,
+      "sha256": "19d1cf0edd0e5a398adc7f05165bc9dc08f7957fa700f6786c00e8c485e6dbee",
+      "git_blob_sha": "072c36f7577b3ff158093934ba19919fa1fd816c",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/rendertree.c",
+      "bytes": 128217,
+      "sha256": "9160762900e4f1a9124b7e852e8f98b0336934343eceddbaf37775c03c9c0e32",
+      "git_blob_sha": "ac721e5583eac2be2f01cc5510c8978f92b1d07e",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/model.c",
+      "bytes": 15456,
+      "sha256": "5a5fb0d03c94450b108436c4d67e1503246e72627cc6155d23ddc1e557755072",
+      "git_blob_sha": "1ea29021d5ead27d1ed72a1d09b330e54b0bdcf9",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_model.c",
+      "bytes": 67147,
+      "sha256": "1c9e8a6b16326cd2a07d3cd9707de01bdc9ab74af0fe3351622890f3acf0dfaa",
+      "git_blob_sha": "0f5c4ebf72e6c3b06af6ce735990f7d6798ec7b8",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_tricks.c",
+      "bytes": 21101,
+      "sha256": "216c067b615a7979ade777d0dac85bd5374ab7929bbac4cc2f9b693363a7da65",
+      "git_blob_sha": "f28c7444ffde680e4fb9d78d45eba2a405cd84ef",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/i24/data/object_library/Streets/elements/misc_sm/misc_sm.txt",
+      "bytes": 2739,
+      "sha256": "713ab4539cf10d60c4f4656dd4b907b4cf81cee0ba8749992607a9dbea1e4061",
+      "git_blob_sha": "779f3d7f4cf6c6aef9444654783bbb31627d2817",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/i24/data/object_library/Streets/elements/misc_sm/misc_sm.rootnames",
+      "bytes": 1220,
+      "sha256": "7e826fc46afd9c3d85c5ddf047b94ad1744eb8ad7231e5e1181e6c871240633e",
+      "git_blob_sha": "3de0b7e39ac81047d97576625efec6a4583d6f7b",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/i24/data/tricks/streets/elements/streets_misc.txt",
+      "bytes": 1214,
+      "sha256": "a43e2c151b3e40e3b98c026464e99a31c3d3dc5099c9b8aa829dde79c87ded33",
+      "git_blob_sha": "de8163b1ec6ae80d600325814948e4d76afb3f4b",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    },
+    {
+      "path": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt",
+      "bytes": 2617295,
+      "sha256": "e2fcea989f1030e6e4fc57d94d2130302a8271eaabcbd8b9a6488040d94e9e28",
+      "git_blob_sha": "09e9bf0a441770f9899745ff55dbca5fb3416fd2",
+      "retrieval": "immutable local Git blob; sparse worktree where available"
+    }
+  ],
+  "source_group_block_pins": [
+    {
+      "name": "grp_Geometry",
+      "bytes": 300,
+      "sha256": "622921ddb4b3f009e565cef90c0ec3c138dddcba10fb12ec9c0a3d11f31cb9a5",
+      "definition_child_count": 3,
+      "source_file": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt"
+    },
+    {
+      "name": "grp141198",
+      "bytes": 435022,
+      "sha256": "62f94b10a8cfc04d0a2162a43012aa03464c6b39dfedde354789571251b21f69",
+      "definition_child_count": 4575,
+      "source_file": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt"
+    },
+    {
+      "name": "grp141203",
+      "bytes": 1041,
+      "sha256": "5f0c3f2e7d1d27fdc647db591fa827798b21f5f79893e8a6a51345c46d5cee69",
+      "definition_child_count": 16,
+      "source_file": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt"
+    },
+    {
+      "name": "grp141205",
+      "bytes": 11929,
+      "sha256": "e29dc79c39870be854311ee7f6146e23b620dc9debba9761d69fc9cfaccb8661",
+      "definition_child_count": 207,
+      "source_file": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt"
+    },
+    {
+      "name": "grp141259",
+      "bytes": 124,
+      "sha256": "0fe790dd97f2e0e0d2deb4ee3443fce54989b5f29f42a7cd8a494a88b7c664a9",
+      "definition_child_count": 1,
+      "source_file": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt"
+    }
+  ],
+  "selected_transform_chain": [
+    {
+      "parent": "map Ref",
+      "child": "grp_Geometry",
+      "source_text": "Ref grp_Geometry\n\tPos 511.380371 426 -703.999756\nEnd\n",
+      "pos_literal": "511.380371 426 -703.999756",
+      "pyr_degrees_literal": null
+    },
+    {
+      "parent": "grp_Geometry",
+      "child": "grp141198",
+      "occurrence_index": 0,
+      "source_text": "\tGroup grp141198\n\t\tPos -296.317322 -417.42926 -280.957397\n\tEnd\n",
+      "pos_literal": "-296.317322 -417.42926 -280.957397",
+      "pyr_degrees_literal": null
+    },
+    {
+      "parent": "grp141198",
+      "child": "grp141203",
+      "occurrence_index": 0,
+      "source_text": "\tGroup grp141203\n\t\tPYR 0 89.999985 -0\n\t\tPos 408.936951 33.42926 -431.042847\n\tEnd\n",
+      "pos_literal": "408.936951 33.42926 -431.042847",
+      "pyr_degrees_literal": "0 89.999985 -0"
+    },
+    {
+      "parent": "grp141203",
+      "child": "grp141205",
+      "occurrence_index": 0,
+      "source_text": "\tGroup grp141205\n\tEnd\n",
+      "pos_literal": null,
+      "pyr_degrees_literal": null
+    },
+    {
+      "parent": "grp141205",
+      "child": "grp141259",
+      "occurrence_index": 0,
+      "source_text": "\tGroup grp141259\n\t\tPos 24.5 32 -40\n\tEnd\n",
+      "pos_literal": "24.5 32 -40",
+      "pyr_degrees_literal": null
+    },
+    {
+      "parent": "grp141259",
+      "child": "Streets/Elements/misc_sm/modern_bench_2wide",
+      "occurrence_index": 0,
+      "source_text": "\tGroup Streets/Elements/misc_sm/modern_bench_2wide\n\t\tPYR 0 90.000038 0\n\tEnd\n",
+      "pos_literal": null,
+      "pyr_degrees_literal": "0 90.000038 0"
+    }
+  ],
+  "inherited_authored_properties": [
+    {
+      "group": "grp141259",
+      "property": "TintColor",
+      "literal": "67 139 202   0 0 0",
+      "qualified_runtime_resolution": false
+    },
+    {
+      "group": "grp141205",
+      "property": "Ambient",
+      "literal": "28 31 40",
+      "qualified_runtime_resolution": false
+    },
+    {
+      "group": "grp141198",
+      "property": "TexSwap",
+      "literal": "generic_cubemap_face0 City_01_01_grpcubemap141152_face0 0",
+      "qualified_runtime_resolution": false
+    },
+    {
+      "group": "grp_Geometry",
+      "property": "AutoGroup",
+      "literal": "Yes"
+    },
+    {
+      "group": "grp_Geometry",
+      "property": "Layer",
+      "literal": "Geometry"
+    }
+  ],
+  "world_transform_policy": "Runtime compose original parent-local Mat4 operations with binary32 source order; keep actual world coordinates; no precomputed oracle transform drives native rendering. A bounded view camera is controlled test input, not a captured live camera.",
+  "material": {
+    "source_declaration": "Texture modern_bench.tga\n Surface METAL\n Blend white.tga\n BlendType ColorBlendDual\nEnd",
+    "source_path": "upstream/i24/data/tricks/streets/elements/streets_misc.txt",
+    "candidate_family": "COLORBLEND_DUAL",
+    "source_model_trick": "mbench declares LodFar250 and LodFarFade75; association must be confirmed from recovered model name suffix",
+    "source_texture_table_association_verified": false,
+    "sampler_family": "Phase8 source default linear mip-zero precedent; world texture flags, wrap, UV scales and mip policy unresolved until exact wrapper/model/trick recovery",
+    "camera_and_lighting": "Controlled camera/lighting only; preserve authored Ambient metadata and explicitly audit actual source static RGB versus dynamic normal-light path before native image qualification",
+    "qualify_reflect_or_shadow_pass": false
+  },
+  "archive": {
+    "outer_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip",
+    "outer_expected_bytes": 1630092780,
+    "inner_member": "payloads/runtime/atlas-world-supplement.zip",
+    "inner_expected_bytes": 207803201,
+    "inner_release_declared_sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f",
+    "whole_archive_sha256_locally_verified": false
+  },
+  "missing_source_members": [
+    {
+      "kind": "model_library",
+      "name": "data/object_library/streets/elements/misc_sm/misc_sm.geo",
+      "size": 51138,
+      "compressed": 51138,
+      "offset": 56969607,
+      "crc32": "40e8fb08",
+      "method": 0,
+      "sha256": null,
+      "bytes_acquired_for_phase9": false,
+      "validated_claim": "Previously inventoried ZIP entry locator; no complete member SHA256 or model table verified for this gate"
+    },
+    {
+      "kind": "candidate_base_texture",
+      "name": "data/texture_library/world/streets/elements/monorail/modern_bench.texture",
+      "size": 22225,
+      "compressed": 10150,
+      "offset": 157524166,
+      "crc32": "dbcd5e30",
+      "method": 8,
+      "sha256": null,
+      "bytes_acquired_for_phase9": false,
+      "validated_claim": "Previously inventoried ZIP entry locator; no complete member SHA256 or model table verified for this gate"
+    }
+  ],
+  "accepted_white_source": {
+    "name": "assets/texture_library/world/filler/white.texture",
+    "size": 327,
+    "compressed": 105,
+    "offset": 558946412,
+    "crc32": "a45335c4",
+    "method": 8,
+    "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip",
+    "outer_expected_bytes": 615545248,
+    "outer_published_sha256": "e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e",
+    "outer_full_hash_locally_verified": false,
+    "inner_member": "payloads/atlas/atlas-assets.zip",
+    "inner_expected_bytes": 615541018,
+    "inner_published_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+    "inner_full_hash_locally_verified": false,
+    "entry_hash_origin": {
+      "member": "payloads/atlas/atlas-assets-index.tsv",
+      "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480",
+      "full_file_locally_verified": true
+    },
+    "id": "reftex8",
+    "file_name": "reftex8.texture",
+    "sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9",
+    "member_sha256_locally_verified": true,
+    "reuse": "accepted immutable Phase8 stock white wrapper; derivative remains separately verified at packaging",
+    "verified_corpus_member_name": "reftex8.texture"
+  },
+  "camera_source": {
+    "view_function": "gfxSetViewMat in Game/src/graphics/gfx.c",
+    "operations": [
+      "copyMat4 camera to view",
+      "transposeMat3 view rotation",
+      "rdrFixMat multiplies diag(-1,+1,+1) on rotation",
+      "view translation uses negative original camera position transformed by resulting rotation",
+      "optional invertMat4Copy"
+    ],
+    "projection_functions": [
+      "rdrSetupPerspectiveProjection",
+      "rdrSetupFrustum"
+    ],
+    "projection_path": "Game/src/render/renderUtil.c",
+    "window_fov_policy": "gfxFixGameFOV reduces non-editor gameplay vertical FOV when aspect exceeds4/3; controlled probe camera dimensions/FOV must explicitly declare whether selecting this policy"
+  },
+  "source_oracles_required": [
+    "TOK_DEGREES_X source parser conversion, original createMat3YPR",
+    "original mulMat4Inline and mulVecMat4 with binary32 source operation order",
+    "original gfxSetViewMat/rdrFixMat and rdrSetupPerspectiveProjection/rdrSetupFrustum via documented neutral wrappers",
+    "unchanged source GEO delta expansion for vertices,normals,UVs,indices and all actual source channels",
+    "original static world lighting/material resolve branch and selected sort classification; pointer tie ordering cannot become literal native64 comparator proof"
+  ],
+  "runtime_qualifications_required": [
+    "strict bounded scene header/count/span/topology validation and malformed-input sanitizer checks",
+    "independent camera/world/clip-space transform references; GPU transform feedback verifies actual source world vertices and normals",
+    "actual recovered submesh texture partitions and selected COLORBLEND_DUAL parameters; independent scalar material oracle",
+    "depth overlap and source culling/viewport change tests, with controlled witnesses labeled separately from authored map transforms",
+    "two EGL lifetimes per JNI call, actual resize on both axes, Surface recreation and callback-gated Home recovery"
+  ],
+  "lifecycle_future_gate": {
+    "existing_phase8_ui_modified": false,
+    "status_before_background_closure": "Render checks passed; lifecycle check required",
+    "green_requires": [
+      "same-session prior successful current check",
+      "actual two-axis resize and newer successful Surface generation",
+      "explicit user Home-test intent followed by onPause plus onStop and required destruction observations",
+      "subsequent onResume and a new current Surface generation",
+      "successful nonobsolete native result after that resume with all inputs still pinned",
+      "no sticky active failures"
+    ],
+    "export_policy": "Immutable foreground report snapshot; SAF picker callbacks after snapshot cannot retroactively satisfy Home qualification",
+    "automated_test_policy": "HOME key event must precede recorded callback sequence; emulator and physical-device receipts remain separate"
+  },
+  "rejected_or_deferred_candidates": [
+    {
+      "candidate": "Concrete_Bench GRP199368",
+      "reason": "Two group refs expand each Concrete_Bench into original bench plus baked shadow model. Four bench instances across two group parents mean eight nominal geometry leaf instances, requiring recovered shadow material/pass."
+    },
+    {
+      "candidate": "bustop_1 frame/glass",
+      "reason": "bustopglass source trick requests ReflectTex0 plus SimpleAlphaSort, needing reflection and distance sorting before honest complete qualification."
+    },
+    {
+      "candidate": "grp1110814 pillars",
+      "reason": "43pillars plus citywall_strt_tall make44leaf references over3000scene units; not a tiny complete pillar-only subtree."
+    }
+  ],
+  "limits": [
+    "No asset member SHA256 claimed for unrecovered misc_sm or modern_bench bytes",
+    "No full Atlas loading or full scene traversal claim",
+    "No camera collision/control/gameplay/network/performance qualification",
+    "No implementation or APK produced by this deconstruction"
+  ]
+}
