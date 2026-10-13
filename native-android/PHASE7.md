@@ -40,7 +40,13 @@ Android execution passed 138,672 native key/hierarchy/bind/socket scalars, 50,11
 
 The runtime presented 540 animated frames with twelve clock wraps. Thirty-six temporal image captures produced twenty-four changed images and 586,272 pixels different from the first pose. The final screenshot was visually reviewed with green **ANIMATION GATE PASSED** and the bent textured sleeve visible. These repeated checks cover one real clip and mesh, not a gameplay or frame-pacing benchmark.
 
-**Physical Thor/Adreno acceptance of this new package is pending.** Phase 6 device acceptance remains recorded separately in [its receipt](evidence/phase6/thor-qualification.json).
+**Physical AYN Thor/Adreno 740 acceptance passed on October 13, 2026.** The [Thor animation receipt](evidence/phase7/thor-qualification.json) preserves 44 independently checked report invariants and the original report digest. Six successful same-session runs created and released twelve EGL contexts across four Surface generations and two actual widths and heights. The observed recovery sequence was pause, Surface destruction, stop, resume, creation of generation 3 and successful foreground request 9. Final captured request 14 passed on generation 4 at 1,884 × 389; no later incomplete request exists in that snapshot.
+
+Thor checked 138,672 native key/hierarchy/bind/socket scalars, 50,112 GPU position/normal components, 9,662,940 skinned/reference image pixels (178,668 useful interior pixels; 953,892 reported edge exclusions), 884,736 material pixels and 588 actual window RGB samples. All comparison mismatches, GL/EGL errors and sticky session failures were zero. Maximum inverse-bind error was 1.1920929e-6; maximum GPU position error was 9.53674316e-7 and normal error was 1.78813934e-7. Skin/material channel error was at most one byte, with the unchanged 1e-4 float and two-byte tolerances.
+
+The device presented 540 actual animated frames and twelve clock wraps; every context exercised 24 distinct palettes. Thirty-six temporal captures included twenty-four changed images and 586,284 pixels different from the first image. All six measured fixture payloads match the independently qualified ARM64 APK and offline corpus, totaling 642,610 bytes. The uploaded report measures asset digests rather than the installed APK digest or source commit; those build identifiers come from the separately verified delivery receipt.
+
+The supplied screenshot shows the bent textured sleeve while generation 6 is running and qualification is pending. It is in-progress visual evidence, not a final status image. The audited JSON is an immutable export ending at the accepted generation 4: export captures the bytes before opening the document picker, and later Surface/lifecycle callbacks cannot rewrite those exported bytes. The raw report and screenshot remain unchanged; the unredacted image, device fingerprint and session/process identifier are not published. Phase 6 device acceptance remains recorded separately in [its receipt](evidence/phase6/thor-qualification.json).
 
 ## Thor acceptance procedure
 
@@ -57,4 +63,4 @@ The controlled diagnostic uses unit actor and bone scale, zero body morphs and a
 
 The source-function oracle does not execute the complete Win32 client. [REA-assisted binary anchor observations](PHASE7-REA.md) identify investigation seams without claiming source-to-binary function equivalence. The shader/material proof retains Phase 6 limits for original Cg execution, compressed-texture driver behavior, culling and compositor alpha. Unexpected GPU reset, process death, full scene passes, networking and playable-client performance remain unqualified.
 
-After the real rig/socket/animation gate passes on Thor, assemble and qualify the complete character before scene/world integration.
+The real rig/socket/animation gate has passed on Thor. Phase 8 assembles and qualifies the complete character before scene/world integration.

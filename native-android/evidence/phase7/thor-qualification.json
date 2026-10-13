@@ -1,0 +1,405 @@
+{
+  "schema": "coh-native-animation-device-acceptance-v1",
+  "review_date": "2026-10-13",
+  "status": "accepted",
+  "qualification_passed": true,
+  "scope": "AYN Thor ARM64 real huge/run encoded-key sampling, 60-node hierarchy, sleeve socket, GPU skinning, bounded animated preview and normal Surface lifecycle",
+  "source_report": {
+    "filename": "COH-NativeAnimation-20261013-164515.json",
+    "bytes": 242893,
+    "sha256": "9889848443a05fb135ffb3ba8c767c52015d7b57b7b69eab78cc6cf9ec107c55",
+    "snapshot_updated_at": "2026-10-13T16:45:15.076-05:00",
+    "raw_report_preserved": true
+  },
+  "screenshot": {
+    "filename": "1006612895.jpg",
+    "sha256": "98f5cb3709498f69675af5440d1dd111948583d8fab9bcd7f69af4461c061adf",
+    "visually_reviewed": true,
+    "observations": [
+      "Textured bent sleeve visible during a bounded animation preview",
+      "Screenshot shows qualification pending while surface generation 6 runs; immutable JSON snapshot ends with passing generation 4",
+      "Export source captures bytes before the document picker; later lifecycle checks cannot rewrite that exported snapshot",
+      "Screenshot is visual in-progress evidence only; final acceptance rests on the audited passing JSON snapshot"
+    ],
+    "unredacted_image_published": false
+  },
+  "delivered_build": {
+    "application_id": "org.coh.animationprobe",
+    "version": "0.1.0-phase7",
+    "source_commit": "fc25a90a0d0a2ecf1733950d8f5c40be1f022b2f",
+    "workflow_run": 38471355989,
+    "apk_bytes": 386171,
+    "apk_sha256": "1b3d9baa4a85312e6afc5c21e00e0921eaa0881c89cb286085ce73c1784b11f6",
+    "native_library": {
+      "file": "lib/arm64-v8a/libcoh_animation_probe.so",
+      "bytes": 83112,
+      "sha256": "6ff0a263413b6fe156e94a33bd52a3c8f9a8a3730d1aedf4a5b5a2c06c4f4da0"
+    },
+    "provenance": "Delivered APK independently matched build receipt and measured report assets. Uploaded report measures six fixture payload hashes, not its installed APK digest or source commit."
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "device": "kalama",
+    "hardware": "qcom",
+    "sdk": 33,
+    "release": "13",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "native_abi": {
+    "pointer_bytes": 8,
+    "long_bytes": 8,
+    "platform": "Android Bionic"
+  },
+  "graphics": {
+    "gl_vendor": "Qualcomm",
+    "gl_renderer": "Adreno (TM) 740",
+    "gl_version": "OpenGL ES 3.2 V@0676.53 (GIT@69e13475cb, I1df7ad3aa9, 1703680572) (Date:12/27/23)",
+    "glsl_version": "OpenGL ES GLSL ES 3.20",
+    "egl_vendor": "Android",
+    "egl_version": "1.5 Android META-EGL"
+  },
+  "fixture": {
+    "container": "COHRIG01",
+    "base": {
+      "name": "huge/Skel_ready",
+      "base_anim_name": "huge/Skel_ready",
+      "bytes": 6171,
+      "sha256": "19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6",
+      "header_bytes": 3000,
+      "bone_count": 60,
+      "length_frames": 60,
+      "hierarchy_capacity": 100,
+      "hierarchy_root": 0
+    },
+    "motion": {
+      "name": "huge/run",
+      "base_anim_name": "huge/Skel_ready",
+      "bytes": 5331,
+      "sha256": "3a365aaabf6d67df5dc0aa5473a50585b8c64e6f2caa95d69dad0c0990afb1e6",
+      "header_bytes": 1476,
+      "bone_count": 44,
+      "length_frames": 25,
+      "hierarchy_capacity": 0,
+      "hierarchy_root": -1
+    },
+    "palette_global_ids": [
+      9,
+      5,
+      7
+    ],
+    "socket_global_id": 72,
+    "required_global_ids": [
+      0,
+      1,
+      2,
+      5,
+      7,
+      9,
+      72
+    ],
+    "first_frame": 1,
+    "last_frame": 25,
+    "diagnostic_ticks_per_second": 30,
+    "effective_rate": 1,
+    "encoded_source_keys_preserved": true,
+    "reference_palettes_drive_rendering": false,
+    "socket_base_fallback": true,
+    "assets": {
+      "rig.bin": {
+        "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5",
+        "bytes": 11642
+      },
+      "mesh.bin": {
+        "sha256": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661",
+        "bytes": 8020
+      },
+      "texture0.rgba": {
+        "sha256": "68207c4bd81ed03ed80847957cd0300068f8a5b40bffc333a90560c6ea610b06",
+        "bytes": 262144
+      },
+      "texture1.rgba": {
+        "sha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7",
+        "bytes": 256
+      },
+      "material-reference.bin": {
+        "sha256": "392c7006750c05074fe4277b0a17bedd2c86704077a49721aaea21f371f71d9d",
+        "bytes": 296976
+      },
+      "rig-reference.bin": {
+        "sha256": "d2df49da3145db8852add06b262a6109c1af76bd988a3aa237ca8a4c26067748",
+        "bytes": 63572
+      }
+    },
+    "verified_total_bytes": 642610,
+    "metadata_matches_delivered_apk": true,
+    "original_cg_execution": false,
+    "geom_scale_applied": false,
+    "bone_morphing_applied": false,
+    "full_sequencer_speed_model_applied": false
+  },
+  "qualification": {
+    "passed": true,
+    "pending_requirements": [],
+    "successful_runs": 6,
+    "failed_runs": 0,
+    "successful_surface_generations": 4,
+    "successful_actual_dimensions": 2,
+    "successful_widths": 2,
+    "successful_heights": 2,
+    "current_surface_passed": true,
+    "native_context_recreation": "required in each passing native run",
+    "limits": "Device-specific rig and single-clip animation diagnostic gate only; not full client/gameplay qualification"
+  },
+  "independently_recomputed": {
+    "transform_vertices": 8352,
+    "transform_components": 50112,
+    "stock_normal_components": 25056,
+    "skin_compared_pixels": 9662940,
+    "skin_interior_pixels": 178668,
+    "skin_edge_excluded_pixels": 953892,
+    "material_cases": 216,
+    "real_material_cases": 168,
+    "synthetic_semantic_cases": 48,
+    "material_pixels": 884736,
+    "window_samples": 588,
+    "animation_samples": 72,
+    "hierarchy_parent_comparisons": 720,
+    "local_components": 30240,
+    "world_components": 51840,
+    "btt_components": 2160,
+    "bpt_components": 51840,
+    "palette_components": 2592,
+    "animation_clock_cases": 96,
+    "base_fallback_samples": 1152,
+    "preview_frames": 540,
+    "preview_clock_steps": 540,
+    "preview_clock_wraps": 12,
+    "preview_image_samples": 36,
+    "preview_changed_image_samples": 24,
+    "preview_pixels_changed_from_first": 586284,
+    "preview_elapsed_ms": 18002,
+    "transform_mismatches": 0,
+    "position_mismatches": 0,
+    "normal_mismatches": 0,
+    "stock_normal_mismatches": 0,
+    "skin_mismatches": 0,
+    "material_mismatches": 0,
+    "window_mismatches": 0,
+    "gl_errors": 0,
+    "first_gl_error": 0,
+    "egl_error": 0,
+    "local_mismatches": 0,
+    "world_mismatches": 0,
+    "btt_mismatches": 0,
+    "bpt_mismatches": 0,
+    "palette_mismatches": 0,
+    "animation_clock_mismatches": 0,
+    "cpu_stage_components": 138672,
+    "native_successful_runs": 6,
+    "egl_context_lifetimes": 12,
+    "surface_dimensions": [
+      [
+        1413,
+        291
+      ],
+      [
+        1884,
+        389
+      ]
+    ],
+    "surface_generations": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "all_gpu_objects_released": true,
+    "successful_swaps": 12,
+    "max_errors": {
+      "max_transform_error": 9.53674316e-07,
+      "max_position_error": 9.53674316e-07,
+      "max_normal_error": 1.78813934e-07,
+      "max_normal_length_error": 1.78813934e-07,
+      "local_max_error": 0,
+      "world_max_error": 7.15255737e-07,
+      "btt_max_error": 2.38418579e-07,
+      "bpt_max_error": 1.1920929e-06,
+      "palette_max_error": 7.15255737e-07,
+      "stock_normal_max_error": 1.78813934e-07,
+      "stock_normal_max_length_error": 1.1920929e-07,
+      "skin_max_byte_error": 1,
+      "material_max_byte_error": 1
+    },
+    "distinct_animated_poses_per_cycle": [
+      24
+    ],
+    "background_foreground_recovery": {
+      "previous_generation": 2,
+      "new_generation": 3,
+      "successful_request": 9,
+      "sequence": [
+        "activity_paused",
+        "surface_destroyed",
+        "activity_stopped",
+        "activity_resumed",
+        "surface_created",
+        "surface_changed",
+        "probe_requested",
+        "probe_completed"
+      ]
+    },
+    "final_captured_foreground": {
+      "generation": 4,
+      "request": 14,
+      "surface": [
+        1884,
+        389
+      ],
+      "passed": true,
+      "later_incomplete_requests": 0
+    }
+  },
+  "audit": {
+    "consistency_checks_passed": 44,
+    "checks": [
+      "Phase 7 schema and nonemulated Thor",
+      "Final qualification and all top-level flags",
+      "No pending requirements or sticky failures",
+      "Same-session history only",
+      "Six successful current results",
+      "Twelve native EGL cycles",
+      "Every required native stage passed",
+      "Every Java precondition passed",
+      "Native Bionic LP64",
+      "All cycles complete, swapped and released",
+      "Every mismatch and GL/EGL error is zero",
+      "No first mismatch observations",
+      "Unchanged float and byte tolerances",
+      "All gated numerical errors below tolerance",
+      "Native/callback/cycle dimensions agree",
+      "Two actual widths and heights, four generations",
+      "Reported qualification counts recompute",
+      "Event monotonicity",
+      "One matching requested/completed event per run",
+      "Final current foreground surface completion",
+      "No later incomplete requests in captured snapshot",
+      "Actual stopped-to-foreground successful recovery",
+      "Two explicit user recreation requests succeeded",
+      "Two actual resize requests succeeded",
+      "Six checked reference samples per cycle",
+      "Raw source keys drive render, not reference palettes",
+      "Expected genuine rig and sleeve socket fallback",
+      "Expected literal range and neutral source clock",
+      "45 runtime frames, source wrap, distinct palettes each cycle",
+      "Temporal rendered image change present each cycle",
+      "Reference skin and material coverage present",
+      "Consistent real Qualcomm Adreno driver",
+      "Delivered APK matches independently qualified receipt",
+      "Single AArch64 library matches receipt",
+      "Fixture metadata values match delivered APK",
+      "Exactly six declared and measured assets",
+      "Asset verified against report, delivered APK and offline source: rig.bin",
+      "Asset verified against report, delivered APK and offline source: mesh.bin",
+      "Asset verified against report, delivered APK and offline source: texture0.rgba",
+      "Asset verified against report, delivered APK and offline source: texture1.rgba",
+      "Asset verified against report, delivered APK and offline source: material-reference.bin",
+      "Asset verified against report, delivered APK and offline source: rig-reference.bin",
+      "Verified total asset byte count recomputes",
+      "Raw uploaded report unchanged during review"
+    ]
+  },
+  "runs": [
+    {
+      "request": 1,
+      "generation": 1,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 3226,
+      "cycles": 2
+    },
+    {
+      "request": 3,
+      "generation": 1,
+      "surface": [
+        1413,
+        291
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 3366,
+      "cycles": 2
+    },
+    {
+      "request": 6,
+      "generation": 2,
+      "surface": [
+        1413,
+        291
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 3380,
+      "cycles": 2
+    },
+    {
+      "request": 9,
+      "generation": 3,
+      "surface": [
+        1413,
+        291
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 3372,
+      "cycles": 2
+    },
+    {
+      "request": 11,
+      "generation": 3,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 3409,
+      "cycles": 2
+    },
+    {
+      "request": 14,
+      "generation": 4,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 3417,
+      "cycles": 2
+    }
+  ],
+  "limits": [
+    "One real encoded clip and sleeve mesh; complete character assembly is the next gate",
+    "Neutral unit actor/bone scale, zero body morphs and identity outer transform; Wretch scale 1.3, costume overrides and complete sequencer state remain outside this gate",
+    "Source-function oracle does not execute the entire original Win32 client or original Cg shader compiler",
+    "Shared vertex lighting in skin/reference image paths; independent transform feedback checks positions and normals",
+    "Controlled double-sided mip0 geometry and offline RGBA conversion; original culling, texture driver, full material/scene families and compositor alpha remain unqualified",
+    "Normal Surface recovery only; unexpected GPU reset, process death, gameplay, network, frame pacing, FPS and startup/zoning performance are not qualified"
+  ]
+}
