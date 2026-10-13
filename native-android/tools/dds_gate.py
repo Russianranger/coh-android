@@ -27,7 +27,7 @@ def prepare(a):
             (folder/'input.dds').write_bytes(single);(folder/'native.rgba').write_bytes(dest.raw)
             cases.append({'id':ident,'source_file':file.relative_to(a.corpus).as_posix(),'source_sha256':sha(data),'mip':level,'width':v.width,'height':v.height,'format':v.format,'bytes':v.rgba_bytes,'reconstructed_dds_sha256':sha(single),'native_sha256':sha(dest.raw)})
     if not cases:raise ValueError('empty corpus')
-    write(out/'cases.json',{'native_library_sha256':sha(a.library.read_bytes()),'decoder':'legacy-nvDXT' if a.legacy else 'generic-BC','cases':cases})
+    write(out/'cases.json',{'native_library_sha256':sha(a.library.read_bytes()),'decoder':'legacy-nvDXT' if a.legacy else 'generic-BC','input_kind':'synthetic' if a.synthetic else 'real','cases':cases})
     print(json.dumps({'cases':len(cases),'formats':sorted(set(c['format'] for c in cases))}))
 def reference(a):
     cases=json.loads((a.cases/'cases.json').read_text())['cases'];runs=[]
@@ -62,11 +62,11 @@ def compare(a):
                 r.update(different_bytes=count,max_channel_delta=delta,different_by_channel=channels,first_differences=first)
         except (OSError,ValueError) as e:r.update(passed=False,error=str(e))
         results.append(r)
-    report={'decoder':manifest.get('decoder','generic-BC'),'native_library_sha256':manifest['native_library_sha256'],'passed':bool(results) and all(x['passed'] for x in results),'scope':'Pinned original nvDXT Win32 library vs native host decode of selected real DDS mip cases; no Android GPU/device qualification','total_cases':len(results),'passed_cases':sum(x['passed'] for x in results),'cases':results}
+    report={'decoder':manifest.get('decoder','generic-BC'),'native_library_sha256':manifest['native_library_sha256'],'passed':bool(results) and all(x['passed'] for x in results),'scope':('Synthetic original-SDK behavior probes' if manifest.get('input_kind')=='synthetic' else 'Selected real DDS mip cases')+'; pinned nvDXT Win32 vs native host; no Android GPU/device qualification','total_cases':len(results),'passed_cases':sum(x['passed'] for x in results),'cases':results}
     write(a.output,report);print(json.dumps({k:v for k,v in report.items() if k!='cases'}));return 0 if report['passed'] else 1
 def main():
     p=argparse.ArgumentParser();s=p.add_subparsers(dest='mode',required=True)
-    x=s.add_parser('prepare');x.add_argument('--corpus',type=Path,required=True);x.add_argument('--library',type=Path,required=True);x.add_argument('--output',type=Path,required=True);x.add_argument('--legacy',action='store_true')
+    x=s.add_parser('prepare');x.add_argument('--corpus',type=Path,required=True);x.add_argument('--library',type=Path,required=True);x.add_argument('--output',type=Path,required=True);x.add_argument('--legacy',action='store_true');x.add_argument('--synthetic',action='store_true')
     x=s.add_parser('reference');x.add_argument('--cases',type=Path,required=True);x.add_argument('--exe',type=Path,required=True)
     x=s.add_parser('compare');x.add_argument('--cases',type=Path,required=True);x.add_argument('--output',type=Path,required=True)
     a=p.parse_args();return {'prepare':prepare,'reference':reference,'compare':compare}[a.mode](a)

@@ -1,0 +1,61 @@
+{
+  "compiler": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "commands": [
+    [
+      "gcc",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-I/home/runner/work/coh-android/coh-android/native-android/include",
+      "-I/home/runner/work/coh-android/coh-android/native-android/src",
+      "-shared",
+      "-fPIC",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_blowfish.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_assets.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_dds.c",
+      "-lm",
+      "-o",
+      "/home/runner/work/coh-android/coh-android/native-android/results/host/libcoh_native_core.so"
+    ],
+    [
+      "gcc",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-I/home/runner/work/coh-android/coh-android/native-android/include",
+      "-I/home/runner/work/coh-android/coh-android/native-android/src",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_blowfish.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_assets.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_dds.c",
+      "/home/runner/work/coh-android/coh-android/native-android/tests/core_test.c",
+      "-lm",
+      "-o",
+      "/home/runner/work/coh-android/coh-android/native-android/results/host/coh-native-core-tests"
+    ]
+  ],
+  "android_cross_compiled": false,
+  "device_executed": false,
+  "files": [
+    {
+      "name": "libcoh_native_core.so",
+      "bytes": 24312,
+      "sha256": "f41ab25644010d34d70a70fc732fa98c34ef85a5c376f3c067f34ea66fe10ba2"
+    },
+    {
+      "name": "coh-native-core-tests",
+      "bytes": 29088,
+      "sha256": "3e594a9e9500d99f349b79a14da3dceef686e5caaa6750ba207d180cff44cc5c"
+    }
+  ],
+  "host_test": {
+    "passed": true,
+    "checks": 12026,
+    "pointer_bytes": 8,
+    "long_bytes": 8,
+    "platform": "host"
+  }
+}

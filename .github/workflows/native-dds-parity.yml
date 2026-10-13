@@ -34,7 +34,7 @@ jobs:
       - name: Prepare supplemental SDK behavior probes
         run: |
           python3 native-android/oracle/generate_edge_cases.py --output native-android/results/diagnostics
-          python3 native-android/tools/dds_gate.py prepare --legacy --corpus native-android/results/diagnostics --library native-android/results/host/libcoh_native_core.so --output native-android/results/diagnostic-cases
+          python3 native-android/tools/dds_gate.py prepare --legacy --corpus native-android/results/diagnostics --library native-android/results/host/libcoh_native_core.so --output native-android/results/diagnostic-cases --synthetic
       - uses: actions/upload-artifact@v4
         with:
           name: native-dds-inputs

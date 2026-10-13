@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "oracle": "original-nvDXTlibMT_S-Win32",
+  "repository_pin": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "inputs": {
+    "upstream/ouroboros/3rdparty/nvdxt/Release/nvDXTlibMT_S.lib": {
+      "sha256": "1e9988ad52a01f44368d8d4150990ef2a033536a7a705424f04333143cd63b73",
+      "bytes": 610954
+    },
+    "upstream/ouroboros/Game/src/render/dxtlibwrapper.cpp": {
+      "sha256": "00534c9aabb61a38a46cde6a59b1a3b1115c77a733005796c1dee9c5826a4a68",
+      "bytes": 3078
+    },
+    "upstream/ouroboros/Game/CMakeLists.txt": {
+      "sha256": "1c36eef4c7484c6f2f236826197ace5cf1ad17f505c9b5a5f783c0f40caf799b",
+      "bytes": 34457
+    }
+  },
+  "host": "Windows-2022Server-10.0.20348-SP0",
+  "architecture": "Win32 x86",
+  "runtime": "/MT; original static SDK, modern MSVC CRT resolution",
+  "specified_mip_maps": 1,
+  "device_execution": false,
+  "full_client_execution": false,
+  "executable": {
+    "sha256": "ff5059813822f3871f3d484e260648903e5c8d1b4ea1e721b6bf0037f531642c",
+    "bytes": 184832,
+    "machine": "i386",
+    "path": "nvdxt-reference.exe"
+  }
+}

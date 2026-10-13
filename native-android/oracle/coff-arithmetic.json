@@ -1,5 +1,5 @@
 {
-  "status": "Static deconstruction: palette arithmetic checked against 111 actual original Win32 SDK real mip golden outputs; alpha-depth edge cases pending targeted original probes",
+  "status": "Static deconstruction confirmed by actual original Win32 SDK: 111 real DXT1/5 mip cases plus 18 targeted synthetic DXT1/3/5 edge cases passed native compatibility comparison",
   "library": "upstream/ouroboros/3rdparty/nvdxt/Release/nvDXTlibMT_S.lib",
   "library_sha256": "1e9988ad52a01f44368d8d4150990ef2a033536a7a705424f04333143cd63b73",
   "archive_member": "./ReleaseMT_STATIC_CPPLIB/dxt_interface.obj",
@@ -114,7 +114,7 @@
         "0x12ff..0x1320",
         "0x14ba..0x14c7"
       ],
-      "formula": "When output is four channels, original DXT1 FourCC unconditionally selects RGB stripping and sets depth3. DXT3/5 retain four channels only if nonzero alpha was observed. This edge condition requires fixture-specific whole-SDK probes."
+      "formula": "When output is four channels, original DXT1 FourCC unconditionally selects RGB stripping and sets depth3. DXT3/5 retain four channels only if nonzero visible alpha was observed. Confirmed by targeted whole-SDK original probes."
     }
   ],
   "reproduce": "ar pP upstream/ouroboros/3rdparty/nvdxt/Release/nvDXTlibMT_S.lib ./ReleaseMT_STATIC_CPPLIB/dxt_interface.obj; extract each indexed COFF section raw bytes; objdump -D -b binary -m i386 (selected range for DXTCdecode)",
@@ -124,5 +124,19 @@
     "scope": "Audited equations independently predicted actual original SDK output for real DXT1/5 inputs; does not qualify uncovered alpha-depth edges or substitute for native-core comparison",
     "passed_cases": 111,
     "rgba_bytes": 7013800
+  },
+  "edge_validation": {
+    "reference_run": 38446476188,
+    "reference_commit": "92b9dc9a841f0006cd36f0d52dc67c0836f7ca92",
+    "synthetic_cases": 18,
+    "passed_cases": 18,
+    "scope": "Synthetic original SDK probes; separate from real texture corpus",
+    "confirmed_contracts": [
+      "DXT1 cutout output becomes depth3 and consumer opaque alpha regardless DDPF alpha flag",
+      "DXT3/5 all-zero visible alpha becomes depth3 and consumer opaque alpha",
+      "DXT5 stripping scans visible pixels; 1x1/2x2 padding with opposite alpha does not change output depth",
+      "Shared endpoint-order color palette and nearest-rounded interpolation"
+    ],
+    "required_header_contract": "Preserve producer DDSD_MIPMAPCOUNT flag. Missing flag can give padded total_width unequal width; native compatibility deliberately rejects that input."
   }
 }

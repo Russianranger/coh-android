@@ -1,0 +1,122 @@
+{
+  "real_fixture_count": 12,
+  "counts": {
+    "blocks": 109634,
+    "dxt5_alpha6_explicit01_blocks": 13236,
+    "dxt5_alpha8_blocks": 50951,
+    "decoded_mip_pixels": 1753450,
+    "dxt1_four_color_blocks": 13597,
+    "dxt1_three_color_blocks": 31850,
+    "dxt1_blocks_with_transparency_selector": 0
+  },
+  "block_count_includes_storage_padding": true,
+  "rows": [
+    {
+      "id": "01-chest_5c_night_chest_01",
+      "counts": {
+        "blocks": 10925,
+        "dxt5_alpha6_explicit01_blocks": 2863,
+        "dxt5_alpha8_blocks": 8062,
+        "decoded_mip_pixels": 174763
+      }
+    },
+    {
+      "id": "02-chest_5c_night_chest_01_bump",
+      "counts": {
+        "blocks": 10925,
+        "dxt5_alpha6_explicit01_blocks": 2392,
+        "dxt5_alpha8_blocks": 8533,
+        "decoded_mip_pixels": 174763
+      }
+    },
+    {
+      "id": "03-belt_5c_ubermunch_belt",
+      "counts": {
+        "blocks": 353,
+        "dxt1_four_color_blocks": 351,
+        "decoded_mip_pixels": 5471,
+        "dxt1_three_color_blocks": 2
+      }
+    },
+    {
+      "id": "04-belt_5c_ubermunch_belt_bump",
+      "counts": {
+        "blocks": 33,
+        "dxt1_four_color_blocks": 33,
+        "decoded_mip_pixels": 351
+      }
+    },
+    {
+      "id": "06-deco11_brick_plain_b_bump",
+      "counts": {
+        "blocks": 1367,
+        "dxt5_alpha8_blocks": 1308,
+        "dxt5_alpha6_explicit01_blocks": 59,
+        "decoded_mip_pixels": 21845
+      }
+    },
+    {
+      "id": "07-brickbuild_window_04_mask",
+      "counts": {
+        "blocks": 1367,
+        "dxt1_three_color_blocks": 1279,
+        "dxt1_four_color_blocks": 88,
+        "decoded_mip_pixels": 21845
+      }
+    },
+    {
+      "id": "08-chest_eidola_male",
+      "counts": {
+        "blocks": 10925,
+        "dxt5_alpha8_blocks": 6829,
+        "dxt5_alpha6_explicit01_blocks": 4096,
+        "decoded_mip_pixels": 174763
+      }
+    },
+    {
+      "id": "10-hips_green_tentacle_arm_normal",
+      "counts": {
+        "blocks": 21849,
+        "dxt5_alpha8_blocks": 21157,
+        "dxt5_alpha6_explicit01_blocks": 692,
+        "decoded_mip_pixels": 349527
+      }
+    },
+    {
+      "id": "11-heavy_ass_suit_01_normal",
+      "counts": {
+        "blocks": 5463,
+        "dxt5_alpha8_blocks": 4938,
+        "dxt5_alpha6_explicit01_blocks": 525,
+        "decoded_mip_pixels": 87381
+      }
+    },
+    {
+      "id": "12-deco_skyscraper_06_window_01_g",
+      "counts": {
+        "blocks": 21847,
+        "dxt1_three_color_blocks": 11960,
+        "dxt1_four_color_blocks": 9887,
+        "decoded_mip_pixels": 349525
+      }
+    },
+    {
+      "id": "13-deco_skyscraper_06_window_01_m",
+      "counts": {
+        "blocks": 21847,
+        "dxt1_four_color_blocks": 3238,
+        "dxt1_three_color_blocks": 18609,
+        "decoded_mip_pixels": 349525
+      }
+    },
+    {
+      "id": "17-scanner_hologram_ppdlogoflipbook",
+      "counts": {
+        "blocks": 2733,
+        "dxt5_alpha6_explicit01_blocks": 2609,
+        "decoded_mip_pixels": 43691,
+        "dxt5_alpha8_blocks": 124
+      }
+    }
+  ]
+}

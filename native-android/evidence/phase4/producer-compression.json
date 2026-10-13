@@ -1,0 +1,70 @@
+{
+  "source_import_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "producer_formats": [
+    "DXT1",
+    "DXT5",
+    "DXT5nm"
+  ],
+  "reader_additionally_supports": [
+    "DXT3"
+  ],
+  "sources": [
+    {
+      "local_evidence_path": "original-oracle/gettex.c",
+      "source_path": "upstream/ouroboros/Utilities/GetTex/src/gettex.c",
+      "sha256": "a0050dc2364477c45d22e0252957a7402e388884c7a1e85000d5d7569ec7aeb6",
+      "line_ranges": [
+        {
+          "start": 1035,
+          "end": 1036,
+          "source": [
+            "    case FOURCC_DXT3:",
+            "        mh.format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;"
+          ]
+        },
+        {
+          "start": 1431,
+          "end": 1444,
+          "source": [
+            "        ",
+            "        if (! (texopt_flags & TEXOPT_TRUECOLOR))",
+            "        {",
+            "            if (( texopt_flags & TEXOPT_BUMPMAP ) ||",
+            "                ( texopt_flags & TEXOPT_NORMALMAP )) {",
+            "                setOptFlag( kGetTexOpt_DXT5nm );",
+            "            } else {",
+            "                if (alpha && !cutout_mode) {",
+            "                    setOptFlag( kGetTexOpt_DXT5 );",
+            "                } else {",
+            "                    setOptFlag( kGetTexOpt_DXT1 );",
+            "                }",
+            "            }",
+            "        }"
+          ]
+        }
+      ]
+    },
+    {
+      "local_evidence_path": "original-oracle/texture_tools.cpp",
+      "source_path": "upstream/ouroboros/Utilities/GetTex/src/texture_tools.cpp",
+      "sha256": "db8d9d1f1b14a8e9c4dd72538302e40f212ac2cdd09ce1cda2f30cf86e320dd5",
+      "line_ranges": [
+        {
+          "start": 237,
+          "end": 245,
+          "source": [
+            "        case kGetTexOpt_DXT5 :",
+            "            pOpts->texture_format = Format_DXT5;        ",
+            "            break;",
+            "        case kGetTexOpt_DXT5nm :",
+            "            pOpts->swizzle_for_dxt5nm = true;",
+            "            pOpts->texture_format = Format_DXT5;",
+            "            break;",
+            "        case kGetTexOpt_DXT1 :",
+            "            pOpts->texture_format = Format_DXT1;        "
+          ]
+        }
+      ]
+    }
+  ]
+}
