@@ -25,3 +25,5 @@ Phase 3 adds a bounded legacy DXT1/3/5 DDS-to-RGBA decoder. See [PHASE3.md](PHAS
 [PHASE4.md](PHASE4.md) qualifies the selected real DXT1/DXT5 corpus against the original Win32 NVIDIA decoder and explains the separate legacy CPU API.
 
 [PHASE5.md](PHASE5.md) adds an installable ARM64 Surface/EGL texture probe. Android13 emulator and physical AYN Thor/Adreno740 pixel/lifecycle checks passed. The [Thor acceptance receipt](evidence/phase5/thor-qualification.json) records 12 successful runs, 24 EGL context lifetimes and zero pixel mismatches or GL/EGL errors. The next gate is a real material and skinned fixture with shader, alpha/fog and offscreen-pass validation.
+
+[PHASE6.md](PHASE6.md) reconstructs a real three-bone sleeve mesh and its default dual-color material in a separate native probe. Host source-function, pose and malformed-input checks passed; Android emulator and Thor qualification are recorded separately.

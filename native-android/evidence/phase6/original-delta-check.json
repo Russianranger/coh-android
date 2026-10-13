@@ -1,0 +1,84 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "exact original scalar uncompressDeltas on Linux host, plus source weight conversion and encoded palette slot conversion",
+  "win32_game_execution": false,
+  "android_device_execution": false,
+  "complete_geo_loader": false,
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "source_sha256_lf": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+  "original_function_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+  "source_weight_conversion_sha256_lf": "23297301f34737585d65e39fc8b01445e5b4a8f665ac9cb49e9101f6f2cf299b",
+  "source_palette_consumer_sha256_lf": "e64ec178a7fc90b260da7c9be8aadbd5014c2dd0e909ae221630b5ea4ae74325",
+  "generated_shimmed_source_sha256": "8013760cc165e2dbea5d6e638f2dc1142536cb800027ee9ec7de677a02abdcba",
+  "real_geometry_sha256": "7d56d6fe65a1be2d02fe66e078b4c7b6a3998177dce47e8ac35b34a77baa413c",
+  "canonical_mesh_sha256": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661",
+  "vertex_count": 116,
+  "triangle_count": 198,
+  "bone_count": 3,
+  "channels": [
+    {
+      "name": "indices",
+      "elements": 594,
+      "source_stream_bytes": 712,
+      "scale_exponent": 0,
+      "decoded_bytes": 2376,
+      "sha256": "4c671cb3f02a631fd600f0a2652b2ddf01d561072044814f74a86c275ce7b5ba",
+      "byte_exact": true
+    },
+    {
+      "name": "positions",
+      "elements": 348,
+      "source_stream_bytes": 791,
+      "scale_exponent": 15,
+      "decoded_bytes": 1392,
+      "sha256": "cf4228f872d206f5358f22c3b62434aadda3c70290fe27c6dbac574c3d2481e9",
+      "byte_exact": true
+    },
+    {
+      "name": "normals",
+      "elements": 348,
+      "source_stream_bytes": 539,
+      "scale_exponent": 8,
+      "decoded_bytes": 1392,
+      "sha256": "6f08508e3d1346580003c969b69c943bd9e357df90d91a50a7d4cbe9db6ac1fd",
+      "byte_exact": true
+    },
+    {
+      "name": "uvs_gpu_upload",
+      "elements": 232,
+      "decoded_bytes": 928,
+      "sha256": "7ba0feee94085784ea23089a6c60a8526284658beb82230d6dd8acd317328429",
+      "byte_exact": true,
+      "source_expression": "u unchanged; v=1.f-v; selected fixture has unit bind scales and zero UV scrolling",
+      "full_runtime_material_transform_resolver": false
+    },
+    {
+      "name": "uvs",
+      "elements": 232,
+      "source_stream_bytes": 461,
+      "scale_exponent": 12,
+      "decoded_bytes": 928,
+      "sha256": "0375d90d896e1f9665fd98c4347647377ddbe572cb502c7798ae5a7c10be6fd8",
+      "byte_exact": true
+    },
+    {
+      "name": "weights",
+      "elements": 232,
+      "source_stream_bytes": 116,
+      "decoded_bytes": 928,
+      "sha256": "6a307a5855d41204ca5cc1763324adbcb1849977a76579537c2608e1cc9a386e",
+      "byte_exact": true,
+      "source_expression": "weight_byte * 1.f / 255.f; weight1=1.f-weight0"
+    },
+    {
+      "name": "local_palette_slots",
+      "elements": 232,
+      "source_stream_bytes": 232,
+      "decoded_bytes": 928,
+      "sha256": "13c94ff6b1011337260b7d2535936081bd2b9668af9313c3a4cb73e292789027",
+      "byte_exact": true,
+      "source_expression": "encoded_byte / 3; divisible-by-three and actual-bone-count validation"
+    }
+  ]
+}

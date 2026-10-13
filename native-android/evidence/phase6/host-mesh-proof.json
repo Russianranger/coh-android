@@ -1,0 +1,97 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "host-native standalone mesh parser and source-GPU-contract CPU deformation",
+  "android_device_execution": false,
+  "production_geo_decoder": false,
+  "native_source_sha256": "18f82e3ad598336f4876ba2ebb1afff6ca0ae77509960e8beb38672bb3fd4be1",
+  "native_header_sha256": "afe72d7801eb89891f059f00076815d0c60351e8935489d0bba5ba2ff454579c",
+  "primitive_tests": {
+    "checks": 36,
+    "invalid_cases": [
+      "magic",
+      "version",
+      "header_size",
+      "zero_vertices",
+      "vertex_limit",
+      "indices_not_triangles",
+      "bone_limit",
+      "wrong_vertex_stride",
+      "vertex_offset_wrap",
+      "index_overlap",
+      "bone_overlap",
+      "total_size",
+      "flags",
+      "reserved",
+      "nan_position",
+      "infinite_normal",
+      "zero_normal",
+      "nan_uv",
+      "negative_weight",
+      "weight_sum",
+      "invalid_local_bone",
+      "invalid_triangle_vertex",
+      "invalid_global_bone",
+      "duplicate_global_bone",
+      "truncated_0",
+      "truncated_1",
+      "truncated_7",
+      "truncated_63",
+      "truncated_64",
+      "truncated_227",
+      "trailing_byte",
+      "nan_palette",
+      "zero_palette",
+      "palette_count"
+    ],
+    "control": "hand-computed two-bone rotated/translated position and normalized normal"
+  },
+  "real_asset": {
+    "mesh_sha256": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661",
+    "bytes": 8020,
+    "vertex_count": 116,
+    "triangle_count": 198,
+    "bone_count": 3,
+    "global_bone_ids": [
+      9,
+      5,
+      7
+    ],
+    "used_local_bones": [
+      0,
+      1,
+      2
+    ],
+    "genuine_two_bone_vertices": 37,
+    "poses": [
+      {
+        "label": "bind",
+        "palette_sha256": "3e359011f7ed4c647f89489eb068a3b052707ff5565bd190f35344cbe9ac659f",
+        "python_golden_sha256": "aec656f29f532a1a40c9b7f75f92f6826fc83995fbfb5d346cda3a9cae99e6e1",
+        "scalar_comparisons": 696,
+        "max_absolute_error": 0.0,
+        "tolerance": "2e-5 absolute + 2e-5 relative"
+      },
+      {
+        "label": "controlled",
+        "palette_sha256": "e7138f295ae94742380a3a37df93d9fad79a16aee703beacdda3d3909a7972d7",
+        "python_golden_sha256": "d48f96c571aad5de5962e7522771cca0c28762d3d2fbbff41543825dfd381b61",
+        "scalar_comparisons": 696,
+        "max_absolute_error": 0.0,
+        "tolerance": "2e-5 absolute + 2e-5 relative"
+      }
+    ]
+  },
+  "sanitizer_tests": {
+    "status": "passed",
+    "checks": 24061,
+    "real_input_bytes": 8020,
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "scope": "exact-allocation truncations and two byte mutations at every real-mesh offset; unaligned inputs, getters and identity skinning",
+    "leak_detection": false
+  },
+  "combined_pose_sha256": "e9bc690e7ea7cb454251d7bdbb34f403890cb21e6b70fe83de0b0f1892d67b0a"
+}

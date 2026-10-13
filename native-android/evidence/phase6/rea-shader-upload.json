@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "phase": 6,
+  "scope": "read-only shader upload/bone discovery",
+  "target": {
+    "reference_release": "coh-atlas-gameplay-v0.13.35",
+    "sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+    "target_executed": false,
+    "matching_pdb": false
+  },
+  "rea": {
+    "repository": "https://github.com/Russianranger/rea",
+    "commit": "0365454a573eb52c7089320fd74bfd4a673b78ae",
+    "version": "6.4.0",
+    "usage_this_pass": "Recovered verified Phase1 evidence/workflow/scripts; direct supervised Ghidra continuation on retained partial project. REA native bridge not retried; prior PID namespace ownership restriction preserved.",
+    "prior_resource_evidence_id": "ev_d88ee0566099d5a65f69581142f00e9790e56fcd03a6a916de8b997a78f1113c",
+    "safety_checks_bypassed": false
+  },
+  "tools": {
+    "ghidra": {
+      "version": "12.1.4",
+      "archive_sha256": "ddac49f903da9d5bac833e5cc79395098b9c33cfd3279be5f31bd00387d2d4db",
+      "verified": true
+    },
+    "java": {
+      "version": "Temurin21.0.12.1+1",
+      "archive_sha256": "ce79869e1307ed8ee1e2baa86a412b1eb5b75d10a01006d788a6f968bcfaee94",
+      "verified": true
+    }
+  },
+  "checkpoint": {
+    "zip_sha256": "926387baf80e3a3581886595642eaf5e6325654ec0017aca52f5d89c3cac57bb",
+    "project_records": [
+      {
+        "path": "CityOfHeroesNative.gpr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "checkpoint_zip_crc32_match": true
+      },
+      {
+        "path": "CityOfHeroesNative.rep/idata/00/00000000.prp",
+        "bytes": 494,
+        "sha256": "7a04d480ed8f3a52eb50d281dd667ba1a05832beb3a5af0c80780bcfaa6853ef",
+        "checkpoint_zip_crc32_match": true
+      },
+      {
+        "path": "CityOfHeroesNative.rep/idata/00/~00000000.db/db.1.gbf",
+        "bytes": 62734336,
+        "sha256": "f260a406e8428b2fa50320bb95b687d8bcbff0754a86815389439b7cf56b9a65",
+        "checkpoint_zip_crc32_match": true
+      },
+      {
+        "path": "CityOfHeroesNative.rep/idata/00/~00000000.db/db.2.gbf",
+        "bytes": 117686272,
+        "sha256": "dfcf854d2ac5b9a52db768224c1cf58c7308c6af854e89f29f5234b85a076202",
+        "checkpoint_zip_crc32_match": true
+      },
+      {
+        "path": "CityOfHeroesNative.rep/idata/~index.bak",
+        "bytes": 114,
+        "sha256": "4f2496bdf08f9e97c3b45a64adf406ec40b82e6db62b06f85ceeeb0d563dd422",
+        "checkpoint_zip_crc32_match": true
+      },
+      {
+        "path": "CityOfHeroesNative.rep/idata/~index.dat",
+        "bytes": 114,
+        "sha256": "4f2496bdf08f9e97c3b45a64adf406ec40b82e6db62b06f85ceeeb0d563dd422",
+        "checkpoint_zip_crc32_match": true
+      },
+      {
+        "path": "CityOfHeroesNative.rep/project.prp",
+        "bytes": 157,
+        "sha256": "b082f0373ca4a46905f24e87f4325f5c764d2426d9fda5736ee5f75c8c19c66f",
+        "checkpoint_zip_crc32_match": true
+      },
+      {
+        "path": "CityOfHeroesNative.rep/user/~index.dat",
+        "bytes": 59,
+        "sha256": "0a5034997e47499d758115fa580ad21d96557d2a32c89f2263bcfd3fa8a9a6e5",
+        "checkpoint_zip_crc32_match": true
+      },
+      {
+        "path": "CityOfHeroesNative.rep/versioned/~index.bak",
+        "bytes": 59,
+        "sha256": "0a5034997e47499d758115fa580ad21d96557d2a32c89f2263bcfd3fa8a9a6e5",
+        "checkpoint_zip_crc32_match": true
+      },
+      {
+        "path": "CityOfHeroesNative.rep/versioned/~index.dat",
+        "bytes": 59,
+        "sha256": "0a5034997e47499d758115fa580ad21d96557d2a32c89f2263bcfd3fa8a9a6e5",
+        "checkpoint_zip_crc32_match": true
+      }
+    ],
+    "project_file_bytes_unchanged": true,
+    "whole_program_coverage": "partial inherited checkpoint",
+    "no_new_import": true,
+    "no_autoanalysis": true,
+    "database_read_only": true
+  },
+  "input_files": [
+    {
+      "path": "native-phase6/CoHPhase6ShaderUpload.java",
+      "sha256": "2361ad4db60122b6af7bfd081a923e87d45356f832aa43b002b2902537bd8b09"
+    },
+    {
+      "path": "native-phase6/rea-recovered/rea-readiness-and-boundaries.json",
+      "sha256": "9b430e662597bc6a46bf5fc3174ec8552614bb193b4ed01120a08f171c0f2d0b"
+    },
+    {
+      "path": "native-phase6/rea-recovered/ghidra-direct-native-seams-refined.json",
+      "sha256": "824beac79462fd0d51d6b93b6878bcde2672fd8cfacc3a546c90dbfa941f8319"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "Game/src/render/thread/rt_bonedmodel.c",
+      "sha256": "e64ec178a7fc90b260da7c9be8aadbd5014c2dd0e909ae221630b5ea4ae74325"
+    },
+    {
+      "path": "Game/src/render/thread/wcw_statemgmt.c",
+      "sha256": "d71db41cf955abe9c3fb188f3e784d033bc2a2fbd912e0964df334e5d783b879"
+    },
+    {
+      "path": "Game/src/render/thread/rt_cgfx.c",
+      "sha256": "eb4c7bf99468a43d193a26a853fa2a9120d770f91b01cd8d14285dcf139b017d"
+    },
+    {
+      "path": "Game/src/render/renderbonedmodel.c",
+      "sha256": "f6a1764baa2d55302d0f52325200fc0b49a107de4458ff739d8768ce4232c2cc"
+    }
+  ],
+  "source_producer_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "binary_upload_seam": {
+    "api": "cgGLSetParameter4fv",
+    "iat": "0x00a3b890",
+    "import_thunk": "0x00994d51",
+    "references": [
+      {
+        "function": "0x00642fc0",
+        "call_addresses": [
+          "0x00643159",
+          "0x006431c6",
+          "0x0064349d",
+          "0x006434bc"
+        ]
+      },
+      {
+        "function": "0x00643b70",
+        "call_addresses": [
+          "0x00643c2d"
+        ]
+      }
+    ],
+    "bone_specific_function_correspondence": "unresolved"
+  },
+  "bone_string_candidates": [
+    {
+      "name": "g_BoneMatrixArrVP",
+      "hits": [
+        {
+          "address": "0x00a9efdc",
+          "recovered_reference_count": 0
+        }
+      ]
+    },
+    {
+      "name": "loadBoneMatrices",
+      "hits": []
+    },
+    {
+      "name": "drawLoopBoned",
+      "hits": [
+        {
+          "address": "0x00a976a0",
+          "recovered_reference_count": 0
+        }
+      ]
+    },
+    {
+      "name": "rt_bonedmodel.c",
+      "hits": [
+        {
+          "address": "0x00a97633",
+          "recovered_reference_count": 0
+        }
+      ]
+    },
+    {
+      "name": "%s: TEX %d, model \"%s\"",
+      "hits": [
+        {
+          "address": "0x00a976b0",
+          "recovered_reference_count": 0
+        }
+      ]
+    }
+  ],
+  "selected_functions": [
+    {
+      "address": "0x00642fc0",
+      "body_bytes": 2086,
+      "retained_instructions": 480,
+      "instructions_truncated": false,
+      "decompile_completed": false,
+      "decompile_reason": "not provided"
+    },
+    {
+      "address": "0x00643b70",
+      "body_bytes": 325,
+      "retained_instructions": 89,
+      "instructions_truncated": false,
+      "decompile_completed": false,
+      "decompile_reason": "not provided"
+    }
+  ],
+  "bounds": {
+    "external_deadline_seconds": 90,
+    "kill_grace_seconds": 10,
+    "max_non_thunk_functions": 3,
+    "per_function_decompile_seconds": 10,
+    "max_retained_instructions_per_function": 800
+  },
+  "outcome": {
+    "exit_code": 0,
+    "live_jobs_remaining": false,
+    "runtime_trace_performed": false,
+    "source_function_names_assigned": false
+  },
+  "evidence_file": "ghidra-shader-upload-instructions.json",
+  "evidence_sha256": "60460471e900db4b43088e09be2dc744b6bd592bfd9fdd5ee35df8969553e024",
+  "limitations": [
+    "Recovered import references establish generic shader vec4 upload, not bone-specific execution.",
+    "Raw bone/render marker strings are candidate anchors with no recovered references in the partial database.",
+    "Two requested bounded decompilations returned decompile_completed=false and no pseudocode; Ghidra provided no failure explanation.",
+    "No execution/runtime trace/capture, Thor workload, performance result, or exact source-to-binary function match was established."
+  ]
+}

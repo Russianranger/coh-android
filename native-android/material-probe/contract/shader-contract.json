@@ -1,0 +1,252 @@
+{
+  "format": "coh-phase6-skinned-dual-contract-v1",
+  "status": "source_contract_implemented_not_device_qualified",
+  "source_pins": "source-hashes.json",
+  "shader_files": {
+    "dual_tint.frag": {
+      "sha256": "e5d93d1d3f688b1c282f67915f6dce649f21bd178336baea5787caddb5a61f07",
+      "bytes": 1175
+    },
+    "material_quad.vert": {
+      "sha256": "c113a8525a93b3aab21accc671130b8e2e9fb8649af52df39313699496f39853",
+      "bytes": 575
+    },
+    "skinned_dual.vert": {
+      "sha256": "7157464641f5ac6b53c1c0b09c9809ed3c483df948fb5302eb02292cb25fe6d2",
+      "bytes": 2049
+    }
+  },
+  "runtime_parameters_captured": false,
+  "original_cg_executed": false,
+  "original_cg_reference_image_available": false,
+  "variant": {
+    "vertex": "vp_master_vp.cg",
+    "drawmode": "DRAWMODE_HW_SKINNED",
+    "defines": [
+      "SKIN=1",
+      "LIGHT_SPACE=VIEW",
+      "VERTEX_LIT=DIFFUSE",
+      "TC_XFORM=NONE",
+      "PIXEL_LIT=NONE",
+      "REFLECT=NONE"
+    ],
+    "fragment": "colorblenddualfp.cg",
+    "blendmode": "BLENDMODE_COLORBLEND_DUAL",
+    "absent_fragment_options": [
+      "BIT_HIGH_QUALITY",
+      "BIT_SHADOWMAP",
+      "BIT_DEBUG"
+    ],
+    "scope_excludes": [
+      "bump",
+      "cube",
+      "shadow",
+      "reflection",
+      "NVIDIA_clip_planes",
+      "CgFX_postprocessing",
+      "mipmap_and_LOD_fidelity",
+      "full_costume_material_catalog"
+    ],
+    "note": "Stock vertex source forcibly declares ultra-feature interpolants; the scoped derivative prunes outputs not consumed by this selected fragment variant."
+  },
+  "attributes": [
+    {
+      "location": 0,
+      "name": "aPosition",
+      "type": "vec3",
+      "source": "POSITION float3 pointer (defaultw1)"
+    },
+    {
+      "location": 1,
+      "name": "aNormal",
+      "type": "vec3",
+      "source": "NORMAL float3 pointer"
+    },
+    {
+      "location": 2,
+      "name": "aUV0",
+      "type": "vec2",
+      "source": "TEXCOORD0 float2 pointer",
+      "preparation": "Game/src/render/model_cache.c:95 VBO V=1-rawV; controlled unit bind scale, shader no additional flip"
+    },
+    {
+      "location": 3,
+      "name": "aUV1",
+      "type": "vec2",
+      "source": "TEXCOORD1 float2 pointer",
+      "preparation": "Game/src/render/model_cache.c:97 VBO V=1-rawV; controlled unit bind scale, shader no additional flip"
+    },
+    {
+      "location": 4,
+      "name": "aWeights",
+      "type": "vec2",
+      "source": "ATTR1 float2; w0=storedU8/255,w1=1-w0; shaderusesw1"
+    },
+    {
+      "location": 5,
+      "name": "aRowIndices",
+      "type": "ivec2",
+      "source": "ATTR5 sourceSHORT2 nonnormalized; nativeintegerattribute; validatedlocalrowoffsets"
+    }
+  ],
+  "palette": {
+    "maximum_disk_bones": 15,
+    "shader_storage_vec4_rows": 48,
+    "maximum_used_rows": 45,
+    "rows_per_bone": 3,
+    "index_contract": "already local_palette_slot*3; nonnegative, multiple3,index+2<actualbonecount*3",
+    "local_order": "bone_ID[j] indexes SeqGfxData.bpt, notglobal_id_attrib",
+    "socket_translation": "mulVecMat4(seqGfxData.btt[node.anim_id],bpt[bone_ID[j]],bone_mats[j][3])",
+    "upload_row": "[bone_mats[j][0][k],bone_mats[j][1][k],bone_mats[j][2][k],bone_mats[j][3][k]] for k=0,1,2",
+    "position": "mix(dot(row0,p4),dot(row1,p4),dot(row2,p4) across2bones,weight.y)",
+    "normal": "normalize(mix(eachbone3x3*normal,weight.y))",
+    "zero_normal": "fixture rejectszero_lengthblend;undefinedsource normalizenotqualified"
+  },
+  "fog": {
+    "vertex": "sqrt(dot(view_position,view_position)+1e-16)",
+    "fragment": "factor=clamp(fog_params.w*(fog_params.z-interpolated_fogCoord),0,1);rgb=mix(fog_color.rgb,lit_rgb,factor)",
+    "alpha_changed": false
+  },
+  "material": {
+    "tint": "mix(const1.rgb,const0.rgb,dual.rgb),thenmixwithwhitebybase.a,thenmultiplybase.rgb",
+    "lighting": "rgb*=4*interpolated_vertex_lighting.rgb;vertexlighting=clamp(dot(normal,light),0,1)*diffuse+ambient",
+    "alpha": "dual.a*const0.a;const1.a,vertexcolor.aandbase.anotcoverage",
+    "alpha_test": "discard unless alpha>alpha_ref",
+    "stock_alpha_ref": 0.0,
+    "controlled_alpha_refs": [
+      0.0,
+      0.5,
+      0.6,
+      1.0
+    ],
+    "texture_role": "ordinaryGPUrole;coh_dds_rgba genericBCdecode,notlegacyrawCPUopaquealphabehavior",
+    "controlled_sampler": "GL_NEAREST+GL_CLAMP_TO_EDGE,level0;quadUVcenter(x+.5)/64,y+.5/64,noFBOyflip",
+    "real_fixture_dual_alpha": "The recovered grey asset is opaque. Four diagnostic cases use a controlled colored half-alpha dual swatch; they are not additional real assets."
+  },
+  "offscreen": {
+    "format": "GL_RGBA8",
+    "depth_scope": "wholemeshcontrolledpass;originaldefaultLEQUAL",
+    "original_front_face": "GL_CW",
+    "original_cull": "GL_BACK",
+    "original_blend": "GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA forRGBA",
+    "fixedpoint_clamp": "source,destinationandblendfactorsclamped[0,1]beforeblend",
+    "rgba_equation": "source_rgba*source_alpha+destination_rgba*(1-source_alpha)",
+    "alpha_equation": "source_alpha^2+destination_alpha*(1-source_alpha)",
+    "spec": "https://registry.khronos.org/OpenGL/specs/es/3.2/es_spec_3.2.pdf",
+    "spec_section": "15.1.5",
+    "excludes": [
+      "MSAA",
+      "sRGB_framebuffer",
+      "Android_compositor_alpha",
+      "CgFX_effect_passes"
+    ]
+  },
+  "material_reference": {
+    "generator": "build_material_reference.py",
+    "scalar_oracle": "material_reference.py",
+    "binary_name": "material-reference.bin",
+    "header_format": "<8s10I",
+    "header_bytes": 48,
+    "header_fields": [
+      "magicCOHMAT6\\0",
+      "version1",
+      "width64",
+      "height64",
+      "case_count18",
+      "record_bytes112",
+      "base_width",
+      "base_height",
+      "dual_width",
+      "dual_height",
+      "reserved0"
+    ],
+    "record_format": "<26f2I",
+    "record_bytes": 112,
+    "record_fields": [
+      "const0vec4",
+      "const1vec4",
+      "vertex_colorvec4",
+      "fog_paramsvec4",
+      "fog_colorvec4",
+      "clearvec4",
+      "fog_coordf32",
+      "alpha_reff32",
+      "flagsu32bit0blend_bit1controlleddual",
+      "reservedu32"
+    ],
+    "per_record_following_payload": "width*height*4 expectedRGBA8",
+    "float_inputs": "packedandroundedIEEE754binary32",
+    "scalar_calculation": "Pythonbinary64,independentofGLSLnativeimplementation",
+    "maximum_pixel_error_quantization_units": 2,
+    "source_execution_not_claimed": true,
+    "case_count": 18,
+    "original_asset_pair_cases": 14,
+    "controlled_swatch_cases": 4,
+    "allowed_flags": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "controlled_dual_swatch": {
+      "width": 1,
+      "height": 1,
+      "rgba8": [
+        51,
+        153,
+        230,
+        128
+      ],
+      "original_asset": false
+    },
+    "binary_bytes": 296976
+  },
+  "acceptance": {
+    "gpu_transform_feedback_against_independent_vertex_oracle": {
+      "suggested_absolute_relative_tolerance": 2e-05,
+      "readback": "vViewPosition.xyz,vNormal.xyz",
+      "requires_actual_nontrivial_two_bone_vertices": true
+    },
+    "rendered_skin_parity": "realmeshCPUoracleposedcontrolvsGPUskin,usefulinteriorpixelsRGBAwithin2quantunits;edgeexclusionmaskexplicitandcoveragecountsreported",
+    "material_parity": "Every 64x64 RGBA component of 18 cases within 2 quantization units; report 14 real-pair and 4 controlled-swatch cases separately, with discard/pass counts.",
+    "lifecycle": "contextrecreationresendsallpalettes,attributes,texturesanduniforms;windowpresentationandresourcecleanup",
+    "physical_device_gate": "ThorARM64Bionic/Adreno740/GLESidentity,actualreports;hostoremulatordoesnotclosedevicegate",
+    "require_shader_compile_and_link": true
+  },
+  "bind_provenance": {
+    "model_candidate": "GEO_Sleeves_Wretch in v_arachnos_wretch_sleeves.geo",
+    "candidate_counts": {
+      "vertices": 116,
+      "triangles": 198,
+      "bones": 3
+    },
+    "candidate_bone_ids": [
+      9,
+      5,
+      7
+    ],
+    "geo_default_primary": "Sleeves_Wretch_Base.tga",
+    "stock_generic_fallback": "grey.tga",
+    "actual_secondary_asset_recovered": true,
+    "npc_costume_override": "v_arachnos_henchmen.nd:973-981 Texture1 Skin_Wretch_Base,Texture2none;distinctfromGEOdefault",
+    "scope": "GEOdefaultmaterialfixture,notcompleteWretchNPCcostumeoranimation",
+    "primary_wrapper_sha256": "c778b30db7d2013eb8a4f296d84f78f85d6718b85f3f2b8cbc1f53a0fc463305",
+    "secondary_wrapper_sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013",
+    "secondary_dimensions": [
+      8,
+      8
+    ],
+    "secondary_rgba": [
+      128,
+      128,
+      128,
+      255
+    ],
+    "mesh_sha256": "7d56d6fe65a1be2d02fe66e078b4c7b6a3998177dce47e8ac35b34a77baa413c",
+    "fixture_acquisition_pins": "../../tools/material_fixture/pins.json"
+  },
+  "oracle_sources": {
+    "material_reference.py": "7d3ef660edaffc0bbbc2f9ade77f7f2d7a5f74dbf6eb269427251e451e519d96",
+    "build_material_reference.py": "f421becbd3899caa047da18ef05e2248897b178567cdd7afe2ff26cd84e14aa0"
+  }
+}

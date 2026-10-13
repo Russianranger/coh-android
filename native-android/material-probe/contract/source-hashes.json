@@ -1,0 +1,132 @@
+{
+  "format": "phase6-shader-source-pins-v1",
+  "repository_checkout_head": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "remote_head_supplied_by_parent": "c764a726e16cb6fe12ac4e2d9a8cfe4e6d37e853",
+  "shader_sources": [
+    {
+      "path": "upstream/i24/data/shaders/cgfx/vp_master_vp.cg",
+      "file": "reference-shaders/vp_master_vp.cg",
+      "bytes": 16751,
+      "sha256": "fc9878f4fe57ff430a018c66c208e18e8c00dcad6737a4a48c8d16f4ef8ecfd8",
+      "git_blob": "d83c6134e627747083928d575dd3e41fd7bd81b3"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/colorblenddualfp.cg",
+      "file": "reference-shaders/colorblenddualfp.cg",
+      "bytes": 3263,
+      "sha256": "c59cea85cfed047397c88b7258230ef178be477ccab3af1a7db5681e993d66af",
+      "git_blob": "548d2ed7bf1b0d552d7dc1fa63de764a7a0630b2"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/variants.cgh",
+      "file": "reference-shaders/variants.cgh",
+      "bytes": 2797,
+      "sha256": "87b28634c0dbe28875f1cbe811a44b4f78f23fc3755827339ee9953d8519869e",
+      "git_blob": "01fcc2408aebd606843bdb86ee8370c553b09dcc"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/constants_vp.cgh",
+      "file": "reference-shaders/constants_vp.cgh",
+      "bytes": 3119,
+      "sha256": "99f6d8d675d5d144b42b839a933b6e2b7ac0ded13c9fcdb95fb894bd6732154a",
+      "git_blob": "22eff853e63946c82fc2dc7be894fccaafb7667c"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/constants_fp.cgh",
+      "file": "reference-shaders/constants_fp.cgh",
+      "bytes": 7203,
+      "sha256": "0a45cb26841235ff27e238e782707a83c12f57548b601d9c616111a2738b6aa1",
+      "git_blob": "f5ae44d09695c0d13c085439279ae7d64c49b855"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/functions.cgh",
+      "file": "reference-shaders/functions.cgh",
+      "bytes": 37969,
+      "sha256": "5b602cf7f03b7ce7a6ea4e02fc34c1a2a33331a9c3a6516762b8823679f9a6ca",
+      "git_blob": "3638d0ffa838ec22512b27eaa0db934c425894e8"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/nexus.cgh",
+      "file": "reference-shaders/nexus.cgh",
+      "bytes": 3450,
+      "sha256": "38c5f6b0114883ab8f2fe8f59a9c5b81bdc1d80a620c8d76fc23c0c332e640ee",
+      "git_blob": "8eba85bf98648cdefff39f594d13ead9b20ab343"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/shadows.cgh",
+      "file": "reference-shaders/shadows.cgh",
+      "bytes": 1355,
+      "sha256": "b522aca95d542e5363f2c3e81cc7011e1efbef8acf2a57d7931c372250146eda",
+      "git_blob": "b0149af22544563880b948ab4b02ff08a56fa969"
+    }
+  ],
+  "render_sources": [
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_bonedmodel.c",
+      "bytes": 20404,
+      "sha256": "e64ec178a7fc90b260da7c9be8aadbd5014c2dd0e909ae221630b5ea4ae74325"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/renderbonedmodel.c",
+      "bytes": 11628,
+      "sha256": "f6a1764baa2d55302d0f52325200fc0b49a107de4458ff739d8768ce4232c2cc"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_shaderMgr.c",
+      "bytes": 128335,
+      "sha256": "8eeb460a166b0c72d3cede4c03957708d6397ed7348a3fdcbba61e909aa45cab"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/wcw_statemgmt.c",
+      "bytes": 141028,
+      "sha256": "d71db41cf955abe9c3fb188f3e784d033bc2a2fbd912e0964df334e5d783b879"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_init.c",
+      "bytes": 17221,
+      "sha256": "4203ba947fa608bcd21b7b9544ce84e6dcd5aabba28d82a123f474b6a232747f"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_tricks.c",
+      "bytes": 21101,
+      "sha256": "216c067b615a7979ade777d0dac85bd5374ab7929bbac4cc2f9b693363a7da65"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/rendertree.c",
+      "bytes": 128217,
+      "sha256": "9160762900e4f1a9124b7e852e8f98b0336934343eceddbaf37775c03c9c0e32"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/tex.c",
+      "bytes": 113372,
+      "sha256": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/entity/costume_client.c",
+      "bytes": 31319,
+      "sha256": "b89818e2c2c834efd14f90e8af882d572b9c24337f9f2a699150d2d1648925f2"
+    },
+    {
+      "path": "upstream/i24/data/tricks/v_shaders/arachnos/henchmen/arachnos_wretch.txt",
+      "bytes": 6492,
+      "sha256": "907b56ff2925ba8426cced7ef071a47394b9da92771c8ae10b0abed270a34cd6"
+    },
+    {
+      "path": "upstream/i24/data/defs/v_villain_costumes/v_arachnos_henchmen.nd",
+      "bytes": 69941,
+      "sha256": "db73b840f0339fb211ac75bcb3680f85de8ff60daf23793f9480fd6a5f02f419"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/model_cache.c",
+      "bytes": 18214,
+      "sha256": "23297301f34737585d65e39fc8b01445e5b4a8f665ac9cb49e9101f6f2cf299b"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/anim.h",
+      "bytes": 12673,
+      "sha256": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe"
+    }
+  ],
+  "original_shader_bytes_preserved": true,
+  "runtime_variant_capture_complete": false
+}

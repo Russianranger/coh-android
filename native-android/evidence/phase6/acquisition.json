@@ -1,0 +1,250 @@
+{
+  "format": 1,
+  "source_repository": "Russianranger/coh-android",
+  "release_tag": "coh-assets-v1.0.0",
+  "outer_asset": "COH-Assets-1.0.0-Base.zip",
+  "outer_expected_bytes": 1630092780,
+  "outer_published_sha256": "6d6e3304e48b89f8fdb218754a57380b3108140ef31bddb30f699ebcf28c2e3d",
+  "outer_full_hash_locally_verified": false,
+  "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip",
+  "inner_member": "payloads/runtime/client-visual-assets.zip",
+  "inner_expected_bytes": 859075775,
+  "inner_published_sha256": "5f91b7d4ebe91e6a547923d702e2fcd56d7fc1d36fb7bffbb66463562d977d60",
+  "inner_full_hash_locally_verified": false,
+  "source_manifest": {
+    "member": "payloads/runtime/client-visual-manifest.json",
+    "bytes": 48591999,
+    "sha256": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2",
+    "full_file_locally_verified": true
+  },
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "model_name": "GEO_Sleeves_Wretch",
+  "model_index": 0,
+  "records": [
+    {
+      "name": "data/player_library/v_arachnos_wretch_sleeves.geo",
+      "size": 6072,
+      "compressed": 5204,
+      "offset": 27565047,
+      "crc32": "601435ae",
+      "method": 8,
+      "id": "mesh",
+      "file_name": "mesh.geo",
+      "sha256": "7d56d6fe65a1be2d02fe66e078b4c7b6a3998177dce47e8ac35b34a77baa413c",
+      "original_pigg_provenance": {
+        "bytes": 6072,
+        "cached_header_bytes": 424,
+        "cached_header_id": 213,
+        "cached_header_sha256": "04d929310607cf1fc2613170577cd5f3943fc2ed48b5c8966e49bf49813d3fa3",
+        "cached_header_verified": true,
+        "compressed": true,
+        "geometry_header": {
+          "baseline_loader_accepts_version": true,
+          "data_block_bounds_verified": true,
+          "header_decompression_verified": true,
+          "header_uncompressed_bytes": 1356,
+          "runtime_compatibility": "unverified",
+          "version": 3
+        },
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "463a4aaf7ac7b762e226ab40acd6d057",
+        "offset": 23138275,
+        "path": "player_library/V_Arachnos_Wretch_Sleeves.geo",
+        "sha256": "7d56d6fe65a1be2d02fe66e078b4c7b6a3998177dce47e8ac35b34a77baa413c",
+        "source_archive": "stage2.pigg",
+        "source_archive_bytes": 88673593,
+        "source_content_range": "bytes 23138275-23143484/88673593",
+        "source_download_receipt": "a0363",
+        "source_etag": "\"d265c6e5e6f18ec4cdf2462276d26698\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:25:57 GMT",
+        "source_member_range": "bytes 23138275-23143484/88673593",
+        "source_metadata_sha256": "e07f5731844206ba9348f2559feab2aaadabc15f26a18d888e7ddfedcb3df2af",
+        "source_url": "https://dists.thunderspy.org/piggs/stage2.pigg",
+        "stored_bytes": 5210,
+        "stored_sha256": "1a7a07b14c4ab359bc5b9febe87ac10c571439e20dbb366246ee4fc1f8d20174"
+      }
+    },
+    {
+      "name": "data/texture_library/v_enemies/arachnos/henchmen/sleeves_wretch_base.texture",
+      "size": 87764,
+      "compressed": 74294,
+      "offset": 265687406,
+      "crc32": "f9cde264",
+      "method": 8,
+      "id": "texture0",
+      "file_name": "texture0.texture",
+      "sha256": "c778b30db7d2013eb8a4f296d84f78f85d6718b85f3f2b8cbc1f53a0fc463305",
+      "original_pigg_provenance": {
+        "bytes": 87764,
+        "cached_header_bytes": 228,
+        "cached_header_id": 3693,
+        "cached_header_sha256": "cf6b60b2a51cd28dab824817759cea3d2524e110710d13890159975c539a1eec",
+        "cached_header_verified": true,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "4c61a2479c8f3553c400e4dda1eb6833",
+        "offset": 69096710,
+        "path": "texture_library/V_ENEMIES/Arachnos/Henchmen/Sleeves_Wretch_Base.texture",
+        "sha256": "c778b30db7d2013eb8a4f296d84f78f85d6718b85f3f2b8cbc1f53a0fc463305",
+        "source_archive": "stage2.pigg",
+        "source_archive_bytes": 88673593,
+        "source_content_range": "bytes 69096710-69171009/88673593",
+        "source_download_receipt": "a0384",
+        "source_etag": "\"d265c6e5e6f18ec4cdf2462276d26698\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:25:57 GMT",
+        "source_member_range": "bytes 69096710-69171009/88673593",
+        "source_metadata_sha256": "e07f5731844206ba9348f2559feab2aaadabc15f26a18d888e7ddfedcb3df2af",
+        "source_url": "https://dists.thunderspy.org/piggs/stage2.pigg",
+        "stored_bytes": 74300,
+        "stored_sha256": "de2f26e152275e37d20bfcfa77173f624fb9a0200146deb3fa918edc915bd7a9",
+        "texture_header": {
+          "data_bounds_verified": true,
+          "header_bytes": 228,
+          "height": 256,
+          "original_name": "texture_library/V_ENEMIES/Arachnos/Henchmen/Sleeves_Wretch_Base.dds",
+          "struct_bytes": 32,
+          "width": 256
+        }
+      }
+    },
+    {
+      "id": "texture1",
+      "file_name": "texture1.texture",
+      "name": "assets/texture_library/world/filler/grey.texture",
+      "size": 894,
+      "compressed": 113,
+      "offset": 558735569,
+      "crc32": "d28455ba",
+      "method": 8,
+      "sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013",
+      "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip",
+      "outer_expected_bytes": 615545248,
+      "outer_published_sha256": "e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e",
+      "outer_full_hash_locally_verified": false,
+      "inner_member": "payloads/atlas/atlas-assets.zip",
+      "inner_expected_bytes": 615541018,
+      "inner_published_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+      "inner_full_hash_locally_verified": false,
+      "entry_hash_origin": {
+        "member": "payloads/atlas/atlas-assets-index.tsv",
+        "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480",
+        "full_file_locally_verified": true
+      },
+      "metadata": {
+        "version": "TX2",
+        "header_bytes": 426,
+        "payload_bytes": 468,
+        "width": 8,
+        "height": 8,
+        "flags": 2,
+        "alpha": false,
+        "embedded_name": "texture_library/WORLD/Filler/grey.dds",
+        "header_bounds_verified": true,
+        "payload_size_verified": true,
+        "baseline_loader_accepts_container": true,
+        "baseline_dimension_limit_exceeded": false,
+        "baseline_loader_accepts_payload_format": true,
+        "runtime_compatibility": "unverified",
+        "image_pixels_decoded": false,
+        "validation_status": "structural_checks_passed",
+        "errors": [],
+        "warnings": [],
+        "dds_width": 8,
+        "dds_height": 8,
+        "dds_mip_count": 4,
+        "dds_pixel_format_header_size": 32,
+        "dds_dimensions_match_texture_canvas": true,
+        "cached_mip_bytes": 356,
+        "payload_format": "ARGB8888",
+        "dds_mip_bounds_verified": true,
+        "dds_mip_bytes": 340,
+        "dds_uninterpreted_trailing_bytes": 0,
+        "structural_validation": "wrapper_dds_mip_bounds",
+        "cached_mip_verified": true,
+        "cached_mip_width": 8,
+        "cached_mip_height": 8
+      }
+    }
+  ],
+  "material_binding": {
+    "source": "upstream/i24/data/defs/v_villain_costumes/v_arachnos_henchmen.nd",
+    "source_sha256": "db73b840f0339fb211ac75bcb3680f85de8ff60daf23793f9480fd6a5f02f419",
+    "part_line": 973,
+    "enttype": "V_Arachnos_Wretch",
+    "npc": "Arachnos_Wretch",
+    "part": "Sleeves",
+    "primary_geometry_texname": "Sleeves_Wretch_Base.tga",
+    "secondary_resolution": "stock texBindSetup generic layer grey_tex fallback",
+    "scope": "real GEO default material; not the Arachnos NPC costume override",
+    "secondary_geometry_alias": "grey",
+    "secondary_asset": "assets/texture_library/world/filler/grey.texture",
+    "npc_override_excluded": {
+      "texture1": "Skin_Wretch_Base",
+      "texture2": "none"
+    },
+    "source_contracts": [
+      {
+        "file": "upstream/ouroboros/Game/src/render/tex.c",
+        "lines": [
+          1036,
+          1045
+        ],
+        "role": "default generic layer fallback grey_tex"
+      },
+      {
+        "file": "upstream/ouroboros/Game/src/render/tex.c",
+        "lines": [
+          2774,
+          2791
+        ],
+        "role": "stock grey asset resolved by texFind/texLoad"
+      }
+    ]
+  },
+  "acquisition_passed": true,
+  "range_bytes_downloaded": 505740,
+  "range_count": 8,
+  "etag_stable": true,
+  "exact_http_range_enforced": true,
+  "zip_member_crc32_verified": true,
+  "all_fixture_sha256_verified": true,
+  "ranges_by_archive": {
+    "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip": [
+      [
+        1630076928,
+        1630092779
+      ],
+      [
+        594411520,
+        594477055
+      ],
+      [
+        622002176,
+        622067711
+      ],
+      [
+        860094464,
+        860159999
+      ],
+      [
+        860160000,
+        860291071
+      ]
+    ],
+    "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip": [
+      [
+        615514112,
+        615545247
+      ],
+      [
+        0,
+        65535
+      ],
+      [
+        558694400,
+        558759935
+      ]
+    ]
+  }
+}
