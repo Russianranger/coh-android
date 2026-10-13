@@ -265,6 +265,33 @@ final class ClientAcceptance {
                 && ("finish_requested".equals(reason) || "interaction_timeout".equals(reason));
     }
 
+    /** Manual capture uses the APK's accepted zero-deadline session policy.
+     * Its honest unbounded stage flag must not be mistaken for foreign evidence.
+     * Full session/PID, budget rows and observation duration are checked separately.
+     */
+    static boolean interactionObservationPolicyAccepted(Object stageValue, Object reportValue,
+            boolean manualPolicy, List<?> acceptedBudgets) {
+        Map<?, ?> stage = object(stageValue), report = object(reportValue);
+        if (!"actual_client_interaction".equals(stage.get("stage"))
+                || !"passed".equals(stage.get("status"))) return false;
+        if (!manualPolicy)
+            return !yes(report.get("manual_session")) && yes(stage.get("bounded_live_observation"))
+                    && !yes(stage.get("user_controlled_observation"));
+        if (!yes(report.get("manual_session"))
+                || !Boolean.FALSE.equals(stage.get("bounded_live_observation"))
+                || !yes(stage.get("user_controlled_observation"))
+                || !"finish_requested".equals(report.get("interaction_completion_reason"))
+                || acceptedBudgets == null || acceptedBudgets.isEmpty() || acceptedBudgets.size() > 2)
+            return false;
+        for (Object value : acceptedBudgets) {
+            Map<?, ?> budget = object(value);
+            if (!yes(budget.get("manual_session")) || !number(budget.get("deadline_utc_ms"), 0)
+                    || !number(budget.get("save_request_deadline_utc_ms"), 0)
+                    || !number(budget.get("movement_deadline_utc_ms"), 0)) return false;
+        }
+        return true;
+    }
+
     /** Observation belongs to the accepted owned session, including explicit manual policy. */
     static boolean clientObservationAccepted(Object value, List<?> acceptedBudgets, String session,
             long clientPid, long windowStarted, long windowEnded, long budgetDeadline,

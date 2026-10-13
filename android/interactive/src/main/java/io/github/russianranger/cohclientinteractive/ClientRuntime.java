@@ -2119,7 +2119,8 @@ public final class ClientRuntime {
         JSONObject inputs = stages.getJSONObject(0), startup = stages.getJSONObject(interactionStage);
         if (!imported.sourceCommit.equals(inputs.optString("source_commit"))
                 || !imported.dataCommit.equals(inputs.optString("data_commit"))
-                || !Boolean.TRUE.equals(startup.opt("bounded_live_observation"))) return false;
+                || !ClientAcceptance.interactionObservationPolicyAccepted(jsonValue(startup), jsonValue(report),
+                    sessionBudget.manual(), sessionBudgetEvents)) return false;
         JSONArray screenshots = report.optJSONArray("screenshots");
         if (screenshots == null || screenshots.length() != 3) return false;
         Set<String> actualCaptures = new HashSet<>();
