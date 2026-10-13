@@ -92,6 +92,13 @@ multiply output alpha. Fixed-function RGBA blending uses
 `SRC_ALPHA/ONE_MINUS_SRC_ALPHA` for all channels, including destination alpha.
 Each actual draw is sampled with its original effective RGB colors.
 
+Character geometry uses a separate linear mip-zero sampler. Original
+`rt_tex.c` selects linear magnification by default; point sampling requires an
+explicit texture option. The selected diagnostic profile has no mip chain.
+The 66 scalar cases continue to validate the exact declared nearest sampler;
+switching between scene and analytic sampling does not change byte tolerance,
+reference pixels, triangle guards, or the independent geometry reference.
+
 | Header offset | Type | Value |
 |---|---|---|
 | 0 | 8 bytes | COHCMAT8 |

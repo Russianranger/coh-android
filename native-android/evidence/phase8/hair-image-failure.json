@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "phase": 8,
+  "passed": false,
+  "source_commit": "5b1e7ef4442a785d24aa19c895f6decd6b30b92d",
+  "workflow_run_id": 38480030226,
+  "artifact": {
+    "id": 11856854126,
+    "bytes": 4689784,
+    "sha256": "f75915dd05fd28f5e1884d7ee15096afcb03303a7da189faf9813a6a6bd4125f"
+  },
+  "report_sha256": "41f8625410c39ad10fd06d145183144511bd28dc83a4a37990a2c90ad79a154a",
+  "stage": "part-image-parity",
+  "failure": "An isolated GPU costume draw differs from independent CPU geometry outside excluded edges",
+  "native_egl_gles_errors": [
+    0,
+    0
+  ],
+  "objects_released": true,
+  "gpu_first_checkpoint_vertices": 2626,
+  "gpu_first_checkpoint_components": 15756,
+  "gpu_mismatches": 0,
+  "gpu_maximum_absolute_error": 9.53674316e-07,
+  "cpu_actor_checks": {
+    "actor_sample_match": true,
+    "hierarchy_match": true,
+    "morph_scale_match": true,
+    "socket_palette_match": true,
+    "animation_clock_match": true
+  },
+  "part_image_mismatches": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    5,
+    0,
+    0,
+    0
+  ],
+  "part_interior_pixels": [
+    17300,
+    22237,
+    4586,
+    4409,
+    9068,
+    7134,
+    31362,
+    772,
+    25098,
+    10368,
+    2088
+  ],
+  "standalone_compared_pixels": 2579519,
+  "standalone_maximum_byte_error": 37,
+  "rgba_tolerance": 2,
+  "triangle_edge_guard_pixels": 2,
+  "remaining_work": "Bounded pixel/UV/depth diagnostics and source sampler investigation; this package is not qualified and not delivered."
+}

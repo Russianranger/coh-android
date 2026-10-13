@@ -60,8 +60,11 @@ source automatic COLORBLEND_DUAL fallback. `materials.json` retains the actual
 six costume composite identities and all omitted high-quality layer names.
 The independent scalar material reference evaluates six cases for every draw,
 including real texture pairs, source costume tints, strict alpha, fog, blending
-and an explicitly controlled alpha swatch. Nearest mip0/clamp sampling and
-controlled lighting are diagnostic inputs, not an original GPU capture.
+and an explicitly controlled alpha swatch. These analytic cases use nearest
+mip0/clamp sampling. Character geometry uses linear mip0/clamp sampling,
+consistent with the source default without point sampling or a mip chain.
+Controlled lighting, mip0 and clamp remain diagnostic inputs; original mip
+chains and runtime sampling capture are unqualified.
 
 Reproduction in a full checkout:
 

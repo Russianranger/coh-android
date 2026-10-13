@@ -130,6 +130,9 @@ def validate(report, minimum_generations=2):
         assert native['standalone_projection_scope'] == 'per-part-six-checkpoint-union'
         assert native['standalone_minimum_interior_pixels_per_part_pose'] == 64
         assert native['assembled_projection_independent_of_standalone'] is True
+        assert native['character_texture_filter'] == 'GL_LINEAR'
+        assert native['material_probe_texture_filter'] == native['window_image_filter'] == 'GL_NEAREST'
+        assert native['mip_policy'] == 'base level only; original mip chain unqualified'
         assert native['original_cg_execution'] is False and native['reference_palettes_drive_rendering'] is False
         assert native['high_quality_materials_qualified'] is False
         assert native['front_face'] == 'CW' and native['depth_write'] is True

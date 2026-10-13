@@ -129,7 +129,8 @@ def resolve():
                       "alpha_sort_origin": "model.c GEO_* colorblend_alpha_hack skips modelNeedsAlphaSort; rendertree.c customtexture alpha-sort guard is disabled; Collar2x only DoubleSided",
                       "source_object_trick": "Collar2x" if "__collar2x" in part["source_model_name"].lower() else None,
                       "alpha_ref": 0.0, "alpha_ref_origin": "rt_state.c:1103 glAlphaFunc(GL_GREATER,0); no object-specific alpha-ref in Collar2x",
-                      "sampler": {"min_filter": "NEAREST", "mag_filter": "NEAREST", "wrap": "CLAMP_TO_EDGE", "mip": 0},
+                      "sampler": {"scope": "analytic material cases", "min_filter": "NEAREST", "mag_filter": "NEAREST", "wrap": "CLAMP_TO_EDGE", "mip": 0},
+                      "character_sampler": {"min_filter": "LINEAR", "mag_filter": "LINEAR", "wrap": "CLAMP_TO_EDGE", "mip": 0},
                       "uv_scale_base": [1, 1], "uv_scale_dual": [1, 1], "uv_scroll": [0, 0],
                       "full_quality_material_qualified": False})
     if len(parts) != 11 or parts[6]["dual_alias"] != "white" or parts[1]["dual_alias"] != "Chest_Wolf_01b":
@@ -150,7 +151,7 @@ def resolve():
                         "stock white is required by texFindNeededBinds and loaded as white.tga by texMakeWhite; retain actual acquired pixels/dimensions/hash",
                         "BMB_NV1XWORLD is a legacy register-combiner choice; it adds no Cg dual fragment operation",
                         "Collar2x makes Hair and Neck double-sided; it supplies no alpha cutout or alpha reference",
-                        "probe nearest/mip0/clamp samplers and controlled lights are explicit validation inputs, not captured runtime state",
+                        "analytic material cases use nearest/mip0/clamp; character geometry uses source-default linear filtering at mip0 with controlled clamp; mip chains and original runtime sampling capture remain unqualified",
                         "advanced MULTI masks, reflections, bump maps, specular, original driver texture decompression and draw sorting remain unqualified"],
               "parts": parts, "original_windows_pixel_capture": False}
     (CONTRACT / "materials.json").write_text(json.dumps(result, indent=2) + "\n")

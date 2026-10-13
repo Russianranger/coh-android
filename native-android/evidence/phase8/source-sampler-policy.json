@@ -1,0 +1,336 @@
+{
+  "schema": "coh-native-character-source-sampler-policy-v1",
+  "source_repository": "https://github.com/Russianranger/coh-android",
+  "source_tree_commit": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "source_baseline_reference": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "sources": [
+    {
+      "path": "upstream/ouroboros/Game/src/render/tex.c",
+      "git_blob": "32fa55bac30691a2893a8b52ad8702287d8cdb8a",
+      "bytes": 113372,
+      "sha256": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+      "url": "https://github.com/Russianranger/coh-android/blob/61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d/upstream/ouroboros/Game/src/render/tex.c",
+      "anchors": [
+        {
+          "lines": [
+            1977,
+            2028
+          ],
+          "purpose": "zero-initialize RdrTexParams; only TEXOPT_POINTSAMPLE sets point_sample; NOMIP controls mip flag"
+        },
+        {
+          "lines": [
+            627,
+            645
+          ],
+          "purpose": "basic texture runtime flags recomputed by trickFromTextureDirName"
+        },
+        {
+          "lines": [
+            1359,
+            1382
+          ],
+          "purpose": "texture-header flags used for alpha/bump/cubemap; current TexOpt flags separately resolved"
+        }
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/tex.h",
+      "git_blob": "a9f5694fd4fbe4acfb140d95a5a9ff19758445f8",
+      "bytes": 11002,
+      "sha256": "56e56aea12a4126250f5f6f4d2211f62814b7eae4ad2598271f5423b60680552",
+      "url": "https://github.com/Russianranger/coh-android/blob/61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d/upstream/ouroboros/Game/src/render/tex.h",
+      "anchors": [
+        {
+          "lines": [
+            19,
+            28
+          ],
+          "purpose": "original TextureFileHeader stores TexOptFlags at byte16"
+        }
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/texEnums.h",
+      "git_blob": "7bdc7c98bd3bfebb7ac7f085af0a51e2d2a64300",
+      "bytes": 3746,
+      "sha256": "6e96499b08adcfdf2a788286da086aead8e17d2b05ae8c31ee50752b7de778de",
+      "url": "https://github.com/Russianranger/coh-android/blob/61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d/upstream/ouroboros/Game/src/render/texEnums.h",
+      "anchors": [
+        {
+          "lines": [
+            28,
+            60
+          ],
+          "purpose": "TEXOPT_POINTSAMPLE bit26, CLAMPS bit6, CLAMPT bit7"
+        }
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_tex.c",
+      "git_blob": "3d613dcff9d4a021159de801a87f9d388a3a4af6",
+      "bytes": 19403,
+      "sha256": "5ce562b7184fa594eb0d678f7981fb5fb0f899b44a1e70c984949f68646fdaf5",
+      "url": "https://github.com/Russianranger/coh-android/blob/61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d/upstream/ouroboros/Game/src/render/thread/rt_tex.c",
+      "anchors": [
+        {
+          "lines": [
+            74,
+            84
+          ],
+          "purpose": "point sampling selects NEAREST; default MAG LINEAR and MIN LINEAR or LINEAR_MIPMAP_LINEAR"
+        }
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/tricks.c",
+      "git_blob": "b8c7ae519d1d5ec31c9fd7861b96b3356eca82e9",
+      "bytes": 57263,
+      "sha256": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+      "url": "https://github.com/Russianranger/coh-android/blob/61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d/upstream/ouroboros/Common/seq/tricks.c",
+      "anchors": [
+        {
+          "lines": [
+            450,
+            492
+          ],
+          "purpose": "implicit filename flags add clamp/bump/normal/cubemap, not point sampling"
+        },
+        {
+          "lines": [
+            506,
+            562
+          ],
+          "purpose": "TexOpt resolution direct name, then parent directories, then zero explicit flags"
+        },
+        {
+          "lines": [
+            75,
+            75
+          ],
+          "purpose": "PointSample token maps TEXOPT_POINTSAMPLE"
+        }
+      ]
+    }
+  ],
+  "actual_hair_textures": [
+    {
+      "file_name": "tex10.texture",
+      "source_name": "texture_library/V_ENEMIES/Arachnos/Henchmen/Hair_Wretch.dds",
+      "bytes": 22140,
+      "sha256": "ee767d35558d389fc61cbbafa3b0fe10258efacf4befa4df68b19e68773eaa3b",
+      "header_bytes": 148,
+      "data_bytes": 21992,
+      "width": 128,
+      "height": 256,
+      "texopt_flags_u32": 192,
+      "texopt_flags_hex": "0xc0",
+      "point_sample_bit": false,
+      "named_flags": [
+        "TEXOPT_CLAMPS",
+        "TEXOPT_CLAMPT"
+      ],
+      "alpha_header": 0
+    },
+    {
+      "file_name": "tex11.texture",
+      "source_name": "texture_library/V_ENEMIES/Arachnos/Henchmen/Hair_Wretch_Mask.dds",
+      "bytes": 11281,
+      "sha256": "9a86430729dd64b85bd762d1fbeadb529878939131f7824aa4b24d15968a9035",
+      "header_bytes": 193,
+      "data_bytes": 11088,
+      "width": 64,
+      "height": 128,
+      "texopt_flags_u32": 192,
+      "texopt_flags_hex": "0xc0",
+      "point_sample_bit": false,
+      "named_flags": [
+        "TEXOPT_CLAMPS",
+        "TEXOPT_CLAMPT"
+      ],
+      "alpha_header": 1
+    }
+  ],
+  "checked_texopt_definitions": {
+    "trick_tree_blob_count": 1585,
+    "local_blobs_checked": 28,
+    "unavailable_blobs_not_fetched": 1557,
+    "matching_direct_or_parent_directory_definitions": [],
+    "files": [
+      {
+        "path": "upstream/i24/data/tricks/architect_entertainment.txt",
+        "git_blob": "d5b0ac7319b403966eb0911d022d19057d0853e0",
+        "sha256": "c6479bfe319a2b3125e619d5a284555be45c4ae8e83772b05585a19f82dcbd6e"
+      },
+      {
+        "path": "upstream/i24/data/tricks/architect_ui.txt",
+        "git_blob": "7c6db52012ab28ff5180a420b93438dbe6549778",
+        "sha256": "fcfcf9f145cf6c8b7113c3bb1d9cc4b736a35632d0a21e0b0e713d726f526676"
+      },
+      {
+        "path": "upstream/i24/data/tricks/beach_gravel_tricks.txt",
+        "git_blob": "ecd828bf2ab8bb12263c3f175dfb66ed62540f0c",
+        "sha256": "e7744eb6b76c5ff1122216f4ca0c4888180f66fa3ccc45b5fabc164c67b390e2"
+      },
+      {
+        "path": "upstream/i24/data/tricks/boats.txt",
+        "git_blob": "8d831afcba7be3f1aa9348bd8bab41b0e4082c42",
+        "sha256": "f5926ece2be54a49eb4919b02a4af286e06b2e5bb967c789dc043744c72659f9"
+      },
+      {
+        "path": "upstream/i24/data/tricks/btest.txt",
+        "git_blob": "73f2e47b13bc2c7e60f7f07704be0195ced81d6e",
+        "sha256": "a225c46b8701da525dd93f76dc455e8eb5f214d1ffc561b682eba9863a3facdc"
+      },
+      {
+        "path": "upstream/i24/data/tricks/buildings/brick1.txt",
+        "git_blob": "49385f3af4ecf8c6bd1ce8076333256a3d7372a5",
+        "sha256": "1568f940aa36660a99d6502883a2a899f423560824ed49142b577bfb1081d1d4"
+      },
+      {
+        "path": "upstream/i24/data/tricks/buildings/burning_buildings.txt",
+        "git_blob": "a9e43810e4acd0298544a8a89f32c447b21088bc",
+        "sha256": "c9cd5496d40c46b66d310a6ff9eb2ffaae2e8bbca36d6dae5cc902e80b1940a8"
+      },
+      {
+        "path": "upstream/i24/data/tricks/buildings/deco1.txt",
+        "git_blob": "09d91887b0bc188db24ca6ca196092f8dd9b2752",
+        "sha256": "6f5e7081ee76c9097072801dbe5f97bb855b4429e014fdc97a0e999250f38b98"
+      },
+      {
+        "path": "upstream/i24/data/tricks/buildings/deco10.txt",
+        "git_blob": "febf21218ac02b53b16d29e9161d628345e11e1d",
+        "sha256": "cd3ea6372e1b35a4f5a529952bb7d4557cbd9898dab96f8b02b022621a76b918"
+      },
+      {
+        "path": "upstream/i24/data/tricks/buildings/deco11.txt",
+        "git_blob": "40ad9322f20d9a666c651c88a99410973a84c0bd",
+        "sha256": "b74b622324740346a5627c498c18a0f7f8e52529c95ff18b2a6297b2ebc013e2"
+      },
+      {
+        "path": "upstream/i24/data/tricks/buildings/deco13.txt",
+        "git_blob": "b5e78f489674bd31f5326a20005b812f6e210286",
+        "sha256": "390ce44deb008d18d8a06e06ea10ad1843ffa8743da5a662de69b33316ed33d3"
+      },
+      {
+        "path": "upstream/i24/data/tricks/buildings/deco14.txt",
+        "git_blob": "237dd1e2c45f2e2537910ecb246636f39d90bd29",
+        "sha256": "c1268a3e0c542b3fc0a3bf83c2a1e40e26c54058f07dd2559a2f52884a994aaa"
+      },
+      {
+        "path": "upstream/i24/data/tricks/buildings/deco16.txt",
+        "git_blob": "abbfab7a8b2be2548c44c5cef4cf886f272a0c33",
+        "sha256": "cca2c30daa873a6e6bef6c9705ee7d66f1b2ec1d0c8ee330f6d3ae3926e7f10a"
+      },
+      {
+        "path": "upstream/i24/data/tricks/buildings/deco2.txt",
+        "git_blob": "03ddf98020f7d0219c188b537abc1e6b9631e10a",
+        "sha256": "cb39f3df4532fe51276e640a6792a43677854462622878b103245b65864c4b42"
+      },
+      {
+        "path": "upstream/i24/data/tricks/buildings/deco4.txt",
+        "git_blob": "d7100ffb07582a61179930e7e2908527796e5179",
+        "sha256": "b03a51f4468b9bc668b725b593f3143544894e521e12ce7009d892d15f952dd4"
+      },
+      {
+        "path": "upstream/i24/data/tricks/character/characterobjecttricks.txt",
+        "git_blob": "16cfd7f67d2729311ee3d14aa883e8d106b978dc",
+        "sha256": "423b37557833f0cdb76c54bb425d9a931ccd31a01a821af0529d6c6058f742f3"
+      },
+      {
+        "path": "upstream/i24/data/tricks/enemy.txt",
+        "git_blob": "52f3b637156ecfd9657150b2a3dd8fb8ec9422ad",
+        "sha256": "8b149e10ea5502291bd20adf665f1cda99bf9f9cb841c2510b68b22a9babb7d3"
+      },
+      {
+        "path": "upstream/i24/data/tricks/general.txt",
+        "git_blob": "ca8749d91c2dd6060656992bbc0966b73ac0313b",
+        "sha256": "13010c1895256ef27f678d9a50aa7284c2ef184454503c964e4b7ae35efbcab1"
+      },
+      {
+        "path": "upstream/i24/data/tricks/hero_bump.txt",
+        "git_blob": "bd70d9a42fcc88a171dd8fd0fd87b2ca27270dcf",
+        "sha256": "ca7e291d4c7b76f48eb6265b1168c6bbb9e77383a2f12591bde1e3cc25fea00d"
+      },
+      {
+        "path": "upstream/i24/data/tricks/hero_textile.txt",
+        "git_blob": "3da8f144ccf7245333941e727c0cadfa13a6cfbd",
+        "sha256": "c5f155d0b69999fa818305839985c52e7e30dd677400f8175aa14c7c7f97b19a"
+      },
+      {
+        "path": "upstream/i24/data/tricks/hero_trix.txt",
+        "git_blob": "b2371b4814ebe1373ebd6560f68d0dbaf2a7f5b2",
+        "sha256": "9ec5699d7d7fcb975e5431a0bf2ca9ff2f0f29df33d6116dcea8ca5bb5a73196"
+      },
+      {
+        "path": "upstream/i24/data/tricks/npc_bump.txt",
+        "git_blob": "f306c01df730bd00f069f9652b16ee48f37668f1",
+        "sha256": "8708c3de8f104b939311d6e58343ecb30224fbb543e4866a9d7ed6e8a297bea6"
+      },
+      {
+        "path": "upstream/i24/data/tricks/texblend.txt",
+        "git_blob": "2a2f52dd348fe455a64213d2b128d447638a5313",
+        "sha256": "16dd3656e74ef494aa569364249ca81981a75eb42a240526dffc708274fde7ef"
+      },
+      {
+        "path": "upstream/i24/data/tricks/ui.txt",
+        "git_blob": "82c991ccc7956409ad85c8ec552c76ade67d13c5",
+        "sha256": "ced893773d82070f3c306ac0771bee6eae153dcc4af0ac36d6bb5f88e4a3a927"
+      },
+      {
+        "path": "upstream/i24/data/tricks/v_enemy.txt",
+        "git_blob": "26c65b1e19b948475b7691171a86815225ed64a1",
+        "sha256": "1a2c47de53d1ef497a9b1bba4a084c73996826a6284a31cebd348f30afe66600"
+      },
+      {
+        "path": "upstream/i24/data/tricks/v_enemy_tricks.txt",
+        "git_blob": "8dad60c05344702f1a6f35ef18027509375a3546",
+        "sha256": "5c7e29da94291d68ac5d4b65fe91418108555c003a7a76b24dfd9da6fb40b05e"
+      },
+      {
+        "path": "upstream/i24/data/tricks/v_shaders/arachnos/henchmen/arachnos_wretch.txt",
+        "git_blob": "9d00acfc1e328534e0bff40211816c0e3bcdaf34",
+        "sha256": "907b56ff2925ba8426cced7ef071a47394b9da92771c8ae10b0abed270a34cd6"
+      },
+      {
+        "path": "upstream/i24/data/tricks/v_shaders/arachnos/wolf_spiders/wolf_spiders.txt",
+        "git_blob": "b097bba82007e16ebfa8146dd8086ffaf198acf7",
+        "sha256": "b239987f2fd9d497e4415da97b552d64a0121f1dd63404a90e536a3f84f505f9"
+      }
+    ]
+  },
+  "observations": [
+    "Original rt_tex.c requests GL_NEAREST only for explicit point_sample; the default magnification filter is GL_LINEAR.",
+    "Original default minification filter is GL_LINEAR_MIPMAP_LINEAR with mips and GL_LINEAR without mips.",
+    "Both exact acquired Hair_Wretch wrappers have flags 0xC0: clampS/clampT, with TEXOPT_POINTSAMPLE absent.",
+    "Runtime BasicTexture TexOpt flags are separately resolved by name/directory; wrapper flags alone do not establish a captured complete runtime texture table.",
+    "No explicit point-sampling request for Hair_Wretch/Hair_Wretch_Mask or their relevant parent paths was found among the 28 locally available trick definitions. Missing 1,557 definitions were not searched or fetched."
+  ],
+  "chosen_bounded_probe_policy": {
+    "character_geometry": {
+      "min_filter": "GL_LINEAR",
+      "mag_filter": "GL_LINEAR",
+      "wrap": "GL_CLAMP_TO_EDGE",
+      "mip_level": 0,
+      "scope": "standalone parts, complete assembled character, and animated preview"
+    },
+    "analytic_material_diagnostics": {
+      "min_filter": "GL_NEAREST",
+      "mag_filter": "GL_NEAREST",
+      "cases": 66,
+      "scope": "explicit diagnostic sampling for exact scalar texel references; restore geometry filters afterwards"
+    },
+    "presentation_fbo": "GL_NEAREST deterministic pixel mapping; not a source material texture"
+  },
+  "threshold_changes": false,
+  "rgba_byte_tolerance": 2,
+  "triangle_edge_exclusion_pixels": 2,
+  "golden_math_changed": false,
+  "inference": "The default original bilinear sampler is supported by original renderer code and preprocessing flags of these exact assets; selecting it for the bounded mip0 geometry probe corrects the prior artificial nearest sampler. CI must still measure whether this resolves Hair image mismatches.",
+  "limitations": [
+    "No full original Win32 runtime texture-state capture.",
+    "No exhaustive proof of absence of a later runtime TexOpt override from all 1,585 trick files.",
+    "Original source mipped/aniso/driver-compressed filtering is not qualified by the mip0 RGBA probe.",
+    "The five SwiftShader Hair pixel mismatches are currently consistent with nearest alpha-boundary or depth discontinuities; no exact cause is claimed without coordinate/UV/depth diagnostics."
+  ]
+}
