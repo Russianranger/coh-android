@@ -1,0 +1,104 @@
+name: Nonshipping retained Game and Cg startup profile
+on:
+  push:
+    branches: [codex/native-client-startup-037]
+    paths:
+      - .github/workflows/android-native-client-startup.yml
+      - tools/prepare_native_client_profile_fixture.py
+      - tools/qualify_native_client_startup.py
+      - tools/test_native_client_startup.py
+      - tools/reuse_native_startup_profile.py
+      - tools/test_reuse_native_startup_profile.py
+  workflow_dispatch:
+permissions: {contents: read, actions: read}
+concurrency:
+  group: native-client-startup-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  wine-client:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Qualify observer, ownership and strict historical recovery contracts
+        run: |
+          python3 -m unittest discover -s tools -p test_native_client_startup.py
+      - name: Admit storage and install real owned Wine, Xvfb and software GL tools
+        run: |
+          test "${RUNNER_ENVIRONMENT:-}" = github-hosted
+          sudo rm -rf -- /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL
+          python3 -c "import shutil; assert shutil.disk_usage('.').free >= 30*1024**3"
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends wine wine32:i386 xvfb xauth mesa-utils tesseract-ocr
+      - name: Authenticate already successful .36 public audit and original Windows diagnostic producer
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          mkdir -p out/native-history
+          gh api repos/Russianranger/coh-android/actions/runs/38346809297 > out/public-run.json
+          gh api repos/Russianranger/coh-android/actions/runs/38346809297/jobs > out/public-jobs.json
+          gh api repos/Russianranger/coh-android/actions/runs/38345782437 > out/native-history/run.json
+          gh api repos/Russianranger/coh-android/actions/runs/38345782437/jobs > out/native-history/jobs.json
+          gh api repos/Russianranger/coh-android/actions/artifacts/11788852713 > out/native-history/artifact.json
+          gh api repos/Russianranger/coh-android/actions/artifacts/11788852713/zip > out/native-history/original.zip
+          python3 - <<'PY'
+          import json, pathlib, sys, urllib.request
+          sys.path.insert(0, 'tools')
+          import prepare_native_client_profile_fixture as fixture
+          r=json.loads(pathlib.Path('out/public-run.json').read_text())
+          j=json.loads(pathlib.Path('out/public-jobs.json').read_text())
+          assert r['id']==38346809297 and r['head_sha']==fixture.SOURCE and r['status']=='completed' and r['conclusion']=='success'
+          audits=[x for x in j['jobs'] if x['id']==115141593507]
+          assert len(audits)==1 and audits[0]['name']=='public-audit' and audits[0]['conclusion']=='success'
+          target=pathlib.Path('out/donor-036.apk')
+          with urllib.request.urlopen('https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk',timeout=60) as response,target.open('xb') as stream:
+              total=0
+              while block:=response.read(1024**2):
+                  total+=len(block);assert total<=fixture.APK['bytes'];stream.write(block)
+          assert fixture.pin(target)==fixture.APK
+          PY
+          python3 tools/reuse_native_startup_profile.py --archive out/native-history/original.zip --output out/observed-package --run-metadata out/native-history/run.json --jobs-metadata out/native-history/jobs.json --artifact-metadata out/native-history/artifact.json
+          python3 tools/test_reuse_native_startup_profile.py --package out/observed-package
+      - name: Authenticate complete original asset volumes and all original imported leaves
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0,'tools/android/interactive')
+          import qualify_runtime_asset_preflight as inputs
+          inputs.ensure_assets('out/asset-cache')
+          PY
+      - name: Prepare actual public .36 client and all visual, animation, zone and texture prerequisites
+        run: >-
+          python3 tools/prepare_native_client_profile_fixture.py --donor-apk out/donor-036.apk
+          --payloads out/asset-cache/payloads --output out/retained-client-fixture
+      - name: Execute actual retained Game first and closed-prefix second startup
+        run: >-
+          xvfb-run -a -s '-screen 0 800x600x24 +extension GLX +render -noreset'
+          python3 tools/qualify_native_client_startup.py
+          --fixture out/retained-client-fixture/native-client-fixture.json
+          --output out/native-client/retained --prefix "${RUNNER_TEMP}/coh-client-retained-${GITHUB_RUN_ID}"
+      - name: Prepare separate original client inputs for already compiled Cg observer
+        run: >-
+          python3 tools/prepare_native_client_profile_fixture.py --donor-apk out/donor-036.apk
+          --payloads out/asset-cache/payloads --output out/observed-client-fixture
+      - name: Execute actual previously built Cg observer Game first and closed-prefix second startup
+        run: >-
+          xvfb-run -a -s '-screen 0 800x600x24 +extension GLX +render -noreset'
+          python3 tools/qualify_native_client_startup.py
+          --fixture out/observed-client-fixture/native-client-fixture.json
+          --output out/native-client/cg-observed --prefix "${RUNNER_TEMP}/coh-client-cg-${GITHUB_RUN_ID}"
+          --native-role cg-observed --native out/observed-package/CityOfHeroes-profile.exe
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-nonshipping-native-client-startup
+          path: |
+            out/native-client/
+            out/retained-client-fixture/native-client-fixture.json
+            out/observed-client-fixture/native-client-fixture.json
+            out/public-run.json
+            out/public-jobs.json
+            out/native-history/*.json
+          retention-days: 90
+          if-no-files-found: warn
