@@ -234,7 +234,9 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                              'unavailable_samples': 0, 'last_unavailable_type': None,
                              'prefix': None, 'last_unavailable_operation': None,
                              'authenticated_dead_leader_workers': 0,
-                             'worker_authentication_failures': 0}
+                             'worker_authentication_failures': 0,
+                             'direct_pid_status_namespace_observations': 0,
+                             'authenticated_namespace_alias_observations': 0}
 
     def lineage_stat(self, path):
         def read():
@@ -263,10 +265,109 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
         if not self.direct_pid_view:
             require(len(status['namespace_pids']) == self.namespace_depth,
                     'Wine lineage PID view changed')
-        namespace = self.pid_namespace(path)
-        own_namespace = self.namespace if not self.direct_pid_view else self.pid_namespace(self.proc_root / 'self')
-        require(namespace == own_namespace, 'Wine lineage namespace changed')
+        try:
+            if self.direct_pid_view:
+                namespace = self.direct_lineage_namespace(path, status)
+            else:
+                namespace = self.authenticated_namespace_link(path, status)
+                require(namespace == self.namespace, 'Wine lineage namespace changed')
+        except FileNotFoundError as exc:
+            self.require_namespace_task_disappeared(path, exc)
         return {**status, 'namespace': namespace}
+
+    def diagnostic_lineage_identity(self):
+        own = self.proc_root / 'self'
+        try:
+            identity, status = self.process_stat(own), self.status(own)
+        except (OSError, ValueError, KeyError, IndexError) as exc:
+            failure = base.DiagnosticError('Wine lineage diagnostic identity is unavailable')
+            failure.ownership_observation = {'operation': 'diagnostic_lineage_identity',
+                'error_type': type(exc).__name__, 'errno': getattr(exc, 'errno', None),
+                'resolution': 'unavailable_diagnostic_identity'}
+            raise failure from exc
+        require(identity['pid'] == status['pid'] == status['tgid'] == os.getpid()
+                and identity['starttime'] == self.diagnostic_starttime
+                and identity['state'] != 'Z' and status['uid'] == self.real_uid,
+                'Wine lineage direct diagnostic identity changed')
+        return identity, status
+
+    def authenticated_namespace_link(self, path, status):
+        """Use a kernel task alias only after proving the same individual task."""
+        try:
+            return self.namespace_link(path)
+        except FileNotFoundError:
+            parts = path.relative_to(self.proc_root).parts
+            if parts == ('self',):
+                before, original_status = self.diagnostic_lineage_identity()
+            elif (len(parts) == 3 and parts[0].isdecimal() and parts[1] == 'task'
+                    and parts[2].isdecimal() and int(parts[2]) == status['pid']
+                    and int(parts[0]) == status['tgid']):
+                before, original_status = self.process_stat(path), self.status(path)
+            else:
+                raise
+            require(original_status == status and before['pid'] == status['pid'],
+                    'Wine namespace alias original identity differs')
+            alias = self.proc_root / str(status['pid'])
+            try:
+                alias_before, alias_status = self.process_stat(alias), self.status(alias)
+                require(self.stable_lineage(alias_before) == self.stable_lineage(before)
+                        and alias_status == status, 'Wine namespace alias points to a different task')
+                namespace = self.namespace_link(alias)
+                alias_after, alias_status_after = self.process_stat(alias), self.status(alias)
+            except FileNotFoundError:
+                # Missing alias metadata does not prove the original task exited.
+                # The caller either supplies explicit direct-view evidence or
+                # verifies disappearance of the original task itself.
+                raise
+            if parts == ('self',):
+                after, after_status = self.diagnostic_lineage_identity()
+            else:
+                after, after_status = self.process_stat(path), self.status(path)
+            require(self.stable_lineage(after) == self.stable_lineage(before)
+                    and after_status == status
+                    and self.stable_lineage(alias_after) == self.stable_lineage(before)
+                    and alias_status_after == status, 'Wine namespace alias changed during read')
+            self.live_lineage['authenticated_namespace_alias_observations'] += 1
+            return namespace
+
+    def direct_lineage_namespace(self, path, status):
+        """Prove the accepted direct PID view when Android omits namespace links.
+
+        Some kernels expose no /proc/*/ns/pid entry, including the diagnostic's
+        own entry. The base ownership policy already accepts a direct PID view.
+        This narrowly retains that policy with fresh diagnostic PID/start-time,
+        UID and global NSpid checks. Every individual worker must still supply
+        its own readable token and exact prefix before entering the registry.
+        A denied link, a mapped namespace, an asymmetric missing link or changed
+        status remains a failure. No PID-only or group-derived authority exists.
+        """
+        own = self.proc_root / 'self'
+        before, own_status = self.diagnostic_lineage_identity()
+        try:
+            own_namespace = self.authenticated_namespace_link(own, own_status)
+        except FileNotFoundError:
+            # Diagnostic identity absence must never escape as target-worker
+            # disappearance into inspect_dead_leader's benign exit handling.
+            require(self.diagnostic_lineage_identity() == (before, own_status),
+                    'Wine lineage diagnostic identity changed during namespace read')
+            own_view = own_status['namespace_pids']
+            require(own_view in ([], [before['pid']])
+                    and status['namespace_pids'] == ([] if not own_view else [status['pid']]),
+                    'Wine lineage direct namespace PID view differs')
+            try:
+                self.authenticated_namespace_link(path, status)
+            except FileNotFoundError:
+                # Check that this is missing namespace metadata, not a vanished
+                # task or a changed diagnostic identity during the read.
+                require(self.status(path) == status and self.process_stat(path)['pid'] == status['pid']
+                        and self.diagnostic_lineage_identity() == (before, own_status),
+                        'Wine lineage direct status changed during namespace proof')
+                self.live_lineage['direct_pid_status_namespace_observations'] += 1
+                return 'direct_pid_global_status_v1'
+            require(False, 'Wine lineage namespace link presence differs from diagnostic')
+        namespace = self.authenticated_namespace_link(path, status)
+        require(namespace == own_namespace, 'Wine lineage namespace changed')
+        return namespace
 
     @staticmethod
     def stable_lineage(value):
@@ -517,8 +618,66 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
     def has_token(self, path):
         return self.proc_read(path, 'environment', lambda: super(DeviceWineProcessOwner, self).has_token(path))
 
-    def pid_namespace(self, path):
+    def namespace_link(self, path):
         return self.proc_read(path, 'pid_namespace', lambda: os.readlink(path / 'ns/pid'))
+
+    def require_namespace_task_disappeared(self, path, error):
+        if path == self.proc_root / 'self':
+            failure = base.DiagnosticError('Wine diagnostic namespace identity is unavailable')
+        else:
+            try:
+                self.process_stat(path)
+            except FileNotFoundError:
+                # This is actual task identity disappearance, not a missing ns
+                # link or diagnostic identity file. Preserve benign exit handling.
+                raise error
+            except (OSError, ValueError, KeyError, IndexError) as exc:
+                failure = base.DiagnosticError('Wine namespace task identity cannot be rechecked')
+                failure.__cause__ = exc
+            else:
+                current = self.process_stat(path)
+                if current['state'] == 'Z':
+                    # Do not call this an owned exit here. The caller rechecks
+                    # the expected exact worker PID/start-time before accepting Z.
+                    raise error
+                failure = base.DiagnosticError('Wine namespace metadata is unavailable for a live task')
+        observation = dict(getattr(error, 'ownership_observation', {}) or {})
+        observation.update(operation='namespace_identity_recheck', resolution='live_or_unverified_namespace_missing')
+        failure.ownership_observation = observation
+        raise failure from error
+
+    def pid_namespace(self, path):
+        try:
+            return self.namespace_link(path)
+        except FileNotFoundError as exc:
+            try:
+                return self.authenticated_namespace_link(path, self.status(path))
+            except FileNotFoundError:
+                self.require_namespace_task_disappeared(path, exc)
+
+    def require_group_disappeared(self, path, error):
+        try:
+            self.process_stat(path)
+        except FileNotFoundError:
+            return
+        failure = base.DiagnosticError('Wine group identity still exists after metadata disappearance')
+        failure.ownership_observation = dict(getattr(error, 'ownership_observation', {}) or {})
+        failure.ownership_observation['resolution'] = 'existing_group_metadata_missing'
+        raise failure from error
+
+    def require_worker_exited(self, task, worker, error):
+        try:
+            current = self.process_stat(task)
+        except FileNotFoundError:
+            return
+        require(current['pid'] == worker['pid'] and current['starttime'] == worker['starttime'],
+                'Wine worker identity changed during disappearance recheck')
+        if current['state'] == 'Z':
+            return
+        failure = base.DiagnosticError('Wine worker is live after metadata disappearance')
+        failure.ownership_observation = dict(getattr(error, 'ownership_observation', {}) or {})
+        failure.ownership_observation['resolution'] = 'live_worker_metadata_missing'
+        raise failure from error
 
     def live_tasks(self, path, deadline=None):
         try:
@@ -637,7 +796,8 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
         path = self.proc_root / str(proc_pid)
         try:
             status = self.status(path)
-        except FileNotFoundError:
+        except FileNotFoundError as exc:
+            self.require_group_disappeared(path, exc)
             return None
         if status['uid'] != self.real_uid or proc_pid in self.excluded:
             return None
@@ -671,7 +831,8 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                         changed = self.process_stat(path)
                         require(changed['pid'] == identity['pid'] and changed['starttime'] == identity['starttime'],
                                 'Wine cleanup group identity changed')
-                    except FileNotFoundError:
+                    except FileNotFoundError as exc:
+                        self.require_group_disappeared(path, exc)
                         if observation is not None:
                             observation['resolution'] = 'verified_disappearance'
                         return None
@@ -691,7 +852,8 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                         observation['resolution'] = 'same_leader_became_zombie_check_workers'
                     if not self.inspect_dead_leader(path, changed, deadline):
                         return None
-        except FileNotFoundError:
+        except FileNotFoundError as exc:
+            self.require_group_disappeared(path, exc)
             return None
         pid = proc_pid if self.direct_pid_view else status['namespace_pids'][-1]
         require(pid > 0 and pid != os.getpid(), 'Invalid owned Wine PID')
@@ -752,7 +914,8 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                         self.live_lineage['worker_authentication_failures'] += 1
                         self.record_lineage_unavailable(exc)
                     return True
-                except FileNotFoundError:
+                except FileNotFoundError as exc:
+                    self.require_worker_exited(task, worker, exc)
                     if previous_denial is not None:
                         previous_denial['resolution'] = 'verified_disappearance'
                         self.receipt['worker_exit_rechecks'] += 1
@@ -771,7 +934,8 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                         require(current_worker['pid'] == worker['pid']
                                 and current_worker['starttime'] == worker['starttime'],
                                 'Wine cleanup worker identity changed during permission recheck')
-                    except FileNotFoundError:
+                    except FileNotFoundError as exc:
+                        self.require_worker_exited(task, worker, exc)
                         observation['resolution'] = 'verified_disappearance'
                         self.receipt['worker_exit_rechecks'] += 1
                         break
@@ -789,7 +953,8 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                         try:
                             lineage_verified = self.continuing_worker_lineage(
                                 path, identity, task, worker, deadline)
-                        except FileNotFoundError:
+                        except FileNotFoundError as exc:
+                            self.require_worker_exited(task, worker, exc)
                             observation['resolution'] = 'verified_disappearance'
                             self.receipt['worker_exit_rechecks'] += 1
                             break

@@ -1,0 +1,212 @@
+name: Fresh manual report and owned cleanup qualification
+on:
+  push:
+    branches: [codex/manual-report-cleanup-037]
+    paths:
+      - .github/workflows/android-manual-report-cleanup.yml
+      - android/guest/game_device_diagnostic.py
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java
+      - tools/android/atlasgame/test_device_cleanup_lineage.py
+      - tools/android/interactive/test_manual_report_acceptance.py
+      - tools/android/interactive/fixtures/thor-manual-report-0.13.36-20261013.json
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: manual-report-cleanup-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  qualification:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/manual-report-cleanup-037'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - name: Require the native host fixture compiler
+        run: |
+          command -v cc
+          cc --version
+          java -version
+          python3 --version
+      - name: Execute all six suites sequentially with unwaived native process checks
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, platform, subprocess, sys, textwrap, time
+          from datetime import datetime, timezone
+          from pathlib import Path
+          root = Path.cwd()
+          output = root / 'out/manual-report-cleanup'
+          output.mkdir(parents=True, exist_ok=True)
+          pins = {
+            'android/guest/game_device_diagnostic.py': '6138c6f0c75cd70b31dd250f73de12b262a08e36f7b6e47b02de172d4116830a',
+            'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java': 'ab987d86e962adad75843724d5d48e0208719254cc69bfa376793f01c0849d74',
+            'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java': '827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9',
+            'tools/android/atlasgame/test_device_cleanup_lineage.py': '9cd85e406ad4fed0a91a4a773ad4d41acd9cc959b216ef64eda6dd57d597aabd',
+            'tools/android/interactive/test_manual_report_acceptance.py': '2d8c6f5c39998c4e140a04d90b625b85286cb75aebdac9b5a123e132abee50f6',
+            'tools/android/interactive/fixtures/thor-manual-report-0.13.36-20261013.json': '60651cd12759542a1bfa346afacd4bc1e43091941da20e08cea1a659df70bc0d',
+          }
+          suites = [
+            ('tools/android/interactive', 'test_manual_report_acceptance.py', 5, 'current_regression_code'),
+            ('tools/android/interactive', 'test_client_gpu_repair_evidence.py', 7, 'retained_historical_test_code'),
+            ('tools/android/interactive', 'test_manual_session.py', 29, 'retained_historical_test_code'),
+            ('tools/android/interactive', 'test_complete_asset_stage_acceptance.py', 12, 'retained_historical_test_code'),
+            ('tools/android/atlasgame', 'test_game_device_diagnostic.py', 64, 'retained_historical_test_code'),
+            ('tools/android/atlasgame', 'test_device_cleanup_lineage.py', 29, 'current_regression_and_retained_test_code'),
+          ]
+          def stamp(): return datetime.now(timezone.utc).isoformat()
+          def digest(path): return hashlib.sha256(path.read_bytes()).hexdigest()
+          source_paths = set(pins) | {'.github/workflows/android-manual-report-cleanup.yml'}
+          for directory, pattern in [('android/guest', '*.py'), ('android/interactive', '*.java'),
+                  ('android/interactive/native', '*'), ('tools/android', '*.py'), ('tools/android/interactive/fixtures', '*')]:
+            source_paths.update(path.as_posix() for path in Path(directory).rglob(pattern) if path.is_file())
+          manifest = {path: {'bytes': Path(path).stat().st_size, 'sha256': digest(Path(path))}
+              for path in sorted(source_paths)}
+          report = {
+            'format': 1, 'status': 'running', 'started_utc': stamp(),
+            'repository': os.environ['GITHUB_REPOSITORY'], 'repository_commit': os.environ['GITHUB_SHA'],
+            'repository_tree': subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], text=True).strip(),
+            'branch': os.environ['GITHUB_REF'], 'run_id': int(os.environ['GITHUB_RUN_ID']),
+            'run_attempt': int(os.environ['GITHUB_RUN_ATTEMPT']),
+            'workflow': '.github/workflows/android-manual-report-cleanup.yml',
+            'runner_os': platform.platform(), 'python': sys.version,
+            'java_version': subprocess.run(['java', '-version'], capture_output=True, text=True, check=True).stderr,
+            'cc_version': subprocess.check_output(['cc', '--version'], text=True),
+            'source_pins': manifest, 'source_pins_verified': False,
+            'tests_executed_in_current_run': True, 'historical_test_code_reexecuted': True,
+            'inherited_test_results_reused': 0, 'unwaived_native_full_proc_checks': True,
+            'process_inventory_filter_added': False, 'permission_errors_waived': False,
+            'scope': 'Clean Linux host Java report-gate and actual owned-process qualification; no APK build, device gameplay or startup timing acceptance.',
+            'apk_built': False, 'physical_AYN_Thor_validation': False, 'publication_requested': False,
+            'suites': [], 'failures': [],
+          }
+          report_path = output / 'qualification.json'
+          def save(): report_path.write_text(json.dumps(report, indent=2, sort_keys=True)+'\n')
+          save()
+          mismatches = [path for path, expected in pins.items() if manifest[path]['sha256'] != expected]
+          if mismatches:
+            report.update(status='failed', finished_utc=stamp())
+            report['failures'].append({'stage': 'reviewed_source_pins', 'paths': mismatches})
+            save(); raise SystemExit(1)
+          report['source_pins_verified'] = True
+          save()
+          runner = textwrap.dedent(r'''
+          import io, json, sys, time, unittest
+          from datetime import datetime, timezone
+          from pathlib import Path
+          directory, pattern, destination = sys.argv[1:]
+          result_rows = []
+          class Result(unittest.TextTestResult):
+              def startTest(self, test):
+                  self.started = time.monotonic()
+                  super().startTest(test)
+              def row(self, test, status, detail=None):
+                  result_rows.append({'test': test.id(), 'status': status,
+                      'elapsed_seconds': round(time.monotonic()-self.started, 6), 'detail': detail})
+              def addSuccess(self, test):
+                  super().addSuccess(test); self.row(test, 'passed')
+              def addFailure(self, test, error):
+                  super().addFailure(test,error); self.row(test,'failed',self._exc_info_to_string(error,test)[:32768])
+              def addError(self, test, error):
+                  super().addError(test,error); self.row(test,'error',self._exc_info_to_string(error,test)[:32768])
+              def addSkip(self, test, reason):
+                  super().addSkip(test,reason); self.row(test,'skipped',reason)
+              def addExpectedFailure(self, test, error):
+                  super().addExpectedFailure(test,error); self.row(test,'expected_failure',self._exc_info_to_string(error,test)[:32768])
+              def addUnexpectedSuccess(self, test):
+                  super().addUnexpectedSuccess(test); self.row(test,'unexpected_success')
+          start = time.monotonic()
+          suite = unittest.defaultTestLoader.discover(directory, pattern=pattern)
+          stream = io.StringIO()
+          result = unittest.TextTestRunner(stream=stream, verbosity=2, resultclass=Result).run(suite)
+          success = result.wasSuccessful() and not result.skipped and not result.expectedFailures and not result.unexpectedSuccesses
+          receipt = {'format':1,'suite':pattern,'status':'passed' if success else 'failed',
+              'tests_run':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),
+              'skipped':len(result.skipped),'expected_failures':len(result.expectedFailures),
+              'unexpected_successes':len(result.unexpectedSuccesses),'tests_executed_in_current_run':True,
+              'inherited_result_reused':False,'elapsed_seconds':round(time.monotonic()-start,6),
+              'finished_utc':datetime.now(timezone.utc).isoformat(),'test_cases':result_rows,
+              'full_unittest_output':stream.getvalue()}
+          Path(destination).write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          print(stream.getvalue(),end='')
+          raise SystemExit(0 if success else 1)
+          ''')
+          for directory, pattern, expected, origin in suites:
+            receipt_path = output / (pattern.removesuffix('.py')+'.json')
+            started = stamp()
+            origin_commit = subprocess.check_output(['git','log','-1','--format=%H','--',directory+'/'+pattern],text=True).strip()
+            process = subprocess.run([sys.executable, '-c', runner, directory, pattern, str(receipt_path)],
+                cwd=root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            (output / (pattern.removesuffix('.py')+'.log')).write_text(process.stdout)
+            print(process.stdout,end='')
+            if receipt_path.is_file():
+              receipt = json.loads(receipt_path.read_text())
+            else:
+              receipt = {'status':'failed','tests_run':0,'errors':1,'failures':0,'skipped':0,
+                  'tests_executed_in_current_run':True,'inherited_result_reused':False,
+                  'runner_report_missing':True}
+            receipt.update(expected_test_count=expected, source_code_scope=origin, test_source_origin_commit=origin_commit,
+                started_utc=started, process_exit_code=process.returncode,
+                receipt_file=receipt_path.name if receipt_path.exists() else None)
+            passed = (process.returncode == 0 and receipt.get('status') == 'passed'
+                and receipt.get('tests_run') == expected and receipt.get('skipped') == 0
+                and receipt.get('failures') == 0 and receipt.get('errors') == 0)
+            receipt['status'] = 'passed' if passed else 'failed'
+            report['suites'].append(receipt)
+            if not passed: report['failures'].append({'stage':'suite','suite':pattern})
+            save()
+          changed = [path for path, pin in manifest.items()
+              if not Path(path).is_file() or digest(Path(path)) != pin['sha256']]
+          report['source_pins_unchanged_after_tests'] = not changed
+          if changed: report['failures'].append({'stage':'source_changed_during_tests','paths':changed})
+          report['current_tests_run'] = sum(row['tests_run'] for row in report['suites'])
+          report['current_suites_run'] = len(report['suites'])
+          report['inherited_tests_retained'] = 0
+          report['status'] = 'passed' if not report['failures'] and report['current_tests_run']==146 and report['current_suites_run']==6 else 'failed'
+          report['finished_utc'] = stamp()
+          save()
+          print('Fresh clean-host qualification:',report['status'],report['current_tests_run'],'tests /',report['current_suites_run'],'suites')
+          raise SystemExit(0 if report['status']=='passed' else 1)
+          PY
+      - name: Retain an explicit failure receipt if an earlier step prevented finalization
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          output = Path('out/manual-report-cleanup')
+          output.mkdir(parents=True, exist_ok=True)
+          path = output / 'qualification.json'
+          report = json.loads(path.read_text()) if path.is_file() else {
+            'format': 1, 'status': 'running', 'repository': os.environ['GITHUB_REPOSITORY'],
+            'repository_commit': os.environ['GITHUB_SHA'], 'branch': os.environ['GITHUB_REF'],
+            'run_id': int(os.environ['GITHUB_RUN_ID']), 'run_attempt': int(os.environ['GITHUB_RUN_ATTEMPT']),
+            'suites': [], 'failures': [], 'tests_executed_in_current_run': False,
+            'inherited_test_results_reused': 0, 'apk_built': False,
+            'physical_AYN_Thor_validation': False, 'publication_requested': False,
+          }
+          if report.get('status') not in ('passed', 'failed'):
+            report.update(status='failed', finished_utc=datetime.now(timezone.utc).isoformat())
+            report['failures'].append({'stage': 'workflow_aborted_before_test_finalization'})
+            if 'source_pins' not in report:
+              source_paths = {'.github/workflows/android-manual-report-cleanup.yml',
+                'tools/android/interactive/fixtures/thor-manual-report-0.13.36-20261013.json'}
+              for directory, pattern in [('android/guest', '*.py'), ('android/interactive', '*.java'), ('tools/android', '*.py')]:
+                source_paths.update(value.as_posix() for value in Path(directory).rglob(pattern) if value.is_file())
+              report['source_pins'] = {name: {'bytes': Path(name).stat().st_size,
+                'sha256': hashlib.sha256(Path(name).read_bytes()).hexdigest()} for name in sorted(source_paths)}
+            path.write_text(json.dumps(report, indent=2, sort_keys=True)+'\n')
+          PY
+      - name: Preserve current-source test and native process evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coh-manual-report-cleanup-037-${{ github.run_id }}-${{ github.run_attempt }}
+          path: out/manual-report-cleanup/
+          retention-days: 90
+          if-no-files-found: error

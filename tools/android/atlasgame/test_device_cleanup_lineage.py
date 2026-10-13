@@ -39,6 +39,11 @@ class CleanupLineageTests(unittest.TestCase):
         self.write_process(self.task, self.worker_stat, self.worker_status)
         (self.root / 'self/ns').mkdir(parents=True)
         (self.root / 'self/ns/pid').symlink_to('pid:[111]')
+        own_pid = os.getpid()
+        self.write_stat(self.root / 'self', dict(pid=own_pid, state='S', parent=1, starttime=1,
+                                               process_group=own_pid, session=own_pid))
+        self.write_status(self.root / 'self', dict(uid=42, pid=own_pid, tgid=own_pid,
+                                                 namespace_pids=[own_pid]))
 
     def write_stat(self, path, value):
         fields = ['0'] * 22
@@ -314,10 +319,184 @@ class CleanupLineageTests(unittest.TestCase):
         self.dead_leader()
         self.assert_signal_rejected()
 
+    def missing_global_namespace_links(self, namespace_pids=True):
+        own = self.root / 'self'
+        own_stat = dict(pid=900, state='S', parent=1, starttime=1, process_group=900, session=900)
+        own_status = dict(uid=42, pid=900, tgid=900, namespace_pids=[900] if namespace_pids else [])
+        self.write_stat(own, own_stat)
+        self.write_status(own, own_status)
+        for path in (own, self.group, self.task):
+            (path / 'ns/pid').unlink()
+        if not namespace_pids:
+            self.group_status['namespace_pids'] = []
+            self.worker_status['namespace_pids'] = []
+            self.write_status(self.group, self.group_status)
+            self.write_status(self.task, self.worker_status)
+        return own, own_stat, own_status
+
+    def test_missing_global_namespace_entries_keep_complete_individual_worker_proof(self):
+        self.missing_global_namespace_links()
+        with patch.object(guest.os, 'getpid', return_value=900):
+            self.remember()
+            self.dead_leader()
+            def exit_worker(*_):
+                self.worker_stat['state'] = 'Z'
+                self.write_stat(self.task, self.worker_stat)
+            with self.deny_worker(), patch.object(guest.os, 'pidfd_open', return_value=19), \
+                    patch.object(guest.os, 'close'), \
+                    patch.object(guest.signal, 'pidfd_send_signal', side_effect=exit_worker) as send:
+                receipt = self.owner.cleanup(time.monotonic() + 1)
+        self.assertTrue(receipt['complete'])
+        self.assertEqual((receipt['remaining'], receipt['inspection_failures']), (0, 0))
+        self.assertGreater(receipt['live_lineage_observation']['direct_pid_status_namespace_observations'], 0)
+        self.assertGreater(receipt['lineage_ownership_rechecks'], 0)
+        send.assert_called_once_with(19, signal.SIGTERM, None, 0)
+        self.assertNotIn(self.owner.environment[self.owner.ENV_KEY], json.dumps(receipt))
+
+    def test_absent_nspid_field_requires_same_absence_for_each_authenticated_task(self):
+        self.missing_global_namespace_links(False)
+        with patch.object(guest.os, 'getpid', return_value=900):
+            self.remember()
+            self.dead_leader()
+            with self.deny_worker():
+                self.assertIsNotNone(self.owner.inspect(123, time.monotonic() + 1))
+            self.worker_status['namespace_pids'] = [124]
+            self.write_status(self.task, self.worker_status)
+            self.assert_signal_rejected()
+
+    def test_missing_namespace_cannot_authenticate_unknown_worker_or_wrong_prefix(self):
+        self.missing_global_namespace_links()
+        (self.task / 'environ').write_bytes(self.owner.needle + b'\0WINEPREFIX=/different\0')
+        with patch.object(guest.os, 'getpid', return_value=900):
+            self.remember()
+            self.assertEqual(self.owner.live_lineage['groups'][(123, 10)]['workers'], {})
+            self.dead_leader()
+            self.assert_signal_rejected()
+
+    def test_direct_missing_namespace_refuses_diagnostic_identity_or_pid_view_changes(self):
+        own, own_stat, own_status = self.missing_global_namespace_links()
+        with patch.object(guest.os, 'getpid', return_value=900):
+            self.remember()
+            self.dead_leader()
+            for key, value in [('starttime', 2), ('pid', 901)]:
+                with self.subTest(stat=key):
+                    changed = dict(own_stat, **{key: value})
+                    self.write_stat(own, changed)
+                    self.assert_signal_rejected()
+                    self.write_stat(own, own_stat)
+            for key, value in [('uid', 43), ('namespace_pids', [900, 1]), ('tgid', 901)]:
+                with self.subTest(status=key):
+                    self.write_status(own, dict(own_status, **{key: value}))
+                    self.assert_signal_rejected()
+                    self.write_status(own, own_status)
+
+    def test_asymmetric_missing_or_denied_namespace_links_stay_closed(self):
+        own, _, _ = self.missing_global_namespace_links()
+        with patch.object(guest.os, 'getpid', return_value=900):
+            self.remember()
+            self.dead_leader()
+            for path in (own, self.task):
+                with self.subTest(path=path.name):
+                    (path / 'ns/pid').symlink_to('pid:[111]')
+                    self.assert_signal_rejected()
+                    (path / 'ns/pid').unlink()
+            original = self.owner.namespace_link
+            for path in (own, self.task):
+                with self.subTest(denied=path.name), patch.object(self.owner, 'namespace_link',
+                        side_effect=lambda value: (_ for _ in ()).throw(PermissionError(13, 'namespace denied'))
+                        if value == path else original(value)):
+                    self.assert_signal_rejected()
+
+    def assert_cleanup_refused(self):
+        with self.deny_worker(), patch.object(guest.signal, 'pidfd_send_signal') as send, \
+                patch.object(guest.os, 'kill') as kill:
+            with self.assertRaises((guest.base.DiagnosticError, PermissionError)):
+                self.owner.cleanup(time.monotonic() + 1)
+        self.assertFalse(self.owner.receipt['complete'])
+        self.assertIsNone(self.owner.receipt['remaining'])
+        self.assertEqual(self.worker_stat['state'], 'R')
+        send.assert_not_called()
+        kill.assert_not_called()
+
+    def test_missing_diagnostic_identity_never_means_live_worker_disappeared(self):
+        own, own_stat, own_status = self.missing_global_namespace_links()
+        with patch.object(guest.os, 'getpid', return_value=900):
+            self.remember()
+            self.dead_leader()
+            for member in ('status', 'stat'):
+                with self.subTest(member=member):
+                    (own / member).unlink()
+                    self.assert_cleanup_refused()
+                    self.write_stat(own, own_stat)
+                    self.write_status(own, own_status)
+
+    def test_namespace_link_appearance_cannot_turn_live_worker_into_verified_disappearance(self):
+        own, _, _ = self.missing_global_namespace_links()
+        with patch.object(guest.os, 'getpid', return_value=900):
+            self.remember()
+            self.dead_leader()
+            (own / 'ns/pid').symlink_to('pid:[111]')
+            self.assert_cleanup_refused()
+
+    def test_missing_live_worker_or_group_status_is_terminal_even_before_permission_read(self):
+        own, _, _ = self.missing_global_namespace_links()
+        with patch.object(guest.os, 'getpid', return_value=900):
+            self.remember()
+            self.dead_leader()
+            for path, status in ((self.task, self.worker_status), (self.group, self.group_status)):
+                with self.subTest(path=path.name):
+                    (path / 'status').unlink()
+                    self.assert_cleanup_refused()
+                    self.write_status(path, status)
+
+    def test_authenticated_individual_tid_namespace_alias_retains_namespace_proof(self):
+        alias = self.root / '124'
+        alias.symlink_to(self.task, target_is_directory=True)
+        # Linux permits /proc/TID lookups but does not enumerate nonleader TIDs
+        # in /proc. The temporary filesystem enumerates this test-only alias.
+        self.owner.excluded.add(124)
+        original = self.owner.namespace_link
+        def link(path):
+            if path == self.task:
+                raise FileNotFoundError(2, 'nested namespace path unavailable')
+            return original(path)
+        with patch.object(guest.DeviceWineProcessOwner, 'namespace_link',
+                          new=lambda owner, path: link(path)):
+            self.remember()
+            self.assertGreater(self.owner.live_lineage['authenticated_namespace_alias_observations'], 0)
+            self.assertEqual(self.owner.live_lineage['direct_pid_status_namespace_observations'], 0)
+            self.dead_leader()
+            def exit_worker(*_):
+                self.worker_stat['state'] = 'Z'
+                self.write_stat(self.task, self.worker_stat)
+            with self.deny_worker(), patch.object(guest.os, 'pidfd_open', return_value=19), \
+                    patch.object(guest.os, 'close'), \
+                    patch.object(guest.signal, 'pidfd_send_signal', side_effect=exit_worker) as send:
+                receipt = self.owner.cleanup(time.monotonic() + 1)
+            self.assertTrue(receipt['complete'])
+            self.assertGreater(receipt['lineage_ownership_rechecks'], 0)
+            send.assert_called_once_with(19, signal.SIGTERM, None, 0)
+
+    def test_namespace_alias_cannot_lend_a_different_task_its_identity(self):
+        alias = self.root / '124'
+        self.write_process(alias, dict(self.worker_stat, pid=125, starttime=12),
+                           dict(self.worker_status, pid=125, namespace_pids=[125]))
+        original = self.owner.namespace_link
+        def link(path):
+            if path == self.task:
+                raise FileNotFoundError(2, 'nested namespace path unavailable')
+            return original(path)
+        with patch.object(guest.DeviceWineProcessOwner, 'namespace_link',
+                          new=lambda owner, path: link(path)):
+            self.owner.observe_live_lineage(time.monotonic() + 1, prefix=self.prefix)
+            self.assertEqual(self.owner.live_lineage['groups'], {})
+            self.dead_leader()
+            self.assert_cleanup_refused()
+
     def test_status_or_namespace_denial_cannot_use_environment_fallback(self):
         self.remember()
         self.dead_leader()
-        for operation in ('status', 'pid_namespace', 'lineage_stat'):
+        for operation in ('status', 'namespace_link', 'lineage_stat'):
             original = getattr(self.owner, operation)
             with self.subTest(operation=operation), patch.object(self.owner, operation, side_effect=lambda path:
                     (_ for _ in ()).throw(PermissionError(13, 'independent proof unavailable'))

@@ -1,0 +1,929 @@
+{
+  "source_archive": "coh-atlas-gameplay-20261013-203328.zip",
+  "source_archive_sha256": "0a0338d7b9140e96c15dfd47ba45f3caef2f1df3243563d22e334d3e294d64e1",
+  "source_outer_json_sha256": "5d1abcabfc89ed3c59e8019200701e17f9dbae67947eb23e13a329fb38681f00",
+  "projection_scope": "Exact .36 fields consumed by production guest acceptance; unrelated observations omitted. Import receipt read is a controlled synthetic host adapter, never physical acceptance.",
+  "app_version": "0.13.36",
+  "guest": {
+    "status": "passed",
+    "passed": true,
+    "session_id": "65a10604bf53486299b97177b11c0711",
+    "scope": "actual_character_reopen_guest",
+    "diagnostic_mode": "actual_character_reopen",
+    "execution_platform_requested": "android",
+    "failures": [],
+    "postgres_started": true,
+    "server_started": true,
+    "mapserver_started": true,
+    "android_surface_validated": false,
+    "game_validated": false,
+    "gameplay_validated": false,
+    "menu_visual_validated": false,
+    "hardware_acceleration_validated": false,
+    "interaction_session_completed": true,
+    "input_effect_verified": false,
+    "interaction_completion_reason": "finish_requested",
+    "presentation_socket_removed": true,
+    "cleanup_complete": true,
+    "cleanup_execution": {
+      "diagnostic_initialized": true,
+      "wine_started": true,
+      "owned_child_count": 81
+    },
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "wine_process_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 239,
+      "scanned_tasks": 192,
+      "dead_leaders_with_live_tasks": 5,
+      "owned_live_workers": 5,
+      "leader_exit_retries": 0,
+      "candidates": 5,
+      "term_signals": 5,
+      "kill_signals": 2,
+      "pidfd_signals": 7,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true,
+      "permission_read_retries": 0,
+      "worker_exit_rechecks": 0,
+      "permission_observations": [],
+      "permission_observations_omitted": 0,
+      "proc_read_retries": 0,
+      "proc_read_observations": [],
+      "proc_read_observations_omitted": 0,
+      "last_inspection_failure": null,
+      "lineage_ownership_rechecks": 0,
+      "live_lineage_observation": {
+        "samples": 5,
+        "unavailable_samples": 141,
+        "last_unavailable_type": "FileNotFoundError",
+        "last_unavailable_operation": "pid_namespace",
+        "authenticated_dead_leader_workers": 0,
+        "worker_authentication_failures": 0,
+        "authenticated_groups": 0,
+        "authenticated_workers": 0
+      }
+    },
+    "client_process_started": true,
+    "renderer_initialized": true,
+    "all_data_loaded": true,
+    "client_main_loop_reached": true,
+    "client_window_observed": true,
+    "startup_observed": true,
+    "startup_elapsed_seconds": 264.461,
+    "observation_seconds": 248.353,
+    "interaction_timeout_seconds": 0,
+    "manual_session": true,
+    "character_session_budgets": [
+      {
+        "format": 1,
+        "session_id": "65a10604bf53486299b97177b11c0711",
+        "client_pid": 624,
+        "character_id": 1,
+        "name": "THORHERO",
+        "account": "COHLOCAL",
+        "map_id": 1,
+        "revision": 1,
+        "phase": "connected",
+        "generated_utc_ms": 1791923447953,
+        "deadline_utc_ms": 0,
+        "save_request_deadline_utc_ms": 0,
+        "movement_deadline_utc_ms": 0,
+        "native_client_ready_observed": true,
+        "reopen_verified": true,
+        "manual_session": true,
+        "zoning_enabled": true,
+        "monorail_enabled": true
+      }
+    ],
+    "client_launch": {
+      "session_id": "65a10604bf53486299b97177b11c0711",
+      "pid": 624
+    },
+    "client_windows": [
+      {
+        "window_id": 20971523,
+        "title": "City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 624",
+        "width": 800,
+        "height": 600,
+        "mapped": true
+      }
+    ],
+    "asset_sha256": {
+      "001-coh-compat.sql": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a",
+      "atlas-world-supplement-manifest.json": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86",
+      "atlas-world-supplement.zip": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f",
+      "atlas_world_assets.py": "b36dbb96b36b7dc20b613d7bd86592f835e890a9a8766bed08eb557e1f8816a3",
+      "character-avatar-defaults-manifest.json": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7",
+      "character-avatar-defaults.zip": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29",
+      "character_avatar_assets.py": "e4e17c8931786490728c721d6db063b55b2e7e17d27813a3da355e72773a8ae1",
+      "character_creation_diagnostic.py": "540c375996164a54e47eeecc5dff141f00772eb790a3131617d8d850a07d21b0",
+      "character_reopen_diagnostic.py": "97a9e2e84b7f53546d38437a651d0adfe743edb1bbfcb69651c48263b212f7b5",
+      "client-caches.zip": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+      "client-launcher.exe": "b453c42876408a842a4f3b717ef3857d4f10624f02462b6e1c6ce5bcdca92159",
+      "client-prerequisites.zip": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e",
+      "client-runtime.zip": "5636fe9b3d45c313b062ac83ba954bfb3b1b160af4aec1b34f046c8c2b421509",
+      "client_interactive_diagnostic.py": "f56eb4a80284dc197f1213b01264e872db9c81f37eaec2babfc36af943c2d08c",
+      "client_login_diagnostic.py": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf",
+      "client_startup_diagnostic.py": "8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53",
+      "dbserver-package.tar.gz": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80",
+      "dbserver-schema.tar.gz": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792",
+      "dbserver_diagnostic.py": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2",
+      "diagnostic.py": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf",
+      "game-package.tar.gz": "20445586ef4271b5f1ce34dd105d4131b8ec1a73fbd88f21c23b700a6913bfe6",
+      "game_device_diagnostic.py": "1a4441f0b7c0e7d4954ac8e486ce148bae0f49035dd8597dff5c900844886d60",
+      "game_diagnostic.py": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737",
+      "game_evidence.py": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d",
+      "game_hang_evidence.py": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef",
+      "game_map_progress.py": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec",
+      "local_character_server.py": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180",
+      "local_login_server.py": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de",
+      "presentation_diagnostic.py": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df",
+      "probe.dll": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b",
+      "psqlodbc_x86.msi": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773",
+      "runtime-lock.json": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+      "runtime-probe.exe": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842",
+      "character_session_budget.py": "78fc86437be60fa32930f771256e9f59eedb52844aa8699f74e5d0450b279b79",
+      "character_server_data_cache.py": "1cb7fa789fd26dd8463dd01cd40555aac6f276fa6defbfc84c6239c35ebe0ac3",
+      "texture_header_index.py": "5f4b7601c3a98d6f4eaeff1c95496e544d336f783826bea15a674bae6e01a2c5",
+      "client_attempt_retry.py": "afc9f16471eda4e7d18a2bdbafab46f27999141217b5c2db998317897f1b8380",
+      "native-responsiveness.json": "e3005754339365b88a41af12dadc2afd540033ba9ee927a18f9e353387e41fc3",
+      "native_responsiveness_contract.py": "7523e2a32f9db8cbe308c8d8bceaa59bd490168cf6886791598810ef86910f85",
+      "native_character_events.py": "2f9813e29530497e6834b21cfbcfc5fd9dd33fc8c64f49502eafab99f25b65b6",
+      "stationary_contact_evidence.py": "40ae7dde35df5d4d44c83bf2b85e52c1fc56171034dbcb483d55aeb0fa29f47d",
+      "server-cache-manifest.json": "4e1a4c9c148509ef34245768f64ca2be4bb83659db845c6ef94ed594666b3fff",
+      "server-caches.zip": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17",
+      "server_message_cache_format.py": "e70fa5aa8c591c866f0c72f3840495cd93024031936f92944c813a9901d3d6ec",
+      "server_cache_package.py": "8a923225b1f9cbd7fe0ac13a700be6a1c372235cf7703db9b87cf80268b53e54",
+      "task_gate_evidence.py": "2b0f8f324401c01cbb1954616d288ff3fc6f10bc8ab8c444ae123e2a2763ef04",
+      "server_animation_package.py": "a8911500947ce99714b38a1fec913159fc42c0e10398b6ccdcb9161e9cfa4d4a",
+      "server-animation-manifest.json": "8f752dceeffa632287602176f26722c3129fcdc9941709793d8b26d22151859f",
+      "task-gate.json": "df780496663132d0537ed748634fcb9bc262094536ef3b53a831e860bf2b7bdc",
+      "server-animations.pigg": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b",
+      "startup-dbserver-manifest.json": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+      "startup-dbserver.exe": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba",
+      "client-visual-assets.zip": "5f91b7d4ebe91e6a547923d702e2fcd56d7fc1d36fb7bffbb66463562d977d60",
+      "client-visual-manifest.json": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2",
+      "client_animation_package.py": "c11559a9c95ff3efb9e9518b5ba585369a48c6a0a3235701c0e44ae50d183f64",
+      "client_visual_assets.py": "b732478e4c33b7e15c8b55c14937a5e557b3d79f637a2f58109ef2f58c3962bb",
+      "native_training_save.py": "a1bc4641eb96fed662274d742cea8ad51f47ab44fc0a35dec155da8a0e486fdc",
+      "atlas-beacon-manifest.json": "ee11bb703eed85229948b30b41277c515faf80da31ccd0436171862765ba41f4",
+      "atlas_beacon_package.py": "37a8db39c4af994bcd5b4fd077319801bacfe90c70d4414d06929408b010d981",
+      "atlas-beacons.zip": "0c7f602d31a438c6e67409bbb89da5d45ee3aacf13c96a50de9401d7973b2949",
+      "client_gpu_profile.py": "c6039fbbf339783faa9a7cdb967d579bae2356e452878af322fcca79a1babd0e",
+      "hardware-renderer.zip": "55f50f8434375cb6587bbfc81b7e9829bdbc8f7ba9a8403eb705315e17ce6f38",
+      "character_zoning.py": "716a9ebd963c45abb2f10b5396013f4c4b87a284cfc887c657fe7423d7a5853f",
+      "character_zoning_scheduler.py": "dc76a478d6fefe83a9c298079bd9a199208fbebd28f189478ebe4a13143ab254",
+      "asset-pack-manifest.json": "9570447b93e7d6e42768e1b0e16b791256b82d509d9caf007aca5c88cd7fd05c",
+      "kings-row-beacon-lock.json": "e2be78c3c055967a17edf8046f43c8e74954c77d29900da264b7781a59334354",
+      "kings_row_beacon_package.py": "a3e2120f5ffb5f307b41ec2670ca4926d1b0cc6df896db2b0db2dbf7dc67c8b5",
+      "native_monorail_contract.py": "d6a879cd5c55059c239ab535af0df3e8369de5b60df6356385fae6df03a72df0",
+      "native_monorail_events.py": "c40c96c4701582220dfee722c5315b9e565ace165278baedcc140ae3000572fd",
+      "zone_asset_package.py": "eba33c606c047b2a4b95c6965e717c0fa649f29dd82878f649ea63b258e6b4b6",
+      "kings-row-beacon-manifest.json": "0b2ade9719e30fe4267782a8affa556c6245a02ad9f421a57195c115afde4694",
+      "kings-row-beacons.zip": "6a7bcfba0d6f64a13d31fc6c31bd8cd366344c6ffa92b546a26ef3f132c2d64c",
+      "zones-audio-supplement-manifest.json": "c819e1af90c1f29a64eac57a20b0bdfb61a50bd9791206ab1ce18c05d210ec6f",
+      "zones-audio-supplement.zip": "3bbc5773f50593e5b2e667c7e01e7f971c3a6a65137f149e0823423798d7b2a7",
+      "zones-world-supplement-manifest.json": "f466ad6c8ab6e84dabd16d404c3a05bcb9fbca3cfad5746852d53b04132d8f74",
+      "zones-world-supplement.zip": "f12a0994cec20ab6d13c158495fe01402e89113ae756e412357e9c4a04833ad3",
+      "map-startup-manifest.json": "df6697dfd4c759cb5690da5cf2f2c17f95580ad0f25ecd1a579e7d0897b0f1a6",
+      "native_map_startup_contract.py": "525cd51cd35be0f1c30ef64b8a268124d1128b333832dde15e9dc8a42706944d",
+      "server-fx-catalog-manifest.json": "ac29fb381b1ffe5c62b1827d3d41110b3cb8d9558c09ac3f96eb4d77b644dc99",
+      "server-fx-catalog.bin": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890",
+      "server_fx_catalog.py": "e0f347e156548b6a78e4f5cb6beba48d053e244e508cfb5d105c316e0fa7148a"
+    },
+    "import_identity": {
+      "generation": "generation-ad41005100194cada53d0c58a7c86c4e",
+      "receipt_sha256": "0a8a104154a5dc74e06491bf18745b496122da82e044d5872b80989e728c3598",
+      "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+      "file_count": 173011,
+      "total_bytes": 2977730517
+    },
+    "screenshots": [
+      {
+        "path": "before-client.ppm",
+        "bytes": 1440015,
+        "sha256": "c3b3d73f6bbb08ab3fa3dfa65d01f89916ba25d37a4f5fbd8cd2202edaa58077",
+        "width": 800,
+        "height": 600,
+        "distinct_colors_capped": 1,
+        "kind": "owned_x_desktop",
+        "menu_visual_validated": false,
+        "session_id": "65a10604bf53486299b97177b11c0711",
+        "captured_utc": "2026-10-13T20:24:14.557747+00:00"
+      },
+      {
+        "path": "client-startup.ppm",
+        "bytes": 1440015,
+        "sha256": "08620302d45d68511fa3084bda8dd9aa3bd81a6df580ff09fe343ece9d0dd43c",
+        "width": 800,
+        "height": 600,
+        "distinct_colors_capped": 256,
+        "kind": "owned_x_desktop",
+        "menu_visual_validated": false,
+        "session_id": "65a10604bf53486299b97177b11c0711",
+        "captured_utc": "2026-10-13T20:29:06.095477+00:00"
+      },
+      {
+        "path": "client-observed.ppm",
+        "bytes": 1440015,
+        "sha256": "39cf09ff5b19cf102294f6b3fd9e05b06f108c58798a25997d042a893dee5620",
+        "width": 800,
+        "height": 600,
+        "distinct_colors_capped": 256,
+        "kind": "owned_x_desktop",
+        "menu_visual_validated": false,
+        "session_id": "65a10604bf53486299b97177b11c0711",
+        "captured_utc": "2026-10-13T20:33:14.165552+00:00"
+      }
+    ],
+    "process_exit_codes": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      -15,
+      1,
+      1
+    ],
+    "character_reopen": {
+      "session_id": "65a10604bf53486299b97177b11c0711",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "map_id": 1,
+      "verified": true,
+      "connected_on_atlas": true,
+      "committed_sql_verified": true,
+      "requested_logout_observed": true,
+      "logout_timer_observed": true,
+      "disconnected_before_sql": true,
+      "forced_stop_before_save": false,
+      "reopen_verified": true,
+      "gameplay_verified": false,
+      "before_character_id": 1,
+      "baseline_character_id": 1,
+      "existing_character_verified": true,
+      "preserved_existing_identity": true,
+      "powers_preserved": true,
+      "costume_preserved": true,
+      "native_client_ready_observed": true,
+      "ordinary_stuck_observed": false,
+      "on_atlas_safe_position": false,
+      "stable_ground_verified": false,
+      "recovery_requested": false,
+      "recovery_verified": false,
+      "committed_native_position_verified": true,
+      "committed_safe_position_verified": false,
+      "operation": "reopen_existing_character",
+      "zoning_enabled": true,
+      "connected_on_supported_map": true,
+      "resume_first_creation_requested": false,
+      "monorail_enabled": true,
+      "baseline_character_count": 1,
+      "baseline_identity_sha256": "e1ea5a6b325dba6b37e7171cc5f7bd1ab3f6a0cdc8773f7f62fbdcdf2a6fca06",
+      "before_login_count": 7,
+      "sql_game_mutations_performed": false,
+      "map_ready": true,
+      "character_id": 1,
+      "auth_id": 1353310574,
+      "db_map_assignment_observed": true,
+      "client_ready_observed_utc": "2026-10-13T20:30:47.952354+00:00",
+      "client_ready_observed_utc_ms": 1791923447952,
+      "client_pid": 624,
+      "saved_utc": "2026-10-13T20:33:04.979652+00:00",
+      "snapshot_sha256": "2e7e5371b14807850eb9499311fbf51ef8ed2158bbbdf91286c048fb0f5db6a1",
+      "evidence_scope": "existing_committed_character_native_ready_then_requested_logout_and_preserved_committed_rows",
+      "selected_rows_preserved": true,
+      "login_count": 8,
+      "enhancements_preserved": true,
+      "selected_rows_preservation_policy": "stable_permanent_power_identity_with_exact_native_rewards_and_stock_temporary_lifecycle",
+      "permanent_powers_preserved": true,
+      "temporary_power_lifecycle_observed": "added",
+      "dayjob_grant_independently_verified": false,
+      "zoning_epoch": 0,
+      "ordinary_save_after_native_zoning": true,
+      "verified_utc": "2026-10-13T20:33:05.252746+00:00"
+    },
+    "local_login": {
+      "profile": "android-local-login",
+      "account": "COHLOCAL",
+      "database": "coh_local_android",
+      "session_id": "65a10604bf53486299b97177b11c0711",
+      "database_preserved": true,
+      "character_list_sent": true,
+      "character_selection_visual_validated": false,
+      "mapserver_started": true,
+      "server_listener_policy": "loopback_only",
+      "profile_reused": true,
+      "cluster_path": "/state/diagnostic/android-local-login/pgdata",
+      "profile_initialized": true,
+      "server_ready": true,
+      "auth_id": 1353310574,
+      "character_count": 1,
+      "local_login_verified": true,
+      "local_account_verified": true,
+      "character_list_response_sent": true,
+      "character_selection_visual_pending": true,
+      "evidence_scope": "current_owned_dbserver_successful_login_and_post_send_system_specs_plus_sql",
+      "client_pid": 624,
+      "verified_utc": "2026-10-13T20:29:25.461403+00:00"
+    },
+    "client_worktree": {
+      "format": 1,
+      "source_data": "/game-import/data",
+      "package_sha256": "5636fe9b3d45c313b062ac83ba954bfb3b1b160af4aec1b34f046c8c2b421509",
+      "cache_archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+      "prerequisites_archive_sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e",
+      "prerequisites_manifest_sha256": "32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f",
+      "normalized_mtime_epoch": 1767225600,
+      "linked_files": 173005,
+      "copied_writable_files": 6,
+      "input_files": 173011,
+      "input_bytes": 2977730517,
+      "imported_inputs_readonly": true,
+      "imported_input_bytes_unchanged": true,
+      "imported_metadata_normalized": true,
+      "prepared_cache_files": 100,
+      "prepared_cache_bytes": 364703716,
+      "prepared_prerequisite_files": 3,
+      "prepared_prerequisite_bytes": 54948,
+      "content_identity_sha256": "d5b1dd8cf9e8e375c21d0860e2bdbd2d327172b6c8854bcb29899bc06d5dfbc7",
+      "worktree_key": "client-work-d5b1dd8cf9e8e375c21d0860",
+      "reused": true,
+      "source_root_preserved": true
+    },
+    "stages": [
+      {
+        "stage": "client_inputs",
+        "status": "passed",
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
+      },
+      {
+        "stage": "client_private_data",
+        "status": "passed"
+      },
+      {
+        "stage": "persistent_server_profile",
+        "status": "passed"
+      },
+      {
+        "stage": "postgres_local_login",
+        "status": "passed"
+      },
+      {
+        "stage": "presentation_display",
+        "status": "passed"
+      },
+      {
+        "stage": "wine_initialization",
+        "status": "passed"
+      },
+      {
+        "stage": "local_login_odbc",
+        "status": "passed"
+      },
+      {
+        "stage": "local_dbserver_startup",
+        "status": "passed"
+      },
+      {
+        "stage": "local_atlas_startup",
+        "status": "passed"
+      },
+      {
+        "stage": "client_visual_assets",
+        "status": "passed"
+      },
+      {
+        "stage": "client_animation_pack",
+        "status": "passed"
+      },
+      {
+        "stage": "client_all_zone_assets",
+        "status": "passed"
+      },
+      {
+        "stage": "client_all_zone_audio",
+        "status": "passed"
+      },
+      {
+        "stage": "win32_runtime_dll",
+        "status": "passed"
+      },
+      {
+        "stage": "actual_client_startup",
+        "status": "passed"
+      },
+      {
+        "stage": "actual_client_interaction",
+        "status": "passed",
+        "bounded_live_observation": false,
+        "user_controlled_observation": true
+      }
+    ],
+    "client_gpu_profile": {
+      "format": 1,
+      "session_id": "65a10604bf53486299b97177b11c0711",
+      "requested": "turnip",
+      "selected": "turnip",
+      "state": "selected_after_probes",
+      "fallback_reason": null,
+      "launch_label": "actual-coh-client",
+      "probe_cleanup_safe": true,
+      "shared_wine_environment_modified": false,
+      "game_prefix_modified_by_probe": false,
+      "game_rendering_validated": false,
+      "hardware_acceleration_validated": false,
+      "physical_fps_improvement_validated": false,
+      "automatic_mid_game_fallback": false,
+      "archive_sha256": "55f50f8434375cb6587bbfc81b7e9829bdbc8f7ba9a8403eb705315e17ce6f38",
+      "vulkan_probe": {
+        "status": "passed"
+      },
+      "wine_gl_probe": {
+        "status": "passed",
+        "passed": true
+      }
+    }
+  },
+  "android": {
+    "session_id": "65a10604bf53486299b97177b11c0711",
+    "started_uptime_ms": 179372185,
+    "client_window_observed_uptime_ms": 179873123,
+    "client_window_ended_uptime_ms": 180121235,
+    "interaction_deadline_uptime_ms": 0,
+    "session_budget_events": [
+      {
+        "type": "character_session_budget",
+        "stage": "actual_client_interaction",
+        "time_utc": "2026-10-13T20:30:47.953248+00:00",
+        "format": 1,
+        "session_id": "65a10604bf53486299b97177b11c0711",
+        "client_pid": 624,
+        "character_id": 1,
+        "name": "THORHERO",
+        "account": "COHLOCAL",
+        "map_id": 1,
+        "revision": 1,
+        "phase": "connected",
+        "generated_utc_ms": 1791923447953,
+        "deadline_utc_ms": 0,
+        "save_request_deadline_utc_ms": 0,
+        "movement_deadline_utc_ms": 0,
+        "native_client_ready_observed": true,
+        "reopen_verified": true,
+        "manual_session": true,
+        "zoning_enabled": true,
+        "monorail_enabled": true
+      }
+    ],
+    "character_connected_event": {
+      "type": "character_connected",
+      "stage": "actual_client_interaction",
+      "time_utc": "2026-10-13T20:30:47.952646+00:00",
+      "session_id": "65a10604bf53486299b97177b11c0711",
+      "client_pid": 624,
+      "character_id": 1,
+      "name": "THORHERO",
+      "account": "COHLOCAL",
+      "map_id": 1,
+      "reopen_verified": true,
+      "baseline_character_id": 1,
+      "existing_character_verified": true,
+      "preserved_existing_identity": true,
+      "native_client_ready_observed": true,
+      "zoning_enabled": true,
+      "connected_on_supported_map": true,
+      "monorail_enabled": true
+    },
+    "character_saved_event": {
+      "type": "character_saved",
+      "stage": "actual_client_interaction",
+      "time_utc": "2026-10-13T20:33:05.252824+00:00",
+      "session_id": "65a10604bf53486299b97177b11c0711",
+      "client_pid": 624,
+      "character_id": 1,
+      "name": "THORHERO",
+      "committed_sql_verified": true,
+      "reopen_verified": true,
+      "powers_preserved": true,
+      "costume_preserved": true,
+      "preserved_existing_identity": true,
+      "committed_native_position_verified": true,
+      "recovery_requested": false,
+      "recovery_verified": false,
+      "zoning_enabled": true,
+      "connected_on_supported_map": true,
+      "map_id": 1,
+      "monorail_enabled": true
+    }
+  },
+  "current_apk_files": {
+    "001-coh-compat.sql": {
+      "bytes": 7788,
+      "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+    },
+    "atlas-world-supplement-manifest.json": {
+      "bytes": 4258210,
+      "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+    },
+    "atlas-world-supplement.zip": {
+      "bytes": 207803201,
+      "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+    },
+    "atlas_world_assets.py": {
+      "bytes": 25852,
+      "sha256": "b36dbb96b36b7dc20b613d7bd86592f835e890a9a8766bed08eb557e1f8816a3"
+    },
+    "character-avatar-defaults-manifest.json": {
+      "bytes": 28554,
+      "sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7"
+    },
+    "character-avatar-defaults.zip": {
+      "bytes": 1842488,
+      "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
+    },
+    "character_avatar_assets.py": {
+      "bytes": 15496,
+      "sha256": "e4e17c8931786490728c721d6db063b55b2e7e17d27813a3da355e72773a8ae1"
+    },
+    "character_creation_diagnostic.py": {
+      "bytes": 27634,
+      "sha256": "540c375996164a54e47eeecc5dff141f00772eb790a3131617d8d850a07d21b0"
+    },
+    "character_reopen_diagnostic.py": {
+      "bytes": 15440,
+      "sha256": "97a9e2e84b7f53546d38437a651d0adfe743edb1bbfcb69651c48263b212f7b5"
+    },
+    "client-caches.zip": {
+      "bytes": 27071659,
+      "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+    },
+    "client-launcher.exe": {
+      "bytes": 246319,
+      "sha256": "b453c42876408a842a4f3b717ef3857d4f10624f02462b6e1c6ce5bcdca92159"
+    },
+    "client-prerequisites.zip": {
+      "bytes": 18757,
+      "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+    },
+    "client-runtime.zip": {
+      "bytes": 8702383,
+      "sha256": "5636fe9b3d45c313b062ac83ba954bfb3b1b160af4aec1b34f046c8c2b421509"
+    },
+    "client_interactive_diagnostic.py": {
+      "bytes": 33958,
+      "sha256": "f56eb4a80284dc197f1213b01264e872db9c81f37eaec2babfc36af943c2d08c"
+    },
+    "client_login_diagnostic.py": {
+      "bytes": 15316,
+      "sha256": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf"
+    },
+    "client_startup_diagnostic.py": {
+      "bytes": 91242,
+      "sha256": "8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53"
+    },
+    "dbserver-package.tar.gz": {
+      "bytes": 2133821,
+      "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80"
+    },
+    "dbserver-schema.tar.gz": {
+      "bytes": 1139794,
+      "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792"
+    },
+    "dbserver_diagnostic.py": {
+      "bytes": 50159,
+      "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+    },
+    "diagnostic.py": {
+      "bytes": 69529,
+      "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+    },
+    "game-package.tar.gz": {
+      "bytes": 11231995,
+      "sha256": "20445586ef4271b5f1ce34dd105d4131b8ec1a73fbd88f21c23b700a6913bfe6"
+    },
+    "game_device_diagnostic.py": {
+      "bytes": 69019,
+      "sha256": "1a4441f0b7c0e7d4954ac8e486ce148bae0f49035dd8597dff5c900844886d60"
+    },
+    "game_diagnostic.py": {
+      "bytes": 80208,
+      "sha256": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737"
+    },
+    "game_evidence.py": {
+      "bytes": 25884,
+      "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+    },
+    "game_hang_evidence.py": {
+      "bytes": 22400,
+      "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+    },
+    "game_map_progress.py": {
+      "bytes": 14789,
+      "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+    },
+    "local_character_server.py": {
+      "bytes": 207503,
+      "sha256": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180"
+    },
+    "local_login_server.py": {
+      "bytes": 21351,
+      "sha256": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de"
+    },
+    "presentation_diagnostic.py": {
+      "bytes": 17396,
+      "sha256": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df"
+    },
+    "probe.dll": {
+      "bytes": 82761,
+      "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+    },
+    "psqlodbc_x86.msi": {
+      "bytes": 4079616,
+      "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+    },
+    "runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "runtime-probe.exe": {
+      "bytes": 245968,
+      "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+    },
+    "character_session_budget.py": {
+      "bytes": 9526,
+      "sha256": "78fc86437be60fa32930f771256e9f59eedb52844aa8699f74e5d0450b279b79"
+    },
+    "character_server_data_cache.py": {
+      "bytes": 34788,
+      "sha256": "1cb7fa789fd26dd8463dd01cd40555aac6f276fa6defbfc84c6239c35ebe0ac3"
+    },
+    "texture_header_index.py": {
+      "bytes": 18204,
+      "sha256": "5f4b7601c3a98d6f4eaeff1c95496e544d336f783826bea15a674bae6e01a2c5"
+    },
+    "client_attempt_retry.py": {
+      "bytes": 12707,
+      "sha256": "afc9f16471eda4e7d18a2bdbafab46f27999141217b5c2db998317897f1b8380"
+    },
+    "native-responsiveness.json": {
+      "bytes": 40754,
+      "sha256": "e3005754339365b88a41af12dadc2afd540033ba9ee927a18f9e353387e41fc3"
+    },
+    "native_responsiveness_contract.py": {
+      "bytes": 78410,
+      "sha256": "7523e2a32f9db8cbe308c8d8bceaa59bd490168cf6886791598810ef86910f85"
+    },
+    "native_character_events.py": {
+      "bytes": 6484,
+      "sha256": "2f9813e29530497e6834b21cfbcfc5fd9dd33fc8c64f49502eafab99f25b65b6"
+    },
+    "stationary_contact_evidence.py": {
+      "bytes": 11472,
+      "sha256": "40ae7dde35df5d4d44c83bf2b85e52c1fc56171034dbcb483d55aeb0fa29f47d"
+    },
+    "server-cache-manifest.json": {
+      "bytes": 39041,
+      "sha256": "4e1a4c9c148509ef34245768f64ca2be4bb83659db845c6ef94ed594666b3fff"
+    },
+    "server-caches.zip": {
+      "bytes": 29825263,
+      "sha256": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17"
+    },
+    "server_message_cache_format.py": {
+      "bytes": 4921,
+      "sha256": "e70fa5aa8c591c866f0c72f3840495cd93024031936f92944c813a9901d3d6ec"
+    },
+    "server_cache_package.py": {
+      "bytes": 22652,
+      "sha256": "8a923225b1f9cbd7fe0ac13a700be6a1c372235cf7703db9b87cf80268b53e54"
+    },
+    "task_gate_evidence.py": {
+      "bytes": 30825,
+      "sha256": "2b0f8f324401c01cbb1954616d288ff3fc6f10bc8ab8c444ae123e2a2763ef04"
+    },
+    "server_animation_package.py": {
+      "bytes": 13418,
+      "sha256": "a8911500947ce99714b38a1fec913159fc42c0e10398b6ccdcb9161e9cfa4d4a"
+    },
+    "server-animation-manifest.json": {
+      "bytes": 1005794,
+      "sha256": "8f752dceeffa632287602176f26722c3129fcdc9941709793d8b26d22151859f"
+    },
+    "task-gate.json": {
+      "bytes": 300,
+      "sha256": "df780496663132d0537ed748634fcb9bc262094536ef3b53a831e860bf2b7bdc"
+    },
+    "server-animations.pigg": {
+      "bytes": 97084456,
+      "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+    },
+    "startup-dbserver-manifest.json": {
+      "bytes": 32549,
+      "sha256": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087"
+    },
+    "startup-dbserver.exe": {
+      "bytes": 1664512,
+      "sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba"
+    },
+    "client-visual-assets.zip": {
+      "bytes": 859075775,
+      "sha256": "5f91b7d4ebe91e6a547923d702e2fcd56d7fc1d36fb7bffbb66463562d977d60"
+    },
+    "client-visual-manifest.json": {
+      "bytes": 48591999,
+      "sha256": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2"
+    },
+    "client_animation_package.py": {
+      "bytes": 13921,
+      "sha256": "c11559a9c95ff3efb9e9518b5ba585369a48c6a0a3235701c0e44ae50d183f64"
+    },
+    "client_visual_assets.py": {
+      "bytes": 27639,
+      "sha256": "b732478e4c33b7e15c8b55c14937a5e557b3d79f637a2f58109ef2f58c3962bb"
+    },
+    "native_training_save.py": {
+      "bytes": 17455,
+      "sha256": "a1bc4641eb96fed662274d742cea8ad51f47ab44fc0a35dec155da8a0e486fdc"
+    },
+    "atlas-beacon-manifest.json": {
+      "bytes": 934650,
+      "sha256": "ee11bb703eed85229948b30b41277c515faf80da31ccd0436171862765ba41f4"
+    },
+    "atlas_beacon_package.py": {
+      "bytes": 49259,
+      "sha256": "37a8db39c4af994bcd5b4fd077319801bacfe90c70d4414d06929408b010d981"
+    },
+    "atlas-beacons.zip": {
+      "bytes": 16150904,
+      "sha256": "0c7f602d31a438c6e67409bbb89da5d45ee3aacf13c96a50de9401d7973b2949"
+    },
+    "client_gpu_profile.py": {
+      "bytes": 65441,
+      "sha256": "c6039fbbf339783faa9a7cdb967d579bae2356e452878af322fcca79a1babd0e"
+    },
+    "hardware-renderer.zip": {
+      "bytes": 2865215,
+      "sha256": "55f50f8434375cb6587bbfc81b7e9829bdbc8f7ba9a8403eb705315e17ce6f38"
+    },
+    "character_zoning.py": {
+      "bytes": 80879,
+      "sha256": "716a9ebd963c45abb2f10b5396013f4c4b87a284cfc887c657fe7423d7a5853f"
+    },
+    "character_zoning_scheduler.py": {
+      "bytes": 20419,
+      "sha256": "dc76a478d6fefe83a9c298079bd9a199208fbebd28f189478ebe4a13143ab254"
+    },
+    "asset-pack-manifest.json": {
+      "bytes": 3946,
+      "sha256": "9570447b93e7d6e42768e1b0e16b791256b82d509d9caf007aca5c88cd7fd05c"
+    },
+    "kings-row-beacon-lock.json": {
+      "bytes": 233,
+      "sha256": "e2be78c3c055967a17edf8046f43c8e74954c77d29900da264b7781a59334354"
+    },
+    "kings_row_beacon_package.py": {
+      "bytes": 10771,
+      "sha256": "a3e2120f5ffb5f307b41ec2670ca4926d1b0cc6df896db2b0db2dbf7dc67c8b5"
+    },
+    "native_monorail_contract.py": {
+      "bytes": 4552,
+      "sha256": "d6a879cd5c55059c239ab535af0df3e8369de5b60df6356385fae6df03a72df0"
+    },
+    "native_monorail_events.py": {
+      "bytes": 5877,
+      "sha256": "c40c96c4701582220dfee722c5315b9e565ace165278baedcc140ae3000572fd"
+    },
+    "zone_asset_package.py": {
+      "bytes": 15364,
+      "sha256": "eba33c606c047b2a4b95c6965e717c0fa649f29dd82878f649ea63b258e6b4b6"
+    },
+    "kings-row-beacon-manifest.json": {
+      "bytes": 1426843,
+      "sha256": "0b2ade9719e30fe4267782a8affa556c6245a02ad9f421a57195c115afde4694"
+    },
+    "kings-row-beacons.zip": {
+      "bytes": 23708626,
+      "sha256": "6a7bcfba0d6f64a13d31fc6c31bd8cd366344c6ffa92b546a26ef3f132c2d64c"
+    },
+    "zones-audio-supplement-manifest.json": {
+      "bytes": 316144,
+      "sha256": "c819e1af90c1f29a64eac57a20b0bdfb61a50bd9791206ab1ce18c05d210ec6f"
+    },
+    "zones-audio-supplement.zip": {
+      "bytes": 847802311,
+      "sha256": "3bbc5773f50593e5b2e667c7e01e7f971c3a6a65137f149e0823423798d7b2a7"
+    },
+    "zones-world-supplement-manifest.json": {
+      "bytes": 4237139,
+      "sha256": "f466ad6c8ab6e84dabd16d404c3a05bcb9fbca3cfad5746852d53b04132d8f74"
+    },
+    "zones-world-supplement.zip": {
+      "bytes": 1663681523,
+      "sha256": "f12a0994cec20ab6d13c158495fe01402e89113ae756e412357e9c4a04833ad3"
+    },
+    "map-startup-manifest.json": {
+      "bytes": 257706,
+      "sha256": "df6697dfd4c759cb5690da5cf2f2c17f95580ad0f25ecd1a579e7d0897b0f1a6"
+    },
+    "native_map_startup_contract.py": {
+      "bytes": 13590,
+      "sha256": "525cd51cd35be0f1c30ef64b8a268124d1128b333832dde15e9dc8a42706944d"
+    },
+    "server-fx-catalog-manifest.json": {
+      "bytes": 1557,
+      "sha256": "ac29fb381b1ffe5c62b1827d3d41110b3cb8d9558c09ac3f96eb4d77b644dc99"
+    },
+    "server-fx-catalog.bin": {
+      "bytes": 3380680,
+      "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+    },
+    "server_fx_catalog.py": {
+      "bytes": 15400,
+      "sha256": "e0f347e156548b6a78e4f5cb6beba48d053e244e508cfb5d105c316e0fa7148a"
+    }
+  },
+  "launcher_started_uptime_ms": 179608662
+}
