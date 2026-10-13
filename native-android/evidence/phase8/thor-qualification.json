@@ -1,17 +1,15 @@
 {
   "schema": "coh-native-character-device-acceptance-v1",
   "review_date": "2026-10-13",
-  "status": "native-character-resize-recreation-accepted; background-return-not-evidenced",
-  "qualification_passed": false,
+  "status": "accepted-by-user; character-rendering-measured; background-return-user-confirmed",
+  "qualification_passed": true,
   "reported_app_qualification_passed": true,
   "user_reported_all_passed": true,
   "native_character_gate_passed": true,
   "resize_gate_passed": true,
   "explicit_surface_recreation_gate_passed": true,
-  "background_return_gate_passed": false,
-  "pending_requirements": [
-    "same-session background/return export with pause, surface destruction, stop, resume, new surface and passing current foreground run"
-  ],
+  "background_return_gate_passed": true,
+  "pending_requirements": [],
   "scope": "AYN Thor ARM64 complete source-selected Wretch assembly, actual actor morphology, 60-node rig, 11 draws, 17 textures, COLORBLEND_DUAL fallback, single run clip and native surface resize/recreation; HOME background return not present in this immutable export",
   "source_report": {
     "filename": "COH-NativeCharacter-20261013-181750.json",
@@ -450,5 +448,12 @@
         "assertions": 117
       }
     ]
+  },
+  "background_return_acceptance": {
+    "basis": "explicit user direction on2026-10-13 America/Chicago: Just consider it done and move to the next gate",
+    "accepted": true,
+    "measured_in_uploaded_export": false,
+    "prior_uploaded_export_unchanged": true,
+    "no_new_callback_events_fabricated": true
   }
 }
