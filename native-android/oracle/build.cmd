@@ -14,7 +14,7 @@ if not exist "%COH_ORACLE_OUT%" mkdir "%COH_ORACLE_OUT%"
 if errorlevel 1 exit /b 5
 python "%COH_ORACLE_ROOT%\native-android\oracle\verify_inputs.py"
 if errorlevel 1 exit /b 6
-cl /nologo /std:c++14 /W4 /WX /O2 /MT /EHsc /D_CRT_SECURE_NO_WARNINGS "%COH_ORACLE_ROOT%\native-android\oracle\nvdxt_reference.cpp" /Fo:"%COH_ORACLE_OUT%\nvdxt-reference.obj" /Fe:"%COH_ORACLE_OUT%\nvdxt-reference.exe" /link /MACHINE:X86 /OPT:REF /INCREMENTAL:NO "%COH_ORACLE_ROOT%\upstream\ouroboros\3rdparty\nvdxt\Release\nvDXTlibMT_S.lib" legacy_stdio_definitions.lib
+cl /nologo /std:c++14 /W4 /WX /O2 /MT /EHsc /D_CRT_SECURE_NO_WARNINGS "%COH_ORACLE_ROOT%\native-android\oracle\nvdxt_reference.cpp" /Fo:"%COH_ORACLE_OUT%\nvdxt-reference.obj" /Fe:"%COH_ORACLE_OUT%\nvdxt-reference.exe" /link /MACHINE:X86 /OPT:REF /INCREMENTAL:NO "%COH_ORACLE_ROOT%\upstream\ouroboros\3rdparty\nvdxt\Release\nvDXTlibMT_S.lib" legacy_stdio_definitions.lib user32.lib advapi32.lib
 if errorlevel 1 exit /b 7
 dumpbin /headers /imports "%COH_ORACLE_OUT%\nvdxt-reference.exe" > "%COH_ORACLE_OUT%\pe-headers-imports.txt"
 if errorlevel 1 exit /b 8
