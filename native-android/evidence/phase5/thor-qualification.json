@@ -1,0 +1,332 @@
+{
+  "schema": "coh-native-surface-device-acceptance-v1",
+  "review_date": "2026-10-13",
+  "status": "accepted",
+  "qualification_passed": true,
+  "scope": "AYN Thor native ARM64 single-texture EGL/GLES and normal Surface lifecycle gate",
+  "source_report": {
+    "filename": "COH-NativeSurface-20261013-142117.json",
+    "bytes": 151750,
+    "sha256": "b7bc323f3f6e680720cffd8fce1a9bcc0af57a61828894c20bbdd1f543710729",
+    "raw_report_preserved": true
+  },
+  "screenshot": {
+    "filename": "Screenshot_20261013-142046.png",
+    "sha256": "7479348cf246038ac99dc1fe1cec1e06183e210b6367e8090a995372a316ab84",
+    "visually_reviewed": true,
+    "observations": [
+      "Green SURFACE GATE PASSED status",
+      "Real clothing texture visibly displayed with aspect-fit letterboxing"
+    ]
+  },
+  "delivered_build": {
+    "application_id": "org.coh.nativeprobe",
+    "version": "0.1.0-phase5",
+    "source_commit": "f5f4127693d4cab8d82b9c30c6f8b6c031639f2c",
+    "workflow_run": 38450326655,
+    "apk_sha256": "0c1f1a4addcdcfb9275665411319c5270441973651ea23ae29df89eee055fe51",
+    "provenance": "Delivered APK build receipt; uploaded device report does not measure APK hash or encode build commit"
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "device": "kalama",
+    "hardware": "qcom",
+    "sdk": 33,
+    "release": "13",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "native_abi": {
+    "pointer_bytes": 8,
+    "long_bytes": 8,
+    "platform": "Android Bionic"
+  },
+  "graphics": {
+    "gl_vendor": "Qualcomm",
+    "gl_renderer": "Adreno (TM) 740",
+    "gl_version": "OpenGL ES 3.2 V@0676.53 (GIT@69e13475cb, I1df7ad3aa9, 1703680572) (Date:12/27/23)",
+    "glsl_version": "OpenGL ES GLSL ES 3.20",
+    "egl_vendor": "Android",
+    "egl_version": "1.5 Android META-EGL",
+    "max_texture_size": 16384,
+    "egl_api_version": [
+      1,
+      5
+    ],
+    "config_rgba_bits": [
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  "fixture": {
+    "fixture_id": "01-chest_5c_night_chest_01",
+    "source_path": "data/texture_library/enemies/5thcolumn/night/chest_5c_night_chest_01.texture",
+    "dds_sha256": "378dbd7be97eed26a0ad3e454efadaab6a52f4f9c01579d94dc20934d8ec44b7",
+    "dds_bytes": 174928,
+    "expected_rgba_sha256": "e8d9492e39d13211aa5196c834725feb7f0113739daa3d7d7f1195b1478ddaef",
+    "expected_rgba_bytes": 524288,
+    "width": 256,
+    "height": 512,
+    "dds_format": "DXT5",
+    "mip": 0,
+    "decoder": "coh_dds_rgba_legacy",
+    "golden_origin": "Pinned original Win32 NVIDIA nvDXTlibMT_S plus raw CPU consumer channel conversion",
+    "qualification_commit": "92b9dc9a841f0006cd36f0d52dc67c0836f7ca92",
+    "qualification_run": 38446476188,
+    "sdk_library_sha256": "1e9988ad52a01f44368d8d4150990ef2a033536a7a705424f04333143cd63b73",
+    "verified_dds_sha256": "378dbd7be97eed26a0ad3e454efadaab6a52f4f9c01579d94dc20934d8ec44b7",
+    "verified_expected_rgba_sha256": "e8d9492e39d13211aa5196c834725feb7f0113739daa3d7d7f1195b1478ddaef",
+    "native_generator_library_sha256": "f41ab25644010d34d70a70fc732fa98c34ef85a5c376f3c067f34ea66fe10ba2",
+    "native_generator_hash_matches_qualified_build_receipt": true
+  },
+  "qualification": {
+    "passed": true,
+    "pending_requirements": [],
+    "successful_runs": 12,
+    "failed_runs": 0,
+    "successful_surface_generations": 6,
+    "successful_actual_dimensions": 2,
+    "current_surface_passed": true,
+    "native_context_recreation": "required in each passing native run",
+    "limits": "Device-specific texture gate only; not shader/material/gameplay qualification"
+  },
+  "independently_recomputed": {
+    "native_successful_runs": 12,
+    "egl_context_lifetimes": 24,
+    "fbo_pixels_compared": 3145728,
+    "fbo_mismatched_pixels": 0,
+    "window_rgb_samples": 1176,
+    "window_rgb_mismatches": 0,
+    "gl_errors": 0,
+    "egl_errors": 0,
+    "successful_swaps": 24,
+    "all_gpu_objects_released": true,
+    "cpu_matches_original_golden_in_every_run": true,
+    "surface_dimensions": [
+      [
+        1413,
+        389
+      ],
+      [
+        1884,
+        389
+      ]
+    ],
+    "surface_generations": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "resize_requests_followed_by_success": 4,
+    "explicit_surface_recreation_requests_followed_by_success": 3,
+    "background_foreground_recoveries": [
+      {
+        "previous_generation": 3,
+        "new_generation": 4,
+        "successful_request": 17,
+        "pause_to_success_ms": 1725,
+        "sequence": [
+          "activity_paused",
+          "surface_destroyed",
+          "activity_stopped",
+          "activity_resumed",
+          "surface_created",
+          "surface_changed",
+          "probe_requested",
+          "probe_completed"
+        ]
+      },
+      {
+        "previous_generation": 4,
+        "new_generation": 5,
+        "successful_request": 20,
+        "pause_to_success_ms": 13157,
+        "sequence": [
+          "activity_paused",
+          "surface_destroyed",
+          "activity_stopped",
+          "activity_resumed",
+          "surface_created",
+          "surface_changed",
+          "probe_requested",
+          "probe_completed"
+        ]
+      }
+    ]
+  },
+  "runs": [
+    {
+      "request": 1,
+      "generation": 1,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 95,
+      "cycles": 2
+    },
+    {
+      "request": 3,
+      "generation": 1,
+      "surface": [
+        1413,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 91,
+      "cycles": 2
+    },
+    {
+      "request": 5,
+      "generation": 1,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 105,
+      "cycles": 2
+    },
+    {
+      "request": 8,
+      "generation": 2,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 99,
+      "cycles": 2
+    },
+    {
+      "request": 9,
+      "generation": 2,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "manual",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 142,
+      "cycles": 2
+    },
+    {
+      "request": 11,
+      "generation": 2,
+      "surface": [
+        1413,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 110,
+      "cycles": 2
+    },
+    {
+      "request": 14,
+      "generation": 3,
+      "surface": [
+        1413,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 112,
+      "cycles": 2
+    },
+    {
+      "request": 17,
+      "generation": 4,
+      "surface": [
+        1413,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 130,
+      "cycles": 2
+    },
+    {
+      "request": 20,
+      "generation": 5,
+      "surface": [
+        1413,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 165,
+      "cycles": 2
+    },
+    {
+      "request": 21,
+      "generation": 5,
+      "surface": [
+        1413,
+        389
+      ],
+      "reason": "manual",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 175,
+      "cycles": 2
+    },
+    {
+      "request": 23,
+      "generation": 5,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 143,
+      "cycles": 2
+    },
+    {
+      "request": 26,
+      "generation": 6,
+      "surface": [
+        1884,
+        389
+      ],
+      "reason": "surfaceChanged",
+      "passed": true,
+      "obsolete": false,
+      "duration_ms": 163,
+      "cycles": 2
+    }
+  ],
+  "limits": [
+    "Repeated checks of one 256x512 DXT5 mip0 fixture; not distinct source texels or a scene benchmark",
+    "FBO covers all RGBA texels; window checks 49 RGB samples per cycle before swap and excludes compositor alpha",
+    "Controlled native context recreation and normal Activity/Surface recovery; no unexpected GPU reset or process death",
+    "Resize changed actual window width and recentering; height-limited texture viewport stayed 194x389, so no changing display scale or orientation qualification",
+    "No filtering/mipmap, material/Cg family, skinned geometry, fog, audio, input, networking, gameplay, FPS or load-time qualification"
+  ]
+}

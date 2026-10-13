@@ -4,7 +4,7 @@ The standalone **COH Native Surface Probe 0.1.0-phase5** APK is built for Androi
 
 [Qualified build and Android emulator run](https://github.com/Russianranger/coh-android/actions/runs/38450326655), code `f5f4127693d4cab8d82b9c30c6f8b6c031639f2c`, passed. The ARM64 APK is 403,518 bytes, SHA256 `0c1f1a4addcdcfb9275665411319c5270441973651ea23ae29df89eee055fe51`. Signature verification, package metadata, ARM64-only ELF64 AArch64 native library and bundled golden hash were checked. The test APK uses an isolated debug signing key.
 
-## Observed Android execution
+## Hosted emulator execution
 
 Android13/API33 x86_64 emulator, pinned stable emulator37.2.12/build16428233 with SwiftShader:
 
@@ -15,9 +15,22 @@ Android13/API33 x86_64 emulator, pinned stable emulator37.2.12/build16428233 wit
 - Packaged DDS SHA and original Win32 golden SHA matched; Android CPU decoding matched every golden byte before drawing.
 - The final screenshot was visually inspected: the real texture remains displayed after native cleanup, with the qualification status passed.
 
-These are repeated checks of one real texture, not one million distinct source texels or a game-scene benchmark. The GL renderer reports Android Emulator OpenGL ES Translator (Google SwiftShader). **Thor/Adreno execution remains pending.**
+These are repeated checks of one real texture, not one million distinct source texels or a game-scene benchmark. The GL renderer reports Android Emulator OpenGL ES Translator (Google SwiftShader). Physical Thor execution is qualified separately below.
 
 The real fixture is `chest_5c_night_chest_01.texture`, decoded 256x512 RGBA. DDS SHA256 `378dbd7be97eed26a0ad3e454efadaab6a52f4f9c01579d94dc20934d8ec44b7`; original normalized Win32 RGBA SHA256 `e8d9492e39d13211aa5196c834725feb7f0113739daa3d7d7f1195b1478ddaef`. Fixture preparation verifies the decoded output against the Phase4 original-SDK record before packaging. The APK runtime rechecks both asset hashes and CPU/golden parity.
+
+## Physical Thor acceptance: passed
+
+The supplied screenshot and `COH-NativeSurface-20261013-142117.json` were reviewed on 2026-10-13. The [device acceptance receipt](evidence/phase5/thor-qualification.json) records independently recomputed counters and source hashes. The device reports **AYN Thor, Android13/API33, ARM64 Bionic, Qualcomm Adreno (TM) 740, OpenGL ES3.2**; native pointers and `long` are both eight bytes.
+
+- All 12 native runs passed, with 24 complete EGL context lifetimes, successful swaps and all app GPU objects released.
+- **3,145,728 FBO RGBA pixel comparisons** and **1,176 window RGB samples** produced zero mismatches. GL/EGL errors and session failures were also zero.
+- Packaged DDS and golden hashes matched the pinned fixture; CPU decoding matched the original Win32 golden in every run.
+- Four resize requests exercised actual Surface sizes 1884x389 and 1413x389. Three explicit Surface recreation requests succeeded. Six Surface generations qualified in total.
+- Two recorded pause/destroy/stop/resume/create sequences recovered successfully, in generations four and five. The final generation six passed before export.
+- The screenshot shows the real clothing texture and green **SURFACE GATE PASSED** status.
+
+This closes the physical-device texture and normal Surface lifecycle gate. The width changes recentered the image while its height-limited viewport remained 194x389; this session does not qualify changing texture display scale or device orientation. Window checks sample RGB before swap and exclude compositor alpha. The uploaded report does not measure the installed APK hash or encode its source commit; the receipt associates the supplied test with the delivered build record. The original emulator and APK build receipts retain their original execution scope.
 
 ## Reconstruction requirements made concrete
 
@@ -27,10 +40,10 @@ Java Surface callbacks schedule serial native requests. Results from an obsolete
 
 This qualifies controlled context recreation and normal Surface lifecycle handling. It does not exercise an unexpected hardware GPU reset, full-game state restoration, frame pacing, all sampler/material/Cg variants, skinned geometry, fog, audio, input or networking. GLES3 identity texture shaders replace no complete Cg program family yet. Full RGBA FBO parity is separate from compositor alpha, filtering/mipmap and screen color-management fidelity.
 
-## Thor acceptance
+## Reproducing Thor acceptance
 
 Install the ARM64 APK and open **COH Native Surface Probe**. The first texture check runs automatically. Confirm the clothing texture appears, use **Resize surface**, then **Recreate surface**, and wait for **SURFACE GATE PASSED**. Press Home, return and wait for the current surface to pass again. Use **Export report**, save the JSON in Downloads and return it for review.
 
 Accept only a report from the Thor showing the expected fixture hashes, actual ARM64/device identity and Adreno renderer, CPU/golden and GPU parity, successful swaps, at least two actual sizes/generations, clean context recreation and foreground recovery. Export any failure before restarting the probe to retry. See `surface-probe/README.md` for reproduction and the separate debug-package update behavior.
 
-Next after device acceptance: a real material and skinned fixture with captured shader parameter/bone contracts, plus alpha/fog/offscreen-pass validation. No playable native client, world entry, FPS or startup/zone improvement is claimed by this texture proof.
+Next gate: a real material and skinned fixture with captured shader parameter/bone contracts, plus alpha/fog/offscreen-pass validation. No playable native client, world entry, FPS or startup/zone improvement is claimed by this texture proof.
