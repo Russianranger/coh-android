@@ -415,7 +415,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     private Map<String, byte[]> verifyAssets(JSONObject fixture) throws Exception {
         JSONObject manifest = fixture.getJSONObject("assets");
         if (manifest.length() != REQUIRED_ASSETS.size())
-            throw new IllegalStateException("Animation asset manifest must contain exactly six files");
+            throw new IllegalStateException("Character asset manifest must contain exactly five binary files");
         Map<String, byte[]> assets = new LinkedHashMap<>();
         JSONObject verified = new JSONObject();
         int total = 0;

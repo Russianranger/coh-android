@@ -30,7 +30,7 @@ Source clockwise front faces and back culling are used except genuine DoubleSide
 
 ## Native qualification design
 
-Six checkpoints at frames 1, 1.5, 5.25, 12.5, 24.5 and 25 check the full 60-node actor hierarchy, morphology, all eleven palettes and 2,626 vertex outputs. GPU transform feedback checks every position and normal. Each draw receives a standalone GPU-versus-independent-reference image check; six assembled images also compare RGBA outside the reported two-pixel triangle-edge guard. Every part requires useful standalone coverage. Float tolerance remains 1e-4 and RGBA tolerance two byte units.
+Six checkpoints at frames 1, 1.5, 5.25, 12.5, 24.5 and 25 check the full 60-node actor hierarchy, morphology, all eleven palettes and 2,626 vertex outputs. GPU transform feedback checks every position and normal. Each draw receives a standalone GPU-versus-independent-reference image check in a close-up camera fitted to its six reference geometry checkpoints with a 20 percent margin. Each piece requires at least 64 useful pixels per pose outside the two-pixel triangle-edge guard. This catches small hair and head draws that the full-character camera cannot qualify separately. Six assembled images retain the independent full-character camera and compare RGBA with the same edge guard. Float tolerance remains 1e-4 and RGBA tolerance two byte units.
 
 Sixty-six material cases exercise actual costume colors, masks, alpha, fog and blending; forty-four use real texture pairs and twenty-two add an explicitly controlled secondary swatch. The accepted GLSL shader sources remain unchanged. GPU-skinned and reference-geometry image paths share vertex lighting; transform feedback independently checks geometry and normals.
 
@@ -38,7 +38,9 @@ Each JNI call creates and releases two EGL contexts. Each context samples origin
 
 ## Qualification status
 
-Original source actor checks passed 11,469 float comparisons at six checkpoints with zero error. Native structural compilation passed with primary Khronos GLES/EGL headers and limited Android-window declarations; actual SDK/NDK compilation and GPU execution are the hosted Android gate, currently pending. Physical Thor acceptance of this package is pending. Accepted Thor Phase 7 remains in [its receipt](evidence/phase7/thor-qualification.json).
+Original source actor checks passed 11,469 float comparisons at six checkpoints with zero error. The [host proof](evidence/phase8/host-character-proof.json) checks 109,308 native float components against the independent reference with zero mismatches and a maximum error of 1.43051147e-6. It also passes 333 named malformed inputs, 3,224 truncations, and 10,070 ASan/UBSan checks. Native structural compilation passed with primary Khronos GLES/EGL headers and limited Android-window declarations; actual SDK/NDK compilation and GPU execution are the hosted Android gate, currently pending. Physical Thor acceptance of this package is pending. Accepted Thor Phase 7 remains in [its receipt](evidence/phase7/thor-qualification.json).
+
+The [Phase 8 REA continuation](PHASE8-REA.md) records a fresh bounded read-only query of the retained client checkpoint. All ten checkpoint files remained unchanged; raw character/material anchors were found but no source function identity was assigned from the partial binary database.
 
 ## Thor acceptance procedure
 

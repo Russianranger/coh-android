@@ -127,6 +127,9 @@ def validate(report, minimum_generations=2):
         assert native['skin_fbo_width'] == native['skin_fbo_height'] == 512
         assert native['transform_absolute_tolerance'] == 0.0001 and native['rgba_byte_tolerance'] == 2
         assert native['triangle_edge_exclusion_pixels'] == 2
+        assert native['standalone_projection_scope'] == 'per-part-six-checkpoint-union'
+        assert native['standalone_minimum_interior_pixels_per_part_pose'] == 64
+        assert native['assembled_projection_independent_of_standalone'] is True
         assert native['original_cg_execution'] is False and native['reference_palettes_drive_rendering'] is False
         assert native['high_quality_materials_qualified'] is False
         assert native['front_face'] == 'CW' and native['depth_write'] is True
@@ -154,7 +157,7 @@ def validate(report, minimum_generations=2):
             assert sum(c['skin_pose_compared_pixels']) == c['skin_compared_pixels']
             assert sum(c['skin_pose_edge_excluded_pixels']) == c['skin_edge_excluded_pixels']
             assert sum(c['skin_pose_interior_pixels']) == c['skin_interior_pixels']
-            assert len(c['part_interior_pixels']) == 11 and all(n > 0 for n in c['part_interior_pixels'])
+            assert len(c['part_interior_pixels']) == 11 and all(n >= 64 * poses for n in c['part_interior_pixels'])
             assert c['part_transform_vertices'] == [part['vertex_count'] * poses for part in report['fixture']['parts']]
             assert c['part_palette_components'] == [len(part['palette_global_ids']) * 12 * poses for part in report['fixture']['parts']]
             assert len(c['part_image_compared_pixels']) == len(c['part_image_mismatches']) == 11
