@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "source_commit": "608eeffa7ececad26bfce5fc2ef00a3cbc81e243",
+  "workflow_run_id": "38481572798",
+  "application_id": "org.coh.characterprobe",
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "compile_sdk": 35,
+  "gradle": "8.9",
+  "gradle_distribution_sha256": "d725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab",
+  "android_gradle_plugin": "8.7.3",
+  "ndk": "28.2.13676358",
+  "cmake": "3.22.1",
+  "signing": "isolated CI debug key; not the production launcher key",
+  "phase": 8,
+  "probe_version": "0.1.0-phase8",
+  "original_game_execution": false,
+  "full_sequencer_execution": false,
+  "artifacts": [
+    {
+      "file": "CoH-Native-Character-Probe-0.1.0-arm64.apk",
+      "bytes": 1999956,
+      "sha256": "7b63e2de27eb84f678fecf2d91e37eb2d2eaf18728e4aa17abe98ef07c9ee71e",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_character_probe.so",
+        "bytes": 109824,
+        "sha256": "2900b4c720c8e276d3bc687cfd6ecb1d2fab1b196f1c72384c3ada078e2a2016"
+      },
+      "packaged_fixture_bytes_verified": true
+    },
+    {
+      "file": "CoH-Native-Character-Probe-0.1.0-emulator-x86_64.apk",
+      "bytes": 2006633,
+      "sha256": "610b4e86239eab5f36710b1df45cc36980cc8e0656ff6e306167d4fd49dc2e68",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "native_library": {
+        "file": "lib/x86_64/libcoh_character_probe.so",
+        "bytes": 116504,
+        "sha256": "fbeb2d68f146a9b5a53ed408425e10c42ba55b0270031818ad8b6f8a17930163"
+      },
+      "packaged_fixture_bytes_verified": true
+    }
+  ],
+  "fixture_assets": [
+    {
+      "file": "character-fixture.json",
+      "bytes": 319922,
+      "sha256": "2b73dd8cf02efec3cfbd961465c359de88da4281671ea7f4a38263ca32523195"
+    },
+    {
+      "file": "character-reference.bin",
+      "bytes": 438216,
+      "sha256": "0cb625fe9b01203bcd6f552398f4816987988c43c133743a579e8e670a471c07"
+    },
+    {
+      "file": "character.bin",
+      "bytes": 4261100,
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+    },
+    {
+      "file": "material-reference.bin",
+      "bytes": 1089856,
+      "sha256": "371af14de5ee603ad41fa82b4a02d5dfb29a4eb61ec58a0a2436b67b2edccfaa"
+    },
+    {
+      "file": "morph.bin",
+      "bytes": 3028,
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+    },
+    {
+      "file": "rig.bin",
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    }
+  ],
+  "thor_device_execution_verified": false
+}

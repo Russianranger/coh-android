@@ -1,0 +1,259 @@
+{
+  "schema": 1,
+  "phase": 8,
+  "passed": true,
+  "source_commit": "608eeffa7ececad26bfce5fc2ef00a3cbc81e243",
+  "workflow": {
+    "run_id": 38481572798,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38481572798",
+    "conclusion": "success",
+    "core_run_id": 38481572688,
+    "core_conclusion": "success"
+  },
+  "artifact": {
+    "id": 11857545966,
+    "bytes": 4822824,
+    "sha256": "b842b8b5beef4f692daf100b3e1792a653631d44af09d217db139a7e3afdee28"
+  },
+  "original_report": {
+    "bytes": 624588,
+    "sha256": "06443f5a5931d08fdb574a466c65767286100228a617900aed435572acf201ca"
+  },
+  "build_receipt_sha256": "5fb7c6fd909f51b4873e93aa7d2501ab4250bd8b7e82b9b4d5c0660e4f433646",
+  "scope": {
+    "android": "13",
+    "sdk": 33,
+    "abi": "x86_64",
+    "renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "hosted_emulator": true,
+    "ayn_thor_verified": false,
+    "whole_client_qualified": false,
+    "original_windows_capture": false
+  },
+  "qualification": {
+    "passed": true,
+    "pending_requirements": [],
+    "successful_runs": 6,
+    "failed_runs": 0,
+    "successful_surface_generations": 4,
+    "successful_actual_dimensions": 2,
+    "successful_widths": 2,
+    "successful_heights": 2,
+    "current_surface_passed": true,
+    "native_context_recreation": "required in each passing native run",
+    "limits": "Device-specific complete character assembly and single-clip diagnostic gate only; not full client/gameplay qualification"
+  },
+  "same_session_all_runs_verified": true,
+  "lifecycle": {
+    "event_names": [
+      "activity_created",
+      "activity_resumed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "resize_requested",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "surface_recreation_requested",
+      "surface_destroyed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "auto_smoke_completed",
+      "activity_paused",
+      "surface_destroyed",
+      "activity_stopped",
+      "activity_resumed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_requested",
+      "probe_completed",
+      "probe_completed",
+      "activity_paused",
+      "activity_resumed",
+      "probe_requested",
+      "resize_requested",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "activity_paused",
+      "activity_resumed",
+      "probe_requested",
+      "surface_recreation_requested",
+      "surface_destroyed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "probe_completed"
+    ],
+    "pause_index": 17,
+    "resume_index": 20,
+    "stop_and_surface_destruction_between_pause_resume": true,
+    "new_surface_after_resume": true
+  },
+  "fixture_assets": {
+    "character.bin": {
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7",
+      "bytes": 4261100
+    },
+    "rig.bin": {
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5",
+      "bytes": 11642
+    },
+    "morph.bin": {
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02",
+      "bytes": 3028
+    },
+    "material-reference.bin": {
+      "sha256": "371af14de5ee603ad41fa82b4a02d5dfb29a4eb61ec58a0a2436b67b2edccfaa",
+      "bytes": 1089856
+    },
+    "character-reference.bin": {
+      "sha256": "0cb625fe9b01203bcd6f552398f4816987988c43c133743a579e8e670a471c07",
+      "bytes": 438216
+    }
+  },
+  "run_dimensions": [
+    [
+      778,
+      558
+    ],
+    [
+      1038,
+      744
+    ]
+  ],
+  "successful_runs": 6,
+  "context_lifetimes": 12,
+  "count_totals": {
+    "successful_runs": 6,
+    "successful_surface_generations": 4,
+    "successful_actual_dimensions": 2,
+    "successful_actual_widths": 2,
+    "successful_actual_heights": 2,
+    "completed_context_cycles": 12,
+    "gpu_pose_components_compared": 1134432,
+    "skinned_image_pixels_compared": 14725272,
+    "material_pixels_compared": 3244032,
+    "window_samples_compared": 588,
+    "presented_animated_frames": 540,
+    "original_local_components_compared": 30240,
+    "hierarchy_world_components_compared": 51840,
+    "bind_translation_components_compared": 2160,
+    "scaled_world_components_compared": 51840,
+    "morph_scale_components_compared": 2304,
+    "standalone_image_pixels_compared": 185583168,
+    "socket_palette_components_compared": 38880,
+    "original_clock_cases_compared": 96,
+    "missing_motion_base_fallback_samples": 1152,
+    "stock_normal_components_compared_diagnostic_only": 567216,
+    "stock_normal_mismatches_diagnostic_only": 0,
+    "native_animation_clock_steps": 540,
+    "native_animation_clock_wraps": 12,
+    "animated_image_temporal_samples": 36,
+    "animated_images_changed_from_first": 24,
+    "animated_pixels_changed_from_first": 1564524
+  },
+  "maximum_errors": {
+    "gpu_absolute": 1.43051147e-06,
+    "standalone_rgba_bytes": 1,
+    "assembled_rgba_bytes": 0,
+    "material_rgba_bytes": 1
+  },
+  "mismatch_totals": {
+    "transform_mismatches": 0,
+    "local_mismatches": 0,
+    "world_mismatches": 0,
+    "scaled_world_mismatches": 0,
+    "btt_mismatches": 0,
+    "morph_scale_mismatches": 0,
+    "palette_mismatches": 0,
+    "skin_mismatches": 0,
+    "material_mismatches": 0,
+    "window_mismatches": 0,
+    "standalone_mismatches": 0,
+    "gl_errors": 0,
+    "egl_error": 0
+  },
+  "per_part_minimum_cumulative_six_checkpoint_interior_pixels": [
+    102622,
+    130031,
+    27788,
+    26939,
+    67490,
+    46847,
+    185282,
+    5081,
+    145019,
+    59257,
+    12211
+  ],
+  "per_part_pixel_mismatch_totals": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "source_sampling_policy": {
+    "character": "GL_LINEAR mip0",
+    "analytic_material_cases": "GL_NEAREST mip0",
+    "window_transfer": "GL_NEAREST / texelFetch",
+    "full_original_mip_chain_qualified": false
+  },
+  "tolerances": {
+    "gpu_absolute": 0.0001,
+    "rgba_bytes": 2,
+    "triangle_edge_guard_pixels": 2,
+    "standalone_minimum_pixels_each_part_each_checkpoint": 64
+  },
+  "cleanup_all_contexts_released": true,
+  "failed_pixel_diagnostic_records": 0,
+  "screen": {
+    "sha256": "4494c87b3ac21baa1e10e02a6c8885ee65402f05a7da4e0e018e1ea86f380d13",
+    "visually_reviewed_full_character_and_green_pass_banner": true
+  },
+  "arm64_apk": {
+    "file": "CoH-Native-Character-Probe-0.1.0-arm64.apk",
+    "bytes": 1999956,
+    "sha256": "7b63e2de27eb84f678fecf2d91e37eb2d2eaf18728e4aa17abe98ef07c9ee71e",
+    "abi": "arm64-v8a",
+    "elf_machine": 183,
+    "native_library": {
+      "file": "lib/arm64-v8a/libcoh_character_probe.so",
+      "bytes": 109824,
+      "sha256": "2900b4c720c8e276d3bc687cfd6ecb1d2fab1b196f1c72384c3ada078e2a2016"
+    },
+    "packaged_fixture_bytes_verified": true
+  },
+  "earlier_attempts": {
+    "first_active_failure": "first-emulator-failure.json",
+    "nearest_hair_failure": "hair-image-failure.json",
+    "intermediate_run_38479468359": "superseded and cancelled; not delivered"
+  },
+  "independent_local_revalidation": {
+    "emulator_checker": true,
+    "apk_elf_machine_and_abi": true,
+    "apk_and_native_library_size_sha256": true,
+    "five_binary_assets_match_independently_prepared_host_inputs": true,
+    "artifact_zip_identity_paths_size_symlink_checks": true
+  },
+  "physical_device_gate": "Install delivered ARM64 APK on Thor; resize, recreate, background/return, then export matching current foreground JSON and screenshot.",
+  "independent_audit": {
+    "file": "independent-qualified-audit.json",
+    "checks": 150,
+    "passed": true,
+    "sha256": "8c0145b13fc33a7ae5ec0371660fcebb52e2a60d27e535afb4b22945c75753d9"
+  }
+}
