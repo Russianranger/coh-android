@@ -25,7 +25,7 @@ static void rgb565(uint16_t v,uint8_t *c){
     unsigned r=v>>11,g=(v>>5)&63,b=v&31;
     c[0]=(uint8_t)((r<<3)|(r>>2));c[1]=(uint8_t)((g<<2)|(g>>4));c[2]=(uint8_t)((b<<3)|(b>>2));c[3]=255;
 }
-int coh_dds_rgba(const uint8_t *p,size_t n,uint32_t level,uint8_t *out,size_t capacity){
+static int decode_rgba(const uint8_t *p,size_t n,uint32_t level,uint8_t *out,size_t capacity,int legacy){
     CohDdsMip v;int status=coh_dds_mip(p,n,level,&v);if(status)return status;
     if(!out||capacity<v.rgba_bytes)return 1;
     /* Caller must supply a disjoint output buffer. No input/output overlap. */
@@ -36,15 +36,15 @@ int coh_dds_rgba(const uint8_t *p,size_t n,uint32_t level,uint8_t *out,size_t ca
         const uint8_t *color=block+(v.format==1?0:8);uint8_t c[4][4];
         uint16_t c0=u16(color),c1=u16(color+2);rgb565(c0,c[0]);rgb565(c1,c[1]);
         for(unsigned k=0;k<3;k++){
-            if(c0>c1||v.format!=1){c[2][k]=(uint8_t)((2*c[0][k]+c[1][k])/3);c[3][k]=(uint8_t)((c[0][k]+2*c[1][k])/3);}
+            if(c0>c1||(!legacy&&v.format!=1)){c[2][k]=(uint8_t)((2*c[0][k]+c[1][k]+(legacy?1:0))/3);c[3][k]=(uint8_t)((c[0][k]+2*c[1][k]+(legacy?1:0))/3);}
             else{c[2][k]=(uint8_t)((c[0][k]+c[1][k])/2);c[3][k]=0;}
         }
         c[2][3]=255;c[3][3]=(c0>c1||v.format!=1)?255:0;
         uint32_t selectors=u32(color+4);uint8_t alpha[8]={0};uint64_t abits=0;
         if(v.format==5){
             alpha[0]=block[0];alpha[1]=block[1];
-            if(alpha[0]>alpha[1])for(unsigned k=2;k<8;k++)alpha[k]=(uint8_t)(((8-k)*alpha[0]+(k-1)*alpha[1])/7);
-            else{for(unsigned k=2;k<6;k++)alpha[k]=(uint8_t)(((6-k)*alpha[0]+(k-1)*alpha[1])/5);alpha[6]=0;alpha[7]=255;}
+            if(alpha[0]>alpha[1])for(unsigned k=2;k<8;k++)alpha[k]=(uint8_t)(((8-k)*alpha[0]+(k-1)*alpha[1]+(legacy?3:0))/7);
+            else{for(unsigned k=2;k<6;k++)alpha[k]=(uint8_t)(((6-k)*alpha[0]+(k-1)*alpha[1]+(legacy?2:0))/5);alpha[6]=0;alpha[7]=255;}
             for(unsigned k=0;k<6;k++)abits|=(uint64_t)block[k+2]<<(k*8);
         }
         for(unsigned y=0;y<4;y++)for(unsigned x=0;x<4;x++){
@@ -58,3 +58,8 @@ int coh_dds_rgba(const uint8_t *p,size_t n,uint32_t level,uint8_t *out,size_t ca
     }
     return 0;
 }
+
+/* Keep generic decode stable; use the qualified legacy path for CPU texWords
+ * replacements. This intentionally preserves the vendor palette conventions. */
+int coh_dds_rgba(const uint8_t *p,size_t n,uint32_t level,uint8_t *out,size_t cap){return decode_rgba(p,n,level,out,cap,0);}
+int coh_dds_rgba_legacy(const uint8_t *p,size_t n,uint32_t level,uint8_t *out,size_t cap){return decode_rgba(p,n,level,out,cap,1);}

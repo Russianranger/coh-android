@@ -1,0 +1,149 @@
+
+decodeRGB.section.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	83 ec 18             	sub    $0x18,%esp
+   3:	8b 54 24 1c          	mov    0x1c(%esp),%edx
+   7:	0f b7 02             	movzwl (%edx),%eax
+   a:	8b c8                	mov    %eax,%ecx
+   c:	53                   	push   %ebx
+   d:	55                   	push   %ebp
+   e:	8b d8                	mov    %eax,%ebx
+  10:	56                   	push   %esi
+  11:	8b f0                	mov    %eax,%esi
+  13:	57                   	push   %edi
+  14:	8b f8                	mov    %eax,%edi
+  16:	c1 e9 05             	shr    $0x5,%ecx
+  19:	81 e7 ff f8 ff ff    	and    $0xfffff8ff,%edi
+  1f:	0b f9                	or     %ecx,%edi
+  21:	8b c8                	mov    %eax,%ecx
+  23:	c1 e8 02             	shr    $0x2,%eax
+  26:	83 e0 07             	and    $0x7,%eax
+  29:	81 e6 e0 07 00 00    	and    $0x7e0,%esi
+  2f:	83 e3 1f             	and    $0x1f,%ebx
+  32:	c1 e9 06             	shr    $0x6,%ecx
+  35:	c1 e3 03             	shl    $0x3,%ebx
+  38:	0b d8                	or     %eax,%ebx
+  3a:	c1 ef 08             	shr    $0x8,%edi
+  3d:	83 e1 18             	and    $0x18,%ecx
+  40:	0b ce                	or     %esi,%ecx
+  42:	8b 74 24 30          	mov    0x30(%esp),%esi
+  46:	8b c7                	mov    %edi,%eax
+  48:	0d 00 ff ff ff       	or     $0xffffff00,%eax
+  4d:	c1 e0 08             	shl    $0x8,%eax
+  50:	c1 e9 03             	shr    $0x3,%ecx
+  53:	0b c1                	or     %ecx,%eax
+  55:	c1 e0 08             	shl    $0x8,%eax
+  58:	0b c3                	or     %ebx,%eax
+  5a:	89 06                	mov    %eax,(%esi)
+  5c:	0f b7 42 02          	movzwl 0x2(%edx),%eax
+  60:	8b d0                	mov    %eax,%edx
+  62:	8b f0                	mov    %eax,%esi
+  64:	c1 ee 05             	shr    $0x5,%esi
+  67:	8b e8                	mov    %eax,%ebp
+  69:	81 e2 ff f8 ff ff    	and    $0xfffff8ff,%edx
+  6f:	0b d6                	or     %esi,%edx
+  71:	8b f0                	mov    %eax,%esi
+  73:	81 e5 e0 07 00 00    	and    $0x7e0,%ebp
+  79:	c1 ee 06             	shr    $0x6,%esi
+  7c:	83 e6 18             	and    $0x18,%esi
+  7f:	0b f5                	or     %ebp,%esi
+  81:	8b e8                	mov    %eax,%ebp
+  83:	c1 e8 02             	shr    $0x2,%eax
+  86:	83 e0 07             	and    $0x7,%eax
+  89:	83 e5 1f             	and    $0x1f,%ebp
+  8c:	c1 e5 03             	shl    $0x3,%ebp
+  8f:	0b e8                	or     %eax,%ebp
+  91:	c1 ea 08             	shr    $0x8,%edx
+  94:	8b c2                	mov    %edx,%eax
+  96:	0d 00 ff ff ff       	or     $0xffffff00,%eax
+  9b:	c1 e0 08             	shl    $0x8,%eax
+  9e:	c1 ee 03             	shr    $0x3,%esi
+  a1:	0b c6                	or     %esi,%eax
+  a3:	c1 e0 08             	shl    $0x8,%eax
+  a6:	0b c5                	or     %ebp,%eax
+  a8:	89 6c 24 24          	mov    %ebp,0x24(%esp)
+  ac:	8b 6c 24 30          	mov    0x30(%esp),%ebp
+  b0:	89 45 04             	mov    %eax,0x4(%ebp)
+  b3:	8b 44 24 2c          	mov    0x2c(%esp),%eax
+  b7:	66 8b 28             	mov    (%eax),%bp
+  ba:	66 3b 68 02          	cmp    0x2(%eax),%bp
+  be:	89 54 24 1c          	mov    %edx,0x1c(%esp)
+  c2:	0f 86 9f 00 00 00    	jbe    0x167
+  c8:	8d 54 7a 01          	lea    0x1(%edx,%edi,2),%edx
+  cc:	b8 ab aa aa aa       	mov    $0xaaaaaaab,%eax
+  d1:	f7 e2                	mul    %edx
+  d3:	d1 ea                	shr    $1,%edx
+  d5:	8b c2                	mov    %edx,%eax
+  d7:	0d 00 ff ff ff       	or     $0xffffff00,%eax
+  dc:	c1 e0 08             	shl    $0x8,%eax
+  df:	89 44 24 2c          	mov    %eax,0x2c(%esp)
+  e3:	8d 54 4e 01          	lea    0x1(%esi,%ecx,2),%edx
+  e7:	b8 ab aa aa aa       	mov    $0xaaaaaaab,%eax
+  ec:	f7 e2                	mul    %edx
+  ee:	8b 44 24 2c          	mov    0x2c(%esp),%eax
+  f2:	d1 ea                	shr    $1,%edx
+  f4:	0b c2                	or     %edx,%eax
+  f6:	8b 54 24 24          	mov    0x24(%esp),%edx
+  fa:	8b 6c 24 30          	mov    0x30(%esp),%ebp
+  fe:	c1 e0 08             	shl    $0x8,%eax
+ 101:	89 44 24 2c          	mov    %eax,0x2c(%esp)
+ 105:	8d 54 5a 01          	lea    0x1(%edx,%ebx,2),%edx
+ 109:	b8 ab aa aa aa       	mov    $0xaaaaaaab,%eax
+ 10e:	f7 e2                	mul    %edx
+ 110:	8b 44 24 2c          	mov    0x2c(%esp),%eax
+ 114:	d1 ea                	shr    $1,%edx
+ 116:	0b c2                	or     %edx,%eax
+ 118:	89 45 08             	mov    %eax,0x8(%ebp)
+ 11b:	8b 44 24 1c          	mov    0x1c(%esp),%eax
+ 11f:	8d 54 47 01          	lea    0x1(%edi,%eax,2),%edx
+ 123:	b8 ab aa aa aa       	mov    $0xaaaaaaab,%eax
+ 128:	f7 e2                	mul    %edx
+ 12a:	d1 ea                	shr    $1,%edx
+ 12c:	8b fa                	mov    %edx,%edi
+ 12e:	8d 4c 71 01          	lea    0x1(%ecx,%esi,2),%ecx
+ 132:	b8 ab aa aa aa       	mov    $0xaaaaaaab,%eax
+ 137:	f7 e1                	mul    %ecx
+ 139:	81 cf 00 ff ff ff    	or     $0xffffff00,%edi
+ 13f:	d1 ea                	shr    $1,%edx
+ 141:	c1 e7 08             	shl    $0x8,%edi
+ 144:	0b fa                	or     %edx,%edi
+ 146:	8b 54 24 24          	mov    0x24(%esp),%edx
+ 14a:	8d 4c 53 01          	lea    0x1(%ebx,%edx,2),%ecx
+ 14e:	b8 ab aa aa aa       	mov    $0xaaaaaaab,%eax
+ 153:	f7 e1                	mul    %ecx
+ 155:	c1 e7 08             	shl    $0x8,%edi
+ 158:	d1 ea                	shr    $1,%edx
+ 15a:	0b fa                	or     %edx,%edi
+ 15c:	89 7d 0c             	mov    %edi,0xc(%ebp)
+ 15f:	5f                   	pop    %edi
+ 160:	5e                   	pop    %esi
+ 161:	5d                   	pop    %ebp
+ 162:	5b                   	pop    %ebx
+ 163:	83 c4 18             	add    $0x18,%esp
+ 166:	c3                   	ret
+ 167:	8b 44 24 30          	mov    0x30(%esp),%eax
+ 16b:	03 d7                	add    %edi,%edx
+ 16d:	c1 e2 0f             	shl    $0xf,%edx
+ 170:	03 f1                	add    %ecx,%esi
+ 172:	8b 4c 24 24          	mov    0x24(%esp),%ecx
+ 176:	81 e2 ff 00 ff ff    	and    $0xffff00ff,%edx
+ 17c:	c1 e6 07             	shl    $0x7,%esi
+ 17f:	0b d6                	or     %esi,%edx
+ 181:	03 d9                	add    %ecx,%ebx
+ 183:	d1 eb                	shr    $1,%ebx
+ 185:	5f                   	pop    %edi
+ 186:	81 e2 00 ff ff ff    	and    $0xffffff00,%edx
+ 18c:	0b d3                	or     %ebx,%edx
+ 18e:	5e                   	pop    %esi
+ 18f:	c6 05 00 00 00 00 01 	movb   $0x1,0x0
+ 196:	81 ca 00 00 00 ff    	or     $0xff000000,%edx
+ 19c:	5d                   	pop    %ebp
+ 19d:	c7 40 0c 00 00 00 00 	movl   $0x0,0xc(%eax)
+ 1a4:	89 50 08             	mov    %edx,0x8(%eax)
+ 1a7:	5b                   	pop    %ebx
+ 1a8:	83 c4 18             	add    $0x18,%esp
+ 1ab:	c3                   	ret

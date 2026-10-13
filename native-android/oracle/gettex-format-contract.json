@@ -1,0 +1,44 @@
+{
+  "scope": "Pinned GetTex automatic compressed-output selection; not a full corpus census",
+  "repository_pin": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "sources": [
+    {
+      "path": "upstream/ouroboros/Utilities/GetTex/src/gettex.c",
+      "sha256": "a0050dc2364477c45d22e0252957a7402e388884c7a1e85000d5d7569ec7aeb6",
+      "producer_lines": [
+        1431,
+        1444
+      ],
+      "reader_dxt3_lines": [
+        1035,
+        1036
+      ]
+    },
+    {
+      "path": "upstream/ouroboros/Utilities/GetTex/src/texture_tools.cpp",
+      "sha256": "db8d9d1f1b14a8e9c4dd72538302e40f212ac2cdd09ce1cda2f30cf86e320dd5",
+      "compressed_option_lines": [
+        237,
+        245
+      ]
+    }
+  ],
+  "automatic_compressed_choices": [
+    {
+      "condition": "bump or normalmap",
+      "option": "DXT5nm",
+      "storage": "DXT5"
+    },
+    {
+      "condition": "alpha and no cutout",
+      "option": "DXT5",
+      "storage": "DXT5"
+    },
+    {
+      "condition": "otherwise",
+      "option": "DXT1",
+      "storage": "DXT1"
+    }
+  ],
+  "dxt3": "Supported by readers; not selected by this automatic compressor branch. Older/imported DXT3 assets may still exist."
+}

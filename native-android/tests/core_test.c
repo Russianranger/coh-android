@@ -45,6 +45,19 @@ int main(void){
     CHECK(coh_dds_rgba(dds,144,0,rgba+4,64)==0 && rgba[7]==255);
     memcpy(dds+84,"DXT5",4);dds[128]=20;dds[129]=200;memset(dds+130,0,6);
     CHECK(coh_dds_rgba(dds,144,0,rgba+4,64)==0 && rgba[7]==20);
+    /* Legacy CPU rounded interpolation differs intentionally from generic BC. */
+    unsigned char legacy[64],generic[64];memcpy(dds+84,"DXT1",4);le32(dds+28,1);
+    dds[128]=0x00;dds[129]=0xf8;dds[130]=0;dds[131]=0;le32(dds+132,0xaaaaaaaau);
+    CHECK(coh_dds_rgba_legacy(dds,136,0,legacy,64)==0);
+    CHECK(coh_dds_rgba(dds,136,0,generic,64)==0);
+    /* red endpoints 255/0 interpolate exactly here; all output alpha opaque. */
+    for(unsigned k=0;k<64;k+=4)CHECK(legacy[k]==170 && legacy[k+3]==255);
+    dds[128]=0x01;dds[129]=0; /* blue endpoint 8; third is rounded 5 vs floor 5 */
+    dds[130]=0;dds[131]=0;le32(dds+132,0xffffffffu); /* fourth is rounded 3 vs floor 2 */
+    CHECK(coh_dds_rgba_legacy(dds,136,0,legacy,64)==0);
+    CHECK(coh_dds_rgba(dds,136,0,generic,64)==0);
+    CHECK(legacy[2]==3 && generic[2]==2);
+    CHECK(coh_dds_rgba_legacy(dds,135,0,legacy,64)==1);
     printf("{\"passed\":true,\"checks\":%u,\"pointer_bytes\":%zu,\"long_bytes\":%zu,\"platform\":\"%s\"}\n",checks,sizeof(void*),sizeof(long),
 #ifdef __ANDROID__
         "Android Bionic"

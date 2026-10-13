@@ -1,0 +1,102 @@
+{
+  "status": "static deconstruction inference; full SDK oracle execution pending",
+  "library": "upstream/ouroboros/3rdparty/nvdxt/Release/nvDXTlibMT_S.lib",
+  "library_sha256": "1e9988ad52a01f44368d8d4150990ef2a033536a7a705424f04333143cd63b73",
+  "archive_member": "./ReleaseMT_STATIC_CPPLIB/dxt_interface.obj",
+  "member_bytes": 30912,
+  "member_sha256": "6f013774b0f434c1b142d601b9a1da6cb1a169e537b006c4f6bb71b692ffc3cd",
+  "functions": [
+    {
+      "symbol": "?decodeRGB@@YAXPAGPAI@Z",
+      "symbol_offset": 0,
+      "section_index": 50,
+      "section_name": ".text",
+      "code_bytes": 428,
+      "object_file_offset": 5077,
+      "relocation_offset": 5505,
+      "relocations": 1,
+      "code_sha256": "18e1b872c959b7802b34d7bbe4faf8e9af8d980f83b9cefcb6ef3caa7bd492f3"
+    },
+    {
+      "symbol": "?decodeAlpha@@YAXPAEPAI@Z",
+      "symbol_offset": 0,
+      "section_index": 52,
+      "section_name": ".text",
+      "code_bytes": 567,
+      "object_file_offset": 5541,
+      "relocation_offset": 0,
+      "relocations": 0,
+      "code_sha256": "162f34e78f2ba6738a54217061b63bc9a73dcfd3e8d3b6f5bbbe03cdd60db231"
+    },
+    {
+      "symbol": "?DXTCdecode@@YAXPAUDDS_HEADER@@0PAXHW4_D3DFORMAT@@HPAE@Z",
+      "symbol_offset": 0,
+      "section_index": 54,
+      "section_name": ".text",
+      "code_bytes": 3610,
+      "object_file_offset": 6134,
+      "relocation_offset": 9744,
+      "relocations": 51,
+      "code_sha256": "081787fd024f7573e793d40ed82109557dfe012c475b6658f3f6c8a3462b7c50"
+    }
+  ],
+  "inferences": [
+    {
+      "function": "decodeRGB",
+      "offsets": [
+        "0x07..0xb0"
+      ],
+      "formula": "RGB565 endpoint R/B=(v5<<3)|(v5>>2), G=(v6<<2)|(v6>>4)"
+    },
+    {
+      "function": "decodeRGB",
+      "offsets": [
+        "0xb7..0xc2"
+      ],
+      "formula": "Three-color branch selected when packed endpoint c0 <= c1"
+    },
+    {
+      "function": "decodeRGB",
+      "offsets": [
+        "0xc8..0x15c"
+      ],
+      "formula": "Four-color channels: C2=(2*C0+C1+1)//3; C3=(C0+2*C1+1)//3"
+    },
+    {
+      "function": "decodeRGB",
+      "offsets": [
+        "0x167..0x1a7"
+      ],
+      "formula": "Three-color C2=(C0+C1)//2, C3=0; DXT1 transparent selector3"
+    },
+    {
+      "function": "decodeAlpha",
+      "offsets": [
+        "0x30..0x174"
+      ],
+      "formula": "a0 > a1: entries k=2..7 equal ((8-k)*a0+(k-1)*a1+3)//7"
+    },
+    {
+      "function": "decodeAlpha",
+      "offsets": [
+        "0x175..0x236"
+      ],
+      "formula": "a0 <= a1: entries k=2..5 equal ((6-k)*a0+(k-1)*a1+2)//5, entries6=0/7=255"
+    },
+    {
+      "function": "DXTCdecode",
+      "offsets": [
+        "0xc5f..0xc75"
+      ],
+      "formula": "Common decodeRGB call used for DXT1/3/5 without forcing four-color mode"
+    },
+    {
+      "function": "DXTCdecode",
+      "offsets": [
+        "0xca6..0xcf4"
+      ],
+      "formula": "DXT1 assigns whole palette word; DXT3/5 preserves existing alpha then ORs RGB palette, including RGB when alpha is zero"
+    }
+  ],
+  "reproduce": "ar pP upstream/ouroboros/3rdparty/nvdxt/Release/nvDXTlibMT_S.lib ./ReleaseMT_STATIC_CPPLIB/dxt_interface.obj; extract each indexed COFF section raw bytes; objdump -D -b binary -m i386 (selected range for DXTCdecode)"
+}

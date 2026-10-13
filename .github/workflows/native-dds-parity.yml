@@ -5,6 +5,8 @@ on:
     paths:
       - 'native-android/oracle/**'
       - 'native-android/tools/dds_gate.py'
+      - 'native-android/tools/dds_diagnostics.py'
+      - 'native-android/include/coh_native_core.h'
       - 'native-android/tools/corpus/**'
       - 'native-android/src/coh_dds.c'
       - '.github/workflows/native-dds-parity.yml'
@@ -17,12 +19,23 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /native-android/
+            /upstream/ouroboros/3rdparty/nvdxt/Release/nvDXTlibMT_S.lib
+            /upstream/ouroboros/Game/CMakeLists.txt
+            /upstream/ouroboros/Game/src/render/dxtlibwrapper.cpp
       - name: Acquire pinned real textures
         run: python3 native-android/tools/corpus/acquire.py --output native-android/results/real-corpus
       - name: Decode real mip cases with native core
         run: |
           python3 native-android/tools/build.py --output native-android/results/host
-          python3 native-android/tools/dds_gate.py prepare --corpus native-android/results/real-corpus --library native-android/results/host/libcoh_native_core.so --output native-android/results/parity-cases
+          python3 native-android/tools/dds_gate.py prepare --corpus native-android/results/real-corpus --library native-android/results/host/libcoh_native_core.so --output native-android/results/parity-cases --legacy
+      - name: Prepare supplemental SDK behavior probes
+        run: |
+          python3 native-android/tools/dds_diagnostics.py --output native-android/results/diagnostics
+          python3 native-android/tools/dds_gate.py prepare --legacy --corpus native-android/results/diagnostics --library native-android/results/host/libcoh_native_core.so --output native-android/results/diagnostic-cases
       - uses: actions/upload-artifact@v4
         with:
           name: native-dds-inputs
@@ -34,6 +47,13 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /native-android/
+            /upstream/ouroboros/3rdparty/nvdxt/Release/nvDXTlibMT_S.lib
+            /upstream/ouroboros/Game/CMakeLists.txt
+            /upstream/ouroboros/Game/src/render/dxtlibwrapper.cpp
       - uses: actions/download-artifact@v4
         with:
           name: native-dds-inputs
@@ -42,13 +62,19 @@ jobs:
         shell: cmd
         run: native-android\oracle\build.cmd
       - name: Execute original decoder
-        run: python native-android/tools/dds_gate.py reference --cases native-android/results/parity-cases --exe native-android/results/original-oracle/nvdxt-reference.exe
+        run: |
+          python native-android/tools/dds_gate.py reference --cases native-android/results/parity-cases --exe native-android/results/original-oracle/nvdxt-reference.exe
+          python native-android/tools/dds_gate.py reference --cases native-android/results/diagnostic-cases --exe native-android/results/original-oracle/nvdxt-reference.exe
       - name: Compare exact pixels and dimensions
         run: python native-android/tools/dds_gate.py compare --cases native-android/results/parity-cases --output native-android/results/original-parity.json
+      - name: Compare supplemental SDK probes
+        if: always()
+        run: python native-android/tools/dds_gate.py compare --cases native-android/results/diagnostic-cases --output native-android/results/diagnostic-parity.json
       - name: Print detailed comparison evidence
         if: always()
         run: |
           if (Test-Path native-android/results/original-parity.json) { Get-Content native-android/results/original-parity.json }
+          if (Test-Path native-android/results/diagnostic-parity.json) { Get-Content native-android/results/diagnostic-parity.json }
       - uses: actions/upload-artifact@v4
         if: always()
         with:

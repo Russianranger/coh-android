@@ -40,4 +40,7 @@ typedef struct {
  * RGBA output must be disjoint from input. Output remains untouched on failure. */
 int coh_dds_mip(const uint8_t *,size_t,uint32_t level,CohDdsMip *);
 int coh_dds_rgba(const uint8_t *,size_t,uint32_t level,uint8_t *,size_t);
+/* Original nvDXT CPU compatibility: rounded interpolation and vendor color
+ * palette ordering. Generic BC output above retains its independent oracle. */
+int coh_dds_rgba_legacy(const uint8_t *,size_t,uint32_t level,uint8_t *,size_t);
 #endif

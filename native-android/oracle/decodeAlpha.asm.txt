@@ -1,0 +1,199 @@
+
+decodeAlpha.section.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	8a 01                	mov    (%ecx),%al
+   2:	84 c0                	test   %al,%al
+   4:	74 0d                	je     0x13
+   6:	0f b6 c0             	movzbl %al,%eax
+   9:	c1 e0 18             	shl    $0x18,%eax
+   c:	0d ff ff ff 00       	or     $0xffffff,%eax
+  11:	eb 02                	jmp    0x15
+  13:	33 c0                	xor    %eax,%eax
+  15:	89 06                	mov    %eax,(%esi)
+  17:	8a 41 01             	mov    0x1(%ecx),%al
+  1a:	84 c0                	test   %al,%al
+  1c:	74 0d                	je     0x2b
+  1e:	0f b6 c0             	movzbl %al,%eax
+  21:	c1 e0 18             	shl    $0x18,%eax
+  24:	0d ff ff ff 00       	or     $0xffffff,%eax
+  29:	eb 02                	jmp    0x2d
+  2b:	33 c0                	xor    %eax,%eax
+  2d:	89 46 04             	mov    %eax,0x4(%esi)
+  30:	8a 51 01             	mov    0x1(%ecx),%dl
+  33:	8a 01                	mov    (%ecx),%al
+  35:	3a c2                	cmp    %dl,%al
+  37:	0f b6 d2             	movzbl %dl,%edx
+  3a:	0f b6 c0             	movzbl %al,%eax
+  3d:	0f 86 32 01 00 00    	jbe    0x175
+  43:	8d 04 40             	lea    (%eax,%eax,2),%eax
+  46:	57                   	push   %edi
+  47:	8d 7c 42 03          	lea    0x3(%edx,%eax,2),%edi
+  4b:	b8 93 24 49 92       	mov    $0x92492493,%eax
+  50:	f7 ef                	imul   %edi
+  52:	03 d7                	add    %edi,%edx
+  54:	c1 fa 02             	sar    $0x2,%edx
+  57:	8b c2                	mov    %edx,%eax
+  59:	c1 e8 1f             	shr    $0x1f,%eax
+  5c:	03 c2                	add    %edx,%eax
+  5e:	c1 e0 18             	shl    $0x18,%eax
+  61:	85 c0                	test   %eax,%eax
+  63:	89 46 08             	mov    %eax,0x8(%esi)
+  66:	74 08                	je     0x70
+  68:	0d ff ff ff 00       	or     $0xffffff,%eax
+  6d:	89 46 08             	mov    %eax,0x8(%esi)
+  70:	0f b6 01             	movzbl (%ecx),%eax
+  73:	0f b6 51 01          	movzbl 0x1(%ecx),%edx
+  77:	8d 04 80             	lea    (%eax,%eax,4),%eax
+  7a:	8d 7c 50 03          	lea    0x3(%eax,%edx,2),%edi
+  7e:	b8 93 24 49 92       	mov    $0x92492493,%eax
+  83:	f7 ef                	imul   %edi
+  85:	03 d7                	add    %edi,%edx
+  87:	c1 fa 02             	sar    $0x2,%edx
+  8a:	8b c2                	mov    %edx,%eax
+  8c:	c1 e8 1f             	shr    $0x1f,%eax
+  8f:	03 c2                	add    %edx,%eax
+  91:	c1 e0 18             	shl    $0x18,%eax
+  94:	85 c0                	test   %eax,%eax
+  96:	89 46 0c             	mov    %eax,0xc(%esi)
+  99:	74 08                	je     0xa3
+  9b:	0d ff ff ff 00       	or     $0xffffff,%eax
+  a0:	89 46 0c             	mov    %eax,0xc(%esi)
+  a3:	0f b6 41 01          	movzbl 0x1(%ecx),%eax
+  a7:	0f b6 11             	movzbl (%ecx),%edx
+  aa:	40                   	inc    %eax
+  ab:	8d 04 40             	lea    (%eax,%eax,2),%eax
+  ae:	8d 3c 90             	lea    (%eax,%edx,4),%edi
+  b1:	b8 93 24 49 92       	mov    $0x92492493,%eax
+  b6:	f7 ef                	imul   %edi
+  b8:	03 d7                	add    %edi,%edx
+  ba:	c1 fa 02             	sar    $0x2,%edx
+  bd:	8b c2                	mov    %edx,%eax
+  bf:	c1 e8 1f             	shr    $0x1f,%eax
+  c2:	03 c2                	add    %edx,%eax
+  c4:	c1 e0 18             	shl    $0x18,%eax
+  c7:	85 c0                	test   %eax,%eax
+  c9:	89 46 10             	mov    %eax,0x10(%esi)
+  cc:	74 08                	je     0xd6
+  ce:	0d ff ff ff 00       	or     $0xffffff,%eax
+  d3:	89 46 10             	mov    %eax,0x10(%esi)
+  d6:	0f b6 01             	movzbl (%ecx),%eax
+  d9:	0f b6 51 01          	movzbl 0x1(%ecx),%edx
+  dd:	40                   	inc    %eax
+  de:	8d 04 40             	lea    (%eax,%eax,2),%eax
+  e1:	8d 3c 90             	lea    (%eax,%edx,4),%edi
+  e4:	b8 93 24 49 92       	mov    $0x92492493,%eax
+  e9:	f7 ef                	imul   %edi
+  eb:	03 d7                	add    %edi,%edx
+  ed:	c1 fa 02             	sar    $0x2,%edx
+  f0:	8b c2                	mov    %edx,%eax
+  f2:	c1 e8 1f             	shr    $0x1f,%eax
+  f5:	03 c2                	add    %edx,%eax
+  f7:	c1 e0 18             	shl    $0x18,%eax
+  fa:	85 c0                	test   %eax,%eax
+  fc:	89 46 14             	mov    %eax,0x14(%esi)
+  ff:	74 08                	je     0x109
+ 101:	0d ff ff ff 00       	or     $0xffffff,%eax
+ 106:	89 46 14             	mov    %eax,0x14(%esi)
+ 109:	0f b6 41 01          	movzbl 0x1(%ecx),%eax
+ 10d:	0f b6 11             	movzbl (%ecx),%edx
+ 110:	8d 04 80             	lea    (%eax,%eax,4),%eax
+ 113:	8d 7c 50 03          	lea    0x3(%eax,%edx,2),%edi
+ 117:	b8 93 24 49 92       	mov    $0x92492493,%eax
+ 11c:	f7 ef                	imul   %edi
+ 11e:	03 d7                	add    %edi,%edx
+ 120:	c1 fa 02             	sar    $0x2,%edx
+ 123:	8b c2                	mov    %edx,%eax
+ 125:	c1 e8 1f             	shr    $0x1f,%eax
+ 128:	03 c2                	add    %edx,%eax
+ 12a:	c1 e0 18             	shl    $0x18,%eax
+ 12d:	85 c0                	test   %eax,%eax
+ 12f:	89 46 18             	mov    %eax,0x18(%esi)
+ 132:	5f                   	pop    %edi
+ 133:	74 08                	je     0x13d
+ 135:	0d ff ff ff 00       	or     $0xffffff,%eax
+ 13a:	89 46 18             	mov    %eax,0x18(%esi)
+ 13d:	0f b6 41 01          	movzbl 0x1(%ecx),%eax
+ 141:	8d 14 40             	lea    (%eax,%eax,2),%edx
+ 144:	0f b6 01             	movzbl (%ecx),%eax
+ 147:	8d 4c 50 03          	lea    0x3(%eax,%edx,2),%ecx
+ 14b:	b8 93 24 49 92       	mov    $0x92492493,%eax
+ 150:	f7 e9                	imul   %ecx
+ 152:	03 d1                	add    %ecx,%edx
+ 154:	c1 fa 02             	sar    $0x2,%edx
+ 157:	8b c2                	mov    %edx,%eax
+ 159:	c1 e8 1f             	shr    $0x1f,%eax
+ 15c:	03 c2                	add    %edx,%eax
+ 15e:	c1 e0 18             	shl    $0x18,%eax
+ 161:	85 c0                	test   %eax,%eax
+ 163:	89 46 1c             	mov    %eax,0x1c(%esi)
+ 166:	0f 84 ca 00 00 00    	je     0x236
+ 16c:	0d ff ff ff 00       	or     $0xffffff,%eax
+ 171:	89 46 1c             	mov    %eax,0x1c(%esi)
+ 174:	c3                   	ret
+ 175:	8d 54 82 02          	lea    0x2(%edx,%eax,4),%edx
+ 179:	b8 67 66 66 66       	mov    $0x66666667,%eax
+ 17e:	f7 ea                	imul   %edx
+ 180:	d1 fa                	sar    $1,%edx
+ 182:	8b c2                	mov    %edx,%eax
+ 184:	c1 e8 1f             	shr    $0x1f,%eax
+ 187:	03 c2                	add    %edx,%eax
+ 189:	c1 e0 18             	shl    $0x18,%eax
+ 18c:	85 c0                	test   %eax,%eax
+ 18e:	89 46 08             	mov    %eax,0x8(%esi)
+ 191:	74 08                	je     0x19b
+ 193:	0d ff ff ff 00       	or     $0xffffff,%eax
+ 198:	89 46 08             	mov    %eax,0x8(%esi)
+ 19b:	0f b6 01             	movzbl (%ecx),%eax
+ 19e:	0f b6 51 01          	movzbl 0x1(%ecx),%edx
+ 1a2:	8d 04 40             	lea    (%eax,%eax,2),%eax
+ 1a5:	8d 54 50 02          	lea    0x2(%eax,%edx,2),%edx
+ 1a9:	b8 67 66 66 66       	mov    $0x66666667,%eax
+ 1ae:	f7 ea                	imul   %edx
+ 1b0:	d1 fa                	sar    $1,%edx
+ 1b2:	8b c2                	mov    %edx,%eax
+ 1b4:	c1 e8 1f             	shr    $0x1f,%eax
+ 1b7:	03 c2                	add    %edx,%eax
+ 1b9:	c1 e0 18             	shl    $0x18,%eax
+ 1bc:	85 c0                	test   %eax,%eax
+ 1be:	89 46 0c             	mov    %eax,0xc(%esi)
+ 1c1:	74 08                	je     0x1cb
+ 1c3:	0d ff ff ff 00       	or     $0xffffff,%eax
+ 1c8:	89 46 0c             	mov    %eax,0xc(%esi)
+ 1cb:	0f b6 41 01          	movzbl 0x1(%ecx),%eax
+ 1cf:	0f b6 11             	movzbl (%ecx),%edx
+ 1d2:	8d 04 40             	lea    (%eax,%eax,2),%eax
+ 1d5:	8d 54 50 02          	lea    0x2(%eax,%edx,2),%edx
+ 1d9:	b8 67 66 66 66       	mov    $0x66666667,%eax
+ 1de:	f7 ea                	imul   %edx
+ 1e0:	d1 fa                	sar    $1,%edx
+ 1e2:	8b c2                	mov    %edx,%eax
+ 1e4:	c1 e8 1f             	shr    $0x1f,%eax
+ 1e7:	03 c2                	add    %edx,%eax
+ 1e9:	c1 e0 18             	shl    $0x18,%eax
+ 1ec:	85 c0                	test   %eax,%eax
+ 1ee:	89 46 10             	mov    %eax,0x10(%esi)
+ 1f1:	74 08                	je     0x1fb
+ 1f3:	0d ff ff ff 00       	or     $0xffffff,%eax
+ 1f8:	89 46 10             	mov    %eax,0x10(%esi)
+ 1fb:	0f b6 51 01          	movzbl 0x1(%ecx),%edx
+ 1ff:	0f b6 01             	movzbl (%ecx),%eax
+ 202:	8d 4c 90 02          	lea    0x2(%eax,%edx,4),%ecx
+ 206:	b8 67 66 66 66       	mov    $0x66666667,%eax
+ 20b:	f7 e9                	imul   %ecx
+ 20d:	d1 fa                	sar    $1,%edx
+ 20f:	8b c2                	mov    %edx,%eax
+ 211:	c1 e8 1f             	shr    $0x1f,%eax
+ 214:	03 c2                	add    %edx,%eax
+ 216:	c1 e0 18             	shl    $0x18,%eax
+ 219:	85 c0                	test   %eax,%eax
+ 21b:	89 46 14             	mov    %eax,0x14(%esi)
+ 21e:	74 08                	je     0x228
+ 220:	0d ff ff ff 00       	or     $0xffffff,%eax
+ 225:	89 46 14             	mov    %eax,0x14(%esi)
+ 228:	c7 46 18 00 00 00 00 	movl   $0x0,0x18(%esi)
+ 22f:	c7 46 1c ff ff ff ff 	movl   $0xffffffff,0x1c(%esi)
+ 236:	c3                   	ret
