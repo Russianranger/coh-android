@@ -1,0 +1,36 @@
+{
+  "schema": "coh-native-animation-corpus-recovery-v1",
+  "status": "passed",
+  "source_release": "coh-assets-v1.0.0",
+  "source_repository": "Russianranger/coh-android",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "exact_http_range_enforced": true,
+  "etag_stable": true,
+  "zip_member_crc32_verified": true,
+  "all_fixture_sha256_verified": true,
+  "range_bytes_downloaded": 227744,
+  "range_count": 4,
+  "records": [
+    {
+      "id": "base",
+      "name": "assets/player_library/animations/huge/skel_ready.anim",
+      "file_name": "base.anim",
+      "size": 6171,
+      "compressed": 2568,
+      "crc32": "843b4d43",
+      "sha256": "19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6"
+    },
+    {
+      "id": "motion",
+      "name": "assets/player_library/animations/huge/run.anim",
+      "file_name": "motion.anim",
+      "size": 5331,
+      "compressed": 3872,
+      "crc32": "5449e379",
+      "sha256": "3a365aaabf6d67df5dc0aa5473a50585b8c64e6f2caa95d69dad0c0990afb1e6"
+    }
+  ],
+  "whole_outer_archive_hash_locally_verified": false,
+  "whole_inner_archive_hash_locally_verified": false
+}

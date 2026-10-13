@@ -1,0 +1,37 @@
+plugins { id 'com.android.application' }
+
+// Device packages stay ARM64-only. A separate x86_64 package is used by CI.
+def probeAbis = providers.gradleProperty('probeAbis').getOrElse('arm64-v8a').split(',') as List
+if (probeAbis.isEmpty() || probeAbis.any { !(it in ['arm64-v8a', 'x86_64']) }) {
+    throw new GradleException('probeAbis must contain arm64-v8a and/or x86_64')
+}
+
+android {
+    namespace 'org.coh.animationprobe'
+    compileSdk 35
+    buildToolsVersion '35.0.0'
+    ndkVersion '28.2.13676358'
+
+    defaultConfig {
+        applicationId 'org.coh.animationprobe'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '0.1.0-phase7'
+        ndk { abiFilters.addAll(probeAbis) }
+        externalNativeBuild {
+            cmake { arguments '-DANDROID_STL=c++_static' }
+        }
+    }
+    externalNativeBuild {
+        cmake { path file('src/main/cpp/CMakeLists.txt'); version '3.22.1' }
+    }
+    buildTypes {
+        debug { debuggable true; jniDebuggable true; minifyEnabled false }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    packaging { jniLibs { useLegacyPackaging = false } }
+}

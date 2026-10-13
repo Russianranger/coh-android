@@ -1,0 +1,158 @@
+{
+  "format": "phase7-animation-source-pins-v1",
+  "repository_checkout_head": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "source_baseline": "Immutable source/data git objects used by accepted Phase6; no upstream working modifications",
+  "original_runtime_capture": false,
+  "files": [
+    {
+      "path": "upstream/ouroboros/Common/seq/seqload.c",
+      "bytes": 48866,
+      "sha256": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f",
+      "git_blob": "df5ded4570ad5cf03fe3ea632ad5e61319bab6d1"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/seqsequence.c",
+      "bytes": 41616,
+      "sha256": "7c816b4dacdfbfac8eecef08c105caf55bb5c1652fac6b100d69ddb4a4b1aefa",
+      "git_blob": "e919c42b3882fa553123f5bbb12380bcde4af027"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/seqskeleton.c",
+      "bytes": 38072,
+      "sha256": "b0c01576fa013f05d507e0f638550866810dd63cfb1ee1106cf9f96f7477a47c",
+      "git_blob": "bea426ba4b397b5ee2cd7aa2609482311993534c"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/seqanimate.c",
+      "bytes": 28057,
+      "sha256": "a4926555f4da4052058f06d28a195edcedae16cb7e905c05e8963afe9915ed22",
+      "git_blob": "160e1ea481dfdd3b14c1a62cccb3edd50467e563"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/animtrack.c",
+      "bytes": 13057,
+      "sha256": "a8f07b2a46d9a45640770707d5730ddc2f9f53cfbde3dd546f66ec9e89dfd50e",
+      "git_blob": "4ac5d94665b0d7784a800b93fd0d32987b0212da"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/animtrackanimate.c",
+      "bytes": 51080,
+      "sha256": "ad976409823db61d1610e3cece2ba323ffc7623af8be1c2c1ac8b38abdcebf21",
+      "git_blob": "3c1bd95efae8215298f8c0bfcecae63bdeb99c2e"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/animtrack.h",
+      "bytes": 4544,
+      "sha256": "ff3e83448d6ce7ccc03e60564d5d9d4d0916b1b77289c220557f0c1fbc657ef2",
+      "git_blob": "8a9a62b314db1570d5a192eed30d82e100d2c730"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/bones.h",
+      "bytes": 3012,
+      "sha256": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+      "git_blob": "1c58b91aea72e40ed66511d6f8ba80d671a658f7"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/bones.c",
+      "bytes": 1331,
+      "sha256": "6aa2eccca9852d7d35f4170629de8f263a22f0fadf83a3a2d7639de9d300c073",
+      "git_blob": "3032532b7ceda6f98e0961315b508562ecf3c9b2"
+    },
+    {
+      "path": "upstream/ouroboros/Common/gameData/BodyPart.c",
+      "bytes": 4246,
+      "sha256": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+      "git_blob": "08120a0491aeb3eebc915380585d4ff343640f7f"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/Quat.c",
+      "bytes": 10296,
+      "sha256": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b",
+      "git_blob": "1ec6f55275629f1db8c6f93453d7a99f38701f6c"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+      "bytes": 47551,
+      "sha256": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "git_blob": "8cbfbdc5d68f3b35043fb176753fd7fbad953c7b"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/rendertree.c",
+      "bytes": 128217,
+      "sha256": "9160762900e4f1a9124b7e852e8f98b0336934343eceddbaf37775c03c9c0e32",
+      "git_blob": "ac721e5583eac2be2f01cc5510c8978f92b1d07e",
+      "working_bytes_match_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/renderbonedmodel.c",
+      "bytes": 11628,
+      "sha256": "f6a1764baa2d55302d0f52325200fc0b49a107de4458ff739d8768ce4232c2cc",
+      "git_blob": "9035c67c53780084d4b0abf970c317e7ac404938",
+      "working_bytes_match_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_bonedmodel.c",
+      "bytes": 20404,
+      "sha256": "e64ec178a7fc90b260da7c9be8aadbd5014c2dd0e909ae221630b5ea4ae74325",
+      "git_blob": "eb68bde128c10870dc00f4f70b9081a1ab631907",
+      "working_bytes_match_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/graphics/gfx.c",
+      "bytes": 58931,
+      "sha256": "9965ea6a472a8b693015540a53142cdf023a2399ecc9dc88f338c5f0b4f42a7e",
+      "git_blob": "ed836bf84948ec379d4eb4161472abb7a87b2edc",
+      "working_bytes_match_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/entity/entclient.c",
+      "bytes": 129281,
+      "sha256": "a11e3b84a2dc87daf2302df674f5af15260c32180494ca1b75af9e44786c7c2d",
+      "git_blob": "3e1db3120349681c275ff5139010abe244223e0d",
+      "working_bytes_match_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/entity/costume_client.c",
+      "bytes": 31319,
+      "sha256": "b89818e2c2c834efd14f90e8af882d572b9c24337f9f2a699150d2d1648925f2",
+      "git_blob": "5d942af926a39f1e3b281642001f4223faa9c43f",
+      "working_bytes_match_blob": true
+    },
+    {
+      "path": "upstream/i24/data/ent_types/v_arachnos_wretch.txt",
+      "bytes": 1203,
+      "sha256": "33c3e292cf87c4334259a51d1387718cf3bc887517498b5903e61a988cd6468c",
+      "git_blob": "673efd4b86a9ba0cda7409915ae68390117c0bcf"
+    },
+    {
+      "path": "upstream/i24/data/sequencers/player.txt",
+      "bytes": 15214,
+      "sha256": "c334dfc0719e5e1d4b4e17cd6707d8cc10b4c66e826de71f4313f9fcd7678258",
+      "git_blob": "284e3146103c8cb5fd77b735e4d9729141c3be27"
+    },
+    {
+      "path": "upstream/i24/data/sequencers/player/motion.inc",
+      "bytes": 96641,
+      "sha256": "a4491460f5ffc093dbdd4333b60694e94d91581a8e6ba55009e17560fa221fcd",
+      "git_blob": "6362f790a5de712222271dda201e98133a6fab7c"
+    },
+    {
+      "path": "upstream/i24/data/sequencers/player/readies.inc",
+      "bytes": 29929,
+      "sha256": "91fefb75679eb23543b9065afb8984a378715f5224ed8fcbe519dd36a5624d5a",
+      "git_blob": "adf7e0e0e390c53967dae2194885ed3c1a088489"
+    },
+    {
+      "path": "upstream/i24/data/defs/ui/bodyparts.bp",
+      "bytes": 5218,
+      "sha256": "21aedaa7b4c901a6e6b8a1a7684f343dba675adc0472bdc6053d378ece37558d",
+      "git_blob": "899dd71bfa0553485555338c658dfa753e8f4f85"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c",
+      "bytes": 37198,
+      "sha256": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "git_blob": "a4ed82b07906da4bb6cfd1ed562b353e147faf69"
+    }
+  ]
+}

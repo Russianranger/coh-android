@@ -1,0 +1,290 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "exact original animation/math scalar functions on Linux host with portable type/macro shims; neutral hierarchy and socket orchestration follows source formulas",
+  "win32_game_execution": false,
+  "android_device_execution": false,
+  "rig_sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5",
+  "base_sha256": "19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6",
+  "motion_sha256": "3a365aaabf6d67df5dc0aa5473a50585b8c64e6f2caa95d69dad0c0990afb1e6",
+  "original_sources": {
+    "format": 1,
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "sources": {
+      "animtrackanimate.c": {
+        "path": "Common/seq/animtrackanimate.c",
+        "sha256_lf": "ad976409823db61d1610e3cece2ba323ffc7623af8be1c2c1ac8b38abdcebf21"
+      },
+      "animtrackanimate.h": {
+        "path": "Common/seq/animtrackanimate.h",
+        "sha256_lf": "1c3292e5938562e6d4c093cd52d5ef0d92f58cabf0e18048f926df5e7d71e273"
+      },
+      "Quat.c": {
+        "path": "libs/UtilitiesLib/src/utils/Quat.c",
+        "sha256_lf": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b"
+      },
+      "mathutil.c": {
+        "path": "libs/UtilitiesLib/src/utils/mathutil.c",
+        "sha256_lf": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f"
+      },
+      "mathutil.h": {
+        "path": "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+        "sha256_lf": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111"
+      },
+      "netcomp.c": {
+        "path": "libs/UtilitiesLib/src/network/netcomp.c",
+        "sha256_lf": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370"
+      },
+      "seqskeleton.c": {
+        "path": "Common/seq/seqskeleton.c",
+        "sha256_lf": "b0c01576fa013f05d507e0f638550866810dd63cfb1ee1106cf9f96f7477a47c"
+      },
+      "seqsequence.c": {
+        "path": "Common/seq/seqsequence.c",
+        "sha256_lf": "7c816b4dacdfbfac8eecef08c105caf55bb5c1652fac6b100d69ddb4a4b1aefa"
+      }
+    },
+    "functions": {
+      "initLookUpTable": {
+        "source": "animtrackanimate.c",
+        "sha256_lf": "e6ac023fceeb801cd8174ee058962b7aeab55fe28a436c2d041cafe49d7f0cb0"
+      },
+      "unPack5ByteQuat": {
+        "source": "animtrackanimate.c",
+        "sha256_lf": "8279bf7db7e04e5eacf972f9cea2e5191cc8da99c3d2942a45898817ef2f0b12"
+      },
+      "unpackQuatElemQuarterPi": {
+        "source": "netcomp.c",
+        "sha256_lf": "7a4321d9d0a82cef17a70e449d8e25ab564ae7d86fe84691c51e7e23af102d4b"
+      },
+      "animExpand5ByteQuat": {
+        "source": "animtrackanimate.c",
+        "sha256_lf": "f42a224b7f3d51ce0b1b1f634f3841da77f5d3565c872d5249f696fc9c0969d6"
+      },
+      "animExpandNonLinearQuat": {
+        "source": "animtrackanimate.c",
+        "sha256_lf": "cb5a8e6ad0dbab65d4589182fe6a28a4e89abbea02d848041fab87fcc7fc414f"
+      },
+      "animExpand8ByteQuat": {
+        "source": "animtrackanimate.c",
+        "sha256_lf": "1b053a0c07af82962973415181af731d1bd89f8371fab876f8a743f8be1cc14f"
+      },
+      "animExpand6BytePosition": {
+        "source": "animtrackanimate.c",
+        "sha256_lf": "12057165aaad5a0fc4a2dee73a5a856c3cd954b8f16f6072976a403bc23d0de5"
+      },
+      "quatNormalize": {
+        "source": "Quat.c",
+        "sha256_lf": "393503ca9d73f9b9f68ead000d9b2b32938191891e24bf72c2002a6ca9e587d3"
+      },
+      "quatInterp": {
+        "source": "Quat.c",
+        "sha256_lf": "d8c97643a5f524ad2a4390b63047c42cfe8cfaf9a0e55e44d09c752b0e8f67df"
+      },
+      "quatToMat": {
+        "source": "Quat.c",
+        "sha256_lf": "6981d8e5ebb0ad2a79b828cce3d4034c3351f5e3e7cdf9c457a41c788bbeb73e"
+      },
+      "posInterp": {
+        "source": "mathutil.c",
+        "sha256_lf": "5db0f8d07fdb628d1c8a917e18bebfb0adacd2f5b172564766671cbafca978a3"
+      },
+      "animCalcTrackIdxs": {
+        "source": "animtrackanimate.c",
+        "sha256_lf": "2b0f3166d9d7bb38c39e69596933c72f30982da9b42ac7bd3c2d39c514b5c31a"
+      },
+      "deriveMinAndMaxRotKeys": {
+        "source": "animtrackanimate.c",
+        "sha256_lf": "a1a4e33c23c4ffb8536c9642104480fc86a2203f741be41222e6249641213948"
+      },
+      "deriveMinAndMaxPosKeys": {
+        "source": "animtrackanimate.c",
+        "sha256_lf": "04638c4fc3b6097e2e71b7ac768f1523f6e6033bbdbad0cd529b1d30b0da47f6"
+      },
+      "animGetRotationValue": {
+        "source": "animtrackanimate.c",
+        "sha256_lf": "e011f935f9581a2f6ccc3a3866c94457bf11f3c44c883c97eecb3db1bd63aef8"
+      },
+      "animGetPositionValue": {
+        "source": "animtrackanimate.c",
+        "sha256_lf": "5e4e450dfd3258bafeb4758e28621b2532d92003d35c904a57c882f518435fa1"
+      },
+      "getBaseRotation": {
+        "source": "seqskeleton.c",
+        "sha256_lf": "fec1d7add48d3530e7b5de62aaaa634f7112aa52a6a780adca116cdb209dbbce"
+      },
+      "getBasePosition": {
+        "source": "seqskeleton.c",
+        "sha256_lf": "ae42479b533e75009bee5913b102e3a9d6b32b0e3a27e220cccac5f89c73dbec"
+      },
+      "mulMat4Inline": {
+        "source": "mathutil.h",
+        "sha256_lf": "31b591763c44c575540a15c2d15cafa7f28fa8e769a39f887eed5fb9f6ac8a3e"
+      },
+      "mulVecMat4": {
+        "source": "mathutil.h",
+        "sha256_lf": "5b88fbd041800c072d550739d12b13f50567609c437d7ca55da7b194e8d4f1a3"
+      },
+      "seqCycleFrame": {
+        "source": "seqsequence.c",
+        "sha256_lf": "b567e96db695cd7fa811f3465782ddf3b8a1738850e3e4d0d8823356282fd62a"
+      }
+    }
+  },
+  "generated_oracle_sha256": "4e9ffeac1fe2f86321b3504b318d608a15282cf62396128de59b8370f8f3206d",
+  "native_source_sha256": "c3b93832caa8f443d00da89b388007930e8d989959baa9b70bbc137de6291f22",
+  "native_header_sha256": "f9fac099a6cf651fcc46f147d021386f2925b156152656178a2510d05a789bd0",
+  "base_tracks": 60,
+  "motion_tracks": 44,
+  "reachable_bones": 60,
+  "outer_roots": [
+    0,
+    61
+  ],
+  "checked_frames": [
+    0.0,
+    1.0,
+    1.5,
+    2.0,
+    3.0,
+    4.0,
+    5.0,
+    5.25,
+    6.0,
+    7.0,
+    8.0,
+    9.0,
+    10.0,
+    11.0,
+    12.0,
+    12.5,
+    13.0,
+    14.0,
+    15.0,
+    16.0,
+    17.0,
+    18.0,
+    19.0,
+    20.0,
+    21.0,
+    22.0,
+    23.0,
+    24.0,
+    24.5,
+    25.0,
+    25.5
+  ],
+  "scalar_comparisons": 13020,
+  "maximum_absolute_error": 0.0,
+  "original_math_comparisons": {
+    "base_matrix_scalars": 720,
+    "bind_translation_scalars": 180,
+    "world_scalars": 22320,
+    "bpt_scalars": 22320,
+    "socket_palette_scalars": 1116
+  },
+  "original_math_maximum_absolute_error": 0.0,
+  "original_cycle_cases": [
+    {
+      "current": 25.0,
+      "timestep_frames": 0.0,
+      "effective_rate": 1.0,
+      "wrapped": false,
+      "expected": 25.0
+    },
+    {
+      "current": 24.0,
+      "timestep_frames": 1.0,
+      "effective_rate": 1.0,
+      "wrapped": false,
+      "expected": 25.0
+    },
+    {
+      "current": 25.0,
+      "timestep_frames": 0.5,
+      "effective_rate": 1.0,
+      "wrapped": true,
+      "expected": 1.5
+    },
+    {
+      "current": 24.0,
+      "timestep_frames": 2.0,
+      "effective_rate": 1.0,
+      "wrapped": true,
+      "expected": 2.0
+    },
+    {
+      "current": 25.0,
+      "timestep_frames": 25.0,
+      "effective_rate": 1.0,
+      "wrapped": true,
+      "expected": 1.0
+    },
+    {
+      "current": 25.0,
+      "timestep_frames": 24.0,
+      "effective_rate": 1.0,
+      "wrapped": true,
+      "expected": 25.0
+    },
+    {
+      "current": 1.0,
+      "timestep_frames": 100.0,
+      "effective_rate": 1.0,
+      "wrapped": true,
+      "expected": 1.0
+    },
+    {
+      "current": 24.0,
+      "timestep_frames": 2.0,
+      "effective_rate": 0.0,
+      "wrapped": false,
+      "expected": 24.0
+    },
+    {
+      "current": 24.0,
+      "timestep_frames": 2.0,
+      "effective_rate": 2.0,
+      "wrapped": true,
+      "expected": 4.0
+    }
+  ],
+  "executed_original_functions": [
+    "initLookUpTable",
+    "unPack5ByteQuat",
+    "animExpand5ByteQuat",
+    "animExpand6BytePosition",
+    "quatNormalize",
+    "quatInterp",
+    "quatToMat",
+    "posInterp",
+    "animCalcTrackIdxs",
+    "deriveMinAndMaxRotKeys",
+    "deriveMinAndMaxPosKeys",
+    "animGetRotationValue",
+    "animGetPositionValue",
+    "getBaseRotation",
+    "getBasePosition",
+    "mulMat4Inline",
+    "mulVecMat4",
+    "seqCycleFrame"
+  ],
+  "compiled_but_unexercised_original_functions": [
+    "unpackQuatElemQuarterPi",
+    "animExpandNonLinearQuat",
+    "animExpand8ByteQuat"
+  ],
+  "reference_frames": [
+    1.0,
+    1.5,
+    5.25,
+    12.5,
+    24.5,
+    25.0
+  ],
+  "used_key_formats": {
+    "rotation": "linear5-byte (flags2)",
+    "position": "rawfloat3 (flags8) and compressedS16x3 /32000 (flags16)"
+  },
+  "legacy_compiler_diagnostics": ""
+}

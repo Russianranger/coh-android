@@ -1,0 +1,53 @@
+{
+  "format": "phase7-independent-hierarchy-native-host-v1",
+  "status": "passed",
+  "rig_sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5",
+  "reference_sha256": "d2df49da3145db8852add06b262a6109c1af76bd988a3aa237ca8a4c26067748",
+  "native_source_sha256": "c3b93832caa8f443d00da89b388007930e8d989959baa9b70bbc137de6291f22",
+  "independent_reference_source_sha256": "146205669a2f49940bc85dc3fb07e43287201b65c3ebe6e19a6c9b5b128798f6",
+  "frames": [
+    1.0,
+    1.5,
+    5.25,
+    12.5,
+    24.5,
+    25.0
+  ],
+  "bone_count": 60,
+  "palette_ids": [
+    9,
+    5,
+    7
+  ],
+  "socket_id": 72,
+  "absolute_tolerance": 0.0001,
+  "stages": {
+    "local": {
+      "components": 2520,
+      "mismatches": 0,
+      "maximum_absolute_error": 0.0
+    },
+    "btt": {
+      "components": 180,
+      "mismatches": 0,
+      "maximum_absolute_error": 2.384185791015625e-07
+    },
+    "world": {
+      "components": 4320,
+      "mismatches": 0,
+      "maximum_absolute_error": 7.152557373046875e-07
+    },
+    "bpt": {
+      "components": 4320,
+      "mismatches": 0,
+      "maximum_absolute_error": 1.1920928955078125e-06
+    },
+    "palette": {
+      "components": 216,
+      "mismatches": 0,
+      "maximum_absolute_error": 7.152557373046875e-07
+    }
+  },
+  "android_device_execution": false,
+  "original_runtime_capture": false
+}

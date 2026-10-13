@@ -1,0 +1,208 @@
+{
+  "format": 1,
+  "source_repository": "Russianranger/coh-android",
+  "release_tag": "coh-assets-v1.0.0",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip",
+  "outer_expected_bytes": 615545248,
+  "outer_published_sha256": "e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e",
+  "outer_full_hash_locally_verified": false,
+  "inner_member": "payloads/atlas/atlas-assets.zip",
+  "inner_expected_bytes": 615541018,
+  "inner_published_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+  "inner_full_hash_locally_verified": false,
+  "source_index": {
+    "member": "payloads/atlas/atlas-assets-index.tsv",
+    "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480",
+    "full_file_locally_verified": true
+  },
+  "records": [
+    {
+      "name": "assets/player_library/animations/huge/skel_ready.anim",
+      "size": 6171,
+      "compressed": 2568,
+      "offset": 301402561,
+      "crc32": "843b4d43",
+      "method": 8,
+      "sha256": "19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6",
+      "header": {
+        "format": "coh_win32_animation",
+        "validation_status": "structural_checks_passed",
+        "runtime_compatibility": "unverified",
+        "validation_scope": "32-bit disk layout, bounds, key flags/counts, loader numeric predicates, reachable hierarchy",
+        "file_bytes": 6171,
+        "errors": [],
+        "warnings": [],
+        "name": "huge/Skel_ready",
+        "base_anim_name": "huge/Skel_ready",
+        "header_size": 3000,
+        "bone_tracks_offset": 1800,
+        "bone_track_count": 60,
+        "hierarchy_offset": 596,
+        "hierarchy_capacity": 100,
+        "hierarchy_reachable_count": 60,
+        "max_hip_displacement": 0.0,
+        "length_frames": 60.0,
+        "rotation_compression_type": 0,
+        "position_compression_type": 0,
+        "rotation_formats": {
+          "compressed_5_bytes": 60
+        },
+        "position_formats": {
+          "uncompressed": 10,
+          "compressed_6_bytes": 50
+        },
+        "rotation_key_count": 327,
+        "position_key_count": 243
+      },
+      "file_name": "base.anim",
+      "id": "base"
+    },
+    {
+      "name": "assets/player_library/animations/huge/run.anim",
+      "size": 5331,
+      "compressed": 3872,
+      "offset": 301134588,
+      "crc32": "5449e379",
+      "method": 8,
+      "sha256": "3a365aaabf6d67df5dc0aa5473a50585b8c64e6f2caa95d69dad0c0990afb1e6",
+      "header": {
+        "format": "coh_win32_animation",
+        "validation_status": "structural_checks_passed",
+        "runtime_compatibility": "unverified",
+        "validation_scope": "32-bit disk layout, bounds, key flags/counts, loader numeric predicates, reachable hierarchy",
+        "file_bytes": 5331,
+        "errors": [],
+        "warnings": [],
+        "name": "huge/run",
+        "base_anim_name": "huge/Skel_ready",
+        "header_size": 1476,
+        "bone_tracks_offset": 596,
+        "bone_track_count": 44,
+        "hierarchy_offset": 0,
+        "hierarchy_capacity": 0,
+        "hierarchy_reachable_count": 0,
+        "max_hip_displacement": 0.0,
+        "length_frames": 25.0,
+        "rotation_compression_type": 0,
+        "position_compression_type": 0,
+        "rotation_formats": {
+          "compressed_5_bytes": 44
+        },
+        "position_formats": {
+          "uncompressed": 6,
+          "compressed_6_bytes": 38
+        },
+        "rotation_key_count": 531,
+        "position_key_count": 119
+      },
+      "file_name": "motion.anim",
+      "id": "motion"
+    }
+  ],
+  "palette_global_ids": [
+    9,
+    5,
+    7
+  ],
+  "socket_global_id": 72,
+  "model_name": "GEO_Sleeves_Wretch",
+  "real_mesh_source_sha256": "7d56d6fe65a1be2d02fe66e078b4c7b6a3998177dce47e8ac35b34a77baa413c",
+  "binding": {
+    "npc": "Arachnos_Wretch",
+    "enttype": "V_Arachnos_Wretch",
+    "sequencer": "player.txt",
+    "sequencer_type": "huge",
+    "parent_type": "male",
+    "base_skeleton": "huge\\skel_ready",
+    "motion": "huge\\run",
+    "move": "RunCycle",
+    "source_anim_range": [
+      1,
+      25
+    ],
+    "source_move_rate": 0.7,
+    "source_flags": [
+      "Cycle",
+      "MoveScale",
+      "SmoothSprint"
+    ],
+    "geom_scale": [
+      1.3,
+      1.3,
+      1.3
+    ],
+    "bone_morphing_applied": false,
+    "full_sequencer_state_applied": false,
+    "source_files": [
+      {
+        "path": "upstream/i24/data/ent_types/v_arachnos_wretch.txt",
+        "role": "enttype selects player sequencer/type huge",
+        "sha256": "33c3e292cf87c4334259a51d1387718cf3bc887517498b5903e61a988cd6468c",
+        "bytes": 1203,
+        "git_blob": "673efd4b86a9ba0cda7409915ae68390117c0bcf"
+      },
+      {
+        "path": "upstream/i24/data/sequencers/player.txt",
+        "lines": [
+          302,
+          305
+        ],
+        "role": "type huge selects base skeleton",
+        "sha256": "c334dfc0719e5e1d4b4e17cd6707d8cc10b4c66e826de71f4313f9fcd7678258",
+        "bytes": 15214,
+        "git_blob": "284e3146103c8cb5fd77b735e4d9729141c3be27"
+      },
+      {
+        "path": "upstream/i24/data/sequencers/player/motion.inc",
+        "lines": [
+          140,
+          145,
+          187,
+          192
+        ],
+        "role": "RunCycle huge motion track and range",
+        "sha256": "a4491460f5ffc093dbdd4333b60694e94d91581a8e6ba55009e17560fa221fcd",
+        "bytes": 96641,
+        "git_blob": "6362f790a5de712222271dda201e98133a6fab7c"
+      },
+      {
+        "path": "upstream/i24/data/defs/ui/bodyparts.bp",
+        "lines": [
+          170,
+          176
+        ],
+        "role": "Sleeves attachment socket72",
+        "sha256": "21aedaa7b4c901a6e6b8a1a7684f343dba675adc0472bdc6053d378ece37558d",
+        "bytes": 5218,
+        "git_blob": "899dd71bfa0553485555338c658dfa753e8f4f85"
+      }
+    ],
+    "source_anim_first_frame_is_literal": true,
+    "diagnostic_clock": {
+      "first": 1,
+      "last": 25,
+      "ticks_per_second": 30,
+      "rate": 1,
+      "source_move_rate_is_not_clock_multiplier": true,
+      "state": "frame-based diagnostic controls; movement velocity and full sequencer scale outside probe"
+    }
+  },
+  "hierarchy_required_parent_chains": [
+    [
+      9,
+      7,
+      5,
+      2,
+      1,
+      0
+    ],
+    [
+      72,
+      2,
+      1,
+      0
+    ]
+  ]
+}

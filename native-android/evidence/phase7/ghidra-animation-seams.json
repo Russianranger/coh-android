@@ -1,0 +1,104 @@
+{
+  "producer": "Direct supervised Ghidra12.1.4 using recovered REA-assisted partial project",
+  "target_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+  "target_executed": false,
+  "autoanalysis": false,
+  "database_modified": false,
+  "whole_program_coverage": "partial inherited checkpoint; no PDB",
+  "retained_imports_unused": [],
+  "animation_anchors": [
+    {
+      "pattern": "animtrackanimate.c",
+      "hits": [
+        {
+          "address": "00a59adf",
+          "memory_block": ".rdata",
+          "references": []
+        }
+      ]
+    },
+    {
+      "pattern": "seqanimate.c",
+      "hits": [
+        {
+          "address": "00a5bb6f",
+          "memory_block": ".rdata",
+          "references": []
+        }
+      ]
+    },
+    {
+      "pattern": "seqskeleton.c",
+      "hits": [
+        {
+          "address": "00a5c82f",
+          "memory_block": ".rdata",
+          "references": []
+        }
+      ]
+    },
+    {
+      "pattern": "seqsequence.c",
+      "hits": [
+        {
+          "address": "00a5c58f",
+          "memory_block": ".rdata",
+          "references": []
+        }
+      ]
+    },
+    {
+      "pattern": "Could not find animTrack for bone",
+      "hits": [
+        {
+          "address": "00a5caa0",
+          "memory_block": ".rdata",
+          "references": []
+        }
+      ]
+    },
+    {
+      "pattern": "Animation file %s doesn\u0027t exist",
+      "hits": [
+        {
+          "address": "00a5cb30",
+          "memory_block": ".rdata",
+          "references": []
+        }
+      ]
+    },
+    {
+      "pattern": "bone_IdIsValid(anim_id)",
+      "hits": [
+        {
+          "address": "00a5bb7c",
+          "memory_block": ".rdata",
+          "references": []
+        }
+      ]
+    },
+    {
+      "pattern": "unPackQuatElem",
+      "hits": []
+    },
+    {
+      "pattern": "seqSetAnimationHeader",
+      "hits": []
+    },
+    {
+      "pattern": "huge\\run",
+      "hits": []
+    },
+    {
+      "pattern": "huge\\skel_ready",
+      "hits": []
+    }
+  ],
+  "selected_functions": [],
+  "limitations": [
+    "Raw animation-related anchors identify candidates only; no source function identity is assigned.",
+    "No source-function name is assigned without corroboration.",
+    "References depend on inherited partial database; empty search results do not establish absence of behavior.",
+    "Maximum3 non-thunk functions,10s per decompilation,800 retained instructions each; external process deadline90s."
+  ]
+}
