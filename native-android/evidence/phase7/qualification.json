@@ -1,0 +1,300 @@
+{
+  "schema": "coh-native-animation-hosted-qualification-v1",
+  "review_date": "2026-10-13",
+  "status": "hosted_android_qualified_thor_pending",
+  "passed": true,
+  "scope": "Android13 API33 x86_64 SwiftShader real encoded animation, neutral full hierarchy/socket, material and normal Surface lifecycle",
+  "source_commit": "fc25a90a0d0a2ecf1733950d8f5c40be1f022b2f",
+  "workflow": {
+    "run_id": 38471355989,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38471355989",
+    "conclusion": "success",
+    "portable_core_run_id": 38471355661,
+    "portable_core_conclusion": "success"
+  },
+  "artifact": {
+    "id": 11852621524,
+    "zip_bytes": 1397617,
+    "zip_sha256": "e648a7526be29ac0a1ead4e5ec8275e5d9e9c7252be95ddd0ca34803a97faf21",
+    "independently_verified": true
+  },
+  "apks": [
+    {
+      "file": "CoH-Native-Animation-Probe-0.1.0-arm64.apk",
+      "bytes": 386171,
+      "sha256": "1b3d9baa4a85312e6afc5c21e00e0921eaa0881c89cb286085ce73c1784b11f6",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_animation_probe.so",
+        "bytes": 83112,
+        "sha256": "6ff0a263413b6fe156e94a33bd52a3c8f9a8a3730d1aedf4a5b5a2c06c4f4da0"
+      },
+      "packaged_fixture_bytes_verified": true
+    },
+    {
+      "file": "CoH-Native-Animation-Probe-0.1.0-emulator-x86_64.apk",
+      "bytes": 389968,
+      "sha256": "6747f192474f8205205c4f621606c46b9e18e7ab40f3306cb9af30e62fa35d3b",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "native_library": {
+        "file": "lib/x86_64/libcoh_animation_probe.so",
+        "bytes": 86912,
+        "sha256": "8fdbf77a74664295adc4965b9620fa7819aa4b23de7071b177bfa5971a05b6eb"
+      },
+      "packaged_fixture_bytes_verified": true
+    }
+  ],
+  "apk_signature": {
+    "scheme_v2_verified": true,
+    "signer_count": 1,
+    "certificate_sha256": "e9f8fdcbc52137c5630574c05b41fe0ad9d07b0b9b19cd52af133395e91b981e",
+    "signing": "isolated CI Android Debug RSA2048; production key not used",
+    "validation_source": "artifact apksigner receipt"
+  },
+  "independent_apk_audit": {
+    "apk_sizes_and_hashes_match_receipt": true,
+    "sole_native_library_and_elf_machine_match": true,
+    "all_six_asset_sizes_hashes_and_bytes_match_local_reproduction": true,
+    "metadata_bytes_match_local_reproduction": true
+  },
+  "evidence_files": [
+    {
+      "file": "emulator-animation-report.json",
+      "bytes": 310714,
+      "sha256": "ce6c48ac10578d2f3ceabae444385db90632bcc83d40bdf54a0a684495d03a05"
+    },
+    {
+      "file": "emulator-smoke-summary.json",
+      "bytes": 2256,
+      "sha256": "886bbfd2ffd494a71175f35c114f029a72e98e8cd713d2f8ec9ba0869cd217be"
+    },
+    {
+      "file": "emulator-screenshot.png",
+      "bytes": 213147,
+      "sha256": "8c59a65d7be0c0d24440466a9f5b67007ed194097955044383080abea1408b9a"
+    },
+    {
+      "file": "host-animation-proof.json",
+      "bytes": 8455,
+      "sha256": "829e73aa4d83db7abbeff5ded3d2423062aeff71975753d536803c53bbfe9b5f"
+    },
+    {
+      "file": "fixture/original-local-parity.json",
+      "bytes": 8689,
+      "sha256": "efa8d5aaad445d0f49974ff25f1d0f1677c64c46c5ac2615b217c667ae089591"
+    },
+    {
+      "file": "build-receipt.json",
+      "bytes": 2724,
+      "sha256": "a3d2b3ed1c1ce26688f15be83462855b284f38890c9c5c67fd31a7551ea7e8e3"
+    }
+  ],
+  "device": {
+    "manufacturer": "Google",
+    "model": "sdk_gphone64_x86_64",
+    "device": "emu64x",
+    "hardware": "ranchu",
+    "sdk": 33,
+    "release": "13",
+    "abis": [
+      "x86_64"
+    ],
+    "emulator_detected": true
+  },
+  "graphics": {
+    "gl_vendor": "Google (Google Inc.)",
+    "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "gl_version": "OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)",
+    "glsl_version": "OpenGL ES GLSL ES 3.00",
+    "egl_vendor": "Android",
+    "egl_version": "1.4 Android META-EGL"
+  },
+  "verified_fixture_assets": {
+    "rig.bin": {
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5",
+      "bytes": 11642
+    },
+    "mesh.bin": {
+      "sha256": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661",
+      "bytes": 8020
+    },
+    "texture0.rgba": {
+      "sha256": "68207c4bd81ed03ed80847957cd0300068f8a5b40bffc333a90560c6ea610b06",
+      "bytes": 262144
+    },
+    "texture1.rgba": {
+      "sha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7",
+      "bytes": 256
+    },
+    "material-reference.bin": {
+      "sha256": "392c7006750c05074fe4277b0a17bedd2c86704077a49721aaea21f371f71d9d",
+      "bytes": 296976
+    },
+    "rig-reference.bin": {
+      "sha256": "d2df49da3145db8852add06b262a6109c1af76bd988a3aa237ca8a4c26067748",
+      "bytes": 63572
+    }
+  },
+  "qualification": {
+    "passed": true,
+    "pending_requirements": [],
+    "successful_runs": 6,
+    "failed_runs": 0,
+    "successful_surface_generations": 4,
+    "successful_actual_dimensions": 2,
+    "successful_widths": 2,
+    "successful_heights": 2,
+    "current_surface_passed": true,
+    "native_context_recreation": "required in each passing native run",
+    "limits": "Device-specific rig and single-clip animation diagnostic gate only; not full client/gameplay qualification"
+  },
+  "independently_recomputed": {
+    "local_components": 30240,
+    "world_components": 51840,
+    "btt_components": 2160,
+    "bpt_components": 51840,
+    "palette_components": 2592,
+    "animation_clock_cases": 96,
+    "base_fallback_samples": 1152,
+    "transform_components": 50112,
+    "stock_normal_components": 25056,
+    "stock_normal_mismatches": 0,
+    "skin_compared_pixels": 9662940,
+    "skin_interior_pixels": 178668,
+    "skin_edge_excluded_pixels": 953892,
+    "skin_mismatches": 0,
+    "material_pixels": 884736,
+    "material_mismatches": 0,
+    "window_samples": 588,
+    "window_mismatches": 0,
+    "preview_frames": 540,
+    "preview_clock_steps": 540,
+    "preview_clock_wraps": 12,
+    "preview_image_samples": 36,
+    "preview_changed_image_samples": 24,
+    "preview_pixels_changed_from_first": 586272,
+    "native_cpu_stage_components": 138672,
+    "successful_runs": 6,
+    "complete_egl_context_lifetimes": 12,
+    "surface_dimensions": [
+      [
+        778,
+        558
+      ],
+      [
+        1038,
+        744
+      ]
+    ],
+    "surface_generations": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "all_gpu_objects_released": true,
+    "all_errors_and_gated_mismatches_zero": true,
+    "retained_obsolete_results": 3,
+    "local_max_error": 0,
+    "world_max_error": 7.15255737e-07,
+    "btt_max_error": 2.38418579e-07,
+    "bpt_max_error": 1.1920929e-06,
+    "palette_max_error": 7.15255737e-07,
+    "max_position_error": 9.53674316e-07,
+    "max_normal_error": 1.78813934e-07,
+    "max_transform_error": 9.53674316e-07,
+    "skin_max_byte_error": 1,
+    "material_max_byte_error": 1
+  },
+  "runs": [
+    {
+      "request": 1,
+      "generation": 1,
+      "surface": [
+        1038,
+        744
+      ],
+      "passed": true,
+      "reason": "surfaceChanged",
+      "duration_ms": 6589
+    },
+    {
+      "request": 3,
+      "generation": 1,
+      "surface": [
+        778,
+        558
+      ],
+      "passed": true,
+      "reason": "surfaceChanged",
+      "duration_ms": 5083
+    },
+    {
+      "request": 6,
+      "generation": 2,
+      "surface": [
+        778,
+        558
+      ],
+      "passed": true,
+      "reason": "surfaceChanged",
+      "duration_ms": 4956
+    },
+    {
+      "request": 10,
+      "generation": 3,
+      "surface": [
+        778,
+        558
+      ],
+      "passed": true,
+      "reason": "intent",
+      "duration_ms": 10165
+    },
+    {
+      "request": 14,
+      "generation": 3,
+      "surface": [
+        1038,
+        744
+      ],
+      "passed": true,
+      "reason": "surfaceChanged",
+      "duration_ms": 10364
+    },
+    {
+      "request": 19,
+      "generation": 4,
+      "surface": [
+        1038,
+        744
+      ],
+      "passed": true,
+      "reason": "surfaceChanged",
+      "duration_ms": 6143
+    }
+  ],
+  "lifecycle": {
+    "actual_both_axes_resize_verified": true,
+    "explicit_recreation_verified": true,
+    "same_session_home_foreground_recovery_verified": true,
+    "successful_surface_generations": 4
+  },
+  "visual_review": {
+    "screenshot_reviewed": true,
+    "observations": [
+      "Green ANIMATION GATE PASSED",
+      "Real textured bent sleeve visible with letterboxing"
+    ],
+    "image_published": false
+  },
+  "limits": [
+    "Physical AYN Thor/Adreno execution remains pending for this package",
+    "One real sleeve, neutral actor/bone scale, one huge run clip; no full costume or gameplay sequencer",
+    "Six independently checked key/palette/GPU checkpoints;45runtimeframes percontext prove clock evolution and image motion, not every-frame original runtime capture",
+    "Source-function host oracle, not complete Windows Game execution or original Cg execution",
+    "Controlled camera/mip0/double-sided renderer and normal Surface lifecycle; no full scene pipeline, GPU reset, process-death or performance claim"
+  ]
+}

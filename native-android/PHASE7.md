@@ -32,7 +32,15 @@ Host original-function parity passed: 13,020 local-channel comparisons and 46,65
 
 The bounded host gate additionally passed 15,732 stage/skin scalars, 66 targeted malformed or API rejections, 19 clock cases, and 34,927 exact-allocation raw-byte truncation/mutation checks under ASan and UBSan. Failed outputs remain unchanged; the [host gate receipt](evidence/phase7/host-animation-proof.json) records the tested source hashes.
 
-Hosted Android qualification is in progress. Physical Thor acceptance of this new package is pending. Phase 6 device acceptance remains recorded separately in [its receipt](evidence/phase6/thor-qualification.json).
+[Hosted Android build and emulator qualification](https://github.com/Russianranger/coh-android/actions/runs/38471355989) passed at source `fc25a90a0d0a2ecf1733950d8f5c40be1f022b2f`. The ARM64-only APK is **386,171 bytes**, SHA256 `1b3d9baa4a85312e6afc5c21e00e0921eaa0881c89cb286085ce73c1784b11f6`. Its single ELF64 AArch64 library, debug signature, package, metadata and all six fixture payloads were verified. The separate x86_64 APK was executed on Android13/API33 with SwiftShader.
+
+The [qualification receipt](evidence/phase7/qualification.json) records independently verified artifact digests and recomputed counters: six successful current-surface runs, twelve complete EGL context lifetimes, four Surface generations, two actual widths and heights, and Home/foreground recovery. Three retained obsolete results were excluded.
+
+Android execution passed 138,672 native key/hierarchy/bind/socket scalars, 50,112 GPU position/normal components, 9,662,940 skinned/reference image pixels (178,668 useful interior pixels; 953,892 explicit edge exclusions), 884,736 material RGBA pixels and 588 actual window RGB samples. All gated mismatches and GL/EGL errors were zero. Maximum GPU position error was 9.53674316e-7; maximum normal error was 1.78813934e-7. Skin/material channel errors were at most one byte at the unchanged two-byte tolerance.
+
+The runtime presented 540 animated frames with twelve clock wraps. Thirty-six temporal image captures produced twenty-four changed images and 586,272 pixels different from the first pose. The final screenshot was visually reviewed with green **ANIMATION GATE PASSED** and the bent textured sleeve visible. These repeated checks cover one real clip and mesh, not a gameplay or frame-pacing benchmark.
+
+**Physical Thor/Adreno acceptance of this new package is pending.** Phase 6 device acceptance remains recorded separately in [its receipt](evidence/phase6/thor-qualification.json).
 
 ## Thor acceptance procedure
 

@@ -1,0 +1,321 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "bounded native raw-key decoder, neutral hierarchy/socket assembly and source-GPU-contract CPU skinning versus original-host locals and independent Python goldens",
+  "android_device_execution": false,
+  "full_game_sequencer": false,
+  "native_sources": {
+    "animation/coh_animation.c": "c3b93832caa8f443d00da89b388007930e8d989959baa9b70bbc137de6291f22",
+    "animation/coh_animation.h": "f9fac099a6cf651fcc46f147d021386f2925b156152656178a2510d05a789bd0",
+    "material-probe/app/src/main/cpp/coh_mesh.c": "18f82e3ad598336f4876ba2ebb1afff6ca0ae77509960e8beb38672bb3fd4be1",
+    "material-probe/app/src/main/cpp/coh_mesh.h": "afe72d7801eb89891f059f00076815d0c60351e8935489d0bba5ba2ff454579c"
+  },
+  "real_asset": {
+    "rig_sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5",
+    "reference_sha256": "d2df49da3145db8852add06b262a6109c1af76bd988a3aa237ca8a4c26067748",
+    "mesh_sha256": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661",
+    "raw_rig_bytes": 11642,
+    "base_tracks": 60,
+    "motion_tracks": 44,
+    "reachable_bones": 60,
+    "outer_roots": [
+      0,
+      61
+    ],
+    "socket_id": 72,
+    "palette_ids": [
+      9,
+      5,
+      7
+    ],
+    "frames": [
+      1.0,
+      1.5,
+      5.25,
+      12.5,
+      24.5,
+      25.0
+    ],
+    "key_format_coverage": {
+      "base": {
+        "linear5_rotation_tracks": 60,
+        "rawfloat3_position_tracks": 10,
+        "compressedS16_position_tracks": 50
+      },
+      "motion": {
+        "linear5_rotation_tracks": 44,
+        "rawfloat3_position_tracks": 6,
+        "compressedS16_position_tracks": 38
+      }
+    },
+    "stages": {
+      "bind_translation": {
+        "scalar_comparisons": 180,
+        "maximum_absolute_error": 2.384185791015625e-07
+      },
+      "local": {
+        "scalar_comparisons": 2520,
+        "maximum_absolute_error": 0.0
+      },
+      "world": {
+        "scalar_comparisons": 4320,
+        "maximum_absolute_error": 7.152557373046875e-07
+      },
+      "bpt": {
+        "scalar_comparisons": 4320,
+        "maximum_absolute_error": 1.1920928955078125e-06
+      },
+      "socket_palette": {
+        "scalar_comparisons": 216,
+        "maximum_absolute_error": 7.152557373046875e-07
+      },
+      "gpu_contract_skin": {
+        "scalar_comparisons": 4176,
+        "maximum_absolute_error": 9.5367431640625e-07
+      }
+    },
+    "scalar_comparisons": 15732,
+    "tolerance": "2e-5 absolute + 2e-5 relative"
+  },
+  "malformed_tests": {
+    "checks": 66,
+    "rejected_cases": [
+      "magic",
+      "version",
+      "header_size",
+      "base_offset",
+      "base_size_wrap",
+      "motion_offset_overlap",
+      "motion_size_wrap",
+      "palette_overlap",
+      "empty_palette",
+      "palette_limit",
+      "socket_unreachable",
+      "flags",
+      "first_negative",
+      "last_equal_first",
+      "fps_nonfinite",
+      "total_size",
+      "reserved",
+      "base_header_short",
+      "base_header_oversize",
+      "track_array_outside",
+      "no_tracks",
+      "track_limit",
+      "hierarchy_outside",
+      "hierarchy_track_overlap",
+      "unterminated_name",
+      "base_link_mismatch",
+      "motion_base_link_mismatch",
+      "unsupported_quaternion_format",
+      "packed_track_padding",
+      "bone_id_limit",
+      "duplicate_bone_id",
+      "rotation_empty",
+      "rotation_limit",
+      "rotation_frame_empty",
+      "rotation_frame_overrun",
+      "position_empty",
+      "position_frame_overrun",
+      "rotation_into_header",
+      "position_span_wrap",
+      "rotation_top_reserved",
+      "rotation_negative_radicand",
+      "position_nan",
+      "position_limit",
+      "hierarchy_root_id",
+      "hierarchy_node_identity",
+      "hierarchy_child_limit",
+      "hierarchy_child_cycle",
+      "hierarchy_sibling_cycle",
+      "hierarchy_unreachable_outer_root",
+      "motion_track_array_outside",
+      "motion_unsupported_keys",
+      "empty",
+      "trailing_byte",
+      "short_header",
+      "final_byte_missing",
+      "sample_-1.0",
+      "sample_nan",
+      "sample_inf",
+      "sample_1000001.0",
+      "socket_limit",
+      "socket_unreachable",
+      "bone_limit",
+      "bone_unreachable",
+      "no_palette",
+      "palette_limit",
+      "palette_nonfinite_world"
+    ],
+    "failed_outputs_unchanged": true
+  },
+  "clock_tests": {
+    "checks": 19,
+    "cases": [
+      {
+        "current": 25.0,
+        "timestep_frames": 0.0,
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 0,
+        "expected_frame": 25.0
+      },
+      {
+        "current": 24.0,
+        "timestep_frames": 1.0,
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 0,
+        "expected_frame": 25.0
+      },
+      {
+        "current": 25.0,
+        "timestep_frames": 0.5,
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 0,
+        "expected_frame": 1.5
+      },
+      {
+        "current": 24.0,
+        "timestep_frames": 2.0,
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 0,
+        "expected_frame": 2.0
+      },
+      {
+        "current": 25.0,
+        "timestep_frames": 25.0,
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 0,
+        "expected_frame": 1.0
+      },
+      {
+        "current": 25.0,
+        "timestep_frames": 24.0,
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 0,
+        "expected_frame": 25.0
+      },
+      {
+        "current": 1.0,
+        "timestep_frames": 100.0,
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 0,
+        "expected_frame": 1.0
+      },
+      {
+        "current": 24.0,
+        "timestep_frames": 2.0,
+        "effective_rate": 0.0,
+        "cycle": 1,
+        "expected_status": 0,
+        "expected_frame": 24.0
+      },
+      {
+        "current": 24.0,
+        "timestep_frames": 2.0,
+        "effective_rate": 2.0,
+        "cycle": 1,
+        "expected_status": 0,
+        "expected_frame": 4.0
+      },
+      {
+        "current": 24.0,
+        "timestep_frames": 2.0,
+        "effective_rate": 1.0,
+        "cycle": 0,
+        "expected_status": 2,
+        "expected_frame": null
+      },
+      {
+        "current": 24.0,
+        "timestep_frames": 1.0,
+        "effective_rate": 1.0,
+        "cycle": 0,
+        "expected_status": 0,
+        "expected_frame": 25.0
+      },
+      {
+        "current": 0.0,
+        "timestep_frames": 1.0,
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 1,
+        "expected_frame": null
+      },
+      {
+        "current": 26.0,
+        "timestep_frames": 0.0,
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 1,
+        "expected_frame": null
+      },
+      {
+        "current": 24.0,
+        "timestep_frames": -1.0,
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 1,
+        "expected_frame": null
+      },
+      {
+        "current": 24.0,
+        "timestep_frames": 1.0,
+        "effective_rate": -1.0,
+        "cycle": 1,
+        "expected_status": 1,
+        "expected_frame": null
+      },
+      {
+        "current": 24.0,
+        "timestep_frames": 1.0,
+        "effective_rate": "nan",
+        "cycle": 1,
+        "expected_status": 1,
+        "expected_frame": null
+      },
+      {
+        "current": "nan",
+        "timestep_frames": 1.0,
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 1,
+        "expected_frame": null
+      },
+      {
+        "current": 24.0,
+        "timestep_frames": "inf",
+        "effective_rate": 1.0,
+        "cycle": 1,
+        "expected_status": 1,
+        "expected_frame": null
+      },
+      {
+        "current": 24.0,
+        "timestep_frames": 1.0,
+        "effective_rate": 1.0,
+        "cycle": 2,
+        "expected_status": 1,
+        "expected_frame": null
+      }
+    ],
+    "scope": "controlled effective rate; strict >last, subtract range once, then reset if still beyond; noncycle end status2 leaves output unchanged"
+  },
+  "sanitizer_tests": {
+    "status": "passed",
+    "checks": 34927,
+    "real_input_bytes": 11642,
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "scope": "exact-allocation truncations and two byte mutations at every raw-rig offset; unaligned encoded inputs plus sample/socket/clock on admitted variants",
+    "leak_detection": false
+  }
+}

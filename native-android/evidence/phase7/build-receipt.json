@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "source_commit": "fc25a90a0d0a2ecf1733950d8f5c40be1f022b2f",
+  "workflow_run_id": "38471355989",
+  "application_id": "org.coh.animationprobe",
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "compile_sdk": 35,
+  "gradle": "8.9",
+  "gradle_distribution_sha256": "d725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab",
+  "android_gradle_plugin": "8.7.3",
+  "ndk": "28.2.13676358",
+  "cmake": "3.22.1",
+  "signing": "isolated CI debug key; not the production launcher key",
+  "phase": 7,
+  "probe_version": "0.1.0-phase7",
+  "original_game_execution": false,
+  "full_sequencer_execution": false,
+  "artifacts": [
+    {
+      "file": "CoH-Native-Animation-Probe-0.1.0-arm64.apk",
+      "bytes": 386171,
+      "sha256": "1b3d9baa4a85312e6afc5c21e00e0921eaa0881c89cb286085ce73c1784b11f6",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_animation_probe.so",
+        "bytes": 83112,
+        "sha256": "6ff0a263413b6fe156e94a33bd52a3c8f9a8a3730d1aedf4a5b5a2c06c4f4da0"
+      },
+      "packaged_fixture_bytes_verified": true
+    },
+    {
+      "file": "CoH-Native-Animation-Probe-0.1.0-emulator-x86_64.apk",
+      "bytes": 389968,
+      "sha256": "6747f192474f8205205c4f621606c46b9e18e7ab40f3306cb9af30e62fa35d3b",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "native_library": {
+        "file": "lib/x86_64/libcoh_animation_probe.so",
+        "bytes": 86912,
+        "sha256": "8fdbf77a74664295adc4965b9620fa7819aa4b23de7071b177bfa5971a05b6eb"
+      },
+      "packaged_fixture_bytes_verified": true
+    }
+  ],
+  "fixture_assets": [
+    {
+      "file": "animation-fixture.json",
+      "bytes": 77054,
+      "sha256": "1ed2a334683b23464cc3028b99fbb4ec4ed11fc7640e4fba58cc80024034b1f7"
+    },
+    {
+      "file": "material-reference.bin",
+      "bytes": 296976,
+      "sha256": "392c7006750c05074fe4277b0a17bedd2c86704077a49721aaea21f371f71d9d"
+    },
+    {
+      "file": "mesh.bin",
+      "bytes": 8020,
+      "sha256": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661"
+    },
+    {
+      "file": "rig-reference.bin",
+      "bytes": 63572,
+      "sha256": "d2df49da3145db8852add06b262a6109c1af76bd988a3aa237ca8a4c26067748"
+    },
+    {
+      "file": "rig.bin",
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    },
+    {
+      "file": "texture0.rgba",
+      "bytes": 262144,
+      "sha256": "68207c4bd81ed03ed80847957cd0300068f8a5b40bffc333a90560c6ea610b06"
+    },
+    {
+      "file": "texture1.rgba",
+      "bytes": 256,
+      "sha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7"
+    }
+  ],
+  "thor_device_execution_verified": false
+}
