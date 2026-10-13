@@ -1,0 +1,6 @@
+{
+  "upstream_source_sha256": "7106020d77eea8313422b865ce3e8587ad7e733366429cf0e613427cdc191585",
+  "generated_sha256": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+  "producer": "fixed-width derivative + checked unaligned-safe game little-endian wrapper",
+  "shipping_source_modified": false
+}
