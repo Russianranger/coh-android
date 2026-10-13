@@ -1,0 +1,145 @@
+name: Nonshipping native startup profile and real Wine preload parity
+on:
+  push:
+    branches: [codex/native-startup-profile-036]
+    paths:
+      - .github/workflows/android-native-startup-profile.yml
+      - database/native-startup-profile/**
+      - tools/prepare_native_startup_profile_source.py
+      - tools/prepare_native_cg_profile_source.py
+      - tools/test_native_startup_profile_source.py
+      - tools/test_native_cg_profile_source.py
+      - tools/package_native_startup_profile.py
+      - tools/qualify_native_startup_profile.py
+      - tools/test_qualify_native_startup_profile.py
+  workflow_dispatch:
+permissions: {contents: read, actions: read}
+concurrency:
+  group: native-startup-profile-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  native:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 120
+    steps:
+      - name: Preserve exact source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Authenticate unchanged public animation inputs
+        shell: pwsh
+        run: |
+          python tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+          if ($LASTEXITCODE -ne 0) { throw 'Exact published inputs failed' }
+      - name: Stage retained MapServer control
+        shell: pwsh
+        run: |
+          python tools/prepare_map_startup_source.py --output C:/native-profile-map --animations-pigg out/native-inputs/server-animations.pigg --animation-manifest out/native-inputs/server-animation-manifest.json
+          if ($LASTEXITCODE -ne 0) { throw 'Retained Map source failed' }
+      - name: Compile retained MapServer control
+        working-directory: C:/native-profile-map
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Map control configuration failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target MapServer
+          if ($LASTEXITCODE -ne 0) { throw 'Map control build failed' }
+      - name: Bind completed control before adding diagnostic source
+        shell: pwsh
+        run: |
+          python tools/package_native_startup_profile.py record-control --source C:/native-profile-map --output out/native-profile --repository-commit "${{ github.sha }}"
+          if ($LASTEXITCODE -ne 0) { throw 'Native control binding failed' }
+          python tools/prepare_native_startup_profile_source.py --source-staging C:/native-profile-map
+          if ($LASTEXITCODE -ne 0) { throw 'Native BIN/sequencer observer staging failed' }
+      - name: Compile observed MapServer with the same compiler and configuration
+        working-directory: C:/native-profile-map
+        shell: pwsh
+        run: |
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target MapServer
+          if ($LASTEXITCODE -ne 0) { throw 'Map diagnostic build failed' }
+      - name: Stage exact retained Game chain and bounded Cg observations
+        shell: pwsh
+        run: |
+          python tools/package_native_startup_profile.py stage-game --output C:/native-profile-game
+          if ($LASTEXITCODE -ne 0) { throw 'Game diagnostic source staging failed' }
+      - name: Execute actual Win32 extracted Cg control-flow qualification
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation missing' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/test_native_cg_profile_source.py --windows-qualify --output out/contracts/native-cg-windows-checks.json
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/cg-profile.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\cg-profile.cmd
+          if ($LASTEXITCODE -ne 0) { throw 'Actual Win32 Cg control-flow fixture failed' }
+      - name: Build diagnostic Game without publishing or replacing native components
+        working-directory: C:/native-profile-game
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Game diagnostic configuration failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
+          if ($LASTEXITCODE -ne 0) { throw 'Game diagnostic build failed' }
+      - name: Validate native dependency closure and package explicitly nonshipping bytes
+        shell: pwsh
+        run: |
+          python tools/package_native_startup_profile.py package --map-source C:/native-profile-map --game-source C:/native-profile-game --cg-checks out/contracts/native-cg-windows-checks.json --output out/native-profile --repository-commit "${{ github.sha }}" --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          if ($LASTEXITCODE -ne 0) { throw 'Diagnostic native package validation failed' }
+      - uses: actions/upload-artifact@v4
+        with: {name: coh-nonshipping-native-startup-profile, path: out/native-profile/, if-no-files-found: error, retention-days: 90}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: {name: coh-nonshipping-native-startup-build-failure, path: out/contracts/, if-no-files-found: warn, retention-days: 90}
+  wine-preload:
+    needs: native
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Admit runner storage and install isolated native tools
+        run: |
+          test "${RUNNER_ENVIRONMENT:-}" = github-hosted
+          sudo rm -rf -- /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL
+          python3 -c "import shutil; assert shutil.disk_usage('.').free >= 30*1024**3"
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends wine wine32:i386 gcc-mingw-w64-i686 xvfb xauth
+      - uses: actions/download-artifact@v4
+        with: {name: coh-nonshipping-native-startup-profile, path: out/native-profile}
+      - name: Qualify strict observers before actual native execution
+        run: python3 -m unittest discover -s tools -p 'test_*native*profile*.py'
+      - name: Authenticate original complete input volumes
+        run: |
+          python3 tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0,'tools/android/interactive')
+          import qualify_runtime_asset_preflight as inputs
+          inputs.ensure_assets('out/asset-cache')
+          PY
+      - name: Prepare disposable complete original provider without PostgreSQL or player data
+        run: >-
+          python3 tools/android/atlasgame/prepare_server_fx_control_fixture.py
+          --donor-apk out/native-inputs/COH-Atlas-Gameplay-0.13.31.apk
+          --payloads out/asset-cache/payloads --output out/native-control-fixture
+      - name: Run real control and diagnostic MapServer through completed TSR preload
+        run: |
+          task_native_runtime=$(python3 -c "import json; print(json.load(open('out/native-control-fixture/control-fixture.json'))['runtime_host_path'])")
+          xvfb-run -a python3 tools/qualify_native_startup_profile.py \
+            --package out/native-profile --runtime "$task_native_runtime" \
+            --control-fixture out/native-control-fixture/control-fixture.json \
+            --work out/native-profile-work --output out/native-profile-qualification \
+            --repository-commit "${{ github.sha }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: coh-nonshipping-native-startup-preload-evidence, path: out/native-profile-qualification/, if-no-files-found: warn, retention-days: 90}
