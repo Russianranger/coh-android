@@ -1,0 +1,137 @@
+{
+  "format": 1,
+  "status": "passed",
+  "role": "actual_extracted_folder_constructor_and_node_insert_parity",
+  "cases": 398,
+  "controlled_enumeration": true,
+  "native_windows_executed": false,
+  "native_game_executed": false,
+  "native_wine_executed": false,
+  "physical_device_executed": false,
+  "portable_windows_types_are_adapters": true,
+  "callback_trace_exact_in_fallback": true,
+  "provider_metadata_and_all_links_equal": true,
+  "root_per_entry_constructor_order_exact_in_every_fallback": true,
+  "same_FindFirst_FindNext_FindClose_counts": true,
+  "enumerations_restarted": false,
+  "one_temporary_batch_maximum": true,
+  "temporary_buffers_released_before_recursion": true,
+  "tested_allocation_failures": [
+    1,
+    2
+  ],
+  "tested_entry_limit": 16384,
+  "controlled_insertion_comparison_cases": [
+    {
+      "mode": "empty",
+      "first_stock": "3933067",
+      "first_candidate": "56376",
+      "last_stock": "3933067",
+      "last_candidate": "56376"
+    },
+    {
+      "mode": "mixed_pig",
+      "first_stock": "3937236",
+      "first_candidate": "3937244",
+      "last_stock": "3937236",
+      "last_candidate": "3937244"
+    },
+    {
+      "mode": "previous_gdd",
+      "first_stock": "3933067",
+      "first_candidate": "56376",
+      "last_stock": "8398859",
+      "last_candidate": "8398859"
+    }
+  ],
+  "observed_native_WFD_bytes": 320,
+  "observed_row_bytes": 324,
+  "maximum_retained_batch_payload_bytes": 5308416,
+  "possible_realloc_payload_overlap_bytes_before_allocator_overhead": 7962624,
+  "aggregate_comparisons_include_sort_alias_checks_and_fallbacks": {
+    "stock": 54979708,
+    "candidate": 46231207
+  },
+  "source": {
+    "format": 1,
+    "role": "nonshipping_retained_game_folder_constructor_sort",
+    "retained_game_recipe": "package_client_render_queue_native",
+    "source_sha256": {
+      "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+      "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524"
+    },
+    "patched_sha256": {
+      "libs/UtilitiesLib/src/utils/FolderCache.c": "ca9ec0ad8fa6a077698e24483f9e509a8a9ff644a8371239aec45c8ff9d95388"
+    },
+    "overlay_sha256": {
+      "libs/UtilitiesLib/src/utils/coh_folder_metadata_sort.h": "4d0fde0af0487f279ad16ff8f3ce85e0040ff6fe01f12cda49d5dc8e103416a4"
+    },
+    "retained_FolderNodeAdd_sha256": "4b94ff2f9630e2fe29c8336f4e031d8c8232ceaefe44b3a007fc21c563890e9f",
+    "per_entry_body_sha256": "7ed60dd12c31c03314ee2ecd86e6ea96a5dda8d96b6d8305d4f3b2be2f44aa67",
+    "activation": "COH_CLIENT_FOLDER_METADATA_SORT=1",
+    "default_enabled": false,
+    "node_create_callback_requires_native_fallback": true,
+    "admitted_cache": "stock_global_folder_cache_only",
+    "admitted_sibling_list": "initially_empty_only; populated_PIG_or_prior_provider_uses_stock",
+    "callback_closed_source_audit": {
+      "role": "retained_closed_source_callback_admission_audit",
+      "source_files_scanned": 4880,
+      "callback_assignments_found": 0,
+      "reference_sources_sha256": {
+        "libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h": "42f1b9c5555abdc93afe7029cdf02bb551d572c18557fed00d7610d6c58e177c",
+        "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c"
+      },
+      "stock_factory_sha256": "ecbe8a95afe3b9b2e3ac3441ed06ee2eeb94c5cc4e4ed9cfc48f62d5cc13ef1d",
+      "global_owner_file_sha256": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1",
+      "all_arbitrary_runtime_memory_mutations_excluded": false
+    },
+    "arbitrary_dynamic_callback_transition_qualified": false,
+    "maximum_directory_entries": 16384,
+    "maximum_diagnostic_rows": 256,
+    "temporary_row_bytes": "sizeof(WIN32_FIND_DATAA)+sizeof(unsigned int), native ABI qualified separately",
+    "maximum_retained_batch_payload": "16384 * native sizeof(CohFolderMetadataRow)",
+    "maximum_realloc_payload_overlap": "24576 * native sizeof(CohFolderMetadataRow), plus allocator overhead",
+    "temporary_storage_released_before_recursion": true,
+    "enumerations_restarted": false,
+    "additional_payload_reads": 0,
+    "fallbacks": [
+      "foreign_cache",
+      "populated_sibling_list",
+      "callback_present",
+      "disabled",
+      "allocation_failure",
+      "entry_limit",
+      "case_alias"
+    ],
+    "fallback_preserves_original_arrival_order": true,
+    "provider_order_changed": false,
+    "source_freshness_changed": false,
+    "asset_membership_changed": false,
+    "metadata_values_changed": false,
+    "linked_list_final_order_changed": false,
+    "cache_schema_changed": false,
+    "native_windows_executed": false,
+    "native_game_executed": false,
+    "physical_device_executed": false,
+    "publication_allowed": false
+  },
+  "publication_allowed": false,
+  "harness_sha256": "102d568a1dfcae70536b913f29e310dbde6c8ed01b8c1f864eb7087d3ccfc956",
+  "fixture_binary_sha256": "86c70f9e3b4e9aafd9acb1945757ad5f8114650e9863f98cdd98421255bb656f",
+  "output": "COH_CLIENT_FOLDER_METADATA_PARITY_PASS cases=398 providers=3 stock_comparisons=54979708 candidate_comparisons=46231207 native_wfd_bytes=320 row_bytes=324 bound_bytes=5308416",
+  "focused_source_unittests": {
+    "status": "passed",
+    "tests": 9,
+    "duration_seconds": 2.372,
+    "windows_executed": false
+  },
+  "genuine_retained_source_staging_roundtrip": {
+    "status": "passed",
+    "immutable_snapshot_files": 5995,
+    "immutable_snapshot_bytes": 173081714,
+    "snapshot_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "retained_source_schema_callsite_pin_count": 43,
+    "elapsed_seconds": 42.82812096899943,
+    "native_build_executed": false
+  }
+}
