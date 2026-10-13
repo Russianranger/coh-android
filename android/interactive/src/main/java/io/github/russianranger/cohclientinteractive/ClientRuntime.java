@@ -1807,7 +1807,7 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the reopened character: " + message(e); }
                             }
                             recordLifecycle("character_connected_observed");
-                            stage("Character connected", reopen ? "THORHERO connected to "+ClientZoning.name(event.optInt("map_id",1))+". Waiting for fresh Android views and the bounded session window before movement and Save become available." : "THORHERO connected to Atlas. Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
+                            stage("Character connected", reopen ? "THORHERO connected to "+ClientZoning.name(event.optInt("map_id",1))+". Waiting for fresh Android views and session ownership verification before movement and Save become available. Gameplay has no countdown." : "THORHERO connected to Atlas. Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
                             notifyInputState();
                         }
                         if("character_zoning_preparation".equals(event.optString("type")))recordZoningPreparation((Map<?,?>)jsonValue(event));

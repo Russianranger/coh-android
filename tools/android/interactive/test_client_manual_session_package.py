@@ -259,7 +259,8 @@ class ManualSessionPackageTests(unittest.TestCase):
         self.assertEqual(set(jobs), {'changes', 'launcher-build', 'launcher-qualify', 'db-minimal', 'apk', 'public-audit'})
         self.assertEqual(jobs['launcher-qualify']['runs-on'], 'windows-2022')
         self.assertEqual(jobs['apk']['needs'], ['changes','launcher-qualify','db-minimal'])
-        self.assertFalse(workflow['concurrency']['cancel-in-progress'])
+        self.assertEqual(workflow['concurrency']['cancel-in-progress'],
+            "${{ github.event_name == 'push' && github.ref == 'refs/heads/codex/character-persistence-continuation' }}")
         self.assertEqual(jobs['apk']['env']['COH_REQUIRE_SAVED_MAP_PG'], '1')
         self.assertEqual(jobs['apk']['env']['COH_REQUIRE_POSTGRESQL'], '1')
         runs = [step.get('run','') for step in jobs['apk']['steps']]

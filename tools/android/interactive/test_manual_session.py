@@ -264,6 +264,19 @@ public final class ManualSessionHost {
 
 
 class ManualSessionJavaTests(unittest.TestCase):
+    def test_saved_reopen_guidance_uses_saved_destination_without_gameplay_countdown(self):
+        activity = (JAVA/'ClientActivity.java').read_text()
+        service = method((JAVA/'ClientService.java').read_text(), 'public String zoningStatus(')
+        runtime = method((JAVA/'ClientRuntime.java').read_text(), 'private void captureOutput(')
+        self.assertIn("Reopen starts in THORHERO's saved destination.", activity)
+        self.assertIn('Tap Start test when ready and Stop test when finished; neither starts a countdown.', activity)
+        self.assertIn('When ready to save, release controls', activity)
+        self.assertNotIn('Choose Kings Row at the actual monorail station', activity)
+        self.assertIn('Reopen THORHERO to start in the saved destination.', service)
+        self.assertNotIn('Atlas instance zoning', service)
+        self.assertIn('Gameplay has no countdown.', runtime)
+        self.assertNotIn('bounded session window', runtime)
+
     @classmethod
     def setUpClass(cls):
         source = (JAVA/'ClientRuntime.java').read_text()

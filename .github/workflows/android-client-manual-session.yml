@@ -11,7 +11,9 @@ permissions:
   actions: read
 concurrency:
   group: android-client-manual-session-publication
-  cancel-in-progress: false
+  # A new reviewed continuation push supersedes its unpublished candidate.
+  # Manual dispatch never interrupts an existing qualification/publication.
+  cancel-in-progress: ${{ github.event_name == 'push' && github.ref == 'refs/heads/codex/character-persistence-continuation' }}
 jobs:
   changes:
     runs-on: ubuntu-24.04
