@@ -174,11 +174,11 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         if (self.ctx.report.get('native_responsiveness_candidate')
                 and callable(getattr(self.local_server, 'client_startup_assets_allowed', None))):
             # Each native process keeps its own complete data/cache tree. Only
-            # the saved-Kings implementation opts into this supervised join.
+            # the saved-map implementation opts into this supervised join.
             self.local_server.overlap_client_initialization = True
         # Register Wine and ODBC, start DbServer, and prepare the saved world.
-        # Atlas retains serial readiness. Saved Kings Row can run its owned
-        # native initialization alongside client preparation and menu loading.
+        # Saved Atlas Park and Kings Row run owned native initialization
+        # alongside client preparation and menu loading, with independent joins.
         super().start_wine()
         # Only the explicit new executable can consume this optional index.
         # The preserved stock startup/creation entry points keep their path.
@@ -277,9 +277,10 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             concurrent = max(0, min(waited_at, finished, probe_finished)
                              - max(preparation.started, probe.started))
         self.ctx.report['client_texture_startup_schedule'] = {
-            'status': status, 'preparation_phase': ('during_owned_saved_kings_native_startup'
+            'status': status, 'preparation_phase': ('during_owned_saved_map_native_startup'
                 if self.local_server.creation_report.get('startup_overlap') is not None
                 else 'after_current_owned_atlas_readiness'),
+            'saved_map_id': self.local_server.creation_report.get('startup_overlap', {}).get('map_id'),
             'overlapped_stage': 'win32_runtime_dll',
             'worker_started': preparation.thread_started, 'worker_joined': True,
             'shared_wine_prefix_access': False, 'private_server_cache_access': False,

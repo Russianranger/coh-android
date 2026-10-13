@@ -32,7 +32,10 @@ PROJECTED_MAP = 'fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba807136
 PROJECTION_SOURCE = '2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d'
 SOURCE_FILES = ('tools/android/interactive/qualify_saved_map_preparation.py',
                 'tools/android/interactive/test_saved_map_preparation_proof.py')
+BOOST_FIXTURE_SCOPE = 'synthetic_read_only_34_field_Boosts_not_player_data'
+BOOST_FIXTURE_COLUMNS = 34
 BOUNDARY = {
+    'controlled_sql_fixture_revision': 2,
     'historical_worker_bytes_unchanged': True,
     'historical_initial_map_selection': 'controlled_Atlas_SQL_boundary',
     'historical_input_projection': 'retained_unprojected_full_input_control',
@@ -70,7 +73,16 @@ def sql_fixture(instance, map_id=5):
         influencepoints=0, description='', motto='', datecreated='2026-10-01')
     identity = [{key: rows['ents'][0][key] for key in evidence.IDENTITY_FIELDS}]
     position = dict(containerid=1, mapid=None, staticmapid=map_id, posx=12.5, posy=-20.0, posz=40.25)
-    snapshot = copy.deepcopy((rows, identity, position)); calls = []
+    # This controlled boundary mirrors the current read-only enhancement query.
+    # Preserve every field and its power relation; never bypass the production
+    # baseline capture merely because the older .35 fixture lacked Boosts.
+    require(len(server.BOOST_FIELDS) == BOOST_FIXTURE_COLUMNS, 'Reviewed Boosts field count differs')
+    boost = {field: None for field in server.BOOST_FIELDS}
+    boost.update(containerid=1, subid=0, powerid=rows['powers'][0]['powerid'], idx=0,
+        categoryname=attr, powersetname=attr, boostname=attr, level=0,
+        numcombines=0, slottedpowerupsmask=0)
+    boosts = [boost]
+    snapshot = copy.deepcopy((rows, identity, position, boosts)); calls = []
     def sql(query, *, game=False, **kwargs):
         require(game is True and query == "SELECT containerid || '|' || authname FROM dbo.shardaccounts "
                 "WHERE lower(authname)=lower('COHLOCAL') ORDER BY containerid;" and not kwargs,
@@ -83,6 +95,10 @@ def sql_fixture(instance, map_id=5):
         elif table == 'ents' and tuple(fields) == ('containerid','mapid','staticmapid','posx','posy','posz'):
             require(where == 'containerid=1', 'Position fixture identity differs')
             value = [position]
+        elif table == 'boosts':
+            require(tuple(fields) == server.BOOST_FIELDS and tuple(keys) == ('containerid','subid')
+                    and where == 'containerid=1', 'Saved-map fixture refused unreviewed Boosts query')
+            value = boosts
         else:
             require(table in rows and tuple(fields) == tuple(evidence.SELECTED[table])
                     + (('logincount',) if table == 'ents' else ()) and where == 'containerid=1',
@@ -92,14 +108,33 @@ def sql_fixture(instance, map_id=5):
         return copy.deepcopy(value)
     instance.sql, instance.sql_rows = sql, selected
     def verify():
-        require((rows, identity, position) == snapshot and calls, 'Fixture character state changed or was never read')
+        require((rows, identity, position, boosts) == snapshot and calls, 'Fixture character state changed or was never read')
         require(instance.baseline_snapshot['rows'] == rows, 'Complete selected character baseline changed')
+        boost_reads = sum(call.get('table') == 'boosts' for call in calls)
+        if boost_reads:
+            require(instance.baseline_enhancements == {'rows': boosts,
+                'semantic': server.enhancement_semantics(boosts, rows['powers'], attributes)},
+                'Complete synthetic enhancement baseline changed')
         return {'sql_boundary': 'controlled_read_only_selected_rows_not_PostgreSQL',
                 'selected_row_reads': len(calls), 'rows_unchanged': True,
                 'identity_and_selected_powers_costume_preserved': True,
                 'saved_position': copy.deepcopy(position),
+                'enhancement_fixture': {'scope': BOOST_FIXTURE_SCOPE, 'columns': len(server.BOOST_FIELDS),
+                    'row_count': len(boosts), 'selected_row_reads': boost_reads, 'rows_unchanged': True,
+                    'rows_sha256': hashlib.sha256(leaf.canonical(boosts)).hexdigest()},
                 'selected_rows_sha256': hashlib.sha256(leaf.canonical(rows)).hexdigest()}
     return verify
+
+
+def validate_enhancement_fixture(value):
+    require(type(value) is dict and value.get('scope') == BOOST_FIXTURE_SCOPE
+            and type(value.get('columns')) is int and value['columns'] == BOOST_FIXTURE_COLUMNS
+            and type(value.get('row_count')) is int and value['row_count'] == 1
+            and type(value.get('selected_row_reads')) is int and value['selected_row_reads'] > 0
+            and value.get('rows_unchanged') is True
+            and re.fullmatch('[0-9a-f]{64}', str(value.get('rows_sha256'))) is not None,
+            'Current read-only synthetic enhancement baseline was not executed/preserved')
+    return value
 
 
 def setup_assets(full, runtime_assets, payloads, root):
@@ -324,6 +359,7 @@ def validate_saved(value):
                 and baseline.get('saved_position') == dict(containerid=1, mapid=None, staticmapid=5,
                                                           posx=12.5, posy=-20.0, posz=40.25),
                 'Controlled saved identity/position proof differs')
+        validate_enhancement_fixture(baseline.get('enhancement_fixture'))
         inventories.append(case.get('excluded_client_texture_inventory', {}))
         require(type(case.get('actual_server_data_files')) is int and case['actual_server_data_files'] > 0,
                 'Actual projected mirror inventory count missing')

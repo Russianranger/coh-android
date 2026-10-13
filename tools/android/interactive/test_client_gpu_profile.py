@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import json
+import os
 from pathlib import Path
 import stat
 import subprocess
@@ -661,6 +662,152 @@ class PolicyTests(unittest.TestCase):
 
 
 
+class PriorPrefixShutdownTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.prefix = self.root / 'prefix'; self.prefix.mkdir(mode=0o700)
+        self.server_base = self.root / 'wine-tmp'
+        info = self.prefix.stat()
+        self.server = self.server_base / ('server-%x-%x' % (info.st_dev, info.st_ino))
+
+    def test_absent_native_namespace_is_read_only(self):
+        receipt = gpu.absent_wine_endpoint(self.prefix, server_base=self.server_base)
+        self.assertEqual([None, None], receipt['server_directories'])
+        self.assertFalse(self.server_base.exists())
+
+    def test_native_endpoint_uses_guest_uid_while_owner_census_uses_real_uid(self):
+        original = Path.lstat
+        observed = []
+        def lookup(path):
+            if str(path).startswith('/tmp/.wine-712345'):
+                observed.append(str(path))
+                raise FileNotFoundError(str(path))
+            return original(path)
+        with mock.patch.object(gpu.os, 'getuid', return_value=712345), \
+                mock.patch.object(Path, 'lstat', lookup):
+            receipt = gpu.absent_wine_endpoint(self.prefix)
+        self.assertEqual([None, None], receipt['server_directories'])
+        self.assertEqual('/tmp/.wine-712345', observed[0])
+        self.assertTrue(any(path.startswith('/tmp/.wine-712345/server-') for path in observed))
+
+    def test_existing_lock_socket_symlink_or_unowned_directory_rejected(self):
+        self.server_base.mkdir(mode=0o700); self.server.mkdir(mode=0o700)
+        for name in ('lock', 'socket'):
+            path = self.server / name
+            path.write_bytes(b'')
+            with self.subTest(name=name), self.assertRaises(gpu.GPUProfileError):
+                gpu.absent_wine_endpoint(self.prefix, server_base=self.server_base)
+            path.unlink()
+            path.symlink_to(self.root / 'missing-target')
+            with self.subTest(link=name), self.assertRaises(gpu.GPUProfileError):
+                gpu.absent_wine_endpoint(self.prefix, server_base=self.server_base)
+            path.unlink()
+        self.server.chmod(0o777)
+        with self.assertRaises(gpu.GPUProfileError):
+            gpu.absent_wine_endpoint(self.prefix, server_base=self.server_base)
+
+    def test_real_prior_process_owner_is_detected_and_never_signaled(self):
+        environment = dict(os.environ, WINEPREFIX=str(self.prefix))
+        child = subprocess.Popen([sys.executable, '-u', '-c',
+            'import sys; from pathlib import Path; print(Path("/proc/self/stat").read_text().split()[0]); sys.stdin.buffer.read()'],
+                                 env=environment, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        proc_pid = int(child.stdout.readline()); child.stdout.close()
+        # Restrict the test census to actual child proc records: hosted Android
+        # style PID namespaces can hide unrelated same-UID runner processes.
+        proc = self.root / 'proc'; proc.mkdir()
+        (proc / 'self').symlink_to('/proc/self')
+        (proc / str(proc_pid)).symlink_to('/proc/' + str(proc_pid))
+        try:
+            with self.assertRaisesRegex(gpu.GPUProfileError, 'live processes or workers'):
+                gpu.observe_prior_prefix_owners(self.prefix, mock.Mock(), proc_root=proc)
+            self.assertIsNone(child.poll())
+        finally:
+            child.stdin.close(); child.wait(timeout=5)
+        receipt = gpu.observe_prior_prefix_owners(self.prefix, mock.Mock(), proc_root=proc)
+        self.assertEqual(0, receipt['matching_processes'])
+        self.assertTrue(receipt['complete'])
+        self.assertEqual(0, receipt['signals_sent'])
+
+    def test_unreadable_prior_same_uid_owner_is_not_assumed_stopped(self):
+        child = subprocess.Popen([sys.executable, '-u', '-c',
+            'import sys; from pathlib import Path; print(Path("/proc/self/stat").read_text().split()[0]); sys.stdin.buffer.read()'],
+                                 env=dict(os.environ, WINEPREFIX=str(self.prefix)), stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        proc_pid = int(child.stdout.readline()); child.stdout.close()
+        proc = self.root / 'proc'; proc.mkdir()
+        (proc / 'self').symlink_to('/proc/self')
+        (proc / str(proc_pid)).symlink_to('/proc/' + str(proc_pid))
+        original = device.DeviceWineProcessOwner.has_token
+        def unreadable(owner, path):
+            if path.name == str(proc_pid):
+                raise PermissionError('synthetic inaccessible environment')
+            return original(owner, path)
+        try:
+            with mock.patch.object(device.DeviceWineProcessOwner, 'has_token', unreadable), \
+                    self.assertRaisesRegex(gpu.GPUProfileError, 'ownership could not be proved'):
+                gpu.observe_prior_prefix_owners(self.prefix, mock.Mock(), proc_root=proc)
+            self.assertIsNone(child.poll())
+        finally:
+            child.stdin.close(); child.wait(timeout=5)
+
+    def fake_process(self, proc, pid, starttime, *, state='S', group=None, token=True):
+        path = proc / str(pid) if group is None else proc / str(group) / 'task' / str(pid)
+        path.mkdir(parents=True, exist_ok=True)
+        (path / 'status').write_text('Uid:\t42 42 42 42\nPid:\t%d\nTgid:\t%d\nNSpid:\t%d\n' %
+                                   (pid, pid if group is None else group, pid))
+        fields = [state, '1', str(pid if group is None else group), '1'] + ['0'] * 15 + [str(starttime)]
+        (path / 'stat').write_text(str(pid) + ' (fixture) ' + ' '.join(fields))
+        if token:
+            (path / 'environ').write_bytes(b'WINEPREFIX=' + os.fsencode(self.prefix) + b'\0')
+        return path
+
+    def process_scope_fixture(self):
+        proc = self.root / 'fixture-proc'; proc.mkdir()
+        boot = proc / 'sys/kernel/random'; boot.mkdir(parents=True)
+        boot_id = '01234567-89ab-cdef-0123-456789abcdef'
+        (boot / 'boot_id').write_text(boot_id)
+        scope = {'format': 1, 'boot_id': boot_id, 'real_uid': 42, 'earliest_owner_starttime': 20}
+        def initialize(observer):
+            observer.initialized = True
+            observer.real_uid = 42
+            observer.excluded = set()
+            observer.direct_pid_view = True
+            observer.diagnostic_starttime = 100
+        return proc, scope, initialize
+
+    def test_scope_excludes_pre_generation_service_but_includes_older_session_owner(self):
+        proc, scope, initialize = self.process_scope_fixture()
+        self.fake_process(proc, 123, 19, token=False)
+        owner = self.fake_process(proc, 124, 50)
+        with mock.patch.object(device.DeviceWineProcessOwner, 'initialize', initialize):
+            with self.assertRaisesRegex(gpu.GPUProfileError, 'live processes or workers'):
+                gpu.observe_prior_prefix_owners(self.prefix, mock.Mock(), prior_owner=scope, proc_root=proc)
+            (owner / 'environ').write_bytes(b'WINEPREFIX=/different-prefix\0')
+            receipt = gpu.observe_prior_prefix_owners(self.prefix, mock.Mock(), prior_owner=scope, proc_root=proc)
+        self.assertTrue(receipt['complete'])
+        self.assertEqual(20, receipt['earliest_owner_starttime'])
+        self.assertEqual(0, receipt['signals_sent'])
+
+    def test_dead_prior_leader_with_live_worker_blocks_reuse(self):
+        proc, scope, initialize = self.process_scope_fixture()
+        self.fake_process(proc, 124, 50, state='Z', token=False)
+        self.fake_process(proc, 125, 51, group=124)
+        with mock.patch.object(device.DeviceWineProcessOwner, 'initialize', initialize), \
+                self.assertRaisesRegex(gpu.GPUProfileError, 'live processes or workers'):
+            gpu.observe_prior_prefix_owners(self.prefix, mock.Mock(), prior_owner=scope, proc_root=proc)
+
+    def test_changed_boot_uid_future_start_or_malformed_scope_requires_cold_prefix(self):
+        proc, scope, initialize = self.process_scope_fixture()
+        for key, value in [('boot_id', 'fedcba98-7654-3210-fedc-ba9876543210'),
+                ('real_uid', 99), ('earliest_owner_starttime', 101), ('earliest_owner_starttime', True),
+                ('earliest_owner_starttime', 0), ('format', True)]:
+            with self.subTest(key=key, value=value), \
+                    mock.patch.object(device.DeviceWineProcessOwner, 'initialize', initialize), \
+                    self.assertRaises(gpu.GPUProfileError):
+                gpu.observe_prior_prefix_owners(self.prefix, mock.Mock(), prior_owner=dict(scope, **{key: value}),
+                                               proc_root=proc)
+
+
 class ProbePrefixReuseTests(unittest.TestCase):
     """Real cache files and locks; native probe/cleanup results are fixture inputs."""
     def setUp(self):
@@ -733,6 +880,38 @@ class ProbePrefixReuseTests(unittest.TestCase):
         self.assertEqual(3, self.stopped.call_count)  # each close, plus prior close check
         self.assertTrue(prefix.is_dir())
 
+    def test_three_successive_checkouts_keep_original_generation_owner_age(self):
+        initial = {'format': 1, 'boot_id': '01234567-89ab-cdef-0123-456789abcdef',
+                   'real_uid': 42, 'earliest_owner_starttime': 100}
+        with mock.patch.object(gpu, 'prior_owner_scope', return_value=initial) as capture:
+            first, prefix = self.run_probe()
+            second, again = self.run_probe()
+            third, final = self.run_probe()
+        self.assertEqual(prefix, again)
+        self.assertEqual(prefix, final)
+        self.assertTrue(second['probe_prefix_cache']['reused'])
+        self.assertTrue(third['probe_prefix_cache']['reused'])
+        self.assertEqual(1, capture.call_count, 'Reuse must not replace the original generation birth')
+        marker_path, = self.owner.root.glob('gpu-probe-prefix-*.json')
+        self.assertEqual(initial, json.loads(marker_path.read_text())['prior_owner'])
+        self.stopped.side_effect = [base.DiagnosticError(
+            'Wine server lock missing; cannot prove prefix shutdown'),
+            {'prefix_lock_free': True, 'server_socket_inactive': True}]
+        with mock.patch.object(gpu, 'absent_wine_endpoint', return_value={}), \
+                mock.patch.object(gpu, 'observe_prior_prefix_owners', return_value={}) as census:
+            fourth, after_missing_tmp = self.run_probe()
+        self.assertEqual(prefix, after_missing_tmp)
+        census.assert_called_once_with(prefix, self.owner.ctx, prior_owner=initial)
+        self.assertEqual(initial, json.loads(marker_path.read_text())['prior_owner'])
+
+    def test_reused_legacy_generation_does_not_invent_later_owner_age(self):
+        first, prefix = self.run_probe()
+        with mock.patch.object(gpu, 'prior_owner_scope', side_effect=AssertionError('Old age replaced')):
+            second, again = self.run_probe()
+        self.assertEqual(prefix, again)
+        marker_path, = self.owner.root.glob('gpu-probe-prefix-*.json')
+        self.assertIsNone(json.loads(marker_path.read_text())['prior_owner'])
+
     def test_busy_or_interrupted_prefix_is_preserved_and_never_reused(self):
         first, prefix = self.run_probe(complete=False)
         self.assertFalse(first['probe_prefix_cache']['published_closed'])
@@ -759,6 +938,72 @@ class ProbePrefixReuseTests(unittest.TestCase):
         self.assertTrue(prefix.is_dir())
         self.assertIn('not independently stopped', second['probe_prefix_cache']['reuse_refused'])
         self.assertEqual(str(fresh), self.owner.ctx.run.call_args.kwargs['env']['WINEPREFIX'])
+
+    def test_closed_prefix_survives_replaced_guest_tmp_without_reinitialization(self):
+        first, prefix = self.run_probe()
+        self.stopped.side_effect = [base.DiagnosticError(
+            'Wine server lock missing; cannot prove prefix shutdown'),
+            {'prefix_lock_free': True, 'server_socket_inactive': True}]
+        absent = {'prefix': gpu.ProbePrefixCache.owned_directory(prefix), 'server_directories': [None, None]}
+        observation = {'matching_processes': 0, 'complete': True, 'signals_sent': 0}
+        with mock.patch.object(gpu, 'absent_wine_endpoint', return_value=absent) as endpoint, \
+                mock.patch.object(gpu, 'observe_prior_prefix_owners', return_value=observation) as census:
+            second, again = self.run_probe()
+        self.assertEqual(prefix, again)
+        self.assertTrue(second['probe_prefix_cache']['reused'])
+        self.assertTrue(second['probe_prefix_cache']['published_closed'])
+        self.assertEqual(2, endpoint.call_count)
+        census.assert_called_once_with(prefix, self.owner.ctx, prior_owner=None)
+        self.assertEqual(wgl_result(), second['wine_gl_probe'])
+        self.assertFalse(second['probe_prefix_cache']['hardware_result_reused'])
+
+    def test_missing_native_lock_requires_current_complete_no_owner_census(self):
+        first, prefix = self.run_probe()
+        self.stopped.side_effect = [base.DiagnosticError(
+            'Wine server lock missing; cannot prove prefix shutdown'),
+            {'prefix_lock_free': True, 'server_socket_inactive': True}]
+        with mock.patch.object(gpu, 'absent_wine_endpoint', return_value={}), \
+                mock.patch.object(gpu, 'observe_prior_prefix_owners', side_effect=gpu.GPUProfileError('live owner')):
+            second, fresh = self.run_probe()
+        self.assertNotEqual(prefix, fresh)
+        self.assertTrue(prefix.is_dir())
+        self.assertFalse(second['probe_prefix_cache']['reused'])
+        self.assertEqual(str(fresh), self.owner.ctx.run.call_args.kwargs['env']['WINEPREFIX'])
+
+    def test_absent_endpoint_change_during_census_preserves_old_prefix(self):
+        first, prefix = self.run_probe()
+        self.stopped.side_effect = [base.DiagnosticError(
+            'Wine server lock missing; cannot prove prefix shutdown'),
+            {'prefix_lock_free': True, 'server_socket_inactive': True}]
+        with mock.patch.object(gpu, 'absent_wine_endpoint', side_effect=[{'inode': 1}, {'inode': 2}]), \
+                mock.patch.object(gpu, 'observe_prior_prefix_owners', return_value={}):
+            second, fresh = self.run_probe()
+        self.assertNotEqual(prefix, fresh)
+        self.assertTrue(prefix.is_dir())
+        self.assertIn('endpoint changed', second['probe_prefix_cache']['reuse_refused'])
+
+    def test_closed_inventory_change_during_census_is_refused(self):
+        first, prefix = self.run_probe()
+        self.stopped.side_effect = [base.DiagnosticError(
+            'Wine server lock missing; cannot prove prefix shutdown'),
+            {'prefix_lock_free': True, 'server_socket_inactive': True}]
+        def mutate(*args, **kwargs):
+            (prefix / 'system.reg').write_text('another writer')
+            return {}
+        with mock.patch.object(gpu, 'absent_wine_endpoint', return_value={}), \
+                mock.patch.object(gpu, 'observe_prior_prefix_owners', side_effect=mutate):
+            second, fresh = self.run_probe()
+        self.assertNotEqual(prefix, fresh)
+        self.assertEqual('another writer', (prefix / 'system.reg').read_text())
+        self.assertIn('changed during shutdown', second['probe_prefix_cache']['reuse_refused'])
+
+    def test_missing_native_lock_never_publishes_current_generation(self):
+        self.stopped.side_effect = base.DiagnosticError('Wine server lock missing; cannot prove prefix shutdown')
+        with mock.patch.object(gpu, 'observe_prior_prefix_owners') as census:
+            receipt, prefix = self.run_probe(cleanup_error=True)
+        census.assert_not_called()
+        self.assertFalse(receipt['probe_prefix_cache']['published_closed'])
+        self.assertTrue(prefix.is_dir())
 
     def test_exclusive_cache_lock_falls_back_without_modifying_locked_generation(self):
         cache, first = self.cache()

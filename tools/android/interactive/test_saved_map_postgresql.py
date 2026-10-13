@@ -83,7 +83,7 @@ class GuardTests(unittest.TestCase):
         for field, wrong in (('format', True), ('fixtures', []),
                 ('native_process_booted', True), ('native_client_connected', True),
                 ('native_save_logout_executed', True), ('physical_ayn_thor_validated', True),
-                ('boost_fields', []), ('shipping_enhancement_capture_changed', True)):
+                ('boost_fields', []), ('shipping_enhancement_capture_changed', False)):
             with self.subTest(field=field), self.assertRaises(RuntimeError):
                 validate_qualification_inventory(dict(proof, **{field: wrong}))
         with self.assertRaises(RuntimeError):
@@ -179,6 +179,9 @@ class SavedMapPostgreSQLTests(unittest.TestCase):
         value = zoning.LocalCharacterZoningServer(owner)
         value.schema = {'expected_attributes': attributes, 'expected_tables': expected}
         value.monorail_qualified = qualified
+        if map_id in (1, 5):
+            value.creation_report['mapserver_producer'] = {
+                'mapserver_sha256': zoning.character.SERVER_TEXTURE_EXCLUSION_MAP}
 
         def production_sql(text, *, game=False, cleanup=False):
             self.assertTrue(game, 'Saved-map evidence unexpectedly queried another database')
@@ -218,6 +221,13 @@ class SavedMapPostgreSQLTests(unittest.TestCase):
             self.assertEqual(value.baseline_snapshot['identity'],
                 dict(containerid=1, authid=77, authname='COHLOCAL', name='THORHERO'))
             self.assertEqual(set(baseline['table_sha256']), set(zoning.character.evidence.SELECTED))
+            if expected_map in (1, 5):
+                self.assertEqual(tuple(enhancements.BOOST_FIELDS), zoning.character.BOOST_FIELDS)
+                self.assertEqual(value.baseline_enhancements['rows'], boosts)
+                proof = value.creation_report['enhancement_baseline']
+                self.assertEqual(proof['row_count'], 2)
+                self.assertEqual(proof['rows_sha256'], zoning.character.digest_json(boosts))
+                self.assertFalse(proof['sql_game_mutations_performed'])
             saved = value.zoning_report['saved_startup']
             self.assertEqual(saved['map_id'], expected_map)
             self.assertEqual(saved['port'], zoning.MAPS[expected_map]['port'])
@@ -291,7 +301,7 @@ def qualification_inventory():
         'enhancement_no_mutation_scope': 'actual_isolated_postgresql_full_34_field_boosts_rows',
         'boost_fields': list(enhancements.BOOST_FIELDS),
         'generated_boost_template_sha256': enhancements.TEMPLATE_SHA256,
-        'shipping_enhancement_capture_changed': False}
+        'shipping_enhancement_capture_changed': True}
 
 
 def validate_qualification_inventory(proof):
@@ -304,7 +314,7 @@ def validate_qualification_inventory(proof):
         'enhancement_no_mutation_scope': 'actual_isolated_postgresql_full_34_field_boosts_rows',
         'boost_fields': list(enhancements.BOOST_FIELDS),
         'generated_boost_template_sha256': enhancements.TEMPLATE_SHA256,
-        'shipping_enhancement_capture_changed': False}
+        'shipping_enhancement_capture_changed': True}
     if (type(proof) is not dict or set(proof) != set(expected)
             or any(type(proof[name]) is not type(value) or proof[name] != value
                 for name, value in expected.items())):

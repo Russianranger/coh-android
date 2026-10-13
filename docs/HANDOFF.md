@@ -1,4 +1,18 @@
-# CURRENT — .35 startup optimization and manual testing — published and independently audited
+# CURRENT — .36 client/map preparation and save-check continuation — qualification pending
+
+Recovered branch `codex/character-persistence-continuation` at `b9e81b0cb772bea5de7394b55702b7c4d55e49f2`, preserving .35 publication and all available evidence. Prior source checkout directories had been pruned; the exact remote branch was recovered into a new checkout. No newer remote work was overwritten. Conversational agent liveness cannot be established from repository state.
+
+**Latest physical state changed: THORHERO returned to Atlas Park and performed normal native logout.** Expected next destination is Atlas, map 1 / UDP 7001. The old strict checker prevented final SQL location export; the next launch must query authoritative PostgreSQL, preserve the actual saved map/position and never hardcode either world. The earlier Kings-first instructions below are historical.
+
+User priorities: whole startup <5 minutes; client initialization <1 minute; zoning <=30 seconds. None is achieved or claimed by current physical evidence. First .35 session took 14:20.825 to Kings world event; second 9:44.314. Kings-to-Atlas native arrival took 11:12.826. Send Text now works; owned cleanup and complete current-session outer ZIP export have physical evidence. See [physical analysis](COH-PHYSICAL-STARTUP-0.13.35.md), [candidate changes](COH-STARTUP-LATENCY-0.13.36.md), [native research](COH-NATIVE-STARTUP-RESEARCH-0.13.36.md) and [ordered current testing guide](COH-Atlas-Gameplay-0.13.36-testing.txt).
+
+.36 / code 51 is not yet published. It retains exact .35 DEX/resources/native runtime components and unchanged Assets 1.0.0. Candidate changes address GPU probe-prefix reuse after temporary Wine endpoint loss, minimal Db/owned map preparation for saved Atlas as well as Kings, reverse authenticated collision proof reuse, cold metadata overhead, stable power/enhancement preservation and exact cross-map rewards. Final SQL/native location is captured before later diagnostic failure. No game SQL mutation is introduced. Manual user-started/stopped capture remains; no gameplay timer is restored.
+
+Required gates remain current-source host suites, disposable PostgreSQL identity/save tests, full imported-assets both-map preparation, genuine retained native minimal Db startup/restart, signed packaging and independent public-byte audit. Separate Game/Map profiling research is nonshipping and cannot substitute for native Atlas/Kings world/graphics parity. Exact fresh/inherited test counts and publication identity will be reconciled here after execution. PR #1 stays draft/unmerged; main stays untouched.
+
+---
+
+# HISTORICAL PUBLISHED — .35 startup optimization and manual testing — published and independently audited
 
 **THORHERO remains saved in Kings Row, static map 5 / UDP 7003.** The supplied
 .34 physical report proves direct Kings entry, an ordinary committed save and a

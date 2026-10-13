@@ -66,6 +66,41 @@ class SavedMapPreparationTests(unittest.TestCase):
         self.assertNotIn('1', value.creation_report.get('map_startup_observation', {}))
         self.assertEqual(value.server_data_identity['source_data'], str(self.fixture.data))
 
+    def test_saved_atlas_uses_minimal_db_and_same_closed_cache_as_prior_return_trip(self):
+        # First build the actual deferred Atlas generation used by Kings→Atlas.
+        previous = self.kings_db()
+        previous_config = previous.runtime / 'data/server/db/servers.cfg'
+        previous_config.write_text('current connection')
+        previous.config = previous_config
+        with patch.object(previous, 'copy_kings_native_dependencies', side_effect=self.copy_native):
+            previous.prepare_atlas_runtime()
+        previous.owner.cleanup_status = {'wine_prefix_stopped': True, 'owned_processes_reaped': True}
+        previous.cleanup_config()
+        saved = self.fixture.make(2)
+        saved.requires_saved_character = True
+        saved.overlap_client_initialization = True
+        saved.initial_map_preparation = Mock(return_value=1)
+        with patch.object(server.login.LocalLoginServer, 'prepare_runtime',
+                          lambda actual: self.fixture.base_prepare(actual)), \
+                patch.object(saved, 'stage_map_data', side_effect=AssertionError('duplicate Atlas mirror')):
+            saved.prepare_runtime()
+            self.assertTrue(saved.atlas_preparation_deferred)
+            self.assertFalse((saved.runtime / 'data/maps').exists())
+            config = saved.runtime / 'data/server/db/servers.cfg'
+            config.write_text('new owned connection')
+            original = {name: ((saved.runtime / name).stat().st_ino, (saved.runtime / name).read_bytes())
+                        for name in self.fixture.schema_files}
+            with patch.object(saved, 'copy_kings_native_dependencies', side_effect=self.copy_native):
+                atlas = saved.prepare_atlas_runtime()
+        self.assertTrue(saved.creation_report['private_map_data']['server_data_cache']['reused'])
+        self.assertEqual(saved.data_cache.identity, previous.data_cache.identity)
+        self.assertNotEqual(atlas, saved.runtime)
+        self.assertEqual((atlas / 'data/server/db/servers.cfg').read_text(), 'new owned connection')
+        for name, expected in original.items():
+            self.assertEqual(((saved.runtime / name).stat().st_ino, (saved.runtime / name).read_bytes()), expected)
+        self.assertFalse(hasattr(saved, 'kings_row_runtime'))
+        self.assertEqual(saved.creation_report['atlas_preparation_deferred']['map_id'], 1)
+
     def test_saved_atlas_retains_complete_original_preparation(self):
         value = self.fixture.make(1)
         with patch.object(value, 'stage_map_data', wraps=value.stage_map_data) as mirror:
@@ -171,19 +206,28 @@ class SavedMapPreparationTests(unittest.TestCase):
 
 
 class SavedMapOverlapTests(unittest.TestCase):
+    selected_map = 5
     def instance(self):
         fixture = startup_fixture.SavedMapStartupTests()
         self.addCleanup(fixture.doCleanups)
-        value = fixture.instance(5, None)
+        value = fixture.instance(self.selected_map, None)
         fixture.baseline(value)
-        value.startup_preparation_map_id = 5
+        value.startup_preparation_map_id = self.selected_map
         child, kings = fixture.fake_launch(value)
         child.started = 100
         value.kings_row_runtime = kings
         value.creation_report['kings_row_beacon_graph'] = {'verified': True, 'map_id': 5}
+        if self.selected_map == 1:
+            value.atlas_map_runtime = value.runtime.with_name('atlas-map-runtime')
+            value.atlas_map_runtime.mkdir()
+            value.atlas_preparation_deferred = True
+            value.atlas_runtime_prepared = True
+            value.prepare_atlas_runtime = Mock(return_value=value.atlas_map_runtime)
+            value.creation_report['atlas_beacon_graph'] = {'status': 'reused_verified_graph',
+                'map': 'maps/city_zones/city_01_01/city_01_01.txt'}
         value.overlap_client_initialization = True
         value.ctx.report['stages'] = [{'stage': 'local_atlas_startup', 'started_utc': 'fixture'}]
-        value.query = Mock(side_effect=[startup_fixture.status(5, False), startup_fixture.status(5)])
+        value.query = Mock(side_effect=[startup_fixture.status(self.selected_map, False), startup_fixture.status(self.selected_map)])
         with patch.object(zoning.time, 'monotonic', return_value=100), \
                 patch.object(zoning.character.game, 'check_game_port'):
             value.start_map()
@@ -259,16 +303,17 @@ class SavedMapOverlapTests(unittest.TestCase):
             with self.assertRaises(server.base.DiagnosticError):
                 value.poll_initial_map_startup()
         self.assertEqual(fixture.rows, before)
-        self.assertIs(value.maps[5]['process'], child)
+        self.assertIs(value.maps[self.selected_map]['process'], child)
         self.assertFalse(value.creation_report['map_ready'])
         self.assertFalse(value.creation_report['startup_overlap']['client_input_admitted'])
 
     def test_overlap_requires_current_saved_map_process_runtime_and_verified_graph(self):
         for field in ('runtime', 'map', 'graph'):
             fixture, value, child = self.instance()
-            if field == 'runtime': value.maps[5]['runtime'] = value.runtime
-            elif field == 'map': value.startup_preparation_map_id = 1
-            else: value.creation_report['kings_row_beacon_graph']['verified'] = False
+            if field == 'runtime': value.maps[self.selected_map]['runtime'] = value.runtime
+            elif field == 'map': value.startup_preparation_map_id = 5 if self.selected_map == 1 else 1
+            elif self.selected_map == 5: value.creation_report['kings_row_beacon_graph']['verified'] = False
+            else: value.creation_report['atlas_beacon_graph']['status'] = 'incomplete'
             with self.subTest(field=field), self.assertRaises(server.base.DiagnosticError):
                 value.client_startup_assets_allowed()
 
@@ -292,6 +337,18 @@ class SavedMapOverlapTests(unittest.TestCase):
                 value.health()
         value.ctx.start.assert_called_once()
 
+    def test_texture_preparation_report_attributes_selected_world(self):
+        fixture, value, child = self.instance()
+        value.ctx.children = []
+        diagnostic = creation.CharacterCreationDiagnostic.__new__(creation.CharacterCreationDiagnostic)
+        diagnostic.local_server, diagnostic.ctx = value, value.ctx
+        preparation = type('Preparation', (), {'finished': 105, 'started': 100, 'thread_started': True})()
+        diagnostic.record_texture_schedule(preparation, 104, 'passed')
+        result = value.ctx.report['client_texture_startup_schedule']
+        self.assertEqual(result['preparation_phase'], 'during_owned_saved_map_native_startup')
+        self.assertEqual(result['saved_map_id'], self.selected_map)
+        self.assertFalse(result['physical_startup_savings_validated'])
+
     def test_first_native_tick_is_timing_evidence_and_never_world_or_input_acceptance(self):
         fixture, value, child = self.instance()
         value.observe_initial_map_progress({'available': True, 'tick_completed': 1, 'unchanged_seconds': 0}, 125)
@@ -302,6 +359,10 @@ class SavedMapOverlapTests(unittest.TestCase):
         self.assertFalse(overlap['client_input_admitted'])
         self.assertFalse(value.creation_report['map_ready'])
         self.assertEqual(value.query.call_count, 1)
+
+
+class SavedAtlasOverlapTests(SavedMapOverlapTests):
+    selected_map = 1
 
 
 class DeferredAtlasPreparationGuardTests(unittest.TestCase):

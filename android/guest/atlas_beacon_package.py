@@ -627,7 +627,8 @@ def eligible_shared_provider(provider, identity, owner):
 
 
 def mint_shared_inputs(selected, providers, identity, owner_root, *,
-                       validation_basis='current_complete_input_sha256_and_same_provider_snapshots'):
+                       validation_basis='current_complete_input_sha256_and_same_provider_snapshots',
+                       manifest_sha256=None):
     require(isinstance(identity, dict) and identity.get('format') == 2
             and isinstance(identity.get('source_roots'), list)
             and len(identity['source_roots']) == 2
@@ -636,18 +637,22 @@ def mint_shared_inputs(selected, providers, identity, owner_root, *,
     owner = proof_owner_identity(owner_root)
     eligible = {name: dict(row) for name, row in providers.items()
                 if eligible_shared_provider(row, identity, owner)}
-    return VerifiedCollisionInputs(_SHARED_PROOF_TOKEN, MANIFEST_SHA256,
+    producer = MANIFEST_SHA256 if manifest_sha256 is None else manifest_sha256
+    require(isinstance(producer, str) and re.fullmatch('[0-9a-f]{64}', producer),
+            'Shared collision proof producer manifest is invalid')
+    return VerifiedCollisionInputs(_SHARED_PROOF_TOKEN, producer,
         hashlib.sha256(canonical(identity)).hexdigest(), owner,
         {name: dict(selected[name]) for name in eligible}, eligible, validation_basis)
 
 
-def reusable_shared_inputs(proof, selected, providers, identity, owner_root):
+def reusable_shared_inputs(proof, selected, providers, identity, owner_root, *, manifest_sha256=None):
     if type(proof) is not VerifiedCollisionInputs or proof.token is not _SHARED_PROOF_TOKEN:
         return set(), 'no_current_process_owned_atlas_proof'
     if not isinstance(identity, dict) or owner_root is None:
         return set(), 'owned_source_generation_or_contract_missing'
     owner = proof_owner_identity(owner_root)
-    if (proof.manifest_sha256 != MANIFEST_SHA256 or proof.owner_identity != owner
+    producer = MANIFEST_SHA256 if manifest_sha256 is None else manifest_sha256
+    if (proof.manifest_sha256 != producer or proof.owner_identity != owner
             or proof.generation_sha256 != hashlib.sha256(canonical(identity)).hexdigest()):
         return set(), 'owned_source_generation_or_contract_changed'
     names = set()
@@ -687,11 +692,12 @@ def atomic_bytes(path, raw):
 
 
 def install(archive, manifest_path, runtime, *, context, imported_inputs_readonly, mapserver_package=None,
-            input_proof_sink=None, source_cache_identity=None, owner_root=None):
+            input_proof_sink=None, source_cache_identity=None, owner_root=None,
+            source_input_proof=None, source_input_manifest_sha256=None):
     started = time.monotonic(); runtime = Path(runtime)
     require(imported_inputs_readonly is True, 'Beacon installation requires the qualified readonly private world')
     value = read_manifest(manifest_path)
-    provider_records = {} if input_proof_sink is not None else None
+    provider_records = {} if input_proof_sink is not None or source_input_proof is not None else None
     profile, selected, inputs, input_targets = profile_snapshot(runtime, value, context,
         provider_records=provider_records)
     accepted_mapserver = STOCK_MAPSERVER_SHA256
@@ -736,13 +742,19 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
                 'input_validation_basis': 'authenticated_prior_full_byte_receipt_and_current_immutable_provider_fingerprints',
                 'same_process_shared_certificate_exported': input_proof_sink is not None,
                 'preparation_elapsed_seconds': round(time.monotonic() - started, 6)}
-    total = 0
+    shared, shared_reason = reusable_shared_inputs(source_input_proof, selected, provider_records,
+        source_cache_identity, owner_root, manifest_sha256=source_input_manifest_sha256)
+    total = reused_bytes = 0
     for name, expected in selected.items():
         context.check()
+        if name in shared:
+            reused_bytes += expected['bytes']
+            continue
         require(pin(input_targets[name], context) == expected, 'Actual Atlas collision/group input differs: ' + name)
         total += expected['bytes']
-    next_profile, _, next_inputs, _ = profile_snapshot(runtime, value, context)
-    require(next_inputs == inputs and next_profile == profile,
+    next_providers = {} if provider_records is not None else None
+    next_profile, _, next_inputs, _ = profile_snapshot(runtime, value, context, provider_records=next_providers)
+    require(next_inputs == inputs and next_profile == profile and next_providers == provider_records,
             'Atlas inputs changed while establishing native graph compatibility')
     regular(archive, 2 * MAX_GRAPH, allow_shared_source=True)
     require(ARCHIVE_BYTES > 0 and pin(archive, context) == {'bytes': ARCHIVE_BYTES, 'sha256': ARCHIVE_SHA256},
@@ -775,21 +787,29 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
               'server_geometry_profile': profile,
               'input_fingerprints': inputs,
               'graph_fingerprints': fingerprints(runtime, targets, context)}
-    atomic_bytes(marker, canonical(record))
-    if input_proof_sink is not None:
+    if provider_records is not None:
         # Recheck the providers after archive work before granting a same-process
         # certificate. This also strengthens the final cold graph guard.
         current_providers = {}
         _, _, current_inputs, _ = profile_snapshot(runtime, value, context, provider_records=current_providers)
         require(current_inputs == inputs and current_providers == provider_records,
                 'Atlas providers changed before shared full-byte certificate')
-        input_proof_sink(mint_shared_inputs(selected, current_providers, source_cache_identity, owner_root))
+    atomic_bytes(marker, canonical(record))
+    if input_proof_sink is not None:
+        input_proof_sink(mint_shared_inputs(selected, current_providers, source_cache_identity, owner_root,
+            validation_basis=('authenticated_shared_provider_pins_and_hashed_destination_delta' if shared else
+                              'current_complete_input_sha256_and_same_provider_snapshots')))
     return {'format': 3, 'status': 'installed_verified_graph', 'map': MAP, 'server_geometry_profile': profile,
             'full_world_crc': value['native']['full_world_crc'], 'installed_files': installed,
             'input_files_checked': len(inputs), 'input_payload_bytes_hashed': total,
+            'input_full_byte_proof_reused_files': len(shared), 'input_full_byte_proof_reused_bytes': reused_bytes,
+            'input_full_byte_proof_reuse_policy': shared_reason,
+            'input_full_byte_proof_reuse_basis': (source_input_proof.validation_basis if shared else
+                'all_destination_inputs_fully_hashed'),
             'archive_decoded': True, 'fingerprint_walk': True, 'input_inventory_walk': True,
             'input_validation': 'bounded_single_walk_inventory_and_fingerprints',
-            'input_validation_basis': 'current_complete_input_sha256_and_same_provider_snapshots',
+            'input_validation_basis': ('authenticated_shared_provider_pins_and_hashed_destination_delta' if shared else
+                                       'current_complete_input_sha256_and_same_provider_snapshots'),
             'same_process_shared_certificate_exported': input_proof_sink is not None,
             'native_graph_readback_qualified': True,
             'preparation_elapsed_seconds': round(time.monotonic() - started, 6)}

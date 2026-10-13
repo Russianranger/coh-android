@@ -45,6 +45,15 @@ MANUAL_ATLAS_ENVIRONMENT = 'COH_WINE_DB_MANUAL_ATLAS'
 MANUAL_ATLAS_ACK = ('COH_WINE_DB_MANUAL_ATLAS=1 active: unused Launcher connection wait skipped; '
                     'manual Atlas launch; ordinary DbServer readiness required')
 POWER_DELTA_LIMIT = 128
+BOOST_FIELDS = ('containerid', 'subid', 'powerid', 'idx', 'categoryname',
+    'powersetname', 'boostname', 'level', 'numcombines', 'var0', 'var1', 'var2', 'var3',
+    'slottedpowerupsmask', *(field for index in range(10)
+        for field in (f'powerupslottype{index}', f'powerupslotid{index}')))
+BOOST_ZERO_DEFAULT_SOURCE = {
+    'Common/container/dbcontainerpack.c': '8b4e5b0a65aac6ad79c088cb4367c47118baf1e771b4fbd24cc2155b3b628ecb',
+    'DBServer/src/container_sql.c': 'fdb1c9d3540c0cbb0fb64b219f02fc1a852ce3c1c54255227237788f8bad078f',
+    'MapServer/src/container/containerloadsave.c': '53eac63aab1577956d85a7cfacbe55fb63c856f6b185d9cb8e2b985117920aa8',
+}
 COMMUTER_POWER = 'Temporary_Powers.Day_Job_Powers.Day_Job_Movement_Increase_Lesser'
 # These pins describe the stock candidate, never evidence that this session
 # actually satisfied its time, material-volume and badge predicates.
@@ -155,6 +164,112 @@ def stock_power_delta(previous, current, attributes):
                 'native_DayJob_grant_and_current_owner_lifecycle'],
             reason='Exact stock-compatible Commuter addition; no native grant or spatial witness, so strict save verification remains required')
     return result
+
+
+def enhancement_semantics(boosts, powers, attributes):
+    """Normalize native indexes/defaults; preserve nonzero boost payloads.
+
+    convertPowerBoosts stores the current packed PowerID. Resolve that relation
+    through the stable UniqueID before comparing attachments across repacking.
+    Inventory index and slotted enhancement index remain exact.
+    The pinned PACKTYPE_INT/FLOAT serializer omits zeros; the SQL reader skips
+    both NULL and zero. Those known numeric payload defaults alone are equal.
+    Required attribute IDs, attachment identity and every raw row are retained.
+    This bounded current-character scope covers 128 powers, six slots per
+    power, and 70 inventory slots; it does not qualify larger endgame profiles
+    or independently authorize loot, equipping, combining or enhancement loss.
+    """
+    require(type(boosts) is list and len(boosts) <= 6010
+            and type(powers) is list and 0 < len(powers) <= POWER_DELTA_LIMIT,
+            'Enhancement/power inventory exceeds bounded preservation scope')
+    known = {row['id'] for row in attributes}
+    ids, unique = {}, set()
+    for row in powers:
+        pid, uid = row.get('powerid'), row.get('uniqueid')
+        require(type(pid) is int and 0 < pid <= POWER_DELTA_LIMIT and pid not in ids
+                and type(uid) is int and 0 < uid <= 0x7fffffff and uid not in unique,
+                'Enhancement attachment has ambiguous power identity')
+        ids[pid] = {key: row[key] for key in ('uniqueid', 'buildnum', 'categoryname', 'powersetname', 'powername')}
+        unique.add(uid)
+    result, subids, locations = [], set(), set()
+    for row in boosts:
+        require(type(row) is dict and set(row) == set(BOOST_FIELDS)
+                and type(row['containerid']) is int and row['containerid'] == 1
+                and type(row['subid']) is int and 0 <= row['subid'] < 6010
+                and row['subid'] not in subids and type(row['powerid']) is int,
+                'Incomplete, duplicate or foreign enhancement row')
+        subids.add(row['subid'])
+        index = 0 if row['idx'] is None else row['idx']
+        require(type(index) is int and index >= 0, 'Invalid enhancement slot index')
+        if row['powerid'] == -1:
+            require(index < 70, 'Inventory enhancement slot exceeds native bound')
+            location = {'inventory_index': index}
+        else:
+            require(row['powerid'] in ids and index < 6, 'Enhancement has no exact power/slot relation')
+            location = {'power': ids[row['powerid']], 'slot_index': index}
+        key = digest_json(location)
+        require(key not in locations, 'Duplicate enhancement attachment')
+        locations.add(key)
+        payload = {key: row[key] for key in BOOST_FIELDS[4:]}
+        for key, value in payload.items():
+            if key in ('categoryname', 'powersetname', 'boostname'):
+                require(type(value) is int and value > 0 and value in known,
+                        'Enhancement attribute is absent from authenticated mapping')
+            elif key in ('var0', 'var1', 'var2', 'var3'):
+                require(value is None or type(value) in (int, float) and math.isfinite(value),
+                        'Enhancement floating value is invalid')
+                if value is None or value == 0:
+                    payload[key] = 0.0
+            else:
+                require(value is None or type(value) is int and 0 <= value <= 0x7fffffff,
+                        'Enhancement integer value is invalid')
+                if value is None:
+                    payload[key] = 0
+        result.append({'location': location, 'payload': payload})
+    return sorted(result, key=digest_json)
+
+
+def stock_power_preservation(previous, current, attributes, *, native_sha256, data_sha256):
+    """Preserve permanent powers while recognizing one stock temporary lifecycle.
+
+    Native packing row numbers are not power identity. Commuter is explicitly
+    deletable and finite-lived in the authenticated stock definition. Observing
+    its addition/expiry is not independent proof of DayJob grant eligibility.
+    Unknown temporary powers and every changed/lost permanent power fail closed.
+    """
+    if native_sha256 != SERVER_TEXTURE_EXCLUSION_MAP or data_sha256 != STOCK_DAYJOB_DATA_INPUTS:
+        return None
+    delta = stock_power_delta(previous, current, attributes)
+    if (delta.get('status') != 'observed' or delta.get('current_native_indexes_contiguous') is not True
+            or delta['changed_prior_powers']):
+        return None
+    names = {row['id']: row['name'].casefold() for row in attributes}
+    def temporary(row):
+        return ('.'.join(names[row[key]] for key in ('categoryname', 'powersetname', 'powername'))
+                == COMMUTER_POWER.casefold()
+            and (row['powerlevelbought'] is None or type(row['powerlevelbought']) is int
+                 and 0 <= row['powerlevelbought'] <= 49)
+            and all(row[key] is None for key in ('powernumboostsbought', 'powersetlevelbought', 'buildnum')))
+    before = {row['uniqueid']: row for row in previous}
+    after = {row['uniqueid']: row for row in current}
+    removed = [before[uid] for uid in delta['deleted_uniqueids']]
+    added = [item['selected_row'] for item in delta['added_powers']]
+    if (len(removed) + len(added) > 1 or any(not temporary(row) for row in removed + added)
+            or any(sum(temporary(row) for row in rows) > 1 for rows in (previous, current))):
+        return None
+    return {'format': 1, 'verified': True,
+        'scope': 'permanent_power_identity_and_authentic_stock_temporary_lifecycle',
+        'before_power_rows_sha256': digest_json(previous), 'saved_power_rows_sha256': digest_json(current),
+        'permanent_powers_preserved': True, 'packing_indexes_reserialized': True,
+        'temporary_power': COMMUTER_POWER if removed or added else None,
+        'temporary_lifecycle': 'added' if added else 'removed' if removed else 'unchanged',
+        'dayjob_grant_verified': False, 'login_eligibility_verified': False,
+        'spatial_predicates_verified': False, 'badge_predicates_verified': False,
+        'native_mapserver_sha256': native_sha256, 'definition_sha256': data_sha256.copy(),
+        'native_source_sha256': STOCK_DAYJOB_NATIVE_INPUTS.copy(),
+        'added_uniqueids': [row['uniqueid'] for row in added],
+        'removed_uniqueids': [row['uniqueid'] for row in removed],
+        'sql_game_mutations_performed': False}
 
 
 def manual_atlas_wait_contract():
@@ -485,17 +600,21 @@ def logout_follows_delivery(logout, delivery):
     return -999 <= timestamp - delivery['sent_utc_ms'] <= LOGOUT_MAX_AGE_MS
 
 
-def entity_records(logs):
+def entity_records(logs, *, map_id=1):
     """Yield IMPORTANT records from the two stock owned-server log routes.
 
     The embedded DbServer log server adds the Atlas map instance/host/DbServer
     prefix. If its connection fails, UtilitiesLib writes locally with level 0.
     """
+    require(type(map_id) is int and map_id in (1, 5), 'Unsupported native entity log map')
+    instance = 'City_01_01' if map_id == 1 else 'City_01_02'
     pattern = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) '
-        r'(?:(?P<local_level>0)|(?P<map_instance>(?i:City_01_01)_1):127\.0\.0\.1:127\.0\.0\.1) +'
+        r'(?:(?P<local_level>0)|(?P<map_instance>(?i:' + instance + r')_1):127\.0\.0\.1:127\.0\.0\.1) +'
         r'(?P<message>[^\r\n]+)$')
     for name, text in logs:
         path = Path(name)
+        if path.parts[:1] == ('map-' + str(map_id),):
+            path = Path(*path.parts[1:])
         if path.parent == Path('logs/mapserver') and path.name == 'entity.log':
             route = 'local_mapserver'
         elif (path.parent == Path('logs/dbserver')
@@ -512,18 +631,124 @@ def entity_records(logs):
                 'map_instance': match['map_instance']}
 
 
-def logout_record(logs):
+def logout_record(logs, *, map_id=1):
     """Record the owned entity's live logout timer, not its underlying cause.
 
     A normal CLIENT_DISCONNECT and a still-linked stalled client can both take
     this timer path. Explicit command delivery must be bound separately.
     """
     pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$')
-    for message, record in entity_records(logs):
+    for message, record in entity_records(logs, map_id=map_id):
         if pattern.fullmatch(message):
             return dict(record, reason='Logout timer expired', account=ACCOUNT, name=CHARACTER,
                 source='current_owned_server_entity_log_live_client_logout_timer')
     return None
+
+
+def reopen_connection_binding(proof, session, client_pid, now_utc_ms):
+    """Bind the existing native/DbServer proof, including the owned monorail lane.
+
+    This recognizes no new readiness by itself. The bridge record must already
+    have passed native process/sequence and independent DbServer status checks.
+    Legacy Atlas producers retain their original contact binding contract.
+    """
+    import stationary_contact_evidence as contact
+    ready = proof.get('client_ready_evidence') if type(proof) is dict else None
+    if type(ready) is not dict or ready.get('source') != 'current_owned_mapserver_monorail_ready':
+        return contact.binding(proof, session, client_pid, now_utc_ms)
+    if not (type(session) is str and re.fullmatch(r'[0-9a-f]{32}', session)
+            and contact.positive_int(client_pid) and type(now_utc_ms) is int
+            and proof.get('session_id') == session and type(proof.get('client_pid')) is int
+            and proof['client_pid'] == client_pid and type(proof.get('character_id')) is int
+            and proof['character_id'] == 1 and type(proof.get('map_id')) is int
+            and proof['map_id'] in (1, 5) and contact.positive_int(proof.get('auth_id'))
+            and proof.get('name') == CHARACTER and proof.get('account') == ACCOUNT
+            and all(proof.get(key) is True for key in ('existing_character_verified',
+                'preserved_existing_identity', 'reopen_verified', 'native_client_ready_observed',
+                'connected_on_supported_map', 'db_map_assignment_observed', 'monorail_enabled'))
+            and type(proof.get('mapserver_producer')) is dict
+            and proof['mapserver_producer'].get('mapserver_sha256') == SERVER_TEXTURE_EXCLUSION_MAP
+            and type(proof.get('character_progress_guard')) is dict
+            and proof['character_progress_guard'].get('passed') is True
+            and type(proof.get('client_ready_observed_utc_ms')) is int
+            and 0 < proof['client_ready_observed_utc_ms'] <= now_utc_ms
+            and ready.get('kind') == 'ready' and ready.get('session_id') == session
+            and ready.get('loaded_world_assets') is True and ready.get('name') == CHARACTER
+            and ready.get('account') == ACCOUNT and ready.get('log_route') == 'immediate_owned_mapserver_console'
+            and type(ready.get('db_id')) is int and ready['db_id'] == 1
+            and type(ready.get('auth_id')) is int and ready['auth_id'] == proof['auth_id']
+            and type(ready.get('map_id')) is int and ready['map_id'] == proof['map_id']
+            and contact.positive_int(ready.get('windows_pid')) and type(ready.get('pid')) is int
+            and ready['pid'] == ready['windows_pid']
+            and contact.positive_int(ready.get('main_thread_id')) and type(ready.get('tid')) is int
+            and ready['tid'] == ready['main_thread_id']
+            and contact.positive_int(ready.get('sequence'))
+            and type(ready.get('port')) is int and 0 < ready['port'] <= 65535
+            and type(ready.get('request')) is int and ready['request'] == 0
+            and type(ready.get('target')) is int and ready['target'] == 0
+            and type(ready.get('position')) is list and len(ready['position']) == 3
+            and all(type(value) in (int, float) and value == 0 for value in ready['position'])
+            and type(ready.get('utc_ms')) is int
+            and 0 < ready['utc_ms'] <= proof['client_ready_observed_utc_ms']
+            and re.fullmatch(r'[0-9a-f]{64}', str(ready.get('line_sha256', '')))):
+        return None
+    return {'session_id': session, 'client_pid': client_pid, 'character_id': 1,
+        'auth_id': proof['auth_id'], 'map_id': proof['map_id'], 'name': CHARACTER, 'account': ACCOUNT,
+        'client_ready_observed_utc_ms': proof['client_ready_observed_utc_ms'],
+        'scope': 'previously_validated_current_session_monorail_and_dbserver_connection',
+        'native_log_contains_character_db_id': False, 'native_log_contains_session_or_client_pid': False,
+        'native_ready_line_sha256': ready['line_sha256']}
+
+
+def native_reward_windows(proof, current, logout_ms, *, session, client_pid, now_utc_ms):
+    history = proof.get('reward_connection_history')
+    if history is None:
+        return [(current, logout_ms)]
+    transfers = proof.get('reward_connection_transfers')
+    if not (type(history) is list and 1 <= len(history) <= 5 and type(transfers) is list
+            and len(transfers) == len(history) - 1):
+        return None
+    connections = [reopen_connection_binding(item, session, client_pid, now_utc_ms) for item in history]
+    if (any(item is None or item['auth_id'] != current['auth_id'] for item in connections)
+            or connections[-1] != current):
+        return None
+    windows = []
+    for index, leg in enumerate(transfers):
+        prior, following = connections[index:index + 2]
+        if type(leg) is not dict:
+            return None
+        delivery = leg.get('delivery')
+        depart = delivery.get('native_station_departure') if type(delivery) is dict else None
+        before_ready = history[index]['client_ready_evidence']
+        after_ready = history[index + 1]['client_ready_evidence']
+        if not (leg.get('arrival_native_verified') is True and type(leg.get('same_client_pid')) is int
+                and leg['same_client_pid'] == client_pid
+                and (leg.get('from_map_id'), leg.get('to_map_id')) == (prior['map_id'], following['map_id'])
+                and prior['map_id'] != following['map_id']
+                and type(delivery) is dict and delivery.get('session_id') == session
+                and type(delivery.get('client_pid')) is int and delivery['client_pid'] == client_pid
+                and type(delivery.get('character_id')) is int and delivery['character_id'] == 1
+                and (delivery.get('from_map_id'), delivery.get('to_map_id')) == (prior['map_id'], following['map_id'])
+                and type(delivery.get('sent_utc_ms')) is int
+                and prior['client_ready_observed_utc_ms'] <= delivery['sent_utc_ms']
+                < following['client_ready_observed_utc_ms'] <= logout_ms
+                and type(depart) is dict and depart.get('source') == 'current_owned_mapserver_monorail_station_departure'
+                and depart.get('kind') == 'station_departure' and depart.get('session_id') == session
+                and depart.get('name') == CHARACTER and depart.get('account') == ACCOUNT
+                and type(depart.get('db_id')) is int and depart['db_id'] == 1
+                and type(depart.get('auth_id')) is int and depart['auth_id'] == current['auth_id']
+                and type(depart.get('pid')) is int and depart['pid'] == before_ready['windows_pid']
+                and type(depart.get('tid')) is int and depart['tid'] == before_ready['main_thread_id']
+                and type(depart.get('sequence')) is int and depart['sequence'] > before_ready['sequence']
+                and type(depart.get('request')) is int and 0 < depart['request'] < depart['sequence']
+                and type(depart.get('utc_ms')) is int and depart['utc_ms'] == delivery['sent_utc_ms']
+                and (depart.get('map_id'), depart.get('target')) == (prior['map_id'], following['map_id'])
+                and re.fullmatch(r'[0-9a-f]{64}', str(depart.get('line_sha256', '')))
+                and evidence._same(leg.get('native_ready'), after_ready)):
+            return None
+        windows.append((prior, delivery['sent_utc_ms']))
+    windows.append((current, logout_ms))
+    return windows
 
 
 def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, client_pid, now_utc_ms):
@@ -535,7 +760,7 @@ def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, cli
     """
     import stationary_contact_evidence as contact
     import task_gate_evidence as task
-    identity = contact.binding(proof, session, client_pid, now_utc_ms)
+    identity = reopen_connection_binding(proof, session, client_pid, now_utc_ms)
     if (identity is None or type(delivery) is not dict
             or delivery.get('session_id') != session or delivery.get('client_pid') != client_pid
             or type(delivery.get('client_pid')) is not int or delivery.get('character_id') != 1
@@ -548,54 +773,62 @@ def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, cli
         end_ms = int(time.mktime(time.strptime(logout['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000)
     except (KeyError, ValueError, OverflowError):
         return None
-    ready_ms = identity['client_ready_observed_utc_ms']
-    if not ready_ms <= end_ms <= now_utc_ms:
+    if not identity['client_ready_observed_utc_ms'] <= end_ms <= now_utc_ms:
         return None
-    values = task.records(logs, ready_ms, end_ms)
-    if values is None:
-        return None  # An over-bound/truncated inventory is never credit proof.
-    credits = [value for value in values if value['kind'] == 'reward']
-    # The retained task parser deduplicates logger routes. For point changes,
-    # refuse repeated positive credits instead of guessing whether two identical
-    # records represent one mirrored award or two real awards in one second.
-    route_pattern = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) '
-        r'(?:(?P<local_level>[02])|(?P<map_instance>(?i:City_01_01)_1):127\.0\.0\.1:127\.0\.0\.1) +'
-        r'(?P<message>[^\r\n]+)$')
-    seen, candidate_count = set(), 0
-    for name, text in logs:
-        path = Path(name)
-        local = path.parent == Path('logs/mapserver') and path.name == 'rewards.log'
-        embedded = (path.parent == Path('logs/dbserver')
-            and re.fullmatch(r'rewards_[0-9][0-9_-]*\.log', path.name))
-        if not local and not embedded:
-            continue
-        tail = text[text.rfind('\n') + 1:]
-        if re.search(r'"THORHERO:COHLOCAL" -?\d+ \[Tbl\]:Rcv:Points(?: |$)', tail):
-            return None  # A pending award line is not a complete credit inventory.
-        for line in text[:text.rfind('\n') + 1].splitlines():
-            parsed = route_pattern.fullmatch(line)
-            if parsed is None or (parsed['local_level'] is not None) != local:
+    windows = native_reward_windows(proof, identity, end_ms, session=session,
+        client_pid=client_pid, now_utc_ms=now_utc_ms)
+    if windows is None:
+        return None
+    credits, seen, candidate_count = [], set(), 0
+    for identity, end_ms in windows:
+        ready_ms = identity['client_ready_observed_utc_ms']
+        values = task.records(logs, ready_ms, end_ms, map_id=identity['map_id'])
+        if values is None:
+            return None  # An over-bound/truncated inventory is never credit proof.
+        credits.extend(value for value in values if value['kind'] == 'reward')
+        # The retained task parser deduplicates logger routes. For point changes,
+        # refuse repeated positive credits instead of guessing whether two identical
+        # records represent one mirrored award or two real awards in one second.
+        instance = 'City_01_01' if identity['map_id'] == 1 else 'City_01_02'
+        route_pattern = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) '
+            r'(?:(?P<local_level>[02])|(?P<map_instance>(?i:' + instance + r')_1):127\.0\.0\.1:127\.0\.0\.1) +'
+            r'(?P<message>[^\r\n]+)$')
+        for name, text in logs:
+            path = Path(name)
+            if path.parts[:1] == ('map-' + str(identity['map_id']),):
+                path = Path(*path.parts[1:])
+            local = path.parent == Path('logs/mapserver') and path.name == 'rewards.log'
+            embedded = (path.parent == Path('logs/dbserver')
+                and re.fullmatch(r'rewards_[0-9][0-9_-]*\.log', path.name))
+            if not local and not embedded:
                 continue
-            message = parsed['message']
-            if not re.match(contact.PREFIX + r'\[Tbl\]:Rcv:Points(?: |$)', message):
-                continue
-            try:
-                stamp = int(time.mktime(time.strptime(parsed['timestamp'], '%y%m%d %H:%M:%S')) * 1000)
-            except (ValueError, OverflowError):
-                return None
-            if not ready_ms <= stamp <= end_ms:
-                continue
-            candidate_count += 1
-            match = task.PATTERNS['reward'].fullmatch(message)
-            if (candidate_count > task.RECORD_LIMIT or match is None or len(message) > 2048
-                    or parsed['local_level'] == '2'
-                    or task._int(int(match['teamup']), -0x80000000) is None):
-                return None
-            if int(match['xp']) or int(match['influence']):
-                key = (stamp, message)
-                if key in seen:
+            tail = text[text.rfind('\n') + 1:]
+            if re.search(r'"THORHERO:COHLOCAL" -?\d+ \[Tbl\]:Rcv:Points(?: |$)', tail):
+                return None  # A pending award line is not a complete credit inventory.
+            for line in text[:text.rfind('\n') + 1].splitlines():
+                parsed = route_pattern.fullmatch(line)
+                if parsed is None or (parsed['local_level'] is not None) != local:
+                    continue
+                message = parsed['message']
+                if not re.match(contact.PREFIX + r'\[Tbl\]:Rcv:Points(?: |$)', message):
+                    continue
+                try:
+                    stamp = int(time.mktime(time.strptime(parsed['timestamp'], '%y%m%d %H:%M:%S')) * 1000)
+                except (ValueError, OverflowError):
                     return None
-                seen.add(key)
+                if not ready_ms <= stamp <= end_ms:
+                    continue
+                candidate_count += 1
+                match = task.PATTERNS['reward'].fullmatch(message)
+                if (candidate_count > task.RECORD_LIMIT or match is None or len(message) > 2048
+                        or parsed['local_level'] == '2'
+                        or task._int(int(match['teamup']), -0x80000000) is None):
+                    return None
+                if int(match['xp']) or int(match['influence']):
+                    key = (identity['map_id'], stamp, message)
+                    if key in seen:
+                        return None
+                    seen.add(key)
     xp, influence = 0, 0
     positive = []
     for credit in credits:
@@ -613,8 +846,10 @@ def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, cli
     if not positive or len(positive) != len(seen):
         return None  # No native award permits no reward-field serialization drift.
     return {'format': 1, 'verified': True,
-        'scope': 'owned_atlas_exact_native_point_credits_before_ordinary_logout',
+        'scope': 'owned_supported_map_exact_native_point_credits_before_ordinary_logout',
         'connection': identity, 'ready_utc_ms': ready_ms, 'logout_utc_ms': end_ms,
+        'reward_connection_windows': [{'connection': connection, 'end_utc_ms': end}
+                                      for connection, end in windows],
         'logout_timer_evidence': logout, 'logout_delivery': delivery,
         'native_log_timestamp_precision_ms': 1000,
         'duplicate_positive_credit_policy': 'reject_even_mirrored_logger_routes',
@@ -1088,14 +1323,18 @@ class LocalCharacterServer(login.LocalLoginServer):
         if self.manual_atlas_startup is not None:
             self.creation_report['manual_atlas_startup'] = self.manual_atlas_startup
         checkpoint('native_dependencies_and_manual_atlas')
-        if initial_map == 5:
-            # PostgreSQL has selected Kings Row before the native DbServer
-            # starts. Its accepted schema-only layout does not need a second
-            # complete Atlas map tree, graph or definition/animation providers.
+        if initial_map == 5 or (initial_map == 1 and self.requires_saved_character
+                and getattr(self, 'overlap_client_initialization', False) is True):
+            # The saved location is authoritative before native startup. Both
+            # supported saved worlds use the authenticated minimal DbServer
+            # layout and their own map runtime. Atlas reuses the same cache
+            # generation as an earlier real return trip; the live DbServer's
+            # schema/configuration is never moved under the running process.
             self.atlas_preparation_deferred = True
             self.creation_report['atlas_preparation_deferred'] = {
-                'reason': 'saved_character_starts_in_kings_row', 'map_id': 5,
-                'dbserver_layout': 'accepted_schema_only_private_runtime',
+                'reason': ('saved_character_starts_in_kings_row' if initial_map == 5 else
+                           'saved_atlas_owned_map_client_initialization'), 'map_id': initial_map,
+                'dbserver_layout': 'authenticated_minimal_private_runtime',
                 'atlas_native_started': False, 'atlas_data_mirror_started': False,
                 'atlas_graph_prepared': False, 'sql_game_mutations_performed': False}
             return
@@ -1169,7 +1408,9 @@ class LocalCharacterServer(login.LocalLoginServer):
                 imported_inputs_readonly=receipt.get('imported_inputs_readonly'),
                 mapserver_package=self.map_package,
                 input_proof_sink=lambda proof: setattr(self, 'atlas_collision_input_proof', proof),
-                source_cache_identity=self.data_cache.identity, owner_root=self.owner.root)
+                source_cache_identity=self.data_cache.identity, owner_root=self.owner.root,
+                source_input_proof=getattr(self, 'kings_collision_input_proof', None),
+                source_input_manifest_sha256=getattr(self, 'kings_row_beacon_lock', {}).get('manifest', {}).get('sha256'))
             self.creation_report['atlas_beacon_graph'] = installed
             self.ctx.report['atlas_beacon_graph'] = installed
         checkpoint('atlas_beacon_graph')
@@ -1185,9 +1426,15 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.creation_report.get('server_animation_pack', {}),
             self.creation_report.get('atlas_beacon_graph', {}),
             self.creation_report['private_map_data']['preparation_elapsed_seconds'], phases)
+        # A collision certificate is useful only until the other supported
+        # world has its own durable proof. Do not retain both 8,000-leaf Python
+        # inventories for the gameplay lifetime once both runtimes exist.
+        self.kings_collision_input_proof = None
+        if getattr(self, 'kings_row_prepared', None) is not None:
+            self.atlas_collision_input_proof = None
 
     def prepare_atlas_runtime(self):
-        """Build Atlas only when a saved Kings character actually requests it.
+        """Build Atlas for its selected saved startup or actual native transfer.
 
         The live DbServer keeps its original schema and credential paths. The
         new Atlas process receives its own data/cache/config tree; no mutable
@@ -1574,7 +1821,8 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.owner.args.assets / kings_row_beacon_package.MANIFEST, target, context=self.ctx,
             imported_inputs_readonly=True, lock_path=self.owner.args.assets / kings_row_beacon_package.LOCK,
             source_input_proof=getattr(self, 'atlas_collision_input_proof', None),
-            source_cache_identity=source_identity, owner_root=self.owner.root)
+            source_cache_identity=source_identity, owner_root=self.owner.root,
+            input_proof_sink=lambda proof: setattr(self, 'kings_collision_input_proof', proof))
         checkpoint('kings_row_beacon_graph')
         self.kings_row_beacon_graph = graph
         report = {'runtime': target.name, 'geometry': geometry, 'graph': graph,
@@ -1592,6 +1840,9 @@ class LocalCharacterServer(login.LocalLoginServer):
         # A successful same-process preparation cannot need the Atlas leaf
         # certificate again; failure/cancellation above deliberately retains it.
         self.atlas_collision_input_proof = None
+        if self.creation_report.get('atlas_beacon_graph', {}).get('status') in (
+                'installed_verified_graph', 'reused_verified_graph'):
+            self.kings_collision_input_proof = None
         return self.kings_row_prepared
 
     def copy_private_data(self, source, target):
@@ -1624,7 +1875,6 @@ class LocalCharacterServer(login.LocalLoginServer):
         while pending:
             self.ctx.check()
             current, destination = pending.pop()
-            require(not destination.is_symlink(), 'Linked private destination refused')
             info = current.lstat()
             relative = current.relative_to(source)
             if len(relative.parts) == 1 and relative.parts[0].casefold() in excluded:
@@ -1642,8 +1892,18 @@ class LocalCharacterServer(login.LocalLoginServer):
                 resolved = resolver.directory(current)
                 require(any(root == resolved or root in resolved.parents for root in roots),
                         'Map data directory escaped verified roots')
-                require(not destination.exists() or destination.is_dir(), 'Invalid private data directory')
-                destination.mkdir(parents=True, exist_ok=True, mode=0o700)
+                # The fresh child is created atomically. Only the bounded
+                # schema parents already present need a destination stat;
+                # avoid repeated exists/is_dir/recursive mkdir per directory.
+                try:
+                    if relative.parts:
+                        destination.mkdir(mode=0o700)
+                    else:
+                        destination.mkdir(parents=True, mode=0o700)
+                except FileExistsError:
+                    destination_info = destination.lstat()
+                    require(not stat.S_ISLNK(destination_info.st_mode), 'Linked private destination refused')
+                    require(stat.S_ISDIR(destination_info.st_mode), 'Invalid private data directory')
                 if cache_recorder is not None:
                     cache_recorder.observe(relative, destination, None, private)
                 result['directories'] += 1
@@ -1652,7 +1912,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                     pending.extend((Path(entry.path), destination / entry.name) for entry in entries)
             else:
                 require(stat.S_ISREG(info.st_mode) or stat.S_ISLNK(info.st_mode), 'Nonregular map input refused')
-                resolved, resolved_info = resolver.leaf(current)
+                resolved, resolved_info = resolver.observed_leaf(current, info)
                 result['files'] += 1; result['bytes'] += resolved_info.st_size
                 # Include accepted prerequisites/prepared caches and bounded
                 # generated client caches in addition to the imported inputs.
@@ -1662,8 +1922,13 @@ class LocalCharacterServer(login.LocalLoginServer):
                 private = private or current.suffix.casefold() == '.dbidmap' or bool(resolved_info.st_mode & 0o222)
                 if cache_recorder is not None:
                     cache_recorder.observe(relative, destination, resolved, private)
-                if destination.exists():
-                    require(destination.is_file(), 'Invalid staged schema file')
+                try:
+                    destination_info = destination.lstat()
+                except FileNotFoundError:
+                    destination_info = None
+                if destination_info is not None:
+                    require(not stat.S_ISLNK(destination_info.st_mode), 'Linked private destination refused')
+                    require(stat.S_ISREG(destination_info.st_mode), 'Invalid staged schema file')
                     require(private or base.file_hash(destination) == base.file_hash(resolved),
                             'Immutable map input conflicts with staged schema')
                     result['preserved_schema_files'] += 1
@@ -2001,6 +2266,8 @@ class LocalCharacterServer(login.LocalLoginServer):
         if delivery is None: return None
         logout = self.native_logout_record()
         if logout is None or not logout_follows_delivery(logout, delivery): return None
+        self.creation_report.update(disconnected_before_sql=True, requested_logout_observed=True,
+            logout_timer_observed=True, logout_delivery=delivery, logout_timer_evidence=logout)
         rows = self.character_rows(identifier)
         snapshot = self.validate_saved_rows(rows, inventory)
         if snapshot is None: return None
@@ -2227,6 +2494,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         super().__init__(owner)
         self.baseline_snapshot = None
         self.failed_after_snapshot = None
+        self.baseline_enhancements = None
         self.creation_report.update(before_character_id=self.CHARACTER_ID,
             baseline_character_id=self.CHARACTER_ID, existing_character_verified=False,
             preserved_existing_identity=False, powers_preserved=False, costume_preserved=False,
@@ -2305,6 +2573,14 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                 'row_counts': {name: len(value) for name, value in rows.items()},
                 'login_count': count, 'captured_utc': base.utc(), 'saved_position': position},
             sql_game_mutations_performed=False)
+        if self.creation_report.get('mapserver_producer', {}).get('mapserver_sha256') == SERVER_TEXTURE_EXCLUSION_MAP:
+            boosts = self.sql_rows('boosts', BOOST_FIELDS, ('containerid', 'subid'), 'containerid=1')
+            semantic = enhancement_semantics(boosts, rows['powers'], self.schema['expected_attributes']['attributes'])
+            self.baseline_enhancements = {'rows': boosts, 'semantic': semantic}
+            self.creation_report['enhancement_baseline'] = {'row_count': len(boosts),
+                'rows_sha256': digest_json(boosts), 'semantic_sha256': digest_json(semantic),
+                'attachment_identity': 'native_PowerID_resolved_to_stable_power_UniqueID',
+                'sql_game_mutations_performed': False}
         if self.stock_power_diagnostics_enabled():
             self.creation_report['stock_power_lifecycle_before_login'] = self.stock_power_lifecycle(rows)
         self.ctx.event('existing_character_ready', session_id=self.owner.args.session_id,
@@ -2418,7 +2694,26 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             self.creation_report.get('client_ready_observed_utc_ms'), int(time.time() * 1000),
             action='stuck', max_age_ms=RELOCATION_MAX_AGE_MS)
 
+    def remember_reward_connection(self):
+        proof = self.creation_report
+        now_ms = int(time.time() * 1000)
+        identity = reopen_connection_binding(proof, self.owner.args.session_id,
+            proof.get('client_pid'), now_ms)
+        if identity is None or proof.get('monorail_enabled') is not True:
+            return
+        history = proof.setdefault('reward_connection_history', [])
+        if history and history[-1]['client_ready_evidence'] == proof['client_ready_evidence']:
+            return
+        require(len(history) < 5, 'Reward connection history exceeds the supported native zoning bound')
+        keys = ('session_id', 'client_pid', 'character_id', 'auth_id', 'map_id', 'name', 'account',
+            'existing_character_verified', 'preserved_existing_identity', 'reopen_verified',
+            'native_client_ready_observed', 'connected_on_supported_map', 'db_map_assignment_observed',
+            'monorail_enabled', 'mapserver_producer', 'character_progress_guard',
+            'client_ready_observed_utc_ms', 'client_ready_evidence', 'connected_on_atlas')
+        history.append(json.loads(json.dumps({key: proof[key] for key in keys})))
+
     def observe_connected_character(self):
+        self.remember_reward_connection()
         delivery = self.relocation_delivery()
         if delivery is None:
             return
@@ -2440,12 +2735,35 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         self.native_reward_credit = None
         self.native_training_save = None
         self.native_power_load_normalization = None
+        self.native_stock_power_preservation = None
         before = self.baseline_snapshot
         after = validate_character_rows(rows, self.baseline, inventory,
             self.schema['expected_attributes'], self.auth_id,
             existing_identity=before['identity'], expected_login_count=before['login_count'] + 1)
         if after is None:
             return None
+        location = self.observe_saved_location()
+        if self.baseline_enhancements is not None:
+            boosts = self.sql_rows('boosts', BOOST_FIELDS, ('containerid', 'subid'), 'containerid=1')
+            comparison = {'verified': False, 'status': 'incomplete',
+                'before_rows': self.baseline_enhancements['rows'], 'saved_rows': boosts,
+                'before_semantic_sha256': digest_json(self.baseline_enhancements['semantic']),
+                'sql_game_mutations_performed': False, 'native_save_failure_proven': False,
+                'native_gameplay_inventory_change_independently_verified': False,
+                'attachment_identity': 'native_PowerID_resolved_to_stable_power_UniqueID',
+                'scope': 'unchanged_enhancement_payload_and_stable_power_attachment',
+                'numeric_default_equivalence': 'native_PACKTYPE_INT_FLOAT_NULL_equals_zero_only',
+                'numeric_default_source_sha256': BOOST_ZERO_DEFAULT_SOURCE.copy(),
+                'reason': 'Saved enhancement rows require typed attachment validation'}
+            self.creation_report['enhancement_preservation'] = comparison
+            semantic = enhancement_semantics(boosts, after['rows']['powers'], self.schema['expected_attributes']['attributes'])
+            equal = evidence._same(self.baseline_enhancements['semantic'], semantic)
+            comparison.update(verified=equal, status='verified' if equal else 'incomplete',
+                saved_semantic_sha256=digest_json(semantic), reason=('Enhancement payload and attachment preserved'
+                if equal else 'Observed enhancement change needs native loot/equipping/combining evidence; '
+                    'ordinary logout and saved-location evidence are retained separately'))
+            require(equal, 'Character diagnostic incomplete: saved enhancements changed; native inventory '
+                    'change is not independently verified. This does not establish a failed native save.')
         if self.stock_power_diagnostics_enabled():
             self.creation_report['stock_power_lifecycle_after_logout'] = self.stock_power_lifecycle(rows)
         # Only the typed current reader repair permits the finite first-training
@@ -2474,6 +2792,8 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                     logs, self.creation_report, receipt, logout_record(logs), before['rows'], after['rows'],
                     self.schema['expected_attributes']['attributes'], session=self.owner.args.session_id,
                     client_pid=self.creation_report.get('client_pid'), now_utc_ms=now_ms)
+        if not evidence._same(before['rows']['powers'], after['rows']['powers']):
+            self.native_stock_power_preservation = self.stock_power_preservation_evidence(before, after)
         for table in evidence.SELECTED:
             previous = before['rows'][table]
             current = after['rows'][table]
@@ -2500,6 +2820,14 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                 else:
                     failure['after_snapshot_export_status'] = 'exceeded_bounded_export_scope'
                 require(False, 'Committed existing character rows changed after reopen: ' + table)
+        self.creation_report.update(saved_position=location['saved_position'],
+            saved_native_position_evidence=location['native_position_evidence'],
+            committed_native_position_verified=True,
+            committed_safe_position_verified=location['requested_recovery_verified'])
+        return after
+
+    def observe_saved_location(self):
+        """Capture SQL/native location even when another diagnostic fails later."""
         delivery = self.relocation_delivery()
         requested = self.creation_report.get('recovery_requested') is True or delivery is not None
         self.creation_report['recovery_requested'] = requested
@@ -2554,15 +2882,109 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         if requested:
             require(all(abs(a-b) <= 2 for a, b in zip(current_position, ground['position'])),
                     'Committed character position differs from the stable native recovery')
-            self.creation_report.update(ground_evidence=ground, committed_safe_position_verified=True)
-        self.creation_report.update(saved_position=position, saved_native_position_evidence=native,
-                                    committed_native_position_verified=True)
-        return after
+            self.creation_report.update(ground_evidence=ground)
+        observation = {'format': 1, 'saved_position': position, 'native_position_evidence': native,
+            'sql_location_matches_native_logout': True, 'requested_recovery_verified': requested,
+            'complete_character_save_verified': False, 'sql_game_mutations_performed': False}
+        self.creation_report['post_logout_location_observation'] = observation
+        return observation
+
+    def stock_power_preservation_evidence(self, before, after):
+        now_ms = int(time.time() * 1000)
+        binding = reopen_connection_binding(self.creation_report, self.owner.args.session_id,
+            self.creation_report.get('client_pid'), now_ms)
+        if (binding is None or self.creation_report.get('task_gate_required') is True
+                or self.baseline_enhancements is None
+                or self.creation_report.get('enhancement_preservation', {}).get('verified') is not True):
+            return None
+        producer = self.creation_report.get('mapserver_producer', {})
+        if producer.get('mapserver_sha256') != SERVER_TEXTURE_EXCLUSION_MAP:
+            return None
+        runtime = (getattr(self, 'kings_row_runtime', None) if binding['map_id'] == 5
+                   else getattr(self, 'atlas_map_runtime', None) or self.runtime)
+        if runtime is None:
+            return None
+        hashes = {}
+        try:
+            for name, expected in STOCK_DAYJOB_DATA_INPUTS.items():
+                path = runtime / name
+                observations = {}
+
+                def parents(leaf, root):
+                    parent = leaf.parent
+                    while True:
+                        info = parent.lstat()
+                        require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.geteuid(),
+                                'Stock lifecycle definition parent is not owned and real')
+                        observations[parent] = server_fx_catalog._unchanged_leaf(info)
+                        if parent == root:
+                            break
+                        require(root in parent.parents, 'Stock lifecycle definition escaped its authenticated root')
+                        parent = parent.parent
+
+                parents(path, runtime)
+                original = path.lstat()
+                observations[path] = server_fx_catalog._unchanged_leaf(original)
+                resolved = path
+                if stat.S_ISLNK(original.st_mode):
+                    # Production mirrors immutable leaves into real runtime
+                    # directories. Permit exactly that direct link shape, not
+                    # arbitrary link resolution or another source authority.
+                    require(self.ctx.report.get('client_worktree', {}).get('imported_inputs_readonly') is True,
+                            'Stock lifecycle linked source has no protected input receipt')
+                    roots = (self.owner.work.resolve(strict=True), self.owner.args.game_data.resolve(strict=True))
+                    saved_roots = getattr(self, 'server_data_identity', {}).get('source_roots')
+                    require(saved_roots == [{'path': str(root),
+                        'identity': server_data_cache.fingerprint(root, directory=True)} for root in roots],
+                        'Stock lifecycle input root identity changed after preparation')
+                    resolved = Path(os.readlink(path))
+                    require(resolved.is_absolute() and '..' not in resolved.parts,
+                            'Stock lifecycle source link is not the prepared absolute leaf')
+                    root = next((root for root in roots if root in resolved.parents), None)
+                    require(root is not None, 'Stock lifecycle source escaped the authenticated input roots')
+                    parents(resolved, root)
+                    leaf = resolved.lstat()
+                    require(stat.S_ISREG(leaf.st_mode) and not leaf.st_mode & 0o222,
+                            'Stock lifecycle source must be a readonly regular leaf')
+                    observations[resolved] = server_fx_catalog._unchanged_leaf(leaf)
+                else:
+                    require(stat.S_ISREG(original.st_mode), 'Stock lifecycle definition is not a regular leaf')
+                fd = os.open(resolved, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+                try:
+                    info = os.fstat(fd)
+                    require(stat.S_ISREG(info.st_mode) and info.st_uid == os.geteuid()
+                        and 0 < info.st_size <= 2 * 1024 * 1024
+                        and server_fx_catalog._unchanged_leaf(info) == observations[resolved],
+                        'Stock lifecycle definition is unowned, replaced or oversized')
+                    with os.fdopen(fd, 'rb', closefd=False) as source:
+                        raw = source.read(info.st_size + 1)
+                    final = os.fstat(fd)
+                    require(server_fx_catalog._unchanged_leaf(info) == server_fx_catalog._unchanged_leaf(final)
+                        and len(raw) == info.st_size
+                        and all(server_fx_catalog._unchanged_leaf(item.lstat()) == observed
+                                for item, observed in observations.items()),
+                        'Stock lifecycle definition or input path changed while reading')
+                    hashes[name] = hashlib.sha256(raw).hexdigest()
+                    require(hashes[name] == expected, 'Stock lifecycle definition differs from accepted native inputs')
+                finally:
+                    os.close(fd)
+        except (OSError, base.DiagnosticError):
+            return None
+        value = stock_power_preservation(before['rows']['powers'], after['rows']['powers'],
+            self.schema['expected_attributes']['attributes'],
+            native_sha256=producer['mapserver_sha256'], data_sha256=hashes)
+        if value is not None:
+            value['connection'] = binding
+        return value
 
     def saved_selected_rows_match(self, table, previous, current):
         """Permit exact awards, first training and finite auto-set normalization."""
         if evidence._same(previous, current):
             return True
+        stock = getattr(self, 'native_stock_power_preservation', None)
+        if table == 'powers' and isinstance(stock, dict) and stock.get('verified') is True:
+            return (digest_json(previous) == stock['before_power_rows_sha256']
+                    and digest_json(current) == stock['saved_power_rows_sha256'])
         normalization = getattr(self, 'native_power_load_normalization', None)
         if (table == 'powers' and isinstance(normalization, dict) and normalization.get('verified') is True):
             return (digest_json(previous) == normalization['before_power_rows_sha256']
@@ -2595,7 +3017,11 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                     for key in fields):
                 return False
             values.append({key: 0 if row[key] is None else row[key] for key in fields})
+        self.remember_reward_connection()
         proof = self.creation_report
+        if 'reward_connection_history' in proof:
+            proof['reward_connection_transfers'] = json.loads(json.dumps(
+                getattr(self, 'zoning_report', {}).get('transfers', [])))
         if (previous[0].get('containerid') != self.CHARACTER_ID
                 or type(previous[0].get('containerid')) is not int
                 or previous[0].get('authid') != proof.get('auth_id')
@@ -2608,7 +3034,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         if delivery is None:
             return False
         logs = self.current_logs()
-        credit = native_reward_credit_evidence(logs, proof, delivery, logout_record(logs),
+        credit = native_reward_credit_evidence(logs, proof, delivery, self.native_logout_record(),
             session=self.owner.args.session_id, client_pid=proof.get('client_pid'), now_utc_ms=now_ms)
         if credit is None or any(values[1][key] != values[0][key] + credit[key + '_delta']
                                  for key in fields):
@@ -2641,6 +3067,14 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                 selected_non_reward_rows_preserved=False,
                 native_power_load_normalization_verified=True,
                 native_power_load_normalization_evidence=normalization)
+        if self.creation_report.get('enhancement_preservation', {}).get('verified') is True:
+            result['enhancements_preserved'] = True
+        stock = getattr(self, 'native_stock_power_preservation', None)
+        if stock is not None:
+            result.update(selected_rows_preservation_policy='stable_permanent_power_identity_with_exact_native_rewards_and_stock_temporary_lifecycle',
+                native_stock_power_preservation=stock, permanent_powers_preserved=True,
+                temporary_power_lifecycle_observed=stock['temporary_lifecycle'],
+                dayjob_grant_independently_verified=False)
         return result
 
     def collect(self, target):

@@ -89,12 +89,12 @@ def private_target(runtime,name,context):
 
 
 def install(archive,manifest_path,runtime,*,context,imported_inputs_readonly,lock_path=None,
-            source_input_proof=None,source_cache_identity=None,owner_root=None):
+            source_input_proof=None,source_cache_identity=None,owner_root=None,input_proof_sink=None):
     started=time.monotonic();runtime=Path(runtime)
     require(imported_inputs_readonly is True,'Qualified readonly Kings world required')
     lock_path=Path(lock_path) if lock_path else Path(manifest_path).with_name(LOCK)
     value,lock=read_manifest(manifest_path,lock_path)
-    providers={} if source_input_proof is not None else None
+    providers={} if source_input_proof is not None or input_proof_sink is not None else None
     inputs,input_targets=inventory(runtime,value,context,provider_records=providers)
     targets={n:private_target(runtime,n,context) for n in value['files']};marker=private_target(runtime,MARKER,context)
     result={'format':1,'verified':True,'map_id':5,'map':MAP,'native_graph_readback_qualified':True,
@@ -107,6 +107,10 @@ def install(archive,manifest_path,runtime,*,context,imported_inputs_readonly,loc
         except (OSError,ValueError):pass
     if isinstance(prior,dict) and prior.get('policy')==POLICY and prior.get('lock')==lock and prior.get('inputs')==inputs:
         if all(p.exists() for p in targets.values()) and prior.get('graphs')==atlas.fingerprints(runtime,targets,context):
+            if input_proof_sink is not None:
+                input_proof_sink(atlas.mint_shared_inputs(value['input_files'],providers,source_cache_identity,owner_root,
+                    validation_basis='authenticated_prior_full_byte_receipt_and_current_immutable_provider_fingerprints',
+                    manifest_sha256=lock['manifest']['sha256']))
             return dict(result,status='reused_verified_graph',installed_files=0,input_payload_bytes_hashed=0,
                         input_full_byte_proof_reused_files=0,input_full_byte_proof_reused_bytes=0,
                         input_full_byte_proof_reuse_policy='unchanged_destination_full_byte_graph_receipt',
@@ -154,5 +158,10 @@ def install(archive,manifest_path,runtime,*,context,imported_inputs_readonly,loc
         and current_providers==providers,'Kings inputs changed before graph receipt')
     atlas.atomic_bytes(marker,canonical({'format':1,'policy':POLICY,'lock':lock,'inputs':inputs,
         'graphs':atlas.fingerprints(runtime,targets,context)}))
+    if input_proof_sink is not None:
+        input_proof_sink(atlas.mint_shared_inputs(value['input_files'],current_providers,source_cache_identity,owner_root,
+            manifest_sha256=lock['manifest']['sha256'],
+            validation_basis=('authenticated_shared_provider_pins_and_hashed_destination_delta' if shared else
+                              'current_complete_input_sha256_and_same_provider_snapshots')))
     return dict(result,status='installed_verified_graph',installed_files=installed,input_payload_bytes_hashed=hashed,
                 preparation_elapsed_seconds=round(time.monotonic()-started,6))

@@ -157,10 +157,13 @@ def read_delivery(path, proof, *, session, client_pid, now_utc_ms, accepted=None
     return value
 
 
-def records(logs, ready_ms, now_ms):
+def records(logs, ready_ms, now_ms, *, map_id=1):
     """Read complete bounded entity/admin records only from owned Atlas routes."""
     if not (type(logs) in (list, tuple) and len(logs) <= server.SERVER_LOG_COUNT_LIMIT):
         return None
+    if type(map_id) is not int or map_id not in (1, 5):
+        return None
+    instance = 'City_01_01' if map_id == 1 else 'City_01_02'
     total, found, seen = 0, [], set()
     for item in logs:
         if not (type(item) in (list, tuple) and len(item) == 2
@@ -172,6 +175,8 @@ def records(logs, ready_ms, now_ms):
         if size > server.SERVER_LOG_FILE_LIMIT or total > server.SERVER_LOG_TOTAL_LIMIT:
             return None
         path = Path(name)
+        if path.parts[:1] == ('map-' + str(map_id),):
+            path = Path(*path.parts[1:])
         if path.parent == Path('logs/mapserver') and path.name in ('entity.log', 'admin.log', 'rewards.log'):
             category, route_name = path.stem, 'local_mapserver'
         elif path.parent == Path('logs/dbserver'):
@@ -182,7 +187,7 @@ def records(logs, ready_ms, now_ms):
         else:
             continue
         route_pattern = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) '
-            r'(?:(?P<local_level>[02])|(?P<map_instance>(?i:City_01_01)_1):127\.0\.0\.1:127\.0\.0\.1) +'
+            r'(?:(?P<local_level>[02])|(?P<map_instance>(?i:' + instance + r')_1):127\.0\.0\.1:127\.0\.0\.1) +'
             r'(?P<message>[^\r\n]+)$')
         for line_index, line in enumerate(text[:text.rfind('\n') + 1].splitlines()):
             parsed = route_pattern.fullmatch(line)

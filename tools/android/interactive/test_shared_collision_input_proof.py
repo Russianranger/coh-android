@@ -117,6 +117,88 @@ class SharedCollisionInputProofTests(unittest.TestCase):
             for call in pin.call_args_list for name in self.atlas.inputs))
         self.assertGreater(self.install()['input_full_byte_proof_reused_files'], 0)
 
+    def kings_proof_for_atlas(self, *, warm=False):
+        proofs = []
+        self.install(source_input_proof=None, input_proof_sink=proofs.append)
+        if warm:
+            result = self.install(source_input_proof=None, input_proof_sink=proofs.append)
+            self.assertEqual(result['status'], 'reused_verified_graph')
+            self.assertEqual(result['input_payload_bytes_hashed'], 0)
+        for name in (fixture.package.GRAPH, fixture.package.DATE, fixture.package.MARKER):
+            (self.atlas.runtime / name).unlink(missing_ok=True)
+        lock = json.loads((self.assets / kings.LOCK).read_bytes())
+        return proofs[-1], lock['manifest']['sha256']
+
+    def atlas_from_kings(self, proof, manifest, **extra):
+        options = dict(context=fixture.Context(), imported_inputs_readonly=True,
+            source_cache_identity=self.identity, owner_root=self.owner,
+            source_input_proof=proof, source_input_manifest_sha256=manifest)
+        options.update(extra)
+        return fixture.package.install(self.atlas.archive, self.atlas.manifest, self.atlas.runtime, **options)
+
+    def test_kings_cold_and_warm_proofs_reuse_exact_shared_bytes_on_return_to_atlas(self):
+        for warm in (False, True):
+            with self.subTest(warm=warm):
+                proof, manifest = self.kings_proof_for_atlas(warm=warm)
+                common = [name for name in self.raws if name.startswith('data/object_library/')]
+                with mock.patch.object(fixture.package, 'pin', wraps=fixture.package.pin) as pin:
+                    result = self.atlas_from_kings(proof, manifest)
+                self.assertEqual(proof.manifest_sha256, manifest)
+                self.assertEqual(result['input_full_byte_proof_reused_files'], len(common))
+                self.assertEqual(result['input_full_byte_proof_reused_bytes'], sum(len(self.raws[n]) for n in common))
+                self.assertGreater(result['input_payload_bytes_hashed'], 0)  # Atlas-specific world still proved.
+                self.assertFalse(any(Path(call.args[0]) == self.atlas.runtime / name
+                    for call in pin.call_args_list for name in common))
+                self.assertEqual(result['installed_files'], 2)
+                self.assertTrue(result['native_graph_readback_qualified'])
+
+    def test_return_to_atlas_refuses_wrong_manifest_and_changed_source(self):
+        proof, manifest = self.kings_proof_for_atlas(warm=True)
+        result = self.atlas_from_kings(proof, 'f' * 64)
+        self.assertEqual(result['input_full_byte_proof_reused_files'], 0)
+        self.assertGreater(result['input_payload_bytes_hashed'], 0)
+        for name in (fixture.package.GRAPH, fixture.package.DATE, fixture.package.MARKER):
+            (self.atlas.runtime / name).unlink(missing_ok=True)
+        name = self.common_name(); original = self.source / name; info = original.stat()
+        original.chmod(0o600); original.write_bytes(b'X' * info.st_size)
+        os.utime(original, ns=(info.st_atime_ns, info.st_mtime_ns)); original.chmod(0o400)
+        with self.assertRaisesRegex(ValueError, 'Actual Atlas collision/group input differs'):
+            self.atlas_from_kings(proof, manifest)
+        self.assertFalse((self.atlas.runtime / fixture.package.MARKER).exists())
+
+    def test_return_to_atlas_checks_final_provider_substitution_before_receipt(self):
+        proof, manifest = self.kings_proof_for_atlas()
+        name = self.common_name(); target = self.atlas.runtime / name
+        substitute = self.source / 'substitution.geo'
+        substitute.write_bytes(self.raws[name]); substitute.chmod(0o400)
+        original = fixture.package.pin
+        changed = False
+        def substitute_during_atlas_specific_hash(path, *args):
+            nonlocal changed
+            result = original(path, *args)
+            if Path(path).as_posix().endswith(fixture.package.MAP) and not changed:
+                target.unlink(); target.symlink_to(substitute); changed = True
+            return result
+        with mock.patch.object(fixture.package, 'pin', side_effect=substitute_during_atlas_specific_hash):
+            with self.assertRaisesRegex(ValueError, 'Atlas inputs changed'):
+                self.atlas_from_kings(proof, manifest)
+        self.assertFalse((self.atlas.runtime / fixture.package.MARKER).exists())
+
+    def test_return_to_atlas_graph_write_race_never_seals_a_changed_provider(self):
+        proof, manifest = self.kings_proof_for_atlas()
+        name = self.common_name(); target = self.atlas.runtime / name
+        substitute = self.source / 'graph-race-substitution.geo'
+        substitute.write_bytes(self.raws[name]); substitute.chmod(0o400)
+        original = fixture.package.atomic_bytes
+        def substitute_after_graph_write(path, raw):
+            original(path, raw)
+            if Path(path) == self.atlas.runtime / fixture.package.GRAPH:
+                target.unlink(); target.symlink_to(substitute)
+        with mock.patch.object(fixture.package, 'atomic_bytes', side_effect=substitute_after_graph_write):
+            with self.assertRaisesRegex(ValueError, 'Atlas providers changed'):
+                self.atlas_from_kings(proof, manifest)
+        self.assertFalse((self.atlas.runtime / fixture.package.MARKER).exists())
+
     def test_json_or_absent_certificate_requires_all_destination_hashes(self):
         for proof in ({'format': 1, 'providers': {}}, None):
             with self.subTest(proof=proof):

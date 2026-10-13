@@ -54,6 +54,42 @@ class CharacterMapDataTests(unittest.TestCase):
             self.assertTrue(target.is_symlink()); self.assertEqual(target.resolve(), original)
             self.assertEqual(original.stat().st_mode & 0o777, 0o444)
 
+    def test_cold_mirror_uses_one_fresh_leaf_observation_and_bounded_parent_checks(self):
+        import character_server_data_cache as cache
+        originals = [self.immutable('defs/shared/leaf-' + str(i) + '.def') for i in range(256)]
+        recorder = cache.ServerDataCache.__new__(cache.ServerDataCache)
+        recorder.directory_names, recorder.private_names, recorder.anchor_names = [], [], {}
+        actual_stat, actual_lstat = os.stat, os.lstat
+        counts = {'stat': 0, 'lstat': 0}
+        def measured(name, method):
+            def call(*args, **kwargs):
+                counts[name] += 1
+                return method(*args, **kwargs)
+            return call
+        with patch.object(os, 'stat', side_effect=measured('stat', actual_stat)), \
+                patch.object(os, 'lstat', side_effect=measured('lstat', actual_lstat)):
+            result = self.value.stage_map_data(self.source, self.target, cache_recorder=recorder)
+        self.assertEqual(result['files'], 256)
+        self.assertEqual(result['linked_immutable_files'], 256)
+        self.assertLess(sum(counts.values()), 4 * 256 + 128)
+        self.assertEqual(len(recorder.anchor_names), 1)
+        for original in originals:
+            target = self.target / original.relative_to(self.imported)
+            self.assertEqual(target.resolve(strict=True), original)
+        self.assertEqual(self.value.creation_report['cold_mirror_input_resolution']['resolved_leaves'], 256)
+
+    def test_existing_linked_leaf_and_dangling_destination_are_rejected(self):
+        self.immutable('defs/leaf.def')
+        (self.target / 'defs').mkdir(parents=True)
+        leaf = self.target / 'defs/leaf.def'
+        for original in (self.imported / 'defs/leaf.def', self.root / 'missing'):
+            leaf.symlink_to(original)
+            with self.assertRaisesRegex(server.base.DiagnosticError, 'Linked private destination'):
+                self.value.stage_map_data(self.source, self.target)
+            self.assertTrue(leaf.is_symlink())
+            leaf.unlink()
+        self.assertEqual((self.imported / 'defs/leaf.def').read_text(), 'accepted')
+
     def test_cache_config_and_dbidmap_files_remain_private_and_schema_wins(self):
         names = ('bin/powers.bin', 'geobin/city.bin', 'server/db/servers.cfg', 'defs/powers/ids.dbidmap')
         originals = [self.immutable(name) for name in names]

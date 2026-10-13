@@ -495,7 +495,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.creation_report['map_id'] = map_id
 
     def start_map(self):
-        if self.active_map_id == 1:
+        if self.active_map_id == 1 and getattr(self, 'overlap_client_initialization', False) is not True:
             original = self.owner.wine_env
             if self.monorail_enabled():
                 self.owner.wine_env = dict(original, **self.monorail_environment(1))
@@ -525,14 +525,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             self.initial_map_startup = {'map_id': target, 'ready': False,
                 'deadline': min(self.ctx.deadline, started + character.MAP_STARTUP_SECONDS),
                 'started_monotonic': started, 'next_query': 0, 'next_message': 0, 'next_observation': 0,
-                'overlap_enabled': target == 5 and getattr(self, 'overlap_client_initialization', False) is True}
+                'overlap_enabled': target in (1, 5) and getattr(self, 'overlap_client_initialization', False) is True}
             rows = self.ctx.report.get('stages', [])
             self.initial_map_stage = rows[-1] if rows and rows[-1].get('stage') == 'local_atlas_startup' else None
             if self.initial_map_startup['overlap_enabled']:
                 self._activate(target)
                 self.ready_floor_ms = self.map_launch_utc_ms - 999
                 self.creation_report['startup_overlap'] = {
-                    'format': 1, 'policy': 'owned_kings_map_and_client_initialization_v1',
+                    'format': 1, 'policy': 'owned_saved_map_and_client_initialization_v2',
                     'map_id': target, 'native_map_launch_utc_ms': self.map_launch_utc_ms,
                     'native_map_launch_monotonic': started,
                     'client_preparation_overlap_started_monotonic': time.monotonic(),
@@ -558,11 +558,22 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             return False
         target = startup['map_id']
         owned = self.maps.get(target)
-        require(target == self.active_map_id == self.startup_preparation_map_id == 5
-                and owned is not None and owned.get('runtime') == self.kings_row_runtime
-                and self.creation_report.get('kings_row_beacon_graph', {}).get('verified') is True
+        if target == 5:
+            expected_runtime = getattr(self, 'kings_row_runtime', None)
+            graph = self.creation_report.get('kings_row_beacon_graph', {})
+            graph_ready = graph.get('verified') is True and graph.get('map_id') == 5
+        else:
+            expected_runtime = getattr(self, 'atlas_map_runtime', None) or self.runtime
+            graph = self.creation_report.get('atlas_beacon_graph', {})
+            graph_ready = (graph.get('status') in ('installed_verified_graph', 'reused_verified_graph')
+                and graph.get('map') == 'maps/city_zones/city_01_01/city_01_01.txt'
+                and (not getattr(self, 'atlas_preparation_deferred', False)
+                     or getattr(self, 'atlas_runtime_prepared', False) is True))
+        require(target in (1, 5) and target == self.active_map_id == self.startup_preparation_map_id
+                and expected_runtime is not None and owned is not None
+                and owned.get('runtime') == expected_runtime and graph_ready
                 and owned['process'].process.poll() is None and not owned['process'].overflow,
-                'Client overlap lacks the prepared owned saved Kings Row process')
+                'Client overlap lacks the prepared owned saved destination process')
         return True
 
     def poll_initial_map_startup(self):
@@ -1241,6 +1252,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             self.zoning_next = float('inf')
 
     def character_evidence(self):
+        self.remember_reward_connection()
         self.tick_zoning()
         if self.pending is not None and (self.pending.get('transfer_requested')
                 or self.pending.get('native_authorization_issued')):

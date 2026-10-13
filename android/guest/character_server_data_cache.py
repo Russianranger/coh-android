@@ -99,9 +99,19 @@ class CheckedInputResolver:
         return result
 
     def leaf(self, path):
+        return self.observed_leaf(path)
+
+    def observed_leaf(self, path, info=None):
+        """Accept only the immediately preceding no-follow source observation.
+
+        This optional input is confined to a single staging invocation. It is
+        never saved or used as a cache proof, and a resolved alias still gets a
+        fresh observation. Directory changes are checked again by verify().
+        """
         path = Path(path)
         current = self.directory(path.parent) / path.name
-        info = current.lstat()
+        if info is None or current != path:
+            info = current.lstat()
         if stat.S_ISLNK(info.st_mode):
             target = Path(os.readlink(current))
             if not target.is_absolute():
@@ -112,11 +122,14 @@ class CheckedInputResolver:
                 self.strict_links += 1
             else:
                 resolved = self.directory(target.parent) / target.name
-                if resolved.is_symlink():
+                info = resolved.lstat()
+                if stat.S_ISLNK(info.st_mode):
                     resolved = current.resolve(strict=True)
                     self.strict_links += 1
+                    info = resolved.lstat()
             self.directory(resolved.parent)
-            info = resolved.lstat()
+            if '..' in target.parts:
+                info = resolved.lstat()
         else:
             resolved = current
         require(any(root == resolved or root in resolved.parents for root in self.roots)
@@ -195,7 +208,8 @@ class ServerDataCache:
         elif private:
             if name != CONFIG:
                 self.private_names.append(name)
-        elif len(self.anchor_names) < 64 and resolved.stat().st_size <= 1024**2:
+        elif (relative.parts[0] not in self.anchor_names and len(self.anchor_names) < 64
+              and resolved.stat().st_size <= 1024**2):
             # One bounded read-only leaf per top-level input directory.
             self.anchor_names.setdefault(relative.parts[0], name)
 

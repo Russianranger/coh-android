@@ -27,7 +27,9 @@ class SavedMapPreparationProofTests(unittest.TestCase):
         case = dict(actual_server_data_files=10,excluded_client_texture_inventory=copy.deepcopy(inventory),selected_map_id=5, selected_port=7003, native_processes_started=0,
             sql_baseline={'sql_boundary': module.BOUNDARY['saved_map_sql_boundary'],
                 'rows_unchanged': True, 'identity_and_selected_powers_costume_preserved': True,
-                'selected_row_reads': 7, 'selected_rows_sha256': 'b'*64,
+                'selected_row_reads': 8, 'selected_rows_sha256': 'b'*64,
+                'enhancement_fixture': {'scope':module.BOOST_FIXTURE_SCOPE, 'columns':34, 'row_count':1,
+                    'selected_row_reads':1, 'rows_unchanged':True, 'rows_sha256':'d'*64},
                 'saved_position': dict(containerid=1,mapid=None,staticmapid=5,posx=12.5,posy=-20.,posz=40.25)},
             source_projection={'policy': 'exact_native_excluded_texture_directory_v1',
                 'excluded_top_level_directories': ['texture_library'],
@@ -78,6 +80,42 @@ class SavedMapPreparationProofTests(unittest.TestCase):
         self.assertGreaterEqual(result['selected_row_reads'],7)
         self.assertFalse(value.creation_report['sql_game_mutations_performed'])
         value.ctx.start.assert_not_called()
+
+    def test_qualified_producer_captures_all_boost_fields_at_readonly_fixture_boundary(self):
+        for map_id in (1,5):
+            f = fixture.SavedMapStartupTests(); self.addCleanup(f.doCleanups)
+            value = f.instance(map_id=map_id); del value.inventory
+            value.creation_report['mapserver_producer'] = {'mapserver_sha256':server.SERVER_TEXTURE_EXCLUSION_MAP}
+            verify = module.sql_fixture(value,map_id=map_id)
+            value.capture_baseline()
+            result = verify()
+            module.validate_enhancement_fixture(result['enhancement_fixture'])
+            self.assertEqual(result['enhancement_fixture']['columns'],34)
+            self.assertEqual(result['enhancement_fixture']['selected_row_reads'],1)
+            self.assertEqual(set(value.baseline_enhancements['rows'][0]),set(server.BOOST_FIELDS))
+            self.assertEqual(value.creation_report['enhancement_baseline']['row_count'],1)
+            before = copy.deepcopy(value.baseline_enhancements)
+            returned = value.sql_rows('boosts',server.BOOST_FIELDS,('containerid','subid'),'containerid=1')
+            returned[0]['level'] = 123  # A caller cannot alter the fixture database.
+            self.assertEqual(value.baseline_enhancements,before)
+            for fields,keys,where in ((server.BOOST_FIELDS[:-1],('containerid','subid'),'containerid=1'),
+                    (server.BOOST_FIELDS,('containerid',),'containerid=1'),
+                    (server.BOOST_FIELDS,('containerid','subid'),'containerid=2')):
+                with self.subTest(map_id=map_id,fields=len(fields),keys=keys,where=where), \
+                        self.assertRaisesRegex(ValueError,'unreviewed Boosts query'):
+                    value.sql_rows('boosts',fields,keys,where)
+            self.assertEqual(verify()['saved_position']['staticmapid'],map_id)
+            self.assertFalse(value.creation_report['sql_game_mutations_performed'])
+            value.ctx.start.assert_not_called()
+
+    def test_enhancement_fixture_receipt_rejects_unexecuted_or_partial_baseline(self):
+        proof,native = self.proof()
+        for key,replacement in (('selected_row_reads',0),('columns',33),('row_count',0),
+                ('rows_unchanged',False),('scope','physical_player_profile')):
+            bad=copy.deepcopy(proof)
+            bad['cases']['cold']['sql_baseline']['enhancement_fixture'][key]=replacement
+            with self.subTest(key=key),self.assertRaisesRegex(ValueError,'enhancement baseline'):
+                self.validate(bad,native)
 
     def test_readonly_fixture_rejects_mutations_and_unreviewed_queries(self):
         f = fixture.SavedMapStartupTests(); self.addCleanup(f.doCleanups)

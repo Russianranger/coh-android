@@ -381,6 +381,7 @@ class ProbePrefixCache:
             'fresh_wgl_probe_required': True, 'hardware_result_reused': False})
         self.marker = None
         self.identity = None
+        self.prior_owner = None
 
     @staticmethod
     def state(info):
@@ -438,6 +439,32 @@ class ProbePrefixCache:
             return base.verify_wine_stopped(prefix)
         except base.DiagnosticError as error:
             raise GPUProfileError('GPU prefix is not independently stopped: ' + str(error)) from error
+
+    def verify_prior_stopped(self, prefix, prior_owner=None):
+        """Reopen a closed generation after Android replaced the guest /tmp.
+
+        Native shutdown at publication still needs the real Wine lock. That
+        temporary lock is outside the persistent prefix and need not survive
+        the next guest invocation. Absence alone is not a shutdown proof: the
+        fallback also checks every inspectable same-UID process and live worker
+        for this exact prefix, including processes older than this diagnostic.
+        It never signals a process or recreates the missing native lock.
+        """
+        import diagnostic as base
+        try:
+            return self.verify_stopped(prefix)
+        except GPUProfileError as error:
+            if (not isinstance(error.__cause__, base.DiagnosticError)
+                    or str(error.__cause__) != 'Wine server lock missing; cannot prove prefix shutdown'):
+                raise
+        before = absent_wine_endpoint(prefix)
+        observation = observe_prior_prefix_owners(prefix, self.owner.ctx, prior_owner=prior_owner)
+        require(absent_wine_endpoint(prefix) == before,
+                'Prior GPU prefix Wine endpoint changed during ownership inspection')
+        return {'policy': 'prior_closed_inventory_and_current_absent_endpoint_and_no_prefix_workers_v1',
+                'native_lock_absent': True, 'server_socket_absent': True,
+                'prefix_owner_observation': observation,
+                'previous_actual_native_shutdown_required': True}
 
     def publish(self, value):
         require(self.owned_directory(self.owner.root) == self.root_identity,
@@ -506,9 +533,18 @@ class ProbePrefixCache:
                     try:
                         require(saved.get('inventory') == self.inventory(candidate),
                                 'Closed GPU prefix inventory changed')
-                        self.report['prior_native_prefix_shutdown'] = self.verify_stopped(candidate)
+                        self.report['prior_native_prefix_shutdown'] = self.verify_prior_stopped(
+                            candidate, saved.get('prior_owner'))
+                        require(saved.get('inventory') == self.inventory(candidate),
+                                'Closed GPU prefix changed during shutdown verification')
                         self.prefix = candidate
                         self.prefix_identity = saved['inventory']['directory']
+                        # A generation keeps its original possible-owner age.
+                        # Advancing this to the latest checkout could hide an
+                        # older process if its temporary Wine namespace later
+                        # disappears. Legacy receipts without age provenance
+                        # retain the conservative all-age census.
+                        self.prior_owner = saved.get('prior_owner')
                         self.report['reused'] = True
                     except (OSError, GPUProfileError) as error:
                         self.report['reuse_refused'] = str(error)[:300]
@@ -521,6 +557,7 @@ class ProbePrefixCache:
                 self.prefix = root / ('gpu-probe-prefix-' + key + '-' + os.urandom(16).hex())
                 self.prefix.mkdir(mode=0o700)
                 self.prefix_identity = self.owned_directory(self.prefix)
+                self.prior_owner = prior_owner_scope(getattr(self, 'process_owner', None))
             self.publish({'format': 1, 'policy': self.POLICY, 'identity': self.identity,
                 'prefix': self.prefix.name, 'state': 'busy'})
             self.report['generation'] = self.prefix.name
@@ -543,7 +580,8 @@ class ProbePrefixCache:
         inventory = self.inventory(self.prefix)
         self.verify_checkout()
         self.publish({'format': 1, 'policy': self.POLICY, 'identity': self.identity,
-            'prefix': self.prefix.name, 'state': 'closed', 'inventory': inventory})
+            'prefix': self.prefix.name, 'state': 'closed', 'inventory': inventory,
+            'prior_owner': self.prior_owner})
         self.report.update(published_closed=True, inventory=inventory)
 
     def verify_checkout(self):
@@ -555,6 +593,104 @@ class ProbePrefixCache:
         if self.fd is not None:
             os.close(self.fd)
             self.fd = None
+
+
+def absent_wine_endpoint(prefix, *, server_base=None):
+    """Read-only absent endpoint proof; never create a substitute Wine lock."""
+    identity = ProbePrefixCache.owned_directory(prefix)
+    # Match diagnostic.verify_wine_stopped and Wine's guest getuid(), which
+    # PRoot virtualizes. The independent /proc census uses status.real_uid;
+    # Android's real application UID must never substitute for this path UID.
+    base = Path(server_base) if server_base is not None else Path('/tmp') / ('.wine-' + str(os.getuid()))
+    server = base / ('server-%x-%x' % (identity[0], identity[1]))
+    parents = []
+    for directory in (base, server):
+        try:
+            info = directory.lstat()
+        except FileNotFoundError:
+            parents.append(None)
+            continue
+        require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.geteuid()
+                and not info.st_mode & 0o077,
+                'Unowned or linked prior GPU Wine server directory')
+        # Other prefixes can legitimately create sockets beneath the shared
+        # .wine-UID directory. Its inode/owner must stay fixed, not its mtime.
+        parents.append([info.st_dev, info.st_ino, info.st_uid, info.st_mode])
+    require(not os.path.lexists(server / 'lock') and not os.path.lexists(server / 'socket'),
+            'Prior GPU Wine lock or endpoint exists without shutdown proof')
+    return {'prefix': identity, 'server_directories': parents}
+
+
+def prior_owner_scope(owner, *, proc_root=Path('/proc')):
+    """Persist only the prior cleanup owner's public process-age identity."""
+    if owner is None or type(owner.real_uid) is not int or type(owner.diagnostic_starttime) is not int:
+        return None
+    try:
+        boot = (proc_root / 'sys/kernel/random/boot_id').read_text().strip()
+    except OSError:
+        return None
+    if not re.fullmatch('[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}', boot):
+        return None
+    return {'format': 1, 'boot_id': boot, 'real_uid': owner.real_uid,
+            'earliest_owner_starttime': owner.diagnostic_starttime}
+
+
+def observe_prior_prefix_owners(prefix, context, *, prior_owner=None, proc_root=Path('/proc')):
+    """Bounded read-only census using the existing real-UID/worker verifier.
+
+    The current session's random token cannot identify an earlier generation.
+    Matching its exact WINEPREFIX observes every potential prefix owner instead;
+    callers must NEVER use this observer for cleanup or signaling.
+    """
+    import diagnostic as base
+    from game_device_diagnostic import DeviceWineProcessOwner
+
+    class ReadOnlyPrefixObserver(DeviceWineProcessOwner):
+        def signal_owned(self, *args, **kwargs):
+            raise GPUProfileError('A prior-prefix observer cannot signal processes')
+
+        def cleanup(self, *args, **kwargs):
+            raise GPUProfileError('A prior-prefix observer cannot clean up processes')
+
+    observer = ReadOnlyPrefixObserver(SimpleNamespace(secrets=[], report={}), proc_root)
+    try:
+        observer.initialize()
+        current_owner_starttime = observer.diagnostic_starttime
+        observer.needle = b'WINEPREFIX=' + os.fsencode(prefix)
+        # The base owner normally excludes older processes because its token
+        # is newly random. That optimization is invalid for a saved prefix.
+        observer.diagnostic_starttime = 0
+        if prior_owner is not None:
+            require(isinstance(prior_owner, dict) and set(prior_owner) == {
+                'format', 'boot_id', 'real_uid', 'earliest_owner_starttime'}
+                and type(prior_owner['format']) is int and prior_owner['format'] == 1
+                and type(prior_owner['real_uid']) is int and prior_owner['real_uid'] == observer.real_uid
+                and type(prior_owner['earliest_owner_starttime']) is int
+                and 0 < prior_owner['earliest_owner_starttime'] <= current_owner_starttime,
+                'Prior GPU prefix process-age authority differs')
+            current = prior_owner_scope(observer, proc_root=proc_root)
+            require(current is not None and current['boot_id'] == prior_owner['boot_id'],
+                    'Prior GPU prefix boot generation differs; fresh private prefix required')
+            # Its random path was private to the prior operation. Processes
+            # older than that operation could not receive it in their startup
+            # environment. Do not inspect unrelated non-dumpable app services.
+            observer.diagnostic_starttime = prior_owner['earliest_owner_starttime']
+        context.check()
+        started = time.monotonic()
+        matches = observer.scan(started + 3)
+        context.check()
+        require(not matches, 'Prior GPU probe prefix still has live processes or workers')
+        require(observer.receipt['inspection_failures'] == 0,
+                'Prior GPU probe prefix ownership inspection is incomplete')
+        return {'policy': 'read_only_exact_prefix_prior_owner_age_and_live_workers_v1',
+                'matching_processes': 0, 'complete': True,
+                'scanned_processes': observer.receipt['scanned_processes'],
+                'scanned_tasks': observer.receipt['scanned_tasks'],
+                'elapsed_seconds': round(time.monotonic() - started, 3),
+                'earliest_owner_starttime': observer.diagnostic_starttime,
+                'signals_sent': 0}
+    except (base.DiagnosticError, OSError, ValueError, KeyError, IndexError) as error:
+        raise GPUProfileError('Prior GPU prefix ownership could not be proved: ' + str(error)) from error
 
 
 def private_wgl_probe(owner, environment, executable, directory, receipt):
@@ -574,10 +710,13 @@ def _private_wgl_probe(owner, environment, executable, directory, receipt, cache
     proxy = SimpleNamespace(secrets=owner.ctx.secrets, report={})
     process_owner = DeviceWineProcessOwner(proxy)
     process_owner.initialize()
+    cache.process_owner = process_owner
     owners = getattr(owner, 'gpu_probe_owners', None)
     if owners is None:
         owners = owner.gpu_probe_owners = []
+    checkout_started = time.monotonic()
     prefix = cache.checkout(environment, receipt)
+    receipt['probe_prefix_checkout_seconds'] = round(time.monotonic() - checkout_started, 3)
     if prefix is None:
         prefix = directory / 'wineprefix'
         prefix.mkdir(mode=0o700)
@@ -606,6 +745,7 @@ def _private_wgl_probe(owner, environment, executable, directory, receipt, cache
         record_wgl_probe(child, receipt)
     finally:
         receipt['wine_probe_initialization_and_execution_seconds'] = round(time.monotonic() - started, 3)
+        cleanup_started = time.monotonic()
         # Only this prefix is shut down. The accepted Game/server prefix and its
         # current lifecycle/readiness markers are never read or modified here.
         try:
@@ -672,6 +812,8 @@ def _private_wgl_probe(owner, environment, executable, directory, receipt, cache
             raise GPUCleanupError('GPU probe cleanup needs attention: ' + str(error)[:300]) from error
         finally:
             cache.release()
+            receipt['wine_probe_cleanup_and_cache_publication_seconds'] = round(
+                time.monotonic() - cleanup_started, 3)
     check_probe_owner(owner)
     require(len(child.output) <= PROBE_OUTPUT_LIMIT and not child.overflow,
             'GPU probe output exceeded its bound')
@@ -915,6 +1057,7 @@ def apply_profile(owner, baseline, label):
     if requested == 'software':
         return dict(baseline)
     owner.gpu_probe_owner_check_failure = None
+    prerequisites_started = time.monotonic()
     try:
         require(requested == 'turnip', 'Unknown requested GPU profile')
         require(count <= 4, 'GPU profile attempt count exceeded bound')
@@ -922,10 +1065,12 @@ def apply_profile(owner, baseline, label):
         require(platform_is_arm64(), 'GPU test requires the retained native ARM64 guest')
         owner.ctx.event('stage', status='running', message='Checking GPU test prerequisites before Game launch')
         directory = owner.root / ('gpu-profile-' + owner.args.session_id + '-' + str(count))
+        archive_started = time.monotonic()
         archive_receipt = verify_archive(owner.args.assets / ARCHIVE,
             owner.ctx.report.get('asset_sha256', {}).get(ARCHIVE), directory,
             on_created=lambda created: record_directory(owner, created))
         receipt.update(archive_receipt)
+        receipt['gpu_archive_verification_and_extraction_seconds'] = round(time.monotonic() - archive_started, 3)
         receipt['gpu_payload_producer'] = {
             'policy': 'retained_APK_pinned_GPU_driver_and_finite_probes_v1',
             'repository_commit': archive_receipt['manifest']['repository_commit'],
@@ -945,8 +1090,10 @@ def apply_profile(owner, baseline, label):
         base.arm64_elf(directory / 'coh-vulkan-gpu-probe')
         base.arm64_elf(driver)
         base.verify_pe32(directory / 'coh-gpu-probe.exe')
+        vulkan_started = time.monotonic()
         receipt['vulkan_probe'] = validate_vulkan_probe(run_probe(owner, 'gpu-native-vulkan-prerequisites',
             [directory / 'coh-vulkan-gpu-probe'], environment, 30))
+        receipt['vulkan_process_and_verification_seconds'] = round(time.monotonic() - vulkan_started, 3)
         receipt['wine_gl_probe'] = private_wgl_probe(owner, environment, directory / 'coh-gpu-probe.exe', directory, receipt)
         receipt.update(selected='turnip', state='selected_after_probes')
         owner.ctx.event('stage', status='running', message='GPU test prerequisites passed; starting Game with the GPU candidate')
@@ -964,6 +1111,8 @@ def apply_profile(owner, baseline, label):
         receipt.update(state='software_fallback', fallback_reason=(type(error).__name__ + ': ' + str(error))[:500])
         owner.ctx.event('stage', status='running', message='No GPU available; using Software. ' + receipt['fallback_reason'])
         return dict(baseline)
+    finally:
+        receipt['total_prerequisites_seconds'] = round(time.monotonic() - prerequisites_started, 3)
 
 
 def platform_is_arm64():
