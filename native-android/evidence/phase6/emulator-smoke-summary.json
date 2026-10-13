@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "passed": true,
+  "scope": "Android 13 x86_64 hosted emulator with SwiftShader; not AYN Thor",
+  "verified_fixture_assets": {
+    "mesh.bin": {
+      "sha256": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661",
+      "bytes": 8020
+    },
+    "poses.bin": {
+      "sha256": "e9bc690e7ea7cb454251d7bdbb34f403890cb21e6b70fe83de0b0f1892d67b0a",
+      "bytes": 5920
+    },
+    "texture0.rgba": {
+      "sha256": "68207c4bd81ed03ed80847957cd0300068f8a5b40bffc333a90560c6ea610b06",
+      "bytes": 262144
+    },
+    "texture1.rgba": {
+      "sha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7",
+      "bytes": 256
+    },
+    "material-reference.bin": {
+      "sha256": "392c7006750c05074fe4277b0a17bedd2c86704077a49721aaea21f371f71d9d",
+      "bytes": 296976
+    }
+  },
+  "successful_runs": 4,
+  "completed_context_cycles": 8,
+  "gpu_pose_components_compared": 11136,
+  "skinned_image_pixels_compared": 1988600,
+  "material_pixels_compared": 589824,
+  "window_samples_compared": 392,
+  "original_cg_execution": false,
+  "actual_resize_verified": true,
+  "surface_recreation_verified": true,
+  "foreground_return_verified": true,
+  "thor_device_execution_verified": false
+}

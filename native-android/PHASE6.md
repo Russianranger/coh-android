@@ -30,7 +30,22 @@ The GLES probe compares transform-feedback positions and normals for every real 
 
 The UI retains the qualified serial Surface lifecycle design. Resize changes both actual dimensions, so this gate also exercises display scale. Obsolete/background results cannot qualify a current Surface, active-session failures remain sticky, and export captures the foreground report before the document picker changes lifecycle state.
 
-Build and execution receipts will distinguish host, hosted emulator and physical Thor evidence. **Physical Thor acceptance is pending for this new package.** The accepted Phase 5 texture/Surface gate remains separate and unchanged.
+## Qualified build and hosted execution
+
+[Android build and emulator qualification](https://github.com/Russianranger/coh-android/actions/runs/38461198804) passed at code `6ba92ede53bf48814bf2a02aceedebd3934eef10`. The ARM64 APK is **314,985 bytes**, SHA256 `478c16eb36ef13e87ee17fbe08760dc610366cc50ce46e2f568f44ce99a3d4e5`. Its isolated debug signature, `org.coh.materialprobe` package, ARM64-only ELF64 AArch64 library and all five bundled fixture hashes were checked. The dedicated x86_64 emulator APK is a separate file.
+
+The [qualification receipt](evidence/phase6/qualification.json) records independent artifact-digest verification and recomputed counters. Android13/API33 with SwiftShader passed four current-surface runs and eight complete EGL context lifetimes:
+
+- 11,136 GPU position/normal component comparisons; zero mismatches at the unchanged 1e-4 tolerance. Maximum observed position error was zero and normal error was 1.1920929e-7.
+- 1,988,600 skinned/reference image pixel comparisons, including 135,072 useful nonbackground interior pixels. The explicit two-pixel geometry-edge exclusion removed 370,696 comparisons. Both poses had useful coverage in every cycle.
+- 589,824 material RGBA pixel comparisons covering all 18 cases per cycle. Skin and material comparisons had zero mismatches at a two-quantization-unit tolerance; the largest observed channel difference was one unit.
+- 392 actual window RGB samples, zero mismatches; all swaps and app GPU cleanup passed, with zero GL/EGL errors.
+- Actual sizes 1038x764 and 778x573, three Surface generations, resize on both axes, Surface recreation and Home/foreground recovery passed. One obsolete result was retained in history and excluded from qualification.
+- The final screenshot was visually reviewed: the real textured sleeve appears with green **MATERIAL GATE PASSED** status.
+
+The [first failed emulator record](evidence/phase6/first-emulator-failure.json) is preserved. That program failed 23 transform components with maximum error 0.000192046165. Making normalization explicit and refining the reciprocal length resolved the comparison without relaxing its tolerance. The built-in normal diagnostic in the modified program also matched, so this run does not isolate the exact original compiler/driver cause or establish that refinement alone caused the improvement.
+
+These counts repeat one source fixture and controlled inputs; they are not distinct assets or a gameplay benchmark. **Physical Thor/Adreno acceptance is pending for this new package.** The accepted Phase 5 texture/Surface gate remains separate.
 
 ## Thor acceptance procedure
 

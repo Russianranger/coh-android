@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "qualification_passed": true,
+  "scope": "Android13/API33 x86_64 hosted SwiftShader controlled real-mesh/material/Surface gate; physical Thor pending",
+  "source_commit": "6ba92ede53bf48814bf2a02aceedebd3934eef10",
+  "workflow_run": 38461198804,
+  "artifact_id": 11846356154,
+  "artifact_archive_sha256": "8bd4fe8d2d92de24d20f34884ef3b2b9758ede2441b05ffc56e8817952faab98",
+  "artifact_digest_independently_verified": true,
+  "source_report_sha256": "3e94724393c458430c9552378d36229025545910b25684e14abe2af1527aa0da",
+  "qualification": {
+    "passed": true,
+    "pending_requirements": [],
+    "successful_runs": 4,
+    "failed_runs": 0,
+    "successful_surface_generations": 3,
+    "successful_actual_dimensions": 2,
+    "successful_widths": 2,
+    "successful_heights": 2,
+    "current_surface_passed": true,
+    "native_context_recreation": "required in each passing native run",
+    "limits": "Device-specific diagnostic material and pose gate only; not full client/gameplay qualification"
+  },
+  "native_successful_runs": 4,
+  "obsolete_native_runs_excluded": 1,
+  "completed_context_lifetimes": 8,
+  "all_objects_released": true,
+  "all_swaps_passed": true,
+  "counts": {
+    "transform_vertices": 1856,
+    "transform_components": 11136,
+    "transform_mismatches": 0,
+    "skin_compared_pixels": 1988600,
+    "skin_interior_pixels": 135072,
+    "skin_edge_excluded_pixels": 370696,
+    "skin_mismatches": 0,
+    "material_pixels": 589824,
+    "material_mismatches": 0,
+    "window_samples": 392,
+    "window_mismatches": 0,
+    "gl_errors": 0,
+    "stock_normal_components": 5568,
+    "stock_normal_mismatches": 0
+  },
+  "surface_sizes": [
+    [
+      778,
+      573
+    ],
+    [
+      1038,
+      764
+    ]
+  ],
+  "surface_generations": [
+    1,
+    2,
+    3
+  ],
+  "graphics": {
+    "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "gl_vendor": "Google (Google Inc.)",
+    "gl_version": "OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)",
+    "glsl_version": "OpenGL ES GLSL ES 3.00",
+    "egl_vendor": "Android",
+    "egl_version": "1.4 Android META-EGL"
+  },
+  "tolerances": {
+    "pose_component_absolute": 0.0001,
+    "rgba_channel_quantization_units": 2,
+    "geometry_edge_exclusion_pixels": 2
+  },
+  "observed_max_errors": {
+    "position": 0,
+    "normal": 1.1920929e-07,
+    "skin_rgba_quantization_units": 1,
+    "material_rgba_quantization_units": 1,
+    "stock_normal_in_modified_shader": 0
+  },
+  "normalization_observation": "Initial program failed 23 transform components at 0.000192046165 maximum error. Explicit post-blend normalization/refinement passed without changing tolerance. The unrefined diagnostic in the modified program also matched; this does not isolate the exact original compiler/driver cause or prove the refinement alone caused the improvement.",
+  "screenshot_visually_reviewed": true,
+  "screenshot_observation": "Real textured sleeve mesh visible; green MATERIAL GATE PASSED status after lifecycle recovery",
+  "original_cg_execution": false,
+  "thor_device_execution_verified": false,
+  "limits": [
+    "Controlled identity/nontrivial bone palettes; no original animation or full rig/socket capture",
+    "GEO default material differs from NPC costume override",
+    "Source-semantic material scalar oracle; no original Cg/GPU execution reference",
+    "Geometry image paths share vertex lighting; transform feedback independently checks positions/normals",
+    "Double-sided controlled rendering; original backface culling unqualified",
+    "Texture level0 RGBA fixtures; no original GPU compressed-texture/filter/mipmap capture",
+    "Window RGB samples exclude compositor alpha; no unexpected GPU reset/process death/gameplay/performance qualification"
+  ]
+}
