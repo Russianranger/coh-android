@@ -134,20 +134,30 @@ def qualify(args):
         subprocess.run([args.wine,'wineboot','--init'],env=env,stdout=log,stderr=subprocess.STDOUT,check=True,timeout=180)
     initialized=args.output/'evidence/prefix-initialization';initialized.mkdir()
     preload.stop_owned_prefix(env,initialized,normal_launcher_exit_observed_first=False)
+    generated=None;fixture_runtime=args.runtime
+    if getattr(args,'generate_owned_fixture',False):
+        require(native_reuse is not None,'Native fixture producer requires authenticated retained binary')
+        import prepare_native_startup_reuse_fixture as producer
+        fixture_runtime,generated=producer.generate(args,args.runtime,args.work,args.output,launcher,env,
+            args.package,control,cache_snapshot)
     records={};outputs={}
     native_cases=(('control',args.package/'MapServer-control.exe'),('profile',args.package/'MapServer-profile.exe'))
     if candidate is not None:
         native_cases=(('control',args.package/'MapServer-profile.exe'),
             ('profile',args.native_prefetch_package/prefetch_package.BINARY))
     for stage,native in native_cases:
-        runtime=args.work/stage;shutil.copytree(args.runtime,runtime,symlinks=True)
+        runtime=args.work/stage;shutil.copytree(fixture_runtime,runtime,symlinks=True)
         require(not (runtime/'piggs/texts.pigg').exists(),'Native profiler requires original development freshness')
         target=runtime/'MapServer.exe';require(not target.is_symlink(),'Private native destination required')
         target.chmod(0o600);shutil.copyfile(native,target)
         native_pin=package.pin(target);before=cache_snapshot(runtime)
         ids_before=preload.package.identifier_snapshot(runtime/'data')
+        source_before=producer.native_inputs(runtime,set(before)) if generated is not None else None
+        if generated is not None:
+            require(source_before['provider_except_MapServer_sha256']==generated['provider_after']['provider_except_MapServer_sha256'],
+                'Warm consumer provider differs from authenticated native generation')
         prelaunch=args.output/'evidence'/(stage+'-before-launch.json')
-        package.write(prelaunch,{'cache':before,'identifiers':ids_before,'actual_native':native_pin})
+        package.write(prelaunch,{'cache':before,'identifiers':ids_before,'actual_native':native_pin,'full_provider':source_before})
         phase_env=dict(env)
         native_source=build['repository_commit']
         if candidate is not None and stage=='profile':
@@ -164,6 +174,7 @@ def qualify(args):
             raise
         native_after=package.pin(target);ids_after=preload.package.identifier_snapshot(runtime/'data')
         after=cache_snapshot(runtime)
+        source_after=producer.native_inputs(runtime,set(before)|set(after)) if generated is not None else None
         # Persist actual executed identities and deltas before any failure gate.
         # Both isolated original-fixture preloads may collect diagnostics; cache
         # mutations still prevent qualification and never authorize reuse.
@@ -172,6 +183,7 @@ def qualify(args):
             'removed':{n:before[n] for n in before.keys()-after.keys()},
             'changed':{n:{'before':before[n],'after':after[n]} for n in before.keys()&after.keys() if before[n]!=after[n]}}
         package.write(args.output/'evidence'/stage/'cache-snapshots.json',snapshots)
+        package.write(args.output/'evidence'/stage/'provider-snapshots.json',{'before':source_before,'after':source_after})
         package.write(args.output/'evidence'/stage/'identifier-snapshots.json',{'before':ids_before,'after':ids_after})
         package.write(args.output/'evidence'/stage/'native-executable-snapshots.json',{'before':native_pin,'after':native_after})
         # The legacy preload receipt carries a historical hard-coded executable
@@ -181,6 +193,7 @@ def qualify(args):
         package.write(args.output/'evidence'/stage/'phase-receipt.json',phase)
         require(native_after==native_pin,'Native diagnostic binary changed during execution')
         require(ids_before==ids_after,'Native preload altered identifiers')
+        require(source_before==source_after,'Native warm consumer altered authenticated provider inputs')
         stdout=(args.output/'evidence'/stage/'stdout.log').read_bytes()
         if stage=='profile' or candidate is not None:outputs[stage]=parse_observations(stdout)
         else:require(b'COH_NATIVE_STARTUP_PROFILE_V1' not in stdout,'Control unexpectedly contains profiler')
@@ -188,14 +201,15 @@ def qualify(args):
         else:require(b'COH_MAP_ANIMATION_METADATA_PREFETCH_V1' not in stdout,'Control unexpectedly prefetched candidate metadata')
         records[stage]={'phase':phase,'cache_before':before,'cache_after':after,
             'identifiers_before':ids_before,'identifiers_after':ids_after,'actual_native':native_pin,
-            'cache_input_unchanged':before==after,'cache_delta':{k:snapshots[k] for k in ('added','removed','changed')}}
+            'cache_input_unchanged':before==after,'full_provider_unchanged':source_before==source_after,
+            'full_provider_before':source_before,'full_provider_after':source_after,'cache_delta':{k:snapshots[k] for k in ('added','removed','changed')}}
     if not all(r['cache_input_unchanged'] for r in records.values()):
         package.write(args.output/REPORT,{'format':1,'status':'failed',
             'failure':'original_prepared_BIN_inventory_changed','publication_allowed':False,
             'repository_commit':args.repository_commit,'native_package_source_commit':build['repository_commit'],
             'native_preload_processes':len(records),'actual_Wine_native_preload_executed':True,
             'cache_reuse_qualified':False,'native_world_executed':False,'physical_device_executed':False,
-            'retained_native_build':native_reuse,'records':records,'observations':outputs,
+            'retained_native_build':native_reuse,'records':records,'observations':outputs,'fixture_generation':generated,
             'scope':'diagnostic only; native cache generation requires a separate explicit producer and qualification'})
         raise ValueError('Diagnostic/native preload wrote or changed prepared BIN inputs; exact per-stage deltas retained')
     require(records['control']['cache_after']==records['profile']['cache_after'],'Control/profile BIN output parity failed')
@@ -224,6 +238,17 @@ def qualify(args):
             control_observations=outputs['control'],native_prefetch_execution_validated=True)
         for name in ('tools/package_native_map_prefetch.py','tools/prepare_native_map_metadata_prefetch_source.py'):
             value['source_files'][name]=package.pin(ROOT/name)
+    if generated is not None:
+        require(all(r['cache_before']==generated['cache_after'] for r in records.values()),
+            'Warm native consumer did not start from exact generated BIN bytes')
+        require(all(r['phase']['definition_counts']==generated['phase']['definition_counts'] for r in records.values()),
+            'Native generation/consumer definition counts differ')
+        value.update(fixture_generation=generated,native_fixture_generation_processes=1,
+            actual_native_processes=3,native_generated_fixture_reuse_qualified=True,
+            generation_and_consumer_timings_are_separate=True,
+            filesystem_cache_scope='full_input_hashing_before_each_native_phase_warms_host_filesystem_cache',
+            native_generated_fixture_receipt=package.pin(args.output/'native-generated-fixture.json'))
+        value['source_files']['tools/prepare_native_startup_reuse_fixture.py']=package.pin(ROOT/'tools/prepare_native_startup_reuse_fixture.py')
     package.write(args.output/REPORT,value)
     return value
 
@@ -233,6 +258,7 @@ if __name__=='__main__':
     for name in ('package','runtime','control-fixture','work','output'):p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--repository-commit',required=True);p.add_argument('--wine',default='wine');p.add_argument('--timeout-seconds',type=int,default=1800)
     p.add_argument('--reuse-completed-windows-package',action='store_true')
+    p.add_argument('--generate-owned-fixture',action='store_true')
     p.add_argument('--native-prefetch-package',type=Path)
     p.add_argument('--native-prefetch-commit')
     value=qualify(p.parse_args());print(json.dumps({'status':value['status'],'publication_allowed':False,'native_preload_processes':2}))
