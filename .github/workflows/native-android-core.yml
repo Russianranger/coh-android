@@ -1,0 +1,34 @@
+name: Native Android portable core
+on:
+  push:
+    branches: [native-android]
+    paths: ['native-android/**', '.github/workflows/native-android-core.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  host-and-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check pinned algorithm derivative
+        run: python3 native-android/tools/generate_crypto.py --check
+      - name: Host core and independent oracle
+        run: |
+          python3 native-android/tools/build.py --output native-android/results/host
+          python3 native-android/tests/test_host.py native-android/results/host/libcoh_native_core.so --output native-android/results/oracle.json
+          python3 native-android/tools/build.py --sanitize --output native-android/results/sanitized
+      - name: Build ARM64 Bionic test slice
+        run: |
+          set -eu
+          curl --fail --silent --show-error --location --output /tmp/ndk.zip https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+          echo 'a7b54a5de87fecd125a17d54f73c446199e72a64  /tmp/ndk.zip' | sha1sum -c -
+          unzip -q /tmp/ndk.zip -d /tmp/native-android-ndk
+          python3 native-android/tools/build.py --cc /tmp/native-android-ndk/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang --android --output native-android/results/android-arm64
+          /tmp/native-android-ndk/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf -h -d native-android/results/android-arm64/coh-native-core-tests > native-android/results/android-arm64/elf.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-android-core-evidence
+          path: native-android/results/
