@@ -92,7 +92,7 @@ enum Scenario {
     PRODUCTION_CHANGED, SCENARIO_COUNT
 };
 enum Operation {
-    CRC, PRODUCTION_CHECK, OPEN, TELL, HEADER, CREATE, SCAN, SIZE, FIND,
+    CRC, PRODUCTION_CHECK, OPEN, TELL, HEADER, CREATE, SCAN, COH_TRACE_EA_SIZE, FIND,
     DATE_CHECK, DISK_DATE, EXISTS, INSERT, DESTROY, SEEK, CLOSE
 };
 typedef struct Operations {
@@ -125,7 +125,7 @@ static void FileListCreate(FileList *list) {
     assert(header_succeeded);operation(CREATE);operations.creates++;*list=scan_ptrs;
 }
 static int eaSize(FileList *list) {
-    operation(SIZE);operations.sizes++;
+    operation(COH_TRACE_EA_SIZE);operations.sizes++;
     return *list==entry_ptrs?7:*list==scan_ptrs?scan_count:0;
 }
 static int DateCheckCallback(void) { return 1; }
