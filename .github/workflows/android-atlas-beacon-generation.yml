@@ -6,6 +6,8 @@ on:
       - .github/workflows/android-atlas-beacon-generation.yml
       - tools/prepare_atlas_beacon_generator_source.py
       - tools/android/interactive/generate_atlas_beacons.py
+      - tools/android/interactive/qualify_atlas_beacon_preflight.py
+      - tools/android/interactive/test_atlas_beacon_preflight.py
       - patches/atlas-beacons/**
   workflow_dispatch:
 permissions:
@@ -41,35 +43,38 @@ jobs:
           summary = {key: item for key, item in value.items() if key != 'optional_input_files'}
           print('COH_ATLAS_BEACON_DONOR_GEOMETRY ' + producer.canonical(summary).decode('ascii'), flush=True)
           PY
-      - name: Test actual source and recovery contracts before native readback
+      - name: Authenticate exact historical reconstruction inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          gh api repos/Russianranger/coh-android/actions/artifacts/11381713754/zip > out/beacon-preflight/coh-ui-beacon-qualification-original.zip
           python3 - <<'PY'
-          import json, sys, unittest
+          import sys, urllib.request
           from pathlib import Path
-          sys.path[:0] = ['tools', 'tools/android/interactive']
-          modules = ['test_prepare_atlas_beacon_generator_source', 'test_generate_atlas_beacons',
-                     'test_atlas_beacon_package', 'test_beacon_runtime_profiles', 'test_ui_beacon_package',
-                     'test_classify_storage_cleanup_change', 'test_server_worktree_reuse']
-          excluded = 'test_ui_beacon_package.UiBeaconPackagingTests.test_workflow_uses_native_generation_and_exact_donor_then_sdk_identity_checks'
-          def leaves(suite):
-              for case in suite:
-                  if isinstance(case, unittest.TestSuite): yield from leaves(case)
-                  else: yield case
-          cases = [case for name in modules for case in leaves(unittest.defaultTestLoader.loadTestsFromName(name))]
-          omitted = [case.id() for case in cases if case.id() == excluded]
-          if omitted != [excluded]: raise SystemExit('Exact held publication-workflow test exclusion differs')
-          selected = unittest.TestSuite(case for case in cases if case.id() != excluded)
-          count = selected.countTestCases()
-          print('COH_ATLAS_BEACON_PREFLIGHT_TESTS ' + json.dumps({'count': count, 'modules': modules,
-                'excluded_uncommitted_publication_workflow_test': excluded,
-                'final_apk_qualification_must_include_excluded_test': True}, sort_keys=True), flush=True)
-          result = unittest.TextTestRunner(verbosity=1).run(selected)
-          if not result.wasSuccessful(): raise SystemExit(1)
-          Path('out/beacon-preflight').mkdir(parents=True, exist_ok=True)
-          Path('out/beacon-preflight/test-contract-summary.json').write_text(json.dumps({
-              'status': 'passed', 'selected_tests': count, 'excluded_test': excluded,
-              'native_generation_proof': False}, sort_keys=True))
+          sys.path.insert(0, 'tools/android/interactive')
+          import qualify_atlas_beacon_preflight as preflight
+          directory = Path('out/beacon-preflight')
+          document = preflight.qualification(directory / 'coh-ui-beacon-qualification-original.zip')
+          for name in preflight.HELPERS:
+              expected = document['source_files'][name]
+              url = 'https://raw.githubusercontent.com/Russianranger/coh-android/' + preflight.ORIGINAL_COMMIT + '/' + name
+              with urllib.request.urlopen(url, timeout=60) as response:
+                  raw = response.read(expected['bytes'] + 1)
+              target = directory / 'historical-source' / name
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_bytes(raw)
+          preflight.verify_helpers(directory / 'historical-source', document)
           PY
+      - name: Test current generator and exact historical reconstruction contracts
+        env:
+          COH_BEACON_PREFLIGHT_FIXTURE_DIRECTORY: ${{ github.workspace }}/out/beacon-preflight
+        run: |
+          python3 tools/android/interactive/qualify_atlas_beacon_preflight.py \
+            --repository . --repository-commit "$GITHUB_SHA" \
+            --historical-qualification out/beacon-preflight/coh-ui-beacon-qualification-original.zip \
+            --historical-source out/beacon-preflight/historical-source \
+            --donor-apk out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk \
+            --output out/beacon-preflight/test-contract-summary.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
