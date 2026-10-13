@@ -51,7 +51,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     private static final int MAX_EVENTS = 160;
     private static final int MAX_ASSET_BYTES = 16 * 1024 * 1024;
     private static final int MAX_TOTAL_ASSET_BYTES = 32 * 1024 * 1024;
-    private static final int MAX_METADATA_BYTES = 128 * 1024;
+    private static final int MAX_METADATA_BYTES = 512 * 1024;
     private static final Set<String> REQUIRED_ASSETS = new HashSet<>(Arrays.asList(
             "character.bin", "rig.bin", "morph.bin", "character-reference.bin", "material-reference.bin"));
     private final Handler main = new Handler(Looper.getMainLooper());

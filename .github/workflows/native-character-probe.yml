@@ -21,7 +21,7 @@ permissions:
   contents: read
 concurrency:
   group: native-character-probe-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   package-and-emulator:
     runs-on: ubuntu-24.04
@@ -42,6 +42,14 @@ jobs:
           python3 -m pip install Pillow==12.3.0
           python3 native-android/tools/character_fixture/acquire.py --output native-android/results/character-corpus
           python3 native-android/tools/character_fixture/prepare.py --corpus native-android/results/character-corpus --output native-android/character-probe/app/src/main/assets --evidence-output native-android/results/character-probe/fixture
+          python3 - <<'PYMETA'
+          import pathlib, re
+          java = pathlib.Path('native-android/character-probe/app/src/main/java/org/coh/characterprobe/MainActivity.java').read_text()
+          bound = re.search(r'MAX_METADATA_BYTES = (\d+) \* 1024;', java)
+          assert bound, 'Missing explicit Java metadata input bound'
+          metadata = pathlib.Path('native-android/character-probe/app/src/main/assets/character-fixture.json')
+          assert 0 < metadata.stat().st_size <= int(bound.group(1)) * 1024, 'Fixture metadata exceeds Android loader bound'
+          PYMETA
       - name: Qualify independent actor hierarchy and costume material references
         run: |
           python3 - <<'PYREF'

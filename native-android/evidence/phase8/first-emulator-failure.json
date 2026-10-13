@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "phase": 8,
+  "passed": false,
+  "source_commit": "44fe41dc022e2748ce19e62d8e752538095478c0",
+  "workflow_run_id": 38479081025,
+  "artifact": {
+    "id": 11856302697,
+    "bytes": 4694881,
+    "sha256": "564aa53e834958c0ccba18b12eb15df3764dc1006088c6513dd6459311299c21"
+  },
+  "report_sha256": "d41e01159edba0ed6d0dcaf6da75b360f9d88452adbabc8fec82b5f270e78523",
+  "failed_active_runs": 1,
+  "native_contexts_attempted": 0,
+  "error": "IllegalStateException: File exceeds bounded input limit",
+  "packaged_metadata_bytes": 315214,
+  "prior_android_metadata_limit_bytes": 131072,
+  "correction_android_metadata_limit_bytes": 524288,
+  "correction": "Bounded manifest loader accepts the detailed five-asset metadata; preparation now checks its size against the Java loader bound. CPU/GPU tolerances and lifecycle requirements remain unchanged.",
+  "separate_preflight_finding": "Hair lacked useful pixels in the whole-character diagnostic camera; separate part close-up cameras enforce at least64 pixels per part and checkpoint with unchanged assembled camera and2pxedge guard. This first Android run did not reach native rendering."
+}
