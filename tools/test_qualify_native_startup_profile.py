@@ -75,5 +75,12 @@ class NativeProfileQualificationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'Regular'):
                 profile.cache_snapshot(root)
 
+    def test_real_fixture_and_provider_modules_agree_on_original_native(self):
+        import prepare_server_fx_control_fixture as fixture
+        self.assertEqual(profile.control_native_identity({'mapserver':fixture.MAPSERVER}),fixture.MAPSERVER)
+        changed=dict(fixture.MAPSERVER,sha256='0'*64)
+        with self.assertRaisesRegex(ValueError,'producer'):
+            profile.control_native_identity({'mapserver':changed})
+
 
 if __name__=='__main__':unittest.main()

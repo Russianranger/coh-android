@@ -24,6 +24,13 @@ from map_startup_namespace_certificate import require
 REPORT='native-startup-profile-qualification.json'
 
 
+def control_native_identity(control):
+    # prepare_server_fx_catalog is the qualifier module; its `fx` member is
+    # the shipped provider contract. Bind the already validated receipt too.
+    require(control.get('mapserver')==fx.fx.MAPSERVER,'Authenticated control native producer differs')
+    return control['mapserver']
+
+
 def parse_observations(raw):
     require(isinstance(raw,bytes) and len(raw)<=64*1024**2,'Bounded native console required')
     text=raw.decode('utf-8','replace').replace('\r','')
@@ -86,7 +93,8 @@ def qualify(args):
     args.work=args.work.resolve();args.output=args.output.resolve();args.runtime=args.runtime.resolve()
     control=fx.validate_control_fixture(package.read(args.control_fixture))
     require(str(args.runtime)==control['runtime_host_path'],'Authenticated control provider path differs')
-    require(package.pin(args.runtime/'MapServer.exe')==fx.MAPSERVER,'Original complete fixture native producer differs')
+    require(package.pin(args.runtime/'MapServer.exe')==control_native_identity(control),
+        'Original complete fixture native producer differs')
     args.work.mkdir(parents=True);args.output.mkdir(parents=True);(args.output/'evidence').mkdir()
     package.write(args.output/'control-fixture.json',control)
     launcher=args.output/'evidence/server-cache-launcher.exe'
