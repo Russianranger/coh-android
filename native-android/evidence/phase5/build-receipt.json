@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "source_commit": "f5f4127693d4cab8d82b9c30c6f8b6c031639f2c",
+  "workflow_run_id": "38450326655",
+  "application_id": "org.coh.nativeprobe",
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "compile_sdk": 35,
+  "gradle": "8.9",
+  "gradle_distribution_sha256": "d725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab",
+  "android_gradle_plugin": "8.7.3",
+  "ndk": "28.2.13676358",
+  "cmake": "3.22.1",
+  "signing": "isolated CI debug key; not the production launcher key",
+  "artifacts": [
+    {
+      "file": "CoH-Native-Surface-Probe-0.1.0-arm64.apk",
+      "bytes": 403518,
+      "sha256": "0c1f1a4addcdcfb9275665411319c5270441973651ea23ae29df89eee055fe51",
+      "abi": "arm64-v8a",
+      "elf_machine": 183
+    },
+    {
+      "file": "CoH-Native-Surface-Probe-0.1.0-emulator-x86_64.apk",
+      "bytes": 404771,
+      "sha256": "8560e467114ac347516e3b9f046194d94e4a33185ca83a5c8fd2f60c0e1cf52c",
+      "abi": "x86_64",
+      "elf_machine": 62
+    }
+  ],
+  "fixture_assets": [
+    {
+      "file": "fixture.dds",
+      "bytes": 174928,
+      "sha256": "378dbd7be97eed26a0ad3e454efadaab6a52f4f9c01579d94dc20934d8ec44b7"
+    },
+    {
+      "file": "fixture.json",
+      "bytes": 1076,
+      "sha256": "ca4f4f501fe17d382eee7447c5d1f2e053d1e1ef2b3f8b220c1989154c53286d"
+    },
+    {
+      "file": "fixture.rgba",
+      "bytes": 524288,
+      "sha256": "e8d9492e39d13211aa5196c834725feb7f0113739daa3d7d7f1195b1478ddaef"
+    }
+  ],
+  "thor_device_execution_verified": false
+}

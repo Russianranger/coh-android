@@ -1,0 +1,251 @@
+{
+  "source_commit": "f5f4127693d4cab8d82b9c30c6f8b6c031639f2c",
+  "run": 38450326655,
+  "artifact_id": 11840605641,
+  "artifact_archive_sha256": "92902023b3252bd0e16c94fdbf75e3cf4dee5ffcd6828620ec44f8afc7fc790b",
+  "artifact_digest_independently_verified": true,
+  "qualification_passed": true,
+  "scope": "host_emulator_only; Thor acceptance pending",
+  "qualification": {
+    "passed": true,
+    "pending_requirements": [],
+    "successful_runs": 4,
+    "failed_runs": 0,
+    "successful_surface_generations": 3,
+    "successful_actual_dimensions": 2,
+    "current_surface_passed": true,
+    "native_context_recreation": "required in each passing native run",
+    "limits": "Device-specific texture gate only; not shader/material/gameplay qualification"
+  },
+  "fixture": {
+    "format": 1,
+    "name": "Night Chest real CoH texture",
+    "fixture_id": "01-chest_5c_night_chest_01",
+    "source_path": "data/texture_library/enemies/5thcolumn/night/chest_5c_night_chest_01.texture",
+    "release_tag": "coh-assets-v1.0.0",
+    "dds_sha256": "378dbd7be97eed26a0ad3e454efadaab6a52f4f9c01579d94dc20934d8ec44b7",
+    "dds_bytes": 174928,
+    "expected_rgba_sha256": "e8d9492e39d13211aa5196c834725feb7f0113739daa3d7d7f1195b1478ddaef",
+    "expected_rgba_bytes": 524288,
+    "width": 256,
+    "height": 512,
+    "dds_format": "DXT5",
+    "mip": 0,
+    "decoder": "coh_dds_rgba_legacy",
+    "golden_origin": "Pinned original Win32 NVIDIA nvDXTlibMT_S plus raw CPU consumer channel conversion",
+    "qualification_commit": "92b9dc9a841f0006cd36f0d52dc67c0836f7ca92",
+    "qualification_run": 38446476188,
+    "sdk_library_sha256": "1e9988ad52a01f44368d8d4150990ef2a033536a7a705424f04333143cd63b73",
+    "native_generator_library_sha256": "f41ab25644010d34d70a70fc732fa98c34ef85a5c376f3c067f34ea66fe10ba2",
+    "whole_asset_archive_hash_verified": false,
+    "wrapper_manifest_hash_verified": true,
+    "verified_dds_sha256": "378dbd7be97eed26a0ad3e454efadaab6a52f4f9c01579d94dc20934d8ec44b7",
+    "verified_expected_rgba_sha256": "e8d9492e39d13211aa5196c834725feb7f0113739daa3d7d7f1195b1478ddaef"
+  },
+  "native_successful_runs": 4,
+  "egl_context_lifetimes": 8,
+  "fbo_pixels_compared": 1048576,
+  "window_rgb_samples": 392,
+  "surface_dimensions": [
+    [
+      778,
+      764
+    ],
+    [
+      1038,
+      764
+    ]
+  ],
+  "surface_generations": [
+    1,
+    2,
+    3
+  ],
+  "last_native_result": {
+    "schema": 1,
+    "probe": "coh-surface-egl-gles3",
+    "passed": true,
+    "platform": "Android Bionic",
+    "pointer_bytes": 8,
+    "long_bytes": 8,
+    "dds_bytes": 174928,
+    "rgba_bytes": 524288,
+    "width": 256,
+    "height": 512,
+    "dxt_format": 5,
+    "declared_mips": 10,
+    "mip_level": 0,
+    "decoder": "coh_dds_rgba_legacy",
+    "decoder_status": 0,
+    "required_cycles": 2,
+    "attempted_cycles": 2,
+    "pixel_contract": "RGBA8 nearest; CPU row 0 equals FBO readback row 0",
+    "window_contract": "aspect fit; opaque RGB aspect fit; CPU row 0 displayed at top",
+    "cpu_golden_match": true,
+    "context_recreation_passed": true,
+    "fbo_pixel_match": true,
+    "window_pixel_match": true,
+    "surface_width": 778,
+    "surface_height": 764,
+    "failure": "",
+    "cycles": [
+      {
+        "index": 0,
+        "completed": true,
+        "passed": true,
+        "context_created": true,
+        "objects_released": true,
+        "fbo_complete": true,
+        "readback_passed": true,
+        "swap_passed": true,
+        "window_pixel_match": true,
+        "surface_width": 778,
+        "surface_height": 764,
+        "viewport": [
+          198,
+          0,
+          382,
+          764
+        ],
+        "max_texture_size": 8192,
+        "config_rgba_bits": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "egl_api_version": [
+          1,
+          4
+        ],
+        "compared_pixels": 131072,
+        "mismatched_pixels": 0,
+        "first_mismatch": {
+          "x": 0,
+          "y": 0,
+          "expected_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "actual_rgba": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "window_samples": 49,
+        "window_mismatches": 0,
+        "window_first_mismatch": {
+          "x": 0,
+          "y": 0,
+          "expected_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "actual_rgba": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "window_alpha_compared": false,
+        "gl_errors": 0,
+        "first_gl_error": 0,
+        "egl_error": 0,
+        "stage": "complete",
+        "failure": "",
+        "gl_vendor": "Google (Google Inc.)",
+        "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+        "gl_version": "OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)",
+        "glsl_version": "OpenGL ES GLSL ES 3.00",
+        "egl_vendor": "Android",
+        "egl_version": "1.4 Android META-EGL"
+      },
+      {
+        "index": 1,
+        "completed": true,
+        "passed": true,
+        "context_created": true,
+        "objects_released": true,
+        "fbo_complete": true,
+        "readback_passed": true,
+        "swap_passed": true,
+        "window_pixel_match": true,
+        "surface_width": 778,
+        "surface_height": 764,
+        "viewport": [
+          198,
+          0,
+          382,
+          764
+        ],
+        "max_texture_size": 8192,
+        "config_rgba_bits": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "egl_api_version": [
+          1,
+          4
+        ],
+        "compared_pixels": 131072,
+        "mismatched_pixels": 0,
+        "first_mismatch": {
+          "x": 0,
+          "y": 0,
+          "expected_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "actual_rgba": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "window_samples": 49,
+        "window_mismatches": 0,
+        "window_first_mismatch": {
+          "x": 0,
+          "y": 0,
+          "expected_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "actual_rgba": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "window_alpha_compared": false,
+        "gl_errors": 0,
+        "first_gl_error": 0,
+        "egl_error": 0,
+        "stage": "complete",
+        "failure": "",
+        "gl_vendor": "Google (Google Inc.)",
+        "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+        "gl_version": "OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)",
+        "glsl_version": "OpenGL ES GLSL ES 3.00",
+        "egl_vendor": "Android",
+        "egl_version": "1.4 Android META-EGL"
+      }
+    ]
+  },
+  "thor_device_execution_verified": false
+}

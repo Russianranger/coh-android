@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "name": "Night Chest real CoH texture",
+  "fixture_id": "01-chest_5c_night_chest_01",
+  "source_path": "data/texture_library/enemies/5thcolumn/night/chest_5c_night_chest_01.texture",
+  "release_tag": "coh-assets-v1.0.0",
+  "dds_sha256": "378dbd7be97eed26a0ad3e454efadaab6a52f4f9c01579d94dc20934d8ec44b7",
+  "dds_bytes": 174928,
+  "expected_rgba_sha256": "e8d9492e39d13211aa5196c834725feb7f0113739daa3d7d7f1195b1478ddaef",
+  "expected_rgba_bytes": 524288,
+  "width": 256,
+  "height": 512,
+  "dds_format": "DXT5",
+  "mip": 0,
+  "decoder": "coh_dds_rgba_legacy",
+  "golden_origin": "Pinned original Win32 NVIDIA nvDXTlibMT_S plus raw CPU consumer channel conversion",
+  "qualification_commit": "92b9dc9a841f0006cd36f0d52dc67c0836f7ca92",
+  "qualification_run": 38446476188,
+  "sdk_library_sha256": "1e9988ad52a01f44368d8d4150990ef2a033536a7a705424f04333143cd63b73",
+  "native_generator_library_sha256": "f41ab25644010d34d70a70fc732fa98c34ef85a5c376f3c067f34ea66fe10ba2",
+  "whole_asset_archive_hash_verified": false,
+  "wrapper_manifest_hash_verified": true
+}

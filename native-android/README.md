@@ -23,3 +23,5 @@ notice. Generated buffers and test data do not access personal profiles.
 Phase 3 adds a bounded legacy DXT1/3/5 DDS-to-RGBA decoder. See [PHASE3.md](PHASE3.md) for source contracts, test results and remaining real-asset parity gate.
 
 [PHASE4.md](PHASE4.md) qualifies the selected real DXT1/DXT5 corpus against the original Win32 NVIDIA decoder and explains the separate legacy CPU API. Android rendering is the next gate.
+
+[PHASE5.md](PHASE5.md) adds an installable ARM64 Surface/EGL texture probe. Android13 emulator pixel/lifecycle checks passed; Thor/Adreno acceptance requires the exported device report.
