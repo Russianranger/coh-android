@@ -1,0 +1,228 @@
+{
+  "format": 1,
+  "role": "nonshipping_client_native_metadata_research",
+  "frozen_repository_commit": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+  "tracked_shipping_changes": false,
+  "production_acceptance_allowed": false,
+  "physical_optimization_result": null,
+  "measured_device_speedup": false,
+  "physical_source": {
+    "archive": "coh-atlas-gameplay-20261013-034513",
+    "member": "client-evidence/client-console.log",
+    "bytes": 629821,
+    "sha256": "d0f4598de7348e4bced088aa5a954dc6541aeba346e43ee23f3b23ae414c3eaf"
+  },
+  "observed_phases": {
+    "texture_headers": {
+      "begin": "2026-10-13T03:25:40.163",
+      "end": "2026-10-13T03:26:10.185",
+      "seconds": 30.022,
+      "texture_tree_request": "2026-10-13T03:25:40.356",
+      "index_setup_upper_bound_seconds": 0.193,
+      "indexed_hits": 38986,
+      "ordinary_header_reads": 0,
+      "enumeration_vs_bind_fraction": "unmeasured"
+    },
+    "fxinfo": {
+      "begin": "2026-10-13T03:27:43.690",
+      "end": "2026-10-13T03:28:09.078",
+      "seconds": 25.388,
+      "freshness_vs_decode_fraction": "unmeasured"
+    },
+    "kings_to_atlas_client_world": {
+      "groups_libraries_and_definitions_ms": 41121,
+      "surviving_fx_preload_ms": 12450,
+      "enclosing_groups_network_and_processing_ms": 55429,
+      "parent_child_phases_not_additive": true,
+      "source": "actual COH_CLIENT_SCENE_PHASE_V1 rows"
+    },
+    "game_initialization": {
+      "seconds": 251.769,
+      "source": "root physical-analysis boundary; not recomputed by this research"
+    },
+    "shader_renderer": {
+      "seconds": 55.816,
+      "source": "root physical-analysis boundary; old Compiled_Cg messages cannot distinguish cache use"
+    },
+    "guest_texture_index_preparation": {
+      "seconds": 12.691,
+      "complete_inventory_seconds": 12.671,
+      "inventory_passes": 1,
+      "pack_reused": true,
+      "original_header_read_seconds": 0.0,
+      "source": "same physical report texture_header_index receipt; separate from native texture header phase"
+    }
+  },
+  "candidate": "complete_authenticated_FolderCache_metadata_hydration_with_unchanged_BIN_freshness_then_separate_per_BIN_proofs",
+  "authority_status": "missing_full_current_native_provider_namespace_and_generation_lease",
+  "host_qualification": {
+    "status": "passed",
+    "tests": 12,
+    "randomized_sequences": 80,
+    "events_per_sequence": 64,
+    "test_output_sha256": "a3ebf4146cfcfcc98d44b39440627ad41b7fa566ac861ca4fd75c31e3a470dba",
+    "fixture_parity": {
+      "status": "passed",
+      "observed_rows": 6,
+      "effective_nodes": 4,
+      "native_algorithm_execution": "host_C_with_bounded_IO_adapters",
+      "full_Game_execution": false,
+      "Wine_execution": false,
+      "production_acceptance_allowed": false,
+      "performance_claim": false
+    },
+    "exact_C_functions": {
+      "FolderNodeAdd": "4b94ff2f9630e2fe29c8336f4e031d8c8232ceaefe44b3a007fc21c563890e9f",
+      "FolderNodeFind": "fd6d4dc74000261615c4087ebeae36626ac1cebd2ae93bc3fda82b569530fa1e",
+      "fileDatesEqual": "b1e699c93d6020a48cda5e0bfd6ea8dcc6f8962583b41f2b540e891221e92a0a",
+      "FolderCacheAddFolderToNode": "99ff9e1997c0679b3c9ad28e13349b5b08398800d6b6ce71cdb9269e391e3e41",
+      "FolderCacheAddPig": "e79a5cd5d61f7d796b66a0b73e1a0428222b042a9b34c0b94e0e6c864151c37a"
+    },
+    "source_adapter": "stock loose-file attributes applied only for accepted loose provider updates; PIG provider insertion does not clear attributes",
+    "not_qualified": [
+      "full_Game",
+      "Wine",
+      "Windows",
+      "Android",
+      "complete_Assets_1_0_0_namespace",
+      "production_generation_authority",
+      "BIN_freshness_bypass",
+      "physical_performance"
+    ],
+    "fixture_manifest_example": {
+      "format": "coh_nonshipping_metadata_parity_v1",
+      "production_acceptance_allowed": false,
+      "identity": {
+        "mode": "FOLDER_CACHE_MODE_DEVELOPMENT_DYNAMIC",
+        "roots": [
+          "fixture://base",
+          "fixture://override"
+        ],
+        "pigs": [
+          "fixture://first.pigg",
+          "fixture://second.pigg"
+        ],
+        "ignore_policy": "fixture_stock_policy_identity",
+        "generation": "fixture_closed_generation",
+        "consumer": "fixture_exact_Game_and_FolderCache_source",
+        "ownership": "fixture_exclusive_closed_namespace",
+        "complete_namespace": true,
+        "immutable": true
+      },
+      "native_source_contract": {
+        "FolderNodeAdd": "4b94ff2f9630e2fe29c8336f4e031d8c8232ceaefe44b3a007fc21c563890e9f",
+        "FolderNodeFind": "fd6d4dc74000261615c4087ebeae36626ac1cebd2ae93bc3fda82b569530fa1e",
+        "fileDatesEqual": "b1e699c93d6020a48cda5e0bfd6ea8dcc6f8962583b41f2b540e891221e92a0a",
+        "FolderCacheAddFolderToNode": "99ff9e1997c0679b3c9ad28e13349b5b08398800d6b6ce71cdb9269e391e3e41",
+        "FolderCacheAddPig": "e79a5cd5d61f7d796b66a0b73e1a0428222b042a9b34c0b94e0e6c864151c37a"
+      },
+      "ordered_observations_sha256": "5725686368eacc22cfe0f2e26eec02fc711538a4e66d3d2c98baf6c5213e8de3",
+      "effective": [
+        {
+          "path": "fx",
+          "timestamp": 1767225600,
+          "bytes": 100,
+          "provider": 0,
+          "file_index": -1,
+          "seen_in_fs": 1,
+          "attributes": 0,
+          "is_dir": 1
+        },
+        {
+          "path": "fx/empty",
+          "timestamp": 1767225600,
+          "bytes": 0,
+          "provider": 0,
+          "file_index": -1,
+          "seen_in_fs": 1,
+          "attributes": 0,
+          "is_dir": 1
+        },
+        {
+          "path": "fx/optional.fx",
+          "timestamp": 0,
+          "bytes": 100,
+          "provider": 0,
+          "file_index": -1,
+          "seen_in_fs": 1,
+          "attributes": 0,
+          "is_dir": 0
+        },
+        {
+          "path": "fx/Test.fx",
+          "timestamp": 1767225600,
+          "bytes": 100,
+          "provider": -2,
+          "file_index": 7,
+          "seen_in_fs": 1,
+          "attributes": 0,
+          "is_dir": 0
+        }
+      ],
+      "effective_sha256": "f83ec9a358b5584aaf00301f4b069da80b63e2020bd9cc17c881eca64406b01e"
+    },
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools",
+      "-p",
+      "test_native_client_metadata_parity.py",
+      "-v"
+    ],
+    "qualification_output": "test_actual_native_pig_winner_preserves_case_and_loose_presence (test_native_client_metadata_parity.MetadataParityTests.test_actual_native_pig_winner_preserves_case_and_loose_presence) ... ok\ntest_algorithm_parity_does_not_authenticate_in_place_source_content (test_native_client_metadata_parity.MetadataParityTests.test_algorithm_parity_does_not_authenticate_in_place_source_content) ... ok\ntest_directional_pig_DST_rule_is_not_symmetric_freshness_tolerance (test_native_client_metadata_parity.MetadataParityTests.test_directional_pig_DST_rule_is_not_symmetric_freshness_tolerance) ... ok\ntest_effective_tampering_and_recomputed_payload_hash_refused (test_native_client_metadata_parity.MetadataParityTests.test_effective_tampering_and_recomputed_payload_hash_refused) ... ok\ntest_manifest_roundtrip_retains_empty_dirs_zero_dates_and_flags (test_native_client_metadata_parity.MetadataParityTests.test_manifest_roundtrip_retains_empty_dirs_zero_dates_and_flags) ... ok\ntest_native_source_and_schema_change_refused (test_native_client_metadata_parity.MetadataParityTests.test_native_source_and_schema_change_refused) ... ok\ntest_optional_absence_addition_deletion_and_same_size_date_change_refused (test_native_client_metadata_parity.MetadataParityTests.test_optional_absence_addition_deletion_and_same_size_date_change_refused) ... ok\ntest_pig_winner_retains_existing_loose_attributes_as_stock_loader_does (test_native_client_metadata_parity.MetadataParityTests.test_pig_winner_retains_existing_loose_attributes_as_stock_loader_does) ... ok\ntest_provider_order_generation_mode_consumer_and_ownership_changes_refused (test_native_client_metadata_parity.MetadataParityTests.test_provider_order_generation_mode_consumer_and_ownership_changes_refused) ... ok\ntest_randomized_ordered_provider_replay_equals_hydrated_metadata (test_native_client_metadata_parity.MetadataParityTests.test_randomized_ordered_provider_replay_equals_hydrated_metadata) ... ok\ntest_unknown_or_incomplete_provider_authority_refused (test_native_client_metadata_parity.MetadataParityTests.test_unknown_or_incomplete_provider_authority_refused) ... ok\ntest_unsafe_paths_and_native_bounds_refused (test_native_client_metadata_parity.MetadataParityTests.test_unsafe_paths_and_native_bounds_refused) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 1.106s\n\nOK\n",
+    "executed_from_portable_research_worktree": true,
+    "added_boundary_case": "PIG file index exceeds signed native 32-bit integer"
+  },
+  "source_sha256": {
+    "upstream/ouroboros/Game/src/render/tex.c": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+    "upstream/ouroboros/Common/fxinfo.c": "61f36247ec92e56395cc6548689c34b1e341283a25c78490627327eafd5e9a13",
+    "upstream/ouroboros/Game/src/group/groupnetrecv.c": "f4cccb5a51acea3448191965470eaa349034c4f6fa1c729fa52aed0888c7004d",
+    "upstream/ouroboros/Common/group/groupfilelib.c": "07abf29638a3b3400f97f9caffdfd36f95c2db38c60063573b8cf67d10e1c5e8",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/fileutil.c": "6d3991db4e8c1a1b7f55280c7ea69711d765e01009022172a2c90eccd759fdd7",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/fileWatch.c": "ac081fe475cd69762b40f1ea0378c8e24884a9974a27afd90c3facd0d1b651c5",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1",
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7",
+    "android/guest/character_server_data_cache.py": "1cb7fa789fd26dd8463dd01cd40555aac6f276fa6defbfc84c6239c35ebe0ac3",
+    "android/guest/texture_header_index.py": "5f4b7601c3a98d6f4eaeff1c95496e544d336f783826bea15a674bae6e01a2c5",
+    "android/guest/client_interactive_diagnostic.py": "f56eb4a80284dc197f1213b01264e872db9c81f37eaec2babfc36af943c2d08c",
+    "patches/client-texture-index/0001-index-texture-headers.patch": "880b2f09e4666552e739fe37ca319f4d42ad6b5f15ea1a276803f7bc14e31a3a",
+    "patches/startup-bundle-client/0001-verified-texture-root.patch": "00cb463cdc4d32b4de622922e6b91316cca5dcb2da46ae00a51b6ab23fd6b470"
+  },
+  "genuine_game_execution_status": "pending_no_local_Wine_Xvfb_or_full_client_closure",
+  "existing_native_env_diagnostic": "COH_CLIENT_BIN_PROFILE=1 with ordinary exact retained Game startup; not createbins",
+  "genuine_game_launch_mode": "--character-manual with retained performance environment and finite host-owned diagnostic supervisor; argc4 would force standard graphics",
+  "portable_research_files": [
+    "tools/native_client_metadata_parity.py",
+    "tools/test_native_client_metadata_parity.py",
+    "docs/NATIVE_CLIENT_METADATA_RESEARCH.md",
+    "docs/android-evidence/native-client-metadata-0.13.36-research.json"
+  ],
+  "research_file_sha256": {
+    "tools/native_client_metadata_parity.py": "eb15e3e6d8e86f2a10e8ad1c3dbd0ae25417dcf7f47399f3097000388c5a2ba6",
+    "tools/test_native_client_metadata_parity.py": "7b5b00840c35caf55ad57847a454abe663874e74f29497a0c6577892f317b7da",
+    "docs/NATIVE_CLIENT_METADATA_RESEARCH.md": "ba3622b1122c0b4713deffb41f6cb304781a12cfb3684177331aaa27b43cd88a"
+  },
+  "retained_game_launch": {
+    "game_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+    "launcher_sha256": "b453c42876408a842a4f3b717ef3857d4f10624f02462b6e1c6ce5bcdca92159",
+    "arguments": [
+      "fresh_session_id_32_lowercase_hex",
+      "verified_absolute_Game_Windows_path",
+      "verified_absolute_runtime_workdir_Windows_path",
+      "--character-manual"
+    ],
+    "requested_graphics_profile": "performance",
+    "diagnostic_only_extra_environment": {
+      "COH_CLIENT_BIN_PROFILE": "1"
+    },
+    "ordinary_guest_override_must_be_avoided": true,
+    "requires_owning_supervisor": true,
+    "executed": false
+  }
+}
