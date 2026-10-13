@@ -1,6 +1,6 @@
 # 0.13.36 startup latency and save-check continuation
 
-Status: candidate in qualification; no .36 public APK or physical speed claim yet. Version 0.13.36 / code 51 retains the exact published .35 Android DEX/resources, Game, DbServer, MapServer, launcher helper, GPU/FEX/Wine and Assets 1.0.0. This stage changes guest preparation and diagnostic validation. Separate nonshipping native profiling research cannot authorize a native replacement.
+Status: published and independently audited from source `3570430cefdb15d9b239563e85cccf4d8fe6f32e`, run `38346809297`. Version 0.13.36 / code 51 retains the exact published .35 Android DEX/resources, Game, DbServer, MapServer, launcher helper, GPU/FEX/Wine and Assets 1.0.0. This stage changes guest preparation and diagnostic validation. Separate nonshipping native profiling research cannot authorize a native replacement.
 
 ## Changes tied to physical evidence
 
@@ -23,4 +23,6 @@ This guest stage targets avoidable GPU prefix initialization, repeated Atlas pre
 
 Current host qualification, strict disposable PostgreSQL tests, actual complete imported-assets cold/warm preparation for both destinations, authentic retained Windows minimal Db startup/restart, signed APK reconstruction and independent public-byte audit are mandatory. Historical donor/helper/native evidence keeps its original producer/source identities; no inherited test is labelled freshly executed.
 
-At publication the exact outcomes and source pins will be recorded in HANDOFF and the publication receipt. Under-five-minute startup, under-one-minute client initialization and under-30-second zones remain false/unverified physical claims. No RAM/FPS/thermal improvement is asserted; parallel startup can increase transient pressure, and cache proof inventories remain bounded and released after durable destination proofs exist.
+Exact outcomes and source pins are recorded in HANDOFF and the [publication receipt](android-evidence/client-startup-latency-0.13.36-publication.json): 2,848 freshly executed tests / 205 suites, zero failures/errors/skips; 115 inherited tests / eight suites retain original producer identities. Full assets, strict disposable PostgreSQL fixtures, genuine retained native minimal Db startup/restart, 10,035 source pins and all 31 companion workflows passed. All four publication jobs passed, including independent downloaded-public-byte audit.
+
+The later October 13 physical reports confirm improved preparation, both committed saves, successful two-way native monorail travel and useful outer ZIPs. Native Game startup remained 264.461 / 264.197 s; cold Kings travel remained 399.273 s to native READY, while a return to the resident Atlas process took 82.844 s. Android manual-observation attribution and later ownership cleanup failures are separate .37 repair items; they do not undo the verified saves. Under-five-minute whole startup, under-one-minute client initialization and under-30-second zones remain unverified. No general RAM/FPS/thermal improvement is asserted; parallel startup can increase transient pressure, and cache proof inventories remain bounded and released after durable destination proofs exist.

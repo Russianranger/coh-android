@@ -75,3 +75,22 @@ The observation headers use stack records and bounded static counters: at most 2
 5. **Collision reuse:** the Atlas PhysX interval is now 18.732 seconds, so retain the owned-stream investigation and measure exact SDK/geometry/cooking identity, bounded memory and both-world parity. It remains smaller than the server sequencer work and cannot explain the full transfer.
 
 The source already supports on-demand MapServers through the DbServer launcher and retains owned destinations during a session. An already resident destination can avoid a new process's common initialization; warm filesystem cache alone cannot. Stock TSR preload is not a proven process-cloning mechanism. No separate dynamic-map engine, unsafe cross-session residency, global freshness bypass, or unqualified native replacement is introduced by this investigation.
+
+
+## Recovered completed native result after publication
+
+The original Windows compilation succeeded in job `115126749610` of run `38345782437`, source `da5cf809925d9d91e029a117d8be184af03db2b6`; the whole workflow was cancelled before Wine execution after a Windows/POSIX receipt-path mismatch. Its successful original artifact was retained and recovered exactly; it was not rebuilt. A strict legacy adapter preserves every original member and producer identity. Subsequent run `38348218236` failed the provider-module binding before native launch; `38348835899` ran the control then failed the BIN-immutability gate. Run `38350025346` ran both real native preloads but still failed because 18 original BINs regenerated. Equal resulting output was not relabelled unchanged.
+
+The Map-only metadata candidate was built successfully at `47e40d4d586d29e273e31ed4d0d51d160832b89d` in run `38350813669`, job `115142552789`. Original candidate artifact `11790609618` ZIP SHA-256 is `69bfc9f44e5304eae786d0668ba30f183f5b99a58586f8db7861f697d8e23aab`; candidate MapServer SHA-256 is `5927f87fdac50c5a839ac067ccbb34b5dfad6223e579287a66a2f866a7d4b2e6`. It invokes the ordinary native animation metadata tree request before individual sequencer attachment lookups, with default-off opt-in and stock schema/date/decode/text fallback intact. It does not load animation payloads early or establish new cache authority.
+
+The completed paired reuse lane at `9454e7892ac81cf4503fd8ad961dc36c27cfc152` (tree `c3d1400216e5b170c4c90c2c75c007387014ca21`) passed in [run 38352862725](https://github.com/Russianranger/coh-android/actions/runs/38352862725). It performed one explicit native fixture generation, then fresh observed-control and candidate consumers. Original producer inputs and timestamp-dependent dependency envelopes were authenticated; generated outputs retained exact schema/body, source-date and identifier proofs. The former failed fixture remained failed.
+
+| Actual host phase | Observed baseline | Metadata candidate |
+|---|---:|---:|
+| Whole native preload | 18.185 s | 14.634 s |
+| Sequencer total | 6.570165 s | 1.367097 s |
+| Combined move validation/animation attachment | 6.018023 s | 0.662457 s |
+
+The earlier stock generation took 18.550 s. The one metadata request took approximately 0.113 s. All 191 generated BIN inventories, 12 identifier files, 129 ordered decoder/sequencer decisions and 125 ordered freshness outcomes matched. The full provider contained 176,422 leaves / 3,484,837,198 bytes. Native definition counts were preserved. Recovery artifact `11791389599`, ZIP 281,739 bytes, SHA-256 `5a5bf01b901e5c5398bb42f07e4c1737ac8b13ee90e90fb297ca01cd08dfa34b`. The actual report SHA-256 is `a84aa918e89a8e4f60be80fc26ccd2960cffcac80c79ddf38d15619ffff5dfb7`.
+
+This is one ordered host pair, preceded by complete hashing that warms the filesystem. It proves a useful native metadata optimization under that fixture; it does not establish Thor savings, new world entry, collision behavior, graphics or RAM parity. RSS/PSS was not collected in that lane. FolderCache allocates node chunks and string keys, so memory is not assumed free. Current .36 physical client/server costs and both-world/native-client qualification are being handled in the .37 continuation.
