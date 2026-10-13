@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 from types import SimpleNamespace
@@ -11,6 +12,51 @@ from unittest.mock import patch
 import qualify_native_client_startup as q
 
 class AdmissionTests(unittest.TestCase):
+    def test_native_RGB_crop_preserves_raw_and_nearest_scaled_pixel_values(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); source = root / 'source.ppm'; target = root / 'crop.ppm'
+            pixels = bytes(range(256)) * (320 * 240 * 3 // 256)
+            source.write_bytes(b'P6\n320 240\n255\n' + pixels); before = q.pin(source)
+            value = q.login_crop(source, target); self.assertEqual(q.pin(source), before)
+            self.assertFalse(value['native_pixels_or_UI_changed'])
+            self.assertEqual(value['crop_xyxy'], [220, 68, 316, 178])
+            raw = target.read_bytes(); offset = raw.index(b'\n255\n') + 5
+            first = pixels[(68 * 320 + 220) * 3:(68 * 320 + 220) * 3 + 3]
+            self.assertEqual(raw[offset:offset + 12], first * 4)
+
+    def test_RGB_capture_malformed_truncated_or_oversized_refused(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); source = root / 'source.ppm'
+            for raw in (b'not a PPM', b'P6\n320 240\n255\nshort', b'P6\n9999 9999\n255\n'):
+                source.write_bytes(raw)
+                with self.assertRaises(ValueError): q.login_crop(source, root / 'crop.ppm')
+
+    def test_login_OCR_requires_actual_positive_crop_and_retains_negative_full_frame(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); source = root / 'source.ppm'
+            source.write_bytes(b'P6\n320 240\n255\n' + b'\0' * (320 * 240 * 3))
+            executable = root / 'tesseract'; executable.write_bytes(b'owned OCR tool')
+            tool = {'resolved': str(executable), 'resolved_pin': q.pin(executable), 'invocation': str(executable)}
+            results = [subprocess.CompletedProcess([], 0, b'unrelated artwork', b''),
+                       subprocess.CompletedProcess([], 0, b'Remember Account Name\nPASSWORD', b'')]
+            with patch.object(q.subprocess, 'run', side_effect=results) as run:
+                value = q.observe_login_text(source, tool, root, 'startup')
+            self.assertEqual(run.call_count, 2); self.assertTrue(value['login_text_observed'])
+            self.assertFalse(value['attempts'][0]['login_text_observed'])
+            self.assertFalse(value['UI_input_sent']); self.assertFalse(value['graphics_quality_changed'])
+            self.assertEqual((root / 'startup-ocr-full-11.txt').read_bytes(), b'unrelated artwork')
+
+    def test_missing_login_OCR_or_failed_OCR_cannot_be_promoted(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); source = root / 'source.ppm'
+            source.write_bytes(b'P6\n320 240\n255\n' + b'\0' * (320 * 240 * 3))
+            executable = root / 'tesseract'; executable.write_bytes(b'owned OCR tool')
+            tool = {'resolved': str(executable), 'resolved_pin': q.pin(executable), 'invocation': str(executable)}
+            with patch.object(q.subprocess, 'run', return_value=subprocess.CompletedProcess([], 1, b'Account Password', b'failed')):
+                self.assertFalse(q.observe_login_text(source, tool, root, 'failed')['login_text_observed'])
+            with patch.object(q.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, b'artwork and settings', b'')):
+                self.assertFalse(q.observe_login_text(source, tool, root, 'missing')['login_text_observed'])
+
     def probe(self, row, returncode=0):
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
@@ -143,6 +189,60 @@ class AdmissionTests(unittest.TestCase):
             self.assertEqual([call.args[0] for call in run.call_args_list], [['/usr/bin/wineserver', '-k'], ['/usr/bin/wineserver', '-w']])
             self.assertTrue(all(call.kwargs['env'] == env for call in run.call_args_list))
             self.assertTrue(receipt['passed']); self.assertFalse(receipt['normal_game_exit_claimed'])
+
+    def stop_fixture(self, root):
+        prefix = root / 'prefix'; prefix.mkdir(mode=0o700)
+        executable = root / 'wineserver'; executable.write_bytes(b'owned wine server')
+        tool = {'resolved': str(executable), 'resolved_pin': q.pin(executable), 'invocation': '/usr/bin/wineserver'}
+        return prefix, tool, {'WINEPREFIX': str(prefix)}
+
+    def test_held_native_launcher_reaped_before_absence_census(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); prefix, tool, env = self.stop_fixture(root)
+            process = subprocess.Popen([sys.executable, '-c', 'pass'])
+            def census(_):
+                self.assertIsNotNone(process.returncode)
+                return []
+            try:
+                with patch.object(q.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, b'', b'')), \
+                     patch.object(q, 'process_census', side_effect=census):
+                    value = q.stop_prefix(prefix, env, tool, root, owned_process=process)
+                self.assertEqual(value['held_launch_Popen_reaped_before_census']['pid'], process.pid)
+                self.assertEqual(value['held_launch_Popen_reaped_before_census']['returncode'], 0)
+                self.assertFalse(value['held_launch_Popen_reaped_before_census']['additional_signal_sent'])
+            finally: process.wait(timeout=10)
+
+    def test_unreadable_dying_Wine_waits_without_signal_until_actual_absence(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); prefix, tool, env = self.stop_fixture(root)
+            with patch.object(q.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, b'', b'')) as run, \
+                 patch.object(q, 'process_census', side_effect=[q.UnreadableWineProcess(9999, 'wineserver'), []]), \
+                 patch.object(q.time, 'sleep'):
+                value = q.stop_prefix(prefix, env, tool, root)
+            self.assertEqual(run.call_count, 2); self.assertTrue(value['passed'])
+            self.assertFalse(value['census_observations'][0]['absence_claimed'])
+            self.assertEqual(value['census_observations'][-1]['exact_prefix_processes'], [])
+
+    def test_live_or_persistently_unreadable_Wine_refused_after_bounded_wait(self):
+        for census in (q.UnreadableWineProcess(9999, 'wineserver'), [{'pid': 1234, 'name': 'wine'}]):
+            with self.subTest(census=census), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary); prefix, tool, env = self.stop_fixture(root)
+                with patch.object(q.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, b'', b'')) as run, \
+                     patch.object(q, 'process_census', side_effect=census if isinstance(census, Exception) else None,
+                                  return_value=census if not isinstance(census, Exception) else None), \
+                     patch.object(q.time, 'monotonic', side_effect=[0, 11]):
+                    with self.assertRaisesRegex(ValueError, 'unreadable or live'): q.stop_prefix(prefix, env, tool, root)
+                self.assertEqual(run.call_count, 2); self.assertTrue((root / 'owned-prefix-census.json').is_file())
+
+    def test_prefix_replacement_cannot_wait_or_claim_other_prefix_cleanup(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); prefix, tool, env = self.stop_fixture(root)
+            def stopped(*args, **kwargs):
+                prefix.rename(root / 'original-prefix'); prefix.mkdir(mode=0o700)
+                return subprocess.CompletedProcess([], 0, b'', b'')
+            with patch.object(q.subprocess, 'run', side_effect=stopped) as run:
+                with self.assertRaisesRegex(ValueError, 'Held owned prefix identity changed'): q.stop_prefix(prefix, env, tool, root)
+            self.assertEqual(run.call_count, 1)
 
     def test_wineboot_timeout_stops_partial_prefix_and_retains_failure(self):
         with tempfile.TemporaryDirectory() as temporary:

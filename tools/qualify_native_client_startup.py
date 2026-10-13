@@ -25,6 +25,54 @@ MAX_LOG = 16 * 1024**2
 OBSERVED_GAME = {'bytes': 9474048, 'sha256': '338172fe57ae9ce303797f784d85c5c9e3a2f768b3373fc5340dfd78f8b75020'}
 CLIENT_PROBE = {'bytes': 470392, 'sha256': '24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0'}
 
+class UnreadableWineProcess(ValueError):
+    def __init__(self, pid, name):
+        super().__init__('Unreadable same-user Wine process')
+        self.pid, self.name = pid, name[:128]
+
+def login_crop(source, target):
+    """Read-only OCR derivative; no native UI action or graphics change."""
+    raw = source.read_bytes()
+    require(len(raw) <= 4 * 1024**2, 'Login capture exceeded bounded RGB frame')
+    match = re.match(rb'P6\n([0-9]+) ([0-9]+)\n255\n', raw)
+    require(match is not None, 'Exact native RGB PPM capture required')
+    width, height = map(int, match.groups()); pixels = raw[match.end():]
+    require(320 <= width <= 1280 and 240 <= height <= 720 and len(pixels) == width * height * 3,
+            'Login capture dimensions/payload invalid')
+    # The actual manual profile is 800x600. Keep a bounded normalized right
+    # label region, away from the stock first-prefix graphics-choice popup.
+    left, top, right, bottom = width * 11 // 16, height * 17 // 60, width * 79 // 80, height * 89 // 120
+    scale = 4; rows = []
+    for y in range(top, bottom):
+        row = pixels[(y * width + left) * 3:(y * width + right) * 3]
+        expanded = b''.join(row[x:x + 3] * scale for x in range(0, len(row), 3))
+        rows.extend([expanded] * scale)
+    out_width, out_height = (right - left) * scale, (bottom - top) * scale
+    require(out_width * out_height * 3 <= 8 * 1024**2, 'OCR derivative exceeded bound')
+    target.write_bytes(('P6\n%d %d\n255\n' % (out_width, out_height)).encode() + b''.join(rows))
+    return {'source': pin(source), 'derivative': pin(target), 'crop_xyxy': [left, top, right, bottom],
+            'scale': scale, 'method': 'RGB_right_login_labels_nearest_upscale', 'native_pixels_or_UI_changed': False}
+
+def observe_login_text(frame_path, tool, directory, label):
+    require(pin(Path(tool['resolved'])) == tool['resolved_pin'], 'Host OCR binary changed')
+    derivative = directory / (label + '-login-crop.ppm')
+    transform = login_crop(frame_path, derivative)
+    results = []
+    for kind, path, psm in (('full', frame_path, '11'), ('right_labels', derivative, '6'), ('right_labels', derivative, '11')):
+        result = subprocess.run([tool['invocation'], str(path), 'stdout', '--psm', psm], capture_output=True, timeout=30)
+        require(len(result.stdout) + len(result.stderr) <= 65536, 'Login frame OCR exceeded bound')
+        output = directory / (label + '-ocr-' + kind + '-' + psm + '.txt'); output.write_bytes(result.stdout)
+        diagnostic = directory / (label + '-ocr-' + kind + '-' + psm + '.stderr'); diagnostic.write_bytes(result.stderr)
+        seen = result.returncode == 0 and bool(re.search(r'login|log in|password|account', result.stdout.decode('utf8', 'replace'), re.I))
+        results.append({'kind': kind, 'psm': int(psm), 'returncode': result.returncode,
+                        'output': pin(output), 'stderr': pin(diagnostic), 'login_text_observed': seen})
+        if seen: break
+    value = {'format': 1, 'raw_frame': pin(frame_path), 'transform': transform, 'attempts': results,
+             'login_text_observed': any(row['login_text_observed'] for row in results),
+             'UI_input_sent': False, 'graphics_quality_changed': False}
+    write(directory / (label + '-login-observation.json'), value)
+    return value
+
 def native_probe(assets, env, wine, directory):
     probe = Path(assets) / 'client-probe.exe'
     require(pin(probe) == CLIENT_PROBE, 'Exact retained native PE32 client probe required')
@@ -132,32 +180,67 @@ def process_census(prefix):
             # Same-user unreadable Wine process prevents claiming cleanup.
             try: name = (path / 'comm').read_text().lower()
             except (FileNotFoundError, ProcessLookupError): continue
-            require(not any(s in name for s in ('wine', 'cityofheroes', 'client-launcher')), 'Unreadable same-user Wine process')
+            if any(s in name for s in ('wine', 'cityofheroes', 'client-launcher')):
+                raise UnreadableWineProcess(int(path.name), name)
     return matched
 
-def stop_prefix(prefix, env, tool, directory):
+def check_held_prefix(prefix, descriptor, info):
+    held, current = os.fstat(descriptor), prefix.lstat()
+    require((held.st_dev, held.st_ino, held.st_uid) == (info.st_dev, info.st_ino, info.st_uid)
+            == (current.st_dev, current.st_ino, current.st_uid) and stat.S_ISDIR(current.st_mode)
+            and not current.st_mode & 0o077, 'Held owned prefix identity changed during stop/census wait')
+
+def stop_prefix(prefix, env, tool, directory, owned_process=None):
     info = prefix.lstat()
     require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.geteuid() and not info.st_mode & 0o077,
             'Private owned host prefix required for stop')
     require(pin(Path(tool['resolved'])) == tool['resolved_pin'], 'Host wineserver executable changed')
+    require(env.get('WINEPREFIX') == str(prefix.absolute()), 'Exact owned prefix environment required for stop')
+    descriptor = os.open(prefix, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
     operations = []
-    for option in ('-k', '-w'):
-        result = subprocess.run([tool['invocation'], option], env=env, capture_output=True, timeout=30)
-        require(len(result.stdout) <= 65536 and len(result.stderr) <= 65536, 'Wine stop diagnostic exceeded bound')
-        (directory / ('wineserver' + option + '.stdout')).write_bytes(result.stdout)
-        (directory / ('wineserver' + option + '.stderr')).write_bytes(result.stderr)
-        operations.append({'argument': option, 'returncode': result.returncode,
-                           'stdout': pin(directory / ('wineserver' + option + '.stdout')),
-                           'stderr': pin(directory / ('wineserver' + option + '.stderr'))})
-        require(result.returncode in ((0, 1) if option == '-k' else (0,)), 'Owned prefix Wine stop/wait failed')
-    deadline = time.monotonic() + 10
-    while True:
-        processes = process_census(prefix)
-        if not processes: break
-        require(time.monotonic() < deadline, 'Owned prefix still has live processes after wait')
-        time.sleep(.1)
+    observations = []; reaped = None
+    try:
+        for option in ('-k', '-w'):
+            check_held_prefix(prefix, descriptor, info)
+            result = subprocess.run([tool['invocation'], option], env=env, capture_output=True, timeout=30)
+            require(len(result.stdout) <= 65536 and len(result.stderr) <= 65536, 'Wine stop diagnostic exceeded bound')
+            (directory / ('wineserver' + option + '.stdout')).write_bytes(result.stdout)
+            (directory / ('wineserver' + option + '.stderr')).write_bytes(result.stderr)
+            operations.append({'argument': option, 'returncode': result.returncode,
+                               'stdout': pin(directory / ('wineserver' + option + '.stdout')),
+                               'stderr': pin(directory / ('wineserver' + option + '.stderr'))})
+            require(result.returncode in ((0, 1) if option == '-k' else (0,)), 'Owned prefix Wine stop/wait failed')
+        if owned_process is not None:
+            require(isinstance(owned_process, subprocess.Popen), 'Exact held native-launch Popen required for reap')
+            held_pid = owned_process.pid
+            returncode = owned_process.wait(timeout=10)
+            require(type(held_pid) is int and held_pid > 0 and type(returncode) is int,
+                    'Held native-launch process could not be reaped')
+            reaped = {'pid': held_pid, 'returncode': returncode, 'reaped_after_exact_prefix_stop': True,
+                      'additional_signal_sent': False, 'normal_game_exit_claimed': False}
+            write(directory / 'held-launcher-reaped.json', reaped)
+        deadline = time.monotonic() + 10
+        while True:
+            check_held_prefix(prefix, descriptor, info)
+            try:
+                processes = process_census(prefix)
+                observation = {'status': 'readable', 'exact_prefix_processes': processes}
+            except UnreadableWineProcess as error:
+                processes = None
+                observation = {'status': 'unreadable_same_user_Wine', 'pid': error.pid, 'name': error.name,
+                               'absence_claimed': False, 'additional_signal_sent': False}
+            observations.append(observation)
+            write(directory / 'owned-prefix-census.json', {'format': 1, 'observations': observations,
+                  'held_owned_prefix_identity': [info.st_dev, info.st_ino, info.st_uid], 'bounded_wait_seconds': 10})
+            if processes == []: break
+            require(time.monotonic() < deadline and len(observations) <= 101,
+                    'Owned prefix census remained unreadable or live after bounded wait')
+            time.sleep(.1)
+    finally: os.close(descriptor)
     value = {'format': 1, 'prefix': str(prefix), 'prefix_identity': [info.st_dev, info.st_ino, info.st_uid],
         'operations': operations, 'exact_prefix_processes_remaining': processes,
+        'census_observations': observations, 'held_owned_prefix_handle_checked': True,
+        'held_launch_Popen_reaped_before_census': reaped,
         'passed': True, 'unrelated_processes_signalled': False, 'normal_game_exit_claimed': False}
     write(directory / 'owned-prefix-stop.json', value)
     return value
@@ -235,7 +318,7 @@ def launch_case(args, fixture, client, work, env, tools, output, label):
         'native_software_renderer_only': True, 'owned_prefix': env['WINEPREFIX'],
         'controls': {k: v for k, v in env.items() if k.startswith('COH_')}})
     started = time.monotonic(); observer = None; samples = []; evidence = None
-    process = None; failure = None; cleanup = None
+    process = None; failure = None; cleanup = None; login_observations = []; first_native_seconds = None
     try:
         registry_empty(tools['wine']['invocation'], env, directory)
         before = cache_snapshot(work); write(directory / 'bins-before.json', before)
@@ -263,22 +346,27 @@ def launch_case(args, fixture, client, work, env, tools, output, label):
                     'current_owned_window': current['client_window_observed']})
                 require(len(samples) <= 721, 'Current startup observer exceeded sample bound')
                 if registry.returncode == 0 and console and current['startup_observed'] and current['renderer_initialized'] and current['all_data_loaded']:
-                    first = time.monotonic(); capture = observer.capture(directory / 'startup.ppm')
+                    first = time.monotonic()
+                    if first_native_seconds is None: first_native_seconds = round(first - started, 6)
+                    require(len(login_observations) < 3, 'Captured current Game frames have no login/account/password text')
+                    capture_label = 'startup' if not login_observations else 'startup-retry-' + str(len(login_observations) + 1)
+                    capture = observer.capture(directory / (capture_label + '.ppm'))
                     require(capture['distinct_colors_capped'] >= 16, 'Captured current renderer produced insufficient pixel variation')
-                    ocr = subprocess.run([tools['tesseract']['invocation'], str(directory / 'startup.ppm'), 'stdout', '--psm', '11'],
-                                         capture_output=True, timeout=30)
-                    require(len(ocr.stdout) + len(ocr.stderr) <= 65536, 'Login frame OCR exceeded evidence budget')
-                    (directory / 'startup-ocr.txt').write_bytes(ocr.stdout)
-                    evidence = {'elapsed_seconds': round(first - started, 6), 'launch': launch, 'console': console,
+                    ocr = observe_login_text(directory / (capture_label + '.ppm'), tools['tesseract'], directory, capture_label)
+                    login_observations.append(dict(ocr, capture=capture, elapsed_seconds=round(time.monotonic() - started, 6)))
+                    evidence = {'elapsed_seconds': first_native_seconds, 'launch': launch, 'console': console,
                         'current_registry': raw, 'registry_returncode': registry.returncode, 'current_native_evidence': current,
-                        'frame': capture, 'ocr_returncode': ocr.returncode,
-                        'login_text_observed': ocr.returncode == 0 and bool(re.search(r'login|log in|password|account', ocr.stdout.decode('utf8', 'replace'), re.I)),
+                        'frame': capture, 'ocr_returncode': ocr['attempts'][-1]['returncode'],
+                        'login_text_observed': ocr['login_text_observed'], 'login_observations': login_observations,
+                        'native_startup_witness_seconds': first_native_seconds,
+                        'login_frame_observed_seconds': round(time.monotonic() - started, 6),
+                        'OCR_processing_separate_from_native_startup_clock': True,
                         'menu_visual_parity_claimed': False, 'cg': parse_cg(text)}
                     require(current['graphics_observation']['renderer_classification'] == 'software',
                             'Actual host Game must identify its software renderer')
-                    require(evidence['login_text_observed'], 'Captured current Game frame has no login/account/password text')
-                    if args.native_role == 'cg-observed': require(evidence['cg']['rows'], 'Actual observed Game emitted no Cg measurements')
-                    break
+                    if evidence['login_text_observed']:
+                        if args.native_role == 'cg-observed': require(evidence['cg']['rows'], 'Actual observed Game emitted no Cg measurements')
+                        break
                 time.sleep(2)
     except BaseException as error:
         failure = {'type': type(error).__name__, 'message': str(error)[:2048]}
@@ -287,8 +375,7 @@ def launch_case(args, fixture, client, work, env, tools, output, label):
             failure_evidence(observer, client, work, env, tools, directory)
         if observer is not None: observer.close()
         try:
-            cleanup = stop_prefix(Path(env['WINEPREFIX']), env, tools['wineserver'], directory)
-            if process is not None: process.wait(timeout=20)
+            cleanup = stop_prefix(Path(env['WINEPREFIX']), env, tools['wineserver'], directory, owned_process=process)
         except BaseException as error:
             cleanup = {'passed': False, 'message': str(error)[:2048]}
         try:
@@ -301,6 +388,7 @@ def launch_case(args, fixture, client, work, env, tools, output, label):
             'label': label, 'evidence': evidence, 'failure': failure, 'cleanup': cleanup,
             'cache_delta': cache_delta(before, after), 'cache_before_count': len(before), 'cache_after_count': len(after),
             'samples': samples, 'generated_cache_mutations_reported': True,
+            'bounded_login_frame_observations': login_observations,
             'native_game_executed': process is not None, 'physical_device_executed': False,
             'native_map_or_character_connection_claimed': False, 'software_GL_timing_scope': True}
         write(directory / 'native-client-phase.json', result)

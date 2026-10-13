@@ -38,7 +38,7 @@ jobs:
       - name: Recover only the successful new Game artifact and exact public .36 native donor
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
-          mkdir -p out/candidate-history
+          mkdir -p out/candidate-history out/ocr-regression-history
           python3 - <<'PY'
           import hashlib,json,os,pathlib,time,urllib.error,urllib.request
           base='https://api.github.com/repos/Russianranger/coh-android'
@@ -59,6 +59,12 @@ jobs:
           assert artifact['size_in_bytes']==4253004 and artifact['digest']=='sha256:5d374e3d515eb171905523fd67d321393783e3f667218488be486efff433918a'
           assert artifact['workflow_run']['head_sha']==run['head_sha']
           for name,value in [('run',run),('jobs',jobs),('artifact',artifact)]:pathlib.Path('out/candidate-history/'+name+'.json').write_text(json.dumps(value,indent=2)+'\n')
+          failed_run=request(base+'/actions/runs/38484481041');failed_artifact=request(base+'/actions/artifacts/11859082802')
+          assert failed_run['head_sha']=='7004c2a103b8798958a928143e070817a37bbcaa' and failed_run['conclusion']=='failure'
+          assert failed_artifact['name']=='coh-nonshipping-native-client-paired-startup' and failed_artifact['expired'] is False
+          assert failed_artifact['size_in_bytes']==1908469 and failed_artifact['digest']=='sha256:e57c647d1fe5c3fa8c2c3c09494c67720595c6b806f54233e0f34d531f57a848'
+          assert failed_artifact['workflow_run']['head_sha']==failed_run['head_sha']
+          for name,value in [('run',failed_run),('artifact',failed_artifact)]:pathlib.Path('out/ocr-regression-history/'+name+'.json').write_text(json.dumps(value,indent=2)+'\n')
           target=pathlib.Path('out/donor-036.apk')
           with urllib.request.urlopen('https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk',timeout=60) as response,target.open('xb') as stream:
               total=0;digest=hashlib.sha256()
@@ -79,6 +85,31 @@ jobs:
                   (output/name).write_bytes(archive.read(name))
           PY
           python3 tools/package_native_client_folder_sort.py validate --directory out/native-candidate --repository-commit 9325f67e1bb4a3e6696dcfd1308ba8e4183171b0 --donor-apk out/donor-036.apk
+          gh api repos/Russianranger/coh-android/actions/artifacts/11859082802/zip > out/ocr-regression-history/artifact.zip
+          python3 - <<'PY'
+          import hashlib,json,pathlib,sys,zipfile
+          sys.path.insert(0,'tools');import qualify_native_client_startup as observer
+          path=pathlib.Path('out/ocr-regression-history/artifact.zip')
+          assert path.stat().st_size==1908469 and hashlib.sha256(path.read_bytes()).hexdigest()=='e57c647d1fe5c3fa8c2c3c09494c67720595c6b806f54233e0f34d531f57a848'
+          output=pathlib.Path('out/ocr-regression');output.mkdir(mode=0o700)
+          base='native-client-paired/retained/first-launch/'
+          with zipfile.ZipFile(path) as archive:
+              assert len(archive.namelist())==49 and len(set(archive.namelist()))==49
+              phase=json.loads(archive.read(base+'native-client-phase.json'))
+              original=archive.read(base+'startup.ppm')
+          assert len(original)==1440015 and hashlib.sha256(original).hexdigest()=='231473437aa48c85c7b8a6da909cafc1a384a5263e450c04b7e82d7c59d1038f'
+          assert phase['status']=='failed' and phase['failure']['message']=='Captured current Game frame has no login/account/password text'
+          native=phase['evidence']['current_native_evidence']
+          assert native['all_data_loaded'] and native['client_main_loop_reached'] and native['client_window_observed']
+          assert native['graphics_observation']['renderer_classification']=='software'
+          frame=output/'original-startup.ppm';frame.write_bytes(original);frame.chmod(0o400)
+          result=observer.observe_login_text(frame,observer.binary_tool('tesseract'),output,'actual-failed-frame')
+          assert result['login_text_observed'] and not result['UI_input_sent'] and not result['graphics_quality_changed']
+          observer.write(output/'read-only-OCR-regression.json',{'format':1,'status':'passed','role':'actual_failed_native_frame_readonly_OCR_regression',
+              'source_run':38484481041,'source_artifact':11859082802,'original_failed_phase':phase,
+              'actual_OCR_observation':result,'historical_native_failure_reclassified':False,'new_Game_process_executed':False})
+          print('Passed actual retained-frame OCR regression without UI input or quality changes')
+          PY
       - name: Reuse exact previously compiled Cg observer without a native rebuild
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
@@ -117,5 +148,7 @@ jobs:
             out/candidate-history/*.json
             out/cg-history/*.json
             out/host-gl-packages.txt
+            out/ocr-regression/
+            out/ocr-regression-history/*.json
           retention-days: 90
           if-no-files-found: warn
