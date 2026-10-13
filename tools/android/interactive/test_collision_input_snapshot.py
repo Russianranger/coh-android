@@ -376,24 +376,26 @@ class CollisionInputSnapshotTests(unittest.TestCase):
         replacement = self.root / 'replacement'
         shutil.copytree(parent, replacement)
         last_scope = self.runtime / 'data/tricks'
-        original_lstat = Path.lstat
-        last_scope_checks = 0
+        original_scandir = package.os.scandir
+        group_scanned = False
         mutated = []
 
-        def observed_lstat(path, *args, **kwargs):
-            nonlocal last_scope_checks
-            if path == last_scope:
-                last_scope_checks += 1
-                # real_directory already checked tricks; this is the inventory
-                # pre-scan check of the final scope, after the group has passed
-                # its own immediate post-scan directory check.
-                if last_scope_checks == 2:
-                    parent.rename(self.root / 'original-group')
-                    replacement.rename(parent)
-                    mutated.append(True)
-            return original_lstat(path, *args, **kwargs)
+        @contextlib.contextmanager
+        def observed_scan(path):
+            nonlocal group_scanned
+            with original_scandir(path) as entries:
+                yield entries
+            if Path(path) == parent:
+                group_scanned = True
+            if Path(path) == last_scope and group_scanned and not mutated:
+                # The collision walk has completed the earlier group and now
+                # reached its last scope. Resolver metadata-call counts may
+                # change; they must not move this mutation before the scan.
+                parent.rename(self.root / 'original-group')
+                replacement.rename(parent)
+                mutated.append(True)
 
-        with mock.patch.object(Path, 'lstat', new=observed_lstat):
+        with mock.patch.object(package.os, 'scandir', side_effect=observed_scan):
             with self.assertRaisesRegex(ERRORS, 'directory changed before inventory completion'):
                 self.snapshot()
         self.assertEqual(mutated, [True])

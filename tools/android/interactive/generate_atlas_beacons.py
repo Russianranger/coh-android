@@ -242,11 +242,11 @@ def resolve_world_targets(runtime, names):
     global _WORLD_RESOLVE_TARGETS
     if _WORLD_RESOLVE_TARGETS is None:
         source = ast.parse(WORLD_CASE_SOURCE.read_text(encoding='utf-8'))
-        required = ('real_directory', 'resolve_targets')
+        required = ('fingerprint', 'real_directory', 'resolve_targets')
         functions = {node.name: node for node in source.body
                      if isinstance(node, ast.FunctionDef) and node.name in required}
         require(set(functions) == set(required), 'Authoritative world case resolver is missing')
-        namespace = {'Path': Path, 'stat': stat, 'require': require}
+        namespace = {'Path': Path, 'os': os, 'stat': stat, 'require': require}
         module = ast.Module(body=[functions[name] for name in required], type_ignores=[])
         exec(compile(ast.fix_missing_locations(module), str(WORLD_CASE_SOURCE), 'exec'), namespace)
         _WORLD_RESOLVE_TARGETS = namespace['resolve_targets']

@@ -144,6 +144,26 @@ class TaskReceiptHostTests(unittest.TestCase):
 
 
 class StartupOnlyGuestTests(unittest.TestCase):
+    def initialization_fixture(self, cls, root, report):
+        args = SimpleNamespace(state=root, assets=root, session_id=SESSION)
+        context = SimpleNamespace(report=report, event=Mock())
+
+        def interactive_setup(diagnostic, given_args, given_context):
+            diagnostic.args, diagnostic.ctx, diagnostic.root = given_args, given_context, root
+
+        # Exercise the real login/character constructors: they create the owned
+        # server and transfer its launcher policy before reopen initialize runs.
+        # Only unrelated filesystem/runtime setup below those constructors is
+        # stubbed; no persistent profile or native process is started here.
+        with patch.object(guest.creation.login.interactive.ClientInteractiveDiagnostic,
+                          '__init__', interactive_setup):
+            diagnostic = cls(args, context)
+        self.assertIs(diagnostic.local_server.owner, diagnostic)
+        self.assertIs(diagnostic.local_server.report, context.report['local_login'])
+        self.assertEqual(diagnostic.local_server.report['version_policy']['native_launcher_mode'],
+                         '--character-creation')
+        return diagnostic
+
     def test_existing_parser_arguments_are_forwarded_without_changes(self):
         args = ['--state', '/state', '--profile', 'android-local-login', '--session-id', SESSION,
                 '--startup-timeout-seconds', '900']
@@ -214,9 +234,8 @@ class StartupOnlyGuestTests(unittest.TestCase):
         for receipt in ('character-task-contact.json', 'character-task-completion.json'):
             with self.subTest(receipt=receipt), tempfile.TemporaryDirectory() as temporary:
                 root = Path(temporary)
-                diagnostic = guest.CharacterReopenDiagnostic.__new__(guest.CharacterReopenDiagnostic)
-                diagnostic.args = SimpleNamespace(state=root, assets=root)
-                diagnostic.ctx = SimpleNamespace(report={'character_reopen': {'task_gate_required': True},
+                (root / 'task-gate.json').write_text('{}')
+                diagnostic = self.initialization_fixture(guest.CharacterReopenDiagnostic, root, {
                     'asset_sha256': {name: 'retained' for name in guest.REQUIRED | {
                         'task-gate.json', 'task_gate_evidence.py', 'server_animation_package.py',
                         'server-animations.pigg', 'server-animation-manifest.json'}}})
@@ -230,13 +249,13 @@ class StartupOnlyGuestTests(unittest.TestCase):
                     with self.assertRaisesRegex(server.base.DiagnosticError, 'Stale task helper delivery receipt'):
                         diagnostic.initialize()
                 self.assertTrue((root / receipt).is_file())
+                self.assertEqual(diagnostic.local_server.report['version_policy']['native_launcher_mode'],
+                                 '--character-manual')
 
     def test_startup_mode_reports_exact_scope_without_claiming_task_proof(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            diagnostic = guest.StartupOnlyCharacterReopenDiagnostic.__new__(guest.StartupOnlyCharacterReopenDiagnostic)
-            diagnostic.args = SimpleNamespace(state=root)
-            diagnostic.ctx = SimpleNamespace(report={'character_reopen': {}})
+            diagnostic = self.initialization_fixture(guest.StartupOnlyCharacterReopenDiagnostic, root, {})
             with patch.object(guest.creation.CharacterCreationDiagnostic, 'initialize'):
                 diagnostic.initialize()
             report = diagnostic.ctx.report
@@ -245,6 +264,8 @@ class StartupOnlyGuestTests(unittest.TestCase):
             self.assertIs(report['task_qualification_requested'], False)
             self.assertEqual(report['startup_validation_scope'], 'saved_character_startup_connection_timing_only')
             self.assertNotIn('task_gate', report)
+            self.assertEqual(diagnostic.local_server.report['version_policy']['native_launcher_mode'],
+                             '--character-manual')
 
     def test_startup_mode_preserves_ordinary_saved_identity_and_save_proof(self):
         self.assertIs(guest.StartupOnlyCharacterReopenDiagnostic.identity_verified, guest.CharacterReopenDiagnostic.identity_verified)

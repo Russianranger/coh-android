@@ -50,5 +50,50 @@
     "native_prefix_stopped_fixture": true,
     "current_native_hardware_executed": false,
     "independent_source_review": "text_input agent reviewed prelaunch ownership, cache publication failure and cleanup safety; identified races fixed and covered by regression tests."
+  },
+  "broad_preflight_corrections": {
+    "executed_utc": "2026-10-13T00:00:55.973279+00:00",
+    "initial_failures_preserved": {
+      "collision_input_snapshot": {
+        "tests_run": 19,
+        "failures": 1,
+        "cause": "Metadata-call-count fixture changed the directory during resolver prepass instead of after collision scan."
+      },
+      "generate_atlas_beacons": {
+        "tests_run": 31,
+        "errors": 13,
+        "cause": "Host AST extraction omitted new shipped-resolver dependencies fingerprint and os."
+      }
+    },
+    "changes": {
+      "tools/android/interactive/test_collision_input_snapshot.py": "Mutation now follows completed actual group scan and arrival at final scope; production final-anchor guard unchanged.",
+      "tools/android/interactive/generate_atlas_beacons.py": "Include exact shipped fingerprint function and os module in the host resolver AST closure; source/provider identities unchanged."
+    },
+    "affected_suite_rerun": {
+      "command": "PYTHONPATH=tools/android/interactive:android/guest python -m unittest tools.android.interactive.test_collision_input_snapshot tools.android.interactive.test_generate_atlas_beacons tools.android.interactive.test_atlas_world_assets tools.android.interactive.test_client_visual_assets tools.android.interactive.test_zone_asset_package tools.android.interactive.test_texture_header_index tools.android.interactive.test_client_animation_package -q",
+      "tests_run": 184,
+      "elapsed_seconds": 9.402,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "explicit_module_reruns": {
+      "test_collision_input_snapshot": {
+        "tests_run": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "test_generate_atlas_beacons": {
+        "tests_run": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "source_sha256": {
+      "tools/android/interactive/generate_atlas_beacons.py": "372c86e795d47d19a47e9fd94bce37c1eedf3e21d3403835540e4a2e1246c516",
+      "tools/android/interactive/test_collision_input_snapshot.py": "5e270138f7ad002f5be392605b8a4130bfa942cad57d7a15364e28fa31452a04"
+    }
   }
 }

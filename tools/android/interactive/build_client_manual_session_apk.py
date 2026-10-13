@@ -97,7 +97,9 @@ REVIEWED_TEST_CHANGES = frozenset('tools/android/interactive/'+name+'.py' for na
     'test_client_report_controls_java', 'test_client_report_lifecycle_java',
     'test_client_report_recovery_java', 'test_completed_guest_report_java',
     'test_full_startup_preflight', 'test_client_text_entry', 'test_manual_session',
-    'test_saved_map_preparation', 'test_classify_storage_cleanup_change')) | frozenset({
+    'test_saved_map_preparation', 'test_classify_storage_cleanup_change',
+    'test_task_receipt_cleanup', 'test_client_visual_schedule',
+    'test_client_preload_launch', 'test_collision_input_snapshot')) | frozenset({
     'tools/android/atlasgame/test_device_cleanup_lineage.py',
     'tools/android/test_setup_memory_guard.py',
     'tools/android/interactive/test_client_zoning_java.py'})
@@ -105,6 +107,8 @@ ROUTING_SOURCE_CHANGES = frozenset({
     'tools/android/interactive/classify_client_animation_repair_change.py',
     'tools/android/interactive/classify_client_profile_recovery_change.py',
     'tools/android/interactive/classify_client_map_startup_change.py'})
+HOST_FIXTURE_SOURCE_CHANGES = frozenset({
+    'tools/android/interactive/generate_atlas_beacons.py'})
 RESEARCH_SOURCE_FILES = frozenset({
     'tools/prepare_native_startup_profile_source.py', 'tools/test_native_startup_profile_source.py',
     'database/native-startup-profile/overlay/coh_native_startup_profile.h'})
@@ -117,8 +121,8 @@ SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT, MARKER, 'docs/'+NOTES_
     'tools/android/interactive/test_saved_map_preparation_proof.py',
     'tools/android/interactive/qualify_minimal_db_runtime.py',
     'tools/android/interactive/test_minimal_db_runtime_contract.py',
-    'tools/android/interactive/fixtures/minimal-db-native-inputs-0.13.34.json'}) | REVIEWED_JAVA_CHANGES | GUEST_SOURCE_CHANGES | REVIEWED_TEST_CHANGES | ROUTING_SOURCE_CHANGES | NATIVE_SOURCE_FILES | RESEARCH_SOURCE_FILES
-REVIEWED_DONOR_SOURCE_CHANGES = REVIEWED_JAVA_CHANGES | GUEST_SOURCE_CHANGES | REVIEWED_TEST_CHANGES | ROUTING_SOURCE_CHANGES
+    'tools/android/interactive/fixtures/minimal-db-native-inputs-0.13.34.json'}) | REVIEWED_JAVA_CHANGES | GUEST_SOURCE_CHANGES | REVIEWED_TEST_CHANGES | ROUTING_SOURCE_CHANGES | HOST_FIXTURE_SOURCE_CHANGES | NATIVE_SOURCE_FILES | RESEARCH_SOURCE_FILES
+REVIEWED_DONOR_SOURCE_CHANGES = REVIEWED_JAVA_CHANGES | GUEST_SOURCE_CHANGES | REVIEWED_TEST_CHANGES | ROUTING_SOURCE_CHANGES | HOST_FIXTURE_SOURCE_CHANGES
 
 
 def load_minimal_db_proof(path, commit):

@@ -85,7 +85,7 @@ class ClientVisualScheduleTests(unittest.TestCase):
                             (self.value.local_server.creation_report, 'map_ready')):
             with self.subTest(key=key):
                 report[key] = False
-                with self.assertRaisesRegex(guest.base.DiagnosticError, 'owned Atlas readiness'):
+                with self.assertRaisesRegex(guest.base.DiagnosticError, 'prepared owned server'):
                     self.value.prepare_client_visual_inputs()
                 self.assert_not_installed()
                 report[key] = True

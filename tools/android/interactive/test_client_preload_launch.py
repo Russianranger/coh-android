@@ -50,7 +50,7 @@ class ClientPreloadLaunchTests(unittest.TestCase):
     def test_saved_character_initial_and_owned_retry_receive_opt_in_and_keep_inputs(self):
         d = self.diagnostic
         command = d.launcher_command()
-        self.assertEqual(command[-1], '--character-creation')
+        self.assertEqual(command[-1], '--character-manual')
         observed = []
         def start(label, argv, *, env):
             observed.append((label, argv, dict(env), Path.cwd()))
