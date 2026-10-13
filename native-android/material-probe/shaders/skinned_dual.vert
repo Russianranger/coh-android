@@ -20,6 +20,8 @@ uniform vec4 uDiffuse;
 uniform vec4 uAmbient;
 out vec3 vViewPosition;
 out vec3 vNormal;
+/* Probe-only diagnostic; excluded from the six-component parity gate. */
+out vec3 vUnrefinedNormal;
 out vec4 vClipPosition;
 out vec4 vLitColor;
 out float vFogCoord;
@@ -43,7 +45,16 @@ void main() {
     vViewPosition = mix(p0, p1, aWeights.y);
     /* The original GPU helper normalizes after blending. The old CPU
      * DeformObject path does not normalize and is a different contract. */
-    vNormal = normalize(mix(n0, n1, aWeights.y));
+    vec3 blendedNormal = mix(n0, n1, aWeights.y);
+    vUnrefinedNormal = normalize(blendedNormal);
+    /* Explicitly refine reciprocal length once. This retains the original
+     * normalize-after-blend mathematical contract while avoiding a driver's
+     * coarse reciprocal-square-root approximation in the compared/shaded normal.
+     * Zero/collapsed normals are rejected by the bounded fixture producer. */
+    float lengthSquared = dot(blendedNormal, blendedNormal);
+    float inverseLength = inversesqrt(lengthSquared);
+    inverseLength *= 1.5 - 0.5 * lengthSquared * inverseLength * inverseLength;
+    vNormal = blendedNormal * inverseLength;
     vClipPosition = uProjection * vec4(vViewPosition, 1.0);
     gl_Position = vClipPosition;
     vFogCoord = sqrt(dot(vViewPosition, vViewPosition) + 1e-16);

@@ -1,0 +1,25 @@
+{
+  "kind": "host-SSE-approximate-rsqrt",
+  "vertices": 116,
+  "position_mismatches": 0,
+  "max_position_error": 0,
+  "normal_mismatches": 49,
+  "max_normal_error": 0.000219464302,
+  "refined_mismatches": 0,
+  "max_refined_error": 1.1920929e-07,
+  "first_normal_component": 7,
+  "first_expected": 0.823992074,
+  "first_approximate": 0.824117661,
+  "tolerance": 0.0001,
+  "scope": "x86 host approximate instruction model; not the emulator driver or original Cg execution",
+  "compile_command": "gcc -std=c11 -O0 -ffp-contract=off -Wall -Wextra normalize_host_probe.c -lm -o normalize_host_probe",
+  "source_sha256": "4f1c66acb4e4526e1df04d33db0f22ee9a488919651b622c20621ba55b7f3a38",
+  "inputs": {
+    "mesh.bin": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661",
+    "poses.bin": "e9bc690e7ea7cb454251d7bdbb34f403890cb21e6b70fe83de0b0f1892d67b0a"
+  },
+  "first_emulator_report_sha256": "1f28f04d7f444c3f6b17677f41ee7419fe29bdfc077736a6c9cd863d4dadc8e6",
+  "first_emulator_normal_kind_proven": false,
+  "exact_emulator_count_and_max_reproduced": false,
+  "shader_fix_GPU_qualification_pending": true
+}

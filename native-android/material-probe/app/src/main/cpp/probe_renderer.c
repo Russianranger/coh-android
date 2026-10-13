@@ -24,6 +24,7 @@
 #define MAX_ASSET (16u * 1024u * 1024u)
 #define TEXT_CAP 512
 #define JSON_CAP 16384
+#define TF_FLOATS 9u
 
 typedef struct { uint8_t *p; size_t n; } Bytes;
 typedef struct { float position[3],normal[3],uv0[2],uv1[2],weights[2]; int32_t rows[2]; } Vertex;
@@ -48,6 +49,16 @@ typedef struct {
     unsigned gl_errors,first_gl_error,egl_error;
     uint64_t transform_vertices,transform_components,transform_mismatches;
     float max_transform_error;
+    uint64_t position_mismatches,normal_mismatches;
+    float max_position_error,max_normal_error,max_normal_length_error;
+    uint32_t first_transform_pose,first_transform_vertex,first_transform_component;
+    float first_transform_expected,first_transform_actual;
+    int first_transform_actual_finite;
+    uint64_t stock_normal_components,stock_normal_mismatches;
+    float stock_normal_max_error,stock_normal_max_length_error;
+    uint32_t stock_first_pose,stock_first_vertex,stock_first_component;
+    float stock_first_expected,stock_first_actual;
+    int stock_first_actual_finite;
     uint64_t skin_compared_pixels,skin_interior_pixels,skin_edge_excluded_pixels,skin_mismatches;
     uint64_t skin_pose_interiors[2],skin_pose_excluded[2],skin_pose_compared[2];
     unsigned skin_max_byte_error,skin_poses;
@@ -81,12 +92,13 @@ static jstring report_json(JNIEnv *env,const Report *r){
     Json j={s,0,1};
     append(&j,"{\"schema\":1,\"probe\":\"coh-material-skin-gles3\",\"platform\":\"Android Bionic\",\"passed\":%s,\"mesh_valid\":%s,\"skin_transform_match\":%s,\"skin_render_match\":%s,\"material_pixel_match\":%s,\"alpha_fog_passed\":%s,\"offscreen_passed\":%s,\"context_recreation_passed\":%s,\"window_pixel_match\":%s,\"pointer_bytes\":%zu,\"long_bytes\":%zu,\"required_cycles\":2,\"attempted_cycles\":%d,\"surface_width\":%d,\"surface_height\":%d,\"mesh_vertices\":%u,\"mesh_indices\":%u,\"mesh_bones\":%u,\"pose_count\":%u,\"material_case_count\":%u,\"skin_fbo_width\":384,\"skin_fbo_height\":384,\"transform_absolute_tolerance\":0.0001,\"rgba_byte_tolerance\":2,\"triangle_edge_exclusion_pixels\":2,\"window_alpha_compared\":false,\"original_cg_execution\":false,\"failure\":",
         boolstr(r->passed),boolstr(r->mesh_valid),boolstr(allcycles(r,1)),boolstr(allcycles(r,2)),boolstr(allcycles(r,3)),boolstr(allcycles(r,3)),boolstr(allcycles(r,2)&&allcycles(r,3)),boolstr(allcycles(r,0)),boolstr(allcycles(r,4)),sizeof(void*),sizeof(long),r->attempted,r->attempted?r->cycles[r->attempted-1].width:0,r->attempted?r->cycles[r->attempted-1].height:0,r->mesh.vertex_count,r->mesh.index_count,r->mesh.bone_count,r->poses.count,r->materials.count);
-    string(&j,r->failure);append(&j,",\"real_material_case_count\":14,\"synthetic_semantic_case_count\":4,\"controlled_dual_rgba\":[51,153,230,128],\"cycles\":[");
+    string(&j,r->failure);append(&j,",\"normal_policy\":\"post-blend inverse square root with one Newton refinement\",\"stock_normal_diagnostic_only\":true,\"transform_feedback_floats_per_vertex\":9,\"real_material_case_count\":14,\"synthetic_semantic_case_count\":4,\"controlled_dual_rgba\":[51,153,230,128],\"cycles\":[");
     for(int i=0;i<r->attempted;i++){
         const Cycle*c=&r->cycles[i];if(i)append(&j,",");
         append(&j,"{\"index\":%d,\"completed\":%s,\"passed\":%s,\"context_created\":%s,\"objects_released\":%s,\"swap_passed\":%s,\"skin_transform_match\":%s,\"skin_render_match\":%s,\"material_pixel_match\":%s,\"window_pixel_match\":%s,\"surface_width\":%d,\"surface_height\":%d,\"viewport\":[%d,%d,%d,%d],\"transform_vertices\":%"PRIu64",\"transform_components\":%"PRIu64",\"transform_mismatches\":%"PRIu64",\"max_transform_error\":%.9g,\"skin_poses\":%u,\"skin_compared_pixels\":%"PRIu64",\"skin_interior_pixels\":%"PRIu64",\"skin_edge_excluded_pixels\":%"PRIu64",\"skin_mismatches\":%"PRIu64",\"skin_max_byte_error\":%u,\"material_cases\":%u,\"material_pixels\":%"PRIu64",\"material_mismatches\":%"PRIu64",\"material_max_byte_error\":%u,\"material_blended_cases\":%u,\"material_discard_clear_pixels\":%"PRIu64",\"window_samples\":%u,\"window_mismatches\":%u,\"gl_errors\":%u,\"first_gl_error\":%u,\"egl_error\":%u,\"stage\":",
             i,boolstr(c->completed),boolstr(c->passed),boolstr(c->context_created),boolstr(c->released),boolstr(c->swap_passed),boolstr(c->skin_transform_match),boolstr(c->skin_render_match),boolstr(c->material_pixel_match),boolstr(c->window_pixel_match),c->width,c->height,c->viewport_x,c->viewport_y,c->viewport_w,c->viewport_h,c->transform_vertices,c->transform_components,c->transform_mismatches,c->max_transform_error,c->skin_poses,c->skin_compared_pixels,c->skin_interior_pixels,c->skin_edge_excluded_pixels,c->skin_mismatches,c->skin_max_byte_error,c->material_cases,c->material_pixels,c->material_mismatches,c->material_max_byte_error,c->blend_cases,c->material_discard_clear_pixels,c->window_samples,c->window_mismatches,c->gl_errors,c->first_gl_error,c->egl_error);
-        string(&j,c->stage);append(&j,",\"skin_pose_interior_pixels\":[%"PRIu64",%"PRIu64"],\"skin_pose_edge_excluded_pixels\":[%"PRIu64",%"PRIu64"],\"skin_pose_compared_pixels\":[%"PRIu64",%"PRIu64"],\"real_material_cases\":%u,\"synthetic_semantic_cases\":%u,\"failure\":",c->skin_pose_interiors[0],c->skin_pose_interiors[1],c->skin_pose_excluded[0],c->skin_pose_excluded[1],c->skin_pose_compared[0],c->skin_pose_compared[1],c->real_material_cases,c->synthetic_semantic_cases);string(&j,c->failure);
+        string(&j,c->stage);append(&j,",\"skin_pose_interior_pixels\":[%"PRIu64",%"PRIu64"],\"skin_pose_edge_excluded_pixels\":[%"PRIu64",%"PRIu64"],\"skin_pose_compared_pixels\":[%"PRIu64",%"PRIu64"],\"real_material_cases\":%u,\"synthetic_semantic_cases\":%u,\"position_mismatches\":%"PRIu64",\"normal_mismatches\":%"PRIu64",\"max_position_error\":%.9g,\"max_normal_error\":%.9g,\"max_normal_length_error\":%.9g,\"first_transform_mismatch\":{\"observed\":%s,\"pose\":%u,\"vertex\":%u,\"component\":%u,\"expected\":%.9g,\"actual\":%.9g,\"actual_finite\":%s},",c->skin_pose_interiors[0],c->skin_pose_interiors[1],c->skin_pose_excluded[0],c->skin_pose_excluded[1],c->skin_pose_compared[0],c->skin_pose_compared[1],c->real_material_cases,c->synthetic_semantic_cases,c->position_mismatches,c->normal_mismatches,c->max_position_error,c->max_normal_error,c->max_normal_length_error,boolstr(c->transform_mismatches!=0),c->first_transform_pose,c->first_transform_vertex,c->first_transform_component,c->first_transform_expected,c->first_transform_actual,boolstr(c->first_transform_actual_finite));
+        append(&j,"\"stock_normal_components\":%"PRIu64",\"stock_normal_mismatches\":%"PRIu64",\"stock_normal_max_error\":%.9g,\"stock_normal_max_length_error\":%.9g,\"stock_first_mismatch\":{\"observed\":%s,\"pose\":%u,\"vertex\":%u,\"component\":%u,\"expected\":%.9g,\"actual\":%.9g,\"actual_finite\":%s},\"failure\":",c->stock_normal_components,c->stock_normal_mismatches,c->stock_normal_max_error,c->stock_normal_max_length_error,boolstr(c->stock_normal_mismatches!=0),c->stock_first_pose,c->stock_first_vertex,c->stock_first_component,c->stock_first_expected,c->stock_first_actual,boolstr(c->stock_first_actual_finite));string(&j,c->failure);
         append(&j,",\"gl_vendor\":");string(&j,c->gl_vendor);append(&j,",\"gl_renderer\":");string(&j,c->gl_renderer);append(&j,",\"gl_version\":");string(&j,c->gl_version);append(&j,",\"glsl_version\":");string(&j,c->glsl_version);append(&j,",\"egl_vendor\":");string(&j,c->egl_vendor);append(&j,",\"egl_version\":");string(&j,c->egl_version);append(&j,"}");
     }
     append(&j,"]}");jstring out=(*env)->NewStringUTF(env,j.ok?s:"{\"passed\":false,\"failure\":\"report capacity exceeded\"}");free(s);return out;
@@ -119,7 +131,7 @@ static GLuint shader(Cycle*c,GLenum type,const char*source){GLuint s=glCreateSha
 static int program_create(Cycle*c,Program*p,const char*v,const char*f,int transform){
     GLuint vs=shader(c,GL_VERTEX_SHADER,v);if(!vs)return 0;GLuint fs=shader(c,GL_FRAGMENT_SHADER,f);if(!fs){glDeleteShader(vs);return 0;}
     p->id=glCreateProgram();if(!p->id){glDeleteShader(vs);glDeleteShader(fs);return fail(c,"program-create","Program allocation failed");}
-    glAttachShader(p->id,vs);glAttachShader(p->id,fs);if(transform){const char*varyings[]={"vViewPosition","vNormal"};glTransformFeedbackVaryings(p->id,2,varyings,GL_INTERLEAVED_ATTRIBS);}glLinkProgram(p->id);glDeleteShader(vs);glDeleteShader(fs);
+    glAttachShader(p->id,vs);glAttachShader(p->id,fs);if(transform){const char*varyings[]={"vViewPosition","vNormal","vUnrefinedNormal"};glTransformFeedbackVaryings(p->id,3,varyings,GL_INTERLEAVED_ATTRIBS);}glLinkProgram(p->id);glDeleteShader(vs);glDeleteShader(fs);
     GLint ok=0;glGetProgramiv(p->id,GL_LINK_STATUS,&ok);if(!ok){char log[TEXT_CAP]={0};glGetProgramInfoLog(p->id,TEXT_CAP,NULL,log);return fail(c,"program-link",log[0]?log:"Program linking failed");}
 #define U(field,name) p->field=glGetUniformLocation(p->id,name)
     U(projection,"uProjection");U(bones,"uBoneRows[0]");U(light,"uLightDir");U(diffuse,"uDiffuse");U(ambient,"uAmbient");U(base,"uBase");U(dual,"uDual");U(const0,"uConst0");U(const1,"uConst1");U(fog_params,"uFogParams");U(fog_color,"uFogColor");U(alpha_ref,"uAlphaRef");U(reference_color,"uReferenceColor");U(reference_fog,"uReferenceFogCoord");
@@ -152,12 +164,47 @@ static int transform_check(Cycle*c,Program*p,GLuint vao,GLuint vbo,GLuint index,
     float rows[COH_MESH_MAX_BONES*12];floats(pose_data(poses,pose),rows,poses->bones*12);
     glUseProgram(p->id);glUniformMatrix4fv(p->projection,1,GL_FALSE,proj);glUniform4fv(p->bones,(GLsizei)poses->bones*3,rows);glUniform3f(p->light,0,0,1);glUniform4f(p->diffuse,.2f,.2f,.2f,0);glUniform4f(p->ambient,.05f,.05f,.05f,1);
     vertex_layout(vao,vbo,index);glBufferData(GL_ARRAY_BUFFER,(GLsizeiptr)((size_t)poses->vertices*sizeof(Vertex)),vertices,GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER,tf);glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER,(GLsizeiptr)((size_t)poses->vertices*24),NULL,GL_DYNAMIC_READ);glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER,0,tf);
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER,tf);glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER,(GLsizeiptr)((size_t)poses->vertices*TF_FLOATS*sizeof(float)),NULL,GL_DYNAMIC_READ);glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER,0,tf);
     glEnable(GL_RASTERIZER_DISCARD);glBeginTransformFeedback(GL_POINTS);glDrawArrays(GL_POINTS,0,(GLsizei)poses->vertices);glEndTransformFeedback();glDisable(GL_RASTERIZER_DISCARD);
     if(!glcheck(c,"skin-transform-feedback"))return 0;
-    float*actual=glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER,0,(GLsizeiptr)((size_t)poses->vertices*24),GL_MAP_READ_BIT);if(!actual)return fail(c,"transform-map","Transform-feedback buffer could not be mapped");
+    float*actual=glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER,0,(GLsizeiptr)((size_t)poses->vertices*TF_FLOATS*sizeof(float)),GL_MAP_READ_BIT);if(!actual)return fail(c,"transform-map","Transform-feedback buffer could not be mapped");
     const uint8_t*g=golden_data(poses,pose);
-    for(uint32_t v=0;v<poses->vertices;v++){c->transform_vertices++;for(unsigned k=0;k<6;k++){float expected=f32(g+v*24+k*4),got=actual[v*6+k],delta=fabsf(expected-got);c->transform_components++;if(isfinite(delta)&&delta>c->max_transform_error)c->max_transform_error=delta;if(!isfinite(got)||delta>FLOAT_TOLERANCE)c->transform_mismatches++;}}
+    for(uint32_t v=0;v<poses->vertices;v++){
+        c->transform_vertices++;
+        float *normal=actual+(size_t)v*TF_FLOATS+3;
+        float normal_error=fabsf(sqrtf(normal[0]*normal[0]+normal[1]*normal[1]+normal[2]*normal[2])-1);
+        if(isfinite(normal_error)&&normal_error>c->max_normal_length_error)c->max_normal_length_error=normal_error;
+        for(unsigned k=0;k<6;k++){
+            float expected=f32(g+v*24+k*4),got=actual[(size_t)v*TF_FLOATS+k],delta=fabsf(expected-got);
+            c->transform_components++;
+            if(isfinite(delta)){
+                if(delta>c->max_transform_error)c->max_transform_error=delta;
+                if(k<3&&delta>c->max_position_error)c->max_position_error=delta;
+                if(k>=3&&delta>c->max_normal_error)c->max_normal_error=delta;
+            }
+            if(!isfinite(got)||delta>FLOAT_TOLERANCE){
+                if(!c->transform_mismatches){
+                    c->first_transform_pose=pose;c->first_transform_vertex=v;c->first_transform_component=k;
+                    c->first_transform_expected=expected;c->first_transform_actual=isfinite(got)?got:0;
+                    c->first_transform_actual_finite=isfinite(got);
+                }
+                c->transform_mismatches++;
+                if(k<3)c->position_mismatches++;else c->normal_mismatches++;
+            }
+        }
+        float *stock=actual+(size_t)v*TF_FLOATS+6;
+        float stock_length_error=fabsf(sqrtf(stock[0]*stock[0]+stock[1]*stock[1]+stock[2]*stock[2])-1);
+        if(isfinite(stock_length_error)&&stock_length_error>c->stock_normal_max_length_error)c->stock_normal_max_length_error=stock_length_error;
+        for(unsigned k=0;k<3;k++){
+            float expected=f32(g+v*24+(k+3)*4),got=stock[k],delta=fabsf(expected-got);
+            c->stock_normal_components++;
+            if(isfinite(delta)&&delta>c->stock_normal_max_error)c->stock_normal_max_error=delta;
+            if(!isfinite(got)||delta>FLOAT_TOLERANCE){
+                if(!c->stock_normal_mismatches){c->stock_first_pose=pose;c->stock_first_vertex=v;c->stock_first_component=k;c->stock_first_expected=expected;c->stock_first_actual=isfinite(got)?got:0;c->stock_first_actual_finite=isfinite(got);}
+                c->stock_normal_mismatches++;
+            }
+        }
+    }
     if(!glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER))return fail(c,"transform-unmap","Transform-feedback data became invalid");
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER,0,0);
     if(!glcheck(c,"transform-readback"))return 0;

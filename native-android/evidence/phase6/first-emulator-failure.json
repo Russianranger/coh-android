@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "source_commit": "9b5fdb5f3e4268f699dd12a9e3ea035f97de1499",
+  "workflow_run": 38458893945,
+  "scope": "failed first hosted Android13 SwiftShader qualification; diagnostic evidence, not accepted build",
+  "qualification_passed": false,
+  "failure_stage": "transform-parity",
+  "failure": "GPU position/normalized-normal differs from independent pose golden",
+  "fixture_mesh_valid": true,
+  "transform_vertices": 116,
+  "transform_components": 696,
+  "transform_mismatches": 23,
+  "max_transform_error": 0.000192046165,
+  "position_vs_normal_breakdown_available": false,
+  "gl_errors": 0,
+  "egl_error": 0,
+  "objects_released": true,
+  "original_cg_execution": false
+}

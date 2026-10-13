@@ -12,8 +12,8 @@
       "bytes": 575
     },
     "skinned_dual.vert": {
-      "sha256": "7157464641f5ac6b53c1c0b09c9809ed3c483df948fb5302eb02292cb25fe6d2",
-      "bytes": 2049
+      "sha256": "174dfa655afb0c867a03f1addde998fb896544fc9f8651e2ef5dc1c1bc66a19b",
+      "bytes": 2752
     }
   },
   "runtime_parameters_captured": false,
@@ -100,7 +100,8 @@
     "upload_row": "[bone_mats[j][0][k],bone_mats[j][1][k],bone_mats[j][2][k],bone_mats[j][3][k]] for k=0,1,2",
     "position": "mix(dot(row0,p4),dot(row1,p4),dot(row2,p4) across2bones,weight.y)",
     "normal": "normalize(mix(eachbone3x3*normal,weight.y))",
-    "zero_normal": "fixture rejectszero_lengthblend;undefinedsource normalizenotqualified"
+    "zero_normal": "fixture rejectszero_lengthblend;undefinedsource normalizenotqualified",
+    "normal_implementation": "blend first; y=inversesqrt(dot(n,n)); y*=1.5-0.5*dot(n,n)*y*y; compared/shaded normal=n*y; builtinnormalize retained only as diagnostic"
   },
   "fog": {
     "vertex": "sqrt(dot(view_position,view_position)+1e-16)",
@@ -203,9 +204,12 @@
   },
   "acceptance": {
     "gpu_transform_feedback_against_independent_vertex_oracle": {
-      "suggested_absolute_relative_tolerance": 2e-05,
-      "readback": "vViewPosition.xyz,vNormal.xyz",
-      "requires_actual_nontrivial_two_bone_vertices": true
+      "readback": "vViewPosition.xyz,vNormal.xyz,vUnrefinedNormal.xyz",
+      "requires_actual_nontrivial_two_bone_vertices": true,
+      "absolute_tolerance": 0.0001,
+      "tolerance_unchanged": true,
+      "gated_components_per_vertex": 6,
+      "diagnostic_only_components_per_vertex": 3
     },
     "rendered_skin_parity": "realmeshCPUoracleposedcontrolvsGPUskin,usefulinteriorpixelsRGBAwithin2quantunits;edgeexclusionmaskexplicitandcoveragecountsreported",
     "material_parity": "Every 64x64 RGBA component of 18 cases within 2 quantization units; report 14 real-pair and 4 controlled-swatch cases separately, with discard/pass counts.",
@@ -248,5 +252,26 @@
   "oracle_sources": {
     "material_reference.py": "7d3ef660edaffc0bbbc2f9ade77f7f2d7a5f74dbf6eb269427251e451e519d96",
     "build_material_reference.py": "f421becbd3899caa047da18ef05e2248897b178567cdd7afe2ff26cd84e14aa0"
+  },
+  "normalization_refinement": {
+    "formula": "y_new=y*(1.5-0.5*x*y*y),x=dot(blendedNormal,blendedNormal)",
+    "source_math_intent": "unit normal after blend",
+    "original_Cg_bit_parity_claimed": false,
+    "probe_only_diagnostic": "vUnrefinedNormal=normalize(blendedNormal)",
+    "first_emulator_identity_components": 696,
+    "first_emulator_transform_mismatches": 23,
+    "first_emulator_max_transform_error": 0.000192046165,
+    "first_emulator_component_kind_recorded": false,
+    "host_sse_approximate": {
+      "position_mismatches": 0,
+      "normal_mismatches": 49,
+      "max_normal_error": 0.000219464302,
+      "NR_normal_mismatches": 0,
+      "NR_max_normal_error": 1.1920929e-07,
+      "exact_emulator_reproduction": false
+    },
+    "primary_source": "https://swiftshader.googlesource.com/SwiftShader.git/+/9651718a9d3f6340fc3cab3712158f6c10ac8800/src/Shader/ShaderCore.cpp",
+    "primary_source_is_actual_emulator_build": false,
+    "corrected_GPU_execution_qualified": false
   }
 }
