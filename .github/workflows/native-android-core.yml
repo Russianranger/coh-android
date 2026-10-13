@@ -16,8 +16,10 @@ jobs:
         run: python3 native-android/tools/generate_crypto.py --check
       - name: Host core and independent oracle
         run: |
+          python3 -m pip install Pillow==12.3.0
           python3 native-android/tools/build.py --output native-android/results/host
           python3 native-android/tests/test_host.py native-android/results/host/libcoh_native_core.so --output native-android/results/oracle.json
+          python3 native-android/tests/test_dds.py native-android/results/host/libcoh_native_core.so --output native-android/results/dds-oracle.json
           python3 native-android/tools/build.py --sanitize --output native-android/results/sanitized
       - name: Build ARM64 Bionic test slice
         run: |

@@ -1,0 +1,5 @@
+{
+  "upstream/ouroboros/Game/src/render/tex.c": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+  "upstream/ouroboros/Game/src/render/texWords.c": "81c5090c7bcf811b77bcfce76bca6ae42da6201d47a41f05c4e2bf4a7a7c9831",
+  "upstream/ouroboros/Game/src/render/dxtlibwrapper.cpp": "00534c9aabb61a38a46cde6a59b1a3b1115c77a733005796c1dee9c5826a4a68"
+}

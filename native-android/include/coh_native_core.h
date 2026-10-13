@@ -30,4 +30,14 @@ typedef struct {
 } CohGeoModel;
 /* v3-v8 decompressed model-record metadata only, not a complete .geo scene loader. */
 int coh_geo_model(const uint8_t *,size_t,uint32_t version,CohGeoModel *);
+typedef struct {
+    uint32_t width,height,mip_count,format; /* format = 1/3/5 for DXT1/3/5 */
+    const uint8_t *blocks;
+    size_t block_bytes,rgba_bytes;
+} CohDdsMip;
+/* Legacy 2D DDS only. Validates the complete declared mip chain. Returns 2 for
+ * unsupported formats, 1 for invalid input/capacity. Views borrow input bytes.
+ * RGBA output must be disjoint from input. Output remains untouched on failure. */
+int coh_dds_mip(const uint8_t *,size_t,uint32_t level,CohDdsMip *);
+int coh_dds_rgba(const uint8_t *,size_t,uint32_t level,uint8_t *,size_t);
 #endif

@@ -19,3 +19,5 @@ gates. Results will distinguish host execution from Android cross-compilation.
 The upstream sources are immutable. `tools/generate_crypto.py --check` verifies
 the crypto derivative against the original source hash and preserves its author
 notice. Generated buffers and test data do not access personal profiles.
+
+Phase 3 adds a bounded legacy DXT1/3/5 DDS-to-RGBA decoder. See [PHASE3.md](PHASE3.md) for source contracts, test results and remaining real-asset parity gate.

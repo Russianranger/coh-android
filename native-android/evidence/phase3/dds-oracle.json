@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "oracle": "Pillow 12.3.0",
+  "scope": "Synthetic DXT1/3/5 DDS; not original NVIDIA decoder or real game asset parity",
+  "counts": {
+    "oracle_images": 1095,
+    "truncated_inputs": 424,
+    "invalid_headers": 9,
+    "capacity_guards": 1095,
+    "mip_checks": 3
+  }
+}

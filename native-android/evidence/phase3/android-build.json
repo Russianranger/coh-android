@@ -1,0 +1,54 @@
+{
+  "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+  "commands": [
+    [
+      "/workspace/scratch/119099198117/phase2-tools/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-I/workspace/scratch/119099198117/native-coh/native-android/include",
+      "-I/workspace/scratch/119099198117/native-coh/native-android/src",
+      "-shared",
+      "-fPIC",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_blowfish.c",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_assets.c",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_dds.c",
+      "-lm",
+      "-o",
+      "/workspace/scratch/119099198117/native-coh/native-android/results/phase3-android/libcoh_native_core.so"
+    ],
+    [
+      "/workspace/scratch/119099198117/phase2-tools/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-I/workspace/scratch/119099198117/native-coh/native-android/include",
+      "-I/workspace/scratch/119099198117/native-coh/native-android/src",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_blowfish.c",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_assets.c",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_dds.c",
+      "/workspace/scratch/119099198117/native-coh/native-android/tests/core_test.c",
+      "-lm",
+      "-o",
+      "/workspace/scratch/119099198117/native-coh/native-android/results/phase3-android/coh-native-core-tests"
+    ]
+  ],
+  "android_cross_compiled": true,
+  "device_executed": false,
+  "files": [
+    {
+      "name": "libcoh_native_core.so",
+      "bytes": 15240,
+      "sha256": "04b0cd1366562130216678522b097635fea5767c1af841000dc253f1d2773c22"
+    },
+    {
+      "name": "coh-native-core-tests",
+      "bytes": 18448,
+      "sha256": "c6e253484405dfa741512973e762c755f6f4f2c7b432209e55aaf139688280e5"
+    }
+  ]
+}

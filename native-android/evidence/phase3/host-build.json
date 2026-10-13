@@ -1,0 +1,61 @@
+{
+  "compiler": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "commands": [
+    [
+      "gcc",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-I/workspace/scratch/119099198117/native-coh/native-android/include",
+      "-I/workspace/scratch/119099198117/native-coh/native-android/src",
+      "-shared",
+      "-fPIC",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_blowfish.c",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_assets.c",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_dds.c",
+      "-lm",
+      "-o",
+      "/workspace/scratch/119099198117/native-coh/native-android/results/phase3-host/libcoh_native_core.so"
+    ],
+    [
+      "gcc",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-I/workspace/scratch/119099198117/native-coh/native-android/include",
+      "-I/workspace/scratch/119099198117/native-coh/native-android/src",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_blowfish.c",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_assets.c",
+      "/workspace/scratch/119099198117/native-coh/native-android/src/coh_dds.c",
+      "/workspace/scratch/119099198117/native-coh/native-android/tests/core_test.c",
+      "-lm",
+      "-o",
+      "/workspace/scratch/119099198117/native-coh/native-android/results/phase3-host/coh-native-core-tests"
+    ]
+  ],
+  "android_cross_compiled": false,
+  "device_executed": false,
+  "files": [
+    {
+      "name": "libcoh_native_core.so",
+      "bytes": 24232,
+      "sha256": "f71a05da0846c9cd58b623512d5cd856ad5dbe15e27a5bbf55cfb654c758828f"
+    },
+    {
+      "name": "coh-native-core-tests",
+      "bytes": 24912,
+      "sha256": "7c337d9263037ad7b0fea935f385775242cdfe041174f37b540d3d785088f195"
+    }
+  ],
+  "host_test": {
+    "passed": true,
+    "checks": 11998,
+    "pointer_bytes": 8,
+    "long_bytes": 8,
+    "platform": "host"
+  }
+}
