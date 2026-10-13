@@ -64,14 +64,23 @@ FIRST TEST — KINGS ROW, MANUAL CAPTURE AND REPORTS
 8. Preserve the ZIP. Export the read-only storage scan if cleanup/reuse remains
    unavailable. Recover interrupted reports if normal finalization is interrupted.
 
-FOLLOW-UP TESTS
-After a short saved Kings session exports correctly, reopen Kings again and
-compare authenticated warm reuse with the prior cold preparation. Start/Stop
-capture when convenient. Use the real monorail to Atlas when ready, verify
-arrival and movement, save normally in Atlas and export the outer ZIP. A later
-reopen must select the newly saved Atlas destination and avoid starting Kings
-unnecessarily. Compare equivalent preparation, native readiness and usable-world
-phases; distinguish a resident map process from warm filesystem caches.
+FOLLOW-UP TESTS — ONLY AFTER THE SHORT KINGS SAVE/EXPORT PASSES
+B. Reopen THORHERO in Kings Row and use the actual monorail to Atlas Park.
+   Record preparation, native startup, transfer and usable-world arrival
+   separately. Confirm movement and character state, save normally in Atlas
+   and export the complete outer ZIP.
+C. Reopen the newly saved Atlas character. Confirm Atlas is selected, position
+   and state persist, and Kings is not started unnecessarily. Save/export.
+D. Only after A-C pass, compare cold versus authenticated warm-cache startup
+   and test Atlas-to-Kings and return travel where practical. Use Start/Stop
+   capture when convenient. Distinguish same-session resident maps from a new
+   process with warm filesystem caches; compare loading phases, FPS, thermals
+   and available memory. Preserve saved data and export failure evidence if
+   a guarded startup or transfer cannot complete.
+
+This ordered follow-up section updates the bundled release notes, which group
+warm comparison with travel. The signed APK and bundled notes retain their
+original source and byte identities in the publication receipt.
 
 FAILURES
 On a startup/input/report/cleanup failure, preserve the existing saved character
