@@ -1,0 +1,111 @@
+name: Native Android compressed audio, UDP, and interactive source scene
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/integration-probe/**
+      - native-android/decode/**
+      - native-android/transport/**
+      - native-android/interactive-world/**
+      - native-android/tools/decode_fixture/**
+      - native-android/tools/transport_fixture/**
+      - native-android/tools/interactive_world_fixture/**
+      - native-android/tools/integration_fixture/**
+      - .github/workflows/native-integration-probe.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-integration-probe-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  package-and-emulator:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install pinned Android components and source-reference headers
+        run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libvorbis-dev
+          python3 -m pip install Pillow==12.3.0
+      - name: Recover accepted real world and compressed audio fixtures
+        run: |
+          mkdir -p native-android/results/integration-probe
+          python3 - <<'PYSTART'
+          import json,os
+          from pathlib import Path
+          Path('native-android/results/integration-probe/source-validation-stage.json').write_text(json.dumps({'schema':1,'phases':[13,14,15],'stage':'source fixture and host qualification','status':'started','passed':False,'source_commit':os.environ['GITHUB_SHA'],'workflow_run_id':os.environ['GITHUB_RUN_ID']},indent=2)+'\n')
+          PYSTART
+          python3 native-android/world-probe/contract/verify_source_tricks.py --repo-root . --output native-android/results/integration-probe/source-trick-resolution.json
+          python3 native-android/tools/world_fixture/acquire.py --output native-android/results/integration-world-corpus
+          python3 native-android/tools/world_fixture/prepare.py --corpus native-android/results/integration-world-corpus --output native-android/integration-probe/app/src/main/assets --evidence-output native-android/results/integration-probe/world-fixture --source-trick-audit native-android/results/integration-probe/source-trick-resolution.json
+          python3 native-android/tools/audio_fixture/acquire.py --output native-android/results/integration-audio-corpus
+          python3 native-android/tools/audio_fixture/prepare.py --corpus native-android/results/integration-audio-corpus --output native-android/integration-probe/app/src/main/assets
+          python3 native-android/tools/decode_fixture/prepare.py --corpus native-android/results/integration-audio-corpus --reference native-android/integration-probe/app/src/main/assets/audio.bin --output native-android/results/integration-probe/decode-fixture
+          cp native-android/results/integration-audio-corpus/headset.ogg native-android/integration-probe/app/src/main/assets/headset.ogg
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path('native-android/decode/licenses')
+          text='Pinned Xiph codecs. The original source bodies and BSD notices are retained.\n\n'
+          for p in sorted(root.iterdir()):
+              if p.is_file():text+=p.name+'\n'+p.read_text()+'\n\n'
+          Path('native-android/integration-probe/app/src/main/assets/codec-licenses.txt').write_text(text)
+          PY
+      - name: Native compressed decoder, real socket transport, and source camera host proofs
+        run: |
+          python3 native-android/tools/decode_fixture/build_host.py --corpus native-android/results/integration-audio-corpus --reference native-android/integration-probe/app/src/main/assets/audio.bin --output native-android/results/integration-probe/decode-host --sanitize
+          python3 native-android/tools/transport_fixture/check.py --output native-android/results/integration-probe/transport-host-proof.json
+          python3 native-android/tools/interactive_world_fixture/check.py --world native-android/integration-probe/app/src/main/assets/world.bin --output native-android/results/integration-probe/interactive-world-host-proof.json --sanitize
+          python3 native-android/integration-probe/tools/ui_host_check.py --output native-android/results/integration-probe/ui
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path('native-android/results/integration-probe')
+          names=['decode-host/host-proof.json','transport-host-proof.json','interactive-world-host-proof.json','ui/ui-host-checks.json']
+          proofs=[]
+          for n in names:
+              raw=(root/n).read_bytes();assert json.loads(raw)['passed'] is True,n
+              proofs.append({'file':n,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()})
+          (root/'source-validation-stage.json').write_text(json.dumps({'schema':1,'phases':[13,14,15],'status':'completed','passed':True,'source_commit':os.environ['GITHUB_SHA'],'workflow_run_id':os.environ['GITHUB_RUN_ID'],'proofs':proofs},indent=2)+'\n')
+          PY
+      - name: Build and lint isolated ARM64 integration probe
+        run: |
+          python3 native-android/integration-probe/gradle.py :app:assembleDebug :app:lintDebug
+          cp native-android/integration-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/integration-probe/CoH-Native-Integration-Probe-0.1.0-arm64.apk
+      - name: Build separate emulator package and verify package identities
+        run: |
+          python3 native-android/integration-probe/gradle.py -PprobeAbis=x86_64 :app:assembleDebug
+          cp native-android/integration-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/integration-probe/CoH-Native-Integration-Probe-0.1.0-emulator-x86_64.apk
+          python3 native-android/tools/integration_fixture/package_check.py
+      - name: Enable hosted Android emulator acceleration
+        run: |
+          test -c /dev/kvm
+          sudo chmod 666 /dev/kvm
+      - name: Android 13 live scene input, decoded playback, UDP, and lifecycle qualification
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/integration-probe/tools/emulator_check.py --apk native-android/results/integration-probe/CoH-Native-Integration-Probe-0.1.0-emulator-x86_64.apk --output native-android/results/integration-probe
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-android-integration-probe-evidence
+          path: native-android/results/integration-probe/
+          if-no-files-found: error
+          retention-days: 30

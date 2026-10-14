@@ -1,0 +1,19 @@
+{
+  "source": "upstream/ouroboros/Game/src/sound/ogg_decode.c",
+  "source_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "source_sha256": "6a37c461d45b46b89c2feefe7edb43ae693d8465f58bf49e4b696a27cc32b5de",
+  "functions": {
+    "readbytes": "6f64b61062b31b6095bfe6014c5b3e2d0044ddc2fe2559f5eb16a552662500dd",
+    "seekbytes": "ab6378e84927ae2b6875d7a6ca5fc2285ed005498224a0a81b4a4d8da908bce7",
+    "closebytes": "9cb5c2cdaf66b6d572b08393173eaa5cfb9b502c8427361eb30bd1c86e6c18cc",
+    "tellbytes": "c982b15a35393c63fd7a88f2513294f1ec6ca48c01faa9be8050d41714f2160e"
+  },
+  "adaptation_boundary": [
+    "Standalone MemFile typedef has unchanged member layout",
+    "Counter/budget adapters invoke the four unmodified source callbacks",
+    "Additional whole-file Ogg page CRC and complete-single-stream preflight precedes libvorbis",
+    "Decoder wrapper replaces Windows OggState/DirectSound engine; signed16 little-endian ov_read triple is unchanged",
+    "Fixed PCM comparison tolerance is <=1 LSB; no reference audio playback fallback",
+    "Generated codec overlay casts sharedbook.c:425 index to ogg_uint32_t before signed-bit shift; original source remains digest-verified and overlay hashes are recorded by dependency acquisition"
+  ]
+}

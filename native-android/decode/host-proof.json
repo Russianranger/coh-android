@@ -1,0 +1,81 @@
+{
+  "passed": true,
+  "checks": 27,
+  "failed": 0,
+  "sample_rate": 44100,
+  "channels": 2,
+  "frames": 18168,
+  "pcm_bytes": 72672,
+  "read_callbacks": 18,
+  "seek_callbacks": 4,
+  "tell_callbacks": 1,
+  "close_callbacks": 1,
+  "ov_read_calls": 24,
+  "compared_samples": 36336,
+  "different_samples": 20,
+  "maximum_sample_error": 1,
+  "sample_rms_error": 0.023460995672,
+  "all_truncated_prefixes_rejected": 12930,
+  "CRC_valid_decoder_rejections": 6,
+  "CRC_valid_payload_mutations": 160,
+  "repeated_decodes": 64,
+  "fixed_maximum_allowed_sample_error": 1,
+  "unchanged_callback_bounds": {
+    "passed": true,
+    "unchanged_callback_bound_checks": 19
+  },
+  "schema": "coh-native-compressed-audio-host-proof-v1",
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "dependency_acquisition": {
+    "passed": true,
+    "source_files_verified": 79,
+    "revisions": {
+      "ogg": "be05b13e98b048f0b5a0f5fa8ce514d56db5f822",
+      "vorbis": "0657aee69dec8508a0011f47f3b69d7538e9d262"
+    },
+    "unsigned_shift_overlay": {
+      "source": "vorbis/lib/sharedbook.c",
+      "line": 425,
+      "source_sha256": "a883767bf16552f5cf8686b58b86e55819dcb63487c5307fee5d45820b836a40",
+      "overlay_sha256": "a8cbecc3bdd0a18d27fd31d342bfb32f9789cbad960d0cf6547e0bee865fce23",
+      "before": "ogg_uint32_t word=i<<(32-c->dec_firsttablen);",
+      "after": "ogg_uint32_t word=(ogg_uint32_t)i<<(32-c->dec_firsttablen);",
+      "reason": "UBSan on valid fixture: left shift into signed int sign bit; cast to declared unsigned destination type defines identical intended bits"
+    },
+    "runtime_network": false
+  },
+  "leak_sanitizer_available": false,
+  "leak_sanitizer_limitation": "LSan cannot run under execution ptrace; ASan and UBSan remain enabled with immediate abort",
+  "unchanged_source_oracle": {
+    "passed": true,
+    "sample_rate": 44100,
+    "channels": 2,
+    "frames": 18168,
+    "pcm_bytes": 72672,
+    "ov_read_calls": 24,
+    "vorbis_version": "Xiph.Org libVorbis 1.3.7",
+    "ov_read_parameters": [
+      0,
+      2,
+      1
+    ],
+    "memory_callbacks_unchanged": true
+  },
+  "unchanged_source_pcm_sha256": "50d8ebb57082c02aa1a2087e5f08baf9f99d9d355f5cef34846486ac882dc9b5",
+  "native_pcm_exact_to_unchanged_callback_oracle": true,
+  "trusted_reference_oracle_comparison": {
+    "compared_samples": 36336,
+    "different_samples": 20,
+    "maximum_sample_error": 1,
+    "sample_rms_error": 0.023460995672000377,
+    "exact": false,
+    "fixed_maximum_allowed_sample_error": 1
+  },
+  "input_sha256": "82bec697f9e824d192cac90f32a01421e4a3875aada64fc709862bc4d3ae9198",
+  "native_source_sha256": "3301c2bb39a7269230c0fdfc733ed7388c21004b4d0a95071976fbaaeb32fff0",
+  "native_header_sha256": "a20533bed2c06b716adcb5ca89b3ec5cd1205d51fe536970ddb8d8a0b7981cbe",
+  "floating_contract": "-ffp-contract=off"
+}

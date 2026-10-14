@@ -1,0 +1,24 @@
+{
+  "repository": "Russianranger/coh-android",
+  "source_revision": "0a5eed1a388ed53da1e19e7d6b2b571c067b82b9",
+  "sources": {
+    "netio_receive.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_receive.c",
+      "sha256_lf": "d24464295fefbb90f2a356f3ea3bfa4bbf6b47863a602d6cc63c63c46cdb1047"
+    },
+    "net_socket.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/net_socket.c",
+      "sha256_lf": "88071c0228cb94ea236ca29795fa903fcdf5348d75858b82ef2c4b99a81f368f"
+    }
+  },
+  "functions": {
+    "pktGetUdp": {
+      "file": "netio_receive.c",
+      "sha256_lf": "6ed5225f729bf287cae30ce30bc822284b26ea3300729eaba2feab41f66c1da2"
+    },
+    "SendToSock": {
+      "file": "net_socket.c",
+      "sha256_lf": "6672f6c9b38c91bee25e1943e8e804f5b6460b51d140d348419c2c695f5aad82"
+    }
+  }
+}

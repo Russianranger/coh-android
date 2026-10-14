@@ -1,0 +1,6 @@
+.tooling/
+.gradle/
+app/build/
+app/.cxx/
+app/src/main/assets/
+local.properties
