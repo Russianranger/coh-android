@@ -1,0 +1,210 @@
+{
+  "schema": "coh-phase9-source-world-materials-v1",
+  "selected_geometry": "modern_bench_2wide__mbench",
+  "part_count": 2,
+  "unique_textures": 4,
+  "material_reference": {
+    "magic": "COHWMAT9",
+    "header_bytes": 64,
+    "record_bytes": 128,
+    "case_stride": 16512,
+    "cases_per_part": 6,
+    "cases": 12,
+    "real_texture_pair_cases": 8,
+    "controlled_secondary_swatch_cases": 4,
+    "mode_field_byte": 116,
+    "pixel_size": [
+      64,
+      64
+    ]
+  },
+  "profile": {
+    "GFXF_MULTITEX": false,
+    "GFXF_BUMPMAPS": false,
+    "GFXF_CUBEMAP": false,
+    "BIT_HIGH_QUALITY": false,
+    "BIT_SHADOWMAP": false,
+    "BIT_DEBUG": false,
+    "world_vertex_branch": "DRAWMODE_DUALTEX_NORMALS; FF_LIT_GL with zero specular, no captured/baked rgbs",
+    "controlled_lighting": {
+      "ambient": [
+        0.25,
+        0.25,
+        0.25,
+        1
+      ],
+      "diffuse": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "specular": [
+        0,
+        0,
+        0
+      ],
+      "vertex_color": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "authored_atlas_lighting_qualified": false,
+    "original_driver_decompression_qualified": false,
+    "original_full_mipchain_qualified": false
+  },
+  "source_authored_properties": {
+    "tint_group": "grp141259",
+    "tint_rgb": [
+      [
+        67,
+        139,
+        202
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    "ambient_group": "grp141205",
+    "ambient_rgb": [
+      28,
+      31,
+      40
+    ],
+    "ambient_resolution": "retained authored data; original lightTracker/lightgrid and bakedRGB buffers are outside controlled lighting qualification",
+    "cubemap_swap_group": "grp141198",
+    "cubemap_swap": [
+      "generic_cubemap_face0",
+      "City_01_01_grpcubemap141152_face0",
+      0
+    ],
+    "cubemap_resolution": "retained authored data; selected GFXF_CUBEMAP-disabled shader has no cubemap sample",
+    "model_trick": "mbench",
+    "lod_far": 250,
+    "lod_far_fade": 75,
+    "lod_resolution": "suffix association and source values verified; distance/fade scheduling outside bounded geometry probe"
+  },
+  "source_declaration_audit": {
+    "required_before_build_qualification": true,
+    "command": "python3 native-android/world-probe/contract/verify_source_tricks.py --repo-root . --output native-android/results/world-probe/source-trick-resolution.json",
+    "scope": "all1585immutabletricks: direct and parent directory selectors; actual mbench and modern_bench bodies"
+  },
+  "parts": [
+    {
+      "part_index": 0,
+      "part": "modern_bench_partition0",
+      "geometry_texture": "Signmetal.tga",
+      "base_alias": "Signmetal",
+      "dual_alias": "grey",
+      "base_texture": 0,
+      "dual_texture": 1,
+      "triangles": 48,
+      "mode": 0,
+      "family": "BLENDMODE_MULTIPLY",
+      "effective_colors_rgb": [
+        [
+          67,
+          139,
+          202
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "draw_alpha": 255,
+      "ambient_scale": 1.0,
+      "diffuse_scale": 1.0,
+      "alpha_ref": 0.0,
+      "double_sided": false,
+      "blend_enabled": false,
+      "depth_write": true,
+      "source_baked_rgb_buffer_loaded": false,
+      "texture_sampling_scene": {
+        "min": "LINEAR",
+        "mag": "LINEAR",
+        "wrap_s": "REPEAT",
+        "wrap_t": "REPEAT",
+        "mip": 0,
+        "scope": "source-default linear filtering/addressing; selected mip-zero profile"
+      },
+      "sampling_analytic": {
+        "min": "NEAREST",
+        "mag": "NEAREST",
+        "wrap_s": "CLAMP_TO_EDGE",
+        "wrap_t": "CLAMP_TO_EDGE",
+        "mip": 0,
+        "scope": "controlled pixel witnesses"
+      },
+      "alpha_sort_required": false,
+      "cubemap_sampled": false,
+      "high_quality_variant": false
+    },
+    {
+      "part_index": 1,
+      "part": "modern_bench_partition1",
+      "geometry_texture": "modern_bench.tga",
+      "base_alias": "modern_bench",
+      "dual_alias": "white",
+      "base_texture": 2,
+      "dual_texture": 3,
+      "triangles": 140,
+      "mode": 1,
+      "family": "BLENDMODE_COLORBLEND_DUAL",
+      "effective_colors_rgb": [
+        [
+          67,
+          139,
+          202
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "draw_alpha": 255,
+      "ambient_scale": 1.0,
+      "diffuse_scale": 1.0,
+      "alpha_ref": 0.0,
+      "double_sided": false,
+      "blend_enabled": false,
+      "depth_write": true,
+      "source_baked_rgb_buffer_loaded": false,
+      "texture_sampling_scene": {
+        "min": "LINEAR",
+        "mag": "LINEAR",
+        "wrap_s": "REPEAT",
+        "wrap_t": "REPEAT",
+        "mip": 0,
+        "scope": "source-default linear filtering/addressing; selected mip-zero profile"
+      },
+      "sampling_analytic": {
+        "min": "NEAREST",
+        "mag": "NEAREST",
+        "wrap_s": "CLAMP_TO_EDGE",
+        "wrap_t": "CLAMP_TO_EDGE",
+        "mip": 0,
+        "scope": "controlled pixel witnesses"
+      },
+      "alpha_sort_required": false,
+      "cubemap_sampled": false,
+      "high_quality_variant": false
+    }
+  ],
+  "notes": [
+    "Signmetaldefaultfamilyrequirescomplete source declaration audit; inventedwhite or forcedCOLORBLEND_DUAL are rejected",
+    "MULTIPLY uses base*grey; RGB*8*vertexRGB, alpha from both samples*lodAlpha; tintRGB uniforms are unused",
+    "COLORBLEND_DUAL uses modern_bench base alpha as tint bypass; fragmentalpha from actualwhite alpha*lodAlpha, so benchalpha mask does not request transparency",
+    "mbench supplies LOD only, noDoubleSided/NoZWrite/AlphaCutout/Reflect/SimpleAlphaSort; preserved sourceCW back culling and depth writes",
+    "GEO has no secondaryUV or RGBbuffer; source expands st2 from st1 for oldworldmaterials; no synthetic authoredRGB claimed",
+    "Neutralconstantlightingtestsoriginalmaterial arithmetic; it does not reconstruct Atlas ambient/lightgrid/sun or all original runtime renderer choices",
+    "Original rt_init source enables SRC_ALPHA/ONE_MINUS_SRC_ALPHA globally; selected opaque actual fragment alpha1 makes controlled disabled geometry blending pixel-equivalent. Analytic half-fade and swatch cases explicitly qualify source-over.",
+    "Original rt_init depthfunc isGL_LEQUAL, preserved bysceneprobe; sourceUV0+UV1 bothVflip1-V afteroldworldmodelst2 copiesst1."
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "format": 1,
+  "passed": true,
+  "scope": "unchanged original uncompressDeltas and source GPU UV upload expression",
+  "source_sha256_lf": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+  "function_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+  "source_geometry_sha256": "04d03d09fef6f7c85225ae92ba0954c880dcef3d2e3ec3791b720d0dcc3d8cd4",
+  "original_client_execution": false,
+  "source_vertices": 256,
+  "source_triangles": 188,
+  "canonical_partition_vertices": 512,
+  "channel_checks": 5,
+  "scalar_elements": 3124,
+  "checks": [
+    {
+      "channel": "indices",
+      "elements": 564,
+      "byte_exact": true,
+      "source_stream_sha256": "a4cc424349b5adc2bb384db428e29d3abd2a45babb8cf60ce95d8a43f6193e43",
+      "decoded_sha256": "c2f056ce05170fa083b4f6a97b9fa573f78573f262a2983221abb1d03dd0de85"
+    },
+    {
+      "channel": "positions",
+      "elements": 768,
+      "byte_exact": true,
+      "source_stream_sha256": "a47b8cb0516609c6974291a85c6fd344f0a77f0c164cd83194e677ce6b462719",
+      "decoded_sha256": "f57bc95357091e82039fa70458637673e168b56a66093dabd6809860de459b74"
+    },
+    {
+      "channel": "normals",
+      "elements": 768,
+      "byte_exact": true,
+      "source_stream_sha256": "91b6f4ff6587308347fc2ebbf7eadadfb0cbebec1fdb4278e8a71d032adea7b5",
+      "decoded_sha256": "43c5ea27784f4821e9412b8ef779ba2c1dcd204736a81833f5c6c9e9e9f39227"
+    },
+    {
+      "channel": "uvs",
+      "elements": 512,
+      "byte_exact": true,
+      "source_stream_sha256": "60355751dc7af7371b22960c7b0602715874af07092be3fafe64ca489af3a462",
+      "decoded_sha256": "0f1c0ab0c77f10a094b16865b40d140ef83bb654543f211e22e3a653dcd3ea70"
+    },
+    {
+      "channel": "uvs_gpu_upload",
+      "elements": 512,
+      "byte_exact": true,
+      "decoded_sha256": "08037c5ac28e976074ddd1473329c200e1f33a12d808df16ca833b4d5a1f8114"
+    }
+  ]
+}

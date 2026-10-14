@@ -1,0 +1,50 @@
+{
+  "schema": "coh-native-world-ui-host-check-v1",
+  "passed": true,
+  "java_syntax_target": 8,
+  "java_parse_passed": true,
+  "qualification_method_cases": 16,
+  "qualification_method_cases_passed": 16,
+  "manifest_xml_parse_passed": true,
+  "bootstrap_python_syntax_passed": true,
+  "accepted_character_probe_files_modified": false,
+  "limits": "Java 8 syntax parsing and exact source-method lifecycle qualification host harness only. Full Android SDK API, lint, native linking and runtime lifecycle remain CI/device checks.",
+  "source_files": {
+    "native-android/world-probe/app/build.gradle": {
+      "sha256": "a0d8be7923f457d30bc30fdb9d5127fef8361f5844b01378f874b1709cc86025",
+      "bytes": 1211
+    },
+    "native-android/world-probe/app/src/main/AndroidManifest.xml": {
+      "sha256": "127054e36e40385dd286a2d7cc514210bf370ae5703309f2df6be60a81107b13",
+      "bytes": 795
+    },
+    "native-android/world-probe/app/src/main/java/org/coh/worldprobe/MainActivity.java": {
+      "sha256": "2cb066bcc246c4662ccc448cbd0294a3c408b814c6e34fb44d184553e365401e",
+      "bytes": 35155
+    },
+    "native-android/world-probe/app/src/main/java/org/coh/worldprobe/ProbeNative.java": {
+      "sha256": "aac9069f2684a279c35e3beda3547b7786df585b44d7e4b4e888142ef5c8fd18",
+      "bytes": 309
+    },
+    "native-android/world-probe/build.gradle": {
+      "sha256": "c3c0cf04da0fc239f391c774554d97d890018ab6e37e87cc62f6070d0c8c9909",
+      "bytes": 73
+    },
+    "native-android/world-probe/settings.gradle": {
+      "sha256": "9147b98b39db50d84c821ceaae4cff295e7699139add070513d9f9ae51caecf5",
+      "bytes": 291
+    },
+    "native-android/world-probe/gradle.properties": {
+      "sha256": "22113811ccd6813719ec7f460621e26ba2c272ef41a038caed14671a9dc8d510",
+      "bytes": 136
+    },
+    "native-android/world-probe/gradle.py": {
+      "sha256": "015761665bfb63ab88106ca3b6c421044c180d711d47af74a586f7065f15daef",
+      "bytes": 2225
+    },
+    "native-android/world-probe/.gitignore": {
+      "sha256": "17b0ca0a1b0afb8ec43c89f18d1b59a469e885044f7b0b6a4ca562780134add7",
+      "bytes": 76
+    }
+  }
+}

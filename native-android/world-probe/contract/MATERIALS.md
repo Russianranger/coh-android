@@ -1,0 +1,49 @@
+# Phase 9 original bench material contract
+
+The selected original GEO v7 model is `modern_bench_2wide__mbench`: 256 source vertices and 188 triangles. Its source texture table partitions the triangles into `Signmetal.tga` (48 triangles) and `modern_bench.tga` (140 triangles), in that order. These are two material partitions of one authored bench instance. They are not two separate authored benches.
+
+The exact resolved family contract is conditional on the complete immutable source declaration audit. The Android build must run `verify_source_tricks.py --repo-root . --output <receipt>` before preparing the fixture. It verifies the pinned 1,585-file original trick tree and every source blob, all primary source SHA256 pins, the relevant direct and parent-directory texture names, and the actual `modern_bench`/`mbench` declaration bodies. Missing files, changed blobs or an unexpected relevant override fail the gate. Sparse local fixture preparation can produce provisional bytes while this audit is pending; it does not qualify material resolution.
+
+| Partition | Source family and textures | Original fragment operation |
+|---|---|---|
+| `Signmetal.tga`, 48 triangles | Default `BLENDMODE_MULTIPLY`, actual Signmetal and stock grey | `base * blend`; RGB multiplied by `8 * vertexColor.rgb`; alpha multiplied by LOD alpha |
+| `modern_bench.tga`, 140 triangles | Declared `BLENDMODE_COLORBLEND_DUAL`, actual modern_bench and stock white | Dual RGB mixes the two tint constants; base alpha mixes that tint toward white; RGB multiplied by `4 * vertexColor.rgb`; alpha is dual alpha times LOD alpha |
+
+The original fallback for a texture with no direct or directory TexOpt declaration is `grey_tex`, not white. Its initial composite family is zero/modulate; original `modelResetFlags` and `initRdrModel` select MULTIPLY for world drawing. The source `streets_misc.txt` directly declares the bench texture's `Blend white.tga` and `BlendType ColorBlendDual`. It is an old dual declaration, not a new MULTI fallback. Its ambient/diffuse scales remain one. No material is forced into the other partition's shader family.
+
+The actual acquired wrappers are retained separately from their decoded derivatives:
+
+| Alias | Original wrapper | Mip-zero input | Alpha role |
+|---|---|---|---|
+| Signmetal | SHA256 `bdd32c3ad587b81f0704391e5da21156d68dc413c0b5ac8890b27d2c72a88978` | 32 × 64 DXT1; alpha 255 | MULTIPLY reads both base and generic alpha |
+| grey | SHA256 `b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013` | Actual 8 × 8 ARGB8888; every pixel `(128,128,128,255)` | Original default generic texture |
+| modern_bench | SHA256 `dbe3b554a798f235d1865234a652f7a0528b48231f4f271d4c42296222aecac1` | 128 × 128 DXT5; base alpha 0–255 | Base alpha is tint bypass; it does not set this family's output transparency |
+| white | SHA256 `682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9` | Actual 8 × 8 DXT1; every RGBA byte 255 | Real source dual texture; output alpha is one at LOD alpha one |
+
+The wrapper flags are metadata, not an invented replacement shader flag. Signmetal and white have flags zero, grey has TRUECOLOR (2), and modern_bench has NORANDOMADDGLOW (16). The modern bench flag is not FADE, NOMIP, clamp or point sampling. Original runtime `texResetTrickBasedParametersBasic` resolves sampling flags through TexOpt lookup/name policy rather than simply copying every cached wrapper flag.
+
+## Preserved authored data and selected rendering scope
+
+The selected source ancestor defines tint bytes `(67,139,202)` and `(0,0,0)`. Native uniforms and references preserve `scaleVec3(byte, 1.f/255.f)` operation order: each byte is multiplied by the binary32 reciprocal, rather than divided using an invented double constant. MULTIPLY does not use those RGB tint uniforms. The dual partition does, through the source mask arithmetic.
+
+The ancestor `Ambient 28 31 40` is retained as authored metadata. Original `handleDefTracker` responds to an ambient group by invoking `lightTracker` and selecting a tracker/light grid. A GEO without a packed RGB stream does not prove that the running Windows scene lacks a generated baked RGB buffer. That grid, runtime baked buffer, Atlas sun state, fullbright/no-angle choices and original static-light closure are not reconstructed by this gate.
+
+The probe selects the original normal-light world branch (`modelDrawTexNormals`, `DRAWMODE_DUALTEX_NORMALS`, Cg `FF_LIT_GL`) with controlled white vertex color, ambient RGB `.25`, diffuse RGB zero and specular RGB zero. This keeps fragment illumination equal to one for dual materials and `2 × grey` for MULTIPLY. It tests real material arithmetic with real textures while retaining authored ambient data for a later lighting gate. The independent scalar lighting helper follows the original normalized model-view normal and `saturate(dot(N,L) * diffuse.rgb)` term; zero specular is an explicit input. It does not execute original Cg or capture Windows shader output.
+
+The inherited `generic_cubemap_face0` → `City_01_01_grpcubemap141152_face0` TexSwap is retained. The selected profile disables cubemap features, and both selected low-profile fragment variants contain no cubemap sample. This is a scoped profile choice, not full inherited cubemap resolution. Bump maps, advanced MULTI, high-quality per-pixel lighting, shadows, reflections and debug variants are disabled and unqualified.
+
+The recovered `__mbench` suffix establishes the actual source model trick association. The unchanged trick supplies `LodFar 250` and `LodFarFade 75`; it supplies no DoubleSided, AlphaCutout, NoZWrite, Reflect or SimpleAlphaSort flag. The geometry gate selects alpha 255 and does not qualify source distance/LOD scheduling or a full scene sorter.
+
+Original render initialization uses clockwise fronts, back-face culling, `GL_LEQUAL`, depth testing and strict `GL_GREATER` alpha test at reference zero. Depth writes remain enabled; source NoZWrite would be a separate explicit trick. Both actual partitions output alpha one in the selected profile. Geometry blending can therefore be disabled without changing those selected opaque pixels. Original initialization enables `SRC_ALPHA, ONE_MINUS_SRC_ALPHA` blending; the analytic cases explicitly qualify those factors, including destination alpha. Disabled opaque geometry blending is not claimed as a captured original state.
+
+The GEO has no separate secondary UV channel. Original non-MULTI VBO setup copies `sts` into `sts2`, then `modelFixup` flips both V coordinates with `1.f - v`. Both source bind scales are one. The world geometry uses source-default linear filtering with repeat addressing in an explicit mip-zero profile. Actual source mip chains exist, but original mip selection, LOD bias, anisotropy and Windows driver decompression remain unqualified. Analytic pixel quads deliberately use nearest, clamp-to-edge and mip zero to isolate material arithmetic from filtering.
+
+## Independent pixel witnesses
+
+`build_material_reference.prepare(parts,textures)` emits `COHWMAT9`: a 64-byte `<8s14I>` header, then twelve cases (six per real material partition). Each case consists of a 128-byte `<26f6I>` parameter record followed by 64 × 64 expected RGBA8 pixels. The first 26 floats retain the accepted material parameter order. At byte 104 the six integers are flags, part index, case index, material mode, zero, zero. Material mode is zero for MULTIPLY and one for COLORBLEND_DUAL, repeated at byte 116 and required to match the source scene partition. The case stride is 16,512 bytes; the complete two-part reference is 198,208 bytes.
+
+Each partition has four actual source texture-pair cases and two controlled secondary-swatch cases. Flags are `[0,1,0,1,2,3]`: bit zero enables source-over blending and bit one substitutes the labeled `(51,153,230,128)` diagnostic secondary swatch. The six cases exercise source tint/neutral light, half fade with blending, midpoint fog, strict reference-one discard, controlled secondary RGB/alpha, and controlled reference-.6 discard. Alpha references are `[0,0,0,1,0,.6]`. Those diagnostic swatches and fade/fog parameters are controlled witnesses, not additional authored assets or captured map state.
+
+The scalar evaluator imports the immutable accepted independent dual-fragment evaluator and adds a separate original MULTIPLY expression. It never parses or executes native GLSL. References use binary64 arithmetic with binary32 uploaded input values; native GPU comparisons retain the existing two-byte pixel tolerance. No reference pixels or matrices drive normal scene rendering.
+
+Run `build_material_reference.py --self-check` for the independent analytic boundaries. Run the complete immutable source audit in CI before rendering qualification. The actual emulator/Thor gate must independently check source partitions, useful geometry coverage, native GPU transforms, both fragment families and lifecycle recovery; static contract files alone do not establish those results.

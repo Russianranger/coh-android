@@ -1,0 +1,181 @@
+#!/usr/bin/env python3
+"""COHWMAT9 scalar references for every Phase 9 real GEO material partition.
+
+The stable accepted layout is 64-byte <8s14I> header, 6 cases per draw, then
+128-byte <26f6I> parameters and 64x64 expected RGBA8 per case. Pixel generation
+never parses or executes the native GLSL derivative. Real and diagnostic inputs
+are identified separately in evidence.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import struct
+
+_spec = importlib.util.spec_from_file_location(
+    "coh_world_material_reference", Path(__file__).with_name("material_reference.py"))
+_scalar = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_scalar)
+f32, fragment, framebuffer = _scalar.f32, _scalar.fragment, _scalar.framebuffer
+MAGIC = b"COHWMAT9"
+HEADER = struct.Struct("<8s14I")
+RECORD = struct.Struct("<26f6I")
+WIDTH = HEIGHT = 64
+PIXEL_BYTES = WIDTH * HEIGHT * 4
+CASE_STRIDE = RECORD.size + PIXEL_BYTES
+CASES_PER_PART = 6
+SWATCH_RGBA8 = (51, 153, 230, 128)
+VECTOR_KEYS = ("const0", "const1", "vertex_color", "fog_params", "fog_color", "clear")
+
+
+def _require(value, message):
+    if not value:
+        raise ValueError(message)
+
+
+def _texture(texture):
+    width, height, raw = texture["width"], texture["height"], texture["rgba"]
+    _require(type(width) is int and type(height) is int and 0 < width <= 1024
+             and 0 < height <= 1024 and isinstance(raw, bytes)
+             and len(raw) == width * height * 4, "invalid decoded texture span")
+    return raw, width, height
+
+
+def _sample(texture, x, y):
+    raw, width, height = texture
+    tx = min(width - 1, ((2 * x + 1) * width) // (2 * WIDTH))
+    ty = min(height - 1, ((2 * y + 1) * height) // (2 * HEIGHT))
+    offset = (ty * width + tx) * 4
+    return tuple(value / 255.0 for value in raw[offset:offset + 4])
+
+
+def cases(part, index):
+    color1 = part.get("color1", part.get("effective_colors_rgb", [[67, 139, 202], [0, 0, 0]])[0])
+    color2 = part.get("color2", part.get("effective_colors_rgb", [[67, 139, 202], [0, 0, 0]])[1])
+    _require(color1 == [67, 139, 202] and color2 == [0, 0, 0],
+             "selected source world tint differs")
+    alpha = part.get("draw_alpha", 255)
+    _require(type(alpha) is int and alpha == 255, "selected source branch must be opaque")
+    mode = part.get("mode", part.get("material_mode", 1))
+    _require(mode in (0, 1), "selected source world material family differs")
+    defaults = {"const0": list(_scalar.source_rgb(color1)) + [f32(alpha * f32(1 / 255.0))],
+                "const1": list(_scalar.source_rgb(color2)) + [1.0],
+                "vertex_color": [.25, .25, .25, 1],
+                "fog_params": [0, 0, 20, .1],
+                "fog_color": [32 / 255, 64 / 255, 96 / 255, 1],
+                "clear": [32 / 255, 96 / 255, 160 / 255, 128 / 255],
+                "fog_coord": 0, "alpha_ref": 0, "flags": 0}
+    overrides = [
+        ("source_world_tint_controlled_neutral_light", {}),
+        ("source_world_tint_controlled_half_fade_source_over", {"fade": .5, "flags": 1}),
+        ("source_world_tint_controlled_mid_fog", {"fog_coord": 15}),
+        ("source_world_tint_controlled_strict_ref_one_discard", {"alpha_ref": 1, "flags": 1}),
+        ("source_world_tint_controlled_dual_rgb_alpha", {"flags": 2}),
+        ("source_world_tint_controlled_dual_ref_point6_discard", {"flags": 3, "alpha_ref": .6}),
+    ]
+    result = []
+    for case_index, (name, override) in enumerate(overrides):
+        case = dict(defaults, **{k: v for k, v in override.items() if k != "fade"})
+        for key in VECTOR_KEYS:
+            case[key] = [f32(value) for value in case[key]]
+        if "fade" in override:
+            case["const0"][3] = f32(override["fade"])
+        case["fog_coord"], case["alpha_ref"] = f32(case["fog_coord"]), f32(case["alpha_ref"])
+        case.update(name=name, part_index=index, case_index=case_index,
+                    part=part.get("part", part.get("name", str(index))),
+                    material_mode=mode,
+                    family="BLENDMODE_MULTIPLY" if mode == 0 else "BLENDMODE_COLORBLEND_DUAL",
+                    dual_texture_mode="controlled_swatch" if case["flags"] & 2 else ("actual_stock_grey" if mode == 0 else "actual_stock_white"),
+                    lighting="controlled neutral ambient .25, diffuse/specular zero",
+                    sampler="controlled nearest/clamp/mip0 analytic quad")
+        result.append(case)
+    return result
+
+
+def record(case):
+    return RECORD.pack(*(value for key in VECTOR_KEYS for value in case[key]),
+                       case["fog_coord"], case["alpha_ref"], case["flags"],
+                       case["part_index"], case["case_index"], case["material_mode"], 0, 0)
+
+
+def prepare(parts, textures):
+    """Return bytes and evidence for real partition bindings and actual RGBA data."""
+    _require(0 < len(parts) <= 16 and 0 < len(textures) <= 32,
+             "world material cardinality exceeds bounded format")
+    decoded = [_texture(texture) for texture in textures]
+    count, total = len(parts) * CASES_PER_PART, HEADER.size + len(parts) * CASES_PER_PART * CASE_STRIDE
+    output = bytearray(HEADER.pack(MAGIC, 1, HEADER.size, WIDTH, HEIGHT, count,
+                                  RECORD.size, len(parts), PIXEL_BYTES, CASE_STRIDE,
+                                  HEADER.size, total, 0, 0, 0))
+    evidence = []
+    for part_index, part in enumerate(parts):
+        b, d = part["base_texture"], part["dual_texture"]
+        _require(type(b) is int and type(d) is int and 0 <= b < len(decoded)
+                 and 0 <= d < len(decoded), "partition texture binding absent")
+        # Actual acquired stock filler remains a texture, rather than a synthesized replacement.
+        mode = part.get("mode", part.get("material_mode", 1))
+        expected = (128, 128, 128, 255) if mode == 0 else (255, 255, 255, 255)
+        _require(decoded[d][0] == bytes(expected) * (decoded[d][1] * decoded[d][2]),
+                 "selected source generic blend filler differs")
+        for case in cases(part, part_index):
+            output.extend(record(case))
+            pixels, discarded = bytearray(), 0
+            for y in range(HEIGHT):
+                for x in range(WIDTH):
+                    dual = (tuple(value / 255.0 for value in SWATCH_RGBA8)
+                            if case["flags"] & 2 else _sample(decoded[d], x, y))
+                    rgba = fragment(_sample(decoded[b], x, y), dual, case["const0"], case["const1"],
+                                    case["vertex_color"], case["fog_params"], case["fog_color"],
+                                    case["fog_coord"], case["alpha_ref"], mode=case["material_mode"])
+                    discarded += rgba is None
+                    pixels.extend(framebuffer(rgba, case["clear"], bool(case["flags"] & 1)))
+            _require(len(pixels) == PIXEL_BYTES, "reference pixel size differs")
+            output.extend(pixels)
+            evidence.append(dict(case, base_texture_index=b, dual_texture_index=d,
+                                 base_texture=textures[b].get("name", str(b)),
+                                 dual_texture=textures[d].get("name", str(d)),
+                                 expected_rgba_sha256=hashlib.sha256(pixels).hexdigest(),
+                                 discarded_pixels=discarded, passed_pixels=WIDTH * HEIGHT - discarded))
+    _require(len(output) == total, "canonical material reference size differs")
+    return bytes(output), evidence
+
+
+def self_check():
+    result = _scalar.self_check()
+    probe = {"part": "modern_bench_partition0", "base_texture": 0, "dual_texture": 1}
+    selected = cases(probe, 0)
+    assert len(selected) == 6 and [item["flags"] for item in selected] == [0, 1, 0, 1, 2, 3]
+    assert RECORD.size == 128 and HEADER.size == 64 and CASE_STRIDE == 16512
+    assert struct.unpack_from("<4I", record(selected[5]), 104) == (3, 0, 5, 1)
+    assert selected[0]["const0"][3] == 1 and selected[1]["const0"][3] == .5
+    assert selected[0]["const1"] == [0, 0, 0, 1]
+    result.update(cases_per_part=CASES_PER_PART, layout="COHWMAT9; repeated material mode at byte116",
+                  real_pair_cases_per_part=4, controlled_secondary_cases_per_part=2)
+    return result
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--self-check", action="store_true")
+    parser.add_argument("--audit-source", type=Path)
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    if args.audit_source:
+        receipt = _scalar.audit_source_tricks(args.audit_source)
+        text = json.dumps(receipt, indent=2) + "\n"
+        if args.output:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(text)
+        else:
+            print(text, end="")
+    elif args.self_check:
+        print(json.dumps(self_check(), indent=2))
+    else:
+        parser.error("Use prepare(parts,textures), --self-check, or --audit-source ROOT")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,103 @@
+{
+  "format": 1,
+  "release_tag": "coh-assets-v1.0.0",
+  "source_commit": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip",
+  "outer_expected_bytes": 1630092780,
+  "outer_full_hash_locally_verified": false,
+  "inner_member": "payloads/runtime/atlas-world-supplement.zip",
+  "inner_expected_bytes": 207803201,
+  "inner_published_sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f",
+  "inner_full_hash_locally_verified": false,
+  "selected_model": "modern_bench_2wide__mbench",
+  "model_index": 10,
+  "texture_files": {
+    "modern_bench": "bench.texture",
+    "signmetal": "sign.texture",
+    "white": "white.texture",
+    "grey": "grey.texture"
+  },
+  "records": [
+    {
+      "name": "data/object_library/streets/elements/misc_sm/misc_sm.geo",
+      "size": 51138,
+      "compressed": 51138,
+      "offset": 56969607,
+      "crc32": "40e8fb08",
+      "method": 0,
+      "sha256": "04d03d09fef6f7c85225ae92ba0954c880dcef3d2e3ec3791b720d0dcc3d8cd4",
+      "id": "misc",
+      "file_name": "misc.geo"
+    },
+    {
+      "name": "data/texture_library/world/streets/elements/monorail/modern_bench.texture",
+      "size": 22225,
+      "compressed": 10150,
+      "offset": 157524166,
+      "crc32": "dbcd5e30",
+      "method": 8,
+      "sha256": "dbe3b554a798f235d1865234a652f7a0528b48231f4f271d4c42296222aecac1",
+      "id": "bench",
+      "file_name": "bench.texture"
+    },
+    {
+      "name": "data/texture_library/world/swappables_and_decals/signs/billboard/billboard_structure/signmetal.texture",
+      "size": 1694,
+      "compressed": 1211,
+      "offset": 167882470,
+      "crc32": "c1f50b6f",
+      "method": 8,
+      "id": "sign",
+      "file_name": "sign.texture",
+      "sha256": "bdd32c3ad587b81f0704391e5da21156d68dc413c0b5ac8890b27d2c72a88978"
+    },
+    {
+      "name": "assets/texture_library/world/filler/white.texture",
+      "size": 327,
+      "compressed": 105,
+      "offset": 558946412,
+      "crc32": "a45335c4",
+      "method": 8,
+      "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip",
+      "outer_expected_bytes": 615545248,
+      "outer_published_sha256": "e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e",
+      "outer_full_hash_locally_verified": false,
+      "inner_member": "payloads/atlas/atlas-assets.zip",
+      "inner_expected_bytes": 615541018,
+      "inner_published_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+      "inner_full_hash_locally_verified": false,
+      "entry_hash_origin": {
+        "member": "payloads/atlas/atlas-assets-index.tsv",
+        "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480",
+        "full_file_locally_verified": true
+      },
+      "id": "white",
+      "file_name": "white.texture",
+      "sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9"
+    },
+    {
+      "name": "assets/texture_library/world/filler/grey.texture",
+      "size": 894,
+      "compressed": 113,
+      "offset": 558735569,
+      "crc32": "d28455ba",
+      "method": 8,
+      "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip",
+      "outer_expected_bytes": 615545248,
+      "outer_published_sha256": "e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e",
+      "outer_full_hash_locally_verified": false,
+      "inner_member": "payloads/atlas/atlas-assets.zip",
+      "inner_expected_bytes": 615541018,
+      "inner_published_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+      "inner_full_hash_locally_verified": false,
+      "entry_hash_origin": {
+        "member": "payloads/atlas/atlas-assets-index.tsv",
+        "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480",
+        "full_file_locally_verified": true
+      },
+      "id": "grey",
+      "file_name": "grey.texture",
+      "sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013"
+    }
+  ]
+}

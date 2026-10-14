@@ -1,0 +1,200 @@
+{
+  "target": {
+    "reference_release": "coh-atlas-gameplay-v0.13.35",
+    "sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+    "target_executed": false,
+    "matching_pdb": false
+  },
+  "rea": {
+    "repository": "https://github.com/Russianranger/rea",
+    "commit": "0365454a573eb52c7089320fd74bfd4a673b78ae",
+    "version": "6.4.0",
+    "usage_this_pass": "Read-only supervised Ghidra continuation from retained REA-assisted project; native bridge ownership restriction preserved",
+    "prior_resource_evidence_id": "ev_d88ee0566099d5a65f69581142f00e9790e56fcd03a6a916de8b997a78f1113c",
+    "safety_checks_bypassed": false
+  },
+  "tools": {
+    "ghidra": {
+      "version": "12.1.4",
+      "archive_sha256": "ddac49f903da9d5bac833e5cc79395098b9c33cfd3279be5f31bd00387d2d4db",
+      "verified": true
+    },
+    "java": {
+      "version": "Temurin21.0.12.1+1",
+      "archive_sha256": "ce79869e1307ed8ee1e2baa86a412b1eb5b75d10a01006d788a6f968bcfaee94",
+      "verified": true
+    }
+  },
+  "schema": 1,
+  "phase": 9,
+  "scope": "read-only world/group/camera raw anchor query of retained REA-assisted client checkpoint",
+  "checkpoint": {
+    "all_ten_files_unchanged": true,
+    "project_records": [
+      {
+        "file": "CityOfHeroesNative.gpr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "file": "CityOfHeroesNative.rep/idata/00/00000000.prp",
+        "bytes": 494,
+        "sha256": "7a04d480ed8f3a52eb50d281dd667ba1a05832beb3a5af0c80780bcfaa6853ef"
+      },
+      {
+        "file": "CityOfHeroesNative.rep/idata/00/~00000000.db/db.1.gbf",
+        "bytes": 62734336,
+        "sha256": "f260a406e8428b2fa50320bb95b687d8bcbff0754a86815389439b7cf56b9a65"
+      },
+      {
+        "file": "CityOfHeroesNative.rep/idata/00/~00000000.db/db.2.gbf",
+        "bytes": 117686272,
+        "sha256": "dfcf854d2ac5b9a52db768224c1cf58c7308c6af854e89f29f5234b85a076202"
+      },
+      {
+        "file": "CityOfHeroesNative.rep/idata/~index.bak",
+        "bytes": 114,
+        "sha256": "4f2496bdf08f9e97c3b45a64adf406ec40b82e6db62b06f85ceeeb0d563dd422"
+      },
+      {
+        "file": "CityOfHeroesNative.rep/idata/~index.dat",
+        "bytes": 114,
+        "sha256": "4f2496bdf08f9e97c3b45a64adf406ec40b82e6db62b06f85ceeeb0d563dd422"
+      },
+      {
+        "file": "CityOfHeroesNative.rep/project.prp",
+        "bytes": 157,
+        "sha256": "b082f0373ca4a46905f24e87f4325f5c764d2426d9fda5736ee5f75c8c19c66f"
+      },
+      {
+        "file": "CityOfHeroesNative.rep/user/~index.dat",
+        "bytes": 59,
+        "sha256": "0a5034997e47499d758115fa580ad21d96557d2a32c89f2263bcfd3fa8a9a6e5"
+      },
+      {
+        "file": "CityOfHeroesNative.rep/versioned/~index.bak",
+        "bytes": 59,
+        "sha256": "0a5034997e47499d758115fa580ad21d96557d2a32c89f2263bcfd3fa8a9a6e5"
+      },
+      {
+        "file": "CityOfHeroesNative.rep/versioned/~index.dat",
+        "bytes": 59,
+        "sha256": "0a5034997e47499d758115fa580ad21d96557d2a32c89f2263bcfd3fa8a9a6e5"
+      }
+    ]
+  },
+  "invocation": {
+    "process": "CityOfHeroes.exe",
+    "noanalysis": true,
+    "read_only": true,
+    "external_deadline_seconds": 90,
+    "exit_code": 0
+  },
+  "query": {
+    "file": "CoHPhase9WorldSeams.java",
+    "sha256": "15f70c81397d054e47ccacab26a53d44c7497228804c35f56b4328a251cc481c"
+  },
+  "results": {
+    "producer": "Direct supervised Ghidra12.1.4 using recovered REA-assisted partial project",
+    "target_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+    "target_executed": false,
+    "autoanalysis": false,
+    "database_modified": false,
+    "whole_program_coverage": "partial inherited checkpoint; no PDB",
+    "retained_imports_unused": [],
+    "world_camera_anchors": [
+      {
+        "pattern": "groupfileload.c",
+        "hits": [
+          {
+            "address": "00a52bd9",
+            "memory_block": ".rdata",
+            "references": []
+          }
+        ]
+      },
+      {
+        "pattern": "groupdraw.c",
+        "hits": []
+      },
+      {
+        "pattern": "groupdrawinline.c",
+        "hits": []
+      },
+      {
+        "pattern": "gfx.c",
+        "hits": [
+          {
+            "address": "00a89226",
+            "memory_block": ".rdata",
+            "references": []
+          },
+          {
+            "address": "00a9791f",
+            "memory_block": ".rdata",
+            "references": []
+          }
+        ]
+      },
+      {
+        "pattern": "gfxwindow.c",
+        "hits": [
+          {
+            "address": "00a8b7e6",
+            "memory_block": ".rdata",
+            "references": []
+          }
+        ]
+      },
+      {
+        "pattern": "renderUtil.c",
+        "hits": []
+      },
+      {
+        "pattern": "rt_model.c",
+        "hits": [
+          {
+            "address": "00a9949b",
+            "memory_block": ".rdata",
+            "references": []
+          }
+        ]
+      },
+      {
+        "pattern": "rt_tricks.c",
+        "hits": [
+          {
+            "address": "00a9de2b",
+            "memory_block": ".rdata",
+            "references": []
+          }
+        ]
+      },
+      {
+        "pattern": "modern_bench_2wide",
+        "hits": []
+      },
+      {
+        "pattern": "gfxSetViewMat",
+        "hits": [
+          {
+            "address": "00a88afc",
+            "memory_block": ".rdata",
+            "references": []
+          }
+        ]
+      },
+      {
+        "pattern": "rdrSetupPerspectiveProjection",
+        "hits": []
+      }
+    ],
+    "selected_functions": [],
+    "limitations": [
+      "Raw world/camera-related anchors identify candidates only; no source function identity is assigned.",
+      "No source-function name is assigned without corroboration.",
+      "References depend on inherited partial database; empty search results do not establish absence of behavior.",
+      "Maximum3 non-thunk functions,10s per decompilation,800 retained instructions each; external process deadline90s."
+    ]
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "schema": "coh-phase9-source-world-material-pins-v1",
+  "source_files": [
+    {
+      "path": "upstream/i24/data/tricks/streets/elements/streets_misc.txt",
+      "bytes": 1214,
+      "sha256": "a43e2c151b3e40e3b98c026464e99a31c3d3dc5099c9b8aa829dde79c87ded33",
+      "git_blob_sha": "de8163b1ec6ae80d600325814948e4d76afb3f4b"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/tricks.c",
+      "bytes": 57263,
+      "sha256": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+      "git_blob_sha": "b8c7ae519d1d5ec31c9fd7861b96b3356eca82e9"
+    },
+    {
+      "path": "upstream/ouroboros/Common/seq/tricks.h",
+      "bytes": 11350,
+      "sha256": "4e6a46939e5b61848e73b34eaab34eca506a2665259e8ebd36171aa802159a49",
+      "git_blob_sha": "9f162a5aaa68c467001414b7d68d9240e13ddc42"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/texEnums.h",
+      "bytes": 3746,
+      "sha256": "6e96499b08adcfdf2a788286da086aead8e17d2b05ae8c31ee50752b7de778de",
+      "git_blob_sha": "7bdc7c98bd3bfebb7ac7f085af0a51e2d2a64300"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/tex.c",
+      "bytes": 113372,
+      "sha256": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+      "git_blob_sha": "32fa55bac30691a2893a8b52ad8702287d8cdb8a"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/model.c",
+      "bytes": 15456,
+      "sha256": "5a5fb0d03c94450b108436c4d67e1503246e72627cc6155d23ddc1e557755072",
+      "git_blob_sha": "1ea29021d5ead27d1ed72a1d09b330e54b0bdcf9"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/rendermodel.c",
+      "bytes": 29650,
+      "sha256": "ddff22bbd6e9dce14425d9cebf5aa25f01c3999bfd61875a9d0a452fce787f35",
+      "git_blob_sha": "d909b4c1b1d8cc534b941329f39ff2908a71e491"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_model.c",
+      "bytes": 67147,
+      "sha256": "1c9e8a6b16326cd2a07d3cd9707de01bdc9ab74af0fe3351622890f3acf0dfaa",
+      "git_blob_sha": "0f5c4ebf72e6c3b06af6ce735990f7d6798ec7b8"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_state.c",
+      "bytes": 48356,
+      "sha256": "6d80cb17585e40a3e1dea7f51d2d9d1129af2569ed6b9fe770dc7aaea734ea0d",
+      "git_blob_sha": "22518c3b4bb885faac1857ced9e3a3e507c2a064"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_tex.c",
+      "bytes": 19403,
+      "sha256": "5ce562b7184fa594eb0d678f7981fb5fb0f899b44a1e70c984949f68646fdaf5",
+      "git_blob_sha": "3d613dcff9d4a021159de801a87f9d388a3a4af6"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_tricks.c",
+      "bytes": 21101,
+      "sha256": "216c067b615a7979ade777d0dac85bd5374ab7929bbac4cc2f9b693363a7da65",
+      "git_blob_sha": "f28c7444ffde680e4fb9d78d45eba2a405cd84ef"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/thread/rt_init.c",
+      "bytes": 17221,
+      "sha256": "4203ba947fa608bcd21b7b9544ce84e6dcd5aabba28d82a123f474b6a232747f",
+      "git_blob_sha": "87318d9a7803ab78d97733e6f8c8ee803f23d8e7"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/graphics/groupdrawinline.c",
+      "bytes": 64782,
+      "sha256": "894a0f0f25f56a6659b66d6419f5089cb08d041c8b10371e7a154cae3f331824",
+      "git_blob_sha": "a94ec17ad82597e7492402133546c94f806977eb"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/colorblenddualfp.cg",
+      "bytes": 3263,
+      "sha256": "c59cea85cfed047397c88b7258230ef178be477ccab3af1a7db5681e993d66af",
+      "git_blob_sha": "548d2ed7bf1b0d552d7dc1fa63de764a7a0630b2"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/multiplyregfp.cg",
+      "bytes": 4246,
+      "sha256": "641ff2c805e82adab66d4235e4f1577ad5a5f430ae9ad6ee5eaea7ee92c5b398",
+      "git_blob_sha": "ecc8f71783f320a2cc02c5f7c9903899ff7376bb"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/vp_master_vp.cg",
+      "bytes": 16751,
+      "sha256": "fc9878f4fe57ff430a018c66c208e18e8c00dcad6737a4a48c8d16f4ef8ecfd8",
+      "git_blob_sha": "d83c6134e627747083928d575dd3e41fd7bd81b3"
+    },
+    {
+      "path": "upstream/i24/data/shaders/cgfx/functions.cgh",
+      "bytes": 37969,
+      "sha256": "5b602cf7f03b7ce7a6ea4e02fc34c1a2a33331a9c3a6516762b8823679f9a6ca",
+      "git_blob_sha": "3638d0ffa838ec22512b27eaa0db934c425894e8"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/render/model_cache.c",
+      "bytes": 18214,
+      "sha256": "23297301f34737585d65e39fc8b01445e5b4a8f665ac9cb49e9101f6f2cf299b",
+      "git_blob_sha": "fe9480bd52a45006cced14f2c30d3b51cedcd6e9"
+    }
+  ],
+  "tricks_tree": {
+    "path": "upstream/i24/data/tricks",
+    "git_tree_sha": "f1aab78ed5cd4e33046758f256e38e777a5ee4a3",
+    "file_count": 1585,
+    "full_blob_scan_required_before_qualification": true
+  },
+  "source_kernel_scope": "Original default/composite family selection, direct and parent-directory texture lookup, world non-boned render branch, tint-byte conversion, UV/sampler policy, original multiply/dual fragment arithmetic",
+  "original_cg_execution": false,
+  "original_atlas_light_grid_execution": false
+}
