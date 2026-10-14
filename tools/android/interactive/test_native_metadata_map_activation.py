@@ -248,7 +248,7 @@ class NativeMetadataMapActivationTests(unittest.TestCase):
         self.assertFalse(metadata.ACTIVATION_IMPLEMENTED)
         self.assertIsNone(metadata.COMPONENT_AUTHORITIES['mapserver'])
         self.assertIsNone(metadata.REVIEWED_EXECUTION_AUTHORITIES['mapserver'])
-        self.assertIsNone(startup.SOURCE_ONLY_COMPATIBILITY_REVIEW)
+        self.assertFalse(startup.SOURCE_ONLY_COMPATIBILITY_REVIEW['descriptor']['scope']['runtime_activation_allowed'])
         self.assertIsNone(startup.RUNTIME_CACHE_PROOF_DERIVATION)
         package, _, _, raw = synthetic_package()
         with self.assertRaisesRegex(ValueError, 'disabled'):
@@ -736,11 +736,10 @@ class NativeMetadataMapActivationTests(unittest.TestCase):
 
     def test_actual_committed_source_record_is_independent_and_cannot_authorize_execution(self):
         descriptor, document, kwargs = self.committed_real_source_review()
-        self.assertIsNone(startup.SOURCE_ONLY_COMPATIBILITY_REVIEW)
-        with self.assertRaisesRegex(ValueError, 'source-only compatibility review is not frozen'):
+        self.assertEqual(startup.SOURCE_ONLY_COMPATIBILITY_REVIEW, {'descriptor': descriptor, 'document': document})
+        inspected = startup.inspect_committed_source_review(descriptor, **kwargs)
+        with patch.object(startup, 'SOURCE_ONLY_COMPATIBILITY_REVIEW', None), self.assertRaisesRegex(ValueError, 'source-only compatibility review is not frozen'):
             startup.inspect_committed_source_review(descriptor, **kwargs)
-        with patch.object(startup, 'SOURCE_ONLY_COMPATIBILITY_REVIEW', {'descriptor': descriptor, 'document': document}):
-            inspected = startup.inspect_committed_source_review(descriptor, **kwargs)
         self.assertFalse(inspected['scope']['runtime_activation_allowed'])
         self.assertFalse(inspected['scope']['shipping_predecessor_execution_validated'])
         self.assertFalse(inspected['scope']['behavioral_collision_validated'])

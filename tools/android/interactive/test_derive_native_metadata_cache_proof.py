@@ -208,7 +208,7 @@ class CacheProofDerivationTests(unittest.TestCase):
                 with self.subTest(field=field),self.assertRaises(ValueError):derive.verify_derivation_source(bad,repo)
 
     def test_production_authorities_remain_closed(self):
-        self.assertIsNone(derive.startup.SOURCE_ONLY_COMPATIBILITY_REVIEW)
+        self.assertFalse(derive.startup.SOURCE_ONLY_COMPATIBILITY_REVIEW['descriptor']['scope']['runtime_activation_allowed'])
         self.assertIsNone(derive.startup.RUNTIME_CACHE_PROOF_DERIVATION)
         self.assertEqual(derive.metadata.COMPONENT_AUTHORITIES,{'game':None,'mapserver':None})
         self.assertFalse(derive.metadata.ACTIVATION_IMPLEMENTED)

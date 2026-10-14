@@ -4,6 +4,8 @@ on:
     branches: [codex/character-persistence-continuation]
     paths:
       - .github/workflows/android-map-startup-native.yml
+      - tools/android/interactive/classify_map_startup_native_change.py
+      - tools/android/interactive/test_map_startup_native_change.py
       - tools/prepare_map_startup_source.py
       - tools/map_startup_animation_certificate.py
       - tools/map_startup_monorail_budget.py
@@ -20,10 +22,36 @@ on:
   workflow_dispatch:
 permissions: {contents: read, actions: read}
 concurrency:
-  group: android-map-startup-native
+  group: ${{ github.event_name == 'workflow_dispatch' && format('android-map-startup-native-manual-{0}', github.run_id) || 'android-map-startup-native' }}
+  # Host-only pushes must not interrupt a genuine native qualification.
   cancel-in-progress: false
 jobs:
+  change-scope:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      native_required: ${{ steps.scope.outputs.native_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          sparse-checkout: |
+            .github/workflows
+            tools/android/interactive
+      - name: Host change-scope and retained native-body regression gates
+        run: python3 -m unittest discover -s tools/android/interactive -p test_map_startup_native_change.py -v
+      - name: Admit only proved host-only changes to retained native consumers
+        id: scope
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_map_startup_native_change.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: coh-map-startup-change-scope, path: out/map-startup-change-scope.json, if-no-files-found: warn, retention-days: 90}
   native:
+    needs: change-scope
+    if: ${{ always() && (needs.change-scope.result != 'success' || needs.change-scope.outputs.native_required != 'false') }}
     runs-on: windows-2025-vs2026
     timeout-minutes: 90
     steps:

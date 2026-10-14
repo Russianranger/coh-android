@@ -33,6 +33,10 @@ CLIENT_ZONE_STARTUP_DOCS = frozenset({
     'docs/android-evidence/native-metadata-adapter-0.13.37-root-integration.json',
 })
 CLIENT_ZONE_STARTUP_ALLOWED = CLIENT_ZONE_STARTUP_DOCS | frozenset({
+    '.github/workflows/android-startup-recovery-review.yml',
+    '.github/workflows/android-map-startup-native.yml',
+    'tools/android/interactive/classify_map_startup_native_change.py',
+    'tools/android/interactive/test_map_startup_native_change.py',
     '.github/workflows/android-client-zone-startup.yml',
     'android/guest/game_device_diagnostic.py',
     'android/guest/client_startup_diagnostic.py',
