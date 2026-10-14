@@ -1,0 +1,101 @@
+{
+  "format": 1,
+  "role": "dormant_guest_ASCII_case_alias_correction",
+  "source_root": "/workspace/scratch/5d16603ca7ff/live-service-037",
+  "files": {
+    "android/guest/client_live_directory_control.py": {
+      "bytes": 13303,
+      "sha256": "80f5e02e17992fcae58331b8f4cbea789f2ca571e7306b62747b62e463bf70af"
+    },
+    "tools/android/interactive/test_client_live_directory_control.py": {
+      "bytes": 20369,
+      "sha256": "64308ffaa70270ccdde99518466bc8c8334d244afd03697648bc7c779ae86644"
+    }
+  },
+  "source_pins_pre": {
+    "android/guest/client_live_directory_control.py": {
+      "bytes": 13303,
+      "sha256": "80f5e02e17992fcae58331b8f4cbea789f2ca571e7306b62747b62e463bf70af"
+    },
+    "tools/android/interactive/test_client_live_directory_control.py": {
+      "bytes": 20369,
+      "sha256": "64308ffaa70270ccdde99518466bc8c8334d244afd03697648bc7c779ae86644"
+    }
+  },
+  "source_pins_post": {
+    "android/guest/client_live_directory_control.py": {
+      "bytes": 13303,
+      "sha256": "80f5e02e17992fcae58331b8f4cbea789f2ca571e7306b62747b62e463bf70af"
+    },
+    "tools/android/interactive/test_client_live_directory_control.py": {
+      "bytes": 20369,
+      "sha256": "64308ffaa70270ccdde99518466bc8c8334d244afd03697648bc7c779ae86644"
+    }
+  },
+  "controls": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-W",
+      "error::ResourceWarning",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/android/interactive",
+      "-p",
+      "test_client_live_directory_control.py",
+      "-v"
+    ],
+    "tests": 36,
+    "prior_retained_cases": 32,
+    "fresh_added_cases": 4,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "seconds": 0.3386386120109819,
+    "ResourceWarning": "error",
+    "log": {
+      "bytes": 6437,
+      "sha256": "aaaf7ab73a75ecf5008c219154750e5b601a9c6fc4466293e86b5cb0cdb624a0"
+    }
+  },
+  "previous_freeze": {
+    "bytes": 2458,
+    "sha256": "b5feb0fbb01c70ddb6d9ca281cbeb9c4879baeee981a2c9a107148a7280b3b58"
+  },
+  "previous_raw_files": {
+    "android/guest/client_live_directory_control.py": {
+      "bytes": 12719,
+      "sha256": "596f7bc6523ed6da95d1a162c1d332fa2f77ccfa1aa651d7096fdfa86ad923c3"
+    },
+    "tools/android/interactive/test_client_live_directory_control.py": {
+      "bytes": 17012,
+      "sha256": "c85d4ebcaee5991766d125aee66847d37862630d8b4168c801d3a106d04a20cc"
+    }
+  },
+  "patch": {
+    "bytes": 5946,
+    "sha256": "ecf247ea79499611e1d48c6344c5fa59eacd8c90b8f4efaa7b88c97cf8be7c71"
+  },
+  "changes": [
+    "Remove all ASCII-case aliases of LIVE prefix from inherited str/bytes shared environments.",
+    "Register every AUTH key case alias containing a valid64hex nonce before current authority validation or refusal diagnostics.",
+    "Preserve unrelated prefixes and nonASCII Unicode lookalikes without folding them into genuine control keys.",
+    "Assign only canonical fresh Game variables after all unchanged current-file and external typed proof gates."
+  ],
+  "scope": {
+    "Android_runtime_executed": false,
+    "native_Game_executed": false,
+    "Wine_executed": false,
+    "FEX_executed": false,
+    "PRoot_executed": false,
+    "JNI_executed": false,
+    "runtime_integration_present": false,
+    "native_registration_allowed": false,
+    "publication_allowed": false,
+    "player_data_accessed": false,
+    "network_used": false,
+    "root_previous_28_path_stage_modified": false
+  },
+  "authority": "Controlled host tests of dormant module; compiled current runtime fixture and producer authority remain external and absent by default."
+}

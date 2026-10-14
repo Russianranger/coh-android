@@ -1,0 +1,85 @@
+{
+  "Android_Bionic_JNI_executed": false,
+  "JVM": "OpenJDK17.0.20+8-1-24.04-Ubuntu; jdk.compiler --release8",
+  "Process_NativeApi_custody_and_fstat_are_typed_host_mocks": true,
+  "actual_regular_FileChannel_controls": true,
+  "command": "PYTHONPATH=live-service-037/tools/android/interactive python -W error::ResourceWarning -m unittest test_client_live_directory_fixture -v",
+  "elapsed_seconds": 17.734,
+  "errors": 0,
+  "executed_utc": "2026-10-14T09:34:07.442504+00:00",
+  "failures": 0,
+  "format": 1,
+  "fresh_host_controls": 75,
+  "inherited_controls": 0,
+  "log": {
+    "bytes": 7925,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/android-metadata-fixture-revision-2-host.log",
+    "sha256": "3dcd841c186984f04e73705609ee7ca59f7e5789f9ea85cacc8efa5504a6e0c4"
+  },
+  "native_Game_executed": false,
+  "native_SDK_probe_executed": false,
+  "native_observer_source": {
+    "bytes": 10186,
+    "path": "/workspace/scratch/5d16603ca7ff/client-live-native-037/probe/coh_live_bridge_probe.c",
+    "sha256": "690a011f2599975b70a62ca7958bcb97d5c7a9ddbe5d255e85be472d552ec0d6"
+  },
+  "overlapping_prior_runs_not_added": true,
+  "packaged_Android_PRoOT_Wine_FEX_executed": false,
+  "physical_performance_measured": false,
+  "prior_72_source_receipt": {
+    "bytes": 4124,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/android-metadata-fixture-host-qualification.json",
+    "sha256": "be16d353db9be13d412c8e662aabeba6b10787365c9b238f225616129ec74a36"
+  },
+  "production_admission_allowed": false,
+  "reference_observer_parser": {
+    "bytes": 4372,
+    "path": "/workspace/scratch/5d16603ca7ff/client-live-native-037/probe/parse_live_bridge_probe.py",
+    "sha256": "edf72961df82cb5af9b529115d4e609932f873b3c811079a0f033e5c91621dd5"
+  },
+  "remaining_gates": [
+    "Reviewed actual Android Os.fstat/noFollow/UID/device/inode packet/fixture adapter",
+    "Current packaged PRoot/Wine/FEX tiny NT observer with held native PID/thread, exit, console, reaping and cleanup",
+    "Fresh probe SDK binary/component APK provenance",
+    "Actual current asset-view/root alias, sharing and per-NT-batch retarget controls",
+    "Current finalized Game namespace and seven held root identities plus native NT directory ACK before first JNI NEXT",
+    "Complete native Game compatibility and independent integration review"
+  ],
+  "revision": 2,
+  "role": "fresh_owned_Android_metadata_fixture_source_controls",
+  "skips": 0,
+  "source_dependencies": {
+    "ClientGuestNamespace.java": {
+      "bytes": 22515,
+      "path": "/workspace/scratch/5d16603ca7ff/live-service-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java",
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c"
+    },
+    "ClientLiveDirectoryOperation.java": {
+      "bytes": 30653,
+      "path": "/workspace/scratch/5d16603ca7ff/live-service-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java",
+      "sha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a"
+    },
+    "ClientLiveDirectoryService.java": {
+      "bytes": 16096,
+      "path": "/workspace/scratch/5d16603ca7ff/live-service-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java",
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0"
+    },
+    "ClientRuntime.java": {
+      "bytes": 199541,
+      "path": "/workspace/scratch/5d16603ca7ff/live-service-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+      "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9"
+    },
+    "NativeLiveDirectory.java": {
+      "bytes": 1119,
+      "path": "/workspace/scratch/5d16603ca7ff/live-service-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java",
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    }
+  },
+  "source_freeze": {
+    "bytes": 1318,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/android-metadata-fixture-source-freeze-revision-2.json",
+    "sha256": "9796090bd0ebb6197c36f7da0ea7dfa3c92325f10cf49632af63b6535915c70c"
+  },
+  "source_or_player_SQL_mutations": false,
+  "status": "PASSED_HOST_SOURCE_ONLY"
+}
