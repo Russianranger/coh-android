@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "phases": [
+    10,
+    11,
+    12
+  ],
+  "source_commit": "fdc5e61c7c746039a8d511eee36585bfa2b3c4b2",
+  "workflow_run_id": 38496453213,
+  "job_id": 115633206614,
+  "passed": false,
+  "failed_stage": "Assemble isolated ARM64 test APK",
+  "source_and_host_oracles_passed": true,
+  "arm64_apk_built": false,
+  "android_emulator_executed": false,
+  "ndk": "28.2.13676358",
+  "compile_target": "aarch64-none-linux-android26",
+  "failure": "AAudioStreamBuilder_setUsage and AAudioStreamBuilder_setContentType are introduced in Android 28 and unavailable at the declared API 26 native target",
+  "source_location": "native-android/audio/coh_aaudio.c:60-61",
+  "retained_artifact": {
+    "id": 11864075782,
+    "bytes": 16062,
+    "sha256": "adc33264dd30ff2a8a54e463abd15e48aab4a326efb54ef98eb8d29c09f55f92"
+  },
+  "evidence_basis": "Completed GitHub Actions job compiler diagnostics and artifact upload receipt"
+}

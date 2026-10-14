@@ -57,8 +57,8 @@ int coh_audio_play(const uint8_t *data,size_t length,CohAudioPlayback *out) {
     AAudioStreamBuilder_setChannelCount(builder,(int32_t)f.channels);
     AAudioStreamBuilder_setSharingMode(builder,AAUDIO_SHARING_MODE_SHARED);
     AAudioStreamBuilder_setPerformanceMode(builder,AAUDIO_PERFORMANCE_MODE_NONE);
-    AAudioStreamBuilder_setUsage(builder,AAUDIO_USAGE_GAME);
-    AAudioStreamBuilder_setContentType(builder,AAUDIO_CONTENT_TYPE_SONIFICATION);
+    /* API 26 supports the sink contract. The optional usage/content setters
+     * begin at API 28; retain AAudio's default MEDIA/MUSIC routing here. */
     if (AAudioStreamBuilder_openStream(builder,&stream)!=AAUDIO_OK || !stream) { out->backend_errors++;goto cleanup; }
     out->opened=1;
     out->actual_rate=AAudioStream_getSampleRate(stream);

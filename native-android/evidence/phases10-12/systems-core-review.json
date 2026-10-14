@@ -16,9 +16,9 @@
     "tools/input_fixture/source-pins.json": "9378c38b82ab99a5d4dffcabcc74b23a5e0c1f8a65debefb7c22d7550bb85743",
     "audio/coh_audio.c": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3",
     "audio/coh_audio.h": "b723bc4d5252cd3c6f2541c00dc5779222a84ad326af9fb75e7d438908462fee",
-    "audio/coh_aaudio.c": "c514e95ef5b284468e66b41914c6ece7fd315f21583fa234dde1262d90ccb362",
+    "audio/coh_aaudio.c": "bc43afb608fa0a079931d19ef6bc6f7dae7d67292f8c722c2b4dc6ca9901e0d6",
     "audio/source_gain_golden.h": "ab28b9f07afba0a1be90eaf89d6f0af1d3878d6ac7ac9305ea015545cdbcf59c",
-    "audio/README.md": "88077ac79fe6f91c18cb664ae2158ff74aa4c29f8efcdc2a5fa60c82dbc26914",
+    "audio/README.md": "039caa869682097c715dc7e714ac42238e5e5a2a24fc4354f91e3ac5279f3662",
     "tools/audio_fixture/acquire.py": "5e9775e397f976053187963d0ae66a9608ae6fb888e1bf1f7bf4c5abd5321a6c",
     "tools/audio_fixture/pins.json": "cc9d3c1a3e73c598e370d2dec83d3f4f71708ca11de46e1efe948c8ee1ba9ab1",
     "tools/audio_fixture/source_oracle.py": "6e56756d4327773f03c87f7d67534ad367b2cc4ee4b601032061cec9063fc8e5",
@@ -86,7 +86,33 @@
       "AAudio sink only; original mixer/scheduler/3D/audio latency unqualified",
       "Backend frame counters do not establish physical speaker audibility",
       "Underrun count is observed; sustained underrun-free gameplay is unqualified"
-    ]
+    ],
+    "minimum_android_api": 26,
+    "all_used_aaudio_functions_declared_api26": true,
+    "aaudio_api_declaration_levels": {
+      "AAudioStreamBuilder_delete": 26,
+      "AAudioStreamBuilder_openStream": 26,
+      "AAudioStreamBuilder_setChannelCount": 26,
+      "AAudioStreamBuilder_setDirection": 26,
+      "AAudioStreamBuilder_setFormat": 26,
+      "AAudioStreamBuilder_setPerformanceMode": 26,
+      "AAudioStreamBuilder_setSampleRate": 26,
+      "AAudioStreamBuilder_setSharingMode": 26,
+      "AAudioStream_close": 26,
+      "AAudioStream_getChannelCount": 26,
+      "AAudioStream_getFormat": 26,
+      "AAudioStream_getFramesRead": 26,
+      "AAudioStream_getSampleRate": 26,
+      "AAudioStream_getState": 26,
+      "AAudioStream_getTimestamp": 26,
+      "AAudioStream_getXRunCount": 26,
+      "AAudioStream_requestStart": 26,
+      "AAudioStream_requestStop": 26,
+      "AAudioStream_waitForStateChange": 26,
+      "AAudioStream_write": 26,
+      "AAudio_createStreamBuilder": 26
+    },
+    "backend_routing": "AAudio default MEDIA usage and MUSIC content; optional API28 routing setters omitted"
   },
   "protocol": {
     "source_files": 10,
@@ -114,7 +140,8 @@
   },
   "review_findings_resolved": [
     "Protocol authenticated negative envelopes now reach selected-profile branches with valid checksums/ciphers",
-    "Audio sanitizer short-header and truncated-tail tests use exact-size allocations"
+    "Audio sanitizer short-header and truncated-tail tests use exact-size allocations",
+    "Real NDK API26 compile failure corrected by removing only optional API28 usage/content setters; all remaining21 AAudio functions declared API26"
   ],
   "android_native_backend_executed_by_this_review": false,
   "full_original_game_execution": false,
@@ -122,5 +149,30 @@
   "physical_audibility_qualified": false,
   "pending_integration_review": [
     "Android app callback/session association and emulator evidence after owners freeze"
-  ]
+  ],
+  "ndk_api26_fix_review": {
+    "passed": true,
+    "failure_workflow_run_id": 38496453213,
+    "failure_job_id": 115633206614,
+    "actual_job_compiler_diagnostics_independently_read": true,
+    "failed_minimum_target": "aarch64-none-linux-android26",
+    "header_source_url": "https://android.googlesource.com/platform/frameworks/av/+/refs/tags/android-13.0.0_r1/media/libaaudio/include/aaudio/AAudio.h",
+    "header_sha256": "2d3545b0a7d213e5059685a978e8cb45919f8831c07f655dc69604e0ffba1d86",
+    "changed_reviewed_files": [
+      {
+        "path": "audio/coh_aaudio.c",
+        "before_sha256": "c514e95ef5b284468e66b41914c6ece7fd315f21583fa234dde1262d90ccb362",
+        "after_sha256": "bc43afb608fa0a079931d19ef6bc6f7dae7d67292f8c722c2b4dc6ca9901e0d6"
+      },
+      {
+        "path": "audio/README.md",
+        "before_sha256": "88077ac79fe6f91c18cb664ae2158ff74aa4c29f8efcdc2a5fa60c82dbc26914",
+        "after_sha256": "039caa869682097c715dc7e714ac42238e5e5a2a24fc4354f91e3ac5279f3662"
+      }
+    ],
+    "portable_source_oracles_pcm_selfchecks_and_protocol_unchanged": true,
+    "minimum_sdk_unchanged": true,
+    "qualification_checks_or_tolerances_weakened": false,
+    "native_android_backend_success_still_pending_rerun": true
+  }
 }

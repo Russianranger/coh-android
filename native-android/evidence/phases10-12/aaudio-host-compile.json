@@ -13,5 +13,32 @@
   ],
   "host_adapter": "__INTRODUCED_IN(x) empty on Linux host only",
   "actual_android_backend_executed": false,
-  "scope": "Typed official Android 13 AAudio API structural compilation only"
+  "scope": "Typed official Android 13 AAudio API structural compilation only",
+  "minimum_android_api": 26,
+  "used_api_levels": {
+    "AAudioStreamBuilder_delete": 26,
+    "AAudioStreamBuilder_openStream": 26,
+    "AAudioStreamBuilder_setChannelCount": 26,
+    "AAudioStreamBuilder_setDirection": 26,
+    "AAudioStreamBuilder_setFormat": 26,
+    "AAudioStreamBuilder_setPerformanceMode": 26,
+    "AAudioStreamBuilder_setSampleRate": 26,
+    "AAudioStreamBuilder_setSharingMode": 26,
+    "AAudioStream_close": 26,
+    "AAudioStream_getChannelCount": 26,
+    "AAudioStream_getFormat": 26,
+    "AAudioStream_getFramesRead": 26,
+    "AAudioStream_getSampleRate": 26,
+    "AAudioStream_getState": 26,
+    "AAudioStream_getTimestamp": 26,
+    "AAudioStream_getXRunCount": 26,
+    "AAudioStream_requestStart": 26,
+    "AAudioStream_requestStop": 26,
+    "AAudioStream_waitForStateChange": 26,
+    "AAudioStream_write": 26,
+    "AAudio_createStreamBuilder": 26
+  },
+  "all_used_apis_available_at_minimum": true,
+  "routing": "AAudio default MEDIA usage and MUSIC content; API28 optional setters omitted",
+  "backend_source_sha256": "bc43afb608fa0a079931d19ef6bc6f7dae7d67292f8c722c2b4dc6ca9901e0d6"
 }

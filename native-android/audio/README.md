@@ -26,6 +26,8 @@ internal sample rounding is not qualified.
 
 The caller runs `coh_audio_play` on one worker. AAudio requested sample rate,
 channel count and PCM16 format must equal the returned stream configuration.
+The sink retains AAudio's default MEDIA usage and MUSIC content routing, so all
+used AAudio APIs are available at the application's minimum Android API 26.
 Partial writes preserve remaining frames. Stream submission, consumption,
 underrun count and optional presentation timestamp are reported separately.
 Those engine counters do not prove physical speaker audibility. Only the user

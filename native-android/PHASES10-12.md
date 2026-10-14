@@ -1,6 +1,6 @@
 # Phases 10–12: input, audio output and packet framing
 
-Phase 9 is accepted on the physical AYN Thor. The [world receipt](evidence/phase9/thor-qualification.json) records the successful precision correction and measured background/return recovery. These three successor gates are developed together in an isolated package, `org.coh.systemsprobe`, version `0.1.0-phases10-12`. Actual Android qualification is pending the dedicated build and emulator workflow.
+Phase 9 is accepted on the physical AYN Thor. The [world receipt](evidence/phase9/thor-qualification.json) records the successful precision correction and measured background/return recovery. These three successor gates are developed together in an isolated package, `org.coh.systemsprobe`, version `0.1.0-phases10-12`. Actual Android qualification is pending the dedicated build and emulator workflow. The first source/oracle stage passed; its ARM64 compile caught two optional API28 AAudio calls at the declared API26 floor. The backend now uses the default MEDIA/MUSIC routing and retains only API26 calls; the [first failed build receipt](evidence/phases10-12/first-native-build-failure.json) remains recorded.
 
 | Gate | Implemented slice | Qualification boundary |
 |---|---|---|
