@@ -1,0 +1,83 @@
+{
+  "format": 1,
+  "source_commit": "8a08a1927225fdaa334ae330b8c8c5d044306fc2",
+  "run_id": 38489822992,
+  "job_id": 115613213713,
+  "overall_status": "failed",
+  "failure": "Native world changed exact provider/native component inputs",
+  "genuine_ready_cases": 1,
+  "sole_ready_case": {
+    "map_id": 1,
+    "role": "stock",
+    "fx_variant": "server_only",
+    "native_console_seconds": 13.776624,
+    "host_status_and_post_query_tick_seconds": 15.125,
+    "PhysX_objects": 2311,
+    "native_Db_status": {
+      "map_id": 1,
+      "world": "City_01_01",
+      "address": "127.0.0.1",
+      "port": 7001,
+      "network_age_seconds": 0,
+      "stats_age_seconds": 0,
+      "native_response_sha256": "8261ceba0bdf31f5559d30baae1bb1e634527b8878f41203a265d4b52adbd2fb"
+    },
+    "held_progress_before_status": {
+      "windows_pid": 7752,
+      "main_thread_id": 7028,
+      "sequence": 130,
+      "stage": "SLEEP",
+      "tick_started": 3,
+      "tick_completed": 3,
+      "raw_record_hex": "434f484d415031000100000080000000481e0000741b00008200000024000000030000000300000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "raw_record_sha256": "ca05611e09b0e15d824c7bc52eba3d71d6abf5c8b660c7ec555f8e735f700785"
+    },
+    "held_progress_after_status": {
+      "windows_pid": 7752,
+      "main_thread_id": 7028,
+      "sequence": 310,
+      "stage": "SLEEP",
+      "tick_started": 9,
+      "tick_completed": 9,
+      "raw_record_hex": "434f484d415031000100000080000000481e0000741b00003601000024000000090000000900000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "raw_record_sha256": "85022cc860f05e4f18c013306a5c9a1a5d0315435030ab409098b331f6bb165e"
+    },
+    "memory_last": {
+      "elapsed_seconds": 14.438,
+      "working_set_bytes": 719716352,
+      "private_commit_bytes": 1634603008,
+      "lifetime_peak_working_set_bytes": 1162219520,
+      "lifetime_peak_commit_bytes": 1696100352
+    }
+  },
+  "cache_additions": {
+    "BIN_members": 545,
+    "BIN_bytes": 15466161,
+    "BIN_changed_members": 18,
+    "BIN_changed_bytes": 1516872
+  },
+  "original_provider_delta": {
+    "added_count": 506,
+    "added_bytes": 1336336,
+    "extensions": {
+      ".bounds": 506
+    },
+    "all_added_within_exact_geometry_bounds_root": true,
+    "changed": 0,
+    "removed": 0
+  },
+  "owned_cleanup_verified": true,
+  "actual_candidate_world_cases": 0,
+  "Kings_world_cases": 0,
+  "full_FX_world_cases": 0,
+  "complete_generation_proof_passed": false,
+  "native_rebuild_performed": false,
+  "asset_preparation_reexecuted": false,
+  "physical_device_measured": false,
+  "shipping_allowed": false,
+  "artifact": {
+    "id": 11862252874,
+    "zip_bytes": 372926,
+    "zip_sha256": "cffe248141252a3e9b72b663dacfce7dadb7c5a0f5cf6152a53af9785240292a"
+  }
+}
