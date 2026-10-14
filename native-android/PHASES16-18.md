@@ -28,15 +28,21 @@ separately under `tools/locomotion_fixture`; their complete qualification is
 retained with the new batch evidence.
 
 The shared renderer checks actual CPU/GPU transforms, visible actor/world
-pixels, real bench occlusion and opaque reverse draw-order depth equality.
-These checks precede continuous rendering. It does not read back every gameplay
+pixels and real bench occlusion. Opaque reverse draw-order checks require zero
+non-tie color mismatches; each bounded color difference must have individually
+verified, identical integer DEPTH24 values from the actual world, actor and
+combined depth textures. Clear, world-front and actor-front controls reject
+a constant or disconnected depth sampler. These checks precede continuous rendering. It does not read back every gameplay
 frame or recenter the logical camera between diagnostic rounds.
 
 Java foreground/Surface epochs are also native tickets. A queued render call
 cannot reset cancellation after its epoch becomes obsolete. Focus loss clears
 controls. Ordinary context reconstruction retains logical state; process death
 or a new app launch starts a fresh offline session. Reset actor is explicit.
-Reports are immutable export snapshots and atomic, coalesced internal writes.
+Java captures export bytes before opening the document picker. Android checks
+verify a real Save, valid session evidence and pre-picker event ordering, and
+retain the exported file hash; they do not compare that hash to an independently
+recorded pre-picker byte digest. Internal writes are atomic and coalesced.
 
 ## Validation and device boundary
 
@@ -56,3 +62,19 @@ The conventional launcher/client, earlier native probes, existing asset packs
 and user data are unchanged. Work remains on `native-android` only.
 
 See [one combined Thor check](session-client/THOR-TEST.md).
+
+## Next related development batch
+
+After physical acceptance of this batch, prioritize a bounded walkable native
+world rather than another isolated transport or rendering probe:
+
+| Gate | Proposed integrated milestone | Required dependency and acceptance |
+| --- | --- | --- |
+| 19 | Authentic Atlas ground and obstacle group with real collision data | Expand the authored geometry group beyond the bench; decode the GEO collision records and source flags. Render/collision transforms must match, with actual traversable ground and bounded loading. Current collision packs are metadata only. |
+| 20 | Grounded source WALK movement and wall handling | Port the bounded `entWalk`/`DoPhysics` and `entWorldCollide`/surface/move/slide subset against real `collGrid` results from gate 19. Require stable grounding, ordinary speed, obstacle collision and source movement trace parity. Gravity/jump requires complete dependencies; server prediction remains separate. |
+| 21 | Authored directional locomotion and transition closure | Resolve RunPre and early-stop `Idle_Walk_Post` → `Idle_Ready`, including Huge's inherited male/walk fallback, plus Huge backward/left/right clips and source interruption/member priorities and interpolation. Qualify short taps, release, reversal, diagonals and obstruction in the same scene. |
+
+The current spawn height is a declared bench AABB placement adapter, not
+terrain detection. Full sequencer execution, full Atlas loading and live
+server authority remain separate. GPU palette skinning is a subsequent
+performance milestone; the accepted CPU skinning path currently functions.

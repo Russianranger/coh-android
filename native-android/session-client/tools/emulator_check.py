@@ -170,25 +170,39 @@ def bounds(node):
     return values
 
 
+def button_nodes(nodes,label):
+    # Android's Material button transformation exposes all-caps accessibility
+    # text even when the app calls setText with sentence case.
+    return [node for node in nodes if node.get('text','').casefold()==label.casefold()
+            and node.get('enabled')=='true' and node.get('clickable')=='true'
+            and node.get('package')==PACKAGE]
+
+
+def button_listener(value,sequence,event_type):
+    matched=[e for e in value['events'] if e['sequence']>sequence and e['type'] in
+             {'reset_requested','recreate_requested','export_requested'}]
+    if not matched:
+        return None
+    assert len(matched)==1 and matched[0]['type']==event_type, 'Measured tap reached wrong/multiple action listeners'
+    return matched[0]
+
+
 def tap_button(label, event_type):
     before = report()
     sequence = max(e['sequence'] for e in before['events'])
     measurements = []
     for _ in range(3):
-        matches = [node for node in ui_nodes() if node.get('text') == label and node.get('enabled') == 'true'
-                   and node.get('clickable') == 'true' and node.get('package') == PACKAGE]
+        matches=button_nodes(ui_nodes(),label)
         assert len(matches) == 1, 'Actual Android button missing: ' + label
         measurements.append(bounds(matches[0]))
         time.sleep(.15)
     assert measurements.count(measurements[0]) == len(measurements), 'Button moved during coordinate measurement'
     x0, y0, x1, y1 = measurements[0]
     adb('shell', 'input', 'touchscreen', 'tap', str((x0+x1)//2), str((y0+y1)//2))
-    result = wait(lambda r:any(e['type'] == event_type and e['sequence'] > sequence for e in r['events']),
+    result = wait(lambda r:button_listener(r,sequence,event_type) is not None,
                   'Actual button listener ' + label)
-    matched = [e for e in result['events'] if e['sequence'] > sequence and e['type'] in
-               {'reset_requested', 'recreate_requested', 'export_requested'}]
-    assert len(matched) == 1 and matched[0]['type'] == event_type, 'Measured tap reached wrong/multiple action listeners'
-    BUTTON_PROOFS.append({'label': label, 'bounds': measurements, 'event': matched[0]})
+    matched=button_listener(result,sequence,event_type)
+    BUTTON_PROOFS.append({'label': label, 'bounds': measurements, 'event': matched})
     save('emulator-button-tap-proof.json', {'schema': 1, 'passed': True, 'taps': BUTTON_PROOFS})
     return result
 
@@ -200,7 +214,7 @@ def scene_input_bounds():
     screen_width,screen_height=struct.unpack_from('>II',screen,16)
     (OUTPUT/'emulator-input-area-screen.png').write_bytes(screen)
     nodes=[n for n in ui_nodes() if n.get('package')==PACKAGE]
-    labelled=[n for n in nodes if n.get('content-desc')=='Native Atlas scene']
+    labelled=[n for n in nodes if n.get('content-desc','').casefold()=='native atlas scene']
     assert len(labelled)<=1, 'Duplicate accessible native scene labels'
     surface_nodes=[n for n in nodes if n.get('class')=='android.view.SurfaceView']
     if labelled:
@@ -360,10 +374,10 @@ def export_document():
     saved = False
     while time.monotonic() < deadline and not saved:
         nodes = ui_nodes()
-        save_nodes = [n for n in nodes if n.get('text', '').upper() == 'SAVE' and n.get('enabled') == 'true']
-        candidates = save_nodes or [n for n in nodes if n.get('text') == 'Downloads' and n.get('enabled') == 'true']
+        save_nodes = [n for n in nodes if n.get('text', '').casefold() == 'save' and n.get('enabled') == 'true']
+        candidates = save_nodes or [n for n in nodes if n.get('text','').casefold() == 'downloads' and n.get('enabled') == 'true']
         if not candidates:
-            candidates = [n for n in nodes if n.get('content-desc') in ('Show roots', 'Open navigation drawer')]
+            candidates = [n for n in nodes if n.get('content-desc','').casefold() in ('show roots', 'open navigation drawer')]
         if candidates:
             x0,y0,x1,y1 = bounds(candidates[0])
             adb('shell', 'input', 'touchscreen', 'tap', str((x0+x1)//2), str((y0+y1)//2))

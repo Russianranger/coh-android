@@ -1,0 +1,119 @@
+{
+  "passed": true,
+  "bounds": [
+    0,
+    440,
+    1080,
+    1857
+  ],
+  "selection": {
+    "scope": "actual Android accessibility node, Native Atlas scene",
+    "screen_width": 1080,
+    "screen_height": 1920,
+    "accessibility_bounds": [
+      0,
+      440,
+      1080,
+      1857
+    ],
+    "fresh_layout_samples": [
+      {
+        "updated_at": "2026-10-14T20:27:26.063Z",
+        "native_frames": 703,
+        "input_area": {
+          "left": 0,
+          "top": 440,
+          "width": 1080,
+          "height": 1417,
+          "shown": true,
+          "surface_ready": true
+        },
+        "bounds": [
+          0,
+          440,
+          1080,
+          1857
+        ]
+      },
+      {
+        "updated_at": "2026-10-14T20:27:27.100Z",
+        "native_frames": 729,
+        "input_area": {
+          "left": 0,
+          "top": 440,
+          "width": 1080,
+          "height": 1417,
+          "shown": true,
+          "surface_ready": true
+        },
+        "bounds": [
+          0,
+          440,
+          1080,
+          1857
+        ]
+      },
+      {
+        "updated_at": "2026-10-14T20:27:28.131Z",
+        "native_frames": 757,
+        "input_area": {
+          "left": 0,
+          "top": 440,
+          "width": 1080,
+          "height": 1417,
+          "shown": true,
+          "surface_ready": true
+        },
+        "bounds": [
+          0,
+          440,
+          1080,
+          1857
+        ]
+      }
+    ],
+    "selected_bounds": [
+      0,
+      440,
+      1080,
+      1857
+    ]
+  },
+  "external_android_before": {
+    "key_down": 8,
+    "key_up": 8,
+    "key_repeat": 8,
+    "motion": 0,
+    "touch_begin": 0,
+    "touch_move": 0,
+    "touch_end": 0,
+    "touch_cancel": 0,
+    "focus_clear": 0,
+    "device_removed": 0,
+    "controller_events": 0,
+    "left_axis_directions": 0,
+    "right_axis_directions": 0,
+    "button_down_mask": 15728640,
+    "touch_motion_directions": 0
+  },
+  "external_android_after": {
+    "key_down": 8,
+    "key_up": 8,
+    "key_repeat": 8,
+    "motion": 0,
+    "touch_begin": 1,
+    "touch_move": 5,
+    "touch_end": 1,
+    "touch_cancel": 0,
+    "focus_clear": 0,
+    "device_removed": 0,
+    "controller_events": 0,
+    "left_axis_directions": 0,
+    "right_axis_directions": 0,
+    "button_down_mask": 15728640,
+    "touch_motion_directions": 2
+  },
+  "camera_yaw_before": 0,
+  "camera_yaw_after": 0.146172881,
+  "scope": "Actual Android touchscreen; same camera used by authored world and actor"
+}

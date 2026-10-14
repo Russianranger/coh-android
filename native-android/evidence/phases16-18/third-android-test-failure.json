@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "status": "failed_automation_incomplete",
+  "workflow_run_id": 38631384218,
+  "job_id": 116083602688,
+  "runtime_source_commit": "e88a02b284de16ed6f7caf1e6b689f2e85d0b6e8",
+  "artifact_id": 11926935368,
+  "artifact_zip_sha256": "f38d8de127b50e249bf3a5b0d9273b5190ada9ee42848890a86886d23ca255b4",
+  "artifact_zip_bytes": 5335885,
+  "failure": "tap_button(Recreate) exact case selector failed to match actual Android Material text RECREATE. Home, explicit Recreate and export checks were not reached. No physical acceptance.",
+  "apk_build_signature_architecture_passed": true,
+  "host_qualification_passed": true,
+  "native_failure": false,
+  "completed_observations": {
+    "frames": 781,
+    "tf_components": 81588,
+    "tf_mismatches": 0,
+    "tf_max_error": 0,
+    "direction_mask": 15,
+    "animation_transitions": 12,
+    "run_samples": 78,
+    "idle_samples": 818,
+    "raw_changed_pixels": 2,
+    "qualified_equal_depth_ties": 2,
+    "non_tie_mismatches": 0,
+    "depth_sampler_controls_passed": true,
+    "depth_codec_float_precision": 23,
+    "gl_errors": 0,
+    "egl_error": 0
+  },
+  "android_keyboard_and_touch_checks_passed": true,
+  "home_and_export_qualified": false,
+  "retained_reports": [
+    {
+      "file": "third-emulator-camera-proof.json",
+      "bytes": 2475,
+      "sha256": "7721772de3b46db93354310c55b96c17758f5b1e06422a8bdb8cc9cb24e9598f"
+    },
+    {
+      "file": "third-emulator-session-report.json",
+      "bytes": 100563,
+      "sha256": "20943f1776f024fafb72fc71223f6781a023d2fa17a4c67952a442fcb15d0c4c"
+    },
+    {
+      "file": "third-emulator-input-motion-proof.json",
+      "bytes": 6761,
+      "sha256": "f8f3e2113b75ab2f70eec602165c42caccfa383c92841a45cb4ce7ac88d757a7"
+    },
+    {
+      "file": "third-build-receipt.json",
+      "bytes": 4439,
+      "sha256": "28785eef8a28a60bf8f9c3420db0a853a157fbe685523ff8064c6c90169ef990"
+    }
+  ]
+}

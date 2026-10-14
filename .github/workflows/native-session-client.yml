@@ -13,6 +13,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: native-session-client-${{ github.ref }}
   cancel-in-progress: true
@@ -23,7 +24,14 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-        with: {persist-credentials: false}
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Qualify fail-closed package reuse guard
+        run: python3 native-android/session-client/tools/reuse_host_check.py --output native-android/results/session-client/reuse-host-checks.json
+      - name: Select exact pinned packages or the complete source build
+        id: package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 native-android/session-client/tools/reuse_qualified_package.py
       - uses: actions/setup-java@v4
         with: {distribution: temurin, java-version: '17'}
       - uses: android-actions/setup-android@v3
@@ -31,10 +39,12 @@ jobs:
           packages: platform-tools
           log-accepted-android-sdk-licenses: false
       - name: Install pinned Android build components
+        if: steps.package.outputs.reused != 'true'
         run: |
           sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
           python3 -m pip install Pillow==12.3.0
       - name: Recover accepted authored character and Atlas source fixtures
+        if: steps.package.outputs.reused != 'true'
         run: |
           mkdir -p native-android/results/session-client
           python3 native-android/tools/session_fixture/host_receipt.py --status started
@@ -44,11 +54,13 @@ jobs:
           python3 native-android/tools/world_fixture/acquire.py --output native-android/results/session-world-corpus --use-verified-local
           python3 native-android/tools/world_fixture/prepare.py --corpus native-android/results/session-world-corpus --output native-android/results/session-world-assets --evidence-output native-android/results/session-client/world-fixture --source-trick-audit native-android/results/session-client/source-trick-resolution.json
       - name: Recover authored idle, run and post-run tracks and combine runtime inputs
+        if: steps.package.outputs.reused != 'true'
         run: |
           python3 native-android/tools/locomotion_fixture/acquire.py --output native-android/results/session-locomotion-corpus --use-verified-local
           python3 native-android/tools/locomotion_fixture/prepare.py --corpus native-android/results/session-locomotion-corpus --output native-android/results/session-locomotion-assets
           python3 native-android/tools/session_fixture/prepare.py --character-assets native-android/results/session-character-assets --world-assets native-android/results/session-world-assets --locomotion-assets native-android/results/session-locomotion-assets --output native-android/session-client/app/src/main/assets --evidence-output native-android/results/session-client
       - name: Source-controlled movement, authored locomotion and character host qualification
+        if: steps.package.outputs.reused != 'true'
         run: |
           python3 native-android/session-client/tools/lifecycle_host_check.py --output native-android/results/session-client/lifecycle
           python3 native-android/tools/session_fixture/depth_codec_check.py --output native-android/results/session-client/depth-codec-host.json
@@ -57,14 +69,21 @@ jobs:
           python3 native-android/tools/character_fixture/native_character_check.py --character native-android/session-client/app/src/main/assets/character.bin --rig native-android/session-client/app/src/main/assets/rig.bin --morph native-android/session-client/app/src/main/assets/morph.bin --reference native-android/session-client/app/src/main/assets/character-reference.bin --output native-android/results/session-client/host-character-proof.json
           python3 native-android/tools/session_fixture/host_receipt.py --status completed
       - name: Build and lint isolated native ARM64 session client
+        if: steps.package.outputs.reused != 'true'
         run: |
           python3 native-android/session-client/gradle.py :app:assembleDebug :app:lintDebug
           cp native-android/session-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/session-client/CoH-Native-Session-Client-0.1.0-arm64.apk
       - name: Build separate emulator APK and validate exact package bytes
+        if: steps.package.outputs.reused != 'true'
         run: |
           python3 native-android/session-client/gradle.py -PprobeAbis=x86_64 :app:assembleDebug
           cp native-android/session-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/session-client/CoH-Native-Session-Client-0.1.0-emulator-x86_64.apk
           python3 native-android/tools/session_fixture/package_check.py
+      - name: Qualify current accessibility selectors and exact tap callback binding
+        run: python3 native-android/session-client/tools/tap_host_check.py --output native-android/results/session-client/tap-host-checks.json
+      - name: Requalify current lifecycle guards when package bytes were reused
+        if: steps.package.outputs.reused == 'true'
+        run: python3 native-android/session-client/tools/lifecycle_host_check.py --output native-android/results/session-client/reuse-current-lifecycle
       - name: Enable hosted Android emulator acceleration
         run: |
           test -c /dev/kvm

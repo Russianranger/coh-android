@@ -1,0 +1,272 @@
+{
+  "schema": 1,
+  "passed": true,
+  "inputs": [
+    {
+      "source": "Android input keyboard keyevent --longpress",
+      "key": "KEYCODE_W",
+      "rounds": 3,
+      "position_before": [
+        584,
+        74,
+        -1441.33374
+      ],
+      "position_after": [
+        584,
+        74,
+        -1537.33374
+      ],
+      "movement_ticks_before": 108,
+      "movement_ticks_after": 217,
+      "adapter_before": {
+        "key_down": 0,
+        "key_up": 0,
+        "key_repeat": 0,
+        "motion": 0,
+        "touch_begin": 0,
+        "touch_move": 0,
+        "touch_end": 0,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 0,
+        "right_axis_directions": 0,
+        "button_down_mask": 0,
+        "touch_motion_directions": 0
+      },
+      "adapter_after": {
+        "key_down": 3,
+        "key_up": 3,
+        "key_repeat": 3,
+        "motion": 0,
+        "touch_begin": 0,
+        "touch_move": 0,
+        "touch_end": 0,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 0,
+        "right_axis_directions": 0,
+        "button_down_mask": 1048576,
+        "touch_motion_directions": 0
+      },
+      "animation_transitions": 5,
+      "run_samples": 55
+    },
+    {
+      "source": "Android input keyboard keyevent --longpress",
+      "key": "KEYCODE_A",
+      "rounds": 1,
+      "position_before": [
+        584,
+        74,
+        -1537.33374
+      ],
+      "position_after": [
+        605.579102,
+        74,
+        -1537.33374
+      ],
+      "movement_ticks_before": 245,
+      "movement_ticks_after": 350,
+      "adapter_before": {
+        "key_down": 3,
+        "key_up": 3,
+        "key_repeat": 3,
+        "motion": 0,
+        "touch_begin": 0,
+        "touch_move": 0,
+        "touch_end": 0,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 0,
+        "right_axis_directions": 0,
+        "button_down_mask": 1048576,
+        "touch_motion_directions": 0
+      },
+      "adapter_after": {
+        "key_down": 4,
+        "key_up": 4,
+        "key_repeat": 4,
+        "motion": 0,
+        "touch_begin": 0,
+        "touch_move": 0,
+        "touch_end": 0,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 0,
+        "right_axis_directions": 0,
+        "button_down_mask": 5242880,
+        "touch_motion_directions": 0
+      },
+      "animation_transitions": 7,
+      "run_samples": 55
+    },
+    {
+      "source": "Android input keyboard keyevent --longpress",
+      "key": "KEYCODE_S",
+      "rounds": 1,
+      "position_before": [
+        605.579102,
+        74,
+        -1537.33374
+      ],
+      "position_after": [
+        605.579102,
+        74,
+        -1499.96301
+      ],
+      "movement_ticks_before": 350,
+      "movement_ticks_after": 379,
+      "adapter_before": {
+        "key_down": 4,
+        "key_up": 4,
+        "key_repeat": 4,
+        "motion": 0,
+        "touch_begin": 0,
+        "touch_move": 0,
+        "touch_end": 0,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 0,
+        "right_axis_directions": 0,
+        "button_down_mask": 5242880,
+        "touch_motion_directions": 0
+      },
+      "adapter_after": {
+        "key_down": 5,
+        "key_up": 5,
+        "key_repeat": 5,
+        "motion": 0,
+        "touch_begin": 0,
+        "touch_move": 0,
+        "touch_end": 0,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 0,
+        "right_axis_directions": 0,
+        "button_down_mask": 7340032,
+        "touch_motion_directions": 0
+      },
+      "animation_transitions": 7,
+      "run_samples": 55
+    },
+    {
+      "source": "Android input keyboard keyevent --longpress",
+      "key": "KEYCODE_D",
+      "rounds": 1,
+      "position_before": [
+        605.579102,
+        74,
+        -1499.96301
+      ],
+      "position_after": [
+        584,
+        74,
+        -1499.96301
+      ],
+      "movement_ticks_before": 379,
+      "movement_ticks_after": 404,
+      "adapter_before": {
+        "key_down": 5,
+        "key_up": 5,
+        "key_repeat": 5,
+        "motion": 0,
+        "touch_begin": 0,
+        "touch_move": 0,
+        "touch_end": 0,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 0,
+        "right_axis_directions": 0,
+        "button_down_mask": 7340032,
+        "touch_motion_directions": 0
+      },
+      "adapter_after": {
+        "key_down": 6,
+        "key_up": 6,
+        "key_repeat": 6,
+        "motion": 0,
+        "touch_begin": 0,
+        "touch_move": 0,
+        "touch_end": 0,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 0,
+        "right_axis_directions": 0,
+        "button_down_mask": 15728640,
+        "touch_motion_directions": 0
+      },
+      "animation_transitions": 7,
+      "run_samples": 55
+    },
+    {
+      "source": "Android input keyboard keyevent --longpress",
+      "key": "KEYCODE_W",
+      "rounds": 2,
+      "position_before": [
+        584,
+        74,
+        -1499.96301
+      ],
+      "position_after": [
+        584,
+        74,
+        -1531.20203
+      ],
+      "movement_ticks_before": 404,
+      "movement_ticks_after": 479,
+      "adapter_before": {
+        "key_down": 6,
+        "key_up": 6,
+        "key_repeat": 6,
+        "motion": 0,
+        "touch_begin": 0,
+        "touch_move": 0,
+        "touch_end": 0,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 0,
+        "right_axis_directions": 0,
+        "button_down_mask": 15728640,
+        "touch_motion_directions": 0
+      },
+      "adapter_after": {
+        "key_down": 8,
+        "key_up": 8,
+        "key_repeat": 8,
+        "motion": 0,
+        "touch_begin": 0,
+        "touch_move": 0,
+        "touch_end": 0,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 0,
+        "right_axis_directions": 0,
+        "button_down_mask": 15728640,
+        "touch_motion_directions": 0
+      },
+      "animation_transitions": 11,
+      "run_samples": 78
+    }
+  ],
+  "physical_controller_verified": false
+}
