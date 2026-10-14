@@ -19,6 +19,13 @@ CONTROL = frozenset({WORKFLOW, HELPER, TEST})
 LEGACY_WORKFLOW_SHA256 = '8839a1ead01f21f08c5ed6f57c75a317d0da11033acf75d539ef9df727385f64'
 GUARDED_WORKFLOW_SHA256 = '2e40ecf1854dbd67bfe16b30f53d45f3427a4d3c45cd75a31dcf976b2926e63f'
 NATIVE_BODY_SHA256 = '7465a7d83385c0e74535b68ce4aa47574bf3338697d3eabb416c946d6a3e0d6b'
+# One reviewed policy handover from the exact already introduced guard. It
+# changes only host evidence routing; later helper/test edits still run native.
+POLICY_CORRECTION_PARENT = 'f6aabde3a3438f58128359fa3f019664ae391b45'
+POLICY_PREDECESSOR_PINS = {
+    HELPER: '2e42ec6c9c4f7b1d4ad6c509ca3e65defcb011986635bda631338cd9f7e18e7d',
+    TEST: '6fecf1686ec8e2b297c83cab32ae2cf3c297754d01f1a2038142fabed4e36066',
+}
 HOST_ONLY = frozenset({
     'android/guest/atlas_beacon_package.py',
     'android/guest/character_zoning.py',
@@ -61,6 +68,7 @@ HOST_ONLY = frozenset({
     'docs/android-evidence/native-metadata-adapter-0.13.37-root-integration.json',
     'docs/android-evidence/native-metadata-adapter-0.13.37-source-checkpoint.json',
     'docs/android-evidence/native-startup-metadata-0.13.37-dormant-review.json',
+    'docs/android-evidence/native-startup-material-facts-0.13.37.json',
     'docs/android-evidence/original-cache-components-0.13.37-recovery.json',
     'tools/android/atlasgame/test_device_cleanup_lineage.py',
     'tools/android/interactive/build_client_zone_startup_apk.py',
@@ -151,18 +159,27 @@ def classify(repo, event, before, head):
         if sha(old) not in {LEGACY_WORKFLOW_SHA256, GUARDED_WORKFLOW_SHA256} or sha(current) != GUARDED_WORKFLOW_SHA256:
             raise ValueError('Unknown workflow wrappers, checkout, policy or compiler scope')
         controls = set(changed) & CONTROL
+        policy_correction = False
         if controls:
-            if controls != CONTROL or sha(old) != LEGACY_WORKFLOW_SHA256:
-                raise ValueError('Only the exact reviewed first guard wrapper introduction may skip')
-            for path in (HELPER, TEST):
-                if git(repo, 'ls-tree', before, '--', path):
-                    raise ValueError('Changed routing helper/test requires native gate')
-                regular_blob(repo, head, path)
+            if controls == {HELPER, TEST} and before == POLICY_CORRECTION_PARENT and sha(old) == GUARDED_WORKFLOW_SHA256:
+                for path, expected in POLICY_PREDECESSOR_PINS.items():
+                    if sha(regular_blob(repo, before, path)) != expected:
+                        raise ValueError('Reviewed policy predecessor helper/test bytes differ')
+                    regular_blob(repo, head, path)
+                policy_correction = True
+            else:
+                if controls != CONTROL or sha(old) != LEGACY_WORKFLOW_SHA256:
+                    raise ValueError('Only the reviewed first introduction or exact one-time policy handover may skip')
+                for path in (HELPER, TEST):
+                    if git(repo, 'ls-tree', before, '--', path):
+                        raise ValueError('Changed routing helper/test requires native gate')
+                    regular_blob(repo, head, path)
         for path in set(changed+cumulative)-{WORKFLOW}:
             regular_blob(repo, head, path)
         result.update(native_required=False, reason='Complete known host-only scope; exact native and FX steps retained',
             retained_native_body_sha256=NATIVE_BODY_SHA256,
-            workflow_sha256=sha(current), control_introduction=bool(controls))
+            workflow_sha256=sha(current), control_introduction=bool(controls) and not policy_correction,
+            source_only_scope_policy_correction=policy_correction)
     except (OSError, subprocess.CalledProcessError, UnicodeError, ValueError) as exc:
         result['reason'] = str(exc)
     return result

@@ -29,6 +29,7 @@ CLIENT_ZONE_STARTUP_DOCS = frozenset({
     'docs/android-evidence/native-map-metadata-adapter-0.13.37-review.json',
     'docs/android-evidence/native-map-metadata-adapter-0.13.37-host-tests.json',
     'docs/android-evidence/native-cache-normalizer-0.13.37-review.json',
+    'docs/android-evidence/native-startup-material-facts-0.13.37.json',
     'docs/android-evidence/native-map-cache-subset-0.13.37-research.json',
     'docs/android-evidence/native-metadata-adapter-0.13.37-root-integration.json',
 })

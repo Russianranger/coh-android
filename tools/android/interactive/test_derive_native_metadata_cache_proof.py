@@ -62,6 +62,45 @@ def unexecuted_world(preload):
         'behavioral_collision_proven':False,'shipping_allowed':False,'freshness_bypass_enabled':False,'cases':cases}
 
 
+def unexecuted_generation(case, *, inherited_authority=None):
+    """Only a schema/absence fixture; these namespace checks were NOT executed."""
+    rows = {}
+    for cache in case['cache_after']:
+        if cache.startswith('data/geobin/object_library/') and cache.endswith('.bounds'):
+            stem=cache.removesuffix('.bounds'); counterpart=stem+'.bin'
+            if counterpart not in case['cache_after']:continue
+            path=stem.removeprefix('data/geobin/').casefold()+'.txt'
+            for name in (cache,counterpart):
+                rows[name]=[{'path':path,'native_dependency_timestamp':0,'original_source_absent':True,
+                    'kind':'native_same_stem_missing_text_sentinel','current_native_namespace_source_absent':True}]
+            if len(rows)==136:break
+    if not rows:
+        name=next(iter(case['cache_after']));rows[name]=[{'path':'defs/unexecuted.def','native_dependency_timestamp':1,
+            'actual_source_mtime_ns':1000000000,'actual_source':derive.pin(b'unexecuted positive source')}]
+    negatives=sum(row['native_dependency_timestamp']==0 for deps in rows.values() for row in deps)
+    paths={row['path'] for deps in rows.values() for row in deps if row['native_dependency_timestamp']==0}
+    namespace={'ordinary_search_roots':['./piggs','./data','./'],
+        **dict.fromkeys(('original_and_current_casefolded_paths_checked','linked_or_reparse_providers_refused',
+            'external_directory_controls_refused','automatic_data_tools_ancestor_pairs_absent','Pig_members_exclusively_original_anim_paths'),True),
+        'animation_Pig':{'bytes':97084456,'sha256':'465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b'},
+        'complete_Pig_member_count':5878,'complete_Pig_member_names_sha256':'e'*64,'checked_ancestors':['unexecuted-fixture'],
+        'animation_Pig_member_recipe_source':{'bytes':14716,'sha256':'56825a9b66669133380c761d9475b57b6ccd4ee5cf71b6044474c0ff32bbc91d'},
+        'native_recipe_source':{'bytes':92002,'sha256':'8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1'}}
+    producer={'native':case['actual_native'],'held_windows_pid':case['Map_progress_after_status']['windows_pid'],
+        'map_id':case['map_id'],'post_query_completed_ticks':case['Map_progress_after_status']['tick_completed'],
+        'native_Db_status':case['native_Db_status'],'world_initialization_markers':case['world_markers'],
+        'original_source_delta':case['original_source_delta'],'provider_native_components':case['provider_after']['native_components']}
+    if inherited_authority is not None:producer['inherited_execution']=inherited_authority
+    return {'delta':case['cache_delta'],'existing_decoded_payload_and_schema_unchanged':True,
+        'new_payloads_require_exact_stock_native_world_producer':True,'new_payloads_require_identical_warm_native_consumers':True,
+        'Android_cache_authority_created':False,'actual_stock_producer':producer,'actual_dependency_sources':rows,
+        'native_negative_source_dependencies':{'rows':negatives,'unique_paths':len(paths),
+            'all_same_stem_object_library_text_with_native_zero_date':True,'namespace':namespace if negatives else None,
+            'original_complete_provider_membership_count':165767,
+            'original_complete_provider_membership_sha256':'496f9f88df2f9f9be782107d889e33566cef12daf3f4fd98d698accd2c69a69f',
+            'native_sentinel_recipe':copy.deepcopy(derive.NATIVE_ABSENCE_RECIPE)}}
+
+
 class CacheProofDerivationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -86,6 +125,44 @@ class CacheProofDerivationTests(unittest.TestCase):
         assert cls.inputs['server_cache_manifest']['component_zip'] == {'bytes':29825263,
             'sha256':'7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17'}
         cls.narrow = derive.inspect_preload(cls.documents['preload'], cls.documents)
+        cls.inherited_path = RECOVERY/'map04b-world-evidence.zip'
+        with zipfile.ZipFile(cls.inherited_path) as archive:
+            cls.old_report = derive.json_document(archive.read(derive.WORLD_REPORT_MEMBER))
+            cls.old_auxiliary = {key:derive.json_document(archive.read(member)) for key,member in {
+                'phase':'1-server_only-generation/phase.json',
+                'retention':'1-server_only-generation/stock-native-generated-cache-outputs.json',
+                'failed_observations':'failed-native-observations.json'}.items()}
+        cls.inherited_input={'repository_commit':derive.INHERITED_STOCK['source'],'run_id':derive.INHERITED_STOCK['run_id'],
+            'artifact_id':derive.INHERITED_STOCK['artifact_id'],'artifact_zip':derive.INHERITED_STOCK['artifact'],
+            'member':derive.WORLD_REPORT_MEMBER,'member_pin':derive.INHERITED_REPORT}
+
+    def unexecuted_mixed_world(self):
+        world=unexecuted_world(self.documents['preload']);old=self.old_report['cases'][0]
+        profile=self.old_auxiliary['failed_observations']['synthetic_profile']
+        authority={**derive.INHERITED_STOCK,'original_overall_result':'failed','original_stock_world_readiness_genuine':True,
+            'stock_native_readiness_reexecuted':False,'stock_native_execution_inherited':True,
+            'negative_dependency_validation_fresh_in_this_qualifier':True,'negative_dependency_validation_status':'passed',
+            'original_report':derive.INHERITED_REPORT,'prepared_manifest':derive.PREPARED_MANIFEST,'disposable_SQL_fixture':profile}
+        world.update(repository_commit=derive.RESUME_SOURCE,actual_native_processes=15,inherited_native_world_processes=1,
+            total_native_world_cases=16,inherited_stock_generation=authority,
+            source_pins={'tools/android/interactive/qualify_native_map_world_037.py':derive.RESUME_QUALIFIER})
+        for case in world['cases']:
+            case['cache_before']=copy.deepcopy(old['cache_after']);case['cache_after']=copy.deepcopy(old['cache_after'])
+            case['original_source_delta']={'added':{},'changed':{},'removed':{}}
+            if case['role']=='stock':case['native_generation']=unexecuted_generation(case)
+        first=copy.deepcopy(old);first['inherited_native_execution']=authority
+        first['native_generation']=unexecuted_generation(first,inherited_authority=authority)
+        world['cases'][0]=first
+        return world
+
+    def authenticated_unexecuted_mixed_world(self):
+        temporary=tempfile.TemporaryDirectory();self.addCleanup(temporary.cleanup)
+        path=Path(temporary.name)/'unexecuted-mixed-world.zip';world=self.unexecuted_mixed_world();raw=derive.metadata.encoded(world)
+        with zipfile.ZipFile(path,'w',compression=zipfile.ZIP_DEFLATED) as archive:archive.writestr('world.json',raw)
+        inputs={**copy.deepcopy(self.inputs),'native_world':{'repository_commit':derive.RESUME_SOURCE,'run_id':1,'artifact_id':2,
+            'artifact_zip':derive.pin(path.read_bytes()),'member':'world.json','member_pin':derive.pin(raw)},
+            derive.INHERITED_INPUT:copy.deepcopy(self.inherited_input)}
+        return derive.authenticate_inputs({**self.paths,'native_world':path,derive.INHERITED_INPUT:self.inherited_path},inputs),inputs
 
     def authenticated_unexecuted_world(self):
         temporary=tempfile.TemporaryDirectory();self.addCleanup(temporary.cleanup)
@@ -114,6 +191,122 @@ class CacheProofDerivationTests(unittest.TestCase):
     def test_failed_actual8a_world_is_rejected_before_proof_exists(self):
         failed = derive.json_document((RECOVERY/'map8a-world-evidence/native-map-world-037-qualification.json').read_bytes())
         with self.assertRaises(ValueError):derive.inspect_world(failed,self.narrow)
+
+    def test_actual_failed04b_original_and_unexecuted_mixed_lineage_preserve_ready_case(self):
+        docs,inputs=self.authenticated_unexecuted_mixed_world()
+        result=derive.inspect_world(docs['native_world'],self.narrow,inherited_world=docs[derive.INHERITED_INPUT],
+            inherited_descriptor=inputs[derive.INHERITED_INPUT],inherited_auxiliary=docs.inherited_auxiliary)
+        lineage=result['execution_lineage'];self.assertEqual(lineage['fresh_native_processes'],15)
+        self.assertEqual(lineage['inherited_native_world_processes'],1);self.assertEqual(len(result['eligible']),106)
+        self.assertNotIn('data/bin/fxinfo.bin',result['eligible'])
+        self.assertIn({'name':'data/bin/fxinfo.bin','reason':'original_donor_output_changed_in_world'},result['excluded_world_tokens'])
+        self.assertEqual(docs[derive.INHERITED_INPUT]['status'],'failed')
+        self.assertEqual(lineage['inherited_stock_authority']['original_overall_result'],'failed')
+        self.assertFalse(lineage['inherited_stock_authority']['stock_native_readiness_reexecuted'])
+        self.assertEqual(lineage['stock_generation_absence_validation'][0]['negative_dependency_rows'],136)
+
+    def test_inherited_stock_old_facts_source_counts_auxiliary_or_absence_substitution_rejected(self):
+        for field in ('fresh16','missing_inherited','second_inherited','old_tick','old_command','old_source','old_result',
+                'resume_source','qualifier','namespace','zero_actual_source','nonzero_missing','negative_count','original_inventory','sql'):
+            world=copy.deepcopy(self.unexecuted_mixed_world());old=copy.deepcopy(self.old_report);aux=copy.deepcopy(self.old_auxiliary)
+            first=world['cases'][0];negative=first['native_generation']['native_negative_source_dependencies']
+            if field=='fresh16':world['actual_native_processes']=16
+            elif field=='missing_inherited':first.pop('inherited_native_execution')
+            elif field=='second_inherited':world['cases'][1]['inherited_native_execution']=first['inherited_native_execution']
+            elif field=='old_tick':first['Map_progress_after_status']['tick_completed']+=1
+            elif field=='old_command':first['command'].append('-unexecuted-substitution')
+            elif field=='old_source':old['repository_commit']='9'*40
+            elif field=='old_result':old['status']='passed'
+            elif field=='resume_source':world['repository_commit']='9'*40
+            elif field=='qualifier':world['source_pins']['tools/android/interactive/qualify_native_map_world_037.py']['sha256']='9'*64
+            elif field=='namespace':negative['namespace']['external_directory_controls_refused']=False
+            elif field=='zero_actual_source':next(iter(first['native_generation']['actual_dependency_sources'].values()))[0]['actual_source']=derive.pin(b'fake')
+            elif field=='nonzero_missing':next(iter(first['native_generation']['actual_dependency_sources'].values()))[0]['native_dependency_timestamp']=1
+            elif field=='negative_count':negative['rows']=True
+            elif field=='original_inventory':negative['original_complete_provider_membership_sha256']='9'*64
+            else:aux['failed_observations']['synthetic_profile']['unchanged']=False
+            with self.subTest(field=field),self.assertRaises(ValueError):
+                derive.inspect_world(world,self.narrow,inherited_world=old,
+                    inherited_descriptor=self.inherited_input,inherited_auxiliary=aux)
+
+    def test_inherited_original_artifact_and_post_auth_auxiliary_mutation_fail_closed(self):
+        docs,inputs=self.authenticated_unexecuted_mixed_world()
+        changed=copy.deepcopy(inputs[derive.INHERITED_INPUT]);changed['artifact_zip']['sha256']='9'*64
+        with self.assertRaises(ValueError):derive.input_descriptor(changed,derive.INHERITED_INPUT)
+        docs.inherited_auxiliary['failed_observations']['synthetic_profile']['unchanged']=False
+        with self.assertRaisesRegex(ValueError,'auxiliary evidence mutated'):
+            derive.derive_proof(docs,raw_inputs=inputs,derivation_source={},source_review={})
+
+    def test_unexecuted_mixed_derivation_records15_fresh1_inherited_and_external_output_pin(self):
+        docs,inputs=self.authenticated_unexecuted_mixed_world()
+        script=(derive.ROOT/derive.SCRIPT).read_bytes()
+        source={'repository_commit':'8'*40,'path':derive.SCRIPT,'git_blob':hashlib.sha1(b'blob '+str(len(script)).encode()+b'\0'+script).hexdigest(),
+            'pin':derive.pin(script)}
+        proof,outer=derive.derive_proof(docs,raw_inputs=inputs,derivation_source=source,
+            source_review=derive.startup.SOURCE_ONLY_COMPATIBILITY_REVIEW['descriptor'])
+        lineage=proof['native_world_execution_lineage']
+        self.assertEqual(lineage['fresh_native_processes'],15);self.assertEqual(lineage['inherited_native_world_processes'],1)
+        self.assertEqual(lineage['inherited_stock_authority']['source'],derive.INHERITED_STOCK['source'])
+        self.assertEqual(lineage['fresh_qualifier_raw_input'],inputs['native_world'])
+        self.assertEqual(len(proof['eligible_bins']),106)
+        self.assertTrue(proof['observations_scope']['constructed_world_fixture'])
+        self.assertNotIn('output',proof['derivation']);self.assertEqual(outer['output']['pin'],derive.pin(derive.metadata.encoded(proof)))
+        self.assertFalse(proof['runtime_authority_created']);self.assertFalse(proof['shipping_allowed'])
+
+    def test_production_entry_refuses_unexecuted_world_fixture_before_source_or_authority(self):
+        docs,inputs=self.authenticated_unexecuted_mixed_world()
+        # Recreate only a temporary controlled ZIP; original donor/preload and
+        # old failed04b bytes are read without modification.
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'unexecuted.zip';raw=derive.metadata.encoded(docs['native_world'])
+            with zipfile.ZipFile(path,'w',compression=zipfile.ZIP_DEFLATED) as archive:archive.writestr('world.json',raw)
+            inputs['native_world']['artifact_zip']=derive.pin(path.read_bytes())
+            with self.assertRaisesRegex(ValueError,'explicitly unexecuted controlled world fixture'):
+                derive.derive_from_artifacts({**self.paths,'native_world':path,derive.INHERITED_INPUT:self.inherited_path},
+                    raw_inputs=inputs,derivation_source={},source_review={})
+
+    def test_only_native_world_json_may_exceed8MiB_with64MiB_cap(self):
+        raw=b'{"bounded_unexecuted_padding":"'+b'x'*(8*1024**2)+b'"}'
+        self.assertEqual(len(derive.json_document(raw,role='native_world')['bounded_unexecuted_padding']),8*1024**2)
+        for role in (None,'preload',derive.INHERITED_INPUT,'client_cache_manifest','server_cache_manifest'):
+            with self.subTest(role=role),self.assertRaises(ValueError):derive.json_document(raw,role=role)
+        descriptor={**self.inherited_input,'repository_commit':'7'*40,'run_id':1,'artifact_id':2,
+            'member_pin':{'bytes':64*1024**2+1,'sha256':'7'*64}}
+        with self.assertRaises(ValueError):derive.input_descriptor(descriptor,'native_world')
+        for raw in (b'{"x":1,"x":2}',b'{"x":NaN}'):
+            with self.subTest(raw=raw),self.assertRaises(ValueError):derive.json_document(raw,role='native_world')
+
+    def test_guest_raw_material_contract_binds_inherited_original_and_only_world64MiB(self):
+        inputs=copy.deepcopy(self.inputs)
+        inputs['native_world']={'repository_commit':derive.RESUME_SOURCE,'run_id':1,'artifact_id':2,
+            'artifact_zip':derive.pin(b'unexecuted fixture ZIP'),'member':'world.json',
+            'member_pin':{'bytes':16*1024**2,'sha256':'7'*64}}
+        inputs[derive.INHERITED_INPUT]=copy.deepcopy(self.inherited_input)
+        descriptor={'derivation_source':{'repository_commit':'8'*40,'path':derive.SCRIPT,'git_blob':'8'*40,
+            'pin':derive.pin((derive.ROOT/derive.SCRIPT).read_bytes())},'raw_inputs':inputs,
+            'output':{'filename':derive.OUTPUT_NAME,'pin':derive.pin(b'unexecuted compact proof')},
+            'scope':derive.DERIVATION_SCOPE}
+        with patch.object(derive.startup,'RUNTIME_CACHE_PROOF_DERIVATION',descriptor):
+            self.assertEqual(derive.startup.inspect_runtime_cache_derivation(descriptor),descriptor)
+        for field in ('inherited_source','inherited_extent','preload_extent','world_extent'):
+            changed=copy.deepcopy(descriptor)
+            if field=='inherited_source':changed['raw_inputs'][derive.INHERITED_INPUT]['repository_commit']='9'*40
+            elif field=='inherited_extent':changed['raw_inputs'][derive.INHERITED_INPUT]['member_pin']['bytes']=16*1024**2
+            elif field=='preload_extent':changed['raw_inputs']['preload']['member_pin']['bytes']=16*1024**2
+            else:changed['raw_inputs']['native_world']['member_pin']['bytes']=64*1024**2+1
+            with self.subTest(field=field),patch.object(derive.startup,'RUNTIME_CACHE_PROOF_DERIVATION',changed),self.assertRaises(ValueError):
+                derive.startup.inspect_runtime_cache_derivation(changed)
+
+    def test_native_dependency_names_preserve_actual_ampersands_and_empty_original_inputs(self):
+        name='object_library/common_decor/common_items/desks_&_tables/desks_&_tables.txt'
+        self.assertEqual(derive.source_dependency_name(name),name)
+        self.assertFalse(derive.metadata.material_member_name(name))
+        self.assertEqual(derive.source_dependency_pin(derive.pin(b'')),derive.pin(b''))
+        for name in ('../escaped.txt','object_library/a:stream.txt','object_library/a/CON.txt',
+                'object_library/a/link\\file.txt','object_library/a/file.txt.','object_library/a/<bad>.txt'):
+            with self.subTest(name=name),self.assertRaises(ValueError):derive.source_dependency_name(name)
+        with self.assertRaises(ValueError):derive.source_dependency_pin({'bytes':True,'sha256':'7'*64})
+        with self.assertRaises(ValueError):derive.source_dependency_pin({'bytes':0,'sha256':'7'*64})
 
     def test_native_order_identifier_or_cache_mutation_rejected(self):
         for field in ('order','identifiers','cache','success_bool'):
@@ -208,7 +401,7 @@ class CacheProofDerivationTests(unittest.TestCase):
                 with self.subTest(field=field),self.assertRaises(ValueError):derive.verify_derivation_source(bad,repo)
 
     def test_production_authorities_remain_closed(self):
-        self.assertIsNone(derive.startup.SOURCE_ONLY_COMPATIBILITY_REVIEW)
+        self.assertFalse(derive.startup.SOURCE_ONLY_COMPATIBILITY_REVIEW['descriptor']['scope']['runtime_activation_allowed'])
         self.assertIsNone(derive.startup.RUNTIME_CACHE_PROOF_DERIVATION)
         self.assertEqual(derive.metadata.COMPONENT_AUTHORITIES,{'game':None,'mapserver':None})
         self.assertFalse(derive.metadata.ACTIVATION_IMPLEMENTED)

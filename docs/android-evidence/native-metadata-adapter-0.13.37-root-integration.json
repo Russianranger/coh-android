@@ -254,5 +254,618 @@
       "sha256": "91cedf636fc7adc5dab987e3a272523d05f7b41755b7a74543949770c8ff6980"
     }
   },
+  "source_only_and_mixed_lineage_continuation": {
+    "activation_implemented": false,
+    "actual_guard_f6_CI": {
+      "FX_job": 115649745102,
+      "change_scope_job": 115649670338,
+      "classification": {
+        "baseline_commit": "bc74b08e75d5da7187f99658d2c04dd509a325fb",
+        "before": "bc74b08e75d5da7187f99658d2c04dd509a325fb",
+        "changed_paths": [
+          ".github/workflows/android-map-startup-native.yml",
+          "docs/HANDOFF.md",
+          "docs/android-evidence/native-metadata-adapter-0.13.37-root-integration.json",
+          "tools/android/interactive/build_client_zone_startup_apk.py",
+          "tools/android/interactive/classify_client_zone_startup_change.py",
+          "tools/android/interactive/classify_map_startup_native_change.py",
+          "tools/android/interactive/qualify_client_zone_startup.py",
+          "tools/android/interactive/release-client-zone-startup-0.13.37.json",
+          "tools/android/interactive/test_map_startup_native_change.py"
+        ],
+        "control_introduction": true,
+        "cumulative_paths": [
+          ".github/workflows/android-map-startup-native.yml",
+          "docs/HANDOFF.md",
+          "docs/android-evidence/native-metadata-adapter-0.13.37-root-integration.json",
+          "tools/android/interactive/build_client_zone_startup_apk.py",
+          "tools/android/interactive/classify_client_zone_startup_change.py",
+          "tools/android/interactive/classify_map_startup_native_change.py",
+          "tools/android/interactive/qualify_client_zone_startup.py",
+          "tools/android/interactive/release-client-zone-startup-0.13.37.json",
+          "tools/android/interactive/test_map_startup_native_change.py"
+        ],
+        "event": "push",
+        "format": 1,
+        "head": "f6aabde3a3438f58128359fa3f019664ae391b45",
+        "inherited_native_execution_claimed_fresh": false,
+        "native_producer_relabelled": false,
+        "native_required": false,
+        "native_steps_or_SDK_flags_changed": false,
+        "qualification_scope": "workflow_routing_only_not_native_qualification",
+        "reason": "Complete known host-only scope; exact native and FX steps retained",
+        "retained_native_body_sha256": "7465a7d83385c0e74535b68ce4aa47574bf3338697d3eabb416c946d6a3e0d6b",
+        "workflow_sha256": "2e40ecf1854dbd67bfe16b30f53d45f3427a4d3c45cd75a31dcf976b2926e63f"
+      },
+      "native_and_FX_jobs": "skipped",
+      "native_job": 115649744454,
+      "result": "success",
+      "run": 38501519757
+    },
+    "current_Game_capture": {
+      "branch": "codex/native-client-metadata-capture-037",
+      "exact_source_files_verified": 18,
+      "independent_source_review": {
+        "branch": "codex/native-client-metadata-capture-037",
+        "embedded_workflow_python_snippets_compiled": 2,
+        "format": 1,
+        "freeze": {
+          "bytes": 3877,
+          "path": "/workspace/scratch/5d16603ca7ff/client-census-active-037-source-freeze.json",
+          "sha256": "1585f41ddc70fa37204b079e537460caf2afe62cd7f57be50057957085ffed32"
+        },
+        "independently_executed_host_tests": {
+          "command": "PYTHONPATH=tools python3 -W error::ResourceWarning -m unittest test_native_client_census_capture_source test_native_client_census_stat_source test_native_client_metadata_census_decode test_native_client_metadata_census_source test_native_client_wfd_probe test_package_native_client_metadata_capture -q",
+          "errors": 0,
+          "failed": 0,
+          "native_SDK_or_Wine_execution_claimed": false,
+          "passed": 58,
+          "seconds": 4.19,
+          "skipped": 0
+        },
+        "intended_parent": "7f3d37fc191f3f30c124d6d57581afb64cceef42",
+        "prior_freeze_note": "Initial7d051843 freeze was superseded by narrowly corrected parser/package invariants. Approval and58 tests bind only the final1585f41d source pins.",
+        "reviewed_at_UTC": "2026-10-14T02:35:07.538891+00:00",
+        "reviewer": "client_harness_review",
+        "scope_limits": {
+          "actual_Windows_SDK_fixture_executed_by_reviewer": false,
+          "actual_full_PIG_index_or_native_current_generation_qualified": false,
+          "controlled_host_fixtures_only": true,
+          "immutable_runtime_lease_qualified": false,
+          "native_Wine_or_Game_execution_by_reviewer": false,
+          "native_build_executed_by_reviewer": false,
+          "performance_gain_or_Thor_results_claimed": false,
+          "physical_device_executed": false,
+          "player_or_SQL_access_or_mutations_by_reviewer": false,
+          "production_replay_or_stat_reuse_enabled": false,
+          "provider_authority_granted": false,
+          "publication_allowed": false,
+          "source_edits_by_reviewer": false
+        },
+        "source_pins_unchanged_after_independent_tests": {
+          ".github/workflows/android-native-client-metadata-capture.yml": {
+            "bytes": 10183,
+            "sha256": "47edb7f49e5d3abe374eca8c9f92c51ef391c88994e6953088632a1fb7fabe7d"
+          },
+          "database/client-metadata-census/README.md": {
+            "bytes": 6499,
+            "sha256": "722806c16392c15b4596c488e7381c2f4312e10de3e46501cd54971329220455"
+          },
+          "database/client-metadata-census/overlay/coh_client_metadata_capture.cmake": {
+            "bytes": 956,
+            "sha256": "cbec381b66b5e7cc41b558ea75aac209f084e741a80f424af2e6a9fa01a23a72"
+          },
+          "database/client-metadata-census/overlay/coh_folder_census.h": {
+            "bytes": 14590,
+            "sha256": "1748606b4aad4a92fe4aad11c931b3bff35594cb7c70c09fb778f61b4fbcc601"
+          },
+          "database/client-metadata-census/overlay/coh_folder_census_adapter.h": {
+            "bytes": 8488,
+            "sha256": "a9ed950a1ac235a6d8a62c8b0e90096466d9ec2324bec3aae737ecfc532dd652"
+          },
+          "database/client-metadata-census/overlay/coh_folder_census_capture.h": {
+            "bytes": 12949,
+            "sha256": "29de9db5ddc5337fe5cb672ec23fa6135f22141fdb93b07b8c0156540d32ee5b"
+          },
+          "database/client-metadata-census/overlay/coh_folder_census_observation.h": {
+            "bytes": 551,
+            "sha256": "13bfc29c113283ba832d3cf2c6620df331a50b82acc90eeee9bede8f6c7b4fda"
+          },
+          "database/client-metadata-census/portable-qualification.json": {
+            "bytes": 33785,
+            "sha256": "94ecf544386c4a530f934a24bb79aac485639c22d7f8aac3f4ad10d33266a764"
+          },
+          "tools/native_client_pig_index_capture.py": {
+            "bytes": 6213,
+            "sha256": "42452df53876d4319afca329b7dd6918c99dc94e6e3c31b88cd4dc10fd61d0e5"
+          },
+          "tools/native_client_wfd_probe.c": {
+            "bytes": 18566,
+            "sha256": "60a3a4e558702bd8e35dc876a5fc94cf255bc60c4415a43d4facf88b8458af0b"
+          },
+          "tools/package_native_client_metadata_capture.py": {
+            "bytes": 26329,
+            "sha256": "85982adceee63266222dc8b66bb98a08bdc334ef93de33cee1c81835d0ac43d1"
+          },
+          "tools/prepare_native_client_metadata_census_source.py": {
+            "bytes": 17040,
+            "sha256": "d4b657f15863530649a2a25e608b7c3b72a4e3405d5c9d928811483de76e7768"
+          },
+          "tools/test_native_client_census_capture_source.py": {
+            "bytes": 12375,
+            "sha256": "00456cded13072f3f0df2c481943ea34eae12095641445a464c3321ed4aa9676"
+          },
+          "tools/test_native_client_census_stat_source.py": {
+            "bytes": 6721,
+            "sha256": "104fd08372f17ea84c1902df45997f86e88317ccfb903046dcc2677da47c9e2f"
+          },
+          "tools/test_native_client_metadata_census_decode.py": {
+            "bytes": 20898,
+            "sha256": "2a15fedfe5ed46838db9cfe01eedc5a9c7e73ce90a4370b85bd3b4a569dee03d"
+          },
+          "tools/test_native_client_metadata_census_source.py": {
+            "bytes": 27487,
+            "sha256": "0e44e25da7fa40a6542a0dad269378aee87d245c44b56284a5210c065c245d53"
+          },
+          "tools/test_native_client_wfd_probe.py": {
+            "bytes": 33374,
+            "sha256": "eccf7452483b3b89680d442f6d9865f65500d3e95c8e6ce0f0ad49b70c30625a"
+          },
+          "tools/test_package_native_client_metadata_capture.py": {
+            "bytes": 15091,
+            "sha256": "d54bd37b4f08961885fc511d0a7e9023c999750b4bd8bdc415e439e73d0ca20a"
+          }
+        },
+        "source_review": [
+          "C probe exact Win32 ANSI320-byte WFD and52-byte by-handle projection;80-byte API outcome envelope;160-byte header;412-byte observation entry; predecessor census328-byte replay rows remain a separate schema",
+          "Original native arrival order and named-dot/empty/nontexture entries preserved; canonical reserved/tail/padding zero; unsupported or malformed names and unreadable APIs remain incomplete",
+          "Probe only GENERIC_READ metadata APIs for inputs; output CREATE_NEW exclusive, outside input root,64MiB bound,16384-directory/200000-row limits, bounded isolated CI deadline, exact owned-handle partial cleanup; no payload or SQL reads",
+          "Parser now matches C single trailing-separator normalization; complete readability explicitly requires mapping_supported and nonmalformed rows. Four actual-SDK controls bind raw stdout/stderr, packet digest, exact status/returncode/cleanup/footer issue counts; they were not executed on this host",
+          "Native PIG hook runs after unchanged stock registration; exact64hex token and narrow global-owner/mode/callback admission; each complete index observed under its original native provider lock; empty slots remain null/unavailable with no unsafe size read;64-provider/200000-index/8MiB caps",
+          "Legacy _AltStat APIs/results including ignored GetFileInformation failure remain unchanged; observed counters atomic and thread-local; errno/GetLastError restored; flushes owner-only/bounded with in-flight-counter scope explicit",
+          "One fresh read-only probe compile plus one capture-only Game compile only; original full source/import/DLL/donor closure and source controls authenticated; private UtilitiesLib capture macro via deferred CMake injection; Map/Beacon OFF; replay macro undefined and production registration absent"
+        ],
+        "status": "approved_source_only_capture_build_and_SDK_controls"
+      },
+      "independent_source_test_count": 58,
+      "native_job": 115651968222,
+      "replay_or_runtime_registration_enabled": false,
+      "run": 38502287842,
+      "source": "4e3188d7dffd2790bbc73e49f9e3fa55df90f016",
+      "status_at_checkpoint": "in_progress",
+      "tree": "b581facfd276db9e367eed35af0a67380b96b5a3"
+    },
+    "current_Map_resume": {
+      "fresh_processes_required": 15,
+      "native_job": 115644491594,
+      "qualification_complete": false,
+      "run": 38499817621,
+      "separately_inherited_original_stock_cases": 1,
+      "source": "b3239ed001cd75a92910731710b7675506cf1944",
+      "status_at_checkpoint": "in_progress"
+    },
+    "earlier_source_only_integration_before_lineage_followup": {
+      "errors": 0,
+      "failures": 0,
+      "overlaps_final_results": true,
+      "seconds": 27.806,
+      "skips": 0,
+      "tests": 55
+    },
+    "final_root_integration_tests": {
+      "ResourceWarning_is_error": true,
+      "errors": 0,
+      "failures": 0,
+      "fresh_tests": 89,
+      "invocations": [
+        {
+          "seconds": 34.585,
+          "tests": 46
+        },
+        {
+          "seconds": 9.365,
+          "tests": 43
+        }
+      ],
+      "modules": {
+        "test_client_zone_startup_package": 9,
+        "test_derive_native_metadata_cache_proof": 20,
+        "test_map_startup_native_change": 26,
+        "test_native_metadata_map_activation": 26,
+        "test_native_startup_metadata_admission": 8
+      },
+      "physical_or_native_execution": false,
+      "skips": 0
+    },
+    "focused_scope_independent_root_review": {
+      "approved": true,
+      "exact_predecessor_f6_and_two_control_pins": true,
+      "future_unknown_or_native_scope_runs_full_gate": true,
+      "native_and_FX_job_body_unchanged": true
+    },
+    "focused_workflow_scope_freeze": {
+      "format": 1,
+      "host_tests": {
+        "command": "python3 -W error::ResourceWarning -m unittest discover -s tools/android/interactive -p test_map_startup_native_change.py -v",
+        "errors": 0,
+        "executed_by_implementation_agent": true,
+        "failed": 0,
+        "independent_root_review_pending": true,
+        "new_cases": 7,
+        "passed": 26,
+        "seconds": 3.724,
+        "skipped": 0
+      },
+      "meaningful_negative_scopes": [
+        "wrong direct parent",
+        "one policy file only",
+        "changed predecessor bytes",
+        "future policy edits",
+        "unknown factual-doc neighbors",
+        "native/build/fixture changes",
+        "workflow body change",
+        "all retained manual/Git/history/merge/multicommit failures"
+      ],
+      "native_or_APK_builds_repeated": false,
+      "native_plus_FX_body_sha256_unchanged": "7465a7d83385c0e74535b68ce4aa47574bf3338697d3eabb416c946d6a3e0d6b",
+      "new_HOST_ONLY_paths": [
+        "docs/android-evidence/native-startup-material-facts-0.13.37.json"
+      ],
+      "one_time_control_transition": {
+        "changed_policy_controls": [
+          "tools/android/interactive/classify_map_startup_native_change.py",
+          "tools/android/interactive/test_map_startup_native_change.py"
+        ],
+        "complete_cumulative_bc74_known_source_scope_still_required": true,
+        "exact_guarded_workflow_unchanged": true,
+        "future_helper_test_edits_still_require_native": true,
+        "predecessor_helper_sha256": "2e42ec6c9c4f7b1d4ad6c509ca3e65defcb011986635bda631338cd9f7e18e7d",
+        "predecessor_test_sha256": "6fecf1686ec8e2b297c83cab32ae2cf3c297754d01f1a2038142fabed4e36066",
+        "required_before": "f6aabde3a3438f58128359fa3f019664ae391b45"
+      },
+      "parent": "f6aabde3a3438f58128359fa3f019664ae391b45",
+      "patch": {
+        "bytes": 10003,
+        "path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/native-workflow-factual-doc-routing.patch",
+        "sha256": "826cc00b59821d8ea42aebf124f35039ecb97ddc6ddf2e33812a306da50783bb"
+      },
+      "remote_push_or_dispatch": false,
+      "role": "focused_one_time_legacy_native_workflow_host_doc_scope_correction",
+      "runtime_or_shipping_authority_added": false,
+      "source_pins": {
+        "tools/android/interactive/classify_map_startup_native_change.py": {
+          "bytes": 11202,
+          "sha256": "141d41f1f208ebe832749b27d6dc826e4f96b4dde22c4853291206d497dc5dc9"
+        },
+        "tools/android/interactive/test_map_startup_native_change.py": {
+          "bytes": 19624,
+          "sha256": "f322813ffc0024f835c393a7ebd5682505318bef6d1d8229bca338816785c19b"
+        }
+      },
+      "source_root_or_frozen_publication_stage_edited": false,
+      "time_UTC": "2026-10-14T02:45:14.698036+00:00",
+      "worktree": "/workspace/scratch/5d16603ca7ff/native-workflow-doc-routing-037"
+    },
+    "foundation_commit": "f6aabde3a3438f58128359fa3f019664ae391b45",
+    "mixed_lineage_freeze": {
+      "base_git_commit": "bc74b08e75d5da7187f99658d2c04dd509a325fb",
+      "boundaries": {
+        "Map_progress_raw_bytes": 128,
+        "fresh_native_processes_in_resume": 15,
+        "generation_dependency_rows_per_stock_case_maximum": 16384,
+        "memory_samples_per_case_maximum": 128,
+        "native_world_JSON_maximum_bytes": 67108864,
+        "native_world_cases": 16,
+        "original_failed04b_result_preserved": true,
+        "original_inherited_native_world_processes": 1,
+        "other_raw_JSON_maximum_bytes": 8388608,
+        "production_entry_refuses_explicit_unexecuted_world_fixtures": true,
+        "raw_native_ZIP_maximum_bytes": 268435456,
+        "raw_native_ZIP_maximum_members": 512,
+        "shipping_036_Map_bytes_execution_inferred": false
+      },
+      "format": 1,
+      "fresh_host_tests": {
+        "errors": 0,
+        "failures": 0,
+        "log": {
+          "bytes": 10554,
+          "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/native-cache-mixed-lineage-host-tests.log",
+          "sha256": "581adeb9e55c5e6fc7880b59bce108947a032b6d22238f5fe33d847588ed627f"
+        },
+        "normalizer_tests": 20,
+        "pre_post_source_pins_unchanged": true,
+        "retained_Map_adapter_tests": 26,
+        "skips": 0,
+        "tests": 46,
+        "unittest_seconds": 33.251,
+        "wall_seconds": 33.46540060999541
+      },
+      "offline_original_captured_dependency_shape": {
+        "all_names_validated": true,
+        "captured_archive": {
+          "bytes": 2409058,
+          "sha256": "b15026b0ee92354069159303ec73e6cbbe6bc07c44ad53bf2798cfcd8488d4d8"
+        },
+        "dependency_rows": 1570,
+        "historical_parser_source": {
+          "bytes": 18535,
+          "path": "tools/prepare_native_startup_reuse_fixture.py",
+          "sha256": "86770ee71b8fc80245ca60d36f509c77511f6f78c34683f103c7cf35f6e72e83"
+        },
+        "ordinary_ampersand_path_rows": 27,
+        "scope": "Pure Python original Parse6 dependency envelope inspection and ordinary source-name validation; no Game/Map/Wine process execution, no field-level native decode claim, no new namespace absence execution",
+        "zero_date_rows": 136,
+        "zero_date_unique_paths": 68
+      },
+      "patch_against_source_only_foundation": {
+        "bytes": 51505,
+        "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/native-cache-mixed-lineage-followup.patch",
+        "sha256": "8762023f56939b8cc912b70644541380c9650ad4b9c99b5e5f1c5abc924e7f33"
+      },
+      "paths": {
+        "android/guest/native_map_startup_contract.py": {
+          "bytes": 63192,
+          "sha256": "cf21dac83bcc96891112800382b8f91e4fe95a95af7580da93972eca4665d36c"
+        },
+        "tools/android/interactive/derive_native_metadata_cache_proof.py": {
+          "bytes": 47939,
+          "sha256": "05d4484380a195eb67225c1eb307cc01ceb56f4a07390c4cc686d9041d5e9adb"
+        },
+        "tools/android/interactive/test_derive_native_metadata_cache_proof.py": {
+          "bytes": 33031,
+          "sha256": "7eeaaad957effc54534ad464f6d3f7cf16d722facfc951cd179b65975a0cb407"
+        }
+      },
+      "required_reviewed_source_only_foundation": {
+        "freeze": "native-startup-source-only-authority-stage-freeze.json",
+        "sha256": "09b479259f8f6f7e9c614e74ad1fcc3dff02713a6af7530cbf7b153bce0054f6"
+      },
+      "residual_gates": [
+        "Independent review of these three source files and all bounded native lineage/namespace rules.",
+        "Actual current raw world artifact must pass 15 fresh + one original inherited stock case with truthful original/current source/run/job/case ownership.",
+        "Final raw world artifact extents and every output subset must be authenticated from actual artifact bytes.",
+        "Commit exact derivation source before deriving a production flat proof; output pin remains solely the external independently frozen descriptor.",
+        "Do not copy builder/classifier/HANDOFF/marker from this stage; preserve root guard and marker revision5."
+      ],
+      "role": "inactive_mixed_native_execution_lineage_normalizer_followup",
+      "scope": {
+        "activation_implemented": false,
+        "actual_final_world_subset_pending": true,
+        "actual_genuine_old_stock_case_preserved": true,
+        "component_and_execution_authorities": null,
+        "constructed_generation_and_current_world_fixtures_unexecuted": true,
+        "controlled_world_additional_donor_omission": "data/bin/fxinfo.bin (ordinary actual original stock output differs)",
+        "controlled_world_donor_subset_count": 106,
+        "fresh15_world_matrix_executed_by_these_host_tests": false,
+        "promotions_implemented": false,
+        "publication_enabled": false,
+        "qualification_enabled": false,
+        "runtime_cache_proof_derivation": null
+      },
+      "worktree": "/workspace/scratch/5d16603ca7ff/publication-037-lineage"
+    },
+    "mixed_lineage_independent_root_review": {
+      "approved": true,
+      "errors": 0,
+      "failures": 0,
+      "fresh_tests": 46,
+      "native_execution": false,
+      "reviewed_exact_source": true,
+      "seconds": 34.585,
+      "skips": 0
+    },
+    "native_component_authorities": null,
+    "promotions_implemented": false,
+    "publication_enabled": false,
+    "qualification_enabled": false,
+    "reviewed_execution_authorities": null,
+    "runtime_cache_proof_derivation": null,
+    "source_only_freeze": {
+      "base_commit": "bc74b08e75d5da7187f99658d2c04dd509a325fb",
+      "committed_source_only_review": {
+        "bytes": 15614,
+        "commit": "1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e",
+        "git_blob": "6b6d373a275029476f28c77cc5fcfe010e58b9bb",
+        "path": "docs/android-evidence/native-map-metadata-source-boundary-0.13.37.json",
+        "sha256": "e5a268b0fbae23230e518f8dcbb49fdccdcdd998293de61b133cc7b5bbf1fd44"
+      },
+      "executed_host_tests": {
+        "admission_and_packaging": {
+          "errors": 0,
+          "failures": 0,
+          "seconds": 4.689,
+          "skips": 0,
+          "tests": 17
+        },
+        "map_adapter_and_normalizer": {
+          "errors": 0,
+          "failures": 0,
+          "seconds": 31.147,
+          "skips": 0,
+          "tests": 38
+        },
+        "scope": "Host-only source/material and inactive adapter fixtures; no Game/Map/Wine execution. Some tests consume actual authenticated original ZIPs. Controlled complete-world fixtures remain explicitly unexecuted."
+      },
+      "format": 1,
+      "gate_state": {
+        "Game_sort_promotion_allowed": false,
+        "Map_world_qualification_pending": true,
+        "activation_implemented": false,
+        "native_component_authorities": null,
+        "new_native_execution_claimed": false,
+        "physical_timing_claimed": false,
+        "promotions_implemented": false,
+        "publication_enabled": false,
+        "qualification_enabled": false,
+        "reviewed_execution_authorities": null,
+        "runtime_cache_proof_derivation": null,
+        "source_only_review_authenticated": true
+      },
+      "integration_notes": [
+        "Preserve root CI guard edits in three shared builder/classifier/qualifier paths; apply only the four builder lines and one classifier document literal from this patch.",
+        "Do not copy HANDOFF or marker files from this worktree.",
+        "The one new evidence document retains raw original failed 04b status and original producer/recovery/qualifier identities.",
+        "All eight authored files verified intact after ENOSPC; no additional source materialization permitted."
+      ],
+      "new_document": "docs/android-evidence/native-startup-material-facts-0.13.37.json",
+      "paths": {
+        "android/guest/native_map_startup_contract.py": {
+          "bytes": 62345,
+          "sha256": "1329d0c5a0c0ec4784191bb4b0e441d8eb7713843526e1268311ffe6b42c3705"
+        },
+        "docs/android-evidence/native-startup-material-facts-0.13.37.json": {
+          "bytes": 171683,
+          "sha256": "da1c9b3dec1067d894b9fe5468d43c5f4d33b797f3dd3308e14dd64fb7ef8567"
+        },
+        "tools/android/interactive/build_client_zone_startup_apk.py": {
+          "bytes": 64539,
+          "sha256": "2eb6033a09e647e5192d0ef2c2ea4c44d1b37f153e99b91ac2e7b315bffaf0ff"
+        },
+        "tools/android/interactive/classify_client_zone_startup_change.py": {
+          "bytes": 5508,
+          "sha256": "d1a6bb66b33b5bce766f8c86fb4efa49324074566642df7649aa59f9abfaed19"
+        },
+        "tools/android/interactive/native_startup_metadata_admission.py": {
+          "bytes": 9098,
+          "sha256": "e64cce6963c9aee6b0f9c899ddd9846ca88108890aa38940cc6fe02771ebb384"
+        },
+        "tools/android/interactive/test_derive_native_metadata_cache_proof.py": {
+          "bytes": 16226,
+          "sha256": "ee51b08b90e873856859d34656c99d1096d106869b8cd392252f4b8490dbbc30"
+        },
+        "tools/android/interactive/test_native_metadata_map_activation.py": {
+          "bytes": 59242,
+          "sha256": "2a276519a9ef16da5c997aa387f10c40b65cec2ad19a36de414ce706fd479ac8"
+        },
+        "tools/android/interactive/test_native_startup_metadata_admission.py": {
+          "bytes": 5887,
+          "sha256": "ac349c0eeee2601d1ef6214e00a8c961c69d64229caa6eb2ac2f1729810c819e"
+        }
+      },
+      "role": "inactive_actual_source_only_and_original_material_facts_freeze",
+      "tracked_patch": {
+        "bytes": 45755,
+        "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/native-startup-source-only-authority-stage.patch",
+        "sha256": "aed5ea0c50e06f8a47973c29665f9adb2a53c87b725df3d8c480fe72df166c09"
+      },
+      "worktree": "/workspace/scratch/5d16603ca7ff/publication-037-authorities"
+    },
+    "source_only_independent_review": {
+      "committed_source_verified_by_production_path": {
+        "bytes": 15614,
+        "commit": "1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e",
+        "git_blob": "6b6d373a275029476f28c77cc5fcfe010e58b9bb",
+        "native_or_physical_permission_granted": false,
+        "path": "docs/android-evidence/native-map-metadata-source-boundary-0.13.37.json",
+        "read_only_git_show": true,
+        "sha256": "e5a268b0fbae23230e518f8dcbb49fdccdcdd998293de61b133cc7b5bbf1fd44"
+      },
+      "format": 1,
+      "foundation_commit": "bc74b08e75d5da7187f99658d2c04dd509a325fb",
+      "freeze": {
+        "bytes": 3946,
+        "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/native-startup-source-only-authority-stage-freeze.json",
+        "sha256": "09b479259f8f6f7e9c614e74ad1fcc3dff02713a6af7530cbf7b153bce0054f6"
+      },
+      "independent_actual_raw_material_authentication": {
+        "Game_producer_members": 6,
+        "Game_recovery_qualification_unique_members": 297,
+        "Map_original_failed_stock_members": 20,
+        "Map_preload_members": 38,
+        "Map_producer_members": 4,
+        "all_member_records": 365,
+        "each_member_name_size_and_SHA256_authenticated": true,
+        "each_whole_ZIP_size_and_SHA256_authenticated": true,
+        "original_04b_failed_result_preserved": true,
+        "original_receipts_rewritten": false,
+        "unique_ZIPs": 5
+      },
+      "independently_executed_tests": {
+        "failures": 0,
+        "initial_command_issue": {
+          "attempted_module": "test_package_client_zone_startup",
+          "corrected_package_run_seconds": 4.848,
+          "correction": "Executed only the actual9-case test_client_zone_startup_package module; no source edits or repeated successful suites.",
+          "initial_run_seconds": 27.381,
+          "issue": "The owner-supplied module name does not exist;46 real cases passed and one unittest loader placeholder errored."
+        },
+        "modules": {
+          "test_client_zone_startup_package": 9,
+          "test_derive_native_metadata_cache_proof": 12,
+          "test_native_metadata_map_activation": 26,
+          "test_native_startup_metadata_admission": 8
+        },
+        "real_case_errors": 0,
+        "real_cases_passed": 55,
+        "skips": 0
+      },
+      "integration_note": "Keep root19-case CI guard changes in shared builder/classifier/qualifier. Add only this stage four builder lines and one classifier document literal. Do not overwrite root HANDOFF/marker.",
+      "reviewed_at_UTC": "2026-10-14T02:27:47.930740+00:00",
+      "reviewer": "client_harness_review",
+      "scope_limits": {
+        "Game_sort_promotion": false,
+        "activation_implemented": false,
+        "behavioral_collision_validated": false,
+        "native_component_authorities": {
+          "game": null,
+          "mapserver": null
+        },
+        "native_world_qualification_pending": true,
+        "new_native_execution_by_reviewer": false,
+        "physical_timing_validated": false,
+        "player_or_SQL_access_or_mutation_by_reviewer": false,
+        "promotions_implemented": false,
+        "publication_enabled": false,
+        "qualification_enabled": false,
+        "reviewed_execution_authorities": {
+          "game": null,
+          "mapserver": null
+        },
+        "runtime_cache_proof_derivation": null,
+        "shipping_predecessor_execution_validated": false,
+        "source_edits_by_reviewer": false,
+        "source_review_is_now_frozen": true,
+        "source_review_is_only_source_SDK_compatibility": true
+      },
+      "source_pins_unchanged_after_tests": {
+        "android/guest/native_map_startup_contract.py": {
+          "bytes": 62345,
+          "sha256": "1329d0c5a0c0ec4784191bb4b0e441d8eb7713843526e1268311ffe6b42c3705"
+        },
+        "docs/android-evidence/native-startup-material-facts-0.13.37.json": {
+          "bytes": 171683,
+          "sha256": "da1c9b3dec1067d894b9fe5468d43c5f4d33b797f3dd3308e14dd64fb7ef8567"
+        },
+        "tools/android/interactive/build_client_zone_startup_apk.py": {
+          "bytes": 64539,
+          "sha256": "2eb6033a09e647e5192d0ef2c2ea4c44d1b37f153e99b91ac2e7b315bffaf0ff"
+        },
+        "tools/android/interactive/classify_client_zone_startup_change.py": {
+          "bytes": 5508,
+          "sha256": "d1a6bb66b33b5bce766f8c86fb4efa49324074566642df7649aa59f9abfaed19"
+        },
+        "tools/android/interactive/native_startup_metadata_admission.py": {
+          "bytes": 9098,
+          "sha256": "e64cce6963c9aee6b0f9c899ddd9846ca88108890aa38940cc6fe02771ebb384"
+        },
+        "tools/android/interactive/test_derive_native_metadata_cache_proof.py": {
+          "bytes": 16226,
+          "sha256": "ee51b08b90e873856859d34656c99d1096d106869b8cd392252f4b8490dbbc30"
+        },
+        "tools/android/interactive/test_native_metadata_map_activation.py": {
+          "bytes": 59242,
+          "sha256": "2a276519a9ef16da5c997aa387f10c40b65cec2ad19a36de414ce706fd479ac8"
+        },
+        "tools/android/interactive/test_native_startup_metadata_admission.py": {
+          "bytes": 5887,
+          "sha256": "ac349c0eeee2601d1ef6214e00a8c961c69d64229caa6eb2ac2f1729810c819e"
+        }
+      },
+      "status": "approved_source_only_inactive_integration"
+    },
+    "source_only_review_authenticated": true,
+    "time_UTC": "2026-10-14T02:47:41.977226+00:00"
+  },
   "tests": 95
 }

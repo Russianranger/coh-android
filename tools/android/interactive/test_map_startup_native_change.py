@@ -13,6 +13,9 @@ SPEC = importlib.util.spec_from_file_location('map_native_change',
 guard = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(guard)
 WORKFLOW = (ROOT/guard.WORKFLOW).read_bytes()
 LEGACY = subprocess.check_output(['git','show',guard.BASELINE+':'+guard.WORKFLOW],cwd=ROOT)
+PREVIOUS_POLICY = {path: subprocess.check_output(['git','show',guard.POLICY_CORRECTION_PARENT+':'+path],cwd=ROOT)
+    for path in (guard.HELPER,guard.TEST)}
+FACTUAL_DOC = 'docs/android-evidence/native-startup-material-facts-0.13.37.json'
 GUEST = 'android/guest/native_map_startup_contract.py'
 NATIVE = 'tools/prepare_map_startup_source.py'
 
@@ -47,6 +50,84 @@ class NativeWorkflowScopeTests(unittest.TestCase):
 
     def classification(self,before,head,event='push'):
         return guard.classify(self.repo,event,before,head)
+
+    def install_previous_policy(self):
+        self.write(guard.WORKFLOW,WORKFLOW)
+        for path,raw in PREVIOUS_POLICY.items():self.write(path,raw)
+        head=self.commit('actual prior reviewed guard bytes')
+        self.enterContext(patch.object(guard,'POLICY_CORRECTION_PARENT',head))
+        return head
+
+    def update_policy(self):
+        for path in (guard.HELPER,guard.TEST):self.write(path,(ROOT/path).read_bytes())
+
+    def test_exact_f6_policy_handover_admits_only_unchanged_native_source_closure(self):
+        before=self.install_previous_policy();self.update_policy();head=self.commit('one reviewed host-doc routing handover')
+        row=self.classification(before,head)
+        self.assertFalse(row['native_required'],row)
+        self.assertTrue(row['source_only_scope_policy_correction'])
+        self.assertFalse(row['control_introduction'])
+        self.assertEqual(row['retained_native_body_sha256'],guard.NATIVE_BODY_SHA256)
+
+    def test_handover_can_include_exact_eight_source_only_stage_paths(self):
+        before=self.install_previous_policy();self.update_policy()
+        for path in ('android/guest/native_map_startup_contract.py',
+            'tools/android/interactive/build_client_zone_startup_apk.py',
+            'tools/android/interactive/classify_client_zone_startup_change.py',
+            'tools/android/interactive/native_startup_metadata_admission.py',
+            'tools/android/interactive/test_derive_native_metadata_cache_proof.py',
+            'tools/android/interactive/test_native_metadata_map_activation.py',
+            'tools/android/interactive/test_native_startup_metadata_admission.py',FACTUAL_DOC):
+            self.write(path,b'CONTROLLED_UNEXECUTED_SOURCE_ONLY_STAGE')
+        head=self.commit('host evidence plus exact handover')
+        self.assertFalse(self.classification(before,head)['native_required'])
+
+    def test_factual_doc_then_remains_an_exact_host_only_path(self):
+        before=self.install_previous_policy();self.update_policy();previous=self.commit('handover')
+        self.write(FACTUAL_DOC,b'CONTROLLED_INACTIVE_MATERIAL_FACTS');head=self.commit('exact evidence path')
+        row=self.classification(previous,head)
+        self.assertFalse(row['native_required'],row)
+        self.assertFalse(row['source_only_scope_policy_correction'])
+
+    def test_policy_handover_wrong_parent_or_partial_controls_require_native(self):
+        before=self.install_previous_policy();self.update_policy();head=self.commit('handover')
+        with patch.object(guard,'POLICY_CORRECTION_PARENT','1'*40):
+            self.assertTrue(self.classification(before,head)['native_required'])
+        for path in (guard.HELPER,guard.TEST):
+            with self.subTest(path=path):
+                self.git('checkout','-q',before)
+                self.write(path,(ROOT/path).read_bytes());partial=self.commit('one policy control only')
+                self.assertTrue(self.classification(before,partial)['native_required'])
+
+    def test_policy_handover_authenticates_both_actual_predecessor_source_pins(self):
+        before=self.install_previous_policy()
+        for path in (guard.HELPER,guard.TEST):
+            self.assertEqual(guard.sha(PREVIOUS_POLICY[path]),guard.POLICY_PREDECESSOR_PINS[path])
+            with self.subTest(path=path):
+                self.git('checkout','-q',before)
+                self.write(path,PREVIOUS_POLICY[path]+b'\nUNREVIEWED_PREDECESSOR\n')
+                changed=self.commit('alter prior policy');self.update_policy();head=self.commit('handover after altered policy')
+                with patch.object(guard,'POLICY_CORRECTION_PARENT',changed):
+                    self.assertTrue(self.classification(changed,head)['native_required'])
+
+    def test_later_helper_or_test_edits_do_not_inherit_one_time_policy_exception(self):
+        before=self.install_previous_policy();self.update_policy();previous=self.commit('handover')
+        for path in (guard.HELPER,guard.TEST):
+            with self.subTest(path=path):
+                self.git('checkout','-q',previous)
+                self.write(path,b'UNREVIEWED_FUTURE_POLICY');head=self.commit('future policy change')
+                self.assertTrue(self.classification(previous,head)['native_required'])
+
+    def test_policy_handover_never_admits_unknown_docs_native_or_workflow_changes(self):
+        before=self.install_previous_policy()
+        for path in ('docs/android-evidence/unreviewed-material-facts.json',NATIVE,
+            'database/map-startup/tests/unreviewed.c','upstream/ouroboros/CMakeLists.txt',guard.WORKFLOW):
+            with self.subTest(path=path):
+                self.git('checkout','-q',before);self.update_policy()
+                self.write(path,WORKFLOW.replace(b'--target MapServer',b'--target Game',1)
+                    if path==guard.WORKFLOW else b'UNREVIEWED_OTHER_SCOPE')
+                head=self.commit('foreign scope with policy handover')
+                self.assertTrue(self.classification(before,head)['native_required'])
 
     def test_exact_first_wrapper_introduction_skips_unchanged_native_body(self):
         head=self.install_guard();row=self.classification(self.baseline,head)
