@@ -1,0 +1,283 @@
+{
+  "schema": 1,
+  "phase": 9,
+  "passed": true,
+  "qualification_passed": true,
+  "probe_version": "0.1.1-phase9",
+  "scope": "AYN Thor Android 13 ARM64 source-selected world/camera/material diagnostic probe",
+  "original_report": {
+    "name": "COH-NativeWorld-20261013-200713.json",
+    "bytes": 239558,
+    "sha256": "6f4d93469e6f31dc690f6cb99f6a631edaa514b9a6ed0ab5ab176983ee9da114",
+    "immutable_original_retained": true
+  },
+  "validation": {
+    "basis": "accepted world-probe checker native, payload, source-audit and lifecycle assertions",
+    "checker_sha256": "c9ca122d914ddfbaacdc8054fe3ca5e86590b08b22a0c27982db4b9124cb0e92",
+    "manual_physical_device_adaptations": [
+      "Expected emulator_detected false while preserving SDK 33 assertion",
+      "Excluded CI-only auto_smoke_completed event requirement; manual resize, recreation and measured background receipt retained"
+    ],
+    "no_events_or_fields_fabricated": true,
+    "source_report_unchanged": true
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "emulator_detected": false,
+    "gpu_vendor": "Qualcomm",
+    "gpu_renderer": "Adreno (TM) 740"
+  },
+  "successful_runs": 6,
+  "recorded_native_attempts": 6,
+  "failed_runs": 0,
+  "session_failures": 0,
+  "completed_context_cycles": 12,
+  "successful_surface_generations": 4,
+  "successful_actual_dimensions": 2,
+  "run_dimensions": [
+    [
+      1413,
+      291
+    ],
+    [
+      1884,
+      389
+    ]
+  ],
+  "all_runs_same_session_verified": true,
+  "all_runs_nonobsolete": true,
+  "source_arithmetic_profile": {
+    "order": "((x*m0+y*m1)+z*m2)+translation",
+    "policy": "source-left-associated-products-and-sums",
+    "mechanisms": [
+      "ESSL-3.20-core-precise"
+    ],
+    "shader_language_versions": [
+      320
+    ],
+    "all_contexts_precise_enabled": true,
+    "thor_0_1_1_retest_passed": true
+  },
+  "independently_parsed_apk_inputs": {
+    "world_parts": 2,
+    "textures": 4,
+    "vertices": 512,
+    "indices": 564,
+    "part_vertices": [
+      256,
+      256
+    ],
+    "part_indices": [
+      144,
+      420
+    ],
+    "part_flags": [
+      0,
+      0
+    ],
+    "part_material_modes": [
+      0,
+      1
+    ],
+    "group_nodes": 6,
+    "camera_poses": 6,
+    "material_cases": 12,
+    "real_material_cases": 8,
+    "synthetic_material_cases": 4,
+    "gpu_components_per_vertex": 13,
+    "material_clear_pixels": 16384
+  },
+  "fixture_assets": {
+    "world.bin": {
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f",
+      "bytes": 102176
+    },
+    "world-reference.bin": {
+      "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13",
+      "bytes": 161344
+    },
+    "material-reference.bin": {
+      "sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77",
+      "bytes": 198208
+    }
+  },
+  "fixture_assets_and_complete_metadata_match_exact_apk": true,
+  "source_audit": {
+    "passed": true,
+    "git_tree_sha": "f1aab78ed5cd4e33046758f256e38e777a5ee4a3",
+    "source_files_verified": 1585,
+    "primary_sources_verified": 20
+  },
+  "count_totals": {
+    "group_local_components": 864,
+    "group_world_components": 864,
+    "camera_view_components": 864,
+    "projection_components": 1152,
+    "modelview_components": 864,
+    "transform_vertices": 36864,
+    "transform_components": 479232,
+    "world_poses": 72,
+    "world_compared_pixels": 18069048,
+    "world_interior_pixels": 302520,
+    "world_edge_excluded_pixels": 805320,
+    "material_cases": 144,
+    "real_material_cases": 96,
+    "synthetic_semantic_cases": 48,
+    "material_pixels": 589824,
+    "material_discard_clear_pixels": 196608,
+    "material_blended_cases": 72,
+    "window_samples": 588,
+    "preview_frames": 540,
+    "distinct_camera_views": 432,
+    "preview_image_samples": 36,
+    "preview_changed_image_samples": 24,
+    "preview_pixels_changed_from_first": 580704,
+    "diagnostic_cases": 60,
+    "diagnostic_pixels": 1500
+  },
+  "maximum_errors": {
+    "group_local_max_error": 0,
+    "group_world_max_error": 0,
+    "camera_view_max_error": 0,
+    "projection_max_error": 0,
+    "modelview_max_error": 0,
+    "world_max_byte_error": 0,
+    "material_max_byte_error": 1,
+    "max_transform_error": 0
+  },
+  "mismatch_totals": {
+    "group_local_mismatches": 0,
+    "group_world_mismatches": 0,
+    "camera_view_mismatches": 0,
+    "projection_mismatches": 0,
+    "modelview_mismatches": 0,
+    "transform_mismatches": 0,
+    "world_position_mismatches": 0,
+    "eye_position_mismatches": 0,
+    "normal_mismatches": 0,
+    "clip_mismatches": 0,
+    "world_mismatches": 0,
+    "material_mismatches": 0,
+    "window_mismatches": 0,
+    "diagnostic_mismatches": 0,
+    "gl_errors": 0,
+    "egl_error": 0
+  },
+  "per_part_transform_vertices_total": [
+    18432,
+    18432
+  ],
+  "per_part_image_compared_pixels_total": [
+    18612912,
+    18185280
+  ],
+  "per_part_image_mismatch_totals": [
+    0,
+    0
+  ],
+  "per_part_minimum_six_camera_interior_pixels": [
+    850,
+    26940
+  ],
+  "each_camera_minimum_interior_pixels": [
+    9944,
+    4665,
+    2146,
+    2260,
+    559,
+    5636
+  ],
+  "all_contexts_completed_and_released": true,
+  "lifecycle": {
+    "actual_resize_verified": true,
+    "surface_recreation_verified": true,
+    "foreground_return_verified": true,
+    "background_callbacks_measured_in_uploaded_export": true,
+    "event_names": [
+      "activity_created",
+      "activity_resumed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "resize_requested",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "surface_recreation_requested",
+      "surface_destroyed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "activity_paused",
+      "surface_destroyed",
+      "activity_stopped",
+      "activity_resumed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "background_return_qualified",
+      "resize_requested",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "surface_recreation_requested",
+      "surface_destroyed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed"
+    ],
+    "background_return": {
+      "passed": true,
+      "paused_generation": 2,
+      "returned_generation": 3,
+      "request": 9,
+      "width": 1413,
+      "height": 291,
+      "event_serials": {
+        "pause": 17,
+        "stop": 19,
+        "surface_destroyed": 18,
+        "resume": 20,
+        "surface_created": 21,
+        "probe_completed": 24
+      }
+    }
+  },
+  "tolerances": {
+    "gpu_absolute": 0.0001,
+    "rgba_bytes": 2,
+    "triangle_edge_guard_pixels": 2,
+    "minimum_each_camera_and_each_partition_aggregate_interior_pixels": 64
+  },
+  "arm64_apk": {
+    "file": "CoH-Native-World-Probe-0.1.1-arm64.apk",
+    "bytes": 243170,
+    "sha256": "ecee30e56bbc54f4fccb1ad1d50847c8f7c34e54d704ab05f61d81f4273b985e",
+    "abi": "arm64-v8a",
+    "elf_machine": 183,
+    "native_library": {
+      "file": "lib/arm64-v8a/libcoh_world_probe.so",
+      "bytes": 96192,
+      "sha256": "5f101bd711c937ea7462357064f4ed612552583e19f4b7f49d4b075062c82ef4"
+    },
+    "packaged_fixture_bytes_verified": true,
+    "manifest_verified": true,
+    "signature_verified": true,
+    "signer_certificate_sha256": "1b8c384819b25da9cb3482f679fa88c72e27a7041e72bf78219055b6eb093923"
+  },
+  "limits": {
+    "full_atlas_loaded": false,
+    "original_game_execution": false,
+    "original_cg_execution": false,
+    "original_atlas_lighting_qualified": false,
+    "original_scene_sorter_qualified": false,
+    "startup_zoning_or_frame_rate_performance_measured": false,
+    "source_geometry": "one authored modern_bench_2wide root and complete selected ancestor chain; two material partitions"
+  }
+}
