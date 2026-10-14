@@ -130,10 +130,13 @@ def validate_probe(path):
     return actual
 
 
-def validate_probe_checks(value, probe):
-    import test_native_client_wfd_probe as contract
+def validate_probe_checks(value, probe, *, contract=None, source_pin=None):
+    if contract is None:
+        import test_native_client_wfd_probe as contract
+    if source_pin is None:
+        source_pin=pin(ROOT/'tools/native_client_wfd_probe.c')
     expected={'format':1,'role':'Windows_SDK_readonly_ANSI_metadata_probe_fixture','status':'passed',
-        'source_sha256':pin(ROOT/'tools/native_client_wfd_probe.c')['sha256'],
+        'source_sha256':source_pin['sha256'],
         'probe':pin(probe),'observed_ABI':{'pointer_bits':32,'WFD_bytes':320,'by_handle_bytes':52,'header_bytes':160},
         'actual_windows_sdk_executed':True,'native_Wine_executed':False,'native_Game_executed':False,
         'physical_device_executed':False,'current_provider_generation_qualified':False,

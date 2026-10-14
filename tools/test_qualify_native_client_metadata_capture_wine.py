@@ -170,4 +170,36 @@ class LaneTests(unittest.TestCase):
         self.assertEqual(len(programs),3)
         for _,body in programs:compile(textwrap.dedent(body),'<capture-workflow>','exec')
 
+    def test_unknown_probe_packet_limit_refused_before_operation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base=Path(temporary)
+            with self.assertRaises(ValueError):
+                lane.run_probe(base/'probe',base/'work',base/'prefix',[],{}, {},base/'output',
+                    '1'*64,'2'*32,contract=SimpleNamespace(MAX_BYTES=128*1024**2))
+            self.assertFalse((base/'output').exists())
+
+    def test_external_probe_must_be_authenticated_after_original_package(self):
+        source=Path(lane.__file__).read_text()
+        self.assertLess(source.index('build=native.validate_package('),source.index('extension_value=bound.validate('))
+        self.assertIn('probe_contract=bound.load_contract(extension)',source)
+        self.assertIn('contract=probe_contract',source)
+        self.assertIn('sidecar.stat().st_size<=contract.MAX_BYTES',source)
+        self.assertIn("'native_probe_RSS_measured':False",source)
+
+    def test_probe_only_repair_workflow_builds_once_without_Game_recompile(self):
+        workflow=(lane.ROOT/'.github/workflows/android-native-client-metadata-probe-bound.yml').read_text()
+        jobs=workflow.split('\njobs:\n',1)[1]
+        self.assertEqual(re.findall(r'^  ([A-Za-z0-9_-]+):\s*$',jobs,re.M),['probe-windows','actual-client-capture'])
+        self.assertEqual(workflow.count('cl /nologo'),1)
+        self.assertNotIn('cmake --build',workflow)
+        self.assertNotIn('package_native_client_metadata_capture.py stage',workflow)
+        self.assertIn('needs: probe-windows',workflow)
+        self.assertEqual(workflow.count('inputs.ensure_assets('),1)
+        self.assertEqual(workflow.count('tools/prepare_native_client_profile_fixture.py --donor-apk'),1)
+        self.assertIn('--probe-extension out/probe-bound',workflow)
+        self.assertIn("producer[0]['conclusion']=='success'",workflow)
+        programs=re.findall(r"(?ms)^([ ]*)python3 - <<'PYTHON'\n(.*?)^\1PYTHON\s*$",workflow)
+        self.assertEqual(len(programs),5)
+        for _,body in programs:compile(textwrap.dedent(body),'<bound-workflow>','exec')
+
 if __name__=='__main__':unittest.main()

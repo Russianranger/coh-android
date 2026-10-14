@@ -111,8 +111,10 @@ def closed_prefix(prefix,identity):
         and [info.st_dev,info.st_ino,info.st_uid]==identity and startup.process_census(prefix)==[],
         'Exact owned closed prefix identity required')
 
-def run_probe(executable,work,prefix,identity,env,tools,output,generation,operation,seconds=300):
+def run_probe(executable,work,prefix,identity,env,tools,output,generation,operation,seconds=300,*,contract=None):
     require(type(seconds) is int and 1<=seconds<=900,'Bounded isolated probe budget required')
+    contract=contract or wfd
+    require(contract.MAX_BYTES in (64*1024**2,96*1024**2),'Reviewed native probe packet bound required')
     closed_prefix(prefix,identity)
     require(not output.exists(),'Fresh probe operation output required')
     output.mkdir(mode=0o700)
@@ -131,18 +133,18 @@ def run_probe(executable,work,prefix,identity,env,tools,output,generation,operat
                 require(time.monotonic()<deadline,'Actual read-only native metadata probe exceeded CI deadline')
                 require((output/'stdout.log').stat().st_size<=65536 and (output/'stderr.log').stat().st_size<=65536,
                         'Native probe diagnostic exceeded bound')
-                if sidecar.exists():require(not sidecar.is_symlink() and sidecar.stat().st_size<=wfd.MAX_BYTES,'Native sidecar exceeded bound')
+                if sidecar.exists():require(not sidecar.is_symlink() and sidecar.stat().st_size<=contract.MAX_BYTES,'Native sidecar exceeded bound')
                 time.sleep(.1)
         raw=(output/'stdout.log').read_bytes()
-        lines=[line for line in raw.decode('ascii').splitlines() if line.startswith(wfd.MARKER)]
+        lines=[line for line in raw.decode('ascii').splitlines() if line.startswith(contract.MARKER)]
         require(len(lines)==1,'Exactly one current native probe console receipt required')
-        receipt=json.loads(lines[0][len(wfd.MARKER):])
+        receipt=json.loads(lines[0][len(contract.MARKER):])
         require(process.returncode==0 and receipt.get('status')=='complete_observation'
             and receipt.get('operation')==operation and receipt.get('generation')==generation
             and receipt.get('output_created') is True and receipt.get('output_handle_closed') is True
             and receipt.get('provider_authority') is False and receipt.get('publication_allowed') is False,
             'Actual native WFD/readability probe incomplete; retain current diagnostic')
-        observation=wfd.parse(sidecar.read_bytes(),generation,operation,windows_path(work/'data'),receipt['windows_pid'])
+        observation=contract.parse(sidecar.read_bytes(),generation,operation,windows_path(work/'data'),receipt['windows_pid'])
         require(observation['status']=='complete_observation','Native current provider mapping/readability incomplete')
         write(output/'actual-WFD-observation.json',observation)
     except BaseException as error:failure={'type':type(error).__name__,'message':str(error)[:2048]}
@@ -154,7 +156,11 @@ def run_probe(executable,work,prefix,identity,env,tools,output,generation,operat
             'status':'passed' if observation and failure is None and cleanup['passed'] else 'failed',
             'failure':failure,'cleanup':cleanup,'observation':observation,'elapsed_seconds':round(time.monotonic()-started,6),
             'probe':pin(executable),'native_Wine_executed':process is not None,'native_Game_executed':False,
-            'actual_process_invocation_held':process is not None,'physical_device_executed':False,**FALSE_AUTHORITY}
+            'actual_process_invocation_held':process is not None,'physical_device_executed':False,
+            'native_packet_bound_bytes':contract.MAX_BYTES,
+            'native_row_cap':contract.MAX_ROWS,'native_directory_cap':contract.MAX_DIRS,
+            'qualifier_process_maxrss_kib':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+            'native_probe_RSS_measured':False,**FALSE_AUTHORITY}
         write(output/'native-probe-phase.json',value)
     require(value['status']=='passed','Actual native metadata probe failed; raw evidence and owned cleanup retained')
     return value
@@ -222,6 +228,14 @@ def qualify(args):
     try:
         authentication_started=time.monotonic()
         build=native.validate_package(args.package,args.package_commit,args.donor_apk)
+        probe_executable=args.package/native.FIXTURE;probe_contract=wfd
+        extension=getattr(args,'probe_extension',None)
+        if extension is not None:
+            import native_client_wfd_probe_bound as bound
+            extension_value=bound.validate(extension,args.probe_extension_commit)
+            probe_executable=extension/bound.PROBE
+            probe_contract=bound.load_contract(extension)
+            value['probe_bound_extension']=extension_value
         value['native_package_authentication_seconds']=round(time.monotonic()-authentication_started,6)
         fixture=json.loads(args.fixture.read_text());work=Path(fixture['work']);assets=Path(fixture['assets'])
         imported=Path(fixture['actual_client_worktree']['source_data']);inherited=build['retained_public_client']['native_member_closure']
@@ -268,11 +282,14 @@ def qualify(args):
         operation=os.urandom(16).hex()
         provenance={'capture_Game':pin(target),'Wine_tools':tools,'PIG_auxiliary':aux['stable_inputs']['piggs/server-animations.pigg'],
             'actual_fixture':pin(args.fixture),'native_package':pin(args.package/native.MANIFEST),
+            'actual_probe':pin(probe_executable),'native_probe_packet_bound_bytes':probe_contract.MAX_BYTES,
             'producer_source_commit':'c0c8857af79cdecaff01e7cc9dbf35a71b9d28e5','Android_runtime_source_equivalence':False}
+        if extension is not None:
+            provenance['probe_bound_extension']=pin(extension/bound.MANIFEST)
         packet,report=projection(work/'data',imported,operation,provenance,args.output/'source-projection')
         value['source_projection']=report
-        probe=run_probe(args.package/native.FIXTURE,work,args.prefix.absolute(),identity,env,tools,args.output/'actual-WFD',
-            report['generation_token'],operation,args.probe_timeout_seconds)
+        probe=run_probe(probe_executable,work,args.prefix.absolute(),identity,env,tools,args.output/'actual-WFD',
+            report['generation_token'],operation,args.probe_timeout_seconds,contract=probe_contract)
         value['actual_WFD']=probe
         value['consumed_field_comparison']=bridge.compare(packet,probe['observation'],report['generation_token'])
         value['post_probe_projection']=recheck_projection(work/'data',imported,report,args.output/'post-probe-projection.json')
@@ -328,4 +345,6 @@ if __name__=='__main__':
     for name in ('fixture','package','donor-apk','prefix','output'):parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--package-commit',required=True);parser.add_argument('--timeout-seconds',type=int,default=900)
     parser.add_argument('--probe-timeout-seconds',type=int,default=300)
+    parser.add_argument('--probe-extension',type=Path)
+    parser.add_argument('--probe-extension-commit')
     result=qualify(parser.parse_args());print(json.dumps({'status':result['status'],'scope':result['role'],'publication_allowed':False}))
