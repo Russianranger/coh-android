@@ -25,7 +25,7 @@ import tarfile
 import time
 
 ROOT=Path(__file__).resolve().parents[3]
-sys.path[:0]=[str(ROOT/'tools'),str(Path(__file__).resolve().parent)]
+sys.path[:0]=[str(ROOT/'tools'),str(ROOT/'android/guest'),str(Path(__file__).resolve().parent)]
 import qualify_minimal_db_runtime as minimal
 import prepare_native_map_world_inputs_037 as inputs
 
@@ -36,6 +36,7 @@ import reuse_native_map_prefetch as candidate_reuse
 import package_native_map_prefetch as candidate_package
 import prepare_native_startup_reuse_fixture as generation
 import qualify_native_startup_profile as profiles
+import server_message_cache_format as message_format
 
 require=minimal.require
 REPORT='native-map-world-037-qualification.json'
@@ -50,6 +51,22 @@ MAP_STAGES={str(i):s for i,s in enumerate((
 MAX_LOG=16*1024**2
 CONFIG='data/server/db/servers.cfg'
 MEMORY_SAMPLES=128
+MAX_WORLD_CACHES=4096
+NEW_WORLD_GLOBALS={'data/bin/animlists.bin','data/bin/behavioralias.bin',
+                   'data/server/bin/ai_config.bin','data/server/bin/plaquemsg-en.bin'}
+
+
+def generated_cache_name(name):
+    inputs.safe_windows_name(name)
+    return name in NEW_WORLD_GLOBALS or (name.startswith(('data/geobin/object_library/','data/geobin/maps/'))
+                                        and name.endswith('.bin'))
+
+
+def map_command(target,map_id):
+    require(map_id in WORLDS,'Reviewed selected world required')
+    return [str(target),'-assertmode','8256','-db','127.0.0.1','-nosharedmemory','-nostats',
+            '-udp',str(WORLDS[map_id][1]),'-tcp','0','-map_id',str(map_id),
+            '-idleExitTimeout','0','-donotautogroup']
 
 
 def pin(path): return inputs.leaf.pin(path)
@@ -128,18 +145,23 @@ def clone_provider(source,provider,destination,generated_cache=None):
     source,destination=Path(source),Path(destination)
     require(source.is_dir() and not source.is_symlink() and not destination.exists(),
             'Fresh unlinked warm consumer destination required')
-    names=provider['files'];require(0<len(names)<=inputs.MAX_FILES,'Warm input membership bound differs')
+    names=provider['files'];members=dict(names)
     if generated_cache is not None:
-        require(set(generated_cache)<=set(names),'Generated BIN membership escapes original provider')
+        require(0<len(generated_cache)<=MAX_WORLD_CACHES,'Generated world cache membership exceeds bound')
+        additions=set(generated_cache)-set(names)
+        require(all(generated_cache_name(n) for n in additions),'Generated BIN membership escapes fixed native producer closure')
+        members.update({n:generated_cache[n] for n in additions})
+    require(0<len(members)<=inputs.MAX_FILES and len({n.casefold() for n in members})==len(members),
+            'Warm input membership bound or case identity differs')
     destination.mkdir();copied=0
-    for name in sorted(names):
+    for name in sorted(members):
         if name in (CONFIG,'MapServer.exe'):continue
         original=native_path(source,name);target=native_path(destination,name)
         require(not original.is_symlink() and all(not p.is_symlink() for p in original.parents),
                 'Linked original warm provider input refused')
         info=original.lstat();require(stat.S_ISREG(info.st_mode) and info.st_nlink==1,
                                     'Private regular warm provider source required')
-        expected=(generated_cache or {}).get(name,names[name])
+        expected=(generated_cache or {}).get(name,members[name])
         require(info.st_size==expected['bytes'],'Warm source size differs from authenticated membership')
         if name not in (generated_cache or {}):
             require(info.st_mtime_ns//100==names[name]['mtime_ns']//100,
@@ -154,20 +176,25 @@ def clone_provider(source,provider,destination,generated_cache=None):
         copied+=1
     return {'copied_provider_files':copied,'operational_members_excluded':True,
             'private_configuration_copied':False,'generated_cache_byte_identity_checked':generated_cache is not None,
-            'immutable_content_census_required_before_launch':True}
+            'immutable_content_census_required_before_launch':True,
+            'explicit_generated_world_cache_members':sorted(set(members)-set(names))}
 
 
 def cache_snapshot(runtime):
     result={}
-    for directory in ('data/bin','data/server/bin'):
-        root=Path(runtime)/directory;require(root.is_dir() and not root.is_symlink(),'Native BIN directory missing/linked')
+    for directory in ('data/bin','data/server/bin','data/geobin'):
+        root=Path(runtime)/directory
+        if directory=='data/geobin' and not root.exists():continue
+        require(root.is_dir() and not root.is_symlink(),'Native BIN directory missing/linked')
         for path in sorted(root.rglob('*.bin')):
-            require(len(result)<512,'Native BIN bound exceeded');result[path.relative_to(runtime).as_posix()]=pin(path)
+            name=path.relative_to(runtime).as_posix()
+            require(directory!='data/geobin' or generated_cache_name(name),'Unreviewed geometry BIN layout')
+            require(len(result)<MAX_WORLD_CACHES,'Native world BIN bound exceeded');result[name]=pin(path)
     require(result and 'data/bin/sequencers.bin' in result,'Current native cache closure missing')
     return result
 
 
-def provider_snapshot(runtime,cache):
+def provider_inventory(runtime,cache):
     runtime=Path(runtime);values={}
     for root in (runtime/'data',runtime/'piggs'):
         require(root.is_dir() and not root.is_symlink(),'Native provider directory missing/linked')
@@ -182,6 +209,11 @@ def provider_snapshot(runtime,cache):
                 values[relative]={**pin(path),'mtime_ns':info.st_mtime_ns//100*100}
     for path in runtime.iterdir():
         if path.suffix.casefold() in ('.exe','.dll'):values[path.name]=pin(path)
+    return values
+
+
+def provider_snapshot(runtime,cache,inventory=None):
+    values=provider_inventory(runtime,cache) if inventory is None else inventory
     return {'files':len(values),'bytes':sum(x['bytes'] for x in values.values()),
             'inventory_sha256':digest(values),'without_MapServer_sha256':digest({n:r for n,r in values.items() if n!='MapServer.exe'}),
             'native_components':{n:r for n,r in values.items() if '/' not in n},
@@ -298,15 +330,64 @@ class Memory:
                 'Linux_RSS_PSS_measured':False,'Thor_measured':False}
 
 
-def validate_generation_changes(runtime,before,after,raw_before):
+def validate_generation_changes(runtime,before,after,raw_before,original_sources=None):
     delta=cache_delta(before,after)
-    require(not delta['added'] and not delta['removed'],'Native generation altered BIN membership')
-    proof={}
+    require(not delta['removed'] and all(generated_cache_name(n) for n in delta['added']),
+            'Native generation altered BIN membership outside fixed world producer closure')
+    require(len(delta['added'])<=MAX_WORLD_CACHES and sum(p['bytes'] for p in delta['added'].values())<=256*1024**2,
+            'New native world cache output exceeds producer bound')
+    proof={};messages={}
     for name in delta['changed']:
         proof[name]=generation.parse6_equivalence(raw_before[name],(Path(runtime)/name).read_bytes())
+    for name in delta['added']:
+        raw=(Path(runtime)/name).read_bytes()
+        if name=='data/server/bin/plaquemsg-en.bin':
+            messages[name]={'structure':message_format.inspect_message_store(raw),'actual_input':after[name],
+                            'schema_source':'MessageStore.c:msWriteBin/msReadBin'}
+            continue
+        decoded=generation.inspect_native_parse6(raw)
+        require(decoded['dependency_count']>0,'New world cache lacks authoritative source dependencies')
+        proof[name]={'after':decoded,'new_native_world_cache':True,
+                     'native_payload_sha256':hashlib.sha256(raw[-decoded['body_bytes']:]).hexdigest(),
+                     'original_payload_comparison_available':False}
     dependencies=generation.bind_dependency_sources(runtime,proof)
+    if delta['added']:require(isinstance(original_sources,dict),'New world caches require original immutable source authority')
+    source_index={n.removeprefix('data/').casefold():r for n,r in (original_sources or {}).items() if n.startswith('data/')}
+    for name,rows in dependencies.items():
+        for row in rows:
+            if original_sources is None:continue
+            original=source_index.get(row['path'].casefold())
+            require(original is not None and row['actual_source']=={k:original[k] for k in ('bytes','sha256')}
+                    and row['actual_source_mtime_ns']//100==original['mtime_ns']//100,
+                    'Generated cache dependency escapes or changes original source authority')
+    for name,value in messages.items():
+        sources={n:r for n,r in (original_sources or {}).items()
+                 if n.casefold().startswith('data/texts/english/server/plaques/')}
+        require(0<len(sources)<=4096,'Original English plaque message source closure missing/bounded')
+        cache_mtime=(Path(runtime)/name).stat().st_mtime_ns
+        for source,original in sources.items():
+            actual=Path(runtime)/source
+            require(pin(actual)=={k:original[k] for k in ('bytes','sha256')}
+                    and actual.stat().st_mtime_ns//100==original['mtime_ns']//100
+                    and original['mtime_ns']//10**9<=cache_mtime//10**9,
+                    'Plaque message cache source/date differs from original immutable provider')
+        value['original_English_source_closure']=sources
+        value['source_inventory_sha256']=digest(sources)
+        value['actual_native_cache_mtime_ns']=cache_mtime
     return {'delta':delta,'Parse6_dependency_envelope_changes':proof,'actual_dependency_sources':dependencies,
-            'decoded_payload_and_schema_unchanged':True,'Android_cache_authority_created':False}
+            'new_MessageStore_outputs':messages,
+            'existing_decoded_payload_and_schema_unchanged':True,
+            'new_payloads_require_exact_stock_native_world_producer':True,
+            'new_payloads_require_identical_warm_native_consumers':True,
+            'fixed_new_cache_closure':{'global_BINs':sorted(NEW_WORLD_GLOBALS),
+                'geometry_BIN_roots':['data/geobin/object_library/','data/geobin/maps/'],
+                'source_recipe':'Common/group/groupfileload.c:makeBinName/groupWriteGroupAndRootnameToBin and retained global/message parser callsites',
+                'source_files':{n:pin(ROOT/'upstream/ouroboros'/n) for n in (
+                    'Common/group/groupfileload.c','Common/seq/AnimBitList.c',
+                    'MapServer/src/ai/entaiBehaviorAlias.c','MapServer/src/ai/entaiInstance.c',
+                    'MapServer/src/plaque.c','libs/UtilitiesLib/src/language/MessageStore.c',
+                    'libs/UtilitiesLib/src/language/MultiMessageStore.c')}},
+            'Android_cache_authority_created':False}
 
 
 def phase_plan(baseline,candidate):
@@ -394,6 +475,79 @@ def owned_process_class(base_process):
     return OwnedProcess
 
 
+def progress_snapshot(path,process):
+    """Retain raw bounded bytes even when a failed startup cannot be admitted."""
+    result={'held_windows_pid':process.child.pid,'held_process_exit_code':process.child.poll()}
+    path=Path(path)
+    if not path.exists():return dict(result,mapping_present=False)
+    info=path.lstat();require(stat.S_ISREG(info.st_mode) and not path.is_symlink() and info.st_size==4096,
+                            'Failure Map progress mapping is not a bounded regular native file')
+    with path.open('rb',buffering=0) as stream:
+        first=stream.read(128);stream.seek(0);second=stream.read(128)
+    result.update(mapping_present=True,mapping_bytes=info.st_size,raw_record_hex=first.hex(),
+                  raw_record_sha256=hashlib.sha256(first).hexdigest(),stable_read=first==second)
+    if first==second:
+        try:result['decoded_record']=map_progress(first,process.child.pid)
+        except ValueError as error:result['decoding_failure']=str(error)
+    return result
+
+
+def owned_process_times(process):
+    require(os.name=='nt','Actual retained-handle CPU observations require Windows')
+    result={'held_windows_pid':process.child.pid,'exit_code':process.child.poll(),
+            'elapsed_seconds':round(time.monotonic()-process.started,3),
+            'source':'GetProcessTimes on retained Popen native process handle'}
+    fields=[wintypes.FILETIME() for _ in range(4)]
+    fn=ctypes.WinDLL('kernel32',use_last_error=True).GetProcessTimes
+    fn.argtypes=[wintypes.HANDLE,*([ctypes.POINTER(wintypes.FILETIME)]*4)];fn.restype=wintypes.BOOL
+    require(fn(wintypes.HANDLE(int(process.child._handle)),*[ctypes.byref(x) for x in fields]),
+            'Owned process CPU query failed')
+    seconds=lambda x:round(((int(x.dwHighDateTime)<<32)|int(x.dwLowDateTime))/10**7,6)
+    result.update(kernel_cpu_seconds=seconds(fields[2]),user_cpu_seconds=seconds(fields[3]))
+    return result
+
+
+def failure_snapshot(probe,start,read_dispatch):
+    result={'case':probe.get('label'),'map_id':probe.get('map_id'),'admitted_world_ready':False,'errors':[]}
+    result['last_readiness_observation']=probe.get('last_readiness_observation')
+    result['Db_ready_baseline']=probe.get('Db_ready_baseline')
+    map_process=probe.get('map_process');db_process=probe.get('db_process')
+    for name,process in (('Map',map_process),('Db',db_process)):
+        if process is not None:
+            try:result[name+'_owned_process']=owned_process_times(process)
+            except Exception as error:result['errors'].append(name+' CPU: '+type(error).__name__+': '+str(error))
+    if map_process is not None:
+        try:result['Map_progress_before_query']=progress_snapshot(probe['progress'],map_process)
+        except Exception as error:result['errors'].append('Map progress: '+type(error).__name__+': '+str(error))
+        try:
+            if map_process.child.poll() is None:probe['memory'].sample()
+            result['Map_memory']=probe['memory'].report()
+        except Exception as error:result['errors'].append('Map memory: '+type(error).__name__+': '+str(error))
+    if db_process is not None and 'db_stages' in probe:
+        try:result['Db_dispatch']=read_dispatch(probe['dispatch'],db_process,probe['db_stages'])
+        except Exception as error:result['errors'].append('Db dispatch: '+type(error).__name__+': '+str(error))
+    # A status-only request is independent evidence, never a replacement for
+    # the failed console+held-PID readiness gate. It does not mutate characters.
+    if map_process is not None and db_process is not None and all(p.child.poll() is None for p in (map_process,db_process)):
+        query=None
+        try:
+            query=start(minimal.map_query_command(probe['runtime'],probe['map_id']),probe['runtime'],
+                        probe['logs'],probe['label']+'-failed-status',probe['env'])
+            probe['children'].append(query)
+            result['status_query_exit_code']=query.wait(15)
+            text=query.text();result['status_query_stdout']=text
+            result['status_query_stdout_sha256']=hashlib.sha256(text.encode()).hexdigest()
+            result['native_Db_status']=ready_status(text,probe['map_id'])
+        except Exception as error:result['errors'].append('failure status: '+type(error).__name__+': '+str(error))
+        finally:
+            if query is not None:
+                try:query.stop()
+                except Exception as error:result['errors'].append('failure query cleanup: '+type(error).__name__)
+        try:result['Map_progress_after_query']=progress_snapshot(probe['progress'],map_process)
+        except Exception as error:result['errors'].append('post-query progress: '+type(error).__name__+': '+str(error))
+    return result
+
+
 def run(args):
     require(os.name=='nt','Genuine world gate requires Windows')
     require(re.fullmatch('[0-9a-f]{40}',args.repository_commit) and 30<=args.timeout_seconds<=1800,
@@ -421,7 +575,7 @@ def run(args):
         'SQL_scope':'new_disposable_fixture_only','behavioral_collision_proven':False,'physical_device_executed':False,
         'shipping_allowed':False,'freshness_bypass_enabled':False,'source_hashing_warms_host_filesystem_cache':True,
         'owned_cleanup_verified':False,'generated_cache_authorizes_Android_reuse':False}
-    cluster=None;children=[];observers=[];secrets=[];current=None;current_before=None;log_contexts=[]
+    cluster=None;children=[];observers=[];secrets=[];current=None;current_before=None;log_contexts=[];case_probe={}
     OwnedProcess=owned_process_class(network.Process)
     def start(command,runtime,logs,label,env):
         p=OwnedProcess(command,runtime,logs,label,env=env);children.append(p);return p
@@ -466,7 +620,8 @@ def run(args):
                 config=db/CONFIG;config.write_text(minimal.guest_config(config.read_text(),cluster.meta['database'],cluster.connection_string(args.driver)))
                 target=current/'MapServer.exe';shutil.copyfile(native,target)
                 (current/CONFIG).write_bytes(config.read_bytes())
-                before=cache_snapshot(current);provider_before=provider_snapshot(current,before)
+                before=cache_snapshot(current);source_before=provider_inventory(current,before)
+                provider_before=provider_snapshot(current,before,source_before)
                 require(before['data/bin/fxinfo.bin']==inputs.FX_VARIANTS[variant],
                         'Current native FX consumer received wrong variant')
                 if original_provider is None:original_provider=provider_before['without_MapServer_sha256']
@@ -477,12 +632,16 @@ def run(args):
                 current_before['regular_provider_clone']=clone
                 write(case_output/'before-launch.json',current_before)
                 case_children=[];case_observers=[]
+                case_probe={'label':label,'map_id':map_id,'runtime':current,'logs':logs,'children':case_children,
+                            'source_before':source_before}
                 env={k:v for k,v in os.environ.items() if not k.startswith(('COH_','PG'))}
                 dispatch=db/'dispatch.bin';db_env=dict(env,COH_WINE_DB_FIXED_INPUTS='1',COH_WINE_DB_LOOPBACK_ONLY='1',
                     COH_WINE_DB_MANUAL_ATLAS='1',COH_WINE_DB_PROGRESS=str(dispatch))
                 db_process=start([str(db/'DbServer.exe'),'-start','0'],db,logs,label+'-db',db_env);case_children.append(db_process)
+                case_probe.update(db_process=db_process,dispatch=dispatch)
                 db_console=ConsoleCapture(db_process.child.pid,logs,label+'-db');observers.append(db_console);case_observers.append(db_console);db_console.start()
                 stages=manifest['db_package']['wine_build_input']['dispatch_progress']['stages']
+                case_probe['db_stages']=stages
                 first_dispatch=None
                 def db_ready():
                     nonlocal first_dispatch
@@ -491,22 +650,31 @@ def run(args):
                     return first_dispatch and first_dispatch['loop_count']>0 and all(a in text for a in
                         (minimal.FIXED_ACK,minimal.LOOPBACK_ACK,minimal.MANUAL_ACK))
                 network.wait_for(db_ready,[db_process],db,300,'owned retained minimal Db readiness')
+                case_probe['Db_ready_baseline']=first_dispatch
                 schema=minimal.schema_snapshot(cluster,manifest['schema'])
                 if schema_original is None:schema_original=schema;fixture=minimal.seed_fixture(cluster)
                 require(schema==schema_original,'Native full-world initialization changed database schema/attributes')
                 progress=current/'world-progress.bin'
                 map_env=dict(env,COH_GAME_LOOPBACK_ONLY='1',COH_WINE_MAP_PROGRESS=str(progress))
                 if role=='candidate':map_env['COH_MAP_ANIMATION_METADATA_PREFETCH']='1'
-                command=[str(target),'-nogui','-db','127.0.0.1','-nosharedmemory','-nostats','-udp',str(WORLDS[map_id][1]),
-                    '-tcp','0','-map_id',str(map_id),'-idleExitTimeout','0','-donotautogroup']
+                # Keep the exact -nogui assertion policy, but allow the already
+                # owned fresh console to execute native setvbuf(_IONBF). With
+                # -nogui, loadend/Server-ready stdout may remain buffered after
+                # the final explicitly flushed loadstart despite live ticks.
+                command=map_command(target,map_id)
                 map_process=start(command,current,logs,label+'-map',map_env);case_children.append(map_process)
                 map_console=ConsoleCapture(map_process.child.pid,logs,label+'-map');observers.append(map_console);case_observers.append(map_console);map_console.start()
                 memory=Memory(map_process);first=None;later=None;status=None;deadline=time.monotonic()+args.timeout_seconds
+                case_probe.update(map_process=map_process,progress=progress,memory=memory,env=env)
                 while True:
                     require(time.monotonic()<deadline,'Owned native world readiness timed out')
                     require(map_process.poll() is None and db_process.poll() is None,'Owned world or Db process exited')
                     memory.sample();sample=read_progress(progress,map_process)
                     text=map_console.text()+'\n'+map_process.text()
+                    case_probe['last_readiness_observation']={'observed_utc_ms':int(time.time()*1000),
+                        'elapsed_Map_seconds':round(time.monotonic()-map_process.started,3),
+                        'held_Map_windows_pid':map_process.child.pid,'Map_progress':sample,
+                        'Server_ready_stdout_observed':'Server ready.' in text}
                     if sample and sample['tick_completed']>0 and 'Server ready.' in text:
                         first=sample;break
                     time.sleep(.1)
@@ -540,13 +708,17 @@ def run(args):
                 require(minimal.fixture_snapshot(cluster)['canonical_sha256']==fixture['canonical_sha256']
                         and minimal.schema_snapshot(cluster,manifest['schema'])==schema_original,
                         'Owned native case cleanup changed synthetic identity/location or schema')
-                after=cache_snapshot(current);provider_after=provider_snapshot(current,set(before)|set(after));delta=cache_delta(before,after)
+                after=cache_snapshot(current);source_after=provider_inventory(current,set(before)|set(after))
+                provider_after=provider_snapshot(current,set(before)|set(after),source_after);delta=cache_delta(before,after)
                 facts={'map_id':map_id,'fx_variant':variant,'phase':phase,'role':role,'command':command,'actual_native':pin(target),
                     'host_ready_status_and_post_query_tick_seconds':round(elapsed,3),'world_markers':markers,
                     'native_Db_status':status,'Map_progress_before_status':first,'Map_progress_after_status':later,
                     'Db_progress_before_world':first_dispatch,'Db_progress_after_status':db_later,
                     'memory':memory.report(),'cache_before':before,'cache_after':after,'cache_delta':delta,
                     'provider_before':provider_before,'provider_after':provider_after,
+                    'original_source_delta':cache_delta(source_before,source_after),
+                    'observed_native_decoder_and_freshness_prefix_only':True,
+                    'native_profiler_limits_unchanged':{'maximum_profile_rows_per_translation_unit':256,'maximum_freshness_rows':256},
                     'schema_snapshot':schema,'synthetic_row_unchanged':True,'owned_cleanup_verified':True,
                     'native_observations':observation,'Map_console':map_console.report(),'Db_console':db_console.report()}
                 facts['actual_certified_animation_consumption']=animation
@@ -559,7 +731,13 @@ def run(args):
                 require(provider_before==provider_after and pin(target)==current_before['native'],
                         'Native world changed exact provider/native component inputs')
                 if role=='stock':
-                    proof=validate_generation_changes(current,before,after,raw_before);facts['native_generation']=proof
+                    proof=validate_generation_changes(current,before,after,raw_before,source_before);facts['native_generation']=proof
+                    proof['actual_stock_producer']={'native':facts['actual_native'],
+                        'retained_native_build':retained.provenance(),
+                        'held_windows_pid':first['windows_pid'],'map_id':map_id,
+                        'native_Db_status':status,'post_query_completed_ticks':later['tick_completed'],
+                        'world_initialization_markers':markers,'original_source_delta':facts['original_source_delta'],
+                        'provider_native_components':provider_after['native_components']}
                     write(case_output/'generation.json',proof);generated=current
                     # The pinned compressed original archive and its complete
                     # manifest remain available; only this exact fresh expanded
@@ -574,7 +752,7 @@ def run(args):
                     # Release only this fully stopped fresh owned case. Evidence
                     # and original public/provider trees are retained separately.
                     shutil.rmtree(current)
-                shutil.rmtree(db);current=None;current_before=None
+                shutil.rmtree(db);current=None;current_before=None;case_probe={}
             shutil.rmtree(generated)
         require(len(report['cases'])==16,'Both worlds require separately generated full and SERVER-only FX native consumers')
         report.update(status='passed',actual_native_worlds_executed=[1,5],initialization_geometry_parity_verified=True,
@@ -584,6 +762,21 @@ def run(args):
     except Exception as error:
         report['failures'].append(type(error).__name__+': '+network.redact(str(error),secrets)[-4000:])
     finally:
+        if report['failures'] and case_probe:
+            try:
+                value=failure_snapshot(case_probe,start,minimal.read_dispatch)
+                if cluster is not None and fixture is not None:
+                    current_fixture=minimal.fixture_snapshot(cluster)
+                    value['synthetic_profile']={'scope':'new_disposable_fixture_only',
+                        'original_canonical_sha256':fixture['canonical_sha256'],
+                        'current_canonical_sha256':current_fixture['canonical_sha256'],
+                        'unchanged':current_fixture['canonical_sha256']==fixture['canonical_sha256']}
+                # The same configured redaction policy applies before public
+                # retention; raw progress bytes have no SQL/profile content.
+                value=json.loads(network.redact(json.dumps(value),secrets))
+                write(output/'failed-native-observations.json',value)
+                report['failed_native_observations']=pin(output/'failed-native-observations.json')
+            except Exception as error:report['failures'].append('failure native observations: '+type(error).__name__)
         for child in reversed(children):
             try:child.stop()
             except Exception as error:report['failures'].append('owned child cleanup: '+type(error).__name__)
@@ -595,9 +788,11 @@ def run(args):
             except Exception as error:report['failures'].append('owned PostgreSQL cleanup: '+type(error).__name__)
         if current is not None and current.exists():
             try:
-                after=cache_snapshot(current);write(output/'failed-case-input-deltas.json',{'before':current_before,
+                after=cache_snapshot(current);source_after=provider_inventory(current,set(current_before['cache'])|set(after))
+                write(output/'failed-case-input-deltas.json',{'before':current_before,
                     'cache_after':after,'cache_delta':cache_delta(current_before['cache'],after),
-                    'provider_after':provider_snapshot(current,set(current_before['cache'])|set(after))})
+                    'provider_after':provider_snapshot(current,set(current_before['cache'])|set(after),source_after),
+                    'original_source_delta':cache_delta(case_probe['source_before'],source_after)})
             except Exception as error:report['failures'].append('failure input snapshot: '+type(error).__name__)
         for context in log_contexts:
             if context['retained']:continue
@@ -609,7 +804,8 @@ def run(args):
         report['owned_cleanup_verified']=all(c.child.poll() is not None for c in children) and not any('cleanup:' in str(e) for e in report['failures'])
         if report['failures']:report['status']='failed'
         report['source_pins']={Path(__file__).relative_to(ROOT).as_posix():pin(__file__),
-            Path(inputs.__file__).relative_to(ROOT).as_posix():pin(inputs.__file__)}
+            Path(inputs.__file__).relative_to(ROOT).as_posix():pin(inputs.__file__),
+            Path(message_format.__file__).relative_to(ROOT).as_posix():pin(message_format.__file__)}
         write(output/REPORT,report)
     require(report['status']=='passed','Actual native world gate failed; inspect '+str(output/REPORT))
     return report

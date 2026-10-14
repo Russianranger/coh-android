@@ -16,11 +16,11 @@ import prepare_native_map_world_inputs_037 as inputs
 import qualify_native_map_world_037 as gate
 
 
-def parse6(payload=b'\x00\x00\x00\x00',date=1800,crc=23):
+def parse6(payload=b'\x00\x00\x00\x00',date=1800,crc=23,dependency='defs/x.txt'):
     def string(value):
         value=value.encode();raw=struct.pack('<H',len(value))+value
         return raw+b'\0'*((-len(raw))%4)
-    deps=struct.pack('<I',1)+string('defs/x.txt')+struct.pack('<I',date)
+    deps=struct.pack('<I',1)+string(dependency)+struct.pack('<I',date)
     return b'CrypticS'+struct.pack('<I',crc)+string('Parse6')+string('Files1')+struct.pack('<I',len(deps))+deps+struct.pack('<I',len(payload))+payload
 
 
@@ -135,10 +135,73 @@ class EvidenceRefusal(unittest.TestCase):
             before={'data/bin/x.bin':{'bytes':len(before_raw),'sha256':hashlib.sha256(before_raw).hexdigest()}}
             after={'data/bin/x.bin':gate.pin(cache)}
             proof=gate.validate_generation_changes(root,before,after,{'data/bin/x.bin':before_raw})
-            self.assertTrue(proof['decoded_payload_and_schema_unchanged'])
+            self.assertTrue(proof['existing_decoded_payload_and_schema_unchanged'])
             self.assertFalse(proof['Android_cache_authority_created'])
             os.utime(source,(2400,2400))
             with self.assertRaises(ValueError):gate.validate_generation_changes(root,before,after,{'data/bin/x.bin':before_raw})
+    def test_exact_stock_new_geometry_BIN_binds_original_sources_and_warm_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source=root/'data/object_library/x.txt';source.parent.mkdir(parents=True)
+            source.write_text('immutable geometry definition');os.utime(source,(1800,1800))
+            name='data/geobin/object_library/x.bin';cache=root/name;cache.parent.mkdir(parents=True)
+            cache.write_bytes(parse6(dependency='object_library/x.txt'))
+            original={'data/object_library/x.txt':{**gate.pin(source),'mtime_ns':source.stat().st_mtime_ns}}
+            proof=gate.validate_generation_changes(root,{}, {name:gate.pin(cache)}, {},original)
+            self.assertFalse(proof['Parse6_dependency_envelope_changes'][name]['original_payload_comparison_available'])
+            self.assertEqual(proof['actual_dependency_sources'][name][0]['actual_source'],gate.pin(source))
+            provider={'files':original};destination=root/'warm'
+            gate.clone_provider(root,provider,destination,{name:gate.pin(cache)})
+            self.assertEqual((destination/name).read_bytes(),cache.read_bytes())
+            for authority in ({},dict(original,**{'data/object_library/x.txt':dict(original['data/object_library/x.txt'],sha256='0'*64)})):
+                with self.assertRaises(ValueError):gate.validate_generation_changes(root,{}, {name:gate.pin(cache)}, {},authority)
+    def test_new_geometry_BIN_outside_fixed_source_roots_is_refused(self):
+        for name in ['data/geobin/player_library/x.bin','data/geobin/maps/x.tmp','data/bin/unreviewed.bin','world-progress.bin']:
+            self.assertFalse(gate.generated_cache_name(name))
+            with tempfile.TemporaryDirectory() as directory:
+                source=Path(directory)/'source';source.mkdir()
+                with self.assertRaises(ValueError):gate.clone_provider(source,{'files':{}},Path(directory)/'warm',
+                    {name:{'bytes':4,'sha256':'0'*64}})
+    def test_new_plaque_MessageStore_uses_its_own_schema_and_original_English_closure(self):
+        def table(values):
+            raw=b''.join(x+b'\0' for x in values);return struct.pack('<II',len(values),len(raw))+raw
+        data=(struct.pack('<I',20090521)+table([b'hello',b'help'])+table([])+struct.pack('<I',1)
+              +struct.pack('<I',5)+b'HELLO'+struct.pack('<III',0,1,0))
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source=root/'data/texts/English/server/plaques/Atlas.ms';source.parent.mkdir(parents=True)
+            source.write_text('HELLO "hello"');os.utime(source,(1800,1800))
+            name='data/server/bin/plaquemsg-en.bin';cache=root/name;cache.parent.mkdir(parents=True);cache.write_bytes(data)
+            original={source.relative_to(root).as_posix():{**gate.pin(source),'mtime_ns':source.stat().st_mtime_ns}}
+            proof=gate.validate_generation_changes(root,{}, {name:gate.pin(cache)}, {},original)
+            self.assertEqual(proof['new_MessageStore_outputs'][name]['structure']['schema_version'],20090521)
+            self.assertNotIn(name,proof['Parse6_dependency_envelope_changes'])
+            with self.assertRaises(ValueError):gate.validate_generation_changes(root,{}, {name:gate.pin(cache)}, {},{})
+            cache.write_bytes(data+b'corruption')
+            with self.assertRaises(ValueError):gate.validate_generation_changes(root,{}, {name:gate.pin(cache)}, {},original)
+    def test_geometry_cache_snapshot_includes_only_fixed_native_layout(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'data/bin').mkdir(parents=True);(root/'data/server/bin').mkdir(parents=True)
+            (root/'data/bin/sequencers.bin').write_bytes(b'original')
+            path=root/'data/geobin/maps/City_Zones/City_01_02.bin';path.parent.mkdir(parents=True);path.write_bytes(b'geometry')
+            self.assertIn(path.relative_to(root).as_posix(),gate.cache_snapshot(root))
+            bad=root/'data/geobin/unknown/x.bin';bad.parent.mkdir();bad.write_bytes(b'unsupported')
+            with self.assertRaises(ValueError):gate.cache_snapshot(root)
+    def test_Map_command_flushes_owned_console_without_changing_assertion_or_world_policy(self):
+        for map_id in (1,5):
+            command=gate.map_command('MapServer.exe',map_id)
+            self.assertNotIn('-nogui',command);self.assertNotIn('-productionmode',command)
+            self.assertEqual(command[command.index('-assertmode')+1],str(8192|64))
+            self.assertEqual(command[command.index('-map_id')+1],str(map_id))
+            self.assertEqual(command[command.index('-udp')+1],str(gate.WORLDS[map_id][1]))
+            self.assertIn('-nosharedmemory',command)
+    def test_failed_progress_retains_raw_held_PID_without_admitting_world(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'progress';path.write_bytes(self.progress()+b'\0'*(4096-128))
+            process=Mock();process.child.pid=123;process.child.poll.return_value=None
+            result=gate.progress_snapshot(path,process)
+            self.assertEqual(bytes.fromhex(result['raw_record_hex']),self.progress())
+            self.assertEqual(result['decoded_record']['tick_completed'],1)
+            process.child.pid=999;result=gate.progress_snapshot(path,process)
+            self.assertIn('decoding_failure',result);self.assertNotIn('decoded_record',result)
     def test_non_windows_execution_never_reports_native_success(self):
         if os.name!='nt':
             with self.assertRaises(ValueError):gate.Memory(None).sample()
