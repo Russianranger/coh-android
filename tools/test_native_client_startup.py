@@ -12,6 +12,36 @@ from unittest.mock import patch
 import qualify_native_client_startup as q
 
 class AdmissionTests(unittest.TestCase):
+    def test_timed_out_registry_partial_mainloop_is_unavailable_until_fresh_success(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); raw = b'GameProgress REG_SZ game_mainLoop\n'
+            timeout = subprocess.TimeoutExpired(['wine', 'reg'], 15, output=raw, stderr=b'busy')
+            ready = subprocess.CompletedProcess([], 0, raw, b'')
+            with patch.object(q.subprocess, 'run', side_effect=[timeout, ready]):
+                old = q.query_game_progress('/usr/bin/wine', {'WINEPREFIX': '/owned/prefix'}, root, 1)
+                current = q.query_game_progress('/usr/bin/wine', {'WINEPREFIX': '/owned/prefix'}, root, 2)
+            self.assertTrue(old.timed_out); self.assertIsNone(old.returncode)
+            self.assertFalse(old.record['timeout_is_readiness']); self.assertEqual(old.record['status'], 'timeout_unavailable')
+            self.assertEqual((root / 'registry-progress-1.stdout').read_bytes(), raw)
+            self.assertFalse(current.timed_out); self.assertEqual(current.returncode, 0)
+
+    def test_registry_observer_unknown_error_and_output_bound_remain_refusals(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with patch.object(q.subprocess, 'run', side_effect=PermissionError('observer denied')):
+                with self.assertRaises(PermissionError): q.query_game_progress('wine', {}, root, 1)
+            with patch.object(q.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, b'x' * 65537, b'')):
+                with self.assertRaisesRegex(ValueError, 'exceeded bound'): q.query_game_progress('wine', {}, root, 1)
+
+    def test_registry_observer_uses_remaining_global_budget_not_an_unbounded_retry(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with patch.object(q.subprocess, 'run', return_value=subprocess.CompletedProcess([], 1, b'not found', b'')) as run:
+                q.query_game_progress('wine', {}, root, 1, timeout_seconds=3.5)
+                self.assertEqual(run.call_args.kwargs['timeout'], 3.5)
+            for value in (0, 16):
+                with self.assertRaises(ValueError): q.query_game_progress('wine', {}, root, 1, timeout_seconds=value)
+
     def test_native_RGB_crop_preserves_raw_and_nearest_scaled_pixel_values(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary); source = root / 'source.ppm'; target = root / 'crop.ppm'

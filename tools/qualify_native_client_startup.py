@@ -18,6 +18,7 @@ import stat
 import subprocess
 import sys
 import time
+from types import SimpleNamespace
 
 from prepare_native_client_profile_fixture import APK, SOURCE, GAME_SHA, LAUNCHER_SHA, pin, require, write
 ROOT = Path(__file__).resolve().parents[1]
@@ -72,6 +73,27 @@ def observe_login_text(frame_path, tool, directory, label):
              'UI_input_sent': False, 'graphics_quality_changed': False}
     write(directory / (label + '-login-observation.json'), value)
     return value
+
+def query_game_progress(wine, env, directory, ordinal, timeout_seconds=15):
+    """A timed-out Wine observer is unavailable evidence, never readiness."""
+    require(0 < ordinal <= 721 and 0 < timeout_seconds <= 15, 'Bounded current registry observer required')
+    timed_out = False; returncode = None
+    try:
+        result = subprocess.run([wine, 'reg', 'query', r'HKCU\Software\Cryptic\CoH',
+            '/v', 'GameProgress', '/reg:32'], env=env, capture_output=True, timeout=timeout_seconds)
+        stdout, stderr, returncode = result.stdout, result.stderr, result.returncode
+    except subprocess.TimeoutExpired as error:
+        timed_out = True; stdout, stderr = error.stdout or b'', error.stderr or b''
+    require(isinstance(stdout, bytes) and isinstance(stderr, bytes) and len(stdout) + len(stderr) <= 65536,
+            'Current registry observation exceeded bound or encoding differs')
+    stem = 'registry-progress-' + str(ordinal)
+    (directory / (stem + '.stdout')).write_bytes(stdout); (directory / (stem + '.stderr')).write_bytes(stderr)
+    record = {'format': 1, 'ordinal': ordinal, 'status': 'timeout_unavailable' if timed_out else 'returned',
+              'returncode': returncode, 'timeout_seconds': timeout_seconds,
+              'stdout': pin(directory / (stem + '.stdout')), 'stderr': pin(directory / (stem + '.stderr')),
+              'timeout_is_readiness': False, 'uses_current_owned_prefix': True}
+    write(directory / (stem + '.json'), record)
+    return SimpleNamespace(stdout=stdout, stderr=stderr, returncode=returncode, timed_out=timed_out, record=record)
 
 def native_probe(assets, env, wine, directory):
     probe = Path(assets) / 'client-probe.exe'
@@ -336,17 +358,24 @@ def launch_case(args, fixture, client, work, env, tools, output, label):
                 text = (directory / 'stdout.log').read_text(errors='replace')
                 require('COH_CLIENT_CONSOLE_TRUNCATED_V1' not in text, 'Native console truncated')
                 launch = client.parse_launch(text, session); console = client.console_identity(text, launch)
-                registry = subprocess.run([tools['wine']['invocation'], 'reg', 'query', r'HKCU\Software\Cryptic\CoH',
-                    '/v', 'GameProgress', '/reg:32'], env=env, capture_output=True, timeout=15)
-                require(len(registry.stdout) + len(registry.stderr) <= 65536, 'Current registry evidence exceeded bound')
-                raw = registry.stdout.decode('utf8', 'replace')
+                remaining = deadline - time.monotonic()
+                require(remaining > 0, 'Actual Game startup exceeded bounded host deadline')
+                registry = query_game_progress(tools['wine']['invocation'], env, directory, len(samples) + 1,
+                                               timeout_seconds=min(15, remaining))
+                require(time.monotonic() < deadline, 'Actual Game startup exceeded bounded host deadline after registry observation')
+                # Partial stdout from a killed/timed-out observer can contain
+                # stale-looking mainLoop text; only a fresh successful return
+                # may authorize the current native startup witness.
+                raw = '' if registry.timed_out else registry.stdout.decode('utf8', 'replace')
                 current = client.startup_evidence(text, raw, observer.windows(), launch)
                 samples.append({'elapsed_seconds': round(time.monotonic() - started, 6), 'registry_returncode': registry.returncode,
+                    'registry_observer_status': registry.record['status'],
                     'main_loop': current['client_main_loop_reached'], 'current_pid': launch.get('pid') if launch else None,
                     'current_owned_window': current['client_window_observed']})
                 require(len(samples) <= 721, 'Current startup observer exceeded sample bound')
                 if registry.returncode == 0 and console and current['startup_observed'] and current['renderer_initialized'] and current['all_data_loaded']:
                     first = time.monotonic()
+                    require(first < deadline, 'Actual native startup witness arrived after bounded host deadline')
                     if first_native_seconds is None: first_native_seconds = round(first - started, 6)
                     require(len(login_observations) < 3, 'Captured current Game frames have no login/account/password text')
                     capture_label = 'startup' if not login_observations else 'startup-retry-' + str(len(login_observations) + 1)
@@ -388,6 +417,8 @@ def launch_case(args, fixture, client, work, env, tools, output, label):
             'label': label, 'evidence': evidence, 'failure': failure, 'cleanup': cleanup,
             'cache_delta': cache_delta(before, after), 'cache_before_count': len(before), 'cache_after_count': len(after),
             'samples': samples, 'generated_cache_mutations_reported': True,
+            'registry_timeout_count': sum(row['registry_observer_status'] == 'timeout_unavailable' for row in samples),
+            'transient_registry_timeouts_never_count_as_readiness': True,
             'bounded_login_frame_observations': login_observations,
             'native_game_executed': process is not None, 'physical_device_executed': False,
             'native_map_or_character_connection_claimed': False, 'software_GL_timing_scope': True}
