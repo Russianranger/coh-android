@@ -1,0 +1,160 @@
+{
+  "format": 1,
+  "source_repository": "Russianranger/coh-android",
+  "release_tag": "coh-assets-v1.0.0",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip",
+  "outer_expected_bytes": 615545248,
+  "outer_published_sha256": "e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e",
+  "outer_full_hash_locally_verified": false,
+  "inner_member": "payloads/atlas/atlas-assets.zip",
+  "inner_expected_bytes": 615541018,
+  "inner_published_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+  "inner_full_hash_locally_verified": false,
+  "records": [
+    {
+      "name": "assets/player_library/animations/huge/skel_ready.anim",
+      "size": 6171,
+      "compressed": 2568,
+      "offset": 301402561,
+      "crc32": "843b4d43",
+      "method": 8,
+      "sha256": "19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6",
+      "file_name": "ready.anim",
+      "id": "ready"
+    },
+    {
+      "name": "assets/player_library/animations/huge/run.anim",
+      "size": 5331,
+      "compressed": 3872,
+      "offset": 301134588,
+      "crc32": "5449e379",
+      "method": 8,
+      "sha256": "3a365aaabf6d67df5dc0aa5473a50585b8c64e6f2caa95d69dad0c0990afb1e6",
+      "file_name": "run.anim",
+      "id": "run"
+    },
+    {
+      "name": "assets/player_library/animations/huge/postrun.anim",
+      "size": 5505,
+      "compressed": 3531,
+      "offset": 300810614,
+      "crc32": "01270d8c",
+      "method": 8,
+      "sha256": "eb3e679e3d1a19daa85bb4883f1fcd51b95ae83fb7f6230b114a59e0b563931c",
+      "file_name": "post.anim",
+      "id": "post"
+    },
+    {
+      "id": "back",
+      "file_name": "back.anim",
+      "name": "assets/player_library/animations/huge/runback.anim",
+      "size": 4681,
+      "compressed": 3081,
+      "offset": 301146457,
+      "crc32": "22167b3a",
+      "method": 8,
+      "sha256": "5ea4d99c7d0d2dd8e8de27bb5f491551ea2629b45d39a8f1835ab37ae89cf1e2"
+    },
+    {
+      "id": "left",
+      "file_name": "left.anim",
+      "name": "assets/player_library/animations/huge/run_left.anim",
+      "size": 5387,
+      "compressed": 3875,
+      "offset": 301138536,
+      "crc32": "4851fb86",
+      "method": 8,
+      "sha256": "a2733c9306852581b15ac5913b9e2734f509f3533a0f9046044204f649a6a5a3"
+    },
+    {
+      "id": "right",
+      "file_name": "right.anim",
+      "name": "assets/player_library/animations/huge/run_right.anim",
+      "size": 5387,
+      "compressed": 3883,
+      "offset": 301142492,
+      "crc32": "7f31c666",
+      "method": 8,
+      "sha256": "2e21c3f2036bcd85f548b43383c1ef027fe92398cdd8df9521862e04cc189fed"
+    },
+    {
+      "id": "walk",
+      "file_name": "walk.anim",
+      "name": "assets/player_library/animations/male/walk.anim",
+      "size": 9001,
+      "compressed": 6925,
+      "offset": 326320992,
+      "crc32": "a290f205",
+      "method": 8,
+      "sha256": "43bd9ab845c336bd4f177a30edc5c0a56fea4bc19b193eee4f1c723493e65e7b"
+    },
+    {
+      "id": "idle",
+      "file_name": "idle.anim",
+      "name": "assets/player_library/animations/male/skel_ready2.anim",
+      "size": 7112,
+      "compressed": 3356,
+      "offset": 323779929,
+      "crc32": "35c1aafd",
+      "method": 8,
+      "sha256": "6757e276eae273d303ea945eaaa410b806f831ac0a869d017ab44a47a00372a7"
+    }
+  ],
+  "clip_names": {
+    "ready": "huge/skel_ready",
+    "run": "huge/run",
+    "post": "huge/postrun",
+    "back": "huge/runback",
+    "left": "huge/run_left",
+    "right": "huge/run_right",
+    "walk": "male/walk",
+    "idle": "male/skel_ready2"
+  },
+  "directional_source_ranges": {
+    "RunPre": [
+      18,
+      25
+    ],
+    "Idle_Walk_Post": [
+      47,
+      48
+    ],
+    "Run_Back_Pre": [
+      1,
+      24
+    ],
+    "Run_Back_Cycle": [
+      1,
+      24
+    ],
+    "Run_Left_Pre": [
+      15,
+      25
+    ],
+    "Run_Left_Cycle": [
+      1,
+      25
+    ],
+    "Run_Right_Pre": [
+      1,
+      25
+    ],
+    "Run_Right_Cycle": [
+      1,
+      25
+    ]
+  },
+  "scope": {
+    "full_source_sequencer": false,
+    "original_encoded_keys_preserved": true,
+    "ground_directional_graph_only": true,
+    "omitted": [
+      "random Ready2 graph",
+      "combat/weapon/swim",
+      "PlayFx",
+      "server authoritative state and prediction"
+    ]
+  }
+}

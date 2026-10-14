@@ -1,0 +1,29 @@
+{
+  "schema": "coh-native-walk-original-source-pins-v1",
+  "repository": "Russianranger/coh-android",
+  "source_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "upstream_source_revision": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "normalization": "CRLF to LF; exactly one trailing newline",
+  "files": [
+    {
+      "path": "upstream/ouroboros/Common/gridcoll/gridcoll.h",
+      "sha256_lf": "4ade01161636f8e87ca253a4a8a19926fee3006c5558ef75bf4fc08098546c8e",
+      "git_blob": "0e64ba65d01f08a346edbe0a10f3a39b3407b03d"
+    },
+    {
+      "path": "upstream/ouroboros/Common/entity/entworldcoll.c",
+      "sha256_lf": "e5c0cab8c310f36ec88c9a97190739af2612e524e487128d409cbb23f4cf71a4",
+      "git_blob": "681cad5956acf26aca5800c8df3211108d553077"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c",
+      "sha256_lf": "58d3c918c4072c8f6b906a493ee6fbdad0632c63dce1ececcf898a089994273e",
+      "git_blob": "a4ed82b07906da4bb6cfd1ed562b353e147faf69"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+      "sha256_lf": "afd8ec36d507a2b6315f6d6493e4c9893a343796f90cee8e148d2a442fa502c5",
+      "git_blob": "8cbfbdc5d68f3b35043fb176753fd7fbad953c7b"
+    }
+  ]
+}

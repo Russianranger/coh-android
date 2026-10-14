@@ -124,6 +124,7 @@ class JSONObject {
  JSONObject put(String key,Object value) { values.put(key,value); return this; }
  JSONObject optJSONObject(String key) { Object value=values.get(key); return value instanceof JSONObject?(JSONObject)value:null; }
  int optInt(String key) { return 0; }
+ String optString(String key,String fallback) { return fallback; }
  long optLong(String key) { return 0; }
  String toString(int indent) { return "{}"; }
 }

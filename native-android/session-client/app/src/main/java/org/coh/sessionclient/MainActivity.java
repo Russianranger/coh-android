@@ -76,7 +76,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         title.setTextSize(18); layout.addView(title);
         TextView controls = new TextView(this);
         controls.setText("Left stick / WASD / D-pad: move • Right stick / drag: look\n"
-                + "Offline movement accelerates and passes through geometry. Use short presses.");
+                + "Grounded WALK on authored ground. Test obstacles, wall sliding and direction changes.");
         layout.addView(controls);
         LinearLayout buttons = new LinearLayout(this);
         Button reset = new Button(this); reset.setText("Reset actor");
@@ -127,7 +127,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
             try {
                 JSONObject manifest = new JSONObject(new String(readAsset("asset-manifest.json"), StandardCharsets.UTF_8));
                 JSONObject records = manifest.getJSONObject("assets");
-                String[] names = {"world.bin", "character.bin", "rig.bin", "morph.bin", "locomotion.bin"};
+                String[] names = {"world.bin", "character.bin", "rig.bin", "morph.bin", "locomotion.bin", "walkable.bin"};
                 byte[][] bytes = new byte[names.length][];
                 for (int i=0; i<names.length; i++) {
                     bytes[i] = readAsset(names[i]); JSONObject pin = records.getJSONObject(names[i]);
@@ -135,7 +135,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
                         throw new IllegalStateException("Asset integrity: " + names[i]);
                 }
                 JSONObject apk = apkIdentity();
-                long result = SessionNative.createSession(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4]);
+                long result = SessionNative.createSession(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5]);
                 if (result == 0) throw new IllegalStateException("Native scene rejected its fixtures");
                 handle = result;
                 main.post(() -> {
@@ -229,11 +229,11 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         JSONObject d=new JSONObject().put("manufacturer",Build.MANUFACTURER).put("model",Build.MODEL)
                 .put("sdk",Build.VERSION.SDK_INT).put("abis",new JSONArray(Build.SUPPORTED_ABIS))
                 .put("emulator_detected",Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk_gphone"));
-        JSONObject app=new JSONObject().put("package",getPackageName()).put("version_name","0.1.0-gates16-18")
-                .put("version_code",1).put("installed_apk",apkIdentity);
-        JSONObject j=new JSONObject().put("schema","coh-native-session-v1").put("phases",new JSONArray(new int[]{16,17,18}))
+        JSONObject app=new JSONObject().put("package",getPackageName()).put("version_name","0.2.0-gates19-21")
+                .put("version_code",2).put("installed_apk",apkIdentity);
+        JSONObject j=new JSONObject().put("schema","coh-native-session-v1").put("phases",new JSONArray(new int[]{19,20,21}))
                 .put("session_id",Long.toHexString(sessionStarted)).put("updated_at",new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX",Locale.US).format(new Date()))
-                .put("scope","Persistent offline Wretch and Atlas benchmark; bounded source NOCOLL movement and authored locomotion; no login, full map, walking collision or replication")
+                .put("scope","Persistent offline Wretch with authored Atlas ground/obstacles, bounded source WALK collision and directional locomotion; no login, full map or replication")
                 .put("app",app).put("device",d).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest)
                 .put("events",new JSONArray(events.toString())).put("resumed",resumed).put("render_busy",renderQueued)
                 .put("report_write_failed",writeFailed).put("failure",failure==null?JSONObject.NULL:failure)
@@ -255,7 +255,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         try {
             JSONObject j=report(); pendingReport.set(j.toString(2).getBytes(StandardCharsets.UTF_8)); queueWriter();
             JSONObject n=j.optJSONObject("native");
-            String move=n==null ? "starting" : n.optInt("animation_state")==1 ? "Run" : n.optInt("animation_state")==2 ? "Run ending" : "Ready";
+            String move=n==null ? "starting" : n.optString("animation_move","starting");
             status.setText(failure!=null ? failure : !assetsVerified ? "Preparing native scene…" :
                     "Offline native session • " + move + " • " + (n==null ? "starting" : n.optLong("frames")+" frames")
                     + (writeFailed ? " • report save failed" : " • report ready"));

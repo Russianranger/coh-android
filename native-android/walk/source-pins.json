@@ -1,0 +1,41 @@
+{
+  "schema": "coh-native-walk-source-pins-v1",
+  "upstream_source_revision": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "normalization": "CRLF to LF; exactly one trailing newline",
+  "files": [
+    {
+      "path": "upstream/ouroboros/Common/entity/entworldcoll.c",
+      "git_blob": "681cad5956acf26aca5800c8df3211108d553077",
+      "sha256_lf": "e5c0cab8c310f36ec88c9a97190739af2612e524e487128d409cbb23f4cf71a4"
+    },
+    {
+      "path": "upstream/ouroboros/Common/gridcoll/ctri.c",
+      "git_blob": "e55768a8ba272bb2cadbf4db9ffea23b4b2e9003",
+      "sha256_lf": "506a32b5546ab24efa9ef8077c3bd197cb5e1a601f6a735cea0f38161bee6b46"
+    },
+    {
+      "path": "upstream/ouroboros/Common/gridcoll/tritri_isectline.c",
+      "git_blob": "fdb8fc9dbae815952f50a3f390558abd19bc4837",
+      "sha256_lf": "fe3a730d7ac5b04c83d8f39f2a41aaedafe0248ffa5ba76793a08386cc25c7db"
+    },
+    {
+      "path": "upstream/ouroboros/Common/gridcoll/gridcollobj.c",
+      "git_blob": "905d49f71083c651cc5e58f2d3ce092b1fa92d99",
+      "sha256_lf": "a3c516bd673dfcea11829281faab091ef104fe04548327e6410a14fe98dde2d5"
+    },
+    {
+      "path": "upstream/ouroboros/Common/gridcoll/gridcoll.h",
+      "git_blob": "0e64ba65d01f08a346edbe0a10f3a39b3407b03d",
+      "sha256_lf": "4ade01161636f8e87ca253a4a8a19926fee3006c5558ef75bf4fc08098546c8e"
+    }
+  ],
+  "adaptation": [
+    "platform/entity/math types shimmed; original source active arithmetic retained",
+    "unused colltest and platform includes removed",
+    "function-local mutable scratch promoted to thread local",
+    "source entWorldMoveMe export renamed behind qualification wrapper",
+    "tracker/grid traversal replaced with bounded world-space authored triangle AABB scan",
+    "checkEntColl no-op for explicit static-world offline subset"
+  ],
+  "oracle_math_pins": "../tools/walk_fixture/oracle-source-pins.json"
+}

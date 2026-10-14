@@ -10,8 +10,8 @@ import struct
 import subprocess
 import zipfile
 
-RUNTIME_ASSETS = {'world.bin', 'character.bin', 'rig.bin', 'morph.bin', 'locomotion.bin'}
-VERSION = '0.1.0-gates16-18'
+RUNTIME_ASSETS = {'world.bin', 'character.bin', 'rig.bin', 'morph.bin', 'locomotion.bin', 'walkable.bin'}
+VERSION = '0.2.0-gates19-21'
 PACKAGE = 'org.coh.sessionclient'
 LIBRARY = 'libcoh_session_client.so'
 
@@ -32,18 +32,18 @@ def main():
     for name, pin in manifest['assets'].items():
         assert identity((args.assets / name).read_bytes()) == pin, name
     combined = json.loads((args.assets / 'session-fixture.json').read_text())
-    assert combined['passed'] is True and combined['gates'] == [16, 17, 18]
+    assert combined['passed'] is True and combined['gates'] == [19, 20, 21]
     assert combined['reference_data_drive_rendering'] is False
     assert set(combined['assets']) | {'asset-manifest.json', 'session-fixture.json'} == expected
     for name, pin in combined['assets'].items():
         assert identity((args.assets / name).read_bytes()) == pin, name
-    for filename in ('character-fixture.json', 'world-fixture.json', 'locomotion-fixture.json'):
+    for filename in ('character-fixture.json', 'world-fixture.json', 'directional-fixture.json', 'walkable-fixture.json'):
         for name, pin in json.loads((args.assets / filename).read_text())['assets'].items():
             assert identity((args.assets / name).read_bytes()) == {k: pin[k] for k in ('bytes', 'sha256')}, name
     signer = Path(os.environ['ANDROID_HOME']) / 'build-tools/35.0.0/apksigner'
     artifacts = []
     for label, abi, machine in [('arm64', 'arm64-v8a', 183), ('emulator-x86_64', 'x86_64', 62)]:
-        path = args.output / ('CoH-Native-Session-Client-0.1.0-' + label + '.apk')
+        path = args.output / ('CoH-Native-Session-Client-0.2.0-' + label + '.apk')
         with zipfile.ZipFile(path) as apk:
             assert apk.testzip() is None
             native = [n for n in apk.namelist() if n.startswith('lib/') and n.endswith('.so')]
@@ -56,7 +56,7 @@ def main():
         signature = subprocess.check_output([str(signer), 'verify', '--verbose', '--print-certs', str(path)], text=True)
         badging = subprocess.check_output([str(signer.with_name('aapt')), 'dump', 'badging', str(path)], text=True)
         match = re.search(r"^package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", badging, re.M)
-        assert match and match.groups() == (PACKAGE, '1', VERSION)
+        assert match and match.groups() == (PACKAGE, '2', VERSION)
         assert "sdkVersion:'26'" in badging and "targetSdkVersion:'35'" in badging
         assert re.findall(r"^uses-permission: name='([^']+)'", badging, re.M) == [], 'Offline session client must not request network permission'
         assert "native-code: '" + abi + "'" in badging
@@ -70,9 +70,9 @@ def main():
                           'packaged_fixtures_verified': True,
                           'signer_certificate_sha256': certificate.group(1)})
     assert len({a['signer_certificate_sha256'] for a in artifacts}) == 1
-    receipt = {'schema': 1, 'gates': [16, 17, 18], 'source_commit': os.environ.get('GITHUB_SHA', 'local-uncommitted'),
+    receipt = {'schema': 1, 'gates': [19, 20, 21], 'source_commit': os.environ.get('GITHUB_SHA', 'local-uncommitted'),
                'workflow_run_id': os.environ.get('GITHUB_RUN_ID', 'local'), 'application_id': PACKAGE,
-               'version_name': VERSION, 'version_code': 1, 'min_sdk': 26, 'target_sdk': 35,
+               'version_name': VERSION, 'version_code': 2, 'min_sdk': 26, 'target_sdk': 35,
                'gradle': '8.9', 'android_gradle_plugin': '8.7.3', 'ndk': '28.2.13676358', 'cmake': '3.22.1',
                'signing': 'Isolated CI debug key; separate from production launcher',
                'artifacts': artifacts, 'assets': [{'file': name, **identity((args.assets / name).read_bytes())} for name in sorted(expected)],

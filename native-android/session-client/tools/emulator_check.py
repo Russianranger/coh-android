@@ -2,8 +2,8 @@
 """Exercise one installed session through genuine Android framework input.
 
 The host driver never calls JNI input or supplies an automatic motion script.
-This qualifies an offline source-derived scene session, not a full game client,
-physical controller, AYN Thor GPU, server protocol, walking collision or login.
+This qualifies the bounded offline source-derived walking scene, not a full
+game client, physical controller, AYN Thor GPU, server protocol or login.
 """
 import argparse
 import hashlib
@@ -23,6 +23,7 @@ OUTPUT = None
 ADB = 'adb'
 INPUT_PROOFS = []
 BUTTON_PROOFS = []
+GATES = [19, 20, 21]
 
 
 def adb(*arguments, check=True):
@@ -65,18 +66,76 @@ def native_ready(value):
             and native.get('frames', 0) >= 30)
 
 
+def grounded_walk(native):
+    """Check actual physics state rather than the feature-enabled label."""
+    walk = native['walk']
+    assert walk['bounded_scene'] is True and walk['grounded'] is True
+    assert 0 < walk['triangles'] <= 65536
+    assert all(isinstance(walk[key], int) and walk[key] >= 0 for key in
+               ('blocked_ticks', 'sliding_ticks', 'ground_hits', 'collision_queries', 'bounded_ticks'))
+    assert walk['ground_hits'] > 0 and walk['collision_queries'] > 0
+    assert math.isfinite(walk['ground_y'])
+    assert abs(native['actor_position'][1] - walk['ground_y']) <= .001
+    return walk
+
+
+def blocked_walk_witness(before, blocked, settled):
+    """A held, progressing source clock must stop at an authored obstacle."""
+    first, last = grounded_walk(blocked['native']), grounded_walk(settled['native'])
+    assert blocked['native']['held_dirs'] == settled['native']['held_dirs'] == 1
+    assert blocked['native']['source_state_bits'] & 1
+    assert settled['native']['source_state_bits'] & 1
+    assert first['blocked_ticks'] > before['native']['walk']['blocked_ticks']
+    assert last['blocked_ticks'] >= first['blocked_ticks'] + 15
+    assert settled['native']['movement_ticks'] >= blocked['native']['movement_ticks'] + 30
+    assert settled['native']['frames'] > blocked['native']['frames']
+    assert last['collision_queries'] > first['collision_queries']
+    assert last['bounded_ticks'] == before['native']['walk']['bounded_ticks'], 'Safety bound is not an authored obstacle'
+    assert distance(blocked['native']['actor_position'], settled['native']['actor_position']) <= .03
+    bounds_min, bounds_max = last['obstacle_bounds_min'], last['obstacle_bounds_max']
+    assert len(bounds_min) == len(bounds_max) == 3
+    assert all(math.isfinite(v) for v in bounds_min+bounds_max)
+    assert all(lo < hi for lo,hi in zip(bounds_min,bounds_max))
+    # This authored bench faces the spawn along world -Z. A wall witness must
+    # be at the bench's near side, not at a distant adapter safety square.
+    position = settled['native']['actor_position']
+    assert bounds_min[0]-1 <= position[0] <= bounds_max[0]+1
+    assert .5 <= position[2]-bounds_max[2] <= 2.5
+    assert settled['input_adapter']['in_app_synthetic']['motion'] == 0
+    return True
+
+
+def sliding_walk_witness(blocked, sliding):
+    first, last = grounded_walk(blocked['native']), grounded_walk(sliding['native'])
+    assert sliding['native']['held_dirs'] in (5, 9)
+    assert sliding['native']['movement_ticks'] >= blocked['native']['movement_ticks'] + 6
+    assert sliding['native']['frames'] > blocked['native']['frames']
+    assert last['sliding_ticks'] > first['sliding_ticks']
+    assert last['blocked_ticks'] > first['blocked_ticks']
+    assert last['bounded_ticks'] == first['bounded_ticks'], 'Safety clamping cannot qualify wall sliding'
+    assert distance(blocked['native']['actor_position'], sliding['native']['actor_position']) > .05
+    assert sliding['input_adapter']['in_app_synthetic']['motion'] == 0
+    return True
+
+
 def validate(value, moved=False):
-    assert value['schema'] == 'coh-native-session-v1' and value['phases'] == [16, 17, 18]
-    assert value['app']['package'] == PACKAGE and value['app']['version_name'] == '0.1.0-gates16-18'
-    assert value['app']['version_code'] == 1
+    assert value['schema'] == 'coh-native-session-v1' and value['phases'] == GATES
+    assert value['app']['package'] == PACKAGE and value['app']['version_name'] == '0.2.0-gates19-21'
+    assert value['app']['version_code'] == 2
     assert value['device']['sdk'] == 33 and value['device']['emulator_detected'] is True
     assert value['assets_verified'] is True and value['failure'] is None and value['report_write_failed'] is False
     native = value['native']
     assert native['valid'] is True and native['failed'] is False
     assert native['source_controlled'] is True and native['pointer_bytes'] == 8
-    assert native['collision'] is native['live_server'] is native['full_atlas'] is False
+    assert native['collision'] is True
+    assert native['live_server'] is native['full_atlas'] is False
+    grounded_walk(native)
+    moves = native['animation_move_samples']
+    assert len(moves) == 12 and all(isinstance(n, int) and n >= 0 for n in moves)
     assert native['frames'] >= 30 and native['contexts_started'] > 0
     assert native['world_draws'] >= 2 and native['actor_draws'] >= 11
+    assert native['walkable_draws'] >= 4 and native['walkable_visible_pixels'] > 0
+    assert native['walkable_tf_components'] > 0 and native['walkable_tf_mismatches'] == 0
     assert native['tf_components'] > 0 and native['tf_mismatches'] == 0
     assert math.isfinite(native['tf_max_error']) and 0 <= native['tf_max_error'] <= .0001
     assert native['depth_order_mismatches'] == native['gl_errors'] == native['egl_error'] == 0
@@ -152,6 +211,182 @@ def input_key(key, rounds=1):
     save('emulator-input-motion-proof.json', {'schema': 1, 'passed': True, 'inputs': INPUT_PROOFS,
                                             'physical_controller_verified': False})
     return after
+
+
+def wait_held(predicate, label, directions, seconds=20):
+    """Observe short safe walks without increasing the app's report cadence.
+
+    The already-held joystick keeps the same direction while genuine ordinary
+    keyboard events of that same direction make Java save a current snapshot.
+    This exercises framework input and existing callbacks, not a JNI backdoor.
+    """
+    key = {1: 'KEYCODE_W', 2: 'KEYCODE_S', 4: 'KEYCODE_A', 8: 'KEYCODE_D',
+           5: 'KEYCODE_W', 9: 'KEYCODE_W'}[directions]
+    deadline = time.monotonic()+seconds
+    while time.monotonic() < deadline:
+        adb('shell', 'input', 'keyboard', 'keyevent', key)
+        current = report()
+        if current is not None and predicate(current):
+            return current
+        time.sleep(.08)
+    raise RuntimeError(label + ' failed; actual held-input evidence retained')
+
+
+def joystick_event(x, y, directions):
+    """Send only framework source events; never invoke native input directly."""
+    before = report()
+    old = before['input_adapter']['external_android']
+    command = [ADB, 'shell', 'input', 'joystick', 'motionevent', 'MOVE', str(x), str(y)]
+    adb(*command[1:])
+    predicate = lambda r:r['native']['held_dirs'] == directions and r['input_adapter']['external_android']['motion'] > old['motion']
+    after = (wait_held(predicate, 'Actual Android joystick axis ' + str((x, y)), directions)
+             if directions else wait(predicate, 'Actual neutral Android joystick axis'))
+    assert after['input_adapter']['external_android']['key_down'] == after['input_adapter']['external_android']['key_up']
+    assert after['input_adapter']['in_app_synthetic']['motion'] == 0
+    return after, command
+
+
+def release_joystick():
+    neutral, command = joystick_event(0, 0, 0)
+    released = wait(lambda r:native_ready(r) and r['native']['held_dirs'] == 0
+                    and r['native']['animation_state'] == 0,
+                    'Released WALK controls complete authored post track', seconds=30)
+    position = released['native']['actor_position'][:]
+    ticks = released['native']['movement_ticks']
+    settled = wait(lambda r:r['native']['movement_ticks'] >= ticks+30,
+                   'Grounded WALK remains stopped after source release')
+    assert distance(position, settled['native']['actor_position']) <= .001
+    return settled
+
+
+def reset_actor(initial_position):
+    tapped = tap_button('Reset actor', 'reset_requested')
+    event = BUTTON_PROOFS[-1]['event']
+    assert event in tapped['events']
+    frames = event['native']['frames']
+    return wait(lambda r:native_ready(r) and r['native']['frames'] > frames+30
+                and r['native']['held_dirs'] == 0
+                and r['native']['animation_state'] == 0
+                and distance(initial_position, r['native']['actor_position']) <= .001,
+                'Actual Reset restores grounded authored spawn')
+
+
+def directional_walk(initial_position):
+    """Long held axes qualify cycles while short genuine keys qualify starts."""
+    cases = [('forward', 0, -1, 1, 3, 1), ('backward', 0, 1, 2, 6, 7),
+             ('left', -1, 0, 4, 8, 9), ('right', 1, 0, 8, 10, 11)]
+    proof = []
+    for name, x, y, directions, pre, cycle in cases:
+        before = reset_actor(initial_position)
+        if name == 'right':
+            # The authentic floor extends much farther world +Z than -X.
+            # Change the real shared camera with actual swipes so RightPre can
+            # complete on authored support instead of walking off this slice.
+            before = turn_right_walk_camera()
+        held, command = joystick_event(x, y, directions)
+        after = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == directions
+                     and r['native']['source_state_bits'] & directions
+                     and r['native']['movement_ticks'] >= held['native']['movement_ticks']+15
+                     and r['native']['animation_move_samples'][pre] > before['native']['animation_move_samples'][pre]
+                     and r['native']['animation_move_samples'][cycle] >= before['native']['animation_move_samples'][cycle]+3,
+                     'Actual held ' + name + ' source animation pre and cycle', directions, seconds=20)
+        grounded_walk(after['native'])
+        released = release_joystick()
+        assert released['native']['animation_transitions'] > before['native']['animation_transitions']
+        proof.append({'direction': name, 'framework_input_argv': command,
+                      'before': before, 'held': after, 'released': released,
+                      'pre_state': pre, 'cycle_state': cycle})
+        save('emulator-directional-walk-proof.json', {'schema': 1, 'passed': True,
+             'scope': 'Actual Android framework joystick holds with same-direction actual keyboard snapshot-refresh events, four authored directional pre/cycle/release paths; no in-app input injection',
+             'cases': proof, 'physical_controller_verified': False})
+    return reset_actor(initial_position)
+
+
+def interrupted_and_reversed_walk(initial_position):
+    before = reset_actor(initial_position)
+    held, tap_command = joystick_event(0, -1, 1)
+    pre = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 1
+                   and r['native']['animation_state'] == 3
+                   and r['native']['animation_move_samples'][3] > before['native']['animation_move_samples'][3],
+                   'Short actual joystick press reaches authored RunPre before release', 1)
+    tapped, release_command = joystick_event(0, 0, 0)
+    stopped = wait(lambda r:native_ready(r) and r['native']['held_dirs'] == 0
+                   and r['native']['animation_state'] == 0,
+                   'Short actual keyboard press completes interrupted run path')
+    assert stopped['native']['animation_move_samples'][3] > before['native']['animation_move_samples'][3]
+    assert stopped['native']['animation_move_samples'][4] > before['native']['animation_move_samples'][4]
+    assert stopped['native']['animation_move_samples'][5] > before['native']['animation_move_samples'][5]
+    save('emulator-interrupted-run-proof.json', {'passed': True,
+         'scope': 'Actual Android joystick press released during observed authored RunPre, then IdleWalkPost and IdleReady',
+         'press_input_argv': tap_command, 'release_input_argv': release_command,
+         'before': before, 'pre': pre, 'released': tapped, 'settled': stopped})
+
+    before = reset_actor(initial_position)
+    held, command = joystick_event(0, -1, 1)
+    forward = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 1
+                   and r['native']['animation_move_samples'][1] > before['native']['animation_move_samples'][1],
+                   'Actual forward axis enters authored RunCycle', 1)
+    reverse_held, reverse_command = joystick_event(0, 1, 2)
+    backward = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 2
+                    and r['native']['source_state_bits'] & 2
+                    and r['native']['movement_ticks'] >= reverse_held['native']['movement_ticks']+15
+                    and r['native']['animation_move_samples'][7] > forward['native']['animation_move_samples'][7]
+                    and distance(forward['native']['actor_position'], r['native']['actor_position']) > .05,
+                    'Actual unreleased forward-to-backward reversal moves authored actor', 2, seconds=20)
+    released = release_joystick()
+    save('emulator-reversal-proof.json', {'passed': True,
+         'scope': 'Actual Android forward-to-backward joystick reversal without an intervening neutral event; authored backward cycle then release',
+         'forward_input_argv': command, 'reverse_input_argv': reverse_command,
+         'before': before, 'forward': forward, 'backward': backward, 'released': released})
+
+    before = reset_actor(initial_position)
+    adapter = before['input_adapter']['external_android']
+    for _ in range(5):
+        adb('shell', 'input', 'keyboard', 'keyevent', 'KEYCODE_W')
+    released = wait(lambda r:native_ready(r) and r['native']['held_dirs'] == 0
+                    and r['native']['animation_state'] == 0
+                    and r['input_adapter']['external_android']['key_down'] >= adapter['key_down']+5
+                    and r['input_adapter']['external_android']['key_up'] >= adapter['key_up']+5,
+                    'Actual short Android taps release without stuck source input')
+    current = released['input_adapter']['external_android']
+    assert current['key_down'] == current['key_up']
+    assert released['input_adapter']['in_app_synthetic']['key_down'] == 0
+    position = released['native']['actor_position'][:]
+    ticks = released['native']['movement_ticks']
+    settled = wait(lambda r:r['native']['movement_ticks'] >= ticks+30,
+                   'Ordinary fast taps leave a stable authored actor')
+    assert distance(position, settled['native']['actor_position']) <= .001
+    save('emulator-quick-tap-proof.json', {'passed': True,
+         'scope': 'Five actual ordinary Android keyevents, framework press/release receipts and stable released source state. A sub-tick tap need not manufacture motion beyond original control latency.',
+         'before': before, 'released': released, 'settled': settled,
+         'tap_displacement': distance(before['native']['actor_position'], released['native']['actor_position'])})
+    return reset_actor(initial_position)
+
+
+def obstacle_walk(initial_position):
+    before = reset_actor(initial_position)
+    held, forward_command = joystick_event(0, -1, 1)
+    blocked = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 1
+                   and r['native']['walk']['blocked_ticks'] > before['native']['walk']['blocked_ticks'],
+                   'Actual source WALK reaches authored forward obstacle', 1, seconds=20)
+    settled = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 1
+                   and r['native']['movement_ticks'] >= blocked['native']['movement_ticks']+30,
+                   'Held source movement remains blocked while physics advances', 1)
+    blocked_walk_witness(before, blocked, settled)
+    sliding_held, diagonal_command = joystick_event(1, -1, 9)
+    sliding = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 9
+                   and r['native']['movement_ticks'] >= sliding_held['native']['movement_ticks']+6
+                   and r['native']['walk']['sliding_ticks'] > settled['native']['walk']['sliding_ticks'],
+                   'Actual diagonal source WALK slides along authored obstacle', 9, seconds=15)
+    sliding_walk_witness(settled, sliding)
+    released = release_joystick()
+    save('emulator-obstacle-walk-proof.json', {'schema': 1, 'passed': True,
+         'scope': 'Actual Android framework joystick with same-direction keyboard snapshot-refresh events: forward input blocked by authored CTri obstacle, diagonal input produces source wall sliding, release stops actor',
+         'forward_input_argv': forward_command, 'diagonal_input_argv': diagonal_command,
+         'before': before, 'blocked': blocked, 'settled': settled, 'sliding': sliding,
+         'released': released, 'physical_controller_verified': False})
+    screenshot('emulator-obstacle-scene.png')
+    return reset_actor(initial_position)
 
 
 def ui_nodes():
@@ -271,6 +506,30 @@ def touch_look():
                                        'camera_yaw_before': before, 'camera_yaw_after': result['native']['camera_yaw'],
                                        'scope': 'Actual Android touchscreen; same camera used by authored world and actor'})
     return result
+
+
+def turn_right_walk_camera():
+    current, rect, selection = scene_input_bounds()
+    x0, y0, x1, y1 = rect
+    left = x0+(x1-x0)//10
+    right = x0+9*(x1-x0)//10
+    middle_y = (y0+y1)//2
+    before = current
+    for _ in range(2):
+        old = current['input_adapter']['external_android']
+        yaw = current['native']['camera_yaw']
+        adb('shell', 'input', 'touchscreen', 'swipe', str(left), str(middle_y),
+            str(right), str(middle_y), '350')
+        current = wait(lambda r:abs(r['native']['camera_yaw']-yaw)>.5
+                       and r['input_adapter']['external_android']['touch_end']>old['touch_end']
+                       and r['input_adapter']['touch_active'] is False,
+                       'Actual touch turns right-walk test toward authored floor interior')
+    assert 1.2 < current['native']['camera_yaw'] < 2.5
+    assert current['native']['held_dirs'] == 0
+    save('emulator-right-walk-camera-proof.json', {'passed': True,
+         'scope': 'Two actual Android scene swipes orient the shared camera so the RightPre/cycle case stays on authentic ground; no actor teleport or private renderer state change',
+         'selection': selection, 'before': before, 'after': current})
+    return current
 
 
 def home_interrupt_witness(before,paused,source='keyboard'):
@@ -434,14 +693,18 @@ def main():
         validate(first)
         assert first['app']['installed_apk'] == apk_identity
         assert first['asset_manifest'] == pins
+        assert 'walkable.bin' in pins['assets'], 'Ground/collision fixture missing from installed package'
         save('emulator-initial-report.json', first); screenshot('emulator-initial-scene.png')
         initial_position = first['native']['actor_position'][:]
-        input_key('KEYCODE_W', rounds=3)
+        directional_walk(initial_position)
+        interrupted_and_reversed_walk(initial_position)
+        obstacle_walk(initial_position)
+        input_key('KEYCODE_W')
         screenshot('emulator-moved-scene.png')
         for key in ('KEYCODE_A', 'KEYCODE_S', 'KEYCODE_D'):
             input_key(key)
         # Leave the actor away from reset to make preservation meaningful.
-        input_key('KEYCODE_W', rounds=2)
+        input_key('KEYCODE_S')
         moved = wait(lambda r:native_ready(r) and r['native']['held_dirs'] == 0
                      and r['native']['animation_state'] == 0, 'Idle after released authored run', seconds=30)
         validate(moved, moved=True)
@@ -487,9 +750,9 @@ def main():
                      and distance(initial_position,r['native']['actor_position'])<=.001,
                      'Actual Reset button returns authored actor placement')
         validate(reset); save('emulator-final-report.json', reset)
-        summary={'schema':1,'gates':[16,17,18],'passed':True,'installed_apk':apk_identity,
+        summary={'schema':1,'gates':GATES,'passed':True,'installed_apk':apk_identity,
                  'native_session_execution_verified':True,
-                 'scope':'Installed Android 13 x86_64; persistent authored Atlas benchmark and Wretch, source no-collision actor movement, authored idle/run/post tracks under actual Android keyboard/touch input',
+                 'scope':'Installed Android 13 x86_64; bounded authored Atlas floor and obstacle CTri geometry with persistent Wretch, source WALK grounding/blocking/sliding, authored directional pre/cycle/post tracks under actual Android framework keyboard/joystick/touch input',
                  'frames':reset['native']['frames'],'contexts_started':reset['native']['contexts_started'],
                  'actual_keyboard_motion':True,'actual_touch_camera':True,'actual_surface_recreation':True,
                  'actual_home_preserves_actor_and_camera':True,'actual_document_export':True,'actual_reset_button':True,
@@ -497,13 +760,21 @@ def main():
                  'actual_home_input_source':'Android framework joystick; not a physical controller',
                  'renewed_framework_joystick_input_after_home':True,
                  'source_tf_components':reset['native']['tf_components'],'source_tf_mismatches':reset['native']['tf_mismatches'],
+                 'walkable_tf_components':reset['native']['walkable_tf_components'],
+                 'walkable_tf_mismatches':reset['native']['walkable_tf_mismatches'],
+                 'walkable_visible_pixels':reset['native']['walkable_visible_pixels'],
                  'raw_depth_order_color_differences':reset['native']['raw_changed_pixels'],
                  'exact_equal_depth_ties':reset['native']['qualified_equal_depth_ties'],
                  'non_tie_depth_order_mismatches':reset['native']['non_tie_mismatches'],
                  'actual_depth_sampler_controls_verified':True,
                  'physical_controller_verified':False,'thor_device_execution_verified':False,
                  'original_game_execution':False,'full_atlas_loaded':False,'server_interoperability_verified':False,
-                 'walking_collision_qualified':False,'full_sequencer_execution':False}
+                 'walking_collision_qualified':True,'authored_obstacle_blocking_verified':True,
+                 'authored_wall_sliding_verified':True,'authored_grounding_verified':True,
+                 'actual_directional_locomotion_verified':True,'actual_interrupted_run_verified':True,
+                 'actual_unreleased_reversal_verified':True,'actual_quick_tap_release_verified':True,
+                 'held_axis_snapshot_refresh_source':'Actual Android same-direction keyboard callbacks while framework joystick remains held',
+                 'full_sequencer_execution':False}
         save('emulator-smoke-summary.json',summary); print(json.dumps(summary))
     finally:
         (OUTPUT/'emulator-logcat.txt').write_bytes(adb('logcat','-d',check=False).stdout)

@@ -19,11 +19,15 @@ add_library(coh_session_client SHARED session_renderer.c
     "${WORLD_CPP}/coh_world_scene.c" "${CHARACTER_CPP}/coh_scene.c"
     "${MATERIAL_CPP}/coh_mesh.c" "${CORE_ROOT}/world/coh_world.c"
     "${CORE_ROOT}/character/coh_character.c"
-    "${CORE_ROOT}/motion/coh_motion.c" "${CORE_ROOT}/locomotion/coh_locomotion.c")
+    "${CORE_ROOT}/motion/coh_motion.c" "${CORE_ROOT}/locomotion/coh_locomotion.c"
+    "${CORE_ROOT}/walkable/coh_walkable_scene.c" "${CORE_ROOT}/walk/coh_walk.c"
+    "${CORE_ROOT}/walk/source_ctri.c" "${CORE_ROOT}/walk/source_world.c" "${CORE_ROOT}/walk/source_tritri.c")
 target_include_directories(coh_session_client PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
     "${MATERIAL_CPP}" "${WORLD_CPP}" "${CHARACTER_CPP}" "${CORE_ROOT}/world"
     "${CORE_ROOT}/animation" "${CORE_ROOT}/character" "${CORE_ROOT}/motion"
-    "${CORE_ROOT}/locomotion")
+    "${CORE_ROOT}/locomotion" "${CORE_ROOT}/walk" "${CORE_ROOT}/walkable")
 target_compile_features(coh_session_client PRIVATE c_std_11)
-target_compile_options(coh_session_client PRIVATE -Wall -Wextra -Werror -ffp-contract=off)
+target_compile_options(coh_session_client PRIVATE -Wall -Wextra -Werror -ffp-contract=off -fno-strict-aliasing)
+set_source_files_properties("${CORE_ROOT}/walk/source_world.c" "${CORE_ROOT}/walk/source_ctri.c"
+    PROPERTIES COMPILE_OPTIONS "-Wno-unused-variable;-Wno-unused-parameter;-Wno-unused-but-set-variable;-Wno-unused-function;-Wno-misleading-indentation")
 target_link_libraries(coh_session_client PRIVATE android EGL GLESv3 m)

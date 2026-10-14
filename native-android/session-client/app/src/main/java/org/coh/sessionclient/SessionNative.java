@@ -6,7 +6,7 @@ public final class SessionNative {
     static { System.loadLibrary("coh_session_client"); }
     private SessionNative() { }
     public static native long createSession(byte[] world, byte[] character, byte[] rig,
-            byte[] morph, byte[] locomotion);
+            byte[] morph, byte[] locomotion, byte[] walkable);
     public static native int render(long handle, Surface surface, long epoch);
     public static native void state(long handle, long epoch, boolean foreground);
     public static native void input(long handle, float forward, float strafe, float lookX, float lookY);

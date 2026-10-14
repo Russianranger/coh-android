@@ -13,9 +13,9 @@ def module(name,path):
 types=module('coh_locomotion_character_types',HERE.parent/'character_fixture/_types.py')
 Rig,Pose,Morph=types.Rig,types.Pose,types.Morph
 class Loco(C.Structure):
-    _fields_=[('bytes',C.POINTER(C.c_uint8)),('byte_count',C.c_size_t),('rigs',Rig*3)]
+    _fields_=[('bytes',C.POINTER(C.c_uint8)),('byte_count',C.c_size_t),('rigs',Rig*12),('clip_count',C.c_uint32)]
 class State(C.Structure):
-    _fields_=[('move',C.c_uint32),('frame',C.c_float),('previous_frame',C.c_float),('move_rate_scale',C.c_float),('transitions',C.c_uint32),('ready_entries',C.c_uint32),('run_entries',C.c_uint32),('post_entries',C.c_uint32),('cycles',C.c_uint32)]
+    _fields_=[('move',C.c_uint32),('frame',C.c_float),('previous_frame',C.c_float),('move_rate_scale',C.c_float),('transitions',C.c_uint32),('ready_entries',C.c_uint32),('run_entries',C.c_uint32),('post_entries',C.c_uint32),('cycles',C.c_uint32)]+[(k,C.c_uint32) for k in ['pre_entries','directional_entries','early_stop_entries','phase_preservations','direction_switches','anim_incrementor','input_mask','selection_changed']]
 def require(v,s):
     if not v:raise ValueError(s)
 def sha(raw):return hashlib.sha256(raw).hexdigest()
@@ -126,7 +126,7 @@ def main():
         oracle=C.CDLL(str(temp/'oracle.so'));oracle.original_tick.argtypes=[C.c_uint32,C.c_float,C.c_float,C.c_int,C.c_float,C.c_float,C.c_float,C.POINTER(C.c_float)];oracle.original_hip.argtypes=[C.c_float,C.c_float];oracle.original_hip.restype=C.c_float
         subprocess.run([*cc,'-std=c11','-O2','-Wall','-Wextra','-Werror','-ffp-contract=off','-fPIC','-shared',str(ROOT/'character/coh_character.c'),str(ROOT/'locomotion/coh_locomotion.c'),'-lm','-o',str(temp/'native.so')],check=True)
         lib=native_configure(C.CDLL(str(temp/'native.so')));mem=(C.c_uint8*len(raw)).from_buffer_copy(raw);loco=Loco();require(lib.coh_locomotion_parse(mem,len(raw),C.byref(loco))==0,'authentic bundle rejected')
-        native_size=C.sizeof(Loco);require(all(r.node_count==60 for r in loco.rigs),'hierarchy cardinality differs')
+        native_size=C.sizeof(Loco);require(all(r.node_count==60 for r in loco.rigs[:3]),'hierarchy cardinality differs')
         state=State();lib.coh_locomotion_init(C.byref(state));checks=0;maximum=0.;transcript=[]
         cases=[(0,1.,0.,1.3)]*80+[(1,1.,x,1.3) for x in [.1,.2,.4,.7,1.4,3.,6.]*18]+[(0,1.,0.,1.3)]*65+[(1,1.,1.4,1.3)]*9+[(0,1.,0.,1.3)]*70
         for i,(forward,dt,distance,geom) in enumerate(cases):
@@ -173,7 +173,7 @@ def main():
         subprocess.run([*cc,'-std=c11','-O0','-ffp-contract=off','-fno-strict-aliasing','-fPIC','-shared',str(temp/'sampler.c'),'-lm','-o',str(temp/'sampler.so')],check=True,capture_output=True)
         sampler=C.CDLL(str(temp/'sampler.so'));sampler.original_local.argtypes=[C.POINTER(C.c_uint8),C.POINTER(C.c_uint8),C.c_int,C.c_int,C.c_int,C.c_int,C.c_int,C.c_float,C.c_int,C.POINTER(C.c_float)]
         local_checks=0;local_maximum=0.
-        for clip,r in enumerate(loco.rigs):
+        for clip,r in enumerate(loco.rigs[:3]):
             base_bytes=C.string_at(r.base.bytes,r.base.byte_count);motion_bytes=C.string_at(r.motion.bytes,r.motion.byte_count)
             base=original.raw_tracks(base_bytes);motion=original.raw_tracks(motion_bytes);ids=list(r.order)[:r.node_count]
             initial={i:original.sample(sampler,base[i],0,True) for i in ids}

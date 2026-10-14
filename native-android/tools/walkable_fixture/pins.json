@@ -1,0 +1,51 @@
+{
+  "format": 1,
+  "release_tag": "coh-assets-v1.0.0",
+  "source_commit": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip",
+  "outer_expected_bytes": 1630092780,
+  "inner_member": "payloads/runtime/atlas-world-supplement.zip",
+  "inner_expected_bytes": 207803201,
+  "records": [
+    {
+      "name": "data/object_library/special_buildings/trainstation/trainstation.geo",
+      "size": 66919,
+      "compressed": 66919,
+      "offset": 56389573,
+      "crc32": "6eb878c3",
+      "method": 0,
+      "sha256": "e88a1246c46c634a3b95b94531697dc4f52ba3a65b95f01d41764191e05372bf",
+      "id": "ground",
+      "file_name": "trainstation.geo"
+    },
+    {
+      "name": "data/texture_library/world/streets/elements/monorail/mono_station_infloor.texture",
+      "size": 11241,
+      "compressed": 8766,
+      "offset": 157615498,
+      "crc32": "d05ce0e0",
+      "method": 8,
+      "sha256": "af2c13822d3998622746a856cbfffb0b6c53b8ac440d090eb06ef98ce11842c4",
+      "id": "floor",
+      "file_name": "mono_station_infloor.texture"
+    },
+    {
+      "name": "data/texture_library/world/streets/elements/monorail/mono_station_infloor_sml.texture",
+      "size": 3053,
+      "compressed": 2445,
+      "offset": 157624375,
+      "crc32": "da965b84",
+      "method": 8,
+      "sha256": "c196327fb76ecd33bb5c2ddd2c5c373a0e33d43687020a0566d98fdea927220b",
+      "id": "small_floor",
+      "file_name": "mono_station_infloor_sml.texture"
+    }
+  ],
+  "selected_model": "_trnstation_infloor",
+  "model_index": 5,
+  "source_declarations": {
+    "path": "upstream/i24/data/tricks/streets/elements/monorail.txt",
+    "bytes": 2444,
+    "sha256": "a962f16fdd809705775d073d21a1daca87f15912aa1228e0cddc2e0a141a7af6"
+  }
+}

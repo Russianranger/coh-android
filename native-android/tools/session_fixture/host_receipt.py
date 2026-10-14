@@ -14,13 +14,13 @@ def main():
     args = parser.parse_args(); args.output.mkdir(parents=True, exist_ok=True)
     proofs = []
     if args.status == 'completed':
-        for name in ['host-motion-proof.json', 'host-locomotion-proof.json', 'host-character-proof.json', 'lifecycle/lifecycle-host-checks.json', 'depth-codec-host.json']:
+        for name in ['host-walkable-proof.json', 'host-walk-proof.json', 'host-directional-proof.json', 'host-directional-sampler-proof.json', 'lifecycle/lifecycle-host-checks.json', 'depth-codec-host.json', 'snapshot-host.json']:
             raw = (args.output / name).read_bytes(); value = json.loads(raw)
             assert value['passed'] is True, name
             proofs.append({'file': name, 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()})
         prepared = json.loads((args.output / 'session-fixture.json').read_text())
         assert prepared['passed'] is True and prepared['runtime_motion_scripted_by_fixture'] is False
-    receipt = {'schema': 1, 'gates': [16, 17, 18], 'stage': 'authored assets and source host qualification',
+    receipt = {'schema': 1, 'gates': [19, 20, 21], 'stage': 'authored assets and source host qualification',
                'status': args.status, 'passed': args.status == 'completed',
                'source_commit': os.environ.get('GITHUB_SHA', 'local-uncommitted'),
                'workflow_run_id': os.environ.get('GITHUB_RUN_ID', 'local'), 'proofs': proofs,

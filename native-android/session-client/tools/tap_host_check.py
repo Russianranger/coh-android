@@ -110,6 +110,62 @@ def main():
         try:driver.home_interrupt_witness(axis_before,bad,source='joystick')
         except AssertionError:check(True,'Background source state rejects '+field)
         else:check(False,'Background source state incorrectly accepts '+field)
+    # Independent evidence fixtures check that stationary input, adapter bounds
+    # or aggregate feature labels cannot pass the shipped collision predicates.
+    native={'walk':{'bounded_scene':True,'grounded':True,'ground_y':74,
+                    'triangles':96,'blocked_ticks':0,'sliding_ticks':0,
+                    'ground_hits':30,'collision_queries':60,'bounded_ticks':0,
+                    'obstacle_bounds_min':[579.656,74,-1387.604],
+                    'obstacle_bounds_max':[585.344,77.68225,-1385.0634]},
+            'actor_position':[582.5,74,-1380],'held_dirs':1,'source_state_bits':1,
+            'movement_ticks':30,'frames':100}
+    walk_before={'native':deepcopy(native),'input_adapter':{'in_app_synthetic':{'motion':0}}}
+    walk_blocked=deepcopy(walk_before)
+    walk_blocked['native'].update(actor_position=[582.5,74,-1384.0634],movement_ticks=40,frames=120)
+    walk_blocked['native']['walk'].update(blocked_ticks=1,ground_hits=40,collision_queries=100)
+    walk_settled=deepcopy(walk_blocked)
+    walk_settled['native'].update(movement_ticks=70,frames=180)
+    walk_settled['native']['walk'].update(blocked_ticks=25,ground_hits=70,collision_queries=180)
+    check(driver.blocked_walk_witness(walk_before,walk_blocked,walk_settled),
+          'Held advancing grounded source movement stopped at the authored obstacle qualifies')
+    for section,field,value,label in [('native','held_dirs',0,'Released movement cannot qualify blocking'),
+                                     ('native','source_state_bits',0,'Absent source controls cannot qualify blocking'),
+                                     ('native','movement_ticks',40,'Stopped physics clock cannot qualify blocking'),
+                                     ('native','frames',120,'Stopped renderer cannot qualify blocking'),
+                                     ('native','actor_position',[582.5,74,-1383],'Moving actor cannot qualify blocking'),
+                                     ('walk','blocked_ticks',1,'No additional blocked steps cannot qualify blocking'),
+                                     ('walk','collision_queries',100,'No actual collision queries cannot qualify blocking'),
+                                     ('walk','bounded_ticks',1,'Adapter clamp cannot qualify authored blocking'),
+                                     ('walk','grounded',False,'Airborne actor cannot qualify grounded blocking'),
+                                     ('walk','ground_y',73,'Wrong ground height cannot qualify grounding')]:
+        bad=deepcopy(walk_settled)
+        (bad['native'] if section=='native' else bad['native']['walk'])[field]=value
+        try:driver.blocked_walk_witness(walk_before,walk_blocked,bad)
+        except AssertionError:check(True,label+' rejected')
+        else:check(False,label+' incorrectly accepted')
+    bad=deepcopy(walk_settled);bad['native']['actor_position']=[582.5,74,-1340]
+    far_block=deepcopy(walk_blocked);far_block['native']['actor_position']=[582.5,74,-1340]
+    try:driver.blocked_walk_witness(walk_before,far_block,bad)
+    except AssertionError:check(True,'Stable stop far from authored obstacle rejected')
+    else:check(False,'Stable stop far from authored obstacle incorrectly accepted')
+    walk_sliding=deepcopy(walk_settled)
+    walk_sliding['native'].update(actor_position=[581.5,74,-1384.0634],held_dirs=9,
+                                 source_state_bits=9,movement_ticks=76,frames=192)
+    walk_sliding['native']['walk'].update(blocked_ticks=29,sliding_ticks=4,ground_hits=76,collision_queries=196)
+    check(driver.sliding_walk_witness(walk_settled,walk_sliding),
+          'Actual grounded diagonal displacement with source block/slide queries qualifies')
+    for section,field,value,label in [('native','held_dirs',1,'Non-diagonal input cannot qualify sliding'),
+                                     ('native','movement_ticks',70,'No physics progression cannot qualify sliding'),
+                                     ('native','frames',180,'No rendering progression cannot qualify sliding'),
+                                     ('native','actor_position',walk_settled['native']['actor_position'],'Stationary actor cannot qualify sliding'),
+                                     ('walk','sliding_ticks',0,'No source slide steps cannot qualify sliding'),
+                                     ('walk','blocked_ticks',25,'No source blocking cannot qualify sliding'),
+                                     ('walk','bounded_ticks',1,'Adapter safety clamp cannot qualify sliding')]:
+        bad=deepcopy(walk_sliding)
+        (bad['native'] if section=='native' else bad['native']['walk'])[field]=value
+        try:driver.sliding_walk_witness(walk_settled,bad)
+        except AssertionError:check(True,label+' rejected')
+        else:check(False,label+' incorrectly accepted')
     observed=None
     if args.observed_ui:
         raw=args.observed_ui.read_bytes();actual=list(ET.fromstring(raw).iter('node'))
@@ -117,7 +173,7 @@ def main():
             check(len(driver.button_nodes(actual,label))==1,'Observed Android UI finds '+label)
         observed={'file':args.observed_ui.name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
     receipt={'schema':1,'passed':True,'checks':checks,
-             'scope':'Actual shipped accessibility-label, exact tap listener and strict unreleased-source Home predicates on independent XML/event fixtures; no device execution',
+             'scope':'Actual shipped accessibility-label, exact tap listener, strict unreleased-source Home and grounded source obstacle/slide evidence predicates on independent XML/event fixtures; no device execution',
              'emulator_driver_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
              'observed_android_ui':observed}
     args.output.parent.mkdir(parents=True,exist_ok=True)

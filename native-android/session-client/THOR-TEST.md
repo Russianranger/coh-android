@@ -1,35 +1,34 @@
-# AYN Thor: one combined test for gates 16–18
+# AYN Thor: one combined test for gates 19–21
 
-Download [the qualified artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705), extract and install
-`CoH-Native-Session-Client-0.1.0-arm64.apk`, and open **CoH Native
-Session Client**. Your launcher and earlier probes can stay installed. No
-server, account or asset import is required. APK SHA256:
-`eb763d8c6e5354da06a336e8fe09a244a893755e82ef708ea1d2139dc17b8634`.
-Host/build/emulator checks passed. Physical gates 16–18 were accepted on October 14, 2026
-from the user's successful Thor test, [raw report](../evidence/phases16-18/COH-NativeSession-20261014-175218.json)
-and [acceptance receipt](../evidence/phases16-18/thor-acceptance-20261014.json).
-This procedure remains the regression check for the unchanged qualified APK.
+Install `CoH-Native-Session-Client-0.2.0-arm64.apk` and open **CoH Native Session
+Client**. This is the same native application trajectory. The conventional
+launcher/client and user imports remain separate. No server, account or asset
+import is needed. The accepted gates 16–18 APK remains the rollback artifact.
+Physical gates 19–21 require this new report and your observations.
 
-1. Wait for the Wretch and Atlas bench to appear together. Confirm the actor
-   is visible, animated and correctly occluded where it overlaps the bench.
-2. Use short forward presses on the left stick or D-pad. Confirm the actor
-   moves, runs and returns through its run-ending animation to Ready after
-   release. Test left, right and backward movement with short presses.
-   Offline movement accelerates rapidly and passes through geometry;
-   backward/strafe animation and normal walking collision are still pending.
-3. Move the right stick or drag the scene to turn the persistent camera.
-   Release and confirm it stops turning. The scene no longer recenters after
-   a bounded preview round. **Reset actor** restores its starting pose/view.
-4. Move and turn the view, then tap **Recreate**. Confirm the actor and camera
-   keep their state after the new Surface appears. Press Android Home while
-   moving, release the stick while away, return without force-stopping, and confirm movement has stopped
-   while the actor/view state is retained. Move again to prove fresh input. Keep the app open through this sequence;
-   process death or a fresh launch intentionally starts a new offline session.
-5. Tap **Export report** and attach `COH-NativeSession-*.json`, including a
-   screenshot if the actor or scene appears incorrect. Export a failure
-   before restarting; the report retains sticky native failures.
+1. **Ground and collision:** wait for the Wretch, authored station floor and
+   bench to appear. The initial forward direction points at the nearby bench.
+   Move forward into it; the actor should stay on the floor and stop against
+   the bench. While still pushing forward, briefly add right or left input to
+   slide along it, then release. Pushing a wall may animate slowly in place;
+   that is the source minimum-rate behavior. Use short diagonal input because
+   the selected floor is bounded. **Reset actor** returns to the supported spawn.
+2. **Directional motion:** test forward, backward, left and right with short
+   presses and releases. Forward should show RunPre then RunCycle and the
+   authored stopping transition. Backward and lateral movement should use their
+   own clips. Test quick taps, forward-to-back reversal and a short diagonal.
+   The feet should remain on the floor. The far edge of the selected fixture
+   has an explicit safety guard; it is not a new invisible wall or full map.
+3. **Camera and recovery:** turn the right stick or drag, then release and
+   confirm the camera stops. Move/turn, tap **Recreate**, and confirm actor/view
+   state survives. Press Android Home while moving, release while away, return
+   without force-stopping, and confirm input cleared while state persisted.
+   Move again, use **Reset actor**, then **Export report**. Attach
+   `COH-NativeSession-*.json` with visual/controller observations and a screenshot.
+   Export a failure before restarting, since native failures remain sticky.
 
-This tests one offline native actor/world session, not account login, full
-Atlas, server-authoritative character movement or sustained performance.
-The accepted offline scope is recorded above; future changes require their own
-qualification and report.
+The floor currently uses the original client's grey fallback for the missing
+`mono_station_floor_det` detail texture. Its authored base textures, geometry,
+placement and collision are retained. This does not test full Atlas, jumping,
+combat, account login, server replication or sustained frame-rate performance.
+The accepted older physical report remains separate from this new qualification.

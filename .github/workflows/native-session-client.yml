@@ -1,4 +1,4 @@
-name: Native Android persistent scene, source movement and locomotion
+name: Native Android authored ground, WALK and directional locomotion
 on:
   push:
     branches: [native-android]
@@ -6,9 +6,14 @@ on:
       - native-android/session-client/**
       - native-android/motion/**
       - native-android/locomotion/**
+      - native-android/walk/**
+      - native-android/walkable/**
       - native-android/tools/session_fixture/**
       - native-android/tools/motion_fixture/**
       - native-android/tools/locomotion_fixture/**
+      - native-android/tools/directional_fixture/**
+      - native-android/tools/walk_fixture/**
+      - native-android/tools/walkable_fixture/**
       - .github/workflows/native-session-client.yml
   workflow_dispatch:
 permissions:
@@ -25,13 +30,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {persist-credentials: false, fetch-depth: 0}
-      - name: Qualify fail-closed package reuse guard
-        run: python3 native-android/session-client/tools/reuse_host_check.py --output native-android/results/session-client/reuse-host-checks.json
-      - name: Select exact pinned packages or the complete source build
-        id: package
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python3 native-android/session-client/tools/reuse_qualified_package.py
       - uses: actions/setup-java@v4
         with: {distribution: temurin, java-version: '17'}
       - uses: android-actions/setup-android@v3
@@ -39,56 +37,54 @@ jobs:
           packages: platform-tools
           log-accepted-android-sdk-licenses: false
       - name: Install pinned Android build components
-        if: steps.package.outputs.reused != 'true'
         run: |
           sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
           python3 -m pip install Pillow==12.3.0
-      - name: Recover accepted authored character and Atlas source fixtures
-        if: steps.package.outputs.reused != 'true'
+      - name: Reuse exact accepted character and benchmark inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p native-android/results/session-client
+          mkdir -p native-android/results/session-client native-android/results/accepted-session-artifact
           python3 native-android/tools/session_fixture/host_receipt.py --status started
-          python3 native-android/world-probe/contract/verify_source_tricks.py --repo-root . --output native-android/results/session-client/source-trick-resolution.json
-          python3 native-android/tools/character_fixture/acquire.py --output native-android/results/session-character-corpus --use-verified-local
-          python3 native-android/tools/character_fixture/prepare.py --corpus native-android/results/session-character-corpus --output native-android/results/session-character-assets --evidence-output native-android/results/session-client/character-fixture
-          python3 native-android/tools/world_fixture/acquire.py --output native-android/results/session-world-corpus --use-verified-local
-          python3 native-android/tools/world_fixture/prepare.py --corpus native-android/results/session-world-corpus --output native-android/results/session-world-assets --evidence-output native-android/results/session-client/world-fixture --source-trick-audit native-android/results/session-client/source-trick-resolution.json
-      - name: Recover authored idle, run and post-run tracks and combine runtime inputs
-        if: steps.package.outputs.reused != 'true'
+          gh api repos/Russianranger/coh-android/actions/artifacts/11929666705/zip > /tmp/accepted-session.zip
+          echo '4fbcc6923136ad59347c3fc1919e8071655291f02a78a4e4c42a8f68046bc3f0  /tmp/accepted-session.zip' | sha256sum -c -
+          unzip -q /tmp/accepted-session.zip -d native-android/results/accepted-session-artifact
+          python3 native-android/tools/session_fixture/recover_accepted_assets.py --apk native-android/results/accepted-session-artifact/CoH-Native-Session-Client-0.1.0-arm64.apk --output native-android/results/accepted-session-assets
+          cp native-android/results/accepted-session-assets/accepted-assets-recovery.json native-android/results/session-client/
+      - name: Prepare new authored ground and obstacle geometry with source flags
         run: |
-          python3 native-android/tools/locomotion_fixture/acquire.py --output native-android/results/session-locomotion-corpus --use-verified-local
-          python3 native-android/tools/locomotion_fixture/prepare.py --corpus native-android/results/session-locomotion-corpus --output native-android/results/session-locomotion-assets
-          python3 native-android/tools/session_fixture/prepare.py --character-assets native-android/results/session-character-assets --world-assets native-android/results/session-world-assets --locomotion-assets native-android/results/session-locomotion-assets --output native-android/session-client/app/src/main/assets --evidence-output native-android/results/session-client
-      - name: Source-controlled movement, authored locomotion and character host qualification
-        if: steps.package.outputs.reused != 'true'
+          python3 native-android/tools/walkable_fixture/check.py --source-root . --accepted-assets native-android/results/accepted-session-assets --corpus native-android/results/session-walkable-corpus --output native-android/results/session-walkable-assets --evidence-output native-android/results/session-client
+      - name: Prepare authored directional raw keys and integrated session assets
         run: |
+          python3 native-android/tools/directional_fixture/acquire.py --output native-android/tools/directional_fixture/corpus --use-verified-local
+          python3 native-android/tools/directional_fixture/prepare.py --corpus native-android/tools/directional_fixture/corpus --output native-android/results/session-directional-assets
+          python3 native-android/tools/session_fixture/prepare_walkable_session.py --accepted-assets native-android/results/accepted-session-assets --walkable-assets native-android/results/session-walkable-assets --locomotion-assets native-android/results/session-directional-assets --output native-android/session-client/app/src/main/assets --evidence-output native-android/results/session-client
+      - name: Qualify WALK, source transitions, source poses and retained lifecycle boundaries
+        run: |
+          python3 native-android/tools/walk_fixture/check.py --source-root . --fixture native-android/session-client/app/src/main/assets/walkable.bin --output native-android/results/session-client/host-walk-proof.json
+          python3 native-android/tools/directional_fixture/check.py --fixture native-android/session-client/app/src/main/assets/locomotion.bin --source-directory upstream --morph native-android/session-client/app/src/main/assets/morph.bin --output native-android/results/session-client/host-directional-proof.json
+          python3 native-android/tools/directional_fixture/sampler_check.py --fixture native-android/session-client/app/src/main/assets/locomotion.bin --source-directory upstream --morph native-android/session-client/app/src/main/assets/morph.bin --output native-android/results/session-client/host-directional-sampler-proof.json
+          python3 native-android/tools/locomotion_fixture/check.py --fixture native-android/results/accepted-session-assets/locomotion.bin --source-directory upstream --morph native-android/results/accepted-session-assets/morph.bin --output native-android/results/session-client/legacy-locomotion-abi-proof.json
           python3 native-android/session-client/tools/lifecycle_host_check.py --output native-android/results/session-client/lifecycle
           python3 native-android/tools/session_fixture/depth_codec_check.py --output native-android/results/session-client/depth-codec-host.json
-          python3 native-android/tools/motion_fixture/check.py --output native-android/results/session-client/host-motion-proof.json --sanitize
-          python3 native-android/tools/locomotion_fixture/check.py --fixture native-android/session-client/app/src/main/assets/locomotion.bin --source-directory upstream --morph native-android/session-client/app/src/main/assets/morph.bin --output native-android/results/session-client/host-locomotion-proof.json
-          python3 native-android/tools/character_fixture/native_character_check.py --character native-android/session-client/app/src/main/assets/character.bin --rig native-android/session-client/app/src/main/assets/rig.bin --morph native-android/session-client/app/src/main/assets/morph.bin --reference native-android/session-client/app/src/main/assets/character-reference.bin --output native-android/results/session-client/host-character-proof.json
+          python3 native-android/tools/session_fixture/snapshot_check.py --output native-android/results/session-client/snapshot-host.json
           python3 native-android/tools/session_fixture/host_receipt.py --status completed
-      - name: Build and lint isolated native ARM64 session client
-        if: steps.package.outputs.reused != 'true'
+      - name: Build and lint ARM64 Session Client
         run: |
           python3 native-android/session-client/gradle.py :app:assembleDebug :app:lintDebug
-          cp native-android/session-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/session-client/CoH-Native-Session-Client-0.1.0-arm64.apk
-      - name: Build separate emulator APK and validate exact package bytes
-        if: steps.package.outputs.reused != 'true'
+          cp native-android/session-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/session-client/CoH-Native-Session-Client-0.2.0-arm64.apk
+      - name: Build emulator package and verify exact package and fixture identities
         run: |
           python3 native-android/session-client/gradle.py -PprobeAbis=x86_64 :app:assembleDebug
-          cp native-android/session-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/session-client/CoH-Native-Session-Client-0.1.0-emulator-x86_64.apk
+          cp native-android/session-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/session-client/CoH-Native-Session-Client-0.2.0-emulator-x86_64.apk
           python3 native-android/tools/session_fixture/package_check.py
-      - name: Qualify current accessibility selectors and exact tap callback binding
+      - name: Qualify accessibility callbacks and grounded obstacle evidence predicates
         run: python3 native-android/session-client/tools/tap_host_check.py --output native-android/results/session-client/tap-host-checks.json
-      - name: Requalify current lifecycle guards when package bytes were reused
-        if: steps.package.outputs.reused == 'true'
-        run: python3 native-android/session-client/tools/lifecycle_host_check.py --output native-android/results/session-client/reuse-current-lifecycle
       - name: Enable hosted Android emulator acceleration
         run: |
           test -c /dev/kvm
           sudo chmod 666 /dev/kvm
-      - name: Android 13 actual input, persistent shared scene, locomotion and lifecycle
+      - name: Android 13 real input, authored scene, WALK contacts, transitions and lifecycle
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
         with:
           api-level: 33
@@ -99,11 +95,11 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
-          script: python3 native-android/session-client/tools/emulator_check.py --apk native-android/results/session-client/CoH-Native-Session-Client-0.1.0-emulator-x86_64.apk --output native-android/results/session-client
+          script: python3 native-android/session-client/tools/emulator_check.py --apk native-android/results/session-client/CoH-Native-Session-Client-0.2.0-emulator-x86_64.apk --output native-android/results/session-client
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-android-session-client-gates16-18
+          name: native-android-session-client-gates19-21
           path: native-android/results/session-client/
           if-no-files-found: error
           retention-days: 30
