@@ -152,6 +152,7 @@ public final class InputAdapter implements InputManager.InputDeviceListener {
         if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP) {
             if (event.getPointerId(actionIndex) == touchId) {
                 float x = coordinate(event.getX(actionIndex), width), y = coordinate(event.getY(actionIndex), height);
+                recordTouchDirection(c, x, y);
                 c.touchEnd++; sink.touch(2, touchId, x, y); touchId = -1;
             }
             return true;
@@ -168,12 +169,15 @@ public final class InputAdapter implements InputManager.InputDeviceListener {
         }
         return true;
     }
-    private void touchMove(Counts c, float x, float y) {
+    private void recordTouchDirection(Counts c, float x, float y) {
         float dx = x - touchX, dy = y - touchY;
         if (dx < -0.001f) c.touchDirections |= 1;
         if (dx > 0.001f) c.touchDirections |= 2;
         if (dy < -0.001f) c.touchDirections |= 4;
         if (dy > 0.001f) c.touchDirections |= 8;
+    }
+    private void touchMove(Counts c, float x, float y) {
+        recordTouchDirection(c, x, y);
         c.touchMove++; sink.touch(1, touchId, x, y); touchX = x; touchY = y;
     }
     public void clear() {

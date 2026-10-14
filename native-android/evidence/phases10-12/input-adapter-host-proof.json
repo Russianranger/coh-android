@@ -1,0 +1,27 @@
+{
+  "schema": "coh-input-adapter-host-proof-v1",
+  "passed": true,
+  "checks": 43,
+  "source": "native-android/systems-probe/app/src/main/java/org/coh/systemsprobe/InputAdapter.java",
+  "source_sha256": "90ead6410b101480afd1526acc5c2bb0c11cdcc0fe0990487be67b8e3d227ffd",
+  "scope": "Actual InputAdapter class under host Android/JSON transport stubs; not Android framework execution",
+  "cases": [
+    "four END-only direction signs",
+    "zero movement END",
+    "unowned pointer UP",
+    "historical MOVE samples",
+    "wrong source flags",
+    "external/synthetic separation",
+    "CANCEL no invented movement"
+  ],
+  "invariants": [
+    "END contributes measured final movement directions",
+    "touch_move counts genuine MOVE samples only",
+    "native sink receives END rather than fabricated MOVE"
+  ],
+  "negative_control": {
+    "passed": true,
+    "mutation": "Remove only final-UP direction accounting from actual InputAdapter",
+    "expected_failure": "END-only +X direction assertion check 3"
+  }
+}

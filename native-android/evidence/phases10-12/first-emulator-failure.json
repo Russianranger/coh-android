@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "phases": [
+    10,
+    11,
+    12
+  ],
+  "source_commit": "ce624b06e7a86e3e9c0a4212bc2dfb8f3556df2d",
+  "workflow_run_id": 38497070427,
+  "job_id": 115635159717,
+  "passed": false,
+  "failed_stage": "Android 13 actual callback qualification: initial touch direction mask",
+  "source_and_host_oracles_passed": true,
+  "arm64_and_x86_64_apks_built": true,
+  "lint_manifest_signature_and_asset_checks_passed": true,
+  "android_emulator_executed": true,
+  "native_runs_passed": 5,
+  "source_maximum_error": 0,
+  "native_input_checks": 4545,
+  "native_offline_wire_cases": 160,
+  "full_aaudio_play_stop_close_runs": 2,
+  "aaudio_submitted_frames": 135468,
+  "aaudio_read_frames": 135468,
+  "aaudio_backend_errors": 0,
+  "aaudio_xrun_counts": [
+    1,
+    1
+  ],
+  "actual_input": {
+    "key_down": 6,
+    "key_up": 6,
+    "key_repeat": 0,
+    "motion": 0,
+    "touch_begin": 4,
+    "touch_move": 6,
+    "touch_end": 4,
+    "touch_cancel": 0,
+    "focus_clear": 2,
+    "device_removed": 0,
+    "controller_events": 0,
+    "left_axis_directions": 0,
+    "right_axis_directions": 0,
+    "button_down_mask": 15859968,
+    "touch_motion_directions": 13
+  },
+  "failure": "Direction mask 13 instead of required 15: native END-coordinate delta moved the preview, but Android adapter direction coverage only recorded MOVE samples",
+  "separate_integration_finding": "Foreground singleTop am start delivered onPause/onResume without active audio; test actions must use app buttons so incidental intents cannot replace the intended Home receipt",
+  "session_failures": 0,
+  "physical_controller_verified": false,
+  "physical_audibility_verified": false,
+  "external_network_execution": false,
+  "thor_device_execution_verified": false,
+  "retained_artifact": {
+    "id": 11864362049,
+    "bytes": 918794,
+    "sha256": "24a0da56fe54253dba1434c197b6ee2c8a350e044472e838a5b8f9721485c59e"
+  },
+  "private_report_sha256": "377700d0f49ba34da474512a71b992f19847992929571d9a7946442915914f96",
+  "raw_session_and_device_identity_omitted": true
+}

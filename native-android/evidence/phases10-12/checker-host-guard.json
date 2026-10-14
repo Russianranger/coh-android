@@ -3,7 +3,7 @@
   "passed": true,
   "scope": "Controlled keeper schema witnesses and adversarial report mutations; no Android execution",
   "positive_schema_cases": 3,
-  "rejected_negative_cases": 35,
+  "rejected_negative_cases": 37,
   "negative_cases": [
     "false native input proof",
     "incorrect native input count",
@@ -39,7 +39,9 @@
     "incorrect source function pins",
     "incorrect compiled original header identity",
     "missing source integer joystick proof",
-    "false audio sanitizer proof"
+    "false audio sanitizer proof",
+    "missing actual adapter negative control",
+    "mismatched actual adapter source identity"
   ],
   "installed_asset_envelope_inspection": true
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.hardware.input.InputManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -60,6 +63,8 @@ public final class MainActivity extends Activity {
     private InputManager inputManager;
     private FrameLayout inputContainer;
     private InputCanvas inputView;
+    private HorizontalScrollView controlScroll;
+    private final Map<String,Button> measuredButtons=new LinkedHashMap<>();
     private TextView status, inputStatus, reportText;
     private byte[] audio, exportSnapshot;
     private volatile boolean active, destroyed, audioBusy;
@@ -132,11 +137,14 @@ public final class MainActivity extends Activity {
     }
     private void button(LinearLayout row,String label,Runnable action) {
         Button b=new Button(this);b.setText(label);b.setTextSize(12);b.setOnClickListener(v->action.run());row.addView(b,new LinearLayout.LayoutParams(-2,-2));
+        String key="Run checks".equals(label)?"run":"Play sound".equals(label)?"play":"Stop sound".equals(label)?"stop":
+            "Export report".equals(label)?"export":"Heard 3 sounds".equals(label)?"audible_confirmation":label.toLowerCase(Locale.US);
+        measuredButtons.put(key,b);
     }
     private void buildUi() {
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);root.setPadding(dp(8),dp(5),dp(8),dp(5));
         root.setBackgroundColor(Color.rgb(239,243,246));status=new TextView(this);status.setTextSize(15);status.setLines(3);root.addView(status);
-        HorizontalScrollView horizontal=new HorizontalScrollView(this);LinearLayout row=new LinearLayout(this);
+        HorizontalScrollView horizontal=new HorizontalScrollView(this);controlScroll=horizontal;LinearLayout row=new LinearLayout(this);
         button(row,"Run checks",()->runChecks("manual"));button(row,"Play sound",()->play("manual"));
         button(row,"Stop sound",()->stopAudio("manual"));button(row,"Heard 3 sounds",()->{
             long successful=-1;for(int i=0;i<audioRuns.length();i++)if(audioRuns.optJSONObject(i).optBoolean("passed"))successful=audioRuns.optJSONObject(i).optLong("run_id");
@@ -309,6 +317,24 @@ public final class MainActivity extends Activity {
     private JSONObject adapterReport() {
         try{return adapter==null?object():adapter.report();}catch(Exception e){throw new IllegalStateException(e);}
     }
+    private JSONObject visibleScreenBounds(View view) {
+        Rect rect=new Rect();boolean visible=view!=null&&view.getGlobalVisibleRect(rect)&&rect.width()>0&&rect.height()>0;
+        if(!visible)return object("left",0,"top",0,"width",0,"height",0,"visible",false,"fully_visible",false,
+            "view_width",view==null?0:view.getWidth(),"view_height",view==null?0:view.getHeight());
+        int[] origin=new int[2];view.getRootView().getLocationOnScreen(origin);rect.offset(origin[0],origin[1]);
+        return object("left",rect.left,"top",rect.top,"width",rect.width(),"height",rect.height(),"visible",true,
+            "fully_visible",rect.width()==view.getWidth()&&rect.height()==view.getHeight(),"view_width",view.getWidth(),"view_height",view.getHeight());
+    }
+    private JSONObject measuredControls() {
+        JSONObject result=object();try{for(Map.Entry<String,Button> entry:measuredButtons.entrySet())result.put(entry.getKey(),visibleScreenBounds(entry.getValue()));}
+        catch(Exception e){throw new IllegalStateException(e);}return result;
+    }
+    private JSONObject measuredControlRow() {
+        JSONObject result=visibleScreenBounds(controlScroll);try{if(controlScroll!=null)result.put("scroll_x",controlScroll.getScrollX())
+            .put("content_width",controlScroll.getChildCount()>0?controlScroll.getChildAt(0).getWidth():0)
+            .put("can_scroll_left",controlScroll.canScrollHorizontally(-1)).put("can_scroll_right",controlScroll.canScrollHorizontally(1));}
+        catch(Exception e){throw new IllegalStateException(e);}return result;
+    }
     private boolean externalInputTransportPassed() {
         JSONObject e=adapterReport().optJSONObject("external_android");
         return e!=null&&e.optLong("touch_begin")>0&&e.optLong("touch_move")>0&&e.optLong("touch_end")>0&&e.optLong("key_down")>0&&e.optLong("key_up")>0;
@@ -336,7 +362,7 @@ public final class MainActivity extends Activity {
                 .put("audio_engine_gate_passed",sourceAudio&&audioEngine&&home&&failures==0).put("protocol_gate_passed",protocol&&failures==0)
                 .put("qualification_passed",qualified).put("device_audible_confirmation_passed",audibleConfirmed)
                 .put("audible_confirmation_scope",audibleConfirmed?"user reported hearing three sounds":"not confirmed; engine writes do not prove audibility")
-                .put("input_area",inputView==null?object():inputView.area());
+                .put("input_area",inputView==null?object():inputView.area()).put("controls",measuredControls()).put("control_row",measuredControlRow());
             status.setText((qualified?"SYSTEM GATES PASSED":"QUALIFICATION PENDING")+" — Input / source audio / offline packet checks\n"+
                 (pre?"Engine checks passed. ":"Run input and sound checks; resize and recreate. ")+(home?(transport?"Home/return and input callbacks passed.":"Drag the arrow and press/release a controller button."):"Play sound, press Home while playing, return and play again."));
             status.setTextColor(qualified?Color.rgb(0,104,42):failures>0?Color.rgb(150,20,20):Color.DKGRAY);

@@ -53,6 +53,7 @@ jobs:
           python3 native-android/tools/audio_fixture/prepare.py --corpus native-android/results/systems-corpus --output native-android/systems-probe/app/src/main/assets
           python3 native-android/tools/audio_fixture/proof.py --fixture native-android/systems-probe/app/src/main/assets/audio.bin --report native-android/results/systems-probe/audio-host-proof.json
           python3 native-android/tools/input_fixture/check.py --output native-android/results/systems-probe/input-host-proof.json --sanitize
+          python3 native-android/tools/input_fixture/adapter_check.py --output native-android/results/systems-probe/input-adapter-host-proof.json
           python3 - <<'PYSOURCE'
           import hashlib, json, pathlib, urllib.request
           pins = json.loads(pathlib.Path('native-android/tools/protocol_fixture/source-pins.json').read_text())
@@ -83,7 +84,7 @@ jobs:
           root = pathlib.Path('native-android/results/systems-probe')
           receipt = json.loads((root/'source-validation-stage.json').read_text())
           proofs = []
-          for filename in ['input-host-proof.json', 'audio-host-proof.json', 'protocol-original-proof.json', 'protocol-host-proof.json', 'ui/ui-host-checks.json']:
+          for filename in ['input-host-proof.json', 'input-adapter-host-proof.json', 'audio-host-proof.json', 'protocol-original-proof.json', 'protocol-host-proof.json', 'ui/ui-host-checks.json']:
               data = (root/filename).read_bytes()
               assert json.loads(data)['passed'] is True, filename
               proofs.append({'file': filename, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()})

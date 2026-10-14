@@ -20,6 +20,7 @@ ACTIVITY = PACKAGE + '/.MainActivity'
 OUTPUT = pathlib.Path('native-android/results/systems-probe')
 REPORT = OUTPUT / 'emulator-systems-report.json'
 ASSETS = {'audio.bin', 'audio-fixture.json'}
+UI_TAP_WITNESSES = []
 
 
 def adb(*args, check=True):
@@ -100,7 +101,7 @@ def inspect_apk_inputs(apk):
 
 
 def inspect_host_proofs():
-    names = ['input-host-proof.json', 'audio-host-proof.json', 'protocol-original-proof.json', 'protocol-host-proof.json']
+    names = ['input-host-proof.json', 'input-adapter-host-proof.json', 'audio-host-proof.json', 'protocol-original-proof.json', 'protocol-host-proof.json']
     proofs = {name: json.loads((OUTPUT/name).read_text()) for name in names}
     assert all(item['passed'] is True for item in proofs.values())
     input_proof = proofs['input-host-proof.json']
@@ -108,6 +109,12 @@ def inspect_host_proofs():
     assert input_proof['source_camera_cases'] == 96 and input_proof['source_key_events'] == 2048
     assert input_proof['source_joystick_integer_cases'] == 8004
     assert input_proof['failed'] == 0 and input_proof['max_source_error'] == 0
+    adapter = proofs['input-adapter-host-proof.json']
+    assert adapter['schema'] == 'coh-input-adapter-host-proof-v1' and adapter['checks'] == 43
+    assert adapter['negative_control']['passed'] is True
+    assert adapter['negative_control']['expected_failure'] == 'END-only +X direction assertion check 3'
+    source = pathlib.Path(__file__).resolve().parents[1]/'app/src/main/java/org/coh/systemsprobe/InputAdapter.java'
+    assert adapter['source_sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
     protocol = proofs['protocol-host-proof.json']
     assert protocol['schema'] == 'coh-native-protocol-host-proof-v1'
     assert protocol['pointer_bytes'] == protocol['long_bytes'] == 8
@@ -308,35 +315,97 @@ def inject_android_input(initial):
     witnesses = []
     previous = initial
     for index, points in enumerate([(x0, yc, x1, yc), (x1, yc, x0, yc), (xc, y0, xc, y1), (xc, y1, xc, y0)]):
-        adb('shell', 'input', 'touchscreen', 'swipe', *(str(value) for value in points), '180')
+        adb('shell', 'input', 'touchscreen', 'swipe', *(str(value) for value in points), '800')
         axis = 1 if index < 2 else 0
+        sign = 1 if index in (0, 2) else -1
         previous_angle = previous['input_snapshot']['pyr'][axis]
         previous_frames = previous['input_snapshot']['frames']
+        ended = wait_report(lambda report: report.get('input_adapter', {}).get('external_android', {}).get('touch_end', 0) >= index + 1
+                            and report.get('input_adapter', {}).get('touch_active') is False,
+                            'Real Android touch release', seconds=15, interval=.1)
+        end_frame = ended['input_snapshot']['frames']
         def native_motion_observed(report):
             snapshot = report.get('input_snapshot', {})
             pyr = snapshot.get('pyr', [])
-            if len(pyr) != 3 or snapshot.get('frames', 0) <= previous_frames:
+            if len(pyr) != 3 or snapshot.get('frames', 0) < end_frame + 2:
                 return False
             difference = pyr[axis] - previous_angle
-            return abs(math.atan2(math.sin(difference), math.cos(difference))) >= .01 \
-                and report.get('input_adapter', {}).get('external_android', {}).get('touch_end', 0) >= index + 1
+            return sign * math.atan2(math.sin(difference), math.cos(difference)) >= .01 \
+                and snapshot.get('delta_x') == snapshot.get('delta_y') == 0 \
+                and report.get('input_adapter', {}).get('touch_active') is False
         observed = wait_report(native_motion_observed, 'Source native editor-look movement from Android touch', seconds=15, interval=.1)
         witnesses.append({'gesture': index + 1, 'axis': axis,
                           'native_frame_before': previous_frames,
+                          'native_frame_at_observed_release': end_frame,
                           'native_frame_after': observed['input_snapshot']['frames'],
+                          'expected_direction': sign,
                           'angle_before': previous_angle,
                           'angle_after': observed['input_snapshot']['pyr'][axis]})
         previous = observed
     adb('shell', 'input', 'keyboard', 'keyevent', 'KEYCODE_SPACE', 'KEYCODE_ENTER',
         'KEYCODE_W', 'KEYCODE_S', 'KEYCODE_A', 'KEYCODE_D')
-    start_action('run')
+    tap_control('run')
     (OUTPUT/'emulator-input-motion-proof.json').write_text(json.dumps({
         'schema': 1, 'passed': True, 'scope': 'Real injected Android touch callbacks reaching native source editor-look preview; no gameplay camera',
         'gestures': witnesses}, indent=2)+'\n')
 
 
-def start_action(action):
-    adb('shell', 'am', 'start', '-W', '-n', ACTIVITY, '--es', 'probe_action', action)
+def tap_control(action):
+    """Tap the actual Android button without delivering a lifecycle Intent."""
+    before = read_report()
+    assert before is not None and action in before['controls']
+    expected_event = {'run': 'checks_complete', 'play': 'audio_play_requested',
+                      'stop': 'audio_cancel_requested', 'resize': 'resize_requested',
+                      'recreate': 'view_recreation_requested'}[action]
+    pauses = sum(event['type'] == 'activity_paused' for event in before['events'])
+    row = before['control_row']
+    assert row['visible'] is True and row['width'] >= 100 and row['height'] >= 20
+    for direction in (-1, 1):
+        for attempt in range(4):
+            report = read_report()
+            assert report is not None and report['session_id'] == before['session_id']
+            target = report['controls'][action]
+            if target['visible'] is True and target['width'] >= 20 and target['height'] >= 20:
+                assert row['left'] <= target['left'] and row['top'] <= target['top']
+                assert target['left'] + target['width'] <= row['left'] + row['width']
+                assert target['top'] + target['height'] <= row['top'] + row['height']
+                last_sequence = max(event['sequence'] for event in report['events'])
+                native_before = max((run['run_id'] for run in report['native_runs']), default=0)
+                x = int(target['left'] + target['width']//2)
+                y = int(target['top'] + target['height']//2)
+                adb('shell', 'input', 'touchscreen', 'tap', str(x), str(y))
+                def matching_events(r):
+                    candidates = [e for e in r.get('events', [])
+                                  if e['sequence'] > last_sequence and e['type'] == expected_event]
+                    if action in ('play', 'stop'):
+                        return [e for e in candidates if e['detail'].get('reason') == 'manual']
+                    if action == 'run':
+                        manual_ids = {run['run_id'] for run in r.get('native_runs', [])
+                                      if run['run_id'] > native_before and run.get('reason') == 'manual'}
+                        return [e for e in candidates if e['detail']['run_id'] in manual_ids]
+                    return candidates
+                observed = wait_report(lambda r: r.get('session_id') == before['session_id']
+                                       and bool(matching_events(r)),
+                                       'Real Android button action ' + action, seconds=15, interval=.1)
+                assert sum(event['type'] == 'activity_paused' for event in observed['events']) == pauses, 'Foreground UI action unexpectedly paused the Activity'
+                matching = matching_events(observed)
+                assert len(matching) == 1
+                UI_TAP_WITNESSES.append({'action': action, 'tap_x': x, 'tap_y': y,
+                    'visible_button_bounds': target, 'control_row_bounds': row,
+                    'before_event_sequence': last_sequence,
+                    'observed_event': matching[0], 'pause_events_before': pauses,
+                    'pause_events_after': pauses})
+                (OUTPUT/'emulator-ui-tap-proof.json').write_text(json.dumps({
+                    'schema': 1, 'passed': True,
+                    'scope': 'Measured real Android Button taps bound to exact listener events; no foreground lifecycle Intent',
+                    'button_taps': UI_TAP_WITNESSES}, indent=2)+'\n')
+                return observed
+            xc, yc = int(row['left'] + row['width']//2), int(row['top'] + row['height']//2)
+            distance = int(row['width']//3)
+            adb('shell', 'input', 'touchscreen', 'swipe', str(xc - direction*distance), str(yc),
+                str(xc + direction*distance), str(yc), '500')
+            time.sleep(.6)
+    raise RuntimeError('Android button remained outside the measured control row: ' + action)
 
 
 def main():
@@ -365,7 +434,7 @@ def main():
         # Cancellation is requested through the Android lifecycle while a real
         # AAudio worker owns an active stream, then its close result is checked.
         old_audio = max(run['run_id'] for run in initial['audio_runs'])
-        start_action('play')
+        tap_control('play')
         wait_report(lambda report: report.get('session_id') == session
                     and report.get('audio_busy') is True and report.get('backend_audio_active') is True,
                     'Native AAudio worker starting', seconds=15, interval=.05)
@@ -383,26 +452,29 @@ def main():
         assert len(cancel) == 1
         validate_audio(cancel[0], contract, cancelled=True)
         save_report('emulator-background-report.json', paused)
-        start_action('run')
+        adb('shell', 'am', 'start', '-W', '-n', ACTIVITY)
         foreground = wait_report(lambda report: report.get('session_id') == session
                                  and report.get('qualification_passed') is True,
                                  'Fresh foreground source proofs and full AAudio reopen')
         validate(foreground, contract, metadata, proofs, full=True)
         save_report('emulator-foreground-report.json', foreground)
         before = max(run['run_id'] for run in successful_native_runs(foreground))
-        start_action('resize')
+        tap_control('resize')
         resized = wait_report(lambda report: report.get('session_id') == session
                               and report.get('qualification_passed') is True
                               and any(run['run_id'] > before for run in successful_native_runs(report)),
                               'Second real input-view resize')
         validate(resized, contract, metadata, proofs, full=True)
         generation = max(run['generation'] for run in successful_native_runs(resized))
-        start_action('recreate')
+        tap_control('recreate')
         final = wait_report(lambda report: report.get('session_id') == session
                             and report.get('qualification_passed') is True
                             and any(run['generation'] > generation for run in successful_native_runs(report)),
                             'Second actual input-view recreation')
         validate(final, contract, metadata, proofs, full=True, minimum_generations=3)
+        names = [event['type'] for event in final['events']]
+        assert names.count('activity_paused') == names.count('activity_stopped') == 1
+        assert names.count('activity_resumed') == 2
         snapshot = final['input_snapshot']
         zero_input(snapshot)
         save_report('emulator-final-report.json', final)
@@ -426,6 +498,8 @@ def main():
                    'native_offline_unaligned_cases': sum(run['protocol']['unaligned_cases'] for run in successful_native_runs(final)),
                    'verified_audio_asset': contract['audio'],
                    'actual_resize_verified': True, 'view_recreation_verified': True,
+                   'foreground_ui_buttons_preserve_home_receipt': True,
+                   'actual_home_pause_stop_resume_cycles': 1,
                    'foreground_return_verified': True, 'foreground_input_clear_verified': True,
                    'physical_controller_verified': False, 'physical_audibility_verified': False,
                    'external_network_execution': False, 'server_interoperability_verified': False,

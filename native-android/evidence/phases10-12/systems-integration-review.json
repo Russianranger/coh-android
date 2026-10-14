@@ -1,0 +1,90 @@
+{
+  "schema": "coh-native-systems-independent-integration-review-v1",
+  "phases": [
+    10,
+    11,
+    12
+  ],
+  "passed": true,
+  "scope": "Read-only review of second Android CI failure and frozen callback/accounting/automation corrections; future rerun qualification still pending",
+  "reviewed_file_sha256": {
+    "native-android/systems-probe/app/src/main/java/org/coh/systemsprobe/MainActivity.java": "1b62a04c6eb3a2b3625b2a45ef8400ae1af7f72891ddf027e7bbe0deca931acd",
+    "native-android/systems-probe/app/src/main/java/org/coh/systemsprobe/InputAdapter.java": "90ead6410b101480afd1526acc5c2bb0c11cdcc0fe0990487be67b8e3d227ffd",
+    "native-android/systems-probe/tools/emulator_check.py": "6e976134713c059ae223d5ee0e54becadc33deae2b0c21380afb450d9bd7ac5b",
+    ".github/workflows/native-systems-probe.yml": "a76cf264594077e296b89f424d19a95cadbabe10607ef87ab737db1854291ea9",
+    "native-android/tools/input_fixture/adapter_check.py": "805f4d56888df6cbfe943eda55c62fbbbe8d9a80679ec6c8461e2c3b9719d257",
+    "native-android/systems-probe/tools/ui_host_check.py": "ef2a9615db5968ba7a9146631799c3b1158682cb7ba330acf3284a278b65ba79",
+    "native-android/systems-probe/app/src/main/cpp/systems_bridge.c": "8d5f321fdb85579604a629d2de77ff13fecf261f48ea10afa1e879539c58b065"
+  },
+  "second_failure": {
+    "workflow_run_id": 38497070427,
+    "job_id": 115635159717,
+    "gate_passed": false,
+    "native_source_checks_and_two_full_audio_runs_passed": true,
+    "immutable_private_report_sha256": "377700d0f49ba34da474512a71b992f19847992929571d9a7946442915914f96",
+    "observed_actual_touch_begin": 4,
+    "observed_actual_touch_move": 6,
+    "observed_actual_touch_end": 4,
+    "observed_touch_direction_mask": 13,
+    "required_mask": 15,
+    "foreground_intent_induced_pause_sequence": 20,
+    "foreground_intent_induced_resume_sequence": 21,
+    "home_with_active_audio_qualified": false
+  },
+  "endpoint_accounting_fix": {
+    "passed": true,
+    "final_owned_pointer_UP_uses_actual_final_coordinates": true,
+    "touch_move_counts_genuine_MOVE_samples_only": true,
+    "native_sink_receives_END_not_fabricated_MOVE": true,
+    "stable_pointer_ownership_and_cancel_unchanged": true,
+    "actual_adapter_host_checks": 43,
+    "negative_control_reproduces_missing_positive_x_direction": true,
+    "proof_sha256": "72c6ec44ce148765a3dfab2fadbade59e7819e65c496f42c32fa793cefb1ed0c"
+  },
+  "native_motion_witness_fix": {
+    "passed": true,
+    "required_actual_gestures": 4,
+    "requires_actual_release_and_inactive_touch": true,
+    "requires_native_frame_at_least_two_after_observed_release": true,
+    "requires_consumed_pending_relative_motion_zero": true,
+    "requires_expected_signed_wrapped_angle_change_at_least_radians": 0.01,
+    "absolute_movement_shortcut_removed": true,
+    "touch_direction_mask_15_and_four_genuine_MOVEs_still_required": true
+  },
+  "foreground_action_fix": {
+    "passed": true,
+    "actual_UI_buttons_replace_foreground_lifecycle_intents": true,
+    "bounds": "Actual visible clipped button rectangles contained within measured Android control row; coordinates converted to screen space",
+    "scrolling": "Bounded measured control-row swipes until intended button is visible",
+    "listener_event_association": "Action-specific new listener event; manual Play/Stop reason and new manual native Run ID checked",
+    "foreground_pause_count_must_remain_unchanged": true,
+    "UI_tap_witness_receipt_retained": true,
+    "launch_intent_only_for_initial_launch_and_real_return_after_HOME": true
+  },
+  "home_cycle_requirements": {
+    "exactly_one_activity_pause_and_stop": true,
+    "exactly_two_activity_resumes_including_initial": true,
+    "actual_STARTED_audio_before_pause_required": true,
+    "exact_interrupted_audio_run_ID_required": true,
+    "sample_submission_and_cancelled_stop_close_result_required": true,
+    "paused_native_key_axis_relative_motion_zero_required": true,
+    "fresh_foreground_source_checks_and_full_audio_reopen_required": true,
+    "early_cancel_constraint_is_emulator_specific": true
+  },
+  "qualification_logic": {
+    "three_actual_Java_predicate_bodies_unchanged_from_prior_actual_CI_apk": true,
+    "host_Java_negative_checks": 24,
+    "keeper_positive_schema_cases": 3,
+    "keeper_rejected_negative_cases": 37,
+    "ui_host_proof_sha256": "5e428541ec5cc215028c1e5be47718a1ac265e2b3a590c2a5ba4c7f3563ff49e",
+    "keeper_guard_proof_sha256": "94e0dec39c60f9743177ef02bb910fcd911c90ee7baf69b0acaa34c5a6a3b899",
+    "native_source_oracle_kernel_goldens_and_tolerances_unchanged": true,
+    "qualification_requirements_weakened": false
+  },
+  "limits": {
+    "actual_Android_fix_success_pending_next_CI_run": true,
+    "physical_Thor_controller_and_audibility_qualified": false,
+    "server_interoperability_qualified": false,
+    "original_game_execution": false
+  }
+}

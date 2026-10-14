@@ -11,7 +11,7 @@
     "input/coh_input.c": "ea3d3ae529f8cb530211123614e3469f25cbba426cb9eb2478abe17d96418403",
     "input/coh_input.h": "20bc5ab3dcd9482c56635f0245b297c0a9c1b7c9d0eb1fc14e479368feddfdb8",
     "input/input_goldens.h": "58781612b8038ce2757a536c89b1284b8a76c7fdc80fd7b31a7b8c650777bc70",
-    "input/README.md": "f99a5a569a9101ffdf399f568e2dfdf82255fcdddcda7994f333f03fc673ee25",
+    "input/README.md": "e02f04378d2fe9502617873a1e697ae4f67960cb5b794a91c903bb4108f3d833",
     "tools/input_fixture/check.py": "b0d6143e18ac6c07605f8b173b094c5fa91911542a3dd299d7a61eb1436f475b",
     "tools/input_fixture/source-pins.json": "9378c38b82ab99a5d4dffcabcc74b23a5e0c1f8a65debefb7c22d7550bb85743",
     "audio/coh_audio.c": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3",
@@ -148,7 +148,7 @@
   "physical_controller_qualified": false,
   "physical_audibility_qualified": false,
   "pending_integration_review": [
-    "Android app callback/session association and emulator evidence after owners freeze"
+    "Actual Android fix success and final artifact qualification after rerun"
   ],
   "ndk_api26_fix_review": {
     "passed": true,
@@ -174,5 +174,11 @@
     "minimum_sdk_unchanged": true,
     "qualification_checks_or_tolerances_weakened": false,
     "native_android_backend_success_still_pending_rerun": true
+  },
+  "frozen_integration_review": {
+    "passed": true,
+    "file": "systems-integration-review.json",
+    "sha256": "cdb8da0fa10d8accf430bec8144426d3c80b7fa14edbd911d271d8b0d9964705",
+    "actual_android_fix_execution_still_pending": true
   }
 }

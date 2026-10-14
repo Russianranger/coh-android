@@ -105,11 +105,21 @@
     "native-android/systems-probe/gradle.properties": "cc38bc495ca4e4d7fa2fe7c9c1112f36af7a63fbf4fc3e7a088e215942403385",
     "native-android/systems-probe/app/build.gradle": "c7db6b63d9e1b6ac5c902132cbbc058a5023e6ed3672d9d30131d69f43834805",
     "native-android/systems-probe/app/src/main/AndroidManifest.xml": "826c162436182fa68026f07a1f975aadf23e44c2051a9ef7c0608beee797d0f6",
-    "native-android/systems-probe/app/src/main/java/org/coh/systemsprobe/MainActivity.java": "b043f9babc5f3b34c7c1dd390344160eeac87a1c5ecf2e98bb4f3a208dab8d2f",
+    "native-android/systems-probe/app/src/main/java/org/coh/systemsprobe/MainActivity.java": "1b62a04c6eb3a2b3625b2a45ef8400ae1af7f72891ddf027e7bbe0deca931acd",
     "native-android/systems-probe/app/src/main/cpp/CMakeLists.txt": "fc37d495a917a1c9229ca140124eac9ca773a26ae02309c5470b6c72dbf67844",
     "native-android/systems-probe/app/src/main/cpp/systems_bridge.c": "8d5f321fdb85579604a629d2de77ff13fecf261f48ea10afa1e879539c58b065",
     "native-android/systems-probe/tools/ui_host_check.py": "ef2a9615db5968ba7a9146631799c3b1158682cb7ba330acf3284a278b65ba79",
     "native-android/systems-probe/gradle.py": "015761665bfb63ab88106ca3b6c421044c180d711d47af74a586f7065f15daef"
   },
-  "gradle_bootstrap_same_as_accepted_world_probe": true
+  "gradle_bootstrap_same_as_accepted_world_probe": true,
+  "integration_file_sha256": {
+    "native-android/systems-probe/app/src/main/java/org/coh/systemsprobe/InputAdapter.java": "90ead6410b101480afd1526acc5c2bb0c11cdcc0fe0990487be67b8e3d227ffd"
+  },
+  "qualification_predicates_byte_unchanged_from_second_ci_artifact": true,
+  "qualification_method_sha256": {
+    "private static boolean zeroInput(": "13a6e8dea68e91155b0e489366a96da10bb9aec1eb3150ce09df3c7ebe014d09",
+    "private boolean preBackground(": "d82092dea40afca4fa979703324b4925868f7b9f15d7b32a6dde2d1784d0d69e",
+    "private boolean backgroundPassed(": "fc7290a4a8675b7a3d177e4c2c8778c7f7b253e030339c612acb61174c8284ad"
+  },
+  "readonly_ui_geometry_addition": "Current visible control bounds and scroll-row measurements; no action API or qualification/lifecycle change"
 }
