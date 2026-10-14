@@ -6,6 +6,132 @@
   "format": 1,
   "foundation_commit": "c2635d5f5ec118948ecb61c334c94d3ed0cbeda2",
   "full_qualification_executed": false,
+  "legacy_native_workflow_guard": {
+    "independent_review": {
+      "base_commit": "bc74b08e75d5da7187f99658d2c04dd509a325fb",
+      "controlled_temporary_git_fixtures_only": true,
+      "format": 1,
+      "independently_executed_host_cases": {
+        "command": "python3 -W error::ResourceWarning -m unittest discover -s tools/android/interactive -p test_map_startup_native_change.py -q",
+        "errors": 0,
+        "failed": 0,
+        "module": "test_map_startup_native_change",
+        "passed": 19,
+        "seconds": 2.348,
+        "skipped": 0
+      },
+      "native_builds_or_APK_builds_executed": false,
+      "native_evidence_claimed_fresh": false,
+      "reviewed_gates": [
+        "Only known host-only cumulative baseline scope and one direct-parent push can omit an unchanged native rebuild; manual/unknown/Git-error/merge/multicommit/native/SDK/build/fixture/workflow-body/history changes require full native gate",
+        "Exact full native and FX job bodies retain baseline bytes and SHA7465a7d83385c0e74535b68ce4aa47574bf3338697d3eabb416c946d6a3e0d6b",
+        "Actual native if-expression executes full gate unless change-scope result is success and output is exact false, including retained false after scope failure",
+        "Push concurrency keeps original dedicated group and cancels obsolete push; every manual run has unique run-ID group and does not cancel other work",
+        "Exactly three finite publication inventory extensions cover workflow/helper/test and include one fresh host suite; no native/APK consumer/source authority relabel"
+      ],
+      "reviewer": "client_harness_review",
+      "shipping_or_cache_authority_created": false,
+      "source_edits_or_player_SQL_mutations_by_reviewer": false,
+      "source_freeze": {
+        "bytes": 2287,
+        "path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/native-workflow-guard-source-freeze.json",
+        "sha256": "fbec51d72114710069b6f9735f5c9a854d2de99ae604a89be1be47ca6f11cb4d"
+      },
+      "source_pins_unchanged_after_tests": [
+        {
+          "bytes": 12869,
+          "path": ".github/workflows/android-map-startup-native.yml",
+          "sha256": "2e40ecf1854dbd67bfe16b30f53d45f3427a4d3c45cd75a31dcf976b2926e63f"
+        },
+        {
+          "bytes": 10078,
+          "path": "tools/android/interactive/classify_map_startup_native_change.py",
+          "sha256": "2e42ec6c9c4f7b1d4ad6c509ca3e65defcb011986635bda631338cd9f7e18e7d"
+        },
+        {
+          "bytes": 14373,
+          "path": "tools/android/interactive/test_map_startup_native_change.py",
+          "sha256": "6fecf1686ec8e2b297c83cab32ae2cf3c297754d01f1a2038142fabed4e36066"
+        },
+        {
+          "bytes": 64447,
+          "path": "tools/android/interactive/build_client_zone_startup_apk.py",
+          "sha256": "c5cfe8009dc0a3a7e041036c2bc1d76426abd657e1a28d85b9e573c08aa1abd2"
+        },
+        {
+          "bytes": 5630,
+          "path": "tools/android/interactive/classify_client_zone_startup_change.py",
+          "sha256": "73ab6c42b23915b81851c3586ac8eb23bdfbfe20dd213c5e5fa3cde7463c2dd0"
+        },
+        {
+          "bytes": 22926,
+          "path": "tools/android/interactive/qualify_client_zone_startup.py",
+          "sha256": "e9a41544fd3ebb6d0e5ffc5cd1d0971e4679d3dc331f4baf1f432dbb0eaabb61"
+        }
+      ],
+      "status": "approved_workflow_routing_only",
+      "time_UTC": "2026-10-14T02:24:15.676801+00:00"
+    },
+    "independent_review_sha256": "d9e06e554bf52f073bdf5db85380b57786c7189d7811034fce43cb83dc007106",
+    "native_SDK_compiler_steps_changed": false,
+    "native_authority_or_publication_enabled": false,
+    "new_test_module": "test_map_startup_native_change",
+    "source_freeze": {
+      "APK_builds_executed": false,
+      "base_commit": "bc74b08e75d5da7187f99658d2c04dd509a325fb",
+      "cancel_in_progress_only_for_push": true,
+      "created_at_utc": "2026-10-14T02:22:42.549999+00:00",
+      "files": [
+        {
+          "bytes": 12869,
+          "path": ".github/workflows/android-map-startup-native.yml",
+          "sha256": "2e40ecf1854dbd67bfe16b30f53d45f3427a4d3c45cd75a31dcf976b2926e63f"
+        },
+        {
+          "bytes": 10078,
+          "path": "tools/android/interactive/classify_map_startup_native_change.py",
+          "sha256": "2e42ec6c9c4f7b1d4ad6c509ca3e65defcb011986635bda631338cd9f7e18e7d"
+        },
+        {
+          "bytes": 14373,
+          "path": "tools/android/interactive/test_map_startup_native_change.py",
+          "sha256": "6fecf1686ec8e2b297c83cab32ae2cf3c297754d01f1a2038142fabed4e36066"
+        },
+        {
+          "bytes": 64447,
+          "path": "tools/android/interactive/build_client_zone_startup_apk.py",
+          "sha256": "c5cfe8009dc0a3a7e041036c2bc1d76426abd657e1a28d85b9e573c08aa1abd2"
+        },
+        {
+          "bytes": 5630,
+          "path": "tools/android/interactive/classify_client_zone_startup_change.py",
+          "sha256": "73ab6c42b23915b81851c3586ac8eb23bdfbfe20dd213c5e5fa3cde7463c2dd0"
+        },
+        {
+          "bytes": 22926,
+          "path": "tools/android/interactive/qualify_client_zone_startup.py",
+          "sha256": "e9a41544fd3ebb6d0e5ffc5cd1d0971e4679d3dc331f4baf1f432dbb0eaabb61"
+        }
+      ],
+      "format": 1,
+      "guarded_workflow_sha256": "2e40ecf1854dbd67bfe16b30f53d45f3427a4d3c45cd75a31dcf976b2926e63f",
+      "legacy_workflow_sha256": "8839a1ead01f21f08c5ed6f57c75a317d0da11033acf75d539ef9df727385f64",
+      "manual_concurrency_group_isolated_by_run_id": true,
+      "manual_dispatch_requires_native": true,
+      "native_body_sha256": "7465a7d83385c0e74535b68ce4aa47574bf3338697d3eabb416c946d6a3e0d6b",
+      "native_builds_executed": false,
+      "native_job_and_fx_job_body_preserved_byte_exactly": true,
+      "push_concurrency_group": "android-map-startup-native",
+      "scope_job_failure_even_with_false_output_requires_native": true,
+      "shipping_or_native_cache_authority_created": false,
+      "supersedes_initial_17_freeze_sha256": "b2d2bf27516fbc427c7d3abac5f2f1fa5f4cf4c116995bd44e64ce04806031cb",
+      "unknown_scope_or_history_requires_native": true,
+      "worktree": "/workspace/scratch/5d16603ca7ff/native-workflow-guard-037"
+    },
+    "source_freeze_sha256": "fbec51d72114710069b6f9735f5c9a854d2de99ae604a89be1be47ca6f11cb4d",
+    "source_scope": "CI routing only; original 95 integration result above stays under its original source pins and is not rerun or relabeled",
+    "total_qualification_modules": 222
+  },
   "modules": [
     "test_native_startup_metadata_admission",
     "test_native_startup_metadata_contract",
