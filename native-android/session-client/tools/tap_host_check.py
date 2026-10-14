@@ -26,10 +26,10 @@ def main():
         nonlocal checks
         checks+=1
         assert value,label
-    xml='''<hierarchy>
-    <node class="android.widget.Button" package="org.coh.sessionclient" text="RESET ACTOR" enabled="true" clickable="true" bounds="[10,280][292,375]"/>
-    <node class="android.widget.Button" package="org.coh.sessionclient" text="RECREATE" enabled="true" clickable="true" bounds="[310,280][532,375]"/>
-    <node class="android.widget.Button" package="org.coh.sessionclient" text="EXPORT REPORT" enabled="true" clickable="true" bounds="[550,280][879,375]"/>
+    xml=f'''<hierarchy>
+    <node class="android.widget.Button" package="{driver.PACKAGE}" text="RESET ACTOR" enabled="true" clickable="true" bounds="[10,280][292,375]"/>
+    <node class="android.widget.Button" package="{driver.PACKAGE}" text="RECREATE" enabled="true" clickable="true" bounds="[310,280][532,375]"/>
+    <node class="android.widget.Button" package="{driver.PACKAGE}" text="EXPORT REPORT" enabled="true" clickable="true" bounds="[550,280][879,375]"/>
     </hierarchy>'''
     nodes=list(ET.fromstring(xml).iter('node'))
     for label,event in [('Reset actor','reset_requested'),('Recreate','recreate_requested'),('Export report','export_requested')]:
@@ -38,7 +38,7 @@ def main():
         check(driver.bounds(matched[0])[2]>driver.bounds(matched[0])[0],'Positive actual button bounds: '+label)
         original=deepcopy(matched[0]);original.set('text',label)
         check(driver.button_nodes([original],label)==[original],'Original sentence-case button: '+label)
-        for key,value in [('package','org.other.app'),('enabled','false'),('clickable','false'),('text',label+' again')]:
+        for key,value in [('package','org.coh.sessionclient'),('enabled','false'),('clickable','false'),('text',label+' again')]:
             wrong=deepcopy(original);wrong.set(key,value)
             check(driver.button_nodes([wrong],label)==[],'Reject unrelated or unavailable target '+key+': '+label)
         receipt={'events':[{'sequence':11,'type':event}]}

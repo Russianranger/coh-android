@@ -1,8 +1,9 @@
 # AYN Thor: one combined test for gates 19–21
 
 Install `CoH-Native-Session-Client-0.2.0-arm64.apk` and open **CoH Native Session
-Client**. This is the same native application trajectory. The conventional
-launcher/client and user imports remain separate. No server, account or asset
+Client 0.2.0**. It installs alongside the accepted 0.1.0 client and preserves
+existing app data and reports. This is the same native application trajectory.
+The conventional launcher/client and user imports remain separate. No server, account or asset
 import is needed. The accepted gates 16–18 APK remains the rollback artifact.
 Physical gates 19–21 require this new report and your observations.
 

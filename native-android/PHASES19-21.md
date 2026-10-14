@@ -2,7 +2,13 @@
 
 This batch continues the physically accepted gates 16–18 at
 `8e83f2343f29c7b4baee7876268c5ccb1e8b01b4`. It extends the same
-`org.coh.sessionclient` application, version `0.2.0-gates19-21`, code 2.
+Session Client source, version `0.2.0-gates19-21`, code 2. This debug package uses
+`org.coh.sessionclient.walk` and the launcher label **CoH Native Session Client
+0.2.0**. It installs alongside the accepted 0.1.0 client because that hosted
+package used an unavailable ephemeral signing key. Existing app data and reports
+are retained. A pinned public test signer supports subsequent debug updates;
+the Java/JNI namespace remains `org.coh.sessionclient`. The conventional client
+and release signing are unchanged.
 The original character, rig, morphology, Atlas benchmark and comparison inputs
 are recovered byte-for-byte from the exact accepted APK. They are not rebuilt
 or reacquired. Existing receipts, failed attempts and the accepted APK remain

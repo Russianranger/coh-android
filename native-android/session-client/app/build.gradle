@@ -9,7 +9,7 @@ android {
     buildToolsVersion '35.0.0'
     ndkVersion '28.2.13676358'
     defaultConfig {
-        applicationId 'org.coh.sessionclient'
+        applicationId 'org.coh.sessionclient.walk'
         minSdk 26
         targetSdk 35
         versionCode 2
@@ -23,7 +23,25 @@ android {
     externalNativeBuild {
         cmake { path file('src/main/cpp/CMakeLists.txt'); version '3.22.1' }
     }
-    buildTypes { debug { debuggable true; jniDebuggable true; minifyEnabled false } }
+    // Intentionally public, test-only signer for isolated native debug builds.
+    // This is never a production launcher credential or release signing key.
+    signingConfigs {
+        nativePublicTest {
+            storeFile file('test-signing/session-test.p12')
+            storeType 'PKCS12'
+            storePassword 'coh-native-public-test'
+            keyAlias 'coh-native-test'
+            keyPassword 'coh-native-public-test'
+        }
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            jniDebuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.nativePublicTest
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

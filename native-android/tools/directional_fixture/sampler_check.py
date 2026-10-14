@@ -46,6 +46,22 @@ void original_blend_reset(void){memset(seq.stored,0,sizeof seq.stored);blend_ser
 '''
 
 def source_program(directory):
+    # The accepted source oracle takes a flat directory. CI supplies the
+    # original upstream tree, so stage exact verified bytes into a temporary
+    # flat view; never reconstruct bytes from decoded source text.
+    manifest=json.loads((HERE/'source-pins.json').read_text())
+    with tempfile.TemporaryDirectory(prefix='coh-directional-source-') as folder:
+        flat=Path(folder)
+        for name,item in manifest['files'].items():
+            direct=directory/name
+            source=direct if direct.exists() else directory/item['path']
+            raw=source.read_bytes().replace(b'\r\n',b'\n')
+            require(len(raw)==item['bytes_lf'] and sha(raw)==item['sha256_lf'],
+                    'original source hash differs: '+str(source))
+            (flat/name).write_bytes(raw)
+        return flat_source_program(flat)
+
+def flat_source_program(directory):
     # Verify original byte/source pins and each previously accepted function.
     # seqregistration's CP1252 comments must remain canonical original bytes.
     code,_=original.source_code(directory);snippets=[];pins={}

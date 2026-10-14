@@ -17,8 +17,8 @@ import time
 import xml.etree.ElementTree as ET
 import zipfile
 
-PACKAGE = 'org.coh.sessionclient'
-ACTIVITY = PACKAGE + '/.MainActivity'
+PACKAGE = 'org.coh.sessionclient.walk'
+ACTIVITY = PACKAGE + '/org.coh.sessionclient.MainActivity'
 OUTPUT = None
 ADB = 'adb'
 INPUT_PROOFS = []

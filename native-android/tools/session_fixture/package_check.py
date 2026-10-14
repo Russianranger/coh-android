@@ -12,12 +12,29 @@ import zipfile
 
 RUNTIME_ASSETS = {'world.bin', 'character.bin', 'rig.bin', 'morph.bin', 'locomotion.bin', 'walkable.bin'}
 VERSION = '0.2.0-gates19-21'
-PACKAGE = 'org.coh.sessionclient'
+PACKAGE = 'org.coh.sessionclient.walk'
 LIBRARY = 'libcoh_session_client.so'
+TEST_SIGNER = {
+    'schema': 1, 'keystore': 'session-test.p12', 'bytes': 2738,
+    'sha256': '2c5a771d7a3989726d475a64471a1cf8bffafb62193a3a98a49ed7070ab2ee05',
+    'certificate_sha256': '9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522',
+    'alias': 'coh-native-test', 'store_type': 'PKCS12',
+    'password': 'coh-native-public-test',
+}
 
 
 def identity(raw):
     return {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
+
+
+def test_signer_identity():
+    directory = Path(__file__).resolve().parents[2] / 'session-client/app/test-signing'
+    metadata = json.loads((directory / 'signer.json').read_text())
+    assert {key: metadata[key] for key in TEST_SIGNER} == TEST_SIGNER, 'Public test signer metadata changed'
+    assert identity((directory / TEST_SIGNER['keystore']).read_bytes()) == {
+        key: TEST_SIGNER[key] for key in ('bytes', 'sha256')
+    }, 'Public test signer keystore bytes changed'
+    return {key: TEST_SIGNER[key] for key in ('keystore', 'bytes', 'sha256', 'certificate_sha256', 'alias', 'store_type')}
 
 
 def main():
@@ -25,6 +42,7 @@ def main():
     parser.add_argument('--output', type=Path, default=Path('native-android/results/session-client'))
     parser.add_argument('--assets', type=Path, default=Path('native-android/session-client/app/src/main/assets'))
     args = parser.parse_args()
+    stable_signer = test_signer_identity()
     args.output.mkdir(parents=True, exist_ok=True)
     expected = {p.name for p in args.assets.iterdir() if p.is_file()}
     manifest = json.loads((args.assets / 'asset-manifest.json').read_text())
@@ -61,7 +79,7 @@ def main():
         assert re.findall(r"^uses-permission: name='([^']+)'", badging, re.M) == [], 'Offline session client must not request network permission'
         assert "native-code: '" + abi + "'" in badging
         certificate = re.search(r'^Signer #1 certificate SHA-256 digest: ([0-9a-f]+)$', signature, re.M)
-        assert certificate
+        assert certificate and certificate.group(1) == TEST_SIGNER['certificate_sha256'], 'APK certificate differs from stable public test signer'
         (args.output / ('apk-signature-' + label + '.txt')).write_text(signature)
         (args.output / ('apk-badging-' + label + '.txt')).write_text(badging)
         artifacts.append({'file': path.name, **identity(path.read_bytes()), 'abi': abi, 'elf_machine': machine,
@@ -74,7 +92,8 @@ def main():
                'workflow_run_id': os.environ.get('GITHUB_RUN_ID', 'local'), 'application_id': PACKAGE,
                'version_name': VERSION, 'version_code': 2, 'min_sdk': 26, 'target_sdk': 35,
                'gradle': '8.9', 'android_gradle_plugin': '8.7.3', 'ndk': '28.2.13676358', 'cmake': '3.22.1',
-               'signing': 'Isolated CI debug key; separate from production launcher',
+               'signing': 'Stable intentionally public PKCS12 test-only signer; separate application ID and signing from accepted 0.1.0 and production launcher',
+               'test_signer': stable_signer,
                'artifacts': artifacts, 'assets': [{'file': name, **identity((args.assets / name).read_bytes())} for name in sorted(expected)],
                'native_session_implementation': True, 'native_session_execution_verified': False,
                'qualification_scope': 'Package integrity only; execution is reported separately by emulator/device receipts',

@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "keystore": "session-test.p12",
+  "bytes": 2738,
+  "sha256": "2c5a771d7a3989726d475a64471a1cf8bffafb62193a3a98a49ed7070ab2ee05",
+  "certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "purpose": "Public fixture for repeatable native debug test updates only; not trusted for production",
+  "alias": "coh-native-test",
+  "store_type": "PKCS12",
+  "password": "coh-native-public-test"
+}
