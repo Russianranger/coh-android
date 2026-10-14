@@ -328,6 +328,45 @@ class EvidenceRefusal(unittest.TestCase):
             ('server_only','candidate-forward','candidate'),('server_only','candidate-reverse','candidate'),
             ('server_only','baseline-reverse','baseline'),('full','generation','stock'),
             ('full','baseline-forward','baseline'),('full','candidate-forward','candidate')])
+    def observation_fixture(self,map_id=1,embedded_ordinal=130):
+        rows=[f'COH_NATIVE_STARTUP_PROFILE_V1 phase={phase} input_token=12345678 success=1 clock_valid=1 elapsed_us=1\n'
+            for phase in ('sequencer_postprocess','sequencer_finalize','sequencer_total')]
+        rows.extend(f'COH_NATIVE_STARTUP_PROFILE_V1 phase=bin_decode input_token={i:08x} success=1 clock_valid=1 elapsed_us=1\n' for i in range(10))
+        world=gate.WORLDS[map_id][0];prefix=f'loading map: maps/City_Zones/{world}/{world}.txt..'
+        for ordinal in range(1,257):
+            row=(f'COH_MAP_BIN_FRESHNESS_V1 ordinal={ordinal} input_token={ordinal:08x} outcome=freshness_accepted clock_valid=1 '
+                'open_us=1 dependencies_us=1 scan_us=1 dates_us=1 membership_us=1 cleanup_us=1\n')
+            rows.append((prefix if ordinal==embedded_ordinal else '')+row)
+        return ''.join(rows).encode()
+    def test_world_adapter_frames_one_exact_source_known_selected_map_prefix(self):
+        for map_id in (1,5):
+            raw=self.observation_fixture(map_id);view=gate.world_native_observations(raw,map_id)
+            self.assertEqual([r['ordinal'] for r in view['freshness_rows']],list(range(1,257)))
+            proof=view['native_world_console_framing'];entry=proof['known_prefixed_rows'][0]
+            self.assertEqual(proof['original_stdout'],{'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()})
+            offset=entry['raw_marker_offset_bytes'];self.assertTrue(raw[offset:].startswith(b'COH_MAP_BIN_FRESHNESS_V1 ordinal=130 '))
+            self.assertFalse(proof['native_rows_or_ordinals_rewritten']);self.assertFalse(proof['legacy_native_parser_changed'])
+            with self.assertRaises(ValueError):gate.profiles.parse_observations(raw)
+    def test_world_adapter_preserves_unprefixed_rows_and_strict_profiler_limits(self):
+        raw=self.observation_fixture(embedded_ordinal=0);v=gate.world_native_observations(raw,1)
+        self.assertEqual(v['native_world_console_framing']['known_prefixed_rows'],[])
+        self.assertEqual(v['native_world_console_framing']['original_stdout'],v['native_world_console_framing']['validated_framed_view'])
+        with self.assertRaises(ValueError):gate.world_native_observations(raw+raw.splitlines(keepends=True)[-1],1)
+        with self.assertRaises(ValueError):gate.world_native_observations(raw,24)
+    def test_world_adapter_refuses_unknown_wrong_map_or_duplicated_progress_prefix(self):
+        raw=self.observation_fixture();world=gate.WORLDS[1][0]
+        prefix=f'loading map: maps/City_Zones/{world}/{world}.txt..'.encode()
+        for changed in (raw.replace(prefix,b'unknown progress..'),raw.replace(prefix,prefix.replace(b'City_01_01',b'City_01_02')),
+            raw.replace(b'COH_MAP_BIN_FRESHNESS_V1 ordinal=131 ',prefix+b'COH_MAP_BIN_FRESHNESS_V1 ordinal=131 '),
+            raw.replace(prefix,prefix+prefix)):
+            with self.assertRaises(ValueError):gate.world_native_observations(changed,1)
+    def test_world_adapter_refuses_missing_duplicate_outoforder_and_malformed_rows(self):
+        raw=self.observation_fixture()
+        for changed in (raw.replace(b'ordinal=130 ',b'ordinal=129 '),raw.replace(b'ordinal=130 ',b'ordinal=131 '),
+            raw.replace(b'ordinal=130 ',b'ordinal=invalid '),raw.replace(b'ordinal=130 ',b'ordinal=130 unknown=1 '),
+            raw.replace(b'COH_MAP_BIN_FRESHNESS_V1 ordinal=130 ',b''),
+            b'unknown..'+raw):
+            with self.assertRaises(ValueError):gate.world_native_observations(changed,1)
     def test_warm_clone_excludes_stale_progress_native_logs_and_private_config(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);source=root/'generated';source.mkdir()

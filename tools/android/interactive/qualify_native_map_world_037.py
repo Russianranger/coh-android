@@ -644,6 +644,35 @@ def phase_plan(baseline,candidate):
     return cases
 
 
+def world_native_observations(raw,map_id):
+    """Frame only the stock selected-world loadstart prefix; never repair rows."""
+    require(type(raw) is bytes and len(raw)<=64*1024**2 and map_id in WORLDS,
+            'Bounded selected-world native observations required')
+    world=WORLDS[map_id][0]
+    prefix=('loading map: maps/City_Zones/'+world+'/'+world+'.txt..').encode('ascii')
+    marker=b'COH_MAP_BIN_FRESHNESS_V1 ';profile=b'COH_NATIVE_STARTUP_PROFILE_V1 '
+    parts=[];offset=0;framed_rows=[]
+    for line in raw.splitlines(keepends=True):
+        raw_line_bytes=len(line)
+        if marker in line:
+            require(line.count(marker)==1,'Duplicated native freshness marker in one line')
+            if not line.startswith(marker):
+                require(line.startswith(prefix+marker) and not framed_rows,
+                        'Unknown/duplicated progress prefix on native freshness row')
+                framed_rows.append({'raw_line_offset_bytes':offset,'raw_marker_offset_bytes':offset+len(prefix),
+                    'removed_exact_prefix':prefix.decode('ascii'),'raw_line_sha256':hashlib.sha256(line).hexdigest()})
+                line=line[len(prefix):]
+        require(profile not in line or line.startswith(profile),'Unknown prefix on native profiler row')
+        parts.append(line);offset+=raw_line_bytes
+    view=b''.join(parts);result=profiles.parse_observations(view)
+    result['native_world_console_framing']={'original_stdout':{'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()},
+        'validated_framed_view':{'bytes':len(view),'sha256':hashlib.sha256(view).hexdigest()},
+        'selected_map_id':map_id,'known_prefixed_rows':framed_rows,'native_rows_or_ordinals_rewritten':False,
+        'legacy_native_parser_changed':False,'native_profiler_bounds_unchanged':True,
+        'stock_loadstart_source':pin(ROOT/'upstream/ouroboros/MapServer/src/group/groupnetdb.c')}
+    return result
+
+
 def FX_consumption(observation,variant,input_pin):
     """Bind the actual native successful FX BIN path and stock freshness decision."""
     require(variant in inputs.FX_VARIANTS and input_pin==inputs.FX_VARIANTS[variant],
@@ -873,6 +902,7 @@ def run(args):
                 raw_before={n:(current/n).read_bytes() for n in before} if role=='stock' else {}
                 current_before={'cache':before,'provider':provider_before,'native':pin(target)}
                 current_before['regular_provider_clone']=clone
+                current_before['cache_dates_before']=before_dates
                 write(case_output/'before-launch.json',current_before)
                 if inherited is not None and (map_id,variant,phase,role)==(1,'server_only','generation','stock'):
                     original_sources={**manifest['providers'][str(map_id)]['files'],**source_before}
@@ -953,7 +983,16 @@ def run(args):
                 require(minimal.fixture_snapshot(cluster)['canonical_sha256']==fixture['canonical_sha256'],
                         'Synthetic character identity/location was changed')
                 elapsed=time.monotonic()-map_process.started;memory.sample()
-                observation=profiles.parse_observations(map_process.stdout.read_bytes()) if role!='stock' else None
+                write(case_output/'native-ready-before-observation-parsing.json',{
+                    'map_id':map_id,'fx_variant':variant,'phase':phase,'role':role,'actual_native':pin(target),
+                    'command':command,'world_markers':markers,'native_Db_status':status,
+                    'host_ready_status_and_post_query_tick_seconds':round(elapsed,3),
+                    'Map_progress_before_status':first,'Map_progress_after_status':later,
+                    'Db_progress_before_world':first_dispatch,'Db_progress_after_status':db_later,
+                    'memory':memory.report(),'synthetic_row_unchanged':True,
+                    'whole_case_admitted_passed':False,'all_cache_parity_checks_complete':False,
+                    'observation_parser_validation_pending':True})
+                observation=world_native_observations(map_process.stdout.read_bytes(),map_id) if role!='stock' else None
                 animation=animation_consumption(map_process.stdout.read_bytes(),pin(current/'piggs/server-animations.pigg'))
                 animation_identity={k:v for k,v in animation['latest_counters'].items() if k not in ('hash_us','stock_us')}
                 if animation_reference is None:animation_reference=animation_identity
@@ -1055,6 +1094,7 @@ def run(args):
                 after=cache_snapshot(current);source_after=provider_inventory(current,set(current_before['cache'])|set(after))
                 write(output/'failed-case-input-deltas.json',{'before':current_before,
                     'cache_after':after,'cache_delta':cache_delta(current_before['cache'],after),
+                    'cache_dates_after':cache_dates(current,after),
                     'provider_after':provider_snapshot(current,set(current_before['cache'])|set(after),source_after),
                     'original_source_delta':cache_delta(case_probe['source_before'],source_after)})
             except Exception as error:report['failures'].append('failure input snapshot: '+type(error).__name__)
