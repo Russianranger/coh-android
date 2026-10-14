@@ -275,6 +275,7 @@ jobs:
       - name: Recover actual final pool job authority
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
+          mkdir -p out
           gh api "repos/Russianranger/coh-android/actions/runs/$GITHUB_RUN_ID" > out/final-run.json
           gh api "repos/Russianranger/coh-android/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100" > out/final-jobs.json
           gh api "repos/Russianranger/coh-android/actions/runs/$GITHUB_RUN_ID/artifacts?per_page=100" > out/final-artifacts.json

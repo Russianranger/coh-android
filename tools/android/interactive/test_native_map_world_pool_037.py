@@ -1,5 +1,6 @@
 import hashlib
 import ctypes
+import json
 import os
 from pathlib import Path
 import tempfile
@@ -10,9 +11,27 @@ from unittest import mock
 import native_map_world_pool_037 as pool
 
 
+def fixture_temp_parent():
+    # Hosted Windows TEMP can use an 8.3 spelling. Allocate the controlled
+    # fixture under its physical spelling; production alias refusal stays strict.
+    raw = Path(tempfile.gettempdir()).absolute()
+    return raw, raw.resolve(strict=True)
+
+
 class PoolTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.raw_temp_parent, cls.canonical_temp_parent = fixture_temp_parent()
+        print('COH_POOL_FIXTURE_TEMP_V1 ' + json.dumps({
+            'raw_temp_parent': str(cls.raw_temp_parent),
+            'resolved_temp_parent': str(cls.canonical_temp_parent),
+            'lexical_parent_differs': os.path.normcase(str(cls.raw_temp_parent))
+                != os.path.normcase(str(cls.canonical_temp_parent)),
+            'production_alias_refusal_unchanged': True,
+        }, sort_keys=True), flush=True)
+
     def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory()
+        self.tmp = tempfile.TemporaryDirectory(dir=self.canonical_temp_parent)
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name) / 'runtime'
         self.archive = Path(self.tmp.name) / 'evidence'
@@ -26,6 +45,21 @@ class PoolTests(unittest.TestCase):
 
     def census(self):
         return pool.closed_namespace(self.root, self.provider, self.caches)
+
+    def test_canonical_fixture_parent_does_not_admit_aliased_directory(self):
+        self.assertEqual(Path(self.tmp.name).parent, self.canonical_temp_parent)
+        alias = Path(self.tmp.name) / 'configured-temp-alias'
+        self.directory_alias(alias, self.archive)
+        with mock.patch.object(tempfile, 'gettempdir', return_value=str(alias)):
+            raw, resolved = fixture_temp_parent()
+        self.assertEqual(raw, alias)
+        self.assertEqual(resolved, self.archive)
+        with self.assertRaisesRegex(ValueError, 'ancestor'):
+            with pool.directory_custody(raw):
+                self.fail('Production custody admitted a directory alias')
+        with tempfile.TemporaryDirectory(dir=resolved) as temporary:
+            with pool.directory_custody(Path(temporary)):
+                self.assertEqual(Path(temporary).parent, self.archive)
 
     def directory_alias(self, alias, target):
         try:
