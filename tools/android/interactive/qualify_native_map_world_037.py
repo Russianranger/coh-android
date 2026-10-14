@@ -58,8 +58,9 @@ NEW_WORLD_GLOBALS={'data/bin/animlists.bin','data/bin/behavioralias.bin',
 
 def generated_cache_name(name):
     inputs.safe_windows_name(name)
-    return name in NEW_WORLD_GLOBALS or (name.startswith(('data/geobin/object_library/','data/geobin/maps/'))
-                                        and name.endswith('.bin'))
+    return (name in NEW_WORLD_GLOBALS
+            or (name.startswith(('data/geobin/object_library/','data/geobin/maps/')) and name.endswith('.bin'))
+            or (name.startswith('data/geobin/object_library/') and name.endswith('.bounds')))
 
 
 def map_command(target,map_id):
@@ -186,11 +187,41 @@ def cache_snapshot(runtime):
         root=Path(runtime)/directory
         if directory=='data/geobin' and not root.exists():continue
         require(root.is_dir() and not root.is_symlink(),'Native BIN directory missing/linked')
-        for path in sorted(root.rglob('*.bin')):
+        for path in sorted(root.rglob('*')):
+            if not path.is_file() or path.suffix not in (('.bin','.bounds') if directory=='data/geobin' else ('.bin',)):continue
             name=path.relative_to(runtime).as_posix()
             require(directory!='data/geobin' or generated_cache_name(name),'Unreviewed geometry BIN layout')
             require(len(result)<MAX_WORLD_CACHES,'Native world BIN bound exceeded');result[name]=pin(path)
     require(result and 'data/bin/sequencers.bin' in result,'Current native cache closure missing')
+    return result
+
+
+def cache_dates(runtime,cache):
+    return {n:(Path(runtime)/n).stat().st_mtime_ns//100*100 for n in cache}
+
+
+def retain_generation_outputs(runtime,before,after,output):
+    """Preserve actual asset cache bytes before format gates can reject them."""
+    delta=cache_delta(before,after);names=sorted(set(delta['added'])|set(delta['changed']))
+    require(len(names)<=MAX_WORLD_CACHES and sum(after[n]['bytes'] for n in names)<=256*1024**2,
+            'Native generated cache evidence exceeds safe retention bound')
+    require(all(generated_cache_name(n) or n in before for n in names),'Unreviewed generation evidence path')
+    archive_path=Path(output)/'stock-native-generated-cache-outputs.tar.gz'
+    require(not archive_path.exists(),'Fresh generation evidence archive required')
+    members={}
+    with tarfile.open(archive_path,'w:gz') as archive:
+        for name in names:
+            path=native_path(runtime,name);info=path.lstat()
+            require(stat.S_ISREG(info.st_mode) and not path.is_symlink() and info.st_nlink==1 and pin(path)==after[name],
+                    'Actual native cache output changed before retention')
+            member=tarfile.TarInfo(name);member.size=info.st_size;member.mtime=info.st_mtime_ns//10**9;member.mode=0o600
+            with path.open('rb') as stream:archive.addfile(member,stream)
+            require(pin(path)==after[name] and path.stat().st_mtime_ns==info.st_mtime_ns,
+                    'Actual native cache output changed during retention')
+            members[name]={**after[name],'mtime_ns':info.st_mtime_ns//100*100}
+    result={'archive':pin(archive_path),'members':members,'exact_current_native_outputs_retained':True,
+            'source_or_player_files_included':False,'cache_validation_alone_admits_native_world':False}
+    write(Path(output)/'stock-native-generated-cache-outputs.json',result)
     return result
 
 
@@ -348,6 +379,7 @@ def validate_generation_changes(runtime,before,after,raw_before,original_sources
         decoded=generation.inspect_native_parse6(raw)
         require(decoded['dependency_count']>0,'New world cache lacks authoritative source dependencies')
         proof[name]={'after':decoded,'new_native_world_cache':True,
+                     'kind':'GroupBounds_Parse6' if name.endswith('.bounds') else 'Parse6',
                      'native_payload_sha256':hashlib.sha256(raw[-decoded['body_bytes']:]).hexdigest(),
                      'original_payload_comparison_available':False}
     dependencies=generation.bind_dependency_sources(runtime,proof)
@@ -381,9 +413,11 @@ def validate_generation_changes(runtime,before,after,raw_before,original_sources
             'new_payloads_require_identical_warm_native_consumers':True,
             'fixed_new_cache_closure':{'global_BINs':sorted(NEW_WORLD_GLOBALS),
                 'geometry_BIN_roots':['data/geobin/object_library/','data/geobin/maps/'],
+                'geometry_bounds_root':'data/geobin/object_library/','geometry_bounds_extension':'.bounds',
+                'geometry_bounds_native_validation':'objectLibraryLoadBoundsFileInternal checks schema/name/raw GroupBounds and Adler32 against computed original geometry; warm bytes and mtimes must remain unchanged',
                 'source_recipe':'Common/group/groupfileload.c:makeBinName/groupWriteGroupAndRootnameToBin and retained global/message parser callsites',
                 'source_files':{n:pin(ROOT/'upstream/ouroboros'/n) for n in (
-                    'Common/group/groupfileload.c','Common/seq/AnimBitList.c',
+                    'Common/group/groupfileload.c','Common/group/groupfilelib.c','Common/seq/AnimBitList.c',
                     'MapServer/src/ai/entaiBehaviorAlias.c','MapServer/src/ai/entaiInstance.c',
                     'MapServer/src/plaque.c','libs/UtilitiesLib/src/language/MessageStore.c',
                     'libs/UtilitiesLib/src/language/MultiMessageStore.c')}},
@@ -620,7 +654,7 @@ def run(args):
                 config=db/CONFIG;config.write_text(minimal.guest_config(config.read_text(),cluster.meta['database'],cluster.connection_string(args.driver)))
                 target=current/'MapServer.exe';shutil.copyfile(native,target)
                 (current/CONFIG).write_bytes(config.read_bytes())
-                before=cache_snapshot(current);source_before=provider_inventory(current,before)
+                before=cache_snapshot(current);before_dates=cache_dates(current,before);source_before=provider_inventory(current,before)
                 provider_before=provider_snapshot(current,before,source_before)
                 require(before['data/bin/fxinfo.bin']==inputs.FX_VARIANTS[variant],
                         'Current native FX consumer received wrong variant')
@@ -709,12 +743,14 @@ def run(args):
                         and minimal.schema_snapshot(cluster,manifest['schema'])==schema_original,
                         'Owned native case cleanup changed synthetic identity/location or schema')
                 after=cache_snapshot(current);source_after=provider_inventory(current,set(before)|set(after))
+                after_dates=cache_dates(current,after)
                 provider_after=provider_snapshot(current,set(before)|set(after),source_after);delta=cache_delta(before,after)
                 facts={'map_id':map_id,'fx_variant':variant,'phase':phase,'role':role,'command':command,'actual_native':pin(target),
                     'host_ready_status_and_post_query_tick_seconds':round(elapsed,3),'world_markers':markers,
                     'native_Db_status':status,'Map_progress_before_status':first,'Map_progress_after_status':later,
                     'Db_progress_before_world':first_dispatch,'Db_progress_after_status':db_later,
                     'memory':memory.report(),'cache_before':before,'cache_after':after,'cache_delta':delta,
+                    'cache_dates_before':before_dates,'cache_dates_after':after_dates,
                     'provider_before':provider_before,'provider_after':provider_after,
                     'original_source_delta':cache_delta(source_before,source_after),
                     'observed_native_decoder_and_freshness_prefix_only':True,
@@ -725,6 +761,9 @@ def run(args):
                 if role!='stock':facts['actual_FX_BIN_consumption']=FX_consumption(observation,variant,before['data/bin/fxinfo.bin'])
                 # Persist full facts and deltas before any immutability gate.
                 write(case_output/'phase.json',facts);report['cases'].append(facts)
+                if role=='stock':
+                    facts['native_generated_output_retention']=retain_generation_outputs(current,before,after,case_output)
+                    write(case_output/'phase.json',facts)
                 native_text,log_records=network.collect_logs(current,logs,case_output,secrets)
                 report.setdefault('redacted_logs',[]).append(log_records);log_context['retained']=True
                 require(not native_failures(native_text),'Owned native world reported failure or missing critical input')
@@ -745,6 +784,7 @@ def run(args):
                     shutil.rmtree(seed)
                 else:
                     require(before==after==cache_snapshot(generated),'Warm native world changed generated BIN bytes')
+                    require(before_dates==after_dates,'Warm native world rewrote byte-identical generated caches')
                     def decisions(o):return ([(r['phase'],r['input_token'],r['success']) for r in o['profile_rows']],
                                             [(r['input_token'],r['outcome']) for r in o['freshness_rows']])
                     if decision_control is None:decision_control=decisions(observation)

@@ -155,7 +155,8 @@ class EvidenceRefusal(unittest.TestCase):
             for authority in ({},dict(original,**{'data/object_library/x.txt':dict(original['data/object_library/x.txt'],sha256='0'*64)})):
                 with self.assertRaises(ValueError):gate.validate_generation_changes(root,{}, {name:gate.pin(cache)}, {},authority)
     def test_new_geometry_BIN_outside_fixed_source_roots_is_refused(self):
-        for name in ['data/geobin/player_library/x.bin','data/geobin/maps/x.tmp','data/bin/unreviewed.bin','world-progress.bin']:
+        for name in ['data/geobin/player_library/x.bin','data/geobin/maps/x.tmp','data/geobin/maps/x.bounds',
+                     'data/geobin/player_library/x.bounds','data/bin/unreviewed.bin','world-progress.bin']:
             self.assertFalse(gate.generated_cache_name(name))
             with tempfile.TemporaryDirectory() as directory:
                 source=Path(directory)/'source';source.mkdir()
@@ -185,6 +186,23 @@ class EvidenceRefusal(unittest.TestCase):
             self.assertIn(path.relative_to(root).as_posix(),gate.cache_snapshot(root))
             bad=root/'data/geobin/unknown/x.bin';bad.parent.mkdir();bad.write_bytes(b'unsupported')
             with self.assertRaises(ValueError):gate.cache_snapshot(root)
+    def test_geometry_bounds_are_typed_Parse6_and_retain_exact_native_output_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source=root/'data/object_library/x.txt';source.parent.mkdir(parents=True)
+            source.write_text('immutable geometry');os.utime(source,(1800,1800))
+            name='data/geobin/object_library/x.bounds';cache=root/name;cache.parent.mkdir(parents=True)
+            cache.write_bytes(parse6(dependency='object_library/x.txt'))
+            original={'data/object_library/x.txt':{**gate.pin(source),'mtime_ns':source.stat().st_mtime_ns}}
+            after={name:gate.pin(cache)};proof=gate.validate_generation_changes(root,{},after,{},original)
+            self.assertEqual(proof['Parse6_dependency_envelope_changes'][name]['kind'],'GroupBounds_Parse6')
+            output=root/'evidence';output.mkdir();retained=gate.retain_generation_outputs(root,{},after,output)
+            with tarfile.open(output/'stock-native-generated-cache-outputs.tar.gz','r:gz') as archive:
+                self.assertEqual(archive.getnames(),[name]);self.assertEqual(archive.extractfile(name).read(),cache.read_bytes())
+            self.assertEqual(retained['members'][name]['sha256'],after[name]['sha256'])
+            warm=root/'warm';gate.clone_provider(root,{'files':original},warm,after)
+            self.assertEqual(gate.cache_dates(root,after),gate.cache_dates(warm,after))
+            before_dates=gate.cache_dates(warm,after);os.utime(warm/name,(2400,2400))
+            self.assertEqual(gate.pin(warm/name),after[name]);self.assertNotEqual(gate.cache_dates(warm,after),before_dates)
     def test_Map_command_flushes_owned_console_without_changing_assertion_or_world_policy(self):
         for map_id in (1,5):
             command=gate.map_command('MapServer.exe',map_id)
