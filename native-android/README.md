@@ -49,3 +49,5 @@ audio was heard, and active audio/blocked-UDP Home interruption cleaned up and
 recovered. The raw physical report is preserved. Gates 13–15 are accepted within
 this isolated probe scope; integrated character movement, persistent gameplay
 state and real server interoperability remain later milestones.
+
+[PHASES16-18.md](PHASES16-18.md) implements the next offline native session batch: a persistent shared Wretch/Atlas scene, source-controlled NOCOLL movement and authored forward Ready/RunCycle/RunPost locomotion. Its build/emulator qualification is in progress; physical acceptance remains pending. Earlier accepted probes and the conventional client remain available.

@@ -1,0 +1,119 @@
+{
+  "format": 1,
+  "source_repository": "Russianranger/coh-android",
+  "release_tag": "coh-assets-v1.0.0",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip",
+  "outer_expected_bytes": 615545248,
+  "outer_published_sha256": "e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e",
+  "outer_full_hash_locally_verified": false,
+  "inner_member": "payloads/atlas/atlas-assets.zip",
+  "inner_expected_bytes": 615541018,
+  "inner_published_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+  "inner_full_hash_locally_verified": false,
+  "records": [
+    {
+      "name": "assets/player_library/animations/huge/skel_ready.anim",
+      "size": 6171,
+      "compressed": 2568,
+      "offset": 301402561,
+      "crc32": "843b4d43",
+      "method": 8,
+      "sha256": "19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6",
+      "file_name": "ready.anim",
+      "id": "ready"
+    },
+    {
+      "name": "assets/player_library/animations/huge/run.anim",
+      "size": 5331,
+      "compressed": 3872,
+      "offset": 301134588,
+      "crc32": "5449e379",
+      "method": 8,
+      "sha256": "3a365aaabf6d67df5dc0aa5473a50585b8c64e6f2caa95d69dad0c0990afb1e6",
+      "file_name": "run.anim",
+      "id": "run"
+    },
+    {
+      "name": "assets/player_library/animations/huge/postrun.anim",
+      "size": 5505,
+      "compressed": 3531,
+      "offset": 300810614,
+      "crc32": "01270d8c",
+      "method": 8,
+      "sha256": "eb3e679e3d1a19daa85bb4883f1fcd51b95ae83fb7f6230b114a59e0b563931c",
+      "file_name": "post.anim",
+      "id": "post"
+    }
+  ],
+  "clip_names": {
+    "ready": "huge/skel_ready",
+    "run": "huge/run",
+    "post": "huge/postrun"
+  },
+  "moves": [
+    {
+      "name": "Ready",
+      "range": [
+        1,
+        60
+      ],
+      "clip": "ready",
+      "flags": [
+        "Cycle"
+      ],
+      "selected_idle_loop": true,
+      "original_cycleMove": "Ready2",
+      "random_idle_variants_implemented": false
+    },
+    {
+      "name": "RunCycle",
+      "range": [
+        1,
+        25
+      ],
+      "clip": "run",
+      "flags": [
+        "Cycle",
+        "MoveScale",
+        "SmoothSprint"
+      ],
+      "requires": [
+        "FORWARD"
+      ],
+      "move_rate": 0.7,
+      "smooth_sprint": 3.3,
+      "nextMove": "RunPost"
+    },
+    {
+      "name": "RunPost",
+      "range": [
+        1,
+        23
+      ],
+      "clip": "post",
+      "flags": [],
+      "interpolate_frames": 8,
+      "transition_blending_implemented": false,
+      "nextMove": "Ready"
+    }
+  ],
+  "scope": {
+    "kind": "bounded offline selection adapter over authentic source moves and clips",
+    "full_source_sequencer": false,
+    "run_pre_implemented": false,
+    "ready_random_variants_implemented": false,
+    "directional_moves": [
+      "FORWARD"
+    ],
+    "omitted": [
+      "RunPre18-25 and early-stop Idle_Walk_Post->Idle_Ready (male/walk fallback)",
+      "Ready2 random Ready_Look/Ready_2Hips graph",
+      "backward/strafe/combat/swim/weapon moves",
+      "transition blending",
+      "PlayFx footfall effects",
+      "live server state/authoritative prediction"
+    ]
+  }
+}

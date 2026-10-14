@@ -1,0 +1,43 @@
+{
+  "schema": "coh-native-motion-source-pins-v1",
+  "repository": "Russianranger/coh-android",
+  "source_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "normalization": "CRLF to LF; exactly one trailing newline",
+  "files": [
+    {
+      "path": "upstream/ouroboros/Common/player/pmotion.c",
+      "sha256_lf": "94ddc6a7f1e1b372c1cd4ec4abec675556e9c4a56120263d93047d40ed56fe90",
+      "git_blob": "982d37dcd32888fe34562815395729d2fbd15978"
+    },
+    {
+      "path": "upstream/ouroboros/Common/entity/motion.c",
+      "sha256_lf": "0d2e393660579a3267b2d8c2784361b2fb6dd7ac8caa6dcd1ce98346a6999016",
+      "git_blob": "a4d3f5b7ff1b49e2127e6c799bee1392227ff0f3"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/player/player.c",
+      "sha256_lf": "d660fba0c1aafbd8a96d7dfc6ac4728b9532d8f65ffec54be8eb808ee514be54",
+      "git_blob": "a3f69a0b426a45f0e8a9a0ba5a1aedca318222cb"
+    },
+    {
+      "path": "upstream/ouroboros/Common/cmdparse/cmdcommon.h",
+      "sha256_lf": "4298f58d4384503feb9cbb752b4e1f9379530f63302aede2e0471780acda54cf",
+      "git_blob": "f8d400c9df37709ff0c83fa42d28a3ae5e543737"
+    },
+    {
+      "path": "upstream/ouroboros/Common/cmdparse/cmdcontrols.h",
+      "sha256_lf": "7ddc6241c80e3e0187e34624283cb0db9ef11144b1bf954eb1dde14ab13c28e9",
+      "git_blob": "0dde1ace635d8d222a66b74498d0ab54b58c9fcb"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c",
+      "sha256_lf": "58d3c918c4072c8f6b906a493ee6fbdad0632c63dce1ececcf898a089994273e",
+      "git_blob": "a4ed82b07906da4bb6cfd1ed562b353e147faf69"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+      "sha256_lf": "afd8ec36d507a2b6315f6d6493e4c9893a343796f90cee8e148d2a442fa502c5",
+      "git_blob": "8cbfbdc5d68f3b35043fb176753fd7fbad953c7b"
+    }
+  ]
+}

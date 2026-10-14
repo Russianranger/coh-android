@@ -110,7 +110,10 @@ int coh_animation_parse(const uint8_t *p,size_t n,CohAnimationRig *out){
     const uint8_t *hier=r.base.bytes+ho;int root=i32(hier);uint8_t seen[COH_ANIMATION_BONES]={0};
     for(unsigned i=0;i<COH_ANIMATION_BONES;i++)r.parent[i]=-2;
     if(root!=0||visit(&r,hier,root,-1,0,seen)||r.node_count!=r.base.track_count||!seen[socket])return 1;
-    for(unsigned id=0;id<COH_ANIMATION_BONES;id++)if(r.motion.tracks[id].present&&!seen[id])return 1;
+    /* Authored moves can retain tracks not used by the selected base skeleton
+     * (e.g.huge/postrun tracks50/51/52). raw_file has validated every record
+     * and encoded key already. Source animPlayInst walks the base hierarchy;
+     * the samplers below likewise visit only r.order and ignore spare tracks. */
     for(uint32_t i=0;i<pc;i++){uint32_t id=u32(p+po+(size_t)i*4);if(id>=COH_ANIMATION_BONES||!seen[id])return 1;for(uint32_t j=0;j<i;j++)if(r.palette_ids[j]==id)return 1;r.palette_ids[i]=id;}
     for(uint32_t i=0;i<r.node_count;i++){
         unsigned id=r.order[i];const CohAnimationTrack *base=&r.base.tracks[id];
