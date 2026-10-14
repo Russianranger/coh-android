@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -93,19 +94,25 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         setContentView(layout);
         adapter = new InputAdapter(new InputAdapter.Sink() {
             public void focus(boolean focused) {
+                if(destroying)return;
                 if (!focused) {
+                    event("input_clear_requested");
                     keys = 0; axisX = axisY = axisZ = axisRz = 0; touching = false;
                     if (handle != 0) SessionNative.focus(handle);
                 }
             }
             public void key(int key, boolean down) {
+                if(destroying)return;
                 if (down) keys |= 1 << key; else keys &= ~(1 << key);
                 sendInput();
+                event(down ? "key_down" : "key_up"); saveReport();
             }
             public void axes(float x, float y, float z, float rz) {
+                if(destroying)return;
                 axisX=x; axisY=y; axisZ=z; axisRz=rz; sendInput();
             }
             public void touch(int action, int pointer, float x, float y) {
+                if(destroying)return;
                 if (action == 0) { touching = true; touchX=x; touchY=y; }
                 else if (action == 1 && touching) {
                     if (handle != 0) SessionNative.look(handle, (x-touchX)*1.2f, (y-touchY)*1.2f);
@@ -143,13 +150,16 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         });
         main.post(poll);
     }
-    private float dead(float value) { return Math.abs(value) <= .15f ? 0 : value; }
+    private float dead(float value) {
+        float magnitude=Math.abs(value);
+        return magnitude<=.15f ? 0 : Math.copySign((magnitude-.15f)/.85f,value);
+    }
     private void sendInput() {
         if (handle == 0 || !resumed || destroying) return;
-        int directions = ((keys & (1<<20))!=0 || axisY<-.15f ? 1 : 0)
-                | ((keys & (1<<21))!=0 || axisY>.15f ? 2 : 0)
-                | ((keys & (1<<22))!=0 || axisX<-.15f ? 4 : 0)
-                | ((keys & (1<<23))!=0 || axisX>.15f ? 8 : 0);
+        int directions = ((keys & (1<<20))!=0 || axisY<-.5f ? 1 : 0)
+                | ((keys & (1<<21))!=0 || axisY>.5f ? 2 : 0)
+                | ((keys & (1<<22))!=0 || axisX<-.5f ? 4 : 0)
+                | ((keys & (1<<23))!=0 || axisX>.5f ? 8 : 0);
         SessionNative.controls(handle, directions, dead(axisZ)*2f, dead(axisRz)*2f);
     }
     private void newSurface() {
@@ -158,7 +168,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         currentSurface=null; currentHolder=null;
         scene.removeAllViews(); view = new SurfaceView(this);
         currentHolder=view.getHolder(); currentHolder.addCallback(this);
-        view.setOnTouchListener((v,event) -> adapter != null && adapter.dispatchTouchEvent(event,v.getWidth(),v.getHeight()));
+        view.setOnTouchListener((v,event) -> !destroying && adapter != null && adapter.dispatchTouchEvent(event,v.getWidth(),v.getHeight()));
         scene.addView(view,new FrameLayout.LayoutParams(-1,-1));
     }
     private void requestRender() {
@@ -182,29 +192,31 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     }
     @Override public void surfaceCreated(SurfaceHolder holder) { }
     @Override public void surfaceChanged(SurfaceHolder holder,int format,int width,int height) {
-        if (holder!=currentHolder) return;
+        if (destroying || holder!=currentHolder) return;
         epoch++; if (handle!=0) SessionNative.state(handle,epoch,resumed);
         currentSurface=holder.getSurface(); event("surface_changed"); requestRender();
     }
     @Override public void surfaceDestroyed(SurfaceHolder holder) {
-        if (holder!=currentHolder) return;
+        if (destroying || holder!=currentHolder) return;
         epoch++; currentSurface=null; if(handle!=0)SessionNative.state(handle,epoch,false); event("surface_destroyed");
     }
     @Override protected void onResume() { super.onResume(); resumed=true; epoch++; if(handle!=0)SessionNative.state(handle,epoch,true); event("resume"); requestRender(); }
     @Override protected void onPause() {
+        event("pause_requested");
         resumed=false; epoch++; if(adapter!=null)adapter.clear();
         if(handle!=0)SessionNative.state(handle,epoch,false); event("pause"); saveReport(); super.onPause();
     }
     @Override public void onWindowFocusChanged(boolean focused) {
-        super.onWindowFocusChanged(focused); if(adapter!=null)adapter.onWindowFocusChanged(focused);
+        super.onWindowFocusChanged(focused); if(!destroying && adapter!=null)adapter.onWindowFocusChanged(focused);
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event) {
-        return adapter!=null && adapter.dispatchKeyEvent(event) || super.dispatchKeyEvent(event);
+        return !destroying && adapter!=null && adapter.dispatchKeyEvent(event) || super.dispatchKeyEvent(event);
     }
     @Override public boolean dispatchGenericMotionEvent(MotionEvent event) {
-        return adapter!=null && adapter.dispatchGenericMotionEvent(event) || super.dispatchGenericMotionEvent(event);
+        return !destroying && adapter!=null && adapter.dispatchGenericMotionEvent(event) || super.dispatchGenericMotionEvent(event);
     }
     private void event(String type) {
+        if(destroying)return;
         try {
             JSONObject event=new JSONObject().put("sequence",++sequence).put("type",type).put("time_ms",System.currentTimeMillis());
             if(handle!=0)event.put("native",new JSONObject(SessionNative.snapshot(handle)));
@@ -243,7 +255,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     }
     private void queueWriter() {
         if(reportWorker.isShutdown() || !writerQueued.compareAndSet(false,true))return;
-        reportWorker.execute(() -> {
+        try { reportWorker.execute(() -> {
             try {
                 byte[] next;
                 while((next=pendingReport.getAndSet(null))!=null) {
@@ -252,7 +264,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
                     catch(Exception ex) { if(output!=null)file.failWrite(output); writeFailed=true; }
                 }
             } finally { writerQueued.set(false); if(!reportWorker.isShutdown() && pendingReport.get()!=null)queueWriter(); }
-        });
+        }); } catch(RejectedExecutionException retired) { writerQueued.set(false); }
     }
     private void exportReport() {
         if(destroying || exporting)return;
@@ -266,6 +278,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     @Override protected void onActivityResult(int request,int result,Intent data) {
         super.onActivityResult(request,result,data);
         if(request!=EXPORT)return;
+        if(destroying)return;
         final byte[] bytes=frozenExport; frozenExport=null; exporting=false;
         if(result!=RESULT_OK || data==null || data.getData()==null || bytes==null){event("export_cancelled");return;}
         reportWorker.execute(() -> {
@@ -295,6 +308,8 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     }
     @Override protected void onDestroy() {
         destroying=true;resumed=false;epoch++;main.removeCallbacks(poll);
+        if(currentHolder!=null)currentHolder.removeCallback(this);
+        currentHolder=null;currentSurface=null;
         if(adapter!=null)adapter.clear();if(inputManager!=null)inputManager.unregisterInputDeviceListener(adapter);
         if(handle!=0)SessionNative.state(handle,epoch,false);
         renderWorker.execute(() -> {long previous=handle;handle=0;if(previous!=0)SessionNative.destroy(previous);});

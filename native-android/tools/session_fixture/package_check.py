@@ -76,7 +76,9 @@ def main():
                'gradle': '8.9', 'android_gradle_plugin': '8.7.3', 'ndk': '28.2.13676358', 'cmake': '3.22.1',
                'signing': 'Isolated CI debug key; separate from production launcher',
                'artifacts': artifacts, 'assets': [{'file': name, **identity((args.assets / name).read_bytes())} for name in sorted(expected)],
-               'native_session_execution': True, 'original_game_execution': False,
+               'native_session_implementation': True, 'native_session_execution_verified': False,
+               'qualification_scope': 'Package integrity only; execution is reported separately by emulator/device receipts',
+               'original_game_execution': False,
                'full_atlas_loaded': False, 'collision_and_gravity_qualified': False,
                'full_sequencer_execution': False, 'server_interoperability_verified': False,
                'thor_device_execution_verified': False, 'physical_controller_verified': False}

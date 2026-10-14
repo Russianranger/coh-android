@@ -14,7 +14,7 @@ def main():
     args = parser.parse_args(); args.output.mkdir(parents=True, exist_ok=True)
     proofs = []
     if args.status == 'completed':
-        for name in ['host-motion-proof.json', 'host-locomotion-proof.json', 'host-character-proof.json']:
+        for name in ['host-motion-proof.json', 'host-locomotion-proof.json', 'host-character-proof.json', 'lifecycle/lifecycle-host-checks.json', 'depth-codec-host.json']:
             raw = (args.output / name).read_bytes(); value = json.loads(raw)
             assert value['passed'] is True, name
             proofs.append({'file': name, 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()})

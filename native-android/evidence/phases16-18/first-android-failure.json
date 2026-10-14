@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "gates": [
+    16,
+    17,
+    18
+  ],
+  "source_commit": "be35287ef62b4843ef7f04a06be8268b83a9816b",
+  "workflow_run_id": 38627169675,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38627169675",
+  "artifact_id": 11925820037,
+  "artifact_sha256": "a9bff540992b8fc1aa96553fc0e9fd9be475ce4689ca3fdaddbfd3aef89e525e",
+  "passed": false,
+  "source_host_build_lint_signature_and_package_passed": true,
+  "stage": "Android13 shared-depth startup",
+  "failure": "Opaque reverse draw order differs at two pixels; exact source transform and both object visibility/occlusion checks pass. Investigation pending; no acceptance tolerance raised.",
+  "native": {
+    "schema": 1,
+    "probe": "coh-native-offline-session",
+    "valid": true,
+    "failed": true,
+    "running": false,
+    "failure": "Opaque draw order changed shared depth result (hair always last)",
+    "pointer_bytes": 8,
+    "source_controlled": true,
+    "collision": false,
+    "live_server": false,
+    "full_atlas": false,
+    "gpu_palette_skinning": false,
+    "skin_policy": "accepted source CPU skin then accepted world shader",
+    "frames": 0,
+    "world_draws": 6,
+    "actor_draws": 33,
+    "skin_samples": 1,
+    "contexts_started": 1,
+    "contexts_completed": 1,
+    "objects_released": true,
+    "width": 0,
+    "height": 0,
+    "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "gl_errors": 0,
+    "egl_error": 0,
+    "shader_language_version": 300,
+    "shader_precise": false,
+    "tf_components": 40794,
+    "tf_mismatches": 0,
+    "tf_max_error": 0,
+    "depth_order_mismatches": 2,
+    "world_visible_pixels": 6898,
+    "actor_visible_pixels": 8418,
+    "world_occludes_actor_pixels": 693,
+    "actor_occludes_world_pixels": 1953,
+    "actor_changed_pixels": 7750,
+    "startup_checked": false,
+    "movement_ticks": 0,
+    "direction_mask": 0,
+    "held_dirs": 0,
+    "actor_position": [
+      584,
+      74,
+      -1441.33374
+    ],
+    "spawn_position": [
+      584,
+      74,
+      -1441.33374
+    ],
+    "actor_yaw": 3.14159274,
+    "camera_yaw": 0,
+    "camera_pitch": 0.159999996,
+    "camera_position": [
+      0,
+      0,
+      0
+    ],
+    "animation_frame": 1,
+    "animation_state": 0,
+    "animation_transitions": 0,
+    "idle_samples": 0,
+    "run_samples": 0,
+    "total_ms": 0,
+    "epoch": 3,
+    "foreground": true,
+    "expected_cancel_surface_errors": 0,
+    "expected_cancel_egl_error": 0,
+    "source_state_bits": 0,
+    "motion_local": [
+      0,
+      0,
+      0
+    ],
+    "motion_world": [
+      0,
+      0,
+      0
+    ],
+    "nocoll_radius": 96,
+    "bounded_steps": 0,
+    "stopped_steps": 0,
+    "animation_move": "Ready",
+    "animation_rate": 1,
+    "ready_entries": 1,
+    "run_entries": 0,
+    "post_entries": 0,
+    "animation_cycles": 0,
+    "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+    "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only"
+  },
+  "retained": [
+    {
+      "file": "first-android-report.json",
+      "bytes": 13544,
+      "sha256": "99edb207ff1b28917721d6266d99178801c3fe3dca54fd37f309919f693e66af"
+    },
+    {
+      "file": "first-build-receipt.json",
+      "bytes": 4275,
+      "sha256": "487b69993872843df15a09144b58447403680db1216c494dcac2baf9f5decc17"
+    },
+    {
+      "file": "first-source-validation.json",
+      "bytes": 844,
+      "sha256": "0dca62cf3fe7f0f40fbf5d9be04cf4ef79087c589e24a0eecf2808b1ad69ca21"
+    }
+  ]
+}

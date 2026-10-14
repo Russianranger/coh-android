@@ -50,6 +50,8 @@ jobs:
           python3 native-android/tools/session_fixture/prepare.py --character-assets native-android/results/session-character-assets --world-assets native-android/results/session-world-assets --locomotion-assets native-android/results/session-locomotion-assets --output native-android/session-client/app/src/main/assets --evidence-output native-android/results/session-client
       - name: Source-controlled movement, authored locomotion and character host qualification
         run: |
+          python3 native-android/session-client/tools/lifecycle_host_check.py --output native-android/results/session-client/lifecycle
+          python3 native-android/tools/session_fixture/depth_codec_check.py --output native-android/results/session-client/depth-codec-host.json
           python3 native-android/tools/motion_fixture/check.py --output native-android/results/session-client/host-motion-proof.json --sanitize
           python3 native-android/tools/locomotion_fixture/check.py --fixture native-android/session-client/app/src/main/assets/locomotion.bin --source-directory upstream --morph native-android/session-client/app/src/main/assets/morph.bin --output native-android/results/session-client/host-locomotion-proof.json
           python3 native-android/tools/character_fixture/native_character_check.py --character native-android/session-client/app/src/main/assets/character.bin --rig native-android/session-client/app/src/main/assets/rig.bin --morph native-android/session-client/app/src/main/assets/morph.bin --reference native-android/session-client/app/src/main/assets/character-reference.bin --output native-android/results/session-client/host-character-proof.json

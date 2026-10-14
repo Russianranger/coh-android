@@ -10,6 +10,7 @@
 #include <GLES3/gl3.h>
 #include <pthread.h>
 #include <stddef.h>
+#include <stdarg.h>
 #include <math.h>
 #include <stdint.h>
 #include <inttypes.h>
@@ -28,8 +29,10 @@
 #define SIZE 512
 #define PI 3.14159265358979323846f
 #define JSON_CAP 8192
+#define DEPTH_DIAGNOSTICS 16u
 typedef struct { uint8_t *p; size_t n; } Bytes;
 typedef struct { float position[3],normal[3],uv0[2],uv1[2]; } Vertex;
+typedef struct {unsigned x,y,world_depth,actor_depth,combined_depth;uint8_t world[4],actor[4],forward[4],reverse[4];} DepthDiagnostic;
 typedef struct {
     Vertex *vertices; CohMeshVertex *source; uint32_t *indices;
     uint32_t ids[COH_ANIMATION_PALETTE],count,index_count,bones;
@@ -47,9 +50,13 @@ typedef struct {
     uint32_t held_dirs,direction_mask;
     uint64_t frames,world_draws,actor_draws,skin_samples,contexts_started,contexts_completed;
     uint64_t tf_components,tf_mismatches,depth_order_mismatches,world_visible_pixels,actor_visible_pixels;
+    uint64_t depth_order_color_differences,depth_order_ties;unsigned depth_diagnostics_count;DepthDiagnostic depth_diagnostics[DEPTH_DIAGNOSTICS];
+    int depth_sampler_controls_passed;unsigned world_control_count,actor_control_count;
+    DepthDiagnostic clear_control,world_controls[DEPTH_DIAGNOSTICS],actor_controls[DEPTH_DIAGNOSTICS],world_front_control,actor_front_control;
     uint64_t world_occludes_actor_pixels,actor_occludes_world_pixels,actor_changed_pixels;
     uint64_t idle_samples,run_samples,total_ms; unsigned gl_errors,egl_error,shader_version;
     unsigned expected_cancel_surface_errors,expected_cancel_egl_error;int surface_failure;
+    unsigned cleanup_gl_errors,cleanup_egl_errors,cleanup_egl_error;
     float tf_max_error; int startup_checked,precise,objects_released,width,height;
     char failure[512],gl_vendor[256],gl_renderer[256];
 } Session;
@@ -58,6 +65,8 @@ typedef struct { GLuint id; GLint model,modelview,projection,mode,light,diffuse,
 typedef struct { EGLDisplay display; EGLSurface surface; EGLContext context;
     ANativeWindow *window; Program program; GLuint world_textures[COH_WORLD_TEXTURES];
     GLuint actor_textures[COH_SCENE_TEXTURES],tf,fbo,color,depth;
+    GLuint depth_program,depth_vao,pixel_fbo,pixel_color;GLint depth_sampler,depth_pixel;
+    int initialized,context_current;
 } Graphics;
 static uint64_t now_ms(void) { struct timespec t; clock_gettime(CLOCK_MONOTONIC,&t);
     return (uint64_t)t.tv_sec*1000u+(uint64_t)t.tv_nsec/1000000u; }
@@ -166,6 +175,17 @@ static int program_create(Session *s,Program *p) {GLint major=0,minor=0;glGetInt
 #undef U
     return glcheck(s,"Source world program build produced GL errors");
 }
+/* Diagnostic only: texelFetch preserves the actual normalized DEPTH24 value.
+ * Packing three bytes is exact for its 24-bit range and does not alter any
+ * source geometry, shader, draw material or render acceptance tolerance. */
+static int depth_program_create(Session *s,Graphics *g) {
+    const char *vertex="#version 300 es\nvoid main(){vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);gl_Position=vec4(p*2.0-1.0,0.0,1.0);}";
+    const char *fragment="#version 300 es\nprecision highp float;precision highp int;uniform highp sampler2D uDepth;uniform ivec2 uPixel;layout(location=0)out vec4 color;void main(){uint z=uint(round(texelFetch(uDepth,uPixel,0).r*16777215.0));color=vec4(float(z&255u),float((z>>8)&255u),float((z>>16)&255u),255.0)/255.0;}";
+    GLuint vs=compile(s,GL_VERTEX_SHADER,vertex),fs=compile(s,GL_FRAGMENT_SHADER,fragment);if(!vs||!fs){if(vs)glDeleteShader(vs);if(fs)glDeleteShader(fs);return 0;}
+    g->depth_program=glCreateProgram();glAttachShader(g->depth_program,vs);glAttachShader(g->depth_program,fs);glLinkProgram(g->depth_program);glDeleteShader(vs);glDeleteShader(fs);
+    GLint ok=0;glGetProgramiv(g->depth_program,GL_LINK_STATUS,&ok);if(!ok)return fail(s,"Depth24 diagnostic program linking failed");g->depth_sampler=glGetUniformLocation(g->depth_program,"uDepth");g->depth_pixel=glGetUniformLocation(g->depth_program,"uPixel");glGenVertexArrays(1,&g->depth_vao);
+    return g->depth_sampler>=0&&g->depth_pixel>=0?glcheck(s,"Depth24 diagnostic program setup failed"):fail(s,"Depth24 diagnostic uniforms missing");
+}
 static int texture(Session *s,GLuint *id,uint32_t w,uint32_t h,const uint8_t *rgba) {glGenTextures(1,id);glBindTexture(GL_TEXTURE_2D,*id);glTexStorage2D(GL_TEXTURE_2D,1,GL_RGBA8,(GLsizei)w,(GLsizei)h);if(rgba)glTexSubImage2D(GL_TEXTURE_2D,0,0,0,(GLsizei)w,(GLsizei)h,GL_RGBA,GL_UNSIGNED_BYTE,rgba);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);return glcheck(s,"Texture upload failed");}
 static void geometry_upload(Geometry *g,int initial) {
     if(initial){glGenVertexArrays(1,&g->vao);glGenBuffers(1,&g->vbo);glGenBuffers(1,&g->ibo);}
@@ -218,6 +238,43 @@ static int transform_check(Session *s,Graphics *g) {
     return s->tf_mismatches?fail(s,"Integrated source CPU/GPU transform mismatch"):glcheck(s,"Integrated transform feedback readback failed");
 }
 static unsigned difference(const uint8_t *a,const uint8_t *b) {unsigned max=0;for(unsigned k=0;k<3;k++){unsigned d=a[k]>b[k]?a[k]-b[k]:b[k]-a[k];if(d>max)max=d;}return max;}
+static int depth_only_draw(Session *s,Graphics *g,int mode) {
+    float view[12],projection[16],model[12],actor_eye[12],eye[6][12];if(!camera(s,1,view,projection,model,actor_eye,eye))return 0;
+    glBindFramebuffer(GL_FRAMEBUFFER,g->fbo);glViewport(0,0,SIZE,SIZE);glEnable(GL_DEPTH_TEST);glDepthMask(GL_TRUE);glDepthFunc(GL_LEQUAL);glClearDepthf(1);glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);glFrontFace(GL_CW);glCullFace(GL_BACK);
+    if(mode!=2)draw_world(s,g,eye,projection);if(mode!=1)draw_actor(s,g,model,actor_eye,projection,0);
+    return glcheck(s,"Opaque actual-mesh depth diagnostic draw failed");
+}
+static int depth_sample(Session *s,Graphics *g,unsigned x,unsigned y,unsigned *depth) {
+    glBindFramebuffer(GL_FRAMEBUFFER,g->pixel_fbo);glViewport(0,0,1,1);glDisable(GL_DEPTH_TEST);glDisable(GL_BLEND);glDisable(GL_CULL_FACE);glUseProgram(g->depth_program);glBindVertexArray(g->depth_vao);glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,g->depth);glUniform1i(g->depth_sampler,0);glUniform2i(g->depth_pixel,(GLint)x,(GLint)y);glDrawArrays(GL_TRIANGLES,0,3);uint8_t bytes[4];glReadPixels(0,0,1,1,GL_RGBA,GL_UNSIGNED_BYTE,bytes);
+    if(!glcheck(s,"Actual DEPTH24 diagnostic sampling failed"))return 0;*depth=(unsigned)bytes[0]|(unsigned)bytes[1]<<8|(unsigned)bytes[2]<<16;return 1;
+}
+static int depth_tie_check(Session *s,Graphics *g) {
+    if(s->depth_order_color_differences>DEPTH_DIAGNOSTICS){s->depth_order_mismatches=s->depth_order_color_differences;return fail(s,"Opaque depth order differences exceed bounded actual-depth diagnostics");}
+    for(unsigned mode=1;mode<=3;mode++){
+        if(!depth_only_draw(s,g,mode==3?0:(int)mode))return 0;
+        for(unsigned i=0;i<s->depth_diagnostics_count;i++){DepthDiagnostic *d=&s->depth_diagnostics[i];unsigned *out=mode==1?&d->world_depth:(mode==2?&d->actor_depth:&d->combined_depth);if(!depth_sample(s,g,d->x,d->y,out))return 0;}
+        for(unsigned i=0;i<1+s->world_control_count+s->actor_control_count;i++){
+            DepthDiagnostic *d=i==0?&s->clear_control:(i<=s->world_control_count?&s->world_controls[i-1]:&s->actor_controls[i-1-s->world_control_count]);
+            unsigned *out=mode==1?&d->world_depth:(mode==2?&d->actor_depth:&d->combined_depth);if(!depth_sample(s,g,d->x,d->y,out))return 0;
+        }
+    }
+    if(s->clear_control.world_depth!=0xffffffu||s->clear_control.actor_depth!=0xffffffu||s->clear_control.combined_depth!=0xffffffu)return fail(s,"Actual DEPTH24 sampler clear control failed");
+    int world_front=0,actor_front=0;
+    for(unsigned group=0;group<2;group++)for(unsigned i=0;i<(group?s->actor_control_count:s->world_control_count);i++){
+        const DepthDiagnostic *d=group?&s->actor_controls[i]:&s->world_controls[i];unsigned expected=d->world_depth<d->actor_depth?d->world_depth:d->actor_depth;
+        if(d->combined_depth!=expected)return fail(s,"Actual DEPTH24 combined positive control is not minimum source-geometry depth");
+        if(d->world_depth<0xffffffu&&d->actor_depth<0xffffffu){
+            if(d->world_depth<d->actor_depth&&!world_front){s->world_front_control=*d;world_front=1;}
+            if(d->actor_depth<d->world_depth&&!actor_front){s->actor_front_control=*d;actor_front=1;}
+        }
+    }
+    if(!world_front||!actor_front)return fail(s,"Actual DEPTH24 sampler distinct source-world/source-actor controls missing");s->depth_sampler_controls_passed=1;
+    for(unsigned i=0;i<s->depth_diagnostics_count;i++){const DepthDiagnostic *d=&s->depth_diagnostics[i];
+        if(d->world_depth<0xffffffu&&d->world_depth==d->actor_depth&&d->world_depth==d->combined_depth)s->depth_order_ties++;
+        else s->depth_order_mismatches++;
+    }
+    return s->depth_order_mismatches?fail(s,"Unequal actual DEPTH24 values changed opaque shared-depth order result"):1;
+}
 static int depth_check(Session *s,Graphics *g) {
     size_t bytes=SIZE*SIZE*4u;uint8_t *images=malloc(bytes*4);if(!images)return fail(s,"Bounded startup depth witness allocation failed");int ok=0;
     uint8_t *world=images,*actor=images+bytes,*both=images+bytes*2,*reverse=images+bytes*3;
@@ -225,24 +282,44 @@ static int depth_check(Session *s,Graphics *g) {
     const uint8_t clear[4]={17,19,23,255};
     for(unsigned i=0;i<SIZE*SIZE;i++) {uint8_t *w=world+i*4,*a=actor+i*4,*b=both+i*4,*r=reverse+i*4;unsigned wc=difference(w,clear),ac=difference(a,clear);
         if(wc>2)s->world_visible_pixels++;if(ac>2)s->actor_visible_pixels++;if(difference(w,b)>2)s->actor_changed_pixels++;
-        if(difference(b,r)>2)s->depth_order_mismatches++;
-        if(wc>2&&ac>2&&difference(w,a)>2){if(difference(b,w)<=2)s->world_occludes_actor_pixels++;if(difference(b,a)<=2)s->actor_occludes_world_pixels++;}
+        if(difference(b,r)>2){s->depth_order_color_differences++;if(s->depth_diagnostics_count<DEPTH_DIAGNOSTICS){DepthDiagnostic *d=&s->depth_diagnostics[s->depth_diagnostics_count++];d->x=i%SIZE;d->y=i/SIZE;memcpy(d->world,w,4);memcpy(d->actor,a,4);memcpy(d->forward,b,4);memcpy(d->reverse,r,4);}}
+        if(wc>2&&ac>2&&difference(w,a)>2){
+            if(difference(b,w)<=2){s->world_occludes_actor_pixels++;if(s->world_control_count<DEPTH_DIAGNOSTICS&&(s->world_occludes_actor_pixels==1||s->world_occludes_actor_pixels%32==1)){DepthDiagnostic *d=&s->world_controls[s->world_control_count++];d->x=i%SIZE;d->y=i/SIZE;}}
+            if(difference(b,a)<=2){s->actor_occludes_world_pixels++;if(s->actor_control_count<DEPTH_DIAGNOSTICS&&(s->actor_occludes_world_pixels==1||s->actor_occludes_world_pixels%32==1)){DepthDiagnostic *d=&s->actor_controls[s->actor_control_count++];d->x=i%SIZE;d->y=i/SIZE;}}
+        }
     }
+    if(!depth_tie_check(s,g))goto end;
     if(s->depth_order_mismatches)fail(s,"Opaque draw order changed shared depth result (hair always last)");
     else if(!s->world_visible_pixels||!s->actor_visible_pixels||!s->actor_changed_pixels||!s->world_occludes_actor_pixels)fail(s,"Authored actor/world startup visibility or real occlusion witness missing");
     else {s->startup_checked=1;ok=1;}
 end:free(images);return ok;
 }
 static void geometry_delete(Geometry *geo){if(geo->vao)glDeleteVertexArrays(1,&geo->vao);if(geo->vbo)glDeleteBuffers(1,&geo->vbo);if(geo->ibo)glDeleteBuffers(1,&geo->ibo);geo->vao=geo->vbo=geo->ibo=0;}
+static int cleanup_egl_failure(Session *s,const char *operation) {
+    unsigned code=(unsigned)eglGetError();s->cleanup_egl_errors++;s->cleanup_egl_error=code;if(!s->egl_error)s->egl_error=code;
+    return fail(s,operation);
+}
 static void graphics_delete(Session *s,Graphics *g) {
-    if(g->context!=EGL_NO_CONTEXT){for(unsigned i=0;i<s->world.part_count;i++)geometry_delete(&s->world_geometry[i]);for(unsigned i=0;i<s->actor.part_count;i++)geometry_delete(&s->actor_geometry[i]);
-        glDeleteTextures((GLsizei)s->world.texture_count,g->world_textures);glDeleteTextures((GLsizei)s->actor.texture_count,g->actor_textures);if(g->program.id)glDeleteProgram(g->program.id);if(g->tf)glDeleteBuffers(1,&g->tf);if(g->fbo)glDeleteFramebuffers(1,&g->fbo);if(g->color)glDeleteTextures(1,&g->color);if(g->depth)glDeleteRenderbuffers(1,&g->depth);
+    int released=1;
+    /* No GL call is permitted against a partial context that never became
+     * current. Any context-owned resources then disappear with its checked
+     * destruction. Every driver call remains outside the shared mutex. */
+    if(g->context_current){for(unsigned i=0;i<s->world.part_count;i++)geometry_delete(&s->world_geometry[i]);for(unsigned i=0;i<s->actor.part_count;i++)geometry_delete(&s->actor_geometry[i]);
+        glDeleteTextures((GLsizei)s->world.texture_count,g->world_textures);glDeleteTextures((GLsizei)s->actor.texture_count,g->actor_textures);if(g->program.id)glDeleteProgram(g->program.id);if(g->tf)glDeleteBuffers(1,&g->tf);if(g->fbo)glDeleteFramebuffers(1,&g->fbo);if(g->color)glDeleteTextures(1,&g->color);if(g->depth)glDeleteTextures(1,&g->depth);if(g->depth_program)glDeleteProgram(g->depth_program);if(g->depth_vao)glDeleteVertexArrays(1,&g->depth_vao);if(g->pixel_fbo)glDeleteFramebuffers(1,&g->pixel_fbo);if(g->pixel_color)glDeleteTextures(1,&g->pixel_color);
+        unsigned previous_errors=s->gl_errors;if(!glcheck(s,"Session owned GL resource deletion failed")){s->cleanup_gl_errors+=s->gl_errors-previous_errors;released=0;}
     }
-    if(g->display!=EGL_NO_DISPLAY){eglMakeCurrent(g->display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);if(g->surface!=EGL_NO_SURFACE)eglDestroySurface(g->display,g->surface);if(g->context!=EGL_NO_CONTEXT)eglDestroyContext(g->display,g->context);eglTerminate(g->display);}
-    if(g->window)ANativeWindow_release(g->window);s->objects_released=1;
+    if(g->initialized){
+        if(g->context_current&&!eglMakeCurrent(g->display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT)){cleanup_egl_failure(s,"Session EGL context unbind failed");released=0;}
+        if(g->surface!=EGL_NO_SURFACE&&!eglDestroySurface(g->display,g->surface)){cleanup_egl_failure(s,"Session owned EGL Surface destruction failed");released=0;}
+        if(g->context!=EGL_NO_CONTEXT&&!eglDestroyContext(g->display,g->context)){cleanup_egl_failure(s,"Session owned EGL context destruction failed");released=0;}
+        if(!eglTerminate(g->display)){cleanup_egl_failure(s,"Session initialized EGL display termination failed");released=0;}
+    }
+    if(!eglReleaseThread()){cleanup_egl_failure(s,"Session EGL worker thread release failed");released=0;}
+    if(g->window){ANativeWindow_release(g->window);g->window=NULL;}s->objects_released=released;
 }
 static int graphics_create(Session *s,Graphics *g) {
-    g->display=eglGetDisplay(EGL_DEFAULT_DISPLAY);if(g->display==EGL_NO_DISPLAY||!eglInitialize(g->display,NULL,NULL)||!eglBindAPI(EGL_OPENGL_ES_API)){s->egl_error=(unsigned)eglGetError();return fail(s,"Session EGL initialization failed");}
+    g->display=eglGetDisplay(EGL_DEFAULT_DISPLAY);if(g->display==EGL_NO_DISPLAY||!eglInitialize(g->display,NULL,NULL)){s->egl_error=(unsigned)eglGetError();return fail(s,"Session EGL initialization failed");}
+    g->initialized=1;if(!eglBindAPI(EGL_OPENGL_ES_API)){s->egl_error=(unsigned)eglGetError();return fail(s,"Session EGL API binding failed");}
     const EGLint attributes[]={EGL_SURFACE_TYPE,EGL_WINDOW_BIT,EGL_RENDERABLE_TYPE,EGL_OPENGL_ES3_BIT_KHR,EGL_RED_SIZE,8,EGL_GREEN_SIZE,8,EGL_BLUE_SIZE,8,EGL_ALPHA_SIZE,8,EGL_DEPTH_SIZE,24,EGL_NONE};EGLConfig config;EGLint count;
     if(!eglChooseConfig(g->display,attributes,&config,1,&count)||count!=1)return fail(s,"Session EGL depth24 configuration failed");EGLint visual;if(!eglGetConfigAttrib(g->display,config,EGL_NATIVE_VISUAL_ID,&visual))return fail(s,"Session EGL native format failed");ANativeWindow_setBuffersGeometry(g->window,0,0,visual);
     const EGLint context_attributes[]={EGL_CONTEXT_CLIENT_VERSION,3,EGL_NONE};g->context=eglCreateContext(g->display,config,EGL_NO_CONTEXT,context_attributes);
@@ -250,13 +327,15 @@ static int graphics_create(Session *s,Graphics *g) {
     g->surface=eglCreateWindowSurface(g->display,config,g->window,NULL);
     if(g->surface==EGL_NO_SURFACE){s->egl_error=(unsigned)eglGetError();s->surface_failure=1;return fail(s,"Session native window Surface failed");}
     if(!eglMakeCurrent(g->display,g->surface,g->surface,g->context)){s->egl_error=(unsigned)eglGetError();s->surface_failure=1;return fail(s,"Session native Surface activation failed");}
+    g->context_current=1;
     snprintf(s->gl_vendor,sizeof s->gl_vendor,"%s",(const char*)glGetString(GL_VENDOR));snprintf(s->gl_renderer,sizeof s->gl_renderer,"%s",(const char*)glGetString(GL_RENDERER));s->objects_released=0;
     if(!program_create(s,&g->program)||!skin(s))return 0;
     for(unsigned i=0;i<s->world.texture_count;i++){const CohWorldTexture *t=&s->world.textures[i];if(!texture(s,&g->world_textures[i],t->width,t->height,t->rgba))return 0;}
     for(unsigned i=0;i<s->actor.texture_count;i++){const CohSceneTexture *t=&s->actor.textures[i];if(!texture(s,&g->actor_textures[i],t->width,t->height,t->rgba))return 0;}
     for(unsigned i=0;i<s->world.part_count;i++)geometry_upload(&s->world_geometry[i],1);for(unsigned i=0;i<s->actor.part_count;i++)geometry_upload(&s->actor_geometry[i],1);glGenBuffers(1,&g->tf);
-    if(!texture(s,&g->color,SIZE,SIZE,NULL))return 0;glGenFramebuffers(1,&g->fbo);glBindFramebuffer(GL_FRAMEBUFFER,g->fbo);glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,g->color,0);glGenRenderbuffers(1,&g->depth);glBindRenderbuffer(GL_RENDERBUFFER,g->depth);glRenderbufferStorage(GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,SIZE,SIZE);glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,g->depth);
+    if(!texture(s,&g->color,SIZE,SIZE,NULL))return 0;glGenFramebuffers(1,&g->fbo);glBindFramebuffer(GL_FRAMEBUFFER,g->fbo);glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,g->color,0);glGenTextures(1,&g->depth);glBindTexture(GL_TEXTURE_2D,g->depth);glTexStorage2D(GL_TEXTURE_2D,1,GL_DEPTH_COMPONENT24,SIZE,SIZE);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);glFramebufferTexture2D(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D,g->depth,0);
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER)!=GL_FRAMEBUFFER_COMPLETE)return fail(s,"Session startup depth witness FBO incomplete");
+    if(!depth_program_create(s,g)||!texture(s,&g->pixel_color,1,1,NULL))return 0;glGenFramebuffers(1,&g->pixel_fbo);glBindFramebuffer(GL_FRAMEBUFFER,g->pixel_fbo);glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,g->pixel_color,0);if(glCheckFramebufferStatus(GL_FRAMEBUFFER)!=GL_FRAMEBUFFER_COMPLETE)return fail(s,"Actual-depth diagnostic pixel target incomplete");
     return transform_check(s,g)&&(s->startup_checked||depth_check(s,g));
 }
 
@@ -269,10 +348,13 @@ static void startup_commit(Session *s,const Session *copy) {
     s->shader_version=copy->shader_version;s->precise=copy->precise;s->objects_released=copy->objects_released;
     s->tf_components=copy->tf_components;s->tf_mismatches=copy->tf_mismatches;s->tf_max_error=copy->tf_max_error;s->gl_errors=copy->gl_errors;
     s->depth_order_mismatches=copy->depth_order_mismatches;s->world_visible_pixels=copy->world_visible_pixels;s->actor_visible_pixels=copy->actor_visible_pixels;
+    s->depth_order_color_differences=copy->depth_order_color_differences;s->depth_order_ties=copy->depth_order_ties;s->depth_diagnostics_count=copy->depth_diagnostics_count;memcpy(s->depth_diagnostics,copy->depth_diagnostics,sizeof s->depth_diagnostics);
+    s->depth_sampler_controls_passed=copy->depth_sampler_controls_passed;s->clear_control=copy->clear_control;s->world_front_control=copy->world_front_control;s->actor_front_control=copy->actor_front_control;
     s->world_occludes_actor_pixels=copy->world_occludes_actor_pixels;s->actor_occludes_world_pixels=copy->actor_occludes_world_pixels;s->actor_changed_pixels=copy->actor_changed_pixels;
     s->startup_checked=copy->startup_checked;s->skin_samples=copy->skin_samples;s->world_draws=copy->world_draws;s->actor_draws=copy->actor_draws;
     s->egl_error=copy->egl_error;s->width=copy->width;s->height=copy->height;s->frames=copy->frames;
     s->expected_cancel_surface_errors=copy->expected_cancel_surface_errors;s->expected_cancel_egl_error=copy->expected_cancel_egl_error;
+    s->cleanup_gl_errors=copy->cleanup_gl_errors;s->cleanup_egl_errors=copy->cleanup_egl_errors;s->cleanup_egl_error=copy->cleanup_egl_error;
 }
 static int cancelled_surface_error(unsigned code){return code==EGL_BAD_NATIVE_WINDOW||code==EGL_BAD_SURFACE;}
 JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e,jclass klass,jlong handle,jobject surface,jlong epoch) {
@@ -338,14 +420,26 @@ JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_cancel(JNIEnv *e
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_state(JNIEnv *e,jclass c,jlong handle,jlong epoch,jboolean foreground) {(void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;pthread_mutex_lock(&s->mutex);s->epoch=(uint64_t)epoch;s->foreground=foreground?1:0;s->cancel=1;clear_input(s);pthread_mutex_unlock(&s->mutex);}
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_reset(JNIEnv *e,jclass c,jlong handle) {(void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return;pthread_mutex_lock(&s->mutex);clear_input(s);s->camera_yaw=s->world.inputs.cameras[0].pyr_degrees[1]*PI/180;s->camera_pitch=.16f;coh_motion_init(&s->motion,s->spawn,wrap(s->camera_yaw-PI),96);coh_locomotion_init(&s->animation);s->accumulator=0;pthread_mutex_unlock(&s->mutex);}
 static void escaped(char *out,size_t capacity,const char *in) {size_t n=0;for(const unsigned char *p=(const unsigned char*)in;*p&&n+7<capacity;p++){if(*p=='"'||*p=='\\'){out[n++]='\\';out[n++]=(char)*p;}else if(*p<32||*p>=127){int used=snprintf(out+n,capacity-n,"\\u%04x",*p);n+=(size_t)used;}else out[n++]=(char)*p;}out[n]=0;}
+typedef struct {char *p;size_t n;int ok;} Json;
+static void jappend(Json *j,const char *format,...) __attribute__((format(printf,2,3)));
+static void jappend(Json *j,const char *format,...) {if(!j->ok)return;va_list args;va_start(args,format);int n=vsnprintf(j->p+j->n,JSON_CAP-j->n,format,args);va_end(args);if(n<0||(size_t)n>=JSON_CAP-j->n){j->ok=0;return;}j->n+=(size_t)n;}
+static void depth_json(Json *j,const DepthDiagnostic *d,int colors) {
+    jappend(j,"{\"x\":%u,\"y\":%u,\"world_depth\":%u,\"actor_depth\":%u,\"combined_depth\":%u",d->x,d->y,d->world_depth,d->actor_depth,d->combined_depth);
+    if(colors){const uint8_t *rgba[4]={d->world,d->actor,d->forward,d->reverse};const char *names[4]={"world_rgba","actor_rgba","forward_rgba","reverse_rgba"};for(unsigned i=0;i<4;i++)jappend(j,",\"%s\":[%u,%u,%u,%u]",names[i],rgba[i][0],rgba[i][1],rgba[i][2],rgba[i][3]);}jappend(j,"}");
+}
 JNIEXPORT jstring JNICALL Java_org_coh_sessionclient_SessionNative_snapshot(JNIEnv *e,jclass c,jlong handle) {
     (void)c;Session *s=(Session*)(intptr_t)handle;if(!s)return (*e)->NewStringUTF(e,"{\"valid\":false}");char json[JSON_CAP],failure[1024],renderer[512];pthread_mutex_lock(&s->mutex);escaped(failure,sizeof failure,s->failure);escaped(renderer,sizeof renderer,s->gl_renderer);
     int n=snprintf(json,sizeof json,"{\"schema\":1,\"probe\":\"coh-native-offline-session\",\"valid\":%s,\"failed\":%s,\"running\":%s,\"failure\":\"%s\",\"pointer_bytes\":%zu,\"source_controlled\":true,\"collision\":false,\"live_server\":false,\"full_atlas\":false,\"gpu_palette_skinning\":false,\"skin_policy\":\"accepted source CPU skin then accepted world shader\",\"frames\":%"PRIu64",\"world_draws\":%"PRIu64",\"actor_draws\":%"PRIu64",\"skin_samples\":%"PRIu64",\"contexts_started\":%"PRIu64",\"contexts_completed\":%"PRIu64",\"objects_released\":%s,\"width\":%d,\"height\":%d,\"gl_renderer\":\"%s\",\"gl_errors\":%u,\"egl_error\":%u,\"shader_language_version\":%u,\"shader_precise\":%s,\"tf_components\":%"PRIu64",\"tf_mismatches\":%"PRIu64",\"tf_max_error\":%.9g,\"depth_order_mismatches\":%"PRIu64",\"world_visible_pixels\":%"PRIu64",\"actor_visible_pixels\":%"PRIu64",\"world_occludes_actor_pixels\":%"PRIu64",\"actor_occludes_world_pixels\":%"PRIu64",\"actor_changed_pixels\":%"PRIu64",\"startup_checked\":%s,\"movement_ticks\":%"PRIu64",\"direction_mask\":%u,\"held_dirs\":%u,\"actor_position\":[%.9g,%.9g,%.9g],\"spawn_position\":[%.9g,%.9g,%.9g],\"actor_yaw\":%.9g,\"camera_yaw\":%.9g,\"camera_pitch\":%.9g,\"camera_position\":[%.9g,%.9g,%.9g],\"animation_frame\":%.9g,\"animation_state\":%u,\"animation_transitions\":%u,\"idle_samples\":%"PRIu64",\"run_samples\":%"PRIu64",\"total_ms\":%"PRIu64"}",
         s->valid?"true":"false",s->failed?"true":"false",s->running?"true":"false",failure,sizeof(void*),s->frames,s->world_draws,s->actor_draws,s->skin_samples,s->contexts_started,s->contexts_completed,s->objects_released?"true":"false",s->width,s->height,renderer,s->gl_errors,s->egl_error,s->shader_version,s->precise?"true":"false",s->tf_components,s->tf_mismatches,s->tf_max_error,s->depth_order_mismatches,s->world_visible_pixels,s->actor_visible_pixels,s->world_occludes_actor_pixels,s->actor_occludes_world_pixels,s->actor_changed_pixels,s->startup_checked?"true":"false",(uint64_t)s->motion.ticks,s->direction_mask,s->held_dirs,s->motion.position[0],s->motion.position[1],s->motion.position[2],s->spawn[0],s->spawn[1],s->spawn[2],s->motion.body_yaw,s->camera_yaw,s->camera_pitch,s->camera_position[0],s->camera_position[1],s->camera_position[2],s->animation.frame,(unsigned)s->animation.move,(unsigned)s->animation.transitions,s->idle_samples,s->run_samples,s->total_ms);
     if(n>0&&(size_t)n<sizeof json){int extra=snprintf(json+n-1,sizeof json-(size_t)n+1,
-        ",\"epoch\":%"PRIu64",\"foreground\":%s,\"expected_cancel_surface_errors\":%u,\"expected_cancel_egl_error\":%u,\"source_state_bits\":%u,\"motion_local\":[%.9g,%.9g,%.9g],\"motion_world\":[%.9g,%.9g,%.9g],\"nocoll_radius\":%.9g,\"bounded_steps\":%u,\"stopped_steps\":%u,\"animation_move\":\"%s\",\"animation_rate\":%.9g,\"ready_entries\":%u,\"run_entries\":%u,\"post_entries\":%u,\"animation_cycles\":%u,\"sampler\":\"GL_LINEAR CLAMP_TO_EDGE base level only\",\"depth_witness_scope\":\"actual source meshes; opaque order reversed with Hair always last; four startup images only\"}",
-        s->epoch,s->foreground?"true":"false",s->expected_cancel_surface_errors,s->expected_cancel_egl_error,s->motion.source_state_bits,s->motion.local_input[0],s->motion.local_input[1],s->motion.local_input[2],s->motion.world_input[0],s->motion.world_input[1],s->motion.world_input[2],s->motion.radius,s->motion.bounded_steps,s->motion.stopped_steps,coh_locomotion_move_name(s->animation.move),s->animation.move_rate_scale,s->animation.ready_entries,s->animation.run_entries,s->animation.post_entries,s->animation.cycles);
-        if(extra<0||(size_t)extra>=sizeof json-(size_t)n+1)n=-1;
+        ",\"epoch\":%"PRIu64",\"foreground\":%s,\"expected_cancel_surface_errors\":%u,\"expected_cancel_egl_error\":%u,\"cleanup_gl_errors\":%u,\"cleanup_egl_errors\":%u,\"cleanup_egl_error\":%u,\"source_state_bits\":%u,\"motion_local\":[%.9g,%.9g,%.9g],\"motion_world\":[%.9g,%.9g,%.9g],\"nocoll_radius\":%.9g,\"bounded_steps\":%u,\"stopped_steps\":%u,\"animation_move\":\"%s\",\"animation_rate\":%.9g,\"ready_entries\":%u,\"run_entries\":%u,\"post_entries\":%u,\"animation_cycles\":%u,\"sampler\":\"GL_LINEAR CLAMP_TO_EDGE base level only\",\"depth_witness_scope\":\"actual source meshes; opaque order reversed with Hair always last; four startup images only\"}",
+        s->epoch,s->foreground?"true":"false",s->expected_cancel_surface_errors,s->expected_cancel_egl_error,s->cleanup_gl_errors,s->cleanup_egl_errors,s->cleanup_egl_error,s->motion.source_state_bits,s->motion.local_input[0],s->motion.local_input[1],s->motion.local_input[2],s->motion.world_input[0],s->motion.world_input[1],s->motion.world_input[2],s->motion.radius,s->motion.bounded_steps,s->motion.stopped_steps,coh_locomotion_move_name(s->animation.move),s->animation.move_rate_scale,s->animation.ready_entries,s->animation.run_entries,s->animation.post_entries,s->animation.cycles);
+        if(extra<0||(size_t)extra>=sizeof json-(size_t)n+1)n=-1;else n=n-1+extra;
+    }
+    if(n>0&&(size_t)n<sizeof json){Json j={json,(size_t)n-1,1};
+        jappend(&j,",\"depth_sampler_controls_passed\":%s,\"raw_changed_pixels\":%"PRIu64",\"qualified_equal_depth_ties\":%"PRIu64",\"non_tie_mismatches\":%"PRIu64",\"depth_sampler_controls\":{\"clear\":",s->depth_sampler_controls_passed?"true":"false",s->depth_order_color_differences,s->depth_order_ties,s->depth_order_mismatches);
+        depth_json(&j,&s->clear_control,0);jappend(&j,",\"world_front\":");depth_json(&j,&s->world_front_control,0);jappend(&j,",\"actor_front\":");depth_json(&j,&s->actor_front_control,0);jappend(&j,"},\"depth_tie_diagnostics\":[");
+        for(unsigned i=0;i<s->depth_diagnostics_count;i++){if(i)jappend(&j,",");depth_json(&j,&s->depth_diagnostics[i],1);}jappend(&j,"]}");n=j.ok?(int)j.n:-1;
     }
     pthread_mutex_unlock(&s->mutex);if(n<0||(size_t)n>=sizeof json)return (*e)->NewStringUTF(e,"{\"valid\":false,\"failure\":\"Native snapshot capacity exceeded\"}");return (*e)->NewStringUTF(e,json);
 }

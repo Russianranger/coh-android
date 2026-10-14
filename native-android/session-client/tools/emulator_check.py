@@ -79,6 +79,29 @@ def validate(value, moved=False):
     assert native['tf_components'] > 0 and native['tf_mismatches'] == 0
     assert math.isfinite(native['tf_max_error']) and 0 <= native['tf_max_error'] <= .0001
     assert native['depth_order_mismatches'] == native['gl_errors'] == native['egl_error'] == 0
+    assert native['depth_sampler_controls_passed'] is True
+    raw = native['raw_changed_pixels']
+    ties = native['qualified_equal_depth_ties']
+    non_ties = native['non_tie_mismatches']
+    assert raw == ties + non_ties and non_ties == 0
+    diagnostics = native['depth_tie_diagnostics']
+    assert len(diagnostics) == raw <= 16
+    assert len({(w['x'],w['y']) for w in diagnostics}) == len(diagnostics)
+    for witness in diagnostics:
+        assert 0 <= witness['x'] < 512 and 0 <= witness['y'] < 512
+        assert 0 <= witness['world_depth'] < 0xffffff
+        assert witness['world_depth'] == witness['actor_depth'] == witness['combined_depth']
+        assert max(abs(a-b) for a,b in zip(witness['forward_rgba'][:3], witness['reverse_rgba'][:3])) > 2
+    controls = native['depth_sampler_controls']
+    assert set(controls) == {'clear', 'world_front', 'actor_front'}
+    clear, world_front, actor_front = (controls[name] for name in ('clear', 'world_front', 'actor_front'))
+    assert len({(w['x'],w['y']) for w in controls.values()}) == 3
+    assert all(0 <= w['x'] < 512 and 0 <= w['y'] < 512 for w in controls.values())
+    assert clear['world_depth'] == clear['actor_depth'] == clear['combined_depth'] == 0xffffff
+    assert 0 <= world_front['world_depth'] < world_front['actor_depth'] < 0xffffff
+    assert world_front['combined_depth'] == world_front['world_depth']
+    assert 0 <= actor_front['actor_depth'] < actor_front['world_depth'] < 0xffffff
+    assert actor_front['combined_depth'] == actor_front['actor_depth']
     assert native['world_visible_pixels'] > 0 and native['actor_visible_pixels'] > 0
     assert native['world_occludes_actor_pixels'] > 0 and native['actor_occludes_world_pixels'] > 0
     assert native['actor_changed_pixels'] > 0 and native['skin_samples'] > 0
@@ -184,6 +207,100 @@ def touch_look():
     return result
 
 
+def home_with_held_input_once(before,command,long_hold):
+    """Interrupt an actual framework key before its framework release arrives."""
+    old = before['input_adapter']['external_android']
+    sequence = max(e['sequence'] for e in before['events'])
+    worker = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    held = None
+    try:
+        deadline = time.monotonic()+3
+        while time.monotonic() < deadline and worker.poll() is None:
+            current = report()
+            if (current is not None and current['native']['held_dirs'] == 1
+                    and current['input_adapter']['external_android']['key_down'] > old['key_down']
+                    and current['input_adapter']['external_android']['key_up'] == old['key_up']
+                    and (not long_hold or (current['native']['source_state_bits']&1
+                        and current['native']['movement_ticks'] > before['native']['movement_ticks']
+                        and distance(current['native']['actor_position'],before['native']['actor_position']) > .01
+                        and current['native']['frames'] > before['native']['frames']
+                        and current['native']['run_samples'] > before['native']['run_samples']))):
+                held = current
+                break
+            time.sleep(.005)
+        assert held is not None and worker.poll() is None, 'No fresh real keyboard-down snapshot before its framework release'
+        # Home is a real system navigation key while the other shell command is
+        # still delivering its long press. No lifecycle intent simulates this.
+        adb('shell', 'input', 'keyevent', 'KEYCODE_HOME')
+        stdout, stderr = worker.communicate(timeout=5)
+        assert worker.returncode == 0, (stdout+stderr).decode(errors='replace')
+        paused = wait(lambda r:r['resumed'] is False and r['native']['running'] is False
+                      and r['native']['held_dirs'] == 0 and any(e['type']=='pause' and e['sequence']>sequence for e in r['events']),
+                      'Actual Android Home cancels a held framework movement key', seconds=30)
+        assert paused['native']['objects_released'] is True
+        assert paused['native']['contexts_completed'] == paused['native']['contexts_started']
+        assert paused['native']['cleanup_gl_errors'] == paused['native']['cleanup_egl_errors'] == 0
+        assert paused['input_adapter']['external_android']['key_down'] == old['key_down']+1
+        assert paused['input_adapter']['external_android']['key_up'] == old['key_up'], 'Release arrived before Home focus interruption'
+        down_events = [e for e in paused['events'] if e['sequence']>sequence and e['type']=='key_down'
+                       and e.get('native', {}).get('held_dirs') == 1]
+        assert down_events, 'Actual forwarded key down was not retained in the event trace'
+        down_sequence=down_events[-1]['sequence']
+        interruption = [e for e in paused['events'] if e['sequence']>down_sequence
+                        and e['type'] in ('input_clear_requested', 'pause_requested')
+                        and e.get('native', {}).get('held_dirs') == 1
+                        and e.get('native', {}).get('source_state_bits',0)&1
+                        and e.get('native', {}).get('movement_ticks',0)>before['native']['movement_ticks']
+                        and distance(e['native']['actor_position'],before['native']['actor_position'])>.01
+                        and e.get('native', {}).get('foreground') is True]
+        assert interruption, 'Home event trace did not witness native held input before focus/pause clearing'
+        clear_sequence=interruption[0]['sequence']
+        assert not any(e['type']=='key_up' and down_sequence<e['sequence']<clear_sequence for e in paused['events']), 'Framework key release preceded focus interruption'
+        assert any(e['type']=='pause' and e['sequence']>clear_sequence for e in paused['events'])
+        save('emulator-home-held-input-proof.json', {'schema':1,'passed':True,
+             'scope':'Actual Android keyboard down, then actual system Home before keyboard up; native movement held in focus/pause event trace and cleared in background',
+             'framework_input_argv':command,'duration_capability_observed':long_hold,
+             'rendered_source_movement_observed_before_home':long_hold,
+             'held_snapshot':held,'interruption_events':interruption,
+             'background_native':paused['native'],
+             'background_input_adapter':paused['input_adapter']})
+        return paused
+    finally:
+        if worker.poll() is None:
+            worker.terminate()
+            worker.communicate(timeout=5)
+
+
+def home_with_held_input(before):
+    usage=[]
+    for arg in ('--help','help'):
+        output=adb('shell','input',arg,check=False)
+        text=(output.stdout+output.stderr).decode(errors='replace')
+        usage.append({'argv':[ADB,'shell','input',arg],'returncode':output.returncode,'output':text})
+        if re.search(r'keycombination\s+\[-t\s+duration\(ms\)\]',text):
+            break
+    save('emulator-android-input-help.json',{'commands':usage})
+    long_hold=any(re.search(r'keycombination\s+\[-t\s+duration\(ms\)\]',item['output']) for item in usage)
+    command=([ADB,'shell','input','keyboard','keycombination','-t','2500','KEYCODE_SHIFT_LEFT','KEYCODE_W']
+             if long_hold else [ADB,'shell','input','keyboard','keyevent','--longpress','KEYCODE_W'])
+    misses=[]
+    for attempt in range(1,4):
+        try:
+            return home_with_held_input_once(before,command,long_hold)
+        except AssertionError as error:
+            # Shell scheduling can exhaust the framework's short long-press
+            # interval. Retain the miss, restore the real app and retry the
+            # complete Home cycle. Missing evidence never becomes a pass.
+            misses.append({'attempt':attempt,'failure':str(error),'latest_report':report()})
+            save('emulator-home-timing-misses.json',{'passed':False,'attempts':misses})
+            if attempt==3:
+                raise
+            adb('shell','am','start','-W','-n',ACTIVITY)
+            before=wait(lambda r:native_ready(r) and r['native']['held_dirs']==0
+                        and r['native']['animation_state']==0,'Real session restored after Home timing miss')
+    raise AssertionError('Unreachable: bounded Home attempts exhausted')
+
+
 def export_document():
     before = report(); session = before['session_id']
     tapped = tap_button('Export report', 'export_requested')
@@ -268,18 +385,14 @@ def main():
         assert distance(position, recreated['native']['actor_position']) <= .001, 'Surface recreation reset actor'
         assert abs(camera[0]-recreated['native']['camera_yaw']) <= .0001 and abs(camera[1]-recreated['native']['camera_pitch']) <= .0001
         validate(recreated, moved=True); save('emulator-recreated-report.json', recreated)
-        prior_sequence=max(e['sequence'] for e in recreated['events'])
         contexts=recreated['native']['contexts_started']; frames=recreated['native']['frames']
-        adb('shell', 'input', 'keyevent', 'KEYCODE_HOME')
-        paused = wait(lambda r:r['resumed'] is False and r['native']['running'] is False
-                      and r['native']['held_dirs'] == 0 and any(e['type']=='pause' and e['sequence']>prior_sequence for e in r['events']),
-                      'Actual Android Home stops worker and clears native input', seconds=30)
-        assert paused['native']['objects_released'] is True
-        assert paused['native']['contexts_completed'] == paused['native']['contexts_started']
+        paused = home_with_held_input(recreated)
+        position=paused['native']['actor_position'][:]
         save('emulator-background-report.json', paused)
         adb('shell', 'am', 'start', '-W', '-n', ACTIVITY)
         returned = wait(lambda r:native_ready(r) and r['native']['contexts_started'] > contexts
-                        and r['native']['frames'] > frames+30, 'Actual Home return starts fresh context without resetting actor')
+                        and r['native']['frames'] > frames+30 and r['native']['animation_state']==0,
+                        'Actual Home return starts fresh context and authored post-run settles without resetting actor')
         assert returned['session_id'] == first['session_id']
         assert distance(position, returned['native']['actor_position']) <= .001
         assert abs(camera[0]-returned['native']['camera_yaw']) <= .0001 and abs(camera[1]-returned['native']['camera_pitch']) <= .0001
@@ -296,7 +409,12 @@ def main():
                  'frames':reset['native']['frames'],'contexts_started':reset['native']['contexts_started'],
                  'actual_keyboard_motion':True,'actual_touch_camera':True,'actual_surface_recreation':True,
                  'actual_home_preserves_actor_and_camera':True,'actual_document_export':True,'actual_reset_button':True,
+                 'actual_home_clears_held_framework_input':True,
                  'source_tf_components':reset['native']['tf_components'],'source_tf_mismatches':reset['native']['tf_mismatches'],
+                 'raw_depth_order_color_differences':reset['native']['raw_changed_pixels'],
+                 'exact_equal_depth_ties':reset['native']['qualified_equal_depth_ties'],
+                 'non_tie_depth_order_mismatches':reset['native']['non_tie_mismatches'],
+                 'actual_depth_sampler_controls_verified':True,
                  'physical_controller_verified':False,'thor_device_execution_verified':False,
                  'original_game_execution':False,'full_atlas_loaded':False,'server_interoperability_verified':False,
                  'walking_collision_qualified':False,'full_sequencer_execution':False}
