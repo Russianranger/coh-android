@@ -202,4 +202,15 @@ class LaneTests(unittest.TestCase):
         self.assertEqual(len(programs),5)
         for _,body in programs:compile(textwrap.dedent(body),'<bound-workflow>','exec')
 
+    def test_Windows_exact_byte_preservation_precedes_checkout_and_pin_controls(self):
+        workflow=(lane.ROOT/'.github/workflows/android-native-client-metadata-probe-bound.yml').read_text()
+        windows=workflow.split('  probe-windows:',1)[1].split('  actual-client-capture:',1)[0]
+        preserve=windows.index('git config --global core.autocrlf false')
+        checkout=windows.index('actions/checkout@')
+        guards=windows.index('python -m unittest test_native_client_wfd_probe_bound')
+        self.assertLess(preserve,checkout)
+        self.assertLess(checkout,guards)
+        self.assertEqual(windows.count('git config --global core.autocrlf false'),1)
+        self.assertNotIn('replace(',windows)
+
 if __name__=='__main__':unittest.main()

@@ -19,6 +19,9 @@ jobs:
     runs-on: windows-2025
     timeout-minutes: 20
     steps:
+      - name: Preserve exact repository source bytes before Windows checkout
+        shell: pwsh
+        run: git config --global core.autocrlf false
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with: {persist-credentials: false}
       - name: Qualify strict isolated packet-bound extension source
