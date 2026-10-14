@@ -1,0 +1,98 @@
+{
+  "actual_launcher_source": {
+    "bytes": 199541,
+    "contains_resume_startup_only_zoning_flags_before_ProcessBuilder": true,
+    "extracted_finalized_command_bytes": 2356,
+    "extracted_finalized_command_sha256": "20eb7b1c45722c4a2c1dd03f45fc6ccd7bdc97e2004b923da9b01564ae71a4f6",
+    "path": "/workspace/scratch/5d16603ca7ff/live-service-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+    "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9"
+  },
+  "execution": {
+    "actual_pure_Java_descriptor_compiled_and_executed": true,
+    "command": "python3 -W error::ResourceWarning -m unittest discover -s tools/android/interactive -p test_client_guest_namespace.py -v",
+    "compiler": "java -m jdk.compiler/com.sun.tools.javac.Main --release 8",
+    "controlled_host_files_only": true,
+    "elapsed_precision": "unittest runner rounded to 3 decimal places",
+    "errors": 0,
+    "failures": 0,
+    "runner_elapsed_seconds": 5.284,
+    "skips": 0,
+    "source_and_launcher_pre_post_pins_unchanged": true,
+    "tests": 36
+  },
+  "format": 1,
+  "interface": {
+    "bindings": 14,
+    "environment_values_in_statement": "Only 3 critical PROOT values; rest bound via sorted typed SHA256, no unrelated values exported",
+    "factory": "ClientGuestNamespace.fromFinalizedCommand(List<String>, Map<String,String>, Inputs)",
+    "full_bindings": [
+      "/ rootfs diagnostic",
+      "/dev passthrough",
+      "/proc passthrough",
+      "/sys passthrough",
+      "/state DIR",
+      "/tmp DIR",
+      "/presentation-socket DIR",
+      "/game-import DIR imported-generation parent",
+      "/opt/coh DIR",
+      "/opt/coh/pgsql DIR nested override",
+      "/opt/wine DIR",
+      "/etc/passwd FILE",
+      "/etc/group FILE",
+      "/etc/hosts FILE"
+    ],
+    "guest_binding_policy": "Exact component boundary, longest admitted prefix",
+    "host_canonicalization": "Only trusted declared fixed-layout roots; outside fence/nested unknown canonical aliases refuse; never host realpath guest lookup/symlink target",
+    "immutable_copied_argv_and_full_process_environment": true,
+    "initial_branch_labels": "ASCII case-insensitive fx and scripts.loc labels; original SCRIPTS.LOC request unchanged, actual case resolved by separately qualified held-FD native layer",
+    "initial_guest_data_view": "/state/diagnostic/client-work-{24 lowercase hex}/data",
+    "operation_attribution": "Actual 13..19 digit timestamp-12 hex runId retained",
+    "operation_wire16": "Decoded 32 hex session, fresh defensive copy",
+    "owned_directory_bindings": 7,
+    "typed_inputs": "Inputs(File appFilesRoot, File installedNativeLibraryRoot, String importedGenerationName, Provenance, LaunchMode)"
+  },
+  "qualification_limits": {
+    "Android_or_PRoot_execution": false,
+    "ClientRuntime_edits": false,
+    "Wine_NtOpenFile_authorization": false,
+    "controller_or_graphics_changes": false,
+    "guest_symlink_resolution_implemented_in_Java": false,
+    "native_UID_dev_inode_ancestry_proof": false,
+    "native_WFD_field_parity": false,
+    "native_registration_allowed": false,
+    "new_APK": false,
+    "new_native_Game": false,
+    "new_native_or_JNI_build": false,
+    "other_owner_service_or_facade_edits": false,
+    "player_data_or_SQL_access": false,
+    "root_metadata_verified": false
+  },
+  "refusal_coverage": [
+    "All 8 valid finalized launch modes",
+    "Changed/missing/appended final flags",
+    "Duplicate/unknown/partial-prefix/foreign/nested host bind changes",
+    "Import data versus parent wrong bind",
+    "Wrong UID/l2s flag/USERLAND/rootfs/helper/session/mode",
+    "PROOT env missing/forcing/unknown keys/NUL/oversized values",
+    "Path component boundaries/dots/trailing ambiguity/nonASCII/legacy.l2s/file-bind children/unknown roots",
+    "Canonical host escapes and unqualified aliases within private fence",
+    "Immutable lists/maps/wire/routes",
+    "Native authority always closed despite changed declared identity"
+  ],
+  "repository_head": "270ad89b4f2f85333692f54446901cc4da3cb4e4",
+  "required_next_admission": "Root owned operation/lifecycle plus actual native stat UID/dev/ino/readonly ancestry held-FD checks and current Wine native object authorization/field recipe; descriptor is provenance, not self-declared authority.",
+  "reviewed_utc": "2026-10-14T07:16:34.270359+00:00",
+  "source_records": [
+    {
+      "bytes": 22515,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java",
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c"
+    },
+    {
+      "bytes": 21587,
+      "path": "tools/android/interactive/test_client_guest_namespace.py",
+      "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77"
+    }
+  ],
+  "stage": "dormant_finalized_PRoot_namespace_descriptor"
+}

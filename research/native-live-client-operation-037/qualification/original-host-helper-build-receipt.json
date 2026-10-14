@@ -1,0 +1,286 @@
+{
+  "Android_OS_Wine_FEX_PRoot_parity": false,
+  "Bionic_ARM64_fixture": false,
+  "artifacts": {
+    "compile-Java-facade-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-Java-facade-fixture.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-host-JNI.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-host-JNI.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-host-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-host-fixture.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execute-host-JNI.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execute-host-JNI.stdout": {
+      "bytes": 140,
+      "sha256": "458c8f566d9546ba21af930bdb443abf1dcada08940dd67cc3de45be78c1cebf"
+    },
+    "execute-host-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execute-host-fixture.stdout": {
+      "bytes": 296,
+      "sha256": "4fdd2bbe52e989ab41c1660938724cb7bab48f00077eff62bfd745467e9b3f2a"
+    },
+    "host-native-kernel-tests.stderr": {
+      "bytes": 5223,
+      "sha256": "82affb645599fcae504446703641c0b550f82efe1c3dcf370c6bdaadd825ae0f"
+    },
+    "host-native-kernel-tests.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "libcoh_live_directory-host.so": {
+      "bytes": 35664,
+      "sha256": "b264121c80afb11ff84248b98099939a6657251c56bd2175174f260615d45708"
+    },
+    "native-live-host-fixture": {
+      "bytes": 39896,
+      "sha256": "9999e1bd207bb228c3ffa154b2d20a383a842ce2bb08b6e9ff46511ed435e538"
+    }
+  },
+  "commands": [
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-W",
+        "error::ResourceWarning",
+        "/workspace/scratch/5d16603ca7ff/live-arm-backend-037/tools/native_live_directory/test_native_live_directory_core.py"
+      ],
+      "elapsed_seconds": 3.22779342099966,
+      "exit_code": 0,
+      "label": "host-native-kernel-tests",
+      "stderr": {
+        "bytes": 5223,
+        "sha256": "82affb645599fcae504446703641c0b550f82efe1c3dcf370c6bdaadd825ae0f"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wpedantic",
+        "/workspace/scratch/5d16603ca7ff/live-arm-backend-037/tools/native_live_directory/coh_live_directory_core.c",
+        "/workspace/scratch/5d16603ca7ff/live-arm-backend-037/tools/native_live_directory/native_live_fixture.c",
+        "-o",
+        "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-host-qualification-revision-4/native-live-host-fixture"
+      ],
+      "elapsed_seconds": 0.661819558001298,
+      "exit_code": 0,
+      "label": "compile-host-fixture",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-host-qualification-revision-4/native-live-host-fixture"
+      ],
+      "elapsed_seconds": 0.02552122899942333,
+      "exit_code": 0,
+      "label": "execute-host-fixture",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 296,
+        "sha256": "4fdd2bbe52e989ab41c1660938724cb7bab48f00077eff62bfd745467e9b3f2a"
+      }
+    },
+    {
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wpedantic",
+        "-fPIC",
+        "-shared",
+        "-pthread",
+        "-I/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-host-headers",
+        "-I/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-host-headers/linux",
+        "/workspace/scratch/5d16603ca7ff/live-arm-backend-037/tools/native_live_directory/coh_live_directory_core.c",
+        "/workspace/scratch/5d16603ca7ff/live-arm-backend-037/tools/native_live_directory/coh_live_directory_jni.c",
+        "-o",
+        "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-host-qualification-revision-4/libcoh_live_directory-host.so"
+      ],
+      "elapsed_seconds": 0.7664061910036253,
+      "exit_code": 0,
+      "label": "compile-host-JNI",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "java",
+        "-m",
+        "jdk.compiler/com.sun.tools.javac.Main",
+        "-d",
+        "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-host-qualification-revision-4/classes",
+        "/workspace/scratch/5d16603ca7ff/live-arm-backend-037/tools/native_live_directory/NativeLiveDirectory.java",
+        "/workspace/scratch/5d16603ca7ff/live-arm-backend-037/tools/native_live_directory/NativeLiveDirectoryFixture.java"
+      ],
+      "elapsed_seconds": 0.7161736579946592,
+      "exit_code": 0,
+      "label": "compile-Java-facade-fixture",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "java",
+        "-Xcheck:jni",
+        "-cp",
+        "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-host-qualification-revision-4/classes",
+        "io.github.russianranger.cohclientinteractive.NativeLiveDirectoryFixture",
+        "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-host-qualification-revision-4/libcoh_live_directory-host.so"
+      ],
+      "elapsed_seconds": 0.27875381500052754,
+      "exit_code": 0,
+      "label": "execute-host-JNI",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 140,
+        "sha256": "458c8f566d9546ba21af930bdb443abf1dcada08940dd67cc3de45be78c1cebf"
+      }
+    }
+  ],
+  "finished_utc": "2026-10-14T07:31:43.644808+00:00",
+  "host": {
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "uid": 0
+  },
+  "host_JNI": true,
+  "host_JNI_fixture": {
+    "android_vm_or_game_qualified": false,
+    "controls_passed": 28,
+    "failures": 0,
+    "schema": "coh-live-host-JNI-fixture-v1",
+    "shipping_admission": false
+  },
+  "host_JNI_headers": {
+    "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-host-headers/jni.h": {
+      "bytes": 75678,
+      "sha256": "1266aea5b9f5d5db1cb6f8e5c6c43cfa7f80bc4f72d7fe42c6131bb939dc70f4"
+    },
+    "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-host-headers/jni_md.h": {
+      "bytes": 2208,
+      "sha256": "88cb5c33e306900dd35a78d5a439087123b8e91b0986bb5acb42cc9bd2fcc42e"
+    }
+  },
+  "host_fixture": {
+    "android_os_or_wine_or_game_qualified": false,
+    "controls_passed": 26,
+    "elapsed_seconds": 0.023067413,
+    "failures": 0,
+    "libc": "host",
+    "metadata_requests": 1165,
+    "peak_owned_heap_bytes": 638416,
+    "pointer_bytes": 8,
+    "schema": "coh-live-native-kernel-fixture-v1",
+    "shipping_admission": false,
+    "stat_bytes": 144,
+    "uid": 0
+  },
+  "host_native_kernel": true,
+  "native_SQL_or_player_data_touched": false,
+  "physical_Thor_performance": false,
+  "registered_Game_consumer": false,
+  "schema": "coh-live-native-directory-qualification-v1",
+  "shipping_admission": false,
+  "source_files": {
+    "NativeLiveDirectory.java": {
+      "bytes": 1119,
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    },
+    "NativeLiveDirectoryFixture.java": {
+      "bytes": 5877,
+      "sha256": "fdc89a03cbf44afc17a08e8f11af0a23366127e2616bb89300c347ce7f11fc1c"
+    },
+    "README.md": {
+      "bytes": 4624,
+      "sha256": "06c1412fd59765c2ace319b2ce8087382507db8a11212e96632972979cdf1528"
+    },
+    "coh_live_directory_core.c": {
+      "bytes": 22987,
+      "sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c"
+    },
+    "coh_live_directory_core.h": {
+      "bytes": 3125,
+      "sha256": "a1f2142a093ea475286b04ed8fbea293cd18640daae8125b656620402e3b728d"
+    },
+    "coh_live_directory_jni.c": {
+      "bytes": 9835,
+      "sha256": "397190cf97af337f5eb0a6bec6d38cf79d58eecb7cd214e16378b575469d8c6b"
+    },
+    "native_core_faults.c": {
+      "bytes": 2177,
+      "sha256": "3d2430507d2533b2cf794cbd239ccaf7e5ca17c3b7802c4959301c7866f4ff31"
+    },
+    "native_live_fixture.c": {
+      "bytes": 11383,
+      "sha256": "b0ab8aa0fbc3f76be237e0f632576241c59342a4ae55b8fd4c43b5506e51cbde"
+    },
+    "qualify_native_live_directory.py": {
+      "bytes": 7749,
+      "sha256": "745bf714fae48d2c20762f7405d3de414f8f8c504d5a7b06acfb2574a6987771"
+    },
+    "test_native_live_directory_core.py": {
+      "bytes": 22432,
+      "sha256": "16a5fc9cc22fb3ac7815e2ef4e9f2dc53c6517418d704ef7c698d85ec62d4694"
+    }
+  },
+  "started_utc": "2026-10-14T07:31:37.963282+00:00",
+  "status": "host-only-passed"
+}

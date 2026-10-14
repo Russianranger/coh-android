@@ -1,0 +1,434 @@
+{
+  "API_artifact": {
+    "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11879777713/zip",
+    "created_at": "2026-10-14T08:24:25Z",
+    "digest": "sha256:794c229b48d8494d5dfd50520c3b4222626dccae898718d1990816e26148a07b",
+    "expired": false,
+    "expires_at": "2027-01-12T08:23:46Z",
+    "id": 11879777713,
+    "name": "native-live-directory-arm-037-2d030678e7013891547ecd7d35fc0cf40ffabff9",
+    "size_in_bytes": 85256,
+    "updated_at": "2026-10-14T08:24:25Z",
+    "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11879777713",
+    "workflow_run": {
+      "head_branch": "codex/native-live-directory-arm-037",
+      "head_repository_id": 1368730125,
+      "head_sha": "2d030678e7013891547ecd7d35fc0cf40ffabff9",
+      "id": 38534800834,
+      "repository_id": 1368730125
+    }
+  },
+  "API_record": {
+    "bytes": 3140,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-independent-review/retained-final-CI-API.json",
+    "sha256": "dadfc2e2e18e64c23ead9e6ff91f71a1d2c45be93c0a9d2ca9349a64dcff1609"
+  },
+  "JNI_binary_and_fresh_ELF_inspection": {
+    "GNU_STACK": "RW nonexecutable",
+    "JNI_exports": [
+      "nativeCanonicalGuestPath",
+      "nativeCloseCursor",
+      "nativeCloseNamespace",
+      "nativeCreate",
+      "nativeIdentity",
+      "nativeNext",
+      "nativeOpen",
+      "nativeStats"
+    ],
+    "LIBDL_undefined_imports": 0,
+    "SONAME": null,
+    "bytes": 29992,
+    "needed": [
+      "libdl.so",
+      "libc.so"
+    ],
+    "sha256": "3d21ece5894b46e9315eb14c3cc12f8d2fcbd3082f99031b4bcbde3e03d5e282",
+    "undefined_imports": [
+      "__cxa_finalize@LIBC",
+      "__cxa_atexit@LIBC",
+      "__register_atfork@LIBC",
+      "getuid@LIBC",
+      "fstat@LIBC",
+      "close@LIBC",
+      "__errno@LIBC",
+      "__stack_chk_fail@LIBC",
+      "open@LIBC",
+      "strcpy@LIBC",
+      "strtok_r@LIBC",
+      "openat@LIBC",
+      "calloc@LIBC",
+      "strcmp@LIBC",
+      "strlen@LIBC",
+      "strstr@LIBC",
+      "free@LIBC",
+      "malloc@LIBC",
+      "memset@LIBC",
+      "fdopendir@LIBC",
+      "readdir@LIBC",
+      "memchr@LIBC",
+      "closedir@LIBC",
+      "qsort@LIBC",
+      "strncmp@LIBC",
+      "strchr@LIBC",
+      "memcpy@LIBC",
+      "strrchr@LIBC",
+      "snprintf@LIBC",
+      "readlinkat@LIBC",
+      "getxattr@LIBC",
+      "strtol@LIBC",
+      "pthread_mutex_lock@LIBC",
+      "pthread_mutex_unlock@LIBC",
+      "strdup@LIBC"
+    ]
+  },
+  "actual_Android_Wine_FEX_PRoot_runtime_qualification": false,
+  "actual_job": {
+    "conclusion": "success",
+    "id": 115754964137,
+    "logs_url": null,
+    "name": "retained-component-audit",
+    "run_id": 38534800834,
+    "status": "completed",
+    "steps": [
+      {
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Run actions/checkout@v4",
+        "number": 2,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Pinned NDK compiler for read-only retained inspection",
+        "number": 3,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Recover original successfully executed ARM components",
+        "number": 4,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Fresh read-only audit controls",
+        "number": 5,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Authenticate original ELF and source plus unchanged compiler dry run",
+        "number": 6,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Preserve exact source and runtime evidence",
+        "number": 7,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Post Run actions/checkout@v4",
+        "number": 14,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 15,
+        "status": "completed"
+      }
+    ]
+  },
+  "actual_successful_readonly_run": {
+    "conclusion": "success",
+    "event": "push",
+    "head_branch": "codex/native-live-directory-arm-037",
+    "head_sha": "2d030678e7013891547ecd7d35fc0cf40ffabff9",
+    "html_url": "https://github.com/Russianranger/coh-android/actions/runs/38534800834",
+    "id": 38534800834,
+    "path": ".github/workflows/android-native-live-directory-arm-037.yml",
+    "run_attempt": 1,
+    "status": "completed",
+    "tree": "1297f8bddf48a60cba84c6b137dafc39e5416113"
+  },
+  "admission_for_operation_owned_metadata_fixture_adapter_component": true,
+  "all14_local_public_Git_and_artifact_source_pins_match": true,
+  "artifact": {
+    "CRC": true,
+    "all_expected_member_names_and_pins_matched": true,
+    "all_extracted_members_match_archive": true,
+    "bytes": 85256,
+    "member_count": 23,
+    "members": {
+      ".github/workflows/android-native-live-directory-arm-037.yml": {
+        "bytes": 2359,
+        "sha256": "15c09d6aafd1eb946828b3c64b28838a747735ee4c435ceb288f52a24a19dc18"
+      },
+      "out/native-live-retained-inspection-037/Android-clang-d8003-CommonArgs.cpp": {
+        "bytes": 104088,
+        "sha256": "3a11a5bf60be20136d9f80cf6e145c36a00dbe6ed568fd3469204cf3639bce19"
+      },
+      "out/native-live-retained-inspection-037/fresh-ELF-inspection.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "out/native-live-retained-inspection-037/fresh-ELF-inspection.stdout": {
+        "bytes": 8471,
+        "sha256": "515762433efc674220fe4c825ebe955af9eaeeec2cfba82bdbfdfc3f4525644e"
+      },
+      "out/native-live-retained-inspection-037/fresh-compiler-version.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "out/native-live-retained-inspection-037/fresh-compiler-version.stdout": {
+        "bytes": 345,
+        "sha256": "835f1507a752737c6b98c8d2a16d58dc47e33eb4b9cc9b473beae6349678167d"
+      },
+      "out/native-live-retained-inspection-037/fresh-driver-dry-run.stderr": {
+        "bytes": 6208,
+        "sha256": "a26b451d5be398809cfcdf07a64b008e759d3cff814b10f8038a78bf75c738eb"
+      },
+      "out/native-live-retained-inspection-037/fresh-driver-dry-run.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "out/native-live-retained-inspection-037/libcoh_live_directory.so": {
+        "bytes": 29992,
+        "sha256": "3d21ece5894b46e9315eb14c3cc12f8d2fcbd3082f99031b4bcbde3e03d5e282"
+      },
+      "out/native-live-retained-inspection-037/retained-inspection.json": {
+        "bytes": 6437,
+        "sha256": "d58516498f7bded2c9681293a0090809b0704c8d5acebc74a97ecb2ba14f5690"
+      },
+      "tools/native_live_directory/NativeLiveDirectory.java": {
+        "bytes": 1119,
+        "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+      },
+      "tools/native_live_directory/NativeLiveDirectoryFixture.java": {
+        "bytes": 5877,
+        "sha256": "fdc89a03cbf44afc17a08e8f11af0a23366127e2616bb89300c347ce7f11fc1c"
+      },
+      "tools/native_live_directory/README.md": {
+        "bytes": 5216,
+        "sha256": "df7dfcb184f57b47bd7519917edf433093799d7b8da4962b0d19113d0b76fd04"
+      },
+      "tools/native_live_directory/audit_retained_native_live_directory.py": {
+        "bytes": 10938,
+        "sha256": "82f24c24d9dcab05a534b6be1101579e87c4a6b79bce480aefaf870da197dc48"
+      },
+      "tools/native_live_directory/coh_live_directory_core.c": {
+        "bytes": 22987,
+        "sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c"
+      },
+      "tools/native_live_directory/coh_live_directory_core.h": {
+        "bytes": 3125,
+        "sha256": "a1f2142a093ea475286b04ed8fbea293cd18640daae8125b656620402e3b728d"
+      },
+      "tools/native_live_directory/coh_live_directory_jni.c": {
+        "bytes": 9835,
+        "sha256": "397190cf97af337f5eb0a6bec6d38cf79d58eecb7cd214e16378b575469d8c6b"
+      },
+      "tools/native_live_directory/native_core_faults.c": {
+        "bytes": 2177,
+        "sha256": "3d2430507d2533b2cf794cbd239ccaf7e5ca17c3b7802c4959301c7866f4ff31"
+      },
+      "tools/native_live_directory/native_live_fixture.c": {
+        "bytes": 11383,
+        "sha256": "b0ab8aa0fbc3f76be237e0f632576241c59342a4ae55b8fd4c43b5506e51cbde"
+      },
+      "tools/native_live_directory/qualify_native_live_directory.py": {
+        "bytes": 7749,
+        "sha256": "745bf714fae48d2c20762f7405d3de414f8f8c504d5a7b06acfb2574a6987771"
+      },
+      "tools/native_live_directory/retained-ARM-artifact-11878700818.json": {
+        "bytes": 8733,
+        "sha256": "7e0e40eaba31112ef54160c618ae4dbb2efe4685a30c7c54b9eb33b90e7933a9"
+      },
+      "tools/native_live_directory/test_audit_retained_native_live_directory.py": {
+        "bytes": 4741,
+        "sha256": "bbb765af0413dc73ab4aceb71a250d756eaa4631b59710118846e4e9eabcd01b"
+      },
+      "tools/native_live_directory/test_native_live_directory_core.py": {
+        "bytes": 22432,
+        "sha256": "16a5fc9cc22fb3ac7815e2ef4e9f2dc53c6517418d704ef7c698d85ec62d4694"
+      }
+    },
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-retained-audit-11879777713/artifact.zip",
+    "sha256": "794c229b48d8494d5dfd50520c3b4222626dccae898718d1990816e26148a07b"
+  },
+  "compiler_provenance_scope": {
+    "LLVM_source_commit": "d8003a456d14a3deb8054cdaa529ffbf02d9b262",
+    "authenticated_target_wrapper_only": {
+      "bytes": 201,
+      "sha256": "953fdbecacf318f6c27ac631c044646f32219f354fe3e9194378dc57a88c0541"
+    },
+    "driver_dry_run": {
+      "bytes": 6208,
+      "sha256": "a26b451d5be398809cfcdf07a64b008e759d3cff814b10f8038a78bf75c738eb"
+    },
+    "exact_original_version_output": {
+      "bytes": 345,
+      "sha256": "835f1507a752737c6b98c8d2a16d58dc47e33eb4b9cc9b473beae6349678167d"
+    },
+    "executed_linker": false,
+    "nuance": "The201-byte NDK.compiler pin authenticates the aarch64 target script, not clang18 executable payload. Original artifact did not record full compiler machinecode. Retained SO/static fixture whole bytes are independently authenticated.",
+    "original_full_Clang_machinecode_equality_claimed": false,
+    "original_full_Clang_machinecode_pin_available": false,
+    "primary_source": {
+      "bytes": 104088,
+      "sha256": "3a11a5bf60be20136d9f80cf6e145c36a00dbe6ed568fd3469204cf3639bce19"
+    },
+    "source_properties": {
+      "bytes": 108,
+      "sha256": "70f1c5165e6d997b18782a49cff71da7a3caacd0c4cd811da24c43359fb83cf6"
+    }
+  },
+  "decoded_actual_CI_job_log": {
+    "bytes": 27911,
+    "failures": 0,
+    "fresh_readonly_tests": 13,
+    "native_component_recompile_or_reexecute": false,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-independent-review/retained-final-CI-job.log",
+    "sha256": "308d58578017e75ad2f86f44cef98c1a087625452735c46014cbb91b429df7e1",
+    "skips": 0
+  },
+  "native_Game_consumer_registration": false,
+  "original_component_build_and_execution": {
+    "JNI_byte_identity_retained": true,
+    "actual_passed_components": {
+      "checked_host_JNI_controls": 28,
+      "execution_and_build_owner": "43ac851 / run38531585318 / job115744482237",
+      "host_C_controls": 26,
+      "host_kernel_tests": 42,
+      "original_command_count": 12,
+      "original_overall_status": "failed",
+      "raw_Bionic_observation": {
+        "android_os_or_wine_or_game_qualified": false,
+        "controls_passed": 26,
+        "elapsed_seconds": 0.081259946,
+        "failures": 0,
+        "libc": "Bionic",
+        "metadata_requests": 1165,
+        "peak_owned_heap_bytes": 638416,
+        "pointer_bytes": 8,
+        "schema": "coh-live-native-kernel-fixture-v1",
+        "shipping_admission": false,
+        "stat_bytes": 128,
+        "uid": 1001
+      },
+      "static_Bionic_ARM64_controls": 26
+    },
+    "fresh_native_execution_claimed": false,
+    "original_failed_report_pin": {
+      "bytes": 17822,
+      "sha256": "9d28449756c06b539d906cf1cc1729233eebe6a63901e9eca80615c57845270f"
+    },
+    "original_failed_report_still_failed": true,
+    "owner": {
+      "all_twelve_native_host_Bionic_compile_execution_commands_exit_zero": true,
+      "artifact_id": 11878700818,
+      "bytes": 1053771,
+      "commit": "43ac85108fa9ebe6916f7fbea74e9f5df85fe529",
+      "failure": "JNI dependency boundary changed",
+      "job_id": 115744482237,
+      "overall_result": "failure",
+      "run_id": 38531585318,
+      "sha256": "6bcbef4ee2c521d0ba4736d8fda8a5723f814667475bced5f65962ff8c1de62d"
+    }
+  },
+  "owner_recovery_receipt": {
+    "bytes": 3410,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-retained-audit-11879777713/recovery.json",
+    "sha256": "f32ba3a0c551fb6b92bd70a4e6b778e67d9f1dfeaef3de2a604a4cb47624415a"
+  },
+  "physical_Thor_startup_improvement": false,
+  "player_data_touched": false,
+  "retained_inspection_report": {
+    "actual_status": "passed-retained-component-inspection",
+    "pin": {
+      "bytes": 6437,
+      "sha256": "d58516498f7bded2c9681293a0090809b0704c8d5acebc74a97ecb2ba14f5690"
+    },
+    "raw_flags": {
+      "Android_Wine_FEX_PRoot_qualified": false,
+      "compilation_or_fixture_reexecution": false,
+      "native_Game_registered": false,
+      "physical_Thor_improvement_demonstrated": false,
+      "shipping_admission": false
+    }
+  },
+  "reviewed_utc": "2026-10-14T08:31:51.160523+00:00",
+  "schema": "coh-live-retained-ARM-actual-artifact-independent-review-v1",
+  "shipping_admission": false,
+  "source_files": {
+    ".github/workflows/android-native-live-directory-arm-037.yml": {
+      "bytes": 2359,
+      "sha256": "15c09d6aafd1eb946828b3c64b28838a747735ee4c435ceb288f52a24a19dc18"
+    },
+    "tools/native_live_directory/NativeLiveDirectory.java": {
+      "bytes": 1119,
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    },
+    "tools/native_live_directory/NativeLiveDirectoryFixture.java": {
+      "bytes": 5877,
+      "sha256": "fdc89a03cbf44afc17a08e8f11af0a23366127e2616bb89300c347ce7f11fc1c"
+    },
+    "tools/native_live_directory/README.md": {
+      "bytes": 5216,
+      "sha256": "df7dfcb184f57b47bd7519917edf433093799d7b8da4962b0d19113d0b76fd04"
+    },
+    "tools/native_live_directory/audit_retained_native_live_directory.py": {
+      "bytes": 10938,
+      "sha256": "82f24c24d9dcab05a534b6be1101579e87c4a6b79bce480aefaf870da197dc48"
+    },
+    "tools/native_live_directory/coh_live_directory_core.c": {
+      "bytes": 22987,
+      "sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c"
+    },
+    "tools/native_live_directory/coh_live_directory_core.h": {
+      "bytes": 3125,
+      "sha256": "a1f2142a093ea475286b04ed8fbea293cd18640daae8125b656620402e3b728d"
+    },
+    "tools/native_live_directory/coh_live_directory_jni.c": {
+      "bytes": 9835,
+      "sha256": "397190cf97af337f5eb0a6bec6d38cf79d58eecb7cd214e16378b575469d8c6b"
+    },
+    "tools/native_live_directory/native_core_faults.c": {
+      "bytes": 2177,
+      "sha256": "3d2430507d2533b2cf794cbd239ccaf7e5ca17c3b7802c4959301c7866f4ff31"
+    },
+    "tools/native_live_directory/native_live_fixture.c": {
+      "bytes": 11383,
+      "sha256": "b0ab8aa0fbc3f76be237e0f632576241c59342a4ae55b8fd4c43b5506e51cbde"
+    },
+    "tools/native_live_directory/qualify_native_live_directory.py": {
+      "bytes": 7749,
+      "sha256": "745bf714fae48d2c20762f7405d3de414f8f8c504d5a7b06acfb2574a6987771"
+    },
+    "tools/native_live_directory/retained-ARM-artifact-11878700818.json": {
+      "bytes": 8733,
+      "sha256": "7e0e40eaba31112ef54160c618ae4dbb2efe4685a30c7c54b9eb33b90e7933a9"
+    },
+    "tools/native_live_directory/test_audit_retained_native_live_directory.py": {
+      "bytes": 4741,
+      "sha256": "bbb765af0413dc73ab4aceb71a250d756eaa4631b59710118846e4e9eabcd01b"
+    },
+    "tools/native_live_directory/test_native_live_directory_core.py": {
+      "bytes": 22432,
+      "sha256": "16a5fc9cc22fb3ac7815e2ef4e9f2dc53c6517418d704ef7c698d85ec62d4694"
+    }
+  },
+  "source_freeze": {
+    "bytes": 4643,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-retained-audit-source-freeze-revision-2.json",
+    "sha256": "7665f7a54ae98688df8d8f586c11b0627d3a1ccf280ad99f1bb76050e012e496"
+  },
+  "status": "passed-independent-actual-retained-component-inspection"
+}

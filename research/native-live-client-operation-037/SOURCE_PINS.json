@@ -1,0 +1,196 @@
+{
+  "files": [
+    {
+      "bytes": 7815,
+      "gitBlobSha1": "24b33c33c379e95c00f4ca4e79f9faae283b684c",
+      "repositoryPath": "research/native-live-client-operation-037/README.md",
+      "sha256": "5081ec13d3ad50a1e88963f891bcee3a8aa97b8c6b11ebceb27cd606489c2c5a",
+      "stageRelativePath": "README.md"
+    },
+    {
+      "bytes": 12719,
+      "gitBlobSha1": "e23f169528cc359ea88554e37f91ced4acbc2c5e",
+      "repositoryPath": "research/native-live-client-operation-037/android/guest/client_live_directory_control.py",
+      "sha256": "596f7bc6523ed6da95d1a162c1d332fa2f77ccfa1aa651d7096fdfa86ad923c3",
+      "stageRelativePath": "android/guest/client_live_directory_control.py"
+    },
+    {
+      "bytes": 22515,
+      "gitBlobSha1": "fa7c5b6c3e254bb2b48a1744d2cc2963d1ca0b5e",
+      "repositoryPath": "research/native-live-client-operation-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java",
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c",
+      "stageRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java"
+    },
+    {
+      "bytes": 30653,
+      "gitBlobSha1": "5df6372f78e607cd063d1388374507cdff02fe9e",
+      "repositoryPath": "research/native-live-client-operation-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java",
+      "sha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a",
+      "stageRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java"
+    },
+    {
+      "bytes": 16096,
+      "gitBlobSha1": "41d5131ec6beeb651dcbb94bca7907651ea3fed8",
+      "repositoryPath": "research/native-live-client-operation-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java",
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0",
+      "stageRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java"
+    },
+    {
+      "bytes": 199541,
+      "gitBlobSha1": "aa6f77b8fcb805b97b3609bc8e4bc0bf3c12f77b",
+      "repositoryPath": "research/native-live-client-operation-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+      "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9",
+      "stageRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java"
+    },
+    {
+      "bytes": 1119,
+      "gitBlobSha1": "4009351cd7ff7474dc8287239a554a5556a7346d",
+      "repositoryPath": "research/native-live-client-operation-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java",
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b",
+      "stageRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java"
+    },
+    {
+      "bytes": 12779,
+      "gitBlobSha1": "bdc507eedd647e3f7ab1d8c1214276eb1c86ce10",
+      "repositoryPath": "research/native-live-client-operation-037/qualification.json",
+      "sha256": "eda92ebd8fcc8b833d69aa23f286540773bd19ee3fab45bafea7f297ca293f88",
+      "stageRelativePath": "qualification.json"
+    },
+    {
+      "bytes": 1219,
+      "gitBlobSha1": "0beb8a4d0a031ef927beec4f37d21dda55fd9421",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/guest-current-root-32-review.json",
+      "sha256": "05d085455460869b20e83c1e0ade652222fea0737e08afa25e004ebf363bf29d",
+      "stageRelativePath": "qualification/guest-current-root-32-review.json"
+    },
+    {
+      "bytes": 2458,
+      "gitBlobSha1": "28847b982c5e639596b506614836d8d3df78ccd5",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/guest-current-source-freeze.json",
+      "sha256": "b5feb0fbb01c70ddb6d9ca281cbeb9c4879baeee981a2c9a107148a7280b3b58",
+      "stageRelativePath": "qualification/guest-current-source-freeze.json"
+    },
+    {
+      "bytes": 8300,
+      "gitBlobSha1": "1aace088c285284745fde85116201ea46c5164e8",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/historical-operation-revision2-review.json",
+      "sha256": "f11f99e4460fa7f90a61976a1a510180b8eefb9a3184083457ceee9050ad5abe",
+      "stageRelativePath": "qualification/historical-operation-revision2-review.json"
+    },
+    {
+      "bytes": 1988,
+      "gitBlobSha1": "6df06b5e0c6864db81bf64d1987ff6df7085fc6d",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/historical-operation-revision2-source-recovery.json",
+      "sha256": "b0c1ad83a24cdf7be11435a311a9e678fef7269d896bf829e14b01aa10d29c28",
+      "stageRelativePath": "qualification/historical-operation-revision2-source-recovery.json"
+    },
+    {
+      "bytes": 4900,
+      "gitBlobSha1": "0ec9b3008e454546e94799c6971776b335848969",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/namespace-current-36-qualification.json",
+      "sha256": "89b6dbb6b7da17fcab0e0a0cd8172ee797c591c4a1bc49554cc575a096b213e3",
+      "stageRelativePath": "qualification/namespace-current-36-qualification.json"
+    },
+    {
+      "bytes": 914,
+      "gitBlobSha1": "47d358c738d1d0207cd5f60dd2ec2e919206b24b",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/namespace-current-source-freeze.json",
+      "sha256": "4f8cc3e13560861ad1c47e2dd78faf6d2e3825705fb0193d4aea50a057aaeeeb",
+      "stageRelativePath": "qualification/namespace-current-source-freeze.json"
+    },
+    {
+      "bytes": 2176,
+      "gitBlobSha1": "74483f2008c57603448f572533421866f7bcd8e9",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/operation-current-revision3-72-controls.json",
+      "sha256": "4c7abbfeb67da1de5055abaa4b283f66c4fb7f75e2b67a69d479ea829294e58c",
+      "stageRelativePath": "qualification/operation-current-revision3-72-controls.json"
+    },
+    {
+      "bytes": 6924,
+      "gitBlobSha1": "232ed9d1d95aa1f6627ed25c80fab75ef01ac3ec",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/operation-current-revision3-independent-review.json",
+      "sha256": "6101f5d0606eb2f48198ef10cf9d5d37258a887bf068a95ad1ea5ce0072a34bd",
+      "stageRelativePath": "qualification/operation-current-revision3-independent-review.json"
+    },
+    {
+      "bytes": 2521,
+      "gitBlobSha1": "0137213a92a5033e1f941fee82e00188b5c93f0f",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/operation-current-revision3-source-freeze.json",
+      "sha256": "0c1b9ef069399c12306e9818508231a8ceeaeda54983bb290c6c8430796638e7",
+      "stageRelativePath": "qualification/operation-current-revision3-source-freeze.json"
+    },
+    {
+      "bytes": 10093,
+      "gitBlobSha1": "45339fce5a7bb070ea3bba1cf4f4743891b74892",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/original-host-helper-build-receipt.json",
+      "sha256": "1b7feb737cc335f34775caff0ad769508c03a369f18d9fd83d2f92877f136fe6",
+      "stageRelativePath": "qualification/original-host-helper-build-receipt.json"
+    },
+    {
+      "bytes": 2667,
+      "gitBlobSha1": "ac3be14259ecddac81bfb2b2c68d8069aeebc555",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/real-host-JNI-current-5-controls.json",
+      "sha256": "bbdf6f4d356a190752a4b529b6b06e71c79500f5a1a9378eb4869cd98668ac46",
+      "stageRelativePath": "qualification/real-host-JNI-current-5-controls.json"
+    },
+    {
+      "bytes": 16625,
+      "gitBlobSha1": "264f8b05976f74ea517a389ea4d53392e0679db4",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/retained-ARM-component-independent-review.json",
+      "sha256": "9be0dd89361f518b81bb028ab4f2e195bba8c8f88e5cf3fc01ae04fb69eaee74",
+      "stageRelativePath": "qualification/retained-ARM-component-independent-review.json"
+    },
+    {
+      "bytes": 2137,
+      "gitBlobSha1": "1498df958566b20dcb80b08d8f1e5198968cdb13",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/service-current-71-controls.json",
+      "sha256": "7890f6144ba7cdbc98d3d544d34f5fa40d44786bdee5eaa95a966cdb1284379a",
+      "stageRelativePath": "qualification/service-current-71-controls.json"
+    },
+    {
+      "bytes": 6592,
+      "gitBlobSha1": "e5b65e450bf40323b147daba748b11d3e464d5bd",
+      "repositoryPath": "research/native-live-client-operation-037/qualification/staged-layout-216-controls.json",
+      "sha256": "3d703e85ae64a4e778270c9327c9af236547c0c07e7fd7eabfb49822f52240ec",
+      "stageRelativePath": "qualification/staged-layout-216-controls.json"
+    },
+    {
+      "bytes": 21587,
+      "gitBlobSha1": "8fbff19cd857a7f22632697a49edb6a8c247ecc5",
+      "repositoryPath": "research/native-live-client-operation-037/tools/android/interactive/test_client_guest_namespace.py",
+      "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77",
+      "stageRelativePath": "tools/android/interactive/test_client_guest_namespace.py"
+    },
+    {
+      "bytes": 17012,
+      "gitBlobSha1": "803e035b1f89030db3dd0540da4e87f2ca3b50d8",
+      "repositoryPath": "research/native-live-client-operation-037/tools/android/interactive/test_client_live_directory_control.py",
+      "sha256": "c85d4ebcaee5991766d125aee66847d37862630d8b4168c801d3a106d04a20cc",
+      "stageRelativePath": "tools/android/interactive/test_client_live_directory_control.py"
+    },
+    {
+      "bytes": 36618,
+      "gitBlobSha1": "1518496072638d5c0d54964160936fb5720c4cba",
+      "repositoryPath": "research/native-live-client-operation-037/tools/android/interactive/test_client_live_directory_operation.py",
+      "sha256": "da72d28b5e5a453dddb0b94f86c4bd86aed27b048155c63655be19840c43a415",
+      "stageRelativePath": "tools/android/interactive/test_client_live_directory_operation.py"
+    },
+    {
+      "bytes": 13197,
+      "gitBlobSha1": "448ffc89971edd5a3c158ea7554eb41fce993c10",
+      "repositoryPath": "research/native-live-client-operation-037/tools/android/interactive/test_client_live_directory_operation_jni.py",
+      "sha256": "302ecdd27b1ea0219b9bd3eb8f346c5261fdf0b9696ec861c0918f54a9dc3353",
+      "stageRelativePath": "tools/android/interactive/test_client_live_directory_operation_jni.py"
+    },
+    {
+      "bytes": 24329,
+      "gitBlobSha1": "c251f1aa5db0924f039653de634112d781222eb9",
+      "repositoryPath": "research/native-live-client-operation-037/tools/android/interactive/test_client_live_directory_service.py",
+      "sha256": "5ffeb08e28d35441c73e2478f897207df8870cb05384a72b14403468e8252cad",
+      "stageRelativePath": "tools/android/interactive/test_client_live_directory_service.py"
+    }
+  ],
+  "schema": "coh_closed_source_stage_file_pins_v1",
+  "scope": "source and JSON receipts only; no native binaries or credentials",
+  "thisPinsDocumentExcludedFromOwnRecursivePinList": true
+}

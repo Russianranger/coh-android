@@ -1,0 +1,47 @@
+{
+  "tests": 72,
+  "passed": 72,
+  "errors": 0,
+  "failures": 0,
+  "skipped": 0,
+  "seconds": 11.29584,
+  "ResourceWarning_is_error": true,
+  "log": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/independent-revision-3-statistics-72-controls.log",
+  "log_pin": {
+    "bytes": 9550,
+    "sha256": "bcf85e37dd76808fd64debf65c6f1fc23a2728a8b8e3e21dca44945d818a03a6"
+  },
+  "source_pins": {
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java": {
+      "bytes": 30653,
+      "sha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a"
+    },
+    "tools/android/interactive/test_client_live_directory_operation.py": {
+      "bytes": 36618,
+      "sha256": "da72d28b5e5a453dddb0b94f86c4bd86aed27b048155c63655be19840c43a415"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java": {
+      "bytes": 22515,
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java": {
+      "bytes": 1119,
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java": {
+      "bytes": 16096,
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0"
+    },
+    "tools/android/interactive/test_client_guest_namespace.py": {
+      "bytes": 21587,
+      "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+      "bytes": 199541,
+      "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9"
+    }
+  },
+  "source_pins_pre_post_unchanged": true,
+  "prior_two_sources_and_exact_unified_diff_authenticated": true,
+  "scope": "Actual release-8 JVM and TCP operation controls; native metadata/calls/activation are typed mocks. No JNI or device result."
+}

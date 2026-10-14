@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "native_registration_allowed": false,
+  "qualification": {
+    "bytes": 4900,
+    "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/client-guest-namespace-java-qualification.json",
+    "sha256": "89b6dbb6b7da17fcab0e0a0cd8172ee797c591c4a1bc49554cc575a096b213e3"
+  },
+  "repository_head": "270ad89b4f2f85333692f54446901cc4da3cb4e4",
+  "root_metadata_verified": false,
+  "source_records": [
+    {
+      "bytes": 22515,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java",
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c"
+    },
+    {
+      "bytes": 21587,
+      "path": "tools/android/interactive/test_client_guest_namespace.py",
+      "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77"
+    }
+  ],
+  "status": "source_frozen_dormant_provenance_only"
+}

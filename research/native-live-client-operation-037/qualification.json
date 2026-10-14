@@ -1,0 +1,236 @@
+{
+  "activationGates": {
+    "APKPublication": false,
+    "Android": false,
+    "FEX": false,
+    "GameNativeConsumerRegistration": false,
+    "PRoot": false,
+    "Wine": false,
+    "devicePerformance": false,
+    "externalActivation": false,
+    "productionRuntimeCaller": false,
+    "shipping": false
+  },
+  "baseRepositoryCommit": "270ad89b4f2f85333692f54446901cc4da3cb4e4",
+  "baselineReproductionFixture": {
+    "bytes": 199541,
+    "originalRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+    "role": "unchanged finalized-command reproduction fixture only; no new Runtime integration",
+    "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9",
+    "stagedRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java"
+  },
+  "countsPolicy": "Count each current case once. Do not add overlapping reruns or superseded revisions. Layout verification, if executed, repeats these same216cases and is a separate execution provenance.",
+  "currentCountsByModule": {
+    "test_client_guest_namespace": 36,
+    "test_client_live_directory_control": 32,
+    "test_client_live_directory_operation": 72,
+    "test_client_live_directory_operation_jni": 5,
+    "test_client_live_directory_service": 71
+  },
+  "currentUniqueQualifiedControlCases": 216,
+  "externalHostJniReproduction": {
+    "binaryIncludedInStage": false,
+    "environmentVariable": "COH_LIVE_TEST_JNI_RECEIPT",
+    "originalHelperBytes": 35664,
+    "originalHelperSha256": "b264121c80afb11ff84248b98099939a6657251c56bd2175174f260615d45708",
+    "originalReceiptSha256": "1b7feb737cc335f34775caff0ad769508c03a369f18d9fd83d2f92877f136fe6",
+    "receiptRequiresOriginalAdjacentBinary": true
+  },
+  "nativeSdkOrHelperBuildTriggered": false,
+  "productionRuntimeChanged": false,
+  "profileDatabaseAssetsOrPlayerAccessed": false,
+  "recordedUtc": "2026-10-14T08:52:00.139200+00:00",
+  "retainedArmComponent": {
+    "actualAndroidPackagedRuntimeOrGameAuthority": false,
+    "artifactId": 11879777713,
+    "jniArmBytes": 29992,
+    "jniArmSha256": "3d21ece5894b46e9315eb14c3cc12f8d2fcbd3082f99031b4bcbde3e03d5e282",
+    "nativeComponentsRebuiltInCurrentReadOnlyAudit": false,
+    "originalBuildCommit": "43ac85108fa9ebe6916f7fbea74e9f5df85fe529",
+    "originalBuildJob": 115744482237,
+    "originalBuildRun": 38531585318,
+    "originalOverallResult": "failure",
+    "rawCompletedComponentControls": {
+      "hostC": 26,
+      "hostCheckedJNI": 28,
+      "hostKernel": 42,
+      "staticBionicARM64": 26
+    },
+    "readOnlyAuditCommit": "2d030678e7013891547ecd7d35fc0cf40ffabff9",
+    "readOnlyAuditRun": 38534800834,
+    "theseInheritedCasesCountedInCurrent216": false
+  },
+  "schema": "coh_native_live_client_operation_closed_source_stage_v1",
+  "scope": {
+    "descriptor": "actual release8 JVM, fixed launcher command fixture; no native root/authorization authority",
+    "guest": "actual isolated private-file Python controls with controlled external ExpectedContext",
+    "jni": "actual hostJNI/kernel/TCP reusing exact original helper with controlled activation",
+    "operation": "actual release8 JVM/TCP with typed metadata/native/activation mocks",
+    "service": "actual release8 JVM/TCP with typed native backend mock"
+  },
+  "selectedReceipts": [
+    {
+      "bytes": 4900,
+      "scope": "current36descriptor",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/client-guest-namespace-java-qualification.json",
+      "sha256": "89b6dbb6b7da17fcab0e0a0cd8172ee797c591c4a1bc49554cc575a096b213e3",
+      "stagedRelativePath": "qualification/namespace-current-36-qualification.json"
+    },
+    {
+      "bytes": 914,
+      "scope": "current descriptor source",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/client-guest-namespace-java-source-freeze.json",
+      "sha256": "4f8cc3e13560861ad1c47e2dd78faf6d2e3825705fb0193d4aea50a057aaeeeb",
+      "stagedRelativePath": "qualification/namespace-current-source-freeze.json"
+    },
+    {
+      "bytes": 2137,
+      "scope": "current71Service exactbytes only; guest32 in this earliercombined receipt superseded and excluded from216",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/guest-handoff-plus-final-Thread-JVM-controls.json",
+      "sha256": "7890f6144ba7cdbc98d3d544d34f5fa40d44786bdee5eaa95a966cdb1284379a",
+      "stagedRelativePath": "qualification/service-current-71-controls.json"
+    },
+    {
+      "bytes": 2458,
+      "scope": "current guest32 exactsource",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/guest-handoff-final-source-freeze.json",
+      "sha256": "b5feb0fbb01c70ddb6d9ca281cbeb9c4879baeee981a2c9a107148a7280b3b58",
+      "stagedRelativePath": "qualification/guest-current-source-freeze.json"
+    },
+    {
+      "bytes": 1219,
+      "scope": "current32guest",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/root-guest32-independent-review.json",
+      "sha256": "05d085455460869b20e83c1e0ade652222fea0737e08afa25e004ebf363bf29d",
+      "stagedRelativePath": "qualification/guest-current-root-32-review.json"
+    },
+    {
+      "bytes": 6924,
+      "scope": "current72operation independentreview",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/independent-revision-3-final-statistics-source-review.json",
+      "sha256": "6101f5d0606eb2f48198ef10cf9d5d37258a887bf068a95ad1ea5ce0072a34bd",
+      "stagedRelativePath": "qualification/operation-current-revision3-independent-review.json"
+    },
+    {
+      "bytes": 2176,
+      "scope": "current72operation",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/independent-revision-3-statistics-72-controls.json",
+      "sha256": "4c7abbfeb67da1de5055abaa4b283f66c4fb7f75e2b67a69d479ea829294e58c",
+      "stagedRelativePath": "qualification/operation-current-revision3-72-controls.json"
+    },
+    {
+      "bytes": 2521,
+      "scope": "current operation source",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-directory-operation-source-freeze-revision-3.json",
+      "sha256": "0c1b9ef069399c12306e9818508231a8ceeaeda54983bb290c6c8430796638e7",
+      "stagedRelativePath": "qualification/operation-current-revision3-source-freeze.json"
+    },
+    {
+      "bytes": 2667,
+      "scope": "current5actualhostJNI/kernel/TCP finalcounterretention; externalactivation controlled",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/real-JNI-kernel-TCP-revision-3-retained-controls.json",
+      "sha256": "bbdf6f4d356a190752a4b529b6b06e71c79500f5a1a9378eb4869cd98668ac46",
+      "stagedRelativePath": "qualification/real-host-JNI-current-5-controls.json"
+    },
+    {
+      "bytes": 8300,
+      "scope": "historical63plus5 originalrevision2 scope; not countedcurrent216",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/independent-operation63-plus-realJNI5-source-review.json",
+      "sha256": "f11f99e4460fa7f90a61976a1a510180b8eefb9a3184083457ceee9050ad5abe",
+      "stagedRelativePath": "qualification/historical-operation-revision2-review.json"
+    },
+    {
+      "bytes": 1988,
+      "scope": "historical byteexact prior source recovery; current worktree untouched",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/revision-2-source-recovery.json",
+      "sha256": "b0c1ad83a24cdf7be11435a311a9e678fef7269d896bf829e14b01aa10d29c28",
+      "stagedRelativePath": "qualification/historical-operation-revision2-source-recovery.json"
+    },
+    {
+      "bytes": 10093,
+      "scope": "inherited authentic hosthelper build; reusedbycurrent5JNI; no newnativebuild",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-host-qualification-revision-4/qualification.json",
+      "sha256": "1b7feb737cc335f34775caff0ad769508c03a369f18d9fd83d2f92877f136fe6",
+      "stagedRelativePath": "qualification/original-host-helper-build-receipt.json"
+    },
+    {
+      "bytes": 16625,
+      "scope": "current2d030678 read-only component audit; inherited43ac851 actualbuild remainsfailedoverall",
+      "selectedSourcePath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-independent-review/review-actual-retained-ARM-artifact-11879777713.json",
+      "sha256": "9be0dd89361f518b81bb028ab4f2e195bba8c8f88e5cf3fc01ae04fb69eaee74",
+      "stagedRelativePath": "qualification/retained-ARM-component-independent-review.json"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "bytes": 22515,
+      "originalRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java",
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c",
+      "stagedRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java"
+    },
+    {
+      "bytes": 1119,
+      "originalRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java",
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b",
+      "stagedRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java"
+    },
+    {
+      "bytes": 16096,
+      "originalRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java",
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0",
+      "stagedRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java"
+    },
+    {
+      "bytes": 30653,
+      "originalRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java",
+      "sha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a",
+      "stagedRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java"
+    },
+    {
+      "bytes": 12719,
+      "originalRelativePath": "android/guest/client_live_directory_control.py",
+      "sha256": "596f7bc6523ed6da95d1a162c1d332fa2f77ccfa1aa651d7096fdfa86ad923c3",
+      "stagedRelativePath": "android/guest/client_live_directory_control.py"
+    },
+    {
+      "bytes": 21587,
+      "originalRelativePath": "tools/android/interactive/test_client_guest_namespace.py",
+      "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77",
+      "stagedRelativePath": "tools/android/interactive/test_client_guest_namespace.py"
+    },
+    {
+      "bytes": 24329,
+      "originalRelativePath": "tools/android/interactive/test_client_live_directory_service.py",
+      "sha256": "5ffeb08e28d35441c73e2478f897207df8870cb05384a72b14403468e8252cad",
+      "stagedRelativePath": "tools/android/interactive/test_client_live_directory_service.py"
+    },
+    {
+      "bytes": 36618,
+      "originalRelativePath": "tools/android/interactive/test_client_live_directory_operation.py",
+      "sha256": "da72d28b5e5a453dddb0b94f86c4bd86aed27b048155c63655be19840c43a415",
+      "stagedRelativePath": "tools/android/interactive/test_client_live_directory_operation.py"
+    },
+    {
+      "bytes": 13197,
+      "originalRelativePath": "tools/android/interactive/test_client_live_directory_operation_jni.py",
+      "sha256": "302ecdd27b1ea0219b9bd3eb8f346c5261fdf0b9696ec861c0918f54a9dc3353",
+      "stagedRelativePath": "tools/android/interactive/test_client_live_directory_operation_jni.py"
+    },
+    {
+      "bytes": 17012,
+      "originalRelativePath": "tools/android/interactive/test_client_live_directory_control.py",
+      "sha256": "c85d4ebcaee5991766d125aee66847d37862630d8b4168c801d3a106d04a20cc",
+      "stagedRelativePath": "tools/android/interactive/test_client_live_directory_control.py"
+    }
+  ],
+  "stageRoot": "research/native-live-client-operation-037",
+  "stagedLayoutVerification": {
+    "bytes": 6592,
+    "currentCasesRepeated": 216,
+    "nativeBuild": false,
+    "path": "qualification/staged-layout-216-controls.json",
+    "sha256": "3d703e85ae64a4e778270c9327c9af236547c0c07e7fd7eabfb49822f52240ec",
+    "uniqueCurrentCaseCountStill": 216
+  },
+  "status": "prepared_closed_source_only_not_published"
+}

@@ -1,0 +1,114 @@
+{
+  "AndroidQualificationGranted": false,
+  "actualJniRevision3Replay": "Root owns the adapted actual JNI 5 composition controls. Not rerun by this reviewer; the previous revision 2 actual JNI result is historical and is not a revision 3 result.",
+  "allSevenSourcePinsPrePostUnchanged": true,
+  "artifactActivationAdded": false,
+  "decision": "Approved revision 3 two-file final-statistics lifetime correction for closed-stage source persistence. No production or Android activation granted.",
+  "delta": {
+    "bytes": 20055,
+    "exactUnifiedDiffIndependentlyReconstructed": true,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/revision-2-to-revision-3-statistics.patch",
+    "sha256": "e848d58879d9b6ebef90660e14b2a773e3e28a0fb3eba6b3119736ee717a6af9"
+  },
+  "dependencies": [
+    {
+      "bytes": 22515,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java",
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c"
+    },
+    {
+      "bytes": 1119,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java",
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    },
+    {
+      "bytes": 16096,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java",
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0"
+    },
+    {
+      "bytes": 21587,
+      "path": "tools/android/interactive/test_client_guest_namespace.py",
+      "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77"
+    },
+    {
+      "bytes": 199541,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+      "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9"
+    }
+  ],
+  "devicePerformanceOrRamClaim": false,
+  "freshControls": {
+    "ResourceWarning_is_error": true,
+    "bytes": 2176,
+    "errors": 0,
+    "failures": 0,
+    "log": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/independent-revision-3-statistics-72-controls.log",
+    "log_pin": {
+      "bytes": 9550,
+      "sha256": "bcf85e37dd76808fd64debf65c6f1fc23a2728a8b8e3e21dca44945d818a03a6"
+    },
+    "passed": 72,
+    "prior_two_sources_and_exact_unified_diff_authenticated": true,
+    "receipt": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/independent-revision-3-statistics-72-controls.json",
+    "scope": "Actual release-8 JVM and TCP operation controls; native metadata/calls/activation are typed mocks. No JNI or device result.",
+    "seconds": 11.29584,
+    "sha256": "4c7abbfeb67da1de5055abaa4b283f66c4fb7f75e2b67a69d479ea829294e58c",
+    "skipped": 0,
+    "source_pins_pre_post_unchanged": true,
+    "tests": 72
+  },
+  "notFreshlyRerun": [
+    "Standalone 36 descriptor controls",
+    "Standalone 71 Service controls",
+    "Native host core/JNI compilation",
+    "Android/Bionic/PRoot/Wine/FEX/Game or AYN Thor tests"
+  ],
+  "ownedFiles": [
+    {
+      "bytes": 30653,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java",
+      "sha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a"
+    },
+    {
+      "bytes": 36618,
+      "path": "tools/android/interactive/test_client_live_directory_operation.py",
+      "sha256": "da72d28b5e5a453dddb0b94f86c4bd86aed27b048155c63655be19840c43a415"
+    }
+  ],
+  "priorSourceRecovery": {
+    "bytes": 1988,
+    "original63Plus5ResultScopeRetained": true,
+    "previousIndependentReview": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/independent-operation63-plus-realJNI5-source-review.json",
+    "previousIndependentReviewPin": {
+      "bytes": 8300,
+      "sha256": "f11f99e4460fa7f90a61976a1a510180b8eefb9a3184083457ceee9050ad5abe"
+    },
+    "priorResultsNotRelabelledToRevision3": true,
+    "receipt": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/revision-2-source-recovery.json",
+    "recoveredTwoFullSourcesAuthenticatedAgainstOriginalRevision2Freeze": true,
+    "sha256": "b0c1ad83a24cdf7be11435a311a9e678fef7269d896bf829e14b01aa10d29c28"
+  },
+  "productionRuntimeCallAdded": false,
+  "providerOrPlayerOrSqlAccess": false,
+  "reviewFindings": [
+    "Owned cursor cleanup finishes before readStatistics invokes the native six-counter observation; api.closeNamespace is in the following finally block and is attempted even when observation or snapshot allocation fails.",
+    "Final fallback snapshot is preinitialized within the factory-owned construction cleanup boundary. IOException, OOME and invalid array length/negative counters/heap bounds are optional omissions with empty values, never a validated counter claim.",
+    "The omission stores only a capped exception class name, never the throwable message. Even omission construction failure falls back to the preallocated bounded generic snapshot.",
+    "The original native post-advance failure remains the service failure, with cleanup failures tracked independently; optional counter exceptions are not substituted for it and cannot authorize cursor retries.",
+    "The synchronized backend closes only its namespace, records finalStatistics before releasing it, and returns that immutable final snapshot on subsequent calls without native calls. Final values use a privately created map of immutable Longs; native source-array mutation and attempted map modification cannot alter the snapshot.",
+    "Normal authenticated peer EOF and explicit owner close both retain final counter evidence, close owned cursor/namespace once, and leave the normal operation successful when only optional statistics fail.",
+    "Diagnostic descriptor labels CURRENT versus final capture and omissions, and explicitly scopes heap values to the observation before namespace free. Statistics are entry metadata/core owned heap, not total filesystem calls, process RSS or device memory.",
+    "Admission, six external activation gates, runtime identity, resolved-path authority, credential handoff, ordinary native error poisoning and cleanup ownership are unchanged in the authenticated two-file delta."
+  ],
+  "reviewedUtc": "2026-10-14T08:38:58.864575+00:00",
+  "reviewer": "/root/ci_recovery_review",
+  "reviewerMutatedProjectSource": false,
+  "reviewerNativeBuilds": 0,
+  "schema": "coh_client_live_directory_final_statistics_independent_review_v1",
+  "sourceFreeze": {
+    "bytes": 2521,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-directory-operation-source-freeze-revision-3.json",
+    "sha256": "0c1b9ef069399c12306e9818508231a8ceeaeda54983bb290c6c8430796638e7"
+  }
+}

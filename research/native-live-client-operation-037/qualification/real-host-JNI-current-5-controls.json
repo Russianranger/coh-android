@@ -1,0 +1,59 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "actual_host_JNI_kernel_TCP_and_final_counter_retention_with_controlled_activation",
+  "current_tests_run": 5,
+  "failed": 0,
+  "skipped": 0,
+  "JNI_warnings": 0,
+  "log": {
+    "bytes": 974,
+    "sha256": "b2135aa8fe0a542a436b23d3594d497b4cdabe02bb4441b17b1226e67de2c477"
+  },
+  "sources": {
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java": {
+      "bytes": 22515,
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java": {
+      "bytes": 1119,
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java": {
+      "bytes": 16096,
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java": {
+      "bytes": 30653,
+      "sha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a"
+    },
+    "tools/android/interactive/test_client_live_directory_operation_jni.py": {
+      "bytes": 13197,
+      "sha256": "302ecdd27b1ea0219b9bd3eb8f346c5261fdf0b9696ec861c0918f54a9dc3353"
+    }
+  },
+  "original_host_helper_build_receipt": {
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-host-qualification-revision-4/qualification.json",
+    "bytes": 10093,
+    "sha256": "1b7feb737cc335f34775caff0ad769508c03a369f18d9fd83d2f92877f136fe6"
+  },
+  "reused_exact_host_helper": {
+    "bytes": 35664,
+    "sha256": "b264121c80afb11ff84248b98099939a6657251c56bd2175174f260615d45708"
+  },
+  "actual_Android_Wine_FEX_PRoot_Game": false,
+  "player_or_SQL_data_touched": false,
+  "activation_authority": "controlled test only; runtime caller and production gates absent",
+  "final_statistics": "validated after cursor cleanup before namespace free; cursor heap returns to pre-cursor namespace baseline; never totalRSS",
+  "prior_failed_postclose_assertion": {
+    "tests_run": 5,
+    "passed": 2,
+    "failed": 3,
+    "cause": "Test expected total native heap zero while the still-live namespace intentionally remains allocated; corrected baseline comparison; no production source or native binary change",
+    "log": {
+      "bytes": 5068,
+      "sha256": "9defd0d4705ce4c3b19156407db1cf0bba8ed46fe35b84ed094d17d26216f6af"
+    }
+  },
+  "executed_utc": "2026-10-14T08:46:37.822866+00:00"
+}
