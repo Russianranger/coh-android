@@ -27,22 +27,51 @@ unorm8 = _scalar.unorm8
 clamp = _scalar.clamp
 
 
+def _audit_read(path, stage):
+    try:
+        return path.read_bytes()
+    except OSError as error:
+        error.audit_stage = stage
+        raise
+
+
+def stock_grey_declaration(data):
+    """Resolve the actual secondary BasicTexture declaration, not a shader override."""
+    digest = hashlib.sha256(data).hexdigest()
+    if len(data) != 266 or digest != "a225c46b8701da525dd93f76dc455e8eb5f214d1ffc561b682eba9863a3facdc":
+        raise ValueError("stock grey source declaration identity differs")
+    text = data.decode("ascii")
+    block = re.search(r"(?ims)^Texture grey\.tga\s*\n(.*?)^End\s*$", text)
+    if not block:
+        raise ValueError("stock grey source declaration is absent")
+    tokens = [line.strip().lower() for line in block.group(1).splitlines() if line.strip()]
+    if tokens != ["flags truecolor"]:
+        raise ValueError("stock grey source TexOpt body differs")
+    return {"lookup_name": "grey", "source_path": "upstream/i24/data/tricks/btest.txt",
+            "source_sha256": digest, "tokens": tokens, "resolved_texopt_flags": 2,
+            "selected_role": "secondary BasicTexture in Signmetal generic layer",
+            "changes_composite_shader_family": False,
+            "clamp_s": False, "clamp_t": False, "mirror_s": False, "mirror_t": False,
+            "point_sample": False, "no_mip": False,
+            "qualified_mip": 0, "qualified_rgba": [128, 128, 128, 255]}
+
+
 def audit_source_tricks(source_root):
     """Fail closed if the complete immutable trick tree cannot be inspected.
 
     Original trickFromTextureName tries a direct basename and then each parent
     texture directory. Searching only for 'Signmetal' would miss directory
     overrides. This check reads and verifies every tracked source trick blob.
-    It verifies the absence of all selected direct/directory overrides for the
-    default Signmetal/grey/white families, and the actual modern_bench/mbench
-    declarations. It is a bounded source declaration audit, not a complete
+    It verifies the absence of selected direct/directory overrides for default
+    Signmetal/white, the actual stock-grey Truecolor declaration, and the actual
+    modern_bench/mbench declarations. It is a bounded declaration audit, not a complete
     original TexOpt parser or an Atlas light-grid execution.
     """
     source_root = Path(source_root).resolve()
     pins = json.loads(Path(__file__).with_name("source-material-pins.json").read_text())
     source_file_checks = []
     for identity in pins["source_files"]:
-        data = (source_root / identity["path"]).read_bytes()
+        data = _audit_read(source_root / identity["path"], "primary-source-identity")
         digest = hashlib.sha256(data).hexdigest()
         if len(data) != identity["bytes"] or digest != identity["sha256"]:
             raise ValueError("original primary material source differs: " + identity["path"])
@@ -63,7 +92,7 @@ def audit_source_tricks(source_root):
     for entry in entries:
         blob_sha, relative = entry.split("\t", 1)
         path = source_root / relative
-        data = path.read_bytes()
+        data = _audit_read(path, "complete-trick-blob-identity")
         digest = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
         if digest != blob_sha:
             raise ValueError("original trick source blob differs: " + relative)
@@ -87,11 +116,15 @@ def audit_source_tricks(source_root):
         "grey": ["grey", "world/filler/", "world/"],
         "white": ["white", "world/filler/", "world/"],
     }
+    grey_path = "upstream/i24/data/tricks/btest.txt"
+    grey = stock_grey_declaration(_audit_read(source_root / grey_path, "stock-grey-declaration"))
     for alias, candidates in lookup_names.items():
         found = {candidate: declarations[candidate] for candidate in candidates if candidate in declarations}
-        if found:
+        expected = {"grey": [grey_path]} if alias == "grey" else {}
+        if found != expected:
             raise ValueError("unexpected selected source material override for " + alias + ": " + repr(found))
-        matched.append({"alias": alias, "lookup_candidates": candidates, "source_matches": [],
+        matched.append({"alias": alias, "lookup_candidates": candidates,
+                        "source_matches": [grey] if alias == "grey" else [],
                         "default_generic": "grey" if alias == "Signmetal" else None})
     required_path = "upstream/i24/data/tricks/streets/elements/streets_misc.txt"
     if declarations.get("modern_bench") != [required_path]:

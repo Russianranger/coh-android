@@ -14,8 +14,24 @@ def main():
     parser.add_argument("--repo-root", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
-    receipt = audit_source_tricks(args.repo_root)
     args.output.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        receipt = audit_source_tricks(args.repo_root)
+    except Exception as error:
+        # Keep a bounded machine-readable failure artifact even when the audit
+        # stops before asset generation. A failure receipt never qualifies a build.
+        pins = json.loads(Path(__file__).with_name("source-material-pins.json").read_text())
+        failure = {"passed": False, "kind": "complete immutable original trick declaration audit",
+                   "stage": getattr(error, "audit_stage", "source-trick-resolution"),
+                   "assets_prepared_by_this_audit": False,
+                   "source_resolution_qualified": False,
+                   "expected_git_tree_sha": pins["tricks_tree"]["git_tree_sha"],
+                   "expected_source_file_count": pins["tricks_tree"]["file_count"],
+                   "error_type": type(error).__name__, "error": str(error)[:2048]}
+        if getattr(error, "filename", None):
+            failure["source_file"] = str(error.filename)[:1024]
+        args.output.write_text(json.dumps(failure, indent=2) + "\n")
+        raise
     args.output.write_text(json.dumps(receipt, indent=2) + "\n")
     print(json.dumps({"passed": receipt["passed"], "source_files_verified": receipt["source_files_verified"],
                       "primary_sources_verified": len(receipt["primary_source_files_verified"]),

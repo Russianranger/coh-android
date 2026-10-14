@@ -205,6 +205,20 @@
     "GEO has no secondaryUV or RGBbuffer; source expands st2 from st1 for oldworldmaterials; no synthetic authoredRGB claimed",
     "Neutralconstantlightingtestsoriginalmaterial arithmetic; it does not reconstruct Atlas ambient/lightgrid/sun or all original runtime renderer choices",
     "Original rt_init source enables SRC_ALPHA/ONE_MINUS_SRC_ALPHA globally; selected opaque actual fragment alpha1 makes controlled disabled geometry blending pixel-equivalent. Analytic half-fade and swatch cases explicitly qualify source-over.",
-    "Original rt_init depthfunc isGL_LEQUAL, preserved bysceneprobe; sourceUV0+UV1 bothVflip1-V afteroldworldmodelst2 copiesst1."
-  ]
+    "Original rt_init depthfunc isGL_LEQUAL, preserved bysceneprobe; sourceUV0+UV1 bothVflip1-V afteroldworldmodelst2 copiesst1.",
+    "Authenticgrey BasicTexture has btest.txt FlagsTruecolor; pin exact266B/SHA and reject extra tokens. It changes neitherSignmetalprimarycomposite family norUV/clamp/mirror/point/mip flags. Actualgrey wrapper alreadyARGB8888flags2, decodedmip0 bytes unchanged."
+  ],
+  "source_stock_grey_texopt": {
+    "source_path": "upstream/i24/data/tricks/btest.txt",
+    "source_sha256": "a225c46b8701da525dd93f76dc455e8eb5f214d1ffc561b682eba9863a3facdc",
+    "source_tokens": [
+      "flags truecolor"
+    ],
+    "resolved_texopt_flags": 2,
+    "selected_role": "secondary BasicTexture in Signmetal generic layer",
+    "composite_shader_family_changed": false,
+    "sampler_flags_changed": false,
+    "qualified_mip0_rgba_changed": false,
+    "original_mipchain_qualified": false
+  }
 }

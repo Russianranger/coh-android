@@ -108,6 +108,12 @@
       "bytes": 18214,
       "sha256": "23297301f34737585d65e39fc8b01445e5b4a8f665ac9cb49e9101f6f2cf299b",
       "git_blob_sha": "fe9480bd52a45006cced14f2c30d3b51cedcd6e9"
+    },
+    {
+      "path": "upstream/i24/data/tricks/btest.txt",
+      "bytes": 266,
+      "sha256": "a225c46b8701da525dd93f76dc455e8eb5f214d1ffc561b682eba9863a3facdc",
+      "git_blob_sha": "73f2e47b13bc2c7e60f7f07704be0195ced81d6e"
     }
   ],
   "tricks_tree": {

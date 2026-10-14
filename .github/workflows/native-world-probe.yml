@@ -38,6 +38,14 @@ jobs:
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
       - name: Recover source-authored world geometry, camera inputs, and source oracles
         run: |
+          mkdir -p native-android/results/world-probe
+          python3 - <<'PYSTAGE'
+          import json, os, pathlib
+          receipt = {'schema': 1, 'phase': 9, 'stage': 'original source material declaration validation',
+                     'status': 'started', 'passed': False, 'source_commit': os.environ['GITHUB_SHA'],
+                     'workflow_run_id': os.environ['GITHUB_RUN_ID']}
+          pathlib.Path('native-android/results/world-probe/source-validation-stage.json').write_text(json.dumps(receipt, indent=2)+'\n')
+          PYSTAGE
           python3 -m pip install Pillow==12.3.0
           python3 native-android/world-probe/contract/verify_source_tricks.py --repo-root . --output native-android/results/world-probe/source-trick-resolution.json
           python3 native-android/tools/world_fixture/acquire.py --output native-android/results/world-corpus

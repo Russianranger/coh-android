@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "phase": 9,
+  "passed": false,
+  "source_commit": "1d9abf85a1ca6494ea49d06278f88de55ba45176",
+  "workflow_run_id": 38488524091,
+  "workflow_job_id": 115607928623,
+  "stage": "complete original trick declaration audit",
+  "error": "unexpected selected source material override for grey: grey declared in upstream/i24/data/tricks/btest.txt",
+  "source_lookup_fail_closed": true,
+  "native_gpu_or_android_execution_attempted": false,
+  "apk_produced": false,
+  "artifact_uploaded": false,
+  "remaining_action": "Resolve authentic stock-grey declaration semantics and retain whole-source audit before native qualification."
+}
