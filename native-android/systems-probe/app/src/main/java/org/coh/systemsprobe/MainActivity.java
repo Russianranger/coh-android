@@ -206,13 +206,23 @@ public final class MainActivity extends Activity {
             final JSONObject value=r;main.post(()->{if(destroyed)return;audioBusy=false;
                 try{value.put("run_id",id).put("reason",reason).put("generation",gen).put("started_after_event",began)
                     .put("completed_at",now()).put("foreground_at_completion",active);}catch(Exception e){throw new IllegalStateException(e);}
-                audioRuns.put(value);while(audioRuns.length()>32)audioRuns.remove(0);if(!value.optBoolean("passed")&&!value.optBoolean("cancelled"))failures++;
+                audioRuns.put(value);while(audioRuns.length()>32)audioRuns.remove(0);if(audioRunFailed(value))failures++;
                 event("audio_complete",object("run_id",id,"passed",value.optBoolean("passed"),"cancelled",value.optBoolean("cancelled"),"closed",value.optBoolean("closed")));
                 refresh();if(autoSmoke&&active)advanceSmoke();
             });
         });
     }
     private void stopAudio(String reason) {nativeCancelAudio();event("audio_cancel_requested",object("reason",reason,"active_backend",nativeAudioActive()));refresh();}
+    private static boolean audioRunFailed(JSONObject run) {
+        if(run==null||!(run.opt("passed") instanceof Boolean)||!(run.opt("cancelled") instanceof Boolean)
+            ||!(run.opt("result") instanceof Number)||!(run.opt("backend_errors") instanceof Number))return true;
+        if(((Number)run.opt("backend_errors")).doubleValue()!=0)return true;
+        double result=((Number)run.opt("result")).doubleValue();
+        // Cancellation is expected only when the native backend returns its
+        // clean CANCELLED result. A later successful run cannot erase errors.
+        return !(run.optBoolean("passed")&&!run.optBoolean("cancelled")&&result==0
+            ||!run.optBoolean("passed")&&run.optBoolean("cancelled")&&result==1);
+    }
     private void advanceSmoke() {
         if(!autoSmoke||!active||audioBusy)return;
         if(smokeStage==0){smokeStage=1;play("autoSmoke_initial");}
@@ -363,8 +373,9 @@ public final class MainActivity extends Activity {
                 .put("qualification_passed",qualified).put("device_audible_confirmation_passed",audibleConfirmed)
                 .put("audible_confirmation_scope",audibleConfirmed?"user reported hearing three sounds":"not confirmed; engine writes do not prove audibility")
                 .put("input_area",inputView==null?object():inputView.area()).put("controls",measuredControls()).put("control_row",measuredControlRow());
-            status.setText((qualified?"SYSTEM GATES PASSED":"QUALIFICATION PENDING")+" — Input / source audio / offline packet checks\n"+
-                (pre?"Engine checks passed. ":"Run input and sound checks; resize and recreate. ")+(home?(transport?"Home/return and input callbacks passed.":"Drag the arrow and press/release a controller button."):"Play sound, press Home while playing, return and play again."));
+            status.setText((qualified?"SYSTEM GATES PASSED":"QUALIFICATION PENDING")+" — Gates 10–12\n"+
+                (!pre?"Run checks, resize and recreate.":home?(transport?"Home/return and callbacks passed.":"Drag arrow and press/release a button."):"Play, then Home during audio; return and play.")+"\n"+
+                "Audio: "+(nativeAudioActive()?"playing":audioBusy?"preparing":"idle")+"  |  Sticks: "+(controllerAxes?"complete":"pending")+"  |  Heard: "+(audibleConfirmed?"confirmed":"pending"));
             status.setTextColor(qualified?Color.rgb(0,104,42):failures>0?Color.rgb(150,20,20):Color.DKGRAY);
             String text=report.toString(2);reportText.setText(text);writeReport(text.getBytes(StandardCharsets.UTF_8));
         }catch(Exception e){status.setText("REPORT ERROR — "+e);status.setTextColor(Color.RED);}

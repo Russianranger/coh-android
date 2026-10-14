@@ -18,9 +18,12 @@ public class InputManager { public interface InputDeviceListener {
 void onInputDeviceAdded(int id);void onInputDeviceChanged(int id);void onInputDeviceRemoved(int id);}}
 ''',
     'android/view/InputDevice.java': '''package android.view;
+import java.util.HashSet;import java.util.Set;
 public class InputDevice {
 public static final int SOURCE_GAMEPAD=0x401,SOURCE_JOYSTICK=0x1000010,SOURCE_DPAD=0x201,SOURCE_KEYBOARD=0x101,SOURCE_TOUCHSCREEN=0x1002;
-public MotionRange getMotionRange(int axis,int source){return null;}
+private final Set<Integer> axes=new HashSet<Integer>();
+public InputDevice(int... declaredAxes){for(int axis:declaredAxes)axes.add(axis);}
+public MotionRange getMotionRange(int axis,int source){return axes.contains(axis)?new MotionRange():null;}
 public static class MotionRange {public float getFlat(){return 0;}}
 }
 ''',
@@ -37,15 +40,19 @@ public int getAction(){return 0;}public int getRepeatCount(){return 0;}
 }
 ''',
     'android/view/MotionEvent.java': '''package android.view;
+import java.util.HashMap;import java.util.Map;
 public class MotionEvent {
 public static final int ACTION_DOWN=0,ACTION_UP=1,ACTION_MOVE=2,ACTION_CANCEL=3,ACTION_POINTER_DOWN=5,ACTION_POINTER_UP=6;
-public static final int AXIS_X=0,AXIS_Y=1,AXIS_Z=11,AXIS_RZ=14,AXIS_HAT_X=15,AXIS_HAT_Y=16;
+public static final int AXIS_X=0,AXIS_Y=1,AXIS_Z=11,AXIS_RX=12,AXIS_RY=13,AXIS_RZ=14,AXIS_HAT_X=15,AXIS_HAT_Y=16;
 private final int action,id,source;private final float x,y;private float[][] history=new float[0][];
+private final Map<Integer,Float> axes=new HashMap<Integer,Float>();private InputDevice device;private int deviceId=-1;
 public MotionEvent(int a,int i,float xx,float yy,int s){action=a;id=i;x=xx;y=yy;source=s;}
 public MotionEvent history(float[][] h){history=h;return this;}
+public MotionEvent device(int id,InputDevice d){deviceId=id;device=d;return this;}
+public MotionEvent axis(int axis,float value){axes.put(axis,value);return this;}
 public int getSource(){return source;}public int getActionMasked(){return action;}public int getActionIndex(){return 0;}
-public int getDeviceId(){return -1;}public InputDevice getDevice(){return null;}
-public float getAxisValue(int axis){return 0;}public int getPointerId(int index){return id;}
+public int getDeviceId(){return deviceId;}public InputDevice getDevice(){return device;}
+public float getAxisValue(int axis){Float value=axes.get(axis);return value==null?0:value;}public int getPointerId(int index){return id;}
 public float getX(int index){return x;}public float getY(int index){return y;}
 public int findPointerIndex(int pointer){return pointer==id?0:-1;}public int getHistorySize(){return history.length;}
 public float getHistoricalX(int index,int h){return history[h][0];}public float getHistoricalY(int index,int h){return history[h][1];}
@@ -71,7 +78,9 @@ public class AdapterHostCheck {
 static int checks;static void check(boolean good){checks++;if(!good)throw new AssertionError("check "+checks);}
 static class Sink implements InputAdapter.Sink {
  final List<Integer> actions=new ArrayList<Integer>();int lastId;float lastX,lastY;
- public void focus(boolean focus){}public void key(int key,boolean down){}public void axes(float x,float y,float z,float rz){}
+ float[] lastAxes;int axisCalls;
+ public void focus(boolean focus){}public void key(int key,boolean down){}
+ public void axes(float x,float y,float z,float rz){lastAxes=new float[]{x,y,z,rz};axisCalls++;}
  public void touch(int action,int id,float x,float y){actions.add(action);lastId=id;lastX=x;lastY=y;}
 }
 static MotionEvent e(int a,int id,float x,float y){return new MotionEvent(a,id,x,y,InputDevice.SOURCE_TOUCHSCREEN);}
@@ -112,6 +121,41 @@ public static void main(String[] args)throws Exception{
  sink=new Sink();a=new InputAdapter(sink);a.dispatchTouchEvent(e(0,8,25,50),100,100);a.dispatchTouchEvent(e(3,8,75,50),100,100);
  check(external(a).getInt("touch_motion_directions")==0&&external(a).getLong("touch_cancel")==1);
  check(external(a).getLong("touch_move")==0&&external(a).getLong("touch_end")==0&&sink.actions.get(1)==3);
+ // Device declarations, not nonzero samples, choose the physical right-stick layout.
+ sink=new Sink();a=new InputAdapter(sink);
+ MotionEvent primary=new MotionEvent(2,0,0,0,InputDevice.SOURCE_JOYSTICK)
+     .device(17,new InputDevice(MotionEvent.AXIS_Z,MotionEvent.AXIS_RZ,MotionEvent.AXIS_RX,MotionEvent.AXIS_RY))
+     .axis(MotionEvent.AXIS_RX,1).axis(MotionEvent.AXIS_RY,-1);
+ check(a.dispatchGenericMotionEvent(primary));
+ check(sink.axisCalls==1&&sink.lastAxes[2]==0&&sink.lastAxes[3]==0);
+ check(external(a).getInt("right_axis_directions")==0);
+ primary.axis(MotionEvent.AXIS_Z,-1).axis(MotionEvent.AXIS_RZ,1);
+ check(a.dispatchGenericMotionEvent(primary));
+ check(sink.lastAxes[2]==-1&&sink.lastAxes[3]==1);
+ check(external(a).getInt("right_axis_directions")==9);
+ sink=new Sink();a=new InputAdapter(sink);
+ MotionEvent alternate=new MotionEvent(2,0,0,0,InputDevice.SOURCE_JOYSTICK)
+     .device(18,new InputDevice(MotionEvent.AXIS_RX,MotionEvent.AXIS_RY))
+     .axis(MotionEvent.AXIS_Z,-1).axis(MotionEvent.AXIS_RZ,1)
+     .axis(MotionEvent.AXIS_RX,1).axis(MotionEvent.AXIS_RY,-1);
+ check(a.dispatchGenericMotionEvent(alternate));
+ check(sink.axisCalls==1&&sink.lastAxes[2]==1&&sink.lastAxes[3]==-1);
+ check(external(a).getInt("right_axis_directions")==6&&external(a).getLong("controller_events")==1);
+ sink=new Sink();a=new InputAdapter(sink);
+ MotionEvent mixed=new MotionEvent(2,0,0,0,InputDevice.SOURCE_JOYSTICK)
+     .device(19,new InputDevice(MotionEvent.AXIS_Z,MotionEvent.AXIS_RY))
+     .axis(MotionEvent.AXIS_RX,1).axis(MotionEvent.AXIS_RY,1).axis(MotionEvent.AXIS_RZ,-1);
+ check(a.dispatchGenericMotionEvent(mixed));
+ check(sink.lastAxes[2]==0&&sink.lastAxes[3]==1);
+ check(external(a).getInt("right_axis_directions")==8);
+ sink=new Sink();a=new InputAdapter(sink);a.setSynthetic(true);
+ MotionEvent noDevice=new MotionEvent(2,0,0,0,InputDevice.SOURCE_JOYSTICK)
+     .axis(MotionEvent.AXIS_Z,-1).axis(MotionEvent.AXIS_RZ,1)
+     .axis(MotionEvent.AXIS_RX,1).axis(MotionEvent.AXIS_RY,-1);
+ check(a.dispatchGenericMotionEvent(noDevice));
+ check(sink.lastAxes[2]==-1&&sink.lastAxes[3]==1);
+ check(a.report().getJSONObject("in_app_synthetic").getInt("right_axis_directions")==9);
+ check(external(a).getInt("right_axis_directions")==0&&external(a).getLong("controller_events")==0);
  System.out.println(checks);
 }}
 ''',
@@ -146,12 +190,26 @@ def main():
         run([javac,'--release','8','-Xlint:all','-Xlint:-options','-Werror','-d',str(negative_classes),str(mutated),*files])
         negative=subprocess.run([java,'-cp',str(negative_classes),'org.coh.systemsprobe.AdapterHostCheck'],capture_output=True,text=True,timeout=60)
         assert negative.returncode!=0 and 'AssertionError: check 3' in negative.stderr, 'END-only negative control failed to reproduce the missing +X direction'
+        # The previous fixed Z/RZ reads must fail the alternate-layout witness.
+        primary_reads='''        float z = centered(event, rightStickAxis(event, MotionEvent.AXIS_Z, MotionEvent.AXIS_RX));
+        float rz = centered(event, rightStickAxis(event, MotionEvent.AXIS_RZ, MotionEvent.AXIS_RY));'''
+        assert original.count(primary_reads)==1
+        axis_mutated=temp/'axis-negative/org/coh/systemsprobe/InputAdapter.java'
+        axis_mutated.parent.mkdir(parents=True)
+        axis_mutated.write_text(original.replace(primary_reads,
+            '        float z = centered(event, MotionEvent.AXIS_Z), rz = centered(event, MotionEvent.AXIS_RZ);'))
+        axis_negative_classes=temp/'axis-negative-classes';axis_negative_classes.mkdir()
+        run([javac,'--release','8','-Xlint:all','-Xlint:-options','-Werror','-d',str(axis_negative_classes),str(axis_mutated),*files])
+        axis_negative=subprocess.run([java,'-cp',str(axis_negative_classes),'org.coh.systemsprobe.AdapterHostCheck'],capture_output=True,text=True,timeout=60)
+        assert axis_negative.returncode!=0 and 'AssertionError: check 51' in axis_negative.stderr, 'Fixed Z/RZ negative control failed to reproduce alternate stick loss'
     report={'schema':'coh-input-adapter-host-proof-v1','passed':True,'checks':checks,
             'source':str(SOURCE.relative_to(ROOT)),'source_sha256':hashlib.sha256(SOURCE.read_bytes()).hexdigest(),
             'scope':'Actual InputAdapter class under host Android/JSON transport stubs; not Android framework execution',
-            'cases':['four END-only direction signs','zero movement END','unowned pointer UP','historical MOVE samples','wrong source flags','external/synthetic separation','CANCEL no invented movement'],
+            'cases':['four END-only direction signs','zero movement END','unowned pointer UP','historical MOVE samples','wrong source flags','external/synthetic separation','CANCEL no invented movement',
+                     'declared Z/RZ preferred even while centered','RX/RY fallback by declared axis ranges','independent mixed axis fallback','device-less synthetic Z/RZ retained'],
             'invariants':['END contributes measured final movement directions','touch_move counts genuine MOVE samples only','native sink receives END rather than fabricated MOVE'],
-            'negative_control':{'passed':True,'mutation':'Remove only final-UP direction accounting from actual InputAdapter','expected_failure':'END-only +X direction assertion check 3'}}
+            'negative_control':{'passed':True,'mutation':'Remove only final-UP direction accounting from actual InputAdapter','expected_failure':'END-only +X direction assertion check 3'},
+            'right_stick_negative_control':{'passed':True,'mutation':'Restore fixed Z/RZ reads without declared-range fallback','expected_failure':'RX/RY sink assertion check 51'}}
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({'passed':True,'checks':checks,'source_sha256':report['source_sha256']}))
 

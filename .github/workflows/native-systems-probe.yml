@@ -94,11 +94,11 @@ jobs:
       - name: Assemble isolated ARM64 test APK
         run: |
           python3 native-android/systems-probe/gradle.py :app:assembleDebug :app:lintDebug
-          cp native-android/systems-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/systems-probe/CoH-Native-Systems-Probe-0.1.0-arm64.apk
+          cp native-android/systems-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/systems-probe/CoH-Native-Systems-Probe-0.1.1-arm64.apk
       - name: Assemble separate emulator test APK
         run: |
           python3 native-android/systems-probe/gradle.py -PprobeAbis=x86_64 :app:assembleDebug
-          cp native-android/systems-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/systems-probe/CoH-Native-Systems-Probe-0.1.0-emulator-x86_64.apk
+          cp native-android/systems-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/systems-probe/CoH-Native-Systems-Probe-0.1.1-emulator-x86_64.apk
       - name: Verify exact package ABI, fixtures, manifest, signature, and build inputs
         run: |
           python3 - <<'PY'
@@ -112,7 +112,7 @@ jobs:
           assert 0 < (assets/'audio.bin').stat().st_size <= 1 << 20
           artifacts = []
           for label, abi, machine in [('arm64', 'arm64-v8a', 183), ('emulator-x86_64', 'x86_64', 62)]:
-              path = root / ('CoH-Native-Systems-Probe-0.1.0-' + label + '.apk')
+              path = root / ('CoH-Native-Systems-Probe-0.1.1-' + label + '.apk')
               with zipfile.ZipFile(path) as apk:
                   native = [name for name in apk.namelist() if name.startswith('lib/') and name.endswith('.so')]
                   assert native == ['lib/' + abi + '/libcoh_systems_probe.so'], native
@@ -126,7 +126,7 @@ jobs:
               signature = subprocess.check_output([str(signer), 'verify', '--verbose', '--print-certs', str(path)], text=True)
               badging = subprocess.check_output([str(signer.with_name('aapt')), 'dump', 'badging', str(path)], text=True)
               package = re.search(r"^package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", badging, re.M)
-              assert package and package.groups() == ('org.coh.systemsprobe', '1', '0.1.0-phases10-12'), badging
+              assert package and package.groups() == ('org.coh.systemsprobe', '2', '0.1.1-phases10-12'), badging
               assert "sdkVersion:'26'" in badging and "targetSdkVersion:'35'" in badging, badging
               assert "native-code: '" + abi + "'" in badging, badging
               assert "launchable-activity: name='org.coh.systemsprobe.MainActivity'" in badging, badging
@@ -138,7 +138,7 @@ jobs:
               artifacts.append({'file': path.name, 'bytes': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'abi': abi, 'elf_machine': machine, 'native_library': {'file': native[0], 'bytes': len(elf), 'sha256': hashlib.sha256(elf).hexdigest()}, 'packaged_fixture_bytes_verified': True, 'manifest_verified': True, 'signature_verified': True, 'signer_certificate_sha256': cert.group(1)})
           assert len({item['signer_certificate_sha256'] for item in artifacts}) == 1
           fixture_files = [{'file': p.name, 'bytes': p.stat().st_size, 'sha256': hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(assets.iterdir()) if p.is_file()]
-          receipt = {'schema': 1, 'phases': [10, 11, 12], 'source_commit': os.environ['GITHUB_SHA'], 'workflow_run_id': os.environ['GITHUB_RUN_ID'], 'application_id': 'org.coh.systemsprobe', 'min_sdk': 26, 'target_sdk': 35, 'compile_sdk': 35, 'gradle': '8.9', 'gradle_distribution_sha256': 'd725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab', 'android_gradle_plugin': '8.7.3', 'ndk': '28.2.13676358', 'cmake': '3.22.1', 'signing': 'isolated CI debug key; not the production launcher key', 'probe_version': '0.1.0-phases10-12', 'version_code': 1, 'original_game_execution': False, 'physical_controller_verified': False, 'physical_audibility_verified': False, 'external_network_execution': False, 'server_interoperability_verified': False, 'artifacts': artifacts, 'fixture_assets': fixture_files, 'thor_device_execution_verified': False}
+          receipt = {'schema': 1, 'phases': [10, 11, 12], 'source_commit': os.environ['GITHUB_SHA'], 'workflow_run_id': os.environ['GITHUB_RUN_ID'], 'application_id': 'org.coh.systemsprobe', 'min_sdk': 26, 'target_sdk': 35, 'compile_sdk': 35, 'gradle': '8.9', 'gradle_distribution_sha256': 'd725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab', 'android_gradle_plugin': '8.7.3', 'ndk': '28.2.13676358', 'cmake': '3.22.1', 'signing': 'isolated CI debug key; not the production launcher key', 'probe_version': '0.1.1-phases10-12', 'version_code': 2, 'original_game_execution': False, 'physical_controller_verified': False, 'physical_audibility_verified': False, 'external_network_execution': False, 'server_interoperability_verified': False, 'artifacts': artifacts, 'fixture_assets': fixture_files, 'thor_device_execution_verified': False}
           (root/'build-receipt.json').write_text(json.dumps(receipt, indent=2)+'\n')
           (root/'SHA256SUMS').write_text(''.join(item['sha256']+'  '+item['file']+'\n' for item in artifacts))
           for path in assets.glob('*.json'):

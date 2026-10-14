@@ -34,7 +34,8 @@ def main():
     source_path = Path(__file__).resolve().parents[1] / 'app/src/main/java/org/coh/systemsprobe/MainActivity.java'
     source = source_path.read_text()
     methods = '\n'.join(method(source, s) for s in (
-        'private static boolean zeroInput(', 'private boolean preBackground(', 'private boolean backgroundPassed('))
+        'private static boolean zeroInput(', 'private static boolean audioRunFailed(',
+        'private boolean preBackground(', 'private boolean backgroundPassed('))
     harness = r'''
 import java.util.*;
 public final class SystemsUiCheck {
@@ -44,7 +45,7 @@ public final class SystemsUiCheck {
  static JSONObject object(Object... x){JSONObject o=new JSONObject();for(int i=0;i<x.length;i+=2)o.put((String)x[i],x[i+1]);return o;}
  static void check(boolean x,String why){checked++;if(!x)throw new AssertionError(why);}
  static JSONObject nativeRun(long id,long gen,int w,int h,long began){return object("run_id",id,"generation",gen,"width",w,"height",h,"passed",true,"foreground_at_completion",true,"started_after_event",began);}
- static JSONObject cancel(){return object("run_id",2,"result",1,"cancelled",true,"opened",true,"started",true,"stopped",true,"closed",true,"backend_errors",0,"submitted_frames",512,"started_after_event",99);}
+ static JSONObject cancel(){return object("run_id",2,"passed",false,"result",1,"cancelled",true,"opened",true,"started",true,"stopped",true,"closed",true,"backend_errors",0,"submitted_frames",512,"started_after_event",99);}
  static SystemsUiCheck valid(){SystemsUiCheck t=new SystemsUiCheck();
   t.nativeRuns.put(nativeRun(1,1,100,100,1)).put(nativeRun(2,1,75,75,2)).put(nativeRun(3,2,75,75,3));
   t.audioRuns.put(object("passed",true,"run_id",1,"started_after_event",4));
@@ -53,6 +54,39 @@ public final class SystemsUiCheck {
   t.nativeRuns.put(nativeRun(4,2,75,75,102));t.nativeSequence=4;return t;}
  public static void main(String[] a){SystemsUiCheck t=valid();
   check(t.preBackground(),"Three current source passes with two sizes/generations");check(t.backgroundPassed(),"Exact interrupted stream and fresh foreground passes");
+  JSONObject success=object("passed",true,"cancelled",false,"result",0,"backend_errors",0);
+  check(!audioRunFailed(success),"A complete clean playback is successful");
+  check(!audioRunFailed(cancel()),"Clean native cancellation is an expected interruption");
+  JSONObject early=cancel().put("opened",false).put("started",false).put("stopped",false).put("closed",false);
+  check(!audioRunFailed(early),"Clean cancellation before open remains allowed");
+  JSONObject failedClose=cancel().put("closed",false).put("backend_errors",1).put("result",-3);
+  check(audioRunFailed(failedClose),"Cancelled close failure is a sticky backend error");
+  JSONObject failedStop=cancel().put("stopped",false).put("backend_errors",1).put("result",-3);
+  check(audioRunFailed(failedStop),"Cancelled stop failure is a sticky backend error");
+  check(audioRunFailed(cancel().put("result",-3)),"Cancellation flag cannot hide a backend result");
+  check(audioRunFailed(cancel().put("result",0)),"Cancellation flag requires native CANCELLED result");
+  check(audioRunFailed(success.put("backend_errors",1)),"Passed flag cannot hide backend errors");
+  check(audioRunFailed(object("passed",false,"cancelled",false,"result",-1,"backend_errors",0)),"Invalid fixture failure remains sticky");
+  check(audioRunFailed(object("passed",false,"cancelled",false,"result",-2,"backend_errors",0)),"Unexpected busy result remains sticky");
+  check(audioRunFailed(object("passed",false,"cancelled",false,"result",-99,"error","Exception")),"Exception report missing backend fields fails closed");
+  check(audioRunFailed(null),"Missing audio report fails closed");
+  String[] required={"passed","cancelled","result","backend_errors"};
+  for(String key:required){JSONObject missing=cancel();missing.m.remove(key);check(audioRunFailed(missing),"Audio report requires "+key);}
+  check(audioRunFailed(cancel().put("result","invalid")),"Malformed result fails closed");
+  check(audioRunFailed(cancel().put("backend_errors","invalid")),"Malformed backend counter fails closed");
+  check(audioRunFailed(cancel().put("passed","false")),"Text passed flag fails closed");
+  check(audioRunFailed(cancel().put("cancelled","true")),"Text cancellation flag fails closed");
+  check(audioRunFailed(cancel().put("result","1")),"Text numeric result fails closed");
+  check(audioRunFailed(cancel().put("backend_errors","0")),"Text numeric backend counter fails closed");
+  check(audioRunFailed(cancel().put("result",1.5)),"Fractional cancellation result fails closed");
+  check(audioRunFailed(cancel().put("backend_errors",0.5)),"Fractional backend counter fails closed");
+  check(audioRunFailed(cancel().put("passed",true)),"Contradictory successful cancellation fails closed");
+  t=valid();if(audioRunFailed(failedClose))t.failures++;
+  t.audioRuns.put(cancel().put("run_id",5)).put(object("passed",true,"cancelled",false,"result",0,"backend_errors",0,"run_id",6));
+  check(t.backgroundPassed(),"A later clean Home cycle can retain valid lifecycle evidence");
+  check(!t.preBackground(),"Earlier cancelled backend error blocks qualification after later successes");
+  t=valid();if(audioRunFailed(cancel()))t.failures++;
+  check(t.preBackground()&&t.backgroundPassed(),"Clean cancellation leaves normal qualification behavior unchanged");
   t.active=false;check(!t.preBackground(),"Background activity cannot qualify current checks");t.active=true;
   t.failures=1;check(!t.preBackground(),"Sticky native failure blocks checks");t.failures=0;
   t.nativeSequence=99;check(!t.preBackground(),"Pending or stale source run cannot qualify");t.nativeSequence=4;
@@ -76,7 +110,7 @@ __METHODS__
 }
 class View {int w=75,h=75;int getWidth(){return w;}int getHeight(){return h;}}
 class JSONObject {Map<String,Object> m=new HashMap<>();JSONObject put(String k,Object v){m.put(k,v);return this;}boolean optBoolean(String k){return Boolean.TRUE.equals(m.get(k));}
- int optInt(String k){Object v=m.get(k);return v instanceof Number?((Number)v).intValue():0;}long optLong(String k){return optLong(k,0);}long optLong(String k,long f){Object v=m.get(k);return v instanceof Number?((Number)v).longValue():f;}
+ Object opt(String k){return m.get(k);}int optInt(String k){Object v=m.get(k);return v instanceof Number?((Number)v).intValue():0;}long optLong(String k){return optLong(k,0);}long optLong(String k,long f){Object v=m.get(k);return v instanceof Number?((Number)v).longValue():f;}
  JSONArray optJSONArray(String k){Object v=m.get(k);return v instanceof JSONArray?(JSONArray)v:null;}}
 class JSONArray {List<Object> l=new ArrayList<>();JSONArray put(Object v){l.add(v);return this;}int length(){return l.size();}JSONObject optJSONObject(int i){return i>=0&&i<l.size()?(JSONObject)l.get(i):null;}
  double optDouble(int i,double f){Object v=i>=0&&i<l.size()?l.get(i):null;return v instanceof Number?((Number)v).doubleValue():f;}}

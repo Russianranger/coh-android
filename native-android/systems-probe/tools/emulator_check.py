@@ -110,9 +110,11 @@ def inspect_host_proofs():
     assert input_proof['source_joystick_integer_cases'] == 8004
     assert input_proof['failed'] == 0 and input_proof['max_source_error'] == 0
     adapter = proofs['input-adapter-host-proof.json']
-    assert adapter['schema'] == 'coh-input-adapter-host-proof-v1' and adapter['checks'] == 43
+    assert adapter['schema'] == 'coh-input-adapter-host-proof-v1' and adapter['checks'] == 59
     assert adapter['negative_control']['passed'] is True
     assert adapter['negative_control']['expected_failure'] == 'END-only +X direction assertion check 3'
+    assert adapter['right_stick_negative_control']['passed'] is True
+    assert adapter['right_stick_negative_control']['expected_failure'] == 'RX/RY sink assertion check 51'
     source = pathlib.Path(__file__).resolve().parents[1]/'app/src/main/java/org/coh/systemsprobe/InputAdapter.java'
     assert adapter['source_sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
     protocol = proofs['protocol-host-proof.json']
@@ -410,7 +412,7 @@ def tap_control(action):
 
 def main():
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    apk = OUTPUT / 'CoH-Native-Systems-Probe-0.1.0-emulator-x86_64.apk'
+    apk = OUTPUT / 'CoH-Native-Systems-Probe-0.1.1-emulator-x86_64.apk'
     contract, metadata = inspect_apk_inputs(apk)
     proofs = inspect_host_proofs()
     adb('install', '-r', str(apk))

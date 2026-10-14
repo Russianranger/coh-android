@@ -42,3 +42,27 @@ The earlier [API-floor compile failure](evidence/phases10-12/first-native-build-
 ## Device sequence
 
 Install **CoH Native Systems Probe**. Run checks, drag the arrow, press and release a controller button, and circle both sticks. Play the sound and confirm hearing the three sounds. Resize and recreate the input view. Start sound, press Home while it is playing, return and play again. Export the JSON report after the system-engine banner passes; the separate controller-coverage and audible-confirmation fields should also be true on the Thor.
+
+## Recovery continuation: Systems Probe 0.1.1
+
+Recovery started from `dd3403fd5fb4e61d0542766eda16bae43a1e4d2f`.
+The prior agent had completed gates 10–12 and recorded the qualified 0.1.0
+packages; it stopped before the physical Thor delivery/acceptance step. No
+Phase 13 implementation existed. The accepted Phase 9 and original 0.1.0
+source, build and emulator evidence remain retained.
+
+Version 0.1.1 changes only the diagnostic Android adapter, reporting and
+delivery checks. Right-stick axes follow the device's declared motion ranges:
+prefer Z/RZ, falling back per axis to RX/RY, matching the production launcher's
+existing policy. A centered preferred axis stays centered even when an alternate
+axis carries another value. Native input kernels are unchanged.
+
+Cancelled audio now preserves backend and cleanup failures as session failures;
+a later clean playback or Home cycle cannot erase them. Normal clean user/Home
+cancellation remains allowed. The status exposes current audio playback and
+the separate stick/audibility observations. The native audio sink, authentic
+PCM fixture, packet kernels and wire goldens are unchanged.
+
+The new package requires a fresh build and emulator receipt before delivery.
+Physical controller coverage and speaker audibility remain pending until the
+[Thor device sequence](systems-probe/THOR-TEST.md) and its JSON are reviewed.

@@ -105,6 +105,13 @@ public final class InputAdapter implements InputManager.InputDeviceListener {
         if (range != null && Math.abs(value) <= range.getFlat()) return 0;
         return value;
     }
+    private static int rightStickAxis(MotionEvent event, int primary, int alternate) {
+        InputDevice device = event.getDevice();
+        // Axis declarations select the layout; zero is a valid centered value.
+        // Device-less synthetic events retain the documented Z/RZ layout.
+        return device == null || device.getMotionRange(primary, event.getSource()) != null
+                ? primary : alternate;
+    }
     private static int directions(float x, float y) {
         int mask = 0;
         if (x < -0.5f) mask |= 1;
@@ -119,7 +126,8 @@ public final class InputAdapter implements InputManager.InputDeviceListener {
                 || !selectController(event.getDeviceId())) return false;
         if (!focused) return true;
         float x = centered(event, MotionEvent.AXIS_X), y = centered(event, MotionEvent.AXIS_Y);
-        float z = centered(event, MotionEvent.AXIS_Z), rz = centered(event, MotionEvent.AXIS_RZ);
+        float z = centered(event, rightStickAxis(event, MotionEvent.AXIS_Z, MotionEvent.AXIS_RX));
+        float rz = centered(event, rightStickAxis(event, MotionEvent.AXIS_RZ, MotionEvent.AXIS_RY));
         Counts c = counts(); c.motion++;
         if (event.getDeviceId() >= 0) c.controllerEvents++;
         c.leftDirections |= directions(x, y); c.rightDirections |= directions(z, rz);
