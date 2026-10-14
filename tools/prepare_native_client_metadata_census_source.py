@@ -17,10 +17,18 @@ import prepare_map_startup_observer_source as safe
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = 'libs/UtilitiesLib/src/utils/FolderCache.c'
 NODE_SOURCE = 'libs/UtilitiesLib/src/utils/FolderCacheNode.c'
+STAT_SOURCE = 'libs/UtilitiesLib/src/utils/winfiletime.c'
 SIGNATURE = 'static void FolderCacheAddFolderToNode('
 HELPER = 'static void cohFolderCacheAddCensusEntry('
-HEADERS = ('coh_folder_census.h', 'coh_folder_census_adapter.h')
+HEADERS = ('coh_folder_census.h', 'coh_folder_census_adapter.h', 'coh_folder_census_capture.h', 'coh_folder_census_observation.h')
 RECEIPT = 'native-client-metadata-census-build-input.json'
+CMAKE_INJECTION = 'coh_client_metadata_capture.cmake'
+QUERY_SENTINEL = '''    if (fc==NULL || relpath==NULL) {
+#if defined(COH_CLIENT_METADATA_CENSUS_CAPTURE)
+        if (fc==NULL && relpath==NULL) cohFolderCensusFlushStatObservations();
+#endif
+        return NULL;
+    }'''
 
 
 def digest(value):
@@ -33,6 +41,44 @@ def bytes_lf(path):
 
 def source_bytes(root=ROOT):
     return bytes_lf(Path(root) / 'upstream/ouroboros' / SOURCE)
+
+
+def patch_stat_source(original):
+    text = original.decode()
+    function = namespace.function(text, 'int _AltStat(')
+    start = '    if ((hndl = CreateFileA(name,\n'
+    end = '                    NULL)) == INVALID_HANDLE_VALUE)'
+    namespace.require(function.count(start) == function.count(end) == 1,
+                      'Stock native CreateFile call differs')
+    patched = function.replace(start, '    hndl = CreateFileA(name,\n', 1).replace(end, '''                    NULL);
+#if defined(COH_CLIENT_METADATA_CENSUS_CAPTURE)
+    if (coh_client_census_stat_scope > 0) {
+        int coh_saved_errno = errno;
+        DWORD coh_saved_error = GetLastError();
+        cohClientCensusObserveStatStage(COH_CENSUS_STAT_CREATE, hndl != INVALID_HANDLE_VALUE);
+        SetLastError(coh_saved_error);
+        errno = coh_saved_errno;
+    }
+#endif
+    if (hndl == INVALID_HANDLE_VALUE)''', 1)
+    info = '        GetFileInformationByHandle(hndl, &bhfi);'
+    namespace.require(patched.count(info) == 1, 'Stock native file information call differs')
+    patched = patched.replace(info, '''#if defined(COH_CLIENT_METADATA_CENSUS_CAPTURE)
+        {
+            BOOL coh_info_result = GetFileInformationByHandle(hndl, &bhfi);
+            if (coh_client_census_stat_scope > 0) {
+                int coh_saved_errno = errno;
+                DWORD coh_saved_error = GetLastError();
+                cohClientCensusObserveStatStage(COH_CENSUS_STAT_FILE_INFORMATION, coh_info_result != 0);
+                SetLastError(coh_saved_error);
+                errno = coh_saved_errno;
+            }
+        }
+#else
+        GetFileInformationByHandle(hndl, &bhfi);
+#endif''', 1)
+    text = text.replace(function, patched, 1)
+    return ('#if defined(COH_CLIENT_METADATA_CENSUS_CAPTURE)\n#include <errno.h>\n#include "coh_folder_census_observation.h"\n#endif\n' + text).encode()
 
 
 def per_entry_body(original):
@@ -96,6 +142,20 @@ def patch_source(original):
     namespace.require(patched.count(recurse) == 1, 'Stock recursive walk differs')
     patched = patched.replace(recurse, '#if defined(COH_CLIENT_METADATA_CENSUS_PROTOTYPE)\ncoh_census_recurse:\n#endif\n' + recurse, 1)
     text = text.replace(function, helper + patched, 1)
+    capture_anchor = 'static bool ban_all_overrides = false;\n'
+    namespace.require(text.count(capture_anchor) == 1, 'Native capture globals anchor differs')
+    text = text.replace(capture_anchor, capture_anchor + '#if defined(COH_CLIENT_METADATA_CENSUS_CAPTURE)\n#include "coh_folder_census_capture.h"\n#define COH_FOLDER_CENSUS_ALTSTAT(fc,name,out,key) cohFolderCensusObservedAltStat(fc,name,out,key)\n#else\n#define COH_FOLDER_CENSUS_ALTSTAT(fc,name,out,key) _AltStat(name,out)\n#endif\n', 1)
+    pig_function = namespace.function(text, 'int FolderCacheAddAllPigs(')
+    pig_end = '    }\n    return 0;\n}'
+    namespace.require(pig_function.count(pig_end) == 1, 'Stock PIG initialization tail differs')
+    pig_capture = pig_function.replace(pig_end, '    }\n#if defined(COH_CLIENT_METADATA_CENSUS_CAPTURE)\n    cohFolderCensusCapturePigIndex(fc);\n#endif\n    return 0;\n}', 1)
+    text = text.replace(pig_function, pig_capture, 1)
+    for old, new in (('_AltStat(relpath, &sbuf)', 'COH_FOLDER_CENSUS_ALTSTAT(fc,relpath,&sbuf,relpath)'), ('_AltStat(filename, &sbuf)', 'COH_FOLDER_CENSUS_ALTSTAT(fc,filename,&sbuf,relpath)')):
+        namespace.require(text.count(old) == 1, 'Stock filesystem override call differs')
+        text = text.replace(old, new, 1)
+    old_sentinel = '    if (fc==NULL || relpath==NULL) return NULL;'
+    namespace.require(text.count(old_sentinel) == 1, 'Stock query sentinel differs')
+    text = text.replace(old_sentinel, QUERY_SENTINEL, 1)
     include = '#include "utilitieslib/utils/FolderCache.h"\n'
     namespace.require(text.count(include) == 1, 'Stock cache include differs')
     return text.replace(include, include + '#if defined(COH_CLIENT_METADATA_CENSUS_PROTOTYPE)\n#include "coh_folder_census_adapter.h"\n#endif\n', 1).encode()
@@ -106,12 +166,14 @@ def expected_receipt(root=ROOT):
     original = source_bytes(root)
     node = bytes_lf(root / 'upstream/ouroboros' / NODE_SOURCE)
     patched = patch_source(original)
-    return {'format': 1, 'role': 'nonshipping_authenticated_metadata_census_consumer_prototype',
+    return {'format': 1, 'role': 'nonshipping_native_pig_index_capture_and_scoped_census_prototype',
         'retained_game_recipe': 'package_client_render_queue_native',
-        'source_sha256': {SOURCE: digest(original), NODE_SOURCE: digest(node)},
-        'patched_sha256': {SOURCE: digest(patched)},
+        'source_sha256': {SOURCE: digest(original), NODE_SOURCE: digest(node), STAT_SOURCE: digest(bytes_lf(root / 'upstream/ouroboros' / STAT_SOURCE))},
+        'patched_sha256': {SOURCE: digest(patched), STAT_SOURCE: digest(patch_stat_source(bytes_lf(root / 'upstream/ouroboros' / STAT_SOURCE)))},
         'overlay_sha256': {'libs/UtilitiesLib/src/utils/' + name: digest(bytes_lf(
             root / 'database/client-metadata-census/overlay' / name)) for name in HEADERS},
+        'cmake_injection_sha256': digest(bytes_lf(root / 'database/client-metadata-census/overlay' / CMAKE_INJECTION)),
+        'cmake_injection_role': 'CMAKE_PROJECT_INCLUDE; deferred UtilitiesLib-only capture define; Game-only MSVC Win32',
         'retained_FolderNodeAdd_sha256': digest(namespace.function(node.decode(), 'FolderNode *FolderNodeAdd(').encode()),
         'per_entry_body_sha256': digest(per_entry_body(original).encode()),
         'production_registration_present': False, 'production_activation_available': False,
@@ -123,12 +185,23 @@ def expected_receipt(root=ROOT):
         'register_input_context_alias_refused_before_writes': True,
         'authority_token_role': 'opaque identity binding; not a cryptographic verification API',
         'source_scope': 'dedicated Game-only build macro, global folder_cache, owning thread, one GDD, dynamic dev mode, initial empty siblings, callbacks disabled, ALL-folder policy',
-        'admitted_branches': ['texture_library', 'object_library', 'fx', 'scripts'],
+        'admitted_branches': ['texture_library', 'object_library', 'fx', 'scripts', 'scripts.loc'],
         'all_native_arrival_records_replayed': True, 'native_directory_recursion_retained': True,
-        'native_hash_build_and_override_query_unchanged': True,
+        'native_hash_build_unchanged': True, 'native_override_and_query_cache_semantics_unchanged': True,
+        'native_override_stat_observer_only': True, 'native_legacy_ignored_info_return_unchanged': True,
+        'native_stat_hooks_preserve_errno_and_GetLastError': True,
+        'native_stat_counters_atomic_and_scoped_by_thread_local_override': True,
         'owned_guard_or_unknown_eligible_directory_failure_revokes_registration_before_stock_recursion': True,
         'native_reserved_fields_and_padding': 'canonical zero; pinned Wine A enumeration does not initialize these fields',
         'current_metadata_claim': 'FolderCache consumed fields only; capture atime and creation provenance is not current-field authority',
+        'previous_closed_prototype_source': '7f3d37fc191f3f30c124d6d57581afb64cceef42',
+        'native_pig_capture_compile_gate': 'COH_CLIENT_METADATA_CENSUS_CAPTURE; absent production',
+        'native_pig_capture_activation': 'COH_CLIENT_CENSUS_CAPTURE=1 plus exact64hex generation',
+        'native_pig_capture_after_stock_initialization': True,
+        'native_pig_capture_all_indices_under_provider_lock': True,
+        'native_pig_capture_registers_provider_authority': False,
+        'native_pig_capture_maximum_records': 200000,
+        'native_pig_capture_maximum_output_bytes': 8388608,
         'native_source_schema_changed': False, 'provider_order_changed': False,
         'asset_payload_reads_added': False, 'game_data_or_player_sql_changed': False,
         'native_windows_executed': False, 'native_game_executed': False,
@@ -170,6 +243,7 @@ def validate_staged_source(source, root=ROOT):
     namespace.require(pins.get(SOURCE) == expected['source_sha256'][SOURCE], 'Retained census predecessor pin differs')
     pins.update(expected['patched_sha256'])
     pins.update(expected['overlay_sha256'])
+    pins[CMAKE_INJECTION] = expected['cmake_injection_sha256']
     pins[NODE_SOURCE] = expected['source_sha256'][NODE_SOURCE]
     for name, pin in pins.items():
         path = safe.safe_staging_file(source, name)
@@ -192,12 +266,14 @@ def stage(source, root=ROOT):
     for name, value in receipt['source_sha256'].items():
         path = safe.safe_staging_file(source, name)
         namespace.require(path.is_file() and digest(bytes_lf(path)) == value, 'Exact retained census predecessor differs: ' + name)
-    for name in (*HEADERS, RECEIPT):
+    for name in (*HEADERS, RECEIPT, CMAKE_INJECTION):
         target = 'libs/UtilitiesLib/src/utils/' + name if name in HEADERS else name
         namespace.require(not safe.safe_staging_file(source, target).exists(), 'Census output already exists: ' + target)
     for name in HEADERS:
         (source / 'libs/UtilitiesLib/src/utils' / name).write_bytes(bytes_lf(root / 'database/client-metadata-census/overlay' / name))
+    (source / CMAKE_INJECTION).write_bytes(bytes_lf(root / 'database/client-metadata-census/overlay' / CMAKE_INJECTION))
     (source / SOURCE).write_bytes(patch_source(bytes_lf(source / SOURCE)))
+    (source / STAT_SOURCE).write_bytes(patch_stat_source(bytes_lf(source / STAT_SOURCE)))
     (source / RECEIPT).write_text(json.dumps(receipt, sort_keys=True, indent=2) + '\n')
     return validate_staged_source(source, root)
 

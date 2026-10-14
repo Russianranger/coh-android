@@ -340,6 +340,8 @@ static void run_case(int scenario) {
 static void api_guards(void) {
  static CohFolderCensusContext copy,snapshot;
  FolderCache owner={0};unsigned char *blob;size_t bytes;CohFolderCensusDirectory directory;
+ assert(cohFolderCensusBranch("scripts.loc"));assert(cohFolderCensusBranch("scripts.loc/contact/test.npc"));
+ assert(!cohFolderCensusBranch("scripts.local"));assert(!cohFolderCensusBranch("scripts.loc-extra/test.npc"));
  fixture_thread=1;lease_current=1;make_inputs(8,0);blob=make_blob(&bytes);
  assert(cohFolderCensusRegister(&coh_folder_census_context,blob,bytes,"fixture",generation_token,&owner,0,fixture_lease,NULL));
  copy=coh_folder_census_context;
@@ -433,10 +435,13 @@ class MetadataCensusConstructorTests(unittest.TestCase):
     def test_hash_query_and_request_tree_bodies_unchanged(self):
         stock = candidate.source_bytes().decode()
         patched = candidate.patch_source(candidate.source_bytes()).decode()
-        for signature in ('void FolderCacheBuildHashTable(', 'void FolderCacheRequestTree(', 'FolderNode *FolderCacheQuery('):
+        for signature in ('void FolderCacheBuildHashTable(', 'void FolderCacheRequestTree('):
             self.assertEqual(namespace.function(stock, signature), namespace.function(patched, signature))
         begin, end = 'FolderNode *FolderCacheFileSystemOverride(', 'static char *ignorePrefixArray'
-        self.assertEqual(stock.split(begin, 1)[1].split(end, 1)[0], patched.split(begin, 1)[1].split(end, 1)[0])
+        region = patched.split(begin, 1)[1].split(end, 1)[0].replace('COH_FOLDER_CENSUS_ALTSTAT(fc,relpath,&sbuf,relpath)', '_AltStat(relpath, &sbuf)').replace('COH_FOLDER_CENSUS_ALTSTAT(fc,filename,&sbuf,relpath)', '_AltStat(filename, &sbuf)')
+        self.assertEqual(stock.split(begin, 1)[1].split(end, 1)[0], region)
+        sentinel = '    if (fc==NULL || relpath==NULL) return NULL;'
+        self.assertEqual(namespace.function(stock, 'FolderNode *FolderCacheQuery('), namespace.function(patched, 'FolderNode *FolderCacheQuery(').replace(candidate.QUERY_SENTINEL, sentinel))
 
     def test_changed_enumeration_anchor_fails_closed(self):
         with self.assertRaisesRegex(ValueError, 'enumeration differs'):

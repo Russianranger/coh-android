@@ -1,102 +1,104 @@
-# Client metadata census prototype
+# Native client census capture stage
 
-This stage is not enabled in the launcher or shipped Game. The production source
-does not call `cohFolderCensusRegister`. Binary parsing, a matching opaque token,
-and a callback supplied by a controlled fixture do not establish provider
-authority. No native Game/Wine, Android, world-entry or physical performance
-qualification is claimed for this prototype.
+This active research stage extends the separately preserved closed prototype
+7f3d37fc191f3f30c124d6d57581afb64cceef42. It is not enabled in any production
+launcher, build or release. It has not executed a genuine new Game or Wine
+provider. A generation token or native-looking rows never grants cache authority.
 
-The preceding bounded folder-sort candidate passed genuine Wine client startup
-compatibility, but demonstrated no useful host timing gain: the retained warm
-native witness was 19.236 seconds, versus 19.217/19.482 seconds for the ordered
-warm candidates. It reduced insertion comparisons, while retaining every Wine
-filesystem enumeration. Physical client startup remained approximately 264
-seconds in the supplied 0.13.36 sessions. This independent next stage targets
-the Wine enumeration/syscall work rather than comparisons alone.
+The preceding folder-sort Game passed actual retained renderer/data/startup
+compatibility with no material warm-host speed improvement. Pinned Wine already
+sorts names before FindNext. This stage targets repeated metadata/syscall work.
 
-## Consumer behavior
+## Exact scope
 
-`coh_folder_census.h` parses FCEN1 with complete preflight before exposing rows.
-It uses at most 64 MiB of caller-owned blob storage and 64 KiB of caller-owned
-directory offsets, without heap allocations or filesystem access. Directory
-lookup uses a case-insensitive binary search. Original per-directory arrival
-order remains exact. The complete scoped directory graph includes empty and
-named dot directories, nontextures and ignored-prefix files. Named dot entries
-remain available in the census even though the stock constructor prunes them.
+The controlled consumer adds the exact scripts.loc boundary to texture_library,
+object_library, fx and scripts. scripts.local and scripts.loc-extra are excluded.
+Complete scoped metadata includes empty/named-dot directories, nontextures,
+original native arrival order and all defined WFD fields. Magic is COHCNS1.
 
-The canonical Win32 projection retains attributes, all three FILETIMEs, both
-size words and long/short names. Reserved words, trailing structure padding and
-string padding must be zero. Pinned Wine's ANSI enumeration leaves the reserved
-words uninitialized; those bytes cannot authenticate a provider. Capture access
-and creation times are provenance, not a claim that those times still equal a
-fresh lookup. Current FolderCache parity concerns its consumed name, low size,
-last-write time, directory/readonly/hidden/system fields.
+The replay registration and its compile gate remain absent in retained builds.
+UtilitiesLib does not inherit Game CLIENT. Future admission requires a complete
+current provider lease, exact native/Wine mapping, one global GDD, owning thread,
+original context, proven PIG identity/non-overlap, empty siblings and immutable
+callback/mode/policy state. Unknown or revoked state uses stock queries.
 
-UtilitiesLib does not inherit the Game target's CLIENT macro. The dedicated
-`COH_CLIENT_METADATA_CENSUS_PROTOTYPE` compile gate is absent from the retained
-production build; a future Game-only qualification must explicitly supply it.
+## Native index bridge
 
-The source overlay replays admitted rows through the literal extracted stock
-per-entry constructor. It preserves FolderNodeAdd, attributes, counters,
-provider precedence, recursive traversal and the existing hash/query routines.
-It does not replace texture callbacks or use THI1 as an enumeration authority.
+The optional hook runs after the unchanged stock AddAllPigs loop. It captures all
+PigSet providers in native order, actual archive and FolderCache mount, virtual
+location, complete index cardinality, member path/timestamp/size/index and
+special/empty state. Each provider stays locked throughout its index observation.
+Empty HOGG slots retain null/unavailable metadata; unsafe size access is skipped.
 
-The context requires a future qualified caller to supply an owned cache,
-matching generation token and a live current-provider lease. The owning thread
-and original context/index addresses are bound; copied contexts and aliased
-registration inputs are refused before writes. Decoder output alias misuse
-preserves the input/index bytes instead of attempting to clear overlapping
-storage. Additional source
-guards require the dedicated Game-only build macro, the global cache, exactly one GDD, the admitted PIG count,
-dynamic development mode, ALL-folder policy, disabled updates, no create/delete
-callbacks, virtual location 0 and initially empty siblings. Only
-texture_library/object_library/fx/scripts are eligible. Unknown paths, changed
-providers/policies, malformed blobs, absent or revoked leases and populated
-PIG/prior-provider branches retain native enumeration. A populated owned branch
-revokes the whole registration before recursion can replay an empty child.
-Every other failed owned admission or unknown eligible directory also revokes
-registration, including a callback that clears itself during stock fallback.
+Capture requires COH_CLIENT_CENSUS_CAPTURE=1 plus an exact 64-character hex generation,
+and narrow native cache/mode/callback admission. Bounded JSON goes to the owned
+current native console. Limits: 64 providers, 200,000 indices, 8 MiB output. Failure
+emits an incomplete footer. No payload extraction, node change or reuse occurs.
+The parser rejects missing indices, wrong token/PID/mount/order/types, repeated
+or truncated captures and duplicate keys. Exact archive bytes, native producer,
+ordered index and fresh post-capture generation require independent authority.
+A supplied member list/count/non-overlap assertion cannot replace that bridge.
 
-The native filesystem override remains unchanged. This prototype never treats
-a skipped entry, missing decoder record or unreadable file as proof of absence.
+## Stat observations
 
-## Actual portable verification
+Optional wrappers tag existing FolderCacheFileSystemOverride _AltStat calls by
+exact eligible branch using thread-local scope. Atomic counters record existing
+CreateFile/GetFileInformation attempts/success and the legacy _AltStat return.
+They do not substitute a stat or fix the ignored file-information return. Hooks
+and flush preserve errno and GetLastError. Unknown calls use stock behavior and
+cannot inherit another branch's scope.
 
-The extracted stock FolderCache constructor and FolderNodeAdd execute on 707
-controlled C cases. They compare complete linked trees, metadata/provider bits,
-parent/previous/next/tail links, counters, original arrival sequence and callback
-traces in each enabled/compiled-disabled lane, with four additional alias/copy
-API guard cases. All fallback scenarios retain stock enumeration counts; admitted
-complete fixture branches omit three native enumeration opens. The existing
-native hash-table body is source-identical; the fixture compares complete tree
-membership with a digest and does not execute the actual StashTable itself.
+Aggregate counters flush at the existing FolderCacheQuery(NULL,NULL) boundary.
+They cover instrumented calls after PIG-capture begin. Each field is atomic;
+snapshots may include in-flight concurrent work and are not closed final counts.
+Only the capture-owning thread flushes, and at most 16 snapshots occur. Counter/capture overhead must be separately measured;
+whole-performance comparisons include launcher generation preflight.
 
-These are portable controlled tests using Win32 type/enumeration adapters.
-They are not genuine current native provider or device timing measurements.
+## Native plan and closed gates
 
-## Gates before any optimization can ship
+The pinned coh_client_metadata_capture.cmake injection runs via the explicit
+CMAKE_PROJECT_INCLUDE option in one qualification-only Game producer. It requires
+MSVC Win32 and Game/UtilitiesLib, refuses Map/Beacon builds and adds the capture
+definition privately to UtilitiesLib. Retained CFLAGS/project sources stay exact.
+This does not enable/register census replay.
 
-1. Capture actual native defined WFD fields and complete branch membership under
-   the exact retained Wine/FEX/PRoot/native consumer identities.
-2. Bind the authenticated import/supplement/overlay recipes to every current
-   alias and target identity, mode, ownership, link, size, mtime/ctime, relevant
-   DOS xattrs, directory identity and exact children. The repository currently
-   has no complete immutable generation proof.
-3. Perform one fresh complete warm metadata vector pass outside Wine/FEX,
-   preferably fused with existing mandatory client preparation. Directory
-   mtimes and 64 anchors cannot safely replace this pass. A readonly chmod is
-   not a read-only filesystem or closed writer epoch.
-4. Qualify source-derived projections against genuine native observations,
-   including read permissions and symlink/xattr/case/short-name behavior. A
-   Python/POSIX projection by itself cannot authorize replay or `_AltStat`.
-5. Execute native retained/replay/fallback parity for constructor/hash/queries,
-   texture binds and winner IDs, catalogs, BINs, shaders and full payload
-   behavior; then actual login/world entry and physical AYN Thor gameplay.
-6. Measure whole launcher validation plus native readiness. Moving work out of
-   Wine only counts as an optimization if total critical-path time improves.
+1. Build one fresh capture-only Game, retaining all historical source/renderer/
+   texture/animation/FX/presentation/input/DLL contracts and exact build material.
+2. Execute a separate bounded Win32 probe in the same owned Wine/provider prefix
+   for actual WFD/readable by-handle projections under the exact native runtime.
+   A POSIX encoder alone cannot establish native authority.
+3. Execute actual Game index/counters with current owned console/PID/session,
+   window, software renderer, all-data/mainloop/frame/OCR and prefix cleanup.
+4. Bind complete observed index/projections to the guest fresh full metadata
+   vector, authenticated import/supplement/overlay recipes, runtime, exact pack
+   and post-capture vector. Current production has no complete closed-leaf proof.
+5. Only then qualify exact present/complete-branch-absent/unknown stat reuse.
+   Unreadable/changed/mutable/unknown providers retain stock. Skipped/excluded
+   entries never imply absence. Directory mtimes/64 anchors/chmod cannot grant
+   a zero-walk immutable generation authority.
+6. Compare complete launcher/native time with instrumentation separate, then
+   qualify actual payload/world/gameplay and AYN Thor performance.
 
-Generation state is scoped to the four admitted immutable branches. Any root
-anchor used to connect those branches must be explicitly marked partial and
-unreplayable; it cannot claim a complete native root enumeration. All mutable
-bins/dbidmaps, unknown supplements/providers and unsupported paths use stock.
-No player database or persistent character profile is touched.
+No player profile, PostgreSQL row, saved location or character is touched.
+Native/Wine execution, current authority, device timing and publication remain
+closed. Controlled source tests are recorded in portable-qualification.json.
+
+The current producer workflow first requires all 58 portable controls and the
+audited public .36 byte donor. It then compiles one read-only Win32 probe and
+executes four real SDK cases (complete metadata, unchanged existing output,
+sharing denial and output-inside-input refusal), retaining raw console and
+sidecar bytes. One full capture Game is compiled afterward. Its typed package
+includes exact effective source pins, original raw donor ancestry, the actual
+UtilitiesLib private-definition project and both control receipts. No successful
+baseline, Cg observer or folder-sort build is repeated.
+
+The separate probe format is COHWFD1: a 160-byte versioned header followed by
+sequence-numbered root/directory/entry/end/footer records. Canonical WFD rows
+are 320 bytes and by-handle information is 52 bytes, with explicit CreateFile,
+GetFileInformation and CloseHandle outcomes. Reserved/padding bytes are zero.
+The five selected branches are complete only when enumeration, traversal,
+readability and cleanup all succeeded. The root is a partial anchor. Unknown
+names, directory reparse points, cycles and API failures remain incomplete
+evidence. These observations grant neither provider authority nor absence.
+The sidecar is exclusive and bounded to 64 MiB, 16,384 directories and 200,000
+rows. Its deadline bounds an isolated CI probe, not user gameplay or captures.

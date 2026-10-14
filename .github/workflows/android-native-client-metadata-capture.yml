@@ -1,0 +1,172 @@
+name: Nonshipping client metadata observation bridge
+on:
+  push:
+    branches: [codex/native-client-metadata-capture-037]
+    paths:
+      - .github/workflows/android-native-client-metadata-capture.yml
+      - tools/prepare_native_client_metadata_census_source.py
+      - tools/native_client_pig_index_capture.py
+      - tools/native_client_wfd_probe.c
+      - tools/test_native_client_wfd_probe.py
+      - tools/test_native_client_census_capture_source.py
+      - tools/test_native_client_census_stat_source.py
+      - tools/test_native_client_metadata_census_source.py
+      - tools/test_native_client_metadata_census_decode.py
+      - tools/package_native_client_metadata_capture.py
+      - tools/test_package_native_client_metadata_capture.py
+      - database/client-metadata-census/**
+  workflow_dispatch:
+permissions: {contents: read, actions: read}
+concurrency:
+  group: native-client-metadata-capture-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  portable-controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Authenticate audited public .36 byte donor for portable archive guards
+        shell: bash
+        run: |
+          mkdir -p out/contracts
+          python - <<'PYTHON'
+          import hashlib,pathlib,urllib.request
+          target=pathlib.Path('out/donor-036.apk')
+          with urllib.request.urlopen('https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk',timeout=60) as response,target.open('xb') as stream:
+              total=0;digest=hashlib.sha256()
+              while block:=response.read(1024**2):
+                  total+=len(block);assert total<=42076692;digest.update(block);stream.write(block)
+          assert total==42076692 and digest.hexdigest()=='14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f'
+          PYTHON
+      - name: Execute all portable controls without claiming Windows or Game execution
+        env:
+          PYTHONPATH: tools
+          COH_PUBLIC036_DONOR_APK: out/donor-036.apk
+          PYTHONWARNINGS: error::ResourceWarning
+        shell: bash
+        run: |
+          python tools/package_native_client_metadata_capture.py host-checks --repository-commit "$GITHUB_SHA" --output out/contracts/native-client-metadata-capture-host-checks.json 2>&1 | tee out/contracts/portable-controls.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-metadata-capture-portable-controls
+          path: out/contracts/
+          retention-days: 90
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: coh-client-metadata-capture-portable-failure
+          path: out/contracts/
+          retention-days: 90
+          if-no-files-found: warn
+  native-game-and-probe:
+    needs: portable-controls
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 100
+    steps:
+      - name: Preserve exact repository source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-metadata-capture-portable-controls
+          path: out/contracts/
+      - name: Authenticate completed .36 public artifact as the unchanged Game and DLL donor
+        shell: pwsh
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          New-Item -ItemType Directory -Path out -Force | Out-Null
+          $script = @'
+          import hashlib,json,os,pathlib,time,urllib.error,urllib.request
+          target=pathlib.Path('out/donor-036.apk')
+          expected={'bytes':42076692,'sha256':'14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f'}
+          base='https://api.github.com/repos/Russianranger/coh-android'
+          def get(url):
+              request=urllib.request.Request(url,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+              for attempt in range(3):
+                  try:
+                      with urllib.request.urlopen(request,timeout=60) as response:return json.load(response)
+                  except urllib.error.HTTPError as error:
+                      if error.code not in (429,500,502,503,504) or attempt==2:raise
+                      time.sleep(5)
+          run=get(base+'/actions/runs/38346809297');jobs=get(base+'/actions/runs/38346809297/jobs')
+          assert run['head_sha']=='3570430cefdb15d9b239563e85cccf4d8fe6f32e' and run['conclusion']=='success'
+          audits=[j for j in jobs['jobs'] if j['id']==115141593507]
+          assert len(audits)==1 and audits[0]['name']=='public-audit' and audits[0]['conclusion']=='success'
+          pathlib.Path('out/donor-public-run.json').write_text(json.dumps(run,indent=2)+'\n')
+          pathlib.Path('out/donor-public-jobs.json').write_text(json.dumps(jobs,indent=2)+'\n')
+          url='https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk'
+          for attempt in range(3):
+              try:
+                  with urllib.request.urlopen(url,timeout=60) as response,target.open('xb') as stream:
+                      total=0;digest=hashlib.sha256()
+                      while block:=response.read(1024**2):
+                          total+=len(block);assert total<=expected['bytes'];digest.update(block);stream.write(block)
+                  assert total==expected['bytes'] and digest.hexdigest()==expected['sha256']
+                  break
+              except urllib.error.HTTPError as error:
+                  target.unlink(missing_ok=True)
+                  if error.code not in (429,500,502,503,504) or attempt==2:raise
+                  time.sleep(5)
+          '@
+          $script | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Audited exact native donor authentication failed' }
+      - name: Stage one retained Game with capture observations and replay disabled
+        shell: pwsh
+        run: |
+          python tools/package_native_client_metadata_capture.py stage --output C:/coh-client-metadata-capture
+          if ($LASTEXITCODE -ne 0) { throw 'Retained native source and capture staging failed' }
+      - name: Compile one read-only Win32 metadata probe and execute real SDK fixture
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'Win32 MSVC installation unavailable' }
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          cl /nologo /O2 /MT /TC tools/native_client_wfd_probe.c /Fe:out/contracts/native-client-wfd-probe.exe /Fo:out/contracts/native-client-wfd-probe.obj
+          if errorlevel 1 exit /b 1
+          python tools/test_native_client_wfd_probe.py --windows-qualify --probe out/contracts/native-client-wfd-probe.exe --output out/contracts/native-client-wfd-probe-windows-checks.json
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/native-wfd-probe.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\native-wfd-probe.cmd
+          if ($LASTEXITCODE -ne 0) { throw 'Real Win32 metadata projection fixture failed' }
+      - name: Compile one capture-only full Game with retained renderer and source contracts
+        working-directory: C:/coh-client-metadata-capture
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF -DCOX_BUILD_MAPSERVER=OFF -DCOX_BUILD_BEACONSERVER=OFF -DCMAKE_PROJECT_INCLUDE=C:/coh-client-metadata-capture/coh_client_metadata_capture.cmake
+          if ($LASTEXITCODE -ne 0) { throw 'Capture-only Game configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
+          if ($LASTEXITCODE -ne 0) { throw 'Capture-only Game compile failed' }
+      - name: Bind fresh Game and probe to exact source, SDK evidence and unchanged native donor
+        shell: pwsh
+        run: |
+          $projects = @(Get-ChildItem -Path C:/coh-client-metadata-capture/out/build/vs2026 -Recurse -Filter UtilitiesLib.vcxproj)
+          if ($projects.Count -ne 1) { throw 'Exact UtilitiesLib compile-definition evidence missing or aliased' }
+          python tools/package_native_client_metadata_capture.py package --source C:/coh-client-metadata-capture --directory C:/coh-client-metadata-capture/out/build/vs2026/bin/OptDebug --cache C:/coh-client-metadata-capture/out/build/vs2026/CMakeCache.txt --checks out/contracts/native-client-metadata-capture-host-checks.json --probe out/contracts/native-client-wfd-probe.exe --probe-checks out/contracts/native-client-wfd-probe-windows-checks.json --utilities-project "$($projects[0].FullName)" --donor-apk out/donor-036.apk --repository-commit "$env:GITHUB_SHA" --run-url "https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID" --output out/native-client-metadata-capture
+          if ($LASTEXITCODE -ne 0) { throw 'Exact capture-native typed package failed' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-nonshipping-native-client-metadata-capture
+          path: out/native-client-metadata-capture/
+          retention-days: 90
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-nonshipping-native-client-metadata-capture-diagnostics
+          path: |
+            out/contracts/
+            out/donor-public-run.json
+            out/donor-public-jobs.json
+          retention-days: 90
+          if-no-files-found: warn

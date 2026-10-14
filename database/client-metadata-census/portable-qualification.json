@@ -1,5 +1,5 @@
 {
-  "absent_compile_gate_constructor": {
+  "constructor_compile_disabled": {
     "actual_hash_table_implementation_executed": false,
     "all_admission_failures_preserve_stock_enumeration": true,
     "api_guard_cases": 4,
@@ -9,10 +9,10 @@
     "copied_context_and_context_input_aliases_refused": true,
     "exact_all_tree_links_and_provider_counters": true,
     "exact_arrival_and_node_attributes": true,
-    "fixture_binary_sha256": "8307974c6f89000245d52ff3f625dccabac30784d65eef32387336e282c9a347",
+    "fixture_binary_sha256": "24993950c026da3d35fdac6091e4f621f9e365775a5ec0ddccaaa593740c3579",
     "fixture_removed_enumeration_calls_per_complete_branch": 3,
     "format": 1,
-    "harness_sha256": "7d51d005636aeca52ec9bc895036bd45d53210c6b9f09257e536a90e99c4c750",
+    "harness_sha256": "d5127d2b47fa166c058442e8852ba5a958c2b0977392870d96e92744d34d4ed7",
     "hash_membership_compared_by_complete_tree_digest": true,
     "native_game_executed": false,
     "native_windows_executed": false,
@@ -31,12 +31,15 @@
         "texture_library",
         "object_library",
         "fx",
-        "scripts"
+        "scripts",
+        "scripts.loc"
       ],
       "all_native_arrival_records_replayed": true,
       "asset_payload_reads_added": false,
       "authority_token_role": "opaque identity binding; not a cryptographic verification API",
       "borrowed_directory_index_bound_to_original_context": true,
+      "cmake_injection_role": "CMAKE_PROJECT_INCLUDE; deferred UtilitiesLib-only capture define; Game-only MSVC Win32",
+      "cmake_injection_sha256": "cbec381b66b5e7cc41b558ea75aac209f084e741a80f424af2e6a9fa01a23a72",
       "compile_gate": "COH_CLIENT_METADATA_CENSUS_PROTOTYPE; not defined by retained UtilitiesLib",
       "current_metadata_claim": "FolderCache consumed fields only; capture atime and creation provenance is not current-field authority",
       "decoder_is_provider_authentication": false,
@@ -45,21 +48,37 @@
       "lease_callback_mandatory": true,
       "native_directory_recursion_retained": true,
       "native_game_executed": false,
-      "native_hash_build_and_override_query_unchanged": true,
+      "native_hash_build_unchanged": true,
+      "native_legacy_ignored_info_return_unchanged": true,
+      "native_override_and_query_cache_semantics_unchanged": true,
+      "native_override_stat_observer_only": true,
+      "native_pig_capture_activation": "COH_CLIENT_CENSUS_CAPTURE=1 plus exact64hex generation",
+      "native_pig_capture_after_stock_initialization": true,
+      "native_pig_capture_all_indices_under_provider_lock": true,
+      "native_pig_capture_compile_gate": "COH_CLIENT_METADATA_CENSUS_CAPTURE; absent production",
+      "native_pig_capture_maximum_output_bytes": 8388608,
+      "native_pig_capture_maximum_records": 200000,
+      "native_pig_capture_registers_provider_authority": false,
       "native_reserved_fields_and_padding": "canonical zero; pinned Wine A enumeration does not initialize these fields",
       "native_source_schema_changed": false,
+      "native_stat_counters_atomic_and_scoped_by_thread_local_override": true,
+      "native_stat_hooks_preserve_errno_and_GetLastError": true,
       "native_windows_executed": false,
       "native_wine_executed": false,
       "overlay_sha256": {
         "libs/UtilitiesLib/src/utils/coh_folder_census.h": "1748606b4aad4a92fe4aad11c931b3bff35594cb7c70c09fb778f61b4fbcc601",
-        "libs/UtilitiesLib/src/utils/coh_folder_census_adapter.h": "5674d44afdbc84f9a4817185c62c649049d814280a27136048a5ee7661f578dd"
+        "libs/UtilitiesLib/src/utils/coh_folder_census_adapter.h": "a9ed950a1ac235a6d8a62c8b0e90096466d9ec2324bec3aae737ecfc532dd652",
+        "libs/UtilitiesLib/src/utils/coh_folder_census_capture.h": "29de9db5ddc5337fe5cb672ec23fa6135f22141fdb93b07b8c0156540d32ee5b",
+        "libs/UtilitiesLib/src/utils/coh_folder_census_observation.h": "13bfc29c113283ba832d3cf2c6620df331a50b82acc90eeee9bede8f6c7b4fda"
       },
       "owned_guard_or_unknown_eligible_directory_failure_revokes_registration_before_stock_recursion": true,
       "patched_sha256": {
-        "libs/UtilitiesLib/src/utils/FolderCache.c": "989af3db44cd02ced72d1e930b50f6a15da5f6219609ead419f9187b94be5965"
+        "libs/UtilitiesLib/src/utils/FolderCache.c": "5843f766ffa956b6b2f3c5f7d1ae82a14f993faca5ce0e3a558181278aca4102",
+        "libs/UtilitiesLib/src/utils/winfiletime.c": "ba26c0d98af910130e96aa3ca3b5a7c9ee1e528cc1f88c722cc973549819845f"
       },
       "per_entry_body_sha256": "7ed60dd12c31c03314ee2ecd86e6ea96a5dda8d96b6d8305d4f3b2be2f44aa67",
       "physical_device_executed": false,
+      "previous_closed_prototype_source": "7f3d37fc191f3f30c124d6d57581afb64cceef42",
       "production_activation_available": false,
       "production_registration_present": false,
       "provider_order_changed": false,
@@ -68,18 +87,116 @@
       "registered_cache_owner_thread_required": true,
       "retained_FolderNodeAdd_sha256": "4b94ff2f9630e2fe29c8336f4e031d8c8232ceaefe44b3a007fc21c563890e9f",
       "retained_game_recipe": "package_client_render_queue_native",
-      "role": "nonshipping_authenticated_metadata_census_consumer_prototype",
+      "role": "nonshipping_native_pig_index_capture_and_scoped_census_prototype",
       "source_scope": "dedicated Game-only build macro, global folder_cache, owning thread, one GDD, dynamic dev mode, initial empty siblings, callbacks disabled, ALL-folder policy",
       "source_sha256": {
         "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
-        "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524"
+        "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+        "libs/UtilitiesLib/src/utils/winfiletime.c": "bd1f419d6dda2517ff4a588a0c70f2500d69f7fc6390d5d58da31b54733deb56"
       },
       "upstream_Game_CLIENT_macro_propagates_to_UtilitiesLib": false
     },
     "status": "passed"
   },
-  "actual_native_Wine_projection_qualified": false,
-  "current_provider_generation_qualified": false,
+  "constructor_compile_enabled": {
+    "actual_hash_table_implementation_executed": false,
+    "all_admission_failures_preserve_stock_enumeration": true,
+    "api_guard_cases": 4,
+    "cases": 707,
+    "controlled_native_metadata_rows": true,
+    "controlled_provider_lease": true,
+    "copied_context_and_context_input_aliases_refused": true,
+    "exact_all_tree_links_and_provider_counters": true,
+    "exact_arrival_and_node_attributes": true,
+    "fixture_binary_sha256": "b57317e247d8544eab023800b8504a15a533f18b2f8883f2a520c1489ed78ec2",
+    "fixture_removed_enumeration_calls_per_complete_branch": 3,
+    "format": 1,
+    "harness_sha256": "3dbf14a460865584770061585e2e74c5b256dc46d7e3bedd4e131e54fc2a0e51",
+    "hash_membership_compared_by_complete_tree_digest": true,
+    "native_game_executed": false,
+    "native_windows_executed": false,
+    "native_wine_executed": false,
+    "observed_adapter_WFD_bytes": 320,
+    "observed_portable_context_bytes": 65928,
+    "output": "COH_CLIENT_METADATA_CENSUS_PARITY_PASS cases=707 native_wfd_bytes=320 context_bytes=65928 removed_fixture_enum_calls=3 api_guard_cases=4\n",
+    "owned_registration_thread_bound": true,
+    "physical_device_executed": false,
+    "production_generation_authority_present": false,
+    "prototype_compile_gate_enabled": true,
+    "publication_allowed": false,
+    "role": "portable_extracted_stock_constructor_census_parity",
+    "source": {
+      "admitted_branches": [
+        "texture_library",
+        "object_library",
+        "fx",
+        "scripts",
+        "scripts.loc"
+      ],
+      "all_native_arrival_records_replayed": true,
+      "asset_payload_reads_added": false,
+      "authority_token_role": "opaque identity binding; not a cryptographic verification API",
+      "borrowed_directory_index_bound_to_original_context": true,
+      "cmake_injection_role": "CMAKE_PROJECT_INCLUDE; deferred UtilitiesLib-only capture define; Game-only MSVC Win32",
+      "cmake_injection_sha256": "cbec381b66b5e7cc41b558ea75aac209f084e741a80f424af2e6a9fa01a23a72",
+      "compile_gate": "COH_CLIENT_METADATA_CENSUS_PROTOTYPE; not defined by retained UtilitiesLib",
+      "current_metadata_claim": "FolderCache consumed fields only; capture atime and creation provenance is not current-field authority",
+      "decoder_is_provider_authentication": false,
+      "format": 1,
+      "game_data_or_player_sql_changed": false,
+      "lease_callback_mandatory": true,
+      "native_directory_recursion_retained": true,
+      "native_game_executed": false,
+      "native_hash_build_unchanged": true,
+      "native_legacy_ignored_info_return_unchanged": true,
+      "native_override_and_query_cache_semantics_unchanged": true,
+      "native_override_stat_observer_only": true,
+      "native_pig_capture_activation": "COH_CLIENT_CENSUS_CAPTURE=1 plus exact64hex generation",
+      "native_pig_capture_after_stock_initialization": true,
+      "native_pig_capture_all_indices_under_provider_lock": true,
+      "native_pig_capture_compile_gate": "COH_CLIENT_METADATA_CENSUS_CAPTURE; absent production",
+      "native_pig_capture_maximum_output_bytes": 8388608,
+      "native_pig_capture_maximum_records": 200000,
+      "native_pig_capture_registers_provider_authority": false,
+      "native_reserved_fields_and_padding": "canonical zero; pinned Wine A enumeration does not initialize these fields",
+      "native_source_schema_changed": false,
+      "native_stat_counters_atomic_and_scoped_by_thread_local_override": true,
+      "native_stat_hooks_preserve_errno_and_GetLastError": true,
+      "native_windows_executed": false,
+      "native_wine_executed": false,
+      "overlay_sha256": {
+        "libs/UtilitiesLib/src/utils/coh_folder_census.h": "1748606b4aad4a92fe4aad11c931b3bff35594cb7c70c09fb778f61b4fbcc601",
+        "libs/UtilitiesLib/src/utils/coh_folder_census_adapter.h": "a9ed950a1ac235a6d8a62c8b0e90096466d9ec2324bec3aae737ecfc532dd652",
+        "libs/UtilitiesLib/src/utils/coh_folder_census_capture.h": "29de9db5ddc5337fe5cb672ec23fa6135f22141fdb93b07b8c0156540d32ee5b",
+        "libs/UtilitiesLib/src/utils/coh_folder_census_observation.h": "13bfc29c113283ba832d3cf2c6620df331a50b82acc90eeee9bede8f6c7b4fda"
+      },
+      "owned_guard_or_unknown_eligible_directory_failure_revokes_registration_before_stock_recursion": true,
+      "patched_sha256": {
+        "libs/UtilitiesLib/src/utils/FolderCache.c": "5843f766ffa956b6b2f3c5f7d1ae82a14f993faca5ce0e3a558181278aca4102",
+        "libs/UtilitiesLib/src/utils/winfiletime.c": "ba26c0d98af910130e96aa3ca3b5a7c9ee1e528cc1f88c722cc973549819845f"
+      },
+      "per_entry_body_sha256": "7ed60dd12c31c03314ee2ecd86e6ea96a5dda8d96b6d8305d4f3b2be2f44aa67",
+      "physical_device_executed": false,
+      "previous_closed_prototype_source": "7f3d37fc191f3f30c124d6d57581afb64cceef42",
+      "production_activation_available": false,
+      "production_registration_present": false,
+      "provider_order_changed": false,
+      "publication_allowed": false,
+      "register_input_context_alias_refused_before_writes": true,
+      "registered_cache_owner_thread_required": true,
+      "retained_FolderNodeAdd_sha256": "4b94ff2f9630e2fe29c8336f4e031d8c8232ceaefe44b3a007fc21c563890e9f",
+      "retained_game_recipe": "package_client_render_queue_native",
+      "role": "nonshipping_native_pig_index_capture_and_scoped_census_prototype",
+      "source_scope": "dedicated Game-only build macro, global folder_cache, owning thread, one GDD, dynamic dev mode, initial empty siblings, callbacks disabled, ALL-folder policy",
+      "source_sha256": {
+        "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+        "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+        "libs/UtilitiesLib/src/utils/winfiletime.c": "bd1f419d6dda2517ff4a588a0c70f2500d69f7fc6390d5d58da31b54733deb56"
+      },
+      "upstream_Game_CLIENT_macro_propagates_to_UtilitiesLib": false
+    },
+    "status": "passed"
+  },
   "decoder": {
     "Windows_SDK_projection_ABI_executed": false,
     "accepted": 70,
@@ -127,44 +244,81 @@
     "role": "bounded_canonical_native_metadata_census_decoder_fixture",
     "status": "passed"
   },
-  "enabled_constructor": {
-    "actual_hash_table_implementation_executed": false,
-    "all_admission_failures_preserve_stock_enumeration": true,
-    "api_guard_cases": 4,
-    "cases": 707,
-    "controlled_native_metadata_rows": true,
-    "controlled_provider_lease": true,
-    "copied_context_and_context_input_aliases_refused": true,
-    "exact_all_tree_links_and_provider_counters": true,
-    "exact_arrival_and_node_attributes": true,
-    "fixture_binary_sha256": "f9d5056ce920e59483752ec364de87850084b7dde1b387b47cd34a03ded93b27",
-    "fixture_removed_enumeration_calls_per_complete_branch": 3,
+  "focused_host_tests": {
+    "failed": 0,
+    "passed": 58,
+    "skipped": 0
+  },
+  "format": 3,
+  "full_retained_source_staging": {
+    "all_prior_raw_source_receipts_preserved": true,
+    "historical_base_receipts": 3,
+    "immutable_source_bytes": 173081714,
+    "immutable_source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "immutable_source_files": 5995,
+    "native_build_executed": false,
+    "retained_Game_layers": 8,
+    "scope": "actual full retained source staging and effective source-closure equality; no native compile",
+    "serializer_schema_pins": 4,
+    "status": "passed",
+    "validated_effective_source_pins": 48
+  },
+  "host_controls": {
     "format": 1,
-    "harness_sha256": "cf0b13f4b3ebe6c2626fb5046064cbd52d8e1bd0449be70101caa839cb8fd37e",
-    "hash_membership_compared_by_complete_tree_digest": true,
+    "host_control_sources": {
+      "test_native_client_census_capture_source": {
+        "bytes": 12375,
+        "sha256": "00456cded13072f3f0df2c481943ea34eae12095641445a464c3321ed4aa9676"
+      },
+      "test_native_client_census_stat_source": {
+        "bytes": 6721,
+        "sha256": "104fd08372f17ea84c1902df45997f86e88317ccfb903046dcc2677da47c9e2f"
+      },
+      "test_native_client_metadata_census_decode": {
+        "bytes": 20898,
+        "sha256": "2a15fedfe5ed46838db9cfe01eedc5a9c7e73ce90a4370b85bd3b4a569dee03d"
+      },
+      "test_native_client_metadata_census_source": {
+        "bytes": 27487,
+        "sha256": "0e44e25da7fa40a6542a0dad269378aee87d245c44b56284a5210c065c245d53"
+      },
+      "test_native_client_wfd_probe": {
+        "bytes": 33374,
+        "sha256": "eccf7452483b3b89680d442f6d9865f65500d3e95c8e6ce0f0ad49b70c30625a"
+      },
+      "test_package_native_client_metadata_capture": {
+        "bytes": 15091,
+        "sha256": "d54bd37b4f08961885fc511d0a7e9023c999750b4bd8bdc415e439e73d0ca20a"
+      }
+    },
+    "host_modules": [
+      "test_native_client_census_stat_source",
+      "test_native_client_census_capture_source",
+      "test_native_client_metadata_census_source",
+      "test_native_client_metadata_census_decode",
+      "test_package_native_client_metadata_capture",
+      "test_native_client_wfd_probe"
+    ],
+    "host_tests": 58,
     "native_game_executed": false,
     "native_windows_executed": false,
-    "native_wine_executed": false,
-    "observed_adapter_WFD_bytes": 320,
-    "observed_portable_context_bytes": 65928,
-    "output": "COH_CLIENT_METADATA_CENSUS_PARITY_PASS cases=707 native_wfd_bytes=320 context_bytes=65928 removed_fixture_enum_calls=3 api_guard_cases=4\n",
-    "owned_registration_thread_bound": true,
-    "physical_device_executed": false,
-    "production_generation_authority_present": false,
-    "prototype_compile_gate_enabled": true,
     "publication_allowed": false,
-    "role": "portable_extracted_stock_constructor_census_parity",
-    "source": {
+    "repository_commit": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+    "role": "portable_source_controls_for_native_capture",
+    "source_recipe": {
       "admitted_branches": [
         "texture_library",
         "object_library",
         "fx",
-        "scripts"
+        "scripts",
+        "scripts.loc"
       ],
       "all_native_arrival_records_replayed": true,
       "asset_payload_reads_added": false,
       "authority_token_role": "opaque identity binding; not a cryptographic verification API",
       "borrowed_directory_index_bound_to_original_context": true,
+      "cmake_injection_role": "CMAKE_PROJECT_INCLUDE; deferred UtilitiesLib-only capture define; Game-only MSVC Win32",
+      "cmake_injection_sha256": "cbec381b66b5e7cc41b558ea75aac209f084e741a80f424af2e6a9fa01a23a72",
       "compile_gate": "COH_CLIENT_METADATA_CENSUS_PROTOTYPE; not defined by retained UtilitiesLib",
       "current_metadata_claim": "FolderCache consumed fields only; capture atime and creation provenance is not current-field authority",
       "decoder_is_provider_authentication": false,
@@ -173,21 +327,37 @@
       "lease_callback_mandatory": true,
       "native_directory_recursion_retained": true,
       "native_game_executed": false,
-      "native_hash_build_and_override_query_unchanged": true,
+      "native_hash_build_unchanged": true,
+      "native_legacy_ignored_info_return_unchanged": true,
+      "native_override_and_query_cache_semantics_unchanged": true,
+      "native_override_stat_observer_only": true,
+      "native_pig_capture_activation": "COH_CLIENT_CENSUS_CAPTURE=1 plus exact64hex generation",
+      "native_pig_capture_after_stock_initialization": true,
+      "native_pig_capture_all_indices_under_provider_lock": true,
+      "native_pig_capture_compile_gate": "COH_CLIENT_METADATA_CENSUS_CAPTURE; absent production",
+      "native_pig_capture_maximum_output_bytes": 8388608,
+      "native_pig_capture_maximum_records": 200000,
+      "native_pig_capture_registers_provider_authority": false,
       "native_reserved_fields_and_padding": "canonical zero; pinned Wine A enumeration does not initialize these fields",
       "native_source_schema_changed": false,
+      "native_stat_counters_atomic_and_scoped_by_thread_local_override": true,
+      "native_stat_hooks_preserve_errno_and_GetLastError": true,
       "native_windows_executed": false,
       "native_wine_executed": false,
       "overlay_sha256": {
         "libs/UtilitiesLib/src/utils/coh_folder_census.h": "1748606b4aad4a92fe4aad11c931b3bff35594cb7c70c09fb778f61b4fbcc601",
-        "libs/UtilitiesLib/src/utils/coh_folder_census_adapter.h": "5674d44afdbc84f9a4817185c62c649049d814280a27136048a5ee7661f578dd"
+        "libs/UtilitiesLib/src/utils/coh_folder_census_adapter.h": "a9ed950a1ac235a6d8a62c8b0e90096466d9ec2324bec3aae737ecfc532dd652",
+        "libs/UtilitiesLib/src/utils/coh_folder_census_capture.h": "29de9db5ddc5337fe5cb672ec23fa6135f22141fdb93b07b8c0156540d32ee5b",
+        "libs/UtilitiesLib/src/utils/coh_folder_census_observation.h": "13bfc29c113283ba832d3cf2c6620df331a50b82acc90eeee9bede8f6c7b4fda"
       },
       "owned_guard_or_unknown_eligible_directory_failure_revokes_registration_before_stock_recursion": true,
       "patched_sha256": {
-        "libs/UtilitiesLib/src/utils/FolderCache.c": "989af3db44cd02ced72d1e930b50f6a15da5f6219609ead419f9187b94be5965"
+        "libs/UtilitiesLib/src/utils/FolderCache.c": "5843f766ffa956b6b2f3c5f7d1ae82a14f993faca5ce0e3a558181278aca4102",
+        "libs/UtilitiesLib/src/utils/winfiletime.c": "ba26c0d98af910130e96aa3ca3b5a7c9ee1e528cc1f88c722cc973549819845f"
       },
       "per_entry_body_sha256": "7ed60dd12c31c03314ee2ecd86e6ea96a5dda8d96b6d8305d4f3b2be2f44aa67",
       "physical_device_executed": false,
+      "previous_closed_prototype_source": "7f3d37fc191f3f30c124d6d57581afb64cceef42",
       "production_activation_available": false,
       "production_registration_present": false,
       "provider_order_changed": false,
@@ -196,28 +366,168 @@
       "registered_cache_owner_thread_required": true,
       "retained_FolderNodeAdd_sha256": "4b94ff2f9630e2fe29c8336f4e031d8c8232ceaefe44b3a007fc21c563890e9f",
       "retained_game_recipe": "package_client_render_queue_native",
-      "role": "nonshipping_authenticated_metadata_census_consumer_prototype",
+      "role": "nonshipping_native_pig_index_capture_and_scoped_census_prototype",
       "source_scope": "dedicated Game-only build macro, global folder_cache, owning thread, one GDD, dynamic dev mode, initial empty siblings, callbacks disabled, ALL-folder policy",
       "source_sha256": {
         "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
-        "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524"
+        "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+        "libs/UtilitiesLib/src/utils/winfiletime.c": "bd1f419d6dda2517ff4a588a0c70f2500d69f7fc6390d5d58da31b54733deb56"
       },
       "upstream_Game_CLIENT_macro_propagates_to_UtilitiesLib": false
     },
     "status": "passed"
   },
-  "focused_host_unittests": {
-    "command": "PYTHONPATH=tools python -m unittest tools/test_native_client_metadata_census_source.py tools/test_native_client_metadata_census_decode.py -v",
-    "failed": 0,
-    "passed": 12
-  },
-  "format": 1,
+  "legacy_AltStat_capture_disabled_controlled": "CONTROLLED_STAT_SOURCE_PASS cases=6 errno_preserved=1 last_error_preserved=1 legacy_info_failure_unchanged=1\n",
+  "legacy_AltStat_capture_enabled_controlled": "CONTROLLED_STAT_SOURCE_PASS cases=6 errno_preserved=1 last_error_preserved=1 legacy_info_failure_unchanged=1\n",
   "native_Game_executed": false,
-  "observed_host_utc": "2026-10-14T01:08:12.670995+00:00",
+  "native_WFD_controlled_C_projection": "CONTROLLED_WFD_C_PASS cases=4 canonical_projection=1 path_alias_refusal=1 SDK=0 authority=0\n",
+  "native_Wine_enumeration_executed": false,
+  "native_pig_API_fixture_scenarios": [
+    {
+      "scenario": 0,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=0 adds=2 locks=2 unlocks=2 metadata_calls=8\n",
+      "stdout": "COH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"begin\",\"generation\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"providers\":2,\"mode\":1,\"gdd_root\":\"c:/qualified/data\",\"windows_pid\":312,\"windows_thread\":77,\"native_registration_allowed\":false}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"provider\",\"ordinal\":0,\"virtual_location\":-1,\"archive\":\"c:/qualified/piggs/animations.pigg\",\"folder_cache_mount\":\"c:/qualified/piggs/animations.pigg:\",\"members\":3}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"member\",\"provider\":0,\"file_index\":0,\"name\":\"sequencers/test.anim\",\"name_present\":true,\"special\":false,\"timestamp\":1000,\"size\":2000,\"metadata_available\":true}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"member\",\"provider\":0,\"file_index\":1,\"name\":null,\"name_present\":false,\"special\":false,\"timestamp\":null,\"size\":null,\"metadata_available\":false}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"member\",\"provider\":0,\"file_index\":2,\"name\":\"?DataList\",\"name_present\":true,\"special\":true,\"timestamp\":1002,\"size\":2002,\"metadata_available\":true}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"provider\",\"ordinal\":1,\"virtual_location\":-2,\"archive\":\"c:/qualified/piggs/supplement.pigg\",\"folder_cache_mount\":\"c:/qualified/piggs/supplement.pigg:\",\"members\":2}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"member\",\"provider\":1,\"file_index\":0,\"name\":\"fx/a\\\"b\\\\c.fx\",\"name_present\":true,\"special\":false,\"timestamp\":1000,\"size\":2000,\"metadata_available\":true}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"member\",\"provider\":1,\"file_index\":1,\"name\":\"scripts.loc/example.npc\",\"name_present\":true,\"special\":false,\"timestamp\":1001,\"size\":2001,\"metadata_available\":true}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"end\",\"complete\":true,\"providers\":2,\"rows\":5,\"native_registration_allowed\":false}\nCOH_NATIVE_FOLDER_STAT_COUNTS_V1 {\"snapshot\":1,\"branch\":\"texture_library\",\"calls\":0,\"returns_ok\":0,\"returns_failed\":0,\"create_calls\":0,\"create_ok\":0,\"info_calls\":0,\"info_ok\":0,\"scope\":\"cumulative_all_thread_local_FolderCache_override_calls_after_PIG_capture_begin\",\"cached_stat_reuse\":false}\nCOH_NATIVE_FOLDER_STAT_COUNTS_V1 {\"snapshot\":1,\"branch\":\"object_library\",\"calls\":0,\"returns_ok\":0,\"returns_failed\":0,\"create_calls\":0,\"create_ok\":0,\"info_calls\":0,\"info_ok\":0,\"scope\":\"cumulative_all_thread_local_FolderCache_override_calls_after_PIG_capture_begin\",\"cached_stat_reuse\":false}\nCOH_NATIVE_FOLDER_STAT_COUNTS_V1 {\"snapshot\":1,\"branch\":\"fx\",\"calls\":1,\"returns_ok\":0,\"returns_failed\":1,\"create_calls\":1,\"create_ok\":0,\"info_calls\":0,\"info_ok\":0,\"scope\":\"cumulative_all_thread_local_FolderCache_override_calls_after_PIG_capture_begin\",\"cached_stat_reuse\":false}\nCOH_NATIVE_FOLDER_STAT_COUNTS_V1 {\"snapshot\":1,\"branch\":\"scripts\",\"calls\":0,\"returns_ok\":0,\"returns_failed\":0,\"create_calls\":0,\"create_ok\":0,\"info_calls\":0,\"info_ok\":0,\"scope\":\"cumulative_all_thread_local_FolderCache_override_calls_after_PIG_capture_begin\",\"cached_stat_reuse\":false}\nCOH_NATIVE_FOLDER_STAT_COUNTS_V1 {\"snapshot\":1,\"branch\":\"scripts.loc\",\"calls\":1,\"returns_ok\":1,\"returns_failed\":0,\"create_calls\":1,\"create_ok\":1,\"info_calls\":1,\"info_ok\":1,\"scope\":\"cumulative_all_thread_local_FolderCache_override_calls_after_PIG_capture_begin\",\"cached_stat_reuse\":false}\n"
+    },
+    {
+      "scenario": 1,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=1 adds=2 locks=0 unlocks=0 metadata_calls=0\n",
+      "stdout": ""
+    },
+    {
+      "scenario": 2,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=2 adds=2 locks=0 unlocks=0 metadata_calls=0\n",
+      "stdout": ""
+    },
+    {
+      "scenario": 3,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=3 adds=2 locks=0 unlocks=0 metadata_calls=0\n",
+      "stdout": ""
+    },
+    {
+      "scenario": 4,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=4 adds=2 locks=0 unlocks=0 metadata_calls=0\n",
+      "stdout": ""
+    },
+    {
+      "scenario": 5,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=5 adds=2 locks=0 unlocks=0 metadata_calls=0\n",
+      "stdout": ""
+    },
+    {
+      "scenario": 6,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=6 adds=2 locks=0 unlocks=0 metadata_calls=0\n",
+      "stdout": ""
+    },
+    {
+      "scenario": 7,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=7 adds=0 locks=0 unlocks=0 metadata_calls=0\n",
+      "stdout": ""
+    },
+    {
+      "scenario": 8,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=8 adds=2 locks=0 unlocks=0 metadata_calls=0\n",
+      "stdout": ""
+    },
+    {
+      "scenario": 9,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=9 adds=2 locks=0 unlocks=0 metadata_calls=0\n",
+      "stdout": ""
+    },
+    {
+      "scenario": 10,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=10 adds=2 locks=1 unlocks=1 metadata_calls=0\n",
+      "stdout": "COH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"begin\",\"generation\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"providers\":2,\"mode\":1,\"gdd_root\":\"c:/qualified/data\",\"windows_pid\":312,\"windows_thread\":77,\"native_registration_allowed\":false}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"provider\",\"ordinal\":0,\"virtual_location\":-1,\"archive\":\"c:/qualified/piggs/animations.pigg\",\"folder_cache_mount\":\"c:/qualified/piggs/animations.pigg:\",\"members\":3}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"end\",\"complete\":false,\"native_registration_allowed\":false}\n"
+    },
+    {
+      "scenario": 11,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=11 adds=0 locks=0 unlocks=0 metadata_calls=0\n",
+      "stdout": "COH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"begin\",\"generation\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"providers\":0,\"mode\":1,\"gdd_root\":\"c:/qualified/data\",\"windows_pid\":312,\"windows_thread\":77,\"native_registration_allowed\":false}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"end\",\"complete\":true,\"providers\":0,\"rows\":0,\"native_registration_allowed\":false}\n"
+    },
+    {
+      "scenario": 12,
+      "stderr": "CONTROLLED_CAPTURE_PASS scenario=12 adds=1 locks=1 unlocks=1 metadata_calls=0\n",
+      "stdout": "COH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"begin\",\"generation\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"providers\":1,\"mode\":1,\"gdd_root\":\"c:/qualified/data\",\"windows_pid\":312,\"windows_thread\":77,\"native_registration_allowed\":false}\nCOH_NATIVE_PIG_INDEX_CAPTURE_V1 {\"event\":\"end\",\"complete\":false,\"native_registration_allowed\":false}\n"
+    }
+  ],
+  "native_provider_authority_qualified": false,
+  "native_windows_executed": false,
+  "observed_host_utc": "2026-10-14T02:32:08.337884+00:00",
   "performance_gain_measured": false,
   "physical_device_executed": false,
+  "previous_closed_prototype_source": "7f3d37fc191f3f30c124d6d57581afb64cceef42",
   "production_registration_present": false,
   "publication_allowed": false,
-  "role": "nonshipping_client_metadata_census_portable_qualification",
-  "status": "passed_portable_source_and_controlled_constructor_only"
+  "role": "nonshipping_native_metadata_capture_portable_qualification",
+  "source": {
+    "admitted_branches": [
+      "texture_library",
+      "object_library",
+      "fx",
+      "scripts",
+      "scripts.loc"
+    ],
+    "all_native_arrival_records_replayed": true,
+    "asset_payload_reads_added": false,
+    "authority_token_role": "opaque identity binding; not a cryptographic verification API",
+    "borrowed_directory_index_bound_to_original_context": true,
+    "cmake_injection_role": "CMAKE_PROJECT_INCLUDE; deferred UtilitiesLib-only capture define; Game-only MSVC Win32",
+    "cmake_injection_sha256": "cbec381b66b5e7cc41b558ea75aac209f084e741a80f424af2e6a9fa01a23a72",
+    "compile_gate": "COH_CLIENT_METADATA_CENSUS_PROTOTYPE; not defined by retained UtilitiesLib",
+    "current_metadata_claim": "FolderCache consumed fields only; capture atime and creation provenance is not current-field authority",
+    "decoder_is_provider_authentication": false,
+    "format": 1,
+    "game_data_or_player_sql_changed": false,
+    "lease_callback_mandatory": true,
+    "native_directory_recursion_retained": true,
+    "native_game_executed": false,
+    "native_hash_build_unchanged": true,
+    "native_legacy_ignored_info_return_unchanged": true,
+    "native_override_and_query_cache_semantics_unchanged": true,
+    "native_override_stat_observer_only": true,
+    "native_pig_capture_activation": "COH_CLIENT_CENSUS_CAPTURE=1 plus exact64hex generation",
+    "native_pig_capture_after_stock_initialization": true,
+    "native_pig_capture_all_indices_under_provider_lock": true,
+    "native_pig_capture_compile_gate": "COH_CLIENT_METADATA_CENSUS_CAPTURE; absent production",
+    "native_pig_capture_maximum_output_bytes": 8388608,
+    "native_pig_capture_maximum_records": 200000,
+    "native_pig_capture_registers_provider_authority": false,
+    "native_reserved_fields_and_padding": "canonical zero; pinned Wine A enumeration does not initialize these fields",
+    "native_source_schema_changed": false,
+    "native_stat_counters_atomic_and_scoped_by_thread_local_override": true,
+    "native_stat_hooks_preserve_errno_and_GetLastError": true,
+    "native_windows_executed": false,
+    "native_wine_executed": false,
+    "overlay_sha256": {
+      "libs/UtilitiesLib/src/utils/coh_folder_census.h": "1748606b4aad4a92fe4aad11c931b3bff35594cb7c70c09fb778f61b4fbcc601",
+      "libs/UtilitiesLib/src/utils/coh_folder_census_adapter.h": "a9ed950a1ac235a6d8a62c8b0e90096466d9ec2324bec3aae737ecfc532dd652",
+      "libs/UtilitiesLib/src/utils/coh_folder_census_capture.h": "29de9db5ddc5337fe5cb672ec23fa6135f22141fdb93b07b8c0156540d32ee5b",
+      "libs/UtilitiesLib/src/utils/coh_folder_census_observation.h": "13bfc29c113283ba832d3cf2c6620df331a50b82acc90eeee9bede8f6c7b4fda"
+    },
+    "owned_guard_or_unknown_eligible_directory_failure_revokes_registration_before_stock_recursion": true,
+    "patched_sha256": {
+      "libs/UtilitiesLib/src/utils/FolderCache.c": "5843f766ffa956b6b2f3c5f7d1ae82a14f993faca5ce0e3a558181278aca4102",
+      "libs/UtilitiesLib/src/utils/winfiletime.c": "ba26c0d98af910130e96aa3ca3b5a7c9ee1e528cc1f88c722cc973549819845f"
+    },
+    "per_entry_body_sha256": "7ed60dd12c31c03314ee2ecd86e6ea96a5dda8d96b6d8305d4f3b2be2f44aa67",
+    "physical_device_executed": false,
+    "previous_closed_prototype_source": "7f3d37fc191f3f30c124d6d57581afb64cceef42",
+    "production_activation_available": false,
+    "production_registration_present": false,
+    "provider_order_changed": false,
+    "publication_allowed": false,
+    "register_input_context_alias_refused_before_writes": true,
+    "registered_cache_owner_thread_required": true,
+    "retained_FolderNodeAdd_sha256": "4b94ff2f9630e2fe29c8336f4e031d8c8232ceaefe44b3a007fc21c563890e9f",
+    "retained_game_recipe": "package_client_render_queue_native",
+    "role": "nonshipping_native_pig_index_capture_and_scoped_census_prototype",
+    "source_scope": "dedicated Game-only build macro, global folder_cache, owning thread, one GDD, dynamic dev mode, initial empty siblings, callbacks disabled, ALL-folder policy",
+    "source_sha256": {
+      "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+      "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+      "libs/UtilitiesLib/src/utils/winfiletime.c": "bd1f419d6dda2517ff4a588a0c70f2500d69f7fc6390d5d58da31b54733deb56"
+    },
+    "upstream_Game_CLIENT_macro_propagates_to_UtilitiesLib": false
+  },
+  "status": "passed_controlled_source_only",
+  "strict_probe_decoder_scope": "Exact native single-trailing-separator path normalization; unknown/malformed rows cannot satisfy complete readability"
 }

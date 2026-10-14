@@ -114,7 +114,7 @@ static int cohFolderCensusRegister(CohFolderCensusContext *context,
 
 static int cohFolderCensusBranch(const char *path)
 {
-    static const char *branches[] = {"texture_library", "object_library", "fx", "scripts"};
+    static const char *branches[] = {"texture_library", "object_library", "fx", "scripts", "scripts.loc"};
     size_t i, j;
     for (i = 0; i < sizeof(branches) / sizeof(branches[0]); ++i) {
         size_t n = strlen(branches[i]);
