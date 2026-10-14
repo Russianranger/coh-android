@@ -106,7 +106,7 @@ the dedicated native integration workflow. Physical Thor stick behavior and
 audibility remain separate observations. See the
 [one combined test sequence](integration-probe/THOR-TEST.md).
 
-## Qualified package for one physical check
+## Qualified package and physical Thor acceptance
 
 Source `e8d4b80b21088992bcbfa403f71bae3138a49e70` passed the
 [integration workflow](https://github.com/Russianranger/coh-android/actions/runs/38603481231)
@@ -127,5 +127,39 @@ The 132,040-byte exported JSON matched its frozen pre-picker hash. Session
 failures, comparison mismatches and GL/EGL/backend errors were zero.
 
 All 140 Java receipt, ordered-writer and tap-measurement host checks passed.
-The ARM64 package is ready for the combined Thor sequence; physical sticks,
-audibility and execution on Thor are pending that new device report.
+
+Physical AYN Thor Android 13/Adreno 740 acceptance passed on October 14. The
+[Thor qualification receipt](evidence/phases13-15/thor-qualification.json)
+audits the immutable
+[uploaded report](evidence/phases13-15/COH-NativeIntegration-20261014-142958.json)
+and the user's **All passed** confirmation. Its observed installed APK size and
+SHA256 match the qualified ARM64 build exactly, and complete fixture metadata
+matches the qualified emulator report. The original emulator checks were
+retained, adapting only the physical device, controller and audible-confirmation
+expectations.
+
+Four native runs passed 108 decoder, 3,636 source-input and 1,320 real UDP
+checks, exchanging 336 datagrams in each direction. The on-device decoder
+compared all 36,336 signed16 samples per decode with maximum error one LSB
+and only five differing samples. Seventeen complete source-renderer rounds
+covered 3,060 frames across two actual sizes and two view generations. Four
+rounds independently witnessed all four signed CPU/GPU/image directions;
+released input settled for 245 frames. Both physical stick masks reached
+15/15. Four complete decoded sound sequences played, with audible confirmation
+linked to completed runs. All recorded comparison mismatches, session failures
+and GL/EGL/audio/UDP backend errors were zero.
+
+The first Home attempt occurred after its sound and bounded UDP wait had
+finished; it remained a clean retry rather than interruption proof. The second
+attempt measured a genuine pause while decoded audio run 4 and blocked UDP
+wait run 2 were active. Audio cancelled after 29,391 submitted frames and
+stopped/closed its stream; the actual blocked poll interrupted and both sockets
+closed. Input cleared at pause. Fresh source checks, current-view rendering
+and complete decoded playback passed after return. Resize and recreation
+were also measured in the physical export.
+
+Gates 13–15 are physically accepted within this isolated integration scope.
+Full Atlas loading, persistent gameplay camera state, character movement,
+collision, server interoperability, full audio scheduling/mixing and sustained
+performance remain separate development milestones. The four complete audio
+plays recorded four total xruns; underrun-free sustained audio is not claimed.

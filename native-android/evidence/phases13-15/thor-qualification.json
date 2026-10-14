@@ -1,0 +1,271 @@
+{
+  "schema": 1,
+  "phases": [
+    13,
+    14,
+    15
+  ],
+  "accepted": true,
+  "passed": true,
+  "acceptance_date": "2026-10-14",
+  "acceptance_basis": "User reported All passed and attached the physical AYN Thor export; package, fixture metadata, underlying runs, input and active Home receipts audited",
+  "qualification_scope": "Physical AYN Thor Android 13 ARM64 integration probe: bounded authentic compressed Ogg decode/AAudio, IPv4 loopback UDP and accepted source camera controlling the authored Atlas bench branch",
+  "source_commit": "e8d4b80b21088992bcbfa403f71bae3138a49e70",
+  "probe_version": "0.1.0-phases13-15",
+  "qualified_build": {
+    "workflow_run_id": 38603481231,
+    "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38603481231",
+    "artifact_id": 11915037774,
+    "arm64_package": {
+      "file": "CoH-Native-Integration-Probe-0.1.0-arm64.apk",
+      "bytes": 750186,
+      "sha256": "1a2b3da7fedad2f3b78ec5673ce45e649e4e9cb5616f120c77a7770941c4ccba",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_integration_probe.so",
+        "bytes": 503264,
+        "sha256": "4728cbf5775a8a37ea02674c1b8acf4720a5fd28396eda9767df2199e43f4041"
+      },
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_fixtures_verified": true,
+      "signer_certificate_sha256": "a07480d939b071479f271c59a25da3702819c45e4e288b096b6c9dd5dbbd2f37"
+    },
+    "installed_apk_bytes_and_sha256_match": true
+  },
+  "report": {
+    "file": "COH-NativeIntegration-20261014-142958.json",
+    "bytes": 188473,
+    "sha256": "4de07e352e2b484b4edad1d0d047f1e61e9633487a9e575dd46ba8c9936b1c4d",
+    "schema": "coh-native-integration-probe-v2",
+    "session_id": "1a13be2a36b-1470",
+    "started_at": "2026-10-14T14:27:51.146-05:00",
+    "updated_at": "2026-10-14T14:29:58.375-05:00",
+    "immutable_original_retained": true
+  },
+  "validation": {
+    "basis": "Original integration emulator checker full native/audio/UDP/world/Home assertions with only physical-device expectation changes, plus package/metadata identity, current view, actual callback ordering, input cleanup and fresh foreground checks",
+    "checker_sha256": "4116c40d55d0d4a73708fa9332bc5d818d76eec5c50dae46ed44fbfe514c2b5c",
+    "receipt_rules_sha256": "57f768ed9358c07181d5fc3f61028ffd6cd1706120bdba44b6f6502cff9c9b86",
+    "physical_device_adaptations": [
+      "Require emulator_detected false instead of true; SDK 33 unchanged",
+      "Require controller_axis_coverage_passed and device_audible_confirmation_passed true instead of false",
+      "Require positive external controller/motion counts instead of zero",
+      "Require left and right axis direction masks 15 instead of zero"
+    ],
+    "source_report_unchanged": true,
+    "no_events_or_fields_fabricated": true,
+    "complete_fixture_metadata_matches_qualified_build": true,
+    "current_completed_world_run_id": 22,
+    "current_world_matches_generation_size_and_render_token": true
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "hardware": "qcom",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false,
+    "gpu_vendor": "Qualcomm",
+    "gpu_renderer": "Adreno (TM) 740",
+    "shader_language_version": 320,
+    "shader_precision_mechanism": "ESSL-3.20-core-precise"
+  },
+  "qualification": {
+    "assets_verified": true,
+    "compressed_decode_gate_passed": true,
+    "loopback_transport_gate_passed": true,
+    "interactive_world_gate_passed": true,
+    "current_world_gate_passed": true,
+    "android_input_transport_passed": true,
+    "pre_background_checks_passed": true,
+    "background_return_gate_passed": true,
+    "qualification_passed": true,
+    "controller_axis_coverage_passed": true,
+    "device_audible_confirmation_passed": true
+  },
+  "session_failures": 0,
+  "count_totals": {
+    "native_runs": 4,
+    "decode_checks": 108,
+    "native_input_checks": 3636,
+    "source_input_cases": 384,
+    "udp_checks": 1320,
+    "udp_datagrams_sent": 336,
+    "udp_datagrams_received": 336,
+    "udp_clear_frames": 132,
+    "udp_encrypted_frames": 132,
+    "udp_expected_rejects": 72,
+    "recorded_world_attempts": 22,
+    "complete_world_engine_rounds": 17,
+    "full_four_direction_interaction_rounds": 4,
+    "harmless_obsolete_world_cancellations": 5,
+    "frames_per_complete_round": 180,
+    "complete_world_frames": 3060,
+    "successful_surface_generations": 2,
+    "actual_sizes": [
+      [
+        1416,
+        291
+      ],
+      [
+        1888,
+        388
+      ]
+    ],
+    "signed_cpu_gpu_image_direction_mask": 15,
+    "input_linked_changed_pixels": 3658519,
+    "released_input_settled_frames": 245,
+    "complete_decoded_audio_plays": 4,
+    "full_play_submitted_frames": 270936,
+    "full_play_read_frames": 270936,
+    "full_play_xruns": 4,
+    "clean_cancelled_audio_runs": 1,
+    "controller_events": 1467,
+    "controller_motion_callbacks": 1435,
+    "external_key_down_up_pairs": 16,
+    "external_touch_move_samples": 256
+  },
+  "decode_comparison": {
+    "sample_rate": 44100,
+    "channels": 2,
+    "frames_per_decode": 18168,
+    "compared_signed16_samples_per_decode": 36336,
+    "maximum_sample_error": 1,
+    "maximum_allowed_sample_error": 1,
+    "different_samples_per_decode": 5,
+    "sample_rms_error": 0.011730497836,
+    "decoded_audio_only_playback": true,
+    "reference_pcm_fallback": false
+  },
+  "mismatch_totals": {
+    "stationary_mismatches": 0,
+    "camera_determinism_mismatches": 0,
+    "same_camera_image_mismatches": 0,
+    "baseline_transform_mismatches": 0,
+    "interactive_transform_mismatches": 0,
+    "baseline_cpu_mismatches": 0
+  },
+  "backend_error_totals": {
+    "gl_errors": 0,
+    "egl_errors": 0,
+    "audio_backend_errors": 0,
+    "udp_backend_errors": 0
+  },
+  "input": {
+    "left_axis_directions": 15,
+    "right_axis_directions": 15,
+    "touch_motion_directions": 15,
+    "external_android": {
+      "key_down": 16,
+      "key_up": 16,
+      "key_repeat": 0,
+      "motion": 1435,
+      "touch_begin": 1,
+      "touch_move": 256,
+      "touch_end": 1,
+      "touch_cancel": 0,
+      "focus_clear": 5,
+      "device_removed": 0,
+      "controller_events": 1467,
+      "left_axis_directions": 15,
+      "right_axis_directions": 15,
+      "button_down_mask": 261888,
+      "touch_motion_directions": 15
+    },
+    "synthetic_controller_events": 0,
+    "settled_final_input": true,
+    "physical_controller_basis": "Physical AYN Thor report, genuine Android external callbacks and both complete stick masks, plus user All passed confirmation"
+  },
+  "home": {
+    "receipt": {
+      "pause_sequence": 84,
+      "input_cleared": true,
+      "audio_started_before_pause": true,
+      "transport_started_before_pause": true,
+      "interrupted_audio_run_id": 4,
+      "interrupted_transport_run_id": 2,
+      "stop_sequence": 89,
+      "resume_sequence": 90
+    },
+    "ready_to_pause_ms": 587,
+    "exact_active_audio_and_udp_runs_verified": true,
+    "audio": {
+      "run_id": 4,
+      "result": 1,
+      "cancelled": true,
+      "opened": true,
+      "started": true,
+      "stopped": true,
+      "closed": true,
+      "submitted_frames_before_cancel": 29391,
+      "read_frames_before_cancel": 28224,
+      "backend_errors": 0
+    },
+    "udp": {
+      "run_id": 2,
+      "passed": true,
+      "cancelled": true,
+      "expected_cancel": true,
+      "interrupted_blocked_poll": 1,
+      "blocked_polls": 27,
+      "sockets_opened": 2,
+      "sockets_closed": 2,
+      "timeouts": 0,
+      "backend_errors": 0
+    },
+    "input_cleared_at_actual_pause": true,
+    "fresh_foreground_native_run_id": 4,
+    "fresh_foreground_world_run_ids": [
+      21,
+      22
+    ],
+    "fresh_foreground_complete_audio_run_id": 5,
+    "fresh_foreground_execution_passed": true,
+    "retained_prior_late_attempt": {
+      "audio_run_id": 3,
+      "audio_completed_before_pause": true,
+      "transport_run_id": 1,
+      "empty_wait_timeout_ms": 5000,
+      "qualified_as_home_interruption": false,
+      "session_failure": false
+    }
+  },
+  "lifecycle": {
+    "actual_resize_verified": true,
+    "surface_recreation_verified": true,
+    "foreground_return_callbacks_measured": true,
+    "current_rendered_view_verified": true,
+    "user_export_received": true,
+    "export_write_failure_reported": false
+  },
+  "audibility": {
+    "user_confirmed": true,
+    "basis": "Heard 3 sounds buttons linked to completed decoded audio runs and user All passed message",
+    "latest_confirmed_complete_audio_run_id": 5
+  },
+  "scope": {
+    "thor_device_execution_verified": true,
+    "physical_controller_verified": true,
+    "physical_audibility_user_confirmed": true,
+    "native_compressed_audio_decode": true,
+    "authentic_pcm_aaudio_sink": true,
+    "restricted_ipv4_loopback_udp": true,
+    "input_driven_authentic_source_scene_camera": true,
+    "whole_client_qualified": false,
+    "original_game_execution": false,
+    "full_atlas_loading_qualified": false,
+    "character_movement_or_collision_qualified": false,
+    "persistent_gameplay_camera_qualified": false,
+    "server_interoperability_verified": false,
+    "remote_network_execution": false,
+    "full_mixer_or_spatial_audio": false,
+    "sustained_underrun_free_audio": false,
+    "performance_qualified": false
+  }
+}

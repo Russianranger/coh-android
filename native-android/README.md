@@ -41,5 +41,11 @@ real bounded UDP loopback transport and current input controlling the authentic
 Atlas scene camera in one new Integration Probe. Source and sanitized host
 proofs, build/lint/package verification and Android 13 emulator qualification
 passed in the [combined qualification receipt](evidence/phases13-15/qualification.json).
-The verified ARM64 package is ready for one Thor test/export sequence covering
-all three gates. Physical acceptance awaits that new report.
+Physical AYN Thor Android 13/Adreno 740 acceptance is recorded separately in the
+[Thor qualification receipt](evidence/phases13-15/thor-qualification.json): the
+installed ARM64 APK identity and fixtures matched, four native runs and seventeen
+complete renderer rounds passed, both sticks reached all directions, decoded
+audio was heard, and active audio/blocked-UDP Home interruption cleaned up and
+recovered. The raw physical report is preserved. Gates 13–15 are accepted within
+this isolated probe scope; integrated character movement, persistent gameplay
+state and real server interoperability remain later milestones.
