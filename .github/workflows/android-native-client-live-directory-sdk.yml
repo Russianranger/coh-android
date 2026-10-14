@@ -1,0 +1,121 @@
+name: Closed live directory Game and tiny NT observer SDK
+on:
+  push:
+    branches: [codex/native-client-live-directory-sdk-037]
+    paths: [database/client-live-directory/**, .github/workflows/android-native-client-live-directory-sdk.yml]
+  workflow_dispatch:
+permissions: {contents: read, actions: read}
+concurrency:
+  group: native-client-live-sdk-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  portable-controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Execute current native/probe/transport source controls
+        env: {PYTHONWARNINGS: 'error::ResourceWarning'}
+        run: |
+          mkdir -p out/controls
+          python -m pip install --disable-pip-version-check PyYAML==6.0.2
+          python database/client-live-directory/pipeline/package_live_native.py controls --repository . --commit "$GITHUB_SHA" --output out/controls/portable-controls.json
+      - uses: actions/upload-artifact@v4
+        with: {name: live-directory-portable-controls, path: out/controls/, retention-days: 90, if-no-files-found: error}
+  native-game-and-observer:
+    needs: portable-controls
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 100
+    steps:
+      - name: Preserve exact source before checkout
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/download-artifact@v4
+        with: {name: live-directory-portable-controls, path: out/controls/}
+      - name: Authenticate independently audited immutable public .36 donor
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path out -Force | Out-Null
+          $source = @'
+          import hashlib,pathlib,urllib.request
+          out=pathlib.Path('out/donor-036.apk')
+          with urllib.request.urlopen('https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk',timeout=60) as response,out.open('xb') as stream:
+              total=0;sha=hashlib.sha256()
+              while block:=response.read(1024**2):
+                  total+=len(block);assert total<=42076692;sha.update(block);stream.write(block)
+          assert total==42076692 and sha.hexdigest()=='14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f'
+          '@
+          $source | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Public donor bytes did not authenticate' }
+      - name: Restore exact inherited source and apply dormant Game-only consumer
+        shell: pwsh
+        run: |
+          python database/client-live-directory/pipeline/package_live_native.py stage --repository . --output C:/coh-live-directory-sdk
+          if ($LASTEXITCODE -ne 0) { throw 'Exact inherited native source staging failed' }
+      - name: Compile one tiny Win32 NT observer and execute four actual SDK controls
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'Exact MSVC Win32 installation unavailable' }
+          $script = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          cl /nologo /O2 /Oy- /MT /TC /I database/client-live-directory/native database/client-live-directory/probe/coh_live_bridge_probe.c /Fe:out/coh-live-bridge-probe.exe /Fo:out/coh-live-bridge-probe.obj
+          if errorlevel 1 exit /b 1
+          python database/client-live-directory/probe/qualify_live_bridge_probe_windows.py --binary out/coh-live-bridge-probe.exe --output out/windows-probe --commit "$env:GITHUB_SHA"
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/live-observer-sdk.cmd -Value $script -Encoding ASCII
+          cmd /c .\out\live-observer-sdk.cmd
+          if ($LASTEXITCODE -ne 0) { throw 'Fresh actual Win32 NT observer fixture failed' }
+      - name: Compile one complete retained Game after observer SDK admission
+        working-directory: C:/coh-live-directory-sdk
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF -DCOX_BUILD_MAPSERVER=OFF -DCOX_BUILD_BEACONSERVER=OFF -DCMAKE_PROJECT_INCLUDE=C:/coh-live-directory-sdk/coh_live_directory.cmake
+          if ($LASTEXITCODE -ne 0) { throw 'Game-only private consumer configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
+          if ($LASTEXITCODE -ne 0) { throw 'Fresh complete native Game compile failed' }
+      - name: Bind actual Game/observer to source, native dependency and SDK evidence
+        shell: pwsh
+        run: |
+          $utilities = @(Get-ChildItem C:/coh-live-directory-sdk/out/build/vs2026 -Recurse -Filter UtilitiesLib.vcxproj)
+          $game = @(Get-ChildItem C:/coh-live-directory-sdk/out/build/vs2026 -Recurse -Filter Game.vcxproj)
+          if ($utilities.Count -ne 1 -or $game.Count -ne 1) { throw 'Exact native project witnesses missing' }
+          python database/client-live-directory/pipeline/package_live_native.py package --repository . --commit "$env:GITHUB_SHA" --run-url "https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID" --source C:/coh-live-directory-sdk --donor out/donor-036.apk --game C:/coh-live-directory-sdk/out/build/vs2026/bin/OptDebug/CityOfHeroes.exe --probe out/coh-live-bridge-probe.exe --cache C:/coh-live-directory-sdk/out/build/vs2026/CMakeCache.txt --utilities "$($utilities[0].FullName)" --game-project "$($game[0].FullName)" --controls out/controls/portable-controls.json --windows out/windows-probe --output out/native-live-directory-SDK
+          if ($LASTEXITCODE -ne 0) { throw 'Exact native producer custody/source binding failed' }
+      - uses: actions/upload-artifact@v4
+        with: {name: coh-closed-native-live-directory-SDK, path: out/native-live-directory-SDK/, retention-days: 90, if-no-files-found: error}
+      - name: Preserve any compiled current bytes before diagnostic upload
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path out/sdk-recovery -Force | Out-Null
+          $binary = 'C:/coh-live-directory-sdk/out/build/vs2026/bin/OptDebug/CityOfHeroes.exe'
+          if (Test-Path -LiteralPath $binary -PathType Leaf) { Copy-Item -LiteralPath $binary -Destination out/sdk-recovery/CityOfHeroes.exe }
+          if (Test-Path -LiteralPath 'out/coh-live-bridge-probe.exe' -PathType Leaf) { Copy-Item -LiteralPath 'out/coh-live-bridge-probe.exe' -Destination out/sdk-recovery/coh-live-bridge-probe.exe }
+          if (Test-Path -LiteralPath 'C:/coh-live-directory-sdk/out/build/vs2026' -PathType Container) {
+            foreach ($name in @('UtilitiesLib.vcxproj','Game.vcxproj')) {
+              $project = @(Get-ChildItem C:/coh-live-directory-sdk/out/build/vs2026 -Recurse -Filter $name)
+              if ($project.Count -eq 1) { Copy-Item -LiteralPath $project[0].FullName -Destination "out/sdk-recovery/$name" }
+            }
+          }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-closed-native-live-directory-SDK-diagnostics
+          path: |
+            out/controls/
+            out/windows-probe/
+            out/live-observer-sdk.cmd
+            out/sdk-recovery/
+            C:/coh-live-directory-sdk/native-client-live-directory-build-input.json
+            C:/coh-live-directory-sdk/out/build/vs2026/CMakeCache.txt
+          retention-days: 90
+          if-no-files-found: warn

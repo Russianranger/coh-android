@@ -1,0 +1,146 @@
+{
+  "Android_runtime_executed": false,
+  "all_controls_in_CI_inventory": true,
+  "files": {
+    "native/README.md": {
+      "bytes": 5648,
+      "sha256": "6b3ce20962360ead4ff04c27e1b1fd18571fdd55bee46afcf587a000b5bc2ff7"
+    },
+    "native/coh_live_directory.cmake": {
+      "bytes": 969,
+      "sha256": "6ba6e70058b4785586bdb6c8e7bbfd547567f23e6e0a8b55d42ed24e1a902f64"
+    },
+    "native/coh_live_native_adapter.h": {
+      "bytes": 11972,
+      "sha256": "2058333d8227e13ec68db00c58a5e9d7b82c01756f5fcd2b32833f37415e2d00"
+    },
+    "native/coh_live_native_authorization.h": {
+      "bytes": 5267,
+      "sha256": "f1c15e4ef892c57644a9e68ea24ffedcee170877c5efb44fc6d215ef9bb494f2"
+    },
+    "native/coh_live_native_policy.h": {
+      "bytes": 5364,
+      "sha256": "0b89154702e69bcd5019c217882be7098a53cb526489aab6bf6ef8bcc03a00f2"
+    },
+    "native/prepare_live_native_source.py": {
+      "bytes": 16695,
+      "sha256": "74a3c019373527ccb1ca4ebd131be65dfefc2059eb7e981708228f2cd46a60fa"
+    },
+    "native/qualify_live_source_stage.py": {
+      "bytes": 2578,
+      "sha256": "a915c6df40cf76c38df2f748aad421fd81eacbfcfc6c9984feb5d6bac19b39ea"
+    },
+    "native/test_live_native_adapter.py": {
+      "bytes": 10984,
+      "sha256": "5c8d48ba1440b2d89659281ee767141a7a5e6284e0e8cc380353c332601edacc"
+    },
+    "native/test_live_native_authorization.py": {
+      "bytes": 8062,
+      "sha256": "156315f333c9f811ac76822d568a0943c3d61f5a2f8b7e5af84b2e88933b3fca"
+    },
+    "native/test_live_native_policy.py": {
+      "bytes": 6013,
+      "sha256": "be665a5fff8b8c777e6ca5c6dc7d6f0f340fe4380094fd4168fab4933533414d"
+    },
+    "native/test_live_native_source.py": {
+      "bytes": 4682,
+      "sha256": "6ef1abcbdd3e103755a2dcb9f5d5811925cd11867752500e9db1192126f0f42b"
+    },
+    "pipeline/README.md": {
+      "bytes": 4480,
+      "sha256": "7869c6d36dd9a506a61dee1249963179d80ba164a734b92f6b73c45f20d119d3"
+    },
+    "pipeline/native-client-live-directory-sdk.yml": {
+      "bytes": 7973,
+      "sha256": "16a7c158443d082f86d98d1a563bd7069f138f3b42265d4fdbffb85b7877ac09"
+    },
+    "pipeline/package_live_native.py": {
+      "bytes": 11924,
+      "sha256": "586f04e87295ea31cc1fbc2062dbe6d691ee17b121083dd8d34e5f5cfc7742d0"
+    },
+    "pipeline/test_live_sdk_pipeline.py": {
+      "bytes": 7969,
+      "sha256": "4a6725952ce0dd020f5eac0b8f9ed7d287f0e956673a8b74d54d2584e3bad819"
+    },
+    "probe/coh_live_bridge_probe.c": {
+      "bytes": 10186,
+      "sha256": "690a011f2599975b70a62ca7958bcb97d5c7a9ddbe5d255e85be472d552ec0d6"
+    },
+    "probe/parse_live_bridge_probe.py": {
+      "bytes": 4372,
+      "sha256": "edf72961df82cb5af9b529115d4e609932f873b3c811079a0f033e5c91621dd5"
+    },
+    "probe/qualify_live_bridge_probe_windows.py": {
+      "bytes": 13757,
+      "sha256": "9e5b660effeb12376f3bbf029c163a93ec6a2a16a08cea4ca42e473013ede15d"
+    },
+    "probe/test_live_bridge_probe_native.py": {
+      "bytes": 7198,
+      "sha256": "97a07000f79d7364146ef0aaf68550c6a7708109c5764aad10e0ee883c3d33cd"
+    },
+    "probe/test_live_bridge_probe_parser.py": {
+      "bytes": 3600,
+      "sha256": "4ea9556f89a09938e064f5fa89ea956ae6dfbe71c8e9b5e2628d74cb9a75a268"
+    },
+    "probe/test_live_bridge_probe_qualification.py": {
+      "bytes": 7969,
+      "sha256": "02981fbe0ebb58797a8dadcca3fea89d67a2d1695760b4d5303ac2d0356d5ac9"
+    },
+    "transport/README.md": {
+      "bytes": 6362,
+      "sha256": "a7f7e827dc0889767aa8460b3fa5597f03c9f5d5138bcf9133400b126b86668f"
+    },
+    "transport/coh_live_directory_batch.h": {
+      "bytes": 4316,
+      "sha256": "767077bfefa2f023fbb558a0757d95e0d2021b2b12da7c4c18d25c6591292fc6"
+    },
+    "transport/coh_live_transport.c": {
+      "bytes": 9606,
+      "sha256": "f51c47aaecb1531f71eaec9feb59235cfeea9c9636351f2434fa7ad1e5f18819"
+    },
+    "transport/coh_live_transport.h": {
+      "bytes": 3891,
+      "sha256": "964758aed2a60543492e4c69733a678553a823b6f283ef1a139c2a9354a685ae"
+    },
+    "transport/qualify_transport_sanitizers.py": {
+      "bytes": 2562,
+      "sha256": "e522ec9ed33b0c9f2d81acbae3f3afdcb7f8bbb28bc50ac090933d4f625ab9dd"
+    },
+    "transport/test_coh_live_transport.py": {
+      "bytes": 5039,
+      "sha256": "3bf54a8feb5f7489b3075742063b932e9d831a2a827c953efe7735267f64e705"
+    },
+    "transport/transport_fixture.c": {
+      "bytes": 20024,
+      "sha256": "af58033ebe2330c06c47c5b3e7c1650db5ef956db80ab9965f6e17bfda30ed3e"
+    },
+    "transport/transport_tcp_fixture.c": {
+      "bytes": 4987,
+      "sha256": "c1834912f075627355c7f16728b97aa69a5c1ad2e4f4d0a584209545c611512b"
+    }
+  },
+  "format": 1,
+  "fresh_pipeline_controls": 5,
+  "fresh_portable_controls": 72,
+  "fresh_probe_source_and_failure_controls": 23,
+  "inherited_pre_alias_native_freeze_sha256": "186bf28007ce882ca1e545bb674bd14021deabf168730a6835b8c5e475ecc829",
+  "native_Game_executed": false,
+  "native_SDK_executed": false,
+  "native_registration_allowed": false,
+  "prior_sdk_source_freeze_sha256": "3e4f5ac58f32469e325b48e718390884b5ff7a2ba5fb6e50ad93cfec3142c3dd",
+  "publication_allowed": false,
+  "repository_source_target": "database/client-live-directory",
+  "reviewed_alias_native_freeze_sha256": "f6a9ec9e74be0f2556efbc8518a3c559a5daa02719070aced6c9c99b2841ce46",
+  "role": "closed_one_Game_one_NT_probe_SDK_source_freeze",
+  "skips": 0,
+  "source_review_corrections": [
+    "private CMake source frozen and package guarded",
+    "installed repository decoder authority pin and isolated layout control",
+    "pipeline guards in actual exact72 CI inventory with explicit PyYAML6.0.2",
+    "SDK failed/timeout evidence plus held PID/console/raw packet/owned cleanup binding",
+    "absolute workflow output and trailing separator input namespace refusal",
+    "current probe C/parser/qualifier source pins"
+  ],
+  "transport_freeze_sha256": "c4eb42de142436055f28b0f132dbe94a02bc11c04f418d326b4ca15cd0004db7",
+  "workflow_target": ".github/workflows/android-native-client-live-directory-sdk.yml"
+}
