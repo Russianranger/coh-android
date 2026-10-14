@@ -1,0 +1,126 @@
+{
+  "schema": "coh-native-live-ancestor-candidate-source-only-pins-v1",
+  "baseline": [
+    {
+      "path": "tools/native_live_directory/coh_live_directory_core.c",
+      "bytes": 22987,
+      "Git_blob": "2fd985b52ecc3e82dbbdecc342edf717a6305e24",
+      "sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c",
+      "raw_public_body_verified": true,
+      "source_commit": "2d030678e7013891547ecd7d35fc0cf40ffabff9"
+    },
+    {
+      "path": "tools/native_live_directory/test_native_live_directory_core.py",
+      "bytes": 22432,
+      "Git_blob": "9d458d7354ef6c7e9dd40b037d4c4d58cca1939b",
+      "sha256": "16a5fc9cc22fb3ac7815e2ef4e9f2dc53c6517418d704ef7c698d85ec62d4694",
+      "raw_public_body_verified": true,
+      "source_commit": "2d030678e7013891547ecd7d35fc0cf40ffabff9"
+    }
+  ],
+  "baseline_complete_directory_Git_members": [
+    {
+      "path": "tools/native_live_directory/NativeLiveDirectory.java",
+      "Git_blob": "4009351cd7ff7474dc8287239a554a5556a7346d",
+      "bytes": 1119,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/NativeLiveDirectoryFixture.java",
+      "Git_blob": "65a1ca190bd46faefc6dba4e84ea392ef2eb8d20",
+      "bytes": 5877,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/README.md",
+      "Git_blob": "fa7c383cde02fd6438437a862186ac41b60dc4ab",
+      "bytes": 5216,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/audit_retained_native_live_directory.py",
+      "Git_blob": "c3b5905c50016500fbfb922ea6d16224ea38a7d8",
+      "bytes": 10938,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/coh_live_directory_core.c",
+      "Git_blob": "2fd985b52ecc3e82dbbdecc342edf717a6305e24",
+      "bytes": 22987,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/coh_live_directory_core.h",
+      "Git_blob": "898b8b9cb8c4cdb0acbf9a94014091dcf48ed14a",
+      "bytes": 3125,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/coh_live_directory_jni.c",
+      "Git_blob": "9f6afe3ab06673c18c521035ec6e6ae5c976bbf3",
+      "bytes": 9835,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/native_core_faults.c",
+      "Git_blob": "d0766c45b71f9220f8a309da3d3f25d1e94eee28",
+      "bytes": 2177,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/native_live_fixture.c",
+      "Git_blob": "d118ea4fd3ecd5603552545190eaae2b03977aba",
+      "bytes": 11383,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/qualify_native_live_directory.py",
+      "Git_blob": "e2dbf420709997462674bfc763233fbac780916f",
+      "bytes": 7749,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/retained-ARM-artifact-11878700818.json",
+      "Git_blob": "2915a919b5813fb8d752f9178dcdc7b6d12d5f0e",
+      "bytes": 8733,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/test_audit_retained_native_live_directory.py",
+      "Git_blob": "5756c73a6d1caeda14b9f35d4c71740afb567332",
+      "bytes": 4741,
+      "type": "file"
+    },
+    {
+      "path": "tools/native_live_directory/test_native_live_directory_core.py",
+      "Git_blob": "9d458d7354ef6c7e9dd40b037d4c4d58cca1939b",
+      "bytes": 22432,
+      "type": "file"
+    }
+  ],
+  "candidate": [
+    {
+      "path": "research/native-live-ancestor-candidate-037/source/tools/native_live_directory/coh_live_directory_core.c",
+      "bytes": 23229,
+      "sha256": "2fcf0cdcf7d840131f923a91af9697be2c1d2b13cbef719199e2a91622ac249b",
+      "Git_blob": "d55e7b92ab5e322ec6baf9ddcbd5179f5ac4a0db",
+      "immutable_blob_readback_byte_exact": true
+    },
+    {
+      "path": "research/native-live-ancestor-candidate-037/source/tools/native_live_directory/test_native_live_directory_core.py",
+      "bytes": 32516,
+      "sha256": "8415a319499643955f2481ef9e2308ebeed0961af1f20360ed2b695d21064f1b",
+      "Git_blob": "ac8fe28a065cc6a4cce8dfcd9dc2e9899a08974f",
+      "immutable_blob_readback_byte_exact": true
+    }
+  ],
+  "immutable_candidate_blobs_retrieved_byte_exact": true,
+  "ASCII_SHA256_check": {
+    "empty_vector": true,
+    "abc_vector": true,
+    "exact_historical_core_and_test_SHA256_vectors": true
+  },
+  "local_temp_index_reconstruction_performed": false,
+  "complete_source_compilation_performed": false,
+  "shipping_allowed": false
+}
