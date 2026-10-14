@@ -1,9 +1,30 @@
 import copy
 import unittest
+from unittest.mock import patch
 import native_startup_metadata_admission as native
 
 
 class NativeMetadataAdmissionTests(unittest.TestCase):
+    def test_actual_committed_source_audit_is_verified_without_native_admission(self):
+        inspected = native.verify_committed_source_compatibility_review()
+        self.assertEqual(inspected['committed_source_review']['commit'],
+            '1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e')
+        self.assertFalse(inspected['scope']['runtime_activation_allowed'])
+        self.assertFalse(inspected['scope']['shipping_predecessor_execution_validated'])
+        self.assertFalse(native.PROMOTIONS_IMPLEMENTED)
+
+    def test_actual_source_audit_commit_path_blob_content_or_scope_substitution_rejected(self):
+        import native_map_startup_contract as startup
+        authority = startup.SOURCE_ONLY_COMPATIBILITY_REVIEW
+        for key in ('commit', 'path', 'git_blob', 'content', 'scope'):
+            changed = copy.deepcopy(authority)
+            if key == 'content': changed['descriptor'][key]['sha256'] = '0'*64
+            elif key == 'scope': changed['descriptor'][key]['runtime_activation_allowed'] = True
+            elif key == 'path': changed['descriptor'][key] = 'docs/android-evidence/another.json'
+            else: changed['descriptor'][key] = '0'*40
+            with self.subTest(key=key), patch.object(startup, 'SOURCE_ONLY_COMPATIBILITY_REVIEW', changed), self.assertRaises(ValueError):
+                native.verify_committed_source_compatibility_review()
+
     def test_closed_promotions_require_exact_typed_false_values(self):
         value = {'game': {'enabled': False}, 'mapserver': {'enabled': False}}
         self.assertEqual(native.validate_disabled_promotions(value), value)

@@ -26,6 +26,7 @@ import qualify_startup_schedule as closure
 import qualify_client_startup_latency as published
 RETAINED_TEST_MODULES = published.TEST_MODULES
 NEW_TEST_MODULES = ('test_client_zone_startup_package', 'test_native_startup_metadata_admission',
+    'test_map_startup_native_change',
     'test_manual_report_acceptance', 'test_native_startup_metadata_contract',
     'test_native_startup_component_migration', 'test_native_metadata_runtime_activation',
     'test_native_metadata_map_activation', 'test_derive_native_metadata_cache_proof')
@@ -68,6 +69,7 @@ CHECK_SUITES = {
     'minimal_db_native_compatibility_verified': ['test_minimal_db_runtime_contract',
         'test_saved_map_preparation_proof', 'test_client_zone_startup_package'],
     'exact_036_game_db_map_graphics_and_assets_verified': ['test_native_startup_metadata_admission', 'test_client_zone_startup_package',
+        'test_map_startup_native_change',
         'test_client_render_queue_contract', 'test_client_gpu_profile', 'test_client_gpu_repair_package',
         'test_external_assets', 'test_asset_pack_import', 'test_animation_runtime_compatibility',
         'test_map_startup_native_contract', 'test_map_startup_animation_certificate'],

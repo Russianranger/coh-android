@@ -1,3 +1,36 @@
+# ISOLATED RECOVERY — October 14 source-review and workflow checkpoint
+
+`codex/startup-recovery-20261014` recovers finalized uncommitted work from the
+existing `.37` authority and workflow-guard working trees, based on continuation
+`bc74b08e75d5da7187f99658d2c04dd509a325fb`. The previous native qualification is
+actively progressing: world run [38499817621](https://github.com/Russianranger/coh-android/actions/runs/38499817621)
+has passed preparation and reached actual Atlas/Kings processes; certificate run
+[38497850809](https://github.com/Russianranger/coh-android/actions/runs/38497850809)
+has passed its native build and is executing genuine FX processes. This recovery
+does not establish a stalled conversation or replace either run. The original
+working trees and continuation head are preserved; `native-android` is excluded.
+
+The recovered source-only Map audit is frozen to its original committed bytes,
+SHA-256 and Git blob. Packaging verifies that actual historical Git document and
+records its limited source-review scope. Native execution, collision, physical
+timing, runtime activation and publication authorities remain closed. The new
+native workflow guard skips only an exact reviewed direct-parent host-only change
+with complete cumulative scope and unchanged native/FX job bodies. Unknown paths,
+changed controls, merges, missing history and failed scope checks require the
+native gate. Manual dispatch remains a full native run in a separate group.
+
+An integration defect was corrected: a host-only push cannot cancel an already
+running genuine native qualification. A separate source-review workflow runs
+self-contained audit/real-Git tests without scratch artifacts. Full Map/cache and
+package tests continue to require their authenticated original fixture inputs;
+the small source-review job does not stand in for native or APK qualification.
+Fresh isolated validation passed 65 audit/Map/cache/workflow cases and nine
+actual-donor archive/package cases, with zero failures/errors/skips. An independent
+review passed the 27 self-contained source-review/workflow cases. These scopes
+overlap; counts must not be added as separate full-release qualification results.
+The `.37` marker advances only its qualification revision to 5; qualification,
+publication and native promotion flags remain false. No successor APK is produced.
+
 # CURRENT — .37 native client/cold-map continuation — development in progress
 
 Recovery on October 13 continued from exact remote `codex/character-persistence-continuation` head `3570430cefdb15d9b239563e85cccf4d8fe6f32e`. The prior scratch checkout and unpublished final documentation/client/world harness files were no longer present; committed source, completed CI artifacts and the new uploaded physical reports were recovered without resetting the branch or rerunning successful publication. The separately active `native-android` branch is outside this continuation and must not be altered. PR #1 remains draft/unmerged; main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`.

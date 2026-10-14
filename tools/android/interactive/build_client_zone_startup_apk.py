@@ -96,12 +96,16 @@ TRUE_FLAGS = ('retained_android_resources_verified', 'retained_game_and_dbserver
 REVIEWED_TEST_CHANGES = frozenset({
     'tools/android/atlasgame/test_device_cleanup_lineage.py'})
 ROUTING_SOURCE_CHANGES = frozenset({
+    '.github/workflows/android-startup-recovery-review.yml',
+    '.github/workflows/android-map-startup-native.yml',
     'tools/android/interactive/classify_client_animation_repair_change.py',
     'tools/android/interactive/classify_client_profile_recovery_change.py',
     'tools/android/interactive/classify_client_map_startup_change.py'})
 HOST_FIXTURE_SOURCE_CHANGES = frozenset()
 RESEARCH_SOURCE_FILES = frozenset()
 SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT, MARKER, 'docs/'+NOTES_NAME,
+    'tools/android/interactive/classify_map_startup_native_change.py',
+    'tools/android/interactive/test_map_startup_native_change.py',
     'tools/android/interactive/build_client_zone_startup_apk.py',
     'tools/android/interactive/test_client_zone_startup_package.py',
     'tools/android/interactive/classify_client_zone_startup_change.py',
@@ -115,6 +119,7 @@ SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT, MARKER, 'docs/'+NOTES_
     'tools/android/interactive/test_native_metadata_map_activation.py',
     'tools/android/interactive/derive_native_metadata_cache_proof.py',
     'tools/android/interactive/test_derive_native_metadata_cache_proof.py',
+    'docs/android-evidence/native-map-metadata-source-boundary-0.13.37.json',
     'tools/android/interactive/test_manual_report_acceptance.py',
     'tools/android/interactive/fixtures/thor-manual-report-0.13.36-20261013.json'}) | REVIEWED_JAVA_CHANGES | ADDED_JAVA_SOURCES | GUEST_SOURCE_CHANGES | REVIEWED_TEST_CHANGES | ROUTING_SOURCE_CHANGES | NATIVE_SOURCE_FILES
 REVIEWED_DONOR_SOURCE_CHANGES = REVIEWED_JAVA_CHANGES | GUEST_SOURCE_CHANGES | REVIEWED_TEST_CHANGES | ROUTING_SOURCE_CHANGES
@@ -300,6 +305,8 @@ def payload_boundaries(payloads, donor, native):
 
 
 def verification_manifests(donor, helper_pins, commit, native):
+    import native_startup_metadata_admission as admission
+    source_only_review = admission.verify_committed_source_compatibility_review(ROOT)
     require(set(helper_pins) == {Path(name).name for name in GUEST_INPUTS},
             'Exact reviewed guest helper pins required')
     require(helper_pins == {Path(name).name: builder().file_pin(ROOT/name) for name in GUEST_INPUTS},
@@ -313,6 +320,7 @@ def verification_manifests(donor, helper_pins, commit, native):
     runtime['client_zone_startup'] = {'format': 1, 'repository_commit': commit,
         'donor_repository_commit': DONOR_COMMIT, 'publication_provenance': publication_provenance(commit),
         'reviewed_guest_inputs': helper_pins, 'native_launcher': native,
+        'committed_Map_source_only_review': source_only_review,
         **dict.fromkeys(FALSE_FLAGS, False), **dict.fromkeys(TRUE_FLAGS, True)}
     require(typed_equal(runtime['client_startup_latency'], donor['runtime_manifest']['client_startup_latency'])
         and typed_equal(runtime['client_manual_session'], donor['runtime_manifest']['client_manual_session'])
