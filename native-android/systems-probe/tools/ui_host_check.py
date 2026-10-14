@@ -46,6 +46,7 @@ public final class SystemsUiCheck {
  static void check(boolean x,String why){checked++;if(!x)throw new AssertionError(why);}
  static JSONObject nativeRun(long id,long gen,int w,int h,long began){return object("run_id",id,"generation",gen,"width",w,"height",h,"passed",true,"foreground_at_completion",true,"started_after_event",began);}
  static JSONObject cancel(){return object("run_id",2,"passed",false,"result",1,"cancelled",true,"opened",true,"started",true,"stopped",true,"closed",true,"backend_errors",0,"submitted_frames",512,"started_after_event",99);}
+ static JSONObject lateCancel(){return cancel().put("result",0).put("completed_clips",3).put("requested_clips",3);}
  static SystemsUiCheck valid(){SystemsUiCheck t=new SystemsUiCheck();
   t.nativeRuns.put(nativeRun(1,1,100,100,1)).put(nativeRun(2,1,75,75,2)).put(nativeRun(3,2,75,75,3));
   t.audioRuns.put(object("passed",true,"run_id",1,"started_after_event",4));
@@ -64,7 +65,27 @@ public final class SystemsUiCheck {
   JSONObject failedStop=cancel().put("stopped",false).put("backend_errors",1).put("result",-3);
   check(audioRunFailed(failedStop),"Cancelled stop failure is a sticky backend error");
   check(audioRunFailed(cancel().put("result",-3)),"Cancellation flag cannot hide a backend result");
-  check(audioRunFailed(cancel().put("result",0)),"Cancellation flag requires native CANCELLED result");
+  check(audioRunFailed(cancel().put("result",0)),"Late cancellation requires completed clips and cleanup evidence");
+  check(!audioRunFailed(lateCancel()),"Clean cancellation during completed stop/close is harmless");
+  String[] cleanup={"opened","started","stopped","closed"};
+  for(String key:cleanup){
+   check(audioRunFailed(lateCancel().put(key,false)),"Late cancellation requires completed "+key);
+   JSONObject missing=lateCancel();missing.m.remove(key);check(audioRunFailed(missing),"Late cancellation requires "+key+" evidence");
+   check(audioRunFailed(lateCancel().put(key,"true")),"Late cancellation requires typed "+key+" evidence");
+  }
+  String[] clipCounts={"completed_clips","requested_clips"};
+  for(String key:clipCounts){
+   check(audioRunFailed(lateCancel().put(key,2)),"Late cancellation requires all three "+key);
+   JSONObject missing=lateCancel();missing.m.remove(key);check(audioRunFailed(missing),"Late cancellation requires "+key+" evidence");
+   check(audioRunFailed(lateCancel().put(key,"3")),"Late cancellation requires typed "+key+" evidence");
+   check(audioRunFailed(lateCancel().put(key,3.5)),"Late cancellation rejects fractional "+key);
+  }
+  check(audioRunFailed(lateCancel().put("backend_errors",1)),"Late cancellation backend errors remain sticky");
+  check(audioRunFailed(lateCancel().put("result",-3)),"Late cancellation backend result remains sticky");
+  t=valid();t.audioRuns.l.set(1,lateCancel());if(audioRunFailed(t.audioRuns.optJSONObject(1)))t.failures++;
+  check(t.preBackground(),"Late cancellation permits retry without poisoning the session");
+  check(!t.backgroundPassed(),"Completed late cancellation cannot qualify Home interruption");
+  t.audioRuns.l.set(1,cancel());check(t.backgroundPassed(),"A later genuine cancellation can qualify the same session");
   check(audioRunFailed(success.put("backend_errors",1)),"Passed flag cannot hide backend errors");
   check(audioRunFailed(object("passed",false,"cancelled",false,"result",-1,"backend_errors",0)),"Invalid fixture failure remains sticky");
   check(audioRunFailed(object("passed",false,"cancelled",false,"result",-2,"backend_errors",0)),"Unexpected busy result remains sticky");

@@ -38,7 +38,8 @@ isolated debug keys. Do not uninstall the production launcher or erase its data.
 
 ## What to report
 
-State whether both sticks moved the arrow correctly, whether movement stopped
+State whether the left stick changed the **Held** input value and the right
+stick rotated the arrow, whether held values cleared and rotation stopped
 when released, whether all three sounds were audible, and whether Home/return
 recovered. Send `COH-NativeSystems-*.json` even if a check remains pending or
 fails. A screenshot of the final status can help identify a missing action.

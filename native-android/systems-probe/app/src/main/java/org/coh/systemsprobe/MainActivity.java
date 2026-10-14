@@ -218,10 +218,17 @@ public final class MainActivity extends Activity {
             ||!(run.opt("result") instanceof Number)||!(run.opt("backend_errors") instanceof Number))return true;
         if(((Number)run.opt("backend_errors")).doubleValue()!=0)return true;
         double result=((Number)run.opt("result")).doubleValue();
-        // Cancellation is expected only when the native backend returns its
-        // clean CANCELLED result. A later successful run cannot erase errors.
+        // A cancel may arrive after the last frame is consumed, during clean
+        // stop/close. That late OK result is harmless but cannot prove Home
+        // interruption: backgroundPassed still requires native CANCELLED (1).
+        boolean lateCancellation=!run.optBoolean("passed")&&run.optBoolean("cancelled")&&result==0
+            &&run.opt("completed_clips") instanceof Number&&((Number)run.opt("completed_clips")).doubleValue()==3
+            &&run.opt("requested_clips") instanceof Number&&((Number)run.opt("requested_clips")).doubleValue()==3
+            &&Boolean.TRUE.equals(run.opt("opened"))&&Boolean.TRUE.equals(run.opt("started"))
+            &&Boolean.TRUE.equals(run.opt("stopped"))&&Boolean.TRUE.equals(run.opt("closed"));
+        // A later successful run cannot erase actual backend errors.
         return !(run.optBoolean("passed")&&!run.optBoolean("cancelled")&&result==0
-            ||!run.optBoolean("passed")&&run.optBoolean("cancelled")&&result==1);
+            ||!run.optBoolean("passed")&&run.optBoolean("cancelled")&&result==1||lateCancellation);
     }
     private void advanceSmoke() {
         if(!autoSmoke||!active||audioBusy)return;
