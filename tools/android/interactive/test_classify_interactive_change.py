@@ -3,6 +3,8 @@ import contextlib
 import io
 import os
 from pathlib import Path
+import subprocess
+import sys
 import unittest
 import tempfile
 from unittest.mock import patch
@@ -14,13 +16,142 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
-    def test_finite_pool_recovery_helpers_require_actual_harness_marker(self):
-        extra=sorted(change.NATIVE_WORLD_RESEARCH_ALLOWED-change.NATIVE_WORLD_RESEARCH_MARKERS)
-        self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,extra,change.NATIVE_WORLD_RESEARCH_REF))
-        self.assertFalse(change.runtime_required('push','a'*40,'b'*40,'a'*40,
-            extra+['tools/android/interactive/qualify_native_map_world_037.py'],change.NATIVE_WORLD_RESEARCH_REF))
-        self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,
-            extra+['tools/android/interactive/qualify_native_map_world_037.py'],'main'))
+    def test_research_route_has_exact_finite_source_ownership(self):
+        ownership={
+            'native_lane':{
+                '.github/workflows/android-native-map-world-037.yml',
+                'tools/android/interactive/qualify_native_map_world_037.py',
+                'tools/android/interactive/test_native_map_world_037.py'},
+            'pool_custody':{
+                'tools/android/interactive/native_map_world_pool_037.py',
+                'tools/android/interactive/test_native_map_world_pool_037.py'},
+            'partial_recovery':{
+                'tools/android/interactive/recover_native_map_world_partial_037.py',
+                'tools/android/interactive/test_recover_native_map_world_partial_037.py'},
+            'evidence_join':{
+                'tools/android/interactive/aggregate_native_map_world_pools_037.py',
+                'tools/android/interactive/test_aggregate_native_map_world_pools_037.py'},
+            'routing_pair':{
+                'tools/android/interactive/classify_interactive_change.py',
+                'tools/android/interactive/test_classify_interactive_change.py'}}
+        markers=set().union(*(paths for owner,paths in ownership.items() if owner!='routing_pair'))
+        self.assertEqual(change.NATIVE_WORLD_RESEARCH_MARKERS,markers)
+        self.assertEqual(change.NATIVE_WORLD_RESEARCH_ROUTING_PAIR,ownership['routing_pair'])
+        self.assertEqual(change.NATIVE_WORLD_RESEARCH_ALLOWED,markers|ownership['routing_pair'])
+
+    def test_each_known_research_helper_or_test_is_a_positive_marker(self):
+        for name in sorted(change.NATIVE_WORLD_RESEARCH_MARKERS):
+            with self.subTest(name=name):
+                self.assertFalse(change.runtime_required('push','a'*40,'b'*40,'a'*40,
+                    [name],change.NATIVE_WORLD_RESEARCH_REF))
+                self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,[name],'main'))
+
+    def test_only_complete_routing_pair_can_bypass_without_a_research_marker(self):
+        pair=sorted(change.NATIVE_WORLD_RESEARCH_ROUTING_PAIR);ref=change.NATIVE_WORLD_RESEARCH_REF
+        self.assertFalse(change.runtime_required('push','a'*40,'b'*40,'a'*40,pair,ref))
+        for names in ([pair[0]],[pair[1]],[],pair+[pair[0]],pair+['unknown.py']):
+            with self.subTest(names=names):
+                self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,names,ref))
+
+    def test_new_research_markers_and_pair_keep_event_history_and_native_guards(self):
+        ref=change.NATIVE_WORLD_RESEARCH_REF
+        scopes=[[name] for name in sorted(change.NATIVE_WORLD_RESEARCH_MARKERS)]
+        scopes.append(sorted(change.NATIVE_WORLD_RESEARCH_ROUTING_PAIR))
+        for names in scopes:
+            for event,before,head,parent in (
+                ('workflow_dispatch','a'*40,'b'*40,'a'*40),
+                ('pull_request','a'*40,'b'*40,'a'*40),
+                ('push','c'*40,'b'*40,'a'*40),
+                ('push','a'*40,'b'*40,'a'*40+'\n'+'c'*40),
+                ('push','0'*40,'b'*40,'0'*40),
+                ('push','a'*40,'0'*40,'a'*40),
+                ('push','invalid','b'*40,'invalid'),
+                ('push','a'*40,'INVALID','a'*40),
+                ('push','a'*40,'a'*40,'a'*40)):
+                with self.subTest(names=names,event=event,before=before,parent=parent):
+                    self.assertTrue(change.runtime_required(event,before,head,parent,names,ref))
+            for foreign in ('upstream/ouroboros/Common/group/groupnovodex.c',
+                'android/native/client-launcher.c','android/guest/character_zoning.py',
+                'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
+                'profiles/THORHERO/character.sql',
+                'tools/android/interactive/native_map_world_pool_038.py',
+                'tools/android/interactive/recover_native_map_world_partial_038.py',
+                'tools/android/interactive/aggregate_native_map_world_pools_038.py',
+                'tools/android/interactive/prepare_native_map_world_inputs_037.py',
+                '.github/workflows/future-native-map.yml'):
+                with self.subTest(names=names,foreign=foreign):
+                    self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,names+[foreign],ref))
+
+    def actual_git_route(self,names,*,event='push',ref=None,merge=False,multicommit=False):
+        with tempfile.TemporaryDirectory(prefix='coh-research-route-owned-') as directory:
+            root=Path(directory);repository=root/'repository';repository.mkdir()
+            env={k:v for k,v in os.environ.items() if not k.startswith('GIT_')}
+            def git(*args):
+                return subprocess.run(['git',*args],cwd=repository,env=env,text=True,
+                    capture_output=True,check=True,timeout=10).stdout.strip()
+            git('init','--quiet','--initial-branch=fixture')
+            git('config','user.name','COH routing fixture')
+            git('config','user.email','coh-routing-fixture@invalid')
+            hooks=root/'empty-hooks';hooks.mkdir();git('config','core.hooksPath',str(hooks))
+            def commit(label):
+                git('add','--all');git('-c','commit.gpgsign=false','commit','--quiet','-m',label)
+                return git('rev-parse','HEAD')
+            (repository/'base.txt').write_text('owned fixture\n');base=commit('base')
+            for name in names:
+                target=repository/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_text('reviewed fixture change\n')
+            before=base;head=commit('research correction')
+            if multicommit:
+                target=repository/names[0];target.write_text('second fixture correction\n');head=commit('second correction')
+            if merge:
+                git('checkout','--quiet','-b','second-parent',base)
+                target=repository/'tools/android/interactive/test_native_map_world_pool_037.py'
+                target.parent.mkdir(parents=True,exist_ok=True);target.write_text('other owned research change\n')
+                commit('other parent');git('checkout','--quiet','fixture')
+                git('-c','commit.gpgsign=false','merge','--quiet','--no-ff','second-parent','-m','controlled merge')
+                head=git('rev-parse','HEAD');before=git('rev-parse','HEAD^1')
+                self.assertEqual(len(git('rev-parse','HEAD^@').splitlines()),2)
+            output=root/'output';output.write_text('existing=true\n')
+            env.update(GITHUB_EVENT_NAME=event,COH_PUSH_BEFORE=before,
+                GITHUB_REF_NAME=change.NATIVE_WORLD_RESEARCH_REF if ref is None else ref,
+                GITHUB_OUTPUT=str(output))
+            result=subprocess.run([sys.executable,str(Path(__file__).with_name('classify_interactive_change.py'))],
+                cwd=repository,env=env,text=True,capture_output=True,timeout=10)
+            self.assertEqual(result.returncode,0,result.stderr)
+            self.assertEqual(git('rev-parse','HEAD'),head)
+            self.assertEqual(output.read_text().splitlines()[0],'existing=true')
+            return output.read_text().splitlines()[1]
+
+    def test_actual_git_helper_recovery_and_join_single_file_pushes_do_not_rebuild(self):
+        names=change.NATIVE_WORLD_RESEARCH_MARKERS-{
+            '.github/workflows/android-native-map-world-037.yml',
+            'tools/android/interactive/qualify_native_map_world_037.py',
+            'tools/android/interactive/test_native_map_world_037.py'}
+        for name in sorted(names):
+            with self.subTest(name=name):
+                self.assertEqual(self.actual_git_route([name]),'runtime_required=false')
+
+    def test_actual_git_complete_classifier_pair_does_not_rebuild(self):
+        self.assertEqual(self.actual_git_route(sorted(change.NATIVE_WORLD_RESEARCH_ROUTING_PAIR)),
+            'runtime_required=false')
+
+    def test_actual_git_future_helper_native_source_and_wrong_refs_require_full(self):
+        helper='tools/android/interactive/native_map_world_pool_037.py'
+        for names in ([helper,'tools/android/interactive/native_map_world_pool_038.py'],
+                [helper,'upstream/ouroboros/Common/group/groupnovodex.c']):
+            with self.subTest(names=names):
+                self.assertEqual(self.actual_git_route(names),'runtime_required=true')
+        for ref in ('main','codex/character-persistence-continuation',
+                'refs/heads/'+change.NATIVE_WORLD_RESEARCH_REF):
+            with self.subTest(ref=ref):
+                self.assertEqual(self.actual_git_route([helper],ref=ref),'runtime_required=true')
+
+    def test_actual_git_merge_multicommit_and_manual_events_require_full(self):
+        helper='tools/android/interactive/native_map_world_pool_037.py'
+        self.assertEqual(self.actual_git_route([helper],merge=True),'runtime_required=true')
+        self.assertEqual(self.actual_git_route([helper],multicommit=True),'runtime_required=true')
+        for event in ('workflow_dispatch','pull_request'):
+            with self.subTest(event=event):
+                self.assertEqual(self.actual_git_route([helper],event=event),'runtime_required=true')
     def test_pool_helper_neighbor_does_not_expand_research_fence(self):
         names=['tools/android/interactive/qualify_native_map_world_037.py',
                'tools/android/interactive/native_map_world_pool_037.py']

@@ -20,25 +20,34 @@ NATIVE_WORLD_RESEARCH_REF='codex/native-map-world-037'
 NATIVE_WORLD_RESEARCH_MARKERS=frozenset({
     '.github/workflows/android-native-map-world-037.yml',
     'tools/android/interactive/qualify_native_map_world_037.py',
-    'tools/android/interactive/test_native_map_world_037.py'})
-NATIVE_WORLD_RESEARCH_ALLOWED=NATIVE_WORLD_RESEARCH_MARKERS|frozenset({
+    'tools/android/interactive/test_native_map_world_037.py',
     'tools/android/interactive/native_map_world_pool_037.py',
     'tools/android/interactive/test_native_map_world_pool_037.py',
     'tools/android/interactive/recover_native_map_world_partial_037.py',
     'tools/android/interactive/test_recover_native_map_world_partial_037.py',
     'tools/android/interactive/aggregate_native_map_world_pools_037.py',
-    'tools/android/interactive/test_aggregate_native_map_world_pools_037.py',
+    'tools/android/interactive/test_aggregate_native_map_world_pools_037.py'})
+NATIVE_WORLD_RESEARCH_ROUTING_PAIR=frozenset({
     'tools/android/interactive/classify_interactive_change.py',
     'tools/android/interactive/test_classify_interactive_change.py'})
+NATIVE_WORLD_RESEARCH_ALLOWED=NATIVE_WORLD_RESEARCH_MARKERS|NATIVE_WORLD_RESEARCH_ROUTING_PAIR
 
 
 def native_world_research_owned(event,before,head,parent,names,ref_name=None):
-    """Keep exact research harness edits in their actual native qualification lane."""
+    """Fence known research corrections and the complete routing repair pair.
+
+    Each finite harness helper is independently a research marker: a helper-only
+    correction must not silently request an unrelated APK/runtime rebuild. The
+    classifier itself can route without a harness change only as its exact pair.
+    Native inputs, unknown helpers and ambiguous history retain full validation.
+    """
     return (ref_name==NATIVE_WORLD_RESEARCH_REF and event=='push'
         and all(type(v) is str and re.fullmatch('[0-9a-f]{40}',v) for v in (before,head,parent))
         and before==parent and before!='0'*40 and head!='0'*40 and head!=before
         and type(names) in (list,tuple) and all(type(n) is str for n in names)
-        and len(names)==len(set(names)) and bool(set(names)&NATIVE_WORLD_RESEARCH_MARKERS)
+        and len(names)==len(set(names))
+        and (bool(set(names)&NATIVE_WORLD_RESEARCH_MARKERS)
+             or set(names)==NATIVE_WORLD_RESEARCH_ROUTING_PAIR)
         and set(names)<=NATIVE_WORLD_RESEARCH_ALLOWED)
 
 SHELL_ONLY = frozenset({
