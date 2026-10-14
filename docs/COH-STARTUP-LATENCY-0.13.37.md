@@ -60,6 +60,16 @@ Successful native builds and prepared providers are reused with exact byte
 authentication. Failed or cancelled qualification is retained as failure evidence.
 Native candidates remain nonshipping until their appropriate gates pass.
 
+## Actual client qualification outcome
+
+The genuine paired run [38488820206](https://github.com/Russianranger/coh-android/actions/runs/38488820206) passed six Game launches: two retained, two constructor candidates and two original Cg observers. The [factual receipt](android-evidence/native-client-folder-sort-0.13.37-qualification.json) keeps original build and recovery identities. Providers, helper/animation/texture inputs, current software renderer, ordinary cache bytes and owned cleanup remained equal. The candidate actually sorted 184 batches / 98,243 entries per run.
+
+Warm retained native console-to-all-data was 15.167 s; candidates were 15.421 / 15.563 s. Accepted current readiness was 19.236088 versus 19.217011 / 19.482232 s, with registry/OCR observation timing distinguished. This proves startup compatibility, not a material host speed benefit. No physical, cold-cache, character-world, visual or measured process RAM result follows. Both Cg cases used 249 OBJECT / zero SOURCE creations, about 0.17 s create and 0.50 s immediate load; later shader loads and device driver caches remain unmeasured.
+
+The full-world native Map gate is active at source `8a08a1927225fdaa334ae330b8c8c5d044306fc2`, run [38489822992](https://github.com/Russianranger/coh-android/actions/runs/38489822992). Original successful preparation and binaries are reused. Earlier failed attempts are retained separately. Native readiness/held process/world/SDK/SQL/cache checks remain mandatory; 31 fresh harness tests passed. No completed world case is claimed yet.
+
+Source review also identified about 1.58 GB of unnecessary repeated BIN-body processing in a dormant cache bridge. Exact original archive/manifest evidence and current ownership must remove that work before activation. A separate native full metadata-census prototype is under source review; its aim is fewer filesystem operations without moving work into world entry. It has not been built, executed or shipped.
+
 ## Diagnostic corrections
 
 The Android manual-capture gate previously rejected a valid user-controlled

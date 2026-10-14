@@ -18,6 +18,9 @@ CLIENT_ZONE_STARTUP_DOCS = frozenset({
     'docs/android-evidence/native-startup-metadata-0.13.37-dormant-review.json',
     'docs/android-evidence/native-map-metadata-source-boundary-0.13.37.json',
     'docs/android-evidence/native-map-world-console-failure-0.13.37.json',
+    'docs/android-evidence/native-client-folder-sort-0.13.37-qualification.json',
+    'docs/android-evidence/native-map-world-buffering-failure-0.13.37.json',
+    'docs/android-evidence/original-cache-components-0.13.37-recovery.json',
 })
 CLIENT_ZONE_STARTUP_ALLOWED = CLIENT_ZONE_STARTUP_DOCS | frozenset({
     '.github/workflows/android-client-zone-startup.yml',
