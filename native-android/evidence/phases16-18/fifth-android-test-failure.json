@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "status": "failed_automation_incomplete",
+  "workflow_run_id": 38636187538,
+  "job_id": 116099838797,
+  "validation_head": "0b4bb3270fd87321132c9e77286eacd87eef6d09",
+  "runtime_source_commit": "e88a02b284de16ed6f7caf1e6b689f2e85d0b6e8",
+  "artifact_id": 11928511826,
+  "artifact_zip_sha256": "c6470132955220d3b9a4245491b2ebb06953026317fda1732cad7d09a0771268",
+  "artifact_zip_bytes": 6459135,
+  "exact_apk_reuse": true,
+  "failure": "Framework joystick MOVE reached native source movement, but driver incorrectly required physical controller_events to increase. Accepted InputAdapter increments that counter only for nonnegative device IDs; the framework injection has no physical device identity. This driver timeout occurred before Home and export, so neither is accepted.",
+  "native_failure": false,
+  "observed_native": {
+    "frames": 2388,
+    "held_dirs": 1,
+    "source_state_bits": 1,
+    "actor_position": [
+      488,
+      74,
+      -1537.33374
+    ],
+    "movement_ticks": 2919,
+    "run_samples": 1758,
+    "gl_errors": 0,
+    "egl_error": 0
+  },
+  "observed_framework_input": {
+    "key_down": 8,
+    "key_up": 8,
+    "key_repeat": 8,
+    "motion": 1,
+    "touch_begin": 1,
+    "touch_move": 1,
+    "touch_end": 1,
+    "touch_cancel": 0,
+    "focus_clear": 0,
+    "device_removed": 0,
+    "controller_events": 0,
+    "left_axis_directions": 4,
+    "right_axis_directions": 0,
+    "button_down_mask": 15728640,
+    "touch_motion_directions": 2
+  },
+  "physical_controller_verified": false,
+  "home_while_held_qualified": false,
+  "document_export_qualified": false,
+  "retained_report": {
+    "file": "fifth-android-report.json",
+    "bytes": 107504,
+    "sha256": "866fed31a17c02dd45a7497bcfd5523d42e5d8ff4fc974faae47209a314412a5"
+  }
+}

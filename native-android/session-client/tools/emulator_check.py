@@ -288,7 +288,9 @@ def home_interrupt_witness(before,paused,source='keyboard'):
     else:
         assert source=='joystick'
         assert final['key_down']==old['key_down'] and final['key_up']==old['key_up']
-        assert final['motion']>old['motion'] and final['controller_events']>old['controller_events']
+        assert final['motion']>old['motion'] and final['left_axis_directions']&4
+        assert before['input_adapter']['in_app_synthetic']['motion']==0
+        assert paused['input_adapter']['in_app_synthetic']['motion']==0
         down_sequence=sequence
     interruption=[e for e in paused['events'] if e['sequence']>down_sequence
                   and e['type'] in ('input_clear_requested','pause_requested')
@@ -330,7 +332,7 @@ def home_with_held_input(before):
               and r['native']['frames']>before['native']['frames']
               and r['native']['run_samples']>before['native']['run_samples']
               and r['input_adapter']['external_android']['motion']>old['motion']
-              and r['input_adapter']['external_android']['controller_events']>old['controller_events'],
+              and r['input_adapter']['external_android']['left_axis_directions']&4,
               'Actual framework joystick forward axis reaches moving native source state')
     assert held['input_adapter']['external_android']['key_down']==old['key_down']
     assert held['input_adapter']['external_android']['key_up']==old['key_up']
@@ -360,7 +362,8 @@ def renewed_joystick_input(before):
     moved=wait(lambda r:r['native']['held_dirs']==2 and r['native']['source_state_bits']&2
                and r['native']['frames']>neutral['native']['frames']
                and distance(r['native']['actor_position'],neutral['native']['actor_position'])>.01
-               and r['input_adapter']['external_android']['motion']>old['motion'], 'Renewed framework joystick backward input moves source actor')
+               and r['input_adapter']['external_android']['motion']>old['motion']
+               and r['input_adapter']['external_android']['left_axis_directions']&8, 'Renewed framework joystick backward input moves source actor')
     old=moved['input_adapter']['external_android']
     adb('shell','input','joystick','motionevent','MOVE','0','0')
     released=wait(lambda r:r['native']['held_dirs']==0 and r['native']['animation_state']==0
@@ -448,17 +451,20 @@ def main():
         moved = wait(lambda r:r['native']['frames'] >= settled_frames+30, 'Continued idle rendering after release')
         assert distance(settled_position,moved['native']['actor_position']) <= .001, 'Released actor continues drifting'
         moved = touch_look(); save('emulator-moved-report.json', moved)
-        state = moved['native']; contexts=state['contexts_started']; position=state['actor_position'][:]
-        camera=(state['camera_yaw'],state['camera_pitch']); frames=state['frames']
-        tap_button('Recreate', 'recreate_requested')
+        state = moved['native']; position=state['actor_position'][:]
+        camera=(state['camera_yaw'],state['camera_pitch'])
+        tapped_recreate=tap_button('Recreate','recreate_requested')
+        recreate_event=BUTTON_PROOFS[-1]['event']
+        assert recreate_event['type']=='recreate_requested' and recreate_event in tapped_recreate['events']
+        contexts=recreate_event['native']['contexts_started'];frames=recreate_event['native']['frames']
         recreated = wait(lambda r:native_ready(r) and r['native']['contexts_started'] > contexts
                          and r['native']['frames'] > frames + 30, 'Actual recreated Surface resumes persistent scene')
         assert recreated['session_id'] == first['session_id']
         assert distance(position, recreated['native']['actor_position']) <= .001, 'Surface recreation reset actor'
         assert abs(camera[0]-recreated['native']['camera_yaw']) <= .0001 and abs(camera[1]-recreated['native']['camera_pitch']) <= .0001
         validate(recreated, moved=True); save('emulator-recreated-report.json', recreated)
-        contexts=recreated['native']['contexts_started']; frames=recreated['native']['frames']
         paused = home_with_held_input(recreated)
+        contexts=paused['native']['contexts_started'];frames=paused['native']['frames']
         position=paused['native']['actor_position'][:]
         save('emulator-background-report.json', paused)
         adb('shell', 'am', 'start', '-W', '-n', ACTIVITY)
@@ -473,8 +479,12 @@ def main():
         screenshot('emulator-foreground-scene.png')
         exported = export_document()
         wait(native_ready, 'Scene returns after document picker')
-        tap_button('Reset actor', 'reset_requested')
-        reset = wait(lambda r:native_ready(r) and distance(initial_position,r['native']['actor_position'])<=.001,
+        tapped_reset=tap_button('Reset actor','reset_requested')
+        reset_event=BUTTON_PROOFS[-1]['event']
+        assert reset_event['type']=='reset_requested' and reset_event in tapped_reset['events']
+        reset_frames=reset_event['native']['frames']
+        reset = wait(lambda r:native_ready(r) and r['native']['frames']>reset_frames+30
+                     and distance(initial_position,r['native']['actor_position'])<=.001,
                      'Actual Reset button returns authored actor placement')
         validate(reset); save('emulator-final-report.json', reset)
         summary={'schema':1,'gates':[16,17,18],'passed':True,'installed_apk':apk_identity,

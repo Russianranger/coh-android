@@ -84,12 +84,14 @@ def main():
         try:driver.home_interrupt_witness(before,bad)
         except AssertionError:check(True,label+' rejected')
         else:check(False,label+' incorrectly accepted')
-    axis_before=deepcopy(before);axis_before['input_adapter']['external_android'].update(motion=0,controller_events=0)
-    axis_paused=deepcopy(paused);axis_paused['input_adapter']['external_android'].update(key_down=8,motion=1,controller_events=1)
+    axis_before=deepcopy(before);axis_before['input_adapter']['external_android'].update(motion=0,controller_events=0,left_axis_directions=0)
+    axis_paused=deepcopy(paused);axis_paused['input_adapter']['external_android'].update(key_down=8,motion=1,controller_events=0,left_axis_directions=4)
+    axis_before['input_adapter']['in_app_synthetic']={'motion':0}
+    axis_paused['input_adapter']['in_app_synthetic']={'motion':0}
     axis_paused['events']=axis_paused['events'][1:]
     check(driver.home_interrupt_witness(axis_before,axis_paused,source='joystick')==[axis_paused['events'][0]],
           'Observed external framework axis with held moving source state qualifies')
-    for field,value,label in [('motion',0,'Missing external motion'),('controller_events',0,'Missing controller-source event'),
+    for field,value,label in [('motion',0,'Missing external motion'),('left_axis_directions',0,'Missing observed forward-axis coverage'),
                               ('key_down',9,'Unrelated keyboard down'),('key_up',9,'Unrelated keyboard release')]:
         bad=deepcopy(axis_paused);bad['input_adapter']['external_android'][field]=value
         try:driver.home_interrupt_witness(axis_before,bad,source='joystick')
@@ -99,6 +101,10 @@ def main():
     try:driver.home_interrupt_witness(axis_before,bad,source='joystick')
     except AssertionError:check(True,'Already-cleared axis cannot qualify pre-clear witness')
     else:check(False,'Already-cleared axis incorrectly accepted')
+    bad=deepcopy(axis_paused);bad['input_adapter']['in_app_synthetic']['motion']=1
+    try:driver.home_interrupt_witness(axis_before,bad,source='joystick')
+    except AssertionError:check(True,'In-app synthetic motion cannot qualify framework joystick receipt')
+    else:check(False,'In-app synthetic motion incorrectly accepted')
     for field,value in [('foreground',True),('source_state_bits',1),('motion_local',[0,0,1]),('motion_world',[1,0,0])]:
         bad=deepcopy(axis_paused);bad['native'][field]=value
         try:driver.home_interrupt_witness(axis_before,bad,source='joystick')
