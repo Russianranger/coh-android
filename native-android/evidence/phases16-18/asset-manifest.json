@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "assets": {
+    "character.bin": {
+      "bytes": 4261100,
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+    },
+    "locomotion.bin": {
+      "bytes": 36004,
+      "sha256": "774dc5dfe813b4e786f4450aa48751901444999cfdc40735c747efd04f308116"
+    },
+    "morph.bin": {
+      "bytes": 3028,
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+    },
+    "rig.bin": {
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    },
+    "world.bin": {
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    }
+  }
+}

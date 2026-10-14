@@ -1,0 +1,331 @@
+{
+  "schema": 1,
+  "gates": [
+    16,
+    17,
+    18
+  ],
+  "status": "host_build_and_android13_emulator_qualified_physical_thor_pending",
+  "passed": true,
+  "runtime_source_commit": "e88a02b284de16ed6f7caf1e6b689f2e85d0b6e8",
+  "runtime_build_workflow_run_id": 38631384218,
+  "qualification_driver_commit": "5cea4041c8c822b6a983f815e3b4814a2e0d3b5a",
+  "qualification_driver_sha256": "236e1f5fd1343523a935889eee5c85b7b909ec64f2186a4a6dfc7609181ac63c",
+  "workflow_run_id": 38637681649,
+  "job_id": 116104929977,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38637681649",
+  "artifact_id": 11929666705,
+  "artifact_url": "https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705",
+  "artifact_zip_bytes": 6868754,
+  "artifact_zip_sha256": "4fbcc6923136ad59347c3fc1919e8071655291f02a78a4e4c42a8f68046bc3f0",
+  "artifact_retention_expires": "2026-11-13T21:11:08Z",
+  "arm64_package": {
+    "file": "CoH-Native-Session-Client-0.1.0-arm64.apk",
+    "bytes": 2139651,
+    "sha256": "eb763d8c6e5354da06a336e8fe09a244a893755e82ef708ea1d2139dc17b8634",
+    "abi": "arm64-v8a",
+    "elf_machine": 183,
+    "native_library": {
+      "file": "lib/arm64-v8a/libcoh_session_client.so",
+      "bytes": 122904,
+      "sha256": "a9358d848f8625602d7864e27dfaf2dda950b952aedd5efa4ebf5863099b70fb"
+    },
+    "signature_verified": true,
+    "manifest_verified": true,
+    "packaged_fixtures_verified": true,
+    "signer_certificate_sha256": "1ab9ac0ce8896ad8d07afed83615ff497f93b930c89dade2a01298cba7d137b9"
+  },
+  "emulator_package": {
+    "file": "CoH-Native-Session-Client-0.1.0-emulator-x86_64.apk",
+    "bytes": 2145400,
+    "sha256": "fc38228217ed2dde33d796e53c0700a71fb8248cd66256536ab6e7a23b13afab",
+    "abi": "x86_64",
+    "elf_machine": 62,
+    "native_library": {
+      "file": "lib/x86_64/libcoh_session_client.so",
+      "bytes": 128656,
+      "sha256": "d5753a373c62c202b51014686645725393ad32c4101f3dd1d446c8bed2213d5d"
+    },
+    "signature_verified": true,
+    "manifest_verified": true,
+    "packaged_fixtures_verified": true,
+    "signer_certificate_sha256": "1ab9ac0ce8896ad8d07afed83615ff497f93b930c89dade2a01298cba7d137b9"
+  },
+  "package_bytes_reused_exactly": true,
+  "original_build_receipt_retained_unchanged": true,
+  "source_host_tests_in_original_build": {
+    "motion_checks": 51539,
+    "source_direction_timing_cases": 2440,
+    "locomotion_clock_rate_comparisons": 2384,
+    "locomotion_encoded_key_comparisons": 49140,
+    "smooth_sprint_morph_palette_comparisons": 3600,
+    "locomotion_invalid_cases": 96,
+    "character_vertices": 2626,
+    "character_geometry_components": 94536,
+    "character_sanitizer_checks": 10070,
+    "original_lifecycle_positive_checks": 22,
+    "original_lifecycle_negative_controls": 11,
+    "all_depth24_float32_bins": 16777216,
+    "sanitizers": "ASan/UBSan; original CI locomotion LeakSanitizer enabled",
+    "source_host_proofs_rerun_in_final_reuse_job": false
+  },
+  "fresh_host_checks": {
+    "selector_home_predicate_checks_ci": 54,
+    "selector_home_checks_local_with_real_android_xml": 57,
+    "current_lifecycle_positive_checks": 22,
+    "current_lifecycle_negative_controls": 11,
+    "reuse_guard_independent_git_checks": 21
+  },
+  "core_regression_workflow": {
+    "run_id": 38637681101,
+    "conclusion": "success",
+    "scope": "portable core/oracle/DDS/sanitizers and ARM64 Bionic compilation"
+  },
+  "android_execution": {
+    "schema": 1,
+    "gates": [
+      16,
+      17,
+      18
+    ],
+    "passed": true,
+    "installed_apk": {
+      "bytes": 2145400,
+      "sha256": "fc38228217ed2dde33d796e53c0700a71fb8248cd66256536ab6e7a23b13afab"
+    },
+    "native_session_execution_verified": true,
+    "scope": "Installed Android 13 x86_64; persistent authored Atlas benchmark and Wretch, source no-collision actor movement, authored idle/run/post tracks under actual Android keyboard/touch input",
+    "frames": 2237,
+    "contexts_started": 4,
+    "actual_keyboard_motion": true,
+    "actual_touch_camera": true,
+    "actual_surface_recreation": true,
+    "actual_home_preserves_actor_and_camera": true,
+    "actual_document_export": true,
+    "actual_reset_button": true,
+    "actual_home_clears_held_framework_input": true,
+    "actual_home_input_source": "Android framework joystick; not a physical controller",
+    "renewed_framework_joystick_input_after_home": true,
+    "source_tf_components": 163176,
+    "source_tf_mismatches": 0,
+    "raw_depth_order_color_differences": 2,
+    "exact_equal_depth_ties": 2,
+    "non_tie_depth_order_mismatches": 0,
+    "actual_depth_sampler_controls_verified": true,
+    "physical_controller_verified": false,
+    "thor_device_execution_verified": false,
+    "original_game_execution": false,
+    "full_atlas_loaded": false,
+    "server_interoperability_verified": false,
+    "walking_collision_qualified": false,
+    "full_sequencer_execution": false
+  },
+  "home_receipt": {
+    "source": "Actual Android framework joystick MOVE, followed by actual system HOME",
+    "preclear_events": [
+      {
+        "sequence": 24,
+        "type": "pause_requested",
+        "frames": 1164,
+        "held_dirs": 1,
+        "source_state_bits": 1,
+        "running": true,
+        "foreground": true
+      },
+      {
+        "sequence": 25,
+        "type": "input_clear_requested",
+        "frames": 1164,
+        "held_dirs": 1,
+        "source_state_bits": 1,
+        "running": true,
+        "foreground": true
+      }
+    ],
+    "background_contexts_started": 2,
+    "background_contexts_completed": 2,
+    "objects_released": true,
+    "background_held_dirs": 0,
+    "background_source_bits": 0,
+    "background_motion_local": [
+      0,
+      0,
+      0
+    ],
+    "background_motion_world": [
+      0,
+      0,
+      0
+    ],
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "preserved_actor_position": [
+      582.089783,
+      74,
+      -1537.33374
+    ],
+    "preserved_camera_orientation": [
+      0.152493745,
+      0.159999996
+    ],
+    "new_frames_after_home": 63,
+    "new_frames_after_recreate": 62,
+    "new_frames_after_reset": 44,
+    "renewed_framework_axis_displacement": 41.11091902987848,
+    "fresh_released_stability_frames": 35
+  },
+  "export": {
+    "passed": true,
+    "path": "/sdcard/Download/COH-NativeSession-20261014-211044.json",
+    "bytes": 156853,
+    "sha256": "8cc3783eb8f7d4c60139a2e96d20d3a08d05e666fe9a9951a554e4746d61c8ac",
+    "scope": "Actual CREATE_DOCUMENT Save; frozen native session evidence before picker pause"
+  },
+  "export_validation_boundary": "Real CREATE_DOCUMENT Save, valid same-session pre-picker event evidence and exported file digest; no independent pre-picker byte-digest comparison",
+  "visual_inspection": "Initial scene shows authored Wretch and Atlas bench together; after movement/Home the actor remains complete and visible. The bench can leave this small benchmark viewport. No full-map claim.",
+  "physical_controller_verified": false,
+  "thor_device_execution_verified": false,
+  "original_game_execution": false,
+  "full_atlas_loaded": false,
+  "walking_collision_qualified": false,
+  "full_sequencer_execution": false,
+  "server_interoperability_verified": false,
+  "preservation": "Conventional launcher/client, existing imports and accepted earlier probes unchanged; native-android only. Earlier failed runs and successful receipts retained.",
+  "retained_reports": [
+    {
+      "file": "build-receipt.json",
+      "bytes": 4439,
+      "sha256": "28785eef8a28a60bf8f9c3420db0a853a157fbe685523ff8064c6c90169ef990"
+    },
+    {
+      "file": "current-lifecycle-host-checks.json",
+      "bytes": 1307,
+      "sha256": "75c0b7e76b03b81f7344ba825f86ee7fdcb440f2182b2ee4d558274091b2b138"
+    },
+    {
+      "file": "depth-codec-host.json",
+      "bytes": 773,
+      "sha256": "dcedee2a626da4960ea39d7acf84d13d4a456a06a8c4a2a5b01e03182c5c4fa2"
+    },
+    {
+      "file": "emulator-background-report.json",
+      "bytes": 131387,
+      "sha256": "8efd77cb8fc66bc599c5fb3ae46b344727993f54ef545665f26295dbe5b177b8"
+    },
+    {
+      "file": "emulator-button-tap-proof.json",
+      "bytes": 17380,
+      "sha256": "759fd8c4e0ddf434fe6179042d103cd13af28780be7977da5ee26d83daf978bc"
+    },
+    {
+      "file": "emulator-camera-proof.json",
+      "bytes": 2476,
+      "sha256": "e2316873d2afb8641f29ff9be2da070ab82b0fba5dd9024370c2f0d070a5f713"
+    },
+    {
+      "file": "emulator-export-proof.json",
+      "bytes": 283,
+      "sha256": "11acefe4cc9cb0d69fbe8873e9bf3913401c462ad57bb31153bd240bc7151ad9"
+    },
+    {
+      "file": "emulator-exported-report.json",
+      "bytes": 156853,
+      "sha256": "8cc3783eb8f7d4c60139a2e96d20d3a08d05e666fe9a9951a554e4746d61c8ac"
+    },
+    {
+      "file": "emulator-final-report.json",
+      "bytes": 212777,
+      "sha256": "b5efaa1d4eae1044275897ebca8ccbff86f556c4fc0c1c4f4bf023d7200d3526"
+    },
+    {
+      "file": "emulator-foreground-report.json",
+      "bytes": 151770,
+      "sha256": "a96bed695c39aec779ed63c29467f6215f69c982543b9c8f275b4549b9631a9d"
+    },
+    {
+      "file": "emulator-home-held-input-proof.json",
+      "bytes": 135683,
+      "sha256": "aa4ac09893fcfbd07cddb121204190933e213cb30fc12d5169ca5f9973945c4c"
+    },
+    {
+      "file": "emulator-input-motion-proof.json",
+      "bytes": 6782,
+      "sha256": "68f3dbff26ef86b651036bb5d466c42d41cc9ca06c627b40a4d223f2e45a2a8a"
+    },
+    {
+      "file": "emulator-recreated-report.json",
+      "bytes": 110912,
+      "sha256": "7c31e7bf017da40e06a6cb63d8f2481345da22bfabc0a7ef59df963e3083a29c"
+    },
+    {
+      "file": "emulator-renewed-input-receipt.json",
+      "bytes": 26614,
+      "sha256": "53939a52be11d5a7f5b52f44dd6ee7dc5d131263e0166731f6a3febff515c869"
+    },
+    {
+      "file": "emulator-smoke-summary.json",
+      "bytes": 1400,
+      "sha256": "82bee98fdb535a9ee2d0ad5ca0b9fe7ed11d5cf5da35b88dee26c36d9d53ebcf"
+    },
+    {
+      "file": "host-character-proof.json",
+      "bytes": 12730,
+      "sha256": "e44b89f2fbadbd00e24e313e2e94948029019bea759d332ffe415f1082263eaa"
+    },
+    {
+      "file": "host-locomotion-proof.json",
+      "bytes": 6373,
+      "sha256": "e94d825a3aa5c97bbbc7ad75fef688ebef7d4e2b1ef1ef74e66792f24464cae3"
+    },
+    {
+      "file": "host-motion-proof.json",
+      "bytes": 1304,
+      "sha256": "22b9abb5ba605dd87519a8e1a8f57221d2ea862da41374e64246c910253e7684"
+    },
+    {
+      "file": "original-lifecycle-host-checks.json",
+      "bytes": 1307,
+      "sha256": "75c0b7e76b03b81f7344ba825f86ee7fdcb440f2182b2ee4d558274091b2b138"
+    },
+    {
+      "file": "package-reuse-receipt.json",
+      "bytes": 1381,
+      "sha256": "cac0d18008330f4cbce650a3d316778b61bbf63349519819be2f38276948715d"
+    },
+    {
+      "file": "reuse-guard.json",
+      "bytes": 3141,
+      "sha256": "43dfa07b2a3b53374d06a877614f3cc35f64c31523a95abbd471f243d9622159"
+    },
+    {
+      "file": "reuse-host-checks.json",
+      "bytes": 275,
+      "sha256": "87cbe2b5c3e5b62fda17f843017069a11f618ef934fb7e5bb79bf96dc596fc0f"
+    },
+    {
+      "file": "source-validation-stage.json",
+      "bytes": 1170,
+      "sha256": "0caa1a9891345390de995853df4caba13cdea1e66c11a8f848add2b97b53c95e"
+    },
+    {
+      "file": "tap-host-checks.json",
+      "bytes": 348,
+      "sha256": "70aaa6ff7bdd3d7877d6ff63b474bb17531c2be15732d41f0eb360691e5b3377"
+    },
+    {
+      "file": "lifecycle/lifecycle-host-checks.json",
+      "bytes": 1307,
+      "sha256": "75c0b7e76b03b81f7344ba825f86ee7fdcb440f2182b2ee4d558274091b2b138"
+    },
+    {
+      "file": "asset-manifest.json",
+      "bytes": 700,
+      "sha256": "44b7c159aa0e4f14aad3998332a14489f10f2dc29a48687d838adfa5a95545d0"
+    },
+    {
+      "file": "session-fixture.json",
+      "bytes": 4855,
+      "sha256": "eeaae174d20282d1c761cbe4e8ec8287262fb5351aa7c37793ae5b5c6005b69f"
+    }
+  ]
+}

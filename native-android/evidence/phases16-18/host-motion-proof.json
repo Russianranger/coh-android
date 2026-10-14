@@ -1,0 +1,34 @@
+{
+  "schema": "coh-native-motion-host-proof-v1",
+  "passed": true,
+  "source_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "source_cases": 2440,
+  "adapter_cases": 11,
+  "checks": 51539,
+  "failed": 0,
+  "max_source_error": 0.0,
+  "unchanged_functions": [
+    "pmotionUpdateControlsPrePhysics",
+    "pmotionUpdateControlsPostPhysics",
+    "pmotionSetVel",
+    "pmotionSetState",
+    "handleBinaryStateChange",
+    "playerAdjustMotionPYR",
+    "entMoveNoColl",
+    "fixAngle",
+    "subAngle",
+    "addAngle",
+    "createMat3RYP",
+    "mulVecMat3",
+    "normalVec3",
+    "nearSameVec3"
+  ],
+  "statement_slices": [
+    "playerAdjustBodyPYR normal-strafe yaw, time_to_realign=0"
+  ],
+  "body_slice_sha256": "79100b3b5258532ccddc3d15535dde5469f01904e30b7c350b266af736160144",
+  "original_program_sha256": "dcac5c137db45469d28d8cae63b5ede62336f32fc4eae1b1406d7c08c8e166ba",
+  "goldens_sha256": "e5124f5f2a7050c8fae38042b142d15f217bc658f9d167606af1446600f768cd",
+  "sanitizers": "ASan and UBSan on native adaptation; original aliasing kernel compiled without strict aliasing",
+  "scope": "Bounded horizontal offline source NOCOLL controls, fixed30Hz, neutral source movement parameters. Excludes normal WALK/collision, jumping, live server, prediction, analog speed and full playerAdjustBodyPYR."
+}

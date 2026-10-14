@@ -1,0 +1,111 @@
+{
+  "eligible": true,
+  "reason": "Every committed change is in the explicit non-runtime allowlist",
+  "changes": [
+    {
+      "path": ".github/workflows/native-session-client.yml",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/PHASES16-18.md",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/evidence/phases16-18/fifth-android-report.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases16-18/fifth-android-test-failure.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases16-18/fourth-android-test-failure.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases16-18/fourth-emulator-recreated-report.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases16-18/fourth-emulator-session-report.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases16-18/fourth-package-reuse-receipt.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases16-18/third-android-test-failure.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases16-18/third-build-receipt.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases16-18/third-emulator-camera-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases16-18/third-emulator-input-motion-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases16-18/third-emulator-session-report.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/session-client/tools/emulator_check.py",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/session-client/tools/reuse_host_check.py",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/session-client/tools/reuse_qualified_package.py",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/session-client/tools/tap_host_check.py",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    }
+  ],
+  "schema": 1,
+  "pinned_runtime_source_commit": "e88a02b284de16ed6f7caf1e6b689f2e85d0b6e8",
+  "validation_head": "5cea4041c8c822b6a983f815e3b4814a2e0d3b5a"
+}

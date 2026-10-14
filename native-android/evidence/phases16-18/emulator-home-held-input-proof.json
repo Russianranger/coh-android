@@ -1,0 +1,4844 @@
+{
+  "schema": 1,
+  "passed": true,
+  "scope": "Actual Android framework joystick MOVE creates held source movement; actual system Home preserves a pre-clear held/moving native witness and clears input in background; no physical controller claim",
+  "framework_input_argv": [
+    "adb",
+    "shell",
+    "input",
+    "joystick",
+    "motionevent",
+    "MOVE",
+    "0",
+    "-1"
+  ],
+  "advertised_framework_source": "joystick",
+  "rendered_source_movement_observed_before_home": true,
+  "held_snapshot": {
+    "schema": "coh-native-session-v1",
+    "phases": [
+      16,
+      17,
+      18
+    ],
+    "session_id": "1a13c3fda58",
+    "updated_at": "2026-10-14T21:10:21.384Z",
+    "scope": "Persistent offline Wretch and Atlas benchmark; bounded source NOCOLL movement and authored locomotion; no login, full map, walking collision or replication",
+    "app": {
+      "package": "org.coh.sessionclient",
+      "version_name": "0.1.0-gates16-18",
+      "version_code": 1,
+      "installed_apk": {
+        "bytes": 2145400,
+        "sha256": "fc38228217ed2dde33d796e53c0700a71fb8248cd66256536ab6e7a23b13afab"
+      }
+    },
+    "device": {
+      "manufacturer": "Google",
+      "model": "sdk_gphone64_x86_64",
+      "sdk": 33,
+      "abis": [
+        "x86_64"
+      ],
+      "emulator_detected": true
+    },
+    "assets_verified": true,
+    "asset_manifest": {
+      "schema": 1,
+      "assets": {
+        "character.bin": {
+          "bytes": 4261100,
+          "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+        },
+        "locomotion.bin": {
+          "bytes": 36004,
+          "sha256": "774dc5dfe813b4e786f4450aa48751901444999cfdc40735c747efd04f308116"
+        },
+        "morph.bin": {
+          "bytes": 3028,
+          "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+        },
+        "rig.bin": {
+          "bytes": 11642,
+          "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+        },
+        "world.bin": {
+          "bytes": 102176,
+          "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+        }
+      }
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "type": "session_created",
+        "time_ms": 1792012180082
+      },
+      {
+        "sequence": 2,
+        "type": "resume",
+        "time_ms": 1792012180087
+      },
+      {
+        "sequence": 3,
+        "type": "assets_loaded",
+        "time_ms": 1792012180464,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": false,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 0,
+          "world_draws": 0,
+          "actor_draws": 0,
+          "skin_samples": 0,
+          "contexts_started": 0,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 0,
+          "height": 0,
+          "gl_renderer": "",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 0,
+          "shader_precise": false,
+          "tf_components": 0,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 0,
+          "actor_visible_pixels": 0,
+          "world_occludes_actor_pixels": 0,
+          "actor_occludes_world_pixels": 0,
+          "actor_changed_pixels": 0,
+          "startup_checked": false,
+          "movement_ticks": 0,
+          "direction_mask": 0,
+          "held_dirs": 0,
+          "actor_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            0,
+            0,
+            0
+          ],
+          "animation_frame": 1,
+          "animation_state": 0,
+          "animation_transitions": 0,
+          "idle_samples": 0,
+          "run_samples": 0,
+          "total_ms": 0,
+          "epoch": 2,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 0,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 1,
+          "run_entries": 0,
+          "post_entries": 0,
+          "animation_cycles": 0,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": false,
+          "depth_codec_float_precision": 0,
+          "raw_changed_pixels": 0,
+          "qualified_equal_depth_ties": 0,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 0,
+              "actor_depth": 0,
+              "combined_depth": 0
+            },
+            "world_front": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 0,
+              "actor_depth": 0,
+              "combined_depth": 0
+            },
+            "actor_front": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 0,
+              "actor_depth": 0,
+              "combined_depth": 0
+            }
+          },
+          "depth_tie_diagnostics": []
+        }
+      },
+      {
+        "sequence": 4,
+        "type": "surface_changed",
+        "time_ms": 1792012180560,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": false,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 0,
+          "world_draws": 0,
+          "actor_draws": 0,
+          "skin_samples": 0,
+          "contexts_started": 0,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 0,
+          "height": 0,
+          "gl_renderer": "",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 0,
+          "shader_precise": false,
+          "tf_components": 0,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 0,
+          "actor_visible_pixels": 0,
+          "world_occludes_actor_pixels": 0,
+          "actor_occludes_world_pixels": 0,
+          "actor_changed_pixels": 0,
+          "startup_checked": false,
+          "movement_ticks": 0,
+          "direction_mask": 0,
+          "held_dirs": 0,
+          "actor_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            0,
+            0,
+            0
+          ],
+          "animation_frame": 1,
+          "animation_state": 0,
+          "animation_transitions": 0,
+          "idle_samples": 0,
+          "run_samples": 0,
+          "total_ms": 0,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 0,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 1,
+          "run_entries": 0,
+          "post_entries": 0,
+          "animation_cycles": 0,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": false,
+          "depth_codec_float_precision": 0,
+          "raw_changed_pixels": 0,
+          "qualified_equal_depth_ties": 0,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 0,
+              "actor_depth": 0,
+              "combined_depth": 0
+            },
+            "world_front": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 0,
+              "actor_depth": 0,
+              "combined_depth": 0
+            },
+            "actor_front": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 0,
+              "actor_depth": 0,
+              "combined_depth": 0
+            }
+          },
+          "depth_tie_diagnostics": []
+        }
+      },
+      {
+        "sequence": 5,
+        "type": "key_down",
+        "time_ms": 1792012187055,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 127,
+          "world_draws": 264,
+          "actor_draws": 1450,
+          "skin_samples": 129,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 133,
+          "direction_mask": 1,
+          "held_dirs": 1,
+          "actor_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            584,
+            81.3050003,
+            -1419.61475
+          ],
+          "animation_frame": 44.3076134,
+          "animation_state": 0,
+          "animation_transitions": 0,
+          "idle_samples": 133,
+          "run_samples": 0,
+          "total_ms": 6453,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 133,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 1,
+          "run_entries": 0,
+          "post_entries": 0,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 6,
+        "type": "key_up",
+        "time_ms": 1792012187496,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 137,
+          "world_draws": 284,
+          "actor_draws": 1560,
+          "skin_samples": 139,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 143,
+          "direction_mask": 1,
+          "held_dirs": 0,
+          "actor_position": [
+            584,
+            74,
+            -1451.66565
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            584,
+            81.3050003,
+            -1428.18774
+          ],
+          "animation_frame": 11.4082251,
+          "animation_state": 1,
+          "animation_transitions": 1,
+          "idle_samples": 134,
+          "run_samples": 9,
+          "total_ms": 6889,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 1,
+          "motion_local": [
+            0,
+            0,
+            0.703555584
+          ],
+          "motion_world": [
+            6.15067819e-08,
+            0,
+            -0.703555584
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 134,
+          "animation_move": "RunCycle",
+          "animation_rate": 2,
+          "ready_entries": 1,
+          "run_entries": 1,
+          "post_entries": 0,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 7,
+        "type": "key_down",
+        "time_ms": 1792012187785,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 145,
+          "world_draws": 300,
+          "actor_draws": 1648,
+          "skin_samples": 147,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 153,
+          "direction_mask": 1,
+          "held_dirs": 1,
+          "actor_position": [
+            584,
+            74,
+            -1451.66565
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            584,
+            81.3050003,
+            -1429.94666
+          ],
+          "animation_frame": 7.92307758,
+          "animation_state": 2,
+          "animation_transitions": 2,
+          "idle_samples": 144,
+          "run_samples": 9,
+          "total_ms": 7212,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 144,
+          "animation_move": "RunPost",
+          "animation_rate": 1,
+          "ready_entries": 1,
+          "run_entries": 1,
+          "post_entries": 1,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 8,
+        "type": "key_up",
+        "time_ms": 1792012188213,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 155,
+          "world_draws": 320,
+          "actor_draws": 1758,
+          "skin_samples": 157,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 164,
+          "direction_mask": 1,
+          "held_dirs": 0,
+          "actor_position": [
+            584,
+            74,
+            -1463.91101
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            584,
+            81.3050003,
+            -1440.27673
+          ],
+          "animation_frame": 12.9457483,
+          "animation_state": 1,
+          "animation_transitions": 3,
+          "idle_samples": 145,
+          "run_samples": 19,
+          "total_ms": 7629,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 1,
+          "motion_local": [
+            0,
+            0,
+            0.718222201
+          ],
+          "motion_world": [
+            6.27889776e-08,
+            0,
+            -0.718222201
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 145,
+          "animation_move": "RunCycle",
+          "animation_rate": 2,
+          "ready_entries": 1,
+          "run_entries": 2,
+          "post_entries": 1,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 9,
+        "type": "key_down",
+        "time_ms": 1792012188375,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 159,
+          "world_draws": 328,
+          "actor_draws": 1802,
+          "skin_samples": 161,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 168,
+          "direction_mask": 1,
+          "held_dirs": 1,
+          "actor_position": [
+            584,
+            74,
+            -1463.91101
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            584,
+            81.3050003,
+            -1442.19202
+          ],
+          "animation_frame": 3.30769253,
+          "animation_state": 2,
+          "animation_transitions": 4,
+          "idle_samples": 149,
+          "run_samples": 19,
+          "total_ms": 7777,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 149,
+          "animation_move": "RunPost",
+          "animation_rate": 1,
+          "ready_entries": 1,
+          "run_entries": 2,
+          "post_entries": 2,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 10,
+        "type": "key_up",
+        "time_ms": 1792012188836,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 173,
+          "world_draws": 356,
+          "actor_draws": 1956,
+          "skin_samples": 175,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 181,
+          "direction_mask": 1,
+          "held_dirs": 0,
+          "actor_position": [
+            584,
+            74,
+            -1480.47815
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            584,
+            81.3050003,
+            -1458.75916
+          ],
+          "animation_frame": 16.0226707,
+          "animation_state": 1,
+          "animation_transitions": 5,
+          "idle_samples": 150,
+          "run_samples": 31,
+          "total_ms": 8202,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 1,
+          "motion_local": [
+            0,
+            0,
+            0.748000026
+          ],
+          "motion_world": [
+            6.53922356e-08,
+            0,
+            -0.748000026
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 150,
+          "animation_move": "RunCycle",
+          "animation_rate": 2,
+          "ready_entries": 1,
+          "run_entries": 3,
+          "post_entries": 2,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 11,
+        "type": "key_down",
+        "time_ms": 1792012190268,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 217,
+          "world_draws": 444,
+          "actor_draws": 2440,
+          "skin_samples": 219,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 224,
+          "direction_mask": 5,
+          "held_dirs": 4,
+          "actor_position": [
+            584,
+            74,
+            -1480.47815
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            584,
+            81.3050003,
+            -1458.75916
+          ],
+          "animation_frame": 11.000001,
+          "animation_state": 0,
+          "animation_transitions": 7,
+          "idle_samples": 193,
+          "run_samples": 31,
+          "total_ms": 9684,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 193,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 2,
+          "run_entries": 3,
+          "post_entries": 3,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 12,
+        "type": "key_up",
+        "time_ms": 1792012190754,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 234,
+          "world_draws": 478,
+          "actor_draws": 2627,
+          "skin_samples": 236,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 239,
+          "direction_mask": 5,
+          "held_dirs": 0,
+          "actor_position": [
+            605.583069,
+            74,
+            -1480.47815
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            602.990479,
+            81.3050003,
+            -1458.75916
+          ],
+          "animation_frame": 22.538456,
+          "animation_state": 0,
+          "animation_transitions": 7,
+          "idle_samples": 208,
+          "run_samples": 31,
+          "total_ms": 10187,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 4,
+          "motion_local": [
+            -0.777777791,
+            0,
+            0
+          ],
+          "motion_world": [
+            0.777777791,
+            0,
+            6.79954937e-08
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 194,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 2,
+          "run_entries": 3,
+          "post_entries": 3,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 13,
+        "type": "key_down",
+        "time_ms": 1792012191083,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 244,
+          "world_draws": 498,
+          "actor_draws": 2737,
+          "skin_samples": 245,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 248,
+          "direction_mask": 7,
+          "held_dirs": 2,
+          "actor_position": [
+            605.583069,
+            74,
+            -1480.47815
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            605.583069,
+            81.3050003,
+            -1458.75916
+          ],
+          "animation_frame": 29.461525,
+          "animation_state": 0,
+          "animation_transitions": 7,
+          "idle_samples": 217,
+          "run_samples": 31,
+          "total_ms": 10515,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 203,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 2,
+          "run_entries": 3,
+          "post_entries": 3,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 14,
+        "type": "key_up",
+        "time_ms": 1792012191592,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 259,
+          "world_draws": 528,
+          "actor_draws": 2902,
+          "skin_samples": 260,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 261,
+          "direction_mask": 7,
+          "held_dirs": 0,
+          "actor_position": [
+            605.583069,
+            74,
+            -1463.90405
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            605.583069,
+            81.3050003,
+            -1442.18506
+          ],
+          "animation_frame": 39.4615135,
+          "animation_state": 0,
+          "animation_transitions": 7,
+          "idle_samples": 230,
+          "run_samples": 31,
+          "total_ms": 11023,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 2,
+          "motion_local": [
+            0,
+            0,
+            -0.748444438
+          ],
+          "motion_world": [
+            -6.54310881e-08,
+            0,
+            0.748444438
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 204,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 2,
+          "run_entries": 3,
+          "post_entries": 3,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 15,
+        "type": "key_down",
+        "time_ms": 1792012191994,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 271,
+          "world_draws": 552,
+          "actor_draws": 3034,
+          "skin_samples": 273,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 274,
+          "direction_mask": 15,
+          "held_dirs": 8,
+          "actor_position": [
+            605.583069,
+            74,
+            -1463.90405
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            605.583069,
+            81.3050003,
+            -1442.18506
+          ],
+          "animation_frame": 49.4615021,
+          "animation_state": 0,
+          "animation_transitions": 7,
+          "idle_samples": 243,
+          "run_samples": 31,
+          "total_ms": 11423,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 217,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 2,
+          "run_entries": 3,
+          "post_entries": 3,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 16,
+        "type": "key_up",
+        "time_ms": 1792012192462,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 282,
+          "world_draws": 574,
+          "actor_draws": 3155,
+          "skin_samples": 283,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 285,
+          "direction_mask": 15,
+          "held_dirs": 0,
+          "actor_position": [
+            593.334839,
+            74,
+            -1463.90405
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            593.334839,
+            81.3050003,
+            -1442.18506
+          ],
+          "animation_frame": 57.9230309,
+          "animation_state": 0,
+          "animation_transitions": 7,
+          "idle_samples": 254,
+          "run_samples": 31,
+          "total_ms": 11896,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 8,
+          "motion_local": [
+            0.718666673,
+            0,
+            0
+          ],
+          "motion_world": [
+            -0.718666673,
+            0,
+            -6.28278372e-08
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 218,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 2,
+          "run_entries": 3,
+          "post_entries": 3,
+          "animation_cycles": 1,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 17,
+        "type": "key_down",
+        "time_ms": 1792012193118,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 302,
+          "world_draws": 614,
+          "actor_draws": 3375,
+          "skin_samples": 304,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 304,
+          "direction_mask": 15,
+          "held_dirs": 1,
+          "actor_position": [
+            593.334839,
+            74,
+            -1463.90405
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            593.334839,
+            81.3050003,
+            -1442.18506
+          ],
+          "animation_frame": 13.538414,
+          "animation_state": 0,
+          "animation_transitions": 7,
+          "idle_samples": 273,
+          "run_samples": 31,
+          "total_ms": 12524,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 237,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 2,
+          "run_entries": 3,
+          "post_entries": 3,
+          "animation_cycles": 2,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 18,
+        "type": "key_up",
+        "time_ms": 1792012193623,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 318,
+          "world_draws": 646,
+          "actor_draws": 3551,
+          "skin_samples": 320,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 320,
+          "direction_mask": 15,
+          "held_dirs": 0,
+          "actor_position": [
+            593.334839,
+            74,
+            -1488.25696
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            593.334839,
+            81.3050003,
+            -1463.7644
+          ],
+          "animation_frame": 20.6389942,
+          "animation_state": 1,
+          "animation_transitions": 8,
+          "idle_samples": 274,
+          "run_samples": 46,
+          "total_ms": 13052,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 1,
+          "motion_local": [
+            0,
+            0,
+            0.792444468
+          ],
+          "motion_world": [
+            6.92776965e-08,
+            0,
+            -0.792444468
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 238,
+          "animation_move": "RunCycle",
+          "animation_rate": 2,
+          "ready_entries": 2,
+          "run_entries": 4,
+          "post_entries": 3,
+          "animation_cycles": 2,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 19,
+        "type": "key_down",
+        "time_ms": 1792012193831,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 324,
+          "world_draws": 658,
+          "actor_draws": 3617,
+          "skin_samples": 326,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 326,
+          "direction_mask": 15,
+          "held_dirs": 1,
+          "actor_position": [
+            593.334839,
+            74,
+            -1488.25696
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            593.334839,
+            81.3050003,
+            -1466.53796
+          ],
+          "animation_frame": 4.84615421,
+          "animation_state": 2,
+          "animation_transitions": 9,
+          "idle_samples": 280,
+          "run_samples": 46,
+          "total_ms": 13234,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 244,
+          "animation_move": "RunPost",
+          "animation_rate": 1,
+          "ready_entries": 2,
+          "run_entries": 4,
+          "post_entries": 4,
+          "animation_cycles": 2,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 20,
+        "type": "key_up",
+        "time_ms": 1792012194303,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 337,
+          "world_draws": 684,
+          "actor_draws": 3760,
+          "skin_samples": 339,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 338,
+          "direction_mask": 15,
+          "held_dirs": 0,
+          "actor_position": [
+            593.334839,
+            74,
+            -1502.58569
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": 3.14159274,
+          "camera_yaw": 0,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            593.334839,
+            81.3050003,
+            -1478.78894
+          ],
+          "animation_frame": 14.4867582,
+          "animation_state": 1,
+          "animation_transitions": 10,
+          "idle_samples": 281,
+          "run_samples": 57,
+          "total_ms": 13700,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 1,
+          "motion_local": [
+            0,
+            0,
+            0.733333349
+          ],
+          "motion_world": [
+            6.41100399e-08,
+            0,
+            -0.733333349
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 245,
+          "animation_move": "RunCycle",
+          "animation_rate": 2,
+          "ready_entries": 2,
+          "run_entries": 5,
+          "post_entries": 4,
+          "animation_cycles": 2,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 21,
+        "type": "recreate_requested",
+        "time_ms": 1792012217486,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 1042,
+          "world_draws": 2094,
+          "actor_draws": 11515,
+          "skin_samples": 1043,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 1012,
+          "direction_mask": 15,
+          "held_dirs": 0,
+          "actor_position": [
+            593.334839,
+            74,
+            -1502.58569
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": -2.98909926,
+          "camera_yaw": 0.152493745,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            596.634033,
+            81.3050003,
+            -1481.11877
+          ],
+          "animation_frame": 24.3842201,
+          "animation_state": 0,
+          "animation_transitions": 12,
+          "idle_samples": 955,
+          "run_samples": 57,
+          "total_ms": 36913,
+          "epoch": 3,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 919,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 3,
+          "run_entries": 5,
+          "post_entries": 5,
+          "animation_cycles": 10,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 22,
+        "type": "surface_changed",
+        "time_ms": 1792012217555,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": true,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 1042,
+          "world_draws": 2094,
+          "actor_draws": 11515,
+          "skin_samples": 1043,
+          "contexts_started": 1,
+          "contexts_completed": 0,
+          "objects_released": false,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 1012,
+          "direction_mask": 15,
+          "held_dirs": 0,
+          "actor_position": [
+            593.334839,
+            74,
+            -1502.58569
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": -2.98909926,
+          "camera_yaw": 0.152493745,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            596.634033,
+            81.3050003,
+            -1481.11877
+          ],
+          "animation_frame": 24.3842201,
+          "animation_state": 0,
+          "animation_transitions": 12,
+          "idle_samples": 955,
+          "run_samples": 57,
+          "total_ms": 36913,
+          "epoch": 5,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 919,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 3,
+          "run_entries": 5,
+          "post_entries": 5,
+          "animation_cycles": 10,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 23,
+        "type": "render_returned",
+        "time_ms": 1792012217719,
+        "native": {
+          "schema": 1,
+          "probe": "coh-native-offline-session",
+          "valid": true,
+          "failed": false,
+          "running": false,
+          "failure": "",
+          "pointer_bytes": 8,
+          "source_controlled": true,
+          "collision": false,
+          "live_server": false,
+          "full_atlas": false,
+          "gpu_palette_skinning": false,
+          "skin_policy": "accepted source CPU skin then accepted world shader",
+          "frames": 1042,
+          "world_draws": 2094,
+          "actor_draws": 11515,
+          "skin_samples": 1043,
+          "contexts_started": 1,
+          "contexts_completed": 1,
+          "objects_released": true,
+          "width": 1080,
+          "height": 1417,
+          "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+          "gl_errors": 0,
+          "egl_error": 0,
+          "shader_language_version": 300,
+          "shader_precise": false,
+          "tf_components": 40794,
+          "tf_mismatches": 0,
+          "tf_max_error": 0,
+          "depth_order_mismatches": 0,
+          "world_visible_pixels": 6898,
+          "actor_visible_pixels": 8418,
+          "world_occludes_actor_pixels": 693,
+          "actor_occludes_world_pixels": 1953,
+          "actor_changed_pixels": 7750,
+          "startup_checked": true,
+          "movement_ticks": 1012,
+          "direction_mask": 15,
+          "held_dirs": 0,
+          "actor_position": [
+            593.334839,
+            74,
+            -1502.58569
+          ],
+          "spawn_position": [
+            584,
+            74,
+            -1441.33374
+          ],
+          "actor_yaw": -2.98909926,
+          "camera_yaw": 0.152493745,
+          "camera_pitch": 0.159999996,
+          "camera_position": [
+            596.634033,
+            81.3050003,
+            -1481.11877
+          ],
+          "animation_frame": 24.3842201,
+          "animation_state": 0,
+          "animation_transitions": 12,
+          "idle_samples": 955,
+          "run_samples": 57,
+          "total_ms": 36913,
+          "epoch": 5,
+          "foreground": true,
+          "expected_cancel_surface_errors": 0,
+          "expected_cancel_egl_error": 0,
+          "cleanup_gl_errors": 0,
+          "cleanup_egl_errors": 0,
+          "cleanup_egl_error": 0,
+          "source_state_bits": 0,
+          "motion_local": [
+            0,
+            0,
+            0
+          ],
+          "motion_world": [
+            0,
+            0,
+            0
+          ],
+          "nocoll_radius": 96,
+          "bounded_steps": 0,
+          "stopped_steps": 919,
+          "animation_move": "Ready",
+          "animation_rate": 1,
+          "ready_entries": 3,
+          "run_entries": 5,
+          "post_entries": 5,
+          "animation_cycles": 10,
+          "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+          "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+          "depth_sampler_controls_passed": true,
+          "depth_codec_float_precision": 23,
+          "raw_changed_pixels": 2,
+          "qualified_equal_depth_ties": 2,
+          "non_tie_mismatches": 0,
+          "depth_sampler_controls": {
+            "clear": {
+              "x": 0,
+              "y": 0,
+              "world_depth": 16777215,
+              "actor_depth": 16777215,
+              "combined_depth": 16777215
+            },
+            "world_front": {
+              "x": 288,
+              "y": 176,
+              "world_depth": 16702028,
+              "actor_depth": 16702269,
+              "combined_depth": 16702028
+            },
+            "actor_front": {
+              "x": 287,
+              "y": 177,
+              "world_depth": 16703822,
+              "actor_depth": 16702189,
+              "combined_depth": 16702189
+            }
+          },
+          "depth_tie_diagnostics": [
+            {
+              "x": 228,
+              "y": 211,
+              "world_depth": 16704438,
+              "actor_depth": 16704438,
+              "combined_depth": 16704438,
+              "world_rgba": [
+                117,
+                124,
+                131,
+                255
+              ],
+              "actor_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "forward_rgba": [
+                31,
+                31,
+                27,
+                255
+              ],
+              "reverse_rgba": [
+                117,
+                124,
+                131,
+                255
+              ]
+            },
+            {
+              "x": 229,
+              "y": 214,
+              "world_depth": 16704748,
+              "actor_depth": 16704748,
+              "combined_depth": 16704748,
+              "world_rgba": [
+                169,
+                171,
+                177,
+                255
+              ],
+              "actor_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "forward_rgba": [
+                9,
+                8,
+                7,
+                255
+              ],
+              "reverse_rgba": [
+                169,
+                171,
+                177,
+                255
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "resumed": true,
+    "render_busy": true,
+    "report_write_failed": false,
+    "failure": null,
+    "input_adapter": {
+      "schema": "coh-android-input-adapter-v1",
+      "external_android": {
+        "key_down": 8,
+        "key_up": 8,
+        "key_repeat": 8,
+        "motion": 1,
+        "touch_begin": 1,
+        "touch_move": 18,
+        "touch_end": 1,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 4,
+        "right_axis_directions": 0,
+        "button_down_mask": 15728640,
+        "touch_motion_directions": 2
+      },
+      "in_app_synthetic": {
+        "key_down": 0,
+        "key_up": 0,
+        "key_repeat": 0,
+        "motion": 0,
+        "touch_begin": 0,
+        "touch_move": 0,
+        "touch_end": 0,
+        "touch_cancel": 0,
+        "focus_clear": 0,
+        "device_removed": 0,
+        "controller_events": 0,
+        "left_axis_directions": 0,
+        "right_axis_directions": 0,
+        "button_down_mask": 0,
+        "touch_motion_directions": 0
+      },
+      "focused": true,
+      "touch_active": false,
+      "scope": "Android callbacks to source scalar/key/joystick kernels; editor look and preview adapter; no gameplay physics",
+      "external_event_provenance": "Framework events; emulator adb injection does not establish physical controller operation"
+    },
+    "native": {
+      "schema": 1,
+      "probe": "coh-native-offline-session",
+      "valid": true,
+      "failed": false,
+      "running": true,
+      "failure": "",
+      "pointer_bytes": 8,
+      "source_controlled": true,
+      "collision": false,
+      "live_server": false,
+      "full_atlas": false,
+      "gpu_palette_skinning": false,
+      "skin_policy": "accepted source CPU skin then accepted world shader",
+      "frames": 1138,
+      "world_draws": 2286,
+      "actor_draws": 12571,
+      "skin_samples": 1141,
+      "contexts_started": 2,
+      "contexts_completed": 1,
+      "objects_released": false,
+      "width": 1080,
+      "height": 1417,
+      "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+      "gl_errors": 0,
+      "egl_error": 0,
+      "shader_language_version": 300,
+      "shader_precise": false,
+      "tf_components": 81588,
+      "tf_mismatches": 0,
+      "tf_max_error": 0,
+      "depth_order_mismatches": 0,
+      "world_visible_pixels": 6898,
+      "actor_visible_pixels": 8418,
+      "world_occludes_actor_pixels": 693,
+      "actor_occludes_world_pixels": 1953,
+      "actor_changed_pixels": 7750,
+      "startup_checked": true,
+      "movement_ticks": 1101,
+      "direction_mask": 15,
+      "held_dirs": 1,
+      "actor_position": [
+        592.875671,
+        74,
+        -1505.55542
+      ],
+      "spawn_position": [
+        584,
+        74,
+        -1441.33374
+      ],
+      "actor_yaw": -2.98909926,
+      "camera_yaw": 0.152493745,
+      "camera_pitch": 0.159999996,
+      "camera_position": [
+        596.335266,
+        81.3050003,
+        -1483.05115
+      ],
+      "animation_frame": 4.04580736,
+      "animation_state": 1,
+      "animation_transitions": 13,
+      "idle_samples": 1040,
+      "run_samples": 61,
+      "total_ms": 3588,
+      "epoch": 5,
+      "foreground": true,
+      "expected_cancel_surface_errors": 0,
+      "expected_cancel_egl_error": 0,
+      "cleanup_gl_errors": 0,
+      "cleanup_egl_errors": 0,
+      "cleanup_egl_error": 0,
+      "source_state_bits": 1,
+      "motion_local": [
+        0,
+        0,
+        0.629777789
+      ],
+      "motion_world": [
+        -0.0962283462,
+        0,
+        -0.622382641
+      ],
+      "nocoll_radius": 96,
+      "bounded_steps": 0,
+      "stopped_steps": 1004,
+      "animation_move": "RunCycle",
+      "animation_rate": 1.49954462,
+      "ready_entries": 3,
+      "run_entries": 6,
+      "post_entries": 5,
+      "animation_cycles": 11,
+      "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+      "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+      "depth_sampler_controls_passed": true,
+      "depth_codec_float_precision": 23,
+      "raw_changed_pixels": 2,
+      "qualified_equal_depth_ties": 2,
+      "non_tie_mismatches": 0,
+      "depth_sampler_controls": {
+        "clear": {
+          "x": 0,
+          "y": 0,
+          "world_depth": 16777215,
+          "actor_depth": 16777215,
+          "combined_depth": 16777215
+        },
+        "world_front": {
+          "x": 288,
+          "y": 176,
+          "world_depth": 16702028,
+          "actor_depth": 16702269,
+          "combined_depth": 16702028
+        },
+        "actor_front": {
+          "x": 287,
+          "y": 177,
+          "world_depth": 16703822,
+          "actor_depth": 16702189,
+          "combined_depth": 16702189
+        }
+      },
+      "depth_tie_diagnostics": [
+        {
+          "x": 228,
+          "y": 211,
+          "world_depth": 16704438,
+          "actor_depth": 16704438,
+          "combined_depth": 16704438,
+          "world_rgba": [
+            117,
+            124,
+            131,
+            255
+          ],
+          "actor_rgba": [
+            31,
+            31,
+            27,
+            255
+          ],
+          "forward_rgba": [
+            31,
+            31,
+            27,
+            255
+          ],
+          "reverse_rgba": [
+            117,
+            124,
+            131,
+            255
+          ]
+        },
+        {
+          "x": 229,
+          "y": 214,
+          "world_depth": 16704748,
+          "actor_depth": 16704748,
+          "combined_depth": 16704748,
+          "world_rgba": [
+            169,
+            171,
+            177,
+            255
+          ],
+          "actor_rgba": [
+            9,
+            8,
+            7,
+            255
+          ],
+          "forward_rgba": [
+            9,
+            8,
+            7,
+            255
+          ],
+          "reverse_rgba": [
+            169,
+            171,
+            177,
+            255
+          ]
+        }
+      ]
+    },
+    "input_area": {
+      "left": 0,
+      "top": 440,
+      "width": 1080,
+      "height": 1417,
+      "shown": true,
+      "surface_ready": true
+    }
+  },
+  "interruption_events": [
+    {
+      "sequence": 24,
+      "type": "pause_requested",
+      "time_ms": 1792012222147,
+      "native": {
+        "schema": 1,
+        "probe": "coh-native-offline-session",
+        "valid": true,
+        "failed": false,
+        "running": true,
+        "failure": "",
+        "pointer_bytes": 8,
+        "source_controlled": true,
+        "collision": false,
+        "live_server": false,
+        "full_atlas": false,
+        "gpu_palette_skinning": false,
+        "skin_policy": "accepted source CPU skin then accepted world shader",
+        "frames": 1164,
+        "world_draws": 2338,
+        "actor_draws": 12857,
+        "skin_samples": 1167,
+        "contexts_started": 2,
+        "contexts_completed": 1,
+        "objects_released": false,
+        "width": 1080,
+        "height": 1417,
+        "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+        "gl_errors": 0,
+        "egl_error": 0,
+        "shader_language_version": 300,
+        "shader_precise": false,
+        "tf_components": 81588,
+        "tf_mismatches": 0,
+        "tf_max_error": 0,
+        "depth_order_mismatches": 0,
+        "world_visible_pixels": 6898,
+        "actor_visible_pixels": 8418,
+        "world_occludes_actor_pixels": 693,
+        "actor_occludes_world_pixels": 1953,
+        "actor_changed_pixels": 7750,
+        "startup_checked": true,
+        "movement_ticks": 1124,
+        "direction_mask": 15,
+        "held_dirs": 1,
+        "actor_position": [
+          582.089783,
+          74,
+          -1537.33374
+        ],
+        "spawn_position": [
+          584,
+          74,
+          -1441.33374
+        ],
+        "actor_yaw": -2.98909926,
+        "camera_yaw": 0.152493745,
+        "camera_pitch": 0.159999996,
+        "camera_position": [
+          586.204346,
+          81.3050003,
+          -1515.86682
+        ],
+        "animation_frame": 8.87631798,
+        "animation_state": 1,
+        "animation_transitions": 13,
+        "idle_samples": 1040,
+        "run_samples": 84,
+        "total_ms": 4354,
+        "epoch": 5,
+        "foreground": true,
+        "expected_cancel_surface_errors": 0,
+        "expected_cancel_egl_error": 0,
+        "cleanup_gl_errors": 0,
+        "cleanup_egl_errors": 0,
+        "cleanup_egl_error": 0,
+        "source_state_bits": 1,
+        "motion_local": [
+          0,
+          0,
+          0.970222235
+        ],
+        "motion_world": [
+          -0.148247331,
+          0,
+          -0.958829403
+        ],
+        "nocoll_radius": 96,
+        "bounded_steps": 9,
+        "stopped_steps": 1004,
+        "animation_move": "RunCycle",
+        "animation_rate": 1.16481233,
+        "ready_entries": 3,
+        "run_entries": 6,
+        "post_entries": 5,
+        "animation_cycles": 12,
+        "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+        "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+        "depth_sampler_controls_passed": true,
+        "depth_codec_float_precision": 23,
+        "raw_changed_pixels": 2,
+        "qualified_equal_depth_ties": 2,
+        "non_tie_mismatches": 0,
+        "depth_sampler_controls": {
+          "clear": {
+            "x": 0,
+            "y": 0,
+            "world_depth": 16777215,
+            "actor_depth": 16777215,
+            "combined_depth": 16777215
+          },
+          "world_front": {
+            "x": 288,
+            "y": 176,
+            "world_depth": 16702028,
+            "actor_depth": 16702269,
+            "combined_depth": 16702028
+          },
+          "actor_front": {
+            "x": 287,
+            "y": 177,
+            "world_depth": 16703822,
+            "actor_depth": 16702189,
+            "combined_depth": 16702189
+          }
+        },
+        "depth_tie_diagnostics": [
+          {
+            "x": 228,
+            "y": 211,
+            "world_depth": 16704438,
+            "actor_depth": 16704438,
+            "combined_depth": 16704438,
+            "world_rgba": [
+              117,
+              124,
+              131,
+              255
+            ],
+            "actor_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "forward_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "reverse_rgba": [
+              117,
+              124,
+              131,
+              255
+            ]
+          },
+          {
+            "x": 229,
+            "y": 214,
+            "world_depth": 16704748,
+            "actor_depth": 16704748,
+            "combined_depth": 16704748,
+            "world_rgba": [
+              169,
+              171,
+              177,
+              255
+            ],
+            "actor_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "forward_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "reverse_rgba": [
+              169,
+              171,
+              177,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sequence": 25,
+      "type": "input_clear_requested",
+      "time_ms": 1792012222147,
+      "native": {
+        "schema": 1,
+        "probe": "coh-native-offline-session",
+        "valid": true,
+        "failed": false,
+        "running": true,
+        "failure": "",
+        "pointer_bytes": 8,
+        "source_controlled": true,
+        "collision": false,
+        "live_server": false,
+        "full_atlas": false,
+        "gpu_palette_skinning": false,
+        "skin_policy": "accepted source CPU skin then accepted world shader",
+        "frames": 1164,
+        "world_draws": 2338,
+        "actor_draws": 12857,
+        "skin_samples": 1167,
+        "contexts_started": 2,
+        "contexts_completed": 1,
+        "objects_released": false,
+        "width": 1080,
+        "height": 1417,
+        "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+        "gl_errors": 0,
+        "egl_error": 0,
+        "shader_language_version": 300,
+        "shader_precise": false,
+        "tf_components": 81588,
+        "tf_mismatches": 0,
+        "tf_max_error": 0,
+        "depth_order_mismatches": 0,
+        "world_visible_pixels": 6898,
+        "actor_visible_pixels": 8418,
+        "world_occludes_actor_pixels": 693,
+        "actor_occludes_world_pixels": 1953,
+        "actor_changed_pixels": 7750,
+        "startup_checked": true,
+        "movement_ticks": 1124,
+        "direction_mask": 15,
+        "held_dirs": 1,
+        "actor_position": [
+          582.089783,
+          74,
+          -1537.33374
+        ],
+        "spawn_position": [
+          584,
+          74,
+          -1441.33374
+        ],
+        "actor_yaw": -2.98909926,
+        "camera_yaw": 0.152493745,
+        "camera_pitch": 0.159999996,
+        "camera_position": [
+          586.204346,
+          81.3050003,
+          -1515.86682
+        ],
+        "animation_frame": 8.87631798,
+        "animation_state": 1,
+        "animation_transitions": 13,
+        "idle_samples": 1040,
+        "run_samples": 84,
+        "total_ms": 4354,
+        "epoch": 5,
+        "foreground": true,
+        "expected_cancel_surface_errors": 0,
+        "expected_cancel_egl_error": 0,
+        "cleanup_gl_errors": 0,
+        "cleanup_egl_errors": 0,
+        "cleanup_egl_error": 0,
+        "source_state_bits": 1,
+        "motion_local": [
+          0,
+          0,
+          0.970222235
+        ],
+        "motion_world": [
+          -0.148247331,
+          0,
+          -0.958829403
+        ],
+        "nocoll_radius": 96,
+        "bounded_steps": 9,
+        "stopped_steps": 1004,
+        "animation_move": "RunCycle",
+        "animation_rate": 1.16481233,
+        "ready_entries": 3,
+        "run_entries": 6,
+        "post_entries": 5,
+        "animation_cycles": 12,
+        "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+        "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+        "depth_sampler_controls_passed": true,
+        "depth_codec_float_precision": 23,
+        "raw_changed_pixels": 2,
+        "qualified_equal_depth_ties": 2,
+        "non_tie_mismatches": 0,
+        "depth_sampler_controls": {
+          "clear": {
+            "x": 0,
+            "y": 0,
+            "world_depth": 16777215,
+            "actor_depth": 16777215,
+            "combined_depth": 16777215
+          },
+          "world_front": {
+            "x": 288,
+            "y": 176,
+            "world_depth": 16702028,
+            "actor_depth": 16702269,
+            "combined_depth": 16702028
+          },
+          "actor_front": {
+            "x": 287,
+            "y": 177,
+            "world_depth": 16703822,
+            "actor_depth": 16702189,
+            "combined_depth": 16702189
+          }
+        },
+        "depth_tie_diagnostics": [
+          {
+            "x": 228,
+            "y": 211,
+            "world_depth": 16704438,
+            "actor_depth": 16704438,
+            "combined_depth": 16704438,
+            "world_rgba": [
+              117,
+              124,
+              131,
+              255
+            ],
+            "actor_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "forward_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "reverse_rgba": [
+              117,
+              124,
+              131,
+              255
+            ]
+          },
+          {
+            "x": 229,
+            "y": 214,
+            "world_depth": 16704748,
+            "actor_depth": 16704748,
+            "combined_depth": 16704748,
+            "world_rgba": [
+              169,
+              171,
+              177,
+              255
+            ],
+            "actor_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "forward_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "reverse_rgba": [
+              169,
+              171,
+              177,
+              255
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "background_native": {
+    "schema": 1,
+    "probe": "coh-native-offline-session",
+    "valid": true,
+    "failed": false,
+    "running": false,
+    "failure": "",
+    "pointer_bytes": 8,
+    "source_controlled": true,
+    "collision": false,
+    "live_server": false,
+    "full_atlas": false,
+    "gpu_palette_skinning": false,
+    "skin_policy": "accepted source CPU skin then accepted world shader",
+    "frames": 1165,
+    "world_draws": 2340,
+    "actor_draws": 12868,
+    "skin_samples": 1167,
+    "contexts_started": 2,
+    "contexts_completed": 2,
+    "objects_released": true,
+    "width": 1080,
+    "height": 1417,
+    "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "gl_errors": 0,
+    "egl_error": 0,
+    "shader_language_version": 300,
+    "shader_precise": false,
+    "tf_components": 81588,
+    "tf_mismatches": 0,
+    "tf_max_error": 0,
+    "depth_order_mismatches": 0,
+    "world_visible_pixels": 6898,
+    "actor_visible_pixels": 8418,
+    "world_occludes_actor_pixels": 693,
+    "actor_occludes_world_pixels": 1953,
+    "actor_changed_pixels": 7750,
+    "startup_checked": true,
+    "movement_ticks": 1124,
+    "direction_mask": 15,
+    "held_dirs": 0,
+    "actor_position": [
+      582.089783,
+      74,
+      -1537.33374
+    ],
+    "spawn_position": [
+      584,
+      74,
+      -1441.33374
+    ],
+    "actor_yaw": -2.98909926,
+    "camera_yaw": 0.152493745,
+    "camera_pitch": 0.159999996,
+    "camera_position": [
+      586.204346,
+      81.3050003,
+      -1515.86682
+    ],
+    "animation_frame": 8.87631798,
+    "animation_state": 1,
+    "animation_transitions": 13,
+    "idle_samples": 1040,
+    "run_samples": 84,
+    "total_ms": 4385,
+    "epoch": 6,
+    "foreground": false,
+    "expected_cancel_surface_errors": 0,
+    "expected_cancel_egl_error": 0,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "cleanup_egl_error": 0,
+    "source_state_bits": 0,
+    "motion_local": [
+      0,
+      0,
+      0
+    ],
+    "motion_world": [
+      0,
+      0,
+      0
+    ],
+    "nocoll_radius": 96,
+    "bounded_steps": 9,
+    "stopped_steps": 1004,
+    "animation_move": "RunCycle",
+    "animation_rate": 1.16481233,
+    "ready_entries": 3,
+    "run_entries": 6,
+    "post_entries": 5,
+    "animation_cycles": 12,
+    "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+    "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+    "depth_sampler_controls_passed": true,
+    "depth_codec_float_precision": 23,
+    "raw_changed_pixels": 2,
+    "qualified_equal_depth_ties": 2,
+    "non_tie_mismatches": 0,
+    "depth_sampler_controls": {
+      "clear": {
+        "x": 0,
+        "y": 0,
+        "world_depth": 16777215,
+        "actor_depth": 16777215,
+        "combined_depth": 16777215
+      },
+      "world_front": {
+        "x": 288,
+        "y": 176,
+        "world_depth": 16702028,
+        "actor_depth": 16702269,
+        "combined_depth": 16702028
+      },
+      "actor_front": {
+        "x": 287,
+        "y": 177,
+        "world_depth": 16703822,
+        "actor_depth": 16702189,
+        "combined_depth": 16702189
+      }
+    },
+    "depth_tie_diagnostics": [
+      {
+        "x": 228,
+        "y": 211,
+        "world_depth": 16704438,
+        "actor_depth": 16704438,
+        "combined_depth": 16704438,
+        "world_rgba": [
+          117,
+          124,
+          131,
+          255
+        ],
+        "actor_rgba": [
+          31,
+          31,
+          27,
+          255
+        ],
+        "forward_rgba": [
+          31,
+          31,
+          27,
+          255
+        ],
+        "reverse_rgba": [
+          117,
+          124,
+          131,
+          255
+        ]
+      },
+      {
+        "x": 229,
+        "y": 214,
+        "world_depth": 16704748,
+        "actor_depth": 16704748,
+        "combined_depth": 16704748,
+        "world_rgba": [
+          169,
+          171,
+          177,
+          255
+        ],
+        "actor_rgba": [
+          9,
+          8,
+          7,
+          255
+        ],
+        "forward_rgba": [
+          9,
+          8,
+          7,
+          255
+        ],
+        "reverse_rgba": [
+          169,
+          171,
+          177,
+          255
+        ]
+      }
+    ]
+  },
+  "background_input_adapter": {
+    "schema": "coh-android-input-adapter-v1",
+    "external_android": {
+      "key_down": 8,
+      "key_up": 8,
+      "key_repeat": 8,
+      "motion": 1,
+      "touch_begin": 1,
+      "touch_move": 18,
+      "touch_end": 1,
+      "touch_cancel": 0,
+      "focus_clear": 1,
+      "device_removed": 0,
+      "controller_events": 0,
+      "left_axis_directions": 4,
+      "right_axis_directions": 0,
+      "button_down_mask": 15728640,
+      "touch_motion_directions": 2
+    },
+    "in_app_synthetic": {
+      "key_down": 0,
+      "key_up": 0,
+      "key_repeat": 0,
+      "motion": 0,
+      "touch_begin": 0,
+      "touch_move": 0,
+      "touch_end": 0,
+      "touch_cancel": 0,
+      "focus_clear": 0,
+      "device_removed": 0,
+      "controller_events": 0,
+      "left_axis_directions": 0,
+      "right_axis_directions": 0,
+      "button_down_mask": 0,
+      "touch_motion_directions": 0
+    },
+    "focused": true,
+    "touch_active": false,
+    "scope": "Android callbacks to source scalar/key/joystick kernels; editor look and preview adapter; no gameplay physics",
+    "external_event_provenance": "Framework events; emulator adb injection does not establish physical controller operation"
+  }
+}

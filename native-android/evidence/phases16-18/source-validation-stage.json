@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "gates": [
+    16,
+    17,
+    18
+  ],
+  "stage": "authored assets and source host qualification",
+  "status": "completed",
+  "passed": true,
+  "source_commit": "e88a02b284de16ed6f7caf1e6b689f2e85d0b6e8",
+  "workflow_run_id": "38631384218",
+  "proofs": [
+    {
+      "file": "host-motion-proof.json",
+      "bytes": 1304,
+      "sha256": "22b9abb5ba605dd87519a8e1a8f57221d2ea862da41374e64246c910253e7684"
+    },
+    {
+      "file": "host-locomotion-proof.json",
+      "bytes": 6373,
+      "sha256": "e94d825a3aa5c97bbbc7ad75fef688ebef7d4e2b1ef1ef74e66792f24464cae3"
+    },
+    {
+      "file": "host-character-proof.json",
+      "bytes": 12730,
+      "sha256": "e44b89f2fbadbd00e24e313e2e94948029019bea759d332ffe415f1082263eaa"
+    },
+    {
+      "file": "lifecycle/lifecycle-host-checks.json",
+      "bytes": 1307,
+      "sha256": "75c0b7e76b03b81f7344ba825f86ee7fdcb440f2182b2ee4d558274091b2b138"
+    },
+    {
+      "file": "depth-codec-host.json",
+      "bytes": 773,
+      "sha256": "dcedee2a626da4960ea39d7acf84d13d4a456a06a8c4a2a5b01e03182c5c4fa2"
+    }
+  ],
+  "full_client_execution_verified": false,
+  "thor_device_execution_verified": false
+}

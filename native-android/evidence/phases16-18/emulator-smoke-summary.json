@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "gates": [
+    16,
+    17,
+    18
+  ],
+  "passed": true,
+  "installed_apk": {
+    "bytes": 2145400,
+    "sha256": "fc38228217ed2dde33d796e53c0700a71fb8248cd66256536ab6e7a23b13afab"
+  },
+  "native_session_execution_verified": true,
+  "scope": "Installed Android 13 x86_64; persistent authored Atlas benchmark and Wretch, source no-collision actor movement, authored idle/run/post tracks under actual Android keyboard/touch input",
+  "frames": 2237,
+  "contexts_started": 4,
+  "actual_keyboard_motion": true,
+  "actual_touch_camera": true,
+  "actual_surface_recreation": true,
+  "actual_home_preserves_actor_and_camera": true,
+  "actual_document_export": true,
+  "actual_reset_button": true,
+  "actual_home_clears_held_framework_input": true,
+  "actual_home_input_source": "Android framework joystick; not a physical controller",
+  "renewed_framework_joystick_input_after_home": true,
+  "source_tf_components": 163176,
+  "source_tf_mismatches": 0,
+  "raw_depth_order_color_differences": 2,
+  "exact_equal_depth_ties": 2,
+  "non_tie_depth_order_mismatches": 0,
+  "actual_depth_sampler_controls_verified": true,
+  "physical_controller_verified": false,
+  "thor_device_execution_verified": false,
+  "original_game_execution": false,
+  "full_atlas_loaded": false,
+  "server_interoperability_verified": false,
+  "walking_collision_qualified": false,
+  "full_sequencer_execution": false
+}

@@ -1,8 +1,11 @@
 # AYN Thor: one combined test for gates 16–18
 
-Install `CoH-Native-Session-Client-0.1.0-arm64.apk` and open **CoH Native
+Download [the qualified artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705), extract and install
+`CoH-Native-Session-Client-0.1.0-arm64.apk`, and open **CoH Native
 Session Client**. Your launcher and earlier probes can stay installed. No
-server, account or asset import is required.
+server, account or asset import is required. APK SHA256:
+`eb763d8c6e5354da06a336e8fe09a244a893755e82ef708ea1d2139dc17b8634`.
+Host/build/emulator checks passed; physical acceptance of this new app is pending.
 
 1. Wait for the Wretch and Atlas bench to appear together. Confirm the actor
    is visible, animated and correctly occluded where it overlaps the bench.
@@ -16,8 +19,9 @@ server, account or asset import is required.
    a bounded preview round. **Reset actor** restores its starting pose/view.
 4. Move and turn the view, then tap **Recreate**. Confirm the actor and camera
    keep their state after the new Surface appears. Press Android Home while
-   moving, return without force-stopping, and confirm movement has stopped
-   while the actor/view state is retained. Move again to prove fresh input.
+   moving, release the stick while away, return without force-stopping, and confirm movement has stopped
+   while the actor/view state is retained. Move again to prove fresh input. Keep the app open through this sequence;
+   process death or a fresh launch intentionally starts a new offline session.
 5. Tap **Export report** and attach `COH-NativeSession-*.json`, including a
    screenshot if the actor or scene appears incorrect. Export a failure
    before restarting; the report retains sticky native failures.

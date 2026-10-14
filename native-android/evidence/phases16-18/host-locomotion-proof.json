@@ -1,0 +1,209 @@
+{
+  "schema": "coh-native-locomotion-host-proof-v1",
+  "status": "passed",
+  "passed": true,
+  "fixture_sha256": "774dc5dfe813b4e786f4450aa48751901444999cfdc40735c747efd04f308116",
+  "source_files": {
+    "schema": "coh-native-locomotion-source-pins-v1",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "files": {
+      "seqsequence.c": {
+        "path": "ouroboros/Common/seq/seqsequence.c",
+        "bytes_lf": 41616,
+        "sha256_lf": "7c816b4dacdfbfac8eecef08c105caf55bb5c1652fac6b100d69ddb4a4b1aefa"
+      },
+      "seqload.c": {
+        "path": "ouroboros/Common/seq/seqload.c",
+        "bytes_lf": 48866,
+        "sha256_lf": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f"
+      },
+      "seq.c": {
+        "path": "ouroboros/Common/seq/seq.c",
+        "bytes_lf": 68452,
+        "sha256_lf": "b483ac7131939559b367a6bfaa5be13170ce4a809666eced8d5220651205e12a"
+      },
+      "entclient.c": {
+        "path": "ouroboros/Game/src/entity/entclient.c",
+        "bytes_lf": 129281,
+        "sha256_lf": "a11e3b84a2dc87daf2302df674f5af15260c32180494ca1b75af9e44786c7c2d"
+      },
+      "player.txt": {
+        "path": "i24/data/sequencers/player.txt",
+        "bytes_lf": 15214,
+        "sha256_lf": "c334dfc0719e5e1d4b4e17cd6707d8cc10b4c66e826de71f4313f9fcd7678258"
+      },
+      "motion.inc": {
+        "path": "i24/data/sequencers/player/motion.inc",
+        "bytes_lf": 96641,
+        "sha256_lf": "a4491460f5ffc093dbdd4333b60694e94d91581a8e6ba55009e17560fa221fcd"
+      },
+      "readies.inc": {
+        "path": "i24/data/sequencers/player/readies.inc",
+        "bytes_lf": 29929,
+        "sha256_lf": "91fefb75679eb23543b9065afb8984a378715f5224ed8fcbe519dd36a5624d5a"
+      },
+      "ReadiesMembers.inc": {
+        "path": "i24/data/sequencers/members/readies.inc",
+        "bytes_lf": 129,
+        "sha256_lf": "724e25d550d7c140ff2c5763a574ac8b2d1813d376b18f0351eb8f9db10d3c1a"
+      },
+      "V_Arachnos_Wretch.txt": {
+        "path": "i24/data/ent_types/v_arachnos_wretch.txt",
+        "bytes_lf": 1203,
+        "sha256_lf": "33c3e292cf87c4334259a51d1387718cf3bc887517498b5903e61a988cd6468c"
+      },
+      "encounters_motion.inc": {
+        "path": "i24/data/sequencers/player/encounters_motion.inc",
+        "bytes_lf": 69128,
+        "sha256_lf": "43db4413b41d07a76d08f31c6198574e48969a6e4df065ad09bdbfa9996edadb"
+      },
+      "mathutil.h": {
+        "path": "ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+        "bytes_lf": 47551,
+        "sha256_lf": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111"
+      }
+    }
+  },
+  "executed_original_functions": {
+    "seqSetMove": {
+      "file": "seqsequence.c",
+      "sha256_lf": "d6317af7bc194f17c0477b3e074256ac4125fa4df728927ca2b1afb915a3b816"
+    },
+    "seqCycleFrame": {
+      "file": "seqsequence.c",
+      "sha256_lf": "b567e96db695cd7fa811f3465782ddf3b8a1738850e3e4d0d8823356282fd62a"
+    },
+    "seqStep": {
+      "file": "seqsequence.c",
+      "sha256_lf": "07ee45e56150c55818166ee4d85a1239d0ba773070f8299f68a61008df8ed997"
+    },
+    "seqGetAnimScale": {
+      "file": "seqsequence.c",
+      "sha256_lf": "7710b0afd58c6070791e5e6e70c69833318d0c3d4af38dca53a2dcec4b622e96"
+    },
+    "seqGetMovementSpeedAnimScale": {
+      "file": "entclient.c",
+      "sha256_lf": "678c34e21184ccf57b8e60bc017b95aa7a7d0363597d19bbcedc2b6359929e85"
+    },
+    "smoothSprintAnimation": {
+      "file": "entclient.c",
+      "sha256_lf": "75d027acdd7903562d538fb91b7165bd54e67ba622de7e913ff8cbe41a7d72a9"
+    }
+  },
+  "generated_oracle_sha256": "3e5fba985482dff71b5d1bbbf565b75e193702e397e64d4a6cf4ba66c3ef00f0",
+  "native_source_sha256": "dca71a48193e946c20673c5da9d1c2653e1919f466b72e786ea96173cdc94349",
+  "original_clock_rate_scalar_comparisons": 2384,
+  "original_clock_rate_maximum_absolute_error": 0.0,
+  "original_encoded_key_scalar_comparisons": 49140,
+  "original_encoded_key_maximum_absolute_error": 0.0,
+  "invalid_cases": 96,
+  "transitions": {
+    "ready": 3,
+    "run": 2,
+    "post": 2,
+    "cycles": 5
+  },
+  "original_unused_postrun_tracks_validated_and_ignored": [
+    50,
+    51,
+    52
+  ],
+  "morph_smooth_sprint_translation_checks": 720,
+  "sanitizers": "ASan and UBSan passed standalone exact-buffer truncation + transitions",
+  "morph_smooth_sprint_palette_scalar_comparisons": 2880,
+  "leak_sanitizer_enabled": true,
+  "scope": {
+    "kind": "bounded offline selection adapter over authentic source moves and clips",
+    "full_source_sequencer": false,
+    "run_pre_implemented": false,
+    "ready_random_variants_implemented": false,
+    "directional_moves": [
+      "FORWARD"
+    ],
+    "omitted": [
+      "RunPre18-25 and early-stop Idle_Walk_Post->Idle_Ready (male/walk fallback)",
+      "Ready2 random Ready_Look/Ready_2Hips graph",
+      "backward/strafe/combat/swim/weapon moves",
+      "transition blending",
+      "PlayFx footfall effects",
+      "live server state/authoritative prediction"
+    ]
+  },
+  "transcript": [
+    {
+      "tick": 0,
+      "move": 0,
+      "frame": 1.769230842590332,
+      "rate": 1.0
+    },
+    {
+      "tick": 30,
+      "move": 0,
+      "frame": 24.846145629882812,
+      "rate": 1.0
+    },
+    {
+      "tick": 60,
+      "move": 0,
+      "frame": 47.92304229736328,
+      "rate": 1.0
+    },
+    {
+      "tick": 90,
+      "move": 1,
+      "frame": 8.664834976196289,
+      "rate": 1.0
+    },
+    {
+      "tick": 120,
+      "move": 1,
+      "frame": 12.686813354492188,
+      "rate": 2.0
+    },
+    {
+      "tick": 150,
+      "move": 1,
+      "frame": 15.362637519836426,
+      "rate": 0.25
+    },
+    {
+      "tick": 180,
+      "move": 1,
+      "frame": 16.96703338623047,
+      "rate": 0.5714285969734192
+    },
+    {
+      "tick": 210,
+      "move": 2,
+      "frame": 4.076923370361328,
+      "rate": 1.0
+    },
+    {
+      "tick": 240,
+      "move": 0,
+      "frame": 4.84615421295166,
+      "rate": 1.0
+    },
+    {
+      "tick": 270,
+      "move": 0,
+      "frame": 27.923065185546875,
+      "rate": 1.0
+    },
+    {
+      "tick": 300,
+      "move": 2,
+      "frame": 16.38461685180664,
+      "rate": 1.0
+    },
+    {
+      "tick": 330,
+      "move": 0,
+      "frame": 17.153846740722656,
+      "rate": 1.0
+    }
+  ],
+  "android_device_execution": false,
+  "original_full_sequencer_execution": false
+}

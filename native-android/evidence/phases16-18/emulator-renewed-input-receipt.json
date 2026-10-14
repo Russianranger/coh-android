@@ -1,0 +1,951 @@
+{
+  "passed": true,
+  "scope": "Actual framework joystick neutral/backward/neutral after Home; no physical controller claim",
+  "original_full_report": {
+    "file": "emulator-renewed-joystick-proof.json",
+    "bytes": 653278,
+    "sha256": "b1064e2fd4898ea218e52265cca6a12ba378d6ed461bba133f95138e5a3886ba"
+  },
+  "snapshots": {
+    "neutral": {
+      "session_id": "1a13c3fda58",
+      "updated_at": "2026-10-14T21:10:26.861Z",
+      "resumed": true,
+      "native": {
+        "schema": 1,
+        "probe": "coh-native-offline-session",
+        "valid": true,
+        "failed": false,
+        "running": true,
+        "failure": "",
+        "pointer_bytes": 8,
+        "source_controlled": true,
+        "collision": false,
+        "live_server": false,
+        "full_atlas": false,
+        "gpu_palette_skinning": false,
+        "skin_policy": "accepted source CPU skin then accepted world shader",
+        "frames": 1259,
+        "world_draws": 2528,
+        "actor_draws": 13902,
+        "skin_samples": 1263,
+        "contexts_started": 3,
+        "contexts_completed": 2,
+        "objects_released": false,
+        "width": 1080,
+        "height": 1417,
+        "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+        "gl_errors": 0,
+        "egl_error": 0,
+        "shader_language_version": 300,
+        "shader_precise": false,
+        "tf_components": 122382,
+        "tf_mismatches": 0,
+        "tf_max_error": 0,
+        "depth_order_mismatches": 0,
+        "world_visible_pixels": 6898,
+        "actor_visible_pixels": 8418,
+        "world_occludes_actor_pixels": 693,
+        "actor_occludes_world_pixels": 1953,
+        "actor_changed_pixels": 7750,
+        "startup_checked": true,
+        "movement_ticks": 1215,
+        "direction_mask": 15,
+        "held_dirs": 0,
+        "actor_position": [
+          582.089783,
+          74,
+          -1537.33374
+        ],
+        "spawn_position": [
+          584,
+          74,
+          -1441.33374
+        ],
+        "actor_yaw": -2.98909926,
+        "camera_yaw": 0.152493745,
+        "camera_pitch": 0.159999996,
+        "camera_position": [
+          585.388977,
+          81.3050003,
+          -1515.86682
+        ],
+        "animation_frame": 47.9230423,
+        "animation_state": 0,
+        "animation_transitions": 15,
+        "idle_samples": 1131,
+        "run_samples": 84,
+        "total_ms": 3898,
+        "epoch": 9,
+        "foreground": true,
+        "expected_cancel_surface_errors": 0,
+        "expected_cancel_egl_error": 0,
+        "cleanup_gl_errors": 0,
+        "cleanup_egl_errors": 0,
+        "cleanup_egl_error": 0,
+        "source_state_bits": 0,
+        "motion_local": [
+          0,
+          0,
+          0
+        ],
+        "motion_world": [
+          0,
+          0,
+          0
+        ],
+        "nocoll_radius": 96,
+        "bounded_steps": 9,
+        "stopped_steps": 1095,
+        "animation_move": "Ready",
+        "animation_rate": 1,
+        "ready_entries": 4,
+        "run_entries": 6,
+        "post_entries": 6,
+        "animation_cycles": 12,
+        "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+        "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+        "depth_sampler_controls_passed": true,
+        "depth_codec_float_precision": 23,
+        "raw_changed_pixels": 2,
+        "qualified_equal_depth_ties": 2,
+        "non_tie_mismatches": 0,
+        "depth_sampler_controls": {
+          "clear": {
+            "x": 0,
+            "y": 0,
+            "world_depth": 16777215,
+            "actor_depth": 16777215,
+            "combined_depth": 16777215
+          },
+          "world_front": {
+            "x": 288,
+            "y": 176,
+            "world_depth": 16702028,
+            "actor_depth": 16702269,
+            "combined_depth": 16702028
+          },
+          "actor_front": {
+            "x": 287,
+            "y": 177,
+            "world_depth": 16703822,
+            "actor_depth": 16702189,
+            "combined_depth": 16702189
+          }
+        },
+        "depth_tie_diagnostics": [
+          {
+            "x": 228,
+            "y": 211,
+            "world_depth": 16704438,
+            "actor_depth": 16704438,
+            "combined_depth": 16704438,
+            "world_rgba": [
+              117,
+              124,
+              131,
+              255
+            ],
+            "actor_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "forward_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "reverse_rgba": [
+              117,
+              124,
+              131,
+              255
+            ]
+          },
+          {
+            "x": 229,
+            "y": 214,
+            "world_depth": 16704748,
+            "actor_depth": 16704748,
+            "combined_depth": 16704748,
+            "world_rgba": [
+              169,
+              171,
+              177,
+              255
+            ],
+            "actor_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "forward_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "reverse_rgba": [
+              169,
+              171,
+              177,
+              255
+            ]
+          }
+        ]
+      },
+      "input_adapter": {
+        "schema": "coh-android-input-adapter-v1",
+        "external_android": {
+          "key_down": 8,
+          "key_up": 8,
+          "key_repeat": 8,
+          "motion": 2,
+          "touch_begin": 1,
+          "touch_move": 18,
+          "touch_end": 1,
+          "touch_cancel": 0,
+          "focus_clear": 2,
+          "device_removed": 0,
+          "controller_events": 0,
+          "left_axis_directions": 4,
+          "right_axis_directions": 0,
+          "button_down_mask": 15728640,
+          "touch_motion_directions": 2
+        },
+        "in_app_synthetic": {
+          "key_down": 0,
+          "key_up": 0,
+          "key_repeat": 0,
+          "motion": 0,
+          "touch_begin": 0,
+          "touch_move": 0,
+          "touch_end": 0,
+          "touch_cancel": 0,
+          "focus_clear": 0,
+          "device_removed": 0,
+          "controller_events": 0,
+          "left_axis_directions": 0,
+          "right_axis_directions": 0,
+          "button_down_mask": 0,
+          "touch_motion_directions": 0
+        },
+        "focused": true,
+        "touch_active": false,
+        "scope": "Android callbacks to source scalar/key/joystick kernels; editor look and preview adapter; no gameplay physics",
+        "external_event_provenance": "Framework events; emulator adb injection does not establish physical controller operation"
+      },
+      "failure": null,
+      "report_write_failed": false
+    },
+    "moving": {
+      "session_id": "1a13c3fda58",
+      "updated_at": "2026-10-14T21:10:27.902Z",
+      "resumed": true,
+      "native": {
+        "schema": 1,
+        "probe": "coh-native-offline-session",
+        "valid": true,
+        "failed": false,
+        "running": true,
+        "failure": "",
+        "pointer_bytes": 8,
+        "source_controlled": true,
+        "collision": false,
+        "live_server": false,
+        "full_atlas": false,
+        "gpu_palette_skinning": false,
+        "skin_policy": "accepted source CPU skin then accepted world shader",
+        "frames": 1293,
+        "world_draws": 2596,
+        "actor_draws": 14276,
+        "skin_samples": 1297,
+        "contexts_started": 3,
+        "contexts_completed": 2,
+        "objects_released": false,
+        "width": 1080,
+        "height": 1417,
+        "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+        "gl_errors": 0,
+        "egl_error": 0,
+        "shader_language_version": 300,
+        "shader_precise": false,
+        "tf_components": 122382,
+        "tf_mismatches": 0,
+        "tf_max_error": 0,
+        "depth_order_mismatches": 0,
+        "world_visible_pixels": 6898,
+        "actor_visible_pixels": 8418,
+        "world_occludes_actor_pixels": 693,
+        "actor_occludes_world_pixels": 1953,
+        "actor_changed_pixels": 7750,
+        "startup_checked": true,
+        "movement_ticks": 1245,
+        "direction_mask": 15,
+        "held_dirs": 2,
+        "actor_position": [
+          588.37146,
+          74,
+          -1496.70557
+        ],
+        "spawn_position": [
+          584,
+          74,
+          -1441.33374
+        ],
+        "actor_yaw": -2.98909926,
+        "camera_yaw": 0.152493745,
+        "camera_pitch": 0.159999996,
+        "camera_position": [
+          591.096802,
+          81.3050003,
+          -1478.95007
+        ],
+        "animation_frame": 11.9999523,
+        "animation_state": 0,
+        "animation_transitions": 15,
+        "idle_samples": 1161,
+        "run_samples": 84,
+        "total_ms": 4953,
+        "epoch": 9,
+        "foreground": true,
+        "expected_cancel_surface_errors": 0,
+        "expected_cancel_egl_error": 0,
+        "cleanup_gl_errors": 0,
+        "cleanup_egl_errors": 0,
+        "cleanup_egl_error": 0,
+        "source_state_bits": 2,
+        "motion_local": [
+          0,
+          0,
+          -0.866666675
+        ],
+        "motion_world": [
+          0.132424325,
+          0,
+          0.856489837
+        ],
+        "nocoll_radius": 96,
+        "bounded_steps": 9,
+        "stopped_steps": 1105,
+        "animation_move": "Ready",
+        "animation_rate": 1,
+        "ready_entries": 4,
+        "run_entries": 6,
+        "post_entries": 6,
+        "animation_cycles": 13,
+        "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+        "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+        "depth_sampler_controls_passed": true,
+        "depth_codec_float_precision": 23,
+        "raw_changed_pixels": 2,
+        "qualified_equal_depth_ties": 2,
+        "non_tie_mismatches": 0,
+        "depth_sampler_controls": {
+          "clear": {
+            "x": 0,
+            "y": 0,
+            "world_depth": 16777215,
+            "actor_depth": 16777215,
+            "combined_depth": 16777215
+          },
+          "world_front": {
+            "x": 288,
+            "y": 176,
+            "world_depth": 16702028,
+            "actor_depth": 16702269,
+            "combined_depth": 16702028
+          },
+          "actor_front": {
+            "x": 287,
+            "y": 177,
+            "world_depth": 16703822,
+            "actor_depth": 16702189,
+            "combined_depth": 16702189
+          }
+        },
+        "depth_tie_diagnostics": [
+          {
+            "x": 228,
+            "y": 211,
+            "world_depth": 16704438,
+            "actor_depth": 16704438,
+            "combined_depth": 16704438,
+            "world_rgba": [
+              117,
+              124,
+              131,
+              255
+            ],
+            "actor_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "forward_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "reverse_rgba": [
+              117,
+              124,
+              131,
+              255
+            ]
+          },
+          {
+            "x": 229,
+            "y": 214,
+            "world_depth": 16704748,
+            "actor_depth": 16704748,
+            "combined_depth": 16704748,
+            "world_rgba": [
+              169,
+              171,
+              177,
+              255
+            ],
+            "actor_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "forward_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "reverse_rgba": [
+              169,
+              171,
+              177,
+              255
+            ]
+          }
+        ]
+      },
+      "input_adapter": {
+        "schema": "coh-android-input-adapter-v1",
+        "external_android": {
+          "key_down": 8,
+          "key_up": 8,
+          "key_repeat": 8,
+          "motion": 3,
+          "touch_begin": 1,
+          "touch_move": 18,
+          "touch_end": 1,
+          "touch_cancel": 0,
+          "focus_clear": 2,
+          "device_removed": 0,
+          "controller_events": 0,
+          "left_axis_directions": 12,
+          "right_axis_directions": 0,
+          "button_down_mask": 15728640,
+          "touch_motion_directions": 2
+        },
+        "in_app_synthetic": {
+          "key_down": 0,
+          "key_up": 0,
+          "key_repeat": 0,
+          "motion": 0,
+          "touch_begin": 0,
+          "touch_move": 0,
+          "touch_end": 0,
+          "touch_cancel": 0,
+          "focus_clear": 0,
+          "device_removed": 0,
+          "controller_events": 0,
+          "left_axis_directions": 0,
+          "right_axis_directions": 0,
+          "button_down_mask": 0,
+          "touch_motion_directions": 0
+        },
+        "focused": true,
+        "touch_active": false,
+        "scope": "Android callbacks to source scalar/key/joystick kernels; editor look and preview adapter; no gameplay physics",
+        "external_event_provenance": "Framework events; emulator adb injection does not establish physical controller operation"
+      },
+      "failure": null,
+      "report_write_failed": false
+    },
+    "released": {
+      "session_id": "1a13c3fda58",
+      "updated_at": "2026-10-14T21:10:28.940Z",
+      "resumed": true,
+      "native": {
+        "schema": 1,
+        "probe": "coh-native-offline-session",
+        "valid": true,
+        "failed": false,
+        "running": true,
+        "failure": "",
+        "pointer_bytes": 8,
+        "source_controlled": true,
+        "collision": false,
+        "live_server": false,
+        "full_atlas": false,
+        "gpu_palette_skinning": false,
+        "skin_policy": "accepted source CPU skin then accepted world shader",
+        "frames": 1326,
+        "world_draws": 2662,
+        "actor_draws": 14639,
+        "skin_samples": 1329,
+        "contexts_started": 3,
+        "contexts_completed": 2,
+        "objects_released": false,
+        "width": 1080,
+        "height": 1417,
+        "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+        "gl_errors": 0,
+        "egl_error": 0,
+        "shader_language_version": 300,
+        "shader_precise": false,
+        "tf_components": 122382,
+        "tf_mismatches": 0,
+        "tf_max_error": 0,
+        "depth_order_mismatches": 0,
+        "world_visible_pixels": 6898,
+        "actor_visible_pixels": 8418,
+        "world_occludes_actor_pixels": 693,
+        "actor_occludes_world_pixels": 1953,
+        "actor_changed_pixels": 7750,
+        "startup_checked": true,
+        "movement_ticks": 1275,
+        "direction_mask": 15,
+        "held_dirs": 0,
+        "actor_position": [
+          590.289246,
+          74,
+          -1484.30188
+        ],
+        "spawn_position": [
+          584,
+          74,
+          -1441.33374
+        ],
+        "actor_yaw": -2.98909926,
+        "camera_yaw": 0.152493745,
+        "camera_pitch": 0.159999996,
+        "camera_position": [
+          593.58844,
+          81.3050003,
+          -1462.83496
+        ],
+        "animation_frame": 35.0768547,
+        "animation_state": 0,
+        "animation_transitions": 15,
+        "idle_samples": 1191,
+        "run_samples": 84,
+        "total_ms": 5997,
+        "epoch": 9,
+        "foreground": true,
+        "expected_cancel_surface_errors": 0,
+        "expected_cancel_egl_error": 0,
+        "cleanup_gl_errors": 0,
+        "cleanup_egl_errors": 0,
+        "cleanup_egl_error": 0,
+        "source_state_bits": 0,
+        "motion_local": [
+          0,
+          0,
+          0
+        ],
+        "motion_world": [
+          0,
+          0,
+          0
+        ],
+        "nocoll_radius": 96,
+        "bounded_steps": 9,
+        "stopped_steps": 1132,
+        "animation_move": "Ready",
+        "animation_rate": 1,
+        "ready_entries": 4,
+        "run_entries": 6,
+        "post_entries": 6,
+        "animation_cycles": 13,
+        "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+        "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+        "depth_sampler_controls_passed": true,
+        "depth_codec_float_precision": 23,
+        "raw_changed_pixels": 2,
+        "qualified_equal_depth_ties": 2,
+        "non_tie_mismatches": 0,
+        "depth_sampler_controls": {
+          "clear": {
+            "x": 0,
+            "y": 0,
+            "world_depth": 16777215,
+            "actor_depth": 16777215,
+            "combined_depth": 16777215
+          },
+          "world_front": {
+            "x": 288,
+            "y": 176,
+            "world_depth": 16702028,
+            "actor_depth": 16702269,
+            "combined_depth": 16702028
+          },
+          "actor_front": {
+            "x": 287,
+            "y": 177,
+            "world_depth": 16703822,
+            "actor_depth": 16702189,
+            "combined_depth": 16702189
+          }
+        },
+        "depth_tie_diagnostics": [
+          {
+            "x": 228,
+            "y": 211,
+            "world_depth": 16704438,
+            "actor_depth": 16704438,
+            "combined_depth": 16704438,
+            "world_rgba": [
+              117,
+              124,
+              131,
+              255
+            ],
+            "actor_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "forward_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "reverse_rgba": [
+              117,
+              124,
+              131,
+              255
+            ]
+          },
+          {
+            "x": 229,
+            "y": 214,
+            "world_depth": 16704748,
+            "actor_depth": 16704748,
+            "combined_depth": 16704748,
+            "world_rgba": [
+              169,
+              171,
+              177,
+              255
+            ],
+            "actor_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "forward_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "reverse_rgba": [
+              169,
+              171,
+              177,
+              255
+            ]
+          }
+        ]
+      },
+      "input_adapter": {
+        "schema": "coh-android-input-adapter-v1",
+        "external_android": {
+          "key_down": 8,
+          "key_up": 8,
+          "key_repeat": 8,
+          "motion": 4,
+          "touch_begin": 1,
+          "touch_move": 18,
+          "touch_end": 1,
+          "touch_cancel": 0,
+          "focus_clear": 2,
+          "device_removed": 0,
+          "controller_events": 0,
+          "left_axis_directions": 12,
+          "right_axis_directions": 0,
+          "button_down_mask": 15728640,
+          "touch_motion_directions": 2
+        },
+        "in_app_synthetic": {
+          "key_down": 0,
+          "key_up": 0,
+          "key_repeat": 0,
+          "motion": 0,
+          "touch_begin": 0,
+          "touch_move": 0,
+          "touch_end": 0,
+          "touch_cancel": 0,
+          "focus_clear": 0,
+          "device_removed": 0,
+          "controller_events": 0,
+          "left_axis_directions": 0,
+          "right_axis_directions": 0,
+          "button_down_mask": 0,
+          "touch_motion_directions": 0
+        },
+        "focused": true,
+        "touch_active": false,
+        "scope": "Android callbacks to source scalar/key/joystick kernels; editor look and preview adapter; no gameplay physics",
+        "external_event_provenance": "Framework events; emulator adb injection does not establish physical controller operation"
+      },
+      "failure": null,
+      "report_write_failed": false
+    },
+    "settled": {
+      "session_id": "1a13c3fda58",
+      "updated_at": "2026-10-14T21:10:30.021Z",
+      "resumed": true,
+      "native": {
+        "schema": 1,
+        "probe": "coh-native-offline-session",
+        "valid": true,
+        "failed": false,
+        "running": true,
+        "failure": "",
+        "pointer_bytes": 8,
+        "source_controlled": true,
+        "collision": false,
+        "live_server": false,
+        "full_atlas": false,
+        "gpu_palette_skinning": false,
+        "skin_policy": "accepted source CPU skin then accepted world shader",
+        "frames": 1361,
+        "world_draws": 2732,
+        "actor_draws": 15024,
+        "skin_samples": 1365,
+        "contexts_started": 3,
+        "contexts_completed": 2,
+        "objects_released": false,
+        "width": 1080,
+        "height": 1417,
+        "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+        "gl_errors": 0,
+        "egl_error": 0,
+        "shader_language_version": 300,
+        "shader_precise": false,
+        "tf_components": 122382,
+        "tf_mismatches": 0,
+        "tf_max_error": 0,
+        "depth_order_mismatches": 0,
+        "world_visible_pixels": 6898,
+        "actor_visible_pixels": 8418,
+        "world_occludes_actor_pixels": 693,
+        "actor_occludes_world_pixels": 1953,
+        "actor_changed_pixels": 7750,
+        "startup_checked": true,
+        "movement_ticks": 1307,
+        "direction_mask": 15,
+        "held_dirs": 0,
+        "actor_position": [
+          590.289246,
+          74,
+          -1484.30188
+        ],
+        "spawn_position": [
+          584,
+          74,
+          -1441.33374
+        ],
+        "actor_yaw": -2.98909926,
+        "camera_yaw": 0.152493745,
+        "camera_pitch": 0.159999996,
+        "camera_position": [
+          593.58844,
+          81.3050003,
+          -1462.83496
+        ],
+        "animation_frame": 59.6922112,
+        "animation_state": 0,
+        "animation_transitions": 15,
+        "idle_samples": 1223,
+        "run_samples": 84,
+        "total_ms": 7039,
+        "epoch": 9,
+        "foreground": true,
+        "expected_cancel_surface_errors": 0,
+        "expected_cancel_egl_error": 0,
+        "cleanup_gl_errors": 0,
+        "cleanup_egl_errors": 0,
+        "cleanup_egl_error": 0,
+        "source_state_bits": 0,
+        "motion_local": [
+          0,
+          0,
+          0
+        ],
+        "motion_world": [
+          0,
+          0,
+          0
+        ],
+        "nocoll_radius": 96,
+        "bounded_steps": 9,
+        "stopped_steps": 1164,
+        "animation_move": "Ready",
+        "animation_rate": 1,
+        "ready_entries": 4,
+        "run_entries": 6,
+        "post_entries": 6,
+        "animation_cycles": 13,
+        "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+        "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+        "depth_sampler_controls_passed": true,
+        "depth_codec_float_precision": 23,
+        "raw_changed_pixels": 2,
+        "qualified_equal_depth_ties": 2,
+        "non_tie_mismatches": 0,
+        "depth_sampler_controls": {
+          "clear": {
+            "x": 0,
+            "y": 0,
+            "world_depth": 16777215,
+            "actor_depth": 16777215,
+            "combined_depth": 16777215
+          },
+          "world_front": {
+            "x": 288,
+            "y": 176,
+            "world_depth": 16702028,
+            "actor_depth": 16702269,
+            "combined_depth": 16702028
+          },
+          "actor_front": {
+            "x": 287,
+            "y": 177,
+            "world_depth": 16703822,
+            "actor_depth": 16702189,
+            "combined_depth": 16702189
+          }
+        },
+        "depth_tie_diagnostics": [
+          {
+            "x": 228,
+            "y": 211,
+            "world_depth": 16704438,
+            "actor_depth": 16704438,
+            "combined_depth": 16704438,
+            "world_rgba": [
+              117,
+              124,
+              131,
+              255
+            ],
+            "actor_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "forward_rgba": [
+              31,
+              31,
+              27,
+              255
+            ],
+            "reverse_rgba": [
+              117,
+              124,
+              131,
+              255
+            ]
+          },
+          {
+            "x": 229,
+            "y": 214,
+            "world_depth": 16704748,
+            "actor_depth": 16704748,
+            "combined_depth": 16704748,
+            "world_rgba": [
+              169,
+              171,
+              177,
+              255
+            ],
+            "actor_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "forward_rgba": [
+              9,
+              8,
+              7,
+              255
+            ],
+            "reverse_rgba": [
+              169,
+              171,
+              177,
+              255
+            ]
+          }
+        ]
+      },
+      "input_adapter": {
+        "schema": "coh-android-input-adapter-v1",
+        "external_android": {
+          "key_down": 8,
+          "key_up": 8,
+          "key_repeat": 8,
+          "motion": 4,
+          "touch_begin": 1,
+          "touch_move": 18,
+          "touch_end": 1,
+          "touch_cancel": 0,
+          "focus_clear": 2,
+          "device_removed": 0,
+          "controller_events": 0,
+          "left_axis_directions": 12,
+          "right_axis_directions": 0,
+          "button_down_mask": 15728640,
+          "touch_motion_directions": 2
+        },
+        "in_app_synthetic": {
+          "key_down": 0,
+          "key_up": 0,
+          "key_repeat": 0,
+          "motion": 0,
+          "touch_begin": 0,
+          "touch_move": 0,
+          "touch_end": 0,
+          "touch_cancel": 0,
+          "focus_clear": 0,
+          "device_removed": 0,
+          "controller_events": 0,
+          "left_axis_directions": 0,
+          "right_axis_directions": 0,
+          "button_down_mask": 0,
+          "touch_motion_directions": 0
+        },
+        "focused": true,
+        "touch_active": false,
+        "scope": "Android callbacks to source scalar/key/joystick kernels; editor look and preview adapter; no gameplay physics",
+        "external_event_provenance": "Framework events; emulator adb injection does not establish physical controller operation"
+      },
+      "failure": null,
+      "report_write_failed": false
+    }
+  }
+}

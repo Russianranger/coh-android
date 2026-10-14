@@ -58,10 +58,52 @@ changes; runtime, asset or source-oracle changes require the full build. The
 package source commit, qualification-driver commit and both workflow runs are
 recorded separately, and original build/source receipts remain unchanged.
 
-Implementation and first host checks are complete; Android build/emulator
-qualification is in progress. Physical Thor acceptance of this new batch is
-pending. These statuses must be updated from the actual final build evidence;
-the accepted gates 13–15 do not establish new batch acceptance.
+Host, sanitizer, build/lint/package and Android 13 x86_64 execution qualification
+passed. The [qualification receipt](evidence/phases16-18/qualification.json)
+binds runtime source `e88a02b284de16ed6f7caf1e6b689f2e85d0b6e8`, original package
+build run `38631384218`, and the corrected qualification driver
+`5cea4041c8c822b6a983f815e3b4814a2e0d3b5a`. Final
+[session workflow 38637681649](https://github.com/Russianranger/coh-android/actions/runs/38637681649)
+and [portable core workflow 38637681101](https://github.com/Russianranger/coh-android/actions/runs/38637681101)
+succeeded. The final session job reused the exact signed packages after proving
+that intervening changes were only driver, workflow, documentation and evidence.
+Original source/build receipts remain byte-for-byte unchanged.
+
+The installed emulator session presented 2,237 frames across four contexts and
+verified 163,176 transform-feedback components with zero mismatches. Two raw
+reverse-order color differences remain recorded: both were individually
+verified exact DEPTH24 ties; zero non-tie mismatches and actual sampler positive
+controls passed. Actual keyboard directions, touch camera, Recreate, held
+framework joystick input at real Home, checked cleanup, preserved actor/camera
+orientation, renewed input, document Save and rendered Reset passed. Recreate,
+Home return and Reset presented 62, 63 and 44 fresh frames after their respective
+callback/background baselines. Released fresh movement stayed stable for 35
+frames. The exported JSON was 156,853 bytes, with its exact digest retained.
+Framework joystick injection has no physical controller identity; no physical
+controller acceptance is inferred from its motion callbacks.
+
+Earlier failed attempts remain retained. They identified exact depth ties and
+automation prerequisites: actual Surface bounds, Material button case, keyboard
+release ordering at Home, virtual joystick provenance and fresh-frame anchoring.
+None of their incomplete Home/export traces is relabeled as passing.
+
+**Physical AYN Thor acceptance of gates 16–18 is pending.** The accepted gates
+13–15 establish their earlier probe scope only.
+
+## Exact ARM64 handoff
+
+[Download the qualified Actions artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705)
+and extract `CoH-Native-Session-Client-0.1.0-arm64.apk`.
+
+- Package: `org.coh.sessionclient`, version `0.1.0-gates16-18`, code 1.
+- ARM64 APK: 2,139,651 bytes; SHA256
+  `eb763d8c6e5354da06a336e8fe09a244a893755e82ef708ea1d2139dc17b8634`.
+- Only native ABI: `arm64-v8a`, ELF64 AArch64 machine 183. APK signature,
+  manifest and all packaged fixture identities passed verification.
+- Artifact ZIP: 6,868,754 bytes; SHA256
+  `4fbcc6923136ad59347c3fc1919e8071655291f02a78a4e4c42a8f68046bc3f0`.
+- Actions retention ends November 13, 2026. The APK and complete diagnostic
+  archive were also delivered directly with the handoff.
 
 The conventional launcher/client, earlier native probes, existing asset packs
 and user data are unchanged. Work remains on `native-android` only.

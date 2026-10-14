@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "passed": true,
+  "checks": 21,
+  "scope": "Actual shipped fail-closed reuse guard over independent temporary Git histories; no artifact download or device acceptance",
+  "guard_sha256": "5ddabe4302cbccbef978fa1c12c79eee7f61dd890dea0dc41e0aa7a365dcfaa6"
+}

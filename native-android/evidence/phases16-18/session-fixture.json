@@ -1,0 +1,148 @@
+{
+  "schema": 1,
+  "gates": [
+    16,
+    17,
+    18
+  ],
+  "passed": true,
+  "kind": "combined authored runtime assets; references retained as evidence only",
+  "runtime_assets": [
+    "character.bin",
+    "locomotion.bin",
+    "morph.bin",
+    "rig.bin",
+    "world.bin"
+  ],
+  "assets": {
+    "character-fixture.json": {
+      "bytes": 319922,
+      "sha256": "2b73dd8cf02efec3cfbd961465c359de88da4281671ea7f4a38263ca32523195"
+    },
+    "character-reference.bin": {
+      "bytes": 438216,
+      "sha256": "0cb625fe9b01203bcd6f552398f4816987988c43c133743a579e8e670a471c07"
+    },
+    "character.bin": {
+      "bytes": 4261100,
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+    },
+    "locomotion-fixture.json": {
+      "bytes": 62271,
+      "sha256": "eb528531aad08723503ee4587a1cd6845c5907b8cb95a95c4add3326352b9254"
+    },
+    "locomotion.bin": {
+      "bytes": 36004,
+      "sha256": "774dc5dfe813b4e786f4450aa48751901444999cfdc40735c747efd04f308116"
+    },
+    "material-reference.bin": {
+      "bytes": 1089856,
+      "sha256": "371af14de5ee603ad41fa82b4a02d5dfb29a4eb61ec58a0a2436b67b2edccfaa"
+    },
+    "morph.bin": {
+      "bytes": 3028,
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+    },
+    "rig.bin": {
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    },
+    "world-fixture.json": {
+      "bytes": 55693,
+      "sha256": "b7da7d864eba90cd6ba70ce87736a0ac2f6d704c380d4021cb26f905394fc2a0"
+    },
+    "world-material-reference.bin": {
+      "bytes": 198208,
+      "sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77"
+    },
+    "world-reference.bin": {
+      "bytes": 161344,
+      "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13"
+    },
+    "world.bin": {
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    }
+  },
+  "source_mapping": {
+    "character-fixture.json": {
+      "source_fixture": "character",
+      "source_name": "character-fixture.json",
+      "bytes": 319922,
+      "sha256": "2b73dd8cf02efec3cfbd961465c359de88da4281671ea7f4a38263ca32523195"
+    },
+    "character-reference.bin": {
+      "source_fixture": "character",
+      "source_name": "character-reference.bin",
+      "bytes": 438216,
+      "sha256": "0cb625fe9b01203bcd6f552398f4816987988c43c133743a579e8e670a471c07"
+    },
+    "character.bin": {
+      "source_fixture": "character",
+      "source_name": "character.bin",
+      "bytes": 4261100,
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+    },
+    "material-reference.bin": {
+      "source_fixture": "character",
+      "source_name": "material-reference.bin",
+      "bytes": 1089856,
+      "sha256": "371af14de5ee603ad41fa82b4a02d5dfb29a4eb61ec58a0a2436b67b2edccfaa"
+    },
+    "morph.bin": {
+      "source_fixture": "character",
+      "source_name": "morph.bin",
+      "bytes": 3028,
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+    },
+    "rig.bin": {
+      "source_fixture": "character",
+      "source_name": "rig.bin",
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    },
+    "world-material-reference.bin": {
+      "source_fixture": "world",
+      "source_name": "material-reference.bin",
+      "bytes": 198208,
+      "sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77"
+    },
+    "world-fixture.json": {
+      "source_fixture": "world",
+      "source_name": "world-fixture.json",
+      "bytes": 55693,
+      "sha256": "b7da7d864eba90cd6ba70ce87736a0ac2f6d704c380d4021cb26f905394fc2a0"
+    },
+    "world-reference.bin": {
+      "source_fixture": "world",
+      "source_name": "world-reference.bin",
+      "bytes": 161344,
+      "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13"
+    },
+    "world.bin": {
+      "source_fixture": "world",
+      "source_name": "world.bin",
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    },
+    "locomotion-fixture.json": {
+      "source_fixture": "locomotion",
+      "source_name": "locomotion-fixture.json",
+      "bytes": 62271,
+      "sha256": "eb528531aad08723503ee4587a1cd6845c5907b8cb95a95c4add3326352b9254"
+    },
+    "locomotion.bin": {
+      "source_fixture": "locomotion",
+      "source_name": "locomotion.bin",
+      "bytes": 36004,
+      "sha256": "774dc5dfe813b4e786f4450aa48751901444999cfdc40735c747efd04f308116"
+    }
+  },
+  "character_parts": 11,
+  "world_parts": 2,
+  "reference_data_drive_rendering": false,
+  "runtime_motion_scripted_by_fixture": false,
+  "full_original_client": false,
+  "full_atlas_loaded": false,
+  "server_interoperability_verified": false
+}
