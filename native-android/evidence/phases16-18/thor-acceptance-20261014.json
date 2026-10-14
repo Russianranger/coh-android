@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "gates": [
+    16,
+    17,
+    18
+  ],
+  "status": "physically_accepted",
+  "accepted_at": "2026-10-14T17:53:02-05:00",
+  "basis": "User reports Everything worked; physical Thor JSON and two screenshots reviewed",
+  "user_statement": "Everything worked",
+  "scope": "Persistent offline Wretch and Atlas benchmark; bounded source NOCOLL movement and authored locomotion; no login, full map, walking collision or replication",
+  "app": {
+    "package": "org.coh.sessionclient",
+    "version_name": "0.1.0-gates16-18",
+    "version_code": 1,
+    "installed_apk": {
+      "bytes": 2139651,
+      "sha256": "eb763d8c6e5354da06a336e8fe09a244a893755e82ef708ea1d2139dc17b8634"
+    }
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "raw_report": {
+    "file": "COH-NativeSession-20261014-175218.json",
+    "bytes": 197769,
+    "sha256": "4c57d13595617a8b385837981aabd3a21d6cdaa0ef5e85cb0a21917fb3805e2a"
+  },
+  "observed": {
+    "frames": 8142,
+    "contexts_started": 5,
+    "contexts_completed": 4,
+    "transform_components": 203970,
+    "transform_mismatches": 0,
+    "non_tie_depth_mismatches": 0,
+    "exact_depth_ties": 2,
+    "gl_errors": 0,
+    "egl_error": 0,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "expected_surface_cancellations": 2,
+    "expected_cancel_egl_error": 12301,
+    "held_dirs_at_export": 0,
+    "max_run_samples": 313,
+    "controller_events": 3782,
+    "left_axis_directions": 15,
+    "right_axis_directions": 15,
+    "synthetic_controller_events": 0,
+    "recreate_requests": 2,
+    "pause_events": 2,
+    "reset_requests": 2,
+    "export_requested": true
+  },
+  "screenshots": [
+    {
+      "uploaded_name": "Screenshot_20261014-175237.png",
+      "bytes": 115179,
+      "sha256": "a7bd5537f70736180c0d2af5eb959fff67dc9e58277e1c8e798a89672136898c"
+    },
+    {
+      "uploaded_name": "Screenshot_20261014-175224.png",
+      "bytes": 122173,
+      "sha256": "dbb0e9de8d9e6c4e7d3220487b37c3016ef784047e3a04929c7edf42e415065c"
+    }
+  ],
+  "acceptance_boundary": "User attestation plus physical report; no independent automated physical-controller trace replay or sustained FPS benchmark",
+  "unqualified": [
+    "full Atlas",
+    "WALK/collision/grounding",
+    "full directional sequencer",
+    "live server login/replication",
+    "GPU palette skinning",
+    "sustained performance"
+  ],
+  "next_batch": [
+    19,
+    20,
+    21
+  ],
+  "original_host_emulator_receipts_modified": false
+}

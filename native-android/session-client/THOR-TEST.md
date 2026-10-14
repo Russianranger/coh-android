@@ -5,7 +5,10 @@ Download [the qualified artifact](https://github.com/Russianranger/coh-android/a
 Session Client**. Your launcher and earlier probes can stay installed. No
 server, account or asset import is required. APK SHA256:
 `eb763d8c6e5354da06a336e8fe09a244a893755e82ef708ea1d2139dc17b8634`.
-Host/build/emulator checks passed; physical acceptance of this new app is pending.
+Host/build/emulator checks passed. Physical gates 16–18 were accepted on October 14, 2026
+from the user's successful Thor test, [raw report](../evidence/phases16-18/COH-NativeSession-20261014-175218.json)
+and [acceptance receipt](../evidence/phases16-18/thor-acceptance-20261014.json).
+This procedure remains the regression check for the unchanged qualified APK.
 
 1. Wait for the Wretch and Atlas bench to appear together. Confirm the actor
    is visible, animated and correctly occluded where it overlaps the bench.
@@ -28,4 +31,5 @@ Host/build/emulator checks passed; physical acceptance of this new app is pendin
 
 This tests one offline native actor/world session, not account login, full
 Atlas, server-authoritative character movement or sustained performance.
-Physical acceptance awaits your new report and observations.
+The accepted offline scope is recorded above; future changes require their own
+qualification and report.

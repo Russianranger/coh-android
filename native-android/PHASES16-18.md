@@ -87,8 +87,17 @@ automation prerequisites: actual Surface bounds, Material button case, keyboard
 release ordering at Home, virtual joystick provenance and fresh-frame anchoring.
 None of their incomplete Home/export traces is relabeled as passing.
 
-**Physical AYN Thor acceptance of gates 16–18 is pending.** The accepted gates
-13–15 establish their earlier probe scope only.
+**Physical AYN Thor gates 16–18 are accepted as of October 14, 2026.**
+The user reported “Everything worked” and supplied the [physical Thor report](evidence/phases16-18/COH-NativeSession-20261014-175218.json)
+and two screenshots. The [acceptance receipt](evidence/phases16-18/thor-acceptance-20261014.json)
+records the exact installed APK, Adreno 740, 8,142 frames across five contexts,
+203,970 checked transform components with zero mismatches, zero non-tie depth
+mismatches, real both-stick events, recreation/Home recovery, reset and export.
+Two recorded color differences are exact depth ties; expected Surface-cancellation
+signals are retained and are not relabeled as render failures. Acceptance covers
+the bounded offline session described above, not full Atlas, collision, live
+server interoperability or sustained performance. Original host/emulator receipts
+remain unchanged.
 
 ## Exact ARM64 handoff
 
