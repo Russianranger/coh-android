@@ -1,0 +1,338 @@
+{
+  "format": 1,
+  "status": "source_and_controlled_host_only",
+  "created_at_utc": "2026-10-14T01:37:10.051426+00:00",
+  "repository_head_at_source_snapshot": "c2635d5f5ec118948ecb61c334c94d3ed0cbeda2",
+  "repository_worktree": "/workspace/scratch/5d16603ca7ff/coh-android-037",
+  "source_files": [
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c",
+      "bytes": 49055,
+      "sha256": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+      "working_tree_git_blob": "12e2f7de1474db36ece02eca900c715858dae1ef",
+      "head_git_blob": "12e2f7de1474db36ece02eca900c715858dae1ef",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h",
+      "bytes": 9950,
+      "sha256": "42f1b9c5555abdc93afe7029cdf02bb551d572c18557fed00d7610d6c58e177c",
+      "working_tree_git_blob": "5dbae7d414330496e4125c1edc7c98799c32065c",
+      "head_git_blob": "5dbae7d414330496e4125c1edc7c98799c32065c",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c",
+      "bytes": 92002,
+      "sha256": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1",
+      "working_tree_git_blob": "44e17993ec97bb8d7ed0f597b327e72161e0a5df",
+      "head_git_blob": "44e17993ec97bb8d7ed0f597b327e72161e0a5df",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/fileutil.c",
+      "bytes": 19189,
+      "sha256": "6d3991db4e8c1a1b7f55280c7ea69711d765e01009022172a2c90eccd759fdd7",
+      "working_tree_git_blob": "3a5312298742f66114d940ba89cb6c2ba33335d9",
+      "head_git_blob": "3a5312298742f66114d940ba89cb6c2ba33335d9",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/winfiletime.c",
+      "bytes": 28175,
+      "sha256": "bd1f419d6dda2517ff4a588a0c70f2500d69f7fc6390d5d58da31b54733deb56",
+      "working_tree_git_blob": "bb3b2580e8d65f4e370d1c66f6db2c87c0676df6",
+      "head_git_blob": "bb3b2580e8d65f4e370d1c66f6db2c87c0676df6",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/piglib.c",
+      "bytes": 46233,
+      "sha256": "786ea2c5e9b8cf14fe4dfd4880b9cfe85a138afbccd56759e59b30b7663ed528",
+      "working_tree_git_blob": "4b3dbd5a6b42944215401b5a4c01093277df698d",
+      "head_git_blob": "4b3dbd5a6b42944215401b5a4c01093277df698d",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/piglib.h",
+      "bytes": 5589,
+      "sha256": "3ed34a9421cc78b6724dfed74fec56a0c1b7492879a451770e86f9962c545cb8",
+      "working_tree_git_blob": "8cd390e1fe46e3df78a625fd249993f255f189e6",
+      "head_git_blob": "8cd390e1fe46e3df78a625fd249993f255f189e6",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/game.c",
+      "bytes": 72206,
+      "sha256": "7a970aa0db124fb68ec37e8b4eb6f5907c4883f9f17a5475ec5b58e5dfa9adde",
+      "working_tree_git_blob": "d604fd77c9898f4c4f5e799581086ee229829145",
+      "head_git_blob": "d604fd77c9898f4c4f5e799581086ee229829145",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "android/guest/client_startup_diagnostic.py",
+      "bytes": 91242,
+      "sha256": "8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53",
+      "working_tree_git_blob": "082753ad81d220abc10c548ce608ff1c6b3ef4c6",
+      "head_git_blob": "082753ad81d220abc10c548ce608ff1c6b3ef4c6",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "android/guest/character_server_data_cache.py",
+      "bytes": 34788,
+      "sha256": "1cb7fa789fd26dd8463dd01cd40555aac6f276fa6defbfc84c6239c35ebe0ac3",
+      "working_tree_git_blob": "a5b27d5162c7ef9f20bf4d494449e63a2957306e",
+      "head_git_blob": "a5b27d5162c7ef9f20bf4d494449e63a2957306e",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "android/guest/character_avatar_assets.py",
+      "bytes": 15496,
+      "sha256": "e4e17c8931786490728c721d6db063b55b2e7e17d27813a3da355e72773a8ae1",
+      "working_tree_git_blob": "d2cbb26dcb560838bfde11c875da6c6718859c99",
+      "head_git_blob": "d2cbb26dcb560838bfde11c875da6c6718859c99",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "android/guest/zone_asset_package.py",
+      "bytes": 15364,
+      "sha256": "eba33c606c047b2a4b95c6965e717c0fa649f29dd82878f649ea63b258e6b4b6",
+      "working_tree_git_blob": "afd8a19adf149f47ef229c70bf42de49a63fa0db",
+      "head_git_blob": "afd8a19adf149f47ef229c70bf42de49a63fa0db",
+      "matches_current_head_blob": true
+    },
+    {
+      "path": "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java",
+      "bytes": 37139,
+      "sha256": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b",
+      "working_tree_git_blob": "eaa086d35d12ff77b7f5bad1ed6237b89aafdd70",
+      "head_git_blob": "eaa086d35d12ff77b7f5bad1ed6237b89aafdd70",
+      "matches_current_head_blob": true
+    }
+  ],
+  "primary_Wine_source_files": [
+    {
+      "local_path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/wine-census/ntdll_unix_file.c",
+      "source_url": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/ntdll/unix/file.c",
+      "bytes": 247376,
+      "sha256": "e89f082258b11ae0a9eec65ac970e718b67996e6cc124df1c102275411f0e3f9"
+    },
+    {
+      "local_path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/wine-census/kernelbase_file.c",
+      "source_url": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/kernelbase/file.c",
+      "bytes": 152948,
+      "sha256": "a98d40ce91a3e394eb0e8db22da6223d1eb8d176f97c9d20fb2e5749bd34fe93"
+    }
+  ],
+  "wine_source_commit": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+  "isolated_producer": {
+    "format": 1,
+    "producer_base_commit": "1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e",
+    "worktree": "/workspace/scratch/5d16603ca7ff/foldercensus-producer-037",
+    "files": [
+      {
+        "path": "android/guest/folder_cache_census.py",
+        "bytes": 28288,
+        "sha256": "dc0095786096b0da3942081bf059ef977055af4c7002e9200d61c2214cf25075"
+      },
+      {
+        "path": "tools/android/interactive/test_folder_cache_census.py",
+        "bytes": 18990,
+        "sha256": "eaf367314d3c76dc684607ee2674618b67c82246c25996f28e632ee63b61d49f"
+      }
+    ],
+    "production_authority": null,
+    "activation_implemented": false,
+    "native_registration_allowed": false,
+    "shipping_allowed": false,
+    "scope": [
+      "texture_library",
+      "object_library",
+      "fx",
+      "scripts",
+      "scripts.loc"
+    ],
+    "native_processes_executed_by_tests": false,
+    "controlled_projection_only": true
+  },
+  "fresh_test_summary": {
+    "tests_run": 23,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "elapsed_seconds": 0.357302,
+    "pins_unchanged": true,
+    "ResourceWarning_policy": "error"
+  },
+  "controlled_C_interoperability_summary": {
+    "cases": 7,
+    "accepted": 1,
+    "rejected": 6,
+    "canonical_rows_verified": 14,
+    "input": {
+      "bytes": 4864,
+      "sha256": "a7c7a3cba580487ba66621a2d81eafbc5415caf7656019540a882301becc40e6"
+    },
+    "status": "passed",
+    "header_sha256": "1748606b4aad4a92fe4aad11c931b3bff35594cb7c70c09fb778f61b4fbcc601",
+    "harness_sha256": "7970ebad776d6f3240df8d3eaa977198a96e64b6d09927ded81a8fecf94d590d",
+    "fixture_binary_sha256": "88dd5d3560573dfa349b87006b492aea1fd7b17b6c50c8444d258e9dea53affb"
+  },
+  "controlled_preflight_summary": [
+    {
+      "kind": "direct",
+      "controlled_files": 5000,
+      "shared_inode_groups": 100,
+      "samples": [
+        0.662958,
+        0.670433,
+        0.67364
+      ],
+      "min_seconds": 0.662958,
+      "max_seconds": 0.67364,
+      "maxrss_kib_samples": [
+        [
+          14240,
+          17180
+        ],
+        [
+          17180,
+          17180
+        ],
+        [
+          17180,
+          17208
+        ]
+      ],
+      "full_fresh_metadata_passes_per_sample": 2,
+      "directories": 66,
+      "rows": 5065,
+      "packet_bytes": 1663920,
+      "caches_uncontrolled": true,
+      "native_process_or_qualified_Runtime_executed": false
+    },
+    {
+      "kind": "symlink",
+      "controlled_files": 5000,
+      "shared_inode_groups": 100,
+      "samples": [
+        1.09494,
+        1.086664,
+        1.097669
+      ],
+      "min_seconds": 1.086664,
+      "max_seconds": 1.097669,
+      "maxrss_kib_samples": [
+        [
+          14240,
+          17644
+        ],
+        [
+          17644,
+          17644
+        ],
+        [
+          17644,
+          17644
+        ]
+      ],
+      "full_fresh_metadata_passes_per_sample": 2,
+      "directories": 66,
+      "rows": 5065,
+      "packet_bytes": 1663920,
+      "caches_uncontrolled": true,
+      "native_process_or_qualified_Runtime_executed": false
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/folder-census-producer-source-freeze.json",
+      "bytes": 868,
+      "sha256": "7232bf578c1917c3d8f5ab9d34a1ef54b3a8cc903b0678c8a0bf1af1e46a082b"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/test_folder_cache_census.json",
+      "bytes": 5505,
+      "sha256": "577861184b68b00962da3605b9f076b7613f10bf92a80af3517f42f1f74bacfa"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/test_folder_cache_census.log",
+      "bytes": 4762,
+      "sha256": "b8e2e824064db11d69178b17ab2131c70a5da5572580c4d45b34109705c611da"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/run_folder_census_controlled_benchmark.py",
+      "bytes": 4884,
+      "sha256": "1743ef2052da22329e556b6bbb4b91700c9b4e2c0dcb6d40fcec3a1b600714ee"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/folder-census-controlled-host-preflight.json",
+      "bytes": 32065,
+      "sha256": "bd653bf835feb67d6c450cf78f175bf2ee6c55b002f254fc1eb3fac00ad81fff"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/producer-controlled-census.fixture.bin",
+      "bytes": 4864,
+      "sha256": "a7c7a3cba580487ba66621a2d81eafbc5415caf7656019540a882301becc40e6"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/producer-controlled-census.fixture.json",
+      "bytes": 3069,
+      "sha256": "698ea216c30c286f46a0e71d7e4df13963a63fdfeff408084e3a3704d4f7d8d2"
+    },
+    {
+      "path": "/workspace/scratch/5d16603ca7ff/diagnostics037-evidence/producer-controlled-census-c-decode.json",
+      "bytes": 2260,
+      "sha256": "9fa16e10fa313a8113b9289ac2aecd79b569def7265aeb0d08f2578768bee819"
+    }
+  ],
+  "source_research_native_execution": false,
+  "producer_tests_Game_or_Wine_execution": false,
+  "C_interoperability_host_execution": true,
+  "actual_Wine_WFD_parity_qualified": false,
+  "native_PIG_complete_index_qualified": false,
+  "actual_PRooot_Wine_readable_override_mapping_qualified": false,
+  "native_managed_writer_lifetime_lease_qualified": false,
+  "physical_Thor_results": false,
+  "startup_saving_measured": false,
+  "estimated_device_gain_seconds": null,
+  "production_authority": null,
+  "native_registration_allowed": false,
+  "shipping_allowed": false,
+  "profile_or_database_referenced_or_mutated": false,
+  "runtime_fixture_limitation": "audited Windows runtime probe bytes, NOT a qualified Wine/FEX runtime closure",
+  "packet_schema": {
+    "magic": "COHCNS1\\0",
+    "header_bytes": 64,
+    "directory_prefix_bytes": 16,
+    "row_bytes": 328,
+    "canonical_WFD_bytes": 320,
+    "max_bytes": 67108864,
+    "max_rows": 200000,
+    "max_directories": 16384,
+    "max_relative_path_bytes": 259,
+    "root_anchor_complete": false,
+    "branches": [
+      "texture_library",
+      "object_library",
+      "fx",
+      "scripts",
+      "scripts.loc"
+    ]
+  },
+  "memory_arithmetic_only": {
+    "files": 173011,
+    "canonical_WFD_320_bytes": 55363520,
+    "FCEN1_328_file_row_bytes": 56747608,
+    "directory_table_name_index_and_ordinary_FolderNodes_additional": true,
+    "actual_selected_branch_file_count_on_Thor_known": false
+  },
+  "required_next_native_gates": [
+    "Observed complete Win32 WFD and separately readable by-handle projection under exact qualified native consumer/Wine/FEX/PRoot/provider",
+    "Complete actual native ordered PIG member/index/mount projection, not a caller supplied member list or count",
+    "Exact fresh current metadata generation after every overlay/visual/world supplement, bound to original authenticated source content generation and capture rows",
+    "Reviewed owned managed-writer/native operation lease and packed-byte authority through native consumption",
+    "Native stock/replay FolderNodes, provider, callbacks, scan, BIN/IDs/loader decisions, renderer/readiness and cleanup parity",
+    "Whole-operation cold and validated warm measurements including current ARM64 producer time, native startup/world entry and memory; then physical Thor client and zoning timing"
+  ]
+}

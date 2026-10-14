@@ -1,0 +1,85 @@
+{
+  "created_utc": "2026-10-14T01:40:44.819582+00:00",
+  "findings": [
+    "Every invocation freshly enumerates membership and current leaf/alias/ancestor metadata twice; no persistent receipt, prior directory fingerprint or THI1 supplies the generation.",
+    "Exact five branches include scripts.loc. Nonselected root children are reference-only; root_anchor_complete stays false.",
+    "Readonly aliases require owned bounded source closure, complete current inode-alias group and nlink equality. Case aliases, unknown/chained/relative/directory links, mutable/cache/DB-ID leaves and unknown providers are refused.",
+    "Metadata-only WFD projection has bounded rows/directories/spool/output and records API request counts separately from kernel syscall claims. Native access/creation/short-name/provider selection/PIG index parity remain unqualified.",
+    "Success and failure CLI evidence is current-operation attributed and inert; existing evidence and actual input files are preserved. Spools/descriptors close on failures under ResourceWarning-as-error."
+  ],
+  "format": 1,
+  "independently_executed_tests": {
+    "command": [
+      "python3",
+      "-W",
+      "error::ResourceWarning",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/android/interactive",
+      "-p",
+      "test_folder_cache_census.py"
+    ],
+    "elapsed_seconds_from_unittest": 0.37,
+    "environment": {
+      "PYTHONPATH": "android/guest"
+    },
+    "errors": 0,
+    "executed": 23,
+    "exit_code": 0,
+    "failed": 0,
+    "module": "test_folder_cache_census",
+    "output": ".......................\n----------------------------------------------------------------------\nRan 23 tests in 0.370s\n\nOK\n",
+    "passed": 23,
+    "skipped": 0
+  },
+  "remaining_gates": [
+    "Actual PRoot/Wine WIN32_FIND_DATA/readability/timestamp/attribute/alias parity.",
+    "Complete native PIG projection/provider precedence and observed single-GDD predicate.",
+    "Exclusive current generation lifetime lease, actual native reader/rollback/ownership qualification and physical timing; this receipt grants none."
+  ],
+  "reviewer": "/root/client_harness_review",
+  "role": "independent_nonshipping_fresh_folder_census_producer_review",
+  "scope": {
+    "activation_implemented": false,
+    "controlled_temporary_fixture_mutations_only": true,
+    "host_CPython_projection_is_actual_Wine_FEX_qualification": false,
+    "native_Game_Map_Wine_FEX_executed_by_review": false,
+    "native_registration_implemented": false,
+    "production_authority": null,
+    "real_player_SQL_or_imported_inputs_mutated": false,
+    "shipping_allowed": false
+  },
+  "source_base_commit": "1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e",
+  "source_freeze": {
+    "filename": "folder-census-producer-source-freeze.json",
+    "pin": {
+      "bytes": 868,
+      "sha256": "7232bf578c1917c3d8f5ab9d34a1ef54b3a8cc903b0678c8a0bf1af1e46a082b"
+    }
+  },
+  "source_post_test_pins": {
+    "android/guest/folder_cache_census.py": {
+      "bytes": 28288,
+      "sha256": "dc0095786096b0da3942081bf059ef977055af4c7002e9200d61c2214cf25075"
+    },
+    "tools/android/interactive/test_folder_cache_census.py": {
+      "bytes": 18990,
+      "sha256": "eaf367314d3c76dc684607ee2674618b67c82246c25996f28e632ee63b61d49f"
+    }
+  },
+  "source_pre_test_pins": {
+    "android/guest/folder_cache_census.py": {
+      "bytes": 28288,
+      "sha256": "dc0095786096b0da3942081bf059ef977055af4c7002e9200d61c2214cf25075"
+    },
+    "tools/android/interactive/test_folder_cache_census.py": {
+      "bytes": 18990,
+      "sha256": "eaf367314d3c76dc684607ee2674618b67c82246c25996f28e632ee63b61d49f"
+    }
+  },
+  "source_unchanged": true,
+  "status": "approved_inactive_source_only",
+  "worktree": "/workspace/scratch/5d16603ca7ff/foldercensus-producer-037"
+}
