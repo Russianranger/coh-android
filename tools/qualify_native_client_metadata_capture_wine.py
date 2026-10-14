@@ -111,7 +111,7 @@ def closed_prefix(prefix,identity):
         and [info.st_dev,info.st_ino,info.st_uid]==identity and startup.process_census(prefix)==[],
         'Exact owned closed prefix identity required')
 
-def run_probe(executable,work,prefix,identity,env,tools,output,generation,operation,seconds=300,*,contract=None):
+def run_probe(executable,work,prefix,identity,env,tools,output,generation,operation,seconds=300,*,contract=None,mapping=None):
     require(type(seconds) is int and 1<=seconds<=900,'Bounded isolated probe budget required')
     contract=contract or wfd
     require(contract.MAX_BYTES in (64*1024**2,96*1024**2),'Reviewed native probe packet bound required')
@@ -119,10 +119,18 @@ def run_probe(executable,work,prefix,identity,env,tools,output,generation,operat
     require(not output.exists(),'Fresh probe operation output required')
     output.mkdir(mode=0o700)
     sidecar=output/'actual-WFD.bin';process=None;failure=None;cleanup=None;observation=None
-    command=[tools['wine']['invocation'],windows_path(executable),windows_path(work/'data'),windows_path(sidecar),generation,operation,str(seconds)]
+    probe_root=windows_path(work/'data')
+    if mapping is not None:
+        mapping.check()
+        require(mapping.report()['path_census_admitted'] is True and mapping.native_root=='X:/data',
+                'Exact current fixed-X mapping and complete bounded path census required')
+        probe_root=mapping.native_root
+    command=[tools['wine']['invocation'],windows_path(executable),probe_root,windows_path(sidecar),generation,operation,str(seconds)]
     write(output/'invocation.json',{'command':command,'executable':pin(executable),'generation':generation,
         'operation':operation,'owned_prefix_identity':identity,'output':str(sidecar),'isolated_CI_budget_seconds':seconds,
-        'player_profile_used':False,'provider_authority':False})
+        'player_profile_used':False,'provider_authority':False,
+        'probe_namespace':mapping.report() if mapping is not None else None,
+        'native_Game_absolute_root_or_volume_or_shortname_equivalence_claimed':False})
     started=time.monotonic()
     try:
         require(pin(Path(tools['wine']['resolved']))==tools['wine']['resolved_pin'],'Exact actual Wine executable changed')
@@ -144,7 +152,7 @@ def run_probe(executable,work,prefix,identity,env,tools,output,generation,operat
             and receipt.get('output_created') is True and receipt.get('output_handle_closed') is True
             and receipt.get('provider_authority') is False and receipt.get('publication_allowed') is False,
             'Actual native WFD/readability probe incomplete; retain current diagnostic')
-        observation=contract.parse(sidecar.read_bytes(),generation,operation,windows_path(work/'data'),receipt['windows_pid'])
+        observation=contract.parse(sidecar.read_bytes(),generation,operation,probe_root,receipt['windows_pid'])
         require(observation['status']=='complete_observation','Native current provider mapping/readability incomplete')
         write(output/'actual-WFD-observation.json',observation)
     except BaseException as error:failure={'type':type(error).__name__,'message':str(error)[:2048]}
@@ -152,6 +160,10 @@ def run_probe(executable,work,prefix,identity,env,tools,output,generation,operat
         stop=output/'cleanup';stop.mkdir()
         try:cleanup=startup.stop_prefix(prefix,env,tools['wineserver'],stop,owned_process=process)
         except BaseException as error:cleanup={'passed':False,'type':type(error).__name__,'message':str(error)[:2048]}
+        if mapping is not None:
+            try:mapping.check()
+            except BaseException as error:
+                failure={'type':type(error).__name__,'message':str(error)[:2048],'preceding_native_failure':failure}
         value={'format':1,'role':'actual_readonly_PE32_WFD_by_handle_host_observation',
             'status':'passed' if observation and failure is None and cleanup['passed'] else 'failed',
             'failure':failure,'cleanup':cleanup,'observation':observation,'elapsed_seconds':round(time.monotonic()-started,6),
@@ -159,6 +171,7 @@ def run_probe(executable,work,prefix,identity,env,tools,output,generation,operat
             'actual_process_invocation_held':process is not None,'physical_device_executed':False,
             'native_packet_bound_bytes':contract.MAX_BYTES,
             'native_row_cap':contract.MAX_ROWS,'native_directory_cap':contract.MAX_DIRS,
+            'probe_namespace':mapping.report() if mapping is not None else None,
             'qualifier_process_maxrss_kib':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
             'native_probe_RSS_measured':False,**FALSE_AUTHORITY}
         write(output/'native-probe-phase.json',value)
@@ -188,6 +201,27 @@ def pig_custody(capture,work,fixture,auxiliary):
         'actual_one_GDD_observed':True,'providers':1,'rows':capture['end']['rows'],
         'native_provider_selection_qualified':False,'branch_nonoverlap_qualified':False,**FALSE_AUTHORITY}
 
+def _close_capture_handles(value,mapping,prefix_descriptor):
+    """Attempt both owned releases; descriptor errors cannot erase the report."""
+    records=[]
+    if mapping is not None:
+        try:
+            mapping.close()
+            records.append({'resource':'owned_probe_mapping_handles','closed':True})
+        except BaseException as error:
+            records.append({'resource':'owned_probe_mapping_handles','closed':False,
+                'type':type(error).__name__,'message':str(error)[:2048]})
+            value['status']='failed'
+    if prefix_descriptor is not None:
+        try:
+            os.close(prefix_descriptor)
+            records.append({'resource':'held_owned_prefix_descriptor','closed':True})
+        except BaseException as error:
+            records.append({'resource':'held_owned_prefix_descriptor','closed':False,
+                'type':type(error).__name__,'message':str(error)[:2048]})
+            value['status']='failed'
+    value['descriptor_finalization']=records
+
 def qualify(args):
     import native_client_census_observed_bridge as bridge
     require(not args.output.exists(),'Fresh actual client capture lane required')
@@ -198,7 +232,7 @@ def qualify(args):
         'physical_device_executed':False,'world_entry_executed':False,'character_login_attempted':False,
         'optimization_benefit_claimed':False,**FALSE_AUTHORITY}
     lane_started=time.monotonic()
-    env=None;tools=None;identity=None;prefix_descriptor=None;prefix_info=None
+    env=None;tools=None;identity=None;prefix_descriptor=None;prefix_info=None;mapping=None
     custody_costs=[]
     def custody_snapshot(label,work,assets,fixture,imported):
         started=time.monotonic()
@@ -280,25 +314,29 @@ def qualify(args):
         require(not phase['cache_delta'] and startup.cache_snapshot(work)==bins,'Capture-disabled altered warmed BINs')
         require(retained_helpers.renderer_identity(phase)==renderer,'Capture-disabled renderer identity changed')
         operation=os.urandom(16).hex()
+        if getattr(args,'short_probe_namespace',False):
+            import native_client_probe_drive as drive
+            mapping=drive.MappedProbeDrive(args.prefix.absolute(),work,identity,None)
+            mapping.admit()
+            value['probe_namespace_admission']=mapping.report()
         provenance={'capture_Game':pin(target),'Wine_tools':tools,'PIG_auxiliary':aux['stable_inputs']['piggs/server-animations.pigg'],
             'actual_fixture':pin(args.fixture),'native_package':pin(args.package/native.MANIFEST),
             'actual_probe':pin(probe_executable),'native_probe_packet_bound_bytes':probe_contract.MAX_BYTES,
             'producer_source_commit':'c0c8857af79cdecaff01e7cc9dbf35a71b9d28e5','Android_runtime_source_equivalence':False}
         if extension is not None:
             provenance['probe_bound_extension']=pin(extension/bound.MANIFEST)
+        if mapping is not None:provenance['probe_namespace']=mapping.report()
         packet,report=projection(work/'data',imported,operation,provenance,args.output/'source-projection')
         value['source_projection']=report
-        probe=run_probe(probe_executable,work,args.prefix.absolute(),identity,env,tools,args.output/'actual-WFD',
-            report['generation_token'],operation,args.probe_timeout_seconds,contract=probe_contract)
-        value['actual_WFD']=probe
-        value['consumed_field_comparison']=bridge.compare(packet,probe['observation'],report['generation_token'])
-        value['post_probe_projection']=recheck_projection(work/'data',imported,report,args.output/'post-probe-projection.json')
-        post_probe_provider,post_probe_aux=custody_snapshot('post-probe',work,assets,fixture,imported)
-        require(post_probe_provider==before and post_probe_aux==aux
-            and startup.cache_snapshot(work)==bins,'Metadata probe changed original inputs or warmed BINs')
-        enabled=dict(env,COH_CLIENT_CENSUS_CAPTURE='1',COH_CLIENT_CENSUS_CAPTURE_GENERATION=report['generation_token'])
+        if mapping is not None:mapping.bind_census(packet);mapping.check()
+        enabled=dict(env,COH_CLIENT_CENSUS_CAPTURE='1',COH_CLIENT_CENSUS_CAPTURE_GENERATION=report['generation_token'],COH_CLIENT_BIN_PROFILE='1')
         phase=startup.launch_case(SimpleNamespace(native_role='metadata-capture-enabled',timeout_seconds=args.timeout_seconds),fixture,client,work,enabled,tools,output,'observation-enabled')
         value['capture_enabled']=phase
+        value['enabled_observation_instrumentation']={'metadata_counters':True,'BIN_PROFILE':True,
+            'BIN_PROFILE_already_enabled_in_retained_and_disabled':True,
+            'existing_native_profile_code_reused':True,'native_Game_recompiled':False,
+            'separate_metadata_disabled_measurement_control':True}
+        if mapping is not None:mapping.check()
         raw=(output/'observation-enabled/stdout.log').read_text(errors='replace')
         capture=pigs.parse(raw,report['generation_token'],phase['evidence']['launch']['pid'])
         value['actual_native_PIG_index']=capture
@@ -314,11 +352,21 @@ def qualify(args):
         require(final_provider==before and final_aux==aux,
                 'Capture-only mutated original provider/PIG/prerequisite custody')
         retained_helpers.native_closure(work,dict(inherited,**{'CityOfHeroes.exe':build['files']['CityOfHeroes.exe']}))
+        # Preserve independent native Game/PIG/stat evidence before any final probe gate.
+        write(args.output/'enabled-Game-observations-before-probe.json',{'capture_enabled':value['capture_enabled'],'actual_native_PIG_index':value['actual_native_PIG_index'],'actual_native_stat_snapshots':value['actual_native_stat_snapshots'],'BIN_PROFILE_enabled':True,**FALSE_AUTHORITY})
+        probe=run_probe(probe_executable,work,args.prefix.absolute(),identity,env,tools,args.output/'actual-WFD',
+            report['generation_token'],operation,args.probe_timeout_seconds,contract=probe_contract,mapping=mapping)
+        value['actual_WFD']=probe
+        value['consumed_field_comparison']=bridge.compare(packet,probe['observation'],report['generation_token'])
+        value['post_probe_projection']=recheck_projection(work/'data',imported,report,args.output/'post-probe-projection.json')
+        post_probe_provider,post_probe_aux=custody_snapshot('post-probe',work,assets,fixture,imported)
+        require(post_probe_provider==before and post_probe_aux==aux
+            and startup.cache_snapshot(work)==bins,'Metadata probe changed original inputs or warmed BINs')
         value['ordered_timings']={'retained_warm_native_witness':retained['cases'][1]['evidence']['native_startup_witness_seconds'],
             'capture_disabled_native_witness':value['capture_disabled']['evidence']['native_startup_witness_seconds'],
             'capture_enabled_native_witness':phase['evidence']['native_startup_witness_seconds'],
             'fresh_projection_preflight':report['whole_preflight_seconds'],'actual_WFD_probe':probe['elapsed_seconds'],
-            'scope':'ordered warm software-GL observations; probe/cache prewarming and observer latency recorded; no optimization or physical inference'}
+            'scope':'ordered warm software-GL observations; enabled Game before WFD probe, metadata instrumentation separate from disabled control, existing BIN timers enabled in all host cases; preparation/cache/observer costs explicit; no optimization or physical inference'}
         value['consumed_field_mapping_gate_passed']=value['consumed_field_comparison']['status']=='matched_consumed_fields'
         require(value['consumed_field_mapping_gate_passed'],'Observed native consumed fields differ from source projection; all native capture observations retained')
         value['status']='passed'
@@ -330,7 +378,14 @@ def qualify(args):
                 startup.check_held_prefix(args.prefix.absolute(),prefix_descriptor,prefix_info)
                 value['final_cleanup']=startup.stop_prefix(args.prefix.absolute(),env,tools['wineserver'],cleanup)
             except BaseException as error:value['final_cleanup']={'passed':False,'type':type(error).__name__,'message':str(error)[:2048]}
-        if prefix_descriptor is not None:os.close(prefix_descriptor)
+        if mapping is not None:
+            try:
+                mapping.check()
+                value['final_probe_namespace']=mapping.report()
+            except BaseException as error:
+                value['final_probe_namespace']={'passed':False,'type':type(error).__name__,'message':str(error)[:2048]}
+                value['status']='failed'
+        _close_capture_handles(value,mapping,prefix_descriptor)
         if value['final_cleanup'] is None or not value['final_cleanup'].get('passed'):value['status']='failed'
         value['qualification_custody_costs']=custody_costs
         value['whole_lane_seconds']=round(time.monotonic()-lane_started,6)
@@ -347,4 +402,5 @@ if __name__=='__main__':
     parser.add_argument('--probe-timeout-seconds',type=int,default=300)
     parser.add_argument('--probe-extension',type=Path)
     parser.add_argument('--probe-extension-commit')
+    parser.add_argument('--short-probe-namespace',action='store_true')
     result=qualify(parser.parse_args());print(json.dumps({'status':result['status'],'scope':result['role'],'publication_allowed':False}))

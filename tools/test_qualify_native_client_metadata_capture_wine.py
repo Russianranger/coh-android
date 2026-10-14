@@ -213,4 +213,65 @@ class LaneTests(unittest.TestCase):
         self.assertEqual(windows.count('git config --global core.autocrlf false'),1)
         self.assertNotIn('replace(',windows)
 
+    def test_enabled_current_Game_evidence_precedes_final_strict_probe_gate(self):
+        source=Path(lane.__file__).read_text()
+        enabled=source.index("value['capture_enabled']=phase")
+        pig=source.index("value['actual_native_PIG_index']=capture")
+        stats=source.index("value['actual_native_stat_snapshots']=")
+        persist=source.index("write(args.output/'enabled-Game-observations-before-probe.json'")
+        probe=source.index('probe=run_probe(probe_executable,')
+        gate=source.index("require(value['consumed_field_mapping_gate_passed']")
+        self.assertLess(enabled,pig);self.assertLess(pig,stats)
+        self.assertLess(stats,persist);self.assertLess(persist,probe);self.assertLess(probe,gate)
+        self.assertIn("COH_CLIENT_BIN_PROFILE='1'",source)
+        self.assertIn('enabled Game before WFD probe',source)
+
+    def test_fixed_namespace_enters_generation_before_native_and_final_cleanup(self):
+        source=Path(lane.__file__).read_text()
+        admitted=source.index('mapping.admit()')
+        provenance=source.index("provenance['probe_namespace']=mapping.report()")
+        encoded=source.index('packet,report=projection(')
+        bound=source.index('mapping.bind_census(packet)')
+        enabled=source.index("phase=startup.launch_case(SimpleNamespace(native_role='metadata-capture-enabled'")
+        self.assertLess(admitted,provenance);self.assertLess(provenance,encoded)
+        self.assertLess(encoded,bound);self.assertLess(bound,enabled)
+        self.assertIn("mapping.report()['path_census_admitted'] is True",source)
+        self.assertIn("mapping.native_root=='X:/data'",source)
+        self.assertIn('_close_capture_handles(value,mapping,prefix_descriptor)',source)
+        self.assertIn('native_Game_absolute_root_or_volume_or_shortname_equivalence_claimed',source)
+
+    def test_reuse_only_workflow_requires_real_successful_jobs_not_whole_failed_run(self):
+        workflow=(lane.ROOT/'.github/workflows/android-native-client-metadata-capture-reuse-wine.yml').read_text()
+        jobs=workflow.split('\njobs:\n',1)[1]
+        self.assertEqual(re.findall(r'^  ([A-Za-z0-9_-]+):\s*$',jobs,re.M),['actual-client-capture'])
+        for command in ('cl /nologo','cmake --build','native_client_wfd_probe_bound.py prepare','native_client_wfd_probe_bound.py package'):
+            self.assertNotIn(command,workflow)
+        for pin in ('11866594540','11869483251','115678115609','10f3ac8853b270088456db8116275108615b0e87','9edfad23f057ebbc678a52274f95707a2c04e4ea6942275f35de705ac0a1c4d2'):
+            self.assertIn(pin,workflow)
+        self.assertIn("run['conclusion']=='failure'",workflow)
+        self.assertIn("producer[0]['conclusion']=='success'",workflow)
+        self.assertIn('--short-probe-namespace',workflow)
+        self.assertEqual(workflow.count('inputs.ensure_assets('),1)
+        programs=re.findall(r"(?ms)^([ ]*)python3 - <<'PYTHON'\n(.*?)^\1PYTHON\s*$",workflow)
+        self.assertEqual(len(programs),5)
+        for _,body in programs:compile(textwrap.dedent(body),'<reuse-workflow>','exec')
+
+    def test_mapping_FD_close_error_cannot_skip_prefix_release_or_durable_report(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base=Path(temporary);descriptor=os.open(base,os.O_RDONLY|os.O_DIRECTORY)
+            mapping=mock.Mock();mapping.close.side_effect=OSError('injected mapping FD close failure')
+            value={'status':'passed','failure':None}
+            lane._close_capture_handles(value,mapping,descriptor)
+            mapping.close.assert_called_once()
+            with self.assertRaises(OSError):os.fstat(descriptor)
+            lane.write(base/'qualification.json',value)
+            saved=json.loads((base/'qualification.json').read_text())
+            self.assertEqual(saved['status'],'failed')
+            self.assertFalse(saved['descriptor_finalization'][0]['closed'])
+            self.assertTrue(saved['descriptor_finalization'][1]['closed'])
+            self.assertEqual(saved['descriptor_finalization'][0]['message'],'injected mapping FD close failure')
+        source=Path(lane.__file__).read_text()
+        self.assertLess(source.index('_close_capture_handles(value,mapping,prefix_descriptor)',source.index('    finally:',source.index('def qualify('))),
+            source.index("write(args.output/'native-client-metadata-capture-Wine-qualification.json'"))
+
 if __name__=='__main__':unittest.main()

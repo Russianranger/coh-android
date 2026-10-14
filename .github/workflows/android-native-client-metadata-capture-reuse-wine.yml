@@ -1,0 +1,158 @@
+name: Reuse qualified native bytes for complete client metadata observations
+on:
+  push:
+    branches: [codex/native-client-metadata-capture-reuse-wine-037]
+    paths:
+      - .github/workflows/android-native-client-metadata-capture-reuse-wine.yml
+      - tools/native_client_probe_drive.py
+      - tools/test_native_client_probe_drive.py
+      - tools/qualify_native_client_metadata_capture_wine.py
+      - tools/test_qualify_native_client_metadata_capture_wine.py
+  workflow_dispatch:
+permissions: {contents: read, actions: read}
+concurrency:
+  group: native-client-metadata-capture-reuse-wine-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  actual-client-capture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Qualify current observer, provider, projection and native bridge source guards
+        env: {PYTHONPATH: tools, PYTHONWARNINGS: 'error::ResourceWarning'}
+        run: |
+          python3 -m unittest test_native_client_startup test_native_client_folder_sort_wine test_native_client_wfd_probe test_native_client_census_observed_bridge test_qualify_native_client_metadata_capture_wine test_native_client_wfd_probe_bound test_native_client_probe_drive -v
+      - name: Admit storage and install complete real PE32 OpenGL software runtime
+        run: |
+          test "${RUNNER_ENVIRONMENT:-}" = github-hosted
+          sudo rm -rf -- /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL
+          python3 -c "import shutil; assert shutil.disk_usage('.').free >= 30*1024**3"
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends wine wine32:i386 xvfb xauth mesa-utils tesseract-ocr libgl1:i386 libglx-mesa0:i386 libgl1-mesa-dri:i386 libx11-6:i386 libxext6:i386 libxrandr2:i386
+          mkdir -p out
+          dpkg-query -W wine wine32:i386 libgl1:i386 libglx-mesa0:i386 libgl1-mesa-dri:i386 libx11-6:i386 libxext6:i386 libxrandr2:i386 > out/host-gl-packages.txt
+      - name: Recover successful capture Game and probe without rebuilding any native artifact
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          mkdir -p out/capture-history
+          python3 - <<'PYTHON'
+          import hashlib,json,os,pathlib,time,urllib.error,urllib.request
+          base='https://api.github.com/repos/Russianranger/coh-android'
+          def request(url):
+              query=urllib.request.Request(url,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+              for attempt in range(3):
+                  try:
+                      with urllib.request.urlopen(query,timeout=60) as response:return json.load(response)
+                  except urllib.error.HTTPError as error:
+                      if error.code not in (429,500,502,503,504) or attempt==2:raise
+                      time.sleep(5)
+          run=request(base+'/actions/runs/38502287842');jobs=request(base+'/actions/runs/38502287842/jobs');artifact=request(base+'/actions/artifacts/11866594540')
+          assert run['head_sha']=='4e3188d7dffd2790bbc73e49f9e3fa55df90f016' and run['conclusion']=='success'
+          native=[job for job in jobs['jobs'] if job['id']==115651968222]
+          assert len(native)==1 and native[0]['name']=='native-game-and-probe' and native[0]['conclusion']=='success'
+          assert artifact['name']=='coh-nonshipping-native-client-metadata-capture' and artifact['expired'] is False
+          assert artifact['size_in_bytes']==4276595 and artifact['digest']=='sha256:5a8baf15df7f92baaecf0e861e5d9ec69128bfdf1e53e4f4304cf6362ef541db'
+          assert artifact['workflow_run']['head_sha']==run['head_sha']
+          for name,value in [('run',run),('jobs',jobs),('artifact',artifact)]:pathlib.Path('out/capture-history/'+name+'.json').write_text(json.dumps(value,indent=2)+'\n')
+          target=pathlib.Path('out/donor-036.apk')
+          with urllib.request.urlopen('https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk',timeout=60) as response,target.open('xb') as stream:
+              total=0;digest=hashlib.sha256()
+              while block:=response.read(1024**2):
+                  total+=len(block);assert total<=42076692;digest.update(block);stream.write(block)
+          assert total==42076692 and digest.hexdigest()=='14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f'
+          PYTHON
+          gh api repos/Russianranger/coh-android/actions/artifacts/11866594540/zip > out/capture-history/artifact.zip
+          python3 - <<'PYTHON'
+          import hashlib,pathlib,zipfile
+          import sys
+          sys.path.insert(0,'tools');import package_native_client_metadata_capture as package
+          archive=pathlib.Path('out/capture-history/artifact.zip')
+          assert archive.stat().st_size==4276595 and hashlib.sha256(archive.read_bytes()).hexdigest()=='5a8baf15df7f92baaecf0e861e5d9ec69128bfdf1e53e4f4304cf6362ef541db'
+          output=pathlib.Path('out/native-capture');output.mkdir()
+          with zipfile.ZipFile(archive) as source:
+              assert len(source.namelist())==len(set(source.namelist()))==8
+              assert set(source.namelist())==package.MEMBERS|{package.MANIFEST}
+              for name in source.namelist():
+                  assert '/' not in name and chr(92) not in name and source.getinfo(name).file_size<=64*1024**2
+                  (output/name).write_bytes(source.read(name))
+          PYTHON
+          python3 tools/package_native_client_metadata_capture.py validate --directory out/native-capture --repository-commit 4e3188d7dffd2790bbc73e49f9e3fa55df90f016 --donor-apk out/donor-036.apk
+      - name: Authenticate retained successful probe-only SDK job while preserving its overall failed Wine run
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          mkdir -p out/probe-bound-history
+          python3 - <<'PYTHON'
+          import hashlib,json,os,pathlib,time,urllib.error,urllib.request
+          base='https://api.github.com/repos/Russianranger/coh-android'
+          def request(url):
+              query=urllib.request.Request(url,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+              for attempt in range(3):
+                  try:
+                      with urllib.request.urlopen(query,timeout=60) as response:return json.load(response)
+                  except urllib.error.HTTPError as error:
+                      if error.code not in (429,500,502,503,504) or attempt==2:raise
+                      time.sleep(5)
+          run=request(base+'/actions/runs/38510646414')
+          jobs=request(base+'/actions/runs/38510646414/jobs')
+          artifact=request(base+'/actions/artifacts/11869483251')
+          assert run['head_sha']=='10f3ac8853b270088456db8116275108615b0e87' and run['id']==38510646414 and run['conclusion']=='failure'
+          producer=[job for job in jobs['jobs'] if job['id']==115678115609]
+          assert len(producer)==1 and producer[0]['name']=='probe-windows' and producer[0]['conclusion']=='success'
+          assert all(step['conclusion']=='success' for step in producer[0]['steps'])
+          assert artifact['name']=='coh-nonshipping-native-client-probe-bound-extension' and artifact['expired'] is False
+          assert artifact['workflow_run']['head_sha']==run['head_sha'] and artifact['workflow_run']['id']==run['id']
+          assert artifact['size_in_bytes']==114829 and artifact['digest']=='sha256:9edfad23f057ebbc678a52274f95707a2c04e4ea6942275f35de705ac0a1c4d2'
+          for name,value in [('run',run),('jobs',jobs),('artifact',artifact)]:pathlib.Path('out/probe-bound-history/'+name+'.json').write_text(json.dumps(value,indent=2)+'\n')
+          PYTHON
+          gh api "repos/Russianranger/coh-android/actions/artifacts/$(python3 -c 'import json;print(json.load(open("out/probe-bound-history/artifact.json"))["id"])')/zip" > out/probe-bound-history/artifact.zip
+          python3 - <<'PYTHON'
+          import hashlib,json,pathlib,sys,zipfile
+          sys.path.insert(0,'tools');import native_client_wfd_probe_bound as bound
+          metadata=json.loads(pathlib.Path('out/probe-bound-history/artifact.json').read_text())
+          archive=pathlib.Path('out/probe-bound-history/artifact.zip')
+          assert archive.stat().st_size==metadata['size_in_bytes'] and hashlib.sha256(archive.read_bytes()).hexdigest()==metadata['digest'].removeprefix('sha256:')
+          output=pathlib.Path('out/probe-bound');output.mkdir()
+          with zipfile.ZipFile(archive) as source:
+              assert len(source.namelist())==len(set(source.namelist()))==len(bound.MEMBERS)
+              assert set(source.namelist())==bound.MEMBERS
+              for name in source.namelist():
+                  assert '/' not in name and chr(92) not in name and source.getinfo(name).file_size<8*1024**2
+                  (output/name).write_bytes(source.read(name))
+          PYTHON
+          python3 tools/native_client_wfd_probe_bound.py validate --directory out/probe-bound --producer-commit 10f3ac8853b270088456db8116275108615b0e87
+      - name: Authenticate unchanged asset volumes once and prepare one complete current client provider
+        run: |
+          python3 - <<'PYTHON'
+          import sys
+          sys.path.insert(0,'tools/android/interactive')
+          import qualify_runtime_asset_preflight as inputs
+          inputs.ensure_assets('out/asset-cache')
+          PYTHON
+          python3 tools/prepare_native_client_profile_fixture.py --donor-apk out/donor-036.apk --payloads out/asset-cache/payloads --output out/client-fixture
+      - name: Run retained controls and actual metadata captures on one verified provider and closed prefix
+        run: >-
+          xvfb-run -a -s '-screen 0 800x600x24 +extension GLX +render -noreset'
+          python3 tools/qualify_native_client_metadata_capture_wine.py
+          --fixture out/client-fixture/native-client-fixture.json
+          --donor-apk out/donor-036.apk --package out/native-capture
+          --package-commit 4e3188d7dffd2790bbc73e49f9e3fa55df90f016
+          --output out/native-client-metadata-capture
+          --prefix "${RUNNER_TEMP}/coh-client-metadata-${GITHUB_RUN_ID}"
+          --probe-extension out/probe-bound --probe-extension-commit 10f3ac8853b270088456db8116275108615b0e87
+          --short-probe-namespace
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-nonshipping-actual-client-metadata-capture
+          path: |
+            out/native-client-metadata-capture/
+            out/client-fixture/native-client-fixture.json
+            out/capture-history/*.json
+            out/host-gl-packages.txt
+            out/probe-bound-history/*.json
+            out/probe-bound/*.json
+          retention-days: 90
+          if-no-files-found: warn
