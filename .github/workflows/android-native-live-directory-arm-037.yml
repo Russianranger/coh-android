@@ -1,0 +1,50 @@
+name: Closed native live directory ARM qualification 0.13.37
+on:
+  push:
+    branches: [codex/native-live-directory-arm-037]
+    paths:
+      - .github/workflows/android-native-live-directory-arm-037.yml
+      - tools/native_live_directory/**
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-live-directory-arm-037-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  native-core:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            tools/native_live_directory
+            .github/workflows/android-native-live-directory-arm-037.yml
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Pinned NDK and bounded ARM user-mode fixture runner
+        run: |
+          sdkmanager 'ndk;27.2.12479018'
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qemu-user
+      - name: Fresh host C and JNI controls, actual static Bionic ARM64 fixture
+        run: >-
+          python3 -W error::ResourceWarning
+          tools/native_live_directory/qualify_native_live_directory.py
+          --out out/native-live-directory-037
+          --ndk "$ANDROID_HOME/ndk/27.2.12479018"
+      - name: Preserve exact source and runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-live-directory-arm-037-${{ github.sha }}
+          path: |
+            out/native-live-directory-037
+            tools/native_live_directory
+            .github/workflows/android-native-live-directory-arm-037.yml
+          if-no-files-found: error
