@@ -1,0 +1,150 @@
+{
+  "format": 1,
+  "role": "packet_geometry_source_only_live_directory_bridge",
+  "original_run": 38505762421,
+  "original_run_result": "failed_probe_size_bound",
+  "packet": {
+    "bytes": 55574000,
+    "sha256": "f9429ee6e2888eedcf44c69ebecca1751e8225b0fa18a2a28fd906df54fd2bca"
+  },
+  "directories": 7532,
+  "rows": 167942,
+  "model": "Wine_b073_FileBothDirectoryInformation_94_byte_prefix_plus_ASCII_UTF16_names_8_byte_align_8192_byte_buffer",
+  "model_limit": "All census rows modeled as visible and metadata-successful; native dot-root suppression, ignored inodes, names skipped after mutation, overflow-entry repeated stat and actual runtime differences are not measured",
+  "model_buffers": 9316,
+  "snapshot_name_bytes": 4467115,
+  "largest_directory": {
+    "path": "scripts.loc/spawndefs/p_city_00_04",
+    "count": 6852,
+    "name_bytes": 213581,
+    "WFD_payload": 2192640,
+    "buffers_8192": 133
+  },
+  "top_directories": [
+    {
+      "path": "scripts.loc/spawndefs/p_city_00_04",
+      "count": 6852,
+      "buffers_8192": 133,
+      "name_bytes": 213581
+    },
+    {
+      "path": "scripts.loc/spawndefs/p_city_00_02",
+      "count": 4601,
+      "buffers_8192": 88,
+      "name_bytes": 137625
+    },
+    {
+      "path": "scripts.loc/spawndefs/p_city_00_03",
+      "count": 2896,
+      "buffers_8192": 56,
+      "name_bytes": 87993
+    },
+    {
+      "path": "texture_library/gui/icons/powers",
+      "count": 2578,
+      "buffers_8192": 53,
+      "name_bytes": 90420
+    },
+    {
+      "path": "scripts.loc/spawndefs/p_city_00_08",
+      "count": 2520,
+      "buffers_8192": 49,
+      "name_bytes": 76029
+    },
+    {
+      "path": "scripts.loc/spawndefs/p_city_00_07",
+      "count": 2418,
+      "buffers_8192": 47,
+      "name_bytes": 73070
+    },
+    {
+      "path": "scripts.loc/spawndefs/v_city_03_01",
+      "count": 1940,
+      "buffers_8192": 39,
+      "name_bytes": 63157
+    },
+    {
+      "path": "scripts.loc/spawndefs/war_05_01",
+      "count": 1885,
+      "buffers_8192": 38,
+      "name_bytes": 62412
+    },
+    {
+      "path": "scripts.loc/spawndefs/p_city_00_01",
+      "count": 1677,
+      "buffers_8192": 34,
+      "name_bytes": 55474
+    },
+    {
+      "path": "scripts.loc/spawndefs/v_city_01_01",
+      "count": 1455,
+      "buffers_8192": 30,
+      "name_bytes": 50672
+    },
+    {
+      "path": "scripts.loc/spawndefs/haz_01_02",
+      "count": 1384,
+      "buffers_8192": 28,
+      "name_bytes": 45338
+    },
+    {
+      "path": "scripts.loc/spawndefs/p_city_00_06",
+      "count": 1302,
+      "buffers_8192": 25,
+      "name_bytes": 39075
+    },
+    {
+      "path": "scripts.loc/spawndefs/city_01_02",
+      "count": 1155,
+      "buffers_8192": 23,
+      "name_bytes": 38150
+    },
+    {
+      "path": "scripts.loc/spawndefs/v_city_05_01",
+      "count": 1143,
+      "buffers_8192": 24,
+      "name_bytes": 42717
+    },
+    {
+      "path": "scripts.loc/spawndefs/city_01_01",
+      "count": 1093,
+      "buffers_8192": 23,
+      "name_bytes": 37868
+    },
+    {
+      "path": "fx/behaviors",
+      "count": 1041,
+      "buffers_8192": 18,
+      "name_bytes": 21984
+    },
+    {
+      "path": "scripts.loc/spawndefs/city_02_05",
+      "count": 990,
+      "buffers_8192": 21,
+      "name_bytes": 35429
+    },
+    {
+      "path": "texture_library/gui/icons/badges",
+      "count": 889,
+      "buffers_8192": 18,
+      "name_bytes": 29311
+    },
+    {
+      "path": "scripts.loc/spawndefs/v_city_01_02",
+      "count": 883,
+      "buffers_8192": 18,
+      "name_bytes": 29841
+    },
+    {
+      "path": "scripts.loc/spawndefs/v_city_04_01",
+      "count": 868,
+      "buffers_8192": 18,
+      "name_bytes": 28773
+    }
+  ],
+  "provider_authority": false,
+  "native_registration_allowed": false,
+  "publication_allowed": false,
+  "actual_native_helper_executed": false,
+  "device_speedup_measured": false
+}

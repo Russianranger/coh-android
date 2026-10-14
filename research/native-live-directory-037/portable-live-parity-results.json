@@ -1,0 +1,39 @@
+{
+  "format": 1,
+  "role": "portable_extracted_stock_constructor_live_batch_parity",
+  "status": "passed_portable_source_controls",
+  "stdout": "COH_LIVE_SOURCE_PARITY_PASS branches=5 refusal_controls=14 terminal_custody_controls=4 rows=167937 buffers=9315 max_packet_bytes=22696 packet_limit=27944 cursor_owned_bytes=28040 actual_native_API=0 provider_authority=0",
+  "stderr": "",
+  "portable_C_process": {
+    "wall_seconds": 0.5121576259989524,
+    "user_seconds": 0.458497,
+    "system_seconds": 0.052764,
+    "max_RSS_KiB": 77568,
+    "minor_page_faults": 19432,
+    "major_page_faults": 0,
+    "input_blocks": 0,
+    "output_blocks": 8
+  },
+  "packet": {
+    "bytes": 55574000,
+    "sha256": "f9429ee6e2888eedcf44c69ebecca1751e8225b0fa18a2a28fd906df54fd2bca",
+    "directories": 7532,
+    "rows": 167942
+  },
+  "generator_sha256": "80b18942a89c33bdd8909696a10efa635ed6c112b964f60c15b243a32f7b1502",
+  "C_harness_sha256": "32423a375f3bb08f43903d39948e490d8ce3fe8100b46193c7dc699d852effac",
+  "batch_header_sha256": "767077bfefa2f023fbb558a0757d95e0d2021b2b12da7c4c18d25c6591292fc6",
+  "original_constructor_sha256": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+  "exact_FolderNodeAdd_source_sha256": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "elapsed_total_seconds": 2.318579229999159,
+  "whole_historical_packet_loaded_only_for_controlled_parity": true,
+  "timestamp_conversion_identical_fixture_stub_not_native_qualification": true,
+  "whole_census_proof_performed_by_live_decoder": false,
+  "field_order_and_complete_stock_node_effects_equal_for_historical_source_projection": true,
+  "actual_POSIX_server_or_Wine_API_or_PRooot_FEX_Game_executed": false,
+  "provider_authority": false,
+  "native_registration_allowed": false,
+  "publication_allowed": false,
+  "device_speedup_measured": false
+}

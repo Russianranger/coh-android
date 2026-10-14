@@ -1,0 +1,122 @@
+{
+  "format": 1,
+  "role": "controlled_live_directory_model_FD_repair_followup",
+  "status": "passed_one_fresh_FD_control_with_historical_results_retained",
+  "current_source_control": {
+    "format": 1,
+    "role": "controlled_live_directory_initial_listing_failure",
+    "status": "passed_injected_failure_and_kernel_FD_cleanup",
+    "cases": [
+      {
+        "name": "initial_listdir_failure_closes_exact_owned_FD",
+        "result": "passed",
+        "injected_error": 5,
+        "observed_closed_FD_error": 9,
+        "original_exception_preserved": true,
+        "unrelated_guard_FD_retained": true
+      }
+    ],
+    "elapsed_seconds": 0.001048183003149461,
+    "source_sha256": "e2c9e7aa948b6b7ec875a97fdfef2d128fe5942cc14d28799540e1284aabeeb3",
+    "platform": "Linux 6.18.44 x86_64",
+    "uid": 0,
+    "only_owned_temporary_files_changed": true,
+    "Wine_or_PRooot_or_FEX_or_Game_executed": false,
+    "provider_authority": false,
+    "native_registration_allowed": false,
+    "publication_allowed": false,
+    "device_speedup_measured": false
+  },
+  "inherited_prior_eight_case_run": {
+    "format": 1,
+    "role": "controlled_POSIX_live_directory_batch_research",
+    "status": "passed_controlled_POSIX_cases",
+    "cases": [
+      {
+        "name": "metadata_after_names_and_previous_batch_is_current",
+        "result": "passed",
+        "row": {
+          "name": "z",
+          "consumed_attributes": 0,
+          "size_low": 13,
+          "write_filetime": 133444736001234560
+        }
+      },
+      {
+        "name": "new_membership_after_open_is_not_added_to_names_snapshot",
+        "result": "passed"
+      },
+      {
+        "name": "removed_name_before_its_metadata_read_is_skipped",
+        "result": "passed"
+      },
+      {
+        "name": "held_directory_fd_retains_identity_after_path_replacement",
+        "result": "passed"
+      },
+      {
+        "name": "outside_hardlink_metadata_change_is_seen_at_current_read",
+        "result": "passed",
+        "row": {
+          "name": "a",
+          "consumed_attributes": 1,
+          "size_low": 1,
+          "write_filetime": 134364279408453800
+        }
+      },
+      {
+        "name": "preexisting_mmap_write_is_seen_without_event_or_lease",
+        "result": "passed",
+        "row": {
+          "name": "mapped",
+          "consumed_attributes": 0,
+          "size_low": 8,
+          "write_filetime": 134364279408485360
+        }
+      },
+      {
+        "name": "raw_host_stat_cannot_resolve_guest_absolute_link",
+        "result": "passed",
+        "guest_path": "/__coh_live_bridge_control__/import-file",
+        "mapped_target_current_size": 6
+      },
+      {
+        "name": "Wine_source_consumed_directory_size_projection_is_zero",
+        "result": "passed",
+        "row": {
+          "name": "dir",
+          "consumed_attributes": 16,
+          "size_low": 0,
+          "write_filetime": 134364279408507070
+        },
+        "actual_POSIX_directory_size": 4096
+      }
+    ],
+    "elapsed_seconds": 0.006278011001995765,
+    "source_sha256": "b1d334ad92c841b0e035044c2f65336001a5dfc7f1556f264af29a719ceb2049",
+    "platform": "Linux 6.18.44 x86_64",
+    "uid": 0,
+    "only_owned_temporary_files_changed": true,
+    "Wine_or_PRooot_or_FEX_or_Game_executed": false,
+    "WFD_API_or_race_parity_qualified": false,
+    "provider_authority": false,
+    "native_registration_allowed": false,
+    "publication_allowed": false,
+    "device_speedup_measured": false
+  },
+  "inherited_prior_eight_case_source_utf8": "#!/usr/bin/env python3\n\"\"\"Controlled POSIX live-batch research, not Wine/PRoot/API parity authority.\n\nOnly owned temporary files are changed. No game, database, assets or processes\nare launched. Names are captured once; metadata is read when each batch runs.\n\"\"\"\nfrom __future__ import annotations\nimport errno\nimport hashlib\nimport json\nimport mmap\nimport os\nfrom pathlib import Path\nimport stat\nimport tempfile\nimport time\n\nATTR_READONLY, ATTR_HIDDEN, ATTR_SYSTEM, ATTR_DIRECTORY, ATTR_ARCHIVE = 1,2,4,16,32\nEPOCH = 116444736000000000\n\ndef fields(directory_fd, name):\n    # The raw POSIX model deliberately does not resolve guest absolute links.\n    info = os.stat(name, dir_fd=directory_fd, follow_symlinks=True)\n    attrs = ATTR_DIRECTORY if stat.S_ISDIR(info.st_mode) else ATTR_ARCHIVE\n    if not info.st_mode & 0o222:\n        attrs |= ATTR_READONLY\n    return {'name':name,'consumed_attributes':attrs & 23,\n            'size_low':0 if stat.S_ISDIR(info.st_mode) else info.st_size & 0xffffffff,\n            'write_filetime':info.st_mtime_ns // 100 + EPOCH}\n\nclass LiveNames:\n    def __init__(self, path):\n        self.fd = os.open(path, os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW)\n        # ASCII-only Wine b073 order. Production must preserve actual native\n        # conversions/configuration, dot aliases and all unsupported cases.\n        self.names = sorted(os.listdir(self.fd),key=lambda name:(name.upper(),name))\n        self.position = 0\n    def batch(self, count):\n        output=[]\n        while self.position<len(self.names) and len(output)<count:\n            name=self.names[self.position];self.position+=1\n            try:\n                output.append(fields(self.fd,name))\n            except OSError as exc:\n                # The source skips all get_file_info failures. This research\n                # accepts only controlled missing-file failure, never maps a\n                # transport/mapping failure to complete-branch absence.\n                if exc.errno!=errno.ENOENT:\n                    raise\n        return output\n    def close(self):\n        os.close(self.fd)\n\ndef run():\n    started=time.monotonic(); checks=[]\n    def passed(name, **observations):\n        checks.append({'name':name,'result':'passed',**observations})\n    with tempfile.TemporaryDirectory(prefix='coh-live-directory-research-') as tmp:\n        root=Path(tmp);data=root/'data';data.mkdir();first=data/'a';later=data/'z'\n        first.write_bytes(b'a');later.write_bytes(b'z')\n        reader=LiveNames(data)\n        try:\n            assert [row['name'] for row in reader.batch(1)]==['a']\n            later.write_bytes(b'fresh-content');os.utime(later,ns=(1700000000123456700,1700000000123456700))\n            row=reader.batch(1)[0]\n            assert row['size_low']==13 and row['write_filetime']==17000000001234567+EPOCH\n            passed('metadata_after_names_and_previous_batch_is_current',row=row)\n        finally:reader.close()\n        reader=LiveNames(data)\n        try:\n            (data/'new').write_bytes(b'new')\n            assert 'new' not in [row['name'] for row in reader.batch(20)]\n            passed('new_membership_after_open_is_not_added_to_names_snapshot')\n        finally:reader.close()\n        reader=LiveNames(data)\n        try:\n            later.unlink()\n            assert 'z' not in [row['name'] for row in reader.batch(20)]\n            passed('removed_name_before_its_metadata_read_is_skipped')\n        finally:reader.close()\n        reader=LiveNames(data)\n        try:\n            moved=root/'renamed-data';data.rename(moved)\n            replacement=data;replacement.mkdir();(replacement/'a').write_bytes(b'replacement')\n            rows=reader.batch(20)\n            assert next(row for row in rows if row['name']=='a')['size_low']==1\n            passed('held_directory_fd_retains_identity_after_path_replacement')\n            data=moved\n        finally:reader.close()\n        alias=root/'outside-alias';os.link(data/'a',alias)\n        reader=LiveNames(data)\n        try:\n            os.chmod(alias,0o444)\n            row=next(row for row in reader.batch(20) if row['name']=='a')\n            assert row['consumed_attributes'] & ATTR_READONLY\n            passed('outside_hardlink_metadata_change_is_seen_at_current_read',row=row)\n        finally:reader.close()\n        os.chmod(alias,0o600)\n        mapped=data/'mapped';mapped.write_bytes(b'original');handle=os.open(mapped,os.O_RDWR)\n        mapping=mmap.mmap(handle,0)\n        reader=LiveNames(data)\n        try:\n            os.utime(mapped,ns=(1000000000000000000,1000000000000000000))\n            mapping[0:8]=b'changed!';mapping.flush()\n            row=next(row for row in reader.batch(20) if row['name']=='mapped')\n            assert mapped.read_bytes()==b'changed!' and row['write_filetime']!=10000000000000000+EPOCH\n            passed('preexisting_mmap_write_is_seen_without_event_or_lease',row=row)\n        finally:reader.close();mapping.close();os.close(handle)\n        target=root/'import-file';target.write_bytes(b'import')\n        guest='/__coh_live_bridge_control__/import-file';link=data/'guest-absolute';link.symlink_to(guest)\n        try:os.stat(link)\n        except FileNotFoundError:\n            passed('raw_host_stat_cannot_resolve_guest_absolute_link',guest_path=guest,\n                   mapped_target_current_size=target.stat().st_size)\n        else:raise AssertionError('Controlled guest path unexpectedly exists')\n        link.unlink()\n        directory=data/'dir';directory.mkdir()\n        fd=os.open(data,os.O_RDONLY|os.O_DIRECTORY)\n        try:\n            row=fields(fd,'dir');assert row['size_low']==0 and row['consumed_attributes'] & ATTR_DIRECTORY\n            passed('Wine_source_consumed_directory_size_projection_is_zero',row=row,\n                   actual_POSIX_directory_size=directory.stat().st_size)\n        finally:os.close(fd)\n    return {'format':1,'role':'controlled_POSIX_live_directory_batch_research',\n            'status':'passed_controlled_POSIX_cases','cases':checks,'elapsed_seconds':time.monotonic()-started,\n            'source_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),\n            'platform':os.uname().sysname+' '+os.uname().release+' '+os.uname().machine,\n            'uid':os.getuid(),'only_owned_temporary_files_changed':True,\n            'Wine_or_PRooot_or_FEX_or_Game_executed':False,\n            'WFD_API_or_race_parity_qualified':False,'provider_authority':False,\n            'native_registration_allowed':False,'publication_allowed':False,\n            'device_speedup_measured':False}\n\nif __name__=='__main__':\n    print(json.dumps(run(),indent=2))\n",
+  "inherited_prior_eight_case_source_pin": {
+    "bytes": 6605,
+    "sha256": "b1d334ad92c841b0e035044c2f65336001a5dfc7f1556f264af29a719ceb2049"
+  },
+  "inherited_prior_eight_case_report_utf8": "{\n  \"format\": 1,\n  \"role\": \"controlled_POSIX_live_directory_batch_research\",\n  \"status\": \"passed_controlled_POSIX_cases\",\n  \"cases\": [\n    {\n      \"name\": \"metadata_after_names_and_previous_batch_is_current\",\n      \"result\": \"passed\",\n      \"row\": {\n        \"name\": \"z\",\n        \"consumed_attributes\": 0,\n        \"size_low\": 13,\n        \"write_filetime\": 133444736001234567\n      }\n    },\n    {\n      \"name\": \"new_membership_after_open_is_not_added_to_names_snapshot\",\n      \"result\": \"passed\"\n    },\n    {\n      \"name\": \"removed_name_before_its_metadata_read_is_skipped\",\n      \"result\": \"passed\"\n    },\n    {\n      \"name\": \"held_directory_fd_retains_identity_after_path_replacement\",\n      \"result\": \"passed\"\n    },\n    {\n      \"name\": \"outside_hardlink_metadata_change_is_seen_at_current_read\",\n      \"result\": \"passed\",\n      \"row\": {\n        \"name\": \"a\",\n        \"consumed_attributes\": 1,\n        \"size_low\": 1,\n        \"write_filetime\": 134364279408453800\n      }\n    },\n    {\n      \"name\": \"preexisting_mmap_write_is_seen_without_event_or_lease\",\n      \"result\": \"passed\",\n      \"row\": {\n        \"name\": \"mapped\",\n        \"consumed_attributes\": 0,\n        \"size_low\": 8,\n        \"write_filetime\": 134364279408485364\n      }\n    },\n    {\n      \"name\": \"raw_host_stat_cannot_resolve_guest_absolute_link\",\n      \"result\": \"passed\",\n      \"guest_path\": \"/__coh_live_bridge_control__/import-file\",\n      \"mapped_target_current_size\": 6\n    },\n    {\n      \"name\": \"Wine_source_consumed_directory_size_projection_is_zero\",\n      \"result\": \"passed\",\n      \"row\": {\n        \"name\": \"dir\",\n        \"consumed_attributes\": 16,\n        \"size_low\": 0,\n        \"write_filetime\": 134364279408507064\n      },\n      \"actual_POSIX_directory_size\": 4096\n    }\n  ],\n  \"elapsed_seconds\": 0.006278011001995765,\n  \"source_sha256\": \"b1d334ad92c841b0e035044c2f65336001a5dfc7f1556f264af29a719ceb2049\",\n  \"platform\": \"Linux 6.18.44 x86_64\",\n  \"uid\": 0,\n  \"only_owned_temporary_files_changed\": true,\n  \"Wine_or_PRooot_or_FEX_or_Game_executed\": false,\n  \"WFD_API_or_race_parity_qualified\": false,\n  \"provider_authority\": false,\n  \"native_registration_allowed\": false,\n  \"publication_allowed\": false,\n  \"device_speedup_measured\": false\n}\n",
+  "inherited_prior_eight_case_report_pin": {
+    "bytes": 2214,
+    "sha256": "ebdff1500327460d8c4288ede22d6560303fae91d0f11c5d9f5ec7ea171e35f4"
+  },
+  "historical_C_results_unchanged": true,
+  "provider_authority": false,
+  "native_registration_allowed": false,
+  "publication_allowed": false,
+  "device_speedup_measured": false
+}

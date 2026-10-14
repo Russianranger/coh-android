@@ -1,0 +1,163 @@
+{
+  "format": 1,
+  "role": "closed_live_directory_batch_source_research_freeze",
+  "root_reference_source": "1d0f2373aa657f8ec3e8c3e5dcd4043643520cde",
+  "files": {
+    "DESIGN.md": {
+      "bytes": 11201,
+      "sha256": "560a0ea1aa06b179c93fcc05583492f4ca2eae9ca35abc83560ec7db6e351227"
+    },
+    "coh_live_directory_batch.h": {
+      "bytes": 4316,
+      "sha256": "767077bfefa2f023fbb558a0757d95e0d2021b2b12da7c4c18d25c6591292fc6"
+    },
+    "qualify_live_batch.py": {
+      "bytes": 12678,
+      "sha256": "80b18942a89c33bdd8909696a10efa635ed6c112b964f60c15b243a32f7b1502"
+    },
+    "live_batch_experiment.py": {
+      "bytes": 9419,
+      "sha256": "e2c9e7aa948b6b7ec875a97fdfef2d128fe5942cc14d28799540e1284aabeeb3"
+    },
+    "packet-geometry.json": {
+      "bytes": 3846,
+      "sha256": "2394658dd836d418724b101f79b18cacfa63f1d649d43e45b3049130758bcea2"
+    },
+    "portable-live-parity.c": {
+      "bytes": 25687,
+      "sha256": "32423a375f3bb08f43903d39948e490d8ce3fe8100b46193c7dc699d852effac"
+    },
+    "portable-live-parity-results.json": {
+      "bytes": 1913,
+      "sha256": "c74cdde67b22bf5646ac8542e1e624164cc7f06e3180f561ca029d7496a416bb"
+    },
+    "controlled-live-batch-results.json": {
+      "bytes": 13237,
+      "sha256": "b63ffa0c58944fef3bd7c3f85ebf37f9998bc27bfc8e1b743d84f8c3d96a7387"
+    },
+    "src_extension_link2symlink_link2symlink.c": {
+      "bytes": 37291,
+      "sha256": "e92e8878d400d0c2e27db82964e0061b7814d39f8a7b2d050cf092bf00339eb8"
+    },
+    "src_extension_fake_id0_stat.c": {
+      "bytes": 5340,
+      "sha256": "a859f753aefc1467d34215344591c5b8f3aa739ab85b3b1fd68fe41a51370486"
+    },
+    "src_extension_fake_id0_open.c": {
+      "bytes": 2884,
+      "sha256": "932e3230016153f7ace9bb5d7020e8903aab8455a46e6294c83f99266c8900be"
+    }
+  },
+  "exact_current_repo_read_sources": {
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c": {
+      "bytes": 49055,
+      "sha256": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCacheNode.c": {
+      "bytes": 13441,
+      "sha256": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/fileWatch.c": {
+      "bytes": 7856,
+      "sha256": "ac081fe475cd69762b40f1ea0378c8e24884a9974a27afd90c3facd0d1b651c5"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/winfiletime.c": {
+      "bytes": 28175,
+      "sha256": "bd1f419d6dda2517ff4a588a0c70f2500d69f7fc6390d5d58da31b54733deb56"
+    },
+    "android/guest/client_startup_diagnostic.py": {
+      "bytes": 94729,
+      "sha256": "a79f50e8c61b2c200d5e3689fd8aa8a7461bf75da9b53d53d3dc2d2145fa59e3"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasGameRuntime.java": {
+      "bytes": 38469,
+      "sha256": "c70b840b9cb557f706392c88d22447210ed926e059f5f7b72e830312ed1f577c"
+    },
+    "tools/android/build_proot.py": {
+      "bytes": 15222,
+      "sha256": "de1f5dd127fc143cdbd8b253fb62f421541560857cb0a9868794470c42924491"
+    },
+    "android/runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    }
+  },
+  "controlled_harness_dependencies": {
+    "tools/test_native_client_metadata_census_source.py": {
+      "bytes": 27487,
+      "sha256": "0e44e25da7fa40a6542a0dad269378aee87d245c44b56284a5210c065c245d53"
+    },
+    "tools/prepare_native_client_metadata_census_source.py": {
+      "bytes": 17040,
+      "sha256": "d4b657f15863530649a2a25e608b7c3b72a4e3405d5c9d928811483de76e7768"
+    },
+    "tools/map_startup_namespace_certificate.py": {
+      "bytes": 7506,
+      "sha256": "de2bd2f9e02aaae71aec9a9ab244cad22315be4b798e968c257ecc42baa725e7"
+    },
+    "tools/native_client_census_observed_bridge.py": {
+      "bytes": 23951,
+      "sha256": "234d06ae1674ca55c87e881a590ad8d0b6416508fc827a4f217367c086908218"
+    },
+    "database/client-metadata-census/overlay/coh_folder_census_adapter.h": {
+      "bytes": 8488,
+      "sha256": "a9ed950a1ac235a6d8a62c8b0e90096466d9ec2324bec3aae737ecfc532dd652"
+    }
+  },
+  "primary_sources": {
+    "Wine_commit": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+    "Wine_kernelbase_file": {
+      "url": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/kernelbase/file.c",
+      "bytes": 152948,
+      "sha256": "a98d40ce91a3e394eb0e8db22da6223d1eb8d176f97c9d20fb2e5749bd34fe93"
+    },
+    "Wine_ntdll_unix_file": {
+      "url": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/ntdll/unix/file.c",
+      "bytes": 247376,
+      "sha256": "e89f082258b11ae0a9eec65ac970e718b67996e6cc124df1c102275411f0e3f9"
+    },
+    "PRoot_commit": "7266fb3e8516535682f5a9c8f3a7e70f6506eddb",
+    "PRoot_exact_git_blobs": {
+      "src/extension/link2symlink/link2symlink.c": "9c67b104d5f8d4a920c1cf9d204b2af352e21feb",
+      "src/extension/fake_id0/stat.c": "f4fb012ea29a1336998e7c2461cee1d597b4527d",
+      "src/extension/fake_id0/open.c": "066acf6a3a236c8c403ea2d7929b420ba1879506"
+    }
+  },
+  "historical_packet_ancestry": {
+    "run": 38505762421,
+    "source": "28c0bf73eb6e924af908fab973f4a32ba566e6bc",
+    "run_result": "failed_probe_size_bound",
+    "artifact": 11868411104,
+    "artifact_zip_sha256": "0c00a92858f6e5e067413cb9ad30a7af4edf72a3d88c7e76e188c17e6192545b",
+    "packet_bytes": 55574000,
+    "packet_sha256": "f9429ee6e2888eedcf44c69ebecca1751e8225b0fa18a2a28fd906df54fd2bca",
+    "inherited_partial_failed_result_not_promoted": true
+  },
+  "native_Game_Wine_FEX_PRRoot_or_SDK_executed": false,
+  "controlled_portable_C_compiled_and_executed": true,
+  "actual_live_helper_socket_or_current_metadata_server_executed": false,
+  "ordinary_AltStat_and_sharing_modified": false,
+  "root_or_main_or_player_data_modified": false,
+  "provider_authority": false,
+  "source_lease_authority": false,
+  "native_registration_allowed": false,
+  "publication_allowed": false,
+  "device_speedup_measured": false,
+  "inherited_controls": {
+    "previous_freeze_sha256": "9575df84084d3fab77e6fcc4dc2ab485ff892796d010dc3a7b4e7dd38f84bec8",
+    "qualification": {
+      "C_stock_constructor_branches": 5,
+      "C_decoder_refusals": 14,
+      "C_terminal_private_custody_controls": 4,
+      "POSIX_temporary_file_cases": 8,
+      "no_skips": true
+    },
+    "C_header_generator_and_C_results_unchanged": true,
+    "earlier_POSIX_results_and_source_and_report_text_retained_exactly": true
+  },
+  "fresh_controls": {
+    "POSIX_initial_listing_failure_and_exact_FD_cleanup_cases": 1,
+    "no_skips": true
+  },
+  "repair": "Close exact owned directory FD on initial listing/sorting failure; original error and unrelated FD remain intact"
+}

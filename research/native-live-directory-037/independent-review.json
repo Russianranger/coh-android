@@ -1,0 +1,203 @@
+{
+  "blockers": [],
+  "closed_scope": {
+    "Android_mapping_or_native_fields_order_batch_timing_qualified": false,
+    "actual_Game_Wine_FEX_PRRoot_or_SDK_executed": false,
+    "actual_live_helper_or_socket_executed": false,
+    "native_registration_allowed": false,
+    "native_timestamp_conversion_qualified": false,
+    "ordinary_AltStat_or_sharing_modified": false,
+    "physical_device_or_speedup_measured": false,
+    "provider_authority": false,
+    "publication_allowed": false,
+    "root_main_player_or_database_modified": false,
+    "source_lease_authority": false
+  },
+  "cursor_review": {
+    "fallback_only_before_any_returned_row": true,
+    "native_Name_projection_timestamp_conversion_not_qualified": true,
+    "no_partially_consumed_batch_replacement": true,
+    "private_frame_copy_and_full_validation_before_rows": true,
+    "stale_ordinal_token_length_padding_unsupported_frame_refusals": true,
+    "terminal_failure_and_no_post_row_restart": true
+  },
+  "format": 1,
+  "fresh_controlled_C_at_pre_repair_freeze": {
+    "C_header_generator_results_source_unchanged_after_model_repair": true,
+    "C_process_maxrss_kib": 77568,
+    "C_process_wall_seconds": 0.6142998770010308,
+    "actual_live_helper_RSS_claimed": false,
+    "batch_frames": 9315,
+    "constructor_branches": 5,
+    "cursor_bytes_on_controlled_64bit_ABI": 28040,
+    "decoder_refusals": 14,
+    "fixture_loads_entire_historical_packet_and_two_node_trees": true,
+    "freeze_sha256": "9575df84084d3fab77e6fcc4dc2ab485ff892796d010dc3a7b4e7dd38f84bec8",
+    "max_actual_packet_bytes": 22696,
+    "native_Game_SDK_or_Wine_build": false,
+    "rows": 167937,
+    "terminal_private_custody_controls": 4,
+    "wire_cap": 27944
+  },
+  "fresh_final_model_controls": {
+    "ResourceWarning": "error",
+    "all_passed_zero_skips": true,
+    "eight_case_seconds": 0.005761195003287867,
+    "initial_listing_EIO_and_exact_FD_EBADF_control": 1,
+    "one_case_seconds": 0.0007268039989867248,
+    "original_exception_and_unrelated_guard_FD_preserved": true,
+    "owned_kernel_cases": 8,
+    "prior_eight_owner_source_and_result_texts_byte_exact_retained": true,
+    "raw_result": {
+      "bytes": 3319,
+      "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-directory-bridge-independent-rerun/independent-current-model-nine-controls.json",
+      "sha256": "470b16e5e78ac3a2f1b400157398ab525f6a4c9dd0489de6ac5d50e2f6ddecc9"
+    }
+  },
+  "future_native_admission_obligations": [
+    "Complete name-count preflight must reject over8192 before returning any row.",
+    "Bind actual operation, helper PID/UID/start-time, consumer/thread/handle, provider and finalized Android guest-bind/alias view.",
+    "Keep metadata acquisition at the exact native buffer observation boundary; qualify mutation/access/sharing/xattr/filter/order/timestamp behavior.",
+    "Propagate terminal failure distinctly from normal EOF; no successful partially constructed world.",
+    "Borrowed row pointers are valid only until the next submit/reset; current fixture copies them immediately.",
+    "Define nonoverlapping external transport input or use safe overlapping copy semantics before native API integration.",
+    "Qualify IPC/backend process ownership, Android Wine/FEX/PRoot runtime and report integration separately."
+  ],
+  "historical_source_packet": {
+    "artifact": 11868411104,
+    "artifact_zip_sha256": "0c00a92858f6e5e067413cb9ad30a7af4edf72a3d88c7e76e188c17e6192545b",
+    "inherited_partial_failed_result_not_promoted": true,
+    "packet_bytes": 55574000,
+    "packet_sha256": "f9429ee6e2888eedcf44c69ebecca1751e8225b0fa18a2a28fd906df54fd2bca",
+    "run": 38505762421,
+    "run_result": "failed_probe_size_bound",
+    "source": "28c0bf73eb6e924af908fab973f4a32ba566e6bc"
+  },
+  "primary_Wine_actual_contents_independently_fetched_and_hash_matched": true,
+  "primary_Wine_sources": {
+    "PRoot_commit": "7266fb3e8516535682f5a9c8f3a7e70f6506eddb",
+    "PRoot_exact_git_blobs": {
+      "src/extension/fake_id0/open.c": "066acf6a3a236c8c403ea2d7929b420ba1879506",
+      "src/extension/fake_id0/stat.c": "f4fb012ea29a1336998e7c2461cee1d597b4527d",
+      "src/extension/link2symlink/link2symlink.c": "9c67b104d5f8d4a920c1cf9d204b2af352e21feb"
+    },
+    "Wine_commit": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+    "Wine_kernelbase_file": {
+      "bytes": 152948,
+      "sha256": "a98d40ce91a3e394eb0e8db22da6223d1eb8d176f97c9d20fb2e5749bd34fe93",
+      "url": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/kernelbase/file.c"
+    },
+    "Wine_ntdll_unix_file": {
+      "bytes": 247376,
+      "sha256": "e89f082258b11ae0a9eec65ac970e718b67996e6cc124df1c102275411f0e3f9",
+      "url": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/ntdll/unix/file.c"
+    }
+  },
+  "reviewed_at_UTC": "2026-10-14T05:43:33.503595+00:00",
+  "reviewer": "/root/client_harness_review",
+  "role": "independent_closed_live_directory_batch_research_review",
+  "root_and_harness_pin_counts": {
+    "all_verified": true,
+    "exact_PRoot_git_blobs": 3,
+    "exact_root_sources": 8,
+    "harness_dependencies": 5
+  },
+  "root_reference_source": "1d0f2373aa657f8ec3e8c3e5dcd4043643520cde",
+  "source_freeze": {
+    "bytes": 6770,
+    "sha256": "a322618628fa56657b756171e016a87f9a1f17d4959802ad6204f48f96e132b6"
+  },
+  "source_post_pins": {
+    "DESIGN.md": {
+      "bytes": 11201,
+      "sha256": "560a0ea1aa06b179c93fcc05583492f4ca2eae9ca35abc83560ec7db6e351227"
+    },
+    "coh_live_directory_batch.h": {
+      "bytes": 4316,
+      "sha256": "767077bfefa2f023fbb558a0757d95e0d2021b2b12da7c4c18d25c6591292fc6"
+    },
+    "controlled-live-batch-results.json": {
+      "bytes": 13237,
+      "sha256": "b63ffa0c58944fef3bd7c3f85ebf37f9998bc27bfc8e1b743d84f8c3d96a7387"
+    },
+    "live_batch_experiment.py": {
+      "bytes": 9419,
+      "sha256": "e2c9e7aa948b6b7ec875a97fdfef2d128fe5942cc14d28799540e1284aabeeb3"
+    },
+    "packet-geometry.json": {
+      "bytes": 3846,
+      "sha256": "2394658dd836d418724b101f79b18cacfa63f1d649d43e45b3049130758bcea2"
+    },
+    "portable-live-parity-results.json": {
+      "bytes": 1913,
+      "sha256": "c74cdde67b22bf5646ac8542e1e624164cc7f06e3180f561ca029d7496a416bb"
+    },
+    "portable-live-parity.c": {
+      "bytes": 25687,
+      "sha256": "32423a375f3bb08f43903d39948e490d8ce3fe8100b46193c7dc699d852effac"
+    },
+    "qualify_live_batch.py": {
+      "bytes": 12678,
+      "sha256": "80b18942a89c33bdd8909696a10efa635ed6c112b964f60c15b243a32f7b1502"
+    },
+    "src_extension_fake_id0_open.c": {
+      "bytes": 2884,
+      "sha256": "932e3230016153f7ace9bb5d7020e8903aab8455a46e6294c83f99266c8900be"
+    },
+    "src_extension_fake_id0_stat.c": {
+      "bytes": 5340,
+      "sha256": "a859f753aefc1467d34215344591c5b8f3aa739ab85b3b1fd68fe41a51370486"
+    },
+    "src_extension_link2symlink_link2symlink.c": {
+      "bytes": 37291,
+      "sha256": "e92e8878d400d0c2e27db82964e0061b7814d39f8a7b2d050cf092bf00339eb8"
+    }
+  },
+  "source_pre_pins": {
+    "DESIGN.md": {
+      "bytes": 11201,
+      "sha256": "560a0ea1aa06b179c93fcc05583492f4ca2eae9ca35abc83560ec7db6e351227"
+    },
+    "coh_live_directory_batch.h": {
+      "bytes": 4316,
+      "sha256": "767077bfefa2f023fbb558a0757d95e0d2021b2b12da7c4c18d25c6591292fc6"
+    },
+    "controlled-live-batch-results.json": {
+      "bytes": 13237,
+      "sha256": "b63ffa0c58944fef3bd7c3f85ebf37f9998bc27bfc8e1b743d84f8c3d96a7387"
+    },
+    "live_batch_experiment.py": {
+      "bytes": 9419,
+      "sha256": "e2c9e7aa948b6b7ec875a97fdfef2d128fe5942cc14d28799540e1284aabeeb3"
+    },
+    "packet-geometry.json": {
+      "bytes": 3846,
+      "sha256": "2394658dd836d418724b101f79b18cacfa63f1d649d43e45b3049130758bcea2"
+    },
+    "portable-live-parity-results.json": {
+      "bytes": 1913,
+      "sha256": "c74cdde67b22bf5646ac8542e1e624164cc7f06e3180f561ca029d7496a416bb"
+    },
+    "portable-live-parity.c": {
+      "bytes": 25687,
+      "sha256": "32423a375f3bb08f43903d39948e490d8ce3fe8100b46193c7dc699d852effac"
+    },
+    "qualify_live_batch.py": {
+      "bytes": 12678,
+      "sha256": "80b18942a89c33bdd8909696a10efa635ed6c112b964f60c15b243a32f7b1502"
+    },
+    "src_extension_fake_id0_open.c": {
+      "bytes": 2884,
+      "sha256": "932e3230016153f7ace9bb5d7020e8903aab8455a46e6294c83f99266c8900be"
+    },
+    "src_extension_fake_id0_stat.c": {
+      "bytes": 5340,
+      "sha256": "a859f753aefc1467d34215344591c5b8f3aa739ab85b3b1fd68fe41a51370486"
+    },
+    "src_extension_link2symlink_link2symlink.c": {
+      "bytes": 37291,
+      "sha256": "e92e8878d400d0c2e27db82964e0061b7814d39f8a7b2d050cf092bf00339eb8"
+    }
+  },
+  "verdict": "approved_as_closed_additive_controlled_research_only"
+}
