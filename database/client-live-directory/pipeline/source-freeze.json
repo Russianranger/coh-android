@@ -47,20 +47,20 @@
       "sha256": "6ef1abcbdd3e103755a2dcb9f5d5811925cd11867752500e9db1192126f0f42b"
     },
     "pipeline/README.md": {
-      "bytes": 4480,
-      "sha256": "7869c6d36dd9a506a61dee1249963179d80ba164a734b92f6b73c45f20d119d3"
+      "bytes": 5117,
+      "sha256": "7f5cc3a6b59539dee752800d06e56a62964978f331b14c42000a548bc47ca5b6"
     },
     "pipeline/native-client-live-directory-sdk.yml": {
       "bytes": 7973,
       "sha256": "16a7c158443d082f86d98d1a563bd7069f138f3b42265d4fdbffb85b7877ac09"
     },
     "pipeline/package_live_native.py": {
-      "bytes": 11924,
-      "sha256": "586f04e87295ea31cc1fbc2062dbe6d691ee17b121083dd8d34e5f5cfc7742d0"
+      "bytes": 15169,
+      "sha256": "af0c61c97124139f52abf5aa218fea1719125f14f49bdc46a338fe9ac178692f"
     },
     "pipeline/test_live_sdk_pipeline.py": {
-      "bytes": 7969,
-      "sha256": "4a6725952ce0dd020f5eac0b8f9ed7d287f0e956673a8b74d54d2584e3bad819"
+      "bytes": 9478,
+      "sha256": "e7122311b952f50787bd756d0a6cf10e016c017957f22263c3afb13d36d54456"
     },
     "probe/coh_live_bridge_probe.c": {
       "bytes": 10186,
@@ -120,14 +120,28 @@
     }
   },
   "format": 1,
-  "fresh_pipeline_controls": 5,
-  "fresh_portable_controls": 72,
+  "fresh_pipeline_controls": 6,
+  "fresh_portable_controls": 73,
   "fresh_probe_source_and_failure_controls": 23,
   "inherited_pre_alias_native_freeze_sha256": "186bf28007ce882ca1e545bb674bd14021deabf168730a6835b8c5e475ecc829",
+  "initial_actual_run": {
+    "Windows_job": 115774469519,
+    "Windows_result": "failed_before_any_compiler",
+    "artifact_bytes": 2066,
+    "artifact_sha256": "5a64071cd5a6efafb16fccab347e717457d3cc27782cfcd685e3a33b4fb41972",
+    "diagnostic_artifact": 11882216856,
+    "log_bytes": 31909,
+    "log_sha256": "98ac39781dc29727b3e074c2884d68b4bcfd17ec8f1832b7e34b5127a63cb696",
+    "portable_job": 115774186344,
+    "portable_result": "passed",
+    "portable_tests": 72,
+    "run": 38540628333,
+    "source": "b4a9b46be4eaa5ac2cc772b9c525f0c7a837ce4d"
+  },
   "native_Game_executed": false,
   "native_SDK_executed": false,
   "native_registration_allowed": false,
-  "prior_sdk_source_freeze_sha256": "3e4f5ac58f32469e325b48e718390884b5ff7a2ba5fb6e50ad93cfec3142c3dd",
+  "prior_sdk_source_freeze_sha256": "1e5fcce5208a81d56afb51412a0abbe4d8f36e295bf1e546d7e48a48355c8b3c",
   "publication_allowed": false,
   "repository_source_target": "database/client-live-directory",
   "reviewed_alias_native_freeze_sha256": "f6a9ec9e74be0f2556efbc8518a3c559a5daa02719070aced6c9c99b2841ce46",
@@ -139,7 +153,8 @@
     "pipeline guards in actual exact72 CI inventory with explicit PyYAML6.0.2",
     "SDK failed/timeout evidence plus held PID/console/raw packet/owned cleanup binding",
     "absolute workflow output and trailing separator input namespace refusal",
-    "current probe C/parser/qualifier source pins"
+    "current probe C/parser/qualifier source pins",
+    "clean retained-checkout imports and preserved local audited .36 donor authenticator; no research-only dependency"
   ],
   "transport_freeze_sha256": "c4eb42de142436055f28b0f132dbe94a02bc11c04f418d326b4ca15cd0004db7",
   "workflow_target": ".github/workflows/android-native-client-live-directory-sdk.yml"

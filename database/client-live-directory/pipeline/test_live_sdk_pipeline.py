@@ -3,6 +3,8 @@ import copy
 import struct
 from pathlib import Path
 import sys
+import os
+import subprocess
 import tempfile
 import unittest
 import yaml
@@ -68,13 +70,37 @@ class PipelineSource(unittest.TestCase):
         text=(ROOT/'pipeline/package_live_native.py').read_text()
         self.assertIn('live.validate_staged_source',text)
         self.assertIn('retained.validate_cmake_cache',text)
-        self.assertIn("game_record['imports']==donor['native_game']['imports']",text)
+        self.assertIn("game_record['imports']==inherited['native_game']['imports']",text)
         self.assertIn("'native_Game_executed':False",text)
         self.assertIn("'Android_runtime_executed':False",text)
         self.assertIn("'native_registration_allowed':False",text)
         self.assertNotIn('native_Game_executed\':True',text)
         self.assertIn("pin(OVERLAY/'native/coh_live_directory.cmake')",text)
         self.assertIn("'test_live_sdk_pipeline'",text)
+
+    def test_clean_retained_repository_imports_without_research_capture_helper(self):
+        repository=Path(os.environ['COH_LIVE_REPOSITORY']).resolve()
+        tools=repository/'tools'
+        # Admit only the committed reference/retained helper roots, deliberately
+        # refusing every research-only package in a fresh process import graph.
+        program='''import importlib.abc,sys,pathlib
+class NoResearch(importlib.abc.MetaPathFinder):
+    def find_spec(self,fullname,path=None,target=None):
+        if fullname.startswith(('package_native_client_metadata_capture','prepare_native_client_metadata_census','native_client_census')):
+            raise ImportError('Research-only helper refused: '+fullname)
+sys.meta_path.insert(0,NoResearch())
+sys.path.insert(0,sys.argv[1])
+import package_live_native as p
+retained,file_record,dependency=p.imports(sys.argv[2])
+assert retained.ROOT==pathlib.Path(sys.argv[2]).resolve()
+assert callable(file_record) and callable(dependency)
+assert not any(n.startswith('package_native_client_metadata_capture') for n in sys.modules)
+print('Clean retained import closure passed')
+'''
+        result=subprocess.run([sys.executable,'-W','error::ResourceWarning','-c',program,str(ROOT/'pipeline'),str(repository)],
+                              capture_output=True,text=True,timeout=30)
+        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+        self.assertIn('Clean retained import closure passed',result.stdout)
 
     def test_typed_sdk_receipt_binds_actual_probe_source_console_pid_cleanup_and_membership(self):
         with tempfile.TemporaryDirectory() as temporary:

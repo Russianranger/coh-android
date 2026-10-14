@@ -8,6 +8,9 @@ import shutil
 import sys
 import unittest
 import os
+import io
+import tempfile
+import zipfile
 
 OVERLAY=Path(__file__).resolve().parent.parent
 sys.path[:0]=[str(OVERLAY/'native'),str(OVERLAY/'probe'),str(OVERLAY/'transport'),str(OVERLAY/'pipeline')]
@@ -24,12 +27,17 @@ MEMBERS=('CityOfHeroes.exe',PROBE,CONTROL,'windows-controls.json',live.RECEIPT,
 CONTROL_MODULES=('test_live_native_policy','test_live_native_authorization','test_live_native_adapter','test_live_native_source',
                  'test_live_bridge_probe_parser','test_live_bridge_probe_native','test_live_bridge_probe_qualification',
                  'test_coh_live_transport','test_live_sdk_pipeline')
-CONTROL_COUNT=72
+CONTROL_COUNT=73
+APK={'bytes':42076692,'sha256':'14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f'}
+DONOR_SOURCE='3570430cefdb15d9b239563e85cccf4d8fe6f32e'
+GAME_SHA='5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b'
+GAME_BYTES=9499648
 
 
 def pin(path):
     path=Path(path)
-    live.require(path.is_file() and not path.is_symlink() and 0<path.stat().st_size<=64*1024**2,'Regular bounded producer input required')
+    live.require(path.is_file() and not any(p.is_symlink() for p in (path,*path.parents)) and
+                 0<path.stat().st_size<=64*1024**2,'Regular bounded producer input required')
     data=path.read_bytes()
     return {'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}
 
@@ -37,11 +45,52 @@ def pin(path):
 def imports(repository):
     root=Path(repository).resolve()
     sys.path[:0]=[str(root/'tools'),str(root/'tools/android/interactive')]
-    import package_native_client_metadata_capture as inherited
     import package_client_render_queue_native as retained
-    from package_reference_runtime import file_record
+    from package_reference_runtime import file_record,dependency_report
     live.require(retained.ROOT==root,'Foreign native recipe refused')
-    return inherited,retained,file_record
+    return retained,file_record,dependency_report
+
+
+def donor(apk,retained,file_record,dependency_report):
+    """Preserve the public .36 byte/member/import authenticator locally.
+
+    The historical capture helper is research-only and is not a dependency of
+    this clean retained-Game checkout. No donor archive or receipt is rewritten.
+    """
+    def exact(actual,expected,message):
+        live.require(retained.typed_equal(actual,expected),message)
+    exact(pin(apk),APK,'Exact independently audited public .36 APK required')
+    with zipfile.ZipFile(apk) as archive:
+        live.require(len(archive.namelist())==len(set(archive.namelist())),'Duplicate donor APK member')
+        raw=archive.read('assets/runtime/client-runtime.zip')
+        outer=archive.read('assets/runtime/client-manifest.json')
+    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+        names=archive.namelist()
+        live.require(len(names)==len(set(names))==len({n.casefold() for n in names}) and
+                     all(re.fullmatch(r'[A-Za-z0-9_.-]+',n) for n in names),'Duplicate/aliased retained native member')
+        live.require('client-package.json' in names,'Retained native package receipt missing')
+        raw_manifest=archive.read('client-package.json')
+        manifest=json.loads(raw_manifest)
+        records=manifest.get('files',{})
+        live.require(type(records) is dict and set(names)==set(records)|{'client-package.json'} and
+                     manifest.get('server_executables_included') is False,'Retained native member closure differs')
+        live.require(records['CityOfHeroes.exe']['sha256']==GAME_SHA and records['CityOfHeroes.exe']['size']==GAME_BYTES,
+                     'Retained public Game identity differs')
+        actual={}
+        with tempfile.TemporaryDirectory(prefix='coh-live-donor-') as temporary:
+            for name in sorted(records):
+                data=archive.read(name)
+                live.require(0<len(data)<=64*1024**2,'Unbounded retained donor payload')
+                path=Path(temporary)/name;path.write_bytes(data)
+                actual[name]=file_record(path)
+        exact(actual,records,'Retained native DLL/Game bytes or imports differ from original receipt')
+        exact(dependency_report(actual),manifest['dependency_report'],'Retained native dependency authority differs')
+        return {'donor_apk':dict(APK),'donor_source':DONOR_SOURCE,'native_game':actual['CityOfHeroes.exe'],
+                'client_runtime_zip':{'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()},
+                'client_manifest':{'bytes':len(outer),'sha256':hashlib.sha256(outer).hexdigest()},
+                'client_package':{'bytes':len(raw_manifest),'sha256':hashlib.sha256(raw_manifest).hexdigest()},
+                'native_member_closure':actual,'client_runtime_manifest':manifest,
+                'native_donor_rebuilt':False,'original_archive_or_receipts_rewritten':False}
 
 
 def controls(repository,commit,output):
@@ -61,7 +110,7 @@ def controls(repository,commit,output):
 
 
 def stage(repository,output):
-    _,retained,_=imports(repository)
+    retained,_,_=imports(repository)
     from types import SimpleNamespace
     retained.stage(SimpleNamespace(output=Path(output)))
     return live.stage(output,repository,OVERLAY)
@@ -106,7 +155,7 @@ def validate_probe_controls(controls,binary,directory,commit):
 
 def package(args):
     root=Path(args.repository).resolve()
-    inherited,retained,file_record=imports(root)
+    retained,file_record,dependency_report=imports(root)
     live.require(re.fullmatch('[0-9a-f]{40}',args.commit) and re.fullmatch(
         r'https://github\.com/Russianranger/coh-android/actions/runs/[1-9][0-9]*',args.run_url),'Exact producer identity required')
     out=Path(args.output)
@@ -114,12 +163,12 @@ def package(args):
     source=live.validate_staged_source(args.source,root,OVERLAY)
     live.require(source['source']['cmake_injection_sha256']==pin(OVERLAY/'native/coh_live_directory.cmake')['sha256'],
                  'Exact private CMake source guard differs')
-    donor=inherited.donor(args.donor)
+    inherited=donor(args.donor,retained,file_record,dependency_report)
     game=Path(args.game)
     game_record=file_record(game)
-    live.require(game.parent.name=='OptDebug' and game_record['pe_machine']==332 and game_record['sha256']!=donor['native_game']['sha256'],
+    live.require(game.parent.name=='OptDebug' and game_record['pe_machine']==332 and game_record['sha256']!=inherited['native_game']['sha256'],
                  'Fresh actual Win32 OptDebug Game required')
-    live.require(game_record['imports']==donor['native_game']['imports'] and game_record['delay_imports']==donor['native_game']['delay_imports'],
+    live.require(game_record['imports']==inherited['native_game']['imports'] and game_record['delay_imports']==inherited['native_game']['delay_imports'],
                  'Retained actual Game native DLL closure differs')
     live.require(b'COH_LIVE_DIRECTORY event=' in game.read_bytes(),'Fresh Game consumer marker missing')
     observer=Path(args.probe)
@@ -153,7 +202,7 @@ def package(args):
     for original,name in copied:
         pin(original);shutil.copyfile(original,out/name)
     value={'format':1,'role':'closed_fresh_native_Game_live_directory_SDK_producer','repository_commit':args.commit,'run_url':args.run_url,
-           'source':source,'retained_public_036':donor,'files':{'CityOfHeroes.exe':game_record,PROBE:observer_record},
+           'source':source,'retained_public_036':inherited,'files':{'CityOfHeroes.exe':game_record,PROBE:observer_record},
            'cache':cache_receipt,'portable_controls':controls,'fresh_Windows_probe_controls':sdk,
            'probe_source':probe_qualifier.source_pins(),'private_cmake_source':pin(OVERLAY/'native/coh_live_directory.cmake'),
            'members':{name:pin(out/name) for name in MEMBERS},
