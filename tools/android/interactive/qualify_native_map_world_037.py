@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import ast
 import ctypes
+import copy
 from ctypes import wintypes
 import hashlib
 import json
@@ -23,6 +24,7 @@ import subprocess
 import sys
 import tarfile
 import time
+import zipfile
 
 ROOT=Path(__file__).resolve().parents[3]
 sys.path[:0]=[str(ROOT/'tools'),str(ROOT/'android/guest'),str(Path(__file__).resolve().parent)]
@@ -37,6 +39,7 @@ import package_native_map_prefetch as candidate_package
 import prepare_native_startup_reuse_fixture as generation
 import qualify_native_startup_profile as profiles
 import server_message_cache_format as message_format
+import server_animation_package as animation_package
 
 require=minimal.require
 REPORT='native-map-world-037-qualification.json'
@@ -54,6 +57,12 @@ MEMORY_SAMPLES=128
 MAX_WORLD_CACHES=4096
 NEW_WORLD_GLOBALS={'data/bin/animlists.bin','data/bin/behavioralias.bin',
                    'data/server/bin/ai_config.bin','data/server/bin/plaquemsg-en.bin'}
+INHERITED_STOCK={'source':'04b7a623ef21d7ad48774a58b3122c69ae07f46b','run_id':38494199595,
+    'native_job_id':115627188579,'artifact_id':11864550716,
+    'artifact':{'bytes':3039985,'sha256':'962d7517ca5d91dd00b797f5b428bdf5fce1975c6c4afc392f7dc9e0a24b06fc'},
+    'qualifier':{'bytes':59963,'sha256':'ed7e2cb2da75664027dcd6be1b7239e1fabe463eec1a3f951835eda7badd9877'},
+    'generation_archive':{'bytes':2409058,'sha256':'b15026b0ee92354069159303ec73e6cbbe6bc07c44ad53bf2798cfcd8488d4d8'}}
+ANIMATION_PIG={'bytes':97084456,'sha256':'465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b'}
 
 
 def generated_cache_name(name):
@@ -361,6 +370,98 @@ class Memory:
                 'Linux_RSS_PSS_measured':False,'Thor_measured':False}
 
 
+def native_namespace(runtime):
+    """Close the actual stock file/FolderCache namespace before proving absence."""
+    runtime=Path(runtime);index={};pigs=[]
+    def enumeration_error(error):
+        raise ValueError('Native namespace enumeration failed; absence cannot be proven')
+    for current,dirs,files in os.walk(runtime,followlinks=False,onerror=enumeration_error):
+        for name in dirs+files:
+            path=Path(current)/name;info=path.lstat()
+            require(not path.is_symlink() and not getattr(info,'st_file_attributes',0)&0x400,
+                    'Native namespace contains a link/reparse point')
+        for name in files:
+            path=Path(current)/name;key=path.relative_to(runtime).as_posix().casefold()
+            require(key not in index and len(index)<inputs.MAX_FILES+MAX_WORLD_CACHES+256,
+                    'Native namespace is ambiguous/oversized')
+            index[key]=path
+            if path.suffix.casefold() in ('.pigg','.hogg'):pigs.append(key)
+    require(not any(key=='gamedatadir.txt' for key in index),'Native external directory control refused')
+    require(not (runtime/'localdata').exists() and not (runtime/'serverdata').exists(),
+            'Native local/server data overlay refused')
+    # The unchanged file.c fallback searches CWD piggs/data/CWD. Autodetection
+    # additionally requires an ancestor with both data and tools; no such
+    # unaccounted provider or drive-level gamedatadir may influence this lane.
+    ancestors=[]
+    for parent in (runtime,*runtime.parents):
+        require(not ((parent/'data').is_dir() and (parent/'tools').is_dir()),
+                'Native automatic external data provider refused')
+        ancestors.append(str(parent))
+    drive=Path(runtime.anchor)
+    require(not os.path.lexists(drive/'gamedatadir.txt'),'Native drive-level directory control refused')
+    require(pigs==['piggs/server-animations.pigg'] and pin(index[pigs[0]])==ANIMATION_PIG,
+            'Native Pig namespace is not the exact animation-only provider')
+    with index[pigs[0]].open('rb') as stream:
+        raw=stream.read(animation_package.HEADER.size)
+        require(animation_package.HEADER.unpack(raw)==(0x123,2,2,16,48,5878),
+                'Exact native animation Pig header differs')
+        table=stream.read(animation_package.ENTRY.size*5878)
+        require(len(table)==animation_package.ENTRY.size*5878,'Animation Pig table truncated')
+        names=animation_package.pool(stream,0x6789,maximum=animation_package.MAX_METADATA)
+        require(len(names)==5878 and len(set(names))==5878,'Animation Pig namespace membership differs')
+        decoded=[]
+        for raw in names:
+            require(raw.endswith(b'\0') and raw.count(b'\0')==1,'Animation Pig member terminator differs')
+            name=raw[:-1].decode('ascii');require(animation_package.safe_name(name),
+                'Unknown non-animation member in native Pig namespace');decoded.append(name)
+    return index,{'ordinary_search_roots':['./piggs','./data','./'],
+        'original_and_current_casefolded_paths_checked':True,'linked_or_reparse_providers_refused':True,
+        'external_directory_controls_refused':True,'automatic_data_tools_ancestor_pairs_absent':True,
+        'checked_ancestors':ancestors,'animation_Pig':ANIMATION_PIG,'complete_Pig_member_count':5878,
+        'complete_Pig_member_names_sha256':digest(decoded),'Pig_members_exclusively_original_anim_paths':True,
+        'animation_Pig_member_recipe_source':pin(animation_package.__file__),
+        'native_recipe_source':pin(ROOT/'upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c')}
+
+
+def bind_world_dependencies(runtime,proof,original_sources):
+    """Preserve native zero-date absence sentinels in their exact producer scope."""
+    runtime=Path(runtime);positive={};negative={};original={n.casefold():r for n,r in original_sources.items()}
+    require(len(original)==len(original_sources),'Original provider namespace is ambiguous')
+    for cache,value in proof.items():
+        positive[cache]=copy.deepcopy(value);kept=[]
+        for dependency in value['after']['dependencies']:
+            name=dependency['path'].casefold().removeprefix('data/')
+            if dependency['timestamp']!=0:kept.append(dependency);continue
+            expected=cache.removeprefix('data/geobin/').removesuffix('.bin').removesuffix('.bounds').casefold()+'.txt'
+            require(cache.startswith('data/geobin/object_library/') and name==expected,
+                    'Native absent dependency escapes fixed same-stem geometry recipe')
+            require(all(prefix+name not in original for prefix in ('data/','','piggs/')),
+                    'Zero-date dependency is present in original provider')
+            negative.setdefault(cache,[]).append({'path':name,'native_dependency_timestamp':0,
+                'original_source_absent':True,'kind':'native_same_stem_missing_text_sentinel'})
+        positive[cache]['after']['dependencies']=kept
+    result=generation.bind_dependency_sources(runtime,positive);namespace_proof=None
+    if negative:
+        namespace,namespace_proof=native_namespace(runtime)
+        for cache,rows in negative.items():
+            for row in rows:
+                name=row['path']
+                require(all(prefix+name not in namespace and not os.path.lexists(runtime/(prefix+name))
+                            for prefix in ('data/','','piggs/')),
+                        'Native absent dependency appeared in current namespace')
+                row['current_native_namespace_source_absent']=True
+            result[cache].extend(rows)
+    return result,{'rows':sum(len(v) for v in negative.values()),
+        'unique_paths':len({r['path'] for rows in negative.values() for r in rows}),
+        'all_same_stem_object_library_text_with_native_zero_date':True,'namespace':namespace_proof,
+        'original_complete_provider_membership_count':len(original),
+        'original_complete_provider_membership_sha256':digest(sorted(original)),
+        'native_sentinel_recipe':{'FileListInsert':pin(ROOT/'upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c'),
+            'ParserIsPersistNewer':pin(ROOT/'upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c'),
+            'groupWriteGroupAndRootnameToBin':pin(ROOT/'upstream/ouroboros/Common/group/groupfileload.c'),
+            'objectLibraryWriteBoundsFile':pin(ROOT/'upstream/ouroboros/Common/group/groupfilelib.c')}}
+
+
 def validate_generation_changes(runtime,before,after,raw_before,original_sources=None):
     delta=cache_delta(before,after)
     require(not delta['removed'] and all(generated_cache_name(n) for n in delta['added']),
@@ -382,12 +483,13 @@ def validate_generation_changes(runtime,before,after,raw_before,original_sources
                      'kind':'GroupBounds_Parse6' if name.endswith('.bounds') else 'Parse6',
                      'native_payload_sha256':hashlib.sha256(raw[-decoded['body_bytes']:]).hexdigest(),
                      'original_payload_comparison_available':False}
-    dependencies=generation.bind_dependency_sources(runtime,proof)
     if delta['added']:require(isinstance(original_sources,dict),'New world caches require original immutable source authority')
+    dependencies,negative=bind_world_dependencies(runtime,proof,original_sources or {})
     source_index={n.removeprefix('data/').casefold():r for n,r in (original_sources or {}).items() if n.startswith('data/')}
     for name,rows in dependencies.items():
         for row in rows:
             if original_sources is None:continue
+            if row.get('kind')=='native_same_stem_missing_text_sentinel':continue
             original=source_index.get(row['path'].casefold())
             require(original is not None and row['actual_source']=={k:original[k] for k in ('bytes','sha256')}
                     and row['actual_source_mtime_ns']//100==original['mtime_ns']//100,
@@ -407,6 +509,7 @@ def validate_generation_changes(runtime,before,after,raw_before,original_sources
         value['source_inventory_sha256']=digest(sources)
         value['actual_native_cache_mtime_ns']=cache_mtime
     return {'delta':delta,'Parse6_dependency_envelope_changes':proof,'actual_dependency_sources':dependencies,
+            'native_negative_source_dependencies':negative,
             'new_MessageStore_outputs':messages,
             'existing_decoded_payload_and_schema_unchanged':True,
             'new_payloads_require_exact_stock_native_world_producer':True,
@@ -422,6 +525,108 @@ def validate_generation_changes(runtime,before,after,raw_before,original_sources
                     'MapServer/src/plaque.c','libs/UtilitiesLib/src/language/MessageStore.c',
                     'libs/UtilitiesLib/src/language/MultiMessageStore.c')}},
             'Android_cache_authority_created':False}
+
+
+def load_inherited_stock(path,output,prepared_manifest):
+    """Authenticate the original failed run and retain its one real ready case."""
+    require(pin(path)==INHERITED_STOCK['artifact'],'Exact executed stock evidence ZIP required')
+    destination=Path(output)/'inherited-stock-04b';require(not destination.exists(),'Fresh inherited evidence output required')
+    destination.mkdir();names=set()
+    with zipfile.ZipFile(path) as archive:
+        require(0<len(archive.infolist())<=64 and sum(m.file_size for m in archive.infolist())<=32*1024**2,
+                'Inherited stock evidence archive exceeds bound')
+        for member in archive.infolist():
+            inputs.safe_windows_name(member.filename)
+            require(not member.is_dir() and not member.flag_bits&1 and member.filename.casefold() not in names
+                    and stat.S_IFMT(member.external_attr>>16) in (0,stat.S_IFREG),'Unsafe inherited evidence member')
+            names.add(member.filename.casefold());target=destination/member.filename;target.parent.mkdir(parents=True,exist_ok=True)
+            with archive.open(member) as source,target.open('xb') as stream:shutil.copyfileobj(source,stream,1024**2)
+    old=json.loads((destination/REPORT).read_bytes());facts=old['cases'][0]
+    require(old['repository_commit']==INHERITED_STOCK['source'] and old['status']=='failed' and len(old['cases'])==1
+            and old['failures']==['ValueError: Native dependency source missing/linked: object_library/v_cov/destructible_objects/v_destructible_place_holders/v_destructible_place_holders.txt']
+            and old['owned_cleanup_verified'] is True and old['player_profile_opened'] is False
+            and old['prepared_manifest']==prepared_manifest and old['public_APK']==inputs.APK
+            and old['production_source']==inputs.SOURCE and old['behavioral_collision_proven'] is False
+            and old['physical_device_executed'] is False and old['shipping_allowed'] is False,
+            'Inherited stock source/result boundary differs')
+    require(old['source_pins']['tools/android/interactive/qualify_native_map_world_037.py']==INHERITED_STOCK['qualifier']
+            and old['source_pins']['tools/android/interactive/prepare_native_map_world_inputs_037.py']==pin(inputs.__file__),
+            'Inherited stock qualifier/unchanged preparation source differs')
+    require(facts==json.loads((destination/'1-server_only-generation/phase.json').read_bytes())
+            and (facts['map_id'],facts['fx_variant'],facts['phase'],facts['role'])==(1,'server_only','generation','stock')
+            and facts['synthetic_row_unchanged'] is True and facts['owned_cleanup_verified'] is True
+            and not any(facts['original_source_delta'].values()) and not facts['cache_delta']['removed'],
+            'Inherited stock case/immutable original inputs differ')
+    for key in ('Map_progress_before_status','Map_progress_after_status'):
+        value=facts[key];decoded=map_progress(bytes.fromhex(value['raw_record_hex']),value['windows_pid'])
+        require(decoded==value and value['tick_completed']>0,'Inherited held-PID progress witness differs')
+    first,later=(facts[k] for k in ('Map_progress_before_status','Map_progress_after_status'))
+    require(first['windows_pid']==later['windows_pid'] and later['tick_completed']>first['tick_completed']
+            and later['sequence']>first['sequence'] and facts['native_Db_status']['map_id']==1
+            and facts['native_Db_status']['port']==7001 and facts['native_Db_status']['address']=='127.0.0.1'
+            and facts['world_markers']['PhysX_objects']==2311 and facts['world_markers']['ordered_world_phases'] is True,
+            'Inherited stock independent readiness/world proof differs')
+    first_db,later_db=(facts[k] for k in ('Db_progress_before_world','Db_progress_after_status'))
+    require(first_db['windows_pid']==later_db['windows_pid'] and later_db['loop_count']>first_db['loop_count']
+            and later_db['sequence']>first_db['sequence'] and old['retained_native_build']==retained.provenance()
+            and facts['actual_native']==facts['provider_before']['native_components']['MapServer.exe'],
+            'Inherited held Db/native build authority differs')
+    profile=json.loads((destination/'failed-native-observations.json').read_bytes())['synthetic_profile']
+    require(profile['unchanged'] is True and profile['scope']=='new_disposable_fixture_only'
+            and profile['original_canonical_sha256']==profile['current_canonical_sha256'],
+            'Inherited disposable SQL identity/location witness differs')
+    archive=destination/'1-server_only-generation/stock-native-generated-cache-outputs.tar.gz'
+    retention=json.loads(archive.with_name('stock-native-generated-cache-outputs.json').read_bytes())
+    require(pin(archive)==INHERITED_STOCK['generation_archive'] and retention==facts['native_generated_output_retention']
+            and retention['archive']==INHERITED_STOCK['generation_archive'], 'Inherited actual stock cache bytes differ')
+    authority={**INHERITED_STOCK,'original_overall_result':'failed','original_stock_world_readiness_genuine':True,
+        'stock_native_readiness_reexecuted':False,'stock_native_execution_inherited':True,
+        'negative_dependency_validation_fresh_in_this_qualifier':False,'negative_dependency_validation_status':'pending',
+        'original_report':pin(destination/REPORT),
+        'prepared_manifest':prepared_manifest,'disposable_SQL_fixture':profile}
+    return {'facts':facts,'archive':archive,'retention':retention,'authority':authority}
+
+
+def recover_stock_cache(runtime,before,before_dates,provider_before,raw_before,original_sources,inherited,case_output):
+    """Restore only authenticated native cache outputs, never operational files."""
+    original=inherited['facts'];members=inherited['retention']['members']
+    require(before==original['cache_before'] and before_dates==original['cache_dates_before']
+            and provider_before==original['provider_before'],'Inherited stock provider/native input authority differs')
+    expected=set(original['cache_delta']['added'])|set(original['cache_delta']['changed'])
+    require(set(members)==expected and len(members)<=MAX_WORLD_CACHES,'Inherited stock cache membership differs')
+    seen=set()
+    with tarfile.open(inherited['archive'],'r:gz') as archive:
+        for member in archive:
+            require(member.name in members and member.name not in seen and member.isfile()
+                    and not member.issym() and not member.islnk()
+                    and (member.name in before or generated_cache_name(member.name)),
+                    'Inherited stock cache archive has an unsafe/unowned member')
+            record=members[member.name];require(member.size==record['bytes'],'Inherited cache size differs')
+            seen.add(member.name);path=native_path(runtime,member.name);path.parent.mkdir(parents=True,exist_ok=True)
+            require(not path.is_symlink() and (not path.exists() or path.is_file()),'Inherited cache destination is linked/nonregular')
+            if path.exists():require(member.name in before and pin(path)==before[member.name],'Inherited cache would overwrite changed input')
+            with archive.extractfile(member) as stream,path.open('wb') as target:shutil.copyfileobj(stream,target,1024**2)
+            require(pin(path)=={k:record[k] for k in ('bytes','sha256')},'Inherited actual cache digest differs')
+            os.utime(path,ns=(record['mtime_ns'],record['mtime_ns']))
+    after=cache_snapshot(runtime);dates=cache_dates(runtime,after)
+    require(seen==expected and after==original['cache_after'] and dates==original['cache_dates_after'],
+            'Inherited complete stock cache bytes/dates differ')
+    provider_after=provider_snapshot(runtime,set(before)|set(after))
+    require(provider_after==provider_before==original['provider_after'],'Inherited cache changed original provider/native components')
+    proof=validate_generation_changes(runtime,before,after,raw_before,original_sources)
+    require(proof['native_negative_source_dependencies']['rows']==136
+            and proof['native_negative_source_dependencies']['unique_paths']==68,
+            'Inherited actual native negative dependency closure differs')
+    inherited['authority'].update(negative_dependency_validation_fresh_in_this_qualifier=True,
+        negative_dependency_validation_status='passed')
+    facts=copy.deepcopy(original);facts['inherited_native_execution']=inherited['authority'];facts['native_generation']=proof
+    proof['actual_stock_producer']={'native':facts['actual_native'],'retained_native_build':retained.provenance(),
+        'held_windows_pid':facts['Map_progress_after_status']['windows_pid'],'map_id':1,
+        'native_Db_status':facts['native_Db_status'],'post_query_completed_ticks':facts['Map_progress_after_status']['tick_completed'],
+        'world_initialization_markers':facts['world_markers'],'original_source_delta':facts['original_source_delta'],
+        'provider_native_components':provider_after['native_components'],'inherited_execution':inherited['authority']}
+    write(Path(case_output)/'phase.json',facts);write(Path(case_output)/'generation.json',proof)
+    return facts
 
 
 def phase_plan(baseline,candidate):
@@ -609,6 +814,7 @@ def run(args):
         'SQL_scope':'new_disposable_fixture_only','behavioral_collision_proven':False,'physical_device_executed':False,
         'shipping_allowed':False,'freshness_bypass_enabled':False,'source_hashing_warms_host_filesystem_cache':True,
         'owned_cleanup_verified':False,'generated_cache_authorizes_Android_reuse':False}
+    inherited=None
     cluster=None;children=[];observers=[];secrets=[];current=None;current_before=None;log_contexts=[];case_probe={}
     OwnedProcess=owned_process_class(network.Process)
     def start(command,runtime,logs,label,env):
@@ -618,6 +824,9 @@ def run(args):
         for observer in reversed(case_observers):observer.stop()
         require(all(p.child.poll() is not None for p in case_children),'Owned native case cleanup failed')
     try:
+        if getattr(args,'inherited_stock_evidence',None) is not None:
+            inherited=load_inherited_stock(args.inherited_stock_evidence,output,report['prepared_manifest'])
+            report['inherited_stock_generation']=inherited['authority']
         largest=max(manifest['providers'][str(m)]['bytes'] for m in WORLDS)+inputs.FX_VARIANTS['full']['bytes']
         require(shutil.disk_usage(work).free>=2*largest+3*1024**3,
                 'Full world native fixture storage reserve unavailable')
@@ -665,6 +874,14 @@ def run(args):
                 current_before={'cache':before,'provider':provider_before,'native':pin(target)}
                 current_before['regular_provider_clone']=clone
                 write(case_output/'before-launch.json',current_before)
+                if inherited is not None and (map_id,variant,phase,role)==(1,'server_only','generation','stock'):
+                    original_sources={**manifest['providers'][str(map_id)]['files'],**source_before}
+                    facts=recover_stock_cache(current,before,before_dates,provider_before,raw_before,original_sources,inherited,case_output)
+                    report['cases'].append(facts);animation_identity=facts['actual_certified_animation_consumption']['latest_counters']
+                    animation_reference={k:v for k,v in animation_identity.items() if k not in ('hash_us','stock_us')}
+                    generated=current;shutil.rmtree(seed);shutil.rmtree(db)
+                    current=None;current_before=None
+                    continue
                 case_children=[];case_observers=[]
                 case_probe={'label':label,'map_id':map_id,'runtime':current,'logs':logs,'children':case_children,
                             'source_before':source_before}
@@ -686,7 +903,12 @@ def run(args):
                 network.wait_for(db_ready,[db_process],db,300,'owned retained minimal Db readiness')
                 case_probe['Db_ready_baseline']=first_dispatch
                 schema=minimal.schema_snapshot(cluster,manifest['schema'])
-                if schema_original is None:schema_original=schema;fixture=minimal.seed_fixture(cluster)
+                if schema_original is None:
+                    if inherited is not None:require(schema==inherited['facts']['schema_snapshot'],
+                        'Fresh disposable Db schema differs from inherited native stock consumer')
+                    schema_original=schema;fixture=minimal.seed_fixture(cluster)
+                    if inherited is not None:require(fixture['canonical_sha256']==inherited['authority']['disposable_SQL_fixture']['original_canonical_sha256'],
+                        'Fresh disposable fixture identity differs from inherited stock case')
                 require(schema==schema_original,'Native full-world initialization changed database schema/attributes')
                 progress=current/'world-progress.bin'
                 map_env=dict(env,COH_GAME_LOOPBACK_ONLY='1',COH_WINE_MAP_PROGRESS=str(progress))
@@ -770,7 +992,8 @@ def run(args):
                 require(provider_before==provider_after and pin(target)==current_before['native'],
                         'Native world changed exact provider/native component inputs')
                 if role=='stock':
-                    proof=validate_generation_changes(current,before,after,raw_before,source_before);facts['native_generation']=proof
+                    original_sources={**manifest['providers'][str(map_id)]['files'],**source_before}
+                    proof=validate_generation_changes(current,before,after,raw_before,original_sources);facts['native_generation']=proof
                     proof['actual_stock_producer']={'native':facts['actual_native'],
                         'retained_native_build':retained.provenance(),
                         'held_windows_pid':first['windows_pid'],'map_id':map_id,
@@ -796,7 +1019,8 @@ def run(args):
             shutil.rmtree(generated)
         require(len(report['cases'])==16,'Both worlds require separately generated full and SERVER-only FX native consumers')
         report.update(status='passed',actual_native_worlds_executed=[1,5],initialization_geometry_parity_verified=True,
-            actual_native_processes=16,baseline_and_candidate_pairs_per_world={'server_only':2,'full':1},
+            actual_native_processes=16-int(inherited is not None),inherited_native_world_processes=int(inherited is not None),
+            total_native_world_cases=16,baseline_and_candidate_pairs_per_world={'server_only':2,'full':1},
             actual_full_and_SERVER_only_FX_world_consumers_verified=True,FX_variants=inputs.FX_VARIANTS,
             memory_measured=True,synthetic_fixture_proof=fixture,schema_snapshot=schema_original)
     except Exception as error:
@@ -856,6 +1080,7 @@ def main():
     for n in ('inputs','baseline','candidate','bin','work','output'):p.add_argument('--'+n,type=Path,required=True)
     p.add_argument('--driver',required=True);p.add_argument('--repository-commit',required=True)
     p.add_argument('--timeout-seconds',type=int,default=900)
+    p.add_argument('--inherited-stock-evidence',type=Path)
     args=p.parse_args();run(args)
 
 

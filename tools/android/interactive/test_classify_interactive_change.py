@@ -1,6 +1,11 @@
 import importlib.util
+import contextlib
+import io
+import os
 from pathlib import Path
 import unittest
+import tempfile
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location('interactive_change_classifier',
     Path(__file__).with_name('classify_interactive_change.py'))
@@ -9,6 +14,53 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_exact_native_world_research_scope_uses_its_dedicated_lane(self):
+        ref=change.NATIVE_WORLD_RESEARCH_REF
+        for marker in sorted(change.NATIVE_WORLD_RESEARCH_MARKERS):
+            for names in ([marker],sorted(change.NATIVE_WORLD_RESEARCH_ALLOWED)):
+                self.assertFalse(change.runtime_required('push','a'*40,'b'*40,'a'*40,names,ref))
+        self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,
+            sorted(change.NATIVE_WORLD_RESEARCH_MARKERS)))
+    def test_native_world_route_refuses_foreign_player_native_Java_or_unsafe_paths(self):
+        names=sorted(change.NATIVE_WORLD_RESEARCH_MARKERS);ref=change.NATIVE_WORLD_RESEARCH_REF
+        for foreign in ('android/guest/character_zoning.py','profiles/THORHERO/character.sql',
+            'upstream/ouroboros/Common/group/groupnovodex.c','android/native/map.c',
+            'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java',
+            'tools/android/interactive/prepare_native_map_world_inputs_037.py',
+            'unreviewed.py','../'+names[0],'/'+names[0],names[0].upper(),names[0]+' '):
+            with self.subTest(foreign=foreign):
+                self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,names+[foreign],ref))
+        for files in ([],[names[0],names[0]],['tools/android/interactive/classify_interactive_change.py'],
+                ['tools/android/interactive/test_classify_interactive_change.py']):
+            self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,files,ref))
+    def test_native_world_route_refuses_wrong_branch_dispatch_merge_or_multicommit(self):
+        names=sorted(change.NATIVE_WORLD_RESEARCH_MARKERS);ref=change.NATIVE_WORLD_RESEARCH_REF
+        for branch in ('main','codex/character-persistence-continuation','refs/heads/'+ref,None):
+            self.assertFalse(change.native_world_research_owned('push','a'*40,'b'*40,'a'*40,names,branch))
+            self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,names,branch))
+        for event,before,head,parent in [('workflow_dispatch','a'*40,'b'*40,'a'*40),
+            ('pull_request','a'*40,'b'*40,'a'*40),('push','c'*40,'b'*40,'a'*40),
+            ('push','a'*40,'b'*40,'a'*40+'\n'+'c'*40),('push','0'*40,'b'*40,'0'*40),
+            ('push','a'*40,'0'*40,'a'*40),
+            ('push','invalid','b'*40,'invalid'),('push','a'*40,'a'*40,'a'*40)]:
+            with self.subTest(event=event,before=before,parent=parent):
+                self.assertTrue(change.runtime_required(event,before,head,parent,names,ref))
+    def test_native_world_ref_does_not_inherit_unrelated_historical_allowances(self):
+        self.assertFalse(change.runtime_required('push','a'*40,'b'*40,'a'*40,
+            ['tools/android/interactive/classify_interactive_change.py']))
+        self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,
+            ['tools/android/interactive/classify_interactive_change.py'],change.NATIVE_WORLD_RESEARCH_REF))
+    def test_classifier_main_reads_ref_name_and_appends_actual_GITHUB_OUTPUT(self):
+        names=sorted(change.NATIVE_WORLD_RESEARCH_MARKERS)
+        for event,ref,expected in [('push',change.NATIVE_WORLD_RESEARCH_REF,'false'),
+            ('push','main','true'),('workflow_dispatch',change.NATIVE_WORLD_RESEARCH_REF,'true')]:
+            with tempfile.TemporaryDirectory() as directory:
+                output=Path(directory)/'output';output.write_text('previous=true\n')
+                env={'GITHUB_EVENT_NAME':event,'COH_PUSH_BEFORE':'a'*40,'GITHUB_REF_NAME':ref,'GITHUB_OUTPUT':str(output)}
+                responses=['a'*40+'\n','b'*40+'\n',('\0'.join(names)+'\0').encode()]
+                with patch.dict(os.environ,env,clear=True),patch.object(change.subprocess,'check_output',side_effect=responses),contextlib.redirect_stdout(io.StringIO()):
+                    change.main()
+                self.assertEqual(output.read_text(),'previous=true\nruntime_required='+expected+'\n')
     def test_render_queue_exact_owner_scope_preserves_runtime_and_rejects_foreign_neighbors(self):
         from classify_storage_cleanup_change import RENDER_QUEUE_ALLOWED,RENDER_QUEUE_DOCS
         for names in (sorted(RENDER_QUEUE_ALLOWED),sorted(RENDER_QUEUE_DOCS)):

@@ -16,6 +16,25 @@ from classify_client_assets_change import client_assets_owned
 from classify_client_receipt_repair_change import client_receipt_repair_owned
 from classify_storage_cleanup_change import STARTUP_ALLOWED, RECEIPT_ALLOWED, SETUP_ALLOWED, BUNDLE_ALLOWED, VISUAL_ALLOWED, CLIENT_LOADING_ALLOWED, CLIENT_STREAMING_ALLOWED, CLIENT_ASSET_CLOSURE_ALLOWED, CLIENT_STARTUP_FOLLOWUP_ALLOWED, LEVELUP_UI_REPAIR_ALLOWED, REOPEN_STARTUP_REPAIR_ALLOWED, UI_BEACON_ALLOWED, PERFORMANCE_ALLOWED, performance_push, scene_performance_push, scene_performance_docs, gameplay_performance_push, gameplay_performance_docs, sidebar_push, sidebar_docs, renderer_attribution_push, renderer_attribution_docs, gpu_profile_push, gpu_profile_docs, render_pipeline_owned, session_repair_owned, setup_copy_owned, render_queue_owned, zoning_owned, client_recovery_owned
 
+NATIVE_WORLD_RESEARCH_REF='codex/native-map-world-037'
+NATIVE_WORLD_RESEARCH_MARKERS=frozenset({
+    '.github/workflows/android-native-map-world-037.yml',
+    'tools/android/interactive/qualify_native_map_world_037.py',
+    'tools/android/interactive/test_native_map_world_037.py'})
+NATIVE_WORLD_RESEARCH_ALLOWED=NATIVE_WORLD_RESEARCH_MARKERS|frozenset({
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py'})
+
+
+def native_world_research_owned(event,before,head,parent,names,ref_name=None):
+    """Keep exact research harness edits in their actual native qualification lane."""
+    return (ref_name==NATIVE_WORLD_RESEARCH_REF and event=='push'
+        and all(type(v) is str and re.fullmatch('[0-9a-f]{40}',v) for v in (before,head,parent))
+        and before==parent and before!='0'*40 and head!='0'*40 and head!=before
+        and type(names) in (list,tuple) and all(type(n) is str for n in names)
+        and len(names)==len(set(names)) and bool(set(names)&NATIVE_WORLD_RESEARCH_MARKERS)
+        and set(names)<=NATIVE_WORLD_RESEARCH_ALLOWED)
+
 SHELL_ONLY = frozenset({
     'tools/android/interactive/character_host_smoke.py',
     'tools/android/interactive/character_reopen_host_smoke.py',
@@ -211,7 +230,9 @@ UI_BEACON_MARKERS = UI_BEACON_ALLOWED - (SHELL_ONLY | RESPONSIVENESS_ONLY | REOP
 RESPONSIVENESS_ONLY |= UI_BEACON_ALLOWED | REOPEN_STARTUP_REPAIR_ALLOWED | LEVELUP_UI_REPAIR_ALLOWED | CLIENT_STARTUP_FOLLOWUP_ALLOWED | CLIENT_ASSET_CLOSURE_ALLOWED | CLIENT_STREAMING_ALLOWED | STARTUP_ALLOWED | RECEIPT_ALLOWED | SETUP_ALLOWED | BUNDLE_ALLOWED | VISUAL_ALLOWED | CLIENT_LOADING_ALLOWED
 
 
-def runtime_required(event, before, head, parent, names):
+def runtime_required(event, before, head, parent, names, ref_name=None):
+    if ref_name==NATIVE_WORLD_RESEARCH_REF:
+        return not native_world_research_owned(event,before,head,parent,names,ref_name)
     if client_animation_repair_owned(event, before, head, parent, names): return False
     if client_receipt_repair_owned(event, before, head, parent, names): return False
     if client_assets_owned(event, before, head, parent, names): return False
@@ -245,7 +266,7 @@ def main():
         head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
         names = subprocess.check_output(['git', 'diff', '--name-only', '-z', parent, head]).decode().rstrip('\0').split('\0')
         required = runtime_required(os.environ.get('GITHUB_EVENT_NAME'),
-            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+            os.environ.get('COH_PUSH_BEFORE'), head, parent, names,os.environ.get('GITHUB_REF_NAME'))
     except (OSError, subprocess.CalledProcessError, UnicodeError):
         pass
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:

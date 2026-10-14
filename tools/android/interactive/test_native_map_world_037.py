@@ -211,6 +211,95 @@ class EvidenceRefusal(unittest.TestCase):
             self.assertEqual(command[command.index('-map_id')+1],str(map_id))
             self.assertEqual(command[command.index('-udp')+1],str(gate.WORLDS[map_id][1]))
             self.assertIn('-nosharedmemory',command)
+    def namespace_fixture(self,root,unknown_member=False):
+        names=[f'player_library/animations/test/i{i}.anim'.encode()+b'\0' for i in range(5878)]
+        if unknown_member:names[-1]=b'object_library/x.txt\0'
+        pool=b''.join(struct.pack('<I',len(n))+n for n in names)
+        raw=(gate.animation_package.HEADER.pack(0x123,2,2,16,48,5878)
+            +b'\0'*(gate.animation_package.ENTRY.size*5878)+struct.pack('<III',0x6789,5878,len(pool))+pool)
+        pig=root/'piggs/server-animations.pigg';pig.parent.mkdir();pig.write_bytes(raw)
+        (root/'data').mkdir();return gate.pin(pig)
+    def negative_fixture(self,root):
+        source=root/'data/object_library/x.rootnames';source.parent.mkdir(parents=True)
+        source.write_bytes(b'original root names');os.utime(source,(1800,1800))
+        original={'data/object_library/x.rootnames':{**gate.pin(source),'mtime_ns':source.stat().st_mtime_ns}}
+        proof={'data/geobin/object_library/x.bin':{'after':{'dependencies':[
+            {'path':'object_library/x.txt','timestamp':0},{'path':'object_library/x.rootnames','timestamp':1800}]}}}
+        return proof,original
+    def test_native_zero_date_is_a_scoped_absence_plus_real_original_rootnames(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);pig=self.namespace_fixture(root);proof,original=self.negative_fixture(root)
+            with patch.object(gate,'ANIMATION_PIG',pig):rows,negative=gate.bind_world_dependencies(root,proof,original)
+            values=rows['data/geobin/object_library/x.bin']
+            self.assertEqual(values[0]['actual_source'],gate.pin(root/'data/object_library/x.rootnames'))
+            self.assertEqual(values[1]['kind'],'native_same_stem_missing_text_sentinel')
+            self.assertTrue(values[1]['current_native_namespace_source_absent'])
+            self.assertEqual((negative['rows'],negative['unique_paths']),(1,1))
+            self.assertEqual(negative['namespace']['complete_Pig_member_count'],5878)
+            self.assertEqual(proof['data/geobin/object_library/x.bin']['after']['dependencies'][0]['timestamp'],0)
+    def test_zero_date_never_ignores_a_present_original_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);proof,original=self.negative_fixture(root)
+            original['data/OBJECT_LIBRARY/X.TXT']={'bytes':1,'sha256':'0'*64,'mtime_ns':0}
+            with self.assertRaises(ValueError):gate.bind_world_dependencies(root,proof,original)
+    def test_negative_dependency_checks_current_case_alias_and_links(self):
+        for linked in (False,True):
+            with tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);pig=self.namespace_fixture(root);proof,original=self.negative_fixture(root)
+                alias=root/'data/object_library/X.TXT'
+                if linked:alias.symlink_to('missing-target')
+                else:alias.write_bytes(b'new unapproved source')
+                with patch.object(gate,'ANIMATION_PIG',pig):
+                    with self.assertRaises(ValueError):gate.bind_world_dependencies(root,proof,original)
+    def test_zero_date_scope_rejects_unrelated_global_map_or_nonmatching_geometry(self):
+        for cache,path in [('data/bin/x.bin','object_library/x.txt'),
+            ('data/geobin/maps/x.bin','maps/x.txt'),('data/geobin/object_library/x.bin','object_library/y.txt'),
+            ('data/geobin/object_library/x.bounds','object_library/x.rootnames')]:
+            proof={cache:{'after':{'dependencies':[{'path':path,'timestamp':0}]}}}
+            with tempfile.TemporaryDirectory() as directory:
+                with self.assertRaises(ValueError):gate.bind_world_dependencies(Path(directory),proof,{})
+    def test_nonzero_missing_dependency_remains_a_hard_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'data').mkdir()
+            proof={'data/geobin/object_library/x.bin':{'after':{'dependencies':[{'path':'object_library/x.txt','timestamp':1800}]}}}
+            with self.assertRaises(ValueError):gate.bind_world_dependencies(root,proof,{})
+    def test_native_namespace_rejects_unknown_Pig_members_or_unpinned_archive(self):
+        for unknown_member in (False,True):
+            with tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);pig=self.namespace_fixture(root,unknown_member=unknown_member)
+                if unknown_member:
+                    with patch.object(gate,'ANIMATION_PIG',pig):
+                        with self.assertRaises(ValueError):gate.native_namespace(root)
+                else:
+                    with self.assertRaises(ValueError):gate.native_namespace(root)
+    def test_native_namespace_rejects_additional_provider_controls_and_archives(self):
+        for name in ('gamedatadir.txt','localdata','serverdata','tools','piggs/unknown.pigg'):
+            with tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);pig=self.namespace_fixture(root);path=root/name
+                if name in ('localdata','serverdata','tools'):path.mkdir()
+                else:path.write_text('unapproved provider')
+                with patch.object(gate,'ANIMATION_PIG',pig):
+                    with self.assertRaises(ValueError):gate.native_namespace(root)
+    def test_native_namespace_refuses_unreadable_directory_enumeration(self):
+        def failed_walk(root,*,followlinks,onerror):
+            onerror(PermissionError('an inaccessible possible provider'))
+            return iter(())
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(gate.os,'walk',side_effect=failed_walk):
+                with self.assertRaisesRegex(ValueError,'absence cannot be proven'):
+                    gate.native_namespace(Path(directory))
+    def test_inherited_stock_refuses_unpinned_evidence_before_creating_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);path=root/'fake.zip';path.write_bytes(b'fake native success')
+            with self.assertRaises(ValueError):gate.load_inherited_stock(path,root,{})
+            self.assertFalse((root/'inherited-stock-04b').exists())
+    def test_inherited_stock_refuses_changed_provider_before_any_cache_write(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source=root/'immutable';source.write_bytes(b'preserved')
+            inherited={'facts':{'cache_before':{},'cache_dates_before':{},'provider_before':{'identity':'old'}},
+                       'retention':{'members':{}}}
+            with self.assertRaises(ValueError):gate.recover_stock_cache(root,{}, {},{'identity':'changed'}, {},{},inherited,root)
+            self.assertEqual(source.read_bytes(),b'preserved')
     def test_failed_progress_retains_raw_held_PID_without_admitting_world(self):
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/'progress';path.write_bytes(self.progress()+b'\0'*(4096-128))

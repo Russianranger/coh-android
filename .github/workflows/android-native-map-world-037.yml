@@ -104,6 +104,12 @@ jobs:
           PY
       - uses: actions/upload-artifact@v4
         with:
+          name: coh-native-world-037-original-provider-manifest
+          path: out/prepared-worlds/native-map-world-inputs-037.json
+          retention-days: 90
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
           name: coh-native-world-037-prepared-public-providers
           path: out/prepared-worlds/
           compression-level: 0
@@ -128,6 +134,36 @@ jobs:
         with: {persist-credentials: false}
       - uses: actions/download-artifact@v4
         with: {name: coh-native-world-037-prepared-public-providers, path: out/prepared-worlds}
+      - name: Authenticate and recover the exact already executed stock Atlas generation
+        shell: bash
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          mkdir -p out/inherited-stock-attribution
+          gh api repos/Russianranger/coh-android/actions/runs/38494199595 > out/inherited-stock-attribution/run.json
+          gh api repos/Russianranger/coh-android/actions/runs/38494199595/jobs > out/inherited-stock-attribution/jobs.json
+          gh api repos/Russianranger/coh-android/actions/artifacts/11864550716 > out/inherited-stock-attribution/artifact.json
+          python - <<'PY'
+          import json,pathlib
+          root=pathlib.Path('out/inherited-stock-attribution')
+          run=json.loads((root/'run.json').read_text());jobs=json.loads((root/'jobs.json').read_text())['jobs']
+          artifact=json.loads((root/'artifact.json').read_text())
+          assert run['id']==38494199595 and run['head_sha']=='04b7a623ef21d7ad48774a58b3122c69ae07f46b'
+          assert run['status']=='completed' and run['conclusion']=='failure'
+          assert run['head_branch']=='codex/native-map-world-037' and run['path']=='.github/workflows/android-native-map-world-037.yml'
+          selected=[j for j in jobs if j['id']==115627188579 and j['name']=='native-worlds']
+          assert len(selected)==1 and selected[0]['status']=='completed' and selected[0]['conclusion']=='failure'
+          assert artifact['id']==11864550716 and artifact['name']=='coh-native-world-037-executed-evidence'
+          assert artifact['size_in_bytes']==3039985 and artifact['digest']=='sha256:962d7517ca5d91dd00b797f5b428bdf5fce1975c6c4afc392f7dc9e0a24b06fc'
+          assert artifact['expired'] is False and artifact['workflow_run']['id']==38494199595
+          assert artifact['workflow_run']['head_sha']==run['head_sha']
+          PY
+          gh api repos/Russianranger/coh-android/actions/artifacts/11864550716/zip > out/inherited-stock-attribution/executed-stock.zip
+          python - <<'PY'
+          import sys
+          sys.path.insert(0,'tools/android/interactive')
+          import qualify_native_map_world_037 as gate
+          assert gate.pin('out/inherited-stock-attribution/executed-stock.zip')==gate.INHERITED_STOCK['artifact']
+          PY
       - name: Reuse exact successful native builds without recompilation
         shell: bash
         env: {GH_TOKEN: '${{ github.token }}'}
@@ -157,7 +193,7 @@ jobs:
         shell: pwsh
         run: |
           if (-not $env:PGBIN -or -not (Test-Path "$env:PGBIN/pg_ctl.exe")) { throw 'Hosted runner PostgreSQL bin unavailable' }
-          python tools/android/interactive/qualify_native_map_world_037.py --inputs out/prepared-worlds --baseline out/native-baseline --candidate out/native-candidate --repository-commit "$env:GITHUB_SHA" --bin "$env:PGBIN" --driver 'PostgreSQL Unicode' --work "C:/coh-world-$env:GITHUB_RUN_ID" --output out/native-world-evidence
+          python tools/android/interactive/qualify_native_map_world_037.py --inputs out/prepared-worlds --baseline out/native-baseline --candidate out/native-candidate --repository-commit "$env:GITHUB_SHA" --bin "$env:PGBIN" --driver 'PostgreSQL Unicode' --work "C:/coh-world-$env:GITHUB_RUN_ID" --output out/native-world-evidence --inherited-stock-evidence out/inherited-stock-attribution/executed-stock.zip
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -176,5 +212,6 @@ jobs:
           path: |
             out/retained-history/
             out/candidate-history/
+            out/inherited-stock-attribution/
           retention-days: 90
           if-no-files-found: warn
