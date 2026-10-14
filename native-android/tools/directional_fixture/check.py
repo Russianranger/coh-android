@@ -50,7 +50,12 @@ def sources(directory):
         direct=directory/name;path=direct if direct.exists() else directory/pin['path']
         raw=path.read_bytes().replace(b'\r\n',b'\n')
         require(len(raw)==pin['bytes_lf'] and sha(raw)==pin['sha256_lf'],'original source hash differs: '+str(path))
-        texts[name]=raw.decode('utf8')
+        if 'git_blob_sha' in pin:
+            require(hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==pin['git_blob_sha'],
+                    'original Git blob differs: '+str(path))
+        # seqregistration's original two bullet comments are CP1252 bytes.
+        # Verify canonical bytes first; decoding never relaxes the source pin.
+        texts[name]=raw.decode(pin.get('text_encoding','utf8'))
     for bit,index in BITS.items():
         require(re.search(r'^#define STATE_'+bit+r'\s+'+str(index)+r'\s*$',texts['seqstate.h'],re.M),'source state index differs: '+bit)
     return texts,pins

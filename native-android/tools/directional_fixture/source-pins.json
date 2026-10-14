@@ -6,117 +6,141 @@
     "seqsequence.c": {
       "path": "ouroboros/Common/seq/seqsequence.c",
       "bytes_lf": 41616,
-      "sha256_lf": "7c816b4dacdfbfac8eecef08c105caf55bb5c1652fac6b100d69ddb4a4b1aefa"
+      "sha256_lf": "7c816b4dacdfbfac8eecef08c105caf55bb5c1652fac6b100d69ddb4a4b1aefa",
+      "git_blob_sha": "e919c42b3882fa553123f5bbb12380bcde4af027"
     },
     "seqload.c": {
       "path": "ouroboros/Common/seq/seqload.c",
       "bytes_lf": 48866,
-      "sha256_lf": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f"
+      "sha256_lf": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f",
+      "git_blob_sha": "df5ded4570ad5cf03fe3ea632ad5e61319bab6d1"
     },
     "seq.c": {
       "path": "ouroboros/Common/seq/seq.c",
       "bytes_lf": 68452,
-      "sha256_lf": "b483ac7131939559b367a6bfaa5be13170ce4a809666eced8d5220651205e12a"
+      "sha256_lf": "b483ac7131939559b367a6bfaa5be13170ce4a809666eced8d5220651205e12a",
+      "git_blob_sha": "d17e5d19b5efb20f0567618815699d1664c4922e"
     },
     "entclient.c": {
       "path": "ouroboros/Game/src/entity/entclient.c",
       "bytes_lf": 129281,
-      "sha256_lf": "a11e3b84a2dc87daf2302df674f5af15260c32180494ca1b75af9e44786c7c2d"
+      "sha256_lf": "a11e3b84a2dc87daf2302df674f5af15260c32180494ca1b75af9e44786c7c2d",
+      "git_blob_sha": "3e1db3120349681c275ff5139010abe244223e0d"
     },
     "player.txt": {
       "path": "i24/data/sequencers/player.txt",
       "bytes_lf": 15214,
-      "sha256_lf": "c334dfc0719e5e1d4b4e17cd6707d8cc10b4c66e826de71f4313f9fcd7678258"
+      "sha256_lf": "c334dfc0719e5e1d4b4e17cd6707d8cc10b4c66e826de71f4313f9fcd7678258",
+      "git_blob_sha": "284e3146103c8cb5fd77b735e4d9729141c3be27"
     },
     "motion.inc": {
       "path": "i24/data/sequencers/player/motion.inc",
       "bytes_lf": 96641,
-      "sha256_lf": "a4491460f5ffc093dbdd4333b60694e94d91581a8e6ba55009e17560fa221fcd"
+      "sha256_lf": "a4491460f5ffc093dbdd4333b60694e94d91581a8e6ba55009e17560fa221fcd",
+      "git_blob_sha": "6362f790a5de712222271dda201e98133a6fab7c"
     },
     "readies.inc": {
       "path": "i24/data/sequencers/player/readies.inc",
       "bytes_lf": 29929,
-      "sha256_lf": "91fefb75679eb23543b9065afb8984a378715f5224ed8fcbe519dd36a5624d5a"
+      "sha256_lf": "91fefb75679eb23543b9065afb8984a378715f5224ed8fcbe519dd36a5624d5a",
+      "git_blob_sha": "adf7e0e0e390c53967dae2194885ed3c1a088489"
     },
     "ReadiesMembers.inc": {
       "path": "i24/data/sequencers/members/readies.inc",
       "bytes_lf": 129,
-      "sha256_lf": "724e25d550d7c140ff2c5763a574ac8b2d1813d376b18f0351eb8f9db10d3c1a"
+      "sha256_lf": "724e25d550d7c140ff2c5763a574ac8b2d1813d376b18f0351eb8f9db10d3c1a",
+      "git_blob_sha": "c31e012c9eb8e16e6b5e6502c79a8c29a42fdcba"
     },
     "V_Arachnos_Wretch.txt": {
       "path": "i24/data/ent_types/v_arachnos_wretch.txt",
       "bytes_lf": 1203,
-      "sha256_lf": "33c3e292cf87c4334259a51d1387718cf3bc887517498b5903e61a988cd6468c"
+      "sha256_lf": "33c3e292cf87c4334259a51d1387718cf3bc887517498b5903e61a988cd6468c",
+      "git_blob_sha": "673efd4b86a9ba0cda7409915ae68390117c0bcf"
     },
     "encounters_motion.inc": {
       "path": "i24/data/sequencers/player/encounters_motion.inc",
       "bytes_lf": 69128,
-      "sha256_lf": "43db4413b41d07a76d08f31c6198574e48969a6e4df065ad09bdbfa9996edadb"
+      "sha256_lf": "43db4413b41d07a76d08f31c6198574e48969a6e4df065ad09bdbfa9996edadb",
+      "git_blob_sha": "ef5c268954d7c8a3fbe5097ee5d28c2ef1f4bc51"
     },
     "mathutil.h": {
       "path": "ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
       "bytes_lf": 47551,
-      "sha256_lf": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111"
+      "sha256_lf": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "git_blob_sha": "8cbfbdc5d68f3b35043fb176753fd7fbad953c7b"
     },
     "EncountersCyclesMembers.inc": {
       "path": "i24/data/sequencers/members/encounters_cycles.inc",
       "bytes_lf": 88,
-      "sha256_lf": "0baf6ebb4a5a91a0830c373282065998dc45b59008d1acd184ecd69a02a0a2a6"
+      "sha256_lf": "0baf6ebb4a5a91a0830c373282065998dc45b59008d1acd184ecd69a02a0a2a6",
+      "git_blob_sha": "e13f05b2317e62ca9e5e91fd62ee7f7864362612"
     },
     "EncountersIdleInterrupts.inc": {
       "path": "i24/data/sequencers/interrupts/encounters_idle.inc",
       "bytes_lf": 75,
-      "sha256_lf": "1f530cd32ca2ae23a7f7869f461dc922f880be881c8a6c272e9fee201d1da92b"
+      "sha256_lf": "1f530cd32ca2ae23a7f7869f461dc922f880be881c8a6c272e9fee201d1da92b",
+      "git_blob_sha": "db0c3a2a5765e6806ccf407a6f51126a343ae781"
     },
     "seqstate.c": {
       "path": "ouroboros/Common/seq/seqstate.c",
       "bytes_lf": 18115,
-      "sha256_lf": "750079414254758fa3e0e478403f68416687475cdb5f852f2472ef30ef4b460e"
+      "sha256_lf": "750079414254758fa3e0e478403f68416687475cdb5f852f2472ef30ef4b460e",
+      "git_blob_sha": "1c5b89d287280c9724f49985246b9fd546d2ff30"
     },
     "seqstate.h": {
       "path": "ouroboros/Common/seq/seqstate.h",
       "bytes_lf": 6683,
-      "sha256_lf": "56c692d96a91b753bbeb456f214e2a7d3b91912210334268303b373b874d2dab"
+      "sha256_lf": "56c692d96a91b753bbeb456f214e2a7d3b91912210334268303b373b874d2dab",
+      "git_blob_sha": "173554c058bb6f887f3660e0d2223b17b873fbcc"
     },
     "animtrackanimate.c": {
       "path": "ouroboros/Common/seq/animtrackanimate.c",
       "bytes_lf": 51080,
-      "sha256_lf": "ad976409823db61d1610e3cece2ba323ffc7623af8be1c2c1ac8b38abdcebf21"
+      "sha256_lf": "ad976409823db61d1610e3cece2ba323ffc7623af8be1c2c1ac8b38abdcebf21",
+      "git_blob_sha": "3c1bd95efae8215298f8c0bfcecae63bdeb99c2e"
     },
     "animtrackanimate.h": {
       "path": "ouroboros/Common/seq/animtrackanimate.h",
       "bytes_lf": 1774,
-      "sha256_lf": "1c3292e5938562e6d4c093cd52d5ef0d92f58cabf0e18048f926df5e7d71e273"
+      "sha256_lf": "1c3292e5938562e6d4c093cd52d5ef0d92f58cabf0e18048f926df5e7d71e273",
+      "git_blob_sha": "6ff9e8d3fbaa828c35b8fc47875e044f492cf2f0"
     },
     "netcomp.c": {
       "path": "ouroboros/libs/UtilitiesLib/src/network/netcomp.c",
       "bytes_lf": 7728,
-      "sha256_lf": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370"
+      "sha256_lf": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370",
+      "git_blob_sha": "19070c8e5f87bdb6913e73d56ce51f1824d3c084"
     },
     "seqskeleton.c": {
       "path": "ouroboros/Common/seq/seqskeleton.c",
       "bytes_lf": 38072,
-      "sha256_lf": "b0c01576fa013f05d507e0f638550866810dd63cfb1ee1106cf9f96f7477a47c"
+      "sha256_lf": "b0c01576fa013f05d507e0f638550866810dd63cfb1ee1106cf9f96f7477a47c",
+      "git_blob_sha": "bea426ba4b397b5ee2cd7aa2609482311993534c"
     },
     "seqregistration.c": {
       "path": "ouroboros/Common/seq/seqregistration.c",
-      "bytes_lf": 34484,
-      "sha256_lf": "ba4fff1b27217ecc180fb2a1f4b1e20be1c58e424734383920c9ba7e687cda96"
+      "bytes_lf": 34480,
+      "sha256_lf": "9ccf1b75e4def1a549e7bc2adc9227548111140807ab969ededacc031bdddb98",
+      "git_blob_sha": "44ff63fd244e88afb5f6e64304a233e4a2bbe6fa",
+      "text_encoding": "cp1252"
     },
     "seqanimate.c": {
       "path": "ouroboros/Common/seq/seqanimate.c",
       "bytes_lf": 28057,
-      "sha256_lf": "a4926555f4da4052058f06d28a195edcedae16cb7e905c05e8963afe9915ed22"
+      "sha256_lf": "a4926555f4da4052058f06d28a195edcedae16cb7e905c05e8963afe9915ed22",
+      "git_blob_sha": "160e1ea481dfdd3b14c1a62cccb3edd50467e563"
     },
     "mathutil.c": {
       "path": "ouroboros/libs/UtilitiesLib/src/utils/mathutil.c",
       "bytes_lf": 37198,
-      "sha256_lf": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f"
+      "sha256_lf": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "git_blob_sha": "a4ed82b07906da4bb6cfd1ed562b353e147faf69"
     },
     "Quat.c": {
       "path": "ouroboros/libs/UtilitiesLib/src/utils/Quat.c",
       "bytes_lf": 10296,
-      "sha256_lf": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b"
+      "sha256_lf": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b",
+      "git_blob_sha": "1ec6f55275629f1db8c6f93453d7a99f38701f6c"
     }
   }
 }

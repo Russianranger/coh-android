@@ -46,9 +46,8 @@ void original_blend_reset(void){memset(seq.stored,0,sizeof seq.stored);blend_ser
 '''
 
 def source_program(directory):
-    # The accepted actor oracle's seqregistration whole-file pin describes a
-    # former host shim. Preserve it; validate exact upstream here through the
-    # directional manifest and compare every reused function hash separately.
+    # Verify original byte/source pins and each previously accepted function.
+    # seqregistration's CP1252 comments must remain canonical original bytes.
     code,_=original.source_code(directory);snippets=[];pins={}
     expected=json.loads((HERE.parent/'character_fixture/original-actor-pins.json').read_text())['sources']
     for file,function in actor.EXTRA_FUNCTIONS:

@@ -31,10 +31,16 @@ The source files are acquired at:
 - [Code revision](https://github.com/Thunderspies/CityOfHeroes/tree/0b75ade0c801735e10c5798f641948a45cc50488)
 - [Data revision](https://github.com/Thunderspies/i24/tree/d51533ec8e6a9cf726b9214968077a05fdcf19f3)
 
-The existing actor oracle records an earlier whole-file host shim hash for
-`seqregistration.c`. The new directional manifest records the exact upstream
-file. Both reused scaleBone/unscaleBone function hashes match the accepted
-oracle. Earlier source pins and evidence remain unchanged.
+The original `seqregistration.c` uses CP1252 bullet comments. Connector text
+retrieval converted those two bytes to UTF8, creating a four-byte difference
+in the initial local cache. The directional manifest now uses the canonical
+34,480-byte original file, SHA256 `9ccf1b75e4def1a549e7bc2adc9227548111140807ab969ededacc031bdddb98`,
+matching the earlier accepted actor pin. Its Git blob SHA
+`44ff63fd244e88afb5f6e64304a233e4a2bbe6fa` independently confirms the exact
+canonical bytes. All 23 source inputs were checked against their repository
+blob identities; byte/hash validation occurs before text decoding. Both
+reused scaleBone/unscaleBone function hashes remain unchanged, as do earlier
+source pins and evidence.
 
 ## Reproduce
 
