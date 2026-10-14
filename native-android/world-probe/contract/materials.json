@@ -206,7 +206,8 @@
     "Neutralconstantlightingtestsoriginalmaterial arithmetic; it does not reconstruct Atlas ambient/lightgrid/sun or all original runtime renderer choices",
     "Original rt_init source enables SRC_ALPHA/ONE_MINUS_SRC_ALPHA globally; selected opaque actual fragment alpha1 makes controlled disabled geometry blending pixel-equivalent. Analytic half-fade and swatch cases explicitly qualify source-over.",
     "Original rt_init depthfunc isGL_LEQUAL, preserved bysceneprobe; sourceUV0+UV1 bothVflip1-V afteroldworldmodelst2 copiesst1.",
-    "Authenticgrey BasicTexture has btest.txt FlagsTruecolor; pin exact266B/SHA and reject extra tokens. It changes neitherSignmetalprimarycomposite family norUV/clamp/mirror/point/mip flags. Actualgrey wrapper alreadyARGB8888flags2, decodedmip0 bytes unchanged."
+    "Authenticgrey BasicTexture has btest.txt FlagsTruecolor; pin exact266B/SHA and reject extra tokens. It changes neitherSignmetalprimarycomposite family norUV/clamp/mirror/point/mip flags. Actualgrey wrapper alreadyARGB8888flags2, decodedmip0 bytes unchanged.",
+    "Authenticwhite BasicTexture has freeway_signs.txt empty Texturewhite.tga declaration; pin887B/SHA and requireemptybody. Neighbor white_tintable declaration is a separatealias anddoesnotapply. EmptyTexOpt changesneithermodern_bench primary composite Dual family norUV/sampler flags orqualifiedRGBAwhitepixels."
   ],
   "source_stock_grey_texopt": {
     "source_path": "upstream/i24/data/tricks/btest.txt",
@@ -216,6 +217,17 @@
     ],
     "resolved_texopt_flags": 2,
     "selected_role": "secondary BasicTexture in Signmetal generic layer",
+    "composite_shader_family_changed": false,
+    "sampler_flags_changed": false,
+    "qualified_mip0_rgba_changed": false,
+    "original_mipchain_qualified": false
+  },
+  "source_stock_white_texopt": {
+    "source_path": "upstream/i24/data/tricks/streets/elements/freeway_signs.txt",
+    "source_sha256": "5d15cb3c5c692eb108b87b6c2efdc6ab86f23bec6f39ad945d05c76947ba5943",
+    "source_tokens": [],
+    "resolved_texopt_flags": 0,
+    "selected_role": "secondary BasicTexture in modern_bench generic layer",
     "composite_shader_family_changed": false,
     "sampler_flags_changed": false,
     "qualified_mip0_rgba_changed": false,

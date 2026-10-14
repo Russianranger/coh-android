@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "phase": 9,
+  "passed": false,
+  "source_commit": "73b3fee67c26babc66b792f22ff780a2354bd0a0",
+  "workflow_run_id": 38489232490,
+  "workflow_job_id": 115610223116,
+  "stage": "complete original trick declaration audit",
+  "error": "unexpected selected source material override for white: white declared in upstream/i24/data/tricks/streets/elements/freeway_signs.txt",
+  "source_lookup_fail_closed": true,
+  "native_gpu_or_android_execution_attempted": false,
+  "apk_produced": false,
+  "artifact": {
+    "id": 11860688061,
+    "bytes": 784,
+    "sha256": "e9f6d9f4682ad4aeab64907c02adc600717313faf905af426e1cdf0dc37397ec",
+    "download_digest_verified": true,
+    "files": ["source-trick-resolution.json", "source-validation-stage.json"]
+  },
+  "failure_receipt": {
+    "passed": false,
+    "kind": "complete immutable original trick declaration audit",
+    "stage": "source-trick-resolution",
+    "assets_prepared_by_this_audit": false,
+    "source_resolution_qualified": false,
+    "expected_git_tree_sha": "f1aab78ed5cd4e33046758f256e38e777a5ee4a3",
+    "expected_source_file_count": 1585,
+    "error_type": "ValueError"
+  },
+  "remaining_action": "Resolve the authentic empty stock-white declaration and retain the whole-source audit before native qualification."
+}

@@ -114,6 +114,12 @@
       "bytes": 266,
       "sha256": "a225c46b8701da525dd93f76dc455e8eb5f214d1ffc561b682eba9863a3facdc",
       "git_blob_sha": "73f2e47b13bc2c7e60f7f07704be0195ced81d6e"
+    },
+    {
+      "path": "upstream/i24/data/tricks/streets/elements/freeway_signs.txt",
+      "bytes": 887,
+      "sha256": "5d15cb3c5c692eb108b87b6c2efdc6ab86f23bec6f39ad945d05c76947ba5943",
+      "git_blob_sha": "ae1c3bc8cb2a1b93dc026d68c651cfa913eec369"
     }
   ],
   "tricks_tree": {

@@ -30,6 +30,9 @@ def main():
                    "error_type": type(error).__name__, "error": str(error)[:2048]}
         if getattr(error, "filename", None):
             failure["source_file"] = str(error.filename)[:1024]
+        if getattr(error, "audit_context", None):
+            encoded = json.dumps(error.audit_context)
+            failure["source_resolution_context"] = error.audit_context if len(encoded) <= 8192 else encoded[:8192]
         args.output.write_text(json.dumps(failure, indent=2) + "\n")
         raise
     args.output.write_text(json.dumps(receipt, indent=2) + "\n")

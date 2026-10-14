@@ -202,7 +202,7 @@ def validate_source_trick_audit(metadata):
     assert audit['primary_source_files_verified'] == expected
     lookups = audit['direct_and_directory_lookup']
     assert [item['alias'] for item in lookups] == ['Signmetal', 'grey', 'white']
-    assert lookups[0]['source_matches'] == lookups[2]['source_matches'] == []
+    assert lookups[0]['source_matches'] == []
     grey_source = next(pin for pin in pins['source_files'] if pin['path'] == 'upstream/i24/data/tricks/btest.txt')
     assert lookups[1]['source_matches'] == [{
         'lookup_name': 'grey', 'source_path': grey_source['path'], 'source_sha256': grey_source['sha256'],
@@ -211,6 +211,14 @@ def validate_source_trick_audit(metadata):
         'changes_composite_shader_family': False, 'clamp_s': False, 'clamp_t': False,
         'mirror_s': False, 'mirror_t': False, 'point_sample': False, 'no_mip': False,
         'qualified_mip': 0, 'qualified_rgba': [128, 128, 128, 255]}]
+    white_source = next(pin for pin in pins['source_files'] if pin['path'] == 'upstream/i24/data/tricks/streets/elements/freeway_signs.txt')
+    assert lookups[2]['source_matches'] == [{
+        'lookup_name': 'white', 'source_path': white_source['path'], 'source_sha256': white_source['sha256'],
+        'tokens': [], 'resolved_texopt_flags': 0,
+        'selected_role': 'secondary BasicTexture in modern_bench generic layer',
+        'changes_composite_shader_family': False, 'clamp_s': False, 'clamp_t': False,
+        'mirror_s': False, 'mirror_t': False, 'point_sample': False, 'no_mip': False,
+        'qualified_mip': 0, 'qualified_rgba': [255, 255, 255, 255]}]
     assert lookups[0]['default_generic'] == 'grey'
     assert audit['modern_bench_tokens'] == ['surface metal', 'blend white.tga', 'blendtype colorblenddual']
     assert audit['mbench_tokens'] == ['lodfar 250', 'lodfarfade 75']

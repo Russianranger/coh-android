@@ -56,6 +56,27 @@ def stock_grey_declaration(data):
             "qualified_mip": 0, "qualified_rgba": [128, 128, 128, 255]}
 
 
+def stock_white_declaration(data):
+    """The actual white TexOpt is empty; white_tintable is a separate alias."""
+    digest = hashlib.sha256(data).hexdigest()
+    if len(data) != 887 or digest != "5d15cb3c5c692eb108b87b6c2efdc6ab86f23bec6f39ad945d05c76947ba5943":
+        raise ValueError("stock white source declaration identity differs")
+    text = data.decode("ascii")
+    block = re.search(r"(?ims)^Texture white\.tga\s*\n(.*?)^End\s*$", text)
+    if not block:
+        raise ValueError("stock white source declaration is absent")
+    tokens = [line.strip().lower() for line in block.group(1).splitlines() if line.strip()]
+    if tokens:
+        raise ValueError("stock white source TexOpt body differs")
+    return {"lookup_name": "white", "source_path": "upstream/i24/data/tricks/streets/elements/freeway_signs.txt",
+            "source_sha256": digest, "tokens": [], "resolved_texopt_flags": 0,
+            "selected_role": "secondary BasicTexture in modern_bench generic layer",
+            "changes_composite_shader_family": False,
+            "clamp_s": False, "clamp_t": False, "mirror_s": False, "mirror_t": False,
+            "point_sample": False, "no_mip": False,
+            "qualified_mip": 0, "qualified_rgba": [255, 255, 255, 255]}
+
+
 def audit_source_tricks(source_root):
     """Fail closed if the complete immutable trick tree cannot be inspected.
 
@@ -63,7 +84,7 @@ def audit_source_tricks(source_root):
     texture directory. Searching only for 'Signmetal' would miss directory
     overrides. This check reads and verifies every tracked source trick blob.
     It verifies the absence of selected direct/directory overrides for default
-    Signmetal/white, the actual stock-grey Truecolor declaration, and the actual
+    Signmetal, the actual stock-grey Truecolor and stock-white empty TexOpts, and
     modern_bench/mbench declarations. It is a bounded declaration audit, not a complete
     original TexOpt parser or an Atlas light-grid execution.
     """
@@ -118,34 +139,47 @@ def audit_source_tricks(source_root):
     }
     grey_path = "upstream/i24/data/tricks/btest.txt"
     grey = stock_grey_declaration(_audit_read(source_root / grey_path, "stock-grey-declaration"))
+    white_path = "upstream/i24/data/tricks/streets/elements/freeway_signs.txt"
+    white = stock_white_declaration(_audit_read(source_root / white_path, "stock-white-declaration"))
+    errors, lookup_context = [], []
     for alias, candidates in lookup_names.items():
         found = {candidate: declarations[candidate] for candidate in candidates if candidate in declarations}
-        expected = {"grey": [grey_path]} if alias == "grey" else {}
+        expected = {"grey": [grey_path]} if alias == "grey" else {"white": [white_path]} if alias == "white" else {}
+        lookup_context.append({"alias": alias, "actual_declarations": found, "expected_declarations": expected,
+                               "passed": found == expected})
         if found != expected:
-            raise ValueError("unexpected selected source material override for " + alias + ": " + repr(found))
+            errors.append("unexpected selected source material override for " + alias + ": " + repr(found))
         matched.append({"alias": alias, "lookup_candidates": candidates,
-                        "source_matches": [grey] if alias == "grey" else [],
+                        "source_matches": [grey] if alias == "grey" else [white] if alias == "white" else [],
                         "default_generic": "grey" if alias == "Signmetal" else None})
     required_path = "upstream/i24/data/tricks/streets/elements/streets_misc.txt"
     if declarations.get("modern_bench") != [required_path]:
-        raise ValueError("selected modern bench direct source declaration differs")
+        errors.append("selected modern bench direct source declaration differs: " + repr(declarations.get("modern_bench")))
     if model_tricks.get("mbench") != [required_path]:
-        raise ValueError("selected model mbench direct source declaration differs")
+        errors.append("selected model mbench direct source declaration differs: " + repr(model_tricks.get("mbench")))
     text = (source_root / required_path).read_text()
     texture = re.search(r"(?ims)^Texture modern_bench\.tga\s*\n(.*?)^End\s*$", text)
     trick = re.search(r"(?ims)^Trick mbench\s*\n(.*?)^End\s*$", text)
-    if not texture or not trick:
-        raise ValueError("selected bench material/model trick is absent")
-    texture_tokens = [line.strip().lower() for line in texture.group(1).splitlines() if line.strip()]
-    trick_tokens = [line.strip().lower() for line in trick.group(1).splitlines() if line.strip()]
+    texture_tokens = [line.strip().lower() for line in texture.group(1).splitlines() if line.strip()] if texture else None
+    trick_tokens = [line.strip().lower() for line in trick.group(1).splitlines() if line.strip()] if trick else None
     if texture_tokens != ["surface metal", "blend white.tga", "blendtype colorblenddual"]:
-        raise ValueError("selected bench texture trick body differs")
+        errors.append("selected bench texture trick body differs: " + repr(texture_tokens))
     if trick_tokens != ["lodfar 250", "lodfarfade 75"]:
-        raise ValueError("selected bench model trick body differs")
+        errors.append("selected bench model trick body differs: " + repr(trick_tokens))
+    context = {"lookup_resolutions": lookup_context,
+               "modern_bench_declarations": declarations.get("modern_bench", []),
+               "mbench_declarations": model_tricks.get("mbench", []),
+               "modern_bench_tokens": texture_tokens, "mbench_tokens": trick_tokens}
+    if errors:
+        error = ValueError("; ".join(errors))
+        error.audit_stage = "complete-selected-source-resolution"
+        error.audit_context = context
+        raise error
     return {"passed": True, "kind": "complete immutable original trick declaration audit",
             "git_tree_sha": actual_tree, "source_files_verified": len(entries),
             "primary_source_files_verified": source_file_checks,
             "direct_and_directory_lookup": matched,
+            "selected_source_resolution_context": context,
             "modern_bench_source": required_path, "modern_bench_tokens": texture_tokens,
             "mbench_tokens": trick_tokens,
             "full_original_texopt_parser_executed": False,
