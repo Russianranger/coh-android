@@ -1,0 +1,214 @@
+{
+  "schema": 1,
+  "phases": [
+    13,
+    14,
+    15
+  ],
+  "passed": true,
+  "qualification_scope": "Host source/sanitizer and installed Android13 x86_64 emulator qualification; ARM64 package built/linted/verified for the separate physical Thor check",
+  "source_commit": "e8d4b80b21088992bcbfa403f71bae3138a49e70",
+  "probe_version": "0.1.0-phases13-15",
+  "workflow": {
+    "run_id": 38603481231,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38603481231",
+    "conclusion": "success",
+    "core_run_id": 38603481435,
+    "core_conclusion": "success"
+  },
+  "artifact": {
+    "id": 11915037774,
+    "bytes": 5418938,
+    "sha256": "6051e0013efe97df566318f5847a751bbadce2d6e471d074b1340f4d81a797aa",
+    "download_digest_verified": true
+  },
+  "packages": [
+    {
+      "file": "CoH-Native-Integration-Probe-0.1.0-arm64.apk",
+      "bytes": 750186,
+      "sha256": "1a2b3da7fedad2f3b78ec5673ce45e649e4e9cb5616f120c77a7770941c4ccba",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_integration_probe.so",
+        "bytes": 503264,
+        "sha256": "4728cbf5775a8a37ea02674c1b8acf4720a5fd28396eda9767df2199e43f4041"
+      },
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_fixtures_verified": true,
+      "signer_certificate_sha256": "a07480d939b071479f271c59a25da3702819c45e4e288b096b6c9dd5dbbd2f37"
+    },
+    {
+      "file": "CoH-Native-Integration-Probe-0.1.0-emulator-x86_64.apk",
+      "bytes": 750767,
+      "sha256": "46a6fd43c19a022d5b1d1109a89775fdfac511c45d0c99355f29485df484d1ed",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "native_library": {
+        "file": "lib/x86_64/libcoh_integration_probe.so",
+        "bytes": 503848,
+        "sha256": "220215f96d44c5197a4404351d6b81330c44f8f4a6a7773c50296b03bbccc0ed"
+      },
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_fixtures_verified": true,
+      "signer_certificate_sha256": "a07480d939b071479f271c59a25da3702819c45e4e288b096b6c9dd5dbbd2f37"
+    }
+  ],
+  "retained_evidence": [
+    {
+      "file": "build-receipt.json",
+      "bytes": 3511,
+      "sha256": "171ce278bed06c7d8b4bedc6eed4da7963266ff4d16bfbe89832162b0adbb39d"
+    },
+    {
+      "file": "source-validation-stage.json",
+      "bytes": 866,
+      "sha256": "e1683a64263fc45052cfefffdf1d263b7db0b4d4d4053fddf870e3e66d03a7b9"
+    },
+    {
+      "file": "emulator-smoke-summary.json",
+      "bytes": 1073,
+      "sha256": "c3a13a84e42120cfe4afa5280571eb08971ed6f36f1234034f947aa8fc55136c"
+    },
+    {
+      "file": "emulator-initial-report.json",
+      "bytes": 101621,
+      "sha256": "f48de43a7d80532a37a149ceabdd104184667d3c2cf74f96c40e2ea2247fa0b7"
+    },
+    {
+      "file": "emulator-background-report.json",
+      "bytes": 111343,
+      "sha256": "a6e55495c931c0676edaf5c3a42b7bc526dec8518f6f26ac5c02663c114990c8"
+    },
+    {
+      "file": "emulator-foreground-report.json",
+      "bytes": 124752,
+      "sha256": "592d647a074b4c126bee461acd93f5ea08b7d1980aa380f12eb495d72c5cfb15"
+    },
+    {
+      "file": "emulator-final-report.json",
+      "bytes": 143860,
+      "sha256": "82ccb5dae9e28cb94e635c6ca862dfd194bcc3192b3d95bddde65124c985a07a"
+    },
+    {
+      "file": "emulator-exported-report.json",
+      "bytes": 132040,
+      "sha256": "33993c7db7a935cb1df26d851538b68b69383c2ab7a8bc5b9c0a2922ef122d30"
+    },
+    {
+      "file": "emulator-export-proof.json",
+      "bytes": 402,
+      "sha256": "6785e83f98ce478bc1df1a72b1976ea233aa9aba5f2b32dcd7a834f0a86c0895"
+    },
+    {
+      "file": "emulator-ui-tap-proof.json",
+      "bytes": 19300,
+      "sha256": "ea1d6681a609d1cd4091f04eb38306f30e9e95a1eed4e98d0df5695d966ec7dd"
+    },
+    {
+      "file": "emulator-input-motion-proof.json",
+      "bytes": 2187,
+      "sha256": "d6bb38addf1a85d879e2a8ee330188c99b23b4a08b6464beac27a542a1eabcec"
+    },
+    {
+      "file": "transport-host-proof.json",
+      "bytes": 3222,
+      "sha256": "b57500c8d42dd0c8c540ba3b94758f686608d506266eff240fc8506e21d68f6a"
+    },
+    {
+      "file": "interactive-world-host-proof.json",
+      "bytes": 4921,
+      "sha256": "a303fa326b6f1d45cb092d55f53f49afd2c2bf332fa45c2f430f65879983d4c9"
+    },
+    {
+      "file": "ui-host-checks.json",
+      "artifact_path": "ui/ui-host-checks.json",
+      "bytes": 632,
+      "sha256": "b3a03d3fee95298a87890a5916a6cdd5a68baabb41b5aafa28c86ab0d6d1dfc7"
+    },
+    {
+      "file": "decode-host-proof.json",
+      "artifact_path": "decode-host/host-proof.json",
+      "bytes": 2821,
+      "sha256": "8171f46e559d3ddf5ec87660457ecb04e764266f766507939c1babc9dc01ce70"
+    }
+  ],
+  "source_and_device_checks": {
+    "native_passes": 3,
+    "decode_checks_per_native_run": 27,
+    "input_source_checks_per_native_run": 909,
+    "udp_checks_per_native_run": 330,
+    "udp_datagrams_per_native_run": 84,
+    "source_camera_host_steps": 4106,
+    "source_camera_host_components": 114968,
+    "host_ui_checks": 140,
+    "successful_world_rounds": 7,
+    "frames_per_round": 180,
+    "actual_sizes": [
+      [
+        783,
+        583
+      ],
+      [
+        1044,
+        778
+      ]
+    ],
+    "actual_generations": [
+      1,
+      2
+    ],
+    "signed_cpu_gpu_image_direction_mask": 15,
+    "input_linked_changed_pixels": 371201,
+    "released_input_settled_frames": 149,
+    "complete_decoded_audio_plays": 2,
+    "actual_button_taps": 7,
+    "session_failures": 0
+  },
+  "home": {
+    "receipt": {
+      "pause_sequence": 35,
+      "input_cleared": true,
+      "audio_started_before_pause": true,
+      "transport_started_before_pause": true,
+      "interrupted_audio_run_id": 2,
+      "interrupted_transport_run_id": 1,
+      "stop_sequence": 40,
+      "resume_sequence": 41
+    },
+    "audio_result": 1,
+    "audio_submitted_frames_before_cancel": 13824,
+    "audio_started_stopped_closed": true,
+    "udp_interrupted_blocked_poll": 1,
+    "udp_blocked_polls": 16,
+    "udp_sockets_opened": 2,
+    "udp_sockets_closed": 2,
+    "fresh_foreground_execution_passed": true
+  },
+  "actual_immutable_document_export_passed": true,
+  "current_world_after_reset_and_picker_passed": true,
+  "scope": {
+    "android": 13,
+    "sdk": 33,
+    "abi": "x86_64",
+    "arm64_package_built": true,
+    "ayn_thor_verified": false,
+    "physical_controller_verified": false,
+    "physical_audibility_verified": false,
+    "external_network_execution": false,
+    "server_interoperability_verified": false,
+    "whole_client_qualified": false,
+    "full_atlas_loading_qualified": false,
+    "character_movement_or_collision_qualified": false,
+    "persistent_gameplay_camera_qualified": false,
+    "performance_qualified": false
+  },
+  "retained_failed_attempts": [
+    "first-android-failure.json",
+    "second-android-failure.json",
+    "third-android-test-failure.json"
+  ],
+  "thor_check": "../../integration-probe/THOR-TEST.md"
+}

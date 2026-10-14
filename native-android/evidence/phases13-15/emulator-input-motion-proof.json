@@ -1,0 +1,130 @@
+{
+  "schema": 2,
+  "passed": true,
+  "scope": "Real Android touches reach source camera and authored Atlas bench; physical joystick and gameplay excluded",
+  "gestures": [
+    {
+      "gesture": 1,
+      "bounds": {
+        "left": 18,
+        "top": 549,
+        "width": 1044,
+        "height": 778,
+        "surface_ready": true
+      },
+      "from": [
+        453,
+        938
+      ],
+      "to": [
+        627,
+        938
+      ],
+      "frames_before": 3,
+      "frames_after": 7,
+      "pyr_before": [
+        0,
+        0,
+        0
+      ],
+      "pyr_after": [
+        0,
+        0.164000005,
+        0
+      ]
+    },
+    {
+      "gesture": 2,
+      "bounds": {
+        "left": 18,
+        "top": 549,
+        "width": 1044,
+        "height": 778,
+        "surface_ready": true
+      },
+      "from": [
+        627,
+        938
+      ],
+      "to": [
+        453,
+        938
+      ],
+      "frames_before": 12,
+      "frames_after": 25,
+      "pyr_before": [
+        0,
+        0.164000005,
+        0
+      ],
+      "pyr_after": [
+        0,
+        -0.00400000438,
+        0
+      ]
+    },
+    {
+      "gesture": 3,
+      "bounds": {
+        "left": 18,
+        "top": 549,
+        "width": 1044,
+        "height": 778,
+        "surface_ready": true
+      },
+      "from": [
+        540,
+        874
+      ],
+      "to": [
+        540,
+        1002
+      ],
+      "frames_before": 30,
+      "frames_after": 47,
+      "pyr_before": [
+        0,
+        -0.00400000438,
+        0
+      ],
+      "pyr_after": [
+        0.142000005,
+        -0.00400000438,
+        0
+      ]
+    },
+    {
+      "gesture": 4,
+      "bounds": {
+        "left": 18,
+        "top": 549,
+        "width": 1044,
+        "height": 778,
+        "surface_ready": true
+      },
+      "from": [
+        540,
+        1002
+      ],
+      "to": [
+        540,
+        874
+      ],
+      "frames_before": 47,
+      "frames_after": 64,
+      "pyr_before": [
+        0.142000005,
+        -0.00400000438,
+        0
+      ],
+      "pyr_after": [
+        0.0240000002,
+        -0.00400000438,
+        0
+      ]
+    }
+  ],
+  "direction_mask": 15,
+  "input_linked_changed_pixels": 371201,
+  "settled_frames": 149
+}

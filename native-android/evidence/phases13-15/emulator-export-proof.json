@@ -1,0 +1,12 @@
+{
+  "schema": 2,
+  "passed": true,
+  "scope": "Actual CREATE_DOCUMENT Save and immutable pre-picker qualification bytes",
+  "snapshot": {
+    "bytes": 132040,
+    "sha256": "33993c7db7a935cb1df26d851538b68b69383c2ab7a8bc5b9c0a2922ef122d30",
+    "qualification_passed": true
+  },
+  "document_path": "/sdcard/Download/COH-NativeIntegration-20261014-171044.json",
+  "background_receipt_preserved": true
+}

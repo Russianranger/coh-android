@@ -39,5 +39,7 @@ Phase 3 adds a bounded legacy DXT1/3/5 DDS-to-RGBA decoder. See [PHASE3.md](PHAS
 [PHASES13-15.md](PHASES13-15.md) combines on-device compressed Ogg decoding,
 real bounded UDP loopback transport and current input controlling the authentic
 Atlas scene camera in one new Integration Probe. Source and sanitized host
-proofs accompany one Android build/emulator workflow and one Thor test/export
-sequence. Previous accepted probes and kernels remain unchanged.
+proofs, build/lint/package verification and Android 13 emulator qualification
+passed in the [combined qualification receipt](evidence/phases13-15/qualification.json).
+The verified ARM64 package is ready for one Thor test/export sequence covering
+all three gates. Physical acceptance awaits that new report.

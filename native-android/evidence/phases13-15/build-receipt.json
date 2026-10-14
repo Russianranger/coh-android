@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "phases": [
+    13,
+    14,
+    15
+  ],
+  "source_commit": "e8d4b80b21088992bcbfa403f71bae3138a49e70",
+  "workflow_run_id": "38603481231",
+  "application_id": "org.coh.integrationprobe",
+  "probe_version": "0.1.0-phases13-15",
+  "version_code": 1,
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "gradle": "8.9",
+  "android_gradle_plugin": "8.7.3",
+  "ndk": "28.2.13676358",
+  "cmake": "3.22.1",
+  "signing": "Isolated CI debug key; separate from production launcher",
+  "artifacts": [
+    {
+      "file": "CoH-Native-Integration-Probe-0.1.0-arm64.apk",
+      "bytes": 750186,
+      "sha256": "1a2b3da7fedad2f3b78ec5673ce45e649e4e9cb5616f120c77a7770941c4ccba",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_integration_probe.so",
+        "bytes": 503264,
+        "sha256": "4728cbf5775a8a37ea02674c1b8acf4720a5fd28396eda9767df2199e43f4041"
+      },
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_fixtures_verified": true,
+      "signer_certificate_sha256": "a07480d939b071479f271c59a25da3702819c45e4e288b096b6c9dd5dbbd2f37"
+    },
+    {
+      "file": "CoH-Native-Integration-Probe-0.1.0-emulator-x86_64.apk",
+      "bytes": 750767,
+      "sha256": "46a6fd43c19a022d5b1d1109a89775fdfac511c45d0c99355f29485df484d1ed",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "native_library": {
+        "file": "lib/x86_64/libcoh_integration_probe.so",
+        "bytes": 503848,
+        "sha256": "220215f96d44c5197a4404351d6b81330c44f8f4a6a7773c50296b03bbccc0ed"
+      },
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_fixtures_verified": true,
+      "signer_certificate_sha256": "a07480d939b071479f271c59a25da3702819c45e4e288b096b6c9dd5dbbd2f37"
+    }
+  ],
+  "assets": [
+    {
+      "file": "audio-fixture.json",
+      "bytes": 6447,
+      "sha256": "ac5098be5f8571e2653424c30c8a4d861593ab973073987a5751b2abcaf71280"
+    },
+    {
+      "file": "audio.bin",
+      "bytes": 72736,
+      "sha256": "440361125d7420a1730ecd742271d8b2a67808dffcfa9dc435f2357d59931823"
+    },
+    {
+      "file": "codec-licenses.txt",
+      "bytes": 3045,
+      "sha256": "b2364a649aa43893b057ca9ca925a1bc585feaf0fa4da4dbf06d3394cf449546"
+    },
+    {
+      "file": "headset.ogg",
+      "bytes": 12930,
+      "sha256": "82bec697f9e824d192cac90f32a01421e4a3875aada64fc709862bc4d3ae9198"
+    },
+    {
+      "file": "material-reference.bin",
+      "bytes": 198208,
+      "sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77"
+    },
+    {
+      "file": "world-fixture.json",
+      "bytes": 55687,
+      "sha256": "ffb553f998931c15fb3cc3d83869001e318560d9b0b7200cf331e51ff5d18cac"
+    },
+    {
+      "file": "world-reference.bin",
+      "bytes": 161344,
+      "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13"
+    },
+    {
+      "file": "world.bin",
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    }
+  ],
+  "accepted_input_adapter_sha256": "fd1df2b4192c4ec42b743596656aceaca5d7351f6466e362547c1c66c410351a",
+  "original_game_execution": false,
+  "full_atlas_loaded": false,
+  "character_movement_or_collision": false,
+  "server_interoperability_verified": false,
+  "network_scope": "IPv4 UDP to127.0.0.1 only; ephemeral ports; worker-owned descriptors",
+  "thor_device_execution_verified": false,
+  "physical_controller_verified": false,
+  "physical_audibility_verified": false
+}

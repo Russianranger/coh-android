@@ -1,0 +1,3615 @@
+{
+  "schema": "coh-native-integration-probe-v2",
+  "phases": [
+    13,
+    14,
+    15
+  ],
+  "started_at": "2026-10-14T17:09:14.391Z",
+  "session_id": "1a13b63bc18-2770",
+  "scope": "Compressed authentic Ogg decoded on this device; local UDP only; authored Atlas bench rendered using accepted source camera/math and Android input. No game login, character movement or server interoperability.",
+  "app": {
+    "package": "org.coh.integrationprobe",
+    "version_name": "0.1.0-phases13-15",
+    "version_code": 1,
+    "installed_apk": {
+      "bytes": 750767,
+      "sha256": "46a6fd43c19a022d5b1d1109a89775fdfac511c45d0c99355f29485df484d1ed",
+      "scope": "Observed installed base APK bytes, hashed on asset worker"
+    }
+  },
+  "device": {
+    "manufacturer": "Google",
+    "model": "sdk_gphone64_x86_64",
+    "hardware": "ranchu",
+    "sdk": 33,
+    "abis": [
+      "x86_64"
+    ],
+    "emulator_detected": true
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "type": "input_view_created",
+      "time": "2026-10-14T17:09:14.448Z",
+      "elapsed_ms": 51290,
+      "generation": 1,
+      "detail": {
+        "generation": 1
+      }
+    },
+    {
+      "sequence": 2,
+      "type": "activity_created",
+      "time": "2026-10-14T17:09:14.554Z",
+      "elapsed_ms": 51395,
+      "generation": 1,
+      "detail": {}
+    },
+    {
+      "sequence": 3,
+      "type": "activity_resumed",
+      "time": "2026-10-14T17:09:14.558Z",
+      "elapsed_ms": 51400,
+      "generation": 1,
+      "detail": {}
+    },
+    {
+      "sequence": 4,
+      "type": "surface_created",
+      "time": "2026-10-14T17:09:14.850Z",
+      "elapsed_ms": 51692,
+      "generation": 1,
+      "detail": {}
+    },
+    {
+      "sequence": 5,
+      "type": "surface_changed",
+      "time": "2026-10-14T17:09:14.886Z",
+      "elapsed_ms": 51728,
+      "generation": 1,
+      "detail": {
+        "width": 1044,
+        "height": 778,
+        "format": 4
+      }
+    },
+    {
+      "sequence": 6,
+      "type": "assets_verified",
+      "time": "2026-10-14T17:09:15.859Z",
+      "elapsed_ms": 52701,
+      "generation": 1,
+      "detail": {
+        "compressed_ogg_bytes": 12930,
+        "compressed_ogg_sha256": "82bec697f9e824d192cac90f32a01421e4a3875aada64fc709862bc4d3ae9198",
+        "pcm_role": "reference only, never played instead of decoder output"
+      }
+    },
+    {
+      "sequence": 7,
+      "type": "checks_requested",
+      "time": "2026-10-14T17:09:15.860Z",
+      "elapsed_ms": 52702,
+      "generation": 1,
+      "detail": {
+        "run_id": 1,
+        "reason": "initial"
+      }
+    },
+    {
+      "sequence": 8,
+      "type": "world_render_requested",
+      "time": "2026-10-14T17:09:15.939Z",
+      "elapsed_ms": 52781,
+      "generation": 1,
+      "detail": {
+        "run_id": 1,
+        "reason": "initial",
+        "width": 1044,
+        "height": 778,
+        "render_token": 1,
+        "native_ticket": 1
+      }
+    },
+    {
+      "sequence": 9,
+      "type": "window_focus_changed",
+      "time": "2026-10-14T17:09:16.010Z",
+      "elapsed_ms": 52861,
+      "generation": 1,
+      "detail": {
+        "focused": true
+      }
+    },
+    {
+      "sequence": 10,
+      "type": "checks_complete",
+      "time": "2026-10-14T17:09:16.726Z",
+      "elapsed_ms": 53568,
+      "generation": 1,
+      "detail": {
+        "run_id": 1,
+        "passed": true,
+        "expected_cancel": false
+      }
+    },
+    {
+      "sequence": 11,
+      "type": "world_render_complete",
+      "time": "2026-10-14T17:09:24.824Z",
+      "elapsed_ms": 61669,
+      "generation": 1,
+      "detail": {
+        "run_id": 1,
+        "engine_passed": true,
+        "clean_obsolete_cancellation": false,
+        "direction_mask": 15
+      }
+    },
+    {
+      "sequence": 12,
+      "type": "world_render_requested",
+      "time": "2026-10-14T17:09:25.052Z",
+      "elapsed_ms": 61894,
+      "generation": 1,
+      "detail": {
+        "run_id": 2,
+        "reason": "bounded_preview_continuation",
+        "width": 1044,
+        "height": 778,
+        "render_token": 1,
+        "native_ticket": 1
+      }
+    },
+    {
+      "sequence": 13,
+      "type": "audio_play_requested",
+      "time": "2026-10-14T17:09:25.582Z",
+      "elapsed_ms": 62424,
+      "generation": 1,
+      "detail": {
+        "run_id": 1,
+        "reason": "manual"
+      }
+    },
+    {
+      "sequence": 14,
+      "type": "audio_complete",
+      "time": "2026-10-14T17:09:27.947Z",
+      "elapsed_ms": 64788,
+      "generation": 1,
+      "detail": {
+        "run_id": 1,
+        "passed": true,
+        "cancelled": false,
+        "closed": true
+      }
+    },
+    {
+      "sequence": 15,
+      "type": "resize_requested",
+      "time": "2026-10-14T17:09:33.987Z",
+      "elapsed_ms": 70829,
+      "generation": 1,
+      "detail": {
+        "smaller": true
+      }
+    },
+    {
+      "sequence": 16,
+      "type": "surface_changed",
+      "time": "2026-10-14T17:09:34.010Z",
+      "elapsed_ms": 70852,
+      "generation": 1,
+      "detail": {
+        "width": 783,
+        "height": 583,
+        "format": 4
+      }
+    },
+    {
+      "sequence": 17,
+      "type": "world_render_complete",
+      "time": "2026-10-14T17:09:34.081Z",
+      "elapsed_ms": 70923,
+      "generation": 1,
+      "detail": {
+        "run_id": 2,
+        "engine_passed": false,
+        "clean_obsolete_cancellation": true,
+        "direction_mask": 0
+      }
+    },
+    {
+      "sequence": 18,
+      "type": "world_render_requested",
+      "time": "2026-10-14T17:09:34.319Z",
+      "elapsed_ms": 71162,
+      "generation": 1,
+      "detail": {
+        "run_id": 3,
+        "reason": "bounded_preview_continuation",
+        "width": 783,
+        "height": 583,
+        "render_token": 3,
+        "native_ticket": 3
+      }
+    },
+    {
+      "sequence": 19,
+      "type": "world_render_complete",
+      "time": "2026-10-14T17:09:40.755Z",
+      "elapsed_ms": 77597,
+      "generation": 1,
+      "detail": {
+        "run_id": 3,
+        "engine_passed": true,
+        "clean_obsolete_cancellation": false,
+        "direction_mask": 0
+      }
+    },
+    {
+      "sequence": 20,
+      "type": "world_render_requested",
+      "time": "2026-10-14T17:09:40.969Z",
+      "elapsed_ms": 77811,
+      "generation": 1,
+      "detail": {
+        "run_id": 4,
+        "reason": "bounded_preview_continuation",
+        "width": 783,
+        "height": 583,
+        "render_token": 3,
+        "native_ticket": 3
+      }
+    },
+    {
+      "sequence": 21,
+      "type": "view_recreation_requested",
+      "time": "2026-10-14T17:09:44.589Z",
+      "elapsed_ms": 81431,
+      "generation": 1,
+      "detail": {
+        "previous_generation": 1
+      }
+    },
+    {
+      "sequence": 22,
+      "type": "surface_destroyed",
+      "time": "2026-10-14T17:09:44.594Z",
+      "elapsed_ms": 81435,
+      "generation": 1,
+      "detail": {}
+    },
+    {
+      "sequence": 23,
+      "type": "input_view_created",
+      "time": "2026-10-14T17:09:44.626Z",
+      "elapsed_ms": 81468,
+      "generation": 2,
+      "detail": {
+        "generation": 2
+      }
+    },
+    {
+      "sequence": 24,
+      "type": "surface_created",
+      "time": "2026-10-14T17:09:44.681Z",
+      "elapsed_ms": 81523,
+      "generation": 2,
+      "detail": {}
+    },
+    {
+      "sequence": 25,
+      "type": "surface_changed",
+      "time": "2026-10-14T17:09:44.682Z",
+      "elapsed_ms": 81523,
+      "generation": 2,
+      "detail": {
+        "width": 783,
+        "height": 583,
+        "format": 4
+      }
+    },
+    {
+      "sequence": 26,
+      "type": "world_render_complete",
+      "time": "2026-10-14T17:09:44.780Z",
+      "elapsed_ms": 81622,
+      "generation": 2,
+      "detail": {
+        "run_id": 4,
+        "engine_passed": false,
+        "clean_obsolete_cancellation": true,
+        "direction_mask": 0
+      }
+    },
+    {
+      "sequence": 27,
+      "type": "world_render_requested",
+      "time": "2026-10-14T17:09:44.805Z",
+      "elapsed_ms": 81647,
+      "generation": 2,
+      "detail": {
+        "run_id": 5,
+        "reason": "surface_created",
+        "width": 783,
+        "height": 583,
+        "render_token": 6,
+        "native_ticket": 6
+      }
+    },
+    {
+      "sequence": 28,
+      "type": "world_render_complete",
+      "time": "2026-10-14T17:09:51.220Z",
+      "elapsed_ms": 88062,
+      "generation": 2,
+      "detail": {
+        "run_id": 5,
+        "engine_passed": true,
+        "clean_obsolete_cancellation": false,
+        "direction_mask": 0
+      }
+    },
+    {
+      "sequence": 29,
+      "type": "world_render_requested",
+      "time": "2026-10-14T17:09:51.439Z",
+      "elapsed_ms": 88281,
+      "generation": 2,
+      "detail": {
+        "run_id": 6,
+        "reason": "bounded_preview_continuation",
+        "width": 783,
+        "height": 583,
+        "render_token": 6,
+        "native_ticket": 6
+      }
+    },
+    {
+      "sequence": 30,
+      "type": "home_check_requested",
+      "time": "2026-10-14T17:09:55.259Z",
+      "elapsed_ms": 92106,
+      "generation": 2,
+      "detail": {
+        "stage": "waiting for renderer cleanup"
+      }
+    },
+    {
+      "sequence": 31,
+      "type": "world_render_complete",
+      "time": "2026-10-14T17:09:55.331Z",
+      "elapsed_ms": 92173,
+      "generation": 2,
+      "detail": {
+        "run_id": 6,
+        "engine_passed": false,
+        "clean_obsolete_cancellation": true,
+        "direction_mask": 0
+      }
+    },
+    {
+      "sequence": 32,
+      "type": "home_check_workers_started",
+      "time": "2026-10-14T17:09:55.375Z",
+      "elapsed_ms": 92221,
+      "generation": 2,
+      "detail": {
+        "transport_run_id": 1,
+        "renderer_active": false
+      }
+    },
+    {
+      "sequence": 33,
+      "type": "audio_play_requested",
+      "time": "2026-10-14T17:09:55.384Z",
+      "elapsed_ms": 92231,
+      "generation": 2,
+      "detail": {
+        "run_id": 2,
+        "reason": "home_check"
+      }
+    },
+    {
+      "sequence": 34,
+      "type": "home_check_ready",
+      "time": "2026-10-14T17:09:55.581Z",
+      "elapsed_ms": 92423,
+      "generation": 2,
+      "detail": {
+        "audio_run_id": 2,
+        "transport_run_id": 1
+      }
+    },
+    {
+      "sequence": 35,
+      "type": "activity_paused",
+      "time": "2026-10-14T17:09:55.838Z",
+      "elapsed_ms": 92680,
+      "generation": 2,
+      "detail": {
+        "input_cleared": true,
+        "input_snapshot": {
+          "result": 1,
+          "held": 0,
+          "pressed": 0,
+          "released": 0,
+          "frames": 871,
+          "clear_count": 3,
+          "rejected": 0,
+          "clipped": 0,
+          "delta_x": 0,
+          "delta_y": 0,
+          "pyr": [
+            0.00400000066,
+            -0.00400000438,
+            0
+          ],
+          "target_pyr": [
+            -0.00400000066,
+            3.13759279,
+            0
+          ],
+          "axes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "audio_started_before_pause": true,
+        "transport_started_before_pause": true,
+        "interrupted_audio_run_id": 2,
+        "interrupted_transport_run_id": 1
+      }
+    },
+    {
+      "sequence": 36,
+      "type": "window_focus_changed",
+      "time": "2026-10-14T17:09:55.855Z",
+      "elapsed_ms": 92697,
+      "generation": 2,
+      "detail": {
+        "focused": false
+      }
+    },
+    {
+      "sequence": 37,
+      "type": "transport_wait_complete",
+      "time": "2026-10-14T17:09:56.255Z",
+      "elapsed_ms": 93097,
+      "generation": 2,
+      "detail": {
+        "run_id": 1,
+        "cancelled": true,
+        "closed": true
+      }
+    },
+    {
+      "sequence": 38,
+      "type": "audio_complete",
+      "time": "2026-10-14T17:09:56.317Z",
+      "elapsed_ms": 93159,
+      "generation": 2,
+      "detail": {
+        "run_id": 2,
+        "passed": false,
+        "cancelled": true,
+        "closed": true
+      }
+    },
+    {
+      "sequence": 39,
+      "type": "surface_destroyed",
+      "time": "2026-10-14T17:09:56.903Z",
+      "elapsed_ms": 93745,
+      "generation": 2,
+      "detail": {}
+    },
+    {
+      "sequence": 40,
+      "type": "activity_stopped",
+      "time": "2026-10-14T17:09:57.234Z",
+      "elapsed_ms": 94076,
+      "generation": 2,
+      "detail": {}
+    }
+  ],
+  "native_runs": [
+    {
+      "passed": true,
+      "decode": {
+        "passed": true,
+        "result": 0,
+        "codec_result": 0,
+        "opened": true,
+        "cleared": true,
+        "eos": true,
+        "streams": 1,
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "pages": 5,
+        "read_callbacks": 18,
+        "seek_callbacks": 4,
+        "tell_callbacks": 1,
+        "close_callbacks": 1,
+        "callback_bytes": 31643,
+        "ov_read_calls": 24,
+        "maximum_sample_error": 1,
+        "different_samples": 6,
+        "compared_samples": 36336,
+        "absolute_sample_error": 6,
+        "squared_sample_error": 6,
+        "sample_rms_error": 0.0128501165511,
+        "maximum_allowed_sample_error": 1,
+        "reference_compared": true,
+        "reference_passed": true,
+        "callback_limit": false,
+        "checks": 27,
+        "failed": 0,
+        "rejected_inputs": 13,
+        "repeated_decodes": 8
+      },
+      "transport": {
+        "passed": true,
+        "result": 0,
+        "cancelled": false,
+        "expected_cancel": false,
+        "session_failure": false,
+        "opened": true,
+        "closed": true,
+        "checks": 330,
+        "datagrams_sent": 84,
+        "datagrams_received": 84,
+        "clear_frames": 33,
+        "encrypted_frames": 33,
+        "expected_rejects": 18,
+        "endpoint_checks": 84,
+        "byte_parity_checks": 66,
+        "decoded_payloads": 66,
+        "truncated_datagrams": 4,
+        "zero_datagrams": 4,
+        "timeouts": 1,
+        "blocked_polls": 86,
+        "interrupted_blocked_poll": 0,
+        "sockets_opened": 4,
+        "sockets_closed": 4,
+        "backend_errors": 0,
+        "elapsed_ms": 41,
+        "scope": "127.0.0.1 UDP only; no game server or authentication"
+      },
+      "input_source": {
+        "passed": true,
+        "result": 1,
+        "checks": 909,
+        "failed": 0,
+        "source_cases": 96,
+        "adapter_cases": 11,
+        "max_source_error": 0
+      },
+      "run_id": 1,
+      "reason": "initial",
+      "generation": 1,
+      "started_after_event": 6,
+      "completed_at": "2026-10-14T17:09:16.725Z",
+      "foreground_at_completion": true,
+      "java_expected_cancel": false,
+      "foreground_epoch": 0
+    }
+  ],
+  "audio_runs": [
+    {
+      "passed": true,
+      "result": 0,
+      "decode": {
+        "passed": true,
+        "result": 0,
+        "codec_result": 0,
+        "opened": true,
+        "cleared": true,
+        "eos": true,
+        "streams": 1,
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "pages": 5,
+        "read_callbacks": 18,
+        "seek_callbacks": 4,
+        "tell_callbacks": 1,
+        "close_callbacks": 1,
+        "callback_bytes": 31643,
+        "ov_read_calls": 24,
+        "maximum_sample_error": 1,
+        "different_samples": 6,
+        "compared_samples": 36336,
+        "absolute_sample_error": 6,
+        "squared_sample_error": 6,
+        "sample_rms_error": 0.0128501165511,
+        "maximum_allowed_sample_error": 1,
+        "reference_compared": true,
+        "reference_passed": true,
+        "callback_limit": false,
+        "checks": 0,
+        "failed": 0,
+        "rejected_inputs": 0,
+        "repeated_decodes": 0
+      },
+      "decoded_audio_played": true,
+      "playback_origin": "on-device Ogg decode; no reference PCM fallback",
+      "requested_rate": 44100,
+      "actual_rate": 44100,
+      "actual_channels": 2,
+      "actual_format": 1,
+      "opened": true,
+      "started": true,
+      "stopped": true,
+      "closed": true,
+      "cancelled": false,
+      "backend_errors": 0,
+      "requested_clips": 3,
+      "completed_clips": 3,
+      "partial_writes": 0,
+      "write_calls": 134,
+      "xrun_count": 1,
+      "timestamp_available": true,
+      "submitted_frames": 67734,
+      "read_frames": 67734,
+      "timestamp_frame": 65586,
+      "timestamp_ns": 64721073408,
+      "source_volume_db": -443,
+      "source_effective_gain": 0.600481987,
+      "quiet_volume_db": -1045,
+      "quiet_effective_gain": 0.300261766,
+      "duration_ns": 2245286612,
+      "run_id": 1,
+      "reason": "manual",
+      "generation": 1,
+      "started_after_event": 12,
+      "completed_at": "2026-10-14T17:09:27.946Z",
+      "foreground_at_completion": true
+    },
+    {
+      "passed": false,
+      "result": 1,
+      "decode": {
+        "passed": true,
+        "result": 0,
+        "codec_result": 0,
+        "opened": true,
+        "cleared": true,
+        "eos": true,
+        "streams": 1,
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "pages": 5,
+        "read_callbacks": 18,
+        "seek_callbacks": 4,
+        "tell_callbacks": 1,
+        "close_callbacks": 1,
+        "callback_bytes": 31643,
+        "ov_read_calls": 24,
+        "maximum_sample_error": 1,
+        "different_samples": 6,
+        "compared_samples": 36336,
+        "absolute_sample_error": 6,
+        "squared_sample_error": 6,
+        "sample_rms_error": 0.0128501165511,
+        "maximum_allowed_sample_error": 1,
+        "reference_compared": true,
+        "reference_passed": true,
+        "callback_limit": false,
+        "checks": 0,
+        "failed": 0,
+        "rejected_inputs": 0,
+        "repeated_decodes": 0
+      },
+      "decoded_audio_played": true,
+      "playback_origin": "on-device Ogg decode; no reference PCM fallback",
+      "requested_rate": 44100,
+      "actual_rate": 44100,
+      "actual_channels": 2,
+      "actual_format": 1,
+      "opened": true,
+      "started": true,
+      "stopped": true,
+      "closed": true,
+      "cancelled": true,
+      "backend_errors": 0,
+      "requested_clips": 3,
+      "completed_clips": 0,
+      "partial_writes": 0,
+      "write_calls": 27,
+      "xrun_count": 0,
+      "timestamp_available": true,
+      "submitted_frames": 13824,
+      "read_frames": 13582,
+      "timestamp_frame": 5562,
+      "timestamp_ns": 92694074292,
+      "source_volume_db": -443,
+      "source_effective_gain": 0.600481987,
+      "quiet_volume_db": -1045,
+      "quiet_effective_gain": 0.300261766,
+      "duration_ns": 447524270,
+      "run_id": 2,
+      "reason": "home_check",
+      "generation": 2,
+      "started_after_event": 32,
+      "completed_at": "2026-10-14T17:09:56.317Z",
+      "foreground_at_completion": false
+    }
+  ],
+  "transport_runs": [
+    {
+      "passed": true,
+      "result": 0,
+      "cancelled": true,
+      "expected_cancel": true,
+      "session_failure": false,
+      "opened": true,
+      "closed": true,
+      "checks": 6,
+      "datagrams_sent": 0,
+      "datagrams_received": 0,
+      "clear_frames": 0,
+      "encrypted_frames": 0,
+      "expected_rejects": 0,
+      "endpoint_checks": 0,
+      "byte_parity_checks": 0,
+      "decoded_payloads": 0,
+      "truncated_datagrams": 0,
+      "zero_datagrams": 0,
+      "timeouts": 0,
+      "blocked_polls": 16,
+      "interrupted_blocked_poll": 1,
+      "sockets_opened": 2,
+      "sockets_closed": 2,
+      "backend_errors": 0,
+      "elapsed_ms": 476,
+      "scope": "127.0.0.1 UDP only; no game server or authentication",
+      "run_id": 1,
+      "reason": "home_wait",
+      "generation": 2,
+      "started_after_event": 31,
+      "completed_at": "2026-10-14T17:09:56.248Z",
+      "foreground_at_completion": false
+    }
+  ],
+  "world_runs": [
+    {
+      "schema": 1,
+      "probe": "coh-native-input-authentic-world",
+      "passed": true,
+      "engine_passed": true,
+      "interaction_passed": true,
+      "cancelled": false,
+      "obsolete": false,
+      "expected_cancel": false,
+      "session_failure": false,
+      "fixtures_valid": true,
+      "baseline_cpu_passed": true,
+      "baseline_gpu_passed": true,
+      "context_created": true,
+      "objects_released": true,
+      "swapped": true,
+      "width": 1044,
+      "height": 778,
+      "surface_width": 1044,
+      "surface_height": 778,
+      "frames": 180,
+      "source_frames_consumed": 180,
+      "direction_mask": 15,
+      "settled_frames": 149,
+      "external_revision_changes": 32,
+      "cpu_direction_mask": 15,
+      "gpu_direction_mask": 15,
+      "image_direction_mask": 15,
+      "input_motion_frames": 23,
+      "stationary_mismatches": 0,
+      "camera_determinism_checks": 180,
+      "camera_determinism_mismatches": 0,
+      "image_samples": 18,
+      "changed_image_samples": 14,
+      "same_camera_image_mismatches": 0,
+      "gl_errors": 0,
+      "egl_error": 0,
+      "shader_language_version": 300,
+      "shader_precise_enabled": 0,
+      "baseline_transform_components": 39936,
+      "baseline_transform_mismatches": 0,
+      "interactive_transform_components": 119808,
+      "interactive_transform_mismatches": 0,
+      "baseline_cpu_components": 384,
+      "baseline_cpu_mismatches": 0,
+      "input_linked_changed_pixels": 371201,
+      "duration_ms": 7804,
+      "first_revision": 2,
+      "last_revision": 84,
+      "first_camera_degrees": [
+        12,
+        0,
+        0
+      ],
+      "last_camera_degrees": [
+        11.7708168,
+        -0.229183316,
+        0
+      ],
+      "stage": "complete",
+      "failure": "",
+      "gl_vendor": "Google (Google Inc.)",
+      "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+      "shader_precision_mechanism": "ESSL-3.00-explicit-source-order-TF-gated",
+      "scope": "Authentic accepted Atlas bench geometry/materials under current native editor-look input and source camera arithmetic; bounded +/-12-degree view adapter",
+      "original_lighting_qualified": false,
+      "full_atlas_loading_qualified": false,
+      "character_movement_qualified": false,
+      "collision_qualified": false,
+      "gameplay_qualified": false,
+      "performance_qualified": false,
+      "run_id": 1,
+      "reason": "initial",
+      "generation": 1,
+      "started_after_event": 7,
+      "completed_at": "2026-10-14T17:09:24.819Z",
+      "foreground_at_completion": true,
+      "requested_width": 1044,
+      "requested_height": 778,
+      "render_token": 1,
+      "native_ticket": 1,
+      "java_obsolete": false
+    },
+    {
+      "schema": 1,
+      "probe": "coh-native-input-authentic-world",
+      "passed": false,
+      "engine_passed": false,
+      "interaction_passed": false,
+      "cancelled": true,
+      "obsolete": true,
+      "expected_cancel": true,
+      "session_failure": false,
+      "fixtures_valid": true,
+      "baseline_cpu_passed": true,
+      "baseline_gpu_passed": true,
+      "context_created": true,
+      "objects_released": true,
+      "swapped": true,
+      "width": 1044,
+      "height": 778,
+      "surface_width": 1044,
+      "surface_height": 778,
+      "frames": 173,
+      "source_frames_consumed": 173,
+      "direction_mask": 0,
+      "settled_frames": 0,
+      "external_revision_changes": 0,
+      "cpu_direction_mask": 0,
+      "gpu_direction_mask": 0,
+      "image_direction_mask": 0,
+      "input_motion_frames": 0,
+      "stationary_mismatches": 0,
+      "camera_determinism_checks": 173,
+      "camera_determinism_mismatches": 0,
+      "image_samples": 2,
+      "changed_image_samples": 0,
+      "same_camera_image_mismatches": 0,
+      "gl_errors": 0,
+      "egl_error": 0,
+      "shader_language_version": 300,
+      "shader_precise_enabled": 0,
+      "baseline_transform_components": 39936,
+      "baseline_transform_mismatches": 0,
+      "interactive_transform_components": 99840,
+      "interactive_transform_mismatches": 0,
+      "baseline_cpu_components": 384,
+      "baseline_cpu_mismatches": 0,
+      "input_linked_changed_pixels": 0,
+      "duration_ms": 8646,
+      "first_revision": 84,
+      "last_revision": 84,
+      "first_camera_degrees": [
+        12,
+        0,
+        0
+      ],
+      "last_camera_degrees": [
+        12,
+        0,
+        0
+      ],
+      "stage": "",
+      "failure": "",
+      "gl_vendor": "Google (Google Inc.)",
+      "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+      "shader_precision_mechanism": "ESSL-3.00-explicit-source-order-TF-gated",
+      "scope": "Authentic accepted Atlas bench geometry/materials under current native editor-look input and source camera arithmetic; bounded +/-12-degree view adapter",
+      "original_lighting_qualified": false,
+      "full_atlas_loading_qualified": false,
+      "character_movement_qualified": false,
+      "collision_qualified": false,
+      "gameplay_qualified": false,
+      "performance_qualified": false,
+      "run_id": 2,
+      "reason": "bounded_preview_continuation",
+      "generation": 1,
+      "started_after_event": 11,
+      "completed_at": "2026-10-14T17:09:34.079Z",
+      "foreground_at_completion": true,
+      "requested_width": 1044,
+      "requested_height": 778,
+      "render_token": 1,
+      "native_ticket": 1,
+      "java_obsolete": true
+    },
+    {
+      "schema": 1,
+      "probe": "coh-native-input-authentic-world",
+      "passed": false,
+      "engine_passed": true,
+      "interaction_passed": false,
+      "cancelled": false,
+      "obsolete": false,
+      "expected_cancel": false,
+      "session_failure": false,
+      "fixtures_valid": true,
+      "baseline_cpu_passed": true,
+      "baseline_gpu_passed": true,
+      "context_created": true,
+      "objects_released": true,
+      "swapped": true,
+      "width": 783,
+      "height": 583,
+      "surface_width": 783,
+      "surface_height": 583,
+      "frames": 180,
+      "source_frames_consumed": 180,
+      "direction_mask": 0,
+      "settled_frames": 0,
+      "external_revision_changes": 0,
+      "cpu_direction_mask": 0,
+      "gpu_direction_mask": 0,
+      "image_direction_mask": 0,
+      "input_motion_frames": 0,
+      "stationary_mismatches": 0,
+      "camera_determinism_checks": 180,
+      "camera_determinism_mismatches": 0,
+      "image_samples": 2,
+      "changed_image_samples": 0,
+      "same_camera_image_mismatches": 0,
+      "gl_errors": 0,
+      "egl_error": 0,
+      "shader_language_version": 300,
+      "shader_precise_enabled": 0,
+      "baseline_transform_components": 39936,
+      "baseline_transform_mismatches": 0,
+      "interactive_transform_components": 99840,
+      "interactive_transform_mismatches": 0,
+      "baseline_cpu_components": 384,
+      "baseline_cpu_mismatches": 0,
+      "input_linked_changed_pixels": 0,
+      "duration_ms": 6003,
+      "first_revision": 84,
+      "last_revision": 84,
+      "first_camera_degrees": [
+        12,
+        0,
+        0
+      ],
+      "last_camera_degrees": [
+        12,
+        0,
+        0
+      ],
+      "stage": "complete",
+      "failure": "",
+      "gl_vendor": "Google (Google Inc.)",
+      "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+      "shader_precision_mechanism": "ESSL-3.00-explicit-source-order-TF-gated",
+      "scope": "Authentic accepted Atlas bench geometry/materials under current native editor-look input and source camera arithmetic; bounded +/-12-degree view adapter",
+      "original_lighting_qualified": false,
+      "full_atlas_loading_qualified": false,
+      "character_movement_qualified": false,
+      "collision_qualified": false,
+      "gameplay_qualified": false,
+      "performance_qualified": false,
+      "run_id": 3,
+      "reason": "bounded_preview_continuation",
+      "generation": 1,
+      "started_after_event": 17,
+      "completed_at": "2026-10-14T17:09:40.754Z",
+      "foreground_at_completion": true,
+      "requested_width": 783,
+      "requested_height": 583,
+      "render_token": 3,
+      "native_ticket": 3,
+      "java_obsolete": false
+    },
+    {
+      "schema": 1,
+      "probe": "coh-native-input-authentic-world",
+      "passed": false,
+      "engine_passed": false,
+      "interaction_passed": false,
+      "cancelled": true,
+      "obsolete": true,
+      "expected_cancel": true,
+      "session_failure": false,
+      "fixtures_valid": true,
+      "baseline_cpu_passed": true,
+      "baseline_gpu_passed": true,
+      "context_created": true,
+      "objects_released": true,
+      "swapped": true,
+      "width": 783,
+      "height": 583,
+      "surface_width": 783,
+      "surface_height": 583,
+      "frames": 48,
+      "source_frames_consumed": 49,
+      "direction_mask": 0,
+      "settled_frames": 0,
+      "external_revision_changes": 0,
+      "cpu_direction_mask": 0,
+      "gpu_direction_mask": 0,
+      "image_direction_mask": 0,
+      "input_motion_frames": 0,
+      "stationary_mismatches": 0,
+      "camera_determinism_checks": 49,
+      "camera_determinism_mismatches": 0,
+      "image_samples": 2,
+      "changed_image_samples": 0,
+      "same_camera_image_mismatches": 0,
+      "gl_errors": 0,
+      "egl_error": 0,
+      "shader_language_version": 300,
+      "shader_precise_enabled": 0,
+      "baseline_transform_components": 39936,
+      "baseline_transform_mismatches": 0,
+      "interactive_transform_components": 33280,
+      "interactive_transform_mismatches": 0,
+      "baseline_cpu_components": 384,
+      "baseline_cpu_mismatches": 0,
+      "input_linked_changed_pixels": 0,
+      "duration_ms": 3327,
+      "first_revision": 84,
+      "last_revision": 84,
+      "first_camera_degrees": [
+        12,
+        0,
+        0
+      ],
+      "last_camera_degrees": [
+        12,
+        0,
+        0
+      ],
+      "stage": "",
+      "failure": "",
+      "gl_vendor": "Google (Google Inc.)",
+      "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+      "shader_precision_mechanism": "ESSL-3.00-explicit-source-order-TF-gated",
+      "scope": "Authentic accepted Atlas bench geometry/materials under current native editor-look input and source camera arithmetic; bounded +/-12-degree view adapter",
+      "original_lighting_qualified": false,
+      "full_atlas_loading_qualified": false,
+      "character_movement_qualified": false,
+      "collision_qualified": false,
+      "gameplay_qualified": false,
+      "performance_qualified": false,
+      "run_id": 4,
+      "reason": "bounded_preview_continuation",
+      "generation": 1,
+      "started_after_event": 19,
+      "completed_at": "2026-10-14T17:09:44.780Z",
+      "foreground_at_completion": true,
+      "requested_width": 783,
+      "requested_height": 583,
+      "render_token": 3,
+      "native_ticket": 3,
+      "java_obsolete": true
+    },
+    {
+      "schema": 1,
+      "probe": "coh-native-input-authentic-world",
+      "passed": false,
+      "engine_passed": true,
+      "interaction_passed": false,
+      "cancelled": false,
+      "obsolete": false,
+      "expected_cancel": false,
+      "session_failure": false,
+      "fixtures_valid": true,
+      "baseline_cpu_passed": true,
+      "baseline_gpu_passed": true,
+      "context_created": true,
+      "objects_released": true,
+      "swapped": true,
+      "width": 783,
+      "height": 583,
+      "surface_width": 783,
+      "surface_height": 583,
+      "frames": 180,
+      "source_frames_consumed": 180,
+      "direction_mask": 0,
+      "settled_frames": 0,
+      "external_revision_changes": 0,
+      "cpu_direction_mask": 0,
+      "gpu_direction_mask": 0,
+      "image_direction_mask": 0,
+      "input_motion_frames": 0,
+      "stationary_mismatches": 0,
+      "camera_determinism_checks": 180,
+      "camera_determinism_mismatches": 0,
+      "image_samples": 2,
+      "changed_image_samples": 0,
+      "same_camera_image_mismatches": 0,
+      "gl_errors": 0,
+      "egl_error": 0,
+      "shader_language_version": 300,
+      "shader_precise_enabled": 0,
+      "baseline_transform_components": 39936,
+      "baseline_transform_mismatches": 0,
+      "interactive_transform_components": 99840,
+      "interactive_transform_mismatches": 0,
+      "baseline_cpu_components": 384,
+      "baseline_cpu_mismatches": 0,
+      "input_linked_changed_pixels": 0,
+      "duration_ms": 6004,
+      "first_revision": 86,
+      "last_revision": 86,
+      "first_camera_degrees": [
+        12,
+        0,
+        0
+      ],
+      "last_camera_degrees": [
+        12,
+        0,
+        0
+      ],
+      "stage": "complete",
+      "failure": "",
+      "gl_vendor": "Google (Google Inc.)",
+      "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+      "shader_precision_mechanism": "ESSL-3.00-explicit-source-order-TF-gated",
+      "scope": "Authentic accepted Atlas bench geometry/materials under current native editor-look input and source camera arithmetic; bounded +/-12-degree view adapter",
+      "original_lighting_qualified": false,
+      "full_atlas_loading_qualified": false,
+      "character_movement_qualified": false,
+      "collision_qualified": false,
+      "gameplay_qualified": false,
+      "performance_qualified": false,
+      "run_id": 5,
+      "reason": "surface_created",
+      "generation": 2,
+      "started_after_event": 26,
+      "completed_at": "2026-10-14T17:09:51.219Z",
+      "foreground_at_completion": true,
+      "requested_width": 783,
+      "requested_height": 583,
+      "render_token": 6,
+      "native_ticket": 6,
+      "java_obsolete": false
+    },
+    {
+      "schema": 1,
+      "probe": "coh-native-input-authentic-world",
+      "passed": false,
+      "engine_passed": false,
+      "interaction_passed": false,
+      "cancelled": true,
+      "obsolete": true,
+      "expected_cancel": true,
+      "session_failure": false,
+      "fixtures_valid": true,
+      "baseline_cpu_passed": true,
+      "baseline_gpu_passed": true,
+      "context_created": true,
+      "objects_released": true,
+      "swapped": true,
+      "width": 783,
+      "height": 583,
+      "surface_width": 783,
+      "surface_height": 583,
+      "frames": 38,
+      "source_frames_consumed": 38,
+      "direction_mask": 0,
+      "settled_frames": 0,
+      "external_revision_changes": 0,
+      "cpu_direction_mask": 0,
+      "gpu_direction_mask": 0,
+      "image_direction_mask": 0,
+      "input_motion_frames": 0,
+      "stationary_mismatches": 0,
+      "camera_determinism_checks": 38,
+      "camera_determinism_mismatches": 0,
+      "image_samples": 2,
+      "changed_image_samples": 0,
+      "same_camera_image_mismatches": 0,
+      "gl_errors": 0,
+      "egl_error": 0,
+      "shader_language_version": 300,
+      "shader_precise_enabled": 0,
+      "baseline_transform_components": 39936,
+      "baseline_transform_mismatches": 0,
+      "interactive_transform_components": 26624,
+      "interactive_transform_mismatches": 0,
+      "baseline_cpu_components": 384,
+      "baseline_cpu_mismatches": 0,
+      "input_linked_changed_pixels": 0,
+      "duration_ms": 3484,
+      "first_revision": 86,
+      "last_revision": 86,
+      "first_camera_degrees": [
+        12,
+        0,
+        0
+      ],
+      "last_camera_degrees": [
+        12,
+        0,
+        0
+      ],
+      "stage": "",
+      "failure": "",
+      "gl_vendor": "Google (Google Inc.)",
+      "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+      "shader_precision_mechanism": "ESSL-3.00-explicit-source-order-TF-gated",
+      "scope": "Authentic accepted Atlas bench geometry/materials under current native editor-look input and source camera arithmetic; bounded +/-12-degree view adapter",
+      "original_lighting_qualified": false,
+      "full_atlas_loading_qualified": false,
+      "character_movement_qualified": false,
+      "collision_qualified": false,
+      "gameplay_qualified": false,
+      "performance_qualified": false,
+      "run_id": 6,
+      "reason": "bounded_preview_continuation",
+      "generation": 2,
+      "started_after_event": 28,
+      "completed_at": "2026-10-14T17:09:55.330Z",
+      "foreground_at_completion": true,
+      "requested_width": 783,
+      "requested_height": 583,
+      "render_token": 6,
+      "native_ticket": 6,
+      "java_obsolete": true
+    }
+  ],
+  "updated_at": "2026-10-14T17:09:57.235Z",
+  "assets_verified": true,
+  "asset_metadata": {
+    "audio": {
+      "schema": "coh-native-audio-fixture-v1",
+      "audio": {
+        "file": "audio.bin",
+        "bytes": 72736,
+        "sha256": "440361125d7420a1730ecd742271d8b2a67808dffcfa9dc435f2357d59931823"
+      },
+      "fixture": {
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "pcm_sha256": "0e9a0cb2fb36575c890cea7ad8b933a732a7e6c970723e5e198dd00fc578fcd5"
+      },
+      "source": {
+        "name": "data/sound/ogg/player/headset_incoming_02.ogg",
+        "size": 12930,
+        "compressed": 11108,
+        "offset": 500202584,
+        "crc32": "ba0b3f1f",
+        "method": 8,
+        "sha256": "82bec697f9e824d192cac90f32a01421e4a3875aada64fc709862bc4d3ae9198",
+        "id": "headset",
+        "file_name": "headset.ogg"
+      },
+      "acquisition": {
+        "schema": "coh-native-audio-acquisition-v1",
+        "acquisition_passed": true,
+        "source": {
+          "name": "data/sound/ogg/player/headset_incoming_02.ogg",
+          "size": 12930,
+          "compressed": 11108,
+          "offset": 500202584,
+          "crc32": "ba0b3f1f",
+          "method": 8,
+          "sha256": "82bec697f9e824d192cac90f32a01421e4a3875aada64fc709862bc4d3ae9198",
+          "id": "headset",
+          "file_name": "headset.ogg"
+        },
+        "manifest_sha256": "c819e1af90c1f29a64eac57a20b0bdfb61a50bd9791206ab1ce18c05d210ec6f",
+        "source_manifest_verified": true,
+        "range_bytes_downloaded": 698390,
+        "range_count": 6,
+        "ranges": [
+          [
+            848101376,
+            848122890
+          ],
+          [
+            262144,
+            327679
+          ],
+          [
+            847904768,
+            848122890
+          ],
+          [
+            500498432,
+            500563967
+          ],
+          [
+            0,
+            65535
+          ],
+          [
+            65536,
+            327679
+          ]
+        ],
+        "exact_http_range_enforced": true,
+        "stable_etag": true,
+        "crc32_verified": true,
+        "sha256_verified": true,
+        "outer_archive_fully_hashed_locally": false,
+        "inner_archive_fully_hashed_locally": false,
+        "outer_release_sha256": "2c4bff8917d30a3835bd92e4f139a948f3c76f1e60900db01bc524b434e39d0b",
+        "inner_release_sha256": "3bbc5773f50593e5b2e667c7e01e7f971c3a6a65137f149e0823423798d7b2a7"
+      },
+      "decode": {
+        "passed": true,
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "ov_read_calls": 24,
+        "vorbis_version": "Xiph.Org libVorbis 1.3.7",
+        "ov_read_parameters": [
+          0,
+          2,
+          1
+        ],
+        "memory_callbacks_unchanged": true
+      },
+      "source_gain_oracle": {
+        "schema": "coh-native-audio-source-gain-v1",
+        "passed": true,
+        "source_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+        "source_functions": 2,
+        "source_comparisons": 40,
+        "maximum_source_error": 0,
+        "cases": [
+          {
+            "input": -1,
+            "db": -10000,
+            "effective_gain": 9.999999747378752e-06
+          },
+          {
+            "input": 0,
+            "db": -10000,
+            "effective_gain": 9.999999747378752e-06
+          },
+          {
+            "input": 9.999999974752427e-07,
+            "db": -10000,
+            "effective_gain": 9.999999747378752e-06
+          },
+          {
+            "input": 9.999999747378752e-06,
+            "db": -10000,
+            "effective_gain": 9.999999747378752e-06
+          },
+          {
+            "input": 9.999999747378752e-05,
+            "db": -8000,
+            "effective_gain": 9.999999747378752e-05
+          },
+          {
+            "input": 0.0010000000474974513,
+            "db": -5999,
+            "effective_gain": 0.001001151860691607
+          },
+          {
+            "input": 0.009999999776482582,
+            "db": -4000,
+            "effective_gain": 0.009999999776482582
+          },
+          {
+            "input": 0.10000000149011612,
+            "db": -1999,
+            "effective_gain": 0.10011520236730576
+          },
+          {
+            "input": 0.25,
+            "db": -1204,
+            "effective_gain": 0.25003454089164734
+          },
+          {
+            "input": 0.30000001192092896,
+            "db": -1045,
+            "effective_gain": 0.3002617657184601
+          },
+          {
+            "input": 0.5,
+            "db": -602,
+            "effective_gain": 0.500034511089325
+          },
+          {
+            "input": 0.6000000238418579,
+            "db": -443,
+            "effective_gain": 0.6004819869995117
+          },
+          {
+            "input": 0.800000011920929,
+            "db": -193,
+            "effective_gain": 0.8007556200027466
+          },
+          {
+            "input": 1,
+            "db": 0,
+            "effective_gain": 1
+          },
+          {
+            "input": 2,
+            "db": 0,
+            "effective_gain": 1
+          }
+        ],
+        "sources": {
+          "upstream/ouroboros/Game/src/sound/ogg_decode.c": {
+            "bytes": 13851,
+            "sha256": "6a37c461d45b46b89c2feefe7edb43ae693d8465f58bf49e4b696a27cc32b5de",
+            "git_blob": "544b108d2bfcf1830b3bfd7bc75097af66ceb070"
+          },
+          "upstream/ouroboros/Game/src/sound/sound_sys.c": {
+            "bytes": 36687,
+            "sha256": "0a48bbdc5006c2e2876253412bd263b9f2640de3745c27a2616dab0c5f173f09",
+            "git_blob": "6e26ac5e27e1fbac578914c05dbb72f2004ffe72"
+          },
+          "upstream/ouroboros/Game/src/sound/sound.h": {
+            "bytes": 4927,
+            "sha256": "ca8af36e2e861680aca874fcee012b4c78a12c56bcbfb9c625a92d28446acf03",
+            "git_blob": "ca7b264db37b48f89b848c0589ed0cb8107d36ad"
+          }
+        },
+        "function_sha256": {
+          "volumeDbToRatio": "fdd4eeb9d50abe2d257938cbcbdbcb28b2a166c0974fad0c02e5b9b556972c27",
+          "volumeRatioToDb": "8f776ba5050717559a104a9a4e36030038293733d5b69e5b8c12fb4c41ae3913"
+        },
+        "callback_sha256": {
+          "readbytes": "6f64b61062b31b6095bfe6014c5b3e2d0044ddc2fe2559f5eb16a552662500dd",
+          "seekbytes": "ab6378e84927ae2b6875d7a6ca5fc2285ed005498224a0a81b4a4d8da908bce7",
+          "closebytes": "9cb5c2cdaf66b6d572b08393173eaa5cfb9b502c8427361eb30bd1c86e6c18cc",
+          "tellbytes": "c982b15a35393c63fd7a88f2513294f1ec6ca48c01faa9be8050d41714f2160e"
+        },
+        "adapters": [
+          "Standalone F32 and MINMAX types/macros with pinned source dB constants",
+          "Full Win32 DirectSound and undocumented sample rounding do not execute"
+        ],
+        "android_libm_float_gain_tolerance": 1e-06
+      },
+      "pcm_nonzero_samples": 36322,
+      "pcm_peak": 15289,
+      "scope": "Authentic client Ogg offline decoded with four unchanged memory callbacks and source signed16 little-endian ov_read parameters; native AAudio sink only",
+      "not_qualified": [
+        "Native compressed Ogg decoder",
+        "Full client sound scheduler/mixer, voiceover/music/3D attenuation/doppler",
+        "Physical speaker audibility from engine counters",
+        "Latency or underrun-free gameplay audio",
+        "Original DirectSound sample rounding"
+      ]
+    },
+    "world": {
+      "format": 1,
+      "name": "Atlas Park authored modern_bench_2wide branch",
+      "source_release": "coh-assets-v1.0.0",
+      "source_commit": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+      "parts": [
+        {
+          "name": "Signmetal.tga",
+          "texture_id": 15,
+          "triangle_count": 48,
+          "first_triangle": 0,
+          "index": 0,
+          "vertex_count": 256,
+          "index_count": 144,
+          "original_vertex_indices_retained": true,
+          "canonical_bytes": 12932,
+          "canonical_sha256": "5e3542795f5a2fe901960af1ade3bf9cad4dba08f9c5db5af3f6c38a23f08d7e",
+          "source_group_node": 5,
+          "static_identity_adapter": {
+            "bone_ids": [
+              0
+            ],
+            "weights": [
+              1,
+              0
+            ],
+            "slots": [
+              0,
+              0
+            ],
+            "role": "native static COHMESH1 adapter; no source bone or authored skin invented"
+          },
+          "base_texture": 0,
+          "dual_texture": 1,
+          "flags": 0,
+          "color1": [
+            67,
+            139,
+            202
+          ],
+          "color2": [
+            0,
+            0,
+            0
+          ],
+          "diffuse_scale": 1,
+          "ambient_scale": 1,
+          "alpha_ref": 0,
+          "mode": 0,
+          "source_material": {
+            "part_index": 0,
+            "part": "modern_bench_partition0",
+            "geometry_texture": "Signmetal.tga",
+            "base_alias": "Signmetal",
+            "dual_alias": "grey",
+            "base_texture": 0,
+            "dual_texture": 1,
+            "triangles": 48,
+            "mode": 0,
+            "family": "BLENDMODE_MULTIPLY",
+            "effective_colors_rgb": [
+              [
+                67,
+                139,
+                202
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "draw_alpha": 255,
+            "ambient_scale": 1,
+            "diffuse_scale": 1,
+            "alpha_ref": 0,
+            "double_sided": false,
+            "blend_enabled": false,
+            "depth_write": true,
+            "source_baked_rgb_buffer_loaded": false,
+            "texture_sampling_scene": {
+              "min": "LINEAR",
+              "mag": "LINEAR",
+              "wrap_s": "REPEAT",
+              "wrap_t": "REPEAT",
+              "mip": 0,
+              "scope": "source-default linear filtering/addressing; selected mip-zero profile"
+            },
+            "sampling_analytic": {
+              "min": "NEAREST",
+              "mag": "NEAREST",
+              "wrap_s": "CLAMP_TO_EDGE",
+              "wrap_t": "CLAMP_TO_EDGE",
+              "mip": 0,
+              "scope": "controlled pixel witnesses"
+            },
+            "alpha_sort_required": false,
+            "cubemap_sampled": false,
+            "high_quality_variant": false
+          }
+        },
+        {
+          "name": "modern_bench.tga",
+          "texture_id": 14,
+          "triangle_count": 140,
+          "first_triangle": 48,
+          "index": 1,
+          "vertex_count": 256,
+          "index_count": 420,
+          "original_vertex_indices_retained": true,
+          "canonical_bytes": 14036,
+          "canonical_sha256": "5ebfadd67a7f2499b4a6f0f5c7af3c8afcb9acb219fdcb5428eadbad5313a534",
+          "source_group_node": 5,
+          "static_identity_adapter": {
+            "bone_ids": [
+              0
+            ],
+            "weights": [
+              1,
+              0
+            ],
+            "slots": [
+              0,
+              0
+            ],
+            "role": "native static COHMESH1 adapter; no source bone or authored skin invented"
+          },
+          "base_texture": 2,
+          "dual_texture": 3,
+          "flags": 0,
+          "color1": [
+            67,
+            139,
+            202
+          ],
+          "color2": [
+            0,
+            0,
+            0
+          ],
+          "diffuse_scale": 1,
+          "ambient_scale": 1,
+          "alpha_ref": 0,
+          "mode": 1,
+          "source_material": {
+            "part_index": 1,
+            "part": "modern_bench_partition1",
+            "geometry_texture": "modern_bench.tga",
+            "base_alias": "modern_bench",
+            "dual_alias": "white",
+            "base_texture": 2,
+            "dual_texture": 3,
+            "triangles": 140,
+            "mode": 1,
+            "family": "BLENDMODE_COLORBLEND_DUAL",
+            "effective_colors_rgb": [
+              [
+                67,
+                139,
+                202
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "draw_alpha": 255,
+            "ambient_scale": 1,
+            "diffuse_scale": 1,
+            "alpha_ref": 0,
+            "double_sided": false,
+            "blend_enabled": false,
+            "depth_write": true,
+            "source_baked_rgb_buffer_loaded": false,
+            "texture_sampling_scene": {
+              "min": "LINEAR",
+              "mag": "LINEAR",
+              "wrap_s": "REPEAT",
+              "wrap_t": "REPEAT",
+              "mip": 0,
+              "scope": "source-default linear filtering/addressing; selected mip-zero profile"
+            },
+            "sampling_analytic": {
+              "min": "NEAREST",
+              "mag": "NEAREST",
+              "wrap_s": "CLAMP_TO_EDGE",
+              "wrap_t": "CLAMP_TO_EDGE",
+              "mip": 0,
+              "scope": "controlled pixel witnesses"
+            },
+            "alpha_sort_required": false,
+            "cubemap_sampled": false,
+            "high_quality_variant": false
+          }
+        }
+      ],
+      "meshes": {
+        "index": 10,
+        "name": "modern_bench_2wide__mbench",
+        "record_bytes": 232,
+        "vertex_count": 256,
+        "triangle_count": 188,
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "materials": [
+          {
+            "name": "Signmetal.tga",
+            "texture_id": 15,
+            "triangle_count": 48,
+            "first_triangle": 0
+          },
+          {
+            "name": "modern_bench.tga",
+            "texture_id": 14,
+            "triangle_count": 140,
+            "first_triangle": 48
+          }
+        ],
+        "packs": [
+          [
+            171,
+            617,
+            26383
+          ],
+          [
+            805,
+            1396,
+            26554
+          ],
+          [
+            322,
+            570,
+            27359
+          ],
+          [
+            430,
+            822,
+            27681
+          ],
+          [
+            0,
+            0,
+            28111
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            317,
+            500,
+            30893
+          ],
+          [
+            2782,
+            6931,
+            28111
+          ]
+        ],
+        "source_geo_version": 7,
+        "source_geo_sha256": "04d03d09fef6f7c85225ae92ba0954c880dcef3d2e3ec3791b720d0dcc3d8cd4",
+        "source_model_count": 24,
+        "source_texture_names": [
+          "white.tga",
+          "mailbox.tga",
+          "street_atm1.tga",
+          "black.tga",
+          "street_meter01.tga",
+          "street_meter02.tga",
+          "street_meter03.tga",
+          "street_payphn01.tga",
+          "street_payphn03.tga",
+          "street_payphn04.tga",
+          "street_payphn05.tga",
+          "street_payphn02.tga",
+          "concrete_main.tga",
+          "plain_cream.tga",
+          "modern_bench.tga",
+          "Signmetal.tga",
+          "paintedmetalpost1a.tga",
+          "ironskylt_mtlstrp.tga",
+          "off_smfile01.TGA",
+          "deco_reflect1.tga",
+          "drnkingfountain.tga",
+          "ofc1_elev_door1.tga",
+          "metal_edge1.tga",
+          "bathroom_sign.tga",
+          "ofc1_door1_frame.tga",
+          "mens_bathroom.tga",
+          "utility_door.tga",
+          "ofc1_door1.tga",
+          "womens_bathroom.tga",
+          "fire_hydrant_base.tga",
+          "fire_hydrant_cap.tga",
+          "newspaperstand_door.tga",
+          "newspaperstand.tga",
+          "newspaper.tga",
+          "Blbrd__ParagonPPie.tga"
+        ],
+        "parts": [
+          {
+            "name": "Signmetal.tga",
+            "texture_id": 15,
+            "triangle_count": 48,
+            "first_triangle": 0,
+            "index": 0,
+            "vertex_count": 256,
+            "index_count": 144,
+            "original_vertex_indices_retained": true,
+            "canonical_bytes": 12932,
+            "canonical_sha256": "5e3542795f5a2fe901960af1ade3bf9cad4dba08f9c5db5af3f6c38a23f08d7e",
+            "source_group_node": 5,
+            "static_identity_adapter": {
+              "bone_ids": [
+                0
+              ],
+              "weights": [
+                1,
+                0
+              ],
+              "slots": [
+                0,
+                0
+              ],
+              "role": "native static COHMESH1 adapter; no source bone or authored skin invented"
+            }
+          },
+          {
+            "name": "modern_bench.tga",
+            "texture_id": 14,
+            "triangle_count": 140,
+            "first_triangle": 48,
+            "index": 1,
+            "vertex_count": 256,
+            "index_count": 420,
+            "original_vertex_indices_retained": true,
+            "canonical_bytes": 14036,
+            "canonical_sha256": "5ebfadd67a7f2499b4a6f0f5c7af3c8afcb9acb219fdcb5428eadbad5313a534",
+            "source_group_node": 5,
+            "static_identity_adapter": {
+              "bone_ids": [
+                0
+              ],
+              "weights": [
+                1,
+                0
+              ],
+              "slots": [
+                0,
+                0
+              ],
+              "role": "native static COHMESH1 adapter; no source bone or authored skin invented"
+            }
+          }
+        ],
+        "canonical_vertex_count": 512,
+        "canonical_index_count": 564,
+        "source_secondary_uv_present": false,
+        "source_static_vertex_rgb_present": false,
+        "source_normals_present": true,
+        "source_skin_channels_present": false,
+        "source_reductions_present": true,
+        "source_grid_present": true,
+        "reductions_selected": false,
+        "source_grid_collision_reconstructed": false,
+        "gpu_uv_transform": "U unchanged; V=float32(1-V), original modelFixup upload",
+        "bounds": {
+          "minimum": [
+            -2.84381103515625,
+            0,
+            -1.4366455078125
+          ],
+          "maximum": [
+            2.84381103515625,
+            3.6822509765625,
+            1.10418701171875
+          ]
+        }
+      },
+      "textures": [
+        {
+          "wrapper_sha256": "bdd32c3ad587b81f0704391e5da21156d68dc413c0b5ac8890b27d2c72a88978",
+          "dds_sha256": "7a123445da9741d79f63080ea11c10bbc849c95c5f67612295fc730ecd4c7ede",
+          "dds_format": "DXT1",
+          "width": 32,
+          "height": 64,
+          "mip": 0,
+          "decoder": "coh_dds_rgba (generic BC with alpha; original GPU upload role)",
+          "index": 0,
+          "name": "signmetal",
+          "source_file": "sign.texture",
+          "wrapper_flags": 0,
+          "wrapper_fade": [
+            0,
+            0
+          ],
+          "wrapper_alpha": 0,
+          "wrapper_version": "TX2",
+          "source_mip_count": 7,
+          "selected_mip": 0,
+          "rgba_bytes": 8192,
+          "rgba_sha256": "b0c0cbdfba412afc5625b302e0b7f4802504c327f43968dc17462204c07982d5",
+          "alpha_minimum": 255,
+          "alpha_maximum": 255,
+          "synthetic_game_fixture": false,
+          "stock_engine_texture_default": false
+        },
+        {
+          "wrapper_sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013",
+          "dds_sha256": "39223f29563cb8f462a468ae3f3da4a58c99aada331f28110849fb75dc1424b7",
+          "dds_format": "ARGB8888",
+          "width": 8,
+          "height": 8,
+          "mip": 0,
+          "decoder": "bounded offline ARGB8888 BGRA-to-RGBA converter; native core uncompressed DDS support remains pending",
+          "index": 1,
+          "name": "grey",
+          "source_file": "grey.texture",
+          "wrapper_flags": 2,
+          "wrapper_fade": [
+            0,
+            0
+          ],
+          "wrapper_alpha": 0,
+          "wrapper_version": "TX2",
+          "source_mip_count": 4,
+          "selected_mip": 0,
+          "rgba_bytes": 256,
+          "rgba_sha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7",
+          "alpha_minimum": 255,
+          "alpha_maximum": 255,
+          "synthetic_game_fixture": false,
+          "stock_engine_texture_default": true
+        },
+        {
+          "wrapper_sha256": "dbe3b554a798f235d1865234a652f7a0528b48231f4f271d4c42296222aecac1",
+          "dds_sha256": "f9bcb1747b2c5ac34b9527574b84b6627a5650bd3f4e0d98ca3f2d0096f4353e",
+          "dds_format": "DXT5",
+          "width": 128,
+          "height": 128,
+          "mip": 0,
+          "decoder": "coh_dds_rgba (generic BC with alpha; original GPU upload role)",
+          "index": 2,
+          "name": "modern_bench",
+          "source_file": "bench.texture",
+          "wrapper_flags": 16,
+          "wrapper_fade": [
+            0,
+            0
+          ],
+          "wrapper_alpha": 1,
+          "wrapper_version": "TX2",
+          "source_mip_count": 8,
+          "selected_mip": 0,
+          "rgba_bytes": 65536,
+          "rgba_sha256": "4950ef92298a538a99716e214fb8a1efaf077ba304d22b589dd8a1f406308d97",
+          "alpha_minimum": 0,
+          "alpha_maximum": 255,
+          "synthetic_game_fixture": false,
+          "stock_engine_texture_default": false
+        },
+        {
+          "wrapper_sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9",
+          "dds_sha256": "ac913c4776b477fd25ba352c4cd92c952c5e726da64cc99906bbfbcad1783fb7",
+          "dds_format": "DXT1",
+          "width": 8,
+          "height": 8,
+          "mip": 0,
+          "decoder": "coh_dds_rgba (generic BC with alpha; original GPU upload role)",
+          "index": 3,
+          "name": "white",
+          "source_file": "white.texture",
+          "wrapper_flags": 0,
+          "wrapper_fade": [
+            0,
+            0
+          ],
+          "wrapper_alpha": 0,
+          "wrapper_version": "TX2",
+          "source_mip_count": 4,
+          "selected_mip": 0,
+          "rgba_bytes": 256,
+          "rgba_sha256": "3d6876a0146de8576eb2395a858de1213d1b92c65b779df3a331cfd5a4584546",
+          "alpha_minimum": 255,
+          "alpha_maximum": 255,
+          "synthetic_game_fixture": false,
+          "stock_engine_texture_default": true
+        }
+      ],
+      "scene": {
+        "container": "COHWOR09",
+        "header_bytes": 128,
+        "part_stride": 96,
+        "texture_stride": 32,
+        "part_count": 2,
+        "texture_count": 4,
+        "canonical_vertices": 512,
+        "indices": 564,
+        "source_vertices": 256,
+        "source_root_instances": 1,
+        "source_group_nodes": 6,
+        "source_group_node_per_part": 5,
+        "static_identity_adapter": true,
+        "input_math_container": "COHWRI09",
+        "input_math_bytes": 520,
+        "reference_matrices_drive_rendering": false,
+        "world_coordinates_preserved": true,
+        "bytes": 102176,
+        "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+      },
+      "reference": {
+        "container": "COHWRF09",
+        "bytes": 161344,
+        "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13",
+        "reference_cameras": 6,
+        "reference_nodes": 6,
+        "reference_vertices": 512,
+        "reference_parts": 2,
+        "camera_matrix_floats": 40,
+        "vertex_output_floats": 13,
+        "camera_case_stride": 26784,
+        "camera_geometry_offset": 160,
+        "original_eye_traversal_composition_order": true,
+        "source_map_group_locals": true,
+        "source_ancestor_chain_retained": true,
+        "reference_kind": "independent Python row-matrix binary32 semantic oracle",
+        "reference_data_drive_rendering": false,
+        "camera_inputs": "controlled PYR/FOV/aspect at actual source world coordinates",
+        "gameplay_fov_adjustment_selected": false,
+        "clip_space_convention": "original OpenGL frustum"
+      },
+      "resolved_materials": {
+        "schema": "coh-phase9-source-world-materials-v1",
+        "selected_geometry": "modern_bench_2wide__mbench",
+        "part_count": 2,
+        "unique_textures": 4,
+        "material_reference": {
+          "magic": "COHWMAT9",
+          "header_bytes": 64,
+          "record_bytes": 128,
+          "case_stride": 16512,
+          "cases_per_part": 6,
+          "cases": 12,
+          "real_texture_pair_cases": 8,
+          "controlled_secondary_swatch_cases": 4,
+          "mode_field_byte": 116,
+          "pixel_size": [
+            64,
+            64
+          ]
+        },
+        "profile": {
+          "GFXF_MULTITEX": false,
+          "GFXF_BUMPMAPS": false,
+          "GFXF_CUBEMAP": false,
+          "BIT_HIGH_QUALITY": false,
+          "BIT_SHADOWMAP": false,
+          "BIT_DEBUG": false,
+          "world_vertex_branch": "DRAWMODE_DUALTEX_NORMALS; FF_LIT_GL with zero specular, no captured/baked rgbs",
+          "controlled_lighting": {
+            "ambient": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "diffuse": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "vertex_color": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          "authored_atlas_lighting_qualified": false,
+          "original_driver_decompression_qualified": false,
+          "original_full_mipchain_qualified": false
+        },
+        "source_authored_properties": {
+          "tint_group": "grp141259",
+          "tint_rgb": [
+            [
+              67,
+              139,
+              202
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "ambient_group": "grp141205",
+          "ambient_rgb": [
+            28,
+            31,
+            40
+          ],
+          "ambient_resolution": "retained authored data; original lightTracker/lightgrid and bakedRGB buffers are outside controlled lighting qualification",
+          "cubemap_swap_group": "grp141198",
+          "cubemap_swap": [
+            "generic_cubemap_face0",
+            "City_01_01_grpcubemap141152_face0",
+            0
+          ],
+          "cubemap_resolution": "retained authored data; selected GFXF_CUBEMAP-disabled shader has no cubemap sample",
+          "model_trick": "mbench",
+          "lod_far": 250,
+          "lod_far_fade": 75,
+          "lod_resolution": "suffix association and source values verified; distance/fade scheduling outside bounded geometry probe"
+        },
+        "source_declaration_audit": {
+          "required_before_build_qualification": true,
+          "command": "python3 native-android/world-probe/contract/verify_source_tricks.py --repo-root . --output native-android/results/world-probe/source-trick-resolution.json",
+          "scope": "all1585immutabletricks: direct and parent directory selectors; actual mbench and modern_bench bodies"
+        },
+        "parts": [
+          {
+            "part_index": 0,
+            "part": "modern_bench_partition0",
+            "geometry_texture": "Signmetal.tga",
+            "base_alias": "Signmetal",
+            "dual_alias": "grey",
+            "base_texture": 0,
+            "dual_texture": 1,
+            "triangles": 48,
+            "mode": 0,
+            "family": "BLENDMODE_MULTIPLY",
+            "effective_colors_rgb": [
+              [
+                67,
+                139,
+                202
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "draw_alpha": 255,
+            "ambient_scale": 1,
+            "diffuse_scale": 1,
+            "alpha_ref": 0,
+            "double_sided": false,
+            "blend_enabled": false,
+            "depth_write": true,
+            "source_baked_rgb_buffer_loaded": false,
+            "texture_sampling_scene": {
+              "min": "LINEAR",
+              "mag": "LINEAR",
+              "wrap_s": "REPEAT",
+              "wrap_t": "REPEAT",
+              "mip": 0,
+              "scope": "source-default linear filtering/addressing; selected mip-zero profile"
+            },
+            "sampling_analytic": {
+              "min": "NEAREST",
+              "mag": "NEAREST",
+              "wrap_s": "CLAMP_TO_EDGE",
+              "wrap_t": "CLAMP_TO_EDGE",
+              "mip": 0,
+              "scope": "controlled pixel witnesses"
+            },
+            "alpha_sort_required": false,
+            "cubemap_sampled": false,
+            "high_quality_variant": false
+          },
+          {
+            "part_index": 1,
+            "part": "modern_bench_partition1",
+            "geometry_texture": "modern_bench.tga",
+            "base_alias": "modern_bench",
+            "dual_alias": "white",
+            "base_texture": 2,
+            "dual_texture": 3,
+            "triangles": 140,
+            "mode": 1,
+            "family": "BLENDMODE_COLORBLEND_DUAL",
+            "effective_colors_rgb": [
+              [
+                67,
+                139,
+                202
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "draw_alpha": 255,
+            "ambient_scale": 1,
+            "diffuse_scale": 1,
+            "alpha_ref": 0,
+            "double_sided": false,
+            "blend_enabled": false,
+            "depth_write": true,
+            "source_baked_rgb_buffer_loaded": false,
+            "texture_sampling_scene": {
+              "min": "LINEAR",
+              "mag": "LINEAR",
+              "wrap_s": "REPEAT",
+              "wrap_t": "REPEAT",
+              "mip": 0,
+              "scope": "source-default linear filtering/addressing; selected mip-zero profile"
+            },
+            "sampling_analytic": {
+              "min": "NEAREST",
+              "mag": "NEAREST",
+              "wrap_s": "CLAMP_TO_EDGE",
+              "wrap_t": "CLAMP_TO_EDGE",
+              "mip": 0,
+              "scope": "controlled pixel witnesses"
+            },
+            "alpha_sort_required": false,
+            "cubemap_sampled": false,
+            "high_quality_variant": false
+          }
+        ],
+        "notes": [
+          "Signmetaldefaultfamilyrequirescomplete source declaration audit; inventedwhite or forcedCOLORBLEND_DUAL are rejected",
+          "MULTIPLY uses base*grey; RGB*8*vertexRGB, alpha from both samples*lodAlpha; tintRGB uniforms are unused",
+          "COLORBLEND_DUAL uses modern_bench base alpha as tint bypass; fragmentalpha from actualwhite alpha*lodAlpha, so benchalpha mask does not request transparency",
+          "mbench supplies LOD only, noDoubleSided/NoZWrite/AlphaCutout/Reflect/SimpleAlphaSort; preserved sourceCW back culling and depth writes",
+          "GEO has no secondaryUV or RGBbuffer; source expands st2 from st1 for oldworldmaterials; no synthetic authoredRGB claimed",
+          "Neutralconstantlightingtestsoriginalmaterial arithmetic; it does not reconstruct Atlas ambient/lightgrid/sun or all original runtime renderer choices",
+          "Original rt_init source enables SRC_ALPHA/ONE_MINUS_SRC_ALPHA globally; selected opaque actual fragment alpha1 makes controlled disabled geometry blending pixel-equivalent. Analytic half-fade and swatch cases explicitly qualify source-over.",
+          "Original rt_init depthfunc isGL_LEQUAL, preserved bysceneprobe; sourceUV0+UV1 bothVflip1-V afteroldworldmodelst2 copiesst1.",
+          "Authenticgrey BasicTexture has btest.txt FlagsTruecolor; pin exact266B/SHA and reject extra tokens. It changes neitherSignmetalprimarycomposite family norUV/clamp/mirror/point/mip flags. Actualgrey wrapper alreadyARGB8888flags2, decodedmip0 bytes unchanged.",
+          "Authenticwhite BasicTexture has freeway_signs.txt empty Texturewhite.tga declaration; pin887B/SHA and requireemptybody. Neighbor white_tintable declaration is a separatealias anddoesnotapply. EmptyTexOpt changesneithermodern_bench primary composite Dual family norUV/sampler flags orqualifiedRGBAwhitepixels."
+        ],
+        "source_stock_grey_texopt": {
+          "source_path": "upstream/i24/data/tricks/btest.txt",
+          "source_sha256": "a225c46b8701da525dd93f76dc455e8eb5f214d1ffc561b682eba9863a3facdc",
+          "source_tokens": [
+            "flags truecolor"
+          ],
+          "resolved_texopt_flags": 2,
+          "selected_role": "secondary BasicTexture in Signmetal generic layer",
+          "composite_shader_family_changed": false,
+          "sampler_flags_changed": false,
+          "qualified_mip0_rgba_changed": false,
+          "original_mipchain_qualified": false
+        },
+        "source_stock_white_texopt": {
+          "source_path": "upstream/i24/data/tricks/streets/elements/freeway_signs.txt",
+          "source_sha256": "5d15cb3c5c692eb108b87b6c2efdc6ab86f23bec6f39ad945d05c76947ba5943",
+          "source_tokens": [],
+          "resolved_texopt_flags": 0,
+          "selected_role": "secondary BasicTexture in modern_bench generic layer",
+          "composite_shader_family_changed": false,
+          "sampler_flags_changed": false,
+          "qualified_mip0_rgba_changed": false,
+          "original_mipchain_qualified": false
+        }
+      },
+      "source_trick_resolution_qualified": true,
+      "source_trick_resolution_audit": {
+        "passed": true,
+        "kind": "complete immutable original trick declaration audit",
+        "git_tree_sha": "f1aab78ed5cd4e33046758f256e38e777a5ee4a3",
+        "source_files_verified": 1585,
+        "primary_source_files_verified": [
+          {
+            "path": "upstream/i24/data/tricks/streets/elements/streets_misc.txt",
+            "bytes": 1214,
+            "sha256": "a43e2c151b3e40e3b98c026464e99a31c3d3dc5099c9b8aa829dde79c87ded33"
+          },
+          {
+            "path": "upstream/ouroboros/Common/seq/tricks.c",
+            "bytes": 57263,
+            "sha256": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7"
+          },
+          {
+            "path": "upstream/ouroboros/Common/seq/tricks.h",
+            "bytes": 11350,
+            "sha256": "4e6a46939e5b61848e73b34eaab34eca506a2665259e8ebd36171aa802159a49"
+          },
+          {
+            "path": "upstream/ouroboros/Game/src/render/texEnums.h",
+            "bytes": 3746,
+            "sha256": "6e96499b08adcfdf2a788286da086aead8e17d2b05ae8c31ee50752b7de778de"
+          },
+          {
+            "path": "upstream/ouroboros/Game/src/render/tex.c",
+            "bytes": 113372,
+            "sha256": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c"
+          },
+          {
+            "path": "upstream/ouroboros/Game/src/render/model.c",
+            "bytes": 15456,
+            "sha256": "5a5fb0d03c94450b108436c4d67e1503246e72627cc6155d23ddc1e557755072"
+          },
+          {
+            "path": "upstream/ouroboros/Game/src/render/rendermodel.c",
+            "bytes": 29650,
+            "sha256": "ddff22bbd6e9dce14425d9cebf5aa25f01c3999bfd61875a9d0a452fce787f35"
+          },
+          {
+            "path": "upstream/ouroboros/Game/src/render/thread/rt_model.c",
+            "bytes": 67147,
+            "sha256": "1c9e8a6b16326cd2a07d3cd9707de01bdc9ab74af0fe3351622890f3acf0dfaa"
+          },
+          {
+            "path": "upstream/ouroboros/Game/src/render/thread/rt_state.c",
+            "bytes": 48356,
+            "sha256": "6d80cb17585e40a3e1dea7f51d2d9d1129af2569ed6b9fe770dc7aaea734ea0d"
+          },
+          {
+            "path": "upstream/ouroboros/Game/src/render/thread/rt_tex.c",
+            "bytes": 19403,
+            "sha256": "5ce562b7184fa594eb0d678f7981fb5fb0f899b44a1e70c984949f68646fdaf5"
+          },
+          {
+            "path": "upstream/ouroboros/Game/src/render/thread/rt_tricks.c",
+            "bytes": 21101,
+            "sha256": "216c067b615a7979ade777d0dac85bd5374ab7929bbac4cc2f9b693363a7da65"
+          },
+          {
+            "path": "upstream/ouroboros/Game/src/render/thread/rt_init.c",
+            "bytes": 17221,
+            "sha256": "4203ba947fa608bcd21b7b9544ce84e6dcd5aabba28d82a123f474b6a232747f"
+          },
+          {
+            "path": "upstream/ouroboros/Game/src/graphics/groupdrawinline.c",
+            "bytes": 64782,
+            "sha256": "894a0f0f25f56a6659b66d6419f5089cb08d041c8b10371e7a154cae3f331824"
+          },
+          {
+            "path": "upstream/i24/data/shaders/cgfx/colorblenddualfp.cg",
+            "bytes": 3263,
+            "sha256": "c59cea85cfed047397c88b7258230ef178be477ccab3af1a7db5681e993d66af"
+          },
+          {
+            "path": "upstream/i24/data/shaders/cgfx/multiplyregfp.cg",
+            "bytes": 4246,
+            "sha256": "641ff2c805e82adab66d4235e4f1577ad5a5f430ae9ad6ee5eaea7ee92c5b398"
+          },
+          {
+            "path": "upstream/i24/data/shaders/cgfx/vp_master_vp.cg",
+            "bytes": 16751,
+            "sha256": "fc9878f4fe57ff430a018c66c208e18e8c00dcad6737a4a48c8d16f4ef8ecfd8"
+          },
+          {
+            "path": "upstream/i24/data/shaders/cgfx/functions.cgh",
+            "bytes": 37969,
+            "sha256": "5b602cf7f03b7ce7a6ea4e02fc34c1a2a33331a9c3a6516762b8823679f9a6ca"
+          },
+          {
+            "path": "upstream/ouroboros/Game/src/render/model_cache.c",
+            "bytes": 18214,
+            "sha256": "23297301f34737585d65e39fc8b01445e5b4a8f665ac9cb49e9101f6f2cf299b"
+          },
+          {
+            "path": "upstream/i24/data/tricks/btest.txt",
+            "bytes": 266,
+            "sha256": "a225c46b8701da525dd93f76dc455e8eb5f214d1ffc561b682eba9863a3facdc"
+          },
+          {
+            "path": "upstream/i24/data/tricks/streets/elements/freeway_signs.txt",
+            "bytes": 887,
+            "sha256": "5d15cb3c5c692eb108b87b6c2efdc6ab86f23bec6f39ad945d05c76947ba5943"
+          }
+        ],
+        "direct_and_directory_lookup": [
+          {
+            "alias": "Signmetal",
+            "lookup_candidates": [
+              "signmetal",
+              "world/swappables_and_decals/signs/billboard/billboard_structure/",
+              "world/swappables_and_decals/signs/billboard/",
+              "world/swappables_and_decals/signs/",
+              "world/swappables_and_decals/",
+              "world/"
+            ],
+            "source_matches": [],
+            "default_generic": "grey"
+          },
+          {
+            "alias": "grey",
+            "lookup_candidates": [
+              "grey",
+              "world/filler/",
+              "world/"
+            ],
+            "source_matches": [
+              {
+                "lookup_name": "grey",
+                "source_path": "upstream/i24/data/tricks/btest.txt",
+                "source_sha256": "a225c46b8701da525dd93f76dc455e8eb5f214d1ffc561b682eba9863a3facdc",
+                "tokens": [
+                  "flags truecolor"
+                ],
+                "resolved_texopt_flags": 2,
+                "selected_role": "secondary BasicTexture in Signmetal generic layer",
+                "changes_composite_shader_family": false,
+                "clamp_s": false,
+                "clamp_t": false,
+                "mirror_s": false,
+                "mirror_t": false,
+                "point_sample": false,
+                "no_mip": false,
+                "qualified_mip": 0,
+                "qualified_rgba": [
+                  128,
+                  128,
+                  128,
+                  255
+                ]
+              }
+            ],
+            "default_generic": null
+          },
+          {
+            "alias": "white",
+            "lookup_candidates": [
+              "white",
+              "world/filler/",
+              "world/"
+            ],
+            "source_matches": [
+              {
+                "lookup_name": "white",
+                "source_path": "upstream/i24/data/tricks/streets/elements/freeway_signs.txt",
+                "source_sha256": "5d15cb3c5c692eb108b87b6c2efdc6ab86f23bec6f39ad945d05c76947ba5943",
+                "tokens": [],
+                "resolved_texopt_flags": 0,
+                "selected_role": "secondary BasicTexture in modern_bench generic layer",
+                "changes_composite_shader_family": false,
+                "clamp_s": false,
+                "clamp_t": false,
+                "mirror_s": false,
+                "mirror_t": false,
+                "point_sample": false,
+                "no_mip": false,
+                "qualified_mip": 0,
+                "qualified_rgba": [
+                  255,
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ],
+            "default_generic": null
+          }
+        ],
+        "selected_source_resolution_context": {
+          "lookup_resolutions": [
+            {
+              "alias": "Signmetal",
+              "actual_declarations": {},
+              "expected_declarations": {},
+              "passed": true
+            },
+            {
+              "alias": "grey",
+              "actual_declarations": {
+                "grey": [
+                  "upstream/i24/data/tricks/btest.txt"
+                ]
+              },
+              "expected_declarations": {
+                "grey": [
+                  "upstream/i24/data/tricks/btest.txt"
+                ]
+              },
+              "passed": true
+            },
+            {
+              "alias": "white",
+              "actual_declarations": {
+                "white": [
+                  "upstream/i24/data/tricks/streets/elements/freeway_signs.txt"
+                ]
+              },
+              "expected_declarations": {
+                "white": [
+                  "upstream/i24/data/tricks/streets/elements/freeway_signs.txt"
+                ]
+              },
+              "passed": true
+            }
+          ],
+          "modern_bench_declarations": [
+            "upstream/i24/data/tricks/streets/elements/streets_misc.txt"
+          ],
+          "mbench_declarations": [
+            "upstream/i24/data/tricks/streets/elements/streets_misc.txt"
+          ],
+          "modern_bench_tokens": [
+            "surface metal",
+            "blend white.tga",
+            "blendtype colorblenddual"
+          ],
+          "mbench_tokens": [
+            "lodfar 250",
+            "lodfarfade 75"
+          ]
+        },
+        "modern_bench_source": "upstream/i24/data/tricks/streets/elements/streets_misc.txt",
+        "modern_bench_tokens": [
+          "surface metal",
+          "blend white.tga",
+          "blendtype colorblenddual"
+        ],
+        "mbench_tokens": [
+          "lodfar 250",
+          "lodfarfade 75"
+        ],
+        "full_original_texopt_parser_executed": false,
+        "original_atlas_lighting_executed": false
+      },
+      "authored_scene": {
+        "source_file": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt",
+        "source_bytes": 2617295,
+        "source_sha256": "e2fcea989f1030e6e4fc57d94d2130302a8271eaabcbd8b9a6488040d94e9e28",
+        "selected_transform_chain": [
+          {
+            "parent": "map Ref",
+            "child": "grp_Geometry",
+            "source_text": "Ref grp_Geometry\n\tPos 511.380371 426 -703.999756\nEnd\n",
+            "pos_literal": "511.380371 426 -703.999756",
+            "pyr_degrees_literal": null
+          },
+          {
+            "parent": "grp_Geometry",
+            "child": "grp141198",
+            "occurrence_index": 0,
+            "source_text": "\tGroup grp141198\n\t\tPos -296.317322 -417.42926 -280.957397\n\tEnd\n",
+            "pos_literal": "-296.317322 -417.42926 -280.957397",
+            "pyr_degrees_literal": null
+          },
+          {
+            "parent": "grp141198",
+            "child": "grp141203",
+            "occurrence_index": 0,
+            "source_text": "\tGroup grp141203\n\t\tPYR 0 89.999985 -0\n\t\tPos 408.936951 33.42926 -431.042847\n\tEnd\n",
+            "pos_literal": "408.936951 33.42926 -431.042847",
+            "pyr_degrees_literal": "0 89.999985 -0"
+          },
+          {
+            "parent": "grp141203",
+            "child": "grp141205",
+            "occurrence_index": 0,
+            "source_text": "\tGroup grp141205\n\tEnd\n",
+            "pos_literal": null,
+            "pyr_degrees_literal": null
+          },
+          {
+            "parent": "grp141205",
+            "child": "grp141259",
+            "occurrence_index": 0,
+            "source_text": "\tGroup grp141259\n\t\tPos 24.5 32 -40\n\tEnd\n",
+            "pos_literal": "24.5 32 -40",
+            "pyr_degrees_literal": null
+          },
+          {
+            "parent": "grp141259",
+            "child": "Streets/Elements/misc_sm/modern_bench_2wide",
+            "occurrence_index": 0,
+            "source_text": "\tGroup Streets/Elements/misc_sm/modern_bench_2wide\n\t\tPYR 0 90.000038 0\n\tEnd\n",
+            "pos_literal": null,
+            "pyr_degrees_literal": "0 90.000038 0"
+          }
+        ],
+        "selected_group_block_pins": [
+          {
+            "name": "grp_Geometry",
+            "bytes": 300,
+            "sha256": "622921ddb4b3f009e565cef90c0ec3c138dddcba10fb12ec9c0a3d11f31cb9a5",
+            "definition_child_count": 3,
+            "source_file": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt"
+          },
+          {
+            "name": "grp141198",
+            "bytes": 435022,
+            "sha256": "62f94b10a8cfc04d0a2162a43012aa03464c6b39dfedde354789571251b21f69",
+            "definition_child_count": 4575,
+            "source_file": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt"
+          },
+          {
+            "name": "grp141203",
+            "bytes": 1041,
+            "sha256": "5f0c3f2e7d1d27fdc647db591fa827798b21f5f79893e8a6a51345c46d5cee69",
+            "definition_child_count": 16,
+            "source_file": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt"
+          },
+          {
+            "name": "grp141205",
+            "bytes": 11929,
+            "sha256": "e29dc79c39870be854311ee7f6146e23b620dc9debba9761d69fc9cfaccb8661",
+            "definition_child_count": 207,
+            "source_file": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt"
+          },
+          {
+            "name": "grp141259",
+            "bytes": 124,
+            "sha256": "0fe790dd97f2e0e0d2deb4ee3443fce54989b5f29f42a7cd8a494a88b7c664a9",
+            "definition_child_count": 1,
+            "source_file": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt"
+          }
+        ],
+        "inherited_authored_properties": [
+          {
+            "group": "grp141259",
+            "property": "TintColor",
+            "literal": "67 139 202   0 0 0",
+            "qualified_runtime_resolution": false
+          },
+          {
+            "group": "grp141205",
+            "property": "Ambient",
+            "literal": "28 31 40",
+            "qualified_runtime_resolution": false
+          },
+          {
+            "group": "grp141198",
+            "property": "TexSwap",
+            "literal": "generic_cubemap_face0 City_01_01_grpcubemap141152_face0 0",
+            "qualified_runtime_resolution": false
+          },
+          {
+            "group": "grp_Geometry",
+            "property": "AutoGroup",
+            "literal": "Yes"
+          },
+          {
+            "group": "grp_Geometry",
+            "property": "Layer",
+            "literal": "Geometry"
+          }
+        ],
+        "source_tint_rgb": [
+          [
+            67,
+            139,
+            202
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "source_ambient_rgb": [
+          28,
+          31,
+          40
+        ],
+        "complete_ancestor_chain_preserved": true,
+        "sibling_branches_loaded": false,
+        "texswap_cubemap_runtime_resolved": false,
+        "atlas_ambient_lighting_reconstructed": false,
+        "full_original_scene_sorter_qualified": false,
+        "source_lod_trick": "mbench",
+        "source_lod_far": 250,
+        "source_lod_far_fade": 75,
+        "runtime_lod_selection_qualified": false
+      },
+      "material": {
+        "container": "COHWMAT9",
+        "oracle": "independent source-semantic scalar",
+        "width": 64,
+        "height": 64,
+        "case_count": 12,
+        "cases_per_part": 6,
+        "original_cg_execution": false,
+        "original_gpu_driver_texture_capture": false,
+        "cases": [
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              1
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 0,
+            "alpha_ref": 0,
+            "flags": 0,
+            "name": "source_world_tint_controlled_neutral_light",
+            "part_index": 0,
+            "case_index": 0,
+            "part": "Signmetal.tga",
+            "material_mode": 0,
+            "family": "BLENDMODE_MULTIPLY",
+            "dual_texture_mode": "actual_stock_grey",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 0,
+            "dual_texture_index": 1,
+            "base_texture": "signmetal",
+            "dual_texture": "grey",
+            "expected_rgba_sha256": "a97037fdb1155cc41d57a85b92c2605d533b676246e9aa30ee34ca34c777ef84",
+            "discarded_pixels": 0,
+            "passed_pixels": 4096
+          },
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              0.5
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 0,
+            "alpha_ref": 0,
+            "flags": 1,
+            "name": "source_world_tint_controlled_half_fade_source_over",
+            "part_index": 0,
+            "case_index": 1,
+            "part": "Signmetal.tga",
+            "material_mode": 0,
+            "family": "BLENDMODE_MULTIPLY",
+            "dual_texture_mode": "actual_stock_grey",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 0,
+            "dual_texture_index": 1,
+            "base_texture": "signmetal",
+            "dual_texture": "grey",
+            "expected_rgba_sha256": "aadf0f19b52e8016cabcaaa9777f1ae562ebdbcfe8af092155a712c89d940a4c",
+            "discarded_pixels": 0,
+            "passed_pixels": 4096
+          },
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              1
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 15,
+            "alpha_ref": 0,
+            "flags": 0,
+            "name": "source_world_tint_controlled_mid_fog",
+            "part_index": 0,
+            "case_index": 2,
+            "part": "Signmetal.tga",
+            "material_mode": 0,
+            "family": "BLENDMODE_MULTIPLY",
+            "dual_texture_mode": "actual_stock_grey",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 0,
+            "dual_texture_index": 1,
+            "base_texture": "signmetal",
+            "dual_texture": "grey",
+            "expected_rgba_sha256": "ad7c34706709f97fec851bb8da6ca1be68d42c1cb36735954f878146bf964c34",
+            "discarded_pixels": 0,
+            "passed_pixels": 4096
+          },
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              1
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 0,
+            "alpha_ref": 1,
+            "flags": 1,
+            "name": "source_world_tint_controlled_strict_ref_one_discard",
+            "part_index": 0,
+            "case_index": 3,
+            "part": "Signmetal.tga",
+            "material_mode": 0,
+            "family": "BLENDMODE_MULTIPLY",
+            "dual_texture_mode": "actual_stock_grey",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 0,
+            "dual_texture_index": 1,
+            "base_texture": "signmetal",
+            "dual_texture": "grey",
+            "expected_rgba_sha256": "f297fe6398c4663ff553b878932bf8148b2e9fb96c2961b26aedd58a1967533f",
+            "discarded_pixels": 4096,
+            "passed_pixels": 0
+          },
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              1
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 0,
+            "alpha_ref": 0,
+            "flags": 2,
+            "name": "source_world_tint_controlled_dual_rgb_alpha",
+            "part_index": 0,
+            "case_index": 4,
+            "part": "Signmetal.tga",
+            "material_mode": 0,
+            "family": "BLENDMODE_MULTIPLY",
+            "dual_texture_mode": "controlled_swatch",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 0,
+            "dual_texture_index": 1,
+            "base_texture": "signmetal",
+            "dual_texture": "grey",
+            "expected_rgba_sha256": "7c38a04cd3a03e35803d2a33291e0072f13761087fa9d79063fbb8f5d7f8578a",
+            "discarded_pixels": 0,
+            "passed_pixels": 4096
+          },
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              1
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 0,
+            "alpha_ref": 0.6000000238418579,
+            "flags": 3,
+            "name": "source_world_tint_controlled_dual_ref_point6_discard",
+            "part_index": 0,
+            "case_index": 5,
+            "part": "Signmetal.tga",
+            "material_mode": 0,
+            "family": "BLENDMODE_MULTIPLY",
+            "dual_texture_mode": "controlled_swatch",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 0,
+            "dual_texture_index": 1,
+            "base_texture": "signmetal",
+            "dual_texture": "grey",
+            "expected_rgba_sha256": "f297fe6398c4663ff553b878932bf8148b2e9fb96c2961b26aedd58a1967533f",
+            "discarded_pixels": 4096,
+            "passed_pixels": 0
+          },
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              1
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 0,
+            "alpha_ref": 0,
+            "flags": 0,
+            "name": "source_world_tint_controlled_neutral_light",
+            "part_index": 1,
+            "case_index": 0,
+            "part": "modern_bench.tga",
+            "material_mode": 1,
+            "family": "BLENDMODE_COLORBLEND_DUAL",
+            "dual_texture_mode": "actual_stock_white",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 2,
+            "dual_texture_index": 3,
+            "base_texture": "modern_bench",
+            "dual_texture": "white",
+            "expected_rgba_sha256": "a5becb0ff9a7259969b5e96515ea965bef14c7fa76e8779002c8ab186585c4e2",
+            "discarded_pixels": 0,
+            "passed_pixels": 4096
+          },
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              0.5
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 0,
+            "alpha_ref": 0,
+            "flags": 1,
+            "name": "source_world_tint_controlled_half_fade_source_over",
+            "part_index": 1,
+            "case_index": 1,
+            "part": "modern_bench.tga",
+            "material_mode": 1,
+            "family": "BLENDMODE_COLORBLEND_DUAL",
+            "dual_texture_mode": "actual_stock_white",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 2,
+            "dual_texture_index": 3,
+            "base_texture": "modern_bench",
+            "dual_texture": "white",
+            "expected_rgba_sha256": "d7f2e614d5b97b84097926e07cb2c0b4b5eca2eef764054d7b38b7f3ed6cbcdd",
+            "discarded_pixels": 0,
+            "passed_pixels": 4096
+          },
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              1
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 15,
+            "alpha_ref": 0,
+            "flags": 0,
+            "name": "source_world_tint_controlled_mid_fog",
+            "part_index": 1,
+            "case_index": 2,
+            "part": "modern_bench.tga",
+            "material_mode": 1,
+            "family": "BLENDMODE_COLORBLEND_DUAL",
+            "dual_texture_mode": "actual_stock_white",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 2,
+            "dual_texture_index": 3,
+            "base_texture": "modern_bench",
+            "dual_texture": "white",
+            "expected_rgba_sha256": "b9e3f758dc0e2df5a0198600df4f0d4e82034dead5d96ed7493acadb09c0f483",
+            "discarded_pixels": 0,
+            "passed_pixels": 4096
+          },
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              1
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 0,
+            "alpha_ref": 1,
+            "flags": 1,
+            "name": "source_world_tint_controlled_strict_ref_one_discard",
+            "part_index": 1,
+            "case_index": 3,
+            "part": "modern_bench.tga",
+            "material_mode": 1,
+            "family": "BLENDMODE_COLORBLEND_DUAL",
+            "dual_texture_mode": "actual_stock_white",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 2,
+            "dual_texture_index": 3,
+            "base_texture": "modern_bench",
+            "dual_texture": "white",
+            "expected_rgba_sha256": "f297fe6398c4663ff553b878932bf8148b2e9fb96c2961b26aedd58a1967533f",
+            "discarded_pixels": 4096,
+            "passed_pixels": 0
+          },
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              1
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 0,
+            "alpha_ref": 0,
+            "flags": 2,
+            "name": "source_world_tint_controlled_dual_rgb_alpha",
+            "part_index": 1,
+            "case_index": 4,
+            "part": "modern_bench.tga",
+            "material_mode": 1,
+            "family": "BLENDMODE_COLORBLEND_DUAL",
+            "dual_texture_mode": "controlled_swatch",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 2,
+            "dual_texture_index": 3,
+            "base_texture": "modern_bench",
+            "dual_texture": "white",
+            "expected_rgba_sha256": "1dcbb671bb1fd9c465022edbbc99be940bea9e364a6e59678b229dc67196b1b2",
+            "discarded_pixels": 0,
+            "passed_pixels": 4096
+          },
+          {
+            "const0": [
+              0.26274511218070984,
+              0.545098066329956,
+              0.7921569347381592,
+              1
+            ],
+            "const1": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "vertex_color": [
+              0.25,
+              0.25,
+              0.25,
+              1
+            ],
+            "fog_params": [
+              0,
+              0,
+              20,
+              0.10000000149011612
+            ],
+            "fog_color": [
+              0.125490203499794,
+              0.250980406999588,
+              0.3764705955982208,
+              1
+            ],
+            "clear": [
+              0.125490203499794,
+              0.3764705955982208,
+              0.6274510025978088,
+              0.501960813999176
+            ],
+            "fog_coord": 0,
+            "alpha_ref": 0.6000000238418579,
+            "flags": 3,
+            "name": "source_world_tint_controlled_dual_ref_point6_discard",
+            "part_index": 1,
+            "case_index": 5,
+            "part": "modern_bench.tga",
+            "material_mode": 1,
+            "family": "BLENDMODE_COLORBLEND_DUAL",
+            "dual_texture_mode": "controlled_swatch",
+            "lighting": "controlled neutral ambient .25, diffuse/specular zero",
+            "sampler": "controlled nearest/clamp/mip0 analytic quad",
+            "base_texture_index": 2,
+            "dual_texture_index": 3,
+            "base_texture": "modern_bench",
+            "dual_texture": "white",
+            "expected_rgba_sha256": "f297fe6398c4663ff553b878932bf8148b2e9fb96c2961b26aedd58a1967533f",
+            "discarded_pixels": 4096,
+            "passed_pixels": 0
+          }
+        ]
+      },
+      "native_generator_library_sha256": "f41ab25644010d34d70a70fc732fa98c34ef85a5c376f3c067f34ea66fe10ba2",
+      "original_world_parity_sha256": "2225d9220daaeeb03752036acd67910648af5e10c81f9335d109ca283e415190",
+      "original_delta_parity_sha256": "50f750dfe64c599d0c8dd8daba844853a4c0fa2ac7da3e164955e8e2ecca66a6",
+      "oracle_kind": "unchanged source camera/group kernels plus independent hierarchy, geometry and shader scalar references",
+      "assets": {
+        "world.bin": {
+          "bytes": 102176,
+          "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+        },
+        "world-reference.bin": {
+          "bytes": 161344,
+          "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13"
+        },
+        "material-reference.bin": {
+          "bytes": 198208,
+          "sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77"
+        }
+      }
+    }
+  },
+  "load_failure": null,
+  "input_adapter": {
+    "schema": "coh-android-input-adapter-v1",
+    "external_android": {
+      "key_down": 5,
+      "key_up": 5,
+      "key_repeat": 0,
+      "motion": 0,
+      "touch_begin": 4,
+      "touch_move": 64,
+      "touch_end": 4,
+      "touch_cancel": 0,
+      "focus_clear": 3,
+      "device_removed": 0,
+      "controller_events": 0,
+      "left_axis_directions": 0,
+      "right_axis_directions": 0,
+      "button_down_mask": 15728896,
+      "touch_motion_directions": 15
+    },
+    "in_app_synthetic": {
+      "key_down": 0,
+      "key_up": 0,
+      "key_repeat": 0,
+      "motion": 0,
+      "touch_begin": 0,
+      "touch_move": 0,
+      "touch_end": 0,
+      "touch_cancel": 0,
+      "focus_clear": 0,
+      "device_removed": 0,
+      "controller_events": 0,
+      "left_axis_directions": 0,
+      "right_axis_directions": 0,
+      "button_down_mask": 0,
+      "touch_motion_directions": 0
+    },
+    "focused": false,
+    "touch_active": false,
+    "scope": "Android callbacks to source scalar/key/joystick kernels; editor look and preview adapter; no gameplay physics",
+    "external_event_provenance": "Framework events; emulator adb injection does not establish physical controller operation"
+  },
+  "input_snapshot": {
+    "result": 1,
+    "held": 0,
+    "pressed": 0,
+    "released": 0,
+    "frames": 868,
+    "clear_count": 1,
+    "rejected": 0,
+    "clipped": 0,
+    "delta_x": 0,
+    "delta_y": 0,
+    "pyr": [
+      0.00400000066,
+      -0.00400000438,
+      0
+    ],
+    "target_pyr": [
+      -0.00400000066,
+      3.13759279,
+      0
+    ],
+    "axes": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "session_failures": 0,
+  "generation": 2,
+  "render_token": 9,
+  "audio_busy": false,
+  "backend_audio_active": false,
+  "transport_busy": false,
+  "backend_transport_active": false,
+  "checks_busy": false,
+  "render_busy": false,
+  "backend_world_active": false,
+  "home_check_ready": false,
+  "home_check_preparing": false,
+  "export_in_progress": false,
+  "report_write_failed": false,
+  "background_return": {
+    "pause_sequence": 35,
+    "input_cleared": true,
+    "audio_started_before_pause": true,
+    "transport_started_before_pause": true,
+    "interrupted_audio_run_id": 2,
+    "interrupted_transport_run_id": 1,
+    "stop_sequence": 40
+  },
+  "pre_background_checks_passed": false,
+  "background_return_gate_passed": false,
+  "android_input_transport_passed": true,
+  "interactive_direction_mask": 15,
+  "interactive_settled_frames": 149,
+  "input_linked_changed_pixels": 371201,
+  "current_world_gate_passed": false,
+  "compressed_decode_gate_passed": true,
+  "loopback_transport_gate_passed": false,
+  "interactive_world_gate_passed": false,
+  "qualification_passed": false,
+  "controller_axis_coverage_passed": false,
+  "device_audible_confirmation_passed": false,
+  "physical_confirmation_scope": "Engine and ADB callbacks do not prove physical speakers or sticks; those observations are recorded separately",
+  "input_area": {
+    "left": 148,
+    "top": 646,
+    "width": 783,
+    "height": 583,
+    "surface_ready": false
+  },
+  "controls": {
+    "run": {
+      "left": 0,
+      "top": 0,
+      "width": 0,
+      "height": 0,
+      "visible": false,
+      "fully_visible": false,
+      "view_width": 232,
+      "view_height": 126
+    },
+    "play": {
+      "left": 0,
+      "top": 0,
+      "width": 0,
+      "height": 0,
+      "visible": false,
+      "fully_visible": false,
+      "view_width": 359,
+      "view_height": 126
+    },
+    "audible_confirmation": {
+      "left": 0,
+      "top": 0,
+      "width": 0,
+      "height": 0,
+      "visible": false,
+      "fully_visible": false,
+      "view_width": 292,
+      "view_height": 126
+    },
+    "reset": {
+      "left": 18,
+      "top": 209,
+      "width": 149,
+      "height": 126,
+      "visible": true,
+      "fully_visible": false,
+      "view_width": 231,
+      "view_height": 126
+    },
+    "resize": {
+      "left": 167,
+      "top": 209,
+      "width": 231,
+      "height": 126,
+      "visible": true,
+      "fully_visible": true,
+      "view_width": 231,
+      "view_height": 126
+    },
+    "recreate": {
+      "left": 398,
+      "top": 209,
+      "width": 231,
+      "height": 126,
+      "visible": true,
+      "fully_visible": true,
+      "view_width": 231,
+      "view_height": 126
+    },
+    "home": {
+      "left": 629,
+      "top": 209,
+      "width": 238,
+      "height": 126,
+      "visible": true,
+      "fully_visible": true,
+      "view_width": 238,
+      "view_height": 126
+    },
+    "export": {
+      "left": 867,
+      "top": 209,
+      "width": 195,
+      "height": 126,
+      "visible": true,
+      "fully_visible": false,
+      "view_width": 280,
+      "view_height": 126
+    }
+  },
+  "control_row": {
+    "left": 18,
+    "top": 209,
+    "width": 1044,
+    "height": 126,
+    "visible": true,
+    "fully_visible": true,
+    "view_width": 1044,
+    "view_height": 126,
+    "scroll_x": 965,
+    "content_width": 2094
+  }
+}

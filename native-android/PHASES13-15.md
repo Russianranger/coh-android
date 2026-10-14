@@ -105,3 +105,27 @@ Build, lint, package identity and Android 13 emulator qualification are run by
 the dedicated native integration workflow. Physical Thor stick behavior and
 audibility remain separate observations. See the
 [one combined test sequence](integration-probe/THOR-TEST.md).
+
+## Qualified package for one physical check
+
+Source `e8d4b80b21088992bcbfa403f71bae3138a49e70` passed the
+[integration workflow](https://github.com/Russianranger/coh-android/actions/runs/38603481231)
+and the portable-core workflow. The
+[qualification receipt](evidence/phases13-15/qualification.json) binds the
+downloaded artifact, both signed APKs and the original reports to that source.
+The ARM64 package is `CoH-Native-Integration-Probe-0.1.0-arm64.apk`, 750,186
+bytes, SHA256 `1a2b3da7fedad2f3b78ec5673ce45e649e4e9cb5616f120c77a7770941c4ccba`.
+
+The installed Android 13 x86_64 package passed three native checks, seven
+180-frame scene rounds across two actual sizes and generations, all four
+signed CPU/GPU/image directions, two complete decoded sound sequences and
+seven real button taps. The genuine Home cycle interrupted decoded playback
+after 13,824 submitted frames and a blocked native UDP poll, stopped/closed
+the stream, closed both sockets, cleared input and reopened all subsystems.
+Reset and the actual document picker required fresh current-view evidence.
+The 132,040-byte exported JSON matched its frozen pre-picker hash. Session
+failures, comparison mismatches and GL/EGL/backend errors were zero.
+
+All 140 Java receipt, ordered-writer and tap-measurement host checks passed.
+The ARM64 package is ready for the combined Thor sequence; physical sticks,
+audibility and execution on Thor are pending that new device report.

@@ -1,0 +1,751 @@
+{
+  "schema": 2,
+  "passed": true,
+  "scope": "Measured real Android Button taps; no foreground lifecycle Intents",
+  "button_taps": [
+    {
+      "action": "play",
+      "tap_x": 429,
+      "tap_y": 272,
+      "bounds": {
+        "left": 250,
+        "top": 209,
+        "width": 359,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 359,
+        "view_height": 126
+      },
+      "event": {
+        "sequence": 13,
+        "type": "audio_play_requested",
+        "time": "2026-10-14T17:09:25.582Z",
+        "elapsed_ms": 62424,
+        "generation": 1,
+        "detail": {
+          "run_id": 1,
+          "reason": "manual"
+        }
+      },
+      "stable_fresh_snapshots": [
+        {
+          "updated_at": "2026-10-14T17:09:25.053Z",
+          "scroll_x": 0,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 0,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 250,
+            "top": 209,
+            "width": 359,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 359,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:09:25.208Z",
+          "scroll_x": 0,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 0,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 250,
+            "top": 209,
+            "width": 359,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 359,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:09:25.410Z",
+          "scroll_x": 0,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 0,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 250,
+            "top": 209,
+            "width": 359,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 359,
+            "view_height": 126
+          }
+        }
+      ],
+      "minimum_source_stability_ms": 300
+    },
+    {
+      "action": "resize",
+      "tap_x": 921,
+      "tap_y": 272,
+      "bounds": {
+        "left": 806,
+        "top": 209,
+        "width": 231,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 231,
+        "view_height": 126
+      },
+      "event": {
+        "sequence": 15,
+        "type": "resize_requested",
+        "time": "2026-10-14T17:09:33.987Z",
+        "elapsed_ms": 70829,
+        "generation": 1,
+        "detail": {
+          "smaller": true
+        }
+      },
+      "stable_fresh_snapshots": [
+        {
+          "updated_at": "2026-10-14T17:09:32.667Z",
+          "scroll_x": 326,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 326,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 806,
+            "top": 209,
+            "width": 231,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 231,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:09:33.221Z",
+          "scroll_x": 326,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 326,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 806,
+            "top": 209,
+            "width": 231,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 231,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:09:33.645Z",
+          "scroll_x": 326,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 326,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 806,
+            "top": 209,
+            "width": 231,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 231,
+            "view_height": 126
+          }
+        }
+      ],
+      "minimum_source_stability_ms": 300
+    },
+    {
+      "action": "recreate",
+      "tap_x": 834,
+      "tap_y": 272,
+      "bounds": {
+        "left": 719,
+        "top": 209,
+        "width": 231,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 231,
+        "view_height": 126
+      },
+      "event": {
+        "sequence": 21,
+        "type": "view_recreation_requested",
+        "time": "2026-10-14T17:09:44.589Z",
+        "elapsed_ms": 81431,
+        "generation": 1,
+        "detail": {
+          "previous_generation": 1
+        }
+      },
+      "stable_fresh_snapshots": [
+        {
+          "updated_at": "2026-10-14T17:09:43.653Z",
+          "scroll_x": 644,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 644,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 719,
+            "top": 209,
+            "width": 231,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 231,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:09:43.867Z",
+          "scroll_x": 644,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 644,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 719,
+            "top": 209,
+            "width": 231,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 231,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:09:44.305Z",
+          "scroll_x": 644,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 644,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 719,
+            "top": 209,
+            "width": 231,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 231,
+            "view_height": 126
+          }
+        }
+      ],
+      "minimum_source_stability_ms": 300
+    },
+    {
+      "action": "home",
+      "tap_x": 748,
+      "tap_y": 272,
+      "bounds": {
+        "left": 629,
+        "top": 209,
+        "width": 238,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 238,
+        "view_height": 126
+      },
+      "event": {
+        "sequence": 30,
+        "type": "home_check_requested",
+        "time": "2026-10-14T17:09:55.259Z",
+        "elapsed_ms": 92106,
+        "generation": 2,
+        "detail": {
+          "stage": "waiting for renderer cleanup"
+        }
+      },
+      "stable_fresh_snapshots": [
+        {
+          "updated_at": "2026-10-14T17:09:54.261Z",
+          "scroll_x": 965,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 965,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 629,
+            "top": 209,
+            "width": 238,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 238,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:09:54.473Z",
+          "scroll_x": 965,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 965,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 629,
+            "top": 209,
+            "width": 238,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 238,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:09:54.933Z",
+          "scroll_x": 965,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 965,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 629,
+            "top": 209,
+            "width": 238,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 238,
+            "view_height": 126
+          }
+        }
+      ],
+      "minimum_source_stability_ms": 300
+    },
+    {
+      "action": "play",
+      "tap_x": 340,
+      "tap_y": 272,
+      "bounds": {
+        "left": 161,
+        "top": 209,
+        "width": 359,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 359,
+        "view_height": 126
+      },
+      "event": {
+        "sequence": 52,
+        "type": "audio_play_requested",
+        "time": "2026-10-14T17:10:23.840Z",
+        "elapsed_ms": 120681,
+        "generation": 2,
+        "detail": {
+          "run_id": 3,
+          "reason": "manual"
+        }
+      },
+      "stable_fresh_snapshots": [
+        {
+          "updated_at": "2026-10-14T17:10:22.943Z",
+          "scroll_x": 89,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 89,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 161,
+            "top": 209,
+            "width": 359,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 359,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:10:23.252Z",
+          "scroll_x": 89,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 89,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 161,
+            "top": 209,
+            "width": 359,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 359,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:10:23.504Z",
+          "scroll_x": 89,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 89,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 161,
+            "top": 209,
+            "width": 359,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 359,
+            "view_height": 126
+          }
+        }
+      ],
+      "minimum_source_stability_ms": 300
+    },
+    {
+      "action": "reset",
+      "tap_x": 927,
+      "tap_y": 272,
+      "bounds": {
+        "left": 812,
+        "top": 209,
+        "width": 231,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 231,
+        "view_height": 126
+      },
+      "event": {
+        "sequence": 54,
+        "type": "view_reset_requested",
+        "time": "2026-10-14T17:10:27.267Z",
+        "elapsed_ms": 124109,
+        "generation": 2,
+        "detail": {}
+      },
+      "stable_fresh_snapshots": [
+        {
+          "updated_at": "2026-10-14T17:10:26.117Z",
+          "scroll_x": 89,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 89,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 812,
+            "top": 209,
+            "width": 231,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 231,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:10:26.528Z",
+          "scroll_x": 89,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 89,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 812,
+            "top": 209,
+            "width": 231,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 231,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:10:26.734Z",
+          "scroll_x": 89,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 89,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 812,
+            "top": 209,
+            "width": 231,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 231,
+            "view_height": 126
+          }
+        }
+      ],
+      "minimum_source_stability_ms": 300
+    },
+    {
+      "action": "export",
+      "tap_x": 922,
+      "tap_y": 272,
+      "bounds": {
+        "left": 782,
+        "top": 209,
+        "width": 280,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 280,
+        "view_height": 126
+      },
+      "event": {
+        "sequence": 59,
+        "type": "export_snapshot_created",
+        "time": "2026-10-14T17:10:44.186Z",
+        "elapsed_ms": 141028,
+        "generation": 2,
+        "detail": {
+          "bytes": 132040,
+          "sha256": "33993c7db7a935cb1df26d851538b68b69383c2ab7a8bc5b9c0a2922ef122d30",
+          "qualification_passed": true
+        }
+      },
+      "stable_fresh_snapshots": [
+        {
+          "updated_at": "2026-10-14T17:10:42.968Z",
+          "scroll_x": 1050,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 1050,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 782,
+            "top": 209,
+            "width": 280,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 280,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:10:43.173Z",
+          "scroll_x": 1050,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 1050,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 782,
+            "top": 209,
+            "width": 280,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 280,
+            "view_height": 126
+          }
+        },
+        {
+          "updated_at": "2026-10-14T17:10:43.698Z",
+          "scroll_x": 1050,
+          "control_row": {
+            "left": 18,
+            "top": 209,
+            "width": 1044,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 1044,
+            "view_height": 126,
+            "scroll_x": 1050,
+            "content_width": 2094
+          },
+          "target": {
+            "left": 782,
+            "top": 209,
+            "width": 280,
+            "height": 126,
+            "visible": true,
+            "fully_visible": true,
+            "view_width": 280,
+            "view_height": 126
+          }
+        }
+      ],
+      "minimum_source_stability_ms": 300
+    }
+  ]
+}

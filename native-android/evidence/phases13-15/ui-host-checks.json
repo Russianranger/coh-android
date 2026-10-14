@@ -1,0 +1,12 @@
+{
+  "schema": "coh-native-integration-ui-host-v2",
+  "passed": true,
+  "checks": 140,
+  "receipt_checks": 118,
+  "coalescing_writer_checks": 9,
+  "tap_measurement_checks": 13,
+  "scope": "Actual shipped Java receipt/writer methods and emulator tap predicates on controlled receipts, threads and fresh measurements; not Android hardware execution",
+  "main_activity_sha256": "c417592e6ee73bc75c9df474bc70f8c9260e07149e7cf6676ef20330d8bf11ea",
+  "receipt_rules_sha256": "57f768ed9358c07181d5fc3f61028ffd6cd1706120bdba44b6f6502cff9c9b86",
+  "emulator_check_sha256": "4116c40d55d0d4a73708fa9332bc5d818d76eec5c50dae46ed44fbfe514c2b5c"
+}

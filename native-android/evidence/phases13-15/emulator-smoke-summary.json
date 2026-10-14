@@ -1,0 +1,29 @@
+{
+  "schema": 2,
+  "phases": [
+    13,
+    14,
+    15
+  ],
+  "passed": true,
+  "apk_sha256": "46a6fd43c19a022d5b1d1109a89775fdfac511c45d0c99355f29485df484d1ed",
+  "apk_bytes": 750767,
+  "compressed_ogg_sha256": "82bec697f9e824d192cac90f32a01421e4a3875aada64fc709862bc4d3ae9198",
+  "compressed_ogg_bytes": 12930,
+  "scope": "Installed Android 13 x86_64; authentic on-device compressed decode, real IPv4 loopback UDP, actual source camera/Atlas scene under real Android framework touch, Surface resize/recreate/Reset and Home cancellation/reopen",
+  "native_runs": 3,
+  "world_runs": 7,
+  "audio_runs": 2,
+  "interactive_direction_mask": 15,
+  "input_linked_changed_pixels": 371201,
+  "settled_frames": 149,
+  "actual_home_cycle_passed": true,
+  "actual_document_export_passed": true,
+  "surface_resize_recreation_passed": true,
+  "physical_controller_verified": false,
+  "physical_audibility_verified": false,
+  "thor_device_execution_verified": false,
+  "external_network_execution": false,
+  "server_interoperability_verified": false,
+  "original_game_execution": false
+}
