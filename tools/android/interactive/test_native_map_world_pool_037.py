@@ -6,6 +6,7 @@ from pathlib import Path
 import tempfile
 import subprocess
 import unittest
+from types import SimpleNamespace
 from unittest import mock
 
 import native_map_world_pool_037 as pool
@@ -96,6 +97,45 @@ class PoolTests(unittest.TestCase):
         self.assertTrue(value['full_namespace_verified'])
         self.assertFalse(value['content_schema_native_SQL_gates_supplied'])
         self.assertFalse(value['shipping_allowed'])
+
+    def test_cached_zero_directory_entry_identity_is_never_admitted(self):
+        original = os.scandir
+        cached_calls = []
+        class CachedEntry:
+            def __init__(self, entry):
+                self.name = entry.name
+            def stat(self, *, follow_symlinks):
+                cached_calls.append(self.name)
+                return SimpleNamespace(st_dev=0, st_ino=0, st_nlink=0)
+        class CachedScan:
+            def __init__(self, path):
+                self.inner = original(path)
+            def __enter__(self):
+                return (CachedEntry(entry) for entry in self.inner.__enter__())
+            def __exit__(self, *args):
+                return self.inner.__exit__(*args)
+        with mock.patch.object(pool.os, 'scandir', side_effect=CachedScan):
+            value = self.census()
+        self.assertEqual(cached_calls, [])
+        for name, info in value['files'].items():
+            self.assertEqual(info, pool.record((self.root / name).lstat()))
+            self.assertEqual(info['links'], 1)
+            self.assertGreater(info['inode'], 0)
+
+    def test_actual_file_identity_and_cached_directory_entry_witness(self):
+        with os.scandir(self.root) as entries:
+            entry = next(value for value in entries if value.name == 'MapServer.exe')
+            cached = entry.stat(follow_symlinks=False)
+            actual = (self.root / entry.name).lstat()
+        fields = lambda info: {name: getattr(info, 'st_' + name) for name in ('dev', 'ino', 'nlink')}
+        self.assertEqual(actual.st_nlink, 1)
+        self.assertGreater(actual.st_ino, 0)
+        if os.name == 'nt':
+            self.assertEqual(fields(cached), {'dev': 0, 'ino': 0, 'nlink': 0})
+        print('COH_POOL_FILE_IDENTITY_V1 ' + json.dumps({
+            'controlled_path': str(self.root / 'MapServer.exe'),
+            'cached_directory_entry': fields(cached), 'fresh_no_follow_path': fields(actual),
+        }, sort_keys=True), flush=True)
 
     def test_unknown_file_and_empty_directory_preserved_on_refusal(self):
         unknown = self.root / 'unrelated-profile'
@@ -278,9 +318,22 @@ class PoolTests(unittest.TestCase):
         descriptor_count = self.handle_count()
         if os.name == 'nt':
             with pool.directory_custody(target):
-                with self.assertRaises(OSError):
+                held_count = self.handle_count()
+                self.assertGreaterEqual(held_count, descriptor_count + len(target.parents) + 1)
+                with self.assertRaises(OSError) as refusal:
                     target.rename(Path(self.tmp.name) / 'moved')
+                self.assertIn(refusal.exception.winerror, (5, 32))
             self.assertTrue(target.is_dir())
+            # The same owned rename succeeds after custody handles close.
+            moved = target.rename(Path(self.tmp.name) / 'moved')
+            moved.rename(target)
+            print('COH_POOL_DIRECTORY_CUSTODY_V1 ' + json.dumps({
+                'controlled_path': str(target), 'path_identity': pool.directory_identity(target.lstat()),
+                'desired_access': 0x81, 'share_mode': 3,
+                'handles_before': descriptor_count, 'handles_during': held_count,
+                'handles_after': self.handle_count(), 'rename_refusal_winerror': refusal.exception.winerror,
+                'rename_after_close_succeeded': True,
+            }, sort_keys=True), flush=True)
         else:
             with self.assertRaisesRegex(ValueError, 'ancestor changed'):
                 with pool.directory_custody(target):

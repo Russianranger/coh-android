@@ -151,9 +151,11 @@ def directory_custody(path):
             ordinary_streams(ancestor)
             identity = directory_identity(before)
             if os.name == 'nt':
+                # Attribute-only access is exempt from sharing checks. Request
+                # FILE_LIST_DIRECTORY | FILE_READ_ATTRIBUTES to hold custody.
                 # Share read/write only: replacement/rename requires delete
                 # sharing and stays denied until this entire chain is released.
-                handle = create(str(ancestor), 0x80, 3, None, 3, 0x02200000, None)
+                handle = create(str(ancestor), 0x81, 3, None, 3, 0x02200000, None)
                 require(handle != ctypes.c_void_p(-1).value, 'Directory custody handle open failed')
             else:
                 handle = os.open(ancestor, os.O_RDONLY | os.O_DIRECTORY | getattr(os, 'O_NOFOLLOW', 0))
@@ -259,8 +261,10 @@ def _closed_namespace(runtime, expected_provider_names, cache_names, budget=None
                 safe_name(name)
                 require(name.casefold() not in seen_folded, 'Pool namespace case alias refused')
                 seen_folded.add(name.casefold())
-                info = entry.stat(follow_symlinks=False)
                 path = directory / entry.name
+                # Windows DirEntry.stat caches zero device/inode/link fields.
+                # Fresh no-follow metadata retains the actual identity gates.
+                info = path.lstat()
                 require(info.st_uid == root_info.st_uid, 'Pool member owner differs')
                 if stat.S_ISDIR(info.st_mode):
                     ordinary(info, directory=True)
