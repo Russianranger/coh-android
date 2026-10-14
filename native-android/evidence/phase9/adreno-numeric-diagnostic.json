@@ -1,0 +1,235 @@
+{
+  "schema": "coh-phase9-adreno-world-rounding-diagnostic-v1",
+  "passed": true,
+  "diagnostic_only": true,
+  "input_sha256": {
+    "thor_report": "d1bd54431dbfd4a3df15323c4c120349e7fad6b9d2f789c376d3ddc6cc94705d",
+    "apk": "cfa910c9f0ec945ee7996c00ca09d8a9a8e2342b746bc130cd989a433bba1421",
+    "world.bin": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f",
+    "world-reference.bin": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13"
+  },
+  "scope": "First source part, first controlled camera; exact IEEE binary32 arithmetic models reproduce recorded first witness plus aggregate threshold count. GPU instruction ordering is inferred, not captured.",
+  "arithmetic": "All modeled product/add/fma roundings use exact rational arithmetic and binary32 round-to-nearest ties-to-even; no epsilon or tolerance change.",
+  "observed": {
+    "current_failed_runs": 4,
+    "observation_source": "supplied failed Thor report",
+    "recorded_report_sha256": "d1bd54431dbfd4a3df15323c4c120349e7fad6b9d2f789c376d3ddc6cc94705d",
+    "gpu_executed_by_this_script": false,
+    "first_camera": 0,
+    "first_part": 0,
+    "vertices_compared": 256,
+    "tf_components_compared": 3328,
+    "world_position_mismatches": 88,
+    "eye_normal_clip_mismatches": 0,
+    "maximum_error_binary32_exact": 0.0001220703125,
+    "first_vertex": 8,
+    "component": 2,
+    "expected": -1439.9266357421875,
+    "actual": -1439.9267578125,
+    "expected_bits": "0xc4b3fda7",
+    "actual_bits": "0xc4b3fda8",
+    "existing_absolute_tolerance": 0.0001
+  },
+  "world_matrix_source_columns": [
+    -1.0,
+    -0.0,
+    5.642599489874556e-07,
+    0.0,
+    1.0,
+    0.0,
+    -5.642599489874556e-07,
+    0.0,
+    -1.0,
+    584.0,
+    74.0,
+    -1440.5
+  ],
+  "first_source_vertex": [
+    2.79998779296875,
+    1.00396728515625,
+    -0.57330322265625
+  ],
+  "first_witness_detail": {
+    "z_products": [
+      1.5799209904798772e-06,
+      0.0,
+      0.57330322265625
+    ],
+    "translation_z": -1440.5,
+    "source_partial_before_translation": 0.5733048319816589,
+    "z_product_plus_translation_exact": -1439.9266967773438,
+    "z_product_plus_translation_is_midpoint": true,
+    "exact_affine_value": -1439.9266951974228,
+    "tiny_x_contribution": 1.5799209904798772e-06,
+    "strict_source_result": -1439.9266357421875,
+    "pairwise_result": -1439.9267578125,
+    "fully_fused_result": -1439.9266357421875,
+    "ulp_at_coordinate": 0.0001220703125
+  },
+  "models": {
+    "strict_source_separate_mul_left_associative_add": {
+      "first_witness_value": -1439.9266357421875,
+      "first_witness_hex_bits": "0xc4b3fda7",
+      "matches_first_observed": false,
+      "mismatches_above_existing_1e_4": 0,
+      "mismatch_components": [],
+      "first_mismatch": null,
+      "maximum_absolute_error": 0.0,
+      "changed_components_below_or_above_tolerance": 0,
+      "matches_recorded_aggregate_pattern": false
+    },
+    "rounded_products_pairwise_addition": {
+      "first_witness_value": -1439.9267578125,
+      "first_witness_hex_bits": "0xc4b3fda8",
+      "matches_first_observed": true,
+      "mismatches_above_existing_1e_4": 88,
+      "mismatch_components": [
+        2
+      ],
+      "first_mismatch": [
+        8,
+        2
+      ],
+      "maximum_absolute_error": 0.0001220703125,
+      "changed_components_below_or_above_tolerance": 88,
+      "matches_recorded_aggregate_pattern": true
+    },
+    "rounded_products_translation_then_z_then_y_then_x": {
+      "first_witness_value": -1439.9267578125,
+      "first_witness_hex_bits": "0xc4b3fda8",
+      "matches_first_observed": true,
+      "mismatches_above_existing_1e_4": 88,
+      "mismatch_components": [
+        2
+      ],
+      "first_mismatch": [
+        8,
+        2
+      ],
+      "maximum_absolute_error": 0.0001220703125,
+      "changed_components_below_or_above_tolerance": 88,
+      "matches_recorded_aggregate_pattern": true
+    },
+    "exact_dot_single_rounding": {
+      "first_witness_value": -1439.9266357421875,
+      "first_witness_hex_bits": "0xc4b3fda7",
+      "matches_first_observed": false,
+      "mismatches_above_existing_1e_4": 3,
+      "mismatch_components": [
+        2
+      ],
+      "first_mismatch": [
+        54,
+        2
+      ],
+      "maximum_absolute_error": 0.0001220703125,
+      "changed_components_below_or_above_tolerance": 3,
+      "matches_recorded_aggregate_pattern": false
+    },
+    "FMA_translation_then_x_y_z": {
+      "first_witness_value": -1439.9267578125,
+      "first_witness_hex_bits": "0xc4b3fda8",
+      "matches_first_observed": true,
+      "mismatches_above_existing_1e_4": 88,
+      "mismatch_components": [
+        2
+      ],
+      "first_mismatch": [
+        8,
+        2
+      ],
+      "maximum_absolute_error": 0.0001220703125,
+      "changed_components_below_or_above_tolerance": 88,
+      "matches_recorded_aggregate_pattern": true
+    },
+    "FMA_translation_then_x_z_y": {
+      "first_witness_value": -1439.9267578125,
+      "first_witness_hex_bits": "0xc4b3fda8",
+      "matches_first_observed": true,
+      "mismatches_above_existing_1e_4": 88,
+      "mismatch_components": [
+        2
+      ],
+      "first_mismatch": [
+        8,
+        2
+      ],
+      "maximum_absolute_error": 0.0001220703125,
+      "changed_components_below_or_above_tolerance": 88,
+      "matches_recorded_aggregate_pattern": true
+    },
+    "FMA_translation_then_y_x_z": {
+      "first_witness_value": -1439.9267578125,
+      "first_witness_hex_bits": "0xc4b3fda8",
+      "matches_first_observed": true,
+      "mismatches_above_existing_1e_4": 88,
+      "mismatch_components": [
+        2
+      ],
+      "first_mismatch": [
+        8,
+        2
+      ],
+      "maximum_absolute_error": 0.0001220703125,
+      "changed_components_below_or_above_tolerance": 88,
+      "matches_recorded_aggregate_pattern": true
+    },
+    "FMA_translation_then_y_z_x": {
+      "first_witness_value": -1439.9267578125,
+      "first_witness_hex_bits": "0xc4b3fda8",
+      "matches_first_observed": true,
+      "mismatches_above_existing_1e_4": 88,
+      "mismatch_components": [
+        2
+      ],
+      "first_mismatch": [
+        8,
+        2
+      ],
+      "maximum_absolute_error": 0.0001220703125,
+      "changed_components_below_or_above_tolerance": 88,
+      "matches_recorded_aggregate_pattern": true
+    },
+    "FMA_translation_then_z_x_y": {
+      "first_witness_value": -1439.9267578125,
+      "first_witness_hex_bits": "0xc4b3fda8",
+      "matches_first_observed": true,
+      "mismatches_above_existing_1e_4": 88,
+      "mismatch_components": [
+        2
+      ],
+      "first_mismatch": [
+        8,
+        2
+      ],
+      "maximum_absolute_error": 0.0001220703125,
+      "changed_components_below_or_above_tolerance": 88,
+      "matches_recorded_aggregate_pattern": true
+    },
+    "FMA_translation_then_z_y_x": {
+      "first_witness_value": -1439.9267578125,
+      "first_witness_hex_bits": "0xc4b3fda8",
+      "matches_first_observed": true,
+      "mismatches_above_existing_1e_4": 88,
+      "mismatch_components": [
+        2
+      ],
+      "first_mismatch": [
+        8,
+        2
+      ],
+      "maximum_absolute_error": 0.0001220703125,
+      "changed_components_below_or_above_tolerance": 88,
+      "matches_recorded_aggregate_pattern": true
+    }
+  },
+  "conclusions": [
+    "Strict source product/add order reproduces every frozen first-part world reference exactly.",
+    "The large translation plus z product lies exactly halfway between adjacent binary32 world coordinates for the first witness.",
+    "Adding the tiny x-rotation contribution before translation selects the expected neighbor; rounding translation+z first loses that contribution and reproduces the observed neighbor.",
+    "Several reassociated/FMA instruction-order models reproduce the recorded aggregate count of 88 threshold mismatches, world-z-only classification, first vertex 8 and exact one-ULP maximum. This identifies a numeric-order mechanism without asserting captured Adreno instructions or complete measured GPU vertex values.",
+    "A single fully fused dot returns the source result for the first witness; the issue is evaluation grouping and intermediate rounding, not all FMA use."
+  ],
+  "recommended_remedy": "Keep source input coordinates, source CPU matrix order, references and 1e-4 tolerance unchanged. Use explicitly staged binary32 component products and left-associative additions under an ESSL precise/no-contraction contract supported by the selected device/shader profile, then rerun independent GPU transform/pixel/lifecycle qualification. Mere temporaries without precision/optimization constraints do not establish evaluation order.",
+  "device_qualification": "failed until corrected shader reruns on Thor; source host and prior emulator evidence remain separate"
+}

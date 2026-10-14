@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "phase": 9,
+  "passed": false,
+  "qualification_passed": false,
+  "original_report": {
+    "bytes": 134060,
+    "sha256": "d1bd54431dbfd4a3df15323c4c120349e7fad6b9d2f789c376d3ddc6cc94705d"
+  },
+  "apk_version": "0.1.0-phase9",
+  "tested_source_commit": "3dc7013c3e96230efb8832732f1489d6aaba3384",
+  "scope": {
+    "device": "AYN Thor",
+    "sdk": 33,
+    "abi": "arm64-v8a",
+    "renderer": "Adreno (TM) 740",
+    "glsl_version": "OpenGL ES GLSL ES 3.20"
+  },
+  "failed_current_runs": 4,
+  "surface_generations": 2,
+  "actual_dimensions": [
+    [
+      1413,
+      291
+    ],
+    [
+      1884,
+      389
+    ]
+  ],
+  "all_cpu_group_camera_projection_modelview_comparisons_exact": true,
+  "gpu_failure": {
+    "stage": "transform-parity",
+    "vertices_examined_each_attempt": 256,
+    "components_examined_each_attempt": 3328,
+    "mismatches_each_attempt": 88,
+    "maximum_absolute_error": 0.000122070312,
+    "unchanged_absolute_tolerance": 0.0001,
+    "world_positions_only": true,
+    "eye_normal_clip_mismatches": 0,
+    "first_mismatch": {
+      "observed": true,
+      "camera": 0,
+      "part": 0,
+      "vertex": 8,
+      "component": 2,
+      "expected": -1439.92664,
+      "actual": -1439.92676,
+      "actual_finite": true
+    }
+  },
+  "gl_and_egl_errors": 0,
+  "all_attempted_context_objects_released": true,
+  "world_pixel_material_and_preview_stages_reached": false,
+  "verified_fixture_assets": {
+    "world.bin": {
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f",
+      "bytes": 102176
+    },
+    "world-reference.bin": {
+      "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13",
+      "bytes": 161344
+    },
+    "material-reference.bin": {
+      "sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77",
+      "bytes": 198208
+    }
+  },
+  "interpretation": "An exact rational binary32 model reproduces the reported first witness, all 88 threshold mismatches and one-ULP maximum using several reassociated/translation-seeded evaluation orders. This supports the rounding-order mechanism; the exact Adreno instruction sequence is not captured.",
+  "remaining_gate": "Implement explicit source-ordered GPU arithmetic with precise where supported, then rebuild and requalify emulator and Thor.",
+  "numeric_diagnostic_receipt": "adreno-numeric-diagnostic.json",
+  "apk_identity_basis": "User report follows the delivered 0.1.0 package; exact three fixture hashes match. APK file hash is not measured in the device report."
+}

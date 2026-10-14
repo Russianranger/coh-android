@@ -341,6 +341,7 @@ def validate(report, contract, minimum_generations=2, full_qualification=True):
         assert native['mip_policy'] == 'base level only; original mip chain unqualified'
         assert native['reference_matrices_drive_rendering'] is False and native['reference_geometry_drive_rendering'] is False
         assert native['original_cg_execution'] is False and native['window_alpha_compared'] is False
+        assert native['source_operation_order'] == '((x*m0+y*m1)+z*m2)+translation'
         assert native['front_face'] == 'CW' and native['cull_face'] == 'BACK except source DoubleSided' and native['depth_write'] is True
         assert native['high_quality_materials_qualified'] is False
         assert native['draw_order'] == 'source original material partition order'
@@ -350,6 +351,19 @@ def validate(report, contract, minimum_generations=2, full_qualification=True):
             assert c['passed'] is True and c['completed'] is True and c['context_created'] is True
             assert c['objects_released'] is True and c['swap_passed'] is True
             assert c['gl_errors'] == c['egl_error'] == 0
+            assert c['gl_context_major'] == 3 and c['gl_context_minor'] in (0, 1, 2)
+            assert c['shader_arithmetic_policy'] == 'source-left-associated-products-and-sums'
+            mechanism = c['shader_precision_mechanism']
+            if mechanism == 'ESSL-3.20-core-precise':
+                assert c['gl_context_minor'] == 2
+                assert c['shader_language_version'] == 320 and c['shader_precise_enabled'] is True
+            elif mechanism in ('ESSL-3.10-EXT_gpu_shader5-precise', 'ESSL-3.10-OES_gpu_shader5-precise'):
+                assert c['gl_context_minor'] == 1
+                assert c['shader_language_version'] == 310 and c['shader_precise_enabled'] is True
+            else:
+                assert mechanism == 'ESSL-3.00-explicit-source-order-TF-gated'
+                assert c['gl_context_minor'] <= 1
+                assert c['shader_language_version'] == 300 and c['shader_precise_enabled'] is False
             assert c['surface_width'] == run['callback_width'] and c['surface_height'] == run['callback_height']
             assert c['transform_vertices'] == vertices * POSES and c['transform_components'] == vertices * POSES * 13
             assert c['transform_mismatches'] == c['world_position_mismatches'] == c['eye_position_mismatches'] == c['normal_mismatches'] == c['clip_mismatches'] == 0
@@ -389,7 +403,7 @@ def validate(report, contract, minimum_generations=2, full_qualification=True):
                                         'surface_destroyed', 'surface_created', 'auto_smoke_completed'])
 def main():
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    apk = OUTPUT / 'CoH-Native-World-Probe-0.1.0-emulator-x86_64.apk'
+    apk = OUTPUT / 'CoH-Native-World-Probe-0.1.1-emulator-x86_64.apk'
     contract, metadata = inspect_apk_inputs(apk)
     validate_source_trick_audit(metadata)
     adb('install', '-r', str(apk))
@@ -459,6 +473,10 @@ def main():
                    'successful_actual_widths': final['qualification']['successful_widths'],
                    'successful_actual_heights': final['qualification']['successful_heights'],
                    'completed_context_cycles': len(cycles),
+                   'source_operation_order': '((x*m0+y*m1)+z*m2)+translation',
+                   'shader_precision_mechanisms': sorted({cycle['shader_precision_mechanism'] for cycle in cycles}),
+                   'shader_language_versions': sorted({cycle['shader_language_version'] for cycle in cycles}),
+                   'all_contexts_shader_precise_enabled': all(cycle['shader_precise_enabled'] for cycle in cycles),
                    'gpu_geometry_components_compared': sum(cycle['transform_components'] for cycle in cycles),
                    'world_image_pixels_compared': sum(cycle['world_compared_pixels'] for cycle in cycles),
                    'material_pixels_compared': sum(cycle['material_pixels'] for cycle in cycles),

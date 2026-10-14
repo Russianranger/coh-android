@@ -65,17 +65,20 @@ jobs:
       - name: Qualify bounded world parser and original camera geometry parity
         run: |
           python3 native-android/tools/world_fixture/native_world_check.py --world native-android/world-probe/app/src/main/assets/world.bin --reference native-android/world-probe/app/src/main/assets/world-reference.bin --output native-android/results/world-probe/host-world-proof.json
+      - name: Verify exact binary32 source order regression witnesses
+        run: |
+          python3 native-android/tools/world_fixture/gpu_arithmetic_check.py --world native-android/world-probe/app/src/main/assets/world.bin --reference native-android/world-probe/app/src/main/assets/world-reference.bin --output native-android/results/world-probe/gpu-arithmetic-regression.json
       - name: Assemble isolated ARM64 test APK
         run: |
           python3 native-android/world-probe/gradle.py :app:assembleDebug :app:lintDebug
           mkdir -p native-android/results/world-probe
-          cp native-android/world-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/world-probe/CoH-Native-World-Probe-0.1.0-arm64.apk
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs native-android/results/world-probe/CoH-Native-World-Probe-0.1.0-arm64.apk > native-android/results/world-probe/apk-signature.txt
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging native-android/results/world-probe/CoH-Native-World-Probe-0.1.0-arm64.apk > native-android/results/world-probe/apk-badging.txt
+          cp native-android/world-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/world-probe/CoH-Native-World-Probe-0.1.1-arm64.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs native-android/results/world-probe/CoH-Native-World-Probe-0.1.1-arm64.apk > native-android/results/world-probe/apk-signature.txt
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging native-android/results/world-probe/CoH-Native-World-Probe-0.1.1-arm64.apk > native-android/results/world-probe/apk-badging.txt
       - name: Assemble separate emulator test APK
         run: |
           python3 native-android/world-probe/gradle.py -PprobeAbis=x86_64 :app:assembleDebug
-          cp native-android/world-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/world-probe/CoH-Native-World-Probe-0.1.0-emulator-x86_64.apk
+          cp native-android/world-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/world-probe/CoH-Native-World-Probe-0.1.1-emulator-x86_64.apk
       - name: Verify package ABI and record exact build inputs
         run: |
           python3 - <<'PY'
@@ -91,7 +94,7 @@ jobs:
               assert len(payload) == identity['bytes'] and hashlib.sha256(payload).hexdigest() == identity['sha256'], name
           artifacts = []
           for label, abi, machine in [('arm64', 'arm64-v8a', 183), ('emulator-x86_64', 'x86_64', 62)]:
-              path = root / ('CoH-Native-World-Probe-0.1.0-' + label + '.apk')
+              path = root / ('CoH-Native-World-Probe-0.1.1-' + label + '.apk')
               with zipfile.ZipFile(path) as apk:
                   native = [name for name in apk.namelist() if name.startswith('lib/') and name.endswith('.so')]
                   assert native == ['lib/' + abi + '/libcoh_world_probe.so'], native
@@ -106,7 +109,7 @@ jobs:
               signature = subprocess.check_output([str(signer), 'verify', '--verbose', '--print-certs', str(path)], text=True)
               badging = subprocess.check_output([str(aapt), 'dump', 'badging', str(path)], text=True)
               package = re.search(r"^package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", badging, re.M)
-              assert package and package.groups() == ('org.coh.worldprobe', '1', '0.1.0-phase9'), badging
+              assert package and package.groups() == ('org.coh.worldprobe', '2', '0.1.1-phase9'), badging
               assert "sdkVersion:'26'" in badging and "targetSdkVersion:'35'" in badging, badging
               assert "native-code: '" + abi + "'" in badging, badging
               assert "launchable-activity: name='org.coh.worldprobe.MainActivity'" in badging, badging
@@ -119,7 +122,7 @@ jobs:
           assert len({item['signer_certificate_sha256'] for item in artifacts}) == 1, 'ARM64 and emulator package signing identities differ'
           fixture_files = [{'file': str(path.relative_to(assets)), 'bytes': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()} for path in sorted(assets.rglob('*')) if path.is_file()]
           assert fixture_files, 'Fixture preparation produced no assets'
-          receipt = {'schema': 1, 'source_commit': os.environ['GITHUB_SHA'], 'workflow_run_id': os.environ['GITHUB_RUN_ID'], 'application_id': 'org.coh.worldprobe', 'min_sdk': 26, 'target_sdk': 35, 'compile_sdk': 35, 'gradle': '8.9', 'gradle_distribution_sha256': 'd725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab', 'android_gradle_plugin': '8.7.3', 'ndk': '28.2.13676358', 'cmake': '3.22.1', 'signing': 'isolated CI debug key; not the production launcher key', 'phase': 9, 'probe_version': '0.1.0-phase9', 'original_game_execution': False, 'full_scene_execution': False, 'full_atlas_loaded': False, 'original_lighting_qualified': False, 'original_scene_sorter_qualified': False, 'artifacts': artifacts, 'fixture_assets': fixture_files, 'thor_device_execution_verified': False}
+          receipt = {'schema': 1, 'source_commit': os.environ['GITHUB_SHA'], 'workflow_run_id': os.environ['GITHUB_RUN_ID'], 'application_id': 'org.coh.worldprobe', 'min_sdk': 26, 'target_sdk': 35, 'compile_sdk': 35, 'gradle': '8.9', 'gradle_distribution_sha256': 'd725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab', 'android_gradle_plugin': '8.7.3', 'ndk': '28.2.13676358', 'cmake': '3.22.1', 'signing': 'isolated CI debug key; not the production launcher key', 'phase': 9, 'probe_version': '0.1.1-phase9', 'version_code': 2, 'original_game_execution': False, 'full_scene_execution': False, 'full_atlas_loaded': False, 'original_lighting_qualified': False, 'original_scene_sorter_qualified': False, 'artifacts': artifacts, 'fixture_assets': fixture_files, 'thor_device_execution_verified': False}
           (root/'build-receipt.json').write_text(json.dumps(receipt, indent=2)+'\n')
           (root/'SHA256SUMS').write_text(''.join(item['sha256']+'  '+item['file']+'\n' for item in artifacts))
           for path in assets.glob('*.json'):

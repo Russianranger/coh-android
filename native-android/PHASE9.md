@@ -1,6 +1,6 @@
 # Phase 9: bounded source world and camera gate
 
-This phase implements an isolated native Android source-world and camera probe, package `org.coh.worldprobe`, version `0.1.0-phase9`. The original [scene recovery receipt](evidence/phase9/scene-recovery.json) preserves the initial source deconstruction; acquisition and implementation recover the authentic geometry and texture members. Host and Android13 emulator qualification passed. The ARM64 test package is built and verified; physical Thor world-probe execution is the remaining device gate.
+This phase implements an isolated native Android source-world and camera probe, package `org.coh.worldprobe`. Version `0.1.0-phase9` passed host and Android13 emulator checks, then failed the Thor transform diagnostic. Version `0.1.1-phase9` preserves source operation order explicitly in the GPU shader; host shader checks passed and updated Android qualification is pending. The original [scene recovery receipt](evidence/phase9/scene-recovery.json) preserves the source deconstruction and authentic geometry/texture recovery.
 
 ## Selected real scene branch
 
@@ -78,4 +78,10 @@ The retained REA-assisted client checkpoint was queried read-only again with a 9
 
 ## Device test
 
-Install **CoH Native World Probe** beside the accepted character probe. Confirm the blue bench seats and metal frame during the camera preview. Resize, wait; recreate, wait; press Home, return and wait. This package displays a green **WORLD GATE PASSED** only after the callback-based background/return sequence as well as both actual dimensions and Surface generations. Export the current JSON report and return it with a screenshot.
+The [Thor 0.1.0 failure](evidence/phase9/thor-transform-failure-0.1.0.json) records four consistent failures before pixel, material or preview tests. CPU group, camera, projection and model-view matrices matched exactly; GPU eye positions, normals and clip coordinates also matched. The first 256-vertex part produced 88 world-Z mismatches with a one-binary32-step maximum of `0.0001220703125`, exceeding the retained `0.0001` absolute bound. No GL/EGL error occurred, and allocated objects were released.
+
+An [exact rational arithmetic diagnostic](evidence/phase9/adreno-numeric-diagnostic.json) reproduces the first vertex and all 88 threshold mismatches with several reassociated or translation-seeded evaluation models. It supports the rounding-order explanation without claiming captured Adreno instructions. The portable [regression checker](tools/world_fixture/gpu_arithmetic_check.py) executes in CI and retains strict source order, references and tolerance.
+
+Version 0.1.1 uses explicit source products and left-associated additions for world/eye positions, normals and clip coordinates. On GLES3.2 it selects ESSL3.20 core `precise`; GLES3.1 can select an advertised EXT/OES gpu_shader5 precise path. The ESSL3.00 compatibility path declares its weaker optimization contract and remains gated by actual GPU comparisons. Shader compile failures do not silently downgrade a selected precise path. The [shader contract](world-probe/shaders/README.md) cites the primary Khronos specifications. The [host arithmetic matrix](evidence/phase9/host-shader-arithmetic-matrix.json) verifies all four paths with two contexts each; it is separate from Android and Thor execution.
+
+Uninstall the previous **CoH Native World Probe**, then install version 0.1.1 when its qualified APK is delivered. These isolated CI debug builds can have different signing keys. Confirm the blue bench seats and metal frame during the camera preview. Resize, wait; recreate, wait; press Home, return and wait. Export the current JSON report after the green **WORLD GATE PASSED** banner appears, and return it with a screenshot. The failed 0.1.0 report remains preserved; 0.1.1 requires its own Thor qualification.

@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "source_commit": "3dc7013c3e96230efb8832732f1489d6aaba3384",
+  "workflow_run_id": "38490035824",
+  "application_id": "org.coh.worldprobe",
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "compile_sdk": 35,
+  "gradle": "8.9",
+  "gradle_distribution_sha256": "d725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab",
+  "android_gradle_plugin": "8.7.3",
+  "ndk": "28.2.13676358",
+  "cmake": "3.22.1",
+  "signing": "isolated CI debug key; not the production launcher key",
+  "phase": 9,
+  "probe_version": "0.1.0-phase9",
+  "original_game_execution": false,
+  "full_scene_execution": false,
+  "full_atlas_loaded": false,
+  "original_lighting_qualified": false,
+  "original_scene_sorter_qualified": false,
+  "artifacts": [
+    {
+      "file": "CoH-Native-World-Probe-0.1.0-arm64.apk",
+      "bytes": 230114,
+      "sha256": "cfa910c9f0ec945ee7996c00ca09d8a9a8e2342b746bc130cd989a433bba1421",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_world_probe.so",
+        "bytes": 83136,
+        "sha256": "5fcde3e3e41f9258778b77a84c8424f6981a55224fffe6ccb34c0bb9c12a6ef0"
+      },
+      "packaged_fixture_bytes_verified": true,
+      "manifest_verified": true,
+      "signature_verified": true,
+      "signer_certificate_sha256": "20f02d7af0dc5e6f5355f88f0235b422a311fe43bfedd77ca417ab486eb0e862"
+    },
+    {
+      "file": "CoH-Native-World-Probe-0.1.0-emulator-x86_64.apk",
+      "bytes": 233447,
+      "sha256": "6c8c76ddf870ca25e8cc9fffeaff2840403f0ec214248879953beb1a100bdf48",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "native_library": {
+        "file": "lib/x86_64/libcoh_world_probe.so",
+        "bytes": 86472,
+        "sha256": "884069bf3157a39934f9515edb8ac773547f0afd4ce7c1c8fed2bc2034e264f9"
+      },
+      "packaged_fixture_bytes_verified": true,
+      "manifest_verified": true,
+      "signature_verified": true,
+      "signer_certificate_sha256": "20f02d7af0dc5e6f5355f88f0235b422a311fe43bfedd77ca417ab486eb0e862"
+    }
+  ],
+  "fixture_assets": [
+    {
+      "file": "material-reference.bin",
+      "bytes": 198208,
+      "sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77"
+    },
+    {
+      "file": "world-fixture.json",
+      "bytes": 55687,
+      "sha256": "ffb553f998931c15fb3cc3d83869001e318560d9b0b7200cf331e51ff5d18cac"
+    },
+    {
+      "file": "world-reference.bin",
+      "bytes": 161344,
+      "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13"
+    },
+    {
+      "file": "world.bin",
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    }
+  ],
+  "thor_device_execution_verified": false
+}

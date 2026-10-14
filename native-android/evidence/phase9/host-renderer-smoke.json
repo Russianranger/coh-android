@@ -57,6 +57,8 @@
   "controlled_diagnostic_scope": "five labelled clip-space witnesses: both opaque depth orders, CW/BACK culling, near-plane crossing, far-plane rejection; diagnostic vertices are not game geometry",
   "preview_scope": "45 paced native camera input interpolations between controlled cameras 0 and 1; elapsed time is not a performance measurement",
   "failure": "",
+  "source_operation_order": "((x*m0+y*m1)+z*m2)+translation",
+  "shader_arithmetic_policy": "source-left-associated-products-and-sums",
   "cycles": [
     {
       "index": 0,
@@ -81,6 +83,12 @@
         512,
         512
       ],
+      "shader_language_version": 320,
+      "shader_precise_enabled": true,
+      "gl_context_major": 3,
+      "gl_context_minor": 2,
+      "shader_arithmetic_policy": "source-left-associated-products-and-sums",
+      "shader_precision_mechanism": "ESSL-3.20-core-precise",
       "group_local_components": 72,
       "group_local_mismatches": 0,
       "group_local_max_error": 0,
@@ -125,7 +133,7 @@
       "preview_image_samples": 3,
       "preview_changed_image_samples": 2,
       "preview_pixels_changed_from_first": 48378,
-      "preview_elapsed_ms": 1500,
+      "preview_elapsed_ms": 1501,
       "diagnostic_cases": 5,
       "diagnostic_pixels": 125,
       "diagnostic_mismatches": 0,
@@ -234,6 +242,12 @@
         512,
         512
       ],
+      "shader_language_version": 320,
+      "shader_precise_enabled": true,
+      "gl_context_major": 3,
+      "gl_context_minor": 2,
+      "shader_arithmetic_policy": "source-left-associated-products-and-sums",
+      "shader_precision_mechanism": "ESSL-3.20-core-precise",
       "group_local_components": 72,
       "group_local_mismatches": 0,
       "group_local_max_error": 0,
@@ -278,7 +292,7 @@
       "preview_image_samples": 3,
       "preview_changed_image_samples": 2,
       "preview_pixels_changed_from_first": 48378,
-      "preview_elapsed_ms": 1500,
+      "preview_elapsed_ms": 1501,
       "diagnostic_cases": 5,
       "diagnostic_pixels": 125,
       "diagnostic_mismatches": 0,
@@ -366,11 +380,12 @@
     }
   ],
   "android_qualification": false,
+  "host_capability_scope": "Actual Mesa GLES 3.2 context, normal capability selection.",
   "host_harness_differences": [
     "Window EGL configuration changed to PBUFFER and eglCreateWindowSurface replaced by 512x512 eglCreatePbufferSurface.",
     "ANativeWindow setBuffersGeometry is a no-op stub.",
     "JNI/report helpers use a host JSON output sink.",
-    "All source parser, source camera/group math, renderer shaders and qualification loops unchanged."
+    "All source parser, source camera/group math, renderer shaders and qualification loops unchanged; OES-only selector bypass is identified separately."
   ],
   "input_sha256": {
     "world-reference.bin": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13",
@@ -381,11 +396,12 @@
     "native-android/world-probe/app/src/main/cpp/coh_world_scene.h": "81989d9900e85146d46a98ae6df427a916dff59b08436f09e0a3762e8b98d739",
     "native-android/world-probe/app/src/main/cpp/CMakeLists.txt": "5709ac0e1ddbc6c865997340fef09d634e7a3a9db95e72792fb98c0d81cfed38",
     "native-android/world-probe/app/src/main/cpp/coh_world_scene.c": "e18593782d66b3584457fb0812a6c82c5785e6062e26248508d35c0b96157cf7",
-    "native-android/world-probe/app/src/main/cpp/probe_renderer.c": "d0073fbb29c60561f88e2e7f8f1e8ab9d5b28181770fa805642cc6819623ff7c",
-    "native-android/world-probe/shaders/world.vert": "8dc2a0c9d5b93965a7f2f6825bc7317d8258ad8ec1242375c67c3704f5aea99d",
-    "native-android/world-probe/shaders/embed_world_shaders.py": "c2c2234584547d60e52c229d6afc634c0b010db752df552898242a81eb4c9217",
+    "native-android/world-probe/app/src/main/cpp/probe_renderer.c": "e02c88ce022b4b180956c0cdefd42cebf1204b9de478831683bf64f0fd7b0202",
+    "native-android/world-probe/shaders/world.vert": "868f893838bb5bedb560762514e1b5e52baf6d7b5d6873d077adc411b632ed22",
+    "native-android/world-probe/shaders/embed_world_shaders.py": "32fd8f860b21dca43a2882cc341dc37eb5219f8226422139d63d62a32ec1b460",
     "native-android/world-probe/shaders/reference.vert": "01a2cb3aa351cd1410f85e651983b5d3eedf1f08de7dc82692e37460b8785e98",
     "native-android/world-probe/shaders/world.frag": "1afd4be9c7ae64ac78cdaa65522dfdd43cd14e94f219ad3157fa63b5a06f0dee",
+    "native-android/world-probe/shaders/README.md": "25b8fcf4bb8654af98ed64094e098ccb56f12f346128a7dcafad87e4dce59983",
     "native-android/world/coh_world.h": "0453a36cb8bb24cfb88aa712147aba4b58cc226da54d59a09eb158ddc8588871",
     "native-android/world/coh_world.c": "9a914b7326e4852bd55827c58bab360cef2516f85268a25cdd4ede2cdfe39c92",
     "native-android/world/README.md": "35274f2bbe21d14f781405901adbd7fd63be245ef27784cfce6ac2d3cedbe713"

@@ -1,0 +1,344 @@
+{
+  "schema": 1,
+  "phase": 9,
+  "passed": true,
+  "source_commit": "3dc7013c3e96230efb8832732f1489d6aaba3384",
+  "workflow": {
+    "run_id": 38490035824,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38490035824",
+    "conclusion": "success",
+    "core_run_id": 38490035780,
+    "core_conclusion": "success"
+  },
+  "artifact": {
+    "id": 11861127703,
+    "bytes": 1160877,
+    "sha256": "bfe67d63089d8d315bc447cefe7a98913e3da72b2f5a02e394a081f6002b5e42",
+    "download_digest_verified": true
+  },
+  "original_report": {
+    "bytes": 302723,
+    "sha256": "8a74eca76ff89f8136e414c71c60b38a4e8ea3245be27911664a5d14f4d7273c"
+  },
+  "build_receipt_sha256": "0a26e6164018af1d16eb0b6beda5c333b4f1cb1c4ace8a2ea140e309b1daba27",
+  "scope": {
+    "android": "13",
+    "sdk": 33,
+    "abi": "x86_64",
+    "renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "hosted_emulator": true,
+    "ayn_thor_verified": false,
+    "whole_client_qualified": false,
+    "full_atlas_loaded": false,
+    "original_lighting_qualified": false,
+    "original_scene_sorter_qualified": false,
+    "source_geometry": "one authored modern_bench_2wide root, two material partitions and complete selected ancestor chain",
+    "original_windows_capture": false,
+    "original_game_execution": false
+  },
+  "qualification": {
+    "passed": true,
+    "pending_requirements": [],
+    "successful_runs": 6,
+    "failed_runs": 0,
+    "successful_surface_generations": 4,
+    "successful_actual_dimensions": 2,
+    "successful_widths": 2,
+    "successful_heights": 2,
+    "current_surface_passed": true
+  },
+  "same_session_all_reports_and_runs_verified": true,
+  "error_and_count_scope": "six successful nonobsolete qualified runs; obsolete attempts are recorded separately",
+  "recorded_native_attempts": 9,
+  "obsolete_attempts": [
+    {
+      "request": 9,
+      "generation": 3,
+      "passed": false,
+      "obsolete": true,
+      "cycles": [
+        {
+          "completed": true,
+          "passed": true,
+          "objects_released": true,
+          "egl_error": 0,
+          "gl_errors": 0,
+          "stage": "complete",
+          "failure": ""
+        },
+        {
+          "completed": true,
+          "passed": true,
+          "objects_released": true,
+          "egl_error": 0,
+          "gl_errors": 0,
+          "stage": "complete",
+          "failure": ""
+        }
+      ]
+    },
+    {
+      "request": 12,
+      "generation": 3,
+      "passed": false,
+      "obsolete": true,
+      "cycles": [
+        {
+          "completed": true,
+          "passed": true,
+          "objects_released": true,
+          "egl_error": 0,
+          "gl_errors": 0,
+          "stage": "complete",
+          "failure": ""
+        },
+        {
+          "completed": true,
+          "passed": true,
+          "objects_released": true,
+          "egl_error": 0,
+          "gl_errors": 0,
+          "stage": "complete",
+          "failure": ""
+        }
+      ]
+    },
+    {
+      "request": 16,
+      "generation": 3,
+      "passed": false,
+      "obsolete": true,
+      "cycles": [
+        {
+          "completed": false,
+          "passed": false,
+          "objects_released": true,
+          "egl_error": 12301,
+          "gl_errors": 0,
+          "stage": "swap-buffers",
+          "failure": "EGL operation failed; Surface may have been destroyed"
+        }
+      ]
+    }
+  ],
+  "initial_and_background_qualification_false": true,
+  "foreground_and_final_qualification_true": true,
+  "lifecycle": {
+    "event_names": [
+      "activity_created",
+      "activity_resumed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "resize_requested",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "surface_recreation_requested",
+      "surface_destroyed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "auto_smoke_completed",
+      "activity_paused",
+      "surface_destroyed",
+      "activity_stopped",
+      "activity_resumed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_requested",
+      "probe_completed",
+      "probe_completed",
+      "background_return_qualified",
+      "activity_paused",
+      "activity_resumed",
+      "probe_requested",
+      "resize_requested",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "probe_completed",
+      "activity_paused",
+      "activity_resumed",
+      "probe_requested",
+      "surface_recreation_requested",
+      "surface_destroyed",
+      "surface_created",
+      "surface_changed",
+      "probe_requested",
+      "probe_completed",
+      "probe_completed"
+    ],
+    "background_return": {
+      "passed": true,
+      "paused_generation": 2,
+      "returned_generation": 3,
+      "request": 10,
+      "width": 778,
+      "height": 558,
+      "event_serials": {
+        "pause": 18,
+        "stop": 20,
+        "surface_destroyed": 19,
+        "resume": 21,
+        "surface_created": 22,
+        "probe_completed": 27
+      }
+    },
+    "actual_resize_verified": true,
+    "surface_recreation_verified": true,
+    "foreground_return_verified": true
+  },
+  "fixture_assets": {
+    "world.bin": {
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f",
+      "bytes": 102176
+    },
+    "world-reference.bin": {
+      "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13",
+      "bytes": 161344
+    },
+    "material-reference.bin": {
+      "sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77",
+      "bytes": 198208
+    }
+  },
+  "run_dimensions": [
+    [
+      778,
+      558
+    ],
+    [
+      1038,
+      744
+    ]
+  ],
+  "count_totals": {
+    "successful_runs": 6,
+    "successful_surface_generations": 4,
+    "successful_actual_dimensions": 2,
+    "successful_actual_widths": 2,
+    "successful_actual_heights": 2,
+    "completed_context_cycles": 12,
+    "gpu_geometry_components_compared": 479232,
+    "world_image_pixels_compared": 18069048,
+    "material_pixels_compared": 589824,
+    "window_samples_compared": 588,
+    "presented_camera_frames": 540,
+    "original_group_local_components_compared": 864,
+    "original_group_world_components_compared": 864,
+    "original_camera_view_components_compared": 864,
+    "original_projection_components_compared": 1152,
+    "original_draw_modelview_components_compared": 864,
+    "controlled_depth_cull_clip_cases": 60,
+    "controlled_depth_cull_clip_pixels": 1500,
+    "camera_image_temporal_samples": 36,
+    "camera_images_changed_from_first": 24,
+    "camera_pixels_changed_from_first": 580956
+  },
+  "maximum_errors": {
+    "group_local_max_error": 0,
+    "group_world_max_error": 0,
+    "camera_view_max_error": 0,
+    "projection_max_error": 0,
+    "modelview_max_error": 0,
+    "max_transform_error": 0,
+    "world_max_byte_error": 0,
+    "material_max_byte_error": 1
+  },
+  "mismatch_totals": {
+    "group_local_mismatches": 0,
+    "group_world_mismatches": 0,
+    "camera_view_mismatches": 0,
+    "projection_mismatches": 0,
+    "modelview_mismatches": 0,
+    "transform_mismatches": 0,
+    "world_position_mismatches": 0,
+    "eye_position_mismatches": 0,
+    "normal_mismatches": 0,
+    "clip_mismatches": 0,
+    "world_mismatches": 0,
+    "material_mismatches": 0,
+    "window_mismatches": 0,
+    "diagnostic_mismatches": 0,
+    "gl_errors": 0,
+    "egl_error": 0
+  },
+  "per_part_minimum_cumulative_six_camera_interior_pixels": [
+    850,
+    26940
+  ],
+  "per_part_pixel_mismatch_totals": [
+    0,
+    0
+  ],
+  "cleanup_all_contexts_released": true,
+  "source_audit": {
+    "passed": true,
+    "source_files_verified": 1585,
+    "primary_sources_verified": 20,
+    "receipt_sha256": "c557465621831bccb0d46bfe44972eb038652fead7fa438df5fa1b9fdd165c19"
+  },
+  "tolerances": {
+    "gpu_absolute": 0.0001,
+    "rgba_bytes": 2,
+    "triangle_edge_guard_pixels": 2,
+    "minimum_each_camera_and_each_partition_aggregate_interior_pixels": 64
+  },
+  "root_download_audit": {
+    "passed": true,
+    "source_commit": "3dc7013c3e96230efb8832732f1489d6aaba3384",
+    "download_digest_verified": true,
+    "bounded_archive_verified": true,
+    "both_apk_and_elf_identities_verified": true,
+    "canonical_asset_bytes_unchanged": true,
+    "full_source_audit_and_metadata_verified": true,
+    "same_session_initial_background_foreground_final_verified": true,
+    "initial_qualification_false": true,
+    "background_qualification_false": true,
+    "foreground_and_final_qualification_true": true,
+    "successful_runs": 6,
+    "completed_context_cycles": 12,
+    "strict_checker_reexecuted": true
+  },
+  "screen": {
+    "sha256": "d9c5569d867ab6fda297e2e3ee33ef4765fd3db20c118d384d6d3c5085af751e",
+    "visually_reviewed_real_bench_and_green_pass_banner": true
+  },
+  "arm64_apk": {
+    "file": "CoH-Native-World-Probe-0.1.0-arm64.apk",
+    "bytes": 230114,
+    "sha256": "cfa910c9f0ec945ee7996c00ca09d8a9a8e2342b746bc130cd989a433bba1421",
+    "abi": "arm64-v8a",
+    "elf_machine": 183,
+    "native_library": {
+      "file": "lib/arm64-v8a/libcoh_world_probe.so",
+      "bytes": 83136,
+      "sha256": "5fcde3e3e41f9258778b77a84c8424f6981a55224fffe6ccb34c0bb9c12a6ef0"
+    },
+    "packaged_fixture_bytes_verified": true,
+    "manifest_verified": true,
+    "signature_verified": true,
+    "signer_certificate_sha256": "20f02d7af0dc5e6f5355f88f0235b422a311fe43bfedd77ca417ab486eb0e862"
+  },
+  "earlier_attempts": [
+    {
+      "run_id": 38488524091,
+      "stage": "source audit stock-grey declaration",
+      "receipt": "first-source-audit-failure.json"
+    },
+    {
+      "run_id": 38489232490,
+      "stage": "source audit stock-white declaration",
+      "receipt": "second-source-audit-failure.json"
+    },
+    {
+      "run_id": 38489666137,
+      "stage": "NDK pointer qualification",
+      "receipt": "first-ndk-build-failure.json"
+    }
+  ]
+}
