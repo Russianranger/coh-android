@@ -18,8 +18,8 @@ stream; the worker retains exclusive ownership of its stop and close.
 Use the [AYN Thor test instructions](THOR-TEST.md) for the 0.1.1 recovery
 package. It keeps the completed source gates and adds range-based right-stick
 axis selection plus sticky cancellation-error reporting. The original 0.1.0
-qualification remains preserved in the phase evidence; physical Thor acceptance
-is still pending.
+qualification remains preserved in the phase evidence. Physical Thor acceptance
+passed on October 14; see the [device receipt](../evidence/phases10-12/thor-qualification.json).
 
 1. Run checks. Drag the arrow, then press and release a controller button. Move
    both sticks in all four directions; stick coverage is reported separately.

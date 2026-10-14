@@ -1,6 +1,6 @@
 # Phases 10–12: input, audio output and packet framing
 
-Phase 9 is accepted on the physical AYN Thor. Gates 10–12 now have one source-qualified diagnostic app, `org.coh.systemsprobe`, version `0.1.0-phases10-12`. Both ARM64 and x86_64 APKs passed build, lint, ABI, fixture, manifest and signature checks. The Android 13 emulator passed all three engine gates and actual Home/return recovery; the [qualification receipt](evidence/phases10-12/qualification.json) binds those results to the exact tested packages. Physical Thor stick coverage and speaker audibility remain separate device checks.
+Phase 9 is accepted on the physical AYN Thor. Gates 10–12 now have one source-qualified diagnostic app, `org.coh.systemsprobe`, version `0.1.0-phases10-12`. Both ARM64 and x86_64 APKs passed build, lint, ABI, fixture, manifest and signature checks. The Android 13 emulator passed all three engine gates and actual Home/return recovery; the [qualification receipt](evidence/phases10-12/qualification.json) binds those results to the exact tested packages. Physical Thor stick coverage, speaker audibility and active-audio Home/return recovery are now accepted in the [Thor qualification receipt](evidence/phases10-12/thor-qualification.json).
 
 | Gate | Implemented slice | Qualification boundary |
 |---|---|---|
@@ -86,6 +86,35 @@ records this distinction separately from Android execution.
 The delivered ARM64 APK is 176,149 bytes, SHA256
 `4e915b8d51575f1901647b9ce80aade3b59560c6ebc74094051049def9a09573`,
 version code 2. Its native library and authentic audio bytes remain identical
-to the original qualified 0.1.0 package. Physical controller coverage and
-speaker audibility remain pending until the
-[Thor device sequence](systems-probe/THOR-TEST.md) and its JSON are reviewed.
+to the original qualified 0.1.0 package. Physical controller coverage and speaker audibility subsequently passed the
+[Thor device sequence](systems-probe/THOR-TEST.md); the acceptance below is
+separate from the hosted emulator evidence.
+
+
+## Physical AYN Thor acceptance
+
+On October 14, the user reported **All passed** and supplied
+[`COH-NativeSystems-20261014-103928.json`](evidence/phases10-12/COH-NativeSystems-20261014-103928.json).
+The audited [Thor receipt](evidence/phases10-12/thor-qualification.json) accepts
+all three bounded gates on Android 13 ARM64: native input/Android callback
+transport, authentic PCM AAudio playback, and restricted offline packet framing.
+
+Five source runs passed across two actual sizes and two input-view generations:
+4,545 input checks, 480 camera cases, 165 gain checks, 160 wire cases, 1,650 bit
+cases, 44,945 malformed cases and 1,280 unaligned cases. Both physical sticks
+reached direction mask 15; 1,968 controller events, eleven matched button
+down/up pairs and 542 touch MOVE samples were recorded. Held keys, axes and
+relative motion were zero in the final sample.
+
+Three complete AAudio plays submitted and consumed 203,202 frames. Home
+interrupted the specifically active third stream after 25,807 submitted frames;
+it returned native CANCELLED and stopped/closed with zero backend errors.
+Fresh source checks and a full fourth audio run completed after resume. The
+user's audible-confirmation button is linked to a successful full play. All
+engine/physical observation fields passed and session failures were zero.
+
+One xrun per complete play remains recorded; sustained underrun-free audio is
+outside this gate. Compressed native decoding, a full mixer/spatial audio,
+player movement/collision and live server interoperability remain later work.
+The v1 report lacks a self-attested package version/digest; the receipt records
+Systems Probe 0.1.1 as the expected immediately preceding delivered package.

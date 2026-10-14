@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "phases": [
+    10,
+    11,
+    12
+  ],
+  "accepted": true,
+  "acceptance_date": "2026-10-14",
+  "acceptance_basis": "User reported All passed and attached physical AYN Thor report; receipt fields and underlying runs audited",
+  "expected_probe_version": "0.1.1-phases10-12",
+  "expected_package_source_commit": "5cfd1b88d0f8312517ee83a2be89952835ee606e",
+  "package_identity_basis": "The immediately preceding delivered Systems Probe 0.1.1; the v1 report does not self-attest APK version, source commit or APK digest",
+  "report": {
+    "file": "COH-NativeSystems-20261014-103928.json",
+    "bytes": 31649,
+    "sha256": "a9c7e94d9ede80fe94d7e2a63ad1ccdb19e6688177256c7decc0e995feecf047",
+    "schema": "coh-native-systems-probe-v1",
+    "started_at": "2026-10-14T10:36:33.892-05:00",
+    "updated_at": "2026-10-14T10:39:28.155-05:00"
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "hardware": "qcom",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "qualification": {
+    "qualification_passed": true,
+    "input_gate_passed": true,
+    "audio_engine_gate_passed": true,
+    "protocol_gate_passed": true,
+    "background_return_gate_passed": true,
+    "controller_axis_coverage_passed": true,
+    "device_audible_confirmation_passed": true,
+    "assets_verified": true,
+    "synthetic_dispatch_passed": true,
+    "android_input_transport_passed": true,
+    "pre_background_checks_passed": true
+  },
+  "session_failures": 0,
+  "count_totals": {
+    "native_runs": 5,
+    "view_generations": 2,
+    "actual_sizes": 2,
+    "native_input_checks": 4545,
+    "source_camera_cases": 480,
+    "source_gain_checks": 165,
+    "offline_wire_cases": 160,
+    "offline_bit_cases": 1650,
+    "offline_malformed_cases": 44945,
+    "offline_unaligned_cases": 1280,
+    "full_audio_plays": 3,
+    "submitted_frames": 203202,
+    "read_frames": 203202,
+    "full_play_xruns": 3,
+    "clean_cancelled_audio_runs": 1,
+    "controller_events": 1968,
+    "controller_motion_callbacks": 1946,
+    "external_key_down_up_pairs": 11,
+    "external_touch_move_samples": 542
+  },
+  "background_return": {
+    "pause_sequence": 24,
+    "input_cleared": true,
+    "audio_was_active_or_pending": true,
+    "audio_started_before_pause": true,
+    "interrupted_audio_run_id": 3,
+    "stop_sequence": 27,
+    "resume_sequence": 28
+  },
+  "verification": {
+    "fixture_identity_matches_qualified_build": true,
+    "current_native_run_matches_actual_view": true,
+    "complete_left_and_right_stick_masks": 15,
+    "input_settled_after_release": true,
+    "audibility_basis": "User confirmation button linked to completed audio run, plus All passed message",
+    "exact_active_stream_cancel_stop_close_verified": true,
+    "fresh_foreground_source_checks_and_audio_reopen_verified": true,
+    "raw_report_preserved": true
+  },
+  "scope": {
+    "thor_device_execution_verified": true,
+    "physical_controller_verified": true,
+    "physical_audibility_user_confirmed": true,
+    "source_input_and_android_adapter": true,
+    "authentic_pcm_aaudio_sink": true,
+    "restricted_offline_packet_framing": true,
+    "original_game_execution": false,
+    "gameplay_character_movement_or_collision": false,
+    "native_compressed_audio_decode": false,
+    "full_mixer_or_spatial_audio": false,
+    "live_server_interoperability": false,
+    "sustained_underrun_free_audio": false
+  }
+}
