@@ -387,7 +387,7 @@
     "native-android/world-probe/shaders/reference.vert": "01a2cb3aa351cd1410f85e651983b5d3eedf1f08de7dc82692e37460b8785e98",
     "native-android/world-probe/shaders/world.frag": "1afd4be9c7ae64ac78cdaa65522dfdd43cd14e94f219ad3157fa63b5a06f0dee",
     "native-android/world/coh_world.h": "0453a36cb8bb24cfb88aa712147aba4b58cc226da54d59a09eb158ddc8588871",
-    "native-android/world/coh_world.c": "675741a723692259af4e692dd89d86eb5bf80b02ee4f2b64f419879eb80833b1",
+    "native-android/world/coh_world.c": "9a914b7326e4852bd55827c58bab360cef2516f85268a25cdd4ede2cdfe39c92",
     "native-android/world/README.md": "35274f2bbe21d14f781405901adbd7fd63be245ef27784cfce6ac2d3cedbe713"
   }
 }
