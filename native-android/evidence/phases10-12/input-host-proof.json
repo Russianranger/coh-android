@@ -45,7 +45,7 @@
   "failed": 0,
   "max_source_error": 0.0,
   "sanitizers": "AddressSanitizer and UndefinedBehaviorSanitizer",
-  "sanitizer_options": "detect_leaks=0",
+  "sanitizer_options": null,
   "scope": "Unchanged scalar/editor-look/key-level kernels under bounded inputs; platform/UI calls stubbed; not original game execution or gameplay camera/physics",
   "compiled_runtime_goldens_sha256": "58781612b8038ce2757a536c89b1284b8a76c7fdc80fd7b31a7b8c650777bc70"
 }

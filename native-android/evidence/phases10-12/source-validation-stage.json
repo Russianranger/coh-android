@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "phases": [
+    10,
+    11,
+    12
+  ],
+  "stage": "source fixture and original kernel qualification",
+  "status": "completed",
+  "passed": true,
+  "source_commit": "9b6fb2799ff2ea405e0db0905a44ba8619fd4512",
+  "workflow_run_id": "38498917836",
+  "proofs": [
+    {
+      "file": "input-host-proof.json",
+      "bytes": 1872,
+      "sha256": "90f798c88d96eddd74d0ccc33fa376502244e3a814ba5610ed77811997c30db1"
+    },
+    {
+      "file": "input-adapter-host-proof.json",
+      "bytes": 1011,
+      "sha256": "72c6ec44ce148765a3dfab2fadbade59e7819e65c496f42c32fa793cefb1ed0c"
+    },
+    {
+      "file": "audio-host-proof.json",
+      "bytes": 3997,
+      "sha256": "0541c5d32952bb0cdefe072f313193d3a567f363fc6c9aaf54c2c336f83c97bf"
+    },
+    {
+      "file": "protocol-original-proof.json",
+      "bytes": 25564,
+      "sha256": "b78ce34993372dbe66b93fe7922e1d48bae52a72769c2ad3ea78e375c68d024f"
+    },
+    {
+      "file": "protocol-host-proof.json",
+      "bytes": 997,
+      "sha256": "c8d4fa35439beadac11568dde44e352bc2839fad2a5ac37d1bf353ec6fb091a0"
+    },
+    {
+      "file": "ui/ui-host-checks.json",
+      "bytes": 296,
+      "sha256": "5e428541ec5cc215028c1e5be47718a1ac265e2b3a590c2a5ba4c7f3563ff49e"
+    }
+  ]
+}

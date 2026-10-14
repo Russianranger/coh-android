@@ -1,0 +1,1274 @@
+{
+  "schema": 1,
+  "phases": [
+    10,
+    11,
+    12
+  ],
+  "passed": true,
+  "probe_version": "0.1.0-phases10-12",
+  "source_commit": "9b6fb2799ff2ea405e0db0905a44ba8619fd4512",
+  "workflow": {
+    "run_id": 38498917836,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38498917836",
+    "conclusion": "success",
+    "core_run_id": 38498917890,
+    "core_conclusion": "success"
+  },
+  "artifact": {
+    "id": 11865042222,
+    "bytes": 699335,
+    "sha256": "231e69ad347245b474efb037fa7e9f9673dddc9a71b456770ca43a283bd26807",
+    "download_digest_verified": true
+  },
+  "original_reports": [
+    {
+      "file": "emulator-initial-report.json",
+      "bytes": 22683,
+      "sha256": "7591accf1de51529d4aa5b42ccbef15d2f51d48242a80de0f2d85a1700b85fbd"
+    },
+    {
+      "file": "emulator-background-report.json",
+      "bytes": 25690,
+      "sha256": "812da0b0a02c17527ff57e8a149abe8efff6baa81b5ecb771a99c1d13059bad7"
+    },
+    {
+      "file": "emulator-foreground-report.json",
+      "bytes": 28856,
+      "sha256": "9d3f56fd83201c226f8b159bfc1693012ce10a6f21263d59dec74335eb9d923d"
+    },
+    {
+      "file": "emulator-final-report.json",
+      "bytes": 32708,
+      "sha256": "d17aefa0004918f96e76a0c0f1a6681e087ac357ee94902a1d8dc0ab89cfe930"
+    }
+  ],
+  "build_receipt_sha256": "3fb3b7d6d0627d8b8345bc5e1c51c6a243be0bbcc1c7134b11ae21857241adf1",
+  "scope": {
+    "android": 13,
+    "sdk": 33,
+    "abi": "x86_64",
+    "hosted_emulator": true,
+    "arm64_package_built": true,
+    "minimum_android_sdk": 26,
+    "ayn_thor_verified": false,
+    "physical_controller_verified": false,
+    "physical_audibility_verified": false,
+    "whole_client_qualified": false,
+    "input": "Source scalar editor look/key/joystick kernels and real injected Android callback transport; new adapter policies declared",
+    "audio": "Original memory-callback Ogg preparation on host, source volume conversion and native Android AAudio PCM sink",
+    "protocol": "Bounded selected legacy LSB/packed-bit/Adler32/Blowfish frames offline",
+    "native_compressed_audio_decode": false,
+    "full_mixer_and_spatial_audio": false,
+    "gameplay_camera_or_character_motion": false,
+    "external_network_execution": false,
+    "server_interoperability_verified": false,
+    "original_game_execution": false
+  },
+  "qualification": {
+    "qualification_passed": true,
+    "pre_background_checks_passed": true,
+    "background_return_gate_passed": true,
+    "android_input_transport_passed": true,
+    "input_gate_passed": true,
+    "audio_engine_gate_passed": true,
+    "protocol_gate_passed": true,
+    "synthetic_dispatch_passed": true,
+    "controller_axis_coverage_passed": false,
+    "device_audible_confirmation_passed": false,
+    "session_failures": 0
+  },
+  "count_totals": {
+    "native_runs": 7,
+    "successful_view_generations": 3,
+    "successful_actual_dimensions": 2,
+    "input_source_cases": 672,
+    "input_native_checks": 6363,
+    "source_gain_checks": 231,
+    "full_aaudio_play_stop_close_runs": 2,
+    "aaudio_submitted_frames": 135468,
+    "aaudio_read_frames": 135468,
+    "lifecycle_audio_cancel_stop_close_runs": 1,
+    "native_offline_wire_cases": 224,
+    "native_offline_bit_cases": 2310,
+    "native_offline_malformed_cases": 62923,
+    "native_offline_unaligned_cases": 1792
+  },
+  "successful_run_dimensions": [
+    [
+      778,
+      472
+    ],
+    [
+      1038,
+      630
+    ]
+  ],
+  "native_source_runs": [
+    {
+      "run_id": 1,
+      "reason": "input_view_size_changed",
+      "generation": 1,
+      "width": 1038,
+      "height": 630,
+      "started_after_event": 6,
+      "foreground_at_completion": true,
+      "passed": true,
+      "input": {
+        "passed": true,
+        "result": 1,
+        "checks": 909,
+        "failed": 0,
+        "source_cases": 96,
+        "adapter_cases": 11,
+        "max_source_error": 0
+      },
+      "audio_source": {
+        "passed": true,
+        "result": 0,
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "checks": 33,
+        "failed": 0,
+        "source_cases": 15,
+        "max_source_error": 0
+      },
+      "protocol": {
+        "passed": true,
+        "result": 0,
+        "checks": 23467,
+        "wire_cases": 32,
+        "bit_cases": 330,
+        "malformed_cases": 8989,
+        "unaligned_cases": 256
+      }
+    },
+    {
+      "run_id": 2,
+      "reason": "input_view_size_changed",
+      "generation": 1,
+      "width": 778,
+      "height": 472,
+      "started_after_event": 12,
+      "foreground_at_completion": true,
+      "passed": true,
+      "input": {
+        "passed": true,
+        "result": 1,
+        "checks": 909,
+        "failed": 0,
+        "source_cases": 96,
+        "adapter_cases": 11,
+        "max_source_error": 0
+      },
+      "audio_source": {
+        "passed": true,
+        "result": 0,
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "checks": 33,
+        "failed": 0,
+        "source_cases": 15,
+        "max_source_error": 0
+      },
+      "protocol": {
+        "passed": true,
+        "result": 0,
+        "checks": 23467,
+        "wire_cases": 32,
+        "bit_cases": 330,
+        "malformed_cases": 8989,
+        "unaligned_cases": 256
+      }
+    },
+    {
+      "run_id": 3,
+      "reason": "input_view_size_changed",
+      "generation": 2,
+      "width": 778,
+      "height": 472,
+      "started_after_event": 17,
+      "foreground_at_completion": true,
+      "passed": true,
+      "input": {
+        "passed": true,
+        "result": 1,
+        "checks": 909,
+        "failed": 0,
+        "source_cases": 96,
+        "adapter_cases": 11,
+        "max_source_error": 0
+      },
+      "audio_source": {
+        "passed": true,
+        "result": 0,
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "checks": 33,
+        "failed": 0,
+        "source_cases": 15,
+        "max_source_error": 0
+      },
+      "protocol": {
+        "passed": true,
+        "result": 0,
+        "checks": 23467,
+        "wire_cases": 32,
+        "bit_cases": 330,
+        "malformed_cases": 8989,
+        "unaligned_cases": 256
+      }
+    },
+    {
+      "run_id": 4,
+      "reason": "manual",
+      "generation": 2,
+      "width": 778,
+      "height": 472,
+      "started_after_event": 19,
+      "foreground_at_completion": true,
+      "passed": true,
+      "input": {
+        "passed": true,
+        "result": 1,
+        "checks": 909,
+        "failed": 0,
+        "source_cases": 96,
+        "adapter_cases": 11,
+        "max_source_error": 0
+      },
+      "audio_source": {
+        "passed": true,
+        "result": 0,
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "checks": 33,
+        "failed": 0,
+        "source_cases": 15,
+        "max_source_error": 0
+      },
+      "protocol": {
+        "passed": true,
+        "result": 0,
+        "checks": 23467,
+        "wire_cases": 32,
+        "bit_cases": 330,
+        "malformed_cases": 8989,
+        "unaligned_cases": 256
+      }
+    },
+    {
+      "run_id": 5,
+      "reason": "foreground_return",
+      "generation": 2,
+      "width": 778,
+      "height": 472,
+      "started_after_event": 26,
+      "foreground_at_completion": true,
+      "passed": true,
+      "input": {
+        "passed": true,
+        "result": 1,
+        "checks": 909,
+        "failed": 0,
+        "source_cases": 96,
+        "adapter_cases": 11,
+        "max_source_error": 0
+      },
+      "audio_source": {
+        "passed": true,
+        "result": 0,
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "checks": 33,
+        "failed": 0,
+        "source_cases": 15,
+        "max_source_error": 0
+      },
+      "protocol": {
+        "passed": true,
+        "result": 0,
+        "checks": 23467,
+        "wire_cases": 32,
+        "bit_cases": 330,
+        "malformed_cases": 8989,
+        "unaligned_cases": 256
+      }
+    },
+    {
+      "run_id": 6,
+      "reason": "input_view_size_changed",
+      "generation": 2,
+      "width": 1038,
+      "height": 630,
+      "started_after_event": 32,
+      "foreground_at_completion": true,
+      "passed": true,
+      "input": {
+        "passed": true,
+        "result": 1,
+        "checks": 909,
+        "failed": 0,
+        "source_cases": 96,
+        "adapter_cases": 11,
+        "max_source_error": 0
+      },
+      "audio_source": {
+        "passed": true,
+        "result": 0,
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "checks": 33,
+        "failed": 0,
+        "source_cases": 15,
+        "max_source_error": 0
+      },
+      "protocol": {
+        "passed": true,
+        "result": 0,
+        "checks": 23467,
+        "wire_cases": 32,
+        "bit_cases": 330,
+        "malformed_cases": 8989,
+        "unaligned_cases": 256
+      }
+    },
+    {
+      "run_id": 7,
+      "reason": "input_view_size_changed",
+      "generation": 3,
+      "width": 1038,
+      "height": 630,
+      "started_after_event": 37,
+      "foreground_at_completion": true,
+      "passed": true,
+      "input": {
+        "passed": true,
+        "result": 1,
+        "checks": 909,
+        "failed": 0,
+        "source_cases": 96,
+        "adapter_cases": 11,
+        "max_source_error": 0
+      },
+      "audio_source": {
+        "passed": true,
+        "result": 0,
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 18168,
+        "pcm_bytes": 72672,
+        "checks": 33,
+        "failed": 0,
+        "source_cases": 15,
+        "max_source_error": 0
+      },
+      "protocol": {
+        "passed": true,
+        "result": 0,
+        "checks": 23467,
+        "wire_cases": 32,
+        "bit_cases": 330,
+        "malformed_cases": 8989,
+        "unaligned_cases": 256
+      }
+    }
+  ],
+  "audio_backend_runs": [
+    {
+      "passed": true,
+      "result": 0,
+      "requested_rate": 44100,
+      "actual_rate": 44100,
+      "actual_channels": 2,
+      "actual_format": 1,
+      "opened": true,
+      "started": true,
+      "stopped": true,
+      "closed": true,
+      "cancelled": false,
+      "backend_errors": 0,
+      "requested_clips": 3,
+      "completed_clips": 3,
+      "partial_writes": 0,
+      "write_calls": 134,
+      "xrun_count": 1,
+      "timestamp_available": true,
+      "submitted_frames": 67734,
+      "read_frames": 67734,
+      "timestamp_frame": 65036,
+      "source_volume_db": -443,
+      "source_effective_gain": 0.600481987,
+      "quiet_volume_db": -1045,
+      "quiet_effective_gain": 0.300261766,
+      "duration_ns": 2431972605,
+      "run_id": 1,
+      "reason": "autoSmoke_initial",
+      "generation": 1,
+      "started_after_event": 8,
+      "foreground_at_completion": true
+    },
+    {
+      "passed": false,
+      "result": 1,
+      "requested_rate": 44100,
+      "actual_rate": 44100,
+      "actual_channels": 2,
+      "actual_format": 1,
+      "opened": true,
+      "started": true,
+      "stopped": true,
+      "closed": true,
+      "cancelled": true,
+      "backend_errors": 0,
+      "requested_clips": 3,
+      "completed_clips": 2,
+      "partial_writes": 0,
+      "write_calls": 112,
+      "xrun_count": 0,
+      "timestamp_available": true,
+      "submitted_frames": 56734,
+      "read_frames": 56271,
+      "timestamp_frame": 52365,
+      "source_volume_db": -443,
+      "source_effective_gain": 0.600481987,
+      "quiet_volume_db": -1045,
+      "quiet_effective_gain": 0.300261766,
+      "duration_ns": 1361756203,
+      "run_id": 2,
+      "reason": "manual",
+      "generation": 2,
+      "started_after_event": 20,
+      "foreground_at_completion": false
+    },
+    {
+      "passed": true,
+      "result": 0,
+      "requested_rate": 44100,
+      "actual_rate": 44100,
+      "actual_channels": 2,
+      "actual_format": 1,
+      "opened": true,
+      "started": true,
+      "stopped": true,
+      "closed": true,
+      "cancelled": false,
+      "backend_errors": 0,
+      "requested_clips": 3,
+      "completed_clips": 3,
+      "partial_writes": 0,
+      "write_calls": 134,
+      "xrun_count": 1,
+      "timestamp_available": true,
+      "submitted_frames": 67734,
+      "read_frames": 67734,
+      "timestamp_frame": 64586,
+      "source_volume_db": -443,
+      "source_effective_gain": 0.600481987,
+      "quiet_volume_db": -1045,
+      "quiet_effective_gain": 0.300261766,
+      "duration_ns": 1677405164,
+      "run_id": 3,
+      "reason": "autoSmoke_foreground_reopen",
+      "generation": 2,
+      "started_after_event": 26,
+      "foreground_at_completion": true
+    }
+  ],
+  "native_source_maximum_errors": {
+    "input": 0,
+    "source_gain": 0
+  },
+  "audio_backend_error_total": 0,
+  "observed_audio_xrun_counts": [
+    1,
+    0,
+    1
+  ],
+  "audio_partial_write_counts": [
+    0,
+    0,
+    0
+  ],
+  "underrun_free_or_latency_qualified": false,
+  "actual_android_input": {
+    "key_down": 6,
+    "key_up": 6,
+    "key_repeat": 0,
+    "motion": 0,
+    "touch_begin": 4,
+    "touch_move": 30,
+    "touch_end": 4,
+    "touch_cancel": 0,
+    "focus_clear": 4,
+    "device_removed": 0,
+    "controller_events": 0,
+    "left_axis_directions": 0,
+    "right_axis_directions": 0,
+    "button_down_mask": 15859968,
+    "touch_motion_directions": 15
+  },
+  "in_app_synthetic_input": {
+    "key_down": 1,
+    "key_up": 0,
+    "key_repeat": 0,
+    "motion": 1,
+    "touch_begin": 1,
+    "touch_move": 1,
+    "touch_end": 0,
+    "touch_cancel": 0,
+    "focus_clear": 4,
+    "device_removed": 0,
+    "controller_events": 0,
+    "left_axis_directions": 0,
+    "right_axis_directions": 2,
+    "button_down_mask": 256,
+    "touch_motion_directions": 10
+  },
+  "settled_signed_native_touch_witnesses": {
+    "schema": 1,
+    "passed": true,
+    "scope": "Real injected Android touch callbacks reaching native source editor-look preview; no gameplay camera",
+    "gestures": [
+      {
+        "gesture": 1,
+        "axis": 1,
+        "native_frame_before": 162,
+        "native_frame_at_observed_release": 200,
+        "native_frame_after": 217,
+        "expected_direction": 1,
+        "angle_before": 0.316000015,
+        "angle_after": 0.818000019
+      },
+      {
+        "gesture": 2,
+        "axis": 1,
+        "native_frame_before": 217,
+        "native_frame_at_observed_release": 233,
+        "native_frame_after": 247,
+        "expected_direction": -1,
+        "angle_before": 0.818000019,
+        "angle_after": 0.318000078
+      },
+      {
+        "gesture": 3,
+        "axis": 0,
+        "native_frame_before": 247,
+        "native_frame_at_observed_release": 263,
+        "native_frame_after": 269,
+        "expected_direction": 1,
+        "angle_before": 0.189999998,
+        "angle_after": 0.689999938
+      },
+      {
+        "gesture": 4,
+        "axis": 0,
+        "native_frame_before": 269,
+        "native_frame_at_observed_release": 282,
+        "native_frame_after": 297,
+        "expected_direction": -1,
+        "angle_before": 0.689999938,
+        "angle_after": 0.189999968
+      }
+    ]
+  },
+  "measured_real_ui_button_witnesses": [
+    {
+      "action": "run",
+      "tap_x": 146,
+      "tap_y": 286,
+      "visible_button_bounds": {
+        "left": 21,
+        "top": 223,
+        "width": 251,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 251,
+        "view_height": 126
+      },
+      "control_row_bounds": {
+        "left": 21,
+        "top": 223,
+        "width": 1038,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 1038,
+        "view_height": 126,
+        "scroll_x": 0,
+        "content_width": 1834,
+        "can_scroll_left": false,
+        "can_scroll_right": true
+      },
+      "before_event_sequence": 19,
+      "pause_events_before": 0,
+      "pause_events_after": 0,
+      "observed_event": {
+        "sequence": 20,
+        "type": "checks_complete",
+        "generation": 2,
+        "detail": {
+          "run_id": 4,
+          "passed": true
+        }
+      }
+    },
+    {
+      "action": "play",
+      "tap_x": 396,
+      "tap_y": 286,
+      "visible_button_bounds": {
+        "left": 272,
+        "top": 223,
+        "width": 248,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 248,
+        "view_height": 126
+      },
+      "control_row_bounds": {
+        "left": 21,
+        "top": 223,
+        "width": 1038,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 1038,
+        "view_height": 126,
+        "scroll_x": 0,
+        "content_width": 1834,
+        "can_scroll_left": false,
+        "can_scroll_right": true
+      },
+      "before_event_sequence": 20,
+      "pause_events_before": 0,
+      "pause_events_after": 0,
+      "observed_event": {
+        "sequence": 21,
+        "type": "audio_play_requested",
+        "generation": 2,
+        "detail": {
+          "run_id": 2,
+          "reason": "manual"
+        }
+      }
+    },
+    {
+      "action": "resize",
+      "tap_x": 420,
+      "tap_y": 286,
+      "visible_button_bounds": {
+        "left": 305,
+        "top": 223,
+        "width": 231,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 231,
+        "view_height": 126
+      },
+      "control_row_bounds": {
+        "left": 21,
+        "top": 223,
+        "width": 1038,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 1038,
+        "view_height": 126,
+        "scroll_x": 0,
+        "content_width": 1834,
+        "can_scroll_left": false,
+        "can_scroll_right": true
+      },
+      "before_event_sequence": 30,
+      "pause_events_before": 1,
+      "pause_events_after": 1,
+      "observed_event": {
+        "sequence": 31,
+        "type": "resize_requested",
+        "generation": 2,
+        "detail": {
+          "smaller": false
+        }
+      }
+    },
+    {
+      "action": "recreate",
+      "tap_x": 639,
+      "tap_y": 286,
+      "visible_button_bounds": {
+        "left": 524,
+        "top": 223,
+        "width": 231,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 231,
+        "view_height": 126
+      },
+      "control_row_bounds": {
+        "left": 21,
+        "top": 223,
+        "width": 1038,
+        "height": 126,
+        "visible": true,
+        "fully_visible": true,
+        "view_width": 1038,
+        "view_height": 126,
+        "scroll_x": 796,
+        "content_width": 1834,
+        "can_scroll_left": true,
+        "can_scroll_right": false
+      },
+      "before_event_sequence": 33,
+      "pause_events_before": 1,
+      "pause_events_after": 1,
+      "observed_event": {
+        "sequence": 34,
+        "type": "view_recreation_requested",
+        "generation": 2,
+        "detail": {
+          "previous_generation": 2
+        }
+      }
+    }
+  ],
+  "lifecycle": {
+    "event_sequence": [
+      {
+        "sequence": 1,
+        "type": "input_view_created",
+        "generation": 1
+      },
+      {
+        "sequence": 2,
+        "type": "activity_created",
+        "generation": 1
+      },
+      {
+        "sequence": 3,
+        "type": "activity_resumed",
+        "generation": 1
+      },
+      {
+        "sequence": 4,
+        "type": "asset_verified",
+        "generation": 1
+      },
+      {
+        "sequence": 5,
+        "type": "input_view_size_changed",
+        "generation": 1
+      },
+      {
+        "sequence": 6,
+        "type": "synthetic_dispatch_checked",
+        "generation": 1
+      },
+      {
+        "sequence": 7,
+        "type": "window_focus_changed",
+        "generation": 1
+      },
+      {
+        "sequence": 8,
+        "type": "checks_complete",
+        "generation": 1
+      },
+      {
+        "sequence": 9,
+        "type": "audio_play_requested",
+        "generation": 1
+      },
+      {
+        "sequence": 10,
+        "type": "audio_complete",
+        "generation": 1
+      },
+      {
+        "sequence": 11,
+        "type": "resize_requested",
+        "generation": 1
+      },
+      {
+        "sequence": 12,
+        "type": "input_view_size_changed",
+        "generation": 1
+      },
+      {
+        "sequence": 13,
+        "type": "checks_complete",
+        "generation": 1
+      },
+      {
+        "sequence": 14,
+        "type": "view_recreation_requested",
+        "generation": 1
+      },
+      {
+        "sequence": 15,
+        "type": "input_view_destroyed",
+        "generation": 1
+      },
+      {
+        "sequence": 16,
+        "type": "input_view_created",
+        "generation": 2
+      },
+      {
+        "sequence": 17,
+        "type": "input_view_size_changed",
+        "generation": 2
+      },
+      {
+        "sequence": 18,
+        "type": "checks_complete",
+        "generation": 2
+      },
+      {
+        "sequence": 19,
+        "type": "auto_smoke_completed",
+        "generation": 2
+      },
+      {
+        "sequence": 20,
+        "type": "checks_complete",
+        "generation": 2
+      },
+      {
+        "sequence": 21,
+        "type": "audio_play_requested",
+        "generation": 2
+      },
+      {
+        "sequence": 22,
+        "type": "activity_paused",
+        "generation": 2
+      },
+      {
+        "sequence": 23,
+        "type": "audio_complete",
+        "generation": 2
+      },
+      {
+        "sequence": 24,
+        "type": "window_focus_changed",
+        "generation": 2
+      },
+      {
+        "sequence": 25,
+        "type": "activity_stopped",
+        "generation": 2
+      },
+      {
+        "sequence": 26,
+        "type": "activity_resumed",
+        "generation": 2
+      },
+      {
+        "sequence": 27,
+        "type": "audio_play_requested",
+        "generation": 2
+      },
+      {
+        "sequence": 28,
+        "type": "window_focus_changed",
+        "generation": 2
+      },
+      {
+        "sequence": 29,
+        "type": "checks_complete",
+        "generation": 2
+      },
+      {
+        "sequence": 30,
+        "type": "audio_complete",
+        "generation": 2
+      },
+      {
+        "sequence": 31,
+        "type": "resize_requested",
+        "generation": 2
+      },
+      {
+        "sequence": 32,
+        "type": "input_view_size_changed",
+        "generation": 2
+      },
+      {
+        "sequence": 33,
+        "type": "checks_complete",
+        "generation": 2
+      },
+      {
+        "sequence": 34,
+        "type": "view_recreation_requested",
+        "generation": 2
+      },
+      {
+        "sequence": 35,
+        "type": "input_view_destroyed",
+        "generation": 2
+      },
+      {
+        "sequence": 36,
+        "type": "input_view_created",
+        "generation": 3
+      },
+      {
+        "sequence": 37,
+        "type": "input_view_size_changed",
+        "generation": 3
+      },
+      {
+        "sequence": 38,
+        "type": "checks_complete",
+        "generation": 3
+      }
+    ],
+    "background_return": {
+      "pause_sequence": 22,
+      "input_cleared": true,
+      "audio_was_active_or_pending": true,
+      "audio_started_before_pause": true,
+      "interrupted_audio_run_id": 2,
+      "stop_sequence": 25,
+      "resume_sequence": 26
+    },
+    "exact_active_audio_run_cancelled_stopped_closed": true,
+    "fresh_source_checks_and_complete_audio_after_resume": true,
+    "actual_home_pause_stop_resume_cycles": 1,
+    "foreground_button_taps_did_not_pause_activity": true,
+    "input_cleared_at_pause": true
+  },
+  "fixture": {
+    "audio": {
+      "file": "audio.bin",
+      "bytes": 72736,
+      "sha256": "440361125d7420a1730ecd742271d8b2a67808dffcfa9dc435f2357d59931823"
+    },
+    "decoded_pcm": {
+      "sample_rate": 44100,
+      "channels": 2,
+      "frames": 18168,
+      "pcm_bytes": 72672,
+      "pcm_sha256": "0e9a0cb2fb36575c890cea7ad8b933a732a7e6c970723e5e198dd00fc578fcd5"
+    },
+    "original_sound": {
+      "name": "data/sound/ogg/player/headset_incoming_02.ogg",
+      "size": 12930,
+      "compressed": 11108,
+      "offset": 500202584,
+      "crc32": "ba0b3f1f",
+      "method": 8,
+      "sha256": "82bec697f9e824d192cac90f32a01421e4a3875aada64fc709862bc4d3ae9198",
+      "id": "headset",
+      "file_name": "headset.ogg"
+    },
+    "acquisition": {
+      "schema": "coh-native-audio-acquisition-v1",
+      "acquisition_passed": true,
+      "source": {
+        "name": "data/sound/ogg/player/headset_incoming_02.ogg",
+        "size": 12930,
+        "compressed": 11108,
+        "offset": 500202584,
+        "crc32": "ba0b3f1f",
+        "method": 8,
+        "sha256": "82bec697f9e824d192cac90f32a01421e4a3875aada64fc709862bc4d3ae9198",
+        "id": "headset",
+        "file_name": "headset.ogg"
+      },
+      "manifest_sha256": "c819e1af90c1f29a64eac57a20b0bdfb61a50bd9791206ab1ce18c05d210ec6f",
+      "source_manifest_verified": true,
+      "range_bytes_downloaded": 698390,
+      "range_count": 6,
+      "ranges": [
+        [
+          848101376,
+          848122890
+        ],
+        [
+          262144,
+          327679
+        ],
+        [
+          847904768,
+          848122890
+        ],
+        [
+          500498432,
+          500563967
+        ],
+        [
+          0,
+          65535
+        ],
+        [
+          65536,
+          327679
+        ]
+      ],
+      "exact_http_range_enforced": true,
+      "stable_etag": true,
+      "crc32_verified": true,
+      "sha256_verified": true,
+      "outer_archive_fully_hashed_locally": false,
+      "inner_archive_fully_hashed_locally": false,
+      "outer_release_sha256": "2c4bff8917d30a3835bd92e4f139a948f3c76f1e60900db01bc524b434e39d0b",
+      "inner_release_sha256": "3bbc5773f50593e5b2e667c7e01e7f971c3a6a65137f149e0823423798d7b2a7"
+    },
+    "host_decode": {
+      "passed": true,
+      "sample_rate": 44100,
+      "channels": 2,
+      "frames": 18168,
+      "pcm_bytes": 72672,
+      "ov_read_calls": 24,
+      "vorbis_version": "Xiph.Org libVorbis 1.3.7",
+      "ov_read_parameters": [
+        0,
+        2,
+        1
+      ],
+      "memory_callbacks_unchanged": true
+    },
+    "source_gain_oracle": {
+      "schema": "coh-native-audio-source-gain-v1",
+      "passed": true,
+      "source_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+      "source_functions": 2,
+      "source_comparisons": 40,
+      "maximum_source_error": 0.0,
+      "cases": [
+        {
+          "input": -1.0,
+          "db": -10000,
+          "effective_gain": 9.999999747378752e-06
+        },
+        {
+          "input": 0.0,
+          "db": -10000,
+          "effective_gain": 9.999999747378752e-06
+        },
+        {
+          "input": 9.999999974752427e-07,
+          "db": -10000,
+          "effective_gain": 9.999999747378752e-06
+        },
+        {
+          "input": 9.999999747378752e-06,
+          "db": -10000,
+          "effective_gain": 9.999999747378752e-06
+        },
+        {
+          "input": 9.999999747378752e-05,
+          "db": -8000,
+          "effective_gain": 9.999999747378752e-05
+        },
+        {
+          "input": 0.0010000000474974513,
+          "db": -5999,
+          "effective_gain": 0.001001151860691607
+        },
+        {
+          "input": 0.009999999776482582,
+          "db": -4000,
+          "effective_gain": 0.009999999776482582
+        },
+        {
+          "input": 0.10000000149011612,
+          "db": -1999,
+          "effective_gain": 0.10011520236730576
+        },
+        {
+          "input": 0.25,
+          "db": -1204,
+          "effective_gain": 0.25003454089164734
+        },
+        {
+          "input": 0.30000001192092896,
+          "db": -1045,
+          "effective_gain": 0.3002617657184601
+        },
+        {
+          "input": 0.5,
+          "db": -602,
+          "effective_gain": 0.500034511089325
+        },
+        {
+          "input": 0.6000000238418579,
+          "db": -443,
+          "effective_gain": 0.6004819869995117
+        },
+        {
+          "input": 0.800000011920929,
+          "db": -193,
+          "effective_gain": 0.8007556200027466
+        },
+        {
+          "input": 1.0,
+          "db": 0,
+          "effective_gain": 1.0
+        },
+        {
+          "input": 2.0,
+          "db": 0,
+          "effective_gain": 1.0
+        }
+      ],
+      "sources": {
+        "upstream/ouroboros/Game/src/sound/ogg_decode.c": {
+          "bytes": 13851,
+          "sha256": "6a37c461d45b46b89c2feefe7edb43ae693d8465f58bf49e4b696a27cc32b5de",
+          "git_blob": "544b108d2bfcf1830b3bfd7bc75097af66ceb070"
+        },
+        "upstream/ouroboros/Game/src/sound/sound_sys.c": {
+          "bytes": 36687,
+          "sha256": "0a48bbdc5006c2e2876253412bd263b9f2640de3745c27a2616dab0c5f173f09",
+          "git_blob": "6e26ac5e27e1fbac578914c05dbb72f2004ffe72"
+        },
+        "upstream/ouroboros/Game/src/sound/sound.h": {
+          "bytes": 4927,
+          "sha256": "ca8af36e2e861680aca874fcee012b4c78a12c56bcbfb9c625a92d28446acf03",
+          "git_blob": "ca7b264db37b48f89b848c0589ed0cb8107d36ad"
+        }
+      },
+      "function_sha256": {
+        "volumeDbToRatio": "fdd4eeb9d50abe2d257938cbcbdbcb28b2a166c0974fad0c02e5b9b556972c27",
+        "volumeRatioToDb": "8f776ba5050717559a104a9a4e36030038293733d5b69e5b8c12fb4c41ae3913"
+      },
+      "callback_sha256": {
+        "readbytes": "6f64b61062b31b6095bfe6014c5b3e2d0044ddc2fe2559f5eb16a552662500dd",
+        "seekbytes": "ab6378e84927ae2b6875d7a6ca5fc2285ed005498224a0a81b4a4d8da908bce7",
+        "closebytes": "9cb5c2cdaf66b6d572b08393173eaa5cfb9b502c8427361eb30bd1c86e6c18cc",
+        "tellbytes": "c982b15a35393c63fd7a88f2513294f1ec6ca48c01faa9be8050d41714f2160e"
+      },
+      "adapters": [
+        "Standalone F32 and MINMAX types/macros with pinned source dB constants",
+        "Full Win32 DirectSound and undocumented sample rounding do not execute"
+      ],
+      "android_libm_float_gain_tolerance": 1e-06
+    }
+  },
+  "host_proof_receipts": [
+    {
+      "file": "input-host-proof.json",
+      "bytes": 1872,
+      "sha256": "90f798c88d96eddd74d0ccc33fa376502244e3a814ba5610ed77811997c30db1"
+    },
+    {
+      "file": "input-adapter-host-proof.json",
+      "bytes": 1011,
+      "sha256": "72c6ec44ce148765a3dfab2fadbade59e7819e65c496f42c32fa793cefb1ed0c"
+    },
+    {
+      "file": "audio-host-proof.json",
+      "bytes": 3997,
+      "sha256": "0541c5d32952bb0cdefe072f313193d3a567f363fc6c9aaf54c2c336f83c97bf"
+    },
+    {
+      "file": "protocol-original-proof.json",
+      "bytes": 25564,
+      "sha256": "b78ce34993372dbe66b93fe7922e1d48bae52a72769c2ad3ea78e375c68d024f"
+    },
+    {
+      "file": "protocol-host-proof.json",
+      "bytes": 997,
+      "sha256": "c8d4fa35439beadac11568dde44e352bc2839fad2a5ac37d1bf353ec6fb091a0"
+    }
+  ],
+  "root_download_audit": {
+    "schema": 1,
+    "phases": [
+      10,
+      11,
+      12
+    ],
+    "passed": true,
+    "source_commit": "9b6fb2799ff2ea405e0db0905a44ba8619fd4512",
+    "workflow_run_id": "38498917836",
+    "download_digest_verified": true,
+    "bounded_archive_and_crc_verified": true,
+    "both_apk_and_elf_identities_verified": true,
+    "canonical_audio_bytes_unchanged": true,
+    "full_source_metadata_and_host_proofs_verified": true,
+    "retained_ci_signature_and_manifest_receipts_verified": true,
+    "same_session_initial_background_foreground_final_verified": true,
+    "actual_android_touch_to_native_movement_verified": true,
+    "settled_signed_source_motion_and_exact_ui_listener_witnesses_verified": true,
+    "only_intended_home_pause_cycle_verified": true,
+    "exact_active_audio_cancellation_stop_close_and_fresh_reopen_verified": true,
+    "initial_and_background_qualification_false": true,
+    "foreground_and_final_qualification_true": true,
+    "strict_checker_reexecuted": true,
+    "physical_controller_verified": false,
+    "physical_audibility_verified": false,
+    "external_network_execution": false,
+    "thor_device_execution_verified": false,
+    "counts": {
+      "native_runs": 7,
+      "successful_view_generations": 3,
+      "successful_actual_dimensions": 2,
+      "input_source_cases": 672,
+      "input_native_checks": 6363,
+      "source_gain_checks": 231,
+      "full_aaudio_play_stop_close_runs": 2,
+      "aaudio_submitted_frames": 135468,
+      "aaudio_read_frames": 135468,
+      "lifecycle_audio_cancel_stop_close_runs": 1,
+      "native_offline_wire_cases": 224,
+      "native_offline_bit_cases": 2310,
+      "native_offline_malformed_cases": 62923,
+      "native_offline_unaligned_cases": 1792
+    }
+  },
+  "screen": {
+    "sha256": "4b62f42d2a15c620c61300303987577d9c20ed589d42df35c5fd1ff64c1438fa",
+    "visually_reviewed_green_system_gates_banner": true
+  },
+  "arm64_apk": {
+    "file": "CoH-Native-Systems-Probe-0.1.0-arm64.apk",
+    "bytes": 176145,
+    "sha256": "e21604e5c80d29a8e103e6a149b6dee51feb1fa960a4e8c018e46fd24e3a0ec0",
+    "abi": "arm64-v8a",
+    "elf_machine": 183,
+    "native_library": {
+      "file": "lib/arm64-v8a/libcoh_systems_probe.so",
+      "bytes": 68400,
+      "sha256": "6a1d26fa1ac2ec7d3cae9662870423536dd744bc3b361640a6ae4c0789d12388"
+    },
+    "packaged_fixture_bytes_verified": true,
+    "manifest_verified": true,
+    "signature_verified": true,
+    "signer_certificate_sha256": "437f21231947b8334fb977c934dc929b405d74507d099be69eb1bb3019817228"
+  },
+  "earlier_attempts": [
+    {
+      "run_id": 38496453213,
+      "receipt": "first-native-build-failure.json",
+      "stage": "API26 optional API28 AAudio calls"
+    },
+    {
+      "run_id": 38497070427,
+      "receipt": "first-emulator-failure.json",
+      "stage": "Final touch direction accounting and foreground lifecycle intents"
+    }
+  ],
+  "raw_session_timestamps_and_device_identity_omitted": true
+}

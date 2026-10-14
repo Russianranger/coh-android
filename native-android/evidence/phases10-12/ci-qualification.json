@@ -1,0 +1,110 @@
+{
+  "schema": "coh-native-systems-ci-qualification-v1",
+  "phases": [
+    10,
+    11,
+    12
+  ],
+  "passed": true,
+  "source_commit": "9b6fb2799ff2ea405e0db0905a44ba8619fd4512",
+  "systems_workflow": {
+    "run_id": 38498917836,
+    "job_id": 115640951185,
+    "attempt": 1,
+    "conclusion": "success"
+  },
+  "portable_core_workflow": {
+    "run_id": 38498917890,
+    "attempt": 1,
+    "conclusion": "success"
+  },
+  "retained_artifact": {
+    "id": 11865042222,
+    "bytes": 699335,
+    "sha256": "231e69ad347245b474efb037fa7e9f9673dddc9a71b456770ca43a283bd26807"
+  },
+  "artifact_local_replay_passed": true,
+  "scope": "Android 13 x86_64 hosted emulator with actual injected Android callbacks; ARM64 package built and inspected, not device executed",
+  "native_runs": 7,
+  "successful_view_generations": 3,
+  "successful_actual_dimensions": 2,
+  "input_gate": {
+    "passed": true,
+    "native_checks": 6363,
+    "source_camera_cases": 672,
+    "real_android_key_pairs": 6,
+    "real_android_touch_gestures": 4,
+    "genuine_move_callbacks": 30,
+    "direction_mask": 15,
+    "signed_settled_native_motion_witnesses": 4,
+    "final_release_to_sample_minimum_frames": 2,
+    "physical_controller_verified": false
+  },
+  "audio_engine_gate": {
+    "passed": true,
+    "authentic_pcm_asset": {
+      "file": "audio.bin",
+      "bytes": 72736,
+      "sha256": "440361125d7420a1730ecd742271d8b2a67808dffcfa9dc435f2357d59931823"
+    },
+    "native_source_gain_checks": 231,
+    "complete_play_stop_close_runs": 2,
+    "submitted_frames": 135468,
+    "consumed_frames": 135468,
+    "exact_home_interrupted_stream_stop_close_runs": 1,
+    "physical_audibility_verified": false,
+    "underrun_free_playback_claimed": false
+  },
+  "offline_protocol_gate": {
+    "passed": true,
+    "wire_cases": 224,
+    "bit_cases": 2310,
+    "malformed_cases": 62923,
+    "unaligned_cases": 1792,
+    "host_fuzz_cases": 12000,
+    "external_network_execution": false,
+    "server_interoperability_verified": false
+  },
+  "lifecycle": {
+    "passed": true,
+    "exact_home_pause_stop_resume_cycles": 1,
+    "foreground_only_ui_button_order": [
+      "run",
+      "play",
+      "resize",
+      "recreate"
+    ],
+    "action_event_association_passed": true,
+    "current_view_source_proof_passed": true,
+    "held_axes_pending_motion_cleared_on_pause": true,
+    "fresh_foreground_native_and_audio_reopen_passed": true
+  },
+  "artifacts": [
+    {
+      "file": "CoH-Native-Systems-Probe-0.1.0-arm64.apk",
+      "bytes": 176145,
+      "sha256": "e21604e5c80d29a8e103e6a149b6dee51feb1fa960a4e8c018e46fd24e3a0ec0",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "signer_certificate_sha256": "437f21231947b8334fb977c934dc929b405d74507d099be69eb1bb3019817228"
+    },
+    {
+      "file": "CoH-Native-Systems-Probe-0.1.0-emulator-x86_64.apk",
+      "bytes": 175590,
+      "sha256": "5d5e3950536b22108529eadf282569d15a6dbe78d354b772b8cb89ef2a2ad6e9",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "signer_certificate_sha256": "437f21231947b8334fb977c934dc929b405d74507d099be69eb1bb3019817228"
+    }
+  ],
+  "not_qualified": [
+    "AYN Thor execution",
+    "Physical controller behavior",
+    "Physical sound audibility",
+    "Full gameplay camera and physics",
+    "Native compressed Ogg decoder",
+    "Original DirectSound sample rounding",
+    "Live protocol handshake or server interoperability",
+    "Original game execution"
+  ]
+}

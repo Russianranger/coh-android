@@ -1,0 +1,216 @@
+{
+  "schema": "coh-native-systems-independent-artifact-review-v1",
+  "phases": [
+    10,
+    11,
+    12
+  ],
+  "passed": true,
+  "scope": "Actual Android13 x86_64 hosted emulator execution and exact isolated ARM64/x86_64 build artifacts; not physical AYN Thor or original game",
+  "source_commit": "9b6fb2799ff2ea405e0db0905a44ba8619fd4512",
+  "workflow_run_id": 38498917836,
+  "job_id": 115640951185,
+  "artifact": {
+    "id": 11865042222,
+    "bytes": 699335,
+    "sha256": "231e69ad347245b474efb037fa7e9f9673dddc9a71b456770ca43a283bd26807",
+    "archive_members": 31,
+    "digest_crc_paths_and_extracted_bytes_independently_verified": true
+  },
+  "strict_frozen_keeper_replayed": true,
+  "checker_sha256": "6e976134713c059ae223d5ee0e54becadc33deae2b0c21380afb450d9bd7ac5b",
+  "apks": [
+    {
+      "file": "CoH-Native-Systems-Probe-0.1.0-arm64.apk",
+      "bytes": 176145,
+      "sha256": "e21604e5c80d29a8e103e6a149b6dee51feb1fa960a4e8c018e46fd24e3a0ec0",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_systems_probe.so",
+        "bytes": 68400,
+        "sha256": "6a1d26fa1ac2ec7d3cae9662870423536dd744bc3b361640a6ae4c0789d12388"
+      },
+      "packaged_fixture_bytes_verified": true,
+      "manifest_verified": true,
+      "signature_verified": true,
+      "signer_certificate_sha256": "437f21231947b8334fb977c934dc929b405d74507d099be69eb1bb3019817228",
+      "binary_manifest_independently_parsed": true,
+      "only_expected_single_elf_abi": true,
+      "canonical_audio_bytes_identical": true,
+      "permissions": [],
+      "signature_scope": "Retained actual CI apksigner v2 verification receipt, bound to exact downloaded APK hash"
+    },
+    {
+      "file": "CoH-Native-Systems-Probe-0.1.0-emulator-x86_64.apk",
+      "bytes": 175590,
+      "sha256": "5d5e3950536b22108529eadf282569d15a6dbe78d354b772b8cb89ef2a2ad6e9",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "native_library": {
+        "file": "lib/x86_64/libcoh_systems_probe.so",
+        "bytes": 67848,
+        "sha256": "d99dfa0a3f0206a6499b3bcaeed373a9b080893c8726d8843d9c735c7482e0cb"
+      },
+      "packaged_fixture_bytes_verified": true,
+      "manifest_verified": true,
+      "signature_verified": true,
+      "signer_certificate_sha256": "437f21231947b8334fb977c934dc929b405d74507d099be69eb1bb3019817228",
+      "binary_manifest_independently_parsed": true,
+      "only_expected_single_elf_abi": true,
+      "canonical_audio_bytes_identical": true,
+      "permissions": [],
+      "signature_scope": "Retained actual CI apksigner v2 verification receipt, bound to exact downloaded APK hash"
+    }
+  ],
+  "fixture": {
+    "file": "audio.bin",
+    "bytes": 72736,
+    "sha256": "440361125d7420a1730ecd742271d8b2a67808dffcfa9dc435f2357d59931823"
+  },
+  "host_source_and_runtime_fixture_metadata_match": true,
+  "source_oracles": {
+    "input_editor_look_cases": 96,
+    "original_key_events": 2048,
+    "original_integer_axis_cases": 8004,
+    "original_volume_functions": 2,
+    "original_volume_comparisons": 40,
+    "original_packet_functions": 24,
+    "original_plain_frames": 16,
+    "original_plain_frame_bytes": 1736
+  },
+  "same_session_all_stages_verified": true,
+  "initial_and_background_qualification_false": true,
+  "foreground_and_final_qualification_true": true,
+  "counts": {
+    "native_runs": 7,
+    "view_generations": 3,
+    "actual_dimensions": [
+      [
+        778,
+        472
+      ],
+      [
+        1038,
+        630
+      ]
+    ],
+    "input_checks": 6363,
+    "input_source_cases": 672,
+    "source_gain_checks": 231,
+    "protocol_checks": 164269,
+    "protocol_wire_cases": 224,
+    "protocol_bit_cases": 2310,
+    "protocol_malformed_cases": 62923,
+    "protocol_unaligned_cases": 1792,
+    "full_audio_runs": 2,
+    "full_audio_submitted_frames": 135468,
+    "full_audio_read_frames": 135468
+  },
+  "actual_android_input": {
+    "key_down": 6,
+    "key_up": 6,
+    "key_repeat": 0,
+    "motion": 0,
+    "touch_begin": 4,
+    "touch_move": 30,
+    "touch_end": 4,
+    "touch_cancel": 0,
+    "focus_clear": 4,
+    "device_removed": 0,
+    "controller_events": 0,
+    "left_axis_directions": 0,
+    "right_axis_directions": 0,
+    "button_down_mask": 15859968,
+    "touch_motion_directions": 15
+  },
+  "signed_settled_native_motion": {
+    "gestures": 4,
+    "wrapped_angle_changes_radians": [
+      0.5020000039999999,
+      -0.49999994099999995,
+      0.49999994000000003,
+      -0.49999997000000007
+    ],
+    "release_plus_two_native_frames_verified": true
+  },
+  "actual_ui_taps": [
+    {
+      "action": "run",
+      "listener_event": "checks_complete",
+      "listener_sequence": 20,
+      "pause_count_before_and_after": 0,
+      "visible_button_and_row_bounds_verified": true
+    },
+    {
+      "action": "play",
+      "listener_event": "audio_play_requested",
+      "listener_sequence": 21,
+      "pause_count_before_and_after": 0,
+      "visible_button_and_row_bounds_verified": true
+    },
+    {
+      "action": "resize",
+      "listener_event": "resize_requested",
+      "listener_sequence": 31,
+      "pause_count_before_and_after": 1,
+      "visible_button_and_row_bounds_verified": true
+    },
+    {
+      "action": "recreate",
+      "listener_event": "view_recreation_requested",
+      "listener_sequence": 34,
+      "pause_count_before_and_after": 1,
+      "visible_button_and_row_bounds_verified": true
+    }
+  ],
+  "home_cycle": {
+    "actual_pause_stop_return_cycles": 1,
+    "pause_sequence": 22,
+    "stop_sequence": 25,
+    "resume_sequence": 26,
+    "exact_interrupted_audio_run_id": 2,
+    "actual_STARTED_before_pause": true,
+    "cancelled_stop_close_passed": true,
+    "cancelled_submitted_frames": 56734,
+    "cancelled_read_frames": 56271,
+    "native_input_clear_verified": true,
+    "fresh_source_checks_and_complete_stream_reopen_verified": true
+  },
+  "errors": {
+    "session_failures": 0,
+    "input_source_maximum_error": 0,
+    "audio_source_maximum_error": 0,
+    "audio_backend_errors": 0
+  },
+  "xrun_observation": {
+    "full_audio_runs": [
+      1,
+      1
+    ],
+    "cancelled_run": 0,
+    "underrun_free_or_latency_performance_qualified": false
+  },
+  "retained_evidence_sha256": {
+    "build-receipt.json": "3fb3b7d6d0627d8b8345bc5e1c51c6a243be0bbcc1c7134b11ae21857241adf1",
+    "emulator-initial-report.json": "7591accf1de51529d4aa5b42ccbef15d2f51d48242a80de0f2d85a1700b85fbd",
+    "emulator-background-report.json": "812da0b0a02c17527ff57e8a149abe8efff6baa81b5ecb771a99c1d13059bad7",
+    "emulator-foreground-report.json": "9d3f56fd83201c226f8b159bfc1693012ce10a6f21263d59dec74335eb9d923d",
+    "emulator-final-report.json": "d17aefa0004918f96e76a0c0f1a6681e087ac357ee94902a1d8dc0ab89cfe930",
+    "emulator-input-motion-proof.json": "59f833023a03feb937431833e7392cdf85efc46da4a6d75f23da417950d709ab",
+    "emulator-ui-tap-proof.json": "ee7f7309e74ae3d4db3622e2913d1deb6063ec32e8a9a606a98c89645de7594d",
+    "source-validation-stage.json": "9a67a6cb4ac5a25fc71c69f46c96b440048748d8fca2bf85dea70a0c1a0ff1d3",
+    "emulator-screenshot.png": "4b62f42d2a15c620c61300303987577d9c20ed589d42df35c5fd1ff64c1438fa"
+  },
+  "screenshot_green_system_gate_banner_and_native_arrow_visually_reviewed": true,
+  "limits": {
+    "physical_thor_execution_verified": false,
+    "physical_controller_verified": false,
+    "physical_audibility_verified": false,
+    "original_game_execution": false,
+    "native_compressed_ogg_decoder_qualified": false,
+    "live_server_interoperability_verified": false,
+    "external_network_execution": false,
+    "gameplay_or_performance_qualified": false
+  }
+}
