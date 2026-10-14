@@ -21,5 +21,5 @@
   "physical_client_start_below_one_minute_validated": false,
   "physical_zone_below_ninety_seconds_for_all_destinations_validated": false,
   "physical_zone_below_thirty_seconds_validated": false,
-  "qualification_revision": 8
+  "qualification_revision": 9
 }

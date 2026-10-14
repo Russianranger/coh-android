@@ -228,7 +228,7 @@ def runtime_admission(package, kind, path=None):
             and same(row['required_values'], material['required_receipt_values'].get(name))
             and type(row['required_values']) is dict and row['required_values'],
             'Review must bind actual qualified receipt bytes and exact claims')
-        pin_record(row['pin'], 8*1024**2)
+        pin_record(row['pin'], (64 if kind == 'mapserver' and name == 'native-map-world-037-qualification.json' else 8)*1024**2)
     require(same(review['scope'], {'old_native_producer_relabelled': False,
         'behavioral_collision_validated': False, 'physical_timing_validated': False}),
         'Execution review must retain historical and physical qualification limits')

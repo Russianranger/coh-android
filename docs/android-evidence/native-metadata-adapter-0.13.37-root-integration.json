@@ -148,6 +148,1788 @@
   "player_SQL_modified": false,
   "publication_enabled": false,
   "qualification_enabled": false,
+  "reviewed_conditional_Map_only_packaging_and_latency_checkpoint": {
+    "UTC": "2026-10-14T06:07:37.538641+00:00",
+    "activation_enabled": false,
+    "actual96_Wine_failed_full_sidecar": {
+      "artifact_id": 11870156176,
+      "capture_disabled_native_readiness_seconds": 17.089729,
+      "failure": {
+        "message": "Actual native metadata probe failed; raw evidence and owned cleanup retained",
+        "type": "ValueError"
+      },
+      "full_native_PIG_or_provider_mapping_qualified": false,
+      "independent_diagnostic_review": {
+        "document": {
+          "bad_rows": [
+            {
+              "create_error": 206,
+              "malformed": false,
+              "mapping_supported": true,
+              "old_absolute_characters": 269,
+              "relative": "texture_library/loading_screens/missions/unique/i21_unique_maps/first_ward/seer_network_to_midnightermansion/fw_seernetwork_2_midnightermansion_splash.texture",
+              "short_absolute_characters": 166
+            },
+            {
+              "create_error": 206,
+              "malformed": false,
+              "mapping_supported": true,
+              "old_absolute_characters": 274,
+              "relative": "texture_library/loading_screens/missions/unique/i22_unique_maps/steel_canyon/laura_lockhart/5th_column_warehouse_leon_fight/5th_column_warehouse_leon_fight.texture",
+              "short_absolute_characters": 171
+            },
+            {
+              "create_error": 206,
+              "malformed": false,
+              "mapping_supported": true,
+              "old_absolute_characters": 266,
+              "relative": "texture_library/loading_screens/missions/unique/i22_unique_maps/steel_canyon/laura_lockhart/abandoned_tech_base_assault/abandoned_tech_base_assault.texture",
+              "short_absolute_characters": 163
+            },
+            {
+              "create_error": 206,
+              "malformed": false,
+              "mapping_supported": true,
+              "old_absolute_characters": 272,
+              "relative": "texture_library/loading_screens/missions/unique/i22_unique_maps/steel_canyon/laura_lockhart/steel_canyon_column_vs_council/steel_canyon_column_vs_council.texture",
+              "short_absolute_characters": 169
+            }
+          ],
+          "complete_native_max_old_path_characters": 274,
+          "complete_native_max_short_path_or_search_characters": 171,
+          "footer": {
+            "directories": 7531,
+            "elapsed_ms": 80302,
+            "enumeration_complete": true,
+            "issues": 4,
+            "readability_complete": false,
+            "rows": 182999
+          },
+          "independent_full_parse_seconds": 11.401713,
+          "native_console_pid": 32,
+          "native_full_mapping_qualified": false,
+          "native_packet": {
+            "bytes": 79033587,
+            "sha256": "903f8824e6f7880d1a14e099e3d85b3266f56d5aec2f2a5f0456c22dee5301b2"
+          },
+          "native_probe_RSS_measured": false,
+          "old_probe_root_characters": 110,
+          "reviewer_python_process_maxrss_kib": 423844,
+          "short_mapping_runtime_executed_by_review": false
+        },
+        "pin": {
+          "bytes": 2160,
+          "sha256": "442f2171fe45dbf43cba78f0380181a639afef44a9ff908314a5b0728111e0a7"
+        }
+      },
+      "job_id": 115678608716,
+      "original_ZIP": {
+        "bytes": 12202154,
+        "sha256": "d267a0d8f433f636eefb04eff959a6ba827b4ff93f2622429bfe0c514b82aa80"
+      },
+      "physical_speed_gain_claimed": false,
+      "probe_native_RSS_measured": false,
+      "qualification_custody_outside_Game_clock": [
+        {
+          "auxiliary_seconds": 0.192259,
+          "kernel_syscalls_measured": false,
+          "label": "before",
+          "provider_content_bytes_rehashed": 8566369583,
+          "provider_directories": 10637,
+          "provider_files": 212393,
+          "provider_full_content_and_metadata_seconds": 88.437553,
+          "scope": "qualification custody outside Game clock; not a proposed zero-cost launcher step",
+          "whole_seconds": 88.629812
+        },
+        {
+          "auxiliary_seconds": 0.106193,
+          "kernel_syscalls_measured": false,
+          "label": "retained-warm",
+          "provider_content_bytes_rehashed": 8566369583,
+          "provider_directories": 10637,
+          "provider_files": 212393,
+          "provider_full_content_and_metadata_seconds": 76.950674,
+          "scope": "qualification custody outside Game clock; not a proposed zero-cost launcher step",
+          "whole_seconds": 77.056867
+        }
+      ],
+      "qualifier_process_maxrss_kib": 473088,
+      "raw_qualification_report": {
+        "bytes": 198500,
+        "sha256": "006f9467d67452d04436202042b6f6a901aa6c3eaccf539d88e0536eeba070a7"
+      },
+      "result": "failed",
+      "run_id": 38510646414,
+      "source": "10f3ac8853b270088456db8116275108615b0e87",
+      "source_projection_capture_encode_recheck_seconds": {
+        "capture": 14.322625,
+        "encode": 0.043996,
+        "recheck": 13.429147
+      },
+      "three_Game_controls_passed": true
+    },
+    "actual_existing_host_BIN_timer_observations": {
+      "COH_NATIVE_BIN_PROFILE_enabled_in_host_controls": true,
+      "COH_NATIVE_BIN_PROFILE_enabled_in_physical_036_reports": false,
+      "CRC_schema_freshness_checks_relaxed": false,
+      "document": {
+        "cases": {
+          "capture/observation-disabled/stdout.log": {
+            "copies": 3556737,
+            "failed_rows": [],
+            "phase_ms": {
+              "decode": 1487.0,
+              "freshness": 2881.0,
+              "open": 159.0
+            },
+            "rows": 292,
+            "top": [
+              {
+                "copies": 0,
+                "ms": 1104.0,
+                "path": "bin/fxinfo.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 715.0,
+                "path": "bin/npcs_client.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 429,
+                "ms": 373.0,
+                "path": "bin/sequencers.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 284.0,
+                "path": "bin/mapstats.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 734550,
+                "ms": 257.0,
+                "path": "bin/powers.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 444926,
+                "ms": 235.0,
+                "path": "bin/fxinfo.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 174.0,
+                "path": "bin/lods.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 138.0,
+                "path": "bin/sequencers.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 138.0,
+                "path": "bin/powers.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 128.0,
+                "path": "bin/powercats.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 182908,
+                "ms": 117.0,
+                "path": "bin/VillainCostume.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 36262,
+                "ms": 97.0,
+                "path": "bin/particles.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 631015,
+                "ms": 81.0,
+                "path": "bin/VillainDef.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 79.0,
+                "path": "bin/tricks.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 55073,
+                "ms": 64.0,
+                "path": "bin/minimap.bin",
+                "phase": "decode",
+                "success": 1
+              }
+            ]
+          },
+          "retained/closed-prefix-second-launch/stdout.log": {
+            "copies": 3556737,
+            "failed_rows": [],
+            "phase_ms": {
+              "decode": 1392.0,
+              "freshness": 2626.0,
+              "open": 135.0
+            },
+            "rows": 292,
+            "top": [
+              {
+                "copies": 0,
+                "ms": 1059.0,
+                "path": "bin/fxinfo.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 609.0,
+                "path": "bin/npcs_client.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 429,
+                "ms": 321.0,
+                "path": "bin/sequencers.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 444926,
+                "ms": 231.0,
+                "path": "bin/fxinfo.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 230.0,
+                "path": "bin/mapstats.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 734550,
+                "ms": 222.0,
+                "path": "bin/powers.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 167.0,
+                "path": "bin/lods.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 126.0,
+                "path": "bin/sequencers.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 125.0,
+                "path": "bin/powers.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 122.0,
+                "path": "bin/powercats.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 182908,
+                "ms": 120.0,
+                "path": "bin/VillainCostume.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 36262,
+                "ms": 97.0,
+                "path": "bin/particles.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 631015,
+                "ms": 81.0,
+                "path": "bin/VillainDef.bin",
+                "phase": "decode",
+                "success": 1
+              },
+              {
+                "copies": 0,
+                "ms": 75.0,
+                "path": "bin/tricks.bin",
+                "phase": "freshness",
+                "success": 1
+              },
+              {
+                "copies": 55073,
+                "ms": 64.0,
+                "path": "bin/minimap.bin",
+                "phase": "decode",
+                "success": 1
+              }
+            ]
+          }
+        },
+        "scope": "actual existing host native BIN timer rows already enabled in environment; no physical-device or allocation-cost parity claim"
+      },
+      "known_length_string_copies_are_not_allocations_or_cost_measurements": true,
+      "physical_timing_claimed": false,
+      "raw_summary_pin": {
+        "bytes": 5490,
+        "sha256": "635a8ff5db20f3fa1e00e9c8c636ba5a13f81606e1186264a396cf5d54079743"
+      }
+    },
+    "actual_single_reuse_Wine_lane": {
+      "all_actual_job_steps_succeeded": true,
+      "completed_API_observation": {
+        "document": {
+          "artifacts": {
+            "artifacts": [
+              {
+                "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11873456803/zip",
+                "created_at": "2026-10-14T06:04:06Z",
+                "digest": "sha256:5833162a2a5ca6ee78a408f7be9d48780ca4bb48162755dec9590c5f35c41646",
+                "expired": false,
+                "expires_at": "2027-01-12T05:42:32Z",
+                "id": 11873456803,
+                "name": "coh-nonshipping-actual-client-metadata-capture",
+                "size_in_bytes": 45891553,
+                "updated_at": "2026-10-14T06:04:06Z",
+                "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11873456803",
+                "workflow_run": {
+                  "head_branch": "codex/native-client-metadata-capture-reuse-wine-037",
+                  "head_repository_id": 1368730125,
+                  "head_sha": "6662a056cb5a80b3a3b51d3741b10793fb8b6300",
+                  "id": 38518079259,
+                  "repository_id": 1368730125
+                }
+              }
+            ]
+          },
+          "format": 1,
+          "jobs": {
+            "jobs": [
+              {
+                "conclusion": "success",
+                "id": 115701297199,
+                "logs_url": null,
+                "name": "actual-client-capture",
+                "run_id": 38518079259,
+                "status": "completed",
+                "steps": [
+                  {
+                    "conclusion": "success",
+                    "name": "Set up job",
+                    "number": 1,
+                    "status": "completed"
+                  },
+                  {
+                    "conclusion": "success",
+                    "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+                    "number": 2,
+                    "status": "completed"
+                  },
+                  {
+                    "conclusion": "success",
+                    "name": "Qualify current observer, provider, projection and native bridge source guards",
+                    "number": 3,
+                    "status": "completed"
+                  },
+                  {
+                    "conclusion": "success",
+                    "name": "Admit storage and install complete real PE32 OpenGL software runtime",
+                    "number": 4,
+                    "status": "completed"
+                  },
+                  {
+                    "conclusion": "success",
+                    "name": "Recover successful capture Game and probe without rebuilding any native artifact",
+                    "number": 5,
+                    "status": "completed"
+                  },
+                  {
+                    "conclusion": "success",
+                    "name": "Authenticate retained successful probe-only SDK job while preserving its overall failed Wine run",
+                    "number": 6,
+                    "status": "completed"
+                  },
+                  {
+                    "conclusion": "success",
+                    "name": "Authenticate unchanged asset volumes once and prepare one complete current client provider",
+                    "number": 7,
+                    "status": "completed"
+                  },
+                  {
+                    "conclusion": "success",
+                    "name": "Run retained controls and actual metadata captures on one verified provider and closed prefix",
+                    "number": 8,
+                    "status": "completed"
+                  },
+                  {
+                    "conclusion": "success",
+                    "name": "Run actions/upload-artifact@v4",
+                    "number": 9,
+                    "status": "completed"
+                  },
+                  {
+                    "conclusion": "success",
+                    "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+                    "number": 18,
+                    "status": "completed"
+                  },
+                  {
+                    "conclusion": "success",
+                    "name": "Complete job",
+                    "number": 19,
+                    "status": "completed"
+                  }
+                ]
+              }
+            ]
+          },
+          "role": "actual_GitHub_completed_single_reuse_client_jobs_and_artifact_metadata"
+        },
+        "pin": {
+          "bytes": 3622,
+          "sha256": "040836b56daa303af477f4beacf3d68849f236001edb41c557b9cc897957cd7c"
+        }
+      },
+      "current_full_provider_PIG_readability_pass_claimed": false,
+      "independent_source_review": {
+        "document": {
+          "admission_checks": {
+            "BIN_timers_already_enabled_in_all_retained_disabled_enabled_controls": true,
+            "Game_PIG_resolver_does_not_generically_accept_X_drives": true,
+            "all_case_alias_or_existing_x_colon_double_colon_refused": true,
+            "all_handle_errors_terminal_and_no_alias_deletion": true,
+            "closed_prefix_census_before_and_after_exclusive_alias_creation": true,
+            "complete_selected_path_inventory_plus_wildcard_dot_and_projected_short_alias_paths_bounded": true,
+            "enabled_Game_PIG_stat_and_custody_evidence_persisted_before_final_WFD_call": true,
+            "exact_link_lstat_readlink_physical_target_bound": true,
+            "fixed_X_only": true,
+            "held_no_follow_ancestor_prefix_dosdevices_work_data_FDs": true,
+            "namespace_admission_then_generation_then_single_full_packet_binding": true,
+            "native_Game_DLL_BIN_provider_renderer_cardinality_gates_preserved": true,
+            "new_opaque_generation_binds_actual_probe_and_owned_namespace": true,
+            "ordered_prewarming_scope_changed_and_explicit": true,
+            "same_private_prefix_device_inode_UID_and_modes_bound": true,
+            "strict_native_complete_readability_and_consumed_field_comparison_still_required": true
+          },
+          "blockers": [],
+          "finalizer_regression": {
+            "actual_owned_prefix_FD_closed_after_injected_mapping_close_error": true,
+            "both_release_attempts_recorded": true,
+            "caller_helper_before_outer_report_write_checked": true,
+            "failed_status_durable_JSON_written": true
+          },
+          "format": 1,
+          "fresh_controls": {
+            "ResourceWarning": "error",
+            "errors": 0,
+            "failures": 0,
+            "included_focused_drive_cases": 15,
+            "modules": [
+              "test_native_client_startup",
+              "test_native_client_folder_sort_wine",
+              "test_native_client_wfd_probe",
+              "test_native_client_census_observed_bridge",
+              "test_qualify_native_client_metadata_capture_wine",
+              "test_native_client_wfd_probe_bound",
+              "test_native_client_probe_drive",
+              "test_package_native_client_metadata_capture"
+            ],
+            "seconds": 2.411,
+            "skips": 0,
+            "tests": 153
+          },
+          "parent_commit": "10f3ac8853b270088456db8116275108615b0e87",
+          "previous_source_run": {
+            "freeze_sha256": "806b6cecfe678cd249e90ef76785385391c89030abb2ca8f65f3df5211ef8242",
+            "issue_fixed_in_final_source": "unguarded mapping.close could skip durable qualification JSON and independent prefix FD release",
+            "seconds": 1.59,
+            "status": "passed_host_controls_with_finalizer_review_issue",
+            "tests": 152
+          },
+          "prior_diagnostic_review": {
+            "all_observed_short_paths_and_searches_max_characters": 171,
+            "original_four_error206_rows_not_removed_or_waived": true,
+            "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/client-capture-Wine-failure-11870156176/independent-full-sidecar-diagnostic-review.json",
+            "sha256": "442f2171fe45dbf43cba78f0380181a639afef44a9ff908314a5b0728111e0a7"
+          },
+          "reviewed_at_UTC": "2026-10-14T05:41:06.547087+00:00",
+          "reviewer": "/root/client_harness_review",
+          "role": "independent_source_only_Wine_reuse_and_owned_short_namespace_review",
+          "scope": {
+            "Android_Wine_FEX_PRRoot_mapping_qualified": false,
+            "Game_absolute_root_volume_or_shortname_equivalence_claimed": false,
+            "current_full_provider_readability_pass_claim": false,
+            "current_short_mapping_Wine_execution_reviewed": false,
+            "native_Game_or_probe_compiled": false,
+            "native_registration_or_replay_allowed": false,
+            "physical_device_execution_or_speed_claim": false,
+            "player_profile_SQL_or_character_login_used": false,
+            "provider_or_source_lease_authority": false,
+            "publication_allowed": false,
+            "runtime_source_equivalence_qualified": false
+          },
+          "source_freeze": {
+            "bytes": 1828,
+            "sha256": "c629c2e1895a1e4bf4864d43a8e38428f7974842955b7b3e1abcfcc874b849c1"
+          },
+          "source_post_pins": {
+            ".github/workflows/android-native-client-metadata-capture-reuse-wine.yml": {
+              "bytes": 11061,
+              "sha256": "2b6b2a15bcd08df44261abecb668b624e6c18534a6cdb29a4010744307782ed7"
+            },
+            "database/client-metadata-census/reuse-Wine-plan.md": {
+              "bytes": 3334,
+              "sha256": "0fff7d34c71e00cfd2265f6131211d6137285cec73b7b8c8653c34485c43b9bd"
+            },
+            "tools/native_client_probe_drive.py": {
+              "bytes": 15983,
+              "sha256": "dcf17f8e7525970a73a04984b0db827be4b316f2da906a88345c85e90e9adc52"
+            },
+            "tools/qualify_native_client_metadata_capture_wine.py": {
+              "bytes": 30034,
+              "sha256": "637b874b38cea20dfe61f63bd86408e4a9008aec516ee6bbb4e49f1840c5c70e"
+            },
+            "tools/test_native_client_probe_drive.py": {
+              "bytes": 15958,
+              "sha256": "8b6434f27a8d4344a55fd1fd31ad3edc162036248e4988a4fb4568b56131d493"
+            },
+            "tools/test_qualify_native_client_metadata_capture_wine.py": {
+              "bytes": 19574,
+              "sha256": "a645eba532090e72a26ff00c32a112e399bfa35615078f8ff4302ed6d6ea7cfe"
+            }
+          },
+          "source_pre_pins": {
+            ".github/workflows/android-native-client-metadata-capture-reuse-wine.yml": {
+              "bytes": 11061,
+              "sha256": "2b6b2a15bcd08df44261abecb668b624e6c18534a6cdb29a4010744307782ed7"
+            },
+            "database/client-metadata-census/reuse-Wine-plan.md": {
+              "bytes": 3334,
+              "sha256": "0fff7d34c71e00cfd2265f6131211d6137285cec73b7b8c8653c34485c43b9bd"
+            },
+            "tools/native_client_probe_drive.py": {
+              "bytes": 15983,
+              "sha256": "dcf17f8e7525970a73a04984b0db827be4b316f2da906a88345c85e90e9adc52"
+            },
+            "tools/qualify_native_client_metadata_capture_wine.py": {
+              "bytes": 30034,
+              "sha256": "637b874b38cea20dfe61f63bd86408e4a9008aec516ee6bbb4e49f1840c5c70e"
+            },
+            "tools/test_native_client_probe_drive.py": {
+              "bytes": 15958,
+              "sha256": "8b6434f27a8d4344a55fd1fd31ad3edc162036248e4988a4fb4568b56131d493"
+            },
+            "tools/test_qualify_native_client_metadata_capture_wine.py": {
+              "bytes": 19574,
+              "sha256": "a645eba532090e72a26ff00c32a112e399bfa35615078f8ff4302ed6d6ea7cfe"
+            }
+          },
+          "verdict": "approved_for_single_Wine_only_reuse_lane_with_strict_gates",
+          "workflow": {
+            "YAML_parsed": true,
+            "embedded_Python_programs_compiled": 5,
+            "individual_original_SDK_job_success_separately_authenticated": true,
+            "native_compiler_invocations": 0,
+            "one_job": "actual-client-capture",
+            "original_probe_source": "10f3ac8853b270088456db8116275108615b0e87",
+            "original_probe_successful_job": 115678115609,
+            "overall_original_probe_Wine_run_remains_failed": 38510646414,
+            "reused_Game_artifact": 11866594540,
+            "reused_probe_artifact": 11869483251,
+            "single_full_provider_preparation": true
+          }
+        },
+        "pin": {
+          "bytes": 6558,
+          "sha256": "391efaf7f8ddfef4729c192f5970656ef86069338397ad064346379ec29fa1de"
+        }
+      },
+      "job_id": 115701297199,
+      "native_capture_started_UTC": "2026-10-14T05:48:21Z",
+      "native_compilation_repeated": false,
+      "original_artifact_API_metadata": {
+        "bytes": 45891553,
+        "expired": false,
+        "id": 11873456803,
+        "name": "coh-nonshipping-actual-client-metadata-capture",
+        "sha256": "5833162a2a5ca6ee78a408f7be9d48780ca4bb48162755dec9590c5f35c41646",
+        "source": "6662a056cb5a80b3a3b51d3741b10793fb8b6300"
+      },
+      "original_raw_qualification_recovery_and_independent_counter_review": "pending_owner_single_download_and_independent_intake",
+      "passing_workflow_does_not_grant_performance_or_runtime_authority": true,
+      "physical_speed_gain_claimed": false,
+      "public_source_verification": {
+        "document": {
+          "all_six_match": true,
+          "files": {
+            ".github/workflows/android-native-client-metadata-capture-reuse-wine.yml": {
+              "bytes": 11061,
+              "sha256": "2b6b2a15bcd08df44261abecb668b624e6c18534a6cdb29a4010744307782ed7"
+            },
+            "database/client-metadata-census/reuse-Wine-plan.md": {
+              "bytes": 3334,
+              "sha256": "0fff7d34c71e00cfd2265f6131211d6137285cec73b7b8c8653c34485c43b9bd"
+            },
+            "tools/native_client_probe_drive.py": {
+              "bytes": 15983,
+              "sha256": "dcf17f8e7525970a73a04984b0db827be4b316f2da906a88345c85e90e9adc52"
+            },
+            "tools/qualify_native_client_metadata_capture_wine.py": {
+              "bytes": 30034,
+              "sha256": "637b874b38cea20dfe61f63bd86408e4a9008aec516ee6bbb4e49f1840c5c70e"
+            },
+            "tools/test_native_client_probe_drive.py": {
+              "bytes": 15958,
+              "sha256": "8b6434f27a8d4344a55fd1fd31ad3edc162036248e4988a4fb4568b56131d493"
+            },
+            "tools/test_qualify_native_client_metadata_capture_wine.py": {
+              "bytes": 19574,
+              "sha256": "a645eba532090e72a26ff00c32a112e399bfa35615078f8ff4302ed6d6ea7cfe"
+            }
+          },
+          "format": 1,
+          "native_compilation_repeated": false,
+          "native_execution_qualified": false,
+          "physical_improvement_claimed": false,
+          "retrieval": "GitHub API content at immutable commit; actual returned UTF-8 bytes hashed",
+          "role": "public_exact_reuse_Wine_source_byte_verification",
+          "source_commit": "6662a056cb5a80b3a3b51d3741b10793fb8b6300",
+          "source_freeze_sha256": "c629c2e1895a1e4bf4864d43a8e38428f7974842955b7b3e1abcfcc874b849c1",
+          "tree": "bf0621b29552276258ddcc29854084a255bbe7f1"
+        },
+        "pin": {
+          "bytes": 1580,
+          "sha256": "b7e1d98bc14aa68835fea3c61319b015537a5c7cf236c3da688a785b2e461e1a"
+        }
+      },
+      "replay_or_provider_authority": false,
+      "run_id": 38518079259,
+      "source": "6662a056cb5a80b3a3b51d3741b10793fb8b6300",
+      "state_at_readonly_API_checkpoint": "completed_success",
+      "tree": "bf0621b29552276258ddcc29854084a255bbe7f1"
+    },
+    "component_and_execution_authorities": {
+      "game": null,
+      "mapserver": null
+    },
+    "current_actual_world_run": {
+      "deadline_UTC": "2026-10-14T06:15:31Z",
+      "final_authenticated_artifact_or_complete_pass_available": false,
+      "job_id": 115661338474,
+      "native_job_timeout_minutes": 180,
+      "new_native_build_or_asset_generation": false,
+      "required_execution_lineage": "15 fresh complete cases plus one separately inherited original04b stock case",
+      "run_id": 38505018109,
+      "source": "3a713dc278d9247a65fb2357447adb5353c0a577",
+      "state_at_readonly_API_checkpoint": "in_progress"
+    },
+    "current_suite_inventory": {
+      "all": 223,
+      "full_execution_completed": false,
+      "inherited_contracts": 9,
+      "new_fresh": 10,
+      "retained_fresh": 204
+    },
+    "foundation_commit": "ee941481bae024507efdb13cf51f95101ccddd92",
+    "independent_review": {
+      "document": {
+        "ACTIVATION_IMPLEMENTED": false,
+        "Game_Map_Wine_process_executed": false,
+        "PROMOTIONS_IMPLEMENTED": false,
+        "ResourceWarning_is_error": true,
+        "base_commit": "ee941481bae024507efdb13cf51f95101ccddd92",
+        "controlled_positive_scope": "Real historical archive/binary bytes are only parsed/migrated/compared; positive integration mocks are explicit unexecuted fixtures, not native qualification.",
+        "current_suite_inventory": {
+          "all": 223,
+          "full_qualification_executed": false,
+          "inherited_contracts": 9,
+          "new": 10,
+          "retained_total": 213
+        },
+        "decision": "Approved for dormant conditional Map-only source integration. No native/runtime/publication authority is opened; actual native mixed world, independently derived cache proof, activation/preflight, Android packaging and public-byte audit gates remain required.",
+        "format": 1,
+        "fresh_independent_affected_module_result": {
+          "cases": 15,
+          "errors": 0,
+          "failures": 0,
+          "modules": [
+            "test_native_startup_component_migration"
+          ],
+          "passed": true,
+          "seconds": 15.958083147001162,
+          "skips": 0
+        },
+        "fresh_test_log": {
+          "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/conditional-map-packaging-independent-migration-revision-2.log",
+          "pin": {
+            "bytes": 3380,
+            "sha256": "b0f7e0d34074039bfb7c5b652920867e3f228e3f5927d1773a4b6c1206c99bdb"
+          }
+        },
+        "native_binaries_built": false,
+        "native_promotions": {
+          "game": {
+            "enabled": false
+          },
+          "mapserver": {
+            "enabled": false
+          }
+        },
+        "network_requests_performed": false,
+        "original_parser_review_failure_preserved": {
+          "known_world_JSON_bytes": 9437282,
+          "native_qualification_failure_claimed": false,
+          "reported_by": "Parent root and CI recovery reviewer",
+          "result": "rejected_by_old_8MiB_contract.unique_json_in_authenticate_materials",
+          "scope": "host raw material parser review; actual proof authorities remained absent"
+        },
+        "patch": {
+          "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/conditional-Map-only-packaging-0.13.37-revision-2.patch",
+          "pin": {
+            "bytes": 63162,
+            "sha256": "53853e2fdf10b961d16325e5b3068d0691c2812f6b55d51b274df6f6e4faa8cf"
+          }
+        },
+        "physical_device_qualification_claimed": false,
+        "player_profile_opened": false,
+        "prior_121_claimed_as_fresh_independent_execution": false,
+        "prior_freeze": {
+          "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/conditional-Map-only-packaging-0.13.37-source-freeze.json",
+          "pin": {
+            "bytes": 8125,
+            "sha256": "818f4bacc8908285827ebed8e7c68229b24bb11492eeb8a4df233be08afb77db"
+          }
+        },
+        "prior_owner_121_case_result_retained": {
+          "cases": 121,
+          "errors": 0,
+          "failures": 0,
+          "log": {
+            "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/map-packaging-final-tests.txt",
+            "pin": {
+              "bytes": 25958,
+              "sha256": "81d1d1be958da64f5d5154bb429762f966c9bb80748a055e2d803cdc9f9c1e39"
+            }
+          },
+          "modules": [
+            "test_native_startup_metadata_admission",
+            "test_native_startup_component_migration",
+            "test_native_startup_metadata_contract",
+            "test_native_metadata_runtime_activation",
+            "test_native_metadata_map_activation",
+            "test_client_zone_startup_package",
+            "test_map_startup_native_change"
+          ],
+          "passed": 121,
+          "seconds": 112.609,
+          "skips": 0,
+          "source_pins_pre_post_unchanged": true
+        },
+        "production_component_authorities": {
+          "game": null,
+          "mapserver": null
+        },
+        "production_execution_authorities": {
+          "game": null,
+          "mapserver": null
+        },
+        "protected_root_files_unchanged": {
+          ".github/workflows/android-client-zone-startup.yml": {
+            "bytes": 23241,
+            "sha256": "d6e068d84603dfcd8c7d552ddc21e4cfc168daba09f8fab4f1edadb42299e07f"
+          },
+          "docs/HANDOFF.md": {
+            "bytes": 557996,
+            "sha256": "a3cacee09f365926db0ef74b686ddca1fc79a614964fb85d75a4dcedcd4598ab"
+          },
+          "docs/android-evidence/native-metadata-adapter-0.13.37-root-integration.json": {
+            "bytes": 428701,
+            "sha256": "54b3628d18dab2787c94f90924bf82dc3e5a2fa74ba8c5cfe8ca718587bcb144"
+          },
+          "tools/android/interactive/classify_map_startup_native_change.py": {
+            "bytes": 13170,
+            "sha256": "5fdf2ce86e02be4de29a8bb10b78ad1d391934d6002de1c3663022c19ce4ed30"
+          },
+          "tools/android/interactive/derive_native_metadata_cache_proof.py": {
+            "bytes": 48270,
+            "sha256": "a1db9ed91f8a21c012088d541d3c6e751f491b7a25694b1a09f645ba9f995389"
+          },
+          "tools/android/interactive/prepare_native_metadata_qualification_fixtures.py": {
+            "bytes": 20946,
+            "sha256": "8ce173db317043f26d1a8a39f5ea3dbff3e8f89a4febc7d1441a753286087195"
+          },
+          "tools/android/interactive/release-client-zone-startup-0.13.37.json": {
+            "bytes": 736,
+            "sha256": "f88abcea98d0891dac9c13eac9a5dd597f0231ebb70406dc97492a5c4a58e5fd"
+          },
+          "tools/android/interactive/test_derive_native_metadata_cache_proof.py": {
+            "bytes": 35798,
+            "sha256": "1b2c45beb6b63bfcece653a1c89c221855db404ef0104b9b4b8af05df572aec7"
+          },
+          "tools/android/interactive/test_map_startup_native_change.py": {
+            "bytes": 24189,
+            "sha256": "6616276258f6a1152071f09814075531322f3fa034cf52858a3414739ad12908"
+          },
+          "tools/android/interactive/test_native_metadata_qualification_fixtures.py": {
+            "bytes": 10238,
+            "sha256": "02d5f09f32dcabb9fcc0879e29d5412944ac471b1a0509e961e964308cbf9125"
+          }
+        },
+        "publish_enabled": false,
+        "qualification_enabled": false,
+        "repeated_unchanged_modules": false,
+        "review_findings": {
+          "accepted_scope": [
+            "Closed production authority tables, activation flags and release marker stop Map selection before candidate material reads or archive output. Game selection remains explicitly unsupported.",
+            "Only exact original 47e40 source/run38350813669/artifact11790609618/whole ZIP/member MapServer-prefetch.exe can supply candidate 5927f87; caller flags and aliases cannot substitute native custody.",
+            "Only MapServer.exe and additive game-package.json may change inside the retained game tar; raw old receipt restores byte exact. Db, Game, native DLL/schema/launcher payloads, old component provenance and Assets1.0 remain retained.",
+            "Current selection facts record Map replacement and false all-native retention without claiming a fresh native compiler run, behavioral collision or physical timing. Historical producer receipts remain separate from the new current Map component.",
+            "Four explicit absolute input paths provide three original material ZIPs plus exact compact derived JSON. Source-frozen committed normalizer blob, output SHA, native world source/run/artifact/member pins, original/current consumers and eligible per-BIN subset bind the delivery. Input material never supplies frozen authority.",
+            "Exact (mapserver,qualification,native-map-world-037-qualification.json) accepts <=64MiB after whole ZIP/member authentication. Game, recovery/producer roles, unknown or nested names and all other parser paths retain original8MiB limit.",
+            "Known large World parser rejects duplicate keys, NaN/Infinity and float overflow, non-object/type input and >64MiB. Actual9,437,282-byte controlled JSON/ZIP passed authenticate_materials in the fresh test.",
+            "Conditional payload reconstruction/enclosing manifests/native preflight/audit facts account for actual changed tar and derived proof while keeping historical component ancestry explicit. Genuine runtime/preflight/Android packaging remain later gates."
+          ],
+          "blocking": []
+        },
+        "reviewed_actual_byte_inputs": {
+          "original_Map_producer": {
+            "Map": {
+              "bytes": 7480832,
+              "sha256": "5927f87fdac50c5a839ac067ccbb34b5dfad6223e579287a66a2f866a7d4b2e6"
+            },
+            "artifact_id": 11790609618,
+            "artifact_zip": {
+              "bytes": 3307410,
+              "sha256": "69bfc9f44e5304eae786d0668ba30f183f5b99a58586f8db7861f697d8e23aab"
+            },
+            "member": "MapServer-prefetch.exe",
+            "run_id": 38350813669,
+            "source": "47e40d4d586d29e273e31ed4d0d51d160832b89d"
+          },
+          "public_036_APK": {
+            "bytes": 42076692,
+            "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f"
+          }
+        },
+        "reviewed_files": {
+          "android/guest/native_startup_metadata_contract.py": {
+            "bytes": 25344,
+            "sha256": "996f6b9f4c1f0d2381d22a25fc81b05e85fd38fd03fbabac7e50e6579ad0c1d3"
+          },
+          "tools/android/interactive/build_client_zone_startup_apk.py": {
+            "bytes": 70299,
+            "sha256": "1d7daf31814985ad0d540bc0052559b36c69b745d79680696cc3431bbeadd0b9"
+          },
+          "tools/android/interactive/native_startup_component_migration.py": {
+            "bytes": 14710,
+            "sha256": "dd3c32c0eb1c2f15489a0f6ce398fd2a145d06069a5cd214c1ea640ad0a616f0"
+          },
+          "tools/android/interactive/native_startup_metadata_admission.py": {
+            "bytes": 18024,
+            "sha256": "0b7c431cb0295dc70c6b2fbcb26e84c720a3d4c61368629425b3ad0219edb1f6"
+          },
+          "tools/android/interactive/qualify_client_zone_startup.py": {
+            "bytes": 23611,
+            "sha256": "ba1b622d49f529d522f53d963832d13724b28b00395f12ca4d3c499432d5a1d3"
+          },
+          "tools/android/interactive/test_native_metadata_runtime_activation.py": {
+            "bytes": 35376,
+            "sha256": "1841165d0f62d07d9cb1b48a8396c3098fd2d31330e1a76fbdad26eb0f9deb22"
+          },
+          "tools/android/interactive/test_native_startup_component_migration.py": {
+            "bytes": 15558,
+            "sha256": "569df74d88422a308efe4b702f73f2f0f12e4795e0064d280c905f21917aa0c6"
+          },
+          "tools/android/interactive/test_native_startup_metadata_admission.py": {
+            "bytes": 16471,
+            "sha256": "52f34898969db8d1b84ec41f10aa911648b820d82172b3211b374467c8a6a1e8"
+          }
+        },
+        "revision_2_source_changes": {
+          "tools/android/interactive/native_startup_component_migration.py": {
+            "current": {
+              "bytes": 14710,
+              "sha256": "dd3c32c0eb1c2f15489a0f6ce398fd2a145d06069a5cd214c1ea640ad0a616f0"
+            },
+            "prior": {
+              "bytes": 13387,
+              "sha256": "40a5e543d3fb58a2d4249dcea00442b5125dbef042f8121a13ab900219ad814e"
+            }
+          },
+          "tools/android/interactive/test_native_startup_component_migration.py": {
+            "current": {
+              "bytes": 15558,
+              "sha256": "569df74d88422a308efe4b702f73f2f0f12e4795e0064d280c905f21917aa0c6"
+            },
+            "prior": {
+              "bytes": 12036,
+              "sha256": "e08dfe6cbd48d06ac1fa1b141ef7e1449db130bc5ec83d72b965de14278f2464"
+            }
+          }
+        },
+        "role": "independent_conditional_Map_only_packaging_dormant_source_review",
+        "root_or_reviewed_source_mutated": false,
+        "source_freeze": {
+          "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/conditional-Map-only-packaging-0.13.37-source-freeze-revision-2.json",
+          "pin": {
+            "bytes": 10297,
+            "sha256": "c9876a3f69ec6eaf3849a7b64c051b7dad06afa11b8b56890229220a690f89ea"
+          }
+        },
+        "source_pins_pre_post_unchanged": true,
+        "timestamp_utc": "2026-10-14T05:43:02.937693+00:00"
+      },
+      "pin": {
+        "bytes": 11039,
+        "sha256": "4e5bf2900dd241c14277ce6ad3f1f75a8abbc5ec81104168ee7a7a87bdca2236"
+      }
+    },
+    "native_promotions_enabled": false,
+    "persisted_closed_live_directory_research": {
+      "SDK_Game_Wine_FEX_PRRoot_or_transport_execution_qualified": false,
+      "branch": "codex/native-client-live-directory-research-037",
+      "committed_members": {
+        "research/native-live-directory-037/DESIGN.md": {
+          "bytes": 11201,
+          "sha256": "560a0ea1aa06b179c93fcc05583492f4ca2eae9ca35abc83560ec7db6e351227"
+        },
+        "research/native-live-directory-037/coh_live_directory_batch.h": {
+          "bytes": 4316,
+          "sha256": "767077bfefa2f023fbb558a0757d95e0d2021b2b12da7c4c18d25c6591292fc6"
+        },
+        "research/native-live-directory-037/controlled-live-batch-results.json": {
+          "bytes": 13237,
+          "sha256": "b63ffa0c58944fef3bd7c3f85ebf37f9998bc27bfc8e1b743d84f8c3d96a7387"
+        },
+        "research/native-live-directory-037/independent-review.json": {
+          "bytes": 8721,
+          "sha256": "62a55450ec3cb37af6734be4bc1e603cfd3064c1c2de36f803399933593ecb50"
+        },
+        "research/native-live-directory-037/live_batch_experiment.py": {
+          "bytes": 9419,
+          "sha256": "e2c9e7aa948b6b7ec875a97fdfef2d128fe5942cc14d28799540e1284aabeeb3"
+        },
+        "research/native-live-directory-037/packet-geometry.json": {
+          "bytes": 3846,
+          "sha256": "2394658dd836d418724b101f79b18cacfa63f1d649d43e45b3049130758bcea2"
+        },
+        "research/native-live-directory-037/portable-live-parity-results.json": {
+          "bytes": 1913,
+          "sha256": "c74cdde67b22bf5646ac8542e1e624164cc7f06e3180f561ca029d7496a416bb"
+        },
+        "research/native-live-directory-037/portable-live-parity.c": {
+          "bytes": 25687,
+          "sha256": "32423a375f3bb08f43903d39948e490d8ce3fe8100b46193c7dc699d852effac"
+        },
+        "research/native-live-directory-037/qualify_live_batch.py": {
+          "bytes": 12678,
+          "sha256": "80b18942a89c33bdd8909696a10efa635ed6c112b964f60c15b243a32f7b1502"
+        },
+        "research/native-live-directory-037/source-freeze.json": {
+          "bytes": 6770,
+          "sha256": "a322618628fa56657b756171e016a87f9a1f17d4959802ad6204f48f96e132b6"
+        },
+        "research/native-live-directory-037/src_extension_fake_id0_open.c": {
+          "bytes": 2884,
+          "sha256": "932e3230016153f7ace9bb5d7020e8903aab8455a46e6294c83f99266c8900be"
+        },
+        "research/native-live-directory-037/src_extension_fake_id0_stat.c": {
+          "bytes": 5340,
+          "sha256": "a859f753aefc1467d34215344591c5b8f3aa739ab85b3b1fd68fe41a51370486"
+        },
+        "research/native-live-directory-037/src_extension_link2symlink_link2symlink.c": {
+          "bytes": 37291,
+          "sha256": "e92e8878d400d0c2e27db82964e0061b7814d39f8a7b2d050cf092bf00339eb8"
+        }
+      },
+      "independent_review": {
+        "document": {
+          "blockers": [],
+          "closed_scope": {
+            "Android_mapping_or_native_fields_order_batch_timing_qualified": false,
+            "actual_Game_Wine_FEX_PRRoot_or_SDK_executed": false,
+            "actual_live_helper_or_socket_executed": false,
+            "native_registration_allowed": false,
+            "native_timestamp_conversion_qualified": false,
+            "ordinary_AltStat_or_sharing_modified": false,
+            "physical_device_or_speedup_measured": false,
+            "provider_authority": false,
+            "publication_allowed": false,
+            "root_main_player_or_database_modified": false,
+            "source_lease_authority": false
+          },
+          "cursor_review": {
+            "fallback_only_before_any_returned_row": true,
+            "native_Name_projection_timestamp_conversion_not_qualified": true,
+            "no_partially_consumed_batch_replacement": true,
+            "private_frame_copy_and_full_validation_before_rows": true,
+            "stale_ordinal_token_length_padding_unsupported_frame_refusals": true,
+            "terminal_failure_and_no_post_row_restart": true
+          },
+          "format": 1,
+          "fresh_controlled_C_at_pre_repair_freeze": {
+            "C_header_generator_results_source_unchanged_after_model_repair": true,
+            "C_process_maxrss_kib": 77568,
+            "C_process_wall_seconds": 0.6142998770010308,
+            "actual_live_helper_RSS_claimed": false,
+            "batch_frames": 9315,
+            "constructor_branches": 5,
+            "cursor_bytes_on_controlled_64bit_ABI": 28040,
+            "decoder_refusals": 14,
+            "fixture_loads_entire_historical_packet_and_two_node_trees": true,
+            "freeze_sha256": "9575df84084d3fab77e6fcc4dc2ab485ff892796d010dc3a7b4e7dd38f84bec8",
+            "max_actual_packet_bytes": 22696,
+            "native_Game_SDK_or_Wine_build": false,
+            "rows": 167937,
+            "terminal_private_custody_controls": 4,
+            "wire_cap": 27944
+          },
+          "fresh_final_model_controls": {
+            "ResourceWarning": "error",
+            "all_passed_zero_skips": true,
+            "eight_case_seconds": 0.005761195003287867,
+            "initial_listing_EIO_and_exact_FD_EBADF_control": 1,
+            "one_case_seconds": 0.0007268039989867248,
+            "original_exception_and_unrelated_guard_FD_preserved": true,
+            "owned_kernel_cases": 8,
+            "prior_eight_owner_source_and_result_texts_byte_exact_retained": true,
+            "raw_result": {
+              "bytes": 3319,
+              "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-directory-bridge-independent-rerun/independent-current-model-nine-controls.json",
+              "sha256": "470b16e5e78ac3a2f1b400157398ab525f6a4c9dd0489de6ac5d50e2f6ddecc9"
+            }
+          },
+          "future_native_admission_obligations": [
+            "Complete name-count preflight must reject over8192 before returning any row.",
+            "Bind actual operation, helper PID/UID/start-time, consumer/thread/handle, provider and finalized Android guest-bind/alias view.",
+            "Keep metadata acquisition at the exact native buffer observation boundary; qualify mutation/access/sharing/xattr/filter/order/timestamp behavior.",
+            "Propagate terminal failure distinctly from normal EOF; no successful partially constructed world.",
+            "Borrowed row pointers are valid only until the next submit/reset; current fixture copies them immediately.",
+            "Define nonoverlapping external transport input or use safe overlapping copy semantics before native API integration.",
+            "Qualify IPC/backend process ownership, Android Wine/FEX/PRoot runtime and report integration separately."
+          ],
+          "historical_source_packet": {
+            "artifact": 11868411104,
+            "artifact_zip_sha256": "0c00a92858f6e5e067413cb9ad30a7af4edf72a3d88c7e76e188c17e6192545b",
+            "inherited_partial_failed_result_not_promoted": true,
+            "packet_bytes": 55574000,
+            "packet_sha256": "f9429ee6e2888eedcf44c69ebecca1751e8225b0fa18a2a28fd906df54fd2bca",
+            "run": 38505762421,
+            "run_result": "failed_probe_size_bound",
+            "source": "28c0bf73eb6e924af908fab973f4a32ba566e6bc"
+          },
+          "primary_Wine_actual_contents_independently_fetched_and_hash_matched": true,
+          "primary_Wine_sources": {
+            "PRoot_commit": "7266fb3e8516535682f5a9c8f3a7e70f6506eddb",
+            "PRoot_exact_git_blobs": {
+              "src/extension/fake_id0/open.c": "066acf6a3a236c8c403ea2d7929b420ba1879506",
+              "src/extension/fake_id0/stat.c": "f4fb012ea29a1336998e7c2461cee1d597b4527d",
+              "src/extension/link2symlink/link2symlink.c": "9c67b104d5f8d4a920c1cf9d204b2af352e21feb"
+            },
+            "Wine_commit": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+            "Wine_kernelbase_file": {
+              "bytes": 152948,
+              "sha256": "a98d40ce91a3e394eb0e8db22da6223d1eb8d176f97c9d20fb2e5749bd34fe93",
+              "url": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/kernelbase/file.c"
+            },
+            "Wine_ntdll_unix_file": {
+              "bytes": 247376,
+              "sha256": "e89f082258b11ae0a9eec65ac970e718b67996e6cc124df1c102275411f0e3f9",
+              "url": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/ntdll/unix/file.c"
+            }
+          },
+          "reviewed_at_UTC": "2026-10-14T05:43:33.503595+00:00",
+          "reviewer": "/root/client_harness_review",
+          "role": "independent_closed_live_directory_batch_research_review",
+          "root_and_harness_pin_counts": {
+            "all_verified": true,
+            "exact_PRoot_git_blobs": 3,
+            "exact_root_sources": 8,
+            "harness_dependencies": 5
+          },
+          "root_reference_source": "1d0f2373aa657f8ec3e8c3e5dcd4043643520cde",
+          "source_freeze": {
+            "bytes": 6770,
+            "sha256": "a322618628fa56657b756171e016a87f9a1f17d4959802ad6204f48f96e132b6"
+          },
+          "source_post_pins": {
+            "DESIGN.md": {
+              "bytes": 11201,
+              "sha256": "560a0ea1aa06b179c93fcc05583492f4ca2eae9ca35abc83560ec7db6e351227"
+            },
+            "coh_live_directory_batch.h": {
+              "bytes": 4316,
+              "sha256": "767077bfefa2f023fbb558a0757d95e0d2021b2b12da7c4c18d25c6591292fc6"
+            },
+            "controlled-live-batch-results.json": {
+              "bytes": 13237,
+              "sha256": "b63ffa0c58944fef3bd7c3f85ebf37f9998bc27bfc8e1b743d84f8c3d96a7387"
+            },
+            "live_batch_experiment.py": {
+              "bytes": 9419,
+              "sha256": "e2c9e7aa948b6b7ec875a97fdfef2d128fe5942cc14d28799540e1284aabeeb3"
+            },
+            "packet-geometry.json": {
+              "bytes": 3846,
+              "sha256": "2394658dd836d418724b101f79b18cacfa63f1d649d43e45b3049130758bcea2"
+            },
+            "portable-live-parity-results.json": {
+              "bytes": 1913,
+              "sha256": "c74cdde67b22bf5646ac8542e1e624164cc7f06e3180f561ca029d7496a416bb"
+            },
+            "portable-live-parity.c": {
+              "bytes": 25687,
+              "sha256": "32423a375f3bb08f43903d39948e490d8ce3fe8100b46193c7dc699d852effac"
+            },
+            "qualify_live_batch.py": {
+              "bytes": 12678,
+              "sha256": "80b18942a89c33bdd8909696a10efa635ed6c112b964f60c15b243a32f7b1502"
+            },
+            "src_extension_fake_id0_open.c": {
+              "bytes": 2884,
+              "sha256": "932e3230016153f7ace9bb5d7020e8903aab8455a46e6294c83f99266c8900be"
+            },
+            "src_extension_fake_id0_stat.c": {
+              "bytes": 5340,
+              "sha256": "a859f753aefc1467d34215344591c5b8f3aa739ab85b3b1fd68fe41a51370486"
+            },
+            "src_extension_link2symlink_link2symlink.c": {
+              "bytes": 37291,
+              "sha256": "e92e8878d400d0c2e27db82964e0061b7814d39f8a7b2d050cf092bf00339eb8"
+            }
+          },
+          "source_pre_pins": {
+            "DESIGN.md": {
+              "bytes": 11201,
+              "sha256": "560a0ea1aa06b179c93fcc05583492f4ca2eae9ca35abc83560ec7db6e351227"
+            },
+            "coh_live_directory_batch.h": {
+              "bytes": 4316,
+              "sha256": "767077bfefa2f023fbb558a0757d95e0d2021b2b12da7c4c18d25c6591292fc6"
+            },
+            "controlled-live-batch-results.json": {
+              "bytes": 13237,
+              "sha256": "b63ffa0c58944fef3bd7c3f85ebf37f9998bc27bfc8e1b743d84f8c3d96a7387"
+            },
+            "live_batch_experiment.py": {
+              "bytes": 9419,
+              "sha256": "e2c9e7aa948b6b7ec875a97fdfef2d128fe5942cc14d28799540e1284aabeeb3"
+            },
+            "packet-geometry.json": {
+              "bytes": 3846,
+              "sha256": "2394658dd836d418724b101f79b18cacfa63f1d649d43e45b3049130758bcea2"
+            },
+            "portable-live-parity-results.json": {
+              "bytes": 1913,
+              "sha256": "c74cdde67b22bf5646ac8542e1e624164cc7f06e3180f561ca029d7496a416bb"
+            },
+            "portable-live-parity.c": {
+              "bytes": 25687,
+              "sha256": "32423a375f3bb08f43903d39948e490d8ce3fe8100b46193c7dc699d852effac"
+            },
+            "qualify_live_batch.py": {
+              "bytes": 12678,
+              "sha256": "80b18942a89c33bdd8909696a10efa635ed6c112b964f60c15b243a32f7b1502"
+            },
+            "src_extension_fake_id0_open.c": {
+              "bytes": 2884,
+              "sha256": "932e3230016153f7ace9bb5d7020e8903aab8455a46e6294c83f99266c8900be"
+            },
+            "src_extension_fake_id0_stat.c": {
+              "bytes": 5340,
+              "sha256": "a859f753aefc1467d34215344591c5b8f3aa739ab85b3b1fd68fe41a51370486"
+            },
+            "src_extension_link2symlink_link2symlink.c": {
+              "bytes": 37291,
+              "sha256": "e92e8878d400d0c2e27db82964e0061b7814d39f8a7b2d050cf092bf00339eb8"
+            }
+          },
+          "verdict": "approved_as_closed_additive_controlled_research_only"
+        },
+        "pin": {
+          "bytes": 8721,
+          "sha256": "62a55450ec3cb37af6734be4bc1e603cfd3064c1c2de36f803399933593ecb50"
+        }
+      },
+      "native_timestamp_conversion_qualified": false,
+      "physical_speed_or_live_helper_memory_claimed": false,
+      "runtime_registration_provider_lease_or_publication_allowed": false,
+      "source": "3b737d617e9d02b9083ba485bfc42bd4bd099023",
+      "tree": "a78b0161184db63f713dd62b6f24f80fff389117"
+    },
+    "physical_device_executed": false,
+    "player_SQL_modified": false,
+    "publication_enabled": false,
+    "qualification_enabled": false,
+    "readonly_actual_workflow_API_checkpoint": {
+      "document": {
+        "format": 1,
+        "role": "actual_GitHub_workflow_jobs_readonly_checkpoint",
+        "runs": [
+          {
+            "API": {
+              "jobs": [
+                {
+                  "conclusion": "success",
+                  "id": 115660418719,
+                  "logs_url": null,
+                  "name": "prepare",
+                  "run_id": 38505018109,
+                  "status": "completed",
+                  "steps": [
+                    {
+                      "conclusion": "success",
+                      "name": "Set up job",
+                      "number": 1,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+                      "number": 2,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Validate native world evidence boundaries and hostile provider cases",
+                      "number": 3,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Authenticate exact successful original prepared provider artifact and unchanged producer",
+                      "number": 4,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Recover and verify exact original prepared ZIP and every provider member",
+                      "number": 5,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Run actions/upload-artifact@v4",
+                      "number": 6,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Run actions/upload-artifact@v4",
+                      "number": 7,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Run actions/upload-artifact@v4",
+                      "number": 8,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+                      "number": 16,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Complete job",
+                      "number": 17,
+                      "status": "completed"
+                    }
+                  ]
+                },
+                {
+                  "conclusion": null,
+                  "id": 115661338474,
+                  "logs_url": null,
+                  "name": "native-worlds",
+                  "run_id": 38505018109,
+                  "status": "in_progress",
+                  "steps": [
+                    {
+                      "conclusion": "success",
+                      "name": "Set up job",
+                      "number": 1,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Preserve committed source bytes on Windows",
+                      "number": 2,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+                      "number": 3,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Run actions/download-artifact@v4",
+                      "number": 4,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Authenticate and recover the exact already executed stock Atlas generation",
+                      "number": 5,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Reuse exact successful native builds without recompilation",
+                      "number": 6,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Validate portable parsers before genuine native execution",
+                      "number": 7,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Install the public APK exact x86 PostgreSQL ODBC driver",
+                      "number": 8,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": null,
+                      "name": "Qualify actual full and SERVER-only FX Atlas and Kings worlds on disposable PostgreSQL",
+                      "number": 9,
+                      "status": "in_progress"
+                    },
+                    {
+                      "conclusion": null,
+                      "name": "Run actions/upload-artifact@v4",
+                      "number": 10,
+                      "status": "pending"
+                    },
+                    {
+                      "conclusion": null,
+                      "name": "Remove downloaded ZIP duplicates from native build attribution",
+                      "number": 11,
+                      "status": "pending"
+                    },
+                    {
+                      "conclusion": null,
+                      "name": "Run actions/upload-artifact@v4",
+                      "number": 12,
+                      "status": "pending"
+                    },
+                    {
+                      "conclusion": null,
+                      "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+                      "number": 24,
+                      "status": "pending"
+                    }
+                  ]
+                }
+              ]
+            },
+            "run_id": 38505018109
+          },
+          {
+            "API": {
+              "jobs": [
+                {
+                  "conclusion": null,
+                  "id": 115701297199,
+                  "logs_url": null,
+                  "name": "actual-client-capture",
+                  "run_id": 38518079259,
+                  "status": "in_progress",
+                  "steps": [
+                    {
+                      "conclusion": "success",
+                      "name": "Set up job",
+                      "number": 1,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+                      "number": 2,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Qualify current observer, provider, projection and native bridge source guards",
+                      "number": 3,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Admit storage and install complete real PE32 OpenGL software runtime",
+                      "number": 4,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Recover successful capture Game and probe without rebuilding any native artifact",
+                      "number": 5,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Authenticate retained successful probe-only SDK job while preserving its overall failed Wine run",
+                      "number": 6,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": "success",
+                      "name": "Authenticate unchanged asset volumes once and prepare one complete current client provider",
+                      "number": 7,
+                      "status": "completed"
+                    },
+                    {
+                      "conclusion": null,
+                      "name": "Run retained controls and actual metadata captures on one verified provider and closed prefix",
+                      "number": 8,
+                      "status": "in_progress"
+                    },
+                    {
+                      "conclusion": null,
+                      "name": "Run actions/upload-artifact@v4",
+                      "number": 9,
+                      "status": "pending"
+                    },
+                    {
+                      "conclusion": null,
+                      "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+                      "number": 18,
+                      "status": "pending"
+                    }
+                  ]
+                }
+              ]
+            },
+            "run_id": 38518079259
+          }
+        ]
+      },
+      "pin": {
+        "bytes": 8414,
+        "sha256": "22246816d4e1d56c6f283f2f8713048c12b9efa20335e674b6ad72c18cf36821"
+      }
+    },
+    "release_marker_revision": 9,
+    "remaining_gates": [
+      "Recover and independently authenticate the complete actual mixed native world artifact; retain failure if timeout or any gate fails.",
+      "Derive the compact runtime proof from immutable raw inputs and committed reviewed normalizer, then independently audit eligible subset and lineage.",
+      "Freeze exact SDK/native component/execution/provider/graph/texture/cache authority before opening Map selection.",
+      "Execute all223 applicable qualification modules, actual runtime assets and strict PostgreSQL with no skips; compile new Java/D8, sign, reconstruct and independently public-byte audit successor APK.",
+      "Use authoritative current THORHERO saved map; short manual capture/session/save/outer ZIP first, then actual cold transfer/device timings."
+    ],
+    "reviewed_source_freeze": {
+      "document": {
+        "actual_byte_inputs": {
+          "original_Map_producer": {
+            "Map": {
+              "bytes": 7480832,
+              "sha256": "5927f87fdac50c5a839ac067ccbb34b5dfad6223e579287a66a2f866a7d4b2e6"
+            },
+            "artifact_id": 11790609618,
+            "artifact_zip": {
+              "bytes": 3307410,
+              "sha256": "69bfc9f44e5304eae786d0668ba30f183f5b99a58586f8db7861f697d8e23aab"
+            },
+            "member": "MapServer-prefetch.exe",
+            "run_id": 38350813669,
+            "source": "47e40d4d586d29e273e31ed4d0d51d160832b89d"
+          },
+          "public_036_APK": {
+            "bytes": 42076692,
+            "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f"
+          }
+        },
+        "base_commit": "ee941481bae024507efdb13cf51f95101ccddd92",
+        "conditional_change": "Only MapServer.exe and game-package.json inside the retained tar; game-package.tar.gz and enclosing current manifests plus independently derived compact JSON in APK.",
+        "conditional_facts": {
+          "all_native_member_bytes_retained": "false only when selected",
+          "fresh_behavioral_collision_claim": false,
+          "native_mapserver_recompiled": false,
+          "native_mapserver_recompiled_in_current_run": false,
+          "native_mapserver_replaced": "true only when selected",
+          "old_producer_relabelled": false,
+          "physical_timing_claim": false
+        },
+        "controlled_test_scope": "Real historical archive/binary bytes are only parsed/migrated/compared; positive integration mocks are explicit unexecuted fixtures, not native qualification.",
+        "derived_output_filename": "native-map-metadata-cache-proof.json",
+        "files": {
+          "android/guest/native_startup_metadata_contract.py": {
+            "bytes": 25344,
+            "sha256": "996f6b9f4c1f0d2381d22a25fc81b05e85fd38fd03fbabac7e50e6579ad0c1d3"
+          },
+          "tools/android/interactive/build_client_zone_startup_apk.py": {
+            "bytes": 70299,
+            "sha256": "1d7daf31814985ad0d540bc0052559b36c69b745d79680696cc3431bbeadd0b9"
+          },
+          "tools/android/interactive/native_startup_component_migration.py": {
+            "bytes": 14710,
+            "sha256": "dd3c32c0eb1c2f15489a0f6ce398fd2a145d06069a5cd214c1ea640ad0a616f0"
+          },
+          "tools/android/interactive/native_startup_metadata_admission.py": {
+            "bytes": 18024,
+            "sha256": "0b7c431cb0295dc70c6b2fbcb26e84c720a3d4c61368629425b3ad0219edb1f6"
+          },
+          "tools/android/interactive/qualify_client_zone_startup.py": {
+            "bytes": 23611,
+            "sha256": "ba1b622d49f529d522f53d963832d13724b28b00395f12ca4d3c499432d5a1d3"
+          },
+          "tools/android/interactive/test_native_metadata_runtime_activation.py": {
+            "bytes": 35376,
+            "sha256": "1841165d0f62d07d9cb1b48a8396c3098fd2d31330e1a76fbdad26eb0f9deb22"
+          },
+          "tools/android/interactive/test_native_startup_component_migration.py": {
+            "bytes": 15558,
+            "sha256": "569df74d88422a308efe4b702f73f2f0f12e4795e0064d280c905f21917aa0c6"
+          },
+          "tools/android/interactive/test_native_startup_metadata_admission.py": {
+            "bytes": 16471,
+            "sha256": "52f34898969db8d1b84ec41f10aa911648b820d82172b3211b374467c8a6a1e8"
+          }
+        },
+        "focused_tests": {
+          "affected_module": "test_native_startup_component_migration",
+          "cases": 15,
+          "errors": 0,
+          "failures": 0,
+          "log": {
+            "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/map-packaging-world-raw-parser-final-retest.txt",
+            "pin": {
+              "bytes": 3380,
+              "sha256": "a3148cd22445d86df37dc1bb23f74a3305f87c6035a5a88f142fd356e81be3a1"
+            }
+          },
+          "passed": 15,
+          "prior_full_stage_run": {
+            "cases": 121,
+            "errors": 0,
+            "failures": 0,
+            "log": {
+              "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/map-packaging-final-tests.txt",
+              "pin": {
+                "bytes": 25958,
+                "sha256": "81d1d1be958da64f5d5154bb429762f966c9bb80748a055e2d803cdc9f9c1e39"
+              }
+            },
+            "modules": [
+              "test_native_startup_metadata_admission",
+              "test_native_startup_component_migration",
+              "test_native_startup_metadata_contract",
+              "test_native_metadata_runtime_activation",
+              "test_native_metadata_map_activation",
+              "test_client_zone_startup_package",
+              "test_map_startup_native_change"
+            ],
+            "passed": 121,
+            "seconds": 112.609,
+            "skips": 0,
+            "source_pins_pre_post_unchanged": true
+          },
+          "scope": "Only affected migration module rerun; prior121 execution retained with exact prior source identity.",
+          "seconds": 17.659,
+          "six_other_stage_source_pins_unchanged": true,
+          "skips": 0
+        },
+        "format": 1,
+        "independent_review_failure_preserved": {
+          "known_world_JSON_bytes": 9437282,
+          "native_qualification_failure_claimed": false,
+          "reported_by": "Parent root and CI recovery reviewer",
+          "result": "rejected_by_old_8MiB_contract.unique_json_in_authenticate_materials",
+          "scope": "host raw material parser review; actual proof authorities remained absent"
+        },
+        "material_intake_changes": [
+          "Exact original MapServer-prefetch.exe source/run/artifact/member mapping; no arbitrary filename alias.",
+          "Only known Map native-map-world-037-qualification.json allows <=64 MiB; other native receipt JSON remains <=8 MiB.",
+          "Exact (mapserver,qualification,native-map-world-037-qualification.json) raw JSON parser permits <=64 MiB after complete ZIP/member authentication; rejects duplicate/nonfinite/overflow values and non-objects. All other receipt parsers remain <=8 MiB."
+        ],
+        "native_Game_Map_Wine_process_executed_by_this_stage": false,
+        "native_binaries_built_by_this_stage": false,
+        "native_promotions": {
+          "game": false,
+          "mapserver": false
+        },
+        "new_raw_parser_tests": {
+          "negative": [
+            "Unknown and nested member name",
+            "Game kind",
+            "Recovery/producer role",
+            "65 MiB bytes",
+            "Nested duplicate key",
+            "NaN/Infinity/-Infinity",
+            "1e999/-1e999 numeric overflow",
+            "Non-object/str input",
+            "Global original parser still refuses >8 MiB"
+          ],
+          "positive": "Real 9,437,282-byte unexecuted fixture JSON inside real ZIP through authenticate_materials with full SHA/member closure."
+        },
+        "patch": {
+          "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/conditional-Map-only-packaging-0.13.37-revision-2.patch",
+          "pin": {
+            "bytes": 63162,
+            "sha256": "53853e2fdf10b961d16325e5b3068d0691c2812f6b55d51b274df6f6e4faa8cf"
+          }
+        },
+        "physical_device_qualification_claimed": false,
+        "player_profile_accessed_or_mutated": false,
+        "prior_source_freeze": {
+          "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/conditional-Map-only-packaging-0.13.37-source-freeze.json",
+          "pin": {
+            "bytes": 8125,
+            "sha256": "818f4bacc8908285827ebed8e7c68229b24bb11492eeb8a4df233be08afb77db"
+          },
+          "prior121_passes_preserved": true
+        },
+        "production_ACTIVATION_IMPLEMENTED": false,
+        "production_PROMOTIONS_IMPLEMENTED": false,
+        "production_component_authorities": {
+          "game": null,
+          "mapserver": null
+        },
+        "production_execution_authorities": {
+          "game": null,
+          "mapserver": null
+        },
+        "protected_root_files_unchanged": {
+          ".github/workflows/android-client-zone-startup.yml": {
+            "bytes": 23241,
+            "sha256": "d6e068d84603dfcd8c7d552ddc21e4cfc168daba09f8fab4f1edadb42299e07f"
+          },
+          "docs/HANDOFF.md": {
+            "bytes": 557996,
+            "sha256": "a3cacee09f365926db0ef74b686ddca1fc79a614964fb85d75a4dcedcd4598ab"
+          },
+          "docs/android-evidence/native-metadata-adapter-0.13.37-root-integration.json": {
+            "bytes": 428701,
+            "sha256": "54b3628d18dab2787c94f90924bf82dc3e5a2fa74ba8c5cfe8ca718587bcb144"
+          },
+          "tools/android/interactive/classify_map_startup_native_change.py": {
+            "bytes": 13170,
+            "sha256": "5fdf2ce86e02be4de29a8bb10b78ad1d391934d6002de1c3663022c19ce4ed30"
+          },
+          "tools/android/interactive/derive_native_metadata_cache_proof.py": {
+            "bytes": 48270,
+            "sha256": "a1db9ed91f8a21c012088d541d3c6e751f491b7a25694b1a09f645ba9f995389"
+          },
+          "tools/android/interactive/prepare_native_metadata_qualification_fixtures.py": {
+            "bytes": 20946,
+            "sha256": "8ce173db317043f26d1a8a39f5ea3dbff3e8f89a4febc7d1441a753286087195"
+          },
+          "tools/android/interactive/release-client-zone-startup-0.13.37.json": {
+            "bytes": 736,
+            "sha256": "f88abcea98d0891dac9c13eac9a5dd597f0231ebb70406dc97492a5c4a58e5fd"
+          },
+          "tools/android/interactive/test_derive_native_metadata_cache_proof.py": {
+            "bytes": 35798,
+            "sha256": "1b2c45beb6b63bfcece653a1c89c221855db404ef0104b9b4b8af05df572aec7"
+          },
+          "tools/android/interactive/test_map_startup_native_change.py": {
+            "bytes": 24189,
+            "sha256": "6616276258f6a1152071f09814075531322f3fa034cf52858a3414739ad12908"
+          },
+          "tools/android/interactive/test_native_metadata_qualification_fixtures.py": {
+            "bytes": 10238,
+            "sha256": "02d5f09f32dcabb9fcc0879e29d5412944ac471b1a0509e961e964308cbf9125"
+          }
+        },
+        "publish_enabled": false,
+        "qualification_enabled": false,
+        "remaining_gates": [
+          "Complete genuine final mixed native world evidence and independent review; no authority from failed snapshots.",
+          "Committed normalizer derives actual observed donor subset; independently audit output/source/raw input pins and truthful execution lineage.",
+          "Freeze exact native component/execution/compatibility authority from actual artifact bytes, SDK/source/graph/texture/cache proofs.",
+          "Recover those exact three raw native material ZIPs and compact derived proof into the four explicit CI paths; retain old Game.",
+          "Review and qualify actual guest selected-map cold/warm preparation, Android/D8 packaging, signer/source/payload reconstruction, then public-byte audit.",
+          "Root explicitly opens qualification/publication/Map selection only after all appropriate gates; physical speed still must be measured on Thor."
+        ],
+        "retained": "Public .36 Game, Db, all native DLL/schema/launcher leaves, Wine/FEX/GPU, Android resources and Assets 1.0.0; raw old native receipts and component ancestry unchanged.",
+        "revision": 2,
+        "role": "inactive_conditional_Map_only_packaging_source_freeze",
+        "runtime_material_environment": [
+          "COH_MAP_METADATA_PRODUCER",
+          "COH_MAP_METADATA_RECOVERY",
+          "COH_MAP_METADATA_QUALIFICATION",
+          "COH_MAP_METADATA_CACHE_PROOF"
+        ]
+      },
+      "pin": {
+        "bytes": 10297,
+        "sha256": "c9876a3f69ec6eaf3849a7b64c051b7dad06afa11b8b56890229220a690f89ea"
+      }
+    },
+    "role": "reviewed_conditional_Map_only_packaging_and_current_latency_research_checkpoint",
+    "root_fresh_integrated_tests": {
+      "ResourceWarning": "error",
+      "cases": 94,
+      "counts_overlap_owner_and_independent_suites": true,
+      "errors": 0,
+      "failures": 0,
+      "log": {
+        "bytes": 20599,
+        "sha256": "8e1caae8575d1ea9d82cd04ea7c257cfe40cc579e6210e4106de6457a55f2083"
+      },
+      "modules": [
+        "test_native_startup_metadata_admission",
+        "test_native_startup_component_migration",
+        "test_native_startup_metadata_contract",
+        "test_native_metadata_runtime_activation",
+        "test_native_metadata_map_activation",
+        "test_client_zone_startup_package"
+      ],
+      "original121_owner_source_specific_execution_retained": true,
+      "seconds": 90.235,
+      "skips": 0
+    },
+    "runtime_cache_proof_derivation": null
+  },
   "reviewed_finite_CI_recovery_and_probe_bound_checkpoint": {
     "FileList_algorithm_critical_path_research": {
       "full_receipt": {

@@ -69,7 +69,7 @@ CHECK_SUITES = {
         'test_graphics_profile', 'test_client_zone_startup_package'],
     'minimal_db_native_compatibility_verified': ['test_minimal_db_runtime_contract',
         'test_saved_map_preparation_proof', 'test_client_zone_startup_package'],
-    'exact_036_game_db_map_graphics_and_assets_verified': ['test_native_startup_metadata_admission', 'test_client_zone_startup_package',
+    'exact_036_other_native_and_reviewed_Map_boundaries_verified': ['test_native_startup_metadata_admission', 'test_client_zone_startup_package',
         'test_map_startup_native_change',
         'test_client_render_queue_contract', 'test_client_gpu_profile', 'test_client_gpu_repair_package',
         'test_external_assets', 'test_asset_pack_import', 'test_animation_runtime_compatibility',
@@ -318,16 +318,16 @@ def qualify(args):
         'added_java_sources': derivative.added_java_sources(donor),
         'donor_dex': donor['recompiled_dex'],
         'external_asset_pack': donor['external_asset_pack'],
-        'native_build_provenance': donor['native_build_provenance'],
+        'native_build_provenance': derivative.native_provenance(donor,derivative.current_map_delivery(donor)),
         'native_launcher': native, 'minimal_db_native': minimal_db,
         'map_startup_component': preflight['map_startup_component'],
         'package_preflight': preflight,
-        **dict.fromkeys(derivative.FALSE_FLAGS, False),
-        **dict.fromkeys(derivative.TRUE_FLAGS, True),
+        'current_Map_component':preflight['current_Map_component'],
+        **derivative.release_facts(),
         'claim_scope': 'Current host qualification executes every changed saved-map/report/cache/SQL scope, '
             'all applicable retained regressions and actual packaged fresh-create/reopen Atlas/Kings preparation. '
             'The retained helper keeps its original .35 Windows process/console/lifecycle qualification and owner; Game/Db/Map '
-            'native consumers, GPU/Wine/FEX and Assets 1.0.0 remain exact. '
+            'consumer ancestry, GPU/Wine/FEX and Assets 1.0.0 remain exact; a selected replacement Map has separately bound current provenance. '
             'Eight immutable historical packaging suites and unchanged certificate regression retain authenticated .36 source-bound results; nested '
             '.32 native producers keep their original identities and are never rebuilt or relabelled. '
             'Native reader/dependency/animation regression suites execute with original authenticated fixture inputs. '

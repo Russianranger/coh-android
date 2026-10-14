@@ -48,7 +48,7 @@ NOTES_NAME, RELEASE_TAG = 'COH-Atlas-Gameplay-0.13.37-testing.txt', 'coh-atlas-g
 NOTES = ROOT/'docs'/NOTES_NAME
 WORKFLOW = '.github/workflows/android-client-zone-startup.yml'
 QUALIFICATION_SCRIPT = 'tools/android/interactive/qualify_client_zone_startup.py'
-QUALIFICATION_SCOPE = 'client_zone_startup_and_manual_diagnostics_retaining_exact_036_native_graphics_assets'
+QUALIFICATION_SCOPE = 'client_zone_startup_manual_diagnostics_exact_036_Game_Db_graphics_assets_and_reviewed_Map_selection'
 MARKER = 'tools/android/interactive/release-client-zone-startup-0.13.37.json'
 REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
@@ -77,7 +77,7 @@ CHECKS = ('retained_regressions_and_postgresql_verified', 'actual_runtime_asset_
     'client_gpu_startup_reuse_verified', 'lawful_progression_save_checks_verified',
     'manual_session_and_capture_verified', 'text_entry_transport_verified',
     'native_launcher_lifecycle_verified', 'minimal_db_native_compatibility_verified',
-    'exact_036_game_db_map_graphics_and_assets_verified')
+    'exact_036_other_native_and_reviewed_Map_boundaries_verified')
 FALSE_FLAGS = ('native_client_recompiled', 'native_mapserver_recompiled', 'native_dbserver_recompiled',
     'graphics_driver_changed', 'wine_or_fex_changed', 'world_assets_changed', 'asset_reimport_required',
     'native_runtime_booted', 'save_acceptance_relaxed', 'physical_recovery_validated',
@@ -141,7 +141,7 @@ def validate_release_marker(marker, *, qualification=False, publication=False):
         'Exact .37 source/donor/version/asset marker required')
     for flag in ('qualification_enabled', 'publish_enabled', 'reviewed_source_integrated'):
         require(type(marker.get(flag)) is bool, 'Typed release marker required: '+flag)
-    admission.validate_disabled_promotions(marker.get('native_promotions'))
+    admission.validate_native_selection(marker.get('native_promotions'))
     if qualification or publication:
         require(marker['reviewed_source_integrated'] and marker['qualification_enabled'],
             'Reviewed source integration and qualification must be explicitly enabled')
@@ -149,6 +149,76 @@ def validate_release_marker(marker, *, qualification=False, publication=False):
         require(marker['publish_enabled'], 'Reviewed publication marker must be explicitly enabled')
     return marker
 
+
+
+def map_selected():
+    import native_startup_metadata_admission as admission
+    marker = read_json(ROOT/MARKER)
+    return admission.validate_native_selection(marker.get('native_promotions'))['mapserver']['enabled']
+
+
+def added_payloads():
+    if not map_selected(): return ADDED_PAYLOADS
+    import native_map_startup_contract as startup
+    proof = startup.inspect_runtime_cache_derivation(startup.RUNTIME_CACHE_PROOF_DERIVATION)
+    import native_startup_metadata_admission as admission
+    require(proof['output']['filename'] == admission.MAP_CACHE_PROOF_NAME, 'Exact new Map proof payload required')
+    return ADDED_PAYLOADS | {'assets/runtime/'+proof['output']['filename']}
+
+
+def release_facts():
+    selected = map_selected()
+    facts = {**dict.fromkeys(FALSE_FLAGS,False), **dict.fromkeys(TRUE_FLAGS,True)}
+    if selected:
+        # This APK workflow integrates an original47e4 compiled artifact; it
+        # does not rerun that producer or relabel its historical SDK build.
+        for name in ('all_native_member_bytes_retained','retained_client_game_and_mapserver_verified',
+            'retained_032_map_startup_component_verified'): facts[name] = False
+    return {**facts,'native_mapserver_replaced':selected,
+        'native_compiler_executed_in_current_APK_workflow':False,
+        'native_mapserver_recompiled_in_current_run':False,
+        'retained_032_map_startup_ancestry_verified':True}
+
+
+def current_map_delivery(donor):
+    if not map_selected(): return None
+    import native_startup_metadata_admission as admission
+    return admission.prepare_map_delivery(donor)
+
+
+def native_provenance(donor,delivery):
+    require((delivery is not None) == map_selected(), 'Current Map selection and producer provenance disagree')
+    if delivery is None:return donor['native_build_provenance']
+    return {'retained_036_producer_receipts':copy.deepcopy(donor['native_build_provenance']),
+        'current_Map_producer':delivery['component']['producer'],
+        'current_Map_component_authority_sha256':delivery['component']['authority_sha256'],
+        'native_compiler_executed_in_current_APK_workflow':False,'old_producer_relabelled':False}
+
+
+def validate_native_preflight(preflight,donor,delivery):
+    require((delivery is not None) == map_selected(), 'Current Map selection and native preflight disagree')
+    require(typed_equal(preflight.get('map_startup_component'),donor['map_startup_component']),
+        'Historical .32 Map component ancestry must remain byte/canonical exact')
+    old = donor['package_preflight']['server_archives']
+    actual = preflight.get('server_archives')
+    if delivery is None:
+        require(typed_equal(actual,old) and preflight.get('current_Map_component') is None,
+            'Unselected native archives must remain exact')
+        return
+    require(typed_equal(preflight.get('current_Map_component'),delivery['component'])
+        and type(actual) is dict and set(actual) == set(old)
+        and {k:actual[k] for k in actual if k != 'archives'} == {k:old[k] for k in old if k != 'archives'}
+        and set(actual.get('archives',{})) == set(old['archives']), 'Exact promoted native preflight closure differs')
+    for name, previous in old['archives'].items():
+        record = actual['archives'][name]
+        if name != 'game-package.tar.gz':
+            require(typed_equal(record,previous),'Retained Db/schema archive changed: '+name)
+            continue
+        delta = delivery['component']['archive_delta']
+        expected = {**previous,**delta['archive']}
+        expected['extracted_bytes'] += (delta['current_consumer']['bytes']-delta['previous_shipping_consumer']['bytes']
+            +delta['current_game_manifest']['bytes']-delta['raw_historical_game_manifest']['bytes'])
+        require(typed_equal(record,expected),'Current Map tar pin/inventory/extracted byte census differs')
 
 def load_minimal_db_proof(path, commit):
     import qualify_minimal_db_runtime as minimal
@@ -254,6 +324,7 @@ def added_java_sources(donor):
 
 def replacement_payloads(donor):
     changed = {'assets/runtime/client-manifest.json', 'assets/runtime/runtime-manifest.json'}
+    if map_selected(): changed.add('assets/runtime/game-package.tar.gz')
     for source in GUEST_SOURCE_CHANGES:
         target = 'assets/runtime/'+Path(source).name
         if builder().file_pin(ROOT/source) != donor['payloads'][target]: changed.add(target)
@@ -298,14 +369,19 @@ def validate_donor(apk, receipt, *, check_sources=True):
 
 
 def payload_boundaries(payloads, donor, native):
-    require(set(payloads) == set(donor['payloads']) | ADDED_PAYLOADS and len(payloads) == 74+len(ADDED_PAYLOADS)
+    require(set(payloads) == set(donor['payloads']) | added_payloads() and len(payloads) == 74+len(added_payloads())
         and {name for name in donor['payloads'] if payloads[name] != donor['payloads'][name]} == replacement_payloads(donor)
         and all(payloads['assets/runtime/'+Path(name).name] == builder().file_pin(ROOT/name) for name in ADDED_GUEST_SOURCES),
-        'Only reviewed guest helpers and enclosing manifests may change; all native bytes remain exact')
+        'Only reviewed guest helpers/manifests and the explicitly selected Map archive/proof may change')
+    if map_selected():
+        delivery = current_map_delivery(donor)
+        require(all(payloads[name] == pin(raw) for name,raw in delivery['archives'].items()),
+            'Current Map archive and derived proof must match authenticated material bytes')
     require(payloads[NATIVE_PAYLOAD] == native['build']['executable'], 'Actual payload must retain original .35 Windows-qualified launcher')
 
 
-def verification_manifests(donor, helper_pins, commit, native):
+def verification_manifests(donor, helper_pins, commit, native, delivery=None):
+    require((delivery is not None) == map_selected(), 'Current Map selection and verification manifest disagree')
     import native_startup_metadata_admission as admission
     source_only_review = admission.verify_committed_source_compatibility_review(ROOT)
     require(set(helper_pins) == {Path(name).name for name in GUEST_INPUTS},
@@ -314,6 +390,8 @@ def verification_manifests(donor, helper_pins, commit, native):
             'Reviewed helper pins must match actual candidate source bytes')
     helper_pins = {name: helper_pins[name] for name in sorted(helper_pins)}
     updates = dict(helper_pins, **{'client-launcher.exe': native['build']['executable']})
+    if delivery is not None:
+        updates.update({Path(name).name:pin(raw) for name,raw in delivery['archives'].items()})
     client = copy.deepcopy(donor['_client_verification']); client['files'].update(updates)
     runtime = copy.deepcopy(donor['runtime_manifest']); runtime['files'].update(updates)
     runtime['files']['client-manifest.json'] = pin(shared.encoded(client))
@@ -322,7 +400,8 @@ def verification_manifests(donor, helper_pins, commit, native):
         'donor_repository_commit': DONOR_COMMIT, 'publication_provenance': publication_provenance(commit),
         'reviewed_guest_inputs': helper_pins, 'native_launcher': native,
         'committed_Map_source_only_review': source_only_review,
-        **dict.fromkeys(FALSE_FLAGS, False), **dict.fromkeys(TRUE_FLAGS, True)}
+        'current_Map_component':None if delivery is None else delivery['component'],
+        **release_facts()}
     require(typed_equal(runtime['client_startup_latency'], donor['runtime_manifest']['client_startup_latency'])
         and typed_equal(runtime['client_manual_session'], donor['runtime_manifest']['client_manual_session'])
         and typed_equal(runtime['client_saved_map_reopen'], donor['runtime_manifest']['client_saved_map_reopen'])
@@ -350,6 +429,7 @@ def add_actual_preflight(preflight, assets):
 
 
 def extract_and_repair(apk, donor, destination, commit, native_directory, native, *, execute_preflight=True):
+    delivery = current_map_delivery(donor)
     destination = Path(destination); destination.mkdir(parents=True)
     base = builder()
     with zipfile.ZipFile(apk) as archive:
@@ -365,18 +445,23 @@ def extract_and_repair(apk, donor, destination, commit, native_directory, native
     launcher = assets/'client-launcher.exe'
     launcher.write_bytes((Path(native_directory)/'client-launcher.exe').read_bytes())
     require(builder().file_pin(launcher) == native['build']['executable'], 'Exact retained .35 launcher bytes required')
-    client, runtime = verification_manifests(donor, helper_pins, commit, native)
+    if delivery is not None:
+        for name,raw in delivery['archives'].items():(destination/name).write_bytes(raw)
+    client, runtime = verification_manifests(donor, helper_pins, commit, native, delivery)
     for name, value in (('client-manifest.json', client), ('runtime-manifest.json', runtime)):
         (assets/name).write_bytes(shared.encoded(value))
-    payloads = {name: base.file_pin(destination/name) for name in sorted(set(donor['payloads']) | ADDED_PAYLOADS)}
+    payloads = {name: base.file_pin(destination/name) for name in sorted(set(donor['payloads']) | added_payloads())}
     payload_boundaries(payloads, donor, native)
     server = retained.verify_server_archives(assets)
-    require(typed_equal(server, donor['package_preflight']['server_archives']),
-            'Every accepted .32 Game/Map/DbServer/schema archive must remain exact')
-    preflight = {'server_archives': server, 'map_startup_component': copy.deepcopy(donor['map_startup_component'])}
+    preflight = {'server_archives': server, 'map_startup_component': copy.deepcopy(donor['map_startup_component']),
+        'current_Map_component':None if delivery is None else delivery['component']}
+    validate_native_preflight(preflight,donor,delivery)
     import native_startup_metadata_admission as admission
-    preflight['native_metadata_admission'] = admission.retain_native_component(
-        donor, server, preflight['map_startup_component'])
+    preflight['native_metadata_admission'] = (admission.retain_native_component(
+        donor, server, preflight['map_startup_component']) if delivery is None else {
+            'format':1,'policy':'exact_qualified_Map_replacement_preserving_036_other_native_members',
+            'new_native_consumer_admitted':True,'old_producer_facts_relabelled':False,
+            'current_Map_component':delivery['component']})
     if execute_preflight:
         add_actual_preflight(preflight, assets)
     return runtime, payloads, preflight
@@ -385,6 +470,7 @@ def extract_and_repair(apk, donor, destination, commit, native_directory, native
 def validate_qualification(q, commit, donor, native, minimal_db):
     import prepare_native_metadata_qualification_fixtures as metadata_fixtures
     metadata_fixtures.validate_proof(q.get('native_metadata_test_fixtures'), repository_commit=commit)
+    delivery = current_map_delivery(donor)
     contract = module('zone_startup_qualification_contract', ROOT/QUALIFICATION_SCRIPT)
     contract.validate_suite_inventory()
     require(type(q.get('format')) is int and q['format'] == 1 and q.get('status') == 'passed'
@@ -397,13 +483,13 @@ def validate_qualification(q, commit, donor, native, minimal_db):
         and q.get('changed_java_sources') == changed_java_sources(donor)
         and q.get('added_java_sources') == added_java_sources(donor)
         and q.get('external_asset_pack') == donor['external_asset_pack']
-        and q.get('native_build_provenance') == donor['native_build_provenance']
+        and typed_equal(q.get('native_build_provenance'),native_provenance(donor,delivery))
         and typed_equal(q.get('native_launcher'), native)
         and typed_equal(q.get('minimal_db_native'), minimal_db)
         and q.get('check_suites') == contract.CHECK_SUITES and set(q.get('checks', {})) == set(CHECKS)
         and all(q['checks'][name] is True for name in CHECKS)
-        and all(q.get(name) is False for name in FALSE_FLAGS)
-        and all(q.get(name) is True for name in TRUE_FLAGS),
+        and all(q.get(name) is value for name,value in release_facts().items())
+        and typed_equal(q.get('current_Map_component'),None if delivery is None else delivery['component']),
         'Exact current client/map/progression qualification and retained .35 native authority required')
     suites = q.get('test_suites', {})
     require(set(suites) == set(contract.TEST_MODULES) and all(row.get('status') == 'passed'
@@ -464,9 +550,7 @@ def validate_qualification(q, commit, donor, native, minimal_db):
         and typed_equal(q.get('native_dependency_test_fixture'), expected_dependency_fixture),
         'Original native fixture donor identities and current reader/dependency scope required')
     require(type(q.get('package_preflight')) is dict, 'Actual serialized package preflight required')
-    require(typed_equal(q['package_preflight'].get('server_archives'), donor['package_preflight']['server_archives'])
-        and typed_equal(q['package_preflight'].get('map_startup_component'), donor['map_startup_component']),
-        'Accepted .32 native archive and component provenance must remain exact')
+    validate_native_preflight(q['package_preflight'],donor,delivery)
     import qualify_zone_startup_preparation as selected
     selected_proof = selected.validate_proof(q['package_preflight'].get('saved_map_startup_preflight'))
     require(typed_equal(selected_proof['full_startup'], q['package_preflight'].get('full_startup')),
@@ -567,6 +651,7 @@ def build(args):
     native = validate_native_launcher(args.native_directory, commit)
     minimal_db = load_minimal_db_proof(args.minimal_db_proof, commit)
     q = validate_qualification(read_json(args.qualification), commit, donor, native, minimal_db)
+    delivery = current_map_delivery(donor)
     password = base.signing_password_spec(args.password_env)
     base.verify_signing_identity(args.keystore, 'coh-client-interactive', SIGNER, password)
     require(args.output.name == APK_NAME and not args.output.exists() and not args.output.is_symlink(), 'Fresh .37 APK required')
@@ -609,19 +694,20 @@ def build(args):
             'abi': 'arm64-v8a', 'scope': QUALIFICATION_SCOPE, 'donor': donor_link(), 'map_startup_component': donor['map_startup_component'],
             'signer_certificate_sha256': certificate, 'signing_key_created': False, 'signature_verified': True,
             'package_badging_verified': True, 'binary_manifest_version_only_verified': True, 'payload_bytes_verified': True,
-            'payloads': payloads, 'changed_apk_payloads': sorted(replacement_payloads(donor)), 'added_apk_payloads': sorted(ADDED_PAYLOADS),
+            'payloads': payloads, 'changed_apk_payloads': sorted(replacement_payloads(donor)), 'added_apk_payloads': sorted(added_payloads()),
             'baseline_payloads_verified': 74, 'retained_baseline_payloads_verified': 74-len(replacement_payloads(donor)),
             'donor_dex': donor['recompiled_dex'], 'recompiled_dex': dex_pin, 'java_sources': java,
             'changed_java_sources': changed_java_sources(donor), 'added_java_sources': added_java_sources(donor),
             'retained_java_sources_verified': len(donor['java_sources'])-len(changed_java_sources(donor)),
-            'retained_android_resources': donor['retained_android_resources'], 'native_build_provenance': donor['native_build_provenance'],
+            'retained_android_resources': donor['retained_android_resources'], 'native_build_provenance': native_provenance(donor,delivery),
             'client_gpu_runtime': donor['client_gpu_runtime'], 'external_asset_release_tag': donor['external_asset_release_tag'],
             'asset_pack_version': donor['asset_pack_version'], 'external_asset_pack': donor['external_asset_pack'],
             'native_launcher': native, 'minimal_db_native': minimal_db, 'qualification': q, 'qualification_receipt': base.file_pin(args.qualification),
             'testing_notes': base.file_pin(args.testing_notes), 'package_preflight': preflight,
             'publication_provenance': publication_provenance(commit), 'runtime_manifest': runtime,
             'runtime_manifest_sha256': payloads['assets/runtime/runtime-manifest.json']['sha256'],
-            **dict.fromkeys(FALSE_FLAGS, False), **dict.fromkeys(TRUE_FLAGS, True)}
+            'current_Map_component':None if delivery is None else delivery['component'],
+            **release_facts()}
         (args.output.parent/REPORT_NAME).write_bytes(shared.encoded(report))
     shutil.copyfile(args.testing_notes, args.output.parent/NOTES_NAME)
     args.output.with_suffix('.apk.sha256').write_text(report['sha256']+'  '+APK_NAME+'\n')
@@ -638,6 +724,7 @@ def verify_report(args, commit, *, execute_preflight=True):
     native = validate_native_launcher(args.native_directory, commit)
     minimal_db = load_minimal_db_proof(args.minimal_db_proof, commit)
     q = validate_qualification(read_json(args.qualification), commit, donor, native, minimal_db); report = read_json(args.build_report)
+    delivery = current_map_delivery(donor)
     require(report.get('format') == 1 and report.get('apk') == APK_NAME
         and report.get('repository_commit') == report.get('runtime_repository_commit') == commit
         and report.get('retained_runtime_repository_commit') == DONOR_COMMIT
@@ -653,7 +740,7 @@ def verify_report(args, commit, *, execute_preflight=True):
         and report.get('changed_java_sources') == changed_java_sources(donor) and report.get('added_java_sources') == added_java_sources(donor)
         and report.get('retained_java_sources_verified') == 24-len(changed_java_sources(donor))
         and report.get('retained_android_resources') == donor['retained_android_resources']
-        and report.get('native_build_provenance') == donor['native_build_provenance']
+        and typed_equal(report.get('native_build_provenance'),native_provenance(donor,delivery))
         and report.get('client_gpu_runtime') == donor['client_gpu_runtime']
         and typed_equal(report.get('native_launcher'), native)
         and typed_equal(report.get('minimal_db_native'), minimal_db)
@@ -661,10 +748,11 @@ def verify_report(args, commit, *, execute_preflight=True):
         and report.get('asset_pack_version') == donor['asset_pack_version']
         and report.get('external_asset_pack') == donor['external_asset_pack']
         and report.get('changed_apk_payloads') == sorted(replacement_payloads(donor))
-        and report.get('added_apk_payloads') == sorted(ADDED_PAYLOADS)
+        and report.get('added_apk_payloads') == sorted(added_payloads())
         and report.get('baseline_payloads_verified') == 74 and report.get('retained_baseline_payloads_verified') == 74-len(replacement_payloads(donor))
-        and all(report.get(name) is False for name in FALSE_FLAGS)
-        and all(report.get(name) is True for name in TRUE_FLAGS+('signature_verified', 'package_badging_verified',
+        and all(report.get(name) is value for name,value in release_facts().items())
+        and typed_equal(report.get('current_Map_component'),None if delivery is None else delivery['component'])
+        and all(report.get(name) is True for name in ('signature_verified', 'package_badging_verified',
             'binary_manifest_version_only_verified', 'payload_bytes_verified')), 'Exact .37 client/map startup and save-check receipt differs')
     base.checked_file(args.apk, report)
     with tempfile.TemporaryDirectory(prefix='coh-startup-latency-independent-dex-') as temporary:
@@ -771,8 +859,9 @@ def audit_record(report, build_report_pin, qualification_pin):
         'runtime_manifest_sha256': report['runtime_manifest_sha256'],
         'inherited_native_launcher': pin(shared.encoded(report['native_launcher'])),
         'current_retained_minimal_db_fixture': pin(shared.encoded(report['minimal_db_native'])),
-        'retained_native_server_archives': pin(shared.encoded(report['package_preflight']['server_archives'])),
-        'retained_map_startup_component': pin(shared.encoded(report['map_startup_component'])),
+        'actual_native_server_archive_inventory': pin(shared.encoded(report['package_preflight']['server_archives'])),
+        'retained_036_map_startup_ancestry': pin(shared.encoded(report['map_startup_component'])),
+        'current_Map_component':None if report.get('current_Map_component') is None else pin(shared.encoded(report['current_Map_component'])),
         'retained_external_assets': pin(shared.encoded(report['external_asset_pack'])),
         'actual_package_preflight': pin(shared.encoded(report['package_preflight'])),
         'actual_runtime_asset_installers_verified': True, 'full_startup_orchestration_verified': True,

@@ -71,6 +71,28 @@ class NativeMetadataRuntimeActivationTests(unittest.TestCase):
         with patch.dict(native.COMPONENT_AUTHORITIES, {'game': expected}), self.assertRaisesRegex(ValueError, 'disabled'):
             native.runtime_admission(package, 'game')
 
+    def test_only_exact_Map_world_qualification_member_has_bounded_64MiB_receipt_allowance(self):
+        # Declarative unexecuted receipt-size fixtures. Actual migration still
+        # requires the independent complete ZIP and member byte authentication.
+        for kind,name,size,accepted in (
+            ('mapserver','native-map-world-037-qualification.json',15*1024**2,True),
+            ('mapserver','native-map-world-037-qualification.json',64*1024**2+1,False),
+            ('mapserver','unrecognized-world.json',15*1024**2,False),
+            ('game','native-map-world-037-qualification.json',15*1024**2,False)):
+            _,expected,review,_=activation_fixture(kind)
+            member_pin={'bytes':size,'sha256':'a'*64};claims={'scope':'unexecuted_receipt_size_fixture'}
+            expected['materials']['qualification']['members']={name:member_pin}
+            expected['materials']['qualification']['required_receipt_values']={name:claims}
+            review['component_authority_sha256']=native.canonical_sha(expected)
+            review['qualification_receipts']={name:{'pin':member_pin,'required_values':claims}}
+            previous=fixture(kind)[1][native.COMPONENTS[kind]['manifest']]
+            with self.subTest(kind=kind,name=name,size=size),patch.dict(native.COMPONENT_AUTHORITIES,{kind:expected}),                patch.dict(native.REVIEWED_EXECUTION_AUTHORITIES,{kind:review}),patch.object(native,'ACTIVATION_IMPLEMENTED',True):
+                package=native.unique_json(migration.wrap_manifest(previous,kind,expected))
+                if accepted:self.assertTrue(native.runtime_admission(package,kind)['runtime_activation_allowed'])
+                else:
+                    with self.assertRaises(ValueError):native.runtime_admission(package,kind)
+        self.assertFalse(native.ACTIVATION_IMPLEMENTED)
+
     def test_retained_path_removes_inherited_switch_without_new_authority(self):
         for kind in ('game', 'mapserver'):
             env = {native.ATTEMPT_ENVIRONMENTS[kind]: '1', 'WINEPREFIX': 'retained'}

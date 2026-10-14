@@ -9,6 +9,8 @@ from __future__ import annotations
 import copy
 import hashlib
 import io
+import json
+import math
 import os
 from pathlib import Path
 import re
@@ -116,6 +118,32 @@ def authenticated_donor(apk):
     return result
 
 
+
+def material_receipt(kind, role, name, raw):
+    """Only the exact Map qualification report may exceed component JSON size.
+
+    Whole artifact and every member are authenticated before this parser is
+    called. Nested names, other material roles and Game receipts keep 8 MiB.
+    """
+    if (kind, role, name) != ('mapserver', 'qualification', 'native-map-world-037-qualification.json'):
+        return contract.unique_json(raw)
+    contract.require(type(raw) is bytes and 0 < len(raw) <= 64*1024**2,
+        'Bounded exact Map world qualification receipt bytes required')
+    def pairs(rows):
+        result = {}
+        for key, value in rows:
+            contract.require(key not in result, 'Duplicate Map world qualification JSON key')
+            result[key] = value
+        return result
+    def finite_float(value):
+        result = float(value)
+        contract.require(math.isfinite(result), 'Nonfinite Map world qualification JSON number')
+        return result
+    result = json.loads(raw, object_pairs_hook=pairs, parse_float=finite_float,
+        parse_constant=lambda value: (_ for _ in ()).throw(ValueError('Nonfinite Map world qualification JSON value')))
+    contract.require(type(result) is dict, 'Map world qualification JSON object required')
+    return result
+
 def authenticate_materials(kind, paths):
     """Bind actual whole ZIPs and every member to fixed source/run/artifact pins.
 
@@ -141,13 +169,21 @@ def authenticate_materials(kind, paths):
             and all(content_pin(members[name]) == identity['members'][name] for name in members),
             'Exact authenticated '+role+' artifact member closure required')
         for name, fields in identity.get('required_receipt_values', {}).items():
-            receipt = contract.unique_json(members[name])
+            receipt = material_receipt(kind, role, name, members[name])
             for field, value in fields.items():
                 contract.require(type(receipt.get(field)) is type(value) and receipt.get(field) == value,
                     'Pinned '+role+' receipt scope/identity differs: '+field)
         material[role] = members
     executable = contract.COMPONENTS[kind]['executable']
-    native = material['producer'].get(executable)
+    producer = expected['materials']['producer']
+    native_member = producer.get('native_member', executable)
+    contract.require(native_member == executable or (kind == 'mapserver' and native_member == 'MapServer-prefetch.exe'
+        and producer.get('repository_commit') == '47e40d4d586d29e273e31ed4d0d51d160832b89d'
+        and producer.get('run_id') == 38350813669 and producer.get('artifact_id') == 11790609618
+        and contract.same(producer.get('artifact_zip'), {'bytes':3307410,
+            'sha256':'69bfc9f44e5304eae786d0668ba30f183f5b99a58586f8db7861f697d8e23aab'})),
+        'Unknown producer native member alias refused')
+    native = material['producer'].get(native_member)
     contract.require(type(native) is bytes and content_pin(native)
         == contract.native_record_pin(expected['native_record']),
         'Exact candidate native executable missing from original producer artifact')
