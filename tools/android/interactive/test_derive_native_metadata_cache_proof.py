@@ -192,6 +192,36 @@ class CacheProofDerivationTests(unittest.TestCase):
         failed = derive.json_document((RECOVERY/'map8a-world-evidence/native-map-world-037-qualification.json').read_bytes())
         with self.assertRaises(ValueError):derive.inspect_world(failed,self.narrow)
 
+    def test_reviewed_current_qualifier_identity_matches_actual_committed_source(self):
+        self.assertEqual(derive.RESUME_SOURCE,'3a713dc278d9247a65fb2357447adb5353c0a577')
+        raw=subprocess.check_output(['git','show',derive.RESUME_SOURCE+':tools/android/interactive/qualify_native_map_world_037.py'],cwd=derive.ROOT)
+        self.assertEqual(derive.pin(raw),derive.RESUME_QUALIFIER)
+        self.assertEqual(derive.RESUME_QUALIFIER,{'bytes':81189,
+            'sha256':'814b01b739d1fed55ecafb739c8dba58c421c0cf74ce2aab825a018cac9aa290'})
+        self.assertIn(b"require(os.name=='nt','Genuine world gate requires Windows')",raw)
+        self.assertEqual(derive.INHERITED_STOCK['source'],'04b7a623ef21d7ad48774a58b3122c69ae07f46b')
+
+    def test_actual_failed_b323_is_rejected_and_old_resume_source_cannot_be_relabelled(self):
+        raw=(RECOVERY/'map-b323-world-evidence.zip').read_bytes()
+        self.assertEqual(derive.pin(raw),{'bytes':4582240,
+            'sha256':'f6d50773cbeab72ff9afd989e95348fd4481f1f9bc8ebdd67338661f835bde77'})
+        with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+            failed=derive.json_document(archive.read(derive.WORLD_REPORT_MEMBER),role='native_world')
+            partial=derive.json_document(archive.read('failed-native-observations.json'))
+        self.assertEqual(failed['repository_commit'],'b3239ed001cd75a92910731710b7675506cf1944')
+        self.assertEqual(failed['status'],'failed');self.assertEqual(len(failed['cases']),1)
+        self.assertEqual(partial['case'],'1-server_only-baseline-forward')
+        self.assertTrue(partial['last_readiness_observation']['Server_ready_stdout_observed'])
+        self.assertNotIn('cache_dates_after',partial)
+        with self.assertRaises(ValueError):derive.inspect_world(failed,self.narrow)
+        world=self.unexecuted_mixed_world()
+        world['repository_commit']='b3239ed001cd75a92910731710b7675506cf1944'
+        world['source_pins']['tools/android/interactive/qualify_native_map_world_037.py']={'bytes':78316,
+            'sha256':'caf775548a64e163b37ddba95dce931626768d1cf3c2bfe0366db6e20f58ecd5'}
+        with self.assertRaisesRegex(ValueError,'reviewed fresh resume source'):
+            derive.inspect_world(world,self.narrow,inherited_world=self.old_report,
+                inherited_descriptor=self.inherited_input,inherited_auxiliary=self.old_auxiliary)
+
     def test_actual_failed04b_original_and_unexecuted_mixed_lineage_preserve_ready_case(self):
         docs,inputs=self.authenticated_unexecuted_mixed_world()
         result=derive.inspect_world(docs['native_world'],self.narrow,inherited_world=docs[derive.INHERITED_INPUT],
@@ -250,6 +280,10 @@ class CacheProofDerivationTests(unittest.TestCase):
         self.assertEqual(lineage['fresh_qualifier_raw_input'],inputs['native_world'])
         self.assertEqual(len(proof['eligible_bins']),106)
         self.assertTrue(proof['observations_scope']['constructed_world_fixture'])
+        self.assertEqual(proof['observations_scope']['native_world_timing_scope'],
+            'unexecuted_controlled_world_fixture_no_native_timing_measurement')
+        self.assertTrue(proof['observations_scope']['legacy_shared_preload_parser_timing_scope_preserved'])
+        self.assertEqual(docs['preload']['observations']['timing_scope'],'host_Wine_wall_time_not_Android_or_Thor')
         self.assertNotIn('output',proof['derivation']);self.assertEqual(outer['output']['pin'],derive.pin(derive.metadata.encoded(proof)))
         self.assertFalse(proof['runtime_authority_created']);self.assertFalse(proof['shipping_allowed'])
 

@@ -42,8 +42,8 @@ INHERITED_STOCK = {'source': '04b7a623ef21d7ad48774a58b3122c69ae07f46b',
     'generation_archive': {'bytes': 2409058, 'sha256': 'b15026b0ee92354069159303ec73e6cbbe6bc07c44ad53bf2798cfcd8488d4d8'}}
 INHERITED_REPORT = {'bytes': 1039965, 'sha256': 'c2c3d768a4269f665a0e3d8651054a63a188be9f815faea974fea98fe82207c7'}
 PREPARED_MANIFEST = {'bytes': 87193832, 'sha256': 'e234440c5d1eca22c993d828993b194d5949d741a7afdfeadf561052d256ae65'}
-RESUME_SOURCE = 'b3239ed001cd75a92910731710b7675506cf1944'
-RESUME_QUALIFIER = {'bytes': 78316, 'sha256': 'caf775548a64e163b37ddba95dce931626768d1cf3c2bfe0366db6e20f58ecd5'}
+RESUME_SOURCE = '3a713dc278d9247a65fb2357447adb5353c0a577'
+RESUME_QUALIFIER = {'bytes': 81189, 'sha256': '814b01b739d1fed55ecafb739c8dba58c421c0cf74ce2aab825a018cac9aa290'}
 INHERITED_FAILURE = 'ValueError: Native dependency source missing/linked: object_library/v_cov/destructible_objects/v_destructible_place_holders/v_destructible_place_holders.txt'
 WORLD_REPORT_MEMBER = 'native-map-world-037-qualification.json'
 NATIVE_ABSENCE_RECIPE = {
@@ -636,6 +636,10 @@ def derive_proof(documents, *, raw_inputs, derivation_source, source_review):
             'whole_generated_BIN_and_GroupBounds_parity_verified': True,
             'source_bound_seven_native_SDK_cooking_DLL_pins_verified': True,
             'constructed_world_fixture': world_document.get('controlled_unexecuted_fixture') is True,
+            'native_world_timing_scope': ('unexecuted_controlled_world_fixture_no_native_timing_measurement'
+                if world_document.get('controlled_unexecuted_fixture') is True
+                else 'actual_Windows_wall_time_not_Android_or_Thor'),
+            'legacy_shared_preload_parser_timing_scope_preserved': True,
             'diagnostic_token_is_integrity_proof': False, 'ordinary_native_schema_freshness_retained': True},
         'omissions': narrow['excluded']+world['excluded_world_tokens'],
         'shipping_allowed': False, 'runtime_authority_created': False, 'physical_timing_validated': False,

@@ -148,6 +148,2273 @@
   "player_SQL_modified": false,
   "publication_enabled": false,
   "qualification_enabled": false,
+  "reviewed_framing_identity_and_native_observations_checkpoint": {
+    "UTC": "2026-10-14T03:57:46.142295+00:00",
+    "activation_enabled": false,
+    "actual_Game_build_and_SDK_review": {
+      "GitHub_jobs_independently_observed_success": true,
+      "actual_Windows_SDK_controls": {
+        "Win32_WFD_bytes": 320,
+        "by_handle_information_bytes": 52,
+        "cases": 4,
+        "complete_readonly_metadata": {
+          "directories": 20,
+          "enumeration_complete": true,
+          "issues": 0,
+          "packet_bytes": 35380,
+          "packet_sha256": "4a18b72053cd92ca8a8a45fd2508599661e0eb2f7ec82b32d3ba0aaa049733ac",
+          "readability_complete": true,
+          "returncode": 0,
+          "root_anchor_partial": true,
+          "rows": 75
+        },
+        "existing_output_refused": {
+          "existing_packet_byte_identity_preserved": true,
+          "new_output_created": false,
+          "returncode": 2
+        },
+        "output_inside_inputs_refused": {
+          "output_created": false,
+          "returncode": 64
+        },
+        "portable_counterpart_controls": 58,
+        "raw_stdout_stderr_and_sidecars_authenticated": true,
+        "sharing_denial": {
+          "directories": 20,
+          "enumeration_complete": true,
+          "issues": 1,
+          "native_error": 32,
+          "packet_sha256": "81b812916f6170d0b4876ffd3842498cae78fc086f2157283b77f36ddfff78ac",
+          "readability_complete": false,
+          "returncode": 2,
+          "rows": 75
+        }
+      },
+      "actual_native_images": {
+        "CityOfHeroes.exe": {
+          "delay_imports": [],
+          "imports": [
+            "ADVAPI32.dll",
+            "cg.dll",
+            "cgGL.dll",
+            "COMDLG32.dll",
+            "DDRAW.dll",
+            "DINPUT8.dll",
+            "DSOUND.dll",
+            "GDI32.dll",
+            "GLU32.dll",
+            "IMM32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll",
+            "ole32.dll",
+            "OPENGL32.dll",
+            "PhysXCooking.dll",
+            "PhysXLoader.dll",
+            "SHELL32.dll",
+            "USER32.dll",
+            "VERSION.dll",
+            "WINMM.dll",
+            "WS2_32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "35c55889b6b6ec31336ba17813f3abc1cf082cc37012e0dd4e24064bec43693f",
+          "size": 9484288
+        },
+        "native-client-wfd-probe.exe": {
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "a0abe86b938a13dcc0f1dd53d1707edc9d1427d23841e1e2483132fb17c5ebff",
+          "size": 125952
+        }
+      },
+      "artifact_id": 11866594540,
+      "artifact_name": "coh-nonshipping-native-client-metadata-capture",
+      "format": 1,
+      "native_job_id": 115651968222,
+      "original_ZIP": {
+        "bytes": 4276595,
+        "sha256": "5a8baf15df7f92baaecf0e861e5d9ec69128bfdf1e53e4f4304cf6362ef541db"
+      },
+      "original_members_all_authenticated": {
+        "CMakeCache.txt": {
+          "bytes": 38359,
+          "sha256": "e19744736e7ad2410d8cadab9755c7b57f6be2b9ecdf7c97afc226368bad326e"
+        },
+        "CityOfHeroes.exe": {
+          "bytes": 9484288,
+          "sha256": "35c55889b6b6ec31336ba17813f3abc1cf082cc37012e0dd4e24064bec43693f"
+        },
+        "UtilitiesLib.vcxproj": {
+          "bytes": 68319,
+          "sha256": "adc80a2691f743e282eb66feebaf1f788fb54bfb71481aa4b0c776ecb8de09f4"
+        },
+        "native-client-metadata-capture-host-checks.json": {
+          "bytes": 6058,
+          "sha256": "e5ec214c22b8482ef1bd63a48746514ece7a97fa03bfcd56548d5981a13ee3f7"
+        },
+        "native-client-metadata-capture-package.json": {
+          "bytes": 834327,
+          "sha256": "8bcaa4bc2e3aa6716aded06b668bcd12208e54a277097e32d25af9423c2cee3a"
+        },
+        "native-client-metadata-census-build-input.json": {
+          "bytes": 4390,
+          "sha256": "fcb58a4b9ad84bcd1b5ca58f171b736ad2a7174f553322e0f707abd965727471"
+        },
+        "native-client-wfd-probe-windows-checks.json": {
+          "bytes": 147991,
+          "sha256": "336021bdd8eefadbd7cb2327481bddfec5047287ef94a4809ed0df82f122a381"
+        },
+        "native-client-wfd-probe.exe": {
+          "bytes": 125952,
+          "sha256": "a0abe86b938a13dcc0f1dd53d1707edc9d1427d23841e1e2483132fb17c5ebff"
+        }
+      },
+      "private_build_gate": {
+        "CMAKE_PROJECT_INCLUDE_exact_capture_injection": true,
+        "COX_BUILD_BEACONSERVER": "OFF",
+        "COX_BUILD_MAPSERVER": "OFF",
+        "UtilitiesLib_OptDebug_Win32_capture_define_present": true,
+        "replay_define_absent": true
+      },
+      "retained_source": {
+        "effective_source_pins": 48,
+        "full_retained_native_dependency_closure_preserved": true,
+        "layered_producer_recipes": 8,
+        "original_FolderNodeAdd": {
+          "bytes": 6774,
+          "sha256": "4b94ff2f9630e2fe29c8336f4e031d8c8232ceaefe44b3a007fc21c563890e9f"
+        },
+        "schema_pins": 4,
+        "stock_entry_body_sha256": "7ed60dd12c31c03314ee2ecd86e6ea96a5dda8d96b6d8305d4f3b2be2f44aa67"
+      },
+      "review_execution_note": "Independent local validation re-derived retained source recipes in controlled temporary directories and parsed authenticated original artifact bytes. It neither recompiled native producers nor executed Game/Wine/Windows processes.",
+      "reviewed_at_UTC": "2026-10-14T03:02:00.310162+00:00",
+      "reviewer": "client_harness_review",
+      "run_id": 38502287842,
+      "scope_limits": {
+        "actual_Windows_SDK_probe_execution_in_CI_verified": true,
+        "actual_native_PIG_index_observation_qualified": false,
+        "actual_one_capture_Game_build_verified": true,
+        "actual_one_readonly_probe_build_verified": true,
+        "current_provider_generation_qualified": false,
+        "native_Game_or_Wine_executed_for_current_capture_qualification": false,
+        "native_SQL_or_player_profile_opened_by_reviewer": false,
+        "native_build_or_download_repeated_by_reviewer": false,
+        "physical_device_executed": false,
+        "provider_authority_granted": false,
+        "publication_allowed": false,
+        "runtime_Game_RAM_or_startup_performance_measured": false,
+        "runtime_replay_or_cached_stat_reuse_enabled": false,
+        "source_edits_by_reviewer": false,
+        "zero_walk_immutable_lease_qualified": false
+      },
+      "source": "4e3188d7dffd2790bbc73e49f9e3fa55df90f016",
+      "source_tree": "b581facfd276db9e367eed35af0a67380b96b5a3",
+      "status": "actual_build_and_Windows_SDK_scope_verified",
+      "typed_package_independently_validated": true
+    },
+    "actual_Wine_failed_observation": {
+      "Game_controls_passed": 3,
+      "actual_native_PIG_index_captured": false,
+      "artifact_id": 11868411104,
+      "artifact_zip": {
+        "bytes": 6334966,
+        "sha256": "0c00a92858f6e5e067413cb9ad30a7af4edf72a3d88c7e76e188c17e6192545b"
+      },
+      "capture_disabled_Game_seconds": 19.469,
+      "independent_review": {
+        "artifact_id": 11868411104,
+        "exact_existing_format_bound": {
+          "approx_current_native_rows": 182999,
+          "approx_current_selected_native_directories": 7531,
+          "directory_end_record_bytes": 36,
+          "entry_record_bytes": 424,
+          "footer_record_bytes": 48,
+          "header_bytes": 160,
+          "maximum_directory_begin_record_bytes": 367,
+          "maximum_directory_records": 16384,
+          "maximum_entry_records": 200000,
+          "maximum_root_record_bytes": 355,
+          "proposed_fixed_96MiB_cap_bytes": 100663296,
+          "rows_and_directories_limits_increased": false,
+          "worst_possible_file_bytes": 91403315
+        },
+        "format": 1,
+        "memory_scope": {
+          "Game_RAM_behavior_not_inferred_from_unchanged_Game_bytes": true,
+          "actual_new_native_or_Wine_RAM_measured": false,
+          "larger_sidecar_and_Python_decoding_or_kernel_cache_can_increase_memory": true,
+          "source_C_explicit_allocation_requests_depend_on_MAX_DIRS_and_fixed_structures_not_MAX_BYTES": true
+        },
+        "observed_completed_Game_controls": [
+          "retained_first",
+          "retained_closed_prefix_second",
+          "capture_binary_observation_disabled"
+        ],
+        "observed_probe_failure": {
+          "directories": 4652,
+          "elapsed_seconds": 110.106389,
+          "enabled_capture_and_PIG_stat_observations_completed": false,
+          "host_held_Popen_reaped": true,
+          "issues": 0,
+          "original_byte_cap": 67108864,
+          "output_handle_closed": true,
+          "owned_partial_output_deleted_by_handle": true,
+          "probe_and_outer_owned_prefix_cleanup_verified": true,
+          "rows": 156268,
+          "status": "assembly_failed",
+          "written_bytes": 67108454
+        },
+        "original_ZIP": {
+          "bytes": 6334966,
+          "sha256": "0c00a92858f6e5e067413cb9ad30a7af4edf72a3d88c7e76e188c17e6192545b"
+        },
+        "original_native_job_id": 115662786823,
+        "original_result_preserved": "failed",
+        "original_run_id": 38505762421,
+        "original_source_prefix": "28c0",
+        "recommendation": {
+          "Game_recompile_required": false,
+          "Wine_consumer_must_authenticate_and_select_new96MiB_parser_cap": true,
+          "approach": "separately_pinned_probe_only96MiB_constant_extension_with_fresh_Win32_compile_and_four_SDK_controls",
+          "generated_C_and_parser_each_one_cap_constant_delta_only": true,
+          "guest_COHCNS1_64MiB_limit_unchanged": true,
+          "native_Windows_PID_and_host_Popen_PID_separate": true,
+          "old_C_and_parser_copies_together_under_new_extension_directory_with_original_basenames": true,
+          "original_eight_member_Game_build_artifact_must_remain_byte_exact": true,
+          "per_branch_federation_rejected_as_unnecessary": "It requires a new branch-selection schema, five native process identities and explicit aggregation custody; the full existing finite schema fits96MiB.",
+          "retained_Game_sha256": "35c55889b6b6ec31336ba17813f3abc1cf082cc37012e0dd4e24064bec43693f"
+        },
+        "reviewed_at_UTC": "2026-10-14T03:51:41.068937+00:00",
+        "reviewer": "client_harness_review",
+        "scope_limits": {
+          "native_build_or_execution_by_reviewer": false,
+          "new_extension_source_or_SDK_controls_reviewed_yet": false,
+          "optimization_benefit_claimed": false,
+          "physical_device_executed": false,
+          "provider_authority": false,
+          "publication_allowed": false,
+          "source_edits_by_reviewer": false
+        },
+        "source_projection": {
+          "capture_seconds": 29.161624,
+          "directory_count_including_partial_root": 7532,
+          "encode_seconds": 0.059885,
+          "encoded_bytes": 55574000,
+          "files": 160411,
+          "recheck_seconds": 26.85771,
+          "rows": 167942,
+          "scope": "actual_Wine_lane_host_source_scan_and_encode; not_Thor_or_optimization_claim",
+          "whole_preflight_seconds": 56.079222
+        },
+        "status": "original_failure_confirmed_probe_only_extension_recommended"
+      },
+      "job_id": 115662786823,
+      "native_WFD_gate_failed": "64MiB observation packet bound",
+      "native_replay_or_optimization_benefit_claimed": false,
+      "owned_cleanup_passed": true,
+      "run_id": 38505762421,
+      "source": "28c0bf73eb6e924af908fab973f4a32ba566e6bc",
+      "source_projection": {
+        "Android_Wine_FEX_PRRoot_mapping_qualified": false,
+        "complete_selected_branches": [
+          "texture_library",
+          "object_library",
+          "fx",
+          "scripts",
+          "scripts.loc"
+        ],
+        "directory_count": 7532,
+        "files": 160411,
+        "fixed_Android_Wine_source_commit_asserted_for_host": false,
+        "format": 1,
+        "fresh_metadata_passes": 2,
+        "generation_token": "92a7a11746bdb7080a093713354c1866ba65f902cd3dc97ea56f7126c9c06a9e",
+        "links": 128803,
+        "metadata_requests": {
+          "capture": {
+            "ancestor_initial_stats": 13200,
+            "ancestor_recheck_stats": 13200,
+            "directory_snapshots_and_rechecks": 15064,
+            "dos_xattr_queries": 167942,
+            "entry_no_follow_stat_requests": 167962,
+            "readonly_alias_stats": 0,
+            "scandir_directories": 7532,
+            "symlink_target_stats": 128803
+          },
+          "interpretation": "explicit producer metadata API requests; kernel syscall counts not measured",
+          "recheck": {
+            "ancestor_initial_stats": 13200,
+            "ancestor_recheck_stats": 13200,
+            "directory_snapshots_and_rechecks": 15064,
+            "dos_xattr_queries": 167942,
+            "entry_no_follow_stat_requests": 167962,
+            "readonly_alias_stats": 0,
+            "scandir_directories": 7532,
+            "symlink_target_stats": 128803
+          }
+        },
+        "native_Game_process_RSS_measured": false,
+        "native_registration_allowed": false,
+        "native_replay_executed": false,
+        "operation": "d750b092adf1be56564a2f837897619e",
+        "outscope_root_entries": 20,
+        "packet": {
+          "bytes": 55574000,
+          "sha256": "f9429ee6e2888eedcf44c69ebecca1751e8225b0fa18a2a28fd906df54fd2bca"
+        },
+        "phase_seconds": {
+          "capture": 29.161624,
+          "encode": 0.059885,
+          "recheck": 26.85771
+        },
+        "producer_capture_recipe_validation_executed": false,
+        "provenance": {
+          "Android_runtime_source_equivalence": false,
+          "PIG_auxiliary": {
+            "bytes": 97084456,
+            "ctime_ns": 1791948322671861670,
+            "device": 2049,
+            "inode": 9703326,
+            "link_mode": 511,
+            "link_mtime_ns": 1791948322742862065,
+            "link_target": "/home/runner/work/coh-android/coh-android/out/client-fixture/assets/server-animations.pigg",
+            "mode": 256,
+            "mtime_ns": 1791948194306150436,
+            "owner_uid": 1001,
+            "readonly": true,
+            "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+          },
+          "Wine_tools": {
+            "tesseract": {
+              "invocation": "/usr/bin/tesseract",
+              "resolved": "/usr/bin/tesseract",
+              "resolved_pin": {
+                "bytes": 39320,
+                "sha256": "9f831cab7525c3dab04af41bda35182af7ea1df9dceeaaa2f3bf207ac45c06a5"
+              }
+            },
+            "wine": {
+              "invocation": "/usr/bin/wine",
+              "resolved": "/usr/bin/wine-stable",
+              "resolved_pin": {
+                "bytes": 1029,
+                "sha256": "96d2e3a50f09760fd38ad083d57fbe3d07f7fe92308b81db2335b57bb36d98f9"
+              }
+            },
+            "wineserver": {
+              "invocation": "/usr/bin/wineserver",
+              "resolved": "/usr/lib/wine/wineserver",
+              "resolved_pin": {
+                "bytes": 382,
+                "sha256": "a0d0ce13ed039949a30dc261cf93f4d6c4606cab5783980cd42f476dfb3b881a"
+              }
+            }
+          },
+          "actual_fixture": {
+            "bytes": 36104,
+            "sha256": "95269f756830a839912405fa0efa38d7a0d9ca3536392f6c45e983f2ea8d7f17"
+          },
+          "capture_Game": {
+            "bytes": 9484288,
+            "sha256": "35c55889b6b6ec31336ba17813f3abc1cf082cc37012e0dd4e24064bec43693f"
+          },
+          "native_package": {
+            "bytes": 834327,
+            "sha256": "8bcaa4bc2e3aa6716aded06b668bcd12208e54a277097e32d25af9423c2cee3a"
+          },
+          "producer_source_commit": "c0c8857af79cdecaff01e7cc9dbf35a71b9d28e5"
+        },
+        "provider_authority": false,
+        "publication_allowed": false,
+        "qualifier_process_maxrss_kib_after": 470276,
+        "qualifier_process_maxrss_kib_before": 470276,
+        "role": "fresh_source_projection_under_external_host_custody",
+        "root_anchor_complete": false,
+        "rows": 167942,
+        "runtime_source_equivalence_qualified": false,
+        "source_projection_qualified_as_Wine_metadata": false,
+        "vector_sha256": "468753347e835468ef1f2e481ff9e5a61ffd0194d3b0e590046208af341cf55e",
+        "whole_preflight_seconds": 56.079222
+      },
+      "status": "failed"
+    },
+    "actual_Wine_source_review": {
+      "branch": "codex/native-client-metadata-capture-wine-037",
+      "final_freeze": {
+        "bytes": 3574,
+        "sha256": "549e8b7d2a717f12a7306b2c29439500c68b0935942e2e62d73595001e56826c"
+      },
+      "format": 1,
+      "independent_host_tests": {
+        "command": "PYTHONPATH=tools python3 -W error::ResourceWarning -m unittest test_native_client_startup test_native_client_folder_sort_wine test_native_client_wfd_probe test_native_client_census_observed_bridge test_qualify_native_client_metadata_capture_wine -q",
+        "errors": 0,
+        "failed": 0,
+        "passed": 93,
+        "seconds": 0.42,
+        "skipped": 0
+      },
+      "intended_parent": "4e3188d7dffd2790bbc73e49f9e3fa55df90f016",
+      "prior_freeze_note": "Initialf642d229 source superseded only by stdlib-only workflow-control test adjustment. Approval binds final549e8b7d pins.",
+      "reviewed_at_UTC": "2026-10-14T03:20:19.600238+00:00",
+      "reviewed_scope": [
+        "Exact existing11866594540 capture Game/probe and original public036 donor/source/DLL/package authority authenticated; no native compile or successful build replay",
+        "One actual complete provider, retained2 launches followed by same capture executable disabled/enabled observations and separate actual native WFD probe, all on the exact same closed owned prefix",
+        "Optional prefix_created callback immediately after private mkdir and before Wine hands held FD/dev/inode/UID custody to outer finalizer; injected optional-inner-finalizer and probe-timeout failures verify exact cleanup and durable current outer reports; legacy callers retain prior default",
+        "Fresh producer c0 scan/encode uses complete selected branches/ancestor/alias facts twice plus post-probe/post-Game rechecks; direct source projection does not claim Android recipe validation, Wine/FEX mapping authority or zero-walk source equivalence",
+        "Bridge validates bounded64MiB/16384-directory/200000-row COHCNS1 graph and actual WFD graph/readability/canonical fields; preserves original native arrivals while recording order differences; comparison qualifies only consumed names, masked attributes, size-low and write-FILETIME",
+        "Creation/access/shortname/high-size/root parity and native timestamp conversion execution are explicitly unqualified; opaque generation binds observed operation, not provider permission",
+        "Actual native PIG index has current console/PID/generation and authenticated archive byte custody; full provider selection/nonoverlap/replay authority remains absent",
+        "Stat snapshots require exact dense5-branch groups, bounded16 snapshots and monotonic individual uint64 fields; no coherent in-flight sums or final-all-thread totals are fabricated",
+        "Current Game window/console PID, registry, all-data/mainloop, software renderer, positive login OCR, logical cardinality, warmed BIN byte compatibility and immutable provider/auxiliary metadata/bytes gates retained",
+        "Whole fresh scan/encode/probe/texture-rebinding/custody and native observation clocks and qualifier max-RSS recorded separately; ordered warm softwareGL observations are not device/performance or runtime-Game memory claims"
+      ],
+      "reviewer": "client_harness_review",
+      "scope_limits": {
+        "Android_Wine_FEX_PRRoot_mapping_qualified": false,
+        "character_login_attempted": false,
+        "native_registration_allowed": false,
+        "native_replay_executed": false,
+        "new_Wine_or_Game_execution_by_reviewer": false,
+        "new_native_build_or_download_by_reviewer": false,
+        "optimization_benefit_claimed": false,
+        "physical_device_executed": false,
+        "player_or_SQL_access_or_mutation_by_reviewer": false,
+        "provider_authority": false,
+        "publication_allowed": false,
+        "runtime_source_equivalence_qualified": false,
+        "source_edits_by_reviewer": false,
+        "world_entry_executed": false
+      },
+      "source_pins_unchanged_after_tests": {
+        ".github/workflows/android-native-client-metadata-capture-wine.yml": {
+          "bytes": 7405,
+          "sha256": "c4caacfdd585fd4214354e5e10b839e543689dcd2c84841b8ef7c45540f2317e"
+        },
+        "android/guest/folder_cache_census.py": {
+          "bytes": 28288,
+          "sha256": "dc0095786096b0da3942081bf059ef977055af4c7002e9200d61c2214cf25075"
+        },
+        "database/client-folder-sort/overlay/coh_folder_metadata_sort.h": {
+          "bytes": 4584,
+          "sha256": "4d0fde0af0487f279ad16ff8f3ce85e0040ff6fe01f12cda49d5dc8e103416a4"
+        },
+        "database/client-metadata-census/wine-capture-plan.md": {
+          "bytes": 4204,
+          "sha256": "67c99f21b8e4965f0d347ebf32d9ee0e796a1127b32b20173b75be549948cd76"
+        },
+        "tools/native_client_census_observed_bridge.py": {
+          "bytes": 23951,
+          "sha256": "234d06ae1674ca55c87e881a590ad8d0b6416508fc827a4f217367c086908218"
+        },
+        "tools/package_native_client_folder_sort.py": {
+          "bytes": 17444,
+          "sha256": "2845e3b7e2b79cb62225de039327d25b8760bb15b631e0f05a3e6ef7d36c3acd"
+        },
+        "tools/prepare_native_client_folder_sort_source.py": {
+          "bytes": 13805,
+          "sha256": "503ad5ed738d909983956f502505a061aed7b6e84ccdb68c47da066224af5f34"
+        },
+        "tools/prepare_native_client_profile_fixture.py": {
+          "bytes": 6283,
+          "sha256": "575b6aab7021f6a6a1df2b26e363b31f359fff15cb57a6882a9efb2bc9e77270"
+        },
+        "tools/qualify_native_client_folder_sort_wine.py": {
+          "bytes": 23933,
+          "sha256": "85d0577a92b176807e39552fb4e6954fa9124312322fdcb4233732fedb85794a"
+        },
+        "tools/qualify_native_client_metadata_capture_wine.py": {
+          "bytes": 25192,
+          "sha256": "3bf0643687b10137f399c667e0da0e4d3e8e0a8a1af6880457ba18c458baa5a5"
+        },
+        "tools/qualify_native_client_startup.py": {
+          "bytes": 36375,
+          "sha256": "70abc75bfcd50c3d518beeb3dbab065e2fcb52fb503aea96f21d0877b7e5c644"
+        },
+        "tools/reuse_native_startup_profile.py": {
+          "bytes": 7698,
+          "sha256": "c279af199cfe1c509769f1d5c2bd2b47f123a36e1531d8981e9b17be176030cd"
+        },
+        "tools/test_native_client_census_observed_bridge.py": {
+          "bytes": 18895,
+          "sha256": "4b509baf5f7a14636eea7c5c6d457fb5d4df9214cd5135ec8f6c9cb5bbacbd9c"
+        },
+        "tools/test_native_client_folder_sort_wine.py": {
+          "bytes": 12514,
+          "sha256": "5fbf9648268acfd443ae7a8859315deeecd9ec31d99c8ba8fe95ec86a714b6f2"
+        },
+        "tools/test_native_client_startup.py": {
+          "bytes": 23278,
+          "sha256": "8ea89654eeff5180d9ea61b1467aaf6440ca947c7e0ab4cd8f8571141ee99ef8"
+        },
+        "tools/test_qualify_native_client_metadata_capture_wine.py": {
+          "bytes": 12359,
+          "sha256": "76ffc13037428fb32315e5807e9cea9bb6a7a5a55410b33c7b448ac18e801ba3"
+        }
+      },
+      "status": "approved_for_actual_observational_Wine_qualification_only",
+      "workflow_YAML_independently_parsed": true,
+      "workflow_embedded_Python_compiled": 3
+    },
+    "actual_b323_failure_and_partial_readiness": {
+      "Db_dispatch_at_failure_capture": {
+        "loop_count": 4387,
+        "main_thread_id": 2952,
+        "raw_record_sha256": "1be6ec53537ca00f4dc6ff9ea2eb1b08386bbe24582f528ed46c915aaa6df514",
+        "sequence": 245644,
+        "stage": 13,
+        "windows_pid": 2304
+      },
+      "Db_ready_baseline": {
+        "loop_count": 12,
+        "main_thread_id": 2952,
+        "raw_record_sha256": "05bbd13270c35ba19bc9051f97cd99e24b29e84958a14a71b9993b19810583f1",
+        "sequence": 644,
+        "stage": 13,
+        "windows_pid": 2304
+      },
+      "Map_memory": {
+        "Linux_RSS_PSS_measured": false,
+        "Thor_measured": false,
+        "omitted_samples": 0,
+        "sample_bound": 128,
+        "sample_count": 15,
+        "samples": [
+          {
+            "elapsed_seconds": 0.172,
+            "lifetime_peak_commit_bytes": 21598208,
+            "lifetime_peak_working_set_bytes": 16601088,
+            "private_commit_bytes": 21573632,
+            "working_set_bytes": 16601088
+          },
+          {
+            "elapsed_seconds": 1.187,
+            "lifetime_peak_commit_bytes": 181579776,
+            "lifetime_peak_working_set_bytes": 182296576,
+            "private_commit_bytes": 171143168,
+            "working_set_bytes": 172511232
+          },
+          {
+            "elapsed_seconds": 2.203,
+            "lifetime_peak_commit_bytes": 366469120,
+            "lifetime_peak_working_set_bytes": 365715456,
+            "private_commit_bytes": 366469120,
+            "working_set_bytes": 365715456
+          },
+          {
+            "elapsed_seconds": 3.234,
+            "lifetime_peak_commit_bytes": 433131520,
+            "lifetime_peak_working_set_bytes": 430858240,
+            "private_commit_bytes": 433131520,
+            "working_set_bytes": 430858240
+          },
+          {
+            "elapsed_seconds": 4.25,
+            "lifetime_peak_commit_bytes": 677744640,
+            "lifetime_peak_working_set_bytes": 669593600,
+            "private_commit_bytes": 604082176,
+            "working_set_bytes": 595841024
+          },
+          {
+            "elapsed_seconds": 5.265,
+            "lifetime_peak_commit_bytes": 758988800,
+            "lifetime_peak_working_set_bytes": 748969984,
+            "private_commit_bytes": 758988800,
+            "working_set_bytes": 748969984
+          },
+          {
+            "elapsed_seconds": 6.297,
+            "lifetime_peak_commit_bytes": 906682368,
+            "lifetime_peak_working_set_bytes": 891658240,
+            "private_commit_bytes": 888991744,
+            "working_set_bytes": 874000384
+          },
+          {
+            "elapsed_seconds": 7.312,
+            "lifetime_peak_commit_bytes": 1180520448,
+            "lifetime_peak_working_set_bytes": 1159454720,
+            "private_commit_bytes": 1180520448,
+            "working_set_bytes": 1159454720
+          },
+          {
+            "elapsed_seconds": 8.328,
+            "lifetime_peak_commit_bytes": 1188610048,
+            "lifetime_peak_working_set_bytes": 1162424320,
+            "private_commit_bytes": 1188610048,
+            "working_set_bytes": 154820608
+          },
+          {
+            "elapsed_seconds": 9.343,
+            "lifetime_peak_commit_bytes": 1416130560,
+            "lifetime_peak_working_set_bytes": 1162424320,
+            "private_commit_bytes": 1416105984,
+            "working_set_bytes": 422100992
+          },
+          {
+            "elapsed_seconds": 10.375,
+            "lifetime_peak_commit_bytes": 1475051520,
+            "lifetime_peak_working_set_bytes": 1162424320,
+            "private_commit_bytes": 1475051520,
+            "working_set_bytes": 483221504
+          },
+          {
+            "elapsed_seconds": 11.39,
+            "lifetime_peak_commit_bytes": 1582940160,
+            "lifetime_peak_working_set_bytes": 1162424320,
+            "private_commit_bytes": 1582899200,
+            "working_set_bytes": 590188544
+          },
+          {
+            "elapsed_seconds": 12.422,
+            "lifetime_peak_commit_bytes": 1682399232,
+            "lifetime_peak_working_set_bytes": 1162424320,
+            "private_commit_bytes": 1681055744,
+            "working_set_bytes": 691392512
+          },
+          {
+            "elapsed_seconds": 13.437,
+            "lifetime_peak_commit_bytes": 1691193344,
+            "lifetime_peak_working_set_bytes": 1162424320,
+            "private_commit_bytes": 1688649728,
+            "working_set_bytes": 698945536
+          },
+          {
+            "elapsed_seconds": 14.468,
+            "lifetime_peak_commit_bytes": 1695780864,
+            "lifetime_peak_working_set_bytes": 1162424320,
+            "private_commit_bytes": 1634234368,
+            "working_set_bytes": 717389824
+          }
+        ],
+        "source": "GetProcessMemoryInfo on retained Popen native process handle"
+      },
+      "Map_owned_process": {
+        "elapsed_seconds": 14.515,
+        "exit_code": null,
+        "held_windows_pid": 8136,
+        "kernel_cpu_seconds": 2.34375,
+        "source": "GetProcessTimes on retained Popen native process handle",
+        "user_cpu_seconds": 10.28125
+      },
+      "Map_progress_after_failure_status_query": {
+        "decoded_record": {
+          "main_thread_id": 8140,
+          "raw_record_hex": "434f484d415031000100000080000000c81f0000cc1f00000802000024000000100000001000000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "raw_record_sha256": "e60445ecfb4dd82cd1e6747e6625925ec3e7de5307920606c124ad0964799229",
+          "sequence": 520,
+          "stage": "SLEEP",
+          "tick_completed": 16,
+          "tick_started": 16,
+          "windows_pid": 8136
+        },
+        "held_process_exit_code": null,
+        "held_windows_pid": 8136,
+        "mapping_bytes": 4096,
+        "mapping_present": true,
+        "raw_record_hex": "434f484d415031000100000080000000c81f0000cc1f00000802000024000000100000001000000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "raw_record_sha256": "e60445ecfb4dd82cd1e6747e6625925ec3e7de5307920606c124ad0964799229",
+        "stable_read": true
+      },
+      "Map_progress_before_failure_status_query": {
+        "decoded_record": {
+          "main_thread_id": 8140,
+          "raw_record_hex": "434f484d415031000100000080000000c81f0000cc1f000054010000240000000a0000000a00000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "raw_record_sha256": "e23f30b1283d75282693734d17bf1bcc3ee22e1f2be92fb53916c034a0ec19bb",
+          "sequence": 340,
+          "stage": "SLEEP",
+          "tick_completed": 10,
+          "tick_started": 10,
+          "windows_pid": 8136
+        },
+        "held_process_exit_code": null,
+        "held_windows_pid": 8136,
+        "mapping_bytes": 4096,
+        "mapping_present": true,
+        "raw_record_hex": "434f484d415031000100000080000000c81f0000cc1f000054010000240000000a0000000a00000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "raw_record_sha256": "e23f30b1283d75282693734d17bf1bcc3ee22e1f2be92fb53916c034a0ec19bb",
+        "stable_read": true
+      },
+      "actual_native_stdout": {
+        "bytes": 110320,
+        "sha256": "ced4a8bb63b58e496f6a2467938e621af9550b5154ca24f4d1288a493624c459"
+      },
+      "artifact": {
+        "bytes": 4582240,
+        "sha256": "f6d50773cbeab72ff9afd989e95348fd4481f1f9bc8ebdd67338661f835bde77"
+      },
+      "artifact_id": 11866634892,
+      "cache_byte_delta": {
+        "added": {},
+        "changed": {},
+        "removed": {}
+      },
+      "complete_cache_mtime_census_preserved": false,
+      "derived_observation_parser_source": {
+        "bytes": 81189,
+        "sha256": "814b01b739d1fed55ecafb739c8dba58c421c0cf74ce2aab825a018cac9aa290"
+      },
+      "failed_case": "1-server_only-baseline-forward",
+      "first_ready_observation": {
+        "Map_progress": {
+          "main_thread_id": 8140,
+          "raw_record_hex": "434f484d415031000100000080000000c81f0000cc1f00008200000024000000030000000300000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "raw_record_sha256": "b0e39643842be66c4de56937248940d6ed0d6108ab10331f7dc25d1fbeffd899",
+          "sequence": 130,
+          "stage": "SLEEP",
+          "tick_completed": 3,
+          "tick_started": 3,
+          "windows_pid": 8136
+        },
+        "Server_ready_stdout_observed": true,
+        "elapsed_Map_seconds": 14.265,
+        "held_Map_windows_pid": 8136,
+        "observed_utc_ms": 1791946590531
+      },
+      "format": "coh-native-map-world-b323-framing-failure-recovery-v1",
+      "framing_diagnosis": {
+        "known_prefixed_rows": [
+          {
+            "raw_line_offset_bytes": 65046,
+            "raw_line_sha256": "ad8dc27e0a5242dc0c617e24b381c74ffd12571de119079ac015dee16ed98e91",
+            "raw_marker_offset_bytes": 65102,
+            "removed_exact_prefix": "loading map: maps/City_Zones/City_01_01/City_01_01.txt.."
+          }
+        ],
+        "legacy_native_parser_changed": false,
+        "native_profiler_bounds_unchanged": true,
+        "native_rows_or_ordinals_rewritten": false,
+        "original_stdout": {
+          "bytes": 110320,
+          "sha256": "ced4a8bb63b58e496f6a2467938e621af9550b5154ca24f4d1288a493624c459"
+        },
+        "selected_map_id": 1,
+        "stock_loadstart_source": {
+          "bytes": 44795,
+          "sha256": "b48bb24ed28ce8e375c9a68425d8d86d647d7a412c0be079951b19600d1a39e3"
+        },
+        "validated_framed_view": {
+          "bytes": 110264,
+          "sha256": "52efc5780d6f961c87d56a89e1cb8042e22a778cdda241672bf323a0ad17e052"
+        }
+      },
+      "fresh_behavioral_collision_proven": false,
+      "fresh_complete_cases": 0,
+      "inherited_cases": 1,
+      "inherited_parser_timing_annotation_preserved": "host_Wine_wall_time_not_Android_or_Thor",
+      "native_Db_status": {
+        "address": "127.0.0.1",
+        "map_id": 1,
+        "native_response_sha256": "04496dc564112c6196a4ada8dbab4138886931d2d1ab132b7500c013bd88c3bb",
+        "network_age_seconds": 0,
+        "port": 7001,
+        "stats_age_seconds": 0,
+        "world": "City_01_01"
+      },
+      "native_build_repeated": false,
+      "native_execution_platform": "Windows GitHub Actions hosted runner",
+      "native_world_markers": {
+        "PhysX_objects": 2311,
+        "UDP_loopback_endpoint_verified": true,
+        "behavioral_collision_proven": false,
+        "initialization_geometry_parity_only": true,
+        "map_id": 1,
+        "native_console_startup_seconds": 14.052629,
+        "ordered_world_phases": true,
+        "udp_port": 7001,
+        "world": "City_01_01"
+      },
+      "original_case_count": 1,
+      "original_failures": [
+        "ValueError: Native freshness ordinals differ"
+      ],
+      "original_job_id": 115644491594,
+      "original_report": {
+        "bytes": 3151476,
+        "sha256": "44e48a3ec17a0930c72d6790f6dc8463035cc9f2720f29b010e1b562b353a364"
+      },
+      "original_result": "failed",
+      "original_run_id": 38499817621,
+      "original_source": "b3239ed001cd75a92910731710b7675506cf1944",
+      "original_source_delta": {
+        "added": {},
+        "changed": {},
+        "removed": {}
+      },
+      "owned_cleanup_verified": true,
+      "physical_device_executed": false,
+      "player_profile_opened": false,
+      "prepared_provider_repeated": false,
+      "reason_warm_case_not_inherited": "Captured failure lacks a complete after-cache-mtime census; real native readiness and unchanged bytes alone do not satisfy the warm-cache admission gate.",
+      "resume_requirement": "The already authenticated 04b stock generation remains inherited with its original source/timestamps. All 15 fresh complete cases remain required.",
+      "shipping_allowed": false,
+      "strict_framed_freshness_rows": 256,
+      "strict_framed_profile_rows": 259,
+      "synthetic_SQL_unchanged": {
+        "current_canonical_sha256": "b48ae05e0256642a1df7c0327d7cb8623d71fa4d6b669df7fe7b22c3dfe71abe",
+        "original_canonical_sha256": "b48ae05e0256642a1df7c0327d7cb8623d71fa4d6b669df7fe7b22c3dfe71abe",
+        "scope": "new_disposable_fixture_only",
+        "unchanged": true
+      },
+      "timing_scope": "host_Windows_wall_time_not_Android_or_Thor",
+      "warm_case_admitted_passed": false
+    },
+    "actual_routing_and_legacy_recovery": {
+      "cancelled_prior_run": {
+        "FX_job": 115642536500,
+        "FX_job_conclusion": "cancelled",
+        "conclusion": "cancelled",
+        "full_FX_qualification_accepted": false,
+        "head": "bc74b08e75d5da7187f99658d2c04dd509a325fb",
+        "id": 38497850809,
+        "native_job": 115637623653,
+        "native_job_conclusion": "success"
+      },
+      "checks": [
+        {
+          "artifacts": [
+            {
+              "bytes": 828,
+              "id": 11866710191,
+              "name": "coh-map-startup-change-scope",
+              "producer_head": "f6aabde3a3438f58128359fa3f019664ae391b45",
+              "sha256": "5ca6180be341314c976f0dee6daf67af00dc35de2a60100c652876e30a13fc9f"
+            }
+          ],
+          "commit": "f6aabde3a3438f58128359fa3f019664ae391b45",
+          "jobs": [
+            {
+              "conclusion": "success",
+              "id": 115649670338,
+              "name": "change-scope",
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "id": 115649744454,
+              "name": "native",
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "id": 115649745102,
+              "name": "fx-native",
+              "status": "completed"
+            }
+          ],
+          "local_actual_Git_matches_authenticated_CI_decision": true,
+          "run_id": 38501519757,
+          "run_url": "https://github.com/Russianranger/coh-android/actions/runs/38501519757",
+          "scope_native_required": false
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 969,
+              "id": 11865889368,
+              "name": "coh-map-startup-change-scope",
+              "producer_head": "78dec23af21b346ef4882eee53c1a8e41944858b",
+              "sha256": "7c226dbf0176ab80a2aa591ef7f6e29e4aee8840f3095b030f845ee768a953fe"
+            }
+          ],
+          "commit": "78dec23af21b346ef4882eee53c1a8e41944858b",
+          "jobs": [
+            {
+              "conclusion": "success",
+              "id": 115654214294,
+              "name": "change-scope",
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "id": 115654263235,
+              "name": "native",
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "id": 115654263644,
+              "name": "fx-native",
+              "status": "completed"
+            }
+          ],
+          "local_actual_Git_matches_authenticated_CI_decision": true,
+          "run_id": 38503054327,
+          "run_url": "https://github.com/Russianranger/coh-android/actions/runs/38503054327",
+          "scope_native_required": false
+        }
+      ],
+      "format": 1,
+      "native_Game_Wine_or_Thor_execution_by_recovery": false,
+      "new_native_or_APK_build_requested": false,
+      "new_shipping_components_admitted": false,
+      "qualification_scope": "workflow_routing_and_artifact_preservation_only",
+      "status": "actual_workflow_guard_verified_and_prior_partial_native_artifacts_preserved"
+    },
+    "component_and_execution_authorities": null,
+    "current_actual_world_run": {
+      "Windows_job_id": 115661338474,
+      "final_artifact": null,
+      "remaining_required_fresh_native_cases": 15,
+      "run_id": 38505018109,
+      "separate_inherited_original_stock_cases": 1,
+      "source": "3a713dc278d9247a65fb2357447adb5353c0a577",
+      "status_at_checkpoint": "in_progress"
+    },
+    "foundation_commit": "78dec23af21b346ef4882eee53c1a8e41944858b",
+    "native_promotions_enabled": false,
+    "normalizer_freeze": {
+      "base_commit": "78dec23af21b346ef4882eee53c1a8e41944858b",
+      "format": 1,
+      "fresh_host_tests": {
+        "all_two_source_pins_unchanged": true,
+        "errors": 0,
+        "failures": 0,
+        "log": {
+          "bytes": 11008,
+          "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/native-cache-reviewed-framing-identity-host-tests.log",
+          "sha256": "c076f9b3957b2f4c3ea2d6b7de6b0e28275f4458271b9e60b3ba38366de33f3b"
+        },
+        "native_Game_Map_Wine_processes_executed": 0,
+        "normalizer_cases": 22,
+        "retained_Map_adapter_cases": 26,
+        "skips": 0,
+        "total": 48,
+        "unittest_seconds": 46.136,
+        "wall_seconds": 47.29848950899759
+      },
+      "patch": {
+        "bytes": 6005,
+        "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/native-cache-reviewed-framing-identity.patch",
+        "sha256": "aa0404f935ba3396ef9edb4d74c806983ac66a04f3a71565c53f1db017c8f8a1"
+      },
+      "paths": {
+        "tools/android/interactive/derive_native_metadata_cache_proof.py": {
+          "bytes": 48270,
+          "sha256": "a1db9ed91f8a21c012088d541d3c6e751f491b7a25694b1a09f645ba9f995389"
+        },
+        "tools/android/interactive/test_derive_native_metadata_cache_proof.py": {
+          "bytes": 35798,
+          "sha256": "1b2c45beb6b63bfcece653a1c89c221855db404ef0104b9b4b8af05df572aec7"
+        }
+      },
+      "pending_actual_world": {
+        "artifact_id": null,
+        "artifact_zip": null,
+        "expected_fresh_native_cases": 15,
+        "expected_inherited_native_cases": 1,
+        "native_job_id": 115661338474,
+        "run_id": 38505018109,
+        "source": "3a713dc278d9247a65fb2357447adb5353c0a577",
+        "status": "pending"
+      },
+      "reviewed_qualifier": {
+        "git_blob": "0c516acea8a87d06cc0e1479d25b53ac682403b9",
+        "path": "tools/android/interactive/qualify_native_map_world_037.py",
+        "pin": {
+          "bytes": 81189,
+          "sha256": "814b01b739d1fed55ecafb739c8dba58c421c0cf74ce2aab825a018cac9aa290"
+        },
+        "repository_commit": "3a713dc278d9247a65fb2357447adb5353c0a577"
+      },
+      "role": "inactive_normalizer_reviewed_world_qualifier_identity_and_metrics_annotation",
+      "scope": {
+        "actual_failed_b323_receipt_refused": true,
+        "b323_ready_partial_witness_not_admitted_as_complete_warm_case": true,
+        "component_and_execution_authorities": null,
+        "controlled_fixture_metrics_label": "unexecuted_controlled_world_fixture_no_native_timing_measurement",
+        "current_unexecuted_fixture_cannot_relabel_b323_source_as_reviewed_3a": true,
+        "derived_actual_world_metrics_label": "actual_Windows_wall_time_not_Android_or_Thor",
+        "final_actual_world_artifact_authenticated": false,
+        "final_proof_derived": false,
+        "legacy_shared_parser_timing_scope_rewritten": false,
+        "native_promotions_enabled": false,
+        "original_04b_Pig_preload_donor_native_cache_and_lineage_rules_unchanged": true,
+        "publication_enabled": false,
+        "qualification_enabled": false,
+        "qualifier_two_identity_constants_updated": true,
+        "runtime_cache_proof_derivation": null
+      },
+      "worktree": "/workspace/scratch/5d16603ca7ff/publication-037-framing"
+    },
+    "owned_inotify_generation_lease_research": {
+      "freeze": {
+        "document_only_review_corrections": [
+          "per-real-UID watch/instance limits versus per-instance queue limit",
+          "per-path watch attempts distinguished from actual inode-based marks",
+          "actual Termux PRoot repository URL",
+          "controlled kernel execution attributed to author; no independent native qualification"
+        ],
+        "format": 1,
+        "full_provider_watch_count_established": false,
+        "native_registration_allowed": false,
+        "physical_device_qualification": false,
+        "production_authority": null,
+        "repository_head": "78dec23af21b346ef4882eee53c1a8e41944858b",
+        "source_and_evidence": [
+          {
+            "bytes": 21844,
+            "path": "docs/IMMUTABLE_PROVIDER_INOTIFY_LEASE_RESEARCH.md",
+            "sha256": "f35b08ef08fa99bb1660e699384bddc6e6be67fa83fa4efe7ad8eff74b629c83"
+          },
+          {
+            "bytes": 18154,
+            "path": "tools/android/interactive/inotify_lease_kernel_experiment.py",
+            "sha256": "5c205aee8bbc487764c850cd3cf0609a0f83b4fa3c7c841cbbf5f28cf2dc6396"
+          },
+          {
+            "bytes": 14211,
+            "path": "docs/android-evidence/inotify-lease-controlled-kernel.json",
+            "sha256": "cf7bbc875bcd08f30e312ea620b8875a4854d8c49f6abccfe88fba33248f2627"
+          },
+          {
+            "bytes": 25311,
+            "path": "docs/android-evidence/inotify-lease-android-source-review.json",
+            "sha256": "068cf281902f13411a04963b9194e5411003405bdf68e62f2a648226872872f6"
+          }
+        ],
+        "stage": "nonshipping_source_research"
+      },
+      "freeze_pin": {
+        "bytes": 1421,
+        "sha256": "25c3d417ab4b1ec466638b77e10913f2f43fcfa6fd111238cc327849a0fa60dc"
+      },
+      "physical_speed_or_memory_benefit_claimed": false,
+      "preserved_source_and_evidence": {
+        "docs/IMMUTABLE_PROVIDER_INOTIFY_LEASE_RESEARCH.md": {
+          "contents": "# Immutable-provider inotify lease: closed research stage\n\nInspected repository: `78dec23af21b346ef4882eee53c1a8e41944858b`.\nThis work is isolated in `inotify-lease-037`. It changes no shipping code,\nplayer data, database, assets, native producer or APK. There is no production\nauthority or native registration. The controlled kernel experiment is source\nresearch, not Android, Wine, Game, MapServer or AYN Thor qualification.\n\n## Decision\n\nA live, bounded raw-inotify owner could avoid repeating an already authenticated\nprovider-generation census during Game or MapServer process restarts in one\nowned operation. It does not currently authorize that shortcut. Complete\nwriter exclusion, alias custody, current native/Wine metadata parity and the\nprovider/PIG contract are still required. Monitoring alone is insufficient.\n\nDo not keep an always-running watcher or change the app's service lifetime in\nthis release. Begin with an explicitly qualified, same-operation experiment.\nA new Android process, closed monitor FD, guest termination, reader failure,\nboot or other blind interval requires a fresh epoch and authentication. A saved\n\"clean\" receipt cannot replace a live owner.\n\nThe first full seed must not become another four-minute preparation stage.\nCurrent production does not contain a complete authenticated continuous-watch\nseed for the existing import. Its historical completed import receipt and\nserver-cache anchors cannot manufacture one. Where the current operation is\nalready making a complete authenticated leaf observation, fuse that work with\nwatch installation and the seed certificate. Otherwise retain the ordinary\nqualified path; do not add mandatory whole-tree hashing just to enable an\noptional optimization. Any proposed new full seed must be measured as part of\nthe complete reopen/zoning operation before admission.\n\n## What the actual code permits\n\n| Existing component | Relevant behavior | Lease implication |\n|---|---|---|\n| `ClientRuntime.begin()` / `endOperation()` | Java class monitor serializes the current process's operations, then releases ownership | Useful admission barrier, but not a provider-wide reader/writer lock or cross-process exclusion |\n| `ClientService` | Ends foreground ownership, clears runtime and calls `stopSelf()` after completion; returns `START_NOT_STICKY` | No continuously owned monitor between current reopen operations |\n| PRoot launch | Uses `--kill-on-exit`; guest UID/path translation does not create a distinct kernel UID | A monitor inside the existing guest cannot outlive that operation |\n| `AtlasAssetImporter.inspect()` | Briefly takes import lock and reads completed-generation pointer/receipt; does not rehash all leaves | Pointer receipt is provenance, not a new current full-leaf proof |\n| Asset importer/archive locks | Lock their own import transactions | No common barrier covers native consumers, runtime setup, normalization or all supplements |\n| `prepare_worktree()` | Cold preparation changes source mtimes/permissions and creates immutable links plus private caches | Seed only after these mutations are complete |\n| `prepare_client_visual_inputs()` | Finalizes visual, animation/PIG, zone and audio inputs | Same-operation sealing hook is after this method, before texture preparation/Game launch |\n| Server-data cache | Checkout/return renames a private data tree and writes ownership receipts | These change a consumer view; they cannot silently preserve its path/topology lease |\n| Animation installer | Publishes an owned symlink to a qualified PIG and a marker; supports rebinding | Both link membership and resolved resource/marker custody must be watched and authenticated |\n| Zone package | Authenticated content-store archives intentionally share hardlinks | Do not forbid known links by assumption or create copies to evade alias proof |\n\nThe exact proposed hook is in `CharacterCreationDiagnostic.start_wine()`:\n`prepare_client_visual_inputs()` returns after all optional supplements, then\n`TextureHeaderPreparation` starts. Base worktree creation is too early.\nFull-source file pins and primary Android/PRoot source pins are recorded in\n`android-evidence/inotify-lease-android-source-review.json`.\n\n## Safety model and the asynchronous delivery race\n\nUse two separate concepts: an authenticated generation, and a live permission\nto reuse that generation. The former binds the complete finite source inventory,\ncontent/schema/provider recipe, metadata, aliases and consumer compatibility.\nThe latter exists only while a proven owner excludes writers and continuously\nmonitors the same source and view. Inotify revokes permission; it does not\nauthenticate bytes, identify writers or synchronously block writes.\n\nThe controlled `event_delivery_race` case completes a file write while a\nuserspace epoch remains valid and its cached digest is stale. Draining then\nobserves the write and invalidates the epoch. Checking an atomic valid flag,\ndraining immediately before a lookup, using epoll, or scheduling the watcher\nat high priority does not close the interval after that check. The caller must\nhold independently enforced reader permission that prevents managed mutations\nfor the complete native consumption lifetime.\n\nA future common provider coordinator would offer these conceptual operations:\n\n* `beginWriter(scope, operation)` synchronously revokes all affected epochs and\n  prevents new readers **before** opening a writable descriptor, chmod, link,\n  rename, replacement or mapping. It waits for affected existing readers to\n  finish safely before mutation. Event attribution is not used to excuse a\n  managed writer's events.\n* `authenticateAndSeal(scope, owner)` requires exclusive writer exclusion,\n  complete watches and full current authenticated observations. It returns an\n  opaque epoch bound to the actual process instance/UID and generation recipe.\n* `acquireReader(epoch, consumer, operation)` checks current owner, full source\n  and view recipe, complete monitor health, no pending revocation, and native\n  compatibility. The acquired permission excludes managed writers while the\n  native consumer can use the cached metadata or read certified inputs.\n* `releaseReader()` occurs only after the appropriate owned consumer has stopped\n  or the implementation has otherwise proved that it can no longer use the\n  leased inputs. Failed process cleanup blocks reuse and writer admission.\n* `revoke(reason)` is terminal for that epoch. The same epoch is never repaired\n  from event counts, rename pairing or selected anchors.\n\nThis is a design API, not implemented authority. Auditing only FolderCache's\nreadonly opens is insufficient: all Game/MapServer/Wine/FEX/helper accesses to\ncertified inputs must obey the same writer policy. Current code has no common\nenforced coordinator. Readonly permission bits are useful custody facts, but\nthe owner can chmod them; an earlier writable FD or shared mmap remains a\nblocker. Unknown writers, undiscoverable descriptors/mappings, unqualified\nnative consumers, writable imported inputs, new mounts or incomplete alias\ncustody always select the ordinary path. A best-effort `/proc` scan is not a\nproof of absence and must not turn permission failures into \"no writers\".\n\nAn unexpected mutation while a purported readonly reader is active proves that\nthe admission premise failed. Revoke new optimization claims and preserve an\nexportable diagnostic. The application must follow its existing safe owned\nfailure/character-preservation path; this research grants no permission to\nmodify SQL, relocate a character, kill unrelated processes or rewrite assets.\n\n## Closed lease state machine and seed protocol\n\nStates are `UNSEALED -> OBSERVING -> AUTHENTICATING -> SEALED -> REVOKED`.\nOnly a new FD and new nonce can leave `REVOKED`; persisted receipts are never\nrestored as `SEALED`.\n\n1. Acquire the common managed-writer exclusion and establish the exact known\n   owner/session/process-instance, real UID, boot/mount context and scope. All\n   consumer, runtime, provider, import, PIG, exclusion and normalization recipe\n   identities remain separately authenticated. No actor identity is inferred\n   from events.\n2. Create one owned raw inotify FD with `IN_CLOEXEC | IN_NONBLOCK`. Start its\n   continuous reader before populating the watch graph. Check every add-watch\n   result. Any fd/read failure, unknown mask, malformed/truncated event,\n   descriptor-map conflict or resource failure closes admission.\n3. Discover and watch every directory in the five selected immutable branches:\n   `texture_library`, `object_library`, `fx`, `scripts`, **`scripts.loc`**. Watch\n   all resolved imported-target directories, supplement/resource directories,\n   known hardlink/symlink alias parents, the PIG namespace/marker and generation\n   pointer/receipt ancestry. Use nofollow/only-directory admission and verify\n   before/after identities; identical inode watches may be shared only with an\n   explicit identity-bound canonical alias mapping and unmodified mask.\n4. Watch-install discovery is not authentication. Before any native callback,\n   perform the complete current authenticated seed after complete coverage;\n   bracket it with the fresh metadata/membership/ancestor passes and event\n   observation. Any topology change during coverage or seed revokes the\n   candidate. Do not patch in a newly created subdirectory and claim the old\n   epoch remained complete. An uncovered interval is acceptable only before\n   authority exists, and all of its resulting state must be authenticated in\n   the final complete seed under writer exclusion.\n5. Validate the same complete graph, source/alias fingerprints, UID/modes,\n   runtime and consumer pins, source/PIG generation/order, exact native Win32\n   consumed fields/readability and exclusion policy. An old THI1 file, raw\n   native count, PIG member list supplied by a caller, import count receipt or\n   historical cache hash cannot substitute for these facts.\n6. Drain and verify monitor health while the writer lock remains held; publish\n   the immutable epoch and acquire reader permission before releasing the\n   seeding transaction. A drain is necessary monitoring hygiene, not the\n   synchronous writer barrier. The native adapter still receives its explicit\n   current lease callback, exact token and consumer/provider recipe.\n7. Continue draining while readers hold the source. Any relevant `IN_MODIFY`,\n   `IN_CLOSE_WRITE`, `IN_ATTRIB`, create/delete/rename, self move/delete,\n   `IN_UNMOUNT`, `IN_IGNORED`, `IN_Q_OVERFLOW` or owner/channel/watch loss revokes.\n   Unexpected descriptor reuse or a stale descriptor-map event also revokes.\n   Overflow is global (`wd=-1`), not a directory-specific omission.\n8. Consumer exit can release a reader while the same owner and FD remain live.\n   Source permission may survive a native process restart in that one owner.\n   A different logical worktree path or server-cache checkout/return needs a\n   newly proved **view** lease; unchanged source monitoring alone does not\n   prove that view's topology, PIG mount order or native registration predicate.\n\nA root/ancestor directory watch is partial namespace monitoring, not full\nFolderCache root enumeration. Changes that can affect the GDD/provider recipe\nrevoke the view even when outside the five replayed branches. No metadata lease\nis issued for PostgreSQL, character profiles, Wine state, logs, reports, private\nBIN/dbidmap/geobin outputs or mutable schema/cache files. These remain governed\nby their existing contracts. Native caches, SQL and collision parity are not\nweakened by this proposal.\n\n## Required writer integration\n\nBefore a candidate may seed a lease, route these existing mutations through the\ncoordinator: runtime setup/update and resource replacement; archive import and\nasset-store replacement/hardlink publication; generation retirement/pointer\nswitch; cold source normalization; native executable replacement; avatar/world,\nvisual, zone and audio publication; PIG link/marker publication or rebind; and\nserver-data checkout/return. Serialize competing operations using the existing\nAndroid guard plus the provider coordinator, not an extra silent app timer.\n\nAn Android-side owner must use the real app UID and canonical host app-private\npaths. Current PRoot's `-i 1000:1000` and path bindings do not isolate writers.\nThe pinned PRoot source explicitly translates `inotify_add_watch` paths. A guest\nraw monitor may be useful for an isolated same-operation test, but inherits the\nguest's termination and ownership constraints. A shipping Android coordinator\nwould need a tiny owned NDK/JNI FD reader; Java `FileObserver` is unsuitable for\nauthority because failed watch registration is not exposed and `wd=-1`\noverflow cannot reach its registered observer map in the inspected Android 15\nimplementation. No JNI/helper is built or included here.\n\nThe current service is a `dataSync` foreground service targeting API 35. A\nperpetual keeper would require separately reviewed lifecycle, power, background\npolicy and failure ownership changes. Android may kill the process without\n`onDestroy()`; Android 15 also limits background duration for this service type.\nDo not claim cross-reopen reuse from the current implementation or a host\ndaemon surviving between tests.\n\n## Scope and memory budget\n\nThe actual selected five-branch watch count is **not established locally**. The\nretained CI fixture has no complete on-disk provider tree here. Its next genuine\nWFD/source-generation output can provide exact path counts. The physical .36\nreport recorded 8,116 server immutable-directory checks, but that is neither\nthe selected client branch count nor the complete logical-plus-source alias\nwatch graph. The 173,011 imported file count likewise does not determine the\ndirectory watch count.\n\nFor a future closed prototype, use one FD and a reviewed maximum of 16,384\nunique watched directories including all aliases/ancestors. This is a proposed\nbudget, not activated policy. Refuse complete admission if actual coverage\nexceeds it or the device rejects any watch. Never omit paths to fit the budget,\nraise a sysctl, or replace exact native predicates with a subset. Read and\nreport device `max_user_watches`, `max_user_instances`, `max_queued_events`,\nactual watch-add results and other owner resource usage. Watch and instance\nlimits are per real UID and can be shared with other observers; the event\nqueue limit applies to each new instance. Configured capacity is not proof\nthat all remaining marks are available.\n\nKeep user-space watch IDs/identity records in a bounded packed table, reuse\nalready authenticated canonical path storage where possible, and impose a\nseparate finite path pool (for example 4 MiB packed records plus an 8 MiB pool\nand a 64 KiB drain buffer at that ceiling). These are design caps, not measured\nallocations. Avoid one FD/thread per directory or a second Python full-file\ninventory. Kernel mark/queue memory is device/kernel dependent and has not been\nmeasured. User-space RSS does not count it. The existing bounded census packet\ncan itself approach 64 MiB, independently of normal FolderNodes and Wine RAM.\n\nMonitoring every imported path instead would require 173,011 add-watch attempts\nbefore extras. In a one-inode-per-file layout that would exceed this host's\n80,485-mark configured limit. Actual marks are inode based, aliases can share\nthem, and the complete current unique-inode count has not been established.\nPer-file watches still would not fix mmap blind spots. A narrow directory lease\ntherefore needs actual complete alias custody and managed writer exclusion,\nrather than proposing per-file watches as a generic cure.\n\n## Fresh controlled kernel results\n\nCommand: `python3 -W error::ResourceWarning tools/android/interactive/inotify_lease_kernel_experiment.py --output docs/android-evidence/inotify-lease-controlled-kernel.json`.\nOne execution, source unchanged before/after: **11 passed, 0 failed**, 0.165596 s.\nThe host was Linux 6.18.44, x86_64, UID 0. Only an owned temporary fixture was\nwritten and removed. No sysctl changes, mounts, native compilation, Wine/Game\nexecution or player-data access occurred.\n\n| Controlled case | Actual observation |\n|---|---|\n| Ordinary writes/permissions/create/delete/rename | Relevant events observed; rename cookies paired |\n| Root-only versus recursive coverage | Nested write produced zero parent events; separate child watch observed it |\n| Outside hardlink alias | Zero watched-directory events despite changed bytes; a file inode watch caught ordinary writes/link-count changes |\n| Earlier writable shared mmap, then chmod 0444 | Changed bytes after write/flush; zero mutation events despite both file and directory watches |\n| Imported symlink target | Logical directory alone saw zero target-write events; resolved source watch saw them |\n| Watch move/removal | `IN_MOVE_SELF` and `IN_IGNORED` observed |\n| Overflow | 17,408 alternating chmod calls yielded 16,384 attribute events plus one `IN_Q_OVERFLOW`, `wd=-1`; events were lost |\n| Owner/FD gap | Replacement watcher saw zero historical events although saved digest had become stale |\n| Delivery race | Userspace epoch stayed valid after completed write and stale digest; draining then revoked it |\n| Missing watch path | Raw registration failed with `ENOENT` |\n| 500 directory watch installation | One FD/500 fdinfo marks; add-watch calls 0.001480 s; fixture mkdir 0.032467 s |\n\nHost limits were 80,485 watches, 128 instances and 16,384 queued events. In the\n500-directory case fdinfo occupied 82,272 bytes and process peak RSS remained\n16,640 KiB before/after. The RSS includes Python and earlier cases; it is not a\nkernel memory measurement or a causal claim of zero watch memory. The timed\nadd-watch loop excludes discovery and full authentication. Warm host filesystem\nresults cannot establish Thor startup savings, actual watch capacity, directory\ncoverage, queue behavior, SELinux/PRoot compatibility or restart authority.\n\nThe prior controlled fresh metadata-producer benchmark covered 5,000 leaves\nand only two source passes: direct inputs roughly 0.663\u20130.674 s, all absolute\nsymlinks roughly 1.087\u20131.098 s. That was not an authenticated full 173,011-leaf\nhash, device benchmark or stock native comparison. It cannot excuse moving\nclient startup work into a different preparation label.\n\n## Next qualification gates\n\nKeep this as research until all following gates pass:\n\n1. Exact real normalized/supplemented five-branch/source/PIG directory inventory,\n   closed alias custody, managed writer integration and current native consumer\n   readonly/readability contract. No guessed native member list or prior THI1\n   certificate may open the gate.\n2. Source tests for watch-before-seed changes, newly populated directory gaps,\n   aliases and link-count drift, all mutator pre-revocations, event delivery\n   race, overflow, missing/failed watches, stale descriptor reuse, FD/reader\n   death, instance/UID/boot/mount changes, failed cleanup, and callback admission\n   after revocation. Tests must show refusal and ordinary fallback, not just an\n   optimization counter increment.\n3. Actual Wine WFD consumed-field/readability and native PIG/provider parity on\n   the real provider. Compare ordinary versus replayed complete FolderNodes,\n   hash/tree state and override behavior for all admitted branches. Source\n   tests or a host POSIX projection are not native qualification.\n4. A supervised genuine Game/Map process-restart test with one continuous raw\n   owner, source-only generation reuse and separately proved view/consumer\n   registration. Inject a managed mutation before admission and confirm no\n   cached callbacks run. Preserve operation/session/source provenance and\n   failure reports. Do not claim cross-app-reopen continuity.\n5. Whole-operation timings: directory discovery/watch install, initial current\n   authentication/hashing, second census pass, WFD/PIG proof, event draining,\n   packet build/read, native launch/readiness, login/world entry and zoning.\n   Include watch count/queue limits, kernel memory where actually available,\n   RSS/PSS, teardown and monitor lifetime. Require a real comparable saving,\n   rather than fewer native stats accompanied by an equally expensive guest\n   scan. Later Thor measurement remains mandatory.\n\nA narrowly qualified same-operation source lease is the smallest next useful\nexperiment. Cross-reopen persistence is a separate product/lifecycle change.\nNeither is implemented or approved for this APK by this document.\n\n## Primary interface sources\n\nRead 2026-10-14; repository source pins are in the adjacent review receipt.\n\n* Linux inotify interface: https://man7.org/linux/man-pages/man7/inotify.7.html\n* Linux kernel inotify design: https://www.kernel.org/doc/html/latest/filesystems/inotify.html\n* Android 15 FileObserver Java: https://android.googlesource.com/platform/frameworks/base/+/android-15.0.0_r1/core/java/android/os/FileObserver.java\n* Android 15 FileObserver JNI: https://android.googlesource.com/platform/frameworks/base/+/android-15.0.0_r1/core/jni/android_util_FileObserver.cpp\n* Android 15 Bionic inotify header: https://android.googlesource.com/platform/bionic/+/android-15.0.0_r1/libc/include/sys/inotify.h\n* Android foreground-service timeout policy: https://developer.android.com/develop/background-work/services/fgs/timeout\n* Android process/service lifecycle: https://developer.android.com/guide/components/activities/process-lifecycle\n* Pinned Termux PRoot translation source: https://github.com/termux/proot/blob/7266fb3e8516535682f5a9c8f3a7e70f6506eddb/src/syscall/enter.c\n\nKernel limitations were also reproduced in the author's controlled host execution.\nNo device result, performance benefit or immutable-provider authority is inferred\nfrom those primary API descriptions.\n",
+          "pin": {
+            "bytes": 21844,
+            "sha256": "f35b08ef08fa99bb1660e699384bddc6e6be67fa83fa4efe7ad8eff74b629c83"
+          }
+        },
+        "docs/android-evidence/inotify-lease-android-source-review.json": {
+          "contents": {
+            "android_api_findings": [
+              {
+                "details": [
+                  "JNI forwards event wd and mask without a global overflow callback.",
+                  "Java stores only successful nonnegative watch descriptors and dispatches only matching registered observers. Queue overflow uses wd=-1, so app observers do not receive it.",
+                  "startWatching returns void; failed -1 registrations remain hidden in the private descriptor array and subsequent starts do not retry automatically.",
+                  "Observers are held weakly; callbacks also disappear if the application does not retain a live reference."
+                ],
+                "evidence": [
+                  "aosp_fileobserver_java",
+                  "aosp_fileobserver_jni"
+                ],
+                "finding": "Public FileObserver is unsuitable for authoritative monitoring.",
+                "inference": "A dedicated raw NDK inotify FD or a supervised raw guest watcher is required to expose all registration failures, global overflow and reader death."
+              },
+              {
+                "details": [
+                  "The pinned Bionic header declares inotify_init, inotify_init1, inotify_add_watch and inotify_rm_watch.",
+                  "The inspected interactive manifest sets minimum SDK 26 and target SDK 35."
+                ],
+                "evidence": [
+                  "aosp_bionic_inotify"
+                ],
+                "finding": "Raw inotify is available for this source project API floor.",
+                "limitation": "Thor kernel limits, SELinux permissions, actual Android version and the packaged build manifest were not observed by this review."
+              },
+              {
+                "details": [
+                  "Android may kill the process without invoking onDestroy.",
+                  "On Android 15, background dataSync foreground service time is bounded; the inspected service declares dataSync."
+                ],
+                "evidence": [
+                  "android_process_lifecycle",
+                  "android_fgs_timeout"
+                ],
+                "finding": "Service process lifetime cannot provide persistence after death.",
+                "inference": "Do not use a perpetual foreground service as proof that a lease always survives. A new process instance always begins without prior live authority."
+              }
+            ],
+            "authority_blockers": [
+              "No common pre-mutation writer barrier and monotonic provider-generation epoch covers all Android and guest writers.",
+              "No proof that all certified source files lack preexisting writable descriptors or mappings and that native consumers cannot create such mappings.",
+              "No authenticated actual Android UID/path/mount and PRoot lease/callback lifetime qualification.",
+              "No current complete native PIG provider index/order proof or observed Wine FindFirst/FindNext parity supplied by this review.",
+              "No device watch-coverage, queue-overflow, watch-loss, process-death or actual whole-startup performance measurements.",
+              "A logical root may contain mutable or out-of-scope branches. A selected-branch lease must never be promoted into a whole-root provider claim."
+            ],
+            "conclusion": {
+              "android_process_death": "Invalidate all leases and perform fresh validation. A saved receipt cannot attest to the interval after the owning process or last FD holder dies.",
+              "feasible_scope": "Revocable continuity for exact certified provider inputs while one live owner retains a raw inotify instance and managed-writer barrier. This is a proposed scope, not demonstrated authority.",
+              "immutable_authority": "Inotify alone cannot establish immutable provider authority; readonly modes alone do not prevent same-owner chmod or previously writable mappings.",
+              "native_process_restarts": "Potentially retain one lease across Game or MapServer process restarts within the same live owner and provider generation."
+            },
+            "format": 1,
+            "inspected_head": "78dec23af21b346ef4882eee53c1a8e41944858b",
+            "inspected_worktree": "/workspace/scratch/5d16603ca7ff/coh-android-037",
+            "lifecycle_hooks": [
+              {
+                "gap": "No provider-generation lease, writer epoch or persistent raw watch owner exists in these paths.",
+                "observed": "Class-monitor operation admission covers setup, import, storage/report operations and a live guest within the Android process. endOperation releases it.",
+                "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+                "symbol": "ClientRuntime.begin / endOperation"
+              },
+              {
+                "gap": "An operation-scoped owner does not prove continuity across completed reopen operations or service/process death.",
+                "observed": "Operations return START_NOT_STICKY. Worker completion clears runtime, releases wake ownership, stops foreground status and calls stopSelf. onDestroy requests runtime stop.",
+                "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java",
+                "symbol": "ClientService.onStartCommand / worker completion / onDestroy"
+              },
+              {
+                "gap": "Activity visibility or binding cannot be relied on as durable watch ownership.",
+                "observed": "Activity binds with BIND_AUTO_CREATE onStart and unbinds onStop.",
+                "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java",
+                "symbol": "ClientActivity.onStart / onStop"
+              },
+              {
+                "observed": "Base worktree setup precedes avatar/world supplement installation. After owned server preparation, prepare_client_visual_inputs installs visual resources, animation PIG binding, and zone/audio supplements before TextureHeaderPreparation starts.",
+                "path": "android/guest/character_creation_diagnostic.py",
+                "recommended_hook": "Acquire writer admission before preparation; only seal the exact final provider generation after these installers complete and before texture/census preparation and native launch. This hook is a source-only recommendation.",
+                "symbol": "CharacterCreationDiagnostic.initialize / start_wine / prepare_client_visual_inputs"
+              },
+              {
+                "gap": "A watcher retained solely within this guest dies with the owned PRoot operation and cannot supply cross-operation authority.",
+                "observed": "One PRoot invocation uses --link2symlink, --kill-on-exit, --sysvipc and -i 1000:1000 for the complete guest operation.",
+                "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+                "symbol": "ClientRuntime.runCharacter ProcessBuilder"
+              }
+            ],
+            "linux_watch_constraints": {
+              "always_handle_returned": [
+                "IN_Q_OVERFLOW",
+                "IN_IGNORED",
+                "IN_UNMOUNT"
+              ],
+              "evidence": [
+                "linux_inotify_manual"
+              ],
+              "findings": [
+                "Directory monitoring is nonrecursive; each directory needs a watch.",
+                "Directory watches miss activity through hard links outside that directory; watch shared target inodes or prove every alias covered.",
+                "mmap modifications and mounts over watched directories are not reported.",
+                "Overflow, ignored watches, unmounts, topology changes, reader failure or failed registrations revoke the complete generation.",
+                "Installation must be bracketed by a fresh complete census; watches must not be repaired incrementally while authoritative."
+              ],
+              "reader_policy": "Use a dedicated bounded reader; mark dirty atomically before other work. Do not subscribe to routine read/open/close-nowrite events merely to assert immutability.",
+              "resource_limits": "Measure watch registration and actual per-UID kernel limits on the Thor. Do not assume host/default limits or one FD per watch.",
+              "source_monitor_does_not_prevent_writes": true,
+              "suggested_raw_mask": [
+                "IN_MODIFY",
+                "IN_ATTRIB",
+                "IN_CLOSE_WRITE",
+                "IN_MOVED_FROM",
+                "IN_MOVED_TO",
+                "IN_CREATE",
+                "IN_DELETE",
+                "IN_DELETE_SELF",
+                "IN_MOVE_SELF"
+              ]
+            },
+            "managed_writer_gaps": [
+              {
+                "existing_guard": "Importer-specific import.lock FileLock. inspect releases the lock before gameplay.",
+                "mutations": [
+                  "Extract staging files",
+                  "Publish generation and active.properties atomically",
+                  "Retire nonactive generations on explicit import recovery"
+                ],
+                "path": "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java",
+                "required_barrier": "Revoke applicable leases before any generation/path publication or retirement, including identity pointer changes.",
+                "symbol": "AtlasAssetImporter.importArchive / recover / inspect"
+              },
+              {
+                "existing_guard": "Asset-store import.lock FileLock. Old hard-linked runtime inodes are retained rather than truncated.",
+                "mutations": [
+                  "Set imported objects readonly",
+                  "Atomically replace content-addressed directory entries",
+                  "Publish accepted descriptor"
+                ],
+                "path": "android/app/src/main/java/io/github/russianranger/cohdiagnostic/AssetPackArchive.java",
+                "required_barrier": "Revoke before replacing object names or accepted identities; track actual runtime-linked inode and all known aliases.",
+                "symbol": "AssetPackArchive.importVolume"
+              },
+              {
+                "mutations": [
+                  "Create runtime asset hard links",
+                  "Remove/replace exact staging asset entries",
+                  "Activate runtime generation"
+                ],
+                "path": "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java",
+                "required_barrier": "Revoke before runtime publication, alias-count changes or deletion. Distinguish kernel hard links created on Android from PRoot link2symlink emulation.",
+                "symbol": "DiagnosticRuntime.setup"
+              },
+              {
+                "mutations": [
+                  "Normalize source leaf permissions and timestamps",
+                  "Create logical data symlinks",
+                  "Install mutable private BIN/DBIDMAP copies",
+                  "Install prepared caches and native executable",
+                  "Replace qualified Game executable during compatible migration"
+                ],
+                "path": "android/guest/client_startup_diagnostic.py",
+                "required_barrier": "Seal only after normalization and final source bindings; exclude private cache bodies from immutable claims and bind current native consumer separately.",
+                "symbol": "prepare_worktree"
+              },
+              {
+                "mutations": [
+                  "Install pinned missing avatar files",
+                  "Replace recognized legacy backing chains",
+                  "Remove only recognized legacy remnants"
+                ],
+                "path": "android/guest/character_avatar_assets.py",
+                "required_barrier": "Invalidate before installation or repair; do not let an old receipt authorize a changed logical link graph.",
+                "symbol": "character_avatar_assets.install"
+              },
+              {
+                "mutations": [
+                  "Restrict proved source archive permissions",
+                  "Install/rebind runtime animation PIG symlink",
+                  "Replace animation marker"
+                ],
+                "path": "android/guest/client_animation_package.py",
+                "required_barrier": "Invalidate before permissions or bindings change. Certify the actual bound source archive and complete known hard-link aliases.",
+                "symbol": "client_animation_package.install"
+              },
+              {
+                "mutations": [
+                  "Create missing supplement directories and files",
+                  "Publish readonly resource outputs",
+                  "Replace qualified package markers"
+                ],
+                "path": "android/guest/zone_asset_package.py",
+                "required_barrier": "Finalize world/audio inputs before initial seal; invalidate before later managed installation.",
+                "symbol": "zone_asset_package.install"
+              },
+              {
+                "mutations": [
+                  "Move an owned server data tree between cache and session roots",
+                  "Restore private schema content",
+                  "Remove private credentials",
+                  "Rekey cache metadata after qualification"
+                ],
+                "path": "android/guest/character_server_data_cache.py",
+                "required_barrier": "Treat private MapServer trees as separate consumers/generations. Do not grant client census authority to a moved server tree.",
+                "symbol": "ServerDataCache.checkout / release / select_compatible_generation"
+              },
+              {
+                "observed": "Character/client state, imported client/server assets and asset-packs are protected from deletion; only qualified unrelated candidates can be removed.",
+                "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageAudit.java",
+                "required_barrier": "Retain current operation admission. Any future deletion of a certified generation would require prior lease revocation, even if ownership is proved.",
+                "symbol": "StorageAudit"
+              }
+            ],
+            "mapping": {
+              "bindings": [
+                {
+                  "guest": "/state",
+                  "host": "<files>/client/state"
+                },
+                {
+                  "guest": "/game-import",
+                  "host": "<files>/client-import/<selected-import-generation>"
+                },
+                {
+                  "guest": "/opt/coh",
+                  "host": "<files>/m2/runtime-<manifest-prefix>/assets"
+                },
+                {
+                  "guest": "/opt/wine",
+                  "host": "<files>/m2/runtime-<manifest-prefix>/wine"
+                }
+              ],
+              "guest_owner": "The guest has PRoot virtual UID/GID 1000:1000; this does not create different kernel ownership or privilege.",
+              "host_owner": "Android-side watches must inspect canonical paths beneath Context.getFilesDir and the real app UID.",
+              "mapping_physically_validated": false,
+              "proot_syscall_evidence": "PR_inotify_add_watch translates its path argument as SYMLINK for IN_DONT_FOLLOW and REGULAR otherwise.",
+              "symlink_and_shared_inode_requirements": "Authenticate both logical path membership and resolved target inode, complete known shared aliases and ancestry. Existing legacy .l2s backing handling is narrowly scoped; do not accept arbitrary real-UID mismatches."
+            },
+            "primary_sources": [
+              {
+                "bytes": 11282,
+                "id": "aosp_fileobserver_java",
+                "pin_encoding": "base64_decoded_source_bytes",
+                "retrieval": "read_only_direct_https",
+                "revision": "android-15.0.0_r1",
+                "sha256": "9ac67b9d97acbf3af782405be0d241e3dbacdba8f46823f7a8b3afa43a14ca5c",
+                "source_snapshot_saved": false,
+                "url": "https://android.googlesource.com/platform/frameworks/base/+/android-15.0.0_r1/core/java/android/os/FileObserver.java?format=TEXT"
+              },
+              {
+                "bytes": 4716,
+                "id": "aosp_fileobserver_jni",
+                "pin_encoding": "base64_decoded_source_bytes",
+                "retrieval": "read_only_direct_https",
+                "revision": "android-15.0.0_r1",
+                "sha256": "18e13a8708ea3e5f0ca475482dfb1e83c1b7a22ff7ced9e76b2e59b3e3f1dede",
+                "source_snapshot_saved": false,
+                "url": "https://android.googlesource.com/platform/frameworks/base/+/android-15.0.0_r1/core/jni/android_util_FileObserver.cpp?format=TEXT"
+              },
+              {
+                "bytes": 1894,
+                "id": "aosp_bionic_inotify",
+                "pin_encoding": "base64_decoded_source_bytes",
+                "retrieval": "read_only_direct_https",
+                "revision": "android-15.0.0_r1",
+                "sha256": "f6c790d3c59ffcb84dad27a047140a3bb1e0058b2007bfddb3f4f1502ba6cf7c",
+                "source_snapshot_saved": false,
+                "url": "https://android.googlesource.com/platform/bionic/+/android-15.0.0_r1/libc/include/sys/inotify.h?format=TEXT"
+              },
+              {
+                "bytes": 87739,
+                "id": "proot_syscall_enter",
+                "pin_encoding": "raw_source_bytes",
+                "retrieval": "read_only_direct_https",
+                "revision": "7266fb3e8516535682f5a9c8f3a7e70f6506eddb",
+                "sha256": "439e3bafacd8462bc3ac8c66b2edc1e258c1b28652ba52253c47e29ec8130f44",
+                "source_snapshot_saved": false,
+                "url": "https://raw.githubusercontent.com/termux/proot/7266fb3e8516535682f5a9c8f3a7e70f6506eddb/src/syscall/enter.c"
+              },
+              {
+                "bytes": 41319,
+                "id": "proot_fake_id0",
+                "pin_encoding": "raw_source_bytes",
+                "retrieval": "read_only_direct_https",
+                "revision": "7266fb3e8516535682f5a9c8f3a7e70f6506eddb",
+                "sha256": "0e4c2e8f5f8bdcbfae5284733e30e1ef0002c12ec9ed4a6bf630394966661e46",
+                "source_snapshot_saved": false,
+                "url": "https://raw.githubusercontent.com/termux/proot/7266fb3e8516535682f5a9c8f3a7e70f6506eddb/src/extension/fake_id0/fake_id0.c"
+              },
+              {
+                "bytes": 22622,
+                "id": "proot_path_binding",
+                "pin_encoding": "raw_source_bytes",
+                "retrieval": "read_only_direct_https",
+                "revision": "7266fb3e8516535682f5a9c8f3a7e70f6506eddb",
+                "sha256": "c1df8aa55547765fb066a9936e8b8d21e5480a8521547e02c6799faabb42bcae",
+                "source_snapshot_saved": false,
+                "url": "https://raw.githubusercontent.com/termux/proot/7266fb3e8516535682f5a9c8f3a7e70f6506eddb/src/path/binding.c"
+              },
+              {
+                "bytes": 44066,
+                "id": "linux_inotify_manual",
+                "pin_encoding": "captured_html_bytes_not_stable_revision",
+                "retrieval": "read_only_direct_https",
+                "sha256": "79f5ab18e2fc423631cf4949ef82ca1384844353ea11a4dba42e1a77e8fdd8fd",
+                "source_snapshot_saved": false,
+                "url": "https://man7.org/linux/man-pages/man7/inotify.7.html"
+              },
+              {
+                "bytes": 311630,
+                "id": "android_process_lifecycle",
+                "pin_encoding": "captured_html_bytes_not_stable_revision",
+                "retrieval": "read_only_direct_https",
+                "sha256": "66719a63b8f96e8a824b93b03ea37a9984041bfac50e9870908d621be50748af",
+                "source_snapshot_saved": false,
+                "url": "https://developer.android.com/guide/components/activities/process-lifecycle"
+              },
+              {
+                "bytes": 280717,
+                "id": "android_fgs_timeout",
+                "pin_encoding": "captured_html_bytes_not_stable_revision",
+                "retrieval": "read_only_direct_https",
+                "sha256": "1a54bef19c4a9c596bfaac018c6b32daf4b46f294f0a30916b4d7bee26df0a8b",
+                "source_snapshot_saved": false,
+                "url": "https://developer.android.com/develop/background-work/services/fgs/timeout"
+              }
+            ],
+            "proposed_receipt_binding": [
+              "Fresh owner nonce and process-instance identity",
+              "Kernel boot and owner PID/start-time identity",
+              "Raw watch instance and complete successful coverage count",
+              "Exact canonical host/guest mappings and root inode identities",
+              "Selected import/runtime generation and their pointer identities",
+              "Current native consumer/source closure and exact provider order",
+              "Finalized supplement identities and complete known aliases",
+              "Fresh census generation and writer epoch",
+              "Current dirty/dead/overflow flags"
+            ],
+            "qualification": {
+              "activation_implemented": false,
+              "android_build_executed": false,
+              "controlled_linux_tests_executed_by_this_reviewer": 0,
+              "device_tests_executed": false,
+              "game_build_executed": false,
+              "game_executed": false,
+              "host_native_qualification_executed": false,
+              "mapserver_executed": false,
+              "only_written_artifact": "/workspace/scratch/5d16603ca7ff/inotify-lease-037/docs/android-evidence/inotify-lease-android-source-review.json",
+              "parent_controlled_linux_tests_reviewed": false,
+              "physical_authority_established": false,
+              "physical_startup_savings_measured": false,
+              "player_data_read": false,
+              "production_authority": null,
+              "project_or_runtime_sources_modified": false,
+              "remote_primary_source_reads_performed": true,
+              "source_inspection_performed": true,
+              "sql_mutations_executed": false,
+              "sql_queries_executed": false,
+              "wine_executed": false
+            },
+            "repository": "https://github.com/Russianranger/coh-android",
+            "reviewed_utc": "2026-10-14T03:27:39.804262+00:00",
+            "reviewer_agent": "/root/diagnostics_037/inotify_android_review",
+            "scope": "inotify_provider_lease_android_source_review_v1",
+            "scope_exclusions": [
+              "No PostgreSQL/profile modifications",
+              "No relocation, character recreation or SQL workaround",
+              "No immutable claim for private BIN/DBIDMAP caches, reports, native logs or Wine mutable state",
+              "No cross-owner receipt shortcut after death",
+              "No host timing extrapolation to physical Thor performance"
+            ],
+            "source_pins": [
+              {
+                "bytes": 70474,
+                "git_blob": "71d6e27499040340695e01c283669099ce7440ed",
+                "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java",
+                "sha256": "1f383d4773e2a96d78e38dfd4e1130bad33331293e1d3fc87da4629ffbc353b3",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 199541,
+                "git_blob": "aa6f77b8fcb805b97b3609bc8e4bc0bf3c12f77b",
+                "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+                "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 56162,
+                "git_blob": "9f0976d107bc759e0c644d0ef45cbb66735d8e44",
+                "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java",
+                "sha256": "23baf3f7715430d6fb212e6581a9561a8d94b318fbd897efefacd6c3efbfe995",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 1519,
+                "git_blob": "aa48eb43a0492eef5f388efa54e044243a0c776c",
+                "path": "android/interactive/src/main/AndroidManifest.xml",
+                "sha256": "705fa09d479f1598a71cf2d1ba7b0b9b7c612935dd3b94712c7d90e29da124e2",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 37139,
+                "git_blob": "eaa086d35d12ff77b7f5bad1ed6237b89aafdd70",
+                "path": "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java",
+                "sha256": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 22279,
+                "git_blob": "02beb9958635226e7ae8ebe1966b571ccc68857a",
+                "path": "android/app/src/main/java/io/github/russianranger/cohdiagnostic/AssetPackArchive.java",
+                "sha256": "91a02b7e4ff84709123fce4a109dc77ff0ecd7c4d770c9b555b7a43b7e80af83",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 49674,
+                "git_blob": "8357736c528dba2d67ae617aebfdc0b88a54980f",
+                "path": "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java",
+                "sha256": "4d62ea2ede34a3ef7fe8b9a22cc18225e04adddd45609aa5070835c1c6e3cecd",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 94729,
+                "git_blob": "6e046367dddf3e67d64337519678ad62b17fe01a",
+                "path": "android/guest/client_startup_diagnostic.py",
+                "sha256": "a79f50e8c61b2c200d5e3689fd8aa8a7461bf75da9b53d53d3dc2d2145fa59e3",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 27634,
+                "git_blob": "8458790f7c10f1d31442767ef279d89b676d6361",
+                "path": "android/guest/character_creation_diagnostic.py",
+                "sha256": "540c375996164a54e47eeecc5dff141f00772eb790a3131617d8d850a07d21b0",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 15496,
+                "git_blob": "d2cbb26dcb560838bfde11c875da6c6718859c99",
+                "path": "android/guest/character_avatar_assets.py",
+                "sha256": "e4e17c8931786490728c721d6db063b55b2e7e17d27813a3da355e72773a8ae1",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 13921,
+                "git_blob": "0c55b39c42a43290c798b3397b6c579a6d976310",
+                "path": "android/guest/client_animation_package.py",
+                "sha256": "c11559a9c95ff3efb9e9518b5ba585369a48c6a0a3235701c0e44ae50d183f64",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 15364,
+                "git_blob": "afd8a19adf149f47ef229c70bf42de49a63fa0db",
+                "path": "android/guest/zone_asset_package.py",
+                "sha256": "eba33c606c047b2a4b95c6965e717c0fa649f29dd82878f649ea63b258e6b4b6",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 81456,
+                "git_blob": "a71560f3dab852dc01693708671eab8805db053b",
+                "path": "android/guest/character_zoning.py",
+                "sha256": "1b912601f2689b535d4136b5be46a4ea8955cfab26358ff0341691a9092e57e5",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 34788,
+                "git_blob": "a5b27d5162c7ef9f20bf4d494449e63a2957306e",
+                "path": "android/guest/character_server_data_cache.py",
+                "sha256": "1cb7fa789fd26dd8463dd01cd40555aac6f276fa6defbfc84c6239c35ebe0ac3",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 49178,
+                "git_blob": "aad08915ba51b54238e95b58b9f58418a697d47e",
+                "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageAudit.java",
+                "sha256": "5a07091e15f9eb4aeac20a50d3c6c5ba1959905a6738466dcebb289ef6b1715a",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 15222,
+                "git_blob": "aea57f4ecbca9f8733abf2ca7cef7359b835edea",
+                "path": "tools/android/build_proot.py",
+                "sha256": "de1f5dd127fc143cdbd8b253fb62f421541560857cb0a9868794470c42924491",
+                "working_bytes_equal_inspected_head": true
+              },
+              {
+                "bytes": 3806,
+                "git_blob": "207f894c30ef50f2a222435f8a180f3c6e53a9dc",
+                "path": "android/native/proot/README.md",
+                "sha256": "daebd01ca644fa34e4acfc92e30220888c3ecb55a7e5ecbf1ddb2608a7c7d3fc",
+                "working_bytes_equal_inspected_head": true
+              }
+            ],
+            "source_snapshot_limitation": "Remote source hashes bind the bytes read. Remote source bodies were not saved in this task. Dynamic documentation HTML hashes identify the read snapshot, not a stable upstream revision.",
+            "source_worktree_clean": true,
+            "status": "source_only_review_authority_closed"
+          },
+          "pin": {
+            "bytes": 25311,
+            "sha256": "068cf281902f13411a04963b9194e5411003405bdf68e62f2a648226872872f6"
+          }
+        },
+        "docs/android-evidence/inotify-lease-controlled-kernel.json": {
+          "contents": {
+            "cases": [
+              {
+                "lease_action": "revoke entire generation on any mutation",
+                "name": "ordinary_mutations",
+                "observations": {
+                  "event_count": 9,
+                  "mask_counts": {
+                    "IN_ATTRIB": 1,
+                    "IN_CLOSE_WRITE": 2,
+                    "IN_CREATE": 1,
+                    "IN_DELETE": 1,
+                    "IN_MODIFY": 2,
+                    "IN_MOVED_FROM": 1,
+                    "IN_MOVED_TO": 1
+                  },
+                  "omitted_events": 0,
+                  "sample": [
+                    {
+                      "cookie": 0,
+                      "mask": 2,
+                      "mask_names": [
+                        "IN_MODIFY"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 8,
+                      "mask_names": [
+                        "IN_CLOSE_WRITE"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 256,
+                      "mask_names": [
+                        "IN_CREATE"
+                      ],
+                      "name": "created.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 2,
+                      "mask_names": [
+                        "IN_MODIFY"
+                      ],
+                      "name": "created.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 8,
+                      "mask_names": [
+                        "IN_CLOSE_WRITE"
+                      ],
+                      "name": "created.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 911745,
+                      "mask": 64,
+                      "mask_names": [
+                        "IN_MOVED_FROM"
+                      ],
+                      "name": "created.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 911745,
+                      "mask": 128,
+                      "mask_names": [
+                        "IN_MOVED_TO"
+                      ],
+                      "name": "renamed.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 512,
+                      "mask_names": [
+                        "IN_DELETE"
+                      ],
+                      "name": "renamed.dat",
+                      "wd": 1
+                    }
+                  ]
+                },
+                "seconds": 0.0011877249999088235,
+                "status": "passed",
+                "watch_descriptor": 1
+              },
+              {
+                "lease_action": "every selected and alias directory must be covered",
+                "name": "recursive_coverage",
+                "root_only": {
+                  "event_count": 0,
+                  "mask_counts": {},
+                  "omitted_events": 0,
+                  "sample": []
+                },
+                "seconds": 0.0011006030035787262,
+                "status": "passed",
+                "with_nested_watch": {
+                  "event_count": 2,
+                  "mask_counts": {
+                    "IN_CLOSE_WRITE": 1,
+                    "IN_MODIFY": 1
+                  },
+                  "omitted_events": 0,
+                  "sample": [
+                    {
+                      "cookie": 0,
+                      "mask": 2,
+                      "mask_names": [
+                        "IN_MODIFY"
+                      ],
+                      "name": "a.dat",
+                      "wd": 2
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 8,
+                      "mask_names": [
+                        "IN_CLOSE_WRITE"
+                      ],
+                      "name": "a.dat",
+                      "wd": 2
+                    }
+                  ]
+                }
+              },
+              {
+                "directory_only": {
+                  "event_count": 0,
+                  "mask_counts": {},
+                  "omitted_events": 0,
+                  "sample": []
+                },
+                "inode_watch": {
+                  "event_count": 2,
+                  "mask_counts": {
+                    "IN_CLOSE_WRITE": 1,
+                    "IN_MODIFY": 1
+                  },
+                  "omitted_events": 0,
+                  "sample": [
+                    {
+                      "cookie": 0,
+                      "mask": 2,
+                      "mask_names": [
+                        "IN_MODIFY"
+                      ],
+                      "name": "",
+                      "wd": 2
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 8,
+                      "mask_names": [
+                        "IN_CLOSE_WRITE"
+                      ],
+                      "name": "",
+                      "wd": 2
+                    }
+                  ]
+                },
+                "lease_action": "directory-only lease requires complete alias custody and writer exclusion",
+                "name": "hardlink_blind_spot",
+                "new_outside_link_inode_watch": {
+                  "event_count": 1,
+                  "mask_counts": {
+                    "IN_ATTRIB": 1
+                  },
+                  "omitted_events": 0,
+                  "sample": [
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "",
+                      "wd": 2
+                    }
+                  ]
+                },
+                "seconds": 0.01028997600224102,
+                "status": "passed"
+              },
+              {
+                "chmod": {
+                  "event_count": 2,
+                  "mask_counts": {
+                    "IN_ATTRIB": 2
+                  },
+                  "omitted_events": 0,
+                  "sample": [
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "",
+                      "wd": 2
+                    }
+                  ]
+                },
+                "data_changed": true,
+                "file_and_directory_watched": true,
+                "file_mode_after": "0o444",
+                "lease_action": "unknown preexisting writable FD/mapping forbids watcher authority",
+                "mmap_write_flush": {
+                  "event_count": 0,
+                  "mask_counts": {},
+                  "omitted_events": 0,
+                  "sample": []
+                },
+                "name": "mmap_blind_spot",
+                "seconds": 0.002130428001692053,
+                "status": "passed"
+              },
+              {
+                "lease_action": "watch both namespace membership and all resolved provider targets",
+                "logical_and_source": {
+                  "event_count": 2,
+                  "mask_counts": {
+                    "IN_CLOSE_WRITE": 1,
+                    "IN_MODIFY": 1
+                  },
+                  "omitted_events": 0,
+                  "sample": [
+                    {
+                      "cookie": 0,
+                      "mask": 2,
+                      "mask_names": [
+                        "IN_MODIFY"
+                      ],
+                      "name": "a.dat",
+                      "wd": 2
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 8,
+                      "mask_names": [
+                        "IN_CLOSE_WRITE"
+                      ],
+                      "name": "a.dat",
+                      "wd": 2
+                    }
+                  ]
+                },
+                "logical_only": {
+                  "event_count": 0,
+                  "mask_counts": {},
+                  "omitted_events": 0,
+                  "sample": []
+                },
+                "name": "symlink_target_coverage",
+                "seconds": 0.0008593579987064004,
+                "status": "passed"
+              },
+              {
+                "lease_action": "move, unmount, ignored, fd loss or reader failure revokes whole lease",
+                "move_self": {
+                  "event_count": 1,
+                  "mask_counts": {
+                    "IN_MOVE_SELF": 1
+                  },
+                  "omitted_events": 0,
+                  "sample": [
+                    {
+                      "cookie": 0,
+                      "mask": 2048,
+                      "mask_names": [
+                        "IN_MOVE_SELF"
+                      ],
+                      "name": "",
+                      "wd": 1
+                    }
+                  ]
+                },
+                "name": "watch_loss",
+                "seconds": 0.00023282899928744882,
+                "status": "passed",
+                "watch_removed": {
+                  "event_count": 1,
+                  "mask_counts": {
+                    "IN_IGNORED": 1
+                  },
+                  "omitted_events": 0,
+                  "sample": [
+                    {
+                      "cookie": 0,
+                      "mask": 32768,
+                      "mask_names": [
+                        "IN_IGNORED"
+                      ],
+                      "name": "",
+                      "wd": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "alternating_chmod_calls": 17408,
+                "lease_action": "overflow revokes; event-count completeness is not inferred",
+                "name": "overflow",
+                "observations": {
+                  "event_count": 16385,
+                  "mask_counts": {
+                    "IN_ATTRIB": 16384,
+                    "IN_Q_OVERFLOW": 1
+                  },
+                  "omitted_events": 16369,
+                  "sample": [
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "b.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "b.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "b.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "b.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "b.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "b.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "b.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 4,
+                      "mask_names": [
+                        "IN_ATTRIB"
+                      ],
+                      "name": "b.dat",
+                      "wd": 1
+                    }
+                  ]
+                },
+                "overflow_marker": [
+                  {
+                    "cookie": 0,
+                    "mask": 16384,
+                    "name": "",
+                    "wd": -1
+                  }
+                ],
+                "queue_limit": 16384,
+                "seconds": 0.08329714099818375,
+                "status": "passed"
+              },
+              {
+                "closed_fd_number": 3,
+                "lease_action": "new owner must perform fresh full authentication; receipts do not bridge gaps",
+                "name": "owner_gap",
+                "new_watch_events": {
+                  "event_count": 0,
+                  "mask_counts": {},
+                  "omitted_events": 0,
+                  "sample": []
+                },
+                "persisted_digest_became_stale": true,
+                "seconds": 0.0010261040006298572,
+                "status": "passed"
+              },
+              {
+                "after_drain": {
+                  "event_count": 2,
+                  "mask_counts": {
+                    "IN_CLOSE_WRITE": 1,
+                    "IN_MODIFY": 1
+                  },
+                  "omitted_events": 0,
+                  "sample": [
+                    {
+                      "cookie": 0,
+                      "mask": 2,
+                      "mask_names": [
+                        "IN_MODIFY"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    },
+                    {
+                      "cookie": 0,
+                      "mask": 8,
+                      "mask_names": [
+                        "IN_CLOSE_WRITE"
+                      ],
+                      "name": "a.dat",
+                      "wd": 1
+                    }
+                  ]
+                },
+                "cached_digest_was_stale": true,
+                "epoch_valid_after_drain": false,
+                "epoch_valid_after_write_before_drain": true,
+                "lease_action": "managed writers revoke synchronously before mutation; drain alone cannot exclude a later write",
+                "name": "event_delivery_race",
+                "seconds": 0.0004889229967375286,
+                "status": "passed"
+              },
+              {
+                "errno": 2,
+                "errno_name": "ENOENT",
+                "lease_action": "every negative add-watch return forbids admission",
+                "name": "invalid_watch_registration",
+                "seconds": 5.346900434233248e-05,
+                "status": "passed"
+              },
+              {
+                "add_watch_seconds": 0.0014799929995206185,
+                "fdinfo_bytes": 82272,
+                "fixture_mkdir_seconds": 0.0324674670046079,
+                "inotify_fd_count": 1,
+                "kernel_watch_memory_measured": false,
+                "limits": "500 controlled directories, warm host filesystem, no Thor or complete-provider extrapolation",
+                "name": "watch_install_cost",
+                "observed_fdinfo_marks": 500,
+                "process_ru_maxrss_after_kib": 16640,
+                "process_ru_maxrss_before_kib": 16640,
+                "seconds": 0.052751285998965614,
+                "status": "passed",
+                "watch_count": 500
+              }
+            ],
+            "failed": 0,
+            "finished_at": "2026-10-14T03:21:46.048528+00:00",
+            "host": {
+              "inotify_sysctls": {
+                "max_queued_events": 16384,
+                "max_user_instances": 128,
+                "max_user_watches": 80485
+              },
+              "uid": 0,
+              "uname": [
+                "Linux",
+                "e1a8e2b72acc",
+                "6.18.44",
+                "#1 SMP Sat Sep 26 20:02:31 UTC 2026",
+                "x86_64"
+              ]
+            },
+            "kind": "controlled_linux_kernel_experiment",
+            "native_registration_allowed": false,
+            "passed": 11,
+            "physical_device_result": false,
+            "schema": 1,
+            "seconds": 0.1655961579963332,
+            "shipping_authority": null,
+            "source": {
+              "bytes": 18154,
+              "sha256": "5c205aee8bbc487764c850cd3cf0609a0f83b4fa3c7c841cbbf5f28cf2dc6396"
+            },
+            "source_unchanged_after_execution": true,
+            "started_at": "2026-10-14T03:21:45.882960+00:00",
+            "temporary_fixture_deleted_on_exit": true
+          },
+          "pin": {
+            "bytes": 14211,
+            "sha256": "cf7bbc875bcd08f30e312ea620b8875a4854d8c49f6abccfe88fba33248f2627"
+          }
+        },
+        "tools/android/interactive/inotify_lease_kernel_experiment.py": {
+          "contents": "#!/usr/bin/env python3\n\"\"\"Owned, nonshipping Linux inotify experiments. No provider authority is issued.\n\nOnly a newly created TemporaryDirectory is modified. The experiment does not\nchange sysctls, mount filesystems, execute Game/Wine or inspect player data.\n\"\"\"\nimport argparse\nimport collections\nimport ctypes\nimport datetime\nimport errno\nimport hashlib\nimport json\nimport mmap\nimport os\nfrom pathlib import Path\nimport resource\nimport struct\nimport tempfile\nimport time\n\n\nIN_MODIFY = 0x00000002\nIN_ATTRIB = 0x00000004\nIN_CLOSE_WRITE = 0x00000008\nIN_MOVED_FROM = 0x00000040\nIN_MOVED_TO = 0x00000080\nIN_CREATE = 0x00000100\nIN_DELETE = 0x00000200\nIN_DELETE_SELF = 0x00000400\nIN_MOVE_SELF = 0x00000800\nIN_UNMOUNT = 0x00002000\nIN_Q_OVERFLOW = 0x00004000\nIN_IGNORED = 0x00008000\nIN_ONLYDIR = 0x01000000\nIN_DONT_FOLLOW = 0x02000000\nIN_ISDIR = 0x40000000\nMUTATION_MASK = (IN_MODIFY | IN_ATTRIB | IN_CLOSE_WRITE | IN_MOVED_FROM |\n                 IN_MOVED_TO | IN_CREATE | IN_DELETE | IN_DELETE_SELF |\n                 IN_MOVE_SELF | IN_UNMOUNT)\nMASK_NAMES = {value: name for name, value in tuple(globals().items())\n              if name.startswith('IN_') and isinstance(value, int)}\nEVENT_HEADER = struct.Struct('=iIII')\nlibc = ctypes.CDLL(None, use_errno=True)\nlibc.inotify_init1.argtypes = [ctypes.c_int]\nlibc.inotify_init1.restype = ctypes.c_int\nlibc.inotify_add_watch.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_uint32]\nlibc.inotify_add_watch.restype = ctypes.c_int\nlibc.inotify_rm_watch.argtypes = [ctypes.c_int, ctypes.c_int]\nlibc.inotify_rm_watch.restype = ctypes.c_int\n\n\ndef require(condition, message):\n    if not condition:\n        raise AssertionError(message)\n\n\ndef timestamp():\n    return datetime.datetime.now(datetime.timezone.utc).isoformat()\n\n\ndef mask_names(mask):\n    return sorted(name for value, name in MASK_NAMES.items() if mask & value)\n\n\ndef summarize(events):\n    counts = collections.Counter()\n    for event in events:\n        counts.update(mask_names(event['mask']))\n    return {'event_count': len(events), 'mask_counts': dict(sorted(counts.items())),\n            'sample': [{**event, 'mask_names': mask_names(event['mask'])}\n                       for event in events[:16]],\n            'omitted_events': max(0, len(events) - 16)}\n\n\nclass Watcher:\n    def __init__(self):\n        self.fd = libc.inotify_init1(os.O_CLOEXEC | os.O_NONBLOCK)\n        if self.fd < 0:\n            code = ctypes.get_errno()\n            raise OSError(code, os.strerror(code))\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *ignored):\n        self.close()\n\n    def close(self):\n        if self.fd >= 0:\n            os.close(self.fd)\n            self.fd = -1\n\n    def watch(self, path, mask=MUTATION_MASK, directory=False):\n        flags = mask | IN_DONT_FOLLOW | (IN_ONLYDIR if directory else 0)\n        wd = libc.inotify_add_watch(self.fd, os.fsencode(path), flags)\n        if wd < 0:\n            code = ctypes.get_errno()\n            raise OSError(code, os.strerror(code), str(path))\n        return wd\n\n    def remove(self, wd):\n        if libc.inotify_rm_watch(self.fd, wd) < 0:\n            code = ctypes.get_errno()\n            raise OSError(code, os.strerror(code))\n\n    def drain(self):\n        result = []\n        while True:\n            try:\n                data = os.read(self.fd, 65536)\n            except BlockingIOError:\n                break\n            require(bool(data), 'inotify descriptor unexpectedly reached EOF')\n            offset = 0\n            while offset < len(data):\n                require(len(data) - offset >= EVENT_HEADER.size, 'truncated event')\n                wd, mask, cookie, length = EVENT_HEADER.unpack_from(data, offset)\n                offset += EVENT_HEADER.size\n                require(length <= len(data) - offset, 'truncated event name')\n                name = data[offset:offset + length].split(b'\\0', 1)[0]\n                offset += length\n                result.append({'wd': wd, 'mask': mask, 'cookie': cookie,\n                               'name': os.fsdecode(name)})\n        return result\n\n\ndef leaf(directory, name='a.dat'):\n    path = directory / name\n    path.write_bytes(b'original contents\\n')\n    return path\n\n\ndef ordinary_mutations(root):\n    directory = root / 'ordinary'; directory.mkdir()\n    path = leaf(directory)\n    with Watcher() as watcher:\n        wd = watcher.watch(directory, directory=True)\n        path.write_bytes(b'changed contents\\n')\n        path.chmod(0o444)\n        made = leaf(directory, 'created.dat')\n        moved = directory / 'renamed.dat'; made.rename(moved); moved.unlink()\n        events = watcher.drain()\n    seen = 0\n    for event in events:\n        seen |= event['mask']\n    wanted = IN_MODIFY | IN_ATTRIB | IN_CREATE | IN_MOVED_FROM | IN_MOVED_TO | IN_DELETE\n    require(seen & wanted == wanted, 'ordinary mutation events incomplete')\n    moved_from = next(event for event in events if event['mask'] & IN_MOVED_FROM)\n    moved_to = next(event for event in events if event['mask'] & IN_MOVED_TO)\n    require(moved_from['cookie'] != 0 and moved_from['cookie'] == moved_to['cookie'],\n            'rename cookie was not paired')\n    return {'watch_descriptor': wd, 'observations': summarize(events),\n            'lease_action': 'revoke entire generation on any mutation'}\n\n\ndef recursive_coverage(root):\n    directory = root / 'recursive'; directory.mkdir()\n    nested = directory / 'nested'; nested.mkdir()\n    path = leaf(nested)\n    with Watcher() as watcher:\n        watcher.watch(directory, directory=True)\n        path.write_bytes(b'outside root-only observation\\n')\n        root_only = watcher.drain()\n        require(root_only == [], 'unexpected recursive parent notification')\n        watcher.watch(nested, directory=True)\n        path.write_bytes(b'with complete directory coverage\\n')\n        complete = watcher.drain()\n    require(any(event['mask'] & IN_MODIFY for event in complete), 'nested watch missed write')\n    return {'root_only': summarize(root_only), 'with_nested_watch': summarize(complete),\n            'lease_action': 'every selected and alias directory must be covered'}\n\n\ndef hardlink_blind_spot(root):\n    watched = root / 'hardlink-watched'; watched.mkdir()\n    outside = root / 'hardlink-outside'; outside.mkdir()\n    path = leaf(watched); alias = outside / 'alias.dat'; os.link(path, alias)\n    with Watcher() as watcher:\n        watcher.watch(watched, directory=True)\n        before = hashlib.sha256(path.read_bytes()).hexdigest()\n        alias.write_bytes(b'write through unwatched hardlink\\n')\n        via_directory = watcher.drain()\n        require(before != hashlib.sha256(path.read_bytes()).hexdigest(), 'hardlink write did not change bytes')\n        require(via_directory == [], 'directory unexpectedly reported outside hardlink write')\n        watcher.watch(path)\n        alias.write_bytes(b'file inode watch catches ordinary write\\n')\n        via_inode = watcher.drain()\n        os.link(path, outside / 'new-alias.dat')\n        link_change = watcher.drain()\n    require(any(event['mask'] & IN_MODIFY for event in via_inode), 'inode watch missed ordinary write')\n    require(any(event['mask'] & IN_ATTRIB for event in link_change), 'inode watch missed link-count change')\n    return {'directory_only': summarize(via_directory), 'inode_watch': summarize(via_inode),\n            'new_outside_link_inode_watch': summarize(link_change),\n            'lease_action': 'directory-only lease requires complete alias custody and writer exclusion'}\n\n\ndef mmap_blind_spot(root):\n    directory = root / 'mmap'; directory.mkdir(); path = leaf(directory)\n    fd = os.open(path, os.O_RDWR)\n    try:\n        mapping = mmap.mmap(fd, 0, flags=mmap.MAP_SHARED, prot=mmap.PROT_READ | mmap.PROT_WRITE)\n        try:\n            with Watcher() as watcher:\n                watcher.watch(directory, directory=True)\n                watcher.watch(path)\n                path.chmod(0o444)\n                permission_events = watcher.drain()\n                before = path.read_bytes()\n                mapping[0:8] = b'MMAPEDIT'; mapping.flush()\n                after = path.read_bytes()\n                modifications = watcher.drain()\n                require(before != after, 'shared writable mapping did not alter bytes')\n                require(modifications == [], 'mmap unexpectedly produced monitored mutation events')\n        finally:\n            mapping.close()\n    finally:\n        os.close(fd)\n    return {'chmod': summarize(permission_events), 'mmap_write_flush': summarize(modifications),\n            'data_changed': True, 'file_mode_after': oct(path.stat().st_mode & 0o777),\n            'file_and_directory_watched': True,\n            'lease_action': 'unknown preexisting writable FD/mapping forbids watcher authority'}\n\n\ndef symlink_target_coverage(root):\n    logical = root / 'symlink-logical'; logical.mkdir()\n    source = root / 'symlink-source'; source.mkdir(); target = leaf(source)\n    (logical / 'import.dat').symlink_to(target)\n    with Watcher() as watcher:\n        watcher.watch(logical, directory=True)\n        target.write_bytes(b'changed resolved target\\n')\n        alias_only = watcher.drain()\n        require(alias_only == [], 'logical directory unexpectedly reported target write')\n        watcher.watch(source, directory=True)\n        target.write_bytes(b'target coverage observed\\n')\n        complete = watcher.drain()\n    require(any(event['mask'] & IN_MODIFY for event in complete), 'resolved source watch missed write')\n    return {'logical_only': summarize(alias_only), 'logical_and_source': summarize(complete),\n            'lease_action': 'watch both namespace membership and all resolved provider targets'}\n\n\ndef watch_loss(root):\n    directory = root / 'loss'; directory.mkdir()\n    with Watcher() as watcher:\n        wd = watcher.watch(directory, directory=True)\n        directory.rename(root / 'loss-moved')\n        moved = watcher.drain()\n        watcher.remove(wd)\n        removed = watcher.drain()\n    require(any(event['mask'] & IN_MOVE_SELF for event in moved), 'move-self missing')\n    require(any(event['mask'] & IN_IGNORED for event in removed), 'explicit removal did not report ignored')\n    return {'move_self': summarize(moved), 'watch_removed': summarize(removed),\n            'lease_action': 'move, unmount, ignored, fd loss or reader failure revokes whole lease'}\n\n\ndef overflow(root):\n    queue_limit = int(Path('/proc/sys/fs/inotify/max_queued_events').read_text())\n    require(0 < queue_limit <= 65536, 'queue bound unsuitable for bounded experiment')\n    directory = root / 'overflow'; directory.mkdir()\n    paths = [leaf(directory, 'a.dat'), leaf(directory, 'b.dat')]\n    calls = queue_limit + 1024\n    with Watcher() as watcher:\n        watcher.watch(directory, mask=IN_ATTRIB, directory=True)\n        for ordinal in range(calls):\n            paths[ordinal % 2].chmod(0o444 if (ordinal // 2) % 2 == 0 else 0o644)\n        events = watcher.drain()\n    overflow_events = [event for event in events if event['mask'] & IN_Q_OVERFLOW]\n    require(len(overflow_events) == 1 and overflow_events[0]['wd'] == -1,\n            'expected queue overflow marker with wd=-1')\n    require(len(events) < calls, 'overflow experiment did not lose events')\n    return {'queue_limit': queue_limit, 'alternating_chmod_calls': calls,\n            'observations': summarize(events), 'overflow_marker': overflow_events,\n            'lease_action': 'overflow revokes; event-count completeness is not inferred'}\n\n\ndef owner_gap(root):\n    directory = root / 'owner-gap'; directory.mkdir(); path = leaf(directory)\n    with Watcher() as watcher:\n        watcher.watch(directory, directory=True)\n        saved_digest = hashlib.sha256(path.read_bytes()).hexdigest()\n        old_fd = watcher.fd\n    path.write_bytes(b'changed while no watcher owned fd\\n')\n    with Watcher() as replacement:\n        replacement.watch(directory, directory=True)\n        after_restart = replacement.drain()\n        digest = hashlib.sha256(path.read_bytes()).hexdigest()\n    require(digest != saved_digest and after_restart == [], 'watcher gap experiment invalid')\n    return {'closed_fd_number': old_fd, 'new_watch_events': summarize(after_restart),\n            'persisted_digest_became_stale': True,\n            'lease_action': 'new owner must perform fresh full authentication; receipts do not bridge gaps'}\n\n\ndef event_delivery_race(root):\n    directory = root / 'delivery-race'; directory.mkdir(); path = leaf(directory)\n    user_epoch = {'generation': 1, 'valid': True, 'digest': hashlib.sha256(path.read_bytes()).hexdigest()}\n    with Watcher() as watcher:\n        watcher.watch(directory, directory=True)\n        path.write_bytes(b'kernel changed file before userspace drain\\n')\n        stale_admission_before_drain = user_epoch['valid']\n        actual_digest = hashlib.sha256(path.read_bytes()).hexdigest()\n        events = watcher.drain()\n        if events:\n            user_epoch['valid'] = False\n    require(stale_admission_before_drain and actual_digest != user_epoch['digest'],\n            'delivery race did not expose a stale userspace epoch')\n    require(events and not user_epoch['valid'], 'userspace failed to revoke after drain')\n    return {'epoch_valid_after_write_before_drain': stale_admission_before_drain,\n            'cached_digest_was_stale': True, 'after_drain': summarize(events),\n            'epoch_valid_after_drain': user_epoch['valid'],\n            'lease_action': 'managed writers revoke synchronously before mutation; drain alone cannot exclude a later write'}\n\n\ndef invalid_watch_registration(root):\n    with Watcher() as watcher:\n        try:\n            watcher.watch(root / 'does-not-exist', directory=True)\n        except OSError as error:\n            require(error.errno == errno.ENOENT, 'wrong missing-path registration errno')\n            result = {'errno': error.errno, 'errno_name': errno.errorcode[error.errno]}\n        else:\n            raise AssertionError('missing-path watch was admitted')\n    return {**result, 'lease_action': 'every negative add-watch return forbids admission'}\n\n\ndef watch_install_cost(root):\n    directory = root / 'watch-cost'; directory.mkdir()\n    paths = []\n    setup_started = time.perf_counter()\n    for ordinal in range(500):\n        path = directory / ('d%04d' % ordinal); path.mkdir(); paths.append(path)\n    fixture_seconds = time.perf_counter() - setup_started\n    rss_before = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss\n    with Watcher() as watcher:\n        started = time.perf_counter()\n        for path in paths:\n            watcher.watch(path, directory=True)\n        install_seconds = time.perf_counter() - started\n        fdinfo = Path('/proc/self/fdinfo/%d' % watcher.fd).read_bytes()\n        marks = sum(line.startswith(b'inotify wd:') for line in fdinfo.splitlines())\n        rss_after = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss\n        require(marks == len(paths), 'fdinfo does not contain every installed watch')\n    return {'watch_count': len(paths), 'inotify_fd_count': 1,\n            'fixture_mkdir_seconds': fixture_seconds, 'add_watch_seconds': install_seconds,\n            'fdinfo_bytes': len(fdinfo), 'observed_fdinfo_marks': marks,\n            'process_ru_maxrss_before_kib': rss_before, 'process_ru_maxrss_after_kib': rss_after,\n            'kernel_watch_memory_measured': False,\n            'limits': '500 controlled directories, warm host filesystem, no Thor or complete-provider extrapolation'}\n\n\nCASES = [ordinary_mutations, recursive_coverage, hardlink_blind_spot, mmap_blind_spot,\n         symlink_target_coverage, watch_loss, overflow, owner_gap,\n         event_delivery_race, invalid_watch_registration, watch_install_cost]\n\n\ndef main():\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument('--output', required=True)\n    args = parser.parse_args()\n    source = Path(__file__).read_bytes()\n    started = time.perf_counter()\n    report = {'schema': 1, 'kind': 'controlled_linux_kernel_experiment',\n              'started_at': timestamp(), 'native_registration_allowed': False,\n              'shipping_authority': None, 'physical_device_result': False,\n              'source': {'bytes': len(source), 'sha256': hashlib.sha256(source).hexdigest()},\n              'host': {'uid': os.getuid(), 'uname': list(os.uname()),\n                       'inotify_sysctls': {name: int(Path('/proc/sys/fs/inotify/' + name).read_text())\n                                           for name in ('max_user_watches', 'max_user_instances', 'max_queued_events')}},\n              'cases': []}\n    with tempfile.TemporaryDirectory(prefix='owned-inotify-experiment-') as temporary:\n        fixture = Path(temporary)\n        report['temporary_fixture_deleted_on_exit'] = True\n        for case in CASES:\n            case_started = time.perf_counter()\n            result = {'name': case.__name__}\n            try:\n                result.update(case(fixture)); result['status'] = 'passed'\n            except Exception as error:\n                result.update(status='failed', error_type=type(error).__name__, error=str(error))\n            result['seconds'] = time.perf_counter() - case_started\n            report['cases'].append(result)\n    report['source_unchanged_after_execution'] = Path(__file__).read_bytes() == source\n    report['finished_at'] = timestamp()\n    report['seconds'] = time.perf_counter() - started\n    report['passed'] = sum(item['status'] == 'passed' for item in report['cases'])\n    report['failed'] = sum(item['status'] != 'passed' for item in report['cases'])\n    output = Path(args.output); output.parent.mkdir(parents=True, exist_ok=True)\n    fd = os.open(output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)\n    with os.fdopen(fd, 'w', encoding='utf-8') as stream:\n        json.dump(report, stream, indent=2, sort_keys=True); stream.write('\\n')\n    print(json.dumps({'passed': report['passed'], 'failed': report['failed'],\n                      'seconds': report['seconds'], 'output': str(output)}, sort_keys=True))\n    return 0 if report['failed'] == 0 and report['source_unchanged_after_execution'] else 1\n\n\nif __name__ == '__main__':\n    raise SystemExit(main())\n",
+          "pin": {
+            "bytes": 18154,
+            "sha256": "5c205aee8bbc487764c850cd3cf0609a0f83b4fa3c7c841cbbf5f28cf2dc6396"
+          }
+        }
+      },
+      "production_or_native_authority": null
+    },
+    "publication_enabled": false,
+    "qualification_enabled": false,
+    "reviewed_published_world_framing": {
+      "actual_stdout_observer_replay": {
+        "exact_selected_world_progress_prefix_framed_once": true,
+        "framed_bytes": 110264,
+        "framed_native_ordinal": 130,
+        "framed_sha256": "52efc5780d6f961c87d56a89e1cb8042e22a778cdda241672bf323a0ad17e052",
+        "freshness_rows": 256,
+        "legacy512_profile_256_freshness_bounds_preserved": true,
+        "legacy_shared_parser_changed": false,
+        "native_rows_or_ordinals_rewritten": false,
+        "profile_rows": 259,
+        "raw_bytes": 110320,
+        "raw_line_offset": 65046,
+        "raw_line_sha256": "ad8dc27e0a5242dc0c617e24b381c74ffd12571de119079ac015dee16ed98e91",
+        "raw_marker_offset": 65102,
+        "raw_sha256": "ced4a8bb63b58e496f6a2467938e621af9550b5154ca24f4d1288a493624c459",
+        "removed_prefix": "loading map: maps/City_Zones/City_01_01/City_01_01.txt..",
+        "stock_loadstart_source": {
+          "bytes": 44795,
+          "sha256": "b48bb24ed28ce8e375c9a68425d8d86d647d7a412c0be079951b19600d1a39e3"
+        }
+      },
+      "authentic_prior_failed_artifact": {
+        "artifact_id": 11866634892,
+        "bytes": 4582240,
+        "failure": "ValueError: Native freshness ordinals differ",
+        "full_warm_case_admitted": false,
+        "original_status": "failed",
+        "original_warm_case_cache_mtime_validation_proven": false,
+        "owned_cleanup_verified": true,
+        "sha256": "f6d50773cbeab72ff9afd989e95348fd4481f1f9bc8ebdd67338661f835bde77",
+        "source": "b3239ed001cd75a92910731710b7675506cf1944",
+        "warm_baseline_cache_byte_deltas": 0,
+        "warm_baseline_original_source_byte_deltas": 0
+      },
+      "format": 1,
+      "independent_host_tests": {
+        "errors": 0,
+        "failed": 0,
+        "module": "test_native_map_world_037",
+        "passed": 46,
+        "seconds": 0.217,
+        "skipped": 0
+      },
+      "known_annotation_limitation": {
+        "Android_or_Thor_speed_inferred": false,
+        "basis": "This qualifier requires os.name==nt and executes native Windows held-Popen/Win32 memory/progress and independent Db status directly; the frozen shared parser label is inherited from its old Wine lane.",
+        "correct_actual_world_lane_timing_scope": "host_Windows_wall_time_not_Android_or_Thor",
+        "native_behavior_or_proof_rules_changed": false,
+        "original_shared_parser_timing_scope": "host_Wine_wall_time_not_Android_or_Thor",
+        "published_source_mutated_for_label": false,
+        "running_native_lane_restarted_for_label": false
+      },
+      "parent": "b3239ed001cd75a92910731710b7675506cf1944",
+      "published_source": "3a713dc278d9247a65fb2357447adb5353c0a577",
+      "readiness_capture_review": [
+        "The native-ready snapshot is persisted before optional observer parsing, with whole-case admission/cache-parity/parser pending flags false",
+        "Before and failed-after cache100ns dates are now retained; originalb323 lacked dates and cannot be retrospectively admitted as a full warm case",
+        "Unknown/wrong-map/multiple progress prefixes, malformed/duplicate/missing/out-of-order native rows remain rejected",
+        "The original04b stock case remains explicitly inherited; no stock/preparation/build replay authorized by this correction"
+      ],
+      "reviewed_at_UTC": "2026-10-14T03:21:27.240377+00:00",
+      "reviewer": "client_harness_review",
+      "scope_limits": {
+        "behavioral_collision_proven": false,
+        "full_native_world_gate_passed": false,
+        "native_build_or_preparation_repeated": false,
+        "new_native_execution_by_reviewer": false,
+        "physical_device_executed": false,
+        "player_or_SQL_access_by_reviewer": false,
+        "shipping_allowed": false,
+        "source_edits_by_reviewer": false
+      },
+      "source_pins": {
+        "tools/android/interactive/qualify_native_map_world_037.py": {
+          "bytes": 81189,
+          "sha256": "814b01b739d1fed55ecafb739c8dba58c421c0cf74ce2aab825a018cac9aa290"
+        },
+        "tools/android/interactive/test_native_map_world_037.py": {
+          "bytes": 32937,
+          "sha256": "fdacc844ccd174d92bfd987b218b3ba1ee1034ab3173f04ef878bed98d20a6a4"
+        }
+      },
+      "status": "published_framing_logic_verified_with_known_timing_annotation_defect"
+    },
+    "root_independent_review": {
+      "ResourceWarning_is_error": true,
+      "approved": true,
+      "errors": 0,
+      "failures": 0,
+      "modules": {
+        "test_derive_native_metadata_cache_proof": 22,
+        "test_native_metadata_map_activation": 26
+      },
+      "native_execution": false,
+      "seconds": 35.271,
+      "skips": 0,
+      "tests": 48
+    },
+    "runtime_cache_proof_derivation": null
+  },
   "role": "fresh_closed_adapter_root_integration_test_result",
   "seconds": 58.372,
   "skips": 0,
