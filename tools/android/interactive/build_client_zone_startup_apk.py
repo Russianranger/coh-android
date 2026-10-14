@@ -54,14 +54,23 @@ REVIEWED_JAVA_CHANGES = frozenset({
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java'})
 ADDED_JAVA_SOURCES = frozenset()
-GUEST_SOURCE_CHANGES = frozenset({'android/guest/game_device_diagnostic.py'})
+GUEST_SOURCE_CHANGES = frozenset({
+    'android/guest/game_device_diagnostic.py',
+    'android/guest/client_startup_diagnostic.py', 'android/guest/client_interactive_diagnostic.py',
+    'android/guest/client_gpu_profile.py', 'android/guest/texture_header_index.py',
+    'android/guest/native_map_startup_contract.py', 'android/guest/local_character_server.py',
+    'android/guest/server_cache_package.py', 'android/guest/server_animation_package.py',
+    'android/guest/atlas_beacon_package.py', 'android/guest/character_zoning.py',
+    'android/guest/game_diagnostic.py', 'android/guest/server_fx_catalog.py'})
+ADDED_GUEST_SOURCES = frozenset({'android/guest/native_startup_metadata_contract.py'})
+GUEST_INPUTS = GUEST_SOURCE_CHANGES | ADDED_GUEST_SOURCES
 NATIVE_SOURCE_FILES = frozenset({
     'android/native/client-launcher.c',
     'tools/android/interactive/manual_launcher_contract.py',
     'tools/android/interactive/package_manual_launcher.py',
     'tools/android/interactive/qualify_manual_launcher_windows.py'})
 NATIVE_PAYLOAD = 'assets/runtime/client-launcher.exe'
-ADDED_PAYLOADS = frozenset()
+ADDED_PAYLOADS = frozenset('assets/runtime/'+Path(name).name for name in ADDED_GUEST_SOURCES)
 CHECKS = ('retained_regressions_and_postgresql_verified', 'actual_runtime_asset_installers_verified',
     'full_startup_orchestration_verified', 'report_finalization_and_recovery_verified',
     'saved_map_startup_and_preservation_verified', 'bounded_cache_reuse_verified',
@@ -102,6 +111,10 @@ SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT, MARKER, 'docs/'+NOTES_
     'tools/android/interactive/native_startup_component_migration.py',
     'tools/android/interactive/test_native_startup_metadata_contract.py',
     'tools/android/interactive/test_native_startup_component_migration.py',
+    'tools/android/interactive/test_native_metadata_runtime_activation.py',
+    'tools/android/interactive/test_native_metadata_map_activation.py',
+    'tools/android/interactive/derive_native_metadata_cache_proof.py',
+    'tools/android/interactive/test_derive_native_metadata_cache_proof.py',
     'tools/android/interactive/test_manual_report_acceptance.py',
     'tools/android/interactive/fixtures/thor-manual-report-0.13.36-20261013.json'}) | REVIEWED_JAVA_CHANGES | ADDED_JAVA_SOURCES | GUEST_SOURCE_CHANGES | REVIEWED_TEST_CHANGES | ROUTING_SOURCE_CHANGES | NATIVE_SOURCE_FILES
 REVIEWED_DONOR_SOURCE_CHANGES = REVIEWED_JAVA_CHANGES | GUEST_SOURCE_CHANGES | REVIEWED_TEST_CHANGES | ROUTING_SOURCE_CHANGES
@@ -279,16 +292,17 @@ def validate_donor(apk, receipt, *, check_sources=True):
 
 
 def payload_boundaries(payloads, donor, native):
-    require(set(payloads) == set(donor['payloads']) and len(payloads) == 74
-        and {name for name in payloads if payloads[name] != donor['payloads'][name]} == replacement_payloads(donor),
+    require(set(payloads) == set(donor['payloads']) | ADDED_PAYLOADS and len(payloads) == 74+len(ADDED_PAYLOADS)
+        and {name for name in donor['payloads'] if payloads[name] != donor['payloads'][name]} == replacement_payloads(donor)
+        and all(payloads['assets/runtime/'+Path(name).name] == builder().file_pin(ROOT/name) for name in ADDED_GUEST_SOURCES),
         'Only reviewed guest helpers and enclosing manifests may change; all native bytes remain exact')
     require(payloads[NATIVE_PAYLOAD] == native['build']['executable'], 'Actual payload must retain original .35 Windows-qualified launcher')
 
 
 def verification_manifests(donor, helper_pins, commit, native):
-    require(set(helper_pins) == {Path(name).name for name in GUEST_SOURCE_CHANGES},
+    require(set(helper_pins) == {Path(name).name for name in GUEST_INPUTS},
             'Exact reviewed guest helper pins required')
-    require(helper_pins == {Path(name).name: builder().file_pin(ROOT/name) for name in GUEST_SOURCE_CHANGES},
+    require(helper_pins == {Path(name).name: builder().file_pin(ROOT/name) for name in GUEST_INPUTS},
             'Reviewed helper pins must match actual candidate source bytes')
     helper_pins = {name: helper_pins[name] for name in sorted(helper_pins)}
     updates = dict(helper_pins, **{'client-launcher.exe': native['build']['executable']})
@@ -336,7 +350,7 @@ def extract_and_repair(apk, donor, destination, commit, native_directory, native
                 shutil.copyfileobj(source, output, 1024*1024)
     for name, expected in donor['payloads'].items(): base.checked_file(destination/name, expected)
     assets = destination/'assets/runtime'; helper_pins = {}
-    for source in sorted(GUEST_SOURCE_CHANGES):
+    for source in sorted(GUEST_INPUTS):
         target = assets/Path(source).name; base.checked_file(ROOT/source)
         target.write_bytes((ROOT/source).read_bytes()); helper_pins[target.name] = base.file_pin(target)
     launcher = assets/'client-launcher.exe'
@@ -345,7 +359,7 @@ def extract_and_repair(apk, donor, destination, commit, native_directory, native
     client, runtime = verification_manifests(donor, helper_pins, commit, native)
     for name, value in (('client-manifest.json', client), ('runtime-manifest.json', runtime)):
         (assets/name).write_bytes(shared.encoded(value))
-    payloads = {name: base.file_pin(destination/name) for name in sorted(donor['payloads'])}
+    payloads = {name: base.file_pin(destination/name) for name in sorted(set(donor['payloads']) | ADDED_PAYLOADS)}
     payload_boundaries(payloads, donor, native)
     server = retained.verify_server_archives(assets)
     require(typed_equal(server, donor['package_preflight']['server_archives']),

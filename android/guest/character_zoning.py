@@ -345,7 +345,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def qualify_monorail_preparation(self):
         if 'native_monorail' not in self.map_package:
             return
-        monorail_contract.embedded_receipt(self.map_package)
+        import native_map_startup_contract as startup
+        monorail_contract.embedded_receipt(startup.legacy_package(self.map_package))
         graph = self.creation_report.get('kings_row_beacon_graph', {})
         require(graph.get('verified') is True and graph.get('map_id') == 5,
                 'Kings Row native collision/beacon package is not verified')
@@ -742,6 +743,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             environment.update(self.monorail_environment(map_id))
         if self.pending is not None:
             self._check_preparation_deadline()
+        import native_startup_metadata_contract as metadata
+        activation = metadata.apply_attempt_environment(getattr(self, 'map_package', {}), 'mapserver',
+            map_runtime / 'MapServer.exe', environment, map_id=map_id)
+        if activation is not None:
+            self.zoning_report.setdefault('native_metadata_attempts', {})[str(map_id)] = activation
         launch_ms = int(time.time() * 1000)
         launch_monotonic = time.monotonic()
         process = self.ctx.start('local-character-zoning-' + str(map_id), ['/usr/bin/env', '--chdir=' + str(map_runtime),
@@ -929,9 +935,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         require(self.zoning_query is None, 'Concurrent zoning protocol query refused')
         self.query_count += 1
         require(self.query_count <= 160, 'Character protocol query budget exceeded')
+        import native_startup_metadata_contract as metadata
+        environment = metadata.scrub_attempt_environment(self.owner.wine_env)
         child = self.ctx.start('zoning-' + label, ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'), '-nogui',
-            '-db', '127.0.0.1', '-dbquery', '-timeout', '10000', *arguments], env=self.owner.wine_env)
+            '-db', '127.0.0.1', '-dbquery', '-timeout', '10000', *arguments], env=environment)
         self.zoning_query = (label, child, time.monotonic() + 90)
 
     def _query_poll(self):

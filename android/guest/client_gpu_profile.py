@@ -19,6 +19,7 @@ from types import SimpleNamespace
 import zipfile
 
 import native_responsiveness_contract as native_candidate
+import native_startup_metadata_contract as metadata
 
 ARCHIVE = 'hardware-renderer.zip'
 MANIFEST = 'hardware-renderer-manifest.json'
@@ -280,6 +281,7 @@ def run_probe(owner, label, command, environment, timeout, *, allow_background_o
     reject it after stopping the isolated prefix and proving leader exit/EOF.
     """
     import diagnostic as base
+    environment = metadata.scrub_attempt_environment(environment)
     try:
         child = owner.ctx.start(label, command, env=environment)
     except base.DiagnosticError as error:
@@ -694,6 +696,7 @@ def observe_prior_prefix_owners(prefix, context, *, prior_owner=None, proc_root=
 
 
 def private_wgl_probe(owner, environment, executable, directory, receipt):
+    environment = metadata.scrub_attempt_environment(environment)
     cache = ProbePrefixCache(owner, environment, receipt)
     try:
         return _private_wgl_probe(owner, environment, executable, directory, receipt, cache)
@@ -886,6 +889,45 @@ def cleanup_directories(owner):
     return failures
 
 
+def current_metadata_consumer(owner):
+    package = getattr(owner, 'client_native_metadata_package', None)
+    if package is None: return None
+    return metadata.runtime_admission(package, 'game', owner.work / 'CityOfHeroes.exe')
+
+
+def retained_client_sha256(owner):
+    value = current_metadata_consumer(owner)
+    return value['previous_consumer_sha256'] if value is not None else getattr(owner, 'client_executable_sha256', None)
+
+
+def current_consumer_result(owner, historical):
+    value = current_metadata_consumer(owner)
+    if value is None: return historical
+    require(historical['client_executable_sha256'] == value['previous_consumer_sha256'],
+        'Current metadata Game does not retain this exact control producer')
+    result = dict(historical, client_executable_sha256=value['current_consumer_sha256'],
+        producer_scope='retained_controls_in_separately_qualified_metadata_consumer',
+        retained_control_producer_executable_sha256=historical['client_executable_sha256'],
+        native_metadata_authority_sha256=value['authority_sha256'],
+        native_metadata_execution_review_sha256=value['execution_review_sha256'],
+        native_metadata_consumer={'executable_sha256': value['current_consumer_sha256'],
+            'component_receipt_sha256': metadata.canonical_sha(value['receipt']),
+            'native_producer': value['native_producer']},
+        physical_fps_improvement_validated=False)
+    result['retained_producer'] = {key: result.pop(key) for key in
+        ('repository_commit', 'manifest_sha256', 'native_source_sha256') if key in result}
+    result['retained_producer']['executable_sha256'] = historical['client_executable_sha256']
+    for key in ('current_Game_repository_commit', 'current_Game_manifest_sha256'):
+        if key in result: result[key.replace('current_Game_', 'retained_control_Game_')] = result.pop(key)
+    return result
+
+
+def control_producer_field(producer, key):
+    # Legacy results retain their exact shape. Additive results state explicitly
+    # that these source/manifest hashes belong to the retained control producer.
+    return producer[key] if key in producer else producer['retained_producer'][key]
+
+
 def verified_render_pipeline_producer(owner):
     """Bind the current Game to the full typed extension of the retained .19 Game.
 
@@ -922,7 +964,7 @@ def verified_render_pipeline_producer(owner):
             and producer.get('base_client_renderer_attribution_manifest_sha256') == parent['manifest_sha256']
             and producer.get('base_client_executable_sha256') == GAME_SHA256
             and producer.get('client_executable_sha256') == pipeline_record['sha256']
-            and getattr(owner, 'client_executable_sha256', None) == record['sha256']
+            and retained_client_sha256(owner) == record['sha256']
             and producer.get('source_commit') == package['source_commit']
             and producer.get('data_commit') == package['data_commit']
             and producer.get('native_source_sha256') == native_candidate.canonical_sha(manifest['retained_source_inputs'])
@@ -948,10 +990,10 @@ def verified_render_pipeline_producer(owner):
     if queue is not None:
         result.update(policy='retained_pipeline_in_verified_render_queue_Game_attempt_v1',
             pipeline_producer_executable_sha256=pipeline_record['sha256'],
-            current_Game_repository_commit=queue['repository_commit'],
-            current_Game_manifest_sha256=queue['manifest_sha256'],
+            current_Game_repository_commit=control_producer_field(queue, 'repository_commit'),
+            current_Game_manifest_sha256=control_producer_field(queue, 'manifest_sha256'),
             typed_render_queue_extension=True)
-    return result
+    return current_consumer_result(owner, result)
 
 
 def verified_render_queue_producer(owner):
@@ -989,7 +1031,7 @@ def verified_render_queue_producer(owner):
             and producer.get('manifest_sha256') == wrapper['manifest_sha256']
             and producer.get('base_client_render_pipeline_manifest_sha256') == parent['manifest_sha256']
             and producer.get('base_client_executable_sha256') == PIPELINE_GAME_SHA256
-            and producer.get('client_executable_sha256') == getattr(owner, 'client_executable_sha256', None) == record['sha256']
+            and producer.get('client_executable_sha256') == retained_client_sha256(owner) == record['sha256']
             and producer.get('source_commit') == package['source_commit']
             and producer.get('data_commit') == package['data_commit']
             and producer.get('native_source_sha256') == native_candidate.canonical_sha(manifest['retained_source_inputs'])
@@ -1005,7 +1047,7 @@ def verified_render_queue_producer(owner):
             and producer.get('render_worker_wake_coalesced') is True
             and producer.get('physical_fps_improvement_validated') is False,
             'Render queue lacks its current verified Game producer')
-    return {'policy': 'exact_retained_pipeline_Game_then_full_typed_render_queue_v1',
+    return current_consumer_result(owner, {'policy': 'exact_retained_pipeline_Game_then_full_typed_render_queue_v1',
             'repository_commit': manifest['repository_commit'], 'manifest_sha256': wrapper['manifest_sha256'],
             'client_executable_sha256': record['sha256'],
             'retained_pipeline_repository_commit': PIPELINE_SOURCE_COMMIT,
@@ -1013,7 +1055,7 @@ def verified_render_queue_producer(owner):
             'retained_pipeline_executable_sha256': PIPELINE_GAME_SHA256,
             'retained_renderer_repository_commit': GAME_SOURCE_COMMIT,
             'retained_renderer_executable_sha256': GAME_SHA256,
-            'native_source_sha256': native_candidate.canonical_sha(manifest['retained_source_inputs'])}
+            'native_source_sha256': native_candidate.canonical_sha(manifest['retained_source_inputs'])})
 
 
 def current_game_producer(owner):

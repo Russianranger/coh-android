@@ -169,6 +169,22 @@ def verify_runtime(runtime, document, *, mapserver_package=None):
     runtime = Path(runtime)
     require(runtime.is_dir() and not runtime.is_symlink(),
             'Animation runtime/native identity differs')
+    import native_startup_metadata_contract as metadata
+    if isinstance(mapserver_package, dict) and metadata.WRAPPER in mapserver_package:
+        admitted = metadata.runtime_admission(mapserver_package, 'mapserver', runtime / 'MapServer.exe')
+        import native_map_startup_contract as startup
+        old = startup.embedded_receipt(mapserver_package)
+        expected = {'policy': 'exact_original_animation_pack_and_certificate',
+            'current_consumer_sha256': admitted['current_consumer_sha256'],
+            'original_animation_identity': identity(), 'original_animation_pack': document['pigg'],
+            'certificate_sha256': startup.compact_sha(old['build_input']['animation_certificate'])}
+        require(metadata.same(admitted['receipt']['compatibility'].get('animation'), expected)
+            and metadata.same(document['identity'], identity()),
+            'Current metadata consumer lacks exact original animation/certificate parity')
+        return dict(startup.verify_current_map(runtime / 'MapServer.exe', mapserver_package),
+            policy='reviewed_metadata_consumer_exact_original_animation_pack',
+            original_animation_producer_mapserver_sha256=document['identity']['mapserver_sha256'],
+            historical_animation_certificate_preserved=True)
     actual = file_pin(runtime / 'MapServer.exe')['sha256']
     historical = document['identity']['mapserver_sha256']
     if actual == historical:

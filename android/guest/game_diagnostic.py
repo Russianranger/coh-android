@@ -140,6 +140,8 @@ def fixed_inputs_acknowledgement(child):
 
 def game_loopback_contract(package):
     """The new hosted profile uses the separately qualified loopback donor only."""
+    import native_startup_metadata_contract as metadata
+    package = metadata.legacy_package(package, 'mapserver')
     profile = package.get('dbserver_profile', 'accepted')
     require(profile in ('accepted', 'loopback'), 'Unknown game DbServer profile')
     if profile == 'accepted':
@@ -191,6 +193,8 @@ def loopback_acknowledgement(child, expected):
 
 
 def game_listener_contract(package):
+    import native_startup_metadata_contract as metadata
+    package = metadata.legacy_package(package, 'mapserver')
     profile = package.get('game_listener_profile', 'accepted')
     require(profile in ('accepted', 'loopback'), 'Unknown game listener profile')
     if profile == 'accepted':
@@ -239,6 +243,12 @@ def game_listener_contract(package):
 
 def mapserver_progress_contract(package):
     """Bind the opt-in binary, complete source receipt and exact publication ABI."""
+    import native_startup_metadata_contract as metadata
+    if isinstance(package, dict) and metadata.WRAPPER in package:
+        import native_map_startup_contract as startup
+        candidate = startup.progress_contract(package)
+        map_progress_module().validate_contract(candidate['contract'], source=True)
+        return candidate
     profile = package.get('mapserver_progress_profile')
     if profile is None:
         require('mapserver_progress' not in package.get('inputs', {}), 'Unexpected MapServer progress donor')
@@ -561,6 +571,9 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
                 and not any(ord(c) < 32 for c in version), 'Missing explicit TestClient launcher version')
         files = self.package.get('files', {})
         require(all(name in files for name in EXES), 'Missing game executable')
+        import native_startup_metadata_contract as metadata
+        self.native_metadata_current_consumer = (metadata.runtime_admission(self.package, 'mapserver',
+            args.game_package / 'MapServer.exe') if metadata.WRAPPER in self.package else None)
         dbserver.verify_inventory(args.game_package, files, manifest='game-package.json', binary=True)
         for name in files:
             base.verify_pe32(args.game_package / name)
@@ -576,6 +589,8 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             environment.pop(dbserver.LOOPBACK_ENV, None)
             environment.pop(evidence.GAME_LOOPBACK_ENV, None)
             environment.pop(MAP_PROGRESS_ENVIRONMENT, None)
+            for name in metadata.ATTEMPT_ENVIRONMENTS.values():
+                environment.pop(name, None)
         self.loopback_contract = game_loopback_contract(self.package)
         self.loopback_enabled = self.loopback_contract is not None
         self.game_listener_metadata = game_listener_contract(self.package)
@@ -614,6 +629,8 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             'mapping_bytes': 4096, 'stages': self.dispatch_stages, 'phases': {}, 'is_success_proof': False}
         if self.map_progress_contract is not None:
             self.game['mapserver_progress'] = map_progress_module().evidence(self.map_progress_contract['producer'])
+            if 'current_consumer' in self.map_progress_contract:
+                self.game['mapserver_progress']['current_consumer'] = self.map_progress_contract['current_consumer']
         self.game['startup_policy'] = {'first_atlas_timeout_seconds': 2400, 'restart_atlas_timeout_seconds': 900,
             'startup_query_timeout_seconds': 90, 'first_poll_interval_seconds': 60,
             'restart_poll_interval_seconds': 30, 'live_query_timeout_seconds': 25,
@@ -712,7 +729,8 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             time.sleep(interval)
 
     def game_environment(self, executable, env=None):
-        environment = (self.wine_env if env is None else env).copy()
+        import native_startup_metadata_contract as metadata
+        environment = metadata.scrub_attempt_environment(self.wine_env if env is None else env)
         environment.pop(MAP_PROGRESS_ENVIRONMENT, None)
         environment.pop(dbserver.LOOPBACK_ENV, None)
         environment.pop(evidence.GAME_LOOPBACK_ENV, None)
@@ -759,6 +777,18 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
     def start_game(self, label, executable, arguments, *, env=None):
         environment = self.game_environment(executable, env)
         phase = getattr(self, 'map_progress_phase', None)
+        import native_startup_metadata_contract as metadata
+        if (executable == 'MapServer.exe' and '-dbquery' not in arguments
+                and metadata.WRAPPER in getattr(self, 'package', {})):
+            indices = [index for index, value in enumerate(arguments) if value == '-map_id']
+            require(len(indices) == 1 and indices[0] + 1 < len(arguments)
+                and re.fullmatch(r'[1-9][0-9]{0,5}', arguments[indices[0] + 1]),
+                'Explicit unique MapServer world argument required')
+            import native_startup_metadata_contract as metadata
+            activation = metadata.apply_attempt_environment(self.package, 'mapserver',
+                self.runtime / 'MapServer.exe', environment, map_id=int(arguments[indices[0] + 1]))
+            if activation is not None:
+                self.game.setdefault('native_metadata_attempts', {})[label] = activation
         if (getattr(self, 'map_progress_contract', None) is not None and phase in ('first', 'restart')
                 and label == phase + '-atlas' and executable == 'MapServer.exe'):
             environment[MAP_PROGRESS_ENVIRONMENT] = base.windows_path(self.map_progress_paths[phase])

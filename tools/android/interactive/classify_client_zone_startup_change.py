@@ -23,10 +23,31 @@ CLIENT_ZONE_STARTUP_DOCS = frozenset({
     'docs/android-evidence/original-cache-components-0.13.37-recovery.json',
     'docs/android-evidence/native-map-world-bounds-failure-0.13.37.json',
     'docs/android-evidence/native-client-metadata-census-0.13.37-prototype.json',
+    'docs/android-evidence/native-metadata-adapter-0.13.37-source-checkpoint.json',
+    'docs/android-evidence/native-client-metadata-adapter-0.13.37-review.json',
+    'docs/android-evidence/native-client-material-reader-0.13.37-review.json',
+    'docs/android-evidence/native-map-metadata-adapter-0.13.37-review.json',
+    'docs/android-evidence/native-map-metadata-adapter-0.13.37-host-tests.json',
+    'docs/android-evidence/native-cache-normalizer-0.13.37-review.json',
+    'docs/android-evidence/native-map-cache-subset-0.13.37-research.json',
+    'docs/android-evidence/native-metadata-adapter-0.13.37-root-integration.json',
 })
 CLIENT_ZONE_STARTUP_ALLOWED = CLIENT_ZONE_STARTUP_DOCS | frozenset({
     '.github/workflows/android-client-zone-startup.yml',
     'android/guest/game_device_diagnostic.py',
+    'android/guest/client_startup_diagnostic.py',
+    'android/guest/client_interactive_diagnostic.py',
+    'android/guest/client_gpu_profile.py',
+    'android/guest/texture_header_index.py',
+    'android/guest/native_map_startup_contract.py',
+    'android/guest/local_character_server.py',
+    'android/guest/server_cache_package.py',
+    'android/guest/server_animation_package.py',
+    'android/guest/atlas_beacon_package.py',
+    'android/guest/character_zoning.py',
+    'android/guest/game_diagnostic.py',
+    'android/guest/server_fx_catalog.py',
+
     'android/guest/native_startup_metadata_contract.py',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
@@ -46,6 +67,10 @@ CLIENT_ZONE_STARTUP_ALLOWED = CLIENT_ZONE_STARTUP_DOCS | frozenset({
     'tools/android/interactive/test_native_startup_metadata_admission.py',
     'tools/android/interactive/test_native_startup_metadata_contract.py',
     'tools/android/interactive/test_native_startup_component_migration.py',
+    'tools/android/interactive/test_native_metadata_runtime_activation.py',
+    'tools/android/interactive/test_native_metadata_map_activation.py',
+    'tools/android/interactive/derive_native_metadata_cache_proof.py',
+    'tools/android/interactive/test_derive_native_metadata_cache_proof.py',
 })
 
 

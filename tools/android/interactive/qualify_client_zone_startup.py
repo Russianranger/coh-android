@@ -27,7 +27,8 @@ import qualify_client_startup_latency as published
 RETAINED_TEST_MODULES = published.TEST_MODULES
 NEW_TEST_MODULES = ('test_client_zone_startup_package', 'test_native_startup_metadata_admission',
     'test_manual_report_acceptance', 'test_native_startup_metadata_contract',
-    'test_native_startup_component_migration')
+    'test_native_startup_component_migration', 'test_native_metadata_runtime_activation',
+    'test_native_metadata_map_activation', 'test_derive_native_metadata_cache_proof')
 TEST_MODULES = RETAINED_TEST_MODULES + NEW_TEST_MODULES
 # Immutable packaging producers and the unchanged prior certificate contract
 # retain original evidence. All changed guest/UI,
@@ -55,7 +56,9 @@ CHECK_SUITES = {
     'lawful_progression_save_checks_verified': ['test_saved_gameplay_lifecycle', 'test_task_gate_evidence'],
     'bounded_cache_reuse_verified': ['test_server_worktree_reuse', 'test_collision_input_snapshot',
         'test_shared_collision_input_proof', 'test_map_startup_observation', 'test_map_startup_cache_reuse',
-        'test_native_startup_metadata_contract', 'test_native_startup_component_migration'],
+        'test_native_startup_metadata_contract', 'test_native_startup_component_migration',
+        'test_native_metadata_runtime_activation', 'test_native_metadata_map_activation',
+        'test_derive_native_metadata_cache_proof'],
     'manual_session_and_capture_verified': ['test_manual_session', 'test_session_budget_java',
         'test_session_budget_guest', 'test_client_zoning_java'],
     'text_entry_transport_verified': ['test_client_text_entry', 'test_input',

@@ -60,6 +60,39 @@ def retain_native_component(donor, actual_server_archives, actual_component):
         'server_archives': copy.deepcopy(actual_server_archives)}
 
 
+def prepare_reviewed_native_archives(donor_apk, material_paths):
+    """Dormant bounded preparation from exact original artifact ZIP bytes.
+
+    This has no signing, build dispatch, installation or publication action.
+    Production keeps both this gate and the guest execution reviews closed.
+    Opening it requires separately authenticated current Game/Map proofs;
+    historical initialization/animation receipts stay unchanged inside each
+    archive. A caller cannot substitute a candidate SHA or a passing boolean.
+    """
+    require(PROMOTIONS_IMPLEMENTED is True, 'Native archive promotion preparation is disabled')
+    require(type(material_paths) is dict and material_paths
+        and set(material_paths) <= {'game', 'mapserver'}, 'Explicit finite Game/Map material paths required')
+    import native_startup_component_migration as migration
+    contract = migration.contract
+    originals = migration.authenticated_donor(donor_apk)
+    archives, proofs = {}, {}
+    for kind in sorted(material_paths):
+        expected, executable = migration.authenticate_materials(kind, material_paths[kind])
+        raw, proof = migration.migrate_archive(originals[kind], kind, executable, expected)
+        reader = migration.zip_members if kind == 'game' else migration.game_members
+        members, _ = reader(raw)
+        package = contract.unique_json(members[contract.COMPONENTS[kind]['manifest']])
+        reviewed = contract.runtime_admission(package, kind)
+        require(proof['native']['sha256'] == reviewed['current_consumer_sha256'],
+            'Archive native bytes differ from separately reviewed current consumer')
+        archives[migration.ARCHIVES[kind]] = raw
+        proofs[kind] = {**proof, 'execution_review_sha256': reviewed['execution_review_sha256'],
+            'qualified_maps': reviewed['qualified_maps'],
+            'actual_artifact_bytes_authenticated': True, 'apk_publication_authorized': False,
+            'native_process_executed_by_preparer': False, 'original_producer_relabelled': False}
+    return archives, proofs
+
+
 def inspect_map_research_wrapper(wrapper, previous_component):
     """Check additive evidence structure without granting runtime authority.
 

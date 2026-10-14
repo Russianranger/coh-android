@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import presentation_diagnostic as presentation
 import game_hang_evidence
 import native_responsiveness_contract as native_candidate
+import native_startup_metadata_contract as metadata
 import client_gpu_profile
 base, require = presentation.base, presentation.require
 SCOPE = 'actual_client_startup_guest'
@@ -182,6 +183,7 @@ def archive_manifest(archive, assets=None):
     require(manifest.get('format') == 1 and manifest.get('role') == 'actual_graphical_client'
             and manifest.get('source_commit') == SOURCE and manifest.get('data_commit') == DATA
             and manifest.get('reference_run_id') == 36088012664, 'Client package provenance differs')
+    historical = metadata.legacy_package(manifest, 'game')
     files = manifest.get('files')
     require(isinstance(files, dict) and len(files) == 21 and set(files) | {'client-package.json'} == {e.filename for e in entries}
             and set(name for name in files if name.lower().endswith('.exe')) == {'CityOfHeroes.exe'}
@@ -190,7 +192,7 @@ def archive_manifest(archive, assets=None):
     if 'native_responsiveness' in manifest:
         require(assets is not None, 'Native client candidate requires the installed source receipt')
         receipt = read_json(Path(assets) / 'native-responsiveness.json', 4 * 1024 * 1024)
-        native_candidate.client_contract(manifest, receipt)
+        native_candidate.client_contract(historical, receipt)
         require(receipt['retained_cache']['executable_sha256'] == EXE_SHA,
                 'Native candidate changed prepared-cache donor history')
     else:
@@ -339,7 +341,9 @@ def prepare_worktree(root, data, assets, identity, context):
         caches = cache_manifest(archive)
     with zipfile.ZipFile(assets / 'client-runtime.zip') as archive:
         package = archive_manifest(archive, assets)
-    candidate_receipt = (native_candidate.embedded_receipt(package)
+    historical = metadata.legacy_package(package, 'game')
+    context.native_metadata_game_package = package if metadata.WRAPPER in package else None
+    candidate_receipt = (native_candidate.embedded_receipt(historical)
                          if 'native_responsiveness' in package else None)
     previous_client_record = ({'size': 9432576, 'sha256': EXE_SHA}
                              if candidate_receipt is not None else None)
@@ -367,6 +371,9 @@ def prepare_worktree(root, data, assets, identity, context):
     if 'client_render_queue' in package:
         previous_client = package['client_render_queue']['base_client_executable']
         previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
+    if metadata.WRAPPER in package:
+        previous_client = historical['files']['CityOfHeroes.exe']
+        previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
     if candidate_receipt is not None:
         require(candidate_receipt['retained_cache']['archive'] == {
                     'bytes': (assets / 'client-caches.zip').stat().st_size, 'sha256': cache_sha},
@@ -382,11 +389,22 @@ def prepare_worktree(root, data, assets, identity, context):
                          'normalized_mtime_epoch': CACHE_EPOCH}
     content_sha = identity_sha256({'data': worktree_data_identity(expected_identity),
                                   'native': native_closure_identity(package)})
+    prepared_metadata_texture_proof = None
+
     def startup_index_migration_proof(report):
         # This producer is validated by archive_manifest, and cached files are
         # verified before every call below. Recompute the old native content
         # identity from its frozen exact executable/DLL closure, rather than
         # accepting a prior marker's claimed identity or a generic schema flag.
+        if metadata.WRAPPER in package:
+            if not report.get('reused'): return report
+            require(prepared_metadata_texture_proof is not None,
+                'Metadata texture migration was not verified before worktree changes')
+            proof = dict(prepared_metadata_texture_proof)
+            report['source_root_preserved'] = True
+            report['native_texture_index_migration'] = proof
+            report['native_metadata_component'] = metadata.runtime_admission(package, 'game')['authority_sha256']
+            return report
         layer = ('client_render_queue' if 'client_render_queue' in package else
                  'client_render_pipeline' if 'client_render_pipeline' in package else
                  'client_renderer_attribution' if 'client_renderer_attribution' in package else
@@ -489,6 +507,17 @@ def prepare_worktree(root, data, assets, identity, context):
         previous_receipt_sha = base.file_hash(candidate / 'client-work.json')
         changed_wrapper = saved['package_sha256'] != package_sha
         upgrade = verify_cached_files(candidate, allow_native_upgrade=changed_wrapper)
+        lineage = saved.get('verified_legacy_receipts', [])
+        require(isinstance(lineage, list) and len(lineage) <= 16
+                and all(isinstance(value, str) and re.fullmatch(r'[0-9a-f]{64}', value)
+                        for value in lineage), 'Invalid client worktree receipt lineage')
+        if metadata.WRAPPER in package:
+            old_content = identity_sha256({'data': worktree_data_identity(expected_identity),
+                'native': native_closure_identity(historical)})
+            prepared_metadata_texture_proof = metadata.game_texture_index_migration(package,
+                {'content_identity_sha256': old_content, 'data_contract': worktree_data_identity(expected_identity)},
+                content_sha)
+            prepared_metadata_texture_proof.pop('runtime_activation_allowed')
         if upgrade:
             # Replace only the exact previous donor executable. Imported data,
             # DLLs and generated cache bytes have already passed their checks.
@@ -510,10 +539,6 @@ def prepare_worktree(root, data, assets, identity, context):
         # regular world/avatar supplements. Keep that verified root in place;
         # renaming it would leave absolute immutable links pointing nowhere.
         destination = candidate
-        lineage = saved.get('verified_legacy_receipts', [])
-        require(isinstance(lineage, list) and len(lineage) <= 16
-                and all(isinstance(value, str) and re.fullmatch(r'[0-9a-f]{64}', value)
-                        for value in lineage), 'Invalid client worktree receipt lineage')
         metadata_changed = (changed_wrapper or saved.get('content_identity_sha256') != content_sha
                             or saved.get('worktree_key') != destination.name)
         if metadata_changed:
@@ -900,9 +925,9 @@ def apply_client_render_pipeline_environment(owner, environment, label):
     owner.ctx.report['client_render_pipeline_environment'] = {
         'format': 1, 'policy': 'current_verified_Game_attempt_only', 'enabled': enabled,
         'launch_label': label,
-        'producer_manifest_sha256': producer['manifest_sha256'] if enabled else None,
+        'producer_manifest_sha256': client_gpu_profile.control_producer_field(producer, 'manifest_sha256') if enabled else None,
         'client_executable_sha256': producer['client_executable_sha256'] if enabled else None,
-        'native_source_sha256': producer['native_source_sha256'] if enabled else None,
+        'native_source_sha256': client_gpu_profile.control_producer_field(producer, 'native_source_sha256') if enabled else None,
         'render_pipeline': '1' if enabled else None,
         'record_prefix': 'COH_CLIENT_RENDER_PIPELINE_V1' if enabled else None,
         'command_sample_interval': 16 if enabled else None,
@@ -911,10 +936,16 @@ def apply_client_render_pipeline_environment(owner, environment, label):
     if enabled and producer.get('typed_render_queue_extension') is True:
         owner.ctx.report['client_render_pipeline_environment'].update(
             pipeline_producer_executable_sha256=producer['pipeline_producer_executable_sha256'],
-            pipeline_producer_repository_commit=producer['repository_commit'],
-            current_Game_repository_commit=producer['current_Game_repository_commit'],
-            current_Game_manifest_sha256=producer['current_Game_manifest_sha256'],
+            pipeline_producer_repository_commit=client_gpu_profile.control_producer_field(producer, 'repository_commit'),
             typed_render_queue_extension=True)
+        report = owner.ctx.report['client_render_pipeline_environment']
+        if 'native_metadata_consumer' in producer:
+            report.update(retained_control_Game_repository_commit=producer['retained_control_Game_repository_commit'],
+                retained_control_Game_manifest_sha256=producer['retained_control_Game_manifest_sha256'],
+                native_metadata_consumer=producer['native_metadata_consumer'])
+        else:
+            report.update(current_Game_repository_commit=producer['current_Game_repository_commit'],
+                current_Game_manifest_sha256=producer['current_Game_manifest_sha256'])
 
 
 def apply_client_render_queue_environment(owner, environment, label):
@@ -927,9 +958,9 @@ def apply_client_render_queue_environment(owner, environment, label):
     owner.ctx.report['client_render_queue_environment'] = {
         'format': 1, 'policy': 'current_verified_Game_attempt_only', 'enabled': enabled,
         'launch_label': label,
-        'producer_manifest_sha256': producer['manifest_sha256'] if enabled else None,
+        'producer_manifest_sha256': client_gpu_profile.control_producer_field(producer, 'manifest_sha256') if enabled else None,
         'client_executable_sha256': producer['client_executable_sha256'] if enabled else None,
-        'native_source_sha256': producer['native_source_sha256'] if enabled else None,
+        'native_source_sha256': client_gpu_profile.control_producer_field(producer, 'native_source_sha256') if enabled else None,
         'render_queue': '1' if enabled else None,
         'record_prefix': 'COH_CLIENT_RENDER_QUEUE_V1' if enabled else None,
         'frame_sample_interval': 32 if enabled else None,
@@ -948,7 +979,7 @@ def apply_client_gameplay_environment(owner, environment, label, graphics_profil
         require(getattr(owner, 'client_scene_performance', False) is True
             and isinstance(producer, dict)
             and re.fullmatch(r'[0-9a-f]{64}', str(getattr(owner, 'client_executable_sha256', '')))
-            and producer.get('client_executable_sha256') == owner.client_executable_sha256
+            and producer.get('client_executable_sha256') == client_gpu_profile.retained_client_sha256(owner)
             and re.fullmatch(r'[0-9a-f]{64}', str(producer.get('manifest_sha256', '')))
             and re.fullmatch(r'[0-9a-f]{40}', str(producer.get('repository_commit', '')))
             and producer.get('replacement_scope') == 'CityOfHeroes.exe_only'
@@ -976,6 +1007,11 @@ def apply_client_gameplay_environment(owner, environment, label, graphics_profil
     apply_client_render_pipeline_environment(owner, environment, label)
     apply_client_render_queue_environment(owner, environment, label)
 
+    proof = metadata.apply_attempt_environment(getattr(owner, 'client_native_metadata_package', None),
+        'game', (owner.work / 'CityOfHeroes.exe' if getattr(owner, 'client_native_metadata_package', None) is not None else None), environment)
+    owner.ctx.report['native_client_metadata_environment'] = {'enabled': proof is not None,
+        'launch_label': label, 'current_consumer': proof, 'shared_wine_environment_modified': False}
+
 
 def apply_client_gpu_environment(owner, environment, label):
     return client_gpu_profile.apply_profile(owner, environment, label)
@@ -984,6 +1020,8 @@ def apply_client_gpu_environment(owner, environment, label):
 class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
     def __init__(self, args, context):
         super().__init__(args, context)
+        for environment in (self.base_env, self.wine_env):
+            for name in metadata.ATTEMPT_ENVIRONMENTS.values(): environment.pop(name, None)
         self.observer = None
         self.client = None
         self.work = None
@@ -1005,6 +1043,14 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         with zipfile.ZipFile(self.args.assets / 'client-runtime.zip') as archive:
             package = archive_manifest(archive, self.args.assets)
         self.client_executable_sha256 = package['files']['CityOfHeroes.exe']['sha256']
+        self.client_native_metadata_package = package if metadata.WRAPPER in package else None
+        if self.client_native_metadata_package is not None:
+            admission = metadata.runtime_admission(package, 'game')
+            self.ctx.report['native_client_metadata_component'] = {key: admission[key] for key in
+                ('authority_sha256', 'execution_review_sha256', 'current_consumer_sha256',
+                 'previous_consumer_sha256', 'physical_timing_validated', 'behavioral_collision_validated')}
+            package = admission['previous_package']
+        retained_client_sha256 = package['files']['CityOfHeroes.exe']['sha256']
         if 'native_responsiveness' in package:
             candidate = native_candidate.embedded_receipt(package)
             self.ctx.report['native_responsiveness_candidate'] = {
@@ -1019,7 +1065,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'repository_commit': wrapper['manifest']['repository_commit'],
                 'manifest_sha256': wrapper['manifest_sha256'],
                 'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
-                'client_executable_sha256': self.client_executable_sha256,
+                'client_executable_sha256': retained_client_sha256,
                 'replacement_scope': 'CityOfHeroes.exe_only',
                 'prepared_cache_schema_changed': False, 'graphics_profile_changed': False,
                 'runtime_execution_validated': False}
@@ -1029,7 +1075,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'repository_commit': wrapper['manifest']['repository_commit'],
                 'manifest_sha256': wrapper['manifest_sha256'],
                 'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
-                'client_executable_sha256': self.client_executable_sha256,
+                'client_executable_sha256': retained_client_sha256,
                 'replacement_scope': 'CityOfHeroes.exe_only',
                 'prepared_cache_schema_changed': False, 'graphics_profile_changed': False,
                 'runtime_execution_validated': False}
@@ -1040,7 +1086,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'repository_commit': wrapper['manifest']['repository_commit'],
                 'manifest_sha256': wrapper['manifest_sha256'],
                 'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
-                'client_executable_sha256': self.client_executable_sha256,
+                'client_executable_sha256': retained_client_sha256,
                 'replacement_scope': 'CityOfHeroes.exe_only',
                 'metadata_preload_only': True, 'source_freshness_preserved': True,
                 'prepared_cache_schema_changed': False, 'physical_startup_savings_validated': False}
@@ -1051,7 +1097,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'repository_commit': wrapper['manifest']['repository_commit'],
                 'manifest_sha256': wrapper['manifest_sha256'],
                 'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
-                'client_executable_sha256': self.client_executable_sha256,
+                'client_executable_sha256': retained_client_sha256,
                 'replacement_scope': 'CityOfHeroes.exe_only',
                 'source_freshness_preserved': True, 'prepared_cache_schema_changed': False,
                 'renderer_changed': False, 'bounded_diagnostics': True,
@@ -1064,7 +1110,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'repository_commit': wrapper['manifest']['repository_commit'],
                 'manifest_sha256': wrapper['manifest_sha256'],
                 'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
-                'client_executable_sha256': self.client_executable_sha256,
+                'client_executable_sha256': retained_client_sha256,
                 'replacement_scope': 'CityOfHeroes.exe_only',
                 'source_freshness_preserved': True, 'prepared_cache_schema_changed': False,
                 'renderer_changed': False, 'menus_and_background_cap_retained': True,
@@ -1079,7 +1125,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'repository_commit': wrapper['manifest']['repository_commit'],
                 'manifest_sha256': wrapper['manifest_sha256'],
                 'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
-                'client_executable_sha256': self.client_executable_sha256,
+                'client_executable_sha256': retained_client_sha256,
                 'source_commit': SOURCE, 'data_commit': DATA,
                 'native_source_sha256': native_candidate.canonical_sha(wrapper['manifest']['retained_source_inputs']),
                 'native_source_sha256_policy': 'canonical_verified_source_receipts_v1',
@@ -1105,7 +1151,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'manifest_sha256': wrapper['manifest_sha256'],
                 'base_client_renderer_attribution_manifest_sha256': wrapper['base_client_renderer_attribution_manifest_sha256'],
                 'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
-                'client_executable_sha256': self.client_executable_sha256,
+                'client_executable_sha256': retained_client_sha256,
                 'source_commit': SOURCE, 'data_commit': DATA,
                 'native_source_sha256': native_candidate.canonical_sha(wrapper['manifest']['retained_source_inputs']),
                 'native_source_sha256_policy': 'canonical_verified_source_receipts_v1',
@@ -1129,7 +1175,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'manifest_sha256': wrapper['manifest_sha256'],
                 'base_client_render_pipeline_manifest_sha256': wrapper['base_client_render_pipeline_manifest_sha256'],
                 'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
-                'client_executable_sha256': self.client_executable_sha256,
+                'client_executable_sha256': retained_client_sha256,
                 'source_commit': SOURCE, 'data_commit': DATA,
                 'native_source_sha256': native_candidate.canonical_sha(wrapper['manifest']['retained_source_inputs']),
                 'native_source_sha256_policy': 'canonical_verified_source_receipts_v1',
@@ -1216,7 +1262,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
             client_environment['COH_CLIENT_DEPENDENCY_PRELOAD'] = '1'
         if getattr(self, 'client_scene_performance', False) is True:
             producer = self.ctx.report.get('client_scene_performance', {})
-            require(producer.get('client_executable_sha256') == self.client_executable_sha256
+            require(producer.get('client_executable_sha256') == client_gpu_profile.retained_client_sha256(self)
                 and re.fullmatch(r'[0-9a-f]{64}', str(producer.get('manifest_sha256', '')))
                 and producer.get('replacement_scope') == 'CityOfHeroes.exe_only'
                 and producer.get('source_freshness_preserved') is True

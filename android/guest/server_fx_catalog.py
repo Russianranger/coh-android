@@ -183,12 +183,29 @@ def verify_package(assets):
     return value, raw
 
 
-def verify_consumer(runtime, mapserver_package):
+def verify_consumer(runtime, mapserver_package, *, projection_manifest=None):
     """Keep the original FX control identity; admit only a typed additive reader.
 
     The animation supplement may change raw animation validation while the exact
     ordinary FX parser, registry and source algorithms remain untouched.
     """
+    import native_startup_metadata_contract as metadata
+    if isinstance(mapserver_package, dict) and metadata.WRAPPER in mapserver_package:
+        admitted = metadata.runtime_admission(mapserver_package, 'mapserver', Path(runtime)/'MapServer.exe')
+        require(type(projection_manifest) is dict
+            and projection_manifest.get('projected') == PROJECTED,
+            'Actual immutable FX projection manifest required for current consumer')
+        expected = {'policy': 'exact_original_server_fx_projection_and_native_ids',
+            'current_consumer_sha256': admitted['current_consumer_sha256'],
+            'projected': PROJECTED,
+            'historical_native_qualification_sha256': metadata.canonical_sha(projection_manifest.get('native_qualification')),
+            'all_native_ids_equal': True, 'all_records_source_compatible': True}
+        require(metadata.same(admitted['receipt']['compatibility'].get('fx'), expected),
+            'Current metadata consumer lacks fresh FX projection/schema/native-ID parity')
+        import native_map_startup_contract as startup
+        return dict(startup.verify_current_map(Path(runtime)/'MapServer.exe', mapserver_package),
+            native_fx_semantics_reviewed=True, native_fx_loader_source_unchanged=False,
+            fx_native_control_mapserver=MAPSERVER, historical_fx_receipt_preserved=True)
     actual = caches.file_pin(Path(runtime)/'MapServer.exe')
     require(isinstance(mapserver_package, dict)
             and mapserver_package.get('native_monorail', {}).get('receipt_sha256') == MONORAIL_RECEIPT,
@@ -220,9 +237,11 @@ def install(assets, runtime, *, context=None, mapserver_package=None):
     require(re.fullmatch(r'local-login-server-[0-9a-f]{32}(?:-kings-row|-atlas-park)?', runtime.name) is not None,
             'FX projection is restricted to the owned Atlas/Kings server namespace')
     value, raw = verify_package(assets)
-    verify_consumer(runtime, mapserver_package)
+    consumer = verify_consumer(runtime, mapserver_package, projection_manifest=value)
     actual = caches.file_pin(runtime/'MapServer.exe')
-    if actual != MAPSERVER:
+    import native_startup_metadata_contract as metadata
+    current_metadata = isinstance(mapserver_package, dict) and metadata.WRAPPER in mapserver_package
+    if actual != MAPSERVER and not current_metadata:
         require(actual == value['native_qualification']['startup_native_consumer']['mapserver'],
                 'FX supplement was qualified for different startup native bytes')
     owner = runtime.lstat().st_uid
@@ -230,6 +249,11 @@ def install(assets, runtime, *, context=None, mapserver_package=None):
     for directory in (runtime / 'data', runtime / 'data/bin'):
         info = directory.lstat()
         require(stat.S_ISDIR(info.st_mode) and info.st_uid == owner, 'Private FX ancestor differs')
+    def attributed(result):
+        if current_metadata:
+            result['current_native_consumer'] = consumer
+            result['native_freshness_loader_unchanged'] = False
+        return result
     target = runtime / TARGET
     if context is not None: context.check()
     snapshot = None
@@ -237,11 +261,11 @@ def install(assets, runtime, *, context=None, mapserver_package=None):
         snapshot = _regular(target, caches.MAX_FILE, owner=owner, allow_empty=True)
         actual = caches.file_pin(target)
         if actual == PROJECTED:
-            return {'format': 1, 'status': 'reused_verified_server_fx_projection', 'installed_files': 0,
-                    'target': TARGET, 'projected': PROJECTED, 'client_fx_changed': False}
+            return attributed({'format': 1, 'status': 'reused_verified_server_fx_projection', 'installed_files': 0,
+                    'target': TARGET, 'projected': PROJECTED, 'client_fx_changed': False})
         if actual != BASE:
-            return {'format': 1, 'status': 'preserved_existing_fx_native_fallback', 'installed_files': 0,
-                    'target': TARGET, 'client_fx_changed': False}
+            return attributed({'format': 1, 'status': 'preserved_existing_fx_native_fallback', 'installed_files': 0,
+                    'target': TARGET, 'client_fx_changed': False})
     # No read-only import links can enter this path. Recheck the exact old inode
     # before atomic replacement; only authenticated full/compact bytes are eligible.
     descriptor, pending = tempfile.mkstemp(prefix='.fx-catalog-', dir=target.parent)
@@ -259,6 +283,6 @@ def install(assets, runtime, *, context=None, mapserver_package=None):
         require(caches.file_pin(target) == PROJECTED, 'Installed FX projection differs')
     finally:
         if os.path.lexists(pending): os.unlink(pending)
-    return {'format': 1, 'status': 'installed_verified_server_fx_projection', 'installed_files': 1,
+    return attributed({'format': 1, 'status': 'installed_verified_server_fx_projection', 'installed_files': 1,
             'target': TARGET, 'base': BASE, 'projected': PROJECTED, 'client_fx_changed': False,
-            'native_freshness_loader_unchanged': True, 'physical_timing_validated': False}
+            'native_freshness_loader_unchanged': True, 'physical_timing_validated': False})

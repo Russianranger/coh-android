@@ -701,7 +701,14 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
     profile, selected, inputs, input_targets = profile_snapshot(runtime, value, context,
         provider_records=provider_records)
     accepted_mapserver = STOCK_MAPSERVER_SHA256
-    if isinstance(mapserver_package, dict) and 'native_map_startup' in mapserver_package:
+    import native_startup_metadata_contract as metadata
+    if isinstance(mapserver_package, dict) and metadata.WRAPPER in mapserver_package:
+        admitted = metadata.runtime_admission(mapserver_package, 'mapserver', runtime / 'MapServer.exe')
+        import native_map_startup_contract as startup
+        startup.verify_metadata_collision_graph(runtime / 'MapServer.exe', mapserver_package,
+            map_id=1, manifest_sha256=MANIFEST_SHA256, retained_collision_sources=RETAINED_COLLISION_SOURCES)
+        accepted_mapserver = admitted['current_consumer_sha256']
+    elif isinstance(mapserver_package, dict) and 'native_map_startup' in mapserver_package:
         import native_map_startup_contract as startup
         receipt = startup.embedded_receipt(mapserver_package)
         require(receipt['previous_mapserver']['sha256'] == startup.PREVIOUS_SHA256

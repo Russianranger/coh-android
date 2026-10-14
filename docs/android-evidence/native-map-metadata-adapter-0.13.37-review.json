@@ -1,0 +1,161 @@
+{
+  "created_utc": "2026-10-14T01:35:53.413607+00:00",
+  "findings": [
+    "Actual original cache catalog authentication and controlled107-row adapter retain22client/85server rows;17changed/unobserved extras cannot inherit the selected compatibility proof. The191-row fixture is catalog/capacity evidence only.",
+    "Shippingfea, actual tested77c/fbfc controls and5927candidate remain distinct. Committed source-only review e5a268b0/blob6b6d373a is independently bound; effective398081svr_init and historical2048c22exclusion are separate.",
+    "Exact held archive SHA plus unchanged fd/path/owner/ctime state permits same-process witnesses. Context reads no original or current BIN bodies; unknown private caches remain under existing ownership and ordinary native schema/freshness checks.",
+    "Derived proof embeds source/raw-input/scope only; its independently frozen output pin is external and nonrecursive. Native decoded ID tables, gameplay, collision behavior and device timing are not claimed."
+  ],
+  "format": 1,
+  "independently_executed_tests": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/android/interactive",
+      "-p",
+      "test_native_metadata_map_activation.py"
+    ],
+    "elapsed_seconds_from_unittest": 21.709,
+    "errors": 0,
+    "executed": 26,
+    "exit_code": 0,
+    "failed": 0,
+    "module": "test_native_metadata_map_activation",
+    "output": "..........................\n----------------------------------------------------------------------\nRan 26 tests in 21.709s\n\nOK\n",
+    "passed": 26,
+    "skipped": 0
+  },
+  "post_test_bytes_equal_reviewed_pre_test_bytes": true,
+  "remaining_gates": [
+    "Actual complete native16-case world artifact, exact source/helper/member-size and material-inventory audit.",
+    "Commit and independently review normalizer source before actual artifact derivation; bind final eligible subset/output pins and separately review production activation.",
+    "Android qualification, signed publication/public-byte audit and physical saved-character acceptance remain separate."
+  ],
+  "reviewer": "/root/client_harness_review",
+  "role": "independent_dormant_Map_runtime_cache_adapter_review",
+  "scope": {
+    "SQL_or_real_game_input_mutations_performed": false,
+    "controlled_world_and_authority_fixtures_explicitly_unexecuted": true,
+    "native_Game_MapServer_Wine_FEX_processes_executed_by_review": false,
+    "physical_Thor_performance_qualified": false,
+    "player_profile_or_persistent_database_opened": false,
+    "production_activation_implemented": false,
+    "production_cache_derivation_authority": null,
+    "production_component_authorities": {
+      "game": null,
+      "mapserver": null
+    },
+    "production_execution_review_authorities": {
+      "game": null,
+      "mapserver": null
+    },
+    "production_source_review_authority": null,
+    "runtime_or_publication_authority_granted_by_review": false,
+    "temporary_controlled_test_fixture_mutations_only": true
+  },
+  "source_foundation_commit": "1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e",
+  "source_post_test_pins": {
+    "android/guest/atlas_beacon_package.py": {
+      "bytes": 49831,
+      "sha256": "d357f30f8bb38afc9fa9e425323f0ba8b574af0fa241b3f4473f1fd7eee2ed87"
+    },
+    "android/guest/character_zoning.py": {
+      "bytes": 81456,
+      "sha256": "1b912601f2689b535d4136b5be46a4ea8955cfab26358ff0341691a9092e57e5"
+    },
+    "android/guest/game_diagnostic.py": {
+      "bytes": 82317,
+      "sha256": "dc448fcff57129d188824f8508cdfe8d8aeee1844519acfd2e67996c17b09710"
+    },
+    "android/guest/local_character_server.py": {
+      "bytes": 215356,
+      "sha256": "ba56251a0af7463fe8c7df909aca2ef2bba7934e317f6017e8183338310286cc"
+    },
+    "android/guest/native_map_startup_contract.py": {
+      "bytes": 29323,
+      "sha256": "e8e8c6aec44d365d3c17981598aa928bfb35ef94e2b28c9b7116be2f7e3e0da8"
+    },
+    "android/guest/native_startup_metadata_contract.py": {
+      "bytes": 25257,
+      "sha256": "3f82bfc36f515d96427a42f70af27abfd3d81b6f6988dba9b8811356c3851f56"
+    },
+    "android/guest/server_animation_package.py": {
+      "bytes": 14716,
+      "sha256": "56825a9b66669133380c761d9475b57b6ccd4ee5cf71b6044474c0ff32bbc91d"
+    },
+    "android/guest/server_cache_package.py": {
+      "bytes": 49892,
+      "sha256": "e45bab2546e4b9c7fdd701d9abc1d071c39b000562924997c3ea9e0a8a5b667c"
+    },
+    "android/guest/server_fx_catalog.py": {
+      "bytes": 17251,
+      "sha256": "e363303241bcf4c27466d54e8a1a7bef5726e3bc28fafae73d0a1c2e890a32b4"
+    },
+    "tools/android/interactive/test_native_metadata_map_activation.py": {
+      "bytes": 59202,
+      "sha256": "70391bfe7825d1a555bd2f252fcedfa52c2cfd449746dd7c6cd48d021b4c8407"
+    },
+    "tools/android/interactive/test_native_startup_metadata_contract.py": {
+      "bytes": 16579,
+      "sha256": "91cedf636fc7adc5dab987e3a272523d05f7b41755b7a74543949770c8ff6980"
+    }
+  },
+  "source_pre_test_pins": {
+    "android/guest/atlas_beacon_package.py": {
+      "bytes": 49831,
+      "sha256": "d357f30f8bb38afc9fa9e425323f0ba8b574af0fa241b3f4473f1fd7eee2ed87"
+    },
+    "android/guest/character_zoning.py": {
+      "bytes": 81456,
+      "sha256": "1b912601f2689b535d4136b5be46a4ea8955cfab26358ff0341691a9092e57e5"
+    },
+    "android/guest/game_diagnostic.py": {
+      "bytes": 82317,
+      "sha256": "dc448fcff57129d188824f8508cdfe8d8aeee1844519acfd2e67996c17b09710"
+    },
+    "android/guest/local_character_server.py": {
+      "bytes": 215356,
+      "sha256": "ba56251a0af7463fe8c7df909aca2ef2bba7934e317f6017e8183338310286cc"
+    },
+    "android/guest/native_map_startup_contract.py": {
+      "bytes": 29323,
+      "sha256": "e8e8c6aec44d365d3c17981598aa928bfb35ef94e2b28c9b7116be2f7e3e0da8"
+    },
+    "android/guest/native_startup_metadata_contract.py": {
+      "bytes": 25257,
+      "sha256": "3f82bfc36f515d96427a42f70af27abfd3d81b6f6988dba9b8811356c3851f56"
+    },
+    "android/guest/server_animation_package.py": {
+      "bytes": 14716,
+      "sha256": "56825a9b66669133380c761d9475b57b6ccd4ee5cf71b6044474c0ff32bbc91d"
+    },
+    "android/guest/server_cache_package.py": {
+      "bytes": 49892,
+      "sha256": "e45bab2546e4b9c7fdd701d9abc1d071c39b000562924997c3ea9e0a8a5b667c"
+    },
+    "android/guest/server_fx_catalog.py": {
+      "bytes": 17251,
+      "sha256": "e363303241bcf4c27466d54e8a1a7bef5726e3bc28fafae73d0a1c2e890a32b4"
+    },
+    "tools/android/interactive/test_native_metadata_map_activation.py": {
+      "bytes": 59202,
+      "sha256": "70391bfe7825d1a555bd2f252fcedfa52c2cfd449746dd7c6cd48d021b4c8407"
+    },
+    "tools/android/interactive/test_native_startup_metadata_contract.py": {
+      "bytes": 16579,
+      "sha256": "91cedf636fc7adc5dab987e3a272523d05f7b41755b7a74543949770c8ff6980"
+    }
+  },
+  "status": "approved_inactive_source_only",
+  "upstream_frozen_evidence": {
+    "filename": "map-activation-actual107-final-host-evidence.json",
+    "pin": {
+      "bytes": 78506,
+      "sha256": "b172f5069cae09aee58cd151c48b9f505d0a203cf1c3be3c920def8c6cb64c3d"
+    }
+  },
+  "worktree": "/workspace/scratch/5d16603ca7ff/publication-037-activation"
+}

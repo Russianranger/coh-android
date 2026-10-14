@@ -216,7 +216,7 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         if enabled:
             require(isinstance(producer, dict)
                     and re.fullmatch(r'[0-9a-f]{64}', str(getattr(self, 'client_executable_sha256', '')))
-                    and producer.get('client_executable_sha256') == self.client_executable_sha256
+                    and producer.get('client_executable_sha256') == startup.client_gpu_profile.retained_client_sha256(self)
                     and re.fullmatch(r'[0-9a-f]{64}', str(producer.get('manifest_sha256', '')))
                     and re.fullmatch(r'[0-9a-f]{40}', str(producer.get('repository_commit', '')))
                     and producer.get('replacement_scope') == 'CityOfHeroes.exe_only'
@@ -236,7 +236,7 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         scene = self.ctx.report.get('client_scene_performance')
         if scene_enabled:
             require(enabled and isinstance(scene, dict)
-                    and scene.get('client_executable_sha256') == self.client_executable_sha256
+                    and scene.get('client_executable_sha256') == startup.client_gpu_profile.retained_client_sha256(self)
                     and re.fullmatch(r'[0-9a-f]{64}', str(scene.get('manifest_sha256', '')))
                     and re.fullmatch(r'[0-9a-f]{40}', str(scene.get('repository_commit', '')))
                     and scene.get('replacement_scope') == 'CityOfHeroes.exe_only'
@@ -272,8 +272,8 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
             receipt = self.ctx.report.get('client_render_pipeline_environment')
             require(isinstance(receipt, dict) and receipt.get('enabled') is True
                 and receipt.get('client_executable_sha256') == producer['client_executable_sha256']
-                and receipt.get('producer_manifest_sha256') == producer['manifest_sha256']
-                and receipt.get('native_source_sha256') == producer['native_source_sha256']
+                and receipt.get('producer_manifest_sha256') == startup.client_gpu_profile.control_producer_field(producer, 'manifest_sha256')
+                and receipt.get('native_source_sha256') == startup.client_gpu_profile.control_producer_field(producer, 'native_source_sha256')
                 and receipt.get('launch_label') == label
                 and environment.get('COH_CLIENT_RENDER_PIPELINE') == '1',
                 'Focused diagnostics isolation lacks the current verified Game attempt')

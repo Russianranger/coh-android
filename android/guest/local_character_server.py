@@ -77,6 +77,10 @@ SERVER_TEXTURE_EXCLUSION_SOURCE = '2048c22f8380931514cefb429790552295e52dd72e036
 
 
 def server_input_projection(package):
+    import native_startup_metadata_contract as metadata
+    if isinstance(package, dict) and metadata.WRAPPER in package:
+        metadata.runtime_admission(package, 'mapserver')
+        return dict(metadata.map_texture_projection(package), native_bytes_changed=True)
     if (not isinstance(package, dict) or package.get('source_commit') != device.SOURCE_COMMIT
             or package.get('files', {}).get('MapServer.exe', {}).get('sha256') != SERVER_TEXTURE_EXCLUSION_MAP):
         return None
@@ -1208,17 +1212,23 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.map_manifest_sha256 = base.file_hash(destination / 'game-package.json')
         self.map_contract = game.mapserver_progress_contract(self.map_package)
         self.creation_report['mapserver_producer'] = self.map_contract['producer']
+        if 'current_consumer' in self.map_contract:
+            self.creation_report['mapserver_current_consumer'] = self.map_contract['current_consumer']
 
     @staticmethod
     def verify_map_payload(directory, candidate_receipt=None):
         path = directory / 'game-package.json'
         require(path.is_file() and not path.is_symlink(), 'Missing or linked Atlas package receipt')
         package = dbserver.load_json(path)
-        candidate = 'native_responsiveness' in package
+        import native_startup_metadata_contract as metadata
+        historical = metadata.legacy_package(package, 'mapserver')
+        if metadata.WRAPPER in package:
+            metadata.runtime_admission(package, 'mapserver', directory / 'MapServer.exe')
+        candidate = 'native_responsiveness' in historical
         if candidate:
             import native_responsiveness_contract as native_candidate
             require(candidate_receipt is not None
-                    and native_candidate.embedded_receipt(package) == native_candidate.validate_receipt(candidate_receipt),
+                    and native_candidate.embedded_receipt(historical) == native_candidate.validate_receipt(candidate_receipt),
                     'Atlas candidate differs from the installed source receipt')
         else:
             require(candidate_receipt is None and base.file_hash(path) == device.MAP_PROGRESS_PACKAGE_SHA256
@@ -1285,6 +1295,8 @@ class LocalCharacterServer(login.LocalLoginServer):
         # Mirror actual directories as the accepted client worktree does, then
         # link individual immutable files. Keep caches/configuration private.
         source_info = source.stat()
+        self.prepare_native_metadata_cache_context(receipt, required_geometry)
+        checkpoint('native_metadata_cache_context')
         cache_native_package = self.data_cache_native_package()
         identity = {'format': 2, 'source_data': str(source.resolve(strict=True)),
             'source_device': source_info.st_dev, 'source_inode': source_info.st_ino,
@@ -1306,7 +1318,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             identity['required_geometry'] = required_geometry
         projection = server_input_projection(self.map_package)
         if projection is not None:
-            identity['server_input_projection'] = projection
+            identity['server_input_projection'] = self.cache_generation_projection(projection)
             self.creation_report['server_input_projection'] = dict(projection)
         self.server_data_identity = identity
         self.server_data_receipt = receipt
@@ -1364,7 +1376,8 @@ class LocalCharacterServer(login.LocalLoginServer):
             checkpoint('cold_server_data_mirror')
             self.data_cache.seal(runtime / 'data', staged)
             checkpoint('cold_server_data_receipt_seal')
-        if self.map_package.get('native_monorail') is not None:
+        import native_startup_metadata_contract as metadata
+        if self.map_package.get('native_monorail') is not None and metadata.WRAPPER not in self.map_package:
             # A reviewed MapServer-only bridge must retain the exact parser and
             # schema ancestry before donor caches can accelerate a fresh install.
             # Fail closed on an unproved binary instead of quietly parsing cold.
@@ -1372,7 +1385,8 @@ class LocalCharacterServer(login.LocalLoginServer):
                 runtime / 'MapServer.exe', self.map_package)
         try:
             donor_identity = server_cache_package.build_expected_identity(runtime / 'data',
-                runtime / 'MapServer.exe', mapserver_package=self.map_package)
+                runtime / 'MapServer.exe', mapserver_package=self.map_package,
+                metadata_cache_context=getattr(self, 'native_metadata_cache_context', None))
             self.creation_report['prepared_server_caches'] = server_cache_package.install(
                 self.owner.args.assets / server_cache_package.ARCHIVE, runtime / 'data',
                 donor_identity, context=self.ctx)
@@ -1601,6 +1615,50 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.manual_atlas_startup['native_ack_observed'] = count == 1
         return count == 1
 
+    def cache_generation_projection(self, projection):
+        """Reuse an old key only after actual current provider/BIN proof exists."""
+        import native_startup_metadata_contract as metadata
+        if metadata.WRAPPER not in self.map_package or getattr(self, 'native_metadata_cache_context', None) is None:
+            return projection
+        old_projection = server_input_projection(metadata.legacy_package(self.map_package, 'mapserver'))
+        fields = ('excluded_top_level_directories', 'native_source_path', 'client_inputs_modified')
+        require(type(old_projection) is dict
+            and projection.get('policy') == 'exact_source_bound_native_excluded_texture_directory_v2'
+            and projection.get('native_source_sha256') == '398081161ebe9e9253b326e8a5f94f502a7bc0a9974a442f1ce83a46ee0f9ae3'
+            and projection.get('retained_texture_exclusion_source_sha256') == old_projection.get('native_source_sha256')
+            and old_projection.get('native_source_sha256') == SERVER_TEXTURE_EXCLUSION_SOURCE
+            and metadata.same({key: projection[key] for key in fields},
+                {key: old_projection[key] for key in fields}),
+            'Current source-bound exclusion cannot retain the historical provider generation key')
+        self.creation_report['server_cache_provider_projection_identity'] = {
+            'policy': 'exact_current_provider_and_bin_parity_preserves_historical_projection_key',
+            'historical_projection': old_projection,
+            'current_consumer_sha256': self.map_package['files']['MapServer.exe']['sha256'],
+            'provider_identity_sha256': self.native_metadata_cache_context['provider_identity_sha256']}
+        return old_projection
+
+    def prepare_native_metadata_cache_context(self, receipt, required_geometry=None):
+        """Build the optional bridge on the actual path before cache checkout."""
+        import native_startup_metadata_contract as metadata
+        if metadata.WRAPPER not in self.map_package:
+            return
+        # Verify execution independently. A closed/unknown current consumer is
+        # never converted into a cache-only fallback and then launched anyway.
+        metadata.runtime_admission(self.map_package, 'mapserver', self.map_package_dir/'MapServer.exe')
+        self.native_metadata_cache_context = None
+        try:
+            result = server_cache_package.construct_native_metadata_context(self.map_package,
+                self.map_package_dir/'MapServer.exe', assets=self.owner.args.assets,
+                worktree=self.owner.work, game_data=self.owner.args.game_data,
+                receipt=receipt, required_geometry=required_geometry, context=self.ctx)
+            self.native_metadata_cache_context = result['context']
+            self.creation_report['native_metadata_cache_context'] = result['evidence']
+        except (ValueError, OSError, KeyError, zipfile.BadZipFile, json.JSONDecodeError) as failure:
+            self.creation_report['native_metadata_cache_context'] = {'status': 'unavailable_exact_current_provider_bridge',
+                'reason': str(failure)[:300], 'original_cache_generation_reused': False,
+                'fallback': 'distinct_current_consumer_generation_full_owned_validation_and_ordinary_native_loader',
+                'sql_game_mutations_performed': False}
+
     def data_cache_native_package(self):
         """Retain an authenticated data generation across this narrow overlay.
 
@@ -1609,9 +1667,31 @@ class LocalCharacterServer(login.LocalLoginServer):
         independently; cache ownership and source validation still run in full.
         """
         package = self.map_package
+        import native_startup_metadata_contract as metadata
+        import native_map_startup_contract as startup
+        if metadata.WRAPPER in package:
+            proof = startup.verify_current_map(self.map_package_dir / 'MapServer.exe', package)
+            context = getattr(self, 'native_metadata_cache_context', None)
+            if context is None:
+                # A new key prevents replay of old private cache generations.
+                # Full owned provider validation and native parsing remain active.
+                self.creation_report['server_data_cache_native_consumer'] = dict(proof,
+                    cache_identity_policy='distinct_current_consumer_generation_full_validation',
+                    original_generation_reused=False)
+                return package
+            cache = startup.verify_metadata_cache_context(self.map_package_dir / 'MapServer.exe', package, context)
+            self.creation_report['server_data_cache_native_consumer'] = dict(proof,
+                cache_identity_policy='exact_provider_recipe_per_bin_reviewed_generation',
+                cache_compatibility=cache, original_generation_reused=True,
+                authenticated_original_donor_bins=len(context['qualified_per_bin']),
+                donor_bin_parity_and_generation_ownership_are_separate=True,
+                all_private_or_device_generated_bins_current_native_ids_qualified=False,
+                geobin_or_collision_bodies_current_native_ids_qualified=False,
+                ordinary_native_freshness_loader_retained=True,
+                whole_generation_reuse_basis='unchanged_immutable_inputs_plus_existing_full_owner_checks_and_native_freshness')
+            return startup.previous_package(package)
         if 'native_map_startup' not in package:
             return package
-        import native_map_startup_contract as startup
         proof = startup.verify_current_map(self.map_package_dir / 'MapServer.exe', package)
         self.creation_report['server_data_cache_native_consumer'] = dict(proof,
             cache_identity_policy='retain_authenticated_station_donor_data_generation')
@@ -1743,6 +1823,14 @@ class LocalCharacterServer(login.LocalLoginServer):
         require(getattr(self, 'zone_asset_document', None) is not None
                 and getattr(self, 'kings_row_beacon_graph', {}).get('verified') is True,
                 'Kings Row package and native graph qualification are required')
+        import native_startup_metadata_contract as metadata
+        if metadata.WRAPPER in self.map_package:
+            import atlas_beacon_package
+            import native_map_startup_contract as startup
+            self.creation_report['kings_row_current_native_consumer'] = startup.verify_metadata_collision_graph(
+                self.map_package_dir / 'MapServer.exe', self.map_package, map_id=5,
+                manifest_sha256=self.kings_row_beacon_lock['manifest']['sha256'],
+                retained_collision_sources=atlas_beacon_package.RETAINED_COLLISION_SOURCES)
         started = time.monotonic()
         phase_at, phases = started, {}
         self.creation_report['kings_row_preparation_phase_seconds'] = phases
@@ -1803,11 +1891,22 @@ class LocalCharacterServer(login.LocalLoginServer):
         config = target / 'data/server/db/servers.cfg'
         server_data_cache.ServerDataCache.restore_schema(self.runtime / 'data/server/db/servers.cfg', config, target)
         checkpoint('native_dependencies_and_session_configuration')
-        cache_compatibility = server_cache_package.verify_mapserver_compatibility(target / 'MapServer.exe', self.map_package)
-        donor = server_cache_package.build_expected_identity(target / 'data', target / 'MapServer.exe',
-            mapserver_package=self.map_package)
-        prepared_caches = server_cache_package.install(self.owner.args.assets / server_cache_package.ARCHIVE,
-            target / 'data', donor, context=self.ctx)
+        try:
+            cache_compatibility = server_cache_package.verify_mapserver_compatibility(
+                target / 'MapServer.exe', self.map_package,
+                metadata_cache_context=getattr(self, 'native_metadata_cache_context', None))
+            donor = server_cache_package.build_expected_identity(target / 'data', target / 'MapServer.exe',
+                mapserver_package=self.map_package,
+                metadata_cache_context=getattr(self, 'native_metadata_cache_context', None))
+            prepared_caches = server_cache_package.install(self.owner.args.assets / server_cache_package.ARCHIVE,
+                target / 'data', donor, context=self.ctx)
+        except (ValueError, OSError) as failure:
+            # Incompatible optional cache donors never grant an old identity.
+            # The private provider and required collision graph still validate.
+            cache_compatibility = {'status': 'unavailable_exact_current_provider_bridge',
+                'cache_donor_identity_preserved': False}
+            prepared_caches = {'format': 1, 'status': 'skipped_native_fallback',
+                'reason': str(failure)[:300], 'installed_files': 0}
         checkpoint('prepared_server_definition_caches')
         fx_catalog = server_fx_catalog.install(self.owner.args.assets, target, context=self.ctx,
             mapserver_package=self.map_package)
@@ -1972,6 +2071,11 @@ class LocalCharacterServer(login.LocalLoginServer):
         require(not self.map_progress_path.exists(), 'Stale Atlas progress file')
         environment = dict(self.owner.wine_env, **{evidence.GAME_LOOPBACK_ENV: '1',
             progress.ENVIRONMENT: base.windows_path(self.map_progress_path)})
+        import native_startup_metadata_contract as metadata
+        activation = metadata.apply_attempt_environment(getattr(self, 'map_package', {}), 'mapserver',
+            self.runtime / 'MapServer.exe', environment, map_id=1)
+        if activation is not None:
+            self.creation_report['native_metadata_attempt'] = activation
         event_contract = self.immediate_event_contract()
         if event_contract is not None:
             character_events.validate_contract(event_contract)
@@ -2072,10 +2176,12 @@ class LocalCharacterServer(login.LocalLoginServer):
     def query(self, arguments, label):
         self.query_count += 1
         require(self.query_count <= 160, 'Character protocol query budget exceeded')
+        import native_startup_metadata_contract as metadata
+        environment = metadata.scrub_attempt_environment(self.owner.wine_env)
         result = self.ctx.run('character-' + label, ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'), '-nogui',
             '-db', '127.0.0.1', '-dbquery', '-timeout', '10000', *arguments],
-            timeout=90, env=self.owner.wine_env)
+            timeout=90, env=environment)
         require(result['exit_code'] == 0, 'Character protocol query failed')
         return self.ctx.children[-1].text()
 

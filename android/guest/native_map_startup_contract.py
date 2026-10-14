@@ -17,6 +17,209 @@ PACK_SHA256 = '465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b'
 TABLE_SHA256 = '179f8a15614dd42c9222be4d3716986bc9c0716a41d6045ef8f2ef7dc83427c4'
 DEPENDENCY_SHA256 = '03236d08d8b33300cc27e614a25cbe37f6556ebe1c35132ab230a31170db33c9'
 MANIFEST = 'map-startup-manifest.json'
+# Separate committed source review. A source/SDK audit is not a native artifact
+# and cannot authorize execution. Root freezes this independently of ZIP facts.
+SOURCE_ONLY_COMPATIBILITY_REVIEW = None
+RUNTIME_CACHE_PROOF_DERIVATION = None
+RUNTIME_CACHE_DERIVATION_SCOPE = {
+    "derived_by_source_reviewed_normalizer": True, "original_artifact_membership_claimed": False,
+    "native_ID_tables_observed": False, "shipping_bytes_executed_claimed": False,
+    "behavioral_collision_validated": False, "physical_timing_validated": False}
+SOURCE_ONLY_REVIEW_SCOPE = {'source_compatibility_only': True,
+    'shipping_predecessor_execution_validated': False, 'new_native_runtime_qualification_proven': False,
+    'runtime_activation_allowed': False, 'shipping_allowed': False,
+    'native_ID_tables_observed': False, 'behavioral_collision_validated': False,
+    'physical_timing_validated': False}
+
+
+def inspect_committed_source_review(descriptor, *, previous_shipping_consumer_sha256,
+        actual_tested_control_consumers, actual_tested_candidate):
+    """Bind source commit/path/blob/content and its exact nonexecution scope.
+
+    The source-pinned document is embedded only after packaging independently
+    checks the committed blob. It is never invented as a member of native ZIPs.
+    Production authority remains absent until that separate review is frozen.
+    """
+    import native_startup_metadata_contract as metadata
+    authority = SOURCE_ONLY_COMPATIBILITY_REVIEW
+    require(type(authority) is dict and set(authority) == {'descriptor', 'document'},
+        'Independent committed source-only compatibility review is not frozen')
+    require(type(descriptor) is dict and set(descriptor) == {'repository', 'commit', 'path',
+        'git_blob', 'content', 'scope'} and metadata.same(descriptor, authority['descriptor'])
+        and descriptor['repository'] == 'Russianranger/coh-android'
+        and re.fullmatch(r'[0-9a-f]{40}', str(descriptor['commit']))
+        and re.fullmatch(r'[0-9a-f]{40}', str(descriptor['git_blob']))
+        and type(descriptor['path']) is str
+        and re.fullmatch(r'docs/android-evidence/[A-Za-z0-9_.-]{1,100}\.json', descriptor['path'])
+        and metadata.same(descriptor['scope'], SOURCE_ONLY_REVIEW_SCOPE),
+        'Committed source-only review identity/scope differs')
+    document = authority['document']; raw = metadata.encoded(document)
+    require(metadata.pin(raw) == metadata.pin_record(descriptor['content'], 8*1024**2)
+        and hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest() == descriptor['git_blob'],
+        'Committed source review content or Git blob differs')
+    require(type(document) is dict and type(document.get('format')) is int and document['format'] == 1
+        and document.get('role') == 'narrow_Map_metadata_consumer_source_and_historical_collision_boundary'
+        and document.get('status') == 'source_delta_verified_fresh_world_gate_pending'
+        and document.get('shipping_allowed') is False
+        and document.get('physical_candidate_behavior_measured') is False
+        and document.get('qualification_boundary', {}).get('fresh_world_behavioral_collision_proven') is False,
+        'Source-only pending qualification review was promoted into execution/behavior evidence')
+    shipping = metadata.native_record_pin(document['shipping_036']['MapServer'])
+    observed = document['observed_control']
+    audited_controls = [metadata.native_record_pin(observed[name]) for name in ('unobserved_control', 'observed_Map')]
+    candidate = metadata.native_record_pin(document['metadata_candidate']['native'])
+    require(shipping['sha256'] == previous_shipping_consumer_sha256
+        and metadata.same(candidate, actual_tested_candidate)
+        and type(actual_tested_control_consumers) is list and actual_tested_control_consumers
+        and len(actual_tested_control_consumers) <= 8
+        and len({row['sha256'] for row in actual_tested_control_consumers}) == len(actual_tested_control_consumers)
+        and all(any(metadata.same(row, audited) for audited in audited_controls) for row in actual_tested_control_consumers),
+        'Source review shipping predecessor, actual tested controls or candidate differ')
+    build = document['metadata_candidate']['build_input']
+    require(observed.get('shipping_base_recipe_exactly_equal') is True
+        and document['metadata_candidate'].get('baseline_import_tables_exactly_preserved') is True
+        and build.get('native_decoder_preserved') is True and build.get('CRC_and_schema_checks_preserved') is True
+        and build.get('freshness_body_exact_except_request') is True
+        and build.get('source_date_and_membership_checks_preserved') is True
+        and build.get('stock_text_and_failure_fallback_preserved') is True
+        and build.get('provider_precedence_preserved') is True
+        and build.get('native_execution_validated') is False and build.get('physical_savings_validated') is False
+        and build.get('publication_allowed') is False,
+        'Committed source decoder/schema/SDK compatibility boundary differs')
+    trees = document.get('complete_upstream_and_PhysX_source_trees_identical')
+    require(type(trees) is dict and len(trees) == 3
+        and len({metadata.canonical_sha(row) for row in trees.values()}) == 1,
+        'Committed upstream/SDK source equivalence closure differs')
+    return {'committed_source_review': copy.deepcopy(descriptor), 'scope': copy.deepcopy(SOURCE_ONLY_REVIEW_SCOPE),
+        'previous_shipping_consumer': shipping, 'audited_control_consumers': audited_controls,
+        'actual_tested_control_consumers': copy.deepcopy(actual_tested_control_consumers),
+        'actual_tested_candidate': candidate,
+        'source_decoder_and_schema_checks_preserved': True, 'upstream_sdk_source_trees_identical': True,
+        'native_execution_or_physical_results_added_by_source_review': False}
+
+
+
+def inspect_runtime_cache_derivation(descriptor):
+    """A derived flat proof has its own source/raw-input/output authority.
+
+    Original producer/recovery/qualification ZIPs keep their exact members.
+    No generated proof is invented as a native artifact member.
+    """
+    import native_startup_metadata_contract as metadata
+    expected = RUNTIME_CACHE_PROOF_DERIVATION
+    require(type(expected) is dict and metadata.same(descriptor, expected)
+        and set(descriptor) == {'derivation_source', 'raw_inputs', 'output', 'scope'}
+        and metadata.same(descriptor['scope'], RUNTIME_CACHE_DERIVATION_SCOPE),
+        'Independent source-reviewed runtime cache derivation is not frozen or differs')
+    source = descriptor['derivation_source']
+    require(type(source) is dict and set(source) == {'repository_commit', 'path', 'git_blob', 'pin'}
+        and re.fullmatch(r'[0-9a-f]{40}', str(source['repository_commit']))
+        and re.fullmatch(r'[0-9a-f]{40}', str(source['git_blob']))
+        and type(source['path']) is str and source['path'].startswith('tools/')
+        and source['path'].endswith('.py') and ':' not in source['path'] and '\\' not in source['path']
+        and all(part not in ('', '.', '..') for part in source['path'].split('/')),
+        'Exact committed derivation source identity required')
+    metadata.pin_record(source['pin'], 2*1024**2)
+    inputs = descriptor['raw_inputs']
+    require(type(inputs) is dict and set(inputs) == {'preload', 'native_world', 'client_cache_manifest', 'server_cache_manifest'},
+        'Exact raw preload/world/original manifest input closure required')
+    for kind in ('preload', 'native_world'):
+        row = inputs[kind]
+        require(type(row) is dict and set(row) == {'repository_commit', 'run_id', 'artifact_id',
+            'artifact_zip', 'member', 'member_pin'}
+            and re.fullmatch(r'[0-9a-f]{40}', str(row['repository_commit']))
+            and all(type(row[key]) is int and row[key] > 0 for key in ('run_id', 'artifact_id'))
+            and type(row['member']) is str and re.fullmatch(r'[A-Za-z0-9_.-]{1,100}', row['member'])
+            and row['member'] not in ('.', '..'), 'Exact immutable raw native report provenance required')
+        metadata.pin_record(row['artifact_zip'], 4*1024**3); metadata.pin_record(row['member_pin'], 8*1024**2)
+    for kind in ('client_cache_manifest', 'server_cache_manifest'):
+        row = inputs[kind]
+        require(type(row) is dict and set(row) == {'component_zip', 'member', 'member_pin', 'origin'}
+            and row['origin'] == 'exact_public_Assets_1_0_0_component'
+            and row['member'] == ('client-cache-manifest.json' if kind == 'client_cache_manifest' else 'server-cache-manifest.json'),
+            'Original donor must retain public component provenance, not invented native producer IDs')
+        metadata.pin_record(row['component_zip'], 512*1024**2); metadata.pin_record(row['member_pin'], 4*1024**2)
+    output = descriptor['output']
+    require(type(output) is dict and set(output) == {'filename', 'pin'}
+        and type(output['filename']) is str and re.fullmatch(r'[A-Za-z0-9_.-]{1,100}', output['filename'])
+        and output['filename'] not in ('.', '..'), 'Exact derived flat proof output identity required')
+    metadata.pin_record(output['pin'], 8*1024**2)
+    return copy.deepcopy(descriptor)
+
+
+def runtime_cache_derivation_statement(descriptor):
+    """Embed only source/input/scope facts; the output pin lives externally."""
+    return {key: copy.deepcopy(descriptor[key]) for key in ('derivation_source', 'raw_inputs', 'scope')}
+
+
+def metadata_admission(package, path=None):
+    import native_startup_metadata_contract as metadata
+    return (metadata.runtime_admission(package, 'mapserver', path)
+            if isinstance(package, dict) and metadata.WRAPPER in package else None)
+
+
+def legacy_package(package):
+    """Restore old protocol/producer facts; this never aliases current bytes."""
+    admitted = metadata_admission(package)
+    return package if admitted is None else admitted['previous_package']
+
+
+def current_consumer_evidence(admitted):
+    return {key: admitted[key] for key in ('authority_sha256', 'execution_review_sha256',
+        'current_consumer_sha256', 'previous_consumer_sha256', 'qualified_maps',
+        'runtime_activation_allowed', 'physical_timing_validated', 'behavioral_collision_validated', 'native_producer')}
+
+
+def verify_metadata_cache_context(path, package, context):
+    """No old cache identity without independently prepared provider/BIN facts.
+
+    Callers supply a context from their authenticated current provider and
+    native cache qualification. The component's own compatibility receipt is
+    never used as a substitute for those actual inputs. Missing context fails
+    so preparation keeps a distinct generation and the ordinary native loader.
+    """
+    admitted = metadata_admission(package, path)
+    require(admitted is not None and type(context) is dict and set(context) == {
+        'provider_identity_sha256', 'bin_recipe_identity_sha256', 'original_proof_sha256',
+        'qualified_per_bin'}, 'Actual metadata provider/recipe/BIN qualification context required')
+    import native_startup_metadata_contract as metadata
+    proof = metadata.cache_compatibility(package, 'mapserver',
+        previous_consumer_sha256=admitted['previous_consumer_sha256'],
+        provider_identity_sha256=context['provider_identity_sha256'],
+        bin_recipe_identity_sha256=context['bin_recipe_identity_sha256'],
+        original_proof_sha256=context['original_proof_sha256'])
+    require(metadata.same(context['qualified_per_bin'], proof['qualified_per_bin']),
+        'Actual per-BIN outputs/schema/identifier inputs/loader decisions differ')
+    return {**proof, 'current_execution': current_consumer_evidence(admitted),
+        'runtime_activation_allowed': True}
+
+
+def verify_metadata_collision_graph(path, package, *, map_id, manifest_sha256, retained_collision_sources):
+    admitted = metadata_admission(package, path)
+    require(admitted is not None and type(map_id) is int and map_id in admitted['qualified_maps']
+        and isinstance(manifest_sha256, str) and re.fullmatch(r'[0-9a-f]{64}', manifest_sha256),
+        'Current consumer lacks this exact native world qualification')
+    import native_startup_metadata_contract as metadata
+    old = embedded_receipt(admitted['previous_package'])
+    bridge = admitted['receipt']['compatibility'].get('collision')
+    previous_files = admitted['previous_package']['files']
+    retained = {name: record for name, record in previous_files.items() if name != 'MapServer.exe'}
+    require(type(bridge) is dict and set(bridge) == {'policy', 'current_consumer_sha256',
+        'retained_collision_sources', 'retained_native_files_sha256', 'graph_manifests'}
+        and bridge['policy'] == 'exact_retained_collision_sdk_geometry_and_graph'
+        and bridge['current_consumer_sha256'] == admitted['current_consumer_sha256']
+        and metadata.same(bridge['retained_collision_sources'], retained_collision_sources)
+        and metadata.same(old['build_input']['monorail_build_input'].get('retained_collision_sources'), retained_collision_sources)
+        and bridge['retained_native_files_sha256'] == metadata.canonical_sha(retained)
+        and type(bridge['graph_manifests']) is dict and set(bridge['graph_manifests']) == {'1', '5'}
+        and all(type(value) is str and re.fullmatch(r'[0-9a-f]{64}', value) for value in bridge['graph_manifests'].values())
+        and bridge['graph_manifests'][str(map_id)] == manifest_sha256,
+        'Current metadata consumer lacks exact collision/SDK/graph parity')
+    return {'current_execution': current_consumer_evidence(admitted), 'map_id': map_id,
+        'graph_manifest_sha256': manifest_sha256, 'historical_graph_producer_preserved': True,
+        'retained_native_files_sha256': bridge['retained_native_files_sha256'],
+        'behavioral_collision_validated': False, 'physical_timing_validated': False}
+
 
 def same(first, second):
     return json.dumps(first, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(second, sort_keys=True, separators=(',', ':'), allow_nan=False)
@@ -74,6 +277,7 @@ def validate_animation_certificate(value):
     return value
 
 def previous_package(package):
+    package = legacy_package(package)
     require(isinstance(package, dict) and isinstance(package.get('native_map_startup'), dict),
         'Missing additive Map startup receipt')
     previous = copy.deepcopy(package)
@@ -82,6 +286,7 @@ def previous_package(package):
     return previous
 
 def embedded_receipt(package):
+    package = legacy_package(package)
     wrapper = package.get('native_map_startup', {})
     receipt = wrapper.get('receipt', {})
     require(isinstance(wrapper, dict) and set(wrapper) == {'receipt', 'receipt_sha256'}
@@ -156,6 +361,27 @@ def embedded_receipt(package):
     return receipt
 
 def verify_current_map(path, package):
+    admitted = metadata_admission(package, path)
+    if admitted is not None:
+        # Historical parser/source claims stay nested in their original proof.
+        # This current component changes textparser and sequencer observation.
+        previous = admitted['previous_package']
+        receipt = embedded_receipt(previous)
+        historical = {'mapserver_sha256': receipt['mapserver']['sha256'],
+            'native_build_repository_commit': receipt['native_build_repository_commit'],
+            'native_build_manifest': receipt['native_build_manifest'],
+            'native_map_startup_receipt_sha256': previous['native_map_startup']['receipt_sha256']}
+        return {'format': 1, 'policy': 'explicit_reviewed_metadata_current_consumer',
+            'actual_mapserver_sha256': admitted['current_consumer_sha256'],
+            'previous_startup_mapserver_sha256': admitted['previous_consumer_sha256'],
+            'original_cache_donor_mapserver_sha256': receipt['build_input']['animation_certificate']['original_animation_identity']['mapserver_sha256'],
+            'historical_startup_producer': historical,
+            'current_execution': current_consumer_evidence(admitted),
+            'cache_donor_identity_preserved': False,
+            'cache_provider_recipe_reuse_requires_separate_proof': True,
+            'animation_identity_preserved': True, 'native_animation_reader_changed': True,
+            'parser_or_definition_sources_changed': True,
+            'behavioral_collision_validated': False, 'physical_loading_gain_validated': False}
     receipt = embedded_receipt(package)
     require(file_pin(path) == pin_record(receipt['mapserver']), 'Current MapServer bytes differ from startup source receipt')
     return {'format': 1, 'policy': 'qualified_startup_overlay_preserves_original_cache_and_graph_history',
@@ -170,8 +396,12 @@ def verify_current_map(path, package):
         'physical_loading_gain_validated': False}
 
 def progress_contract(package):
+    admitted = metadata_admission(package)
     receipt = embedded_receipt(package)
-    return {'contract': receipt['build_input']['monorail_build_input']['events_build_input']['progress_contract'],
+    result = {'contract': receipt['build_input']['monorail_build_input']['events_build_input']['progress_contract'],
         'producer': {'repository_commit': receipt['native_build_repository_commit'],
             'manifest_sha256': receipt['native_build_manifest']['sha256'],
             'mapserver_sha256': receipt['mapserver']['sha256']}}
+    if admitted is not None:
+        result['current_consumer'] = current_consumer_evidence(admitted)
+    return result

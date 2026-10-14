@@ -1,0 +1,238 @@
+{
+  "format": 1,
+  "role": "final_inactive_native_metadata_adapter_and_normalizer_source_checkpoint",
+  "created_utc": "2026-10-14T01:32:50.208989+00:00",
+  "source_foundation_commit": "1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e",
+  "integrate_on_root_commit": "c2635d5f5ec118948ecb61c334c94d3ed0cbeda2",
+  "source_files": {
+    "android/guest/atlas_beacon_package.py": {
+      "bytes": 49831,
+      "sha256": "d357f30f8bb38afc9fa9e425323f0ba8b574af0fa241b3f4473f1fd7eee2ed87"
+    },
+    "android/guest/character_zoning.py": {
+      "bytes": 81456,
+      "sha256": "1b912601f2689b535d4136b5be46a4ea8955cfab26358ff0341691a9092e57e5"
+    },
+    "android/guest/client_gpu_profile.py": {
+      "bytes": 67882,
+      "sha256": "bcd40a279ce512ee00cbb6819a0ce3d6690f0c3ce7a7ef802c4da5656a79efd0"
+    },
+    "android/guest/client_interactive_diagnostic.py": {
+      "bytes": 34112,
+      "sha256": "ea0c910ba0ee32a3de77d9ac30be8260994f5d5fac1d4f981eba9c04a51d7c26"
+    },
+    "android/guest/client_startup_diagnostic.py": {
+      "bytes": 94729,
+      "sha256": "a79f50e8c61b2c200d5e3689fd8aa8a7461bf75da9b53d53d3dc2d2145fa59e3"
+    },
+    "android/guest/game_diagnostic.py": {
+      "bytes": 82317,
+      "sha256": "dc448fcff57129d188824f8508cdfe8d8aeee1844519acfd2e67996c17b09710"
+    },
+    "android/guest/local_character_server.py": {
+      "bytes": 215356,
+      "sha256": "ba56251a0af7463fe8c7df909aca2ef2bba7934e317f6017e8183338310286cc"
+    },
+    "android/guest/native_map_startup_contract.py": {
+      "bytes": 29323,
+      "sha256": "e8e8c6aec44d365d3c17981598aa928bfb35ef94e2b28c9b7116be2f7e3e0da8"
+    },
+    "android/guest/native_startup_metadata_contract.py": {
+      "bytes": 25257,
+      "sha256": "3f82bfc36f515d96427a42f70af27abfd3d81b6f6988dba9b8811356c3851f56"
+    },
+    "android/guest/server_animation_package.py": {
+      "bytes": 14716,
+      "sha256": "56825a9b66669133380c761d9475b57b6ccd4ee5cf71b6044474c0ff32bbc91d"
+    },
+    "android/guest/server_cache_package.py": {
+      "bytes": 49892,
+      "sha256": "e45bab2546e4b9c7fdd701d9abc1d071c39b000562924997c3ea9e0a8a5b667c"
+    },
+    "android/guest/server_fx_catalog.py": {
+      "bytes": 17251,
+      "sha256": "e363303241bcf4c27466d54e8a1a7bef5726e3bc28fafae73d0a1c2e890a32b4"
+    },
+    "android/guest/texture_header_index.py": {
+      "bytes": 19493,
+      "sha256": "fa7e8d889b35f04d988c61a218e1c44e87e8104bd4230fb4b0f6e199b6b1abba"
+    },
+    "tools/android/interactive/build_client_zone_startup_apk.py": {
+      "bytes": 64253,
+      "sha256": "96a69c2725836e2ed516b444267f8d82eb22b714349940b67a58080cacf168cf"
+    },
+    "tools/android/interactive/classify_client_zone_startup_change.py": {
+      "bytes": 4804,
+      "sha256": "f9447e61e3c7f92b56cb8ef40b9b78768c743bca27f6e9ad2fa87f3ae78b0a67"
+    },
+    "tools/android/interactive/derive_native_metadata_cache_proof.py": {
+      "bytes": 29040,
+      "sha256": "f9c502a7f6cf4136dc4f04701e27b66cb3ab1eac3b3b76d4273b98309a5e833a"
+    },
+    "tools/android/interactive/native_startup_component_migration.py": {
+      "bytes": 12743,
+      "sha256": "fce13e97e70404c1300f50698181f4adac93894973e386e725a2616f01796c17"
+    },
+    "tools/android/interactive/native_startup_metadata_admission.py": {
+      "bytes": 6885,
+      "sha256": "3fbecf05683ccb10a3046e0c0fdb6d1d97329c876e28d5b6003ac4cd408c3b74"
+    },
+    "tools/android/interactive/qualify_client_zone_startup.py": {
+      "bytes": 22846,
+      "sha256": "f0fe7a27064d9442c411691e81a4d558c6572f7c1cc41210504343189c806a66"
+    },
+    "tools/android/interactive/test_client_zone_startup_package.py": {
+      "bytes": 7171,
+      "sha256": "4b046a4cee369f69210446b16ee79cfc4590b6ec520bcc30817133fb87a28a05"
+    },
+    "tools/android/interactive/test_derive_native_metadata_cache_proof.py": {
+      "bytes": 16174,
+      "sha256": "766c04854e1b7b10928f7e58a46798ea983d373549f919de588424f92fd82978"
+    },
+    "tools/android/interactive/test_native_metadata_map_activation.py": {
+      "bytes": 59202,
+      "sha256": "70391bfe7825d1a555bd2f252fcedfa52c2cfd449746dd7c6cd48d021b4c8407"
+    },
+    "tools/android/interactive/test_native_metadata_runtime_activation.py": {
+      "bytes": 33539,
+      "sha256": "2ecde7af12563cdbc9b322c04fafa35a14b91bfa7c531ff9bdb2e1536d55a339"
+    },
+    "tools/android/interactive/test_native_startup_component_migration.py": {
+      "bytes": 9579,
+      "sha256": "5b33001822e28453a3d61e7a9b9a5bb40a0e865f4df430d638f04396efbf457e"
+    },
+    "tools/android/interactive/test_native_startup_metadata_contract.py": {
+      "bytes": 16579,
+      "sha256": "91cedf636fc7adc5dab987e3a272523d05f7b41755b7a74543949770c8ff6980"
+    }
+  },
+  "code_path_count": 25,
+  "patch": {
+    "file": "native-metadata-final-inactive-integration.patch",
+    "bytes": 301983,
+    "sha256": "f5c4431e6219d07b4666f28699e260295e7dbcc1308073681031ebbb6424ebf2"
+  },
+  "evidence_files": {
+    "client-activation-independent-review.json": {
+      "bytes": 20419,
+      "sha256": "04ea2edc3887106bd7c6f3a3fec57514d2a63a4a9a4849c4fdb154fd5d36db14"
+    },
+    "client-material-layout-independent-review.json": {
+      "bytes": 3180,
+      "sha256": "f01b35be0edf57361d9c7c1d1c789f86fa60d7181ec212aa17feba6bba0b1988"
+    },
+    "map-activation-actual107-final-host-evidence.json": {
+      "bytes": 78506,
+      "sha256": "b172f5069cae09aee58cd151c48b9f505d0a203cf1c3be3c920def8c6cb64c3d"
+    },
+    "native-cache-normalizer-source-freeze.json": {
+      "bytes": 1842,
+      "sha256": "bf501d046bad038499de883b2c73541ac339820770ac6befc035285ebbb641cc"
+    },
+    "actual-preload-107-cache-subset-research.json": {
+      "bytes": 70722,
+      "sha256": "fa566ee62b2fa46d5d85a841ba0b6474bb8104da2da3d37364b5c90fbe90fbcb"
+    },
+    "actual-Game-material-facts-draft.json": {
+      "bytes": 138534,
+      "sha256": "b58f054b176bb786cc93a643511d78d21e799559e6302a41b6951784024eef11"
+    },
+    "actual-Game-texture-source-material-facts.json": {
+      "bytes": 7350,
+      "sha256": "b0a36cdc465b02190bdac397df4a15647b15eaf3eb5c387b382dc99b601c14d7"
+    }
+  },
+  "source_reviews": {
+    "client_paths": "independent75_case_approval_unchanged_except_Map_only_shared_contract_addition",
+    "material_reader": "independent42_case_approval_unchanged_except_Map_only_shared_contract_addition",
+    "Map_adapters": "independent26_case_approval_on_current_nine_pins",
+    "normalizer": "independent12_case_approval_on_current_two_pins"
+  },
+  "fresh_tests": {
+    "Map_owner": {
+      "executed": 174,
+      "passed": 174,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "normalizer_owner": {
+      "executed": 12,
+      "passed": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_seconds": 1.221
+    },
+    "packaging_and_admission_and_shared_Map_contract_refresh": {
+      "executed": 27,
+      "passed": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_seconds": 11.11
+    },
+    "test_count_overlap": "Do not sum overlapping modules as distinct cases"
+  },
+  "qualification_inventory": {
+    "modules": 221,
+    "retained_modules": 213,
+    "new_modules": [
+      "test_client_zone_startup_package",
+      "test_native_startup_metadata_admission",
+      "test_manual_report_acceptance",
+      "test_native_startup_metadata_contract",
+      "test_native_startup_component_migration",
+      "test_native_metadata_runtime_activation",
+      "test_native_metadata_map_activation",
+      "test_derive_native_metadata_cache_proof"
+    ],
+    "inherited_contracts_kept": 9,
+    "full_qualification_executed": false
+  },
+  "production_state": {
+    "component_authorities_None": true,
+    "execution_authorities_None": true,
+    "source_only_review_None": true,
+    "derived_cache_proof_authority_None": true,
+    "ACTIVATION_IMPLEMENTED": false,
+    "PROMOTIONS_IMPLEMENTED": false,
+    "qualification_enabled": false,
+    "publish_enabled": false,
+    "APKnativebytes_changed": false,
+    "payloads": 75
+  },
+  "integration_instructions": {
+    "copy_only_exact_25_code_paths": true,
+    "preserve_root_Handoff_all_docs_and_receipts": true,
+    "preserve_root_marker_revision3": true,
+    "preserve_root_six_reviewed_diagnostic_paths": true,
+    "five_root_doc_allowlist_additions_merged": true,
+    "leave_all_gates_closed": true,
+    "commit_source_before_actual_final_derivation": true
+  },
+  "remaining_gates": [
+    "Bind exact separately committed source-only audit descriptor/document after source review",
+    "Require successful genuine16-case Atlas/Kings full/SERVER-only world/cache/SDK/geometry/memory artifact",
+    "Freeze raw qualification/provenance inputs and derive/review actual world-constrained subset; failed world is rejected",
+    "Populate independently reviewed exact native component and execution authorities",
+    "Implement/review actual APK native archive promotion and truthful native compile flags",
+    "Run committed-source complete required host/SQL/Android/Java-D8/integration qualifications",
+    "Sign successor and independently audit public APK bytes",
+    "Physical device startup/entry/save/zoning/export acceptance remains unmeasured"
+  ],
+  "scope": {
+    "synthetic_native_world_cases_unexecuted": true,
+    "actual9454_preload_and_public_donor_materials_recovered_without_rerunning_native_work": true,
+    "zero_BIN_body_reads_in_guest_context": true,
+    "standalone_C_texture_decoder_executed_in_prior_independent_texture_suite": true,
+    "new_Game_Map_Wine_processes_executed_by_source_checkpoint_builder": false,
+    "physical_Thor_speed_validated": false,
+    "player_database_changed": false,
+    "main_changed": false,
+    "native_build_rerun": false,
+    "push_performed": false,
+    "publication_performed": false
+  },
+  "supersedes_checkpoint": "native-metadata-inactive-adapter-source-checkpoint.json"
+}

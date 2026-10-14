@@ -70,6 +70,32 @@ def zip_members(raw):
         return {row.filename: archive.read(row) for row in rows}, rows
 
 
+def material_members(raw):
+    """Bounded proof artifacts may have directories; native payloads stay flat."""
+    contract.require(0 < len(raw) <= MAXIMUM_ARCHIVE, 'Bounded native evidence ZIP required')
+    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+        rows = archive.infolist(); names = [row.filename for row in rows]
+        contract.require(0 < len(rows) <= 512 and all(contract.material_member_name(name) for name in names)
+            and len(set(names)) == len(names) and len({name.casefold() for name in names}) == len(names),
+            'Unsafe/duplicate/aliased native material member paths')
+        # Directory aliases are ambiguous even when leaf names differ.
+        directories = {}
+        for name in names:
+            parts = name.split('/')
+            for index in range(1, len(parts)):
+                prefix = '/'.join(parts[:index]); folded = prefix.casefold()
+                contract.require(directories.get(folded, prefix) == prefix,
+                    'Aliased native material directories')
+                directories[folded] = prefix
+        contract.require(not set(directories) & {name.casefold() for name in names}
+            and all(not row.is_dir() and not row.flag_bits & 1
+                and stat.S_IFMT(row.external_attr >> 16) in (0, stat.S_IFREG)
+                and 0 <= row.file_size <= MAXIMUM_NATIVE_LEAF for row in rows)
+            and sum(row.file_size for row in rows) <= MAXIMUM_ARCHIVE,
+            'Linked/encrypted/oversized/conflicting native material ZIP member')
+        return {row.filename: archive.read(row) for row in rows}, rows
+
+
 def game_members(raw):
     contract.require(0 < len(raw) <= MAXIMUM_ARCHIVE, 'Bounded native Game tar archive required')
     with tarfile.open(fileobj=io.BytesIO(raw), mode='r:gz') as archive:
@@ -110,7 +136,7 @@ def authenticate_materials(kind, paths):
             'Original material source/job owner required')
         raw = read_regular(Path(paths[role]).absolute())
         contract.require(content_pin(raw) == identity['artifact_zip'], 'Actual '+role+' artifact bytes differ')
-        members, _ = zip_members(raw)
+        members, _ = material_members(raw)
         contract.require(set(members) == set(identity['members'])
             and all(content_pin(members[name]) == identity['members'][name] for name in members),
             'Exact authenticated '+role+' artifact member closure required')

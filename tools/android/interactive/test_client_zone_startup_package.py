@@ -65,8 +65,9 @@ class ClientZoneStartupPackageTests(unittest.TestCase):
         self.assertEqual(package.changed_java_sources(self.donor), sorted(package.REVIEWED_JAVA_CHANGES))
         self.assertEqual(package.added_java_sources(self.donor), [])
         self.assertEqual(package.replacement_payloads(self.donor), frozenset({
-            'assets/runtime/client-manifest.json', 'assets/runtime/runtime-manifest.json',
-            'assets/runtime/game_device_diagnostic.py'}))
+            'assets/runtime/client-manifest.json', 'assets/runtime/runtime-manifest.json'} |
+            {'assets/runtime/'+Path(name).name for name in package.GUEST_SOURCE_CHANGES}))
+        self.assertEqual(package.ADDED_PAYLOADS, {'assets/runtime/native_startup_metadata_contract.py'})
 
     def test_unreviewed_existing_java_change_rejected(self):
         native = package.builder()
@@ -94,7 +95,7 @@ class ClientZoneStartupPackageTests(unittest.TestCase):
                 for name in self.donor['payloads']:
                     if name not in package.replacement_payloads(self.donor):
                         self.assertEqual((candidate/name).read_bytes(), old.read(name), name)
-            self.assertEqual({name for name in payloads if payloads[name] != self.donor['payloads'][name]},
+            self.assertEqual({name for name in self.donor['payloads'] if payloads[name] != self.donor['payloads'][name]},
                 set(package.replacement_payloads(self.donor)))
 
     def test_finite_owner_rejects_unknown_paths_and_ambiguous_ancestry(self):

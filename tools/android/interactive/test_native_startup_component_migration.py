@@ -109,6 +109,37 @@ class NativeStartupComponentMigrationTests(unittest.TestCase):
             archive.writestr(entry, 'target')
         with self.assertRaises(ValueError): migration.zip_members(output.getvalue())
 
+    def test_evidence_layout_supports_297_bounded_relative_members_without_payload_relaxation(self):
+        rows={'native-client-paired/case-%03d/receipt.json'%index:b'{"scope":"unexecuted"}' for index in range(297)}
+        raw=zip_raw(rows)
+        members,_=migration.material_members(raw)
+        self.assertEqual(members,rows)
+        with self.assertRaises(ValueError):migration.zip_members(raw)
+        with self.assertRaises(ValueError):migration.material_members(zip_raw({
+            'proof/member-%03d.json'%index:b'{}' for index in range(513)}))
+
+    def test_evidence_empty_logs_are_bound_while_native_payloads_remain_nonempty(self):
+        raw=zip_raw({'proof/qualification.json':b'{"scope":"unexecuted"}','proof/stderr.log':b''})
+        members,_=migration.material_members(raw)
+        self.assertEqual(members['proof/stderr.log'],b'')
+        self.assertEqual(migration.content_pin(members['proof/stderr.log']),
+            {'bytes':0,'sha256':'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'})
+        with self.assertRaises(ValueError):migration.zip_members(zip_raw({'CityOfHeroes.exe':b''}))
+        with self.assertRaises(ValueError):native.unique_json(members['proof/stderr.log'])
+
+    def test_evidence_path_traversal_aliases_conflicts_and_links_fail_closed(self):
+        invalid=({'../escape.json':b'{}'},{'/absolute.json':b'{}'},
+            {'a\\b.json':b'{}'},{'C:/drive.json':b'{}'},
+            {'Case/a.json':b'{}','case/b.json':b'{}'},
+            {'parent':b'{}','parent/child.json':b'{}'},
+            {'/'.join(['level']*8)+'/too-deep.json':b'{}'})
+        for rows in invalid:
+            with self.subTest(rows=rows),self.assertRaises(ValueError):migration.material_members(zip_raw(rows))
+        output=io.BytesIO()
+        with zipfile.ZipFile(output,'w') as opened:
+            entry=zipfile.ZipInfo('proof/link');entry.external_attr=0o120777<<16;opened.writestr(entry,'target')
+        with self.assertRaises(ValueError):migration.material_members(output.getvalue())
+
     def test_tar_link_and_parent_paths_refused(self):
         for name, kind in (('../escape', tarfile.REGTYPE), ('alias', tarfile.SYMTYPE)):
             output = io.BytesIO()

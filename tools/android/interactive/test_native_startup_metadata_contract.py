@@ -115,9 +115,9 @@ class NativeStartupMetadataContractTests(unittest.TestCase):
             'previous_consumer_sha256': previous,
             'current_consumer_sha256': initial['native_record']['sha256'],
             'provider_identity_sha256': 'b'*64, 'bin_recipe_identity_sha256': 'c'*64,
-            'original_proof_sha256': 'd'*64, 'qualified_per_bin': {'bin/sequencers.bin': {
+            'original_proof_sha256': 'd'*64, 'eligible_bin_paths': ['bin/sequencers.bin'], 'qualified_per_bin': {'bin/sequencers.bin': {
                 'schema_identity_sha256': 'e'*64, 'output_sha256': 'f'*64,
-                'native_ids_sha256': '1'*64, 'loader_decisions_sha256': '2'*64}}}
+                'identifier_inputs_sha256': '1'*64, 'loader_decisions_sha256': '2'*64}}}
         package, expected = package_fixture('mapserver', {'cache': bridge})
         kwargs = {'previous_consumer_sha256': previous, 'provider_identity_sha256': 'b'*64,
             'bin_recipe_identity_sha256': 'c'*64, 'original_proof_sha256': 'd'*64}
@@ -129,15 +129,39 @@ class NativeStartupMetadataContractTests(unittest.TestCase):
                 with self.subTest(field=field), self.assertRaises(ValueError):
                     native.cache_compatibility(package, 'mapserver', **changed)
 
+    def test_exact_191_bin_inventory_requires_supported_paths_and_no_directory_aliases(self):
+        previous=native.unique_json(fixture('mapserver')[1]['game-package.json'])['files']['MapServer.exe']['sha256']
+        rows={'data/server/bin/cache_%03d.bin'%index:{'schema_identity_sha256':'4'*64,
+            'output_sha256':'5'*64,'identifier_inputs_sha256':'6'*64,'loader_decisions_sha256':'7'*64} for index in range(191)}
+        bridge={'policy':'exact_provider_recipe_and_native_consumer_parity',
+            'previous_consumer_sha256':previous,'current_consumer_sha256':fixture('mapserver')[3]['native_record']['sha256'],
+            'provider_identity_sha256':'1'*64,'bin_recipe_identity_sha256':'2'*64,'original_proof_sha256':'3'*64,
+            'eligible_bin_paths':sorted(rows),'qualified_per_bin':rows}
+        def inspect(selected):
+            package,expected=package_fixture('mapserver',{'cache':selected})
+            with patch.dict(native.COMPONENT_AUTHORITIES,{'mapserver':expected}):
+                return native.cache_compatibility(package,'mapserver',previous_consumer_sha256=previous,
+                    provider_identity_sha256='1'*64,bin_recipe_identity_sha256='2'*64,original_proof_sha256='3'*64)
+        self.assertEqual(len(inspect(bridge)['qualified_per_bin']),191)
+        for name in ('data/geobin/zone.bin','data/server/bin/../../escape.bin','data/server/bin/extra.bin'):
+            changed=copy.deepcopy(bridge);changed['qualified_per_bin'][name]=dict(next(iter(rows.values())))
+            # Unqualified extra member must not be admitted from a blanket regex.
+            with self.subTest(name=name),self.assertRaises(ValueError):inspect(changed)
+        changed=copy.deepcopy(bridge)
+        changed['qualified_per_bin'].update({'bin/alias.bin':dict(next(iter(rows.values()))),
+            'data/bin/alias.bin':dict(next(iter(rows.values())))})
+        changed['eligible_bin_paths']=sorted(changed['qualified_per_bin'])
+        with self.assertRaisesRegex(ValueError,'Aliased logical'):inspect(changed)
+
     def test_self_consistent_fake_previous_consumer_rejected(self):
         _, _, _, initial = fixture('mapserver')
         bridge = {'policy': 'exact_provider_recipe_and_native_consumer_parity',
             'previous_consumer_sha256': '9'*64,
             'current_consumer_sha256': initial['native_record']['sha256'],
             'provider_identity_sha256': 'b'*64, 'bin_recipe_identity_sha256': 'c'*64,
-            'original_proof_sha256': 'd'*64, 'qualified_per_bin': {'bin/sequencers.bin': {
+            'original_proof_sha256': 'd'*64, 'eligible_bin_paths': ['bin/sequencers.bin'], 'qualified_per_bin': {'bin/sequencers.bin': {
                 'schema_identity_sha256': 'e'*64, 'output_sha256': 'f'*64,
-                'native_ids_sha256': '1'*64, 'loader_decisions_sha256': '2'*64}}}
+                'identifier_inputs_sha256': '1'*64, 'loader_decisions_sha256': '2'*64}}}
         package, expected = package_fixture('mapserver', {'cache': bridge})
         with patch.dict(native.COMPONENT_AUTHORITIES, {'mapserver': expected}), self.assertRaises(ValueError):
             native.cache_compatibility(package, 'mapserver', previous_consumer_sha256='9'*64,
@@ -145,14 +169,21 @@ class NativeStartupMetadataContractTests(unittest.TestCase):
 
     def test_new_map_texture_projection_requires_explicit_consumer_and_source(self):
         _, _, _, initial = fixture('mapserver')
-        proof = {'policy': 'exact_native_excluded_texture_directory_v1',
+        proof = {'policy': 'exact_source_bound_native_excluded_texture_directory_v2',
             'native_consumer_sha256': initial['native_record']['sha256'],
             'native_source_path': 'MapServer/src/svr/svr_init.c',
-            'native_source_sha256': '2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d',
+            'native_source_sha256': '398081161ebe9e9253b326e8a5f94f502a7bc0a9974a442f1ce83a46ee0f9ae3',
+            'retained_texture_exclusion_source_sha256': '2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d',
             'excluded_top_level_directories': ['texture_library'], 'client_inputs_modified': False}
         package, expected = package_fixture('mapserver', {'server_texture_projection': proof})
         with patch.dict(native.COMPONENT_AUTHORITIES, {'mapserver': expected}):
             self.assertEqual(native.map_texture_projection(package), proof)
+        for field, replacement in (('native_source_sha256', proof['retained_texture_exclusion_source_sha256']),
+                ('retained_texture_exclusion_source_sha256', proof['native_source_sha256'])):
+            bad = dict(proof, **{field: replacement})
+            package, expected = package_fixture('mapserver', {'server_texture_projection': bad})
+            with self.subTest(field=field), patch.dict(native.COMPONENT_AUTHORITIES, {'mapserver': expected}), self.assertRaises(ValueError):
+                native.map_texture_projection(package)
         package, expected = package_fixture('mapserver')
         with patch.dict(native.COMPONENT_AUTHORITIES, {'mapserver': expected}), self.assertRaises(ValueError):
             native.map_texture_projection(package)

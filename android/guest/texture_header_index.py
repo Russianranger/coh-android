@@ -183,6 +183,22 @@ def prepare(work, import_identity, executable_sha256, context):
             'Texture import identity differs from verified client worktree')
     identity = pack_identity(stable_client, import_identity, executable_sha256, inventory_sha)
     target, marker = work / PACK, work / MARKER
+    metadata_package = getattr(context, 'native_metadata_game_package', None)
+    if metadata_package is not None:
+        import native_startup_metadata_contract as metadata
+        actual = metadata.runtime_admission(metadata_package, 'game', work/'CityOfHeroes.exe')
+        require(actual['current_consumer_sha256'] == executable_sha256,
+            'Texture index current Game consumer differs')
+        metadata_report = getattr(context, 'report', {}).get('client_worktree', {})
+        supplied = metadata_report.get('native_texture_index_migration')
+        if supplied is not None:
+            require(type(supplied) is dict and metadata_report.get('source_root_preserved') is True,
+                'Verified metadata texture source root required')
+            expected_proof = metadata.game_texture_index_migration(metadata_package,
+                supplied.get('previous_client_identity'), supplied.get('content_identity_sha256'))
+            expected_proof.pop('runtime_activation_allowed')
+            require(metadata.same(supplied, expected_proof),
+                'Texture index current consumer/source/input proof differs')
     expected = {'format': FORMAT, 'identity': identity, 'records': len(records),
                 'inventory_sha256': inventory_sha, 'client_executable_sha256': executable_sha256,
                 'identity_policy': IDENTITY_POLICY,
@@ -232,9 +248,10 @@ def prepare(work, import_identity, executable_sha256, context):
                                                 'verified_client_gameplay_performance_layer_v1',
                                                 'verified_client_renderer_attribution_layer_v1',
                                                 'verified_client_render_pipeline_layer_v1',
-                                                'verified_client_render_queue_layer_v1')
+                                                'verified_client_render_queue_layer_v1',
+                                                'verified_native_metadata_texture_layer_v1')
                         and native['native_source_closure_verified'] is True
-                        and native['texture_header_struct_bytes'] == 32
+                        and type(native['texture_header_struct_bytes']) is int and native['texture_header_struct_bytes'] == 32
                         and native['client_executable_sha256'] == executable_sha256
                         and native['previous_executable_sha256'] != executable_sha256
                         and native['content_identity_sha256'] == stable_client['content_identity_sha256']

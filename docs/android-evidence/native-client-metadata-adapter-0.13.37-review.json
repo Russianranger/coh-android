@@ -1,0 +1,336 @@
+{
+  "format": 1,
+  "scope": "independent_frozen_dormant_client_integration_host_review",
+  "source_freeze": {
+    "bytes": 1699,
+    "sha256": "3c4e30515220ab49d2c6d749c656a2c6fc396bb1e77b25d4098c9bb885d40b32"
+  },
+  "repository_base": "1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e",
+  "source_files": {
+    "android/guest/client_gpu_profile.py": {
+      "bytes": 67882,
+      "sha256": "bcd40a279ce512ee00cbb6819a0ce3d6690f0c3ce7a7ef802c4da5656a79efd0"
+    },
+    "android/guest/client_interactive_diagnostic.py": {
+      "bytes": 34112,
+      "sha256": "ea0c910ba0ee32a3de77d9ac30be8260994f5d5fac1d4f981eba9c04a51d7c26"
+    },
+    "android/guest/client_startup_diagnostic.py": {
+      "bytes": 94729,
+      "sha256": "a79f50e8c61b2c200d5e3689fd8aa8a7461bf75da9b53d53d3dc2d2145fa59e3"
+    },
+    "android/guest/texture_header_index.py": {
+      "bytes": 19493,
+      "sha256": "fa7e8d889b35f04d988c61a218e1c44e87e8104bd4230fb4b0f6e199b6b1abba"
+    },
+    "android/guest/native_startup_metadata_contract.py": {
+      "bytes": 24606,
+      "sha256": "f5bb12787481e11e71659d500d0901fe30fa5dd1a2f7c6e63b8a04fb7aaeba43"
+    },
+    "tools/android/interactive/test_native_metadata_runtime_activation.py": {
+      "bytes": 32296,
+      "sha256": "325a49d3e7ac7045b96b8d44cbe98e3f33d10858a85eb04e183dfcb8997ac4c2"
+    },
+    "tools/android/interactive/test_native_startup_metadata_contract.py": {
+      "bytes": 15888,
+      "sha256": "dd4d1f4edeb6f65e2440db660e47cfaa4a8169736c84cab3c0d07bfabcb55c0a"
+    },
+    "tools/android/interactive/native_startup_metadata_admission.py": {
+      "bytes": 6885,
+      "sha256": "3fbecf05683ccb10a3046e0c0fdb6d1d97329c876e28d5b6003ac4cd408c3b74"
+    }
+  },
+  "started_utc": "2026-10-14T00:31:30.063628+00:00",
+  "suites": [
+    {
+      "module": "test_native_metadata_runtime_activation",
+      "tests_run": 17,
+      "elapsed_seconds": 16.668,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "test_ids": [
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_actual_worktree_upgrade_and_index_rebind_preserve_payload_caches_links_and_root",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_actual_wrapped_client_archive_validates_old_receipt_and_new_record",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_authenticated_fixture_artifacts_prepare_only_one_native_and_receipt",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_client_constructor_scrubs_shared_prerequisite_environments",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_current_bytes_change_refuses_opt_in_before_attempt",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_dormant_artifact_preparation_fails_before_io",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_exact_current_owned_bytes_and_separate_old_producer_admitted_in_fixture",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_full_current_pipeline_queue_controls_keep_raw_producers_and_label_new_source",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_game_gpu_adaptor_preserves_historical_producer_separately",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_gpu_prerequisite_children_receive_neither_game_nor_map_opt_in",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_map_world_switch_only_supported_fresh_maps",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_production_authorities_reviews_and_execution_remain_closed",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_retained_path_removes_inherited_switch_without_new_authority",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_review_receipt_claim_pin_and_numeric_alias_tamper_rejected",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_same_process_native_hash_reuse_requires_exact_inode_ctime_and_all_pins",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_texture_input_migration_derives_generation_and_root_specific_identities",
+        "test_native_metadata_runtime_activation.NativeMetadataRuntimeActivationTests.test_worktree_preflight_failure_preserves_executable_receipt_index_and_every_input"
+      ]
+    },
+    {
+      "module": "test_client_render_queue_contract",
+      "tests_run": 6,
+      "elapsed_seconds": 67.275,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "test_ids": [
+        "test_client_render_queue_contract.RenderQueueContractTests.test_all_new_controls_require_exact_types_and_values",
+        "test_client_render_queue_contract.RenderQueueContractTests.test_each_real_Win32_proof_flag_requires_true_without_physical_gain_claims",
+        "test_client_render_queue_contract.RenderQueueContractTests.test_native_flags_controls_parent_and_Dll_closure_fail_closed",
+        "test_client_render_queue_contract.RenderQueueContractTests.test_raw_foreign_source_history_rejected_even_after_rebinding_canonical_hash",
+        "test_client_render_queue_contract.RenderQueueContractTests.test_typed_layer_extends_exact_pipeline_Game_and_preserves_all_eight_previous_wrappers",
+        "test_client_render_queue_contract.RenderQueueContractTests.test_worker_fixture_requires_actual_Win32_source_and_typed_counts_and_lifecycle_proof"
+      ]
+    },
+    {
+      "module": "test_client_render_pipeline_contract",
+      "tests_run": 4,
+      "elapsed_seconds": 7.416,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "test_ids": [
+        "test_client_render_pipeline_contract.RenderPipelineContractTests.test_correctly_rebound_foreign_ancestry_is_rejected",
+        "test_client_render_pipeline_contract.RenderPipelineContractTests.test_every_native_proof_flag_and_retained_qualification_remains_typed",
+        "test_client_render_pipeline_contract.RenderPipelineContractTests.test_forged_controls_dependencies_source_parent_and_proof_rejected",
+        "test_client_render_pipeline_contract.RenderPipelineContractTests.test_typed_layer_extends_exact_renderer_Game_and_preserves_every_previous_wrapper"
+      ]
+    },
+    {
+      "module": "test_client_preload_launch",
+      "tests_run": 8,
+      "elapsed_seconds": 0.009,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "test_ids": [
+        "test_client_preload_launch.ClientPreloadLaunchTests.test_current_game_identity_is_required_even_when_report_claims_a_producer",
+        "test_client_preload_launch.ClientPreloadLaunchTests.test_enabled_flag_without_matching_current_typed_producer_fails_before_launch",
+        "test_client_preload_launch.ClientPreloadLaunchTests.test_failed_owned_launch_restores_cwd_and_never_mutates_server_environment",
+        "test_client_preload_launch.ClientPreloadLaunchTests.test_saved_character_initial_and_owned_retry_receive_opt_in_and_keep_inputs",
+        "test_client_preload_launch.ClientPreloadLaunchTests.test_unqualified_or_truthy_flag_never_inherits_an_opt_in",
+        "test_client_preload_launch.ClientSceneLaunchTests.test_foreign_game_or_unverified_scene_semantics_fail_before_client_or_retry_launch",
+        "test_client_preload_launch.ClientSceneLaunchTests.test_old_or_truthy_scene_producer_retains_old_bin_policy_and_strips_scene_controls",
+        "test_client_preload_launch.ClientSceneLaunchTests.test_verified_initial_and_retry_have_bounded_profiles_and_disable_legacy_resource_logging"
+      ]
+    },
+    {
+      "module": "test_texture_header_index",
+      "tests_run": 19,
+      "elapsed_seconds": 0.433,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "test_ids": [
+        "test_texture_header_index.TextureIndexTests.test_cached_private_root_cannot_accept_an_ancestor_replacement",
+        "test_texture_header_index.TextureIndexTests.test_corrupt_pack_regenerated",
+        "test_texture_header_index.TextureIndexTests.test_each_leaf_keeps_fresh_metadata_without_repeated_parent_resolution",
+        "test_texture_header_index.TextureIndexTests.test_every_stable_contract_change_invalidates",
+        "test_texture_header_index.TextureIndexTests.test_exact_mip_and_warm_reuse",
+        "test_texture_header_index.TextureIndexTests.test_exact_native_layer_rebinds_existing_header_payload_without_decoding",
+        "test_texture_header_index.TextureIndexTests.test_executable_and_content_changes_invalidate",
+        "test_texture_header_index.TextureIndexTests.test_import_and_directory_changes_invalidate",
+        "test_texture_header_index.TextureIndexTests.test_interrupted_native_envelope_rename_recovers_without_header_reads",
+        "test_texture_header_index.TextureIndexTests.test_legacy_snapshot_or_payload_change_refuses_rebinding",
+        "test_texture_header_index.TextureIndexTests.test_link_escape_refused",
+        "test_texture_header_index.TextureIndexTests.test_missing_stable_identity_falls_back_to_normal_native_reads",
+        "test_texture_header_index.TextureIndexTests.test_mutation_while_indexing_is_refused",
+        "test_texture_header_index.TextureIndexTests.test_native_decoder_equivalence_and_rejection",
+        "test_texture_header_index.TextureIndexTests.test_native_rebind_requires_exact_executable_inventory_and_data_proof",
+        "test_texture_header_index.TextureIndexTests.test_preparation_phase_timings_partition_cold_and_warm_work",
+        "test_texture_header_index.TextureIndexTests.test_unproved_legacy_index_reindexes_conservatively",
+        "test_texture_header_index.TextureIndexTests.test_verified_legacy_index_rebinds_envelope_without_reindex",
+        "test_texture_header_index.TextureIndexTests.test_wrapper_and_lineage_changes_preserve_stable_index"
+      ]
+    },
+    {
+      "module": "test_native_startup_metadata_contract",
+      "tests_run": 12,
+      "elapsed_seconds": 1.922,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "test_ids": [
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_both_raw_original_receipts_restore_byte_exact_order",
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_duplicate_and_nonfinite_json_refused",
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_exact_191_bin_inventory_requires_supported_paths_and_no_directory_aliases",
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_exact_per_bin_provider_recipe_and_proof_bridge_only",
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_game_texture_migration_binds_both_native_and_input_identities",
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_new_map_texture_projection_requires_explicit_consumer_and_source",
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_new_record_authority_and_scope_tamper_rejected",
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_old_ancestry_tamper_rejected_after_rehashing_outer_wrapper",
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_old_consumer_hash_alone_never_authorizes_cache_reuse",
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_real_authorities_absent_and_activation_dormant",
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_scope_booleans_cannot_be_replaced_with_numeric_aliases",
+        "test_native_startup_metadata_contract.NativeStartupMetadataContractTests.test_self_consistent_fake_previous_consumer_rejected"
+      ]
+    },
+    {
+      "module": "test_native_startup_component_migration",
+      "tests_run": 9,
+      "elapsed_seconds": 8.076,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "test_ids": [
+        "test_native_startup_component_migration.NativeStartupComponentMigrationTests.test_absent_authorities_stop_before_candidate_file_read",
+        "test_native_startup_component_migration.NativeStartupComponentMigrationTests.test_actual_whole_material_and_member_bytes_bound_independently",
+        "test_native_startup_component_migration.NativeStartupComponentMigrationTests.test_arbitrary_caller_authority_rejected",
+        "test_native_startup_component_migration.NativeStartupComponentMigrationTests.test_candidate_content_and_actual_pe_must_match_frozen_authority",
+        "test_native_startup_component_migration.NativeStartupComponentMigrationTests.test_json_receipt_flags_cannot_override_actual_artifact_identity",
+        "test_native_startup_component_migration.NativeStartupComponentMigrationTests.test_real_game_and_map_archive_migrations_preserve_every_other_member",
+        "test_native_startup_component_migration.NativeStartupComponentMigrationTests.test_symlink_material_paths_cannot_be_resolved_into_accepted_inputs",
+        "test_native_startup_component_migration.NativeStartupComponentMigrationTests.test_tar_link_and_parent_paths_refused",
+        "test_native_startup_component_migration.NativeStartupComponentMigrationTests.test_zip_alias_traversal_symlink_and_oversized_names_refused"
+      ]
+    }
+  ],
+  "execution_scope": {
+    "Game_processes_executed": 0,
+    "MapServer_processes_executed": 0,
+    "Wine_processes_executed": 0,
+    "standalone_host_C_texture_decoder_executed": true,
+    "physical_AYN_Thor_execution_validated": false,
+    "native_consumer_qualification_claimed": false
+  },
+  "sources_unchanged": true,
+  "source_files_after": {
+    "android/guest/client_gpu_profile.py": {
+      "bytes": 67882,
+      "sha256": "bcd40a279ce512ee00cbb6819a0ce3d6690f0c3ce7a7ef802c4da5656a79efd0"
+    },
+    "android/guest/client_interactive_diagnostic.py": {
+      "bytes": 34112,
+      "sha256": "ea0c910ba0ee32a3de77d9ac30be8260994f5d5fac1d4f981eba9c04a51d7c26"
+    },
+    "android/guest/client_startup_diagnostic.py": {
+      "bytes": 94729,
+      "sha256": "a79f50e8c61b2c200d5e3689fd8aa8a7461bf75da9b53d53d3dc2d2145fa59e3"
+    },
+    "android/guest/texture_header_index.py": {
+      "bytes": 19493,
+      "sha256": "fa7e8d889b35f04d988c61a218e1c44e87e8104bd4230fb4b0f6e199b6b1abba"
+    },
+    "android/guest/native_startup_metadata_contract.py": {
+      "bytes": 24606,
+      "sha256": "f5bb12787481e11e71659d500d0901fe30fa5dd1a2f7c6e63b8a04fb7aaeba43"
+    },
+    "tools/android/interactive/test_native_metadata_runtime_activation.py": {
+      "bytes": 32296,
+      "sha256": "325a49d3e7ac7045b96b8d44cbe98e3f33d10858a85eb04e183dfcb8997ac4c2"
+    },
+    "tools/android/interactive/test_native_startup_metadata_contract.py": {
+      "bytes": 15888,
+      "sha256": "dd4d1f4edeb6f65e2440db660e47cfaa4a8169736c84cab3c0d07bfabcb55c0a"
+    },
+    "tools/android/interactive/native_startup_metadata_admission.py": {
+      "bytes": 6885,
+      "sha256": "3fbecf05683ccb10a3046e0c0fdb6d1d97329c876e28d5b6003ac4cd408c3b74"
+    }
+  },
+  "passed": true,
+  "tests_run": 75,
+  "elapsed_seconds": 101.8,
+  "finished_utc": "2026-10-14T00:33:11.863588+00:00",
+  "production_gates": {
+    "component_authorities": {
+      "game": null,
+      "mapserver": null
+    },
+    "execution_authorities": {
+      "game": null,
+      "mapserver": null
+    },
+    "runtime_activation_implemented": false,
+    "archive_promotions_implemented": false
+  },
+  "executed_source_pins": {
+    "tools/android/interactive/test_native_metadata_runtime_activation.py": {
+      "bytes": 32296,
+      "sha256": "325a49d3e7ac7045b96b8d44cbe98e3f33d10858a85eb04e183dfcb8997ac4c2"
+    },
+    "tools/android/interactive/test_client_render_queue_contract.py": {
+      "bytes": 10191,
+      "sha256": "81e89b21297441c7277b58fb8138d9628d4561903474cc24dddc677535c90197"
+    },
+    "tools/android/interactive/test_client_render_pipeline_contract.py": {
+      "bytes": 9904,
+      "sha256": "6f1105ceb401d0ccda4af7ae2b9f0d9b942d02dcb6dc503390a285baba65367c"
+    },
+    "tools/android/interactive/test_client_preload_launch.py": {
+      "bytes": 11257,
+      "sha256": "74b4776ff0705218486ea23bc5870fdafa131cb1ebb20a43e5b722c236f7b267"
+    },
+    "tools/android/interactive/test_texture_header_index.py": {
+      "bytes": 21551,
+      "sha256": "3269228616549797116b04bb236fc9e51fd58274531c6eb3df3c2adda743df09"
+    },
+    "tools/android/interactive/test_native_startup_metadata_contract.py": {
+      "bytes": 15888,
+      "sha256": "dd4d1f4edeb6f65e2440db660e47cfaa4a8169736c84cab3c0d07bfabcb55c0a"
+    },
+    "tools/android/interactive/test_native_startup_component_migration.py": {
+      "bytes": 7549,
+      "sha256": "f840008f6eda545111c4156407b5c2ccdf5bb1e1bfce33549bcdf5805bd08a56"
+    },
+    "tools/android/interactive/native_startup_component_migration.py": {
+      "bytes": 11130,
+      "sha256": "928c19588f387db5dc0b530655e060a869587bb0c42d1c3adad44a7a9a40b86f"
+    },
+    "android/guest/game_diagnostic.py": {
+      "bytes": 82317,
+      "sha256": "dc448fcff57129d188824f8508cdfe8d8aeee1844519acfd2e67996c17b09710"
+    }
+  },
+  "unittest_log": {
+    "bytes": 15578,
+    "sha256": "200810c5a2401baa47ed7970c1a3c3efb17cb21d6feb832d8b7650925137a8b9"
+  },
+  "review_decision": "approved_inactive_client_adapters_only",
+  "reviewed_corrections": [
+    "Metadata texture compatibility validates before any warm executable replacement or client-work receipt update.",
+    "Actual current owned Game bytes and the complete typed source/input proof validate before texture index recovery or publication.",
+    "Both inherited metadata opt-ins are removed from shared client environments and isolated GPU probe copies; an admitted live attempt receives only its own flag.",
+    "Retained pipeline/queue source and manifest fields remain explicitly historical, while current consumer authority and producer material are separate; saved-character isolation uses the retained control field accessor.",
+    "Full initialize plus owned initial/retry fixture preserves raw producer report bytes, shared environment, retained private caches, supplements, linked inputs and the original worktree root."
+  ],
+  "limitations": [
+    "Production component authorities and execution reviews remain None; runtime activation and archive promotion flags remain False.",
+    "Runtime admission fixtures replace frozen authorities with explicitly synthetic unexecuted unit materials. They alter an unused final byte of retained PE bytes and do not execute Game, MapServer or Wine.",
+    "Warm worktree fixture uses authenticated actual .36 native archives and actual public cache/prerequisite archives with an explicitly controlled two-texture input tree. It is not a physical Assets 1.0.0 gameplay or full imported-data qualification.",
+    "No native metadata candidate behavior, native decoded-ID/collision parity, performance benefit or AYN Thor timing is established by this host review.",
+    "Per-BIN identifier_inputs_sha256 denotes authenticated identifier input inventory, not observed decoded native-ID parity.",
+    "Map adapter/cache-context source and final source freeze remain separately owned and reviewed. game_diagnostic.py in executed_source_pins is an observed final pin only, not this client freeze approval."
+  ],
+  "authenticated_fixture_inputs": {
+    "audited_036_apk": {
+      "bytes": 42076692,
+      "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f"
+    },
+    "actual_public_client_cache_archive": {
+      "bytes": 27071659,
+      "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+    },
+    "actual_036_client_prerequisite_archive": {
+      "bytes": 18757,
+      "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+    }
+  }
+}
