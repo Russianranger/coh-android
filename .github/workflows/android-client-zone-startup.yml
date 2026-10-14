@@ -173,6 +173,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with: {name: coh-client-minimal-db-native-proof, path: out/minimal-db}
       - name: Qualify client/GPU startup, map preparation, progression save checks, strict SQL and complete runtime assets
+        env: {GH_TOKEN: '${{ github.token }}'}
         run: >-
           python3 tools/android/interactive/qualify_client_zone_startup.py --repository-commit "$GITHUB_SHA"
           --donor-apk out/donor.apk --donor-build-report out/donor-evidence/client-startup-latency-apk-build-report.json

@@ -26,7 +26,18 @@ POLICY_PREDECESSOR_PINS = {
     HELPER: '2e42ec6c9c4f7b1d4ad6c509ca3e65defcb011986635bda631338cd9f7e18e7d',
     TEST: '6fecf1686ec8e2b297c83cab32ae2cf3c297754d01f1a2038142fabed4e36066',
 }
+# A second independently reviewed handover admits only the two fixture source
+# paths and the exact credential-scoped host qualification workflow update.
+FIXTURE_POLICY_PARENT = '1d0f2373aa657f8ec3e8c3e5dcd4043643520cde'
+FIXTURE_POLICY_PREDECESSOR_PINS = {
+    HELPER: '141d41f1f208ebe832749b27d6dc826e4f96b4dde22c4853291206d497dc5dc9',
+    TEST: 'f322813ffc0024f835c393a7ebd5682505318bef6d1d8229bca338816785c19b',
+}
+FIXTURE_WORKFLOW = '.github/workflows/android-client-zone-startup.yml'
+FIXTURE_WORKFLOW_PREDECESSOR_SHA256 = '5d15be8c27418e90a2d97270b30d54fbbb4ce2ab9172dfed42e2d82cceef04c0'
+FIXTURE_WORKFLOW_SHA256 = 'd6e068d84603dfcd8c7d552ddc21e4cfc168daba09f8fab4f1edadb42299e07f'
 HOST_ONLY = frozenset({
+    FIXTURE_WORKFLOW,
     'android/guest/atlas_beacon_package.py',
     'android/guest/character_zoning.py',
     'android/guest/client_gpu_profile.py',
@@ -90,6 +101,8 @@ HOST_ONLY = frozenset({
     'tools/android/interactive/test_native_startup_component_migration.py',
     'tools/android/interactive/test_native_startup_metadata_admission.py',
     'tools/android/interactive/test_native_startup_metadata_contract.py',
+    'tools/android/interactive/prepare_native_metadata_qualification_fixtures.py',
+    'tools/android/interactive/test_native_metadata_qualification_fixtures.py',
 })
 
 
@@ -158,8 +171,14 @@ def classify(repo, event, before, head):
             raise ValueError('Native/FX job body or compiler flags changed')
         if sha(old) not in {LEGACY_WORKFLOW_SHA256, GUARDED_WORKFLOW_SHA256} or sha(current) != GUARDED_WORKFLOW_SHA256:
             raise ValueError('Unknown workflow wrappers, checkout, policy or compiler scope')
+        if FIXTURE_WORKFLOW in changed+cumulative:
+            previous_fixture = sha(regular_blob(repo, before, FIXTURE_WORKFLOW))
+            current_fixture = sha(regular_blob(repo, head, FIXTURE_WORKFLOW))
+            if previous_fixture not in {FIXTURE_WORKFLOW_PREDECESSOR_SHA256, FIXTURE_WORKFLOW_SHA256} or current_fixture != FIXTURE_WORKFLOW_SHA256:
+                raise ValueError('Host fixture workflow differs from its exact credential-scoped recipe')
         controls = set(changed) & CONTROL
         policy_correction = False
+        fixture_policy_correction = False
         if controls:
             if controls == {HELPER, TEST} and before == POLICY_CORRECTION_PARENT and sha(old) == GUARDED_WORKFLOW_SHA256:
                 for path, expected in POLICY_PREDECESSOR_PINS.items():
@@ -167,6 +186,12 @@ def classify(repo, event, before, head):
                         raise ValueError('Reviewed policy predecessor helper/test bytes differ')
                     regular_blob(repo, head, path)
                 policy_correction = True
+            elif controls == {HELPER, TEST} and before == FIXTURE_POLICY_PARENT and sha(old) == GUARDED_WORKFLOW_SHA256:
+                for path, expected in FIXTURE_POLICY_PREDECESSOR_PINS.items():
+                    if sha(regular_blob(repo, before, path)) != expected:
+                        raise ValueError('Reviewed fixture policy predecessor helper/test bytes differ')
+                    regular_blob(repo, head, path)
+                fixture_policy_correction = True
             else:
                 if controls != CONTROL or sha(old) != LEGACY_WORKFLOW_SHA256:
                     raise ValueError('Only the reviewed first introduction or exact one-time policy handover may skip')
@@ -178,8 +203,9 @@ def classify(repo, event, before, head):
             regular_blob(repo, head, path)
         result.update(native_required=False, reason='Complete known host-only scope; exact native and FX steps retained',
             retained_native_body_sha256=NATIVE_BODY_SHA256,
-            workflow_sha256=sha(current), control_introduction=bool(controls) and not policy_correction,
-            source_only_scope_policy_correction=policy_correction)
+            workflow_sha256=sha(current), control_introduction=bool(controls) and not (policy_correction or fixture_policy_correction),
+            source_only_scope_policy_correction=policy_correction,
+            original_fixture_scope_policy_correction=fixture_policy_correction)
     except (OSError, subprocess.CalledProcessError, UnicodeError, ValueError) as exc:
         result['reason'] = str(exc)
     return result

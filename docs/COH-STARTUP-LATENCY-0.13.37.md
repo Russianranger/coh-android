@@ -70,7 +70,7 @@ The first genuine stock Atlas world reached readiness at 13.776624 s in [3848982
 
 Source review also identified about 1.58 GB of unnecessary repeated BIN-body processing in a dormant cache bridge. Exact original archive/manifest evidence and current ownership must remove that work before activation. A separate closed native metadata-census prototype is preserved at source `7f3d37fc191f3f30c124d6d57581afb64cceef42`. Root and independent review each passed 12 portable tests; [its receipt](android-evidence/native-client-metadata-census-0.13.37-prototype.json) records the current-provider/native/runtime gates that remain unestablished. It aims to reduce repeated filesystem operations without moving initialization into world entry. It has not been built as Game, executed under Wine or shipped.
 
-The [inactive integration checkpoint](android-evidence/native-metadata-adapter-0.13.37-source-checkpoint.json) and independent [Map adapter](android-evidence/native-map-metadata-adapter-0.13.37-review.json), [normalizer](android-evidence/native-cache-normalizer-0.13.37-review.json), [client adapter](android-evidence/native-client-metadata-adapter-0.13.37-review.json) and [material reader](android-evidence/native-client-material-reader-0.13.37-review.json) reviews preserve exact source pins. These are source/host checks, with native and publication authorities still closed. The full qualifier now lists 221 modules; full execution remains pending.
+The [inactive integration checkpoint](android-evidence/native-metadata-adapter-0.13.37-source-checkpoint.json) and independent [Map adapter](android-evidence/native-map-metadata-adapter-0.13.37-review.json), [normalizer](android-evidence/native-cache-normalizer-0.13.37-review.json), [client adapter](android-evidence/native-client-metadata-adapter-0.13.37-review.json) and [material reader](android-evidence/native-client-material-reader-0.13.37-review.json) reviews preserve exact source pins. These are source/host checks, with native and publication authorities still closed. The full qualifier now lists 223 modules: 204 retained fresh, 10 new fresh and nine inherited contracts; full execution remains pending.
 
 ## Diagnostic corrections
 
@@ -100,3 +100,9 @@ of the complete outer ZIP. Then measure client startup and the first cold
 Atlas-to-Kings transfer separately from the resident return. Verify movement,
 powers, costume, enhancements and combat, save normally and export after each
 session. Preserve failure evidence if readiness or transfer fails.
+
+## Current observation and CI recovery checkpoint
+
+Finite original-material recovery passed 73 integrated host cases with zero skips and preserves failed historical native runs as failed. It recovers original evidence/components and the retained Game recipe; it creates no runtime authority. The separately built 96 MiB observation probe passed four actual Windows SDK controls while retaining the original Game. The subsequent Wine lane failed and its evidence is being recovered. The full Atlas/Kings world matrix remains pending.
+
+The exact-C FileList benchmark rules out bulk sorting as a substantial saving: 19,606 actual FX paths require only 151 pointer shifts, and the safe append shortcut saves about 3 ms on this Linux host. Repeated native metadata calls, directory enumeration and decoding/allocation remain under investigation. None of these host observations establishes the requested sub-60-second client or sub-90-second physical zone targets.

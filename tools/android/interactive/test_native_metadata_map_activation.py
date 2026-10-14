@@ -571,7 +571,8 @@ class NativeMetadataMapActivationTests(unittest.TestCase):
     def actual_preload_107_controlled_adapter_fixture(self):
         """Real preload subset/PE bytes; authority and missing world gate stay controlled."""
         owned = self.provider_fixture(actual_server_donor=True)
-        research_path = Path('/workspace/scratch/5d16603ca7ff/publication-037-evidence/actual-preload-107-cache-subset-research.json')
+        research_path = Path(os.environ.get('COH_METADATA_TEST_PRELOAD_RESEARCH',
+            Path(__file__).resolve().parents[3]/'docs/android-evidence/native-map-cache-subset-0.13.37-research.json'))
         research_raw = research_path.read_bytes()
         self.assertEqual(caches.pin_bytes(research_raw), {'bytes': 70722,
             'sha256': 'fa566ee62b2fa46d5d85a841ba0b6474bb8104da2da3d37364b5c90fbe90fbcb'})
@@ -580,7 +581,8 @@ class NativeMetadataMapActivationTests(unittest.TestCase):
         self.assertFalse(research['scope']['normalizer_committed_and_independently_reviewed'])
         self.assertFalse(research['scope']['runtime_authority_created'])
         descriptor, document, _ = self.committed_real_source_review()
-        producer_zip = Path('/workspace/scratch/5d16603ca7ff/native037-recovery/source-audit-11790609618.zip')
+        producer_zip = Path(os.environ.get('COH_METADATA_TEST_MAP_PRODUCER',
+            Path(os.environ.get('COH_METADATA_RECOVERY', '/workspace/scratch/5d16603ca7ff/native037-recovery'))/'source-audit-11790609618.zip'))
         self.assertEqual(caches.file_pin(producer_zip), {'bytes': 3307410,
             'sha256': '69bfc9f44e5304eae786d0668ba30f183f5b99a58586f8db7861f697d8e23aab'})
         with zipfile.ZipFile(producer_zip) as archive:

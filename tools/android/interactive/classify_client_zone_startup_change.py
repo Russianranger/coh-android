@@ -75,6 +75,8 @@ CLIENT_ZONE_STARTUP_ALLOWED = CLIENT_ZONE_STARTUP_DOCS | frozenset({
     'tools/android/interactive/test_native_metadata_map_activation.py',
     'tools/android/interactive/derive_native_metadata_cache_proof.py',
     'tools/android/interactive/test_derive_native_metadata_cache_proof.py',
+    'tools/android/interactive/prepare_native_metadata_qualification_fixtures.py',
+    'tools/android/interactive/test_native_metadata_qualification_fixtures.py',
 })
 
 

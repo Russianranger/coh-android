@@ -15,6 +15,17 @@ WORKFLOW = (ROOT/guard.WORKFLOW).read_bytes()
 LEGACY = subprocess.check_output(['git','show',guard.BASELINE+':'+guard.WORKFLOW],cwd=ROOT)
 PREVIOUS_POLICY = {path: subprocess.check_output(['git','show',guard.POLICY_CORRECTION_PARENT+':'+path],cwd=ROOT)
     for path in (guard.HELPER,guard.TEST)}
+PREVIOUS_FIXTURE_POLICY = {path: subprocess.check_output(['git','show',guard.FIXTURE_POLICY_PARENT+':'+path],cwd=ROOT)
+    for path in (guard.HELPER,guard.TEST)}
+PREVIOUS_FIXTURE_WORKFLOW = subprocess.check_output(['git','show',guard.FIXTURE_POLICY_PARENT+':'+guard.FIXTURE_WORKFLOW],cwd=ROOT)
+FIXTURE_WORKFLOW = (ROOT/guard.FIXTURE_WORKFLOW).read_bytes()
+FIXTURE_STAGE = (
+    'tools/android/interactive/build_client_zone_startup_apk.py',
+    'tools/android/interactive/classify_client_zone_startup_change.py',
+    'tools/android/interactive/qualify_client_zone_startup.py',
+    'tools/android/interactive/test_native_metadata_map_activation.py',
+    'tools/android/interactive/prepare_native_metadata_qualification_fixtures.py',
+    'tools/android/interactive/test_native_metadata_qualification_fixtures.py')
 FACTUAL_DOC = 'docs/android-evidence/native-startup-material-facts-0.13.37.json'
 GUEST = 'android/guest/native_map_startup_contract.py'
 NATIVE = 'tools/prepare_map_startup_source.py'
@@ -29,6 +40,7 @@ class NativeWorkflowScopeTests(unittest.TestCase):
         self.write(guard.WORKFLOW,LEGACY)
         self.write(GUEST,b'BASELINE_GUEST')
         self.write(NATIVE,b'BASELINE_UNEXECUTED_PRODUCER')
+        self.write(guard.FIXTURE_WORKFLOW,PREVIOUS_FIXTURE_WORKFLOW)
         self.baseline=self.commit('baseline')
         self.enterContext(patch.object(guard,'BASELINE',self.baseline))
 
@@ -60,6 +72,59 @@ class NativeWorkflowScopeTests(unittest.TestCase):
 
     def update_policy(self):
         for path in (guard.HELPER,guard.TEST):self.write(path,(ROOT/path).read_bytes())
+
+    def install_previous_fixture_policy(self):
+        self.write(guard.WORKFLOW,WORKFLOW)
+        for path,raw in PREVIOUS_FIXTURE_POLICY.items():self.write(path,raw)
+        head=self.commit('actual prior fixture-routing policy bytes')
+        self.enterContext(patch.object(guard,'FIXTURE_POLICY_PARENT',head))
+        return head
+
+    def update_fixture_policy(self):
+        self.update_policy()
+        self.write(guard.FIXTURE_WORKFLOW,FIXTURE_WORKFLOW)
+        for path in FIXTURE_STAGE:self.write(path,b'CONTROLLED_UNEXECUTED_HOST_FIXTURE_SOURCE')
+
+    def test_exact_current_fixture_handover_and_credential_workflow_admit_no_native_changes(self):
+        before=self.install_previous_fixture_policy();self.update_fixture_policy();head=self.commit('finite host fixture recovery')
+        row=self.classification(before,head)
+        self.assertFalse(row['native_required'],row)
+        self.assertTrue(row['original_fixture_scope_policy_correction'])
+        self.assertFalse(row['source_only_scope_policy_correction']);self.assertFalse(row['control_introduction'])
+        self.assertEqual(row['retained_native_body_sha256'],guard.NATIVE_BODY_SHA256)
+        previous=head
+        self.write(FIXTURE_STAGE[0],b'LATER_KNOWN_HOST_SOURCE');head=self.commit('later known host source')
+        self.assertFalse(self.classification(previous,head)['native_required'])
+
+    def test_fixture_handover_requires_exact_parent_controls_and_both_actual_old_source_pins(self):
+        before=self.install_previous_fixture_policy();self.update_fixture_policy();head=self.commit('fixture handover')
+        with patch.object(guard,'FIXTURE_POLICY_PARENT','1'*40):
+            self.assertTrue(self.classification(before,head)['native_required'])
+        for path in (guard.HELPER,guard.TEST):
+            self.assertEqual(guard.sha(PREVIOUS_FIXTURE_POLICY[path]),guard.FIXTURE_POLICY_PREDECESSOR_PINS[path])
+            with self.subTest(path=path):
+                self.git('checkout','-q',before)
+                self.write(path,(ROOT/path).read_bytes());partial=self.commit('partial fixture control')
+                self.assertTrue(self.classification(before,partial)['native_required'])
+                self.git('checkout','-q',before)
+                self.write(path,PREVIOUS_FIXTURE_POLICY[path]+b'\nUNREVIEWED_PREDECESSOR\n')
+                altered=self.commit('altered predecessor');self.update_fixture_policy();head=self.commit('subsequent fixture handover')
+                with patch.object(guard,'FIXTURE_POLICY_PARENT',altered):
+                    self.assertTrue(self.classification(altered,head)['native_required'])
+
+    def test_fixture_handover_and_later_push_reject_unknown_workflows_native_and_future_guard_edits(self):
+        before=self.install_previous_fixture_policy()
+        for path in (NATIVE,'docs/android-evidence/unknown-fixture.json',guard.WORKFLOW,guard.FIXTURE_WORKFLOW):
+            with self.subTest(path=path):
+                self.git('checkout','-q',before);self.update_fixture_policy()
+                self.write(path,b'UNREVIEWED_CHANGED_SCOPE');head=self.commit('foreign scope')
+                self.assertTrue(self.classification(before,head)['native_required'])
+        self.git('checkout','-q',before);self.update_fixture_policy();previous=self.commit('reviewed fixture handover')
+        for path in (guard.HELPER,guard.TEST,guard.FIXTURE_WORKFLOW):
+            with self.subTest(later=path):
+                self.git('checkout','-q',previous);self.write(path,b'UNREVIEWED_FUTURE_POLICY')
+                head=self.commit('future guard/workflow mutation')
+                self.assertTrue(self.classification(previous,head)['native_required'])
 
     def test_exact_f6_policy_handover_admits_only_unchanged_native_source_closure(self):
         before=self.install_previous_policy();self.update_policy();head=self.commit('one reviewed host-doc routing handover')

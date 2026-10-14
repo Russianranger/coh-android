@@ -29,7 +29,8 @@ NEW_TEST_MODULES = ('test_client_zone_startup_package', 'test_native_startup_met
     'test_map_startup_native_change',
     'test_manual_report_acceptance', 'test_native_startup_metadata_contract',
     'test_native_startup_component_migration', 'test_native_metadata_runtime_activation',
-    'test_native_metadata_map_activation', 'test_derive_native_metadata_cache_proof')
+    'test_native_metadata_map_activation', 'test_derive_native_metadata_cache_proof',
+    'test_native_metadata_qualification_fixtures')
 TEST_MODULES = RETAINED_TEST_MODULES + NEW_TEST_MODULES
 # Immutable packaging producers and the unchanged prior certificate contract
 # retain original evidence. All changed guest/UI,
@@ -59,7 +60,7 @@ CHECK_SUITES = {
         'test_shared_collision_input_proof', 'test_map_startup_observation', 'test_map_startup_cache_reuse',
         'test_native_startup_metadata_contract', 'test_native_startup_component_migration',
         'test_native_metadata_runtime_activation', 'test_native_metadata_map_activation',
-        'test_derive_native_metadata_cache_proof'],
+        'test_derive_native_metadata_cache_proof', 'test_native_metadata_qualification_fixtures'],
     'manual_session_and_capture_verified': ['test_manual_session', 'test_session_budget_java',
         'test_session_budget_guest', 'test_client_zoning_java'],
     'text_entry_transport_verified': ['test_client_text_entry', 'test_input',
@@ -222,6 +223,10 @@ def qualify(args):
     os.environ['COH_MAP_STARTUP_TEST_ANIMATIONS'] = str(payloads/'server-animations.pigg')
     os.environ['COH_MAP_STARTUP_TEST_ANIMATION_MANIFEST'] = str(payloads/'server-animation-manifest.json')
     os.environ['COH_ANIMATION_REPAIR_ASSET_CACHE'] = str(args.asset_directory.resolve())
+    import prepare_native_metadata_qualification_fixtures as metadata_fixtures
+    fixture_recovery = metadata_fixtures.prepare(args.donor_apk, payloads,
+        args.native_metadata_fixtures_directory, token=os.environ.get('GH_TOKEN'))
+    os.environ.update(fixture_recovery['environment'])
     java = derivative.current_sources(donor)
     paths = source_paths(donor)
     derivative.require_committed_sources(commit, paths)
@@ -289,6 +294,7 @@ def qualify(args):
         'scope': derivative.QUALIFICATION_SCOPE, 'repository_commit': commit,
         'runtime_repository_commit': commit, 'donor': derivative.donor_link(),
         'native_contract_test_fixture': native_contract_fixture,
+        'native_metadata_test_fixtures': fixture_recovery,
         'native_dependency_test_fixture': {'role': 'original_public_030_native_dependency_fixture_only',
             'apk': original_dependency.DONOR_APK, 'repository_commit': original_dependency.DONOR_COMMIT,
             'current_suites': ['test_kings_row_runtime_dependencies'],
@@ -348,6 +354,7 @@ def main():
     for name in ('donor-apk', 'donor-build-report', 'native-contract-donor-apk', 'dependency-donor-apk', 'animation-donor-apk', 'native-directory', 'minimal-db-proof', 'output'):
         parser.add_argument('--'+name, type=Path, required=True)
     parser.add_argument('--asset-directory', type=Path, default=ROOT/'out/map-startup-assets')
+    parser.add_argument('--native-metadata-fixtures-directory', type=Path, default=ROOT/'out/native-metadata-fixtures')
     qualify(parser.parse_args())
 
 

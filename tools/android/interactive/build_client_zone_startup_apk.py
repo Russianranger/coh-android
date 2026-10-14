@@ -118,6 +118,8 @@ SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT, MARKER, 'docs/'+NOTES_
     'tools/android/interactive/test_native_metadata_map_activation.py',
     'tools/android/interactive/derive_native_metadata_cache_proof.py',
     'tools/android/interactive/test_derive_native_metadata_cache_proof.py',
+    'tools/android/interactive/prepare_native_metadata_qualification_fixtures.py',
+    'tools/android/interactive/test_native_metadata_qualification_fixtures.py',
     'docs/android-evidence/native-map-metadata-source-boundary-0.13.37.json',
     'tools/android/interactive/test_manual_report_acceptance.py',
     'tools/android/interactive/fixtures/thor-manual-report-0.13.36-20261013.json'}) | REVIEWED_JAVA_CHANGES | ADDED_JAVA_SOURCES | GUEST_SOURCE_CHANGES | REVIEWED_TEST_CHANGES | ROUTING_SOURCE_CHANGES | NATIVE_SOURCE_FILES
@@ -381,6 +383,8 @@ def extract_and_repair(apk, donor, destination, commit, native_directory, native
 
 
 def validate_qualification(q, commit, donor, native, minimal_db):
+    import prepare_native_metadata_qualification_fixtures as metadata_fixtures
+    metadata_fixtures.validate_proof(q.get('native_metadata_test_fixtures'), repository_commit=commit)
     contract = module('zone_startup_qualification_contract', ROOT/QUALIFICATION_SCRIPT)
     contract.validate_suite_inventory()
     require(type(q.get('format')) is int and q['format'] == 1 and q.get('status') == 'passed'
