@@ -166,10 +166,15 @@ JNIEXPORT jlong JNICALL Java_org_coh_sessionclient_SessionNative_createSession(J
     for(unsigned i=0;i<s->walkable.triangle_count;i++) {
         const CohWalkTriangle *t=&s->walkable.triangles[i];int elevated=0;
         for(unsigned j=0;j<3;j++)if(t->v[j][1]>s->walkable.spawn[1]+.1f)elevated=1;
-        if(elevated){for(unsigned j=0;j<3;j++)for(unsigned k=0;k<3;k++){
-            if(t->v[j][k]<s->obstacle_min[k])s->obstacle_min[k]=t->v[j][k];
-            if(t->v[j][k]>s->obstacle_max[k])s->obstacle_max[k]=t->v[j][k];
-        }obstacle_vertices+=3;}
+        if(elevated) {
+            for(unsigned j=0;j<3;j++) {
+                for(unsigned k=0;k<3;k++) {
+                    if(t->v[j][k]<s->obstacle_min[k])s->obstacle_min[k]=t->v[j][k];
+                    if(t->v[j][k]>s->obstacle_max[k])s->obstacle_max[k]=t->v[j][k];
+                }
+            }
+            obstacle_vertices+=3;
+        }
     }
     if(!obstacle_vertices)goto error;
     /* Explicit authored-scene profile: source bench AABB foot plane; Wretch is
