@@ -26,10 +26,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
       - name: Pinned NDK and bounded ARM user-mode fixture runner
         run: |
-          sdkmanager 'ndk;27.2.12479018'
+          task_sdk_manager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$task_sdk_manager"
+          "$task_sdk_manager" 'ndk;27.2.12479018'
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends qemu-user
       - name: Fresh host C and JNI controls, actual static Bionic ARM64 fixture
