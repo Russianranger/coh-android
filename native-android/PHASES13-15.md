@@ -93,6 +93,14 @@ preserves this timing miss. Qualification still requires interruption of the
 exact active audio and blocked-poll runs, followed by their cleanup and fresh
 foreground execution; a clean timeout or early cancellation is retryable.
 
+The third hosted attempt exposed an automation error: its horizontal button
+row was still moving when a tap intended for Resize activated Home check.
+The app recorded the actual action and did not invent a Resize or Home pass.
+The [test-driver failure receipt](evidence/phases13-15/third-android-test-failure.json)
+preserves the result. Real button taps now wait for stable visible bounds and
+scroll position across fresh snapshots, then still require the actual matching
+button callback.
+
 Build, lint, package identity and Android 13 emulator qualification are run by
 the dedicated native integration workflow. Physical Thor stick behavior and
 audibility remain separate observations. See the

@@ -5,6 +5,7 @@ The UDP execution is restricted to native IPv4 loopback. Engine counters and
 ADB framework input deliberately do not establish Thor audibility or sticks.
 """
 import argparse
+import datetime
 import hashlib
 import json
 from pathlib import Path
@@ -53,31 +54,96 @@ def save(name,report):
     (OUTPUT/name).write_text(json.dumps(report,indent=2)+'\n')
 
 
+BUTTON_EVENTS={'run':'checks_requested','play':'audio_play_requested','resize':'resize_requested',
+               'recreate':'view_recreation_requested','home':'home_check_requested',
+               'reset':'view_reset_requested','export':'export_snapshot_created'}
+
+
+def control_sample(report,action):
+    """Only measurement changes and fresh source timestamps establish stability."""
+    row=report['control_row'];target=report['controls'][action]
+    row_keys=('left','top','width','height','scroll_x','content_width')
+    target_keys=('left','top','width','height','visible','fully_visible','view_width','view_height')
+    key=tuple(row[k] for k in row_keys)+tuple(target[k] for k in target_keys)
+    stamp=datetime.datetime.fromisoformat(report['updated_at'].replace('Z','+00:00')).timestamp()
+    contained=(row.get('visible') is True and row.get('fully_visible') is True
+               and target.get('visible') is True and target.get('fully_visible') is True
+               and target['width']>=20 and target['height']>=20
+               and row['left']<=target['left'] and row['top']<=target['top']
+               and target['left']+target['width']<=row['left']+row['width']
+               and target['top']+target['height']<=row['top']+row['height'])
+    return key,stamp,contained
+
+
+def stable_control(action,session,seconds=6):
+    deadline=time.monotonic()+seconds;last_stamp=None;key=None;samples=[];began=None
+    while time.monotonic()<deadline:
+        report=read_report()
+        if report is None:
+            time.sleep(.1);continue
+        assert report['session_id']==session,'App session changed while measuring button'
+        new_key,stamp,contained=control_sample(report,action)
+        # The asynchronous writer can expose the same completed snapshot many
+        # times. Repeated reads add no evidence that the widget stopped moving.
+        if stamp==last_stamp:
+            time.sleep(.1);continue
+        if last_stamp is not None and stamp<last_stamp:
+            raise RuntimeError('Report source timestamps regressed during button measurement')
+        last_stamp=stamp
+        sample={'updated_at':report['updated_at'],'scroll_x':report['control_row']['scroll_x'],
+                'control_row':dict(report['control_row']),'target':dict(report['controls'][action])}
+        if new_key!=key:
+            key=new_key;samples=[sample];began=time.monotonic();first_stamp=stamp
+        else:
+            samples.append(sample)
+        if len(samples)>=3 and stamp-first_stamp>=.3 and time.monotonic()-began>=.3:
+            return report,samples,contained
+        time.sleep(.1)
+    raise RuntimeError('Button/control row did not become stable across fresh source snapshots: '+action)
+
+
+def manual_button_event(event):
+    if event['type'] not in BUTTON_EVENTS.values():
+        return False
+    if event['type'] in ('checks_requested','audio_play_requested'):
+        return event.get('detail',{}).get('reason')=='manual'
+    return True
+
+
+def button_listener(report,sequence,expected):
+    candidates=[e for e in report['events'] if e['sequence']>sequence and manual_button_event(e)]
+    wrong=[e for e in candidates if e['type']!=expected]
+    if wrong:
+        raise RuntimeError('Measured tap reached a different listener; refusing to retap: '+json.dumps(wrong))
+    matched=[e for e in candidates if e['type']==expected]
+    if len(matched)>1:
+        raise RuntimeError('A single measured tap produced multiple listener events')
+    return matched[0] if matched else None
+
+
 def tap(action):
     before = read_report()
     assert before is not None
-    event_name = {'run':'checks_requested','play':'audio_play_requested','resize':'resize_requested',
-                  'recreate':'view_recreation_requested','home':'home_check_requested',
-                  'reset':'view_reset_requested','export':'export_snapshot_created'}[action]
-    row = before['control_row']
+    event_name=BUTTON_EVENTS[action]
     for direction in (-1,1):
         for _ in range(5):
-            report = read_report()
+            report,stable_samples,contained=stable_control(action,before['session_id'])
+            row=report['control_row']
             target = report['controls'][action]
-            if target['visible'] and target['fully_visible'] and target['width']>=20 and target['height']>=20:
+            if contained:
                 sequence = max(e['sequence'] for e in report['events'])
                 x,y = int(target['left']+target['width']//2),int(target['top']+target['height']//2)
                 adb('shell','input','touchscreen','tap',str(x),str(y))
-                after = wait_report(lambda r:any(e['sequence']>sequence and e['type']==event_name for e in r['events']),
+                after = wait_report(lambda r:button_listener(r,sequence,event_name) is not None,
                                     'Actual Button '+action,seconds=15,interval=.05)
-                matched = next(e for e in after['events'] if e['sequence']>sequence and e['type']==event_name)
-                TAPS.append({'action':action,'tap_x':x,'tap_y':y,'bounds':target,'event':matched})
+                matched=button_listener(after,sequence,event_name)
+                TAPS.append({'action':action,'tap_x':x,'tap_y':y,'bounds':target,'event':matched,
+                             'stable_fresh_snapshots':stable_samples,'minimum_source_stability_ms':300})
                 save('emulator-ui-tap-proof.json',{'schema':2,'passed':True,'scope':'Measured real Android Button taps; no foreground lifecycle Intents','button_taps':TAPS})
                 return after
             xc,yc = int(row['left']+row['width']//2),int(row['top']+row['height']//2)
-            distance = int(row['width']//3)
-            adb('shell','input','touchscreen','swipe',str(xc-direction*distance),str(yc),str(xc+direction*distance),str(yc),'180')
-            time.sleep(.2)
+            distance = max(20,int(row['width']//6))
+            adb('shell','input','touchscreen','swipe',str(xc-direction*distance),str(yc),str(xc+direction*distance),str(yc),'2000')
     raise RuntimeError('Button not visible: '+action)
 
 

@@ -2,9 +2,66 @@
 """Execute the shipped Java receipt predicates on hostile lifecycle receipts."""
 import argparse
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import subprocess
+
+
+def tap_measurement_checks():
+    """Execute the actual tap predicates with controlled fresh measurements."""
+    import datetime
+    from copy import deepcopy
+    path=Path(__file__).with_name('emulator_check.py')
+    spec=importlib.util.spec_from_file_location('integration_emulator_predicates',path)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    checked=0
+    def check(value,label):
+        nonlocal checked
+        checked+=1
+        if not value:raise AssertionError(label)
+    class Clock:
+        value=0
+        def monotonic(self):return self.value
+        def sleep(self,delay):self.value+=delay
+    initial=datetime.datetime(2026,10,14,16,56,tzinfo=datetime.timezone.utc)
+    def report(index,scroll=0,visible=True,left=100):
+        return {'session_id':'controlled','updated_at':(initial+datetime.timedelta(milliseconds=index*200)).isoformat(),
+                'control_row':{'left':0,'top':0,'width':400,'height':60,'visible':True,'fully_visible':True,'scroll_x':scroll,'content_width':800},
+                'controls':{'resize':{'left':left,'top':0,'width':100,'height':60,'visible':visible,'fully_visible':visible,'view_width':100,'view_height':60}}}
+    def execute(reports,seconds=.9):
+        values=iter(reports);last=reports[-1];module.time=Clock()
+        def read():
+            nonlocal last
+            last=next(values,last);return deepcopy(last)
+        module.read_report=read
+        return module.stable_control('resize','controlled',seconds=seconds)
+    stable,samples,contained=execute([report(i) for i in range(6)])
+    check(contained and len(samples)>=3,'Stable target requires several source snapshots')
+    check(len({s['updated_at'] for s in samples})==len(samples),'Every witness snapshot is fresh')
+    stamps=[datetime.datetime.fromisoformat(s['updated_at']).timestamp() for s in samples]
+    check(stamps[-1]-stamps[0]>=.3,'Source measurements span at least 300ms')
+    for values,label in [([report(0)]*20,'Repeated persisted bytes cannot establish stability'),
+                         ([report(i,scroll=i,left=100-i) for i in range(20)],'Moving row cannot establish stability'),
+                         ([report(0),report(3),report(1)],'Regressed source timestamp is rejected')]:
+        try:execute(values)
+        except RuntimeError:check(True,label)
+        else:check(False,label)
+    _,samples,contained=execute([report(0),report(0),report(1),report(1),report(2),report(3)])
+    check(contained and len({s['updated_at'] for s in samples})==len(samples),'Async repeated snapshots do not add witnesses')
+    _,_,contained=execute([report(i,visible=False) for i in range(6)])
+    check(not contained,'Partially visible target is never tappable')
+    _,_,contained=execute([report(i,left=-10) for i in range(6)])
+    check(not contained,'Claimed visibility outside current row cannot qualify')
+    expected={'sequence':11,'type':'resize_requested','detail':{}}
+    check(module.button_listener({'events':[expected]},10,'resize_requested')==expected,'Exact listener binds a measured tap')
+    for events,label in [([{'sequence':11,'type':'home_check_requested','detail':{}}],'Wrong listener fails without silent retap'),
+                          ([expected,dict(expected,sequence=12)],'Single tap cannot qualify duplicate listeners')]:
+        try:module.button_listener({'events':events},10,'resize_requested')
+        except RuntimeError:check(True,label)
+        else:check(False,label)
+    check(module.button_listener({'events':[{'sequence':11,'type':'audio_complete','detail':{}}]},10,'resize_requested') is None,'Unrelated worker completion is not a button action')
+    return checked
 
 
 def method(source, signature):
@@ -158,7 +215,8 @@ class AtomicFile {
     subprocess.run([javac,'--release','8','-Xlint:-options',*[str(p) for p in root.rglob('*.java')]],check=True,timeout=30)
     result = subprocess.run([java,'-cp',str(root),'org.coh.integrationprobe.IntegrationUiCheck'],check=True,capture_output=True,text=True,timeout=30)
     writer_result = subprocess.run([java,'-cp',str(root),'org.coh.integrationprobe.IntegrationWriterCheck'],check=True,capture_output=True,text=True,timeout=30)
-    receipt = {'schema':'coh-native-integration-ui-host-v2','passed':True,'checks':int(result.stdout.strip())+int(writer_result.stdout.strip()),'receipt_checks':int(result.stdout.strip()),'coalescing_writer_checks':int(writer_result.stdout.strip()),'scope':'Actual shipped Java validation predicates and coalescing writer methods on controlled receipts and owned host threads; not Android hardware execution','main_activity_sha256':hashlib.sha256((java_dir/'MainActivity.java').read_bytes()).hexdigest(),'receipt_rules_sha256':hashlib.sha256((java_dir/'ReceiptRules.java').read_bytes()).hexdigest()}
+    tap_checks=tap_measurement_checks()
+    receipt = {'schema':'coh-native-integration-ui-host-v2','passed':True,'checks':int(result.stdout.strip())+int(writer_result.stdout.strip())+tap_checks,'receipt_checks':int(result.stdout.strip()),'coalescing_writer_checks':int(writer_result.stdout.strip()),'tap_measurement_checks':tap_checks,'scope':'Actual shipped Java receipt/writer methods and emulator tap predicates on controlled receipts, threads and fresh measurements; not Android hardware execution','main_activity_sha256':hashlib.sha256((java_dir/'MainActivity.java').read_bytes()).hexdigest(),'receipt_rules_sha256':hashlib.sha256((java_dir/'ReceiptRules.java').read_bytes()).hexdigest(),'emulator_check_sha256':hashlib.sha256(Path(__file__).with_name('emulator_check.py').read_bytes()).hexdigest()}
     (args.output/'ui-host-checks.json').write_text(json.dumps(receipt,indent=2)+'\n')
     print(json.dumps(receipt))
 

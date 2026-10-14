@@ -1,0 +1,337 @@
+{
+  "schema": 1,
+  "phases": [
+    13,
+    14,
+    15
+  ],
+  "source_commit": "e3d815b0ecdfc0384e775e42b233cea0de3f6c30",
+  "workflow_run_id": 38601568802,
+  "artifact_id": 11913992331,
+  "artifact_zip_bytes": 5055266,
+  "artifact_zip_sha256": "9aacec9610fb8ccd2277f2a9f42e8c68d276c0786f2e0e718f12a6b5b406034f",
+  "report_bytes": 62791,
+  "report_sha256": "67f907fc4cee2481bfe9a6c54e9c485a4c9cad49f60c8d6de986dcaf7593add6",
+  "stage": "Actual automated Resize button tap",
+  "session_failures": 0,
+  "installed_apk": {
+    "bytes": 750767,
+    "sha256": "b99dfc6810391d61e736d7f649edc7517e6f70669dbc9876f25ee1606a0ffe48",
+    "scope": "Observed installed base APK bytes, hashed on asset worker"
+  },
+  "native_checks_passed": [
+    true
+  ],
+  "world_runs": [
+    {
+      "run_id": 1,
+      "engine_passed": true,
+      "direction_mask": 15,
+      "frames": 180,
+      "expected_cancel": false,
+      "session_failure": false,
+      "objects_released": true,
+      "gl_errors": 0
+    },
+    {
+      "run_id": 2,
+      "engine_passed": false,
+      "direction_mask": 0,
+      "frames": 69,
+      "expected_cancel": true,
+      "session_failure": false,
+      "objects_released": true,
+      "gl_errors": 0
+    },
+    {
+      "run_id": 3,
+      "engine_passed": true,
+      "direction_mask": 0,
+      "frames": 180,
+      "expected_cancel": false,
+      "session_failure": false,
+      "objects_released": true,
+      "gl_errors": 0
+    }
+  ],
+  "successful_taps": {
+    "schema": 2,
+    "passed": true,
+    "scope": "Measured real Android Button taps; no foreground lifecycle Intents",
+    "button_taps": [
+      {
+        "action": "play",
+        "tap_x": 429,
+        "tap_y": 272,
+        "bounds": {
+          "left": 250,
+          "top": 209,
+          "width": 359,
+          "height": 126,
+          "visible": true,
+          "fully_visible": true,
+          "view_width": 359,
+          "view_height": 126
+        },
+        "event": {
+          "sequence": 13,
+          "type": "audio_play_requested",
+          "time": "2026-10-14T16:56:21.043Z",
+          "elapsed_ms": 69583,
+          "generation": 1,
+          "detail": {
+            "run_id": 1,
+            "reason": "manual"
+          }
+        }
+      }
+    ]
+  },
+  "events": [
+    {
+      "sequence": 13,
+      "type": "audio_play_requested",
+      "time": "2026-10-14T16:56:21.043Z",
+      "elapsed_ms": 69583,
+      "generation": 1,
+      "detail": {
+        "run_id": 1,
+        "reason": "manual"
+      }
+    },
+    {
+      "sequence": 14,
+      "type": "audio_complete",
+      "time": "2026-10-14T16:56:23.572Z",
+      "elapsed_ms": 72114,
+      "generation": 1,
+      "detail": {
+        "run_id": 1,
+        "passed": true,
+        "cancelled": false,
+        "closed": true
+      }
+    },
+    {
+      "sequence": 15,
+      "type": "home_check_requested",
+      "time": "2026-10-14T16:56:25.055Z",
+      "elapsed_ms": 73596,
+      "generation": 1,
+      "detail": {
+        "stage": "waiting for renderer cleanup"
+      }
+    },
+    {
+      "sequence": 16,
+      "type": "world_render_complete",
+      "time": "2026-10-14T16:56:25.247Z",
+      "elapsed_ms": 73796,
+      "generation": 1,
+      "detail": {
+        "run_id": 2,
+        "engine_passed": false,
+        "clean_obsolete_cancellation": true,
+        "direction_mask": 0
+      }
+    },
+    {
+      "sequence": 17,
+      "type": "home_check_workers_started",
+      "time": "2026-10-14T16:56:25.276Z",
+      "elapsed_ms": 73817,
+      "generation": 1,
+      "detail": {
+        "transport_run_id": 1,
+        "renderer_active": false
+      }
+    },
+    {
+      "sequence": 18,
+      "type": "audio_play_requested",
+      "time": "2026-10-14T16:56:25.279Z",
+      "elapsed_ms": 73822,
+      "generation": 1,
+      "detail": {
+        "run_id": 2,
+        "reason": "home_check"
+      }
+    },
+    {
+      "sequence": 19,
+      "type": "home_check_ready",
+      "time": "2026-10-14T16:56:25.357Z",
+      "elapsed_ms": 73898,
+      "generation": 1,
+      "detail": {
+        "audio_run_id": 2,
+        "transport_run_id": 1
+      }
+    },
+    {
+      "sequence": 20,
+      "type": "audio_complete",
+      "time": "2026-10-14T16:56:26.923Z",
+      "elapsed_ms": 75463,
+      "generation": 1,
+      "detail": {
+        "run_id": 2,
+        "passed": true,
+        "cancelled": false,
+        "closed": true
+      }
+    },
+    {
+      "sequence": 21,
+      "type": "transport_wait_complete",
+      "time": "2026-10-14T16:56:30.286Z",
+      "elapsed_ms": 78826,
+      "generation": 1,
+      "detail": {
+        "run_id": 1,
+        "cancelled": false,
+        "closed": true
+      }
+    },
+    {
+      "sequence": 22,
+      "type": "world_render_requested",
+      "time": "2026-10-14T16:56:30.286Z",
+      "elapsed_ms": 78826,
+      "generation": 1,
+      "detail": {
+        "run_id": 3,
+        "reason": "home_check_retry_preview",
+        "width": 1044,
+        "height": 778,
+        "render_token": 2,
+        "native_ticket": 2
+      }
+    },
+    {
+      "sequence": 23,
+      "type": "world_render_complete",
+      "time": "2026-10-14T16:56:37.577Z",
+      "elapsed_ms": 86117,
+      "generation": 1,
+      "detail": {
+        "run_id": 3,
+        "engine_passed": true,
+        "clean_obsolete_cancellation": false,
+        "direction_mask": 0
+      }
+    },
+    {
+      "sequence": 24,
+      "type": "world_render_requested",
+      "time": "2026-10-14T16:56:37.799Z",
+      "elapsed_ms": 86339,
+      "generation": 1,
+      "detail": {
+        "run_id": 4,
+        "reason": "bounded_preview_continuation",
+        "width": 1044,
+        "height": 778,
+        "render_token": 2,
+        "native_ticket": 2
+      }
+    }
+  ],
+  "final_control_row": {
+    "left": 18,
+    "top": 209,
+    "width": 1044,
+    "height": 126,
+    "visible": true,
+    "fully_visible": true,
+    "view_width": 1044,
+    "view_height": 126,
+    "scroll_x": 1050,
+    "content_width": 2094
+  },
+  "final_controls": {
+    "run": {
+      "left": 0,
+      "top": 0,
+      "width": 0,
+      "height": 0,
+      "visible": false,
+      "fully_visible": false,
+      "view_width": 232,
+      "view_height": 126
+    },
+    "play": {
+      "left": 0,
+      "top": 0,
+      "width": 0,
+      "height": 0,
+      "visible": false,
+      "fully_visible": false,
+      "view_width": 359,
+      "view_height": 126
+    },
+    "audible_confirmation": {
+      "left": 0,
+      "top": 0,
+      "width": 0,
+      "height": 0,
+      "visible": false,
+      "fully_visible": false,
+      "view_width": 292,
+      "view_height": 126
+    },
+    "reset": {
+      "left": 18,
+      "top": 209,
+      "width": 64,
+      "height": 126,
+      "visible": true,
+      "fully_visible": false,
+      "view_width": 231,
+      "view_height": 126
+    },
+    "resize": {
+      "left": 82,
+      "top": 209,
+      "width": 231,
+      "height": 126,
+      "visible": true,
+      "fully_visible": true,
+      "view_width": 231,
+      "view_height": 126
+    },
+    "recreate": {
+      "left": 313,
+      "top": 209,
+      "width": 231,
+      "height": 126,
+      "visible": true,
+      "fully_visible": true,
+      "view_width": 231,
+      "view_height": 126
+    },
+    "home": {
+      "left": 544,
+      "top": 209,
+      "width": 238,
+      "height": 126,
+      "visible": true,
+      "fully_visible": true,
+      "view_width": 238,
+      "view_height": 126
+    },
+    "export": {
+      "left": 782,
+      "top": 209,
+      "width": 280,
+      "height": 126,
+      "visible": true,
+      "fully_visible": true,
+      "view_width": 280,
+      "view_height": 126
+    }
+  },
+  "diagnosis": "Automation sampled the horizontal button row before its fling had settled. A tap intended for Resize activated Home check instead. The actual Home event was recorded, no Resize event was fabricated, workers cleaned up and a missed interruption remained unqualified. The button driver will require stable bounds and scroll offset across fresh snapshots before each real tap. Native scene/audio/UDP and all127 Java host checks passed.",
+  "package_delivered": false,
+  "thor_tested": false
+}
