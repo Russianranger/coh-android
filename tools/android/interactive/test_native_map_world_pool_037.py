@@ -206,6 +206,32 @@ class PoolTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'directory changed'):
                 self.census()
 
+    def test_changed_names_refused_even_with_unchanged_directory_timestamps(self):
+        original_scan = os.scandir
+        original_stat = Path.lstat
+        directory = self.root / 'data/fx'
+        captured = original_stat(directory)
+        changed = []
+        class Mutating:
+            def __init__(self, path):
+                self.inner = original_scan(path)
+                self.path = Path(path)
+            def __enter__(self):
+                return self.inner.__enter__()
+            def __exit__(self, *args):
+                result = self.inner.__exit__(*args)
+                if self.path == directory and not changed:
+                    (directory / 'unknown-current.fx').write_bytes(b'preserve')
+                    changed.append(True)
+                return result
+        def stable_directory_stat(path, *args, **kwargs):
+            return captured if path == directory else original_stat(path, *args, **kwargs)
+        with mock.patch.object(pool.os, 'scandir', side_effect=Mutating), \
+                mock.patch.object(Path, 'lstat', stable_directory_stat):
+            with self.assertRaisesRegex(ValueError, 'directory changed'):
+                self.census()
+        self.assertEqual((directory / 'unknown-current.fx').read_bytes(), b'preserve')
+
     def test_real_owned_log_transfer_preserves_bytes_and_date(self):
         path = self.log()
         raw = path.read_bytes()
@@ -220,6 +246,39 @@ class PoolTests(unittest.TestCase):
         self.assertEqual(result['transferred']['sha256'], hashlib.sha256(raw).hexdigest())
         self.assertFalse(result['unknown_files_removed'])
         self.census()
+
+    def test_repeated_owned_transfer_retains_exact_metadata_with_bounded_witnesses(self):
+        for ordinal in range(8):
+            path = self.log()
+            receipt = self.census()
+            result = pool.quarantine_owned_error_log(self.root, self.archive,
+                'controlled-repeat-' + str(ordinal), receipt, stopped=True)
+            target = Path(result['archive'])
+            self.assertFalse(path.exists())
+            self.assertEqual(target.read_bytes(), b'owned current native error log\n')
+            self.assertEqual(target.lstat().st_nlink, 1)
+            print('COH_POOL_TRANSFER_METADATA_V1 ' + json.dumps({
+                'ordinal': ordinal, 'controlled_path': str(target),
+                'captured_identity': result['captured']['identity'],
+                'transferred_identity': result['transferred']['identity'],
+                'bytes_and_native_date_unchanged': True,
+            }, sort_keys=True), flush=True)
+
+    def test_descriptor_metadata_difference_is_refused_with_exact_field_witness(self):
+        path = self.log()
+        original = os.fstat
+        def different(descriptor):
+            value = original(descriptor)
+            fields = {name: getattr(value, name) for name in (
+                'st_dev', 'st_ino', 'st_uid', 'st_mode', 'st_nlink', 'st_size',
+                'st_mtime_ns', 'st_ctime_ns', 'st_file_attributes') if hasattr(value, name)}
+            fields['st_nlink'] = 2
+            return SimpleNamespace(**fields)
+        with mock.patch.object(pool.os, 'fstat', side_effect=different):
+            with self.assertRaisesRegex(ValueError,
+                    'Native error log identity changed: .*"links": .*"descriptor": 2, "path": 1'):
+                pool.pin_log(path)
+        self.assertTrue(path.exists())
 
     def test_live_missing_cleanup_and_archive_collision_preserve_log(self):
         path = self.log()

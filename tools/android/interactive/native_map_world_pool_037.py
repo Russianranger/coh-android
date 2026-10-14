@@ -202,7 +202,11 @@ def pin_log(path, expected=None, budget=None):
     flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NOFOLLOW', 0)
     descriptor = os.open(path, flags)
     try:
-        require(record(os.fstat(descriptor)) == record(before), 'Native error log identity changed')
+        actual = record(os.fstat(descriptor))
+        expected_record = record(before)
+        require(actual == expected_record, 'Native error log identity changed: ' + json.dumps(
+            {key: {'path': expected_record[key], 'descriptor': actual[key]}
+             for key in expected_record if expected_record[key] != actual[key]}, sort_keys=True))
         sha = hashlib.sha256()
         size = 0
         while True:
@@ -214,7 +218,10 @@ def pin_log(path, expected=None, budget=None):
             size += len(chunk)
             require(size <= MAX_LOG_BYTES, 'Native error log grew beyond custody bound')
             sha.update(chunk)
-        require(record(os.fstat(descriptor)) == record(before), 'Native error log changed while hashing')
+        actual = record(os.fstat(descriptor))
+        require(actual == expected_record, 'Native error log changed while hashing: ' + json.dumps(
+            {key: {'path': expected_record[key], 'descriptor': actual[key]}
+             for key in expected_record if expected_record[key] != actual[key]}, sort_keys=True))
     finally:
         os.close(descriptor)
     require(size == before.st_size and record(path.lstat()) == record(before),
@@ -253,6 +260,7 @@ def _closed_namespace(runtime, expected_provider_names, cache_names, budget=None
         ordinary(before, directory=True)
         require(before.st_uid == root_info.st_uid, 'Pool directory owner differs')
         ordinary_streams(directory)
+        visited_names = set()
         with os.scandir(directory) as entries:
             for entry in entries:
                 if budget is not None:
@@ -261,6 +269,7 @@ def _closed_namespace(runtime, expected_provider_names, cache_names, budget=None
                 safe_name(name)
                 require(name.casefold() not in seen_folded, 'Pool namespace case alias refused')
                 seen_folded.add(name.casefold())
+                visited_names.add(entry.name)
                 path = directory / entry.name
                 # Windows DirEntry.stat caches zero device/inode/link fields.
                 # Fresh no-follow metadata retains the actual identity gates.
@@ -279,6 +288,17 @@ def _closed_namespace(runtime, expected_provider_names, cache_names, budget=None
                     ordinary_streams(path)
                     files[name] = record(info)
                     require(record(path.lstat()) == files[name], 'Pool file changed during enumeration')
+        # Windows directory timestamps can coalesce or update asynchronously.
+        # Close the exact ordinary namespace independently of timestamp changes.
+        current_names = set()
+        with os.scandir(directory) as entries:
+            for entry in entries:
+                if budget is not None:
+                    budget.check('pool directory-name closure')
+                require(entry.name in visited_names and entry.name not in current_names,
+                        'Pool directory changed during enumeration')
+                current_names.add(entry.name)
+        require(current_names == visited_names, 'Pool directory changed during enumeration')
         require(record(directory.lstat()) == record(before), 'Pool directory changed during enumeration')
     walk(runtime)
     require(required <= files.keys(), 'Missing exact pool member')
