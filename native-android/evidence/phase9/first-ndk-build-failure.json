@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "phase": 9,
+  "passed": false,
+  "source_commit": "372a8d886ef17a4ff9081db2267350644b24ad59",
+  "workflow_run_id": 38489666137,
+  "workflow_job_id": 115611615012,
+  "stage": "ARM64 Android NDK compilation",
+  "source_audit_passed": true,
+  "source_trick_files_verified": 1585,
+  "primary_sources_verified": 20,
+  "host_source_and_parser_checks_passed": true,
+  "error": "coh_world.c:77 pointer type mismatch between float (*)[3] and const float (*)[3] under -Werror,-Wpointer-type-mismatch",
+  "ndk": "28.2.13676358",
+  "warnings_remain_errors": true,
+  "native_gpu_or_android_execution_attempted": false,
+  "apk_produced": false,
+  "artifact": {
+    "id": 11860968624,
+    "bytes": 172666,
+    "sha256": "a93c2b3694eb5ebb9f15aee6d3b628fcff3ced694ba53b9d5d4fb02ea6ddbca2",
+    "download_digest_verified": true
+  },
+  "remaining_action": "Give both matrix branches consistent explicit pointer qualification, preserving source binary32 operation order, then rebuild and qualify Android."
+}

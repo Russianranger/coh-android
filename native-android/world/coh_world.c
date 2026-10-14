@@ -74,7 +74,7 @@ int coh_world_group_eye_matrices(const CohWorldInputs *in,const float view[12],f
  for(uint32_t i=0;i<6;i++){
   if(!valid_node(&in->nodes[i],i))return -2;
   source_local(in->nodes[i].position,in->nodes[i].pyr_degrees,local);
-  multiply(i?eyes[i-1]:(const float(*)[3])view,local,eyes[i]);
+  multiply(i?(const float(*)[3])eyes[i-1]:(const float(*)[3])view,local,eyes[i]);
  }
  memcpy(eye,eyes,sizeof eyes);return 0;
 }
