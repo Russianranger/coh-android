@@ -52,6 +52,7 @@ typedef struct {
     uint64_t tf_components,tf_mismatches,depth_order_mismatches,world_visible_pixels,actor_visible_pixels;
     uint64_t depth_order_color_differences,depth_order_ties;unsigned depth_diagnostics_count;DepthDiagnostic depth_diagnostics[DEPTH_DIAGNOSTICS];
     int depth_sampler_controls_passed;unsigned world_control_count,actor_control_count;
+    int depth_codec_float_precision;
     DepthDiagnostic clear_control,world_controls[DEPTH_DIAGNOSTICS],actor_controls[DEPTH_DIAGNOSTICS],world_front_control,actor_front_control;
     uint64_t world_occludes_actor_pixels,actor_occludes_world_pixels,actor_changed_pixels;
     uint64_t idle_samples,run_samples,total_ms; unsigned gl_errors,egl_error,shader_version;
@@ -179,6 +180,9 @@ static int program_create(Session *s,Program *p) {GLint major=0,minor=0;glGetInt
  * Packing three bytes is exact for its 24-bit range and does not alter any
  * source geometry, shader, draw material or render acceptance tolerance. */
 static int depth_program_create(Session *s,Graphics *g) {
+    GLint range[2]={0},precision=0;glGetShaderPrecisionFormat(GL_FRAGMENT_SHADER,GL_HIGH_FLOAT,range,&precision);s->depth_codec_float_precision=precision;
+    if(!glcheck(s,"Actual fragment depth diagnostic precision query failed"))return 0;
+    if(precision<23)return fail(s,"Actual DEPTH24 diagnostic requires at least float32 fragment precision");
     const char *vertex="#version 300 es\nvoid main(){vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);gl_Position=vec4(p*2.0-1.0,0.0,1.0);}";
     const char *fragment="#version 300 es\nprecision highp float;precision highp int;uniform highp sampler2D uDepth;uniform ivec2 uPixel;layout(location=0)out vec4 color;void main(){uint z=uint(round(texelFetch(uDepth,uPixel,0).r*16777215.0));color=vec4(float(z&255u),float((z>>8)&255u),float((z>>16)&255u),255.0)/255.0;}";
     GLuint vs=compile(s,GL_VERTEX_SHADER,vertex),fs=compile(s,GL_FRAGMENT_SHADER,fragment);if(!vs||!fs){if(vs)glDeleteShader(vs);if(fs)glDeleteShader(fs);return 0;}
@@ -350,6 +354,7 @@ static void startup_commit(Session *s,const Session *copy) {
     s->depth_order_mismatches=copy->depth_order_mismatches;s->world_visible_pixels=copy->world_visible_pixels;s->actor_visible_pixels=copy->actor_visible_pixels;
     s->depth_order_color_differences=copy->depth_order_color_differences;s->depth_order_ties=copy->depth_order_ties;s->depth_diagnostics_count=copy->depth_diagnostics_count;memcpy(s->depth_diagnostics,copy->depth_diagnostics,sizeof s->depth_diagnostics);
     s->depth_sampler_controls_passed=copy->depth_sampler_controls_passed;s->clear_control=copy->clear_control;s->world_front_control=copy->world_front_control;s->actor_front_control=copy->actor_front_control;
+    s->depth_codec_float_precision=copy->depth_codec_float_precision;
     s->world_occludes_actor_pixels=copy->world_occludes_actor_pixels;s->actor_occludes_world_pixels=copy->actor_occludes_world_pixels;s->actor_changed_pixels=copy->actor_changed_pixels;
     s->startup_checked=copy->startup_checked;s->skin_samples=copy->skin_samples;s->world_draws=copy->world_draws;s->actor_draws=copy->actor_draws;
     s->egl_error=copy->egl_error;s->width=copy->width;s->height=copy->height;s->frames=copy->frames;
@@ -437,7 +442,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_sessionclient_SessionNative_snapshot(JNIE
         if(extra<0||(size_t)extra>=sizeof json-(size_t)n+1)n=-1;else n=n-1+extra;
     }
     if(n>0&&(size_t)n<sizeof json){Json j={json,(size_t)n-1,1};
-        jappend(&j,",\"depth_sampler_controls_passed\":%s,\"raw_changed_pixels\":%"PRIu64",\"qualified_equal_depth_ties\":%"PRIu64",\"non_tie_mismatches\":%"PRIu64",\"depth_sampler_controls\":{\"clear\":",s->depth_sampler_controls_passed?"true":"false",s->depth_order_color_differences,s->depth_order_ties,s->depth_order_mismatches);
+        jappend(&j,",\"depth_sampler_controls_passed\":%s,\"depth_codec_float_precision\":%d,\"raw_changed_pixels\":%"PRIu64",\"qualified_equal_depth_ties\":%"PRIu64",\"non_tie_mismatches\":%"PRIu64",\"depth_sampler_controls\":{\"clear\":",s->depth_sampler_controls_passed?"true":"false",s->depth_codec_float_precision,s->depth_order_color_differences,s->depth_order_ties,s->depth_order_mismatches);
         depth_json(&j,&s->clear_control,0);jappend(&j,",\"world_front\":");depth_json(&j,&s->world_front_control,0);jappend(&j,",\"actor_front\":");depth_json(&j,&s->actor_front_control,0);jappend(&j,"},\"depth_tie_diagnostics\":[");
         for(unsigned i=0;i<s->depth_diagnostics_count;i++){if(i)jappend(&j,",");depth_json(&j,&s->depth_diagnostics[i],1);}jappend(&j,"]}");n=j.ok?(int)j.n:-1;
     }

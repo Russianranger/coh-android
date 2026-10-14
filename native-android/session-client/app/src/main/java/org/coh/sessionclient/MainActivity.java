@@ -167,6 +167,8 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         if (handle != 0) SessionNative.state(handle,epoch,resumed);
         currentSurface=null; currentHolder=null;
         scene.removeAllViews(); view = new SurfaceView(this);
+        view.setContentDescription("Native Atlas scene");
+        view.setImportantForAccessibility(android.view.View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         currentHolder=view.getHolder(); currentHolder.addCallback(this);
         view.setOnTouchListener((v,event) -> !destroying && adapter != null && adapter.dispatchTouchEvent(event,v.getWidth(),v.getHeight()));
         scene.addView(view,new FrameLayout.LayoutParams(-1,-1));
@@ -237,6 +239,12 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
                 .put("report_write_failed",writeFailed).put("failure",failure==null?JSONObject.NULL:failure)
                 .put("input_adapter",adapter==null?JSONObject.NULL:adapter.report());
         if(handle!=0)j.put("native",new JSONObject(SessionNative.snapshot(handle)));
+        if(view!=null) {
+            int[] location=new int[2];view.getLocationOnScreen(location);
+            j.put("input_area",new JSONObject().put("left",location[0]).put("top",location[1])
+                    .put("width",view.getWidth()).put("height",view.getHeight()).put("shown",view.isShown())
+                    .put("surface_ready",currentSurface!=null&&currentSurface.isValid()));
+        }
         return j;
     }
     private final Runnable poll=new Runnable() {

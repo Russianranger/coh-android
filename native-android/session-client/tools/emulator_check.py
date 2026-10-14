@@ -11,6 +11,7 @@ import json
 import math
 from pathlib import Path
 import re
+import struct
 import subprocess
 import time
 import xml.etree.ElementTree as ET
@@ -192,16 +193,67 @@ def tap_button(label, event_type):
     return result
 
 
+def scene_input_bounds():
+    """Ground coordinates in the actual accessible view or fresh Android layout."""
+    screen=adb('exec-out','screencap','-p').stdout
+    assert screen[:8] == b'\x89PNG\r\n\x1a\n' and screen[12:16] == b'IHDR'
+    screen_width,screen_height=struct.unpack_from('>II',screen,16)
+    (OUTPUT/'emulator-input-area-screen.png').write_bytes(screen)
+    nodes=[n for n in ui_nodes() if n.get('package')==PACKAGE]
+    labelled=[n for n in nodes if n.get('content-desc')=='Native Atlas scene']
+    assert len(labelled)<=1, 'Duplicate accessible native scene labels'
+    surface_nodes=[n for n in nodes if n.get('class')=='android.view.SurfaceView']
+    if labelled:
+        selected=labelled[0]; source='actual Android accessibility node, Native Atlas scene'
+    elif len(surface_nodes)==1:
+        selected=surface_nodes[0]; source='actual Android accessibility SurfaceView node'
+    else:
+        selected=None; source='actual SurfaceView getLocationOnScreen/getWidth/getHeight report'
+    observed=bounds(selected) if selected is not None else None
+    deadline=time.monotonic()+10; samples=[]; last_stamp=None; geometry=None
+    while time.monotonic()<deadline:
+        current=report()
+        if current is None or not native_ready(current):
+            time.sleep(.1);continue
+        if current['updated_at']==last_stamp:
+            time.sleep(.1);continue
+        last_stamp=current['updated_at']; area=current['input_area']
+        assert area['shown'] is True and area['surface_ready'] is True
+        left,top,width,height=(int(area[k]) for k in ('left','top','width','height'))
+        assert width>=160 and height>=160
+        assert current['native']['width']==width and current['native']['height']==height
+        rect=[left,top,left+width,top+height]
+        assert 0<=left<rect[2]<=screen_width and 0<=top<rect[3]<=screen_height
+        if observed is not None:
+            assert observed==rect, 'Accessibility bounds differ from the current native SurfaceView layout'
+        if rect!=geometry:
+            geometry=rect;samples=[]
+        samples.append({'updated_at':current['updated_at'],'native_frames':current['native']['frames'],
+                        'input_area':dict(area),'bounds':rect})
+        if len(samples)>=3 and samples[-1]['native_frames']>samples[0]['native_frames']:
+            proof={'scope':source,'screen_width':screen_width,'screen_height':screen_height,
+                   'accessibility_bounds':observed,'fresh_layout_samples':samples,'selected_bounds':rect}
+            save('emulator-input-area-proof.json',proof)
+            return current,rect,proof
+        time.sleep(.1)
+    raise AssertionError('Native SurfaceView input geometry did not settle across fresh rendering reports')
+
+
 def touch_look():
-    current = report()
-    nodes = [n for n in ui_nodes() if n.get('class') == 'android.view.SurfaceView' and n.get('package') == PACKAGE]
-    assert len(nodes) == 1
-    x0, y0, x1, y1 = bounds(nodes[0]); xc, yc = (x0+x1)//2, (y0+y1)//2
+    current,rect,selection=scene_input_bounds()
+    x0,y0,x1,y1=rect; xc,yc=(x0+x1)//2,(y0+y1)//2
+    previous=current['input_adapter']['external_android']
     before = current['native']['camera_yaw']
     adb('shell', 'input', 'touchscreen', 'swipe', str(xc-40), str(yc), str(xc+40), str(yc), '450')
-    result = wait(lambda r:abs(r['native']['camera_yaw']-before) > .01, 'Real touch moves shared camera')
+    result = wait(lambda r:abs(r['native']['camera_yaw']-before) > .01
+                  and r['input_adapter']['external_android']['touch_end']>previous['touch_end']
+                  and r['input_adapter']['touch_active'] is False,'Real touch moves shared camera and releases')
     assert result['native']['held_dirs'] == 0
+    external=result['input_adapter']['external_android']
+    assert external['touch_begin']==previous['touch_begin']+1 and external['touch_move']>previous['touch_move']
+    assert external['touch_end']==previous['touch_end']+1
     save('emulator-camera-proof.json', {'passed': True, 'bounds': [x0,y0,x1,y1],
+                                       'selection':selection,'external_android_before':previous,'external_android_after':external,
                                        'camera_yaw_before': before, 'camera_yaw_after': result['native']['camera_yaw'],
                                        'scope': 'Actual Android touchscreen; same camera used by authored world and actor'})
     return result
@@ -405,6 +457,7 @@ def main():
                      'Actual Reset button returns authored actor placement')
         validate(reset); save('emulator-final-report.json', reset)
         summary={'schema':1,'gates':[16,17,18],'passed':True,'installed_apk':apk_identity,
+                 'native_session_execution_verified':True,
                  'scope':'Installed Android 13 x86_64; persistent authored Atlas benchmark and Wretch, source no-collision actor movement, authored idle/run/post tracks under actual Android keyboard/touch input',
                  'frames':reset['native']['frames'],'contexts_started':reset['native']['contexts_started'],
                  'actual_keyboard_motion':True,'actual_touch_camera':True,'actual_surface_recreation':True,

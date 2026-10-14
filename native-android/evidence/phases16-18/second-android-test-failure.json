@@ -1,0 +1,220 @@
+{
+  "schema": 1,
+  "gates": [
+    16,
+    17,
+    18
+  ],
+  "passed": false,
+  "source_commit": "57510dbffe7a46e027c4883291447d9223904d05",
+  "workflow_run_id": 38629831217,
+  "artifact_id": 11926022991,
+  "artifact_sha256": "56ee7e5a691c8accc55459d1b4d5ad4045d0619b7d0bcdf8ad7fe6af43d74577",
+  "stage": "test driver locating actual scene Surface for touch",
+  "failure": "UiAutomator omitted inaccessible SurfaceView; one-node assertion failed before touch, Home and export. No native/app failure; functional actor/world and keyboard checks observed. Surface accessibility and actual observed view bounds will ground the corrected swipe.",
+  "observed_native": {
+    "schema": 1,
+    "probe": "coh-native-offline-session",
+    "valid": true,
+    "failed": false,
+    "running": true,
+    "failure": "",
+    "pointer_bytes": 8,
+    "source_controlled": true,
+    "collision": false,
+    "live_server": false,
+    "full_atlas": false,
+    "gpu_palette_skinning": false,
+    "skin_policy": "accepted source CPU skin then accepted world shader",
+    "frames": 425,
+    "world_draws": 860,
+    "actor_draws": 4728,
+    "skin_samples": 427,
+    "contexts_started": 1,
+    "contexts_completed": 0,
+    "objects_released": false,
+    "width": 1080,
+    "height": 1417,
+    "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "gl_errors": 0,
+    "egl_error": 0,
+    "shader_language_version": 300,
+    "shader_precise": false,
+    "tf_components": 40794,
+    "tf_mismatches": 0,
+    "tf_max_error": 0,
+    "depth_order_mismatches": 0,
+    "world_visible_pixels": 6898,
+    "actor_visible_pixels": 8418,
+    "world_occludes_actor_pixels": 693,
+    "actor_occludes_world_pixels": 1953,
+    "actor_changed_pixels": 7750,
+    "startup_checked": true,
+    "movement_ticks": 527,
+    "direction_mask": 15,
+    "held_dirs": 0,
+    "actor_position": [
+      569.183289,
+      74,
+      -1537.33374
+    ],
+    "spawn_position": [
+      584,
+      74,
+      -1441.33374
+    ],
+    "actor_yaw": 3.14159274,
+    "camera_yaw": 0,
+    "camera_pitch": 0.159999996,
+    "camera_position": [
+      569.183289,
+      81.3050003,
+      -1515.61475
+    ],
+    "animation_frame": 57.153801,
+    "animation_state": 0,
+    "animation_transitions": 12,
+    "idle_samples": 455,
+    "run_samples": 72,
+    "total_ms": 21591,
+    "epoch": 3,
+    "foreground": true,
+    "expected_cancel_surface_errors": 0,
+    "expected_cancel_egl_error": 0,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "cleanup_egl_error": 0,
+    "source_state_bits": 0,
+    "motion_local": [
+      0,
+      0,
+      0
+    ],
+    "motion_world": [
+      0,
+      0,
+      0
+    ],
+    "nocoll_radius": 96,
+    "bounded_steps": 1,
+    "stopped_steps": 410,
+    "animation_move": "Ready",
+    "animation_rate": 1,
+    "ready_entries": 3,
+    "run_entries": 5,
+    "post_entries": 5,
+    "animation_cycles": 4,
+    "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+    "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+    "depth_sampler_controls_passed": true,
+    "raw_changed_pixels": 2,
+    "qualified_equal_depth_ties": 2,
+    "non_tie_mismatches": 0,
+    "depth_sampler_controls": {
+      "clear": {
+        "x": 0,
+        "y": 0,
+        "world_depth": 16777215,
+        "actor_depth": 16777215,
+        "combined_depth": 16777215
+      },
+      "world_front": {
+        "x": 288,
+        "y": 176,
+        "world_depth": 16702028,
+        "actor_depth": 16702269,
+        "combined_depth": 16702028
+      },
+      "actor_front": {
+        "x": 287,
+        "y": 177,
+        "world_depth": 16703822,
+        "actor_depth": 16702189,
+        "combined_depth": 16702189
+      }
+    },
+    "depth_tie_diagnostics": [
+      {
+        "x": 228,
+        "y": 211,
+        "world_depth": 16704438,
+        "actor_depth": 16704438,
+        "combined_depth": 16704438,
+        "world_rgba": [
+          117,
+          124,
+          131,
+          255
+        ],
+        "actor_rgba": [
+          31,
+          31,
+          27,
+          255
+        ],
+        "forward_rgba": [
+          31,
+          31,
+          27,
+          255
+        ],
+        "reverse_rgba": [
+          117,
+          124,
+          131,
+          255
+        ]
+      },
+      {
+        "x": 229,
+        "y": 214,
+        "world_depth": 16704748,
+        "actor_depth": 16704748,
+        "combined_depth": 16704748,
+        "world_rgba": [
+          169,
+          171,
+          177,
+          255
+        ],
+        "actor_rgba": [
+          9,
+          8,
+          7,
+          255
+        ],
+        "forward_rgba": [
+          9,
+          8,
+          7,
+          255
+        ],
+        "reverse_rgba": [
+          169,
+          171,
+          177,
+          255
+        ]
+      }
+    ]
+  },
+  "native_failures": 0,
+  "complete_batch_qualified": false,
+  "retained": [
+    {
+      "file": "second-android-report.json",
+      "bytes": 94675,
+      "sha256": "2272acd962a2ce99fde7a8c82bf02dbb282e40086e4e288bd7bbc70b47d45be6"
+    },
+    {
+      "file": "second-initial-report.json",
+      "bytes": 14212,
+      "sha256": "70716090ae6a5de85222468d0fc2ede506f38f1b3660332bd74b6c49bffef037"
+    },
+    {
+      "file": "second-input-motion-proof.json",
+      "bytes": 6782,
+      "sha256": "d8ea3cca11ff3b36f1842e1ebaa98ec925a2d7b57dd9e9bc75a436d4576f7b65"
+    }
+  ]
+}
