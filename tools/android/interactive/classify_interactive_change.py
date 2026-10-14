@@ -22,6 +22,12 @@ NATIVE_WORLD_RESEARCH_MARKERS=frozenset({
     'tools/android/interactive/qualify_native_map_world_037.py',
     'tools/android/interactive/test_native_map_world_037.py'})
 NATIVE_WORLD_RESEARCH_ALLOWED=NATIVE_WORLD_RESEARCH_MARKERS|frozenset({
+    'tools/android/interactive/native_map_world_pool_037.py',
+    'tools/android/interactive/test_native_map_world_pool_037.py',
+    'tools/android/interactive/recover_native_map_world_partial_037.py',
+    'tools/android/interactive/test_recover_native_map_world_partial_037.py',
+    'tools/android/interactive/aggregate_native_map_world_pools_037.py',
+    'tools/android/interactive/test_aggregate_native_map_world_pools_037.py',
     'tools/android/interactive/classify_interactive_change.py',
     'tools/android/interactive/test_classify_interactive_change.py'})
 

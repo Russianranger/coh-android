@@ -14,6 +14,21 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_finite_pool_recovery_helpers_require_actual_harness_marker(self):
+        extra=sorted(change.NATIVE_WORLD_RESEARCH_ALLOWED-change.NATIVE_WORLD_RESEARCH_MARKERS)
+        self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,extra,change.NATIVE_WORLD_RESEARCH_REF))
+        self.assertFalse(change.runtime_required('push','a'*40,'b'*40,'a'*40,
+            extra+['tools/android/interactive/qualify_native_map_world_037.py'],change.NATIVE_WORLD_RESEARCH_REF))
+        self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,
+            extra+['tools/android/interactive/qualify_native_map_world_037.py'],'main'))
+    def test_pool_helper_neighbor_does_not_expand_research_fence(self):
+        names=['tools/android/interactive/qualify_native_map_world_037.py',
+               'tools/android/interactive/native_map_world_pool_037.py']
+        for unknown in ('tools/android/interactive/native_map_world_pool_038.py',
+                        'tools/android/interactive/recover_native_map_world_partial_037.py.bak',
+                        'profiles/THORHERO/location.json'):
+            with self.subTest(unknown=unknown):
+                self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,names+[unknown],change.NATIVE_WORLD_RESEARCH_REF))
     def test_exact_native_world_research_scope_uses_its_dedicated_lane(self):
         ref=change.NATIVE_WORLD_RESEARCH_REF
         for marker in sorted(change.NATIVE_WORLD_RESEARCH_MARKERS):

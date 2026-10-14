@@ -8,6 +8,7 @@ Only disposable PostgreSQL state is used. No produced cache enters an APK.
 from __future__ import annotations
 import argparse
 import ast
+from contextlib import contextmanager
 import ctypes
 import copy
 from ctypes import wintypes
@@ -63,6 +64,24 @@ INHERITED_STOCK={'source':'04b7a623ef21d7ad48774a58b3122c69ae07f46b','run_id':38
     'qualifier':{'bytes':59963,'sha256':'ed7e2cb2da75664027dcd6be1b7239e1fabe463eec1a3f951835eda7badd9877'},
     'generation_archive':{'bytes':2409058,'sha256':'b15026b0ee92354069159303ec73e6cbbe6bc07c44ad53bf2798cfcd8488d4d8'}}
 ANIMATION_PIG={'bytes':97084456,'sha256':'465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b'}
+BUDGET=None
+PHASE_COSTS=None
+
+
+def budget_check(phase):
+    if BUDGET is not None:BUDGET.check(phase)
+
+
+@contextmanager
+def measured_phase(name):
+    budget_check(name);started=time.monotonic();completed=False
+    try:
+        yield
+        completed=True
+    finally:
+        if PHASE_COSTS is not None:PHASE_COSTS.append({'phase':name,
+            'elapsed_host_seconds':round(time.monotonic()-started,6),'completed':completed,
+            'timing_scope':'host_Windows_fixture_work_not_Android_or_Thor'})
 
 
 def generated_cache_name(name):
@@ -79,7 +98,9 @@ def map_command(target,map_id):
             '-idleExitTimeout','0','-donotautogroup']
 
 
-def pin(path): return inputs.leaf.pin(path)
+def pin(path):
+    budget_check('content hashing')
+    return inputs.leaf.pin(path)
 def digest(value): return hashlib.sha256(inputs.leaf.canonical(value)).hexdigest()
 def write(path,value):inputs.write(path,value)
 
@@ -107,6 +128,7 @@ def read_manifest(path):
             and digest(files)==provider['inventory_sha256'],'Provider manifest bounds/digest differ')
         aliases=set()
         for name,record in files.items():
+            budget_check('provider manifest validation')
             inputs.safe_windows_name(name)
             require(name.casefold() not in aliases and set(record)=={'bytes','sha256','mtime_ns'}
                     and type(record['bytes']) is int and 0<=record['bytes']<=inputs.MAX_FILE
@@ -122,6 +144,7 @@ def extract_provider(archive_path,provider,destination):
     seen=set()
     with tarfile.open(archive_path,'r:gz') as archive:
         for member in archive:
+            budget_check('provider extraction')
             inputs.safe_windows_name(member.name);record=provider['files'].get(member.name)
             require(member.isfile() and not member.issym() and not member.islnk() and record is not None
                     and member.name not in seen and member.size==record['bytes'],'Provider member is unsafe or unpinned')
@@ -165,6 +188,7 @@ def clone_provider(source,provider,destination,generated_cache=None):
             'Warm input membership bound or case identity differs')
     destination.mkdir();copied=0
     for name in sorted(members):
+        budget_check('immutable provider clone')
         if name in (CONFIG,'MapServer.exe'):continue
         original=native_path(source,name);target=native_path(destination,name)
         require(not original.is_symlink() and all(not p.is_symlink() for p in original.parents),
@@ -197,6 +221,7 @@ def cache_snapshot(runtime):
         if directory=='data/geobin' and not root.exists():continue
         require(root.is_dir() and not root.is_symlink(),'Native BIN directory missing/linked')
         for path in sorted(root.rglob('*')):
+            budget_check('native cache census')
             if not path.is_file() or path.suffix not in (('.bin','.bounds') if directory=='data/geobin' else ('.bin',)):continue
             name=path.relative_to(runtime).as_posix()
             require(directory!='data/geobin' or generated_cache_name(name),'Unreviewed geometry BIN layout')
@@ -238,9 +263,12 @@ def provider_inventory(runtime,cache):
     runtime=Path(runtime);values={}
     for root in (runtime/'data',runtime/'piggs'):
         require(root.is_dir() and not root.is_symlink(),'Native provider directory missing/linked')
-        for current,dirs,files in os.walk(root,followlinks=False):
+        def walk_error(error):raise error
+        for current,dirs,files in os.walk(root,followlinks=False,onerror=walk_error):
+            budget_check('complete source hashing')
             require(not any((Path(current)/n).is_symlink() for n in dirs),'Linked native provider directory refused')
             for name in files:
+                budget_check('complete source hashing')
                 path=Path(current)/name;relative=path.relative_to(runtime).as_posix()
                 if relative in cache or relative==CONFIG:continue
                 info=path.lstat();require(stat.S_ISREG(info.st_mode) and info.st_nlink==1,
@@ -816,13 +844,46 @@ def failure_snapshot(probe,start,read_dispatch):
     return result
 
 
+def selected_pool(args):
+    map_id=getattr(args,'pool_map_id',None);variant=getattr(args,'pool_fx_variant',None)
+    require((map_id is None)==(variant is None),'Both exact pool selectors required')
+    if map_id is None:return None
+    require(type(map_id) is int and map_id in WORLDS and variant in inputs.FX_VARIANTS,
+            'Reviewed map and FX pool required')
+    return {'map_id':map_id,'fx_variant':variant}
+
+
+def namespace_summary(value):
+    return {k:value[k] for k in ('format','runtime','root_identity','namespace_sha256',
+        'owned_error_log','full_namespace_verified','content_schema_native_SQL_gates_supplied',
+        'unknown_leaf_deletion_allowed','shipping_allowed')}|{
+        'ordinary_files':len(value['files']),'ordinary_file_bytes':sum(r['bytes'] for r in value['files'].values()),
+        'directories':len(value['directories']),'complete_stat_ledger_embedded':False}
+
+
 def run(args):
+    global BUDGET,PHASE_COSTS
     require(os.name=='nt','Genuine world gate requires Windows')
     require(re.fullmatch('[0-9a-f]{40}',args.repository_commit) and 30<=args.timeout_seconds<=1800,
             'Exact source and finite host bound required')
     require(subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()==args.repository_commit,
             'Native world qualifier checkout source differs')
-    manifest=read_manifest(args.inputs/inputs.MANIFEST);pin_apk=args.inputs/'COH-Atlas-Gameplay-0.13.36.apk'
+    selection=selected_pool(args);pool=None
+    if selection is not None:
+        import native_map_world_pool_037 as pool
+    PHASE_COSTS=[]
+    if pool is not None:BUDGET=pool.Budget(getattr(args,'operation_budget_seconds',7200))
+    if selection:
+        require(type(getattr(args,'run_id',None)) is int and args.run_id>0
+                and type(getattr(args,'job_id',None)) is int and args.job_id>0,
+                'Actual native pool run and job authority required')
+        require(os.environ.get('GITHUB_RUN_ID')==str(args.run_id),'Actual Actions run differs')
+        if getattr(args,'inherited_stock_evidence',None) is not None:
+            require(selection=={'map_id':1,'fx_variant':'server_only'},
+                    'Inherited stock generation belongs only to Atlas SERVER-only pool')
+    with measured_phase('authenticate original manifest and native artifacts'):
+        manifest=read_manifest(args.inputs/inputs.MANIFEST)
+    pin_apk=args.inputs/'COH-Atlas-Gameplay-0.13.36.apk'
     require(pin(pin_apk)==inputs.APK,'Exact public .36 APK required')
     require(pin(args.inputs/'full-fxinfo.bin')==inputs.FX_VARIANTS['full'],'Exact original full FX BIN required')
     retained.validate_package(args.baseline);candidate=candidate_package.validate(args.candidate,
@@ -843,16 +904,36 @@ def run(args):
         'SQL_scope':'new_disposable_fixture_only','behavioral_collision_proven':False,'physical_device_executed':False,
         'shipping_allowed':False,'freshness_bypass_enabled':False,'source_hashing_warms_host_filesystem_cache':True,
         'owned_cleanup_verified':False,'generated_cache_authorizes_Android_reuse':False}
+    if selection is not None:report.update(scope='actual_Windows_one_Map_FX_pool_initialization_and_geometry_parity',
+        selected_pool=selection,provider_runtime_reused=True,
+        host_phase_costs=PHASE_COSTS,operation_budget_seconds=getattr(args,'operation_budget_seconds',7200),
+        native_execution_authority={'source':args.repository_commit,
+            'run_id':getattr(args,'run_id',None),'job_id':getattr(args,'job_id',None),
+            'fresh_native_world_processes_only':True},complete_all_16_case_gate_claimed=False)
     inherited=None
+    partial=None;partial_values=None
     cluster=None;children=[];observers=[];secrets=[];current=None;current_before=None;log_contexts=[];case_probe={}
     OwnedProcess=owned_process_class(network.Process)
     def start(command,runtime,logs,label,env):
-        p=OwnedProcess(command,runtime,logs,label,env=env);children.append(p);return p
+        with measured_phase(label+' owned native process launch'):
+            p=OwnedProcess(command,runtime,logs,label,env=env)
+        children.append(p);return p
     def stop_case(case_children,case_observers):
         for p in reversed(case_children):p.stop()
         for observer in reversed(case_observers):observer.stop()
         require(all(p.child.poll() is not None for p in case_children),'Owned native case cleanup failed')
     try:
+        if getattr(args,'partial_world_evidence',None) is not None:
+            require(selection is not None and selection['map_id']==5,
+                    'Partial world resume only executes still missing Kings pools')
+            import recover_native_map_world_partial_037 as partial_recovery
+            with measured_phase('authenticate cancelled original individual native cases'):
+                partial,partial_values=partial_recovery.recover(args.partial_world_evidence)
+            report['cancelled_original_individual_case_resume']={
+                'source':partial_recovery.SOURCE,'run_id':partial_recovery.RUN,'job_id':partial_recovery.JOB,
+                'artifact_id':partial_recovery.ARTIFACT,'artifact':partial_recovery.ZIP_PIN,
+                'original_result':'cancelled','original_final_report_present':False,
+                'original_global_cleanup_verified':False,'already_revalidated_native_cases':9}
         if getattr(args,'inherited_stock_evidence',None) is not None:
             inherited=load_inherited_stock(args.inherited_stock_evidence,output,report['prepared_manifest'])
             report['inherited_stock_generation']=inherited['authority']
@@ -862,24 +943,38 @@ def run(args):
         for port,kind in ((15439,socket.SOCK_STREAM),(6997,socket.SOCK_STREAM),(7000,socket.SOCK_DGRAM),
                           (7001,socket.SOCK_DGRAM),(7003,socket.SOCK_DGRAM)):
             with socket.socket(socket.AF_INET,kind) as probe:probe.bind(('127.0.0.1',port))
-        cluster=pg_local.initialize(work/'pg',args.bin,15439,'coh_native_world',args.driver);secrets=list(cluster.secrets.values())
+        with measured_phase('initialize disposable PostgreSQL'):
+            cluster=pg_local.initialize(work/'pg',args.bin,15439,'coh_native_world',args.driver)
+        secrets=list(cluster.secrets.values())
         schema_original=None;fixture=None
-        for map_id in (1,5):
+        for map_id in ((selection['map_id'],) if selection else (1,5)):
             # Original current-provider generation is measured separately; each
             # warm consumer then uses an independent copy of its resulting bytes.
             generated=None;decision_control=None
             original_provider=None;animation_reference=None
             for case_index,(variant,phase,role,native) in enumerate(phase_plan(args.baseline,args.candidate)):
+                if selection and variant!=selection['fx_variant']:continue
+                budget_check('admit next genuine native case')
                 if role=='stock':
                     if generated is not None:shutil.rmtree(generated)
                     generated=None;decision_control=None
-                    seed=extract_provider(args.inputs/('provider-'+str(map_id)+'.tar.gz'),manifest['providers'][str(map_id)],
-                        work/('s'+str(map_id)+str(case_index)))
+                    with measured_phase(str(map_id)+'-'+variant+' original provider extraction'):
+                        seed=extract_provider(args.inputs/('provider-'+str(map_id)+'.tar.gz'),manifest['providers'][str(map_id)],
+                            work/('s'+str(map_id)+str(case_index)))
                     require(pin(seed/'data/bin/fxinfo.bin')==inputs.FX_VARIANTS['server_only'],
                             'Actual public Map provider does not contain qualified SERVER-only FX')
-                label=str(map_id)+'-'+variant+'-'+phase;current=work/('m'+str(map_id)+str(case_index))
-                clone=clone_provider(seed if generated is None else generated,manifest['providers'][str(map_id)],current,
-                    cache_snapshot(generated) if generated is not None else None)
+                label=str(map_id)+'-'+variant+'-'+phase
+                if selection:
+                    current=seed if generated is None else generated
+                    clone={'copied_provider_files':0,'operational_members_excluded':True,
+                        'private_configuration_copied':False,'provider_runtime_reused':generated is not None,
+                        'initial_private_manifest_extraction_used_directly':generated is None,
+                        'full_content_source_cache_date_censuses_required_each_case':True}
+                else:
+                    current=work/('m'+str(map_id)+str(case_index))
+                    with measured_phase(label+' immutable provider clone'):
+                        clone=clone_provider(seed if generated is None else generated,manifest['providers'][str(map_id)],current,
+                            cache_snapshot(generated) if generated is not None else None)
                 # The full variant changes precisely this original BIN and
                 # preserves its controlled source date before native generation.
                 if generated is None and variant=='full':
@@ -888,11 +983,18 @@ def run(args):
                     os.utime(current/'data/bin/fxinfo.bin',ns=(stamp,stamp))
                 logs=work/(label+'-logs');logs.mkdir();case_output=output/label;case_output.mkdir()
                 log_context={'runtime':current,'logs':logs,'output':case_output,'retained':False};log_contexts.append(log_context)
-                db=extract_provider(args.inputs/'provider-db.tar.gz',manifest['providers']['db'],work/('d'+str(map_id)+str(case_index)))
+                with measured_phase(label+' fresh Db provider extraction'):
+                    db=extract_provider(args.inputs/'provider-db.tar.gz',manifest['providers']['db'],work/('d'+str(map_id)+str(case_index)))
                 config=db/CONFIG;config.write_text(minimal.guest_config(config.read_text(),cluster.meta['database'],cluster.connection_string(args.driver)))
                 target=current/'MapServer.exe';shutil.copyfile(native,target)
                 (current/CONFIG).write_bytes(config.read_bytes())
-                before=cache_snapshot(current);before_dates=cache_dates(current,before);source_before=provider_inventory(current,before)
+                with measured_phase(label+' full prelaunch source SDK and cache hashing'):
+                    before=cache_snapshot(current);before_dates=cache_dates(current,before);source_before=provider_inventory(current,before)
+                namespace_before=None
+                if selection:
+                    with measured_phase(label+' full prelaunch private namespace census'):
+                        namespace_before=pool.closed_namespace(current,manifest['providers'][str(map_id)]['files'],before,BUDGET)
+                    require(namespace_before['owned_error_log'] is None,'Prior operational error log was not transferred')
                 provider_before=provider_snapshot(current,before,source_before)
                 require(before['data/bin/fxinfo.bin']==inputs.FX_VARIANTS[variant],
                         'Current native FX consumer received wrong variant')
@@ -903,14 +1005,34 @@ def run(args):
                 current_before={'cache':before,'provider':provider_before,'native':pin(target)}
                 current_before['regular_provider_clone']=clone
                 current_before['cache_dates_before']=before_dates
+                if namespace_before is not None:current_before['closed_private_namespace']=namespace_summary(namespace_before)
                 write(case_output/'before-launch.json',current_before)
                 if inherited is not None and (map_id,variant,phase,role)==(1,'server_only','generation','stock'):
                     original_sources={**manifest['providers'][str(map_id)]['files'],**source_before}
                     facts=recover_stock_cache(current,before,before_dates,provider_before,raw_before,original_sources,inherited,case_output)
+                    if selection:
+                        with measured_phase(label+' inherited stock restoration closed namespace'):
+                            restored=pool.closed_namespace(current,manifest['providers'][str(map_id)]['files'],cache_snapshot(current),BUDGET)
+                        facts['inherited_private_restoration_closed_namespace']=namespace_summary(restored)
+                        facts['new_stock_native_process_executed']=False
                     report['cases'].append(facts);animation_identity=facts['actual_certified_animation_consumption']['latest_counters']
                     animation_reference={k:v for k,v in animation_identity.items() if k not in ('hash_us','stock_us')}
-                    generated=current;shutil.rmtree(seed);shutil.rmtree(db)
+                    generated=current
+                    if not selection:shutil.rmtree(seed)
+                    shutil.rmtree(db)
                     current=None;current_before=None
+                    continue
+                if partial is not None and (map_id,variant,phase,role)==(5,'server_only','generation','stock'):
+                    original_sources={**manifest['providers'][str(map_id)]['files'],**source_before}
+                    with measured_phase(label+' captured current-provider stock cache-only checkout'):
+                        facts=partial_recovery.restore_Kings_stock(current,before,before_dates,provider_before,
+                            raw_before,original_sources,partial,partial_values,case_output)
+                        restored=pool.closed_namespace(current,manifest['providers'][str(map_id)]['files'],cache_snapshot(current),BUDGET)
+                    facts['fresh_private_Kings_stock_restore']['closed_namespace']=namespace_summary(restored)
+                    write(case_output/'phase.json',facts);report['cases'].append(facts)
+                    animation_identity=facts['actual_certified_animation_consumption']['latest_counters']
+                    animation_reference={k:v for k,v in animation_identity.items() if k not in ('hash_us','stock_us')}
+                    generated=current;shutil.rmtree(db);current=None;current_before=None
                     continue
                 case_children=[];case_observers=[]
                 case_probe={'label':label,'map_id':map_id,'runtime':current,'logs':logs,'children':case_children,
@@ -926,11 +1048,13 @@ def run(args):
                 first_dispatch=None
                 def db_ready():
                     nonlocal first_dispatch
+                    budget_check(label+' owned native Db readiness')
                     first_dispatch=minimal.read_dispatch(dispatch,db_process,stages)
                     text=db_console.text()+'\n'+db_process.text()
                     return first_dispatch and first_dispatch['loop_count']>0 and all(a in text for a in
                         (minimal.FIXED_ACK,minimal.LOOPBACK_ACK,minimal.MANUAL_ACK))
-                network.wait_for(db_ready,[db_process],db,300,'owned retained minimal Db readiness')
+                with measured_phase(label+' fresh owned native Db readiness'):
+                    network.wait_for(db_ready,[db_process],db,300,'owned retained minimal Db readiness')
                 case_probe['Db_ready_baseline']=first_dispatch
                 schema=minimal.schema_snapshot(cluster,manifest['schema'])
                 if schema_original is None:
@@ -940,7 +1064,8 @@ def run(args):
                     if inherited is not None:require(fixture['canonical_sha256']==inherited['authority']['disposable_SQL_fixture']['original_canonical_sha256'],
                         'Fresh disposable fixture identity differs from inherited stock case')
                 require(schema==schema_original,'Native full-world initialization changed database schema/attributes')
-                progress=current/'world-progress.bin'
+                progress=(work/('p'+str(map_id)+str(case_index)+'.bin')) if selection else current/'world-progress.bin'
+                require(not progress.exists(),'Fresh unique current Map progress namespace required')
                 map_env=dict(env,COH_GAME_LOOPBACK_ONLY='1',COH_WINE_MAP_PROGRESS=str(progress))
                 if role=='candidate':map_env['COH_MAP_ANIMATION_METADATA_PREFETCH']='1'
                 # Keep the exact -nogui assertion policy, but allow the already
@@ -951,8 +1076,10 @@ def run(args):
                 map_process=start(command,current,logs,label+'-map',map_env);case_children.append(map_process)
                 map_console=ConsoleCapture(map_process.child.pid,logs,label+'-map');observers.append(map_console);case_observers.append(map_console);map_console.start()
                 memory=Memory(map_process);first=None;later=None;status=None;deadline=time.monotonic()+args.timeout_seconds
+                readiness_started=time.monotonic()
                 case_probe.update(map_process=map_process,progress=progress,memory=memory,env=env)
                 while True:
+                    budget_check(label+' owned native world readiness')
                     require(time.monotonic()<deadline,'Owned native world readiness timed out')
                     require(map_process.poll() is None and db_process.poll() is None,'Owned world or Db process exited')
                     memory.sample();sample=read_progress(progress,map_process)
@@ -964,6 +1091,9 @@ def run(args):
                     if sample and sample['tick_completed']>0 and 'Server ready.' in text:
                         first=sample;break
                     time.sleep(.1)
+                PHASE_COSTS.append({'phase':label+' owned native Map readiness',
+                    'elapsed_host_seconds':round(time.monotonic()-readiness_started,6),'completed':True,
+                    'timing_scope':'host_Windows_native_process_not_Android_or_Thor'})
                 marker_text=map_console.text()
                 # Console screen and redirected stdout may duplicate the same
                 # native stream. Use one whole owned stream for phase witnesses.
@@ -974,6 +1104,7 @@ def run(args):
                 status=ready_status(query.text(),map_id);require(status is not None,'Native destination remains NotReady')
                 for line in query.text().splitlines():require(not network.is_failure_line(line),'Native status emitted failure')
                 while True:
+                    budget_check(label+' post-status native tick advancement')
                     require(time.monotonic()<deadline,'Native post-status tick advancement timed out')
                     memory.sample();later=read_progress(progress,map_process)
                     if later and later['tick_completed']>first['tick_completed'] and later['sequence']>first['sequence']:break
@@ -1003,8 +1134,9 @@ def run(args):
                 require(minimal.fixture_snapshot(cluster)['canonical_sha256']==fixture['canonical_sha256']
                         and minimal.schema_snapshot(cluster,manifest['schema'])==schema_original,
                         'Owned native case cleanup changed synthetic identity/location or schema')
-                after=cache_snapshot(current);source_after=provider_inventory(current,set(before)|set(after))
-                after_dates=cache_dates(current,after)
+                with measured_phase(label+' full poststop source SDK cache byte and date census'):
+                    after=cache_snapshot(current);source_after=provider_inventory(current,set(before)|set(after))
+                    after_dates=cache_dates(current,after)
                 provider_after=provider_snapshot(current,set(before)|set(after),source_after);delta=cache_delta(before,after)
                 facts={'map_id':map_id,'fx_variant':variant,'phase':phase,'role':role,'command':command,'actual_native':pin(target),
                     'host_ready_status_and_post_query_tick_seconds':round(elapsed,3),'world_markers':markers,
@@ -1018,6 +1150,10 @@ def run(args):
                     'native_profiler_limits_unchanged':{'maximum_profile_rows_per_translation_unit':256,'maximum_freshness_rows':256},
                     'schema_snapshot':schema,'synthetic_row_unchanged':True,'owned_cleanup_verified':True,
                     'native_observations':observation,'Map_console':map_console.report(),'Db_console':db_console.report()}
+                if selection:facts.update(provider_runtime_reused=role!='stock',
+                    native_execution_authority=report['native_execution_authority'],
+                    closed_private_namespace_before=namespace_summary(namespace_before),
+                    whole_case_admitted_passed=False)
                 facts['actual_certified_animation_consumption']=animation
                 if role!='stock':facts['actual_FX_BIN_consumption']=FX_consumption(observation,variant,before['data/bin/fxinfo.bin'])
                 # Persist full facts and deltas before any immutability gate.
@@ -1043,7 +1179,7 @@ def run(args):
                     # The pinned compressed original archive and its complete
                     # manifest remain available; only this exact fresh expanded
                     # copy is released after owned processes stop and proofs land.
-                    shutil.rmtree(seed)
+                    if not selection:shutil.rmtree(seed)
                 else:
                     require(before==after==cache_snapshot(generated),'Warm native world changed generated BIN bytes')
                     require(before_dates==after_dates,'Warm native world rewrote byte-identical generated caches')
@@ -1053,11 +1189,29 @@ def run(args):
                     require(decisions(observation)==decision_control,'Warm native world changed ordered decoder/freshness decisions')
                     # Release only this fully stopped fresh owned case. Evidence
                     # and original public/provider trees are retained separately.
-                    shutil.rmtree(current)
+                    if not selection:shutil.rmtree(current)
+                if selection:
+                    with measured_phase(label+' closed namespace and owned operational transfer'):
+                        namespace_after=pool.closed_namespace(current,manifest['providers'][str(map_id)]['files'],after,BUDGET)
+                        private_archive=work/'owned-log-archive';private_archive.mkdir(exist_ok=True)
+                        transfer=pool.quarantine_owned_error_log(current,private_archive,label,namespace_after,
+                            stopped=all(p.child.poll() is not None for p in case_children))
+                    facts.update(closed_private_namespace_after=namespace_summary(namespace_after),
+                        owned_operational_log_transfer=transfer,whole_case_admitted_passed=True)
+                    write(case_output/'phase.json',facts)
                 shutil.rmtree(db);current=None;current_before=None;case_probe={}
             shutil.rmtree(generated)
-        require(len(report['cases'])==16,'Both worlds require separately generated full and SERVER-only FX native consumers')
-        report.update(status='passed',actual_native_worlds_executed=[1,5],initialization_geometry_parity_verified=True,
+        expected_cases=(5 if selection['fx_variant']=='server_only' else 3) if selection else 16
+        require(len(report['cases'])==expected_cases,'Every selected pool/native consumer must execute and pass')
+        if selection:
+            stock_recovered=(inherited is not None or partial is not None and selection['fx_variant']=='server_only')
+            report.update(status='passed',actual_native_worlds_executed=[selection['map_id']],
+                initialization_geometry_parity_verified=True,actual_native_processes=expected_cases-int(stock_recovered),
+                inherited_native_world_processes=int(stock_recovered),total_native_world_cases=expected_cases,
+                selected_pool_only_verified=True,actual_full_and_SERVER_only_FX_world_consumers_verified=False,
+                memory_measured=True,synthetic_fixture_proof=fixture,schema_snapshot=schema_original)
+        else:
+            report.update(status='passed',actual_native_worlds_executed=[1,5],initialization_geometry_parity_verified=True,
             actual_native_processes=16-int(inherited is not None),inherited_native_world_processes=int(inherited is not None),
             total_native_world_cases=16,baseline_and_candidate_pairs_per_world={'server_only':2,'full':1},
             actual_full_and_SERVER_only_FX_world_consumers_verified=True,FX_variants=inputs.FX_VARIANTS,
@@ -1065,6 +1219,7 @@ def run(args):
     except Exception as error:
         report['failures'].append(type(error).__name__+': '+network.redact(str(error),secrets)[-4000:])
     finally:
+        BUDGET=None # The reserved job budget remains available for owned cleanup and failure evidence.
         if report['failures'] and case_probe:
             try:
                 value=failure_snapshot(case_probe,start,minimal.read_dispatch)
@@ -1110,6 +1265,8 @@ def run(args):
         report['source_pins']={Path(__file__).relative_to(ROOT).as_posix():pin(__file__),
             Path(inputs.__file__).relative_to(ROOT).as_posix():pin(inputs.__file__),
             Path(message_format.__file__).relative_to(ROOT).as_posix():pin(message_format.__file__)}
+        if pool is not None:report['source_pins'][Path(pool.__file__).relative_to(ROOT).as_posix()]=pin(pool.__file__)
+        if partial is not None:report['source_pins'][Path(partial_recovery.__file__).relative_to(ROOT).as_posix()]=pin(partial_recovery.__file__)
         write(output/REPORT,report)
     require(report['status']=='passed','Actual native world gate failed; inspect '+str(output/REPORT))
     return report
@@ -1121,6 +1278,11 @@ def main():
     p.add_argument('--driver',required=True);p.add_argument('--repository-commit',required=True)
     p.add_argument('--timeout-seconds',type=int,default=900)
     p.add_argument('--inherited-stock-evidence',type=Path)
+    p.add_argument('--pool-map-id',type=int,choices=(1,5))
+    p.add_argument('--pool-fx-variant',choices=('server_only','full'))
+    p.add_argument('--operation-budget-seconds',type=int,default=7200)
+    p.add_argument('--run-id',type=int);p.add_argument('--job-id',type=int)
+    p.add_argument('--partial-world-evidence',type=Path)
     args=p.parse_args();run(args)
 
 
