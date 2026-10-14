@@ -1,0 +1,7 @@
+{
+  "schema": "coh-native-systems-ui-host-v1",
+  "passed": true,
+  "checks": 78,
+  "scope": "Actual receipt validation methods on controlled host Java data; not Android lifecycle or AAudio execution",
+  "main_activity_sha256": "c16000ce7f4d1c8ce370be761e68f0fb166f89165d9b26afb29decfc4aa9ec06"
+}

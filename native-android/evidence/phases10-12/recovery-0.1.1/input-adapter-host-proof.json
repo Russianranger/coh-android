@@ -1,0 +1,36 @@
+{
+  "schema": "coh-input-adapter-host-proof-v1",
+  "passed": true,
+  "checks": 59,
+  "source": "native-android/systems-probe/app/src/main/java/org/coh/systemsprobe/InputAdapter.java",
+  "source_sha256": "fd1df2b4192c4ec42b743596656aceaca5d7351f6466e362547c1c66c410351a",
+  "scope": "Actual InputAdapter class under host Android/JSON transport stubs; not Android framework execution",
+  "cases": [
+    "four END-only direction signs",
+    "zero movement END",
+    "unowned pointer UP",
+    "historical MOVE samples",
+    "wrong source flags",
+    "external/synthetic separation",
+    "CANCEL no invented movement",
+    "declared Z/RZ preferred even while centered",
+    "RX/RY fallback by declared axis ranges",
+    "independent mixed axis fallback",
+    "device-less synthetic Z/RZ retained"
+  ],
+  "invariants": [
+    "END contributes measured final movement directions",
+    "touch_move counts genuine MOVE samples only",
+    "native sink receives END rather than fabricated MOVE"
+  ],
+  "negative_control": {
+    "passed": true,
+    "mutation": "Remove only final-UP direction accounting from actual InputAdapter",
+    "expected_failure": "END-only +X direction assertion check 3"
+  },
+  "right_stick_negative_control": {
+    "passed": true,
+    "mutation": "Restore fixed Z/RZ reads without declared-range fallback",
+    "expected_failure": "RX/RY sink assertion check 51"
+  }
+}

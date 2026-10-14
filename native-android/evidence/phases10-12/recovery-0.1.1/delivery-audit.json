@@ -1,0 +1,19 @@
+{
+  "schema": "coh-systems-probe-recovery-audit-v1",
+  "passed": true,
+  "source_commit": "5cfd1b88d0f8312517ee83a2be89952835ee606e",
+  "workflow_run_id": 38587763042,
+  "archive_sha256": "cebd01ea28b292895de227f3307e125e9c08ad3ea77538a96e7718260abcba73",
+  "probe_version": "0.1.1-phases10-12",
+  "package_manifest_signature_receipts_verified": true,
+  "downloaded_apk_elf_and_fixture_bytes_verified": true,
+  "all_source_validation_proof_hashes_verified": true,
+  "actual_java_ui_checks": 78,
+  "actual_java_adapter_checks": 59,
+  "final_emulator_report_revalidated": true,
+  "session_failures": 0,
+  "thor_device_execution_verified": false,
+  "physical_controller_verified": false,
+  "physical_audibility_verified": false,
+  "original_game_execution": false
+}

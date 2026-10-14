@@ -1,0 +1,59 @@
+{
+  "schema": "coh-aaudio-late-cancel-host-witness-v1",
+  "passed": true,
+  "scope": "Actual unchanged native C sink under controlled host AAudio stubs; not Android or device execution",
+  "trigger": "coh_audio_cancel invoked from requestStop after complete successful sample drain",
+  "fixture": "Synthetic one-frame mono 8000 Hz signed PCM; exercises lifecycle only",
+  "observed": {
+    "result": 0,
+    "cancelled": 1,
+    "backend_errors": 0,
+    "completed_clips": 3,
+    "opened": 1,
+    "started": 1,
+    "stopped": 1,
+    "closed": 1,
+    "submitted_frames": 2403,
+    "read_frames": 2403
+  },
+  "compiler_command": [
+    "cc",
+    "-std=c11",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-Wno-unused-parameter",
+    "-I/workspace/scratch/a72c29190853/native-aaudio-late-cancel-review",
+    "-I/workspace/scratch/a72c29190853/coh-native/native-android/audio",
+    "/workspace/scratch/a72c29190853/coh-native/native-android/audio/coh_aaudio.c",
+    "/workspace/scratch/a72c29190853/coh-native/native-android/audio/coh_audio.c",
+    "/workspace/scratch/a72c29190853/native-aaudio-late-cancel-review/late_cancel.c",
+    "-lm",
+    "-o",
+    "/workspace/scratch/a72c29190853/native-aaudio-late-cancel-review/late_cancel"
+  ],
+  "source_files": [
+    {
+      "path": "/workspace/scratch/a72c29190853/coh-native/native-android/audio/coh_aaudio.c",
+      "sha256": "bc43afb608fa0a079931d19ef6bc6f7dae7d67292f8c722c2b4dc6ca9901e0d6"
+    },
+    {
+      "path": "/workspace/scratch/a72c29190853/coh-native/native-android/audio/coh_audio.c",
+      "sha256": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+    },
+    {
+      "path": "/workspace/scratch/a72c29190853/coh-native/native-android/audio/coh_audio.h",
+      "sha256": "b723bc4d5252cd3c6f2541c00dc5779222a84ad326af9fb75e7d438908462fee"
+    },
+    {
+      "path": "/workspace/scratch/a72c29190853/native-aaudio-late-cancel-review/aaudio/AAudio.h",
+      "sha256": "5843ec5db60c4cc159ba9bd9bb511f078f9a2b8e71687915f62b1bcfc0d4feb6"
+    },
+    {
+      "path": "/workspace/scratch/a72c29190853/native-aaudio-late-cancel-review/late_cancel.c",
+      "sha256": "62d0adea23288e2430ce5efeeef9be65439a82f0934977ac070992b95514e8b5"
+    }
+  ],
+  "observation": "Cancellation sampled after cleanup can coexist with OK result and full clean playback",
+  "qualification_boundary": "This should not be sticky failure, and does not satisfy interrupted-stream Home gate"
+}

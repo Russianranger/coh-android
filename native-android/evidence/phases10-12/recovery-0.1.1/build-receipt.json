@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "phases": [
+    10,
+    11,
+    12
+  ],
+  "source_commit": "5cfd1b88d0f8312517ee83a2be89952835ee606e",
+  "workflow_run_id": "38587763042",
+  "application_id": "org.coh.systemsprobe",
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "compile_sdk": 35,
+  "gradle": "8.9",
+  "gradle_distribution_sha256": "d725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab",
+  "android_gradle_plugin": "8.7.3",
+  "ndk": "28.2.13676358",
+  "cmake": "3.22.1",
+  "signing": "isolated CI debug key; not the production launcher key",
+  "probe_version": "0.1.1-phases10-12",
+  "version_code": 2,
+  "original_game_execution": false,
+  "physical_controller_verified": false,
+  "physical_audibility_verified": false,
+  "external_network_execution": false,
+  "server_interoperability_verified": false,
+  "artifacts": [
+    {
+      "file": "CoH-Native-Systems-Probe-0.1.1-arm64.apk",
+      "bytes": 176149,
+      "sha256": "4e915b8d51575f1901647b9ce80aade3b59560c6ebc74094051049def9a09573",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_systems_probe.so",
+        "bytes": 68400,
+        "sha256": "6a1d26fa1ac2ec7d3cae9662870423536dd744bc3b361640a6ae4c0789d12388"
+      },
+      "packaged_fixture_bytes_verified": true,
+      "manifest_verified": true,
+      "signature_verified": true,
+      "signer_certificate_sha256": "744e39e83fe388a300a7c46d6843eeb6da6b80f46156f20510fef7204b252b0f"
+    },
+    {
+      "file": "CoH-Native-Systems-Probe-0.1.1-emulator-x86_64.apk",
+      "bytes": 175594,
+      "sha256": "087882c61e1fa19fb2faee31b73ce14f9190a52261beda0ec8ca1cbb3f1dde9b",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "native_library": {
+        "file": "lib/x86_64/libcoh_systems_probe.so",
+        "bytes": 67848,
+        "sha256": "d99dfa0a3f0206a6499b3bcaeed373a9b080893c8726d8843d9c735c7482e0cb"
+      },
+      "packaged_fixture_bytes_verified": true,
+      "manifest_verified": true,
+      "signature_verified": true,
+      "signer_certificate_sha256": "744e39e83fe388a300a7c46d6843eeb6da6b80f46156f20510fef7204b252b0f"
+    }
+  ],
+  "fixture_assets": [
+    {
+      "file": "audio-fixture.json",
+      "bytes": 6447,
+      "sha256": "ac5098be5f8571e2653424c30c8a4d861593ab973073987a5751b2abcaf71280"
+    },
+    {
+      "file": "audio.bin",
+      "bytes": 72736,
+      "sha256": "440361125d7420a1730ecd742271d8b2a67808dffcfa9dc435f2357d59931823"
+    }
+  ],
+  "thor_device_execution_verified": false
+}

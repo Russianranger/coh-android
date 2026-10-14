@@ -63,6 +63,29 @@ cancellation remains allowed. The status exposes current audio playback and
 the separate stick/audibility observations. The native audio sink, authentic
 PCM fixture, packet kernels and wire goldens are unchanged.
 
-The new package requires a fresh build and emulator receipt before delivery.
-Physical controller coverage and speaker audibility remain pending until the
+The [0.1.1 qualification receipt](evidence/phases10-12/recovery-0.1.1/qualification.json)
+records successful [workflow 38587763042](https://github.com/Russianranger/coh-android/actions/runs/38587763042)
+and portable-core workflow 38587762974 from source commit
+`5cfd1b88d0f8312517ee83a2be89952835ee606e`. The downloaded archive and both
+APKs passed byte/ELF/fixture/manifest/signature-receipt checks. The actual adapter
+passed 59 host checks and two negative controls; actual Java receipt validation
+passed 78 checks. The final Android 13 report passed seven source runs across
+three view generations/two sizes, two complete AAudio plays consuming 135,468
+frames, one exact active-stream cancellation/stop/close and fresh Home/return
+recovery, with zero session failures. Both physical observation fields remain
+false in emulator evidence.
+
+The unchanged native sink's clean late-cancellation behavior was reproduced
+under bounded host AAudio stubs: Home arriving during successful cleanup can
+produce result OK plus cancellation after all three clips complete. The Android
+receipt helper permits that clean retry while the Home gate still requires the
+native CANCELLED result. Backend errors remain sticky. The
+[host witness](evidence/phases10-12/recovery-0.1.1/native-late-cancel-proof.json)
+records this distinction separately from Android execution.
+
+The delivered ARM64 APK is 176,149 bytes, SHA256
+`4e915b8d51575f1901647b9ce80aade3b59560c6ebc74094051049def9a09573`,
+version code 2. Its native library and authentic audio bytes remain identical
+to the original qualified 0.1.0 package. Physical controller coverage and
+speaker audibility remain pending until the
 [Thor device sequence](systems-probe/THOR-TEST.md) and its JSON are reviewed.

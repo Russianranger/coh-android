@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "phases": [
+    10,
+    11,
+    12
+  ],
+  "passed": true,
+  "probe_version": "0.1.1-phases10-12",
+  "recovered_from_commit": "dd3403fd5fb4e61d0542766eda16bae43a1e4d2f",
+  "source_commit": "5cfd1b88d0f8312517ee83a2be89952835ee606e",
+  "workflow": {
+    "run_id": 38587763042,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38587763042",
+    "conclusion": "success",
+    "core_run_id": 38587762974,
+    "core_conclusion": "success"
+  },
+  "artifact": {
+    "id": 11906756222,
+    "bytes": 678095,
+    "sha256": "cebd01ea28b292895de227f3307e125e9c08ad3ea77538a96e7718260abcba73",
+    "download_digest_verified": true
+  },
+  "scope": {
+    "hosted_emulator_android": 13,
+    "emulator_abi": "x86_64",
+    "arm64_package_built": true,
+    "physical_controller_verified": false,
+    "physical_audibility_verified": false,
+    "thor_device_execution_verified": false,
+    "original_game_execution": false,
+    "external_network_execution": false,
+    "accepted_source_kernels_unchanged": true
+  },
+  "qualification": {
+    "qualification_passed": true,
+    "input_gate_passed": true,
+    "audio_engine_gate_passed": true,
+    "protocol_gate_passed": true,
+    "background_return_gate_passed": true,
+    "controller_axis_coverage_passed": false,
+    "device_audible_confirmation_passed": false,
+    "session_failures": 0
+  },
+  "arm64_artifact": {
+    "file": "CoH-Native-Systems-Probe-0.1.1-arm64.apk",
+    "bytes": 176149,
+    "sha256": "4e915b8d51575f1901647b9ce80aade3b59560c6ebc74094051049def9a09573",
+    "abi": "arm64-v8a",
+    "elf_machine": 183,
+    "native_library": {
+      "file": "lib/arm64-v8a/libcoh_systems_probe.so",
+      "bytes": 68400,
+      "sha256": "6a1d26fa1ac2ec7d3cae9662870423536dd744bc3b361640a6ae4c0789d12388"
+    },
+    "packaged_fixture_bytes_verified": true,
+    "manifest_verified": true,
+    "signature_verified": true,
+    "signer_certificate_sha256": "744e39e83fe388a300a7c46d6843eeb6da6b80f46156f20510fef7204b252b0f"
+  },
+  "host_checks": {
+    "input_adapter": 59,
+    "ui_receipt_validation": 78,
+    "negative_controls": [
+      "missing final-UP touch direction",
+      "missing right-stick RX/RY range fallback"
+    ],
+    "native_late_cancel_reproduced": true
+  },
+  "evidence_files": [
+    {
+      "file": "build-receipt.json",
+      "bytes": 2482,
+      "sha256": "2942aca78739d1712a5b9e6acc99ae95e9101d5ecf5fad12a2aee816c31226ad"
+    },
+    {
+      "file": "delivery-audit.json",
+      "bytes": 763,
+      "sha256": "65e80ffd579821a608c74b8d9dd47c1792e479274c46f44ee2d00709544808fb"
+    },
+    {
+      "file": "emulator-final-report.json",
+      "bytes": 32693,
+      "sha256": "29b9e79bac52f44ddcec4c0ea5159bb8b28fc0054cbc64a8fdf16ceba1d16480"
+    },
+    {
+      "file": "emulator-smoke-summary.json",
+      "bytes": 2167,
+      "sha256": "06bdf34e06309f0d799d1573e53775f9efef1da03c15b2c67e980512faf424c3"
+    },
+    {
+      "file": "input-adapter-host-proof.json",
+      "bytes": 1383,
+      "sha256": "b33a9175f8a627dd690255c2d058aeec37210b74cc68c4dec81ef998387080c3"
+    },
+    {
+      "file": "native-late-cancel-proof.json",
+      "bytes": 2435,
+      "sha256": "ace790bb7fae9f19c56d650d62f977bcecca20248641a81dba9d04669b12f3fa"
+    },
+    {
+      "file": "ui-host-checks.json",
+      "bytes": 296,
+      "sha256": "8ae024b152257c5d67589205de0cccb0bea7fa1d0a9c8cf35f2da37a74ff831f"
+    }
+  ],
+  "next_gate": "Physical Thor execution of systems-probe/THOR-TEST.md; review controller and speaker evidence before accepting gates10-12 on device"
+}
