@@ -52,6 +52,11 @@
       "path": "i24/data/sequencers/player/encounters_motion.inc",
       "bytes_lf": 69128,
       "sha256_lf": "43db4413b41d07a76d08f31c6198574e48969a6e4df065ad09bdbfa9996edadb"
+    },
+    "mathutil.h": {
+      "path": "ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+      "bytes_lf": 47551,
+      "sha256_lf": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111"
     }
   }
 }

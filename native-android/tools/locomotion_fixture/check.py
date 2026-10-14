@@ -63,7 +63,6 @@ static GfxNode *gfxTreeFindBoneInAnimation(int dummy,GfxNode*n,unsigned handle,i
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define MINMAX(v,a,b) MIN(MAX(v,a),b)
 #define subVec3(a,b,c) do{for(int j=0;j<3;j++)(c)[j]=(a)[j]-(b)[j];}while(0)
-static float lengthVec3(const float*v){return sqrtf(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);}
 '''
 WRAPPER=r'''
 static void initOracle(SeqInst *s,SeqInfo*info,SeqMove moves[3],TypeGfx gfx[3],AnimRange ranges[3],SeqType*type,GfxNode nodes[2],unsigned move,float frame,float previous,float geom){
@@ -100,6 +99,9 @@ def sources(directory):
     require(re.search(r'Type\s+huge\s+Anim\s+huge\\postrun\s+1\s+23',texts['motion.inc']) is not None,'source RunPost binding differs')
     require(re.search(r'Type\s+huge\s+Anim\s+huge\\Skel_ready\s+1\s+60',texts['readies.inc']) is not None,'source Ready binding differs')
     snippets=[];function_pins={}
+    for name in ['fsqrt','SQR','lengthVec3Squared','lengthVec3']:
+        match=re.search(r'^#define '+name+r'\([^\n]*$',texts['mathutil.h'],re.M)
+        require(match is not None,'original length macro missing: '+name);snippets.append(match.group()+'\n')
     for file,fn in FUNCTIONS:
         code=extract(texts[file],fn);function_pins[fn]={'file':file,'sha256_lf':sha(code.encode())};snippets.append(code)
     return PREAMBLE+'\n'.join(snippets)+WRAPPER,pins,function_pins,paths
@@ -184,7 +186,7 @@ def main():
                     if i in motion:
                         for j in range(3):value[4+j]=C.c_float(value[4+j]-delta[i][j]).value
                     for x,y in zip(list(pose.rotation[i])+list(pose.position[i]),value):local_maximum=max(local_maximum,near(x,y,'original encoded-key local'));local_checks+=1
-        morph_checks=0
+        morph_checks=0;palette_checks=0
         if a.morph:
             mraw=a.morph.read_bytes();mmem=(C.c_uint8*len(mraw)).from_buffer_copy(mraw);morph=Morph();require(lib.coh_character_parse_morph(mmem,len(mraw),C.byref(morph))==0,'accepted morph rejected')
             for rate in [1.,1.05,1.5,2.]:
@@ -198,6 +200,17 @@ def main():
                     ancestor=i
                     while ancestor>=0 and ancestor!=0:ancestor=r.parent[ancestor]
                     for j in range(3):near(corrected.world_rows[i][j*4+3],regular.world_rows[i][j*4+3]+(shift[j] if ancestor==0 else 0),'source hip descendant translation');morph_checks+=1
+                ids=list(r.order)[:r.node_count]
+                for offset in range(0,len(ids),15):
+                    selected=ids[offset:offset+15];bone_ids=(C.c_uint32*len(selected))(*selected);original_rows=(C.c_float*(12*len(selected)))();corrected_rows=(C.c_float*(12*len(selected)))()
+                    require(lib.coh_character_palette(C.byref(r),C.byref(morph),C.byref(regular),72,bone_ids,len(selected),original_rows)==0,'regular source palette failed')
+                    require(lib.coh_character_palette(C.byref(r),C.byref(morph),C.byref(corrected),72,bone_ids,len(selected),corrected_rows)==0,'corrected source palette failed')
+                    for at,i in enumerate(selected):
+                        ancestor=i
+                        while ancestor>=0 and ancestor!=0:ancestor=r.parent[ancestor]
+                        for j in range(12):
+                            expected=original_rows[at*12+j]+(shift[j//4] if j%4==3 and ancestor==0 else 0)
+                            near(corrected_rows[at*12+j],expected,'source SmoothSprint palette translation');palette_checks+=1
         # Standalone ASan/UBSan process includes exact-size truncation buffers.
         driver=HERE/'sanitizer.c';exe=temp/'sanitizer'
         subprocess.run([*cc,'-std=c11','-O1','-g','-ffp-contract=off','-fsanitize=address,undefined','-fno-omit-frame-pointer','-no-pie','-I'+str(ROOT/'locomotion'),str(driver),str(ROOT/'locomotion/coh_locomotion.c'),str(ROOT/'character/coh_character.c'),'-lm','-o',str(exe)],check=True)
@@ -212,6 +225,7 @@ def main():
                 'invalid_cases':invalids,'transitions':{'ready':state.ready_entries,'run':state.run_entries,'post':state.post_entries,'cycles':state.cycles},
                 'original_unused_postrun_tracks_validated_and_ignored':unused,
                 'morph_smooth_sprint_translation_checks':morph_checks,'sanitizers':'ASan and UBSan passed standalone exact-buffer truncation + transitions',
+                'morph_smooth_sprint_palette_scalar_comparisons':palette_checks,
                 'leak_sanitizer_enabled':not a.disable_leak_sanitizer,
                 'scope':json.loads((HERE/'pins.json').read_text())['scope'],'transcript':transcript,
                 'android_device_execution':False,'original_full_sequencer_execution':False}
