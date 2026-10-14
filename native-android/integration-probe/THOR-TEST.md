@@ -13,7 +13,7 @@ installed. This test needs no server startup, account or asset import.
 2. Tap **Play decoded sound**. You should hear three game clips with a quieter
    middle clip. Let playback finish, then tap **Heard 3 sounds**. This time the
    compressed Ogg is decoded on your Thor before playback.
-3. Tap **Resize**, wait about 16 seconds for the current rendered check to
+3. Tap **Resize**, wait about 6–16 seconds for the current rendered check to
    finish, then tap **Recreate** and wait again. Swipe the horizontal button
    row to expose controls outside the right edge. Use **Reset view** if needed;
    it restores the authored camera and requires a fresh rendered check.
@@ -26,7 +26,7 @@ installed. This test needs no server startup, account or asset import.
    Send the JSON even if a check remains pending or fails, with what you saw
    or heard. If a real failure occurs, preserve its report before relaunching.
 
-The scene performs repeated bounded rendering rounds; allow roughly 16 seconds
+The scene performs repeated bounded rendering rounds; allow roughly 6–16 seconds
 after a view change. A passing report includes native decode, actual UDP,
 four signed scene-camera directions, settled released input, two actual view
 sizes, recreation and active audio/UDP Home cancellation with fresh recovery.

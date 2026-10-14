@@ -9,7 +9,7 @@ the previous qualified probe or immutable upstream source.
 
 Before accepting interaction, each fresh context compares all six frozen
 source camera/group cases on the CPU and all 512 fixture vertices per camera
-through actual GPU transform feedback. During the 450-frame, 15-second input
+through actual GPU transform feedback. During the 180-frame, six-second input
 window, current cameras are evaluated by source kernels and sampled GPU
 feedback is compared with CPU source arithmetic. Rendering uses original
 vertices and native matrices; feedback/reference geometry never drives it.
@@ -19,8 +19,14 @@ under its input mutex, plus a monotonically increasing external Android-event
 revision. No competing UI timer may consume those input frames. Duplicate
 source frames and regressing revisions are rejected. Native input's explicit
 30 Hz step is consumed once; slow frames carry no elapsed-time input backlog.
-The run has 450-frame and 25-second limits, independently of graphics startup.
+The run has 180-frame and 25-second limits, independently of graphics startup.
 These are bounded diagnostic limits, not an FPS or latency qualification.
+Fifteen scheduled current-camera GPU comparisons run at frame indices 0, 12,
+24, through 168, with additional immediate checks for new signed directions.
+This retains the first version's comparison coverage while removing redundant
+idle rendering. Its software-GPU run had correct source/GPU/image direction
+coverage and zero comparison/backend errors but reached the unchanged
+25-second bound before finishing the arbitrary original 450-frame loop.
 
 The camera adapter preserves source editor look's pitch negation and yaw
 increment after removing the fixed target yaw+180 degrees relative to the

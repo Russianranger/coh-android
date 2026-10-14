@@ -112,7 +112,7 @@ final class ReceiptRules {
             && bool(run,"baseline_cpu_passed",true) && bool(run,"baseline_gpu_passed",true)
             && bool(run,"context_created",true) && bool(run,"objects_released",true)
             && bool(run,"cancelled",false) && integer(run,"gl_errors",0)
-            && positive(run,"source_frames_consumed") && positive(run,"frames")
+            && integer(run,"source_frames_consumed",180) && integer(run,"frames",180)
             && integer(run,"stationary_mismatches",0) && integer(run,"camera_determinism_mismatches",0)
             && integer(run,"same_camera_image_mismatches",0) && integer(run,"interactive_transform_mismatches",0);
     }

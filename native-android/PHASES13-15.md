@@ -41,7 +41,7 @@ threaded lifecycle cases, actual descriptor-error injection and negative control
 The [interactive scene contract](interactive-world/README.md) reuses the
 accepted world renderer and precise shader sources directly. Each fresh
 context checks six original CPU/GPU camera references. Current input then
-drives native matrices for 450 rendered frames. Every signed direction needs
+drives native matrices for 180 rendered frames. Every signed direction needs
 CPU motion, GPU parity and changed-image evidence. Released input must settle.
 The explicitly declared adapter limits pitch/yaw changes to ±12 degrees about
 the authored camera and preserves immediate reversal at the bounds.

@@ -140,7 +140,7 @@ def validate(report,full=False):
     for run in report['world_runs']:
         if run.get('engine_passed') is True and not run.get('java_obsolete'):
             assert run['objects_released'] is True and run['baseline_cpu_passed'] is True and run['baseline_gpu_passed'] is True
-            assert run['source_frames_consumed']==run['frames']>0 and run['gl_errors']==0
+            assert run['source_frames_consumed']==run['frames']==180 and run['gl_errors']==0
             assert run['stationary_mismatches']==run['camera_determinism_mismatches']==run['same_camera_image_mismatches']==0
             assert run['interactive_transform_mismatches']==0 and run['session_failure'] is False
             assert run['direction_mask']==(run['cpu_direction_mask']&run['gpu_direction_mask']&run['image_direction_mask'])

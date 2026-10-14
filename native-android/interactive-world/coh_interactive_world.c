@@ -7,7 +7,7 @@
 #undef Java_org_coh_worldprobe_ProbeNative_probe
 #include "coh_interactive_world.h"
 
-#define INTERACTIVE_FRAMES 450u
+#define INTERACTIVE_FRAMES 180u
 #define INPUT_SECONDS (1.0f / 30.0f)
 
 static int control_cancelled(const CohInteractiveWorldControl *control) {
@@ -232,7 +232,7 @@ int coh_interactive_world_run(ANativeWindow *window,
         if (memcmp(view,repeat_view,sizeof view) || memcmp(projection,repeat_projection,sizeof projection))
             out->camera_determinism_mismatches++;
         const unsigned new_gpu_direction = motion_direction & ~out->gpu_direction_mask;
-        if (!tick || tick % 30u == 0 || new_gpu_direction) {
+        if (!tick || tick % 12u == 0 || new_gpu_direction) {
             REQUIRE_GL(interactive_transform(&cycle,out,&program,vao,vbo,ibo,tf,&report,geometry,textures,eye,projection));
             out->gpu_direction_mask |= motion_direction;
         }
@@ -259,10 +259,10 @@ int coh_interactive_world_run(ANativeWindow *window,
         REQUIRE_GL(display_window(&cycle,display,surface,&target,present.id,qvao,qvbo,NULL,0));
         out->frames++;
         /* Each fixed-rate input step is consumed once. Slow rendering carries
-         * no elapsed-time input backlog; a run is capped at450 frames/25s. */
+         * no elapsed-time input backlog; a run is capped at 180 frames/25s. */
         if (clock_gettime(CLOCK_MONOTONIC,&end)) { fail(&cycle,"interactive-clock","Monotonic clock failed"); goto cleanup; }
         if (monotonic_ms(&end) - monotonic_ms(&start) > 25000u) {
-            fail(&cycle,"interactive-deadline","450-frame diagnostic exceeded25-second bound"); goto cleanup;
+            fail(&cycle,"interactive-deadline","180-frame diagnostic exceeded 25-second bound"); goto cleanup;
         }
         const uint64_t ns = (uint64_t)start.tv_nsec + (uint64_t)(tick + 1) * (1000000000u / 30u);
         struct timespec deadline = {start.tv_sec + (time_t)(ns / 1000000000u),(long)(ns % 1000000000u)};
@@ -303,7 +303,7 @@ cleanup:
     if (!released) out->session_failure = 1;
     /* Deferred comparison counters are already observed failures. A later
      * clean Home cancellation cannot erase a mismatch accumulated in an
-     * earlier frame before the normal450-frame completion predicate runs. */
+     * earlier frame before the normal 180-frame completion predicate runs. */
     if (out->stationary_mismatches || out->camera_determinism_mismatches ||
         out->same_camera_image_mismatches || out->interactive_transform_mismatches ||
         cycle.transform_mismatches || cycle.group_local_mismatches || cycle.group_world_mismatches ||
