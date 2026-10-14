@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "source_commit": "3dc7013c3e96230efb8832732f1489d6aaba3384",
-  "workflow_run_id": "38490035824",
+  "source_commit": "1fdc674c87e03856966ed41c0344f4d067bf737c",
+  "workflow_run_id": "38492076765",
   "application_id": "org.coh.worldprobe",
   "min_sdk": 26,
   "target_sdk": 35,
@@ -13,7 +13,8 @@
   "cmake": "3.22.1",
   "signing": "isolated CI debug key; not the production launcher key",
   "phase": 9,
-  "probe_version": "0.1.0-phase9",
+  "probe_version": "0.1.1-phase9",
+  "version_code": 2,
   "original_game_execution": false,
   "full_scene_execution": false,
   "full_atlas_loaded": false,
@@ -21,36 +22,36 @@
   "original_scene_sorter_qualified": false,
   "artifacts": [
     {
-      "file": "CoH-Native-World-Probe-0.1.0-arm64.apk",
-      "bytes": 230114,
-      "sha256": "cfa910c9f0ec945ee7996c00ca09d8a9a8e2342b746bc130cd989a433bba1421",
+      "file": "CoH-Native-World-Probe-0.1.1-arm64.apk",
+      "bytes": 243170,
+      "sha256": "ecee30e56bbc54f4fccb1ad1d50847c8f7c34e54d704ab05f61d81f4273b985e",
       "abi": "arm64-v8a",
       "elf_machine": 183,
       "native_library": {
         "file": "lib/arm64-v8a/libcoh_world_probe.so",
-        "bytes": 83136,
-        "sha256": "5fcde3e3e41f9258778b77a84c8424f6981a55224fffe6ccb34c0bb9c12a6ef0"
+        "bytes": 96192,
+        "sha256": "5f101bd711c937ea7462357064f4ed612552583e19f4b7f49d4b075062c82ef4"
       },
       "packaged_fixture_bytes_verified": true,
       "manifest_verified": true,
       "signature_verified": true,
-      "signer_certificate_sha256": "20f02d7af0dc5e6f5355f88f0235b422a311fe43bfedd77ca417ab486eb0e862"
+      "signer_certificate_sha256": "1b8c384819b25da9cb3482f679fa88c72e27a7041e72bf78219055b6eb093923"
     },
     {
-      "file": "CoH-Native-World-Probe-0.1.0-emulator-x86_64.apk",
-      "bytes": 233447,
-      "sha256": "6c8c76ddf870ca25e8cc9fffeaff2840403f0ec214248879953beb1a100bdf48",
+      "file": "CoH-Native-World-Probe-0.1.1-emulator-x86_64.apk",
+      "bytes": 246567,
+      "sha256": "7238a6dcc76b145663b2af853a9e4bf048b1cc78bff4b18171d57fd93df1bf59",
       "abi": "x86_64",
       "elf_machine": 62,
       "native_library": {
         "file": "lib/x86_64/libcoh_world_probe.so",
-        "bytes": 86472,
-        "sha256": "884069bf3157a39934f9515edb8ac773547f0afd4ce7c1c8fed2bc2034e264f9"
+        "bytes": 99592,
+        "sha256": "07ef9e8ec31f6e9289118727590ac38c09517ce2100de528cc88ce49d1db0f71"
       },
       "packaged_fixture_bytes_verified": true,
       "manifest_verified": true,
       "signature_verified": true,
-      "signer_certificate_sha256": "20f02d7af0dc5e6f5355f88f0235b422a311fe43bfedd77ca417ab486eb0e862"
+      "signer_certificate_sha256": "1b8c384819b25da9cb3482f679fa88c72e27a7041e72bf78219055b6eb093923"
     }
   ],
   "fixture_assets": [

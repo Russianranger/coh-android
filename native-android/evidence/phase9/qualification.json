@@ -2,25 +2,25 @@
   "schema": 1,
   "phase": 9,
   "passed": true,
-  "source_commit": "3dc7013c3e96230efb8832732f1489d6aaba3384",
+  "source_commit": "1fdc674c87e03856966ed41c0344f4d067bf737c",
   "workflow": {
-    "run_id": 38490035824,
-    "url": "https://github.com/Russianranger/coh-android/actions/runs/38490035824",
+    "run_id": 38492076765,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38492076765",
     "conclusion": "success",
-    "core_run_id": 38490035780,
+    "core_run_id": 38492076857,
     "core_conclusion": "success"
   },
   "artifact": {
-    "id": 11861127703,
-    "bytes": 1160877,
-    "sha256": "bfe67d63089d8d315bc447cefe7a98913e3da72b2f5a02e394a081f6002b5e42",
+    "id": 11861574249,
+    "bytes": 1079822,
+    "sha256": "6de0bf1e3c23a7921d106b67cac505535d18b68d133e1faa8ae5d70c7f8a67ef",
     "download_digest_verified": true
   },
   "original_report": {
-    "bytes": 302723,
-    "sha256": "8a74eca76ff89f8136e414c71c60b38a4e8ea3245be27911664a5d14f4d7273c"
+    "bytes": 316565,
+    "sha256": "50a8e0b2d44d8fe12b5e6ace84cac07bab6243a726a488ccd66a1acb3e563b69"
   },
-  "build_receipt_sha256": "0a26e6164018af1d16eb0b6beda5c333b4f1cb1c4ace8a2ea140e309b1daba27",
+  "build_receipt_sha256": "cd3a918114c3978c32fc3675ec8c3be61f9720ee064b3dff04647ed661c9cd3d",
   "scope": {
     "android": "13",
     "sdk": 33,
@@ -46,6 +46,20 @@
     "successful_widths": 2,
     "successful_heights": 2,
     "current_surface_passed": true
+  },
+  "probe_version": "0.1.1-phase9",
+  "source_arithmetic_profile": {
+    "order": "source-left-associated-products-and-sums",
+    "mechanisms": [
+      "ESSL-3.00-explicit-source-order-TF-gated"
+    ],
+    "language_versions": [
+      300
+    ],
+    "precise_enabled_values": [
+      false
+    ],
+    "thor_0_1_1_retest_passed": false
   },
   "same_session_all_reports_and_runs_verified": true,
   "error_and_count_scope": "six successful nonobsolete qualified runs; obsolete attempts are recorded separately",
@@ -282,6 +296,11 @@
     "primary_sources_verified": 20,
     "receipt_sha256": "c557465621831bccb0d46bfe44972eb038652fead7fa438df5fa1b9fdd165c19"
   },
+  "arithmetic_regression": {
+    "passed": true,
+    "receipt_sha256": "076d9594f4d085f2224696c7558528d5933616d1c228fee4f27151f8722ea781",
+    "gpu_execution": false
+  },
   "tolerances": {
     "gpu_absolute": 0.0001,
     "rgba_bytes": 2,
@@ -290,7 +309,7 @@
   },
   "root_download_audit": {
     "passed": true,
-    "source_commit": "3dc7013c3e96230efb8832732f1489d6aaba3384",
+    "source_commit": "1fdc674c87e03856966ed41c0344f4d067bf737c",
     "download_digest_verified": true,
     "bounded_archive_verified": true,
     "both_apk_and_elf_identities_verified": true,
@@ -305,24 +324,24 @@
     "strict_checker_reexecuted": true
   },
   "screen": {
-    "sha256": "d9c5569d867ab6fda297e2e3ee33ef4765fd3db20c118d384d6d3c5085af751e",
+    "sha256": "d8d178ccaa6b8fe6852e8d57110a42d7a1da1074cfab1983388405d80e9ae911",
     "visually_reviewed_real_bench_and_green_pass_banner": true
   },
   "arm64_apk": {
-    "file": "CoH-Native-World-Probe-0.1.0-arm64.apk",
-    "bytes": 230114,
-    "sha256": "cfa910c9f0ec945ee7996c00ca09d8a9a8e2342b746bc130cd989a433bba1421",
+    "file": "CoH-Native-World-Probe-0.1.1-arm64.apk",
+    "bytes": 243170,
+    "sha256": "ecee30e56bbc54f4fccb1ad1d50847c8f7c34e54d704ab05f61d81f4273b985e",
     "abi": "arm64-v8a",
     "elf_machine": 183,
     "native_library": {
       "file": "lib/arm64-v8a/libcoh_world_probe.so",
-      "bytes": 83136,
-      "sha256": "5fcde3e3e41f9258778b77a84c8424f6981a55224fffe6ccb34c0bb9c12a6ef0"
+      "bytes": 96192,
+      "sha256": "5f101bd711c937ea7462357064f4ed612552583e19f4b7f49d4b075062c82ef4"
     },
     "packaged_fixture_bytes_verified": true,
     "manifest_verified": true,
     "signature_verified": true,
-    "signer_certificate_sha256": "20f02d7af0dc5e6f5355f88f0235b422a311fe43bfedd77ca417ab486eb0e862"
+    "signer_certificate_sha256": "1b8c384819b25da9cb3482f679fa88c72e27a7041e72bf78219055b6eb093923"
   },
   "earlier_attempts": [
     {
@@ -339,6 +358,11 @@
       "run_id": 38489666137,
       "stage": "NDK pointer qualification",
       "receipt": "first-ndk-build-failure.json"
+    },
+    {
+      "stage": "Thor 0.1.0 GPU world-coordinate rounding",
+      "receipt": "thor-transform-failure-0.1.0.json",
+      "original_report_sha256": "d1bd54431dbfd4a3df15323c4c120349e7fad6b9d2f789c376d3ddc6cc94705d"
     }
   ]
 }
