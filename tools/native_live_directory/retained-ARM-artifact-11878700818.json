@@ -1,0 +1,195 @@
+{
+  "members": {
+    ".github/workflows/android-native-live-directory-arm-037.yml": {
+      "bytes": 1874,
+      "sha256": "f99b84b62ad5dc635e2deeb55eea1531087c5b4ee295325e376680585c0bc8ac"
+    },
+    "out/native-live-directory-037/NDK-compiler-version.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/NDK-compiler-version.stdout": {
+      "bytes": 345,
+      "sha256": "835f1507a752737c6b98c8d2a16d58dc47e33eb4b9cc9b473beae6349678167d"
+    },
+    "out/native-live-directory-037/classes/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.class": {
+      "bytes": 711,
+      "sha256": "54da2e493eeb6f6f5ab539d60866e0b406d94385627f147c7cfb6b58aa5ef5a3"
+    },
+    "out/native-live-directory-037/classes/io/github/russianranger/cohclientinteractive/NativeLiveDirectoryFixture$Action.class": {
+      "bytes": 389,
+      "sha256": "343db9b2a3cdf743db6eb32d042bd6bcea3bb4f397789e177ba2f926f006cb82"
+    },
+    "out/native-live-directory-037/classes/io/github/russianranger/cohclientinteractive/NativeLiveDirectoryFixture.class": {
+      "bytes": 9785,
+      "sha256": "217a2e979b927adf9d29f868313c7b41ca6d6d8fa20b240ebdc00c24c11f4003"
+    },
+    "out/native-live-directory-037/compile-Bionic-ARM64-JNI.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/compile-Bionic-ARM64-JNI.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/compile-Bionic-ARM64-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/compile-Bionic-ARM64-fixture.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/compile-Java-facade-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/compile-Java-facade-fixture.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/compile-host-JNI.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/compile-host-JNI.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/compile-host-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/compile-host-fixture.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/execute-Bionic-ARM64-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/execute-Bionic-ARM64-fixture.stdout": {
+      "bytes": 301,
+      "sha256": "f5a375b4a146cabbfdaea2ade6b3fed0b213638a462d38c5987e2c66f4826c7e"
+    },
+    "out/native-live-directory-037/execute-host-JNI.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/execute-host-JNI.stdout": {
+      "bytes": 140,
+      "sha256": "458c8f566d9546ba21af930bdb443abf1dcada08940dd67cc3de45be78c1cebf"
+    },
+    "out/native-live-directory-037/execute-host-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/execute-host-fixture.stdout": {
+      "bytes": 299,
+      "sha256": "78287411aedbc6827fcc8ee92b739b0a5c13482071052327d8b7efdf8ecdd6d3"
+    },
+    "out/native-live-directory-037/host-native-kernel-tests.stderr": {
+      "bytes": 5223,
+      "sha256": "55e8caa83574b59f3896aaa172ab3f650d548ab8832db4dfb9dff92487a4ac19"
+    },
+    "out/native-live-directory-037/host-native-kernel-tests.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/inspect-Bionic-ARM64-JNI.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/inspect-Bionic-ARM64-JNI.stdout": {
+      "bytes": 6774,
+      "sha256": "0f5d7f7a66b00f9628ce67c72ed99195f2582aa0e5cf190c5b47ab84dd237762"
+    },
+    "out/native-live-directory-037/inspect-Bionic-ARM64-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "out/native-live-directory-037/inspect-Bionic-ARM64-fixture.stdout": {
+      "bytes": 940,
+      "sha256": "84e0b946759ac1bc14a676cc7fea4e5fee0a8f74f99a04ae4d6c3da4a31c7d70"
+    },
+    "out/native-live-directory-037/libcoh_live_directory-host.so": {
+      "bytes": 35664,
+      "sha256": "cec249a49fa8758b4caf2f074c133fb687f5d53e1c580ab1aa8031b822d653a8"
+    },
+    "out/native-live-directory-037/libcoh_live_directory.so": {
+      "bytes": 29992,
+      "sha256": "3d21ece5894b46e9315eb14c3cc12f8d2fcbd3082f99031b4bcbde3e03d5e282"
+    },
+    "out/native-live-directory-037/native-live-Bionic-ARM64-fixture": {
+      "bytes": 2283592,
+      "sha256": "6a17fabff96e8aa3f91a45ae3072a9d012a52814ef5d78ac2037338d157dd482"
+    },
+    "out/native-live-directory-037/native-live-host-fixture": {
+      "bytes": 39896,
+      "sha256": "c90f2fd61412c5e7769a1c266b59d0fbb0c594bb561dc45c328170b58cf232a5"
+    },
+    "out/native-live-directory-037/qualification.json": {
+      "bytes": 17822,
+      "sha256": "9d28449756c06b539d906cf1cc1729233eebe6a63901e9eca80615c57845270f"
+    },
+    "tools/native_live_directory/NativeLiveDirectory.java": {
+      "bytes": 1119,
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    },
+    "tools/native_live_directory/NativeLiveDirectoryFixture.java": {
+      "bytes": 5877,
+      "sha256": "fdc89a03cbf44afc17a08e8f11af0a23366127e2616bb89300c347ce7f11fc1c"
+    },
+    "tools/native_live_directory/README.md": {
+      "bytes": 4624,
+      "sha256": "06c1412fd59765c2ace319b2ce8087382507db8a11212e96632972979cdf1528"
+    },
+    "tools/native_live_directory/coh_live_directory_core.c": {
+      "bytes": 22987,
+      "sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c"
+    },
+    "tools/native_live_directory/coh_live_directory_core.h": {
+      "bytes": 3125,
+      "sha256": "a1f2142a093ea475286b04ed8fbea293cd18640daae8125b656620402e3b728d"
+    },
+    "tools/native_live_directory/coh_live_directory_jni.c": {
+      "bytes": 9835,
+      "sha256": "397190cf97af337f5eb0a6bec6d38cf79d58eecb7cd214e16378b575469d8c6b"
+    },
+    "tools/native_live_directory/native_core_faults.c": {
+      "bytes": 2177,
+      "sha256": "3d2430507d2533b2cf794cbd239ccaf7e5ca17c3b7802c4959301c7866f4ff31"
+    },
+    "tools/native_live_directory/native_live_fixture.c": {
+      "bytes": 11383,
+      "sha256": "b0ab8aa0fbc3f76be237e0f632576241c59342a4ae55b8fd4c43b5506e51cbde"
+    },
+    "tools/native_live_directory/qualify_native_live_directory.py": {
+      "bytes": 7749,
+      "sha256": "745bf714fae48d2c20762f7405d3de414f8f8c504d5a7b06acfb2574a6987771"
+    },
+    "tools/native_live_directory/test_native_live_directory_core.py": {
+      "bytes": 22432,
+      "sha256": "16a5fc9cc22fb3ac7815e2ef4e9f2dc53c6517418d704ef7c698d85ec62d4694"
+    }
+  },
+  "origin": {
+    "all_twelve_native_host_Bionic_compile_execution_commands_exit_zero": true,
+    "artifact_id": 11878700818,
+    "bytes": 1053771,
+    "commit": "43ac85108fa9ebe6916f7fbea74e9f5df85fe529",
+    "failure": "JNI dependency boundary changed",
+    "job_id": 115744482237,
+    "overall_result": "failure",
+    "run_id": 38531585318,
+    "sha256": "6bcbef4ee2c521d0ba4736d8fda8a5723f814667475bced5f65962ff8c1de62d"
+  },
+  "primary_NDK_driver": {
+    "bytes": 104088,
+    "reviewed_rule": "Android nonstatic/non-static-pie AddRunTimeLibs pushes -ldl (2170\u20132174)",
+    "sha256": "3a11a5bf60be20136d9f80cf6e145c36a00dbe6ed568fd3469204cf3639bce19",
+    "url": "https://android.googlesource.com/toolchain/llvm-project/+/d8003a456d14a3deb8054cdaa529ffbf02d9b262/clang/lib/Driver/ToolChains/CommonArgs.cpp?format=TEXT"
+  },
+  "schema": "coh-live-ARM-retained-artifact-v1",
+  "shipping_admission": false
+}

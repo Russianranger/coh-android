@@ -62,7 +62,15 @@ libc and a pinned NDK27.2 static Bionic ARM64 build through QEMU user mode.
 identity, live batches, stale handles, exceptions and namespace cleanup.
 
 The CI lane compiles the Android ARM64 shared JNI library separately and audits
-ELF architecture, eight JNI exports and libc-only dynamic dependencies. Static
+ELF architecture and eight JNI exports. The original audit's libc-only
+assumption was wrong: the actual NDK Android driver adds `libdl.so`; all named
+undefined imports in this library are versioned to LIBC and libdl is unused.
+The original run's final audit remains failed. A separate strict retained-byte
+inspection authenticates its complete artifact, source, original passed command
+results and exact `[libdl.so, libc.so]` dependencies, nonexecutable stack and
+absent SONAME. It runs the unchanged compiler in `-###` dry-run mode and verifies
+the pinned primary NDK driver insertion rule. It does not rebuild or reexecute
+any passed C, JNI or Bionic component. Static
 Bionic execution under Linux/QEMU proves only that compiled core/ABI fixture;
 it is not Android OS, actual app UID, retained PRoot/Wine/FEX, network service,
 native SDK/Game, full corpus or Thor qualification. Exact retained-runtime WFD

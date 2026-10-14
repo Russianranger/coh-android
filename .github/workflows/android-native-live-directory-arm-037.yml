@@ -8,13 +8,16 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: native-live-directory-arm-037-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  native-core:
+  retained-component-audit:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,22 +25,26 @@ jobs:
             tools/native_live_directory
             .github/workflows/android-native-live-directory-arm-037.yml
           sparse-checkout-cone-mode: false
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-      - name: Pinned NDK and bounded ARM user-mode fixture runner
+      - name: Pinned NDK compiler for read-only retained inspection
         run: |
           task_sdk_manager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
           test -x "$task_sdk_manager"
           "$task_sdk_manager" 'ndk;27.2.12479018'
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends qemu-user
-      - name: Fresh host C and JNI controls, actual static Bionic ARM64 fixture
+      - name: Recover original successfully executed ARM components
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/Russianranger/coh-android/actions/artifacts/11878700818/zip > "$RUNNER_TEMP/coh-live-original-ARM.zip"
+      - name: Fresh read-only audit controls
+        env:
+          COH_LIVE_RETAINED_ARM_ARTIFACT: ${{ runner.temp }}/coh-live-original-ARM.zip
+        run: python3 -W error::ResourceWarning tools/native_live_directory/test_audit_retained_native_live_directory.py
+      - name: Authenticate original ELF and source plus unchanged compiler dry run
         run: >-
           python3 -W error::ResourceWarning
-          tools/native_live_directory/qualify_native_live_directory.py
-          --out out/native-live-directory-037
+          tools/native_live_directory/audit_retained_native_live_directory.py
+          --artifact "$RUNNER_TEMP/coh-live-original-ARM.zip"
+          --out out/native-live-retained-inspection-037
           --ndk "$ANDROID_HOME/ndk/27.2.12479018"
       - name: Preserve exact source and runtime evidence
         if: always()
@@ -45,7 +52,7 @@ jobs:
         with:
           name: native-live-directory-arm-037-${{ github.sha }}
           path: |
-            out/native-live-directory-037
+            out/native-live-retained-inspection-037
             tools/native_live_directory
             .github/workflows/android-native-live-directory-arm-037.yml
           if-no-files-found: error
