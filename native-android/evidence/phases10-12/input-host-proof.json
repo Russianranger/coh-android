@@ -1,0 +1,51 @@
+{
+  "schema": "coh-native-input-host-proof-v1",
+  "passed": true,
+  "source_files": [
+    {
+      "path": "upstream/ouroboros/Game/src/win/input.c",
+      "bytes": 55801,
+      "sha256": "84bf55f74cdbc95b5bb3d198fdef377fdc0a87d5ba3f540ad51d76f17b8210e6",
+      "git_blob": "e90b1389731e6e30d639665aac8428bd57b1748d"
+    },
+    {
+      "path": "upstream/ouroboros/Game/src/graphics/camera.c",
+      "bytes": 43192,
+      "sha256": "e88988263803583fd057d9425f74e7b55eb71f8ea42f5659078185cb6a8251e2",
+      "git_blob": "89d07fcd3479eeac40f958472b2078e14363d52a"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c",
+      "bytes": 37198,
+      "sha256": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "git_blob": "a4ed82b07906da4bb6cfd1ed562b353e147faf69"
+    },
+    {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+      "bytes": 47551,
+      "sha256": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "git_blob": "8cbfbdc5d68f3b35043fb176753fd7fbad953c7b"
+    }
+  ],
+  "unchanged_functions": [
+    "fixAngle",
+    "subAngle",
+    "addAngle",
+    "look",
+    "inpUpdateKeyEx"
+  ],
+  "source_camera_cases": 96,
+  "source_key_events": 2048,
+  "source_joystick_integer_cases": 8004,
+  "unchanged_statement_slices": [
+    "inpJoystickState XY and Z/Rz axis comparisons and key updates"
+  ],
+  "native_checks": 909,
+  "adapter_cases": 11,
+  "failed": 0,
+  "max_source_error": 0.0,
+  "sanitizers": "AddressSanitizer and UndefinedBehaviorSanitizer",
+  "sanitizer_options": "detect_leaks=0",
+  "scope": "Unchanged scalar/editor-look/key-level kernels under bounded inputs; platform/UI calls stubbed; not original game execution or gameplay camera/physics",
+  "compiled_runtime_goldens_sha256": "58781612b8038ce2757a536c89b1284b8a76c7fdc80fd7b31a7b8c650777bc70"
+}

@@ -1,0 +1,688 @@
+{
+  "schema": "coh-native-protocol-reference-v1",
+  "passed": true,
+  "scope": "host original producer functions plus independent zlib/OpenSSL algorithm reference; no Android or live handshake",
+  "source_functions": 24,
+  "plain_source_cases": 16,
+  "source_frame_bytes_compared": 1736,
+  "wire_cases": 32,
+  "bit_cases": 66,
+  "authenticated_negative_cases": 8,
+  "key_hex": "000102030405060708090a0b0c0d0e0f",
+  "source_profile": {
+    "debug": false,
+    "siblings": false,
+    "acks": false,
+    "compression_allowed": false,
+    "ordered_allowed": false,
+    "zero_padding_producer_policy": true
+  },
+  "original_harness": "unchanged source bodies including packet/ACK dispatch; unsupported typed/debug/length-auto helpers trap if reached; aligned zero-initialized trusted buffers, O0 without sanitizers; unsafe original writer is not shipped",
+  "header_sha256": "3f80f7f9d2f40b0a7fca64b542f4a1aa3d66304459462ca42bb07dcf5beac179",
+  "cases": [
+    {
+      "id": 0,
+      "payload_bits": 1,
+      "payload_hex": "00",
+      "encrypted": false,
+      "wire_hex": "69000000000c0001000000000000000000000000"
+    },
+    {
+      "id": 0,
+      "payload_bits": 1,
+      "payload_hex": "00",
+      "encrypted": true,
+      "wire_hex": "690000001992b07088650b2e4df295b9f07be8df"
+    },
+    {
+      "id": 1,
+      "payload_bits": 2,
+      "payload_hex": "12",
+      "encrypted": false,
+      "wire_hex": "6a00000000a20015020000000012000000000000"
+    },
+    {
+      "id": 1,
+      "payload_bits": 2,
+      "payload_hex": "12",
+      "encrypted": true,
+      "wire_hex": "6a000000f82aee329dee897ef72cb8d05c5f2758"
+    },
+    {
+      "id": 2147483647,
+      "payload_bits": 7,
+      "payload_hex": "26",
+      "encrypted": false,
+      "wire_hex": "6f0000002ae00422feffffff0026000000000000"
+    },
+    {
+      "id": 2147483647,
+      "payload_bits": 7,
+      "payload_hex": "26",
+      "encrypted": true,
+      "wire_hex": "6f00000006c3b6a93f04b57faa64aebcb7d08adb"
+    },
+    {
+      "id": 2147483648,
+      "payload_bits": 8,
+      "payload_hex": "38",
+      "encrypted": false,
+      "wire_hex": "70000000019c003a000000000138000000000000"
+    },
+    {
+      "id": 2147483648,
+      "payload_bits": 8,
+      "payload_hex": "38",
+      "encrypted": true,
+      "wire_hex": "700000002b618c231c41d01db9b98bdcffe5f400"
+    },
+    {
+      "id": 4294967295,
+      "payload_bits": 9,
+      "payload_hex": "4c95",
+      "encrypted": false,
+      "wire_hex": "710000002f7004defeffffff014c950000000000"
+    },
+    {
+      "id": 4294967295,
+      "payload_bits": 9,
+      "payload_hex": "4c95",
+      "encrypted": true,
+      "wire_hex": "71000000f1f8865564184104cb5d74e9a21865b2"
+    },
+    {
+      "id": 0,
+      "payload_bits": 31,
+      "payload_hex": "5ea9f13b",
+      "encrypted": false,
+      "wire_hex": "870000000c35023400000000005ea9f13b000000"
+    },
+    {
+      "id": 0,
+      "payload_bits": 31,
+      "payload_hex": "5ea9f13b",
+      "encrypted": true,
+      "wire_hex": "87000000b87dca88573b7b93177fc5e35a3c3c4e"
+    },
+    {
+      "id": 1,
+      "payload_bits": 32,
+      "payload_hex": "72bb054d",
+      "encrypted": false,
+      "wire_hex": "8800000008f10182020000000072bb054d000000"
+    },
+    {
+      "id": 1,
+      "payload_bits": 32,
+      "payload_hex": "72bb054d",
+      "encrypted": true,
+      "wire_hex": "880000005ab2b0f82a4ad2d746396ad8c832b8ab"
+    },
+    {
+      "id": 2147483647,
+      "payload_bits": 33,
+      "payload_hex": "84cf1761a9",
+      "encrypted": false,
+      "wire_hex": "89000000363e0670feffffff0084cf1761a90000"
+    },
+    {
+      "id": 2147483647,
+      "payload_bits": 33,
+      "payload_hex": "84cf1761a9",
+      "encrypted": true,
+      "wire_hex": "8900000023eee1f91e71577c384f1480b41cdca6"
+    },
+    {
+      "id": 2147483648,
+      "payload_bits": 63,
+      "payload_hex": "98e12b73bd054f97",
+      "encrypted": false,
+      "wire_hex": "a70000002cbd03c1000000000198e12b73bd054f9700000000000000"
+    },
+    {
+      "id": 2147483648,
+      "payload_bits": 63,
+      "payload_hex": "98e12b73bd054f97",
+      "encrypted": true,
+      "wire_hex": "a7000000e582e21ac95d7b26643e6cb83d2a7169cfe009566bf3cbd5"
+    },
+    {
+      "id": 4294967295,
+      "payload_bits": 64,
+      "payload_hex": "aaf53d87cf1961ab",
+      "encrypted": false,
+      "wire_hex": "a80000007d2f0854feffffff01aaf53d87cf1961ab00000000000000"
+    },
+    {
+      "id": 4294967295,
+      "payload_bits": 64,
+      "payload_hex": "aaf53d87cf1961ab",
+      "encrypted": true,
+      "wire_hex": "a8000000287187b474424a2b1db764564ae96f915c34649f5f6b2368"
+    },
+    {
+      "id": 0,
+      "payload_bits": 65,
+      "payload_hex": "be075199e32b75bd07",
+      "encrypted": false,
+      "wire_hex": "a90000002c8603f70000000000be075199e32b75bd07000000000000"
+    },
+    {
+      "id": 0,
+      "payload_bits": 65,
+      "payload_hex": "be075199e32b75bd07",
+      "encrypted": true,
+      "wire_hex": "a900000038020f09e8d1c790346196c60c6d2c42beb1b4c294481ea6"
+    },
+    {
+      "id": 1,
+      "payload_bits": 255,
+      "payload_hex": "d01b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9",
+      "encrypted": false,
+      "wire_hex": "670100008aac10a20200000000d01b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa900000000000000"
+    },
+    {
+      "id": 1,
+      "payload_bits": 255,
+      "payload_hex": "d01b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9",
+      "encrypted": true,
+      "wire_hex": "67010000ee19446eff1efba52bad02dfc96f3d2dcd18ce349bcba452fd8768bbc8ba2903db0ee8d3cf650a40cbfd51e2807d0761"
+    },
+    {
+      "id": 2147483647,
+      "payload_bits": 256,
+      "payload_hex": "e42d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb",
+      "encrypted": false,
+      "wire_hex": "68010000096d12fbfeffffff00e42d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb00000000000000"
+    },
+    {
+      "id": 2147483647,
+      "payload_bits": 256,
+      "payload_hex": "e42d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb",
+      "encrypted": true,
+      "wire_hex": "6801000076cb63ba84a1170c11fc9caa63f1d40849ee99fa59d8cef0c04f959aff07ed60b8886b5bc3c5c9ae64da86b6fd4be844"
+    },
+    {
+      "id": 2147483648,
+      "payload_bits": 511,
+      "payload_hex": "f64189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef",
+      "encrypted": false,
+      "wire_hex": "670200003d5821c10000000001f64189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef00000000000000"
+    },
+    {
+      "id": 2147483648,
+      "payload_bits": 511,
+      "payload_hex": "f64189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef",
+      "encrypted": true,
+      "wire_hex": "670200008e909ddc8cfbfd22715d74ba83838432c53ab7b8044acde5c962932f0c8c943bd2137beb47e43c65c26a98b07f5eb87cb22671406f2c8d2d59376ebbde43d92a79075c5624d0668e923ee6ca75fa96e9"
+    },
+    {
+      "id": 4294967295,
+      "payload_bits": 512,
+      "payload_hex": "0a539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb901",
+      "encrypted": false,
+      "wire_hex": "6802000096a2207cfeffffff010a539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb90100000000000000"
+    },
+    {
+      "id": 4294967295,
+      "payload_bits": 512,
+      "payload_hex": "0a539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb901",
+      "encrypted": true,
+      "wire_hex": "68020000636f48752dda501296ce092879033328c415c199384ee74bf8bca2f3921a39aa7b8b0a7f92d7261f3746124a06078af1525baa81c59eaf493e118bdf3d889782e9016b2e9d3136efe19f13ae70140ec6"
+    },
+    {
+      "id": 0,
+      "payload_bits": 9600,
+      "payload_hex": "1c67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb05",
+      "encrypted": false,
+      "wire_hex": "e825000052f556ce00000000001c67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb0500000000000000"
+    },
+    {
+      "id": 0,
+      "payload_bits": 9600,
+      "payload_hex": "1c67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb054d97df2971bb034d95df2771b9034b95dd276fb9014b93dd256fb7014993db256db7ff4991db236db5ff4791d9236bb5fd478fd9216bb3fd458fd72169b3fb458dd71f69b1fb438dd51f67b1f9438bd51d67aff9418bd31d65aff74189d31b65adf73f89d11b63adf53f87d11963abf53d87cf1961abf33d85cf1761a9f33b85cd175fa9f13b83cd155fa7f13983cb155da7ef3981cb135da5ef3781c9135ba5ed377fc9115ba3ed357fc71159a3eb357dc70f59a1eb337dc50f57a1e9337bc50d579fe9317bc30d559fe73179c30b559de72f79c10b539de52f77c109539be52d77bf09519be32d75bf075199e32b75bd074f99e12b73bd054f97e12973bb05",
+      "encrypted": true,
+      "wire_hex": "e82500004eb4bacdebd6fb88fcc11fc5d3d21bff1ca8377c7b71e235cd7c11bc3796c7c8e82d869a6d7bfeafebb9eef9628f41107b922051d5c751634f02d9101a0878f5bd03be80a103d7e846a9ef149c53b6580c0cf30c89662c96dfad8dfefdab8adc9459d0c2e564f49bc812c22a90eb8032dd0c451d65e2c06434b4b616606c381590fddbf3c0da8482fd053dd61cec97ebba9d5778fc369c84af555b6e63e55ddc96b6079b09d2c07c9ce1641d5ede0f9d5a3a58b4ff9622daacee80e77e5a7cffca79fc564e2ba5daac1df9a2e952816b64525217b0ba085e64d5c957a2a2788d81ce940fec1a5e1ea8cf52037d98d51538720cb68034d0d0554401b881741acdd418b7ef6eb60145654db6f2fca3d9881ca8377c7b71e235cd7c11bc3796c7c8e82d869a6d7bfeafebb9eef9628f41107b922051d5c751634f02d9101a0878f5bd03be80a103d7e846a9ef149c53b6580c0cf30c89662c96dfad8dfefdab8adc9459d0c2e564f49bc812c22a90eb8032dd0c451d65e2c06434b4b616606c381590fddbf3c0da8482fd053dd61cec97ebba9d5778fc369c84af555b6e63e55ddc96b6079b09d2c07c9ce1641d5ede0f9d5a3a58b4ff9622daacee80e77e5a7cffca79fc564e2ba5daac1df9a2e952816b64525217b0ba085e64d5c957a2a2788d81ce940fec1a5e1ea8cf52037d98d51538720cb68034d0d0554401b881741acdd418b7ef6eb60145654db6f2fca3d9881ca8377c7b71e235cd7c11bc3796c7c8e82d869a6d7bfeafebb9eef9628f41107b922051d5c751634f02d9101a0878f5bd03be80a103d7e846a9ef149c53b6580c0cf30c89662c96dfad8dfefdab8adc9459d0c2e564f49bc812c22a90eb8032dd0c451d65e2c06434b4b616606c381590fddbf3c0da8482fd053dd61cec97ebba9d5778fc369c84af555b6e63e55ddc96b6079b09d2c07c9ce1641d5ede0f9d5a3a58b4ff9622daacee80e77e5a7cffca79fc564e2ba5daac1df9a2e952816b64525217b0ba085e64d5c957a2a2788d81ce940fec1a5e1ea8cf52037d98d51538720cb68034d0d0554401b881741acdd418b7ef6eb60145654db6f2fca3d9881ca8377c7b71e235cd7c11bc3796c7c8e82d869a6d7bfeafebb9eef9628f41107b922051d5c751634f02d9101a0878f5bd03be80a103d7e846a9ef149c53b6580c0cf30c89662c96dfad8dfefdab8adc9459d0c2e564f49bc812c22a90eb8032dd0c451d65e2c06434b4b616606c381590fddbf3c0da8482fd053dd61cec97ebba9d5778fc369c84af555b6e63e55ddc96b6079b09d2c07c9ce1641d5ede0f9d5a3a58b4ff9622daacee80e77e5a7cffca79fc564e2ba5daac1df9a2e952816b64525217b0ba085e64d5c957a2a2788d81ce940fec1a5e1ea8cf52037d98d51538720cb68034d0d0554401b881741acdd418b7ef6eb60145654db6f2fca3d9881ca8377c7b71e235cd7c11bc3796c7c8e82d869a6d7bfeafebb9eef9628f41107b922051d5c751634f02d9101a0878f5bd03be80a103d7e846a9ef149c53b6580c0cf30c89662c96dfad8dfefdab8adc9459d0c2e564f49bc812c22a90eb8032dd0c451d65e2c06434b4b616606c381590fddbf3c0da8482fd053dd61cec97ebba9d5778fc369c84af555b6e63e55ddc96b6079b09d2c07c9ce1641d5ede0f9d5a3a58b4ff9622daa94d53d038e3cf95"
+    }
+  ],
+  "bits": [
+    {
+      "width": 1,
+      "value": 0,
+      "bit_count": 1,
+      "hex": "00"
+    },
+    {
+      "width": 1,
+      "value": 1,
+      "bit_count": 3,
+      "hex": "01"
+    },
+    {
+      "width": 1,
+      "value": 2,
+      "bit_count": 3,
+      "hex": "03"
+    },
+    {
+      "width": 1,
+      "value": 2147483647,
+      "bit_count": 63,
+      "hex": "ffffff7f777fff3f"
+    },
+    {
+      "width": 1,
+      "value": 2147483648,
+      "bit_count": 63,
+      "hex": "ffffffff777fff3f"
+    },
+    {
+      "width": 1,
+      "value": 4294967295,
+      "bit_count": 63,
+      "hex": "ffffff7f777fff7f"
+    },
+    {
+      "width": 2,
+      "value": 0,
+      "bit_count": 2,
+      "hex": "00"
+    },
+    {
+      "width": 2,
+      "value": 1,
+      "bit_count": 2,
+      "hex": "01"
+    },
+    {
+      "width": 2,
+      "value": 2,
+      "bit_count": 2,
+      "hex": "02"
+    },
+    {
+      "width": 2,
+      "value": 3,
+      "bit_count": 6,
+      "hex": "03"
+    },
+    {
+      "width": 2,
+      "value": 4,
+      "bit_count": 6,
+      "hex": "07"
+    },
+    {
+      "width": 2,
+      "value": 2147483647,
+      "bit_count": 62,
+      "hex": "ffffffffbbbfff1f"
+    },
+    {
+      "width": 2,
+      "value": 2147483648,
+      "bit_count": 62,
+      "hex": "ffffff3fbcbfff1f"
+    },
+    {
+      "width": 2,
+      "value": 4294967295,
+      "bit_count": 62,
+      "hex": "ffffffffbbbfff3f"
+    },
+    {
+      "width": 3,
+      "value": 0,
+      "bit_count": 3,
+      "hex": "00"
+    },
+    {
+      "width": 3,
+      "value": 1,
+      "bit_count": 3,
+      "hex": "01"
+    },
+    {
+      "width": 3,
+      "value": 6,
+      "bit_count": 3,
+      "hex": "06"
+    },
+    {
+      "width": 3,
+      "value": 7,
+      "bit_count": 9,
+      "hex": "0700"
+    },
+    {
+      "width": 3,
+      "value": 8,
+      "bit_count": 9,
+      "hex": "0f00"
+    },
+    {
+      "width": 3,
+      "value": 2147483647,
+      "bit_count": 77,
+      "hex": "ffffffffff7ff7fddf0f"
+    },
+    {
+      "width": 3,
+      "value": 2147483648,
+      "bit_count": 77,
+      "hex": "ffffffffff9ff7fddf0f"
+    },
+    {
+      "width": 3,
+      "value": 4294967295,
+      "bit_count": 77,
+      "hex": "ffffffffff7ff7fddf1f"
+    },
+    {
+      "width": 4,
+      "value": 0,
+      "bit_count": 4,
+      "hex": "00"
+    },
+    {
+      "width": 4,
+      "value": 1,
+      "bit_count": 4,
+      "hex": "01"
+    },
+    {
+      "width": 4,
+      "value": 14,
+      "bit_count": 4,
+      "hex": "0e"
+    },
+    {
+      "width": 4,
+      "value": 15,
+      "bit_count": 12,
+      "hex": "0f00"
+    },
+    {
+      "width": 4,
+      "value": 16,
+      "bit_count": 12,
+      "hex": "1f00"
+    },
+    {
+      "width": 4,
+      "value": 2147483647,
+      "bit_count": 60,
+      "hex": "ffffff2fefefff07"
+    },
+    {
+      "width": 4,
+      "value": 2147483648,
+      "bit_count": 60,
+      "hex": "ffffff3fefefff07"
+    },
+    {
+      "width": 4,
+      "value": 4294967295,
+      "bit_count": 60,
+      "hex": "ffffff2fefefff0f"
+    },
+    {
+      "width": 5,
+      "value": 0,
+      "bit_count": 5,
+      "hex": "00"
+    },
+    {
+      "width": 5,
+      "value": 1,
+      "bit_count": 5,
+      "hex": "01"
+    },
+    {
+      "width": 5,
+      "value": 30,
+      "bit_count": 5,
+      "hex": "1e"
+    },
+    {
+      "width": 5,
+      "value": 31,
+      "bit_count": 15,
+      "hex": "1f00"
+    },
+    {
+      "width": 5,
+      "value": 32,
+      "bit_count": 15,
+      "hex": "3f00"
+    },
+    {
+      "width": 5,
+      "value": 2147483647,
+      "bit_count": 67,
+      "hex": "ffffffff17df7fff03"
+    },
+    {
+      "width": 5,
+      "value": 2147483648,
+      "bit_count": 67,
+      "hex": "ffffffff1fdf7fff03"
+    },
+    {
+      "width": 5,
+      "value": 4294967295,
+      "bit_count": 67,
+      "hex": "ffffffff17df7fff07"
+    },
+    {
+      "width": 8,
+      "value": 0,
+      "bit_count": 8,
+      "hex": "00"
+    },
+    {
+      "width": 8,
+      "value": 1,
+      "bit_count": 8,
+      "hex": "01"
+    },
+    {
+      "width": 8,
+      "value": 254,
+      "bit_count": 8,
+      "hex": "fe"
+    },
+    {
+      "width": 8,
+      "value": 255,
+      "bit_count": 24,
+      "hex": "ff0000"
+    },
+    {
+      "width": 8,
+      "value": 256,
+      "bit_count": 24,
+      "hex": "ff0100"
+    },
+    {
+      "width": 8,
+      "value": 2147483647,
+      "bit_count": 56,
+      "hex": "ffffff01fffe7f"
+    },
+    {
+      "width": 8,
+      "value": 2147483648,
+      "bit_count": 56,
+      "hex": "ffffff02fffe7f"
+    },
+    {
+      "width": 8,
+      "value": 4294967295,
+      "bit_count": 56,
+      "hex": "ffffff01fffeff"
+    },
+    {
+      "width": 16,
+      "value": 0,
+      "bit_count": 16,
+      "hex": "0000"
+    },
+    {
+      "width": 16,
+      "value": 1,
+      "bit_count": 16,
+      "hex": "0100"
+    },
+    {
+      "width": 16,
+      "value": 65534,
+      "bit_count": 16,
+      "hex": "feff"
+    },
+    {
+      "width": 16,
+      "value": 65535,
+      "bit_count": 48,
+      "hex": "ffff00000000"
+    },
+    {
+      "width": 16,
+      "value": 65536,
+      "bit_count": 48,
+      "hex": "ffff01000000"
+    },
+    {
+      "width": 16,
+      "value": 2147483647,
+      "bit_count": 48,
+      "hex": "ffff0000ff7f"
+    },
+    {
+      "width": 16,
+      "value": 2147483648,
+      "bit_count": 48,
+      "hex": "ffff0100ff7f"
+    },
+    {
+      "width": 16,
+      "value": 4294967295,
+      "bit_count": 48,
+      "hex": "ffff0000ffff"
+    },
+    {
+      "width": 31,
+      "value": 0,
+      "bit_count": 31,
+      "hex": "00000000"
+    },
+    {
+      "width": 31,
+      "value": 1,
+      "bit_count": 31,
+      "hex": "01000000"
+    },
+    {
+      "width": 31,
+      "value": 2147483646,
+      "bit_count": 31,
+      "hex": "feffff7f"
+    },
+    {
+      "width": 31,
+      "value": 2147483647,
+      "bit_count": 63,
+      "hex": "ffffff7f00000000"
+    },
+    {
+      "width": 31,
+      "value": 2147483648,
+      "bit_count": 63,
+      "hex": "ffffffff00000000"
+    },
+    {
+      "width": 31,
+      "value": 4294967295,
+      "bit_count": 63,
+      "hex": "ffffff7f00000040"
+    },
+    {
+      "width": 32,
+      "value": 0,
+      "bit_count": 32,
+      "hex": "00000000"
+    },
+    {
+      "width": 32,
+      "value": 1,
+      "bit_count": 32,
+      "hex": "01000000"
+    },
+    {
+      "width": 32,
+      "value": 2147483647,
+      "bit_count": 32,
+      "hex": "ffffff7f"
+    },
+    {
+      "width": 32,
+      "value": 2147483648,
+      "bit_count": 32,
+      "hex": "00000080"
+    },
+    {
+      "width": 32,
+      "value": 4294967294,
+      "bit_count": 32,
+      "hex": "feffffff"
+    },
+    {
+      "width": 32,
+      "value": 4294967295,
+      "bit_count": 32,
+      "hex": "ffffffff"
+    }
+  ],
+  "negatives": [
+    {
+      "name": "debug",
+      "encrypted": false,
+      "wire_hex": "6900000000180002010000000000000000000000"
+    },
+    {
+      "name": "debug",
+      "encrypted": true,
+      "wire_hex": "69000000f88b46b6c3e5b2754df295b9f07be8df"
+    },
+    {
+      "name": "siblings",
+      "encrypted": false,
+      "wire_hex": "8900000009540157000000008268462402000000"
+    },
+    {
+      "name": "siblings",
+      "encrypted": true,
+      "wire_hex": "8900000045625b028ebe2f86f2dd7cf97aed520a"
+    },
+    {
+      "name": "acks",
+      "encrypted": false,
+      "wire_hex": "890000000cd001e100000000a48a684604000000"
+    },
+    {
+      "name": "acks",
+      "encrypted": true,
+      "wire_hex": "890000003b8eb9e336f84df81cecc13806bc3d2f"
+    },
+    {
+      "name": "packed_ack_overflow",
+      "encrypted": false,
+      "wire_hex": "a9000000638807f700000000fcffffffffffffff0100000000000000"
+    },
+    {
+      "name": "packed_ack_overflow",
+      "encrypted": true,
+      "wire_hex": "a9000000667c36bede37c0c44a566a28d01463c2e19f13ae70140ec6"
+    }
+  ]
+}

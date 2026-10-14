@@ -1,0 +1,115 @@
+{
+  "schema": "coh-native-systems-app-host-v1",
+  "passed": true,
+  "scope": "Real JVM JNI bridge calls with portable input/audio-source/protocol kernels; Android AAudio backend replaced by never-called link stubs. No Android callback, stream or speaker qualification.",
+  "java8_parse_passed": true,
+  "manifest_xml_passed": true,
+  "typed_jni_werror_compile_passed": true,
+  "native_proof": {
+    "passed": true,
+    "input": {
+      "passed": true,
+      "result": 1,
+      "checks": 909,
+      "failed": 0,
+      "source_cases": 96,
+      "adapter_cases": 11,
+      "max_source_error": 0
+    },
+    "audio_source": {
+      "passed": true,
+      "result": 0,
+      "sample_rate": 44100,
+      "channels": 2,
+      "frames": 18168,
+      "pcm_bytes": 72672,
+      "checks": 33,
+      "failed": 0,
+      "source_cases": 15,
+      "max_source_error": 0
+    },
+    "protocol": {
+      "passed": true,
+      "result": 0,
+      "checks": 23467,
+      "wire_cases": 32,
+      "bit_cases": 330,
+      "malformed_cases": 8989,
+      "unaligned_cases": 256
+    }
+  },
+  "held_key_then_focus_clear_passed": true,
+  "portable_jni_frames": [
+    {
+      "result": 1,
+      "held": 256,
+      "pressed": 256,
+      "released": 0,
+      "frames": 1,
+      "clear_count": 0,
+      "rejected": 0,
+      "clipped": 0,
+      "delta_x": 0,
+      "delta_y": 0,
+      "pyr": [
+        0,
+        0,
+        0
+      ],
+      "target_pyr": [
+        0,
+        0,
+        0
+      ],
+      "axes": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "result": 1,
+      "held": 0,
+      "pressed": 0,
+      "released": 0,
+      "frames": 2,
+      "clear_count": 1,
+      "rejected": 0,
+      "clipped": 0,
+      "delta_x": 0,
+      "delta_y": 0,
+      "pyr": [
+        0,
+        0,
+        0
+      ],
+      "target_pyr": [
+        0,
+        0,
+        0
+      ],
+      "axes": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "owned_file_sha256": {
+    "native-android/systems-probe/.gitignore": "bc42e5a843ab730e37d610bfc5fb95f8089cd3ca7e57b124d94073649bc09eb9",
+    "native-android/systems-probe/README.md": "f66957671a586674867b1ca3c5fadfa7696b89e7f3a19ec44e9212d9e2e064e1",
+    "native-android/systems-probe/settings.gradle": "fd498dfc3c204292215af113d51126299f96b5d75732abfcdaa650cf1e76a259",
+    "native-android/systems-probe/build.gradle": "8ebf0602839be8fd4c06f07a93e45da6b4a04444fa1b38df8b9def9c1b5c8032",
+    "native-android/systems-probe/gradle.properties": "cc38bc495ca4e4d7fa2fe7c9c1112f36af7a63fbf4fc3e7a088e215942403385",
+    "native-android/systems-probe/app/build.gradle": "c7db6b63d9e1b6ac5c902132cbbc058a5023e6ed3672d9d30131d69f43834805",
+    "native-android/systems-probe/app/src/main/AndroidManifest.xml": "826c162436182fa68026f07a1f975aadf23e44c2051a9ef7c0608beee797d0f6",
+    "native-android/systems-probe/app/src/main/java/org/coh/systemsprobe/MainActivity.java": "b043f9babc5f3b34c7c1dd390344160eeac87a1c5ecf2e98bb4f3a208dab8d2f",
+    "native-android/systems-probe/app/src/main/cpp/CMakeLists.txt": "fc37d495a917a1c9229ca140124eac9ca773a26ae02309c5470b6c72dbf67844",
+    "native-android/systems-probe/app/src/main/cpp/systems_bridge.c": "8d5f321fdb85579604a629d2de77ff13fecf261f48ea10afa1e879539c58b065",
+    "native-android/systems-probe/tools/ui_host_check.py": "ef2a9615db5968ba7a9146631799c3b1158682cb7ba330acf3284a278b65ba79",
+    "native-android/systems-probe/gradle.py": "015761665bfb63ab88106ca3b6c421044c180d711d47af74a586f7065f15daef"
+  },
+  "gradle_bootstrap_same_as_accepted_world_probe": true
+}

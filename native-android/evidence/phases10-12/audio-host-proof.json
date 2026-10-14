@@ -1,0 +1,132 @@
+{
+  "schema": "coh-native-audio-host-proof-v1",
+  "passed": true,
+  "audio_sha256": "440361125d7420a1730ecd742271d8b2a67808dffcfa9dc435f2357d59931823",
+  "checks": 38,
+  "malformed_spans_rejected": 83,
+  "pcm_scale_components": 145344,
+  "source_gain_oracle": {
+    "schema": "coh-native-audio-source-gain-v1",
+    "passed": true,
+    "source_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+    "source_functions": 2,
+    "source_comparisons": 40,
+    "maximum_source_error": 0.0,
+    "cases": [
+      {
+        "input": -1.0,
+        "db": -10000,
+        "effective_gain": 9.999999747378752e-06
+      },
+      {
+        "input": 0.0,
+        "db": -10000,
+        "effective_gain": 9.999999747378752e-06
+      },
+      {
+        "input": 9.999999974752427e-07,
+        "db": -10000,
+        "effective_gain": 9.999999747378752e-06
+      },
+      {
+        "input": 9.999999747378752e-06,
+        "db": -10000,
+        "effective_gain": 9.999999747378752e-06
+      },
+      {
+        "input": 9.999999747378752e-05,
+        "db": -8000,
+        "effective_gain": 9.999999747378752e-05
+      },
+      {
+        "input": 0.0010000000474974513,
+        "db": -5999,
+        "effective_gain": 0.001001151860691607
+      },
+      {
+        "input": 0.009999999776482582,
+        "db": -4000,
+        "effective_gain": 0.009999999776482582
+      },
+      {
+        "input": 0.10000000149011612,
+        "db": -1999,
+        "effective_gain": 0.10011520236730576
+      },
+      {
+        "input": 0.25,
+        "db": -1204,
+        "effective_gain": 0.25003454089164734
+      },
+      {
+        "input": 0.30000001192092896,
+        "db": -1045,
+        "effective_gain": 0.3002617657184601
+      },
+      {
+        "input": 0.5,
+        "db": -602,
+        "effective_gain": 0.500034511089325
+      },
+      {
+        "input": 0.6000000238418579,
+        "db": -443,
+        "effective_gain": 0.6004819869995117
+      },
+      {
+        "input": 0.800000011920929,
+        "db": -193,
+        "effective_gain": 0.8007556200027466
+      },
+      {
+        "input": 1.0,
+        "db": 0,
+        "effective_gain": 1.0
+      },
+      {
+        "input": 2.0,
+        "db": 0,
+        "effective_gain": 1.0
+      }
+    ],
+    "sources": {
+      "upstream/ouroboros/Game/src/sound/ogg_decode.c": {
+        "bytes": 13851,
+        "sha256": "6a37c461d45b46b89c2feefe7edb43ae693d8465f58bf49e4b696a27cc32b5de",
+        "git_blob": "544b108d2bfcf1830b3bfd7bc75097af66ceb070"
+      },
+      "upstream/ouroboros/Game/src/sound/sound_sys.c": {
+        "bytes": 36687,
+        "sha256": "0a48bbdc5006c2e2876253412bd263b9f2640de3745c27a2616dab0c5f173f09",
+        "git_blob": "6e26ac5e27e1fbac578914c05dbb72f2004ffe72"
+      },
+      "upstream/ouroboros/Game/src/sound/sound.h": {
+        "bytes": 4927,
+        "sha256": "ca8af36e2e861680aca874fcee012b4c78a12c56bcbfb9c625a92d28446acf03",
+        "git_blob": "ca7b264db37b48f89b848c0589ed0cb8107d36ad"
+      }
+    },
+    "function_sha256": {
+      "volumeDbToRatio": "fdd4eeb9d50abe2d257938cbcbdbcb28b2a166c0974fad0c02e5b9b556972c27",
+      "volumeRatioToDb": "8f776ba5050717559a104a9a4e36030038293733d5b69e5b8c12fb4c41ae3913"
+    },
+    "callback_sha256": {
+      "readbytes": "6f64b61062b31b6095bfe6014c5b3e2d0044ddc2fe2559f5eb16a552662500dd",
+      "seekbytes": "ab6378e84927ae2b6875d7a6ca5fc2285ed005498224a0a81b4a4d8da908bce7",
+      "closebytes": "9cb5c2cdaf66b6d572b08393173eaa5cfb9b502c8427361eb30bd1c86e6c18cc",
+      "tellbytes": "c982b15a35393c63fd7a88f2513294f1ec6ca48c01faa9be8050d41714f2160e"
+    },
+    "adapters": [
+      "Standalone F32 and MINMAX types/macros with pinned source dB constants",
+      "Full Win32 DirectSound and undocumented sample rounding do not execute"
+    ],
+    "android_libm_float_gain_tolerance": 1e-06
+  },
+  "asan_ubsan": {
+    "passed": true,
+    "guard_checks": 66,
+    "leak_sanitizer_enabled": false,
+    "scope": "Portable fixture parser and PCM scaling only"
+  },
+  "native_android_backend_executed": false
+}

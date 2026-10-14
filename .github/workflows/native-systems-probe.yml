@@ -1,0 +1,168 @@
+name: Native Android input, audio, and offline protocol probe
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/systems-probe/**
+      - native-android/input/**
+      - native-android/audio/**
+      - native-android/protocol/**
+      - native-android/tools/input_fixture/**
+      - native-android/tools/audio_fixture/**
+      - native-android/tools/protocol_fixture/**
+      - native-android/include/coh_native_core.h
+      - native-android/src/coh_blowfish.c
+      - .github/workflows/native-systems-probe.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-systems-probe-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  package-and-emulator:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Preserve evidence from the first qualification stage
+        run: |
+          mkdir -p native-android/results/systems-probe
+          python3 - <<'PYSTAGE'
+          import json, os, pathlib
+          receipt = {'schema': 1, 'phases': [10, 11, 12], 'stage': 'source fixture and original kernel qualification',
+                     'status': 'started', 'passed': False, 'source_commit': os.environ['GITHUB_SHA'],
+                     'workflow_run_id': os.environ['GITHUB_RUN_ID']}
+          pathlib.Path('native-android/results/systems-probe/source-validation-stage.json').write_text(json.dumps(receipt, indent=2)+'\n')
+          PYSTAGE
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install pinned Android build components and source audio headers
+        run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libvorbis-dev
+      - name: Recover authentic audio and qualify original source kernels
+        run: |
+          python3 native-android/tools/audio_fixture/acquire.py --output native-android/results/systems-corpus
+          python3 native-android/tools/audio_fixture/prepare.py --corpus native-android/results/systems-corpus --output native-android/systems-probe/app/src/main/assets
+          python3 native-android/tools/audio_fixture/proof.py --fixture native-android/systems-probe/app/src/main/assets/audio.bin --report native-android/results/systems-probe/audio-host-proof.json
+          python3 native-android/tools/input_fixture/check.py --output native-android/results/systems-probe/input-host-proof.json --sanitize
+          python3 - <<'PYSOURCE'
+          import hashlib, json, pathlib, urllib.request
+          pins = json.loads(pathlib.Path('native-android/tools/protocol_fixture/source-pins.json').read_text())
+          destination = pathlib.Path('native-android/results/protocol-source')
+          destination.mkdir(parents=True, exist_ok=True)
+          for filename, identity in pins['sources'].items():
+              path = identity['path']
+              if path.startswith('external:'):
+                  assert filename == 'adler32.cpp'
+                  assert path == 'external:weidai11/cryptopp/adler32.cpp@' + pins['crypto_revision']
+                  url = 'https://raw.githubusercontent.com/weidai11/cryptopp/' + pins['crypto_revision'] + '/adler32.cpp'
+                  with urllib.request.urlopen(url, timeout=30) as response:
+                      data = response.read((1 << 20) + 1)
+                  assert 0 < len(data) <= 1 << 20
+              else:
+                  source = pathlib.Path(path)
+                  assert source.is_relative_to('upstream')
+                  data = source.read_bytes()
+              data = data.replace(b'\r\n', b'\n')
+              assert hashlib.sha256(data).hexdigest() == identity['sha256_lf'], filename
+              (destination/filename).write_bytes(data)
+          PYSOURCE
+          python3 native-android/tools/protocol_fixture/prepare.py --source-dir native-android/results/protocol-source --check --output native-android/results/systems-probe/protocol-original-proof.json
+          python3 native-android/tools/protocol_fixture/check.py --output native-android/results/systems-probe/protocol-host-proof.json
+          python3 native-android/systems-probe/tools/ui_host_check.py --output native-android/results/systems-probe/ui
+          python3 - <<'PYPASSED'
+          import hashlib, json, pathlib
+          root = pathlib.Path('native-android/results/systems-probe')
+          receipt = json.loads((root/'source-validation-stage.json').read_text())
+          proofs = []
+          for filename in ['input-host-proof.json', 'audio-host-proof.json', 'protocol-original-proof.json', 'protocol-host-proof.json', 'ui/ui-host-checks.json']:
+              data = (root/filename).read_bytes()
+              assert json.loads(data)['passed'] is True, filename
+              proofs.append({'file': filename, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
+          receipt.update({'status': 'completed', 'passed': True, 'proofs': proofs})
+          (root/'source-validation-stage.json').write_text(json.dumps(receipt, indent=2)+'\n')
+          PYPASSED
+      - name: Assemble isolated ARM64 test APK
+        run: |
+          python3 native-android/systems-probe/gradle.py :app:assembleDebug :app:lintDebug
+          cp native-android/systems-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/systems-probe/CoH-Native-Systems-Probe-0.1.0-arm64.apk
+      - name: Assemble separate emulator test APK
+        run: |
+          python3 native-android/systems-probe/gradle.py -PprobeAbis=x86_64 :app:assembleDebug
+          cp native-android/systems-probe/app/build/outputs/apk/debug/app-debug.apk native-android/results/systems-probe/CoH-Native-Systems-Probe-0.1.0-emulator-x86_64.apk
+      - name: Verify exact package ABI, fixtures, manifest, signature, and build inputs
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, re, struct, subprocess, zipfile
+          root = pathlib.Path('native-android/results/systems-probe')
+          assets = pathlib.Path('native-android/systems-probe/app/src/main/assets')
+          expected_assets = {'audio.bin', 'audio-fixture.json'}
+          assert {p.name for p in assets.iterdir() if p.is_file()} == expected_assets
+          metadata = json.loads((assets/'audio-fixture.json').read_text())
+          assert 0 < (assets/'audio-fixture.json').stat().st_size <= 256 * 1024
+          assert 0 < (assets/'audio.bin').stat().st_size <= 1 << 20
+          artifacts = []
+          for label, abi, machine in [('arm64', 'arm64-v8a', 183), ('emulator-x86_64', 'x86_64', 62)]:
+              path = root / ('CoH-Native-Systems-Probe-0.1.0-' + label + '.apk')
+              with zipfile.ZipFile(path) as apk:
+                  native = [name for name in apk.namelist() if name.startswith('lib/') and name.endswith('.so')]
+                  assert native == ['lib/' + abi + '/libcoh_systems_probe.so'], native
+                  elf = apk.read(native[0])
+                  assert elf[:6] == b'\x7fELF\x02\x01' and struct.unpack_from('<H', elf, 18)[0] == machine
+                  packaged = {name.removeprefix('assets/') for name in apk.namelist() if name.startswith('assets/') and not name.endswith('/')}
+                  assert packaged == expected_assets, packaged
+                  for name in packaged:
+                      assert apk.read('assets/'+name) == (assets/name).read_bytes(), name
+              signer = pathlib.Path(os.environ['ANDROID_HOME'])/'build-tools/35.0.0/apksigner'
+              signature = subprocess.check_output([str(signer), 'verify', '--verbose', '--print-certs', str(path)], text=True)
+              badging = subprocess.check_output([str(signer.with_name('aapt')), 'dump', 'badging', str(path)], text=True)
+              package = re.search(r"^package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", badging, re.M)
+              assert package and package.groups() == ('org.coh.systemsprobe', '1', '0.1.0-phases10-12'), badging
+              assert "sdkVersion:'26'" in badging and "targetSdkVersion:'35'" in badging, badging
+              assert "native-code: '" + abi + "'" in badging, badging
+              assert "launchable-activity: name='org.coh.systemsprobe.MainActivity'" in badging, badging
+              assert not re.search(r'^uses-permission:', badging, re.M), badging
+              cert = re.search(r'^Signer #1 certificate SHA-256 digest: ([0-9a-f]+)$', signature, re.M)
+              assert cert and len(cert.group(1)) == 64, signature
+              (root/('apk-signature-'+label+'.txt')).write_text(signature)
+              (root/('apk-badging-'+label+'.txt')).write_text(badging)
+              artifacts.append({'file': path.name, 'bytes': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'abi': abi, 'elf_machine': machine, 'native_library': {'file': native[0], 'bytes': len(elf), 'sha256': hashlib.sha256(elf).hexdigest()}, 'packaged_fixture_bytes_verified': True, 'manifest_verified': True, 'signature_verified': True, 'signer_certificate_sha256': cert.group(1)})
+          assert len({item['signer_certificate_sha256'] for item in artifacts}) == 1
+          fixture_files = [{'file': p.name, 'bytes': p.stat().st_size, 'sha256': hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(assets.iterdir()) if p.is_file()]
+          receipt = {'schema': 1, 'phases': [10, 11, 12], 'source_commit': os.environ['GITHUB_SHA'], 'workflow_run_id': os.environ['GITHUB_RUN_ID'], 'application_id': 'org.coh.systemsprobe', 'min_sdk': 26, 'target_sdk': 35, 'compile_sdk': 35, 'gradle': '8.9', 'gradle_distribution_sha256': 'd725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab', 'android_gradle_plugin': '8.7.3', 'ndk': '28.2.13676358', 'cmake': '3.22.1', 'signing': 'isolated CI debug key; not the production launcher key', 'probe_version': '0.1.0-phases10-12', 'version_code': 1, 'original_game_execution': False, 'physical_controller_verified': False, 'physical_audibility_verified': False, 'external_network_execution': False, 'server_interoperability_verified': False, 'artifacts': artifacts, 'fixture_assets': fixture_files, 'thor_device_execution_verified': False}
+          (root/'build-receipt.json').write_text(json.dumps(receipt, indent=2)+'\n')
+          (root/'SHA256SUMS').write_text(''.join(item['sha256']+'  '+item['file']+'\n' for item in artifacts))
+          for path in assets.glob('*.json'):
+              (root/path.name).write_bytes(path.read_bytes())
+          PY
+      - name: Enable hosted emulator acceleration
+        run: |
+          test -c /dev/kvm
+          sudo chmod 666 /dev/kvm
+      - name: Android 13 actual input, AAudio, offline wire proofs, and lifecycle qualification
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/systems-probe/tools/emulator_check.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-android-systems-probe-evidence
+          path: native-android/results/systems-probe/
+          if-no-files-found: error
+          retention-days: 30

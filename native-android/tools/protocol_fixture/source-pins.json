@@ -1,0 +1,146 @@
+{
+  "repository": "Russianranger/coh-android",
+  "source_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "crypto_repository": "weidai11/cryptopp",
+  "crypto_revision": "b5242667a24e3db8e4600e77b2e502ef204e5280",
+  "sources": {
+    "BitStream.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c",
+      "sha256_lf": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+    },
+    "BitStream.h": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/BitStream.h",
+      "sha256_lf": "31802c763370b7bf74908c99f7f17cae021375d4c2dc6a8445359cdaa7d74b06"
+    },
+    "netio_core.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_core.c",
+      "sha256_lf": "7201b5529f19bf56650137e1fb7c699d7e3f905de1d03c146092d03cde219c29"
+    },
+    "netio_send.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c",
+      "sha256_lf": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9"
+    },
+    "net_packet.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c",
+      "sha256_lf": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039"
+    },
+    "net_packet.h": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_packet.h",
+      "sha256_lf": "80a772528a6b273b4b9c4bc8985b0988edb49a8a2591cf63094610fdf23aa36f"
+    },
+    "net_structdefs.h": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h",
+      "sha256_lf": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9"
+    },
+    "crypt.cpp": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp",
+      "sha256_lf": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60"
+    },
+    "CryptoPP.cmake": {
+      "path": "upstream/ouroboros/cmake/dependencies/CryptoPP.cmake",
+      "sha256_lf": "4477f15cb07e42366770f9990afd7cf94f2fd1ef7b08337a9ae0426033dadc67"
+    },
+    "adler32.cpp": {
+      "path": "external:weidai11/cryptopp/adler32.cpp@b5242667a24e3db8e4600e77b2e502ef204e5280",
+      "sha256_lf": "efb2132b86e42019748aa5a49c4fd8a3076a9ecee538be3c8f1b77651e2a9ad0"
+    }
+  },
+  "functions": {
+    "initBitStream": {
+      "file": "BitStream.c",
+      "sha256_lf": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3"
+    },
+    "bsSetByteAlignment": {
+      "file": "BitStream.c",
+      "sha256_lf": "c5f01d08b819d093574461b0b256c93f8c1e686e939a91e64566630acfbba965"
+    },
+    "bsWriteBits": {
+      "file": "BitStream.c",
+      "sha256_lf": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0"
+    },
+    "bsReadBits": {
+      "file": "BitStream.c",
+      "sha256_lf": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea"
+    },
+    "bsWriteBitsArray": {
+      "file": "BitStream.c",
+      "sha256_lf": "d1f563ac0460441027cdda2892d89e3612cbd13154c68a6470e3777dcac46e82"
+    },
+    "bsWriteBitsPack": {
+      "file": "BitStream.c",
+      "sha256_lf": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb"
+    },
+    "bsReadBitsPack": {
+      "file": "BitStream.c",
+      "sha256_lf": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620"
+    },
+    "bsRewind": {
+      "file": "BitStream.c",
+      "sha256_lf": "24fb46019b614e4b81f0718ec6ec26d415028ecca2a30ffebc6a1d3300658a3a"
+    },
+    "bsAlignByte": {
+      "file": "BitStream.c",
+      "sha256_lf": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40"
+    },
+    "bsGetCursorBitPosition": {
+      "file": "BitStream.c",
+      "sha256_lf": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac"
+    },
+    "bsGetBitLength": {
+      "file": "BitStream.c",
+      "sha256_lf": "a26f9d1c05f15c55fca9d270d8d741e14d01583cd48675dafa319087ece14728"
+    },
+    "bsSetCursorBitPosition": {
+      "file": "BitStream.c",
+      "sha256_lf": "38771cfc1baa74b33b5a7bcc8c59ad5cab7907a31c96c11dabaab13c1c38e627"
+    },
+    "bsSetEndOfStreamPosition": {
+      "file": "BitStream.c",
+      "sha256_lf": "09f8030a838952b5fdca5e26808ba3765b58ef2b00fddafaefabe1824c5870f6"
+    },
+    "pktSetByteAlignment": {
+      "file": "net_packet.c",
+      "sha256_lf": "039804cf64e15f616e2c1ba200be92d7e92cb62204d24af64a4b85a23673cb76"
+    },
+    "pktSendBits": {
+      "file": "net_packet.c",
+      "sha256_lf": "417040312877e0288d45ada572d2f2a6d7a6ca42f08f501fae315d503be1abc5"
+    },
+    "pktSendBitsPack": {
+      "file": "net_packet.c",
+      "sha256_lf": "8746bc145e72c7cfe59e4cde7081348032e11ed2275d6336bd48a7fa0a007abd"
+    },
+    "pktGetBitsPack": {
+      "file": "net_packet.c",
+      "sha256_lf": "beaeef547f7c85066be17d8c878abe86acc9068a155df977484234f51f2ee617"
+    },
+    "pktSendBitsArray": {
+      "file": "net_packet.c",
+      "sha256_lf": "50d95c26f722973120211fcb71862abe1f9d813148e426a24e341dccb9e4f795"
+    },
+    "pktSendAcks": {
+      "file": "netio_core.c",
+      "sha256_lf": "3a5d8d1ed47374d8e8e7d251964323d91a82d9f9f05f7d7dcc6155b7a63a70bb"
+    },
+    "pktWrap": {
+      "file": "netio_core.c",
+      "sha256_lf": "29c8cb2dd66c4ba33a72015665de31599b2f778b89eeb94b512179bfd627580c"
+    },
+    "blowfishPad": {
+      "file": "netio_core.c",
+      "sha256_lf": "126fd2d7c52612db2dc64378f092f9900155a876109139efb2de98c16a83fa52"
+    },
+    "cryptAdler32": {
+      "file": "crypt.cpp",
+      "sha256_lf": "b1a7c5362a407b1a10484851d3f2d33dbf7e19aeac35a3cf2ab0d792a7619d7a"
+    },
+    "Adler32::Update": {
+      "file": "adler32.cpp",
+      "sha256_lf": "14694945fc0a0ddb1d33b31606f0971aa3c7686accc0e700b6710a55b61e3594"
+    },
+    "Adler32::TruncatedFinal": {
+      "file": "adler32.cpp",
+      "sha256_lf": "3f98b612dcfdd90019ee60afa44b2b6d61d8107db50b42cc8a027071d2828bfa"
+    }
+  }
+}

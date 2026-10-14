@@ -1,0 +1,126 @@
+{
+  "schema": "coh-native-systems-independent-core-review-v1",
+  "phases": [
+    10,
+    11,
+    12
+  ],
+  "passed": true,
+  "scope": "Read-only independent source, bounds, ownership, oracle and claim-scope review; actual Android execution remains CI/device qualification",
+  "reviewed_file_sha256": {
+    "input/coh_input.c": "ea3d3ae529f8cb530211123614e3469f25cbba426cb9eb2478abe17d96418403",
+    "input/coh_input.h": "20bc5ab3dcd9482c56635f0245b297c0a9c1b7c9d0eb1fc14e479368feddfdb8",
+    "input/input_goldens.h": "58781612b8038ce2757a536c89b1284b8a76c7fdc80fd7b31a7b8c650777bc70",
+    "input/README.md": "f99a5a569a9101ffdf399f568e2dfdf82255fcdddcda7994f333f03fc673ee25",
+    "tools/input_fixture/check.py": "b0d6143e18ac6c07605f8b173b094c5fa91911542a3dd299d7a61eb1436f475b",
+    "tools/input_fixture/source-pins.json": "9378c38b82ab99a5d4dffcabcc74b23a5e0c1f8a65debefb7c22d7550bb85743",
+    "audio/coh_audio.c": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3",
+    "audio/coh_audio.h": "b723bc4d5252cd3c6f2541c00dc5779222a84ad326af9fb75e7d438908462fee",
+    "audio/coh_aaudio.c": "c514e95ef5b284468e66b41914c6ece7fd315f21583fa234dde1262d90ccb362",
+    "audio/source_gain_golden.h": "ab28b9f07afba0a1be90eaf89d6f0af1d3878d6ac7ac9305ea015545cdbcf59c",
+    "audio/README.md": "88077ac79fe6f91c18cb664ae2158ff74aa4c29f8efcdc2a5fa60c82dbc26914",
+    "tools/audio_fixture/acquire.py": "5e9775e397f976053187963d0ae66a9608ae6fb888e1bf1f7bf4c5abd5321a6c",
+    "tools/audio_fixture/pins.json": "cc9d3c1a3e73c598e370d2dec83d3f4f71708ca11de46e1efe948c8ee1ba9ab1",
+    "tools/audio_fixture/source_oracle.py": "6e56756d4327773f03c87f7d67534ad367b2cc4ee4b601032061cec9063fc8e5",
+    "tools/audio_fixture/source_decoder.c": "4bcc69c71c673608c99b106f4d8e4675443fd03746848e004cd598ba2152c01d",
+    "tools/audio_fixture/prepare.py": "030fc173014c86cd42ab2f2bebe3dd53c09e368bc41ea86815f5ba7f75dd61f4",
+    "tools/audio_fixture/proof.py": "9c1ee197066d070dc700c12185c2b3ccdd1f292e680dfb6300ded2b6a39f5975",
+    "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "protocol/coh_protocol_selftest.c": "b5fbc4f0016fdb47c9de9bb4c4f2cde1676fa346da383ef404dfd287412eb80c",
+    "protocol/protocol_goldens.h": "3f80f7f9d2f40b0a7fca64b542f4a1aa3d66304459462ca42bb07dcf5beac179",
+    "protocol/README.md": "172690b18a050a24288c5eb72961e8bbf0e3362b1e2b3fcee47e9bd104b2e7bd",
+    "tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a",
+    "tools/protocol_fixture/source-pins.json": "15095538cb7de2b6c4fca28d1ed01a33b5be730973a44be110c7e0368ed2039f",
+    "tools/protocol_fixture/check.py": "339a6080a8b66d5a4cf5d97c9e3f73875fa312c142a7d60753f94b5a9fa6f7a4",
+    "tools/protocol_fixture/SOURCE-AUDIT.md": "1c4f60aa86d88f4f1dd092fa71778a61c2b6fe84ef1f158386290e54a4dbb8af"
+  },
+  "input": {
+    "source_files": 4,
+    "unchanged_functions": [
+      "fixAngle",
+      "subAngle",
+      "addAngle",
+      "look",
+      "inpUpdateKeyEx"
+    ],
+    "source_camera_cases": 96,
+    "source_key_events": 2048,
+    "source_joystick_integer_cases": 8004,
+    "native_checks": 909,
+    "adapter_cases": 11,
+    "host_source_maximum_error": 0.0,
+    "bounded_keys": 24,
+    "maximum_absolute_pending_delta": 500,
+    "touch_stable_pointer_and_one_frame_consumption_reviewed": true,
+    "focus_device_loss_cancel_clear_reviewed": true,
+    "jni_serialization_required": true,
+    "limits": [
+      "Original editor-look scalar and key-level seams only",
+      "New Android stick rate, touch normalization and dead zone are explicit adapter decisions",
+      "Original gameplay camera, collision, movement and binding dispatcher unqualified"
+    ]
+  },
+  "audio": {
+    "source_gain_functions": 2,
+    "source_gain_comparisons": 40,
+    "host_source_maximum_error": 0.0,
+    "native_host_checks": 38,
+    "malformed_spans_rejected": 83,
+    "pcm_scale_components": 145344,
+    "sanitizer_guard_checks": 66,
+    "worker_exclusive_stream_stop_close_reviewed": true,
+    "atomic_cancellation_and_actual_started_witness_reviewed": true,
+    "partial_writes_preserve_remaining_frames_reviewed": true,
+    "consumption_counter_checked_after_submission": true,
+    "fixture": {
+      "bytes": 72736,
+      "sha256": "440361125d7420a1730ecd742271d8b2a67808dffcfa9dc435f2357d59931823",
+      "rate": 44100,
+      "channels": 2,
+      "frames": 18168,
+      "full_play_submitted_frames": 67734
+    },
+    "limits": [
+      "Original Ogg compressed decode remains host-side using four unchanged memory callbacks and source ov_read format",
+      "AAudio sink only; original mixer/scheduler/3D/audio latency unqualified",
+      "Backend frame counters do not establish physical speaker audibility",
+      "Underrun count is observed; sustained underrun-free gameplay is unqualified"
+    ]
+  },
+  "protocol": {
+    "source_files": 10,
+    "unchanged_source_functions": 24,
+    "plain_source_cases": 16,
+    "source_frame_bytes_compared": 1736,
+    "native_checks": 23467,
+    "wire_cases": 32,
+    "bit_cases": 330,
+    "malformed_cases": 8989,
+    "unaligned_cases": 256,
+    "host_exact_allocation_fuzz_cases": 12000,
+    "authenticated_negative_cases_independently_verified_with_zlib_and_OpenSSL_decrypt": 8,
+    "byte_safe_lsb_operations_reviewed": true,
+    "transactional_error_outputs_reviewed": true,
+    "frame_capacity": 1472,
+    "selected_payload_capacity": 1200,
+    "defined_zero_padding_and_stricter_padded_length_policy_reviewed": true,
+    "limits": [
+      "Offline selected untyped legacy framing only, no ACK/sibling/compression/ordering",
+      "Original unsafe aligned word writer observed on trusted host inputs at O0, not shipped",
+      "Defined zero-initialized producer storage matches source framing; incidental writes outside logical bit span unqualified",
+      "No sockets, server authentication, reliability or live interoperability qualified"
+    ]
+  },
+  "review_findings_resolved": [
+    "Protocol authenticated negative envelopes now reach selected-profile branches with valid checksums/ciphers",
+    "Audio sanitizer short-header and truncated-tail tests use exact-size allocations"
+  ],
+  "android_native_backend_executed_by_this_review": false,
+  "full_original_game_execution": false,
+  "physical_controller_qualified": false,
+  "physical_audibility_qualified": false,
+  "pending_integration_review": [
+    "Android app callback/session association and emulator evidence after owners freeze"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "coh-native-aaudio-host-compile-v1",
+  "passed": true,
+  "header_source_url": "https://android.googlesource.com/platform/frameworks/av/+/refs/tags/android-13.0.0_r1/media/libaaudio/include/aaudio/AAudio.h",
+  "header_bytes": 70241,
+  "header_sha256": "2d3545b0a7d213e5059685a978e8cb45919f8831c07f655dc69604e0ffba1d86",
+  "compiler_flags": [
+    "-std=c11",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fsyntax-only"
+  ],
+  "host_adapter": "__INTRODUCED_IN(x) empty on Linux host only",
+  "actual_android_backend_executed": false,
+  "scope": "Typed official Android 13 AAudio API structural compilation only"
+}

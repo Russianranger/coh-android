@@ -1,0 +1,48 @@
+{
+  "schema": "coh-native-audio-pins-v1",
+  "source_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+  "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Audio.zip",
+  "outer_expected_bytes": 848122891,
+  "outer_release_sha256": "2c4bff8917d30a3835bd92e4f139a948f3c76f1e60900db01bc524b434e39d0b",
+  "inner_member": "payloads/runtime/zones-audio-supplement.zip",
+  "inner_expected_bytes": 847802311,
+  "inner_release_sha256": "3bbc5773f50593e5b2e667c7e01e7f971c3a6a65137f149e0823423798d7b2a7",
+  "manifest_member": "payloads/runtime/zones-audio-supplement-manifest.json",
+  "manifest_bytes": 316144,
+  "manifest_sha256": "c819e1af90c1f29a64eac57a20b0bdfb61a50bd9791206ab1ce18c05d210ec6f",
+  "record": {
+    "name": "data/sound/ogg/player/headset_incoming_02.ogg",
+    "size": 12930,
+    "compressed": 11108,
+    "offset": 500202584,
+    "crc32": "ba0b3f1f",
+    "method": 8,
+    "sha256": "82bec697f9e824d192cac90f32a01421e4a3875aada64fc709862bc4d3ae9198",
+    "id": "headset",
+    "file_name": "headset.ogg"
+  },
+  "decoded": {
+    "sample_rate": 44100,
+    "channels": 2,
+    "frames": 18168,
+    "pcm_bytes": 72672,
+    "pcm_sha256": "0e9a0cb2fb36575c890cea7ad8b933a732a7e6c970723e5e198dd00fc578fcd5"
+  },
+  "sources": {
+    "upstream/ouroboros/Game/src/sound/ogg_decode.c": {
+      "bytes": 13851,
+      "sha256": "6a37c461d45b46b89c2feefe7edb43ae693d8465f58bf49e4b696a27cc32b5de",
+      "git_blob": "544b108d2bfcf1830b3bfd7bc75097af66ceb070"
+    },
+    "upstream/ouroboros/Game/src/sound/sound_sys.c": {
+      "bytes": 36687,
+      "sha256": "0a48bbdc5006c2e2876253412bd263b9f2640de3745c27a2616dab0c5f173f09",
+      "git_blob": "6e26ac5e27e1fbac578914c05dbb72f2004ffe72"
+    },
+    "upstream/ouroboros/Game/src/sound/sound.h": {
+      "bytes": 4927,
+      "sha256": "ca8af36e2e861680aca874fcee012b4c78a12c56bcbfb9c625a92d28446acf03",
+      "git_blob": "ca7b264db37b48f89b848c0589ed0cb8107d36ad"
+    }
+  }
+}
