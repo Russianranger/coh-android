@@ -80,6 +80,12 @@ public final class IntegrationUiCheck {
   check(!ReceiptRules.transportRunFailed(udp()),"Clean real sockets closed");check(!ReceiptRules.transportRunFailed(udpCancel()),"Native blocked poll cancellation");
   JSONObject timeout=udp().put("passed",false).put("result",1).put("timeouts",1);check(!ReceiptRules.transportRunFailed(timeout),"Bounded timeout retryable");check(!ReceiptRules.transportInterrupted(timeout,8,100),"Timeout cannot prove Home");
   JSONObject queued=udp().put("passed",false).put("result",1).put("blocked_polls",0);check(!ReceiptRules.transportRunFailed(queued),"Clean cancellation before first blocked poll is retryable");check(!ReceiptRules.transportInterrupted(queued,8,100),"Queued socket wait cannot prove Home");
+  JSONObject prePoll=udp().put("passed",false).put("result",1).put("cancelled",true).put("expected_cancel",true).put("blocked_polls",0).put("sockets_opened",0).put("sockets_closed",0).put("opened",false).put("closed",false);
+  check(!ReceiptRules.transportRunFailed(prePoll),"Explicit clean Home before any socket opens permits retry");check(!ReceiptRules.transportInterrupted(prePoll.put("run_id",8).put("started_after_event",90),8,100),"Zero-socket cancellation cannot qualify Home");
+  prePoll.put("sockets_opened",1).put("sockets_closed",1).put("opened",true).put("closed",true);check(!ReceiptRules.transportRunFailed(prePoll),"Clean Home while opening first owned socket permits retry");
+  prePoll.put("sockets_closed",0);check(ReceiptRules.transportRunFailed(prePoll),"Early cancellation cannot hide leaked socket");prePoll.put("sockets_closed",1).put("session_failure",true);check(ReceiptRules.transportRunFailed(prePoll),"Early cancellation cannot hide backend/source failure");
+  prePoll.put("session_failure",false).put("backend_errors",1);check(ReceiptRules.transportRunFailed(prePoll),"Early cancellation cannot hide backend error count");
+  check(ReceiptRules.homeWitnessAllowed(false,true,true),"Actual simultaneous started workers can witness Home");check(!ReceiptRules.homeWitnessAllowed(true,true,true),"Own document picker cannot manufacture Home witness");check(!ReceiptRules.homeWitnessAllowed(false,false,true),"Queued audio cannot witness Home");check(!ReceiptRules.homeWitnessAllowed(false,true,false),"Queued UDP cannot witness Home");
   check(ReceiptRules.transportRunFailed(udp().put("sockets_closed",1)),"Descriptor leak sticky");check(ReceiptRules.transportRunFailed(udpCancel().put("backend_errors",1)),"Cancelled socket backend error sticky");
   check(!ReceiptRules.transportInterrupted(udpCancel().put("blocked_polls",0),8,100),"Queued wait cannot qualify Home");check(!ReceiptRules.transportInterrupted(udpCancel(),99,100),"Unrelated UDP cancellation rejected");
   check(ReceiptRules.nativeCheckPassed(nativeProof()),"Decoder/input and actual ordinary loopback checks");
@@ -111,12 +117,48 @@ public final class IntegrationUiCheck {
  __BACKGROUND__
 }'''.replace('__BACKGROUND__', method(source, 'private boolean backgroundPassed('))
     (package / 'IntegrationUiCheck.java').write_text(harness)
+    writer_harness = r'''package org.coh.integrationprobe;
+import java.util.*;import java.util.concurrent.*;import java.util.concurrent.atomic.*;import org.json.*;
+public final class IntegrationWriterCheck {
+ final ExecutorService persistence=Executors.newSingleThreadExecutor();
+ final AtomicReference<byte[]> pendingReport=new AtomicReference<>();final AtomicBoolean writerScheduled=new AtomicBoolean();
+ final AtomicFile reportFile=new AtomicFile();final Handler main=new Handler();boolean destroyed,reportWriteFailed;int failures,refreshes;
+ static int checked;static void check(boolean b,String why){checked++;if(!b)throw new AssertionError(why);}
+ static JSONObject object(Object... p){return new JSONObject();}void event(String type,JSONObject detail){}void refresh(){refreshes++;}
+ public static void main(String[] args)throws Exception{
+  IntegrationWriterCheck t=new IntegrationWriterCheck();t.reportFile.pauseFirst=true;
+  t.queueReport(new byte[]{1});check(t.reportFile.started.await(2,TimeUnit.SECONDS),"Owned writer starts asynchronously");
+  for(int i=2;i<=100;i++)t.queueReport(new byte[]{(byte)i});
+  check(t.pendingReport.get()[0]==100,"Pending immutable snapshots coalesce to latest");
+  t.reportFile.release.countDown();t.persistence.shutdown();check(t.persistence.awaitTermination(2,TimeUnit.SECONDS),"Shutdown drains pending latest snapshot");
+  check(t.reportFile.saved.size()==2,"One in-flight plus one latest write bounds persistence work");
+  check(t.reportFile.saved.get(0)[0]==1&&t.reportFile.saved.get(1)[0]==100,"Snapshots commit in order and latest wins");
+  check(t.pendingReport.get()==null&&!t.writerScheduled.get(),"Drain ends without stranded bytes or scheduled flag");
+  t=new IntegrationWriterCheck();t.reportFile.fail=true;t.queueReport(new byte[]{4});
+  t.persistence.submit(()->{}).get(2,TimeUnit.SECONDS);check(t.failures==1&&t.reportWriteFailed,"Atomic write failure is visible and sticky");
+  t.queueReport(new byte[]{5});t.persistence.submit(()->{}).get(2,TimeUnit.SECONDS);check(t.failures==1&&t.refreshes==1,"Repeated failure cannot trigger refresh recursion or erase prior failure");
+  t.persistence.shutdown();check(t.persistence.awaitTermination(2,TimeUnit.SECONDS),"Failed writer shuts down cleanly");System.out.println(checked);
+ }
+ __QUEUE__
+ __DRAIN__
+}
+class FileOutputStream extends java.io.ByteArrayOutputStream {}
+class Handler {void post(Runnable task){task.run();}}
+class AtomicFile {
+ volatile boolean pauseFirst,fail;final CountDownLatch started=new CountDownLatch(1),release=new CountDownLatch(1);
+ final List<byte[]> saved=Collections.synchronizedList(new ArrayList<>());
+ FileOutputStream startWrite()throws Exception{if(fail)throw new java.io.IOException("Controlled write failure");return new FileOutputStream();}
+ void finishWrite(FileOutputStream stream)throws Exception{started.countDown();if(pauseFirst){pauseFirst=false;if(!release.await(2,TimeUnit.SECONDS))throw new AssertionError("Writer release timed out");}saved.add(stream.toByteArray());}
+ void failWrite(FileOutputStream stream){}
+}'''.replace('__QUEUE__', method(source,'private void queueReport(')).replace('__DRAIN__', method(source,'private void drainReports('))
+    (package/'IntegrationWriterCheck.java').write_text(writer_harness)
     args.output.mkdir(parents=True, exist_ok=True)
     javac = str(args.java_home / 'bin/javac') if args.java_home else 'javac'
     java = str(args.java_home / 'bin/java') if args.java_home else 'java'
     subprocess.run([javac,'--release','8','-Xlint:-options',*[str(p) for p in root.rglob('*.java')]],check=True,timeout=30)
     result = subprocess.run([java,'-cp',str(root),'org.coh.integrationprobe.IntegrationUiCheck'],check=True,capture_output=True,text=True,timeout=30)
-    receipt = {'schema':'coh-native-integration-ui-host-v2','passed':True,'checks':int(result.stdout.strip()),'scope':'Actual shipped Java validation predicates on controlled decoder/audio/socket/renderer/Home receipts; not hardware execution','main_activity_sha256':hashlib.sha256((java_dir/'MainActivity.java').read_bytes()).hexdigest(),'receipt_rules_sha256':hashlib.sha256((java_dir/'ReceiptRules.java').read_bytes()).hexdigest()}
+    writer_result = subprocess.run([java,'-cp',str(root),'org.coh.integrationprobe.IntegrationWriterCheck'],check=True,capture_output=True,text=True,timeout=30)
+    receipt = {'schema':'coh-native-integration-ui-host-v2','passed':True,'checks':int(result.stdout.strip())+int(writer_result.stdout.strip()),'receipt_checks':int(result.stdout.strip()),'coalescing_writer_checks':int(writer_result.stdout.strip()),'scope':'Actual shipped Java validation predicates and coalescing writer methods on controlled receipts and owned host threads; not Android hardware execution','main_activity_sha256':hashlib.sha256((java_dir/'MainActivity.java').read_bytes()).hexdigest(),'receipt_rules_sha256':hashlib.sha256((java_dir/'ReceiptRules.java').read_bytes()).hexdigest()}
     (args.output/'ui-host-checks.json').write_text(json.dumps(receipt,indent=2)+'\n')
     print(json.dumps(receipt))
 

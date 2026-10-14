@@ -9,7 +9,8 @@ installed. This test needs no server startup, account or asset import.
    after each. Press/release **A** and circle both Thor sticks. The right stick
    controls this camera; left-stick character movement is a later milestone.
    Look should reach **15/15**, with both sticks marked complete. The camera
-   view is deliberately limited to keep the bench in view.
+   view is deliberately limited to keep the bench in view. Each bounded
+   diagnostic round recenters the bench; check release behavior within a round.
 2. Tap **Play decoded sound**. You should hear three game clips with a quieter
    middle clip. Let playback finish, then tap **Heard 3 sounds**. This time the
    compressed Ogg is decoded on your Thor before playback.
@@ -21,6 +22,8 @@ installed. This test needs no server startup, account or asset import.
    Android Home while the sound is playing. Return without force-stopping the
    app. Tap **Play decoded sound** once more and let it finish. Wait for the
    new rendered view to complete. If Home was too early or late, repeat this step.
+   Preparing the check pauses the scene and waits for its graphics cleanup
+   before starting the sound and blocked socket wait.
 5. When **INTEGRATION GATES PASSED**, **Sticks: complete** and **Heard: confirmed**
    appear, tap **Export report** and attach `COH-NativeIntegration-*.json`.
    Send the JSON even if a check remains pending or fails, with what you saw

@@ -44,13 +44,24 @@ context checks six original CPU/GPU camera references. Current input then
 drives native matrices for 180 rendered frames. Every signed direction needs
 CPU motion, GPU parity and changed-image evidence. Released input must settle.
 The explicitly declared adapter limits pitch/yaw changes to ±12 degrees about
-the authored camera and preserves immediate reversal at the bounds.
+the authored camera and preserves immediate reversal at the bounds. Each
+bounded diagnostic round initializes this adapter from its first source
+sample and recenters the authored view; persistent gameplay camera state is
+outside this gate.
 
 The host camera proof compares 4,106 original editor steps and 114,968 original
 camera components exactly, checks transactional malformed inputs and catches
 reversed-pitch/disconnected-yaw controls. Another 16,007 ASan/UBSan checks
 exercise the accepted input-to-camera pipeline. These are source proofs;
 Android callbacks and GPU execution require the combined device report.
+
+The first hosted Android attempt completed 367 of 450 preview frames before
+the unchanged 25-second deadline. All observed source/GPU comparisons, four
+directions and cleanup passed. The bounded preview now renders 180 frames,
+retaining fifteen scheduled GPU/image comparisons, immediate direction checks
+and all six independent baseline cases. This is diagnostic coverage rather
+than a frame-rate claim. The [first failure receipt](evidence/phases13-15/first-android-failure.json)
+preserves the original result.
 
 ## Combined application
 
@@ -67,6 +78,20 @@ requires cancellation/cleanup of those exact runs, cleared input, fresh native
 checks, a fresh successful rendered view and complete decoded playback after
 return. Resizing, recreating and Reset invalidate current view proof. The
 document picker cannot replace genuine Home evidence or alter its frozen export.
+Preparation pauses the repeated preview and waits for worker-owned graphics
+cleanup before starting either Home worker. The live screen shows a compact
+summary; full immutable JSON snapshots are saved by one coalescing writer and
+the detailed export retains its fixed pre-picker bytes.
+
+The second hosted attempt passed scene directions, decoded playback, actual
+Surface resize and recreation, but reached `onPause` 4.410 seconds after READY.
+Both native workers had already finished. The app correctly withheld the
+interruption receipt and recorded zero session failures. Logcat showed slow
+main-thread rendering of the full report. The
+[second failure receipt](evidence/phases13-15/second-android-failure.json)
+preserves this timing miss. Qualification still requires interruption of the
+exact active audio and blocked-poll runs, followed by their cleanup and fresh
+foreground execution; a clean timeout or early cancellation is retryable.
 
 Build, lint, package identity and Android 13 emulator qualification are run by
 the dedicated native integration workflow. Physical Thor stick behavior and

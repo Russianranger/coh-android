@@ -239,7 +239,7 @@ def main():
         gen=resized['generation'];tap('recreate')
         ready=wait_report(lambda r:r['generation']>gen and r['pre_background_checks_passed'] is True,'Actual Surface recreation',seconds=50)
         validate(ready);save('emulator-initial-report.json',ready)
-        tap('home');wait_report(lambda r:r.get('home_check_ready') is True,'Active native audio and blocked UDP wait',seconds=15,interval=.02)
+        tap('home');wait_report(lambda r:r.get('home_check_ready') is True and r.get('backend_world_active') is False and r.get('render_busy') is False,'Active native audio and blocked UDP wait after renderer cleanup',seconds=15,interval=.02)
         adb('shell','input','keyevent','KEYCODE_HOME')
         paused=wait_report(lambda r:r.get('background_return',{}).get('stop_sequence',0)>0 and not r['audio_busy'] and not r['transport_busy'],'Home owns cancellation and closes workers',seconds=15)
         save('emulator-background-report.json',paused)

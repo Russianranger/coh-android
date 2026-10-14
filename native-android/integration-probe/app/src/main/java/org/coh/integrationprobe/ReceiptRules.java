@@ -57,6 +57,15 @@ final class ReceiptRules {
             && run.optLong("started_after_event",Long.MAX_VALUE)<pause;
     }
     static boolean transportRunFailed(JSONObject run) {
+        boolean noOwnedSockets=integer(run,"sockets_opened",0)&&integer(run,"sockets_closed",0);
+        boolean releasedSockets=positive(run,"sockets_opened")
+            && integer(run,"sockets_closed",run.optLong("sockets_opened"))&&bool(run,"closed",true);
+        boolean prePollCancellation=bool(run,"passed",false)&&integer(run,"result",1)
+            && bool(run,"cancelled",true)&&bool(run,"expected_cancel",true)
+            && bool(run,"session_failure",false)&&integer(run,"backend_errors",0)
+            && integer(run,"blocked_polls",0)&&integer(run,"interrupted_blocked_poll",0)
+            && (noOwnedSockets||releasedSockets);
+        if(prePollCancellation)return false;
         if (run == null || run.has("session_failure") && !bool(run,"session_failure",false)
             || !integer(run,"backend_errors",0) || !bool(run,"opened",true)
             || !bool(run,"closed",true) || !positive(run,"sockets_opened")
@@ -104,7 +113,11 @@ final class ReceiptRules {
     static boolean transportInterrupted(JSONObject run, long id, long pause) {
         return !transportRunFailed(run) && integer(run,"run_id",id)
             && bool(run,"cancelled",true) && integer(run,"interrupted_blocked_poll",1)
+            && integer(run,"sockets_opened",2)&&integer(run,"sockets_closed",2)
             && positive(run,"blocked_polls") && run.optLong("started_after_event",Long.MAX_VALUE)<pause;
+    }
+    static boolean homeWitnessAllowed(boolean ownPicker,boolean audioStarted,boolean transportStarted) {
+        return !ownPicker&&audioStarted&&transportStarted;
     }
     static boolean worldEnginePassed(JSONObject run) {
         return bool(run,"java_obsolete",false) && bool(run,"session_failure",false)
