@@ -273,68 +273,40 @@ def touch_look():
     return result
 
 
-def home_with_held_input_once(before,command,long_hold):
-    """Interrupt an actual framework key before its framework release arrives."""
-    old = before['input_adapter']['external_android']
-    sequence = max(e['sequence'] for e in before['events'])
-    worker = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    held = None
-    try:
-        deadline = time.monotonic()+3
-        while time.monotonic() < deadline and worker.poll() is None:
-            current = report()
-            if (current is not None and current['native']['held_dirs'] == 1
-                    and current['input_adapter']['external_android']['key_down'] > old['key_down']
-                    and current['input_adapter']['external_android']['key_up'] == old['key_up']
-                    and (not long_hold or (current['native']['source_state_bits']&1
-                        and current['native']['movement_ticks'] > before['native']['movement_ticks']
-                        and distance(current['native']['actor_position'],before['native']['actor_position']) > .01
-                        and current['native']['frames'] > before['native']['frames']
-                        and current['native']['run_samples'] > before['native']['run_samples']))):
-                held = current
-                break
-            time.sleep(.005)
-        assert held is not None and worker.poll() is None, 'No fresh real keyboard-down snapshot before its framework release'
-        # Home is a real system navigation key while the other shell command is
-        # still delivering its long press. No lifecycle intent simulates this.
-        adb('shell', 'input', 'keyevent', 'KEYCODE_HOME')
-        stdout, stderr = worker.communicate(timeout=5)
-        assert worker.returncode == 0, (stdout+stderr).decode(errors='replace')
-        paused = wait(lambda r:r['resumed'] is False and r['native']['running'] is False
-                      and r['native']['held_dirs'] == 0 and any(e['type']=='pause' and e['sequence']>sequence for e in r['events']),
-                      'Actual Android Home cancels a held framework movement key', seconds=30)
-        assert paused['native']['objects_released'] is True
-        assert paused['native']['contexts_completed'] == paused['native']['contexts_started']
-        assert paused['native']['cleanup_gl_errors'] == paused['native']['cleanup_egl_errors'] == 0
-        assert paused['input_adapter']['external_android']['key_down'] == old['key_down']+1
-        assert paused['input_adapter']['external_android']['key_up'] == old['key_up'], 'Release arrived before Home focus interruption'
-        down_events = [e for e in paused['events'] if e['sequence']>sequence and e['type']=='key_down'
-                       and e.get('native', {}).get('held_dirs') == 1]
-        assert down_events, 'Actual forwarded key down was not retained in the event trace'
-        down_sequence=down_events[-1]['sequence']
-        interruption = [e for e in paused['events'] if e['sequence']>down_sequence
-                        and e['type'] in ('input_clear_requested', 'pause_requested')
-                        and e.get('native', {}).get('held_dirs') == 1
-                        and e.get('native', {}).get('source_state_bits',0)&1
-                        and e.get('native', {}).get('movement_ticks',0)>before['native']['movement_ticks']
-                        and distance(e['native']['actor_position'],before['native']['actor_position'])>.01
-                        and e.get('native', {}).get('foreground') is True]
-        assert interruption, 'Home event trace did not witness native held input before focus/pause clearing'
-        clear_sequence=interruption[0]['sequence']
-        assert not any(e['type']=='key_up' and down_sequence<e['sequence']<clear_sequence for e in paused['events']), 'Framework key release preceded focus interruption'
-        assert any(e['type']=='pause' and e['sequence']>clear_sequence for e in paused['events'])
-        save('emulator-home-held-input-proof.json', {'schema':1,'passed':True,
-             'scope':'Actual Android keyboard down, then actual system Home before keyboard up; native movement held in focus/pause event trace and cleared in background',
-             'framework_input_argv':command,'duration_capability_observed':long_hold,
-             'rendered_source_movement_observed_before_home':long_hold,
-             'held_snapshot':held,'interruption_events':interruption,
-             'background_native':paused['native'],
-             'background_input_adapter':paused['input_adapter']})
-        return paused
-    finally:
-        if worker.poll() is None:
-            worker.terminate()
-            worker.communicate(timeout=5)
+def home_interrupt_witness(before,paused,source='keyboard'):
+    """Require an unreleased source key at Home interruption and exact order."""
+    old=before['input_adapter']['external_android']
+    sequence=max(e['sequence'] for e in before['events'])
+    final=paused['input_adapter']['external_android']
+    if source=='keyboard':
+        assert final['key_down']==old['key_down']+1
+        assert final['key_up']==old['key_up'], 'Release arrived before Home focus interruption'
+        down_events=[e for e in paused['events'] if e['sequence']>sequence and e['type']=='key_down'
+                     and e.get('native',{}).get('held_dirs')==1]
+        assert len(down_events)==1, 'Exactly one actual forwarded movement key down must be retained'
+        down_sequence=down_events[0]['sequence']
+    else:
+        assert source=='joystick'
+        assert final['key_down']==old['key_down'] and final['key_up']==old['key_up']
+        assert final['motion']>old['motion'] and final['controller_events']>old['controller_events']
+        down_sequence=sequence
+    interruption=[e for e in paused['events'] if e['sequence']>down_sequence
+                  and e['type'] in ('input_clear_requested','pause_requested')
+                  and e.get('native',{}).get('held_dirs')==1
+                  and e.get('native',{}).get('source_state_bits',0)&1
+                  and e.get('native',{}).get('movement_ticks',0)>before['native']['movement_ticks']
+                  and distance(e['native']['actor_position'],before['native']['actor_position'])>.01
+                  and e.get('native',{}).get('running') is True
+                  and e.get('native',{}).get('frames',0)>before['native']['frames']
+                  and e.get('native',{}).get('foreground') is True]
+    assert interruption, 'Home event trace lacks actual held and moving source input immediately before clear'
+    clear_sequence=interruption[0]['sequence']
+    assert not any(e['type']=='key_up' and down_sequence<e['sequence']<clear_sequence for e in paused['events']), 'Framework key release preceded focus interruption'
+    assert any(e['type']=='pause' and e['sequence']>clear_sequence for e in paused['events'])
+    assert paused['resumed'] is False and paused['native']['running'] is False and paused['native']['held_dirs']==0
+    assert paused['native']['foreground'] is False and paused['native']['source_state_bits']==0
+    assert paused['native']['motion_local']==paused['native']['motion_world']==[0,0,0]
+    return interruption
 
 
 def home_with_held_input(before):
@@ -343,28 +315,62 @@ def home_with_held_input(before):
         output=adb('shell','input',arg,check=False)
         text=(output.stdout+output.stderr).decode(errors='replace')
         usage.append({'argv':[ADB,'shell','input',arg],'returncode':output.returncode,'output':text})
-        if re.search(r'keycombination\s+\[-t\s+duration\(ms\)\]',text):
+        if re.search(r'^\s+joystick\s*$',text,re.M) and 'motionevent <DOWN|UP|MOVE|CANCEL> <x> <y>' in text:
             break
     save('emulator-android-input-help.json',{'commands':usage})
-    long_hold=any(re.search(r'keycombination\s+\[-t\s+duration\(ms\)\]',item['output']) for item in usage)
-    command=([ADB,'shell','input','keyboard','keycombination','-t','2500','KEYCODE_SHIFT_LEFT','KEYCODE_W']
-             if long_hold else [ADB,'shell','input','keyboard','keyevent','--longpress','KEYCODE_W'])
-    misses=[]
-    for attempt in range(1,4):
-        try:
-            return home_with_held_input_once(before,command,long_hold)
-        except AssertionError as error:
-            # Shell scheduling can exhaust the framework's short long-press
-            # interval. Retain the miss, restore the real app and retry the
-            # complete Home cycle. Missing evidence never becomes a pass.
-            misses.append({'attempt':attempt,'failure':str(error),'latest_report':report()})
-            save('emulator-home-timing-misses.json',{'passed':False,'attempts':misses})
-            if attempt==3:
-                raise
-            adb('shell','am','start','-W','-n',ACTIVITY)
-            before=wait(lambda r:native_ready(r) and r['native']['held_dirs']==0
-                        and r['native']['animation_state']==0,'Real session restored after Home timing miss')
-    raise AssertionError('Unreachable: bounded Home attempts exhausted')
+    assert any(re.search(r'^\s+joystick\s*$',item['output'],re.M)
+               and 'motionevent <DOWN|UP|MOVE|CANCEL> <x> <y>' in item['output'] for item in usage), 'Framework joystick MOVE capability not advertised'
+    old=before['input_adapter']['external_android']
+    command=[ADB,'shell','input','joystick','motionevent','MOVE','0','-1']
+    adb(*command[1:])
+    held=wait(lambda r:native_ready(r) and r['native']['held_dirs']==1
+              and r['native']['source_state_bits']&1
+              and r['native']['movement_ticks']>before['native']['movement_ticks']
+              and distance(r['native']['actor_position'],before['native']['actor_position'])>.01
+              and r['native']['frames']>before['native']['frames']
+              and r['native']['run_samples']>before['native']['run_samples']
+              and r['input_adapter']['external_android']['motion']>old['motion']
+              and r['input_adapter']['external_android']['controller_events']>old['controller_events'],
+              'Actual framework joystick forward axis reaches moving native source state')
+    assert held['input_adapter']['external_android']['key_down']==old['key_down']
+    assert held['input_adapter']['external_android']['key_up']==old['key_up']
+    adb('shell','input','keyevent','KEYCODE_HOME')
+    paused=wait(lambda r:r['resumed'] is False and r['native']['running'] is False
+                and r['native']['held_dirs']==0,'Actual Home clears held framework joystick axis',seconds=30)
+    interruption=home_interrupt_witness(before,paused,source='joystick')
+    assert paused['native']['objects_released'] is True
+    assert paused['native']['contexts_completed']==paused['native']['contexts_started']
+    assert paused['native']['cleanup_gl_errors']==paused['native']['cleanup_egl_errors']==0
+    save('emulator-home-held-input-proof.json',{'schema':1,'passed':True,
+         'scope':'Actual Android framework joystick MOVE creates held source movement; actual system Home preserves a pre-clear held/moving native witness and clears input in background; no physical controller claim',
+         'framework_input_argv':command,'advertised_framework_source':'joystick',
+         'rendered_source_movement_observed_before_home':True,
+         'held_snapshot':held,'interruption_events':interruption,
+         'background_native':paused['native'],'background_input_adapter':paused['input_adapter']})
+    return paused
+
+
+def renewed_joystick_input(before):
+    old=before['input_adapter']['external_android']
+    adb('shell','input','joystick','motionevent','MOVE','0','0')
+    neutral=wait(lambda r:r['native']['held_dirs']==0
+                 and r['input_adapter']['external_android']['motion']>old['motion'], 'Real neutral joystick event after foreground return')
+    old=neutral['input_adapter']['external_android']
+    adb('shell','input','joystick','motionevent','MOVE','0','1')
+    moved=wait(lambda r:r['native']['held_dirs']==2 and r['native']['source_state_bits']&2
+               and r['native']['frames']>neutral['native']['frames']
+               and distance(r['native']['actor_position'],neutral['native']['actor_position'])>.01
+               and r['input_adapter']['external_android']['motion']>old['motion'], 'Renewed framework joystick backward input moves source actor')
+    old=moved['input_adapter']['external_android']
+    adb('shell','input','joystick','motionevent','MOVE','0','0')
+    released=wait(lambda r:r['native']['held_dirs']==0 and r['native']['animation_state']==0
+                  and r['input_adapter']['external_android']['motion']>old['motion'], 'Real neutral joystick release settles authored actor')
+    position=released['native']['actor_position'][:];frames=released['native']['frames']
+    settled=wait(lambda r:r['native']['frames']>=frames+30, 'Continuous rendering after fresh joystick release')
+    assert distance(position,settled['native']['actor_position'])<=.001
+    save('emulator-renewed-joystick-proof.json',{'passed':True,'scope':'Actual framework joystick neutral/backward/neutral after Home; no physical controller claim',
+         'neutral':neutral,'moving':moved,'released':released,'settled':settled})
+    return settled
 
 
 def export_document():
@@ -463,6 +469,7 @@ def main():
         assert distance(position, returned['native']['actor_position']) <= .001
         assert abs(camera[0]-returned['native']['camera_yaw']) <= .0001 and abs(camera[1]-returned['native']['camera_pitch']) <= .0001
         validate(returned, moved=True); save('emulator-foreground-report.json', returned)
+        renewed=renewed_joystick_input(returned);validate(renewed,moved=True)
         screenshot('emulator-foreground-scene.png')
         exported = export_document()
         wait(native_ready, 'Scene returns after document picker')
@@ -477,6 +484,8 @@ def main():
                  'actual_keyboard_motion':True,'actual_touch_camera':True,'actual_surface_recreation':True,
                  'actual_home_preserves_actor_and_camera':True,'actual_document_export':True,'actual_reset_button':True,
                  'actual_home_clears_held_framework_input':True,
+                 'actual_home_input_source':'Android framework joystick; not a physical controller',
+                 'renewed_framework_joystick_input_after_home':True,
                  'source_tf_components':reset['native']['tf_components'],'source_tf_mismatches':reset['native']['tf_mismatches'],
                  'raw_depth_order_color_differences':reset['native']['raw_changed_pixels'],
                  'exact_equal_depth_ties':reset['native']['qualified_equal_depth_ties'],

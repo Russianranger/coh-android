@@ -56,6 +56,54 @@ def main():
             check(True,label+' rejected')
         else:
             check(False,label+' incorrectly accepted')
+    before={'native':{'movement_ticks':20,'frames':50,'actor_position':[1,2,3]},
+            'input_adapter':{'external_android':{'key_down':8,'key_up':8}},
+            'events':[{'sequence':10,'type':'resume'}]}
+    clear={'held_dirs':1,'source_state_bits':1,'movement_ticks':22,'running':True,'frames':52,
+           'actor_position':[2,2,3],'foreground':True}
+    paused={'resumed':False,'native':{'running':False,'held_dirs':0,'foreground':False,'source_state_bits':0,
+                                    'motion_local':[0,0,0],'motion_world':[0,0,0]},
+            'input_adapter':{'external_android':{'key_down':9,'key_up':8}},
+            'events':[{'sequence':11,'type':'key_down','native':{'held_dirs':1}},
+                      {'sequence':13,'type':'input_clear_requested','native':clear},
+                      {'sequence':14,'type':'pause','native':{'held_dirs':0}}]}
+    check(driver.home_interrupt_witness(before,paused)==[paused['events'][1]],'Unreleased moving source input before real focus clear qualifies')
+    for key,value,label in [('held_dirs',0,'Already released native input'),('source_state_bits',0,'No source forward state'),
+                            ('movement_ticks',20,'No source movement tick'),('actor_position',[1,2,3],'No actual displacement'),
+                            ('foreground',False,'Already background clear'),('running',False,'Inactive pre-clear renderer'),
+                            ('frames',50,'No actual rendering before focus interruption')]:
+        bad=deepcopy(paused);bad['events'][1]['native'][key]=value
+        try:driver.home_interrupt_witness(before,bad)
+        except AssertionError:check(True,label+' rejected')
+        else:check(False,label+' incorrectly accepted')
+    for insert,up,label in [(True,8,'Key up precedes pre-clear witness'),
+                            (True,9,'Observed fourth-run early release'),
+                            (False,9,'Aggregate key release cannot establish unreleased interruption')]:
+        bad=deepcopy(paused);bad['input_adapter']['external_android']['key_up']=up
+        if insert:bad['events'].insert(1,{'sequence':12,'type':'key_up','native':{'held_dirs':0}})
+        try:driver.home_interrupt_witness(before,bad)
+        except AssertionError:check(True,label+' rejected')
+        else:check(False,label+' incorrectly accepted')
+    axis_before=deepcopy(before);axis_before['input_adapter']['external_android'].update(motion=0,controller_events=0)
+    axis_paused=deepcopy(paused);axis_paused['input_adapter']['external_android'].update(key_down=8,motion=1,controller_events=1)
+    axis_paused['events']=axis_paused['events'][1:]
+    check(driver.home_interrupt_witness(axis_before,axis_paused,source='joystick')==[axis_paused['events'][0]],
+          'Observed external framework axis with held moving source state qualifies')
+    for field,value,label in [('motion',0,'Missing external motion'),('controller_events',0,'Missing controller-source event'),
+                              ('key_down',9,'Unrelated keyboard down'),('key_up',9,'Unrelated keyboard release')]:
+        bad=deepcopy(axis_paused);bad['input_adapter']['external_android'][field]=value
+        try:driver.home_interrupt_witness(axis_before,bad,source='joystick')
+        except AssertionError:check(True,label+' rejected')
+        else:check(False,label+' incorrectly accepted')
+    bad=deepcopy(axis_paused);bad['events'][0]['native']['held_dirs']=0
+    try:driver.home_interrupt_witness(axis_before,bad,source='joystick')
+    except AssertionError:check(True,'Already-cleared axis cannot qualify pre-clear witness')
+    else:check(False,'Already-cleared axis incorrectly accepted')
+    for field,value in [('foreground',True),('source_state_bits',1),('motion_local',[0,0,1]),('motion_world',[1,0,0])]:
+        bad=deepcopy(axis_paused);bad['native'][field]=value
+        try:driver.home_interrupt_witness(axis_before,bad,source='joystick')
+        except AssertionError:check(True,'Background source state rejects '+field)
+        else:check(False,'Background source state incorrectly accepts '+field)
     observed=None
     if args.observed_ui:
         raw=args.observed_ui.read_bytes();actual=list(ET.fromstring(raw).iter('node'))
@@ -63,7 +111,7 @@ def main():
             check(len(driver.button_nodes(actual,label))==1,'Observed Android UI finds '+label)
         observed={'file':args.observed_ui.name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
     receipt={'schema':1,'passed':True,'checks':checks,
-             'scope':'Actual shipped case-insensitive accessibility-label selector and exact post-tap listener predicates on literal XML/event fixtures; no device execution',
+             'scope':'Actual shipped accessibility-label, exact tap listener and strict unreleased-source Home predicates on independent XML/event fixtures; no device execution',
              'emulator_driver_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
              'observed_android_ui':observed}
     args.output.parent.mkdir(parents=True,exist_ok=True)

@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "package_bytes_reused": true,
+  "original_runtime_source_commit": "e88a02b284de16ed6f7caf1e6b689f2e85d0b6e8",
+  "validation_head": "ad91233071fb36dc8313ad03b5bcd417766aca80",
+  "validation_workflow_run_id": "38634007527",
+  "validation_driver_sha256": "787c0c4fc0ff9771d96f1ef7564d181cc89111dda357bd05d3285f56d773a843",
+  "original_artifact_id": 11926935368,
+  "original_workflow_run_id": 38631384218,
+  "original_archive_bytes": 5335885,
+  "original_archive_sha256": "f38d8de127b50e249bf3a5b0d9273b5190ada9ee42848890a86886d23ca255b4",
+  "original_build_receipt_sha256": "28785eef8a28a60bf8f9c3420db0a853a157fbe685523ff8064c6c90169ef990",
+  "artifacts": [
+    {
+      "file": "CoH-Native-Session-Client-0.1.0-arm64.apk",
+      "bytes": 2139651,
+      "sha256": "eb763d8c6e5354da06a336e8fe09a244a893755e82ef708ea1d2139dc17b8634",
+      "abi": "arm64-v8a"
+    },
+    {
+      "file": "CoH-Native-Session-Client-0.1.0-emulator-x86_64.apk",
+      "bytes": 2145400,
+      "sha256": "fc38228217ed2dde33d796e53c0700a71fb8248cd66256536ab6e7a23b13afab",
+      "abi": "x86_64"
+    }
+  ],
+  "original_source_host_proofs_retained_unchanged": true,
+  "source_host_tests_rerun": false,
+  "new_emulator_acceptance": false,
+  "thor_device_execution_verified": false,
+  "scope": "Exact previously packaged APKs; fresh driver/lifecycle/selector qualification follows separately"
+}

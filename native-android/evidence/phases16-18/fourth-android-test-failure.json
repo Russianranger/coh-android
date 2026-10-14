@@ -1,0 +1,186 @@
+{
+  "schema": 1,
+  "status": "failed_automation_incomplete",
+  "workflow_run_id": 38634007527,
+  "job_id": 116092441092,
+  "validation_head": "ad91233071fb36dc8313ad03b5bcd417766aca80",
+  "runtime_source_commit": "e88a02b284de16ed6f7caf1e6b689f2e85d0b6e8",
+  "artifact_id": 11927272713,
+  "artifact_zip_sha256": "7125699d6f8f809e0be94feedaeb5ba0a7ab196bf7183f4c251d1c9db568980c",
+  "artifact_zip_bytes": 7480047,
+  "exact_original_apk_reuse": true,
+  "failure": "All three held-key Home attempts received key_up before pause_requested/input_clear_requested. Native held_dirs/source_state_bits were already zero at pause. These traces cannot qualify Home interrupting held native motion. The existing strong predicate correctly rejected them. Real document export was not reached.",
+  "completed_checks": [
+    "GPU/source transforms and actual depth sampler controls",
+    "all four Android keyboard directions and authored forward Run/Ready/release",
+    "actual touchscreen camera",
+    "actual Recreate button preserving actor position and camera orientation",
+    "21 source-independent reuse guard tests",
+    "32 current selector tests",
+    "22 current lifecycle guard checks plus 11 negative controls",
+    "fresh portable core and ARM64 Bionic workflow 38634007419"
+  ],
+  "native_failure": false,
+  "native_background_cleanup": {
+    "frames": 1229,
+    "contexts_started": 5,
+    "contexts_completed": 5,
+    "objects_released": true,
+    "held_dirs": 0,
+    "source_state_bits": 0,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "gl_errors": 0,
+    "egl_error": 0
+  },
+  "failed_home_ordering": [
+    [
+      {
+        "sequence": 25,
+        "type": "key_down",
+        "time_ms": 1792010642408,
+        "held_dirs": 1,
+        "source_state_bits": 0,
+        "foreground": true
+      },
+      {
+        "sequence": 26,
+        "type": "key_up",
+        "time_ms": 1792010643718,
+        "held_dirs": 0,
+        "source_state_bits": 1,
+        "foreground": true
+      },
+      {
+        "sequence": 27,
+        "type": "pause_requested",
+        "time_ms": 1792010644154,
+        "held_dirs": 0,
+        "source_state_bits": 0,
+        "foreground": true
+      },
+      {
+        "sequence": 28,
+        "type": "input_clear_requested",
+        "time_ms": 1792010644154,
+        "held_dirs": 0,
+        "source_state_bits": 0,
+        "foreground": true
+      },
+      {
+        "sequence": 29,
+        "type": "pause",
+        "time_ms": 1792010644157,
+        "held_dirs": 0,
+        "source_state_bits": 0,
+        "foreground": false
+      }
+    ],
+    [
+      {
+        "sequence": 35,
+        "type": "key_down",
+        "time_ms": 1792010648662,
+        "held_dirs": 1,
+        "source_state_bits": 0,
+        "foreground": true
+      },
+      {
+        "sequence": 36,
+        "type": "key_up",
+        "time_ms": 1792010650108,
+        "held_dirs": 0,
+        "source_state_bits": 1,
+        "foreground": true
+      },
+      {
+        "sequence": 37,
+        "type": "pause_requested",
+        "time_ms": 1792010650474,
+        "held_dirs": 0,
+        "source_state_bits": 0,
+        "foreground": true
+      },
+      {
+        "sequence": 38,
+        "type": "input_clear_requested",
+        "time_ms": 1792010650474,
+        "held_dirs": 0,
+        "source_state_bits": 0,
+        "foreground": true
+      },
+      {
+        "sequence": 39,
+        "type": "pause",
+        "time_ms": 1792010650475,
+        "held_dirs": 0,
+        "source_state_bits": 0,
+        "foreground": false
+      }
+    ],
+    [
+      {
+        "sequence": 45,
+        "type": "key_down",
+        "time_ms": 1792010654674,
+        "held_dirs": 1,
+        "source_state_bits": 0,
+        "foreground": true
+      },
+      {
+        "sequence": 46,
+        "type": "key_up",
+        "time_ms": 1792010655566,
+        "held_dirs": 0,
+        "source_state_bits": 1,
+        "foreground": true
+      },
+      {
+        "sequence": 47,
+        "type": "pause_requested",
+        "time_ms": 1792010656070,
+        "held_dirs": 0,
+        "source_state_bits": 0,
+        "foreground": true
+      },
+      {
+        "sequence": 48,
+        "type": "input_clear_requested",
+        "time_ms": 1792010656070,
+        "held_dirs": 0,
+        "source_state_bits": 0,
+        "foreground": true
+      },
+      {
+        "sequence": 49,
+        "type": "pause",
+        "time_ms": 1792010656070,
+        "held_dirs": 0,
+        "source_state_bits": 0,
+        "foreground": false
+      }
+    ]
+  ],
+  "home_while_held_qualified": false,
+  "document_export_qualified": false,
+  "thor_device_execution_verified": false,
+  "retained_reports": [
+    {
+      "file": "fourth-emulator-recreated-report.json",
+      "bytes": 115887,
+      "sha256": "28230722691e52ac81edaa20fbe01867852d1e93ec38ddf0ea6e20f42420f9ee"
+    },
+    {
+      "file": "fourth-emulator-session-report.json",
+      "bytes": 248425,
+      "sha256": "817866808367c018207b2b459ef30301cd3fe0415f8033206601d56ef7968a92"
+    },
+    {
+      "file": "fourth-package-reuse-receipt.json",
+      "bytes": 1381,
+      "sha256": "fd0fc07ad1f1a73496791e39cca484d02ce819a33217d1a450202f2b6fa14e72"
+    }
+  ],
+  "original_timing_miss_reports_retained_in_artifact": true,
+  "artifact_url": "https://github.com/Russianranger/coh-android/actions/runs/38634007527/artifacts/11927272713"
+}

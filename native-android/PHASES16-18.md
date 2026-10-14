@@ -48,10 +48,15 @@ recorded pre-picker byte digest. Internal writes are atomic and coalesced.
 
 The dedicated [session workflow](../.github/workflows/native-session-client.yml)
 builds and lints ARM64, builds a separate x86_64 package, verifies APK signature,
-manifest, ELF machine and exact assets, then drives actual Android keyboard
-input and touch. It checks idle/run/release, all four movement directions,
+manifest, ELF machine and exact assets, then drives actual Android keyboard,
+touch and framework joystick events. Framework injection does not establish
+physical controller acceptance. It checks idle/run/release, all four movement directions,
 scene visibility/depth, recreated Surface state, Home state and real document
-export. Source-host qualification and original reports are retained.
+export. Source-host qualification and original reports are retained. A strict
+whole-tree guard can reuse exact previously signed APK bytes for driver-only
+changes; runtime, asset or source-oracle changes require the full build. The
+package source commit, qualification-driver commit and both workflow runs are
+recorded separately, and original build/source receipts remain unchanged.
 
 Implementation and first host checks are complete; Android build/emulator
 qualification is in progress. Physical Thor acceptance of this new batch is
