@@ -74,9 +74,13 @@ def safe_name(name):
 
 
 def record(info):
+    # CPython Windows path stat uses creation time for legacy ctime, whereas
+    # fstat uses FILE_BASIC_INFO.ChangeTime. Preserve the path identity's
+    # creation-time meaning explicitly; pin_log checks native fd change too.
+    creation_or_change = info.st_birthtime_ns if os.name == 'nt' else info.st_ctime_ns
     return {'device': info.st_dev, 'inode': info.st_ino, 'uid': info.st_uid,
             'mode': info.st_mode, 'links': info.st_nlink, 'bytes': info.st_size,
-            'mtime_ns': info.st_mtime_ns, 'ctime_ns': info.st_ctime_ns,
+            'mtime_ns': info.st_mtime_ns, 'ctime_ns': creation_or_change,
             'attributes': getattr(info, 'st_file_attributes', 0)}
 
 
@@ -202,7 +206,8 @@ def pin_log(path, expected=None, budget=None):
     flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NOFOLLOW', 0)
     descriptor = os.open(path, flags)
     try:
-        actual = record(os.fstat(descriptor))
+        descriptor_before = os.fstat(descriptor)
+        actual = record(descriptor_before)
         expected_record = record(before)
         require(actual == expected_record, 'Native error log identity changed: ' + json.dumps(
             {key: {'path': expected_record[key], 'descriptor': actual[key]}
@@ -218,16 +223,32 @@ def pin_log(path, expected=None, budget=None):
             size += len(chunk)
             require(size <= MAX_LOG_BYTES, 'Native error log grew beyond custody bound')
             sha.update(chunk)
-        actual = record(os.fstat(descriptor))
+        descriptor_after = os.fstat(descriptor)
+        actual = record(descriptor_after)
         require(actual == expected_record, 'Native error log changed while hashing: ' + json.dumps(
             {key: {'path': expected_record[key], 'descriptor': actual[key]}
              for key in expected_record if expected_record[key] != actual[key]}, sort_keys=True))
+        if os.name == 'nt':
+            require(descriptor_after.st_ctime_ns == descriptor_before.st_ctime_ns,
+                    'Native error log descriptor ChangeTime changed while hashing: ' + json.dumps({
+                        'before': descriptor_before.st_ctime_ns, 'after': descriptor_after.st_ctime_ns},
+                        sort_keys=True))
     finally:
         os.close(descriptor)
     require(size == before.st_size and record(path.lstat()) == record(before),
             'Native error log name/content metadata changed')
     return {'bytes': size, 'sha256': sha.hexdigest(), 'identity': record(before),
-            'mtime_ns': before.st_mtime_ns // 100 * 100}
+            'mtime_ns': before.st_mtime_ns // 100 * 100,
+            'timestamp_observation': {
+                'identity_ctime_semantics': 'Windows_creation_st_birthtime_ns'
+                    if os.name == 'nt' else 'POSIX_metadata_change_st_ctime_ns',
+                'raw_path_ctime_ns': before.st_ctime_ns,
+                'raw_descriptor_ctime_ns_before': descriptor_before.st_ctime_ns,
+                'raw_descriptor_ctime_ns_after': descriptor_after.st_ctime_ns,
+                'descriptor_ctime_semantics': 'Windows_FILE_BASIC_INFO_ChangeTime'
+                    if os.name == 'nt' else 'POSIX_metadata_change_st_ctime_ns',
+                'descriptor_change_time_before_after_verified': True,
+            }}
 
 
 def _closed_namespace(runtime, expected_provider_names, cache_names, budget=None):

@@ -261,6 +261,7 @@ class PoolTests(unittest.TestCase):
                 'ordinal': ordinal, 'controlled_path': str(target),
                 'captured_identity': result['captured']['identity'],
                 'transferred_identity': result['transferred']['identity'],
+                'transferred_timestamp_observation': result['transferred']['timestamp_observation'],
                 'bytes_and_native_date_unchanged': True,
             }, sort_keys=True), flush=True)
 
@@ -271,7 +272,7 @@ class PoolTests(unittest.TestCase):
             value = original(descriptor)
             fields = {name: getattr(value, name) for name in (
                 'st_dev', 'st_ino', 'st_uid', 'st_mode', 'st_nlink', 'st_size',
-                'st_mtime_ns', 'st_ctime_ns', 'st_file_attributes') if hasattr(value, name)}
+                'st_mtime_ns', 'st_ctime_ns', 'st_birthtime_ns', 'st_file_attributes') if hasattr(value, name)}
             fields['st_nlink'] = 2
             return SimpleNamespace(**fields)
         with mock.patch.object(pool.os, 'fstat', side_effect=different):
@@ -279,6 +280,47 @@ class PoolTests(unittest.TestCase):
                     'Native error log identity changed: .*"links": .*"descriptor": 2, "path": 1'):
                 pool.pin_log(path)
         self.assertTrue(path.exists())
+
+    def test_Windows_creation_identity_and_native_change_are_separate_and_checked(self):
+        path = self.log()
+        info = path.lstat()
+        def sample(creation, change):
+            value = {name: getattr(info, name) for name in (
+                'st_dev', 'st_ino', 'st_uid', 'st_mode', 'st_nlink', 'st_size',
+                'st_mtime_ns', 'st_file_attributes') if hasattr(info, name)}
+            return SimpleNamespace(**value, st_birthtime_ns=creation, st_ctime_ns=change)
+        creation = 1000000000
+        before = sample(creation, creation)
+        stable_fd = sample(creation, creation + 100)
+        original = Path.lstat
+        def path_sample(value, *args, **kwargs):
+            return before if value == path else original(value, *args, **kwargs)
+        with mock.patch.object(pool.os, 'name', 'nt'), \
+                mock.patch.object(Path, 'lstat', path_sample), \
+                mock.patch.object(pool, 'ordinary_streams'), \
+                mock.patch.object(pool.os, 'fstat', return_value=stable_fd):
+            value = pool.pin_log(path)
+        self.assertEqual(value['identity']['ctime_ns'], creation)
+        self.assertEqual(value['timestamp_observation']['raw_descriptor_ctime_ns_before'], creation + 100)
+        self.assertEqual(value['timestamp_observation']['raw_path_ctime_ns'], creation)
+        for samples, message in (([sample(creation + 1, creation + 100)], 'identity changed'),
+                ([stable_fd, sample(creation, creation + 101)], 'ChangeTime changed')):
+            with self.subTest(message=message), mock.patch.object(pool.os, 'name', 'nt'), \
+                    mock.patch.object(Path, 'lstat', path_sample), \
+                    mock.patch.object(pool, 'ordinary_streams'), \
+                    mock.patch.object(pool.os, 'fstat', side_effect=samples):
+                with self.assertRaisesRegex(ValueError, message):
+                    pool.pin_log(path)
+        self.assertTrue(path.exists())
+
+    def test_POSIX_ctime_identity_is_not_replaced_by_available_birthtime(self):
+        actual = self.log().lstat()
+        fields = {name: getattr(actual, name) for name in (
+            'st_dev', 'st_ino', 'st_uid', 'st_mode', 'st_nlink', 'st_size',
+            'st_mtime_ns', 'st_ctime_ns', 'st_file_attributes') if hasattr(actual, name)}
+        fields['st_birthtime_ns'] = actual.st_ctime_ns - 100
+        with mock.patch.object(pool.os, 'name', 'posix'):
+            self.assertEqual(pool.record(SimpleNamespace(**fields))['ctime_ns'], actual.st_ctime_ns)
 
     def test_live_missing_cleanup_and_archive_collision_preserve_log(self):
         path = self.log()
