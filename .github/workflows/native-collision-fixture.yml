@@ -1,0 +1,20 @@
+name: Native collision fixture preparation
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/tools/collision_fixture/**
+      - .github/workflows/native-collision-fixture.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  bounded-grid:
+    if: github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Verify authentic disk grid and malformed input rejection
+        run: python3 -m unittest discover -s native-android/tools/collision_fixture -v

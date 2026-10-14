@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "repository_commit": "537f5b1a451a701018537b93631512b20cfb2b33",
+  "upstream_source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "sources": {
+    "Common/gridcoll/gridcoll.c": {
+      "git_blob": "71c2c8b2fa7abad2702b7427fc49d73a8bc2d5f7",
+      "sha256": "e25032c077b32896353e79929e74c81d4735564e8a8714c0d7c739db883655d4",
+      "bytes": 15111
+    },
+    "Common/gridcoll/ctri.c": {
+      "git_blob": "e55768a8ba272bb2cadbf4db9ffea23b4b2e9003",
+      "sha256": "b1f7ecc592009102b7e0b29de4d33a89f74a9d52d51845c13f578815a6c94a81",
+      "bytes": 42178
+    },
+    "Common/seq/anim.h": {
+      "git_blob": "d21cfc4484f2990c467da11d96757c49c2d68cea",
+      "sha256": "b5e6149d6222a74e1d3741b902c0a08fec45ad08ac63665be1d214ba54d2fbbe",
+      "bytes": 12673
+    },
+    "Common/gridcoll/ctri.h": {
+      "git_blob": "571e3461f299248ce8eb34d68edd8edc151f5c71",
+      "sha256": "95d0cb73de8c03698836c98114f910a4063146ef08e867730a001b04e69413b8",
+      "bytes": 1385
+    },
+    "libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h": {
+      "git_blob": "dc31714ffdf0ebfe6fce6fb89e95c20907fd261f",
+      "sha256": "ab53247b24bda859f8755d03f300a9f6fd4da2ac58d99796e952d8014b70bba9",
+      "bytes": 909
+    },
+    "Common/seq/anim.c": {
+      "git_blob": "86ee0b4c9fbbb90aaf28f14a0b0664ee1098ca80",
+      "sha256": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+      "bytes": 88082
+    },
+    "Common/player/pmotion.c": {
+      "git_blob": "982d37dcd32888fe34562815395729d2fbd15978",
+      "sha256": "a5bd9d1fa7f048a2745c3ac17a989523d28312b2d5441a3c8a401703f08f444e",
+      "bytes": 43995
+    },
+    "Common/gridcoll/gridcoll.h": {
+      "git_blob": "0e64ba65d01f08a346edbe0a10f3a39b3407b03d",
+      "sha256": "4ade01161636f8e87ca253a4a8a19926fee3006c5558ef75bf4fc08098546c8e",
+      "bytes": 4331
+    },
+    "Common/gridcoll/grid.h": {
+      "git_blob": "40ad5643a4852e52e95dd49983ac74c1b53370ee",
+      "sha256": "26d145bd7f6eb7f0b2b4da42da5422c4ca5934107a74fb0a14f22c45b703dd2a",
+      "bytes": 1736
+    }
+  }
+}

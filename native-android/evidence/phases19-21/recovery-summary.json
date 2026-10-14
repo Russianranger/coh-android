@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "base_commit": "537f5b1a451a701018537b93631512b20cfb2b33",
+  "native_tree": "b792cd3d646be856dc62fad26b5c432440ea7495",
+  "truncated": false,
+  "matching": 519,
+  "changed": [],
+  "missing": [
+    "RECOVERY-2026-10-14.md"
+  ],
+  "extra_generated_files": 236,
+  "full_local_inventory_sha256": "948d75adbeeede6a461d2eed28564255e91b9465270ad1bd76f1b86ceca03bbc",
+  "physical_gates_13_15": "accepted per user",
+  "physical_gates_16_18": "pending",
+  "runtime_source": "e88a02b284de16ed6f7caf1e6b689f2e85d0b6e8",
+  "qualification_driver": "5cea4041c8c822b6a983f815e3b4814a2e0d3b5a",
+  "session_workflow": 38637681649,
+  "core_workflow": 38637681101,
+  "apk_sha256": "eb763d8c6e5354da06a336e8fe09a244a893755e82ef708ea1d2139dc17b8634",
+  "native_worker_observed": false,
+  "terminated_processes": [],
+  "unpublished_native_implementation_found": false
+}
