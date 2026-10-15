@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "EGL": "1.5",
+  "GL_version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+  "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "pixel_comparisons": 4,
+  "channel_tolerance": 1,
+  "negative_cases": 5,
+  "bounded_batch_quads": 128,
+  "batch_draw_calls": 2,
+  "gl_errors": 0,
+  "authentic_font_gpu": {
+    "status": "passed",
+    "font_sha256": "714351827092d0ed290a8625a75780636b66c66fcc91d575bb80a633ae0c4329",
+    "glyphs": 95,
+    "pixel_comparisons": 9915,
+    "channel_tolerance": 1,
+    "alpha_sha256": "3a51c975729b17201a48562434d11069d007d42279b43e5f52484d5ccd24bd43"
+  },
+  "source_hashes": {
+    "coh_hud_gles.c": "4d4e32fc099a3015076f605e04728742b6963dced8b7c0b3d551b5e2f11883bc",
+    "coh_hud_gles.h": "6078a168479024bf080f194c3ebb7e7b9c23583ebee0b5a618cd5607cfccdda0",
+    "coh_hud_quad.c": "b382b8ed76c9aeb6138f1c47d62abe1d892fae12bdb1f130e0296f51e6c39fd2",
+    "gles_test.c": "3e7457dddd8e65733e63d3f18a2d9ef945671bd30daab8b77d1ec979302a22e3"
+  },
+  "scope": "Actual GLES3 shaders/batching/R8 alpha/blending/scissor on host software GPU; Android/Adreno pending"
+}

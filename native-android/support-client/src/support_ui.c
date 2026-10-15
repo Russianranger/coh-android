@@ -1,0 +1,185 @@
+#include "support_ui.h"
+#include "../../engine/ui/gameplay/coh_hud_android.h"
+#include "../../engine/ui/gameplay/coh_hud_atlas.h"
+/* Generated at packaging time by engine/ui/gameplay/make_atlas.py, default
+ * prefix coh_hud_font, font1/resource7. No TTF decode on the GL/audio thread. */
+#include "support_font.h"
+#include <GLES3/gl3.h>
+#include <math.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct SupportUi {
+    pthread_mutex_t mutex;CohHud hud;CohHudIme ime;CohHudState state;
+    CohHudGles gpu;CohHudGlesStats prior_gpu;uint32_t texture;
+    CohHudIntent history[COH_HUD_INTENTS];size_t history_count;
+    uint64_t mock_ms,recharge_until[COH_HUD_POWERS];SupportUiStats stats;
+};
+static void utf8_copy(char *out,size_t capacity,const char *text){
+    size_t n=strlen(text);if(n>=capacity)n=capacity-1;
+    while(n&&((unsigned char)text[n]&0xc0u)==0x80u)n--;
+    memcpy(out,text,n);out[n]=0;
+}
+static void message(SupportUi *u,const char *text){
+    size_t slot;if(u->state.chat_count==COH_HUD_CHAT_LINES){
+        memmove(u->state.chat,u->state.chat+1,(COH_HUD_CHAT_LINES-1)*sizeof(u->state.chat[0]));slot=COH_HUD_CHAT_LINES-1;
+    }else slot=u->state.chat_count++;
+    utf8_copy(u->state.chat[slot],sizeof(u->state.chat[slot]),text);
+}
+static void gpu_add(CohHudGlesStats *sum,const CohHudGlesStats *part){
+    sum->frames+=part->frames;sum->quads+=part->quads;sum->draw_calls+=part->draw_calls;sum->bytes_uploaded+=part->bytes_uploaded;
+    sum->rejected_frames+=part->rejected_frames;sum->gl_errors+=part->gl_errors;sum->preexisting_errors+=part->preexisting_errors;
+    if(part->arena_bytes>sum->arena_bytes)sum->arena_bytes=part->arena_bytes;
+    if(part->batch_high_water>sum->batch_high_water)sum->batch_high_water=part->batch_high_water;
+}
+static CohStatus record(SupportUi *u,CohStatus s){u->stats.last_status=(int)s;return s;}
+static CohStatus update(SupportUi *u){u->state.revision++;return coh_hud_set_state(&u->hud,&u->state);}
+static void drain_intents(SupportUi *u){
+    CohHudIntent e;char line[COH_UI_TEXT];
+    while(coh_hud_poll(&u->hud,&e)){
+        u->stats.intents_processed++;
+        if(u->history_count==COH_HUD_INTENTS){
+            memmove(u->history,u->history+1,(COH_HUD_INTENTS-1)*sizeof(u->history[0]));u->history_count--;u->stats.intent_history_drops++;
+        }
+        u->history[u->history_count++]=e;
+        switch(e.kind){
+        case COH_HUD_USE_POWER:
+            if(e.slot<u->state.power_count){
+                u->stats.power_uses++;u->stats.last_power=e.id;u->state.powers[e.slot].cooldown=1;
+                u->recharge_until[e.slot]=u->mock_ms>UINT64_MAX-2500?UINT64_MAX:u->mock_ms+2500;
+                snprintf(line,sizeof(line),"OFFLINE power intent: %u (no combat/server)",e.id);message(u,line);
+            }break;
+        case COH_HUD_SEND_CHAT:
+            u->stats.chat_submits++;message(u,"OFFLINE chat submitted locally:");message(u,e.text);break;
+        case COH_HUD_SELECT_CHARACTER:
+            u->stats.character_selections++;u->stats.last_character=e.id;
+            if(e.slot<u->state.character_count)utf8_copy(u->state.actor_name,sizeof(u->state.actor_name),u->state.characters[e.slot].name);
+            u->state.show_character_select=0;
+            message(u,"OFFLINE selection only; scene remains Huge/Wretch.");break;
+        case COH_HUD_OPEN_CHARACTER_MENU:
+            u->stats.menu_opens++;u->state.show_character_select=1;break;
+        case COH_HUD_CLOSE_CHARACTER_MENU:
+            u->stats.menu_closes++;u->state.show_character_select=0;break;
+        case COH_HUD_TARGET:
+            u->stats.target_clicks++;message(u,"OFFLINE target intent; no targeting protocol.");break;
+        }
+        snprintf(u->stats.last_intent,sizeof(u->stats.last_intent),"offline kind=%u id=%u slot=%u revision=%llu",(unsigned)e.kind,e.id,e.slot,(unsigned long long)e.revision);
+        update(u);
+    }
+}
+SupportUi *support_ui_create(void){
+    static const char *powers[COH_HUD_POWERS]={"Brawl","Punch","Kick","Sprint","Jump","Rest","Power 7","Power 8","Power 9","Power 10"};
+    static const char *characters[3]={"Offline Huge / Wretch","Offline Male choice","Offline Female choice"};
+    SupportUi *u=calloc(1,sizeof(*u));size_t i;
+    if(!u)return NULL;
+    if(pthread_mutex_init(&u->mutex,NULL)!=0){free(u);return NULL;}
+    if(coh_hud_atlas_validate(&coh_hud_font)!=COH_OK||coh_hud_init(&u->hud,coh_hud_atlas_glyph,&coh_hud_font)!=COH_OK){
+        pthread_mutex_destroy(&u->mutex);free(u);return NULL;
+    }
+    coh_hud_ime_init(&u->ime);u->state.actor_id=100;u->state.target_id=200;u->state.in_phase=1;
+    strcpy(u->state.actor_name,"Offline Huge / Wretch");strcpy(u->state.target_name,"Mock target (offline)");
+    u->state.health=85;u->state.max_health=100;u->state.absorb=15;u->state.endurance=75;u->state.max_endurance=100;
+    u->state.target_health=60;u->state.target_max_health=100;u->state.power_count=COH_HUD_POWERS;
+    for(i=0;i<COH_HUD_POWERS;i++){u->state.powers[i].id=1000+(uint32_t)i;u->state.powers[i].enabled=1;
+        strcpy(u->state.powers[i].name,powers[i]);}
+    u->state.character_count=3;for(i=0;i<3;i++){
+        u->state.characters[i].id=500+(uint32_t)i;u->state.characters[i].enabled=1;strcpy(u->state.characters[i].name,characters[i]);
+    }
+    message(u,"OFFLINE HUD: native original-font rendering.");
+    message(u,"D-pad/A, touch, chat/IME: local intents only.");
+    message(u,"Character choices are data; scene stays Wretch.");
+    u->stats.arena_bytes=sizeof(*u);record(u,update(u));return u;
+}
+void support_ui_destroy(SupportUi *u){
+    if(!u)return;
+    /* External owner has stopped/joined callbacks before this CPU destruction. */
+    pthread_mutex_destroy(&u->mutex);coh_hud_destroy(&u->hud);free(u);
+}
+CohStatus support_ui_surface(SupportUi *u,uint32_t gen,int width,int height,CohHudInsets safe){
+    CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
+    s=record(u,coh_hud_surface(&u->hud,gen,(float)width,(float)height,safe));pthread_mutex_unlock(&u->mutex);return s;
+}
+static CohStatus texture_resolve(void *context,uint32_t id,CohHudTexture *out){
+    SupportUi *u=context;if(id!=7||!u->texture)return COH_NOT_FOUND;*out=(CohHudTexture){u->texture,1};return COH_OK;
+}
+CohStatus support_ui_context_create(SupportUi *u,uint32_t gen){
+    CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
+    s=coh_hud_gles_create(&u->gpu,gen);
+    if(s==COH_OK){
+        glGenTextures(1,&u->texture);glBindTexture(GL_TEXTURE_2D,u->texture);glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+        glTexImage2D(GL_TEXTURE_2D,0,GL_R8,COH_HUD_FONT_WIDTH,COH_HUD_FONT_HEIGHT,0,GL_RED,GL_UNSIGNED_BYTE,coh_hud_font_alpha);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+        glBindTexture(GL_TEXTURE_2D,0);
+        if(!u->texture||glGetError()!=GL_NO_ERROR){if(u->texture)glDeleteTextures(1,&u->texture);
+            u->texture=0;coh_hud_gles_destroy(&u->gpu);s=COH_IO;}
+    }
+    record(u,s);pthread_mutex_unlock(&u->mutex);return s;
+}
+void support_ui_context_destroy(SupportUi *u){
+    if(!u)return;
+    pthread_mutex_lock(&u->mutex);gpu_add(&u->prior_gpu,&u->gpu.stats);coh_hud_gles_destroy(&u->gpu);
+    if(u->texture)glDeleteTextures(1,&u->texture);
+    u->texture=0;
+    coh_hud_surface_lost(&u->hud);u->stats.surface_losses++;pthread_mutex_unlock(&u->mutex);
+}
+void support_ui_context_lost(SupportUi *u){
+    if(!u)return;
+    pthread_mutex_lock(&u->mutex);gpu_add(&u->prior_gpu,&u->gpu.stats);coh_hud_gles_forget(&u->gpu);u->texture=0;
+    coh_hud_surface_lost(&u->hud);u->stats.surface_losses++;pthread_mutex_unlock(&u->mutex);
+}
+CohStatus support_ui_draw(SupportUi *u,int width,int height,uint32_t gen){
+    CohStatus s;const CohUiDraw *draws;size_t count;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
+    s=coh_hud_build(&u->hud);
+    if(s==COH_OK){draws=coh_hud_draws(&u->hud,gen,&count);s=draws?coh_hud_gles_draw(&u->gpu,width,height,gen,draws,count,texture_resolve,u):COH_STATE;}
+    record(u,s);pthread_mutex_unlock(&u->mutex);return s;
+}
+CohStatus support_ui_touch(SupportUi *u,int action,uint32_t pointer,float x,float y){
+    CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
+    s=coh_hud_android_touch(&u->hud,action,pointer,x,y);if(s==COH_OK)drain_intents(u);record(u,s);pthread_mutex_unlock(&u->mutex);return s;
+}
+CohStatus support_ui_key(SupportUi *u,int key,int action,int repeat,int shift){
+    CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
+    s=coh_hud_android_key(&u->hud,key,action,repeat,shift);if(s==COH_OK)drain_intents(u);record(u,s);pthread_mutex_unlock(&u->mutex);return s;
+}
+CohStatus support_ui_text(SupportUi *u,const char *text){
+    CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
+    s=coh_hud_ime_commit(&u->hud,&u->ime,text);record(u,s);pthread_mutex_unlock(&u->mutex);return s;
+}
+CohStatus support_ui_composing(SupportUi *u,const char *text){
+    CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
+    coh_ui_layout(&u->hud.ui);s=coh_hud_ime_composing(&u->hud,&u->ime,text);record(u,s);pthread_mutex_unlock(&u->mutex);return s;
+}
+CohStatus support_ui_submit(SupportUi *u){return support_ui_key(u,66,0,0,0);}
+CohStatus support_ui_focus_chat(SupportUi *u){
+    CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
+    s=record(u,coh_hud_focus(&u->hud,COH_HUD_BIND_CHAT_INPUT));pthread_mutex_unlock(&u->mutex);return s;
+}
+int support_ui_keyboard_requested(SupportUi *u){
+    int result;if(!u)return 0;pthread_mutex_lock(&u->mutex);coh_ui_layout(&u->hud.ui);
+    result=coh_hud_keyboard_requested(&u->hud);pthread_mutex_unlock(&u->mutex);return result;
+}
+CohStatus support_ui_tick_mock(SupportUi *u,uint64_t elapsed){
+    size_t i;CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
+    if(elapsed<u->mock_ms){record(u,COH_INVALID);pthread_mutex_unlock(&u->mutex);return COH_INVALID;}
+    u->mock_ms=elapsed;u->state.health=80+(float)(elapsed%20000)/1000;
+    u->state.endurance=55+(float)(elapsed%30000)/1000;
+    for(i=0;i<u->state.power_count;i++)u->state.powers[i].cooldown=u->recharge_until[i]>elapsed?(float)(u->recharge_until[i]-elapsed)/2500.0f:0;
+    s=record(u,update(u));pthread_mutex_unlock(&u->mutex);return s;
+}
+CohStatus support_ui_snapshot(SupportUi *u,SupportUiStats *out){
+    const CohUiWidget *input;size_t i;if(!u||!out)return COH_INVALID;pthread_mutex_lock(&u->mutex);
+    *out=u->stats;out->hud=u->hud.stats;out->widgets=u->hud.ui.stats;out->gpu=u->prior_gpu;gpu_add(&out->gpu,&u->gpu.stats);
+    out->generation=u->gpu.generation;coh_ui_layout(&u->hud.ui);out->keyboard_requested=coh_hud_keyboard_requested(&u->hud);
+    for(i=0;i<u->hud.ui.widget_count;i++)if(u->hud.ui.widgets[i].desc.binding==COH_HUD_BIND_CHAT_INPUT){
+        input=u->hud.ui.widgets+i;memcpy(out->chat_input,input->text,sizeof(out->chat_input));break;
+    }
+    pthread_mutex_unlock(&u->mutex);return COH_OK;
+}
+int support_ui_poll_intent(SupportUi *u,CohHudIntent *out){
+    if(!u||!out)return 0;
+    pthread_mutex_lock(&u->mutex);if(!u->history_count){pthread_mutex_unlock(&u->mutex);return 0;}
+    *out=u->history[0];memmove(u->history,u->history+1,(--u->history_count)*sizeof(u->history[0]));pthread_mutex_unlock(&u->mutex);return 1;
+}

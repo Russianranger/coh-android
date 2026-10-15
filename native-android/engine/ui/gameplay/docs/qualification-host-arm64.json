@@ -1,0 +1,152 @@
+{
+  "gates": [
+    34,
+    35,
+    36
+  ],
+  "module": "opt-in native gameplay HUD",
+  "host": "qualified within documented mock HUD/source-color scope",
+  "emulator": "not run",
+  "physical_thor": "not run",
+  "accepted_baseline": "not modified",
+  "tests": {
+    "groups": 8,
+    "state_negative_cases": 18,
+    "lifecycle_recreates": 32,
+    "benchmark_iterations": 2000,
+    "snapshot_build_mean_host_us": 7.439,
+    "arena_bytes": 340048,
+    "state_bytes": 3120,
+    "widgets": 64,
+    "draw_high_water": 177,
+    "initial_draws": 176
+  },
+  "host_command": [
+    "gcc",
+    "-std=c99",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-Wpedantic",
+    "-O2",
+    "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/coh_ui.c",
+    "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/coh_hud.c",
+    "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/gameplay/coh_hud_android.c",
+    "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/gameplay/coh_hud_atlas.c",
+    "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/gameplay/coh_hud_quad.c",
+    "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/gameplay/tests/hud_test.c",
+    "-lm",
+    "-o",
+    "/tmp/coh-hud-a68bc21t/hud-tests"
+  ],
+  "no_allocator_imports": true,
+  "allocation_scope": "Fixed caller arena; verifies direct imports, not libc internals of snprintf or process-wide allocation profiling",
+  "sanitizer_tests": {
+    "groups": 8,
+    "state_negative_cases": 18,
+    "lifecycle_recreates": 32,
+    "benchmark_iterations": 2000,
+    "snapshot_build_mean_host_us": 44.359,
+    "arena_bytes": 340048,
+    "state_bytes": 3120,
+    "widgets": 64,
+    "draw_high_water": 177,
+    "initial_draws": 176
+  },
+  "sanitizers": "ASan + UBSan passed; LSan disabled; module has no owned heap",
+  "source_oracle": {
+    "status": "passed",
+    "color_reference_comparisons": 30759,
+    "primary_tray_slots": 10,
+    "original_font_load_policy": "mont_hvbold.ttf, NOHINT/FT_LOAD_NO_HINTING, normal grayscale",
+    "files": {
+      "Game/src/UI/uiStatus.c": "a54a51f45cbc30b149cdceaf9d3b556269610bfda61775caa764b84d7702e9bc",
+      "Game/src/UI/uiTray.c": "54123637f9a29a1ef3b36d25a8829b3771eb66974cef0c0733d7f1e82fff1794",
+      "Game/src/UI/uiChat.c": "b4b14caf4b726dcfa99fe05e667f86abf6313e9791119a7892a2aebef4415d6b",
+      "Game/src/UI/uiTarget.c": "cbfdd2d89cffd3a58f5d6803867c980efd20b58bae96d5b525d1b69e7b0c8866",
+      "Game/src/UI/uiLogin.c": "0728b59542254c50161e2478efb17a948ad6d8a4c320ac1363652be481ce0c88",
+      "Game/src/UI/sprite/sprite_base.c": "73e7d6e64570ad921669c8257f5ec4fc4f1f075c997829d61abe39a1f774c43d",
+      "Game/src/UI/uiFocus.c": "de7e3726215a2b61e23ae4ea49b68192453482d47bad1d9ac22e4167f851a325",
+      "Game/src/graphics/ttFont.c": "e692cee3769852ac91771f7461f1410083c9f4f3f00d6dfd4f46dc38af717fe8",
+      "Game/src/graphics/truetype/ttFontCore.c": "6d97ac1b31ba1dcdb221885e55c96deb935b8695f8909fdc8c178498c96a8864",
+      "Common/gameComm/trayCommon.h": "2cbcf819cb9b11eedd103a2aada1e91f1dd5f5d2c0b11b4c5fed7c89d7d9fbb7",
+      "Game/src/UI/sprite/sprite_font.c": "07f317b7af6d9a5f0057fd7db315daa3ef9a094fd65a847e6dcfd9b2cf63a206"
+    },
+    "scope": "Original health/endurance color/interp bodies and ten-slot primary tray. Layout mock, no font/GPU parity."
+  },
+  "authentic_font": {
+    "status": "passed",
+    "font": "mont_hvbold.ttf",
+    "font_sha256": "714351827092d0ed290a8625a75780636b66c66fcc91d575bb80a633ae0c4329",
+    "glyphs": 95,
+    "negative_inputs": 5,
+    "fonttools_advance_max_delta_px": 0.007749999999999702,
+    "advance_tolerance_px": 0.015625,
+    "alpha_bytes": 32768,
+    "alpha_sha256": "3a51c975729b17201a48562434d11069d007d42279b43e5f52484d5ccd24bd43",
+    "rasterization": {
+      "freetype_version": "2.13.2",
+      "family": "Montreal-Heavy",
+      "style": "Regular",
+      "units_per_em": 1000,
+      "no_hinting": true,
+      "pixel_size": [
+        16,
+        16
+      ],
+      "mode": "normal grayscale"
+    },
+    "scope": "Original font, source NOHINT flag, independent fontTools hmtx advances, exact packed host FreeType masks; legacy/GPU rendering pending"
+  },
+  "android": {
+    "status": "ARM64 built",
+    "api": 26,
+    "compiler": "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+    "artifact": "libcoh_hud.so",
+    "sha256": "87b76962f18429cbb0f56b542e352d5285fab129b40e7c78a67ee6b50aecdd4f",
+    "bytes": 45048,
+    "android_header_constant_checks": 22,
+    "no_allocator_imports": true,
+    "command": [
+      "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-std=c99",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wpedantic",
+      "-O2",
+      "-fPIC",
+      "-shared",
+      "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/coh_ui.c",
+      "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/coh_hud.c",
+      "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/gameplay/coh_hud_android.c",
+      "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/gameplay/coh_hud_atlas.c",
+      "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/gameplay/coh_hud_quad.c",
+      "/workspace/scratch/bd17f7dd7d03/support-hud/native-android/engine/ui/gameplay/coh_hud_gles.c",
+      "-lm",
+      "-lGLESv3",
+      "-Wl,--no-undefined",
+      "-o",
+      "native-android/engine/ui/gameplay/docs/libcoh_hud.so"
+    ],
+    "execution": "not run; compilation does not qualify Android rendering/input"
+  },
+  "source_files": {
+    "coh_hud.c": "d390c1b56085db463209e5a7e04544a1dc5979c20d0da7a684139528f2bd23a2",
+    "gameplay/coh_hud_android.c": "bedbcdf168bc654a25229e8239d2722ffd884b686d01b6124d897f6864c26ca8",
+    "gameplay/coh_hud_atlas.c": "afd1e638f9dc77599186c2c6a8dd7ed6cb2d148545f58c7f35929f4436d2656b",
+    "gameplay/coh_hud_quad.c": "b382b8ed76c9aeb6138f1c47d62abe1d892fae12bdb1f130e0296f51e6c39fd2",
+    "coh_hud.h": "6f4785f2dd5ff5235a8c18105c6a990d0c3257374792ae327343bc206aa1f2d9",
+    "gameplay/coh_hud_android.h": "9358b55cb9d9775f17c01ab759551d0791c9ca922422cf3449698dde4120a562",
+    "gameplay/coh_hud_atlas.h": "c08ceafa1ba590f4a879d7bb0f82e6ac10c131d14fb541e110588f99529be81d",
+    "gameplay/coh_hud_gles.h": "6078a168479024bf080f194c3ebb7e7b9c23583ebee0b5a618cd5607cfccdda0",
+    "gameplay/coh_hud_gles.c": "4d4e32fc099a3015076f605e04728742b6963dced8b7c0b3d551b5e2f11883bc",
+    "gameplay/make_atlas.py": "31f65c63ecc36f1e05900958f2a79abccadf7febf7bd9aa0ae8f7691de0d897f",
+    "gameplay/tests/hud_test.c": "93bd7c00506f53cc9e7d669d1ff77a8c3e7f5d6985b8391a858d90198b0a5e9c"
+  },
+  "reused_kernel_hashes": {
+    "coh_ui.c": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676",
+    "coh_ui.h": "50267d8fa4a6e3a04bc917e62bf0d24599cc30b1292cd5caa65b22ec4b6f6870"
+  },
+  "performance_scope": "Host CPU clock snapshot+drawlist only; no device/GPU or 30 FPS claim"
+}

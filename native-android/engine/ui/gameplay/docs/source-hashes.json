@@ -1,0 +1,15 @@
+{
+  "files": {
+    "Game/src/UI/uiStatus.c": "a54a51f45cbc30b149cdceaf9d3b556269610bfda61775caa764b84d7702e9bc",
+    "Game/src/UI/uiTray.c": "54123637f9a29a1ef3b36d25a8829b3771eb66974cef0c0733d7f1e82fff1794",
+    "Game/src/UI/uiChat.c": "b4b14caf4b726dcfa99fe05e667f86abf6313e9791119a7892a2aebef4415d6b",
+    "Game/src/UI/uiTarget.c": "cbfdd2d89cffd3a58f5d6803867c980efd20b58bae96d5b525d1b69e7b0c8866",
+    "Game/src/UI/uiLogin.c": "0728b59542254c50161e2478efb17a948ad6d8a4c320ac1363652be481ce0c88",
+    "Game/src/UI/sprite/sprite_base.c": "73e7d6e64570ad921669c8257f5ec4fc4f1f075c997829d61abe39a1f774c43d",
+    "Game/src/UI/uiFocus.c": "de7e3726215a2b61e23ae4ea49b68192453482d47bad1d9ac22e4167f851a325",
+    "Game/src/graphics/ttFont.c": "e692cee3769852ac91771f7461f1410083c9f4f3f00d6dfd4f46dc38af717fe8",
+    "Game/src/graphics/truetype/ttFontCore.c": "6d97ac1b31ba1dcdb221885e55c96deb935b8695f8909fdc8c178498c96a8864",
+    "Common/gameComm/trayCommon.h": "2cbcf819cb9b11eedd103a2aada1e91f1dd5f5d2c0b11b4c5fed7c89d7d9fbb7",
+    "Game/src/UI/sprite/sprite_font.c": "07f317b7af6d9a5f0057fd7db315daa3ef9a094fd65a847e6dcfd9b2cf63a206"
+  }
+}

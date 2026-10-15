@@ -1,0 +1,30 @@
+{
+  "source_release": "coh-assets-v1.0.0",
+  "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip",
+  "outer_published_sha256": "e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e",
+  "full_outer_hash_locally_verified": false,
+  "etag_stable": true,
+  "etag": "\"0x8DF27B1EAAFE542\"",
+  "qualification": "CRC and new SHA identities; decoded/source parity is separate",
+  "records": [
+    {
+      "name": "assets/fonts/mont_hvbold.ttf",
+      "size": 35308,
+      "compressed": 21847,
+      "offset": 14237577,
+      "crc32": "0425d230",
+      "method": 8,
+      "sha256": "714351827092d0ed290a8625a75780636b66c66fcc91d575bb80a633ae0c4329"
+    },
+    {
+      "name": "assets/fonts/arial.ttf",
+      "size": 273020,
+      "compressed": 150230,
+      "offset": 1397632,
+      "crc32": "2164d13d",
+      "method": 8,
+      "sha256": "32015260078e6f19452e8f97f2295a5013e7569b84c53de028bd6789c17201c2"
+    }
+  ],
+  "scope": "Per-entry CRC + SHA verified by coordinator range recovery; entire outer ZIP not hashed locally."
+}

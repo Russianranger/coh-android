@@ -1,0 +1,44 @@
+{
+  "module": "offline SupportUi mutex adapter",
+  "host": "passed",
+  "tests": {
+    "offline_intents": 5,
+    "gpu_frames": 104,
+    "thread_snapshot_calls": 2000,
+    "thread_navigation_calls": 2000,
+    "arena_bytes": 412184,
+    "GL_errors": 0
+  },
+  "font_sha256": "714351827092d0ed290a8625a75780636b66c66fcc91d575bb80a633ae0c4329",
+  "allocation": "One initialization calloc; fixed arena thereafter. Mutex serializes all public update/render/snapshot methods. Caller owns lifetime shutdown.",
+  "emulator": "not run",
+  "physical_thor": "not run",
+  "thread_scope": "Observed mutex stress; TSan not run",
+  "sanitizer_tests": {
+    "offline_intents": 5,
+    "gpu_frames": 104,
+    "thread_snapshot_calls": 2000,
+    "thread_navigation_calls": 2000,
+    "arena_bytes": 412184,
+    "GL_errors": 0
+  },
+  "sanitizers": "ASan + UBSan passed; LSan disabled",
+  "android": {
+    "status": "ARM64 built",
+    "api": 26,
+    "bytes": 93728,
+    "sha256": "726d120e99b4e8a69edb712c859e6ddf449a2b1df9a14e7b4e2cdb8af0e6a285",
+    "execution": "not run; host EGL execution is separate"
+  },
+  "source_hashes": {
+    "support-client/src/support_ui.c": "bfbd3f5f116dac8bccd01a5caccef4c506cb555d27e2e5927b190ba934a1e55c",
+    "engine/ui/coh_ui.c": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676",
+    "engine/ui/coh_hud.c": "d390c1b56085db463209e5a7e04544a1dc5979c20d0da7a684139528f2bd23a2",
+    "engine/ui/gameplay/coh_hud_android.c": "bedbcdf168bc654a25229e8239d2722ffd884b686d01b6124d897f6864c26ca8",
+    "engine/ui/gameplay/coh_hud_atlas.c": "afd1e638f9dc77599186c2c6a8dd7ed6cb2d148545f58c7f35929f4436d2656b",
+    "engine/ui/gameplay/coh_hud_quad.c": "b382b8ed76c9aeb6138f1c47d62abe1d892fae12bdb1f130e0296f51e6c39fd2",
+    "engine/ui/gameplay/coh_hud_gles.c": "4d4e32fc099a3015076f605e04728742b6963dced8b7c0b3d551b5e2f11883bc",
+    "support-client/src/support_ui.h": "6f182112ac2fe3c821c37b5b70bff44649443ab20e72d5ecf7d0bc5e3091991e",
+    "engine/ui/gameplay/tests/support_ui_test.c": "06718bfb134583e9b090460955c2632fb32d12fe48431dd9f99aa7d5d96b7a25"
+  }
+}
