@@ -1,0 +1,258 @@
+{
+  "schema": 1,
+  "passed": true,
+  "package": "org.coh.nativesupport",
+  "source_commit": null,
+  "installed_apk": {
+    "bytes": 2438508,
+    "sha256": "ebf296cc953dfa0a0f1ca007a3982676812ed4a7d77a8c8c1b29c24aa737434d"
+  },
+  "scope": "actual Android emulator framework input/lifecycle and native report assertions in separate offline support client",
+  "scenario_sha256": "ef8e090f481e4087cec04cbf02f92b944e7ceb74a329ae5aef116863a9fdb7c2",
+  "steps": [
+    {
+      "label": "Authentic neutral punch mock",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Mock animation"
+        }
+      ],
+      "assertions": {
+        "support.animation.samples": {
+          "gt": 5
+        },
+        "support.animation.triggers": 1,
+        "support.animation.kind": 0
+      }
+    },
+    {
+      "label": "Authentic jump-power mock without jump physics",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Mock animation"
+        }
+      ],
+      "assertions": {
+        "support.animation.triggers": 2,
+        "support.animation.kind": 1,
+        "support.animation.samples": {
+          "increases": true
+        }
+      }
+    },
+    {
+      "label": "Authentic reaction mock",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Mock animation"
+        }
+      ],
+      "assertions": {
+        "support.animation.triggers": 3,
+        "support.animation.kind": 2,
+        "support.animation.samples": {
+          "increases": true
+        }
+      }
+    },
+    {
+      "label": "Restore accepted grounded locomotion",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Mock animation"
+        }
+      ],
+      "assertions": {
+        "support.animation.triggers": 4,
+        "support.animation.kind": 3,
+        "native.frames": {
+          "increases": true
+        }
+      }
+    },
+    {
+      "label": "Touch native power tray",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "hud_tap",
+          "x": 265,
+          "y": 716
+        }
+      ],
+      "assertions": {
+        "support.hud.power_uses": {
+          "increases": true
+        }
+      }
+    },
+    {
+      "label": "Touch native character menu and select mock data",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "hud_tap",
+          "x": 100,
+          "y": 700
+        },
+        {
+          "kind": "wait",
+          "seconds": 1
+        },
+        {
+          "kind": "hud_tap",
+          "x": 500,
+          "y": 188
+        }
+      ],
+      "assertions": {
+        "support.hud.character_selections": {
+          "increases": true
+        }
+      }
+    },
+    {
+      "label": "Android keyboard commit to native chat",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Chat text"
+        },
+        {
+          "kind": "text",
+          "text": "Offline native chat"
+        },
+        {
+          "kind": "tap_text",
+          "text": "Send"
+        }
+      ],
+      "assertions": {
+        "support.hud.chat_submits": {
+          "increases": true
+        }
+      }
+    },
+    {
+      "label": "Controller navigation and native power intent",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "UI navigation: OFF"
+        },
+        {
+          "kind": "key",
+          "source": "gamepad",
+          "key": "KEYCODE_BUTTON_R1"
+        },
+        {
+          "kind": "key",
+          "source": "gamepad",
+          "key": "KEYCODE_BUTTON_A"
+        }
+      ],
+      "assertions": {
+        "support.hud.power_uses": {
+          "increases": true
+        }
+      }
+    },
+    {
+      "label": "Pause and joined native audio diagnostics",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "home"
+        }
+      ],
+      "assertions": {
+        "support.audio.running": 0,
+        "support.audio.diagnostics_valid": 1,
+        "support.audio.callback_calls": {
+          "gt": 0
+        },
+        "support.audio.rendered_frames": {
+          "gt": 0
+        },
+        "support.audio.last_status": 0
+      }
+    },
+    {
+      "label": "Home recovery with resumed native audio",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "launch"
+        }
+      ],
+      "assertions": {
+        "native.frames": {
+          "increases": true
+        },
+        "support.audio.running": 1,
+        "support.audio.opens": {
+          "increases": true
+        },
+        "support.hud.chat_submits": {
+          "same": true
+        }
+      }
+    },
+    {
+      "label": "Surface recreation retains HUD and native state",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Recreate"
+        }
+      ],
+      "assertions": {
+        "native.contexts_started": {
+          "increases": true
+        },
+        "support.hud.surface_recreates": {
+          "increases": true
+        },
+        "support.hud.chat_submits": {
+          "same": true
+        },
+        "native.frames": {
+          "increases": true
+        }
+      }
+    },
+    {
+      "label": "Bounded Near Far selection",
+      "passed": true,
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "View distance"
+        }
+      ],
+      "assertions": {
+        "native.stream.view_radius": 96,
+        "native.frames": {
+          "increases": true
+        }
+      }
+    }
+  ],
+  "native_execution_verified": true,
+  "physical_controller_verified": false,
+  "thor_device_execution_verified": false,
+  "full_atlas_loaded": false,
+  "server_interoperability_verified": false,
+  "gates_fully_accepted": false
+}

@@ -1,0 +1,421 @@
+[
+  {
+    "args": [
+      "shell",
+      "getprop",
+      "ro.boot.qemu"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 2,
+    "stdout_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "stdout_preview": "1\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "shell",
+      "pm",
+      "path",
+      "org.coh.nativesupport"
+    ],
+    "returncode": 1,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_preview": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "install",
+      "/home/runner/work/coh-android/coh-android/native-android/results/support-client/CoH-Native-Support-Client-0.1.0-support-batch-emulator-x86_64.apk"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 86,
+    "stdout_sha256": "169a6f163b3626331a7758fa479e3890619967e6dc94368dde26dfca1514f93d",
+    "stdout_preview": "Serving...\nPerforming Incremental Install\nSuccess\nInstall command complete in 6149 ms\n",
+    "stderr": "All files should be loaded. Notifying the device.\n"
+  },
+  {
+    "args": [
+      "shell",
+      "am",
+      "start",
+      "-W",
+      "-n",
+      "org.coh.nativesupport/org.coh.sessionclient.MainActivity"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 218,
+    "stdout_sha256": "92e88593135678d816adf1d4b0111d22061af96a8318158fe9760d730bfb7e60",
+    "stdout_preview": "Starting: Intent { cmp=org.coh.nativesupport/org.coh.sessionclient.MainActivity }\nStatus: ok\nLaunchState: COLD\nActivity: org.coh.nativesupport/org.coh.sessionclient.MainActivity\nTotalTime: 2470\nWaitTime: 2497\nComplete\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 2511,
+    "stdout_sha256": "93434da9d05787b99195cd2509776045c535667eaa6d3d987dce06a8aae10661",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:30.745Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": false,\n  \"events\": [\n    {\n      \"sequence\": 1,\n      \"type\": \"session_created\",\n      \"time_ms\": 1792050449599\n    },\n    {\n      \"sequence\": 2,\n      \"type\": \"resume\",\n      \"time_ms\": 1792050449604\n    },\n    {\n      \"sequence\": 3,\n      \"type\": \"surface_changed\",\n      \"time_ms\": 1792050449921\n    }\n  ],\n  \"resumed\": true,\n  \"render_busy\": false,\n  \"report_write_failed\": false,\n  \"failure\": null,\n  \"input_adapter\": {\n    \"schema\": \"coh-android-input-adapter-v1\",\n    \"external_android\": {\n      \"key_down\": 0,\n      \"key_up\": 0,\n      \"key_repeat\": 0,\n      \"motion\": 0,\n      \"touch_begin\": 0,\n      \"touch_move\": 0,\n      \"touch_end\": 0,\n      \"touch_cancel\": 0,\n      \"focus_clear\": 0,\n      \"device_removed\": 0,\n      \"controller_events\": 0,\n      \"left_axis_directions\": 0,\n      \"right_axis_directions\": 0,\n      \"button_down_mask\": 0,\n      \"touch_motion_directions\": 0\n    },\n    \"in_app_synthetic\": {\n      \"key_down\": 0,\n      \"key_up\": 0,\n      \"key_repeat\": 0,\n      \"motion\": 0,\n      \"touch_begin\": 0,\n      \"touch_move\": 0,\n      \"touch_end\": 0,\n      \"touch_cancel\": 0,\n      \"focus_clear\": 0,\n      \"device_removed\": 0,\n      \"controller_events\": 0,\n      \"left_axis_directions\": 0,\n      \"right_axis_directions\": 0,\n      \"button_down_mask\": 0,\n      \"touch_motion_di",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 19549,
+    "stdout_sha256": "6515bcc3d123f2792e8cd093a521da6d1137aca1571a8edb780574d26f7a8e93",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:31.028Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 19549,
+    "stdout_sha256": "6515bcc3d123f2792e8cd093a521da6d1137aca1571a8edb780574d26f7a8e93",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:31.028Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 24933,
+    "stdout_sha256": "257edc2aafc1a24ba1054d4455490e8ea0f596426748ed9402ffb2003db114e3",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:31.768Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 24933,
+    "stdout_sha256": "257edc2aafc1a24ba1054d4455490e8ea0f596426748ed9402ffb2003db114e3",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:31.768Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 24933,
+    "stdout_sha256": "257edc2aafc1a24ba1054d4455490e8ea0f596426748ed9402ffb2003db114e3",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:31.768Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 24934,
+    "stdout_sha256": "30d2a49499fef3af2585b64bb7792e1c03d938d4360e8e1314eff17b2f52ac97",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:32.788Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33056,
+    "stdout_sha256": "b6c982aacb2f8bc7f943e0d1bd4e6e9d703d044f7d031e2645c216d67892db29",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:32.892Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33056,
+    "stdout_sha256": "b6c982aacb2f8bc7f943e0d1bd4e6e9d703d044f7d031e2645c216d67892db29",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:32.892Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33056,
+    "stdout_sha256": "b6c982aacb2f8bc7f943e0d1bd4e6e9d703d044f7d031e2645c216d67892db29",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:32.892Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33055,
+    "stdout_sha256": "d8be8ebf980a62385d57531b2584b151e103dd58de1dcc0f834f0c0093a2dcd4",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:33.843Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33055,
+    "stdout_sha256": "d8be8ebf980a62385d57531b2584b151e103dd58de1dcc0f834f0c0093a2dcd4",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:33.843Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33055,
+    "stdout_sha256": "d8be8ebf980a62385d57531b2584b151e103dd58de1dcc0f834f0c0093a2dcd4",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:33.843Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33055,
+    "stdout_sha256": "d8be8ebf980a62385d57531b2584b151e103dd58de1dcc0f834f0c0093a2dcd4",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:33.843Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33189,
+    "stdout_sha256": "d27114532993f05cd966a5922f68b990c19449cbf966db5613750358d7907907",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:34.864Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33189,
+    "stdout_sha256": "d27114532993f05cd966a5922f68b990c19449cbf966db5613750358d7907907",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:34.864Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33189,
+    "stdout_sha256": "d27114532993f05cd966a5922f68b990c19449cbf966db5613750358d7907907",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:34.864Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33211,
+    "stdout_sha256": "2dc53d9d0b159a7de00bfe976fe6e030036dba783a4daf53c51fc8fea34e7415",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:35.911Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33211,
+    "stdout_sha256": "2dc53d9d0b159a7de00bfe976fe6e030036dba783a4daf53c51fc8fea34e7415",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:35.911Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33211,
+    "stdout_sha256": "2dc53d9d0b159a7de00bfe976fe6e030036dba783a4daf53c51fc8fea34e7415",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:35.911Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33219,
+    "stdout_sha256": "5a244e50132d9c4845f6c57e2e7d1a716b6a459e9321e14ea1d27a9161445e5a",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:36.940Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "screencap",
+      "-p"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 587326,
+    "stdout_sha256": "bad10f727edf064a45d7950236a0a0b1d2c51bfe7928c40b78ec3be8835477b2",
+    "stdout_preview": "\ufffdPNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u00048\u0000\u0000\u0007\ufffd\b\u0006\u0000\u0000\u0000+a\ufffd\n\u0000\u0000\u0000\u0001sRGB\u0000\ufffd\ufffd\u001c\ufffd\u0000\u0000\u0000\u0004sBIT\b\b\b\b|\bd\ufffd\u0000\u0000 \u0000IDATx\ufffd\ufffd\ufffdyP\u001bg\ufffd?\ufffd\ufffd\ufffd\u0000q\ufffd7\u0018\f\u0198\u00c01\ufffd\ufffd\u0011_\ufffd\u001d;\ufffdr\u060esO2\ufffdd\ufffd\ufffd\ufffdLm\ufffdlm\ufffd\u001f[\ufffdU[[5\ufffd\u07dd?\ufffd\ufffd\ufffdL6\ufffd\u06198cob\ufffdG\u0012\u0007\ufffd6\ufffdv\ufffd1\ufffd\ufffd\u0005\ufffd\u0188[ @HBB\ufffd\ufffd\ufffd\u007f\ufffd$@\u0002\ufffd\ufffd~UQE\ufffd\ufffd\ufffdy\u001a\ufffdG\u075f~\ufffd\ufffd#\ufffd\ufffd\ufffd~g\u0002\u0011\u0011\u0011\u0011\u0011\u0011\u0011\ufffd\u0017\ufffd\ufffd\ufffd\u0002DDDDDDDD\ufffd\ufffd\u0000\u0007\u0011\u0011\u0011\u0011\u0011\u0011\u0011y=\u00068\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd1\ufffdADDDDDDD^\ufffd\u0001\u000e\"\"\"\"\"\"\"\ufffdz\fp\u0010\u0011\u0011\u0011\u0011\u0011\u0011\ufffd\ufffdc\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u001e\u0003\u001cDDDDDDD\ufffd\ufffd\u0018\ufffd \"\"\"\"\"\"\"\ufffd\ufffd\u0000\u0007\u0011\u0011\u0011\u0011\u0011\u0011\u0011y=\u00068\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd1\ufffdADDDDDDD^O\ufffd\ufffd\n\ufffdsI$\u0012\ufffd\ufffd\ufffd ''\u0007!!!\ufffd\ufffd\ufffdDOO\ufffdh\ufffd\ufffd\ufffd(\ufffd\ufffd\ufffdA\ufffd\u0562\ufffd\ufffd\u001aZ\ufffd\ufffdM\ufffd\ufffd\ufffd\ufffdr\ufffdDDDDDDd\u001d\u0003\u001c3\\@@\u0000\ufffd-[\ufffd%K\ufffd\ufffd\ufffd\ufffd\u0007\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd/1<<\f\u0000\ufffd\ufffd\ufffd\u00ce\u001d;\ufffd\ufffd\ufffd\b\ufffd\ufffd\b\ufffdD\ufffd\ufffd\ufffd*\ufffd\ufffd\ufffd\ufffd-\ufffdIDDDD\ufffdl\u0001\u0001\u0001HHH@bb\"\u0002\u0002\u0002\ufffd\ufffd\ufffd\b\ufffd\\.\ufffd\ufffd\ufffdj\ufffdP(\ufffd\ufffdh\ufffdP(\ufffd\ufffd\ufffd\u0006\ufffdF\ufffd\ufffd\u001aO\ufffd\ufffd\ufffd\ufffdq\ufffd\ufffd=\ufffd\ufffd\ufffd?\ufffda\ufffd\ufffd\u007f\ufffd\ufffd\ufffd;\ufffd\u000e3\u0019\u0003\u001c3\ufffd\ufffd\ufffd\u001f\ufffd\ufffd\ufffd\u0011\u001e\u001e\u000e\u0000HOOGII\t.]\ufffd\u0004\u0000())Azz:\ufffd\ufffd\ufffd\u0001\u0000999hhh\ufffd\u001b\ufffd\ufffdr\ufffdDDDDD\ufffd\u0010\u0011\u0011\ufffd\ufffd\ufffd\\\ufffd\ufffd\ufffd\"##c\ufffd\ufffdsssE\u02cd\ufffd\ufffd\ufffd\ufffd\ufffdG}}=z{{\ufffdUM\ufffd\u0638q#222\\\u0012\ufffd \ufffdb\ufffdc\u0006\ufffd\ufffd\ufffdE@@\u0000\ufffd\ufffd\ufffd\ufffduR\ufffd\u0014AAA\u00b2\ufffd\ufffd\u001fV\ufffd\\\ufffd\ufffd\ufffd\u0014\u0000\ufffd\ufffd9s\ufffd\ufffd\ufffd'\ufffd\u001e\u0014\u0014\u0004\ufffdT\ufffd\ufffd%44\u0014\u001a\ufffd\u0006z\ufffd\ufffd\ufffdg`\ufffd\ufffdr\ufffdDDDDD\u0396\ufffd\ufffd\ufffdU\ufffdVY\u0004,\ufffdr\ufffd\ufffd\ufffd\f\ufffd\u0631\u0003\ufffd\ufffd\ufffd(++Ccc\ufffd\ufffdj\ufffd<\u001b7n\ufffd\u018d\u001b\ufffd\ufffd\ufffd\ufffd\uea90\u00030\ufffd1\u0003H\ufffdR$''c\u014a\u0015\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdQ]]\ufffd\ufffd\ufffd\u0011\u031d;\u0017\u0011\u0011\u0011\u00b6\u0012\ufffd\u0004\u0011\u0011\u0011\b\r\r\u0005\u0000\ufffd\ufffd\ufffd\ufffd\ufffd\u0015\u0015\u0015\ufffd\ufffd\ufffdd\f\u000e\u000eB&\ufffd\ufffd\ufffd\ufffd\u0000\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd(//\u01d3'O`4\u001a]z~\ufffdf\ufffdy\u0012\u0011\u0011\u0011\u00119[FF\u00066l\ufffd`So\r{\ufffd\ufffd\u0004ill\u01193g<6\ufffd1\u001a\ufffdp\ufffd\u0246\ufffd\u0632\u000f\ufffd\ufffd\u0607\u0001\ufffd\u0019 $$\u0004\ufffd\ufffd\ufffd\ufffd\ufffd\u03c7D\"Abb\"\ufffd\ufffd\ufffd`4\u001a\u0011\u001d\u001d-\f\ufffd\u0018\ufffd\ufffd\ufffd\u007fT`` \u05ad[\ufffd\ufffd\ufffdt\u0004\u0007\u0007#99\u0019\ufffd\ufffd\ufffd0\ufffdL\ufffd\ufffd\ufffdJ\ufffd\ufffdJ\ufffdr\ufffd)Y5[\u0393\ufffd\ufffd\ufffd\ufffd\ufffdY\u0002\u0002\u0002\ufffdg\u03dei\ufffd\u0630\ufffdh\ufffd\ufffd\ufffd\ufffd\n\ufffd8q\u00a3\ufffdtxbpc\ufffd\ufffd0\ufffda;\ufffd\u00058\ufffd\ufffd\ufffd\u0011\u0015\u00155\ufffd\ufffd\u073e}\u001bJ\ufffd\ufffd\u00015\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdTa\ufffd\ufffd\ufffd\u0007hoo\ufffd\ufffd\ufffd\ufffd\ufffdE*\ufffd\ufffd\ufffd\ufffd\u001f2\ufffd\ufffd\u007fgTT\u0534\ua6dc\ufffd\ufffd\ufffd\ufffdh\ufffd\ufffd\ufffd\ufffd\ufffdq\ufffd\ufffd\ufffd[\f\ufffdp\ufffd\ufffdr\ufffdDDDDD\u0390\ufffd\ufffd\ufffd\u000f>\ufffd\u0000\u0001\u0001\u0001.-\ufffd\ufffd\ufffd\u0018\ufffd\ufffd\ufffd\ufffd\ufffd\u33e1P(\\Z\ufffd5\ufffd\u000en8\u001a\ufffd\u001c\ufffdsZ\ufffdc\ufffd\u04a5\u000e\ufffd\n*\ufffdJ\ufffd\u0004\u0005d2\u0019\ufffd\ufffd\u0643\ufffd\ufffd8a\u0777\ufffd~k5\ufffd\ufffd\ufffd\ufffdV\ufffd\ufffdP(\ufffd\ufffd\ufffd\ufffdb0\u001a\ufffd\u0018\u001c\u001cDKK\u000b\ufffd\ufffd\ufffd,z&\ufffd\ufffd\ufffd!!!\u0001)))\b\u000e\u000e\ufffdT*\u0015eI\u0006\u0000\ufffdN\ufffd\ufffd\ufffd6\ufffd\ufffdj\ufffd\ufffd\ufffdV\ufffd\ufffd<\ufffd\ufffd\ufffd\ufffd\ufffd\u001c\ufffd\ufffd\ufffd\u0018{\ufffd\ufffdq[\ufffd\u0001\u0001\u0001\ufffd\ufffd\ufffd\u000fq\ufffd\ufffdaTTT\ufffd\ufffd\u001e\ufffd\u0016\ufffd \ufffdx\ufffd\u0010\u0015\ufffdN\ufffd\ufffdn\u07bcY\u0014\ufffdp\u0005g\ufffd\ufffd\ufffd\ufffd0\ufffdJ%T*\u0015bcc\ufffd\ufffd&\ufffd\tj\ufffd\u001a\ufffd\ufffd\ufffdhjjBWW\u0017\ufffdJ%\ufffd\ufffd\ufffdD\ufffd\u0007\u0006\u0006\"22\u0012111HOOGnn.\ufffd\ufffd\ufffd \ufffdH\ufffdmzzz\ufffd\ufffd\ufffd%L\ufffd\ufffd\u000e\ufffd\ufffd<\ufffd\ufffd\ufffd\ufffd\ufffd\u001ci\u03de=(..vw5\u0000<\ufffdK@@\u0000._\ufffd\ufffd\ufffd\u0019\u0718\ufffd\ufffd\u0016\u0a2f\ufffdGOO\ufffd\ufffd\ufffd\ufffd\ufffd\ufffda\u039c9\u0000\ufffd\ufffd\ufffd\u000e\ufffd$\ufffdIMM\u014a\u0015+l\ufffd\u0793\ufffd\u0005x:t\ufffd\ufffd\ufffd\u000f\ufffd\ufffd\ufffd\u00ba\ufffd\ufffd\u0011tvv\ufffd\ufffd\ufffd\u0002\r\r\r\ufffd\ufffd\ufffd\u001ew\ufffd\ufffd\ufffd!\f\r\r\ufffd\u0253'hiiAgg'\ufffd\ufffd\ufffd\u0011\u001b\u001b+\ufffd\ufffd\ufffd\ud8c6\udfef/\ufffdR\ufffd[\ufffd\ufffd\u0386\ufffd$\"\"\"\"r\ufffd\ufffd\ufffdb\ufffd\tn\ufffd\u06be};4\u001a\ufffdK{rxrp\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdrv\ufffdvN\u000bpL\ufffd\ufffd\ufffd\ufffd\ufffd\u007f\ufffd\ufffd\u007f\u0012\ufffdo\u0738\ufffd\ufffd*\tv\ufffd\ufffd!\ufffdq\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u001f\ufffd\ufffd\ufffd\u001bs\ufffdL\ufffd\ufffd\ufffdTa\u0190\ufffd\ufffd\u0011\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u02f8}\ufffd\ufffd]=G\ufffd\ufffd\ufffd\ufffd\ufffdO?app\u0010\ufffd<\ufffd\f\u0012\u0012\u0012\ufffd\ufffd\u30c8\ufffd\b\u0014\u0015\u0015!&&\u0006\u0006\ufffdA(\ufffd\ufffd\ufffd\u0013\u0006\ufffd\ufffda\ufffd6\u001b\u03d3\ufffd\ufffd\ufffd\ufffd\ufffdY\ufffd1K\ufffd#\ufffd&\u001fu\u0005O\u000fn\ufffd\ufffdx\ufffd\u0010\ufffd\ufffd\u02d7#<<\u001c\u0000088\ufffd\ufffdW\ufffd:\ufffd\ufffd\r\u001b6 %%\u0005\u0000\ufffd\ufffd\ufffd+\ufffdZ\u0511\ufffdy.111X\ufffdl\u0019\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0003\ufffdT\ufffd\ufffd\ufffd\u0000\ufffd\ufffd\ufffd\ufffdd2A\ufffdT\ufffd\ufffd\ufffd\u001c\ufffd\ufffd\ufffd\u0000\ufffd&\ufffd\f\n\n\u00a3G\ufffd\ufffd\ufffdj\ufffd\u001eS.\ufffd#55\u0015j\ufffd\u001a\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u000f\u05ad['$\ufffd\\\ufffdp!\ufffd\u035b\u0007\ufffd\u0448\ufffd\ufffd\u0011<x\ufffd\u0000W\ufffd^E[[\ufffd\ufffd\ufffdm6\ufffd'\u0011\u0011\u0011\u0011\ufffd\ufffd\u001c:t\b\ufffd\ufffd\ufffdHHHpwU\u0004mmm8t\ufffdK\ufffd\ufffd\ufffd\ufffd\u00069\ufffdGM\u0015\ufffdl\ufffd2\ufffd\ufffd\ufffd\ufffdJ\ufffd\ufffdz\ufffd\u001e?>>\u001ek\u05ac\u0001\ufffd4oCii\ufffdC\ufffd?\ufffd3\ufffd%\"\"\u0002iii\ufffd\ufffd\ufffdFDD\u0004\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0007\ufffdi\"\u03ba\ufffd:\ufffd\ufffd\ufffd\ufffd`0 00\u0010\ufffdV\ufffd\u009a5k&\ufffd9\u0012\u0017\u0017\ufffd5k\ufffd`\u056aU\b\f\f\ufffd\ufffd`@mm-\ufffd\ufffd\ua104\ufffd~~~\b\u000b\u000bCDD\u0004\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdef\ufffdy\u0012\u0011\u0011\u0011\u00119\u04fe}\ufffd\ufffd\ufffd\ufffd\ufffd",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "run-as",
+      "org.coh.nativesupport",
+      "cat",
+      "files/session-report.json"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 33232,
+    "stdout_sha256": "b69f1aa2400b9ae59dc04a59a155e90133a7d96febd67b549a4b17b9b495fd8d",
+    "stdout_preview": "{\n  \"schema\": \"coh-native-support-v1\",\n  \"phases\": [\n    31,\n    32,\n    33,\n    34,\n    35,\n    36,\n    43,\n    44,\n    45\n  ],\n  \"session_id\": \"1a13e87cc9f\",\n  \"updated_at\": \"2026-10-15T07:47:39.108Z\",\n  \"scope\": \"Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.\",\n  \"app\": {\n    \"package\": \"org.coh.nativesupport\",\n    \"version_name\": \"0.1.0-support-batch\",\n    \"version_code\": 1,\n    \"installed_apk\": {\n      \"bytes\": 2438508,\n      \"sha256\": \"f54f8d69cd057eca4986edfbc327959f0a99e6ddda7f7445d8bfa20f2fe93ff2\"\n    }\n  },\n  \"device\": {\n    \"manufacturer\": \"Google\",\n    \"model\": \"sdk_gphone64_x86_64\",\n    \"sdk\": 33,\n    \"abis\": [\n      \"x86_64\"\n    ],\n    \"emulator_detected\": true\n  },\n  \"assets_verified\": true,\n  \"asset_manifest\": {\n    \"schema\": 1,\n    \"assets\": {\n      \"character.bin\": {\n        \"bytes\": 4261100,\n        \"sha256\": \"59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7\"\n      },\n      \"locomotion.bin\": {\n        \"bytes\": 147103,\n        \"sha256\": \"8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7\"\n      },\n      \"map.bin\": {\n        \"bytes\": 161654,\n        \"sha256\": \"1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f\"\n      },\n      \"morph.bin\": {\n        \"bytes\": 3028,\n        \"sha256\": \"ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02\"\n      },\n      \"rig.bin\": {\n        \"bytes\": 11642,\n        \"sha256\": \"2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5\"\n      },\n      \"walkable.bin\": {\n        \"bytes\": 605048,\n        \"sha256\": \"e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357\"\n      },\n      \"world.bin\": {\n        \"bytes\": 102176,\n        \"sha256\": \"7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f\"\n      }\n    }\n  },\n  \"support_asset_manifest\": {\n    \"schema\": \"coh-native-support-assets-v1\",\n    \"accepted_apk_sha25",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "shell",
+      "uiautomator",
+      "dump",
+      "/data/local/tmp/coh-support-ui.xml"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 59,
+    "stdout_sha256": "dedfdc7712ff270596c06f5713731365cb82d9ac2360e84b7af485bb49ce2f4f",
+    "stdout_preview": "UI hierchary dumped to: /data/local/tmp/coh-support-ui.xml\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "cat",
+      "/data/local/tmp/coh-support-ui.xml"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 7822,
+    "stdout_sha256": "178d271888102f5a3d70afe41d7006e1f4865f889a56b212e6074dd14cec3426",
+    "stdout_preview": "<?xml version='1.0' encoding='UTF-8' standalone='yes' ?><hierarchy rotation=\"0\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.widget.FrameLayout\" package=\"org.coh.nativesupport\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,1920]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.widget.LinearLayout\" package=\"org.coh.nativesupport\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,1857]\"><node index=\"0\" text=\"\" resource-id=\"android:id/content\" class=\"android.widget.FrameLayout\" package=\"org.coh.nativesupport\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,63][1080,1857]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.widget.LinearLayout\" package=\"org.coh.nativesupport\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,63][1080,1857]\"><node index=\"0\" text=\"CoH Native Support \u2022 Offline mock HUD\" resource-id=\"\" class=\"android.widget.TextView\" package=\"org.coh.nativesupport\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,63][1080,126]\" /><node index=\"1\" text=\"Left stick / WASD / D-pad: move \u2022 Right stick / drag: look&#10;Original Wretch scene \u2022 New clips use neutral poses. Mock HUD and sound; no server.&#10;UI navigation routes D-pad/A to the HUD; sticks move the actor when disabled.\" resource-id=\"\" class=\"andro",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "logcat",
+      "-d"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 3488677,
+    "stdout_sha256": "66dfd6c767fdddb0872c823a0612a3451b3adcd51e16de0a08c57185f512ac96",
+    "stdout_preview": "--------- beginning of kernel\n10-15 07:46:46.053     0     0 I         : Linux version 5.15.119-android13-8-00034-gd34029c8258b-ab10871489 (build-user@build-host) (Android (8508608, based on r450784e) clang version 14.0.7 (https://android.googlesource.com/toolchain/llvm-project 4c603efb0cca074e9238af8b4106c30add4418f6), LLD 14.0.7) #1 SMP PREEMPT Wed Sep 27 18:42:24 UTC 2023\n10-15 07:46:46.053     0     0 I Command line: 8250.nr_uarts=1 clocksource=pit no_timer_check console=0 loop.max_part=7 ramoops.mem_address=0xff018000 ramoops.mem_size=0x10000 memmap=0x10000$0xff018000 printk.devkmsg=on bootconfig mac80211_hwsim.radios=0\n10-15 07:46:46.053     0     0 I x86/fpu : Supporting XSAVE feature 0x001: 'x87 floating point registers'\n10-15 07:46:46.053     0     0 I x86/fpu : Supporting XSAVE feature 0x002: 'SSE registers'\n10-15 07:46:46.053     0     0 I x86/fpu : Supporting XSAVE feature 0x004: 'AVX registers'\n10-15 07:46:46.053     0     0 I x86/fpu : xstate_offset[2]:  576, xstate_sizes[2]:  256\n10-15 07:46:46.053     0     0 I x86/fpu : Enabled xstate features 0x7, context size is 832 bytes, using 'standard' format.\n10-15 07:46:46.053     0     0 I signal  : max sigframe size: 1776\n10-15 07:46:46.053     0     0 I         : BIOS-provided physical RAM map:\n10-15 07:46:46.053     0     0 I BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable\n10-15 07:46:46.053     0     0 I BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved\n10-15 07:46:46.053     0     0 I BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved\n10-15 07:46:46.053     0     0 I BIOS-e820: [mem 0x0000000000100000-0x000000007ffd5fff] usable\n10-15 07:46:46.053     0     0 I BIOS-e820: [mem 0x000000007ffd6000-0x000000007fffffff] reserved\n10-15 07:46:46.053     0     0 I BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved\n10-15 07:46:46.053     0     0 I BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved\n10-15 07:46:46.053     0     0 I         : Stack Depot is disabled\n10-15 07:46:46.053     0     0",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "exec-out",
+      "screencap",
+      "-p"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 588654,
+    "stdout_sha256": "af1102f9bfcb2ea29ad815ae2e91ddccfeb2932c9a340754a05514b158f2ee88",
+    "stdout_preview": "\ufffdPNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u00048\u0000\u0000\u0007\ufffd\b\u0006\u0000\u0000\u0000+a\ufffd\n\u0000\u0000\u0000\u0001sRGB\u0000\ufffd\ufffd\u001c\ufffd\u0000\u0000\u0000\u0004sBIT\b\b\b\b|\bd\ufffd\u0000\u0000 \u0000IDATx\ufffd\ufffd\ufffdiPTg\ufffd?\ufffdo7\r4\ufffd\ufffd\ufffd \b\ufffd\" \u0002\ufffd\ufffd\u001a%\u001a\ufffd,j\ufffdd\ufffdI&\ufffd\u052d\ufffd\ufffd\ufffdfRwy5U\ufffdj\ufffd\ufffd\ufffd\u038b\ufffd\ufffd\ufffd\ufffdMnt\u00123r\ufffd\u0018\ufffd$\ufffd\ufffd\"n\uc6ca\ufffd(\ufffd/\ufffd5tC\ufffd\ufffd\u007faq\ufffd\ufffd\ufffd\u0006\ufffd\ufffdW\ufffd~\ufffd\ufffd\ufffd\u001c\ufffd\ufffd\ufffdy\ufffd\ufffd\ufffds~\ufffdy~\ufffd\ufffdw\ufffd\ufffd\ufffd\u0016DDDDDDDD\u000eLj\ufffd\n\u0010\u0011\u0011\u0011\u0011\u0011\u0011\u0011\ufffd\u0017\u0003\u001cDDDDDDD\ufffd\ufffd\u0018\ufffd \"\"\"\"\"\"\"\ufffd\ufffd\u0000\u0007\u0011\u0011\u0011\u0011\u0011\u0011\u00119<\u00068\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd1\ufffdADDDDDDD\u000e\ufffd\u0001\u000e\"\"\"\"\"\"\"rx\fp\u0010\u0011\u0011\u0011\u0011\u0011\u0011\ufffd\ufffdc\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u001c\u001e\u0003\u001cDDDDDDD\ufffd\ufffd\u0018\ufffd \"\"\"\"\"\"\"\ufffd\ufffd\u0000\u0007\u0011\u0011\u0011\u0011\u0011\u0011\u00119<\ufffd\ufffd+@\ufffd%\ufffdH\ufffd\ufffd\ufffd\ufffd\ufffddxyy\ufffd\ufffd\ufffd\u001c\ufffd\ufffd\ufffd\ufffd\ufffd\u0004\u0004\u0004 %%\u0005*\ufffd\nUUUP*\ufffd6\ufffd\ufffd\ufffd\u0019\ufffd\ufffd\ufffd\ufffdT(\ufffdJ\ufffdm'\u0011\u0011\u0011\u0011\u0011\u0011\u0019\ufffd\u0000\ufffd\u0002\ufffd\ufffd\u6195+W\";;\u001bNNN\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0007\ufffdR\ufffd\u0000\u0000...\u0639s'\ufffd\ufffd\u00e1\ufffdh \ufffdHPYY\ufffdp7\ufffd\ufffd\ufffd\ufffd\ufffdW_all\f\ufffd~;\ufffdR)***\u001c\ufffd\ufffdDDDDD\ufffd\ufffd\ufffd\u61b0\ufffd0\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\r\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u03d5J%\ufffd\ufffd\ufffd0::\ufffd\ufffd\ufffd6\ufffd\ufffd\ufffdctt\u05065\ufffd\ufffd\ufffd\ufffd\u0004444X\ufffd\ufffd\ufffd>\ufffdh\u019f\u007f\ufffd\ufffd\u0007\ufffdj\ufffd\u0016\ufffd\ufffdB\ufffd\u0000\ufffd\u0002\ufffd\ufffd\ufffd\u014b\u0017\ufffd\ufffd\ufffd\u0017\u0000\u0010\u001b\u001b\ufffd\ufffd+W\ufffd\ufffd\u014b\u0000\ufffd\ufffd\ufffd\\\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0015\u0000\ufffd\ufffd\ufffd\ufffd[\ufffdn9\u070d\ufffd\ufffd\ufffd\u000bbccE\ufffd\ufffd\ufffd\ufffd\u0165K\ufffd\ufffd\ufffdj\ufffd\ufffd\ufffd\ufffd\u014b\u0017\u000b\u001dsrr2\ufffd\ufffd\ufffd\u001d\ufffd\ufffdDDDDD\ufffd\ufffd\ufffd\u71d4\ufffd\u0014\ufffd\ufffd\ufffd ..n\ufffd\u05e7\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdP[[\ufffd\ufffd\ufffd:<z\ufffd\ufffdR\u0574\ufffd\u035b7#..\ufffd*\u0001\u000e\ufffd,\u00068\u0016\u0010ggg\ufffd\ufffd\ufffdappP\ufffd'\ufffdJ\ufffd\ufffd\ufffd!l\ufffd\ufffd\ufffd`\ufffd\ufffd\u0548\ufffd\ufffd\u0002\u0000,Z\ufffd\b...\ufffd\ufffd=<< \ufffd\ufffdS\ufffdx{{ctt\u0014\ufffd\ufffd\ufffd\u0016n\ufffdq\ufffd\ufffd\ufffd\ufffd \u000e\u0000\ufffd\ufffd\ufffd\ufffd};\ufffd\ufffd\ufffd\ufffd\ufffd,-..\u000e\ufffd\ufffd\ufffdz\u0001\u000bS\ufffd\ufffd\ufffd\"66\u0016;w\ufffdD]]\u001d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdh\ufffdZZ\ufffd\ufffd\u035b\ufffdi\ufffd&\u073bw\ufffd\ufffdU!3`\ufffdc\u0001\ufffdJ\ufffd\ufffd\ufffd\ufffdD^^\u001e\\\\\\p\ufffd\ufffd\u001dTWWC\ufffdVc\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0013^+\ufffdH\ufffd\ufffd\ufffd\u0007ooo\u0000\ufffd\ufffd\ufffd\ufffd\ufffd\\\u0001\u0001\u0001\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0010d2\u0019\ufffd\ufffd\ufffd\u0011\u001f\u001f\ufffd\ufffd\ufffdq\ufffd\ufffd\ufffd\ufffd\ufffd\u00c7\ufffdh4Vm\u07e4\ufffdv\ufffdZ\ufffd\n\ufffd\ufffd\u03b8s\ufffd\u000e\ufffd\ufffd\ufffd0111\ufffdvFFFbxx\ufffd\ufffd\ufffdIDDDDdiqqq\u0634i\ufffdQ\ufffd5L59\u0012\ufffd\ufffd\ufffd\u0011\ufffdO\ufffd\ufffd\ufffd@\ufffd\ufffd\u035b\ufffdy\ufffdf\ufffd\ufffd\ufffd\ufffd\u007f\ufffd\ufffd\ufffdC\ufffd\ufffd|\ufffd\u11e2mNY1\r\u0003\u001c\u000b\ufffd\ufffd\ufffd\u0017\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0006\ufffdT\ufffd\ufffd\ufffdp$&&B\ufffd\ufffd 00P4_n\ufffd\ufffd\r\ufffd$www\ufffd_\ufffd\u001e111\ufffd\ufffd\ufffdDdd$|}}\ufffd\ufffdj\ufffd\ufffd\ufffd#\f\f\f```\ufffd\ufffdM2hj;%\u0012\ufffd^;\ufffd\ufffd\u04184S;7l\u0600\ufffd\ufffdX\ufffdk'\u0011\u0011\u0011\u0011\ufffd\ufffd\ufffd\ufffd\ufffda\u03de=HMM\ufffdxYqqq\ufffd\ufffd\ufffdCYY\u0019\ufffd\u001e=jWy:&GnX\ufffdl\ufffd6\ufffd\ufffd\ufffd\u001f\ufffd\ufffd\ufffd\ufffd\ufffdY\ufffd\ufffd$\ufffdX\ufffd#))\t\u0001\u0001\u0001\ufffd>O}}=\ufffd\ufffd\ufffd\ufffdP#}QQQ\ufffd\ufffd\ufffd\u0016\ufffd\ufffd\u07bd\ufffd\ufffd\ufffd\u000e\ufffd\ufffd\ufffd{[\ufffdR)\\]]!\ufffd\ufffd \ufffdH\u0010\u0010\u00100\ufffd\ufffdFDD   \u0000...\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001\u0003k\ufffd\ufffdN\u0000\ufffdngdd$\u0002\u0003\u0003\r\ufffd\ufffd\ufffdH+\u0011\u0011\u0011\u0011\ufffd\ufffd\u000b\u000f\u000f\ufffd/~\ufffd\u000b\ufffd\ufffd\ufffd[\ufffd\ufffd\u0015+V 99\u0019\ufffd|\ufffd\t\ufffd\ufffd\u06acZ\ufffd!\ufffd\ufffd\r\ufffdDb\ufffd\u0018\u58cf>\ufffdH\u000e#Y,\ufffd\ufffd\ufffd\ufffd3\ufffdy\\\u0000\ufffd\ufffd\ufffdg\ufffd\ufffd\ufffdL&\ufffd\u07bd{\u0011\u0012\u0012\"\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0669\ufffd\ufffd\ufffd\ufffd\ufffdArr\ufffd?\u0000\ufffdj\ufffdB\ufffd@[[\u001bT*\ufffd\ufffd\ufffd\u001a\u001a\ufffd\u0006\ufffd\ufffd\ufffdhiiA{{\ufffd\ufffd\ufffd\u0004\u001f\u001f\u001f\ufffd\ufffd\ufffdb\u0462E\ufffd\ufffd\ufffdT*\ufffd;\ufffdJ\ufffdB{{;\ufffd\ufffd\ufffd\ufffd^\u007fcMm\ufffd\ufffd\ufffd\u001a\u01b43,,\fQQQ3\ufffd\ufffd\ufffd\ufffd\u0003\n\ufffd\u00a2m!\"\"\"\"\ufffd\ufffd\ufffd\ufffd,\ufffd\u077b\ufffdf\u5ef9\ufffd\ufffd\ufffd\ufffd\ufffdGaa!JKKmV\u000fKOK!\u06f2\ufffd)*\ufffd\u02d9\ufffd\u06d6-[D\ufffd\rk\ufffdT[\ufffd\ufffd\ufffd\ufffd\ufffd\u05c7\ufffd\ufffd\u0001\ufffd\r\ufffdV\ufffd\ufffdB\ufffd@}}=\u001a\u001b\u001b\ufffd\ufffd\u074d\ufffd\ufffd>\ufffd\ufffd\ufffd\ufffd\ufffdwww\ufffd\ufffd\ufffd?\ufffd\ufffd\ufffd\u0010\u001b\u001b\ufffd\ufffd\ufffd\u0014xxx\ufffd\u0002:\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0016\ufffd]\ufffd\ufffd\ufffd\ufffd\f\u000e\u000e\u0016\ufffdO\ufffd\ufffd\ufffd\ufffd\u000eMMM\u000e\ufffdN\"\"\"\"\"s\u06bbw/\ufffd\ufffd\ufffdl]\r\u0000\ufffd\ufffd\ufffd\ufffd\ufffdK\ufffd.Y\ufffdl\u00067\u0016>\ufffd\u00058\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdk\ufffdq111X\ufffdh\u0011\u0000\ufffd\ufffd\ufffd\u0013MMM\ufffd\u001a\u0016-Z\ufffd\ufffd\ufffd<\ufffd_o\ufffd\ufffdX*\ufffd\ufffdT*\ufffd\ufffd\ufffd\ufffdh5\ufffd\ufffd\ufffd\ttuu\ufffd\ufffd\ufffd\u0014\ufffdn\ufffdBww\ufffd\ufffd\u01cf\ufffd\ufffd`dd\u0004\u000f\u001f>DKK\u000b:;;\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd`aJ\ufffd\ufffd\ufffd\u0013\ufffd\ufffd\ufffd!\ufffdJm\ufffdd\ufffd\ufffd\ufffd\u0005\ufffd\ufffd\ufffd\u00be\ufffd\ufffd\ufffdy\ufffd&zzz\ufffd=^\ufffd\ufffd]]]\ufffd\ufffd\ufffd\ufffdk\ufffdL&\ufffdi;\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd%++\u000b+V\ufffd\ufffdu5Dv\ufffd\u0601\ufffd\ufffdQ\ufffd\ufffd\ufffdYm\u0685\ufffdsn\ufffd\ufffd\u0007\u001f|\ufffd?\ufffd\ufffd\u000e3e\u019eY,\ufffd1\ufffdaGNNN\ufffd\u0004*\ufffd\ufffd\ufffd\u0016y\ufffd\ufffd\u0739St\ufffd<\ufffd\ufffd\ufffd\ufffd\u000f>\ufffd\ufffd9\ufffd\ufffd\ufffd\u2090\ufffd\u0010\ufffd\ufffd\\&\ufffd!::ZX1dbb\u0002\ufffd\ufffd\ufffd\ufffdt\ufffd\u0012\ufffd\ufffd\ufffdM\u001a9\ufffd\ufffd\u04c3\u001b7n@\ufffdP`\u035a5\b\u000b\u000b\ufffd\ufffd\ufffd\u0013\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffdj\ufffd\ufffd\ufffd\ufffd.\ufffd\ufffdj\ufffd\ufffd\u035a\ufffd\ufffd~\ufffd:\ufffd\ufffd\ufffdm\ufffdN\"\"\"\"\"K\ufffd\ufffd*)\ufffd0\ufffd|\ufffd\u001a\ufffdy\ufffd\u0006\u0013\ufffd\ufffd\ufffd]MQ\ufffd\ufffd\u02c3\ufffd\ufffd/\u0000`xx\u0018W\ufffd\\1{\u0019\ufffd6mBTT\u0014\u0000\ufffd\u0463G\ufffd\ufffdE\ufffd)//\u000f>>>",
+    "stderr": ""
+  }
+]

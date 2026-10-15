@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "accepted_baseline": "Gates1-24 physically accepted within user-documented bounded scopes; unchanged0.3.0 APK",
+  "primary_exclusive": "Gates25-27; no code edits by this batch",
+  "workers_actually_concurrent": 6,
+  "workstreams": [
+    {
+      "gate": "31",
+      "implemented": true,
+      "host_qualified": true,
+      "arm64_built": true,
+      "emulator_qualified": false,
+      "emulator_scope": "No new body rendering",
+      "physical_thor_accepted": false,
+      "full_gate_accepted": false
+    },
+    {
+      "gate": "32",
+      "implemented": true,
+      "host_qualified": true,
+      "arm64_built": true,
+      "emulator_qualified": true,
+      "emulator_scope": "Bounded offline x86_64 adapter only",
+      "physical_thor_accepted": false,
+      "full_gate_accepted": false
+    },
+    {
+      "gate": "33",
+      "implemented": true,
+      "host_qualified": true,
+      "arm64_built": true,
+      "emulator_qualified": true,
+      "emulator_scope": "Bounded offline x86_64 adapter only",
+      "physical_thor_accepted": false,
+      "full_gate_accepted": false
+    },
+    {
+      "gate": "34-36",
+      "implemented": true,
+      "host_qualified": true,
+      "arm64_built": true,
+      "emulator_qualified": true,
+      "emulator_scope": "Bounded offline x86_64 adapter only",
+      "physical_thor_accepted": false,
+      "full_gate_accepted": false
+    },
+    {
+      "gate": "43",
+      "implemented": true,
+      "host_qualified": true,
+      "arm64_built": true,
+      "emulator_qualified": true,
+      "emulator_scope": "Bounded offline x86_64 adapter only",
+      "physical_thor_accepted": false,
+      "full_gate_accepted": false
+    },
+    {
+      "gate": "44-45 preparation",
+      "implemented": true,
+      "host_qualified": true,
+      "arm64_built": true,
+      "emulator_qualified": true,
+      "emulator_scope": "Bounded offline x86_64 adapter only",
+      "physical_thor_accepted": false,
+      "full_gate_accepted": false
+    }
+  ],
+  "source_sha": "b69bbf232e1746f1fb35ef1aa624a636f2cce490",
+  "workflow": "https://github.com/Russianranger/coh-android/actions/runs/38702695275/artifacts/11957750066",
+  "no_full_game_fps_claim": true
+}

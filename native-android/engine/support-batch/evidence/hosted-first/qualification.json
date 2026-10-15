@@ -1,0 +1,11 @@
+{
+  "source_sha": "37128acb3c41e5bb81e247c87f313a20a758f326",
+  "run_id": 38700728779,
+  "artifact_id": 11955638663,
+  "archive_sha256": "9b8a50be14934ac9011c683f65cdcf5f3100dc518e0de2f5ac930c09f849b474",
+  "archive_sha256_independently_verified": true,
+  "zip_crc_verified": true,
+  "scenario_passed": false,
+  "failure": "Case-sensitive accessibility selector expected Mock animation; rendered Android Button text was MOCK ANIMATION",
+  "scope": "Native startup, original font HUD, 2304-triangle BVH WALK and actual AAudio initialization; full interaction/lifecycle scenario unqualified"
+}

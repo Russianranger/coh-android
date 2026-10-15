@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "source_sha": "b69bbf232e1746f1fb35ef1aa624a636f2cce490",
+  "source_tree": "fae77373bb0beb2b815b50e9d329f33c89cac250",
+  "run_id": 38702695275,
+  "run_conclusion": "success",
+  "artifact_id": 11957750066,
+  "artifact_url": "https://github.com/Russianranger/coh-android/actions/runs/38702695275/artifacts/11957750066",
+  "archive_sha256": "71bd89e52b113222e0e9a8ba22f09c39bf3880edeb6807e6c77eb24e0d2b1594",
+  "archive_independently_verified": true,
+  "zip_crc_verified": true,
+  "both_apk_hashes_independently_verified": true,
+  "clean_source_build_receipt_verified": true,
+  "installed_apk_identity_verified": true,
+  "emulator_assertions_passed": 13,
+  "native_library_reproducibility": {
+    "arm64-v8a": {
+      "local_native_sha256": "c82479894021dad5f88bae523a605c32d479093d6617ef4430fad3e3fb4645ed",
+      "hosted_native_sha256": "c82479894021dad5f88bae523a605c32d479093d6617ef4430fad3e3fb4645ed",
+      "byte_identical": true
+    },
+    "x86_64": {
+      "local_native_sha256": "66e0b688ee8b5ed8228729ce2e95eaa13b837711bf4728486c9f90d84df5877d",
+      "hosted_native_sha256": "66e0b688ee8b5ed8228729ce2e95eaa13b837711bf4728486c9f90d84df5877d",
+      "byte_identical": true
+    }
+  },
+  "scope": "Bounded offline x86_64 Android execution; ARM64 build; no new character-body GPU or physical Thor acceptance",
+  "accepted_0_3_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+  "accepted_0_3_apk_rebuilt": false,
+  "accepted_0_3_source_and_inputs_unchanged": true
+}

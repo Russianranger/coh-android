@@ -1,0 +1,13 @@
+{
+  "run_id": 38701533777,
+  "artifact_id": 11957020613,
+  "source": "c988abbb55affe890542c505150e0f418f0b18e8",
+  "archive_sha256": "22f56a3bfcaed8fd1617533f8f6041ad2d607ec75861061c03022087dee7e2a3",
+  "archive_digest_independently_verified": true,
+  "zip_crc_verified": true,
+  "both_apk_hashes_independently_verified": true,
+  "source_bound_build_receipt_verified": true,
+  "emulator_scenarios_passed": 12,
+  "emulator_summary_source_field": null,
+  "source_binding_note": "Summary source field absent in this driver; exact commit established through clean build receipt and identical installed APK SHA. Final touch driver reads this directly."
+}
