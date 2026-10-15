@@ -141,6 +141,79 @@ triangles, zero hot allocator calls, zero outstanding tracked allocations,
 ASan/UBSan and Android API 26 ARM64 linking. LeakSanitizer has the same recorded
 local `/proc` restriction. Runtime Android/Thor acceptance is still pending.
 
+## Optional streamed-neighborhood admission
+
+`coh_physics_snapshot.h` provides an additive loader boundary that rejects
+explicitly missing neighboring assets. Existing `CohPhysicsScene` and accepted
+WALK APIs remain unchanged. The optional snapshot owns both the geometry and a
+deep-copied regular X/Z coverage grid. Each cell is `MISSING`, explicitly known
+`EMPTY`, or `LOADED` with an exact segment ID and segment generation. Invalid or
+unresolved references reject snapshot creation. The grid declares a common
+covered Y interval. These declarations are loader attestations of completeness;
+triangle bounds cannot establish that every game asset has been decoded.
+`EMPTY` means no additional segment must be loaded for that cell; triangles from
+neighboring loaded segments may still cross it.
+
+`snapshot_query` and `snapshot_walker_prepare` inspect every intersected cell
+before calling the unchanged source implementation. Missing cells, out-of-grid
+regions and uncovered Y return `COH_NOT_FOUND`. A closed query touching an
+internal cell seam checks both neighbors; contact with the outer grid boundary
+also requires a larger manifest. No floor is invented. Query/contact output and
+an existing walker's prepared world/state remain unchanged on admission failure.
+The fixed admission counters report checked and missing cells separately from
+BVH cost. The fixed cap is 65,536 cells; there is no admission heap allocation.
+Preparation is off tick, and accepted stepping still allocates nothing.
+
+Snapshots use atomic reference ownership. Creation returns one owned reference;
+retain one additional reference before publishing to each concurrent reader,
+and release it only after that reader's last synchronous query/prepare. A live
+owned reference must exist throughout retain; incrementing a retired raw pointer
+is invalid. No process-global scene pointer or atomic publication policy is
+introduced. A prepared walker owns its own accepted source cache and retains no
+snapshot pointer, so it survives immediate snapshot retirement. Replacements
+must use a fresh generation. Grounded replacement performs unchanged source
+ground admission before retaining the exact WALK state; stale-generation steps
+reject. The original lower-level manual scene lifetime API is preserved.
+
+Validation:
+
+```sh
+python3 native-android/engine/physics/check_snapshot.py \
+  --source-root /path/to/full/source --ndk /path/to/android-ndk-r28c \
+  --output /path/to/proof.json
+```
+
+The checker verifies the same five original source identities, independently
+compiles original CTri/triangle kernels, and compares deterministic results with
+the accepted implementation. The fixture is four explicitly synthetic connected
+graded regions; it extends source-qualified traces rather than claiming a newly
+decoded authentic map. It covers exact source WALK traces through repeated
+state-preserving neighborhood refreshes, complete/missing/known-empty cells,
+seam and world-edge admission, wrong segment generations, malformed manifests,
+memory limits, cancellation, scene replacement and concurrent reference retirement.
+ASan/UBSan, tracked allocation accounting and API 26 ARM64 export/link validation
+are separate evidence. The default LeakSanitizer mode is enabled; this sandbox
+again refused `/proc/.../task` access, so the committed local receipt explicitly
+records `--disable-leak-sanitizer`. No LeakSanitizer result is claimed.
+
+`qualification/snapshot-host-arm64.json` describes the exact source files used.
+The 10,000-query batch duration is a host CPU observation for eight triangles,
+not an Android latency, gameplay FPS or full-world performance claim. The source
+WALK, authentic floor/bench and 32,768-triangle BVH receipts above are unchanged.
+Android emulator and physical Thor tests for this new optional loader boundary
+remain pending; support-client integration can continue using the existing API
+until a genuine streamed loader supplies the coverage manifest.
+
+Integration requires only adding `coh_physics_snapshot.c` beside the existing
+physics library (the owned standalone CMake target does this), including the new
+header in the loader, and switching queries/prepare calls to the snapshot
+wrappers. Keep renderer/Surface generations separate from scene generation.
+Publish loader snapshots off tick; pause and refresh a neighborhood on
+`COH_NOT_FOUND`, retrying the same tick only after complete geometry arrives.
+Reverting this additive continuation or omitting the new source and retaining
+the original scene API rolls back the change without asset, actor, protocol,
+session, JNI, root-build or accepted APK changes.
+
 ## Remaining gate requirements
 
 - No new jump launch/hold/release law. Accepted WALK explicitly rejects jump
@@ -156,8 +229,9 @@ local `/proc` restriction. Runtime Android/Thor acceptance is still pending.
   neighborhood assembly; the accepted narrow WALK world still uses its original
   bounded scan. No unsupported sublinear WALK claim is made.
 - Source world bounds remain limited to 16,384 units per WALK neighborhood.
-  AABB safety cannot prove that all neighboring assets have been loaded; segment
-  availability is a loader/integration admission responsibility.
+  AABB safety cannot prove that all neighboring assets have been loaded. The
+  optional coverage snapshot enforces explicit loader attestations; truthful
+  segment completeness and integration remain the loader's responsibility.
 - Replacement generation ground admission is conservative and can reject a pose
   close to an obstacle although its current WALK state is supported. Keep the
   previous snapshot and retry on confirmed ground; never reset the actor.

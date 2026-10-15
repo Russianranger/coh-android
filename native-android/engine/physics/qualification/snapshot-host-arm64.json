@@ -1,0 +1,107 @@
+{
+  "schema": "coh-native-physics-snapshot-v1",
+  "passed": true,
+  "starting_repository_revision": "3c5da1d8cd501d778e270d395109d40666fbe37a",
+  "source_revision": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "source_sha256_lf": {
+    "upstream/ouroboros/Common/entity/entworldcoll.c": "e5c0cab8c310f36ec88c9a97190739af2612e524e487128d409cbb23f4cf71a4",
+    "upstream/ouroboros/Common/gridcoll/ctri.c": "506a32b5546ab24efa9ef8077c3bd197cb5e1a601f6a735cea0f38161bee6b46",
+    "upstream/ouroboros/Common/gridcoll/tritri_isectline.c": "fe3a730d7ac5b04c83d8f39f2a41aaedafe0248ffa5ba76793a08386cc25c7db",
+    "upstream/ouroboros/Common/gridcoll/gridcollobj.c": "a3c516bd673dfcea11829281faab091ef104fe04548327e6410a14fe98dde2d5",
+    "upstream/ouroboros/Common/gridcoll/gridcoll.h": "4ade01161636f8e87ca253a4a8a19926fee3006c5558ef75bf4fc08098546c8e"
+  },
+  "independently_compiled_original_ctri_parity": true,
+  "host": {
+    "passed": true,
+    "checks": 10566,
+    "failed": 0,
+    "source_walk_exact_steps": 160,
+    "state_preserving_refreshes": 7,
+    "connected_regions": 4,
+    "max_coverage_cells_tested": 65536,
+    "snapshot_owned_bytes": 2384,
+    "query_and_walk_allocator_calls": 0,
+    "outstanding_tracked_allocations": 0,
+    "concurrent_source_queries": 8000,
+    "query_batch_cpu_seconds": 0.002591
+  },
+  "asan_ubsan": {
+    "passed": true,
+    "checks": 10566,
+    "failed": 0,
+    "source_walk_exact_steps": 160,
+    "state_preserving_refreshes": 7,
+    "connected_regions": 4,
+    "max_coverage_cells_tested": 65536,
+    "snapshot_owned_bytes": 2384,
+    "query_and_walk_allocator_calls": 0,
+    "outstanding_tracked_allocations": 0,
+    "concurrent_source_queries": 8000,
+    "query_batch_cpu_seconds": 0.035435
+  },
+  "leak_sanitizer_enabled": false,
+  "android": {
+    "built": true,
+    "abi": "arm64-v8a",
+    "api": 26,
+    "ndk": "android-ndk-r28c",
+    "library": {
+      "bytes": 252432,
+      "sha256": "307207a81273dc25c658839c2d6413fbce949a53f47bab8b1e233a5f5e08a176"
+    },
+    "exports": [
+      "coh_physics_snapshot_create",
+      "coh_physics_snapshot_info",
+      "coh_physics_snapshot_query",
+      "coh_physics_snapshot_release",
+      "coh_physics_snapshot_retain",
+      "coh_physics_snapshot_walker_prepare"
+    ],
+    "emulator_qualified": false,
+    "physical_thor_accepted": false
+  },
+  "runtime_source": {
+    "native-android/engine/physics/coh_physics_snapshot.c": {
+      "bytes": 6741,
+      "sha256": "f2079ec68f51c353bdf93fd0a5e18ebbb12a1db969f3607ae239a736534d531d"
+    },
+    "native-android/engine/physics/coh_physics.c": {
+      "bytes": 12503,
+      "sha256": "50bca0b54db61a6ac8318241c2e94ab9e0d347567f41c950dd3aaa4ee0837871"
+    },
+    "native-android/walk/coh_walk.c": {
+      "bytes": 15089,
+      "sha256": "998c64c472613cf6e8da38218a8d30bcbf49d29c273520180948d4a2e90c50be"
+    },
+    "native-android/walk/source_world.c": {
+      "bytes": 35313,
+      "sha256": "4225a8576a5a536cac44ab107cbfe9bdd7bd3d1ab04bbdb6c2679b375aec9d55"
+    },
+    "native-android/motion/coh_motion.c": {
+      "bytes": 6899,
+      "sha256": "857240b5eff8a0b88aa102826b03e1fb9318158b89c44487473e03f3a39a454b"
+    },
+    "native-android/walk/source_ctri.c": {
+      "bytes": 41795,
+      "sha256": "1862c65a355ddfa71d1264671effa36addc2a8a3497b7c0825465835603a5670"
+    },
+    "native-android/walk/source_tritri.c": {
+      "bytes": 25477,
+      "sha256": "c3fabb12b9a31baac2b6f0bf83b9c0f9456941f897167524e5dfcd88837005c3"
+    },
+    "native-android/engine/physics/coh_physics_snapshot.h": {
+      "bytes": 3037,
+      "sha256": "1b952bb7eba80fb3871cc4768447168d8efd7fef5e94ce0fdadbaadc39ac4fb7"
+    },
+    "native-android/engine/physics/tests/test_snapshot.c": {
+      "bytes": 11362,
+      "sha256": "a826d73d46139c03e76b9c7a9d3721db856edd12785aa5f4718d48cd7daad184"
+    }
+  },
+  "limits": [
+    "Coverage is an explicit loader attestation, not proof of completeness from triangle bounds.",
+    "Four connected synthetic source-qualified slope regions; no newly qualified authentic map.",
+    "No jump, dynamic collision, prediction, networking or server changes.",
+    "ARM64 linking does not establish Android runtime, Thor, full-map or performance acceptance."
+  ]
+}

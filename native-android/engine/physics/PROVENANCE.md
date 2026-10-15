@@ -30,3 +30,14 @@ the supplied witnesses, not equivalence of every original world/grid function.
 Synthetic terrain and duplicate-triangle tests are explicitly mock geometry.
 The external authentic corpus remains identified by SHA256 in each newly emitted
 proof. Accepted Session Client 0.3.0 and its physical evidence remain immutable.
+
+`coh_physics_snapshot.c` is an additive coverage-admission and reference-lifetime
+adapter, starting from repository revision
+`3c5da1d8cd501d778e270d395109d40666fbe37a`. It does not replace any source movement
+or collision law. Its four connected slope regions are explicitly synthetic
+source-qualified witnesses. `check_snapshot.py` verifies the five original
+source hashes above and compiles original CTri files independently before
+comparing exact source-WALK/refreshed-window results. Coverage-cell declarations
+are loader metadata, not original map assets and not an assertion that a full
+City of Heroes map has been qualified. Refcount ownership does not confer
+thread safety on a shared mutable walker; each walker retains a single tick owner.
