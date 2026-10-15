@@ -1,0 +1,67 @@
+name: Native combined server-helper and exact-client qualification
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/combined-client/tools/reuse_server_helper.py
+      - .github/workflows/native-combined-startup-requalify.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-combined-startup-requalify-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  exact-client-android13:
+    if: github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false, fetch-depth: 0}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install image-check dependency and recover pinned source inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sdkmanager 'build-tools;35.0.0'
+          python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+          gh api repos/Russianranger/coh-android/actions/artifacts/11999855486/zip > /tmp/combined-623b-packages.zip
+          curl --fail --silent --show-error --location --retry 2 --output /tmp/combined-donor.apk https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk
+          echo '14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f  /tmp/combined-donor.apk' | sha256sum -c -
+          python3 native-android/combined-client/tools/prepare.py --donor-apk /tmp/combined-donor.apk
+      - name: Qualify server-helper contracts and preserve exact client payloads
+        run: |
+          python3 native-android/combined-client/tools/reuse_server_helper.py --archive /tmp/combined-623b-packages.zip --output native-android/results/combined-startup-requalify --build-tools "$ANDROID_HOME/build-tools/35.0.0" --require-clean
+          python3 native-android/combined-client/runtime/check.py --source-root . --donor /tmp/combined-donor.apk --output native-android/results/combined-startup-requalify/server-runtime.json
+          python3 native-android/combined-client/qualification/check_diagnostics.py > native-android/results/combined-startup-requalify/diagnostics.json
+          python3 native-android/combined-client/tools/driver_controls.py
+      - name: Enable hosted Android emulator acceleration
+        run: |
+          test -c /dev/kvm
+          sudo chmod 666 /dev/kvm
+      - name: Qualify final APK framework and retained native client
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-startup-requalify/CoH-Native-Combined-0.1.1-emulator-x86_64.apk --output native-android/results/combined-startup-requalify/android13 --donor-apk /tmp/combined-donor.apk --protocol-binary native-android/results/combined-startup-requalify/host/local-android/coh-local-x86_64 --protocol-receipt native-android/results/combined-startup-requalify/host/local-android/android-build.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-combined-startup-qualified
+          path: native-android/results/combined-startup-requalify/
+          if-no-files-found: error
+          retention-days: 90
