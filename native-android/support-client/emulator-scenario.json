@@ -16,7 +16,21 @@
     },
     "support.audio.initialized": 1,
     "support.audio.running": 1,
-    "support.audio.last_status": 0
+    "support.audio.last_status": 0,
+    "app.version_name": "0.2.0-gameplay",
+    "app.version_code": 200,
+    "support.ui_extensions.authentic_tray_images": 11,
+    "support.audio_environment.listener_updates": {
+      "gt": 0
+    },
+    "support.observations.counters.draw_calls.known": true,
+    "support.observations.counters.draw_calls.owner_total": {
+      "gt": 0
+    },
+    "support.observations.counters.upload_bytes.known": true,
+    "support.observations.counters.allocations.known": false,
+    "support.observations.memory.process_rss.known": false,
+    "support.performance.invalid_samples": 0
   },
   "fatal_fields": [
     "native.failed",

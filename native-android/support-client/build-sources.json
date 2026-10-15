@@ -70,7 +70,10 @@
     "{codec_root}/safe/sharedbook.c",
     "{codec_root}/vorbis/lib/lookup.c",
     "{codec_root}/vorbis/lib/bitrate.c",
-    "{codec_root}/vorbis/lib/vorbisfile.c"
+    "{codec_root}/vorbis/lib/vorbisfile.c",
+    "native-android/engine/audio/coh_audio_listener.c",
+    "native-android/engine/perf/coh_perf_bridge.c",
+    "native-android/engine/ui/gameplay/coh_hud_axis_navigation.c"
   ],
   "include_dirs": [
     "native-android/support-client/src",
@@ -230,6 +233,18 @@
       ],
       "outputs": [
         "{generated}/world_shader_sources.h"
+      ]
+    },
+    {
+      "command": [
+        "{python}",
+        "native-android/engine/ui/gameplay/tray/prepare.py",
+        "--output",
+        "{generated}"
+      ],
+      "outputs": [
+        "{generated}/support_tray.h",
+        "{generated}/tray-manifest.json"
       ]
     }
   ],

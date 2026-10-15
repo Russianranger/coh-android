@@ -12,7 +12,9 @@
 typedef struct {AAsset *asset;uint64_t bytes;} AssetSource;
 struct SupportAudio {
     AAssetManager *manager;pthread_t worker;pthread_mutex_t mutex;pthread_cond_t wake;
-    int joined,cleanup_only,desired,shutdown,position_pending,retry_requested;
+    int joined,cleanup_only,desired,shutdown,position_pending,retry_requested,listener_pending;
+    uint64_t route_generation,route_applied;
+    CohAudioListenerPose listener;
     CohVec3 position;SupportAudioReport published,owner;
     CohMixer *mixer;CohMixerAAudio *backend;CohMusic *music,*ambient;
     AssetSource music_source,ambient_source;
@@ -133,7 +135,8 @@ static CohStatus start_backend(SupportAudio *s,CohVec3 position) {
     r=quiescent_pause(s,0);if(r)return r;
     r=coh_mixer_update_emitter(s->mixer,1002,position,.6f);if(r)return r;
     r=coh_mixer_aaudio_open(s->mixer,&s->backend);
-    if(!r){s->owner.opens++;s->owner.running=1;s->owner.diagnostics_valid=0;}
+    if(!r){s->owner.opens++;s->owner.running=1;s->owner.diagnostics_valid=0;
+        if(s->owner.device_error){s->owner.last_device_error=s->owner.device_error;s->owner.recovered_device_errors++;s->owner.device_error=0;}}
     else if(!s->backend)(void)quiescent_pause(s,1);
     return r;
 }
@@ -164,12 +167,19 @@ static void *owner_worker(void *opaque) {
     if(!s->cleanup_only){s->owner.last_status=initialize(s);s->fatal=s->owner.last_status!=COH_OK;publish(s);}
     for(;;) {
         pthread_mutex_lock(&s->mutex);
-        int shutdown=s->shutdown,desired=s->desired,position_pending=s->position_pending,retry=s->retry_requested;
+        int shutdown=s->shutdown,desired=s->desired,position_pending=s->position_pending,retry=s->retry_requested,listener_pending=s->listener_pending;
+        int listener_sent=0;
+        CohAudioListenerPose listener=s->listener;s->listener_pending=0;
+        uint64_t route=s->route_generation;
         CohVec3 position=s->position;s->position_pending=0;
         s->retry_requested=0;
         pthread_mutex_unlock(&s->mutex);
         if(shutdown)break;
         s->owner.worker_ticks++;
+        if(s->ready&&s->owner.close_pending){
+            s->owner.last_status=suspend_backend(s);
+            if(s->backend)goto owner_cycle_done;
+        }
         if(retry&&s->fatal&&s->ready) {
             CohStatus result=suspend_backend(s);
             if(!s->backend) {
@@ -181,16 +191,29 @@ static void *owner_worker(void *opaque) {
         }
         if(s->ready&&!s->fatal) {
             CohStatus result=COH_OK;
-            if(!desired&&s->backend){result=suspend_backend(s);s->owner.state_changes++;}
-            else if(desired&&!s->backend){result=start_backend(s,position);s->owner.state_changes++;}
+            int32_t device_error=coh_mixer_aaudio_device_error(s->backend);
+            if(s->backend&&(device_error||route!=s->route_applied||!desired)) {
+                result=suspend_backend(s);
+                if(s->backend){s->owner.last_status=result;goto owner_cycle_done;}
+                if(device_error||route!=s->route_applied)s->owner.route_reopens++;
+                s->route_applied=route;s->owner.state_changes++;result=COH_OK;
+            }
+            if(!s->backend)s->route_applied=route;
+            if(desired&&!s->backend){result=start_backend(s,position);s->owner.state_changes++;}
             if(result==COH_OK&&desired&&s->backend) {
                 if(position_pending)result=coh_mixer_update_emitter(s->mixer,1002,position,.6f);
                 if(result==COH_LIMIT){pthread_mutex_lock(&s->mutex);s->position_pending=1;pthread_mutex_unlock(&s->mutex);result=COH_OK;}
+                if(!result&&listener_pending){result=coh_audio_listener_apply(s->mixer,&listener);
+                    if(!result){s->owner.listener=listener;s->owner.listener_updates++;listener_sent=1;}
+                    if(result==COH_LIMIT){pthread_mutex_lock(&s->mutex);s->listener_pending=1;pthread_mutex_unlock(&s->mutex);result=COH_OK;}}
                 if(!result)result=pump_sources(s,8);
             }
             s->owner.last_status=result;
             if(result!=COH_OK&&result!=COH_CANCELLED){(void)suspend_backend(s);s->fatal=1;}
         }
+owner_cycle_done:
+        /* Failed close/initialization/pause must not drop the latest mailbox pose. */
+        if(listener_pending&&!listener_sent){pthread_mutex_lock(&s->mutex);s->listener_pending=1;pthread_mutex_unlock(&s->mutex);}
         publish(s);
         struct timespec deadline;
         if(clock_gettime(CLOCK_MONOTONIC,&deadline)==0) {
@@ -224,6 +247,16 @@ void support_audio_pause(SupportAudio *s){environment(s,0);}
 void support_audio_emitter(SupportAudio *s,float x,float y,float z) {
     if(!s||!isfinite(x)||!isfinite(y)||!isfinite(z))return;
     pthread_mutex_lock(&s->mutex);s->position=(CohVec3){x,y,z};s->position_pending=1;pthread_cond_signal(&s->wake);pthread_mutex_unlock(&s->mutex);
+}
+void support_audio_listener(SupportAudio *s,const CohAudioListenerPose *pose) {
+    if(!s||!pose)return;
+    pthread_mutex_lock(&s->mutex);
+    if(memcmp(&s->listener,pose,sizeof *pose)){s->listener=*pose;s->listener_pending=1;pthread_cond_signal(&s->wake);}
+    pthread_mutex_unlock(&s->mutex);
+}
+void support_audio_route(SupportAudio *s,uint64_t generation) {
+    if(!s||!generation)return;
+    pthread_mutex_lock(&s->mutex);s->route_generation=generation;pthread_cond_signal(&s->wake);pthread_mutex_unlock(&s->mutex);
 }
 int support_audio_snapshot(SupportAudio *s,SupportAudioReport *out) {
     if(!s||!out)return COH_INVALID;

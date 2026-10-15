@@ -8,5 +8,7 @@ public final class SupportNative {
  public static native boolean touch(long h,int action,int pointer,float x,float y);
  public static native boolean key(long h,int key,int action,int repeat,int shift);
  public static native void text(long h,byte[] utf8);
+ public static native void navigation(long h,boolean active,float x,float y);
+ public static native void audioEnvironment(long h,boolean allowed,long routeGeneration);
  public static native String snapshot(long h);
 }

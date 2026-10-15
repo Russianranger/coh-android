@@ -2,6 +2,7 @@
 #define COH_NATIVE_SUPPORT_AUDIO_H
 #include <android/asset_manager.h>
 #include <stdint.h>
+#include "../../engine/audio/coh_audio_listener.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -17,6 +18,9 @@ typedef struct {
     uint64_t callback_calls, maximum_callback_ns, deadline_overruns;
     uint64_t mixer_allocated_bytes, adapter_bytes;
     uint64_t snapshot_generation;
+    uint64_t listener_updates,route_reopens,recovered_device_errors;
+    int32_t last_device_error;
+    CohAudioListenerPose listener;
 } SupportAudioReport;
 /* Starts one non-realtime control/decoder/backend-owner worker. Manager must
  * outlive successful destroy. Assets are music.ogg and ambient.ogg.
@@ -27,6 +31,8 @@ SupportAudio *support_audio_create(AAssetManager *);
 void support_audio_resume(SupportAudio *);
 void support_audio_pause(SupportAudio *);
 void support_audio_emitter(SupportAudio *,float x,float y,float z);
+void support_audio_listener(SupportAudio *,const CohAudioListenerPose *);
+void support_audio_route(SupportAudio *,uint64_t generation);
 /* Thread-safe copy; returns 0 on success. Mixer/backend counters are captured
  * only after sink close joins callbacks. While running they describe the last
  * quiescent checkpoint; diagnostics_valid=0 makes that explicit. Pause, wait

@@ -11,7 +11,7 @@ accepted offline scene. The original renderer/JNI/Java files remain unchanged.
 It retains the original Wretch/Huge actor and bounded Atlas asset selection,
 adds static BVH-backed WALK, exact CPU skin-result caching, source-font GLES HUD,
 mock neutral authentic animation clips and streamed Atlas Plaza/steam audio.
-Character choices change mock data only. Male/Female/Huge costume assemblies
+The tray uses authentic original ring and 1–9,0 numeral artwork; ability-specific icons remain unavailable. UI-navigation mode routes the left stick through bounded focus hysteresis/repeat, and D-pad/A continue to navigate. Character choices change mock data only. Male/Female/Huge costume assemblies
 have independent host evidence; this APK does not render their full resource
 closures. Jump-and-smash is an animation preview, not jump physics.
 
@@ -57,22 +57,22 @@ establish full-game FPS, full-map memory use or Adreno performance.
 
 1. Keep the accepted 0.3.0 APK installed. Install the separate ARM64 support APK
    from the named Actions artifact; check its SHA256 against `SHA256SUMS`.
-   A replacement support build may use another disposable debug certificate;
+   The support release uses a separately verified disposable debug certificate;
    export its report and uninstall only the previous support app first.
 2. Open **CoH Native Support**. Confirm scene and source-font HUD render,
    mock health/endurance update, and music plus positional ambient audio play.
-3. Use left/right sticks, short WASD/D-pad movement and touch dragging; check
+3. With UI navigation OFF, use left/right sticks, short WASD/D-pad movement and touch dragging; check
    grounded movement, blocking, sliding and Near/Far selection. Reset actor.
 4. Press **Mock animation** four times, observing punch, jump-power, reaction
    and restoration of accepted grounded locomotion. New previews are neutral
    poses; do not evaluate body morph parity from these clips.
 5. Touch a power slot, target and Characters. Select mock character data; the
    visible scene actor remains Wretch. Toggle **UI navigation: ON** and use
-   D-pad/shoulders/A. Enter a short message with Android keyboard and **Send**.
+   left stick, D-pad/shoulders/A. Enter a short message with Android keyboard and **Send**.
 6. Press **Recreate** twice, Home/resume three times, and test an audio route
-   change. Confirm HUD/chat persist, movement clears on focus loss, audio
+   change and another app briefly taking audio focus. Confirm HUD/chat persist, movement clears on focus loss, audio
    resumes, and no duplicate scene or sound remains.
-7. Run for 10 minutes with movement, scene selection and simultaneous sound.
+7. Run for 10 active minutes with movement, scene selection and simultaneous sound. The new `support.active_foreground_ms` accumulates foreground time across Surface lifetimes; background time is excluded.
    Home for several seconds so audio diagnostics become quiescent, resume,
    and **Export report**. Share JSON, Far/Near screenshots and observed sound,
    input and visual issues in one consolidated session.
@@ -91,3 +91,24 @@ repeated. Its report incorrectly labels version code `1` although the verified
 APK manifest code is `100`. New builds must report installed package metadata
 and pass the stricter emulator identity checks. Original font glyphs are present;
 baseline original UI icon/skin closure remains incomplete.
+
+## Gameplay continuation scope
+
+This runtime changes only the separate support package and opts into new tray,
+analog-focus, listener and diagnostic adapters. Spatial sound follows the actual
+source scene camera; emitters are anchored near the bounded scene spawn. Android
+audio focus loss pauses playback, output-route changes close/join then reopen on
+the native owner, and platform error/failed-close recovery retains callback state.
+Surface recreation currently pauses/reopens audio and is part of the test.
+
+The new generation-aware body-mesh render bridge, retained collision coverage
+snapshots and transactional multi-actor animation bridge are separately
+host/source/sanitizer/ARM64 qualified. Their complete character, streamed-map and
+multi-character GPU integrations remain pending; this APK keeps the accepted
+Wretch/Atlas regression scene. No new full gameplay gate is accepted.
+
+JSON now reads installed package version metadata, includes a monotonic
+foreground-duration observation, partial Java/native-heap bytes and explicit
+unknown RSS/PSS/thermal flags. No GPU timer, full-map FPS or physical qualification
+is inferred. Export must identify package org.coh.nativesupport, version
+0.2.0-gameplay/code200, the installed APK SHA and all original asset identities.

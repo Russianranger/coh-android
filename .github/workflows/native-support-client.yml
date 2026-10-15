@@ -74,7 +74,7 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -no-snapshot -noaudio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
-          script: python3 native-android/support-client/tools/emulator_check.py --apk native-android/results/support-client/CoH-Native-Support-Client-0.1.0-support-batch-emulator-x86_64.apk --scenario native-android/support-client/emulator-scenario.json --output native-android/results/support-client
+          script: python3 native-android/support-client/tools/emulator_check.py --apk native-android/results/support-client/CoH-Native-Support-Client-0.2.0-gameplay-emulator-x86_64.apk --scenario native-android/support-client/emulator-scenario.json --output native-android/results/support-client
       - name: Upload exact APKs and qualification evidence
         if: always()
         uses: actions/upload-artifact@v4

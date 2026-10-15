@@ -82,6 +82,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     private TextView status;
     private InputAdapter adapter;
     private InputManager inputManager;
+    private SupportAudioEnvironment audioEnvironment;
     private int keys;
     private float axisX, axisY, axisZ, axisRz, touchX, touchY;
     private boolean touching, uiNavigation, hudTouching;
@@ -90,6 +91,9 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
 
     @Override public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+        audioEnvironment=new SupportAudioEnvironment(this,main,(allowed,route) -> {
+            if(!destroying&&handle!=0)SupportNative.audioEnvironment(handle,allowed,route);
+        });
         sessionStarted = System.currentTimeMillis();
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);layout.setFocusableInTouchMode(true);layout.requestFocus();
@@ -98,7 +102,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         title.setTextSize(18); layout.addView(title);
         TextView controls = new TextView(this);
         controls.setText("Left stick / WASD / D-pad: move • Right stick / drag: look\n"
-                + "Original Wretch scene • New clips use neutral poses. Mock HUD and sound; no server.\nUI navigation routes D-pad/A to the HUD; sticks move the actor when disabled.");
+                + "Original Wretch scene • New clips use neutral poses. Mock HUD and sound; no server.\nUI navigation routes left stick and D-pad/A to HUD focus; sticks control the scene when disabled.");
         layout.addView(controls);
         LinearLayout buttons = new LinearLayout(this);
         Button reset = new Button(this); reset.setText("Reset actor");
@@ -121,8 +125,9 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         Button animation = new Button(this); animation.setText("Mock animation");
         animation.setOnClickListener(v -> {if(handle!=0)SupportNative.trigger(handle);event("mock_animation");saveReport();}); supportButtons.addView(animation);
         Button navigation = new Button(this); navigation.setText("UI navigation: OFF");
-        navigation.setOnClickListener(v -> {uiNavigation=!uiNavigation;layout.requestFocus();navigation.setText("UI navigation: "+(uiNavigation?"ON":"OFF"));if(adapter!=null)adapter.clear();event("ui_navigation");});supportButtons.addView(navigation);layout.addView(supportButtons);
-        LinearLayout chatRow=new LinearLayout(this);chatText=new android.widget.EditText(this);chatText.setSingleLine(true);chatText.setHint("Chat text");chatText.setContentDescription("Chat text");chatRow.addView(chatText,new LinearLayout.LayoutParams(0,-2,1));
+        navigation.setOnClickListener(v -> {uiNavigation=!uiNavigation;layout.requestFocus();navigation.setText("UI navigation: "+(uiNavigation?"ON":"OFF"));if(adapter!=null)adapter.clear();if(handle!=0)SupportNative.navigation(handle,false,0,0);event("ui_navigation");});supportButtons.addView(navigation);layout.addView(supportButtons);
+        LinearLayout chatRow=new LinearLayout(this);chatText=new android.widget.EditText(this);
+        chatText.setOnFocusChangeListener((v,focused) -> {if(focused){if(adapter!=null)adapter.clear();if(handle!=0){SupportNative.navigation(handle,false,0,0);SessionNative.controls(handle,0,0,0);}}});chatText.setSingleLine(true);chatText.setHint("Chat text");chatText.setContentDescription("Chat text");chatRow.addView(chatText,new LinearLayout.LayoutParams(0,-2,1));
         Button send=new Button(this);send.setText("Send");send.setOnClickListener(v -> {if(handle!=0){SupportNative.text(handle,chatText.getText().toString().getBytes(StandardCharsets.UTF_8));chatText.setText("");chatText.clearFocus();layout.requestFocus();android.view.inputmethod.InputMethodManager ime=(android.view.inputmethod.InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);if(ime!=null)ime.hideSoftInputFromWindow(chatText.getWindowToken(),0);event("mock_chat");saveReport();}});chatRow.addView(send);layout.addView(chatRow);
         status = new TextView(this); status.setText("Preparing native scene…"); layout.addView(status);
         scene = new FrameLayout(this); layout.addView(scene, new LinearLayout.LayoutParams(-1, 0, 1));
@@ -188,6 +193,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
                 main.post(() -> {
                     if (destroying) return;
                     assetManifest=manifest; supportAssetManifest=supportManifest; apkIdentity=apk; assetsVerified=true;
+                    audioEnvironment.apply();
                     SessionNative.state(handle,epoch,resumed);
                     event("assets_loaded"); requestRender(); saveReport();
                 });
@@ -254,22 +260,30 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         if (destroying || holder!=currentHolder) return;
         epoch++; currentSurface=null; if(handle!=0)SessionNative.state(handle,epoch,false); event("surface_destroyed");
     }
-    @Override protected void onResume() { super.onResume(); resumed=true; epoch++; if(handle!=0)SessionNative.state(handle,epoch,true); event("resume"); requestRender(); }
+    @Override protected void onResume() { super.onResume(); resumed=true; audioEnvironment.start(); epoch++; if(handle!=0)SessionNative.state(handle,epoch,true); event("resume"); requestRender(); }
     @Override protected void onPause() {
         event("pause_requested");
         resumed=false; epoch++; if(adapter!=null)adapter.clear();
+        audioEnvironment.stop();
         if(handle!=0)SessionNative.state(handle,epoch,false); event("pause"); saveReport(); super.onPause();
     }
     @Override public void onWindowFocusChanged(boolean focused) {
-        super.onWindowFocusChanged(focused); if(!destroying && adapter!=null)adapter.onWindowFocusChanged(focused);
+        super.onWindowFocusChanged(focused);if(!focused&&handle!=0)SupportNative.navigation(handle,false,0,0); if(!destroying && adapter!=null)adapter.onWindowFocusChanged(focused);
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event) {
+        if(chatText!=null&&chatText.hasFocus())return super.dispatchKeyEvent(event);
         if(!destroying&&handle!=0&&uiNavigation&&(chatText==null||!chatText.hasFocus())) {
             if(SupportNative.key(handle,event.getKeyCode(),event.getAction(),event.getRepeatCount(),event.isShiftPressed()?1:0))return true;
         }
         return !destroying && adapter!=null && adapter.dispatchKeyEvent(event) || super.dispatchKeyEvent(event);
     }
     @Override public boolean dispatchGenericMotionEvent(MotionEvent event) {
+        if(chatText!=null&&chatText.hasFocus())return super.dispatchGenericMotionEvent(event);
+        if(!destroying&&resumed&&handle!=0&&uiNavigation&&(chatText==null||!chatText.hasFocus())
+                &&(event.getSource()&android.view.InputDevice.SOURCE_CLASS_JOYSTICK)!=0&&event.getActionMasked()==MotionEvent.ACTION_MOVE){
+            SupportNative.navigation(handle,true,Math.max(-1,Math.min(1,event.getAxisValue(MotionEvent.AXIS_X))),
+                    Math.max(-1,Math.min(1,event.getAxisValue(MotionEvent.AXIS_Y))));return true;
+        }
         return !destroying && adapter!=null && adapter.dispatchGenericMotionEvent(event) || super.dispatchGenericMotionEvent(event);
     }
     private void event(String type) {
@@ -284,15 +298,21 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         JSONObject d=new JSONObject().put("manufacturer",Build.MANUFACTURER).put("model",Build.MODEL)
                 .put("sdk",Build.VERSION.SDK_INT).put("abis",new JSONArray(Build.SUPPORTED_ABIS))
                 .put("emulator_detected",Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk_gphone"));
-        JSONObject app=new JSONObject().put("package",getPackageName()).put("version_name","0.1.0-support-batch")
-                .put("version_code",1).put("installed_apk",apkIdentity);
+        android.content.pm.PackageInfo installed=getPackageManager().getPackageInfo(getPackageName(),0);
+        long versionCode=Build.VERSION.SDK_INT>=28?installed.getLongVersionCode():installed.versionCode;
+        JSONObject app=new JSONObject().put("package",getPackageName()).put("version_name",installed.versionName)
+                .put("version_code",versionCode).put("installed_apk",apkIdentity);
         JSONObject j=new JSONObject().put("schema","coh-native-support-v1").put("phases",new JSONArray(new int[]{31,32,33,34,35,36,43,44,45}))
                 .put("session_id",Long.toHexString(sessionStarted)).put("updated_at",new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX",Locale.US).format(new Date()))
                 .put("scope","Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.")
                 .put("app",app).put("device",d).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest).put("support_asset_manifest",supportAssetManifest)
                 .put("events",new JSONArray(events.toString())).put("resumed",resumed).put("render_busy",renderQueued)
                 .put("report_write_failed",writeFailed).put("failure",failure==null?JSONObject.NULL:failure)
-                .put("input_adapter",adapter==null?JSONObject.NULL:adapter.report());
+                .put("input_adapter",adapter==null?JSONObject.NULL:adapter.report())
+                .put("audio_environment",audioEnvironment.report())
+                .put("process_memory",new JSONObject().put("java_used_bytes",Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())
+                        .put("native_heap_allocated_bytes",android.os.Debug.getNativeHeapAllocatedSize())
+                        .put("rss_measured",false).put("pss_measured",false).put("thermal_measured",false));
         if(handle!=0){j.put("native",new JSONObject(SessionNative.snapshot(handle)));j.put("support",new JSONObject(SupportNative.snapshot(handle)));}
         if(view!=null) {
             int[] location=new int[2];view.getLocationOnScreen(location);
@@ -373,6 +393,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         return new JSONObject().put("bytes",path.length()).put("sha256",hex(digest.digest()));
     }
     @Override protected void onDestroy() {
+        audioEnvironment.stop();
         destroying=true;resumed=false;epoch++;main.removeCallbacks(poll);
         if(currentHolder!=null)currentHolder.removeCallback(this);
         currentHolder=null;currentSurface=null;

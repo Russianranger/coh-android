@@ -289,6 +289,7 @@ static void draw_actor(Session *s,Graphics *g,const float *model,const float *ey
 }
 static int scene_draw(Session *s,Graphics *g,GLuint fbo,int width,int height,int mode,int reverse,uint8_t *image) {
     float view[12],projection[16],model[12],actor_eye[12],eye[6][12];if(!camera(s,(float)width/height,view,projection,model,actor_eye,eye))return 0;
+    if(!fbo&&!mode&&!image)support_bridge_listener(s->support,view);
     glBindFramebuffer(GL_FRAMEBUFFER,fbo);glViewport(0,0,width,height);glEnable(GL_DEPTH_TEST);glDepthMask(GL_TRUE);glDepthFunc(GL_LEQUAL);glClearDepthf(1);glClearColor(17/255.f,19/255.f,23/255.f,1);glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);glFrontFace(GL_CW);glCullFace(GL_BACK);
     if(mode!=1&&reverse)draw_actor(s,g,model,actor_eye,projection,0);
     if(mode!=2){if(fbo!=0)draw_world(s,g,eye,projection);else{
@@ -510,10 +511,32 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e
         /* No shared session mutex is held by any driver call, including swap,
          * readbacks or context teardown. Main-thread focus/tickets stay live. */
         int surface_failed=0;
-        if(!startup->failed){for(unsigned i=0;i<startup->actor.part_count;i++)geometry_upload(&startup->actor_geometry[i],0);EGLint width=0,height=0;
+        if(!startup->failed){
+            uint64_t actor_before=startup->actor_draws,world_before=startup->stream_stats.draws;
+            CohSessionWorldStats before=startup->stream_stats;
+            uint64_t uploaded=0;
+            support_bridge_stage(s->support,COH_PERF_RENDER_SUBMIT,1);
+            for(unsigned i=0;i<startup->actor.part_count;i++){
+                geometry_upload(&startup->actor_geometry[i],0);
+                uploaded+=(uint64_t)startup->actor_geometry[i].count*sizeof(Vertex);
+            }
+            EGLint width=0,height=0;
             if(!eglQuerySurface(g.display,g.surface,EGL_WIDTH,&width)||!eglQuerySurface(g.display,g.surface,EGL_HEIGHT,&height)){startup->egl_error=(unsigned)eglGetError();surface_failed=1;}
             else if(width<=0||height<=0||width>16384||height>16384)surface_failed=1;
-            else {startup->width=width;startup->height=height;if(scene_draw(startup,&g,0,width,height,0,0,NULL)){if(!support_bridge_draw(s->support,width,height,(unsigned)epoch))fail(startup,"Support HUD draw failed");if(!eglSwapBuffers(g.display,g.surface)){startup->egl_error=(unsigned)eglGetError();surface_failed=1;}else startup->frames++;}}
+            else {startup->width=width;startup->height=height;
+                if(scene_draw(startup,&g,0,width,height,0,0,NULL)){
+                    if(!support_bridge_draw(s->support,width,height,(unsigned)epoch))fail(startup,"Support HUD draw failed");
+                }
+            }
+            support_bridge_stage(s->support,COH_PERF_RENDER_SUBMIT,0);
+            support_bridge_render_metrics(s->support,startup->actor_draws-actor_before+startup->stream_stats.draws-world_before,
+                uploaded,startup->stream_stats.cache_hits-before.cache_hits,startup->stream_stats.cache_misses-before.cache_misses,
+                startup->stream_stats.evictions-before.evictions);
+            if(!surface_failed&&!startup->failed){
+                support_bridge_stage(s->support,COH_PERF_PRESENT,1);
+                if(!eglSwapBuffers(g.display,g.surface)){startup->egl_error=(unsigned)eglGetError();surface_failed=1;}else startup->frames++;
+                support_bridge_stage(s->support,COH_PERF_PRESENT,0);
+            }
         }
         pthread_mutex_lock(&s->mutex);if(surface_failed){
             if((s->cancel||s->epoch!=(uint64_t)epoch)&&cancelled_surface_error(startup->egl_error)){startup->expected_cancel_surface_errors++;startup->expected_cancel_egl_error=startup->egl_error;startup->egl_error=0;}
@@ -611,4 +634,13 @@ JNIEXPORT void JNICALL Java_org_coh_sessionclient_SupportNative_trigger(JNIEnv*e
 JNIEXPORT jboolean JNICALL Java_org_coh_sessionclient_SupportNative_touch(JNIEnv*e,jclass c,jlong h,jint action,jint pointer,jfloat x,jfloat y){(void)e;(void)c;Session*s=(Session*)(intptr_t)h;return s&&support_bridge_touch(s->support,action,(unsigned)pointer,x,y);}
 JNIEXPORT jboolean JNICALL Java_org_coh_sessionclient_SupportNative_key(JNIEnv*e,jclass c,jlong h,jint key,jint action,jint repeat,jint shift){(void)e;(void)c;Session*s=(Session*)(intptr_t)h;return s&&support_bridge_key(s->support,key,action,repeat,shift);}
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SupportNative_text(JNIEnv*e,jclass c,jlong h,jbyteArray text){(void)c;Session*s=(Session*)(intptr_t)h;if(!s||!text)return;jsize n=(*e)->GetArrayLength(e,text);if(n<1||n>254)return;char bytes[256]={0};(*e)->GetByteArrayRegion(e,text,0,n,(jbyte*)bytes);if(!(*e)->ExceptionCheck(e))support_bridge_text(s->support,bytes);}
-JNIEXPORT jstring JNICALL Java_org_coh_sessionclient_SupportNative_snapshot(JNIEnv*e,jclass c,jlong h){(void)c;Session*s=(Session*)(intptr_t)h;char json[16384];support_bridge_snapshot(s?s->support:NULL,json,sizeof json);return (*e)->NewStringUTF(e,json);}
+JNIEXPORT jstring JNICALL Java_org_coh_sessionclient_SupportNative_snapshot(JNIEnv*e,jclass c,jlong h){(void)c;Session*s=(Session*)(intptr_t)h;char json[32768];support_bridge_snapshot(s?s->support:NULL,json,sizeof json);return (*e)->NewStringUTF(e,json);}
+
+JNIEXPORT void JNICALL Java_org_coh_sessionclient_SupportNative_audioEnvironment(JNIEnv*e,jclass c,jlong h,jboolean allowed,jlong route){
+ (void)e;(void)c;Session*s=(Session*)(intptr_t)h;if(!s||route<=0)return;
+ support_bridge_audio_environment(s->support,allowed?1:0,(uint64_t)route);
+}
+
+JNIEXPORT void JNICALL Java_org_coh_sessionclient_SupportNative_navigation(JNIEnv*e,jclass c,jlong h,jboolean active,jfloat x,jfloat y){
+ (void)e;(void)c;Session*s=(Session*)(intptr_t)h;if(s)support_bridge_navigation(s->support,active?1:0,x,y);
+}

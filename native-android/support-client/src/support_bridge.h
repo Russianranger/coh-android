@@ -4,6 +4,7 @@
 #include "coh_animation.h"
 #include "coh_mesh.h"
 #include "coh_walk.h"
+#include "../../engine/perf/coh_perf.h"
 typedef struct SupportBridge SupportBridge;
 SupportBridge *support_bridge_create(const CohWalkTriangle*,unsigned,const float[3],float,unsigned);
 /* Success frees and nulls the owner. A failed audio close retains the complete
@@ -11,6 +12,12 @@ SupportBridge *support_bridge_create(const CohWalkTriangle*,unsigned,const float
 int support_bridge_destroy(SupportBridge**);
 int support_bridge_configure(SupportBridge*,AAssetManager*,const void *clips[3],const size_t sizes[3]);
 void support_bridge_foreground(SupportBridge*,int);
+void support_bridge_audio_environment(SupportBridge*,int,uint64_t);
+void support_bridge_listener(SupportBridge*,const float view[12]);
+/* Exact submitted operation deltas; excludes startup diagnostics. */
+void support_bridge_stage(SupportBridge*,CohPerfStage,int begin);
+void support_bridge_render_metrics(SupportBridge*,uint64_t draws,uint64_t uploads,
+                                  uint64_t hits,uint64_t misses,uint64_t evictions);
 int support_bridge_walk(SupportBridge*,unsigned,float,CohWalkState*);
 void support_bridge_reset(SupportBridge*,const float[3],float,CohWalkState*);
 void support_bridge_clear(SupportBridge*);
@@ -23,6 +30,7 @@ void support_bridge_frame_begin(SupportBridge*);
 void support_bridge_frame_end(SupportBridge*);
 void support_bridge_trigger(SupportBridge*);
 int support_bridge_touch(SupportBridge*,int,unsigned,float,float);
+void support_bridge_navigation(SupportBridge*,int,float,float);
 int support_bridge_key(SupportBridge*,int,int,int,int);
 void support_bridge_text(SupportBridge*,const char*);
 void support_bridge_snapshot(SupportBridge*,char*,size_t);

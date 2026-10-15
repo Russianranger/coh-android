@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "starting_remote_head": "3c5da1d8cd501d778e270d395109d40666fbe37a",
+  "historical_checkpoint": "132a813df53d94c38b441932f85ec42741123abf",
+  "workers_actually_concurrent": 6,
+  "worker_worktrees": [
+    "worker-support",
+    "worker-appearance",
+    "worker-ui",
+    "worker-physics",
+    "worker-animation",
+    "worker-audio-perf"
+  ],
+  "all_workers_pinned_to_starting_remote": true,
+  "remote_worker_branches_created": false,
+  "primary_read_only": "/workspace/scratch/cd30b2fc1c9e",
+  "primary_unpublished_protected_files": 29,
+  "primary_unpublished_paths": [
+    "native-android/engine/dbclient/",
+    "native-android/engine/login/",
+    "native-android/engine/mapclient/"
+  ],
+  "overlaps_with_batch": [],
+  "primary_processes_workflows_or_worktrees_mutated": false
+}

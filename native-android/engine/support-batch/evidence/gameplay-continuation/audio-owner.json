@@ -1,0 +1,83 @@
+{
+  "schema": "coh-support-audio-owner-faults-v1",
+  "passed": true,
+  "sources": [
+    {
+      "file": "native-android/support-client/src/support_audio.c",
+      "sha256": "0c9044fc24fdc5c165ddc134476c6082372e3507544ae828549be7751af1535c",
+      "bytes": 14757,
+      "source_root": "source-root"
+    },
+    {
+      "file": "native-android/support-client/src/support_audio.h",
+      "sha256": "8b7ac19c49c17a9e364d423452591fe9c60e96bf4e73e7fc274ab8879c4f426d",
+      "bytes": 2662,
+      "source_root": "source-root"
+    },
+    {
+      "file": "native-android/engine/audio/coh_mixer.h",
+      "sha256": "51ad20370cc75b3edaa93997c9ff4cdb9546e5485521e65daf117522866fc389",
+      "bytes": 4996,
+      "source_root": "source-root"
+    },
+    {
+      "file": "native-android/engine/audio/coh_mixer_aaudio.h",
+      "sha256": "34cdee21c5486f53fbfd78cf8bccbf2ed7db4d6ebb0268906b77f5e25f07c489",
+      "bytes": 2081,
+      "source_root": "source-root"
+    },
+    {
+      "file": "native-android/engine/audio/coh_music.h",
+      "sha256": "28470224888716ef77901ea6383570c6e2a901bea435e4e233b0366ee8f752fc",
+      "bytes": 2983,
+      "source_root": "source-root"
+    },
+    {
+      "file": "native-android/engine/audio/coh_resample.h",
+      "sha256": "fb1cdd1880f30b409c09b8d00cd5c0fda20cd314dae8b2a9362f6dea14396aa4",
+      "bytes": 1432,
+      "source_root": "source-root"
+    },
+    {
+      "file": "native-android/engine/audio/coh_audio_listener.h",
+      "sha256": "906dc38a44effe640fba2a284f599bda6fd69f22fa4701bf62e80f2426a9911d",
+      "bytes": 1268,
+      "source_root": "listener-root"
+    },
+    {
+      "file": "native-android/engine/coh_contracts.h",
+      "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+      "bytes": 1044,
+      "source_root": "source-root"
+    }
+  ],
+  "compiler": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "asan_passed": true,
+  "ubsan_passed": true,
+  "leaksanitizer_enabled": false,
+  "tracked_dependency_residue": 0,
+  "result": {
+    "passed": true,
+    "checks": 82,
+    "scenarios": 9,
+    "backend_opens": 5,
+    "backend_closes": 5,
+    "outstanding_assets": 0,
+    "outstanding_mixers": 0,
+    "outstanding_streams": 0,
+    "outstanding_sinks": 0,
+    "android_execution": false
+  },
+  "scope": "Real support audio owner thread/mailbox with controlled fake backend/music/mixer/AAsset; no Android/emulator/callback/decode/physical evidence.",
+  "scenarios": [
+    "initial paused asset/stream admission",
+    "resume running checkpoint boundary",
+    "listener pose delivery",
+    "route close/reopen",
+    "device-error stream recovery",
+    "failed route close automatically resumes desired-running state",
+    "failed pause close retains owners then automatically retries",
+    "failed destroy retains graph then explicit cleanup-worker retry",
+    "partial source initialization cleanup"
+  ]
+}

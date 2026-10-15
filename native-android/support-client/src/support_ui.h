@@ -11,6 +11,7 @@ typedef struct {
     uint64_t intents_processed,power_uses,chat_submits,character_selections,target_clicks,
              menu_opens,menu_closes,intent_history_drops,surface_losses;
     uint32_t generation,last_power,last_character;
+    uint64_t axis_actions,axis_repeats;
     int keyboard_requested,last_status;size_t arena_bytes;
     char chat_input[COH_UI_TEXT],last_intent[COH_UI_TEXT];
 } SupportUiStats;
@@ -20,6 +21,7 @@ SupportUi *support_ui_create(void);
 /* Call context_destroy on its GL thread first, or context_lost after actual
  * context loss. This destructor owns CPU memory only and never calls GL. */
 void support_ui_destroy(SupportUi *ui);
+void support_ui_navigation(SupportUi *ui,int active,float x,float y);
 CohStatus support_ui_surface(SupportUi *ui,uint32_t generation,int width,int height,CohHudInsets safe);
 CohStatus support_ui_context_create(SupportUi *ui,uint32_t generation);
 void support_ui_context_destroy(SupportUi *ui); /* same current GL context */

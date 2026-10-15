@@ -4,6 +4,9 @@
 /* Generated at packaging time by engine/ui/gameplay/make_atlas.py, default
  * prefix coh_hud_font, font1/resource7. No TTF decode on the GL/audio thread. */
 #include "support_font.h"
+#include "support_tray.h"
+#include "../../engine/ui/gameplay/coh_hud_axis_navigation.h"
+#include <stdatomic.h>
 #include <GLES3/gl3.h>
 #include <math.h>
 #include <pthread.h>
@@ -12,8 +15,10 @@
 #include <string.h>
 
 struct SupportUi {
+    _Atomic uint64_t axes;_Atomic uint32_t axis_reset;uint32_t axis_seen;
+    CohHudAxisNavigation axis;uint64_t prior_axis_actions,prior_axis_repeats;
     pthread_mutex_t mutex;CohHud hud;CohHudIme ime;CohHudState state;
-    CohHudGles gpu;CohHudGlesStats prior_gpu;uint32_t texture;
+    CohHudGles gpu;CohHudGlesStats prior_gpu;uint32_t texture,tray[11];
     CohHudIntent history[COH_HUD_INTENTS];size_t history_count;
     uint64_t mock_ms,recharge_until[COH_HUD_POWERS];SupportUiStats stats;
 };
@@ -74,9 +79,13 @@ SupportUi *support_ui_create(void){
     static const char *characters[3]={"Offline Huge / Wretch","Offline Male choice","Offline Female choice"};
     SupportUi *u=calloc(1,sizeof(*u));size_t i;
     if(!u)return NULL;
+    atomic_init(&u->axes,UINT64_MAX);atomic_init(&u->axis_reset,0);
     if(pthread_mutex_init(&u->mutex,NULL)!=0){free(u);return NULL;}
     if(coh_hud_atlas_validate(&coh_hud_font)!=COH_OK||coh_hud_init(&u->hud,coh_hud_atlas_glyph,&coh_hud_font)!=COH_OK){
         pthread_mutex_destroy(&u->mutex);free(u);return NULL;
+    }
+    if(coh_hud_set_tray_decoration(&u->hud,100,coh_hud_tray_numbers)!=COH_OK){
+        pthread_mutex_destroy(&u->mutex);coh_hud_destroy(&u->hud);free(u);return NULL;
     }
     coh_hud_ime_init(&u->ime);u->state.actor_id=100;u->state.target_id=200;u->state.in_phase=1;
     strcpy(u->state.actor_name,"Offline Huge / Wretch");strcpy(u->state.target_name,"Mock target (offline)");
@@ -97,12 +106,23 @@ void support_ui_destroy(SupportUi *u){
     /* External owner has stopped/joined callbacks before this CPU destruction. */
     pthread_mutex_destroy(&u->mutex);coh_hud_destroy(&u->hud);free(u);
 }
+/* Lifecycle/input updates never wait for the HUD lock or a GL driver call. */
+void support_ui_navigation(SupportUi *u,int active,float x,float y){
+    if(!u||!isfinite(x)||!isfinite(y)||x< -1||x>1||y< -1||y>1)return;
+    uint64_t value=UINT64_MAX;
+    if(active){uint32_t a,b;memcpy(&a,&x,sizeof a);memcpy(&b,&y,sizeof b);value=((uint64_t)a<<32)|b;}
+    atomic_store_explicit(&u->axes,value,memory_order_release);
+    if(!active)atomic_fetch_add_explicit(&u->axis_reset,1,memory_order_release);
+}
 CohStatus support_ui_surface(SupportUi *u,uint32_t gen,int width,int height,CohHudInsets safe){
     CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
     s=record(u,coh_hud_surface(&u->hud,gen,(float)width,(float)height,safe));pthread_mutex_unlock(&u->mutex);return s;
 }
 static CohStatus texture_resolve(void *context,uint32_t id,CohHudTexture *out){
-    SupportUi *u=context;if(id!=7||!u->texture)return COH_NOT_FOUND;*out=(CohHudTexture){u->texture,1};return COH_OK;
+    SupportUi *u=context;
+    if(id==7&&u->texture){*out=(CohHudTexture){u->texture,1};return COH_OK;}
+    for(unsigned i=0;i<11;i++)if(id==coh_hud_tray_images[i].resource&&u->tray[i]){*out=(CohHudTexture){u->tray[i],0};return COH_OK;}
+    return COH_NOT_FOUND;
 }
 CohStatus support_ui_context_create(SupportUi *u,uint32_t gen){
     CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
@@ -112,9 +132,17 @@ CohStatus support_ui_context_create(SupportUi *u,uint32_t gen){
         glTexImage2D(GL_TEXTURE_2D,0,GL_R8,COH_HUD_FONT_WIDTH,COH_HUD_FONT_HEIGHT,0,GL_RED,GL_UNSIGNED_BYTE,coh_hud_font_alpha);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+        glGenTextures(11,u->tray);
+        for(unsigned i=0;i<11;i++){
+            const CohHudTrayImage *image=&coh_hud_tray_images[i];
+            glBindTexture(GL_TEXTURE_2D,u->tray[i]);
+            glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,(GLsizei)image->width,(GLsizei)image->height,0,GL_RGBA,GL_UNSIGNED_BYTE,image->rgba);
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+        }
         glBindTexture(GL_TEXTURE_2D,0);
         if(!u->texture||glGetError()!=GL_NO_ERROR){if(u->texture)glDeleteTextures(1,&u->texture);
-            u->texture=0;coh_hud_gles_destroy(&u->gpu);s=COH_IO;}
+            glDeleteTextures(11,u->tray);memset(u->tray,0,sizeof u->tray);u->texture=0;coh_hud_gles_destroy(&u->gpu);s=COH_IO;}
     }
     record(u,s);pthread_mutex_unlock(&u->mutex);return s;
 }
@@ -122,12 +150,12 @@ void support_ui_context_destroy(SupportUi *u){
     if(!u)return;
     pthread_mutex_lock(&u->mutex);gpu_add(&u->prior_gpu,&u->gpu.stats);coh_hud_gles_destroy(&u->gpu);
     if(u->texture)glDeleteTextures(1,&u->texture);
-    u->texture=0;
+    glDeleteTextures(11,u->tray);memset(u->tray,0,sizeof u->tray);u->texture=0;
     coh_hud_surface_lost(&u->hud);u->stats.surface_losses++;pthread_mutex_unlock(&u->mutex);
 }
 void support_ui_context_lost(SupportUi *u){
     if(!u)return;
-    pthread_mutex_lock(&u->mutex);gpu_add(&u->prior_gpu,&u->gpu.stats);coh_hud_gles_forget(&u->gpu);u->texture=0;
+    pthread_mutex_lock(&u->mutex);gpu_add(&u->prior_gpu,&u->gpu.stats);coh_hud_gles_forget(&u->gpu);u->texture=0;memset(u->tray,0,sizeof u->tray);
     coh_hud_surface_lost(&u->hud);u->stats.surface_losses++;pthread_mutex_unlock(&u->mutex);
 }
 CohStatus support_ui_draw(SupportUi *u,int width,int height,uint32_t gen){
@@ -176,6 +204,13 @@ int support_ui_keyboard_requested(SupportUi *u){
 CohStatus support_ui_tick_mock(SupportUi *u,uint64_t elapsed){
     size_t i;CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
     if(elapsed<u->mock_ms){record(u,COH_INVALID);pthread_mutex_unlock(&u->mutex);return COH_INVALID;}
+    uint32_t reset=atomic_load_explicit(&u->axis_reset,memory_order_acquire);
+    if(reset!=u->axis_seen){u->prior_axis_actions+=u->axis.actions;u->prior_axis_repeats+=u->axis.repeats;coh_hud_axis_reset(&u->axis);u->axis_seen=reset;}
+    uint64_t axes=atomic_load_explicit(&u->axes,memory_order_acquire);
+    if(axes!=UINT64_MAX){uint32_t a=(uint32_t)(axes>>32),b=(uint32_t)axes;float x,y;memcpy(&x,&a,sizeof x);memcpy(&y,&b,sizeof y);
+        s=coh_hud_axis_step(&u->hud,&u->axis,x,y,elapsed);
+        if(s!=COH_OK){record(u,s);pthread_mutex_unlock(&u->mutex);return s;}drain_intents(u);
+    }
     u->mock_ms=elapsed;u->state.health=80+(float)(elapsed%20000)/1000;
     u->state.endurance=55+(float)(elapsed%30000)/1000;
     for(i=0;i<u->state.power_count;i++)u->state.powers[i].cooldown=u->recharge_until[i]>elapsed?(float)(u->recharge_until[i]-elapsed)/2500.0f:0;
@@ -183,7 +218,7 @@ CohStatus support_ui_tick_mock(SupportUi *u,uint64_t elapsed){
 }
 CohStatus support_ui_snapshot(SupportUi *u,SupportUiStats *out){
     const CohUiWidget *input;size_t i;if(!u||!out)return COH_INVALID;pthread_mutex_lock(&u->mutex);
-    *out=u->stats;out->hud=u->hud.stats;out->widgets=u->hud.ui.stats;out->gpu=u->prior_gpu;gpu_add(&out->gpu,&u->gpu.stats);
+    *out=u->stats;out->axis_actions=u->prior_axis_actions+u->axis.actions;out->axis_repeats=u->prior_axis_repeats+u->axis.repeats;out->hud=u->hud.stats;out->widgets=u->hud.ui.stats;out->gpu=u->prior_gpu;gpu_add(&out->gpu,&u->gpu.stats);
     out->generation=u->gpu.generation;coh_ui_layout(&u->hud.ui);out->keyboard_requested=coh_hud_keyboard_requested(&u->hud);
     for(i=0;i<u->hud.ui.widget_count;i++)if(u->hud.ui.widgets[i].desc.binding==COH_HUD_BIND_CHAT_INPUT){
         input=u->hud.ui.widgets+i;memcpy(out->chat_input,input->text,sizeof(out->chat_input));break;
