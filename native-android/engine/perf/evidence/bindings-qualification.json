@@ -1,0 +1,341 @@
+{
+  "schema": 1,
+  "status": "host-qualified-and-arm64-built",
+  "starting_commit": "3c5da1d8cd501d778e270d395109d40666fbe37a",
+  "features": [
+    "source-reflected-view camera listener binding",
+    "generation-safe total/delta counter observations",
+    "unknown-vs-measured-zero diagnostics",
+    "memory gauges typed accounted/RSS/PSS"
+  ],
+  "host": {
+    "status": "passed",
+    "checks": 53090,
+    "cameras": 5000,
+    "spatial_source_comparisons": 10000,
+    "hot_path_allocator_calls": 0,
+    "bridge_bytes": 648,
+    "listener_pose_bytes": 24,
+    "perf": {
+      "schema": 1,
+      "module": "coh-native-perf",
+      "time_unit": "ns",
+      "clock": "caller_monotonic",
+      "percentile_bucket_ns": 500000,
+      "enabled": true,
+      "paused": false,
+      "surface_generation": 0,
+      "epoch": 153,
+      "target_frame_ns": 33333333,
+      "stall_ns": 100000000,
+      "dropped_frames": 0,
+      "invalid_samples": 0,
+      "over_budget": 0,
+      "stalls": 0,
+      "resident_bytes": 0,
+      "peak_resident_bytes": 0,
+      "gpu_unavailable": 0,
+      "gpu_disjoint": 0,
+      "gpu_stale": 0,
+      "gpu_not_ready": 0,
+      "frame": {
+        "samples": 0,
+        "sum_ns": 0,
+        "max_ns": 0,
+        "p50_upper_ns": 0,
+        "p95_upper_ns": 0,
+        "p99_upper_ns": 0
+      },
+      "gpu": {
+        "samples": 0,
+        "sum_ns": 0,
+        "max_ns": 0,
+        "p50_upper_ns": 0,
+        "p95_upper_ns": 0,
+        "p99_upper_ns": 0
+      },
+      "stages": {
+        "animation": {
+          "samples": 0,
+          "sum_ns": 0,
+          "max_ns": 0,
+          "p50_upper_ns": 0,
+          "p95_upper_ns": 0,
+          "p99_upper_ns": 0
+        },
+        "skinning": {
+          "samples": 0,
+          "sum_ns": 0,
+          "max_ns": 0,
+          "p50_upper_ns": 0,
+          "p95_upper_ns": 0,
+          "p99_upper_ns": 0
+        },
+        "collision": {
+          "samples": 0,
+          "sum_ns": 0,
+          "max_ns": 0,
+          "p50_upper_ns": 0,
+          "p95_upper_ns": 0,
+          "p99_upper_ns": 0
+        },
+        "asset_loading": {
+          "samples": 0,
+          "sum_ns": 0,
+          "max_ns": 0,
+          "p50_upper_ns": 0,
+          "p95_upper_ns": 0,
+          "p99_upper_ns": 0
+        },
+        "render_submit": {
+          "samples": 0,
+          "sum_ns": 0,
+          "max_ns": 0,
+          "p50_upper_ns": 0,
+          "p95_upper_ns": 0,
+          "p99_upper_ns": 0
+        },
+        "present": {
+          "samples": 0,
+          "sum_ns": 0,
+          "max_ns": 0,
+          "p50_upper_ns": 0,
+          "p95_upper_ns": 0,
+          "p99_upper_ns": 0
+        },
+        "audio_control": {
+          "samples": 0,
+          "sum_ns": 0,
+          "max_ns": 0,
+          "p50_upper_ns": 0,
+          "p95_upper_ns": 0,
+          "p99_upper_ns": 0
+        }
+      },
+      "counters": {
+        "copied_bytes": 0,
+        "upload_bytes": 18446744073709551615,
+        "draw_calls": 2619,
+        "state_binds": 0,
+        "skinned_vertices": 0,
+        "collision_tests": 0,
+        "asset_hits": 0,
+        "asset_misses": 0,
+        "asset_evictions": 0,
+        "readbacks": 0,
+        "explicit_waits": 0,
+        "allocations": 0
+      }
+    },
+    "bindings": {
+      "schema": 1,
+      "module": "coh-native-perf-bindings",
+      "counters": {
+        "copied_bytes": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "upload_bytes": {
+          "known": true,
+          "mode": "delta",
+          "generation": 0,
+          "owner_total": 18446744073709551615,
+          "observations": 2,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "draw_calls": {
+          "known": true,
+          "mode": "total",
+          "generation": 2,
+          "owner_total": 507,
+          "observations": 2004,
+          "rebases": 1,
+          "rejected": 2
+        },
+        "state_binds": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "skinned_vertices": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "collision_tests": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "asset_hits": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "asset_misses": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "asset_evictions": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "readbacks": {
+          "known": true,
+          "mode": "delta",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 1,
+          "rebases": 0,
+          "rejected": 1
+        },
+        "explicit_waits": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "allocations": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        }
+      },
+      "memory": {
+        "module_accounted": {
+          "known": true,
+          "current_bytes": 400,
+          "peak_bytes": 600,
+          "observations": 2
+        },
+        "process_rss": {
+          "known": true,
+          "current_bytes": 0,
+          "peak_bytes": 0,
+          "observations": 1
+        },
+        "process_pss": {
+          "known": false,
+          "current_bytes": 0,
+          "peak_bytes": 0,
+          "observations": 0
+        }
+      }
+    }
+  },
+  "independent_trace": {
+    "passed": true,
+    "draw_calls_expected": 2619,
+    "scope": "Independent Python arithmetic over explicit 1000-step trace, paused/disabled exclusion, repeated totals, reset and source-mode rejection; no game FPS claim"
+  },
+  "source_provenance": {
+    "original_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+    "sound": {
+      "revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+      "files": {
+        "sound.c": "8f114a02c47c25cba0c090e1fd6b8a164a8bd7086ba1590ef5ef236db77eab25",
+        "sound_sys.c": "0a48bbdc5006c2e2876253412bd263b9f2640de3745c27a2616dab0c5f173f09"
+      },
+      "functions": {
+        "sndSphereVolume": "ee664aa8a8928e0c44a4c67768267dbba99360ffbe9d2f07c4d14d6025fbbf8e",
+        "sphereGroupGetVolume": "e6a99fd44f17c5eaab1dbb64f87dbbb48b743c27676973123497786c04e8df30",
+        "volumeDbToRatio": "fdd4eeb9d50abe2d257938cbcbdbcb28b2a166c0974fad0c02e5b9b556972c27",
+        "volumeRatioToDb": "8f776ba5050717559a104a9a4e36030038293733d5b69e5b8c12fb4c41ae3913"
+      },
+      "shim": "F32, vector operations, zero listener, head-right X, ignoreSoundRamp flag, one 3D sphere without fade/variance; functions unchanged"
+    },
+    "mathutil_lf_sha256": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+    "createMat3YPR_unchanged_body_sha256": "20ec80bc614452b9ab22a836ea9c4db022cca7daa6652583a3735333c5ccf688",
+    "shim": "Original createMat3YPR unchanged; sin/cos shim matches portable _WIN64 source branch. Source gain/group functions unchanged; controlled one-sphere nonfading world listener."
+  },
+  "sanitizers": {
+    "address": "passed",
+    "undefined": "passed",
+    "leak_detection": false,
+    "leak_limitation": "LeakSanitizer process inspection denied; explicit allocator-call guard covers all added hot paths; inherited mixer lifetime accounting unchanged",
+    "checks": 53090
+  },
+  "android_arm64": {
+    "status": "built",
+    "api": 26,
+    "elf_machine": "AArch64",
+    "library_sha256": "7d99edbebe7649975be1482c981e80670ee5d7c6789f8742075bcd302480ebb9",
+    "library_bytes": 46456,
+    "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+    "sources": [
+      "native-android/engine/perf/coh_perf.c",
+      "native-android/engine/perf/coh_perf_bridge.c",
+      "native-android/engine/audio/coh_audio_listener.c",
+      "native-android/engine/audio/coh_mixer.c",
+      "native-android/audio/coh_audio.c",
+      "native-android/world/coh_world.c"
+    ],
+    "scope": "Linked additive adapters and unchanged mixer/perf/source-world kernels only, no AAudio driver/APK execution"
+  },
+  "emulator_qualified": false,
+  "physical_thor_accepted": false,
+  "memory": {
+    "fixed_bridge_bytes": 648,
+    "listener_pose_bytes": 24,
+    "sampling_allocator_calls": 0,
+    "device_rss_pss_thermal": "unknown; unit-test memory gauge values are explicit synthetic fixtures"
+  },
+  "module_sha256": {
+    "native-android/engine/perf/coh_perf.c": "63fbfb006497e897f80373c56dc45444ae7630db9c004bb04674314c5cd44970",
+    "native-android/engine/perf/coh_perf_bridge.c": "5af98cd1bad62a43c5b8f577178d895236b90999b007ba1d91b60ceb1e57ad01",
+    "native-android/engine/audio/coh_audio_listener.c": "897e2bb0603c10d77919607a7437e332de1e1cb71ac89343ace37b5d1d8709d6",
+    "native-android/engine/audio/coh_mixer.c": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444",
+    "native-android/audio/coh_audio.c": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3",
+    "native-android/world/coh_world.c": "9a914b7326e4852bd55827c58bab360cef2516f85268a25cdd4ede2cdfe39c92",
+    "native-android/engine/perf/coh_perf_bridge.h": "07a2a8cdbba7a102d30deff1b8d80140a442dce620f5d1edafe33f3bc2c94f14",
+    "native-android/engine/audio/coh_audio_listener.h": "906dc38a44effe640fba2a284f599bda6fd69f22fa4701bf62e80f2426a9911d",
+    "native-android/engine/perf/tests/test_bindings.c": "c16dd62a5c09a823d68a88234ced76bcca5271734d191c5815d80271868fc477",
+    "native-android/engine/perf/check_bindings.py": "24be029d435a1181a7a0025b4352d21a076d7fadce11ef886e8516c4ae5d1779"
+  },
+  "limitations": [
+    "Audio focus/route/platform lifecycle belongs to Android owner; no new Android lifecycle claims.",
+    "Counter totals require stable serialized owner generation; first observation rebases without reconstructing earlier operations.",
+    "Source camera inverse uses accepted float view; world position roundtrip tolerance 0.025 source units within +/-32500.",
+    "No synchronous GPU operation or inferred GPU timing added; GPU/thermal remain unknown until measured.",
+    "No physical audibility, latency, sustained xrun/FPS acceptance, full-game performance or gate acceptance."
+  ]
+}
