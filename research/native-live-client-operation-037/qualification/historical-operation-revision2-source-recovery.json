@@ -1,0 +1,33 @@
+{
+  "currentWorktreeChanged": false,
+  "deltaPatch": {
+    "bytes": 20055,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/revision-2-to-revision-3-statistics.patch",
+    "sha256": "e848d58879d9b6ebef90660e14b2a773e3e28a0fb3eba6b3119736ee717a6af9"
+  },
+  "files": [
+    {
+      "bytes": 26875,
+      "currentBytes": 30653,
+      "currentSha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a",
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java",
+      "recoveredPath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/revision-2-source/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java",
+      "sha256": "8cbd836f7a826371b6a31be68dab96d2f4a71824df4cc942c863d000303cd9b1"
+    },
+    {
+      "bytes": 30332,
+      "currentBytes": 36618,
+      "currentSha256": "da72d28b5e5a453dddb0b94f86c4bd86aed27b048155c63655be19840c43a415",
+      "path": "tools/android/interactive/test_client_live_directory_operation.py",
+      "recoveredPath": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/revision-2-source/tools/android/interactive/test_client_live_directory_operation.py",
+      "sha256": "bca29decb2ca6e54916324af1528d71408dfbfad1ac134816f3dfc987cb2d836"
+    }
+  ],
+  "historicQualificationRelabelled": false,
+  "method": "Reverse the explicit final-statistics source delta from current worktree; independently compare complete reconstructed byte length and SHA-256 to authoritative revision-2 source freeze before writing",
+  "nativeOrJniReexecuted": false,
+  "original63Plus5ReviewAndLogsPreserved": true,
+  "recordedUtc": "2026-10-14T08:36:09.211464+00:00",
+  "schema": "coh_exact_prior_operation_source_recovery_v1",
+  "sourceFreezeSha256": "51f4ecf2d23eb0d96d28f36c5bf2ec2977b5d538ad81c07399bf4bc0ec7683e3"
+}

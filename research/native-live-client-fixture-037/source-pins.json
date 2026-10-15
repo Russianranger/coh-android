@@ -1,0 +1,54 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 3126,
+      "sha256": "fc713dd0d961ed5effd56639359541713927c918f5faf184362fe8f2acecb2a6"
+    },
+    "evidence/fixture-independent-source-review.json": {
+      "bytes": 6628,
+      "sha256": "d1d45a963df13aa1e4699a55e69d2699d7222ab614f6a0884c03ae01f9c453e5"
+    },
+    "evidence/fixture-owner-host-qualification-revision-2.json": {
+      "bytes": 4409,
+      "sha256": "d428a7dae5bba66b1fea084cc6f48f73e4932a2d80e6a37344aca0977a749ec0"
+    },
+    "evidence/fixture-source-freeze-revision-2.json": {
+      "bytes": 1318,
+      "sha256": "9796090bd0ebb6197c36f7da0ea7dfa3c92325f10cf49632af63b6535915c70c"
+    },
+    "evidence/guest-ASCII-case-source-freeze.json": {
+      "bytes": 3624,
+      "sha256": "f44454f8fbbb305ccf03e363ea9d063fc4702143761b3fcaada80519c7022c8e"
+    },
+    "evidence/guest-current36-root.log": {
+      "bytes": 6437,
+      "sha256": "b05fa5376920d2ecab60b553c0e337d1d40c58c5bcfe349a55f5e83cc63c0622"
+    },
+    "qualification.json": {
+      "bytes": 7152,
+      "sha256": "71f44aa2dde674ad5eb0d0b2866a837d64b6de45c3a985486eefa80cb18bd934"
+    },
+    "source/android/guest/client_live_directory_control.py": {
+      "bytes": 13303,
+      "sha256": "80f5e02e17992fcae58331b8f4cbea789f2ca571e7306b62747b62e463bf70af"
+    },
+    "source/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryFixture.java": {
+      "bytes": 49318,
+      "sha256": "0834f290a7bd373dcf3d2ceda1fe10f14d50e29bc8320d1bf55e8cefe0fa024e"
+    },
+    "source/tools/android/interactive/test_client_live_directory_control.py": {
+      "bytes": 20369,
+      "sha256": "64308ffaa70270ccdde99518466bc8c8334d244afd03697648bc7c779ae86644"
+    },
+    "source/tools/android/interactive/test_client_live_directory_fixture.py": {
+      "bytes": 35369,
+      "sha256": "9a130cfb1d16929405b776464924779b61989efab3766491963805f4c07192d6"
+    }
+  },
+  "format": 1,
+  "native_registration_allowed": false,
+  "publication_allowed": false,
+  "role": "closed_client_fixture_guest_increment_source_pins",
+  "self_pin_omitted_intentionally": true,
+  "source_parent_commit": "270ad89b4f2f85333692f54446901cc4da3cb4e4"
+}

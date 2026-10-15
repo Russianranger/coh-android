@@ -1,0 +1,55 @@
+{
+  "AndroidQualificationGranted": false,
+  "artifactActivationAdded": false,
+  "baseCommit": "270ad89b4f2f85333692f54446901cc4da3cb4e4",
+  "correction": "Retain validated final six counters after cursor cleanup before namespace close; preserve bounded optional omission without changing original native/service failure; distinguish current/final evidence and permit post-close immutable access",
+  "dependencyFiles": [
+    {
+      "bytes": 22515,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java",
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c"
+    },
+    {
+      "bytes": 1119,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java",
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    },
+    {
+      "bytes": 16096,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java",
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0"
+    },
+    {
+      "bytes": 21587,
+      "path": "tools/android/interactive/test_client_guest_namespace.py",
+      "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77"
+    },
+    {
+      "bytes": 199541,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+      "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9"
+    }
+  ],
+  "nativeProviderRegistered": false,
+  "ownedFiles": [
+    {
+      "bytes": 30653,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java",
+      "sha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a"
+    },
+    {
+      "bytes": 36618,
+      "path": "tools/android/interactive/test_client_live_directory_operation.py",
+      "sha256": "da72d28b5e5a453dddb0b94f86c4bd86aed27b048155c63655be19840c43a415"
+    }
+  ],
+  "playerDataTouched": false,
+  "previousFreeze": {
+    "bytes": 2430,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-directory-operation-source-freeze-revision-2.json",
+    "sha256": "51f4ecf2d23eb0d96d28f36c5bf2ec2977b5d538ad81c07399bf4bc0ec7683e3"
+  },
+  "productionRuntimeCallAdded": false,
+  "recordedUtc": "2026-10-14T08:34:38.314517+00:00",
+  "schema": "coh_client_live_directory_operation_source_freeze_v3"
+}

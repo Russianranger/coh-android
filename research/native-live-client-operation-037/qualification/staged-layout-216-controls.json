@@ -1,0 +1,128 @@
+{
+  "actualHostJniCases": 5,
+  "authorities": {
+    "APKPublication": false,
+    "Android": false,
+    "FEX": false,
+    "GameNativeConsumerRegistration": false,
+    "PRoot": false,
+    "Wine": false,
+    "devicePerformance": false,
+    "externalActivation": false,
+    "productionRuntimeCaller": false,
+    "shipping": false
+  },
+  "countsPolicy": "These216cases repeat the same current cases in the copied layout; do not add them to the216unique total.",
+  "currentCases": 216,
+  "currentExternalActivationContract": "controlled host fixtures only; no production validator/caller",
+  "errors": 0,
+  "executionCommand": "COH_LIVE_TEST_JNI_RECEIPT=<authenticated original host helper qualification.json> PYTHONPATH=tools/android/interactive:android/guest python3 -W error::ResourceWarning -m unittest test_client_guest_namespace test_client_live_directory_service test_client_live_directory_operation test_client_live_directory_operation_jni test_client_live_directory_control -v",
+  "failures": 0,
+  "javaFixtureCompilation": "actual jdk.compiler --release8",
+  "nativeCompilerOrSdkBuildInvoked": false,
+  "originalHostHelperReused": {
+    "binaryIncludedInStage": false,
+    "environmentVariable": "COH_LIVE_TEST_JNI_RECEIPT",
+    "originalHelperBytes": 35664,
+    "originalHelperSha256": "b264121c80afb11ff84248b98099939a6657251c56bd2175174f260615d45708",
+    "originalReceiptSha256": "1b7feb737cc335f34775caff0ad769508c03a369f18d9fd83d2f92877f136fe6",
+    "receiptRequiresOriginalAdjacentBinary": true
+  },
+  "productionRuntimePlayerSqlAssetsTouched": false,
+  "rawLog": {
+    "bytes": 29925,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-client-operation-closed-stage-layout-216-controls.log",
+    "sha256": "bdebe71e0a7a6d58922344de1800cba2ffd12b9ac1628aab5f8dc374083433dc"
+  },
+  "recordedUtc": "2026-10-14T08:55:46.177630+00:00",
+  "sameExistingCaseCountsByModule": {
+    "test_client_guest_namespace": 36,
+    "test_client_live_directory_control": 32,
+    "test_client_live_directory_operation": 72,
+    "test_client_live_directory_operation_jni": 5,
+    "test_client_live_directory_service": 71
+  },
+  "schema": "coh_closed_client_operation_staged_layout_qualification_v1",
+  "skipped": 0,
+  "sourceAndBaselineCopies": [
+    {
+      "bytes": 22515,
+      "originalRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java",
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c",
+      "sourceAndStagingUnchanged": true,
+      "stagedRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java"
+    },
+    {
+      "bytes": 1119,
+      "originalRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java",
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b",
+      "sourceAndStagingUnchanged": true,
+      "stagedRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java"
+    },
+    {
+      "bytes": 16096,
+      "originalRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java",
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0",
+      "sourceAndStagingUnchanged": true,
+      "stagedRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java"
+    },
+    {
+      "bytes": 30653,
+      "originalRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java",
+      "sha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a",
+      "sourceAndStagingUnchanged": true,
+      "stagedRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java"
+    },
+    {
+      "bytes": 12719,
+      "originalRelativePath": "android/guest/client_live_directory_control.py",
+      "sha256": "596f7bc6523ed6da95d1a162c1d332fa2f77ccfa1aa651d7096fdfa86ad923c3",
+      "sourceAndStagingUnchanged": true,
+      "stagedRelativePath": "android/guest/client_live_directory_control.py"
+    },
+    {
+      "bytes": 21587,
+      "originalRelativePath": "tools/android/interactive/test_client_guest_namespace.py",
+      "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77",
+      "sourceAndStagingUnchanged": true,
+      "stagedRelativePath": "tools/android/interactive/test_client_guest_namespace.py"
+    },
+    {
+      "bytes": 24329,
+      "originalRelativePath": "tools/android/interactive/test_client_live_directory_service.py",
+      "sha256": "5ffeb08e28d35441c73e2478f897207df8870cb05384a72b14403468e8252cad",
+      "sourceAndStagingUnchanged": true,
+      "stagedRelativePath": "tools/android/interactive/test_client_live_directory_service.py"
+    },
+    {
+      "bytes": 36618,
+      "originalRelativePath": "tools/android/interactive/test_client_live_directory_operation.py",
+      "sha256": "da72d28b5e5a453dddb0b94f86c4bd86aed27b048155c63655be19840c43a415",
+      "sourceAndStagingUnchanged": true,
+      "stagedRelativePath": "tools/android/interactive/test_client_live_directory_operation.py"
+    },
+    {
+      "bytes": 13197,
+      "originalRelativePath": "tools/android/interactive/test_client_live_directory_operation_jni.py",
+      "sha256": "302ecdd27b1ea0219b9bd3eb8f346c5261fdf0b9696ec861c0918f54a9dc3353",
+      "sourceAndStagingUnchanged": true,
+      "stagedRelativePath": "tools/android/interactive/test_client_live_directory_operation_jni.py"
+    },
+    {
+      "bytes": 17012,
+      "originalRelativePath": "tools/android/interactive/test_client_live_directory_control.py",
+      "sha256": "c85d4ebcaee5991766d125aee66847d37862630d8b4168c801d3a106d04a20cc",
+      "sourceAndStagingUnchanged": true,
+      "stagedRelativePath": "tools/android/interactive/test_client_live_directory_control.py"
+    },
+    {
+      "bytes": 199541,
+      "originalRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+      "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9",
+      "sourceAndStagingUnchanged": true,
+      "stagedRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java"
+    }
+  ],
+  "status": "passed-host-staged-layout-only",
+  "unittestElapsedSeconds": 36.646
+}
