@@ -1,0 +1,37 @@
+{
+  "original_producer_cases": 80,
+  "plaintext_bytes_compared": 41456,
+  "timeout_source_cases": 70,
+  "original_compression_cases": 40,
+  "source_file_count": 12,
+  "source_revision": "9ee2f8c74e3efdd2593d514bf8d32a75dcbc8de9",
+  "fixture_sha256": "56878e6a9fd35aad40ead70bc6cd717466f7cc83343570aefc3ac2e3bb7ae3aa",
+  "oracle": "unchanged original pktWrap/ACK/bit/auto/bsCompress/calcTimeout bodies; trusted aligned O0 host, never shipped",
+  "schema": "coh-native-gate25-host-v1",
+  "passed": true,
+  "native": {
+    "checks": 113042,
+    "negative_cases": 53476,
+    "wire_cases": 640,
+    "session_scenarios": 21,
+    "fixed_link_bytes": 482296,
+    "codec_initial_bytes": 275504,
+    "cpu_test_ms": 161.78,
+    "server_interoperability": false
+  },
+  "native_sources_sha256": {
+    "engine/network/coh_net.c": "0c320dd8f33494fa40de7db94d0cab96779549d8baad64b09b78d90525b79b2f",
+    "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "engine/network/coh_net_zip.c": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8",
+    "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "engine/network/tests/test_net.c": "6e576f893dae3eacd76eb1ff503eb5868097f29cc9d566c725346c23220312a1",
+    "engine/network/coh_net.h": "212965ce8caeba5d79423b1bf97a999d1479ac62cbbaec0a2fa3efbd178e5071",
+    "engine/network/check.py": "bf5d6fd5f5b956a3b599c97628827a9906ad8d434262e9ca0715925479282324",
+    "engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "sanitizers": "ASan+UBSan; leak sanitizer disabled on restricted host",
+  "android_build": false,
+  "android_execution": false,
+  "live_server_interoperability": false
+}

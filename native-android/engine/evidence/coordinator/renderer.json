@@ -1,0 +1,192 @@
+{
+  "working_tree_sources": {
+    "check.py": "cb6737113e9d9813938e83534cb7882c65d3a8dd4ed13fcfba2521f62b37dd68",
+    "coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "coh_renderer_gles.c": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c",
+    "coh_renderer_gles.h": "d8bcb8107e4f61aeaf1e6270da3ee41ec057d3be460e1dfe4a34a4c48baed9ae",
+    "coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "embed_shaders.py": "de596b01aecdba37181dd5769f73138a66664daf96160e61333b03f6ee255890",
+    "shaders/material.frag.in": "9f5f9550ea00d69e57668a049ae988c7759700e0dbb6a00005a92e4e26f3acff",
+    "shaders/rigid.vert": "c192794e6a489eedbb4af34baf7ec8a9563b745152025531d0302d652f29d2f6",
+    "tests/bindings.py": "5b799b7a3ea006aedbd149ca3fb51891da806fa93bdc043b9e729d3295bda7d5",
+    "tests/gpu_check.py": "4f454c836c360def83adf044a50137e07ec7f3a3f94c0390a023f06c89b726e9",
+    "tests/oracle.py": "59e883dc98178e00995bbea72ceaf50bb544bbc23d7a554db7fe656a5872ef5b",
+    "tests/selftest.c": "9de1806797d65c4b6f2082ba4df3e08eaaf07bb822aa0270c09c2a37fc4a29a4"
+  },
+  "base_commit": "b28e62dd9a02d6f0a3320261184cbaf443fa4854",
+  "gate": 24,
+  "status": "host_qualified",
+  "android_emulator_qualified": false,
+  "physical_thor_qualified": false,
+  "source_audit": {
+    "passed": true,
+    "original_source_files": [
+      {
+        "path": "upstream/i24/data/shaders/cgfx/vp_master_vp.cg",
+        "sha256": "fc9878f4fe57ff430a018c66c208e18e8c00dcad6737a4a48c8d16f4ef8ecfd8",
+        "bytes": 16751
+      },
+      {
+        "path": "upstream/i24/data/shaders/cgfx/multiplyregfp.cg",
+        "sha256": "641ff2c805e82adab66d4235e4f1577ad5a5f430ae9ad6ee5eaea7ee92c5b398",
+        "bytes": 4246
+      },
+      {
+        "path": "upstream/i24/data/shaders/cgfx/colorblenddualfp.cg",
+        "sha256": "c59cea85cfed047397c88b7258230ef178be477ccab3af1a7db5681e993d66af",
+        "bytes": 3263
+      },
+      {
+        "path": "upstream/i24/data/shaders/cgfx/addglowfp.cg",
+        "sha256": "acc6056b22d413ed0b0143ec2111cd6198a389534962752e671d348d865dc228",
+        "bytes": 3460
+      },
+      {
+        "path": "upstream/i24/data/shaders/cgfx/functions.cgh",
+        "sha256": "5b602cf7f03b7ce7a6ea4e02fc34c1a2a33331a9c3a6516762b8823679f9a6ca",
+        "bytes": 37969
+      },
+      {
+        "path": "upstream/i24/data/shaders/cgfx/variants.cgh",
+        "sha256": "87b28634c0dbe28875f1cbe811a44b4f78f23fc3755827339ee9953d8519869e",
+        "bytes": 2797
+      },
+      {
+        "path": "upstream/i24/data/shaders/cgfx/nexus.cgh",
+        "sha256": "38c5f6b0114883ab8f2fe8f59a9c5b81bdc1d80a620c8d76fc23c0c332e640ee",
+        "bytes": 3450
+      },
+      {
+        "path": "upstream/ouroboros/Game/src/render/thread/rt_init.c",
+        "sha256": "4203ba947fa608bcd21b7b9544ce84e6dcd5aabba28d82a123f474b6a232747f",
+        "bytes": 17221
+      },
+      {
+        "path": "upstream/ouroboros/Game/src/render/thread/rt_model.c",
+        "sha256": "1c9e8a6b16326cd2a07d3cd9707de01bdc9ab74af0fe3351622890f3acf0dfaa",
+        "bytes": 67147
+      },
+      {
+        "path": "upstream/ouroboros/Game/src/render/model_cache.c",
+        "sha256": "23297301f34737585d65e39fc8b01445e5b4a8f665ac9cb49e9101f6f2cf299b",
+        "bytes": 18214
+      }
+    ],
+    "original_cg_executed": false
+  },
+  "limits": [
+    "low-profile rigid source families only",
+    "skinned adapter remains accepted separate module",
+    "no HQ/bump/cube/shadow/multi/water/postprocessing",
+    "no gameplay FPS claim"
+  ],
+  "host_unit": {
+    "passed": true,
+    "negative_cases": 12,
+    "queue_lifecycle_cache_checks": true,
+    "owned_bytes": 3504,
+    "sustained_frames": 20000,
+    "module_allocation_growth_bytes": 0,
+    "sustained_host_cpu_seconds": 0.007692
+  },
+  "source_oracle": {
+    "passed": true,
+    "fragment_cases": 3000,
+    "vertex_cases": 3000,
+    "max_fragment_error": 4.103829986945584e-07,
+    "max_vertex_error": 1.9992401973922824e-06,
+    "fragment_tolerance": 3e-05,
+    "vertex_tolerance": 5e-05,
+    "reference": "independent binary64 source equations; no original Cg execution"
+  },
+  "sanitizers": {
+    "passed": true,
+    "negative_cases": 12,
+    "queue_lifecycle_cache_checks": true,
+    "owned_bytes": 3504,
+    "sustained_frames": 20000,
+    "module_allocation_growth_bytes": 0,
+    "sustained_host_cpu_seconds": 0.02704,
+    "instrumentation": "ASan+UBSan",
+    "leak_sanitizer": {
+      "passed": false,
+      "reason": "LSan unavailable in this traced execution environment (/proc task inspection denied); no leak-sanitizer result claimed"
+    }
+  },
+  "android_arm64_build": {
+    "passed": true,
+    "api": 26,
+    "ndk": "android-ndk-r28c",
+    "elf": "/tmp/coh-renderer-ryo0onok/libcoh_renderer_arm64.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, not stripped",
+    "sha256": "4018e34ba5581e28c880a79f3daa2f8493c660660dd505a46c512ae4329fc47f",
+    "execution": false
+  },
+  "host_gles": {
+    "passed": true,
+    "identity": {
+      "vendor": "Mesa",
+      "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+      "version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+      "glsl": "OpenGL ES GLSL ES 3.20"
+    },
+    "egl": [
+      1,
+      5
+    ],
+    "driver": "concrete C GLES3 backend",
+    "material_cases": 18,
+    "authentic_declared_material_cases": 8,
+    "controlled_semantic_cases": 10,
+    "rgba_components_compared": 294912,
+    "max_byte_error": 1,
+    "tolerance": 2,
+    "authentic_input": {
+      "world_sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f",
+      "material_reference_sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77",
+      "vertices": 512,
+      "indices": 564,
+      "textures": 4
+    },
+    "stats": {
+      "owned_bytes": 13344,
+      "borrowed_vertex_bytes": 0,
+      "borrowed_index_bytes": 0,
+      "queued": 0,
+      "high_water_draws": 1,
+      "submitted": 20,
+      "drawn": 20,
+      "rejected": 0,
+      "compiles": 3,
+      "cache_hits": 17,
+      "evictions": 0,
+      "state_binds": 20,
+      "cancelled": 0,
+      "surface_generation": 0
+    },
+    "android_execution": false,
+    "physical_thor": false,
+    "transform_feedback": [
+      {
+        "passed": true,
+        "components": 23040,
+        "max_error": 9.284465640746475e-07,
+        "tolerance": 0.0001,
+        "source_geometry": true,
+        "lighting_modes": 3,
+        "shader_profile": "ESSL3.00 explicit source order"
+      },
+      {
+        "passed": true,
+        "components": 23040,
+        "max_error": 9.284465640746475e-07,
+        "tolerance": 0.0001,
+        "source_geometry": true,
+        "lighting_modes": 3,
+        "shader_profile": "ESSL3.20 core precise"
+      }
+    ],
+    "surface_recreate_passed": true,
+    "egl_context_loss_recreate_passed": true
+  }
+}

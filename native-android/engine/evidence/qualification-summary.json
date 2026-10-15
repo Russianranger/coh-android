@@ -1,0 +1,86 @@
+{
+  "schema": "coh-native-parallel-coordinator-v1",
+  "gates": [
+    22,
+    24,
+    25,
+    33,
+    34,
+    43
+  ],
+  "true_parallel_workers": 6,
+  "isolated_detached_worktrees": true,
+  "all_individual_coordinator_reruns_passed": true,
+  "individual_sanitizers": [
+    "ASan",
+    "UBSan"
+  ],
+  "leak_sanitizer_available": false,
+  "combined_host_passed": true,
+  "combined_authentic_decode_to_mixer_ownership": true,
+  "combined_android_arm64_bionic_link_passed": true,
+  "android_emulator_qualified": false,
+  "physical_thor_qualified": false,
+  "live_server_interoperability": false,
+  "new_apk_created": false,
+  "existing_apk_paths_changed": false,
+  "existing_workflows_changed": false,
+  "source_base": "d480744d729ecff2251bad3746eb6ed0cc182e95",
+  "integration_driver_corrections": [
+    "Set required UI font size in test descriptor",
+    "Adopt Surface generation before renderer begin",
+    "Supply valid nonzero source normals in test triangle"
+  ],
+  "module_implementations_changed_for_driver_corrections": false,
+  "receipts": [
+    {
+      "path": "coordinator/aggregate-summary.json",
+      "sha256": "f3611cbf84a5133abb356e11b14dba04b73e0ef96b5e260dc68cafcc9388c8eb"
+    },
+    {
+      "path": "coordinator/arm64-symbol-audit.json",
+      "sha256": "a4334516ec2491a3c7636f82aaef8055b7b4301ca807cc30da23db6ca0daca71"
+    },
+    {
+      "path": "coordinator/assets.json",
+      "sha256": "3e9b387284b8b7e53818d60613e7ecfc060deb3abdcfe07e677a0f4ce9effbc2"
+    },
+    {
+      "path": "coordinator/audio.json",
+      "sha256": "d58d1e1ebcb0eb239d08bdede41634410a64d8dbdf0aead516abfd7f750d6d98"
+    },
+    {
+      "path": "coordinator/combined-arm64-build.json",
+      "sha256": "240e7b28763adb913104a610ede8337edb8d47ef1d195e3ad1b90fcdf78f47c0"
+    },
+    {
+      "path": "coordinator/combined-arm64-elf.txt",
+      "sha256": "19ad1b2ef37438d3f0f74f5c4013474edab97cbf224121c47dbfdd034b38b326"
+    },
+    {
+      "path": "coordinator/combined-host-build.json",
+      "sha256": "cd7fa7555656feddee28c0f9fc934ae624df0c4edfd0bcc739f9b709498ab654"
+    },
+    {
+      "path": "coordinator/combined-host-elf.txt",
+      "sha256": "7b507941cc464eb62b1f2f7aaa4dfd31aa59ccba0ac4a2a453b814c2ebca8386"
+    },
+    {
+      "path": "coordinator/network.json",
+      "sha256": "7c1041cceb710a903827ced5b5dccc2c2b9728c1d66ef7cb1cf90d4444fb598e"
+    },
+    {
+      "path": "coordinator/renderer.json",
+      "sha256": "f0e8484404b3bf178c7393d45d5ab1f0570fc9a3e0bc431b356fa21ee08ab955"
+    },
+    {
+      "path": "coordinator/sequencer.json",
+      "sha256": "5d45c070311714b931da33b9c6bea69c0d9648a16486af29902da976ec31a3ef"
+    },
+    {
+      "path": "coordinator/ui.json",
+      "sha256": "2ff7b92b0e3372c8a88e0bab18d5a3149993dc3c7cff6e20f6c635cb8ba252de"
+    }
+  ],
+  "concurrent_aggregate_runner_passed": true
+}

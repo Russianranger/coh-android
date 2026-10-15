@@ -1,0 +1,272 @@
+{
+  "schema": "coh-native-engine-build-v1",
+  "passed": true,
+  "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+  "command": [
+    "/workspace/scratch/bd17f7dd7d03/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+    "-std=c11",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-ffp-contract=off",
+    "-I/workspace/scratch/bd17f7dd7d03/native-integration/native-android/include",
+    "-I/workspace/scratch/bd17f7dd7d03/native-integration/native-android/src",
+    "-DCOH_ENGINE_WITH_DECODER=1",
+    "-DHAVE_ALLOCA_H=1",
+    "-I/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/pinned-codecs/ogg/include",
+    "-I/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/pinned-codecs/vorbis/include",
+    "-I/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/pinned-codecs/vorbis/lib",
+    "-shared",
+    "-fPIC",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/assets/coh_asset_loader.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/assets/coh_asset_geo.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/renderer/coh_renderer.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/network/coh_net.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/network/coh_net_frame.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/network/coh_net_zip.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/sequencer/coh_sequencer.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/ui/coh_ui.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/audio/coh_mixer.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/src/coh_assets.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/src/coh_dds.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/src/coh_blowfish.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/protocol/coh_protocol.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/animation/coh_animation.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/audio/coh_audio.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/renderer/coh_renderer_gles.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/audio/coh_mixer_aaudio.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/assets/coh_asset_audio.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/decode/coh_decode.c",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-0.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-1.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-2.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-3.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-4.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-5.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-6.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-7.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-8.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-9.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-10.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-11.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-12.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-13.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-14.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-15.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-16.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-17.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-18.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-19.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-20.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-21.o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/codec-22.o",
+    "-lz",
+    "-lm",
+    "-lGLESv3",
+    "-laaudio",
+    "-Wl,--no-undefined",
+    "-o",
+    "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/combined-arm64/libcoh_native_engine.so"
+  ],
+  "android_arm64_bionic_cross_compiled": true,
+  "android_executed": false,
+  "physical_thor_qualified": false,
+  "sanitizers": [],
+  "library": {
+    "name": "libcoh_native_engine.so",
+    "bytes": 399376,
+    "sha256": "388c010fbe89d97a6b952f5fd87f912675464c18e78563b8edb076b627b92fd7"
+  },
+  "sources": [
+    {
+      "path": "engine/assets/coh_asset_loader.c",
+      "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b"
+    },
+    {
+      "path": "engine/assets/coh_asset_geo.c",
+      "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+    },
+    {
+      "path": "engine/renderer/coh_renderer.c",
+      "sha256": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00"
+    },
+    {
+      "path": "engine/network/coh_net.c",
+      "sha256": "0c320dd8f33494fa40de7db94d0cab96779549d8baad64b09b78d90525b79b2f"
+    },
+    {
+      "path": "engine/network/coh_net_frame.c",
+      "sha256": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+    },
+    {
+      "path": "engine/network/coh_net_zip.c",
+      "sha256": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8"
+    },
+    {
+      "path": "engine/sequencer/coh_sequencer.c",
+      "sha256": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91"
+    },
+    {
+      "path": "engine/ui/coh_ui.c",
+      "sha256": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676"
+    },
+    {
+      "path": "engine/audio/coh_mixer.c",
+      "sha256": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444"
+    },
+    {
+      "path": "src/coh_assets.c",
+      "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+    },
+    {
+      "path": "src/coh_dds.c",
+      "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+    },
+    {
+      "path": "src/coh_blowfish.c",
+      "sha256": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+    },
+    {
+      "path": "protocol/coh_protocol.c",
+      "sha256": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea"
+    },
+    {
+      "path": "animation/coh_animation.c",
+      "sha256": "98865ae06e3d8eeeb97383e3e36295d715ec7c2556cfd03129dbc79275cefdbb"
+    },
+    {
+      "path": "audio/coh_audio.c",
+      "sha256": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+    },
+    {
+      "path": "engine/renderer/coh_renderer_gles.c",
+      "sha256": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c"
+    },
+    {
+      "path": "engine/audio/coh_mixer_aaudio.c",
+      "sha256": "503b8b876fe63d27f3ed7ac73efb2fb06822eac6be178a6b52d7714c6ac07f14"
+    },
+    {
+      "path": "engine/assets/coh_asset_audio.c",
+      "sha256": "f097e778174b63570a7b695d0d0e830a1cf6f555b856701ff593aa0d021f55ba"
+    },
+    {
+      "path": "decode/coh_decode.c",
+      "sha256": "3301c2bb39a7269230c0fdfc733ed7388c21004b4d0a95071976fbaaeb32fff0"
+    }
+  ],
+  "scope": "Combined opt-in libraries only. No APK, JNI, server exchange or gameplay performance claim.",
+  "pinned_codec_verification": {
+    "passed": true,
+    "source_files_verified": 79,
+    "revisions": {
+      "ogg": "be05b13e98b048f0b5a0f5fa8ce514d56db5f822",
+      "vorbis": "0657aee69dec8508a0011f47f3b69d7538e9d262"
+    },
+    "unsigned_shift_overlay": {
+      "source": "vorbis/lib/sharedbook.c",
+      "line": 425,
+      "source_sha256": "a883767bf16552f5cf8686b58b86e55819dcb63487c5307fee5d45820b836a40",
+      "overlay_sha256": "a8cbecc3bdd0a18d27fd31d342bfb32f9789cbad960d0cf6547e0bee865fce23",
+      "before": "ogg_uint32_t word=i<<(32-c->dec_firsttablen);",
+      "after": "ogg_uint32_t word=(ogg_uint32_t)i<<(32-c->dec_firsttablen);",
+      "reason": "UBSan on valid fixture: left shift into signed int sign bit; cast to declared unsigned destination type defines identical intended bits"
+    },
+    "runtime_network": false
+  },
+  "codec_sources": [
+    {
+      "path": "pinned-codecs/ogg/src/bitwise.c",
+      "sha256": "753d2ace9337bcb8c9ef23f42d630186f55f75a0d962ee79b3e7d87a614c147c"
+    },
+    {
+      "path": "pinned-codecs/ogg/src/framing.c",
+      "sha256": "04373c7f155e0f6d8a5f355108b2908002a6ffe3895da89796619090a3313bdc"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/mdct.c",
+      "sha256": "e32b379d7a3d9253524abae3c41c5ac2486bf166cf65996efc4e68db1b164993"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/smallft.c",
+      "sha256": "21b4cd38bc6d50991f4abca4d2619fe1fa27ee74a22bd935804f4cd62b77472a"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/block.c",
+      "sha256": "7f65c7031c2b94405d2c1b5f0a73cc19efe9506e95736ba0b38d86bd42170a7e"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/envelope.c",
+      "sha256": "ae9f845d39776f7b6072543368a18037f778c56385a5cb6377dac388f44b3b51"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/window.c",
+      "sha256": "bea202730509aa12bc5f0da703be1a04a7e7dd04b2ee7a2b3a6f8b133edaacbc"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/lsp.c",
+      "sha256": "cf618a3be06feb94e39eb7a06ad0db4fd8462f8edac93faf4765b28516a9f5ef"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/lpc.c",
+      "sha256": "e782bd2780f354fcb0156855260c082ccdeed76dc1152ba7a6ae45b98520dfeb"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/analysis.c",
+      "sha256": "cf75d75c762f27ee9f50e9be794e47551d86cbdfb00fbce962ba3280a9516e4d"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/synthesis.c",
+      "sha256": "d5f92aaed1e7b59f3c01e0405813009cda29a61a0e6155d60980907d93c1eeb3"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/psy.c",
+      "sha256": "e8ccec1fba7d00961d5c67fec30b488c912f0ad7842ec7b1aeab987b97744b6e"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/info.c",
+      "sha256": "03af6059fe7e50d0b37a0370707139227e6cd4cc74be56473cd22f0300739fca"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/floor1.c",
+      "sha256": "fd4f403b56bf5538d1cc33fcf9236bca230553c143273fe17f5846ed928b6a64"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/floor0.c",
+      "sha256": "20185fa3bff19f7c162a113f8fb969f3961079454b3ffd2019e9e555b0bbc61c"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/res0.c",
+      "sha256": "0d3daf9327dbe14460d9b11df1ea0d9de709e3326d70b607d65720323d0caf62"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/mapping0.c",
+      "sha256": "d3f26fa42c4345f36885e93650ee6da07861b37ea816b131e5fafb7a7c6d19e2"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/registry.c",
+      "sha256": "4259a70a4de23ab48a0af4ff08e0f68102052c6c7d3535c06bd7d7e2fdb82a65"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/codebook.c",
+      "sha256": "662728ef6190968fd717af62b19578006357090814b15b2f03ddc7a98871b345"
+    },
+    {
+      "path": "pinned-codecs/safe/sharedbook.c",
+      "sha256": "a8cbecc3bdd0a18d27fd31d342bfb32f9789cbad960d0cf6547e0bee865fce23"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/lookup.c",
+      "sha256": "4b169c62256e13a6575aaf38eb49514d8e7825c0df2429a669768b5a6d6716fa"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/bitrate.c",
+      "sha256": "fd8940a065820c247e0e115b9a10af82c09ed419f8c9a6b88eddaaed221f52b3"
+    },
+    {
+      "path": "pinned-codecs/vorbis/lib/vorbisfile.c",
+      "sha256": "557752159e4c96e4ca339d28a4454c9d7edbf6b2bca6cbe4e8a5f8c44ef9196f"
+    }
+  ]
+}

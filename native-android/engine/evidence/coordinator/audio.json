@@ -1,0 +1,86 @@
+{
+  "schema": "coh-native-gate43-host-v1",
+  "passed": true,
+  "source_oracle": {
+    "revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+    "files": {
+      "sound.c": "8f114a02c47c25cba0c090e1fd6b8a164a8bd7086ba1590ef5ef236db77eab25",
+      "sound_sys.c": "0a48bbdc5006c2e2876253412bd263b9f2640de3745c27a2616dab0c5f173f09"
+    },
+    "functions": {
+      "sndSphereVolume": "ee664aa8a8928e0c44a4c67768267dbba99360ffbe9d2f07c4d14d6025fbbf8e",
+      "sphereGroupGetVolume": "e6a99fd44f17c5eaab1dbb64f87dbbb48b743c27676973123497786c04e8df30",
+      "volumeDbToRatio": "fdd4eeb9d50abe2d257938cbcbdbcb28b2a166c0974fad0c02e5b9b556972c27",
+      "volumeRatioToDb": "8f776ba5050717559a104a9a4e36030038293733d5b69e5b8c12fb4c41ae3913"
+    },
+    "shim": "F32, vector operations, zero listener, head-right X, ignoreSoundRamp flag, one 3D sphere without fade/variance; functions unchanged"
+  },
+  "module_sources": {
+    "native-android/engine/audio/coh_mixer.c": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444",
+    "native-android/engine/audio/coh_mixer.h": "51ad20370cc75b3edaa93997c9ff4cdb9546e5485521e65daf117522866fc389",
+    "native-android/engine/audio/coh_mixer_aaudio.c": "503b8b876fe63d27f3ed7ac73efb2fb06822eac6be178a6b52d7714c6ac07f14",
+    "native-android/engine/audio/coh_mixer_aaudio.h": "7b8658fd4aa5ae58896296bd7d1599a7d10acfc113f93cadd2e71e3c82ac23c3",
+    "native-android/engine/audio/test_mixer.c": "9dc1090d29e421c76b55de2d16bbf56ee2e70693320244a69fc17f3f9e3d8ff9",
+    "native-android/engine/audio/test_aaudio.c": "0dfdb41f15c5020381d605145275f7864809898e7d4e7be7beda3bb82f9a0ac1",
+    "native-android/audio/coh_audio.c": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+  },
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "leak_sanitizer": "unavailable: runtime cannot read /proc/PID/task; allocation accounting still enforced",
+  "codec": {
+    "verified_files": 79,
+    "revisions": {
+      "ogg": "be05b13e98b048f0b5a0f5fa8ce514d56db5f822",
+      "vorbis": "0657aee69dec8508a0011f47f3b69d7538e9d262"
+    },
+    "safe_overlay_sha256": "a8cbecc3bdd0a18d27fd31d342bfb32f9789cbad960d0cf6547e0bee865fce23"
+  },
+  "authentic_asset": {
+    "path": "data/sound/ogg/player/headset_incoming_02.ogg",
+    "ogg_sha256": "82bec697f9e824d192cac90f32a01421e4a3875aada64fc709862bc4d3ae9198",
+    "reference_sha256": "440361125d7420a1730ecd742271d8b2a67808dffcfa9dc435f2357d59931823"
+  },
+  "results": [
+    {
+      "kind": "extended",
+      "simulated_seconds": 120.001,
+      "host_seconds": 2.599619,
+      "voices": 32,
+      "allocated_bytes": 434784,
+      "callback_allocations": 0
+    },
+    {
+      "kind": "authentic",
+      "simultaneous_voices": 3,
+      "frames": 18168,
+      "decoder_maximum_sample_error": 1,
+      "mixer_oracle_maximum_error": 0
+    },
+    {
+      "kind": "summary",
+      "passed": true,
+      "checks": 53980,
+      "source_comparisons": 5000,
+      "live_wrapped_allocations_after_teardown": 0
+    },
+    {
+      "kind": "aaudio_host_owner",
+      "passed": true,
+      "opened": 9,
+      "closed": 9,
+      "scope": "host shim lifecycle only"
+    }
+  ],
+  "compiler": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "real_time_allocation_guard": "linker-wrapped malloc/calloc/realloc/free assert callback never calls allocator",
+  "android_emulator": "not run",
+  "physical_thor": "not run",
+  "limitations": [
+    "Software stereo approximation; no DirectSound/HRTF sample parity",
+    "No resampling, Doppler, reverb, sphere merging or original owner routing",
+    "Streaming ring accepts off-thread decoded PCM; existing bounded Ogg decoder still decodes whole clips",
+    "Host elapsed time is not a device benchmark or proof of audible output"
+  ]
+}

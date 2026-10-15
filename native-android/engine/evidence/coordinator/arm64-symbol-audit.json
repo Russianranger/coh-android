@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "sha256": "388c010fbe89d97a6b952f5fd87f912675464c18e78563b8edb076b627b92fd7",
+  "required_exports": [
+    "coh_asset_acquire",
+    "coh_asset_sound_decode",
+    "coh_renderer_submit",
+    "coh_renderer_gles_create",
+    "coh_net_receive",
+    "coh_seq_step",
+    "coh_ui_build",
+    "coh_mixer_render",
+    "coh_mixer_aaudio_open"
+  ],
+  "architecture": "AArch64",
+  "android_executed": false
+}

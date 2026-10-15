@@ -1,0 +1,123 @@
+{
+  "schema": "coh-native-parallel-module-check-v1",
+  "workers": 6,
+  "passed": true,
+  "modules": [
+    {
+      "module": "assets",
+      "passed": true,
+      "exit_code": 0,
+      "elapsed_host_seconds": 3.6430554469989147,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/assets/check.py",
+        "--output",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/aggregate/assets.json",
+        "--source-root",
+        "/workspace/scratch/bd17f7dd7d03/coh-native-coordinator",
+        "--sanitize",
+        "--corpus-root",
+        "/workspace/scratch/552733ac6bdc"
+      ],
+      "receipt": "assets.json",
+      "receipt_sha256": "119929f1da5070caa820b550409db7e7c45e6c07101703aa200ed93ca97c140e"
+    },
+    {
+      "module": "audio",
+      "passed": true,
+      "exit_code": 0,
+      "elapsed_host_seconds": 26.67076207500213,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/audio/check.py",
+        "--output",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/aggregate/audio.json",
+        "--source-root",
+        "/workspace/scratch/bd17f7dd7d03/coh-native-coordinator",
+        "--sanitize",
+        "--codec-root",
+        "/workspace/scratch/552733ac6bdc/coh-next/native-android/decode/.deps",
+        "--asset-root",
+        "/workspace/scratch/552733ac6bdc/coh-next/native-android/integration-probe/app/src/main/assets"
+      ],
+      "receipt": "audio.json",
+      "receipt_sha256": "149f19a144a98d9c665a846e9c7253754e7530fb6a04f39277a26a134a8cf869"
+    },
+    {
+      "module": "network",
+      "passed": true,
+      "exit_code": 0,
+      "elapsed_host_seconds": 2.529755389005004,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/network/check.py",
+        "--output",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/aggregate/network.json",
+        "--source-root",
+        "/workspace/scratch/bd17f7dd7d03/coh-native-coordinator",
+        "--sanitize"
+      ],
+      "receipt": "network.json",
+      "receipt_sha256": "c045054229252c08aefb3c533f909bba6c99b524a8d4565c76c52de9ef19656d"
+    },
+    {
+      "module": "renderer",
+      "passed": true,
+      "exit_code": 0,
+      "elapsed_host_seconds": 2.937875404000806,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/renderer/check.py",
+        "--output",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/aggregate/renderer.json",
+        "--source-root",
+        "/workspace/scratch/bd17f7dd7d03/coh-native-coordinator",
+        "--sanitize",
+        "--corpus",
+        "/workspace/scratch/552733ac6bdc/coh-next/native-android/integration-probe/app/src/main/assets",
+        "--ndk",
+        "/workspace/scratch/bd17f7dd7d03/toolchains/android-ndk-r28c"
+      ],
+      "receipt": "renderer.json",
+      "receipt_sha256": "c93ef9a0e6159fcaa398213b346fe445d0f5ae1e72266d58e8b66ad5020e015f"
+    },
+    {
+      "module": "sequencer",
+      "passed": true,
+      "exit_code": 0,
+      "elapsed_host_seconds": 3.247181642000214,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/sequencer/tools/check.py",
+        "--output",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/aggregate/sequencer.json",
+        "--source-root",
+        "/workspace/scratch/bd17f7dd7d03/coh-native-coordinator",
+        "--sanitize"
+      ],
+      "receipt": "sequencer.json",
+      "receipt_sha256": "45cf5d128a1fd7fd17a0050192878c2cd6d4ebb2660bae20bc046f3911967da2"
+    },
+    {
+      "module": "ui",
+      "passed": true,
+      "exit_code": 0,
+      "elapsed_host_seconds": 1.9754778020069352,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/engine/ui/check.py",
+        "--output",
+        "/workspace/scratch/bd17f7dd7d03/native-integration/native-android/results/parallel/aggregate/ui.json",
+        "--source-root",
+        "/workspace/scratch/bd17f7dd7d03/coh-native-coordinator",
+        "--sanitize"
+      ],
+      "receipt": "ui.json",
+      "receipt_sha256": "f3762ebe376d34cded0dbce17f55f1728e22d5bea04661a036d03f34f1debbad"
+    }
+  ],
+  "android_emulator_qualified": false,
+  "physical_thor_qualified": false,
+  "scope": "Host source/oracle/sanitizer suites. Host runtimes are diagnostics, not device gameplay benchmarks.",
+  "combined_host_passed": true
+}
