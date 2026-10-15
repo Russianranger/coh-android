@@ -1,0 +1,41 @@
+{
+  "module": "Additive mobile analog HUD-focus policy",
+  "host": "passed",
+  "tests": {
+    "focus_timing_hysteresis_groups": 7,
+    "invalid_samples": 5,
+    "overflow_and_same_timestamp": true,
+    "catchup_burst": false,
+    "gameplay_intents": 0,
+    "arena_bytes": 72
+  },
+  "source_policy": "New mobile focus hysteresis/repeat contract; original desktop stick timing parity is not claimed. Calls existing source-qualified coh_hud_action only.",
+  "source_baseline": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "implementation_start_commit": "e6f5d4b190d60480e178b9bf6ce33859e457ef46",
+  "emulator": "not run; coordinator must wire selected stick and frame ticks",
+  "physical_thor": "not run",
+  "sanitizers": "ASan + UBSan passed; LSan disabled; caller-owned fixed storage",
+  "sanitizer_tests": {
+    "focus_timing_hysteresis_groups": 7,
+    "invalid_samples": 5,
+    "overflow_and_same_timestamp": true,
+    "catchup_burst": false,
+    "gameplay_intents": 0,
+    "arena_bytes": 72
+  },
+  "android": {
+    "status": "ARM64 built",
+    "api": 26,
+    "bytes": 32152,
+    "sha256": "d60b0021ee6f8c233eb9d8f73ea11944b31a06b6a200d4d275fb73afadd3dc32",
+    "execution": "not run"
+  },
+  "no_direct_allocator_imports": true,
+  "source_hashes": {
+    "coh_ui.c": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676",
+    "coh_hud.c": "2a803451ba0ff34db41deadc7ced716554b0046889ae47786752413766ca8177",
+    "gameplay/coh_hud_axis_navigation.c": "710e5c09b020537ce50a600aeaa3c2728a4b0bbfbcca2c9d00aef9bdd4adea5e",
+    "gameplay/coh_hud_axis_navigation.h": "6e2da3d5e369544a1e62d33daa2cd62a1fc41191833d5a105f78a1684eb333d8",
+    "gameplay/tests/axis_navigation_test.c": "48a960e620f801b804403e3385fc46266d4b27030c847dc1947b0f1d1b52d870"
+  }
+}

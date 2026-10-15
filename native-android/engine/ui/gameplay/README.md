@@ -74,3 +74,45 @@ and 1–9,0 slot-number imagery. It preserves existing typed HUD state/intents a
 input behavior. Source-backed preparation, host GPU, sanitizers and ARM64 evidence
 are in `tray/qualification.json`; Android/Thor qualification of this extension
 remains pending coordinator integration. Power-specific ability icons remain open.
+
+## Held analog focus navigation
+
+`coh_hud_axis_navigation.{h,c}` is an additive mobile focus adapter, separate from
+original game movement. Initialize `CohHudAxisNavigation` with
+`coh_hud_axis_reset`. Pass the selected stick's normalized axes and a monotonic
+elapsed millisecond sample to `coh_hud_axis_step(hud,axis,x,y,ms)` from the HUD
+owner thread on each input sample and each mock frame. Positive Y means down.
+Use the same elapsed-clock domain throughout a held gesture.
+
+The adapter engages at magnitude .55, retains direction until below .35, and
+requires a .15 stronger competing axis to switch diagonal focus. It immediately
+navigates on direction changes, repeats once after 350 ms, then at 110 ms
+intervals. A slow frame emits at most one focus action; equal timestamps never
+repeat. Subtraction-based timing handles `UINT64_MAX` without deadline overflow.
+A focus boundary is a counted no-op. Invalid axes/reversed time are rejected;
+queue/Surface errors preserve the held edge and timing for retry. Public
+counters distinguish samples, actions, repeats, blocked edges and rejections.
+The fixed caller arena is 72 bytes on the qualified 64-bit host and stores no
+HUD/session pointers, clock handle, heap or GL objects.
+
+The coordinator must give the stick one owner: while UI navigation is ON,
+suppress scene/camera dispatch for that selected stick. Reset the adapter and
+clear its stored stick axes when switching OFF, losing focus, pausing or
+removing the controller. On resume, a fresh sample creates a fresh edge. The
+adapter emits only existing local `CohUiAction` focus directions. Activation,
+chat, typed gameplay intents and later network dispatch keep their existing
+owners.
+
+`axis_check.py --ndk /path/to/ndk --sanitize --output /tmp/axis.json` covers held
+repeat deadlines, deadband and diagonal jitter, direction reversal, stalled
+frames, equal/overflow timestamps, invalid/backward input, full-queue retry,
+Surface loss/recreation and reset. Host, ASan/UBSan and API26 ARM64 results are
+in `docs/qualification-axis-navigation.json`; direct allocator imports are
+absent. The mobile hysteresis timings are an explicit new policy; original
+desktop stick-timing parity is not claimed. Existing source-qualified focus
+geometry is called unchanged. Android emulator/Thor navigation remains pending
+coordinator wiring and actual device evidence.
+
+Rollback removes the coordinator's axis owner/tick wiring and this additive
+module, preserving `coh_hud_navigation_axis` for existing neutral-edge callers.
+No shared JNI, live session or accepted scene file changed in this worker.
