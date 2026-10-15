@@ -17,8 +17,37 @@ static void *navigation(void *ctx){
         CohStatus s=support_ui_key(ui,61,0,0,(int)(i&1u));assert(s==COH_OK||s==COH_NOT_FOUND);
     }return NULL;
 }
+static unsigned pointer_routes(void){
+    SupportUi *p=support_ui_create();int consumed=-1;CohStatus status;SupportUiStats stats;
+    assert(p);assert(support_ui_surface(p,3,1280,720,(CohHudInsets){0,0,0,0})==COH_OK);
+    assert(support_ui_context_create(p,3)==COH_OK);assert(support_ui_draw(p,1280,720,3)==COH_OK);
+    /* A focusable power acquires capture; its activating UP is consumed even
+     * though activation disables the power and releases capture. */
+    assert(support_ui_pointer(p,0,0,409,674,&consumed)==COH_OK&&consumed==1);
+    assert(support_ui_pointer(p,1,0,409,674,&consumed)==COH_OK&&consumed==1);
+    assert(support_ui_snapshot(p,&stats)==COH_OK&&stats.power_uses==1);
+    /* Leaving the widget retains ownership of the gesture through release. */
+    assert(support_ui_pointer(p,0,2,482,674,&consumed)==COH_OK&&consumed==1);
+    assert(support_ui_pointer(p,2,2,800,400,&consumed)==COH_OK&&consumed==1);
+    assert(support_ui_pointer(p,1,2,800,400,&consumed)==COH_OK&&consumed==1);
+    assert(support_ui_snapshot(p,&stats)==COH_OK&&stats.power_uses==1);
+    /* Empty scene background is not a focusable HUD target. A background UP
+     * has no native capture, so COH_STATE must not be mistaken for consumed. */
+    assert(support_ui_pointer(p,0,0,800,400,&consumed)==COH_OK&&consumed==0);
+    assert(support_ui_pointer(p,2,0,810,420,&consumed)==COH_OK&&consumed==0);
+    status=support_ui_pointer(p,1,0,810,420,&consumed);assert(status==COH_STATE&&consumed==0);
+    /* A second pointer cannot leak into camera handling while the HUD owns
+     * the first pointer; global Android CANCEL releases the entire capture. */
+    assert(support_ui_pointer(p,0,5,555,674,&consumed)==COH_OK&&consumed==1);
+    assert(support_ui_pointer(p,5,6,800,400,&consumed)==COH_STATE&&consumed==1);
+    assert(support_ui_pointer(p,3,0,800,400,&consumed)==COH_OK&&consumed==1);
+    assert(support_ui_pointer(p,2,0,810,420,&consumed)==COH_OK&&consumed==0);
+    assert(support_ui_pointer(p,0,0,555,674,NULL)==COH_INVALID);
+    assert(support_ui_pointer(NULL,0,0,0,0,&consumed)==COH_INVALID&&consumed==0);
+    support_ui_context_destroy(p);support_ui_destroy(p);return 14;
+}
 int run_support_ui_tests(void){
-    SupportUiStats stats;CohHudIntent intent;unsigned count=0,i;pthread_t one,two;
+    SupportUiStats stats;CohHudIntent intent;unsigned count=0,i,pointer_cases;pthread_t one,two;
     ui=support_ui_create();assert(ui);
     assert(support_ui_draw(ui,1280,720,1)==COH_STATE);
     assert(support_ui_surface(ui,1,1280,720,(CohHudInsets){0,0,0,0})==COH_OK);
@@ -49,8 +78,10 @@ int run_support_ui_tests(void){
     }
     assert(!pthread_join(one,NULL)&&!pthread_join(two,NULL));
     assert(support_ui_snapshot(ui,&stats)==COH_OK&&stats.gpu.gl_errors==0&&stats.gpu.frames==104);
-    printf("{\"offline_intents\":%u,\"gpu_frames\":%llu,\"thread_snapshot_calls\":2000,\"thread_navigation_calls\":2000,\"arena_bytes\":%zu,\"GL_errors\":0}\n",count,(unsigned long long)stats.gpu.frames,stats.arena_bytes);
-    support_ui_context_destroy(ui);support_ui_destroy(ui);support_ui_destroy(NULL);ui=NULL;return 0;
+    support_ui_context_destroy(ui);support_ui_destroy(ui);support_ui_destroy(NULL);ui=NULL;
+    pointer_cases=pointer_routes();
+    printf("{\"offline_intents\":%u,\"gpu_frames\":%llu,\"thread_snapshot_calls\":2000,\"thread_navigation_calls\":2000,\"arena_bytes\":%zu,\"pointer_cases\":%u,\"GL_errors\":0}\n",count,(unsigned long long)stats.gpu.frames,stats.arena_bytes,pointer_cases);
+    return 0;
 }
 #ifdef SUPPORT_UI_TEST_MAIN
 /* Minimal stable EGL ABI declarations keep this host-only bootstrap independent

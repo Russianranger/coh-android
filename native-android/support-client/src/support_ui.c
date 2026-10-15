@@ -136,9 +136,21 @@ CohStatus support_ui_draw(SupportUi *u,int width,int height,uint32_t gen){
     if(s==COH_OK){draws=coh_hud_draws(&u->hud,gen,&count);s=draws?coh_hud_gles_draw(&u->gpu,width,height,gen,draws,count,texture_resolve,u):COH_STATE;}
     record(u,s);pthread_mutex_unlock(&u->mutex);return s;
 }
+CohStatus support_ui_pointer(SupportUi *u,int action,uint32_t pointer,float x,float y,int *consumed){
+    CohStatus s;int captured;
+    if(consumed)*consumed=0;
+    if(!u||!consumed)return COH_INVALID;
+    pthread_mutex_lock(&u->mutex);
+    captured=u->hud.ui.capture!=0;
+    s=coh_hud_android_touch(&u->hud,action,pointer,x,y);
+    /* Read before draining intents: activation may disable the clicked power
+     * or change modal visibility, but that release still belongs to the HUD. */
+    *consumed=captured||u->hud.ui.capture!=0;
+    if(s==COH_OK)drain_intents(u);
+    record(u,s);pthread_mutex_unlock(&u->mutex);return s;
+}
 CohStatus support_ui_touch(SupportUi *u,int action,uint32_t pointer,float x,float y){
-    CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);
-    s=coh_hud_android_touch(&u->hud,action,pointer,x,y);if(s==COH_OK)drain_intents(u);record(u,s);pthread_mutex_unlock(&u->mutex);return s;
+    int consumed;return support_ui_pointer(u,action,pointer,x,y,&consumed);
 }
 CohStatus support_ui_key(SupportUi *u,int key,int action,int repeat,int shift){
     CohStatus s;if(!u)return COH_INVALID;pthread_mutex_lock(&u->mutex);

@@ -71,7 +71,7 @@ void support_bridge_surface_end(SupportBridge*b){if(!b)return;support_ui_context
 void support_bridge_frame_begin(SupportBridge*b){if(!b)return;pthread_mutex_lock(&b->mutex);coh_perf_frame_begin(&b->perf,ns(),b->generation);pthread_mutex_unlock(&b->mutex);}
 void support_bridge_frame_end(SupportBridge*b){if(!b)return;pthread_mutex_lock(&b->mutex);if(b->perf.active_frame&&!b->perf.snapshot.paused)coh_perf_frame_end(&b->perf,ns());b->frames++;pthread_mutex_unlock(&b->mutex);}
 void support_bridge_trigger(SupportBridge*b){if(!b)return;pthread_mutex_lock(&b->mutex);if(b->animation){b->kind=(uint32_t)(b->trigger_count%4);b->mock_active=b->kind<3;if(b->mock_active&&coh_support_animation_trigger(b->animation,b->kind,b->tick+1))b->failures++;b->trigger_count++;if(b->audio)support_audio_emitter(b->audio,(b->kind==0?-8.f:8.f),0,4);}pthread_mutex_unlock(&b->mutex);}
-int support_bridge_touch(SupportBridge*b,int action,unsigned pointer,float x,float y){if(!b)return 0;return support_ui_touch(b->ui,action,pointer,x,y)==COH_OK;}
+int support_bridge_touch(SupportBridge*b,int action,unsigned pointer,float x,float y){if(!b)return 0;int consumed=0;(void)support_ui_pointer(b->ui,action,pointer,x,y,&consumed);return consumed;}
 int support_bridge_key(SupportBridge*b,int key,int action,int repeat,int shift){if(!b)return 0;return support_ui_key(b->ui,key,action,repeat,shift)==COH_OK;}
 void support_bridge_text(SupportBridge*b,const char*text){if(!b)return;support_ui_focus_chat(b->ui);support_ui_text(b->ui,text);support_ui_submit(b->ui);}
 void support_bridge_snapshot(SupportBridge*b,char*out,size_t cap){if(!b){snprintf(out,cap,"{\"configured\":false}");return;}SupportUiStats u={0};support_ui_snapshot(b->ui,&u);pthread_mutex_lock(&b->mutex);

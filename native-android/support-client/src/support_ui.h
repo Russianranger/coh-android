@@ -25,6 +25,12 @@ CohStatus support_ui_context_create(SupportUi *ui,uint32_t generation);
 void support_ui_context_destroy(SupportUi *ui); /* same current GL context */
 void support_ui_context_lost(SupportUi *ui); /* context gone; no GL calls */
 CohStatus support_ui_draw(SupportUi *ui,int width,int height,uint32_t generation);
+/* Android touch routing is separate from operation status. Only focusable HUD
+ * hit targets acquire capture. Once acquired, consume all pointer events until
+ * release/cancel, including an UP/CANCEL that clears capture. Background touches
+ * report consumed=0 (their UP may return COH_STATE because no capture exists).
+ * The caller preserves/cancels its scene gesture when HUD capture takes over. */
+CohStatus support_ui_pointer(SupportUi *ui,int masked_action,uint32_t pointer,float x,float y,int *consumed);
 CohStatus support_ui_touch(SupportUi *ui,int masked_action,uint32_t pointer,float x,float y);
 CohStatus support_ui_key(SupportUi *ui,int keycode,int action,int repeat,int shift);
 CohStatus support_ui_text(SupportUi *ui,const char *committed_utf8); /* append committed text */

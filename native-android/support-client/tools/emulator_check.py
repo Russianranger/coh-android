@@ -113,6 +113,13 @@ class Check:
             x=area['left']+(area['width']-1024*scale)/2+float(value['x'])*scale
             y=area['top']+(area['height']-768*scale)/2+float(value['y'])*scale
             self.adb('shell','input','tap',str(round(x)),str(round(y)))
+        elif kind=='hud_swipe':
+            report=self.report();require(report is not None,'No report for HUD gesture coordinates')
+            area=report['input_area'];scale=min(area['width']/1024,area['height']/768)
+            points=[]
+            for end in ('0','1'):
+                points.extend([round(area['left']+(area['width']-1024*scale)/2+float(value['x'+end])*scale),round(area['top']+(area['height']-768*scale)/2+float(value['y'+end])*scale)])
+            self.adb('shell','input','swipe',*[str(v) for v in points],str(value.get('ms',300)))
         elif kind=='tap':self.adb('shell','input','tap',str(value['x']),str(value['y']))
         elif kind=='swipe':self.adb('shell','input','swipe',*[str(value[k]) for k in ('x0','y0','x1','y1','ms')])
         elif kind=='home':self.adb('shell','input','keyevent','KEYCODE_HOME')
@@ -120,6 +127,14 @@ class Check:
         elif kind=='wait':time.sleep(min(10,float(value.get('seconds',1))))
         else:raise ValueError('Unsupported framework action: '+kind)
     def execute(self):
+        build_path=self.a.apk.parent/'build-receipt.json'
+        require(build_path.is_file(),'Source-bound APK build receipt is missing')
+        build=json.loads(build_path.read_text())
+        require(build.get('passed') and build.get('source_tree_clean'),'APK source checkout was unqualified or dirty')
+        self.source_commit=build.get('source_commit')
+        require(isinstance(self.source_commit,str) and re.fullmatch(r'[0-9a-f]{40}',self.source_commit),'Exact source commit missing')
+        admitted=[x for x in build.get('artifacts',[]) if x.get('file')==self.a.apk.name]
+        require(len(admitted)==1 and admitted[0].get('sha256')==hashlib.sha256(self.a.apk.read_bytes()).hexdigest(),'APK differs from source-bound receipt')
         require(self.adb('shell','getprop','ro.boot.qemu').stdout.strip()==b'1','Support qualification is restricted to disposable emulator')
         existing=self.adb('shell','pm','path',PACKAGE,check=False).stdout.strip()
         require(not existing or self.a.replace,'Support app already installed; use explicit --replace for owned emulator iteration')
@@ -143,7 +158,7 @@ class Check:
             if step.get('screenshot'):self.screenshot('emulator-step-%02d.png'%i)
             print(json.dumps({'step':step['label'],'passed':True}),flush=True);previous=current
         self.save('emulator-final-report.json',previous);self.screenshot('emulator-final.png')
-        summary={'schema':1,'passed':True,'package':PACKAGE,'source_commit':self.scenario.get('source_commit'),
+        summary={'schema':1,'passed':True,'package':PACKAGE,'source_commit':self.source_commit,
                  'installed_apk':{'bytes':self.a.apk.stat().st_size,'sha256':hashlib.sha256(self.a.apk.read_bytes()).hexdigest()},
                  'scope':'actual Android emulator framework input/lifecycle and native report assertions in separate offline support client',
                  'scenario_sha256':hashlib.sha256(self.a.scenario.read_bytes()).hexdigest(),'steps':self.steps,

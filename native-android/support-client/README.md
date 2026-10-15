@@ -43,6 +43,11 @@ from the last quiescent checkpoint. A failed close retains the whole native
 Session and AssetManager; one process-wide cleanup slot blocks another Session
 until cleanup succeeds. Both Java and native admission enforce this bound.
 
+The present harness records CPU frame/stage timing. Generic performance counters
+that have no caller adapter remain uninstrumented; their zero values do not
+mean the scene made no allocations, copies or draw calls. Module cache/physics/
+audio/HUD receipts report their own explicit bytes and counters.
+
 CPU frame/stage measurements include only explicit scopes. No GPU timer adapter
 is installed, so GPU timing is unavailable. This small offline scene cannot
 establish full-game FPS, full-map memory use or Adreno performance.
@@ -51,6 +56,8 @@ establish full-game FPS, full-map memory use or Adreno performance.
 
 1. Keep the accepted 0.3.0 APK installed. Install the separate ARM64 support APK
    from the named Actions artifact; check its SHA256 against `SHA256SUMS`.
+   A replacement support build may use another disposable debug certificate;
+   export its report and uninstall only the previous support app first.
 2. Open **CoH Native Support 0.1.0**. Confirm scene and source-font HUD render,
    mock health/endurance update, and music plus positional ambient audio play.
 3. Use left/right sticks, short WASD/D-pad movement and touch dragging; check

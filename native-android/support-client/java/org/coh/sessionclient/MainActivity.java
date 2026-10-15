@@ -84,7 +84,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     private InputManager inputManager;
     private int keys;
     private float axisX, axisY, axisZ, axisRz, touchX, touchY;
-    private boolean touching, uiNavigation;
+    private boolean touching, uiNavigation, hudTouching;
     private android.widget.EditText chatText;
     private byte[] frozenExport;
 
@@ -132,7 +132,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
                 if(destroying)return;
                 if (!focused) {
                     event("input_clear_requested");
-                    keys = 0; axisX = axisY = axisZ = axisRz = 0; touching = false;
+                    keys = 0; axisX = axisY = axisZ = axisRz = 0; touching = false;hudTouching=false;
                     if (handle != 0) SessionNative.focus(handle);
                 }
             }
@@ -218,8 +218,11 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         view.setImportantForAccessibility(android.view.View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         currentHolder=view.getHolder(); currentHolder.addCallback(this);
         view.setOnTouchListener((v,event) -> {if(destroying||adapter==null)return false;
-            if(handle!=0)SupportNative.touch(handle,event.getActionMasked(),event.getPointerId(event.getActionIndex()),event.getX(),event.getY());
-            return adapter.dispatchTouchEvent(event,v.getWidth(),v.getHeight());});
+            int action=event.getActionMasked();boolean consumed=handle!=0&&SupportNative.touch(handle,action,event.getPointerId(event.getActionIndex()),event.getX(),event.getY());
+            if(action==MotionEvent.ACTION_DOWN)hudTouching=consumed;
+            boolean captured=hudTouching||consumed;
+            if(action==MotionEvent.ACTION_UP||action==MotionEvent.ACTION_CANCEL)hudTouching=false;
+            return captured||adapter.dispatchTouchEvent(event,v.getWidth(),v.getHeight());});
         scene.addView(view,new FrameLayout.LayoutParams(-1,-1));
     }
     private void requestRender() {

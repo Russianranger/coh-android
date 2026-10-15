@@ -110,6 +110,27 @@
       "screenshot": false
     },
     {
+      "label": "Captured HUD drag does not steer scene camera",
+      "actions": [
+        {
+          "kind": "hud_swipe",
+          "x0": 340,
+          "y0": 716,
+          "x1": 350,
+          "y1": 720,
+          "ms": 300
+        }
+      ],
+      "assert": {
+        "support.hud.power_uses": {
+          "increases": true
+        },
+        "native.camera_yaw": {
+          "same": true
+        }
+      }
+    },
+    {
       "label": "Touch native character menu and select mock data",
       "actions": [
         {
