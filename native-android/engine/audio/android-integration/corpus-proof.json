@@ -1,0 +1,66 @@
+{
+  "schema": "coh-native-audio-stream-corpus-v1",
+  "passed": true,
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "outer_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Audio.zip",
+  "outer_expected_bytes": 848122891,
+  "inner_member": "payloads/runtime/zones-audio-supplement.zip",
+  "inner_expected_bytes": 847802311,
+  "manifest_sha256": "c819e1af90c1f29a64eac57a20b0bdfb61a50bd9791206ab1ce18c05d210ec6f",
+  "records": [
+    {
+      "path": "data/sound/ogg/music/atlasplaza.ogg",
+      "file_name": "atlasplaza.ogg",
+      "bytes": 256209,
+      "sha256": "1a9f7ee21bc425508eb2e4a17c6ac66c04059ee6f0b0e4d0517ba3e1095c7bf7",
+      "compressed": 256209,
+      "offset": 235053854,
+      "crc32": "07c6fbfd",
+      "method": 0
+    },
+    {
+      "path": "data/sound/ogg/city/steam1_loop.ogg",
+      "file_name": "steam1.ogg",
+      "bytes": 42318,
+      "sha256": "176bfd08df6a17af558157ad1934d23c92aaaa81d7428e2e04d1250cfa0c6821",
+      "compressed": 42318,
+      "offset": 38824992,
+      "crc32": "8db535ff",
+      "method": 0
+    }
+  ],
+  "http_range_bytes": 960534,
+  "ranges": [
+    [
+      848101376,
+      848122890
+    ],
+    [
+      0,
+      65535
+    ],
+    [
+      65536,
+      327679
+    ],
+    [
+      847904768,
+      848122890
+    ],
+    [
+      235339776,
+      235405311
+    ],
+    [
+      235405312,
+      235667455
+    ],
+    [
+      39124992,
+      39190527
+    ]
+  ],
+  "etag_stable": true,
+  "full_archive_hash_verified": false,
+  "integrity_scope": "Pinned manifest SHA + each selected file size/SHA + ZIP CRC; full 848MB archive not downloaded"
+}

@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.22.1)
+# Opt in only after adding existing engine/audio and decode targets once.
+if(NOT TARGET coh_game_audio OR NOT TARGET coh_pinned_vorbis)
+  message(FATAL_ERROR "Add existing coh_game_audio and pinned decode targets before audio streaming extension")
+endif()
+add_library(coh_audio_stream_extension STATIC ../coh_music.c ../coh_resample.c)
+set_target_properties(coh_audio_stream_extension PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_compile_features(coh_audio_stream_extension PUBLIC c_std_11)
+target_compile_options(coh_audio_stream_extension PRIVATE -Wall -Wextra -Werror -ffp-contract=off)
+target_include_directories(coh_audio_stream_extension PUBLIC "${CMAKE_CURRENT_LIST_DIR}/..")
+target_link_libraries(coh_audio_stream_extension PUBLIC coh_game_audio coh_pinned_vorbis)
