@@ -19,6 +19,52 @@ MAIN = PACKAGE + '/.MainActivity'
 NATIVE = PACKAGE + '/.NativeClientActivity'
 
 
+def settled_preview(value, minimum_frames):
+    native = value.get('native', {})
+    static = native.get('static_renderer', {})
+    return (value.get('assets_verified') is True and value.get('resumed') is True
+            and value.get('failure') is None and value.get('report_write_failed') is False
+            and native.get('valid') is True and native.get('failed') is False
+            and native.get('running') is True and native.get('foreground') is True
+            and native.get('objects_released') is False and native.get('frames', 0) > minimum_frames
+            and native.get('contexts_started', 0) == native.get('contexts_completed', 0) + 1
+            and native.get('gl_errors') == 0 and native.get('tf_mismatches') == 0
+            and static.get('gpu_bytes', 0) > 0 and static.get('tf_mismatches') == 0
+            and static.get('visible_pixels', 0) > 0
+            and all(native.get(k, 0) > 0 for k in ('world_visible_pixels', 'actor_visible_pixels',
+                'world_occludes_actor_pixels', 'actor_occludes_world_pixels', 'actor_changed_pixels')))
+
+
+def scene_pixels(raw, area):
+    from io import BytesIO
+    from PIL import Image
+    with Image.open(BytesIO(raw)) as image:
+        if image.format != 'PNG':
+            raise ValueError('Device screenshot is not PNG')
+        image = image.convert('RGB')
+        values = [area.get(k) for k in ('left','top','width','height')]
+        if any(type(v) is not int for v in values):
+            raise ValueError('Actual Surface bounds are absent')
+        left, top, width, height = values
+        if (left < 0 or top < 0 or width < 64 or height < 64
+                or left+width > image.width or top+height > image.height
+                or area.get('shown') is not True or area.get('surface_ready') is not True):
+            raise ValueError('Actual foreground Surface bounds are invalid')
+        crop = image.crop((left, top, left+width, top+height))
+        count = width*height
+        bright = sum(max(rgb) >= 40 for rgb in crop.getdata())
+        black = sum(max(rgb) <= 4 for rgb in crop.getdata())
+        colors = crop.getcolors(maxcolors=65536)
+        distinct = len(colors) if colors is not None else 65537
+        proof = {'surface_position_size':values,'surface_bounds_ltrb':[left,top,left+width,top+height],'screenshot_size':[image.width,image.height],
+                 'surface_pixels':count,'bright_pixels':bright,'black_pixels':black,
+                 'distinct_colors_at_least':distinct,'minimum_bright_pixels':max(256,count//100),
+                 'minimum_distinct_colors':64,
+                 'scope':'Actual device screenshot crop at Android framework-reported SurfaceView screen bounds; excludes app header, buttons and navigation bar.'}
+        proof['passed'] = bright >= proof['minimum_bright_pixels'] and distinct >= proof['minimum_distinct_colors']
+        return proof, crop
+
+
 class Check:
     def __init__(self, args):
         self.args = args
@@ -247,6 +293,32 @@ class Check:
         (self.args.output / 'exported-native-report.json').write_bytes(raw)
         self.record('actual framework JSON document export', bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
 
+    def capture_visible_scene(self, minimum_frames):
+        before = self.wait_report('native-client-report.json', lambda x: settled_preview(x, minimum_frames), 'foreground preview finishes new-context GPU reconstruction and advancing presentation', seconds=60)
+        root = self.dump()
+        before = self.wait_report('native-client-report.json', lambda x: settled_preview(x, minimum_frames), 'foreground preview stays settled after UI-bound observation', seconds=30)
+        area = before['input_area']
+        ui_surface = [n.attrib.get('bounds') for n in root.iter('node') if n.attrib.get('class') == 'android.view.SurfaceView']
+        raw = self.adb('exec-out', 'screencap', '-p').stdout
+        (self.args.output / 'native-preview.png').write_bytes(raw)
+        proof, crop = scene_pixels(raw, area)
+        crop.save(self.args.output / 'native-preview-surface.png')
+        after = self.report('native-client-report.json')
+        proof.update(uiautomator_surface_bounds=ui_surface, bounds_source='SurfaceView.getLocationOnScreen/getWidth/getHeight in input_area; crop uses left,top,left+width,top+height', screenshot_sha256=hashlib.sha256(raw).hexdigest(),
+                     before_frames=before['native']['frames'],
+                     before_context=before['native']['contexts_started'],
+                     before_gpu_bytes=before['native']['static_renderer']['gpu_bytes'])
+        (self.args.output / 'foreground-scene-report.json').write_text(json.dumps(before,indent=2)+'\n')
+        (self.args.output / 'scene-pixel-proof.json').write_text(json.dumps(proof,indent=2)+'\n')
+        assert proof['passed'], 'Actual Surface screenshot contains no sufficiently nonuniform visible scene'
+        assert after is not None and settled_preview(after, minimum_frames)
+        assert after['native']['contexts_started'] == before['native']['contexts_started']
+        assert after['input_area'] == area
+        self.record('current foreground GPU resources and actual on-screen scene pixels', frames=before['native']['frames'],
+                    context=before['native']['contexts_started'], gpu_bytes=proof['before_gpu_bytes'],
+                    bright_pixels=proof['bright_pixels'], distinct_colors_at_least=proof['distinct_colors_at_least'],
+                    screenshot_sha256=proof['screenshot_sha256'])
+
     def run(self):
         assert self.text('shell', 'getprop', 'ro.boot.qemu').strip() == '1', 'Qualification is limited to its disposable CI emulator'
         assert self.text('shell', 'getprop', 'ro.product.cpu.abi').strip() == 'x86_64'
@@ -308,8 +380,9 @@ class Check:
             self.adb('shell', 'input', 'tap', (xy[0]+xy[2])//2, (xy[1]+xy[3])//2)
         self.wait_report('native-client-report.json', lambda x: x.get('resumed') is True and x.get('native', {}).get('frames', 0) > changed['native']['frames'], 'native preview Home recovery')
         self.record('framework view distance, Surface recreation and Home recovery')
+        before_export = self.report('native-client-report.json')
         self.export_native()
-        (self.args.output / 'native-preview.png').write_bytes(self.adb('exec-out', 'screencap', '-p').stdout)
+        self.capture_visible_scene(before_export['native']['frames'] + 10)
         self.adb('shell', 'input', 'keyevent', 'KEYCODE_BACK')
         if self.args.protocol_binary:
             data = self.args.protocol_binary.read_bytes()

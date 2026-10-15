@@ -10,7 +10,7 @@ from types import SimpleNamespace
 import json
 import tempfile
 import xml.etree.ElementTree as ET
-from emulator_check import Check, PACKAGE
+from emulator_check import Check, PACKAGE, scene_pixels, settled_preview
 
 FILE = 'native-test-donor.apk'
 BACKGROUND = f'<node package="com.google.android.documentsui" text="{FILE}" bounds="[189,899][583,956]"/>'
@@ -88,7 +88,26 @@ def main():
             raise AssertionError('Native app ANR trace was admitted')
         except RuntimeError as failure:
             assert 'Native app ANR' in str(failure) and not native_trace.commands
-    print(json.dumps({'passed':True,'checks':10,'scope':'Host regression for Android 13 accessibility drawer occlusion and actual app-return admission; no Android execution claim.'}))
+        from PIL import Image
+        from io import BytesIO
+        def png(image):
+            out=BytesIO();image.save(out,format='PNG');return out.getvalue()
+        area={'left':0,'top':872,'width':1080,'height':985,'shown':True,'surface_ready':True}
+        shot=Image.new('RGB',(1080,1920),(0,0,0));shot.paste((255,255,255),(0,0,1080,872))
+        proof,_=scene_pixels(png(shot),area)
+        assert proof['passed'] is False and proof['bright_pixels']==0, 'White app header admitted a black actual Surface'
+        shot.paste((17,19,23),(0,872,1080,1857));proof,_=scene_pixels(png(shot),area)
+        assert proof['passed'] is False, 'Uniform GLES clear admitted without scene'
+        texture=Image.new('RGB',(128,128));texture.putdata([(40+x,40+y,80) for y in range(128) for x in range(128)]);shot.paste(texture,(100,1000))
+        proof,_=scene_pixels(png(shot),area)
+        assert proof['passed'] is True and proof['surface_bounds_ltrb']==[0,872,1080,1857]
+        native=dict(valid=True,failed=False,running=True,foreground=True,objects_released=False,frames=300,contexts_started=6,contexts_completed=5,gl_errors=0,tf_mismatches=0,world_visible_pixels=1,actor_visible_pixels=1,world_occludes_actor_pixels=1,actor_occludes_world_pixels=1,actor_changed_pixels=1,static_renderer=dict(gpu_bytes=1,tf_mismatches=0,visible_pixels=1))
+        ready=dict(assets_verified=True,resumed=True,failure=None,report_write_failed=False,native=native)
+        assert settled_preview(ready,290) is True
+        native['objects_released']=True;assert settled_preview(ready,290) is False
+        native['objects_released']=False;native['static_renderer']['gpu_bytes']=0;assert settled_preview(ready,290) is False
+        native['static_renderer']['gpu_bytes']=1;assert settled_preview(ready,310) is False
+    print(json.dumps({'passed':True,'checks':17,'scope':'Host regression for Android 13 accessibility drawer occlusion and actual app-return admission; no Android execution claim.'}))
 
 
 if __name__ == '__main__':

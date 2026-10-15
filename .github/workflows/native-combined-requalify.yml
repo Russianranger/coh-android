@@ -28,6 +28,7 @@ jobs:
         run: |
           gh api repos/Russianranger/coh-android/actions/artifacts/11987440686/zip > /tmp/combined-qualified-packages.zip
           python3 native-android/combined-client/tools/reuse_packages.py --archive /tmp/combined-qualified-packages.zip --output native-android/results/combined-requalify --require-clean
+          python3 -m pip install --disable-pip-version-check Pillow==12.3.0
           python3 native-android/combined-client/tools/driver_controls.py
       - uses: actions/setup-java@v4
         with: {distribution: temurin, java-version: '17'}
