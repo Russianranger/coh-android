@@ -17,8 +17,19 @@ HELPER = 'tools/android/interactive/classify_map_startup_native_change.py'
 TEST = 'tools/android/interactive/test_map_startup_native_change.py'
 CONTROL = frozenset({WORKFLOW, HELPER, TEST})
 LEGACY_WORKFLOW_SHA256 = '8839a1ead01f21f08c5ed6f57c75a317d0da11033acf75d539ef9df727385f64'
-GUARDED_WORKFLOW_SHA256 = '2e40ecf1854dbd67bfe16b30f53d45f3427a4d3c45cd75a31dcf976b2926e63f'
+GUARDED_WORKFLOW_SHA256 = 'ca8c768949d3d2617043e842ea1ce250573daaf7059ce3ed577fe34cac20d6c7'
+PRE_RECOVERY_WORKFLOW_SHA256 = '2e40ecf1854dbd67bfe16b30f53d45f3427a4d3c45cd75a31dcf976b2926e63f'
 NATIVE_BODY_SHA256 = '7465a7d83385c0e74535b68ce4aa47574bf3338697d3eabb416c946d6a3e0d6b'
+# Frozen after the separate dormant-source import; only this exact predecessor
+# may hand over the cancellation policy without re-running unchanged compilers.
+RECOVERY_SOURCE_COMMIT = '8016b39ec213df6aee5c3032554abc7e21878cbd'
+RECOVERY_SOURCE_BASE = '65c4d83a533400118932685b170c640a77bc9435'
+RECOVERY_PREDECESSOR_PINS = {
+    HELPER: '5fdf2ce86e02be4de29a8bb10b78ad1d391934d6002de1c3663022c19ce4ed30',
+    TEST: '6616276258f6a1152071f09814075531322f3fa034cf52858a3414739ad12908',
+}
+RECOVERY_REVIEW_WORKFLOW = '.github/workflows/android-startup-recovery-review.yml'
+RECOVERY_REVIEW_WORKFLOW_SHA256 = '9e57cd3eff1dab2a1c9c595fcd5afaec45c51b43d2f101ecf052b97729f9ea0f'
 # One reviewed policy handover from the exact already introduced guard. It
 # changes only host evidence routing; later helper/test edits still run native.
 POLICY_CORRECTION_PARENT = 'f6aabde3a3438f58128359fa3f019664ae391b45'
@@ -38,6 +49,7 @@ FIXTURE_WORKFLOW_PREDECESSOR_SHA256 = '5d15be8c27418e90a2d97270b30d54fbbb4ce2ab9
 FIXTURE_WORKFLOW_SHA256 = 'd6e068d84603dfcd8c7d552ddc21e4cfc168daba09f8fab4f1edadb42299e07f'
 HOST_ONLY = frozenset({
     FIXTURE_WORKFLOW,
+    RECOVERY_REVIEW_WORKFLOW,
     'android/guest/atlas_beacon_package.py',
     'android/guest/character_zoning.py',
     'android/guest/client_gpu_profile.py',
@@ -144,6 +156,26 @@ def native_body(raw):
     return body.encode('utf-8')
 
 
+def frozen_recovery_scope(repo, head, names):
+    """Inherited dormant files are exact bytes, never a future path allowance."""
+    git(repo, 'merge-base', '--is-ancestor', RECOVERY_SOURCE_COMMIT, head)
+    imported = set(paths(repo, RECOVERY_SOURCE_BASE, RECOVERY_SOURCE_COMMIT))
+    if not names <= imported:
+        raise ValueError('Cumulative unknown paths are outside the frozen recovery import')
+    for path in names:
+        if not path.startswith(('research/', 'database/client-live-directory/',
+            'tools/native_live_directory/', 'docs/')):
+            raise ValueError('Frozen recovery import includes a Map producer or active source')
+        original = git(repo, 'ls-tree', RECOVERY_SOURCE_COMMIT, '--', path).decode('ascii').strip()
+        current = git(repo, 'ls-tree', head, '--', path).decode('ascii').strip()
+        prefix, found = original.split('\t')
+        mode, kind, object_id = prefix.split()
+        if (mode not in {'100644', '100755'} or kind != 'blob' or found != path
+            or not oid(object_id) or current != original):
+            raise ValueError('Frozen dormant recovery source was changed, aliased or removed')
+    return sorted(names)
+
+
 def classify(repo, event, before, head):
     result = {'format': 1, 'native_required': True,
         'qualification_scope': 'workflow_routing_only_not_native_qualification',
@@ -163,14 +195,21 @@ def classify(repo, event, before, head):
         if not changed or not cumulative:
             raise ValueError('Empty or unavailable change scope requires native gate')
         result.update(changed_paths=changed, cumulative_paths=cumulative)
-        if any(path not in HOST_ONLY | CONTROL for path in changed+cumulative):
+        if any(path not in HOST_ONLY | CONTROL for path in changed):
             raise ValueError('Unknown or native producer/build/fixture change requires native gate')
+        inherited = set(cumulative) - (HOST_ONLY | CONTROL)
+        if inherited:
+            result['frozen_dormant_recovery_paths'] = frozen_recovery_scope(repo, head, inherited)
+            result['frozen_dormant_recovery_commit'] = RECOVERY_SOURCE_COMMIT
         old = regular_blob(repo, before, WORKFLOW)
         current = regular_blob(repo, head, WORKFLOW)
         if sha(native_body(old)) != NATIVE_BODY_SHA256 or sha(native_body(current)) != NATIVE_BODY_SHA256:
             raise ValueError('Native/FX job body or compiler flags changed')
-        if sha(old) not in {LEGACY_WORKFLOW_SHA256, GUARDED_WORKFLOW_SHA256} or sha(current) != GUARDED_WORKFLOW_SHA256:
+        if sha(old) not in {LEGACY_WORKFLOW_SHA256, PRE_RECOVERY_WORKFLOW_SHA256, GUARDED_WORKFLOW_SHA256} or sha(current) != GUARDED_WORKFLOW_SHA256:
             raise ValueError('Unknown workflow wrappers, checkout, policy or compiler scope')
+        if RECOVERY_REVIEW_WORKFLOW in changed+cumulative:
+            if sha(regular_blob(repo, head, RECOVERY_REVIEW_WORKFLOW)) != RECOVERY_REVIEW_WORKFLOW_SHA256:
+                raise ValueError('Source-review CI differs from its exact read-only recipe')
         if FIXTURE_WORKFLOW in changed+cumulative:
             previous_fixture = sha(regular_blob(repo, before, FIXTURE_WORKFLOW))
             current_fixture = sha(regular_blob(repo, head, FIXTURE_WORKFLOW))
@@ -179,8 +218,15 @@ def classify(repo, event, before, head):
         controls = set(changed) & CONTROL
         policy_correction = False
         fixture_policy_correction = False
+        recovery_policy_correction = False
         if controls:
-            if controls == {HELPER, TEST} and before == POLICY_CORRECTION_PARENT and sha(old) == GUARDED_WORKFLOW_SHA256:
+            if controls == CONTROL and before == RECOVERY_SOURCE_COMMIT and sha(old) == PRE_RECOVERY_WORKFLOW_SHA256:
+                for path, expected in RECOVERY_PREDECESSOR_PINS.items():
+                    if sha(regular_blob(repo, before, path)) != expected:
+                        raise ValueError('Exact recovery predecessor helper/test bytes differ')
+                    regular_blob(repo, head, path)
+                recovery_policy_correction = True
+            elif controls == {HELPER, TEST} and before == POLICY_CORRECTION_PARENT and sha(old) == GUARDED_WORKFLOW_SHA256:
                 for path, expected in POLICY_PREDECESSOR_PINS.items():
                     if sha(regular_blob(repo, before, path)) != expected:
                         raise ValueError('Reviewed policy predecessor helper/test bytes differ')
@@ -199,11 +245,12 @@ def classify(repo, event, before, head):
                     if git(repo, 'ls-tree', before, '--', path):
                         raise ValueError('Changed routing helper/test requires native gate')
                     regular_blob(repo, head, path)
-        for path in set(changed+cumulative)-{WORKFLOW}:
+        for path in set(changed+cumulative)-{WORKFLOW}-inherited:
             regular_blob(repo, head, path)
         result.update(native_required=False, reason='Complete known host-only scope; exact native and FX steps retained',
             retained_native_body_sha256=NATIVE_BODY_SHA256,
-            workflow_sha256=sha(current), control_introduction=bool(controls) and not (policy_correction or fixture_policy_correction),
+            workflow_sha256=sha(current), control_introduction=bool(controls) and not (policy_correction or fixture_policy_correction or recovery_policy_correction),
+            cancellation_policy_recovery=recovery_policy_correction,
             source_only_scope_policy_correction=policy_correction,
             original_fixture_scope_policy_correction=fixture_policy_correction)
     except (OSError, subprocess.CalledProcessError, UnicodeError, ValueError) as exc:

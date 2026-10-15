@@ -19,6 +19,9 @@ PREVIOUS_FIXTURE_POLICY = {path: subprocess.check_output(['git','show',guard.FIX
     for path in (guard.HELPER,guard.TEST)}
 PREVIOUS_FIXTURE_WORKFLOW = subprocess.check_output(['git','show',guard.FIXTURE_POLICY_PARENT+':'+guard.FIXTURE_WORKFLOW],cwd=ROOT)
 FIXTURE_WORKFLOW = (ROOT/guard.FIXTURE_WORKFLOW).read_bytes()
+RECOVERY_PREVIOUS = {path: subprocess.check_output(['git', 'show', guard.RECOVERY_SOURCE_BASE+':'+path], cwd=ROOT)
+    for path in (*guard.CONTROL,)}
+RECOVERY_REVIEW = (ROOT/guard.RECOVERY_REVIEW_WORKFLOW).read_bytes()
 FIXTURE_STAGE = (
     'tools/android/interactive/build_client_zone_startup_apk.py',
     'tools/android/interactive/classify_client_zone_startup_change.py',
@@ -62,6 +65,117 @@ class NativeWorkflowScopeTests(unittest.TestCase):
 
     def classification(self,before,head,event='push'):
         return guard.classify(self.repo,event,before,head)
+
+    def install_recovery_predecessor(self, import_path='research/recovery/frozen-source.py', alias=False):
+        for path, raw in RECOVERY_PREVIOUS.items():self.write(path,raw)
+        previous=self.commit('actual pre-recovery guard sources')
+        self.enterContext(patch.object(guard,'RECOVERY_SOURCE_BASE',previous))
+        if alias:
+            target=self.repo/import_path;target.parent.mkdir(parents=True,exist_ok=True)
+            target.symlink_to('../../../tools/prepare_map_startup_source.py')
+        else:self.write(import_path,b'FROZEN_DORMANT_UNEXECUTED_SOURCE')
+        source=self.commit('separate dormant source import')
+        self.enterContext(patch.object(guard,'RECOVERY_SOURCE_COMMIT',source))
+        return source,import_path
+
+    def update_recovery_policy(self):
+        self.write(guard.WORKFLOW,WORKFLOW)
+        for path in (guard.HELPER,guard.TEST):self.write(path,(ROOT/path).read_bytes())
+        self.write(guard.RECOVERY_REVIEW_WORKFLOW,RECOVERY_REVIEW)
+
+    def test_exact_recovery_handover_preserves_native_body_and_frozen_dormant_bytes(self):
+        before,path=self.install_recovery_predecessor();self.update_recovery_policy()
+        head=self.commit('read-only source CI and no-cancel handover')
+        row=self.classification(before,head)
+        self.assertFalse(row['native_required'],row)
+        self.assertTrue(row['cancellation_policy_recovery'])
+        self.assertEqual(row['frozen_dormant_recovery_paths'],[path])
+        self.assertFalse(row['control_introduction'])
+        self.assertFalse(row['inherited_native_execution_claimed_fresh'])
+        self.assertEqual(guard.native_body(RECOVERY_PREVIOUS[guard.WORKFLOW]),guard.native_body(WORKFLOW))
+        self.write(GUEST,b'LATER_KNOWN_HOST_CHANGE');later=self.commit('later reviewed host source')
+        self.assertFalse(self.classification(head,later)['native_required'])
+
+    def test_recovery_handover_refuses_wrong_parent_or_mutated_old_control_bytes(self):
+        before,_=self.install_recovery_predecessor();self.update_recovery_policy()
+        head=self.commit('handover')
+        with patch.object(guard,'RECOVERY_SOURCE_COMMIT','1'*40):
+            self.assertTrue(self.classification(before,head)['native_required'])
+        for path,expected in guard.RECOVERY_PREDECESSOR_PINS.items():
+            self.assertEqual(guard.sha(RECOVERY_PREVIOUS[path]),expected)
+            with self.subTest(path=path),patch.dict(guard.RECOVERY_PREDECESSOR_PINS,{path:'0'*64}):
+                self.assertTrue(self.classification(before,head)['native_required'])
+
+    def test_frozen_recovery_is_not_a_future_source_path_allowance(self):
+        before,path=self.install_recovery_predecessor();self.update_recovery_policy()
+        previous=self.commit('handover')
+        for changed in (path,'research/recovery/unreviewed.py',guard.HELPER,guard.TEST):
+            with self.subTest(path=changed):
+                self.git('checkout','-q',previous);self.write(changed,b'UNREVIEWED_LATER_SOURCE')
+                head=self.commit('later source mutation')
+                self.assertTrue(self.classification(previous,head)['native_required'])
+                if changed == path:
+                    self.write(GUEST,b'LATER_HOST_CHANGE_CANNOT_HIDE_CHANGED_IMPORT')
+                    later=self.commit('host edit after dormant source mutation')
+                    self.assertTrue(self.classification(head,later)['native_required'])
+
+    def test_frozen_recovery_rejects_active_native_import_or_source_alias(self):
+        for path,alias in ((NATIVE,False),('research/recovery/alias.py',True)):
+            with self.subTest(path=path):
+                self.git('checkout','-q',self.baseline)
+                before,_=self.install_recovery_predecessor(path,alias)
+                self.update_recovery_policy();head=self.commit('handover with refused frozen source')
+                self.assertTrue(self.classification(before,head)['native_required'])
+
+    def test_recovery_review_workflow_tamper_and_cancellation_reversal_require_native_gate(self):
+        before,_=self.install_recovery_predecessor();self.update_recovery_policy()
+        previous=self.commit('handover')
+        for path,raw in ((guard.RECOVERY_REVIEW_WORKFLOW,RECOVERY_REVIEW.replace(b'contents: read',b'contents: write')),
+            (guard.WORKFLOW,WORKFLOW.replace(b'cancel-in-progress: false',b'cancel-in-progress: true',1))):
+            with self.subTest(path=path):
+                self.git('checkout','-q',previous);self.write(path,raw);head=self.commit('unreviewed workflow change')
+                self.assertTrue(self.classification(previous,head)['native_required'])
+
+    def test_exact_seven_path_source_correction_skips_legacy_native_and_APK_workflows(self):
+        import classify_client_zone_startup_change as owner
+        import classify_client_animation_repair_change as legacy
+        import classify_interactive_change as diagnostic
+        names=sorted(owner.STARTUP_RECOVERY_SOURCE_CONTROLS)
+        args=('push','1'*40,'2'*40,'1'*40,names)
+        self.assertTrue(owner.startup_recovery_source_owned(*args))
+        self.assertTrue(legacy.historical_repair_owned(*args))
+        self.assertFalse(diagnostic.runtime_required(*args))
+        for other in (NATIVE,GUEST,'research/recovery/unreviewed.py','tools/native_live_directory/unreviewed.py',
+            'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
+            owner.CLIENT_ZONE_STARTUP_MARKER):
+            with self.subTest(other=other):
+                context=(*args[:-1],names+[other])
+                self.assertFalse(owner.startup_recovery_source_owned(*context))
+                # The existing marker-owned .37 lane keeps its separate scope.
+                if other != owner.CLIENT_ZONE_STARTUP_MARKER:
+                    self.assertTrue(diagnostic.runtime_required(*context))
+        for missing in names:
+            with self.subTest(missing=missing):
+                self.assertFalse(owner.startup_recovery_source_owned(*args[:-1],[p for p in names if p!=missing]))
+        for event in ('pull_request','workflow_dispatch',None):
+            self.assertFalse(owner.startup_recovery_source_owned(event,*args[1:]))
+        self.assertFalse(owner.startup_recovery_source_owned('push','1'*40,'2'*40,'3'*40,names))
+
+    def test_source_review_lane_is_finite_read_only_and_keeps_release_authorities_closed(self):
+        import json
+        text=RECOVERY_REVIEW.decode()
+        self.assertEqual(guard.sha(RECOVERY_REVIEW),guard.RECOVERY_REVIEW_WORKFLOW_SHA256)
+        self.assertEqual(text.count('branches: [codex/character-persistence-continuation]'),2)
+        self.assertIn('permissions: {contents: read}',text)
+        self.assertIn('persist-credentials: false, fetch-depth: 0',text)
+        self.assertIn('test_native_startup_metadata_admission.NativeMetadataAdmissionTests',text)
+        self.assertNotIn('test_native_startup_metadata_admission\n',text)
+        for command in ('sdkmanager','cmake','workflow_dispatch','contents: write','publish_enabled: true'):
+            self.assertNotIn(command,text)
+        marker=json.loads((ROOT/'tools/android/interactive/release-client-zone-startup-0.13.37.json').read_text())
+        for field in ('qualification_enabled','publish_enabled',
+            'physical_client_start_below_one_minute_validated','physical_zone_below_ninety_seconds_for_all_destinations_validated'):
+            self.assertIs(marker[field],False)
 
     def install_previous_policy(self):
         self.write(guard.WORKFLOW,WORKFLOW)
@@ -281,7 +395,7 @@ class NativeWorkflowScopeTests(unittest.TestCase):
 
     def test_non_native_workflow_policy_change_is_unknown_and_requires_gate(self):
         previous=self.install_guard()
-        self.write(guard.WORKFLOW,WORKFLOW.replace(b"github.event_name == 'push'",b"github.event_name == 'schedule'",1))
+        self.write(guard.WORKFLOW,WORKFLOW.replace(b'cancel-in-progress: false',b'cancel-in-progress: true',1))
         head=self.commit('alter workflow policy')
         self.assertTrue(self.classification(previous,head)['native_required'])
 
@@ -318,7 +432,7 @@ class NativeWorkflowScopeTests(unittest.TestCase):
         self.assertEqual(guard.sha(guard.native_body(LEGACY)),guard.NATIVE_BODY_SHA256)
         self.assertEqual(guard.native_body(LEGACY),guard.native_body(WORKFLOW))
         text=WORKFLOW.decode()
-        self.assertIn("cancel-in-progress: ${{ github.event_name == 'push' }}",text)
+        self.assertIn('cancel-in-progress: false',text)
         self.assertIn("if: ${{ always() && (needs.change-scope.result != 'success' || needs.change-scope.outputs.native_required != 'false') }}",text)
         self.assertIn('fetch-depth: 0',text)
         self.assertLess(text.index('Host change-scope'),text.index('id: scope'))
@@ -379,8 +493,8 @@ class NativeWorkflowScopeTests(unittest.TestCase):
         self.assertEqual(group('workflow_dispatch',123),'android-map-startup-native-manual-123')
         self.assertNotEqual(group('workflow_dispatch',123),group('workflow_dispatch',124))
         self.assertNotEqual(group('push',123),group('workflow_dispatch',123))
-        cancel=text.split('cancel-in-progress: ${{ ',1)[1].split(' }}',1)[0]
-        self.assertEqual(cancel,"github.event_name == 'push'")
+        self.assertIn('cancel-in-progress: false',text)
+        self.assertNotIn('cancel-in-progress: true',text)
 
 
 if __name__ == '__main__':unittest.main()

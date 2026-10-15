@@ -34,6 +34,7 @@ CLIENT_ZONE_STARTUP_DOCS = frozenset({
     'docs/android-evidence/native-metadata-adapter-0.13.37-root-integration.json',
 })
 CLIENT_ZONE_STARTUP_ALLOWED = CLIENT_ZONE_STARTUP_DOCS | frozenset({
+    '.github/workflows/android-startup-recovery-review.yml',
     '.github/workflows/android-map-startup-native.yml',
     'tools/android/interactive/classify_map_startup_native_change.py',
     'tools/android/interactive/test_map_startup_native_change.py',
@@ -78,6 +79,31 @@ CLIENT_ZONE_STARTUP_ALLOWED = CLIENT_ZONE_STARTUP_DOCS | frozenset({
     'tools/android/interactive/prepare_native_metadata_qualification_fixtures.py',
     'tools/android/interactive/test_native_metadata_qualification_fixtures.py',
 })
+
+# This exact seven-path correction has its own source-only CI lane. It cannot
+# own runtime, guest, native producer, release-marker or arbitrary research edits.
+STARTUP_RECOVERY_SOURCE_CONTROLS = frozenset({
+    '.github/workflows/android-startup-recovery-review.yml',
+    '.github/workflows/android-map-startup-native.yml',
+    'tools/android/interactive/classify_map_startup_native_change.py',
+    'tools/android/interactive/test_map_startup_native_change.py',
+    'tools/android/interactive/classify_client_zone_startup_change.py',
+    'tools/android/interactive/classify_client_animation_repair_change.py',
+    'tools/android/interactive/build_client_zone_startup_apk.py',
+})
+
+
+def startup_recovery_source_owned(event, before, head, parent, names):
+    if not isinstance(names, (list, tuple, set, frozenset)) or not names:
+        return False
+    if any(type(name) is not str for name in names):
+        return False
+    paths = set(names)
+    direct = (event == 'push' and all(type(value) is str
+        and re.fullmatch('[0-9a-f]{40}', value) for value in (before, head, parent))
+        and before != '0'*40 and head != '0'*40 and before == parent and head != before)
+    return bool(direct and STARTUP_RECOVERY_SOURCE_CONTROLS <= paths
+        and paths <= STARTUP_RECOVERY_SOURCE_CONTROLS | {'docs/HANDOFF.md'})
 
 
 def client_zone_startup_owned(event, before, head, parent, names):

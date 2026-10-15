@@ -23,7 +23,8 @@ on:
 permissions: {contents: read, actions: read}
 concurrency:
   group: ${{ github.event_name == 'workflow_dispatch' && format('android-map-startup-native-manual-{0}', github.run_id) || 'android-map-startup-native' }}
-  cancel-in-progress: ${{ github.event_name == 'push' }}
+  # A host-only push must not cancel an already running genuine qualification.
+  cancel-in-progress: false
 jobs:
   change-scope:
     runs-on: ubuntu-24.04

@@ -40,10 +40,12 @@ and independent replay; a separate actual Linux fork/locked-mutex check passed.
 These are new source scopes, not inherited qualification of the missing adapters.
 
 PR #2 remains draft/unmerged. Target source-review/package logic already supersedes
-its old versions. A narrow independently reviewed workflow correction is prepared
-separately: retain the exact native/FX job bodies, prevent source pushes cancelling
-active native qualification and run source-only review without an incidental APK
-build. It must be replayed against its exact committed direct parent before push.
+its old versions. The narrow independently reviewed workflow correction retains
+the exact native/FX job bodies, prevents source pushes cancelling active native
+qualification and runs source-only review without an incidental APK build. Final
+local routing replay against exact parent `8016b39ec213df6aee5c3032554abc7e21878cbd`
+authenticated 129 inherited dormant paths: native_required=false and legacy
+diagnostic runtime_required=false. Public CI evidence remains separately scoped.
 
 No new Thor timing or RAM benefit is measured. The inherited .36 Game time is
 about 264 s; first Kings request 399.273 s (native MapServer 285.591 s); resident
