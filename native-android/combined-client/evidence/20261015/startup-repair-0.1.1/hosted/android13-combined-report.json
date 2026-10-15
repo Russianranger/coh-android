@@ -1,0 +1,74 @@
+{
+  "schema": "coh-native-combined-app-v1",
+  "package": "org.coh.nativecombined",
+  "busy": false,
+  "runtime_ready": false,
+  "version_name": "0.1.1-local-server-native",
+  "version_code": 2,
+  "android_sdk": 33,
+  "abis": [
+    "x86_64"
+  ],
+  "storage_available_bytes": 5150494720,
+  "server_start_available_bytes": 5286641664,
+  "imports": "Server payload: verified\nAssets 1.0.0 — import audio, base, reference, zones part(s)\nGame files: import all four asset parts\nProfile: no logical dump imported",
+  "message": "Selected input size or SHA-256 does not match the required version",
+  "progress_done": 0,
+  "progress_total": 0,
+  "server": {
+    "phase": "failed",
+    "ready": false,
+    "session_id": "997a75be10fc44218c435e42f587bdf1",
+    "guest_exit_code": -1,
+    "owned_process_alive": false,
+    "failure_code": "SERVER_ADMISSION_FAILED",
+    "last_stage": "guest_starting",
+    "elapsed_ms": 1,
+    "stage_elapsed_ms": 1,
+    "stages": [
+      {
+        "stage": "guest_starting",
+        "elapsed_ms": 0
+      }
+    ]
+  },
+  "local_development_auth": true,
+  "real_authserver_login_verified": false,
+  "native_live_world_verified": false,
+  "old_application_modified": false,
+  "updated_elapsed_ms": 154565,
+  "events": [
+    {
+      "name": "setting_up",
+      "elapsed_ms": 110145
+    },
+    {
+      "name": "operation_failed",
+      "elapsed_ms": 110187
+    },
+    {
+      "name": "starting",
+      "elapsed_ms": 114109
+    },
+    {
+      "name": "operation_failed",
+      "elapsed_ms": 114166
+    },
+    {
+      "name": "importing",
+      "elapsed_ms": 139563
+    },
+    {
+      "name": "import_complete",
+      "elapsed_ms": 141227
+    },
+    {
+      "name": "importing",
+      "elapsed_ms": 150963
+    },
+    {
+      "name": "operation_failed",
+      "elapsed_ms": 151184
+    }
+  ]
+}

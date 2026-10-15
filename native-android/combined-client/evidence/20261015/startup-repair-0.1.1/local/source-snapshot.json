@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "source_commit_before_publish": "4b04f7529543941eddcdd7b88b1d220cb2c0bcab",
+  "source_file_sha256": {
+    "native-android/combined-client/app/build.gradle": "6b73ebf8b0fdde349e1085b609488951aaf53fa146653ed37f7a8fa031e5fe0d",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/GuestDiagnostics.java": "f18da966cf622447a56f1c0449f80b8362f165e0cfade066185480670213827e",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ImportContract.java": "0346a774afeb86285141474feca391f0dda6795bfc36493baaa843dc46f42aa5",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ImportStore.java": "dff7089621f88404c4dbf5b42e0a21e610cb15755df0605b25063d820135f3df",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/LeaseRules.java": "2f8c9325ee3f29d7074b0716044774a5313aaf90dde316bd5e741edbc9d00eb8",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/LocalNative.java": "38c2d6293fb21559708455322ea15abefb8958d2299e52d2107dd99bd2276c23",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/MainActivity.java": "4d395282c0736e29103b96c359105d17f7ecf08ce8fc102831d0a0f2020338bd",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java": "a0baa5cd260e12e886d5f1b5ad68b31629431ae026731af2101a95b0db52e758",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/RuntimeSetup.java": "53a369452bb4c10b2fd8d369daa87e6ea2845158bf6f0c1465409c85e83da3a2",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerService.java": "4c353ef893b6490118ddd57c5888006a006d8ebc38716c8d10fe2e829abb7b95",
+    "native-android/combined-client/runtime/check.py": "245c7007a711ee95df8f3589e640cb1c63f54d327b98a8b9b5f5795bcf3ff9f1",
+    "native-android/combined-client/runtime/server_runtime.py": "2c5f904ab210249d175e1ee5700b65f6e8d9b76e105511410288ea84f93f7de6",
+    "native-android/combined-client/runtime/test_runtime.py": "c1b094c1b3f1fff9a372a65ace0abe3b44deed730d2ff4d3368b7d45df534834"
+  },
+  "scope": "Exact Java/runtime/build source hashes for final local0.1.1 APKs.",
+  "qualified_source_commit": "159a3a3ebb79c7e8173b2662331655d317037311",
+  "recorded_source_still_matches": true
+}

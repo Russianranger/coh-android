@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "same_package": "org.coh.nativecombined",
+  "new_version_code": 2,
+  "same_signer_as_0_1_0": true,
+  "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "import_contract_byte_identical_to_0_1_0": true,
+  "import_contract_sha256": "6a85249a48f394fbcb63c548d4bb10ae3e3eb6eb3ebe02196fa5f9afa41cf4a8",
+  "atlas_import_properties_byte_identical_to_0_1_0": true,
+  "actual_device_update_executed": false,
+  "scope": "APK update identity and unchanged imported-asset contract; physical installation and retained-profile boot are device acceptance."
+}

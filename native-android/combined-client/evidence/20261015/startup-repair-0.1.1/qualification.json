@@ -1,0 +1,38 @@
+{
+  "format": 1,
+  "status": "passed",
+  "workflow": "38790024223",
+  "artifact": "12000096595",
+  "artifact_sha256": "b172f88fad43b38b1fe83a7ba8afb84bbf3715ed8dd21ee5847d7d3827205160",
+  "qualification_source": "159a3a3ebb79c7e8173b2662331655d317037311",
+  "runtime_source": "d26253eaf38e254aadda7e1c18b4dfee39296dc8",
+  "arm64_apk": {
+    "name": "CoH-Native-Combined-0.1.1-arm64.apk",
+    "bytes": 11242291,
+    "sha256": "278363e57b04148a4e5653026105873b164cab557fece651feb0d20ffad9f4ec"
+  },
+  "final_x86_framework_apk_sha256": "50fcd9fd61208f4de7f858afd157c6d69d49cc39ff21fa441e6739b74974810c",
+  "hosted_apks_identical_to_local_delivery": true,
+  "zip_crc_verified": true,
+  "framework_checks_passed": 14,
+  "source_and_donor_runtime_tests_passed": 52,
+  "source_and_donor_runtime_skips": 0,
+  "diagnostic_controls": 143,
+  "scripted_native_udp_checks": 464,
+  "scripted_native_udp_scenarios": 6,
+  "scene": {
+    "frames": 336,
+    "context": 6,
+    "gpu_bytes": 557056,
+    "gl_errors": 0,
+    "tf_mismatches": 0,
+    "bright_pixels": 556562,
+    "distinct_colors_at_least": 14241,
+    "screenshot_independently_viewed": true
+  },
+  "physical_thor_accepted": false,
+  "actual_guest_server_boot_verified": false,
+  "actual_server_interoperability_verified": false,
+  "real_authenticated_session": false,
+  "scope": "Final signed APK source/host/ARM64 package and x86 Android framework qualification. ARM64 guest Python/server boot is not executed by the emulator."
+}

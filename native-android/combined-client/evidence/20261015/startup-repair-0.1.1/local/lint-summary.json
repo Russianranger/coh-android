@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "error_count": 0,
+  "warning_count": 74,
+  "issue_counts": {
+    "ApplySharedPref": 2,
+    "DataExtractionRules": 1,
+    "UsableSpace": 15,
+    "MissingApplicationIcon": 1,
+    "ClickableViewAccessibility": 5,
+    "SetTextI18n": 50
+  }
+}

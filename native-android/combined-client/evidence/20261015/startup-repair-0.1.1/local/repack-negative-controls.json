@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "negative_controls": 3,
+  "controls": [
+    "unpinned artifact rejected before output creation",
+    "modified prepared helper rejected before output creation",
+    "existing delivery output preserved"
+  ],
+  "actual_guest_server_boot_verified": false
+}

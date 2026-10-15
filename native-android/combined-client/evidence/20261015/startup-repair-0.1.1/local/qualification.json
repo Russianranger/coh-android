@@ -1,0 +1,49 @@
+{
+  "schema": "coh-native-combined-final-local-v1",
+  "status": "passed",
+  "source_commit": "159a3a3ebb79c7e8173b2662331655d317037311",
+  "host_suites": 7,
+  "guest_diagnostic_controls": 143,
+  "runtime_methods_each_source_and_donor": {
+    "passed": 25,
+    "skipped": 1,
+    "skip_reason": "Host sandbox does not permit AF_UNIX socket creation"
+  },
+  "delivery_packages": {
+    "arm64-v8a": {
+      "bytes": 11242291,
+      "name": "CoH-Native-Combined-0.1.1-arm64.apk",
+      "sha256": "278363e57b04148a4e5653026105873b164cab557fece651feb0d20ffad9f4ec"
+    },
+    "x86_64": {
+      "bytes": 10807960,
+      "name": "CoH-Native-Combined-0.1.1-emulator-x86_64.apk",
+      "sha256": "50fcd9fd61208f4de7f858afd157c6d69d49cc39ff21fa441e6739b74974810c"
+    }
+  },
+  "delivery_client_payload_byte_identical_to_pinned_ci": true,
+  "delivery_guest_helpers_source": "d26253eaf38e254aadda7e1c18b4dfee39296dc8",
+  "local_gradle_arm64_and_x86_built_and_linted": true,
+  "delivery_reuses_hosted_ci_native_elfs_instead_of_local_gradle_elfs": true,
+  "lint": {
+    "status": "passed",
+    "error_count": 0,
+    "warning_count": 74,
+    "issue_counts": {
+      "ApplySharedPref": 2,
+      "DataExtractionRules": 1,
+      "UsableSpace": 15,
+      "MissingApplicationIcon": 1,
+      "ClickableViewAccessibility": 5,
+      "SetTextI18n": 50
+    }
+  },
+  "package_audits_passed_clean_source": true,
+  "repack_reproducible_in_three_local_runs": true,
+  "emulator_executed_locally": false,
+  "changed_guest_python_executed_on_android": false,
+  "actual_guest_server_boot_verified": false,
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false,
+  "scope": "Final signed APKs reuse exact pinned CI client payloads; only two host-qualified guest helpers and their receipt change. Local full host/sanitizer contracts and both independent Gradle builds passed. Hosted final-APK framework qualification is separate evidence."
+}

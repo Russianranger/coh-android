@@ -1,5 +1,83 @@
 # Combined server/native client — October 15, 2026
 
+## Startup repair 0.1.1
+
+Runtime source: `d26253eaf38e254aadda7e1c18b4dfee39296dc8`.
+Client payload source: `623b51299f32cbc7d09195c039a63caaa9e06179`.
+Packaging/qualification source: `159a3a3ebb79c7e8173b2662331655d317037311`.
+The current ARM64 delivery is 11,242,291 bytes, SHA256
+`278363e57b04148a4e5653026105873b164cab557fece651feb0d20ffad9f4ec`.
+It retains `org.coh.nativecombined`, uses versionCode 2 and the established signer.
+The import contract, runtime pins, Atlas import settings and accepted scene assets
+are unchanged. Update in place; no imports or runtime setup need repeating.
+
+The actual Thor 0.1.0 report is preserved under
+`evidence/20261015/startup-failure-0.1.0/`. Startup lasted 825.923 seconds and
+failed in `local_dbserver_startup` before a DbServer, MapServer or TestClient
+process was recorded. PostgreSQL/Wine/ODBC succeeded, and cleanup completed.
+The generic original failure does not prove the exact helper exception or a
+port conflict. Legacy child elapsed fields were ages at cleanup, not execution
+durations. Source TestClient provisioning had not started and did not cause
+this observed delay.
+
+Changes remove duplicate ODBC installation/probing, retain the accepted Wine INF
+timestamp correction, mark its real proof before later server preparation, and
+check actual local port availability early. Reports retain safe exception
+class/source-site/errno without messages, credentials or child output. Primary
+and cleanup failures remain separate. Launcher progress is session-bound,
+bounded and timed, freezes on exit, identifies its app version/storage, and
+labels older guest reports as previous-session evidence. Only a matching,
+strictly typed private cleanup report can release the owner marker.
+
+All seven local host suites pass: 143 diagnostic boundaries, 24 lease checks,
+17 framework-driver controls, import guards and current/exact-donor runtime
+contracts. Runtime suites each run 26 methods: 25 pass and one AF_UNIX test is
+skipped because this executor blocks Unix socket creation. Actual TCP/UDP bind
+admission tests pass. Existing local/DB contracts pass release, ASan and UBSan,
+including malformed inputs and explicit descriptor cleanup; Android boundary
+binaries compile. Both independent Gradle ABI builds and lint pass (zero errors,
+74 warnings). Exact local receipts are in
+`evidence/20261015/startup-repair-0.1.1/local/`.
+
+Delivery reuses the pinned CI package artifact `11999855486`, SHA256
+`7d878cad7e73f8e7b0f36cde4b35057f773a03bc7d4d258a2687be10805f852d`.
+Only `combined/server_runtime.py`, `test_runtime.py` and their build-input receipt
+change inside each APK. Every other payload entry, including native ELFs, DEX,
+manifest, resources and scene, matches CI byte for byte. Source ancestry,
+package pins, signer, 16 KiB alignment and three-entry-only deltas are audited;
+three local repacks reproduce identical hashes. Local compiler ELF build IDs
+differed from CI, so those local binaries are not the delivery payload.
+`tools/reuse_server_helper.py` makes this reuse reproducible and refuses any
+other runtime/client source changes. Its qualified source pins are intentionally
+strict; future client development requires a new qualified base package.
+
+Workflow [38788212809](https://github.com/Russianranger/coh-android/actions/runs/38788212809)
+passed package/host/ARM64 stages and eleven Android checks through JSON export,
+then failed because Pillow was absent in the separate emulator job. The failure
+is preserved. The dependency is now installed in that job, and final-package
+framework continuation [38790024223](https://github.com/Russianranger/coh-android/actions/runs/38790024223)
+passed all fourteen checks on the final x86 APK, including actual donor SAF
+import/refusal, current GLES scene, Surface/Home recovery, real JSON export and
+464 scripted UDP checks across six scenarios. The actual foreground scene has
+336 frames in context 6, zero GL/transform errors, 557,056 GPU bytes, 556,562 bright
+pixels and at least 14,241 colors. The screenshot was independently viewed.
+Hosted source/exact-donor runtime tests pass all 52 executions with zero skips;
+143 diagnostic controls pass. Its [artifact](https://github.com/Russianranger/coh-android/actions/runs/38790024223/artifacts/12000096595)
+ZIP SHA256 is
+`b172f88fad43b38b1fe83a7ba8afb84bbf3715ed8dd21ee5847d7d3827205160`.
+Downloaded ZIP CRCs, both APK hashes and byte equality with the delivered files
+were independently verified. Exact receipts are under
+`evidence/20261015/startup-repair-0.1.1/hosted/`; the consolidated record is
+`evidence/20261015/startup-repair-0.1.1/qualification.json`.
+
+Implemented and host-qualified server corrections are not actual device boot
+proof. ARM64 guest startup, physical 0.1.1 acceptance, real DB/Map exchange,
+encrypted AuthServer authentication and authoritative world spawn/render remain
+pending. No gate 25–27 acceptance is inferred from a scripted socket or x86
+framework test. Follow the updated [THOR-TEST.md](THOR-TEST.md).
+
+## Original 0.1.0 package and evidence
+
 ## Package and source identity
 
 The ARM64 runtime source is `5637133133a3654bb1a4f4b0fdb74ae575d05520`.
@@ -21,7 +99,7 @@ included. Public crypto libraries were reused from artifact `11980774730` after
 output and current-source hash verification.
 
 Use [THOR-TEST.md](THOR-TEST.md), not a new build of the accepted standalone 0.3.0
-client. This is the next combined physical test.
+client. The startup-repair instructions above supersede the old APK handoff.
 
 ## Implementation and evidence boundaries
 

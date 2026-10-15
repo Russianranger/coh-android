@@ -5,11 +5,49 @@ This is a new, separate app named **CoH Native Combined**
 0.1.0/0.2.0/0.3.0 apps and all existing assets and reports. Do not uninstall or
 clear their storage. Gates 22–24 remain accepted within their documented scope.
 
-Qualified build source: `5637133133a3654bb1a4f4b0fdb74ae575d05520`.
-ARM64 APK: 11,493,783 bytes, SHA256
-`4ae4ef25c6ea60bfdcac000f4ff9016ae202aa42e3414024a40c99dcf66b97ee`.
-The [package artifact](https://github.com/Russianranger/coh-android/actions/runs/38763514350/artifacts/11987440686)
-contains the ARM64 APK and build receipts; use the ARM64 file for Thor.
+## Current update: 0.1.1
+
+Install `CoH-Native-Combined-0.1.1-arm64.apk` **over the existing Combined app**.
+The package and signing identity are unchanged. Keep its data; do not uninstall,
+clear storage, repeat the imports or repeat runtime setup. The failed 0.1.0
+report already confirms your imports and runtime setup completed successfully.
+
+Current ARM64 APK: 11,242,291 bytes, SHA256
+`278363e57b04148a4e5653026105873b164cab557fece651feb0d20ffad9f4ec`.
+The [qualified package artifact](https://github.com/Russianranger/coh-android/actions/runs/38790024223/artifacts/12000096595)
+contains the current ARM64 APK and receipts; use the ARM64 file for Thor.
+Guest runtime source: `d26253eaf38e254aadda7e1c18b4dfee39296dc8`.
+Exact CI client payload source: `623b51299f32cbc7d09195c039a63caaa9e06179`.
+Packaging/qualification source: `159a3a3ebb79c7e8173b2662331655d317037311`.
+See [QUALIFICATION.md](QUALIFICATION.md) for evidence and acceptance limits.
+
+For this retry:
+
+1. Stop the server in the conventional COH launcher. Leave its data installed.
+2. Install the update, open **CoH Native Combined**, then tap **Start server**.
+   Reuse the existing verified imports and preserved private test profile.
+3. Watch the stage and elapsed time. `LOCAL_SERVER_PORT_IN_USE` means a required
+   local port is occupied: stop the other server before retrying. This check now
+   runs before expensive server preparation.
+4. If readiness succeeds, tap **Launch native client**, then **Connect local
+   server**. Follow the character and Map handoff checks below.
+5. Export the combined launcher's **report ZIP** after success or failure. It now
+   includes the specific error type/site, numeric OS error when available,
+   stage history, execution durations and free storage. A native preview JSON
+   alone does not contain server startup evidence.
+
+The old report shows successful PostgreSQL, Wine and both ODBC checks, followed
+by a failure before any DbServer/MapServer/TestClient process was recorded. It
+omitted the actual exception, so the exact device cause is still unproved.
+This update removes duplicate ODBC work, preserves successful Wine setup before
+later preparation and makes an unresolved failure diagnosable. Its speed and
+successful guest server startup still need the Thor retry.
+
+The original 0.1.0 APK and evidence remain preserved:
+11,493,783 bytes, SHA256
+`4ae4ef25c6ea60bfdcac000f4ff9016ae202aa42e3414024a40c99dcf66b97ee`,
+[original package artifact](https://github.com/Russianranger/coh-android/actions/runs/38763514350/artifacts/11987440686).
+The following preparation section is for a **new installation**, not this update.
 
 ## Prepare the existing files
 

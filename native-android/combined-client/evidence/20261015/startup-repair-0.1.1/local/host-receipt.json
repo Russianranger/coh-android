@@ -1,0 +1,91 @@
+{
+  "format": 1,
+  "status": "passed",
+  "suites": [
+    {
+      "name": "framework-driver-controls",
+      "returncode": 0,
+      "elapsed_seconds": 4.08,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/combined-client/tools/driver_controls.py"
+      ]
+    },
+    {
+      "name": "lease-admission",
+      "returncode": 0,
+      "elapsed_seconds": 0.981,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/combined-client/qualification/check_lease.py"
+      ]
+    },
+    {
+      "name": "guest-diagnostics",
+      "returncode": 0,
+      "elapsed_seconds": 1.047,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/combined-client/qualification/check_diagnostics.py"
+      ]
+    },
+    {
+      "name": "imports",
+      "returncode": 0,
+      "elapsed_seconds": 4.577,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/combined-client/imports/tests/check_imports.py"
+      ]
+    },
+    {
+      "name": "server-runtime",
+      "returncode": 0,
+      "elapsed_seconds": 1.193,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/combined-client/runtime/check.py",
+        "--source-root",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native",
+        "--donor",
+        "/workspace/scratch/cd30b2fc1c9e/coh-donor-0.13.36.apk",
+        "--output",
+        "/workspace/scratch/cd30b2fc1c9e/combined-failure-011-final/host/server-runtime.json"
+      ]
+    },
+    {
+      "name": "local-protocol",
+      "returncode": 0,
+      "elapsed_seconds": 21.071,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/local/check.py",
+        "--source-root",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native",
+        "--sanitize",
+        "--ndk",
+        "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c",
+        "--android-output",
+        "/workspace/scratch/cd30b2fc1c9e/combined-failure-011-final/host/local-android",
+        "--output",
+        "/workspace/scratch/cd30b2fc1c9e/combined-failure-011-final/host/local-protocol.json"
+      ]
+    },
+    {
+      "name": "db-protocol",
+      "returncode": 0,
+      "elapsed_seconds": 12.993,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/dbclient/check.py",
+        "--source-root",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native",
+        "--sanitize",
+        "--output",
+        "/workspace/scratch/cd30b2fc1c9e/combined-failure-011-final/host/db-protocol.json"
+      ]
+    }
+  ],
+  "scope": "Source and deterministic host/import/scripted socket contracts; Android execution and actual guest server startup are separate evidence.",
+  "actual_server_interoperability_verified": false
+}
