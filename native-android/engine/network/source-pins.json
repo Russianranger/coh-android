@@ -1,0 +1,53 @@
+{
+  "source_revision": "9ee2f8c74e3efdd2593d514bf8d32a75dcbc8de9",
+  "files": {
+    "BitStream.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/components/BitStream.c",
+      "sha256_lf": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+    },
+    "net_packet.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packet.c",
+      "sha256_lf": "4c970280e323d50e4d2f36882b493a1b640df4b8d9b1192c72598315c8387039"
+    },
+    "net_packetutil.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/net_packetutil.c",
+      "sha256_lf": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+    },
+    "netio_core.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_core.c",
+      "sha256_lf": "7201b5529f19bf56650137e1fb7c699d7e3f905de1d03c146092d03cde219c29"
+    },
+    "netio_send.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_send.c",
+      "sha256_lf": "43a02c7243e286512e3ab9f86e0664c6074e7745bb7dcc9d66322d9a0d6c00f9"
+    },
+    "netio_receive.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/netio_receive.c",
+      "sha256_lf": "d24464295fefbb90f2a356f3ea3bfa4bbf6b47863a602d6cc63c63c46cdb1047"
+    },
+    "net_link.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c",
+      "sha256_lf": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9"
+    },
+    "net_version.c": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/net_version.c",
+      "sha256_lf": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212"
+    },
+    "crypt.cpp": {
+      "path": "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp",
+      "sha256_lf": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60"
+    },
+    "authclient.c": {
+      "path": "upstream/ouroboros/Game/src/clientcomm/authclient.c",
+      "sha256_lf": "d1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015"
+    },
+    "dbclient.c": {
+      "path": "upstream/ouroboros/Game/src/clientcomm/dbclient.c",
+      "sha256_lf": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b"
+    },
+    "clientcomm.c": {
+      "path": "upstream/ouroboros/Game/src/clientcomm/clientcomm.c",
+      "sha256_lf": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd"
+    }
+  }
+}
