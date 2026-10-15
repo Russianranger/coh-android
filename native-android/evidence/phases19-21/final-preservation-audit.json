@@ -1,0 +1,294 @@
+{
+  "schema": 2,
+  "base_commit": "8e83f2343f29c7b4baee7876268c5ccb1e8b01b4",
+  "inspected_remote_commit": "eef440ac87d1cabc3b7892025b6d04b7b3a2eab5",
+  "runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "branch": "native-android",
+  "merge_to_main": false,
+  "baseline_tracked_files": 627,
+  "unchanged_baseline_files": 607,
+  "changed_files": 20,
+  "missing_files": 0,
+  "missing_paths": [],
+  "changed_baseline_paths": [
+    {
+      "path": ".github/workflows/native-session-client.yml",
+      "base_git_blob_sha": "711d57b33b7019a47f25af3ab372200453fe2a2f"
+    },
+    {
+      "path": "native-android/PHASES16-18.md",
+      "base_git_blob_sha": "13df0bd01a4e5ecca6a678b1e54ea235791eaade"
+    },
+    {
+      "path": "native-android/README.md",
+      "base_git_blob_sha": "299e91fc8340f029fe70829060f2e08b4a3bbe0a"
+    },
+    {
+      "path": "native-android/RECOVERY-SESSION-2026-10-14.md",
+      "base_git_blob_sha": "d7fe8551d82808289db00d7e7ef9e209304c566d"
+    },
+    {
+      "path": "native-android/locomotion/README.md",
+      "base_git_blob_sha": "d208246c48452d6cff1c1edae8140bf10e675ecf"
+    },
+    {
+      "path": "native-android/locomotion/coh_locomotion.c",
+      "base_git_blob_sha": "5a94162e00fe81614318f19d0556bd6997aa00d3"
+    },
+    {
+      "path": "native-android/locomotion/coh_locomotion.h",
+      "base_git_blob_sha": "a80aea06e9f847f3760ce8d87a02cc27649c6730"
+    },
+    {
+      "path": "native-android/session-client/THOR-TEST.md",
+      "base_git_blob_sha": "37fc26bd12d9e7931e05fb8cbd3a9eb1ed3157ac"
+    },
+    {
+      "path": "native-android/session-client/app/build.gradle",
+      "base_git_blob_sha": "bce70875672caf0e5c10e0d970bc40ef8a964831"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/AndroidManifest.xml",
+      "base_git_blob_sha": "d45d56970f5c743379b2da9f9d6fa8c8d519300c"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/cpp/CMakeLists.txt",
+      "base_git_blob_sha": "f95f400f5a0caf35ab036e23879e142a58574231"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/cpp/session_renderer.c",
+      "base_git_blob_sha": "627530c1779dc7de4c90565808b360aa1a5a84da"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/java/org/coh/sessionclient/MainActivity.java",
+      "base_git_blob_sha": "0dc450efcc83eb06675a7fa20803129a853a20c0"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/java/org/coh/sessionclient/SessionNative.java",
+      "base_git_blob_sha": "763f4d9cfe12ccdc661e8db4c59ccde545806f67"
+    },
+    {
+      "path": "native-android/session-client/tools/emulator_check.py",
+      "base_git_blob_sha": "f4c416e24ad1cb1a09f00b13ddb12d46dd44bce1"
+    },
+    {
+      "path": "native-android/session-client/tools/lifecycle_host_check.py",
+      "base_git_blob_sha": "def139397f744411a9378b12756d8144b306135c"
+    },
+    {
+      "path": "native-android/session-client/tools/tap_host_check.py",
+      "base_git_blob_sha": "7d82ea88772b14086d986c21e2582dfd9a17fbde"
+    },
+    {
+      "path": "native-android/tools/locomotion_fixture/check.py",
+      "base_git_blob_sha": "f94f8991305daa453650f69cea972fc1869df56b"
+    },
+    {
+      "path": "native-android/tools/session_fixture/host_receipt.py",
+      "base_git_blob_sha": "498cea0d8bf8883e128967ed09c02d4d28912656"
+    },
+    {
+      "path": "native-android/tools/session_fixture/package_check.py",
+      "base_git_blob_sha": "86d680a5c97142180fb72ca7db541146af1656e5"
+    }
+  ],
+  "baseline_manifest_sha256": "933700271cf127950c29c2d675239686e560709bb432d17b453e438aac1abfaa",
+  "baseline_scope": "All627 tracked native and workflow files in the recovered checkout, compared by exact Git blob hashes;20 authorized changes implement or document gates19\u201321 and their qualification harness.",
+  "accepted_phase1_18_evidence_files_verified": 189,
+  "accepted_phase1_18_evidence_changed": [],
+  "accepted_evidence_groups": {
+    "android-elf.txt": 1,
+    "ci.json": 1,
+    "ghidra-phase2-seams.json": 1,
+    "host-oracle.json": 1,
+    "phase3": 4,
+    "phase4": 7,
+    "phase5": 7,
+    "phase6": 17,
+    "phase7": 13,
+    "phase8": 12,
+    "phase9": 22,
+    "phases10-12": 31,
+    "phases13-15": 21,
+    "phases16-18": 49,
+    "push-anchor-candidates.json": 1,
+    "rea-game-resources.json": 1
+  },
+  "existing_qualification_or_physical_evidence_modified": false,
+  "historical_phase16_18_document_change": "Root-authorized link-only change redirects the old combined procedure to THOR-TEST-16-18.md and links the new19\u201321 procedure; historical qualification/acceptance prose is retained.",
+  "historical_thor_test": {
+    "original_commit": "8e83f2343f29c7b4baee7876268c5ccb1e8b01b4",
+    "original_path": "native-android/session-client/THOR-TEST.md",
+    "preserved_path": "native-android/session-client/THOR-TEST-16-18.md",
+    "bytes": 2499,
+    "git_blob_sha": "37fc26bd12d9e7931e05fb8cbd3a9eb1ed3157ac",
+    "byte_identical": true
+  },
+  "conventional_launcher_or_client_modified": false,
+  "unchanged_root_entries": [
+    {
+      "path": ".gitattributes",
+      "type": "blob",
+      "mode": "100644",
+      "git_object_sha": "3525733741b89d32f43e04f54c1d8718b5e8cc85"
+    },
+    {
+      "path": ".gitignore",
+      "type": "blob",
+      "mode": "100644",
+      "git_object_sha": "b1c01cbdd0e044bf6b517aaa868ca90a75af841e"
+    },
+    {
+      "path": "README.md",
+      "type": "blob",
+      "mode": "100644",
+      "git_object_sha": "4f528125c688ffecec254cf0422a391cbc60dd65"
+    },
+    {
+      "path": "android",
+      "type": "tree",
+      "mode": "040000",
+      "git_object_sha": "553cd74e5f4feb594929526150c07e468c6bb787"
+    },
+    {
+      "path": "assets",
+      "type": "tree",
+      "mode": "040000",
+      "git_object_sha": "9fe8101236bf38b112e28f267e9f86f5814f4bda"
+    },
+    {
+      "path": "content-lock.json",
+      "type": "blob",
+      "mode": "100644",
+      "git_object_sha": "21b74cc88a277d014bbc762df6cb3194a979b247"
+    },
+    {
+      "path": "database",
+      "type": "tree",
+      "mode": "040000",
+      "git_object_sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664"
+    },
+    {
+      "path": "docs",
+      "type": "tree",
+      "mode": "040000",
+      "git_object_sha": "c4e94926959bd1356bfcaae393bba89d4df812e6"
+    },
+    {
+      "path": "patches",
+      "type": "tree",
+      "mode": "040000",
+      "git_object_sha": "ffcb910e17540ea97360b6783b3a2099d485f8bc"
+    },
+    {
+      "path": "source-target.json",
+      "type": "blob",
+      "mode": "100644",
+      "git_object_sha": "da3991f40d57449ef6e8675dc5298b264e406ab8"
+    },
+    {
+      "path": "tools",
+      "type": "tree",
+      "mode": "040000",
+      "git_object_sha": "7873277263ebf048722a019d11a87d215e0192a7"
+    },
+    {
+      "path": "upstream",
+      "type": "tree",
+      "mode": "040000",
+      "git_object_sha": "b343713b3067b4921165323858cd6553cb4301cf"
+    },
+    {
+      "path": "upstream-lock.json",
+      "type": "blob",
+      "mode": "100644",
+      "git_object_sha": "c33196ce39472e17becfe1a93fa39c19f099ed20"
+    }
+  ],
+  "changed_root_entries": [
+    ".github",
+    "native-android"
+  ],
+  ".github_changed_paths": [
+    "workflows/native-session-client.yml"
+  ],
+  "remote_scope_comparison": {
+    "base": "61860394b7896ec03c3d17dfff240f6017465e8f",
+    "head": "eef440ac87d1cabc3b7892025b6d04b7b3a2eab5",
+    "commits": 1,
+    "modified_document_paths": [
+      "native-android/PHASES16-18.md",
+      "native-android/PHASES19-21.md",
+      "native-android/README.md",
+      "native-android/RECOVERY-SESSION-2026-10-14.md",
+      "native-android/session-client/THOR-TEST.md"
+    ],
+    "added_paths": 206,
+    "runtime_driver_or_build_changes": false,
+    "scope": "205 newly retained phase19\u201321 evidence/diagnostic files plus one preserved old Thor procedure and five document edits; no runtime or driver modifications in this documentation/evidence commit.",
+    "added_phase19_21_evidence_paths": 205,
+    "added_preserved_thor_procedure_paths": 1
+  },
+  "working_copy_at_completed_tree_audit": {
+    "tracked_native_and_workflow_files": 876,
+    "different_from_inspected_remote": [],
+    "missing_from_inspected_remote": [],
+    "pending_after_snapshot": "This audit file and the newly preserved startup-retry failure folder; any later harness-only setup fix is outside this completed tree snapshot and must pass its current reuse guard."
+  },
+  "failed_evidence_indexes_verified": 9,
+  "failed_evidence_files_verified": 217,
+  "failed_evidence_indexes": [
+    {
+      "folder": "failed-camera-driver",
+      "indexed_files_verified": 30,
+      "index_sha256": "097fc3c421bf1a372095ee6fa4ddaa20d610fd8ea23767b57e66de72f32800ce"
+    },
+    {
+      "folder": "failed-emulator-startup",
+      "indexed_files_verified": 26,
+      "index_sha256": "a69479acac864a6a0410240a7783901d81a9892ff37a24e4d4c4504176ba110c"
+    },
+    {
+      "folder": "failed-emulator-startup-retry",
+      "indexed_files_verified": 26,
+      "index_sha256": "896eaa2adac2d196beaff7dbbbeb324ffd1d949f94a0b51e879741e89b54d9fd"
+    },
+    {
+      "folder": "failed-ndk-indentation",
+      "indexed_files_verified": 14,
+      "index_sha256": "668f446481d915836a6c43083f6881f8e23a96256cfd9ddb23a71fd70f49a9a0"
+    },
+    {
+      "folder": "failed-pre-poll",
+      "indexed_files_verified": 34,
+      "index_sha256": "aefce3359b925708391353e5d94d0f19b3028655a10f36cd0e4738a5c6ea17a7"
+    },
+    {
+      "folder": "failed-release-settling",
+      "indexed_files_verified": 31,
+      "index_sha256": "10ffa049ba71b645e15345e82fcbc25bcc1e70d6c98a3f079680b730bcde8732"
+    },
+    {
+      "folder": "failed-slide-driver",
+      "indexed_files_verified": 39,
+      "index_sha256": "42d7519cbf4697fae50ce75102706ba57b781a57133cbe8d22df077f0b102884"
+    },
+    {
+      "folder": "failed-source-layout",
+      "indexed_files_verified": 9,
+      "index_sha256": "03ff148ac5af4303ca5cf21bb40279b7e96e4348461254cf8f77d971924d7814"
+    },
+    {
+      "folder": "failed-source-pin",
+      "indexed_files_verified": 8,
+      "index_sha256": "3ecb192b7acee01f2e09772f803483b06d2ff3006fa19c731c7ba75b39ff6ab3"
+    }
+  ],
+  "accepted_0_1_0_application_preserved": true,
+  "new_application_id": "org.coh.sessionclient.walk",
+  "java_jni_namespace": "org.coh.sessionclient",
+  "user_data_modified": false,
+  "user_data_scope": "No physical-device storage or user imports operated on; data-clear events in failure logs concern the disposable hosted emulator only.",
+  "original_preservation_audit_sha256": "a94e71080592a94a6cc678110a3296ef1ee56c2cb9fb20d4e766d1ba41ac8ac1",
+  "qualification_scope": "Preservation and change-scope audit only; no combined emulator, physical device, live server or performance acceptance claimed."
+}

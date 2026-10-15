@@ -52,7 +52,7 @@ receipts instead of rebuilding unchanged code.
 
 Failed source-pin, source-layout and NDK compile stops, followed by camera,
 brief-RunPre observation and release-settling harness failures, remain under
-`evidence/phases19-21/failed-*`. The latest preserved stop is
+`evidence/phases19-21/failed-*`. An earlier preserved stop is
 [failed-slide-driver](evidence/phases19-21/failed-slide-driver/failure.json):
 workflow `38660735982`, driver `c47ba93017ca00a5cfbaa8494948e120210f6649`,
 failed a grounded-slide assertion after prolonged diagonal input. Its events
@@ -68,3 +68,20 @@ the current package and bounded test scope. The accepted
 [0.1.0 rollback artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705)
 remains unchanged. All commits stay on `native-android`; no merge to `main` is
 part of this work.
+
+The later source/build-qualified APK remains byte-identical; no rebuild followed
+runtime `8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d`. Two retained startup
+attempts showed system data clearing removing the newly launched Activity.
+The fresh-install driver `c32f6cb9b4d276565d95093679187847f46c78e9` removes
+that unnecessary clearing and verifies package/report absence and exact Activity
+launch. It passed that correction on Android in session run `38663997193`.
+The same run passed rendering and forward/backward release settling, then stopped
+at the left-direction grounded predicate after prolonged travel in the selected
+scene. Its original failed report is retained in `failed-directional-ground`.
+Complete emulator qualification remains open; no physical acceptance is inferred.
+Portable-core workflow `38663997261` passed. No qualification job remains running.
+
+The next three milestones are closure of gates 19–21 emulator/Thor acceptance,
+larger bounded authentic Atlas loading/streaming, and native live-server session
+and replicated actor-state foundations. The missing authored floor detail texture
+and unqualified sustained performance remain explicit limitations.

@@ -1,0 +1,85 @@
+{
+  "scope": "Disposable freshly-created no-snapshot CI emulator only; require package and report absence, install without replace or data clearing, then verify actual Android launch result",
+  "passed": true,
+  "commands": [
+    {
+      "argv": [
+        "adb",
+        "shell",
+        "getprop",
+        "ro.boot.qemu"
+      ],
+      "returncode": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "shell",
+        "pm",
+        "path",
+        "org.coh.sessionclient.walk"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "shell",
+        "pm",
+        "list",
+        "packages",
+        "--user",
+        "0",
+        "org.coh.sessionclient.walk"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "install",
+        "native-android/results/session-client/CoH-Native-Session-Client-0.2.0-emulator-x86_64.apk"
+      ],
+      "returncode": 0,
+      "stdout": "Performing Streamed Install\nSuccess\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "exec-out",
+        "run-as",
+        "org.coh.sessionclient.walk",
+        "find",
+        ".",
+        "-maxdepth",
+        "3",
+        "-name",
+        "session-report.json"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "shell",
+        "am",
+        "start",
+        "-W",
+        "-n",
+        "org.coh.sessionclient.walk/org.coh.sessionclient.MainActivity"
+      ],
+      "returncode": 0,
+      "stdout": "Starting: Intent { cmp=org.coh.sessionclient.walk/org.coh.sessionclient.MainActivity }\nStatus: ok\nLaunchState: COLD\nActivity: org.coh.sessionclient.walk/org.coh.sessionclient.MainActivity\nTotalTime: 2315\nWaitTime: 2323\nComplete\n",
+      "stderr": ""
+    }
+  ]
+}

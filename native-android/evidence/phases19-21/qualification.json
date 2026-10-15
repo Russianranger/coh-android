@@ -1,22 +1,29 @@
 {
-  "schema": 1,
+  "schema": 2,
   "gates": [
     19,
     20,
     21
   ],
-  "status": "source_host_and_android_build_qualified_combined_emulator_retry_in_progress_physical_pending",
+  "status": "implemented_source_host_and_android_build_qualified_combined_emulator_incomplete_physical_pending",
   "passed": false,
-  "runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
-  "runtime_build_workflow_run_id": 38656997946,
-  "qualification_driver_commit": "61860394b7896ec03c3d17dfff240f6017465e8f",
-  "qualification_driver_sha256": "dd6f1b09fe3c4bc9cf52798e9412e4541273328cf6613ce83d49f723cb23179e",
-  "workflow_run_id": 38662399471,
-  "workflow_attempt": 2,
-  "job_id": 116188118943,
-  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38662399471",
+  "implementation_complete_within_documented_bounded_scope": true,
   "source_host_qualified": true,
   "arm64_build_lint_package_qualified": true,
+  "runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "runtime_build_workflow_run_id": 38656997946,
+  "runtime_build_scope": "Source/host, ARM64/x86_64 build, Android lint and exact signature/package/asset stages passed; that workflow later failed at camera automation. Original receipt and stage preserved unchanged.",
+  "qualification_driver_commit": "c32f6cb9b4d276565d95093679187847f46c78e9",
+  "qualification_driver_sha256": "7f4e0a2af0c76f7657aa0db1f73480d955f9e087a94f949bcaa96b1a23d1350f",
+  "workflow_run_id": 38663997193,
+  "workflow_attempt": 1,
+  "job_id": 116191573616,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38663997193",
+  "workflow_conclusion": "failure",
+  "artifact_id": 11940047220,
+  "artifact_url": "https://github.com/Russianranger/coh-android/actions/runs/38663997193/artifacts/11940047220",
+  "artifact_zip_bytes": 6723097,
+  "artifact_zip_sha256": "a6a49d4c021459043f298e3f2cbbe18a83cb95b50921f89a577d4af0a280adb8",
   "arm64_package": {
     "file": "CoH-Native-Session-Client-0.2.0-arm64.apk",
     "bytes": 2344055,
@@ -50,13 +57,208 @@
     "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522"
   },
   "package_bytes_reused_exactly": true,
-  "original_build_receipt_preserved": true,
-  "durable_arm64_download": "https://chatgpt.com/api/library/files/libfile_1f69175230b08191b4c8ea65e369139c/download",
+  "source_host_proofs_rerun_in_final_job": false,
+  "original_build_receipt_preserved_unchanged": true,
+  "durable_arm64_test_download": "https://chatgpt.com/api/library/files/libfile_1f69175230b08191b4c8ea65e369139c/download",
+  "source_host_stage": {
+    "schema": 1,
+    "gates": [
+      19,
+      20,
+      21
+    ],
+    "stage": "authored assets and source host qualification",
+    "status": "completed",
+    "passed": true,
+    "source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+    "workflow_run_id": "38656997946",
+    "proofs": [
+      {
+        "file": "host-walkable-proof.json",
+        "bytes": 349,
+        "sha256": "53135ca6cd554e0df214f482a24fc42611d648b260f38967afb7981de3df70e0"
+      },
+      {
+        "file": "host-walk-proof.json",
+        "bytes": 7117,
+        "sha256": "4ac5d6e2e455dcc71eae821e869297b239b5b24629a49ea2058f34c4e3417acb"
+      },
+      {
+        "file": "host-directional-proof.json",
+        "bytes": 18206,
+        "sha256": "0f16c955b525c55bd99d033bcd78863aa99b00d7ba7bcb45a2a6e03862f470de"
+      },
+      {
+        "file": "host-directional-sampler-proof.json",
+        "bytes": 3527,
+        "sha256": "3790fceedf1f7d435f68ef7a63c895f7efe2e1c30456648f41a1d88cb9f980c7"
+      },
+      {
+        "file": "lifecycle/lifecycle-host-checks.json",
+        "bytes": 1307,
+        "sha256": "45230b4c70cb548020c41249685d36e8bd71f2f61a29ee72ef279b0ce01d7d00"
+      },
+      {
+        "file": "depth-codec-host.json",
+        "bytes": 773,
+        "sha256": "dcedee2a626da4960ea39d7acf84d13d4a456a06a8c4a2a5b01e03182c5c4fa2"
+      },
+      {
+        "file": "snapshot-host.json",
+        "bytes": 1170,
+        "sha256": "e3c09ca408f2d5fc1221f02a3a23d9fab22fecb12f381e193670e3b9ac2c03bc"
+      }
+    ],
+    "full_client_execution_verified": false,
+    "thor_device_execution_verified": false
+  },
+  "source_build_retained_reports": [
+    {
+      "file": "source-build-qualified/SHA256SUMS",
+      "bytes": 226,
+      "sha256": "1627e1c77dde9916cc6a46e680565f009bbba48c6ad2e27a762129b702802e41"
+    },
+    {
+      "file": "source-build-qualified/accepted-assets-recovery.json",
+      "bytes": 1977,
+      "sha256": "bef8e62efa5c6b8ec123281b4ab1ae4e0efa73449238e4ee33628f4fec65c8f3"
+    },
+    {
+      "file": "source-build-qualified/apk-badging-arm64.txt",
+      "bytes": 677,
+      "sha256": "618e02f2a638e490c25a1bee18a44d5913a34190be77eae8f76c18817c724c3a"
+    },
+    {
+      "file": "source-build-qualified/apk-badging-emulator-x86_64.txt",
+      "bytes": 674,
+      "sha256": "13532633f98849e7eb9b6cfe54d8bf90c9dc8f0b5ae8f8c0439562f1101f2272"
+    },
+    {
+      "file": "source-build-qualified/apk-signature-arm64.txt",
+      "bytes": 983,
+      "sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146"
+    },
+    {
+      "file": "source-build-qualified/apk-signature-emulator-x86_64.txt",
+      "bytes": 983,
+      "sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146"
+    },
+    {
+      "file": "source-build-qualified/asset-manifest.json",
+      "bytes": 836,
+      "sha256": "79750a47eb092763c0beaee6c19ab05b34612fd79e4c56bf2ed506f1e0693ac8"
+    },
+    {
+      "file": "source-build-qualified/build-receipt.json",
+      "bytes": 5143,
+      "sha256": "fdf108fa56d45419e867a453ef28a0728348f8f0c4dd9fbfa32c2235e6fb1ae1"
+    },
+    {
+      "file": "source-build-qualified/depth-codec-host.json",
+      "bytes": 773,
+      "sha256": "dcedee2a626da4960ea39d7acf84d13d4a456a06a8c4a2a5b01e03182c5c4fa2"
+    },
+    {
+      "file": "source-build-qualified/host-directional-proof.json",
+      "bytes": 18206,
+      "sha256": "0f16c955b525c55bd99d033bcd78863aa99b00d7ba7bcb45a2a6e03862f470de"
+    },
+    {
+      "file": "source-build-qualified/host-directional-sampler-proof.json",
+      "bytes": 3527,
+      "sha256": "3790fceedf1f7d435f68ef7a63c895f7efe2e1c30456648f41a1d88cb9f980c7"
+    },
+    {
+      "file": "source-build-qualified/host-walk-proof.json",
+      "bytes": 7117,
+      "sha256": "4ac5d6e2e455dcc71eae821e869297b239b5b24629a49ea2058f34c4e3417acb"
+    },
+    {
+      "file": "source-build-qualified/host-walkable-proof.json",
+      "bytes": 349,
+      "sha256": "53135ca6cd554e0df214f482a24fc42611d648b260f38967afb7981de3df70e0"
+    },
+    {
+      "file": "source-build-qualified/legacy-locomotion-abi-proof.json",
+      "bytes": 6373,
+      "sha256": "65287816f7e75085c2ad54f1701fbd5c630dd5a320952216fdd2eed2e074e58c"
+    },
+    {
+      "file": "source-build-qualified/lifecycle/lifecycle-host-checks.json",
+      "bytes": 1307,
+      "sha256": "45230b4c70cb548020c41249685d36e8bd71f2f61a29ee72ef279b0ce01d7d00"
+    },
+    {
+      "file": "source-build-qualified/session-fixture.json",
+      "bytes": 5185,
+      "sha256": "22fdfa072914e449d1d2f89cc42e486e104a1e093b48cafa6157c0121a6cf25d"
+    },
+    {
+      "file": "source-build-qualified/snapshot-host.json",
+      "bytes": 1170,
+      "sha256": "e3c09ca408f2d5fc1221f02a3a23d9fab22fecb12f381e193670e3b9ac2c03bc"
+    },
+    {
+      "file": "source-build-qualified/source-floor-resolution.json",
+      "bytes": 580,
+      "sha256": "ec1821500b4c0564c0d08372452c77f192380bb8d1a0bac2fc2b9a47d00ddba0"
+    },
+    {
+      "file": "source-build-qualified/source-validation-stage.json",
+      "bytes": 1490,
+      "sha256": "1b4700f07c4e843efdeac138bebfc77078f4fd81eb9c3e6f91ac7d5ffe99794b"
+    },
+    {
+      "file": "source-build-qualified/walkable-fixture.json",
+      "bytes": 28031,
+      "sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1"
+    }
+  ],
+  "fresh_host_checks": {
+    "schema": 1,
+    "passed": true,
+    "checks": 126,
+    "scope": "Actual shipped fresh-package/install/launch receipts, accessibility-label, exact tap listener, strict unreleased-source Home, grounded source obstacle/slide, exact RunPre-at-release and released-WALK stability evidence predicates on independent XML/event fixtures; no device execution",
+    "emulator_driver_sha256": "7f4e0a2af0c76f7657aa0db1f73480d955f9e087a94f949bcaa96b1a23d1350f",
+    "observed_android_ui": null
+  },
+  "reuse_guard_checks": {
+    "schema": 1,
+    "passed": true,
+    "checks": 38,
+    "guard_sha256": "af08017c15a04f2fb821817149fd00ad54f1c7feb5f5cd58a89e07874c367e2d",
+    "scope": "Actual shipped guard over independent Git histories and unsafe ZIP mutation controls; no Android execution or device acceptance"
+  },
   "core_regression_workflow": {
-    "run_id": 38662399457,
+    "run_id": 38663997261,
     "conclusion": "success"
   },
   "combined_android_execution_qualified": false,
+  "latest_emulator_partial_scope": [
+    "Fresh disposable emulator package/report absence and exact Activity launch passed without data clearing.",
+    "Native shared scene startup/rendering passed.",
+    "Forward and backward source directional locomotion with strict released-position settling passed.",
+    "Latest run stopped at left-direction grounded_walk predicate; right, bounded slide and subsequent lifecycle/export stages were not reached."
+  ],
+  "last_failure": {
+    "operation": "directional_walk left case calls grounded_walk on a prolonged held-input sample",
+    "frames": 1159,
+    "source_ticks": 1754,
+    "held_dirs": 4,
+    "source_state_bits": 4,
+    "actor_position": [
+      617.372437,
+      74,
+      -1380
+    ],
+    "grounded": false,
+    "safety_bound_events": 13,
+    "native_failed": false,
+    "source_tf_mismatches": 0,
+    "walkable_tf_mismatches": 0,
+    "non_tie_depth_mismatches": 0,
+    "interpretation": "Held host polling continued to unsupported selected-scene support. A bounded callback-based movement driver remains required; the exact geometric support crossing was not captured. This is not a passing grounded movement witness."
+  },
   "physical_controller_verified": false,
   "thor_device_execution_verified": false,
   "accepted_older_physical_gates": [
@@ -67,18 +269,46 @@
     17,
     18
   ],
+  "latest_fully_qualified_rollback_apk": {
+    "file": "CoH-Native-Session-Client-0.1.0-arm64.apk",
+    "bytes": 2139651,
+    "sha256": "eb763d8c6e5354da06a336e8fe09a244a893755e82ef708ea1d2139dc17b8634",
+    "abi": "arm64-v8a",
+    "elf_machine": 183,
+    "native_library": {
+      "file": "lib/arm64-v8a/libcoh_session_client.so",
+      "bytes": 122904,
+      "sha256": "a9358d848f8625602d7864e27dfaf2dda950b952aedd5efa4ebf5863099b70fb"
+    },
+    "signature_verified": true,
+    "manifest_verified": true,
+    "packaged_fixtures_verified": true,
+    "signer_certificate_sha256": "1ab9ac0ce8896ad8d07afed83615ff497f93b930c89dade2a01298cba7d137b9",
+    "runtime_source_commit": "e88a02b284de16ed6f7caf1e6b689f2e85d0b6e8",
+    "workflow_run_id": 38637681649,
+    "physical_acceptance_receipt": "../phases16-18/thor-acceptance-20261014.json",
+    "durable_download": "https://chatgpt.com/api/library/files/libfile_bc1c1886923481919c358c8911bb9411/download"
+  },
   "old_evidence_modified": false,
   "branch": "native-android",
   "merge_to_main": false,
   "remaining_blockers": [
-    "Complete actual Android combined qualification; attempt2 retries only the startup race, with exact unchanged APK and code.",
-    "New AYN Thor report and observations for physical gates19\u201321.",
-    "Authored floor detail asset mono_station_floor_det unavailable; genuine source grey fallback used."
+    "Close complete fresh emulator qualification using bounded real framework input and retained source callbacks for all directional paths; preserve all current predicates.",
+    "Receive a new AYN Thor report and visual/controller observations for physical gates19\u201321.",
+    "Authored mono_station_floor_det asset remains unavailable; source genuine grey fallback is qualified but detailed floor appearance incomplete."
+  ],
+  "next_three_milestones": [
+    "Close gates19\u201321 emulator and physical Thor acceptance within the selected authored scene.",
+    "Expand authentic Atlas geometry/collision with bounded native loading and streaming.",
+    "Establish native live-server session and replicated actor state using the retained protocol foundations."
   ],
   "original_game_execution": false,
   "full_atlas_loaded": false,
   "full_sequencer_execution": false,
   "server_interoperability_verified": false,
-  "performance_accepted": false,
-  "preservation": "All original physical/host qualification evidence, failed attempts, acceptedAPK and conventional launcher/client remain unchanged. New0.2 app installs alongside0.1 with a pinned public debug signer."
+  "sustained_performance_accepted": false,
+  "preservation": "All original physical/host evidence, failed attempts, accepted0.1 APK and conventional client retained. New0.2 installs alongside0.1 with a pinned public debug signer. No user-data clearing, migration or deletion.",
+  "evidence_interpretation_notes": [
+    "Latest raw emulator-directional-walk-proof has a per-case passed=true field and a static four-direction scope string but only two case records. It establishes forward/backward partial success only; left/right and complete batch acceptance are not inferred."
+  ]
 }

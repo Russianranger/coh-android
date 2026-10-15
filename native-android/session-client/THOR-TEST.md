@@ -15,11 +15,14 @@ Package identity: **2,344,055 bytes**, SHA256
 Runtime source: `8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d`;
 [build run 38656997946](https://github.com/Russianranger/coh-android/actions/runs/38656997946).
 Source/host checks, the complete 1,585-file source trick audit, ARM64/x86_64
-builds, lint, signatures and package integrity passed. **Combined emulator
-qualification remains pending after the slide harness sampled an ungrounded
-state during prolonged diagonal input; physical gates 19–21 are also pending.**
+builds, lint, signatures and package integrity passed. **This is a test build.
+Complete emulator qualification and physical gates 19–21 remain pending.**
+The latest [emulator run](https://github.com/Russianranger/coh-android/actions/runs/38663997193)
+passed startup/rendering and forward/backward movement, then failed its left
+movement grounding predicate after prolonged travel in the selected scene.
 Individual directional, interruption, reversal, quick-tap and release-settling
-checks passed within their recorded scopes.
+checks passed within earlier recorded partial scopes. Short manual input helps
+keep this test on the authored support; report any unexpected grounding failure.
 
 1. **Ground and collision:** wait for the Wretch, authored station floor and
    bench to appear. The initial forward direction points at the nearby bench.
@@ -51,3 +54,8 @@ The accepted older physical report remains separate from this new qualification.
 The unchanged
 [accepted 0.1.0 artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705)
 and [original Thor procedure](THOR-TEST-16-18.md) remain the rollback path.
+
+The latest fully qualified and physically accepted rollback is
+[CoH-Native-Session-Client-0.1.0-arm64.apk](https://chatgpt.com/api/library/files/libfile_bc1c1886923481919c358c8911bb9411/download)
+with SHA256 `eb763d8c6e5354da06a336e8fe09a244a893755e82ef708ea1d2139dc17b8634`.
+Its original [gates 16–18 procedure](THOR-TEST-16-18.md) remains unchanged.

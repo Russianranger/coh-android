@@ -1,0 +1,1305 @@
+{
+  "eligible": true,
+  "reason": "Only allowlisted driver, workflow, documentation or evidence changes",
+  "changes": [
+    {
+      "path": ".github/workflows/native-session-client.yml",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/PHASES16-18.md",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/PHASES19-21.md",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/README.md",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/RECOVERY-SESSION-2026-10-14.md",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/diagnostics/release_check.py",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/accepted-assets-recovery.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/apk-badging-arm64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/apk-badging-emulator-x86_64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/apk-signature-arm64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/apk-signature-emulator-x86_64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/asset-manifest.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/build-receipt.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/depth-codec-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/emulator-button-tap-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/emulator-directional-walk-proof.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/emulator-initial-report.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/emulator-initial-scene.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/emulator-input-area-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/emulator-input-area-screen.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/emulator-logcat.txt.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/emulator-screenshot.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/emulator-session-report.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/emulator-ui.xml",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/failure.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/host-directional-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/host-directional-sampler-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/host-walk-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/host-walkable-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/legacy-locomotion-abi-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/lifecycle/lifecycle-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/session-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/snapshot-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/source-floor-resolution.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/source-validation-stage.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/tap-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-camera-driver/walkable-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/accepted-assets-recovery.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/apk-badging-arm64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/apk-badging-emulator-x86_64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/apk-signature-arm64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/apk-signature-emulator-x86_64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/asset-manifest.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/build-receipt.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/depth-codec-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/emulator-logcat.txt.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/emulator-screenshot.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/failure.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/host-directional-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/host-directional-sampler-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/host-walk-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/host-walkable-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/legacy-locomotion-abi-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/lifecycle/lifecycle-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/package-reuse-receipt.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/reuse-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/session-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/snapshot-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/source-floor-resolution.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/source-validation-stage.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/tap-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/walkable-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/walkable-reuse-guard.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-emulator-startup/workflow-job-log.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/accepted-assets-recovery.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/asset-manifest.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/depth-codec-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/failure.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/host-directional-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/host-directional-sampler-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/host-walk-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/host-walkable-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/legacy-locomotion-abi-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/lifecycle/lifecycle-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/session-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/snapshot-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/source-floor-resolution.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/source-validation-stage.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-ndk-indentation/walkable-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/accepted-assets-recovery.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/apk-badging-arm64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/apk-badging-emulator-x86_64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/apk-signature-arm64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/apk-signature-emulator-x86_64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/asset-manifest.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/build-receipt.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/depth-codec-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/emulator-button-tap-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/emulator-directional-walk-proof.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/emulator-initial-report.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/emulator-initial-scene.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/emulator-input-area-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/emulator-input-area-screen.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/emulator-logcat.txt.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/emulator-right-walk-camera-proof.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/emulator-screenshot.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/emulator-session-report.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/emulator-ui.xml",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/failure.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/host-directional-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/host-directional-sampler-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/host-walk-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/host-walkable-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/legacy-locomotion-abi-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/lifecycle/lifecycle-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/package-reuse-receipt.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/reuse-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/session-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/snapshot-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/source-floor-resolution.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/source-validation-stage.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/tap-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/walkable-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-pre-poll/walkable-reuse-guard.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/accepted-assets-recovery.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/apk-badging-arm64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/apk-badging-emulator-x86_64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/apk-signature-arm64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/apk-signature-emulator-x86_64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/asset-manifest.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/build-receipt.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/depth-codec-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/emulator-button-tap-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/emulator-directional-walk-proof.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/emulator-initial-report.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/emulator-initial-scene.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/emulator-logcat.txt.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/emulator-screenshot.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/emulator-session-report.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/emulator-ui.xml",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/failure.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/host-directional-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/host-directional-sampler-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/host-walk-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/host-walkable-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/legacy-locomotion-abi-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/lifecycle/lifecycle-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/package-reuse-receipt.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/reuse-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/session-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/snapshot-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/source-floor-resolution.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/source-validation-stage.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/tap-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/walkable-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-release-settling/walkable-reuse-guard.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/accepted-assets-recovery.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/apk-badging-arm64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/apk-badging-emulator-x86_64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/apk-signature-arm64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/apk-signature-emulator-x86_64.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/asset-manifest.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/build-receipt.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/depth-codec-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-button-tap-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-directional-walk-proof.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-initial-report.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-initial-scene.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-input-area-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-input-area-screen.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-interrupted-run-proof.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-logcat.txt.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-quick-tap-proof.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-reversal-proof.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-right-walk-camera-proof.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-screenshot.png",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-session-report.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-ui.xml",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/emulator-walk-settling-proof.json.gz",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/failure.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/host-directional-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/host-directional-sampler-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/host-walk-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/host-walkable-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/legacy-locomotion-abi-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/lifecycle/lifecycle-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/package-reuse-receipt.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/reuse-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/session-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/snapshot-host.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/source-floor-resolution.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/source-validation-stage.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/tap-host-checks.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/walkable-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/walkable-reuse-guard.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-slide-driver/workflow-job-log.txt",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-layout/accepted-assets-recovery.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-layout/asset-manifest.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-layout/failure.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-layout/host-directional-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-layout/host-walk-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-layout/host-walkable-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-layout/session-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-layout/source-floor-resolution.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-layout/source-validation-stage.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-layout/walkable-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-pin/accepted-assets-recovery.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-pin/asset-manifest.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-pin/failure.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-pin/host-walk-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-pin/host-walkable-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-pin/session-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-pin/source-floor-resolution.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-pin/source-validation-stage.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/failed-source-pin/walkable-fixture.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/host-walk-release-settling-proof.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/pending-framework-restore-check.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/pending-framework-restore-check.patch",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/preservation-audit.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/evidence/phases19-21/qualification.json",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/session-client/THOR-TEST-16-18.md",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/session-client/THOR-TEST.md",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/session-client/tools/emulator_check.py",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/session-client/tools/reuse_walkable_host_check.py",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/session-client/tools/reuse_walkable_package.py",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/session-client/tools/tap_host_check.py",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    }
+  ],
+  "schema": 1,
+  "original_runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "validation_head": "c32f6cb9b4d276565d95093679187847f46c78e9"
+}

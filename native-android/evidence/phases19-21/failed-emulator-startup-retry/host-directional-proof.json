@@ -1,0 +1,870 @@
+{
+  "schema": "coh-native-directional-host-proof-v1",
+  "passed": true,
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "unchanged_functions": {
+    "seqSetMove": {
+      "file": "seqsequence.c",
+      "sha256_lf": "d6317af7bc194f17c0477b3e074256ac4125fa4df728927ca2b1afb915a3b816"
+    },
+    "seqCycleFrame": {
+      "file": "seqsequence.c",
+      "sha256_lf": "b567e96db695cd7fa811f3465782ddf3b8a1738850e3e4d0d8823356282fd62a"
+    },
+    "seqStep": {
+      "file": "seqsequence.c",
+      "sha256_lf": "07ee45e56150c55818166ee4d85a1239d0ba773070f8299f68a61008df8ed997"
+    },
+    "seqAInterruptsB": {
+      "file": "seqsequence.c",
+      "sha256_lf": "3c8272360d3e27e149fe110828c8f6e08dac0b49a3bb0a83b45298a6fae46042"
+    },
+    "getSetBits": {
+      "file": "seqsequence.c",
+      "sha256_lf": "3266d7ddbdad31dd56b7add5383ec7979050680a061f535c36e25706e75bf35a"
+    },
+    "seqSearchInterrupts": {
+      "file": "seqsequence.c",
+      "sha256_lf": "b75d65b289482f8f1e5d7e587d4fc63eb3e52073cc93f26f3995ab37ef9621ee"
+    },
+    "seqGetAnimScale": {
+      "file": "seqsequence.c",
+      "sha256_lf": "7710b0afd58c6070791e5e6e70c69833318d0c3d4af38dca53a2dcec4b622e96"
+    },
+    "seqProcessInst": {
+      "file": "seqsequence.c",
+      "sha256_lf": "b66b7aada26a4f241b10858199c07794567bb3d379bcab3a44d701ca6d1e1659"
+    },
+    "seqGetMovementSpeedAnimScale": {
+      "file": "entclient.c",
+      "sha256_lf": "678c34e21184ccf57b8e60bc017b95aa7a7d0363597d19bbcedc2b6359929e85"
+    }
+  },
+  "source_program_sha256": "f70831ad5d28d0321bbedc5382100ec23608d2e50e9432c8c246f1f1686d926a",
+  "authentic_move_declarations": {
+    "Ready": {
+      "name": "Ready",
+      "clip": "huge/skel_ready",
+      "type": "huge",
+      "first": 1.0,
+      "last": 60.0,
+      "requires": [],
+      "priority": 0,
+      "members": [
+        "<DeathIRQ>",
+        "<HitIRQ>",
+        "<ReactIRQ>",
+        "<BlockIRQ>",
+        "<AttackIRQ>",
+        "<IRQRest>",
+        "<MoveIRQ>",
+        "<IRQEmotesALL>",
+        "<IRQEncounters>",
+        "<Jumps>",
+        "<Ready>"
+      ],
+      "interrupts": [],
+      "flags": [
+        "Cycle"
+      ],
+      "move_rate": 0.0,
+      "scale": 1.0,
+      "interpolate": 5,
+      "next": "Ready",
+      "cycle": "Ready"
+    },
+    "RunCycle": {
+      "name": "RunCycle",
+      "clip": "huge/run",
+      "type": "huge",
+      "first": 1.0,
+      "last": 25.0,
+      "requires": [
+        "FORWARD"
+      ],
+      "priority": 0,
+      "members": [
+        "<DeathIRQ>",
+        "<AttackIRQ>",
+        "<BasicMove>",
+        "<IRQJumps>",
+        "<IRQSwim>",
+        "<IRQSlide>",
+        "<RunsALL>",
+        "<GroundMoveALL>",
+        "<SideMoveIRQ>"
+      ],
+      "interrupts": [],
+      "flags": [
+        "Cycle",
+        "MoveScale",
+        "SmoothSprint"
+      ],
+      "move_rate": 0.7,
+      "scale": 1.0,
+      "interpolate": 5,
+      "next": "RunPost",
+      "cycle": null
+    },
+    "RunPost": {
+      "name": "RunPost",
+      "clip": "huge/postrun",
+      "type": "huge",
+      "first": 1.0,
+      "last": 23.0,
+      "requires": [],
+      "priority": 0,
+      "members": [
+        "<DeathIRQ>",
+        "<HitIRQ>",
+        "<ReactIRQ>",
+        "<BlockIRQ>",
+        "<AttackIRQ>",
+        "<IRQRest>",
+        "<MoveIRQ>",
+        "<IRQEmotesALL>",
+        "<IRQEncounters>",
+        "<Jumps>",
+        "<Ready>"
+      ],
+      "interrupts": [],
+      "flags": [],
+      "move_rate": 0.0,
+      "scale": 1.0,
+      "interpolate": 8,
+      "next": "Ready",
+      "cycle": null
+    },
+    "RunPre": {
+      "name": "RunPre",
+      "clip": "huge/run",
+      "type": "huge",
+      "first": 18.0,
+      "last": 25.0,
+      "requires": [
+        "FORWARD"
+      ],
+      "priority": 1,
+      "members": [
+        "<DeathIRQ>",
+        "<AttackIRQ>",
+        "<BasicMove>",
+        "<IRQJumps>",
+        "<IRQSwim>",
+        "<IRQSlide>",
+        "<RunsALL>",
+        "<GroundMoveALL>",
+        "<SideMoveIRQ>"
+      ],
+      "interrupts": [
+        "<Ready>",
+        "<MoveIRQ>"
+      ],
+      "flags": [
+        "Cycle",
+        "MoveScale",
+        "SmoothSprint"
+      ],
+      "move_rate": 0.7,
+      "scale": 1.0,
+      "interpolate": 5,
+      "next": "Idle_Walk_Post",
+      "cycle": "RunCycle"
+    },
+    "Idle_Walk_Post": {
+      "name": "Idle_Walk_Post",
+      "clip": "male/walk",
+      "type": "male",
+      "first": 47.0,
+      "last": 48.0,
+      "requires": [
+        "IDLE"
+      ],
+      "priority": 0,
+      "members": [
+        "<DeathIRQ>",
+        "<HitIRQ>",
+        "<ReactIRQ>",
+        "<AttackIRQ>",
+        "<IRQRest>",
+        "<MoveIRQ>"
+      ],
+      "interrupts": [],
+      "flags": [],
+      "move_rate": 0.0,
+      "scale": 1.0,
+      "interpolate": 5,
+      "next": "Idle_Ready",
+      "cycle": null
+    },
+    "Idle_Ready": {
+      "name": "Idle_Ready",
+      "clip": "male/skel_ready2",
+      "type": "male",
+      "first": 1.0,
+      "last": 60.0,
+      "requires": [
+        "IDLE"
+      ],
+      "priority": 1,
+      "members": [
+        "<DeathIRQ>",
+        "<HitIRQ>",
+        "<ReactIRQ>",
+        "<AttackIRQ>",
+        "<IRQRest>",
+        "<MoveIRQ>"
+      ],
+      "interrupts": [
+        "<IRQEncounters>"
+      ],
+      "flags": [
+        "Cycle"
+      ],
+      "move_rate": 0.0,
+      "scale": 1.0,
+      "interpolate": 5,
+      "next": "Ready",
+      "cycle": null
+    },
+    "Run_Back_Pre": {
+      "name": "Run_Back_Pre",
+      "clip": "huge/runback",
+      "type": "huge",
+      "first": 1.0,
+      "last": 24.0,
+      "requires": [
+        "BACKWARD"
+      ],
+      "priority": 1,
+      "members": [
+        "<DeathIRQ>",
+        "<AttackIRQ>",
+        "<BasicMove>",
+        "<IRQJumps>",
+        "<IRQSwim>",
+        "<IRQSlide>",
+        "<RunsALL>",
+        "<GroundMoveALL>"
+      ],
+      "interrupts": [
+        "<Ready>",
+        "<MoveIRQ>"
+      ],
+      "flags": [
+        "Cycle",
+        "MoveScale",
+        "SmoothSprint"
+      ],
+      "move_rate": 0.525,
+      "scale": 1.0,
+      "interpolate": 5,
+      "next": "Idle_Walk_Post",
+      "cycle": "Run_Back_Cycle"
+    },
+    "Run_Back_Cycle": {
+      "name": "Run_Back_Cycle",
+      "clip": "huge/runback",
+      "type": "huge",
+      "first": 1.0,
+      "last": 24.0,
+      "requires": [
+        "BACKWARD"
+      ],
+      "priority": 1,
+      "members": [
+        "<DeathIRQ>",
+        "<AttackIRQ>",
+        "<BasicMove>",
+        "<IRQJumps>",
+        "<IRQSwim>",
+        "<IRQSlide>",
+        "<RunsALL>",
+        "<GroundMoveALL>"
+      ],
+      "interrupts": [
+        "<BackMoveIRQ>"
+      ],
+      "flags": [
+        "Cycle",
+        "MoveScale",
+        "SmoothSprint"
+      ],
+      "move_rate": 0.525,
+      "scale": 1.0,
+      "interpolate": 5,
+      "next": "RunPost",
+      "cycle": null
+    },
+    "Run_Left_Pre": {
+      "name": "Run_Left_Pre",
+      "clip": "huge/run_left",
+      "type": "huge",
+      "first": 15.0,
+      "last": 25.0,
+      "requires": [
+        "STEPLEFT"
+      ],
+      "priority": 1,
+      "members": [
+        "<DeathIRQ>",
+        "<AttackIRQ>",
+        "<BasicMove>",
+        "<IRQJumps>",
+        "<IRQSwim>",
+        "<IRQSlide>",
+        "<RunsALL>",
+        "<GroundMoveALL>",
+        "<BackMoveIRQ>"
+      ],
+      "interrupts": [
+        "<Ready>",
+        "<MoveIRQ>",
+        "RunPre"
+      ],
+      "flags": [
+        "Cycle",
+        "MoveScale",
+        "SmoothSprint"
+      ],
+      "move_rate": 0.7,
+      "scale": 1.0,
+      "interpolate": 5,
+      "next": "Idle_Walk_Post",
+      "cycle": "Run_Left_Cycle"
+    },
+    "Run_Left_Cycle": {
+      "name": "Run_Left_Cycle",
+      "clip": "huge/run_left",
+      "type": "huge",
+      "first": 1.0,
+      "last": 25.0,
+      "requires": [
+        "STEPLEFT"
+      ],
+      "priority": 1,
+      "members": [
+        "<DeathIRQ>",
+        "<AttackIRQ>",
+        "<BasicMove>",
+        "<IRQJumps>",
+        "<IRQSwim>",
+        "<IRQSlide>",
+        "<RunsALL>",
+        "<GroundMoveALL>",
+        "<BackMoveIRQ>"
+      ],
+      "interrupts": [
+        "<SideMoveIRQ>"
+      ],
+      "flags": [
+        "Cycle",
+        "MoveScale",
+        "SmoothSprint"
+      ],
+      "move_rate": 0.7,
+      "scale": 1.0,
+      "interpolate": 5,
+      "next": "RunPost",
+      "cycle": null
+    },
+    "Run_Right_Pre": {
+      "name": "Run_Right_Pre",
+      "clip": "huge/run_right",
+      "type": "huge",
+      "first": 1.0,
+      "last": 25.0,
+      "requires": [
+        "STEPRIGHT"
+      ],
+      "priority": 1,
+      "members": [
+        "<DeathIRQ>",
+        "<AttackIRQ>",
+        "<BasicMove>",
+        "<IRQJumps>",
+        "<IRQSwim>",
+        "<IRQSlide>",
+        "<RunsALL>",
+        "<GroundMoveALL>",
+        "<BackMoveIRQ>"
+      ],
+      "interrupts": [
+        "<Ready>",
+        "<MoveIRQ>",
+        "RunPre"
+      ],
+      "flags": [
+        "Cycle",
+        "MoveScale",
+        "SmoothSprint"
+      ],
+      "move_rate": 0.7,
+      "scale": 1.0,
+      "interpolate": 5,
+      "next": "Idle_Walk_Post",
+      "cycle": "Run_Right_Cycle"
+    },
+    "Run_Right_Cycle": {
+      "name": "Run_Right_Cycle",
+      "clip": "huge/run_right",
+      "type": "huge",
+      "first": 1.0,
+      "last": 25.0,
+      "requires": [
+        "STEPRIGHT"
+      ],
+      "priority": 1,
+      "members": [
+        "<DeathIRQ>",
+        "<AttackIRQ>",
+        "<BasicMove>",
+        "<IRQJumps>",
+        "<IRQSwim>",
+        "<IRQSlide>",
+        "<RunsALL>",
+        "<GroundMoveALL>",
+        "<BackMoveIRQ>"
+      ],
+      "interrupts": [
+        "<SideMoveIRQ>"
+      ],
+      "flags": [
+        "Cycle",
+        "MoveScale",
+        "SmoothSprint"
+      ],
+      "move_rate": 0.7,
+      "scale": 1.0,
+      "interpolate": 5,
+      "next": "RunPost",
+      "cycle": null
+    }
+  },
+  "source_state_bit_cache": {
+    "1": [
+      "RunPre"
+    ],
+    "12": [
+      "Idle_Ready"
+    ],
+    "2": [
+      "Run_Back_Pre",
+      "Run_Back_Cycle"
+    ],
+    "3": [
+      "Run_Left_Pre",
+      "Run_Left_Cycle"
+    ],
+    "4": [
+      "Run_Right_Pre",
+      "Run_Right_Cycle"
+    ]
+  },
+  "source_graph_ticks": 4470,
+  "source_comparisons": 31290,
+  "maximum_source_error": 0.0,
+  "equal_priority_counter_changes": 537,
+  "invalid_atomic_checks": 10,
+  "sanitizers": {
+    "ASan": true,
+    "UBSan": true,
+    "LSan": true,
+    "header_truncation_cases": 128,
+    "directional_step_sample_reset_cases": 20000,
+    "full_bundle_mutation_cases": 6396
+  },
+  "observed_moves": [
+    "Idle_Ready",
+    "Idle_Walk_Post",
+    "Ready",
+    "RunCycle",
+    "RunPost",
+    "RunPre",
+    "Run_Back_Cycle",
+    "Run_Back_Pre",
+    "Run_Left_Cycle",
+    "Run_Left_Pre",
+    "Run_Right_Cycle",
+    "Run_Right_Pre"
+  ],
+  "fixture": {
+    "bytes": 147103,
+    "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+  },
+  "transcript": [
+    {
+      "tick": 0,
+      "move": "RunPre",
+      "frame": 18.0,
+      "rate": 1.0,
+      "incrementor": 0
+    },
+    {
+      "tick": 60,
+      "move": "RunCycle",
+      "frame": 15.461530685424805,
+      "rate": 1.0,
+      "incrementor": 0
+    },
+    {
+      "tick": 120,
+      "move": "Ready",
+      "frame": 1.769230842590332,
+      "rate": 1.0,
+      "incrementor": 0
+    },
+    {
+      "tick": 180,
+      "move": "Run_Back_Pre",
+      "frame": 11.2564115524292,
+      "rate": 1.3333333730697632,
+      "incrementor": 0
+    },
+    {
+      "tick": 240,
+      "move": "Run_Back_Cycle",
+      "frame": 3.2051267623901367,
+      "rate": 1.3333333730697632,
+      "incrementor": 0
+    },
+    {
+      "tick": 300,
+      "move": "Ready",
+      "frame": 9.461539268493652,
+      "rate": 1.0,
+      "incrementor": 0
+    },
+    {
+      "tick": 360,
+      "move": "Run_Left_Cycle",
+      "frame": 5.615385055541992,
+      "rate": 1.0,
+      "incrementor": 0
+    },
+    {
+      "tick": 420,
+      "move": "Run_Left_Cycle",
+      "frame": 3.769211769104004,
+      "rate": 1.0,
+      "incrementor": 0
+    },
+    {
+      "tick": 480,
+      "move": "Ready",
+      "frame": 17.153846740722656,
+      "rate": 1.0,
+      "incrementor": 0
+    },
+    {
+      "tick": 540,
+      "move": "Run_Right_Pre",
+      "frame": 24.076915740966797,
+      "rate": 1.0,
+      "incrementor": 0
+    },
+    {
+      "tick": 600,
+      "move": "RunPost",
+      "frame": 1.0,
+      "rate": 0.25,
+      "incrementor": 0
+    },
+    {
+      "tick": 660,
+      "move": "Ready",
+      "frame": 24.846145629882812,
+      "rate": 1.0,
+      "incrementor": 0
+    },
+    {
+      "tick": 720,
+      "move": "Run_Left_Cycle",
+      "frame": 6.999991416931152,
+      "rate": 1.0,
+      "incrementor": 2
+    },
+    {
+      "tick": 780,
+      "move": "RunPost",
+      "frame": 8.69230842590332,
+      "rate": 1.0,
+      "incrementor": 2
+    },
+    {
+      "tick": 840,
+      "move": "Ready",
+      "frame": 32.53844451904297,
+      "rate": 1.0,
+      "incrementor": 2
+    },
+    {
+      "tick": 900,
+      "move": "Run_Right_Cycle",
+      "frame": 14.692299842834473,
+      "rate": 1.0,
+      "incrementor": 4
+    },
+    {
+      "tick": 960,
+      "move": "RunPost",
+      "frame": 16.38461685180664,
+      "rate": 1.0,
+      "incrementor": 4
+    },
+    {
+      "tick": 1020,
+      "move": "Run_Back_Pre",
+      "frame": 1.0,
+      "rate": 1.0,
+      "incrementor": 5
+    },
+    {
+      "tick": 1080,
+      "move": "Run_Back_Cycle",
+      "frame": 15.94871997833252,
+      "rate": 1.3333333730697632,
+      "incrementor": 5
+    },
+    {
+      "tick": 1140,
+      "move": "Ready",
+      "frame": 1.769230842590332,
+      "rate": 1.0,
+      "incrementor": 5
+    },
+    {
+      "tick": 1200,
+      "move": "Run_Back_Cycle",
+      "frame": 10.230770111083984,
+      "rate": 1.3333333730697632,
+      "incrementor": 6
+    },
+    {
+      "tick": 1260,
+      "move": "Run_Back_Cycle",
+      "frame": 2.769228458404541,
+      "rate": 1.3333333730697632,
+      "incrementor": 6
+    },
+    {
+      "tick": 1320,
+      "move": "Ready",
+      "frame": 9.461539268493652,
+      "rate": 1.0,
+      "incrementor": 6
+    },
+    {
+      "tick": 1380,
+      "move": "Ready",
+      "frame": 13.307693481445312,
+      "rate": 1.0,
+      "incrementor": 6
+    },
+    {
+      "tick": 1440,
+      "move": "Ready",
+      "frame": 59.461490631103516,
+      "rate": 1.0,
+      "incrementor": 6
+    },
+    {
+      "tick": 1500,
+      "move": "Ready",
+      "frame": 43.30766296386719,
+      "rate": 1.0,
+      "incrementor": 6
+    },
+    {
+      "tick": 1560,
+      "move": "Ready",
+      "frame": 27.15383529663086,
+      "rate": 1.0,
+      "incrementor": 6
+    },
+    {
+      "tick": 1620,
+      "move": "Ready",
+      "frame": 11.000000953674316,
+      "rate": 1.0,
+      "incrementor": 6
+    },
+    {
+      "tick": 1680,
+      "move": "Ready",
+      "frame": 57.15380096435547,
+      "rate": 1.0,
+      "incrementor": 6
+    },
+    {
+      "tick": 1740,
+      "move": "RunCycle",
+      "frame": 4.65384578704834,
+      "rate": 0.25,
+      "incrementor": 6
+    },
+    {
+      "tick": 1800,
+      "move": "Run_Left_Cycle",
+      "frame": 15.99998664855957,
+      "rate": 0.25,
+      "incrementor": 6
+    },
+    {
+      "tick": 1860,
+      "move": "Run_Back_Cycle",
+      "frame": 2.153846263885498,
+      "rate": 0.25,
+      "incrementor": 6
+    },
+    {
+      "tick": 1920,
+      "move": "RunPost",
+      "frame": 20.999996185302734,
+      "rate": 1.0,
+      "incrementor": 6
+    },
+    {
+      "tick": 1980,
+      "move": "Run_Back_Pre",
+      "frame": 1.0,
+      "rate": 1.0,
+      "incrementor": 7
+    },
+    {
+      "tick": 2040,
+      "move": "Idle_Walk_Post",
+      "frame": 47.0,
+      "rate": 2.0,
+      "incrementor": 19
+    },
+    {
+      "tick": 2100,
+      "move": "Run_Back_Pre",
+      "frame": 2.538461685180664,
+      "rate": 2.0,
+      "incrementor": 33
+    },
+    {
+      "tick": 2160,
+      "move": "Run_Left_Pre",
+      "frame": 15.0,
+      "rate": 1.0,
+      "incrementor": 49
+    },
+    {
+      "tick": 2220,
+      "move": "Idle_Walk_Post",
+      "frame": 47.0,
+      "rate": 0.6666666865348816,
+      "incrementor": 64
+    },
+    {
+      "tick": 2280,
+      "move": "Run_Right_Pre",
+      "frame": 2.0,
+      "rate": 2.0,
+      "incrementor": 77
+    },
+    {
+      "tick": 2340,
+      "move": "Idle_Walk_Post",
+      "frame": 47.0,
+      "rate": 2.0,
+      "incrementor": 92
+    },
+    {
+      "tick": 2400,
+      "move": "Run_Right_Pre",
+      "frame": 1.0,
+      "rate": 1.0,
+      "incrementor": 106
+    },
+    {
+      "tick": 2460,
+      "move": "Run_Back_Cycle",
+      "frame": 1.0,
+      "rate": 2.0,
+      "incrementor": 117
+    },
+    {
+      "tick": 2520,
+      "move": "Run_Left_Pre",
+      "frame": 15.0,
+      "rate": 1.0,
+      "incrementor": 134
+    },
+    {
+      "tick": 2580,
+      "move": "Idle_Walk_Post",
+      "frame": 47.0,
+      "rate": 0.25,
+      "incrementor": 147
+    },
+    {
+      "tick": 2640,
+      "move": "Run_Back_Pre",
+      "frame": 1.0,
+      "rate": 1.0,
+      "incrementor": 163
+    },
+    {
+      "tick": 2700,
+      "move": "Run_Left_Pre",
+      "frame": 15.0,
+      "rate": 1.0,
+      "incrementor": 176
+    },
+    {
+      "tick": 2760,
+      "move": "Idle_Walk_Post",
+      "frame": 47.0,
+      "rate": 2.0,
+      "incrementor": 189
+    },
+    {
+      "tick": 2820,
+      "move": "RunPre",
+      "frame": 18.0,
+      "rate": 1.0,
+      "incrementor": 199
+    },
+    {
+      "tick": 2880,
+      "move": "RunPost",
+      "frame": 1.0,
+      "rate": 0.25,
+      "incrementor": 212
+    },
+    {
+      "tick": 2940,
+      "move": "RunPost",
+      "frame": 1.0,
+      "rate": 0.3809524178504944,
+      "incrementor": 222
+    },
+    {
+      "tick": 3000,
+      "move": "Run_Left_Pre",
+      "frame": 15.0,
+      "rate": 1.0,
+      "incrementor": 238
+    },
+    {
+      "tick": 3060,
+      "move": "RunPre",
+      "frame": 18.0,
+      "rate": 1.0,
+      "incrementor": 251
+    },
+    {
+      "tick": 3120,
+      "move": "Run_Back_Pre",
+      "frame": 2.0,
+      "rate": 0.25,
+      "incrementor": 263
+    }
+  ],
+  "scope": "Selected 12-move grounded graph; exact original IRQ/priority/requirements/frame/rate routines with platform stubs. Ready2 random idles, full non-ground graph, combat, PlayFx and live server excluded. Source IDLE input is absent for Wretch."
+}

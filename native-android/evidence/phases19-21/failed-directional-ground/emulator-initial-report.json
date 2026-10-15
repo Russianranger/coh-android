@@ -1,0 +1,535 @@
+{
+  "schema": "coh-native-session-v1",
+  "phases": [
+    19,
+    20,
+    21
+  ],
+  "session_id": "1a13d1d1d02",
+  "updated_at": "2026-10-15T01:11:25.948Z",
+  "scope": "Persistent offline Wretch with authored Atlas ground/obstacles, bounded source WALK collision and directional locomotion; no login, full map or replication",
+  "app": {
+    "package": "org.coh.sessionclient.walk",
+    "version_name": "0.2.0-gates19-21",
+    "version_code": 2,
+    "installed_apk": {
+      "bytes": 2361364,
+      "sha256": "45752990736305bc1520d81e9c6507bb4b53a8322970bed8535085ff0f44af4e"
+    }
+  },
+  "device": {
+    "manufacturer": "Google",
+    "model": "sdk_gphone64_x86_64",
+    "sdk": 33,
+    "abis": [
+      "x86_64"
+    ],
+    "emulator_detected": true
+  },
+  "assets_verified": true,
+  "asset_manifest": {
+    "schema": 1,
+    "assets": {
+      "character.bin": {
+        "bytes": 4261100,
+        "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+      },
+      "locomotion.bin": {
+        "bytes": 147103,
+        "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+      },
+      "morph.bin": {
+        "bytes": 3028,
+        "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+      },
+      "rig.bin": {
+        "bytes": 11642,
+        "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+      },
+      "walkable.bin": {
+        "bytes": 202880,
+        "sha256": "d7694d1dc83e2d95cea045e7f4912c1f9211aafed3fdebbab42943aab30a4d62"
+      },
+      "world.bin": {
+        "bytes": 102176,
+        "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+      }
+    }
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "type": "session_created",
+      "time_ms": 1792026680602
+    },
+    {
+      "sequence": 2,
+      "type": "resume",
+      "time_ms": 1792026680611
+    },
+    {
+      "sequence": 3,
+      "type": "surface_changed",
+      "time_ms": 1792026680830
+    },
+    {
+      "sequence": 4,
+      "type": "assets_loaded",
+      "time_ms": 1792026681474,
+      "native": {
+        "schema": 1,
+        "probe": "coh-native-offline-session",
+        "valid": true,
+        "failed": false,
+        "running": false,
+        "failure": "",
+        "pointer_bytes": 8,
+        "source_controlled": true,
+        "collision": true,
+        "live_server": false,
+        "full_atlas": false,
+        "gpu_palette_skinning": false,
+        "skin_policy": "accepted source CPU skin then accepted world shader",
+        "frames": 0,
+        "world_draws": 0,
+        "actor_draws": 0,
+        "skin_samples": 0,
+        "contexts_started": 0,
+        "contexts_completed": 0,
+        "objects_released": false,
+        "width": 0,
+        "height": 0,
+        "gl_renderer": "",
+        "gl_errors": 0,
+        "egl_error": 0,
+        "shader_language_version": 0,
+        "shader_precise": false,
+        "tf_components": 0,
+        "tf_mismatches": 0,
+        "tf_max_error": 0,
+        "depth_order_mismatches": 0,
+        "world_visible_pixels": 0,
+        "actor_visible_pixels": 0,
+        "world_occludes_actor_pixels": 0,
+        "actor_occludes_world_pixels": 0,
+        "actor_changed_pixels": 0,
+        "startup_checked": false,
+        "movement_ticks": 0,
+        "direction_mask": 0,
+        "held_dirs": 0,
+        "actor_position": [
+          582.5,
+          74,
+          -1380
+        ],
+        "spawn_position": [
+          582.5,
+          74,
+          -1380
+        ],
+        "actor_yaw": 3.1415925,
+        "camera_yaw": -4.76837158e-07,
+        "camera_pitch": 0.159999996,
+        "camera_position": [
+          0,
+          0,
+          0
+        ],
+        "animation_frame": 1,
+        "animation_state": 0,
+        "animation_transitions": 0,
+        "idle_samples": 0,
+        "run_samples": 0,
+        "total_ms": 0,
+        "epoch": 3,
+        "foreground": true,
+        "expected_cancel_surface_errors": 0,
+        "expected_cancel_egl_error": 0,
+        "cleanup_gl_errors": 0,
+        "cleanup_egl_errors": 0,
+        "cleanup_egl_error": 0,
+        "source_state_bits": 0,
+        "motion_local": [
+          0,
+          0,
+          0
+        ],
+        "motion_world": [
+          0,
+          0,
+          0
+        ],
+        "nocoll_radius": 8192,
+        "bounded_steps": 0,
+        "stopped_steps": 0,
+        "animation_move": "Ready",
+        "animation_rate": 1,
+        "ready_entries": 1,
+        "run_entries": 0,
+        "post_entries": 0,
+        "animation_cycles": 0,
+        "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+        "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+        "walkable_draws": 0,
+        "input_pending_edges": 0,
+        "walk": {
+          "grounded": true,
+          "ground_y": 74,
+          "ground_hits": 0,
+          "blocked_ticks": 0,
+          "sliding_ticks": 0,
+          "bounded_ticks": 0,
+          "collision_queries": 1,
+          "triangle_tests": 2,
+          "triangles": 276,
+          "bounded_scene": true,
+          "spawn_yaw": 3.1415925,
+          "obstacle_bounds_min": [
+            579.656189,
+            74,
+            -1387.60413
+          ],
+          "obstacle_bounds_max": [
+            585.343811,
+            77.682251,
+            -1385.06335
+          ]
+        },
+        "walkable_tf_components": 0,
+        "walkable_tf_mismatches": 0,
+        "walkable_visible_pixels": 0,
+        "animation_move_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "walk_contact_hits": 1,
+        "walk_wall_hits": 0,
+        "walk_ground_hits": 1,
+        "depth_sampler_controls_passed": false,
+        "depth_codec_float_precision": 0,
+        "raw_changed_pixels": 0,
+        "qualified_equal_depth_ties": 0,
+        "non_tie_mismatches": 0,
+        "depth_sampler_controls": {
+          "clear": {
+            "x": 0,
+            "y": 0,
+            "world_depth": 0,
+            "actor_depth": 0,
+            "combined_depth": 0
+          },
+          "world_front": {
+            "x": 0,
+            "y": 0,
+            "world_depth": 0,
+            "actor_depth": 0,
+            "combined_depth": 0
+          },
+          "actor_front": {
+            "x": 0,
+            "y": 0,
+            "world_depth": 0,
+            "actor_depth": 0,
+            "combined_depth": 0
+          }
+        },
+        "depth_tie_diagnostics": []
+      }
+    }
+  ],
+  "resumed": true,
+  "render_busy": true,
+  "report_write_failed": false,
+  "failure": null,
+  "input_adapter": {
+    "schema": "coh-android-input-adapter-v1",
+    "external_android": {
+      "key_down": 0,
+      "key_up": 0,
+      "key_repeat": 0,
+      "motion": 0,
+      "touch_begin": 0,
+      "touch_move": 0,
+      "touch_end": 0,
+      "touch_cancel": 0,
+      "focus_clear": 0,
+      "device_removed": 0,
+      "controller_events": 0,
+      "left_axis_directions": 0,
+      "right_axis_directions": 0,
+      "button_down_mask": 0,
+      "touch_motion_directions": 0
+    },
+    "in_app_synthetic": {
+      "key_down": 0,
+      "key_up": 0,
+      "key_repeat": 0,
+      "motion": 0,
+      "touch_begin": 0,
+      "touch_move": 0,
+      "touch_end": 0,
+      "touch_cancel": 0,
+      "focus_clear": 0,
+      "device_removed": 0,
+      "controller_events": 0,
+      "left_axis_directions": 0,
+      "right_axis_directions": 0,
+      "button_down_mask": 0,
+      "touch_motion_directions": 0
+    },
+    "focused": true,
+    "touch_active": false,
+    "scope": "Android callbacks to source scalar/key/joystick kernels; editor look and preview adapter; no gameplay physics",
+    "external_event_provenance": "Framework events; emulator adb injection does not establish physical controller operation"
+  },
+  "native": {
+    "schema": 1,
+    "probe": "coh-native-offline-session",
+    "valid": true,
+    "failed": false,
+    "running": true,
+    "failure": "",
+    "pointer_bytes": 8,
+    "source_controlled": true,
+    "collision": true,
+    "live_server": false,
+    "full_atlas": false,
+    "gpu_palette_skinning": false,
+    "skin_policy": "accepted source CPU skin then accepted world shader",
+    "frames": 34,
+    "world_draws": 78,
+    "actor_draws": 427,
+    "skin_samples": 38,
+    "contexts_started": 1,
+    "contexts_completed": 0,
+    "objects_released": false,
+    "width": 1080,
+    "height": 1417,
+    "gl_renderer": "Android Emulator OpenGL ES Translator (Google SwiftShader)",
+    "gl_errors": 0,
+    "egl_error": 0,
+    "shader_language_version": 300,
+    "shader_precise": false,
+    "tf_components": 40794,
+    "tf_mismatches": 0,
+    "tf_max_error": 0,
+    "depth_order_mismatches": 0,
+    "world_visible_pixels": 6898,
+    "actor_visible_pixels": 8418,
+    "world_occludes_actor_pixels": 693,
+    "actor_occludes_world_pixels": 1953,
+    "actor_changed_pixels": 7750,
+    "startup_checked": true,
+    "movement_ticks": 49,
+    "direction_mask": 0,
+    "held_dirs": 0,
+    "actor_position": [
+      582.5,
+      74,
+      -1380
+    ],
+    "spawn_position": [
+      582.5,
+      74,
+      -1380
+    ],
+    "actor_yaw": 3.1415925,
+    "camera_yaw": -4.76837158e-07,
+    "camera_pitch": 0.159999996,
+    "camera_position": [
+      582.5,
+      81.3050003,
+      -1358.28101
+    ],
+    "animation_frame": 38.6922836,
+    "animation_state": 0,
+    "animation_transitions": 0,
+    "idle_samples": 49,
+    "run_samples": 0,
+    "total_ms": 4343,
+    "epoch": 3,
+    "foreground": true,
+    "expected_cancel_surface_errors": 0,
+    "expected_cancel_egl_error": 0,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "cleanup_egl_error": 0,
+    "source_state_bits": 0,
+    "motion_local": [
+      0,
+      0,
+      0
+    ],
+    "motion_world": [
+      0,
+      0,
+      0
+    ],
+    "nocoll_radius": 8192,
+    "bounded_steps": 0,
+    "stopped_steps": 49,
+    "animation_move": "Ready",
+    "animation_rate": 1,
+    "ready_entries": 1,
+    "run_entries": 0,
+    "post_entries": 0,
+    "animation_cycles": 0,
+    "sampler": "GL_LINEAR CLAMP_TO_EDGE base level only",
+    "depth_witness_scope": "actual source meshes; opaque order reversed with Hair always last; four startup images only",
+    "walkable_draws": 140,
+    "input_pending_edges": 0,
+    "walk": {
+      "grounded": true,
+      "ground_y": 74,
+      "ground_hits": 49,
+      "blocked_ticks": 0,
+      "sliding_ticks": 0,
+      "bounded_ticks": 0,
+      "collision_queries": 99,
+      "triangle_tests": 100,
+      "triangles": 276,
+      "bounded_scene": true,
+      "spawn_yaw": 3.1415925,
+      "obstacle_bounds_min": [
+        579.656189,
+        74,
+        -1387.60413
+      ],
+      "obstacle_bounds_max": [
+        585.343811,
+        77.682251,
+        -1385.06335
+      ]
+    },
+    "walkable_tf_components": 8502,
+    "walkable_tf_mismatches": 0,
+    "walkable_visible_pixels": 138143,
+    "animation_move_samples": [
+      49,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "walk_contact_hits": 50,
+    "walk_wall_hits": 0,
+    "walk_ground_hits": 50,
+    "depth_sampler_controls_passed": true,
+    "depth_codec_float_precision": 23,
+    "raw_changed_pixels": 2,
+    "qualified_equal_depth_ties": 2,
+    "non_tie_mismatches": 0,
+    "depth_sampler_controls": {
+      "clear": {
+        "x": 0,
+        "y": 0,
+        "world_depth": 16777215,
+        "actor_depth": 16777215,
+        "combined_depth": 16777215
+      },
+      "world_front": {
+        "x": 288,
+        "y": 176,
+        "world_depth": 16702028,
+        "actor_depth": 16702269,
+        "combined_depth": 16702028
+      },
+      "actor_front": {
+        "x": 287,
+        "y": 177,
+        "world_depth": 16703822,
+        "actor_depth": 16702189,
+        "combined_depth": 16702189
+      }
+    },
+    "depth_tie_diagnostics": [
+      {
+        "x": 228,
+        "y": 211,
+        "world_depth": 16704438,
+        "actor_depth": 16704438,
+        "combined_depth": 16704438,
+        "world_rgba": [
+          117,
+          124,
+          131,
+          255
+        ],
+        "actor_rgba": [
+          31,
+          31,
+          27,
+          255
+        ],
+        "forward_rgba": [
+          31,
+          31,
+          27,
+          255
+        ],
+        "reverse_rgba": [
+          117,
+          124,
+          131,
+          255
+        ]
+      },
+      {
+        "x": 229,
+        "y": 214,
+        "world_depth": 16704748,
+        "actor_depth": 16704748,
+        "combined_depth": 16704748,
+        "world_rgba": [
+          169,
+          171,
+          177,
+          255
+        ],
+        "actor_rgba": [
+          9,
+          8,
+          7,
+          255
+        ],
+        "forward_rgba": [
+          9,
+          8,
+          7,
+          255
+        ],
+        "reverse_rgba": [
+          169,
+          171,
+          177,
+          255
+        ]
+      }
+    ]
+  },
+  "input_area": {
+    "left": 0,
+    "top": 440,
+    "width": 1080,
+    "height": 1417,
+    "shown": true,
+    "surface_ready": true
+  }
+}

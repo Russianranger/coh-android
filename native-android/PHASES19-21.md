@@ -74,16 +74,22 @@ Source/host checks, the complete source trick audit, ARM64 and x86_64 builds,
 Android lint, signatures and exact package/asset/ELF checks passed for runtime
 `8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d` in
 [build workflow 38656997946](https://github.com/Russianranger/coh-android/actions/runs/38656997946).
-The original [build receipt](evidence/phases19-21/failed-camera-driver/build-receipt.json)
-and [completed source stage](evidence/phases19-21/failed-camera-driver/source-validation-stage.json)
+The original [build receipt](evidence/phases19-21/source-build-qualified/build-receipt.json)
+and [completed source stage](evidence/phases19-21/source-build-qualified/source-validation-stage.json)
 remain byte-identical during later driver-only runs. The strict reuse guard
 rejects runtime, application, asset, adapter, shader or source dependency changes.
 
-**The combined emulator procedure remains pending. Physical gates 19–21 also
-remain pending.** Later runs passed individual directional, interruption,
-reversal and quick-tap checks, but the latest preserved run stopped at its
-grounded slide predicate. These partial checks do not qualify the whole batch.
-Accepted gates 13–18 and their original evidence are unchanged.
+**Gates 19–21 are implemented and source/build qualified. Complete emulator
+qualification and physical Thor acceptance remain pending.** The latest
+[session run 38663997193](https://github.com/Russianranger/coh-android/actions/runs/38663997193)
+passed fresh installation, exact Activity launch, rendering and forward/backward
+source locomotion with release settling. It stopped during the left-direction
+case at an unsupported selected-scene position; it did not reach the new bounded
+slide or subsequent lifecycle/export stages. This is a failed combined check,
+not a qualified complete batch. The [qualification manifest](evidence/phases19-21/qualification.json)
+binds the exact runtime and latest driver separately.
+[Portable-core run 38663997261](https://github.com/Russianranger/coh-android/actions/runs/38663997261)
+passed. Accepted gates 13–18 and their original evidence are unchanged.
 
 The [retained source-release settling proof](evidence/phases19-21/failed-slide-driver/emulator-walk-settling-proof.json.gz)
 contains six successful release cases. Each observes actual Android release,
@@ -99,7 +105,7 @@ the shipped adapter's normalized swipe range; the
 [RunPre case](evidence/phases19-21/failed-pre-poll/failure.json) missed a brief
 current phase during ADB polling; the
 [release case](evidence/phases19-21/failed-release-settling/failure.json) required
-natural source settling before its stability check. The latest
+natural source settling before its stability check. The earlier
 [slide case](evidence/phases19-21/failed-slide-driver/failure.json), workflow
 `38660735982` at driver `c47ba93017ca00a5cfbaa8494948e120210f6649`, retains a
 grounded slide at source tick 6047, a later grounded sample at 6051, and the first
@@ -108,6 +114,24 @@ intervening ground-loss tick and geometric crossing point were not captured.
 Its final report has no native failure, GL/EGL error or transform mismatch.
 The portable-core workflow `38660735985` passed separately. Earlier source-pin,
 source-layout and NDK compile stops remain preserved in their own failure folders.
+
+Two subsequent startup attempts are retained under `failed-emulator-startup`
+and `failed-emulator-startup-retry`: Android clearApplicationUserData removed the
+Activity after launch. The latest driver requires a fresh disposable emulator,
+installs without replacement or data clearing, rejects existing reports and
+records the exact launch result. That correction passed on Android.
+The [latest left-direction failure](evidence/phases19-21/failed-directional-ground/failure.json)
+retains 1,159 frames, source tick 1,754, actor `[617.372437,74,-1380]`,
+`grounded=false` and 13 safety-bound events, with no native failure or transform
+mismatch. The exact support crossing was not captured. All directional automation
+needs bounded real framework input and fresh callback witnesses so host polling
+cannot prolong travel beyond this incomplete scene. No predicate is waived.
+
+The [independent local friction diagnostic](evidence/phases19-21/host-walk-release-settling-proof.json)
+executes 21 original-source release steps with bit-exact velocities/positions;
+it does not claim Android or physical execution. The
+[preservation audit](evidence/phases19-21/final-preservation-audit.json) retains all
+189 earlier evidence files unchanged. Failed and partial reports remain separate.
 
 Download the current ARM64 test package:
 [CoH-Native-Session-Client-0.2.0-arm64.apk](https://chatgpt.com/api/library/files/libfile_1f69175230b08191b4c8ea65e369139c/download)

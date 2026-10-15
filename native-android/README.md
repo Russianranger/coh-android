@@ -59,9 +59,14 @@ the full 1,585-file source trick audit, ARM64/x86_64 builds, lint, signatures an
 package integrity passed on runtime
 `8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d` in
 [build run 38656997946](https://github.com/Russianranger/coh-android/actions/runs/38656997946).
-The combined emulator check remains pending after a prolonged diagonal slide
-sample failed the grounded predicate; successful partial checks and failed
-driver attempts are preserved separately. Physical gates 19–21 remain pending.
+Complete emulator qualification remains pending: the latest
+[session run 38663997193](https://github.com/Russianranger/coh-android/actions/runs/38663997193)
+passed fresh install/launch, rendering and forward/backward motion, then failed
+the left-direction grounded predicate after prolonged travel in the selected
+scene. The [manifest](evidence/phases19-21/qualification.json) retains its exact
+scope and failed evidence. [Portable-core run 38663997261](https://github.com/Russianranger/coh-android/actions/runs/38663997261)
+passed. Physical gates 19–21 remain pending; 0.2.0 is a source/build-qualified
+test APK, not a fully emulator-qualified or physically accepted replacement.
 
 The current
 [CoH-Native-Session-Client-0.2.0-arm64.apk](https://chatgpt.com/api/library/files/libfile_1f69175230b08191b4c8ea65e369139c/download)

@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "kind": "complete source floor lookup audit",
+  "git_tree_sha": "f1aab78ed5cd4e33046758f256e38e777a5ee4a3",
+  "source_files_verified": 1585,
+  "direct_aliases": {
+    "mono_station_floor_det": [
+      "upstream/i24/data/tricks/streets/elements/monorail.txt"
+    ],
+    "mono_station_infloor": [
+      "upstream/i24/data/tricks/streets/elements/monorail.txt"
+    ],
+    "mono_station_infloor_sml": [
+      "upstream/i24/data/tricks/streets/elements/monorail.txt"
+    ]
+  },
+  "parent_directory_fallback_not_selected": true,
+  "benchmark_audit_reused": true
+}

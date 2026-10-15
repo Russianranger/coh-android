@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "passed": true,
+  "checks": 110,
+  "scope": "Actual shipped accessibility-label, exact tap listener, strict unreleased-source Home, grounded source obstacle/slide, exact RunPre-at-release and released-WALK stability evidence predicates on independent XML/event fixtures; no device execution",
+  "emulator_driver_sha256": "dd6f1b09fe3c4bc9cf52798e9412e4541273328cf6613ce83d49f723cb23179e",
+  "observed_android_ui": null
+}
