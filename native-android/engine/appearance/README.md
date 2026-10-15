@@ -1,5 +1,9 @@
 # Gate31 native appearance assembly
 
+The additive native GEO conversion and CPU render bridge is described separately
+in [RENDER-BRIDGE.md](RENDER-BRIDGE.md). It extends this assembly without changing
+the original qualification receipt or claiming complete-character acceptance.
+
 This additive C11 library converts parsed original costume/body-part data into
 bounded, caller-owned geometry, texture, socket and color draw requests. It is
 independent of a game session. The accepted Huge/Wretch rig, morph, sampler,
