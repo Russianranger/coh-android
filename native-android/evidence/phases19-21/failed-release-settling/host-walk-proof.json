@@ -1,0 +1,208 @@
+{
+  "schema": "coh-native-bounded-walk-qualification-v1",
+  "passed": true,
+  "original_source": {
+    "schema": "coh-native-walk-original-oracle-v1",
+    "passed": true,
+    "source_cases": 12736,
+    "slide_transcript_cases": 144,
+    "upstream_source_revision": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "source_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+    "unchanged_functions": [
+      {
+        "file": "gridcoll.h",
+        "signature": "typedef enum CollFlags",
+        "first_line": 12,
+        "last_line": 41,
+        "sha256_lf": "f2c2a1feea9930f017f0526bbb5f1a24d532b768ab39c7d62a9286c967c54cf4"
+      },
+      {
+        "file": "mathutil.h",
+        "signature": "original arithmetic macro definitions",
+        "names": [
+          "SQR",
+          "fsqrt",
+          "fatan2",
+          "copyVec3",
+          "setVec3same",
+          "zeroVec3",
+          "scaleVec3",
+          "addVec3",
+          "subVec3",
+          "setVec3",
+          "dotVec3",
+          "lengthVec3Squared",
+          "lengthVec3",
+          "lengthVec3SquaredXZ",
+          "lengthVec3XZ",
+          "vec3IsZero",
+          "sameVec3",
+          "MINMAX"
+        ],
+        "sha256_lf": "079b00a50b96b8070f99bd0018ada83b68064f1201a5aa8b89146e305f7941e4"
+      },
+      {
+        "file": "mathutil.h",
+        "signature": "static INLINEDBG F32 normalVec3(",
+        "first_line": 910,
+        "last_line": 926,
+        "sha256_lf": "de086e6eff62b81fd0de62b98431aa66c54bae151d60086859ca50d48fff7c53"
+      },
+      {
+        "file": "mathutil.h",
+        "signature": "static INLINEDBG void mulVecMat3(",
+        "first_line": 732,
+        "last_line": 737,
+        "sha256_lf": "34d84f255ae3628fad8a977a937eb904e6ce916ad988c2f0d7d2aa87293a78d8"
+      },
+      {
+        "file": "mathutil.c",
+        "signature": "void getVec3YP(",
+        "first_line": 693,
+        "last_line": 700,
+        "sha256_lf": "090285544dbb1888384b33489958a0fecdcd6ad9f5db51567097c5dacf83b829"
+      },
+      {
+        "file": "mathutil.c",
+        "signature": "void createMat3RYP(",
+        "first_line": 783,
+        "last_line": 804,
+        "sha256_lf": "f2f6ab56e37a6cb4bcc3701467ead9ec79ddd40e288778f7b59e3abe7fc10c8f"
+      },
+      {
+        "file": "mathutil.c",
+        "signature": "void camLookAt(",
+        "first_line": 138,
+        "last_line": 145,
+        "sha256_lf": "ac304e62dcd7df33d3bece657b76b4b48c55c15c585c20c1f1c90d3d98ffdcd6"
+      },
+      {
+        "file": "mathutil.c",
+        "signature": "void transposeMat3Copy(",
+        "first_line": 365,
+        "last_line": 378,
+        "sha256_lf": "c573e279d365623ad5b005e75b9403a7e3b38ca689980ef353b8d6efaab83a0b"
+      },
+      {
+        "file": "entworldcoll.c",
+        "signature": "static int SlideWall(",
+        "first_line": 132,
+        "last_line": 216,
+        "sha256_lf": "d23e3c224d0f345fc1aee80096af8435dc57d3b8a9435d2095e6c31ce7097c78"
+      },
+      {
+        "file": "entworldcoll.c",
+        "signature": "static void reflectOffPlane(",
+        "first_line": 346,
+        "last_line": 365,
+        "sha256_lf": "1eb16f904887706fdce18f6457a1c3dfe893b5ebdc38f67b9d8ac32dd98e4571"
+      },
+      {
+        "file": "entworldcoll.c",
+        "signature": "static void makeSteepSlopesSlippery(",
+        "first_line": 514,
+        "last_line": 536,
+        "sha256_lf": "d55184d684e6ffe7530225fd8c8953377d9d6360cabfaf448943910dbc036711"
+      },
+      {
+        "file": "entworldcoll.c",
+        "signature": "void entWorldGetSurface(",
+        "first_line": 542,
+        "last_line": 558,
+        "sha256_lf": "0fdbc7f989a2329ba7e8bc4ebbf58bb09a387d11abfa96d0accc1f928f23b09e"
+      },
+      {
+        "file": "entworldcoll.c",
+        "signature": "SurfaceParams *entWorldGetSurfaceModifier(",
+        "first_line": 560,
+        "last_line": 584,
+        "sha256_lf": "2a15eb39e83b3716f135b869593014f06f00e271886a7e2a46f3b944e405e43a"
+      },
+      {
+        "file": "entworldcoll.c",
+        "signature": "void entWorldApplySurfMods(",
+        "first_line": 586,
+        "last_line": 593,
+        "sha256_lf": "cdf02bad1a7b9261cc9bed5668563d95eac9f1df1eb9a2a58f5ca1199c34358d"
+      },
+      {
+        "file": "entworldcoll.c",
+        "signature": "void entWorldApplyTextureOverrides(",
+        "first_line": 595,
+        "last_line": 614,
+        "sha256_lf": "8e7181bc58ec7ea159869e73fda250f7e3e0d0096fc20deec833daab0a155cef"
+      },
+      {
+        "file": "entworldcoll.c",
+        "signature": "void entWorldCollide(",
+        "first_line": 710,
+        "last_line": 1325,
+        "sha256_lf": "8cdc354ec43d292ac4d85ce4667445edb2c91e52377be72abf0a556aca7da77b"
+      }
+    ],
+    "original_program_sha256": "13344d92e3875fc0d54979372ee302e074bec26d7f9c0ebc5a7ddcc468c27484",
+    "scope": "Original active entWorldCollide velocity and surface laws; neutral movement modifiers; exact original math helpers. Separate original SlideWall contact transcript cases. World query/entity callbacks are stubbed. Does not prove original world queries or full original WALK equivalence.",
+    "stubs": [
+      "Entity/MotionState layout",
+      "world and entity collision callbacks",
+      "platform math intrinsics mapped to libm",
+      "performance instrumentation"
+    ]
+  },
+  "source_velocity_cases": 12736,
+  "source_slide_transcripts": 144,
+  "max_velocity_error": 0.0,
+  "max_slide_error": 0.0,
+  "authored_fixture": {
+    "filename": "walkable.bin",
+    "bytes": 202880,
+    "sha256": "d7694d1dc83e2d95cea045e7f4912c1f9211aafed3fdebbab42943aab30a4d62"
+  },
+  "adapter_sanitizer": {
+    "passed": true,
+    "checks": 100,
+    "failed": 0
+  },
+  "authored_scene_sanitizer": {
+    "passed": true,
+    "checks": 364,
+    "failed": 0,
+    "authored_triangles": 276,
+    "ground_y": 74,
+    "forward_blocked_position": [
+      582.518188,
+      74,
+      -1384.05054
+    ],
+    "source_wall_queries": true,
+    "forward_slide_test_bounded_steps": 0,
+    "scene_guard_separately_exercised": true
+  },
+  "asan_ubsan_passed": true,
+  "leak_sanitizer_enabled": true,
+  "leak_detection": "enabled; no allocator leaks detected",
+  "scope": "Original active WALK velocity/feet/head/wall and CTri query kernels in bounded authored static geometry; neutral source modifiers, fixed 30Hz, source max five substeps; no entity collision, jumping/powers/full tracker streaming/server prediction.",
+  "physical_gates19_21_accepted": false,
+  "runtime_sources": {
+    "coh_walk.c": {
+      "bytes": 15089,
+      "sha256": "998c64c472613cf6e8da38218a8d30bcbf49d29c273520180948d4a2e90c50be"
+    },
+    "coh_walk_selftest.c": {
+      "bytes": 2171,
+      "sha256": "0b5d71334e5d0f883b14a63d30bdfc8295bc5fddb5f8936d3b8c28bf613ec84f"
+    },
+    "source_world.c": {
+      "bytes": 35313,
+      "sha256": "4225a8576a5a536cac44ab107cbfe9bdd7bd3d1ab04bbdb6c2679b375aec9d55"
+    },
+    "source_ctri.c": {
+      "bytes": 41795,
+      "sha256": "1862c65a355ddfa71d1264671effa36addc2a8a3497b7c0825465835603a5670"
+    },
+    "source_tritri.c": {
+      "bytes": 25477,
+      "sha256": "c3fabb12b9a31baac2b6f0bf83b9c0f9456941f897167524e5dfcd88837005c3"
+    }
+  }
+}

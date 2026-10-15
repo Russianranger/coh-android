@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "gates": [
+    19,
+    20,
+    21
+  ],
+  "stage": "authored assets and source host qualification",
+  "status": "completed",
+  "passed": true,
+  "source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "workflow_run_id": "38656997946",
+  "proofs": [
+    {
+      "file": "host-walkable-proof.json",
+      "bytes": 349,
+      "sha256": "53135ca6cd554e0df214f482a24fc42611d648b260f38967afb7981de3df70e0"
+    },
+    {
+      "file": "host-walk-proof.json",
+      "bytes": 7117,
+      "sha256": "4ac5d6e2e455dcc71eae821e869297b239b5b24629a49ea2058f34c4e3417acb"
+    },
+    {
+      "file": "host-directional-proof.json",
+      "bytes": 18206,
+      "sha256": "0f16c955b525c55bd99d033bcd78863aa99b00d7ba7bcb45a2a6e03862f470de"
+    },
+    {
+      "file": "host-directional-sampler-proof.json",
+      "bytes": 3527,
+      "sha256": "3790fceedf1f7d435f68ef7a63c895f7efe2e1c30456648f41a1d88cb9f980c7"
+    },
+    {
+      "file": "lifecycle/lifecycle-host-checks.json",
+      "bytes": 1307,
+      "sha256": "45230b4c70cb548020c41249685d36e8bd71f2f61a29ee72ef279b0ce01d7d00"
+    },
+    {
+      "file": "depth-codec-host.json",
+      "bytes": 773,
+      "sha256": "dcedee2a626da4960ea39d7acf84d13d4a456a06a8c4a2a5b01e03182c5c4fa2"
+    },
+    {
+      "file": "snapshot-host.json",
+      "bytes": 1170,
+      "sha256": "e3c09ca408f2d5fc1221f02a3a23d9fab22fecb12f381e193670e3b9ac2c03bc"
+    }
+  ],
+  "full_client_execution_verified": false,
+  "thor_device_execution_verified": false
+}

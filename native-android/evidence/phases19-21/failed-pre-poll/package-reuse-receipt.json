@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "package_bytes_reused": true,
+  "original_runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "validation_head": "7df5fc683276e7e38d2bdc073fa1d3d25b8d5881",
+  "validation_workflow_run_id": "38658242659",
+  "validation_driver_sha256": "eac032af21655e7ef350a60474676a8bd7a8600ddeaec942c1eb9980aeee8534",
+  "original_workflow_run_id": "38656997946",
+  "original_artifact_id": 11936304916,
+  "original_archive_bytes": 7291533,
+  "original_archive_sha256": "662b679f33854c704b831a061ba03a5d142b8f987686f783293f51ef84503151",
+  "original_build_receipt_sha256": "fdf108fa56d45419e867a453ef28a0728348f8f0c4dd9fbfa32c2235e6fb1ae1",
+  "original_host_stage_sha256": "1b4700f07c4e843efdeac138bebfc77078f4fd81eb9c3e6f91ac7d5ffe99794b",
+  "artifacts": [
+    {
+      "file": "CoH-Native-Session-Client-0.2.0-arm64.apk",
+      "bytes": 2344055,
+      "sha256": "2d59e2b39af99facc6f3ac26b310aeba85802542efabb1e71d90e2d33a00de92",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_session_client.so",
+        "bytes": 237552,
+        "sha256": "0737ba7883ff2184cc1722abc243ea5a6792f723c979b53be506c3c30aacbb20"
+      },
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_fixtures_verified": true,
+      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522"
+    },
+    {
+      "file": "CoH-Native-Session-Client-0.2.0-emulator-x86_64.apk",
+      "bytes": 2361364,
+      "sha256": "45752990736305bc1520d81e9c6507bb4b53a8322970bed8535085ff0f44af4e",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "native_library": {
+        "file": "lib/x86_64/libcoh_session_client.so",
+        "bytes": 254864,
+        "sha256": "811eb7a709064dd46bca9b65238cd1d73efd27f03d84a5b50acae56e3359a5c4"
+      },
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_fixtures_verified": true,
+      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522"
+    }
+  ],
+  "retained_files": [
+    "CoH-Native-Session-Client-0.2.0-arm64.apk",
+    "CoH-Native-Session-Client-0.2.0-emulator-x86_64.apk",
+    "SHA256SUMS",
+    "accepted-assets-recovery.json",
+    "apk-badging-arm64.txt",
+    "apk-badging-emulator-x86_64.txt",
+    "apk-signature-arm64.txt",
+    "apk-signature-emulator-x86_64.txt",
+    "asset-manifest.json",
+    "build-receipt.json",
+    "depth-codec-host.json",
+    "host-directional-proof.json",
+    "host-directional-sampler-proof.json",
+    "host-walk-proof.json",
+    "host-walkable-proof.json",
+    "legacy-locomotion-abi-proof.json",
+    "lifecycle/lifecycle-host-checks.json",
+    "session-fixture.json",
+    "snapshot-host.json",
+    "source-floor-resolution.json",
+    "source-validation-stage.json",
+    "walkable-fixture.json"
+  ],
+  "original_source_host_proofs_retained_unchanged": true,
+  "source_host_tests_rerun": false,
+  "original_emulator_results_reused": false,
+  "new_emulator_acceptance": false,
+  "thor_device_execution_verified": false,
+  "scope": "Pinned source/package qualifications only; current driver executes the exact unchanged APK separately"
+}

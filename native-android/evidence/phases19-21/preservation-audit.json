@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "base_commit": "8e83f2343f29c7b4baee7876268c5ccb1e8b01b4",
+  "baseline_tracked_files": 627,
+  "unchanged_baseline_files": 609,
+  "changed_files": 18,
+  "missing_files": 0,
+  "existing_qualification_or_physical_evidence_modified": false,
+  "conventional_launcher_or_client_modified": false,
+  "user_data_modified": false,
+  "scope": "Exact Git blob comparison in recovered native-and-workflows local checkout; pending final documentation edits are outside these baseline source counts. Commits use base trees and explicit native paths only.",
+  "accepted_0_1_0_application_preserved": true,
+  "new_application_id": "org.coh.sessionclient.walk",
+  "java_jni_namespace": "org.coh.sessionclient",
+  "signer": "Pinned intentionally public debug test fixture; enables future updates of separate native walking client",
+  "branch": "native-android",
+  "merge_to_main": false
+}

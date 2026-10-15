@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "passed": true,
+  "checks": 38,
+  "guard_sha256": "af08017c15a04f2fb821817149fd00ad54f1c7feb5f5cd58a89e07874c367e2d",
+  "scope": "Actual shipped guard over independent Git histories and unsafe ZIP mutation controls; no Android execution or device acceptance"
+}

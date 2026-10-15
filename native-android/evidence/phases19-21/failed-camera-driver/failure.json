@@ -1,0 +1,276 @@
+{
+  "schema": 1,
+  "gates": [
+    19,
+    20,
+    21
+  ],
+  "status": "failed_camera_driver",
+  "passed": false,
+  "runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "workflow_run_id": 38656997946,
+  "job_id": 116169007472,
+  "artifact_id": 11936304916,
+  "artifact_zip_bytes": 7291533,
+  "artifact_zip_sha256": "662b679f33854c704b831a061ba03a5d142b8f987686f783293f51ef84503151",
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38656997946",
+  "stop_operation": "turn_right_walk_camera before right locomotion case",
+  "reason": "Driver sent two genuine 80%-width swipes assuming normalized coordinates [0,1]; shipped adapter uses [-1,1]. Actual yaw -2.48158598 reflects 3.8016 radians wrapping; retained target was 1.2..2.5. Fix uses one genuine swipe without changing target or native code.",
+  "native_failure": false,
+  "frames_before_driver_failure": 1829,
+  "passed_partial_directional_cases": [
+    "forward",
+    "backward",
+    "left"
+  ],
+  "grounded": true,
+  "source_tf_mismatches": 0,
+  "walkable_tf_mismatches": 0,
+  "arm64_build_lint_and_integrity_passed": true,
+  "apks_available_for_byte_identical_reuse": true,
+  "physical_acceptance": false,
+  "retained_partial_reports": [
+    {
+      "file": "accepted-assets-recovery.json",
+      "bytes": 1977,
+      "sha256": "bef8e62efa5c6b8ec123281b4ab1ae4e0efa73449238e4ee33628f4fec65c8f3",
+      "retained_file": "accepted-assets-recovery.json",
+      "retained_bytes": 1977,
+      "retained_sha256": "bef8e62efa5c6b8ec123281b4ab1ae4e0efa73449238e4ee33628f4fec65c8f3"
+    },
+    {
+      "file": "apk-badging-arm64.txt",
+      "bytes": 677,
+      "sha256": "618e02f2a638e490c25a1bee18a44d5913a34190be77eae8f76c18817c724c3a",
+      "retained_file": "apk-badging-arm64.txt",
+      "retained_bytes": 677,
+      "retained_sha256": "618e02f2a638e490c25a1bee18a44d5913a34190be77eae8f76c18817c724c3a"
+    },
+    {
+      "file": "apk-badging-emulator-x86_64.txt",
+      "bytes": 674,
+      "sha256": "13532633f98849e7eb9b6cfe54d8bf90c9dc8f0b5ae8f8c0439562f1101f2272",
+      "retained_file": "apk-badging-emulator-x86_64.txt",
+      "retained_bytes": 674,
+      "retained_sha256": "13532633f98849e7eb9b6cfe54d8bf90c9dc8f0b5ae8f8c0439562f1101f2272"
+    },
+    {
+      "file": "apk-signature-arm64.txt",
+      "bytes": 983,
+      "sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146",
+      "retained_file": "apk-signature-arm64.txt",
+      "retained_bytes": 983,
+      "retained_sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146"
+    },
+    {
+      "file": "apk-signature-emulator-x86_64.txt",
+      "bytes": 983,
+      "sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146",
+      "retained_file": "apk-signature-emulator-x86_64.txt",
+      "retained_bytes": 983,
+      "retained_sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146"
+    },
+    {
+      "file": "asset-manifest.json",
+      "bytes": 836,
+      "sha256": "79750a47eb092763c0beaee6c19ab05b34612fd79e4c56bf2ed506f1e0693ac8",
+      "retained_file": "asset-manifest.json",
+      "retained_bytes": 836,
+      "retained_sha256": "79750a47eb092763c0beaee6c19ab05b34612fd79e4c56bf2ed506f1e0693ac8"
+    },
+    {
+      "file": "build-receipt.json",
+      "bytes": 5143,
+      "sha256": "fdf108fa56d45419e867a453ef28a0728348f8f0c4dd9fbfa32c2235e6fb1ae1",
+      "retained_file": "build-receipt.json",
+      "retained_bytes": 5143,
+      "retained_sha256": "fdf108fa56d45419e867a453ef28a0728348f8f0c4dd9fbfa32c2235e6fb1ae1"
+    },
+    {
+      "file": "depth-codec-host.json",
+      "bytes": 773,
+      "sha256": "dcedee2a626da4960ea39d7acf84d13d4a456a06a8c4a2a5b01e03182c5c4fa2",
+      "retained_file": "depth-codec-host.json",
+      "retained_bytes": 773,
+      "retained_sha256": "dcedee2a626da4960ea39d7acf84d13d4a456a06a8c4a2a5b01e03182c5c4fa2"
+    },
+    {
+      "file": "emulator-button-tap-proof.json",
+      "bytes": 27743,
+      "sha256": "7f293d053aa30566ccb95c7abc772ed23b8664995817a18300b25ba25f76e122",
+      "retained_file": "emulator-button-tap-proof.json",
+      "retained_bytes": 27743,
+      "retained_sha256": "7f293d053aa30566ccb95c7abc772ed23b8664995817a18300b25ba25f76e122"
+    },
+    {
+      "file": "emulator-directional-walk-proof.json",
+      "bytes": 1228398,
+      "sha256": "f1598c1e36c0655d07fa4b619e3e81c4ce59a737abc286862a3fdd42b7b3da74",
+      "retained_file": "emulator-directional-walk-proof.json.gz",
+      "retained_bytes": 42089,
+      "retained_sha256": "28a8cca0c0b06001f2641112c1a472e86fca0d52872d1b24a2192ebd993b6a1e"
+    },
+    {
+      "file": "emulator-initial-report.json",
+      "bytes": 13151,
+      "sha256": "926ed69336ae92edcff877229c3449844f41d2d77301ba990b9cfda357a9a150",
+      "retained_file": "emulator-initial-report.json",
+      "retained_bytes": 13151,
+      "retained_sha256": "926ed69336ae92edcff877229c3449844f41d2d77301ba990b9cfda357a9a150"
+    },
+    {
+      "file": "emulator-initial-scene.png",
+      "bytes": 877029,
+      "sha256": "67f1086b886512c064a732290c7abf9e1aed4e9218886662c9736eb9ca5c449f",
+      "retained_file": "emulator-initial-scene.png",
+      "retained_bytes": 877029,
+      "retained_sha256": "67f1086b886512c064a732290c7abf9e1aed4e9218886662c9736eb9ca5c449f"
+    },
+    {
+      "file": "emulator-input-area-proof.json",
+      "bytes": 1294,
+      "sha256": "f4457c88c71898c054593efbb9bfecf8f8962dccef675feb069cc8b659066868",
+      "retained_file": "emulator-input-area-proof.json",
+      "retained_bytes": 1294,
+      "retained_sha256": "f4457c88c71898c054593efbb9bfecf8f8962dccef675feb069cc8b659066868"
+    },
+    {
+      "file": "emulator-input-area-screen.png",
+      "bytes": 877140,
+      "sha256": "0d45f15863a6c1db7cc530af3c8be61a3ded402e243caa6c227c9ba6b93dba2c",
+      "retained_file": "emulator-input-area-screen.png",
+      "retained_bytes": 877140,
+      "retained_sha256": "0d45f15863a6c1db7cc530af3c8be61a3ded402e243caa6c227c9ba6b93dba2c"
+    },
+    {
+      "file": "emulator-logcat.txt",
+      "bytes": 2413395,
+      "sha256": "8d769a294c1f4f52bd672186a9595a485db4fcfa7a836f024a030245a9fb64ce",
+      "retained_file": "emulator-logcat.txt.gz",
+      "retained_bytes": 314459,
+      "retained_sha256": "92f9896514bab28b675d53c0e5762916cb0689597cf316c4fdd4c07e45899ee1"
+    },
+    {
+      "file": "emulator-screenshot.png",
+      "bytes": 806779,
+      "sha256": "cf29d87d7ba952170623c00411d087a247c344fa0fef3f9f1c0a9f1874c6fc5b",
+      "retained_file": "emulator-screenshot.png",
+      "retained_bytes": 806779,
+      "retained_sha256": "cf29d87d7ba952170623c00411d087a247c344fa0fef3f9f1c0a9f1874c6fc5b"
+    },
+    {
+      "file": "emulator-session-report.json",
+      "bytes": 210973,
+      "sha256": "34e9ab56d4034efcda0732e9a382d0622a0afd76056050f73dc5cfcb54d62b0a",
+      "retained_file": "emulator-session-report.json.gz",
+      "retained_bytes": 8102,
+      "retained_sha256": "1cb522e4bd8498cfc233b4e6adcdce88bcadfccdc7704bc7cc74f35983e92c32"
+    },
+    {
+      "file": "emulator-ui.xml",
+      "bytes": 5454,
+      "sha256": "5fe66ba67dac62549b0d856236b5d128089d6e8169687d76b3de37c589409a17",
+      "retained_file": "emulator-ui.xml",
+      "retained_bytes": 5454,
+      "retained_sha256": "5fe66ba67dac62549b0d856236b5d128089d6e8169687d76b3de37c589409a17"
+    },
+    {
+      "file": "host-directional-proof.json",
+      "bytes": 18206,
+      "sha256": "0f16c955b525c55bd99d033bcd78863aa99b00d7ba7bcb45a2a6e03862f470de",
+      "retained_file": "host-directional-proof.json",
+      "retained_bytes": 18206,
+      "retained_sha256": "0f16c955b525c55bd99d033bcd78863aa99b00d7ba7bcb45a2a6e03862f470de"
+    },
+    {
+      "file": "host-directional-sampler-proof.json",
+      "bytes": 3527,
+      "sha256": "3790fceedf1f7d435f68ef7a63c895f7efe2e1c30456648f41a1d88cb9f980c7",
+      "retained_file": "host-directional-sampler-proof.json",
+      "retained_bytes": 3527,
+      "retained_sha256": "3790fceedf1f7d435f68ef7a63c895f7efe2e1c30456648f41a1d88cb9f980c7"
+    },
+    {
+      "file": "host-walk-proof.json",
+      "bytes": 7117,
+      "sha256": "4ac5d6e2e455dcc71eae821e869297b239b5b24629a49ea2058f34c4e3417acb",
+      "retained_file": "host-walk-proof.json",
+      "retained_bytes": 7117,
+      "retained_sha256": "4ac5d6e2e455dcc71eae821e869297b239b5b24629a49ea2058f34c4e3417acb"
+    },
+    {
+      "file": "host-walkable-proof.json",
+      "bytes": 349,
+      "sha256": "53135ca6cd554e0df214f482a24fc42611d648b260f38967afb7981de3df70e0",
+      "retained_file": "host-walkable-proof.json",
+      "retained_bytes": 349,
+      "retained_sha256": "53135ca6cd554e0df214f482a24fc42611d648b260f38967afb7981de3df70e0"
+    },
+    {
+      "file": "legacy-locomotion-abi-proof.json",
+      "bytes": 6373,
+      "sha256": "65287816f7e75085c2ad54f1701fbd5c630dd5a320952216fdd2eed2e074e58c",
+      "retained_file": "legacy-locomotion-abi-proof.json",
+      "retained_bytes": 6373,
+      "retained_sha256": "65287816f7e75085c2ad54f1701fbd5c630dd5a320952216fdd2eed2e074e58c"
+    },
+    {
+      "file": "lifecycle/lifecycle-host-checks.json",
+      "bytes": 1307,
+      "sha256": "45230b4c70cb548020c41249685d36e8bd71f2f61a29ee72ef279b0ce01d7d00",
+      "retained_file": "lifecycle/lifecycle-host-checks.json",
+      "retained_bytes": 1307,
+      "retained_sha256": "45230b4c70cb548020c41249685d36e8bd71f2f61a29ee72ef279b0ce01d7d00"
+    },
+    {
+      "file": "session-fixture.json",
+      "bytes": 5185,
+      "sha256": "22fdfa072914e449d1d2f89cc42e486e104a1e093b48cafa6157c0121a6cf25d",
+      "retained_file": "session-fixture.json",
+      "retained_bytes": 5185,
+      "retained_sha256": "22fdfa072914e449d1d2f89cc42e486e104a1e093b48cafa6157c0121a6cf25d"
+    },
+    {
+      "file": "snapshot-host.json",
+      "bytes": 1170,
+      "sha256": "e3c09ca408f2d5fc1221f02a3a23d9fab22fecb12f381e193670e3b9ac2c03bc",
+      "retained_file": "snapshot-host.json",
+      "retained_bytes": 1170,
+      "retained_sha256": "e3c09ca408f2d5fc1221f02a3a23d9fab22fecb12f381e193670e3b9ac2c03bc"
+    },
+    {
+      "file": "source-floor-resolution.json",
+      "bytes": 580,
+      "sha256": "ec1821500b4c0564c0d08372452c77f192380bb8d1a0bac2fc2b9a47d00ddba0",
+      "retained_file": "source-floor-resolution.json",
+      "retained_bytes": 580,
+      "retained_sha256": "ec1821500b4c0564c0d08372452c77f192380bb8d1a0bac2fc2b9a47d00ddba0"
+    },
+    {
+      "file": "source-validation-stage.json",
+      "bytes": 1490,
+      "sha256": "1b4700f07c4e843efdeac138bebfc77078f4fd81eb9c3e6f91ac7d5ffe99794b",
+      "retained_file": "source-validation-stage.json",
+      "retained_bytes": 1490,
+      "retained_sha256": "1b4700f07c4e843efdeac138bebfc77078f4fd81eb9c3e6f91ac7d5ffe99794b"
+    },
+    {
+      "file": "tap-host-checks.json",
+      "bytes": 389,
+      "sha256": "3eb1e54c08a016b13dae94dadfb9533962486626bfcd6b19e0c6eab6c5199838",
+      "retained_file": "tap-host-checks.json",
+      "retained_bytes": 389,
+      "retained_sha256": "3eb1e54c08a016b13dae94dadfb9533962486626bfcd6b19e0c6eab6c5199838"
+    },
+    {
+      "file": "walkable-fixture.json",
+      "bytes": 28031,
+      "sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1",
+      "retained_file": "walkable-fixture.json",
+      "retained_bytes": 28031,
+      "retained_sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1"
+    }
+  ],
+  "compression": "Large textual original evidence is stored losslessly as gzip; original length and SHA256 remain indexed. PNGs are retained unchanged.",
+  "superseded_by": "See final qualification.json; original failed evidence remains unchanged."
+}

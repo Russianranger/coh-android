@@ -1,0 +1,33 @@
+{
+  "eligible": true,
+  "reason": "Only allowlisted driver, workflow, documentation or evidence changes",
+  "changes": [
+    {
+      "path": ".github/workflows/native-session-client.yml",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/session-client/tools/emulator_check.py",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "status": "M"
+    },
+    {
+      "path": "native-android/session-client/tools/reuse_walkable_host_check.py",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    },
+    {
+      "path": "native-android/session-client/tools/reuse_walkable_package.py",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "status": "A"
+    }
+  ],
+  "schema": 1,
+  "original_runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "validation_head": "7df5fc683276e7e38d2bdc073fa1d3d25b8d5881"
+}

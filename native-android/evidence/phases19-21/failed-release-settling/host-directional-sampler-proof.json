@@ -1,0 +1,93 @@
+{
+  "schema": "coh-native-directional-sampler-proof-v1",
+  "passed": true,
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "poses": 1165,
+  "reachable_bones": 60,
+  "observed_moves": [
+    "Idle_Ready",
+    "Idle_Walk_Post",
+    "Ready",
+    "RunCycle",
+    "RunPost",
+    "RunPre",
+    "Run_Back_Cycle",
+    "Run_Back_Pre",
+    "Run_Left_Cycle",
+    "Run_Left_Pre",
+    "Run_Right_Cycle",
+    "Run_Right_Pre"
+  ],
+  "stages": {
+    "morphology": {
+      "components": 309,
+      "maximum_absolute_error": 0.0
+    },
+    "retarget_delta": {
+      "components": 2160,
+      "maximum_absolute_error": 1.862645149230957e-09
+    },
+    "local_rotation": {
+      "components": 279600,
+      "maximum_absolute_error": 0.0
+    },
+    "local_position": {
+      "components": 419400,
+      "maximum_absolute_error": 2.384185791015625e-07
+    },
+    "world_hierarchy": {
+      "components": 838800,
+      "maximum_absolute_error": 9.5367431640625e-07
+    },
+    "blend_state": {
+      "components": 209700,
+      "maximum_absolute_error": 0.0
+    }
+  },
+  "rotation_early_termination_bone_frames": 12817,
+  "translation_early_termination_bone_frames": 16307,
+  "invalid_atomic_sampler_checks": 12,
+  "original_sources": {
+    "mathutil.h": {
+      "sha256_lf": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "functions": {
+        "mulMat3Inline": "588b61c732ce238dbde15f6ee3e682a5034c8bb36270e1d4503b55dffe375d16",
+        "nearSameVec3Tol": "1b6fde1ff869de7d45ac6ea54e15bc8139bd334e01fcd5bc5e9936771e9ebd31"
+      }
+    },
+    "mathutil.c": {
+      "sha256_lf": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "functions": {
+        "mulMat3": "2a2726749f2a887ee256cbc2d419b3f59dff205531d573cf545529aa203da4c9",
+        "scaleMat3Vec3": "a25503311cdffb1c03ac89fa2019cb87e4a732f3c4e036d7ef033c3e0824ded9"
+      }
+    },
+    "seqregistration.c": {
+      "sha256_lf": "9ccf1b75e4def1a549e7bc2adc9227548111140807ab969ededacc031bdddb98",
+      "functions": {
+        "unscaleBone": "fe426803f8423a49b95d5b2036fd9643b42d59f6d220a4bfcd282d7051ea087c",
+        "scaleBone": "7ba5fa545d632ee9e7e1d91ae5ecfbc7e23c738c9ad586c1b467cc6880ede11c"
+      }
+    },
+    "seqskeleton.c": {
+      "sha256_lf": "b0c01576fa013f05d507e0f638550866810dd63cfb1ee1106cf9f96f7477a47c",
+      "functions": {
+        "changeBoneScaleEx": "f6adcdb092cb3cdb75a2746b0c54181efb0cdacf8493a892fa5d7ed380627573"
+      }
+    },
+    "seqanimate.c": {
+      "sha256_lf": "a4926555f4da4052058f06d28a195edcedae16cb7e905c05e8963afe9915ed22",
+      "functions": {
+        "animGetNextFrame": "3eff2f5cd3bc3b3dcebfff06fcc6f7166a4855b5698d1c95d6f6375b6b7dc4c2",
+        "computeHipCorrectionScale": "e2f76156a894d1baee36efdf2704dbd37fe4a6fe8c30f6dea794e6ee7bf54c7f",
+        "animateGfxNodeBone": "bbc330df7c4c0ab35791e38afb52bb33ea508178d7907fcc3352d2d29cb3650e",
+        "animInterpNodeWithLastPosition": "fe9817396ab43b81a83e48abd5b8cc650cd7bc98e17f4e9a3f1550b71c495889"
+      }
+    }
+  },
+  "source_program_sha256": "088861b75ff19f9f0db518bc632ff5d3cd6e27ced629afe58017d85f966f18d4",
+  "fixture_sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7",
+  "morph_sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02",
+  "scope": "Original scalar raw-key codecs, parent-type animation delta, morphology, independent per-bone transition blend, hierarchy composition. Neutral aiming; no pixels/server/GPU."
+}

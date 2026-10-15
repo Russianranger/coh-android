@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "gates": [
+    19,
+    20,
+    21
+  ],
+  "stage": "authored assets and source host qualification",
+  "status": "started",
+  "passed": false,
+  "source_commit": "7a7d2cba4aa4c5cbb55ceb4d85beccd881403a91",
+  "workflow_run_id": "38655914488",
+  "proofs": [],
+  "full_client_execution_verified": false,
+  "thor_device_execution_verified": false
+}

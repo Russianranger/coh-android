@@ -1,0 +1,41 @@
+{
+  "schema": "coh-native-session-lifecycle-host-v1",
+  "passed": true,
+  "checks": 22,
+  "negative_control_checks": 11,
+  "source": "native-android/session-client/app/src/main/java/org/coh/sessionclient/MainActivity.java",
+  "source_sha256": "ec5511a9ca965ff07f81d91b7ee73db6891738828ef07309ffa5eed101958cd5",
+  "scope": "Actual extracted Java callback/sink/event/save methods under minimal host transport stubs; destruction guards only, not Android framework ordering or native resource cleanup",
+  "entry_points": [
+    "surface_changed",
+    "surface_destroyed",
+    "window_focus",
+    "key_callback",
+    "motion_callback",
+    "event",
+    "sink_focus",
+    "sink_key",
+    "sink_axes",
+    "sink_touch",
+    "save_report"
+  ],
+  "retired_nonzero_handle": 7,
+  "destroyed_callbacks_emit_no_jni_snapshot_adapter_input_render_or_report_effects": true,
+  "live_positive_controls_passed": true,
+  "negative_control": {
+    "mutation": "Remove only each extracted destruction guard; keep shipped remaining body intact",
+    "detected_for_every_entry_point": [
+      "surface_changed",
+      "surface_destroyed",
+      "window_focus",
+      "key_callback",
+      "motion_callback",
+      "event",
+      "sink_focus",
+      "sink_key",
+      "sink_axes",
+      "sink_touch",
+      "save_report"
+    ]
+  }
+}

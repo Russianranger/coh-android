@@ -48,9 +48,9 @@ counters and cumulative contact/ground/slide/bound counters support qualificatio
   below 1e-6. The old COHLOCO1 behavior is retained and rechecked because the
   native view/state ABI grew; its original receipts are not rewritten.
 - New GEO delta channels execute original source decoding. Indexed render and
-  collision vertices compare byte-for-byte. Complete source trick lookup must
-  pass in the full CI checkout; sparse local preparation explicitly retains
-  that audit as pending. The genuine grey fallback is qualified from the
+  collision vertices compare byte-for-byte. The full CI checkout passed the
+  complete 1,585-file source trick lookup audit, including the selected floor
+  aliases and immutable trick-tree identity. The genuine grey fallback is qualified from the
   unchanged lookup function and actual legacy binding statement.
 - Native report serialization tests the exact Session declaration and shipped
   serializer, including all twelve animation counters and sixteen depth
@@ -68,9 +68,57 @@ checks new scene rendering, directional transitions, bench blocking/sliding,
 Home/Recreate/Reset and real document export. No automatic movement script or
 synthetic JNI input substitutes for the Android input tests.
 
-**Implementation and local source/host checks are complete. Android build and
-emulator qualification are pending until their final receipts are recorded.**
-**Physical gates 19–21 remain pending.** Accepted gates 13–18 are unchanged.
+## Current package and qualification state
+
+Source/host checks, the complete source trick audit, ARM64 and x86_64 builds,
+Android lint, signatures and exact package/asset/ELF checks passed for runtime
+`8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d` in
+[build workflow 38656997946](https://github.com/Russianranger/coh-android/actions/runs/38656997946).
+The original [build receipt](evidence/phases19-21/failed-camera-driver/build-receipt.json)
+and [completed source stage](evidence/phases19-21/failed-camera-driver/source-validation-stage.json)
+remain byte-identical during later driver-only runs. The strict reuse guard
+rejects runtime, application, asset, adapter, shader or source dependency changes.
+
+**The combined emulator procedure remains pending. Physical gates 19–21 also
+remain pending.** Later runs passed individual directional, interruption,
+reversal and quick-tap checks, but the latest preserved run stopped at its
+grounded slide predicate. These partial checks do not qualify the whole batch.
+Accepted gates 13–18 and their original evidence are unchanged.
+
+The [retained source-release settling proof](evidence/phases19-21/failed-slide-driver/emulator-walk-settling-proof.json.gz)
+contains six successful release cases. Each observes actual Android release,
+drained native input edges and zero desired source controls, then requires a
+pose window advancing at least 30 source ticks within the unchanged .001-unit
+tolerance. The retained windows advance 30–59 ticks with zero measured endpoint
+displacement. Ready animation alone is not treated as zero physics velocity;
+the original source ground friction and collision code remain unchanged.
+
+Driver recovery history is retained separately: the
+[camera case](evidence/phases19-21/failed-camera-driver/failure.json) exposed
+the shipped adapter's normalized swipe range; the
+[RunPre case](evidence/phases19-21/failed-pre-poll/failure.json) missed a brief
+current phase during ADB polling; the
+[release case](evidence/phases19-21/failed-release-settling/failure.json) required
+natural source settling before its stability check. The latest
+[slide case](evidence/phases19-21/failed-slide-driver/failure.json), workflow
+`38660735982` at driver `c47ba93017ca00a5cfbaa8494948e120210f6649`, retains a
+grounded slide at source tick 6047, a later grounded sample at 6051, and the first
+retained ungrounded sample at 6053 after prolonged diagonal input. The exact
+intervening ground-loss tick and geometric crossing point were not captured.
+Its final report has no native failure, GL/EGL error or transform mismatch.
+The portable-core workflow `38660735985` passed separately. Earlier source-pin,
+source-layout and NDK compile stops remain preserved in their own failure folders.
+
+Download the current ARM64 test package:
+[CoH-Native-Session-Client-0.2.0-arm64.apk](https://chatgpt.com/api/library/files/libfile_1f69175230b08191b4c8ea65e369139c/download)
+([original GitHub artifact 11936304916](https://github.com/Russianranger/coh-android/actions/runs/38656997946/artifacts/11936304916)).
+It is **2,344,055 bytes**, SHA256
+`2d59e2b39af99facc6f3ac26b310aeba85802542efabb1e71d90e2d33a00de92`.
+This is a verified build for testing, with combined emulator and physical
+acceptance still pending. The accepted
+[0.1.0 rollback artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705)
+and [original Thor procedure](session-client/THOR-TEST-16-18.md) remain available.
+
 No full Atlas, live server login/replication, full sequencer, GPU palette
 skinning or sustained performance acceptance is claimed.
 

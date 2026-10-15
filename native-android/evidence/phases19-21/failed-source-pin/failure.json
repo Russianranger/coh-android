@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "gates": [
+    19,
+    20,
+    21
+  ],
+  "status": "failed_before_apk_build",
+  "passed": false,
+  "source_commit": "003be7711639aad3d387d5aa88a5b5701588166d",
+  "workflow_run_id": 38655291392,
+  "job_id": 116163483631,
+  "artifact_id": 11936626133,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38655291392",
+  "artifact_url": "https://github.com/Russianranger/coh-android/actions/runs/38655291392/artifacts/11936626133",
+  "artifact_zip_sha256": "1a783b928f8b4e75718a6b5419e134cf9b0481d072dc647d87f43298ee5a17fc",
+  "stop_operation": "source host qualification",
+  "reason": "The original seqregistration.c byte pin had been calculated from connector-transcoded CP1252 comments; source verification rejected the canonical repository bytes before APK build. Fixed by canonical byte and Git blob pins.",
+  "apk_built": false,
+  "physical_acceptance": false,
+  "retained_partial_reports": [
+    {
+      "file": "accepted-assets-recovery.json",
+      "bytes": 1977,
+      "sha256": "bef8e62efa5c6b8ec123281b4ab1ae4e0efa73449238e4ee33628f4fec65c8f3"
+    },
+    {
+      "file": "asset-manifest.json",
+      "bytes": 836,
+      "sha256": "79750a47eb092763c0beaee6c19ab05b34612fd79e4c56bf2ed506f1e0693ac8"
+    },
+    {
+      "file": "host-walk-proof.json",
+      "bytes": 7117,
+      "sha256": "4ac5d6e2e455dcc71eae821e869297b239b5b24629a49ea2058f34c4e3417acb"
+    },
+    {
+      "file": "host-walkable-proof.json",
+      "bytes": 349,
+      "sha256": "53135ca6cd554e0df214f482a24fc42611d648b260f38967afb7981de3df70e0"
+    },
+    {
+      "file": "session-fixture.json",
+      "bytes": 5185,
+      "sha256": "22fdfa072914e449d1d2f89cc42e486e104a1e093b48cafa6157c0121a6cf25d"
+    },
+    {
+      "file": "source-floor-resolution.json",
+      "bytes": 580,
+      "sha256": "ec1821500b4c0564c0d08372452c77f192380bb8d1a0bac2fc2b9a47d00ddba0"
+    },
+    {
+      "file": "source-validation-stage.json",
+      "bytes": 362,
+      "sha256": "90b4138cdd5f00562a68afc156e13e5c9a8d9ff53a5135cf6c7c96e156fb01c2"
+    },
+    {
+      "file": "walkable-fixture.json",
+      "bytes": 28031,
+      "sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1"
+    }
+  ],
+  "superseded_by": "See final qualification.json; original partial receipts are unchanged."
+}

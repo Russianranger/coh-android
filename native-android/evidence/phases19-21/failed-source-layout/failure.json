@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "gates": [
+    19,
+    20,
+    21
+  ],
+  "status": "failed_before_apk_build",
+  "passed": false,
+  "source_commit": "7a7d2cba4aa4c5cbb55ceb4d85beccd881403a91",
+  "workflow_run_id": 38655914488,
+  "job_id": 116165511543,
+  "artifact_id": 11937455511,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38655914488",
+  "artifact_url": "https://github.com/Russianranger/coh-android/actions/runs/38655914488/artifacts/11937455511",
+  "artifact_zip_sha256": "e9b94ece5fa896126ef725a89fb592ebd0f0fc6ace4b3f3e1b1b207142dd1bb9",
+  "stop_operation": "source host qualification",
+  "reason": "The graph passed canonical source verification, then the accepted animation oracle requested upstream/animtrackanimate.c from a flat local source view absent in the full nested checkout. Fixed by staging exact verified source bytes into a temporary flat view.",
+  "apk_built": false,
+  "physical_acceptance": false,
+  "retained_partial_reports": [
+    {
+      "file": "accepted-assets-recovery.json",
+      "bytes": 1977,
+      "sha256": "bef8e62efa5c6b8ec123281b4ab1ae4e0efa73449238e4ee33628f4fec65c8f3"
+    },
+    {
+      "file": "asset-manifest.json",
+      "bytes": 836,
+      "sha256": "79750a47eb092763c0beaee6c19ab05b34612fd79e4c56bf2ed506f1e0693ac8"
+    },
+    {
+      "file": "host-directional-proof.json",
+      "bytes": 18206,
+      "sha256": "0f16c955b525c55bd99d033bcd78863aa99b00d7ba7bcb45a2a6e03862f470de"
+    },
+    {
+      "file": "host-walk-proof.json",
+      "bytes": 7117,
+      "sha256": "4ac5d6e2e455dcc71eae821e869297b239b5b24629a49ea2058f34c4e3417acb"
+    },
+    {
+      "file": "host-walkable-proof.json",
+      "bytes": 349,
+      "sha256": "53135ca6cd554e0df214f482a24fc42611d648b260f38967afb7981de3df70e0"
+    },
+    {
+      "file": "session-fixture.json",
+      "bytes": 5185,
+      "sha256": "22fdfa072914e449d1d2f89cc42e486e104a1e093b48cafa6157c0121a6cf25d"
+    },
+    {
+      "file": "source-floor-resolution.json",
+      "bytes": 580,
+      "sha256": "ec1821500b4c0564c0d08372452c77f192380bb8d1a0bac2fc2b9a47d00ddba0"
+    },
+    {
+      "file": "source-validation-stage.json",
+      "bytes": 362,
+      "sha256": "bf517ba72dd904015e6cf26f4b53c234253bb3bab8ce4be1ed4f77cb3f72f174"
+    },
+    {
+      "file": "walkable-fixture.json",
+      "bytes": 28031,
+      "sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1"
+    }
+  ],
+  "superseded_by": "See final qualification.json; original partial receipts are unchanged."
+}

@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "status": "preserved_followup_not_applied",
+  "postpush_driver_sha256": "40192941e9fbe4bb357a6843b5e8deaef628d37030bd7e987fd30967c7c4e16e",
+  "patch_file": "pending-framework-restore-check.patch",
+  "patch_sha256": "6ade01498443fdd1b0936defa777522f817c3e44fd4bf4d685b35ca363db09a4",
+  "reason": "An extra emulator-setting restoration assertion/receipt was added after a frozen driver push. Preserve it as a followup patch; that driver attempt already restores the original isolated emulator setting in finally. This extra guard has not executed on Android. No native runtime or user-data behavior changes.",
+  "host_checks_passed": 87,
+  "android_extra_guard_execution_verified": false,
+  "base_driver_commit": "2dd23ca653b4b55e1bbc0ff3fd4eb042605967d3",
+  "base_driver_sha256": "8c419b70f6662ba6fb2a503950fd47aa6daf28b89d8214093b525a03fad47e7b"
+}

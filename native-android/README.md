@@ -50,7 +50,26 @@ recovered. The raw physical report is preserved. Gates 13–15 are accepted with
 this isolated probe scope; integrated character movement, persistent gameplay
 state and real server interoperability remain later milestones.
 
-[PHASES16-18.md](PHASES16-18.md) implements the next offline native session batch: a persistent shared Wretch/Atlas scene, source-controlled NOCOLL movement and authored forward Ready/RunCycle/RunPost locomotion. Source host/sanitizer checks, signed ARM64 build/lint/integrity and Android 13 emulator qualification passed in [workflow 38637681649](https://github.com/Russianranger/coh-android/actions/runs/38637681649), with 2,237 frames, real input, held-axis Home cleanup/recovery, export and rendered reset. The [qualified ARM64 artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705) and [receipt](evidence/phases16-18/qualification.json) bind the unchanged runtime APK source and corrected driver separately. Physical Thor/controller acceptance was confirmed by the user on October 14, 2026; the [physical receipt](evidence/phases16-18/thor-acceptance-20261014.json) and raw report are retained. The [combined Thor test](session-client/THOR-TEST.md) remains available for regression checks. Earlier accepted probes and the conventional client remain available.
+[PHASES16-18.md](PHASES16-18.md) implements the next offline native session batch: a persistent shared Wretch/Atlas scene, source-controlled NOCOLL movement and authored forward Ready/RunCycle/RunPost locomotion. Source host/sanitizer checks, signed ARM64 build/lint/integrity and Android 13 emulator qualification passed in [workflow 38637681649](https://github.com/Russianranger/coh-android/actions/runs/38637681649), with 2,237 frames, real input, held-axis Home cleanup/recovery, export and rendered reset. The [qualified ARM64 artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705) and [receipt](evidence/phases16-18/qualification.json) bind the unchanged runtime APK source and corrected driver separately. Physical Thor/controller acceptance was confirmed by the user on October 14, 2026; the [physical receipt](evidence/phases16-18/thor-acceptance-20261014.json) and raw report are retained. The [original Thor test](session-client/THOR-TEST-16-18.md) remains available for regression checks. Earlier accepted probes and the conventional client remain available.
 
 
-[PHASES19-21.md](PHASES19-21.md) implements the next integrated authored floor/obstacle, source WALK and directional locomotion batch in Session Client 0.2.0. Local source/host checks passed; Android build/emulator and new physical Thor qualification remain pending until their final receipts. Gates 13–18 stay accepted and the exact earlier APK remains available for rollback.
+[PHASES19-21.md](PHASES19-21.md) implements authored floor/obstacle geometry,
+source WALK and directional locomotion in Session Client 0.2.0. Source/host checks,
+the full 1,585-file source trick audit, ARM64/x86_64 builds, lint, signatures and
+package integrity passed on runtime
+`8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d` in
+[build run 38656997946](https://github.com/Russianranger/coh-android/actions/runs/38656997946).
+The combined emulator check remains pending after a prolonged diagonal slide
+sample failed the grounded predicate; successful partial checks and failed
+driver attempts are preserved separately. Physical gates 19–21 remain pending.
+
+The current
+[CoH-Native-Session-Client-0.2.0-arm64.apk](https://chatgpt.com/api/library/files/libfile_1f69175230b08191b4c8ea65e369139c/download)
+is 2,344,055 bytes, SHA256
+`2d59e2b39af99facc6f3ac26b310aeba85802542efabb1e71d90e2d33a00de92`
+([original artifact 11936304916](https://github.com/Russianranger/coh-android/actions/runs/38656997946/artifacts/11936304916)).
+It installs alongside the accepted 0.1.0 app without deleting its data. Use the
+[combined Thor procedure](session-client/THOR-TEST.md). Gates 13–18 remain
+accepted, with the unchanged
+[0.1.0 rollback artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705)
+and [original instructions](session-client/THOR-TEST-16-18.md) available.

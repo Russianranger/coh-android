@@ -1,0 +1,953 @@
+{
+  "schema": "coh-native-walk-release-settling-local-diagnostic-v1",
+  "passed": true,
+  "diagnostic_local_only": true,
+  "runtime_changed": false,
+  "apk_rebuilt": false,
+  "android_execution_claimed": false,
+  "physical_ayn_thor_claimed": false,
+  "runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "trigger": "Android driver used Ready/control-release as a stationary position baseline; residual original WALK friction can exceed unchanged 0.001 stability tolerance.",
+  "fixture": {
+    "filename": "walkable.bin",
+    "bytes": 202880,
+    "sha256": "d7694d1dc83e2d95cea045e7f4912c1f9211aafed3fdebbab42943aab30a4d62"
+  },
+  "profile": {
+    "physics_hz": 30,
+    "source_timestep": 1,
+    "neutral_surface_modifiers": true,
+    "source_surface_fields": {
+      "traction": 1.0,
+      "friction": 0.44999998807907104,
+      "bounce": 0.009999999776482582,
+      "gravity": 0.06499999761581421,
+      "max_speed": 1.0
+    },
+    "source_surface_flags": 2048,
+    "normal": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "initial_backward_held_ticks": 25,
+    "initial_velocity": [
+      0.0,
+      0.0,
+      0.9999998211860657
+    ],
+    "initial_position": [
+      582.5,
+      74.0,
+      -1357.7821044921875
+    ],
+    "release_input": [
+      0,
+      0,
+      0
+    ],
+    "focus_clear_called": false
+  },
+  "original_source_pins": {
+    "schema": "coh-native-walk-original-source-pins-v1",
+    "repository": "Russianranger/coh-android",
+    "source_revision": "61bcde64ece0c45a1e3ba1c39f038b15dc6efd7d",
+    "upstream_source_revision": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "normalization": "CRLF to LF; exactly one trailing newline",
+    "files": [
+      {
+        "path": "upstream/ouroboros/Common/gridcoll/gridcoll.h",
+        "sha256_lf": "4ade01161636f8e87ca253a4a8a19926fee3006c5558ef75bf4fc08098546c8e",
+        "git_blob": "0e64ba65d01f08a346edbe0a10f3a39b3407b03d"
+      },
+      {
+        "path": "upstream/ouroboros/Common/entity/entworldcoll.c",
+        "sha256_lf": "e5c0cab8c310f36ec88c9a97190739af2612e524e487128d409cbb23f4cf71a4",
+        "git_blob": "681cad5956acf26aca5800c8df3211108d553077"
+      },
+      {
+        "path": "upstream/ouroboros/libs/UtilitiesLib/src/utils/mathutil.c",
+        "sha256_lf": "58d3c918c4072c8f6b906a493ee6fbdad0632c63dce1ececcf898a089994273e",
+        "git_blob": "a4ed82b07906da4bb6cfd1ed562b353e147faf69"
+      },
+      {
+        "path": "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h",
+        "sha256_lf": "afd8ec36d507a2b6315f6d6493e4c9893a343796f90cee8e148d2a442fa502c5",
+        "git_blob": "8cbfbdc5d68f3b35043fb176753fd7fbad953c7b"
+      }
+    ]
+  },
+  "original_truncate_source": {
+    "path": "upstream/ouroboros/Common/entity/motion.c",
+    "sha256_lf": "f83b14bbfcffeffe8e32e8941b6ab60ed07d6656aadff0d9ed9f2b53391aa361",
+    "git_blob": "a4d3f5b7ff1b49e2127e6c799bee1392227ff0f3",
+    "signature": "static void truncateVelocity(",
+    "first_line": 1691,
+    "last_line": 1702
+  },
+  "original_program_sha256": "f3882e0f5eb6fa354a29ccec990c3ca768fa624c0b5129277cd7455df68fa774",
+  "reproducer_sha256": "defa3b965b16c9d9e895467363c7738cb89c40ad86dd74b289cfa4baf4dd8e24",
+  "original_functions": [
+    {
+      "file": "gridcoll.h",
+      "signature": "typedef enum CollFlags",
+      "first_line": 12,
+      "last_line": 41,
+      "sha256_lf": "f2c2a1feea9930f017f0526bbb5f1a24d532b768ab39c7d62a9286c967c54cf4"
+    },
+    {
+      "file": "mathutil.h",
+      "signature": "original arithmetic macro definitions",
+      "names": [
+        "SQR",
+        "fsqrt",
+        "fatan2",
+        "copyVec3",
+        "setVec3same",
+        "zeroVec3",
+        "scaleVec3",
+        "addVec3",
+        "subVec3",
+        "setVec3",
+        "dotVec3",
+        "lengthVec3Squared",
+        "lengthVec3",
+        "lengthVec3SquaredXZ",
+        "lengthVec3XZ",
+        "vec3IsZero",
+        "sameVec3",
+        "MINMAX"
+      ],
+      "sha256_lf": "079b00a50b96b8070f99bd0018ada83b68064f1201a5aa8b89146e305f7941e4"
+    },
+    {
+      "file": "mathutil.h",
+      "signature": "static INLINEDBG F32 normalVec3(",
+      "first_line": 910,
+      "last_line": 926,
+      "sha256_lf": "de086e6eff62b81fd0de62b98431aa66c54bae151d60086859ca50d48fff7c53"
+    },
+    {
+      "file": "mathutil.h",
+      "signature": "static INLINEDBG void mulVecMat3(",
+      "first_line": 732,
+      "last_line": 737,
+      "sha256_lf": "34d84f255ae3628fad8a977a937eb904e6ce916ad988c2f0d7d2aa87293a78d8"
+    },
+    {
+      "file": "mathutil.c",
+      "signature": "void getVec3YP(",
+      "first_line": 693,
+      "last_line": 700,
+      "sha256_lf": "090285544dbb1888384b33489958a0fecdcd6ad9f5db51567097c5dacf83b829"
+    },
+    {
+      "file": "mathutil.c",
+      "signature": "void createMat3RYP(",
+      "first_line": 783,
+      "last_line": 804,
+      "sha256_lf": "f2f6ab56e37a6cb4bcc3701467ead9ec79ddd40e288778f7b59e3abe7fc10c8f"
+    },
+    {
+      "file": "mathutil.c",
+      "signature": "void camLookAt(",
+      "first_line": 138,
+      "last_line": 145,
+      "sha256_lf": "ac304e62dcd7df33d3bece657b76b4b48c55c15c585c20c1f1c90d3d98ffdcd6"
+    },
+    {
+      "file": "mathutil.c",
+      "signature": "void transposeMat3Copy(",
+      "first_line": 365,
+      "last_line": 378,
+      "sha256_lf": "c573e279d365623ad5b005e75b9403a7e3b38ca689980ef353b8d6efaab83a0b"
+    },
+    {
+      "file": "entworldcoll.c",
+      "signature": "static int SlideWall(",
+      "first_line": 132,
+      "last_line": 216,
+      "sha256_lf": "d23e3c224d0f345fc1aee80096af8435dc57d3b8a9435d2095e6c31ce7097c78"
+    },
+    {
+      "file": "entworldcoll.c",
+      "signature": "static void reflectOffPlane(",
+      "first_line": 346,
+      "last_line": 365,
+      "sha256_lf": "1eb16f904887706fdce18f6457a1c3dfe893b5ebdc38f67b9d8ac32dd98e4571"
+    },
+    {
+      "file": "entworldcoll.c",
+      "signature": "static void makeSteepSlopesSlippery(",
+      "first_line": 514,
+      "last_line": 536,
+      "sha256_lf": "d55184d684e6ffe7530225fd8c8953377d9d6360cabfaf448943910dbc036711"
+    },
+    {
+      "file": "entworldcoll.c",
+      "signature": "void entWorldGetSurface(",
+      "first_line": 542,
+      "last_line": 558,
+      "sha256_lf": "0fdbc7f989a2329ba7e8bc4ebbf58bb09a387d11abfa96d0accc1f928f23b09e"
+    },
+    {
+      "file": "entworldcoll.c",
+      "signature": "SurfaceParams *entWorldGetSurfaceModifier(",
+      "first_line": 560,
+      "last_line": 584,
+      "sha256_lf": "2a15eb39e83b3716f135b869593014f06f00e271886a7e2a46f3b944e405e43a"
+    },
+    {
+      "file": "entworldcoll.c",
+      "signature": "void entWorldApplySurfMods(",
+      "first_line": 586,
+      "last_line": 593,
+      "sha256_lf": "cdf02bad1a7b9261cc9bed5668563d95eac9f1df1eb9a2a58f5ca1199c34358d"
+    },
+    {
+      "file": "entworldcoll.c",
+      "signature": "void entWorldApplyTextureOverrides(",
+      "first_line": 595,
+      "last_line": 614,
+      "sha256_lf": "8e7181bc58ec7ea159869e73fda250f7e3e0d0096fc20deec833daab0a155cef"
+    },
+    {
+      "file": "entworldcoll.c",
+      "signature": "void entWorldCollide(",
+      "first_line": 710,
+      "last_line": 1325,
+      "sha256_lf": "8cdc354ec43d292ac4d85ce4667445edb2c91e52377be72abf0a556aca7da77b"
+    }
+  ],
+  "runtime_sources": {
+    "coh_walk.c": {
+      "bytes": 15089,
+      "sha256": "998c64c472613cf6e8da38218a8d30bcbf49d29c273520180948d4a2e90c50be"
+    },
+    "source_world.c": {
+      "bytes": 35313,
+      "sha256": "4225a8576a5a536cac44ab107cbfe9bdd7bd3d1ab04bbdb6c2679b375aec9d55"
+    },
+    "source_ctri.c": {
+      "bytes": 41795,
+      "sha256": "1862c65a355ddfa71d1264671effa36addc2a8a3497b7c0825465835603a5670"
+    },
+    "source_tritri.c": {
+      "bytes": 25477,
+      "sha256": "c3fabb12b9a31baac2b6f0bf83b9c0f9456941f897167524e5dfcd88837005c3"
+    },
+    "coh_motion.c": {
+      "bytes": 6899,
+      "sha256": "857240b5eff8a0b88aa102826b03e1fb9318158b89c44487473e03f3a39a454b"
+    }
+  },
+  "compared_release_steps": 21,
+  "all_velocities_bit_exact": true,
+  "all_positions_bit_exact": true,
+  "native_vector_serialization": "Native IEEE binary32 values printed with 9 significant decimal digits and round-tripped to binary32 before comparison.",
+  "max_velocity_absolute_error": 0.0,
+  "zero_velocity_release_tick": 20,
+  "tick10_to_settled_displacement": 0.0029296875,
+  "zero_velocity_stable_at_tick21": true,
+  "recommended_driver_change": "Allow a source-friction settling interval before capturing the stationary baseline; then preserve the separate 30-tick stability check and 0.001 tolerance. Do not freeze or retune runtime velocity.",
+  "scope": "Independent unchanged original entWorldCollide, original surface/math functions and original truncateVelocity, compared with actual bounded native WALK on the pinned authored floor fixture. Oracle world/entity callbacks stubbed; this does not establish complete tracker/grid/full-client equivalence.",
+  "reproduction": {
+    "command": "python3 native-android/evidence/phases19-21/diagnostics/release_check.py --source-root . --fixture /path/to/walkable.bin --output /path/to/host-walk-release-settling-proof.json",
+    "inputs": "Full pinned upstream source checkout, unchanged native runtime sources, and the fixture identified by SHA256 above; CC defaults to cc."
+  },
+  "release_steps": [
+    {
+      "tick": 1,
+      "velocity": [
+        0.0,
+        0.0,
+        0.5499999523162842
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1357.2320556640625
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.5499999523162842
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1357.2320556640625
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 2,
+      "velocity": [
+        0.0,
+        0.0,
+        0.3024999797344208
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.9295654296875
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.3024999797344208
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.9295654296875
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 3,
+      "velocity": [
+        0.0,
+        0.0,
+        0.16637499630451202
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.76318359375
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.16637499630451202
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.76318359375
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 4,
+      "velocity": [
+        0.0,
+        0.0,
+        0.09150625020265579
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.671630859375
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.09150625020265579
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.671630859375
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 5,
+      "velocity": [
+        0.0,
+        0.0,
+        0.050328437238931656
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.621337890625
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.050328437238931656
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.621337890625
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 6,
+      "velocity": [
+        0.0,
+        0.0,
+        0.027680641040205956
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.5936279296875
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.027680641040205956
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.5936279296875
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 7,
+      "velocity": [
+        0.0,
+        0.0,
+        0.015224352478981018
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.578369140625
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.015224352478981018
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.578369140625
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 8,
+      "velocity": [
+        0.0,
+        0.0,
+        0.00837339460849762
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.5699462890625
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.00837339460849762
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.5699462890625
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 9,
+      "velocity": [
+        0.0,
+        0.0,
+        0.004605366848409176
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.5653076171875
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.004605366848409176
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.5653076171875
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 10,
+      "velocity": [
+        0.0,
+        0.0,
+        0.0025329517666250467
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.562744140625
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.0025329517666250467
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.562744140625
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 11,
+      "velocity": [
+        0.0,
+        0.0,
+        0.0013931235298514366
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.5614013671875
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.0013931235298514366
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.5614013671875
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 12,
+      "velocity": [
+        0.0,
+        0.0,
+        0.0007662179414182901
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.5606689453125
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.0007662179414182901
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.5606689453125
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 13,
+      "velocity": [
+        0.0,
+        0.0,
+        0.00042141988524235785
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.560302734375
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.00042141988524235785
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.560302734375
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 14,
+      "velocity": [
+        0.0,
+        0.0,
+        0.00023178092669695616
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.56005859375
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.00023178092669695616
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.56005859375
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 15,
+      "velocity": [
+        0.0,
+        0.0,
+        0.00012747952132485807
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.5599365234375
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.00012747952132485807
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.5599365234375
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 16,
+      "velocity": [
+        0.0,
+        0.0,
+        7.011373963905498e-05
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        7.011373963905498e-05
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 17,
+      "velocity": [
+        0.0,
+        0.0,
+        3.856255716527812e-05
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        3.856255716527812e-05
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 18,
+      "velocity": [
+        0.0,
+        0.0,
+        2.120940735039767e-05
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        2.120940735039767e-05
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 19,
+      "velocity": [
+        0.0,
+        0.0,
+        1.1665174497466069e-05
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        1.1665174497466069e-05
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 20,
+      "velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    },
+    {
+      "tick": 21,
+      "velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "control_input": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_state_bits": 0,
+      "grounded": true,
+      "bounded_steps": 0,
+      "original_velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "original_position": [
+        582.5,
+        74.0,
+        -1356.559814453125
+      ],
+      "velocity_bit_exact": true,
+      "position_bit_exact": true
+    }
+  ]
+}

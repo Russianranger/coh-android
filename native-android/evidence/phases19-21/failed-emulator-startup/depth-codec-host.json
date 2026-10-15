@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "float32_depth_bins": 16777216,
+  "roundtrip_mismatches": 0,
+  "rgba8_channel_bins": 256,
+  "channel_mismatches": 0,
+  "control_policy_checks": 10,
+  "schema": "coh-host-depth24-diagnostic-codec-v1",
+  "scope": "host float32 diagnostic packing and explicit acceptance policy only",
+  "gpu_executed": false,
+  "source_renderer_qualified": false,
+  "actual_sampler_binding_qualified": false,
+  "actual_gpu_positive_controls_required": true,
+  "exact_integer_tie_required": true,
+  "color_tolerance_changed": false,
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "c_source_sha256": "cdf8871141c7682081420ad54a3c42436e5e7b9ee406caf7711b9b2efa2defff",
+  "checker_sha256": "878f39888bc531a7e93e7abbddf73063fdc75a414b6db3a6852832bf3aefd363"
+}

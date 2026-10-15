@@ -1,0 +1,684 @@
+﻿2026-10-15T00:51:35.6796453Z Current runner version: '2.337.0'
+2026-10-15T00:51:35.6823501Z ##[group]Runner Image Provisioner
+2026-10-15T00:51:35.6824480Z Hosted Compute Agent
+2026-10-15T00:51:35.6825097Z Version: 20261002.596
+2026-10-15T00:51:35.6825867Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-15T00:51:35.6826634Z Build Date: 2026-10-02T22:28:27Z
+2026-10-15T00:51:35.6827368Z Worker ID: {a4ede595-7ab0-4305-a99b-f7bd505338f0}
+2026-10-15T00:51:35.6828468Z Region: westus2
+2026-10-15T00:51:35.6829062Z Cloud: Azure
+2026-10-15T00:51:35.6829597Z ##[endgroup]
+2026-10-15T00:51:35.6831524Z ##[group]Operating System
+2026-10-15T00:51:35.6832288Z Ubuntu
+2026-10-15T00:51:35.6832893Z 24.04.5
+2026-10-15T00:51:35.6833461Z LTS
+2026-10-15T00:51:35.6834045Z ##[endgroup]
+2026-10-15T00:51:35.6834668Z ##[group]Runner Image
+2026-10-15T00:51:35.6835300Z Image: ubuntu-24.04
+2026-10-15T00:51:35.6835914Z Version: 20261004.327.1
+2026-10-15T00:51:35.6837221Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-15T00:51:35.6839138Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-15T00:51:35.6840166Z ##[endgroup]
+2026-10-15T00:51:35.6841400Z ##[group]GITHUB_TOKEN Permissions
+2026-10-15T00:51:35.6843378Z Actions: read
+2026-10-15T00:51:35.6844074Z Contents: read
+2026-10-15T00:51:35.6844700Z Metadata: read
+2026-10-15T00:51:35.6845272Z ##[endgroup]
+2026-10-15T00:51:35.6847483Z Secret source: Actions
+2026-10-15T00:51:35.6848773Z Cache mode: write
+2026-10-15T00:51:35.6849587Z Prepare workflow directory
+2026-10-15T00:51:35.7200110Z Prepare all required actions
+2026-10-15T00:51:35.7250110Z Getting action download info
+2026-10-15T00:51:36.1822746Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-15T00:51:36.2857771Z Download action repository 'actions/setup-java@v4' (SHA:cf277c60eb25467037889841efdb72551f06f6c3)
+2026-10-15T00:51:36.6031907Z Download action repository 'android-actions/setup-android@v3' (SHA:9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407)
+2026-10-15T00:51:36.7993872Z Download action repository 'reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d' (SHA:a421e43855164a8197daf9d8d40fe71c6996bb0d)
+2026-10-15T00:51:37.0040883Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-15T00:51:37.2596411Z Complete job name: package-and-emulator
+2026-10-15T00:51:37.3705235Z ##[group]Run actions/checkout@v4
+2026-10-15T00:51:37.3706567Z with:
+2026-10-15T00:51:37.3707326Z   persist-credentials: false
+2026-10-15T00:51:37.3708560Z   fetch-depth: 0
+2026-10-15T00:51:37.3709399Z   repository: Russianranger/coh-android
+2026-10-15T00:51:37.3718784Z   token: ***
+2026-10-15T00:51:37.3719548Z   ssh-strict: true
+2026-10-15T00:51:37.3720314Z   ssh-user: git
+2026-10-15T00:51:37.3721051Z   clean: true
+2026-10-15T00:51:37.3721842Z   sparse-checkout-cone-mode: true
+2026-10-15T00:51:37.3722823Z   fetch-tags: false
+2026-10-15T00:51:37.3723658Z   show-progress: true
+2026-10-15T00:51:37.3724477Z   lfs: false
+2026-10-15T00:51:37.3725213Z   submodules: false
+2026-10-15T00:51:37.3726007Z   set-safe-directory: true
+2026-10-15T00:51:37.3726913Z   allow-unsafe-pr-checkout: false
+2026-10-15T00:51:37.3728517Z ##[endgroup]
+2026-10-15T00:51:37.4804413Z Syncing repository: Russianranger/coh-android
+2026-10-15T00:51:37.4807366Z ##[group]Getting Git version info
+2026-10-15T00:51:37.4809289Z Working directory is '/home/runner/work/coh-android/coh-android'
+2026-10-15T00:51:37.4811289Z [command]/usr/bin/git version
+2026-10-15T00:51:37.4886847Z git version 2.55.0
+2026-10-15T00:51:37.4910829Z ##[endgroup]
+2026-10-15T00:51:37.4930674Z Temporarily overriding HOME='/home/runner/work/_temp/0c54ec96-b2d7-4dfd-a9b0-19b0bb969336' before making global git config changes
+2026-10-15T00:51:37.4935253Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-15T00:51:37.4939159Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/coh-android/coh-android
+2026-10-15T00:51:37.4995614Z Deleting the contents of '/home/runner/work/coh-android/coh-android'
+2026-10-15T00:51:37.5004410Z ##[group]Initializing the repository
+2026-10-15T00:51:37.5009007Z [command]/usr/bin/git init /home/runner/work/coh-android/coh-android
+2026-10-15T00:51:37.5149176Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-15T00:51:37.5151300Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-15T00:51:37.5153330Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-15T00:51:37.5154886Z hint: call:
+2026-10-15T00:51:37.5156057Z hint:
+2026-10-15T00:51:37.5157001Z hint: 	git config --global init.defaultBranch <name>
+2026-10-15T00:51:37.5158617Z hint:
+2026-10-15T00:51:37.5159961Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-15T00:51:37.5161766Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-15T00:51:37.5163369Z hint:
+2026-10-15T00:51:37.5164139Z hint: 	git branch -m <name>
+2026-10-15T00:51:37.5165012Z hint:
+2026-10-15T00:51:37.5166185Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-15T00:51:37.5174110Z Initialized empty Git repository in /home/runner/work/coh-android/coh-android/.git/
+2026-10-15T00:51:37.5185633Z [command]/usr/bin/git remote add origin https://github.com/Russianranger/coh-android
+2026-10-15T00:51:37.5251146Z ##[endgroup]
+2026-10-15T00:51:37.5253571Z ##[group]Disabling automatic garbage collection
+2026-10-15T00:51:37.5256146Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-15T00:51:37.5291082Z ##[endgroup]
+2026-10-15T00:51:37.5293421Z ##[group]Setting up auth
+2026-10-15T00:51:37.5299420Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-15T00:51:37.5344612Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-15T00:51:37.5769010Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-15T00:51:37.5811250Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-15T00:51:37.6037768Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-15T00:51:37.6078178Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-15T00:51:37.6306025Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-15T00:51:37.6347663Z ##[endgroup]
+2026-10-15T00:51:37.6349379Z ##[group]Fetching the repository
+2026-10-15T00:51:37.6358267Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-10-15T00:51:48.1951127Z From https://github.com/Russianranger/coh-android
+2026-10-15T00:51:48.1952403Z  * [new branch]          archive/volume2-assessment-2026-09-23 -> origin/archive/volume2-assessment-2026-09-23
+2026-10-15T00:51:48.1953221Z  * [new branch]          codex/atlas-recovery-20260928 -> origin/codex/atlas-recovery-20260928
+2026-10-15T00:51:48.1954138Z  * [new branch]          codex/beacon-preflight-historical-fixtures-035 -> origin/codex/beacon-preflight-historical-fixtures-035
+2026-10-15T00:51:48.1955099Z  * [new branch]          codex/character-persistence-continuation -> origin/codex/character-persistence-continuation
+2026-10-15T00:51:48.1956083Z  * [new branch]          codex/folder-cache-census-producer-037 -> origin/codex/folder-cache-census-producer-037
+2026-10-15T00:51:48.1957365Z  * [new branch]          codex/manual-report-cleanup-037 -> origin/codex/manual-report-cleanup-037
+2026-10-15T00:51:48.1959442Z  * [new branch]          codex/native-client-folder-sort-037 -> origin/codex/native-client-folder-sort-037
+2026-10-15T00:51:48.1960334Z  * [new branch]          codex/native-client-folder-sort-wine-037 -> origin/codex/native-client-folder-sort-wine-037
+2026-10-15T00:51:48.1961342Z  * [new branch]          codex/native-client-live-directory-research-037 -> origin/codex/native-client-live-directory-research-037
+2026-10-15T00:51:48.1962354Z  * [new branch]          codex/native-client-live-directory-sdk-037 -> origin/codex/native-client-live-directory-sdk-037
+2026-10-15T00:51:48.1963212Z  * [new branch]          codex/native-client-metadata-036 -> origin/codex/native-client-metadata-036
+2026-10-15T00:51:48.1964250Z  * [new branch]          codex/native-client-metadata-capture-037 -> origin/codex/native-client-metadata-capture-037
+2026-10-15T00:51:48.1965607Z  * [new branch]          codex/native-client-metadata-capture-reuse-wine-037 -> origin/codex/native-client-metadata-capture-reuse-wine-037
+2026-10-15T00:51:48.1967711Z  * [new branch]          codex/native-client-metadata-capture-wine-037 -> origin/codex/native-client-metadata-capture-wine-037
+2026-10-15T00:51:48.1969712Z  * [new branch]          codex/native-client-metadata-census-prototype-037 -> origin/codex/native-client-metadata-census-prototype-037
+2026-10-15T00:51:48.1970690Z  * [new branch]          codex/native-client-metadata-probe-bound-037 -> origin/codex/native-client-metadata-probe-bound-037
+2026-10-15T00:51:48.1971478Z  * [new branch]          codex/native-client-startup-037 -> origin/codex/native-client-startup-037
+2026-10-15T00:51:48.1972231Z  * [new branch]          codex/native-live-ancestor-candidate-037 -> origin/codex/native-live-ancestor-candidate-037
+2026-10-15T00:51:48.1973090Z  * [new branch]          codex/native-live-client-fixture-research-037 -> origin/codex/native-live-client-fixture-research-037
+2026-10-15T00:51:48.1974199Z  * [new branch]          codex/native-live-client-operation-research-037 -> origin/codex/native-live-client-operation-research-037
+2026-10-15T00:51:48.1975054Z  * [new branch]          codex/native-live-directory-arm-037 -> origin/codex/native-live-directory-arm-037
+2026-10-15T00:51:48.1975754Z  * [new branch]          codex/native-map-prefetch-036 -> origin/codex/native-map-prefetch-036
+2026-10-15T00:51:48.1976477Z  * [new branch]          codex/native-map-prefetch-reuse-036 -> origin/codex/native-map-prefetch-reuse-036
+2026-10-15T00:51:48.1977364Z  * [new branch]          codex/native-map-world-037  -> origin/codex/native-map-world-037
+2026-10-15T00:51:48.1978337Z  * [new branch]          codex/native-startup-profile-036 -> origin/codex/native-startup-profile-036
+2026-10-15T00:51:48.1979134Z  * [new branch]          codex/native-startup-profile-reuse-036 -> origin/codex/native-startup-profile-reuse-036
+2026-10-15T00:51:48.1979908Z  * [new branch]          codex/startup-recovery-20261014 -> origin/codex/startup-recovery-20261014
+2026-10-15T00:51:48.1980484Z  * [new branch]          main                        -> origin/main
+2026-10-15T00:51:48.1981071Z  * [new branch]          native-android              -> origin/native-android
+2026-10-15T00:51:48.1981781Z  * [new tag]             coh-assets-v1.0.0           -> coh-assets-v1.0.0
+2026-10-15T00:51:48.1982292Z  * [new tag]             coh-atlas-gameplay-v0.11.0  -> coh-atlas-gameplay-v0.11.0
+2026-10-15T00:51:48.1982836Z  * [new tag]             coh-atlas-gameplay-v0.11.1  -> coh-atlas-gameplay-v0.11.1
+2026-10-15T00:51:48.1983365Z  * [new tag]             coh-atlas-gameplay-v0.11.2  -> coh-atlas-gameplay-v0.11.2
+2026-10-15T00:51:48.1983904Z  * [new tag]             coh-atlas-gameplay-v0.11.3  -> coh-atlas-gameplay-v0.11.3
+2026-10-15T00:51:48.1984475Z  * [new tag]             coh-atlas-gameplay-v0.11.4  -> coh-atlas-gameplay-v0.11.4
+2026-10-15T00:51:48.1984996Z  * [new tag]             coh-atlas-gameplay-v0.11.5  -> coh-atlas-gameplay-v0.11.5
+2026-10-15T00:51:48.1985623Z  * [new tag]             coh-atlas-gameplay-v0.11.6  -> coh-atlas-gameplay-v0.11.6
+2026-10-15T00:51:48.1986509Z  * [new tag]             coh-atlas-gameplay-v0.12.0  -> coh-atlas-gameplay-v0.12.0
+2026-10-15T00:51:48.1987244Z  * [new tag]             coh-atlas-gameplay-v0.12.1  -> coh-atlas-gameplay-v0.12.1
+2026-10-15T00:51:48.1987799Z  * [new tag]             coh-atlas-gameplay-v0.13.0  -> coh-atlas-gameplay-v0.13.0
+2026-10-15T00:51:48.1988624Z  * [new tag]             coh-atlas-gameplay-v0.13.1  -> coh-atlas-gameplay-v0.13.1
+2026-10-15T00:51:48.1989194Z  * [new tag]             coh-atlas-gameplay-v0.13.10 -> coh-atlas-gameplay-v0.13.10
+2026-10-15T00:51:48.1989772Z  * [new tag]             coh-atlas-gameplay-v0.13.11 -> coh-atlas-gameplay-v0.13.11
+2026-10-15T00:51:48.1990347Z  * [new tag]             coh-atlas-gameplay-v0.13.12 -> coh-atlas-gameplay-v0.13.12
+2026-10-15T00:51:48.1990908Z  * [new tag]             coh-atlas-gameplay-v0.13.13 -> coh-atlas-gameplay-v0.13.13
+2026-10-15T00:51:48.1991464Z  * [new tag]             coh-atlas-gameplay-v0.13.14 -> coh-atlas-gameplay-v0.13.14
+2026-10-15T00:51:48.1992040Z  * [new tag]             coh-atlas-gameplay-v0.13.15 -> coh-atlas-gameplay-v0.13.15
+2026-10-15T00:51:48.1992589Z  * [new tag]             coh-atlas-gameplay-v0.13.16 -> coh-atlas-gameplay-v0.13.16
+2026-10-15T00:51:48.1993142Z  * [new tag]             coh-atlas-gameplay-v0.13.17 -> coh-atlas-gameplay-v0.13.17
+2026-10-15T00:51:48.1993697Z  * [new tag]             coh-atlas-gameplay-v0.13.18 -> coh-atlas-gameplay-v0.13.18
+2026-10-15T00:51:48.1994245Z  * [new tag]             coh-atlas-gameplay-v0.13.19 -> coh-atlas-gameplay-v0.13.19
+2026-10-15T00:51:48.1994805Z  * [new tag]             coh-atlas-gameplay-v0.13.2  -> coh-atlas-gameplay-v0.13.2
+2026-10-15T00:51:48.1995360Z  * [new tag]             coh-atlas-gameplay-v0.13.20 -> coh-atlas-gameplay-v0.13.20
+2026-10-15T00:51:48.1995905Z  * [new tag]             coh-atlas-gameplay-v0.13.21 -> coh-atlas-gameplay-v0.13.21
+2026-10-15T00:51:48.1996454Z  * [new tag]             coh-atlas-gameplay-v0.13.22 -> coh-atlas-gameplay-v0.13.22
+2026-10-15T00:51:48.1997006Z  * [new tag]             coh-atlas-gameplay-v0.13.23 -> coh-atlas-gameplay-v0.13.23
+2026-10-15T00:51:48.1997552Z  * [new tag]             coh-atlas-gameplay-v0.13.24 -> coh-atlas-gameplay-v0.13.24
+2026-10-15T00:51:48.1998375Z  * [new tag]             coh-atlas-gameplay-v0.13.25 -> coh-atlas-gameplay-v0.13.25
+2026-10-15T00:51:48.1998955Z  * [new tag]             coh-atlas-gameplay-v0.13.26 -> coh-atlas-gameplay-v0.13.26
+2026-10-15T00:51:48.1999670Z  * [new tag]             coh-atlas-gameplay-v0.13.27 -> coh-atlas-gameplay-v0.13.27
+2026-10-15T00:51:48.2000242Z  * [new tag]             coh-atlas-gameplay-v0.13.28 -> coh-atlas-gameplay-v0.13.28
+2026-10-15T00:51:48.2000799Z  * [new tag]             coh-atlas-gameplay-v0.13.29 -> coh-atlas-gameplay-v0.13.29
+2026-10-15T00:51:48.2001362Z  * [new tag]             coh-atlas-gameplay-v0.13.3  -> coh-atlas-gameplay-v0.13.3
+2026-10-15T00:51:48.2001914Z  * [new tag]             coh-atlas-gameplay-v0.13.30 -> coh-atlas-gameplay-v0.13.30
+2026-10-15T00:51:48.2002544Z  * [new tag]             coh-atlas-gameplay-v0.13.31 -> coh-atlas-gameplay-v0.13.31
+2026-10-15T00:51:48.2003474Z  * [new tag]             coh-atlas-gameplay-v0.13.32 -> coh-atlas-gameplay-v0.13.32
+2026-10-15T00:51:48.2004473Z  * [new tag]             coh-atlas-gameplay-v0.13.33 -> coh-atlas-gameplay-v0.13.33
+2026-10-15T00:51:48.2005473Z  * [new tag]             coh-atlas-gameplay-v0.13.34 -> coh-atlas-gameplay-v0.13.34
+2026-10-15T00:51:48.2006469Z  * [new tag]             coh-atlas-gameplay-v0.13.35 -> coh-atlas-gameplay-v0.13.35
+2026-10-15T00:51:48.2007467Z  * [new tag]             coh-atlas-gameplay-v0.13.36 -> coh-atlas-gameplay-v0.13.36
+2026-10-15T00:51:48.2008466Z  * [new tag]             coh-atlas-gameplay-v0.13.4  -> coh-atlas-gameplay-v0.13.4
+2026-10-15T00:51:48.2009071Z  * [new tag]             coh-atlas-gameplay-v0.13.5  -> coh-atlas-gameplay-v0.13.5
+2026-10-15T00:51:48.2009653Z  * [new tag]             coh-atlas-gameplay-v0.13.6  -> coh-atlas-gameplay-v0.13.6
+2026-10-15T00:51:48.2010456Z  * [new tag]             coh-atlas-gameplay-v0.13.7  -> coh-atlas-gameplay-v0.13.7
+2026-10-15T00:51:48.2011059Z  * [new tag]             coh-atlas-gameplay-v0.13.8  -> coh-atlas-gameplay-v0.13.8
+2026-10-15T00:51:48.2011633Z  * [new tag]             coh-atlas-gameplay-v0.13.9  -> coh-atlas-gameplay-v0.13.9
+2026-10-15T00:51:48.2013571Z [command]/usr/bin/git branch --list --remote origin/native-android
+2026-10-15T00:51:48.2014378Z   origin/native-android
+2026-10-15T00:51:48.2015846Z [command]/usr/bin/git rev-parse refs/remotes/origin/native-android
+2026-10-15T00:51:48.2040896Z 61860394b7896ec03c3d17dfff240f6017465e8f
+2026-10-15T00:51:48.2045418Z ##[endgroup]
+2026-10-15T00:51:48.2046066Z ##[group]Determining the checkout info
+2026-10-15T00:51:48.2046867Z ##[endgroup]
+2026-10-15T00:51:48.2059600Z [command]/usr/bin/git sparse-checkout disable
+2026-10-15T00:51:48.2116338Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-15T00:51:48.2147487Z ##[group]Checking out the ref
+2026-10-15T00:51:48.2151776Z [command]/usr/bin/git checkout --progress --force -B native-android refs/remotes/origin/native-android
+2026-10-15T00:51:49.3628444Z Updating files:   5% (9506/164516)
+2026-10-15T00:51:49.5303629Z Updating files:   6% (9871/164516)
+2026-10-15T00:51:49.5964456Z Updating files:   7% (11517/164516)
+2026-10-15T00:51:49.6632858Z Updating files:   8% (13162/164516)
+2026-10-15T00:51:49.7234891Z Updating files:   9% (14807/164516)
+2026-10-15T00:51:49.7800960Z Updating files:  10% (16452/164516)
+2026-10-15T00:51:49.8431536Z Updating files:  11% (18097/164516)
+2026-10-15T00:51:49.9059545Z Updating files:  12% (19742/164516)
+2026-10-15T00:51:49.9734694Z Updating files:  13% (21388/164516)
+2026-10-15T00:51:50.0423877Z Updating files:  14% (23033/164516)
+2026-10-15T00:51:50.1092400Z Updating files:  15% (24678/164516)
+2026-10-15T00:51:50.1775199Z Updating files:  16% (26323/164516)
+2026-10-15T00:51:50.2371031Z Updating files:  17% (27968/164516)
+2026-10-15T00:51:50.2972489Z Updating files:  18% (29613/164516)
+2026-10-15T00:51:50.3370054Z Updating files:  19% (31259/164516)
+2026-10-15T00:51:50.3584986Z Updating files:  19% (32337/164516)
+2026-10-15T00:51:50.4212639Z Updating files:  20% (32904/164516)
+2026-10-15T00:51:50.4813567Z Updating files:  21% (34549/164516)
+2026-10-15T00:51:50.5443547Z Updating files:  22% (36194/164516)
+2026-10-15T00:51:50.6094340Z Updating files:  23% (37839/164516)
+2026-10-15T00:51:50.6748455Z Updating files:  24% (39484/164516)
+2026-10-15T00:51:50.7396964Z Updating files:  25% (41129/164516)
+2026-10-15T00:51:50.8078240Z Updating files:  26% (42775/164516)
+2026-10-15T00:51:50.8703210Z Updating files:  27% (44420/164516)
+2026-10-15T00:51:50.9311661Z Updating files:  28% (46065/164516)
+2026-10-15T00:51:50.9960075Z Updating files:  29% (47710/164516)
+2026-10-15T00:51:51.0621496Z Updating files:  30% (49355/164516)
+2026-10-15T00:51:51.1248969Z Updating files:  31% (51000/164516)
+2026-10-15T00:51:51.1890468Z Updating files:  32% (52646/164516)
+2026-10-15T00:51:51.2572911Z Updating files:  33% (54291/164516)
+2026-10-15T00:51:51.3282709Z Updating files:  34% (55936/164516)
+2026-10-15T00:51:51.3368988Z Updating files:  35% (57581/164516)
+2026-10-15T00:51:51.3919343Z Updating files:  35% (57806/164516)
+2026-10-15T00:51:51.4555820Z Updating files:  36% (59226/164516)
+2026-10-15T00:51:51.5242819Z Updating files:  37% (60871/164516)
+2026-10-15T00:51:51.5903449Z Updating files:  38% (62517/164516)
+2026-10-15T00:51:51.6549212Z Updating files:  39% (64162/164516)
+2026-10-15T00:51:51.7179496Z Updating files:  40% (65807/164516)
+2026-10-15T00:51:51.7790572Z Updating files:  41% (67452/164516)
+2026-10-15T00:51:51.8413663Z Updating files:  42% (69097/164516)
+2026-10-15T00:51:51.9023725Z Updating files:  43% (70742/164516)
+2026-10-15T00:51:51.9673665Z Updating files:  44% (72388/164516)
+2026-10-15T00:51:52.0404398Z Updating files:  45% (74033/164516)
+2026-10-15T00:51:52.3499212Z Updating files:  46% (75678/164516)
+2026-10-15T00:51:52.6129878Z Updating files:  46% (76509/164516)
+2026-10-15T00:51:52.9393412Z Updating files:  47% (77323/164516)
+2026-10-15T00:51:53.3416767Z Updating files:  48% (78968/164516)
+2026-10-15T00:51:53.8156708Z Updating files:  48% (79979/164516)
+2026-10-15T00:51:54.3371251Z Updating files:  49% (80613/164516)
+2026-10-15T00:51:54.3840940Z Updating files:  49% (81862/164516)
+2026-10-15T00:51:55.0153035Z Updating files:  50% (82258/164516)
+2026-10-15T00:51:55.3384941Z Updating files:  51% (83904/164516)
+2026-10-15T00:51:55.4161794Z Updating files:  51% (84699/164516)
+2026-10-15T00:51:55.5939146Z Updating files:  52% (85549/164516)
+2026-10-15T00:51:55.6847275Z Updating files:  53% (87194/164516)
+2026-10-15T00:51:55.7565864Z Updating files:  54% (88839/164516)
+2026-10-15T00:51:55.8169635Z Updating files:  55% (90484/164516)
+2026-10-15T00:51:55.8800925Z Updating files:  56% (92129/164516)
+2026-10-15T00:51:55.9566013Z Updating files:  57% (93775/164516)
+2026-10-15T00:51:56.1115379Z Updating files:  58% (95420/164516)
+2026-10-15T00:51:56.3377026Z Updating files:  59% (97065/164516)
+2026-10-15T00:51:56.4019365Z Updating files:  59% (98145/164516)
+2026-10-15T00:51:56.5037855Z Updating files:  60% (98710/164516)
+2026-10-15T00:51:56.6031921Z Updating files:  61% (100355/164516)
+2026-10-15T00:51:56.6830424Z Updating files:  62% (102000/164516)
+2026-10-15T00:51:56.7635867Z Updating files:  63% (103646/164516)
+2026-10-15T00:51:56.8376257Z Updating files:  64% (105291/164516)
+2026-10-15T00:51:57.3321030Z Updating files:  65% (106936/164516)
+2026-10-15T00:51:57.3369120Z Updating files:  66% (108581/164516)
+2026-10-15T00:51:57.4077653Z Updating files:  66% (108687/164516)
+2026-10-15T00:51:57.4865653Z Updating files:  67% (110226/164516)
+2026-10-15T00:51:57.5607091Z Updating files:  68% (111871/164516)
+2026-10-15T00:51:57.6379532Z Updating files:  69% (113517/164516)
+2026-10-15T00:51:57.7109713Z Updating files:  70% (115162/164516)
+2026-10-15T00:51:57.7821736Z Updating files:  71% (116807/164516)
+2026-10-15T00:51:57.8532858Z Updating files:  72% (118452/164516)
+2026-10-15T00:51:57.9220632Z Updating files:  73% (120097/164516)
+2026-10-15T00:51:57.9925802Z Updating files:  74% (121742/164516)
+2026-10-15T00:51:58.0632491Z Updating files:  75% (123387/164516)
+2026-10-15T00:51:58.1304945Z Updating files:  76% (125033/164516)
+2026-10-15T00:51:58.1984641Z Updating files:  77% (126678/164516)
+2026-10-15T00:51:58.2678032Z Updating files:  78% (128323/164516)
+2026-10-15T00:51:58.3370635Z Updating files:  79% (129968/164516)
+2026-10-15T00:51:58.3392355Z Updating files:  79% (131566/164516)
+2026-10-15T00:51:58.4067709Z Updating files:  80% (131613/164516)
+2026-10-15T00:51:58.4736859Z Updating files:  81% (133258/164516)
+2026-10-15T00:51:58.5378878Z Updating files:  82% (134904/164516)
+2026-10-15T00:51:58.6049784Z Updating files:  83% (136549/164516)
+2026-10-15T00:51:58.6754479Z Updating files:  84% (138194/164516)
+2026-10-15T00:51:58.7440148Z Updating files:  85% (139839/164516)
+2026-10-15T00:51:58.8144393Z Updating files:  86% (141484/164516)
+2026-10-15T00:51:58.8836183Z Updating files:  87% (143129/164516)
+2026-10-15T00:51:58.9523071Z Updating files:  88% (144775/164516)
+2026-10-15T00:51:59.0195138Z Updating files:  89% (146420/164516)
+2026-10-15T00:51:59.0866653Z Updating files:  90% (148065/164516)
+2026-10-15T00:51:59.1590951Z Updating files:  91% (149710/164516)
+2026-10-15T00:51:59.2560522Z Updating files:  92% (151355/164516)
+2026-10-15T00:51:59.3371994Z Updating files:  93% (153000/164516)
+2026-10-15T00:51:59.3800523Z Updating files:  93% (154287/164516)
+2026-10-15T00:51:59.5580521Z Updating files:  94% (154646/164516)
+2026-10-15T00:51:59.6927832Z Updating files:  95% (156291/164516)
+2026-10-15T00:51:59.8694502Z Updating files:  96% (157936/164516)
+2026-10-15T00:52:00.2369790Z Updating files:  97% (159581/164516)
+2026-10-15T00:52:00.3371707Z Updating files:  98% (161226/164516)
+2026-10-15T00:52:00.3982085Z Updating files:  98% (162119/164516)
+2026-10-15T00:52:00.5700567Z Updating files:  99% (162871/164516)
+2026-10-15T00:52:00.5701134Z Updating files: 100% (164516/164516)
+2026-10-15T00:52:00.5701616Z Updating files: 100% (164516/164516), done.
+2026-10-15T00:52:00.8210664Z Switched to a new branch 'native-android'
+2026-10-15T00:52:00.8211352Z branch 'native-android' set up to track 'origin/native-android'.
+2026-10-15T00:52:00.8332277Z ##[endgroup]
+2026-10-15T00:52:00.8380977Z [command]/usr/bin/git log -1 --format=%H
+2026-10-15T00:52:00.8412524Z 61860394b7896ec03c3d17dfff240f6017465e8f
+2026-10-15T00:52:00.8423075Z ##[group]Removing auth
+2026-10-15T00:52:00.8426953Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-15T00:52:00.8461678Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-15T00:52:00.8798596Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-15T00:52:00.8827471Z http.https://github.com/.extraheader
+2026-10-15T00:52:00.8836585Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-15T00:52:00.9327705Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-15T00:52:00.9674289Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-15T00:52:00.9711031Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-15T00:52:01.0052251Z ##[endgroup]
+2026-10-15T00:52:01.0715954Z ##[group]Run python3 native-android/session-client/tools/reuse_walkable_package.py --guard-only --repo-root . --output native-android/results/session-client --github-output "$GITHUB_OUTPUT"
+2026-10-15T00:52:01.0717452Z [36;1mpython3 native-android/session-client/tools/reuse_walkable_package.py --guard-only --repo-root . --output native-android/results/session-client --github-output "$GITHUB_OUTPUT"[0m
+2026-10-15T00:52:01.1925934Z shell: /usr/bin/bash -e {0}
+2026-10-15T00:52:01.1926241Z ##[endgroup]
+2026-10-15T00:52:02.0973042Z {"eligible": true, "reason": "Only allowlisted driver, workflow, documentation or evidence changes", "changes": [{"path": ".github/workflows/native-session-client.yml", "old_mode": "100644", "new_mode": "100644", "status": "M"}, {"path": "native-android/session-client/tools/emulator_check.py", "old_mode": "100644", "new_mode": "100644", "status": "M"}, {"path": "native-android/session-client/tools/reuse_walkable_host_check.py", "old_mode": "000000", "new_mode": "100644", "status": "A"}, {"path": "native-android/session-client/tools/reuse_walkable_package.py", "old_mode": "000000", "new_mode": "100644", "status": "A"}, {"path": "native-android/session-client/tools/tap_host_check.py", "old_mode": "100644", "new_mode": "100644", "status": "M"}], "schema": 1, "original_runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d", "validation_head": "61860394b7896ec03c3d17dfff240f6017465e8f"}
+2026-10-15T00:52:02.1147427Z ##[group]Run android-actions/setup-android@v3
+2026-10-15T00:52:02.1147750Z with:
+2026-10-15T00:52:02.1148264Z   packages: platform-tools
+2026-10-15T00:52:02.1148546Z   log-accepted-android-sdk-licenses: false
+2026-10-15T00:52:02.1148844Z   cmdline-tools-version: 12266719
+2026-10-15T00:52:02.1149115Z   accept-android-sdk-licenses: true
+2026-10-15T00:52:02.1149368Z ##[endgroup]
+2026-10-15T00:52:02.1863206Z Found preinstalled sdkmanager in /usr/local/lib/android/sdk/cmdline-tools/latest with following source.properties:
+2026-10-15T00:52:02.1864276Z Pkg.Revision=12.0
+2026-10-15T00:52:02.1864660Z Pkg.Path=cmdline-tools;12.0
+2026-10-15T00:52:02.1865005Z Pkg.Desc=Android SDK Command-line Tools
+2026-10-15T00:52:02.1865225Z 
+2026-10-15T00:52:02.1865354Z Wrong version in preinstalled sdkmanager
+2026-10-15T00:52:02.1866012Z Downloading commandline tools from https://dl.google.com/android/repository/commandlinetools-linux-12266719_latest.zip
+2026-10-15T00:52:03.0097851Z [command]/usr/bin/unzip -o -q /home/runner/work/_temp/5d3517fe-cdfe-4812-97cf-8aefe4e081bc
+2026-10-15T00:52:03.7924245Z Accepting Android SDK licenses
+2026-10-15T00:52:06.5376276Z [command]/usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager platform-tools
+2026-10-15T00:52:07.4874152Z Loading package information...                                                  
+2026-10-15T00:52:07.6286947Z Loading local repository...                                                     
+2026-10-15T00:52:07.6308911Z [                                       ] 3% Loading local repository...        
+2026-10-15T00:52:07.6408845Z [                                       ] 3% Fetch remote repository...         
+2026-10-15T00:52:08.0862846Z [=                                      ] 3% Fetch remote repository...         
+2026-10-15T00:52:08.1627405Z [=                                      ] 4% Fetch remote repository...         
+2026-10-15T00:52:08.2000493Z [=                                      ] 5% Fetch remote repository...         
+2026-10-15T00:52:08.2749240Z [==                                     ] 5% Fetch remote repository...         
+2026-10-15T00:52:08.3669236Z [==                                     ] 6% Fetch remote repository...         
+2026-10-15T00:52:08.4620837Z [==                                     ] 7% Fetch remote repository...         
+2026-10-15T00:52:08.4649321Z [==                                     ] 7% Computing updates...               
+2026-10-15T00:52:08.4767714Z [===                                    ] 8% Computing updates...               
+2026-10-15T00:52:08.5803200Z [===                                    ] 10% Computing updates...              
+2026-10-15T00:52:08.5835851Z [=======================================] 100% Computing updates...             
+2026-10-15T00:52:08.5836318Z 
+2026-10-15T00:52:08.6713229Z ##[group]Run gh api repos/Russianranger/coh-android/actions/artifacts/11936304916/zip > /tmp/walking-session.zip
+2026-10-15T00:52:08.6714722Z [36;1mgh api repos/Russianranger/coh-android/actions/artifacts/11936304916/zip > /tmp/walking-session.zip[0m
+2026-10-15T00:52:08.6716676Z [36;1mpython3 native-android/session-client/tools/reuse_walkable_package.py --archive /tmp/walking-session.zip --repo-root . --output native-android/results/session-client[0m
+2026-10-15T00:52:08.6786320Z shell: /usr/bin/bash -e {0}
+2026-10-15T00:52:08.6786591Z env:
+2026-10-15T00:52:08.6786816Z   ANDROID_HOME: /usr/local/lib/android/sdk
+2026-10-15T00:52:08.6787141Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+2026-10-15T00:52:08.6790432Z   GH_TOKEN: ***
+2026-10-15T00:52:08.6790665Z ##[endgroup]
+2026-10-15T00:52:11.1796548Z {"reused": true, "runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d", "retained_files": ["CoH-Native-Session-Client-0.2.0-arm64.apk", "CoH-Native-Session-Client-0.2.0-emulator-x86_64.apk", "SHA256SUMS", "accepted-assets-recovery.json", "apk-badging-arm64.txt", "apk-badging-emulator-x86_64.txt", "apk-signature-arm64.txt", "apk-signature-emulator-x86_64.txt", "asset-manifest.json", "build-receipt.json", "depth-codec-host.json", "host-directional-proof.json", "host-directional-sampler-proof.json", "host-walk-proof.json", "host-walkable-proof.json", "legacy-locomotion-abi-proof.json", "lifecycle/lifecycle-host-checks.json", "session-fixture.json", "snapshot-host.json", "source-floor-resolution.json", "source-validation-stage.json", "walkable-fixture.json"]}
+2026-10-15T00:52:11.1926803Z ##[group]Run python3 native-android/session-client/tools/reuse_walkable_host_check.py --output native-android/results/session-client/reuse-host-checks.json
+2026-10-15T00:52:11.1928157Z [36;1mpython3 native-android/session-client/tools/reuse_walkable_host_check.py --output native-android/results/session-client/reuse-host-checks.json[0m
+2026-10-15T00:52:11.1991553Z shell: /usr/bin/bash -e {0}
+2026-10-15T00:52:11.1991803Z env:
+2026-10-15T00:52:11.1992025Z   ANDROID_HOME: /usr/local/lib/android/sdk
+2026-10-15T00:52:11.1992337Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+2026-10-15T00:52:11.1992637Z ##[endgroup]
+2026-10-15T00:52:11.8603617Z {"schema": 1, "passed": true, "checks": 38, "guard_sha256": "af08017c15a04f2fb821817149fd00ad54f1c7feb5f5cd58a89e07874c367e2d", "scope": "Actual shipped guard over independent Git histories and unsafe ZIP mutation controls; no Android execution or device acceptance"}
+2026-10-15T00:52:11.8727640Z ##[group]Run python3 native-android/session-client/tools/tap_host_check.py --output native-android/results/session-client/tap-host-checks.json
+2026-10-15T00:52:11.8729719Z [36;1mpython3 native-android/session-client/tools/tap_host_check.py --output native-android/results/session-client/tap-host-checks.json[0m
+2026-10-15T00:52:11.8814401Z shell: /usr/bin/bash -e {0}
+2026-10-15T00:52:11.8814656Z env:
+2026-10-15T00:52:11.8814872Z   ANDROID_HOME: /usr/local/lib/android/sdk
+2026-10-15T00:52:11.8815185Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+2026-10-15T00:52:11.8815474Z ##[endgroup]
+2026-10-15T00:52:11.9478439Z {"schema": 1, "passed": true, "checks": 110, "scope": "Actual shipped accessibility-label, exact tap listener, strict unreleased-source Home, grounded source obstacle/slide, exact RunPre-at-release and released-WALK stability evidence predicates on independent XML/event fixtures; no device execution", "emulator_driver_sha256": "dd6f1b09fe3c4bc9cf52798e9412e4541273328cf6613ce83d49f723cb23179e", "observed_android_ui": null}
+2026-10-15T00:52:11.9566832Z ##[group]Run test -c /dev/kvm
+2026-10-15T00:52:11.9567156Z [36;1mtest -c /dev/kvm[0m
+2026-10-15T00:52:11.9567397Z [36;1msudo chmod 666 /dev/kvm[0m
+2026-10-15T00:52:11.9630619Z shell: /usr/bin/bash -e {0}
+2026-10-15T00:52:11.9630879Z env:
+2026-10-15T00:52:11.9631094Z   ANDROID_HOME: /usr/local/lib/android/sdk
+2026-10-15T00:52:11.9631426Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+2026-10-15T00:52:11.9631712Z ##[endgroup]
+2026-10-15T00:52:11.9886018Z ##[group]Run reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+2026-10-15T00:52:11.9886506Z with:
+2026-10-15T00:52:11.9886699Z   api-level: 33
+2026-10-15T00:52:11.9886921Z   emulator-build: 16428233
+2026-10-15T00:52:11.9887147Z   channel: stable
+2026-10-15T00:52:11.9887348Z   target: google_apis
+2026-10-15T00:52:11.9887558Z   arch: x86_64
+2026-10-15T00:52:11.9887749Z   profile: pixel_2
+2026-10-15T00:52:11.9888624Z   emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+2026-10-15T00:52:11.9889189Z   disable-animations: true
+2026-10-15T00:52:11.9890035Z   script: python3 native-android/session-client/tools/emulator_check.py --apk native-android/results/session-client/CoH-Native-Session-Client-0.2.0-emulator-x86_64.apk --output native-android/results/session-client
+2026-10-15T00:52:11.9890902Z   cores: 2
+2026-10-15T00:52:11.9891084Z   avd-name: test
+2026-10-15T00:52:11.9891319Z   force-avd-creation: true
+2026-10-15T00:52:11.9891563Z   emulator-boot-timeout: 600
+2026-10-15T00:52:11.9891798Z   emulator-port: 5554
+2026-10-15T00:52:11.9892022Z   disable-spellchecker: false
+2026-10-15T00:52:11.9892274Z   disable-linux-hw-accel: auto
+2026-10-15T00:52:11.9892515Z   enable-hw-keyboard: false
+2026-10-15T00:52:11.9892738Z env:
+2026-10-15T00:52:11.9892941Z   ANDROID_HOME: /usr/local/lib/android/sdk
+2026-10-15T00:52:11.9893250Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+2026-10-15T00:52:11.9893521Z ##[endgroup]
+2026-10-15T00:52:12.0473639Z ##[group]Configure emulator
+2026-10-15T00:52:12.0476248Z API level: 33
+2026-10-15T00:52:12.0477090Z System image API level: 33
+2026-10-15T00:52:12.0477647Z target: google_apis
+2026-10-15T00:52:12.0478524Z CPU architecture: x86_64
+2026-10-15T00:52:12.0479195Z Hardware profile: pixel_2
+2026-10-15T00:52:12.0479786Z Cores: 2
+2026-10-15T00:52:12.0480238Z RAM size: 
+2026-10-15T00:52:12.0480690Z Heap size: 
+2026-10-15T00:52:12.0481247Z SD card path or size: 
+2026-10-15T00:52:12.0481931Z Disk size: 
+2026-10-15T00:52:12.0482340Z AVD name: test
+2026-10-15T00:52:12.0483123Z force avd creation: true
+2026-10-15T00:52:12.0483692Z Emulator boot timeout: 600
+2026-10-15T00:52:12.0484822Z emulator port: 5554
+2026-10-15T00:52:12.0486176Z emulator options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+2026-10-15T00:52:12.0487456Z disable animations: true
+2026-10-15T00:52:12.0488363Z disable spellchecker: false
+2026-10-15T00:52:12.0489159Z disable Linux hardware acceleration: false
+2026-10-15T00:52:12.0489938Z enable hardware keyboard: false
+2026-10-15T00:52:12.0490570Z using emulator build: 16428233
+2026-10-15T00:52:12.0491170Z Channel: 0 (stable)
+2026-10-15T00:52:12.0491665Z Script:
+2026-10-15T00:52:12.0493662Z python3 native-android/session-client/tools/emulator_check.py --apk native-android/results/session-client/CoH-Native-Session-Client-0.2.0-emulator-x86_64.apk --output native-android/results/session-client
+2026-10-15T00:52:12.0495553Z Pre emulator launch script:
+2026-10-15T00:52:12.0496486Z ##[endgroup]
+2026-10-15T00:52:12.0497296Z ##[group]Install Android SDK
+2026-10-15T00:52:12.0540726Z [command]/usr/bin/sh -c \yes | sdkmanager --licenses > /dev/null
+2026-10-15T00:52:14.2008701Z Installing latest build tools, platform tools, and platform.
+2026-10-15T00:52:14.2023839Z [command]/usr/bin/sh -c \sdkmanager --install 'build-tools;37.0.0' platform-tools 'platforms;android-33'> /dev/null
+2026-10-15T00:52:20.1802130Z Installing latest emulator.
+2026-10-15T00:52:20.1818997Z [command]/usr/bin/sh -c \sdkmanager --install emulator --channel=0 > /dev/null
+2026-10-15T00:52:27.7789874Z Installing emulator build 16428233.
+2026-10-15T00:52:27.7807583Z [command]/usr/bin/curl -fo emulator.zip https://dl.google.com/android/repository/emulator-linux_x64-16428233.zip
+2026-10-15T00:52:27.7882028Z   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2026-10-15T00:52:27.7883519Z                                  Dload  Upload   Total   Spent    Left  Speed
+2026-10-15T00:52:27.7883923Z 
+2026-10-15T00:52:28.5640962Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2026-10-15T00:52:28.9722165Z  56  333M   56  186M    0     0   240M      0  0:00:01 --:--:--  0:00:01  240M
+2026-10-15T00:52:28.9723290Z 100  333M  100  333M    0     0   281M      0  0:00:01  0:00:01 --:--:--  281M
+2026-10-15T00:52:28.9775598Z [command]/usr/bin/unzip -o -q emulator.zip -d /usr/local/lib/android/sdk
+2026-10-15T00:52:35.6902628Z Installing system images.
+2026-10-15T00:52:35.6917459Z [command]/usr/bin/sh -c \sdkmanager --install 'system-images;android-33;google_apis;x86_64' --channel=0 > /dev/null
+2026-10-15T00:53:15.1350582Z ##[endgroup]
+2026-10-15T00:53:15.1352443Z ##[group]Create AVD
+2026-10-15T00:53:15.1352968Z Creating AVD.
+2026-10-15T00:53:15.1373999Z [command]/usr/bin/sh -c \echo no | avdmanager create avd --force -n test --package 'system-images;android-33;google_apis;x86_64' --device 'pixel_2'
+2026-10-15T00:53:15.9523735Z Loading local repository...                                                     
+2026-10-15T00:53:15.9530846Z [=========                              ] 25% Loading local repository...       
+2026-10-15T00:53:15.9531975Z [=========                              ] 25% Fetch remote repository...        
+2026-10-15T00:53:15.9533012Z [=======================================] 100% Fetch remote repository...       
+2026-10-15T00:53:16.0393052Z Auto-selecting single ABI x86_64
+2026-10-15T00:53:16.4611462Z [command]/usr/bin/sh -c \printf 'hw.cpu.ncore=2\n' >> /home/runner/.android/avd/test.avd/config.ini
+2026-10-15T00:53:16.4634276Z ##[endgroup]
+2026-10-15T00:53:16.4636110Z ##[group]Launch Emulator
+2026-10-15T00:53:16.4636457Z Starting emulator.
+2026-10-15T00:53:16.4653803Z [command]/usr/bin/sh -c \/usr/local/lib/android/sdk/emulator/emulator -port 5554 -avd test -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none &
+2026-10-15T00:53:16.4781861Z INFO         | Android emulator version 37.2.12.0 (build_id 16428233) (CL:N/A)
+2026-10-15T00:53:16.4782692Z INFO         | Graphics backend: gfxstream
+2026-10-15T00:53:16.4783746Z INFO         | Found systemPath /usr/local/lib/android/sdk/system-images/android-33/google_apis/x86_64/
+2026-10-15T00:53:16.5245426Z INFO         | Saving last run QEMU version for the AVD to 2
+2026-10-15T00:53:16.5246184Z INFO         | Increasing RAM size to 2048MB
+2026-10-15T00:53:16.5246975Z ##############################################################################
+2026-10-15T00:53:16.5247787Z ##                        WARNING - ACTION REQUIRED                         ##
+2026-10-15T00:53:16.5249008Z ##  Consider using the '-metrics-collection' flag to help improve the       ##
+2026-10-15T00:53:16.5250193Z ##  emulator by sending anonymized usage data. Or use the '-no-metrics'     ##
+2026-10-15T00:53:16.5250959Z ##  flag to bypass this warning and turn off the metrics collection.        ##
+2026-10-15T00:53:16.5251728Z ##  In a future release this warning will turn into a one-time blocking     ##
+2026-10-15T00:53:16.5252473Z ##  prompt to ask for explicit user input regarding metrics collection.     ##
+2026-10-15T00:53:16.5253110Z ##                                                                          ##
+2026-10-15T00:53:16.5253783Z ##  Please see '-help-metrics-collection' for more details. You can use     ##
+2026-10-15T00:53:16.5254576Z ##  '-metrics-to-file' or '-metrics-to-console' flags to see what type of   ##
+2026-10-15T00:53:16.5255331Z ##  data is being collected by emulator as part of usage statistics.        ##
+2026-10-15T00:53:16.5256003Z ##############################################################################
+2026-10-15T00:53:16.5256533Z INFO         | Guest GLES Driver: Auto (ext controls)
+2026-10-15T00:53:16.5257291Z INFO         | emuglConfig_init: vulkan_mode_selected:swiftshader gles_mode_selected:swiftshader
+2026-10-15T00:53:16.5258299Z INFO         | Checking system compatibility:
+2026-10-15T00:53:16.5259096Z INFO         |   Checking: hasSufficientDiskSpace
+2026-10-15T00:53:16.5259797Z INFO         |      Ok: Disk space requirements to run avd: `test` are met
+2026-10-15T00:53:16.5260245Z INFO         |   Checking: hasSufficientHwGpu
+2026-10-15T00:53:16.5260832Z INFO         |      Ok: Hardware GPU compatibility checks are not required
+2026-10-15T00:53:16.5261289Z INFO         |   Checking: hasSufficientSystem
+2026-10-15T00:53:16.5261770Z INFO         |      Ok: System requirements to run avd: `test` are met
+2026-10-15T00:53:16.5262861Z WARNING      | Feature QuickbootFileBacked is disabled due to stability issues, if you really want that, the environment variable ANDROID_EMU_FORCE_QUICKBOOT_FILE_BACKED need to set to 1
+2026-10-15T00:53:16.7343880Z ERROR        | Unable to connect to adb daemon on port: 5037
+2026-10-15T00:53:16.7355035Z INFO         | Storing crashdata in: /tmp/android-runner/emu-crash-37.2.12.db, detection is enabled for process: 3321
+2026-10-15T00:53:16.7356546Z INFO         | Initializing gfxstream backend
+2026-10-15T00:53:16.7364611Z INFO         | startOpenglesRendererImpl: gpu info
+2026-10-15T00:53:16.7365273Z INFO         | 
+2026-10-15T00:53:16.7368748Z INFO         | initIcdPaths: ICD set to 'swiftshader', using Swiftshader ICD
+2026-10-15T00:53:16.7369971Z INFO         | Setting ICD filenames for the loader = /usr/local/lib/android/sdk/emulator/lib64/vulkan/vk_swiftshader_icd.json
+2026-10-15T00:53:16.7371590Z INFO         | SharedLibrary::open for [/usr/local/lib/android/sdk/emulator/qemu/linux-x86_64/lib64/vulkan/libvulkan.so]
+2026-10-15T00:53:16.7373420Z INFO         | SharedLibrary::open for [/usr/local/lib/android/sdk/emulator/qemu/linux-x86_64/lib64/vulkan/libvulkan.so.1]
+2026-10-15T00:53:16.7375364Z INFO         | SharedLibrary::open for [/usr/local/lib/android/sdk/emulator/lib64/vulkan/libvulkan.so]
+2026-10-15T00:53:16.7377173Z INFO         | Added library: /usr/local/lib/android/sdk/emulator/lib64/vulkan/libvulkan.so
+2026-10-15T00:53:16.7430266Z INFO         | Selecting Vulkan device: SwiftShader Device (Subzero), Version: 1.3.0
+2026-10-15T00:53:16.7431210Z INFO         | Using Vulkan externalMemoryMode: OpaqueFd for VkEmulation
+2026-10-15T00:53:16.7511391Z INFO         | Format VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16 does not support YCbCr sampler conversion
+2026-10-15T00:53:16.7544501Z INFO         | SharedLibrary::open for [libX11]
+2026-10-15T00:53:16.7548241Z WARNING      | Could not open libX11.so, try libX11.so.6
+2026-10-15T00:53:16.7549256Z INFO         | SharedLibrary::open for [libX11.so.6]
+2026-10-15T00:53:16.7549917Z INFO         | SharedLibrary::open for [libX11-xcb]
+2026-10-15T00:53:16.7550635Z WARNING      | Could not open libX11-xcb.so, try libX11-xcb.so.1
+2026-10-15T00:53:16.7551264Z INFO         | SharedLibrary::open for [libX11-xcb.so.1]
+2026-10-15T00:53:16.7604117Z INFO         | Initializing VkEmulation features:
+2026-10-15T00:53:16.7604842Z INFO         |     glInteropSupported: false
+2026-10-15T00:53:16.7605413Z INFO         |     useDeferredCommands: true
+2026-10-15T00:53:16.7605914Z INFO         |     createResourceWithRequirements: true
+2026-10-15T00:53:16.7606387Z INFO         |     useVulkanComposition: false
+2026-10-15T00:53:16.7606838Z INFO         |     useVulkanNativeSwapchain: false
+2026-10-15T00:53:16.7607295Z INFO         |     enable guestRenderDoc: false
+2026-10-15T00:53:16.7607739Z INFO         |     ASTC LDR emulation mode: Gpu
+2026-10-15T00:53:16.7608505Z INFO         |     enable ETC2 emulation: true
+2026-10-15T00:53:16.7608941Z INFO         |     enable Ycbcr emulation: false
+2026-10-15T00:53:16.7609365Z INFO         |     guestVulkanOnly: false
+2026-10-15T00:53:16.7609798Z INFO         |     useDedicatedAllocations: false
+2026-10-15T00:53:16.7610259Z INFO         |     guestVulkanMaxApiVersion: 1.3.0
+2026-10-15T00:53:16.7610744Z INFO         |     enableProtectedMemoryEmulation: false
+2026-10-15T00:53:16.7631154Z INFO         | Graphics Adapter Vendor Google (Google Inc.)
+2026-10-15T00:53:16.7632659Z INFO         | Graphics Adapter Android Emulator OpenGL ES Translator (Google SwiftShader)
+2026-10-15T00:53:16.7633744Z INFO         | Graphics API Version OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)
+2026-10-15T00:53:16.7637135Z INFO         | Graphics API Extensions GL_OES_EGL_sync GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_depth24 GL_OES_depth32 GL_OES_element_index_uint GL_OES_texture_float GL_OES_texture_float_linear GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth_texture GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_packed_depth_stencil GL_OES_vertex_half_float GL_OES_standard_derivatives GL_OES_texture_npot GL_OES_rgb8_rgba8 GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_texture_format_BGRA8888 GL_APPLE_texture_format_BGRA8888 
+2026-10-15T00:53:16.7640926Z INFO         | Graphics Device Extensions N/A
+2026-10-15T00:53:16.7641705Z INFO         | Disabling sparse binding feature support
+2026-10-15T00:53:16.7714837Z INFO         | Sending adb public key [QAAAAB+vJI0h85URKSSJZXF3xZp41Az+QvvgEsHMHIcoP0DUxVHQmuZBwW9WM5Ie8LOeq8AwyyNkj/AfuMGyyJ4QWgdjEz2f36AezAdX5h5bvBImVQYVYcSS+3+Gy8CiJsbJGB7jkkVI8AcTuFUVjLx/n957TTN1Z7sqRHCGjToTHv4NclDjBsfmabDsXGmwUA8ss5lzKYV6YoSuM3WlVe5FVSS8XVVMqsLo4R9wC5OX/kgKzvaRS2Wz6wDv3DqJyZ20TnZbcQyS9d5CgvTs0a5/ZZY4nFuQrfpSeb5YO77Z6k+F7S6Fzjizv07EQ+vBQl6tOy2tt9vyZEQJ6PpdUai+4T/KsVecDsBdcWjvU0irtD+j30c9854lB7dq+d3iXD3RwOtSJSlAYNwa63urW+d5ajC1McMIoBHv6F/lmOpoVM6cb+j3WtKZe4GVilE2KDpXps9Up1BAT4nCp45lNAAv2Qd3z7h2JYnV5OhUdHDjmheQSV8SP4m6GMXsvcYf367LKzz+ual5Ny3A4C+PGSxyNIq9YBhWB4V0Oul00j3g4lehoGW7icCPfI7fCTVqHfmd+qUMbbW3Jb9CrFzTEUwJumUeN/Rtr3xTWub4+4CZG7VDtX/xRIy+IDZ1YUi7xSqQnUUOHw2lWjwD/rWReNO43fLg8dxPm5vDPbcd9qFRE5bsKwRdkAEAAQA= runner@unknown]
+2026-10-15T00:53:16.7720226Z INFO         | Userspace boot properties:
+2026-10-15T00:53:16.7721226Z INFO         |   androidboot.boot_devices=pci0000:00/0000:00:03.0 pci0000:00/0000:00:06.0
+2026-10-15T00:53:16.7721879Z INFO         |   androidboot.dalvik.vm.heapsize=512m
+2026-10-15T00:53:16.7722419Z INFO         |   androidboot.debug.hwui.renderer=skiagl
+2026-10-15T00:53:16.7722972Z INFO         |   androidboot.debug.sf.nobootanimation=1
+2026-10-15T00:53:16.7723485Z INFO         |   androidboot.hardware=ranchu
+2026-10-15T00:53:16.7724244Z INFO         |   androidboot.hardware.gltransport=pipe
+2026-10-15T00:53:16.7724756Z INFO         |   androidboot.hardware.vulkan=ranchu
+2026-10-15T00:53:16.7725227Z INFO         |   androidboot.logcat=*:V
+2026-10-15T00:53:16.7725700Z INFO         |   androidboot.opengles.version=196608
+2026-10-15T00:53:16.7726163Z INFO         |   androidboot.qemu=1
+2026-10-15T00:53:16.7731041Z INFO         |   androidboot.qemu.adb.pubkey=QAAAAB+vJI0h85URKSSJZXF3xZp41Az+QvvgEsHMHIcoP0DUxVHQmuZBwW9WM5Ie8LOeq8AwyyNkj/AfuMGyyJ4QWgdjEz2f36AezAdX5h5bvBImVQYVYcSS+3+Gy8CiJsbJGB7jkkVI8AcTuFUVjLx/n957TTN1Z7sqRHCGjToTHv4NclDjBsfmabDsXGmwUA8ss5lzKYV6YoSuM3WlVe5FVSS8XVVMqsLo4R9wC5OX/kgKzvaRS2Wz6wDv3DqJyZ20TnZbcQyS9d5CgvTs0a5/ZZY4nFuQrfpSeb5YO77Z6k+F7S6Fzjizv07EQ+vBQl6tOy2tt9vyZEQJ6PpdUai+4T/KsVecDsBdcWjvU0irtD+j30c9854lB7dq+d3iXD3RwOtSJSlAYNwa63urW+d5ajC1McMIoBHv6F/lmOpoVM6cb+j3WtKZe4GVilE2KDpXps9Up1BAT4nCp45lNAAv2Qd3z7h2JYnV5OhUdHDjmheQSV8SP4m6GMXsvcYf367LKzz+ual5Ny3A4C+PGSxyNIq9YBhWB4V0Oul00j3g4lehoGW7icCPfI7fCTVqHfmd+qUMbbW3Jb9CrFzTEUwJumUeN/Rtr3xTWub4+4CZG7VDtX/xRIy+IDZ1YUi7xSqQnUUOHw2lWjwD/rWReNO43fLg8dxPm5vDPbcd9qFRE5bsKwRdkAEAAQA= runner@unknown
+2026-10-15T00:53:16.7734852Z INFO         |   androidboot.qemu.avd_name=test
+2026-10-15T00:53:16.7735780Z INFO         |   androidboot.qemu.camera_hq_edge_processing=0
+2026-10-15T00:53:16.7736511Z INFO         |   androidboot.qemu.camera_protocol_ver=1
+2026-10-15T00:53:16.7736936Z INFO         |   androidboot.qemu.cpuvulkan.version=4202496
+2026-10-15T00:53:16.7737406Z INFO         |   androidboot.qemu.gltransport.drawFlushInterval=800
+2026-10-15T00:53:16.7737859Z INFO         |   androidboot.qemu.gltransport.name=pipe
+2026-10-15T00:53:16.7738640Z INFO         |   androidboot.qemu.hwcodec.avcdec=2
+2026-10-15T00:53:16.7739042Z INFO         |   androidboot.qemu.hwcodec.hevcdec=2
+2026-10-15T00:53:16.7739638Z INFO         |   androidboot.qemu.hwcodec.vpxdec=2
+2026-10-15T00:53:16.7740148Z INFO         |   androidboot.qemu.settings.system.screen_off_timeout=2147483647
+2026-10-15T00:53:16.7740618Z INFO         |   androidboot.qemu.skin=1080x1920
+2026-10-15T00:53:16.7740982Z INFO         |   androidboot.qemu.virtiowifi=1
+2026-10-15T00:53:16.7741333Z INFO         |   androidboot.qemu.vsync=60
+2026-10-15T00:53:16.7741703Z INFO         |   androidboot.serialno=EMULATOR37X2X12X0
+2026-10-15T00:53:16.7742327Z INFO         |   androidboot.vbmeta.digest=cc2acf6c582b63336b71fe51ed136e1a7a577e9e868ae7ba916ef6b3965324e5
+2026-10-15T00:53:16.7742925Z INFO         |   androidboot.vbmeta.hash_alg=sha256
+2026-10-15T00:53:16.7743287Z INFO         |   androidboot.vbmeta.size=6592
+2026-10-15T00:53:16.7743657Z INFO         |   androidboot.veritymode=enforcing
+2026-10-15T00:53:16.7913746Z WARNING: cannnot unmap ptr 0x7f5720001000 as it is in the protected range from 0x7f56a0000000 to 0x7f5720200000
+2026-10-15T00:53:16.8134908Z INFO         | Monitoring duration of emulator setup.
+2026-10-15T00:53:17.8164350Z INFO         | Successfully initialized netsim WiFi
+2026-10-15T00:53:17.8165354Z INFO         | Activated packet streamer for bluetooth emulation
+2026-10-15T00:53:17.8225672Z INFO         | Setting display: 0 configuration to: 1080x1920, dpi: 420x420 
+2026-10-15T00:53:17.8226707Z INFO         | setDisplayActiveConfig: id:0, 1080x1920
+2026-10-15T00:53:17.8227694Z INFO         | emulatorSetupEnvironment: Environment scene is not required
+2026-10-15T00:53:17.8309261Z USER_INFO    | Emulator is performing a full startup. This may take upto two minutes, or more.
+2026-10-15T00:53:17.8314109Z WARNING      | Failed to process .ini file /home/runner/.android/emu-update-last-check.ini for reading.
+2026-10-15T00:53:17.9455405Z WARNING      | Failed to process .ini file /home/runner/.android/emu-update-last-check.ini for reading.
+2026-10-15T00:53:26.4710977Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:26.4743760Z * daemon not running; starting now at tcp:5037
+2026-10-15T00:53:26.4851406Z * daemon started successfully
+2026-10-15T00:53:26.4855351Z adb: device offline
+2026-10-15T00:53:26.4864958Z The process '/usr/local/lib/android/sdk/platform-tools/adb' failed with exit code 1
+2026-10-15T00:53:28.4912358Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:28.4949822Z adb: device offline
+2026-10-15T00:53:28.4951935Z The process '/usr/local/lib/android/sdk/platform-tools/adb' failed with exit code 1
+2026-10-15T00:53:30.5006629Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:30.5295397Z 
+2026-10-15T00:53:32.5369982Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:32.5919389Z 
+2026-10-15T00:53:34.5980103Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:34.6232907Z 
+2026-10-15T00:53:36.6346269Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:36.6567387Z 
+2026-10-15T00:53:38.6619829Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:38.6805299Z 
+2026-10-15T00:53:40.6893637Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:40.7140011Z 
+2026-10-15T00:53:42.7176303Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:42.7475617Z 
+2026-10-15T00:53:44.7548523Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:44.7734387Z 
+2026-10-15T00:53:46.7793380Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:46.8027056Z 
+2026-10-15T00:53:48.8079457Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:48.8340035Z 
+2026-10-15T00:53:50.8376384Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:50.8701390Z 
+2026-10-15T00:53:52.8750146Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:52.8981252Z 
+2026-10-15T00:53:54.9093409Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:54.9525229Z 
+2026-10-15T00:53:56.9759784Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
+2026-10-15T00:53:57.1307490Z 1
+2026-10-15T00:53:57.1403831Z Emulator booted.
+2026-10-15T00:53:57.1486534Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell input keyevent 82
+2026-10-15T00:53:57.4135981Z Disabling animations.
+2026-10-15T00:53:57.4177008Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell settings put global window_animation_scale 0.0
+2026-10-15T00:53:57.6746720Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell settings put global transition_animation_scale 0.0
+2026-10-15T00:53:57.9506794Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell settings put global animator_duration_scale 0.0
+2026-10-15T00:53:58.3473442Z ##[endgroup]
+2026-10-15T00:53:58.3539489Z [command]/usr/bin/sh -c python3 native-android/session-client/tools/emulator_check.py --apk native-android/results/session-client/CoH-Native-Session-Client-0.2.0-emulator-x86_64.apk --output native-android/results/session-client
+2026-10-15T00:53:58.4755052Z INFO         | Boot completed in 41969 ms
+2026-10-15T00:53:58.4808057Z INFO         | Increasing screen off timeout, logcat buffer size to 2M.
+2026-10-15T00:55:37.2661312Z Traceback (most recent call last):
+2026-10-15T00:55:37.2670266Z   File "/home/runner/work/coh-android/coh-android/native-android/session-client/tools/emulator_check.py", line 976, in <module>
+2026-10-15T00:55:37.2672319Z     main()
+2026-10-15T00:55:37.2673515Z   File "/home/runner/work/coh-android/coh-android/native-android/session-client/tools/emulator_check.py", line 883, in main
+2026-10-15T00:55:37.2674982Z     first = wait(native_ready, 'Continuous authored shared scene startup', seconds=90)
+2026-10-15T00:55:37.2676018Z             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-15T00:55:37.2677327Z   File "/home/runner/work/coh-android/coh-android/native-android/session-client/tools/emulator_check.py", line 70, in wait
+2026-10-15T00:55:37.2679041Z     raise RuntimeError(label + ' failed; latest installed session report retained')
+2026-10-15T00:55:37.2680332Z RuntimeError: Continuous authored shared scene startup failed; latest installed session report retained
+2026-10-15T00:55:37.2985202Z ##[error]The process '/usr/bin/sh' failed with exit code 1
+2026-10-15T00:55:37.2995926Z ##[group]Terminate Emulator
+2026-10-15T00:55:37.2996687Z [command]/usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 emu kill
+2026-10-15T00:55:37.3030688Z OK: killing emulator, bye bye
+2026-10-15T00:55:37.3040228Z OK
+2026-10-15T00:55:37.3062389Z INFO         | Wait for emulator (pid 3321) 20 seconds to shutdown gracefully before kill;you can set environment variable ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL(in seconds) to change the default value (20 seconds)
+2026-10-15T00:55:37.3068560Z 
+2026-10-15T00:55:37.3069391Z ##[endgroup]
+2026-10-15T00:55:37.3173517Z USER_INFO    | Snapshots have been disabled by the user, save request is ignored.
+2026-10-15T00:55:37.3181682Z INFO         | Saving snapshot 'default_boot' took 0 ms
+2026-10-15T00:55:37.8578593Z ERROR        | stop: Not implemented
+2026-10-15T00:55:37.8580265Z WARNING      | Emulator client has not yet been configured.. Call configure me first!
+2026-10-15T00:55:37.8711203Z INFO         | removeAll
+2026-10-15T00:55:37.9034983Z WARNING      | Netsim Wifi dns:///localhost:46851 is gone due to Stream removed (CANCELLED)
+2026-10-15T00:55:38.7816976Z ##[group]Run actions/upload-artifact@v4
+2026-10-15T00:55:38.7817277Z with:
+2026-10-15T00:55:38.7817518Z   name: native-android-session-client-gates19-21
+2026-10-15T00:55:38.7817855Z   path: native-android/results/session-client/
+2026-10-15T00:55:38.7818509Z   if-no-files-found: error
+2026-10-15T00:55:38.7818741Z   retention-days: 30
+2026-10-15T00:55:38.7818950Z   compression-level: 6
+2026-10-15T00:55:38.7819163Z   overwrite: false
+2026-10-15T00:55:38.7819368Z   include-hidden-files: false
+2026-10-15T00:55:38.7819592Z env:
+2026-10-15T00:55:38.7819793Z   ANDROID_HOME: /usr/local/lib/android/sdk
+2026-10-15T00:55:38.7820084Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+2026-10-15T00:55:38.7820376Z   ANDROID_AVD_HOME: /home/runner/.android/avd
+2026-10-15T00:55:38.7820638Z ##[endgroup]
+2026-10-15T00:55:38.9524582Z (node:4276) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-15T00:55:38.9525587Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-15T00:55:38.9649810Z With the provided path, there will be 28 files uploaded
+2026-10-15T00:55:38.9657330Z Artifact name is valid!
+2026-10-15T00:55:38.9658207Z Root directory input is valid!
+2026-10-15T00:55:39.3572691Z Beginning upload of artifact content to blob storage
+2026-10-15T00:55:39.6662944Z (node:4276) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-15T00:55:40.5690595Z Uploaded bytes 6095697
+2026-10-15T00:55:40.6492489Z Finished uploading artifact content to blob storage!
+2026-10-15T00:55:40.6494065Z SHA256 digest of uploaded artifact zip is 4c9aca56793f72cca7f4d28af66c0a1f1d7dbcdef2e3884733b6bee028f8b205
+2026-10-15T00:55:40.6495366Z Finalizing artifact upload
+2026-10-15T00:55:40.9178859Z Artifact native-android-session-client-gates19-21.zip successfully finalized. Artifact ID 11939806851
+2026-10-15T00:55:40.9182239Z Artifact native-android-session-client-gates19-21 has been successfully uploaded! Final size is 6095697 bytes. Artifact ID is 11939806851
+2026-10-15T00:55:40.9188534Z Artifact download URL: https://github.com/Russianranger/coh-android/actions/runs/38662399471/artifacts/11939806851
+2026-10-15T00:55:40.9392360Z Post job cleanup.
+2026-10-15T00:55:41.0324502Z [command]/usr/bin/git version
+2026-10-15T00:55:41.0372259Z git version 2.55.0
+2026-10-15T00:55:41.0416345Z Temporarily overriding HOME='/home/runner/work/_temp/ac74abdb-eda8-4731-9c0c-498df46e91b0' before making global git config changes
+2026-10-15T00:55:41.0417707Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-15T00:55:41.0423288Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/coh-android/coh-android
+2026-10-15T00:55:41.0463032Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-15T00:55:41.0499464Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-15T00:55:41.1224772Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-15T00:55:41.1269966Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-15T00:55:41.1648768Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-15T00:55:41.1689326Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-15T00:55:41.2177354Z Cleaning up orphan processes
+2026-10-15T00:55:41.2647070Z Terminate orphan process: pid (3387) (netsimd)
+2026-10-15T00:55:41.2729938Z Terminate orphan process: pid (3483) (adb)
+2026-10-15T00:55:41.2836654Z Terminate orphan process: pid (4238) (sh)
+2026-10-15T00:55:41.2923240Z Terminate orphan process: pid (4245) (sh)
+2026-10-15T00:55:41.3026335Z Terminate orphan process: pid (4253) (sh)
+2026-10-15T00:55:41.3113525Z Terminate orphan process: pid (4260) (sh)
+2026-10-15T00:55:41.3199822Z Terminate orphan process: pid (4266) (sh)
+2026-10-15T00:55:41.3223506Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4, android-actions/setup-android@v3. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

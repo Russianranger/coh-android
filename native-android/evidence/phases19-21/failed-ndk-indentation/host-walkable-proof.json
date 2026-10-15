@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "authored_parts": 4,
+  "source_triangles": 276,
+  "render_collision_indexed_positions_byte_exact": true,
+  "source_vertices_checked": 828,
+  "malformed_inputs_checked": 12,
+  "old_gates_repeated": false,
+  "fixture": {
+    "bytes": 202880,
+    "sha256": "d7694d1dc83e2d95cea045e7f4912c1f9211aafed3fdebbab42943aab30a4d62"
+  }
+}

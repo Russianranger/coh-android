@@ -1,0 +1,286 @@
+{
+  "schema": 1,
+  "gates": [
+    19,
+    20,
+    21
+  ],
+  "status": "failed_release_settling_predicate",
+  "passed": false,
+  "runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "qualification_driver_commit": "2dd23ca653b4b55e1bbc0ff3fd4eb042605967d3",
+  "workflow_run_id": 38659452750,
+  "job_id": 116176982874,
+  "artifact_id": 11938826177,
+  "artifact_zip_bytes": 6027467,
+  "artifact_zip_sha256": "2b9822bb24bd26ec94f5fca4466192f7349b673b31ec4059f907c22af3ab6f9e",
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38659452750",
+  "stop_operation": "release_joystick position stability assertion in backward directional case",
+  "reason": "The predicate treated held_dirs=0 and animation Ready as complete physics settling. Source WALK retains .45 ground friction and decays actual horizontal velocity by .55 per tick; desired motion and Ready do not certify zero physics velocity. Input pending edges also needed explicit closure. The exact failing candidate displacement was not retained, so no magnitude is invented.",
+  "native_failure": false,
+  "frames_before_driver_failure": 869,
+  "latest_held_dirs": 0,
+  "latest_source_state_bits": 0,
+  "latest_input_pending_edges": 0,
+  "latest_grounded": true,
+  "latest_actor_position": [
+    582.5,
+    74,
+    -1343.12354
+  ],
+  "exact_apk_and_source_proofs_reused": true,
+  "physical_acceptance": false,
+  "retained_partial_reports": [
+    {
+      "file": "accepted-assets-recovery.json",
+      "bytes": 1977,
+      "sha256": "bef8e62efa5c6b8ec123281b4ab1ae4e0efa73449238e4ee33628f4fec65c8f3",
+      "retained_file": "accepted-assets-recovery.json",
+      "retained_bytes": 1977,
+      "retained_sha256": "bef8e62efa5c6b8ec123281b4ab1ae4e0efa73449238e4ee33628f4fec65c8f3"
+    },
+    {
+      "file": "apk-badging-arm64.txt",
+      "bytes": 677,
+      "sha256": "618e02f2a638e490c25a1bee18a44d5913a34190be77eae8f76c18817c724c3a",
+      "retained_file": "apk-badging-arm64.txt",
+      "retained_bytes": 677,
+      "retained_sha256": "618e02f2a638e490c25a1bee18a44d5913a34190be77eae8f76c18817c724c3a"
+    },
+    {
+      "file": "apk-badging-emulator-x86_64.txt",
+      "bytes": 674,
+      "sha256": "13532633f98849e7eb9b6cfe54d8bf90c9dc8f0b5ae8f8c0439562f1101f2272",
+      "retained_file": "apk-badging-emulator-x86_64.txt",
+      "retained_bytes": 674,
+      "retained_sha256": "13532633f98849e7eb9b6cfe54d8bf90c9dc8f0b5ae8f8c0439562f1101f2272"
+    },
+    {
+      "file": "apk-signature-arm64.txt",
+      "bytes": 983,
+      "sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146",
+      "retained_file": "apk-signature-arm64.txt",
+      "retained_bytes": 983,
+      "retained_sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146"
+    },
+    {
+      "file": "apk-signature-emulator-x86_64.txt",
+      "bytes": 983,
+      "sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146",
+      "retained_file": "apk-signature-emulator-x86_64.txt",
+      "retained_bytes": 983,
+      "retained_sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146"
+    },
+    {
+      "file": "asset-manifest.json",
+      "bytes": 836,
+      "sha256": "79750a47eb092763c0beaee6c19ab05b34612fd79e4c56bf2ed506f1e0693ac8",
+      "retained_file": "asset-manifest.json",
+      "retained_bytes": 836,
+      "retained_sha256": "79750a47eb092763c0beaee6c19ab05b34612fd79e4c56bf2ed506f1e0693ac8"
+    },
+    {
+      "file": "build-receipt.json",
+      "bytes": 5143,
+      "sha256": "fdf108fa56d45419e867a453ef28a0728348f8f0c4dd9fbfa32c2235e6fb1ae1",
+      "retained_file": "build-receipt.json",
+      "retained_bytes": 5143,
+      "retained_sha256": "fdf108fa56d45419e867a453ef28a0728348f8f0c4dd9fbfa32c2235e6fb1ae1"
+    },
+    {
+      "file": "depth-codec-host.json",
+      "bytes": 773,
+      "sha256": "dcedee2a626da4960ea39d7acf84d13d4a456a06a8c4a2a5b01e03182c5c4fa2",
+      "retained_file": "depth-codec-host.json",
+      "retained_bytes": 773,
+      "retained_sha256": "dcedee2a626da4960ea39d7acf84d13d4a456a06a8c4a2a5b01e03182c5c4fa2"
+    },
+    {
+      "file": "emulator-button-tap-proof.json",
+      "bytes": 13885,
+      "sha256": "36ab26f19ad14838224ce6159a413ed583850025f5fa9ac9843a066e391b66af",
+      "retained_file": "emulator-button-tap-proof.json",
+      "retained_bytes": 13885,
+      "retained_sha256": "36ab26f19ad14838224ce6159a413ed583850025f5fa9ac9843a066e391b66af"
+    },
+    {
+      "file": "emulator-directional-walk-proof.json",
+      "bytes": 225482,
+      "sha256": "e297645aac862e2e7bfa8b0cf35f8439983d9dea99e544e278e1225f616215ab",
+      "retained_file": "emulator-directional-walk-proof.json.gz",
+      "retained_bytes": 11506,
+      "retained_sha256": "226cf7fb1079d68593751b38d6e445944a49e3f6788e521cf548e555b0122e38"
+    },
+    {
+      "file": "emulator-initial-report.json",
+      "bytes": 23733,
+      "sha256": "b056d0e0bc8c349817cf5460d2ade4c16438700c3c001958eb5f0b8f3aa884a5",
+      "retained_file": "emulator-initial-report.json",
+      "retained_bytes": 23733,
+      "retained_sha256": "b056d0e0bc8c349817cf5460d2ade4c16438700c3c001958eb5f0b8f3aa884a5"
+    },
+    {
+      "file": "emulator-initial-scene.png",
+      "bytes": 874515,
+      "sha256": "43762e5e5ded09b6033b1aa079f6eb09182e101aef960906bcd5379e157f1843",
+      "retained_file": "emulator-initial-scene.png",
+      "retained_bytes": 874515,
+      "retained_sha256": "43762e5e5ded09b6033b1aa079f6eb09182e101aef960906bcd5379e157f1843"
+    },
+    {
+      "file": "emulator-logcat.txt",
+      "bytes": 1418618,
+      "sha256": "24eb0b2f8306d7af29b995717008d3247308203013b8b112cce306b2c8a5af8a",
+      "retained_file": "emulator-logcat.txt.gz",
+      "retained_bytes": 208275,
+      "retained_sha256": "19bef91476a9895e6b8206165b034a9462c1fa5931124f30150c414ac27b94d8"
+    },
+    {
+      "file": "emulator-screenshot.png",
+      "bytes": 644011,
+      "sha256": "90747fec3311a6aab20e9eaefede74cf60416b59a419f73ce2b55d502c112dcb",
+      "retained_file": "emulator-screenshot.png",
+      "retained_bytes": 644011,
+      "retained_sha256": "90747fec3311a6aab20e9eaefede74cf60416b59a419f73ce2b55d502c112dcb"
+    },
+    {
+      "file": "emulator-session-report.json",
+      "bytes": 246023,
+      "sha256": "e6c2163c89e3c9921bf7f0c3b69297119ad65bfa2594be2428b3d31b97a20b61",
+      "retained_file": "emulator-session-report.json.gz",
+      "retained_bytes": 7520,
+      "retained_sha256": "2d23afef249e62d5ac1ca52d0db360611fa25bf0da7797bf74e3097c09383f5b"
+    },
+    {
+      "file": "emulator-ui.xml",
+      "bytes": 5452,
+      "sha256": "4a49c06b2688a9d256ae44111d3d2128753f033ff0c867018cd78023fc6ef229",
+      "retained_file": "emulator-ui.xml",
+      "retained_bytes": 5452,
+      "retained_sha256": "4a49c06b2688a9d256ae44111d3d2128753f033ff0c867018cd78023fc6ef229"
+    },
+    {
+      "file": "host-directional-proof.json",
+      "bytes": 18206,
+      "sha256": "0f16c955b525c55bd99d033bcd78863aa99b00d7ba7bcb45a2a6e03862f470de",
+      "retained_file": "host-directional-proof.json",
+      "retained_bytes": 18206,
+      "retained_sha256": "0f16c955b525c55bd99d033bcd78863aa99b00d7ba7bcb45a2a6e03862f470de"
+    },
+    {
+      "file": "host-directional-sampler-proof.json",
+      "bytes": 3527,
+      "sha256": "3790fceedf1f7d435f68ef7a63c895f7efe2e1c30456648f41a1d88cb9f980c7",
+      "retained_file": "host-directional-sampler-proof.json",
+      "retained_bytes": 3527,
+      "retained_sha256": "3790fceedf1f7d435f68ef7a63c895f7efe2e1c30456648f41a1d88cb9f980c7"
+    },
+    {
+      "file": "host-walk-proof.json",
+      "bytes": 7117,
+      "sha256": "4ac5d6e2e455dcc71eae821e869297b239b5b24629a49ea2058f34c4e3417acb",
+      "retained_file": "host-walk-proof.json",
+      "retained_bytes": 7117,
+      "retained_sha256": "4ac5d6e2e455dcc71eae821e869297b239b5b24629a49ea2058f34c4e3417acb"
+    },
+    {
+      "file": "host-walkable-proof.json",
+      "bytes": 349,
+      "sha256": "53135ca6cd554e0df214f482a24fc42611d648b260f38967afb7981de3df70e0",
+      "retained_file": "host-walkable-proof.json",
+      "retained_bytes": 349,
+      "retained_sha256": "53135ca6cd554e0df214f482a24fc42611d648b260f38967afb7981de3df70e0"
+    },
+    {
+      "file": "legacy-locomotion-abi-proof.json",
+      "bytes": 6373,
+      "sha256": "65287816f7e75085c2ad54f1701fbd5c630dd5a320952216fdd2eed2e074e58c",
+      "retained_file": "legacy-locomotion-abi-proof.json",
+      "retained_bytes": 6373,
+      "retained_sha256": "65287816f7e75085c2ad54f1701fbd5c630dd5a320952216fdd2eed2e074e58c"
+    },
+    {
+      "file": "lifecycle/lifecycle-host-checks.json",
+      "bytes": 1307,
+      "sha256": "45230b4c70cb548020c41249685d36e8bd71f2f61a29ee72ef279b0ce01d7d00",
+      "retained_file": "lifecycle/lifecycle-host-checks.json",
+      "retained_bytes": 1307,
+      "retained_sha256": "45230b4c70cb548020c41249685d36e8bd71f2f61a29ee72ef279b0ce01d7d00"
+    },
+    {
+      "file": "package-reuse-receipt.json",
+      "bytes": 3199,
+      "sha256": "2a8f1abcb7b883feb758051b1b899d1c72404f7ccdf94d749b2124ccb31b824d",
+      "retained_file": "package-reuse-receipt.json",
+      "retained_bytes": 3199,
+      "retained_sha256": "2a8f1abcb7b883feb758051b1b899d1c72404f7ccdf94d749b2124ccb31b824d"
+    },
+    {
+      "file": "reuse-host-checks.json",
+      "bytes": 280,
+      "sha256": "31b19c41a9f811da5855342071efa44df7a171186e6ae6fe24e51b49e7193942",
+      "retained_file": "reuse-host-checks.json",
+      "retained_bytes": 280,
+      "retained_sha256": "31b19c41a9f811da5855342071efa44df7a171186e6ae6fe24e51b49e7193942"
+    },
+    {
+      "file": "session-fixture.json",
+      "bytes": 5185,
+      "sha256": "22fdfa072914e449d1d2f89cc42e486e104a1e093b48cafa6157c0121a6cf25d",
+      "retained_file": "session-fixture.json",
+      "retained_bytes": 5185,
+      "retained_sha256": "22fdfa072914e449d1d2f89cc42e486e104a1e093b48cafa6157c0121a6cf25d"
+    },
+    {
+      "file": "snapshot-host.json",
+      "bytes": 1170,
+      "sha256": "e3c09ca408f2d5fc1221f02a3a23d9fab22fecb12f381e193670e3b9ac2c03bc",
+      "retained_file": "snapshot-host.json",
+      "retained_bytes": 1170,
+      "retained_sha256": "e3c09ca408f2d5fc1221f02a3a23d9fab22fecb12f381e193670e3b9ac2c03bc"
+    },
+    {
+      "file": "source-floor-resolution.json",
+      "bytes": 580,
+      "sha256": "ec1821500b4c0564c0d08372452c77f192380bb8d1a0bac2fc2b9a47d00ddba0",
+      "retained_file": "source-floor-resolution.json",
+      "retained_bytes": 580,
+      "retained_sha256": "ec1821500b4c0564c0d08372452c77f192380bb8d1a0bac2fc2b9a47d00ddba0"
+    },
+    {
+      "file": "source-validation-stage.json",
+      "bytes": 1490,
+      "sha256": "1b4700f07c4e843efdeac138bebfc77078f4fd81eb9c3e6f91ac7d5ffe99794b",
+      "retained_file": "source-validation-stage.json",
+      "retained_bytes": 1490,
+      "retained_sha256": "1b4700f07c4e843efdeac138bebfc77078f4fd81eb9c3e6f91ac7d5ffe99794b"
+    },
+    {
+      "file": "tap-host-checks.json",
+      "bytes": 414,
+      "sha256": "79aaa35111a3311c6ee1d1bec9d5ff300b3cefe765438149e284ac7af2ccca1e",
+      "retained_file": "tap-host-checks.json",
+      "retained_bytes": 414,
+      "retained_sha256": "79aaa35111a3311c6ee1d1bec9d5ff300b3cefe765438149e284ac7af2ccca1e"
+    },
+    {
+      "file": "walkable-fixture.json",
+      "bytes": 28031,
+      "sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1",
+      "retained_file": "walkable-fixture.json",
+      "retained_bytes": 28031,
+      "retained_sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1"
+    },
+    {
+      "file": "walkable-reuse-guard.json",
+      "bytes": 1095,
+      "sha256": "f83fb06398ffa5d751c61dc3c877c76d4141fb2f23be44a98ff435824e6fb47e",
+      "retained_file": "walkable-reuse-guard.json",
+      "retained_bytes": 1095,
+      "retained_sha256": "f83fb06398ffa5d751c61dc3c877c76d4141fb2f23be44a98ff435824e6fb47e"
+    }
+  ],
+  "fix_scope": "Driver waits for cleared source/queued input and a bounded natural settling interval, then requires unchanged .001-unit tolerance across 30 advancing source ticks. No source friction or native velocity change.",
+  "compression": "Large textual evidence is retained losslessly as gzip with original byte identities.",
+  "superseded_by": "See final qualification.json; original failed evidence remains unchanged."
+}

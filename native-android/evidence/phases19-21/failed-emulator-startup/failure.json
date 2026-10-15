@@ -1,0 +1,278 @@
+{
+  "schema": 1,
+  "gates": [
+    19,
+    20,
+    21
+  ],
+  "status": "failed_emulator_startup_setup",
+  "passed": false,
+  "runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "qualification_driver_commit": "61860394b7896ec03c3d17dfff240f6017465e8f",
+  "workflow_run_id": 38662399471,
+  "job_id": 116186488167,
+  "artifact_id": 11939806851,
+  "artifact_zip_bytes": 6095697,
+  "artifact_zip_sha256": "4c9aca56793f72cca7f4d28af66c0a1f1d7dbcdef2e3884733b6bee028f8b205",
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38662399471",
+  "portable_core_workflow_run_id": 38662399457,
+  "portable_core_workflow_result": "success",
+  "stop_operation": "main -> wait(native_ready, Continuous authored shared scene startup, seconds=90)",
+  "traceback_driver_line": 883,
+  "wait_failure_driver_line": 70,
+  "reason": "The initial native-ready wait timed out before a session report or feature test was generated. Logcat records activity START at 00:54:04.487, then system force-stop for clearApplicationUserData at 00:54:04.659 and forced activity removal at 00:54:04.698. The retained screenshot shows the Android home launcher.",
+  "observed_setup_log_lines": {
+    "activity_start": "10-15 00:54:04.487   487   689 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=org.coh.sessionclient.walk/org.coh.sessionclient.MainActivity} from uid 2000",
+    "system_data_clear_force_stop": "10-15 00:54:04.659   487   521 I ActivityManager: Force stopping org.coh.sessionclient.walk appid=10174 user=-1: clearApplicationUserData",
+    "activity_removed": "10-15 00:54:04.698   487   521 I WindowManager:   Force removing ActivityRecord{b1bc0ea u0 org.coh.sessionclient.walk/org.coh.sessionclient.MainActivity} t9}"
+  },
+  "suspected_cause": "An asynchronous clearApplicationUserData setup operation racing with the subsequent activity launch is an inference from log ordering, not an established native client defect.",
+  "session_report_generated": false,
+  "native_failure": null,
+  "native_failure_measurement": "Unavailable: no session report was generated; neither native success nor native failure is established by this run.",
+  "feature_tests_started": false,
+  "partial_successful_feature_tests": [],
+  "source_package_scope": "Exact previously built APKs and successful original source/host/package receipts were reused unchanged; these do not substitute for current emulator execution.",
+  "exact_apk_and_source_proofs_reused": true,
+  "combined_emulator_qualification": false,
+  "physical_acceptance": false,
+  "retained_partial_reports": [
+    {
+      "file": "accepted-assets-recovery.json",
+      "bytes": 1977,
+      "sha256": "bef8e62efa5c6b8ec123281b4ab1ae4e0efa73449238e4ee33628f4fec65c8f3",
+      "retained_file": "accepted-assets-recovery.json",
+      "retained_bytes": 1977,
+      "retained_sha256": "bef8e62efa5c6b8ec123281b4ab1ae4e0efa73449238e4ee33628f4fec65c8f3",
+      "origin": "original artifact"
+    },
+    {
+      "file": "apk-badging-arm64.txt",
+      "bytes": 677,
+      "sha256": "618e02f2a638e490c25a1bee18a44d5913a34190be77eae8f76c18817c724c3a",
+      "retained_file": "apk-badging-arm64.txt",
+      "retained_bytes": 677,
+      "retained_sha256": "618e02f2a638e490c25a1bee18a44d5913a34190be77eae8f76c18817c724c3a",
+      "origin": "original artifact"
+    },
+    {
+      "file": "apk-badging-emulator-x86_64.txt",
+      "bytes": 674,
+      "sha256": "13532633f98849e7eb9b6cfe54d8bf90c9dc8f0b5ae8f8c0439562f1101f2272",
+      "retained_file": "apk-badging-emulator-x86_64.txt",
+      "retained_bytes": 674,
+      "retained_sha256": "13532633f98849e7eb9b6cfe54d8bf90c9dc8f0b5ae8f8c0439562f1101f2272",
+      "origin": "original artifact"
+    },
+    {
+      "file": "apk-signature-arm64.txt",
+      "bytes": 983,
+      "sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146",
+      "retained_file": "apk-signature-arm64.txt",
+      "retained_bytes": 983,
+      "retained_sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146",
+      "origin": "original artifact"
+    },
+    {
+      "file": "apk-signature-emulator-x86_64.txt",
+      "bytes": 983,
+      "sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146",
+      "retained_file": "apk-signature-emulator-x86_64.txt",
+      "retained_bytes": 983,
+      "retained_sha256": "28e12a3c5faecdc6a2dc295d06727640dee1a956457bffdf502bc374c62c2146",
+      "origin": "original artifact"
+    },
+    {
+      "file": "asset-manifest.json",
+      "bytes": 836,
+      "sha256": "79750a47eb092763c0beaee6c19ab05b34612fd79e4c56bf2ed506f1e0693ac8",
+      "retained_file": "asset-manifest.json",
+      "retained_bytes": 836,
+      "retained_sha256": "79750a47eb092763c0beaee6c19ab05b34612fd79e4c56bf2ed506f1e0693ac8",
+      "origin": "original artifact"
+    },
+    {
+      "file": "build-receipt.json",
+      "bytes": 5143,
+      "sha256": "fdf108fa56d45419e867a453ef28a0728348f8f0c4dd9fbfa32c2235e6fb1ae1",
+      "retained_file": "build-receipt.json",
+      "retained_bytes": 5143,
+      "retained_sha256": "fdf108fa56d45419e867a453ef28a0728348f8f0c4dd9fbfa32c2235e6fb1ae1",
+      "origin": "original artifact"
+    },
+    {
+      "file": "depth-codec-host.json",
+      "bytes": 773,
+      "sha256": "dcedee2a626da4960ea39d7acf84d13d4a456a06a8c4a2a5b01e03182c5c4fa2",
+      "retained_file": "depth-codec-host.json",
+      "retained_bytes": 773,
+      "retained_sha256": "dcedee2a626da4960ea39d7acf84d13d4a456a06a8c4a2a5b01e03182c5c4fa2",
+      "origin": "original artifact"
+    },
+    {
+      "file": "emulator-logcat.txt",
+      "bytes": 4626120,
+      "sha256": "aa64c269f5745f028cef9f2553527b83dbdd4a64d969681a3cde7b10c0612850",
+      "retained_file": "emulator-logcat.txt.gz",
+      "retained_bytes": 559283,
+      "retained_sha256": "c8df432aa383920a16da7eabb03beffd31e04ccc04d548a3a0da5558bfa8861b",
+      "origin": "original artifact"
+    },
+    {
+      "file": "emulator-screenshot.png",
+      "bytes": 1238022,
+      "sha256": "79171e1b7efbabd8a44f911fb3977280f9fd97c12000d7d086f8759c41172914",
+      "retained_file": "emulator-screenshot.png",
+      "retained_bytes": 1238022,
+      "retained_sha256": "79171e1b7efbabd8a44f911fb3977280f9fd97c12000d7d086f8759c41172914",
+      "origin": "original artifact"
+    },
+    {
+      "file": "host-directional-proof.json",
+      "bytes": 18206,
+      "sha256": "0f16c955b525c55bd99d033bcd78863aa99b00d7ba7bcb45a2a6e03862f470de",
+      "retained_file": "host-directional-proof.json",
+      "retained_bytes": 18206,
+      "retained_sha256": "0f16c955b525c55bd99d033bcd78863aa99b00d7ba7bcb45a2a6e03862f470de",
+      "origin": "original artifact"
+    },
+    {
+      "file": "host-directional-sampler-proof.json",
+      "bytes": 3527,
+      "sha256": "3790fceedf1f7d435f68ef7a63c895f7efe2e1c30456648f41a1d88cb9f980c7",
+      "retained_file": "host-directional-sampler-proof.json",
+      "retained_bytes": 3527,
+      "retained_sha256": "3790fceedf1f7d435f68ef7a63c895f7efe2e1c30456648f41a1d88cb9f980c7",
+      "origin": "original artifact"
+    },
+    {
+      "file": "host-walk-proof.json",
+      "bytes": 7117,
+      "sha256": "4ac5d6e2e455dcc71eae821e869297b239b5b24629a49ea2058f34c4e3417acb",
+      "retained_file": "host-walk-proof.json",
+      "retained_bytes": 7117,
+      "retained_sha256": "4ac5d6e2e455dcc71eae821e869297b239b5b24629a49ea2058f34c4e3417acb",
+      "origin": "original artifact"
+    },
+    {
+      "file": "host-walkable-proof.json",
+      "bytes": 349,
+      "sha256": "53135ca6cd554e0df214f482a24fc42611d648b260f38967afb7981de3df70e0",
+      "retained_file": "host-walkable-proof.json",
+      "retained_bytes": 349,
+      "retained_sha256": "53135ca6cd554e0df214f482a24fc42611d648b260f38967afb7981de3df70e0",
+      "origin": "original artifact"
+    },
+    {
+      "file": "legacy-locomotion-abi-proof.json",
+      "bytes": 6373,
+      "sha256": "65287816f7e75085c2ad54f1701fbd5c630dd5a320952216fdd2eed2e074e58c",
+      "retained_file": "legacy-locomotion-abi-proof.json",
+      "retained_bytes": 6373,
+      "retained_sha256": "65287816f7e75085c2ad54f1701fbd5c630dd5a320952216fdd2eed2e074e58c",
+      "origin": "original artifact"
+    },
+    {
+      "file": "lifecycle/lifecycle-host-checks.json",
+      "bytes": 1307,
+      "sha256": "45230b4c70cb548020c41249685d36e8bd71f2f61a29ee72ef279b0ce01d7d00",
+      "retained_file": "lifecycle/lifecycle-host-checks.json",
+      "retained_bytes": 1307,
+      "retained_sha256": "45230b4c70cb548020c41249685d36e8bd71f2f61a29ee72ef279b0ce01d7d00",
+      "origin": "original artifact"
+    },
+    {
+      "file": "package-reuse-receipt.json",
+      "bytes": 3199,
+      "sha256": "f39599f371a2db718ef99dd69161f5d1b2f31d6f560889f5cb36d9511fa42f75",
+      "retained_file": "package-reuse-receipt.json",
+      "retained_bytes": 3199,
+      "retained_sha256": "f39599f371a2db718ef99dd69161f5d1b2f31d6f560889f5cb36d9511fa42f75",
+      "origin": "original artifact"
+    },
+    {
+      "file": "reuse-host-checks.json",
+      "bytes": 280,
+      "sha256": "31b19c41a9f811da5855342071efa44df7a171186e6ae6fe24e51b49e7193942",
+      "retained_file": "reuse-host-checks.json",
+      "retained_bytes": 280,
+      "retained_sha256": "31b19c41a9f811da5855342071efa44df7a171186e6ae6fe24e51b49e7193942",
+      "origin": "original artifact"
+    },
+    {
+      "file": "session-fixture.json",
+      "bytes": 5185,
+      "sha256": "22fdfa072914e449d1d2f89cc42e486e104a1e093b48cafa6157c0121a6cf25d",
+      "retained_file": "session-fixture.json",
+      "retained_bytes": 5185,
+      "retained_sha256": "22fdfa072914e449d1d2f89cc42e486e104a1e093b48cafa6157c0121a6cf25d",
+      "origin": "original artifact"
+    },
+    {
+      "file": "snapshot-host.json",
+      "bytes": 1170,
+      "sha256": "e3c09ca408f2d5fc1221f02a3a23d9fab22fecb12f381e193670e3b9ac2c03bc",
+      "retained_file": "snapshot-host.json",
+      "retained_bytes": 1170,
+      "retained_sha256": "e3c09ca408f2d5fc1221f02a3a23d9fab22fecb12f381e193670e3b9ac2c03bc",
+      "origin": "original artifact"
+    },
+    {
+      "file": "source-floor-resolution.json",
+      "bytes": 580,
+      "sha256": "ec1821500b4c0564c0d08372452c77f192380bb8d1a0bac2fc2b9a47d00ddba0",
+      "retained_file": "source-floor-resolution.json",
+      "retained_bytes": 580,
+      "retained_sha256": "ec1821500b4c0564c0d08372452c77f192380bb8d1a0bac2fc2b9a47d00ddba0",
+      "origin": "original artifact"
+    },
+    {
+      "file": "source-validation-stage.json",
+      "bytes": 1490,
+      "sha256": "1b4700f07c4e843efdeac138bebfc77078f4fd81eb9c3e6f91ac7d5ffe99794b",
+      "retained_file": "source-validation-stage.json",
+      "retained_bytes": 1490,
+      "retained_sha256": "1b4700f07c4e843efdeac138bebfc77078f4fd81eb9c3e6f91ac7d5ffe99794b",
+      "origin": "original artifact"
+    },
+    {
+      "file": "tap-host-checks.json",
+      "bytes": 440,
+      "sha256": "4983168785caf989071993f80b461c92a8a97ab2968f76b102cd2abcac4879fd",
+      "retained_file": "tap-host-checks.json",
+      "retained_bytes": 440,
+      "retained_sha256": "4983168785caf989071993f80b461c92a8a97ab2968f76b102cd2abcac4879fd",
+      "origin": "original artifact"
+    },
+    {
+      "file": "walkable-fixture.json",
+      "bytes": 28031,
+      "sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1",
+      "retained_file": "walkable-fixture.json",
+      "retained_bytes": 28031,
+      "retained_sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1",
+      "origin": "original artifact"
+    },
+    {
+      "file": "walkable-reuse-guard.json",
+      "bytes": 1095,
+      "sha256": "e8d8b42cda6fc8838f808f569f07b828c7142fb97ab867f80a13c24e13c8ea35",
+      "retained_file": "walkable-reuse-guard.json",
+      "retained_bytes": 1095,
+      "retained_sha256": "e8d8b42cda6fc8838f808f569f07b828c7142fb97ab867f80a13c24e13c8ea35",
+      "origin": "original artifact"
+    },
+    {
+      "file": "workflow-job-log.txt",
+      "bytes": 64247,
+      "sha256": "c2d378b3822f9ecb9701ee63f5ac07e0085eca6275e0fbd1b67df1f9ecbb4790",
+      "retained_file": "workflow-job-log.txt",
+      "retained_bytes": 64247,
+      "retained_sha256": "c2d378b3822f9ecb9701ee63f5ac07e0085eca6275e0fbd1b67df1f9ecbb4790",
+      "origin": "GitHub Actions job116186488167 log fetched separately from artifact"
+    }
+  ],
+  "fix_scope": "No runtime or driver change is claimed in this preservation record. The unchanged failed emulator job is to be rerun to test whether this was transient setup ordering.",
+  "compression": "Textual evidence larger than 131072 bytes retained losslessly as gzip with mtime 0; original/stored lengths and SHA256 identities indexed.",
+  "superseded_by": "Pending successful combined qualification; original failed evidence remains preserved."
+}

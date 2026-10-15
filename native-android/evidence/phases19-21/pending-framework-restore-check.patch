@@ -1,0 +1,14 @@
+--- a/native-android/session-client/tools/emulator_check.py
++++ b/native-android/session-client/tools/emulator_check.py
+@@ -378,6 +378,11 @@
+             adb('shell', 'settings', 'delete', 'secure', 'long_press_timeout')
+         else:
+             adb('shell', 'settings', 'put', 'secure', 'long_press_timeout', original_timeout)
++        restored = adb('shell', 'settings', 'get', 'secure', 'long_press_timeout').stdout.decode().strip()
++        assert restored == original_timeout, 'Qualification emulator long-press setting was not restored'
++        save('emulator-interrupted-run-framework-setting-proof.json', {
++             'scope': 'Only the isolated qualification emulator framework input timeout was temporarily changed; native source clocks and game data were unchanged',
++             'original': original_timeout, 'restored': restored, 'restored_exactly': True})
+     assert interrupted, 'No actual timed keyboard release was witnessed during authored RunPre'
+ 
+     before = reset_actor(initial_position)

@@ -1,17 +1,32 @@
 # AYN Thor: one combined test for gates 19–21
 
-Install `CoH-Native-Session-Client-0.2.0-arm64.apk` and open **CoH Native Session
-Client 0.2.0**. It installs alongside the accepted 0.1.0 client and preserves
+Download
+[CoH-Native-Session-Client-0.2.0-arm64.apk](https://chatgpt.com/api/library/files/libfile_1f69175230b08191b4c8ea65e369139c/download)
+([GitHub artifact 11936304916](https://github.com/Russianranger/coh-android/actions/runs/38656997946/artifacts/11936304916)),
+install it and open **CoH Native Session Client 0.2.0**. It installs alongside
+the accepted 0.1.0 client as `org.coh.sessionclient.walk` and preserves
 existing app data and reports. This is the same native application trajectory.
 The conventional launcher/client and user imports remain separate. No server, account or asset
 import is needed. The accepted gates 16–18 APK remains the rollback artifact.
 Physical gates 19–21 require this new report and your observations.
 
+Package identity: **2,344,055 bytes**, SHA256
+`2d59e2b39af99facc6f3ac26b310aeba85802542efabb1e71d90e2d33a00de92`.
+Runtime source: `8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d`;
+[build run 38656997946](https://github.com/Russianranger/coh-android/actions/runs/38656997946).
+Source/host checks, the complete 1,585-file source trick audit, ARM64/x86_64
+builds, lint, signatures and package integrity passed. **Combined emulator
+qualification remains pending after the slide harness sampled an ungrounded
+state during prolonged diagonal input; physical gates 19–21 are also pending.**
+Individual directional, interruption, reversal, quick-tap and release-settling
+checks passed within their recorded scopes.
+
 1. **Ground and collision:** wait for the Wretch, authored station floor and
    bench to appear. The initial forward direction points at the nearby bench.
    Move forward into it; the actor should stay on the floor and stop against
-   the bench. While still pushing forward, briefly add right or left input to
-   slide along it, then release. Pushing a wall may animate slowly in place;
+   the bench. While still pushing forward, add a very brief right or left tap
+   to slide along it, then release as soon as the slide starts. Reset before
+   trying the other direction. Pushing a wall may animate slowly in place;
    that is the source minimum-rate behavior. Use short diagonal input because
    the selected floor is bounded. **Reset actor** returns to the supported spawn.
 2. **Directional motion:** test forward, backward, left and right with short
@@ -33,3 +48,6 @@ The floor currently uses the original client's grey fallback for the missing
 placement and collision are retained. This does not test full Atlas, jumping,
 combat, account login, server replication or sustained frame-rate performance.
 The accepted older physical report remains separate from this new qualification.
+The unchanged
+[accepted 0.1.0 artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705)
+and [original Thor procedure](THOR-TEST-16-18.md) remain the rollback path.

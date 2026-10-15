@@ -117,7 +117,8 @@ and extract `CoH-Native-Session-Client-0.1.0-arm64.apk`.
 The conventional launcher/client, earlier native probes, existing asset packs
 and user data are unchanged. Work remains on `native-android` only.
 
-See [one combined Thor check](session-client/THOR-TEST.md).
+See the [preserved gates 16–18 Thor check](session-client/THOR-TEST-16-18.md).
+The [current combined check](session-client/THOR-TEST.md) targets gates 19–21.
 
 ## Next related development batch
 

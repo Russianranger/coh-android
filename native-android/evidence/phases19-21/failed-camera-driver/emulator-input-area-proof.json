@@ -1,0 +1,73 @@
+{
+  "scope": "actual Android accessibility node, Native Atlas scene",
+  "screen_width": 1080,
+  "screen_height": 1920,
+  "accessibility_bounds": [
+    0,
+    440,
+    1080,
+    1857
+  ],
+  "fresh_layout_samples": [
+    {
+      "updated_at": "2026-10-15T00:02:41.026Z",
+      "native_frames": 1747,
+      "input_area": {
+        "left": 0,
+        "top": 440,
+        "width": 1080,
+        "height": 1417,
+        "shown": true,
+        "surface_ready": true
+      },
+      "bounds": [
+        0,
+        440,
+        1080,
+        1857
+      ]
+    },
+    {
+      "updated_at": "2026-10-15T00:02:42.120Z",
+      "native_frames": 1766,
+      "input_area": {
+        "left": 0,
+        "top": 440,
+        "width": 1080,
+        "height": 1417,
+        "shown": true,
+        "surface_ready": true
+      },
+      "bounds": [
+        0,
+        440,
+        1080,
+        1857
+      ]
+    },
+    {
+      "updated_at": "2026-10-15T00:02:43.194Z",
+      "native_frames": 1785,
+      "input_area": {
+        "left": 0,
+        "top": 440,
+        "width": 1080,
+        "height": 1417,
+        "shown": true,
+        "surface_ready": true
+      },
+      "bounds": [
+        0,
+        440,
+        1080,
+        1857
+      ]
+    }
+  ],
+  "selected_bounds": [
+    0,
+    440,
+    1080,
+    1857
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "gates": [
+    19,
+    20,
+    21
+  ],
+  "passed": true,
+  "kind": "accepted actor/benchmark plus authored ground, source collision and directional raw keys",
+  "runtime_assets": [
+    "character.bin",
+    "locomotion.bin",
+    "morph.bin",
+    "rig.bin",
+    "walkable.bin",
+    "world.bin"
+  ],
+  "assets": {
+    "character-fixture.json": {
+      "bytes": 319922,
+      "sha256": "2b73dd8cf02efec3cfbd961465c359de88da4281671ea7f4a38263ca32523195"
+    },
+    "character-reference.bin": {
+      "bytes": 438216,
+      "sha256": "0cb625fe9b01203bcd6f552398f4816987988c43c133743a579e8e670a471c07"
+    },
+    "character.bin": {
+      "bytes": 4261100,
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+    },
+    "directional-fixture.json": {
+      "bytes": 157311,
+      "sha256": "d6409d6c4ca22958964e8e95f1f3515a7e239755f2870ceaadc9b9731f984b3e"
+    },
+    "locomotion.bin": {
+      "bytes": 147103,
+      "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+    },
+    "material-reference.bin": {
+      "bytes": 1089856,
+      "sha256": "371af14de5ee603ad41fa82b4a02d5dfb29a4eb61ec58a0a2436b67b2edccfaa"
+    },
+    "morph.bin": {
+      "bytes": 3028,
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+    },
+    "rig.bin": {
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    },
+    "walkable-fixture.json": {
+      "bytes": 28031,
+      "sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1"
+    },
+    "walkable.bin": {
+      "bytes": 202880,
+      "sha256": "d7694d1dc83e2d95cea045e7f4912c1f9211aafed3fdebbab42943aab30a4d62"
+    },
+    "world-fixture.json": {
+      "bytes": 55693,
+      "sha256": "b7da7d864eba90cd6ba70ce87736a0ac2f6d704c380d4021cb26f905394fc2a0"
+    },
+    "world-material-reference.bin": {
+      "bytes": 198208,
+      "sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77"
+    },
+    "world-reference.bin": {
+      "bytes": 161344,
+      "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13"
+    },
+    "world.bin": {
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    }
+  },
+  "source_mapping": {
+    "character-fixture.json": {
+      "source_fixture": "accepted-gates16-18",
+      "bytes": 319922,
+      "sha256": "2b73dd8cf02efec3cfbd961465c359de88da4281671ea7f4a38263ca32523195"
+    },
+    "character-reference.bin": {
+      "source_fixture": "accepted-gates16-18",
+      "bytes": 438216,
+      "sha256": "0cb625fe9b01203bcd6f552398f4816987988c43c133743a579e8e670a471c07"
+    },
+    "character.bin": {
+      "source_fixture": "accepted-gates16-18",
+      "bytes": 4261100,
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+    },
+    "material-reference.bin": {
+      "source_fixture": "accepted-gates16-18",
+      "bytes": 1089856,
+      "sha256": "371af14de5ee603ad41fa82b4a02d5dfb29a4eb61ec58a0a2436b67b2edccfaa"
+    },
+    "morph.bin": {
+      "source_fixture": "accepted-gates16-18",
+      "bytes": 3028,
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+    },
+    "rig.bin": {
+      "source_fixture": "accepted-gates16-18",
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    },
+    "world-fixture.json": {
+      "source_fixture": "accepted-gates16-18",
+      "bytes": 55693,
+      "sha256": "b7da7d864eba90cd6ba70ce87736a0ac2f6d704c380d4021cb26f905394fc2a0"
+    },
+    "world-material-reference.bin": {
+      "source_fixture": "accepted-gates16-18",
+      "bytes": 198208,
+      "sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77"
+    },
+    "world-reference.bin": {
+      "source_fixture": "accepted-gates16-18",
+      "bytes": 161344,
+      "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13"
+    },
+    "world.bin": {
+      "source_fixture": "accepted-gates16-18",
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    },
+    "walkable-fixture.json": {
+      "source_fixture": "walkable",
+      "bytes": 28031,
+      "sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1"
+    },
+    "walkable.bin": {
+      "source_fixture": "walkable",
+      "bytes": 202880,
+      "sha256": "d7694d1dc83e2d95cea045e7f4912c1f9211aafed3fdebbab42943aab30a4d62"
+    },
+    "directional-fixture.json": {
+      "source_fixture": "directional",
+      "bytes": 157311,
+      "sha256": "d6409d6c4ca22958964e8e95f1f3515a7e239755f2870ceaadc9b9731f984b3e"
+    },
+    "locomotion.bin": {
+      "source_fixture": "directional",
+      "bytes": 147103,
+      "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+    }
+  },
+  "character_parts": 11,
+  "world_parts": 2,
+  "reference_data_drive_rendering": false,
+  "runtime_motion_scripted_by_fixture": false,
+  "full_original_client": false,
+  "full_atlas_loaded": false,
+  "server_interoperability_verified": false,
+  "physical_gates19_21_accepted": false
+}

@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "gates": [
+    19,
+    20,
+    21
+  ],
+  "source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "workflow_run_id": "38656997946",
+  "application_id": "org.coh.sessionclient.walk",
+  "version_name": "0.2.0-gates19-21",
+  "version_code": 2,
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "gradle": "8.9",
+  "android_gradle_plugin": "8.7.3",
+  "ndk": "28.2.13676358",
+  "cmake": "3.22.1",
+  "signing": "Stable intentionally public PKCS12 test-only signer; separate application ID and signing from accepted 0.1.0 and production launcher",
+  "test_signer": {
+    "keystore": "session-test.p12",
+    "bytes": 2738,
+    "sha256": "2c5a771d7a3989726d475a64471a1cf8bffafb62193a3a98a49ed7070ab2ee05",
+    "certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+    "alias": "coh-native-test",
+    "store_type": "PKCS12"
+  },
+  "artifacts": [
+    {
+      "file": "CoH-Native-Session-Client-0.2.0-arm64.apk",
+      "bytes": 2344055,
+      "sha256": "2d59e2b39af99facc6f3ac26b310aeba85802542efabb1e71d90e2d33a00de92",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_session_client.so",
+        "bytes": 237552,
+        "sha256": "0737ba7883ff2184cc1722abc243ea5a6792f723c979b53be506c3c30aacbb20"
+      },
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_fixtures_verified": true,
+      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522"
+    },
+    {
+      "file": "CoH-Native-Session-Client-0.2.0-emulator-x86_64.apk",
+      "bytes": 2361364,
+      "sha256": "45752990736305bc1520d81e9c6507bb4b53a8322970bed8535085ff0f44af4e",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "native_library": {
+        "file": "lib/x86_64/libcoh_session_client.so",
+        "bytes": 254864,
+        "sha256": "811eb7a709064dd46bca9b65238cd1d73efd27f03d84a5b50acae56e3359a5c4"
+      },
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_fixtures_verified": true,
+      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522"
+    }
+  ],
+  "assets": [
+    {
+      "file": "asset-manifest.json",
+      "bytes": 836,
+      "sha256": "79750a47eb092763c0beaee6c19ab05b34612fd79e4c56bf2ed506f1e0693ac8"
+    },
+    {
+      "file": "character-fixture.json",
+      "bytes": 319922,
+      "sha256": "2b73dd8cf02efec3cfbd961465c359de88da4281671ea7f4a38263ca32523195"
+    },
+    {
+      "file": "character-reference.bin",
+      "bytes": 438216,
+      "sha256": "0cb625fe9b01203bcd6f552398f4816987988c43c133743a579e8e670a471c07"
+    },
+    {
+      "file": "character.bin",
+      "bytes": 4261100,
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+    },
+    {
+      "file": "directional-fixture.json",
+      "bytes": 157311,
+      "sha256": "d6409d6c4ca22958964e8e95f1f3515a7e239755f2870ceaadc9b9731f984b3e"
+    },
+    {
+      "file": "locomotion.bin",
+      "bytes": 147103,
+      "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+    },
+    {
+      "file": "material-reference.bin",
+      "bytes": 1089856,
+      "sha256": "371af14de5ee603ad41fa82b4a02d5dfb29a4eb61ec58a0a2436b67b2edccfaa"
+    },
+    {
+      "file": "morph.bin",
+      "bytes": 3028,
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+    },
+    {
+      "file": "rig.bin",
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    },
+    {
+      "file": "session-fixture.json",
+      "bytes": 5185,
+      "sha256": "22fdfa072914e449d1d2f89cc42e486e104a1e093b48cafa6157c0121a6cf25d"
+    },
+    {
+      "file": "walkable-fixture.json",
+      "bytes": 28031,
+      "sha256": "d21c5b2bece3df51e56f010a1644db4c1a2308b7ddc036812218a9584fa408d1"
+    },
+    {
+      "file": "walkable.bin",
+      "bytes": 202880,
+      "sha256": "d7694d1dc83e2d95cea045e7f4912c1f9211aafed3fdebbab42943aab30a4d62"
+    },
+    {
+      "file": "world-fixture.json",
+      "bytes": 55693,
+      "sha256": "b7da7d864eba90cd6ba70ce87736a0ac2f6d704c380d4021cb26f905394fc2a0"
+    },
+    {
+      "file": "world-material-reference.bin",
+      "bytes": 198208,
+      "sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77"
+    },
+    {
+      "file": "world-reference.bin",
+      "bytes": 161344,
+      "sha256": "6479217ee8b78bc48cef400a94c150b03addfecd6c8a00f8ab5a2e6258fd0b13"
+    },
+    {
+      "file": "world.bin",
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    }
+  ],
+  "native_session_implementation": true,
+  "native_session_execution_verified": false,
+  "qualification_scope": "Package integrity only; execution is reported separately by emulator/device receipts",
+  "original_game_execution": false,
+  "full_atlas_loaded": false,
+  "collision_and_gravity_qualified": false,
+  "full_sequencer_execution": false,
+  "server_interoperability_verified": false,
+  "thor_device_execution_verified": false,
+  "physical_controller_verified": false
+}
