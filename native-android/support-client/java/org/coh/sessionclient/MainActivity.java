@@ -92,7 +92,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         super.onCreate(bundle);
         sessionStarted = System.currentTimeMillis();
         LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setOrientation(LinearLayout.VERTICAL);layout.setFocusableInTouchMode(true);layout.requestFocus();
         TextView title = new TextView(this);
         title.setText("CoH Native Support • Offline mock HUD");
         title.setTextSize(18); layout.addView(title);
@@ -121,9 +121,9 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         Button animation = new Button(this); animation.setText("Mock animation");
         animation.setOnClickListener(v -> {if(handle!=0)SupportNative.trigger(handle);event("mock_animation");saveReport();}); supportButtons.addView(animation);
         Button navigation = new Button(this); navigation.setText("UI navigation: OFF");
-        navigation.setOnClickListener(v -> {uiNavigation=!uiNavigation;navigation.setText("UI navigation: "+(uiNavigation?"ON":"OFF"));if(adapter!=null)adapter.clear();event("ui_navigation");});supportButtons.addView(navigation);layout.addView(supportButtons);
+        navigation.setOnClickListener(v -> {uiNavigation=!uiNavigation;layout.requestFocus();navigation.setText("UI navigation: "+(uiNavigation?"ON":"OFF"));if(adapter!=null)adapter.clear();event("ui_navigation");});supportButtons.addView(navigation);layout.addView(supportButtons);
         LinearLayout chatRow=new LinearLayout(this);chatText=new android.widget.EditText(this);chatText.setSingleLine(true);chatText.setHint("Chat text");chatText.setContentDescription("Chat text");chatRow.addView(chatText,new LinearLayout.LayoutParams(0,-2,1));
-        Button send=new Button(this);send.setText("Send");send.setOnClickListener(v -> {if(handle!=0){SupportNative.text(handle,chatText.getText().toString().getBytes(StandardCharsets.UTF_8));chatText.setText("");chatText.clearFocus();event("mock_chat");saveReport();}});chatRow.addView(send);layout.addView(chatRow);
+        Button send=new Button(this);send.setText("Send");send.setOnClickListener(v -> {if(handle!=0){SupportNative.text(handle,chatText.getText().toString().getBytes(StandardCharsets.UTF_8));chatText.setText("");chatText.clearFocus();layout.requestFocus();android.view.inputmethod.InputMethodManager ime=(android.view.inputmethod.InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);if(ime!=null)ime.hideSoftInputFromWindow(chatText.getWindowToken(),0);event("mock_chat");saveReport();}});chatRow.addView(send);layout.addView(chatRow);
         status = new TextView(this); status.setText("Preparing native scene…"); layout.addView(status);
         scene = new FrameLayout(this); layout.addView(scene, new LinearLayout.LayoutParams(-1, 0, 1));
         setContentView(layout);

@@ -17,7 +17,7 @@ struct SupportBridge {
  CohSupportPhysics *physics; CohSupportAnimation *animation;
  SupportAudio *audio; SupportUi *ui; CohSkinCache *cache; CohPerf perf;
  const CohWalkTriangle *tri;unsigned triangle_count;CohBytes clips[3]; uint64_t tick,frames,trigger_count,failures,started;
- uint32_t generation,kind; int mock_active,foreground,configured,context;
+ uint32_t generation,kind,hud_generation;int hud_width,hud_height; int mock_active,foreground,configured,context;
 };
 static uint64_t ns(void){struct timespec t;clock_gettime(CLOCK_MONOTONIC,&t);return (uint64_t)t.tv_sec*1000000000u+(uint64_t)t.tv_nsec;}
 SupportBridge *support_bridge_create(const CohWalkTriangle *tri,unsigned count,const float spawn[3],float yaw,unsigned max_vertices){
@@ -54,14 +54,22 @@ int support_bridge_walk(SupportBridge*b,unsigned dirs,float yaw,CohWalkState*out
 void support_bridge_reset(SupportBridge*b,const float spawn[3],float yaw,CohWalkState*out){if(!b)return;pthread_mutex_lock(&b->mutex);CohSupportPhysics *fresh=NULL;if(!coh_support_physics_create(&fresh,b->tri,b->triangle_count,spawn,yaw)){coh_support_physics_destroy(b->physics);b->physics=fresh;}else b->failures++;if(out)*out=*coh_support_physics_state(b->physics);b->mock_active=0;coh_skin_cache_invalidate(b->cache);pthread_mutex_unlock(&b->mutex);}
 void support_bridge_clear(SupportBridge*b){if(!b)return;pthread_mutex_lock(&b->mutex);coh_support_physics_clear(b->physics);pthread_mutex_unlock(&b->mutex);}
 int support_bridge_pose(SupportBridge*b,float dt,CohAnimationPose*out,const CohAnimationRig**rig){if(!b)return 0;pthread_mutex_lock(&b->mutex);int result=0;if(b->animation&&b->mock_active){coh_perf_stage_begin(&b->perf,COH_PERF_ANIMATION,ns());if(!coh_support_animation_sample(b->animation,dt,++b->tick,out)){*rig=coh_support_animation_active_rig(b->animation);result=1;}else b->failures++;coh_perf_stage_end(&b->perf,COH_PERF_ANIMATION,ns());}pthread_mutex_unlock(&b->mutex);return result;}
-const CohSkinnedVertex*support_bridge_skin(SupportBridge*b,unsigned part,const CohMeshVertex*v,unsigned count,const float*rows,unsigned bones){if(!b)return NULL;pthread_mutex_lock(&b->mutex);const CohSkinnedVertex*out=NULL;CohSkinKey key={part+1,1,1,1,1,1};coh_perf_stage_begin(&b->perf,COH_PERF_SKINNING,ns());if(coh_skin_cache_sample(b->cache,key,v,count,rows,bones,&out,NULL))b->failures++;coh_perf_stage_end(&b->perf,COH_PERF_SKINNING,ns());pthread_mutex_unlock(&b->mutex);return out;}
+const CohSkinnedVertex*support_bridge_skin(SupportBridge*b,unsigned part,const CohMeshVertex*v,unsigned count,const float*rows,unsigned bones){if(!b)return NULL;pthread_mutex_lock(&b->mutex);const CohSkinnedVertex*out=NULL;CohSkinKey key={part+1,1,1,1,1,1};int measure=b->perf.active_frame&&!b->perf.snapshot.paused;if(measure)coh_perf_stage_begin(&b->perf,COH_PERF_SKINNING,ns());if(coh_skin_cache_sample(b->cache,key,v,count,rows,bones,&out,NULL))b->failures++;if(measure)coh_perf_stage_end(&b->perf,COH_PERF_SKINNING,ns());pthread_mutex_unlock(&b->mutex);return out;}
 void support_bridge_surface_begin(SupportBridge*b,unsigned gen){if(!b)return;int context=support_ui_context_create(b->ui,gen)==COH_OK;pthread_mutex_lock(&b->mutex);b->generation=gen;coh_perf_surface(&b->perf,gen);coh_perf_gpu_unavailable(&b->perf);b->context=context;if(!context)b->failures++;pthread_mutex_unlock(&b->mutex);}
 /* Render owner only. Never hold the lifecycle/performance mutex across GL.
  * The UI adapter has its own bounded draw/input serialization. */
-int support_bridge_draw(SupportBridge*b,int w,int h,unsigned gen){if(!b)return 0;int ok=b->context&&support_ui_surface(b->ui,gen,w,h,(CohHudInsets){0,0,0,0})==COH_OK&&support_ui_tick_mock(b->ui,(ns()-b->started)/1000000)==COH_OK&&support_ui_draw(b->ui,w,h,gen)==COH_OK;if(!ok){pthread_mutex_lock(&b->mutex);b->failures++;pthread_mutex_unlock(&b->mutex);}return ok;}
-void support_bridge_surface_end(SupportBridge*b){if(!b)return;support_ui_context_destroy(b->ui);b->context=0;}
+int support_bridge_draw(SupportBridge*b,int w,int h,unsigned gen){if(!b)return 0;
+ int ok=b->context;
+ if(ok&&(b->hud_generation!=gen||b->hud_width!=w||b->hud_height!=h)){
+  ok=support_ui_surface(b->ui,gen,w,h,(CohHudInsets){0,0,0,0})==COH_OK;
+  if(ok){b->hud_generation=gen;b->hud_width=w;b->hud_height=h;}
+ }
+ if(ok)ok=support_ui_tick_mock(b->ui,(ns()-b->started)/1000000)==COH_OK&&support_ui_draw(b->ui,w,h,gen)==COH_OK;
+ if(!ok){pthread_mutex_lock(&b->mutex);b->failures++;pthread_mutex_unlock(&b->mutex);}return ok;
+}
+void support_bridge_surface_end(SupportBridge*b){if(!b)return;support_ui_context_destroy(b->ui);b->context=0;b->hud_generation=0;}
 void support_bridge_frame_begin(SupportBridge*b){if(!b)return;pthread_mutex_lock(&b->mutex);coh_perf_frame_begin(&b->perf,ns(),b->generation);pthread_mutex_unlock(&b->mutex);}
-void support_bridge_frame_end(SupportBridge*b){if(!b)return;pthread_mutex_lock(&b->mutex);coh_perf_frame_end(&b->perf,ns());b->frames++;pthread_mutex_unlock(&b->mutex);}
+void support_bridge_frame_end(SupportBridge*b){if(!b)return;pthread_mutex_lock(&b->mutex);if(b->perf.active_frame&&!b->perf.snapshot.paused)coh_perf_frame_end(&b->perf,ns());b->frames++;pthread_mutex_unlock(&b->mutex);}
 void support_bridge_trigger(SupportBridge*b){if(!b)return;pthread_mutex_lock(&b->mutex);if(b->animation){b->kind=(uint32_t)(b->trigger_count%4);b->mock_active=b->kind<3;if(b->mock_active&&coh_support_animation_trigger(b->animation,b->kind,b->tick+1))b->failures++;b->trigger_count++;if(b->audio)support_audio_emitter(b->audio,(b->kind==0?-8.f:8.f),0,4);}pthread_mutex_unlock(&b->mutex);}
 int support_bridge_touch(SupportBridge*b,int action,unsigned pointer,float x,float y){if(!b)return 0;return support_ui_touch(b->ui,action,pointer,x,y)==COH_OK;}
 int support_bridge_key(SupportBridge*b,int key,int action,int repeat,int shift){if(!b)return 0;return support_ui_key(b->ui,key,action,repeat,shift)==COH_OK;}

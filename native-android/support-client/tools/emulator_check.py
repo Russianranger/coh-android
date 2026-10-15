@@ -92,7 +92,8 @@ class Check:
     def tap_text(self,text):
         self.adb('shell','uiautomator','dump','/data/local/tmp/coh-support-ui.xml')
         raw=self.adb('exec-out','cat','/data/local/tmp/coh-support-ui.xml').stdout
-        tree=ET.fromstring(raw);nodes=[n for n in tree.iter('node') if n.get('text')==text or n.get('content-desc')==text]
+        (self.a.output/'emulator-ui-hierarchy.xml').write_bytes(raw)
+        tree=ET.fromstring(raw);nodes=[n for n in tree.iter('node') if n.get('text','').casefold()==text.casefold() or n.get('content-desc','').casefold()==text.casefold()]
         require(len(nodes)==1,'Expected unique Android control: '+text)
         bounds=re.fullmatch(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]',nodes[0].get('bounds',''))
         require(bounds,'Control has no actionable bounds: '+text)

@@ -87,4 +87,5 @@ jobs:
             native-android/results/support-client/*.json
             native-android/results/support-client/*.txt
             native-android/results/support-client/*.png
+            native-android/results/support-client/*.xml
             native-android/results/support-client/SHA256SUMS

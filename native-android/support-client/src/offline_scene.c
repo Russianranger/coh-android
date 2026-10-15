@@ -607,7 +607,7 @@ JNIEXPORT jboolean JNICALL Java_org_coh_sessionclient_SupportNative_initialize(J
    pthread_mutex_unlock(&s->mutex);}
  for(unsigned i=0;i<3;i++)free(clips[i].p);return ok?JNI_TRUE:JNI_FALSE;
 }
-JNIEXPORT void JNICALL Java_org_coh_sessionclient_SupportNative_trigger(JNIEnv*e,jclass c,jlong h){(void)e;(void)c;Session*s=(Session*)(intptr_t)h;if(s)support_bridge_trigger(s->support);}
+JNIEXPORT void JNICALL Java_org_coh_sessionclient_SupportNative_trigger(JNIEnv*e,jclass c,jlong h){(void)e;(void)c;Session*s=(Session*)(intptr_t)h;if(s){pthread_mutex_lock(&s->mutex);if(s->startup_checked&&!s->failed&&s->foreground)support_bridge_trigger(s->support);pthread_mutex_unlock(&s->mutex);}}
 JNIEXPORT jboolean JNICALL Java_org_coh_sessionclient_SupportNative_touch(JNIEnv*e,jclass c,jlong h,jint action,jint pointer,jfloat x,jfloat y){(void)e;(void)c;Session*s=(Session*)(intptr_t)h;return s&&support_bridge_touch(s->support,action,(unsigned)pointer,x,y);}
 JNIEXPORT jboolean JNICALL Java_org_coh_sessionclient_SupportNative_key(JNIEnv*e,jclass c,jlong h,jint key,jint action,jint repeat,jint shift){(void)e;(void)c;Session*s=(Session*)(intptr_t)h;return s&&support_bridge_key(s->support,key,action,repeat,shift);}
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SupportNative_text(JNIEnv*e,jclass c,jlong h,jbyteArray text){(void)c;Session*s=(Session*)(intptr_t)h;if(!s||!text)return;jsize n=(*e)->GetArrayLength(e,text);if(n<1||n>254)return;char bytes[256]={0};(*e)->GetByteArrayRegion(e,text,0,n,(jbyte*)bytes);if(!(*e)->ExceptionCheck(e))support_bridge_text(s->support,bytes);}
