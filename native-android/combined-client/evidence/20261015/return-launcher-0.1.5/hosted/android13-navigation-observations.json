@@ -1,0 +1,168 @@
+{
+  "activities": [
+    {
+      "app_pids": [
+        5835
+      ],
+      "inventory": {
+        "pending_finish_or_stop": false,
+        "records": {
+          "5c16afc": {
+            "component": "org.coh.nativecombined/.MainActivity",
+            "task": 10
+          }
+        },
+        "resumed": [
+          "5c16afc"
+        ]
+      },
+      "sha256": "d2be9854b5aa0a819aced3c9925e22b5934c83177c8a6a19a93a757f4cbad255",
+      "source": "launcher-before-first-native-activities.txt"
+    },
+    {
+      "app_pids": [
+        5835
+      ],
+      "inventory": {
+        "pending_finish_or_stop": false,
+        "records": {
+          "17f6295": {
+            "component": "org.coh.nativecombined/.NativeClientActivity",
+            "task": 10
+          },
+          "5c16afc": {
+            "component": "org.coh.nativecombined/.MainActivity",
+            "task": 10
+          }
+        },
+        "resumed": [
+          "17f6295"
+        ]
+      },
+      "sha256": "ce30d1998ec76359a208006081c6c4d632cb1580218df8a832611c70592a5d1e",
+      "source": "active-character-picker-before-activities.txt"
+    },
+    {
+      "app_pids": [
+        5835
+      ],
+      "inventory": {
+        "pending_finish_or_stop": false,
+        "records": {
+          "5c16afc": {
+            "component": "org.coh.nativecombined/.MainActivity",
+            "task": 10
+          }
+        },
+        "resumed": [
+          "5c16afc"
+        ]
+      },
+      "sha256": "c3d0c2bdf8a7a72f379f6b4b95cb9c1a38b3c58f27f8226ba70457a86ee0fb75",
+      "source": "active-character-picker-after-activities.txt"
+    },
+    {
+      "app_pids": [
+        5835
+      ],
+      "inventory": {
+        "pending_finish_or_stop": false,
+        "records": {
+          "5c16afc": {
+            "component": "org.coh.nativecombined/.MainActivity",
+            "task": 10
+          },
+          "e033452": {
+            "component": "org.coh.nativecombined/.NativeClientActivity",
+            "task": 10
+          }
+        },
+        "resumed": [
+          "e033452"
+        ]
+      },
+      "sha256": "449bce856534e44a7c5ce3ecff5ebfa25e6e48afd4641d64fa866e4e570cc8e0",
+      "source": "before-launcher-zip-export-before-activities.txt"
+    },
+    {
+      "app_pids": [
+        5835
+      ],
+      "inventory": {
+        "pending_finish_or_stop": false,
+        "records": {
+          "5c16afc": {
+            "component": "org.coh.nativecombined/.MainActivity",
+            "task": 10
+          }
+        },
+        "resumed": [
+          "5c16afc"
+        ]
+      },
+      "sha256": "5c9a5a43ead62f8ed0466935f9f82a3dfb2765de62b2181ff2e331fb6b6fa80a",
+      "source": "before-launcher-zip-export-after-activities.txt"
+    }
+  ],
+  "actual_arm64_guest_server_executed": false,
+  "actual_server_interoperability_verified": false,
+  "direct_native_task_root_branch_framework_tested": false,
+  "format": 1,
+  "native_reports": [
+    {
+      "closed_sockets": 0,
+      "external_focus_clear": 0,
+      "frames": 844,
+      "held_dirs": 1,
+      "opened_sockets": 1,
+      "protocol_phase": "CHARACTERS_READY",
+      "resumed": true,
+      "return_to_launcher_cleanup_pending": false,
+      "return_to_launcher_ready": false,
+      "sha256": "2bfccae3abcab551d1c856115ecaeb365553e8474f76356eb32486320a5c4aee",
+      "source": "active-character-picker-held-native-report.json"
+    },
+    {
+      "closed_sockets": 1,
+      "external_focus_clear": 2,
+      "frames": 855,
+      "held_dirs": 0,
+      "opened_sockets": 1,
+      "protocol_phase": "SUSPENDED",
+      "resumed": false,
+      "return_to_launcher_cleanup_pending": false,
+      "return_to_launcher_ready": true,
+      "sha256": "f3699c7c3923cd274df450bc5a2be89936eaa7676d37b8c9cb780ca5988ab3ee",
+      "source": "active-character-picker-return-native-report.json"
+    },
+    {
+      "closed_sockets": null,
+      "external_focus_clear": 0,
+      "frames": 72,
+      "held_dirs": 0,
+      "opened_sockets": null,
+      "protocol_phase": "IDLE",
+      "resumed": true,
+      "return_to_launcher_cleanup_pending": false,
+      "return_to_launcher_ready": false,
+      "sha256": "a202c20ed02ea6397ac83aa39c6031dcde49e97cffe2595b4a56edd0159bfcc2",
+      "source": "reopened-before-explicit-reconnect-native-report.json"
+    },
+    {
+      "closed_sockets": 2,
+      "external_focus_clear": 5,
+      "frames": 1357,
+      "held_dirs": 0,
+      "opened_sockets": 2,
+      "protocol_phase": "SUSPENDED",
+      "resumed": false,
+      "return_to_launcher_cleanup_pending": false,
+      "return_to_launcher_ready": true,
+      "sha256": "4099fec78eba67965201fab2d565c11161fa12dd1bdf8bc4ea42245086d94964",
+      "source": "before-launcher-zip-export-return-native-report.json"
+    }
+  ],
+  "physical_thor_accepted": false,
+  "scope": "Actual disposable Android framework Return and reopen, held virtual W input, retained Main/task/process, controlled source-layout peer and SAF exports. These snapshots do not prove post-destruction renderer teardown. Absent IDLE socket counters are retained as null.",
+  "source_commit": "5bf8d954190d3e924d3c23b51735eebe7a07c0e3"
+}

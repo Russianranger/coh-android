@@ -1,0 +1,23 @@
+{
+  "authserver_authenticated": false,
+  "character_choices": 1,
+  "character_lists": 1,
+  "closed_sockets": 2,
+  "db_phase": 9,
+  "db_port": 48319,
+  "failed": false,
+  "live_world": false,
+  "map_connects": 1,
+  "map_handoffs": 1,
+  "map_phase": 5,
+  "map_port": 52241,
+  "opened_sockets": 2,
+  "pid": 8334,
+  "real_server_interoperability": false,
+  "scene_prefixes": 1,
+  "schema": 1,
+  "scripted_source_layout": true,
+  "selected_wire_slot": 0,
+  "source_command_catalogs": 1,
+  "source_command_count": 915
+}

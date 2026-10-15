@@ -7,15 +7,30 @@ clear their storage. Gates 22–24 remain accepted within their documented scope
 
 ## Current update: 0.1.5 Return to launcher
 
+Current ARM64 APK: **11,528,591 bytes**, SHA256
+`71e2f272bfadfc1076b3fcf832b41eba8d83c5541db7198ab69f4f38b2cb5671`.
+[Download package artifact](https://github.com/Russianranger/coh-android/actions/runs/38818477241/artifacts/12011278016).
+The [successful workflow](https://github.com/Russianranger/coh-android/actions/runs/38818477241)
+passes twelve host suites, both ABI builds/audits, 76 hosted runtime executions
+without skips and **32 Android13 framework checks**, including explicit Return
+under held input, the retained launcher/process, closed client sockets, fresh
+preview/reconnect and real ZIP export. All assets/native libraries retain the
+qualified 0.1.4 bytes. Source: `5bf8d954190d3e924d3c23b51735eebe7a07c0e3`.
+The emulator does not run the ARM64 guest; physical Return/server continuity is
+the purpose of this Thor test.
+
 Install `CoH-Native-Combined-0.1.5-arm64.apk` **over Combined**. Keep the existing
 imports, runtime, saved test profile, accepted native apps and conventional
-launcher. Do not uninstall, clear storage or repeat setup.
+launcher. Stop an active Combined server through the launcher before installing.
+Do not uninstall, clear storage or repeat setup.
 
 Your exact 0.1.4 report confirms a real server boot, character list/selection,
 initial Map connection acceptance and shortcut-catalog admission. Scene reception
 then fails with `COH_LIMIT` before a scene prefix reaches the parser. The visible
 scene remains the offline preview. This navigation update does not change that
 protocol bound or claim a completed live world.
+The [physical report record](evidence/20261015/thor-0.1.4-connection/THOR-014-CONNECTION.md)
+preserves the exact acceptance scope and numeric failure checkpoint.
 
 1. Start the server from the launcher, then open the native client manually.
 2. Tap **Return to launcher** at the top of the native controls. It must return
@@ -40,8 +55,10 @@ The [successful workflow](https://github.com/Russianranger/coh-android/actions/r
 passes twelve host suites, both ABI builds/package audits, 76 current/donor
 runtime executions without skips, and **26 Android13 framework checks**. All
 native ELF payloads and accepted scene assets retain the exact qualified 0.1.3
-bytes. Source: `294041ddff3b5f80ae4dbf25073b01e037ecc7ee`. Actual 0.1.4 Thor
-server restart and native handoff are the next physical tests, not yet accepted.
+bytes. Source: `294041ddff3b5f80ae4dbf25073b01e037ecc7ee`. At that delivery,
+physical startup and handoff were pending. The later 0.1.4 report now confirms
+startup, clean stop and the initial native Map handshake. A separate
+force-stop/recover/restart cycle and complete scene transfer remain pending.
 
 Install `CoH-Native-Combined-0.1.4-arm64.apk` **over Combined**. Do not uninstall,
 clear storage, reimport assets, repeat setup or remove the saved test profile.
@@ -90,7 +107,7 @@ explains the current failure and the stale 0.1.2 client report. The qualified
 
 ## Previous qualified 0.1.3 connection repair
 
-Historical handoff; use the current 0.1.4 procedure above.
+Historical handoff; use the current 0.1.5 procedure above.
 
 Install `CoH-Native-Combined-0.1.3-arm64.apk` **over the existing Combined app**.
 

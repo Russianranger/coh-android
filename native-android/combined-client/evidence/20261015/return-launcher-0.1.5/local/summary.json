@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "status": "host_and_android_build_passed",
+  "published_source_commit": "5bf8d954190d3e924d3c23b51735eebe7a07c0e3",
+  "host_suites": 12,
+  "driver_controls": 94,
+  "activity_inventory_controls": 16,
+  "lint": {
+    "arm64": {
+      "Error": 0,
+      "Fatal": 0,
+      "Warning": 75
+    },
+    "x86": {
+      "Error": 0,
+      "Fatal": 0,
+      "Warning": 75
+    }
+  },
+  "added_lint_warning": "SetTextI18n for the new Return button English label; same direct-string pattern as the existing Activity.",
+  "actual_emulator_executed_locally": false,
+  "physical_thor_accepted": false,
+  "actual_arm64_guest_server_verified": false,
+  "scope": "Local source/host/build/package validation; new navigation and held-key behavior require hosted framework evidence."
+}

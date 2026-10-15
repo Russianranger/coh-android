@@ -1,6 +1,135 @@
 # Combined server/native client — October 15, 2026
 
+## Return to launcher 0.1.5
+
+Runtime/UI and qualification source:
+`5bf8d954190d3e924d3c23b51735eebe7a07c0e3`, Git tree
+`5bdb21d3e733bbf4cd6a3fcc1e082b01e46ddb97`, exclusively on `native-android`.
+Publication freshly checked `bfbbdbc487c4e4a53ce5d7396e3ff4bf9eebbed0` and used
+a guarded non-force update. The five local integration commits remain on
+`preserved/combined-015-local-validation`; prior worktrees and qualification
+history remain preserved.
+
+The new [physical 0.1.4 evidence](evidence/20261015/thor-0.1.4-connection/THOR-014-CONNECTION.md)
+matches the exact qualified APK in both the standalone report and launcher ZIP.
+It confirms readiness at **13m20.298s**, a clean manual stop in **4.304s**, real
+native DB list/selection and initial Map application CONNECT/shortcut acceptance.
+The source state machine successfully queues REQSCENE. Queued compressed receive
+then fails with `COH_LIMIT`, before any scene prefix reaches its parser. The
+reported command/length belong to the preceding accepted shortcut message; the
+failed declared size and exact decode subcondition were not recorded. This is
+bounded real local interoperability, not encrypted AuthServer login, full Gate
+25–27 acceptance or a native live world.
+
+The physical preview remains healthy through 6,039 frames and ten contexts with
+zero GL/EGL, transform or depth-order errors. The picker retains an accepted
+camera aspect. There is no new Android low-memory exit in this run; 897 valid
+memory samples show no measured pressure stop. Earlier memory-kill causes remain
+unresolved. The recorded cold data mirror takes 438.672s; beacon work takes
+67.561s. No warm-start timing or speed improvement is inferred from one clean
+run. A UI APK update does not itself prove a server-data cache invalidation.
+
+The native client now has a full-width **Return to launcher** button at the top
+of its existing bounded scrolling controls. It blocks repeated navigation and
+new Connect requests, invalidates pending character selection, and queues
+suspension on the existing single network owner. Capture completion returns on
+the main Handler; a two-second deadline records `cleanup_pending` rather than
+blocking the UI or claiming completion. Normal pause/destroy still clear input,
+release rendering resources and close the client handle. The action does not
+reference the server service or issue a server stop/cancel operation. Normal
+same-task navigation finishes the native Activity and resumes the retained
+launcher. A direct-task fallback creates Main with CLEAR_TOP/SINGLE_TOP before
+finishing. That fallback is source-reviewed, not emulator-executed: the native
+Activity remains non-exported and no qualification hook is added.
+
+Workers actually ran concurrently in isolated worktrees: minimal Activity
+implementation/lifecycle review, Android build/framework qualification, sanitized
+physical evidence and independent protocol/lifecycle analysis. File ownership
+did not overlap. The coordinator integrated release metadata, source/remote
+guards and this handoff. No runtime, engine, native renderer, assets, imported
+data, account, character or profile was changed.
+
+All twelve local host suites pass, including release/ASan/UBSan protocol
+regressions, 94 driver controls, 83 installed-APK identity checks and 152 guest
+diagnostic checks. Sixteen new Activity-inventory controls distinguish historical
+references, duplicate/recreated launchers, wrong task/native Activity records,
+pending finish/stop and malformed dumps. Both ABI packages assemble, lint and
+pass clean-source/package audits. Lint has zero errors and 75 warnings; the one
+additional warning is the new English button label, consistent with the existing
+direct-label UI. All 74 asset entries, build-input metadata, runtime helpers,
+import contract, PRoot payloads and native/engine/Session Client source closure
+are unchanged from qualified 0.1.4. VersionCode advances from 5 to 6 with the
+same package and signer. Local packages are not the delivery binaries.
+
+The package job in [workflow 38818477241](https://github.com/Russianranger/coh-android/actions/runs/38818477241)
+passes. The [package artifact](https://github.com/Russianranger/coh-android/actions/runs/38818477241/artifacts/12011278016)
+is 10,981,949 bytes, SHA256
+`423198cd177deb242f5d17321d85dca3d26e11ae56e45360d5f3ef825d67fdaa`;
+all 38 member CRCs and both clean-source/package receipts were independently
+checked. Hosted current/exact-donor runtime tests each pass 38/38 with zero skips.
+
+The exact CI ARM64 package is **11,528,591 bytes**, SHA256
+`71e2f272bfadfc1076b3fcf832b41eba8d83c5541db7198ab69f4f38b2cb5671`.
+The companion x86_64 package is 11,125,424 bytes, SHA256
+`49163fcaa39708a462bb375ea13df9b4f8e266a1c9a2bd3143386a0c67d05144`.
+Independent entry comparison verifies all 74 assets and all six native ELF
+payloads across both ABIs are byte-for-byte identical to qualified 0.1.4. Only
+AndroidManifest.xml and classes2.dex differ. The signing certificate remains
+`9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522`.
+Deliver the exact CI ARM64 binary without rebuilding or repacking it.
+
+The independently triggered [portable-core workflow 38818477277](https://github.com/Russianranger/coh-android/actions/runs/38818477277)
+also passes its pinned derivative, host core/oracle and ARM64 Bionic crossbuild.
+That job does not execute the ARM64 server or establish a native live world.
+
+The Android13 job also passes, **32/32 checks**. Its [framework artifact](https://github.com/Russianranger/coh-android/actions/runs/38818477241/artifacts/12012113270)
+is 2,063,319 bytes, SHA256
+`1a46047963786bd25046df9d92892a67c985f661d937ab8dbb31303445c40328`.
+During a real framework-held W input at the scripted character picker, the source
+held mask is 1 before Return and zero afterward; focus-clear count increases
+0 → 2, client phase becomes SUSPENDED, and its one opened socket is closed.
+Android resumes the exact retained Main Activity token/task/process, with one
+Main instance, no Native Activity and no pending finish/stop record. The observed
+service state and independent scripted peer/policy remain intact. A new native
+Activity renders at least 72 frames in IDLE with clear input before the explicit
+Connect command. The second unchanged peer then exercises the complete existing
+scripted DB-to-Map scene-prefix contract. Both peers close their two sockets and
+their fixture policies are removed.
+
+Return before launcher ZIP export again resumes the same Main/process and
+records both client sockets closed. The actual SAF ZIP is 11,432 bytes, SHA256
+`3516e9a159608eee28c76ee4d238b80607634316638877de193392f36f978865`;
+it keeps the current code-6 APK identity and explicitly labels the preserved
+scripted code-3 native report as historical. All prior import/lifecycle/scene
+checks remain: 71 protected donor files, two actual SAF imports with descriptor
+counts 115 → 115 → 115, malformed-donor refusal, Near/Far, Surface recreation,
+Home/return and native JSON export. Picker and reopened Surfaces remain 1920×382.
+The final foreground scene has 1,209 frames, four contexts, 557,056 GPU bytes,
+479,008 bright pixels and at least 12,554 colors, with no GL/transform errors or
+app ANR/crash. The button/picker and final preview screenshots were independently
+viewed. Android native UDP contracts also pass 659 checks/seven scenarios.
+
+This is actual x86_64 app/framework navigation and explicitly scripted peer
+execution. It does not run the ARM64 Wine/FEX server, establish its liveness
+after Return, or prove post-destruction renderer teardown from the saved pause
+report. Actual 0.1.5 Thor Return/server continuity remain the next physical
+checks. Compact receipts are under `evidence/20261015/return-launcher-0.1.5/`.
+This final evidence/documentation handoff does not rebuild the exact CI APK.
+
+The scene receive limit remains independent work. First export bounded numeric
+decoder reason, compressed/declared size and output budget; the current report
+cannot identify the rejected allocation/size. Then design owned per-session
+large-message storage and incremental decode rather than increasing every queue
+and worker-stack buffer through a global macro. Complete GROUPS/ALLENTS and
+authoritative spawn still follow that admission contract. Separately, expose
+allowlisted cache/graph reuse/refusal outcomes and measure unchanged-input clean
+Stop → restart. Existing strict cache ownership/closed-generation checks must
+remain intact; preserved character/profile data does not prove cache reuse.
+
 ## Interrupted-start recovery 0.1.4
+
+Historical qualification at delivery. The later physical report and current
+0.1.5 section above supersede its then-pending server/Map acceptance status.
 
 Runtime and qualification source: `294041ddff3b5f80ae4dbf25073b01e037ecc7ee`,
 Git tree `53a6d2a95f0ddcb9d85ffe6db14f1b33c9b5d5a1`, exclusively on

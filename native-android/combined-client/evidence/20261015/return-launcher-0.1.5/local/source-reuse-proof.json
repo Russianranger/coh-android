@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "built_source_commit": "ef95d884a7c546a8515033fa564b1d65d38c6158",
+  "published_source_commit": "5bf8d954190d3e924d3c23b51735eebe7a07c0e3",
+  "complete_source_git_trees_identical": true,
+  "source_tree": "5bdb21d3e733bbf4cd6a3fcc1e082b01e46ddb97",
+  "unchanged_014_runtime_native_source_closure": [
+    "native-android/combined-client/app/src/main/cpp",
+    "native-android/combined-client/runtime",
+    "native-android/engine",
+    "native-android/session-client"
+  ],
+  "unchanged_source_entries": 488,
+  "git_tree_listing_sha256": "31f47c7da27bee9b4acfcc7369f46439cd53b28c136313368162cd85853063a0",
+  "scope": "Code and input continuity only. NativeClientActivity adds navigation; its actual framework behavior is separately qualified."
+}

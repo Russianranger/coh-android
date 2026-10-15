@@ -1,0 +1,33 @@
+{
+  "format": 1,
+  "status": "passed",
+  "source_commit": "ef95d884a7c546a8515033fa564b1d65d38c6158",
+  "older_014_apk_sha256": "18b06672a11af3a50bd2ece77ce41bc2fecec7f8ebe6037408245119ca21ad2c",
+  "newer_apk": {
+    "bytes": 11528595,
+    "name": "CoH-Native-Combined-0.1.5-arm64.apk",
+    "sha256": "294bdee0ea67ec0176ed5cbba6eb7fc8618e35c3a3867527c2f54a5e1649a4f7"
+  },
+  "same_package_and_signer": true,
+  "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "version_code": 6,
+  "version_name": "0.1.5-local-server-native",
+  "all_asset_entries_byte_identical": 74,
+  "accepted_scene_assets_identical": 11,
+  "import_contract_and_runtime_helper_metadata_identical": true,
+  "proot_payloads_identical": 2,
+  "unchanged_source_closure": [
+    "native-android/combined-client/app/src/main/cpp",
+    "native-android/combined-client/runtime",
+    "native-android/engine",
+    "native-android/session-client"
+  ],
+  "source_closure_diff_empty": true,
+  "lint": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 75
+  },
+  "added_lint_warning": "One SetTextI18n warning for the new Return button label, using the Activity existing direct-string pattern.",
+  "scope": "Static update/import/runtime/native source continuity; Java Activity navigation and release manifest change. Android framework return/reopen qualification and real Thor usage are separate."
+}

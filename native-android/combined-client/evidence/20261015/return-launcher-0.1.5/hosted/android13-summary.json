@@ -1,0 +1,87 @@
+{
+  "actual_arm64_guest_server_executed": false,
+  "actual_server_interoperability_verified": false,
+  "all_74_assets_and_all_native_payloads_byte_identical_to_0_1_4": true,
+  "android_job": 116710090149,
+  "artifact": {
+    "all_crc_checks_passed": true,
+    "bytes": 2063319,
+    "id": 12012113270,
+    "members": 455,
+    "sha256": "1a46047963786bd25046df9d92892a67c985f661d937ab8dbb31303445c40328"
+  },
+  "checks_passed": 32,
+  "direct_native_task_root_branch_framework_tested": false,
+  "format": 1,
+  "installed_x86_apk_sha256": "49163fcaa39708a462bb375ea13df9b4f8e266a1c9a2bd3143386a0c67d05144",
+  "physical_thor_accepted": false,
+  "reopen": {
+    "actual_server_interoperability_verified": false,
+    "check": "native relaunch requires explicit reconnect",
+    "independent_peer_survived_return": true,
+    "new_preview_session": true,
+    "passed": true,
+    "protocol_phase": "IDLE",
+    "server_policy_preserved": true,
+    "source_input_clear": true
+  },
+  "return_checks": [
+    {
+      "active_main_instances": 1,
+      "active_native_instances": 0,
+      "actual_arm64_server_liveness_qualified": false,
+      "actual_framework_held_key_across_click": true,
+      "check": "explicit Return to launcher: active-character-picker",
+      "closed_sockets": 1,
+      "native_network_phase": "SUSPENDED",
+      "opened_sockets": 1,
+      "passed": true,
+      "retained_main_activity": true,
+      "same_app_process": true,
+      "scope": "Actual existing launcher/task/process and client suspend/report capture; post-destruction render teardown and ARM64 guest server execution are not established by this report.",
+      "service_state_unchanged": true,
+      "source_held_input_cleared": true
+    },
+    {
+      "active_main_instances": 1,
+      "active_native_instances": 0,
+      "actual_arm64_server_liveness_qualified": false,
+      "actual_framework_held_key_across_click": false,
+      "check": "explicit Return to launcher: before-launcher-zip-export",
+      "closed_sockets": 2,
+      "native_network_phase": "SUSPENDED",
+      "opened_sockets": 2,
+      "passed": true,
+      "retained_main_activity": true,
+      "same_app_process": true,
+      "scope": "Actual existing launcher/task/process and client suspend/report capture; post-destruction render teardown and ARM64 guest server execution are not established by this report.",
+      "service_state_unchanged": true,
+      "source_held_input_cleared": true
+    }
+  ],
+  "saf_zip_export": {
+    "bytes": 11432,
+    "check": "actual SAF ZIP separates scripted retained native report from current APK",
+    "current_version_code": 6,
+    "historical_entry": "previous-app-native-client-report.json",
+    "historical_version_code": 3,
+    "passed": true,
+    "physical_device_evidence": false,
+    "scripted_fixture": true,
+    "sha256": "3516e9a159608eee28c76ee4d238b80607634316638877de193392f36f978865"
+  },
+  "scene_pixels": {
+    "bright_pixels": 479008,
+    "check": "current foreground GPU resources and actual on-screen scene pixels",
+    "context": 4,
+    "distinct_colors_at_least": 12554,
+    "frames": 1209,
+    "gpu_bytes": 557056,
+    "passed": true,
+    "screenshot_sha256": "f8ce673d7cc37f000c38541ba40c7ce28a795d8bb4eae47a440e51b627fd50b5"
+  },
+  "scope": "Actual disposable Android framework Return and reopen, held virtual W input, retained Main/task/process, controlled source-layout peer and SAF exports. The real Thor Map receive failure is preserved and not repaired by this UI-only package.",
+  "source_commit": "5bf8d954190d3e924d3c23b51735eebe7a07c0e3",
+  "status": "passed",
+  "workflow_run": 38818477241
+}

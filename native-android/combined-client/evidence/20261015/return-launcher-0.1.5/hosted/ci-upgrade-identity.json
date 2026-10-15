@@ -1,0 +1,86 @@
+{
+  "format": 1,
+  "status": "passed",
+  "workflow_run": 38818477241,
+  "artifact_id": 12011278016,
+  "archive": {
+    "bytes": 10981949,
+    "sha256": "423198cd177deb242f5d17321d85dca3d26e11ae56e45360d5f3ef825d67fdaa"
+  },
+  "archive_members": 38,
+  "zip_crc_verified": true,
+  "source_commit": "5bf8d954190d3e924d3c23b51735eebe7a07c0e3",
+  "packages": {
+    "arm64": {
+      "previous_014_apk": {
+        "bytes": 11527815,
+        "name": "CoH-Native-Combined-0.1.4-arm64.apk",
+        "sha256": "18b06672a11af3a50bd2ece77ce41bc2fecec7f8ebe6037408245119ca21ad2c"
+      },
+      "apk": {
+        "bytes": 11528591,
+        "name": "CoH-Native-Combined-0.1.5-arm64.apk",
+        "sha256": "71e2f272bfadfc1076b3fcf832b41eba8d83c5541db7198ab69f4f38b2cb5671"
+      },
+      "only_changed_entry_payloads": [
+        "AndroidManifest.xml",
+        "classes2.dex"
+      ],
+      "all_asset_payloads_identical": 74,
+      "all_native_elf_payloads_identical": {
+        "lib/arm64-v8a/libcoh_combined_network.so": {
+          "bytes": 5461352,
+          "sha256": "3d33933c0e1118c9b9518c63a6c8da67b832e85d43a78a42f0db9e0472bf539c"
+        },
+        "lib/arm64-v8a/libcoh_session_client.so": {
+          "bytes": 369480,
+          "sha256": "5362ae64938a46e9685e2a51c259b368e88f070dde9b962245b066b4f461b4c8"
+        },
+        "lib/arm64-v8a/libproot-loader.so": {
+          "bytes": 17624,
+          "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+        },
+        "lib/arm64-v8a/libproot.so": {
+          "bytes": 263648,
+          "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+        }
+      },
+      "same_package_and_signer": true,
+      "version_code": 6
+    },
+    "x86": {
+      "previous_014_apk": {
+        "bytes": 11124648,
+        "name": "CoH-Native-Combined-0.1.4-emulator-x86_64.apk",
+        "sha256": "c090590092c638508fbd5a17235a63604ae8757d809b0fc70fc1e2b16805e0ee"
+      },
+      "apk": {
+        "bytes": 11125424,
+        "name": "CoH-Native-Combined-0.1.5-emulator-x86_64.apk",
+        "sha256": "49163fcaa39708a462bb375ea13df9b4f8e266a1c9a2bd3143386a0c67d05144"
+      },
+      "only_changed_entry_payloads": [
+        "AndroidManifest.xml",
+        "classes2.dex"
+      ],
+      "all_asset_payloads_identical": 74,
+      "all_native_elf_payloads_identical": {
+        "lib/x86_64/libcoh_combined_network.so": {
+          "bytes": 5828920,
+          "sha256": "81235ccb43e35990473977b2fdbd1cfed57523b14e5196ee078415a709b9d13b"
+        },
+        "lib/x86_64/libcoh_session_client.so": {
+          "bytes": 389712,
+          "sha256": "e12116beb745e2bf953c17466e5de5e61b212d015841e88f9fa83bf3363f2129"
+        }
+      },
+      "same_package_and_signer": true,
+      "version_code": 6
+    }
+  },
+  "actual_arm64_guest_server_verified": false,
+  "physical_thor_accepted": false,
+  "current_and_donor_runtime_methods": 38,
+  "runtime_skipped_methods": 0,
+  "scope": "Independent exact CI archive/package and payload audit. All74 assets and all native ELFs retain qualified0.1.4 bytes; only release manifest and Java classes2.dex change. Native protocol/runtime behavior and physical acceptance are not newly established by this static audit."
+}

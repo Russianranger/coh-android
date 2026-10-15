@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "workflow_run": 38818477241,
+  "source_commit": "5bf8d954190d3e924d3c23b51735eebe7a07c0e3",
+  "artifact_id": 12011278016,
+  "archive_bytes": 10981949,
+  "github_archive_sha256": "423198cd177deb242f5d17321d85dca3d26e11ae56e45360d5f3ef825d67fdaa",
+  "independent_digest_matches": true,
+  "archive_members": 38,
+  "all_zip_member_crc_checks_passed": true
+}

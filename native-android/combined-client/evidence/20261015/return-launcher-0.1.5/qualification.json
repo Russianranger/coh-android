@@ -1,0 +1,66 @@
+{
+  "format": 1,
+  "version": "0.1.5-local-server-native",
+  "version_code": 6,
+  "branch": "native-android",
+  "qualified_source": "5bf8d954190d3e924d3c23b51735eebe7a07c0e3",
+  "qualified_tree": "5bdb21d3e733bbf4cd6a3fcc1e082b01e46ddb97",
+  "workflow_run": 38818477241,
+  "package_job": 116708950955,
+  "android13_job": 116710090149,
+  "package_artifact": {
+    "id": 12011278016,
+    "bytes": 10981949,
+    "sha256": "423198cd177deb242f5d17321d85dca3d26e11ae56e45360d5f3ef825d67fdaa"
+  },
+  "android13_artifact": {
+    "id": 12012113270,
+    "bytes": 2063319,
+    "sha256": "1a46047963786bd25046df9d92892a67c985f661d937ab8dbb31303445c40328"
+  },
+  "arm64_delivery": {
+    "name": "CoH-Native-Combined-0.1.5-arm64.apk",
+    "bytes": 11528591,
+    "sha256": "71e2f272bfadfc1076b3fcf832b41eba8d83c5541db7198ab69f4f38b2cb5671",
+    "exact_ci_binary_not_rebuilt_or_repacked": true,
+    "same_package_and_signer": true,
+    "unchanged_assets_from_qualified_014": 74,
+    "unchanged_native_elf_payloads_across_both_abis": 6,
+    "changed_apk_entries_only": ["AndroidManifest.xml", "classes2.dex"],
+    "large_game_or_server_archives_added": false
+  },
+  "evidence_status": {
+    "implemented": true,
+    "source_and_host_qualified": true,
+    "host_suites": 12,
+    "driver_controls": 94,
+    "release_asan_ubsan_protocol_regressions_passed": true,
+    "hosted_runtime_executions_passed": 76,
+    "hosted_runtime_skips": 0,
+    "android_arm64_built_and_audited": true,
+    "android_x86_64_built_and_audited": true,
+    "local_lint_errors": 0,
+    "local_lint_warnings": 75,
+    "android13_framework_qualified": true,
+    "android13_framework_checks": 32,
+    "held_framework_input_return_verified": true,
+    "same_retained_launcher_task_and_process_verified": true,
+    "client_sockets_closed_on_return_verified": true,
+    "fresh_preview_and_explicit_reconnect_verified": true,
+    "real_json_and_zip_document_exports_verified": true,
+    "direct_native_task_root_fallback_source_reviewed_only": true,
+    "physical_015_thor_return_accepted": false,
+    "actual_015_arm64_guest_liveness_after_return_verified": false,
+    "real_encrypted_authentication_verified": false,
+    "server_authoritative_world_rendering_verified": false,
+    "scene_receive_coh_limit_fixed_by_this_batch": false
+  },
+  "preserved_physical_evidence": {
+    "gates_1_through_24_accepted_within_documented_scopes": true,
+    "combined_014_exact_apk_server_boot_and_clean_stop": true,
+    "combined_014_real_db_list_selection_and_initial_map_connect_shortcuts": true,
+    "combined_014_complete_scene_transfer": false,
+    "android_low_memory_exit_cause_identified": false
+  },
+  "scope": "Navigation change only; runtime, native/engine/renderer source and inputs unchanged. Android13 executes the actual companion x86_64 app and explicit scripted UDP peers, not ARM64 Wine/FEX or authentic login/live world. Saved pause diagnostics do not prove post-destruction renderer teardown. Physical0.1.4 server/initial Map evidence remains distinct from pending0.1.5 Return/server continuity. Install over Combined and retain imports, runtime, profiles, reports and previous APKs."
+}

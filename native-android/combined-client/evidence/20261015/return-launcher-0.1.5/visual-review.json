@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "reviewer": "coordinator_independent_image_inspection",
+  "qualified_source": "5bf8d954190d3e924d3c23b51735eebe7a07c0e3",
+  "workflow_run": 38818477241,
+  "artifact_id": 12012113270,
+  "images": [
+    {
+      "file": "return-picker-visible.png",
+      "sha256": "00e3329998a5f2a9b89aa0d9a61826ad9cb857b40219ec583d5ee677b9eb0c2a",
+      "observed": "Full-width Return to launcher is visible at the top while the explicitly scripted character picker is open. Textured floor, benches and offline character preview remain visible below the bounded controls.",
+      "framework_surface_width": 1920,
+      "framework_surface_height": 382
+    },
+    {
+      "file": "native-preview.png",
+      "sha256": "f8ce673d7cc37f000c38541ba40c7ce28a795d8bb4eae47a440e51b627fd50b5",
+      "observed": "Portrait foreground preview keeps the Return button visible and renders the textured character, floor and benches. UI labels the preview and suspended protocol honestly.",
+      "frames": 1209,
+      "context": 4,
+      "gpu_bytes": 557056
+    }
+  ],
+  "scope": "Viewed exact hosted emulator screenshots; no physical Thor or server-world claim. Original images remain in the pinned workflow artifact."
+}
