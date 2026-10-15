@@ -1,0 +1,240 @@
+{
+  "format": 1,
+  "app_id": "org.coh.nativecombined",
+  "server_only": true,
+  "conventional_client_started": false,
+  "native_client_started_by_guest": false,
+  "encrypted_authentication_verified": false,
+  "native_world_entry_verified": false,
+  "original_profile_modified": false,
+  "status": "failed",
+  "failure_code": "RETAINED_GUEST_DEPENDENCY_FAILED",
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "profile_preserved": true,
+  "cleanup_complete": true,
+  "last_stage": "local_dbserver_startup",
+  "session_id": "f643fc52bf084a9090d895528728423a",
+  "import_generation": "generation-afba5bcfe13141c1b93ca84bb033133b",
+  "processes": [
+    {
+      "label": "native-initdb",
+      "elapsed_seconds": 498.219,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "native-cluster-status",
+      "elapsed_seconds": 493.267,
+      "exit_code": 3,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 492.882,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 492.767,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 492.7,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 492.638,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 492.576,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 492.519,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 492.459,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 491.581,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 491.514,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 491.453,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 491.391,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 491.325,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 491.21,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 491.14,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "wineboot",
+      "elapsed_seconds": 490.857,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "install-x86-psqlodbc",
+      "elapsed_seconds": 370.631,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "odbc-driver-preflight",
+      "elapsed_seconds": 367.677,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "local-install-x86-psqlodbc",
+      "elapsed_seconds": 365.98,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "local-odbc-driver",
+      "elapsed_seconds": 338.902,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 328.208,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "owned-wine-stop",
+      "elapsed_seconds": 1.584,
+      "exit_code": 1,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "owned-wine-wait",
+      "elapsed_seconds": 1.527,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "postgres-graceful-stop",
+      "elapsed_seconds": 0.198,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "postgres_native_combined",
+      "elapsed_seconds": 493.197,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    {
+      "label": "private-headless-x",
+      "elapsed_seconds": 491.075,
+      "exit_code": 0,
+      "forced_stop": true,
+      "output_capture_closed": true,
+      "input_closed": true
+    }
+  ]
+}

@@ -2,10 +2,12 @@
 """Owned server-only adapter for the native combined application.
 
 The retained server stack is imported, not bundled here. No graphical CoH
-client, fixture, account creation, character creation or relocation is called.
+client, native character creation or synthetic SQL character is used. Optional
+fresh-profile provisioning uses the authentic source TestClient and server save.
 """
 import argparse
 import contextlib
+import errno
 import hashlib
 import json
 import math
@@ -20,13 +22,14 @@ import socket
 import stat
 import sys
 import time
+import traceback
 
 FORMAT = 1
 APP_ID = 'org.coh.nativecombined'
 GENERATION = re.compile(r'generation-[0-9a-f]{32}')
 SESSION = re.compile(r'[0-9a-f]{32}')
 BACKUP_MAX = 512 * 1024 * 1024
-base = startup = character = zoning = login = None
+base = startup = character = zoning = login = wine_policy = None
 
 
 class AdmissionError(RuntimeError):
@@ -127,10 +130,10 @@ def ready_document(args, destination, *, assets_sha256, import_receipt_sha256):
 
 def load_guest_modules(directory):
     """Only the manifest-verified donor modules may implement retained behavior."""
-    global base, startup, character, zoning, login
+    global base, startup, character, zoning, login, wine_policy
     directory = real_private_path(directory, directory=True)
     for name in ('diagnostic.py', 'client_startup_diagnostic.py', 'local_character_server.py',
-                 'character_zoning.py', 'local_login_server.py'):
+                 'character_zoning.py', 'local_login_server.py', 'client_login_diagnostic.py'):
         real_private_path(directory / name)
     sys.path.insert(0, str(directory))
     import diagnostic
@@ -138,8 +141,91 @@ def load_guest_modules(directory):
     import local_character_server
     import character_zoning
     import local_login_server
+    import client_login_diagnostic
     base, startup = diagnostic, client_startup_diagnostic
     character, zoning, login = local_character_server, character_zoning, local_login_server
+    wine_policy = client_login_diagnostic
+
+
+def admit_local_port(port, protocol):
+    """Use the retained exact bind policy; no connection or discovery probe."""
+    try:
+        character.game.check_game_port(port, protocol)
+    except base.DiagnosticError as exc:
+        code = ('LOCAL_SERVER_PORT_IN_USE' if isinstance(exc.__cause__, OSError)
+                and exc.__cause__.errno == errno.EADDRINUSE else 'LOCAL_SERVER_PORT_UNAVAILABLE')
+        raise AdmissionError(code) from exc
+
+
+def failure_metadata(exc):
+    """Types and verified code locations only: never messages, locals or paths."""
+    kind = type(exc).__name__
+    if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,79}', kind):
+        kind = 'Exception'
+    sites = []
+    roots = [Path(__file__).resolve().parent]
+    if startup is not None:
+        roots.append(Path(startup.__file__).resolve().parent)
+    for frame in traceback.extract_tb(exc.__traceback__):
+        filename = Path(frame.filename)
+        if (filename.parent.resolve() in roots and re.fullmatch(r'[A-Za-z0-9_]+\.py', filename.name)
+                and re.fullmatch(r'[A-Za-z_][A-Za-z0-9_<>]{0,99}', frame.name)):
+            sites.append({'file': filename.name, 'function': frame.name, 'line': frame.lineno})
+    code = str(exc) if isinstance(exc, AdmissionError) else 'RETAINED_GUEST_DEPENDENCY_FAILED'
+    if any(site['function'] == 'check_game_port' for site in sites):
+        code = ('LOCAL_SERVER_PORT_IN_USE' if isinstance(exc.__cause__, OSError)
+                and exc.__cause__.errno == errno.EADDRINUSE else 'LOCAL_SERVER_PORT_UNAVAILABLE')
+    if not re.fullmatch(r'[A-Z][A-Z0-9_]{0,79}', code):
+        code = 'INTERNAL_RUNTIME_FAILURE'
+    metadata = {'primary_failure_code': code, 'exception_type': kind, 'failure_sites': sites[-8:]}
+    cause = exc
+    for _ in range(4):
+        number = getattr(cause, 'errno', None)
+        if isinstance(cause, OSError) and type(number) is int and 0 < number <= 4096:
+            metadata['failure_errno'] = number
+            break
+        cause = getattr(cause, '__cause__', None)
+        if cause is None:
+            break
+    return metadata
+
+
+def report_identity(args):
+    require(SESSION.fullmatch(args.session_id) and GENERATION.fullmatch(args.import_generation),
+            'INVALID_RUN_IDENTITY')
+    real_private_path(args.state, directory=True, exists=False)
+    args.state.mkdir(mode=0o700, parents=True, exist_ok=True)
+    real_private_path(args.state, directory=True)
+    require(args.state.stat().st_uid == os.geteuid(), 'REPORT_STATE_OWNER_DIFFERS')
+    return {'session_id': args.session_id, 'import_generation': args.import_generation}
+
+
+def write_report(args, result):
+    """Atomic owned-path publication also works before donor imports succeed."""
+    report_identity(args)
+    raw = (json.dumps(result, indent=2) + '\n').encode()
+    require(len(raw) <= 256 * 1024, 'REPORT_SIZE_EXCEEDED')
+    directory = os.open(args.state, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    temporary = 'latest-report.tmp-' + secrets.token_hex(8)
+    try:
+        require(os.fstat(directory).st_uid == os.geteuid(), 'REPORT_STATE_OWNER_DIFFERS')
+        try:
+            previous = os.stat('latest-report.json', dir_fd=directory, follow_symlinks=False)
+        except FileNotFoundError:
+            previous = None
+        require(previous is None or stat.S_ISREG(previous.st_mode) and previous.st_nlink == 1,
+                'INVALID_REPORT_OUTPUT')
+        fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                     0o600, dir_fd=directory)
+        with os.fdopen(fd, 'wb') as output:
+            output.write(raw)
+            output.flush()
+            os.fsync(output.fileno())
+        os.replace(temporary, 'latest-report.json', src_dir_fd=directory, dst_dir_fd=directory)
+    finally:
+        with contextlib.suppress(FileNotFoundError):
+            os.unlink(temporary, dir_fd=directory)
+        os.close(directory)
 
 
 def runtime_classes():
@@ -152,8 +238,23 @@ def runtime_classes():
             self.session_id = args.session_id
             self.public_events = 0
             self.log_root = None
+            self.owned_start_attempts = 0
+            self.stage_started_monotonic = None
 
         log_paths = character.game.GameContext.log_paths
+
+        def stage(self, name):
+            if self.stage_started_monotonic is not None and self.report['stages']:
+                self.report['stages'][-1].setdefault('elapsed_seconds',
+                    round(time.monotonic() - self.stage_started_monotonic, 3))
+            base.Context.stage(self, name)
+            self.stage_started_monotonic = time.monotonic()
+
+        def passed(self, **evidence):
+            base.Context.passed(self, **evidence)
+            if self.stage_started_monotonic is not None:
+                self.report['stages'][-1]['elapsed_seconds'] = round(
+                    time.monotonic() - self.stage_started_monotonic, 3)
 
         def start(self, label, argv, *, env=None, input_text=None, cleanup=False):
             if not cleanup:
@@ -161,6 +262,7 @@ def runtime_classes():
             # Retained map startup can use up to 160 actual status queries.
             # Match the accepted character-session finite child inventory.
             require(len(self.children) < 512, 'PROCESS_BUDGET_EXCEEDED')
+            self.owned_start_attempts += 1
             child = base.OwnedProcess(label, argv, env or os.environ.copy(), input_text)
             self.children.append(child)
             return child
@@ -181,7 +283,18 @@ def runtime_classes():
             print(json.dumps(value, separators=(',', ':')), flush=True)
 
         def record(self, child, *, refresh=False):
-            receipt = {'label': child.label, 'elapsed_seconds': round(time.monotonic() - child.started, 3),
+            lifetime = round(time.monotonic() - child.started, 3)
+            completion = getattr(child, 'completion', None)
+            completed_elapsed = completion.get('elapsed_seconds') if isinstance(completion, dict) else None
+            if (type(completed_elapsed) not in (int, float) or not math.isfinite(completed_elapsed)
+                    or completed_elapsed < 0):
+                completed_elapsed = None
+            receipt = {'label': child.label,
+                       'elapsed_seconds': completed_elapsed if type(completed_elapsed) in (int, float) else lifetime,
+                       'elapsed_scope': 'completed_execution' if completed_elapsed is not None else 'observed_lifetime',
+                       'observed_lifetime_seconds': lifetime,
+                       'output_bytes': len(getattr(child, 'output', b'')),
+                       'output_overflow': bool(getattr(child, 'overflow', False)),
                        'exit_code': child.process.poll(), 'forced_stop': child.forced_stop,
                        'output_capture_closed': not child.reader.is_alive(),
                        'input_closed': not child.writer.is_alive()}
@@ -471,6 +584,8 @@ def runtime_classes():
             self.ready_path = args.state / 'server-ready.json'
             self.ready_receipt = None
             self.provisioner = None
+            self.presentation_socket = self.root / 'runtime' / 'vnc.sock'
+            self.presentation_socket_identity = None
 
         # DbServer's accepted helpers read complete bounded stdout, unlike the
         # short generic SQL report tail. No output is logged by our Context.
@@ -479,6 +594,10 @@ def runtime_classes():
             return self.ctx.children[-1].text().strip()
 
         def initialize(self):
+            self.ctx.stage('preflight_local_server_ports')
+            for port, protocol in ((6997, socket.SOCK_STREAM), (7000, socket.SOCK_DGRAM)):
+                admit_local_port(port, protocol)
+            self.ctx.passed(local_server_ports_available=True)
             self.ctx.stage('server_only_input_admission')
             require(platform.machine().lower() in ('aarch64', 'arm64'), 'ARM64_GUEST_REQUIRED')
             require(os.geteuid() == 1000, 'PROOT_UID_1000_REQUIRED')
@@ -489,6 +608,10 @@ def runtime_classes():
             require(identity['generation'] == self.args.import_generation, 'IMPORT_GENERATION_DIFFERS')
             self.ctx.report['import_identity'] = identity
             self.ctx.passed(import_generation_verified=True)
+            self.server.initialize()
+            self.ctx.stage('preflight_selected_map_port')
+            admit_local_port(self.server.destination['map_port'], socket.SOCK_DGRAM)
+            self.ctx.passed(selected_map_port_available=True)
             self.ctx.stage('prepare_private_server_inputs')
             self.work, receipt = startup.prepare_worktree(self.root, self.args.game_data,
                                                           self.args.assets, identity, self.ctx)
@@ -496,15 +619,59 @@ def runtime_classes():
             character.avatar.install(self.work, self.args.assets, self.ctx)
             character.world.install(self.work, self.args.assets, self.ctx)
             self.ctx.passed(original_game_data_preserved=True)
-            self.server.initialize()
+
+        # Exact donor display/bootstrap path: no MSI installation or driver
+        # probe here. LocalLoginServer.start retains the single original pair.
+        def start_wine(self):
+            require(not self.presentation_socket.exists() and not self.presentation_socket.is_symlink(),
+                    'OWNED_DISPLAY_SOCKET_ALREADY_EXISTS')
+            startup.presentation.PresentationDiagnostic.start_wine(self)
+
+        def prepare_wine_initialization(self):
+            registration = wine_policy.wine_registration_input(self.args.wine)
+            prefix_existed = self.wineprefix.is_dir()
+            base.Diagnostic.prepare_wine_initialization(self)
+            self._wine_registration_input = registration
+            receipt = self.wine_initialization
+            prior_ready = receipt['ready_prefix_reused']
+            receipt.update(prior_ready_prefix=prior_ready, existing_prefix_preserved=prefix_existed,
+                installed_wine_inf=registration, refresh_reason='none' if prior_ready else 'no_current_readiness_proof',
+                update_timestamp_content_before=None, update_timestamp_content_after=None,
+                registration_timestamp_verified=False)
+            if prior_ready:
+                timestamp = self.wineprefix / '.update-timestamp'
+                previous = wine_policy.wine_update_timestamp(timestamp)
+                receipt['update_timestamp_content_before'] = previous
+                if previous != registration['mtime_seconds']:
+                    timestamp.unlink()
+                    receipt.update(ready_prefix_reused=False, update_timestamp_removed=True,
+                                   refresh_reason='wine_inf_timestamp_changed')
+                    self.ctx.event('stage', status='running', message='Refreshing preserved Windows environment')
+
+        def initialize_wine(self):
+            try:
+                base.Diagnostic.initialize_wine(self)
+                current = wine_policy.wine_registration_input(self.args.wine)
+                base.require(current == self._wine_registration_input,
+                             'Wine registration input changed during initialization')
+                timestamp = wine_policy.wine_update_timestamp(self.wineprefix / '.update-timestamp')
+                self.wine_initialization['update_timestamp_content_after'] = timestamp
+                base.require(timestamp == current['mtime_seconds'],
+                             'Wine registration timestamp differs from installed input')
+                self.wine_initialization['registration_timestamp_verified'] = True
+            except BaseException:
+                if hasattr(self, 'wine_initialization'):
+                    self.wine_initialization['state'] = 'failed'
+                raise
 
         def execute(self):
             self.initialize()
             # This owns a private headless X display required by retained Wine
             # registration/MSI; no CityOfHeroes.exe or client-launcher executes.
             self.start_wine()
-            self.mark_wine_ready()
             self.server.start()
+            # The retained LocalLoginServer ODBC driver probe has now passed.
+            self.mark_wine_ready()
             self.server.health()
             require(self.server.report.get('server_ready') is True
                     and self.server.creation_report.get('map_ready') is True,
@@ -545,6 +712,20 @@ def runtime_classes():
         def cleanup(self):
             self.ready_path.unlink(missing_ok=True)
             failures = super().cleanup()
+            if self.presentation_socket_identity is not None:
+                try:
+                    if self.presentation_socket.exists() or self.presentation_socket.is_symlink():
+                        info = self.presentation_socket.lstat()
+                        require(stat.S_ISSOCK(info.st_mode)
+                                and (info.st_dev, info.st_ino) == self.presentation_socket_identity,
+                                'DISPLAY_SOCKET_IDENTITY_CHANGED')
+                        require(self.xserver.process.poll() is not None and not self.xserver.reader.is_alive(),
+                                'OWNED_DISPLAY_STILL_LIVE')
+                        self.presentation_socket.unlink()
+                    self.cleanup_status['presentation_socket_removed'] = True
+                except Exception:
+                    failures.append('Owned display socket cleanup incomplete')
+                    self.cleanup_status['presentation_socket_removed'] = False
             if self.provisioner is not None:
                 for helper_session in self.provisioner.sessions:
                     if helper_session.root.exists():
@@ -559,7 +740,7 @@ def runtime_classes():
     return Context, Owner
 
 
-def arguments(argv=None):
+def arguments(argv=None, *, validate=True):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--guest-modules', type=Path, default=Path('/opt/coh'))
     parser.add_argument('--state', type=Path, default=Path('/state'))
@@ -576,6 +757,12 @@ def arguments(argv=None):
                         help='Fresh empty owned profile only: create/save one real character using source TestClient')
     parser.add_argument('--timeout-seconds', type=int, default=21600)
     args = parser.parse_args(argv)
+    if validate:
+        validate_arguments(args)
+    return args
+
+
+def validate_arguments(args):
     require(SESSION.fullmatch(args.session_id) and GENERATION.fullmatch(args.import_generation), 'INVALID_RUN_IDENTITY')
     require(600 <= args.timeout_seconds <= 21600, 'INVALID_RUNTIME_DURATION')
     require(args.guest_modules == args.assets, 'GUEST_MODULES_MUST_BE_VERIFIED_ASSETS')
@@ -591,28 +778,35 @@ def arguments(argv=None):
 def main(argv=None):
     os.umask(0o077)
     owner = context = args = None
+    construction_started = False
+    context_construction_started = False
     result = {'format': FORMAT, 'app_id': APP_ID, 'server_only': True,
               'conventional_client_started': False, 'native_client_started_by_guest': False,
               'encrypted_authentication_verified': False, 'native_world_entry_verified': False,
-              'original_profile_modified': False, 'status': 'failed'}
+              'original_profile_modified': False, 'status': 'failed',
+              'last_stage': 'preflight_input_admission',
+              'cleanup_scope': 'current_attempt_only', 'primary_failure_code': None,
+              'cleanup_failure_code': None}
     exit_code = 1
     try:
-        args = arguments(argv)
-        args.state.mkdir(mode=0o700, parents=True, exist_ok=True)
+        args = arguments(argv, validate=False)
+        result.update(report_identity(args))
+        validate_arguments(args)
         load_guest_modules(args.guest_modules)
         Context, Owner = runtime_classes()
+        context_construction_started = True
         context = Context(args)
         for sig in (signal.SIGINT, signal.SIGTERM):
             signal.signal(sig, lambda _sig, _frame: setattr(context, 'cancel_requested', True))
+        construction_started = True
         owner = Owner(args, context)
-        # Native endpoint admission is always tied to this running owner.
         owner.ready_path.unlink(missing_ok=True)
         owner.execute()
     except BaseException as exc:
-        cancelled = context is not None and isinstance(exc, base.Cancelled)
+        cancelled = context is not None and base is not None and isinstance(exc, base.Cancelled)
         result['status'] = 'stopped' if cancelled else 'failed'
-        result['failure_code'] = None if cancelled else (str(exc) if isinstance(exc, AdmissionError)
-                                                        else 'RETAINED_GUEST_DEPENDENCY_FAILED')
+        if not cancelled:
+            result.update(failure_metadata(exc))
         exit_code = 0 if cancelled else 1
     finally:
         cleanup = []
@@ -623,25 +817,54 @@ def main(argv=None):
                 cleanup = ['Owned cleanup did not complete']
             result['cleanup'] = owner.cleanup_status
             result['profile_preserved'] = True
-        result['cleanup_complete'] = owner is not None and not cleanup
-        if cleanup:
+            complete = not cleanup and bool(owner.cleanup_status.get('owned_processes_reaped'))
+        else:
+            # Constructors can fail after starting a child. Only a context with
+            # zero start attempts and zero children proves no cleanup is due.
+            complete = ((context is None and not context_construction_started) or
+                        (context is not None and getattr(context, 'owned_start_attempts', None) == 0
+                         and not context.children))
+            result['cleanup'] = {'owner_constructed': False, 'construction_started': construction_started,
+                'owned_start_attempts': getattr(context, 'owned_start_attempts', None) if context_construction_started else 0,
+                'owned_processes_reaped': complete, 'no_owned_children_started': complete}
+        result['cleanup_complete'] = complete
+        if not complete:
             result['status'] = 'cleanup_failed'
-            result['failure_code'] = 'OWNED_CLEANUP_INCOMPLETE'
+            result['cleanup_failure_code'] = 'OWNED_CLEANUP_INCOMPLETE'
             exit_code = 1
+        # Compatibility field retains the primary cause even when cleanup also
+        # fails; callers can distinguish the separate cleanup failure code.
+        result['failure_code'] = result['primary_failure_code'] or result['cleanup_failure_code']
         if context is not None:
             result['last_stage'] = context.stage_name
-            result['session_id'] = args.session_id
-            result['import_generation'] = args.import_generation
             result['processes'] = context.report['processes']
-            if owner is not None and owner.ready_receipt is not None:
-                result['server_readiness'] = owner.ready_receipt
-            raw = json.dumps(result, indent=2) + '\n'
-            if len(raw.encode()) <= 256 * 1024:
-                with contextlib.suppress(Exception):
-                    base.private_write(args.state / 'latest-report.json', raw)
-        print(json.dumps({'type': 'server_stopped', 'status': result['status'],
-                          'failure_code': result.get('failure_code'),
-                          'cleanup_complete': result['cleanup_complete']}, separators=(',', ':')), flush=True)
+            stages = context.report.get('stages', [])[-128:]
+            if stages and context.stage_started_monotonic is not None:
+                stages[-1].setdefault('elapsed_seconds', round(time.monotonic() - context.stage_started_monotonic, 3))
+            result['stage_history'] = [{key: row[key] for key in ('stage', 'started_utc', 'finished_utc', 'status', 'elapsed_seconds')
+                                        if key in row} for row in stages]
+            if owner is not None:
+                phases = owner.server.creation_report.get('server_preparation_phase_seconds', {})
+                result['server_preparation_phase_seconds'] = {key: value for key, value in phases.items()
+                    if re.fullmatch(r'[A-Za-z0-9_]{1,100}', key) and type(value) in (int, float)
+                    and math.isfinite(value) and value >= 0}
+                if owner.ready_receipt is not None:
+                    result['server_readiness'] = owner.ready_receipt
+        report_written = False
+        if args is not None:
+            try:
+                write_report(args, result)
+                report_written = True
+            except Exception:
+                pass  # The bounded stdout receipt still carries the safe cause.
+        print(json.dumps({'type': 'server_stopped', 'format': FORMAT, 'app_id': APP_ID,
+            'session_id': result.get('session_id'), 'import_generation': result.get('import_generation'),
+            'status': result['status'], 'failure_code': result['failure_code'],
+            'primary_failure_code': result['primary_failure_code'],
+            'cleanup_failure_code': result['cleanup_failure_code'],
+            'exception_type': result.get('exception_type'), 'failure_sites': result.get('failure_sites', []),
+            'failure_errno': result.get('failure_errno'),
+            'cleanup_complete': complete, 'report_written': report_written}, separators=(',', ':')), flush=True)
     return exit_code
 
 

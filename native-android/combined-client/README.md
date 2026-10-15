@@ -70,6 +70,25 @@ Near/Far selection, Surface recreation, Home/return, missing-policy refusal and
 report export; scripted native UDP tests are labelled separately. It cannot run
 the ARM64 Wine/FEX server on the x86_64 emulator.
 
+## First Thor startup failure
+
+The exported `COH-NativeCombined-1792088413287.zip` records a failed 0.1.0
+server attempt lasting 825.923 seconds, ending in `local_dbserver_startup`.
+PostgreSQL, Wine registration and both ODBC checks completed. No DbServer,
+MapServer or TestClient process was recorded. Cleanup completed and the private
+profile was preserved. The original generic failure code cannot identify the
+exact failing preparation helper or prove a port conflict. Keep this evidence
+under `evidence/20261015/startup-failure-0.1.0/`.
+
+The 0.1.1 update removes duplicated ODBC work and adds session-bound failure
+codes, bounded stage history and elapsed times. Completed child execution times
+must be distinguished from their age at cleanup; the 0.1.0 report overwrote
+those execution times. A stopped run's displayed timer now freezes, and old
+guest evidence is labelled as a previous session in exports. These diagnostic
+improvements do not establish successful Thor server startup or a live native
+world session. Install updates over this separate test app to preserve its
+verified imports and private profile.
+
 Local preparation and checks:
 
 ```sh

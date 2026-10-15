@@ -32,6 +32,7 @@ def main():
     commands = [
         ('framework-driver-controls', [sys.executable, native / 'combined-client/tools/driver_controls.py']),
         ('lease-admission', [sys.executable, native / 'combined-client/qualification/check_lease.py']),
+        ('guest-diagnostics', [sys.executable, native / 'combined-client/qualification/check_diagnostics.py']),
         ('imports', [sys.executable, native / 'combined-client/imports/tests/check_imports.py']),
         ('server-runtime', [sys.executable, native / 'combined-client/runtime/check.py', '--source-root', args.source_root.resolve(), '--donor', args.donor_apk.resolve(), '--output', args.output / 'server-runtime.json']),
         ('local-protocol', [sys.executable, native / 'engine/local/check.py', '--source-root', args.source_root.resolve(), '--sanitize', '--ndk', ndk.resolve(), '--android-output', args.output / 'local-android', '--output', args.output / 'local-protocol.json']),

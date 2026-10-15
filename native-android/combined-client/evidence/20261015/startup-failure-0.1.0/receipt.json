@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "source": "User exported AYN Thor report",
+  "archive_name": "COH-NativeCombined-1792088413287.zip",
+  "archive_sha256": "84097797d84737abd2917c09e0b7bb3632b57c0dd1ba5b160be106d3688cb2b2",
+  "tested_apk_sha256": "4ae4ef25c6ea60bfdcac000f4ff9016ae202aa42e3414024a40c99dcf66b97ee",
+  "startup_to_process_exit_seconds": 825.923,
+  "last_stage": "local_dbserver_startup",
+  "failure_code": "RETAINED_GUEST_DEPENDENCY_FAILED",
+  "cleanup_complete": true,
+  "dbserver_process_recorded": false,
+  "mapserver_process_recorded": false,
+  "source_helper_process_recorded": false,
+  "actual_server_interoperability_verified": false,
+  "limitation": "Legacy process elapsed_seconds were overwritten with age at cleanup; they are not task execution durations. Generic failure omits exception/site, so the report does not establish the exact failing helper or a port conflict."
+}

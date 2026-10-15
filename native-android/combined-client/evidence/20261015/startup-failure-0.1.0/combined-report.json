@@ -1,0 +1,84 @@
+{
+  "schema": "coh-native-combined-app-v1",
+  "package": "org.coh.nativecombined",
+  "busy": false,
+  "runtime_ready": true,
+  "imports": "Server payload: verified\nAssets 1.0.0 verified; reusable with this APK\nGame files: verified\nProfile: no logical dump imported",
+  "message": "Server stopped with a diagnostic failure. Export report.",
+  "progress_done": 1,
+  "progress_total": 1,
+  "server": {
+    "phase": "failed",
+    "ready": false,
+    "session_id": "f643fc52bf084a9090d895528728423a",
+    "guest_exit_code": 1,
+    "owned_process_alive": false
+  },
+  "local_development_auth": true,
+  "real_authserver_login_verified": false,
+  "native_live_world_verified": false,
+  "old_application_modified": false,
+  "updated_elapsed_ms": 594317467,
+  "events": [
+    {
+      "name": "importing",
+      "elapsed_ms": 592912677
+    },
+    {
+      "name": "import_complete",
+      "elapsed_ms": 592913016
+    },
+    {
+      "name": "importing",
+      "elapsed_ms": 592931444
+    },
+    {
+      "name": "import_complete",
+      "elapsed_ms": 592961921
+    },
+    {
+      "name": "importing",
+      "elapsed_ms": 592968628
+    },
+    {
+      "name": "import_complete",
+      "elapsed_ms": 593027235
+    },
+    {
+      "name": "importing",
+      "elapsed_ms": 593036614
+    },
+    {
+      "name": "import_complete",
+      "elapsed_ms": 593058916
+    },
+    {
+      "name": "importing",
+      "elapsed_ms": 593107269
+    },
+    {
+      "name": "import_complete",
+      "elapsed_ms": 593286335
+    },
+    {
+      "name": "setting_up",
+      "elapsed_ms": 593312849
+    },
+    {
+      "name": "runtime_ready",
+      "elapsed_ms": 593452155
+    },
+    {
+      "name": "starting",
+      "elapsed_ms": 593465325
+    },
+    {
+      "name": "server_process_started",
+      "elapsed_ms": 593465356
+    },
+    {
+      "name": "server_process_exited",
+      "elapsed_ms": 594291248
+    }
+  ]
+}

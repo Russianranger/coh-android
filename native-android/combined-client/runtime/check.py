@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -32,7 +33,15 @@ def run_tests(directory):
     print(result.stdout, end='')
     if result.returncode:
         raise SystemExit(result.returncode)
-    return {'test_methods': 15, 'status': 'passed',
+    summary = re.search(r'(?m)^Ran ([0-9]+) tests? in ', result.stdout)
+    if summary is None:
+        raise SystemExit('Host test result count is missing')
+    count = int(summary[1])
+    skipped = re.search(r'(?m)^OK \(skipped=([0-9]+)\)', result.stdout)
+    skip_count = int(skipped[1]) if skipped else 0
+    return {'test_methods': count, 'passed_methods': count - skip_count,
+            'skipped_methods': skip_count, 'status': 'passed',
+            'skip_reasons': re.findall(r"(?m)\.\.\. skipped '([^'\n]{1,200})'", result.stdout),
             'stdout_sha256': hashlib.sha256(result.stdout.encode()).hexdigest()}
 
 
@@ -73,7 +82,7 @@ def main():
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(record, indent=2) + '\n')
     print(json.dumps({'status': 'passed', 'actual_server_executed': False,
-                      'test_methods_per_guest': 15, 'donor_checked': args.donor is not None}))
+                      'test_methods_per_guest': record['source_contract_tests']['test_methods'], 'donor_checked': args.donor is not None}))
 
 
 if __name__ == '__main__':

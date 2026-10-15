@@ -57,8 +57,10 @@ public final class MainActivity extends Activity {
         if(status==null)return;if(service==null){status.setText("Runtime owner is starting…");return;}
         JSONObject s=service.snapshot();JSONObject server=s.optJSONObject("server");boolean busy=s.optBoolean("busy"),ready=server!=null&&server.optBoolean("ready");
         String progress=s.optLong("progress_total")>0?"\nProgress: "+s.optLong("progress_done")+" / "+s.optLong("progress_total"):"";
+        String stage=server==null?"":server.optString("last_stage");
+        String timing=stage.isEmpty()?"":"\nStage: "+stage.replace('_',' ')+" · "+(server.optLong("stage_elapsed_ms")/1000)+" s\nRun elapsed: "+(server.optLong("elapsed_ms")/1000)+" s";
         status.setText(s.optString("message")+"\n\n"+s.optString("imports")+"\nRuntime: "+(s.optBoolean("runtime_ready")?"ready":"setup required")
-            +"\nServer: "+(server==null?"stopped":server.optString("phase"))+progress
+            +"\nServer: "+(server==null?"stopped":server.optString("phase"))+timing+progress
             +"\n\n"+(ready?"Server ready. Open the native client and tap Connect local server.":"The native preview can open now; server connection requires fresh readiness."));
         for(Button b:mutations)b.setEnabled(!busy);launch.setEnabled(!busy||ready);stop.setEnabled(busy||ready||(server!=null&&server.optBoolean("owned_process_alive")));
     }
@@ -77,13 +79,21 @@ public final class MainActivity extends Activity {
             if(!pendingKind.matches("launcher|part|base|wine|profile")){Toast.makeText(this,"Choose an import operation again",Toast.LENGTH_SHORT).show();return;}
             final String kind=pendingKind;withService(()->service.importDocuments(kind,files));pendingKind="";
         }else if(request==EXPORT&&data.getData()!=null){
-            final Uri output=data.getData();exports.execute(()->{try(OutputStream stream=getContentResolver().openOutputStream(output);ZipOutputStream zip=new ZipOutputStream(Objects.requireNonNull(stream))){
-                if(service!=null){zip.putNextEntry(new ZipEntry("combined-report.json"));zip.write(service.snapshot().toString(2).getBytes(StandardCharsets.UTF_8));zip.closeEntry();}
+            final Uri output=data.getData();final ServerService currentService=service;exports.execute(()->{try(OutputStream stream=getContentResolver().openOutputStream(output);ZipOutputStream zip=new ZipOutputStream(Objects.requireNonNull(stream))){
+                JSONObject combined=currentService!=null?currentService.snapshot():ServerService.readJson(new File(getFilesDir(),"combined-report.json"),2*1024*1024);
+                if(combined==null)throw new IOException("Launcher report unavailable");
+                zip.putNextEntry(new ZipEntry("combined-report.json"));zip.write(combined.toString(2).getBytes(StandardCharsets.UTF_8));zip.closeEntry();
                 for(String path:new String[]{"native-client-report.json","combined-server/latest-report.json"}){
                     File f=new File(getFilesDir(),path);if(!f.isFile()||f.length()>2*1024*1024)continue;
                     JSONObject report=ServerService.readJson(f,2*1024*1024);if(report==null)continue;
                     if(report.optJSONObject("server_readiness")!=null)report.getJSONObject("server_readiness").remove("account");
-                    zip.putNextEntry(new ZipEntry(path.replace('/','-')));zip.write(report.toString(2).getBytes(StandardCharsets.UTF_8));zip.closeEntry();
+                    String name=path.replace('/','-');
+                    if(path.equals("combined-server/latest-report.json")){
+                        JSONObject server=combined.optJSONObject("server");
+                        boolean current=server!=null&&GuestDiagnostics.sameSession(server.optString("session_id"),report.optString("session_id"));
+                        if(!current)name="previous-session-"+name;
+                    }
+                    zip.putNextEntry(new ZipEntry(name));zip.write(report.toString(2).getBytes(StandardCharsets.UTF_8));zip.closeEntry();
                 }
                 }catch(Exception e){main.post(()->Toast.makeText(this,"Report export failed",Toast.LENGTH_LONG).show());return;}main.post(()->Toast.makeText(this,"Report exported",Toast.LENGTH_LONG).show());});
         }

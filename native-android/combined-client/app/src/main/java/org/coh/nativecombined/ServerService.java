@@ -29,6 +29,10 @@ public final class ServerService extends Service {
     private volatile String importStatus="Checking imports…",session="",generation="";
     private volatile long progressDone,progressTotal;
     private volatile int guestExit=-1;
+    private final GuestDiagnostics diagnostics=new GuestDiagnostics();
+    private String appVersion="unknown";
+    private long appVersionCode;
+    private volatile long startFreeBytes;
     private ImportStore imports;
     private RuntimeSetup setup;
     private PowerManager.WakeLock wake;
@@ -37,6 +41,7 @@ public final class ServerService extends Service {
     private final Runnable ticker=new Runnable(){public void run(){save();main.postDelayed(this,2000);}};
     @Override public void onCreate(){
         super.onCreate();stateDir=new File(getFilesDir(),"combined-server");stateDir.mkdirs();
+        try{android.content.pm.PackageInfo p=getPackageManager().getPackageInfo(getPackageName(),0);appVersion=p.versionName;appVersionCode=p.versionCode;}catch(Exception ignored){}
         NotificationManager nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         nm.createNotificationChannel(new NotificationChannel("server","Native COH local runtime",NotificationManager.IMPORTANCE_LOW));
         foreground();main.post(ticker);
@@ -54,9 +59,14 @@ public final class ServerService extends Service {
     private void refresh()throws Exception {importStatus=imports.status();runtimeReady=setup.ready();}
     public JSONObject snapshot(){
         JSONObject out=new JSONObject();try{
+            GuestDiagnostics.Snapshot d=diagnostics.snapshot(SystemClock.elapsedRealtime());JSONArray stages=new JSONArray();
+            for(int i=0;i<d.stages.length;i++)stages.put(new JSONObject().put("stage",d.stages[i]).put("elapsed_ms",d.stageTimes[i]));
             out.put("schema","coh-native-combined-app-v1").put("package",getPackageName()).put("busy",busy).put("runtime_ready",runtimeReady)
+                .put("version_name",appVersion).put("version_code",appVersionCode).put("android_sdk",Build.VERSION.SDK_INT).put("abis",new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS)))
+                .put("storage_available_bytes",getFilesDir().getUsableSpace()).put("server_start_available_bytes",startFreeBytes)
                 .put("imports",importStatus).put("message",message).put("progress_done",progressDone).put("progress_total",progressTotal)
-                .put("server",new JSONObject().put("phase",phase).put("ready",ready).put("session_id",session).put("guest_exit_code",guestExit).put("owned_process_alive",guest!=null&&guest.isAlive()))
+                .put("server",new JSONObject().put("phase",phase).put("ready",ready).put("session_id",session).put("guest_exit_code",guestExit).put("owned_process_alive",guest!=null&&guest.isAlive())
+                    .put("failure_code",d.failure).put("last_stage",d.stage).put("elapsed_ms",d.elapsedMs).put("stage_elapsed_ms",d.stageElapsedMs).put("stages",stages))
                 .put("local_development_auth",true).put("real_authserver_login_verified",false).put("native_live_world_verified",false)
                 .put("old_application_modified",false).put("updated_elapsed_ms",SystemClock.elapsedRealtime());
             synchronized(events){out.put("events",new JSONArray(events.toString()));}
@@ -70,10 +80,10 @@ public final class ServerService extends Service {
     private interface Operation {void run(ImportContract.Control cancellation)throws Exception;}
     private synchronized void submit(String name,Operation operation){
         if(busy||(guest!=null&&guest.isAlive())){message="Stop the current operation before starting another.";save();return;}
-        busy=true;ready=false;phase=name;stopRequested=false;control=new ImportContract.Control();final ImportContract.Control operationControl=control;revoke();event(name);foreground();save();
+        busy=true;ready=false;phase=name;stopRequested=false;progressDone=progressTotal=0;control=new ImportContract.Control();final ImportContract.Control operationControl=control;revoke();event(name);foreground();save();
         owner.execute(()->{
             try{initialize();operation.run(operationControl);if(!name.equals("starting")){phase="stopped";message="Operation complete. Start the server when ready.";}}
-            catch(Exception e){fail(e);}finally{ready=false;revoke();try{refresh();}catch(Exception ignored){}releaseWake();synchronized(this){if(control==operationControl)control=null;busy=false;}save();}
+            catch(Exception e){if(name.equals("starting"))diagnostics.failure(session,"SERVER_ADMISSION_FAILED");fail(e);}finally{if(name.equals("starting"))diagnostics.finish(SystemClock.elapsedRealtime());ready=false;revoke();try{refresh();}catch(Exception ignored){}releaseWake();synchronized(this){if(control==operationControl)control=null;busy=false;}save();}
         });
     }
     public void importDocuments(String kind,List<Uri> documents){
@@ -95,12 +105,15 @@ public final class ServerService extends Service {
         message="Stopping owned work and preserving the test profile…";event("stop_requested");save();
     }
     private void runServer(ImportContract.Control cancellation)throws Exception {
+        session=UUID.randomUUID().toString().replace("-","");generation="";guestExit=-1;
+        diagnostics.start(session,SystemClock.elapsedRealtime());
+        startFreeBytes=getFilesDir().getUsableSpace();
+        message="Checking local server inputs…";
         if(!Arrays.asList(Build.SUPPORTED_ABIS).contains("arm64-v8a"))throw new IOException("The server runtime requires an ARM64 Android device");
         if(!setup.ready())throw new IOException("Import the files and complete Set up runtime before starting the server");
         File data=imports.gameDataDirectory();if(data==null)throw new IOException("Import all four verified game asset parts");
         File runtime=setup.generationDirectory();
         generation=data.getParentFile().getName();if(!generation.matches("generation-[0-9a-f]{32}"))throw new IOException("Invalid imported game generation");
-        session=UUID.randomUUID().toString().replace("-","");guestExit=-1;
         File stop=new File(stateDir,"stop-request"),lease=new File(stateDir,"server-ready.json");
         Files.deleteIfExists(stop.toPath());Files.deleteIfExists(lease.toPath());
         File previous=new File(stateDir,"owner-active.json");
@@ -139,17 +152,24 @@ public final class ServerService extends Service {
                 if(stopRequested||cancellation.isCancelled()){
                     ready=false;revoke();if(cleanupDeadline==0){cleanupDeadline=SystemClock.elapsedRealtime()+120000;write(stop,"stop\n".getBytes(StandardCharsets.US_ASCII));}
                     if(SystemClock.elapsedRealtime()>=cleanupDeadline){message="Owned cleanup exceeded its deadline; export the report.";phase="cleanup_failed";awaitCleanup(process,cleanupDeadline);break;}
-                }else try{updateLease(lease,process);}catch(Exception e){ready=false;revoke();stopRequested=true;message="Endpoint lease failed; stopping the owned server.";}
+                }else try{updateLease(lease,process);}catch(Exception e){diagnostics.failure(session,"ENDPOINT_LEASE_FAILED");ready=false;revoke();stopRequested=true;message="Endpoint lease failed; stopping the owned server.";}
                 save();
             }
             if(process.isAlive())throw new IOException("Owned runtime did not exit; force-stop this test app and export the report");
             guestExit=process.exitValue();output.join(3000);ready=false;revoke();
             JSONObject result=readJson(new File(stateDir,"latest-report.json"),256*1024);
-            boolean cleaned=result!=null&&session.equals(result.optString("session_id"))&&result.optBoolean("cleanup_complete",false);
-            if(cleaned){Files.deleteIfExists(previous.toPath());phase=guestExit==0?"stopped":"failed";message=guestExit==0?"Server stopped; test profile preserved.":"Server stopped with a diagnostic failure. Export report.";}
-            else {phase="cleanup_failed";message="Server cleanup could not be proved. Preserve and export the report.";}
+            boolean current=result!=null&&GuestDiagnostics.currentReport(session,result.optString("session_id"),result.opt("format"),result.optString("app_id"));
+            if(current){
+                diagnostics.stage(session,result.optString("last_stage"),SystemClock.elapsedRealtime());
+                diagnostics.failure(session,result.optString("primary_failure_code",result.optString("failure_code")));
+            }
+            diagnostics.finish(SystemClock.elapsedRealtime());
+            boolean cleaned=GuestDiagnostics.cleanupProved(!process.isAlive(),current,result==null?null:result.opt("cleanup_complete"));
+            String failure=diagnostics.snapshot(SystemClock.elapsedRealtime()).failure;
+            if(cleaned){Files.deleteIfExists(previous.toPath());phase=guestExit==0&&failure.isEmpty()?"stopped":"failed";message=phase.equals("stopped")?"Server stopped; test profile preserved.":"Server failed"+(failure.isEmpty()?"":": "+failure)+". Test profile preserved. Export report.";}
+            else {phase="cleanup_failed";message="Server cleanup could not be proved"+(failure.isEmpty()?"": " after "+failure)+". Preserve and export the report.";}
             event("server_process_exited");
-        }catch(Exception failure){ready=false;revoke();if(guest!=null&&guest.isAlive()){try{write(stop,"stop\n".getBytes(StandardCharsets.US_ASCII));if(cleanupDeadline==0)cleanupDeadline=SystemClock.elapsedRealtime()+120000;awaitCleanup(guest,cleanupDeadline);}catch(Exception ignored){/* Marker blocks reuse until explicit recovery. */}}throw failure;}finally{ready=false;revoke();if(guest!=null&&!guest.isAlive())guest=null;}
+        }catch(Exception failure){ready=false;revoke();if(guest!=null&&guest.isAlive()){try{write(stop,"stop\n".getBytes(StandardCharsets.US_ASCII));if(cleanupDeadline==0)cleanupDeadline=SystemClock.elapsedRealtime()+120000;awaitCleanup(guest,cleanupDeadline);}catch(Exception ignored){/* Marker blocks reuse until explicit recovery. */}}throw failure;}finally{diagnostics.finish(SystemClock.elapsedRealtime());ready=false;revoke();if(guest!=null&&!guest.isAlive())guest=null;}
     }
     private static void awaitCleanup(java.lang.Process process,long deadline)throws InterruptedException {
         if(waitUntil(process,deadline))return;
@@ -181,7 +201,16 @@ public final class ServerService extends Service {
     }
     private void stageLine(String line){
         if(!line.startsWith("{"))return;
-        try{JSONObject e=new JSONObject(line);if(e.optString("type").equals("stage")){String stage=e.optString("stage",e.optString("name","Preparing local server"));if(stage.matches("[A-Za-z0-9_ .:-]{1,120}"))message=stage;}}catch(JSONException ignored){}
+        try{JSONObject e=new JSONObject(line);String id=e.optString("session_id");
+            if(!GuestDiagnostics.sameSession(session,id))return;
+            if(e.optString("type").equals("stage")){
+                String stage=e.optString("stage");if(diagnostics.stage(id,stage,SystemClock.elapsedRealtime()))message="Preparing server: "+stage.replace('_',' ');
+            }else if(e.optString("type").equals("server_stopped")){
+                diagnostics.failure(id,e.optString("primary_failure_code",e.optString("failure_code")));
+                // Output is diagnostic only. The session-bound private report
+                // remains the cleanup authority after the process has exited.
+            }
+        }catch(JSONException ignored){}
     }
     public void recoverInterrupted(){submit("recovering",c->{
         if(guest!=null&&guest.isAlive())throw new IOException("The owned server is still running. Stop it first.");

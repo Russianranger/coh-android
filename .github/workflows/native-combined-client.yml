@@ -47,13 +47,13 @@ jobs:
       - name: Build and lint consolidated ARM64 APK
         run: |
           python3 native-android/combined-client/gradle.py -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug :app:lintDebug
-          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-client/CoH-Native-Combined-0.1.0-arm64.apk
-          python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-client/CoH-Native-Combined-0.1.0-arm64.apk --abi arm64-v8a --require-clean --output native-android/results/combined-client/arm64-package.json
+          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-client/CoH-Native-Combined-0.1.1-arm64.apk
+          python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-client/CoH-Native-Combined-0.1.1-arm64.apk --abi arm64-v8a --require-clean --output native-android/results/combined-client/arm64-package.json
       - name: Build and audit emulator integration package
         run: |
           python3 native-android/combined-client/gradle.py -PprobeAbis=x86_64 -PcohCryptoRoot=/tmp/combined-crypto :app:assembleDebug
-          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-client/CoH-Native-Combined-0.1.0-emulator-x86_64.apk
-          python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-client/CoH-Native-Combined-0.1.0-emulator-x86_64.apk --abi x86_64 --require-clean --output native-android/results/combined-client/x86_64-package.json
+          cp native-android/combined-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/combined-client/CoH-Native-Combined-0.1.1-emulator-x86_64.apk
+          python3 native-android/combined-client/tools/package_check.py --apk native-android/results/combined-client/CoH-Native-Combined-0.1.1-emulator-x86_64.apk --abi x86_64 --require-clean --output native-android/results/combined-client/x86_64-package.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -98,7 +98,7 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
-          script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-client/CoH-Native-Combined-0.1.0-emulator-x86_64.apk --output native-android/results/combined-client/android13 --donor-apk /tmp/combined-donor.apk --protocol-binary native-android/results/combined-client/host/local-android/coh-local-x86_64 --protocol-receipt native-android/results/combined-client/host/local-android/android-build.json
+          script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-client/CoH-Native-Combined-0.1.1-emulator-x86_64.apk --output native-android/results/combined-client/android13 --donor-apk /tmp/combined-donor.apk --protocol-binary native-android/results/combined-client/host/local-android/coh-local-x86_64 --protocol-receipt native-android/results/combined-client/host/local-android/android-build.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
