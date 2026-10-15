@@ -119,6 +119,7 @@ def blocked_walk_witness(before, blocked, settled):
 def sliding_walk_witness(blocked, sliding):
     first, last = grounded_walk(blocked['native']), grounded_walk(sliding['native'])
     assert sliding['native']['held_dirs'] in (5, 9)
+    assert sliding['native']['source_state_bits'] == sliding['native']['held_dirs']
     assert sliding['native']['movement_ticks'] >= blocked['native']['movement_ticks'] + 6
     assert sliding['native']['frames'] > blocked['native']['frames']
     assert last['sliding_ticks'] > first['sliding_ticks']
@@ -127,6 +128,39 @@ def sliding_walk_witness(blocked, sliding):
     assert distance(blocked['native']['actor_position'], sliding['native']['actor_position']) > .05
     assert sliding['input_adapter']['in_app_synthetic']['motion'] == 0
     return True
+
+
+def slide_callback_witness(blocked, completed):
+    """Find actual held diagonal physics in a fresh framework callback snapshot.
+
+    A bounded keyboard chord releases before host polling. Its retained Java
+    callback carries the exact native state while diagonal input was still held;
+    final neutral state or historical slide counters cannot substitute for it.
+    """
+    old = blocked['input_adapter']['external_android']
+    current = completed['input_adapter']['external_android']
+    assert current['key_down'] == old['key_down']+2
+    assert current['key_up'] == old['key_up']+2
+    assert current['key_down'] == current['key_up']
+    assert completed['input_adapter']['in_app_synthetic']['key_down'] == 0
+    assert completed['input_adapter']['in_app_synthetic']['key_up'] == 0
+    sequence = max(e['sequence'] for e in blocked['events'])
+    events = [e for e in completed['events'] if e['sequence'] > sequence
+              and e['type'] in ('key_down', 'key_up')]
+    assert [e['type'] for e in events] == ['key_down', 'key_down', 'key_up', 'key_up']
+    assert events[0]['native']['held_dirs'] == 1
+    assert events[1]['native']['held_dirs'] == events[2]['native']['held_dirs'] == 9
+    # W releases first while the real forward joystick and D remain held.
+    # D then releases automatically, leaving only that forward joystick.
+    assert events[3]['native']['held_dirs'] in (0, 1)
+    for event in events[1:3]:
+        candidate = {'native': event['native'], 'input_adapter': completed['input_adapter']}
+        try:
+            sliding_walk_witness(blocked, candidate)
+        except AssertionError:
+            continue
+        return event
+    raise AssertionError('Fresh real held diagonal callbacks contain no grounded six-tick source wall slide')
 
 
 def pre_release_witness(before, released):
@@ -476,32 +510,73 @@ def interrupted_and_reversed_walk(initial_position):
 
 
 def obstacle_walk(initial_position):
-    before = reset_actor(initial_position)
-    progress('authored obstacle collision begins', before)
-    held, forward_command = joystick_event(0, -1, 1)
-    blocked = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 1
-                   and r['native']['walk']['blocked_ticks'] > before['native']['walk']['blocked_ticks'],
-                   'Actual source WALK reaches authored forward obstacle', 1, seconds=20)
-    settled = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 1
-                   and r['native']['movement_ticks'] >= blocked['native']['movement_ticks']+30,
-                   'Held source movement remains blocked while physics advances', 1)
-    blocked_walk_witness(before, blocked, settled)
-    progress('authored obstacle blocks held input', settled)
-    sliding_held, diagonal_command = joystick_event(1, -1, 9)
-    sliding = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 9
-                   and r['native']['movement_ticks'] >= sliding_held['native']['movement_ticks']+6
-                   and r['native']['walk']['sliding_ticks'] > settled['native']['walk']['sliding_ticks'],
-                   'Actual diagonal source WALK slides along authored obstacle', 9, seconds=15)
-    sliding_walk_witness(settled, sliding)
-    progress('authored obstacle wall sliding passes', sliding)
-    released = release_joystick()
-    save('emulator-obstacle-walk-proof.json', {'schema': 1, 'passed': True,
-         'scope': 'Actual Android framework joystick with same-direction keyboard snapshot-refresh events: forward input blocked by authored CTri obstacle, diagonal input produces source wall sliding, release stops actor',
-         'forward_input_argv': forward_command, 'diagonal_input_argv': diagonal_command,
-         'before': before, 'blocked': blocked, 'settled': settled, 'sliding': sliding,
-         'released': released, 'physical_controller_verified': False})
-    screenshot('emulator-obstacle-scene.png')
-    return reset_actor(initial_position)
+    help_result = adb('shell', 'input', 'help', check=False)
+    help_text = (help_result.stdout+help_result.stderr).decode(errors='replace')
+    assert 'keycombination [-t duration(ms)]' in help_text, 'Android framework bounded keycombination is not advertised'
+    attempts = []
+    for duration in (250, 500, 1000, 1500):
+        before = reset_actor(initial_position)
+        progress('authored obstacle collision begins', before, framework_chord_ms=duration)
+        held, forward_command = joystick_event(0, -1, 1)
+        blocked = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 1
+                       and r['native']['walk']['blocked_ticks'] > before['native']['walk']['blocked_ticks'],
+                       'Actual source WALK reaches authored forward obstacle', 1, seconds=20)
+        settled = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 1
+                       and r['native']['movement_ticks'] >= blocked['native']['movement_ticks']+30,
+                       'Held source movement remains blocked while physics advances', 1)
+        blocked_walk_witness(before, blocked, settled)
+        progress('authored obstacle blocks held input', settled)
+        diagonal_command = [ADB, 'shell', 'input', 'keyboard', 'keycombination', '-t', str(duration), 'KEYCODE_W', 'KEYCODE_D']
+        neutral_command = [ADB, 'shell', 'input', 'joystick', 'motionevent', 'MOVE', '0', '0']
+        # The standard Android command asynchronously injects both genuine key
+        # downs and timed ups inside one process. Neutralize the forward axis
+        # immediately afterward, before any host snapshot polling can extend
+        # this diagonal walk around the finite bench and off the floor slice.
+        adb(*diagonal_command[1:])
+        adb(*neutral_command[1:])
+        completed = wait(lambda r:r['native']['held_dirs'] == 0
+                         and r['input_adapter']['external_android']['key_up'] >= settled['input_adapter']['external_android']['key_up']+2,
+                         'Bounded actual diagonal chord and forward-axis neutral callbacks complete')
+        witness = None
+        try:
+            witness = slide_callback_witness(settled, completed)
+        except AssertionError:
+            pass
+        attempt = {'framework_chord_ms': duration, 'forward_input_argv': forward_command,
+                   'diagonal_input_argv': diagonal_command, 'neutral_input_argv': neutral_command,
+                   'before': before, 'blocked': blocked, 'settled': settled,
+                   'completed': completed, 'sliding_callback': witness}
+        attempts.append(attempt)
+        save('emulator-obstacle-walk-proof.json', {'schema': 1, 'passed': False,
+             'scope': 'Actual Android held forward joystick blocked by authored CTri; bounded genuine W+D keyboard chord supplies a retained held-diagonal native callback witness, then real forward-axis neutral',
+             'advertised_framework_input_help': help_text, 'attempts': attempts,
+             'physical_controller_verified': False})
+        # A missed short callback or an input scheduling overrun is preserved as
+        # a failed attempt. It cannot qualify a fall or a safety-bound clamp.
+        if witness is None or not completed['native']['walk']['grounded'] or completed['native']['walk']['bounded_ticks'] != settled['native']['walk']['bounded_ticks']:
+            progress('bounded wall-slide attempt lacks a complete supported-ground witness', completed,
+                     framework_chord_ms=duration)
+            continue
+        try:
+            released = settle_released_walk(completed, 'Bounded actual W+D chord and forward joystick neutral', neutral_command)
+            assert released['native']['walk']['bounded_ticks'] == settled['native']['walk']['bounded_ticks']
+        except (AssertionError, RuntimeError) as failure:
+            attempt['settling_failure'] = str(failure) or 'Authored support or unchanged bounds predicate failed while source friction settled'
+            save('emulator-obstacle-walk-proof.json', {'schema': 1, 'passed': False,
+                 'scope': 'Bounded actual input attempts; source wall-slide and supported-ground release requirements remain pending',
+                 'advertised_framework_input_help': help_text, 'attempts': attempts,
+                 'physical_controller_verified': False})
+            continue
+        attempt['released'] = released
+        progress('authored obstacle wall sliding passes', {'native': witness['native']},
+                 framework_chord_ms=duration, callback_sequence=witness['sequence'])
+        save('emulator-obstacle-walk-proof.json', {'schema': 1, 'passed': True,
+             'scope': 'Actual framework input: authored obstacle blocks forward movement, a fresh native callback proves grounded held-diagonal source wall sliding for at least six advancing ticks without bounds, then released controls settle',
+             'advertised_framework_input_help': help_text, 'attempts': attempts,
+             'physical_controller_verified': False})
+        screenshot('emulator-obstacle-scene.png')
+        return reset_actor(initial_position)
+    raise RuntimeError('No bounded real Android chord produced a complete grounded wall-slide witness; all attempts retained')
 
 
 def ui_nodes():

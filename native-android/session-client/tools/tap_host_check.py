@@ -160,12 +160,48 @@ def main():
                                      ('native','actor_position',walk_settled['native']['actor_position'],'Stationary actor cannot qualify sliding'),
                                      ('walk','sliding_ticks',0,'No source slide steps cannot qualify sliding'),
                                      ('walk','blocked_ticks',25,'No source blocking cannot qualify sliding'),
-                                     ('walk','bounded_ticks',1,'Adapter safety clamp cannot qualify sliding')]:
+                                     ('walk','bounded_ticks',1,'Adapter safety clamp cannot qualify sliding'),
+                                     ('native','source_state_bits',0,'Held label without actual source direction cannot qualify sliding')]:
         bad=deepcopy(walk_sliding)
         (bad['native'] if section=='native' else bad['native']['walk'])[field]=value
         try:driver.sliding_walk_witness(walk_settled,bad)
         except AssertionError:check(True,label+' rejected')
         else:check(False,label+' incorrectly accepted')
+    chord_before=deepcopy(walk_settled)
+    chord_before['events']=[{'sequence':10,'type':'key_up'}]
+    chord_before['input_adapter']['external_android']={'key_down':8,'key_up':8}
+    chord_completed={'input_adapter':{'external_android':{'key_down':10,'key_up':10},
+                                       'in_app_synthetic':{'motion':0,'key_down':0,'key_up':0}},
+                     'events':[{'sequence':11,'type':'key_down','native':{'held_dirs':1}},
+                               {'sequence':12,'type':'key_down','native':deepcopy(walk_sliding['native'])},
+                               {'sequence':13,'type':'key_up','native':deepcopy(walk_sliding['native'])},
+                               {'sequence':14,'type':'key_up','native':{'held_dirs':1}}]}
+    check(driver.slide_callback_witness(chord_before,chord_completed)==chord_completed['events'][1],
+          'Fresh actual framework chord callback preserves exact grounded held-diagonal source wall slide')
+    for section,field,value,label in [('native','held_dirs',0,'Final neutral state cannot replace actual held diagonal witness'),
+                                     ('native','source_state_bits',1,'Requested diagonal without achieved source diagonal'),
+                                     ('native','movement_ticks',75,'Fewer than six actual source ticks'),
+                                     ('native','frames',180,'No rendered progression in actual callback'),
+                                     ('native','actor_position',walk_settled['native']['actor_position'],'Historical slide counter without actual displacement'),
+                                     ('walk','grounded',False,'Callback after leaving authentic floor'),
+                                     ('walk','bounded_ticks',1,'Callback relying on adapter boundary clamping'),
+                                     ('walk','sliding_ticks',0,'No fresh original source slide steps'),
+                                     ('walk','blocked_ticks',25,'No fresh original source blocked steps')]:
+        bad=deepcopy(chord_completed)
+        for event in bad['events'][1:3]:
+            (event['native'] if section=='native' else event['native']['walk'])[field]=value
+        try:driver.slide_callback_witness(chord_before,bad)
+        except AssertionError:check(True,label+' rejected')
+        else:check(False,label+' incorrectly accepted')
+    bad=deepcopy(chord_completed)
+    for event in bad['events']:event['sequence']-=10
+    try:driver.slide_callback_witness(chord_before,bad)
+    except AssertionError:check(True,'Historical prior-command diagonal callback rejected')
+    else:check(False,'Historical diagonal callback incorrectly accepted')
+    bad=deepcopy(chord_completed);bad['input_adapter']['in_app_synthetic']['key_down']=1
+    try:driver.slide_callback_witness(chord_before,bad)
+    except AssertionError:check(True,'Synthetic chord cannot qualify real framework source wall slide')
+    else:check(False,'Synthetic chord incorrectly accepted')
     run_before={'native':{'movement_ticks':10,'frames':30,'actor_position':[1,2,3],
                           'animation_move_samples':[10,0,0,4,0,0,0,0,0,0,0,0]},
                 'input_adapter':{'external_android':{'key_down':8,'key_up':8}},
