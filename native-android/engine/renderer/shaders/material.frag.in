@@ -1,0 +1,32 @@
+/* MATERIAL compile constant: 0 multiplyreg, 1 colorblenddual, 2 addglow.
+ * Low-profile original families: no HQ, shadow, cube, bump, debug variants. */
+precision highp float;
+uniform sampler2D uBase, uDual, uMask;
+uniform vec4 uConst0, uConst1, uFogParams, uFogColor, uGlowParams;
+uniform float uAlphaRef;
+in vec2 vUV0, vUV1;
+in vec4 vLit;
+in float vFog;
+layout(location=0) out vec4 outColor;
+void main() {
+    vec4 base=texture(uBase,vUV0);
+#if MATERIAL==0
+    vec4 dual=texture(uDual,vUV1);
+    vec4 result=base*dual;
+    result.rgb*=8.0*vLit.rgb;
+    result.a*=uConst0.a;
+#elif MATERIAL==1
+    vec4 dual=texture(uDual,vUV1);
+    vec3 tint=mix(uConst1.rgb,uConst0.rgb,dual.rgb);
+    tint=mix(tint,vec3(1.0),base.a);
+    vec4 result=vec4(tint*base.rgb*4.0*vLit.rgb,dual.a*uConst0.a);
+#else
+    vec4 result=vec4(mix(uConst0.rgb,base.rgb,base.a)*4.0*vLit.rgb,uConst0.a);
+    vec2 maskUV=floor(vUV0)*0.0078125+uGlowParams.yw;
+    if (texture(uMask,maskUV).r<uGlowParams.x) result.rgb+=texture(uDual,vUV1).rgb;
+#endif
+    float fogAmount=clamp(uFogParams.w*(uFogParams.z-vFog),0.0,1.0);
+    result.rgb=mix(uFogColor.rgb,result.rgb,fogAmount);
+    if (!(result.a>uAlphaRef)) discard;
+    outColor=result;
+}
