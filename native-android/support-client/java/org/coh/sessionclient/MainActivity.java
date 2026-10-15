@@ -83,6 +83,12 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     private InputAdapter adapter;
     private InputManager inputManager;
     private SupportAudioEnvironment audioEnvironment;
+    private SupportControllerNavigation uiController;
+    private final InputManager.InputDeviceListener uiDevices=new InputManager.InputDeviceListener() {
+        public void onInputDeviceAdded(int id) { }
+        public void onInputDeviceChanged(int id) { if(uiController!=null)uiController.deviceChanged(id); }
+        public void onInputDeviceRemoved(int id) { if(uiController!=null)uiController.deviceChanged(id); }
+    };
     private int keys;
     private float axisX, axisY, axisZ, axisRz, touchX, touchY;
     private boolean touching, uiNavigation, hudTouching;
@@ -93,6 +99,10 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         super.onCreate(bundle);
         audioEnvironment=new SupportAudioEnvironment(this,main,(allowed,route) -> {
             if(!destroying&&handle!=0)SupportNative.audioEnvironment(handle,allowed,route);
+        });
+        uiController=new SupportControllerNavigation(new SupportControllerNavigation.Sink() {
+            public void axes(float x,float y) { if(!destroying&&handle!=0)SupportNative.navigation(handle,true,x,y); }
+            public void clear() { if(!destroying&&handle!=0)SupportNative.navigation(handle,false,0,0); }
         });
         sessionStarted = System.currentTimeMillis();
         LinearLayout layout = new LinearLayout(this);
@@ -125,9 +135,9 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         Button animation = new Button(this); animation.setText("Mock animation");
         animation.setOnClickListener(v -> {if(handle!=0)SupportNative.trigger(handle);event("mock_animation");saveReport();}); supportButtons.addView(animation);
         Button navigation = new Button(this); navigation.setText("UI navigation: OFF");
-        navigation.setOnClickListener(v -> {uiNavigation=!uiNavigation;layout.requestFocus();navigation.setText("UI navigation: "+(uiNavigation?"ON":"OFF"));if(adapter!=null)adapter.clear();if(handle!=0)SupportNative.navigation(handle,false,0,0);event("ui_navigation");});supportButtons.addView(navigation);layout.addView(supportButtons);
+        navigation.setOnClickListener(v -> {uiNavigation=!uiNavigation;layout.requestFocus();navigation.setText("UI navigation: "+(uiNavigation?"ON":"OFF"));if(adapter!=null)adapter.clear();uiController.clear();event("ui_navigation");});supportButtons.addView(navigation);layout.addView(supportButtons);
         LinearLayout chatRow=new LinearLayout(this);chatText=new android.widget.EditText(this);
-        chatText.setOnFocusChangeListener((v,focused) -> {if(focused){if(adapter!=null)adapter.clear();if(handle!=0){SupportNative.navigation(handle,false,0,0);SessionNative.controls(handle,0,0,0);}}});chatText.setSingleLine(true);chatText.setHint("Chat text");chatText.setContentDescription("Chat text");chatRow.addView(chatText,new LinearLayout.LayoutParams(0,-2,1));
+        chatText.setOnFocusChangeListener((v,focused) -> {if(focused){if(adapter!=null)adapter.clear();uiController.clear();if(handle!=0)SessionNative.controls(handle,0,0,0);}});chatText.setSingleLine(true);chatText.setHint("Chat text");chatText.setContentDescription("Chat text");chatRow.addView(chatText,new LinearLayout.LayoutParams(0,-2,1));
         Button send=new Button(this);send.setText("Send");send.setOnClickListener(v -> {if(handle!=0){SupportNative.text(handle,chatText.getText().toString().getBytes(StandardCharsets.UTF_8));chatText.setText("");chatText.clearFocus();layout.requestFocus();android.view.inputmethod.InputMethodManager ime=(android.view.inputmethod.InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);if(ime!=null)ime.hideSoftInputFromWindow(chatText.getWindowToken(),0);event("mock_chat");saveReport();}});chatRow.addView(send);layout.addView(chatRow);
         status = new TextView(this); status.setText("Preparing native scene…"); layout.addView(status);
         scene = new FrameLayout(this); layout.addView(scene, new LinearLayout.LayoutParams(-1, 0, 1));
@@ -161,7 +171,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
             }
         });
         inputManager = (InputManager)getSystemService(INPUT_SERVICE);
-        if (inputManager != null) inputManager.registerInputDeviceListener(adapter, main);
+        if(inputManager!=null){inputManager.registerInputDeviceListener(adapter,main);inputManager.registerInputDeviceListener(uiDevices,main);}
         newSurface(); event("session_created");
         renderWorker.execute(() -> {
             try {
@@ -264,15 +274,16 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     @Override protected void onPause() {
         event("pause_requested");
         resumed=false; epoch++; if(adapter!=null)adapter.clear();
-        audioEnvironment.stop();
+        audioEnvironment.stop();uiController.clear();
         if(handle!=0)SessionNative.state(handle,epoch,false); event("pause"); saveReport(); super.onPause();
     }
     @Override public void onWindowFocusChanged(boolean focused) {
-        super.onWindowFocusChanged(focused);if(!focused&&handle!=0)SupportNative.navigation(handle,false,0,0); if(!destroying && adapter!=null)adapter.onWindowFocusChanged(focused);
+        super.onWindowFocusChanged(focused);if(!focused&&uiController!=null)uiController.clear(); if(!destroying && adapter!=null)adapter.onWindowFocusChanged(focused);
     }
     @Override public boolean dispatchKeyEvent(KeyEvent event) {
         if(chatText!=null&&chatText.hasFocus())return super.dispatchKeyEvent(event);
         if(!destroying&&handle!=0&&uiNavigation&&(chatText==null||!chatText.hasFocus())) {
+            uiController.select(event.getDeviceId());
             if(SupportNative.key(handle,event.getKeyCode(),event.getAction(),event.getRepeatCount(),event.isShiftPressed()?1:0))return true;
         }
         return !destroying && adapter!=null && adapter.dispatchKeyEvent(event) || super.dispatchKeyEvent(event);
@@ -281,8 +292,8 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         if(chatText!=null&&chatText.hasFocus())return super.dispatchGenericMotionEvent(event);
         if(!destroying&&resumed&&handle!=0&&uiNavigation&&(chatText==null||!chatText.hasFocus())
                 &&(event.getSource()&android.view.InputDevice.SOURCE_CLASS_JOYSTICK)!=0&&event.getActionMasked()==MotionEvent.ACTION_MOVE){
-            SupportNative.navigation(handle,true,Math.max(-1,Math.min(1,event.getAxisValue(MotionEvent.AXIS_X))),
-                    Math.max(-1,Math.min(1,event.getAxisValue(MotionEvent.AXIS_Y))));return true;
+            uiController.motion(event.getDeviceId(),event.getAxisValue(MotionEvent.AXIS_X),event.getAxisValue(MotionEvent.AXIS_Y),
+                    event.getAxisValue(MotionEvent.AXIS_HAT_X),event.getAxisValue(MotionEvent.AXIS_HAT_Y));return true;
         }
         return !destroying && adapter!=null && adapter.dispatchGenericMotionEvent(event) || super.dispatchGenericMotionEvent(event);
     }
@@ -310,6 +321,8 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
                 .put("report_write_failed",writeFailed).put("failure",failure==null?JSONObject.NULL:failure)
                 .put("input_adapter",adapter==null?JSONObject.NULL:adapter.report())
                 .put("audio_environment",audioEnvironment.report())
+                .put("ui_controller",new JSONObject().put("selected_device",uiController.selectedDevice()==Integer.MIN_VALUE?JSONObject.NULL:uiController.selectedDevice())
+                        .put("motion_samples",uiController.motionSamples()).put("hat_samples",uiController.hatSamples()).put("clears",uiController.clears()))
                 .put("process_memory",new JSONObject().put("java_used_bytes",Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())
                         .put("native_heap_allocated_bytes",android.os.Debug.getNativeHeapAllocatedSize())
                         .put("rss_measured",false).put("pss_measured",false).put("thermal_measured",false));
@@ -397,7 +410,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         destroying=true;resumed=false;epoch++;main.removeCallbacks(poll);
         if(currentHolder!=null)currentHolder.removeCallback(this);
         currentHolder=null;currentSurface=null;
-        if(adapter!=null)adapter.clear();if(inputManager!=null)inputManager.unregisterInputDeviceListener(adapter);
+        if(adapter!=null)adapter.clear();if(inputManager!=null){inputManager.unregisterInputDeviceListener(adapter);inputManager.unregisterInputDeviceListener(uiDevices);}
         long previous=handle;handle=0;
         if(previous!=0){SessionNative.state(previous,epoch,false);retireNative(previous);}
         renderWorker.execute(MainActivity::finishNativeCleanup);

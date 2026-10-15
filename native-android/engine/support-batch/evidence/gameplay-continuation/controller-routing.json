@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "checks": 19,
+  "scope": "real pure-Java UI controller/HAT ownership policy; no Android input injection",
+  "inputs": [
+    {
+      "file": "native-android/support-client/java/org/coh/sessionclient/SupportControllerNavigation.java",
+      "sha256": "3a152fba168451317f8d5eee0f69d1dcf93267d92160ed8a01bcd832f5da506c"
+    },
+    {
+      "file": "native-android/support-client/tools/tests/ControllerNavigationTest.java",
+      "sha256": "be40dce18a669bb54f31cb16e1645cc8d74fba4da2e50251f87de73b75dc07cd"
+    }
+  ],
+  "android_execution": false
+}
