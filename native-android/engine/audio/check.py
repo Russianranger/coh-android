@@ -167,7 +167,7 @@ def main():
         rows = [json.loads(line) for line in result.stdout.splitlines() if line.startswith('{')]
         backend = build / 'test-aaudio-owner'
         command = [*cc, *strict, '-I' + str(HERE / 'host-shim'), str(HERE / 'test_aaudio.c'),
-                   str(HERE / 'coh_mixer_aaudio.c'), str(HERE / 'coh_mixer.c'), str(NATIVE / 'audio/coh_audio.c'),
+                   str(HERE / 'coh_mixer_aaudio.c'), str(HERE / 'coh_audio_session.c'), str(HERE / 'coh_mixer.c'), str(NATIVE / 'audio/coh_audio.c'),
                    *options, '-Wl,--wrap=clock_gettime', '-lm', '-o', str(backend)]
         result = subprocess.run(command, capture_output=True, text=True)
         require(result.returncode == 0, result.stdout + result.stderr)
@@ -181,7 +181,7 @@ def main():
         receipt = {'schema': 'coh-native-gate43-host-v1', 'passed': True, 'source_oracle': source_receipt,
                    'module_sources': {str(p.relative_to(REPO)): digest(p) for p in
                                       [HERE / 'coh_mixer.c', HERE / 'coh_mixer.h', HERE / 'coh_mixer_aaudio.c',
-                                       HERE / 'coh_mixer_aaudio.h', HERE / 'test_mixer.c', HERE / 'test_aaudio.c', NATIVE / 'audio/coh_audio.c']},
+                                       HERE / 'coh_mixer_aaudio.h', HERE / 'coh_audio_session.c', HERE / 'coh_audio_session.h', HERE / 'test_mixer.c', HERE / 'test_aaudio.c', NATIVE / 'audio/coh_audio.c']},
                    'sanitizers': ['address', 'undefined'] if args.sanitize else [], 'leak_sanitizer': leak_sanitizer,
                    'codec': codec_receipt, 'authentic_asset': asset_receipt, 'results': rows,
                    'compiler': subprocess.check_output([*cc, '--version'], text=True).splitlines()[0],

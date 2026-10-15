@@ -44,7 +44,8 @@ CohStatus coh_net_zip_decode(CohNetZip *, int streaming, CohBytes input,
 size_t coh_net_zip_memory(const CohNetZip *);
 typedef enum { COH_NET_IDLE, COH_NET_CONNECTING, COH_NET_WAIT_FINAL,
     COH_NET_CONNECTED, COH_NET_ENCRYPTION_REQUIRED, COH_NET_CLOSED,
-    COH_NET_TIMED_OUT, COH_NET_CANCELLED, COH_NET_FAILED } CohNetState;
+    COH_NET_TIMED_OUT, COH_NET_CANCELLED, COH_NET_FAILED,
+    COH_NET_DISCONNECTING } CohNetState;
 typedef struct {
     uint64_t sent, received, retransmits, acknowledged, duplicates, malformed;
     uint64_t queue_limits, fragment_expirations, timeouts, unsupported;
@@ -64,14 +65,27 @@ typedef struct {
 /* callback borrows the frame for the call; success means the complete
  * datagram was accepted. It must not call back into this link. */
 typedef CohStatus (*CohNetSend)(void *context, CohBytes datagram);
+/* Optional Gate26 provider. peer/own are the original 64-byte CryptoPP DH
+ * public values. Provider generates fresh private entropy, validates peer,
+ * derives the shared64 MD5 and initializes the accepted Blowfish context.
+ * Private/shared values must be erased by provider before returning. It must
+ * not reenter this link or expose secrets in diagnostics. A callback alone is
+ * not evidence of source DH compatibility or actual server interoperability. */
+typedef CohStatus (*CohNetKeyExchange)(void *context,
+    const uint8_t peer_public[64], uint8_t own_public[64], CohBlowfish *key);
 CohNetConfig coh_net_default_config(void);
 CohNet *coh_net_create(const CohNetConfig *);
 void coh_net_destroy(CohNet *);
 CohNetState coh_net_state(const CohNet *);
+/* IDLE only. required=1 rejects a clear SERVER_ACK; no fallback negotiation.
+ * Null provider retains explicit encrypted-handshake unsupported behavior. */
+CohStatus coh_net_set_key_exchange(CohNet *, CohNetKeyExchange, void *context,
+    int required);
 /* Emits source CONNECT(connect_id, requested_version), then handles clear
- * SERVER_ACK/CLIENT_ACK/FINAL transitions. Encrypted SERVER_ACK returns
- * COH_UNSUPPORTED and ENCRYPTION_REQUIRED; it never silently downgrades.
- * Gate26 must supply audited DH/key negotiation before encrypted login. */
+ * SERVER_ACK/CLIENT_ACK/FINAL transitions. Without a provider an encrypted
+ * SERVER_ACK returns COH_UNSUPPORTED and ENCRYPTION_REQUIRED. With one, reply
+ * stays clear, then receive decryption activates; send encryption activates
+ * only after final SERVER_ACK_ACK. It never silently downgrades. */
 CohStatus coh_net_begin(CohNet *, uint32_t connect_id, uint64_t now_ms);
 CohStatus coh_net_queue(CohNet *, CohBytes payload, uint32_t bits,
     int reliable, int ordered, int compressed, uint64_t now_ms);
@@ -80,6 +94,10 @@ CohStatus coh_net_receive(CohNet *, CohBytes frame, uint64_t now_ms);
 /* Output unchanged when no message. Decompression happens after sibling
  * merge and ordered delivery, matching source streaming dictionary order. */
 CohStatus coh_net_next(CohNet *, CohNetMessage *);
+/* Source COMMCONTROL_DISCONNECT / ACK. Drops gameplay queues, then retries one
+ * reliable disconnect until ACK or the configured connect-timeout budget.
+ * The socket owner must continue pumping until CLOSED/TIMED_OUT. */
+CohStatus coh_net_disconnect(CohNet *, uint64_t now_ms);
 void coh_net_cancel(CohNet *);
 void coh_net_close(CohNet *);
 void coh_net_diagnostics(const CohNet *, CohNetDiagnostics *);

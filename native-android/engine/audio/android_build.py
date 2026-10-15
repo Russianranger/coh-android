@@ -23,7 +23,7 @@ def main():
     tools = a.ndk / 'toolchains/llvm/prebuilt/linux-x86_64/bin'
     cc = tools / 'aarch64-linux-android26-clang'
     a.build_dir.mkdir(parents=True, exist_ok=True)
-    sources = [HERE / 'coh_mixer.c', HERE / 'coh_mixer_aaudio.c', NATIVE / 'audio/coh_audio.c']
+    sources = [HERE / 'coh_mixer.c', HERE / 'coh_mixer_aaudio.c', HERE / 'coh_audio_session.c', NATIVE / 'audio/coh_audio.c']
     commands = []
     objects = []
     for source in sources:
@@ -45,7 +45,7 @@ def main():
                'sources': {str(s.relative_to(NATIVE.parent)): sha(s) for s in sources},
                'commands': commands, 'library_sha256': sha(library), 'library_bytes': library.stat().st_size,
                'elf': elf, 'android_emulator': 'not run', 'physical_thor': 'not run',
-               'scope': 'Linked opt-in native library including new AAudio callback sink; no APK or existing Session Client changes'}
+               'scope': 'Linked opt-in native library including AAudio sink and application lifecycle controller; no APK or existing Session Client changes'}
     a.output.parent.mkdir(parents=True, exist_ok=True)
     a.output.write_text(json.dumps(receipt, indent=2) + '\n')
     print(json.dumps({'passed': True, 'output': str(a.output), 'sha256': sha(library), 'bytes': library.stat().st_size}))

@@ -1,0 +1,16 @@
+{
+  "revision": "2c32f5686246fa28cf3341e8e89dd1014eacd5f4",
+  "sha256_lf": {
+    "upstream/ouroboros/Common/auth/auth.c": "589ca2a4353e5725cb1aad90c2f24e9dc852e6bbdad034e5932de17635bffa49",
+    "upstream/ouroboros/Common/auth/auth.h": "6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe",
+    "upstream/ouroboros/Common/auth/authconn.h": "3c4e9a635b7f08d84922fd441eee3b30298d70e9bbc28056481601235866fd58",
+    "upstream/ouroboros/Game/src/clientcomm/authclient.c": "d1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015",
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.c": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/crypt.cpp": "cde2d5acd0bd23cf2b681d968f3b241ace148afc31f7a8af353920087e812b60",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_link.c": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/blowfish.c": "7106020d77eea8313422b865ce3e8587ad7e733366429cf0e613427cdc191585",
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp": "7ba1ae3f483a4b32b57d609c007f7049e16684d8aa875165b40a462ef7d1a1cb",
+    "upstream/ouroboros/AuthServer/src/util.cpp": "d87b7b47cfb52490a27fdf3ec8e5179c96c803058dd4b98204f8e644f631c59a",
+    "upstream/ouroboros/AuthServer/src/IOBuffer.cpp": "c113c383b7f45061d0f58a2eb6ecde9ae19fd9728e7d2121acb49db5b533d38a"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "actual_server_interoperability_verified": false,
+  "android_arm64_portable_object_built": true,
+  "android_crypto_provider_available": false,
+  "credential_derivation_source_oracle_cases": 80,
+  "dh_python_pow_oracle_cases": 64,
+  "emulator_qualified": false,
+  "global_auth_source_frame_cases": 140,
+  "host_crypto_provider": "OpenSSL3",
+  "leak_sanitizer_enabled": false,
+  "leak_sanitizer_limitation": "Execution environment blocks /proc task inspection; ASan address and UBSan remain enabled.",
+  "native_tests": {
+    "authenticated_server_session": false,
+    "checks": 1920,
+    "malformed_inputs": 10000
+  },
+  "ndk_revision": "28.2.13676358",
+  "physical_thor_accepted": false,
+  "sanitize": true,
+  "source_dh_der_exact": true,
+  "source_pins_sha256": "263ad05c0db3b07997b08c4a0f8b879e78e51d5593d4f65aa1a4d273d184f3e8",
+  "status": "PASS"
+}

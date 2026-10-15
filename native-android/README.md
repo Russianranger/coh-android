@@ -1,5 +1,11 @@
 # Native Android experiments - Phase 2
 
+Latest continuation: [gates 25–27 session libraries](PHASES25-27.md) and
+[October 15 recovery](RECOVERY-20261015.md). Networking, authentication and
+replication have new source/host-qualified components; genuine account login
+and a live native world remain pending. The unchanged [Session Client 0.3.0
+Thor procedure](session-client/THOR-TEST.md) remains the next physical test.
+
 Isolated C modules for Android Bionic `arm64-v8a`, based on the accepted client
 source. These targets are independent of the shipping Game and launcher targets.
 

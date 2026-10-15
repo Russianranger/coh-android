@@ -1,0 +1,9 @@
+{
+  "scope": "Recovery environment setup, not a code failure",
+  "initial_aggregate_result": "baseline-summary.json retains failed renderer attempt during NDK extraction",
+  "initial_error": "clang: unable to execute command: Executable ld.lld does not exist",
+  "second_attempt_error": "relative NDK directory used for temporary GLES header symlinks; GLES3/gl3.h not found",
+  "resolved": "NDK extraction completed and absolute NDK path supplied; baseline-renderer.json passed",
+  "ndk_revision": "28.2.13676358",
+  "ndk_zip_sha256": "dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f"
+}

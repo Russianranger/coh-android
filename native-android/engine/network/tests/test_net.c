@@ -218,6 +218,54 @@ static void test_negative_lifecycle(void) {
     CHECK(coh_net_receive(n,frame(5,&p,raw),104)==COH_OK);CHECK(coh_net_next(n,&m)==COH_INVALID);CHECK(coh_net_state(n)==COH_NET_FAILED);
     coh_net_diagnostics(n,&d);CHECK(!d.tx_pending&&!d.rx_pending&&!d.fragment_groups);coh_net_destroy(n);negative++;
 }
+typedef struct {unsigned calls;CohStatus result;} Exchange;
+static CohStatus fixed_exchange(void *context,const uint8_t peer[64],uint8_t own[64],CohBlowfish *key) {
+    Exchange *e=context;e->calls++;
+    for(unsigned i=0;i<64;i++){CHECK(peer[i]==i+1);own[i]=(uint8_t)(128+i);}
+    if(e->result!=COH_OK)return e->result;
+    uint8_t raw[16];memset(raw,0x5a,sizeof(raw));CHECK(coh_bf_init(key,raw,sizeof(raw))==0);return COH_OK;
+}
+static CohNetPacket encrypted_ack(unsigned ver) {
+    CohNetPacket p=command(ver,100,2,1,1);
+    size_t at=(p.payload_bits+7u)&~(size_t)7;
+    for(unsigned i=0;i<64;i++)p.payload[at/8+i]=(uint8_t)(i+1);
+    p.payload_bits=(uint32_t)at+512;p.ack_count=1;p.acks[0]=1;return p;
+}
+static void test_key_exchange(void) {
+    for(unsigned ver=0;ver<=5;ver++) {
+        CohNetConfig config=coh_net_default_config();config.version=ver;CohNet *n=coh_net_create(&config);CHECK(n);
+        Exchange exchange={0,COH_OK};CHECK(coh_net_set_key_exchange(n,fixed_exchange,&exchange,1)==COH_OK);
+        CHECK(coh_net_begin(n,999,0)==COH_OK);CHECK(coh_net_set_key_exchange(n,fixed_exchange,&exchange,1)==COH_STATE);
+        Captured sent={0};CHECK(coh_net_pump(n,0,capture,&sent,(CohCancel){0})==COH_OK);CHECK(sent.count==1);
+        uint8_t raw[COH_PROTOCOL_FRAME_MAX];CohNetPacket p=encrypted_ack(ver);CHECK(coh_net_receive(n,frame(ver,&p,raw),1)==COH_OK);
+        CHECK(exchange.calls==1&&coh_net_state(n)==COH_NET_WAIT_FINAL);
+        sent.count=0;CHECK(coh_net_pump(n,1,capture,&sent,(CohCancel){0})==COH_OK);CHECK(sent.count==1);
+        CHECK(coh_net_frame_decode(ver,NULL,0,0,(CohBytes){sent.frames[0],sent.sizes[0]},&p)==COH_OK);
+        CohProtocolBits b;uint32_t cmd,value;CHECK(coh_protocol_bits_init(&b,p.payload,sizeof(p.payload),p.payload_bits,0)==COH_OK);
+        CHECK(coh_protocol_read_pack(&b,1,&cmd)==COH_OK);
+        if(ver>=4){CHECK(cmd==0);CHECK(coh_protocol_read_pack(&b,1,&cmd)==COH_OK);}
+        CHECK(cmd==3&&coh_protocol_read_pack(&b,1,&value)==COH_OK&&value==1);
+        size_t at=(b.cursor+7)&~(size_t)7;CHECK(at+512==p.payload_bits);
+        for(unsigned i=0;i<64;i++)CHECK(p.payload[at/8+i]==128+i);
+        CohBlowfish key;uint8_t key_bytes[16];memset(key_bytes,0x5a,sizeof(key_bytes));CHECK(coh_bf_init(&key,key_bytes,16)==0);
+        p=command(ver,101,4,0,0);p.ack_count=1;p.acks[0]=2;size_t size=0;
+        CHECK(coh_net_frame_encode(ver,&key,1,&p,raw,sizeof(raw),&size)==COH_OK);
+        CHECK(coh_net_receive(n,(CohBytes){raw,size},2)==COH_OK&&coh_net_state(n)==COH_NET_CONNECTED);
+        uint8_t data[1]={10};CHECK(coh_net_queue(n,(CohBytes){data,1},8,1,0,0,3)==COH_OK);
+        sent.count=0;CHECK(coh_net_pump(n,3,capture,&sent,(CohCancel){0})==COH_OK);CHECK(sent.count==1);
+        CHECK(coh_net_frame_decode(ver,&key,1,0,(CohBytes){sent.frames[0],sent.sizes[0]},&p)==COH_OK&&p.payload_bits==8&&p.payload[0]==10);
+        CHECK(coh_net_frame_decode(ver,NULL,0,0,(CohBytes){sent.frames[0],sent.sizes[0]},&p)==COH_INVALID);negative++;
+        CHECK(coh_net_disconnect(n,4)==COH_OK);sent.count=0;CHECK(coh_net_pump(n,4,capture,&sent,(CohCancel){0})==COH_OK);
+        CHECK(coh_net_frame_decode(ver,&key,1,0,(CohBytes){sent.frames[0],sent.sizes[0]},&p)==COH_OK);
+        coh_net_destroy(n);session_cases++;
+    }
+    CohNet *n=coh_net_create(NULL);CHECK(n);CHECK(coh_net_set_key_exchange(n,NULL,NULL,1)==COH_OK);CHECK(coh_net_begin(n,1,0)==COH_OK);
+    uint8_t raw[COH_PROTOCOL_FRAME_MAX];CohNetPacket p=command(5,100,2,0,1);
+    CHECK(coh_net_receive(n,frame(5,&p,raw),1)==COH_UNSUPPORTED&&coh_net_state(n)==COH_NET_ENCRYPTION_REQUIRED);coh_net_destroy(n);negative++;
+    n=coh_net_create(NULL);CHECK(n);Exchange failed={0,COH_INVALID};CHECK(coh_net_set_key_exchange(n,fixed_exchange,&failed,1)==COH_OK);
+    CHECK(coh_net_begin(n,1,0)==COH_OK);p=encrypted_ack(5);CHECK(coh_net_receive(n,frame(5,&p,raw),1)==COH_INVALID&&coh_net_state(n)==COH_NET_FAILED);
+    CohNetDiagnostics d;coh_net_diagnostics(n,&d);CHECK(!d.tx_pending);coh_net_destroy(n);negative++;
+}
 static uint32_t random_state=0x250143;
 static uint32_t random32(void) { random_state^=random_state<<13;random_state^=random_state>>17;random_state^=random_state<<5;return random_state; }
 static void test_fuzz(void) {
@@ -233,7 +281,7 @@ static void test_fuzz(void) {
     }
 }
 int main(void) {
-    clock_t start=clock();test_frames();test_zip();test_session();test_compressed_session();test_negative_lifecycle();test_fuzz();
+    clock_t start=clock();test_frames();test_zip();test_session();test_compressed_session();test_negative_lifecycle();test_key_exchange();test_fuzz();
     CohNet *n=coh_net_create(NULL);CHECK(n);CohNetDiagnostics d;coh_net_diagnostics(n,&d);coh_net_destroy(n);
     printf("{\"checks\":%u,\"negative_cases\":%u,\"wire_cases\":%u,\"session_scenarios\":%u,\"fixed_link_bytes\":%zu,\"codec_initial_bytes\":%zu,\"cpu_test_ms\":%.3f,\"server_interoperability\":false}\n",checks,negative,wire_cases,session_cases,d.storage_bytes,d.codec_bytes,1000.0*(clock()-start)/CLOCKS_PER_SEC);return 0;
 }

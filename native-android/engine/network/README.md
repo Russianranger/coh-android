@@ -2,18 +2,20 @@
 
 This opt-in C99 library extends the accepted bitstream/Blowfish kernels with
 source-compatible NetLink framing, reliable queues and a client session state
-machine. It has no Wine, Box64 or FEX dependency. It is outside all APK, JNI,
+machine, plus an opt-in POSIX/Android nonblocking UDP owner. It has no Wine,
+Box64 or FEX dependency. It is outside all APK, JNI,
 launcher, Session Client and production-server execution paths.
 
-**Status: implemented and host qualified within the boundary below. Gate 25 is
-not passed: no actual server exchange, Android execution or physical Thor
+**Status: implemented, host qualified and ARM64 compiled within the boundary
+below. Gate 25 is not passed: no actual server exchange, Android execution or physical Thor
 network qualification has occurred.** A clear-handshake scenario between host
 test adapters is a state-machine test, not evidence of server interoperability.
 
 ## Public API and ownership
 
-`coh_net.h` is the only public header. Compile `coh_net.c`, `coh_net_frame.c`,
-`coh_net_zip.c`, the existing `native-android/protocol/coh_protocol.c` and
+`coh_net.h` provides the transport-independent link; `coh_net_udp.h` is its
+optional socket owner. Compile `coh_net.c`, `coh_net_frame.c`,
+`coh_net_zip.c`, `coh_net_udp.c`, the existing `native-android/protocol/coh_protocol.c` and
 `native-android/src/coh_blowfish.c`; link zlib. Include
 `native-android/include` and `native-android/protocol`. No other existing
 module changes are required. Local `CMakeLists.txt` provides an optional static
@@ -28,8 +30,13 @@ library target; the coordinator owns any higher-level build integration.
   successful `queue` and `receive` copy retained bytes. Teardown follows stopped
   producers. `destroy(NULL)` is harmless; never reuse a freed pointer.
 - `begin` queues original `CONNECT`, connect ID and requested version.
-  `receive` handles clear `SERVER_ACK`, `CLIENT_ACK` reply, final server ACK,
-  idle and disconnect. It never fabricates an authentication success.
+  `receive` handles `SERVER_ACK`, `CLIENT_ACK` reply, final server ACK,
+  idle and disconnect. `coh_net_set_key_exchange` optionally supplies a Gate26
+  provider; the callback outputs the original public64 and accepted Blowfish
+  context. The CLIENT_ACK goes clear, receive decryption starts after deriving
+  the key, and send encryption starts after final SERVER_ACK_ACK. The optional
+  required-encryption policy rejects clear negotiation. The default still
+  rejects encrypted negotiation explicitly. It never fabricates authentication.
 - `queue` accepts an opaque game payload including its original command and
   logical bit count. For compressed messages the caller must already use the
   source byte-aligned payload form: packed fields become 32-bit values and
@@ -39,8 +46,8 @@ library target; the coordinator owns any higher-level build integration.
   failure preserves the pending packet and piggyback ACKs. It must not reenter
   the link. The caller's socket adapter must validate peer endpoints, prohibit
   truncation, provide a monotonic clock, and close its own descriptors. The
-  accepted Gate14 loopback adapter is reused as a transport contract reference;
-  this module does not widen its endpoint restriction or alter it.
+  new `coh_net_udp` owner enforces those checks. The accepted Gate14 adapter
+  remains unchanged, including its loopback-only restriction.
 - `next` returns caller-owned messages after sibling reassembly and ordered
   delivery. Compressed ordered messages are inflated in delivery order, with
   independent standalone compression contexts for unordered traffic. Mixed
@@ -48,7 +55,37 @@ library target; the coordinator owns any higher-level build integration.
 - Cancellation is cooperative in `pump`, including between datagrams.
   `cancel/close` clear retained queues. A remotely requested disconnect clears
   gameplay queues and preserves one close reply; it never retransmits old game
-  traffic after closure. Do not poll or close sockets on another thread here.
+  traffic after closure. `coh_net_disconnect` sends/retries original control5,
+  accepts control6, and uses the configured connection timeout as its bounded
+  shutdown deadline. Do not poll or close sockets on another thread here.
+
+## Nonblocking UDP lifecycle
+
+`coh_net_udp_create` validates an explicitly supplied numeric IPv4 peer and
+local bind plus a receive budget (1..64); creation has no network side effect.
+`begin` opens an owner-thread socket, sets nonblocking and close-on-exec flags,
+binds, then starts the link. `service` never blocks: it uses `recvmsg` with a
+bounded number of datagrams before pumping the existing bounded TX queue.
+It validates complete source address/port and `MSG_TRUNC` before framing.
+Empty, malformed, unsupported and wrong-peer traffic are counted without body
+logging. Send EAGAIN/EINTR preserves reliable packets and ACKs for the next
+tick. OS errors, cancellation, encryption-provider absence and timeout close
+the descriptor. No DNS, public-server probing or credentials are implicit.
+
+Android foreground notifications must be enqueued to the socket owner thread.
+`suspend` closes and destroys the old link, clearing keys, queues and zlib
+dictionaries. `resume` requires an explicit different connection ID and creates
+a fresh link/socket; no held input, old application queue or stale dictionary
+is replayed. Authentication/character selection must be performed again by
+the coordinator after network reconnection. This is a defined recovery
+boundary, not yet a qualified Android Home/return or authenticated reconnect.
+
+The callback provider owns its fresh private entropy and secret wiping. The
+NetLink owner erases its accepted key schedule on cancel/close/timeout/failure
+and destruction with volatile writes. A pending encrypted disconnect reply
+retains its key until sent or the owner is closed. All state has one owner;
+there is no cross-thread descriptor closure. Diagnostics contain counters,
+states and an errno integer only, with no packet body or secret.
 
 ## Implemented protocol behavior
 
@@ -83,17 +120,18 @@ not be reused. Unsupported encrypted handshake never falls back to clear text.
 
 Limits are compile-time visible: 32 pending send frames, 16 received messages,
 four sibling groups, 16 parts/group, 16,384 bytes/message and a 16,384-slot
-dedup table. One host link uses **482,296 fixed bytes** plus **275,504 initial
+dedup table. One host link uses **486,488 fixed bytes** plus **275,504 initial
 codec bytes** on the tested 64-bit host. zlib allocations have a separate hard
 768 KiB ceiling, use overflow-checked allocator accounting, and are freed on
 teardown. Temporary standalone codec contexts do not disturb streaming state.
-The fixed structure size is ABI-dependent; use diagnostics on Android.
+The fixed structure size is ABI-dependent; use diagnostics on Android. The
+preserved earlier receipt's 482,296 bytes predates the optional key context.
 
 There are no per-frame heap allocations in framing/reliable queues. zlib can
 allocate a bounded window when first needed and standalone codec calls may
 allocate/free bounded work storage. This is not a realtime audio callback.
-Receive and dispatch copy at most the fixed message cap; an Android transport
-thread adapter and tighter measured allocation policy remain later work.
+Receive and dispatch copy at most the fixed message cap. The socket owner
+needs coordinator/JNI thread dispatch and measured Android allocation policy.
 
 Diagnostics expose sent/received/retry/ACK counts, duplicate and malformed
 counts, queue/fragment/timeouts, current retained objects, fixed storage, codec
@@ -114,9 +152,14 @@ python3 native-android/engine/network/check.py \
 oracle compiles. The unchanged legacy writer is used only on trusted aligned
 zero-filled host storage at `-O0`, without sanitizers; it is never linked into
 the new library. New native code compiles with `-Wall -Wextra -Werror` and runs
-with ASan/UBSan. LeakSanitizer is disabled on the restricted host. Current
-receipt: `evidence/host.json`; it explicitly sets real-server interoperability,
-Android build and Android execution false.
+with ASan/UBSan. LeakSanitizer is disabled on the restricted host. Original
+receipt `evidence/host.json` is preserved. The additive
+`evidence/udp-host.json` records 114,147 core checks, 886 controlled OS-UDP
+checks, 16 socket scenarios and sanitizer qualification. Its socket peer is a
+source-shaped test fixture, never a City of Heroes server.
+`evidence/udp-android-build.json` separately records NDK28c API26 AArch64 shared
+library and UDP-test executable compilation. Android execution, emulator and
+Thor acceptance and real-server interoperability remain explicitly false.
 
 Reference coverage includes 80 original producer profiles, independent Python
 bit-list/zlib headers, 40 unchanged original `bsCompress` comparisons, 70
@@ -125,8 +168,10 @@ allocation truncations, 12,000 checksum-valid parser mutations, 500 mixed
 stream/standalone codec cycles, handshakes at each supported source version,
 fragment reordering, packet loss/retry/ACK retirement, ordered compression,
 queue caps, cancellation, timeout, oversized ACKed groups and disconnect
-regressions. Encryption uses the accepted Blowfish kernel; no new DH claim is
-made by frame round trips.
+regressions. Encryption uses the accepted Blowfish kernel. Generic provider
+tests cover the clear CLIENT_ACK, encrypted final ACK, encrypted gameplay,
+provider rejection and required-encryption failure at versions0–5. Their fixed
+provider does not qualify DH; the coordinator separately joins Gate26 crypto.
 
 ## Required next interoperability and Gate 26 work
 
@@ -135,14 +180,17 @@ made by frame round trips.
    policy, and a disposable account/character. No production server was changed
    or contacted. Wire captures must redact credentials and retain packet IDs,
    capability transitions and exact binary/source identities.
-2. **Encrypted NetLink handshake:** port `crypt.cpp`'s exact DER DH group and
+2. **Encrypted NetLink handshake:** supply a qualified provider for
+   `crypt.cpp`'s exact DER DH group and
    fixed 64-byte public/private/shared-secret conventions; validate peers;
    derive MD5 over the 64-byte shared secret, then reproduce
    `cryptBlowfishInitU32` key byte order. Verify the CLIENT_ACK public key is
    sent clear, enable decrypt after shared-key derivation, and enable encrypt
-   at final SERVER_ACK_ACK. Currently an authenticated, fully present
-   encryption request returns `COH_UNSUPPORTED` and
-   `COH_NET_ENCRYPTION_REQUIRED`; incomplete key payload returns invalid.
+   at final SERVER_ACK_ACK. The optional callback and transition wiring now
+   implement that sequence; without a provider a fully present request returns
+   `COH_UNSUPPORTED` and `COH_NET_ENCRYPTION_REQUIRED`; incomplete key payload
+   returns invalid. A vetted Android crypto provider and authentic server
+   handshake remain unqualified.
 3. **Authentication is a different protocol:** `authLogin/authclient.c` uses
    TCP AuthServer framing, initial protocol/key setup, credential packet,
    server list and play/queue replies. These are not NetLink CONNECT. Support
@@ -164,12 +212,13 @@ made by frame round trips.
    clear/encrypted exchange (as configured), authentic loss/reorder/fragment
    behavior, disconnect/reconnect, and source-defined compressed packet
    traces. Implement RTT sampling, source cookie echo, version fallback policy,
-   buffer resize handling, typed packets if required and nonblocking socket
-   integration only as measured server behavior requires. Version3 is an
+   buffer resize handling and typed packets if required by measured server
+   behavior. The UDP owner is implemented but not device/server qualified.
+   Version3 is an
    original explicitly nonpublic profile; frame compatibility is not a claim
    of usable v3 login.
 
-The library does not yet implement AuthServer, DH/MD5 negotiation, DB/game
+The library does not itself implement AuthServer, the DH/MD5 provider, DB/game
 commands, cookie echo, source buffer-resize control, live RTT estimation,
 server version fallback, credentials, map-transfer state or entity replication.
 Those are explicit remaining requirements, not simulated successes.

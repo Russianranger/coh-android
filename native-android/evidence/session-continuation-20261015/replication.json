@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "passed": true,
+  "scope": "synthetic source-layout fixtures and original position consumer; no real server/capture/device",
+  "source_files": 18,
+  "fixtures": 38,
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 73099,
+      "truncations": 4300,
+      "fuzz_cases": 30000,
+      "live_server": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 73099,
+      "truncations": 4300,
+      "fuzz_cases": 30000,
+      "live_server": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 73099,
+      "truncations": 4300,
+      "fuzz_cases": 30000,
+      "live_server": false
+    }
+  },
+  "actual_server_interoperability": false,
+  "full_entity_parser": false,
+  "render_spawn_handoff": false,
+  "android_built": false,
+  "emulator_qualified": false,
+  "thor_accepted": false
+}

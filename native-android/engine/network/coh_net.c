@@ -10,12 +10,16 @@ typedef struct {
 } Group;
 struct CohNet {
     CohNetConfig config;CohNetState state;CohNetZip *zip;
+    CohNetKeyExchange key_exchange;void *key_context;CohBlowfish key;
+    uint8_t decrypt_on,encrypt_on,require_encryption;
     Tx tx[COH_NET_TX_MAX];Rx rx[COH_NET_RX_MAX];Group groups[COH_NET_GROUP_MAX];
     uint32_t seen[COH_NET_WINDOW],acks[COH_NET_ACK_MAX],ack_count;
     uint32_t next_id,next_sibling,next_ordered,last_ordered;
     uint64_t start_ms,last_rx_ms,last_clock_ms;
     CohNetDiagnostics diagnostics;
 };
+static void erase(void *data,size_t size) {volatile uint8_t *p=data;while(size--)*p++=0;}
+static void forget_key(CohNet *n) {erase(&n->key,sizeof(n->key));n->decrypt_on=n->encrypt_on=0;}
 static void occupancy(CohNet *n) {
     uint32_t tx=0,rx=0,g=0;size_t bytes=0;
     for(unsigned i=0;i<COH_NET_TX_MAX;i++)if(n->tx[i].used){tx++;bytes+=(n->tx[i].packet.payload_bits+7)/8;}
@@ -38,8 +42,13 @@ CohNet *coh_net_create(const CohNetConfig *config) {
     n->config=c;n->zip=coh_net_zip_create();
     if(!n->zip){free(n);return NULL;}occupancy(n);return n;
 }
-void coh_net_destroy(CohNet *n) { if(n){coh_net_zip_destroy(n->zip);memset(n,0,sizeof(*n));free(n);} }
+void coh_net_destroy(CohNet *n) { if(n){coh_net_zip_destroy(n->zip);erase(n,sizeof(*n));free(n);} }
 CohNetState coh_net_state(const CohNet *n) { return n?n->state:COH_NET_FAILED; }
+CohStatus coh_net_set_key_exchange(CohNet *n,CohNetKeyExchange exchange,void *context,int required) {
+    if(!n||n->state!=COH_NET_IDLE)return COH_STATE;
+    if(required!=0&&required!=1)return COH_INVALID;
+    n->key_exchange=exchange;n->key_context=context;n->require_encryption=(uint8_t)required;return COH_OK;
+}
 static unsigned tx_free(const CohNet *n) { unsigned c=0;for(unsigned i=0;i<COH_NET_TX_MAX;i++)c+=!n->tx[i].used;return c; }
 static CohStatus queue_raw(CohNet *n,CohBytes data,uint32_t bits,int reliable,int ordered,int compressed,int connect,uint64_t now) {
     if(!data.data||!bits||bits>COH_NET_MESSAGE_MAX*8||data.size<((size_t)bits+7)/8||
@@ -97,9 +106,17 @@ CohStatus coh_net_queue(CohNet *n,CohBytes data,uint32_t bits,int reliable,int o
 static void clear_queues(CohNet *n) {
     memset(n->tx,0,sizeof(n->tx));memset(n->rx,0,sizeof(n->rx));memset(n->groups,0,sizeof(n->groups));n->ack_count=0;occupancy(n);
 }
-void coh_net_cancel(CohNet *n) { if(n){clear_queues(n);n->state=COH_NET_CANCELLED;} }
-void coh_net_close(CohNet *n) { if(n){clear_queues(n);n->state=COH_NET_CLOSED;} }
-static CohStatus timeout(CohNet *n) { clear_queues(n);n->state=COH_NET_TIMED_OUT;n->diagnostics.timeouts++;return COH_STATE; }
+CohStatus coh_net_disconnect(CohNet *n,uint64_t now) {
+    if(!n||n->state!=COH_NET_CONNECTED)return COH_STATE;
+    if(now<n->last_clock_ms)return COH_INVALID;
+    clear_queues(n);
+    CohStatus s=control(n,5,0,0,now);
+    if(s==COH_OK){n->state=COH_NET_DISCONNECTING;n->start_ms=n->last_clock_ms=now;}
+    return s;
+}
+void coh_net_cancel(CohNet *n) { if(n){clear_queues(n);forget_key(n);n->state=COH_NET_CANCELLED;} }
+void coh_net_close(CohNet *n) { if(n){clear_queues(n);forget_key(n);n->state=COH_NET_CLOSED;} }
+static CohStatus timeout(CohNet *n) { clear_queues(n);forget_key(n);n->state=COH_NET_TIMED_OUT;n->diagnostics.timeouts++;return COH_STATE; }
 static int cmp(const void *a,const void *b) { uint32_t x=*(const uint32_t*)a,y=*(const uint32_t*)b;return (x>y)-(x<y); }
 CohStatus coh_net_pump(CohNet *n,uint64_t now,CohNetSend send,void *context,CohCancel cancel) {
     if(!n||!send)return COH_INVALID;
@@ -108,7 +125,7 @@ CohStatus coh_net_pump(CohNet *n,uint64_t now,CohNetSend send,void *context,CohC
     if(cancel.poll&&cancel.poll(cancel.context)){coh_net_cancel(n);return COH_CANCELLED;}
     if(n->state==COH_NET_CANCELLED)return COH_CANCELLED;
     if(n->state==COH_NET_TIMED_OUT||n->state==COH_NET_FAILED||n->state==COH_NET_ENCRYPTION_REQUIRED)return COH_STATE;
-    if((n->state==COH_NET_CONNECTING||n->state==COH_NET_WAIT_FINAL)&&now-n->start_ms>=n->config.connect_timeout_ms)return timeout(n);
+    if((n->state==COH_NET_CONNECTING||n->state==COH_NET_WAIT_FINAL||n->state==COH_NET_DISCONNECTING)&&now-n->start_ms>=n->config.connect_timeout_ms)return timeout(n);
     if(n->state==COH_NET_CONNECTED&&now-n->last_rx_ms>=n->config.idle_timeout_ms)return timeout(n);
     for(unsigned i=0;i<COH_NET_GROUP_MAX;i++)if(n->groups[i].used&&now-n->groups[i].start_ms>=n->config.fragment_timeout_ms) {
         /* Already-ACKed reliable fragments cannot be silently evicted: the
@@ -139,7 +156,7 @@ CohStatus coh_net_pump(CohNet *n,uint64_t now,CohNetSend send,void *context,CohC
         memcpy(p.acks,n->acks,p.ack_count*sizeof(uint32_t));
         uint8_t frame[COH_PROTOCOL_FRAME_MAX];size_t size=0;CohStatus s;
         for(;;) {
-            s=coh_net_frame_encode(n->config.version,NULL,0,&p,frame,sizeof(frame),&size);
+            s=coh_net_frame_encode(n->config.version,n->encrypt_on?&n->key:NULL,n->encrypt_on,&p,frame,sizeof(frame),&size);
             uint32_t total=s==COH_OK?((uint32_t)frame[0]|(uint32_t)frame[1]<<8|(uint32_t)frame[2]<<16|(uint32_t)frame[3]<<24):0;
             if(s==COH_OK&&(total-p.payload_bits<=28*8||!p.ack_count))break;
             if(!p.ack_count)return s;
@@ -180,11 +197,27 @@ static CohStatus process_control(CohNet *n,const CohNetMessage *m,uint64_t now,i
         if(encrypt) {
             size_t at=(b.cursor+7)&~(size_t)7;
             if(at+512>b.bit_length)return COH_INVALID;
-            n->state=COH_NET_ENCRYPTION_REQUIRED;n->diagnostics.unsupported++;return COH_UNSUPPORTED;
+            if(!n->key_exchange){clear_queues(n);forget_key(n);n->state=COH_NET_ENCRYPTION_REQUIRED;n->diagnostics.unsupported++;return COH_UNSUPPORTED;}
+            /* Once decrypt_on is set, source retransmissions with the same
+             * packet ID are deduplicated; a changed public key cannot replace
+             * a live negotiation. No clear retry or crypto downgrade path. */
+            if(n->decrypt_on)return COH_STATE;
+            uint8_t own[64]={0};CohBlowfish key;memset(&key,0,sizeof(key));
+            CohStatus s=n->key_exchange(n->key_context,data+at/8,own,&key);
+            if(s!=COH_OK){erase(&key,sizeof(key));clear_queues(n);forget_key(n);n->state=COH_NET_FAILED;return s;}
+            uint8_t ack[80]={0};CohProtocolBits reply;(void)coh_protocol_bits_init(&reply,ack,sizeof(ack),0,1);
+            if(n->config.version>=4)(void)coh_protocol_write_pack(&reply,1,0);
+            (void)coh_protocol_write_pack(&reply,1,3);(void)coh_protocol_write_pack(&reply,1,1);
+            size_t key_at=(reply.cursor+7)&~(size_t)7;memcpy(ack+key_at/8,own,sizeof(own));
+            uint32_t bits=(uint32_t)(key_at+512);
+            s=queue_raw(n,(CohBytes){ack,(bits+7)/8},bits,1,0,0,0,now);
+            if(s==COH_OK){n->key=key;n->decrypt_on=1;n->state=COH_NET_WAIT_FINAL;}
+            erase(&key,sizeof(key));return s;
         }
+        if(n->require_encryption||n->decrypt_on){clear_queues(n);forget_key(n);n->state=COH_NET_ENCRYPTION_REQUIRED;n->diagnostics.unsupported++;return COH_UNSUPPORTED;}
         CohStatus s=control(n,3,1,0,now);if(s==COH_OK)n->state=COH_NET_WAIT_FINAL;return s;
     }
-    if(cmd==4) { if(n->state!=COH_NET_WAIT_FINAL)return COH_STATE;n->state=COH_NET_CONNECTED;return COH_OK; }
+    if(cmd==4) { if(n->state!=COH_NET_WAIT_FINAL)return COH_STATE;n->encrypt_on=n->decrypt_on;n->state=COH_NET_CONNECTED;return COH_OK; }
     if(cmd==5) {
         /* Original netAckDisconnect flushes its reply then discards the link.
          * Preserve only one reply for the caller's next nonblocking send;
@@ -243,14 +276,14 @@ static CohStatus retain(CohNet *n,const CohNetPacket *p,uint64_t now) {
     if(retained_bits>COH_NET_MESSAGE_MAX*8) {
         /* Earlier retained pieces were ACKed. Discarding them and remaining
          * connected would make a reliable message permanently unrecoverable. */
-        n->diagnostics.queue_limits++;clear_queues(n);n->state=COH_NET_FAILED;return COH_LIMIT;
+        n->diagnostics.queue_limits++;clear_queues(n);forget_key(n);n->state=COH_NET_FAILED;return COH_LIMIT;
     }
     g->parts[p->sibling_part]=*p;g->mask|=1u<<p->sibling_part;
     if(g->mask!=((1u<<g->count)-1))return COH_OK;
     size_t offset=0;m.id=g->parts[0].id;
     for(unsigned i=0;i<g->count;i++) {
         size_t size=(g->parts[i].payload_bits+7)/8;
-        if(offset+size>sizeof(m.payload)){n->diagnostics.queue_limits++;clear_queues(n);n->state=COH_NET_FAILED;return COH_LIMIT;}
+        if(offset+size>sizeof(m.payload)){n->diagnostics.queue_limits++;clear_queues(n);forget_key(n);n->state=COH_NET_FAILED;return COH_LIMIT;}
         memcpy(m.payload+offset,g->parts[i].payload,size);offset+=size;m.payload_bits+=g->parts[i].payload_bits;
     }
     CohStatus s=store_message(n,&m,now);
@@ -263,8 +296,8 @@ static CohStatus retain(CohNet *n,const CohNetPacket *p,uint64_t now) {
 CohStatus coh_net_receive(CohNet *n,CohBytes frame,uint64_t now) {
     if(!n)return COH_INVALID;
     if(now<n->last_clock_ms)return COH_INVALID;
-    if(n->state!=COH_NET_CONNECTING&&n->state!=COH_NET_WAIT_FINAL&&n->state!=COH_NET_CONNECTED)return COH_STATE;
-    CohNetPacket p;CohStatus s=coh_net_frame_decode(n->config.version,NULL,0,0,frame,&p);
+    if(n->state!=COH_NET_CONNECTING&&n->state!=COH_NET_WAIT_FINAL&&n->state!=COH_NET_CONNECTED&&n->state!=COH_NET_DISCONNECTING)return COH_STATE;
+    CohNetPacket p;CohStatus s=coh_net_frame_decode(n->config.version,n->decrypt_on?&n->key:NULL,n->decrypt_on,0,frame,&p);
     if(s!=COH_OK){n->diagnostics.malformed++;return s;}
     for(uint32_t i=0;i<p.ack_count;i++)for(unsigned j=0;j<COH_NET_TX_MAX;j++)if(n->tx[j].used&&n->tx[j].sent&&n->tx[j].packet.id==p.acks[i]){
         n->tx[j].used=0;n->diagnostics.acknowledged++;
@@ -295,7 +328,7 @@ CohStatus coh_net_next(CohNet *n,CohNetMessage *out) {
     if(m.compressed) {
         uint8_t data[COH_NET_MESSAGE_MAX];size_t size=0;
         CohStatus s=coh_net_zip_decode(n->zip,m.ordered,(CohBytes){m.payload,(m.payload_bits+7)/8},data,sizeof(data),&size);
-        if(s!=COH_OK){clear_queues(n);n->state=COH_NET_FAILED;n->diagnostics.malformed++;return s;}
+        if(s!=COH_OK){clear_queues(n);forget_key(n);n->state=COH_NET_FAILED;n->diagnostics.malformed++;return s;}
         memcpy(m.payload,data,size);m.payload_bits=(uint32_t)size*8;
     }
     if(m.ordered)n->last_ordered=m.ordered_id;

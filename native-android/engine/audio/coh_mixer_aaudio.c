@@ -17,6 +17,7 @@ static aaudio_data_callback_result_t data(AAudioStream *stream,void *user,void *
     (void)stream;CohMixerAAudio *sink=user;int64_t start=now_ns();
     if(frames<0||frames>8192||coh_mixer_render(sink->mixer,output,(uint32_t)frames)!=COH_OK) {
         if(frames>0&&frames<=8192&&output) memset(output,0,(size_t)frames*2*sizeof(float));
+        atomic_store_explicit(&sink->error,COH_MIXER_AAUDIO_RENDER_ERROR,memory_order_release);
         coh_mixer_device_error(sink->mixer);return AAUDIO_CALLBACK_RESULT_STOP;
     }
     int64_t end=now_ns();sink->report.callback_calls++;
@@ -75,6 +76,9 @@ CohStatus coh_mixer_aaudio_open(CohMixer *m,CohMixerAAudio **out) {
         coh_mixer_aaudio_close(out,NULL);return COH_IO;
     }
     sink->report.started=1;return COH_OK;
+}
+int32_t coh_mixer_aaudio_device_error(const CohMixerAAudio *sink) {
+    return sink ? atomic_load_explicit(&sink->error,memory_order_acquire) : 0;
 }
 CohStatus coh_mixer_aaudio_close(CohMixerAAudio **handle,CohMixerAAudioReport *report) {
     if(!handle) return COH_INVALID;

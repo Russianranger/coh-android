@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.16)
+project(coh_native_replication C)
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+add_library(coh_native_replication STATIC coh_replication.c)
+target_include_directories(coh_native_replication PUBLIC .)
+target_compile_options(coh_native_replication PRIVATE -Wall -Wextra -Werror)
+target_link_libraries(coh_native_replication PUBLIC m)

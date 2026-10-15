@@ -1,0 +1,86 @@
+name: Native Android session protocol contracts
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/engine/network/**
+      - native-android/engine/auth/**
+      - native-android/engine/replication/**
+      - native-android/engine/audio/**
+      - native-android/engine/session/**
+      - native-android/engine/build.py
+      - native-android/engine/qualify_session.py
+      - .github/workflows/native-session-protocol.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-session-protocol-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  host-and-arm64:
+    if: github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Install host cryptographic test backend
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libssl-dev zlib1g-dev
+      - name: Install the pinned NDK
+        run: |
+          curl --fail --silent --show-error --location --output /tmp/ndk.zip https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+          echo 'dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f  /tmp/ndk.zip' | sha256sum -c -
+          unzip -q /tmp/ndk.zip -d /tmp/native-session-ndk
+      - name: Qualify source contracts, malformed inputs and combined native linkage
+        run: |
+          python3 native-android/engine/qualify_session.py --source-root . --sanitize --ndk /tmp/native-session-ndk/android-ndk-r28c --output native-android/results/session-protocol
+          python3 native-android/engine/session/android_boundary.py --ndk /tmp/native-session-ndk/android-ndk-r28c --output native-android/results/session-protocol/boundary
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-session-protocol-contracts
+          path: native-android/results/session-protocol/
+          retention-days: 90
+  android-socket-boundary:
+    needs: host-and-arm64
+    if: github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-session-protocol-contracts
+          path: native-android/results/session-protocol
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Enable hosted Android emulator acceleration
+        run: |
+          test -c /dev/kvm
+          sudo chmod 666 /dev/kvm
+      - name: Qualify new socket owner on Android 13 without rebuilding accepted APKs
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/engine/session/android_boundary.py --execute --output native-android/results/session-protocol/boundary
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-session-android-socket-evidence
+          path: native-android/results/session-protocol/boundary/
+          retention-days: 90

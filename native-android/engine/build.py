@@ -9,6 +9,9 @@ SOURCES = [
     'engine/assets/coh_asset_loader.c', 'engine/assets/coh_asset_geo.c',
     'engine/renderer/coh_renderer.c',
     'engine/network/coh_net.c', 'engine/network/coh_net_frame.c', 'engine/network/coh_net_zip.c',
+    'engine/network/coh_net_udp.c', 'engine/auth/coh_auth.c',
+    'engine/replication/coh_replication.c',
+    'engine/session/coh_session_crypto.c',
     'engine/sequencer/coh_sequencer.c', 'engine/ui/coh_ui.c', 'engine/audio/coh_mixer.c',
     'src/coh_assets.c', 'src/coh_dds.c', 'src/coh_blowfish.c',
     'protocol/coh_protocol.c', 'animation/coh_animation.c', 'audio/coh_audio.c',
@@ -39,7 +42,8 @@ def main():
         toolchain = args.ndk.resolve()/'toolchains/llvm/prebuilt/linux-x86_64/bin'
         cc = str(toolchain/'aarch64-linux-android26-clang')
         readelf = str(toolchain/'llvm-readelf')
-        sources += [ENGINE/'renderer/coh_renderer_gles.c', ENGINE/'audio/coh_mixer_aaudio.c']
+        sources += [ENGINE/'renderer/coh_renderer_gles.c', ENGINE/'audio/coh_mixer_aaudio.c',
+                    ENGINE/'audio/coh_audio_session.c']
         libraries += ['-lGLESv3', '-laaudio']
     if args.sanitize:
         flags += ['-fsanitize=address,undefined', '-fno-omit-frame-pointer']

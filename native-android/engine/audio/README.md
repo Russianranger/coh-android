@@ -2,7 +2,8 @@
 
 Status: reusable mixer **implemented and host qualified**, including authentic
 native Ogg decode integration. The optional AAudio callback sink builds and
-links for Android ARM64 API 26. Android emulator playback, physical Thor
+links for Android ARM64 API 26. The opt-in application lifecycle controller is also implemented and host qualified.
+Android emulator playback, physical Thor
 audibility, latency, device-change behavior and sustained backend underrun
 acceptance are **pending**. Gate 43 is not physically accepted or complete.
 
@@ -15,7 +16,8 @@ fixtures or previous receipts. No Wine/Box64/FEX is used.
 `coh_mixer.h` exposes an owned, bounded mixer, cached PCM resources, scheduled
 audio events, stream rings, emitter/listener updates, bus gains, cancellation,
 pause/resume and diagnostics. `coh_mixer_aaudio.h` exposes a separate optional
-Android sink. The existing accepted `audio/coh_audio.c` provides the exact
+Android sink. `coh_audio_session.h` adds a backend-owner application lifecycle
+controller around that sink. The existing accepted `audio/coh_audio.c` provides the exact
 source gain curve and COHAUD11 parser. `decode/coh_decode.c` can decode compressed
 assets on a producer worker; the mixer neither forks nor invokes the codec.
 
@@ -112,6 +114,59 @@ Read diagnostics only with the producer and render callback quiescent; the
 snapshot is deliberately not a racy live statistics API. Stop producers, close
 the backend, then destroy the mixer. `destroy(NULL)` and closing a null sink are
 idempotent; normal destruction consumes the pointer and callers must clear it.
+
+## Opt-in application lifecycle controller
+
+`coh_audio_session.h` is the next additive integration contract. It owns one
+AAudio sink and borrows one mixer; the application retains cache, decoder and
+mixer ownership. Marshal all calls and other mixer producer operations to the
+same owner. Create only with the old render consumer stopped. Initial state is
+suspended; notify the owner of actual foreground and OS audio-focus results with
+`coh_audio_session_environment(session, foreground, audio_focus)`. Both values
+must be exactly zero or one, and both must be true for playback. The application
+still obtains/abandons audio focus through Android; no Java bridge or OS focus
+request is implemented here. Surface loss alone does not suspend audio.
+
+On background or focus loss the controller pauses and closes. Resume reopens
+without evicting PCM or losing retained voices, and the audio simulation clock
+stays frozen during suspension. A failed platform close preserves the callback
+context and mixer lifetime; `pump` retries that close before any replacement
+open, including rapid background/foreground transitions. A saturated mixer
+command queue cannot prevent shutdown: after callback join, the controller drains
+controls and applies pause with a quiescent zero-frame render.
+
+Call `coh_audio_session_pump` on the owner periodically to observe the sink's
+atomic error flag. It never reads live callback statistics. A device error or
+rejected render callback closes and flushes via the existing mixer device-error
+path, then latches a fault. Ordinary foreground notifications cannot replay old
+sounds; `coh_audio_session_recover` explicitly acknowledges the fault and reopens
+only when foreground and focus are still true. The game decides which sounds to
+requeue. This is a pause/recovery policy, not an audio-focus ducking, Android
+routing, resampling, streaming-decoder or gameplay-sound-routing implementation.
+
+`coh_audio_session_report` copies owner metadata and the last fully closed sink
+receipt; it is safe while the AAudio consumer runs. Live mixer counters still
+require quiescence. `opens` counts successful opens, while `closes` counts every
+released sink, including a sink retained by a failed open. Reports do not contain
+credentials, asset bytes or application pointers. Destroy closes the sink and
+pauses the borrowed mixer; it does not destroy the mixer, cache or retained
+voices. A failed platform close retains the session pointer for retry. A stop
+failure followed by successful platform close consumes it and returns `COH_IO`.
+
+The host AAudio shim additionally covers duplicate notifications, malformed
+booleans, held loop playback across background/focus loss, queue saturation,
+failed close/retry, failed-open retained handles, rapid foreground change,
+callback validation errors, an error arriving during close, explicit fault
+recovery, repeated destruction and PCM reuse after session teardown. The shim
+has 19 matching opens/closes and exercises three latched faults. It is synthetic
+host lifecycle evidence, not real Android focus/thread scheduling, emulator
+playback or physical Thor audibility. No Session Client source or APK is changed.
+The additive receipts `lifecycle-host-proof.json`,
+`lifecycle-sanitizer-proof.json` and `lifecycle-android-build.json` preserve the
+old Gate 43 receipts and record the full source/oracle/decoder rerun, ASan/UBSan,
+and linked Android ARM64 API26 library. LeakSanitizer remains unavailable because
+the sandbox cannot read `/proc/PID/task`; explicit mixer allocation accounting
+and ASan/UBSan still pass.
 
 ## Validation
 

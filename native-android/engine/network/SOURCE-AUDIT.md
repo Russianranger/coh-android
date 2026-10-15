@@ -16,7 +16,7 @@ their original gates.
 | `libs/UtilitiesLib/src/network/netio_receive.c` | Merge and order before persistent stream inflate; untyped compressed payload layout |
 | `libs/UtilitiesLib/src/network/net_version.c` | Versions0–5 compression, ordering and control subchannel capabilities; default5 |
 | `libs/UtilitiesLib/src/network/net_link.c` | Initial CONNECT always v0 header; negotiated ACKs, three-step finish, disconnect and encrypted DH/MD5 transition |
-| `libs/UtilitiesLib/src/network/crypt.cpp` | Exact DH group, public/shared secret width, MD5-derived Blowfish key conventions still to port |
+| `libs/UtilitiesLib/src/network/crypt.cpp` | Exact DH group, public/shared secret width and MD5-derived Blowfish key conventions delegated to optional Gate26 provider |
 | `Game/src/clientcomm/authclient.c` | Distinct TCP AuthServer state sequence and development-mode alternative |
 | `Game/src/clientcomm/dbclient.c` | DB login fields, character selection, map endpoint/cookie handoff |
 | `Game/src/clientcomm/clientcomm.c` | UDP MapServer connect, CLIENT_CONNECT body, SERVER_CONNECT_MSG and initial data dependencies |
@@ -38,3 +38,30 @@ New safety limits differ intentionally from the source's unsafe paths: no
 unbounded sibling arrays, unchecked packed arithmetic, >1GB allocation permits,
 stale padding copies or logging credentials. Native zero-filled producer
 padding matches the original producer supplied defined zero-filled storage.
+
+## Additive UDP and encrypted lifecycle continuation
+
+The accepted framing, bitstream, Blowfish and zlib bodies remain unchanged.
+The new POSIX `coh_net_udp.c` is an owner adapter around those accepted APIs;
+its exact peer and truncation checks follow the existing accepted Gate14
+transport contract without changing Gate14's endpoint restriction. The adapter
+opens only explicitly requested numeric IPv4 endpoints. Host qualification
+uses local OS sockets and a controlled source-shaped peer, not a live game
+server. Android compilation is recorded separately from execution.
+
+`net_link.c:netAckConnect` and `handleControlCommand` are the provenance for the
+optional callback sequence: encrypted flag and byte-aligned public512 in the
+clear CLIENT_ACK, derive shared secret and enable receive decryption, then
+enable send encryption at SERVER_ACK_ACK. No native DH claim is made by the
+fixed provider in this module's tests. The callback contract requires the
+separate Gate26 provider to generate fresh private entropy, validate the exact
+source public value and derive MD5(shared64) into accepted Blowfish bytes.
+Setting required-encryption explicitly forbids a clear fallback. Private/shared
+values remain provider-owned; key-schedule cleanup uses volatile writes.
+
+`net_link.c:handleControlCommand` control5/6 and `netAckDisconnect` define the
+graceful disconnect/ACK path. Dropping queued gameplay before requesting close
+and bounding shutdown by the configured connection deadline are intentional
+native ownership limits. Suspend/resume destroys and recreates transport and
+codec state on its owner thread; an authenticated reconnect still requires
+Gate26/coordinator work and real-server evidence.

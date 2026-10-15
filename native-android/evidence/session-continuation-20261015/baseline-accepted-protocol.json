@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "checks": 23467,
+  "wire_cases": 32,
+  "bit_cases": 330,
+  "malformed_cases": 8989,
+  "unaligned_cases": 256,
+  "fuzz_cases": 12000,
+  "pointer_bytes": 8,
+  "long_bytes": 8,
+  "schema": "coh-native-protocol-host-proof-v1",
+  "scope": "Linux host LP64 native kernel, independent compiled goldens; no Android or unchanged-server handshake",
+  "sanitizers": [
+    "AddressSanitizer",
+    "UndefinedBehaviorSanitizer"
+  ],
+  "leak_sanitizer": false,
+  "source_sha256": {
+    "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "protocol/coh_protocol_selftest.c": "b5fbc4f0016fdb47c9de9bb4c4f2cde1676fa346da383ef404dfd287412eb80c",
+    "protocol/protocol_goldens.h": "3f80f7f9d2f40b0a7fca64b542f4a1aa3d66304459462ca42bb07dcf5beac179",
+    "protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+  }
+}

@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.22)
+project(coh_auth C)
+# Portable protocol/provider wrapper. Caller supplies accepted Blowfish and
+# CohProtocol symbols (native_coh_core/coh_protocol in the integrated build).
+add_library(coh_auth STATIC coh_auth.c)
+target_include_directories(coh_auth PUBLIC . ../../include)
+target_compile_features(coh_auth PUBLIC c_std_99)
+option(COH_AUTH_OPENSSL "Enable separately linked OpenSSL3 crypto provider" OFF)
+if(COH_AUTH_OPENSSL)
+    find_package(OpenSSL 3 REQUIRED COMPONENTS Crypto)
+    add_library(coh_auth_openssl STATIC coh_auth_openssl.c)
+    target_link_libraries(coh_auth_openssl PUBLIC coh_auth OpenSSL::Crypto)
+    target_include_directories(coh_auth_openssl PUBLIC .)
+    target_compile_features(coh_auth_openssl PUBLIC c_std_99)
+endif()

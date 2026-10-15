@@ -1,0 +1,183 @@
+{
+  "schema": "coh-gate22-host-v1",
+  "implemented": true,
+  "host_qualified": true,
+  "android_built": false,
+  "emulator_qualified": false,
+  "physical_qualified": false,
+  "host": {
+    "passed": true,
+    "checks": 20502,
+    "authentic_files": 13,
+    "geo_models": 55,
+    "streams": 464,
+    "textures": 2,
+    "animations": 8,
+    "sounds": 1,
+    "malformed_mutations": 1832,
+    "peak_heap_bytes": 176086,
+    "peak_resident_bytes": 133838,
+    "evictions": 1034,
+    "elapsed_seconds": 0.021521299990126863
+  },
+  "oracle": {
+    "passed": true,
+    "original_source_sha256_lf": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "original_function_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+    "models_compared": 55,
+    "delta_channels": 220,
+    "scalar_elements": 62059,
+    "texture_pixels": 20480,
+    "assets": [
+      {
+        "virtual": "data/object_library/streets/elements/misc_sm/misc_sm.geo",
+        "sha256": "04d03d09fef6f7c85225ae92ba0954c880dcef3d2e3ec3791b720d0dcc3d8cd4",
+        "bytes": 51138,
+        "pin": "tools/world_fixture/pins.json",
+        "version": 7,
+        "models": 24,
+        "original_delta_byte_exact": true
+      },
+      {
+        "virtual": "data/sound/ogg/player/headset_incoming_02.ogg",
+        "sha256": "82bec697f9e824d192cac90f32a01421e4a3875aada64fc709862bc4d3ae9198",
+        "bytes": 12930,
+        "pin": "tools/audio_fixture/pins.json"
+      },
+      {
+        "virtual": "assets/player_library/animations/huge/skel_ready.anim",
+        "sha256": "19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6",
+        "bytes": 6171,
+        "pin": "tools/locomotion_fixture/pins.json"
+      },
+      {
+        "virtual": "assets/player_library/animations/huge/run.anim",
+        "sha256": "3a365aaabf6d67df5dc0aa5473a50585b8c64e6f2caa95d69dad0c0990afb1e6",
+        "bytes": 5331,
+        "pin": "tools/locomotion_fixture/pins.json"
+      },
+      {
+        "virtual": "assets/player_library/animations/huge/postrun.anim",
+        "sha256": "eb3e679e3d1a19daa85bb4883f1fcd51b95ae83fb7f6230b114a59e0b563931c",
+        "bytes": 5505,
+        "pin": "tools/locomotion_fixture/pins.json"
+      },
+      {
+        "virtual": "assets/player_library/animations/huge/runback.anim",
+        "sha256": "5ea4d99c7d0d2dd8e8de27bb5f491551ea2629b45d39a8f1835ab37ae89cf1e2",
+        "bytes": 4681,
+        "pin": "tools/directional_fixture/pins.json"
+      },
+      {
+        "virtual": "assets/player_library/animations/huge/run_left.anim",
+        "sha256": "a2733c9306852581b15ac5913b9e2734f509f3533a0f9046044204f649a6a5a3",
+        "bytes": 5387,
+        "pin": "tools/directional_fixture/pins.json"
+      },
+      {
+        "virtual": "assets/player_library/animations/huge/run_right.anim",
+        "sha256": "2e21c3f2036bcd85f548b43383c1ef027fe92398cdd8df9521862e04cc189fed",
+        "bytes": 5387,
+        "pin": "tools/directional_fixture/pins.json"
+      },
+      {
+        "virtual": "assets/player_library/animations/male/walk.anim",
+        "sha256": "43bd9ab845c336bd4f177a30edc5c0a56fea4bc19b193eee4f1c723493e65e7b",
+        "bytes": 9001,
+        "pin": "tools/directional_fixture/pins.json"
+      },
+      {
+        "virtual": "assets/player_library/animations/male/skel_ready2.anim",
+        "sha256": "6757e276eae273d303ea945eaaa410b806f831ac0a869d017ab44a47a00372a7",
+        "bytes": 7112,
+        "pin": "tools/directional_fixture/pins.json"
+      },
+      {
+        "virtual": "data/object_library/special_buildings/trainstation/trainstation.geo",
+        "sha256": "e88a1246c46c634a3b95b94531697dc4f52ba3a65b95f01d41764191e05372bf",
+        "bytes": 66919,
+        "pin": "tools/walkable_fixture/pins.json",
+        "version": 0,
+        "models": 31,
+        "original_delta_byte_exact": true
+      },
+      {
+        "virtual": "data/texture_library/world/streets/elements/monorail/mono_station_infloor.texture",
+        "sha256": "af2c13822d3998622746a856cbfffb0b6c53b8ac440d090eb06ef98ce11842c4",
+        "bytes": 11241,
+        "pin": "tools/walkable_fixture/pins.json",
+        "width": 128,
+        "height": 128,
+        "pillow_rgba_exact": true
+      },
+      {
+        "virtual": "data/texture_library/world/streets/elements/monorail/mono_station_infloor_sml.texture",
+        "sha256": "c196327fb76ecd33bb5c2ddd2c5c373a0e33d43687020a0566d98fdea927220b",
+        "bytes": 3053,
+        "pin": "tools/walkable_fixture/pins.json",
+        "width": 64,
+        "height": 64,
+        "pillow_rgba_exact": true
+      }
+    ],
+    "original_game_execution": false
+  },
+  "sanitizers": {
+    "run": true,
+    "address": true,
+    "undefined": true,
+    "leak_detection": false,
+    "leak_note": "LeakSanitizer cannot inspect /proc under this execution environment; initial detect_leaks=1 run failed during leak runtime setup. ASan/UBSan rerun with leak detection disabled.",
+    "result": {
+      "passed": true,
+      "checks": 20502,
+      "authentic_files": 13,
+      "geo_models": 55,
+      "streams": 464,
+      "textures": 2,
+      "animations": 8,
+      "sounds": 1,
+      "malformed_mutations": 1832,
+      "peak_heap_bytes": 176086,
+      "peak_resident_bytes": 133838,
+      "evictions": 1034
+    }
+  },
+  "source_provenance_lf_sha256": {
+    "libs/UtilitiesLib/include/utilitieslib/utils/piglib_internal.h": "cc484d61ea0042a7f48f40b701901e36b3cb05667b6c0ef48f1ecbb31681a2eb",
+    "libs/UtilitiesLib/src/utils/piglib.c": "786ea2c5e9b8cf14fe4dfd4880b9cfe85a138afbccd56759e59b30b7663ed528",
+    "libs/UtilitiesLib/src/components/datapool.c": "c01451963321c874c0948ae2c57a1c9c9aaf59471660e52869d9a0c9cad2c953",
+    "Game/src/render/tex.h": "56e56aea12a4126250f5f6f4d2211f62814b7eae4ad2598271f5423b60680552",
+    "Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc"
+  },
+  "pigg_corpus_container": "synthetic original-format packaging; authentic payloads, no original PIGG archive execution comparison",
+  "compile_command": [
+    "cc",
+    "-std=c99",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-pedantic",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "-I",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/include",
+    "-O2",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/assets/tests/harness.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/assets/coh_asset_loader.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/assets/coh_asset_geo.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/src/coh_assets.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/src/coh_dds.c",
+    "-lz",
+    "-lm",
+    "-o",
+    "/tmp/coh-assets-eobxljms/harness"
+  ],
+  "limits": {
+    "heap_bytes": 4194304,
+    "resident_bytes": 524288,
+    "single_asset_bytes": 262144,
+    "resident_entries": 4
+  },
+  "scope": "Opt-in indexed native asset library; no Session Client or JNI changes."
+}

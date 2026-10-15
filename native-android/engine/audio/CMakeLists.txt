@@ -7,7 +7,7 @@ target_compile_options(coh_game_audio PRIVATE -Wall -Wextra -Werror -ffp-contrac
 set_target_properties(coh_game_audio PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_link_libraries(coh_game_audio PUBLIC m)
 if(ANDROID)
-  target_sources(coh_game_audio PRIVATE coh_mixer_aaudio.c)
+  target_sources(coh_game_audio PRIVATE coh_mixer_aaudio.c coh_audio_session.c)
   target_link_libraries(coh_game_audio PUBLIC aaudio)
 endif()
 # No decoder is invoked by the mixer. Optional decode/cache work links the

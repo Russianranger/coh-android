@@ -3,7 +3,8 @@
 
 The original x86 bit writer runs unchanged on trusted aligned inputs, -O0,
 without sanitizers. Only the new native module is sanitizer qualified.
-No socket opens, actual server or Android execution are implied by this test.
+The additive UDP test opens only controlled local OS sockets. No actual
+City of Heroes server or Android execution is implied by these tests.
 """
 from pathlib import Path
 import argparse, ctypes as C, hashlib, importlib.util, json, os, random
@@ -151,14 +152,17 @@ def main():
  p=argparse.ArgumentParser();p.add_argument('--source-root',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--sanitize',action='store_true');p.add_argument('--cc',default='cc');a=p.parse_args()
  with tempfile.TemporaryDirectory(prefix='coh-gate25-') as tmp:
   d=Path(tmp);proof=reference(a.source_root,d)
-  sources=[HERE/'coh_net.c',HERE/'coh_net_frame.c',HERE/'coh_net_zip.c',ROOT/'protocol/coh_protocol.c',ROOT/'src/coh_blowfish.c',HERE/'tests/test_net.c']
+  library=[HERE/'coh_net.c',HERE/'coh_net_frame.c',HERE/'coh_net_zip.c',HERE/'coh_net_udp.c',ROOT/'protocol/coh_protocol.c',ROOT/'src/coh_blowfish.c']
+  sources=[*library,HERE/'tests/test_net.c']
   flags=['-std=c99','-Wall','-Wextra','-Werror','-O1','-g','-I'+str(ROOT/'include'),'-I'+str(ROOT/'protocol'),'-I'+str(HERE),'-I'+str(d)]
   if a.sanitize:flags+=['-fno-omit-frame-pointer','-fsanitize=address,undefined','-fno-pie','-no-pie']
   binary=d/'net-test';build=run([a.cc,*flags,*map(str,sources),'-lz','-o',str(binary)])
   env=dict(os.environ,ASAN_OPTIONS='detect_leaks=0:abort_on_error=1',UBSAN_OPTIONS='halt_on_error=1:print_stacktrace=1')
   result=run([str(binary)],env=env);native=json.loads(result.stdout)
-  qualified=[*sources,HERE/'coh_net.h',HERE/'check.py',ROOT/'engine/coh_contracts.h']
-  proof.update(schema='coh-native-gate25-host-v1',passed=True,native=native,native_sources_sha256={str(path.relative_to(ROOT)):sha(path.read_bytes()) for path in qualified},sanitizers='ASan+UBSan; leak sanitizer disabled on restricted host' if a.sanitize else 'not requested',android_build=False,android_execution=False,live_server_interoperability=False)
+  udp_binary=d/'udp-test';run([a.cc,*flags,*map(str,[*library,HERE/'tests/test_udp.c']),'-lz','-o',str(udp_binary)])
+  udp=json.loads(run([str(udp_binary)],env=env).stdout)
+  qualified=[*sources,HERE/'tests/test_udp.c',HERE/'coh_net.h',HERE/'coh_net_udp.h',HERE/'check.py',ROOT/'engine/coh_contracts.h']
+  proof.update(schema='coh-native-gate25-host-v2',passed=True,native=native,udp_adapter=udp,native_sources_sha256={str(path.relative_to(ROOT)):sha(path.read_bytes()) for path in qualified},sanitizers='ASan+UBSan; leak sanitizer disabled on restricted host' if a.sanitize else 'not requested',android_build=False,android_execution=False,live_server_interoperability=False)
   a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(proof,indent=2)+'\n')
   print(json.dumps(proof))
 if __name__=='__main__':main()

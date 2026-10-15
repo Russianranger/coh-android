@@ -1,0 +1,84 @@
+{
+  "passed": true,
+  "checks": 330,
+  "datagrams_sent": 84,
+  "datagrams_received": 84,
+  "clear_frames": 33,
+  "encrypted_frames": 33,
+  "expected_rejects": 18,
+  "endpoint_checks": 84,
+  "byte_parity_checks": 66,
+  "decoded_payloads": 66,
+  "truncated_datagrams": 4,
+  "zero_datagrams": 4,
+  "timeouts": 1,
+  "sockets_opened": 4,
+  "sockets_closed": 4,
+  "backend_errors": 0,
+  "cancelled_waits": 12,
+  "cancelled_ordinary_selftests": 6,
+  "foreground_restore_cases": 8,
+  "concurrent_waiters": 2,
+  "descriptor_count_before": 4,
+  "descriptor_count_after": 4,
+  "reopened_passed": true,
+  "elapsed_ms": 44,
+  "injected_backend": {
+    "passed": true,
+    "backend_error_cases": 1,
+    "transactional_backend_failure": true,
+    "sockets_opened": 2,
+    "sockets_closed": 2
+  },
+  "parity_then_late_cancel": {
+    "passed": true,
+    "real_socket_parity_fault": true,
+    "later_ui_cancel": true,
+    "sticky_session_failure": true,
+    "expected_cancel": false,
+    "sockets_opened": 2,
+    "sockets_closed": 2
+  },
+  "schema": "coh-native-udp-host-proof-v1",
+  "scope": "Linux LP64 real IPv4 loopback UDP; accepted NetLink v0 wire subset; no server connection, login or reliable delivery",
+  "sanitizers": [
+    "AddressSanitizer",
+    "UndefinedBehaviorSanitizer"
+  ],
+  "leak_sanitizer": false,
+  "original_source_revision": "0a5eed1a388ed53da1e19e7d6b2b571c067b82b9",
+  "source_pins_verified": true,
+  "negative_controls": {
+    "endpoint_guard_removed": {
+      "caught": true,
+      "returncode": 1,
+      "assertion": "transport driver failed at line 66: !coh_transport_selftest(&normal) && normal.passed"
+    },
+    "cancel_epoch_ignored": {
+      "caught": true,
+      "returncode": 1,
+      "assertion": "transport driver failed at line 91: !w.result && w.proof.passed && w.proof.interrupted_blocked_poll == 1"
+    },
+    "failure_output_overwritten": {
+      "caught": true,
+      "returncode": 1,
+      "assertion": "transport driver failed at line 66: !coh_transport_selftest(&normal) && normal.passed"
+    },
+    "later_cancel_waives_independent_failure": {
+      "caught": true,
+      "returncode": 1,
+      "assertion": "late-cancel driver rejected an independent parity error incorrectly waived by a later UI cancellation"
+    }
+  },
+  "source_sha256": {
+    "transport/coh_transport.c": "3c9c5138598a30c9ddef4d9ec7900a0a817ddc6f630d2d0b032508da24e77083",
+    "transport/coh_transport.h": "b90fba85ba88b4b71b8f873050aef45c3324430a2c2ff802ce08c6bd62df10d4",
+    "tools/transport_fixture/driver.c": "9ce5643327dad62c3adb42665403a28d695fa9cd0b39513187b689adcea455d1",
+    "tools/transport_fixture/backend_driver.c": "37437d0eb9dac813b2d7af84b9b43ba55b45a35d4273629f26594dc0b16afcb1",
+    "tools/transport_fixture/late_cancel_driver.c": "d25a7d81d29d1361aad04fe9f825d7bd696766a847e775e9541eea5f29a1a4d4",
+    "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "protocol/protocol_goldens.h": "3f80f7f9d2f40b0a7fca64b542f4a1aa3d66304459462ca42bb07dcf5beac179",
+    "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+  }
+}

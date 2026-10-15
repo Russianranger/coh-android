@@ -1,0 +1,1 @@
+{"passed": true, "android_arm64_bionic_cross_compiled": true, "library": {"name": "libcoh_native_engine.so", "bytes": 188760, "sha256": "0c1b6849503de70f4767a1ed9d69f17e7e85e08f2f638b1eb34edc99cb67b5e4"}}

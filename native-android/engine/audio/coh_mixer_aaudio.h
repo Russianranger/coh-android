@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 typedef struct CohMixerAAudio CohMixerAAudio;
+/* Latched callback validation failure; distinct from platform AAudio errors. */
+#define COH_MIXER_AAUDIO_RENDER_ERROR INT32_MIN
 typedef struct {
     int32_t result, sample_rate, channels, format, frames_per_burst, buffer_frames;
     int32_t xrun_count, device_error;
@@ -19,6 +21,9 @@ typedef struct {
  * accepted native audio gate. Source PCM must match the actual opened rate.
  * No stream handle escapes to UI/lifecycle/error threads. */
 CohStatus coh_mixer_aaudio_open(CohMixer *, CohMixerAAudio **out);
+/* Atomic error-only poll, safe on the backend owner while callbacks run.
+ * Returns zero for a null sink or no observed failure. No live stats access. */
+int32_t coh_mixer_aaudio_device_error(const CohMixerAAudio *);
 /* Stop/wait/close is bounded except the platform close operation itself.
  * Null handle is an idempotent success. Close records final consumption/xrun/
  * timestamp diagnostics, then processes outstanding mixer controls at zero

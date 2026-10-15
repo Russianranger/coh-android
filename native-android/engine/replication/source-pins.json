@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "base_commit": "2c32f5686246fa28cf3341e8e89dd1014eacd5f4",
+  "sha256_lf": {
+    "Common/comm_game.h": "ee8af9fbe23a1e83f4fcf8e1289c29751befbb544178cb9a34bd84b97f3d9a12",
+    "Common/entity/entity_enum.h": "52a800d3947ea34ca1fddc35dd76fccf117907f627a06369fe8f6e988a0a374d",
+    "Common/entity/entVarUpdate.h": "93ac3cf2e1aa851dfdc98516b93f460b32881be29661a2dd5dd6a9bc77be8e0e",
+    "Common/cmdparse/cmdcommon.c": "9b9289906988d0932be0d998e0926b0cd3bd95bb2ff7e90557ff3065f1de77e7",
+    "libs/UtilitiesLib/include/utilitieslib/network/net_structdefs.h": "116b3c4a4d4319893ddc0cd75a60722ec58c96a3dc066a74b1b92e12d925aea9",
+    "libs/UtilitiesLib/include/utilitieslib/network/netcomp.h": "f41480f782d35a880b2519d8cb0c83270f63af309ac717698963024387aa2e5f",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370",
+    "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+    "libs/UtilitiesLib/src/utils/cmdoldparse.c": "5e370b1d639d540992799aa1ba9519c34a314c5b16ca17c625eef8ba3ad71d10",
+    "Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+    "Game/src/clientcomm/clientcommreceive.c": "7be9f8127a7aca6b51e0a83b5572c04932b15f34d22e09d31370e6f6105b13dc",
+    "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "Game/src/player/player.c": "88015bed6468f12f5ed8e129fd48f37842a4ca531b8ae907af436fbeddcdb6b2",
+    "Game/src/group/groupnetrecv.c": "f4cccb5a51acea3448191965470eaa349034c4f6fa1c729fa52aed0888c7004d",
+    "MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+    "MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+    "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054"
+  }
+}
