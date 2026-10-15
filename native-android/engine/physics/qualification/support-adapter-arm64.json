@@ -1,0 +1,58 @@
+{
+  "schema": "coh-support-physics-adapter-v1",
+  "passed": true,
+  "host": {
+    "passed": true,
+    "checks": 1026,
+    "failed": 0,
+    "authentic_triangles": 2304,
+    "deterministic_segments": 3,
+    "exact_walk_ticks": 250,
+    "hot_allocator_calls": 0,
+    "outstanding_tracked_allocations": 0,
+    "source_query_nodes": 45,
+    "source_query_triangles": 16
+  },
+  "asan_ubsan": {
+    "passed": true,
+    "checks": 1026,
+    "failed": 0,
+    "authentic_triangles": 2304,
+    "deterministic_segments": 3,
+    "exact_walk_ticks": 250,
+    "hot_allocator_calls": 0,
+    "outstanding_tracked_allocations": 0,
+    "source_query_nodes": 45,
+    "source_query_triangles": 16
+  },
+  "leak_sanitizer_enabled": false,
+  "leak_sanitizer_note": "Explicitly disabled: sandbox /proc task access was unavailable during preceding module qualification",
+  "fixture_sha256": "e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357",
+  "android": {
+    "built": true,
+    "abi": "arm64-v8a",
+    "api": 26,
+    "library_sha256": "c4563f7fcfd2aa0ca1d4044e933e6153e47693f4f9c967befe71bf620a3a76d7",
+    "exports": [
+      "coh_support_physics_clear",
+      "coh_support_physics_create",
+      "coh_support_physics_destroy",
+      "coh_support_physics_refresh",
+      "coh_support_physics_snapshot",
+      "coh_support_physics_state",
+      "coh_support_physics_step"
+    ],
+    "emulator_qualified": false,
+    "physical_thor_accepted": false
+  },
+  "source_sha256": {
+    "native-android/support-client/src/support_physics.c": "4eb4729ec320e7442c1cb7abef9102949bcc9435a730c6db92811cbc8fa26982",
+    "native-android/engine/physics/coh_physics.c": "50bca0b54db61a6ac8318241c2e94ab9e0d347567f41c950dd3aaa4ee0837871",
+    "native-android/walk/coh_walk.c": "998c64c472613cf6e8da38218a8d30bcbf49d29c273520180948d4a2e90c50be",
+    "native-android/walk/source_world.c": "4225a8576a5a536cac44ab107cbfe9bdd7bd3d1ab04bbdb6c2679b375aec9d55",
+    "native-android/walk/source_ctri.c": "1862c65a355ddfa71d1264671effa36addc2a8a3497b7c0825465835603a5670",
+    "native-android/walk/source_tritri.c": "c3fabb12b9a31baac2b6f0bf83b9c0f9456941f897167524e5dfcd88837005c3",
+    "native-android/motion/coh_motion.c": "857240b5eff8a0b88aa102826b03e1fb9318158b89c44487473e03f3a39a454b",
+    "native-android/support-client/src/support_physics.h": "502a7d46667cebac99a2128c8cc20d57f81feca59d5ca8263bf8f4e47ee90819"
+  }
+}
