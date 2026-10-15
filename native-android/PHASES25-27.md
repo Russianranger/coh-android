@@ -17,6 +17,24 @@ That local receipt explicitly records a dirty working tree; clean hosted source
 and actual Android execution are separate qualification steps. No new APK or
 actual authenticated server session follows from these library tests.
 
+The clean-source [workflow 38752076829](https://github.com/Russianranger/coh-android/actions/runs/38752076829)
+now passes at exact source `28c46f015e4405b162c87c9dcdab98de7c04ea39`:
+all source/host/sanitizer contracts, both Android ABI test builds, combined
+ARM64/public-crypto linkage and all five native Android 13 x86_64 suites.
+The [host/ARM64 artifact](https://github.com/Russianranger/coh-android/actions/runs/38752076829/artifacts/11980774730)
+and [Android execution artifact](https://github.com/Russianranger/coh-android/actions/runs/38752076829/artifacts/11981608450)
+were downloaded, digest/ZIP checked, and their exact binaries/receipts bound to
+the clean host manifest. The ARM64 library is byte-identical locally and hosted:
+`baf29c191b5976d8a6e30c8600042ad26792ad6644770cab8240fd018196bf35`.
+[Hosted receipts](evidence/session-live-20261015/hosted-qualification.json)
+keep server login, full live world, integrated-owner Android execution and new
+physical acceptance false. The five executed Android suites are crypto,
+Auth TCP, DB wire, DB UDP session and MapServer entry; they use scripted peers.
+The integrated stage owner is host qualified and ARM64 linked separately.
+The existing [session workflow](https://github.com/Russianranger/coh-android/actions/runs/38752076641)
+and [portable-core workflow](https://github.com/Russianranger/coh-android/actions/runs/38752076621)
+also passed on that exact source. No accepted APK was rebuilt.
+
 These changes advance the native engine libraries while keeping Session Client
 0.3.0 and the conventional launcher/client unchanged. No new gate is accepted
 as a live client milestone. The [recovery record](RECOVERY-20261015.md) identifies
@@ -67,7 +85,8 @@ written to diagnostics.
 | MapServer entry | 240 source producer golden packets; release, ASan and UBSan each29,514 checks/10,652 negatives/17 UDP scenarios; explicit scene-incomplete stop |
 | Integrated stage owner | 229 synthetic adapter checks/9 admission scenarios plus41 real-module TCP checks/3 lifecycle scenarios; ASan/UBSan and ARM64 object build; full scripted socket chain and Android owner execution remain pending |
 | Original NetLink peer | 40 unchanged source functions;16 clear/encrypted version/loss scenarios;48 malformed datagrams; fresh DH and original final-ACK flush order |
-| Combined engine | ARM64 Bionic/public crypto/GLES/AAudio linkage with no undefined symbols; sanitized host integration passes6 groups |
+| Combined engine | ARM64 Bionic/public crypto/GLES/AAudio linkage with no undefined symbols; sanitized host integration passes 6 groups |
+| Android 13 x86_64 | Crypto 1,920 checks/10,000 malformed; Auth TCP 523/11 scenarios; DB wire 95,925/10,000 malformed; DB session 715/10 scenarios; Map 29,514/10,652 negatives/17 scenarios; all passed with exact receipt/binary verification |
 | Actual shard/login/live world | Pending; no server, account, character or controlled capture available |
 | Accepted APKs | No accepted APK rebuilt, reinstalled or migrated |
 
@@ -161,8 +180,9 @@ Android lifecycle callbacks, Android cryptography or real server login.
 3. Verify the implemented DB login/list/selection against the authorized server,
    honoring checksum/version rules. Source lists beyond the accepted16-KiB
    NetLink reassembly bound remain unsupported; no transport cap was widened.
-4. Extend bounded scene/entity/character tails and selected-character pose
-   validation. Only then bridge authoritative state to the native renderer.
+4. Implement the independent [static-scene, entity and full-update-tail contracts](SESSION-NEXT-CONTRACTS.md)
+   with source producer oracles. Only then bridge validated selected-character
+   identity and authoritative state to the native renderer.
 5. Wire audio lifecycle and existing UI/animation frameworks into one coherent
    application path, preserving source assets and existing input/Surface tests.
 

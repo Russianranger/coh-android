@@ -1,0 +1,1543 @@
+{
+  "accepted_apks_rebuilt": false,
+  "actual_server_interoperability_verified": false,
+  "android_executed": false,
+  "android_manifest_sha256": "70e3a38ec5061cbc2916cf76d1648375ee9465e414563e9462618ea8a8f2054d",
+  "clean_source_required": true,
+  "driver_sha256": "17297960500f23b1852a50dda5d8a2798ea1edae67b200750dd417a1acd0ec20",
+  "emulator_qualified": false,
+  "errors": {},
+  "full_live_world_verified": false,
+  "gates25_27_complete": false,
+  "live_owner_host_contract_present": true,
+  "parallel_host_workers": 3,
+  "passed": true,
+  "physical_thor_accepted": false,
+  "real_account_login_verified": false,
+  "results": {
+    "combined_arm64": {
+      "android_arm64_bionic_cross_compiled": true,
+      "android_executed": false,
+      "command": [
+        "/tmp/native-live-ndk/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffp-contract=off",
+        "-I/home/runner/work/coh-android/coh-android/native-android/include",
+        "-I/home/runner/work/coh-android/coh-android/native-android/src",
+        "-I/home/runner/work/coh-android/coh-android/native-android/results/live-session/crypto/arm64-v8a/include",
+        "-shared",
+        "-fPIC",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/assets/coh_asset_loader.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/assets/coh_asset_geo.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/renderer/coh_renderer.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_frame.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_zip.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_udp.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/auth/coh_auth.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/login/coh_login.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/dbclient/coh_dbclient.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/dbclient/coh_db_session.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/live/coh_live.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/mapclient/coh_mapclient.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/replication/coh_replication.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/session/coh_session_crypto.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/sequencer/coh_sequencer.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/ui/coh_ui.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/audio/coh_mixer.c",
+        "/home/runner/work/coh-android/coh-android/native-android/src/coh_assets.c",
+        "/home/runner/work/coh-android/coh-android/native-android/src/coh_dds.c",
+        "/home/runner/work/coh-android/coh-android/native-android/src/coh_blowfish.c",
+        "/home/runner/work/coh-android/coh-android/native-android/protocol/coh_protocol.c",
+        "/home/runner/work/coh-android/coh-android/native-android/animation/coh_animation.c",
+        "/home/runner/work/coh-android/coh-android/native-android/audio/coh_audio.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/renderer/coh_renderer_gles.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/audio/coh_mixer_aaudio.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/audio/coh_audio_session.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/auth/coh_auth_openssl.c",
+        "-lz",
+        "-lm",
+        "-lGLESv3",
+        "-laaudio",
+        "/home/runner/work/coh-android/coh-android/native-android/results/live-session/crypto/arm64-v8a/lib/libcrypto.a",
+        "-ldl",
+        "-Wl,--no-undefined",
+        "-o",
+        "/home/runner/work/coh-android/coh-android/native-android/results/live-session/engine-arm64/libcoh_native_engine.so"
+      ],
+      "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+      "library": {
+        "bytes": 6332936,
+        "name": "libcoh_native_engine.so",
+        "sha256": "baf29c191b5976d8a6e30c8600042ad26792ad6644770cab8240fd018196bf35"
+      },
+      "passed": true,
+      "physical_thor_qualified": false,
+      "public_android_crypto_provider_linked": true,
+      "public_crypto_receipt_sha256": "d8e3421fab4bb55c3c70f3c9ca56ddae7cd9a67ba37e980184235c7d8c366084",
+      "sanitizers": [],
+      "schema": "coh-native-engine-build-v1",
+      "scope": "Combined opt-in libraries only. No APK, JNI, server exchange or gameplay performance claim.",
+      "sources": [
+        {
+          "path": "engine/assets/coh_asset_loader.c",
+          "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b"
+        },
+        {
+          "path": "engine/assets/coh_asset_geo.c",
+          "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+        },
+        {
+          "path": "engine/renderer/coh_renderer.c",
+          "sha256": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00"
+        },
+        {
+          "path": "engine/network/coh_net.c",
+          "sha256": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f"
+        },
+        {
+          "path": "engine/network/coh_net_frame.c",
+          "sha256": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+        },
+        {
+          "path": "engine/network/coh_net_zip.c",
+          "sha256": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8"
+        },
+        {
+          "path": "engine/network/coh_net_udp.c",
+          "sha256": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a"
+        },
+        {
+          "path": "engine/auth/coh_auth.c",
+          "sha256": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d"
+        },
+        {
+          "path": "engine/login/coh_login.c",
+          "sha256": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e"
+        },
+        {
+          "path": "engine/dbclient/coh_dbclient.c",
+          "sha256": "f721a976e38ee87aa8994c88db7d76635f668006c1f4be6da2d4865d1750b447"
+        },
+        {
+          "path": "engine/dbclient/coh_db_session.c",
+          "sha256": "8bb97ecfec6a99a87ec10b3789b088f1513442056443b47563a5f6d0ea92fe00"
+        },
+        {
+          "path": "engine/live/coh_live.c",
+          "sha256": "21e5e2f2ede974e5d6df236254431dd474fbcf04a7ae6b6cd66596359cd479bb"
+        },
+        {
+          "path": "engine/mapclient/coh_mapclient.c",
+          "sha256": "6bcaad9b0c852492bef787bd4c2792af958f3bb3828eb540c7b186af318eae94"
+        },
+        {
+          "path": "engine/replication/coh_replication.c",
+          "sha256": "29a066edcf42699f63c84007cbda66a2f390e4597d4607e33be56e420828f1f6"
+        },
+        {
+          "path": "engine/session/coh_session_crypto.c",
+          "sha256": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1"
+        },
+        {
+          "path": "engine/sequencer/coh_sequencer.c",
+          "sha256": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91"
+        },
+        {
+          "path": "engine/ui/coh_ui.c",
+          "sha256": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676"
+        },
+        {
+          "path": "engine/audio/coh_mixer.c",
+          "sha256": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444"
+        },
+        {
+          "path": "src/coh_assets.c",
+          "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+        },
+        {
+          "path": "src/coh_dds.c",
+          "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+        },
+        {
+          "path": "src/coh_blowfish.c",
+          "sha256": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+        },
+        {
+          "path": "protocol/coh_protocol.c",
+          "sha256": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea"
+        },
+        {
+          "path": "animation/coh_animation.c",
+          "sha256": "98865ae06e3d8eeeb97383e3e36295d715ec7c2556cfd03129dbc79275cefdbb"
+        },
+        {
+          "path": "audio/coh_audio.c",
+          "sha256": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+        },
+        {
+          "path": "engine/renderer/coh_renderer_gles.c",
+          "sha256": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c"
+        },
+        {
+          "path": "engine/audio/coh_mixer_aaudio.c",
+          "sha256": "bddfdbcbb0564be3a99ec893cfa72ee6f1896dc71f08f0eb392369fce7bdd8ae"
+        },
+        {
+          "path": "engine/audio/coh_audio_session.c",
+          "sha256": "646e388250ec4d9954fb019bf9d4f6ce780643e73b8ddd870c77125a41a87b9b"
+        },
+        {
+          "path": "engine/auth/coh_auth_openssl.c",
+          "sha256": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1"
+        }
+      ]
+    },
+    "combined_host": {
+      "android_arm64_bionic_cross_compiled": false,
+      "android_executed": false,
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffp-contract=off",
+        "-I/home/runner/work/coh-android/coh-android/native-android/include",
+        "-I/home/runner/work/coh-android/coh-android/native-android/src",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "-shared",
+        "-fPIC",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/assets/coh_asset_loader.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/assets/coh_asset_geo.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/renderer/coh_renderer.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_frame.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_zip.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_udp.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/auth/coh_auth.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/login/coh_login.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/dbclient/coh_dbclient.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/dbclient/coh_db_session.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/live/coh_live.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/mapclient/coh_mapclient.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/replication/coh_replication.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/session/coh_session_crypto.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/sequencer/coh_sequencer.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/ui/coh_ui.c",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/audio/coh_mixer.c",
+        "/home/runner/work/coh-android/coh-android/native-android/src/coh_assets.c",
+        "/home/runner/work/coh-android/coh-android/native-android/src/coh_dds.c",
+        "/home/runner/work/coh-android/coh-android/native-android/src/coh_blowfish.c",
+        "/home/runner/work/coh-android/coh-android/native-android/protocol/coh_protocol.c",
+        "/home/runner/work/coh-android/coh-android/native-android/animation/coh_animation.c",
+        "/home/runner/work/coh-android/coh-android/native-android/audio/coh_audio.c",
+        "-lz",
+        "-lm",
+        "-Wl,--no-undefined",
+        "-o",
+        "/home/runner/work/coh-android/coh-android/native-android/results/live-session/engine-host/libcoh_native_engine.so"
+      ],
+      "compiler": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "host_integration": {
+        "authentic_compressed_ownership": false,
+        "groups": 6,
+        "passed": true,
+        "scope": "cross-module ownership, identity, copied audio, UI binding, framing and lifecycle contracts; mocked renderer and synthetic network payload"
+      },
+      "leak_sanitizer_executed": false,
+      "leak_sanitizer_limitation": "LSan task enumeration is unavailable in this execution environment.",
+      "library": {
+        "bytes": 2712528,
+        "name": "libcoh_native_engine.so",
+        "sha256": "b1cd8286e727db6de7bfe3cd24f5dfd7ee9b854e5406d05b16f6569cfe72cfa8"
+      },
+      "passed": true,
+      "physical_thor_qualified": false,
+      "public_android_crypto_provider_linked": false,
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "schema": "coh-native-engine-build-v1",
+      "scope": "Combined opt-in libraries only. No APK, JNI, server exchange or gameplay performance claim.",
+      "sources": [
+        {
+          "path": "engine/assets/coh_asset_loader.c",
+          "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b"
+        },
+        {
+          "path": "engine/assets/coh_asset_geo.c",
+          "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+        },
+        {
+          "path": "engine/renderer/coh_renderer.c",
+          "sha256": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00"
+        },
+        {
+          "path": "engine/network/coh_net.c",
+          "sha256": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f"
+        },
+        {
+          "path": "engine/network/coh_net_frame.c",
+          "sha256": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+        },
+        {
+          "path": "engine/network/coh_net_zip.c",
+          "sha256": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8"
+        },
+        {
+          "path": "engine/network/coh_net_udp.c",
+          "sha256": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a"
+        },
+        {
+          "path": "engine/auth/coh_auth.c",
+          "sha256": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d"
+        },
+        {
+          "path": "engine/login/coh_login.c",
+          "sha256": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e"
+        },
+        {
+          "path": "engine/dbclient/coh_dbclient.c",
+          "sha256": "f721a976e38ee87aa8994c88db7d76635f668006c1f4be6da2d4865d1750b447"
+        },
+        {
+          "path": "engine/dbclient/coh_db_session.c",
+          "sha256": "8bb97ecfec6a99a87ec10b3789b088f1513442056443b47563a5f6d0ea92fe00"
+        },
+        {
+          "path": "engine/live/coh_live.c",
+          "sha256": "21e5e2f2ede974e5d6df236254431dd474fbcf04a7ae6b6cd66596359cd479bb"
+        },
+        {
+          "path": "engine/mapclient/coh_mapclient.c",
+          "sha256": "6bcaad9b0c852492bef787bd4c2792af958f3bb3828eb540c7b186af318eae94"
+        },
+        {
+          "path": "engine/replication/coh_replication.c",
+          "sha256": "29a066edcf42699f63c84007cbda66a2f390e4597d4607e33be56e420828f1f6"
+        },
+        {
+          "path": "engine/session/coh_session_crypto.c",
+          "sha256": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1"
+        },
+        {
+          "path": "engine/sequencer/coh_sequencer.c",
+          "sha256": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91"
+        },
+        {
+          "path": "engine/ui/coh_ui.c",
+          "sha256": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676"
+        },
+        {
+          "path": "engine/audio/coh_mixer.c",
+          "sha256": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444"
+        },
+        {
+          "path": "src/coh_assets.c",
+          "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+        },
+        {
+          "path": "src/coh_dds.c",
+          "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+        },
+        {
+          "path": "src/coh_blowfish.c",
+          "sha256": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+        },
+        {
+          "path": "protocol/coh_protocol.c",
+          "sha256": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea"
+        },
+        {
+          "path": "animation/coh_animation.c",
+          "sha256": "98865ae06e3d8eeeb97383e3e36295d715ec7c2556cfd03129dbc79275cefdbb"
+        },
+        {
+          "path": "audio/coh_audio.c",
+          "sha256": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+        }
+      ]
+    },
+    "crypto_build": {
+      "abis": [
+        "arm64-v8a",
+        "x86_64"
+      ],
+      "passed": true,
+      "reused_existing_binaries": false,
+      "verified_source_and_artifact_hashes": true
+    },
+    "crypto_host": {
+      "actual_server_interoperability_verified": false,
+      "android_arm64_portable_object_built": false,
+      "android_crypto_provider_available": false,
+      "credential_derivation_source_oracle_cases": 80,
+      "dh_python_pow_oracle_cases": 64,
+      "emulator_qualified": false,
+      "global_auth_source_frame_cases": 140,
+      "host_crypto_provider": "OpenSSL3",
+      "leak_sanitizer_enabled": false,
+      "leak_sanitizer_limitation": "Execution environment blocks /proc task inspection; ASan address and UBSan remain enabled.",
+      "native_tests": {
+        "authenticated_server_session": false,
+        "checks": 1920,
+        "malformed_inputs": 10000
+      },
+      "physical_thor_accepted": false,
+      "sanitize": true,
+      "source_dh_der_exact": true,
+      "source_pins_sha256": "263ad05c0db3b07997b08c4a0f8b879e78e51d5593d4f65aa1a4d273d184f3e8",
+      "status": "PASS"
+    },
+    "dbclient": {
+      "actual_server_interoperability_verified": false,
+      "android_arm64_built": true,
+      "android_artifacts": [
+        {
+          "abi": "arm64-v8a",
+          "built": true,
+          "executed": false,
+          "file": "coh-db-wire-arm64-v8a",
+          "kind": "wire",
+          "sha256": "096efda03cc05c97df636b24c29e34fa01faf87d247f89f7539dc120fd93b5ef"
+        },
+        {
+          "abi": "arm64-v8a",
+          "built": true,
+          "executed": false,
+          "file": "coh-db-session-arm64-v8a",
+          "kind": "session",
+          "sha256": "9b5175e7d0e310c18e5a160ac7e5ecd686be8e3f737e02f300fe5f057830ab5b"
+        },
+        {
+          "abi": "x86_64",
+          "built": true,
+          "executed": false,
+          "file": "coh-db-wire-x86_64",
+          "kind": "wire",
+          "sha256": "f19e2a3ed6ee4587c6466a44f1a630db8f0ecc53bb810c25a019ffa6c074caa3"
+        },
+        {
+          "abi": "x86_64",
+          "built": true,
+          "executed": false,
+          "file": "coh-db-session-x86_64",
+          "kind": "session",
+          "sha256": "7c0a5086993f8d6e2f9b542755315e2c809c938c8119fbbe38adb473a94b2fa1"
+        }
+      ],
+      "android_fixture_sha256": "9c2a390672279823bf8e57c09e3cf0ee3f58121d364da73487ad8abf725cf438",
+      "android_library_sha256": "ad9f27a149f2d55cc6ebaed716d647dff3286aabc1283347548a632ab12c1bdc",
+      "checks": {
+        "asan": {
+          "checks": 95925,
+          "malformed_inputs": 10000,
+          "passed": true,
+          "real_server_login": false,
+          "session": {
+            "actual_os_udp": true,
+            "checks": 715,
+            "passed": true,
+            "real_authenticated_server": false,
+            "socket_leak_check": true,
+            "socket_scenarios": 10,
+            "source_layout_peer": true
+          }
+        },
+        "release": {
+          "checks": 95925,
+          "malformed_inputs": 10000,
+          "passed": true,
+          "real_server_login": false,
+          "session": {
+            "actual_os_udp": true,
+            "checks": 715,
+            "passed": true,
+            "real_authenticated_server": false,
+            "socket_leak_check": true,
+            "socket_scenarios": 10,
+            "source_layout_peer": true
+          }
+        },
+        "ubsan": {
+          "checks": 95925,
+          "malformed_inputs": 10000,
+          "passed": true,
+          "real_server_login": false,
+          "session": {
+            "actual_os_udp": true,
+            "checks": 715,
+            "passed": true,
+            "real_authenticated_server": false,
+            "socket_leak_check": true,
+            "socket_scenarios": 10,
+            "source_layout_peer": true
+          }
+        }
+      },
+      "emulator_qualified": false,
+      "fixtures": 29,
+      "leak_sanitizer_enabled": false,
+      "leak_sanitizer_limitation": "Disabled for executor /proc task-walk compatibility; ASan address checks and explicit socket descriptor before/after cleanup checks remain enabled.",
+      "ndk_revision": "28.2.13676358",
+      "passed": true,
+      "physical_thor_accepted": false,
+      "schema": 1,
+      "scope": "pinned original login/choose producer blocks and bit writer; synthetic full source-layout player lists and actual OS UDP session peer; no real authenticated server or capture",
+      "source_files": 10,
+      "source_producer_profiles": 4
+    },
+    "live_owner": {
+      "actual_tcp_boundary": {
+        "actual_os_tcp": true,
+        "checks": 41,
+        "descriptor_cleanup": true,
+        "full_auth_db_map_chain": false,
+        "passed": true,
+        "real_authenticated_session": false,
+        "scenarios": 3
+      },
+      "android": {
+        "abi": "arm64-v8a",
+        "api": 26,
+        "built": true,
+        "executed": false,
+        "kind": "owner object only; cross-module Android linkage belongs to aggregate qualification",
+        "sha256": "0491c1d40c3990a14e06ffc00b401e25b3b87ee1de0268b2b259db8e82b991ca"
+      },
+      "credentials_logged": false,
+      "full_scripted_auth_db_map_socket_chain": false,
+      "native_live_world": false,
+      "owner_contract": {
+        "checks": 229,
+        "live_world": false,
+        "passed": true,
+        "real_authenticated_session": false,
+        "scenarios": 9,
+        "synthetic_component_adapters": true
+      },
+      "passed": true,
+      "physical_thor_accepted": false,
+      "real_authenticated_server_session": false,
+      "sanitizers": "ASan+UBSan; LeakSanitizer disabled",
+      "schema": "coh-native-integrated-owner-v1",
+      "source_sha256": {
+        "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+        "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+        "engine/dbclient/coh_db_session.c": "8bb97ecfec6a99a87ec10b3789b088f1513442056443b47563a5f6d0ea92fe00",
+        "engine/dbclient/coh_dbclient.c": "f721a976e38ee87aa8994c88db7d76635f668006c1f4be6da2d4865d1750b447",
+        "engine/live/check.py": "e97623364fb4c727c7850812e481aa1541d42dd302cf8a18134b0dbe0ccfb329",
+        "engine/live/coh_live.c": "21e5e2f2ede974e5d6df236254431dd474fbcf04a7ae6b6cd66596359cd479bb",
+        "engine/live/coh_live.h": "48f1d50c4c91f685ef9e13e2ae04de4e3c4b55abbc542c5444545b029121d519",
+        "engine/live/test_live.c": "78591b8e6b1e9d44177af15ca830b25a5a67ff3ba919a3b2ad48af26a384e4a7",
+        "engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+        "engine/mapclient/coh_mapclient.c": "6bcaad9b0c852492bef787bd4c2792af958f3bb3828eb540c7b186af318eae94",
+        "engine/network/coh_net.c": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f",
+        "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+        "engine/network/coh_net_udp.c": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a",
+        "engine/network/coh_net_zip.c": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8",
+        "engine/replication/coh_replication.c": "29a066edcf42699f63c84007cbda66a2f390e4597d4607e33be56e420828f1f6",
+        "engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+        "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+        "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+      }
+    },
+    "login": {
+      "actual_server_interoperability_verified": false,
+      "android": {
+        "arm64-v8a": {
+          "abi": "arm64-v8a",
+          "android_executed": false,
+          "binary": "test_login_android",
+          "binary_sha256": "1882da26dd1f02d72178ad651f3fc00df1e46b29b4fc0fa13bd79271e571581d",
+          "command": [
+            "/tmp/native-live-ndk/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+            "-std=c11",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-ffp-contract=off",
+            "-I/home/runner/work/coh-android/coh-android/native-android/include",
+            "-O2",
+            "-I/home/runner/work/coh-android/coh-android/native-android/results/live-session/crypto/arm64-v8a/include",
+            "/home/runner/work/coh-android/coh-android/native-android/engine/login/coh_login.c",
+            "/home/runner/work/coh-android/coh-android/native-android/engine/auth/coh_auth.c",
+            "/home/runner/work/coh-android/coh-android/native-android/protocol/coh_protocol.c",
+            "/home/runner/work/coh-android/coh-android/native-android/src/coh_blowfish.c",
+            "/home/runner/work/coh-android/coh-android/native-android/engine/login/test_login.c",
+            "-Wl,--wrap=connect,--wrap=send",
+            "/home/runner/work/coh-android/coh-android/native-android/results/live-session/crypto/arm64-v8a/lib/libcoh_auth_android_crypto.a",
+            "/home/runner/work/coh-android/coh-android/native-android/results/live-session/crypto/arm64-v8a/lib/libcrypto.a",
+            "-ldl",
+            "-lm",
+            "-o",
+            "/home/runner/work/coh-android/coh-android/native-android/results/live-session/android/login/arm64-v8a/test_login_android"
+          ],
+          "crypto_build_receipt_sha256": "d8e3421fab4bb55c3c70f3c9ca56ddae7cd9a67ba37e980184235c7d8c366084",
+          "passed": true,
+          "real_account_login_verified": false,
+          "source_sha256": {
+            "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+            "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+            "engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+            "engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f",
+            "engine/login/test_login.c": "1e7babe5a78ebc732aea3182d7ec7ffe93d3f4c19c7b3202643bef712767c091",
+            "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+            "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+          }
+        },
+        "x86_64": {
+          "abi": "x86_64",
+          "android_executed": false,
+          "binary": "test_login_android",
+          "binary_sha256": "a057574ca499fed46d5302b4ed4d8e96948458b5f88c36825d49c2160ed89dfd",
+          "command": [
+            "/tmp/native-live-ndk/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android26-clang",
+            "-std=c11",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-ffp-contract=off",
+            "-I/home/runner/work/coh-android/coh-android/native-android/include",
+            "-O2",
+            "-I/home/runner/work/coh-android/coh-android/native-android/results/live-session/crypto/x86_64/include",
+            "/home/runner/work/coh-android/coh-android/native-android/engine/login/coh_login.c",
+            "/home/runner/work/coh-android/coh-android/native-android/engine/auth/coh_auth.c",
+            "/home/runner/work/coh-android/coh-android/native-android/protocol/coh_protocol.c",
+            "/home/runner/work/coh-android/coh-android/native-android/src/coh_blowfish.c",
+            "/home/runner/work/coh-android/coh-android/native-android/engine/login/test_login.c",
+            "-Wl,--wrap=connect,--wrap=send",
+            "/home/runner/work/coh-android/coh-android/native-android/results/live-session/crypto/x86_64/lib/libcoh_auth_android_crypto.a",
+            "/home/runner/work/coh-android/coh-android/native-android/results/live-session/crypto/x86_64/lib/libcrypto.a",
+            "-ldl",
+            "-lm",
+            "-o",
+            "/home/runner/work/coh-android/coh-android/native-android/results/live-session/android/login/x86_64/test_login_android"
+          ],
+          "crypto_build_receipt_sha256": "3d15aa486551e8ad2172d8c58290464907081ec769a673d1691a06ee8df4f402",
+          "passed": true,
+          "real_account_login_verified": false,
+          "source_sha256": {
+            "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+            "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+            "engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+            "engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f",
+            "engine/login/test_login.c": "1e7babe5a78ebc732aea3182d7ec7ffe93d3f4c19c7b3202643bef712767c091",
+            "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+            "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+          }
+        }
+      },
+      "leak_sanitizer": "not claimed locally; task enumeration unavailable, address/UB checks enabled",
+      "passed": true,
+      "real_account_login_verified": false,
+      "schema": "coh-native-auth-tcp-controller-v1",
+      "scope": "Actual TCP sockets/real host or public Android crypto; scripted source-layout AuthServer replies. No real account database.",
+      "source_audit": {
+        "audit": [
+          "authLogin",
+          "authWaitFor",
+          "acGetProtocolVer",
+          "acGetLoginOK",
+          "acGetSendServerList",
+          "acGetPlayOK",
+          "authGetPacket",
+          "authSendPacket",
+          "setupPacketSizeOffset"
+        ],
+        "note": "Control-flow/source audit; credential/framing byte oracles remain in engine/auth/check.py. Scripted peer tests are not source server execution.",
+        "sha256_lf": {
+          "upstream/ouroboros/Common/auth/auth.c": "589ca2a4353e5725cb1aad90c2f24e9dc852e6bbdad034e5932de17635bffa49",
+          "upstream/ouroboros/Common/auth/auth.h": "6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe",
+          "upstream/ouroboros/Game/src/clientcomm/authclient.c": "d1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015"
+        },
+        "source_revision": "pinned repository source"
+      },
+      "tests": {
+        "asan_ubsan": {
+          "actual_os_tcp": true,
+          "checks": 523,
+          "descriptor_cleanup": true,
+          "passed": true,
+          "passwords_logged": false,
+          "real_account_login_verified": false,
+          "socket_scenarios": 11,
+          "synthetic_authserver": true
+        },
+        "release": {
+          "actual_os_tcp": true,
+          "checks": 523,
+          "descriptor_cleanup": true,
+          "passed": true,
+          "passwords_logged": false,
+          "real_account_login_verified": false,
+          "socket_scenarios": 11,
+          "synthetic_authserver": true
+        }
+      },
+      "thor_accepted": false
+    },
+    "mapclient": {
+      "actual_server_interoperability": false,
+      "android_arm64_object_built": true,
+      "android_arm64_object_sha256": "3435b19298f9272bee2e3a9fb690b5b1d291b42cc5d015b16df5f83733927675",
+      "android_executables": {
+        "arm64-v8a": {
+          "api": 26,
+          "bytes": 120472,
+          "executed": false,
+          "file": "arm64-v8a/test_mapclient_android",
+          "receipt": "arm64-v8a/receipt.json",
+          "sha256": "fef552d6f6bfe489bbfd0d4cd59bfb19f34a4e0056ff7f3b4a42d1d2f4646d87"
+        },
+        "x86_64": {
+          "api": 26,
+          "bytes": 120128,
+          "executed": false,
+          "file": "x86_64/test_mapclient_android",
+          "receipt": "x86_64/receipt.json",
+          "sha256": "cbc463c88444272b67eb616bc156c9661a239992392a2016aa97f4e97f89897a"
+        }
+      },
+      "android_executables_built": true,
+      "android_fixtures_sha256": "99c70180c021fcb109c3abc1bdff5bc39a331f0eed22652bf1b39588c0449783",
+      "checks": {
+        "asan": {
+          "actual_authentication": false,
+          "actual_os_udp": true,
+          "checks": 29514,
+          "live_world": false,
+          "negative_cases": 10652,
+          "scenarios": 17,
+          "scripted_peer_only": true,
+          "socket_leak_check": true
+        },
+        "release": {
+          "actual_authentication": false,
+          "actual_os_udp": true,
+          "checks": 29514,
+          "live_world": false,
+          "negative_cases": 10652,
+          "scenarios": 17,
+          "scripted_peer_only": true,
+          "socket_leak_check": true
+        },
+        "ubsan": {
+          "actual_authentication": false,
+          "actual_os_udp": true,
+          "checks": 29514,
+          "live_world": false,
+          "negative_cases": 10652,
+          "scenarios": 17,
+          "scripted_peer_only": true,
+          "socket_leak_check": true
+        }
+      },
+      "emulator_qualified": false,
+      "full_entity_parser": false,
+      "full_scene_parser": false,
+      "leak_sanitizer_enabled": false,
+      "leak_sanitizer_note": "ASan addresses checked; descriptor lifetime checked through /proc/self/fd. LeakSanitizer process inspection is unavailable in this execution environment.",
+      "login_verified": false,
+      "passed": true,
+      "render_spawn_handoff": false,
+      "schema": 1,
+      "scope": "source producer parity plus actual OS UDP with scripted synthetic peer; no real server/authentication/capture",
+      "source_files": 11,
+      "source_golden_packets": 240,
+      "thor_accepted": false
+    },
+    "server_oracle": {
+      "actual_mapserver_world": false,
+      "adapter_sources_sha256": {
+        "check.py": "5db3842d2f79e43c73368903bd957d6ddf226f696f75e3d4328e829df7ab728c",
+        "oracle_adapter.c.inc": "10ac7e7b45dd4fec484da33d89b1ad2d2435475685e0a6b47c159a162bc8c89c",
+        "oracle_shims.h": "d2e345c8ff0b927492a58f606702ee1ba0942604513fc2863aee2bafcd87247f",
+        "server_main.c.inc": "2853675fd38f130ff0092df0468d112a4302374416d7fcecb10682e13ada043c"
+      },
+      "android_execution": false,
+      "authenticated_session": false,
+      "cases": [
+        {
+          "dropped_initial_connect": false,
+          "encrypted": false,
+          "native": {
+            "acknowledged": 4,
+            "checks": 39,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 0,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 0,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 0,
+            "duplicates": 0,
+            "encrypt_on": 0,
+            "native_to_source_bytes": [
+              28,
+              20,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              20,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 0
+        },
+        {
+          "dropped_initial_connect": true,
+          "encrypted": false,
+          "native": {
+            "acknowledged": 4,
+            "checks": 1122,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 1,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 0,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 1,
+            "duplicates": 0,
+            "encrypt_on": 0,
+            "native_to_source_bytes": [
+              28,
+              20,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              20,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 0
+        },
+        {
+          "dropped_initial_connect": false,
+          "encrypted": true,
+          "native": {
+            "acknowledged": 4,
+            "checks": 78,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 0,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 1,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 0,
+            "duplicates": 0,
+            "encrypt_on": 1,
+            "native_to_source_bytes": [
+              28,
+              84,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              84,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 0
+        },
+        {
+          "dropped_initial_connect": true,
+          "encrypted": true,
+          "native": {
+            "acknowledged": 4,
+            "checks": 1119,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 1,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 1,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 1,
+            "duplicates": 0,
+            "encrypt_on": 1,
+            "native_to_source_bytes": [
+              28,
+              84,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              84,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 0
+        },
+        {
+          "dropped_initial_connect": false,
+          "encrypted": false,
+          "native": {
+            "acknowledged": 4,
+            "checks": 39,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 0,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 0,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 0,
+            "duplicates": 0,
+            "encrypt_on": 0,
+            "native_to_source_bytes": [
+              28,
+              20,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              20,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 2
+        },
+        {
+          "dropped_initial_connect": true,
+          "encrypted": false,
+          "native": {
+            "acknowledged": 4,
+            "checks": 1101,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 1,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 0,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 1,
+            "duplicates": 0,
+            "encrypt_on": 0,
+            "native_to_source_bytes": [
+              28,
+              20,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              20,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 2
+        },
+        {
+          "dropped_initial_connect": false,
+          "encrypted": true,
+          "native": {
+            "acknowledged": 4,
+            "checks": 57,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 0,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 1,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 0,
+            "duplicates": 0,
+            "encrypt_on": 1,
+            "native_to_source_bytes": [
+              28,
+              84,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              84,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 2
+        },
+        {
+          "dropped_initial_connect": true,
+          "encrypted": true,
+          "native": {
+            "acknowledged": 4,
+            "checks": 1125,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 1,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 1,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 1,
+            "duplicates": 0,
+            "encrypt_on": 1,
+            "native_to_source_bytes": [
+              28,
+              84,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              84,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 2
+        },
+        {
+          "dropped_initial_connect": false,
+          "encrypted": false,
+          "native": {
+            "acknowledged": 4,
+            "checks": 39,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 0,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 0,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 0,
+            "duplicates": 0,
+            "encrypt_on": 0,
+            "native_to_source_bytes": [
+              28,
+              20,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              20,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 4
+        },
+        {
+          "dropped_initial_connect": true,
+          "encrypted": false,
+          "native": {
+            "acknowledged": 4,
+            "checks": 1107,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 1,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 0,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 1,
+            "duplicates": 0,
+            "encrypt_on": 0,
+            "native_to_source_bytes": [
+              28,
+              20,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              20,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 4
+        },
+        {
+          "dropped_initial_connect": false,
+          "encrypted": true,
+          "native": {
+            "acknowledged": 4,
+            "checks": 60,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 0,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 1,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 0,
+            "duplicates": 0,
+            "encrypt_on": 1,
+            "native_to_source_bytes": [
+              28,
+              84,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              84,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 4
+        },
+        {
+          "dropped_initial_connect": true,
+          "encrypted": true,
+          "native": {
+            "acknowledged": 4,
+            "checks": 1128,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 1,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 1,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 1,
+            "duplicates": 0,
+            "encrypt_on": 1,
+            "native_to_source_bytes": [
+              28,
+              84,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              84,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 4
+        },
+        {
+          "dropped_initial_connect": false,
+          "encrypted": false,
+          "native": {
+            "acknowledged": 4,
+            "checks": 42,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 0,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 0,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 0,
+            "duplicates": 0,
+            "encrypt_on": 0,
+            "native_to_source_bytes": [
+              28,
+              20,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              20,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 5
+        },
+        {
+          "dropped_initial_connect": true,
+          "encrypted": false,
+          "native": {
+            "acknowledged": 4,
+            "checks": 1110,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 1,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 0,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 1,
+            "duplicates": 0,
+            "encrypt_on": 0,
+            "native_to_source_bytes": [
+              28,
+              20,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              20,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 5
+        },
+        {
+          "dropped_initial_connect": false,
+          "encrypted": true,
+          "native": {
+            "acknowledged": 4,
+            "checks": 60,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 0,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 1,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 0,
+            "duplicates": 0,
+            "encrypt_on": 1,
+            "native_to_source_bytes": [
+              28,
+              84,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              84,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 5
+        },
+        {
+          "dropped_initial_connect": true,
+          "encrypted": true,
+          "native": {
+            "acknowledged": 4,
+            "checks": 1107,
+            "closed": true,
+            "connected": true,
+            "payload_exchange": true,
+            "retransmits": 1,
+            "sockets_closed": 1,
+            "sockets_opened": 1
+          },
+          "native_negative_datagrams": 3,
+          "source": {
+            "client_ack_controls": 1,
+            "connect_controls": 1,
+            "connected": 1,
+            "decrypt_on": 1,
+            "discarded": 1,
+            "disconnect_controls": 1,
+            "dropped": 1,
+            "duplicates": 0,
+            "encrypt_on": 1,
+            "native_to_source_bytes": [
+              28,
+              84,
+              20,
+              20,
+              20,
+              20
+            ],
+            "negative_datagrams": 3,
+            "original_ack_calls": 3,
+            "sockets_closed": 1,
+            "sockets_opened": 1,
+            "source_to_native_bytes": [
+              84,
+              20,
+              28,
+              20
+            ],
+            "test_payload_received": 1
+          },
+          "version": 5
+        }
+      ],
+      "full_original_server": false,
+      "gate25_complete": false,
+      "generated_source_sha256": "e84c7b990d2b21ba4cf2d2627ed625b4dfbf409cd6312e04c48dd80cf5b03d7e",
+      "native_malformed_datagrams": 48,
+      "native_sources_sha256": {
+        "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+        "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+        "engine/network/coh_net.c": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f",
+        "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+        "engine/network/coh_net_udp.c": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a",
+        "engine/network/coh_net_zip.c": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8",
+        "engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+        "engine/session/server-oracle/native_client.c": "ec76712e2d027da666afb4909b7e7b0809b318eb6c2d026f0ff7b65522116964",
+        "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+        "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+      },
+      "openssl_version": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)",
+      "passed": true,
+      "peer_scope": "unchanged pinned original NetLink handler/producer/unwrap functions behind documented host shims; real loopback UDP",
+      "physical_thor_accepted": false,
+      "real_os_udp_scenarios": 16,
+      "sanitizers": "ASan+UBSan native client and new oracle shims/socket wrapper; original function bodies explicitly no_sanitize; leak sanitizer disabled",
+      "schema": "coh-original-netlink-udp-oracle-v1",
+      "secrets_logged": false,
+      "source_function_count": 40,
+      "source_pin_mutation_rejected": true,
+      "source_pins_sha256": "1dc30ae5c03fdac6b67992ad6f277961ebcfb9e92fe7be9c2efe840732564340"
+    }
+  },
+  "sanitizers_requested": true,
+  "schema": "coh-native-live-contract-qualification-v1",
+  "source_git_status_porcelain": [],
+  "source_git_status_porcelain_end": [],
+  "source_revision": "28c46f015e4405b162c87c9dcdab98de7c04ea39",
+  "source_revision_changed_during_qualification": false,
+  "source_revision_end": "28c46f015e4405b162c87c9dcdab98de7c04ea39",
+  "source_worktree_dirty": false
+}

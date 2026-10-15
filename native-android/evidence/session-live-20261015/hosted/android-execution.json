@@ -1,0 +1,92 @@
+{
+  "abi": "x86_64",
+  "accepted_apks_rebuilt": false,
+  "actual_server_interoperability_verified": false,
+  "android_executed": true,
+  "android_release": "13",
+  "android_sdk": "33",
+  "device_is_emulator": true,
+  "device_model": "sdk_gphone64_x86_64",
+  "emulator_qualified": true,
+  "full_live_world_verified": false,
+  "gates25_27_complete": false,
+  "manifest_sha256": "70e3a38ec5061cbc2916cf76d1648375ee9465e414563e9462618ea8a8f2054d",
+  "passed": true,
+  "physical_android_executed": false,
+  "physical_thor_accepted": false,
+  "real_account_login_verified": false,
+  "schema": "coh-native-live-contracts-android-execution-v1",
+  "scope": "Five native crypto/scripted-peer TCP/UDP contract suites",
+  "suites": {
+    "crypto": {
+      "android_executed": true,
+      "binary_sha256": "5a3f7f0547afe9a71ec9c58eec277b1547a97be194ea1ae27cd56b7342d5dbdc",
+      "build_receipt_sha256": "3d15aa486551e8ad2172d8c58290464907081ec769a673d1691a06ee8df4f402",
+      "passed": true,
+      "result": {
+        "authenticated_server_session": false,
+        "checks": 1920,
+        "malformed_inputs": 10000
+      }
+    },
+    "db_session": {
+      "android_executed": true,
+      "binary_sha256": "7c0a5086993f8d6e2f9b542755315e2c809c938c8119fbbe38adb473a94b2fa1",
+      "build_receipt_sha256": "901c4c533492c932cbbc1f7dd9d913d582d5e9e827b1e062313347bc9ecec3e9",
+      "passed": true,
+      "result": {
+        "actual_os_udp": true,
+        "checks": 715,
+        "passed": true,
+        "real_authenticated_server": false,
+        "socket_leak_check": true,
+        "socket_scenarios": 10,
+        "source_layout_peer": true
+      }
+    },
+    "db_wire": {
+      "android_executed": true,
+      "binary_sha256": "f19e2a3ed6ee4587c6466a44f1a630db8f0ecc53bb810c25a019ffa6c074caa3",
+      "build_receipt_sha256": "901c4c533492c932cbbc1f7dd9d913d582d5e9e827b1e062313347bc9ecec3e9",
+      "passed": true,
+      "result": {
+        "checks": 95925,
+        "malformed_inputs": 10000,
+        "passed": true,
+        "real_server_login": false
+      }
+    },
+    "login": {
+      "android_executed": true,
+      "binary_sha256": "a057574ca499fed46d5302b4ed4d8e96948458b5f88c36825d49c2160ed89dfd",
+      "build_receipt_sha256": "2061fbecb94a4772b2e474516c9bac97bdf1ae986e02b0ff5260b1e22666e4e4",
+      "passed": true,
+      "result": {
+        "actual_os_tcp": true,
+        "checks": 523,
+        "descriptor_cleanup": true,
+        "passed": true,
+        "passwords_logged": false,
+        "real_account_login_verified": false,
+        "socket_scenarios": 11,
+        "synthetic_authserver": true
+      }
+    },
+    "mapclient": {
+      "android_executed": true,
+      "binary_sha256": "cbc463c88444272b67eb616bc156c9661a239992392a2016aa97f4e97f89897a",
+      "build_receipt_sha256": "1b1c5faeea97da5dfdb96656da7a4d8f58c66a8ece1be09503f0980d29e480a9",
+      "passed": true,
+      "result": {
+        "actual_authentication": false,
+        "actual_os_udp": true,
+        "checks": 29514,
+        "live_world": false,
+        "negative_cases": 10652,
+        "scenarios": 17,
+        "scripted_peer_only": true,
+        "socket_leak_check": true
+      }
+    }
+  }
+}

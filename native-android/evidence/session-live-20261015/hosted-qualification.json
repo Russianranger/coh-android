@@ -1,0 +1,132 @@
+{
+  "schema": "coh-native-live-session-hosted-qualification-v1",
+  "qualified_source": "28c46f015e4405b162c87c9dcdab98de7c04ea39",
+  "qualified_source_tree": "73f52a53c44cfa4dc283b889f9f2e0b3e28c3e59",
+  "passed": true,
+  "source_clean_before_and_after": true,
+  "source_changed_during_qualification": false,
+  "workflow": {
+    "run": 38752076829,
+    "conclusion": "success",
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38752076829"
+  },
+  "regression_workflows": [
+    {
+      "run": 38752076641,
+      "conclusion": "success",
+      "scope": "prior source/host/ARM64 + Android socket boundary"
+    },
+    {
+      "run": 38752076621,
+      "conclusion": "success",
+      "scope": "portable core"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 11980774730,
+      "name": "native-live-session-host-arm64",
+      "sha256": "99516e8cc5ea602e2596e4c6dd5e5e965c1dcd5979523e317f5e87698f38f30d",
+      "archive_verified": true,
+      "zip_crcs_verified": true
+    },
+    {
+      "id": 11981608450,
+      "name": "native-live-session-android13-execution",
+      "sha256": "24406e7d6efc2c88283bf7943fce4ac2a9b58858d408d188a38052aae1dec2e5",
+      "archive_verified": true,
+      "zip_crcs_verified": true
+    }
+  ],
+  "arm64_library": {
+    "bytes": 6332936,
+    "name": "libcoh_native_engine.so",
+    "sha256": "baf29c191b5976d8a6e30c8600042ad26792ad6644770cab8240fd018196bf35"
+  },
+  "arm64_byte_identical_local_and_hosted": true,
+  "public_android_crypto_linked": true,
+  "android": {
+    "sdk": 33,
+    "release": "13",
+    "abi": "x86_64",
+    "emulator_qualified": true,
+    "suites": {
+      "crypto": {
+        "authenticated_server_session": false,
+        "checks": 1920,
+        "malformed_inputs": 10000
+      },
+      "db_session": {
+        "actual_os_udp": true,
+        "checks": 715,
+        "passed": true,
+        "real_authenticated_server": false,
+        "socket_leak_check": true,
+        "socket_scenarios": 10,
+        "source_layout_peer": true
+      },
+      "db_wire": {
+        "checks": 95925,
+        "malformed_inputs": 10000,
+        "passed": true,
+        "real_server_login": false
+      },
+      "login": {
+        "actual_os_tcp": true,
+        "checks": 523,
+        "descriptor_cleanup": true,
+        "passed": true,
+        "passwords_logged": false,
+        "real_account_login_verified": false,
+        "socket_scenarios": 11,
+        "synthetic_authserver": true
+      },
+      "mapclient": {
+        "actual_authentication": false,
+        "actual_os_udp": true,
+        "checks": 29514,
+        "live_world": false,
+        "negative_cases": 10652,
+        "scenarios": 17,
+        "scripted_peer_only": true,
+        "socket_leak_check": true
+      }
+    },
+    "exact_binary_and_receipt_hashes_bound_to_host_manifest": true
+  },
+  "integrated_owner_host_qualified": true,
+  "integrated_owner_android_executed": false,
+  "complete_scripted_auth_db_map_socket_chain": false,
+  "actual_server_interoperability_verified": false,
+  "real_account_login_verified": false,
+  "full_native_live_world_verified": false,
+  "new_physical_thor_acceptance": false,
+  "gates25_27_complete": false,
+  "accepted_gates1_24_preserved": true,
+  "accepted_apks_rebuilt": false,
+  "new_apk": null,
+  "prior_qualified_apk_artifacts_confirmed_unexpired": [
+    11945445541,
+    11957750066
+  ],
+  "server_access_blockers": [
+    "Matching authorized disposable AuthServer/DbServer/MapServer runtime",
+    "AuthServer-compatible SQL/ODBC database/configuration",
+    "Disposable real account and existing character",
+    "Effective version/checksum/encryption policy and controlled redacted protocol evidence"
+  ],
+  "independent_implementation_gaps": [
+    "Complete static scene transaction",
+    "Complete conditional entity records and full character/update tails",
+    "Source dictionary/schema compatibility and packet-size admission",
+    "Atomic authoritative identity/pose/render publication",
+    "Native application JNI/permission/UI/lifecycle integration",
+    "Future full-world READY password-MD5 ownership contract"
+  ],
+  "next_parallel_contracts": "../../SESSION-NEXT-CONTRACTS.md",
+  "receipt_sha256": {
+    "android-manifest.json": "70e3a38ec5061cbc2916cf76d1648375ee9465e414563e9462618ea8a8f2054d",
+    "qualification.json": "fdca4ade82c49a9aa24497c95cc42074e2fb4f42e30c2d6ba19eb8d5a6ad0938",
+    "android-execution.json": "240ac8077ee4228993bd60371c2dc08f9a77c768a1b75b2f012af4284b06d51d"
+  }
+}
