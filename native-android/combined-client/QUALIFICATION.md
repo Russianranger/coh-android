@@ -1,5 +1,132 @@
 # Combined server/native client — October 15, 2026
 
+## Interrupted-start recovery 0.1.4
+
+Runtime and qualification source: `294041ddff3b5f80ae4dbf25073b01e037ecc7ee`,
+Git tree `53a6d2a95f0ddcb9d85ffe6db14f1b33c9b5d5a1`, exclusively on
+`native-android`. Publication freshly checked remote
+`8168d20ea4753c3a0891840cc8ef8dc3e78261c2` and used a guarded non-force update.
+The eight local integration commits remain on
+`preserved/combined-014-local-validation`. Earlier worktrees, imports, profiles,
+reports and all prior qualified APKs remain preserved.
+
+The new [Thor evidence](evidence/20261015/startup-repair-0.1.4/thor-failure-sanitized.md)
+separates two failures. The current 0.1.3 attempt stops normally after 15,652 ms
+with `OWNED_DISPLAY_SOCKET_ALREADY_EXISTS`, before Wine/client startup. The
+existing object's type/listener liveness was not reported. The preceding attempt
+has an Android `LOW_MEMORY` exit around 5.4 seconds into startup, with its last
+snapshot still in input admission. Seven valid samples show no measured pressure
+and over 8 GB system headroom. No guest allocation site, cgroup limit or fatal
+transient is retained; the kill's cause remains unresolved. The embedded native
+report is byte-identical old 0.1.2 evidence, not a new 0.1.3 client attempt.
+
+Each server session now uses a private 25-byte endpoint component derived from
+96 bits of its full session identity. Both the runtime and Java admission check
+the actual Android backing pathname against the Unix-socket limit, including
+secondary Android user paths. The existing display bootstrap/readiness, private
+directory permissions, free-display selection, collision rejection and exact
+device/inode owned cleanup remain. Old, live, foreign and symlink endpoints are
+not deleted or reclaimed. Session identity remains full-length in ownership and
+diagnostic records. This repairs the restart collision without assuming a stale
+object is safe to unlink.
+
+Stage transitions now immediately flush bounded numeric guest RSS/peak samples;
+Android retains at most 32 current-session rows with allowlisted fields. Unknown
+cgroup metrics remain null. No packet bodies, private paths, credentials, cookies
+or authentication keys are added. Report persistence serializes snapshot through
+write so an older ticker cannot erase a newly captured boundary. An independent
+host scheduling model reproduces 100 old overwrites and retains fresh reports in
+100 serialized cases; it does not establish Android filesystem durability.
+The launcher streams its installed APK digest once on a background owner and
+records it in exports. Older-version native reports keep their content under
+`previous-app-native-client-report.json` rather than masquerading as current.
+
+The input-admission audit finds bounded reads and streamed verification, not a
+whole-asset heap load: the 11,975-byte client manifest is capped at 1 MiB, the
+3,872,410,072-byte payload is hashed in 1 MiB chunks, and PE/ELF identity reads are
+bounded. The larger visual validator already runs later in its own reaped
+process. Those facts neither identify nor eliminate the Android kill. Original
+asset checks, memory admission, process cleanup and Android protections remain
+enabled; no verified input is skipped to make this retry pass.
+
+Workers actually ran concurrently in isolated worktrees with separate ownership:
+runtime interruption regression, sanitized Thor evidence, APK/build/framework
+qualification and independent Java/concurrency review. The coordinator integrated
+the owner, export, pathname admission and unified release handoff. No native
+client, engine, accepted renderer or imported profile was changed.
+
+All twelve local host suites pass, including release/ASan/UBSan protocol
+regressions, 83 APK identity checks, 152 diagnostic checks and 78 framework-driver
+controls. Current/exact-donor runtime suites each execute 38 methods locally:
+36 pass and two AF_UNIX controls are explicitly sandbox-skipped. Hosted Linux
+must execute those controls rather than treating the local skips as success.
+The interruption fixture uses a real host AF_UNIX listener and SIGKILL; owned
+inode cleanup is a separate production-method fixture with mocked dead display
+process status. Numeric flush is a real Python pipe observation, not Android
+durability or a full Xvnc/Wine/PRoot/server restart qualification.
+Both ABI packages assemble and lint with zero errors and 74 existing warnings.
+Published-source clean audits pass without rebuilding unchanged production code.
+Only four of 74 asset entries change: build-input metadata and the three changed
+Python runtime/test/collector files. All 11 accepted scene assets, import
+contract, both PRoot payloads, package and signer remain identical to 0.1.3;
+versionCode advances from 4 to 5. These local APKs are not the delivery binaries.
+
+Both jobs in [workflow 38811852104](https://github.com/Russianranger/coh-android/actions/runs/38811852104)
+pass. The [package artifact](https://github.com/Russianranger/coh-android/actions/runs/38811852104/artifacts/12007874953)
+is 10,979,954 bytes, SHA256
+`a94bdc50e6e89cc2f2d06b30e4d73954021fa29688b73b94496d5a4a0ee25190`;
+all 38 member CRCs and clean source/package receipts were independently checked.
+Hosted current and exact-donor runtime suites each pass **38/38**, zero skips;
+both explicitly record actual execution of the AF_UNIX interruption and abrupt
+numeric-resource capture controls. These retain the host-only scope above.
+
+Deliver **CoH-Native-Combined-0.1.4-arm64.apk**, **11,527,815 bytes**, SHA256
+`18b06672a11af3a50bd2ece77ce41bc2fecec7f8ebe6037408245119ca21ad2c`.
+The exact companion x86_64 APK is 11,124,648 bytes, SHA256
+`c090590092c638508fbd5a17235a63604ae8757d809b0fc70fc1e2b16805e0ee`.
+Both ABIs retain every native ELF payload byte-for-byte from qualified 0.1.3.
+Only six APK entry payloads differ: the version manifest, launcher classes2.dex
+and the four helper/metadata asset entries listed above. Every other payload,
+the import contract, accepted scene and signer are identical. No large game or
+runtime archives are added. The delivery is the exact CI APK, not a local rebuild
+or repack; this evidence/documentation handoff does not require another build.
+
+The [Android13 framework artifact](https://github.com/Russianranger/coh-android/actions/runs/38811852104/artifacts/12009526078)
+is 1,680,745 bytes, SHA256
+`afc8b4db146fa0ec2afc41dc4b4743103f89147b456e211a94a4f9139f80b0a4`.
+All **26/26 framework checks** pass. Current launcher identity becomes ready and
+matches the exact installed x86_64 APK. A real SAF ZIP export keeps its current
+code-5 report and preserves the explicitly scripted old code-3 native report
+under the historical filename; the original native report is restored afterward.
+The exported ZIP is 12,206 bytes, SHA256
+`61bc334b6d2bb2cdd042da59a56e2cacb4d267e6cc1d2e33cb136a2ff764d290`.
+Its empty guest-resource list is correctly scoped to x86, not claimed ARM64 guest
+execution. Numeric-resource validation remains source/host qualified.
+
+Actual picker and post-selection Surfaces remain 1920×382 with 572-pixel controls.
+The full scripted 915-name catalog reaches `SCENE_INCOMPLETE`, accepts two Map
+messages and one scene prefix, then closes both peer sockets and removes its
+fixture policy. Near/Far, Surface recreation, Home/return, actual native JSON
+export and no-app-crash/ANR checks pass. The final foreground scene has 1,342
+frames, seven contexts, 557,056 GPU bytes, 556,553 bright pixels and at least
+14,281 colors, with no GL/transform mismatch. The picker and final preview
+screenshots were independently viewed. Two real SAF donor imports retain all 71
+read-only protected files and exact FX bytes; observed descriptors are
+114 → 114 → 115, within the explicit bounded framework/provider-cache limits,
+not a claim of zero descriptor growth. The separate Android native UDP controller
+passes 659 checks/seven scripted scenarios. The framework executes the x86_64 app
+and source-layout UDP peers, not ARM64 Wine/FEX, a real AuthServer session or a
+live server world. Compact local/hosted receipts are preserved beside the Thor
+failure record.
+
+Follow the current [THOR-TEST.md](THOR-TEST.md): install over Combined, retain all
+inputs/runtime/profile, recover only after owned children are gone, start the
+server, then manually launch/connect the native client. Export before another
+retry. Normal stop/restart and optional force-stop/recover/restart need physical
+Thor evidence. The independent low-memory exit, real Map application acceptance,
+encrypted authentication and authoritative live world remain pending. Accepted
+Gates 22–24 and the earlier physical 0.1.2 server/DB handoff evidence are unchanged.
+
 ## Connection repair 0.1.3
 
 Runtime and qualification source: `1ca6afc1b375d1e3a59ed13be562d9f9d1d0b81e`,

@@ -1,0 +1,17 @@
+{
+  "schema": "coh-apk-report-identity-host-v1",
+  "passed": true,
+  "checks": 83,
+  "independent_sha256_file_cases": 9,
+  "maximum_admitted_bytes": 26214400,
+  "java_heap_limit_bytes": 16777216,
+  "streaming_large_file_verified": true,
+  "observable_mutation_rejected": true,
+  "path_free_errors_verified": true,
+  "strict_package_version_types_verified": true,
+  "production_sha256": "0e600a86f4cec7cdd4ac03816d9d1825bb211a9673c65629758ce689717c44d7",
+  "scope": "Host pure Java provenance policy only; Android owner caching and report integration are separate",
+  "android_built": false,
+  "emulator_qualified": false,
+  "physical_thor_accepted": false
+}

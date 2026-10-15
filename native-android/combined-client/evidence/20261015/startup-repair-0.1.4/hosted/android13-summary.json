@@ -1,0 +1,91 @@
+{
+  "format": 1,
+  "workflow_run": 38811852104,
+  "source_commit": "294041ddff3b5f80ae4dbf25073b01e037ecc7ee",
+  "status": "passed",
+  "framework_checks": 26,
+  "framework_artifact_id": 12009526078,
+  "framework_archive_bytes": 1680745,
+  "framework_archive_sha256": "afc8b4db146fa0ec2afc41dc4b4743103f89147b456e211a94a4f9139f80b0a4",
+  "zip_members": 357,
+  "all_zip_member_crc_checks_passed": true,
+  "apk_identity_check": {
+    "check": "current launcher APK identity matches exact installed package",
+    "passed": true,
+    "installed_apk_status": "ready",
+    "installed_apk_bytes": 11124648,
+    "installed_apk_sha256": "c090590092c638508fbd5a17235a63604ae8757d809b0fc70fc1e2b16805e0ee"
+  },
+  "actual_zip_export_check": {
+    "check": "actual SAF ZIP separates scripted retained native report from current APK",
+    "passed": true,
+    "historical_entry": "previous-app-native-client-report.json",
+    "scripted_fixture": true,
+    "historical_version_code": 3,
+    "current_version_code": 5,
+    "bytes": 12206,
+    "sha256": "61bc334b6d2bb2cdd042da59a56e2cacb4d267e6cc1d2e33cb136a2ff764d290",
+    "physical_device_evidence": false
+  },
+  "viewport_checks": [
+    {
+      "check": "bounded native viewport: initial-preview",
+      "passed": true,
+      "surface_width": 1080,
+      "surface_height": 1028,
+      "host_width": 1080,
+      "host_height": 1028,
+      "native_camera_aspect_valid": true,
+      "controls_height": 766
+    },
+    {
+      "check": "bounded native viewport: landscape-preview",
+      "passed": true,
+      "surface_width": 1920,
+      "surface_height": 382,
+      "host_width": 1920,
+      "host_height": 382,
+      "native_camera_aspect_valid": true,
+      "controls_height": 572
+    },
+    {
+      "check": "bounded native viewport: character-picker-visible",
+      "passed": true,
+      "surface_width": 1920,
+      "surface_height": 382,
+      "host_width": 1920,
+      "host_height": 382,
+      "native_camera_aspect_valid": true,
+      "controls_height": 572
+    },
+    {
+      "check": "bounded native viewport: after-character-selection",
+      "passed": true,
+      "surface_width": 1920,
+      "surface_height": 382,
+      "host_width": 1920,
+      "host_height": 382,
+      "native_camera_aspect_valid": true,
+      "controls_height": 572
+    }
+  ],
+  "scene_pixel_check": {
+    "check": "current foreground GPU resources and actual on-screen scene pixels",
+    "passed": true,
+    "frames": 1342,
+    "context": 7,
+    "gpu_bytes": 557056,
+    "bright_pixels": 556553,
+    "distinct_colors_at_least": 14281,
+    "screenshot_sha256": "6e9f38e478952dc06df82a435ecaca6b85465bdc3e314826cf76ba12e7817704"
+  },
+  "guest_resource_rows_on_x86": 0,
+  "current_and_donor_runtime_methods": 38,
+  "runtime_skipped_methods": 0,
+  "controlled_unix_interruption_restart_tests_executed": true,
+  "abrupt_resource_capture_test_executed": true,
+  "actual_arm64_guest_server_executed": false,
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false,
+  "scope": "Actual Android x86 framework, controlled source-layout UDP selection, current APK identity and SAF historical-label export. Controlled host Unix-socket interruption and resource-flush tests are not ARM64 Wine/server execution or a proven Android kill cause."
+}

@@ -1,0 +1,61 @@
+{
+  "format": 1,
+  "version": "0.1.4-local-server-native",
+  "version_code": 5,
+  "branch": "native-android",
+  "qualified_source": "294041ddff3b5f80ae4dbf25073b01e037ecc7ee",
+  "qualified_tree": "53a6d2a95f0ddcb9d85ffe6db14f1b33c9b5d5a1",
+  "workflow_run": 38811852104,
+  "package_job": 116686763382,
+  "android13_job": 116687906307,
+  "package_artifact": {
+    "id": 12007874953,
+    "bytes": 10979954,
+    "sha256": "a94bdc50e6e89cc2f2d06b30e4d73954021fa29688b73b94496d5a4a0ee25190"
+  },
+  "android13_artifact": {
+    "id": 12009526078,
+    "bytes": 1680745,
+    "sha256": "afc8b4db146fa0ec2afc41dc4b4743103f89147b456e211a94a4f9139f80b0a4"
+  },
+  "arm64_delivery": {
+    "name": "CoH-Native-Combined-0.1.4-arm64.apk",
+    "bytes": 11527815,
+    "sha256": "18b06672a11af3a50bd2ece77ce41bc2fecec7f8ebe6037408245119ca21ad2c",
+    "exact_ci_binary_not_rebuilt_or_repacked": true,
+    "signer_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+    "all_four_native_elfs_byte_identical_to_qualified_013": true,
+    "unchanged_assets": 70,
+    "unchanged_accepted_scene_assets": 11,
+    "unchanged_import_contract": true,
+    "large_runtime_game_payloads_embedded": false
+  },
+  "evidence_status": {
+    "implemented": true,
+    "source_and_host_qualified": true,
+    "host_suites": 12,
+    "release_asan_ubsan_protocol_regressions_passed": true,
+    "hosted_runtime_executions_passed": 76,
+    "hosted_runtime_skips": 0,
+    "actual_host_unix_socket_interruption_controls_executed": true,
+    "android_arm64_built_and_audited": true,
+    "android_x86_64_built_and_audited": true,
+    "android13_framework_qualified": true,
+    "android13_framework_checks": 26,
+    "current_installed_apk_identity_verified": true,
+    "actual_saf_zip_historical_report_labeling_verified": true,
+    "physical_014_thor_server_restart_accepted": false,
+    "actual_014_guest_server_execution_verified": false,
+    "android_low_memory_exit_cause_identified": false,
+    "android_low_memory_kill_prevention_verified": false,
+    "real_map_application_acceptance_verified": false,
+    "real_encrypted_authentication_verified": false,
+    "server_authoritative_world_rendering_verified": false
+  },
+  "preserved_physical_evidence": {
+    "gates_1_through_24_accepted_within_documented_scopes": true,
+    "combined_012_server_boot_and_real_db_character_handoff": true,
+    "combined_013_report_contains_new_native_execution": false
+  },
+  "scope": "Interrupted-start isolation and bounded diagnostics. Real host AF_UNIX interruption and separate exact-inode cleanup contracts are not full Xvnc/Wine/PRoot/Android server restart evidence. Android13 runs the exact companion x86_64 APK and explicitly scripted UDP peers, not authentic login or live world. Empty emulator guest samples do not qualify ARM64 memory ingestion or an OS kill cause. Update in place; preserve imports, runtime, profiles, reports and previous APKs."
+}

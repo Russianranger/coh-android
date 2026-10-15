@@ -7,6 +7,16 @@ clear their storage. Gates 22–24 remain accepted within their documented scope
 
 ## Current update: 0.1.4 interrupted-start recovery
 
+Current ARM64 delivery: **11,527,815 bytes**, SHA256
+`18b06672a11af3a50bd2ece77ce41bc2fecec7f8ebe6037408245119ca21ad2c`.
+[Download package artifact](https://github.com/Russianranger/coh-android/actions/runs/38811852104/artifacts/12007874953).
+The [successful workflow](https://github.com/Russianranger/coh-android/actions/runs/38811852104)
+passes twelve host suites, both ABI builds/package audits, 76 current/donor
+runtime executions without skips, and **26 Android13 framework checks**. All
+native ELF payloads and accepted scene assets retain the exact qualified 0.1.3
+bytes. Source: `294041ddff3b5f80ae4dbf25073b01e037ecc7ee`. Actual 0.1.4 Thor
+server restart and native handoff are the next physical tests, not yet accepted.
+
 Install `CoH-Native-Combined-0.1.4-arm64.apk` **over Combined**. Do not uninstall,
 clear storage, reimport assets, repeat setup or remove the saved test profile.
 The 0.1.3 report failed before Wine/client startup because a pre-existing private

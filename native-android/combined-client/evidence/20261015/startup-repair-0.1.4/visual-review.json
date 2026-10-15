@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "reviewer": "coordinator_independent_image_inspection",
+  "qualified_source": "294041ddff3b5f80ae4dbf25073b01e037ecc7ee",
+  "workflow_run": 38811852104,
+  "artifact_id": 12009526078,
+  "images": [
+    {
+      "file": "character-picker-visible.png",
+      "sha256": "44dd84eae98eda5d5170bfb3897e139394bac697cf3c7adca9438207981ef536",
+      "observed": "Landscape character selection is visible above a continuing textured floor, benches and character preview. Fixture character is explicitly labeled NATIVE FIXTURE. Controls and scene are not collapsed.",
+      "framework_surface_width": 1920,
+      "framework_surface_height": 382
+    },
+    {
+      "file": "native-preview.png",
+      "sha256": "6e9f38e478952dc06df82a435ecaca6b85465bdc3e314826cf76ba12e7817704",
+      "observed": "Foreground portrait preview after export/lifecycle continues rendering the character, textured floor and benches. UI explicitly labels offline preview, suspended protocol and pending server world.",
+      "pixel_proof_frames": 1342,
+      "pixel_proof_context": 7,
+      "pixel_proof_gpu_bytes": 557056
+    }
+  ],
+  "scope": "Viewed exact hosted emulator screenshots; neither physical Thor acceptance nor server-authoritative rendering. Original screenshots remain in the pinned workflow artifact."
+}

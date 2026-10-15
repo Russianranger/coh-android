@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "built_source_commit": "da98ca3c341062322a40a5ad6360368923028adb",
+  "published_source_commit": "294041ddff3b5f80ae4dbf25073b01e037ecc7ee",
+  "only_changes_after_build": [
+    "native-android/combined-client/README.md",
+    "native-android/combined-client/THOR-TEST.md"
+  ],
+  "qualified_013_native_source": "1ca6afc1b375d1e3a59ed13be562d9f9d1d0b81e",
+  "unchanged_native_client_source_closure": [
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java",
+    "native-android/combined-client/app/src/main/cpp",
+    "native-android/engine",
+    "native-android/session-client"
+  ],
+  "unchanged_native_client_source_entries": 485,
+  "git_tree_listing_sha256": "045034119ee2e5d896ddf2d86fa9b527d7b46628095d881c6312d88acdc61c75",
+  "actual_new_emulator_execution": false,
+  "scope": "Source and input continuity only; new launcher diagnostics/export and Python runtime are separately qualified."
+}

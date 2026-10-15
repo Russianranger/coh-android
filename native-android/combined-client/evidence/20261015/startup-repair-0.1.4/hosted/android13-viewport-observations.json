@@ -1,0 +1,122 @@
+{
+  "format": 1,
+  "scope": "Disposable Android framework observations; source-layout peer is explicitly scripted and preview remains offline.",
+  "observations": [
+    {
+      "source_file": "landscape-preview-native-report.json",
+      "native": {
+        "frames": 317,
+        "width": 1920,
+        "height": 382,
+        "contexts_started": 4,
+        "gl_errors": 0,
+        "failed": false
+      },
+      "input_area": {
+        "left": 0,
+        "top": 635,
+        "width": 1920,
+        "height": 382,
+        "shown": true,
+        "surface_ready": true
+      },
+      "viewport_policy": {
+        "schema": "coh-native-viewport-v1",
+        "maximum_controls_percent": 60,
+        "minimum_aspect": 0.25,
+        "maximum_aspect": 8,
+        "maximum_dimension": 16384,
+        "host_width": 1920,
+        "host_height": 382
+      },
+      "server_phase": "POLICY_UNAVAILABLE"
+    },
+    {
+      "source_file": "character-picker-visible-native-report.json",
+      "native": {
+        "frames": 654,
+        "width": 1920,
+        "height": 382,
+        "contexts_started": 4,
+        "gl_errors": 0,
+        "failed": false
+      },
+      "input_area": {
+        "left": 0,
+        "top": 635,
+        "width": 1920,
+        "height": 382,
+        "shown": true,
+        "surface_ready": true
+      },
+      "viewport_policy": {
+        "schema": "coh-native-viewport-v1",
+        "maximum_controls_percent": 60,
+        "minimum_aspect": 0.25,
+        "maximum_aspect": 8,
+        "maximum_dimension": 16384,
+        "host_width": 1920,
+        "host_height": 382
+      },
+      "server_phase": "CHARACTERS_READY"
+    },
+    {
+      "source_file": "after-character-selection-native-report.json",
+      "native": {
+        "frames": 926,
+        "width": 1920,
+        "height": 382,
+        "contexts_started": 4,
+        "gl_errors": 0,
+        "failed": false
+      },
+      "input_area": {
+        "left": 0,
+        "top": 635,
+        "width": 1920,
+        "height": 382,
+        "shown": true,
+        "surface_ready": true
+      },
+      "viewport_policy": {
+        "schema": "coh-native-viewport-v1",
+        "maximum_controls_percent": 60,
+        "minimum_aspect": 0.25,
+        "maximum_aspect": 8,
+        "maximum_dimension": 16384,
+        "host_width": 1920,
+        "host_height": 382
+      },
+      "server_phase": "SCENE_INCOMPLETE"
+    },
+    {
+      "source_file": "foreground-scene-report.json",
+      "native": {
+        "frames": 1342,
+        "width": 1080,
+        "height": 985,
+        "contexts_started": 7,
+        "gl_errors": 0,
+        "failed": false
+      },
+      "input_area": {
+        "left": 0,
+        "top": 872,
+        "width": 1080,
+        "height": 985,
+        "shown": true,
+        "surface_ready": true
+      },
+      "viewport_policy": {
+        "schema": "coh-native-viewport-v1",
+        "maximum_controls_percent": 60,
+        "minimum_aspect": 0.25,
+        "maximum_aspect": 8,
+        "maximum_dimension": 16384,
+        "host_width": 1080,
+        "host_height": 985
+      },
+      "server_phase": "SUSPENDED"
+    }
+  ]
+}

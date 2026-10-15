@@ -1,0 +1,12 @@
+{
+  "old_stale_overwrite_reproductions": 100,
+  "serialized_fresh_final_reports": 100,
+  "thread_pairs_completed": 200,
+  "schema": "coh-report-save-order-review-v1",
+  "passed": true,
+  "reviewed_commit": "da98ca3c341062322a40a5ad6360368923028adb",
+  "production_save_synchronized": true,
+  "production_service_sha256": "1b29d95018a3e29fbae3771e7951d54d19aa1aa70affe9f33b166ed191308d8b",
+  "scope": "Deterministic host scheduling model of snapshot-before-serialized-write versus synchronized snapshot-to-write; source signature independently checked. No Android or filesystem durability qualification.",
+  "deadlock_review": "Service monitor precedes short diagnostics, memory and events snapshot locks and static write monitor; no reverse acquisition found. Resource capture releases resourcesLock before save, submit is reentrant, export takes only snapshots."
+}

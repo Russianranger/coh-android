@@ -1,0 +1,43 @@
+{
+  "format": 1,
+  "status": "host_and_android_build_passed",
+  "final_local_source_commit": "da98ca3c341062322a40a5ad6360368923028adb",
+  "host_suites": 12,
+  "host_seconds": 126.522,
+  "host_source_note": "Host collector began at b124636d6e. The only later production change da98ca3c34 serializes ServerService.save; final Android assembly/lint audits include that change. No host-tested module changed.",
+  "driver_controls": 78,
+  "apk_identity_host_checks": 83,
+  "guest_diagnostic_host_checks": 152,
+  "runtime_methods_per_source_and_donor": 38,
+  "runtime_passed_per_source_and_donor": 36,
+  "runtime_sandbox_skips_per_source_and_donor": 2,
+  "skip_scope": "AF_UNIX creation is unavailable locally; hosted qualification must execute both socket controls.",
+  "packages": {
+    "arm64-v8a": {
+      "bytes": 11619134,
+      "name": "CoH-Native-Combined-0.1.4-arm64.apk",
+      "sha256": "b1dc8ca84929ae99b6e500ca7d22800feac2bc704d83041978cece9e0c57d6d0"
+    },
+    "x86_64": {
+      "bytes": 11124648,
+      "name": "CoH-Native-Combined-0.1.4-x86_64-emulator.apk",
+      "sha256": "b3cabca141de9c267aeea2c7f70becb667d1fec2878925e10d92fd5bf112ea4d"
+    }
+  },
+  "lint": {
+    "arm64-v8a": {
+      "errors": 0,
+      "warnings": 74
+    },
+    "x86_64": {
+      "errors": 0,
+      "warnings": 74
+    }
+  },
+  "unchanged_native_client_source": true,
+  "static_upgrade_receipt": "upgrade-identity.json",
+  "admission_audit_receipt": "admission-audit.json",
+  "actual_emulator_executed_locally": false,
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false
+}

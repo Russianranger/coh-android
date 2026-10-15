@@ -1,0 +1,89 @@
+{
+  "format": 1,
+  "audit": "read_only_admission_memory_boundary",
+  "source_commit": "8168d20ea4",
+  "report_zip_sha256": "89315274fd2d0ce2c3324888bb65cba9d4497fa9368af2b031c282a68557a5c8",
+  "exact_donor_sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+  "latest": {
+    "failure_code": "OWNED_DISPLAY_SOCKET_ALREADY_EXISTS",
+    "elapsed_ms": 15652,
+    "last_stage": "preflight_selected_map_port",
+    "warm_geometry": {
+      "policy": "isolated_original_geometry_before_servers",
+      "worker_used": false,
+      "worker_reaped": true,
+      "before_postgresql": true,
+      "before_wine": true,
+      "worker_peak_rss_kib": 0,
+      "parent_rss_kib_before": 31464,
+      "parent_rss_kib_after": 31480,
+      "elapsed_seconds": 1.318,
+      "status": "reused_verified_required_geometry",
+      "input_files_checked": 406,
+      "required_geometry_sha256": "c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43"
+    },
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": false,
+      "owned_processes_reaped": true
+    },
+    "cleanup_complete": true,
+    "existing_socket_listener_liveness_tested": false
+  },
+  "prior_interrupted": {
+    "version_code": 4,
+    "last_persisted_elapsed_ms": 5135,
+    "last_stage": "server_only_input_admission",
+    "valid_memory_samples": 7,
+    "minimum_system_headroom_bytes": 8315179008,
+    "minimum_java_heap_headroom_bytes": 245580856,
+    "cooperative_stop_requested": false,
+    "guest_report_present": false
+  },
+  "subsequent_android_exit": {
+    "reason": 3,
+    "status": 0,
+    "importance": 100,
+    "pss_kib": 78634,
+    "rss_kib": 184828,
+    "low_memory": true
+  },
+  "recorded_stage_admission": {
+    "startup.verify_assets": {
+      "manifest_bytes": 11975,
+      "json_read_cap_bytes": 1048576,
+      "hashed_payloads": 81,
+      "payload_bytes": 3872410072,
+      "hash_chunk_bytes": 1048576
+    },
+    "verify_pe32": {
+      "headers": 3,
+      "maximum_read_bytes_each": 65536
+    },
+    "arm64_elf": {
+      "binaries": 2,
+      "read_bytes_each": 20
+    },
+    "import_identity": {
+      "receipt_read_cap_bytes": 4096,
+      "format": "ASCII properties"
+    }
+  },
+  "later_stage_materialization": {
+    "world_manifest_bytes": 4258210,
+    "visual_manifest_bytes": 48591999,
+    "cold_visual_validation_isolated": true
+  },
+  "retained_native_report": {
+    "version_code": 3,
+    "apk_sha256": "1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449",
+    "phase": "SUSPENDED",
+    "current_013_native_execution_evidence": false
+  },
+  "conclusions": [
+    "No large JSON materialization is evident in the persisted interrupted admission stage.",
+    "Reason3 records Android low-memory classification; guest RSS, cgroup and phantom-process causes are not recorded.",
+    "Existing display pathname is proven; its stale/live status is not established by the old exists/is_symlink guard.",
+    "No input-admission weakening, server execution, build or repository edit performed by this audit."
+  ]
+}

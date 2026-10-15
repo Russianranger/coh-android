@@ -1,0 +1,41 @@
+{
+  "format": 1,
+  "status": "passed",
+  "source_commit": "da98ca3c341062322a40a5ad6360368923028adb",
+  "older_apk_sha256": "8b60102521c23d42e2706331d266602d5c7429b3b42799e053361f47331b90c5",
+  "newer_apk": {
+    "bytes": 11619134,
+    "name": "CoH-Native-Combined-0.1.4-arm64.apk",
+    "sha256": "b1dc8ca84929ae99b6e500ca7d22800feac2bc704d83041978cece9e0c57d6d0"
+  },
+  "same_package_and_signer": true,
+  "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "version_code": "5",
+  "version_name": "0.1.4-local-server-native",
+  "assets": {
+    "total": 74,
+    "changed_only": [
+      "assets/combined/build-inputs.json",
+      "assets/combined/check.py",
+      "assets/combined/server_runtime.py",
+      "assets/combined/test_runtime.py"
+    ],
+    "unchanged_count": 70,
+    "accepted_scene_assets_identical": 11,
+    "donor_import_contract_identical": true,
+    "proot_elf_payloads_identical": 2
+  },
+  "unchanged_native_client_source_closure": [
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java",
+    "native-android/combined-client/app/src/main/cpp",
+    "native-android/engine",
+    "native-android/session-client"
+  ],
+  "native_client_source_diff_empty": true,
+  "lint": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 74
+  },
+  "scope": "Static update/input and accepted native client source continuity; changed Java diagnostics/export and guest Python require new framework and device evidence. No real server startup is claimed."
+}
