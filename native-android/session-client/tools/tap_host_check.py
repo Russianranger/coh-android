@@ -26,6 +26,38 @@ def main():
         nonlocal checks
         checks+=1
         assert value,label
+    empty={'returncode':0,'stdout':'','stderr':''}
+    driver.fresh_package_precondition(empty,empty)
+    check(True,'Fresh disposable target package absence is positively verified')
+    for absent_path,packages,label in [({'returncode':0,'stdout':'package:/data/app/old/base.apk','stderr':''},empty,'Installed package path'),
+                                (empty,{'returncode':0,'stdout':'package:'+driver.PACKAGE,'stderr':''},'Existing target package'),
+                                (empty,{'returncode':1,'stdout':'','stderr':''},'Failed package inventory'),
+                                ({'returncode':1,'stdout':'','stderr':'device offline'},empty,'Offline device cannot establish absence')]:
+        try:driver.fresh_package_precondition(absent_path,packages)
+        except AssertionError:check(True,label+' rejected')
+        else:check(False,label+' incorrectly accepted')
+    install={'returncode':0,'stdout':'Performing Streamed Install\nSuccess\n','stderr':''}
+    driver.install_success(install);check(True,'Actual Android install Success receipt qualifies')
+    for receipt,label in [({'returncode':1,'stdout':'Success\n','stderr':''},'Failed installer exit'),
+                          ({'returncode':0,'stdout':'Failure [INSTALL_FAILED]\n','stderr':''},'Android installer failure with zero exit')]:
+        try:driver.install_success(receipt)
+        except AssertionError:check(True,label+' rejected')
+        else:check(False,label+' incorrectly accepted')
+    driver.fresh_report_absence(empty);check(True,'Successful empty app-storage report search confirms fresh launch')
+    for receipt,label in [({'returncode':0,'stdout':'./files/session-report.json\n','stderr':''},'Stale report before Activity launch'),
+                          ({'returncode':1,'stdout':'','stderr':'run-as: permission denied'},'Inaccessible app storage cannot prove report absence')]:
+        try:driver.fresh_report_absence(receipt)
+        except AssertionError:check(True,label+' rejected')
+        else:check(False,label+' incorrectly accepted')
+    launched={'returncode':0,'stdout':'Starting: Intent\nStatus: ok\nActivity: '+driver.ACTIVITY+'\nComplete\n','stderr':''}
+    driver.launch_success(launched);check(True,'Successful exact Android launch receipt qualifies')
+    for receipt,label in [({'returncode':0,'stdout':'Error type 3\nError: Activity class does not exist\n','stderr':''},'Android launch error despite zero exit'),
+                          ({'returncode':0,'stdout':'Status: ok\nActivity: org.other.app/.Activity\n','stderr':''},'Wrong foreground activity'),
+                          ({'returncode':0,'stdout':'Starting: Intent\n','stderr':''},'Missing confirmed launch status'),
+                          ({'returncode':1,'stdout':launched['stdout'],'stderr':''},'Failed launch exit with misleading stdout')]:
+        try:driver.launch_success(receipt)
+        except AssertionError:check(True,label+' rejected')
+        else:check(False,label+' incorrectly accepted')
     xml=f'''<hierarchy>
     <node class="android.widget.Button" package="{driver.PACKAGE}" text="RESET ACTOR" enabled="true" clickable="true" bounds="[10,280][292,375]"/>
     <node class="android.widget.Button" package="{driver.PACKAGE}" text="RECREATE" enabled="true" clickable="true" bounds="[310,280][532,375]"/>
@@ -272,7 +304,7 @@ def main():
             check(len(driver.button_nodes(actual,label))==1,'Observed Android UI finds '+label)
         observed={'file':args.observed_ui.name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
     receipt={'schema':1,'passed':True,'checks':checks,
-             'scope':'Actual shipped accessibility-label, exact tap listener, strict unreleased-source Home, grounded source obstacle/slide, exact RunPre-at-release and released-WALK stability evidence predicates on independent XML/event fixtures; no device execution',
+             'scope':'Actual shipped fresh-package/install/launch receipts, accessibility-label, exact tap listener, strict unreleased-source Home, grounded source obstacle/slide, exact RunPre-at-release and released-WALK stability evidence predicates on independent XML/event fixtures; no device execution',
              'emulator_driver_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
              'observed_android_ui':observed}
     args.output.parent.mkdir(parents=True,exist_ok=True)

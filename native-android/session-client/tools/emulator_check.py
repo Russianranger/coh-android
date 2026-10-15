@@ -31,6 +31,62 @@ def adb(*arguments, check=True):
     return subprocess.run([ADB, *arguments], check=check, capture_output=True, timeout=30)
 
 
+def adb_receipt(*arguments):
+    result = adb(*arguments, check=False)
+    return {'argv': [ADB, *arguments], 'returncode': result.returncode,
+            'stdout': result.stdout.decode(errors='replace'),
+            'stderr': result.stderr.decode(errors='replace')}
+
+
+def fresh_package_precondition(path, packages):
+    assert packages['returncode'] == 0 and not packages['stderr'].strip()
+    assert not packages['stdout'].strip(), 'Walking package already exists; this driver requires a disposable fresh emulator'
+    assert path['returncode'] in (0, 1) and not path['stdout'].strip() and not path['stderr'].strip(), 'Package absence was not verified'
+
+
+def install_success(receipt):
+    assert receipt['returncode'] == 0
+    text = receipt['stdout']+'\n'+receipt['stderr']
+    assert re.search(r'^Success\s*$', receipt['stdout'], re.M)
+    assert not re.search(r'^(?:Error|Failure)\b', text, re.M | re.I)
+
+
+def fresh_report_absence(receipt):
+    assert receipt['returncode'] == 0 and not receipt['stdout'].strip() and not receipt['stderr'].strip(), 'Unexpected pre-launch session report or inaccessible fresh app storage'
+
+
+def launch_success(receipt):
+    assert receipt['returncode'] == 0
+    text = receipt['stdout']+'\n'+receipt['stderr']
+    assert not re.search(r'^(?:Error|Exception|Failure)\b', text, re.M | re.I)
+    assert re.search(r'^Status:\s*ok\s*$', receipt['stdout'], re.M)
+    activity = re.findall(r'^Activity:\s*(\S+)\s*$', receipt['stdout'], re.M)
+    assert activity == [ACTIVITY], 'Android launch did not resolve the intended native walking Activity'
+
+
+def install_and_launch(apk):
+    proof = {'scope': 'Disposable freshly-created no-snapshot CI emulator only; require package and report absence, install without replace or data clearing, then verify actual Android launch result',
+             'passed': False, 'commands': []}
+    def observed(*arguments):
+        receipt = adb_receipt(*arguments)
+        proof['commands'].append(receipt)
+        save('emulator-install-launch-proof.json', proof)
+        return receipt
+    qemu = observed('shell', 'getprop', 'ro.boot.qemu')
+    assert qemu['returncode'] == 0 and qemu['stdout'].strip() == '1', 'Fresh-install qualification is restricted to its disposable emulator'
+    path = observed('shell', 'pm', 'path', PACKAGE)
+    packages = observed('shell', 'pm', 'list', 'packages', '--user', '0', PACKAGE)
+    fresh_package_precondition(path, packages)
+    progress('fresh disposable emulator has no walking package; installing exact APK')
+    install_success(observed('install', str(apk)))
+    existing = observed('exec-out', 'run-as', PACKAGE, 'find', '.', '-maxdepth', '3', '-name', 'session-report.json')
+    fresh_report_absence(existing)
+    launch_success(observed('shell', 'am', 'start', '-W', '-n', ACTIVITY))
+    proof['passed'] = True
+    save('emulator-install-launch-proof.json', proof)
+    progress('fresh APK installation and exact Android Activity launch pass')
+
+
 def save(name, value):
     (OUTPUT / name).write_text(json.dumps(value, indent=2) + '\n')
 
@@ -876,10 +932,8 @@ def main():
         for name, pin in pins['assets'].items():
             raw = apk.read('assets/'+name)
             assert {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()} == pin
-    adb('install', '-r', str(args.apk)); adb('shell', 'am', 'force-stop', PACKAGE)
-    adb('shell', 'pm', 'clear', PACKAGE); adb('logcat', '-c')
     try:
-        adb('shell', 'am', 'start', '-W', '-n', ACTIVITY)
+        install_and_launch(args.apk)
         first = wait(native_ready, 'Continuous authored shared scene startup', seconds=90)
         validate(first)
         assert first['app']['installed_apk'] == apk_identity
