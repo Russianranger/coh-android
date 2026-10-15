@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "built_source_commit": "39c9912c7bcbfbd4aa6a724c01e9556a51ad0170",
+  "published_source_commit": "1ca6afc1b375d1e3a59ed13be562d9f9d1d0b81e",
+  "unchanged_application_and_session_subtree_files": 51,
+  "application_and_session_git_tree_listing_sha256": "543b1655201995e264e7307db67f64bed9d8a242d2dc59c6e4260a2a60d1e953",
+  "all_changed_paths_are_qualification_only": [
+    "native-android/combined-client/tools/driver_controls.py",
+    "native-android/combined-client/tools/emulator_check.py",
+    "native-android/engine/local/README.md",
+    "native-android/engine/local/check.py",
+    "native-android/engine/local/evidence/connection-013-peer-host.json",
+    "native-android/engine/local/test_ui_peer.c",
+    "native-android/engine/local/test_ui_peer_client.c"
+  ],
+  "production_apk_source_unchanged": true,
+  "actual_emulator_execution": false
+}

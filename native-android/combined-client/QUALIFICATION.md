@@ -1,5 +1,136 @@
 # Combined server/native client — October 15, 2026
 
+## Connection repair 0.1.3
+
+Runtime and qualification source: `1ca6afc1b375d1e3a59ed13be562d9f9d1d0b81e`,
+Git tree `52afd541c445c6c5c949e5bf88f9f167b73acfde`, exclusively on
+`native-android`. Publication checked the current remote HEAD and used a guarded
+non-force update from `339003eaddb67947c28bc88e2aef8b33b75bd4e5`.
+The complete local integration history is retained on
+`preserved/combined-013-local-validation`; earlier worktrees and unpublished
+history remain preserved. Recovery found the clean 0.1.2 qualification/handoff
+checkpoint, not an unfinished source edit or an actual stalled build/emulator
+process. No completed 0.1.2 qualification was restarted.
+
+The new [physical Thor evidence](evidence/THOR-012-SERVER-CONNECTION.md) confirms
+that the exact qualified 0.1.2 APK booted the local server after 556.310 seconds,
+received a real DbServer character list, selected a character and began the
+DB-provided Map handoff. Its ready snapshot has 701 valid memory samples and no
+pressure stop. The older low-memory exit is independently recorded by Android;
+the latest user-requested exits are different records. The ZIP's old 0.1.1 FX
+failure is historical evidence, and the fresh stopped report does not invalidate
+the archived running snapshot. Graceful real-server stop/restart still needs its
+own device evidence. This is partial real local interoperability, not encrypted
+AuthServer login, completed Map application acceptance or a native live world.
+
+Showing the character list shrank the Surface from 1920×469 to 1920×137. The
+unchanged source camera rejects the resulting aspect of 14.0146. The new Android
+controls scroll within at most 60% of available height, and the actual measured
+Surface is fitted within the existing [0.25, 8] aspect and 16384-pixel limits.
+The accepted renderer, camera, asset inputs and Gates 22–24 are unchanged. A
+compiled unchanged-camera oracle reproduces the exact rejection and accepts the
+fitted 1096×137 rectangle.
+
+The source server's static accessible-name table has 915 entries (14,264 string
+bytes), distinct from the shortcut schema. The old common 256-entry limit could
+reject a valid development-server catalog. The new parser streams and discards
+accessible names under a separate 1024-entry bound, retains the 256-entry schema
+bound and never authorizes native command execution from those strings. The
+existing transport/framing/encryption/reliability kernels and 16 KiB message bound
+are unchanged. The old `COH_LIMIT` report lacks the failed packet, so this proven
+compatibility defect is a plausible cause, not an identified captured packet.
+Terminal DB/Map phases, parser stage/status and numeric UDP/NetLink counters now
+survive cleanup and suspend. Reports contain no account identifiers, packet
+bodies, passwords, cookies or authentication keys.
+
+Workers actually ran concurrently in isolated worktrees with separate ownership:
+viewport policy/oracle, protocol/parser/socket qualification, Android build and
+framework driver, sanitized Thor evidence, and independent read-only review.
+The coordinator integrated the Activity and release handoff. No server runtime
+or imported/private profile was changed for this repair.
+
+All eleven local host suites pass. New checks include 5,021 Java viewport cases,
+1,441 controls-height cases, 4,904 unchanged C-camera comparisons and 625 exhaustive
+area checks. Fifty framework-driver controls include invalid/stale EGL viewport
+and numeric privacy rejection. Per release/ASan/UBSan mode, replication passes
+75,165 checks (5,318 truncations and 30,000 fuzz cases), Map passes 29,927 checks
+across 21 scripted OS-UDP scenarios, and the local owner passes 659 checks across
+seven scenarios. Full 915-name fragmented catalogs pass bitpacked and compressed
+profiles. A separate bounded UI peer roundtrip also passes all three modes and
+builds for ARM64/x86_64. These peers are explicitly synthetic source-layout
+fixtures; they do not prove an authenticated or real guest-server session.
+
+Both local ABI APKs assemble, lint and pass clean package audits; lint has zero
+errors and 74 existing warnings. The first Map collector attempt lacked source
+references in its sparse worktree; adding the required upstream source folders
+allowed the complete eleven-suite run to pass. All 74 asset entries, both PRoot
+binaries, the signing certificate, import contract and accepted scene match the
+exact 0.1.2 delivery. The application stays `org.coh.nativecombined`, versionCode
+increases from 3 to 4, and SDK requirements stay unchanged. Compact receipts are
+under `evidence/20261015/connection-repair-0.1.3/local/`; those local APKs are not
+the delivery binary.
+
+The exact [hosted workflow 38804511398](https://github.com/Russianranger/coh-android/actions/runs/38804511398)
+passes both jobs. The [package artifact](https://github.com/Russianranger/coh-android/actions/runs/38804511398/artifacts/12005078271)
+ZIP SHA256 is `42edf73c989ba385514e0c8e5a367bf84fa665d379bcfed29cd5c078c5d1c761`;
+all 37 CRCs and both APK receipts were independently checked. The ARM64 delivery
+is **11,521,251 bytes**, SHA256
+`8b60102521c23d42e2706331d266602d5c7429b3b42799e053361f47331b90c5`.
+Hosted current/exact-donor runtime tests pass all 60 executions without skips.
+The CI package differs from the local candidate only in the two newly compiled
+native libraries; all assets, DEX, manifest and resources match. Deliver the CI
+binary; do not substitute the local candidate or rebuild it for documentation.
+
+All **24 Android13 x86_64 framework checks** pass on the exact companion package.
+The [framework artifact](https://github.com/Russianranger/coh-android/actions/runs/38804511398/artifacts/12005214269)
+ZIP SHA256 is `1d53ff01bfd388e92c47af7e8241577dc3d5f04ddf271dde83127f6e065c9787`.
+The actual Surface/EGL remains **1920×382** before the picker, at frame 593 while
+characters are selectable, and after selection at frame 823. Controls occupy
+572 pixels. The scripted peer's complete 915-name catalog produces two accepted
+Map messages and one partial scene, reaching `SCENE_INCOMPLETE`, not a live world.
+Its two sockets close and its test policy is removed. Actual scene screenshots
+were independently viewed; the final foreground frame 1330/context 6 has 557,056
+GPU bytes, 556,442 bright pixels, at least 14,269 colors, and no GL/transform
+errors. Near/Far, Surface/Home, real JSON export, numeric diagnostics, original
+71-member donor protection and two actual SAF imports pass. Import descriptor
+counts stay **115 → 115 → 115**. No app crash or ANR is recorded.
+
+The [portable core](https://github.com/Russianranger/coh-android/actions/runs/38804511475),
+[session contracts](https://github.com/Russianranger/coh-android/actions/runs/38804511582)
+and [live foundations](https://github.com/Russianranger/coh-android/actions/runs/38804511301)
+workflows also fully pass at this source. They include actual Android13 x86_64
+socket/crypto/DB/login/Map contract execution and ARM64 crossbuilds. Their peers
+remain scripted; none establishes an authentic encrypted login or live world.
+Hashes, exact scope, numeric checkpoints, screenshots and compact/full receipts
+are preserved in `evidence/20261015/connection-repair-0.1.3/`.
+
+
+Follow [THOR-TEST.md](THOR-TEST.md): update Combined in place, reuse the existing
+imports/runtime/profile, start the server, open the native client manually,
+connect, select the saved character, and export both native JSON and launcher
+ZIP. Actual real Map acceptance, encrypted AuthServer login, complete scene/entity
+decoding and server-authoritative render/spawn remain pending. A larger real
+`SERVER_GROUPS` message may expose another supported-message bound; preserve the
+new numeric report instead of inferring a completed world from the offline
+preview. The next independent milestones are authentic Thor Map exchange with
+these diagnostics, bounded initial scene/entity decoding and authoritative spawn,
+and separate encrypted authentication against an authorized compatible server.
+Source-defined follow-up work can run independently: transactional GROUPS
+file/definition/reference transforms and CRC validation; a complete ALLENTS
+record/tail walker with real player identity and DBID; and the REQALLENTS/READY
+plus application-ack sequence with secure cookie lifetime. Only then may a
+validated immutable server snapshot drive the existing renderer. A larger message
+must use an explicit owned/session byte budget or incremental decode contract;
+globally increasing message macros also enlarges queued bodies and worker-stack
+buffers. Measure the owned server's numeric world-update size first. Existing
+native audio/UI modules can be integrated separately without reimplementing
+accepted transport or rendering kernels.
+
+The accepted standalone [Session Client 0.3.0 APK](https://github.com/Russianranger/coh-android/actions/runs/38673357918/artifacts/11945445541)
+and its [original Thor instructions](../session-client/THOR-TEST.md) remain
+available. Gates 22–24 remain physically accepted; no rebuild or new acceptance
+claim is required for that unchanged package.
+
 ## Startup repair 0.1.2
 
 Source: `377584651471e748fbbd4a24cdf08bd2c48ca4a3`, tree

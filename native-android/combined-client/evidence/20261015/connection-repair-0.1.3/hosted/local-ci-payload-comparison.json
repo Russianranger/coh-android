@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "scope": "Clean local and hosted 0.1.3 package payload comparison; native compiler output differences are retained, hosted APK is the delivery.",
+  "same_entry_inventory": true,
+  "different_entries": [
+    "lib/arm64-v8a/libcoh_combined_network.so",
+    "lib/arm64-v8a/libcoh_session_client.so"
+  ],
+  "all_assets_dex_manifest_resources_equal": true
+}

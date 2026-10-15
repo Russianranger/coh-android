@@ -1,0 +1,56 @@
+{
+  "format": 1,
+  "source_commit": "39c9912c7bcbfbd4aa6a724c01e9556a51ad0170",
+  "status": "host_and_android_build_passed",
+  "host_suites": 11,
+  "host_receipt": "host-complete/receipt.json",
+  "package_receipts": [
+    "package-arm64.json",
+    "package-x86.json"
+  ],
+  "static_upgrade_receipt": "upgrade-identity.json",
+  "framework_driver_controls": 50,
+  "apk": {
+    "arm64": {
+      "bytes": 11521251,
+      "name": "CoH-Native-Combined-0.1.3-arm64.apk",
+      "sha256": "a2b618969225510720490b2dad4ff34d691e98ab33d17ac4760807dcb5f5516b"
+    },
+    "x86": {
+      "bytes": 11118080,
+      "name": "CoH-Native-Combined-0.1.3-x86_64-emulator.apk",
+      "sha256": "e55355c1fd8d0f2bc0d7fbfab1d98c0a693709f4ae1e9b59a62a29719a7c13b7"
+    }
+  },
+  "lint": {
+    "arm64": {
+      "errors": 0,
+      "existing_warnings": 74
+    },
+    "x86_64": {
+      "errors": 0,
+      "existing_warnings": 74
+    }
+  },
+  "emulator_executed_locally": false,
+  "reason": "No local KVM; actual framework qualification is a separate hosted job.",
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false,
+  "scope": "Local qualification of new viewport/protocol implementation and static update contracts; existing Thor 0.1.2 server-boot evidence is preserved separately.",
+  "published_source_commit": "1ca6afc1b375d1e3a59ed13be562d9f9d1d0b81e",
+  "receipt_paths": [
+    "host-summary.json",
+    "local-protocol.json",
+    "replication.json",
+    "upgrade-identity.json",
+    "map-protocol.json",
+    "runtime-contracts.json",
+    "source-reuse-proof.json",
+    "db-protocol.json",
+    "package-arm64.json",
+    "package-x86_64.json",
+    "viewport-policy.json",
+    "driver-controls.json"
+  ],
+  "initial_host_attempt_note": "Initial sparse checkout omitted referenced original entity/player/group source files; expanded those source folders, then reran all eleven suites successfully. Initial failed collector logs are preserved outside this compact receipt bundle."
+}

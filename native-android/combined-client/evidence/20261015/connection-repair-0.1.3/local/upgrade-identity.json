@@ -1,0 +1,38 @@
+{
+  "format": 1,
+  "status": "passed",
+  "source_commit": "39c9912c7bcbfbd4aa6a724c01e9556a51ad0170",
+  "older_apk": {
+    "path": "CoH-Native-Combined-0.1.2-arm64.apk",
+    "sha256": "1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449"
+  },
+  "newer_apk": {
+    "path": "LOCAL_OUTPUT/CoH-Native-Combined-0.1.3-arm64.apk",
+    "sha256": "a2b618969225510720490b2dad4ff34d691e98ab33d17ac4760807dcb5f5516b"
+  },
+  "old_badging": [
+    "package: name='org.coh.nativecombined' versionCode='3' versionName='0.1.2-local-server-native' platformBuildVersionName='15' platformBuildVersionCode='35' compileSdkVersion='35' compileSdkVersionCodename='15'",
+    "sdkVersion:'26'",
+    "targetSdkVersion:'35'",
+    "launchable-activity: name='org.coh.nativecombined.MainActivity'  label='' icon=''"
+  ],
+  "new_badging": [
+    "package: name='org.coh.nativecombined' versionCode='4' versionName='0.1.3-local-server-native' platformBuildVersionName='15' platformBuildVersionCode='35' compileSdkVersion='35' compileSdkVersionCodename='15'",
+    "sdkVersion:'26'",
+    "targetSdkVersion:'35'",
+    "launchable-activity: name='org.coh.nativecombined.MainActivity'  label='' icon=''"
+  ],
+  "old_signer_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "new_signer_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "unchanged_asset_entries": 74,
+  "changed_asset_entries": [],
+  "accepted_scene_entries_byte_identical": 11,
+  "donor_import_contract_byte_identical": true,
+  "combined_runtime_helper_entries_byte_identical": 3,
+  "unchanged_proot_entries": {
+    "lib/arm64-v8a/libproot-loader.so": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c",
+    "lib/arm64-v8a/libproot.so": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+  },
+  "source_difference_session_client": "",
+  "scope": "Static update compatibility: same app ID/signing certificate, incremented version, unchanged external-import contract, all accepted scene and guest-helper assets, and PRoot. No device upgrade or server startup is claimed."
+}

@@ -7,6 +7,12 @@ accepted native Session Client remain installed with their private data intact.
 
 Follow [THOR-TEST.md](THOR-TEST.md) for the consolidated device test.
 
+Current **0.1.3** [package and qualification](https://github.com/Russianranger/coh-android/actions/runs/38804511398):
+11,521,251-byte ARM64 APK, eleven host suites and 24 Android13 framework checks.
+Update over Combined without repeating imports or setup. Real 0.1.3 Thor Map
+acceptance and server-authoritative rendering remain pending; the framework
+character-selection peer is explicitly scripted.
+
 ## Scope
 
 * The server uses the existing ARM64 PostgreSQL and Wine/FEX DbServer/MapServer

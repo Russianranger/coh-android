@@ -1,0 +1,203 @@
+{
+  "format": 1,
+  "status": "passed",
+  "checks": [
+    {
+      "check": "fresh install and exact main Activity",
+      "passed": true,
+      "apk_sha256": "c0647e8d5b232f5045e5b47045276aef9f76555c06ecc6b68257ec100e458e2e"
+    },
+    {
+      "check": "fresh app initialized for external imports without failures",
+      "passed": true
+    },
+    {
+      "check": "bounded public memory and Android exit diagnostics",
+      "passed": true,
+      "memory_samples": 0,
+      "memory_status": "not_started",
+      "retained_memory_samples": 0,
+      "android_exit_records": 0,
+      "scope": "Actual combined-report schema and numeric privacy bounds; zero samples do not qualify ARM64 server memory admission or guest execution."
+    },
+    {
+      "check": "framework SAF cancellation and app return",
+      "passed": true,
+      "control": "Import launcher APK"
+    },
+    {
+      "check": "framework SAF cancellation and app return",
+      "passed": true,
+      "control": "Import game asset part"
+    },
+    {
+      "check": "missing imports refuse setup and server start",
+      "passed": true,
+      "runtime_ready": false,
+      "server_ready": false
+    },
+    {
+      "check": "failed attempt survives actual force-stop and relaunch",
+      "passed": true,
+      "retained_attempts": 1,
+      "android_exit_records": 1,
+      "scope": "Framework force-stop retention with data preserved; this does not simulate or qualify Android low-memory killing or guest startup."
+    },
+    {
+      "check": "actual pinned donor APK imported through SAF",
+      "passed": true,
+      "bytes": 42076692,
+      "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f"
+    },
+    {
+      "check": "actual imported donor payload sealed with original FX bytes",
+      "passed": true,
+      "payload_files": 71,
+      "write_permission_bits": 0,
+      "fx_bytes": 3380680,
+      "fx_sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+    },
+    {
+      "check": "repeated donor import descriptor observation",
+      "passed": true,
+      "before": {
+        "available": true,
+        "pid": 6008,
+        "count": 115
+      },
+      "after_first": {
+        "available": true,
+        "pid": 6008,
+        "count": 115
+      },
+      "after_repeat": {
+        "available": true,
+        "pid": 6008,
+        "count": 115
+      },
+      "complete_imports": 2,
+      "first_import_growth_limit": 32,
+      "repeat_growth_limit": 8,
+      "scope": "Actual app descriptor counts across two complete SAF donor imports, allowing bounded framework/provider cache growth; no guest server execution.",
+      "bounded_growth_verified": true
+    },
+    {
+      "check": "untrusted donor refused and previous accepted payload preserved",
+      "passed": true
+    },
+    {
+      "check": "bounded native viewport: initial-preview",
+      "passed": true,
+      "surface_width": 1080,
+      "surface_height": 1028,
+      "host_width": 1080,
+      "host_height": 1028,
+      "native_camera_aspect_valid": true,
+      "controls_height": 766
+    },
+    {
+      "check": "native connection refuses absent server lease",
+      "passed": true,
+      "actual_server_interoperability_verified": false
+    },
+    {
+      "check": "native preview actual GLES frames",
+      "passed": true,
+      "frames": 34,
+      "gl_errors": 0
+    },
+    {
+      "check": "bounded native viewport: landscape-preview",
+      "passed": true,
+      "surface_width": 1920,
+      "surface_height": 382,
+      "host_width": 1920,
+      "host_height": 382,
+      "native_camera_aspect_valid": true,
+      "controls_height": 572
+    },
+    {
+      "check": "bounded native viewport: character-picker-visible",
+      "passed": true,
+      "surface_width": 1920,
+      "surface_height": 382,
+      "host_width": 1920,
+      "host_height": 382,
+      "native_camera_aspect_valid": true,
+      "controls_height": 572
+    },
+    {
+      "check": "bounded native viewport: after-character-selection",
+      "passed": true,
+      "surface_width": 1920,
+      "surface_height": 382,
+      "host_width": 1920,
+      "host_height": 382,
+      "native_camera_aspect_valid": true,
+      "controls_height": 572
+    },
+    {
+      "check": "actual app character picker and native DB-to-Map scene boundary",
+      "passed": true,
+      "phase": "SCENE_INCOMPLETE",
+      "map_stage": 6,
+      "last_status": 2,
+      "accepted_messages": 2,
+      "scene_prefixes": 1,
+      "numeric_privacy_bounds_verified": true,
+      "peer_binary_sha256": "b494f2be84702bf785c590345482e1db3196285c2338b214ee15ee57cde376fd",
+      "scripted_source_layout": true,
+      "real_server_interoperability": false,
+      "real_authenticated_session": false,
+      "preview_is_server_world": false
+    },
+    {
+      "check": "scripted UI peer lifecycle cleanup",
+      "passed": true,
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "fixture_policy_removed": true,
+      "real_server_interoperability": false
+    },
+    {
+      "check": "framework view distance, Surface recreation and Home recovery",
+      "passed": true
+    },
+    {
+      "check": "actual framework JSON document export",
+      "passed": true,
+      "bytes": 167392,
+      "sha256": "80d763ab03cf0d0af7318c0d6d7260e5cf6da5cfca0cd9bab6a4b0852e27aec7"
+    },
+    {
+      "check": "current foreground GPU resources and actual on-screen scene pixels",
+      "passed": true,
+      "frames": 1330,
+      "context": 6,
+      "gpu_bytes": 557056,
+      "bright_pixels": 556442,
+      "distinct_colors_at_least": 14269,
+      "screenshot_sha256": "89593a106692c756ef17e898a9eddef22fc92c50e698ab9fc511352499b1103c"
+    },
+    {
+      "check": "Android native UDP DB-to-Map controller",
+      "passed": true,
+      "checks": 659,
+      "socket_scenarios": 7,
+      "real_server_interoperability": false
+    },
+    {
+      "check": "no app crash or ANR recorded",
+      "passed": true
+    }
+  ],
+  "device": {
+    "api": "33",
+    "abi": "x86_64",
+    "emulator": true
+  },
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false,
+  "real_authenticated_session": false,
+  "scope": "Consolidated app Android framework imports, native preview GLES, landscape viewport and lifecycle; optional source-layout UDP peer drives the actual app character picker to its bounded Map scene prefix. This does not qualify ARM64 guest execution, a real authenticated session or live-world rendering."
+}

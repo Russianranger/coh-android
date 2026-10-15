@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "status": "passed",
+  "workflow_run": 38804511398,
+  "artifact": 12005078271,
+  "artifact_zip_bytes": 10964026,
+  "artifact_zip_sha256": "42edf73c989ba385514e0c8e5a367bf84fa665d379bcfed29cd5c078c5d1c761",
+  "zip_crc_passed": true,
+  "archive_members": 37,
+  "published_source_commit": "1ca6afc1b375d1e3a59ed13be562d9f9d1d0b81e",
+  "both_package_audits_exactly_match_ci_receipts": true,
+  "older_apk_sha256": "1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449",
+  "arm64_apk": {
+    "bytes": 11521251,
+    "name": "CoH-Native-Combined-0.1.3-arm64.apk",
+    "sha256": "8b60102521c23d42e2706331d266602d5c7429b3b42799e053361f47331b90c5"
+  },
+  "x86_64_apk": {
+    "bytes": 11118084,
+    "name": "CoH-Native-Combined-0.1.3-emulator-x86_64.apk",
+    "sha256": "c0647e8d5b232f5045e5b47045276aef9f76555c06ecc6b68257ec100e458e2e"
+  },
+  "old_and_new_signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "all_74_assets_byte_identical_to_012": true,
+  "accepted_scene_assets_byte_identical": 11,
+  "donor_import_members_unchanged": 71,
+  "proot_elf_entries_byte_identical": 2,
+  "host_suites_passed": 11,
+  "android_fixture_binaries_verified": 4,
+  "new_version_code": 4,
+  "new_version_name": "0.1.3",
+  "actual_emulator_execution": "pending hosted Android job",
+  "actual_server_interoperability_verified": false,
+  "physical_thor_accepted": false,
+  "scope": "Independent static audits of exact CI package artifact and unchanged update inputs. No new APK build, repack or device/server execution."
+}

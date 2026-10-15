@@ -8,6 +8,17 @@ clear their storage. Gates 22–24 remain accepted within their documented scope
 ## Current update: 0.1.3 connection repair
 
 Install `CoH-Native-Combined-0.1.3-arm64.apk` **over the existing Combined app**.
+
+Current ARM64 delivery: **11,521,251 bytes**, SHA256
+`8b60102521c23d42e2706331d266602d5c7429b3b42799e053361f47331b90c5`.
+[Download package artifact](https://github.com/Russianranger/coh-android/actions/runs/38804511398/artifacts/12005078271).
+The [successful workflow](https://github.com/Russianranger/coh-android/actions/runs/38804511398)
+passed eleven host suites, both ABI builds/lint and **24 Android13 framework
+checks**, including the real app's landscape character picker against an
+explicitly scripted UDP peer. Runtime/driver source:
+`1ca6afc1b375d1e3a59ed13be562d9f9d1d0b81e`. Actual 0.1.3 Thor Map acceptance
+remains the purpose of this retry.
+
 The package and signing identity are unchanged. Keep its data; do not uninstall,
 clear storage, repeat imports or repeat runtime setup. Your 0.1.2 report confirms
 that the server reached readiness after 9 minutes 16 seconds, and the native

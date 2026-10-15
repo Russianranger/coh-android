@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "workflow_run": 38804511398,
+  "artifact_id": 12005078271,
+  "name": "native-combined-client-packages",
+  "bytes": 10964026,
+  "github_archive_digest": "sha256:42edf73c989ba385514e0c8e5a367bf84fa665d379bcfed29cd5c078c5d1c761",
+  "independent_archive_digest_matches": true,
+  "all_zip_member_crc_checks_passed": true,
+  "source_commit": "1ca6afc1b375d1e3a59ed13be562d9f9d1d0b81e"
+}

@@ -1,0 +1,64 @@
+{
+  "format": 1,
+  "status": "passed",
+  "runtime_and_driver_source": "1ca6afc1b375d1e3a59ed13be562d9f9d1d0b81e",
+  "source_tree": "52afd541c445c6c5c949e5bf88f9f167b73acfde",
+  "branch": "native-android",
+  "workflow": 38804511398,
+  "jobs": {
+    "package": 116661758190,
+    "android13_framework": 116663323079
+  },
+  "package_artifact": {
+    "id": 12005078271,
+    "bytes": 10964026,
+    "sha256": "42edf73c989ba385514e0c8e5a367bf84fa665d379bcfed29cd5c078c5d1c761"
+  },
+  "framework_artifact": {
+    "id": 12005214269,
+    "bytes": 1641132,
+    "sha256": "1d53ff01bfd388e92c47af7e8241577dc3d5f04ddf271dde83127f6e065c9787"
+  },
+  "arm64_apk": {
+    "name": "CoH-Native-Combined-0.1.3-arm64.apk",
+    "bytes": 11521251,
+    "sha256": "8b60102521c23d42e2706331d266602d5c7429b3b42799e053361f47331b90c5"
+  },
+  "emulator_apk": {
+    "name": "CoH-Native-Combined-0.1.3-emulator-x86_64.apk",
+    "bytes": 11118084,
+    "sha256": "c0647e8d5b232f5045e5b47045276aef9f76555c06ecc6b68257ec100e458e2e"
+  },
+  "qualification": {
+    "implemented": true,
+    "host_suites_passed": 11,
+    "asan_ubsan_passed": true,
+    "arm64_built": true,
+    "android13_x86_64_emulator_qualified": true,
+    "framework_checks_passed": 24,
+    "physical_thor_013_accepted": false,
+    "actual_server_interoperability_013_verified": false,
+    "encrypted_authserver_login_verified": false,
+    "server_authoritative_world_rendered": false
+  },
+  "existing_physical_012_evidence": "../../thor-012-server-connection.json",
+  "unchanged": {
+    "asset_entries": 74,
+    "proot_elf_entries": 2,
+    "signer": true,
+    "package": "org.coh.nativecombined",
+    "accepted_session_client_source": true,
+    "import_runtime_profile_contract": true
+  },
+  "framework_peer_scope": "Actual Android app UI/socket execution against an explicitly scripted source-layout peer, not an authentic guest server or authenticated account session.",
+  "screenshots": {
+    "character-picker-visible.png": {
+      "bytes": 397470,
+      "sha256": "3d7baf037ae1604210c600edf5fc6b399aa86f9c28e4c61b91eb565a3834c7a2"
+    },
+    "native-preview.png": {
+      "bytes": 645667,
+      "sha256": "89593a106692c756ef17e898a9eddef22fc92c50e698ab9fc511352499b1103c"
+    }
+  }
+}

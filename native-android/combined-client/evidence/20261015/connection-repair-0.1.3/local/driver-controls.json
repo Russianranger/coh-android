@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "checks": 50,
+  "capture_controls": 13,
+  "viewport_protocol_controls": 20,
+  "scope": "Host regressions for document selection, strict fresh capture, native fault rejection, scene/viewport admission, bounded landscape scrolling and numeric protocol privacy; no Android execution claim."
+}

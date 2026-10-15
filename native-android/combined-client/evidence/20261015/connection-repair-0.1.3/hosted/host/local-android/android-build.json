@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "module": "local",
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "file": "coh-local-arm64-v8a",
+      "sha256": "140bd9d06be1f794230734e401a076cb07571df19fc13c1910896b12dd0416db",
+      "built": true,
+      "executed": false
+    },
+    {
+      "abi": "x86_64",
+      "file": "coh-local-x86_64",
+      "sha256": "1b919511dab12ede07c4136f77a61db481c20b36e5ddb8e3c432115e8e750236",
+      "built": true,
+      "executed": false
+    }
+  ],
+  "scripted_ui_peer_artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "file": "coh-local-peer-arm64-v8a",
+      "sha256": "c6ddb047081d864ac5e5ba27e5b757f795f495701c549c63bade1f9de072d3de",
+      "built": true,
+      "executed": false,
+      "role": "scripted-ui-peer",
+      "real_server_interoperability": false
+    },
+    {
+      "abi": "x86_64",
+      "file": "coh-local-peer-x86_64",
+      "sha256": "b494f2be84702bf785c590345482e1db3196285c2338b214ee15ee57cde376fd",
+      "built": true,
+      "executed": false,
+      "role": "scripted-ui-peer",
+      "real_server_interoperability": false
+    }
+  ],
+  "android_execution_qualified": false,
+  "actual_server_interoperability_verified": false
+}

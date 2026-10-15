@@ -1,0 +1,105 @@
+{
+  "schema": "coh-native-local-owner-v1",
+  "passed": true,
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 659,
+      "socket_scenarios": 7,
+      "actual_os_udp": true,
+      "full_scripted_db_map_chain": true,
+      "source_layout_peer": true,
+      "real_server_interoperability": false,
+      "real_authenticated_session": false,
+      "native_live_world": false,
+      "socket_leak_check": true
+    },
+    "asan": {
+      "passed": true,
+      "checks": 659,
+      "socket_scenarios": 7,
+      "actual_os_udp": true,
+      "full_scripted_db_map_chain": true,
+      "source_layout_peer": true,
+      "real_server_interoperability": false,
+      "real_authenticated_session": false,
+      "native_live_world": false,
+      "socket_leak_check": true
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 659,
+      "socket_scenarios": 7,
+      "actual_os_udp": true,
+      "full_scripted_db_map_chain": true,
+      "source_layout_peer": true,
+      "real_server_interoperability": false,
+      "real_authenticated_session": false,
+      "native_live_world": false,
+      "socket_leak_check": true
+    }
+  },
+  "source_files": 9,
+  "source_sha256_lf": {
+    "upstream/ouroboros/Game/src/clientcomm/authclient.c": "d1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015",
+    "upstream/ouroboros/Game/src/clientcomm/dbclient.c": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b",
+    "upstream/ouroboros/DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+    "upstream/ouroboros/Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+    "upstream/ouroboros/Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+    "upstream/ouroboros/libs/UtilitiesLib/src/network/net_version.c": "02799d8519d463edce86364b4fb0949d7f4396e4f24b57d9e51cb63ceeae1212",
+    "android/native/client-launcher.c": "1a9b64f233399939f889f6da63004625d4ba9dd72040d17c5ad75e809870bbe8",
+    "android/guest/game_diagnostic.py": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737",
+    "android/guest/client_login_diagnostic.py": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf"
+  },
+  "source_fixture_count": 36,
+  "implementation_sha256": {
+    "engine/local/coh_local.c": "9faabae5965fa3178293fec3d02b4bb761fbc90d62f21115e159e8f566d8bdab",
+    "engine/dbclient/coh_dbclient.c": "f8cc93ecdad68a0623faeadae89b16ce298f4b53e8b8e3e3d4cae15318afabdd",
+    "engine/dbclient/coh_db_session.c": "8d2b20a9a5ea26db2d97ccc8a20bcb512d3f747b53d47ec922dadda8c759d91c",
+    "engine/mapclient/coh_mapclient.c": "2b180d4fc681debfcffb4614b79adf69afab3726c418e6268130dc5546f71b09",
+    "engine/replication/coh_replication.c": "74592de84a6e036122c0585659188e9962c0f92cba969cd27faa5140d91448a7",
+    "engine/network/coh_net.c": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f",
+    "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "engine/network/coh_net_zip.c": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8",
+    "engine/network/coh_net_udp.c": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a",
+    "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "engine/local/coh_local.h": "b75ad3a859f908e1399f42f5e72d6b60a55be13e9bef66dbaae97e1dff4a4d02",
+    "engine/local/test_local.c": "81fede9274143f57e3383c5859cbb4a8e5f8e4f131d3a6ba7587c5b521ff638d",
+    "engine/local/check.py": "9512d1057c8b320fe34ba5e7fc97fdc640413824fcd3a89cf08b4d252a27561a",
+    "engine/dbclient/coh_db_session.h": "299af9af1efad53747384703478496ae9b0a8e3fc87d8d78d2073ec4d589c4d6",
+    "engine/dbclient/coh_dbclient.h": "ccdbb62ad57ba33ea9bb8af2803d2704615ce91fbb3cd0b4539fa319906eecdb",
+    "engine/dbclient/tests/test_db_session.c": "d751ab6e2f3fdcab6883e9b562938adbe0bf10c2cbbd0d0ddb571c8631f79e35",
+    "engine/mapclient/coh_mapclient.h": "0f922d1667048bf58d3493ba463b067876602d26ca142e3c79c14389ee0f6132"
+  },
+  "android": {
+    "arm64_built": true,
+    "executed": false,
+    "library_sha256": "11c98df8f9b77387e853eed8a3a484bbdfe02b7669356ca973809d1ce2374cdf",
+    "artifacts": [
+      {
+        "abi": "arm64-v8a",
+        "file": "coh-local-arm64-v8a",
+        "sha256": "140bd9d06be1f794230734e401a076cb07571df19fc13c1910896b12dd0416db",
+        "built": true,
+        "executed": false
+      },
+      {
+        "abi": "x86_64",
+        "file": "coh-local-x86_64",
+        "sha256": "1b919511dab12ede07c4136f77a61db481c20b36e5ddb8e3c432115e8e750236",
+        "built": true,
+        "executed": false
+      }
+    ]
+  },
+  "sanitizers": "ASan+UBSan",
+  "leak_sanitizer_enabled": false,
+  "leak_sanitizer_limitation": "Executor /proc task-walk compatibility; explicit before/after FD checks remain enabled.",
+  "actual_server_interoperability_verified": false,
+  "authserver_authenticated_session": false,
+  "native_live_world": false,
+  "physical_thor_accepted": false,
+  "credentials_logged": false
+}

@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "passed": true,
+  "executed": false,
+  "scope": "cross-built complete scripted-peer mapclient tests only; no execution, server session, login or live-world claim",
+  "ndk_revision": "28.2.13676358",
+  "fixtures_sha256": "99c70180c021fcb109c3abc1bdff5bc39a331f0eed22652bf1b39588c0449783",
+  "source_oracle_sha256": "22f6c1676d8efde100de33f5dc3f26097b7608c317b85261af31ea3fab0f3b81",
+  "source_files_sha256": {
+    "engine/mapclient/coh_mapclient.c": "2b180d4fc681debfcffb4614b79adf69afab3726c418e6268130dc5546f71b09",
+    "engine/mapclient/tests/test_mapclient.c": "9142e636736a5463f7bb7290327b6da51ab463e2ae377ce50f35803e88488f93",
+    "engine/replication/coh_replication.c": "74592de84a6e036122c0585659188e9962c0f92cba969cd27faa5140d91448a7",
+    "engine/network/coh_net.c": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f",
+    "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "engine/network/coh_net_zip.c": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8",
+    "engine/network/coh_net_udp.c": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a",
+    "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+  },
+  "executables": {
+    "arm64-v8a": {
+      "file": "arm64-v8a/test_mapclient_android",
+      "sha256": "3dab82c5ad6ad00ffad929ecd175fb300deea6769857e4d190a96d31fc5e4fce",
+      "bytes": 155616,
+      "api": 26,
+      "executed": false,
+      "receipt": "arm64-v8a/receipt.json"
+    },
+    "x86_64": {
+      "file": "x86_64/test_mapclient_android",
+      "sha256": "5910d854bef2a9230ad31b395fd2e51225164589c416261ef2791be7126fa240",
+      "bytes": 155640,
+      "api": 26,
+      "executed": false,
+      "receipt": "x86_64/receipt.json"
+    }
+  }
+}
