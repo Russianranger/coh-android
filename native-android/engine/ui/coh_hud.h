@@ -52,6 +52,7 @@ typedef struct {
     CohUi ui; CohHudState state;
     CohHudIntent intents[COH_HUD_INTENTS]; size_t intent_count;
     CohHudInsets insets; float surface_width,surface_height;
+    uint32_t tray_ring,tray_numbers[COH_HUD_POWERS];
     int initialized; CohHudStats stats;
 } CohHud;
 
@@ -60,6 +61,11 @@ void coh_hud_destroy(CohHud *hud);
 /* Transactional validation, copied state, no font/asset/GL work. */
 CohStatus coh_hud_set_state(CohHud *hud,const CohHudState *state);
 CohStatus coh_hud_set_skin(CohHud *hud,const CohHudSkin *skin);
+/* Optional original tray artwork. Numbers are supplied in slot order 1..9,0,
+ * matching source tray_drawSlot. Values are caller-owned resource IDs, never
+ * GL handles; zero clears decoration. Copied once, retained across snapshots
+ * and Surface recreation. Does not replace a power's own icon or emit intents. */
+CohStatus coh_hud_set_tray_decoration(CohHud *hud,uint32_t ring,const uint32_t numbers[COH_HUD_POWERS]);
 CohStatus coh_hud_surface(CohHud *hud,uint32_t generation,float width,float height,CohHudInsets safe);
 void coh_hud_surface_lost(CohHud *hud);
 CohStatus coh_hud_build(CohHud *hud);

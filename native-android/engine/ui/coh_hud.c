@@ -7,7 +7,7 @@ enum { ROOT=1,STATUS=2,NAME=3,HEALTH_BG=4,HEALTH=5,ABSORB=6,HEALTH_TEXT=7,
        END_BG=8,ENDURANCE=9,END_TEXT=10,TARGET=11,TARGET_BAR=12,TARGET_TEXT=13,
        CHAT=14,CHAT_INPUT=15,TRAY=16,CHAR_MENU=17,SELECT=18,
        POWER_FIRST=32,POWER_ICON_FIRST=48,POWER_RECHARGE_FIRST=64,
-       CHARACTER_FIRST=80,CHAT_FIRST=96 };
+       CHARACTER_FIRST=80,CHAT_FIRST=96,POWER_NUMBER_FIRST=112 };
 #define SHOWN (COH_UI_VISIBLE|COH_UI_ENABLED)
 #define BUTTON (SHOWN|COH_UI_FOCUSABLE)
 static uint32_t blend(float t,uint32_t a,uint32_t b) {
@@ -63,8 +63,9 @@ CohStatus coh_hud_init(CohHud *h,CohUiGlyphFn glyph,void *context) {
     ADD(TRAY,ROOT,0,COH_UI_WINDOW,SHOWN,222,682,790,74,0x102c40e8u,"");
     for(i=0;i<COH_HUD_POWERS;i++){
         ADD(POWER_FIRST+(uint32_t)i,TRAY,COH_HUD_BIND_POWER_FIRST+(uint32_t)i,COH_UI_BUTTON,0,8+(float)i*78,8,72,58,0x31536bffu,"");
-        ADD(POWER_ICON_FIRST+(uint32_t)i,POWER_FIRST+(uint32_t)i,0,COH_UI_ICON,0,0,0,72,58,0xffffffffu,"");
+        ADD(POWER_ICON_FIRST+(uint32_t)i,POWER_FIRST+(uint32_t)i,0,COH_UI_ICON,0,9,0,54,54,0xffffffffu,"");
         ADD(POWER_RECHARGE_FIRST+(uint32_t)i,POWER_FIRST+(uint32_t)i,0,COH_UI_PROGRESS,SHOWN,0,52,72,6,0x66cceeffu,"");
+        ADD(POWER_NUMBER_FIRST+(uint32_t)i,POWER_FIRST+(uint32_t)i,0,COH_UI_ICON,0,2,40,(i==1||i==5)?6:7,9,0xffffffffu,"");
     }
     ADD(CHAR_MENU,ROOT,COH_HUD_BIND_CHARACTER_MENU,COH_UI_BUTTON,BUTTON,12,682,196,36,0x31536bffu,"Characters");
     ADD(SELECT,ROOT,0,COH_UI_WINDOW,0,336,142,352,294,0x102c40f8u,"Select character");
@@ -135,6 +136,10 @@ CohStatus coh_hud_set_state(CohHud *h,const CohHudState *s){
         widget(h,POWER_FIRST+(uint32_t)i)->desc.kind=present&&p->icon?COH_UI_ICON:COH_UI_BUTTON;
         widget(h,POWER_FIRST+(uint32_t)i)->desc.resource_id=present?p->icon:0;
         widget(h,POWER_RECHARGE_FIRST+(uint32_t)i)->value=present?p->cooldown:0;
+        widget(h,POWER_ICON_FIRST+(uint32_t)i)->desc.resource_id=h->tray_ring;
+        coh_ui_set_flags(&h->ui,POWER_ICON_FIRST+(uint32_t)i,present&&h->tray_ring?SHOWN:0);
+        widget(h,POWER_NUMBER_FIRST+(uint32_t)i)->desc.resource_id=h->tray_numbers[i];
+        coh_ui_set_flags(&h->ui,POWER_NUMBER_FIRST+(uint32_t)i,present&&h->tray_numbers[i]?SHOWN:0);
     }
     coh_ui_set_flags(&h->ui,SELECT,s->show_character_select?SHOWN:0);
     coh_ui_set_flags(&h->ui,CHAT_INPUT,s->show_character_select?COH_UI_VISIBLE:BUTTON);
@@ -160,6 +165,13 @@ CohStatus coh_hud_set_skin(CohHud *h,const CohHudSkin *skin){
     }
     /* Public setter invalidates the retained drawlist after direct descriptor edits. */
     return coh_ui_set_text(&h->ui,NAME,h->state.actor_name);
+}
+CohStatus coh_hud_set_tray_decoration(CohHud *h,uint32_t ring,const uint32_t numbers[COH_HUD_POWERS]){
+    uint32_t copy[COH_HUD_POWERS];
+    if(!h||!h->initialized)return COH_STATE;
+    if(!numbers)return COH_INVALID;
+    memcpy(copy,numbers,sizeof(copy));h->tray_ring=ring;memcpy(h->tray_numbers,copy,sizeof(copy));
+    return coh_hud_set_state(h,&h->state);
 }
 CohStatus coh_hud_surface(CohHud *h,uint32_t gen,float width,float height,CohHudInsets safe){
     CohStatus s;

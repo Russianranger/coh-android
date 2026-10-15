@@ -66,3 +66,11 @@ The adapter uploads the generated original-font R8 texture, retains a bounded lo
 Packaging generates `support_font.h` from the default atlas generator symbols rather than committing font/glyph bytes. Add its generated directory and `engine/ui/gameplay` to includes, and compile the adapter with the HUD sources. The coordinator owns JNI, Java IME, build/package wiring and actual emulator qualification.
 
 `support_ui_check.py --ndk ... --font ... --output ... --sanitize` reproduces real host EGL 1280×720 rendering, 104 GPU frames, five local intent paths, Surface/backend recreation with retained chat, 2,000 concurrent snapshot calls and 2,000 concurrent controller-navigation calls, plus ASan/UBSan and an Android API26 ARM64 shared-library link. This observed mutex stress is not a TSan proof. The adapter receipt is `docs/qualification-support-adapter.json`; Android emulator and physical Thor testing remain separate coordinator work.
+
+## Original tray decoration continuation
+
+The additive [tray extension](tray/README.md) recovers and qualifies original ring
+and 1–9,0 slot-number imagery. It preserves existing typed HUD state/intents and
+input behavior. Source-backed preparation, host GPU, sanitizers and ARM64 evidence
+are in `tray/qualification.json`; Android/Thor qualification of this extension
+remains pending coordinator integration. Power-specific ability icons remain open.

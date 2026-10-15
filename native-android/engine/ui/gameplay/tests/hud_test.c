@@ -190,9 +190,41 @@ static void quads(void){
     assert(coh_hud_quad(&d,1,v)==COH_INVALID);
     assert(coh_hud_scissor((CohUiRect){0,0,1,1},0,720,clip)==COH_INVALID);checks++;
 }
+static void tray_decoration(void){
+    uint32_t numbers[COH_HUD_POWERS];size_t i,n,images;const CohUiDraw *d;CohHudIntent e;
+    const CohUiWidget *w;float x,y;base();
+    for(i=0;i<COH_HUD_POWERS;i++)numbers[i]=101+(uint32_t)i;
+    assert(coh_hud_set_tray_decoration(&hud,100,NULL)==COH_INVALID);
+    assert(coh_hud_set_tray_decoration(&hud,100,numbers)==COH_OK);
+    assert(!coh_hud_poll(&hud,&e)&&!coh_hud_draws(&hud,1,&n));
+    numbers[0]=999;assert(hud.tray_numbers[0]==101); /* copied caller resources */
+    assert(coh_hud_build(&hud)==COH_OK);d=coh_hud_draws(&hud,1,&n);images=0;
+    for(i=0;i<n;i++)if(d[i].kind==COH_UI_DRAW_IMAGE){
+        assert(d[i].resource_id>=100&&d[i].resource_id<=110);images++;
+    }
+    assert(images==20);
+    /* Decoration neither captures touch nor adds a controller focus stop. */
+    w=binding(COH_HUD_BIND_POWER_FIRST);x=w->pixels.x+3*hud.ui.scale_x+hud.insets.left;
+    y=w->pixels.y+43*hud.ui.scale_y+hud.insets.top;
+    assert(coh_hud_android_touch(&hud,0,7,x,y)==COH_OK);
+    assert(coh_hud_android_touch(&hud,1,7,x,y)==COH_OK);
+    assert(coh_hud_poll(&hud,&e)&&e.kind==COH_HUD_USE_POWER&&e.slot==0);
+    state.power_count=2;state.show_character_select=1;
+    assert(coh_hud_set_state(&hud,&state)==COH_OK);assert(coh_hud_build(&hud)==COH_OK);
+    d=coh_hud_draws(&hud,1,&n);images=0;
+    for(i=0;i<n;i++)if(d[i].kind==COH_UI_DRAW_IMAGE)images++;
+    assert(images==4); /* only existing two powers, also while modal-disabled */
+    coh_hud_surface_lost(&hud);assert(hud.tray_ring==100&&hud.tray_numbers[0]==101);
+    assert(coh_hud_surface(&hud,2,720,1280,(CohHudInsets){12,18,12,18})==COH_OK);
+    assert(coh_hud_build(&hud)==COH_OK);d=coh_hud_draws(&hud,2,&n);assert(d&&n);
+    memset(numbers,0,sizeof(numbers));assert(coh_hud_set_tray_decoration(&hud,0,numbers)==COH_OK);
+    assert(coh_hud_build(&hud)==COH_OK);d=coh_hud_draws(&hud,2,&n);
+    for(i=0;i<n;i++)assert(d[i].kind!=COH_UI_DRAW_IMAGE);
+    checks++;
+}
 int main(void){
     unsigned i;clock_t begin,end;double micros;size_t high;
-    state_and_draws();invalid_snapshot();touch_and_controller();text_ime();selection_and_bounds();lifecycle();atlas();quads();
+    state_and_draws();invalid_snapshot();touch_and_controller();text_ime();selection_and_bounds();lifecycle();atlas();quads();tray_decoration();
     base();begin=clock();for(i=0;i<2000;i++){
         state.revision=i;state.health=(float)(i%101);assert(coh_hud_set_state(&hud,&state)==COH_OK);
         assert(coh_hud_build(&hud)==COH_OK);

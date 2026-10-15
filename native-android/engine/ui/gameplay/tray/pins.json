@@ -1,0 +1,141 @@
+{
+  "format": 1,
+  "source_repository": "Russianranger/coh-android",
+  "release_tag": "coh-assets-v1.0.0",
+  "outer_asset": "COH-Assets-1.0.0-Base.zip",
+  "outer_expected_bytes": 1630092780,
+  "outer_published_sha256": "6d6e3304e48b89f8fdb218754a57380b3108140ef31bddb30f699ebcf28c2e3d",
+  "outer_full_hash_locally_verified": false,
+  "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip",
+  "inner_member": "payloads/runtime/client-visual-assets.zip",
+  "inner_expected_bytes": 859075775,
+  "inner_published_sha256": "5f91b7d4ebe91e6a547923d702e2fcd56d7fc1d36fb7bffbb66463562d977d60",
+  "inner_full_hash_locally_verified": false,
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "scope": "Original tray ring and slot-number decorations, not power-specific icons.",
+  "records": [
+    {
+      "name": "data/texture_library/gui/hud/tray/tray_ring_power.texture",
+      "size": 16593,
+      "sha256": "a6a13f0b8129c39437fada2ea07a8c5df780986d5e9ca225af6ff6028956c207",
+      "resource": 100,
+      "file_name": "tray_ring_power.texture",
+      "offset": 84128730,
+      "compressed": 1634,
+      "method": 8,
+      "crc32": "e1c0c179"
+    },
+    {
+      "name": "data/texture_library/gui/hud/tray/tray_ring_number_1.texture",
+      "size": 724,
+      "sha256": "13abe7e0b76ecc9e811bbb2bd84027e60251f4c4ed18fd4e7f4d3a555eab487a",
+      "resource": 101,
+      "file_name": "tray_ring_number_1.texture",
+      "offset": 84123697,
+      "compressed": 227,
+      "method": 8,
+      "crc32": "ae019d61"
+    },
+    {
+      "name": "data/texture_library/gui/hud/tray/tray_ring_number_2.texture",
+      "size": 724,
+      "sha256": "3942203f671d04b6df1df075fbf0a89523a7bca0ed04d7b77fec16b5590c7c53",
+      "resource": 102,
+      "file_name": "tray_ring_number_2.texture",
+      "offset": 84124014,
+      "compressed": 232,
+      "method": 8,
+      "crc32": "1d09e6f6"
+    },
+    {
+      "name": "data/texture_library/gui/hud/tray/tray_ring_number_3.texture",
+      "size": 724,
+      "sha256": "a6fe76c4a3ade5b29fc431d3c728d3c88f742c669a44cec76199e2049140db88",
+      "resource": 103,
+      "file_name": "tray_ring_number_3.texture",
+      "offset": 84124336,
+      "compressed": 247,
+      "method": 8,
+      "crc32": "7b7cd027"
+    },
+    {
+      "name": "data/texture_library/gui/hud/tray/tray_ring_number_4.texture",
+      "size": 724,
+      "sha256": "928092d851a394ae9397ab983bbc545c61ddba647749ab7cb2e28293a94a1619",
+      "resource": 104,
+      "file_name": "tray_ring_number_4.texture",
+      "offset": 84124673,
+      "compressed": 225,
+      "method": 8,
+      "crc32": "c16e9ff9"
+    },
+    {
+      "name": "data/texture_library/gui/hud/tray/tray_ring_number_5.texture",
+      "size": 724,
+      "sha256": "3410704f7dab1d3d465ca1a672d35fe0495f57f22c4f9c1f28a2f7cecbc516a3",
+      "resource": 105,
+      "file_name": "tray_ring_number_5.texture",
+      "offset": 84124988,
+      "compressed": 246,
+      "method": 8,
+      "crc32": "861712b1"
+    },
+    {
+      "name": "data/texture_library/gui/hud/tray/tray_ring_number_6.texture",
+      "size": 724,
+      "sha256": "7a6a9dec6e8a0d5ec20ae91f052293c547bf3ba727f84356076650225975d8a4",
+      "resource": 106,
+      "file_name": "tray_ring_number_6.texture",
+      "offset": 84125324,
+      "compressed": 235,
+      "method": 8,
+      "crc32": "4f5c561d"
+    },
+    {
+      "name": "data/texture_library/gui/hud/tray/tray_ring_number_7.texture",
+      "size": 724,
+      "sha256": "1f804c476c803194036dd305b354f5d0bd88f21b06bd3e816e1cd9cfb13e622d",
+      "resource": 107,
+      "file_name": "tray_ring_number_7.texture",
+      "offset": 84125649,
+      "compressed": 224,
+      "method": 8,
+      "crc32": "7164ade6"
+    },
+    {
+      "name": "data/texture_library/gui/hud/tray/tray_ring_number_8.texture",
+      "size": 724,
+      "sha256": "985307c33e119ea75457642a942446fb0aab64633863ef1f74d3e1b4c6c6a945",
+      "resource": 108,
+      "file_name": "tray_ring_number_8.texture",
+      "offset": 84125963,
+      "compressed": 239,
+      "method": 8,
+      "crc32": "3c692f91"
+    },
+    {
+      "name": "data/texture_library/gui/hud/tray/tray_ring_number_9.texture",
+      "size": 724,
+      "sha256": "14b5b36cb8e40006aa6c08d100394e1027393f27824342a86cda20c140d21023",
+      "resource": 109,
+      "file_name": "tray_ring_number_9.texture",
+      "offset": 84126292,
+      "compressed": 236,
+      "method": 8,
+      "crc32": "9ccc3816"
+    },
+    {
+      "name": "data/texture_library/gui/hud/tray/tray_ring_number_0.texture",
+      "size": 724,
+      "sha256": "31562bb65a9991a47bf0fe33e6246226bd2f852507ce28bb181d2408d46a38ea",
+      "resource": 110,
+      "file_name": "tray_ring_number_0.texture",
+      "offset": 84123358,
+      "compressed": 249,
+      "method": 8,
+      "crc32": "a601efde"
+    }
+  ],
+  "observed_range_etag": "\"0x8DF27B1DA04C5EA\""
+}
