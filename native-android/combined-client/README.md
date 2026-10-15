@@ -99,3 +99,25 @@ python3 native-android/combined-client/gradle.py -PprobeAbis=arm64-v8a -PcohCryp
 
 The public test signing identity is for development packages. Generated inputs,
 APK outputs, SDKs and caches are excluded from source control.
+
+## Second Thor startup failure and memory interruption
+
+The 0.1.1 report in `evidence/20261015/startup-failure-0.1.1/` identifies
+`server_fx_catalog._regular`: an exact pinned FX payload was writable with two
+hardlinks. The unchanged donor permits a shared source only when read-only.
+0.1.2 seals verified immutable imports before publication and repairs an existing
+ready generation on Start without changing its identity or saved profile. A
+one-time streamed pin check precedes permission changes; a completed receipt
+allows later bounded owner/type/size/mode checks. The original FX guard remains
+unchanged. The regression uses the actual donor payload and original guard.
+
+The user also observed an earlier Android low-memory kill. Its allocation site
+is not recoverable from the supplied ZIP. Cold original geometry admission now
+runs in a short-lived owned Python process before PostgreSQL/Wine startup; its
+exact original manifest and geometry checks remain intact. The parent reaps the
+child and verifies the retained warm receipt before continuing. Android memory
+admission, cooperative runtime pressure stops and bounded numeric telemetry
+supplement that allocation-lifetime change. These cannot guarantee prevention
+of Android process kills. OS exit records and four preceding attempts are
+included in report exports, without account identifiers or raw traces. Neither
+this repair nor emulator preview tests establish successful Thor guest startup.

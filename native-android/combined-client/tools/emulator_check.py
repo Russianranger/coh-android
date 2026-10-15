@@ -19,6 +19,60 @@ MAIN = PACKAGE + '/.MainActivity'
 NATIVE = PACKAGE + '/.NativeClientActivity'
 
 
+def memory_report_contract(value):
+    """Validate public report bounds without claiming ARM64 memory admission ran."""
+    memory = value.get('server_memory')
+    assert isinstance(memory, dict), 'Combined memory diagnostics are absent'
+    nonnegative = ('samples', 'invalid_samples', 'sample_interval_ms', 'required_pressure_samples',
+                   'required_pressure_span_ms', 'retained_sample_limit', 'pressure_samples')
+    nullable = ('admission_reserve_bytes', 'running_reserve_bytes', 'java_heap_reserve_bytes',
+                'minimum_java_heap_headroom_bytes', 'pressure_started_elapsed_ms', 'last_elapsed_ms')
+    allowed = set(nonnegative + nullable + ('format', 'status', 'reason', 'scope',
+                  'sample_unavailable_policy', 'admitted', 'stop_requested',
+                  'minimum_system_headroom_bytes', 'recent_samples'))
+    assert set(memory) == allowed, 'Unexpected memory diagnostic fields'
+    assert type(memory['format']) is int and memory['format'] == 1
+    assert isinstance(memory['status'], str) and re.fullmatch(r'[a-z_]{1,64}', memory['status'])
+    assert isinstance(memory['reason'], str) and re.fullmatch(r'[A-Z0-9_]{0,80}', memory['reason'])
+    assert isinstance(memory['scope'], str) and 0 < len(memory['scope']) <= 256
+    assert memory['sample_unavailable_policy'] == 'block_start_or_request_owned_cleanup'
+    assert all(type(memory[k]) is bool for k in ('admitted', 'stop_requested'))
+    assert all(type(memory[k]) is int and memory[k] >= 0 for k in nonnegative)
+    assert all(memory[k] is None or (type(memory[k]) is int and memory[k] >= 0) for k in nullable)
+    assert memory['minimum_system_headroom_bytes'] is None or type(memory['minimum_system_headroom_bytes']) is int
+    assert memory['invalid_samples'] <= memory['samples']
+    assert (memory['sample_interval_ms'], memory['required_pressure_samples'],
+            memory['required_pressure_span_ms'], memory['retained_sample_limit']) == (1000, 3, 3000, 64)
+    rows = memory['recent_samples']
+    assert isinstance(rows, list) and len(rows) <= min(64, memory['samples'])
+    fields = ('available_bytes', 'total_bytes', 'threshold_bytes', 'java_heap_used_bytes',
+              'java_heap_limit_bytes', 'java_heap_headroom_bytes')
+    row_keys = set(fields + ('elapsed_ms', 'valid', 'system_headroom_bytes', 'low_memory'))
+    for row in rows:
+        assert isinstance(row, dict) and set(row) == row_keys
+        assert type(row['valid']) is bool
+        assert row['elapsed_ms'] is None or (type(row['elapsed_ms']) is int and row['elapsed_ms'] >= 0)
+        assert all(row[k] is None or (type(row[k]) is int and row[k] >= 0) for k in fields)
+        assert row['system_headroom_bytes'] is None or type(row['system_headroom_bytes']) is int
+        assert row['low_memory'] is None or type(row['low_memory']) is bool
+        if row['valid']:
+            assert all(type(row[k]) is int for k in fields) and type(row['low_memory']) is bool
+        else:
+            assert all(row[k] is None for k in (*fields, 'system_headroom_bytes', 'low_memory'))
+    exits = value.get('android_process_exits')
+    assert isinstance(exits, list) and len(exits) <= 8, 'Android exit history exceeds its public bound'
+    exit_numbers = ('reason', 'status', 'timestamp_utc_ms', 'importance', 'pss_kib', 'rss_kib')
+    for item in exits:
+        assert isinstance(item, dict) and set(item) == set(exit_numbers + ('low_memory',)), 'Unexpected Android exit metadata; descriptions and traces must stay private'
+        assert all(type(item[k]) is int for k in exit_numbers)
+        assert all(item[k] >= 0 for k in ('timestamp_utc_ms', 'pss_kib', 'rss_kib'))
+        assert type(item['low_memory']) is bool
+    assert isinstance(value.get('android_exit_history_status'), str)
+    return {'memory_samples': memory['samples'], 'memory_status': memory['status'],
+            'retained_memory_samples': len(rows), 'android_exit_records': len(exits),
+            'scope': 'Actual combined-report schema and numeric privacy bounds; zero samples do not qualify ARM64 server memory admission or guest execution.'}
+
+
 def settled_preview(value, minimum_frames):
     native = value.get('native', {})
     static = native.get('static_renderer', {})
@@ -248,19 +302,85 @@ class Check:
         for path, name in ((self.args.donor_apk, donor_name), (invalid, invalid.name)):
             self.adb('push', path, '/sdcard/Download/' + name)
             self.adb('shell', 'am', 'broadcast', '-a', 'android.intent.action.MEDIA_SCANNER_SCAN_FILE', '-d', 'file:///sdcard/Download/' + name)
-        before = self.report('combined-report.json')
+        before_fds = self.app_fd_count()
         self.select_document('Import launcher APK', donor_name)
         value = self.wait_report('combined-report.json', lambda x: x.get('busy') is False and 'Server payload: verified' in x.get('imports', ''), 'real pinned donor APK SAF import', seconds=90)
         assert value['runtime_ready'] is False and value['server']['ready'] is False
         accepted = 'files/combined-import/donor-' + DONOR_SHA + '/accepted.sha256'
         assert self.text('exec-out', 'run-as', PACKAGE, 'cat', accepted) == DONOR_SHA + '\n'
         self.record('actual pinned donor APK imported through SAF', bytes=DONOR_BYTES, sha256=DONOR_SHA)
+        first_fds = self.app_fd_count()
+        import zipfile
+        with zipfile.ZipFile(self.args.apk) as apk:
+            contract = json.loads(apk.read('assets/combined/import-contract.json'))
+        members = contract['donor_files']
+        assert 0 < len(members) <= 128
+        directory = 'files/combined-import/donor-' + DONOR_SHA + '/'
+        paths = [directory + name.removeprefix('assets/runtime/') for name in sorted(members)]
+        modes = self.text('exec-out', 'run-as', PACKAGE, 'stat', '-c', '%a', *paths).split()
+        assert len(modes) == len(paths) and all(re.fullmatch(r'[0-7]{3,4}', value) for value in modes)
+        assert all(int(value, 8) & 0o222 == 0 for value in modes), 'Imported pinned donor payload remains writable'
+        fx = self.adb('exec-out', 'run-as', PACKAGE, 'cat', directory + 'server-fx-catalog.bin').stdout
+        assert len(fx) == 3380680 and hashlib.sha256(fx).hexdigest() == 'ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890'
+        self.record('actual imported donor payload sealed with original FX bytes', payload_files=len(paths),
+                    write_permission_bits=0, fx_bytes=len(fx), fx_sha256=hashlib.sha256(fx).hexdigest())
+        prior_events = len(value.get('events', []))
+        self.select_document('Import launcher APK', donor_name)
+        value = self.wait_report('combined-report.json', lambda x: x.get('busy') is False
+            and len(x.get('events', [])) > prior_events and 'Server payload: verified' in x.get('imports', ''),
+            'repeated complete pinned donor SAF import', seconds=90)
+        repeated_fds = self.app_fd_count()
+        fd_proof = {'before': before_fds, 'after_first': first_fds, 'after_repeat': repeated_fds,
+                    'complete_imports': 2, 'first_import_growth_limit': 32, 'repeat_growth_limit': 8,
+                    'scope': 'Actual app descriptor counts across two complete SAF donor imports, allowing bounded framework/provider cache growth; no guest server execution.'}
+        if all(item['available'] for item in (before_fds, first_fds, repeated_fds)):
+            assert before_fds['pid'] == first_fds['pid'] == repeated_fds['pid'], 'App process changed during imports'
+            assert first_fds['count'] <= before_fds['count'] + 32, 'First donor import retained excessive descriptors'
+            assert repeated_fds['count'] <= first_fds['count'] + 8, 'Repeated donor import retained descriptors'
+            fd_proof['bounded_growth_verified'] = True
+        else:
+            fd_proof['bounded_growth_verified'] = False
+        (self.args.output / 'donor-import-fd-proof.json').write_text(json.dumps(fd_proof, indent=2) + '\n')
+        self.record('repeated donor import descriptor observation', **fd_proof)
         old_events = len(value.get('events', []))
         self.select_document('Import launcher APK', invalid.name)
         after = self.wait_report('combined-report.json', lambda x: x.get('busy') is False and len(x.get('events', [])) > old_events and str(x.get('server', {}).get('phase', '')).lower() == 'failed', 'untrusted donor APK admission refusal')
         assert 'Server payload: verified' in after['imports']
         assert self.text('exec-out', 'run-as', PACKAGE, 'cat', accepted) == DONOR_SHA + '\n'
         self.record('untrusted donor refused and previous accepted payload preserved')
+
+    def app_fd_count(self):
+        pid = self.text('shell', 'pidof', '-s', PACKAGE).strip()
+        assert re.fullmatch(r'[1-9][0-9]*', pid), 'Expected app process is absent'
+        result = self.adb('exec-out', 'run-as', PACKAGE, 'ls', '/proc/' + pid + '/fd', check=False)
+        if result.returncode:
+            return {'available': False, 'reason': 'run_as_proc_access_unavailable'}
+        values = result.stdout.decode().split()
+        assert 0 < len(values) < 4096 and all(v.isdigit() for v in values), 'Unexpected app descriptor inventory'
+        return {'available': True, 'pid': int(pid), 'count': len(values)}
+
+    def retain_failed_attempt(self, failed):
+        session = failed.get('server', {}).get('session_id', '')
+        assert re.fullmatch(r'[0-9a-f]{32}', session), 'Failed admission did not record its attempt identity'
+        # run() has already proved this is a fresh disposable emulator. Preserve
+        # its data while exercising Android's actual force-stop/relaunch path.
+        self.adb('shell', 'am', 'force-stop', PACKAGE)
+        self.launch(MAIN)
+        current = self.wait_report('combined-report.json', lambda x: x.get('server', {}).get('session_id') != session
+            and x.get('server', {}).get('owned_process_alive') is False, 'fresh report after force-stop and relaunch')
+        memory_report_contract(current)
+        (self.args.output / 'combined-server').mkdir(exist_ok=True)
+        history = self.wait_report('combined-server/previous-attempts.json', lambda x: any(
+            item.get('session_id') == session for item in x.get('attempts', [])), 'prior attempt retained after framework relaunch')
+        assert history.get('format') == 1 and history.get('maximum_attempts') == 4
+        assert isinstance(history.get('attempts'), list) and 0 < len(history['attempts']) <= 4
+        saved = next(item for item in history['attempts'] if item.get('session_id') == session)
+        assert saved['app']['package'] == PACKAGE and saved['app']['server']['session_id'] == session
+        assert 'guest' not in saved, 'Missing-import admission unexpectedly generated a guest report'
+        memory_report_contract(saved['app'])
+        self.record('failed attempt survives actual force-stop and relaunch', retained_attempts=len(history['attempts']),
+                    android_exit_records=len(current['android_process_exits']),
+                    scope='Framework force-stop retention with data preserved; this does not simulate or qualify Android low-memory killing or guest startup.')
 
     def export_native(self):
         before = self.report('native-client-report.json')
@@ -336,6 +456,7 @@ class Check:
         assert 'Server payload: import ' in initial['imports'] and 'Game files: import all four asset parts' in initial['imports']
         assert initial['runtime_ready'] is False and initial['server']['ready'] is False
         self.record('fresh app initialized for external imports without failures')
+        self.record('bounded public memory and Android exit diagnostics', **memory_report_contract(initial))
         for label in ('Import launcher APK', 'Import game asset part'):
             self.picker_cancel(label)
         # These controls must fail closed without imported runtime/assets. Inspect
@@ -344,10 +465,14 @@ class Check:
         time.sleep(.5)
         self.tap('Start server')
         time.sleep(.5)
-        state = self.wait_report('combined-report.json', lambda x: x.get('server', {}).get('ready') is False and str(x.get('server', {}).get('phase', '')).upper() not in ('READY', 'STARTING', 'RUNNING'), 'missing-import admission remains closed')
+        state = self.wait_report('combined-report.json', lambda x: x.get('busy') is False
+            and re.fullmatch(r'[0-9a-f]{32}', x.get('server', {}).get('session_id', ''))
+            and x.get('server', {}).get('ready') is False
+            and str(x.get('server', {}).get('phase', '')).upper() not in ('READY', 'STARTING', 'RUNNING'), 'missing-import admission remains closed')
         assert state.get('runtime_ready') is False
         assert str(state.get('server', {}).get('phase', '')).upper() not in ('READY', 'STARTING', 'RUNNING')
         self.record('missing imports refuse setup and server start', runtime_ready=False, server_ready=False)
+        self.retain_failed_attempt(state)
         if self.args.donor_apk:
             self.import_donor()
         self.tap('Launch native client')

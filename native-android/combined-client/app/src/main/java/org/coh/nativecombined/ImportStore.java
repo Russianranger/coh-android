@@ -1,6 +1,10 @@
 package org.coh.nativecombined;
 
 import android.content.Context;
+import android.system.Os;
+import android.system.OsConstants;
+import android.system.StructStat;
+import android.system.ErrnoException;
 import io.github.russianranger.cohdiagnostic.AssetPackStore;
 import io.github.russianranger.cohatlas.AtlasAssetImporter;
 import java.io.*;
@@ -18,6 +22,9 @@ public final class ImportStore {
     final File base;
     private final ImportContract.Progress progress;
     private static final long RESERVE=512L*1024*1024;
+    // Linux UAPI asm-generic/fcntl.h: O_CLOEXEC = 02000000 on Android arm64/x86_64.
+    // Use the kernel flag directly: the public SDK constant starts after minSdk 26.
+    private static final int LINUX_O_CLOEXEC=0x80000;
     public ImportStore(Context context,ImportContract.Progress progress)throws Exception {
         this.context=context.getApplicationContext();this.contract=new ImportContract(this.context);
         this.progress=progress==null?(phase,done,total)->{}:progress;
@@ -82,6 +89,7 @@ public final class ImportStore {
                     if(entry==null||entry.isDirectory()||entry.getSize()!=member.getValue().bytes)throw new IOException("Pinned server member is missing or differs");
                     String leaf=member.getKey().substring("assets/runtime/".length());ImportContract.safeLeaf(leaf);
                     try(InputStream in=zip.getInputStream(entry)){copy(in,out.resolve(leaf),member.getValue(),control,progress,"Importing server payload");}
+                    sealVerified(out.resolve(leaf),member.getValue(),control,progress);
                 }
             }
             Files.delete(apk);write(out.resolve("accepted.sha256"),(contract.donor.sha256+"\n").getBytes(java.nio.charset.StandardCharsets.US_ASCII));
@@ -136,6 +144,57 @@ public final class ImportStore {
         if(!regular(file,pin.bytes))throw new IOException("Imported runtime payload is missing");MessageDigest hash=ImportContract.hash();long done=0;byte[] buffer=new byte[65536];
         try(InputStream in=Files.newInputStream(file,LinkOption.NOFOLLOW_LINKS)){int n;while((n=in.read(buffer))!=-1){control.check();if(n==0)throw new IOException("Payload made no progress");hash.update(buffer,0,n);done+=n;}}
         if(done!=pin.bytes||!pin.sha256.equals(ImportContract.hex(hash.digest())))throw new IOException("Imported runtime payload checksum differs");
+    }
+    /** One verified immutable inode; aliases are checked again before publication. */
+    static final class SealRecord {
+        final Path path;final ImportContract.Pin pin;final StructStat observed;final List<Path> aliases=new ArrayList<>();
+        SealRecord(Path path,ImportContract.Pin pin,StructStat observed){this.path=path;this.pin=pin;this.observed=observed;aliases.add(path);}
+    }
+    static StructStat immutableStat(Path path,ImportContract.Pin pin)throws IOException {
+        noLinks(path);
+        try {
+            StructStat value=Os.lstat(path.toString());
+            if(!OsConstants.S_ISREG(value.st_mode)||value.st_uid!=android.os.Process.myUid()||value.st_size!=pin.bytes)
+                throw new IOException("Immutable input has an unexpected type, owner or size");
+            return value;
+        } catch(ErrnoException e){throw new IOException("Cannot inspect an immutable input",e);}
+    }
+    static boolean sameFile(StructStat a,StructStat b){return a.st_dev==b.st_dev&&a.st_ino==b.st_ino&&a.st_uid==b.st_uid&&a.st_size==b.st_size;}
+    static boolean sameState(StructStat a,StructStat b){return sameFile(a,b)&&a.st_mode==b.st_mode&&a.st_nlink==b.st_nlink&&a.st_mtime==b.st_mtime&&a.st_ctime==b.st_ctime;}
+    static boolean readonly(Path path,ImportContract.Pin pin)throws IOException{return (immutableStat(path,pin).st_mode&0222)==0;}
+    static SealRecord verifyForSeal(Path path,ImportContract.Pin pin,ImportContract.Control control,ImportContract.Progress progress)throws IOException {
+        StructStat before=immutableStat(path,pin);MessageDigest hash=ImportContract.hash();long done=0,last=0;byte[] buffer=new byte[65536];
+        try {
+            FileDescriptor fd=Os.open(path.toString(),OsConstants.O_RDONLY|OsConstants.O_NOFOLLOW|LINUX_O_CLOEXEC,0);
+            try {
+                if(!sameState(before,Os.fstat(fd)))throw new IOException("Immutable input changed before verification");
+                int n;while((n=Os.read(fd,buffer,0,buffer.length))!=0){control.check();if(n<0)throw new IOException("Invalid immutable input read result");done+=n;if(done>pin.bytes)throw new IOException("Immutable input exceeds its pin");hash.update(buffer,0,n);if(done-last>=4L*1024*1024){progress.update("Verifying immutable server inputs",done,pin.bytes);last=done;}}
+                if(done!=pin.bytes||!pin.sha256.equals(ImportContract.hex(hash.digest()))||!sameState(before,Os.fstat(fd))||!sameState(before,immutableStat(path,pin)))
+                    throw new IOException("Immutable input SHA-256 or identity differs");
+            } finally {Os.close(fd);}
+        } catch(ErrnoException e){throw new IOException("Cannot verify an immutable input",e);}
+        return new SealRecord(path,pin,before);
+    }
+    static void requireSealAliases(SealRecord record,boolean sealed)throws IOException {
+        for(Path path:record.aliases){StructStat current=immutableStat(path,record.pin);
+            if(!(sealed?sameFile(record.observed,current)&&(current.st_mode&0222)==0:sameState(record.observed,current)))
+                throw new IOException("Immutable input alias changed during preparation");}
+    }
+    static void setSealMode(SealRecord record,int mode,boolean requireOriginal)throws IOException {
+        noLinks(record.path);
+        try {
+            FileDescriptor fd=Os.open(record.path.toString(),OsConstants.O_RDONLY|OsConstants.O_NOFOLLOW|LINUX_O_CLOEXEC,0);
+            try {
+                StructStat current=Os.fstat(fd);
+                if(!(requireOriginal?sameState(record.observed,current):sameFile(record.observed,current)))throw new IOException("Immutable inode changed before permission update");
+                Os.fchmod(fd,mode);current=Os.fstat(fd);
+                if(!sameFile(record.observed,current)||(current.st_mode&0777)!=mode)throw new IOException("Immutable input permission update was not retained");
+            } finally {Os.close(fd);}
+        }catch(ErrnoException e){throw new IOException("Cannot protect an immutable input",e);}
+    }
+    static void sealVerified(Path path,ImportContract.Pin pin,ImportContract.Control control,ImportContract.Progress progress)throws IOException {
+        SealRecord record=verifyForSeal(path,pin,control,progress);
+        control.publish(()->{requireSealAliases(record,false);if((record.observed.st_mode&0222)!=0)setSealMode(record,record.observed.st_mode&0555,true);requireSealAliases(record,true);});
     }
     private static final class OwnedInput extends FilterInputStream {
         private boolean closed;OwnedInput(InputStream in){super(Objects.requireNonNull(in));}

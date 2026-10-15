@@ -33,6 +33,9 @@ public final class ServerService extends Service {
     private String appVersion="unknown";
     private long appVersionCode;
     private volatile long startFreeBytes;
+    private volatile ServerMemoryPolicy serverMemory=new ServerMemoryPolicy();
+    private volatile JSONArray processExits=new JSONArray();
+    private volatile String exitHistoryStatus="not_collected";
     private ImportStore imports;
     private RuntimeSetup setup;
     private PowerManager.WakeLock wake;
@@ -44,8 +47,10 @@ public final class ServerService extends Service {
         try{android.content.pm.PackageInfo p=getPackageManager().getPackageInfo(getPackageName(),0);appVersion=p.versionName;appVersionCode=p.versionCode;}catch(Exception ignored){}
         NotificationManager nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         nm.createNotificationChannel(new NotificationChannel("server","Native COH local runtime",NotificationManager.IMPORTANCE_LOW));
-        foreground();main.post(ticker);
-        owner.execute(()->{try{initialize();refresh();}catch(Exception e){fail(e);}save();});
+        foreground();
+        // Capture before returning a binder: submit/stop can save synchronously.
+        final JSONObject persisted=readJson(new File(getFilesDir(),"combined-report.json"),128*1024);
+        owner.execute(()->{try{archiveAttempt(persisted);collectProcessExits();initialize();refresh();}catch(Exception e){fail(e);}save();main.post(ticker);});
     }
     private void foreground(){
         PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);
@@ -64,6 +69,7 @@ public final class ServerService extends Service {
             out.put("schema","coh-native-combined-app-v1").put("package",getPackageName()).put("busy",busy).put("runtime_ready",runtimeReady)
                 .put("version_name",appVersion).put("version_code",appVersionCode).put("android_sdk",Build.VERSION.SDK_INT).put("abis",new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS)))
                 .put("storage_available_bytes",getFilesDir().getUsableSpace()).put("server_start_available_bytes",startFreeBytes)
+                .put("server_memory",new JSONObject(serverMemory.snapshot())).put("android_process_exits",processExits).put("android_exit_history_status",exitHistoryStatus)
                 .put("imports",importStatus).put("message",message).put("progress_done",progressDone).put("progress_total",progressTotal)
                 .put("server",new JSONObject().put("phase",phase).put("ready",ready).put("session_id",session).put("guest_exit_code",guestExit).put("owned_process_alive",guest!=null&&guest.isAlive())
                     .put("failure_code",d.failure).put("last_stage",d.stage).put("elapsed_ms",d.elapsedMs).put("stage_elapsed_ms",d.stageElapsedMs).put("stages",stages))
@@ -80,9 +86,10 @@ public final class ServerService extends Service {
     private interface Operation {void run(ImportContract.Control cancellation)throws Exception;}
     private synchronized void submit(String name,Operation operation){
         if(busy||(guest!=null&&guest.isAlive())){message="Stop the current operation before starting another.";save();return;}
+        final JSONObject prior=name.equals("starting")?snapshot():null;
         busy=true;ready=false;phase=name;stopRequested=false;progressDone=progressTotal=0;control=new ImportContract.Control();final ImportContract.Control operationControl=control;revoke();event(name);foreground();save();
         owner.execute(()->{
-            try{initialize();operation.run(operationControl);if(!name.equals("starting")){phase="stopped";message="Operation complete. Start the server when ready.";}}
+            try{initialize();if(prior!=null)archiveAttempt(prior);operation.run(operationControl);if(!name.equals("starting")){phase="stopped";message="Operation complete. Start the server when ready.";}}
             catch(Exception e){if(name.equals("starting"))diagnostics.failure(session,"SERVER_ADMISSION_FAILED");fail(e);}finally{if(name.equals("starting"))diagnostics.finish(SystemClock.elapsedRealtime());ready=false;revoke();try{refresh();}catch(Exception ignored){}releaseWake();synchronized(this){if(control==operationControl)control=null;busy=false;}save();}
         });
     }
@@ -106,18 +113,22 @@ public final class ServerService extends Service {
     }
     private void runServer(ImportContract.Control cancellation)throws Exception {
         session=UUID.randomUUID().toString().replace("-","");generation="";guestExit=-1;
+        serverMemory=new ServerMemoryPolicy();
         diagnostics.start(session,SystemClock.elapsedRealtime());
         startFreeBytes=getFilesDir().getUsableSpace();
         message="Checking local server inputs…";
         if(!Arrays.asList(Build.SUPPORTED_ABIS).contains("arm64-v8a"))throw new IOException("The server runtime requires an ARM64 Android device");
         if(!setup.ready())throw new IOException("Import the files and complete Set up runtime before starting the server");
         File data=imports.gameDataDirectory();if(data==null)throw new IOException("Import all four verified game asset parts");
-        File runtime=setup.generationDirectory();
         generation=data.getParentFile().getName();if(!generation.matches("generation-[0-9a-f]{32}"))throw new IOException("Invalid imported game generation");
         File stop=new File(stateDir,"stop-request"),lease=new File(stateDir,"server-ready.json");
         Files.deleteIfExists(stop.toPath());Files.deleteIfExists(lease.toPath());
         File previous=new File(stateDir,"owner-active.json");
         if(previous.exists())throw new IOException("Previous server ownership is incomplete. Preserve the report and force-stop this test app before recovery");
+        diagnostics.stage(session,"server_memory_admission",SystemClock.elapsedRealtime());
+        admitServerMemory();
+        diagnostics.stage(session,"prepare_immutable_server_inputs",SystemClock.elapsedRealtime());
+        File runtime=setup.prepareForServer(cancellation,this::progress);
         File tmp=new File(getFilesDir(),"combined-tmp"),shortTmp=new File(getFilesDir(),"p"),helper=new File(getFilesDir(),"combined-guest");
         tmp.mkdirs();shortTmp.mkdirs();helper.mkdirs();
         if(shortTmp.getCanonicalPath().getBytes(StandardCharsets.UTF_8).length+27>107)throw new IOException("Storage path exceeds the process runtime socket limit");
@@ -141,7 +152,7 @@ public final class ServerService extends Service {
         else command.add("--provision-test-character");
         ProcessBuilder builder=new ProcessBuilder(command).redirectErrorStream(true);
         builder.environment().put("PROOT_LOADER",loader.getPath());builder.environment().put("PROOT_TMP_DIR",shortTmp.getPath());builder.environment().put("PROOT_NO_SECCOMP","1");
-        cancellation.check();write(previous,new JSONObject().put("session_id",session).put("clean",false).toString().getBytes(StandardCharsets.UTF_8));
+        cancellation.check();admitServerMemory();write(previous,new JSONObject().put("session_id",session).put("clean",false).toString().getBytes(StandardCharsets.UTF_8));
         PowerManager manager=(PowerManager)getSystemService(POWER_SERVICE);wake=manager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"coh:native-server");wake.acquire(6*60*60*1000L);
         long cleanupDeadline=0;
         try {
@@ -149,6 +160,10 @@ public final class ServerService extends Service {
             final java.lang.Process process=guest;
             Thread output=new Thread(()->readOutput(process),"coh-server-output");output.start();
             while(!process.waitFor(1,TimeUnit.SECONDS)){
+                if(!stopRequested&&!cancellation.isCancelled()&&serverMemory.observe(memorySample(),SystemClock.elapsedRealtime())){
+                    diagnostics.failure(session,"SERVER_MEMORY_SAFETY_STOP");ready=false;revoke();stopRequested=true;
+                    message="Server memory check requested cleanup; stopping the server and preserving the test profile.";event("server_memory_safety_stop");
+                }
                 if(stopRequested||cancellation.isCancelled()){
                     ready=false;revoke();if(cleanupDeadline==0){cleanupDeadline=SystemClock.elapsedRealtime()+120000;write(stop,"stop\n".getBytes(StandardCharsets.US_ASCII));}
                     if(SystemClock.elapsedRealtime()>=cleanupDeadline){message="Owned cleanup exceeded its deadline; export the report.";phase="cleanup_failed";awaitCleanup(process,cleanupDeadline);break;}
@@ -170,6 +185,56 @@ public final class ServerService extends Service {
             else {phase="cleanup_failed";message="Server cleanup could not be proved"+(failure.isEmpty()?"": " after "+failure)+". Preserve and export the report.";}
             event("server_process_exited");
         }catch(Exception failure){ready=false;revoke();if(guest!=null&&guest.isAlive()){try{write(stop,"stop\n".getBytes(StandardCharsets.US_ASCII));if(cleanupDeadline==0)cleanupDeadline=SystemClock.elapsedRealtime()+120000;awaitCleanup(guest,cleanupDeadline);}catch(Exception ignored){/* Marker blocks reuse until explicit recovery. */}}throw failure;}finally{diagnostics.finish(SystemClock.elapsedRealtime());ready=false;revoke();if(guest!=null&&!guest.isAlive())guest=null;}
+    }
+    private ServerMemoryPolicy.Sample memorySample(){
+        try{
+            ActivityManager manager=(ActivityManager)getSystemService(ACTIVITY_SERVICE);
+            ActivityManager.MemoryInfo info=new ActivityManager.MemoryInfo();manager.getMemoryInfo(info);
+            Runtime java=Runtime.getRuntime();
+            return new ServerMemoryPolicy.Sample(info.availMem,info.totalMem,info.threshold,info.lowMemory,java.totalMemory()-java.freeMemory(),java.maxMemory());
+        }catch(RuntimeException unavailable){return null;}
+    }
+    private void admitServerMemory()throws IOException{
+        if(!serverMemory.admit(memorySample(),SystemClock.elapsedRealtime())){
+            diagnostics.failure(session,"SERVER_MEMORY_ADMISSION_FAILED");
+            throw new IOException("Server startup stopped because available memory is low or unavailable. Close other apps and retry; imports and profile are preserved.");
+        }
+    }
+    private void collectProcessExits(){
+        if(Build.VERSION.SDK_INT<30){exitHistoryStatus="unsupported_before_android_11";return;}
+        JSONArray records=new JSONArray();
+        try{
+            ActivityManager manager=(ActivityManager)getSystemService(ACTIVITY_SERVICE);
+            for(ApplicationExitInfo item:manager.getHistoricalProcessExitReasons(getPackageName(),0,8)){
+                // Numeric OS evidence only: no process command, description or trace.
+                records.put(new JSONObject().put("reason",item.getReason()).put("status",item.getStatus()).put("timestamp_utc_ms",item.getTimestamp())
+                    .put("importance",item.getImportance()).put("pss_kib",item.getPss()).put("rss_kib",item.getRss()).put("low_memory",item.getReason()==ApplicationExitInfo.REASON_LOW_MEMORY));
+                if(records.length()==8)break;
+            }
+            processExits=records;exitHistoryStatus="collected";
+        }catch(RuntimeException|JSONException unavailable){processExits=records;exitHistoryStatus="unavailable";}
+    }
+    private void archiveAttempt(JSONObject app)throws IOException{
+        if(app==null||!"coh-native-combined-app-v1".equals(app.optString("schema"))||!getPackageName().equals(app.optString("package")))return;
+        JSONObject server=app==null?null:app.optJSONObject("server");
+        if(server==null||!server.optString("session_id").matches("[0-9a-f]{32}"))return;
+        String id=server.optString("session_id");
+        File file=new File(stateDir,"previous-attempts.json");JSONObject saved=readJson(file,2*1024*1024);
+        JSONArray old=saved==null?null:saved.optJSONArray("attempts"),next=new JSONArray();
+        try{
+            if(old!=null)for(int i=0;i<old.length();i++){JSONObject item=old.optJSONObject(i);if(item!=null&&id.equals(item.optString("session_id")))return;}
+            if(old!=null)for(int i=Math.max(0,old.length()-3);i<old.length();i++)if(old.optJSONObject(i)!=null)next.put(old.getJSONObject(i));
+            JSONObject entry=new JSONObject().put("session_id",id).put("app",app);
+            JSONObject guestReport=readJson(new File(stateDir,"latest-report.json"),256*1024);
+            if(guestReport!=null&&GuestDiagnostics.sameSession(id,guestReport.optString("session_id"))){
+                JSONObject readiness=guestReport.optJSONObject("server_readiness");if(readiness!=null)readiness.remove("account");
+                entry.put("guest",guestReport);
+            }
+            next.put(entry);
+            byte[] bytes=new JSONObject().put("format",1).put("maximum_attempts",4).put("attempts",next).toString(2).getBytes(StandardCharsets.UTF_8);
+            if(bytes.length>2*1024*1024)throw new IOException("Previous attempt evidence exceeds its bound");
+            write(file,bytes);
+        }catch(JSONException invalid){throw new IOException("Previous attempt evidence could not be preserved",invalid);}
     }
     private static void awaitCleanup(java.lang.Process process,long deadline)throws InterruptedException {
         if(waitUntil(process,deadline))return;

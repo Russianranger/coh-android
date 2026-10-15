@@ -1,0 +1,112 @@
+{
+  "schema": "coh-native-combined-app-v1",
+  "package": "org.coh.nativecombined",
+  "busy": false,
+  "runtime_ready": true,
+  "version_name": "0.1.1-local-server-native",
+  "version_code": 2,
+  "android_sdk": 33,
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "armeabi"
+  ],
+  "storage_available_bytes": 147737604096,
+  "server_start_available_bytes": 147761782784,
+  "imports": "Server payload: verified\nAssets 1.0.0 verified; reusable with this APK\nGame files: verified\nProfile: no logical dump imported",
+  "message": "Server failed: RETAINED_GUEST_DEPENDENCY_FAILED. Test profile preserved. Export report.",
+  "progress_done": 0,
+  "progress_total": 0,
+  "server": {
+    "phase": "failed",
+    "ready": false,
+    "session_id": "d2e72556378d4a64a47b75e50c07e570",
+    "guest_exit_code": 1,
+    "owned_process_alive": false,
+    "failure_code": "RETAINED_GUEST_DEPENDENCY_FAILED",
+    "last_stage": "local_dbserver_startup",
+    "elapsed_ms": 46026,
+    "stage_elapsed_ms": 9484,
+    "stages": [
+      {
+        "stage": "guest_starting",
+        "elapsed_ms": 0
+      },
+      {
+        "stage": "preflight_local_server_ports",
+        "elapsed_ms": 241
+      },
+      {
+        "stage": "server_only_input_admission",
+        "elapsed_ms": 242
+      },
+      {
+        "stage": "persistent_server_profile",
+        "elapsed_ms": 4049
+      },
+      {
+        "stage": "postgres_native_combined",
+        "elapsed_ms": 4753
+      },
+      {
+        "stage": "preflight_selected_map_port",
+        "elapsed_ms": 5662
+      },
+      {
+        "stage": "prepare_private_server_inputs",
+        "elapsed_ms": 5663
+      },
+      {
+        "stage": "presentation_display",
+        "elapsed_ms": 12707
+      },
+      {
+        "stage": "wine_initialization",
+        "elapsed_ms": 12930
+      },
+      {
+        "stage": "local_login_odbc",
+        "elapsed_ms": 23447
+      },
+      {
+        "stage": "local_dbserver_startup",
+        "elapsed_ms": 36542
+      }
+    ]
+  },
+  "local_development_auth": true,
+  "real_authserver_login_verified": false,
+  "native_live_world_verified": false,
+  "old_application_modified": false,
+  "updated_elapsed_ms": 597426645,
+  "events": [
+    {
+      "name": "starting",
+      "elapsed_ms": 597361655
+    },
+    {
+      "name": "operation_failed",
+      "elapsed_ms": 597361664
+    },
+    {
+      "name": "recovering",
+      "elapsed_ms": 597367315
+    },
+    {
+      "name": "interrupted_owner_recovered",
+      "elapsed_ms": 597367331
+    },
+    {
+      "name": "starting",
+      "elapsed_ms": 597370746
+    },
+    {
+      "name": "server_process_started",
+      "elapsed_ms": 597370774
+    },
+    {
+      "name": "server_process_exited",
+      "elapsed_ms": 597416785
+    }
+  ]
+}

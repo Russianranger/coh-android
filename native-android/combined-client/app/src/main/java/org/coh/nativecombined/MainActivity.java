@@ -83,7 +83,7 @@ public final class MainActivity extends Activity {
                 JSONObject combined=currentService!=null?currentService.snapshot():ServerService.readJson(new File(getFilesDir(),"combined-report.json"),2*1024*1024);
                 if(combined==null)throw new IOException("Launcher report unavailable");
                 zip.putNextEntry(new ZipEntry("combined-report.json"));zip.write(combined.toString(2).getBytes(StandardCharsets.UTF_8));zip.closeEntry();
-                for(String path:new String[]{"native-client-report.json","combined-server/latest-report.json"}){
+                for(String path:new String[]{"native-client-report.json","combined-server/latest-report.json","combined-server/previous-attempts.json"}){
                     File f=new File(getFilesDir(),path);if(!f.isFile()||f.length()>2*1024*1024)continue;
                     JSONObject report=ServerService.readJson(f,2*1024*1024);if(report==null)continue;
                     if(report.optJSONObject("server_readiness")!=null)report.getJSONObject("server_readiness").remove("account");

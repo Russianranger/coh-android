@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "source_report": "COH-NativeCombined-1792091522013.zip",
+  "source_report_sha256": "638977d8425d537cb660b79c2e1ec60541b705eef9513a0f55ac73bb51298693",
+  "installed_version": "0.1.1-local-server-native",
+  "user_reported_prior_attempt": "Android killed the program due to low memory; exact prior attempt is not retained in the uploaded ZIP",
+  "recorded_attempt_seconds": 46.026,
+  "recorded_failure": "RETAINED_GUEST_DEPENDENCY_FAILED",
+  "recorded_failing_guard": "server_fx_catalog._regular",
+  "reproduced_cause": "Pinned FX payload is writable with two hardlinks; donor rejects shared sources unless read-only. Same inode, pinned bytes and links pass after mode 0444.",
+  "cleanup_complete": true,
+  "profile_preserved": true,
+  "actual_server_interoperability_verified": false
+}

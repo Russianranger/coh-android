@@ -65,6 +65,7 @@ public final class RuntimeSetup {
                             ImportContract.Pin donor=contract.donorFiles.get("assets/runtime/"+name);
                             if(donor==null)throw new IOException("Runtime member is absent from every pinned input");same(pin,donor);
                             source=new File(imports.runtimePayloadDirectory(),name);
+                            ImportStore.sealVerified(source.toPath(),pin,control,progress);
                         }
                         ImportStore.verify(source.toPath(),pin,control,progress);
                         // Immutable app-private payloads share bytes across setup generations.
@@ -90,6 +91,48 @@ public final class RuntimeSetup {
                 // Never follow extracted guest symlinks during cancellation cleanup.
                 if(!published)try{RuntimeTarExtractor.remove(staging.toFile());}catch(IOException ignored){/* Unpublished setup remains unselectable and may be removed on explicit retry. */}
             }
+        }
+    }
+    /** Upgrade existing 0.1.0/0.1.1 inputs in place; profiles and runtime identity are unchanged. */
+    public File prepareForServer(ImportContract.Control control,ImportContract.Progress listener)throws Exception {
+        final ImportContract.Progress progress=listener==null?(phase,done,total)->{}:listener;
+        try(FileChannel channel=FileChannel.open(new File(home,"setup.lock").toPath(),StandardOpenOption.CREATE,StandardOpenOption.WRITE,LinkOption.NOFOLLOW_LINKS);FileLock lock=ImportStore.lock(channel)) {
+            control.check();if(!ready())throw new IOException("Complete runtime setup before starting the server");
+            SortedMap<String,ImportContract.Pin> candidates=new TreeMap<>();
+            for(Map.Entry<String,ImportContract.Pin> entry:contract.donorFiles.entrySet())candidates.put(new File(imports.runtimePayloadDirectory(),entry.getKey().substring("assets/runtime/".length())).getPath(),entry.getValue());
+            JSONObject files=contract.runtimeManifest.getJSONObject("files");
+            for(Iterator<String> names=files.keys();names.hasNext();){String name=names.next();ImportContract.safeLeaf(name);candidates.put(new File(generation,"assets/"+name).getPath(),ImportContract.pin(files.getJSONObject(name)));}
+            Path receipt=new File(generation,"immutable-inputs-v1.sha256").toPath();
+            boolean cached=ImportStore.regular(receipt,65)&&new String(Files.readAllBytes(receipt),StandardCharsets.US_ASCII).equals(identity+"\n");
+            if(cached){for(Map.Entry<String,ImportContract.Pin> entry:candidates.entrySet()){control.check();if(!ImportStore.readonly(Paths.get(entry.getKey()),entry.getValue())){cached=false;break;}}}
+            if(cached){progress.update("Immutable server inputs ready",1,1);return generation;}
+            // Verify every byte first. A bad pin or cancellation cannot seal a
+            // previously accepted inode or publish a migration receipt.
+            final LinkedHashMap<String,ImportStore.SealRecord> inodes=new LinkedHashMap<>();int checked=0;
+            for(Map.Entry<String,ImportContract.Pin> entry:candidates.entrySet()) {
+                control.check();Path path=Paths.get(entry.getKey());ImportContract.Pin pin=entry.getValue();android.system.StructStat current=ImportStore.immutableStat(path,pin);
+                String key=current.st_dev+":"+current.st_ino;ImportStore.SealRecord prior=inodes.get(key);
+                if(prior!=null){if(prior.pin.bytes!=pin.bytes||!prior.pin.sha256.equals(pin.sha256)||!ImportStore.sameState(prior.observed,current))throw new IOException("Shared immutable input pins or identities differ");prior.aliases.add(path);}
+                else inodes.put(key,ImportStore.verifyForSeal(path,pin,control,progress));
+                progress.update("Checking immutable file identities",++checked,candidates.size());
+            }
+            final Path temporary=new File(generation,".immutable-"+UUID.randomUUID()).toPath();
+            try {
+                control.publish(()->{
+                    List<ImportStore.SealRecord> changed=new ArrayList<>();
+                    try {
+                        for(ImportStore.SealRecord record:inodes.values())ImportStore.requireSealAliases(record,false);
+                        for(ImportStore.SealRecord record:inodes.values())if((record.observed.st_mode&0222)!=0){ImportStore.setSealMode(record,record.observed.st_mode&0555,true);changed.add(record);}
+                        for(ImportStore.SealRecord record:inodes.values())ImportStore.requireSealAliases(record,true);
+                        ImportStore.write(temporary,(identity+"\n").getBytes(StandardCharsets.US_ASCII));
+                        Files.move(temporary,receipt,StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);
+                    }catch(IOException failure){
+                        for(int i=changed.size()-1;i>=0;i--)try{ImportStore.setSealMode(changed.get(i),changed.get(i).observed.st_mode&0777,false);}catch(IOException ignored){/* Byte-preserving protection remains; no receipt is published. */}
+                        throw failure;
+                    }
+                });
+            } finally {Files.deleteIfExists(temporary);}
+            progress.update("Verified immutable server inputs protected",1,1);return generation;
         }
     }
     private RuntimeMemoryGuard memoryGuard(ImportContract.Control control,ImportContract.Progress progress) {

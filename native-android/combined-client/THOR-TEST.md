@@ -5,43 +5,46 @@ This is a new, separate app named **CoH Native Combined**
 0.1.0/0.2.0/0.3.0 apps and all existing assets and reports. Do not uninstall or
 clear their storage. Gates 22–24 remain accepted within their documented scope.
 
-## Current update: 0.1.1
+## Current update: 0.1.2
 
-Install `CoH-Native-Combined-0.1.1-arm64.apk` **over the existing Combined app**.
+Install `CoH-Native-Combined-0.1.2-arm64.apk` **over the existing Combined app**.
 The package and signing identity are unchanged. Keep its data; do not uninstall,
-clear storage, repeat the imports or repeat runtime setup. The failed 0.1.0
-report already confirms your imports and runtime setup completed successfully.
-
-Current ARM64 APK: 11,242,291 bytes, SHA256
-`278363e57b04148a4e5653026105873b164cab557fece651feb0d20ffad9f4ec`.
-The [qualified package artifact](https://github.com/Russianranger/coh-android/actions/runs/38790024223/artifacts/12000096595)
-contains the current ARM64 APK and receipts; use the ARM64 file for Thor.
-Guest runtime source: `d26253eaf38e254aadda7e1c18b4dfee39296dc8`.
-Exact CI client payload source: `623b51299f32cbc7d09195c039a63caaa9e06179`.
-Packaging/qualification source: `159a3a3ebb79c7e8173b2662331655d317037311`.
-See [QUALIFICATION.md](QUALIFICATION.md) for evidence and acceptance limits.
+clear storage, repeat the imports or repeat runtime setup. Both prior reports
+confirm the imports and runtime setup are already complete.
 
 For this retry:
 
-1. Stop the server in the conventional COH launcher. Leave its data installed.
+1. Stop the server in the conventional COH launcher. Close other memory-heavy
+   apps before starting this disposable server test.
 2. Install the update, open **CoH Native Combined**, then tap **Start server**.
-   Reuse the existing verified imports and preserved private test profile.
-3. Watch the stage and elapsed time. `LOCAL_SERVER_PORT_IN_USE` means a required
-   local port is occupied: stop the other server before retrying. This check now
-   runs before expensive server preparation.
+   The first start verifies and protects the existing immutable inputs in place.
+   This repair preserves their bytes, runtime identity and private test profile.
+   Subsequent starts reuse the protection receipt with bounded metadata checks.
+3. Watch the stage and elapsed time. If an interrupted ownership warning appears,
+   export the report, force-stop this test app, reopen it and tap **Recover
+   interrupted server**, then **Start server**. Recovery preserves the database.
 4. If readiness succeeds, tap **Launch native client**, then **Connect local
    server**. Follow the character and Map handoff checks below.
-5. Export the combined launcher's **report ZIP** after success or failure. It now
-   includes the specific error type/site, numeric OS error when available,
-   stage history, execution durations and free storage. A native preview JSON
-   alone does not contain server startup evidence.
+5. Export the combined launcher's **report ZIP** after success or failure. If
+   Android closes the app, reopen it and export before another retry. Reports
+   now include memory samples, available OS process-exit reasons and up to four
+   preceding attempts. A native preview JSON alone lacks server startup evidence.
 
-The old report shows successful PostgreSQL, Wine and both ODBC checks, followed
-by a failure before any DbServer/MapServer/TestClient process was recorded. It
-omitted the actual exception, so the exact device cause is still unproved.
-This update removes duplicate ODBC work, preserves successful Wine setup before
-later preparation and makes an unresolved failure diagnosable. Its speed and
-successful guest server startup still need the Thor retry.
+The recorded 0.1.1 attempt failed after 46.026 seconds before starting DbServer.
+The exact retained donor guard rejected a writable hardlinked FX payload; the
+pinned bytes are correct. The fix verifies those bytes and removes write bits
+from immutable inputs without weakening the original donor guard. The user also
+reported a preceding Android low-memory kill; its exact cause was not retained
+in that ZIP. Cold geometry admission now finishes in a reaped process before
+PostgreSQL and Wine start, reducing overlapping allocations. Startup admission
+and cooperative runtime memory monitoring are additional safeguards, not a
+promise that Android cannot kill the app. Successful ARM64 server boot still
+requires the Thor retry.
+
+The previous qualified 0.1.1 package remains available:
+11,242,291 bytes, SHA256
+`278363e57b04148a4e5653026105873b164cab557fece651feb0d20ffad9f4ec`,
+[0.1.1 package artifact](https://github.com/Russianranger/coh-android/actions/runs/38790024223/artifacts/12000096595).
 
 The original 0.1.0 APK and evidence remain preserved:
 11,493,783 bytes, SHA256

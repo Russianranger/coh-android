@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 import platform
 import re
+import resource
 import secrets
 import signal
 import shutil
@@ -226,6 +227,140 @@ def write_report(args, result):
         with contextlib.suppress(FileNotFoundError):
             os.unlink(temporary, dir_fd=directory)
         os.close(directory)
+
+
+def rss_kib():
+    """Linux VmRSS only; no process command lines or environment are read."""
+    try:
+        with Path('/proc/self/status').open() as source:
+            raw = source.read(16384)
+        value = re.search(r'(?m)^VmRSS:\s+([0-9]+) kB$', raw)
+        return int(value[1]) if value and int(value[1]) <= 8 * 1024 * 1024 else None
+    except OSError:
+        return None
+
+
+def geometry_worker_main(argv=None):
+    """Run the original cold manifest/geometry validator in disposable memory."""
+    parser = argparse.ArgumentParser(description='Internal original-geometry preparation worker')
+    parser.add_argument('--geometry-worker', action='store_true', required=True)
+    parser.add_argument('--guest-modules', type=Path, required=True)
+    parser.add_argument('--assets', type=Path, required=True)
+    parser.add_argument('--state', type=Path, required=True)
+    parser.add_argument('--worktree', type=Path, required=True)
+    parser.add_argument('--session-id', required=True)
+    parser.add_argument('--import-generation', required=True)
+    args = parser.parse_args(argv)
+    args.timeout_seconds = 900
+    result = {'type': 'geometry_prepared', 'format': 1, 'status': 'failed',
+              'server_processes_started': False}
+    try:
+        require(SESSION.fullmatch(args.session_id) and GENERATION.fullmatch(args.import_generation),
+                'INVALID_RUN_IDENTITY')
+        result.update(session_id=args.session_id, import_generation=args.import_generation)
+        require(args.guest_modules == args.assets, 'GUEST_MODULES_MUST_BE_VERIFIED_ASSETS')
+        for path in (args.assets, args.state, args.worktree):
+            real_private_path(path, directory=True)
+        load_guest_modules(args.guest_modules)
+        Context, _ = runtime_classes()
+        context = Context(args)
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            signal.signal(sig, lambda _sig, _frame: setattr(context, 'cancel_requested', True))
+        import atlas_beacon_package as beacons
+        # No altered module, compact substitute, or skipped source/archive pin.
+        receipt = beacons.ensure_required_geometry(args.worktree, args.assets, context)
+        require(not context.children and context.owned_start_attempts == 0,
+                'GEOMETRY_WORKER_STARTED_UNEXPECTED_CHILD')
+        identity = beacons.validate_required_geometry(args.worktree, context)
+        result.update(status=receipt['status'], input_files_checked=receipt['input_files_checked'],
+            required_geometry_sha256=identity['required_geometry_sha256'],
+            worker_peak_rss_kib=int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
+        print(json.dumps(result, separators=(',', ':')), flush=True)
+        return 0
+    except BaseException as exc:
+        result.update(failure_metadata(exc))
+        print(json.dumps(result, separators=(',', ':')), flush=True)
+        return 1
+
+
+def prepare_geometry_before_servers(owner):
+    """Join/reap the original cold validator before any PG or Wine residency."""
+    require(owner.pg is None and owner.xserver is None and not owner.wine_started,
+            'GEOMETRY_PREPARATION_REQUIRES_STOPPED_SERVERS')
+    assets = owner.args.assets
+    if not ((assets / 'atlas-beacons.zip').exists() or (assets / 'atlas-beacon-manifest.json').exists()):
+        return
+    context = owner.ctx
+    context.stage('isolated_required_geometry_preparation')
+    before = rss_kib()
+    started = time.monotonic()
+    import atlas_beacon_package as beacons
+    import client_visual_assets as visual
+    # Preserve the donor's fast warm path. Do not launch another interpreter
+    # when the original durable outputs and immutable source fingerprints match.
+    try:
+        identity = beacons.validate_required_geometry(owner.work, context)
+        saved = beacons.geometry_marker_state(owner.work)
+        warm_ready = saved.get('source_state') == visual.source_state(assets)
+    except (ValueError, FileNotFoundError):
+        warm_ready = False
+    if warm_ready:
+        warm = beacons.ensure_required_geometry(owner.work, assets, context)
+        require(warm.get('status') == 'reused_verified_required_geometry', 'GEOMETRY_WARM_REUSE_FAILED')
+        context.report['geometry_preparation'] = {
+            'policy': 'isolated_original_geometry_before_servers', 'worker_used': False,
+            'worker_reaped': True, 'before_postgresql': True, 'before_wine': True,
+            'worker_peak_rss_kib': 0, 'parent_rss_kib_before': before, 'parent_rss_kib_after': rss_kib(),
+            'elapsed_seconds': round(time.monotonic() - started, 3), 'status': warm['status'],
+            'input_files_checked': warm['input_files_checked'],
+            'required_geometry_sha256': identity['required_geometry_sha256']}
+        context.passed(original_geometry_reused_without_worker=True)
+        return
+    result = context.run('isolated-required-geometry', [sys.executable, str(Path(__file__).resolve()),
+        '--geometry-worker', '--guest-modules', str(assets), '--assets', str(assets),
+        '--state', str(owner.args.state), '--worktree', str(owner.work),
+        '--session-id', owner.args.session_id, '--import-generation', owner.args.import_generation],
+        timeout=900, env=owner.base_env, check=False,
+        progress_message='Preparing exact original geometry before starting the servers')
+    child = context.children[-1]
+    require(child.process.poll() is not None and not child.reader.is_alive() and not child.writer.is_alive(),
+            'GEOMETRY_PREPARATION_WORKER_NOT_REAPED')
+    receipts = []
+    for line in child.text().splitlines():
+        try:
+            value = json.loads(line)
+        except ValueError:
+            continue
+        if type(value) is dict and value.get('type') == 'geometry_prepared':
+            receipts.append(value)
+    require(len(receipts) == 1, 'GEOMETRY_PREPARATION_RECEIPT_MISSING')
+    receipt = receipts[0]
+    require(receipt.get('session_id') == owner.args.session_id
+            and receipt.get('import_generation') == owner.args.import_generation,
+            'GEOMETRY_PREPARATION_IDENTITY_DIFFERS')
+    require(result['exit_code'] == 0 and receipt.get('server_processes_started') is False
+            and receipt.get('status') in ('installed_verified_required_geometry', 'reused_verified_required_geometry'),
+            'GEOMETRY_PREPARATION_WORKER_FAILED')
+    import atlas_beacon_package as beacons
+    # Independent original durable/warm checks bind actual output fingerprints
+    # and exact original geometry digest after the high-memory child has exited.
+    warm = beacons.ensure_required_geometry(owner.work, assets, context)
+    require(warm.get('status') == 'reused_verified_required_geometry'
+            and beacons.validate_required_geometry(owner.work, context) == warm['identity'],
+            'GEOMETRY_PREPARATION_WARM_PROOF_FAILED')
+    require(receipt.get('required_geometry_sha256') == warm['identity']['required_geometry_sha256']
+            and receipt.get('input_files_checked') == warm['input_files_checked'],
+            'GEOMETRY_PREPARATION_OUTPUT_DIFFERS')
+    peak = receipt.get('worker_peak_rss_kib')
+    require(type(peak) is int and 0 <= peak <= 8 * 1024 * 1024, 'INVALID_GEOMETRY_MEMORY_RECEIPT')
+    context.report['geometry_preparation'] = {'policy': 'isolated_original_geometry_before_servers',
+        'worker_used': True, 'worker_reaped': True, 'before_postgresql': owner.pg is None,
+        'before_wine': not owner.wine_started, 'worker_peak_rss_kib': peak,
+        'parent_rss_kib_before': before, 'parent_rss_kib_after': rss_kib(),
+        'elapsed_seconds': round(time.monotonic() - started, 3), 'status': receipt['status'],
+        'input_files_checked': warm['input_files_checked'],
+        'required_geometry_sha256': warm['identity']['required_geometry_sha256']}
+    context.passed(geometry_preparation_worker_reaped=True)
 
 
 def runtime_classes():
@@ -612,10 +747,6 @@ def runtime_classes():
             require(identity['generation'] == self.args.import_generation, 'IMPORT_GENERATION_DIFFERS')
             self.ctx.report['import_identity'] = identity
             self.ctx.passed(import_generation_verified=True)
-            self.server.initialize()
-            self.ctx.stage('preflight_selected_map_port')
-            admit_local_port(self.server.destination['map_port'], socket.SOCK_DGRAM)
-            self.ctx.passed(selected_map_port_available=True)
             self.ctx.stage('prepare_private_server_inputs')
             self.work, receipt = startup.prepare_worktree(self.root, self.args.game_data,
                                                           self.args.assets, identity, self.ctx)
@@ -623,6 +754,11 @@ def runtime_classes():
             character.avatar.install(self.work, self.args.assets, self.ctx)
             character.world.install(self.work, self.args.assets, self.ctx)
             self.ctx.passed(original_game_data_preserved=True)
+            prepare_geometry_before_servers(self)
+            self.server.initialize()
+            self.ctx.stage('preflight_selected_map_port')
+            admit_local_port(self.server.destination['map_port'], socket.SOCK_DGRAM)
+            self.ctx.passed(selected_map_port_available=True)
 
         # Exact donor display/bootstrap path: no MSI installation or driver
         # probe here. LocalLoginServer.start retains the single original pair.
@@ -840,6 +976,8 @@ def main(argv=None):
         if context is not None:
             result['last_stage'] = context.stage_name
             result['processes'] = context.report['processes']
+            if 'geometry_preparation' in context.report:
+                result['geometry_preparation'] = context.report['geometry_preparation']
             stages = context.report.get('stages', [])[-128:]
             if stages and context.stage_started_monotonic is not None:
                 stages[-1].setdefault('elapsed_seconds', round(time.monotonic() - context.stage_started_monotonic, 3))
@@ -871,4 +1009,6 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
+    if '--geometry-worker' in sys.argv[1:]:
+        sys.exit(geometry_worker_main())
     sys.exit(main())

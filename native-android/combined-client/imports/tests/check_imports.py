@@ -11,6 +11,10 @@ import subprocess
 import tempfile
 import tarfile
 import io
+import argparse
+import os
+import sys
+import zipfile
 
 ROOT=Path(__file__).resolve().parents[4]
 JAVA=ROOT/'combined-client/app/src/main/java/org/coh/nativecombined'
@@ -20,7 +24,11 @@ STUBS={
 'android/app/ActivityManager.java':'''package android.app;public class ActivityManager {public static class MemoryInfo {public long availMem=16L<<30,totalMem=16L<<30,threshold=0;public boolean lowMemory;}public void getMemoryInfo(MemoryInfo m){}}''',
 'android/os/Build.java':'''package android.os;public class Build {public static String[] SUPPORTED_ABIS={"arm64-v8a"};}''',
 'android/os/SystemClock.java':'''package android.os;public class SystemClock {public static long uptimeMillis(){return System.nanoTime()/1000000;}}''',
-'android/system/Os.java':'''package android.system;import java.nio.file.*;public class Os {public static void chmod(String name,int mode){}public static void symlink(String target,String name)throws Exception{Files.createSymbolicLink(Paths.get(name),Paths.get(target));}}''',
+'android/system/ErrnoException.java':'''package android.system;public class ErrnoException extends Exception {public ErrnoException(Exception e){super(e);}}''',
+'android/system/StructStat.java':'''package android.system;public class StructStat {public long st_dev,st_ino,st_size,st_nlink,st_mtime,st_ctime;public int st_uid,st_mode;}''',
+'android/system/OsConstants.java':'''package android.system;public class OsConstants {public static final int O_RDONLY=0,O_NOFOLLOW=1;public static boolean S_ISREG(int mode){return (mode&0170000)==0100000;}}''',
+'android/os/Process.java':'''package android.os;import java.nio.file.*;public class Process {public static int myUid(){try{return ((Number)Files.getAttribute(Paths.get("."),"unix:uid")).intValue();}catch(Exception e){throw new RuntimeException(e);}}}''',
+'android/system/Os.java':'''package android.system;import java.io.*;import java.nio.file.*;import java.nio.file.attribute.*;import java.util.*;public class Os {static final Map<FileDescriptor,FileInputStream> inputs=new IdentityHashMap<>();static final Set<FileDescriptor> cloexec=Collections.newSetFromMap(new IdentityHashMap<FileDescriptor,Boolean>());static final Map<FileDescriptor,String> paths=new IdentityHashMap<>();public static StructStat lstat(String name)throws ErrnoException{try{Path p=Paths.get(name);Map<String,Object>a=Files.readAttributes(p,"unix:*",LinkOption.NOFOLLOW_LINKS);StructStat s=new StructStat();s.st_dev=((Number)a.get("dev")).longValue();s.st_ino=((Number)a.get("ino")).longValue();s.st_size=((Number)a.get("size")).longValue();s.st_nlink=((Number)a.get("nlink")).longValue();s.st_uid=((Number)a.get("uid")).intValue();s.st_mode=((Number)a.get("mode")).intValue();s.st_mtime=((FileTime)a.get("lastModifiedTime")).toMillis()/1000;s.st_ctime=((FileTime)a.get("ctime")).toMillis()/1000;return s;}catch(Exception e){throw new ErrnoException(e);}}public static FileDescriptor open(String name,int flags,int mode)throws ErrnoException{try{if((flags&0x80000)==0)throw new IOException("close-on-exec must be atomic at open");if(Files.isSymbolicLink(Paths.get(name)))throw new IOException("nofollow");FileInputStream in=new FileInputStream(name);FileDescriptor fd=in.getFD();inputs.put(fd,in);paths.put(fd,name);cloexec.add(fd);return fd;}catch(Exception e){throw new ErrnoException(e);}}public static int read(FileDescriptor fd,byte[] b,int offset,int count)throws ErrnoException{try{if(!cloexec.contains(fd))throw new IOException("descriptor not close-on-exec before read");int n=inputs.get(fd).read(b,offset,count);return n<0?0:n;}catch(Exception e){throw new ErrnoException(e);}}public static void close(FileDescriptor fd)throws ErrnoException{try{inputs.remove(fd).close();paths.remove(fd);cloexec.remove(fd);}catch(Exception e){throw new ErrnoException(e);}}public static int openHandles(){return inputs.size();}public static StructStat fstat(FileDescriptor fd)throws ErrnoException{return lstat(paths.get(fd));}public static void fchmod(FileDescriptor fd,int mode)throws ErrnoException{if(!cloexec.contains(fd))throw new ErrnoException(new IOException("descriptor not close-on-exec before chmod"));chmod(paths.get(fd),mode);}public static void chmod(String name,int mode)throws ErrnoException{try{Set<PosixFilePermission>s=EnumSet.noneOf(PosixFilePermission.class);PosixFilePermission[] v={PosixFilePermission.OWNER_READ,PosixFilePermission.OWNER_WRITE,PosixFilePermission.OWNER_EXECUTE,PosixFilePermission.GROUP_READ,PosixFilePermission.GROUP_WRITE,PosixFilePermission.GROUP_EXECUTE,PosixFilePermission.OTHERS_READ,PosixFilePermission.OTHERS_WRITE,PosixFilePermission.OTHERS_EXECUTE};int[]b={0400,0200,0100,0040,0020,0010,0004,0002,0001};for(int i=0;i<v.length;i++)if((mode&b[i])!=0)s.add(v[i]);Files.setPosixFilePermissions(Paths.get(name),s);}catch(Exception e){throw new ErrnoException(e);}}public static void symlink(String target,String name)throws Exception{Files.createSymbolicLink(Paths.get(name),Paths.get(target));}}''',
 'org/json/JSONObject.java':'''package org.json;import java.util.*;public class JSONObject {static final Map<String,JSONObject> encoded=new HashMap<>();private final Map<String,Object> values=new LinkedHashMap<>();public JSONObject(){}public JSONObject(String text){JSONObject known=encoded.get(text);if(known==null)throw new IllegalArgumentException("Invalid fixture JSON");values.putAll(known.values);}public JSONObject put(String n,Object v){values.put(n,v);return this;}public int getInt(String n){return ((Number)values.get(n)).intValue();}public long getLong(String n){return ((Number)values.get(n)).longValue();}public String getString(String n){return (String)values.get(n);}public JSONObject getJSONObject(String n){return (JSONObject)values.get(n);}public boolean has(String n){return values.containsKey(n);}public Iterator<String> keys(){return values.keySet().iterator();}public String toString(){String key="fixture-json-"+encoded.size();encoded.put(key,this);return key;}}''',
 'io/github/russianranger/cohdiagnostic/AssetPackStore.java':'''package io.github.russianranger.cohdiagnostic;import java.io.*;import android.content.Context;import org.json.JSONObject;public class AssetPackStore {public static boolean accepted;public interface Check {void check()throws IOException;}public interface Progress {void update(String n,long a,long b);}public AssetPackStore(Context c,JSONObject m,Check k,Progress p){}public String status(){return "fixture assets pending";}public boolean isAccepted(){return accepted;}public String importVolume(InputStream i)throws IOException{i.close();return "fixture";}public boolean contains(String p){return false;}public InputStream open(String p)throws IOException{throw new FileNotFoundException(p);}public File resolve(String p)throws IOException{throw new FileNotFoundException(p);}}''',
 'io/github/russianranger/cohatlas/AtlasAssetImporter.java':'''package io.github.russianranger.cohatlas;import java.io.*;public class AtlasAssetImporter {public static File fixtureData;public interface Assets {InputStream open(String n)throws IOException;}public interface Progress {void update(String n,long a,long b,long c,long d);}public static class Control {public boolean requestCancel(){return true;}}public static class Summary {public File dataDirectory;}public AtlasAssetImporter(File f,Assets a){}public Summary inspect(){if(fixtureData==null)return null;Summary s=new Summary();s.dataDirectory=fixtureData;return s;}public Summary importArchive(InputStream i,Progress p,Control c){return null;}}''',
@@ -47,7 +55,7 @@ public final class ImportsHost {
  public static void main(String[] args)throws Exception {
   File root=new File(args[0]);byte[] body=bytes("verified payload"),apk=zip("assets/runtime/test.bin",body);Context c=context(new File(root,"main"),apk,body);
   ImportStore store=new ImportStore(c,(p,d,t)->{});need(!store.donorReady(),"fresh donor ready");int[] closed={0};store.importDonorApk(owned(apk,closed),new ImportContract.Control());need(closed[0]==1&&store.donorReady(),"donor not atomically accepted");
-  File member=new File(store.runtimePayloadDirectory(),"test.bin");need(Arrays.equals(body,Files.readAllBytes(member.toPath())),"wrong donor bytes");
+  File member=new File(store.runtimePayloadDirectory(),"test.bin");need(Arrays.equals(body,Files.readAllBytes(member.toPath())),"wrong donor bytes");need((android.system.Os.lstat(member.toString()).st_mode&0222)==0,"new donor input was not protected before sharing");
   byte[] before=Files.readAllBytes(member.toPath());byte[] wrong=apk.clone();wrong[wrong.length/2]^=1;closed[0]=0;final int[] badClose=closed;fail(()->store.importDonorApk(owned(wrong,badClose),new ImportContract.Control()));need(closed[0]==1&&store.donorReady()&&Arrays.equals(before,Files.readAllBytes(member.toPath())),"failed donor replaced accepted data");
   ImportContract.Control cancelled=new ImportContract.Control();cancelled.cancel();closed[0]=0;final int[] cancelClose=closed;fail(()->store.importDonorApk(owned(apk,cancelClose),cancelled));need(closed[0]==1&&store.donorReady(),"cancel changed donor");
   closed[0]=0;store.importDonorApk(owned(apk,closed),new ImportContract.Control());need(closed[0]==1&&store.donorReady(),"repeat donor not reused");
@@ -75,8 +83,32 @@ public final class ImportsHost {
   io.github.russianranger.cohdiagnostic.AssetPackStore.accepted=true;io.github.russianranger.cohatlas.AtlasAssetImporter.fixtureData=new File(root,"fake-game/data");
   RuntimeSetup actual=new RuntimeSetup(setupContext,setupImports);File installed=actual.setup(new ImportContract.Control(),null);need(actual.ready(),"real small tar setup not activated");need(new File(installed,"rootfs/usr/bin/python3").isFile()&&new File(installed,"pg/opt/coh/pgsql/bin/postgres").isFile(),"runtime files not extracted");
   Object importedInode=Files.getAttribute(new File(setupImports.runtimePayloadDirectory(),"test.bin").toPath(),"unix:ino"),stagedInode=Files.getAttribute(new File(installed,"assets/test.bin").toPath(),"unix:ino");need(importedInode.equals(stagedInode),"runtime generation copied immutable asset bytes");
-  need(actual.setup(new ImportContract.Control(),null).equals(installed),"repeat setup changed generation");fail(()->actual.setup(cancelled,null));need(actual.ready(),"cancelled repeat setup discarded ready generation");
+  need(actual.setup(new ImportContract.Control(),null).equals(installed),"repeat setup changed generation");
+  // Recreate the old 0.1.1 writable donor/hard-link layout without changing bytes.
+  Path donorInput=new File(setupImports.runtimePayloadDirectory(),"test.bin").toPath(),runtimeInput=new File(installed,"assets/test.bin").toPath();
+  android.system.Os.chmod(donorInput.toString(),0600);need(!ImportStore.readonly(runtimeInput,new ImportContract.Pin(body.length,ImportContract.hex(ImportContract.hash().digest(body)))),"old writable layout fixture missing");
+  Path preservedProfile=new File(setupContext.getFilesDir(),"profile-sentinel").toPath();Files.write(preservedProfile,bytes("profile unchanged"));
+  fail(()->actual.prepareForServer(cancelled,null));need((android.system.Os.lstat(runtimeInput.toString()).st_mode&0222)!=0,"cancelled repair changed an active inode");
+  need(!new File(installed,"immutable-inputs-v1.sha256").exists(),"cancelled repair published receipt");
+  ImportContract.Control midRepair=new ImportContract.Control();fail(()->actual.prepareForServer(midRepair,(phase,done,total)->{if(phase.equals("Checking immutable file identities"))midRepair.cancel();}));
+  need((android.system.Os.lstat(runtimeInput.toString()).st_mode&0222)!=0&&!new File(installed,"immutable-inputs-v1.sha256").exists(),"mid-verification cancellation protected an active inode");
+  Object oldInode=Files.getAttribute(runtimeInput,"unix:ino");actual.prepareForServer(new ImportContract.Control(),null);
+  need(ImportStore.readonly(runtimeInput,new ImportContract.Pin(body.length,ImportContract.hex(ImportContract.hash().digest(body)))),"repair did not protect shared runtime input");
+  need(ImportStore.readonly(donorInput,new ImportContract.Pin(body.length,ImportContract.hex(ImportContract.hash().digest(body)))),"repair did not protect donor inode");
+  need(oldInode.equals(Files.getAttribute(runtimeInput,"unix:ino"))&&oldInode.equals(Files.getAttribute(donorInput,"unix:ino")),"repair replaced shared inode");
+  need(Arrays.equals(body,Files.readAllBytes(runtimeInput)),"repair changed pinned bytes");
+  Path sealReceipt=new File(installed,"immutable-inputs-v1.sha256").toPath();need(Files.isRegularFile(sealReceipt),"successful repair receipt absent");
+  Object receiptInode=Files.getAttribute(sealReceipt,"unix:ino");actual.prepareForServer(new ImportContract.Control(),null);need(receiptInode.equals(Files.getAttribute(sealReceipt,"unix:ino")),"repeat repair rewrote receipt");
+  need(new String(Files.readAllBytes(preservedProfile),"UTF-8").equals("profile unchanged"),"repair touched profile");
+  // A writable damaged input must fail full verification before any chmod.
+  Files.delete(sealReceipt);android.system.Os.chmod(donorInput.toString(),0600);Files.write(donorInput,bytes("bad-payload-size"));
+  fail(()->actual.prepareForServer(new ImportContract.Control(),null));need((android.system.Os.lstat(donorInput.toString()).st_mode&0222)!=0,"bad-pin repair changed mode");need(!Files.exists(sealReceipt),"bad-pin repair published receipt");
+  Files.write(donorInput,body);actual.prepareForServer(new ImportContract.Control(),null);
+  // Cached preparation must still refuse a link replacing a target.
+  Files.delete(runtimeInput);Files.createSymbolicLink(runtimeInput,donorInput);fail(()->actual.prepareForServer(new ImportContract.Control(),null));Files.delete(runtimeInput);Files.createLink(runtimeInput,donorInput);
+fail(()->actual.setup(cancelled,null));need(actual.ready(),"cancelled repeat setup discarded ready generation");
   Files.delete(new File(installed,"assets/test.bin").toPath());Files.write(new File(installed,"assets/test.bin").toPath(),bytes("damaged"));fail(()->actual.setup(new ImportContract.Control(),null));need(actual.ready(),"failed verification removed previous receipt");need(Arrays.equals(body,Files.readAllBytes(new File(setupImports.runtimePayloadDirectory(),"test.bin").toPath())),"runtime damage changed immutable donor inode");
+  need(android.system.Os.openHandles()==0,"immutable input native descriptor leaked");
   System.out.println("combined import controls passed: "+checks);
  }
 }
@@ -107,6 +139,7 @@ public final class CanonicalPathsHost {
 '''
 
 def main():
+    parser=argparse.ArgumentParser();parser.add_argument("--donor-apk",type=Path);args=parser.parse_args()
     root=Path(__file__).resolve().parents[2]
     repo=root.parents[1]
     source=root/'app/src/main/java/org/coh/nativecombined'
@@ -139,6 +172,30 @@ def main():
             'storage.reserve.bytes':str(256*1024*1024),'storage.per.file.bytes':'4096'}
         atlas_properties=temp/'atlas-import.properties';atlas_properties.write_text(''.join(f'{k}={v}\n' for k,v in properties.items()).replace('\\n','\n'))
         subprocess.run(['java','-cp',str(canonical),'org.coh.nativecombined.CanonicalPathsHost',str(temp/'canonical-files'),str(atlas_properties)],check=True)
+        if args.donor_apk:
+            expected_apk='14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f'
+            with args.donor_apk.open('rb') as stream:assert hashlib.file_digest(stream,'sha256').hexdigest()==expected_apk
+            with zipfile.ZipFile(args.donor_apk) as archive:
+                raw=archive.read('assets/runtime/server-fx-catalog.bin')
+                assert archive.read('assets/runtime/server_fx_catalog.py')==(repo/'android/guest/server_fx_catalog.py').read_bytes()
+            seal_host=temp/'org/coh/nativecombined/SealActualHost.java'
+            seal_host.write_text('package org.coh.nativecombined;import java.nio.file.*;public class SealActualHost {public static void main(String[]a)throws Exception {ImportStore.sealVerified(Paths.get(a[0]),new ImportContract.Pin(Long.parseLong(a[1]),a[2]),new ImportContract.Control(),(p,d,t)->{});}}')
+            subprocess.run(['java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8','-cp',str(classes),'-d',str(classes),str(seal_host)],check=True)
+            original_path=list(sys.path);sys.path.insert(0,str(repo/'android/guest'))
+            try:
+                import server_fx_catalog as fx
+                assert len(raw)==fx.PROJECTED['bytes'] and hashlib.sha256(raw).hexdigest()==fx.PROJECTED['sha256']
+                donor_file=temp/'actual-fx.bin';runtime_file=temp/'actual-fx-link.bin';donor_file.write_bytes(raw);os.chmod(donor_file,0o600);os.link(donor_file,runtime_file)
+                inode=donor_file.stat().st_ino
+                try:fx._regular(runtime_file,len(raw),shared_source=True)
+                except ValueError:pass
+                else:raise AssertionError('Pinned FX guard accepted the old writable hard-link fixture')
+                subprocess.run(['java','-cp',str(classes),'org.coh.nativecombined.SealActualHost',str(donor_file),str(len(raw)),hashlib.sha256(raw).hexdigest()],check=True)
+                fx._regular(runtime_file,len(raw),shared_source=True)
+                assert donor_file.stat().st_ino==runtime_file.stat().st_ino==inode and donor_file.read_bytes()==raw
+                print('Exact donor FX guard: writable shared inode rejected; production Java readonly seal accepted unchanged inode and bytes')
+            finally:sys.path[:]=original_path
+
         original=(repo/'android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java').read_text()
         adapted=(root/'imports/src/org/coh/nativecombined/RuntimeTarExtractor.java').read_text()
         expected=original.replace('package io.github.russianranger.cohdiagnostic;','package org.coh.nativecombined;\n').replace('final class TarExtractor {','final class RuntimeTarExtractor {').replace('SetupMemoryGuard','RuntimeMemoryGuard')

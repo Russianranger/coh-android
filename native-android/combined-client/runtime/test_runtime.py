@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Host admission/lifecycle contract tests; no server-interoperability claim."""
 import contextlib
+import hashlib
 import importlib.util
 import io
 import inspect
@@ -8,9 +9,13 @@ import json
 import math
 import os
 import socket
+import sys
 import time
+import threading
 from pathlib import Path
 import tempfile
+import textwrap
+import zipfile
 from types import SimpleNamespace
 import unittest
 from unittest import mock
@@ -417,6 +422,152 @@ class RetainedSourceContractTests(unittest.TestCase):
             with self.assertRaisesRegex(runtime.AdmissionError, 'INVALID_REPORT_OUTPUT'):
                 runtime.write_report(args, {'format': 1})
             self.assertEqual(target.read_text(), 'original')
+
+    def test_geometry_preparation_refuses_resident_server_processes(self):
+        for pg, display, wine in ((object(), None, False), (None, object(), False), (None, None, True)):
+            owner = SimpleNamespace(pg=pg, xserver=display, wine_started=wine)
+            with self.assertRaisesRegex(runtime.AdmissionError, 'GEOMETRY_PREPARATION_REQUIRES_STOPPED_SERVERS'):
+                runtime.prepare_geometry_before_servers(owner)
+
+    def test_initialize_prepares_geometry_before_postgresql(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            args = SimpleNamespace(assets=root, wine=root/'wine', wineserver=root/'wineserver',
+                game_data=root/'data', import_generation='generation-'+'b'*32)
+            ctx = self.Context(SimpleNamespace(state=root, timeout_seconds=600, session_id='a'*32))
+            owner = self.Owner.__new__(self.Owner)
+            owner.args=args; owner.ctx=ctx; owner.root=root
+            owner.pg=None; owner.xserver=None; owner.wine_started=False
+            order=[]
+            def geometry(actual):
+                self.assertIs(actual, owner)
+                self.assertIsNone(owner.pg)
+                self.assertFalse(owner.wine_started)
+                order.append('geometry')
+            def postgres():
+                order.append('postgres')
+                owner.pg=object()
+            owner.server=SimpleNamespace(initialize=postgres, destination={'map_port':7001})
+            with mock.patch.object(runtime, 'admit_local_port'), \
+                 mock.patch.object(runtime.platform, 'machine', return_value='aarch64'), \
+                 mock.patch.object(runtime.os, 'geteuid', return_value=1000), \
+                 mock.patch.object(runtime.startup, 'verify_assets', return_value={}), \
+                 mock.patch.object(runtime.base, 'arm64_elf'), \
+                 mock.patch.object(runtime.startup, 'import_identity', return_value={'generation':args.import_generation}), \
+                 mock.patch.object(runtime.startup, 'prepare_worktree', return_value=(root,{})), \
+                 mock.patch.object(runtime.character.avatar, 'install'), \
+                 mock.patch.object(runtime.character.world, 'install'), \
+                 mock.patch.object(runtime, 'prepare_geometry_before_servers', side_effect=geometry), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                owner.initialize()
+            self.assertEqual(order, ['geometry','postgres'])
+
+    def test_owned_geometry_child_original_cold_warm_and_tamper_oracle(self):
+        # Synthetic selected GEO bytes exercise the unchanged original install,
+        # ZIP, digest, immutable-output and cache-receipt functions. Only fixture
+        # metadata pins differ; this does not qualify original native geometry.
+        import atlas_beacon_package as beacons
+        import client_visual_assets as visual
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary); assets=root/'assets';assets.mkdir()
+            work=root/'work';work.mkdir();(work/'data').mkdir()
+            (work/'data/object_library/fixture').mkdir(parents=True)
+            (work/'client-work.json').write_text('{"fixture":"protected-worktree"}')
+            state=root/'state';state.mkdir()
+            (assets/'atlas-beacons.zip').write_bytes(b'fixture presence marker')
+            payloads={'data/object_library/fixture/g%d.geo'%i:('fixture geometry %d'%i).encode()
+                      for i in range(beacons.REQUIRED_GEOS)}
+            files={name:{'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
+                   for name,raw in payloads.items()}
+            document={'files':files}
+            (assets/visual.MANIFEST).write_text(json.dumps(document,sort_keys=True,separators=(',',':')))
+            with zipfile.ZipFile(assets/visual.ARCHIVE,'w',zipfile.ZIP_DEFLATED) as archive:
+                for name,raw in payloads.items():
+                    entry=zipfile.ZipInfo(name);entry.compress_type=zipfile.ZIP_DEFLATED
+                    entry.external_attr=(0o100444)<<16
+                    archive.writestr(entry,raw)
+            geometry_sha=hashlib.sha256(beacons.canonical(files)).hexdigest()
+            harness=root/'worker_oracle.py'
+            harness.write_text(textwrap.dedent("""
+                import importlib.util,sys,json,hashlib
+                from pathlib import Path
+                spec=importlib.util.spec_from_file_location('runtime_oracle',sys.argv[1])
+                runtime=importlib.util.module_from_spec(spec);spec.loader.exec_module(runtime)
+                runtime.load_guest_modules(Path(sys.argv[2]))
+                import atlas_beacon_package as beacons, client_visual_assets as visual
+                assets=Path(sys.argv[3]);document=json.loads((assets/visual.MANIFEST).read_text())
+                beacons.REQUIRED_GEOMETRY_SHA256=hashlib.sha256(beacons.canonical(document['files'])).hexdigest()
+                visual.ARCHIVE_BYTES=(assets/visual.ARCHIVE).stat().st_size
+                visual.FILE_COUNT=len(document['files'])
+                visual.package=lambda path:document
+                runtime.load_guest_modules=lambda path:None
+                sys.exit(runtime.geometry_worker_main(sys.argv[4:]))
+            """))
+            args=SimpleNamespace(assets=assets,state=state,session_id='a'*32,
+                                 import_generation='generation-'+'b'*32)
+            ctx=self.Context(SimpleNamespace(state=state,timeout_seconds=600,session_id=args.session_id))
+            owner=SimpleNamespace(pg=None,xserver=None,wine_started=False,args=args,
+                                  work=work,ctx=ctx,base_env=os.environ.copy())
+            run_original=ctx.run
+            def run(label,argv,**kwargs):
+                self.assertEqual(label,'isolated-required-geometry')
+                self.assertIn('--geometry-worker',argv)
+                self.assertIsNone(owner.pg);self.assertFalse(owner.wine_started)
+                command=[sys.executable,str(harness),str(HERE/'server_runtime.py'),
+                         str(Path(runtime.startup.__file__).parent),str(assets),*argv[2:]]
+                return run_original(label,command,**kwargs)
+            ctx.run=run
+            with mock.patch.object(beacons,'REQUIRED_GEOMETRY_SHA256',geometry_sha), \
+                 mock.patch.object(visual,'ARCHIVE_BYTES',(assets/visual.ARCHIVE).stat().st_size), \
+                 mock.patch.object(visual,'FILE_COUNT',len(files)), \
+                 mock.patch.object(visual,'package',side_effect=AssertionError('Parent must not load full metadata')), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                runtime.prepare_geometry_before_servers(owner)
+                first=ctx.report['geometry_preparation'].copy()
+                self.assertTrue(first['worker_used']);self.assertTrue(first['worker_reaped'])
+                self.assertEqual(first['input_files_checked'],beacons.REQUIRED_GEOS)
+                self.assertEqual(len(ctx.children),1)
+                self.assertEqual(beacons.validate_required_geometry(work,ctx)['required_geometry_sha256'],geometry_sha)
+                for child in ctx.children:
+                    self.assertIsNotNone(child.process.poll())
+                    self.assertFalse(child.reader.is_alive());self.assertFalse(child.writer.is_alive())
+                runtime.prepare_geometry_before_servers(owner)
+                self.assertFalse(ctx.report['geometry_preparation']['worker_used'])
+                self.assertEqual(len(ctx.children),1)
+                target=work/next(iter(files));target.chmod(0o600);target.write_bytes(b'tampered')
+                with self.assertRaises((runtime.AdmissionError,runtime.base.DiagnosticError)):
+                    runtime.prepare_geometry_before_servers(owner)
+                self.assertEqual(target.read_bytes(),b'tampered')
+                self.assertTrue(all(child.process.poll() is not None for child in ctx.children))
+
+    def test_stop_during_owned_geometry_worker_reaps_real_child(self):
+        import atlas_beacon_package as beacons
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary);(root/'atlas-beacons.zip').write_bytes(b'presence')
+            args=SimpleNamespace(assets=root,state=root,session_id='a'*32,
+                                 import_generation='generation-'+'b'*32)
+            ctx=self.Context(SimpleNamespace(state=root,timeout_seconds=600,session_id=args.session_id))
+            owner=SimpleNamespace(pg=None,xserver=None,wine_started=False,args=args,
+                                  work=root,ctx=ctx,base_env=os.environ.copy())
+            original=ctx.run
+            def run(label,argv,**kwargs):
+                return original(label,[sys.executable,'-c','import time; time.sleep(30)'],**kwargs)
+            ctx.run=run
+            timer=threading.Timer(.15,lambda:setattr(ctx,'cancel_requested',True))
+            with mock.patch.object(beacons,'validate_required_geometry',side_effect=ValueError('cold fixture')), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                timer.start()
+                try:
+                    with self.assertRaises(runtime.base.Cancelled):
+                        runtime.prepare_geometry_before_servers(owner)
+                finally:
+                    timer.cancel();timer.join()
+            self.assertEqual(len(ctx.children),1)
+            child=ctx.children[0]
+            self.assertIsNotNone(child.process.poll())
+            self.assertFalse(child.reader.is_alive());self.assertFalse(child.writer.is_alive())
+            self.assertNotIn('geometry_preparation',ctx.report)
+            self.assertIsNone(owner.pg);self.assertFalse(owner.wine_started)
 
     def test_private_sql_record_not_exported_or_logged(self):
         args = SimpleNamespace(state=Path('/unused'), timeout_seconds=600, session_id='a' * 32)
