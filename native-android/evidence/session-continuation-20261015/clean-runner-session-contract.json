@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "checks": 45,
+  "encrypted_netlink_contract": true,
+  "replication_authorization_guard": true,
+  "real_server": false,
+  "authenticated_account": false,
+  "live_world": false
+}

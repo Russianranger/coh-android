@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "native_runtime_source_commit": "01979b1ebc7d13c3051e9550855968812d6b4af1",
+  "failed_hosted_runs": [
+    38695968808,
+    38696210944
+  ],
+  "host_failure": "Audio default fixture directories pointed at recovered scratch; absent on clean runner. Network/auth/replication passed.",
+  "audio_scope_fix": "Corpus checking requires explicit pair of --audio-codec-root and --audio-asset-root; otherwise explicit --no-authentic source/lifecycle tests. Prior authentic worker receipts preserved.",
+  "local_lsan_fix": "Recognize known ptrace task-enumeration failure without hiding real leak or address errors.",
+  "boundary_schema_fix": "Validate exact typed explicit C socket invariants after zero process exit; driver did not emit generic passed field.",
+  "boundary_validation": "Actual host socket report accepted; missing or changed keys and generic passed-only report rejected.",
+  "local_clean_runner_qualification_passed": true,
+  "arm64_library_unchanged": true,
+  "arm64_library_sha256": "0c1b6849503de70f4767a1ed9d69f17e7e85e08f2f638b1eb34edc99cb67b5e4",
+  "actual_server_interoperability": false
+}

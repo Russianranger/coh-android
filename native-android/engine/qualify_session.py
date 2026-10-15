@@ -24,7 +24,11 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--ndk', type=Path)
     parser.add_argument('--sanitize', action='store_true')
+    parser.add_argument('--audio-codec-root', type=Path)
+    parser.add_argument('--audio-asset-root', type=Path)
     args = parser.parse_args()
+    if bool(args.audio_codec_root) != bool(args.audio_asset_root):
+        parser.error('Authentic audio checking requires both audio corpus directories')
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     root = args.source_root.resolve()
@@ -35,6 +39,15 @@ def main():
                    '--source-root', str(root), '--output', str(output/(module+'.json'))]
         if args.sanitize:
             command += ['--sanitize']
+        if module == 'audio':
+            if args.audio_codec_root:
+                command += ['--codec-root', str(args.audio_codec_root.resolve()),
+                            '--asset-root', str(args.audio_asset_root.resolve())]
+            else:
+                # Clean runners do not possess the recovered proprietary
+                # corpus. Require an explicit partial scope instead of
+                # accidentally depending on another task's scratch defaults.
+                command += ['--no-authentic']
         start = time.monotonic()
         with (output/(module+'.log')).open('w') as log:
             try:
@@ -63,6 +76,7 @@ def main():
                'actual_server_interoperability_verified': False,
                'authenticated_account': False, 'live_world_session': False,
                'accepted_apk_rebuilt': False}
+    summary['authentic_audio_corpus_requested'] = bool(args.audio_codec_root)
     try:
         if summary['passed']:
             sources = [ENGINE/p for p in [

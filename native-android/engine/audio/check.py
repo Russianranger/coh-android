@@ -25,6 +25,12 @@ def require(value, message):
         raise ValueError(message)
 
 
+def lsan_task_inspection_blocked(stderr):
+    return ('LeakSanitizer has encountered a fatal error' in stderr
+            and ("Can't open /proc/" in stderr
+                 or 'LeakSanitizer does not work under ptrace' in stderr))
+
+
 def function(text, name):
     matches = list(re.finditer(r'(?m)^(?:static )?[^\n]+\b' + re.escape(name) + r'\([^\n]*\)\s*\{', text))
     require(len(matches) == 1, 'Function identity differs: ' + name)
@@ -159,8 +165,8 @@ def main():
         environment['UBSAN_OPTIONS'] = 'halt_on_error=1:print_stacktrace=1'
         result = subprocess.run([str(executable), *run_args], capture_output=True, text=True, env=environment, timeout=120)
         leak_sanitizer = 'enabled' if args.sanitize else 'not requested'
-        if args.sanitize and result.returncode and 'LeakSanitizer has encountered a fatal error' in result.stderr and "Can't open /proc/" in result.stderr:
-            leak_sanitizer = 'unavailable: runtime cannot read /proc/PID/task; allocation accounting still enforced'
+        if args.sanitize and result.returncode and lsan_task_inspection_blocked(result.stderr):
+            leak_sanitizer = 'unavailable: task inspection blocked under tracing; allocation accounting still enforced'
             environment['ASAN_OPTIONS'] = 'detect_leaks=0:halt_on_error=1'
             result = subprocess.run([str(executable), *run_args], capture_output=True, text=True, env=environment, timeout=120)
         require(result.returncode == 0, result.stdout + result.stderr)
@@ -172,8 +178,8 @@ def main():
         result = subprocess.run(command, capture_output=True, text=True)
         require(result.returncode == 0, result.stdout + result.stderr)
         result = subprocess.run([str(backend)], capture_output=True, text=True, env=environment, timeout=15)
-        if args.sanitize and result.returncode and 'LeakSanitizer has encountered a fatal error' in result.stderr and "Can't open /proc/" in result.stderr:
-            leak_sanitizer = 'unavailable: runtime cannot read /proc/PID/task; allocation accounting still enforced'
+        if args.sanitize and result.returncode and lsan_task_inspection_blocked(result.stderr):
+            leak_sanitizer = 'unavailable: task inspection blocked under tracing; allocation accounting still enforced'
             environment['ASAN_OPTIONS'] = 'detect_leaks=0:halt_on_error=1'
             result = subprocess.run([str(backend)], capture_output=True, text=True, env=environment, timeout=15)
         require(result.returncode == 0, result.stdout + result.stderr)
