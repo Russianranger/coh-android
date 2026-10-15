@@ -7,11 +7,11 @@ accepted native Session Client remain installed with their private data intact.
 
 Follow [THOR-TEST.md](THOR-TEST.md) for the consolidated device test.
 
-Current **0.1.3** [package and qualification](https://github.com/Russianranger/coh-android/actions/runs/38804511398):
-11,521,251-byte ARM64 APK, eleven host suites and 24 Android13 framework checks.
-Update over Combined without repeating imports or setup. Real 0.1.3 Thor Map
-acceptance and server-authoritative rendering remain pending; the framework
-character-selection peer is explicitly scripted.
+Current **0.1.4** repairs interrupted-start display isolation and improves report
+provenance and bounded guest-resource diagnostics. Install over Combined without
+repeating imports or setup. The separate observed Android low-memory exit remains
+unexplained; no memory protection or asset check is weakened. See the current
+[Thor procedure](THOR-TEST.md) and [qualification record](QUALIFICATION.md).
 
 ## Scope
 

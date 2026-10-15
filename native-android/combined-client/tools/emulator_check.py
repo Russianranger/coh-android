@@ -7,6 +7,7 @@ real database/account/map session. ARM64 guest servers require device acceptance
 """
 from pathlib import Path
 import argparse
+import copy
 import hashlib
 import json
 import re
@@ -15,6 +16,7 @@ import subprocess
 import threading
 import time
 import xml.etree.ElementTree as ET
+import zipfile
 
 PACKAGE = 'org.coh.nativecombined'
 MAIN = PACKAGE + '/.MainActivity'
@@ -22,6 +24,36 @@ NATIVE = PACKAGE + '/.NativeClientActivity'
 # AOSP DumpCommand reports these exact failures before writing a hierarchy.
 CAPTURE_TRANSIENTS = frozenset(('ERROR: could not get idle state.',
     'ERROR: null root node returned by UiTestAutomationBridge.'))
+
+
+def installed_apk_contract(value, expected_sha, expected_bytes, require_ready=True):
+    status, identity = value.get('installed_apk_status'), value.get('installed_apk')
+    assert status in ('pending', 'ready', 'unavailable'), 'Installed APK identity status is invalid'
+    if status != 'ready':
+        assert identity is None
+        assert not require_ready, 'Installed APK identity is not ready'
+        return {'installed_apk_status': status}
+    assert isinstance(identity, dict) and set(identity) == {'bytes', 'sha256'}
+    assert type(identity['bytes']) is int and 0 < identity['bytes'] <= 25 << 20
+    assert isinstance(identity['sha256'], str) and re.fullmatch('[0-9a-f]{64}', identity['sha256'])
+    assert identity == {'bytes': expected_bytes, 'sha256': expected_sha}, 'App report identifies a different installed APK'
+    return {'installed_apk_status': status, 'installed_apk_bytes': identity['bytes'],
+            'installed_apk_sha256': identity['sha256']}
+
+
+def guest_resources_contract(value):
+    rows = value.get('guest_resources')
+    assert isinstance(rows, list) and len(rows) <= 32, 'Guest resource diagnostics exceed their public bound'
+    metrics = ('rss_kib', 'peak_rss_kib', 'children_peak_rss_kib', 'cgroup_current_bytes',
+               'cgroup_max_bytes', 'cgroup_oom_kill_count')
+    for row in rows:
+        assert isinstance(row, dict) and set(row) == set(metrics) | {'stage', 'boundary', 'elapsed_ms'}
+        assert isinstance(row['stage'], str) and re.fullmatch(r'[A-Za-z0-9_ .:-]{1,120}', row['stage'])
+        assert row['boundary'] in ('entered', 'leaving')
+        assert type(row['elapsed_ms']) is int and row['elapsed_ms'] >= 0
+        assert all(row[k] is None or (type(row[k]) is int and 0 <= row[k] <= 1 << 50) for k in metrics)
+    return {'retained_guest_resource_samples': len(rows),
+            'guest_resource_scope': 'Bounded numeric report schema; empty x86 samples do not qualify ARM64 guest RSS or an Android kill cause.'}
 
 
 def viewport_contract(value):
@@ -123,7 +155,7 @@ def memory_report_contract(value):
         assert all(item[k] >= 0 for k in ('timestamp_utc_ms', 'pss_kib', 'rss_kib'))
         assert type(item['low_memory']) is bool
     assert isinstance(value.get('android_exit_history_status'), str)
-    return {'memory_samples': memory['samples'], 'memory_status': memory['status'],
+    return {**guest_resources_contract(value), 'memory_samples': memory['samples'], 'memory_status': memory['status'],
             'retained_memory_samples': len(rows), 'android_exit_records': len(exits),
             'scope': 'Actual combined-report schema and numeric privacy bounds; zero samples do not qualify ARM64 server memory admission or guest execution.'}
 
@@ -662,9 +694,7 @@ class Check:
                     android_exit_records=len(current['android_process_exits']),
                     scope='Framework force-stop retention with data preserved; this does not simulate or qualify Android low-memory killing or guest startup.')
 
-    def export_native(self):
-        before = self.report('native-client-report.json')
-        self.tap('Export report')
+    def save_document(self):
         deadline = time.monotonic() + 25
         saved = False
         while time.monotonic() < deadline and not saved:
@@ -681,6 +711,11 @@ class Check:
                 saved = is_save
             time.sleep(.3)
         assert saved, 'Real CREATE_DOCUMENT Save unavailable'
+
+    def export_native(self):
+        before = self.report('native-client-report.json')
+        self.tap('Export report')
+        self.save_document()
         self.wait_report('native-client-report.json', lambda x: x.get('session_id') == before['session_id'] and any(e.get('type') == 'export_complete' for e in x.get('events', [])), 'actual native JSON export callback')
         files = self.text('shell', 'find', '/sdcard/Download', '-maxdepth', '1', '-name', 'COH-NativeCombined-*.json').splitlines()
         assert len(files) == 1
@@ -692,6 +727,65 @@ class Check:
         assert exported['native']['frames'] >= before['native']['frames']
         (self.args.output / 'exported-native-report.json').write_bytes(raw)
         self.record('actual framework JSON document export', bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+
+    def export_retained_native_fixture(self):
+        """Exercise actual SAF ZIP provenance labeling with an explicit fixture."""
+        self.wait_report('native-client-report.json', lambda x:x.get('resumed') is False,
+                         'native Activity stops before retained-report export fixture')
+        original = self.adb('exec-out','run-as',PACKAGE,'cat','files/native-client-report.json').stdout
+        fixture = copy.deepcopy(json.loads(original))
+        assert fixture.get('device',{}).get('emulator_detected') is True
+        fixture['app'].update(version_code=3, version_name='0.1.2-local-server-native',
+            installed_apk={'bytes':11519003,'sha256':'1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449'})
+        fixture['qualification_fixture'] = {'type':'retained_native_version_label',
+            'scripted':True, 'physical_device_evidence':False}
+        path = self.args.output/'scripted-retained-native-report.json'
+        path.write_text(json.dumps(fixture)+'\n')
+        backup = self.args.output/'native-report-before-scripted-export.json';backup.write_bytes(original)
+        remote = '/data/local/tmp/coh-retained-native-export.json'
+        def publish(source):
+            self.adb('push',source,remote)
+            self.adb('shell','run-as',PACKAGE,'cp',remote,'files/native-client-report.json.tmp')
+            self.adb('shell','run-as',PACKAGE,'mv','files/native-client-report.json.tmp','files/native-client-report.json')
+        try:
+            publish(path)
+            before = set(self.text('shell','find','/sdcard/Download','-maxdepth','1','-name','COH-NativeCombined-*.zip').splitlines())
+            self.tap('Export report');self.save_document()
+            deadline = time.monotonic()+30
+            exported = None
+            while time.monotonic() < deadline:
+                files = set(self.text('shell','find','/sdcard/Download','-maxdepth','1','-name','COH-NativeCombined-*.zip').splitlines())-before
+                if len(files) == 1:
+                    raw = self.adb('exec-out','cat',next(iter(files))).stdout
+                    assert len(raw) <= 8 << 20
+                    try:
+                        from io import BytesIO
+                        with zipfile.ZipFile(BytesIO(raw)) as archive:
+                            assert archive.testzip() is None
+                            candidate = json.loads(archive.read('combined-report.json'))
+                            assert 'native-client-report.json' not in archive.namelist(), 'Historical native report was mislabeled current'
+                            retained = json.loads(archive.read('previous-app-native-client-report.json'))
+                            assert retained == fixture, 'Historical native report was modified or discarded'
+                            exported = candidate
+                            break
+                    except (zipfile.BadZipFile, KeyError):
+                        pass  # CREATE_DOCUMENT may expose its file before ZipOutputStream closes.
+                time.sleep(.2)
+            assert exported is not None, 'Actual launcher ZIP export never completed'
+            installed_apk_contract(exported,hashlib.sha256(self.args.apk.read_bytes()).hexdigest(),self.args.apk.stat().st_size)
+            memory_report_contract(exported)
+            (self.args.output/'exported-launcher-report.zip').write_bytes(raw)
+            self.record('actual SAF ZIP separates scripted retained native report from current APK',
+                historical_entry='previous-app-native-client-report.json', scripted_fixture=True,
+                historical_version_code=3, current_version_code=exported['version_code'],
+                bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest(), physical_device_evidence=False)
+        finally:
+            try:
+                publish(backup)
+                restored = self.adb('exec-out','run-as',PACKAGE,'cat','files/native-client-report.json').stdout
+                assert restored == original, 'Original native report was not restored after fixture qualification'
+            finally:
+                self.adb('shell','rm','-f',remote,check=False)
 
     def capture_visible_scene(self, minimum_frames):
         before = self.wait_report('native-client-report.json', lambda x: settled_preview(x, minimum_frames), 'foreground preview finishes new-context GPU reconstruction and advancing presentation', seconds=60)
@@ -733,6 +827,10 @@ class Check:
         initial = self.wait_report('combined-report.json', lambda x: 'Server payload:' in x.get('imports', '') or any(e.get('name') == 'operation_failed' for e in x.get('events', [])), 'fresh app import initialization')
         (self.args.output / 'initial-combined-report.json').write_text(json.dumps(initial, indent=2) + '\n')
         assert not any(e.get('name') == 'operation_failed' for e in initial.get('events', [])), 'Fresh app import initialization failed: ' + initial.get('message', '')
+        identity = self.wait_report('combined-report.json', lambda x:x.get('installed_apk_status') == 'ready',
+                                    'cached current APK identity becomes ready')
+        self.record('current launcher APK identity matches exact installed package', **installed_apk_contract(identity,
+                    hashlib.sha256(self.args.apk.read_bytes()).hexdigest(),self.args.apk.stat().st_size))
         assert 'Server payload: import ' in initial['imports'] and 'Game files: import all four asset parts' in initial['imports']
         assert initial['runtime_ready'] is False and initial['server']['ready'] is False
         self.record('fresh app initialized for external imports without failures')
@@ -801,6 +899,7 @@ class Check:
         self.export_native()
         self.capture_visible_scene(before_export['native']['frames'] + 10)
         self.adb('shell', 'input', 'keyevent', 'KEYCODE_BACK')
+        self.export_retained_native_fixture()
         if self.args.protocol_binary:
             data = self.args.protocol_binary.read_bytes()
             if self.args.protocol_receipt:

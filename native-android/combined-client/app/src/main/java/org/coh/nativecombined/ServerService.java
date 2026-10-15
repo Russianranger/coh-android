@@ -36,6 +36,10 @@ public final class ServerService extends Service {
     private volatile ServerMemoryPolicy serverMemory=new ServerMemoryPolicy();
     private volatile JSONArray processExits=new JSONArray();
     private volatile String exitHistoryStatus="not_collected";
+    private volatile ApkReportIdentity.Snapshot installedApk;
+    private volatile String installedApkStatus="pending";
+    private final Object resourcesLock=new Object();
+    private volatile JSONArray guestResources=new JSONArray();
     private ImportStore imports;
     private RuntimeSetup setup;
     private PowerManager.WakeLock wake;
@@ -50,7 +54,11 @@ public final class ServerService extends Service {
         foreground();
         // Capture before returning a binder: submit/stop can save synchronously.
         final JSONObject persisted=readJson(new File(getFilesDir(),"combined-report.json"),128*1024);
-        owner.execute(()->{try{archiveAttempt(persisted);collectProcessExits();initialize();refresh();}catch(Exception e){fail(e);}save();main.post(ticker);});
+        owner.execute(()->{try{archiveAttempt(persisted);collectProcessExits();captureApkIdentity();initialize();refresh();}catch(Exception e){fail(e);}save();main.post(ticker);});
+    }
+    private void captureApkIdentity(){
+        try{installedApk=ApkReportIdentity.capture(new File(getApplicationInfo().sourceDir));installedApkStatus="ready";}
+        catch(IOException|RuntimeException unavailable){installedApkStatus="unavailable";}
     }
     private void foreground(){
         PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);
@@ -65,9 +73,13 @@ public final class ServerService extends Service {
     public JSONObject snapshot(){
         JSONObject out=new JSONObject();try{
             GuestDiagnostics.Snapshot d=diagnostics.snapshot(SystemClock.elapsedRealtime());JSONArray stages=new JSONArray();
+            ApkReportIdentity.Snapshot apk=installedApk;
+            String apkStatus=apk!=null?"ready":"unavailable".equals(installedApkStatus)?"unavailable":"pending";
             for(int i=0;i<d.stages.length;i++)stages.put(new JSONObject().put("stage",d.stages[i]).put("elapsed_ms",d.stageTimes[i]));
             out.put("schema","coh-native-combined-app-v1").put("package",getPackageName()).put("busy",busy).put("runtime_ready",runtimeReady)
                 .put("version_name",appVersion).put("version_code",appVersionCode).put("android_sdk",Build.VERSION.SDK_INT).put("abis",new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS)))
+                .put("installed_apk_status",apkStatus).put("installed_apk",apk==null?JSONObject.NULL:new JSONObject().put("bytes",apk.bytes).put("sha256",apk.sha256))
+                .put("guest_resources",guestResources)
                 .put("storage_available_bytes",getFilesDir().getUsableSpace()).put("server_start_available_bytes",startFreeBytes)
                 .put("server_memory",new JSONObject(serverMemory.snapshot())).put("android_process_exits",processExits).put("android_exit_history_status",exitHistoryStatus)
                 .put("imports",importStatus).put("message",message).put("progress_done",progressDone).put("progress_total",progressTotal)
@@ -113,6 +125,7 @@ public final class ServerService extends Service {
     }
     private void runServer(ImportContract.Control cancellation)throws Exception {
         session=UUID.randomUUID().toString().replace("-","");generation="";guestExit=-1;
+        synchronized(resourcesLock){guestResources=new JSONArray();}
         serverMemory=new ServerMemoryPolicy();
         diagnostics.start(session,SystemClock.elapsedRealtime());
         startFreeBytes=getFilesDir().getUsableSpace();
@@ -132,6 +145,10 @@ public final class ServerService extends Service {
         File tmp=new File(getFilesDir(),"combined-tmp"),shortTmp=new File(getFilesDir(),"p"),helper=new File(getFilesDir(),"combined-guest");
         tmp.mkdirs();shortTmp.mkdirs();helper.mkdirs();
         if(shortTmp.getCanonicalPath().getBytes(StandardCharsets.UTF_8).length+27>107)throw new IOException("Storage path exceeds the process runtime socket limit");
+        // PRoot rewrites guest Unix paths to their real Android backing path.
+        // Session display components are 25 ASCII bytes, plus the separator.
+        if(new File(stateDir,"diagnostic/runtime").getCanonicalPath().getBytes(StandardCharsets.UTF_8).length+26>107)
+            throw new IOException("Storage path exceeds the private display socket limit");
         try(InputStream in=getAssets().open("combined/server_runtime.py")){write(new File(helper,"server_runtime.py"),bounded(in,512*1024));}
         File hosts=new File(helper,"hosts");String hostname=Os.uname().nodename;if(!hostname.matches("[A-Za-z0-9_.-]{1,253}"))throw new IOException("Invalid device hostname");write(hosts,("127.0.0.1 localhost "+hostname+"\n::1 localhost\n").getBytes(StandardCharsets.US_ASCII));
         String lib=getApplicationInfo().nativeLibraryDir;
@@ -268,7 +285,9 @@ public final class ServerService extends Service {
         if(!line.startsWith("{"))return;
         try{JSONObject e=new JSONObject(line);String id=e.optString("session_id");
             if(!GuestDiagnostics.sameSession(session,id))return;
-            if(e.optString("type").equals("stage")){
+            if(e.optString("type").equals("guest_resources")){
+                captureGuestResources(id,e);
+            }else if(e.optString("type").equals("stage")){
                 String stage=e.optString("stage");if(diagnostics.stage(id,stage,SystemClock.elapsedRealtime()))message="Preparing server: "+stage.replace('_',' ');
             }else if(e.optString("type").equals("server_stopped")){
                 diagnostics.failure(id,e.optString("primary_failure_code",e.optString("failure_code")));
@@ -276,6 +295,25 @@ public final class ServerService extends Service {
                 // remains the cleanup authority after the process has exited.
             }
         }catch(JSONException ignored){}
+    }
+    private void captureGuestResources(String id,JSONObject source)throws JSONException{
+        synchronized(resourcesLock){
+            if(!GuestDiagnostics.sameSession(session,id))return;
+            String stage=GuestDiagnostics.stageName(source.optString("stage"));
+            String boundary=source.optString("boundary");
+            if(stage.isEmpty()||!(boundary.equals("entered")||boundary.equals("leaving")))return;
+            JSONObject row=new JSONObject().put("stage",stage).put("boundary",boundary)
+                .put("elapsed_ms",diagnostics.snapshot(SystemClock.elapsedRealtime()).elapsedMs);
+            for(String key:new String[]{"rss_kib","peak_rss_kib","children_peak_rss_kib","cgroup_current_bytes","cgroup_max_bytes","cgroup_oom_kill_count"}){
+                Long value=GuestDiagnostics.numericMetric(source.opt(key));
+                row.put(key,value==null?JSONObject.NULL:value);
+            }
+            JSONArray next=new JSONArray();JSONArray previous=guestResources;
+            for(int i=Math.max(0,previous.length()-31);i<previous.length();i++)next.put(previous.getJSONObject(i));
+            next.put(row);guestResources=next;
+        }
+        // Persist the last stage boundary before a later abrupt process exit.
+        save();
     }
     public void recoverInterrupted(){submit("recovering",c->{
         if(guest!=null&&guest.isAlive())throw new IOException("The owned server is still running. Stop it first.");
@@ -296,7 +334,7 @@ public final class ServerService extends Service {
     private void releaseWake(){if(wake!=null){if(wake.isHeld())wake.release();wake=null;}}
     public File policyFile(){return new File(getFilesDir(),"native-session-policy.json");}
     private void revoke(){try{Files.deleteIfExists(policyFile().toPath());}catch(IOException ignored){/* Client also checks freshness and session identity. */}}
-    private void save(){try{write(new File(getFilesDir(),"combined-report.json"),snapshot().toString(2).getBytes(StandardCharsets.UTF_8));}catch(Exception ignored){}}
+    private synchronized void save(){try{write(new File(getFilesDir(),"combined-report.json"),snapshot().toString(2).getBytes(StandardCharsets.UTF_8));}catch(Exception ignored){}}
     static JSONObject readJson(File file,int max){try(InputStream in=new FileInputStream(file)){return new JSONObject(new String(bounded(in,max),StandardCharsets.UTF_8));}catch(Exception e){return null;}}
     static byte[] bounded(InputStream in,int limit)throws IOException {ByteArrayOutputStream out=new ByteArrayOutputStream();byte[] buf=new byte[8192];int n;while((n=in.read(buf))!=-1){if(n==0||out.size()+n>limit)throw new IOException("Input exceeds its bound");out.write(buf,0,n);}return out.toByteArray();}
     static synchronized void write(File file,byte[] bytes)throws IOException {file.getParentFile().mkdirs();AtomicFile atomic=new AtomicFile(file);FileOutputStream out=atomic.startWrite();try{out.write(bytes);out.getFD().sync();atomic.finishWrite(out);}catch(IOException e){atomic.failWrite(out);throw e;}}

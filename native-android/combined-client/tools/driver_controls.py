@@ -12,7 +12,8 @@ import copy
 import tempfile
 import xml.etree.ElementTree as ET
 from unittest.mock import patch
-from emulator_check import Check, PACKAGE, scene_pixels, settled_preview, viewport_contract, map_report_contract
+from emulator_check import (Check, PACKAGE, scene_pixels, settled_preview, viewport_contract,
+                            map_report_contract, installed_apk_contract, guest_resources_contract)
 
 FILE = 'native-test-donor.apk'
 BACKGROUND = f'<node package="com.google.android.documentsui" text="{FILE}" bounds="[189,899][583,956]"/>'
@@ -198,6 +199,43 @@ def viewport_protocol_controls(path):
     return count
 
 
+def identity_resource_controls():
+    count = 0
+    identity = {'installed_apk_status':'ready','installed_apk':{'bytes':1000,'sha256':'a'*64}}
+    def accepted(v):return installed_apk_contract(v,'a'*64,1000)
+    def reject(function, value):
+        nonlocal count
+        try:function(value)
+        except AssertionError:count+=1;return
+        raise AssertionError('Invalid APK/resource report was admitted')
+    accepted(identity);count+=1
+    for state in ('pending','unavailable'):
+        value={'installed_apk_status':state,'installed_apk':None}
+        installed_apk_contract(value,'a'*64,1000,require_ready=False);count+=1
+        reject(accepted,value)
+    for change in (
+        {'bytes':True,'sha256':'a'*64}, {'bytes':0,'sha256':'a'*64},
+        {'bytes':(25<<20)+1,'sha256':'a'*64}, {'bytes':1000,'sha256':'A'*64},
+        {'bytes':1000,'sha256':'b'*64}, {'bytes':1000,'sha256':'a'*63},
+        {'bytes':1000,'sha256':'a'*64,'path':'must stay private'},
+    ):
+        reject(accepted,{'installed_apk_status':'ready','installed_apk':change})
+    reject(accepted,{'installed_apk_status':'ready','installed_apk':None})
+    reject(accepted,{'installed_apk_status':'unknown','installed_apk':None})
+    metrics=('rss_kib','peak_rss_kib','children_peak_rss_kib','cgroup_current_bytes','cgroup_max_bytes','cgroup_oom_kill_count')
+    row=dict.fromkeys(metrics,None);row.update(stage='server_only_input_admission',boundary='entered',elapsed_ms=0)
+    guest_resources_contract({'guest_resources':[]});count+=1
+    guest_resources_contract({'guest_resources':[row]*32});count+=1
+    populated=copy.deepcopy(row);populated.update(dict.fromkeys(metrics,1<<50))
+    guest_resources_contract({'guest_resources':[populated]});count+=1
+    reject(guest_resources_contract,{'guest_resources':[row]*33})
+    for change in ({'pid':123},{'stage':'/private/path'},{'stage':'x'*121},{'boundary':'unknown'},
+                   {'elapsed_ms':-1},{'elapsed_ms':True},{'rss_kib':-1},{'peak_rss_kib':True},
+                   {'children_peak_rss_kib':.5},{'cgroup_current_bytes':(1<<50)+1}):
+        value=copy.deepcopy(row);value.update(change);reject(guest_resources_contract,{'guest_resources':[value]})
+    return count
+
+
 def main():
     with tempfile.TemporaryDirectory(prefix='coh-driver-controls-') as temp:
         driver = Driver(Path(temp), [BACKGROUND+DRAWER, BACKGROUND, APP])
@@ -258,8 +296,10 @@ def main():
         native['static_renderer']['gpu_bytes']=1;assert settled_preview(ready,310) is False
         capture_checks=capture_controls(Path(temp)/'captures')
         viewport_protocol_checks=viewport_protocol_controls(Path(temp)/'viewport-protocol')
-    print(json.dumps({'passed':True,'checks':17+capture_checks+viewport_protocol_checks,'capture_controls':capture_checks,
-        'viewport_protocol_controls':viewport_protocol_checks,'scope':'Host regressions for document selection, strict fresh capture, native fault rejection, scene/viewport admission, bounded landscape scrolling and numeric protocol privacy; no Android execution claim.'}))
+        identity_resource_checks=identity_resource_controls()
+    print(json.dumps({'passed':True,'checks':17+capture_checks+viewport_protocol_checks+identity_resource_checks,'capture_controls':capture_checks,
+        'identity_resource_controls':identity_resource_checks,
+        'viewport_protocol_controls':viewport_protocol_checks,'scope':'Host regressions for document selection, strict fresh capture, native fault rejection, scene/viewport admission, bounded scrolling, exact APK identity and numeric protocol/resource privacy; no Android execution claim.'}))
 
 
 if __name__ == '__main__':

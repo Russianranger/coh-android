@@ -9,6 +9,9 @@ import json
 import math
 import os
 import socket
+import selectors
+import stat
+import subprocess
 import sys
 import time
 import threading
@@ -101,6 +104,141 @@ class AdmissionTests(unittest.TestCase):
                          Path('/'), Path('relative')):
                 with self.subTest(path=path), self.assertRaises(runtime.AdmissionError):
                     runtime.real_private_path(path)
+
+    def test_session_display_endpoints_preserve_interrupted_legacy_path(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'runtime').mkdir(mode=0o700)
+            legacy = root / 'runtime/vnc.sock'
+            legacy.write_text('unrelated or interrupted endpoint; preserve')
+            previous = legacy.stat()
+            first = runtime.presentation_endpoint(root, 'a' * 32)
+            second = runtime.presentation_endpoint(root, 'b' * 32)
+            self.assertNotEqual(first, second)
+            self.assertEqual(first.name, 'v' + hashlib.sha256(('a' * 32).encode()).hexdigest()[:24])
+            self.assertEqual(len(first.name), 25)
+            for prefix in ('/data/user/0', '/data/data', '/data/user/10', '/data/user/12345'):
+                backing = Path(prefix) / 'org.coh.nativecombined/files/combined-server/diagnostic/runtime' / first.name
+                self.assertLessEqual(len(os.fsencode(backing)), 107)
+            self.assertLessEqual(len(os.fsencode(first)), 107)
+            self.assertEqual(legacy.read_text(), 'unrelated or interrupted endpoint; preserve')
+            self.assertEqual(legacy.stat(), previous)
+            first.write_text('preserve a conflicting current-session endpoint')
+            with self.assertRaisesRegex(runtime.AdmissionError, 'OWNED_DISPLAY_SOCKET_ALREADY_EXISTS'):
+                runtime.presentation_endpoint(root, 'a' * 32)
+            self.assertEqual(first.read_text(), 'preserve a conflicting current-session endpoint')
+            self.assertEqual(runtime.presentation_endpoint(root, 'b' * 32), second)
+
+    def test_session_display_refuses_linked_malformed_and_unowned_paths(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            directory = root / 'runtime'
+            directory.mkdir(mode=0o700)
+            target = root / 'target'
+            target.write_text('preserved')
+            endpoint = runtime.presentation_endpoint(root, 'a' * 32)
+            endpoint.symlink_to(target)
+            with self.assertRaisesRegex(runtime.AdmissionError, 'OWNED_DISPLAY_SOCKET_ALREADY_EXISTS'):
+                runtime.presentation_endpoint(root, 'a' * 32)
+            self.assertTrue(endpoint.is_symlink())
+            self.assertEqual(target.read_text(), 'preserved')
+            endpoint.unlink()
+            directory.chmod(0o755)
+            with self.assertRaisesRegex(runtime.AdmissionError, 'INVALID_PRIVATE_DISPLAY_DIRECTORY'):
+                runtime.presentation_endpoint(root, 'a' * 32)
+            directory.chmod(0o700)
+            with mock.patch.object(runtime.os, 'geteuid', return_value=directory.stat().st_uid + 1):
+                with self.assertRaisesRegex(runtime.AdmissionError, 'INVALID_PRIVATE_DISPLAY_DIRECTORY'):
+                    runtime.presentation_endpoint(root, 'a' * 32)
+            for session in ('', 'a' * 31, 'A' * 32, '../' + 'a' * 32, None, True):
+                with self.subTest(session=session), self.assertRaises(runtime.AdmissionError):
+                    runtime.presentation_endpoint(root, session)
+            directory.rmdir()
+            real = root / 'real'
+            real.mkdir(mode=0o700)
+            directory.symlink_to(real, target_is_directory=True)
+            with self.assertRaisesRegex(runtime.AdmissionError, 'LINKED_PRIVATE_PATH'):
+                runtime.presentation_endpoint(root, 'a' * 32)
+            self.assertTrue(directory.is_symlink())
+
+    def test_session_display_path_length_is_checked_before_spawn(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / ('d' * 70)
+            (root / 'runtime').mkdir(mode=0o700, parents=True)
+            with self.assertRaisesRegex(runtime.AdmissionError, 'OWNED_DISPLAY_SOCKET_PATH_TOO_LONG'):
+                runtime.presentation_endpoint(root, 'a' * 32)
+
+    def test_real_unix_socket_interruption_then_new_session_restart(self):
+        try:
+            probe = socket.socket(socket.AF_UNIX)
+        except PermissionError:
+            self.skipTest('Host sandbox does not permit AF_UNIX socket creation')
+        probe.close()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'runtime').mkdir(mode=0o700)
+            first = runtime.presentation_endpoint(root, 'a' * 32)
+            worker = subprocess.Popen([sys.executable, '-c',
+                "import socket,sys,signal; s=socket.socket(socket.AF_UNIX); "
+                "s.bind(sys.argv[1]); s.listen(1); print('ready',flush=True); signal.pause()", str(first)],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            try:
+                with selectors.DefaultSelector() as selector:
+                    selector.register(worker.stdout, selectors.EVENT_READ)
+                    self.assertTrue(selector.select(timeout=5))
+                    self.assertEqual(worker.stdout.readline().strip(), 'ready')
+                before = first.lstat()
+                # Simulate abrupt Android process death: no guest cleanup runs.
+                worker.kill()
+                worker.communicate(timeout=5)
+                self.assertTrue(stat.S_ISSOCK(first.lstat().st_mode))
+                with self.assertRaisesRegex(runtime.AdmissionError, 'OWNED_DISPLAY_SOCKET_ALREADY_EXISTS'):
+                    runtime.presentation_endpoint(root, 'a' * 32)
+                second = runtime.presentation_endpoint(root, 'b' * 32)
+                with socket.socket(socket.AF_UNIX) as restarted:
+                    restarted.bind(str(second))
+                    restarted.listen(1)
+                    self.assertTrue(stat.S_ISSOCK(second.lstat().st_mode))
+                    self.assertEqual(first.lstat(), before)
+                    # A live endpoint with this session name is also refused;
+                    # no connect probe or unlink touches an unknown listener.
+                    with self.assertRaisesRegex(runtime.AdmissionError, 'OWNED_DISPLAY_SOCKET_ALREADY_EXISTS'):
+                        runtime.presentation_endpoint(root, 'b' * 32)
+                    restarted.setblocking(False)
+                    with self.assertRaises(BlockingIOError):
+                        restarted.accept()
+                self.assertTrue(second.exists())
+                self.assertEqual(first.lstat(), before)
+            finally:
+                if worker.poll() is None:
+                    worker.kill()
+                worker.communicate(timeout=5)
+
+    def test_guest_resource_reads_are_bounded_and_numeric_only(self):
+        opened = mock.mock_open(read_data='Name: private\nVmRSS: 12345 kB\n')
+        with mock.patch('io.open', opened), \
+             mock.patch.object(runtime.resource, 'getrusage', side_effect=[
+                 SimpleNamespace(ru_maxrss=23456), SimpleNamespace(ru_maxrss=34567)]):
+            sample = runtime.guest_resource_sample()
+        opened.assert_called_once()
+        self.assertEqual(opened.call_args.args[0], Path('/proc/self/status'))
+        opened().read.assert_called_once_with(16384)
+        self.assertEqual(sample, {'rss_kib': 12345, 'peak_rss_kib': 23456,
+            'children_peak_rss_kib': 34567, 'cgroup_current_bytes': None,
+            'cgroup_max_bytes': None, 'cgroup_oom_kill_count': None})
+        self.assertNotIn('private', json.dumps(sample))
+
+    def test_guest_resource_unknown_wrong_types_and_bounds_do_not_fail(self):
+        for value in (-1, True, 12.5, '123', 8 * 1024 * 1024 + 1, None):
+            with self.subTest(value=value), \
+                 mock.patch('io.open', side_effect=PermissionError('private details')), \
+                 mock.patch.object(runtime.resource, 'getrusage', return_value=SimpleNamespace(ru_maxrss=value)):
+                self.assertTrue(all(v is None for v in runtime.guest_resource_sample().values()))
+        for text in ('VmRSS: ' + '9' * 5000 + ' kB\n', 'VmRSS: -1 kB\n', 'VmRSS: 0.5 kB\n', 'missing'):
+            with mock.patch('io.open', mock.mock_open(read_data=text)), \
+                 mock.patch.object(runtime.resource, 'getrusage', side_effect=OSError('private details')):
+                sample = runtime.guest_resource_sample()
+            self.assertTrue(all(v is None for v in sample.values()))
 
     def test_ready_contract_has_no_authentication_secrets(self):
         args = SimpleNamespace(session_id='a' * 32, import_generation='generation-' + 'b' * 32)
@@ -211,6 +349,54 @@ class RetainedSourceContractTests(unittest.TestCase):
             server.provision_if_requested()
             self.assertEqual(server.provision, receipt)
 
+    def test_guest_resource_stage_events_are_session_bound_and_retained_bounded(self):
+        args = SimpleNamespace(state=Path('/unused'), timeout_seconds=600, session_id='a' * 32)
+        ctx = self.Context(args)
+        sample = {'rss_kib': 100, 'peak_rss_kib': 200, 'children_peak_rss_kib': 300,
+            'cgroup_current_bytes': None, 'cgroup_max_bytes': None, 'cgroup_oom_kill_count': None}
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output), mock.patch.object(runtime, 'guest_resource_sample', return_value=sample):
+            for i in range(20):
+                ctx.stage('phase_' + str(i))
+        resources = [json.loads(line) for line in output.getvalue().splitlines()
+                     if json.loads(line).get('type') == 'guest_resources']
+        self.assertEqual(len(resources), 40)
+        self.assertEqual(len(ctx.guest_resource_samples), 32)
+        self.assertEqual(resources[0]['boundary'], 'leaving')
+        self.assertEqual(resources[0]['stage'], 'preflight')
+        self.assertEqual(resources[1]['boundary'], 'entered')
+        self.assertEqual(resources[1]['stage'], 'phase_0')
+        self.assertTrue(all(row['session_id'] == 'a' * 32 for row in resources))
+        self.assertTrue(all(set(row) == set(sample) | {'type', 'stage', 'boundary', 'session_id', 'time_utc'} for row in resources))
+        self.assertNotIn('/unused', output.getvalue())
+
+    def test_guest_resource_event_is_flushed_before_abrupt_guest_exit(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            script = textwrap.dedent("""\
+                import importlib.util,os,signal,sys
+                from pathlib import Path
+                from types import SimpleNamespace
+                spec=importlib.util.spec_from_file_location('runtime_abrupt_exit',sys.argv[1])
+                runtime=importlib.util.module_from_spec(spec);spec.loader.exec_module(runtime)
+                runtime.load_guest_modules(Path(sys.argv[2]))
+                Context,_=runtime.runtime_classes()
+                ctx=Context(SimpleNamespace(state=Path(sys.argv[3]),timeout_seconds=30,session_id='a'*32))
+                ctx.stage('server_only_input_admission')
+                os.kill(os.getpid(),signal.SIGKILL)
+                """)
+            child = subprocess.run([sys.executable, '-c', script, str(HERE / 'server_runtime.py'),
+                str(Path(runtime.startup.__file__).parent), temporary],
+                capture_output=True, text=True, timeout=10)
+            self.assertEqual(child.returncode, -9)
+            values = [json.loads(line) for line in child.stdout.splitlines()]
+            self.assertEqual(values[-1]['type'], 'guest_resources')
+            self.assertEqual(values[-1]['stage'], 'server_only_input_admission')
+            self.assertEqual(values[-1]['boundary'], 'entered')
+            self.assertEqual(values[-1]['session_id'], 'a' * 32)
+            self.assertTrue(type(values[-1]['rss_kib']) is int and values[-1]['rss_kib'] > 0)
+            self.assertIsNone(values[-1]['cgroup_oom_kill_count'])
+            self.assertNotIn(temporary, child.stdout)
+
     def test_actual_bound_ports_fail_then_release(self):
         for transport in (socket.SOCK_STREAM, socket.SOCK_DGRAM):
             with self.subTest(transport=transport):
@@ -227,7 +413,10 @@ class RetainedSourceContractTests(unittest.TestCase):
         display = inspect.getsource(runtime.startup.presentation.PresentationDiagnostic.start_wine)
         owner = self.Owner.__new__(self.Owner)
         with tempfile.TemporaryDirectory() as temporary:
-            owner.presentation_socket = Path(temporary) / 'rfb.sock'
+            owner.root = Path(temporary)
+            (owner.root / 'runtime').mkdir(mode=0o700)
+            owner.args = SimpleNamespace(session_id='a' * 32)
+            owner.ctx = SimpleNamespace(stage=lambda name: None, report={})
             with mock.patch.object(runtime.startup.presentation.PresentationDiagnostic, 'start_wine') as retained:
                 owner.start_wine()
                 retained.assert_called_once_with(owner)

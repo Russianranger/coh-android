@@ -88,6 +88,11 @@ public final class MainActivity extends Activity {
                     JSONObject report=ServerService.readJson(f,2*1024*1024);if(report==null)continue;
                     if(report.optJSONObject("server_readiness")!=null)report.getJSONObject("server_readiness").remove("account");
                     String name=path.replace('/','-');
+                    if(path.equals("native-client-report.json")){
+                        JSONObject app=report.optJSONObject("app");
+                        if(app==null||!ApkReportIdentity.sameAppReport(getPackageName(),combined.optLong("version_code"),app.opt("package"),app.opt("version_code")))
+                            name="previous-app-"+name;
+                    }
                     if(path.equals("combined-server/latest-report.json")){
                         JSONObject server=combined.optJSONObject("server");
                         boolean current=server!=null&&GuestDiagnostics.sameSession(server.optString("session_id"),report.optString("session_id"));

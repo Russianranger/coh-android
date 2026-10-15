@@ -53,6 +53,9 @@ public final class DiagnosticsTest {
   need(!GuestDiagnostics.cleanupProved(true,false,true));
   for(Object invalid:new Object[]{false,"true",1,null})need(!GuestDiagnostics.cleanupProved(true,true,invalid));
   d.start(id,0);d.finish(0);need(d.snapshot(1000).elapsedMs==0);
+  need(Long.valueOf(0).equals(GuestDiagnostics.numericMetric(0)));
+  need(Long.valueOf(1L<<50).equals(GuestDiagnostics.numericMetric(1L<<50)));
+  for(Object invalid:new Object[]{null,true,"123",1.0,-1,-1L,Long.MAX_VALUE})need(GuestDiagnostics.numericMetric(invalid)==null);
   System.out.println("{\"status\":\"passed\",\"checks\":"+checks+",\"actual_server_interoperability_verified\":false}");
  }
 }

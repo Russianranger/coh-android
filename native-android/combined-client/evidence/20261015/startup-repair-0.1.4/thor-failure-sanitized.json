@@ -1,0 +1,822 @@
+{
+  "format": 1,
+  "schema": "coh-native-combined-thor-013-startup-failure-v1",
+  "recorded_utc_date": "2026-10-15",
+  "analysis_base_revision": "8168d20ea4753c3a0891840cc8ef8dc3e78261c2",
+  "provenance": {
+    "original_inputs_committed": false,
+    "bundle_bytes": 19122,
+    "bundle_sha256": "89315274fd2d0ce2c3324888bb65cba9d4497fa9368af2b031c282a68557a5c8",
+    "members": [
+      {
+        "role": "combined-report",
+        "bytes": 11210,
+        "sha256": "e1c7c6e313ee329281286b805c92003320e2a402727dcb32648559b7afd1a233"
+      },
+      {
+        "role": "native-client-report",
+        "bytes": 223933,
+        "sha256": "a6f1afef6cd722b866529a47e7f7e17f89a8a6b3746d9b7e809ef3118c943e28"
+      },
+      {
+        "role": "combined-server-latest-report",
+        "bytes": 7472,
+        "sha256": "bfc9716571bfde2bf5abc3e23324f452b7fbf6b8e1cfec5aa9950a5038598a0c"
+      },
+      {
+        "role": "combined-server-previous-attempts",
+        "bytes": 63854,
+        "sha256": "7d30a235455916ae709e28247f64b1d80178f1e1eb91f433e1a9be64a41a2cd5"
+      }
+    ],
+    "sanitization": "Explicit allowlist of version, numeric timing/memory/exit values, fixed statuses and stages, public APK identity and source hashes. No account/character names, credentials, private paths, or session/import IDs."
+  },
+  "reported_current_app": {
+    "schema": "coh-native-combined-app-v1",
+    "package": "org.coh.nativecombined",
+    "version_name": "0.1.3-local-server-native",
+    "version_code": 4,
+    "android_sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ]
+  },
+  "expected_qualified_013_apk": {
+    "name": "CoH-Native-Combined-0.1.3-arm64.apk",
+    "bytes": 11521251,
+    "sha256": "8b60102521c23d42e2706331d266602d5c7429b3b42799e053361f47331b90c5",
+    "runtime_and_driver_source": "1ca6afc1b375d1e3a59ed13be562d9f9d1d0b81e",
+    "installed_current_apk_sha256_present_in_this_bundle": false,
+    "independent_exact_current_binary_match_proved_by_this_bundle": false
+  },
+  "latest_server_attempt": {
+    "source": "current_combined_and_current_guest_reports",
+    "server": {
+      "phase": "failed",
+      "ready": false,
+      "guest_exit_code": 1,
+      "owned_process_alive": false,
+      "failure_code": "OWNED_DISPLAY_SOCKET_ALREADY_EXISTS",
+      "last_stage": "preflight_selected_map_port",
+      "elapsed_ms": 15652,
+      "stage_elapsed_ms": 260,
+      "stages": [
+        {
+          "stage": "guest_starting",
+          "elapsed_ms": 0
+        },
+        {
+          "stage": "server_memory_admission",
+          "elapsed_ms": 7
+        },
+        {
+          "stage": "prepare_immutable_server_inputs",
+          "elapsed_ms": 7
+        },
+        {
+          "stage": "preflight_local_server_ports",
+          "elapsed_ms": 293
+        },
+        {
+          "stage": "server_only_input_admission",
+          "elapsed_ms": 295
+        },
+        {
+          "stage": "prepare_private_server_inputs",
+          "elapsed_ms": 4415
+        },
+        {
+          "stage": "isolated_required_geometry_preparation",
+          "elapsed_ms": 10801
+        },
+        {
+          "stage": "persistent_server_profile",
+          "elapsed_ms": 12122
+        },
+        {
+          "stage": "postgres_native_combined",
+          "elapsed_ms": 12839
+        },
+        {
+          "stage": "preflight_selected_map_port",
+          "elapsed_ms": 15392
+        }
+      ]
+    },
+    "memory": {
+      "format": 1,
+      "status": "running",
+      "admitted": true,
+      "stop_requested": false,
+      "samples": 17,
+      "invalid_samples": 0,
+      "sample_interval_ms": 1000,
+      "admission_reserve_bytes": 999756032,
+      "running_reserve_bytes": 249939008,
+      "java_heap_reserve_bytes": 16777216,
+      "minimum_system_headroom_bytes": 9193500672,
+      "minimum_java_heap_headroom_bytes": 245924776,
+      "pressure_started_elapsed_ms": null,
+      "pressure_samples": 0,
+      "last_elapsed_ms": 15226,
+      "recent_samples": [
+        {
+          "elapsed_ms": 0,
+          "valid": true,
+          "available_bytes": 9469915136,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 20724680,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9243422720,
+          "java_heap_headroom_bytes": 247710776
+        },
+        {
+          "elapsed_ms": 35,
+          "valid": true,
+          "available_bytes": 9471270912,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 22072264,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9244778496,
+          "java_heap_headroom_bytes": 246363192
+        },
+        {
+          "elapsed_ms": 1039,
+          "valid": true,
+          "available_bytes": 9460670464,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 22203480,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9234178048,
+          "java_heap_headroom_bytes": 246231976
+        },
+        {
+          "elapsed_ms": 2048,
+          "valid": true,
+          "available_bytes": 9419993088,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 22342744,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9193500672,
+          "java_heap_headroom_bytes": 246092712
+        },
+        {
+          "elapsed_ms": 3058,
+          "valid": true,
+          "available_bytes": 9433722880,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 22510680,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9207230464,
+          "java_heap_headroom_bytes": 245924776
+        },
+        {
+          "elapsed_ms": 4073,
+          "valid": true,
+          "available_bytes": 9596039168,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 8599504,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9369546752,
+          "java_heap_headroom_bytes": 259835952
+        },
+        {
+          "elapsed_ms": 5086,
+          "valid": true,
+          "available_bytes": 9635766272,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 8751056,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9409273856,
+          "java_heap_headroom_bytes": 259684400
+        },
+        {
+          "elapsed_ms": 6102,
+          "valid": true,
+          "available_bytes": 9633161216,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 8972240,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9406668800,
+          "java_heap_headroom_bytes": 259463216
+        },
+        {
+          "elapsed_ms": 7116,
+          "valid": true,
+          "available_bytes": 9620107264,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 9091024,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9393614848,
+          "java_heap_headroom_bytes": 259344432
+        },
+        {
+          "elapsed_ms": 8129,
+          "valid": true,
+          "available_bytes": 9618567168,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 9312208,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9392074752,
+          "java_heap_headroom_bytes": 259123248
+        },
+        {
+          "elapsed_ms": 9144,
+          "valid": true,
+          "available_bytes": 9613168640,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 9447376,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9386676224,
+          "java_heap_headroom_bytes": 258988080
+        },
+        {
+          "elapsed_ms": 10158,
+          "valid": true,
+          "available_bytes": 9624092672,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 9684944,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9397600256,
+          "java_heap_headroom_bytes": 258750512
+        },
+        {
+          "elapsed_ms": 11173,
+          "valid": true,
+          "available_bytes": 9627779072,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 9922512,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9401286656,
+          "java_heap_headroom_bytes": 258512944
+        },
+        {
+          "elapsed_ms": 12183,
+          "valid": true,
+          "available_bytes": 9627840512,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 10115024,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9401348096,
+          "java_heap_headroom_bytes": 258320432
+        },
+        {
+          "elapsed_ms": 13198,
+          "valid": true,
+          "available_bytes": 9606438912,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 10467280,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9379946496,
+          "java_heap_headroom_bytes": 257968176
+        },
+        {
+          "elapsed_ms": 14211,
+          "valid": true,
+          "available_bytes": 9606193152,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 10676176,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9379700736,
+          "java_heap_headroom_bytes": 257759280
+        },
+        {
+          "elapsed_ms": 15226,
+          "valid": true,
+          "available_bytes": 9599377408,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false,
+          "java_heap_used_bytes": 11028432,
+          "java_heap_limit_bytes": 268435456,
+          "system_headroom_bytes": 9372884992,
+          "java_heap_headroom_bytes": 257407024
+        }
+      ]
+    },
+    "app_events": [
+      {
+        "name": "recovering",
+        "elapsed_ms": 605440474
+      },
+      {
+        "name": "interrupted_owner_recovered",
+        "elapsed_ms": 605440489
+      },
+      {
+        "name": "starting",
+        "elapsed_ms": 605444693
+      },
+      {
+        "name": "server_process_started",
+        "elapsed_ms": 605444746
+      },
+      {
+        "name": "server_process_exited",
+        "elapsed_ms": 605460353
+      }
+    ],
+    "updated_elapsed_ms": 605468583,
+    "guest": {
+      "format": 1,
+      "app_id": "org.coh.nativecombined",
+      "server_only": true,
+      "conventional_client_started": false,
+      "native_client_started_by_guest": false,
+      "encrypted_authentication_verified": false,
+      "native_world_entry_verified": false,
+      "original_profile_modified": false,
+      "status": "failed",
+      "last_stage": "preflight_selected_map_port",
+      "primary_failure_code": "OWNED_DISPLAY_SOCKET_ALREADY_EXISTS",
+      "cleanup_failure_code": null,
+      "exception_type": "AdmissionError",
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": false,
+        "owned_processes_reaped": true
+      },
+      "profile_preserved": true,
+      "cleanup_complete": true,
+      "failure_code": "OWNED_DISPLAY_SOCKET_ALREADY_EXISTS",
+      "geometry_preparation": {
+        "policy": "isolated_original_geometry_before_servers",
+        "worker_used": false,
+        "worker_reaped": true,
+        "before_postgresql": true,
+        "before_wine": true,
+        "worker_peak_rss_kib": 0,
+        "parent_rss_kib_before": 31464,
+        "parent_rss_kib_after": 31480,
+        "elapsed_seconds": 1.318,
+        "status": "reused_verified_required_geometry",
+        "input_files_checked": 406,
+        "required_geometry_sha256": "c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43"
+      },
+      "stage_history": [
+        {
+          "stage": "preflight_local_server_ports",
+          "started_utc": "2026-10-15T21:25:42.736526+00:00",
+          "finished_utc": "2026-10-15T21:25:42.737669+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.001
+        },
+        {
+          "stage": "server_only_input_admission",
+          "started_utc": "2026-10-15T21:25:42.738003+00:00",
+          "finished_utc": "2026-10-15T21:25:46.857408+00:00",
+          "status": "passed",
+          "elapsed_seconds": 4.12
+        },
+        {
+          "stage": "prepare_private_server_inputs",
+          "started_utc": "2026-10-15T21:25:46.857836+00:00",
+          "finished_utc": "2026-10-15T21:25:53.243340+00:00",
+          "status": "passed",
+          "elapsed_seconds": 6.386
+        },
+        {
+          "stage": "isolated_required_geometry_preparation",
+          "started_utc": "2026-10-15T21:25:53.244256+00:00",
+          "finished_utc": "2026-10-15T21:25:54.563680+00:00",
+          "status": "passed",
+          "elapsed_seconds": 1.32
+        },
+        {
+          "stage": "persistent_server_profile",
+          "started_utc": "2026-10-15T21:25:54.564797+00:00",
+          "elapsed_seconds": 0.717
+        },
+        {
+          "stage": "postgres_native_combined",
+          "started_utc": "2026-10-15T21:25:55.281884+00:00",
+          "finished_utc": "2026-10-15T21:25:57.603104+00:00",
+          "status": "passed",
+          "elapsed_seconds": 2.321
+        },
+        {
+          "stage": "preflight_selected_map_port",
+          "started_utc": "2026-10-15T21:25:57.835200+00:00",
+          "finished_utc": "2026-10-15T21:25:57.836546+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.001
+        }
+      ]
+    },
+    "readiness_reached": false,
+    "failure_site": "start_wine_owned_presentation_endpoint_admission_before_presentation_display_stage",
+    "existing_endpoint_type_or_liveness_recorded": false,
+    "cleanup_scope_caveat": "cleanup_complete is the current guest report result; it does not establish a successful subsequent restart or absence of every old filesystem endpoint."
+  },
+  "earlier_013_attempts_in_same_bundle": [
+    {
+      "role": "early_admission_failure_followed_by_recovery",
+      "reported_app": {
+        "version_name": "0.1.3-local-server-native",
+        "version_code": 4
+      },
+      "server": {
+        "phase": "stopped",
+        "ready": false,
+        "guest_exit_code": -1,
+        "owned_process_alive": false,
+        "failure_code": "SERVER_ADMISSION_FAILED",
+        "last_stage": "guest_starting",
+        "elapsed_ms": 8,
+        "stage_elapsed_ms": 8,
+        "stages": [
+          {
+            "stage": "guest_starting",
+            "elapsed_ms": 0
+          }
+        ]
+      },
+      "memory": {
+        "format": 1,
+        "status": "not_started",
+        "admitted": false,
+        "stop_requested": false,
+        "samples": 0,
+        "invalid_samples": 0,
+        "sample_interval_ms": 1000,
+        "admission_reserve_bytes": null,
+        "running_reserve_bytes": null,
+        "java_heap_reserve_bytes": null,
+        "minimum_system_headroom_bytes": null,
+        "minimum_java_heap_headroom_bytes": null,
+        "pressure_started_elapsed_ms": null,
+        "pressure_samples": 0,
+        "last_elapsed_ms": null,
+        "recent_samples": []
+      },
+      "app_events": [
+        {
+          "name": "starting",
+          "elapsed_ms": 605422456
+        },
+        {
+          "name": "operation_failed",
+          "elapsed_ms": 605422478
+        },
+        {
+          "name": "recovering",
+          "elapsed_ms": 605425732
+        },
+        {
+          "name": "interrupted_owner_recovered",
+          "elapsed_ms": 605425743
+        }
+      ],
+      "updated_elapsed_ms": 605429454
+    },
+    {
+      "role": "interrupted_013_attempt_last_persisted_snapshot",
+      "reported_app": {
+        "version_name": "0.1.3-local-server-native",
+        "version_code": 4
+      },
+      "server": {
+        "phase": "starting",
+        "ready": false,
+        "guest_exit_code": -1,
+        "owned_process_alive": true,
+        "failure_code": "",
+        "last_stage": "server_only_input_admission",
+        "elapsed_ms": 5135,
+        "stage_elapsed_ms": 4512,
+        "stages": [
+          {
+            "stage": "guest_starting",
+            "elapsed_ms": 0
+          },
+          {
+            "stage": "server_memory_admission",
+            "elapsed_ms": 6
+          },
+          {
+            "stage": "prepare_immutable_server_inputs",
+            "elapsed_ms": 7
+          },
+          {
+            "stage": "preflight_local_server_ports",
+            "elapsed_ms": 621
+          },
+          {
+            "stage": "server_only_input_admission",
+            "elapsed_ms": 623
+          }
+        ]
+      },
+      "memory": {
+        "format": 1,
+        "status": "running",
+        "admitted": true,
+        "stop_requested": false,
+        "samples": 7,
+        "invalid_samples": 0,
+        "sample_interval_ms": 1000,
+        "admission_reserve_bytes": 999756032,
+        "running_reserve_bytes": 249939008,
+        "java_heap_reserve_bytes": 16777216,
+        "minimum_system_headroom_bytes": 8315179008,
+        "minimum_java_heap_headroom_bytes": 245580856,
+        "pressure_started_elapsed_ms": null,
+        "pressure_samples": 0,
+        "last_elapsed_ms": 5092,
+        "recent_samples": [
+          {
+            "elapsed_ms": 0,
+            "valid": true,
+            "available_bytes": 8543326208,
+            "total_bytes": 15996096512,
+            "threshold_bytes": 226492416,
+            "low_memory": false,
+            "java_heap_used_bytes": 21556168,
+            "java_heap_limit_bytes": 268435456,
+            "system_headroom_bytes": 8316833792,
+            "java_heap_headroom_bytes": 246879288
+          },
+          {
+            "elapsed_ms": 60,
+            "valid": true,
+            "available_bytes": 8541671424,
+            "total_bytes": 15996096512,
+            "threshold_bytes": 226492416,
+            "low_memory": false,
+            "java_heap_used_bytes": 22854600,
+            "java_heap_limit_bytes": 268435456,
+            "system_headroom_bytes": 8315179008,
+            "java_heap_headroom_bytes": 245580856
+          },
+          {
+            "elapsed_ms": 1065,
+            "valid": true,
+            "available_bytes": 8574636032,
+            "total_bytes": 15996096512,
+            "threshold_bytes": 226492416,
+            "low_memory": false,
+            "java_heap_used_bytes": 8434216,
+            "java_heap_limit_bytes": 268435456,
+            "system_headroom_bytes": 8348143616,
+            "java_heap_headroom_bytes": 260001240
+          },
+          {
+            "elapsed_ms": 2069,
+            "valid": true,
+            "available_bytes": 8583819264,
+            "total_bytes": 15996096512,
+            "threshold_bytes": 226492416,
+            "low_memory": false,
+            "java_heap_used_bytes": 8639016,
+            "java_heap_limit_bytes": 268435456,
+            "system_headroom_bytes": 8357326848,
+            "java_heap_headroom_bytes": 259796440
+          },
+          {
+            "elapsed_ms": 3076,
+            "valid": true,
+            "available_bytes": 8758448128,
+            "total_bytes": 15996096512,
+            "threshold_bytes": 226492416,
+            "low_memory": false,
+            "java_heap_used_bytes": 8774184,
+            "java_heap_limit_bytes": 268435456,
+            "system_headroom_bytes": 8531955712,
+            "java_heap_headroom_bytes": 259661272
+          },
+          {
+            "elapsed_ms": 4084,
+            "valid": true,
+            "available_bytes": 8927129600,
+            "total_bytes": 15996096512,
+            "threshold_bytes": 226492416,
+            "low_memory": false,
+            "java_heap_used_bytes": 8978984,
+            "java_heap_limit_bytes": 268435456,
+            "system_headroom_bytes": 8700637184,
+            "java_heap_headroom_bytes": 259456472
+          },
+          {
+            "elapsed_ms": 5092,
+            "valid": true,
+            "available_bytes": 9481752576,
+            "total_bytes": 15996096512,
+            "threshold_bytes": 226492416,
+            "low_memory": false,
+            "java_heap_used_bytes": 9130536,
+            "java_heap_limit_bytes": 268435456,
+            "system_headroom_bytes": 9255260160,
+            "java_heap_headroom_bytes": 259304920
+          }
+        ]
+      },
+      "app_events": [
+        {
+          "name": "starting",
+          "elapsed_ms": 605422456
+        },
+        {
+          "name": "operation_failed",
+          "elapsed_ms": 605422478
+        },
+        {
+          "name": "recovering",
+          "elapsed_ms": 605425732
+        },
+        {
+          "name": "interrupted_owner_recovered",
+          "elapsed_ms": 605425743
+        },
+        {
+          "name": "starting",
+          "elapsed_ms": 605429456
+        },
+        {
+          "name": "server_process_started",
+          "elapsed_ms": 605429557
+        }
+      ],
+      "updated_elapsed_ms": 605434621,
+      "guest_final_report_present": false,
+      "attribution_to_latest_low_memory_exit": "Consistent with ordered app elapsed-clock events and the latest OS exit timestamp; no allocating process or allocation is identified."
+    }
+  ],
+  "android_process_exit_history": {
+    "status": "collected",
+    "records": [
+      {
+        "reason": 3,
+        "status": 0,
+        "timestamp_utc_ms": 1792099532637,
+        "importance": 100,
+        "pss_kib": 78634,
+        "rss_kib": 184828,
+        "low_memory": true
+      },
+      {
+        "reason": 10,
+        "status": 0,
+        "timestamp_utc_ms": 1792099424958,
+        "importance": 125,
+        "pss_kib": 98115,
+        "rss_kib": 196168,
+        "low_memory": false
+      },
+      {
+        "reason": 10,
+        "status": 0,
+        "timestamp_utc_ms": 1792095878701,
+        "importance": 125,
+        "pss_kib": 81790,
+        "rss_kib": 184160,
+        "low_memory": false
+      },
+      {
+        "reason": 10,
+        "status": 0,
+        "timestamp_utc_ms": 1792093965739,
+        "importance": 125,
+        "pss_kib": 98225,
+        "rss_kib": 194336,
+        "low_memory": false
+      },
+      {
+        "reason": 3,
+        "status": 0,
+        "timestamp_utc_ms": 1792091451014,
+        "importance": 100,
+        "pss_kib": 72888,
+        "rss_kib": 179156,
+        "low_memory": true
+      },
+      {
+        "reason": 10,
+        "status": 0,
+        "timestamp_utc_ms": 1792091414033,
+        "importance": 125,
+        "pss_kib": 91394,
+        "rss_kib": 195492,
+        "low_memory": false
+      }
+    ],
+    "latest_exit_utc": "2026-10-15T21:25:32.637000+00:00",
+    "latest_exit_reason_symbol": "LOW_MEMORY",
+    "android_low_memory_exit_confirmed": true,
+    "exact_allocation_or_child_process_cause_determined": false,
+    "memory_observer_prevented_this_exit": false
+  },
+  "timing_correlation": {
+    "method": "Cross-check current guest first-stage UTC with app stage elapsed time; infer current run origin from exited event minus finalized run elapsed. Compare the prior running snapshot origin (updated_elapsed minus running elapsed).",
+    "uncertainty": "Approximate cross-clock correlation; guest stage UTC is generated before Android reads its progress event. Log delivery and rounded millisecond diagnostics preclude exact millisecond causality.",
+    "guest_anchor_utc": "2026-10-15T21:25:42.736526+00:00",
+    "app_anchor_stage_elapsed_ms": 293,
+    "inferred_current_run_origin_elapsed_ms": 605444701,
+    "inferred_prior_run_origin_elapsed_ms": 605429486,
+    "inferred_run_origin_separation_ms": 15215,
+    "estimated_low_memory_exit_after_prior_run_origin_ms": 5408.474,
+    "last_persisted_prior_run_elapsed_ms": 5135,
+    "estimated_low_memory_exit_after_last_prior_snapshot_ms": 273.474,
+    "inferred_prior_run_duration_rounded_seconds": 5.4
+  },
+  "stale_native_client_report": {
+    "bytes": 223933,
+    "sha256": "a6f1afef6cd722b866529a47e7f7e17f89a8a6b3746d9b7e809ef3118c943e28",
+    "byte_identical_to_prior_012_bundle_client_report": true,
+    "previous_012_bundle_sha256": "9dc8b8352507c0224b8b35016c03ced4dd459a4baa95c4b94d3cf2dd85ad356e",
+    "matches_previous_repository_evidence_member_sha256": true,
+    "app": {
+      "package": "org.coh.nativecombined",
+      "version_name": "0.1.2-local-server-native",
+      "version_code": 3,
+      "installed_apk": {
+        "bytes": 11519003,
+        "sha256": "1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449"
+      }
+    },
+    "updated_at": "2026-10-15T15:24:38.590-05:00",
+    "server_protocol": {
+      "schema": "coh-native-local-numeric-v1",
+      "phase": "SUSPENDED",
+      "local_development_auth": 1,
+      "server_identity_bound": 0,
+      "generation": 1,
+      "selection_generation": 1,
+      "db_phase": 8,
+      "map_phase": 8,
+      "last_status": 4,
+      "attempts": 1,
+      "character_lists": 1,
+      "character_choices": 1,
+      "map_handoffs": 1,
+      "policy_rejections": 0,
+      "failures": 1,
+      "suspends": 2,
+      "cancellations": 0,
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "authserver_authenticated": false,
+      "live_world_rendered": false
+    },
+    "failure": "Native renderer failed; preserve the exported report",
+    "native_failure": {
+      "failure": "Source session camera failed",
+      "frames": 532,
+      "width": 1920,
+      "height": 137,
+      "contexts_started": 2,
+      "contexts_completed": 2
+    },
+    "proves_current_013_native_connection_failure": false,
+    "proves_current_013_viewport_regression": false,
+    "interpretation": "Retained 0.1.2 client diagnostic; current 0.1.3 server startup failed before a new ready/manual-client handoff."
+  },
+  "historical_context": {
+    "older_011_guest_failure_present": true,
+    "older_012_ready_snapshot_present": true,
+    "older_012_ready_elapsed_ms": 556310,
+    "historical_012_server_boot_evidence_revoked": false
+  },
+  "scope": {
+    "physical_013_server_startup_accepted": false,
+    "physical_013_native_connection_result_available": false,
+    "physical_013_native_viewport_repair_assessed_by_this_bundle": false,
+    "encrypted_AuthServer_login_verified": false,
+    "native_server_authoritative_world_verified": false,
+    "014_repair_qualified_by_this_record": false,
+    "gates_22_to_24_acceptance_changed": false
+  }
+}

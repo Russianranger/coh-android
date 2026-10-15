@@ -31,6 +31,7 @@ def main():
     native = args.source_root.resolve() / 'native-android'
     commands = [
         ('framework-driver-controls', [sys.executable, native / 'combined-client/tools/driver_controls.py']),
+        ('installed-apk-identity', [sys.executable, native / 'combined-client/qualification/check_apk_identity.py']),
         ('lease-admission', [sys.executable, native / 'combined-client/qualification/check_lease.py']),
         ('guest-diagnostics', [sys.executable, native / 'combined-client/qualification/check_diagnostics.py']),
         ('server-memory-policy', [sys.executable, native / 'combined-client/qualification/check_server_memory.py']),

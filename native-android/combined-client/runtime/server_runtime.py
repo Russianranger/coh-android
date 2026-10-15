@@ -55,6 +55,29 @@ def real_private_path(path, *, directory=False, exists=True):
     return path
 
 
+def presentation_endpoint(root, session):
+    """Choose one absent endpoint in the existing private runtime directory.
+
+    An interrupted older session may leave a socket inode. Its pathname is
+    never reused, probed, removed or treated as proof of a live owned process.
+    The retained X server still selects an unused display and validates its
+    actual mode-0600 endpoint before any Wine initialization.
+    """
+    require(type(session) is str and SESSION.fullmatch(session), 'INVALID_RUN_IDENTITY')
+    directory = real_private_path(Path(root) / 'runtime', directory=True)
+    info = directory.lstat()
+    require(stat.S_ISDIR(info.st_mode) and stat.S_IMODE(info.st_mode) == 0o700
+            and info.st_uid == os.geteuid(), 'INVALID_PRIVATE_DISPLAY_DIRECTORY')
+    # Keep room for PRoot's Android backing path as well as the guest path.
+    # A 96-bit session digest avoids the fixed legacy endpoint and long UUID
+    # suffix; an unexpected collision still fails closed below.
+    endpoint = directory / ('v' + hashlib.sha256(session.encode('ascii')).hexdigest()[:24])
+    # Linux sockaddr_un.sun_path is 108 bytes including the terminating NUL.
+    require(len(os.fsencode(endpoint)) <= 107, 'OWNED_DISPLAY_SOCKET_PATH_TOO_LONG')
+    require(not endpoint.exists() and not endpoint.is_symlink(), 'OWNED_DISPLAY_SOCKET_ALREADY_EXISTS')
+    return endpoint
+
+
 def digest(path):
     h = hashlib.sha256()
     with Path(path).open('rb') as source:
@@ -236,8 +259,26 @@ def rss_kib():
             raw = source.read(16384)
         value = re.search(r'(?m)^VmRSS:\s+([0-9]+) kB$', raw)
         return int(value[1]) if value and int(value[1]) <= 8 * 1024 * 1024 else None
-    except OSError:
+    except (OSError, ValueError, OverflowError, TypeError):
         return None
+
+
+def guest_resource_sample():
+    """Best-effort Linux numeric observations; never a memory-cause verdict.
+
+    Cgroup discovery is deliberately deferred. An unverified or shared group
+    must not be represented as this owned guest's memory accounting.
+    """
+    def peak(who):
+        try:
+            value = resource.getrusage(who).ru_maxrss
+            return value if type(value) is int and 0 <= value <= 8 * 1024 * 1024 else None
+        except (OSError, ValueError, OverflowError, TypeError, AttributeError):
+            return None
+    return {'rss_kib': rss_kib(), 'peak_rss_kib': peak(resource.RUSAGE_SELF),
+            'children_peak_rss_kib': peak(resource.RUSAGE_CHILDREN),
+            'cgroup_current_bytes': None, 'cgroup_max_bytes': None,
+            'cgroup_oom_kill_count': None}
 
 
 def geometry_worker_main(argv=None):
@@ -375,15 +416,30 @@ def runtime_classes():
             self.log_root = None
             self.owned_start_attempts = 0
             self.stage_started_monotonic = None
+            self.guest_resource_samples = []
 
         log_paths = character.game.GameContext.log_paths
 
+        def resource_boundary(self, boundary):
+            if boundary not in ('leaving', 'entered'):
+                return
+            stage = self.stage_name
+            if type(stage) is not str or not re.fullmatch(r'[A-Za-z0-9_]{1,100}', stage):
+                stage = 'unknown_stage'
+            sample = {'type': 'guest_resources', 'stage': stage, 'boundary': boundary,
+                      'session_id': self.session_id, 'time_utc': base.utc(), **guest_resource_sample()}
+            self.guest_resource_samples.append(sample)
+            self.guest_resource_samples = self.guest_resource_samples[-32:]
+            print(json.dumps(sample, separators=(',', ':')), flush=True)
+
         def stage(self, name):
+            self.resource_boundary('leaving')
             if self.stage_started_monotonic is not None and self.report['stages']:
                 self.report['stages'][-1].setdefault('elapsed_seconds',
                     round(time.monotonic() - self.stage_started_monotonic, 3))
             base.Context.stage(self, name)
             self.stage_started_monotonic = time.monotonic()
+            self.resource_boundary('entered')
 
         def passed(self, **evidence):
             base.Context.passed(self, **evidence)
@@ -723,7 +779,7 @@ def runtime_classes():
             self.ready_path = args.state / 'server-ready.json'
             self.ready_receipt = None
             self.provisioner = None
-            self.presentation_socket = self.root / 'runtime' / 'vnc.sock'
+            self.presentation_socket = None
             self.presentation_socket_identity = None
 
         # DbServer's accepted helpers read complete bounded stdout, unlike the
@@ -763,8 +819,12 @@ def runtime_classes():
         # Exact donor display/bootstrap path: no MSI installation or driver
         # probe here. LocalLoginServer.start retains the single original pair.
         def start_wine(self):
-            require(not self.presentation_socket.exists() and not self.presentation_socket.is_symlink(),
-                    'OWNED_DISPLAY_SOCKET_ALREADY_EXISTS')
+            self.ctx.stage('prepare_owned_presentation_endpoint')
+            self.presentation_socket = presentation_endpoint(self.root, self.args.session_id)
+            self.ctx.report['presentation_endpoint'] = {
+                'policy': 'fresh_session_bound_private_rfb_socket',
+                'session_bound': True, 'existing_endpoints_removed': 0,
+                'legacy_fixed_endpoint_reused': False, 'original_display_bootstrap_reused': True}
             startup.presentation.PresentationDiagnostic.start_wine(self)
 
         def prepare_wine_initialization(self):
@@ -978,6 +1038,10 @@ def main(argv=None):
             result['processes'] = context.report['processes']
             if 'geometry_preparation' in context.report:
                 result['geometry_preparation'] = context.report['geometry_preparation']
+            if 'presentation_endpoint' in context.report:
+                result['presentation_endpoint'] = context.report['presentation_endpoint']
+            if getattr(context, 'guest_resource_samples', None):
+                result['guest_resource_samples'] = context.guest_resource_samples
             stages = context.report.get('stages', [])[-128:]
             if stages and context.stage_started_monotonic is not None:
                 stages[-1].setdefault('elapsed_seconds', round(time.monotonic() - context.stage_started_monotonic, 3))

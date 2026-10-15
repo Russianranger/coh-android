@@ -42,7 +42,11 @@ def run_tests(directory):
     return {'test_methods': count, 'passed_methods': count - skip_count,
             'skipped_methods': skip_count, 'status': 'passed',
             'skip_reasons': re.findall(r"(?m)\.\.\. skipped '([^'\n]{1,200})'", result.stdout),
-            'stdout_sha256': hashlib.sha256(result.stdout.encode()).hexdigest()}
+            'stdout_sha256': hashlib.sha256(result.stdout.encode()).hexdigest(),
+            'unix_socket_interruption_test_executed': bool(re.search(
+                r'(?m)^test_real_unix_socket_interruption_then_new_session_restart .*\.\.\. ok$', result.stdout)),
+            'abrupt_guest_resource_capture_test_executed': bool(re.search(
+                r'(?m)^test_guest_resource_event_is_flushed_before_abrupt_guest_exit .*\.\.\. ok$', result.stdout))}
 
 
 def main():
@@ -55,6 +59,9 @@ def main():
     source = args.source_root.resolve() / 'android' / 'guest'
     record = {'format': 1, 'scope': 'server_only_admission_and_retained_api_contract',
         'actual_server_executed': False, 'actual_login_verified': False,
+        'display_endpoint_policy': 'session_sha256_96bit_private_component_25bytes',
+        'legacy_display_endpoints_deleted': False, 'donor_display_guard_weakened': False,
+        'guest_resource_scope': 'bounded_self_RSS_and_peak_RSS_observations_only_cgroup_unknown_not_a_cause_verdict',
         'native_world_entry_verified': False, 'test_character_provision_executed': False,
         'source_contract_tests': run_tests(source),
         'source_modules': {name: sha(source / name) for name in REQUIRED_MODULES}}

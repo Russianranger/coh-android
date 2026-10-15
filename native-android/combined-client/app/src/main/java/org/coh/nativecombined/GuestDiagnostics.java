@@ -25,6 +25,11 @@ final class GuestDiagnostics {
     static String stageName(String value){
         return value!=null&&value.matches("[A-Za-z0-9_ .:-]{1,120}")?value:"";
     }
+    static Long numericMetric(Object value){
+        if(!(value instanceof Integer)&&!(value instanceof Long))return null;
+        long number=((Number)value).longValue();
+        return number>=0&&number<=(1L<<50)?number:null;
+    }
     synchronized void start(String id,long now){
         if(!sameSession(id,id)||now<0)throw new IllegalArgumentException("Invalid run identity");
         session=id;stage="";failure="";started=stageStarted=now;finished=0;ended=false;stages.clear();times.clear();

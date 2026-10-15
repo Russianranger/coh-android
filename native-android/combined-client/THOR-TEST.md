@@ -5,7 +5,56 @@ This is a new, separate app named **CoH Native Combined**
 0.1.0/0.2.0/0.3.0 apps and all existing assets and reports. Do not uninstall or
 clear their storage. Gates 22–24 remain accepted within their documented scope.
 
-## Current update: 0.1.3 connection repair
+## Current update: 0.1.4 interrupted-start recovery
+
+Install `CoH-Native-Combined-0.1.4-arm64.apk` **over Combined**. Do not uninstall,
+clear storage, reimport assets, repeat setup or remove the saved test profile.
+The 0.1.3 report failed before Wine/client startup because a pre-existing private
+display endpoint remained after interruption. The next session now uses a fresh,
+short session-derived endpoint. It never deletes or takes over an old endpoint.
+The real Android backing pathname is checked against the Unix-socket size limit.
+
+The report separately records an Android low-memory exit around 5.4 seconds into
+a preceding startup. The allocating process/cause was not retained. The last
+samples still showed over 8 GB system headroom and over 245 MB Java headroom;
+those measurements cannot guarantee against an OS kill. Original streamed asset
+verification, memory admission and cleanup checks remain enabled. New stage
+boundaries preserve bounded guest RSS/peak observations for the next diagnosis;
+unknown cgroup metrics are explicitly null, not assumed zero.
+
+For this retry:
+
+1. Stop any running test server and install over Combined. Keep the conventional
+   launcher closed. Existing runtime, immutable inputs and saved character stay.
+2. If an interrupted-owner warning appears, use **Recover interrupted server**
+   after reopening the app with no owned server still running. If recovery refuses
+   live children, export first, Android-force-stop only Combined, reopen and
+   recover. Do not delete files or change Android memory-killer settings.
+3. Tap **Start server**. It must no longer fail merely because an older session's
+   display endpoint exists. Record the stages and wait for server readiness.
+4. Once ready, launch the native client manually, Connect, select the existing
+   character and record its resulting protocol state. The expected implemented
+   boundary is still `SCENE_INCOMPLETE`; the visible scene is an offline preview.
+5. Return to the launcher, stop the server normally, and start once more. Confirm
+   the same character persists. If this passes, an optional interruption check is
+   to force-stop only Combined while its server is ready, reopen, recover and
+   start again. Never clear app data or run two server owners simultaneously.
+6. Export the combined **report ZIP** after success or the first failure, before
+   another retry. It includes the current installed APK hash and sampled guest
+   resources. Retained native reports from older app versions are clearly named
+   `previous-app-native-client-report.json`; they are not new test results.
+7. If Android kills the app again, reopen and export before recovery/retry. The
+   earlier attempt and OS exit record are needed even when no final guest report
+   could be written. This update repairs restart isolation; it does not claim to
+   have identified or eliminated the separate low-memory exit.
+
+The [0.1.3 failure record](evidence/20261015/startup-repair-0.1.4/thor-failure-sanitized.md)
+explains the current failure and the stale 0.1.2 client report. The qualified
+0.1.3 APK, accepted scene and all earlier evidence remain available below.
+
+## Previous qualified 0.1.3 connection repair
+
+Historical handoff; use the current 0.1.4 procedure above.
 
 Install `CoH-Native-Combined-0.1.3-arm64.apk` **over the existing Combined app**.
 
