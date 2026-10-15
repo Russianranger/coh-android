@@ -87,10 +87,12 @@ CohStatus coh_rep_shortcuts(CohRepReader *r,CohRepSchema *out) {
         CALL(coh_rep_string(&q,name,sizeof(name)));
         v.entries[v.count++]=(CohRepShortcut){(uint16_t)id,shortcut_kind(name)};
     }
-    /* Accessible command strings follow the shortcut terminator. */
-    uint32_t n;PACK(&q,1,n);if(n>COH_REP_SHORTCUT_MAX)return COH_LIMIT;
+    /* The access-filtered server_cmds list is independent of the shortcut
+     * schema. Discard names one at a time; never allocate n strings or let
+     * their names authorize native command execution. */
+    uint32_t n;PACK(&q,1,n);if(n>COH_REP_ACCESSIBLE_COMMAND_MAX)return COH_LIMIT;
     for(uint32_t i=0;i<n;i++)CALL(coh_rep_string(&q,name,sizeof(name)));
-    *r=q;*out=v;return COH_OK;
+    v.accessible_commands=n;*r=q;*out=v;return COH_OK;
 }
 CohStatus coh_rep_scene_prefix(CohRepReader *r,CohRepScenePrefix *out) {
     if(!valid(r)||!out)return COH_INVALID;

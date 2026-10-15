@@ -98,6 +98,9 @@ CohStatus coh_map_client_begin(CohMapClient *m,const CohMapAuthorization *a,uint
     m->diag.local_development_authorized=(unsigned)a->local_development_authorized;
     m->diag.selected_dbid=a->selected_dbid;m->diag.map_id=a->handoff.map_id;m->diag.map_link_id=a->handoff.link_id;
     m->cookie=a->handoff.cookie;m->authorized=1;m->last_connect_id=id;
+    m->diag.stage=COH_MAP_STAGE_NONE;m->diag.last_status=COH_OK;
+    m->diag.last_command=m->diag.last_payload_bits=0;
+    m->diag.last_command_valid=m->diag.last_byte_aligned=0;
     m->diag.generation++;m->diag.phase=COH_MAP_NET_CONNECTING;m->phase_ms=m->last_ms=now;return COH_OK;
 }
 static CohStatus send_command(CohMapClient *m,unsigned command,uint64_t now) {
@@ -111,22 +114,31 @@ static CohStatus send_command(CohMapClient *m,unsigned command,uint64_t now) {
 }
 static CohStatus inspect(CohMapClient *m,const CohNetMessage *message,uint64_t now) {
     if(!m->authorized)return COH_STATE;
+    m->diag.stage=COH_MAP_STAGE_COMMAND;
+    m->diag.last_command_valid=0;
+    m->diag.last_payload_bits=message->payload_bits;
+    m->diag.last_byte_aligned=message->compressed;
     CohBytes b={message->payload,(message->payload_bits+7)/8};CohRepReader reader;uint32_t cmd;
     CohStatus s=coh_rep_reader(&reader,b,message->payload_bits,message->compressed);
     if(s==COH_OK)s=coh_rep_pack(&reader,1,&cmd);
     if(s!=COH_OK)goto rejected;
     if(m->config.udp.link.version<4){if(cmd<7){s=COH_UNSUPPORTED;goto rejected;}cmd-=5;}
+    m->diag.last_command=cmd;m->diag.last_command_valid=1;
     if(cmd==COH_REP_CONNECT_MSG) {
+        m->diag.stage=COH_MAP_STAGE_CONNECT;
         CohRepConnect v;s=coh_rep_connect(&reader,&v);
         if(s!=COH_OK)goto rejected;
         if(reader.cursor!=reader.bits){s=COH_UNSUPPORTED;goto rejected;}
         if(!v.accepted){coh_map_client_close(m);m->diag.disconnects++;s=COH_STATE;goto rejected;}
         if(m->diag.phase!=COH_MAP_WAIT_CONNECT){s=COH_STATE;goto rejected;}
     } else if(cmd==COH_REP_SHORTCUTS) {
+        m->diag.stage=COH_MAP_STAGE_SHORTCUTS;
         if(m->diag.phase!=COH_MAP_WAIT_SHORTCUTS){s=COH_STATE;goto rejected;}
     } else if(cmd==COH_REP_GROUPS) {
+        m->diag.stage=COH_MAP_STAGE_SCENE_PREFIX;
         if(m->diag.phase!=COH_MAP_WAIT_SCENE&&m->diag.phase!=COH_MAP_SCENE_INCOMPLETE){s=COH_STATE;goto rejected;}
     } else if(cmd==COH_REP_UPDATE||cmd==COH_REP_ALLENTS) {
+        m->diag.stage=COH_MAP_STAGE_ENTITY_PREFIX;
         if(m->diag.phase!=COH_MAP_SCENE_INCOMPLETE){s=COH_STATE;goto rejected;}
     } else {s=COH_UNSUPPORTED;goto rejected;}
     if(m->diag.selected_dbid) {
@@ -154,6 +166,7 @@ static CohStatus inspect(CohMapClient *m,const CohNetMessage *message,uint64_t n
     if(cmd==COH_REP_UPDATE||cmd==COH_REP_ALLENTS) {
         m->diag.entity_prefixes++;s=COH_UNSUPPORTED;goto rejected;
     }
+    m->diag.stage=COH_MAP_STAGE_SEND_COMMAND;
     if(cmd==COH_REP_CONNECT_MSG) {
         s=send_command(m,COH_MAP_REQSHORTCUTS,now);
         if(s==COH_OK){m->diag.phase=COH_MAP_WAIT_SHORTCUTS;m->phase_ms=now;}
@@ -162,8 +175,9 @@ static CohStatus inspect(CohMapClient *m,const CohNetMessage *message,uint64_t n
         if(s==COH_OK){m->diag.phase=COH_MAP_WAIT_SCENE;m->phase_ms=now;}
     }
     if(s!=COH_OK){coh_map_client_close(m);m->diag.phase=COH_MAP_FAILED;goto rejected;}
-    m->diag.accepted_messages++;return COH_OK;
+    m->diag.accepted_messages++;m->diag.last_status=COH_OK;return COH_OK;
 rejected:
+    m->diag.last_status=s;
     m->diag.rejected_messages++;
     if(s==COH_INVALID||s==COH_LIMIT)m->diag.malformed++;
     if(s==COH_UNSUPPORTED)m->diag.unsupported++;
@@ -176,14 +190,16 @@ CohStatus coh_map_client_service(CohMapClient *m,uint64_t now,CohCancel cancel) 
     m->last_ms=now;CohStatus s=coh_net_udp_service(m->udp,now,cancel);CohNetUdpDiagnostics udp;
     coh_net_udp_diagnostics(m->udp,&udp);
     if(udp.state!=COH_UDP_ACTIVE) {
+        m->diag.stage=COH_MAP_STAGE_UDP_SERVICE;m->diag.last_status=s;
         clear_authorization(m);
         if(udp.state==COH_UDP_TIMED_OUT){m->diag.phase=COH_MAP_TIMED_OUT;m->diag.timeouts++;}
         else m->diag.phase=udp.state==COH_UDP_CLOSED?COH_MAP_CLOSED:COH_MAP_FAILED;
         return s;
     }
-    if(s!=COH_OK)return s;
+    if(s!=COH_OK){m->diag.stage=COH_MAP_STAGE_UDP_SERVICE;m->diag.last_status=s;return s;}
     if(m->diag.phase==COH_MAP_NET_CONNECTING&&udp.link_state==COH_NET_CONNECTED) {
-        s=send_command(m,COH_MAP_CONNECT,now);m->cookie=0;
+        m->diag.stage=COH_MAP_STAGE_SEND_COMMAND;
+        s=send_command(m,COH_MAP_CONNECT,now);m->diag.last_status=s;m->cookie=0;
         if(s!=COH_OK){coh_map_client_close(m);m->diag.phase=COH_MAP_FAILED;return s;}
         m->diag.phase=COH_MAP_WAIT_CONNECT;m->phase_ms=now;
     }
@@ -191,12 +207,16 @@ CohStatus coh_map_client_service(CohMapClient *m,uint64_t now,CohCancel cancel) 
     for(unsigned i=0;i<m->config.message_budget;i++) {
         CohNetMessage message;s=coh_net_udp_next(m->udp,&message);
         if(s==COH_NOT_FOUND)break;
-        if(s!=COH_OK)return s;
+        if(s!=COH_OK){m->diag.stage=COH_MAP_STAGE_MESSAGE_NEXT;m->diag.last_status=s;return s;}
         s=inspect(m,&message,now);wipe(&message,sizeof(message));
-        if(s!=COH_OK)result=s;
+        /* Preserve the first rejected message's numeric checkpoint. Continue
+         * draining only on a later service call, never over a failed parse. */
+        if(s!=COH_OK){result=s;break;}
         if(!m->authorized)break;
     }
+    if(result!=COH_OK)return result;
     if(m->diag.phase!=COH_MAP_DISCONNECTING&&now-m->phase_ms>=m->config.application_timeout_ms) {
+        m->diag.stage=COH_MAP_STAGE_APPLICATION_TIMEOUT;m->diag.last_status=COH_STATE;
         coh_map_client_close(m);m->diag.phase=COH_MAP_TIMED_OUT;m->diag.timeouts++;return COH_STATE;
     }
     return result;

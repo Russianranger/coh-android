@@ -5,50 +5,61 @@ This is a new, separate app named **CoH Native Combined**
 0.1.0/0.2.0/0.3.0 apps and all existing assets and reports. Do not uninstall or
 clear their storage. Gates 22–24 remain accepted within their documented scope.
 
-## Current update: 0.1.2
+## Current update: 0.1.3 connection repair
 
-Install `CoH-Native-Combined-0.1.2-arm64.apk` **over the existing Combined app**.
+Install `CoH-Native-Combined-0.1.3-arm64.apk` **over the existing Combined app**.
 The package and signing identity are unchanged. Keep its data; do not uninstall,
-clear storage, repeat the imports or repeat runtime setup. Both prior reports
-confirm the imports and runtime setup are already complete.
+clear storage, repeat imports or repeat runtime setup. Your 0.1.2 report confirms
+that the server reached readiness after 9 minutes 16 seconds, and the native
+client received a real character list, selected a character and requested the
+DB-to-Map handoff. Map connection acceptance and live-world rendering were not
+established.
 
-Current ARM64 APK: 11,519,003 bytes, SHA256
-`1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449`.
-The [package artifact](https://github.com/Russianranger/coh-android/actions/runs/38795244645/artifacts/12002281757)
-contains the ARM64 APK and reproducible build/host receipts.
-Source: `377584651471e748fbbd4a24cdf08bd2c48ca4a3`.
-The [Android13 exact-package continuation](https://github.com/Russianranger/coh-android/actions/runs/38797308843)
-passes all 18 framework checks without rebuilding either APK. Actual ARM64
-server startup still requires this Thor test.
+This update bounds the scrolling controls and the actual Surface dimensions so
+showing the character picker cannot collapse the accepted camera viewport. It
+also separates the accessible command-name list from the smaller shortcut schema
+limit: the source server can send over 900 command names. Reports retain the
+terminal protocol stage, status and numeric transport counters after cleanup and
+Home/return. The old report's `COH_LIMIT` is consistent with that parser defect;
+without its packet body, the exact failed packet cannot be identified.
 
 For this retry:
 
-1. Stop the server in the conventional COH launcher. Close other memory-heavy
-   apps before starting this disposable server test.
-2. Install the update, open **CoH Native Combined**, then tap **Start server**.
-   The first start verifies and protects the existing immutable inputs in place.
-   This repair preserves their bytes, runtime identity and private test profile.
-   Subsequent starts reuse the protection receipt with bounded metadata checks.
-3. Watch the stage and elapsed time. If an interrupted ownership warning appears,
-   export the report, force-stop this test app, reopen it and tap **Recover
-   interrupted server**, then **Start server**. Recovery preserves the database.
-4. If readiness succeeds, tap **Launch native client**, then **Connect local
-   server**. Follow the character and Map handoff checks below.
-5. Export the combined launcher's **report ZIP** after success or failure. If
-   Android closes the app, reopen it and export before another retry. Reports
-   now include memory samples, available OS process-exit reasons and up to four
-   preceding attempts. A native preview JSON alone lacks server startup evidence.
+1. Stop any existing server owner first. Install the update over Combined and
+   open it. Keep the conventional launcher closed during the disposable test.
+2. Tap **Start server** and wait for **Server ready**. Existing inputs, runtime
+   and saved disposable character are reused. Do not repeat setup. First-boot
+   timing is not a guarantee of warm-start timing; record the displayed stages.
+3. Tap **Launch native client**, then **Connect local server**. When the
+   character list appears, the scene must keep rendering. Controls scroll within
+   the upper part of the screen; scroll there to reach other buttons if needed.
+4. Select the same existing test character. Record the resulting state. The
+   expected implemented boundary is **SCENE_INCOMPLETE** when the server's
+   initial scene/entity packets require further decoding. The visible scene
+   remains the accepted offline preview, not server-authoritative world state.
+5. Before exporting, check **Recreate**, then Home/return and explicit reconnect.
+   Backgrounding suspends the network owner; it does not silently reconnect.
+6. Export the native JSON and the combined launcher's **report ZIP**, whether
+   the handoff succeeds or fails. Export before another retry if Android closes
+   the app. The ZIP preserves up to four preceding attempts and available numeric
+   OS exit reasons. A preview JSON alone lacks the complete server evidence.
+7. Stop the server through the launcher, then start once more and verify the
+   saved character is retained. Stop/restart cleanup remains a separate check.
 
-The recorded 0.1.1 attempt failed after 46.026 seconds before starting DbServer.
-The exact retained donor guard rejected a writable hardlinked FX payload; the
-pinned bytes are correct. The fix verifies those bytes and removes write bits
-from immutable inputs without weakening the original donor guard. The user also
-reported a preceding Android low-memory kill; its exact cause was not retained
-in that ZIP. Cold geometry admission now finishes in a reaped process before
-PostgreSQL and Wine start, reducing overlapping allocations. Startup admission
-and cooperative runtime memory monitoring are additional safeguards, not a
-promise that Android cannot kill the app. Successful ARM64 server boot still
-requires the Thor retry.
+The new report also records the earlier Android low-memory exit; the latest
+force-stops have different OS reasons. No allocation site was retained for the
+old kill. The successful 0.1.2 server snapshot had no measured pressure stop and
+at least 6.05 GB available system memory across 701 samples. This does not
+establish the peak memory use between samples or guarantee against OS kills.
+The old 0.1.1 FX failure is explicitly previous-session evidence in the ZIP.
+
+Keep the qualified 0.1.2 APK available:
+11,519,003 bytes, SHA256
+`1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449`,
+[0.1.2 package artifact](https://github.com/Russianranger/coh-android/actions/runs/38795244645/artifacts/12002281757).
+Its [exact-package Android13 continuation](https://github.com/Russianranger/coh-android/actions/runs/38797308843)
+passed all 18 framework checks. The Thor report now adds actual server boot and
+DB list/selection/handoff evidence, within the limits described above.
 
 The previous qualified 0.1.1 package remains available:
 11,242,291 bytes, SHA256

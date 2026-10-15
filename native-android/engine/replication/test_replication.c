@@ -127,6 +127,32 @@ static void extra_mode(int mode,CohBytes nan,size_t nan_bits,CohBytes duplicate,
     CHECK(coh_rep_reader(&r,empty,empty_bits,mode)==COH_OK);CHECK(coh_rep_physics(&r,&phys)==COH_OK);
     CHECK(!phys.position_changed&&!phys.has_id);
 }
+static void source_command_catalog(int mode,CohBytes source,size_t source_bits,
+    CohBytes maximum,size_t maximum_bits,CohBytes overflow,size_t overflow_bits) {
+    CohRepReader r=body(source,source_bits,mode);CohRepSchema schema={0};
+    CHECK(coh_rep_shortcuts(&r,&schema)==COH_OK&&r.cursor==source_bits);
+    CHECK(schema.count==1&&schema.entries[0].kind==1);
+    CHECK(schema.accessible_commands==SOURCE_ACCESSIBLE_COMMAND_COUNT);
+    /* Sample truncated catalog tails and each truncation of the final64 bits.
+     * Schema and reader are transactional, including after hundreds of names. */
+    CohRepReader start=body(source,source_bits,mode);
+    for(size_t bits=start.cursor;bits<source_bits;bits+=257) {
+        r=start;r.bits=bits;CohRepReader old=r;CohRepSchema saved=schema;
+        CHECK(coh_rep_shortcuts(&r,&schema)!=COH_OK);
+        CHECK(!memcmp(&r,&old,sizeof(r))&&!memcmp(&schema,&saved,sizeof(schema)));truncations++;
+    }
+    for(size_t bits=source_bits-64;bits<source_bits;bits++) {
+        r=start;r.bits=bits;CohRepReader old=r;CohRepSchema saved=schema;
+        CHECK(coh_rep_shortcuts(&r,&schema)!=COH_OK);
+        CHECK(!memcmp(&r,&old,sizeof(r))&&!memcmp(&schema,&saved,sizeof(schema)));truncations++;
+    }
+    r=body(maximum,maximum_bits,mode);
+    CHECK(coh_rep_shortcuts(&r,&schema)==COH_OK&&r.cursor==maximum_bits);
+    CHECK(schema.accessible_commands==COH_REP_ACCESSIBLE_COMMAND_MAX&&schema.count==1);
+    r=body(overflow,overflow_bits,mode);CohRepReader old=r;CohRepSchema saved=schema;
+    CHECK(coh_rep_shortcuts(&r,&schema)==COH_LIMIT);
+    CHECK(!memcmp(&r,&old,sizeof(r))&&!memcmp(&schema,&saved,sizeof(schema)));
+}
 static void fuzz(void) {
     uint32_t seed=0x12345678;unsigned char buffer[257];CohRepSchema schema={0};
     for(unsigned n=0;n<30000;n++) {
@@ -146,6 +172,8 @@ int main(void) {
     MODE(0);MODE(1);fuzz();
 #define EXTRA(n) extra_mode(n,BYTES(connect_nan##n),connect_nan##n##_bits,BYTES(duplicate_shortcuts##n),duplicate_shortcuts##n##_bits,BYTES(long_shortcut##n),long_shortcut##n##_bits,BYTES(update_debug##n),update_debug##n##_bits,BYTES(scene_same##n),scene_same##n##_bits,BYTES(physics_id_only##n),physics_id_only##n##_bits,BYTES(physics_empty##n),physics_empty##n##_bits)
     EXTRA(0);EXTRA(1);
+#define CATALOG(n) source_command_catalog(n,BYTES(source_commands##n),source_commands##n##_bits,BYTES(maximum_commands##n),maximum_commands##n##_bits,BYTES(overflow_commands##n),overflow_commands##n##_bits)
+    CATALOG(0);CATALOG(1);
     CohRepReader invalid;CHECK(coh_rep_reader(&invalid,(CohBytes){NULL,1},8,0)==COH_INVALID);
     CHECK(coh_rep_reader(&invalid,(CohBytes){NULL,0},1,0)==COH_INVALID);
     CHECK(coh_rep_reader(&invalid,(CohBytes){connect0,COH_REP_MESSAGE_MAX+1},1,0)==COH_INVALID);

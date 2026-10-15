@@ -6,7 +6,7 @@ The unchanged original x86 bit code runs only on trusted padded/aligned input,
 at -O0. Sanitizers cover the new module and test harness, not legacy code.
 """
 from pathlib import Path
-import argparse, ctypes as C, hashlib, importlib.util, json, os, struct, subprocess, tempfile
+import argparse, ctypes as C, hashlib, importlib.util, json, os, re, struct, subprocess, tempfile
 
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
@@ -23,6 +23,7 @@ FILES=[
  'Game/src/entity/entrecv.c', 'Game/src/player/player.c',
  'Game/src/group/groupnetrecv.c', 'MapServer/src/group/groupnetsend.c',
  'MapServer/src/svr/svr_tick.c', 'MapServer/src/entity/entsend.c',
+ 'MapServer/src/cmdparse/cmdserver.c',
 ]
 def run(cmd,**kw):
  p=subprocess.run(cmd,text=True,capture_output=True,**kw)
@@ -71,7 +72,7 @@ void original_position(const U8 *data,U32 length,int aligned,U32 id,U32 *packed,
  lib=C.CDLL(str(libfile));lib.original_fields.argtypes=[C.c_void_p,C.c_void_p,C.c_uint32,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
  lib.original_position.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_uint32,C.c_void_p,C.c_void_p,C.c_void_p]
  return lib,pins
-def fixtures(lib,directory):
+def fixtures(lib,directory,source_root=REPO):
  def u(n,v):return [(n,v)]
  def p(v):return [(-1,v)]
  def f(v):return u(32,struct.unpack('<I',struct.pack('<f',v))[0])
@@ -82,7 +83,14 @@ def fixtures(lib,directory):
   widths=(C.c_int*len(fields))(*(x[0] for x in fields));values=(C.c_uint32*len(fields))(*(x[1] for x in fields))
   output=(C.c_uint8*32768)();length=C.c_uint32();lib.original_fields(widths,values,len(fields),aligned,output,C.byref(length))
   return bytes(output[:(length.value+7)//8]),length.value
- content=[];count=0
+ # A conservative upper catalog includes every static producer table entry,
+ # before access/hidden-command filtering. Names are extracted from the exact
+ # hash-pinned source, then serialized by the unchanged original bit writer.
+ table=(source_root/'upstream/ouroboros/MapServer/src/cmdparse/cmdserver.c').read_text()
+ table=table[table.index('Cmd server_cmds[]'):];table=table[:table.index('\n};')]
+ command_names=re.findall(r'^\s*\{\s*\d+\s*,\s*"([^"]+)"',table,re.M)
+ if len(command_names)!=915 or max(map(len,command_names))>=256:raise ValueError('Source command catalog bound changed')
+ content=['#define SOURCE_ACCESSIBLE_COMMAND_COUNT 915u\n'];count=0
  def emit(name,fields,mode):
   nonlocal count
   data,bits=produce(fields,mode);label=name+str(mode)
@@ -93,6 +101,9 @@ def fixtures(lib,directory):
   emit('connect_nan',p(5)+p(1)+u(32,0x7fc00000),mode)
   emit('reject',p(5)+p(0)+s('Disposable test rejection'),mode)
   emit('legacy_connect',p(10)+p(1)+f(-6.0),mode)
+  emit('source_commands',p(4)+p(1)+s('time')+p(0xffffffff)+p(len(command_names))+sum((s(name) for name in command_names),[]),mode)
+  emit('maximum_commands',p(4)+p(1)+s('time')+p(0xffffffff)+p(1024)+s('x')*1024,mode)
+  emit('overflow_commands',p(4)+p(0xffffffff)+p(1025),mode)
   emit('shortcuts',p(4)+p(1)+s('time')+p(2)+s('timescale')+p(3)+s('pause')+p(4)+s('svr_fog_color')+p(5)+s('not_source_supported')+p(0xffffffff)+p(2)+s('help')+s('quit'),mode)
   emit('duplicate_shortcuts',p(4)+p(1)+s('time')+p(1)+s('timescale')+p(0xffffffff)+p(0),mode)
   emit('long_shortcut',p(4)+p(1)+s('x'*256)+p(0xffffffff)+p(0),mode)
@@ -119,7 +130,7 @@ def fixtures(lib,directory):
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--source-root',type=Path,default=REPO);ap.add_argument('--sanitize',action='store_true');ap.add_argument('--output',type=Path);args=ap.parse_args()
  with tempfile.TemporaryDirectory(prefix='coh-replication-') as d:
-  directory=Path(d);lib,pins=oracle(args.source_root.resolve(),directory);n=fixtures(lib,directory)
+  directory=Path(d);lib,pins=oracle(args.source_root.resolve(),directory);n=fixtures(lib,directory,args.source_root.resolve())
   modes=[('release',['-O2'])]
   if args.sanitize:modes += [('asan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=address','-no-pie']),('ubsan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=undefined','-fno-sanitize-recover=all'])]
   checks={}

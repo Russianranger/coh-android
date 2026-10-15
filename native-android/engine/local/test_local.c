@@ -63,7 +63,7 @@ static void send_handoff(Peer *db,CohNetEndpoint target,Peer *map,int remote){
     for(unsigned i=0;i<7;i++)CHECK(!coh_protocol_write_pack(&b,1,fields[i]));
     application_send(db,target,p,&b,0);
 }
-static void happy_chain(void){
+static void happy_chain(unsigned malformed_catalog){
     Peer db=peer_open(),map=peer_open();CohLocal *s=start(&db,101,102,100);CohNetEndpoint db_target=list_characters(s,&db,100);
     send_handoff(&db,db_target,&map,0);service_ok(s,106);drain_ack(&db,5);CHECK(diag(s).phase==COH_LOCAL_MAP_CONNECTING&&diag(s).map_handoffs==1&&diag(s).server_identity_bound);
     /* Finish genuine DB graceful disconnect while Map connects. */
@@ -79,7 +79,22 @@ static void happy_chain(void){
     CHECK(!coh_protocol_read(&r,1,&cod)&&cod==0);CHECK(!coh_protocol_read(&r,1,&new_character)&&new_character==0&&r.cursor==r.bit_length);
     reply=application(&map,COH_REP_CONNECT_MSG);CohProtocolBits b=append_packet(&reply);CHECK(!coh_protocol_write_pack(&b,1,1));CHECK(!coh_protocol_write(&b,32,0));application_send(&map,map_target,reply,&b,request.id);
     service_ok(s,111);drain_ack(&map,5);service_ok(s,112);request=frame_read(&map,5,0);CHECK(command(&request,5,0)==COH_MAP_REQSHORTCUTS);
-    reply=application(&map,COH_REP_SHORTCUTS);b=append_packet(&reply);CHECK(!coh_protocol_write_pack(&b,1,UINT32_MAX));CHECK(!coh_protocol_write_pack(&b,1,0));application_send(&map,map_target,reply,&b,request.id);
+    reply=application(&map,COH_REP_SHORTCUTS);b=append_packet(&reply);CHECK(!coh_protocol_write_pack(&b,1,UINT32_MAX));
+    CHECK(!coh_protocol_write_pack(&b,1,malformed_catalog?COH_REP_ACCESSIBLE_COMMAND_MAX+1:0));
+    application_send(&map,map_target,reply,&b,request.id);
+    if(malformed_catalog) {
+        CHECK(coh_local_service(s,113,(CohCancel){0})==COH_LIMIT);drain_ack(&map,5);
+        CohLocalDiagnostics d=diag(s);CHECK(d.phase==COH_LOCAL_FAILED&&d.last_status==COH_LIMIT);
+        CHECK(d.terminal_failure&&d.terminal_map_phase==COH_MAP_WAIT_SHORTCUTS&&d.map_phase==COH_MAP_CLOSED);
+        CHECK(d.map_protocol.stage==COH_MAP_STAGE_SHORTCUTS&&d.map_protocol.last_status==COH_LIMIT);
+        CHECK(d.map_protocol.last_command_valid&&d.map_protocol.last_command==COH_REP_SHORTCUTS);
+        CHECK(d.map_protocol.accepted_messages==1&&d.map_protocol.rejected_messages==1&&d.map_protocol.malformed==1);
+        CHECK(d.opened_sockets==2&&d.closed_sockets==2);
+        coh_local_suspend(s);d=diag(s);
+        CHECK(d.terminal_failure&&d.terminal_map_phase==COH_MAP_WAIT_SHORTCUTS&&d.last_status==COH_LIMIT);
+        CHECK(d.map_protocol.stage==COH_MAP_STAGE_SHORTCUTS&&d.map_protocol.last_status==COH_LIMIT);
+        coh_local_destroy(s);peer_close(&map);peer_close(&db);scenarios++;return;
+    }
     service_ok(s,113);drain_ack(&map,5);service_ok(s,114);request=frame_read(&map,5,0);CHECK(command(&request,5,0)==COH_MAP_REQSCENE);
     reply=application(&map,COH_REP_GROUPS);b=append_packet(&reply);CHECK(!coh_protocol_write_pack(&b,1,0));CHECK(!coh_protocol_write_pack(&b,1,0));CHECK(!coh_protocol_write(&b,1,0));CHECK(!coh_protocol_write(&b,1,0));application_send(&map,map_target,reply,&b,request.id);
     CHECK(coh_local_service(s,115,(CohCancel){0})==COH_UNSUPPORTED);drain_ack(&map,5);
@@ -107,6 +122,6 @@ int main(void){
     unsigned before=descriptors();CohLocalConfig c=coh_local_default_config();c.db.transport.peer=(CohNetEndpoint){{127,0,0,1},7000};
     CHECK(!coh_local_create(&c));c.local_development_enabled=1;c.db.transport.peer.address[0]=10;CHECK(!coh_local_create(&c));
     c.db.transport.peer.address[0]=127;c.map.udp.local.address[0]=0;CHECK(!coh_local_create(&c));
-    happy_chain();failures();CHECK(descriptors()==before);
+    happy_chain(0);happy_chain(1);failures();CHECK(descriptors()==before);
     printf("{\"passed\":true,\"checks\":%u,\"socket_scenarios\":%u,\"actual_os_udp\":true,\"full_scripted_db_map_chain\":true,\"source_layout_peer\":true,\"real_server_interoperability\":false,\"real_authenticated_session\":false,\"native_live_world\":false,\"socket_leak_check\":true}\n",checks,scenarios);return 0;
 }

@@ -1,6 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 #include "coh_mapclient.h"
 #include "fixtures.h"
+#include "server-command-fixtures.h"
 #include <arpa/inet.h>
 #include <dirent.h>
 #include <fcntl.h>
@@ -75,6 +76,35 @@ static void send_packet(Peer p,CohNetEndpoint to,unsigned version,CohNetPacket b
     CHECK(coh_net_frame_encode(version,NULL,0,&body,data,sizeof(data),&n)==COH_OK);
     struct sockaddr_in a=address(to);CHECK(sendto(p.fd,data,n,0,(struct sockaddr*)&a,sizeof(a))==(ssize_t)n);
 }
+/* Source-derived full accessible-command table over real fragment datagrams.
+ * The original source writer produced the bodies; this scripted peer is not a
+ * real MapServer and its successful decode is not authentication evidence. */
+static unsigned send_large(Peer p,CohNetEndpoint to,unsigned version,const uint8_t *data,
+    uint32_t bits,unsigned aligned,uint32_t first_id,uint32_t ack_id) {
+    uint8_t encoded[COH_NET_MESSAGE_MAX];size_t bytes=(bits+7)/8;
+    if(aligned) {
+        CohNetZip *z=coh_net_zip_create();CHECK(z);
+        CHECK(coh_net_zip_encode(z,0,(CohBytes){data,bytes},encoded,sizeof(encoded),&bytes)==COH_OK);
+        coh_net_zip_destroy(z);data=encoded;bits=(uint32_t)bytes*8;
+    }
+    unsigned count=(unsigned)((bytes+COH_NET_PAYLOAD_MAX-1)/COH_NET_PAYLOAD_MAX);
+    CHECK(count>1&&count<=COH_NET_FRAGMENT_MAX);
+    for(unsigned i=0;i<count;i++) {
+        CohNetPacket packet={0};packet.id=first_id+i;packet.compressed=(uint8_t)aligned;
+        packet.sibling_id=77;packet.sibling_count=count;packet.sibling_part=i;
+        size_t offset=(size_t)i*COH_NET_PAYLOAD_MAX,n=bytes-offset;
+        if(n>COH_NET_PAYLOAD_MAX)n=COH_NET_PAYLOAD_MAX;
+        memcpy(packet.payload,data+offset,n);packet.payload_bits=(uint32_t)(n*8);
+        if(i+1==count)packet.payload_bits=bits-(uint32_t)(offset*8);
+        packet.ack_count=1;packet.acks[0]=ack_id;
+        /* Already compressed above. send_packet would compress each fragment. */
+        uint8_t frame[COH_PROTOCOL_FRAME_MAX];size_t frame_bytes;
+        CHECK(coh_net_frame_encode(version,NULL,0,&packet,frame,sizeof(frame),&frame_bytes)==COH_OK);
+        struct sockaddr_in address_to=address(to);
+        CHECK(sendto(p.fd,frame,frame_bytes,0,(struct sockaddr*)&address_to,sizeof(address_to))==(ssize_t)frame_bytes);
+    }
+    return count;
+}
 static CohNetPacket receive_packet(Peer p,unsigned version,int connect) {
     struct pollfd pollfd={p.fd,POLLIN,0};CHECK(poll(&pollfd,1,100)==1);
     uint8_t data[COH_PROTOCOL_FRAME_MAX];ssize_t n=recv(p.fd,data,sizeof(data),0);CHECK(n>0);
@@ -96,7 +126,7 @@ static void drain_idle(Peer p,unsigned version) {
     struct pollfd pollfd={p.fd,POLLIN,0};
     while(poll(&pollfd,1,0)==1)CHECK(command(receive_packet(p,version,0),0)==0);
 }
-static uint64_t handshake(CohMapClient *m,Peer p,unsigned version,unsigned aligned,uint32_t known_dbid,uint32_t connect_id,uint64_t now) {
+static uint64_t handshake(CohMapClient *m,Peer p,unsigned version,unsigned aligned,uint32_t known_dbid,uint32_t connect_id,uint64_t now,unsigned source_catalog) {
     CohMapAuthorization a=authorized(p);a.selected_dbid=known_dbid;
     CHECK(coh_map_client_begin(m,&a,connect_id,now)==COH_OK);
     CHECK(coh_map_client_service(m,now,(CohCancel){0})==COH_OK);
@@ -125,10 +155,17 @@ static uint64_t handshake(CohMapClient *m,Peer p,unsigned version,unsigned align
     send_packet(p,local(m),version,ack);CHECK(coh_map_client_service(m,now+4,(CohCancel){0})==COH_OK);
     CHECK(diagnostics(m).phase==COH_MAP_WAIT_SHORTCUTS);drain_idle(p,version);
     CHECK(coh_map_client_service(m,now+5,(CohCancel){0})==COH_OK);CohNetPacket shortcuts=receive_command(p,version,COH_MAP_REQSHORTCUTS);
-    ack=profile_packet(103,COH_REP_SHORTCUTS,version<4,aligned);b=append(&ack);
-    pack_value(&b,aligned,UINT32_MAX);pack_value(&b,aligned,0);
-    ack.payload_bits=(uint32_t)b.bit_length;ack.ack_count=1;ack.acks[0]=shortcuts.id;
-    send_packet(p,local(m),version,ack);CHECK(coh_map_client_service(m,now+6,(CohCancel){0})==COH_OK);drain_idle(p,version);
+    if(source_catalog) {
+        CHECK(version==5); /* source catalog fixture uses modern command IDs */
+        send_large(p,local(m),version,aligned?source_commands1:source_commands0,
+            aligned?source_commands1_bits:source_commands0_bits,aligned,103,shortcuts.id);
+    } else {
+        ack=profile_packet(103,COH_REP_SHORTCUTS,version<4,aligned);b=append(&ack);
+        pack_value(&b,aligned,UINT32_MAX);pack_value(&b,aligned,0);
+        ack.payload_bits=(uint32_t)b.bit_length;ack.ack_count=1;ack.acks[0]=shortcuts.id;
+        send_packet(p,local(m),version,ack);
+    }
+    CHECK(coh_map_client_service(m,now+6,(CohCancel){0})==COH_OK);drain_idle(p,version);
     CHECK(diagnostics(m).phase==COH_MAP_WAIT_SCENE);
     CHECK(coh_map_client_service(m,now+7,(CohCancel){0})==COH_OK);CohNetPacket scene=receive_command(p,version,COH_MAP_REQSCENE);
     CHECK(scene.payload_bits>0);return now+8;
@@ -211,7 +248,7 @@ static void actual_socket_inspection(void) {
     for(unsigned profile=0;profile<12;profile++){
         unsigned version=profile<6?profile:(profile<11?profile-5:5),aligned=profile>=6;
         Peer p=peer_open();CohMapConfig c=configuration(p,version);CohMapClient *m=coh_map_client_create(&c);CHECK(m);
-        uint64_t now=handshake(m,p,version,aligned,profile==11?12345:0,41,100);
+        uint64_t now=handshake(m,p,version,aligned,profile==11?12345:0,41,100,0);
         CohNetPacket scene=scene_prefix(version,aligned,104);send_packet(p,local(m),version,scene);
         CHECK(coh_map_client_service(m,now++,(CohCancel){0})==COH_UNSUPPORTED);drain_idle(p,version);
         CohMapDiagnostics d=diagnostics(m);CHECK(d.phase==COH_MAP_SCENE_INCOMPLETE&&d.scene_prefixes==1&&!d.character_identity_verified);
@@ -243,6 +280,37 @@ static void actual_socket_inspection(void) {
         coh_map_client_destroy(m);peer_close(p);scenarios++;
     }
 }
+static void source_catalog_over_udp(void) {
+    for(unsigned aligned=0;aligned<2;aligned++) {
+        Peer p=peer_open();CohMapConfig c=configuration(p,5);CohMapClient *m=coh_map_client_create(&c);CHECK(m);
+        uint64_t now=handshake(m,p,5,aligned,0,71,100,1);
+        CohMapDiagnostics d=diagnostics(m);
+        CHECK(d.phase==COH_MAP_WAIT_SCENE&&d.accepted_messages==2&&!d.character_identity_verified);
+        CHECK(d.last_command_valid&&d.last_command==COH_REP_SHORTCUTS&&d.last_status==COH_OK);
+        CHECK(d.last_byte_aligned==aligned&&d.udp.link.queue_limits==0);
+        CohNetPacket scene=scene_prefix(5,aligned,120);send_packet(p,local(m),5,scene);
+        CHECK(coh_map_client_service(m,now,(CohCancel){0})==COH_UNSUPPORTED);drain_idle(p,5);
+        d=diagnostics(m);CHECK(d.phase==COH_MAP_SCENE_INCOMPLETE&&d.scene_prefixes==1);
+        CHECK(d.stage==COH_MAP_STAGE_SCENE_PREFIX&&d.last_status==COH_UNSUPPORTED);
+        CHECK(d.last_command==COH_REP_GROUPS&&d.last_command_valid&&!d.character_identity_verified);
+        coh_map_client_close(m);d=diagnostics(m);
+        CHECK(d.phase==COH_MAP_CLOSED&&d.stage==COH_MAP_STAGE_SCENE_PREFIX&&d.last_status==COH_UNSUPPORTED);
+        CHECK(d.udp.sockets_opened==d.udp.sockets_closed&&!d.udp.link.tx_pending);
+        coh_map_client_destroy(m);peer_close(p);scenarios++;
+    }
+}
+static void first_rejection_precedes_deadline(void) {
+    Peer p=peer_open();CohMapConfig c=configuration(p,5);c.application_timeout_ms=10;
+    CohMapClient *m=coh_map_client_create(&c);CHECK(m);
+    uint64_t now=handshake(m,p,5,0,0,72,100,0);
+    CohNetPacket malformed_scene=packet(104,COH_REP_GROUPS,0);
+    send_packet(p,local(m),5,malformed_scene);
+    CHECK(coh_map_client_service(m,now+20,(CohCancel){0})==COH_INVALID);drain_idle(p,5);
+    CohMapDiagnostics d=diagnostics(m);
+    CHECK(d.phase==COH_MAP_WAIT_SCENE&&d.stage==COH_MAP_STAGE_SCENE_PREFIX);
+    CHECK(d.last_status==COH_INVALID&&d.last_command==COH_REP_GROUPS&&d.timeouts==0);
+    coh_map_client_destroy(m);peer_close(p);scenarios++;
+}
 static unsigned fd_count(void) {
     DIR *d=opendir("/proc/self/fd");CHECK(d);unsigned n=0;struct dirent *e;
     while((e=readdir(d)))if(e->d_name[0]!='.')n++;
@@ -251,7 +319,7 @@ static unsigned fd_count(void) {
 static int cancelled(void *context){(void)context;return 1;}
 static void timeout_and_cancel(void) {
     Peer p=peer_open();CohMapConfig c=configuration(p,5);c.application_timeout_ms=10;
-    CohMapClient *m=coh_map_client_create(&c);CHECK(m);uint64_t now=handshake(m,p,5,0,0,51,100);
+    CohMapClient *m=coh_map_client_create(&c);CHECK(m);uint64_t now=handshake(m,p,5,0,0,51,100,0);
     CHECK(coh_map_client_service(m,now+20,(CohCancel){0})==COH_STATE);
     CohMapDiagnostics d=diagnostics(m);CHECK(d.phase==COH_MAP_TIMED_OUT&&d.timeouts==1&&!d.selection_generation&&d.udp.sockets_opened==d.udp.sockets_closed);
     coh_map_client_destroy(m);peer_close(p);scenarios++;
@@ -260,7 +328,7 @@ static void timeout_and_cancel(void) {
     CHECK(coh_map_client_service(m,0,(CohCancel){cancelled,NULL})==COH_CANCELLED);d=diagnostics(m);
     CHECK(d.phase==COH_MAP_FAILED&&!d.selection_generation&&d.udp.state==COH_UDP_CANCELLED&&d.udp.sockets_opened==d.udp.sockets_closed);
     coh_map_client_destroy(m);peer_close(p);scenarios++;
-    p=peer_open();c=configuration(p,5);m=coh_map_client_create(&c);CHECK(m);now=handshake(m,p,5,0,0,53,100);
+    p=peer_open();c=configuration(p,5);m=coh_map_client_create(&c);CHECK(m);now=handshake(m,p,5,0,0,53,100,0);
     CohNetPacket refusal=packet(104,COH_REP_CONNECT_MSG,0);CohProtocolBits b=append(&refusal);
     CHECK(coh_protocol_write_pack(&b,1,0)==COH_OK);
     static const char remote_text[]="Synthetic refusal; remote text discarded";
@@ -271,6 +339,6 @@ static void timeout_and_cancel(void) {
     coh_map_client_destroy(m);peer_close(p);scenarios++;
 }
 int main(void) {
-    unsigned fds=fd_count();serializers();configuration_tests();local_authorization_tests();actual_socket_inspection();timeout_and_cancel();CHECK(fd_count()==fds);
+    unsigned fds=fd_count();serializers();configuration_tests();local_authorization_tests();actual_socket_inspection();source_catalog_over_udp();first_rejection_precedes_deadline();timeout_and_cancel();CHECK(fd_count()==fds);
     printf("{\"checks\":%u,\"negative_cases\":%u,\"scenarios\":%u,\"actual_os_udp\":true,\"scripted_peer_only\":true,\"socket_leak_check\":true,\"actual_authentication\":false,\"live_world\":false}\n",checks,negative,scenarios);return 0;
 }

@@ -67,3 +67,32 @@ This is deterministic host/socket qualification. It is **not** a real server,
 AuthServer login, physical Thor or complete live-world result. Android build
 receipts identify ARM64 and x86_64 executables; device execution requires
 separate evidence.
+
+Terminal errors preserve the DB and Map phases immediately before owned
+cleanup, alongside the current post-cleanup phases. The Map parser checkpoint
+and full numeric UDP/NetLink counters remain reportable after suspend. This
+separates a parser capacity rejection from malformed framing, decompression,
+transport queue limits or socket errors without exposing account identifiers,
+cookies, keys, remote text or packet bodies. A real UDP regression rejects an
+oversized accessible-command count and verifies these diagnostics survive
+socket closure and a subsequent suspend.
+
+### Disposable Android UI peer
+
+`check.py --android-output` also cross-builds a qualification-only
+`coh-local-peer-<abi>` binary. Its entries are kept separately in
+`android-build.json.scripted_ui_peer_artifacts` with role `scripted-ui-peer`.
+It is never included in the APK. Run it on a fresh disposable emulator with
+`--serve --report /data/local/tmp/coh-ui-peer-report.json`; its one ready JSON
+line supplies the ephemeral DB and Map ports. The qualification driver must
+explicitly label its temporary loopback policy as scripted, unencrypted,
+account `Fixture`, and never represent it as actual server evidence.
+
+The peer waits for actual UI selection of synthetic `Native Fixture` slot 0,
+then sends the original-writer player list, source-layout handoff, accepted
+Map handshake, fragmented 915-name source command catalog and an intentionally
+incomplete scene prefix. It supports bounded identical response replay for
+duplicate request IDs, writes atomic numeric lifecycle reports, responds to
+SIGTERM/SIGINT, and exits after at most 180 seconds. No READY or entity spawn
+is manufactured. The host checker runs a separate real native client through
+this peer under release, ASan and UBSan, including socket closure.

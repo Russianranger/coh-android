@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.AtomicFile;
 import android.view.KeyEvent;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -91,13 +92,27 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         sessionStarted = System.currentTimeMillis();
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout controlsLayout = new LinearLayout(this);
+        controlsLayout.setOrientation(LinearLayout.VERTICAL);
+        android.widget.ScrollView controlsScroll = new android.widget.ScrollView(this) {
+            @Override protected void onMeasure(int widthSpec, int heightSpec) {
+                if (android.view.View.MeasureSpec.getMode(heightSpec) != android.view.View.MeasureSpec.UNSPECIFIED) {
+                    int maximum = ViewportPolicy.controlsHeight(android.view.View.MeasureSpec.getSize(heightSpec), Integer.MAX_VALUE);
+                    heightSpec = android.view.View.MeasureSpec.makeMeasureSpec(maximum, android.view.View.MeasureSpec.AT_MOST);
+                }
+                super.onMeasure(widthSpec, heightSpec);
+            }
+        };
+        controlsScroll.setContentDescription("Native client controls");
+        controlsScroll.addView(controlsLayout);
+        layout.addView(controlsScroll, new LinearLayout.LayoutParams(-1, -2));
         TextView title = new TextView(this);
         title.setText("Native City of Heroes • Local development client");
-        title.setTextSize(18); layout.addView(title);
+        title.setTextSize(18); controlsLayout.addView(title);
         TextView controls = new TextView(this);
         controls.setText("Local scene preview • Left stick / WASD / D-pad: move • Right stick / drag: look\n"
                 + "The scene below is the accepted offline preview. Server character/world rendering is pending.");
-        layout.addView(controls);
+        controlsLayout.addView(controls);
         LinearLayout networkButtons = new LinearLayout(this);
         connectButton = new Button(this); connectButton.setText("Connect local server");
         connectButton.setOnClickListener(v -> connectLocalServer()); networkButtons.addView(connectButton);
@@ -108,13 +123,13 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             networkWorker.execute(() -> {
                 if(networkHandle!=0){LocalNative.disconnect(networkHandle);publishNetwork();}
             });
-        }); networkButtons.addView(disconnect); layout.addView(networkButtons);
+        }); networkButtons.addView(disconnect); controlsLayout.addView(networkButtons);
         networkStatus = new TextView(this); networkStatus.setText("Server protocol: idle • Start the server in the launcher first.");
-        layout.addView(networkStatus);
+        controlsLayout.addView(networkStatus);
         characterButtons = new LinearLayout(this); characterButtons.setOrientation(LinearLayout.VERTICAL);
         charactersScroll = new android.widget.ScrollView(this);
         charactersScroll.addView(characterButtons);
-        layout.addView(charactersScroll, new LinearLayout.LayoutParams(-1, (int)(144*getResources().getDisplayMetrics().density)));
+        controlsLayout.addView(charactersScroll, new LinearLayout.LayoutParams(-1, (int)(144*getResources().getDisplayMetrics().density)));
         charactersScroll.setVisibility(android.view.View.GONE);
         LinearLayout buttons = new LinearLayout(this);
         Button reset = new Button(this); reset.setText("Reset actor");
@@ -131,9 +146,9 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
             if (handle != 0) SessionNative.viewDistance(handle);
             event("view_distance_requested"); saveReport();
         });
-        layout.addView(buttons);
-        layout.addView(distance);
-        status = new TextView(this); status.setText("Preparing native scene…"); layout.addView(status);
+        controlsLayout.addView(buttons);
+        controlsLayout.addView(distance);
+        status = new TextView(this); status.setText("Preparing native scene…"); controlsLayout.addView(status);
         scene = new FrameLayout(this); layout.addView(scene, new LinearLayout.LayoutParams(-1, 0, 1));
         setContentView(layout);
         adapter = new InputAdapter(new InputAdapter.Sink() {
@@ -334,12 +349,18 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         epoch++;
         if (handle != 0) SessionNative.state(handle,epoch,resumed);
         currentSurface=null; currentHolder=null;
-        scene.removeAllViews(); view = new SurfaceView(this);
+        scene.removeAllViews(); view = new SurfaceView(this) {
+            @Override protected void onMeasure(int widthSpec, int heightSpec) {
+                int[] bounds = ViewportPolicy.fit(android.view.View.MeasureSpec.getSize(widthSpec),
+                        android.view.View.MeasureSpec.getSize(heightSpec));
+                setMeasuredDimension(bounds[0], bounds[1]);
+            }
+        };
         view.setContentDescription("Local native Atlas scene preview");
         view.setImportantForAccessibility(android.view.View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         currentHolder=view.getHolder(); currentHolder.addCallback(this);
         view.setOnTouchListener((v,event) -> !destroying && adapter != null && adapter.dispatchTouchEvent(event,v.getWidth(),v.getHeight()));
-        scene.addView(view,new FrameLayout.LayoutParams(-1,-1));
+        scene.addView(view,new FrameLayout.LayoutParams(-1,-1,Gravity.CENTER));
     }
     private void requestRender() {
         if (destroying || !resumed || handle==0 || renderQueued || currentSurface==null || !currentSurface.isValid()) return;
@@ -410,7 +431,11 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                 .put("server_protocol",new JSONObject(networkReport)).put("preview_is_server_world",false)
                 .put("events",new JSONArray(events.toString())).put("resumed",resumed).put("render_busy",renderQueued)
                 .put("report_write_failed",writeFailed).put("failure",failure==null?JSONObject.NULL:failure)
-                .put("input_adapter",adapter==null?JSONObject.NULL:adapter.report());
+                .put("input_adapter",adapter==null?JSONObject.NULL:adapter.report())
+                .put("viewport_policy",new JSONObject().put("schema","coh-native-viewport-v1")
+                    .put("maximum_controls_percent",60).put("minimum_aspect",0.25).put("maximum_aspect",8)
+                    .put("maximum_dimension",16384).put("host_width",scene==null?0:scene.getWidth())
+                    .put("host_height",scene==null?0:scene.getHeight()));
         if(handle!=0)j.put("native",new JSONObject(SessionNative.snapshot(handle)));
         if(view!=null) {
             int[] location=new int[2];view.getLocationOnScreen(location);

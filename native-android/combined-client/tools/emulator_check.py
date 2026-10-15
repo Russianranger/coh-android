@@ -10,7 +10,9 @@ import argparse
 import hashlib
 import json
 import re
+import selectors
 import subprocess
+import threading
 import time
 import xml.etree.ElementTree as ET
 
@@ -20,6 +22,56 @@ NATIVE = PACKAGE + '/.NativeClientActivity'
 # AOSP DumpCommand reports these exact failures before writing a hierarchy.
 CAPTURE_TRANSIENTS = frozenset(('ERROR: could not get idle state.',
     'ERROR: null root node returned by UiTestAutomationBridge.'))
+
+
+def viewport_contract(value):
+    """Match the actual EGL viewport to its bounded Android SurfaceView."""
+    policy = value.get('viewport_policy', {})
+    assert policy.get('schema') == 'coh-native-viewport-v1'
+    assert (policy.get('maximum_controls_percent'), policy.get('minimum_aspect'),
+            policy.get('maximum_aspect'), policy.get('maximum_dimension')) == (60, .25, 8, 16384)
+    area, native = value.get('input_area', {}), value.get('native', {})
+    w, h = area.get('width'), area.get('height')
+    assert type(w) is int and type(h) is int and 0 < w <= 16384 and 0 < h <= 16384
+    assert 4*w >= h and w <= 8*h, 'Actual Surface exceeds unchanged native camera aspect bounds'
+    assert area.get('shown') is True and area.get('surface_ready') is True
+    assert all(type(area.get(k)) is int and area[k] >= 0 for k in ('left', 'top'))
+    assert all(type(policy.get(k)) is int and policy[k] > 0 for k in ('host_width', 'host_height'))
+    assert w <= policy['host_width'] and h <= policy['host_height']
+    assert (native.get('width'), native.get('height')) == (w, h), 'Renderer retained a stale EGL viewport'
+    assert value.get('preview_is_server_world') is False
+    return {'surface_width': w, 'surface_height': h, 'host_width': policy['host_width'],
+            'host_height': policy['host_height'], 'native_camera_aspect_valid': True}
+
+
+def map_report_contract(value):
+    """Exact numeric-only diagnostics: no packet payloads or session secrets."""
+    assert value.get('schema') == 'coh-native-local-numeric-v1'
+    assert isinstance(value.get('phase'), str) and re.fullmatch('[A-Z_]{1,40}', value['phase'])
+    assert value.get('authserver_authenticated') is False and value.get('live_world_rendered') is False
+    numbers = ('local_development_auth server_identity_bound generation selection_generation '
+        'db_phase map_phase last_status attempts character_lists character_choices map_handoffs '
+        'policy_rejections failures suspends cancellations opened_sockets closed_sockets '
+        'terminal_failure terminal_db_phase terminal_map_phase').split()
+    fields = ('phase stage last_status last_command_valid last_command last_payload_bits last_byte_aligned '
+        'accepted_messages rejected_messages malformed unsupported scene_prefixes entity_prefixes disconnects suspends timeouts').split()
+    udp_fields = ('state link_state sockets_opened sockets_closed datagrams_sent datagrams_received peer_rejects '
+        'truncated empty malformed unsupported send_would_block interrupted io_errors receive_budget_exhausted '
+        'suspends resumes cancellations timeouts last_system_error').split()
+    link_fields = ('sent received retransmits acknowledged duplicates malformed queue_limits fragment_expirations '
+        'timeouts unsupported tx_pending rx_pending fragment_groups storage_bytes codec_bytes high_water_retained_bytes').split()
+    def exact(data, numeric, extras=(), signed=()):
+        assert isinstance(data, dict) and set(data) == set(numeric) | set(extras), 'Unexpected public protocol fields'
+        assert all(type(data[k]) is int and (k in signed or data[k] >= 0) for k in numeric)
+    exact(value, numbers, ('schema', 'phase', 'map_protocol', 'authserver_authenticated', 'live_world_rendered'))
+    mapping = value['map_protocol']; exact(mapping, fields, ('udp',))
+    udp = mapping['udp']; exact(udp, udp_fields, ('link',), ('last_system_error',))
+    exact(udp['link'], link_fields)
+    assert all(value[k] in (0, 1) for k in ('local_development_auth', 'server_identity_bound', 'terminal_failure'))
+    assert all(mapping[k] in (0, 1) for k in ('last_command_valid', 'last_byte_aligned'))
+    return {'phase': value['phase'], 'map_stage': mapping['stage'], 'last_status': mapping['last_status'],
+            'accepted_messages': mapping['accepted_messages'], 'scene_prefixes': mapping['scene_prefixes'],
+            'numeric_privacy_bounds_verified': True}
 
 
 def memory_report_contract(value):
@@ -130,8 +182,8 @@ class Check:
         self.capture_id = 0
         args.output.mkdir(parents=True, exist_ok=True)
 
-    def adb(self, *args, check=True):
-        r = subprocess.run([self.args.adb, '-s', self.args.serial, *map(str, args)], capture_output=True, timeout=45)
+    def adb(self, *args, check=True, timeout=45):
+        r = subprocess.run([self.args.adb, '-s', self.args.serial, *map(str, args)], capture_output=True, timeout=timeout)
         if check and r.returncode:
             raise RuntimeError('ADB command failed: ' + repr(args) + '\nreturncode=' + str(r.returncode)
                 + '\nstdout:\n' + r.stdout.decode(errors='replace') + '\nstderr:\n' + r.stderr.decode(errors='replace'))
@@ -240,26 +292,205 @@ class Check:
             time.sleep(.5)
         raise RuntimeError('External Android UI dialog did not clear')
 
-    def tap(self, label):
-        deadline = time.monotonic() + 15
+    @staticmethod
+    def bounds(node):
+        values = [int(v) for v in re.findall(r'-?\d+', node.attrib.get('bounds', ''))]
+        return values if len(values) == 4 and values[2] > values[0] and values[3] > values[1] else None
+
+    def controls_bounds(self, root):
+        nodes = list(root.iter('node'))
+        control = next((n for n in nodes if n.attrib.get('content-desc') == 'Native client controls'), None)
+        if control is None:
+            control = next((n for n in nodes if n.attrib.get('package') == PACKAGE
+                            and n.attrib.get('class') == 'android.widget.ScrollView'), None)
+        candidates = [self.bounds(n) for n in nodes if n.attrib.get('package') == PACKAGE]
+        candidates = [v for v in candidates if v]
+        return self.bounds(control) if control is not None else (max(candidates, key=lambda v:(v[2]-v[0])*(v[3]-v[1])) if candidates else None)
+
+    def tap(self, label, prefix=False, activate=True):
+        deadline = time.monotonic() + 30
+        swipes = 0
         while time.monotonic() < deadline:
             root = self.dump()
+            clip = self.controls_bounds(root)
             disabled = False
             for node in root.iter('node'):
-                if node.attrib.get('text', '').lower() != label.lower():
+                text = node.attrib.get('text', '').lower()
+                if not (text.startswith(label.lower()) if prefix else text == label.lower()):
                     continue
                 if node.attrib.get('enabled') != 'true':
                     disabled = True
                     break
-                coordinates = [int(v) for v in re.findall(r'\d+', node.attrib['bounds'])]
-                self.adb('shell', 'input', 'tap', (coordinates[0]+coordinates[2])//2, (coordinates[1]+coordinates[3])//2)
-                return
+                coordinates = self.bounds(node)
+                if coordinates is None:
+                    continue
+                x, y = (coordinates[0]+coordinates[2])//2, (coordinates[1]+coordinates[3])//2
+                if clip and not (clip[0] <= x < clip[2] and clip[1] <= y < clip[3]):
+                    continue
+                if activate:
+                    self.adb('shell', 'input', 'tap', x, y)
+                return node
             if disabled:
                 time.sleep(.2)
                 continue
-            self.adb('shell', 'input', 'swipe', '500', '1400', '500', '600', '250')
+            if clip is None or swipes >= 10:
+                break
+            x = (clip[0]+clip[2])//2
+            low, high = clip[1]+(clip[3]-clip[1])//5, clip[3]-(clip[3]-clip[1])//5
+            start, end = (high, low) if swipes % 6 < 3 else (low, high)
+            self.adb('shell', 'input', 'swipe', x, start, x, end, '250')
+            swipes += 1
             time.sleep(.3)
         raise RuntimeError('UI control not found: ' + label)
+
+    def viewport(self, label, minimum_frames=0):
+        def ready(value):
+            if not settled_preview(value, minimum_frames):
+                return False
+            try:
+                viewport_contract(value)
+                return True
+            except AssertionError:
+                return False
+        value = self.wait_report('native-client-report.json', ready, label + ' settled bounded EGL viewport', seconds=60)
+        proof = viewport_contract(value)
+        root = self.dump()
+        clip = self.controls_bounds(root)
+        assert clip, 'Actual controls accessibility viewport is absent'
+        controls_height = clip[3]-clip[1]
+        assert controls_height*100 <= (controls_height+proof['host_height'])*60+100, 'Controls displaced the reserved scene'
+        (self.args.output / (label+'-native-report.json')).write_text(json.dumps(value, indent=2)+'\n')
+        self.record('bounded native viewport: '+label, **proof, controls_height=controls_height)
+        return value
+
+    def scripted_character_picker(self):
+        """Drive the real app against explicit source-layout UDP fixtures only."""
+        data = self.args.ui_peer_binary.read_bytes()
+        assert self.args.protocol_receipt, 'Scripted UI peer requires its exact Android build receipt'
+        receipt = json.loads(self.args.protocol_receipt.read_text())
+        peers = [v for v in receipt.get('scripted_ui_peer_artifacts', [])
+                 if v.get('abi') == 'x86_64' and v.get('file') == self.args.ui_peer_binary.name]
+        assert len(peers) == 1 and peers[0].get('role') == 'scripted-ui-peer'
+        assert peers[0]['sha256'] == hashlib.sha256(data).hexdigest()
+        remote, report_path = '/data/local/tmp/coh-combined-ui-peer', '/data/local/tmp/coh-combined-ui-peer-report.json'
+        staging = '/data/local/tmp/coh-combined-ui-policy.json'
+        self.adb('push', self.args.ui_peer_binary, remote)
+        self.adb('shell', 'chmod', '700', remote)
+        self.adb('shell', 'rm', '-f', report_path)
+        process = None
+        ready = None
+        stop = threading.Event()
+        errors = []
+        thread = None
+        completed = False
+        final = None
+        log = (self.args.output/'scripted-ui-peer.stderr').open('wb')
+        try:
+            process = subprocess.Popen([self.args.adb, '-s', self.args.serial, 'shell', remote,
+                '--serve', '--report', report_path], stdout=subprocess.PIPE, stderr=log)
+            with selectors.DefaultSelector() as selector:
+                selector.register(process.stdout, selectors.EVENT_READ)
+                raw, deadline = b'', time.monotonic()+30
+                while b'\n' not in raw and time.monotonic() < deadline:
+                    if selector.select(.5):
+                        chunk = process.stdout.read1(4096)
+                        if not chunk: break
+                        raw += chunk
+                        assert len(raw) <= 4096, 'Scripted peer readiness exceeds its bound'
+            (self.args.output/'scripted-ui-peer-ready.stdout').write_bytes(raw)
+            assert b'\n' in raw, 'Scripted peer did not publish bounded readiness'
+            ready = json.loads(raw.splitlines()[0])
+            assert ready.get('scripted_source_layout') is True and ready.get('real_server_interoperability') is False
+            assert all(type(ready.get(k)) is int and 0 < ready[k] <= 65535 for k in ('db_port', 'map_port'))
+            assert type(ready.get('pid')) is int and ready['pid'] > 0
+            policy_file = self.args.output/'scripted-ui-policy.json'
+            def refresh():
+                elapsed = int(float(self.adb('shell','cat','/proc/uptime',timeout=5).stdout.split()[0])*1000)
+                policy = {'schema':'coh-native-local-policy-v1', 'state':'ready', 'db_address':'127.0.0.1',
+                    'db_port':ready['db_port'], 'net_version':5, 'account':'Fixture',
+                    'server_session_id':'f'*32, 'import_generation':'e'*32,
+                    'ready_elapsed_ms':elapsed, 'encryption_required':False, 'outbound_compressed':False}
+                policy_file.write_text(json.dumps(policy)+'\n')
+                self.adb('push', policy_file, staging,timeout=5)
+                self.adb('shell','run-as',PACKAGE,'cp',staging,'files/native-session-policy.json.tmp',timeout=5)
+                self.adb('shell','run-as',PACKAGE,'mv','files/native-session-policy.json.tmp','files/native-session-policy.json',timeout=5)
+            refresh()
+            def maintain():
+                while not stop.wait(2):
+                    try: refresh()
+                    except Exception as failure:
+                        errors.append(str(failure));return
+            thread = threading.Thread(target=maintain, daemon=True);thread.start()
+            self.tap('Connect local server')
+            characters = self.wait_report('native-client-report.json', lambda x:x.get('server_protocol',{}).get('phase') == 'CHARACTERS_READY', 'actual native app DB list from explicit scripted UDP peer')
+            map_report_contract(characters['server_protocol'])
+            self.tap('Native Fixture', prefix=True, activate=False)
+            before = self.viewport('character-picker-visible', characters['native']['frames']+30)
+            assert before['server_protocol']['phase'] == 'CHARACTERS_READY'
+            (self.args.output/'character-picker-visible.png').write_bytes(self.adb('exec-out','screencap','-p').stdout)
+            self.tap('Native Fixture', prefix=True)
+            selected = self.wait_report('native-client-report.json', lambda x:x.get('server_protocol',{}).get('phase') == 'SCENE_INCOMPLETE', 'actual character selection and bounded Map scene prefix', seconds=60)
+            protocol = selected['server_protocol']; proof = map_report_contract(protocol)
+            assert protocol['character_lists'] == 1 and protocol['character_choices'] == 1 and protocol['map_handoffs'] == 1
+            assert protocol['terminal_failure'] == 0 and protocol['map_protocol']['scene_prefixes'] >= 1
+            mapping = protocol['map_protocol']
+            assert (mapping['accepted_messages'],mapping['phase'],mapping['stage'],mapping['last_status'],
+                    mapping['last_command_valid'],mapping['last_command']) == (2,5,6,2,1,6)
+            assert mapping['udp']['link']['queue_limits'] == 0
+            self.viewport('after-character-selection', before['native']['frames']+5)
+            peer_raw = self.adb('exec-out','cat',report_path).stdout
+            assert 0 < len(peer_raw) <= 16384
+            peer = json.loads(peer_raw)
+            assert peer.get('scripted_source_layout') is True and peer.get('real_server_interoperability') is False
+            assert peer.get('authserver_authenticated') is False and peer.get('live_world') is False and peer.get('failed') is False
+            assert all(peer.get(k) == 1 for k in ('character_lists','character_choices','map_handoffs','map_connects','source_command_catalogs','scene_prefixes'))
+            assert peer.get('source_command_count') == 915 and peer.get('selected_wire_slot') == 0
+            (self.args.output/'scripted-ui-peer-report.json').write_bytes(peer_raw)
+            assert not errors, 'Scripted policy refresh failed: '+repr(errors)
+            self.record('actual app character picker and native DB-to-Map scene boundary', **proof,
+                peer_binary_sha256=hashlib.sha256(data).hexdigest(), scripted_source_layout=True,
+                real_server_interoperability=False, real_authenticated_session=False, preview_is_server_world=False)
+            self.tap('Disconnect client')
+            completed = True
+        finally:
+            stop.set()
+            if thread:
+                thread.join(timeout=25)
+                if thread.is_alive(): errors.append('Scripted policy refresher exceeded bounded ADB shutdown')
+            try:
+                if ready:
+                    cmdline = self.adb('exec-out','cat','/proc/'+str(ready['pid'])+'/cmdline',check=False).stdout
+                    if cmdline.split(b'\0')[0] == remote.encode():
+                        self.adb('shell','kill','-TERM',ready['pid'],check=False)
+                if process:
+                    try:
+                        remaining, unused = process.communicate(timeout=10)
+                        (self.args.output/'scripted-ui-peer-final.stdout').write_bytes(remaining)
+                    except subprocess.TimeoutExpired:
+                        process.terminate();process.communicate(timeout=5)
+                if ready:
+                    final = self.adb('exec-out','cat',report_path,check=False)
+                    (self.args.output/'scripted-ui-peer-final-report.json').write_bytes(final.stdout)
+            except Exception as failure:
+                errors.append('Peer cleanup: '+str(failure))
+            finally:
+                log.close()
+                for command in (
+                    ('shell','run-as',PACKAGE,'rm','-f','files/native-session-policy.json','files/native-session-policy.json.tmp'),
+                    ('shell','rm','-f',remote,report_path,staging),
+                ):
+                    try:
+                        result = self.adb(*command,check=False)
+                        if result.returncode: errors.append('Fixture cleanup returned '+str(result.returncode))
+                    except Exception as failure:
+                        errors.append('Fixture cleanup: '+str(failure))
+        assert not errors, 'Scripted fixture lifecycle failure: '+repr(errors)
+        assert completed and process.returncode == 0 and final is not None and final.returncode == 0, 'Scripted peer did not exit cleanly'
+        final_peer = json.loads(final.stdout)
+        assert final_peer['closed_sockets'] == final_peer['opened_sockets'] == 2
+        assert final_peer['failed'] is False
+        self.record('scripted UI peer lifecycle cleanup', opened_sockets=2, closed_sockets=2,
+                    fixture_policy_removed=True, real_server_interoperability=False)
 
     def report(self, filename):
         r = self.adb('exec-out', 'run-as', PACKAGE, 'cat', 'files/' + filename, check=False)
@@ -530,10 +761,22 @@ class Check:
         assert current.get('failure') is None and current.get('report_write_failed') is False
         assert native.get('gl_errors') == 0 and native.get('static_renderer', {}).get('tf_mismatches') == 0
         assert current.get('preview_is_server_world') is False
+        self.viewport('initial-preview', native['frames'])
         self.tap('Connect local server')
         self.wait_report('native-client-report.json', lambda x: x.get('server_protocol', {}).get('phase') == 'POLICY_UNAVAILABLE', 'native connect refuses missing owned server lease')
         self.record('native connection refuses absent server lease', actual_server_interoperability_verified=False)
         self.record('native preview actual GLES frames', frames=native['frames'], gl_errors=native['gl_errors'])
+        self.adb('shell','settings','put','system','accelerometer_rotation','0')
+        self.adb('shell','settings','put','system','user_rotation','1')
+        landscape = self.wait_report('native-client-report.json', lambda x:
+            settled_preview(x, native['frames']+10) and x.get('viewport_policy',{}).get('host_width',0)
+            > x.get('viewport_policy',{}).get('host_height',16384), 'actual landscape native preview after framework rotation', seconds=60)
+        assert self.dump().attrib.get('rotation') == '1', 'Framework did not rotate into landscape'
+        self.viewport('landscape-preview', landscape['native']['frames'])
+        if self.args.ui_peer_binary:
+            self.scripted_character_picker()
+        current = self.report('native-client-report.json')
+        native = current['native']
         first = native.get('contexts_started', 1)
         first_count = native['stream']['selected_instances']
         assert first_count in (6, 11)
@@ -562,7 +805,7 @@ class Check:
             data = self.args.protocol_binary.read_bytes()
             if self.args.protocol_receipt:
                 receipt = json.loads(self.args.protocol_receipt.read_text())
-                candidates = [v for v in receipt.get('artifacts', []) if v.get('abi') == 'x86_64']
+                candidates = [v for v in receipt.get('artifacts', []) if v.get('abi') == 'x86_64' and v.get('file') == self.args.protocol_binary.name]
                 assert len(candidates) == 1 and candidates[0]['sha256'] == hashlib.sha256(data).hexdigest()
             remote = '/data/local/tmp/coh-combined-local-contract'
             try:
@@ -579,7 +822,7 @@ class Check:
                 self.adb('shell', 'rm', '-f', remote, check=False)
         self.native_fault_evidence('final-app-fault-audit')
         self.record('no app crash or ANR recorded')
-        value = {'format': 1, 'status': 'passed', 'checks': self.proofs, 'device': {'api': self.text('shell', 'getprop', 'ro.build.version.sdk').strip(), 'abi': 'x86_64', 'emulator': True}, 'physical_thor_accepted': False, 'actual_server_interoperability_verified': False, 'real_authenticated_session': False, 'scope': 'Consolidated app Android framework import cancellation/admission, native preview GLES and lifecycle; optional source-layout scripted native UDP controller. ARM64 guest server startup and real local account handoff require device qualification.'}
+        value = {'format': 1, 'status': 'passed', 'checks': self.proofs, 'device': {'api': self.text('shell', 'getprop', 'ro.build.version.sdk').strip(), 'abi': 'x86_64', 'emulator': True}, 'physical_thor_accepted': False, 'actual_server_interoperability_verified': False, 'real_authenticated_session': False, 'scope': 'Consolidated app Android framework imports, native preview GLES, landscape viewport and lifecycle; optional source-layout UDP peer drives the actual app character picker to its bounded Map scene prefix. This does not qualify ARM64 guest execution, a real authenticated session or live-world rendering.'}
         (self.args.output / 'receipt.json').write_text(json.dumps(value, indent=2) + '\n')
 
 
@@ -592,6 +835,7 @@ def main():
     p.add_argument('--protocol-binary', type=Path)
     p.add_argument('--donor-apk', type=Path)
     p.add_argument('--protocol-receipt', type=Path)
+    p.add_argument('--ui-peer-binary', type=Path, help='Exact receipt-pinned source-layout UDP peer; does not qualify a real server session')
     args = p.parse_args()
     driver = Check(args)
     try:

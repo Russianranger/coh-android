@@ -86,3 +86,19 @@ The combined local-server app uses a separate loopback-only development guard.
 `local_development_authorized=1` requires `authenticated=0`, explicit endpoint
 approval and unknown DBID; ambiguous or remote admission fails. It does not
 establish AuthServer account authentication. Normal authenticated admission is unchanged.
+
+### Numeric failure checkpoints
+
+The controller retains the last rejected command's normalized numeric ID,
+payload bit count, byte-alignment profile, status and parser checkpoint after
+socket cleanup. Checkpoints are 0 none, 1 UDP service, 2 next message /
+decompression, 3 command decode, 4 connect response, 5 shortcuts, 6 scene
+prefix, 7 entity prefix, 8 command queueing, and 9 application timeout. The
+first rejected message ends that service call so later messages cannot erase
+its checkpoint. This does not relax malformed or unsupported-message policy.
+
+The source command-catalog regression sends all 915 pinned static names over
+actual fragmented UDP datagrams in bitpacked and compressed/byte-aligned
+profiles. This is a scripted source-layout peer; it is not a server capture
+or authenticated live session. No transport kernel or 16KiB message bound is
+changed. Larger real scene messages remain a separate bounded-capacity issue.

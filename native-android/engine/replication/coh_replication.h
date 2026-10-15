@@ -10,13 +10,17 @@ enum { COH_REP_UPDATE=2, COH_REP_ALLENTS=3, COH_REP_SHORTCUTS=4,
     COH_REP_CONNECT_MSG=5, COH_REP_GROUPS=6 };
 #define COH_REP_MESSAGE_MAX 16384u
 #define COH_REP_SHORTCUT_MAX 256u
+/* This list is sent separately from the 35-entry source shortcut schema.
+ * The pinned server_cmds producer contains at most 915 command names. Stream
+ * and discard up to 1024 names within the existing 16KiB message bound. */
+#define COH_REP_ACCESSIBLE_COMMAND_MAX 1024u
 #define COH_REP_NAME_MAX 256u
 /* Decompressed payload, including the command. compressed=1 means the source
  * byteAlignedMode (rounded scalar widths and 32-bit packed integers), not zlib
  * input. No pointers, socket handles or secrets are retained. */
 typedef struct { CohBytes bytes; size_t bits, cursor; unsigned compressed; } CohRepReader;
 typedef struct { uint16_t id; uint8_t kind; } CohRepShortcut;
-typedef struct { CohRepShortcut entries[COH_REP_SHORTCUT_MAX]; size_t count; } CohRepSchema;
+typedef struct { CohRepShortcut entries[COH_REP_SHORTCUT_MAX]; size_t count, accessible_commands; } CohRepSchema;
 typedef struct { uint32_t accepted; float timezone_delta; } CohRepConnect;
 typedef struct {
     uint32_t undo_count, redo_count, new_world, mission_map, instance_id,

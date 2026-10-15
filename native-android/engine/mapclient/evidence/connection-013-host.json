@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "passed": true,
+  "scope": "source producer parity plus actual OS UDP with scripted synthetic peer; no real server/authentication/capture",
+  "source_files": 11,
+  "source_golden_packets": 240,
+  "source_accessible_command_upper_count": 915,
+  "checks": {
+    "release": {
+      "checks": 29927,
+      "negative_cases": 10657,
+      "scenarios": 21,
+      "actual_os_udp": true,
+      "scripted_peer_only": true,
+      "socket_leak_check": true,
+      "actual_authentication": false,
+      "live_world": false
+    },
+    "asan": {
+      "checks": 29927,
+      "negative_cases": 10657,
+      "scenarios": 21,
+      "actual_os_udp": true,
+      "scripted_peer_only": true,
+      "socket_leak_check": true,
+      "actual_authentication": false,
+      "live_world": false
+    },
+    "ubsan": {
+      "checks": 29927,
+      "negative_cases": 10657,
+      "scenarios": 21,
+      "actual_os_udp": true,
+      "scripted_peer_only": true,
+      "socket_leak_check": true,
+      "actual_authentication": false,
+      "live_world": false
+    }
+  },
+  "leak_sanitizer_enabled": false,
+  "leak_sanitizer_note": "ASan addresses checked; descriptor lifetime checked through /proc/self/fd. LeakSanitizer process inspection is unavailable in this execution environment.",
+  "android_arm64_object_built": true,
+  "emulator_qualified": false,
+  "thor_accepted": false,
+  "actual_server_interoperability": false,
+  "full_scene_parser": false,
+  "full_entity_parser": false,
+  "render_spawn_handoff": false,
+  "login_verified": false,
+  "android_arm64_object_sha256": "3357266a47872c5b43864425cb583ecc8bf1410955c7737b334614780fc0ff4f"
+}

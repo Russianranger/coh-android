@@ -84,7 +84,8 @@ generation until a new complete shortcuts packet is consumed.
 
 All command/field bounds are deliberate native resource limits, rather than
 claims that every original server configuration fits. In particular there are
-at most 256 shortcuts and accessible commands, 32 loadscreen pages, 256-byte
+at most 256 shortcuts, 1,024 separately streamed accessible command names,
+32 loadscreen pages, 256-byte
 NUL-terminated strings, and 16,384 message bytes. Exceeding a bound rejects the
 input; production admission must treat that as unsupported rather than omit
 data and continue.
@@ -138,3 +139,16 @@ The exact file hashes are in `source-pins.json` at recovery checkpoint
 
 Remove this optional library or revert its additive commit to roll back. There
 is no APK, launcher, asset, account, character or report migration.
+
+The accessible command list after the shortcut terminator is independent of
+its schema. The pinned `cmdserver.c:cmdOldServerSendCommands` filters a static
+table with 915 named entries; the conservative unfiltered name inventory is
+14,264 bytes including terminators. The parser now permits up to 1,024 names,
+reading and discarding one bounded string at a time. It retains only the
+numeric count. It still permits at most 256 shortcut definitions and 16KiB
+per message. Names do not register or authorize native command execution.
+Original bit-writer fixtures exercise the entire pinned 915-name inventory in
+both payload profiles, the 1,024 boundary, 1,025 rejection, and truncated tails.
+The earlier shared 256 cap was incompatible with valid privileged command
+lists. Existing Thor reports do not identify the failing packet; this fix
+alone does not prove its exact cause or a complete real MapServer connection.

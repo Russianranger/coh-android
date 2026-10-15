@@ -49,8 +49,19 @@ typedef struct {
     CohAuthMapHandoff handoff;
     unsigned address_index; /* 0 or 1, must match config UDP peer */
 } CohMapAuthorization;
+/* Numeric parser checkpoints distinguish transport capacity, command parsing,
+ * complete handshake parsing and deliberate incomplete replication. */
+typedef enum { COH_MAP_STAGE_NONE, COH_MAP_STAGE_UDP_SERVICE,
+    COH_MAP_STAGE_MESSAGE_NEXT, COH_MAP_STAGE_COMMAND,
+    COH_MAP_STAGE_CONNECT, COH_MAP_STAGE_SHORTCUTS,
+    COH_MAP_STAGE_SCENE_PREFIX, COH_MAP_STAGE_ENTITY_PREFIX,
+    COH_MAP_STAGE_SEND_COMMAND, COH_MAP_STAGE_APPLICATION_TIMEOUT } CohMapStage;
 typedef struct {
     CohMapPhase phase;
+    CohMapStage stage;
+    CohStatus last_status;
+    uint32_t last_command, last_payload_bits;
+    unsigned last_command_valid, last_byte_aligned;
     uint32_t selected_slot, selection_generation, selected_dbid;
     uint32_t map_id, map_link_id, generation;
     unsigned local_development_authorized;

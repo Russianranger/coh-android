@@ -17,6 +17,7 @@ static void snapshot(CohLocal *s){
     if(s->db)coh_db_session_diagnostics(s->db,&d);
     if(s->map)coh_map_client_diagnostics(s->map,&m);
     s->diagnostics.db_phase=d.phase;s->diagnostics.map_phase=m.phase;
+    s->diagnostics.map_protocol=m;
     if(d.server_identity_bound)s->diagnostics.server_identity_bound=1;
     s->diagnostics.character_lists+=d.player_lists-s->observed_lists;s->observed_lists=d.player_lists;
     s->diagnostics.opened_sockets=s->retired_opened+d.transport.sockets_opened+m.udp.sockets_opened;
@@ -28,6 +29,9 @@ static void close_modules(CohLocal *s){
     s->selected=0;s->selected_slot=s->db_id=s->map_id=0;s->diagnostics.server_identity_bound=0;snapshot(s);
 }
 static CohStatus stop(CohLocal *s,CohLocalPhase phase,CohStatus status){
+    snapshot(s);s->diagnostics.terminal_failure=1;
+    s->diagnostics.terminal_db_phase=s->diagnostics.db_phase;
+    s->diagnostics.terminal_map_phase=s->diagnostics.map_phase;
     close_modules(s);s->diagnostics.phase=phase;s->diagnostics.last_status=status;
     s->diagnostics.failures++;return status;
 }
@@ -84,6 +88,8 @@ CohStatus coh_local_begin(CohLocal *s,const CohDbLogin *policy,const char *name,
     coh_db_session_destroy(s->db);coh_map_client_destroy(s->map);s->db=db;s->map=NULL;s->observed_lists=0;s->diagnostics.server_identity_bound=0;
     s->db_id=s->last_db_id=dbid;s->map_id=s->last_map_id=mapid;s->selected=0;
     s->clock_ms=now;s->diagnostics.attempts++;s->diagnostics.generation++;
+    s->diagnostics.terminal_failure=0;s->diagnostics.terminal_db_phase=COH_DB_IDLE;
+    s->diagnostics.terminal_map_phase=COH_MAP_IDLE;
     s->diagnostics.phase=COH_LOCAL_DB_CONNECTING;s->diagnostics.last_status=COH_OK;snapshot(s);return COH_OK;
 }
 CohStatus coh_local_characters(const CohLocal *s,CohLocalCharacters *out){

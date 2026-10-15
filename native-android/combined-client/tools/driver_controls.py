@@ -8,10 +8,11 @@ reporting a host simulation as Android execution or a real import.
 from pathlib import Path
 from types import SimpleNamespace
 import json
+import copy
 import tempfile
 import xml.etree.ElementTree as ET
 from unittest.mock import patch
-from emulator_check import Check, PACKAGE, scene_pixels, settled_preview
+from emulator_check import Check, PACKAGE, scene_pixels, settled_preview, viewport_contract, map_report_contract
 
 FILE = 'native-test-donor.apk'
 BACKGROUND = f'<node package="com.google.android.documentsui" text="{FILE}" bounds="[189,899][583,956]"/>'
@@ -124,6 +125,79 @@ def capture_controls(path):
     return count
 
 
+def viewport_protocol_controls(path):
+    """Replay Thor dimensions and reject stale/secret-bearing public reports."""
+    count = 0
+    preview = {'viewport_policy': {'schema':'coh-native-viewport-v1', 'maximum_controls_percent':60,
+        'minimum_aspect':.25, 'maximum_aspect':8, 'maximum_dimension':16384,
+        'host_width':1920, 'host_height':469},
+        'input_area':{'left':0,'top':611,'width':1920,'height':469,'shown':True,'surface_ready':True},
+        'native':{'width':1920,'height':469}, 'preview_is_server_world':False}
+    viewport_contract(preview);count+=1
+    # The actual failed EGL height must fail even if its outer host is larger.
+    def reject(function, value):
+        nonlocal count
+        try:function(value)
+        except AssertionError:count+=1;return
+        raise AssertionError('Invalid public report was admitted')
+    for mutate in (
+        lambda v:v['input_area'].update(height=137),
+        lambda v:v['native'].update(height=137),
+        lambda v:v['input_area'].update(width=16385),
+        lambda v:v['input_area'].update(width=True),
+        lambda v:v['input_area'].update(surface_ready=False),
+        lambda v:v['viewport_policy'].update(host_height=100),
+        lambda v:v.update(preview_is_server_world=True),
+    ):
+        value=copy.deepcopy(preview);mutate(value);reject(viewport_contract,value)
+    fitted=copy.deepcopy(preview);fitted['input_area'].update(width=1096,height=137)
+    fitted['native'].update(width=1096,height=137);viewport_contract(fitted);count+=1
+    mapping_fields = ('phase stage last_status last_command_valid last_command last_payload_bits last_byte_aligned '
+        'accepted_messages rejected_messages malformed unsupported scene_prefixes entity_prefixes disconnects suspends timeouts').split()
+    udp_fields = ('state link_state sockets_opened sockets_closed datagrams_sent datagrams_received peer_rejects '
+        'truncated empty malformed unsupported send_would_block interrupted io_errors receive_budget_exhausted '
+        'suspends resumes cancellations timeouts last_system_error').split()
+    link_fields = ('sent received retransmits acknowledged duplicates malformed queue_limits fragment_expirations '
+        'timeouts unsupported tx_pending rx_pending fragment_groups storage_bytes codec_bytes high_water_retained_bytes').split()
+    top_fields = ('local_development_auth server_identity_bound generation selection_generation db_phase map_phase '
+        'last_status attempts character_lists character_choices map_handoffs policy_rejections failures suspends '
+        'cancellations opened_sockets closed_sockets terminal_failure terminal_db_phase terminal_map_phase').split()
+    protocol = dict.fromkeys(top_fields,0)
+    protocol.update(schema='coh-native-local-numeric-v1',phase='SCENE_INCOMPLETE',authserver_authenticated=False,
+        live_world_rendered=False,map_protocol=dict.fromkeys(mapping_fields,0))
+    protocol['map_protocol']['udp']=dict.fromkeys(udp_fields,0)
+    protocol['map_protocol']['udp']['link']=dict.fromkeys(link_fields,0)
+    map_report_contract(protocol);count+=1
+    for mutate in (
+        lambda v:v.update(password='must never appear'),
+        lambda v:v['map_protocol'].update(packet_body='must never appear'),
+        lambda v:v['map_protocol']['udp']['link'].update(cookie=42),
+        lambda v:v.update(terminal_map_phase=-1),
+        lambda v:v['map_protocol'].update(last_status=True),
+        lambda v:v['map_protocol']['udp'].update(datagrams_received=-1),
+        lambda v:v.update(authserver_authenticated=True),
+        lambda v:v.update(live_world_rendered=True),
+    ):
+        value=copy.deepcopy(protocol);mutate(value);reject(map_report_contract,value)
+    protocol['map_protocol']['udp']['last_system_error']=-11
+    map_report_contract(protocol);count+=1
+    class ScrollDriver(Check):
+        def __init__(self):
+            super().__init__(SimpleNamespace(output=path/'scroll'))
+            self.commands=[]
+            self.frames=iter([
+                '<node text="Native Fixture • level 1" enabled="true" bounds="[0,430][800,510]"/>',
+                '<node text="Native Fixture • level 1" enabled="true" bounds="[0,180][800,260]"/>'])
+        def dump(self):
+            return ET.fromstring('<hierarchy><node package="'+PACKAGE+'" content-desc="Native client controls" bounds="[0,30][1920,400]">'+next(self.frames)+'</node></hierarchy>')
+        def adb(self,*args,**kwargs):self.commands.append(args)
+    scroll=ScrollDriver()
+    with patch('emulator_check.time.sleep'):scroll.tap('Native Fixture',prefix=True)
+    assert scroll.commands==[('shell','input','swipe',960,326,960,104,'250'),('shell','input','tap',400,220)]
+    count+=1
+    return count
+
+
 def main():
     with tempfile.TemporaryDirectory(prefix='coh-driver-controls-') as temp:
         driver = Driver(Path(temp), [BACKGROUND+DRAWER, BACKGROUND, APP])
@@ -183,7 +257,9 @@ def main():
         native['objects_released']=False;native['static_renderer']['gpu_bytes']=0;assert settled_preview(ready,290) is False
         native['static_renderer']['gpu_bytes']=1;assert settled_preview(ready,310) is False
         capture_checks=capture_controls(Path(temp)/'captures')
-    print(json.dumps({'passed':True,'checks':17+capture_checks,'capture_controls':capture_checks,'scope':'Host regressions for foreground document selection, strict fresh UI capture and bounded known-transient retries, unconditional native fault rejection, and scene admission; no Android execution claim.'}))
+        viewport_protocol_checks=viewport_protocol_controls(Path(temp)/'viewport-protocol')
+    print(json.dumps({'passed':True,'checks':17+capture_checks+viewport_protocol_checks,'capture_controls':capture_checks,
+        'viewport_protocol_controls':viewport_protocol_checks,'scope':'Host regressions for document selection, strict fresh capture, native fault rejection, scene/viewport admission, bounded landscape scrolling and numeric protocol privacy; no Android execution claim.'}))
 
 
 if __name__ == '__main__':

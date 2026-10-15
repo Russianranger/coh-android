@@ -76,6 +76,15 @@ def fixtures(lib,directory):
       count+=1
  lines+=['};'];(directory/'fixtures.h').write_text('\n'.join(lines)+'\n');return count
 
+def command_fixtures(repo,directory):
+ spec=importlib.util.spec_from_file_location('qualified_replication_commands',repo/'native-android/engine/replication/check.py')
+ helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
+ target=directory/'replication';target.mkdir()
+ lib,_=helper.oracle(repo,target);helper.fixtures(lib,target,repo)
+ lines=(target/'fixtures.h').read_text().splitlines()
+ (directory/'server-command-fixtures.h').write_text('\n'.join(line for line in lines if line.startswith(('#define SOURCE_ACCESSIBLE','static const unsigned char source_commands','#define source_commands')))+'\n')
+ return 915
+
 def main():
  parser=argparse.ArgumentParser();parser.add_argument('--source-root',type=Path,default=REPO);parser.add_argument('--sanitize',action='store_true');parser.add_argument('--output',type=Path);parser.add_argument('--ndk',type=Path)
  parser.add_argument('--android-output',type=Path,help='With --ndk, preserve fixtures and full ARM64/x86_64 test executables; builds only, never executes them')
@@ -83,7 +92,7 @@ def main():
  if args.android_output and not args.ndk:parser.error('--android-output requires --ndk')
  repo=args.source_root.resolve();native=repo/'native-android'
  with tempfile.TemporaryDirectory(prefix='coh-mapclient-') as tmp:
-  directory=Path(tmp);lib,pins=oracle(repo,directory);count=fixtures(lib,directory)
+  directory=Path(tmp);lib,pins=oracle(repo,directory);count=fixtures(lib,directory);catalog_count=command_fixtures(repo,directory)
   sources=[HERE/'coh_mapclient.c',HERE/'tests/test_mapclient.c',native/'engine/replication/coh_replication.c',native/'engine/network/coh_net.c',native/'engine/network/coh_net_frame.c',native/'engine/network/coh_net_zip.c',native/'engine/network/coh_net_udp.c',native/'protocol/coh_protocol.c',native/'src/coh_blowfish.c']
   modes=[('release',['-O1'])]
   if args.sanitize:modes += [('asan',['-g','-O1','-fno-omit-frame-pointer','-fsanitize=address','-no-pie']),('ubsan',['-g','-O1','-fno-omit-frame-pointer','-fsanitize=undefined','-fno-sanitize-recover=all'])]
@@ -100,7 +109,7 @@ def main():
     run(['cc','-std=c99','-Wall','-Wextra','-Werror','-pedantic',*flags,*dependency_flags,'-I'+str(directory),'-I'+str(HERE),'-I'+str(native/'include'),'-c',source,'-o',obj])
    run(['cc',*flags,*objects,'-lz','-lm','-o',binary])
    checks[name]=json.loads(run([binary],env=env))
-  proof={'schema':1,'passed':True,'scope':'source producer parity plus actual OS UDP with scripted synthetic peer; no real server/authentication/capture','source_files':len(pins),'source_golden_packets':count,'checks':checks,'leak_sanitizer_enabled':False,'leak_sanitizer_note':'ASan addresses checked; descriptor lifetime checked through /proc/self/fd. LeakSanitizer process inspection is unavailable in this execution environment.','android_arm64_object_built':False,'emulator_qualified':False,'thor_accepted':False,'actual_server_interoperability':False,'full_scene_parser':False,'full_entity_parser':False,'render_spawn_handoff':False,'login_verified':False}
+  proof={'schema':1,'passed':True,'scope':'source producer parity plus actual OS UDP with scripted synthetic peer; no real server/authentication/capture','source_files':len(pins),'source_golden_packets':count,'source_accessible_command_upper_count':catalog_count,'checks':checks,'leak_sanitizer_enabled':False,'leak_sanitizer_note':'ASan addresses checked; descriptor lifetime checked through /proc/self/fd. LeakSanitizer process inspection is unavailable in this execution environment.','android_arm64_object_built':False,'emulator_qualified':False,'thor_accepted':False,'actual_server_interoperability':False,'full_scene_parser':False,'full_entity_parser':False,'render_spawn_handoff':False,'login_verified':False}
   if args.ndk:
    compiler=args.ndk/'toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang'
    run([compiler,'-std=c99','-Wall','-Wextra','-Werror','-pedantic','-fPIC','-I'+str(native/'include'),'-c',HERE/'coh_mapclient.c','-o',directory/'mapclient-arm64.o'])
@@ -108,6 +117,7 @@ def main():
    if args.android_output:
     destination=args.android_output.resolve();destination.mkdir(parents=True,exist_ok=True)
     shutil.copy2(directory/'fixtures.h',destination/'fixtures.h')
+    shutil.copy2(directory/'server-command-fixtures.h',destination/'server-command-fixtures.h')
     shutil.copy2(directory/'source-oracle.c',destination/'source-oracle.c')
     ndk_revision=(args.ndk/'source.properties').read_text().split('Pkg.Revision = ')[1].splitlines()[0]
     manifest={'schema':1,'passed':True,'executed':False,'scope':'cross-built complete scripted-peer mapclient tests only; no execution, server session, login or live-world claim','ndk_revision':ndk_revision,'fixtures_sha256':hashlib.sha256((destination/'fixtures.h').read_bytes()).hexdigest(),'source_oracle_sha256':hashlib.sha256((destination/'source-oracle.c').read_bytes()).hexdigest(),'source_files_sha256':{str(source.relative_to(native)):hashlib.sha256(source.read_bytes()).hexdigest() for source in sources},'executables':{}}

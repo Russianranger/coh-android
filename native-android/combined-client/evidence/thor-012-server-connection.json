@@ -1,0 +1,468 @@
+{
+  "schema": "coh-native-combined-thor-012-server-connection-v1",
+  "recorded_utc_date": "2026-10-15",
+  "source_revision": "377584651471e748fbbd4a24cdf08bd2c48ca4a3",
+  "qualification_driver_revision": "0f4240352a0d2878d1e1e86878267ef68997e027",
+  "analysis_base_revision": "339003eaddb67947c28bc88e2aef8b33b75bd4e5",
+  "provenance": {
+    "original_inputs_committed": false,
+    "export_bundle": {
+      "bytes": 17092,
+      "sha256": "9dc8b8352507c0224b8b35016c03ced4dd459a4baa95c4b94d3cf2dd85ad356e"
+    },
+    "earlier_standalone_client_report": {
+      "bytes": 84933,
+      "sha256": "a08b3f448b15858236db1c0ad1b8f4df2585c7e08485206ca2b56e6c6d6248fc"
+    },
+    "export_members": [
+      {
+        "role": "combined-report",
+        "bytes": 2780,
+        "sha256": "fd0312cf31eff959cd158db8938e1ca1839babb6e2ff4da7db53e36be29da4d5"
+      },
+      {
+        "role": "native-client-report",
+        "bytes": 223933,
+        "sha256": "a6f1afef6cd722b866529a47e7f7e17f89a8a6b3746d9b7e809ef3118c943e28"
+      },
+      {
+        "role": "previous-session-combined-server-latest-report",
+        "bytes": 10344,
+        "sha256": "7eec888bfa876a4018fab7178c9b7b3afc07bf960f8e89bfb81d53dddf19997a"
+      },
+      {
+        "role": "combined-server-previous-attempts",
+        "bytes": 51376,
+        "sha256": "959853b650d0ceb26ddb24e182a2729f1898b209c1b55a9ba79f42466f14d05c"
+      }
+    ],
+    "sanitization": "Explicit numeric/status allowlist; no account names, character names, credentials, private paths, session IDs, import IDs, or original input bodies."
+  },
+  "app": {
+    "package": "org.coh.nativecombined",
+    "version_name": "0.1.2-local-server-native",
+    "version_code": 3,
+    "installed_apk": {
+      "bytes": 11519003,
+      "sha256": "1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449"
+    }
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "current_server_attempt": {
+    "source": "archived_current_version_ready_snapshot",
+    "version_name": "0.1.2-local-server-native",
+    "version_code": 3,
+    "phase": "ready",
+    "ready": true,
+    "guest_exit_code": -1,
+    "owned_process_alive": true,
+    "failure_code": "",
+    "last_stage": "server_running_manual_native_client",
+    "elapsed_ms": 716398,
+    "stage_elapsed_ms": 160088,
+    "stages": [
+      {
+        "stage": "guest_starting",
+        "elapsed_ms": 0
+      },
+      {
+        "stage": "server_memory_admission",
+        "elapsed_ms": 8
+      },
+      {
+        "stage": "prepare_immutable_server_inputs",
+        "elapsed_ms": 8
+      },
+      {
+        "stage": "preflight_local_server_ports",
+        "elapsed_ms": 5433
+      },
+      {
+        "stage": "server_only_input_admission",
+        "elapsed_ms": 5434
+      },
+      {
+        "stage": "prepare_private_server_inputs",
+        "elapsed_ms": 9138
+      },
+      {
+        "stage": "isolated_required_geometry_preparation",
+        "elapsed_ms": 12753
+      },
+      {
+        "stage": "persistent_server_profile",
+        "elapsed_ms": 13657
+      },
+      {
+        "stage": "postgres_native_combined",
+        "elapsed_ms": 14152
+      },
+      {
+        "stage": "preflight_selected_map_port",
+        "elapsed_ms": 14885
+      },
+      {
+        "stage": "presentation_display",
+        "elapsed_ms": 14886
+      },
+      {
+        "stage": "wine_initialization",
+        "elapsed_ms": 14996
+      },
+      {
+        "stage": "local_login_odbc",
+        "elapsed_ms": 23354
+      },
+      {
+        "stage": "local_dbserver_startup",
+        "elapsed_ms": 36901
+      },
+      {
+        "stage": "local_atlas_startup",
+        "elapsed_ms": 173107
+      },
+      {
+        "stage": "game_create_and_connect",
+        "elapsed_ms": 455183
+      },
+      {
+        "stage": "game_live_currency",
+        "elapsed_ms": 550123
+      },
+      {
+        "stage": "game_protocol_logout_first",
+        "elapsed_ms": 553274
+      },
+      {
+        "stage": "server_running_manual_native_client",
+        "elapsed_ms": 556310
+      }
+    ],
+    "ready_elapsed_ms": 556310,
+    "memory": {
+      "format": 1,
+      "status": "running",
+      "admitted": true,
+      "stop_requested": false,
+      "samples": 701,
+      "invalid_samples": 0,
+      "admission_reserve_bytes": 999756032,
+      "running_reserve_bytes": 249939008,
+      "java_heap_reserve_bytes": 16777216,
+      "minimum_system_headroom_bytes": 6055989248,
+      "minimum_java_heap_headroom_bytes": 200999568,
+      "pressure_started_elapsed_ms": null,
+      "pressure_samples": 0
+    },
+    "local_development_auth": true,
+    "real_authserver_login_verified": false,
+    "native_live_world_verified": false,
+    "old_application_modified": false,
+    "graceful_server_stop_or_restart_qualified": false
+  },
+  "native_connection_before_export_pause": {
+    "source": "earlier_standalone_client_report",
+    "schema": "coh-native-local-numeric-v1",
+    "phase": "FAILED",
+    "local_development_auth": 1,
+    "server_identity_bound": 0,
+    "generation": 1,
+    "selection_generation": 1,
+    "db_phase": 11,
+    "map_phase": 7,
+    "last_status": 4,
+    "attempts": 1,
+    "character_lists": 1,
+    "character_choices": 1,
+    "map_handoffs": 1,
+    "policy_rejections": 0,
+    "failures": 1,
+    "suspends": 0,
+    "cancellations": 0,
+    "opened_sockets": 2,
+    "closed_sockets": 2,
+    "authserver_authenticated": false,
+    "live_world_rendered": false,
+    "last_status_symbol": "COH_LIMIT",
+    "status_numeric_definition": {
+      "COH_OK": 0,
+      "COH_INVALID": 1,
+      "COH_UNSUPPORTED": 2,
+      "COH_NOT_FOUND": 3,
+      "COH_LIMIT": 4,
+      "COH_CANCELLED": 5,
+      "COH_IO": 6,
+      "COH_STATE": 7
+    },
+    "terminal_site_determined": false,
+    "post_cleanup_phase_caveat": "Existing stop closes DB and Map modules before snapshot; db_phase/map_phase and cleared identity do not preserve the original failure site.",
+    "proven_scope": [
+      "real_local_DB_character_list_received",
+      "existing_local_character_choice_requested",
+      "real_DB_to_Map_handoff_taken_and_Map_begin_succeeded"
+    ],
+    "not_proven": [
+      "MapServer_application_connect_accepted",
+      "encrypted_AuthServer_login",
+      "native_server_world_rendered"
+    ]
+  },
+  "native_connection_after_export_pause": {
+    "source": "export_bundle_native_client_report",
+    "schema": "coh-native-local-numeric-v1",
+    "phase": "SUSPENDED",
+    "local_development_auth": 1,
+    "server_identity_bound": 0,
+    "generation": 1,
+    "selection_generation": 1,
+    "db_phase": 8,
+    "map_phase": 8,
+    "last_status": 4,
+    "attempts": 1,
+    "character_lists": 1,
+    "character_choices": 1,
+    "map_handoffs": 1,
+    "policy_rejections": 0,
+    "failures": 1,
+    "suspends": 2,
+    "cancellations": 0,
+    "opened_sockets": 2,
+    "closed_sockets": 2,
+    "authserver_authenticated": false,
+    "live_world_rendered": false,
+    "last_status_symbol": "COH_LIMIT"
+  },
+  "native_scene_failure": {
+    "valid": true,
+    "failed": true,
+    "running": false,
+    "failure": "Source session camera failed",
+    "frames": 532,
+    "contexts_started": 2,
+    "contexts_completed": 2,
+    "objects_released": true,
+    "width": 1920,
+    "height": 137,
+    "gl_errors": 0,
+    "egl_error": 0,
+    "tf_mismatches": 0,
+    "depth_order_mismatches": 0,
+    "aspect": 14.014598540145986,
+    "source_camera_minimum_aspect": 0.25,
+    "source_camera_maximum_aspect": 8.0,
+    "source_camera_guard_rejects_reported_aspect": true,
+    "guard_host_check": {
+      "source_sha256": "9a914b7326e4852bd55827c58bab360cef2516f85268a25cdd4ede2cdfe39c92",
+      "controls": 4,
+      "unmodified_source_guard_test": "passed",
+      "before_1920x469_status": 0,
+      "reported_1920x137_status": -2,
+      "maximum_aspect_8_status": 0,
+      "minimum_aspect_0_25_status": 0
+    },
+    "source_assets": {
+      "geo_loads": 3,
+      "texture_loads": 6,
+      "errors": 0
+    },
+    "stream": {
+      "catalog_instances": 11,
+      "selected_instances": 6,
+      "resident_bytes": 157491,
+      "peak_resident_bytes": 157491,
+      "cache_hits": 25,
+      "cache_misses": 8,
+      "evictions": 0
+    },
+    "preview_is_server_world": false,
+    "timeline": [
+      {
+        "sequence": 7,
+        "type": "local_connect_requested",
+        "elapsed_since_session_created_ms": 8522,
+        "frames": 500,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "failure": "",
+        "contexts_started": 1,
+        "contexts_completed": 0
+      },
+      {
+        "sequence": 8,
+        "type": "surface_changed",
+        "elapsed_since_session_created_ms": 9046,
+        "frames": 531,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "failure": "",
+        "contexts_started": 1,
+        "contexts_completed": 0
+      },
+      {
+        "sequence": 9,
+        "type": "render_returned",
+        "elapsed_since_session_created_ms": 9062,
+        "frames": 532,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "failure": "",
+        "contexts_started": 1,
+        "contexts_completed": 1
+      },
+      {
+        "sequence": 10,
+        "type": "render_returned",
+        "elapsed_since_session_created_ms": 9121,
+        "frames": 532,
+        "width": 1920,
+        "height": 137,
+        "failed": true,
+        "failure": "Source session camera failed",
+        "contexts_started": 2,
+        "contexts_completed": 2
+      },
+      {
+        "sequence": 11,
+        "type": "local_character_choice_requested",
+        "elapsed_since_session_created_ms": 14946,
+        "frames": 532,
+        "width": 1920,
+        "height": 137,
+        "failed": true,
+        "failure": "Source session camera failed",
+        "contexts_started": 2,
+        "contexts_completed": 2
+      },
+      {
+        "sequence": 12,
+        "type": "surface_changed",
+        "elapsed_since_session_created_ms": 14961,
+        "frames": 532,
+        "width": 1920,
+        "height": 137,
+        "failed": true,
+        "failure": "Source session camera failed",
+        "contexts_started": 2,
+        "contexts_completed": 2
+      },
+      {
+        "sequence": 13,
+        "type": "render_returned",
+        "elapsed_since_session_created_ms": 14963,
+        "frames": 532,
+        "width": 1920,
+        "height": 137,
+        "failed": true,
+        "failure": "Source session camera failed",
+        "contexts_started": 2,
+        "contexts_completed": 2
+      }
+    ],
+    "assessment": "Independent UI layout/Surface aspect failure: the available render height shrank from 469 to 137 pixels after local connect and before character selection; the new aspect exceeds the unchanged source camera bound."
+  },
+  "export_after_process_reopen": {
+    "source": "export_bundle_combined_report",
+    "version_name": "0.1.2-local-server-native",
+    "server": {
+      "phase": "stopped",
+      "ready": false,
+      "owned_process_alive": false,
+      "elapsed_ms": 0
+    },
+    "server_memory": {
+      "status": "not_started",
+      "admitted": false,
+      "samples": 0
+    },
+    "interpretation": "Fresh stopped app state after process exit/reopen; it does not negate the archived ready snapshot."
+  },
+  "android_process_exit_history": {
+    "status": "collected",
+    "numeric_records": [
+      {
+        "reason": 10,
+        "status": 0,
+        "timestamp_utc_ms": 1792095878701,
+        "importance": 125,
+        "pss_kib": 81790,
+        "rss_kib": 184160,
+        "low_memory": false
+      },
+      {
+        "reason": 10,
+        "status": 0,
+        "timestamp_utc_ms": 1792093965739,
+        "importance": 125,
+        "pss_kib": 98225,
+        "rss_kib": 194336,
+        "low_memory": false
+      },
+      {
+        "reason": 3,
+        "status": 0,
+        "timestamp_utc_ms": 1792091451014,
+        "importance": 100,
+        "pss_kib": 72888,
+        "rss_kib": 179156,
+        "low_memory": true
+      },
+      {
+        "reason": 10,
+        "status": 0,
+        "timestamp_utc_ms": 1792091414033,
+        "importance": 125,
+        "pss_kib": 91394,
+        "rss_kib": 195492,
+        "low_memory": false
+      }
+    ],
+    "reason_interpretation": {
+      "3": "LOW_MEMORY",
+      "10": "USER_REQUESTED"
+    },
+    "older_low_memory_reason_confirmed": true,
+    "latest_two_records_are_user_requested": true,
+    "exact_low_memory_allocation_or_child_process_cause_determined": false
+  },
+  "historical_failure_in_same_bundle": {
+    "version_name": "0.1.1-local-server-native",
+    "server": {
+      "phase": "failed",
+      "ready": false,
+      "guest_exit_code": 1,
+      "failure_code": "RETAINED_GUEST_DEPENDENCY_FAILED",
+      "last_stage": "local_dbserver_startup",
+      "elapsed_ms": 46026
+    },
+    "guest": {
+      "status": "failed",
+      "primary_failure_code": "RETAINED_GUEST_DEPENDENCY_FAILED",
+      "cleanup_failure_code": null,
+      "profile_preserved": true,
+      "cleanup_complete": true
+    },
+    "interpretation": "The previous-session guest report and older archived attempt describe the already repaired 0.1.1 startup failure, not the 0.1.2 native connection failure."
+  },
+  "acceptance": {
+    "physical_Thor_server_boot_verified": true,
+    "physical_Thor_real_local_DB_character_list_and_handoff_verified": true,
+    "physical_Thor_native_Map_connect_verified": false,
+    "encrypted_AuthServer_login_verified": false,
+    "native_live_world_verified": false,
+    "new_full_gate_acceptance_claimed": false,
+    "gates_22_to_24_implementation_or_prior_acceptance_changed": false
+  }
+}

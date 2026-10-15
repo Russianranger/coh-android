@@ -18,9 +18,10 @@ Follow [THOR-TEST.md](THOR-TEST.md) for the consolidated device test.
   local server's `UseFakeAuth` policy, not a fabricated authenticated receipt.
 * Full scene/entity decoding and server-position rendering are incomplete.
   `SCENE_INCOMPLETE` is the current bounded endpoint, not a live-world success.
-* Real AuthServer authentication and actual guest-server/device interoperability
-  remain separate qualification requirements. Deterministic socket peers do not
-  prove a real server session.
+* The 0.1.2 Thor report confirms actual server boot, a native DbServer character
+  list/selection and a requested Map handoff. Map acceptance, encrypted AuthServer
+  authentication and server-authoritative rendering remain pending. Deterministic
+  socket peers do not prove a real server session.
 
 ## External inputs
 
@@ -121,3 +122,17 @@ supplement that allocation-lifetime change. These cannot guarantee prevention
 of Android process kills. OS exit records and four preceding attempts are
 included in report exports, without account identifiers or raw traces. Neither
 this repair nor emulator preview tests establish successful Thor guest startup.
+
+## Thor server boot and connection repair 0.1.3
+
+The next report confirms 0.1.2 server readiness after 556.310 seconds. Its native
+client retrieved an actual character list, selected one and began the DB-to-Map
+handoff, then failed with `COH_LIMIT`. Separately, character controls resized the
+Surface to 1920×137, beyond the unchanged source camera's aspect limit of 8.
+The renderer failure is reproducible with the recorded pose. The 0.1.3 Android
+layout reserves scene space and fits the actual Surface to the accepted bounds;
+it does not change the accepted renderer or assets. Accessible server command
+names now have their own source-audited bound rather than the 256-entry shortcut
+schema bound. Terminal numeric diagnostics survive socket cleanup and suspend.
+The exact old failing packet was not retained; real Map acceptance still needs
+the device retry. See the sanitized [Thor evidence](evidence/THOR-012-SERVER-CONNECTION.md).

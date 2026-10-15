@@ -25,6 +25,12 @@ typedef struct {
     CohDbSessionPhase db_phase;
     CohMapPhase map_phase;
     CohStatus last_status;
+    /* The terminal failure phases are captured before cleanup clears active
+     * authorization and closes sockets. Current phases still prove cleanup. */
+    unsigned terminal_failure;
+    CohDbSessionPhase terminal_db_phase;
+    CohMapPhase terminal_map_phase;
+    CohMapDiagnostics map_protocol;
     uint32_t generation, selection_generation;
     unsigned local_development_auth, server_identity_bound;
     uint64_t attempts, character_lists, character_choices, map_handoffs,

@@ -34,10 +34,13 @@ def main():
         ('lease-admission', [sys.executable, native / 'combined-client/qualification/check_lease.py']),
         ('guest-diagnostics', [sys.executable, native / 'combined-client/qualification/check_diagnostics.py']),
         ('server-memory-policy', [sys.executable, native / 'combined-client/qualification/check_server_memory.py']),
+        ('viewport-policy', [sys.executable, native / 'combined-client/qualification/check_viewport.py']),
         ('imports', [sys.executable, native / 'combined-client/imports/tests/check_imports.py', '--donor-apk', args.donor_apk.resolve()]),
         ('server-runtime', [sys.executable, native / 'combined-client/runtime/check.py', '--source-root', args.source_root.resolve(), '--donor', args.donor_apk.resolve(), '--output', args.output / 'server-runtime.json']),
         ('local-protocol', [sys.executable, native / 'engine/local/check.py', '--source-root', args.source_root.resolve(), '--sanitize', '--ndk', ndk.resolve(), '--android-output', args.output / 'local-android', '--output', args.output / 'local-protocol.json']),
         ('db-protocol', [sys.executable, native / 'engine/dbclient/check.py', '--source-root', args.source_root.resolve(), '--sanitize', '--output', args.output / 'db-protocol.json']),
+        ('map-protocol', [sys.executable, native / 'engine/mapclient/check.py', '--source-root', args.source_root.resolve(), '--sanitize', '--ndk', ndk.resolve(), '--android-output', args.output / 'map-android', '--output', args.output / 'map-protocol.json']),
+        ('replication', [sys.executable, native / 'engine/replication/check.py', '--source-root', args.source_root.resolve(), '--sanitize', '--output', args.output / 'replication.json']),
     ]
     results = []
     for name, command in commands:
