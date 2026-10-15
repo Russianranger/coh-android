@@ -115,7 +115,10 @@ comparisons; the appearance receipt adds actual mesh palette/socket compatibilit
    appearance generations. A null morph means a separately-qualified neutral
    rig, not an implicit default morphology for an authored NPC. Existing custom
    Huge/Wretch morphology remains available; Male/Female custom morphology is
-   still unsupported.
+   still unsupported. Passing a non-null Huge morph requires that the supplied
+   pose's local translations and hierarchy have already been sampled/composed
+   with that same morphology, as `coh_character_sample` does. The palette bridge
+   cannot retrofit all morphology into the sequencer's neutral world pose.
 4. For each source material table range, supply `first_triangle*3` and
    `triangle_count*3`, source-qualified material settings and resolved logical
    texture names/handles for the current Surface. Allocate frame arenas outside

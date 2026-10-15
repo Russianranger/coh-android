@@ -28,7 +28,10 @@ CohStatus coh_appearance_mesh_build(const CohAssetGeo *,uint32_t model_index,
  * logical identity and generation agreement; it is not a digest authenticator.
  * Pose is an already composed world pose from the sequencer owner. Neutral
  * morph=NULL is admitted only when that rig is independently neutral-qualified.
- * A non-NULL morph uses the existing Huge-only qualified kernel. */
+ * A non-NULL morph uses the existing Huge-only qualified palette kernel and
+ * requires a pose already sampled/composed with that same morphology (including
+ * local translation changes). This palette bridge cannot retrofit morphology
+ * into an already composed neutral world pose. */
 typedef struct {
  uint64_t actor_id,rig_id;
  uint32_t body_type,appearance_generation,rig_generation,pose_generation;
