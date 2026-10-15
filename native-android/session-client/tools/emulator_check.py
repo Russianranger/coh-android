@@ -118,6 +118,37 @@ def sliding_walk_witness(blocked, sliding):
     return True
 
 
+def pre_release_witness(before, released):
+    """Require a fresh real key-up while the displayed source move is RunPre.
+
+    Historical Pre samples cannot establish that release interrupted Pre. The
+    actual Java key-up receipt must still show that move after held input clears,
+    before the following source tick selects IdleWalkPost.
+    """
+    old = before['input_adapter']['external_android']
+    current = released['input_adapter']['external_android']
+    assert current['key_down'] == old['key_down']+1
+    assert current['key_up'] == old['key_up']+1
+    assert current['key_down'] == current['key_up']
+    assert released['input_adapter']['in_app_synthetic']['key_down'] == 0
+    assert released['input_adapter']['in_app_synthetic']['key_up'] == 0
+    sequence = max(e['sequence'] for e in before['events'])
+    events = [e for e in released['events'] if e['sequence'] > sequence
+              and e['type'] in ('key_down', 'key_up')]
+    assert len(events) == 2 and [e['type'] for e in events] == ['key_down', 'key_up']
+    assert events[0]['native']['held_dirs'] == 1
+    witness = events[1]
+    native = witness['native']
+    assert native['held_dirs'] == 0 and native['animation_state'] == 3
+    assert native['source_state_bits'] & 1
+    assert native['foreground'] is True and native['running'] is True
+    assert native['movement_ticks'] > before['native']['movement_ticks']
+    assert native['frames'] > before['native']['frames']
+    assert native['animation_move_samples'][3] > before['native']['animation_move_samples'][3]
+    assert distance(native['actor_position'], before['native']['actor_position']) > .01
+    return witness
+
+
 def validate(value, moved=False):
     assert value['schema'] == 'coh-native-session-v1' and value['phases'] == GATES
     assert value['app']['package'] == PACKAGE and value['app']['version_name'] == '0.2.0-gates19-21'
@@ -303,23 +334,51 @@ def directional_walk(initial_position):
 
 
 def interrupted_and_reversed_walk(initial_position):
-    before = reset_actor(initial_position)
-    held, tap_command = joystick_event(0, -1, 1)
-    pre = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 1
-                   and r['native']['animation_state'] == 3
-                   and r['native']['animation_move_samples'][3] > before['native']['animation_move_samples'][3],
-                   'Short actual joystick press reaches authored RunPre before release', 1)
-    tapped, release_command = joystick_event(0, 0, 0)
-    stopped = wait(lambda r:native_ready(r) and r['native']['held_dirs'] == 0
-                   and r['native']['animation_state'] == 0,
-                   'Short actual keyboard press completes interrupted run path')
-    assert stopped['native']['animation_move_samples'][3] > before['native']['animation_move_samples'][3]
-    assert stopped['native']['animation_move_samples'][4] > before['native']['animation_move_samples'][4]
-    assert stopped['native']['animation_move_samples'][5] > before['native']['animation_move_samples'][5]
-    save('emulator-interrupted-run-proof.json', {'passed': True,
-         'scope': 'Actual Android joystick press released during observed authored RunPre, then IdleWalkPost and IdleReady',
-         'press_input_argv': tap_command, 'release_input_argv': release_command,
-         'before': before, 'pre': pre, 'released': tapped, 'settled': stopped})
+    # Android 13's standard input --longpress uses this framework setting.
+    # Set it only on this isolated qualification emulator, then restore it. A
+    # single framework input process supplies timely DOWN/repeat/UP callbacks;
+    # no host polling, app hook, JNI input or renderer motion script is used.
+    original_timeout = adb('shell', 'settings', 'get', 'secure', 'long_press_timeout').stdout.decode().strip()
+    assert original_timeout == 'null' or original_timeout.isdecimal()
+    attempts = []
+    interrupted = False
+    try:
+        for duration in (120, 160, 200):
+            before = reset_actor(initial_position)
+            adb('shell', 'settings', 'put', 'secure', 'long_press_timeout', str(duration))
+            assert adb('shell', 'settings', 'get', 'secure', 'long_press_timeout').stdout.decode().strip() == str(duration)
+            command = [ADB, 'shell', 'input', 'keyboard', 'keyevent', '--longpress', 'KEYCODE_W']
+            adb(*command[1:])
+            released = wait(lambda r:r['native']['held_dirs'] == 0
+                            and r['input_adapter']['external_android']['key_up'] > before['input_adapter']['external_android']['key_up'],
+                            'Actual timed Android key-up callback is retained')
+            stopped = wait(lambda r:native_ready(r) and r['native']['held_dirs'] == 0
+                           and r['native']['animation_state'] == 0,
+                           'Timed actual keyboard release completes authored stop graph')
+            witness = None
+            try:
+                witness = pre_release_witness(before, stopped)
+            except AssertionError:
+                pass
+            fresh_early_stop = all(stopped['native']['animation_move_samples'][state]
+                                   > before['native']['animation_move_samples'][state] for state in (3, 4, 5))
+            attempts.append({'framework_long_press_timeout_ms': duration,
+                             'framework_input_argv': command, 'before': before,
+                             'released': released, 'settled': stopped,
+                             'release_during_run_pre': witness, 'fresh_early_stop_path': fresh_early_stop})
+            interrupted = witness is not None and fresh_early_stop
+            save('emulator-interrupted-run-proof.json', {'passed': interrupted,
+                 'scope': 'Actual Android keyboard DOWN/UP, with exact fresh key-up native receipt still in RunPre after held input clears, then new authored IdleWalkPost and IdleReady samples',
+                 'original_framework_long_press_timeout': original_timeout,
+                 'attempts': attempts})
+            if interrupted:
+                break
+    finally:
+        if original_timeout == 'null':
+            adb('shell', 'settings', 'delete', 'secure', 'long_press_timeout')
+        else:
+            adb('shell', 'settings', 'put', 'secure', 'long_press_timeout', original_timeout)
+    assert interrupted, 'No actual timed keyboard release was witnessed during authored RunPre'
 
     before = reset_actor(initial_position)
     held, command = joystick_event(0, -1, 1)
