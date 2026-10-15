@@ -1,0 +1,179 @@
+{
+  "scope": "new asset/render bridge only",
+  "raw_assets": {
+    "misc.geo": {
+      "path": "data/object_library/streets/elements/misc_sm/misc_sm.geo",
+      "bytes": 51138,
+      "sha256": "04d03d09fef6f7c85225ae92ba0954c880dcef3d2e3ec3791b720d0dcc3d8cd4",
+      "pin": "tools/world_fixture/pins.json"
+    },
+    "bench.texture": {
+      "path": "data/texture_library/world/streets/elements/monorail/modern_bench.texture",
+      "bytes": 22225,
+      "sha256": "dbe3b554a798f235d1865234a652f7a0528b48231f4f271d4c42296222aecac1",
+      "pin": "tools/world_fixture/pins.json"
+    },
+    "sign.texture": {
+      "path": "data/texture_library/world/swappables_and_decals/signs/billboard/billboard_structure/signmetal.texture",
+      "bytes": 1694,
+      "sha256": "bdd32c3ad587b81f0704391e5da21156d68dc413c0b5ac8890b27d2c72a88978",
+      "pin": "tools/world_fixture/pins.json"
+    },
+    "white.texture": {
+      "path": "assets/texture_library/world/filler/white.texture",
+      "bytes": 327,
+      "sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9",
+      "pin": "tools/world_fixture/pins.json"
+    },
+    "grey.texture": {
+      "path": "assets/texture_library/world/filler/grey.texture",
+      "bytes": 894,
+      "sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013",
+      "pin": "tools/world_fixture/pins.json"
+    },
+    "trainstation.geo": {
+      "path": "data/object_library/special_buildings/trainstation/trainstation.geo",
+      "bytes": 66919,
+      "sha256": "e88a1246c46c634a3b95b94531697dc4f52ba3a65b95f01d41764191e05372bf",
+      "pin": "tools/walkable_fixture/pins.json"
+    },
+    "mono_station_infloor.texture": {
+      "path": "data/texture_library/world/streets/elements/monorail/mono_station_infloor.texture",
+      "bytes": 11241,
+      "sha256": "af2c13822d3998622746a856cbfffb0b6c53b8ac440d090eb06ef98ce11842c4",
+      "pin": "tools/walkable_fixture/pins.json"
+    },
+    "mono_station_infloor_sml.texture": {
+      "path": "data/texture_library/world/streets/elements/monorail/mono_station_infloor_sml.texture",
+      "bytes": 3053,
+      "sha256": "c196327fb76ecd33bb5c2ddd2c5c373a0e33d43687020a0566d98fdea927220b",
+      "pin": "tools/walkable_fixture/pins.json"
+    }
+  },
+  "source_sha256": {
+    "check.py": "9a4c8ddfc86c2d6d99c5f2156047f94d4af8a4c90eb7b06fa92804c35ffb372d",
+    "coh_asset_render.c": "50524a72baa219033a01073135ef4b61b8dd289c634d1be6cb85394210f0e983",
+    "coh_asset_render.h": "c69090c79b78f302713834b21f0c9a59acb15722598369b0efe67f0ef4fe7f87",
+    "tests/test_bridge.c": "0f7afdbf91dcf4ca73b3ea5002a3c16428dbb509de34d2e02878ad74f72273da"
+  },
+  "android_execution": false,
+  "physical_thor_acceptance": false,
+  "host": {
+    "passed": true,
+    "assertions": 2254,
+    "authentic_meshes": 3,
+    "material_parts": 6,
+    "unique_textures": 6,
+    "texture_loads": 7,
+    "sustained_cache_cycles": 1000,
+    "peak_counted_bytes": 462508,
+    "android_execution": false
+  },
+  "source_packet_oracle": {
+    "passed": true,
+    "reference": "hash-pinned unchanged original uncompressDeltas plus independent binary32 source V flip/scales and material partitions",
+    "original_decoder_source_sha256_lf": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "scalar_components_byte_exact": 19852,
+    "index_components_byte_exact": 1560,
+    "meshes": [
+      {
+        "source": "misc.geo",
+        "version": 7,
+        "model": "modern_bench_2wide__mbench",
+        "parts": 2,
+        "packet_sha256": "4c32eb8d222ab7337aee4cce3516432822aed7aca8997e51d391a41f739c5965"
+      },
+      {
+        "source": "misc.geo",
+        "version": 7,
+        "model": "modern_bench_4wide__mbench",
+        "parts": 2,
+        "packet_sha256": "cd9aa31c2c6d75be959a94086b65c38d15f142659070933a334bf6dd5c4864c1"
+      },
+      {
+        "source": "trainstation.geo",
+        "version": 0,
+        "model": "_trnstation_infloor",
+        "parts": 2,
+        "packet_sha256": "38c46fee470c5e2a018450da717fc96f00b369d994b647c7aeb8e3e79d1a1dcc"
+      }
+    ]
+  },
+  "texture_upload_oracle": {
+    "passed": true,
+    "textures": [
+      {
+        "source": "bench.texture",
+        "pixels": 16384,
+        "rgba_sha256": "4950ef92298a538a99716e214fb8a1efaf077ba304d22b589dd8a1f406308d97",
+        "pillow_byte_exact": true
+      },
+      {
+        "source": "grey.texture",
+        "pixels": 64,
+        "rgba_sha256": "eec68212ac4794baa76cf2d4520d0401aeb7156ee1ee28dabbc0bf0fdec54cb7",
+        "pillow_byte_exact": true
+      },
+      {
+        "source": "mono_station_infloor.texture",
+        "pixels": 16384,
+        "rgba_sha256": "968adc89c2845e4aefab6de42c0d9a02a746a70e8da6dbf90ee619244ab34c54",
+        "pillow_byte_exact": true
+      },
+      {
+        "source": "mono_station_infloor_sml.texture",
+        "pixels": 4096,
+        "rgba_sha256": "98be42e6f27b65598283704a522f51efc660726f82bf004a7895ce2563e85249",
+        "pillow_byte_exact": true
+      },
+      {
+        "source": "sign.texture",
+        "pixels": 2048,
+        "rgba_sha256": "b0c0cbdfba412afc5625b302e0b7f4802504c327f43968dc17462204c07982d5",
+        "pillow_byte_exact": true
+      },
+      {
+        "source": "white.texture",
+        "pixels": 64,
+        "rgba_sha256": "3d6876a0146de8576eb2395a858de1213d1b92c65b779df3a331cfd5a4584546",
+        "pillow_byte_exact": true
+      }
+    ],
+    "pixels": 39040
+  },
+  "sanitizers": {
+    "passed": true,
+    "address": true,
+    "undefined": true,
+    "leak_sanitizer": false,
+    "reason": "LSan unavailable in this execution environment; no LSan pass claimed",
+    "test": {
+      "passed": true,
+      "assertions": 2254,
+      "authentic_meshes": 3,
+      "material_parts": 6,
+      "unique_textures": 6,
+      "texture_loads": 7,
+      "sustained_cache_cycles": 1000,
+      "peak_counted_bytes": 462508,
+      "android_execution": false
+    }
+  },
+  "native_argb8888": {
+    "passed": true,
+    "cases": 1080,
+    "independent_channel_swizzle_cases": 120,
+    "malformed_capacity_overlap_cases": 960,
+    "scope": "exact ARGB8888 only, mip-zero output; no compressed decoder retest"
+  },
+  "android_arm64_build": {
+    "passed": true,
+    "api": 26,
+    "ndk": "28.2.13676358",
+    "bytes": 69080,
+    "sha256": "c7a53301faa12c26bd75cc035f92cf725ac54aa8b4bd7f485013c6079f90fb7f",
+    "elf": "/tmp/coh-bridge-91k2dxab/bridge-arm64.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, not stripped",
+    "execution": false
+  },
+  "passed": true
+}

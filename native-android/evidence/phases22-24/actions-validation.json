@@ -1,0 +1,385 @@
+{
+  "schema": 1,
+  "runtime_source_commit": "ac840d23026b92455e26a8a50fe4a97d7920f5c2",
+  "qualification_driver_commit": "d0cf7a68af7edcc14685f3e305bce79fb06380fb",
+  "build_attempt": {
+    "jobs": [
+      {
+        "id": 116216957163,
+        "name": "package-and-emulator",
+        "status": "completed",
+        "conclusion": "failure",
+        "run_id": 38671972824,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Record the new integrated qualification scope",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run actions/setup-java@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Run android-actions/setup-android@v3",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Install pinned native build components and focused host dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Recover only the pinned accepted package and eight bounded source inputs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Qualify the new raw-asset render bridge and expanded authored map",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Qualify the actual integrated static GPU path and recreated source cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Qualify bounded framework admission, preserved selectors and expanded snapshots",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Build and lint the new ARM64 native client",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11
+          },
+          {
+            "name": "Build the disposable emulator package and verify exact bytes and signer",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Enable hosted Android emulator acceleration",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13
+          },
+          {
+            "name": "Android 13 bounded real input, source residency, renderer and lifecycle",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 14
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15
+          },
+          {
+            "name": "Post Run actions/setup-java@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 29
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 30
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 31
+          }
+        ]
+      }
+    ]
+  },
+  "successful_qualification": {
+    "jobs": [
+      {
+        "id": 116221314214,
+        "name": "package-and-emulator",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 38673357918,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Lease exact packages only for qualification-driver changes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Record the new integrated qualification scope",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Run actions/setup-java@v4",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5
+          },
+          {
+            "name": "Run android-actions/setup-android@v3",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Install pinned native build components and focused host dependencies",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 7
+          },
+          {
+            "name": "Recover exact successful builds and host proofs without old emulator witnesses",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Recover only the pinned accepted package and eight bounded source inputs",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 9
+          },
+          {
+            "name": "Qualify the new raw-asset render bridge and expanded authored map",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10
+          },
+          {
+            "name": "Qualify the actual integrated static GPU path and recreated source cache",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11
+          },
+          {
+            "name": "Qualify the current bounded framework admission driver",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Qualify preserved selectors and expanded snapshots",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13
+          },
+          {
+            "name": "Build and lint the new ARM64 native client",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 14
+          },
+          {
+            "name": "Build the disposable emulator package and verify exact bytes and signer",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 15
+          },
+          {
+            "name": "Enable hosted Android emulator acceleration",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16
+          },
+          {
+            "name": "Android 13 bounded real input, source residency, renderer and lifecycle",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 18
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 36
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 37
+          }
+        ]
+      }
+    ]
+  },
+  "portable_core_runtime": {
+    "jobs": [
+      {
+        "id": 116216957816,
+        "name": "host-and-android",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 38671972933,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Check pinned algorithm derivative",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Host core and independent oracle",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Build ARM64 Bionic test slice",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13
+          }
+        ]
+      }
+    ]
+  },
+  "portable_core_driver": {
+    "jobs": [
+      {
+        "id": 116221313005,
+        "name": "host-and-android",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 38673357836,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Check pinned algorithm derivative",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Host core and independent oracle",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Build ARM64 Bionic test slice",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13
+          }
+        ]
+      }
+    ]
+  }
+}

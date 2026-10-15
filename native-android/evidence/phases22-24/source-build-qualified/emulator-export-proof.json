@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "path": "/sdcard/Download/COH-NativeSession-20261015-025853.json",
+  "bytes": 264540,
+  "sha256": "a06eb4393c5a175d5de6148720158966f13f20305d007f70d9ed0d67a576ecb9",
+  "scope": "Actual CREATE_DOCUMENT Save; frozen native session evidence before picker pause"
+}

@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "gates": [
+    22,
+    23,
+    24
+  ],
+  "passed": true,
+  "source_commit": "ac840d23026b92455e26a8a50fe4a97d7920f5c2",
+  "workflow_run_id": "38671972824",
+  "application_id": "org.coh.sessionclient.walk",
+  "version_name": "0.3.0-gates22-24",
+  "version_code": 3,
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "gradle": "8.9",
+  "android_gradle_plugin": "8.7.3",
+  "ndk": "28.2.13676358",
+  "cmake": "3.22.1",
+  "test_signer": {
+    "keystore": "session-test.p12",
+    "bytes": 2738,
+    "sha256": "2c5a771d7a3989726d475a64471a1cf8bffafb62193a3a98a49ed7070ab2ee05",
+    "certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+    "alias": "coh-native-test",
+    "store_type": "PKCS12"
+  },
+  "signing": "Stable intentionally public debug-only PKCS12 key; upgrade of accepted 0.2 without data clearing",
+  "artifacts": [
+    {
+      "file": "CoH-Native-Session-Client-0.3.0-arm64.apk",
+      "bytes": 1931361,
+      "sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+      "abi": "arm64-v8a",
+      "elf_machine": 183,
+      "native_library": {
+        "file": "lib/arm64-v8a/libcoh_session_client.so",
+        "bytes": 369480,
+        "sha256": "1bcb32152c9a42c7fda63332413615f257a33f777d371bb421a6c3a86b7deb86"
+      },
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_fixtures_verified": true,
+      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522"
+    },
+    {
+      "file": "CoH-Native-Session-Client-0.3.0-emulator-x86_64.apk",
+      "bytes": 1951590,
+      "sha256": "15987156a337bb5c767e49c2fc8e60083c568c6887d39e048cd3222b2b402d05",
+      "abi": "x86_64",
+      "elf_machine": 62,
+      "native_library": {
+        "file": "lib/x86_64/libcoh_session_client.so",
+        "bytes": 389712,
+        "sha256": "4a55970c2bbe01c28b3a6319663d64dcc397111e6e733587f924c21c2a89c096"
+      },
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_fixtures_verified": true,
+      "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522"
+    }
+  ],
+  "assets": [
+    {
+      "file": "asset-manifest.json",
+      "bytes": 966,
+      "sha256": "c6917aba1add141130d4f26ef980a8b7984b6054c10b152c517c3349c4d5990e"
+    },
+    {
+      "file": "character.bin",
+      "bytes": 4261100,
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+    },
+    {
+      "file": "locomotion.bin",
+      "bytes": 147103,
+      "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+    },
+    {
+      "file": "map-fixture.json",
+      "bytes": 260148,
+      "sha256": "37df8a6df3ba3963d21a30db0c6a1079517db70cdaaa967e3b613a7620e512fa"
+    },
+    {
+      "file": "map.bin",
+      "bytes": 161654,
+      "sha256": "1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f"
+    },
+    {
+      "file": "morph.bin",
+      "bytes": 3028,
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+    },
+    {
+      "file": "rig.bin",
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    },
+    {
+      "file": "session-fixture.json",
+      "bytes": 3139,
+      "sha256": "79b50c74077bff6745b78c953d28e6550c06210f5ddea81db0c06a8fb90d3c78"
+    },
+    {
+      "file": "walkable-fixture.json",
+      "bytes": 108986,
+      "sha256": "5cc3f2de3c36d9b539a22e76f3164e966f1584f48a499a4171bd9946d9652ede"
+    },
+    {
+      "file": "walkable.bin",
+      "bytes": 605048,
+      "sha256": "e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357"
+    },
+    {
+      "file": "world.bin",
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    }
+  ],
+  "runtime_asset_count": 7,
+  "total_packaged_assets": 11,
+  "source_catalog": {
+    "nodes": 25,
+    "endpoints": 3,
+    "assets": 8,
+    "instances": 11
+  },
+  "source_collision_triangles": 2304,
+  "accepted_runtime_assets_preserved": {
+    "world.bin": {
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    },
+    "character.bin": {
+      "bytes": 4261100,
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+    },
+    "rig.bin": {
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    },
+    "morph.bin": {
+      "bytes": 3028,
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+    },
+    "locomotion.bin": {
+      "bytes": 147103,
+      "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+    }
+  },
+  "accepted_qualification_repeated": false,
+  "native_session_execution_verified": false,
+  "qualification_scope": "Exact source/input/package/ELF/signature integrity; emulator and Thor execution are separate receipts",
+  "full_atlas_loaded": false,
+  "server_interoperability_verified": false,
+  "thor_device_execution_verified": false,
+  "physical_controller_verified": false
+}

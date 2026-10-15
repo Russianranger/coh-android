@@ -24,8 +24,13 @@ components, 3,082 expanded WALK assertions, sanitized bridge/cache ownership and
 independent original-decode/texture parity. The reusable real-GLES adapter check
 passes on GLES 3.0 and 3.2, with 164,280 integrated transform components and zero
 mismatches across three contexts. Repeated Near/Far changes and context recovery
-retain three GEO/six texture decodes. These are source/host results; Android and
-physical qualification are recorded separately in the evidence receipt.
+retain three GEO/six texture decodes. Android 13 emulator qualification also passes: 3,505 frames, five contexts,
+207,480 new static-render transform components with zero mismatches, genuine
+bounded four-direction input, Near/Far selection, held-input Home/return,
+Recreate, document export and reset. Runtime source and qualification driver
+are bound separately; the retry reuses the exact packages from the original
+build. The first Home-test ordering failure remains preserved losslessly.
+Physical acceptance is separate and remains pending.
 
 Raw cache residency, bridge allocations and map metadata have separate bounded
 counters. They do not measure total application RAM or sustained performance.

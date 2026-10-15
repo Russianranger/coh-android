@@ -1,0 +1,239 @@
+{
+  "schema": "coh-native-gates22-24-emulator-evidence-v1",
+  "gates": [
+    22,
+    23,
+    24
+  ],
+  "passed": true,
+  "physical_qualified": false,
+  "thor_device_execution_verified": false,
+  "source": "Exact successful GitHub Actions artifact; all emulator JSON and original logcat retained losslessly with deterministic gzip",
+  "workflow_run_id": 38673357918,
+  "artifact_id": 11945445541,
+  "artifact_zip": {
+    "bytes": 8181831,
+    "sha256": "12eeed609434908e0f4c864dea4b02791e3333d8af39fa156ac28bfaab1ca606"
+  },
+  "runtime_source_commit": "ac840d23026b92455e26a8a50fe4a97d7920f5c2",
+  "qualification_driver_commit": "d0cf7a68af7edcc14685f3e305bce79fb06380fb",
+  "driver_sha256": "4b00501a4d3c0e834b765176dcb524a2c3cc8fd112c3d70050fa9facc402606c",
+  "installed_apk": {
+    "bytes": 1951590,
+    "sha256": "15987156a337bb5c767e49c2fc8e60083c568c6887d39e048cd3222b2b402d05"
+  },
+  "frames": 3505,
+  "contexts_started": 5,
+  "files": [
+    {
+      "source_file": "emulator-background-report.json",
+      "file": "emulator-background-report.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 222584,
+      "original_sha256": "0def803f71067e9c1d0ec8ab6cf1020e51a47f608211c63b05465e9574928850",
+      "stored_bytes": 8055,
+      "stored_sha256": "7d3ca2069168e8dcb66ed3dbb87b28aeb644151fcc1cf3abf1f36eae6ee812be",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-bounded-framework-setting.json",
+      "file": "emulator-bounded-framework-setting.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 230,
+      "original_sha256": "f415e547de441862c02c63d20142d86d1095ae43bfb2a75c08b21a94bcf838ba",
+      "stored_bytes": 164,
+      "stored_sha256": "6172815f11d8d2da2e56c010323da91b7365adcff23a898dfbe39b6a45747b8f",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-bounded-home-proof.json",
+      "file": "emulator-bounded-home-proof.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 457934,
+      "original_sha256": "3183a4a8c7dc71e525bd7893c129369f87341b0e55c96c039c58c570ecc0551c",
+      "stored_bytes": 16313,
+      "stored_sha256": "b55d3186ec2fe4099f5a77dc9a055d06c15f7d23afe75dab4b1c0cfe08cddc15",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-bounded-input-proof.json",
+      "file": "emulator-bounded-input-proof.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 2541667,
+      "original_sha256": "dc9c2d6947ed742dd249b310d58bca548fe9fac0ef3571fab356bf96ce5ae55a",
+      "stored_bytes": 86332,
+      "stored_sha256": "717f954575d1fc00eff29a0fb10057335be629fc757ec5dc08977a0bd0a16b1e",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-button-tap-proof.json",
+      "file": "emulator-button-tap-proof.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 78142,
+      "original_sha256": "e68dcafd85bc657b668d259f597872491a4ff4411b04bb885c1382937d34b515",
+      "stored_bytes": 3716,
+      "stored_sha256": "c1b5a62e42b837e2fb6e866d6fa45b881aef59e825f5b334af39944a29bc34a6",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-camera-proof.json",
+      "file": "emulator-camera-proof.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 2492,
+      "original_sha256": "2a3723797bbd7b88558e894b824ce305e84ffb2a450c5f559b645ef02590fd13",
+      "stored_bytes": 618,
+      "stored_sha256": "968ccc8fb99803962f45a4aadd5f39a2078160ea86a78e927a26f5b7a5ddcc55",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-export-proof.json",
+      "file": "emulator-export-proof.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 283,
+      "original_sha256": "3a1157b2ec6037de8599f56430c133a3c1b8f4a37a1c0987250ac8f743833291",
+      "stored_bytes": 242,
+      "stored_sha256": "a4ea1c2abcc4ee7881cd797d5eeaf6ee90966b75bbf377c57b05393a2792b07c",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-exported-report.json",
+      "file": "emulator-exported-report.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 264540,
+      "original_sha256": "a06eb4393c5a175d5de6148720158966f13f20305d007f70d9ed0d67a576ecb9",
+      "stored_bytes": 8900,
+      "stored_sha256": "e81b8e98bc08a88ef1268597a59a0a771ea80f8402f66acfec978de7f5e5f22e",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-final-report.json",
+      "file": "emulator-final-report.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 341479,
+      "original_sha256": "162763eb964b389a7004b441e94c3a7cf53ba4a16a112a947354c9139c6d6e12",
+      "stored_bytes": 9960,
+      "stored_sha256": "900dd4cf1ed9f12405cbeba5426bb524f02be618e6a2a05696ffa0df46013bd1",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-foreground-report.json",
+      "file": "emulator-foreground-report.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 243553,
+      "original_sha256": "6e3971fc4aa05c66c9e7af394ee01dba47c0b4a293e249f4c933ab822b8d5028",
+      "stored_bytes": 8382,
+      "stored_sha256": "dc44349d5b0b561cccd3b9c6284260a8c87dabcf76e1fd28c6d1f4fe4dff9085",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-initial-report.json",
+      "file": "emulator-initial-report.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 27038,
+      "original_sha256": "7005b6b37649b82c595318187ae5901587cc7f777bea1bc31af6598633bbd4e1",
+      "stored_bytes": 4033,
+      "stored_sha256": "11ed4ede42aef34664ce1fbd431ebc2267e546ddf7ed65cbf253c024f45e89aa",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-input-area-proof.json",
+      "file": "emulator-input-area-proof.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 1294,
+      "original_sha256": "0df9033fcd03e62519c9956e65897e582b1589b15380cb93e3354f4e05f03fd0",
+      "stored_bytes": 339,
+      "stored_sha256": "0ac58f9f8802dede4e691b1c57612f937a152ff167586f7f43319e4681ac1c31",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-install-launch-proof.json",
+      "file": "emulator-install-launch-proof.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 1934,
+      "original_sha256": "6c15aedb4ee9c1d12196a80c3707eea69c3b4ef0ec9b1a8048a60540b931d06e",
+      "stored_bytes": 589,
+      "stored_sha256": "9f75d9b409a6e2f39e96d74de7b0ed471e2d80144b74d11e411bb65ace4939e6",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-logcat.txt",
+      "file": "emulator-logcat.txt.gz",
+      "encoding": "gzip",
+      "original_bytes": 7714720,
+      "original_sha256": "181da81a7e3b5f739bb67e057e126884995f69f83e4f7db66b4df9c2b0cb7653",
+      "stored_bytes": 983810,
+      "stored_sha256": "56edc9c6a69bf7c91a6a036f1000270b09051f2347eedc2ca6396465aa94ba10",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-moved-report.json",
+      "file": "emulator-moved-report.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 152624,
+      "original_sha256": "701fd64ebfdc989d0ee2f2ada5f24488d95d3fac8f13e452518bbcf5870dacf1",
+      "stored_bytes": 6926,
+      "stored_sha256": "6fb75070ae217537d16eea779d1f404d69b7c3607536b0b04a55323bf6596344",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-nextbatch-summary.json",
+      "file": "emulator-nextbatch-summary.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 1689,
+      "original_sha256": "cef4c710c4b81b95fddd27b161a0d17d70478962b5b293fe533c2507bcd6feab",
+      "stored_bytes": 775,
+      "stored_sha256": "aa5c637c838edc41787002422e3360a5aacdd13011e39d1ded933047c9f28043",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-recreated-report.json",
+      "file": "emulator-recreated-report.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 173565,
+      "original_sha256": "a1565f009d135ee0c1a87ea3c776aee609ffe2c180c6ace584ed9408ba22d24a",
+      "stored_bytes": 7288,
+      "stored_sha256": "9b626495700ef8b6bf7b0c71e7d3a60e9bbd2a84a3842582d0447d6f17b02e8e",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-session-report.json",
+      "file": "emulator-session-report.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 341428,
+      "original_sha256": "78e34a54b8aca46d9d84c3c5a24215f5f6e48b6328d20e55095c4c3424ecb62e",
+      "stored_bytes": 9953,
+      "stored_sha256": "fb947181070e17a6a93582cb6d548503324485112fe5dfed8bf758ae082f334d",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-view-distance-24-proof.json",
+      "file": "emulator-view-distance-24-proof.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 138984,
+      "original_sha256": "6e128309bb1bcf60c8e9b3ad640897a3e3e74a73bcd693aa6965522f2c84775b",
+      "stored_bytes": 10887,
+      "stored_sha256": "385c3cf0dfec0604e7b4e75d6e8fce7ae9603dc1adb63ea56c9c27c8cbfe7b22",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-view-distance-96-proof.json",
+      "file": "emulator-view-distance-96-proof.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 116464,
+      "original_sha256": "90d67a6e98f36718b1fc940dfd83ffe3dba7c5e976628401e7dfa0d1a6c60c67",
+      "stored_bytes": 9182,
+      "stored_sha256": "12b3495a7239ae4204686d3e79940a8da4086763a86853487c62282ecf38f2f0",
+      "lossless_decompression_verified": true
+    },
+    {
+      "source_file": "emulator-walk-settling-proof.json",
+      "file": "emulator-walk-settling-proof.json.gz",
+      "encoding": "gzip",
+      "original_bytes": 3666313,
+      "original_sha256": "eab00f02c7f0b661000e9c813be9789da1e83dffbe695befa14085c1d0f72676",
+      "stored_bytes": 123411,
+      "stored_sha256": "d46c007b153fc607c345da4e6bbfbaeab1eb6822bfe421d6f953728e7f105a1e",
+      "lossless_decompression_verified": true
+    }
+  ]
+}

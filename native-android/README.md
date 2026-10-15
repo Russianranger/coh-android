@@ -96,5 +96,8 @@ milestones. Host/source/ARM64 qualification is recorded in the
 The integrated [gates 22–24 implementation and scope](PHASES22-24.md) is committed
 on `native-android`. [Session Client 0.3.0](https://chatgpt.com/api/library/files/libfile_7909bc8bae848191911760e360ae9884/download)
 uses the same `.walk` application ID and stable signer as 0.2.0. Source/host/GPU,
-ARM64/x86 builds, lint and package checks passed. Combined Android qualification
-is recorded separately; physical gates 22–24 await the actual Thor report.
+ARM64/x86 builds, lint and package checks passed. Complete Android 13
+[qualification](https://github.com/Russianranger/coh-android/actions/runs/38673357918)
+passed with 3,505 frames, five contexts, real input, Near/Far selection,
+Home/return, Recreate, export and reset. Physical gates 22–24 await the actual
+Thor report; use the [consolidated procedure](session-client/THOR-TEST.md).

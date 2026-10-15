@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "gates": [
+    22,
+    23,
+    24
+  ],
+  "passed": true,
+  "installed_apk": {
+    "bytes": 1951590,
+    "sha256": "15987156a337bb5c767e49c2fc8e60083c568c6887d39e048cd3222b2b402d05"
+  },
+  "scope": "Fresh disposable Android 13 x86_64 install; actual source-loader/cache/static-render integration, bounded source-instance selection, real finite framework movement and camera, recreated/Home render generations, actual document export and Reset",
+  "frames": 3505,
+  "contexts_started": 5,
+  "source_assets": {
+    "geo_loads": 3,
+    "texture_loads": 6,
+    "errors": 0
+  },
+  "stream": {
+    "catalog_instances": 11,
+    "selected_instances": 6,
+    "resident_bytes": 157491,
+    "budget_bytes": 524288,
+    "peak_resident_bytes": 157491,
+    "selection_updates": 3,
+    "cache_hits": 25,
+    "cache_misses": 8,
+    "evictions": 0,
+    "generation": 5,
+    "draws": 44320,
+    "view_radius": 24
+  },
+  "static_renderer": {
+    "draw_packets": 44320,
+    "tf_components": 207480,
+    "tf_mismatches": 0,
+    "visible_pixels": 170321,
+    "material_mode_mask": 3,
+    "owned_cpu_bytes": 267456,
+    "gpu_bytes": 557056,
+    "tf_max_error": 0
+  },
+  "actual_framework_callback_source_motion_verified": true,
+  "all_movement_released_before_host_polling": true,
+  "actual_view_distance_selection_verified": true,
+  "actual_context_rebuild_and_source_cache_reuse_verified": true,
+  "actual_home_interrupt_and_renewed_input_verified": true,
+  "actual_document_export_verified": true,
+  "actual_reset_verified": true,
+  "full_atlas_loaded": false,
+  "physical_controller_verified": false,
+  "thor_device_execution_verified": false,
+  "server_interoperability_verified": false
+}

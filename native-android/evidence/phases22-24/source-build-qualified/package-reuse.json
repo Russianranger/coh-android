@@ -1,0 +1,62 @@
+{
+  "eligible": true,
+  "changed_paths": [
+    ".github/workflows/native-world-session-client.yml",
+    "native-android/session-client/tools/nextbatch_emulator_check.py",
+    "native-android/session-client/tools/nextbatch_host_check.py",
+    "native-android/session-client/tools/reuse_world_package.py"
+  ],
+  "rejected_paths": [],
+  "tracked_worktree_dirty": [],
+  "copied_files": [
+    "CoH-Native-Session-Client-0.3.0-arm64.apk",
+    "CoH-Native-Session-Client-0.3.0-emulator-x86_64.apk",
+    "SHA256SUMS",
+    "accepted-0.2-provenance/asset-manifest.json",
+    "accepted-0.2-provenance/character-fixture.json",
+    "accepted-0.2-provenance/directional-fixture.json",
+    "accepted-0.2-provenance/session-fixture.json",
+    "accepted-0.2-provenance/walkable-fixture.json",
+    "accepted-0.2-provenance/world-fixture.json",
+    "accepted-0.2-provenance/world-material-reference.bin",
+    "accepted-0.2-provenance/world-reference.bin",
+    "accepted-0.2-provenance/world.bin",
+    "accepted-assets-recovery.json",
+    "apk-badging-arm64.txt",
+    "apk-badging-emulator-x86_64.txt",
+    "apk-signature-arm64.txt",
+    "apk-signature-emulator-x86_64.txt",
+    "asset-manifest.json",
+    "build-receipt.json",
+    "host-bridge-proof.json",
+    "host-integrated-gpu-proof.json",
+    "host-map-proof.json",
+    "map-fixture.json",
+    "nextbatch-host-checks.json",
+    "raw-source-acquisition.json",
+    "session-fixture.json",
+    "shared-selector-host-checks.json",
+    "snapshot-host.json",
+    "walkable-fixture.json"
+  ],
+  "schema": 1,
+  "source_runtime_commit": "ac840d23026b92455e26a8a50fe4a97d7920f5c2",
+  "original_run": 38671972824,
+  "original_artifact": 11945040803,
+  "archive": {
+    "bytes": 7897912,
+    "sha256": "48cb364da4392af2a782e14fad5ff95e4465a21e6669afe685e61dfb854db36d"
+  },
+  "packages": {
+    "CoH-Native-Session-Client-0.3.0-arm64.apk": {
+      "bytes": 1931361,
+      "sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639"
+    },
+    "CoH-Native-Session-Client-0.3.0-emulator-x86_64.apk": {
+      "bytes": 1951590,
+      "sha256": "15987156a337bb5c767e49c2fc8e60083c568c6887d39e048cd3222b2b402d05"
+    }
+  },
+  "runtime_rebuilt": false,
+  "old_emulator_witnesses_reused": false
+}
