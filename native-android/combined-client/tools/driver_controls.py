@@ -31,6 +31,21 @@ class Driver(Check):
         self.commands.append(args)
 
 
+class AnrDriver(Check):
+    def record(self, name, **details):
+        self.proofs.append({'host_fixture':True,'check':name,**details})
+    def __init__(self, path, frames):
+        super().__init__(SimpleNamespace(output=path))
+        self.frames = iter(x.encode() for x in frames)
+        self.commands = []
+    def adb(self, *args, check=True):
+        if args[:2] == ('exec-out', 'cat'):
+            return SimpleNamespace(stdout=next(self.frames))
+        if args[:3] == ('shell', 'input', 'tap'):
+            self.commands.append(args)
+        return SimpleNamespace(stdout=b'')
+
+
 def main():
     with tempfile.TemporaryDirectory(prefix='coh-driver-controls-') as temp:
         driver = Driver(Path(temp), [BACKGROUND+DRAWER, BACKGROUND, APP])
@@ -42,7 +57,17 @@ def main():
         direct = Driver(Path(temp), [BACKGROUND, APP])
         direct.select_document('Import launcher APK', FILE)
         assert direct.commands == [('shell','input','tap',386,927)]
-    print(json.dumps({'passed':True,'checks':4,'scope':'Host regression for Android 13 accessibility drawer occlusion and actual app-return admission; no Android execution claim.'}))
+        anr = '<hierarchy><node resource-id="android:id/alertTitle" text="Pixel Launcher isn&amp;apos;t responding"/><node resource-id="android:id/aerr_wait" text="Wait" bounds="[70,1024][1010,1150]"/></hierarchy>'.replace('isn&amp;apos;t', "isn't")
+        external = AnrDriver(Path(temp), [anr, '<hierarchy>'+APP+'</hierarchy>'])
+        external.dump()
+        assert external.commands == [('shell','input','tap',540,1087)] and external.launcher_anrs == 1
+        own = AnrDriver(Path(temp), [anr.replace('Pixel Launcher', 'CoH Native Combined')])
+        try:
+            own.dump()
+            raise AssertionError('Native app ANR was admitted')
+        except RuntimeError as failure:
+            assert 'without dismissal' in str(failure) and not own.commands
+    print(json.dumps({'passed':True,'checks':6,'scope':'Host regression for Android 13 accessibility drawer occlusion and actual app-return admission; no Android execution claim.'}))
 
 
 if __name__ == '__main__':

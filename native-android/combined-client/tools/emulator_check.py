@@ -23,6 +23,7 @@ class Check:
     def __init__(self, args):
         self.args = args
         self.proofs = []
+        self.launcher_anrs = 0
         args.output.mkdir(parents=True, exist_ok=True)
 
     def adb(self, *args, check=True):
@@ -41,10 +42,32 @@ class Check:
         print(json.dumps(item), flush=True)
 
     def dump(self):
-        self.adb('shell', 'uiautomator', 'dump', '/sdcard/combined-ui.xml')
-        raw = self.adb('exec-out', 'cat', '/sdcard/combined-ui.xml').stdout
-        (self.args.output / 'last-ui.xml').write_bytes(raw)
-        return ET.fromstring(raw)
+        for unused in range(4):
+            self.adb('shell', 'uiautomator', 'dump', '/sdcard/combined-ui.xml')
+            raw = self.adb('exec-out', 'cat', '/sdcard/combined-ui.xml').stdout
+            (self.args.output / 'last-ui.xml').write_bytes(raw)
+            root = ET.fromstring(raw)
+            alerts = [n for n in root.iter('node') if n.attrib.get('resource-id') == 'android:id/alertTitle']
+            launcher = next((n for n in alerts if n.attrib.get('text') == "Pixel Launcher isn't responding"), None)
+            if launcher is None:
+                if any("isn't responding" in n.attrib.get('text', '') for n in alerts):
+                    raise RuntimeError('App or nonallowlisted component ANR; qualification failed without dismissal')
+                return root
+            # This is an observed headless-emulator launcher failure, before any
+            # native preview starts. Recover only that exact external component;
+            # an app ANR remains a qualification failure and is never dismissed.
+            self.launcher_anrs += 1
+            (self.args.output / ('external-launcher-anr-' + str(self.launcher_anrs) + '.xml')).write_bytes(raw)
+            if self.launcher_anrs > 3:
+                raise RuntimeError('External Pixel Launcher repeatedly failed to respond')
+            wait = next((n for n in root.iter('node') if n.attrib.get('resource-id') == 'android:id/aerr_wait' and n.attrib.get('text') == 'Wait'), None)
+            if wait is None:
+                raise RuntimeError('Observed external launcher ANR has no framework Wait action')
+            xy = [int(v) for v in re.findall(r'\d+', wait.attrib['bounds'])]
+            self.adb('shell', 'input', 'tap', (xy[0]+xy[2])//2, (xy[1]+xy[3])//2)
+            self.record('external Pixel Launcher ANR observed and framework Wait selected', external_component='com.google.android.apps.nexuslauncher', occurrence=self.launcher_anrs, native_app_anr_dismissed=False)
+            time.sleep(.5)
+        raise RuntimeError('External launcher dialog did not clear')
 
     def tap(self, label):
         deadline = time.monotonic() + 15

@@ -1,0 +1,66 @@
+name: Native combined exact-package Android framework continuation
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/combined-client/tools/emulator_check.py
+      - native-android/combined-client/tools/driver_controls.py
+      - native-android/combined-client/tools/reuse_packages.py
+      - .github/workflows/native-combined-requalify.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-combined-requalify-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  exact-package-android13:
+    if: github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[combined-requalify]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Recover exact successful packages and reject runtime or build input changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/Russianranger/coh-android/actions/artifacts/11987440686/zip > /tmp/combined-qualified-packages.zip
+          python3 native-android/combined-client/tools/reuse_packages.py --archive /tmp/combined-qualified-packages.zip --output native-android/results/combined-requalify --require-clean
+          python3 native-android/combined-client/tools/driver_controls.py
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Fetch exact external donor for real Android SAF import
+        run: |
+          curl --fail --silent --show-error --location --retry 2 --output /tmp/combined-donor.apk https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk
+          echo '14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f  /tmp/combined-donor.apk' | sha256sum -c -
+      - name: Enable hosted Android emulator acceleration
+        run: |
+          test -c /dev/kvm
+          sudo chmod 666 /dev/kvm
+      - name: Continue framework qualification with exact previously qualified APK binaries
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-requalify/CoH-Native-Combined-0.1.0-emulator-x86_64.apk --output native-android/results/combined-requalify/android13 --donor-apk /tmp/combined-donor.apk --protocol-binary native-android/results/combined-requalify/host/local-android/coh-local-x86_64 --protocol-receipt native-android/results/combined-requalify/host/local-android/android-build.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-combined-exact-package-android13
+          path: |
+            native-android/results/combined-requalify/android13/
+            native-android/results/combined-requalify/package-reuse-proof.json
+          if-no-files-found: error
+          retention-days: 90
