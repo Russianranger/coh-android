@@ -1,0 +1,73 @@
+{
+  "module": "offline SupportUi mutex adapter",
+  "host": "passed",
+  "tests": {
+    "offline_intents": 5,
+    "gpu_frames": 104,
+    "thread_snapshot_calls": 2000,
+    "thread_navigation_calls": 2000,
+    "arena_bytes": 412384,
+    "pointer_cases": 14,
+    "GL_errors": 0
+  },
+  "font_sha256": "714351827092d0ed290a8625a75780636b66c66fcc91d575bb80a633ae0c4329",
+  "allocation": "One initialization calloc; fixed arena thereafter. Mutex serializes all public update/render/snapshot methods. Caller owns lifetime shutdown.",
+  "emulator": "not run",
+  "physical_thor": "not run",
+  "thread_scope": "Observed mutex stress; TSan not run",
+  "source_root": "/workspace/scratch/ebe496866e63/coh-gameplay",
+  "source_commit": "0425bc98e90924f399ed8f6db922f32d683133cd",
+  "generated_tray_images": 11,
+  "generated_tray_rgba_bytes": 8224,
+  "axis_tests": {
+    "root_axis_adapter": "passed",
+    "actions": 4,
+    "repeats": 2,
+    "last_power": 1003,
+    "surface_recreate_chat": true,
+    "GL_errors": 0
+  },
+  "sanitizer_tests": {
+    "offline_intents": 5,
+    "gpu_frames": 104,
+    "thread_snapshot_calls": 2000,
+    "thread_navigation_calls": 2000,
+    "arena_bytes": 412384,
+    "pointer_cases": 14,
+    "GL_errors": 0
+  },
+  "sanitizers": "ASan + UBSan passed; LSan disabled",
+  "sanitizer_axis_tests": {
+    "root_axis_adapter": "passed",
+    "actions": 4,
+    "repeats": 2,
+    "last_power": 1003,
+    "surface_recreate_chat": true,
+    "GL_errors": 0
+  },
+  "android": {
+    "status": "ARM64 built",
+    "api": 26,
+    "bytes": 109552,
+    "sha256": "01858a63ba9ee11b00ef9bec98fbc1d6dcf12844be057dc2f142c5429efa1af0",
+    "execution": "not run; host EGL execution is separate"
+  },
+  "source_hashes": {
+    "support-client/src/support_ui.c": "b64e23bb1d7a5603606bbe2c9df093c7b6fa124c4cd81aea9128f19830beb960",
+    "engine/ui/coh_ui.c": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676",
+    "engine/ui/coh_hud.c": "2a803451ba0ff34db41deadc7ced716554b0046889ae47786752413766ca8177",
+    "engine/ui/gameplay/coh_hud_android.c": "bedbcdf168bc654a25229e8239d2722ffd884b686d01b6124d897f6864c26ca8",
+    "engine/ui/gameplay/coh_hud_atlas.c": "afd1e638f9dc77599186c2c6a8dd7ed6cb2d148545f58c7f35929f4436d2656b",
+    "engine/ui/gameplay/coh_hud_quad.c": "b382b8ed76c9aeb6138f1c47d62abe1d892fae12bdb1f130e0296f51e6c39fd2",
+    "engine/ui/gameplay/coh_hud_gles.c": "4d4e32fc099a3015076f605e04728742b6963dced8b7c0b3d551b5e2f11883bc",
+    "engine/ui/gameplay/coh_hud_axis_navigation.c": "710e5c09b020537ce50a600aeaa3c2728a4b0bbfbcca2c9d00aef9bdd4adea5e",
+    "support-client/src/support_ui.h": "a6f60d56d9a8bf174619985eeed1f0b7571e3ce68a757edd15e347a30d57a0fb",
+    "engine/ui/gameplay/tests/support_ui_test.c": "7b241796909d844cdee7b08128d6c58be149a1c7b39102c83b3fc2ec7420ed54"
+  },
+  "generated_font_header_sha256": "79b2bf96955bc1c87fd6f4f0504b22115a1a52973399663a9c66ec1e01b6e710",
+  "generated_tray_header_sha256": "f65a714a85313f17a9357866dfed3a4ecbb3e4867c3d853305f6a64edd54f57a",
+  "qualification_test_hashes": {
+    "support_ui_axis_test.c": "d03d30cfd9ba73acd21ca3a571142b4ad212391b8a5fe424f1cd65b45494e49c",
+    "root_axis_adapter_test.c": "a7871ca3606fc1d1c0e31ea16420ac61168f0c8b9da6c3343f6aef4cbf412266"
+  }
+}

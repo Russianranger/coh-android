@@ -116,3 +116,30 @@ coordinator wiring and actual device evidence.
 Rollback removes the coordinator's axis owner/tick wiring and this additive
 module, preserving `coh_hud_navigation_axis` for existing neutral-edge callers.
 No shared JNI, live session or accepted scene file changed in this worker.
+
+## Coordinator SupportUi integration regression
+
+`support_ui_check.py` uses C11, includes the analog adapter and prepares original
+tray resources before linking the current coordinator SupportUi. Use
+`--source-root /path/to/coordinator-checkout` for read-only qualification of a
+separate checkout and `--tray-corpus /path/to/pinned-tray-cache` to reuse already
+admitted originals. `--axis-checks` additionally tests the coordinator's public
+atomic axis mailbox, held repetition, OFF suppression through a long pause and
+chat retention through renderer recreation. It verifies an exact local mock
+power intent after the expected three focus actions.
+
+An already generated authentic `support_font.h` may be reused with
+`--font-header /path/to/support_font.h --font-preparation /path/to/preparation.json`.
+The runner verifies the preparation's generated-header hash and the pinned
+original Montreal Heavy identity. Otherwise retain `--font /path/to/mont_hvbold.ttf`.
+It reports generated font/tray header identities, compiled source hashes and
+the actual checkout revision. This avoids unnecessary asset recovery while
+preserving the previous source/font admission evidence.
+
+`docs/qualification-root-support-integration.json` records host EGL,
+ASan/UBSan and ARM64 build results against coordinator commit
+`0425bc98e90924f399ed8f6db922f32d683133cd`. The tested UI C implementation is
+unchanged from `eacf8bf415c4937d0daaed75d790a6ed2b37cd11`. The additional Java
+HAT/device-removal policy requires its independent Java/emulator qualification;
+this C harness does not establish Android framework or physical controller
+acceptance.
