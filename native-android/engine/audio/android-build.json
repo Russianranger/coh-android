@@ -1,0 +1,75 @@
+{
+  "schema": "coh-native-gate43-android-library-v1",
+  "passed": true,
+  "abi": "arm64-v8a",
+  "api": 26,
+  "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+  "ndk_revision": "Pkg.Desc = Android NDK\nPkg.Revision = 28.2.13676358\nPkg.BaseRevision = 28.2.13676358\nPkg.ReleaseName = r28c",
+  "sources": {
+    "native-android/engine/audio/coh_mixer.c": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444",
+    "native-android/engine/audio/coh_mixer_aaudio.c": "503b8b876fe63d27f3ed7ac73efb2fb06822eac6be178a6b52d7714c6ac07f14",
+    "native-android/audio/coh_audio.c": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+  },
+  "commands": [
+    [
+      "/workspace/scratch/bd17f7dd7d03/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-std=c11",
+      "-O2",
+      "-fPIC",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-c",
+      "/workspace/scratch/bd17f7dd7d03/worker-audio/native-android/engine/audio/coh_mixer.c",
+      "-o",
+      "/tmp/coh-audio-arm64/coh_mixer.o"
+    ],
+    [
+      "/workspace/scratch/bd17f7dd7d03/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-std=c11",
+      "-O2",
+      "-fPIC",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-c",
+      "/workspace/scratch/bd17f7dd7d03/worker-audio/native-android/engine/audio/coh_mixer_aaudio.c",
+      "-o",
+      "/tmp/coh-audio-arm64/coh_mixer_aaudio.o"
+    ],
+    [
+      "/workspace/scratch/bd17f7dd7d03/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-std=c11",
+      "-O2",
+      "-fPIC",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-c",
+      "/workspace/scratch/bd17f7dd7d03/worker-audio/native-android/audio/coh_audio.c",
+      "-o",
+      "/tmp/coh-audio-arm64/coh_audio.o"
+    ],
+    [
+      "/workspace/scratch/bd17f7dd7d03/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-shared",
+      "-Wl,--no-undefined",
+      "/tmp/coh-audio-arm64/coh_mixer.o",
+      "/tmp/coh-audio-arm64/coh_mixer_aaudio.o",
+      "/tmp/coh-audio-arm64/coh_audio.o",
+      "-laaudio",
+      "-lm",
+      "-o",
+      "/tmp/coh-audio-arm64/libcoh_game_audio.so"
+    ]
+  ],
+  "library_sha256": "cb6a29e337234db650405a32faba9c38dd6bc77fb0bd5940f1d7bd86893dde6c",
+  "library_bytes": 31904,
+  "elf": "ELF Header:\n  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00\n  Class:                             ELF64\n  Data:                              2's complement, little endian\n  Version:                           1 (current)\n  OS/ABI:                            UNIX - System V\n  ABI Version:                       0\n  Type:                              DYN (Shared object file)\n  Machine:                           AArch64\n  Version:                           0x1\n  Entry point address:               0x0\n  Start of program headers:          64 (bytes into file)\n  Start of section headers:          30240 (bytes into file)\n  Flags:                             0x0\n  Size of this header:               64 (bytes)\n  Size of program headers:           56 (bytes)\n  Number of program headers:         10\n  Size of section headers:           64 (bytes)\n  Number of section headers:         26\n  Section header string table index: 24\nDynamic section at offset 0x5ad8 contains 27 entries:\n  Tag                Type           Name/Value\n  0x0000000000000001 (NEEDED)       Shared library: [libaaudio.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libm.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libdl.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libc.so]\n  0x000000000000001e (FLAGS)        BIND_NOW \n  0x000000006ffffffb (FLAGS_1)      NOW \n  0x0000000000000007 (RELA)         0x1148\n  0x0000000000000008 (RELASZ)       144 (bytes)\n  0x0000000000000009 (RELAENT)      24 (bytes)\n  0x000000006ffffff9 (RELACOUNT)    5\n  0x0000000000000017 (JMPREL)       0x11d8\n  0x0000000000000002 (PLTRELSZ)     1176 (bytes)\n  0x0000000000000003 (PLTGOT)       0xdc90\n  0x0000000000000014 (PLTREL)       RELA\n  0x0000000000000006 (SYMTAB)       0x308\n  0x000000000000000b (SYMENT)       24 (bytes)\n  0x0000000000000005 (STRTAB)       0xb44\n  0x000000000000000a (STRSZ)        1533 (bytes)\n  0x000000006ffffef5 (GNU_HASH)     0xa68\n  0x0000000000000019 (INIT_ARRAY)   0xdac8\n  0x000000000000001b (INIT_ARRAYSZ) 16 (bytes)\n  0x000000000000001a (FINI_ARRAY)   0xdab8\n  0x000000000000001c (FINI_ARRAYSZ) 16 (bytes)\n  0x000000006ffffff0 (VERSYM)       0x998\n  0x000000006ffffffe (VERNEED)      0xa24\n  0x000000006fffffff (VERNEEDNUM)   2\n  0x0000000000000000 (NULL)         0x0\n",
+  "android_emulator": "not run",
+  "physical_thor": "not run",
+  "scope": "Linked opt-in native library including new AAudio callback sink; no APK or existing Session Client changes"
+}
