@@ -1,0 +1,2029 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_commit": "c14a831b55163dbcf2b3e63b4c52805785fceafa",
+  "package": "org.coh.nativesupport",
+  "version": "0.2.0-gameplay",
+  "version_name": "0.2.0-gameplay",
+  "version_code": 200,
+  "source_tree_clean": true,
+  "source_tree_changes": [],
+  "scope": "separate offline support client; accepted0.3 APK unchanged; no live server",
+  "source_manifest": {
+    "file": "native-android/support-client/build-sources.json",
+    "bytes": 8214,
+    "sha256": "5e087c091f71fdf791548e36fae8d6c880df7b3d3a264021078b6bd580a272d5"
+  },
+  "sources": [
+    {
+      "file": "native-android/support-client/src/offline_scene.c",
+      "bytes": 72047,
+      "sha256": "0c205bb517d51e3a69ef1a186f50ed1921234c6d6b4d26779d75403e4028cb3b"
+    },
+    {
+      "file": "native-android/support-client/src/support_bridge.c",
+      "bytes": 16131,
+      "sha256": "b4c33b631ae464c4f4792db721e7b826f0cab6445405eb6079a5c3a80a1d5ecd"
+    },
+    {
+      "file": "native-android/support-client/src/support_physics.c",
+      "bytes": 3705,
+      "sha256": "4eb4729ec320e7442c1cb7abef9102949bcc9435a730c6db92811cbc8fa26982"
+    },
+    {
+      "file": "native-android/support-client/src/support_animation.c",
+      "bytes": 4135,
+      "sha256": "4820beb97c7fb425c8a567cebfebff5c8bfd371e99a9c8d329faf5492e4af020"
+    },
+    {
+      "file": "native-android/support-client/src/support_ui.c",
+      "bytes": 14621,
+      "sha256": "b64e23bb1d7a5603606bbe2c9df093c7b6fa124c4cd81aea9128f19830beb960"
+    },
+    {
+      "file": "native-android/support-client/src/support_audio.c",
+      "bytes": 14757,
+      "sha256": "0c9044fc24fdc5c165ddc134476c6082372e3507544ae828549be7751af1535c"
+    },
+    {
+      "file": "native-android/session-client/app/src/main/cpp/session_stream_world.c",
+      "bytes": 14439,
+      "sha256": "8a75db4cbae73cbccf405bcdb2409186c17b17bbea6a87699d10a7964c5d4433"
+    },
+    {
+      "file": "native-android/session-client/app/src/main/cpp/session_stream_qualify.c",
+      "bytes": 15891,
+      "sha256": "7b1233a768e5a908acd1704d6a297dc2b3d34b5abff0949f78898b6b95652c21"
+    },
+    {
+      "file": "native-android/engine/assets/coh_asset_loader.c",
+      "bytes": 18935,
+      "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b"
+    },
+    {
+      "file": "native-android/engine/assets/coh_asset_geo.c",
+      "bytes": 10886,
+      "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+    },
+    {
+      "file": "native-android/engine/bridge/coh_asset_render.c",
+      "bytes": 22114,
+      "sha256": "50524a72baa219033a01073135ef4b61b8dd289c634d1be6cb85394210f0e983"
+    },
+    {
+      "file": "native-android/engine/world/coh_world_stream.c",
+      "bytes": 14730,
+      "sha256": "762e98f449b4cce22d77ec576c9d65019e9a2739b7ecfde2fc8230d7770eb561"
+    },
+    {
+      "file": "native-android/engine/renderer/coh_renderer.c",
+      "bytes": 15845,
+      "sha256": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00"
+    },
+    {
+      "file": "native-android/engine/renderer/coh_renderer_gles.c",
+      "bytes": 9772,
+      "sha256": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c"
+    },
+    {
+      "file": "native-android/src/coh_assets.c",
+      "bytes": 3806,
+      "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+    },
+    {
+      "file": "native-android/src/coh_dds.c",
+      "bytes": 4055,
+      "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+    },
+    {
+      "file": "native-android/world-probe/app/src/main/cpp/coh_world_scene.c",
+      "bytes": 2900,
+      "sha256": "e18593782d66b3584457fb0812a6c82c5785e6062e26248508d35c0b96157cf7"
+    },
+    {
+      "file": "native-android/character-probe/app/src/main/cpp/coh_scene.c",
+      "bytes": 2597,
+      "sha256": "e567b7fd5557d4dc27f91f00519f437fece03aefc0da1ade652c7fc804593708"
+    },
+    {
+      "file": "native-android/material-probe/app/src/main/cpp/coh_mesh.c",
+      "bytes": 5349,
+      "sha256": "18f82e3ad598336f4876ba2ebb1afff6ca0ae77509960e8beb38672bb3fd4be1"
+    },
+    {
+      "file": "native-android/world/coh_world.c",
+      "bytes": 7054,
+      "sha256": "9a914b7326e4852bd55827c58bab360cef2516f85268a25cdd4ede2cdfe39c92"
+    },
+    {
+      "file": "native-android/character/coh_character.c",
+      "bytes": 8518,
+      "sha256": "25f7fe7078ead64eb3a32672ad17ddb438ecf2168681c72cd33d6e13be1dedfe"
+    },
+    {
+      "file": "native-android/motion/coh_motion.c",
+      "bytes": 6899,
+      "sha256": "857240b5eff8a0b88aa102826b03e1fb9318158b89c44487473e03f3a39a454b"
+    },
+    {
+      "file": "native-android/locomotion/coh_locomotion.c",
+      "bytes": 17276,
+      "sha256": "25ece1bc86284d8547f764eefc674594312488f11b036d96007fc909dc78de89"
+    },
+    {
+      "file": "native-android/walkable/coh_walkable_scene.c",
+      "bytes": 4469,
+      "sha256": "22b3941cab9c026e57b58c8f867b7565207afcf3561dc1a6246af0cfdfcc7aa0"
+    },
+    {
+      "file": "native-android/walk/coh_walk.c",
+      "bytes": 15089,
+      "sha256": "998c64c472613cf6e8da38218a8d30bcbf49d29c273520180948d4a2e90c50be"
+    },
+    {
+      "file": "native-android/walk/source_ctri.c",
+      "bytes": 41795,
+      "sha256": "1862c65a355ddfa71d1264671effa36addc2a8a3497b7c0825465835603a5670"
+    },
+    {
+      "file": "native-android/walk/source_world.c",
+      "bytes": 35313,
+      "sha256": "4225a8576a5a536cac44ab107cbfe9bdd7bd3d1ab04bbdb6c2679b375aec9d55"
+    },
+    {
+      "file": "native-android/walk/source_tritri.c",
+      "bytes": 25477,
+      "sha256": "c3fabb12b9a31baac2b6f0bf83b9c0f9456941f897167524e5dfcd88837005c3"
+    },
+    {
+      "file": "native-android/engine/appearance/coh_appearance.c",
+      "bytes": 9181,
+      "sha256": "d52cac6163bd42ee5044d3eadc62a78f69ff84ea74d75bbb969bfba4ade5538d"
+    },
+    {
+      "file": "native-android/engine/appearance/coh_appearance_adapters.c",
+      "bytes": 1631,
+      "sha256": "4bed6ee78f2a0e7f1d3936fd0f7acb98de80f8b7dc79ab799ae7cd975860c897"
+    },
+    {
+      "file": "native-android/engine/physics/coh_physics.c",
+      "bytes": 12503,
+      "sha256": "50bca0b54db61a6ac8318241c2e94ab9e0d347567f41c950dd3aaa4ee0837871"
+    },
+    {
+      "file": "native-android/engine/sequencer/coh_sequencer.c",
+      "bytes": 10444,
+      "sha256": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91"
+    },
+    {
+      "file": "native-android/engine/sequencer/coh_seq_playback.c",
+      "bytes": 10758,
+      "sha256": "2ef50d335651caef3538777273ed9f29c884b76a6ade5e683ffc2f5ba16caa5e"
+    },
+    {
+      "file": "native-android/engine/ui/coh_ui.c",
+      "bytes": 16624,
+      "sha256": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676"
+    },
+    {
+      "file": "native-android/engine/ui/coh_hud.c",
+      "bytes": 15700,
+      "sha256": "2a803451ba0ff34db41deadc7ced716554b0046889ae47786752413766ca8177"
+    },
+    {
+      "file": "native-android/engine/ui/gameplay/coh_hud_android.c",
+      "bytes": 3213,
+      "sha256": "bedbcdf168bc654a25229e8239d2722ffd884b686d01b6124d897f6864c26ca8"
+    },
+    {
+      "file": "native-android/engine/ui/gameplay/coh_hud_atlas.c",
+      "bytes": 2130,
+      "sha256": "afd1e638f9dc77599186c2c6a8dd7ed6cb2d148545f58c7f35929f4436d2656b"
+    },
+    {
+      "file": "native-android/engine/ui/gameplay/coh_hud_gles.c",
+      "bytes": 6748,
+      "sha256": "4d4e32fc099a3015076f605e04728742b6963dced8b7c0b3d551b5e2f11883bc"
+    },
+    {
+      "file": "native-android/engine/ui/gameplay/coh_hud_quad.c",
+      "bytes": 1663,
+      "sha256": "b382b8ed76c9aeb6138f1c47d62abe1d892fae12bdb1f130e0296f51e6c39fd2"
+    },
+    {
+      "file": "native-android/engine/audio/coh_mixer.c",
+      "bytes": 20086,
+      "sha256": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444"
+    },
+    {
+      "file": "native-android/engine/audio/coh_mixer_aaudio.c",
+      "bytes": 6007,
+      "sha256": "bddfdbcbb0564be3a99ec893cfa72ee6f1896dc71f08f0eb392369fce7bdd8ae"
+    },
+    {
+      "file": "native-android/engine/audio/coh_music.c",
+      "bytes": 9971,
+      "sha256": "6f1dcd545bf4a8822805702d4a684c5961c167c4478e1adcc143e301d0d1be4e"
+    },
+    {
+      "file": "native-android/engine/audio/coh_resample.c",
+      "bytes": 2300,
+      "sha256": "a22ecb054d3802bb4b5a9e3a3deade02859899bf6c96dba832f333815e31c293"
+    },
+    {
+      "file": "native-android/audio/coh_audio.c",
+      "bytes": 3534,
+      "sha256": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+    },
+    {
+      "file": "native-android/engine/perf/coh_perf.c",
+      "bytes": 9673,
+      "sha256": "63fbfb006497e897f80373c56dc45444ae7630db9c004bb04674314c5cd44970"
+    },
+    {
+      "file": "native-android/engine/perf/coh_skin_cache.c",
+      "bytes": 5292,
+      "sha256": "6491f613e198dfd710d801eafcf0859ec7b82d9bd8ce9c7e396d799a13ae8c4c"
+    },
+    {
+      "file": "native-android/decode/.deps/ogg/src/bitwise.c",
+      "bytes": 30633,
+      "sha256": "753d2ace9337bcb8c9ef23f42d630186f55f75a0d962ee79b3e7d87a614c147c"
+    },
+    {
+      "file": "native-android/decode/.deps/ogg/src/framing.c",
+      "bytes": 66904,
+      "sha256": "04373c7f155e0f6d8a5f355108b2908002a6ffe3895da89796619090a3313bdc"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/mdct.c",
+      "bytes": 15493,
+      "sha256": "e32b379d7a3d9253524abae3c41c5ac2486bf166cf65996efc4e68db1b164993"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/smallft.c",
+      "bytes": 22185,
+      "sha256": "21b4cd38bc6d50991f4abca4d2619fe1fa27ee74a22bd935804f4cd62b77472a"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/block.c",
+      "bytes": 30592,
+      "sha256": "7f65c7031c2b94405d2c1b5f0a73cc19efe9506e95736ba0b38d86bd42170a7e"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/envelope.c",
+      "bytes": 10672,
+      "sha256": "ae9f845d39776f7b6072543368a18037f778c56385a5cb6377dac388f44b3b51"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/window.c",
+      "bytes": 128646,
+      "sha256": "bea202730509aa12bc5f0da703be1a04a7e7dd04b2ee7a2b3a6f8b133edaacbc"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/lsp.c",
+      "bytes": 12585,
+      "sha256": "cf618a3be06feb94e39eb7a06ad0db4fd8462f8edac93faf4765b28516a9f5ef"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/lpc.c",
+      "bytes": 4486,
+      "sha256": "e782bd2780f354fcb0156855260c082ccdeed76dc1152ba7a6ae45b98520dfeb"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/analysis.c",
+      "bytes": 3088,
+      "sha256": "cf75d75c762f27ee9f50e9be794e47551d86cbdfb00fbce962ba3280a9516e4d"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/synthesis.c",
+      "bytes": 5180,
+      "sha256": "d5f92aaed1e7b59f3c01e0405813009cda29a61a0e6155d60980907d93c1eeb3"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/psy.c",
+      "bytes": 35900,
+      "sha256": "e8ccec1fba7d00961d5c67fec30b488c912f0ad7842ec7b1aeab987b97744b6e"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/info.c",
+      "bytes": 19866,
+      "sha256": "03af6059fe7e50d0b37a0370707139227e6cd4cc74be56473cd22f0300739fca"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/floor1.c",
+      "bytes": 30922,
+      "sha256": "fd4f403b56bf5538d1cc33fcf9236bca230553c143273fe17f5846ed928b6a64"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/floor0.c",
+      "bytes": 6889,
+      "sha256": "20185fa3bff19f7c162a113f8fb969f3961079454b3ffd2019e9e555b0bbc61c"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/res0.c",
+      "bytes": 24915,
+      "sha256": "0d3daf9327dbe14460d9b11df1ea0d9de709e3326d70b607d65720323d0caf62"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/mapping0.c",
+      "bytes": 28765,
+      "sha256": "d3f26fa42c4345f36885e93650ee6da07861b37ea816b131e5fafb7a7c6d19e2"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/registry.c",
+      "bytes": 1772,
+      "sha256": "4259a70a4de23ab48a0af4ff08e0f68102052c6c7d3535c06bd7d7e2fdb82a65"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/codebook.c",
+      "bytes": 13408,
+      "sha256": "662728ef6190968fd717af62b19578006357090814b15b2f03ddc7a98871b345"
+    },
+    {
+      "file": "native-android/decode/.deps/safe/sharedbook.c",
+      "bytes": 17820,
+      "sha256": "a8cbecc3bdd0a18d27fd31d342bfb32f9789cbad960d0cf6547e0bee865fce23"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/lookup.c",
+      "bytes": 3246,
+      "sha256": "4b169c62256e13a6575aaf38eb49514d8e7825c0df2429a669768b5a6d6716fa"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/bitrate.c",
+      "bytes": 8478,
+      "sha256": "fd8940a065820c247e0e115b9a10af82c09ed419f8c9a6b88eddaaed221f52b3"
+    },
+    {
+      "file": "native-android/decode/.deps/vorbis/lib/vorbisfile.c",
+      "bytes": 76295,
+      "sha256": "557752159e4c96e4ca339d28a4454c9d7edbf6b2bca6cbe4e8a5f8c44ef9196f"
+    },
+    {
+      "file": "native-android/engine/audio/coh_audio_listener.c",
+      "bytes": 2072,
+      "sha256": "897e2bb0603c10d77919607a7437e332de1e1cb71ac89343ace37b5d1d8709d6"
+    },
+    {
+      "file": "native-android/engine/perf/coh_perf_bridge.c",
+      "bytes": 3627,
+      "sha256": "5af98cd1bad62a43c5b8f577178d895236b90999b007ba1d91b60ceb1e57ad01"
+    },
+    {
+      "file": "native-android/engine/ui/gameplay/coh_hud_axis_navigation.c",
+      "bytes": 2012,
+      "sha256": "710e5c09b020537ce50a600aeaa3c2728a4b0bbfbcca2c9d00aef9bdd4adea5e"
+    }
+  ],
+  "java_sources": [
+    {
+      "file": "native-android/support-client/java/org/coh/sessionclient/SupportControllerNavigation.java",
+      "bytes": 1352,
+      "sha256": "3a152fba168451317f8d5eee0f69d1dcf93267d92160ed8a01bcd832f5da506c"
+    },
+    {
+      "file": "native-android/support-client/java/org/coh/sessionclient/SupportNative.java",
+      "bytes": 778,
+      "sha256": "a0f27cf83edd5f6a17841ed756c2675befd0bd41d17e884103c8d30a97f9724d"
+    },
+    {
+      "file": "native-android/support-client/java/org/coh/sessionclient/MainActivity.java",
+      "bytes": 28522,
+      "sha256": "29d383daf202933425d520140a6746fa641f4bec0c1009a3dd785ec2ca8c11cb"
+    },
+    {
+      "file": "native-android/support-client/java/org/coh/sessionclient/SupportAudioEnvironment.java",
+      "bytes": 3210,
+      "sha256": "147d65dbe4a23750f28ed9e477ae4516775b62ba3103715722f649a62b4f8b63"
+    },
+    {
+      "file": "native-android/support-client/java/org/coh/sessionclient/SessionNative.java",
+      "bytes": 1099,
+      "sha256": "147f7c672193164415b26fc9a6380ef24f8462be4511ef8b2e0d8131f03967f9"
+    },
+    {
+      "file": "native-android/systems-probe/app/src/main/java/org/coh/systemsprobe/InputAdapter.java",
+      "bytes": 11632,
+      "sha256": "fd1df2b4192c4ec42b743596656aceaca5d7351f6466e362547c1c66c410351a"
+    }
+  ],
+  "assets": [
+    {
+      "file": "ambient.ogg",
+      "bytes": 42318,
+      "sha256": "176bfd08df6a17af558157ad1934d23c92aaaa81d7428e2e04d1250cfa0c6821"
+    },
+    {
+      "file": "asset-manifest.json",
+      "bytes": 966,
+      "sha256": "c6917aba1add141130d4f26ef980a8b7984b6054c10b152c517c3349c4d5990e"
+    },
+    {
+      "file": "character.bin",
+      "bytes": 4261100,
+      "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+    },
+    {
+      "file": "fall.bin",
+      "bytes": 29345,
+      "sha256": "002937884fc0ece20402c4134833797987ce045a61004c907109b2657929202e"
+    },
+    {
+      "file": "jump.bin",
+      "bytes": 26217,
+      "sha256": "dbe6cb7fee990f39b457f026a788f92b747b60001dd7beeb5131f7696781068b"
+    },
+    {
+      "file": "locomotion.bin",
+      "bytes": 147103,
+      "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+    },
+    {
+      "file": "map.bin",
+      "bytes": 161654,
+      "sha256": "1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f"
+    },
+    {
+      "file": "morph.bin",
+      "bytes": 3028,
+      "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+    },
+    {
+      "file": "music.ogg",
+      "bytes": 256209,
+      "sha256": "1a9f7ee21bc425508eb2e4a17c6ac66c04059ee6f0b0e4d0517ba3e1095c7bf7"
+    },
+    {
+      "file": "punch.bin",
+      "bytes": 17086,
+      "sha256": "d14594d77eca3b570f0016016a8156887e656d47a0214a4a1e54c3ef2ec4b771"
+    },
+    {
+      "file": "rig.bin",
+      "bytes": 11642,
+      "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+    },
+    {
+      "file": "support-asset-manifest.json",
+      "bytes": 2030,
+      "sha256": "dcb3418806578f0eebcb215f2af8d843a2f410683220d53bedd4c2554f5df7da"
+    },
+    {
+      "file": "walkable.bin",
+      "bytes": 605048,
+      "sha256": "e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357"
+    },
+    {
+      "file": "world.bin",
+      "bytes": 102176,
+      "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-arm64.apk",
+      "bytes": 2413935,
+      "sha256": "26bad28b029fef86931108b531f883c9a948a16aff1dc2cdba9d8447c6c4d935",
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_assets_verified": true,
+      "native": {
+        "abi": "arm64-v8a",
+        "elf_machine": "AArch64",
+        "sha256": "daadb4a75a9a6c11743352ecbde8d5dcfb28dc01b3117c6cc7a8e7e786be4552",
+        "bytes": 733480,
+        "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+        "compiled_inputs": [
+          {
+            "file": "native-android/animation/coh_animation.c",
+            "bytes": 12647,
+            "sha256": "98865ae06e3d8eeeb97383e3e36295d715ec7c2556cfd03129dbc79275cefdbb"
+          },
+          {
+            "file": "native-android/animation/coh_animation.h",
+            "bytes": 2853,
+            "sha256": "f9fac099a6cf651fcc46f147d021386f2925b156152656178a2510d05a789bd0"
+          },
+          {
+            "file": "native-android/audio/coh_audio.c",
+            "bytes": 3534,
+            "sha256": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+          },
+          {
+            "file": "native-android/audio/coh_audio.h",
+            "bytes": 1721,
+            "sha256": "b723bc4d5252cd3c6f2541c00dc5779222a84ad326af9fb75e7d438908462fee"
+          },
+          {
+            "file": "native-android/audio/source_gain_golden.h",
+            "bytes": 1077,
+            "sha256": "ab28b9f07afba0a1be90eaf89d6f0af1d3878d6ac7ac9305ea015545cdbcf59c"
+          },
+          {
+            "file": "native-android/character/coh_character.c",
+            "bytes": 8518,
+            "sha256": "25f7fe7078ead64eb3a32672ad17ddb438ecf2168681c72cd33d6e13be1dedfe"
+          },
+          {
+            "file": "native-android/character/coh_character.h",
+            "bytes": 1975,
+            "sha256": "4905cf1da6b39661b4ed2f526be1dccfd88585da199b44474e0bd1227361bda0"
+          },
+          {
+            "file": "native-android/character-probe/app/src/main/cpp/coh_scene.c",
+            "bytes": 2597,
+            "sha256": "e567b7fd5557d4dc27f91f00519f437fece03aefc0da1ade652c7fc804593708"
+          },
+          {
+            "file": "native-android/character-probe/app/src/main/cpp/coh_scene.h",
+            "bytes": 929,
+            "sha256": "f1e560ee4c52f799d2f47b185268d84b8a6d93be9f18e8919185290db233d45c"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/include/ogg/config_types.h",
+            "bytes": 342,
+            "sha256": "08a5b6d3d30ce5ea721432640b64d1c3b1ee485635a00f60b32deccdb4caf1d5"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/include/ogg/ogg.h",
+            "bytes": 8373,
+            "sha256": "aad86109c1fdb377738675a63e0b19859e06ada25ae5c59c290ca7263d1dc4ca"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/include/ogg/os_types.h",
+            "bytes": 4781,
+            "sha256": "3bbab6a5d31e3c25c6080252b042afb87028e3ffff100e3e0285648b250b70f4"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/src/bitwise.c",
+            "bytes": 30633,
+            "sha256": "753d2ace9337bcb8c9ef23f42d630186f55f75a0d962ee79b3e7d87a614c147c"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/src/crctable.h",
+            "bytes": 23902,
+            "sha256": "bbeb9f7e2ef15925400943a16ea9e3ce6aaf2f84a1e74b69b33e53a5c4693023"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/src/framing.c",
+            "bytes": 66904,
+            "sha256": "04373c7f155e0f6d8a5f355108b2908002a6ffe3895da89796619090a3313bdc"
+          },
+          {
+            "file": "native-android/decode/.deps/safe/sharedbook.c",
+            "bytes": 17820,
+            "sha256": "a8cbecc3bdd0a18d27fd31d342bfb32f9789cbad960d0cf6547e0bee865fce23"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/include/vorbis/codec.h",
+            "bytes": 8387,
+            "sha256": "1d031e3cbae7defe966426e33802450a56388a1323eec1ec629e6d4095c676c5"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/include/vorbis/vorbisfile.h",
+            "bytes": 7990,
+            "sha256": "7d98264e57b0190ef0a2701a0bea5f982e82fc1bedd93cd9408a2fff7790f803"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/analysis.c",
+            "bytes": 3088,
+            "sha256": "cf75d75c762f27ee9f50e9be794e47551d86cbdfb00fbce962ba3280a9516e4d"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/backends.h",
+            "bytes": 5151,
+            "sha256": "1253a0cf54a10b46591bf1dac1717b3bd76abe89188217cd7fbfaa8f50745df5"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/bitrate.c",
+            "bytes": 8478,
+            "sha256": "fd8940a065820c247e0e115b9a10af82c09ed419f8c9a6b88eddaaed221f52b3"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/bitrate.h",
+            "bytes": 1963,
+            "sha256": "06bd012d67f97a5dc1de135371060a0c879a83b01c69d2cceee4ddc7cbef2676"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/block.c",
+            "bytes": 30592,
+            "sha256": "7f65c7031c2b94405d2c1b5f0a73cc19efe9506e95736ba0b38d86bd42170a7e"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/codebook.c",
+            "bytes": 13408,
+            "sha256": "662728ef6190968fd717af62b19578006357090814b15b2f03ddc7a98871b345"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/codebook.h",
+            "bytes": 4958,
+            "sha256": "1a0bf4ebc17645910080155a83bd39b810c7e73703e97c65c5e7ccfdcb89ec55"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/codec_internal.h",
+            "bytes": 5392,
+            "sha256": "3f32ac0e4e94cb0dde4800b243e1239cda9e4df1d277acf334fb48a648a08f8b"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/envelope.c",
+            "bytes": 10672,
+            "sha256": "ae9f845d39776f7b6072543368a18037f778c56385a5cb6377dac388f44b3b51"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/envelope.h",
+            "bytes": 2116,
+            "sha256": "4bc533e8455ad005fca72274ce10e8c7cff69251f0641d98a8a71922be0ba0ce"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/floor0.c",
+            "bytes": 6889,
+            "sha256": "20185fa3bff19f7c162a113f8fb969f3961079454b3ffd2019e9e555b0bbc61c"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/floor1.c",
+            "bytes": 30922,
+            "sha256": "fd4f403b56bf5538d1cc33fcf9236bca230553c143273fe17f5846ed928b6a64"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/highlevel.h",
+            "bytes": 1840,
+            "sha256": "22758888e37c71831d2dca16848f03443ed5b5308247c727a58c83f23294716c"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/info.c",
+            "bytes": 19866,
+            "sha256": "03af6059fe7e50d0b37a0370707139227e6cd4cc74be56473cd22f0300739fca"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lookup.c",
+            "bytes": 3246,
+            "sha256": "4b169c62256e13a6575aaf38eb49514d8e7825c0df2429a669768b5a6d6716fa"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lookup.h",
+            "bytes": 1249,
+            "sha256": "1efc9bdd275e812a7cca384e0880ddc85ea94c4c845bcd41a4fe5a557b32ac86"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lookup_data.h",
+            "bytes": 10036,
+            "sha256": "cd14d76eb3380d091bbcdda5bc361e5f2f31803e71e3a2287ac4d1435ed57bd5"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lpc.c",
+            "bytes": 4486,
+            "sha256": "e782bd2780f354fcb0156855260c082ccdeed76dc1152ba7a6ae45b98520dfeb"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lpc.h",
+            "bytes": 1174,
+            "sha256": "90b11956f6fe25980613e1fce79d13a49e1109ad76e87c1f11891940df4f78f5"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lsp.c",
+            "bytes": 12585,
+            "sha256": "cf618a3be06feb94e39eb7a06ad0db4fd8462f8edac93faf4765b28516a9f5ef"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lsp.h",
+            "bytes": 1182,
+            "sha256": "588111726561c1caa8a22278eb63b7b4fa84dfbeea14d99a1d9d46b77aacda0c"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/mapping0.c",
+            "bytes": 28765,
+            "sha256": "d3f26fa42c4345f36885e93650ee6da07861b37ea816b131e5fafb7a7c6d19e2"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/masking.h",
+            "bytes": 39455,
+            "sha256": "627fdc3683edda9800edffe0360807d782c1236ba4ad5d05f013517c104b9147"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/mdct.c",
+            "bytes": 15493,
+            "sha256": "e32b379d7a3d9253524abae3c41c5ac2486bf166cf65996efc4e68db1b164993"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/mdct.h",
+            "bytes": 1955,
+            "sha256": "f8ac37e630cd3c0b8790d4de79134e1015dff3a9136beab7835ff8b2e489fe0f"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/misc.h",
+            "bytes": 1988,
+            "sha256": "f83ebd3e0327e6b12cfe11239826691a9fad3f4870b7f8444d7ba54ace289e4a"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/os.h",
+            "bytes": 5176,
+            "sha256": "b9e31c7a0f46d43f6788670fd63f8f3db1584a8915f696e664ec8cf0c8fe81be"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/psy.c",
+            "bytes": 35900,
+            "sha256": "e8ccec1fba7d00961d5c67fec30b488c912f0ad7842ec7b1aeab987b97744b6e"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/psy.h",
+            "bytes": 4628,
+            "sha256": "99d1f493b63185d702868d8f6616ab69bb546ffb61afb3f47a0f637c3ff5b391"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/registry.c",
+            "bytes": 1772,
+            "sha256": "4259a70a4de23ab48a0af4ff08e0f68102052c6c7d3535c06bd7d7e2fdb82a65"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/registry.h",
+            "bytes": 1247,
+            "sha256": "29a25a4e34b3d41458b7a7e1757da9c63cea24322c39616b7fe16b3bf51ab55a"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/res0.c",
+            "bytes": 24915,
+            "sha256": "0d3daf9327dbe14460d9b11df1ea0d9de709e3326d70b607d65720323d0caf62"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/scales.h",
+            "bytes": 2761,
+            "sha256": "455637c2955912086613c0acf0451091dd22707bf1560ac9f964b975998fb545"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/smallft.c",
+            "bytes": 22185,
+            "sha256": "21b4cd38bc6d50991f4abca4d2619fe1fa27ee74a22bd935804f4cd62b77472a"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/smallft.h",
+            "bytes": 1218,
+            "sha256": "6df874852a7247f181e9a8e7ead541a40893cc50c0a17f1f3e799db25c5a9e61"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/synthesis.c",
+            "bytes": 5180,
+            "sha256": "d5f92aaed1e7b59f3c01e0405813009cda29a61a0e6155d60980907d93c1eeb3"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/vorbisfile.c",
+            "bytes": 76295,
+            "sha256": "557752159e4c96e4ca339d28a4454c9d7edbf6b2bca6cbe4e8a5f8c44ef9196f"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/window.c",
+            "bytes": 128646,
+            "sha256": "bea202730509aa12bc5f0da703be1a04a7e7dd04b2ee7a2b3a6f8b133edaacbc"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/window.h",
+            "bytes": 1086,
+            "sha256": "9bb736d228deae67699012cc38f81d379e0b077432f162f2dcd1087f7669dc98"
+          },
+          {
+            "file": "native-android/engine/appearance/coh_appearance.c",
+            "bytes": 9181,
+            "sha256": "d52cac6163bd42ee5044d3eadc62a78f69ff84ea74d75bbb969bfba4ade5538d"
+          },
+          {
+            "file": "native-android/engine/appearance/coh_appearance.h",
+            "bytes": 3951,
+            "sha256": "abe34751e978035bb255b08a2dd98bbf2173c21ad72d27f55aa428a366d97c18"
+          },
+          {
+            "file": "native-android/engine/appearance/coh_appearance_adapters.c",
+            "bytes": 1631,
+            "sha256": "4bed6ee78f2a0e7f1d3936fd0f7acb98de80f8b7dc79ab799ae7cd975860c897"
+          },
+          {
+            "file": "native-android/engine/assets/coh_asset_geo.c",
+            "bytes": 10886,
+            "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+          },
+          {
+            "file": "native-android/engine/assets/coh_asset_geo.h",
+            "bytes": 2263,
+            "sha256": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b"
+          },
+          {
+            "file": "native-android/engine/assets/coh_asset_loader.c",
+            "bytes": 18935,
+            "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b"
+          },
+          {
+            "file": "native-android/engine/assets/coh_asset_loader.h",
+            "bytes": 4499,
+            "sha256": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36"
+          },
+          {
+            "file": "native-android/engine/audio/coh_audio_listener.c",
+            "bytes": 2072,
+            "sha256": "897e2bb0603c10d77919607a7437e332de1e1cb71ac89343ace37b5d1d8709d6"
+          },
+          {
+            "file": "native-android/engine/audio/coh_audio_listener.h",
+            "bytes": 1268,
+            "sha256": "906dc38a44effe640fba2a284f599bda6fd69f22fa4701bf62e80f2426a9911d"
+          },
+          {
+            "file": "native-android/engine/audio/coh_mixer.c",
+            "bytes": 20086,
+            "sha256": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444"
+          },
+          {
+            "file": "native-android/engine/audio/coh_mixer.h",
+            "bytes": 4996,
+            "sha256": "51ad20370cc75b3edaa93997c9ff4cdb9546e5485521e65daf117522866fc389"
+          },
+          {
+            "file": "native-android/engine/audio/coh_mixer_aaudio.c",
+            "bytes": 6007,
+            "sha256": "bddfdbcbb0564be3a99ec893cfa72ee6f1896dc71f08f0eb392369fce7bdd8ae"
+          },
+          {
+            "file": "native-android/engine/audio/coh_mixer_aaudio.h",
+            "bytes": 2081,
+            "sha256": "34cdee21c5486f53fbfd78cf8bccbf2ed7db4d6ebb0268906b77f5e25f07c489"
+          },
+          {
+            "file": "native-android/engine/audio/coh_music.c",
+            "bytes": 9971,
+            "sha256": "6f1dcd545bf4a8822805702d4a684c5961c167c4478e1adcc143e301d0d1be4e"
+          },
+          {
+            "file": "native-android/engine/audio/coh_music.h",
+            "bytes": 2983,
+            "sha256": "28470224888716ef77901ea6383570c6e2a901bea435e4e233b0366ee8f752fc"
+          },
+          {
+            "file": "native-android/engine/audio/coh_resample.c",
+            "bytes": 2300,
+            "sha256": "a22ecb054d3802bb4b5a9e3a3deade02859899bf6c96dba832f333815e31c293"
+          },
+          {
+            "file": "native-android/engine/audio/coh_resample.h",
+            "bytes": 1432,
+            "sha256": "fb1cdd1880f30b409c09b8d00cd5c0fda20cd314dae8b2a9362f6dea14396aa4"
+          },
+          {
+            "file": "native-android/engine/bridge/coh_asset_render.c",
+            "bytes": 22114,
+            "sha256": "50524a72baa219033a01073135ef4b61b8dd289c634d1be6cb85394210f0e983"
+          },
+          {
+            "file": "native-android/engine/bridge/coh_asset_render.h",
+            "bytes": 5124,
+            "sha256": "c69090c79b78f302713834b21f0c9a59acb15722598369b0efe67f0ef4fe7f87"
+          },
+          {
+            "file": "native-android/engine/coh_contracts.h",
+            "bytes": 1044,
+            "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+          },
+          {
+            "file": "native-android/engine/perf/coh_perf.c",
+            "bytes": 9673,
+            "sha256": "63fbfb006497e897f80373c56dc45444ae7630db9c004bb04674314c5cd44970"
+          },
+          {
+            "file": "native-android/engine/perf/coh_perf.h",
+            "bytes": 4261,
+            "sha256": "0d6928135f27aaa7dd1454c2974c07314bbd818163cdeaac155875f1aa70dbdc"
+          },
+          {
+            "file": "native-android/engine/perf/coh_perf_bridge.c",
+            "bytes": 3627,
+            "sha256": "5af98cd1bad62a43c5b8f577178d895236b90999b007ba1d91b60ceb1e57ad01"
+          },
+          {
+            "file": "native-android/engine/perf/coh_perf_bridge.h",
+            "bytes": 2816,
+            "sha256": "07a2a8cdbba7a102d30deff1b8d80140a442dce620f5d1edafe33f3bc2c94f14"
+          },
+          {
+            "file": "native-android/engine/perf/coh_skin_cache.c",
+            "bytes": 5292,
+            "sha256": "6491f613e198dfd710d801eafcf0859ec7b82d9bd8ce9c7e396d799a13ae8c4c"
+          },
+          {
+            "file": "native-android/engine/perf/coh_skin_cache.h",
+            "bytes": 1880,
+            "sha256": "c88997202da49fecf992532bc716a0b2f52855a969836f68d06a9613b6be5fdf"
+          },
+          {
+            "file": "native-android/engine/physics/coh_physics.c",
+            "bytes": 12503,
+            "sha256": "50bca0b54db61a6ac8318241c2e94ab9e0d347567f41c950dd3aaa4ee0837871"
+          },
+          {
+            "file": "native-android/engine/physics/coh_physics.h",
+            "bytes": 3755,
+            "sha256": "13d8697f0a2be95bc20502a477a46317abed016e7de320c7201a10967ec730d7"
+          },
+          {
+            "file": "native-android/engine/renderer/coh_renderer.c",
+            "bytes": 15845,
+            "sha256": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00"
+          },
+          {
+            "file": "native-android/engine/renderer/coh_renderer.h",
+            "bytes": 5299,
+            "sha256": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab"
+          },
+          {
+            "file": "native-android/engine/renderer/coh_renderer_gles.c",
+            "bytes": 9772,
+            "sha256": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c"
+          },
+          {
+            "file": "native-android/engine/renderer/coh_renderer_gles.h",
+            "bytes": 1218,
+            "sha256": "d8bcb8107e4f61aeaf1e6270da3ee41ec057d3be460e1dfe4a34a4c48baed9ae"
+          },
+          {
+            "file": "native-android/engine/renderer/coh_renderer_shaders.h",
+            "bytes": 12209,
+            "sha256": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b"
+          },
+          {
+            "file": "native-android/engine/sequencer/coh_seq_playback.c",
+            "bytes": 10758,
+            "sha256": "2ef50d335651caef3538777273ed9f29c884b76a6ade5e683ffc2f5ba16caa5e"
+          },
+          {
+            "file": "native-android/engine/sequencer/coh_seq_playback.h",
+            "bytes": 3341,
+            "sha256": "eab4ad496200cfe7e471d2b795aa06a0b4402c95da157ca86da6d15ac87672bd"
+          },
+          {
+            "file": "native-android/engine/sequencer/coh_sequencer.c",
+            "bytes": 10444,
+            "sha256": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91"
+          },
+          {
+            "file": "native-android/engine/sequencer/coh_sequencer.h",
+            "bytes": 4676,
+            "sha256": "895b888ef2c4d8aa441c2a07b9ccaf0ac8c5b0affd548fe3dcda1ecf152c6f16"
+          },
+          {
+            "file": "native-android/engine/ui/coh_hud.c",
+            "bytes": 15700,
+            "sha256": "2a803451ba0ff34db41deadc7ced716554b0046889ae47786752413766ca8177"
+          },
+          {
+            "file": "native-android/engine/ui/coh_hud.h",
+            "bytes": 4225,
+            "sha256": "e36e19ecc3608ac1df81c988c64fd22f9a3a6e72999b59e0bf4e688aca0ebd7d"
+          },
+          {
+            "file": "native-android/engine/ui/coh_ui.c",
+            "bytes": 16624,
+            "sha256": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676"
+          },
+          {
+            "file": "native-android/engine/ui/coh_ui.h",
+            "bytes": 4879,
+            "sha256": "50267d8fa4a6e3a04bc917e62bf0d24599cc30b1292cd5caa65b22ec4b6f6870"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_android.c",
+            "bytes": 3213,
+            "sha256": "bedbcdf168bc654a25229e8239d2722ffd884b686d01b6124d897f6864c26ca8"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_android.h",
+            "bytes": 1501,
+            "sha256": "9358b55cb9d9775f17c01ab759551d0791c9ca922422cf3449698dde4120a562"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_atlas.c",
+            "bytes": 2130,
+            "sha256": "afd1e638f9dc77599186c2c6a8dd7ed6cb2d148545f58c7f35929f4436d2656b"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_atlas.h",
+            "bytes": 869,
+            "sha256": "c08ceafa1ba590f4a879d7bb0f82e6ac10c131d14fb541e110588f99529be81d"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_axis_navigation.c",
+            "bytes": 2012,
+            "sha256": "710e5c09b020537ce50a600aeaa3c2728a4b0bbfbcca2c9d00aef9bdd4adea5e"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_axis_navigation.h",
+            "bytes": 1289,
+            "sha256": "6e2da3d5e369544a1e62d33daa2cd62a1fc41191833d5a105f78a1684eb333d8"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_gles.c",
+            "bytes": 6748,
+            "sha256": "4d4e32fc099a3015076f605e04728742b6963dced8b7c0b3d551b5e2f11883bc"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_gles.h",
+            "bytes": 2162,
+            "sha256": "6078a168479024bf080f194c3ebb7e7b9c23583ebee0b5a618cd5607cfccdda0"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_quad.c",
+            "bytes": 1663,
+            "sha256": "b382b8ed76c9aeb6138f1c47d62abe1d892fae12bdb1f130e0296f51e6c39fd2"
+          },
+          {
+            "file": "native-android/engine/world/coh_world_stream.c",
+            "bytes": 14730,
+            "sha256": "762e98f449b4cce22d77ec576c9d65019e9a2739b7ecfde2fc8230d7770eb561"
+          },
+          {
+            "file": "native-android/engine/world/coh_world_stream.h",
+            "bytes": 3944,
+            "sha256": "5489ecb86fc84699f28a24461e7fcaf30a22a2dfa935c8f857b86020682cceaa"
+          },
+          {
+            "file": "native-android/include/coh_native_core.h",
+            "bytes": 2613,
+            "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+          },
+          {
+            "file": "native-android/locomotion/coh_locomotion.c",
+            "bytes": 17276,
+            "sha256": "25ece1bc86284d8547f764eefc674594312488f11b036d96007fc909dc78de89"
+          },
+          {
+            "file": "native-android/locomotion/coh_locomotion.h",
+            "bytes": 4143,
+            "sha256": "6558da66f56f27ce6334921fe79fe6edeffd93e55edd321b97cd725dec2978c0"
+          },
+          {
+            "file": "native-android/material-probe/app/src/main/cpp/coh_mesh.c",
+            "bytes": 5349,
+            "sha256": "18f82e3ad598336f4876ba2ebb1afff6ca0ae77509960e8beb38672bb3fd4be1"
+          },
+          {
+            "file": "native-android/material-probe/app/src/main/cpp/coh_mesh.h",
+            "bytes": 1847,
+            "sha256": "afe72d7801eb89891f059f00076815d0c60351e8935489d0bba5ba2ff454579c"
+          },
+          {
+            "file": "native-android/motion/coh_motion.c",
+            "bytes": 6899,
+            "sha256": "857240b5eff8a0b88aa102826b03e1fb9318158b89c44487473e03f3a39a454b"
+          },
+          {
+            "file": "native-android/motion/coh_motion.h",
+            "bytes": 1875,
+            "sha256": "0e98ef6d00f07731f6f3ae88dff3540770303c41f7423a6ba8155ccc2ecdf716"
+          },
+          {
+            "file": "native-android/session-client/app/src/main/cpp/session_stream_qualify.c",
+            "bytes": 15891,
+            "sha256": "7b1233a768e5a908acd1704d6a297dc2b3d34b5abff0949f78898b6b95652c21"
+          },
+          {
+            "file": "native-android/session-client/app/src/main/cpp/session_stream_qualify.h",
+            "bytes": 1156,
+            "sha256": "615dc7fafc09793c105fa72ee3fcc48f9fe46041694898fedb360b0478dd6eb7"
+          },
+          {
+            "file": "native-android/session-client/app/src/main/cpp/session_stream_world.c",
+            "bytes": 14439,
+            "sha256": "8a75db4cbae73cbccf405bcdb2409186c17b17bbea6a87699d10a7964c5d4433"
+          },
+          {
+            "file": "native-android/session-client/app/src/main/cpp/session_stream_world.h",
+            "bytes": 1475,
+            "sha256": "a86f89abaef0058cd765fa055b891de7b0337de347da843d17297dc2900e1522"
+          },
+          {
+            "file": "native-android/src/byte_reader.h",
+            "bytes": 791,
+            "sha256": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1"
+          },
+          {
+            "file": "native-android/src/coh_assets.c",
+            "bytes": 3806,
+            "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+          },
+          {
+            "file": "native-android/src/coh_dds.c",
+            "bytes": 4055,
+            "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+          },
+          {
+            "file": "native-android/support-client/generated/support_font.h",
+            "bytes": 92725,
+            "sha256": "79b2bf96955bc1c87fd6f4f0504b22115a1a52973399663a9c66ec1e01b6e710"
+          },
+          {
+            "file": "native-android/support-client/src/offline_scene.c",
+            "bytes": 72047,
+            "sha256": "0c205bb517d51e3a69ef1a186f50ed1921234c6d6b4d26779d75403e4028cb3b"
+          },
+          {
+            "file": "native-android/support-client/src/support_animation.c",
+            "bytes": 4135,
+            "sha256": "4820beb97c7fb425c8a567cebfebff5c8bfd371e99a9c8d329faf5492e4af020"
+          },
+          {
+            "file": "native-android/support-client/src/support_animation.h",
+            "bytes": 1920,
+            "sha256": "c3e38f1739f3fe80df714195af0e78310fde1dbd2cc426a7de099882ad430096"
+          },
+          {
+            "file": "native-android/support-client/src/support_audio.c",
+            "bytes": 14757,
+            "sha256": "0c9044fc24fdc5c165ddc134476c6082372e3507544ae828549be7751af1535c"
+          },
+          {
+            "file": "native-android/support-client/src/support_audio.h",
+            "bytes": 2662,
+            "sha256": "8b7ac19c49c17a9e364d423452591fe9c60e96bf4e73e7fc274ab8879c4f426d"
+          },
+          {
+            "file": "native-android/support-client/src/support_bridge.c",
+            "bytes": 16131,
+            "sha256": "b4c33b631ae464c4f4792db721e7b826f0cab6445405eb6079a5c3a80a1d5ecd"
+          },
+          {
+            "file": "native-android/support-client/src/support_bridge.h",
+            "bytes": 2165,
+            "sha256": "e5e83b8c56002f94ddcf449505ebd9548079b295821ed8871ce47db47b724477"
+          },
+          {
+            "file": "native-android/support-client/src/support_physics.c",
+            "bytes": 3705,
+            "sha256": "4eb4729ec320e7442c1cb7abef9102949bcc9435a730c6db92811cbc8fa26982"
+          },
+          {
+            "file": "native-android/support-client/src/support_physics.h",
+            "bytes": 1797,
+            "sha256": "502a7d46667cebac99a2128c8cc20d57f81feca59d5ca8263bf8f4e47ee90819"
+          },
+          {
+            "file": "native-android/support-client/src/support_ui.c",
+            "bytes": 14621,
+            "sha256": "b64e23bb1d7a5603606bbe2c9df093c7b6fa124c4cd81aea9128f19830beb960"
+          },
+          {
+            "file": "native-android/support-client/src/support_ui.h",
+            "bytes": 2976,
+            "sha256": "a6f60d56d9a8bf174619985eeed1f0b7571e3ce68a757edd15e347a30d57a0fb"
+          },
+          {
+            "file": "native-android/walk/coh_walk.c",
+            "bytes": 15089,
+            "sha256": "998c64c472613cf6e8da38218a8d30bcbf49d29c273520180948d4a2e90c50be"
+          },
+          {
+            "file": "native-android/walk/coh_walk.h",
+            "bytes": 2885,
+            "sha256": "c7b29f43e1c4b71d39226f12ea3325826068ef961fc7c4ac81a5fd53566f90c5"
+          },
+          {
+            "file": "native-android/walk/source_ctri.c",
+            "bytes": 41795,
+            "sha256": "1862c65a355ddfa71d1264671effa36addc2a8a3497b7c0825465835603a5670"
+          },
+          {
+            "file": "native-android/walk/source_math.h",
+            "bytes": 5794,
+            "sha256": "90bb7698c2289531702523516640a5569ce249cec060ff36d0207780692cb272"
+          },
+          {
+            "file": "native-android/walk/source_tritri.c",
+            "bytes": 25477,
+            "sha256": "c3fabb12b9a31baac2b6f0bf83b9c0f9456941f897167524e5dfcd88837005c3"
+          },
+          {
+            "file": "native-android/walk/source_types.h",
+            "bytes": 2564,
+            "sha256": "ffc887a031439ac43c7f09184e1e43f3fc573cf3b6a72b20184ccba2adaa8021"
+          },
+          {
+            "file": "native-android/walk/source_world.c",
+            "bytes": 35313,
+            "sha256": "4225a8576a5a536cac44ab107cbfe9bdd7bd3d1ab04bbdb6c2679b375aec9d55"
+          },
+          {
+            "file": "native-android/walkable/coh_walkable_scene.c",
+            "bytes": 4469,
+            "sha256": "22b3941cab9c026e57b58c8f867b7565207afcf3561dc1a6246af0cfdfcc7aa0"
+          },
+          {
+            "file": "native-android/walkable/coh_walkable_scene.h",
+            "bytes": 1003,
+            "sha256": "ff34fccb1ac5cc6cef44c0acef50a6b9221376621e9a3dd0e7d7dbfb7dfbe31b"
+          },
+          {
+            "file": "native-android/world/coh_world.c",
+            "bytes": 7054,
+            "sha256": "9a914b7326e4852bd55827c58bab360cef2516f85268a25cdd4ede2cdfe39c92"
+          },
+          {
+            "file": "native-android/world/coh_world.h",
+            "bytes": 1505,
+            "sha256": "0453a36cb8bb24cfb88aa712147aba4b58cc226da54d59a09eb158ddc8588871"
+          },
+          {
+            "file": "native-android/world-probe/app/src/main/cpp/coh_world_scene.c",
+            "bytes": 2900,
+            "sha256": "e18593782d66b3584457fb0812a6c82c5785e6062e26248508d35c0b96157cf7"
+          },
+          {
+            "file": "native-android/world-probe/app/src/main/cpp/coh_world_scene.h",
+            "bytes": 840,
+            "sha256": "81989d9900e85146d46a98ae6df427a916dff59b08436f09e0a3762e8b98d739"
+          },
+          {
+            "file": "/tmp/coh-support-package-_rfy5ryr/generated/support_tray.h",
+            "bytes": 23068,
+            "sha256": "f65a714a85313f17a9357866dfed3a4ecbb3e4867c3d853305f6a64edd54f57a"
+          },
+          {
+            "file": "/tmp/coh-support-package-_rfy5ryr/generated/world_shader_sources.h",
+            "bytes": 56200,
+            "sha256": "2023c1745ae9c3fc5932c0a9fe8c82344a515098ddba2c84e78d01444db89c9a"
+          }
+        ],
+        "compiled_inputs_scope": "Compiler -MMD closure includes direct/indirect non-system headers and generated inputs; NDK system headers are bound by NDK revision."
+      },
+      "signer_certificate_sha256": "51c72fc0355533257734e5a6a7ea359e0bd59dcfb81d5e93ccd8171dbe0fba7b"
+    },
+    {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-emulator-x86_64.apk",
+      "bytes": 2463084,
+      "sha256": "cc05eee0c826c57f2d21b534a37d868fe8a9ea51986278b48d898a6f7069ce2c",
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_assets_verified": true,
+      "native": {
+        "abi": "x86_64",
+        "elf_machine": "Advanced Micro Devices X86-64",
+        "sha256": "6597743af7cde0cdb6c8eafc8e262f22c9ec216e80ab80cfd02a1b59d641c74b",
+        "bytes": 783160,
+        "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+        "compiled_inputs": [
+          {
+            "file": "native-android/animation/coh_animation.c",
+            "bytes": 12647,
+            "sha256": "98865ae06e3d8eeeb97383e3e36295d715ec7c2556cfd03129dbc79275cefdbb"
+          },
+          {
+            "file": "native-android/animation/coh_animation.h",
+            "bytes": 2853,
+            "sha256": "f9fac099a6cf651fcc46f147d021386f2925b156152656178a2510d05a789bd0"
+          },
+          {
+            "file": "native-android/audio/coh_audio.c",
+            "bytes": 3534,
+            "sha256": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+          },
+          {
+            "file": "native-android/audio/coh_audio.h",
+            "bytes": 1721,
+            "sha256": "b723bc4d5252cd3c6f2541c00dc5779222a84ad326af9fb75e7d438908462fee"
+          },
+          {
+            "file": "native-android/audio/source_gain_golden.h",
+            "bytes": 1077,
+            "sha256": "ab28b9f07afba0a1be90eaf89d6f0af1d3878d6ac7ac9305ea015545cdbcf59c"
+          },
+          {
+            "file": "native-android/character/coh_character.c",
+            "bytes": 8518,
+            "sha256": "25f7fe7078ead64eb3a32672ad17ddb438ecf2168681c72cd33d6e13be1dedfe"
+          },
+          {
+            "file": "native-android/character/coh_character.h",
+            "bytes": 1975,
+            "sha256": "4905cf1da6b39661b4ed2f526be1dccfd88585da199b44474e0bd1227361bda0"
+          },
+          {
+            "file": "native-android/character-probe/app/src/main/cpp/coh_scene.c",
+            "bytes": 2597,
+            "sha256": "e567b7fd5557d4dc27f91f00519f437fece03aefc0da1ade652c7fc804593708"
+          },
+          {
+            "file": "native-android/character-probe/app/src/main/cpp/coh_scene.h",
+            "bytes": 929,
+            "sha256": "f1e560ee4c52f799d2f47b185268d84b8a6d93be9f18e8919185290db233d45c"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/include/ogg/config_types.h",
+            "bytes": 342,
+            "sha256": "08a5b6d3d30ce5ea721432640b64d1c3b1ee485635a00f60b32deccdb4caf1d5"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/include/ogg/ogg.h",
+            "bytes": 8373,
+            "sha256": "aad86109c1fdb377738675a63e0b19859e06ada25ae5c59c290ca7263d1dc4ca"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/include/ogg/os_types.h",
+            "bytes": 4781,
+            "sha256": "3bbab6a5d31e3c25c6080252b042afb87028e3ffff100e3e0285648b250b70f4"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/src/bitwise.c",
+            "bytes": 30633,
+            "sha256": "753d2ace9337bcb8c9ef23f42d630186f55f75a0d962ee79b3e7d87a614c147c"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/src/crctable.h",
+            "bytes": 23902,
+            "sha256": "bbeb9f7e2ef15925400943a16ea9e3ce6aaf2f84a1e74b69b33e53a5c4693023"
+          },
+          {
+            "file": "native-android/decode/.deps/ogg/src/framing.c",
+            "bytes": 66904,
+            "sha256": "04373c7f155e0f6d8a5f355108b2908002a6ffe3895da89796619090a3313bdc"
+          },
+          {
+            "file": "native-android/decode/.deps/safe/sharedbook.c",
+            "bytes": 17820,
+            "sha256": "a8cbecc3bdd0a18d27fd31d342bfb32f9789cbad960d0cf6547e0bee865fce23"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/include/vorbis/codec.h",
+            "bytes": 8387,
+            "sha256": "1d031e3cbae7defe966426e33802450a56388a1323eec1ec629e6d4095c676c5"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/include/vorbis/vorbisfile.h",
+            "bytes": 7990,
+            "sha256": "7d98264e57b0190ef0a2701a0bea5f982e82fc1bedd93cd9408a2fff7790f803"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/analysis.c",
+            "bytes": 3088,
+            "sha256": "cf75d75c762f27ee9f50e9be794e47551d86cbdfb00fbce962ba3280a9516e4d"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/backends.h",
+            "bytes": 5151,
+            "sha256": "1253a0cf54a10b46591bf1dac1717b3bd76abe89188217cd7fbfaa8f50745df5"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/bitrate.c",
+            "bytes": 8478,
+            "sha256": "fd8940a065820c247e0e115b9a10af82c09ed419f8c9a6b88eddaaed221f52b3"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/bitrate.h",
+            "bytes": 1963,
+            "sha256": "06bd012d67f97a5dc1de135371060a0c879a83b01c69d2cceee4ddc7cbef2676"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/block.c",
+            "bytes": 30592,
+            "sha256": "7f65c7031c2b94405d2c1b5f0a73cc19efe9506e95736ba0b38d86bd42170a7e"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/codebook.c",
+            "bytes": 13408,
+            "sha256": "662728ef6190968fd717af62b19578006357090814b15b2f03ddc7a98871b345"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/codebook.h",
+            "bytes": 4958,
+            "sha256": "1a0bf4ebc17645910080155a83bd39b810c7e73703e97c65c5e7ccfdcb89ec55"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/codec_internal.h",
+            "bytes": 5392,
+            "sha256": "3f32ac0e4e94cb0dde4800b243e1239cda9e4df1d277acf334fb48a648a08f8b"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/envelope.c",
+            "bytes": 10672,
+            "sha256": "ae9f845d39776f7b6072543368a18037f778c56385a5cb6377dac388f44b3b51"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/envelope.h",
+            "bytes": 2116,
+            "sha256": "4bc533e8455ad005fca72274ce10e8c7cff69251f0641d98a8a71922be0ba0ce"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/floor0.c",
+            "bytes": 6889,
+            "sha256": "20185fa3bff19f7c162a113f8fb969f3961079454b3ffd2019e9e555b0bbc61c"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/floor1.c",
+            "bytes": 30922,
+            "sha256": "fd4f403b56bf5538d1cc33fcf9236bca230553c143273fe17f5846ed928b6a64"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/highlevel.h",
+            "bytes": 1840,
+            "sha256": "22758888e37c71831d2dca16848f03443ed5b5308247c727a58c83f23294716c"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/info.c",
+            "bytes": 19866,
+            "sha256": "03af6059fe7e50d0b37a0370707139227e6cd4cc74be56473cd22f0300739fca"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lookup.c",
+            "bytes": 3246,
+            "sha256": "4b169c62256e13a6575aaf38eb49514d8e7825c0df2429a669768b5a6d6716fa"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lookup.h",
+            "bytes": 1249,
+            "sha256": "1efc9bdd275e812a7cca384e0880ddc85ea94c4c845bcd41a4fe5a557b32ac86"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lookup_data.h",
+            "bytes": 10036,
+            "sha256": "cd14d76eb3380d091bbcdda5bc361e5f2f31803e71e3a2287ac4d1435ed57bd5"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lpc.c",
+            "bytes": 4486,
+            "sha256": "e782bd2780f354fcb0156855260c082ccdeed76dc1152ba7a6ae45b98520dfeb"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lpc.h",
+            "bytes": 1174,
+            "sha256": "90b11956f6fe25980613e1fce79d13a49e1109ad76e87c1f11891940df4f78f5"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lsp.c",
+            "bytes": 12585,
+            "sha256": "cf618a3be06feb94e39eb7a06ad0db4fd8462f8edac93faf4765b28516a9f5ef"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/lsp.h",
+            "bytes": 1182,
+            "sha256": "588111726561c1caa8a22278eb63b7b4fa84dfbeea14d99a1d9d46b77aacda0c"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/mapping0.c",
+            "bytes": 28765,
+            "sha256": "d3f26fa42c4345f36885e93650ee6da07861b37ea816b131e5fafb7a7c6d19e2"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/masking.h",
+            "bytes": 39455,
+            "sha256": "627fdc3683edda9800edffe0360807d782c1236ba4ad5d05f013517c104b9147"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/mdct.c",
+            "bytes": 15493,
+            "sha256": "e32b379d7a3d9253524abae3c41c5ac2486bf166cf65996efc4e68db1b164993"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/mdct.h",
+            "bytes": 1955,
+            "sha256": "f8ac37e630cd3c0b8790d4de79134e1015dff3a9136beab7835ff8b2e489fe0f"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/misc.h",
+            "bytes": 1988,
+            "sha256": "f83ebd3e0327e6b12cfe11239826691a9fad3f4870b7f8444d7ba54ace289e4a"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/os.h",
+            "bytes": 5176,
+            "sha256": "b9e31c7a0f46d43f6788670fd63f8f3db1584a8915f696e664ec8cf0c8fe81be"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/psy.c",
+            "bytes": 35900,
+            "sha256": "e8ccec1fba7d00961d5c67fec30b488c912f0ad7842ec7b1aeab987b97744b6e"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/psy.h",
+            "bytes": 4628,
+            "sha256": "99d1f493b63185d702868d8f6616ab69bb546ffb61afb3f47a0f637c3ff5b391"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/registry.c",
+            "bytes": 1772,
+            "sha256": "4259a70a4de23ab48a0af4ff08e0f68102052c6c7d3535c06bd7d7e2fdb82a65"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/registry.h",
+            "bytes": 1247,
+            "sha256": "29a25a4e34b3d41458b7a7e1757da9c63cea24322c39616b7fe16b3bf51ab55a"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/res0.c",
+            "bytes": 24915,
+            "sha256": "0d3daf9327dbe14460d9b11df1ea0d9de709e3326d70b607d65720323d0caf62"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/scales.h",
+            "bytes": 2761,
+            "sha256": "455637c2955912086613c0acf0451091dd22707bf1560ac9f964b975998fb545"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/smallft.c",
+            "bytes": 22185,
+            "sha256": "21b4cd38bc6d50991f4abca4d2619fe1fa27ee74a22bd935804f4cd62b77472a"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/smallft.h",
+            "bytes": 1218,
+            "sha256": "6df874852a7247f181e9a8e7ead541a40893cc50c0a17f1f3e799db25c5a9e61"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/synthesis.c",
+            "bytes": 5180,
+            "sha256": "d5f92aaed1e7b59f3c01e0405813009cda29a61a0e6155d60980907d93c1eeb3"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/vorbisfile.c",
+            "bytes": 76295,
+            "sha256": "557752159e4c96e4ca339d28a4454c9d7edbf6b2bca6cbe4e8a5f8c44ef9196f"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/window.c",
+            "bytes": 128646,
+            "sha256": "bea202730509aa12bc5f0da703be1a04a7e7dd04b2ee7a2b3a6f8b133edaacbc"
+          },
+          {
+            "file": "native-android/decode/.deps/vorbis/lib/window.h",
+            "bytes": 1086,
+            "sha256": "9bb736d228deae67699012cc38f81d379e0b077432f162f2dcd1087f7669dc98"
+          },
+          {
+            "file": "native-android/engine/appearance/coh_appearance.c",
+            "bytes": 9181,
+            "sha256": "d52cac6163bd42ee5044d3eadc62a78f69ff84ea74d75bbb969bfba4ade5538d"
+          },
+          {
+            "file": "native-android/engine/appearance/coh_appearance.h",
+            "bytes": 3951,
+            "sha256": "abe34751e978035bb255b08a2dd98bbf2173c21ad72d27f55aa428a366d97c18"
+          },
+          {
+            "file": "native-android/engine/appearance/coh_appearance_adapters.c",
+            "bytes": 1631,
+            "sha256": "4bed6ee78f2a0e7f1d3936fd0f7acb98de80f8b7dc79ab799ae7cd975860c897"
+          },
+          {
+            "file": "native-android/engine/assets/coh_asset_geo.c",
+            "bytes": 10886,
+            "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+          },
+          {
+            "file": "native-android/engine/assets/coh_asset_geo.h",
+            "bytes": 2263,
+            "sha256": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b"
+          },
+          {
+            "file": "native-android/engine/assets/coh_asset_loader.c",
+            "bytes": 18935,
+            "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b"
+          },
+          {
+            "file": "native-android/engine/assets/coh_asset_loader.h",
+            "bytes": 4499,
+            "sha256": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36"
+          },
+          {
+            "file": "native-android/engine/audio/coh_audio_listener.c",
+            "bytes": 2072,
+            "sha256": "897e2bb0603c10d77919607a7437e332de1e1cb71ac89343ace37b5d1d8709d6"
+          },
+          {
+            "file": "native-android/engine/audio/coh_audio_listener.h",
+            "bytes": 1268,
+            "sha256": "906dc38a44effe640fba2a284f599bda6fd69f22fa4701bf62e80f2426a9911d"
+          },
+          {
+            "file": "native-android/engine/audio/coh_mixer.c",
+            "bytes": 20086,
+            "sha256": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444"
+          },
+          {
+            "file": "native-android/engine/audio/coh_mixer.h",
+            "bytes": 4996,
+            "sha256": "51ad20370cc75b3edaa93997c9ff4cdb9546e5485521e65daf117522866fc389"
+          },
+          {
+            "file": "native-android/engine/audio/coh_mixer_aaudio.c",
+            "bytes": 6007,
+            "sha256": "bddfdbcbb0564be3a99ec893cfa72ee6f1896dc71f08f0eb392369fce7bdd8ae"
+          },
+          {
+            "file": "native-android/engine/audio/coh_mixer_aaudio.h",
+            "bytes": 2081,
+            "sha256": "34cdee21c5486f53fbfd78cf8bccbf2ed7db4d6ebb0268906b77f5e25f07c489"
+          },
+          {
+            "file": "native-android/engine/audio/coh_music.c",
+            "bytes": 9971,
+            "sha256": "6f1dcd545bf4a8822805702d4a684c5961c167c4478e1adcc143e301d0d1be4e"
+          },
+          {
+            "file": "native-android/engine/audio/coh_music.h",
+            "bytes": 2983,
+            "sha256": "28470224888716ef77901ea6383570c6e2a901bea435e4e233b0366ee8f752fc"
+          },
+          {
+            "file": "native-android/engine/audio/coh_resample.c",
+            "bytes": 2300,
+            "sha256": "a22ecb054d3802bb4b5a9e3a3deade02859899bf6c96dba832f333815e31c293"
+          },
+          {
+            "file": "native-android/engine/audio/coh_resample.h",
+            "bytes": 1432,
+            "sha256": "fb1cdd1880f30b409c09b8d00cd5c0fda20cd314dae8b2a9362f6dea14396aa4"
+          },
+          {
+            "file": "native-android/engine/bridge/coh_asset_render.c",
+            "bytes": 22114,
+            "sha256": "50524a72baa219033a01073135ef4b61b8dd289c634d1be6cb85394210f0e983"
+          },
+          {
+            "file": "native-android/engine/bridge/coh_asset_render.h",
+            "bytes": 5124,
+            "sha256": "c69090c79b78f302713834b21f0c9a59acb15722598369b0efe67f0ef4fe7f87"
+          },
+          {
+            "file": "native-android/engine/coh_contracts.h",
+            "bytes": 1044,
+            "sha256": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+          },
+          {
+            "file": "native-android/engine/perf/coh_perf.c",
+            "bytes": 9673,
+            "sha256": "63fbfb006497e897f80373c56dc45444ae7630db9c004bb04674314c5cd44970"
+          },
+          {
+            "file": "native-android/engine/perf/coh_perf.h",
+            "bytes": 4261,
+            "sha256": "0d6928135f27aaa7dd1454c2974c07314bbd818163cdeaac155875f1aa70dbdc"
+          },
+          {
+            "file": "native-android/engine/perf/coh_perf_bridge.c",
+            "bytes": 3627,
+            "sha256": "5af98cd1bad62a43c5b8f577178d895236b90999b007ba1d91b60ceb1e57ad01"
+          },
+          {
+            "file": "native-android/engine/perf/coh_perf_bridge.h",
+            "bytes": 2816,
+            "sha256": "07a2a8cdbba7a102d30deff1b8d80140a442dce620f5d1edafe33f3bc2c94f14"
+          },
+          {
+            "file": "native-android/engine/perf/coh_skin_cache.c",
+            "bytes": 5292,
+            "sha256": "6491f613e198dfd710d801eafcf0859ec7b82d9bd8ce9c7e396d799a13ae8c4c"
+          },
+          {
+            "file": "native-android/engine/perf/coh_skin_cache.h",
+            "bytes": 1880,
+            "sha256": "c88997202da49fecf992532bc716a0b2f52855a969836f68d06a9613b6be5fdf"
+          },
+          {
+            "file": "native-android/engine/physics/coh_physics.c",
+            "bytes": 12503,
+            "sha256": "50bca0b54db61a6ac8318241c2e94ab9e0d347567f41c950dd3aaa4ee0837871"
+          },
+          {
+            "file": "native-android/engine/physics/coh_physics.h",
+            "bytes": 3755,
+            "sha256": "13d8697f0a2be95bc20502a477a46317abed016e7de320c7201a10967ec730d7"
+          },
+          {
+            "file": "native-android/engine/renderer/coh_renderer.c",
+            "bytes": 15845,
+            "sha256": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00"
+          },
+          {
+            "file": "native-android/engine/renderer/coh_renderer.h",
+            "bytes": 5299,
+            "sha256": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab"
+          },
+          {
+            "file": "native-android/engine/renderer/coh_renderer_gles.c",
+            "bytes": 9772,
+            "sha256": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c"
+          },
+          {
+            "file": "native-android/engine/renderer/coh_renderer_gles.h",
+            "bytes": 1218,
+            "sha256": "d8bcb8107e4f61aeaf1e6270da3ee41ec057d3be460e1dfe4a34a4c48baed9ae"
+          },
+          {
+            "file": "native-android/engine/renderer/coh_renderer_shaders.h",
+            "bytes": 12209,
+            "sha256": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b"
+          },
+          {
+            "file": "native-android/engine/sequencer/coh_seq_playback.c",
+            "bytes": 10758,
+            "sha256": "2ef50d335651caef3538777273ed9f29c884b76a6ade5e683ffc2f5ba16caa5e"
+          },
+          {
+            "file": "native-android/engine/sequencer/coh_seq_playback.h",
+            "bytes": 3341,
+            "sha256": "eab4ad496200cfe7e471d2b795aa06a0b4402c95da157ca86da6d15ac87672bd"
+          },
+          {
+            "file": "native-android/engine/sequencer/coh_sequencer.c",
+            "bytes": 10444,
+            "sha256": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91"
+          },
+          {
+            "file": "native-android/engine/sequencer/coh_sequencer.h",
+            "bytes": 4676,
+            "sha256": "895b888ef2c4d8aa441c2a07b9ccaf0ac8c5b0affd548fe3dcda1ecf152c6f16"
+          },
+          {
+            "file": "native-android/engine/ui/coh_hud.c",
+            "bytes": 15700,
+            "sha256": "2a803451ba0ff34db41deadc7ced716554b0046889ae47786752413766ca8177"
+          },
+          {
+            "file": "native-android/engine/ui/coh_hud.h",
+            "bytes": 4225,
+            "sha256": "e36e19ecc3608ac1df81c988c64fd22f9a3a6e72999b59e0bf4e688aca0ebd7d"
+          },
+          {
+            "file": "native-android/engine/ui/coh_ui.c",
+            "bytes": 16624,
+            "sha256": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676"
+          },
+          {
+            "file": "native-android/engine/ui/coh_ui.h",
+            "bytes": 4879,
+            "sha256": "50267d8fa4a6e3a04bc917e62bf0d24599cc30b1292cd5caa65b22ec4b6f6870"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_android.c",
+            "bytes": 3213,
+            "sha256": "bedbcdf168bc654a25229e8239d2722ffd884b686d01b6124d897f6864c26ca8"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_android.h",
+            "bytes": 1501,
+            "sha256": "9358b55cb9d9775f17c01ab759551d0791c9ca922422cf3449698dde4120a562"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_atlas.c",
+            "bytes": 2130,
+            "sha256": "afd1e638f9dc77599186c2c6a8dd7ed6cb2d148545f58c7f35929f4436d2656b"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_atlas.h",
+            "bytes": 869,
+            "sha256": "c08ceafa1ba590f4a879d7bb0f82e6ac10c131d14fb541e110588f99529be81d"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_axis_navigation.c",
+            "bytes": 2012,
+            "sha256": "710e5c09b020537ce50a600aeaa3c2728a4b0bbfbcca2c9d00aef9bdd4adea5e"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_axis_navigation.h",
+            "bytes": 1289,
+            "sha256": "6e2da3d5e369544a1e62d33daa2cd62a1fc41191833d5a105f78a1684eb333d8"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_gles.c",
+            "bytes": 6748,
+            "sha256": "4d4e32fc099a3015076f605e04728742b6963dced8b7c0b3d551b5e2f11883bc"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_gles.h",
+            "bytes": 2162,
+            "sha256": "6078a168479024bf080f194c3ebb7e7b9c23583ebee0b5a618cd5607cfccdda0"
+          },
+          {
+            "file": "native-android/engine/ui/gameplay/coh_hud_quad.c",
+            "bytes": 1663,
+            "sha256": "b382b8ed76c9aeb6138f1c47d62abe1d892fae12bdb1f130e0296f51e6c39fd2"
+          },
+          {
+            "file": "native-android/engine/world/coh_world_stream.c",
+            "bytes": 14730,
+            "sha256": "762e98f449b4cce22d77ec576c9d65019e9a2739b7ecfde2fc8230d7770eb561"
+          },
+          {
+            "file": "native-android/engine/world/coh_world_stream.h",
+            "bytes": 3944,
+            "sha256": "5489ecb86fc84699f28a24461e7fcaf30a22a2dfa935c8f857b86020682cceaa"
+          },
+          {
+            "file": "native-android/include/coh_native_core.h",
+            "bytes": 2613,
+            "sha256": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106"
+          },
+          {
+            "file": "native-android/locomotion/coh_locomotion.c",
+            "bytes": 17276,
+            "sha256": "25ece1bc86284d8547f764eefc674594312488f11b036d96007fc909dc78de89"
+          },
+          {
+            "file": "native-android/locomotion/coh_locomotion.h",
+            "bytes": 4143,
+            "sha256": "6558da66f56f27ce6334921fe79fe6edeffd93e55edd321b97cd725dec2978c0"
+          },
+          {
+            "file": "native-android/material-probe/app/src/main/cpp/coh_mesh.c",
+            "bytes": 5349,
+            "sha256": "18f82e3ad598336f4876ba2ebb1afff6ca0ae77509960e8beb38672bb3fd4be1"
+          },
+          {
+            "file": "native-android/material-probe/app/src/main/cpp/coh_mesh.h",
+            "bytes": 1847,
+            "sha256": "afe72d7801eb89891f059f00076815d0c60351e8935489d0bba5ba2ff454579c"
+          },
+          {
+            "file": "native-android/motion/coh_motion.c",
+            "bytes": 6899,
+            "sha256": "857240b5eff8a0b88aa102826b03e1fb9318158b89c44487473e03f3a39a454b"
+          },
+          {
+            "file": "native-android/motion/coh_motion.h",
+            "bytes": 1875,
+            "sha256": "0e98ef6d00f07731f6f3ae88dff3540770303c41f7423a6ba8155ccc2ecdf716"
+          },
+          {
+            "file": "native-android/session-client/app/src/main/cpp/session_stream_qualify.c",
+            "bytes": 15891,
+            "sha256": "7b1233a768e5a908acd1704d6a297dc2b3d34b5abff0949f78898b6b95652c21"
+          },
+          {
+            "file": "native-android/session-client/app/src/main/cpp/session_stream_qualify.h",
+            "bytes": 1156,
+            "sha256": "615dc7fafc09793c105fa72ee3fcc48f9fe46041694898fedb360b0478dd6eb7"
+          },
+          {
+            "file": "native-android/session-client/app/src/main/cpp/session_stream_world.c",
+            "bytes": 14439,
+            "sha256": "8a75db4cbae73cbccf405bcdb2409186c17b17bbea6a87699d10a7964c5d4433"
+          },
+          {
+            "file": "native-android/session-client/app/src/main/cpp/session_stream_world.h",
+            "bytes": 1475,
+            "sha256": "a86f89abaef0058cd765fa055b891de7b0337de347da843d17297dc2900e1522"
+          },
+          {
+            "file": "native-android/src/byte_reader.h",
+            "bytes": 791,
+            "sha256": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1"
+          },
+          {
+            "file": "native-android/src/coh_assets.c",
+            "bytes": 3806,
+            "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+          },
+          {
+            "file": "native-android/src/coh_dds.c",
+            "bytes": 4055,
+            "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+          },
+          {
+            "file": "native-android/support-client/generated/support_font.h",
+            "bytes": 92725,
+            "sha256": "79b2bf96955bc1c87fd6f4f0504b22115a1a52973399663a9c66ec1e01b6e710"
+          },
+          {
+            "file": "native-android/support-client/src/offline_scene.c",
+            "bytes": 72047,
+            "sha256": "0c205bb517d51e3a69ef1a186f50ed1921234c6d6b4d26779d75403e4028cb3b"
+          },
+          {
+            "file": "native-android/support-client/src/support_animation.c",
+            "bytes": 4135,
+            "sha256": "4820beb97c7fb425c8a567cebfebff5c8bfd371e99a9c8d329faf5492e4af020"
+          },
+          {
+            "file": "native-android/support-client/src/support_animation.h",
+            "bytes": 1920,
+            "sha256": "c3e38f1739f3fe80df714195af0e78310fde1dbd2cc426a7de099882ad430096"
+          },
+          {
+            "file": "native-android/support-client/src/support_audio.c",
+            "bytes": 14757,
+            "sha256": "0c9044fc24fdc5c165ddc134476c6082372e3507544ae828549be7751af1535c"
+          },
+          {
+            "file": "native-android/support-client/src/support_audio.h",
+            "bytes": 2662,
+            "sha256": "8b7ac19c49c17a9e364d423452591fe9c60e96bf4e73e7fc274ab8879c4f426d"
+          },
+          {
+            "file": "native-android/support-client/src/support_bridge.c",
+            "bytes": 16131,
+            "sha256": "b4c33b631ae464c4f4792db721e7b826f0cab6445405eb6079a5c3a80a1d5ecd"
+          },
+          {
+            "file": "native-android/support-client/src/support_bridge.h",
+            "bytes": 2165,
+            "sha256": "e5e83b8c56002f94ddcf449505ebd9548079b295821ed8871ce47db47b724477"
+          },
+          {
+            "file": "native-android/support-client/src/support_physics.c",
+            "bytes": 3705,
+            "sha256": "4eb4729ec320e7442c1cb7abef9102949bcc9435a730c6db92811cbc8fa26982"
+          },
+          {
+            "file": "native-android/support-client/src/support_physics.h",
+            "bytes": 1797,
+            "sha256": "502a7d46667cebac99a2128c8cc20d57f81feca59d5ca8263bf8f4e47ee90819"
+          },
+          {
+            "file": "native-android/support-client/src/support_ui.c",
+            "bytes": 14621,
+            "sha256": "b64e23bb1d7a5603606bbe2c9df093c7b6fa124c4cd81aea9128f19830beb960"
+          },
+          {
+            "file": "native-android/support-client/src/support_ui.h",
+            "bytes": 2976,
+            "sha256": "a6f60d56d9a8bf174619985eeed1f0b7571e3ce68a757edd15e347a30d57a0fb"
+          },
+          {
+            "file": "native-android/walk/coh_walk.c",
+            "bytes": 15089,
+            "sha256": "998c64c472613cf6e8da38218a8d30bcbf49d29c273520180948d4a2e90c50be"
+          },
+          {
+            "file": "native-android/walk/coh_walk.h",
+            "bytes": 2885,
+            "sha256": "c7b29f43e1c4b71d39226f12ea3325826068ef961fc7c4ac81a5fd53566f90c5"
+          },
+          {
+            "file": "native-android/walk/source_ctri.c",
+            "bytes": 41795,
+            "sha256": "1862c65a355ddfa71d1264671effa36addc2a8a3497b7c0825465835603a5670"
+          },
+          {
+            "file": "native-android/walk/source_math.h",
+            "bytes": 5794,
+            "sha256": "90bb7698c2289531702523516640a5569ce249cec060ff36d0207780692cb272"
+          },
+          {
+            "file": "native-android/walk/source_tritri.c",
+            "bytes": 25477,
+            "sha256": "c3fabb12b9a31baac2b6f0bf83b9c0f9456941f897167524e5dfcd88837005c3"
+          },
+          {
+            "file": "native-android/walk/source_types.h",
+            "bytes": 2564,
+            "sha256": "ffc887a031439ac43c7f09184e1e43f3fc573cf3b6a72b20184ccba2adaa8021"
+          },
+          {
+            "file": "native-android/walk/source_world.c",
+            "bytes": 35313,
+            "sha256": "4225a8576a5a536cac44ab107cbfe9bdd7bd3d1ab04bbdb6c2679b375aec9d55"
+          },
+          {
+            "file": "native-android/walkable/coh_walkable_scene.c",
+            "bytes": 4469,
+            "sha256": "22b3941cab9c026e57b58c8f867b7565207afcf3561dc1a6246af0cfdfcc7aa0"
+          },
+          {
+            "file": "native-android/walkable/coh_walkable_scene.h",
+            "bytes": 1003,
+            "sha256": "ff34fccb1ac5cc6cef44c0acef50a6b9221376621e9a3dd0e7d7dbfb7dfbe31b"
+          },
+          {
+            "file": "native-android/world/coh_world.c",
+            "bytes": 7054,
+            "sha256": "9a914b7326e4852bd55827c58bab360cef2516f85268a25cdd4ede2cdfe39c92"
+          },
+          {
+            "file": "native-android/world/coh_world.h",
+            "bytes": 1505,
+            "sha256": "0453a36cb8bb24cfb88aa712147aba4b58cc226da54d59a09eb158ddc8588871"
+          },
+          {
+            "file": "native-android/world-probe/app/src/main/cpp/coh_world_scene.c",
+            "bytes": 2900,
+            "sha256": "e18593782d66b3584457fb0812a6c82c5785e6062e26248508d35c0b96157cf7"
+          },
+          {
+            "file": "native-android/world-probe/app/src/main/cpp/coh_world_scene.h",
+            "bytes": 840,
+            "sha256": "81989d9900e85146d46a98ae6df427a916dff59b08436f09e0a3762e8b98d739"
+          },
+          {
+            "file": "/tmp/coh-support-package-_rfy5ryr/generated/support_tray.h",
+            "bytes": 23068,
+            "sha256": "f65a714a85313f17a9357866dfed3a4ecbb3e4867c3d853305f6a64edd54f57a"
+          },
+          {
+            "file": "/tmp/coh-support-package-_rfy5ryr/generated/world_shader_sources.h",
+            "bytes": 56200,
+            "sha256": "2023c1745ae9c3fc5932c0a9fe8c82344a515098ddba2c84e78d01444db89c9a"
+          }
+        ],
+        "compiled_inputs_scope": "Compiler -MMD closure includes direct/indirect non-system headers and generated inputs; NDK system headers are bound by NDK revision."
+      },
+      "signer_certificate_sha256": "51c72fc0355533257734e5a6a7ea359e0bd59dcfb81d5e93ccd8171dbe0fba7b"
+    }
+  ],
+  "android_emulator_qualified": false,
+  "physical_thor_accepted": false,
+  "ndk": "Pkg.Desc = Android NDK\nPkg.Revision = 28.2.13676358\nPkg.BaseRevision = 28.2.13676358\nPkg.ReleaseName = r28c\n",
+  "build_tools": "35.0.0",
+  "platform": "android-35",
+  "signing": "separate disposable debug certificate"
+}

@@ -1,0 +1,223 @@
+{
+  "schema": 1,
+  "passed": true,
+  "source_commit": "c14a831b55163dbcf2b3e63b4c52805785fceafa",
+  "run_id": 38765087744,
+  "artifact_id": 11990195263,
+  "artifact_url": "https://github.com/Russianranger/coh-android/actions/runs/38765087744/artifacts/11990195263",
+  "archive_sha256": "8cbf1be4b0fe880d341b3eb96f476f49db4879230349fda92cfe088e03181c81",
+  "archive_crc_verified": true,
+  "runtime_header_identities_rechecked": 106,
+  "emulator_scenarios_passed": 13,
+  "installed_emulator_apk_identity_verified": true,
+  "artifacts": [
+    {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-arm64.apk",
+      "bytes": 2413935,
+      "sha256": "26bad28b029fef86931108b531f883c9a948a16aff1dc2cdba9d8447c6c4d935",
+      "certificate_sha256": "51c72fc0355533257734e5a6a7ea359e0bd59dcfb81d5e93ccd8171dbe0fba7b",
+      "native_sha256": "daadb4a75a9a6c11743352ecbde8d5dcfb28dc01b3117c6cc7a8e7e786be4552",
+      "signature_verified": true,
+      "packaged_assets_verified": true,
+      "native_local_hosted_byte_identical": true
+    },
+    {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-emulator-x86_64.apk",
+      "bytes": 2463084,
+      "sha256": "cc05eee0c826c57f2d21b534a37d868fe8a9ea51986278b48d898a6f7069ce2c",
+      "certificate_sha256": "51c72fc0355533257734e5a6a7ea359e0bd59dcfb81d5e93ccd8171dbe0fba7b",
+      "native_sha256": "6597743af7cde0cdb6c8eafc8e262f22c9ec216e80ab80cfd02a1b59d641c74b",
+      "signature_verified": true,
+      "packaged_assets_verified": true,
+      "native_local_hosted_byte_identical": true
+    }
+  ],
+  "final_observations": {
+    "frames": 1006,
+    "contexts_started": 3,
+    "contexts_completed": 2,
+    "gl_errors": 0,
+    "tf_mismatches": 0,
+    "support_failures": 0,
+    "perf_invalid_samples": 0,
+    "audio": {
+      "initialized": 1,
+      "running": 1,
+      "last_status": 0,
+      "device_error": 0,
+      "opens": 4,
+      "closes": 3,
+      "decode_calls": 7700,
+      "diagnostics_valid": 0,
+      "rendered_frames": 2279240,
+      "underrun_frames": 0,
+      "callback_calls": 4538,
+      "maximum_callback_ns": 10461423
+    },
+    "audio_environment": {
+      "focus_allowed": true,
+      "route_generation": 3,
+      "route_reopens": 2,
+      "listener_updates": 1,
+      "recovered_device_errors": 0,
+      "last_device_error": 0,
+      "listener_position": [
+        582.5,
+        81.3050156,
+        -1358.28088
+      ],
+      "listener_right": [
+        1,
+        0,
+        4.7683713e-07
+      ]
+    },
+    "hud": {
+      "frames": 1007,
+      "gl_errors": 0,
+      "power_uses": 3,
+      "chat_submits": 1,
+      "character_selections": 1,
+      "intents": 6,
+      "surface_recreates": 3,
+      "generation": 9
+    },
+    "observations": {
+      "schema": 1,
+      "module": "coh-native-perf-bindings",
+      "counters": {
+        "copied_bytes": {
+          "known": true,
+          "mode": "total",
+          "generation": 1,
+          "owner_total": 95430144,
+          "observations": 1011,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "upload_bytes": {
+          "known": true,
+          "mode": "delta",
+          "generation": 0,
+          "owner_total": 178956656,
+          "observations": 2014,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "draw_calls": {
+          "known": true,
+          "mode": "delta",
+          "generation": 0,
+          "owner_total": 85304,
+          "observations": 2014,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "state_binds": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "skinned_vertices": {
+          "known": true,
+          "mode": "total",
+          "generation": 1,
+          "owner_total": 1952356,
+          "observations": 1011,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "collision_tests": {
+          "known": true,
+          "mode": "delta",
+          "generation": 0,
+          "owner_total": 2994,
+          "observations": 1497,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "asset_hits": {
+          "known": true,
+          "mode": "delta",
+          "generation": 0,
+          "owner_total": 8,
+          "observations": 1007,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "asset_misses": {
+          "known": true,
+          "mode": "delta",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 1007,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "asset_evictions": {
+          "known": true,
+          "mode": "delta",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 1007,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "readbacks": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "explicit_waits": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        },
+        "allocations": {
+          "known": false,
+          "mode": "unknown",
+          "generation": 0,
+          "owner_total": 0,
+          "observations": 0,
+          "rebases": 0,
+          "rejected": 0
+        }
+      },
+      "memory": {
+        "module_accounted": {
+          "known": true,
+          "current_bytes": 1936184,
+          "peak_bytes": 1936184,
+          "observations": 73
+        },
+        "process_rss": {
+          "known": false,
+          "current_bytes": 0,
+          "peak_bytes": 0,
+          "observations": 0
+        },
+        "process_pss": {
+          "known": false,
+          "current_bytes": 0,
+          "peak_bytes": 0,
+          "observations": 0
+        }
+      }
+    },
+    "active_foreground_ms": 63827
+  },
+  "scope": "x86_64 bounded offline emulator execution and signed ARM64 build; no physical Thor, actual controller/HAT disconnect or audible route acceptance",
+  "physical_thor_accepted": false
+}

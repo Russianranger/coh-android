@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "workers_actually_concurrent": 6,
+  "source_build_sha": "c14a831b55163dbcf2b3e63b4c52805785fceafa",
+  "workstreams": [
+    {
+      "worker": "A",
+      "scope": "Support qualification/recovery",
+      "published_commits": "fde1ad0804 / 26f1d7d872",
+      "result": "Recovered exact old artifact/signatures/assets; source-header binding and runtime identity; nine audio fault scenarios; bounded JSON"
+    },
+    {
+      "worker": "B",
+      "scope": "Gate31 appearance",
+      "published_commits": "eacf8bf415",
+      "result": "402 body/31 Wretch models,1,326,591 source scalars;1,206 neutral part poses;132,840 host GLES components;full bodies open"
+    },
+    {
+      "worker": "C",
+      "scope": "Gates34-36 UI",
+      "published_commits": "3b886f3d9b / 72b9fcf755",
+      "result": "Original tray ring+numerals,18,504 GPU channel comparisons;analog focus hysteresis/repeat;ability icons open"
+    },
+    {
+      "worker": "D",
+      "scope": "Gate32 physics",
+      "published_commits": "120fc1be5a",
+      "result": "10,566 checks;four source-qualified graded regions;160 exact WALK ticks;coverage/refcounts;larger authentic maps open"
+    },
+    {
+      "worker": "E",
+      "scope": "Gate33 animation",
+      "published_commits": "e54e715aaa",
+      "result": "14,648,961 actor checks;3 genuine families;9,000 interleaved actor ticks;6,636 cues;visible multiple actors open"
+    },
+    {
+      "worker": "F",
+      "scope": "Gates43-45 audio/perf",
+      "published_commits": "c70a8f9df7",
+      "result": "53,090 checks;10,000 source spatial comparisons;generation-aware observed counters;physical latency/FPS open"
+    }
+  ],
+  "new_physical_thor_acceptance": false,
+  "accepted_session0_3_changed": false,
+  "workflow": "https://github.com/Russianranger/coh-android/actions/runs/38765087744/artifacts/11990195263"
+}
