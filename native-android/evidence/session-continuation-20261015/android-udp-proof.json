@@ -1,0 +1,19 @@
+{
+  "schema": "coh-native-android-socket-boundary-v1",
+  "passed": true,
+  "android_api": "33",
+  "abi": "x86_64",
+  "binary_sha256": "da568f94480b72c07a069ef26ce6c0a491616dcc2f0603ebb58cd6518f8e8daf",
+  "native": {
+    "checks": 886,
+    "negative_cases": 49,
+    "socket_scenarios": 16,
+    "actual_os_udp": true,
+    "socket_leak_check": true,
+    "live_server_interoperability": false
+  },
+  "scope": "New native UDP owner/lifecycle on Android shell; synthetic peer, no APK, real shard, account login or world session.",
+  "arm64_executed": false,
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false
+}

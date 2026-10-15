@@ -57,13 +57,36 @@ or authenticated server transcript was available.
 | Authentic audio worker qualification | 53,980 checks, 5,000 source comparisons, zero callback allocations; 19 matched lifecycle backend opens/closes and three latched failures |
 | Coordinator crypto/transport/replication contract | Synthetic cross-module host integration; see recorded receipt |
 | Combined ARM64 | NDK 28.2.13676358, API 26, ELF64 AArch64 with Bionic/GLES/AAudio linkage and no undefined symbols |
-| New Android socket runtime | Separate focused workflow executes only the new native socket test; its result is recorded separately from host and build receipts |
+| New Android socket runtime | Android 13/API 33 x86_64 passed all 886 checks, 49 negatives and 16 synthetic-peer socket scenarios, including descriptor cleanup. No APK, account, actual shard or ARM64 device execution. |
 | Gate 25/26/27 actual server acceptance | Pending |
 | New Thor acceptance | Pending; gates 22–24 still require the unchanged 0.3.0 test |
 
 LeakSanitizer task enumeration is unavailable in this execution environment;
 ASan memory-access and UBSan checks ran. Explicit socket descriptor and wrapped
 audio allocation cleanup checks remain enabled. No LSan pass is claimed.
+The clean hosted runner additionally completed its audio checks with LSan
+enabled; that job explicitly omitted the recovered authentic audio corpus.
+Authentic decoder/mixer parity remains separately recorded by the worker.
+
+The [successful hosted session workflow 38696578546](https://github.com/Russianranger/coh-android/actions/runs/38696578546)
+qualifies source `1fa4f080b74846602310ce71c9713eb6471384d4`. Its
+[host/ARM64 artifact](https://github.com/Russianranger/coh-android/actions/runs/38696578546/artifacts/11954530644)
+and [Android socket artifact](https://github.com/Russianranger/coh-android/actions/runs/38696578546/artifacts/11954686503)
+were downloaded and their archive digests independently checked. The hosted
+combined ARM64 library is byte-identical to the local library: SHA256
+`0c1b6849503de70f4767a1ed9d69f17e7e85e08f2f638b1eb34edc99cb67b5e4`.
+The [portable core workflow 38696578514](https://github.com/Russianranger/coh-android/actions/runs/38696578514)
+also passed. [Hosted receipts](evidence/session-continuation-20261015/hosted-qualification.json)
+preserve exact source, binary, artifact and execution identities.
+
+The first two new hosted attempts failed because the audio check implicitly
+used an earlier task's scratch corpus directories. The coordinator now requires
+explicit `--audio-codec-root` and `--audio-asset-root` together for that scope;
+otherwise it runs explicitly partial source/lifecycle checks. A separate review
+also corrected the boundary wrapper to validate the C driver's actual explicit
+result fields. Those driver fixes left the native ARM64 library unchanged.
+The [driver recovery receipt](evidence/session-continuation-20261015/qualification-driver-recovery.json)
+and original hosted error remain alongside the successful evidence.
 
 The unchanged renderer also passed host source equations, real Mesa GLES output
 and context recreation, plus ARM64 linkage; the accepted packet and UDP kernels

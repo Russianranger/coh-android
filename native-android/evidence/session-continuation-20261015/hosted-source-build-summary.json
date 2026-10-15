@@ -1,0 +1,457 @@
+{
+  "schema": "coh-native-session-continuation-v1",
+  "passed": true,
+  "modules": [
+    {
+      "module": "audio",
+      "passed": true,
+      "exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/audio/check.py",
+        "--source-root",
+        "/home/runner/work/coh-android/coh-android",
+        "--output",
+        "/home/runner/work/coh-android/coh-android/native-android/results/session-protocol/audio.json",
+        "--sanitize",
+        "--no-authentic"
+      ],
+      "elapsed_host_seconds": 8.95447282500001
+    },
+    {
+      "module": "auth",
+      "passed": true,
+      "exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/auth/check.py",
+        "--source-root",
+        "/home/runner/work/coh-android/coh-android",
+        "--output",
+        "/home/runner/work/coh-android/coh-android/native-android/results/session-protocol/auth.json",
+        "--sanitize"
+      ],
+      "elapsed_host_seconds": 4.433057749
+    },
+    {
+      "module": "network",
+      "passed": true,
+      "exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/network/check.py",
+        "--source-root",
+        "/home/runner/work/coh-android/coh-android",
+        "--output",
+        "/home/runner/work/coh-android/coh-android/native-android/results/session-protocol/network.json",
+        "--sanitize"
+      ],
+      "elapsed_host_seconds": 6.6388286429999965
+    },
+    {
+      "module": "replication",
+      "passed": true,
+      "exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/replication/check.py",
+        "--source-root",
+        "/home/runner/work/coh-android/coh-android",
+        "--output",
+        "/home/runner/work/coh-android/coh-android/native-android/results/session-protocol/replication.json",
+        "--sanitize"
+      ],
+      "elapsed_host_seconds": 3.936640036
+    }
+  ],
+  "android_emulator_qualified": false,
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false,
+  "authenticated_account": false,
+  "live_world_session": false,
+  "accepted_apk_rebuilt": false,
+  "authentic_audio_corpus_requested": false,
+  "cross_module_contract": {
+    "passed": true,
+    "checks": 45,
+    "encrypted_netlink_contract": true,
+    "replication_authorization_guard": true,
+    "real_server": false,
+    "authenticated_account": false,
+    "live_world": false
+  },
+  "combined-host": {
+    "schema": "coh-native-engine-build-v1",
+    "passed": true,
+    "compiler": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "command": [
+      "gcc",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-I/home/runner/work/coh-android/coh-android/native-android/include",
+      "-I/home/runner/work/coh-android/coh-android/native-android/src",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-shared",
+      "-fPIC",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/assets/coh_asset_loader.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/assets/coh_asset_geo.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/renderer/coh_renderer.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_frame.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_zip.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_udp.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/auth/coh_auth.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/replication/coh_replication.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/session/coh_session_crypto.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/sequencer/coh_sequencer.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/ui/coh_ui.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/audio/coh_mixer.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_assets.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_dds.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_blowfish.c",
+      "/home/runner/work/coh-android/coh-android/native-android/protocol/coh_protocol.c",
+      "/home/runner/work/coh-android/coh-android/native-android/animation/coh_animation.c",
+      "/home/runner/work/coh-android/coh-android/native-android/audio/coh_audio.c",
+      "-lz",
+      "-lm",
+      "-Wl,--no-undefined",
+      "-o",
+      "/home/runner/work/coh-android/coh-android/native-android/results/session-protocol/combined-host/libcoh_native_engine.so"
+    ],
+    "android_arm64_bionic_cross_compiled": false,
+    "android_executed": false,
+    "physical_thor_qualified": false,
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "library": {
+      "name": "libcoh_native_engine.so",
+      "bytes": 2194128,
+      "sha256": "6dede9650509cb11d6dc9846c6727cbced27b19ec950ab26850fed3cea643c68"
+    },
+    "sources": [
+      {
+        "path": "engine/assets/coh_asset_loader.c",
+        "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b"
+      },
+      {
+        "path": "engine/assets/coh_asset_geo.c",
+        "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+      },
+      {
+        "path": "engine/renderer/coh_renderer.c",
+        "sha256": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00"
+      },
+      {
+        "path": "engine/network/coh_net.c",
+        "sha256": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f"
+      },
+      {
+        "path": "engine/network/coh_net_frame.c",
+        "sha256": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+      },
+      {
+        "path": "engine/network/coh_net_zip.c",
+        "sha256": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8"
+      },
+      {
+        "path": "engine/network/coh_net_udp.c",
+        "sha256": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a"
+      },
+      {
+        "path": "engine/auth/coh_auth.c",
+        "sha256": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d"
+      },
+      {
+        "path": "engine/replication/coh_replication.c",
+        "sha256": "29a066edcf42699f63c84007cbda66a2f390e4597d4607e33be56e420828f1f6"
+      },
+      {
+        "path": "engine/session/coh_session_crypto.c",
+        "sha256": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1"
+      },
+      {
+        "path": "engine/sequencer/coh_sequencer.c",
+        "sha256": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91"
+      },
+      {
+        "path": "engine/ui/coh_ui.c",
+        "sha256": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676"
+      },
+      {
+        "path": "engine/audio/coh_mixer.c",
+        "sha256": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444"
+      },
+      {
+        "path": "src/coh_assets.c",
+        "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+      },
+      {
+        "path": "src/coh_dds.c",
+        "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+      },
+      {
+        "path": "src/coh_blowfish.c",
+        "sha256": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+      },
+      {
+        "path": "protocol/coh_protocol.c",
+        "sha256": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea"
+      },
+      {
+        "path": "animation/coh_animation.c",
+        "sha256": "98865ae06e3d8eeeb97383e3e36295d715ec7c2556cfd03129dbc79275cefdbb"
+      },
+      {
+        "path": "audio/coh_audio.c",
+        "sha256": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+      }
+    ],
+    "scope": "Combined opt-in libraries only. No APK, JNI, server exchange or gameplay performance claim.",
+    "host_integration": {
+      "passed": true,
+      "groups": 6,
+      "authentic_compressed_ownership": false,
+      "scope": "cross-module ownership, identity, copied audio, UI binding, framing and lifecycle contracts; mocked renderer and synthetic network payload"
+    },
+    "leak_sanitizer_executed": false,
+    "leak_sanitizer_limitation": "LSan task enumeration is unavailable in this execution environment."
+  },
+  "combined-arm64": {
+    "schema": "coh-native-engine-build-v1",
+    "passed": true,
+    "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+    "command": [
+      "/tmp/native-session-ndk/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-I/home/runner/work/coh-android/coh-android/native-android/include",
+      "-I/home/runner/work/coh-android/coh-android/native-android/src",
+      "-shared",
+      "-fPIC",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/assets/coh_asset_loader.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/assets/coh_asset_geo.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/renderer/coh_renderer.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_frame.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_zip.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/network/coh_net_udp.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/auth/coh_auth.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/replication/coh_replication.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/session/coh_session_crypto.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/sequencer/coh_sequencer.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/ui/coh_ui.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/audio/coh_mixer.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_assets.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_dds.c",
+      "/home/runner/work/coh-android/coh-android/native-android/src/coh_blowfish.c",
+      "/home/runner/work/coh-android/coh-android/native-android/protocol/coh_protocol.c",
+      "/home/runner/work/coh-android/coh-android/native-android/animation/coh_animation.c",
+      "/home/runner/work/coh-android/coh-android/native-android/audio/coh_audio.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/renderer/coh_renderer_gles.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/audio/coh_mixer_aaudio.c",
+      "/home/runner/work/coh-android/coh-android/native-android/engine/audio/coh_audio_session.c",
+      "-lz",
+      "-lm",
+      "-lGLESv3",
+      "-laaudio",
+      "-Wl,--no-undefined",
+      "-o",
+      "/home/runner/work/coh-android/coh-android/native-android/results/session-protocol/combined-arm64/libcoh_native_engine.so"
+    ],
+    "android_arm64_bionic_cross_compiled": true,
+    "android_executed": false,
+    "physical_thor_qualified": false,
+    "sanitizers": [],
+    "library": {
+      "name": "libcoh_native_engine.so",
+      "bytes": 188760,
+      "sha256": "0c1b6849503de70f4767a1ed9d69f17e7e85e08f2f638b1eb34edc99cb67b5e4"
+    },
+    "sources": [
+      {
+        "path": "engine/assets/coh_asset_loader.c",
+        "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b"
+      },
+      {
+        "path": "engine/assets/coh_asset_geo.c",
+        "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+      },
+      {
+        "path": "engine/renderer/coh_renderer.c",
+        "sha256": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00"
+      },
+      {
+        "path": "engine/network/coh_net.c",
+        "sha256": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f"
+      },
+      {
+        "path": "engine/network/coh_net_frame.c",
+        "sha256": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+      },
+      {
+        "path": "engine/network/coh_net_zip.c",
+        "sha256": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8"
+      },
+      {
+        "path": "engine/network/coh_net_udp.c",
+        "sha256": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a"
+      },
+      {
+        "path": "engine/auth/coh_auth.c",
+        "sha256": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d"
+      },
+      {
+        "path": "engine/replication/coh_replication.c",
+        "sha256": "29a066edcf42699f63c84007cbda66a2f390e4597d4607e33be56e420828f1f6"
+      },
+      {
+        "path": "engine/session/coh_session_crypto.c",
+        "sha256": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1"
+      },
+      {
+        "path": "engine/sequencer/coh_sequencer.c",
+        "sha256": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91"
+      },
+      {
+        "path": "engine/ui/coh_ui.c",
+        "sha256": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676"
+      },
+      {
+        "path": "engine/audio/coh_mixer.c",
+        "sha256": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444"
+      },
+      {
+        "path": "src/coh_assets.c",
+        "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+      },
+      {
+        "path": "src/coh_dds.c",
+        "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+      },
+      {
+        "path": "src/coh_blowfish.c",
+        "sha256": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+      },
+      {
+        "path": "protocol/coh_protocol.c",
+        "sha256": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea"
+      },
+      {
+        "path": "animation/coh_animation.c",
+        "sha256": "98865ae06e3d8eeeb97383e3e36295d715ec7c2556cfd03129dbc79275cefdbb"
+      },
+      {
+        "path": "audio/coh_audio.c",
+        "sha256": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+      },
+      {
+        "path": "engine/renderer/coh_renderer_gles.c",
+        "sha256": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c"
+      },
+      {
+        "path": "engine/audio/coh_mixer_aaudio.c",
+        "sha256": "bddfdbcbb0564be3a99ec893cfa72ee6f1896dc71f08f0eb392369fce7bdd8ae"
+      },
+      {
+        "path": "engine/audio/coh_audio_session.c",
+        "sha256": "646e388250ec4d9954fb019bf9d4f6ce780643e73b8ddd870c77125a41a87b9b"
+      }
+    ],
+    "scope": "Combined opt-in libraries only. No APK, JNI, server exchange or gameplay performance claim."
+  },
+  "android_arm64_built": true,
+  "android_crypto_provider_linked": false,
+  "crypto_provider_scope": "OpenSSL host backend exercised; portable callback bridge built for Android without a selected crypto backend.",
+  "source_sha256": {
+    "engine/assets/check.py": "4e7162ccf0e175056890cc9adc572d1b90b7f06a5bf0ad881529ef3577dc3ceb",
+    "engine/assets/coh_asset_audio.c": "f097e778174b63570a7b695d0d0e830a1cf6f555b856701ff593aa0d021f55ba",
+    "engine/assets/coh_asset_audio.h": "904379620dfc0f55bd2380f98a45d36e4410efaf709e8e3bd95e58d0efe619be",
+    "engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "engine/assets/coh_asset_geo.h": "aaf007c4baf9b31df618f00b54c5565c5c5b954fed3ab89f755687e5ac36536b",
+    "engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "engine/assets/coh_asset_loader.h": "54e3af473d7b0ea4c6dbc8e1dffa126e531eb4fa9884fb4ce8802a7678a31b36",
+    "engine/assets/tests/harness.c": "671cbd463cda7e708648c9514b107ad687a3ed50f23fdacbc4db3b2cbc1eb24e",
+    "engine/audio/android_build.py": "f02bbc8d141dbf43a978752d4abddb5b0a443b19515df59868c40bbb4865fb62",
+    "engine/audio/check.py": "5df014ca476a9481b1634adc36302aace541dc7df653c5fdce3cc415a03c3000",
+    "engine/audio/coh_audio_session.c": "646e388250ec4d9954fb019bf9d4f6ce780643e73b8ddd870c77125a41a87b9b",
+    "engine/audio/coh_audio_session.h": "38f96874b0661f187f9a849503017916f80091a117b1b795ff74e9f348f0a2b8",
+    "engine/audio/coh_mixer.c": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444",
+    "engine/audio/coh_mixer.h": "51ad20370cc75b3edaa93997c9ff4cdb9546e5485521e65daf117522866fc389",
+    "engine/audio/coh_mixer_aaudio.c": "bddfdbcbb0564be3a99ec893cfa72ee6f1896dc71f08f0eb392369fce7bdd8ae",
+    "engine/audio/coh_mixer_aaudio.h": "34cdee21c5486f53fbfd78cf8bccbf2ed7db4d6ebb0268906b77f5e25f07c489",
+    "engine/audio/host-shim/aaudio/AAudio.h": "5759785dce003e7539a284d6a2fabaeac1e706f5c835f6acad42aa30c0d4de99",
+    "engine/audio/test_aaudio.c": "21e2b5345df21f50d9013399a8651133da22ead8025d5c3abe4cee6a0d5f6523",
+    "engine/audio/test_mixer.c": "9dc1090d29e421c76b55de2d16bbf56ee2e70693320244a69fc17f3f9e3d8ff9",
+    "engine/auth/check.py": "de11e837cfcc0d730bb2f95d12b68743c60071175533b7b42d28096e73194f01",
+    "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "engine/auth/coh_auth.h": "0e4af13d48fc7076aa5e4a94c395c1771e43625f2cfeebec3ed76bdde8357e0d",
+    "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+    "engine/auth/tests/oracle_shim.c": "f2f877a9fb2c0e80b4019038bed0b1cb00a70bd9f83b1bb97d13a52c93b3e65b",
+    "engine/auth/tests/test_auth.c": "db2193b84cb703ef5f2be9ed744d60775c874911f15cbbebf782310c4093772c",
+    "engine/bridge/check.py": "9a4c8ddfc86c2d6d99c5f2156047f94d4af8a4c90eb7b06fa92804c35ffb372d",
+    "engine/bridge/coh_asset_render.c": "50524a72baa219033a01073135ef4b61b8dd289c634d1be6cb85394210f0e983",
+    "engine/bridge/coh_asset_render.h": "c69090c79b78f302713834b21f0c9a59acb15722598369b0efe67f0ef4fe7f87",
+    "engine/bridge/tests/test_bridge.c": "0f7afdbf91dcf4ca73b3ea5002a3c16428dbb509de34d2e02878ad74f72273da",
+    "engine/build.py": "d3b917005a1b914d954e1c2b91eed5092836ea90eb9ec753795478db2b44327a",
+    "engine/check_all.py": "1be6adda4ad4723706251df8041c4f5d4380163cf13b7b776c83fac543570d1b",
+    "engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "engine/network/check.py": "e50d3d370d6ec3aba71c44f2b5b9bb3be281e259950b350801821855438aa614",
+    "engine/network/coh_net.c": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f",
+    "engine/network/coh_net.h": "24f59b2f1274e80111d7ce73876dded97a00d97f4e86f61c27ad8fe44139ac7c",
+    "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "engine/network/coh_net_udp.c": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a",
+    "engine/network/coh_net_udp.h": "a45eea7f2435aed3403e12ba1e5b2e69716d18acaa9f5f6b708616c41146763d",
+    "engine/network/coh_net_zip.c": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8",
+    "engine/network/tests/test_net.c": "a234a07b641ae6ad637bf2a91909edc8ab7291ec1ce8e0abf77555ce0eba05fe",
+    "engine/network/tests/test_udp.c": "1d0b250a0d828e712b0b16f3b7a77a9ab7c14a9817490105d242fec4ca104525",
+    "engine/qualify_session.py": "9550bbe1cee7ae485595f7c626da2a13dc5861ad439f102e1cb9765d989385c5",
+    "engine/renderer/check.py": "cb6737113e9d9813938e83534cb7882c65d3a8dd4ed13fcfba2521f62b37dd68",
+    "engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "engine/renderer/coh_renderer.h": "793dd0913aa34980a48bbfde8311cc0973c0d156c1784ec2d9d94ed369675fab",
+    "engine/renderer/coh_renderer_gles.c": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c",
+    "engine/renderer/coh_renderer_gles.h": "d8bcb8107e4f61aeaf1e6270da3ee41ec057d3be460e1dfe4a34a4c48baed9ae",
+    "engine/renderer/coh_renderer_shaders.h": "a55a50501c7936a13a916f53eaa62de5b57095360f4936e530348ec4345db74b",
+    "engine/renderer/embed_shaders.py": "de596b01aecdba37181dd5769f73138a66664daf96160e61333b03f6ee255890",
+    "engine/renderer/shaders/rigid.vert": "c192794e6a489eedbb4af34baf7ec8a9563b745152025531d0302d652f29d2f6",
+    "engine/renderer/tests/bindings.py": "5b799b7a3ea006aedbd149ca3fb51891da806fa93bdc043b9e729d3295bda7d5",
+    "engine/renderer/tests/gpu_check.py": "4f454c836c360def83adf044a50137e07ec7f3a3f94c0390a023f06c89b726e9",
+    "engine/renderer/tests/oracle.py": "59e883dc98178e00995bbea72ceaf50bb544bbc23d7a554db7fe656a5872ef5b",
+    "engine/renderer/tests/selftest.c": "9de1806797d65c4b6f2082ba4df3e08eaaf07bb822aa0270c09c2a37fc4a29a4",
+    "engine/replication/check.py": "009b64cf6d7d471d72acba4f29381f59f3803133691807551d02e8201aac22a4",
+    "engine/replication/coh_replication.c": "29a066edcf42699f63c84007cbda66a2f390e4597d4607e33be56e420828f1f6",
+    "engine/replication/coh_replication.h": "ff914b60558ce807e4ff1480ca9bb7ae21efbaf4322a8b0cd7961730e6b6ef91",
+    "engine/replication/test_replication.c": "3506a76398be0a43bb97735d440a54e3d8b54b42c78b7bd1bcea9f14b0ac0a96",
+    "engine/sequencer/coh_sequencer.c": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91",
+    "engine/sequencer/coh_sequencer.h": "895b888ef2c4d8aa441c2a07b9ccaf0ac8c5b0affd548fe3dcda1ecf152c6f16",
+    "engine/sequencer/tests/test_sequencer.c": "3f1dad6193c78d1f5e0508f1a306f6b5eec46f73252f06e40e3792062b2ff1e7",
+    "engine/sequencer/tools/check.py": "30bf1a812a1c0f458a629854ff9e3e67745aa3d58e89b9ca3dbdf7eb0c6c1314",
+    "engine/sequencer/tools/original_oracle.py": "fae84392019f34d1b0675b1593787f12da403169440fe91c3c7212863eef2805",
+    "engine/sequencer/tools/source_fixture.py": "88ce4bef0eb0318e750df2a7483262849e71b8a7a53b76482430c0e894a84852",
+    "engine/session/android_boundary.py": "48ae84812807734a6157ba0de114a942c9a5d38586bc2281c89132149dce0a7c",
+    "engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+    "engine/session/coh_session_crypto.h": "8bf88344744196d0a23d91a9737548a51e8cc318a9c7b03920e1e6d295717b57",
+    "engine/session/test_contract.c": "aa7966001a910e257c00c245f41520df939426ce0360defa58c927f936f05a35",
+    "engine/tests/integration.c": "3af348a480278cf5cd02e6705942a70ac25abd07e42de75251aad8e22eb82a74",
+    "engine/ui/check.py": "528b0ab95d7443a6ff5d4a206ed0f842c3956817e2ff3415e551e4d5d9c7b22b",
+    "engine/ui/coh_ui.c": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676",
+    "engine/ui/coh_ui.h": "50267d8fa4a6e3a04bc917e62bf0d24599cc30b1292cd5caa65b22ec4b6f6870",
+    "engine/ui/tests/oracle_bridge.c": "0766ff3214c6ae09d4b1f9b874d3aacd6ce756ef252eb6cde53222e23596b6c0",
+    "engine/ui/tests/ui_test.c": "18c57c610c5fd21c7c60fba9e0f7b4a7391e29cd367609d71f4380de7a3efd4d",
+    "engine/world/check.py": "3bfee6f7825f57fae14c6cbe6d6aa02cf8b78019dd6a383fc795ba53cc1515ed",
+    "engine/world/coh_world_stream.c": "762e98f449b4cce22d77ec576c9d65019e9a2739b7ecfde2fc8230d7770eb561",
+    "engine/world/coh_world_stream.h": "5489ecb86fc84699f28a24461e7fcaf30a22a2dfa935c8f857b86020682cceaa",
+    "engine/world/test_walkable.c": "462ef73d7e364437f40b3a712d0011cbbc342a7d6d25e3ce2d51b613c23b67f8",
+    "engine/world/test_world.c": "93e72e70543af86bd3b4787c0838ec1543f4f5085b204fbadad93f101f623aea"
+  }
+}

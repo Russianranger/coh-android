@@ -1,0 +1,70 @@
+{
+  "schema": "coh-native-session-hosted-qualification-v1",
+  "source_commit": "1fa4f080b74846602310ce71c9713eb6471384d4",
+  "runtime_source_commit": "01979b1ebc7d13c3051e9550855968812d6b4af1",
+  "run_id": 38696578546,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/38696578546",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 116294425525,
+      "name": "host-and-arm64",
+      "conclusion": "success"
+    },
+    {
+      "id": 116294944463,
+      "name": "android-socket-boundary",
+      "conclusion": "success"
+    }
+  ],
+  "core_run_id": 38696578514,
+  "core_conclusion": "success",
+  "artifacts": [
+    {
+      "id": 11954530644,
+      "name": "native-session-protocol-contracts",
+      "sha256": "6cfba879a4871812f4ffd2b98a936db8ff41a51bb00287434f03828ee0e56cd6"
+    },
+    {
+      "id": 11954686503,
+      "name": "native-session-android-socket-evidence",
+      "sha256": "28305ba8def10e0379ef0a6c1455be84002b2fb1df36c54c1ed2e06277120dc3"
+    }
+  ],
+  "artifact_archives_downloaded_and_sha256_verified": true,
+  "combined_arm64_library_sha256": "0c1b6849503de70f4767a1ed9d69f17e7e85e08f2f638b1eb34edc99cb67b5e4",
+  "local_and_hosted_arm64_library_identical": true,
+  "local_and_hosted_emulator_test_sources_identical": true,
+  "emulator_test_binary_note": "Standalone test embeds absolute __FILE__ diagnostic paths; local and hosted executables are not claimed byte-identical. Executed binary matches exact hosted build receipt.",
+  "android_socket_proof": {
+    "schema": "coh-native-android-socket-boundary-v1",
+    "passed": true,
+    "android_api": "33",
+    "abi": "x86_64",
+    "binary_sha256": "da568f94480b72c07a069ef26ce6c0a491616dcc2f0603ebb58cd6518f8e8daf",
+    "native": {
+      "checks": 886,
+      "negative_cases": 49,
+      "socket_scenarios": 16,
+      "actual_os_udp": true,
+      "socket_leak_check": true,
+      "live_server_interoperability": false
+    },
+    "scope": "New native UDP owner/lifecycle on Android shell; synthetic peer, no APK, real shard, account login or world session.",
+    "arm64_executed": false,
+    "physical_thor_accepted": false,
+    "actual_server_interoperability_verified": false
+  },
+  "accepted_apk_rebuilt": false,
+  "gates22_24_thor_accepted": false,
+  "gates25_27_complete": false,
+  "actual_server_interoperability_verified": false,
+  "authenticated_account": false,
+  "native_live_world": false,
+  "superseded_failed_session_runs": [
+    38695968808,
+    38696210944
+  ],
+  "scope": "Source/host/sanitizer, ARM64 build and Android13 x86_64 socket owner boundary. No application JNI/lifecycle, Android crypto, real shard, login, live entity spawn or Thor acceptance."
+}
