@@ -1,0 +1,54 @@
+{
+  "male/1_2punch": {
+    "sha256": "d3e1980892b43a0ff17adf49cd57c7d70626b3be4f63fa325f17e50e157d3051",
+    "bytes": 13266
+  },
+  "male/jump_n_smash": {
+    "sha256": "82e1e5cc509d52ad438c6229562d06adf4431a566e3bbca341035903e47fec5a",
+    "bytes": 21246
+  },
+  "male/fallout": {
+    "sha256": "062960991dfb7c1c34d9cfd1415825cbefc06934eb0ae6f87407306f971aa27c",
+    "bytes": 24218
+  },
+  "male/a_yes_wave": {
+    "sha256": "851c567a72e8cf6157c1e25cbae19811c8a745f873ddb989c80865481d66813d",
+    "bytes": 27153
+  },
+  "fem/1_2punch": {
+    "sha256": "165c1ba849d5ef58169da89c29e104661be2edde3d7c74dcdf6e24aa1aed769a",
+    "bytes": 10656
+  },
+  "fem/jump_n_smash": {
+    "sha256": "84c3629e77d5721369421ee319258abe52d4b09c3f6b4bc562a25e966ef02048",
+    "bytes": 19746
+  },
+  "fem/fallout": {
+    "sha256": "3ea9892ae5beae9108a97d3d708fa2d12e7705e957e1681bc57f14a3118068bb",
+    "bytes": 23042
+  },
+  "fem/combat_postjump": {
+    "sha256": "1d8f51ac26b4b0a97718fcc0fe07d4a2de0e2639187d550610ff329a3b38d4f4",
+    "bytes": 6385
+  },
+  "huge/1_2punch": {
+    "sha256": "60125cb256e5eef5b3b833ded923b2b3b15e7841f0760159efb53ce18a46d4f4",
+    "bytes": 10783
+  },
+  "huge/jump_n_smash": {
+    "sha256": "3e7126e1e96b90c5ffa9eb23e2dc8a5e3d41ee712b90fe7ec926dec15cfc77e9",
+    "bytes": 19914
+  },
+  "huge/fallout": {
+    "sha256": "9b3eeac37206313a4ed9466e6de5246f084933d095041355a78adbceae1d64f0",
+    "bytes": 23042
+  },
+  "huge/combat_postjump": {
+    "sha256": "6904cb48497cd4749f354c9974b2d7ac5454bf56d0eefcaf35890e91aca9fa24",
+    "bytes": 11881
+  },
+  "male/comb_postjump": {
+    "sha256": "8c108e755a3b958338fe6162a955fc34a5d5867d1eaaee42c387589d881a8248",
+    "bytes": 14632
+  }
+}

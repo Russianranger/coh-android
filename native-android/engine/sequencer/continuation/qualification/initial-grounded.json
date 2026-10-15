@@ -1,0 +1,233 @@
+{
+  "schema": "coh-sequencer-continuation-v1",
+  "gate": 33,
+  "status": "implemented; host-qualified bounded raw-pose playback extension; full gate pending",
+  "host": {
+    "host": {
+      "checks": 20620965,
+      "source_pose_scalar_comparisons": 20523420,
+      "maximum_error": 0,
+      "raw_rigs": 12,
+      "retained_actor_bytes": 7960,
+      "heap_calls_per_sample": 0,
+      "frames": 18002,
+      "elapsed_seconds": 0.309839474997716,
+      "heap_blocking_symbol_audit": "passed",
+      "compiler_stack_usage": [
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:19:12:same_topology\t8\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:28:18:bindings_valid\t128\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:99:12:crosses\t8\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:36:11:coh_seq_playback_init\t8048\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:56:11:coh_seq_playback_rebind\t32\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:110:11:coh_seq_playback_sample\t15760\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:191:11:coh_seq_playback_state\t176\tstatic"
+      ]
+    },
+    "asan-ubsan": {
+      "checks": 20620965,
+      "source_pose_scalar_comparisons": 20523420,
+      "maximum_error": 0,
+      "raw_rigs": 12,
+      "retained_actor_bytes": 7960,
+      "heap_calls_per_sample": 0,
+      "frames": 18002,
+      "elapsed_seconds": 1.5674598859914113,
+      "heap_blocking_symbol_audit": "passed",
+      "compiler_stack_usage": [
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:19:12:same_topology\t80\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:28:18:bindings_valid\t416\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:99:12:crosses\t64\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:105:13:event\t80\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:36:11:coh_seq_playback_init\t8464\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:56:11:coh_seq_playback_rebind\t96\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:110:11:coh_seq_playback_sample\t16592\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:191:11:coh_seq_playback_state\t352\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:201:1:_sub_D_00099_0\t16\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c:201:1:_sub_I_00099_1\t16\tstatic"
+      ]
+    }
+  },
+  "original_source_oracle": true,
+  "provenance": {
+    "files": {
+      "libs/UtilitiesLib/src/utils/Quat.c": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b",
+      "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "Common/seq/seqanimate.c": "a4926555f4da4052058f06d28a195edcedae16cb7e905c05e8963afe9915ed22"
+    },
+    "unchanged_functions": {
+      "quatNormalize": "393503ca9d73f9b9f68ead000d9b2b32938191891e24bf72c2002a6ca9e587d3",
+      "quatInterp": "d8c97643a5f524ad2a4390b63047c42cfe8cfaf9a0e55e44d09c752b0e8f67df",
+      "quatToMat": "6981d8e5ebb0ad2a79b828cce3d4034c3351f5e3e7cdf9c457a41c788bbeb73e",
+      "posInterp": "5db0f8d07fdb628d1c8a917e18bebfb0adacd2f5b172564766671cbafca978a3",
+      "nearSameVec3Tol": "1b6fde1ff869de7d45ac6ea54e15bc8139bd334e01fcd5bc5e9936771e9ebd31",
+      "animInterpNodeWithLastPosition": "fe9817396ab43b81a83e48abd5b8cc650cd7bc98e17f4e9a3f1550b71c495889"
+    },
+    "timing": "original animPlayInst percent_new expression, neutral source timestep"
+  },
+  "android": {
+    "status": "ARM64 API26 object compiled; execution not qualified",
+    "bytes": 7512,
+    "sha256": "1d5fa4c77f07d81403a4bd3025564b0047265046a4b2861597b59579eca5e59b"
+  },
+  "emulator": "not run",
+  "physical_thor": "not run",
+  "fixture": {
+    "locomotion.bin": {
+      "bytes": 147103,
+      "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+    }
+  },
+  "existing_selection_regression": {
+    "host": {
+      "host": {
+        "assertions": 1848320,
+        "original_kernel_comparisons": 89111,
+        "unresolved_source_steps_safely_blocked": 10909,
+        "source_visited_masks": [
+          94013,
+          94013
+        ],
+        "stress_steps": 1000000,
+        "host_stress_elapsed_ns": 28641060,
+        "actor_retained_bytes": 216,
+        "engine_heap_allocations": 0
+      },
+      "asan-ubsan": {
+        "assertions": 1848320,
+        "original_kernel_comparisons": 89111,
+        "unresolved_source_steps_safely_blocked": 10909,
+        "source_visited_masks": [
+          94013,
+          94013
+        ],
+        "stress_steps": 1000000,
+        "host_stress_elapsed_ns": 120495264,
+        "actor_retained_bytes": 216,
+        "engine_heap_allocations": 0
+      }
+    },
+    "original_source_kernel_oracle": true,
+    "source_families": [
+      "jump",
+      "fall",
+      "combat kick",
+      "emote",
+      "knockdown cycle"
+    ]
+  },
+  "module_sha256": {
+    "coh_seq_playback.c": "5793abf53723d122aa38cdff13335825ac31b7b891da5e1d08338089c4dd1e1a",
+    "coh_seq_playback.h": "eab4ad496200cfe7e471d2b795aa06a0b4402c95da157ca86da6d15ac87672bd",
+    "continuation/tests/playback_test.c": "82877634dc068b00bffcd90875fab6bd497e58e516dc9931ab76ed456e611b2e"
+  },
+  "limits": [
+    "Authentic raw idle/directional clips only; jump/fall/combat/emote graph selection source parity is not new-pose proof.",
+    "Neutral rigs; body morphing/root-motion/registration/FX not implemented.",
+    "Event markers are a local deterministic adapter contract, not original FX timing or network packets.",
+    "No Android execution or new Thor acceptance claimed.",
+    "LeakSanitizer disabled due to known executor /proc limitation; ASan and UBSan active, module heap imports absent."
+  ],
+  "commands": [
+    [
+      "/usr/bin/cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-fstack-usage",
+      "-O2",
+      "-c",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/animation-playback-check/playback-build/host-playback.o"
+    ],
+    [
+      "/usr/bin/cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-O2",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/locomotion",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/continuation/tests/playback_test.c",
+      "/workspace/scratch/bd17f7dd7d03/animation-playback-check/playback-build/host-playback.o",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_sequencer.c",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/character/coh_character.c",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/locomotion/coh_locomotion.c",
+      "-lm",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/animation-playback-check/playback-build/host-playback-test",
+      "-DCOH_PLAYBACK_ORACLE",
+      "/workspace/scratch/bd17f7dd7d03/animation-playback-check/playback-build/original-playback.c",
+      "-Wno-unused-variable",
+      "-Wno-unused-function"
+    ],
+    [
+      "/usr/bin/cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-fstack-usage",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-fno-pie",
+      "-no-pie",
+      "-c",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/animation-playback-check/playback-build/asan-ubsan-playback.o"
+    ],
+    [
+      "/usr/bin/cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-fno-pie",
+      "-no-pie",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/locomotion",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/continuation/tests/playback_test.c",
+      "/workspace/scratch/bd17f7dd7d03/animation-playback-check/playback-build/asan-ubsan-playback.o",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_sequencer.c",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/character/coh_character.c",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/locomotion/coh_locomotion.c",
+      "-lm",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/animation-playback-check/playback-build/asan-ubsan-playback-test",
+      "-DCOH_PLAYBACK_ORACLE",
+      "/workspace/scratch/bd17f7dd7d03/animation-playback-check/playback-build/original-playback.c",
+      "-Wno-unused-variable",
+      "-Wno-unused-function"
+    ],
+    [
+      "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "/workspace/scratch/bd17f7dd7d03/support-animation2/native-android/engine/sequencer/coh_seq_playback.c",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/animation-playback-check/playback-build/coh_seq_playback-arm64.o"
+    ]
+  ]
+}

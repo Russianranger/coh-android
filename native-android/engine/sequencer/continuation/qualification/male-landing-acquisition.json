@@ -1,0 +1,40 @@
+{
+  "schema": "coh-native-support-corpus-v1",
+  "source_release": "coh-assets-v1.0.0",
+  "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip",
+  "outer_published_sha256": "e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e",
+  "full_outer_hash_locally_verified": false,
+  "etag_stable": true,
+  "etag": "\"0x8DF27B1EAAFE542\"",
+  "range_bytes": 2159424,
+  "ranges": [
+    [
+      615514112,
+      615545247
+    ],
+    [
+      0,
+      65535
+    ],
+    [
+      613548032,
+      615545247
+    ],
+    [
+      309788672,
+      309854207
+    ]
+  ],
+  "records": [
+    {
+      "name": "assets/player_library/animations/male/comb_postjump.anim",
+      "size": 14632,
+      "compressed": 11479,
+      "offset": 309834502,
+      "crc32": "f26304a8",
+      "method": 8,
+      "sha256": "8c108e755a3b958338fe6162a955fc34a5d5867d1eaaee42c387589d881a8248"
+    }
+  ],
+  "qualification": "CRC and new SHA identities; decoded/source parity is separate"
+}

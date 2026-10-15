@@ -1,0 +1,17 @@
+{
+  "files": {
+    "libs/UtilitiesLib/src/utils/Quat.c": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b",
+    "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+    "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+    "Common/seq/seqanimate.c": "a4926555f4da4052058f06d28a195edcedae16cb7e905c05e8963afe9915ed22"
+  },
+  "unchanged_functions": {
+    "quatNormalize": "393503ca9d73f9b9f68ead000d9b2b32938191891e24bf72c2002a6ca9e587d3",
+    "quatInterp": "d8c97643a5f524ad2a4390b63047c42cfe8cfaf9a0e55e44d09c752b0e8f67df",
+    "quatToMat": "6981d8e5ebb0ad2a79b828cce3d4034c3351f5e3e7cdf9c457a41c788bbeb73e",
+    "posInterp": "5db0f8d07fdb628d1c8a917e18bebfb0adacd2f5b172564766671cbafca978a3",
+    "nearSameVec3Tol": "1b6fde1ff869de7d45ac6ea54e15bc8139bd334e01fcd5bc5e9936771e9ebd31",
+    "animInterpNodeWithLastPosition": "fe9817396ab43b81a83e48abd5b8cc650cd7bc98e17f4e9a3f1550b71c495889"
+  },
+  "timing": "original animPlayInst percent_new expression, neutral source timestep"
+}

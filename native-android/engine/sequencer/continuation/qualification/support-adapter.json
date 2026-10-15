@@ -1,0 +1,39 @@
+{
+  "schema": "coh-support-animation-adapter-v1",
+  "host": {
+    "host": {
+      "checks": 20807,
+      "samples": 10002,
+      "retained_bytes": 43872,
+      "borrowed_bytes": 72648,
+      "per_sample_allocations": 0
+    },
+    "asan-ubsan": {
+      "checks": 20807,
+      "samples": 10002,
+      "retained_bytes": 43872,
+      "borrowed_bytes": 72648,
+      "per_sample_allocations": 0
+    }
+  },
+  "android": {
+    "status": "ARM64 API26 object built; no Android execution",
+    "sha256": "21599b3056bd1bd9e621420c0374bbf7d83d830579b83e1850dde024b8df8cf1",
+    "bytes": 3816
+  },
+  "physical_thor": "not run",
+  "module_sha256": {
+    "support_animation.c": "4820beb97c7fb425c8a567cebfebff5c8bfd371e99a9c8d329faf5492e4af020",
+    "support_animation.h": "c3e38f1739f3fe80df714195af0e78310fde1dbd2cc426a7de099882ad430096"
+  },
+  "clips": {
+    "huge-1_2punch.bin": "d14594d77eca3b570f0016016a8156887e656d47a0214a4a1e54c3ef2ec4b771",
+    "huge-jump_n_smash.bin": "dbe6cb7fee990f39b457f026a788f92b747b60001dd7beeb5131f7696781068b",
+    "huge-fallout.bin": "002937884fc0ece20402c4134833797987ce045a61004c907109b2657929202e"
+  },
+  "scope": "isolated neutral Huge raw clip mock playback; accepted grounded code unchanged",
+  "limitations": [
+    "No morph hierarchy composition, gameplay graph side effects, live session or Android execution proof.",
+    "ASan and UBSan active; LeakSanitizer disabled for executor /proc limitation."
+  ]
+}
