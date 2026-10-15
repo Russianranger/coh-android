@@ -1,0 +1,1537 @@
+{
+  "version": 1,
+  "scope": "selection/timing only; explicit authored ranges, unresolved original clip ends preserved",
+  "states": {
+    "BIGFALL": 9,
+    "AIR": 6,
+    "JUMP": 5,
+    "APEX": 7,
+    "COMBAT": 20,
+    "KICKBRAWL": 297,
+    "EMOTE": 724,
+    "TEABAG": 793,
+    "BOW": 157,
+    "GREETING": 776,
+    "LOW": 48
+  },
+  "moves": [
+    {
+      "name": "RunFall",
+      "source": "data/sequencers/player/motion/motion_fall.inc",
+      "requires": [
+        "BIGFALL"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<REACTIRQ>",
+        "<ATTACKIRQ>",
+        "<FALL>"
+      ],
+      "interrupts": [
+        "<BASICMOVE>",
+        "<WALKMOVE>",
+        "<DUALPISTOLSMOVE>",
+        "<COMBATMOVE>",
+        "<WEPMOVE>",
+        "<TWOHANDMOVE>",
+        "<TRAVELMOVE>",
+        "<TRAVELWEPMOVE>",
+        "<TRAVELDUALHANDMOVE>",
+        "<TRAVELLEFTHANDMOVE>",
+        "<TRAVELSHIELDMOVE>",
+        "<TRAVELSHIELDWEPMOVE>",
+        "<READY>",
+        "<COMBAT>",
+        "<WEPCOMBAT>",
+        "<TWOHANDCOMBAT>",
+        "<ICESLIDE>",
+        "<MOVEIRQ>"
+      ],
+      "flags": 8,
+      "priority": 1,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "RunFall_2",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 67.0,
+          "last_frame": 93.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/superjump.anim",
+          "first_frame": 67.0,
+          "last_frame": 93.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/superjump.anim",
+          "first_frame": 67.0,
+          "last_frame": 93.0
+        }
+      },
+      "required": [
+        9
+      ],
+      "member_words": [
+        134217728,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        524286,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 1
+    },
+    {
+      "name": "RunFall_2",
+      "source": "data/sequencers/player/motion/motion_fall.inc",
+      "requires": [
+        "AIR"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<REACTIRQ>",
+        "<HITIRQ>",
+        "<ATTACKIRQ>",
+        "<FALL>"
+      ],
+      "interrupts": [],
+      "flags": 1,
+      "priority": 1,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "JumpPost",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 93.0,
+          "last_frame": null
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/superjump.anim",
+          "first_frame": 93.0,
+          "last_frame": null
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/superjump.anim",
+          "first_frame": 93.0,
+          "last_frame": null
+        }
+      },
+      "required": [
+        6
+      ],
+      "member_words": [
+        167772160,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 7
+    },
+    {
+      "name": "jumpPre",
+      "source": "data/sequencers/player/motion/motion_jump.inc",
+      "requires": [
+        "JUMP",
+        "AIR"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<JUMPS>",
+        "<ATTACKIRQ>"
+      ],
+      "interrupts": [
+        "<MOVEIRQ>",
+        "<IRQJUMPS>",
+        "<READY>",
+        "<GROUNDMOVEALL>",
+        "<SKILL>",
+        "<ICESLIDE>",
+        "<SWIM>",
+        "<JUMPFALL>",
+        "<BLOCK>",
+        "<HITIRQ>",
+        "<STUNMOVE>",
+        "<MOVEIRQ>"
+      ],
+      "flags": 0,
+      "priority": 2,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "jumpUp",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        },
+        "praetorianpolice": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        },
+        "resistancemale": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        },
+        "resistancefem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        },
+        "sprocket": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        },
+        "rocksuit": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        },
+        "invisiblemaletarget_silent": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        },
+        "p_apparitions_minion": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        },
+        "p_apparitions_lieutenant": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        },
+        "p_apparitions_minion_merged": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/superjump.anim",
+          "first_frame": 3.0,
+          "last_frame": 6.0
+        }
+      },
+      "required": [
+        5,
+        6
+      ],
+      "member_words": [
+        134217728,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        134094848,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 3
+    },
+    {
+      "name": "jumpUp",
+      "source": "data/sequencers/player/motion/motion_jump.inc",
+      "requires": [
+        "JUMP",
+        "AIR"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<JUMPS>",
+        "<ATTACKIRQ>"
+      ],
+      "interrupts": [],
+      "flags": 1,
+      "priority": 0,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "jumpApex",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 6.0,
+          "last_frame": 65.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/superjump.anim",
+          "first_frame": 6.0,
+          "last_frame": 65.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/superjump.anim",
+          "first_frame": 6.0,
+          "last_frame": 65.0
+        }
+      },
+      "required": [
+        5,
+        6
+      ],
+      "member_words": [
+        134217728,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 4
+    },
+    {
+      "name": "jumpApex",
+      "source": "data/sequencers/player/motion/motion_jump.inc",
+      "requires": [
+        "APEX",
+        "AIR"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<JUMPS>",
+        "<ATTACKIRQ>"
+      ],
+      "interrupts": [],
+      "flags": 0,
+      "priority": 0,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "jumpFall",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 65.0,
+          "last_frame": 66.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/superjump.anim",
+          "first_frame": 65.0,
+          "last_frame": 66.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/superjump.anim",
+          "first_frame": 65.0,
+          "last_frame": 66.0
+        }
+      },
+      "required": [
+        7,
+        6
+      ],
+      "member_words": [
+        134217728,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 5
+    },
+    {
+      "name": "jumpFall",
+      "source": "data/sequencers/player/motion/motion_jump.inc",
+      "requires": [
+        "AIR"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<JUMPS>",
+        "<JUMPFALL>",
+        "<ATTACKIRQ>"
+      ],
+      "interrupts": [],
+      "flags": 8,
+      "priority": 0,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "jumpFall2",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 66.0,
+          "last_frame": 93.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/superjump.anim",
+          "first_frame": 66.0,
+          "last_frame": 93.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/superjump.anim",
+          "first_frame": 66.0,
+          "last_frame": 93.0
+        }
+      },
+      "required": [
+        6
+      ],
+      "member_words": [
+        142606336,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 6
+    },
+    {
+      "name": "jumpFall2",
+      "source": "data/sequencers/player/motion/motion_jump.inc",
+      "requires": [
+        "AIR"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<JUMPS>",
+        "<JUMPFALL>",
+        "<ATTACKIRQ>"
+      ],
+      "interrupts": [],
+      "flags": 1,
+      "priority": 0,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "JumpPost",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/superjump.anim",
+          "first_frame": 93.0,
+          "last_frame": null
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/superjump.anim",
+          "first_frame": 93.0,
+          "last_frame": null
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/superjump.anim",
+          "first_frame": 93.0,
+          "last_frame": null
+        }
+      },
+      "required": [
+        6
+      ],
+      "member_words": [
+        142606336,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 7
+    },
+    {
+      "name": "JumpPost",
+      "source": "data/sequencers/player/motion/motion_jump.inc",
+      "requires": [],
+      "members": [
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<BLOCKIRQ>",
+        "<ATTACKIRQ>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESALL>",
+        "<IRQENCOUNTERS>",
+        "<JUMPS>",
+        "<READY>"
+      ],
+      "interrupts": [],
+      "flags": 0,
+      "priority": 0,
+      "scale": 0.7,
+      "interpolate": 1.0,
+      "next_name": "postReady_back",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        },
+        "praetorianpolice": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        },
+        "resistancemale": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        },
+        "resistancefem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        },
+        "camerashaker": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/combat_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/combat_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        },
+        "rocksuit": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        },
+        "invisiblemaletarget_silent": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        },
+        "p_apparitions_minion": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/combat_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        },
+        "p_apparitions_lieutenant": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/combat_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        },
+        "p_apparitions_minion_merged": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/combat_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        }
+      },
+      "required": [],
+      "member_words": [
+        436477952,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": null
+    },
+    {
+      "name": "KickBrawl_R",
+      "source": "data/sequencers/player/powers.inc",
+      "requires": [
+        "COMBAT",
+        "KICKBRAWL"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<ATTACKIRQ>"
+      ],
+      "interrupts": [
+        "<ATTACKIRQ>"
+      ],
+      "flags": 524416,
+      "priority": 2,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "KickBrawl_R_post",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/kickbrawl_R.anim",
+          "first_frame": 1.0,
+          "last_frame": 20.0
+        }
+      },
+      "required": [
+        20,
+        297
+      ],
+      "member_words": [
+        134217728,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        134217728,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 9
+    },
+    {
+      "name": "KickBrawl_R_post",
+      "source": "data/sequencers/player/powers.inc",
+      "requires": [
+        "COMBAT"
+      ],
+      "members": [
+        "<COMBAT>",
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<ATTACKIRQ>",
+        "<BLOCKIRQ>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESALL>",
+        "<IRQENCOUNTERS>",
+        "<JUMPS>"
+      ],
+      "interrupts": [],
+      "flags": 136,
+      "priority": 0,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "KickBrawl_cycle",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/kickbrawl_R.anim",
+          "first_frame": 20.0,
+          "last_frame": 37.0
+        }
+      },
+      "required": [
+        20
+      ],
+      "member_words": [
+        436486144,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 12
+    },
+    {
+      "name": "KickBrawl_L",
+      "source": "data/sequencers/player/powers.inc",
+      "requires": [
+        "COMBAT",
+        "KICKBRAWL"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<ATTACKIRQ>"
+      ],
+      "interrupts": [
+        "<ATTACKIRQ>"
+      ],
+      "flags": 524416,
+      "priority": 2,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "KickBrawl_L_post",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/kickbrawl_L.anim",
+          "first_frame": 1.0,
+          "last_frame": 20.0
+        }
+      },
+      "required": [
+        20,
+        297
+      ],
+      "member_words": [
+        134217728,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        134217728,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 11
+    },
+    {
+      "name": "KickBrawl_L_post",
+      "source": "data/sequencers/player/powers.inc",
+      "requires": [
+        "COMBAT"
+      ],
+      "members": [
+        "<COMBAT>",
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<ATTACKIRQ>",
+        "<BLOCKIRQ>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESALL>",
+        "<IRQENCOUNTERS>",
+        "<JUMPS>"
+      ],
+      "interrupts": [],
+      "flags": 136,
+      "priority": 0,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "KickBrawl_cycle",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/kickbrawl_L.anim",
+          "first_frame": 20.0,
+          "last_frame": 37.0
+        }
+      },
+      "required": [
+        20
+      ],
+      "member_words": [
+        436486144,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 12
+    },
+    {
+      "name": "KickBrawl_cycle",
+      "source": "data/sequencers/player/powers.inc",
+      "requires": [
+        "COMBAT"
+      ],
+      "members": [
+        "<COMBAT>",
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<ATTACKIRQ>",
+        "<BLOCKIRQ>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESALL>",
+        "<IRQENCOUNTERS>",
+        "<JUMPS>"
+      ],
+      "interrupts": [],
+      "flags": 129,
+      "priority": 0,
+      "scale": 0.5,
+      "interpolate": 8.0,
+      "next_name": "postReady_back",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/kick_cycle.anim",
+          "first_frame": 1.0,
+          "last_frame": null
+        }
+      },
+      "required": [
+        20
+      ],
+      "member_words": [
+        436486144,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": null
+    },
+    {
+      "name": "KnockDown_cycle",
+      "source": "data/sequencers/player/reactions.inc",
+      "requires": [],
+      "members": [
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<BLOCKIRQ>",
+        "<ATTACKIRQ>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESALL>",
+        "<IRQENCOUNTERS>",
+        "<JUMPS>",
+        "<READY>"
+      ],
+      "interrupts": [],
+      "flags": 1,
+      "priority": 0,
+      "scale": 0.5,
+      "interpolate": 0.0,
+      "next_name": "Ready",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/claw_cycle.anim",
+          "first_frame": 1.0,
+          "last_frame": 31.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/claw_cycle.anim",
+          "first_frame": 1.0,
+          "last_frame": 31.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/claw_cycle.anim",
+          "first_frame": 1.0,
+          "last_frame": 31.0
+        }
+      },
+      "required": [],
+      "member_words": [
+        436477952,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": null
+    },
+    {
+      "name": "Teabag_Pre",
+      "source": "data/sequencers/player/emotes.inc",
+      "requires": [
+        "EMOTE",
+        "TEABAG"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<ATTACKIRQ>",
+        "<JUMPS>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESCOMBAT>",
+        "<IRQEMOTESRIGHTHAND>",
+        "<IRQEMOTESLEFTHAND>",
+        "<IRQEMOTESDUALHAND>",
+        "<IRQEMOTESSHIELD>"
+      ],
+      "interrupts": [
+        "<IRQEMOTESALL>",
+        "<IRQEMOTESCOMBAT>"
+      ],
+      "flags": 32768,
+      "priority": 2,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "Teabag",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/emote_teabag.anim",
+          "first_frame": 1.0,
+          "last_frame": 10.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/emote_teabag.anim",
+          "first_frame": 1.0,
+          "last_frame": 10.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/emote_teabag.anim",
+          "first_frame": 1.0,
+          "last_frame": 10.0
+        }
+      },
+      "required": [
+        724,
+        793
+      ],
+      "member_words": [
+        1778647040,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        805306368,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 15
+    },
+    {
+      "name": "Teabag",
+      "source": "data/sequencers/player/emotes.inc",
+      "requires": [],
+      "members": [
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<ATTACKIRQ>",
+        "<JUMPS>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESCOMBAT>",
+        "<IRQEMOTESRIGHTHAND>",
+        "<IRQEMOTESLEFTHAND>",
+        "<IRQEMOTESDUALHAND>",
+        "<IRQEMOTESSHIELD>"
+      ],
+      "interrupts": [],
+      "flags": 32768,
+      "priority": 0,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "Teabag_cycle",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/emote_teabag.anim",
+          "first_frame": 10.0,
+          "last_frame": null
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/emote_teabag.anim",
+          "first_frame": 10.0,
+          "last_frame": null
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/emote_teabag.anim",
+          "first_frame": 10.0,
+          "last_frame": null
+        }
+      },
+      "required": [],
+      "member_words": [
+        1778647040,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": null
+    },
+    {
+      "name": "Bow_Reverant",
+      "source": "data/sequencers/player/emotes.inc",
+      "requires": [
+        "EMOTE",
+        "BOW",
+        "GREETING",
+        "LOW"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<ATTACKIRQ>",
+        "<JUMPS>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESCOMBAT>",
+        "<IRQEMOTESRIGHTHAND>",
+        "<IRQEMOTESLEFTHAND>",
+        "<IRQEMOTESDUALHAND>",
+        "<IRQEMOTESSHIELD>"
+      ],
+      "interrupts": [
+        "<IRQEMOTESALL>",
+        "<IRQEMOTESCOMBAT>",
+        "<IRQEMOTESSHIELD>"
+      ],
+      "flags": 16777216,
+      "priority": 6,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "Bow_Reverant_post",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/reverant_bow2.anim",
+          "first_frame": 1.0,
+          "last_frame": 100.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/reverant_bow2.anim",
+          "first_frame": 1.0,
+          "last_frame": 100.0
+        }
+      },
+      "required": [
+        724,
+        157,
+        776,
+        48
+      ],
+      "member_words": [
+        1778647040,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        1879048192,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 17
+    },
+    {
+      "name": "Bow_Reverant_post",
+      "source": "data/sequencers/player/emotes.inc",
+      "requires": [],
+      "members": [
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<ATTACKIRQ>",
+        "<JUMPS>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESCOMBAT>",
+        "<IRQEMOTESRIGHTHAND>",
+        "<IRQEMOTESLEFTHAND>",
+        "<IRQEMOTESDUALHAND>",
+        "<IRQEMOTESSHIELD>"
+      ],
+      "interrupts": [],
+      "flags": 16777216,
+      "priority": 0,
+      "scale": 1.0,
+      "interpolate": 15.0,
+      "next_name": "Emote_Idle1_Cycle",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/postback_right.anim",
+          "first_frame": 28.0,
+          "last_frame": null
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/postback_right.anim",
+          "first_frame": 28.0,
+          "last_frame": null
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/post_ready.anim",
+          "first_frame": 28.0,
+          "last_frame": null
+        }
+      },
+      "required": [],
+      "member_words": [
+        1778647040,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": null
+    }
+  ],
+  "source_sha256": {
+    "i24/data/sequencers/player.txt": "c334dfc0719e5e1d4b4e17cd6707d8cc10b4c66e826de71f4313f9fcd7678258",
+    "i24/data/sequencers/player/motion.inc": "a4491460f5ffc093dbdd4333b60694e94d91581a8e6ba55009e17560fa221fcd",
+    "ouroboros/Common/seq/seqstate.h": "56c692d96a91b753bbeb456f214e2a7d3b91912210334268303b373b874d2dab",
+    "ouroboros/Common/seq/seqstate.c": "750079414254758fa3e0e478403f68416687475cdb5f852f2472ef30ef4b460e",
+    "ouroboros/Common/seq/TriggeredMove.h": "82499d5298f2da605a1efc64d2281cc6ccaf48fba0fdc1feb5ad5e35b7bdc175",
+    "i24/data/sequencers/statebits.statebits": "22ad5edb2e5cf2132ff754fb338a50bb1b3669445f161c37f7ec7f52cf00f77b",
+    "ouroboros/Common/seq/seq.h": "78a5b4c3d4536a6d97e26f162cd219ef5d9852d99f7f384b5f6be5d5d002c44c",
+    "ouroboros/Common/seq/seqload.c": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f",
+    "ouroboros/Common/seq/seqsequence.c": "7c816b4dacdfbfac8eecef08c105caf55bb5c1652fac6b100d69ddb4a4b1aefa",
+    "ouroboros/libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+    "i24/data/sequencers/player/motion/motion_fall.inc": "f338d95f4d712bcb2239880224ffc316bf82633a468037faf259dc49a10b1d18",
+    "i24/data/sequencers/player/motion/motion_jump.inc": "5291bf53a2cd652e99179588e865584d7e689dac6d34838c137fc06041b61c56",
+    "i24/data/sequencers/members/readies.inc": "724e25d550d7c140ff2c5763a574ac8b2d1813d376b18f0351eb8f9db10d3c1a",
+    "i24/data/sequencers/player/powers.inc": "f36db75bf6652aa4ca9469be66a3e0e25398eb9f17afc6627e996f1a978301e8",
+    "i24/data/sequencers/members/combat.inc": "ed1636357a0f36c68525cbaa734372b7de6d1bcae73ac9906842d4c8187fad25",
+    "i24/data/sequencers/player/reactions.inc": "89c668698da7d31a04ee8d6d98c8908a43e5d7c4a19ccbb5f264d9bd70bacfa8",
+    "i24/data/sequencers/player/emotes.inc": "58b6f6f1ae054f06eaa0f3229bf95f2edd0427c6ce84e7028d1d69a6f76cf5b0",
+    "i24/data/sequencers/members/emotes_idle.inc": "b3d2eb651978d7f630a36d5f83ed280a6e918b28d442f4c7c2a6c4bb884a577e"
+  }
+}
