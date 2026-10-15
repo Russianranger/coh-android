@@ -515,7 +515,10 @@ def turn_right_walk_camera():
     right = x0+9*(x1-x0)//10
     middle_y = (y0+y1)//2
     before = current
-    for _ in range(2):
+    # InputAdapter.coordinate maps pixels into [-1,1], so this 80%-width
+    # swipe turns approximately 1.92 rad at the shipped 1.2 look gain. Two
+    # swipes would wrap past pi and point Right toward the floor edge again.
+    for _ in range(1):
         old = current['input_adapter']['external_android']
         yaw = current['native']['camera_yaw']
         adb('shell', 'input', 'touchscreen', 'swipe', str(left), str(middle_y),
@@ -527,7 +530,7 @@ def turn_right_walk_camera():
     assert 1.2 < current['native']['camera_yaw'] < 2.5
     assert current['native']['held_dirs'] == 0
     save('emulator-right-walk-camera-proof.json', {'passed': True,
-         'scope': 'Two actual Android scene swipes orient the shared camera so the RightPre/cycle case stays on authentic ground; no actor teleport or private renderer state change',
+         'scope': 'One actual Android scene swipe through the shipped [-1,1] coordinate adapter orients the shared camera so the RightPre/cycle case stays on authentic ground; no actor teleport or private renderer state change',
          'selection': selection, 'before': before, 'after': current})
     return current
 
