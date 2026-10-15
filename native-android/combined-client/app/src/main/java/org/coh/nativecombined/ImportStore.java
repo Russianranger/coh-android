@@ -49,7 +49,7 @@ public final class ImportStore {
         return part;
     }
     private AtlasAssetImporter gameImporter(AssetPackStore pack)throws IOException {
-        return new AtlasAssetImporter(new File(context.getFilesDir(),"combined-game-import"),name->{
+        return new AtlasAssetImporter(new File(context.getFilesDir().getCanonicalFile(),"combined-game-import"),name->{
             try {return pack.contains("atlas/"+name)?pack.open("atlas/"+name):context.getAssets().open("atlas/"+name);}
             catch(IOException e){throw e;}catch(Exception e){throw new IOException("Cannot open verified game content",e);}
         });

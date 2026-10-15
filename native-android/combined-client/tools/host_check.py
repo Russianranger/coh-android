@@ -30,6 +30,7 @@ def main():
         raise ValueError('Pinned NDK28.2.13676358 is required for Android boundary binaries')
     native = args.source_root.resolve() / 'native-android'
     commands = [
+        ('framework-driver-controls', [sys.executable, native / 'combined-client/tools/driver_controls.py']),
         ('lease-admission', [sys.executable, native / 'combined-client/qualification/check_lease.py']),
         ('imports', [sys.executable, native / 'combined-client/imports/tests/check_imports.py']),
         ('server-runtime', [sys.executable, native / 'combined-client/runtime/check.py', '--source-root', args.source_root.resolve(), '--donor', args.donor_apk.resolve(), '--output', args.output / 'server-runtime.json']),

@@ -82,6 +82,30 @@ public final class ImportsHost {
 }
 '''
 
+CANONICAL_HOST=r'''
+package org.coh.nativecombined;
+import android.content.Context;import org.json.JSONObject;import java.io.*;import java.nio.file.*;
+public final class CanonicalPathsHost {
+ static int checks;static void need(boolean b,String m){checks++;if(!b)throw new AssertionError(m);}
+ static byte[] bytes(String s)throws Exception{return s.getBytes("UTF-8");}
+ static JSONObject pin(byte[] b){return new JSONObject().put("bytes",b.length).put("sha256",ImportContract.hex(ImportContract.hash().digest(b)));}
+ public static void main(String[] args)throws Exception {
+  Path root=Paths.get(args[0]),actual=root.resolve("actual"),alias=root.resolve("android-user-zero");Files.createDirectories(actual.resolve("files"));Files.createSymbolicLink(alias,actual);
+  Context c=new Context(alias.resolve("files").toFile());
+  JSONObject contract=new JSONObject().put("format",1).put("donor_apk",pin(bytes("APK")).put("name","COH-Atlas-Gameplay-0.13.36.apk"))
+    .put("donor_files",new JSONObject().put("assets/runtime/test.bin",pin(bytes("payload")))).put("bundled_files",new JSONObject());
+  c.assets.put("combined/import-contract.json",bytes(contract.toString()));c.assets.put("runtime/runtime-manifest.json",bytes(new JSONObject().put("format",1).put("files",new JSONObject()).toString()));
+  c.assets.put("runtime/runtime-lock.json",bytes(new JSONObject().put("base",pin(bytes("base"))).put("wine",pin(bytes("wine"))).toString()));
+  c.assets.put("atlas/atlas-import.properties",Files.readAllBytes(Paths.get(args[1])));
+  ImportStore store=new ImportStore(c,null);String status=store.status();need(status.contains("import COH-Atlas-Gameplay-0.13.36.apk"),"fresh status failed to report missing donor");need(status.contains("Game files: import all four asset parts"),"fresh status failed to report missing assets");
+  need(store.gameDataDirectory()==null,"fresh game import incorrectly ready");Path game=actual.resolve("files/combined-game-import");need(Files.isDirectory(game,LinkOption.NOFOLLOW_LINKS),"canonical private game store not created");
+  ImportStore.remove(game);Path outside=root.resolve("outside");Files.createDirectory(outside);Path sentinel=outside.resolve("sentinel");Files.write(sentinel,bytes("preserve"));Files.createSymbolicLink(game,outside);
+  boolean rejected=false;try{store.status();}catch(IOException expected){rejected=true;}need(rejected,"actual game directory symlink was followed");need(new String(Files.readAllBytes(sentinel),"UTF-8").equals("preserve"),"outside path modified");
+  System.out.println("canonical Android private path controls passed: "+checks);
+ }
+}
+'''
+
 def main():
     root=Path(__file__).resolve().parents[2]
     repo=root.parents[1]
@@ -101,6 +125,20 @@ def main():
                 for path,data in entries.items():
                     item=tarfile.TarInfo(path);item.size=len(data);item.mode=0o755;archive.addfile(item,io.BytesIO(data))
         subprocess.run(['java','-cp',str(classes),'org.coh.nativecombined.ImportsHost',str(temp/'files'),str(fixtures)],check=True)
+        # Compile a separate regression with the actual AtlasAssetImporter, not the
+        # readiness adapter used by the synthetic runtime setup fixture above.
+        canonical=temp/'canonical-classes';canonical.mkdir()
+        canonical_host=temp/'org/coh/nativecombined/CanonicalPathsHost.java';canonical_host.write_text(CANONICAL_HOST)
+        actual_importer=repo/'android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java'
+        canonical_files=[f for f in files if f.name not in ('ImportsHost.java','AtlasAssetImporter.java')]+[canonical_host,actual_importer]
+        subprocess.run(['java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8','-d',str(canonical),*(str(f) for f in canonical_files)],check=True)
+        properties={'format':'1','source.commit':'1'*40,'data.commit':'2'*40,'repository.commit':'3'*40,
+            'asset.archive.sha256':'a'*64,'text.archive.sha256':'b'*64,'asset.manifest.sha256':'c'*64,'asset.index.sha256':'d'*64,'text.index.sha256':'e'*64,
+            'asset.archive.bytes':'1','text.archive.bytes':'1','asset.manifest.bytes':'1','asset.index.bytes':'1','text.index.bytes':'1',
+            'asset.count':'1','text.count':'1','total.count':'2','asset.bytes':'1','text.bytes':'1','total.bytes':'2',
+            'storage.reserve.bytes':str(256*1024*1024),'storage.per.file.bytes':'4096'}
+        atlas_properties=temp/'atlas-import.properties';atlas_properties.write_text(''.join(f'{k}={v}\n' for k,v in properties.items()).replace('\\n','\n'))
+        subprocess.run(['java','-cp',str(canonical),'org.coh.nativecombined.CanonicalPathsHost',str(temp/'canonical-files'),str(atlas_properties)],check=True)
         original=(repo/'android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java').read_text()
         adapted=(root/'imports/src/org/coh/nativecombined/RuntimeTarExtractor.java').read_text()
         expected=original.replace('package io.github.russianranger.cohdiagnostic;','package org.coh.nativecombined;\n').replace('final class TarExtractor {','final class RuntimeTarExtractor {').replace('SetupMemoryGuard','RuntimeMemoryGuard')

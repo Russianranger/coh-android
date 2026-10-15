@@ -110,22 +110,37 @@ class Check:
 
     def select_document(self, control, filename):
         self.tap(control)
-        deadline = time.monotonic() + 20
+        deadline = time.monotonic() + 25
+        selected = False
+        trace = []
         while time.monotonic() < deadline:
             nodes = list(self.dump().iter('node'))
-            target = next((n for n in nodes if n.attrib.get('text', '') == filename), None)
-            if target is None:
-                target = next((n for n in nodes if n.attrib.get('text', '').lower() == 'downloads' and n.attrib.get('enabled') == 'true'), None)
-            if target is None:
-                target = next((n for n in nodes if n.attrib.get('content-desc', '').lower() in ('show roots', 'open navigation drawer')), None)
+            picker = any('documentsui' in n.attrib.get('package', '') for n in nodes)
+            if selected and not picker and any(n.attrib.get('package') == PACKAGE for n in nodes):
+                (self.args.output / 'picker-selection-history.json').write_text(json.dumps(trace, indent=2) + '\n')
+                return
+            if not picker:
+                time.sleep(.2)
+                continue
+            # Android includes the obscured file list in its accessibility tree
+            # while the navigation drawer is open. Select its foreground root
+            # before considering any file row behind that drawer.
+            drawer = any(n.attrib.get('text', '').lower() == 'open from' for n in nodes)
+            target = None
+            if drawer:
+                target = next((n for n in nodes if n.attrib.get('text', '').lower() == 'downloads' and n.attrib.get('resource-id') == 'android:id/title'), None)
+            else:
+                target = next((n for n in nodes if n.attrib.get('text') == filename), None)
+                if target is None:
+                    target = next((n for n in nodes if n.attrib.get('content-desc', '').lower() in ('show roots', 'open navigation drawer')), None)
             if target is not None:
-                picked = target.attrib.get('text') == filename
                 xy = [int(v) for v in re.findall(r'\d+', target.attrib['bounds'])]
+                selected = not drawer and target.attrib.get('text') == filename
+                trace.append({'drawer_open': drawer, 'target_text': target.attrib.get('text'), 'target_description': target.attrib.get('content-desc'), 'selected_file': selected, 'bounds': xy})
                 self.adb('shell', 'input', 'tap', (xy[0]+xy[2])//2, (xy[1]+xy[3])//2)
-                if picked:
-                    return
-            time.sleep(.25)
-        raise RuntimeError('SAF document could not be selected: ' + filename)
+            time.sleep(.3)
+        (self.args.output / 'picker-selection-history.json').write_text(json.dumps(trace, indent=2) + '\n')
+        raise RuntimeError('SAF document selection never returned to the app: ' + filename)
 
     def import_donor(self):
         from prepare import DONOR_SHA, DONOR_BYTES, verify
@@ -190,6 +205,12 @@ class Check:
         self.launch(MAIN)
         time.sleep(.5)
         self.record('fresh install and exact main Activity', apk_sha256=hashlib.sha256(self.args.apk.read_bytes()).hexdigest())
+        initial = self.wait_report('combined-report.json', lambda x: 'Server payload:' in x.get('imports', '') or any(e.get('name') == 'operation_failed' for e in x.get('events', [])), 'fresh app import initialization')
+        (self.args.output / 'initial-combined-report.json').write_text(json.dumps(initial, indent=2) + '\n')
+        assert not any(e.get('name') == 'operation_failed' for e in initial.get('events', [])), 'Fresh app import initialization failed: ' + initial.get('message', '')
+        assert 'Server payload: import ' in initial['imports'] and 'Game files: import all four asset parts' in initial['imports']
+        assert initial['runtime_ready'] is False and initial['server']['ready'] is False
+        self.record('fresh app initialized for external imports without failures')
         for label in ('Import launcher APK', 'Import game asset part'):
             self.picker_cancel(label)
         # These controls must fail closed without imported runtime/assets. Inspect
