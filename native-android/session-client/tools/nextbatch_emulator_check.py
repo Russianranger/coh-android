@@ -176,17 +176,50 @@ def bounded_key(key, directions, duration_ms=250):
 
 
 def bounded_home_script(duration_ms):
-    """Only constant, bounded device-side framework commands; no report loop."""
+    """Finite device-side framework input and actual HOME-resumed barrier."""
     assert type(duration_ms) is int and 100 <= duration_ms <= 500
     return '\n'.join([
         'set -e',
         "trap 'input joystick motionevent MOVE 0 0' EXIT HUP INT TERM",
+        'coh_home_component="$(cmd package resolve-activity --brief --user 0 -a android.intent.action.MAIN -c android.intent.category.HOME | tail -n 1)"',
+        'case "$coh_home_component" in */*) ;; *) exit 71 ;; esac',
+        'printf \'COH_HOME_COMPONENT=%s\\n\' "$coh_home_component"',
         'input joystick motionevent MOVE 0 -1',
         'sleep %.3f' % (duration_ms / 1000),
         'input keyevent KEYCODE_HOME',
+        # Android 13 may return START_DELIVERED_TO_TOP from am -W before a
+        # previously queued lifecycle transaction completes. Require the real
+        # ActivityManager resumed-HOME state as well, within six device probes.
+        # This finite device-side barrier never reads or drives the app report.
+        'am start -W -a android.intent.action.MAIN -c android.intent.category.HOME -n "$coh_home_component"',
+        'coh_home_ready=0',
+        'for coh_home_probe in 1 2 3 4 5 6; do',
+        '  if dumpsys activity activities | grep -E "mResumedActivity:|topResumedActivity=" | grep -F "$coh_home_component" >/dev/null; then',
+        '    coh_home_ready=1; break',
+        '  fi',
+        '  sleep 0.100',
+        'done',
+        'test "$coh_home_ready" = 1',
+        'printf \'COH_HOME_RESUMED=%s\\n\' "$coh_home_component"',
         'input joystick motionevent MOVE 0 0',
         'trap - EXIT HUP INT TERM',
     ])
+
+
+def framework_home_completion(stdout):
+    """An actual Android HOME launch must complete before neutral is sent."""
+    assert 'android.intent.action.MAIN' in stdout and 'android.intent.category.HOME' in stdout
+    statuses = session.re.findall(r'^Status:\s*(\S+)\s*$', stdout, session.re.M)
+    assert statuses == ['ok'], 'The real HOME Activity launch was not completed successfully'
+    activities = session.re.findall(r'^Activity:\s*(\S+)\s*$', stdout, session.re.M)
+    assert len(activities) == 1 and '/' in activities[0]
+    resolved = session.re.findall(r'^COH_HOME_COMPONENT=(\S+)\s*$', stdout, session.re.M)
+    resumed = session.re.findall(r'^COH_HOME_RESUMED=(\S+)\s*$', stdout, session.re.M)
+    assert resolved == resumed == activities, 'Actual ActivityManager resumed HOME state was not observed before neutral'
+    assert session.re.search(r'^Complete\s*$', stdout, session.re.M), 'Android HOME wait did not complete'
+    assert not session.re.search(r'^(?:Error|Exception|Failure)\b', stdout, session.re.M | session.re.I)
+    return {'status': statuses[0], 'activity': activities[0], 'completed': True,
+            'scope': 'Genuine HOME key plus Android MAIN/HOME request and finite ActivityManager resumed-HOME observation; neutral follows the actual system lifecycle barrier'}
 
 
 def bounded_home(before, duration_ms=250):
@@ -199,9 +232,11 @@ def bounded_home(before, duration_ms=250):
              'command_returncode': result.returncode, 'command_elapsed_seconds': elapsed,
              'command_stdout': result.stdout.decode(errors='replace'),
              'command_stderr': result.stderr.decode(errors='replace'),
-             'scope': 'One device-side timed framework joystick/Home/neutral sequence; release is dispatched before host polling, and a shell trap neutralizes on ordinary command failure'}
+             'scope': 'One device-side timed framework joystick/Home sequence requires actual ActivityManager resumed-HOME state before neutral; six finite system probes, release before host polling, and a shell trap neutralizes on ordinary command failure'}
     session.save('emulator-bounded-home-proof.json', proof)
     assert result.returncode == 0 and elapsed <= 10
+    proof['android_home_completion'] = framework_home_completion(proof['command_stdout'])
+    session.save('emulator-bounded-home-proof.json', proof)
     paused = session.wait(lambda r:r['resumed'] is False and r['native']['running'] is False
                           and r['native']['held_dirs'] == 0,
                           'Actual bounded Home clears source input and stops renderer', seconds=30)

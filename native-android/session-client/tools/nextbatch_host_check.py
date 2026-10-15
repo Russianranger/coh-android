@@ -140,10 +140,55 @@ def main():
     # This command grammar has one finite wait and release on normal completion
     # and signal/ordinary-error paths; there is no host report-dependent hold.
     script = driver.bounded_home_script(250)
-    assert script.count('sleep ') == 1 and 'sleep 0.250' in script
+    assert script.count('sleep ') == 2 and 'sleep 0.250' in script and 'sleep 0.100' in script
+    assert 'for coh_home_probe in 1 2 3 4 5 6; do' in script
+    assert script.index('test "$coh_home_ready" = 1') < script.rindex('input joystick motionevent MOVE 0 0')
     assert 'trap ' in script and 'EXIT HUP INT TERM' in script
-    assert script.index('input keyevent KEYCODE_HOME') < script.rindex('input joystick motionevent MOVE 0 0')
+    assert script.index('input keyevent KEYCODE_HOME') < script.index('am start -W -a android.intent.action.MAIN -c android.intent.category.HOME') < script.rindex('input joystick motionevent MOVE 0 0')
     passed('Bounded device-side Home path neutralizes before host polling')
+    home_stdout = ('COH_HOME_COMPONENT=com.google.android.apps.nexuslauncher/.NexusLauncherActivity\n'
+                   'Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.HOME] }\n'
+                   'Status: ok\nLaunchState: HOT\nActivity: com.google.android.apps.nexuslauncher/.NexusLauncherActivity\n'
+                   'TotalTime: 122\nWaitTime: 123\nComplete\n'
+                   'COH_HOME_RESUMED=com.google.android.apps.nexuslauncher/.NexusLauncherActivity\n')
+    assert driver.framework_home_completion(home_stdout)['completed'] is True
+    passed('Actual synchronous Android HOME completion admits release after launch')
+    for bad, label in [
+        (home_stdout.replace('Status: ok\n', ''), 'Missing Android HOME completion status'),
+        (home_stdout.replace('COH_HOME_RESUMED=com.google.android.apps.nexuslauncher/.NexusLauncherActivity\n', ''), 'am -W alone without actual HOME resumed observation'),
+        (home_stdout.replace('COH_HOME_RESUMED=com.google.android.apps.nexuslauncher/.NexusLauncherActivity', 'COH_HOME_RESUMED=org.coh.sessionclient.walk/.MainActivity'), 'Wrong Activity resumed before neutral'),
+        (home_stdout.replace('Status: ok', 'Status: timeout'), 'Android HOME launch timed out'),
+        (home_stdout.replace('Complete\n', ''), 'HOME launch wait still incomplete'),
+        (home_stdout.replace('android.intent.category.HOME', 'android.intent.category.LAUNCHER'), 'Unrelated Activity launch'),
+        (home_stdout.replace('Activity: com.google.android.apps.nexuslauncher/.NexusLauncherActivity\n', ''), 'Missing actual HOME Activity identity'),
+        (home_stdout + 'Error: Activity class does not exist\n', 'Framework launch error despite success-looking status'),
+    ]:
+        rejects(lambda: driver.framework_home_completion(bad), label)
+    # Match the observed first 0.3 CI race: real forward motion and blocking
+    # occurred, but an early neutral arrived before asynchronous Home pause.
+    # Historical displacement and aggregate axis coverage cannot substitute for
+    # an actually held source direction in the pre-clear lifecycle callback.
+    home_before = deepcopy(before)
+    home_before['input_adapter']['external_android'].update(motion=0, left_axis_directions=0)
+    held = deepcopy(native)
+    held.update(held_dirs=1, source_state_bits=1, movement_ticks=98, frames=147,
+                actor_position=[582.460449, 74, -1384.01367])
+    held['walk'].update(blocked_ticks=10, bounded_ticks=0, collision_queries=281)
+    background = deepcopy(held)
+    background.update(held_dirs=0, source_state_bits=0, foreground=False, running=False,
+                      motion_local=[0,0,0], motion_world=[0,0,0])
+    home_paused = {'resumed':False, 'native':background,
+                   'input_adapter':{'external_android':{'key_down':5,'key_up':5,'motion':2,'left_axis_directions':4},
+                                    'in_app_synthetic':deepcopy(synthetic)},
+                   'events':[{'sequence':21,'type':'pause_requested','native':held},
+                             {'sequence':22,'type':'pause','native':background}]}
+    assert driver.session.home_interrupt_witness(home_before, home_paused, source='joystick')
+    passed('Genuine held source movement remains mandatory at the Home pre-clear callback')
+    premature = deepcopy(home_paused)
+    premature['events'][0]['native'].update(held_dirs=0, source_state_bits=0,
+                                           motion_local=[0,0,0], motion_world=[0,0,0])
+    rejects(lambda: driver.session.home_interrupt_witness(home_before, premature, source='joystick'),
+            'Observed 0.3 early-neutral race cannot qualify historical source movement as held Home interruption')
     for value in (-1, 0, 99, 501, 5000, True, 250.5):
         rejects(lambda: driver.bounded_home_script(value), 'Invalid or excessive device-side hold: ' + repr(value))
     integration = deepcopy(native)
