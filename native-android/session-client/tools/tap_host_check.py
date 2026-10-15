@@ -206,6 +206,29 @@ def main():
     try:driver.pre_release_witness(run_before,bad)
     except AssertionError:check(True,'Reversed actual press/release trace rejected')
     else:check(False,'Reversed press/release trace incorrectly accepted')
+    settle_before={'assets_verified':True,'resumed':True,'native':deepcopy(native)}
+    settle_before['native'].update(valid=True,running=True,frames=100,movement_ticks=30,
+                                  held_dirs=0,input_pending_edges=0,source_state_bits=0,
+                                  motion_local=[0,0,0],motion_world=[0,0,0],animation_state=0)
+    settle_after=deepcopy(settle_before)
+    settle_after['native'].update(frames=160,movement_ticks=60)
+    check(driver.stable_walk_window(settle_before,settle_after),
+          'Released grounded source WALK stays within original tolerance over advancing ticks')
+    settling=deepcopy(settle_after);settling['native']['actor_position'][2]+=.00293
+    check(driver.stable_walk_window(settle_before,settling) is False,
+          'Source-faithful residual friction after Ready cannot prematurely qualify stability')
+    for field,value,label in [('input_pending_edges',1,'Native Ready before pending edge drains'),
+                              ('source_state_bits',2,'Native Ready with a surviving source direction'),
+                              ('held_dirs',2,'Ready label with held backward input'),
+                              ('motion_world',[0,0,1],'Ready label with nonzero desired world controls'),
+                              ('motion_local',[0,0,1],'Ready label with nonzero desired local controls'),
+                              ('animation_state',2,'Release still completing authored RunPost'),
+                              ('movement_ticks',59,'Fewer than thirty advancing source ticks'),
+                              ('frames',100,'Non-advancing rendering cannot establish a stable walk')]:
+        bad=deepcopy(settle_after);bad['native'][field]=value
+        try:driver.stable_walk_window(settle_before,bad)
+        except AssertionError:check(True,label+' rejected')
+        else:check(False,label+' incorrectly accepted')
     observed=None
     if args.observed_ui:
         raw=args.observed_ui.read_bytes();actual=list(ET.fromstring(raw).iter('node'))
@@ -213,7 +236,7 @@ def main():
             check(len(driver.button_nodes(actual,label))==1,'Observed Android UI finds '+label)
         observed={'file':args.observed_ui.name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
     receipt={'schema':1,'passed':True,'checks':checks,
-             'scope':'Actual shipped accessibility-label, exact tap listener, strict unreleased-source Home, grounded source obstacle/slide and exact RunPre-at-release evidence predicates on independent XML/event fixtures; no device execution',
+             'scope':'Actual shipped accessibility-label, exact tap listener, strict unreleased-source Home, grounded source obstacle/slide, exact RunPre-at-release and released-WALK stability evidence predicates on independent XML/event fixtures; no device execution',
              'emulator_driver_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
              'observed_android_ui':observed}
     args.output.parent.mkdir(parents=True,exist_ok=True)

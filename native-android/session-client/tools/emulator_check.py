@@ -23,6 +23,7 @@ OUTPUT = None
 ADB = 'adb'
 INPUT_PROOFS = []
 BUTTON_PROOFS = []
+SETTLING_PROOFS = []
 GATES = [19, 20, 21]
 
 
@@ -32,6 +33,16 @@ def adb(*arguments, check=True):
 
 def save(name, value):
     (OUTPUT / name).write_text(json.dumps(value, indent=2) + '\n')
+
+
+def progress(stage, value=None, **details):
+    entry = {'stage': stage, **details}
+    if value is not None:
+        native = value['native']
+        entry.update(frames=native['frames'], source_ticks=native['movement_ticks'],
+                     held_dirs=native['held_dirs'], animation_state=native['animation_state'],
+                     actor_position=native['actor_position'])
+    print(json.dumps(entry), flush=True)
 
 
 def report():
@@ -147,6 +158,23 @@ def pre_release_witness(before, released):
     assert native['animation_move_samples'][3] > before['native']['animation_move_samples'][3]
     assert distance(native['actor_position'], before['native']['actor_position']) > .01
     return witness
+
+
+def released_walk_controls(value):
+    native = value['native']
+    return (native_ready(value) and native['held_dirs'] == 0
+            and native['input_pending_edges'] == 0 and native['source_state_bits'] == 0
+            and native['motion_local'] == native['motion_world'] == [0, 0, 0]
+            and native['animation_state'] == 0)
+
+
+def stable_walk_window(before, after):
+    """No tolerance increase: actual pose must settle across a source second."""
+    assert released_walk_controls(before) and released_walk_controls(after)
+    assert after['native']['movement_ticks'] >= before['native']['movement_ticks']+30
+    assert after['native']['frames'] > before['native']['frames']
+    grounded_walk(after['native'])
+    return distance(before['native']['actor_position'], after['native']['actor_position']) <= .001
 
 
 def validate(value, moved=False):
@@ -277,17 +305,41 @@ def joystick_event(x, y, directions):
     return after, command
 
 
+def settle_released_walk(neutral, release_scope, command=None):
+    candidate = wait(released_walk_controls, 'Released WALK input queue and source post track clear', seconds=30)
+    deadline = time.monotonic()+10
+    trace = []
+    proof = {'scope': 'Actual framework release, drained native input edges and zero desired controls; original source ground friction may settle after Ready. A full advancing 30-tick pose window must remain within unchanged .001 source-unit tolerance.',
+             'release_scope': release_scope, 'release_input_argv': command, 'release_observed': neutral,
+             'initial_candidate': candidate, 'windows': trace, 'passed': False}
+    SETTLING_PROOFS.append(proof)
+    save('emulator-walk-settling-proof.json', {'cases': SETTLING_PROOFS})
+    progress('source WALK input released; observing natural settling', candidate)
+    while time.monotonic() < deadline:
+        ticks = candidate['native']['movement_ticks']
+        next_state = wait(lambda r:released_walk_controls(r)
+                          and r['native']['movement_ticks'] >= ticks+30
+                          and r['native']['frames'] > candidate['native']['frames'],
+                          'Released source WALK advances through its settling window',
+                          seconds=max(.1, deadline-time.monotonic()))
+        stable = stable_walk_window(candidate, next_state)
+        trace.append({'before': candidate, 'after': next_state,
+                      'displacement': distance(candidate['native']['actor_position'], next_state['native']['actor_position']),
+                      'source_ticks': next_state['native']['movement_ticks']-ticks,
+                      'stable_within_original_tolerance': stable})
+        proof['passed'] = stable
+        save('emulator-walk-settling-proof.json', {'cases': SETTLING_PROOFS})
+        progress('source WALK settling window', next_state,
+                 displacement=trace[-1]['displacement'], source_window_ticks=trace[-1]['source_ticks'], stable=stable)
+        if stable:
+            return next_state
+        candidate = next_state
+    raise RuntimeError('Released source WALK never stabilized within .001 across 30 advancing ticks; settling trace retained')
+
+
 def release_joystick():
     neutral, command = joystick_event(0, 0, 0)
-    released = wait(lambda r:native_ready(r) and r['native']['held_dirs'] == 0
-                    and r['native']['animation_state'] == 0,
-                    'Released WALK controls complete authored post track', seconds=30)
-    position = released['native']['actor_position'][:]
-    ticks = released['native']['movement_ticks']
-    settled = wait(lambda r:r['native']['movement_ticks'] >= ticks+30,
-                   'Grounded WALK remains stopped after source release')
-    assert distance(position, settled['native']['actor_position']) <= .001
-    return settled
+    return settle_released_walk(neutral, 'Actual Android framework joystick neutral', command)
 
 
 def reset_actor(initial_position):
@@ -309,6 +361,7 @@ def directional_walk(initial_position):
     proof = []
     for name, x, y, directions, pre, cycle in cases:
         before = reset_actor(initial_position)
+        progress('directional locomotion begins', before, direction=name)
         if name == 'right':
             # The authentic floor extends much farther world +Z than -X.
             # Change the real shared camera with actual swipes so RightPre can
@@ -323,6 +376,7 @@ def directional_walk(initial_position):
                      'Actual held ' + name + ' source animation pre and cycle', directions, seconds=20)
         grounded_walk(after['native'])
         released = release_joystick()
+        progress('directional locomotion passes', released, direction=name)
         assert released['native']['animation_transitions'] > before['native']['animation_transitions']
         proof.append({'direction': name, 'framework_input_argv': command,
                       'before': before, 'held': after, 'released': released,
@@ -345,6 +399,7 @@ def interrupted_and_reversed_walk(initial_position):
     try:
         for duration in (120, 160, 200):
             before = reset_actor(initial_position)
+            progress('timed RunPre interruption begins', before, framework_timeout_ms=duration)
             adb('shell', 'settings', 'put', 'secure', 'long_press_timeout', str(duration))
             assert adb('shell', 'settings', 'get', 'secure', 'long_press_timeout').stdout.decode().strip() == str(duration)
             command = [ADB, 'shell', 'input', 'keyboard', 'keyevent', '--longpress', 'KEYCODE_W']
@@ -372,6 +427,8 @@ def interrupted_and_reversed_walk(initial_position):
                  'original_framework_long_press_timeout': original_timeout,
                  'attempts': attempts})
             if interrupted:
+                progress('actual key-up during RunPre and early-stop path pass', stopped,
+                         framework_timeout_ms=duration, release_event_sequence=witness['sequence'])
                 break
     finally:
         if original_timeout == 'null':
@@ -410,11 +467,7 @@ def interrupted_and_reversed_walk(initial_position):
     current = released['input_adapter']['external_android']
     assert current['key_down'] == current['key_up']
     assert released['input_adapter']['in_app_synthetic']['key_down'] == 0
-    position = released['native']['actor_position'][:]
-    ticks = released['native']['movement_ticks']
-    settled = wait(lambda r:r['native']['movement_ticks'] >= ticks+30,
-                   'Ordinary fast taps leave a stable authored actor')
-    assert distance(position, settled['native']['actor_position']) <= .001
+    settled = settle_released_walk(released, 'Five ordinary actual Android keyboard taps complete release')
     save('emulator-quick-tap-proof.json', {'passed': True,
          'scope': 'Five actual ordinary Android keyevents, framework press/release receipts and stable released source state. A sub-tick tap need not manufacture motion beyond original control latency.',
          'before': before, 'released': released, 'settled': settled,
@@ -424,6 +477,7 @@ def interrupted_and_reversed_walk(initial_position):
 
 def obstacle_walk(initial_position):
     before = reset_actor(initial_position)
+    progress('authored obstacle collision begins', before)
     held, forward_command = joystick_event(0, -1, 1)
     blocked = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 1
                    and r['native']['walk']['blocked_ticks'] > before['native']['walk']['blocked_ticks'],
@@ -432,12 +486,14 @@ def obstacle_walk(initial_position):
                    and r['native']['movement_ticks'] >= blocked['native']['movement_ticks']+30,
                    'Held source movement remains blocked while physics advances', 1)
     blocked_walk_witness(before, blocked, settled)
+    progress('authored obstacle blocks held input', settled)
     sliding_held, diagonal_command = joystick_event(1, -1, 9)
     sliding = wait_held(lambda r:native_ready(r) and r['native']['held_dirs'] == 9
                    and r['native']['movement_ticks'] >= sliding_held['native']['movement_ticks']+6
                    and r['native']['walk']['sliding_ticks'] > settled['native']['walk']['sliding_ticks'],
                    'Actual diagonal source WALK slides along authored obstacle', 9, seconds=15)
     sliding_walk_witness(settled, sliding)
+    progress('authored obstacle wall sliding passes', sliding)
     released = release_joystick()
     save('emulator-obstacle-walk-proof.json', {'schema': 1, 'passed': True,
          'scope': 'Actual Android framework joystick with same-direction keyboard snapshot-refresh events: forward input blocked by authored CTri obstacle, diagonal input produces source wall sliding, release stops actor',
@@ -689,9 +745,7 @@ def renewed_joystick_input(before):
     adb('shell','input','joystick','motionevent','MOVE','0','0')
     released=wait(lambda r:r['native']['held_dirs']==0 and r['native']['animation_state']==0
                   and r['input_adapter']['external_android']['motion']>old['motion'], 'Real neutral joystick release settles authored actor')
-    position=released['native']['actor_position'][:];frames=released['native']['frames']
-    settled=wait(lambda r:r['native']['frames']>=frames+30, 'Continuous rendering after fresh joystick release')
-    assert distance(position,settled['native']['actor_position'])<=.001
+    settled=settle_released_walk(released, 'Renewed real Android joystick neutral after Home')
     save('emulator-renewed-joystick-proof.json',{'passed':True,'scope':'Actual framework joystick neutral/backward/neutral after Home; no physical controller claim',
          'neutral':neutral,'moving':moved,'released':released,'settled':settled})
     return settled
@@ -757,6 +811,7 @@ def main():
         assert first['asset_manifest'] == pins
         assert 'walkable.bin' in pins['assets'], 'Ground/collision fixture missing from installed package'
         save('emulator-initial-report.json', first); screenshot('emulator-initial-scene.png')
+        progress('installed native walking scene starts and rendering checks pass', first)
         initial_position = first['native']['actor_position'][:]
         directional_walk(initial_position)
         interrupted_and_reversed_walk(initial_position)
@@ -769,12 +824,9 @@ def main():
         input_key('KEYCODE_S')
         moved = wait(lambda r:native_ready(r) and r['native']['held_dirs'] == 0
                      and r['native']['animation_state'] == 0, 'Idle after released authored run', seconds=30)
+        moved = settle_released_walk(moved, 'Actual Android keyboard WASD sequence completes release')
         validate(moved, moved=True)
         assert distance(initial_position, moved['native']['actor_position']) > .1
-        settled_position = moved['native']['actor_position'][:]
-        settled_frames = moved['native']['frames']
-        moved = wait(lambda r:r['native']['frames'] >= settled_frames+30, 'Continued idle rendering after release')
-        assert distance(settled_position,moved['native']['actor_position']) <= .001, 'Released actor continues drifting'
         moved = touch_look(); save('emulator-moved-report.json', moved)
         state = moved['native']; position=state['actor_position'][:]
         camera=(state['camera_yaw'],state['camera_pitch'])
