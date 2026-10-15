@@ -1,0 +1,23 @@
+{
+  "schema": "coh-native-combined-app-v1",
+  "package": "org.coh.nativecombined",
+  "busy": false,
+  "runtime_ready": false,
+  "imports": "Server payload: import COH-Atlas-Gameplay-0.13.36.apk\nAssets 1.0.0 \u2014 import audio, base, reference, zones part(s)\nGame files: import all four asset parts\nProfile: no logical dump imported",
+  "message": "Import the existing launcher APK and four game asset parts.",
+  "progress_done": 0,
+  "progress_total": 0,
+  "server": {
+    "phase": "stopped",
+    "ready": false,
+    "session_id": "",
+    "guest_exit_code": -1,
+    "owned_process_alive": false
+  },
+  "local_development_auth": true,
+  "real_authserver_login_verified": false,
+  "native_live_world_verified": false,
+  "old_application_modified": false,
+  "updated_elapsed_ms": 80376,
+  "events": []
+}

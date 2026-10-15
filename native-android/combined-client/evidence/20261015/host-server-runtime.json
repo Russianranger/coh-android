@@ -1,0 +1,41 @@
+{
+  "format": 1,
+  "scope": "server_only_admission_and_retained_api_contract",
+  "actual_server_executed": false,
+  "actual_login_verified": false,
+  "native_world_entry_verified": false,
+  "test_character_provision_executed": false,
+  "source_contract_tests": {
+    "test_methods": 15,
+    "status": "passed",
+    "stdout_sha256": "cdc6136f59a459d48a3b313af772475c428cc1a0f4061c9af0659e578f20ecf1"
+  },
+  "source_modules": {
+    "diagnostic.py": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf",
+    "dbserver_diagnostic.py": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2",
+    "game_diagnostic.py": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737",
+    "client_startup_diagnostic.py": "8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53",
+    "local_login_server.py": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de",
+    "local_character_server.py": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180",
+    "character_zoning.py": "716a9ebd963c45abb2f10b5396013f4c4b87a284cfc887c657fe7423d7a5853f",
+    "game_evidence.py": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+  },
+  "donor": {
+    "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+    "modules": {
+      "diagnostic.py": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf",
+      "dbserver_diagnostic.py": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2",
+      "game_diagnostic.py": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737",
+      "client_startup_diagnostic.py": "8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53",
+      "local_login_server.py": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de",
+      "local_character_server.py": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180",
+      "character_zoning.py": "716a9ebd963c45abb2f10b5396013f4c4b87a284cfc887c657fe7423d7a5853f",
+      "game_evidence.py": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+    },
+    "contract_tests": {
+      "test_methods": 15,
+      "status": "passed",
+      "stdout_sha256": "a918b010979a1bee0e5160f9ef63ede33a1e558da0dc0109827e08e1f01fa7f2"
+    }
+  }
+}

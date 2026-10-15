@@ -1,0 +1,92 @@
+{
+  "format": 1,
+  "status": "passed",
+  "checks": [
+    {
+      "check": "fresh install and exact main Activity",
+      "passed": true,
+      "apk_sha256": "09a6a6a8f43cb8e1f574bb407ea4682ac95c39ba716e6cb906212161b21ed482"
+    },
+    {
+      "check": "fresh app initialized for external imports without failures",
+      "passed": true
+    },
+    {
+      "check": "framework SAF cancellation and app return",
+      "passed": true,
+      "control": "Import launcher APK"
+    },
+    {
+      "check": "framework SAF cancellation and app return",
+      "passed": true,
+      "control": "Import game asset part"
+    },
+    {
+      "check": "missing imports refuse setup and server start",
+      "passed": true,
+      "runtime_ready": false,
+      "server_ready": false
+    },
+    {
+      "check": "actual pinned donor APK imported through SAF",
+      "passed": true,
+      "bytes": 42076692,
+      "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f"
+    },
+    {
+      "check": "untrusted donor refused and previous accepted payload preserved",
+      "passed": true
+    },
+    {
+      "check": "native connection refuses absent server lease",
+      "passed": true,
+      "actual_server_interoperability_verified": false
+    },
+    {
+      "check": "native preview actual GLES frames",
+      "passed": true,
+      "frames": 42,
+      "gl_errors": 0
+    },
+    {
+      "check": "framework view distance, Surface recreation and Home recovery",
+      "passed": true
+    },
+    {
+      "check": "actual framework JSON document export",
+      "passed": true,
+      "bytes": 138541,
+      "sha256": "ee04d8651cdbdc0cd29ef9b8c9d13a8a25a7b65a4cce67a64f82dca57a73d08e"
+    },
+    {
+      "check": "current foreground GPU resources and actual on-screen scene pixels",
+      "passed": true,
+      "frames": 267,
+      "context": 6,
+      "gpu_bytes": 557056,
+      "bright_pixels": 556406,
+      "distinct_colors_at_least": 14194,
+      "screenshot_sha256": "058eaf755078318e44fc04ffa12a09a1467709c1c25876d583f17524713b01b2"
+    },
+    {
+      "check": "Android native UDP DB-to-Map controller",
+      "passed": true,
+      "checks": 464,
+      "socket_scenarios": 6,
+      "real_server_interoperability": false
+    },
+    {
+      "check": "no app crash recorded",
+      "passed": true
+    }
+  ],
+  "device": {
+    "api": "33",
+    "abi": "x86_64",
+    "emulator": true
+  },
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false,
+  "real_authenticated_session": false,
+  "scope": "Consolidated app Android framework import cancellation/admission, native preview GLES and lifecycle; optional source-layout scripted native UDP controller. ARM64 guest server startup and real local account handoff require device qualification."
+}

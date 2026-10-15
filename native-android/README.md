@@ -2,6 +2,14 @@
 
 > Gates 22–24 are physically accepted on AYN Thor for Session Client 0.3.0. See [the acceptance receipt](evidence/phases22-24/thor-acceptance-20261015.json). No repeat of this test is required. Historical qualification sections below retain their original timing.
 
+The new [combined server/native app](combined-client/README.md) imports existing
+0.13.36 launcher and CoH Assets 1.0.0 files, starts the existing headless local
+server runtime, and opens the native client manually. Follow its
+[consolidated Thor test](combined-client/THOR-TEST.md). It installs separately and
+preserves the conventional launcher and accepted native clients. Native DB/Map
+handoff is an explicit local development path; real AuthServer login and full
+server-world render/spawn remain pending.
+
 Latest continuation: [gates 25–27 session libraries](PHASES25-27.md) and
 [October 15 recovery](RECOVERY-20261015.md). Networking, authentication and
 replication have new source/host-qualified components; genuine account login

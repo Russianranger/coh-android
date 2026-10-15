@@ -1,0 +1,82 @@
+{
+  "format": 1,
+  "status": "passed",
+  "suites": [
+    {
+      "name": "framework-driver-controls",
+      "returncode": 0,
+      "elapsed_seconds": 0.95,
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/coh-android/coh-android/native-android/combined-client/tools/driver_controls.py"
+      ]
+    },
+    {
+      "name": "lease-admission",
+      "returncode": 0,
+      "elapsed_seconds": 0.719,
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/coh-android/coh-android/native-android/combined-client/qualification/check_lease.py"
+      ]
+    },
+    {
+      "name": "imports",
+      "returncode": 0,
+      "elapsed_seconds": 3.27,
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/coh-android/coh-android/native-android/combined-client/imports/tests/check_imports.py"
+      ]
+    },
+    {
+      "name": "server-runtime",
+      "returncode": 0,
+      "elapsed_seconds": 0.673,
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/coh-android/coh-android/native-android/combined-client/runtime/check.py",
+        "--source-root",
+        "/home/runner/work/coh-android/coh-android",
+        "--donor",
+        "/home/runner/work/coh-android/coh-android/native-android/combined-client/.inputs/COH-Atlas-Gameplay-0.13.36.apk",
+        "--output",
+        "/home/runner/work/coh-android/coh-android/native-android/results/combined-client/host/server-runtime.json"
+      ]
+    },
+    {
+      "name": "local-protocol",
+      "returncode": 0,
+      "elapsed_seconds": 11.812,
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/local/check.py",
+        "--source-root",
+        "/home/runner/work/coh-android/coh-android",
+        "--sanitize",
+        "--ndk",
+        "/usr/local/lib/android/sdk/ndk/28.2.13676358",
+        "--android-output",
+        "/home/runner/work/coh-android/coh-android/native-android/results/combined-client/host/local-android",
+        "--output",
+        "/home/runner/work/coh-android/coh-android/native-android/results/combined-client/host/local-protocol.json"
+      ]
+    },
+    {
+      "name": "db-protocol",
+      "returncode": 0,
+      "elapsed_seconds": 9.082,
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/coh-android/coh-android/native-android/engine/dbclient/check.py",
+        "--source-root",
+        "/home/runner/work/coh-android/coh-android",
+        "--sanitize",
+        "--output",
+        "/home/runner/work/coh-android/coh-android/native-android/results/combined-client/host/db-protocol.json"
+      ]
+    }
+  ],
+  "scope": "Source and deterministic host/import/scripted socket contracts; Android execution and actual guest server startup are separate evidence.",
+  "actual_server_interoperability_verified": false
+}

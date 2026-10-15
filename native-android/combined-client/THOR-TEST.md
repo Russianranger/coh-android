@@ -5,6 +5,12 @@ This is a new, separate app named **CoH Native Combined**
 0.1.0/0.2.0/0.3.0 apps and all existing assets and reports. Do not uninstall or
 clear their storage. Gates 22–24 remain accepted within their documented scope.
 
+Qualified build source: `5637133133a3654bb1a4f4b0fdb74ae575d05520`.
+ARM64 APK: 11,493,783 bytes, SHA256
+`4ae4ef25c6ea60bfdcac000f4ff9016ae202aa42e3414024a40c99dcf66b97ee`.
+The [package artifact](https://github.com/Russianranger/coh-android/actions/runs/38763514350/artifacts/11987440686)
+contains the ARM64 APK and build receipts; use the ARM64 file for Thor.
+
 ## Prepare the existing files
 
 1. Stop the server in the conventional COH launcher first. Both apps use local
@@ -20,7 +26,7 @@ clear their storage. Gates 22–24 remain accepted within their documented scope
    1.0.0** ZIP parts. Multi-selection is supported; alternatively import them one
    at a time. Wait for the accepted input status after each operation. Keep the
    original ZIPs. An incomplete or wrong part must not enable server readiness.
-5. If you already have the pinned Linux ARM64 and Wine/FEX runtime `.tgz`
+5. If you already have the pinned Linux ARM64 and Wine/FEX runtime `.tar.gz` / `.tgz`
    archives, import each with **Import runtime archive (optional)**. Otherwise
    setup downloads approximately 672 MB. Arbitrary runtime archives are refused.
 6. Leave **Import character backup** unused for the first disposable test.
@@ -28,7 +34,9 @@ clear their storage. Gates 22–24 remain accepted within their documented scope
    to create and validate one real saved test character. Existing launcher
    accounts and characters are untouched. Optional restoration accepts a logical
    PostgreSQL PGDMP backup, at most 512 MiB, into this isolated profile; it does not
-   import a raw `pgdata` directory.
+   import a raw `pgdata` directory. The supported restored profile has one
+   `COHLOCAL` character with container ID 1 on Atlas or Kings Row; arbitrary
+   account/profile migration is outside this initial test.
 7. After imports, have at least **5 GiB free in internal storage**, then tap
    **Set up runtime**. Keep the app foreground for initial setup. Imported game
    data and the new runtime take additional space; the APK does not share the
