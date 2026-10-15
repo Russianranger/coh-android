@@ -50,6 +50,10 @@ typedef struct { uint32_t position, count; } CohDbQueue;
  * These functions do not assert server authentication or successful login. */
 CohStatus coh_db_login_encode(const CohDbLogin *, int byte_aligned,
     int legacy_commands, uint8_t *, size_t capacity, size_t *bit_length);
+/* Development-only source -db login. UID/cookie MUST be zero. It creates
+ * no authenticated receipt and is admitted only by begin_local on loopback. */
+CohStatus coh_db_local_login_encode(const CohDbLogin *, int byte_aligned,
+    int legacy_commands, uint8_t *, size_t capacity, size_t *bit_length);
 CohStatus coh_db_choose_encode(const CohDbChoose *, int byte_aligned,
     int legacy_commands, uint8_t *, size_t capacity, size_t *bit_length);
 CohStatus coh_db_players_parse(CohBytes, size_t bit_length, int byte_aligned,

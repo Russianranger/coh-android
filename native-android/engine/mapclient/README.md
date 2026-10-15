@@ -81,3 +81,8 @@ driver must verify the receipt, execute the matching ABI and preserve its
 separate execution result.
 
 Source constraints and oracle boundaries are documented in `SOURCE-AUDIT.md`.
+
+The combined local-server app uses a separate loopback-only development guard.
+`local_development_authorized=1` requires `authenticated=0`, explicit endpoint
+approval and unknown DBID; ambiguous or remote admission fails. It does not
+establish AuthServer account authentication. Normal authenticated admission is unchanged.

@@ -1,0 +1,82 @@
+# Native Combined Client
+
+One separately installed Android app imports the existing local-server inputs,
+starts an owned headless local server, and lets the user open the native client
+manually. The package is `org.coh.nativecombined`; the conventional launcher and
+accepted native Session Client remain installed with their private data intact.
+
+Follow [THOR-TEST.md](THOR-TEST.md) for the consolidated device test.
+
+## Scope
+
+* The server uses the existing ARM64 PostgreSQL and Wine/FEX DbServer/MapServer
+  runtime. No graphical Windows game client is launched.
+* The native client uses native C/C++ transport and GLES rendering. Its initial
+  scene is the accepted Session Client 0.3.0 preview, with its original assets.
+* The explicit loopback development session can request an existing character
+  list, select a character, and follow the real DB-to-Map handoff. It uses the
+  local server's `UseFakeAuth` policy, not a fabricated authenticated receipt.
+* Full scene/entity decoding and server-position rendering are incomplete.
+  `SCENE_INCOMPLETE` is the current bounded endpoint, not a live-world success.
+* Real AuthServer authentication and actual guest-server/device interoperability
+  remain separate qualification requirements. Deterministic socket peers do not
+  prove a real server session.
+
+## External inputs
+
+The APK embeds small PRoot cores, reviewed helper scripts, manifests, native
+libraries and the accepted preview fixtures. It excludes rootfs, Wine/FEX,
+PostgreSQL binaries, PE server/client files and the four game asset archives.
+
+`tools/prepare.py` pins the previously published 0.13.36 donor APK and qualified
+0.3.0 scene APK. Runtime imports accept only exact manifest members/hashes;
+unrelated or malformed archives cannot replace an accepted generation. The
+0.13.36 donor helper closure is preserved unchanged. New server orchestration is
+separate in `runtime/server_runtime.py`.
+
+The app imports through Android's document picker, copies accepted inputs into
+its own storage, and publishes completed generations atomically. It never reads
+another app's private storage. Setup requires ARM64 and at least 5 GiB of free
+internal space after imports. Missing pinned Linux and Wine archives are
+downloaded during setup; existing matching archives can be imported instead.
+This initial test stores its own runtime and profile, so it needs additional disk
+space even when the old launcher already has those files.
+
+## Ownership and reports
+
+A foreground service owns imports, setup and the server process. Readiness
+requires a live owner plus a current, matching guest heartbeat; the native client
+receives only the current loopback development policy. Stop, stale readiness,
+backgrounding the client, changed session/generation and process exit revoke the
+native connection. Stop requests cooperative guest cleanup, then uses one bounded
+120-second deadline with 15/5-second termination stages. An incomplete ownership
+marker blocks reuse until explicit interrupted-server recovery. Recovery never
+deletes database data.
+
+Reports contain bounded diagnostics, state transitions and numeric native packet
+counters. Export omits account identifiers, configuration, profile dumps,
+passwords and authentication keys. Guest readiness is not equivalent to native
+protocol success. Native packet receipt is not equivalent to complete scene
+replication.
+
+## Building and qualification
+
+The workflow `.github/workflows/native-combined-client.yml` prepares exact inputs,
+reuses the pinned public crypto artifact, runs host/sanitizer contracts, builds
+ARM64 and an x86_64 emulator package, lints and audits both, then runs the Android
+13 framework driver. A clean source receipt and exact APK hashes bind the driver
+to its package. The emulator tests actual document import/refusal, preview GLES,
+Near/Far selection, Surface recreation, Home/return, missing-policy refusal and
+report export; scripted native UDP tests are labelled separately. It cannot run
+the ARM64 Wine/FEX server on the x86_64 emulator.
+
+Local preparation and checks:
+
+```sh
+python3 native-android/combined-client/tools/prepare.py --donor-apk /path/COH-Atlas-Gameplay-0.13.36.apk --scene-apk /path/CoH-Native-Session-Client-0.3.0-arm64.apk
+python3 native-android/combined-client/tools/host_check.py --donor-apk /path/COH-Atlas-Gameplay-0.13.36.apk --ndk /path/android-ndk-r28c --output /tmp/combined-host
+python3 native-android/combined-client/gradle.py -PprobeAbis=arm64-v8a -PcohCryptoRoot=/path/crypto-build :app:assembleDebug :app:lintDebug
+```
+
+The public test signing identity is for development packages. Generated inputs,
+APK outputs, SDKs and caches are excluded from source control.

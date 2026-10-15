@@ -32,6 +32,7 @@ typedef struct {
 typedef struct {
     CohDbSessionPhase phase;
     uint32_t generation, selection_generation, queue_position, queue_count;
+    unsigned local_development_auth, server_identity_bound;
     uint64_t login_requests, player_lists, queue_updates, choices, handoffs,
         malformed, unsupported, server_rejections, receipt_rejections,
         suspends, disconnects, timeouts, cancellations;
@@ -44,6 +45,12 @@ CohDbSession *coh_db_session_create(const CohDbSessionConfig *);
 void coh_db_session_destroy(CohDbSession *);
 CohStatus coh_db_session_begin(CohDbSession *, const CohDbLogin *,
     const CohDbAuthReceipt *, uint32_t connect_id, uint64_t now_ms);
+/* Explicit source -db/UseFakeAuth path. Both local bind and DB peer must be
+ * loopback, login UID/cookie zero, generation fresh/nonzero. First genuine
+ * SEND_PLAYERS must supply a nonzero UID; all later lists must match it.
+ * This is NOT AuthServer authentication and cannot create CohDbAuthReceipt. */
+CohStatus coh_db_session_begin_local(CohDbSession *, const CohDbLogin *,
+    uint32_t generation, uint32_t connect_id, uint64_t now_ms);
 CohStatus coh_db_session_service(CohDbSession *, uint64_t now_ms, CohCancel);
 CohStatus coh_db_session_players(const CohDbSession *, CohDbPlayers *);
 CohStatus coh_db_session_choose(CohDbSession *, uint32_t wire_slot,

@@ -1,0 +1,98 @@
+{
+  "actual_server_interoperability_verified": false,
+  "android_arm64_built": true,
+  "android_artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "built": true,
+      "executed": false,
+      "file": "coh-db-wire-arm64-v8a",
+      "kind": "wire",
+      "sha256": "e13c8c33930a12e79c3a0af04a427dce31e5ab1db84c20163add7254e652c9c1"
+    },
+    {
+      "abi": "arm64-v8a",
+      "built": true,
+      "executed": false,
+      "file": "coh-db-session-arm64-v8a",
+      "kind": "session",
+      "sha256": "bf99ecce2a44e58d7e4427c9818b90371b6098f0fa630ad157efbda6d14c0148"
+    },
+    {
+      "abi": "x86_64",
+      "built": true,
+      "executed": false,
+      "file": "coh-db-wire-x86_64",
+      "kind": "wire",
+      "sha256": "fb2e974ce770a732736b00efb58d8cac38a624de81b32e8b48ef46ed8fe9a909"
+    },
+    {
+      "abi": "x86_64",
+      "built": true,
+      "executed": false,
+      "file": "coh-db-session-x86_64",
+      "kind": "session",
+      "sha256": "28bb043627d50722366a9ff0a2039ac87b918840962248a232518ed7d24c92b3"
+    }
+  ],
+  "android_fixture_sha256": "0e6aae45f26274265ae8d498904064dd8f86ea3db33b501cb78006bd09cc1484",
+  "android_library_sha256": "2c3498f986c7f67bdb101b01c9abc27dc9b19d0103375a093440f60c7e4d843c",
+  "checks": {
+    "asan": {
+      "checks": 95949,
+      "malformed_inputs": 10000,
+      "passed": true,
+      "real_server_login": false,
+      "session": {
+        "actual_os_udp": true,
+        "checks": 958,
+        "passed": true,
+        "real_authenticated_server": false,
+        "socket_leak_check": true,
+        "socket_scenarios": 14,
+        "source_layout_peer": true
+      }
+    },
+    "release": {
+      "checks": 95949,
+      "malformed_inputs": 10000,
+      "passed": true,
+      "real_server_login": false,
+      "session": {
+        "actual_os_udp": true,
+        "checks": 958,
+        "passed": true,
+        "real_authenticated_server": false,
+        "socket_leak_check": true,
+        "socket_scenarios": 14,
+        "source_layout_peer": true
+      }
+    },
+    "ubsan": {
+      "checks": 95949,
+      "malformed_inputs": 10000,
+      "passed": true,
+      "real_server_login": false,
+      "session": {
+        "actual_os_udp": true,
+        "checks": 958,
+        "passed": true,
+        "real_authenticated_server": false,
+        "socket_leak_check": true,
+        "socket_scenarios": 14,
+        "source_layout_peer": true
+      }
+    }
+  },
+  "emulator_qualified": false,
+  "fixtures": 36,
+  "leak_sanitizer_enabled": false,
+  "leak_sanitizer_limitation": "Disabled for executor /proc task-walk compatibility; ASan address checks and explicit socket descriptor before/after cleanup checks remain enabled.",
+  "ndk_revision": "28.2.13676358",
+  "passed": true,
+  "physical_thor_accepted": false,
+  "schema": 1,
+  "scope": "pinned original login/choose producer blocks and bit writer; synthetic full source-layout player lists and actual OS UDP session peer; no real authenticated server or capture",
+  "source_files": 10,
+  "source_producer_profiles": 4
+}

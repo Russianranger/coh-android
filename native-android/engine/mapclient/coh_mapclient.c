@@ -54,7 +54,7 @@ static void clear_authorization(CohMapClient *m) {
     m->cookie=0;m->authorized=0;coh_rep_session_disconnect(&m->inspector);
     memset(&m->schema,0,sizeof(m->schema));m->diag.selected_dbid=0;
     m->diag.selected_slot=0;m->diag.selection_generation=0;m->diag.character_identity_verified=0;
-    m->diag.map_id=0;m->diag.map_link_id=0;
+    m->diag.map_id=0;m->diag.map_link_id=0;m->diag.local_development_authorized=0;
 }
 void coh_map_client_close(CohMapClient *m) {
     if(!m)return;
@@ -65,10 +65,13 @@ void coh_map_client_destroy(CohMapClient *m) {
     if(m){coh_net_udp_destroy(m->udp);wipe(m,sizeof(*m));free(m);}
 }
 static CohStatus authorization(const CohMapClient *m,const CohMapAuthorization *a) {
-    if(!a||(a->authenticated!=0&&a->authenticated!=1)||(a->endpoint_authorized!=0&&a->endpoint_authorized!=1))return COH_INVALID;
-    if(!a->authenticated||!a->endpoint_authorized)return COH_STATE;
+    if(!a||(a->authenticated!=0&&a->authenticated!=1)||(a->endpoint_authorized!=0&&a->endpoint_authorized!=1)||
+       (a->local_development_authorized!=0&&a->local_development_authorized!=1))return COH_INVALID;
+    if(a->authenticated&&a->local_development_authorized)return COH_INVALID;
+    if((!a->authenticated&&!a->local_development_authorized)||!a->endpoint_authorized)return COH_STATE;
     if(!a->selection_generation||a->selected_slot>=64||a->handoff.cookie<2||a->address_index>1)return COH_INVALID;
     uint32_t ip=a->handoff.address[a->address_index];
+    if(a->local_development_authorized&&(m->config.udp.peer.address[0]!=127||(ip&255u)!=127||a->selected_dbid))return COH_INVALID;
     for(unsigned i=0;i<4;i++)if(m->config.udp.peer.address[i]!=(uint8_t)(ip>>(8*i)))return COH_INVALID;
     if(m->config.udp.peer.port!=a->handoff.udp_port)return COH_INVALID;
     return COH_OK;
@@ -92,6 +95,7 @@ CohStatus coh_map_client_begin(CohMapClient *m,const CohMapAuthorization *a,uint
         if(s!=COH_OK){coh_map_client_close(m);return s;}
     }
     m->diag.selected_slot=a->selected_slot;m->diag.selection_generation=a->selection_generation;
+    m->diag.local_development_authorized=(unsigned)a->local_development_authorized;
     m->diag.selected_dbid=a->selected_dbid;m->diag.map_id=a->handoff.map_id;m->diag.map_link_id=a->handoff.link_id;
     m->cookie=a->handoff.cookie;m->authorized=1;m->last_connect_id=id;
     m->diag.generation++;m->diag.phase=COH_MAP_NET_CONNECTING;m->phase_ms=m->last_ms=now;return COH_OK;

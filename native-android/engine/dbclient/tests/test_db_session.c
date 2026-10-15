@@ -60,7 +60,9 @@ static CohNetEndpoint local(CohDbSession *s){CohNetEndpoint e;CHECK(coh_db_sessi
 static CohNetPacket handshake_uid(CohDbSession *s,Peer *peer,unsigned version,uint32_t connect_id,uint64_t now,uint32_t uid) {
     CohDbLogin login;CohDbAuthReceipt auth;login_configuration(&login,&auth,1);
     login.user_id=auth.user_id=uid;
-    CHECK(coh_db_session_begin(s,&login,&auth,connect_id,now)==COH_OK);CHECK(coh_db_session_service(s,now,(CohCancel){0})==COH_OK);
+    if(uid)CHECK(coh_db_session_begin(s,&login,&auth,connect_id,now)==COH_OK);
+    else {login.cookie=0;login.no_version_check=1;CHECK(coh_db_session_begin_local(s,&login,1,connect_id,now)==COH_OK);}
+    CHECK(coh_db_session_service(s,now,(CohCancel){0})==COH_OK);
     CohNetPacket first=frame_read(peer,version,1);CHECK(command(&first,version,1)==1);
     CohNetEndpoint target=local(s);CohNetPacket reply=control(version,100,2,1,0);reply.ack_count=1;reply.acks[0]=first.id;frame_send(peer,target,version,&reply);
     CHECK(coh_db_session_service(s,now+1,(CohCancel){0})==COH_OK);CohNetPacket ack=frame_read(peer,version,0);CHECK(command(&ack,version,1)==3);
@@ -71,7 +73,7 @@ static CohNetPacket handshake_uid(CohDbSession *s,Peer *peer,unsigned version,ui
     uint8_t decoded[COH_NET_MESSAGE_MAX];const uint8_t *data=request.payload;size_t bytes=(request.payload_bits+7)/8;
     if(request.compressed){CHECK(coh_net_zip_decode(peer->zip,0,(CohBytes){data,bytes},decoded,sizeof(decoded),&bytes)==COH_OK);data=decoded;}
     uint8_t expected[COH_DB_LOGIN_MAX];size_t expected_bits=0;
-    CHECK(coh_db_login_encode(&login,request.compressed,version<4,expected,sizeof(expected),&expected_bits)==COH_OK);
+    CHECK((uid?coh_db_login_encode:coh_db_local_login_encode)(&login,request.compressed,version<4,expected,sizeof(expected),&expected_bits)==COH_OK);
     CHECK(expected_bits==(request.compressed?bytes*8:request.payload_bits)&&!memcmp(data,expected,(expected_bits+7)/8));
     coh_db_wipe(&login,sizeof(login));coh_db_wipe(&auth,sizeof(auth));return request;
 }
@@ -159,10 +161,46 @@ static void reliable_retry(void) {
     CHECK(coh_db_session_service(s,102+c.request_timeout_ms,(CohCancel){0})==COH_STATE);CHECK(coh_db_session_phase(s)==COH_DB_TIMED_OUT);
     coh_db_session_destroy(s);peer_close(&peer);scenarios++;
 }
+static void local_development(unsigned which) {
+    Peer peer=peer_open();CohDbSessionConfig c=configuration(&peer,5,0);CohDbSession *s=coh_db_session_create(&c);CHECK(s);
+    CohNetPacket request=handshake_uid(s,&peer,5,555,100,0);CohNetEndpoint target=local(s);
+    const uint8_t *data=which==1?players_zero0:players0;size_t bits=which==1?players_zero0_bits:players0_bits;
+    peer_message(&peer,target,5,data,bits,0,request.id);CohStatus status=coh_db_session_service(s,104,(CohCancel){0});drain_ack(&peer,5);
+    CohDbSessionDiagnostics d;coh_db_session_diagnostics(s,&d);CHECK(d.local_development_auth==1);
+    if(which==1){CHECK(status==COH_INVALID&&d.phase==COH_DB_FAILED&&!d.server_identity_bound);}
+    else {
+        CHECK(status==COH_OK&&d.phase==COH_DB_CHARACTERS&&d.server_identity_bound);
+        CohDbPlayers p;CHECK(coh_db_session_players(s,&p)==COH_OK&&p.user_id==12345);
+        if(which==2){peer_message(&peer,target,5,players_rebound0,players_rebound0_bits,0,0);CHECK(coh_db_session_service(s,105,(CohCancel){0})==COH_INVALID);drain_ack(&peer,5);CHECK(coh_db_session_phase(s)==COH_DB_FAILED);}
+        else {
+            peer_message(&peer,target,5,players0,players0_bits,0,0);CHECK(coh_db_session_service(s,105,(CohCancel){0})==COH_OK);drain_ack(&peer,5);
+            CHECK(coh_db_session_choose(s,0,0,0,106)==COH_OK);CHECK(coh_db_session_service(s,106,(CohCancel){0})==COH_OK);request=frame_read(&peer,5,0);
+            peer_message(&peer,target,5,map0,map0_bits,0,request.id);CHECK(coh_db_session_service(s,107,(CohCancel){0})==COH_OK);drain_ack(&peer,5);
+            CohDbSessionHandoff h;CHECK(coh_db_session_take_handoff(s,&h)==COH_OK&&h.map.cookie==123456&&h.selected_slot==0&&!h.selected_dbid);
+        }
+    }
+    coh_db_session_suspend(s);CohDbLogin login;CohDbAuthReceipt auth;login_configuration(&login,&auth,1);login.user_id=login.cookie=0;
+    CHECK(coh_db_session_begin(s,&login,&auth,556,108)==COH_STATE);
+    CHECK(coh_db_session_begin_local(s,&login,1,556,108)==COH_STATE);
+    CHECK(coh_db_session_begin_local(s,&login,2,556,108)==COH_OK);coh_db_session_cancel(s);
+    coh_db_session_diagnostics(s,&d);CHECK(d.transport.sockets_opened==d.transport.sockets_closed);
+    coh_db_session_destroy(s);peer_close(&peer);scenarios++;
+}
+static void local_policy_rejections(void) {
+    Peer peer=peer_open();CohDbSessionConfig c=configuration(&peer,5,0);CohDbLogin login;CohDbAuthReceipt auth;login_configuration(&login,&auth,1);login.user_id=login.cookie=0;
+    for(unsigned i=0;i<2;i++){
+        if(i==0)c.transport.peer.address[0]=10;else {c.transport.peer=peer.endpoint;c.transport.local.address[0]=0;c.transport.local.address[3]=0;}
+        CohDbSession *s=coh_db_session_create(&c);CHECK(s);
+        CHECK(coh_db_session_begin_local(s,&login,1,1,100)==COH_STATE);
+        CohDbSessionDiagnostics d;coh_db_session_diagnostics(s,&d);CHECK(!d.transport.sockets_opened);
+        coh_db_session_destroy(s);
+    }
+    peer_close(&peer);scenarios++;
+}
 static unsigned descriptors(void) {
     DIR *d=opendir("/proc/self/fd");CHECK(d);unsigned n=0;struct dirent *e;while((e=readdir(d)))if(e->d_name[0]!='.')n++;CHECK(!closedir(d));return n;
 }
 int main(void) {
-    unsigned before=descriptors();happy(0,0);happy(5,0);happy(5,1);receipt_and_lifecycle();rejection(0);rejection(1);rejection(2);rejection(3);encryption_policy();reliable_retry();CHECK(before==descriptors());
+    unsigned before=descriptors();local_development(0);local_development(1);local_development(2);local_policy_rejections();happy(0,0);happy(5,0);happy(5,1);receipt_and_lifecycle();rejection(0);rejection(1);rejection(2);rejection(3);encryption_policy();reliable_retry();CHECK(before==descriptors());
     printf("{\"passed\":true,\"checks\":%u,\"socket_scenarios\":%u,\"actual_os_udp\":true,\"source_layout_peer\":true,\"real_authenticated_server\":false,\"socket_leak_check\":true}\n",checks,scenarios);return 0;
 }

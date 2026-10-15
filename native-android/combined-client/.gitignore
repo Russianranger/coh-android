@@ -1,0 +1,8 @@
+.tooling/
+.gradle/
+**/build/
+local.properties
+app/src/main/assets/
+app/src/main/jniLibs/
+**/.cxx/
+.inputs/

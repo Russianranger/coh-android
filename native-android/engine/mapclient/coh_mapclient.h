@@ -38,9 +38,12 @@ typedef struct {
     unsigned cod;
 } CohMapConfig;
 typedef struct {
-    /* Both are caller assertions from a REAL authorized Gate26 session.
-     * Neither creates evidence of authentication; test fixtures cannot do so. */
+    /* Caller authorization from a completed AuthServer path, or the explicit
+     * loopback development path below. Neither field creates acceptance evidence. */
     int authenticated, endpoint_authorized;
+    /* Explicit source UseFakeAuth mode: never evidence of AuthServer login.
+     * Mutually exclusive with authenticated; loopback-only, unknown DBID. */
+    int local_development_authorized;
     uint32_t selected_slot, selection_generation;
     uint32_t selected_dbid; /* optional: 0 when DB protocol did not supply one */
     CohAuthMapHandoff handoff;
@@ -50,6 +53,7 @@ typedef struct {
     CohMapPhase phase;
     uint32_t selected_slot, selection_generation, selected_dbid;
     uint32_t map_id, map_link_id, generation;
+    unsigned local_development_authorized;
     unsigned character_identity_verified; /* always0 until complete own-entity decode */
     uint64_t accepted_messages, rejected_messages, malformed, unsupported;
     uint64_t scene_prefixes, entity_prefixes, disconnects, suspends, timeouts;

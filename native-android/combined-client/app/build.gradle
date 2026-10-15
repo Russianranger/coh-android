@@ -1,0 +1,40 @@
+plugins { id 'com.android.application' }
+def selectedAbis = providers.gradleProperty('probeAbis').getOrElse('arm64-v8a').split(',') as List
+def cryptoRoot = providers.gradleProperty('cohCryptoRoot').getOrElse('')
+if (selectedAbis.isEmpty() || selectedAbis.any { !(it in ['arm64-v8a','x86_64']) }) throw new GradleException('Unsupported ABI')
+if (cryptoRoot.isEmpty()) throw new GradleException('cohCryptoRoot must name the qualified public crypto output')
+android {
+    namespace 'org.coh.nativecombined'
+    compileSdk 35
+    buildToolsVersion '35.0.0'
+    ndkVersion '28.2.13676358'
+    defaultConfig {
+        applicationId 'org.coh.nativecombined'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '0.1.0-local-server-native'
+        ndk { abiFilters.addAll(selectedAbis) }
+        externalNativeBuild { cmake { arguments '-DCOH_CRYPTO_ROOT=' + file(cryptoRoot).absolutePath } }
+    }
+    sourceSets.main.java {
+        srcDirs 'src/main/java', '../imports/src', '../../session-client/app/src/main/java', '../../systems-probe/app/src/main/java', '../../../android/app/src/main/java', '../../../android/atlas/src/main/java'
+        include 'org/coh/nativecombined/**', 'org/coh/sessionclient/SessionNative.java', 'org/coh/systemsprobe/InputAdapter.java'
+        include 'io/github/russianranger/cohatlas/AtlasAssetImporter.java'
+        include 'io/github/russianranger/cohdiagnostic/AssetPackStore.java', 'io/github/russianranger/cohdiagnostic/AssetPackArchive.java', 'io/github/russianranger/cohdiagnostic/SetupMemoryGuard.java'
+    }
+    externalNativeBuild { cmake { path file('src/main/cpp/CMakeLists.txt'); version '3.22.1' } }
+    signingConfigs {
+        publicNativeTest {
+            storeFile file('../../session-client/app/test-signing/session-test.p12')
+            storeType 'PKCS12'
+            storePassword 'coh-native-public-test'
+            keyAlias 'coh-native-test'
+            keyPassword 'coh-native-public-test'
+        }
+    }
+    buildTypes { debug { debuggable true; jniDebuggable true; minifyEnabled false; signingConfig signingConfigs.publicNativeTest } }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
+    packaging { jniLibs { useLegacyPackaging = true; keepDebugSymbols += ['**/libproot.so','**/libproot-loader.so'] } }
+    androidResources { noCompress += ['bin','json','tsv'] }
+}

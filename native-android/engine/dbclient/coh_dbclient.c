@@ -69,8 +69,9 @@ static CohStatus command(Bits *b,uint32_t expected,int legacy) {
     uint32_t cmd;TRY(read_pack(b,&cmd));return cmd==expected+(legacy?5u:0u)?COH_OK:COH_UNSUPPORTED;
 }
 void coh_db_wipe(void *p,size_t n){volatile uint8_t *v=(volatile uint8_t *)p;if(v)while(n--)*v++=0;}
-static CohStatus login(const CohDbLogin *v,Bits *b,int legacy) {
-    if(!v->account[0]||!v->patch_version[0]||!v->protocol_version||!v->user_id||
+static CohStatus login(const CohDbLogin *v,Bits *b,int legacy,int local) {
+    if(!v->account[0]||!v->patch_version[0]||!v->protocol_version||(!local&&!v->user_id)||
+        (local&&(v->user_id||v->cookie))||
         v->no_timeout>1||v->no_version_check>1)return COH_INVALID;
     /* compress2 matches pktSendZipped exactly, including terminating NUL. */
     size_t raw=bounded_length(v->system_spec,sizeof(v->system_spec));
@@ -90,13 +91,19 @@ static CohStatus login(const CohDbLogin *v,Bits *b,int legacy) {
     if(v->keyed_access_level)TRY(write_string(b,v->keyed_access_issued_to,sizeof(v->keyed_access_issued_to)));
     return COH_OK;
 }
-CohStatus coh_db_login_encode(const CohDbLogin *v,int aligned,int legacy,uint8_t *out,size_t cap,size_t *bits) {
+static CohStatus login_encode(const CohDbLogin *v,int aligned,int legacy,uint8_t *out,size_t cap,size_t *bits,int local) {
     if(!v||!out||!bits||!cap||(aligned!=0&&aligned!=1)||(legacy!=0&&legacy!=1))return COH_INVALID;
     uint8_t tmp[COH_DB_LOGIN_MAX]={0};Bits b={tmp,sizeof(tmp),sizeof(tmp)*8,0,aligned,1};
-    CohStatus s=login(v,&b,legacy);
+    CohStatus s=login(v,&b,legacy,local);
     if(s==COH_OK&&(b.cursor+7)/8>cap)s=COH_LIMIT;
     if(s==COH_OK){memcpy(out,tmp,(b.cursor+7)/8);*bits=b.cursor;}
     coh_db_wipe(tmp,sizeof(tmp));return s;
+}
+CohStatus coh_db_login_encode(const CohDbLogin *v,int aligned,int legacy,uint8_t *out,size_t cap,size_t *bits) {
+    return login_encode(v,aligned,legacy,out,cap,bits,0);
+}
+CohStatus coh_db_local_login_encode(const CohDbLogin *v,int aligned,int legacy,uint8_t *out,size_t cap,size_t *bits) {
+    return login_encode(v,aligned,legacy,out,cap,bits,1);
 }
 CohStatus coh_db_choose_encode(const CohDbChoose *v,int aligned,int legacy,uint8_t *out,size_t cap,size_t *bits) {
     if(!v||!out||!bits||!cap||v->slot>=COH_DB_SLOTS_MAX||!v->name[0]||

@@ -54,6 +54,7 @@ char *encrypedKeyIssuedTo="authorized test fixture";
 static Packet *pktCreateEx(void *link,int cmd){(void)link;memset(storage,0,sizeof(storage));memset(&packet,0,sizeof(packet));initBitStream(&packet.stream,(U8*)storage,sizeof(storage),Write,old_profile&1,0);pktSendBitsPack(&packet,1,cmd+((old_profile&2)?5:0));return &packet;}
 void original_login(int profile,U8 *out,U32 *length){
  old_profile=profile;Packet *pak;char *auth_name="fixture";int user_id=0x12345678,cookie=(int)0x89abcdef,no_version_check=0,no_timeout=1;U32 checksum[4];
+ if(old_profile&4){user_id=0;cookie=0;no_version_check=1;}
  for(unsigned i=0;i<128;i++)db_info.auth_user_data[i]=(U8)(i^0xa5);
  for(unsigned i=0;i<16;i++)((U8*)checksum)[i]=(U8)(i*13);
 '''+login+'''
@@ -91,8 +92,8 @@ def fixtures(lib,tmp):
  def emit(label,data,bits):
   nonlocal count
   content.append('static const unsigned char '+label+'[]={'+','.join(str(c) for c in data)+'};\n#define '+label+'_bits '+str(bits)+'u\n');count+=1
- def players(mode,legacy=False,badscale=False,badlock=False,overslots=False,count=5):
-  fields=p(2+(5 if legacy else 0))+auto(12345)+s('remote command must not execute')+u(1,1)+u(1,0)+u(1,1)+p(8)+p(65 if overslots else count)+p(2)+p(1)+p(0)
+ def players(mode,legacy=False,badscale=False,badlock=False,overslots=False,count=5,uid=12345):
+  fields=p(2+(5 if legacy else 0))+auto(uid)+s('remote command must not execute')+u(1,1)+u(1,0)+u(1,1)+p(8)+p(65 if overslots else count)+p(2)+p(1)+p(0)
   if overslots:return produce(fields,mode)
   for i in range(count):
    fields+=p(9+i)+s(['Native Fixture','EMPTY','Visitor:OtherShard','Invalid Character','Locked Character'][i] if i<5 else 'Additional Fixture '+str(i))+s('' if i==3 else 'Class_Blaster')+s('Magic')+p(8)+p(0)+p(1)+auto(3)+p(0)+s('Primary.Power')+s('Secondary.Power')+p(0)+(u(32,0x7fc00000) if badscale else f(.25))+f(-.5)+u(32,0x11223344)+s('maps/City_Zones/City_01_01/City_01_01.txt')+p(12)+u(32,7)+u(32,123456789)+u(2,3 if badlock else (2 if i==4 else 0))
@@ -104,6 +105,7 @@ def fixtures(lib,tmp):
    for kind in ['login','choose']:
     out=(C.c_uint8*65536)();n=C.c_uint32();getattr(lib,'original_'+kind)(mode+(2 if legacy else 0),out,C.byref(n));emit(kind+suffix,bytes(out[:(n.value+7)//8]),n.value)
    emit('players'+suffix,*players(mode,legacy))
+   out=(C.c_uint8*65536)();n=C.c_uint32();lib.original_login(mode+(2 if legacy else 0)+4,out,C.byref(n));emit('local_login'+suffix,bytes(out[:(n.value+7)//8]),n.value)
   emit('queue'+str(mode),*produce(p(20)+auto(3)+auto(10),mode))
   emit('large'+str(mode),*players(mode,count=64))
   for legacy in [False,True]:
@@ -111,6 +113,9 @@ def fixtures(lib,tmp):
    emit('map'+suffix,*produce(p(4+(5 if legacy else 0))+p(17)+p(1)+p(0x0100007f)+p(0)+p(7002)+p(7003)+p(123456),mode))
    emit('error'+suffix,*produce(p(3+(5 if legacy else 0))+s('disposable server rejection'),mode))
   emit('badmap'+str(mode),*produce(p(4)+p(17)+p(1)+p(0x0100007f)+p(0)+p(7002)+p(7003)+p(1),mode))
+ emit('players_zero0',*players(0,uid=0))
+ emit('players_rebound0',*players(0,uid=12346))
+ emit('map_remote0',*produce(p(4)+p(17)+p(1)+p(0x0100000a)+p(0)+p(7002)+p(7003)+p(123456),0))
  for name,kw in [('overslots',{'overslots':True}),('badscale',{'badscale':True}),('badlock',{'badlock':True})]:emit(name+'0',*players(0,**kw))
  (tmp/'fixtures.h').write_text(''.join(content));return count
 def main():

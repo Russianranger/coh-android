@@ -54,6 +54,16 @@ static void encode_test(const unsigned char *login,size_t login_size,size_t logi
     c.slot=64;CHECK(coh_db_choose_encode(&c,mode,legacy,out,sizeof(out),&bits)==COH_INVALID);
     coh_db_wipe(&v,sizeof(v));for(size_t i=0;i<sizeof(v);i++)CHECK(!((uint8_t *)&v)[i]);
 }
+static void local_encode_test(const unsigned char *expected,size_t n,size_t expected_bits,int mode,int legacy) {
+    CohDbLogin v;config(&v);v.user_id=v.cookie=0;v.no_version_check=1;
+    uint8_t output[4096],before[4096];memset(output,0xa7,sizeof(output));memcpy(before,output,sizeof(before));size_t bits=1337;
+    CHECK(coh_db_login_encode(&v,mode,legacy,output,sizeof(output),&bits)==COH_INVALID);
+    CHECK(bits==1337&&!memcmp(output,before,sizeof(before)));
+    CHECK(coh_db_local_login_encode(&v,mode,legacy,output,sizeof(output),&bits)==COH_OK);
+    CHECK(bits==expected_bits&&(bits+7)/8==n&&!memcmp(output,expected,n));
+    v.user_id=1;CHECK(coh_db_local_login_encode(&v,mode,legacy,output,sizeof(output),&bits)==COH_INVALID);
+    v.user_id=0;v.cookie=1;CHECK(coh_db_local_login_encode(&v,mode,legacy,output,sizeof(output),&bits)==COH_INVALID);
+}
 static uint32_t rng=0x414254;
 static uint32_t next(void){rng=rng*1664525u+1013904223u;return rng;}
 static void map_test(const unsigned char *data,size_t size,size_t bits,int mode,int legacy) {
@@ -67,6 +77,10 @@ static void map_test(const unsigned char *data,size_t size,size_t bits,int mode,
     }
 }
 int main(void) {
+    local_encode_test(local_login0,sizeof(local_login0),local_login0_bits,0,0);
+    local_encode_test(local_login1,sizeof(local_login1),local_login1_bits,1,0);
+    local_encode_test(local_login_old0,sizeof(local_login_old0),local_login_old0_bits,0,1);
+    local_encode_test(local_login_old1,sizeof(local_login_old1),local_login_old1_bits,1,1);
     encode_test(login0,sizeof(login0),login0_bits,choose0,sizeof(choose0),choose0_bits,0,0);
     encode_test(login1,sizeof(login1),login1_bits,choose1,sizeof(choose1),choose1_bits,1,0);
     encode_test(login_old0,sizeof(login_old0),login_old0_bits,choose_old0,sizeof(choose_old0),choose_old0_bits,0,1);

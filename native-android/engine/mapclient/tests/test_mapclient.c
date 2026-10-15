@@ -178,6 +178,23 @@ static void configuration_tests(void) {
     bad=c;bad.udp.peer.port=0;CHECK(!coh_map_client_create(&bad));
     CHECK(coh_map_config_validate(NULL)==COH_INVALID);coh_map_client_destroy(m);peer_close(p);negative+=15;scenarios++;
 }
+static void local_authorization_tests(void) {
+    Peer p=peer_open();CohMapConfig c=configuration(p,5);CohMapClient *m=coh_map_client_create(&c);CHECK(m);
+    CohMapAuthorization a=authorized(p);a.local_development_authorized=1;
+    CHECK(coh_map_client_begin(m,&a,61,0)==COH_INVALID);negative++;
+    a.authenticated=0;a.local_development_authorized=2;CHECK(coh_map_client_begin(m,&a,61,0)==COH_INVALID);negative++;
+    a.local_development_authorized=1;a.selected_dbid=123;CHECK(coh_map_client_begin(m,&a,61,0)==COH_INVALID);negative++;
+    a.selected_dbid=0;a.endpoint_authorized=0;CHECK(coh_map_client_begin(m,&a,61,0)==COH_STATE);negative++;
+    a.endpoint_authorized=1;CHECK(coh_map_client_begin(m,&a,61,0)==COH_OK);
+    CHECK(diagnostics(m).local_development_authorized==1&&!diagnostics(m).character_identity_verified);
+    CHECK(coh_map_client_service(m,0,(CohCancel){0})==COH_OK);
+    CohNetPacket first=receive_packet(p,5,1);CHECK(first.connect&&command(first,0)==1);
+    coh_map_client_suspend(m);CHECK(!diagnostics(m).local_development_authorized);
+    coh_map_client_destroy(m);
+    c.udp.peer.address[0]=192;a.handoff.address[0]=(a.handoff.address[0]&~255u)|192u;
+    m=coh_map_client_create(&c);CHECK(m);CHECK(coh_map_client_begin(m,&a,62,1)==COH_INVALID);negative++;
+    CHECK(!diagnostics(m).udp.sockets_opened);coh_map_client_destroy(m);peer_close(p);scenarios++;
+}
 static CohNetPacket scene_prefix(unsigned version,unsigned aligned,uint32_t id) {
     CohNetPacket p=profile_packet(id,COH_REP_GROUPS,version<4,aligned);CohProtocolBits b=append(&p);
     pack_value(&b,aligned,0);pack_value(&b,aligned,0);
@@ -254,6 +271,6 @@ static void timeout_and_cancel(void) {
     coh_map_client_destroy(m);peer_close(p);scenarios++;
 }
 int main(void) {
-    unsigned fds=fd_count();serializers();configuration_tests();actual_socket_inspection();timeout_and_cancel();CHECK(fd_count()==fds);
+    unsigned fds=fd_count();serializers();configuration_tests();local_authorization_tests();actual_socket_inspection();timeout_and_cancel();CHECK(fd_count()==fds);
     printf("{\"checks\":%u,\"negative_cases\":%u,\"scenarios\":%u,\"actual_os_udp\":true,\"scripted_peer_only\":true,\"socket_leak_check\":true,\"actual_authentication\":false,\"live_world\":false}\n",checks,negative,scenarios);return 0;
 }

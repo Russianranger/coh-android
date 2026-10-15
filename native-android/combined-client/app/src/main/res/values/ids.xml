@@ -1,0 +1,10 @@
+<resources>
+    <item type="id" name="native_main_status"/>
+    <item type="id" name="native_main_import_launcher"/>
+    <item type="id" name="native_main_import_part"/>
+    <item type="id" name="native_main_setup"/>
+    <item type="id" name="native_main_start_server"/>
+    <item type="id" name="native_main_launch_client"/>
+    <item type="id" name="native_main_stop_server"/>
+    <item type="id" name="native_main_export"/>
+</resources>

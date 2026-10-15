@@ -103,3 +103,17 @@ renaming/deletion/creation, queue-server routing, server-authentication policy,
 or MapServer entity replication. Unknown messages
 must be dispatched separately or rejected. The final auth bit arrays are
 fully parsed; there is no unsupported tail within `SEND_PLAYERS` itself.
+
+## Explicit loopback development entry
+
+`coh_db_local_login_encode` and `coh_db_session_begin_local` reproduce the
+original `-db`/UseFakeAuth path without fabricating an AuthServer receipt.
+Both initial UID and cookie must be zero; both bind and peer must be loopback.
+The first complete SEND_PLAYERS must return a nonzero server UID, and later
+lists must retain that UID. Fresh explicit generation is required after every
+terminal transition. The ordinary authenticated entry still requires a
+nonzero matching verified receipt and rejects UID-zero attempts.
+
+The integrated caller lives in `../local/`; its scoped development version
+policy matches the current conventional loopback launcher. It sends no
+local-map-IP override, preserving the selected character's saved destination.

@@ -12,12 +12,13 @@ struct CohDbSession {
     size_t login_bits;
     uint64_t clock_ms,phase_start_ms;
     uint32_t receipt_generation,user_id,selected_slot;
-    int begun;
+    int begun,local_development;
 };
 static void forget(CohDbSession *s) {
     coh_db_wipe(s->login,sizeof(s->login));s->login_bits=0;
     coh_db_wipe(&s->players,sizeof(s->players));coh_db_wipe(&s->handoff,sizeof(s->handoff));
     s->user_id=0;s->selected_slot=0;
+    s->diagnostics.server_identity_bound=0;
 }
 static CohStatus stop(CohDbSession *s,CohDbSessionPhase phase,CohStatus result) {
     coh_net_udp_close(s->udp);forget(s);s->diagnostics.phase=phase;return result;
@@ -41,9 +42,9 @@ CohStatus coh_db_session_begin(CohDbSession *s,const CohDbLogin *login,const Coh
     if(!s||!login||!auth)return COH_INVALID;
     if(active(s->diagnostics.phase))return COH_STATE;
     if((s->begun&&now<s->clock_ms)||s->diagnostics.generation==UINT32_MAX)return COH_INVALID;
-    if(auth->verified!=1||!auth->generation||auth->generation<=s->receipt_generation||
+    if(!auth->user_id||auth->verified!=1||!auth->generation||auth->generation<=s->receipt_generation||
        auth->user_id!=login->user_id||auth->game_cookie!=login->cookie||
-       !memchr(auth->account,0,sizeof(auth->account))||strcmp(auth->account,login->account)) {
+       !memchr(auth->account,0,sizeof(auth->account))||!memchr(login->account,0,sizeof(login->account))||strcmp(auth->account,login->account)) {
         s->diagnostics.receipt_rejections++;return COH_STATE;
     }
     uint8_t encoded[COH_DB_LOGIN_MAX];size_t bits=0;
@@ -54,8 +55,31 @@ CohStatus coh_db_session_begin(CohDbSession *s,const CohDbLogin *login,const Coh
     if(result!=COH_OK){coh_db_wipe(encoded,sizeof(encoded));return result;}
     forget(s);memcpy(s->login,encoded,(bits+7)/8);coh_db_wipe(encoded,sizeof(encoded));
     s->login_bits=bits;s->receipt_generation=auth->generation;s->user_id=auth->user_id;
+    s->local_development=0;s->diagnostics.local_development_auth=0;s->diagnostics.server_identity_bound=1;
     s->clock_ms=s->phase_start_ms=now;s->begun=1;s->diagnostics.generation++;
     s->diagnostics.queue_position=s->diagnostics.queue_count=0;s->diagnostics.phase=COH_DB_CONNECTING;return COH_OK;
+}
+static int loopback(CohNetEndpoint e) {return e.address[0]==127;}
+CohStatus coh_db_session_begin_local(CohDbSession *s,const CohDbLogin *login,uint32_t generation,uint32_t id,uint64_t now) {
+    if(!s||!login)return COH_INVALID;
+    if(active(s->diagnostics.phase))return COH_STATE;
+    if(!generation||generation<=s->receipt_generation||login->user_id||login->cookie||
+       !loopback(s->config.transport.peer)||!loopback(s->config.transport.local)) {
+        s->diagnostics.receipt_rejections++;return COH_STATE;
+    }
+    if((s->begun&&now<s->clock_ms)||s->diagnostics.generation==UINT32_MAX)return COH_INVALID;
+    uint8_t encoded[COH_DB_LOGIN_MAX];size_t bits=0;
+    CohStatus result=coh_db_local_login_encode(login,s->config.outbound_compressed,
+        s->config.transport.link.version<4,encoded,sizeof(encoded),&bits);
+    if(result!=COH_OK){coh_db_wipe(encoded,sizeof(encoded));return result;}
+    CohNetUdpState state=coh_net_udp_state(s->udp);
+    result=(state==COH_UDP_IDLE||state==COH_UDP_CLOSED)?coh_net_udp_begin(s->udp,id,now):coh_net_udp_resume(s->udp,id,now);
+    if(result!=COH_OK){coh_db_wipe(encoded,sizeof(encoded));return result;}
+    forget(s);memcpy(s->login,encoded,(bits+7)/8);coh_db_wipe(encoded,sizeof(encoded));
+    s->login_bits=bits;s->receipt_generation=generation;s->local_development=1;
+    s->diagnostics.local_development_auth=1;s->clock_ms=s->phase_start_ms=now;
+    s->begun=1;s->diagnostics.generation++;s->diagnostics.queue_position=s->diagnostics.queue_count=0;
+    s->diagnostics.phase=COH_DB_CONNECTING;return COH_OK;
 }
 static CohStatus message_command(const CohNetMessage *m,int legacy,uint32_t *command) {
     size_t bytes=(m->payload_bits+7)/8;if(bytes>COH_PROTOCOL_FRAME_MAX)bytes=COH_PROTOCOL_FRAME_MAX;
@@ -86,7 +110,9 @@ static CohStatus application_message(CohDbSession *s,const CohNetMessage *m) {
         if(s->diagnostics.phase!=COH_DB_WAIT_PLAYERS&&s->diagnostics.phase!=COH_DB_QUEUED&&s->diagnostics.phase!=COH_DB_CHARACTERS)return COH_STATE;
         CohDbPlayers players;
         result=coh_db_players_parse(body,m->payload_bits,aligned,legacy,&players);
-        if(result==COH_OK&&players.user_id!=s->user_id)result=COH_INVALID;
+        if(result==COH_OK&&(!players.user_id||
+            ((!s->local_development||s->user_id)&&players.user_id!=s->user_id)))result=COH_INVALID;
+        if(result==COH_OK&&s->local_development&&!s->user_id){s->user_id=players.user_id;s->diagnostics.server_identity_bound=1;}
         if(result==COH_OK){s->players=players;s->diagnostics.player_lists++;s->diagnostics.phase=COH_DB_CHARACTERS;}
         coh_db_wipe(&players,sizeof(players));return result;
     }
