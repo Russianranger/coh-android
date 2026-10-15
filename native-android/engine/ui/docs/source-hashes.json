@@ -1,0 +1,13 @@
+{
+  "source": "https://github.com/Russianranger/coh-android/tree/native-android/upstream/ouroboros",
+  "note": "Exact bytes supplied by coordinator full-source extraction; content hashes authoritative, not outer Git HEAD.",
+  "files": {
+    "Game/src/UI/uiFocus.c": "de7e3726215a2b61e23ae4ea49b68192453482d47bad1d9ac22e4167f851a325",
+    "Game/src/UI/uiBox.c": "b402c56e69bb25a7e5052b5955f0845494c77238bf61ee5f2de021411a822298",
+    "Game/src/UI/uiWindows.c": "a844c34cd4a776c0f233f63d6e42ecc5b9c18d1427e324adad139815680b5072",
+    "Game/src/UI/uiEditText.c": "48c79a80d97e8da32c6d6369ee395c5f71d06ace75b4f0104a26683796970ac1",
+    "Game/src/UI/sprite/sprite_base.c": "73e7d6e64570ad921669c8257f5ec4fc4f1f075c997829d61abe39a1f774c43d",
+    "Game/src/UI/sprite/sprite_base.h": "445024974d83a3db1bce0517e453cdf4f9c7e125509e308aa858ffbd298b088a",
+    "Game/src/graphics/truetype/ttFontCore.c": "6d97ac1b31ba1dcdb221885e55c96deb935b8695f8909fdc8c178498c96a8864"
+  }
+}

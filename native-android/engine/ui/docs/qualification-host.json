@@ -1,0 +1,70 @@
+{
+  "gate": 34,
+  "module": "native game UI framework",
+  "host": "passed",
+  "android": "not run",
+  "emulator": "not run",
+  "physical_thor": "not run",
+  "host_tests": {
+    "test_groups": 11,
+    "stress_iterations": 20000,
+    "stress_cpu_seconds": 0.002088,
+    "arena_bytes": 327600,
+    "widget_high_water": 1,
+    "draw_high_water": 5,
+    "event_high_water": 2,
+    "frames": 20000,
+    "ui_heap_calls_by_design": 0
+  },
+  "host_command": [
+    "gcc",
+    "-std=c99",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-Wpedantic",
+    "-O2",
+    "/workspace/scratch/bd17f7dd7d03/worker-ui/native-android/engine/ui/coh_ui.c",
+    "/workspace/scratch/bd17f7dd7d03/worker-ui/native-android/engine/ui/tests/ui_test.c",
+    "-lm",
+    "-o",
+    "/tmp/coh-ui-0c2fy4xk/ui-test"
+  ],
+  "no_heap_imports": true,
+  "sanitizer_tests": {
+    "test_groups": 11,
+    "stress_iterations": 20000,
+    "stress_cpu_seconds": 0.012488,
+    "arena_bytes": 327600,
+    "widget_high_water": 1,
+    "draw_high_water": 5,
+    "event_high_water": 2,
+    "frames": 20000,
+    "ui_heap_calls_by_design": 0
+  },
+  "sanitizers": "ASan + UBSan passed; LSan disabled (/proc task/ptrace environment limitation)",
+  "source_oracle": {
+    "status": "passed",
+    "source_files": 7,
+    "hashes": {
+      "Game/src/UI/uiFocus.c": "de7e3726215a2b61e23ae4ea49b68192453482d47bad1d9ac22e4167f851a325",
+      "Game/src/UI/uiBox.c": "b402c56e69bb25a7e5052b5955f0845494c77238bf61ee5f2de021411a822298",
+      "Game/src/UI/uiWindows.c": "a844c34cd4a776c0f233f63d6e42ecc5b9c18d1427e324adad139815680b5072",
+      "Game/src/UI/uiEditText.c": "48c79a80d97e8da32c6d6369ee395c5f71d06ace75b4f0104a26683796970ac1",
+      "Game/src/UI/sprite/sprite_base.c": "73e7d6e64570ad921669c8257f5ec4fc4f1f075c997829d61abe39a1f774c43d",
+      "Game/src/UI/sprite/sprite_base.h": "445024974d83a3db1bce0517e453cdf4f9c7e125509e308aa858ffbd298b088a",
+      "Game/src/graphics/truetype/ttFontCore.c": "6d97ac1b31ba1dcdb221885e55c96deb935b8695f8909fdc8c178498c96a8864"
+    },
+    "original_scaling_cases": 768,
+    "original_focus_trace_steps": 259,
+    "python_utf8_reference_cases": 8718,
+    "scope": "Exact original shell scaling/letterbox and single-owner editable focus bodies; no font raster/GPU parity claim"
+  },
+  "source_files": {
+    "coh_ui.h": "50267d8fa4a6e3a04bc917e62bf0d24599cc30b1292cd5caa65b22ec4b6f6870",
+    "coh_ui.c": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676",
+    "tests/ui_test.c": "18c57c610c5fd21c7c60fba9e0f7b4a7391e29cd367609d71f4380de7a3efd4d",
+    "tests/oracle_bridge.c": "0766ff3214c6ae09d4b1f9b874d3aacd6ce756ef252eb6cde53222e23596b6c0"
+  },
+  "qualification": "host qualified framework only"
+}

@@ -1,0 +1,13 @@
+{
+  "gate": 34,
+  "status": "Android ARM64 shared-library build passed; execution not run",
+  "ndk": "r28c",
+  "compiler": "aarch64-linux-android26-clang",
+  "command": "aarch64-linux-android26-clang -std=c99 -O2 -Wall -Wextra -Werror -Wpedantic -fPIC -shared native-android/engine/ui/coh_ui.c -lm -Wl,--no-undefined -o /tmp/libcoh_ui-arm64.so",
+  "elf": "ELF 64-bit LSB shared object, ARM aarch64",
+  "sha256": "85b7c65803f34bb7a6cfd432221ac00bb25772a95772e1c3cf88511901a23b80",
+  "source_sha256": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676",
+  "android_runtime": "not run",
+  "emulator": "not run",
+  "physical_thor": "not run"
+}
