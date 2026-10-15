@@ -26,6 +26,45 @@ CAPTURE_TRANSIENTS = frozenset(('ERROR: could not get idle state.',
     'ERROR: null root node returned by UiTestAutomationBridge.'))
 
 
+def activity_inventory(text):
+    """Count active Android13 Hist records, excluding repeated state references."""
+    assert isinstance(text, str) and len(text) <= 4 << 20
+    assert 'ACTIVITY MANAGER ACTIVITIES' in text, 'Activity inventory header is absent'
+    records, resumed = {}, set()
+    prefix = r'ActivityRecord\{([0-9a-fA-F]+)\s+u\d+\s+([^\s}]+)'
+    def item(line, match):
+        token, component = match.groups()
+        if component.startswith(PACKAGE+'/'+PACKAGE+'.'):
+            component = PACKAGE+'/.'+component.split('/')[-1][len(PACKAGE)+1:]
+        task = re.search(r'\bt(-?\d+)\b', line[match.end():])
+        assert task is not None, 'Active Activity record has no task identity'
+        return token, {'component': component, 'task': int(task.group(1))}
+    for line in text.splitlines():
+        historical = re.match(r'^\s*(?:\*\s*)?Hist\s+#\d+:\s+'+prefix, line)
+        if re.match(r'^\s*(?:\*\s*)?Hist\s+#',line):
+            assert historical, 'Malformed active Activity record'
+        if historical:
+            token, row = item(line, historical)
+            if row['component'].startswith(PACKAGE+'/'):
+                assert token not in records or records[token] == row
+                records[token] = row
+        reference = re.match(r'^\s*(?:mResumedActivity|topResumedActivity|ResumedActivity):\s+'+prefix,line)
+        if reference:
+            token, row = item(line, reference)
+            if row['component'].startswith(PACKAGE+'/'):resumed.add(token)
+    pending = bool(re.search(r'^\s*(?:\*\s*)?(?:Fin|Stop)\s+#\d+:[^\n]*'+re.escape(PACKAGE),text,re.M))
+    assert records, 'No active app Activity record'
+    return {'records': records, 'resumed': sorted(resumed), 'pending_finish_or_stop': pending}
+
+
+def retained_launcher(baseline, current):
+    return (len(baseline['records']) == 1
+        and next(iter(baseline['records'].values()))['component'] == MAIN
+        and current['records'] == baseline['records']
+        and current['resumed'] == baseline['resumed'] == list(baseline['records'])
+        and not current['pending_finish_or_stop'] and current['pid'] == baseline['pid'])
+
+
 def installed_apk_contract(value, expected_sha, expected_bytes, require_ready=True):
     status, identity = value.get('installed_apk_status'), value.get('installed_apk')
     assert status in ('pending', 'ready', 'unavailable'), 'Installed APK identity status is invalid'
@@ -395,8 +434,73 @@ class Check:
         self.record('bounded native viewport: '+label, **proof, controls_height=controls_height)
         return value
 
-    def scripted_character_picker(self):
+    def activity_state(self, label):
+        raw = self.text('shell','dumpsys','-t','5','activity','-a','activities')
+        (self.args.output/(label+'-activities.txt')).write_text(raw)
+        state = activity_inventory(raw)
+        pid = self.text('shell','pidof',PACKAGE).strip()
+        assert re.fullmatch('[1-9][0-9]*',pid), 'App process disappeared during Activity navigation'
+        return {**state,'pid':int(pid)}
+
+    def return_to_launcher(self, label, held_input=False):
+        before = self.report('native-client-report.json')
+        service = self.report('combined-report.json')
+        active = self.activity_state(label+'-before')
+        holder = None
+        try:
+            if held_input:
+                node = self.tap('Return to launcher',activate=False)
+                xy = self.bounds(node)
+                holder = subprocess.Popen([self.args.adb,'-s',self.args.serial,'shell','input','keyboard',
+                    'keycombination','-t','6000','KEYCODE_W','KEYCODE_SHIFT_LEFT'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+                held = self.wait_report('native-client-report.json',lambda x:x.get('session_id') == before['session_id']
+                    and x.get('native',{}).get('held_dirs',0) != 0,'actual framework key hold before Return',seconds=3)
+                (self.args.output/(label+'-held-native-report.json')).write_text(json.dumps(held,indent=2)+'\n')
+                assert holder.poll() is None, 'Held input ended before the Return click'
+                self.adb('shell','input','tap',(xy[0]+xy[2])//2,(xy[1]+xy[3])//2)
+            else:self.tap('Return to launcher')
+        finally:
+            if holder:
+                stdout,stderr = holder.communicate(timeout=12)
+                (self.args.output/(label+'-held-input.stdout')).write_bytes(stdout)
+                (self.args.output/(label+'-held-input.stderr')).write_bytes(stderr)
+                assert holder.returncode == 0, 'Framework key hold command failed'
+        returned = self.wait_report('native-client-report.json', lambda x:
+            x.get('session_id') == before['session_id'] and x.get('resumed') is False
+            and any(e.get('type') == 'return_to_launcher_ready' for e in x.get('events',[])),
+            label+' completed explicit return capture')
+        protocol = returned['server_protocol'];map_report_contract(protocol)
+        assert protocol['phase'] == 'SUSPENDED' and protocol['opened_sockets'] == protocol['closed_sockets']
+        assert returned['native']['held_dirs'] == 0
+        assert returned['input_adapter']['external_android']['focus_clear'] > before['input_adapter']['external_android']['focus_clear']
+        deadline = time.monotonic()+20
+        while time.monotonic() < deadline:
+            state = self.activity_state(label+'-after')
+            if retained_launcher(self.launcher_baseline,state):
+                break
+            time.sleep(.2)
+        else:raise RuntimeError('Return did not resume the single retained launcher Activity: '+repr(state))
+        assert active['pid'] == state['pid'] == self.launcher_baseline['pid']
+        after_service = self.wait_report('combined-report.json',lambda x:
+            x.get('updated_elapsed_ms',0) > service.get('updated_elapsed_ms',0),
+            label+' fresh service report after launcher resume')
+        assert all(after_service['server'].get(k) == service['server'].get(k)
+                   for k in ('session_id','phase','ready','owned_process_alive'))
+        assert after_service['busy'] == service['busy']
+        (self.args.output/(label+'-return-native-report.json')).write_text(json.dumps(returned,indent=2)+'\n')
+        self.record('explicit Return to launcher: '+label, same_app_process=True,
+            retained_main_activity=True, active_main_instances=1, active_native_instances=0,
+            native_network_phase=protocol['phase'], opened_sockets=protocol['opened_sockets'],
+            closed_sockets=protocol['closed_sockets'], source_held_input_cleared=True,
+            actual_framework_held_key_across_click=held_input,
+            service_state_unchanged=True, actual_arm64_server_liveness_qualified=False,
+            scope='Actual existing launcher/task/process and client suspend/report capture; post-destruction render teardown and ARM64 guest server execution are not established by this report.')
+        return returned
+
+    def scripted_character_picker(self, return_from_picker=False):
         """Drive the real app against explicit source-layout UDP fixtures only."""
+        peer_prefix = 'return-picker-peer' if return_from_picker else 'scripted-ui-peer'
+        viewport_label = 'return-picker-visible' if return_from_picker else 'character-picker-visible'
         data = self.args.ui_peer_binary.read_bytes()
         assert self.args.protocol_receipt, 'Scripted UI peer requires its exact Android build receipt'
         receipt = json.loads(self.args.protocol_receipt.read_text())
@@ -416,7 +520,7 @@ class Check:
         thread = None
         completed = False
         final = None
-        log = (self.args.output/'scripted-ui-peer.stderr').open('wb')
+        log = (self.args.output/(peer_prefix+'.stderr')).open('wb')
         try:
             process = subprocess.Popen([self.args.adb, '-s', self.args.serial, 'shell', remote,
                 '--serve', '--report', report_path], stdout=subprocess.PIPE, stderr=log)
@@ -429,7 +533,7 @@ class Check:
                         if not chunk: break
                         raw += chunk
                         assert len(raw) <= 4096, 'Scripted peer readiness exceeds its bound'
-            (self.args.output/'scripted-ui-peer-ready.stdout').write_bytes(raw)
+            (self.args.output/(peer_prefix+'-ready.stdout')).write_bytes(raw)
             assert b'\n' in raw, 'Scripted peer did not publish bounded readiness'
             ready = json.loads(raw.splitlines()[0])
             assert ready.get('scripted_source_layout') is True and ready.get('real_server_interoperability') is False
@@ -457,32 +561,52 @@ class Check:
             characters = self.wait_report('native-client-report.json', lambda x:x.get('server_protocol',{}).get('phase') == 'CHARACTERS_READY', 'actual native app DB list from explicit scripted UDP peer')
             map_report_contract(characters['server_protocol'])
             self.tap('Native Fixture', prefix=True, activate=False)
-            before = self.viewport('character-picker-visible', characters['native']['frames']+30)
+            before = self.viewport(viewport_label, characters['native']['frames']+30)
             assert before['server_protocol']['phase'] == 'CHARACTERS_READY'
-            (self.args.output/'character-picker-visible.png').write_bytes(self.adb('exec-out','screencap','-p').stdout)
-            self.tap('Native Fixture', prefix=True)
-            selected = self.wait_report('native-client-report.json', lambda x:x.get('server_protocol',{}).get('phase') == 'SCENE_INCOMPLETE', 'actual character selection and bounded Map scene prefix', seconds=60)
-            protocol = selected['server_protocol']; proof = map_report_contract(protocol)
-            assert protocol['character_lists'] == 1 and protocol['character_choices'] == 1 and protocol['map_handoffs'] == 1
-            assert protocol['terminal_failure'] == 0 and protocol['map_protocol']['scene_prefixes'] >= 1
-            mapping = protocol['map_protocol']
-            assert (mapping['accepted_messages'],mapping['phase'],mapping['stage'],mapping['last_status'],
-                    mapping['last_command_valid'],mapping['last_command']) == (2,5,6,2,1,6)
-            assert mapping['udp']['link']['queue_limits'] == 0
-            self.viewport('after-character-selection', before['native']['frames']+5)
-            peer_raw = self.adb('exec-out','cat',report_path).stdout
-            assert 0 < len(peer_raw) <= 16384
-            peer = json.loads(peer_raw)
-            assert peer.get('scripted_source_layout') is True and peer.get('real_server_interoperability') is False
-            assert peer.get('authserver_authenticated') is False and peer.get('live_world') is False and peer.get('failed') is False
-            assert all(peer.get(k) == 1 for k in ('character_lists','character_choices','map_handoffs','map_connects','source_command_catalogs','scene_prefixes'))
-            assert peer.get('source_command_count') == 915 and peer.get('selected_wire_slot') == 0
-            (self.args.output/'scripted-ui-peer-report.json').write_bytes(peer_raw)
-            assert not errors, 'Scripted policy refresh failed: '+repr(errors)
-            self.record('actual app character picker and native DB-to-Map scene boundary', **proof,
-                peer_binary_sha256=hashlib.sha256(data).hexdigest(), scripted_source_layout=True,
-                real_server_interoperability=False, real_authenticated_session=False, preview_is_server_world=False)
-            self.tap('Disconnect client')
+            (self.args.output/(viewport_label+'.png')).write_bytes(self.adb('exec-out','screencap','-p').stdout)
+            if return_from_picker:
+                self.return_to_launcher('active-character-picker',held_input=True)
+                policy = json.loads(self.adb('exec-out','run-as',PACKAGE,'cat','files/native-session-policy.json').stdout)
+                assert policy['server_session_id'] == 'f'*32 and policy['db_port'] == ready['db_port']
+                assert process.poll() is None, 'Returning to launcher stopped the independent server peer'
+                peer = json.loads(self.adb('exec-out','cat',report_path).stdout)
+                assert peer['character_lists'] == 1 and peer['character_choices'] == peer['map_handoffs'] == 0
+                self.tap('Launch native client')
+                reopened = self.wait_report('native-client-report.json',lambda x:x.get('session_id') != before['session_id']
+                    and settled_preview(x,30),'fresh preview after explicit launcher relaunch',seconds=60)
+                self.viewport('reopened-before-explicit-reconnect',reopened['native']['frames']+30)
+                reopened = self.report('native-client-report.json')
+                assert reopened['server_protocol']['phase'] == 'IDLE' and reopened['native']['held_dirs'] == 0
+                assert reopened['server_protocol'].get('attempts',0) == 0
+                peer = json.loads(self.adb('exec-out','cat',report_path).stdout)
+                assert peer['character_lists'] == 1 and peer['character_choices'] == 0
+                self.record('native relaunch requires explicit reconnect',new_preview_session=True,
+                    source_input_clear=True,protocol_phase='IDLE',server_policy_preserved=True,
+                    independent_peer_survived_return=True,actual_server_interoperability_verified=False)
+            else:
+                self.tap('Native Fixture', prefix=True)
+                selected = self.wait_report('native-client-report.json', lambda x:x.get('server_protocol',{}).get('phase') == 'SCENE_INCOMPLETE', 'actual character selection and bounded Map scene prefix', seconds=60)
+                protocol = selected['server_protocol']; proof = map_report_contract(protocol)
+                assert protocol['character_lists'] == 1 and protocol['character_choices'] == 1 and protocol['map_handoffs'] == 1
+                assert protocol['terminal_failure'] == 0 and protocol['map_protocol']['scene_prefixes'] >= 1
+                mapping = protocol['map_protocol']
+                assert (mapping['accepted_messages'],mapping['phase'],mapping['stage'],mapping['last_status'],
+                        mapping['last_command_valid'],mapping['last_command']) == (2,5,6,2,1,6)
+                assert mapping['udp']['link']['queue_limits'] == 0
+                self.viewport('after-character-selection', before['native']['frames']+5)
+                peer_raw = self.adb('exec-out','cat',report_path).stdout
+                assert 0 < len(peer_raw) <= 16384
+                peer = json.loads(peer_raw)
+                assert peer.get('scripted_source_layout') is True and peer.get('real_server_interoperability') is False
+                assert peer.get('authserver_authenticated') is False and peer.get('live_world') is False and peer.get('failed') is False
+                assert all(peer.get(k) == 1 for k in ('character_lists','character_choices','map_handoffs','map_connects','source_command_catalogs','scene_prefixes'))
+                assert peer.get('source_command_count') == 915 and peer.get('selected_wire_slot') == 0
+                (self.args.output/(peer_prefix+'-report.json')).write_bytes(peer_raw)
+                assert not errors, 'Scripted policy refresh failed: '+repr(errors)
+                self.record('actual app character picker and native DB-to-Map scene boundary', **proof,
+                    peer_binary_sha256=hashlib.sha256(data).hexdigest(), scripted_source_layout=True,
+                    real_server_interoperability=False, real_authenticated_session=False, preview_is_server_world=False)
+                self.tap('Disconnect client')
             completed = True
         finally:
             stop.set()
@@ -497,12 +621,12 @@ class Check:
                 if process:
                     try:
                         remaining, unused = process.communicate(timeout=10)
-                        (self.args.output/'scripted-ui-peer-final.stdout').write_bytes(remaining)
+                        (self.args.output/(peer_prefix+'-final.stdout')).write_bytes(remaining)
                     except subprocess.TimeoutExpired:
                         process.terminate();process.communicate(timeout=5)
                 if ready:
                     final = self.adb('exec-out','cat',report_path,check=False)
-                    (self.args.output/'scripted-ui-peer-final-report.json').write_bytes(final.stdout)
+                    (self.args.output/(peer_prefix+'-final-report.json')).write_bytes(final.stdout)
             except Exception as failure:
                 errors.append('Peer cleanup: '+str(failure))
             finally:
@@ -521,7 +645,7 @@ class Check:
         final_peer = json.loads(final.stdout)
         assert final_peer['closed_sockets'] == final_peer['opened_sockets'] == 2
         assert final_peer['failed'] is False
-        self.record('scripted UI peer lifecycle cleanup', opened_sockets=2, closed_sockets=2,
+        self.record('scripted UI peer lifecycle cleanup', scenario=peer_prefix, opened_sockets=2, closed_sockets=2,
                     fixture_policy_removed=True, real_server_interoperability=False)
 
     def report(self, filename):
@@ -853,6 +977,10 @@ class Check:
         self.retain_failed_attempt(state)
         if self.args.donor_apk:
             self.import_donor()
+        self.launcher_baseline = self.activity_state('launcher-before-first-native')
+        assert len(self.launcher_baseline['records']) == 1 and not self.launcher_baseline['pending_finish_or_stop']
+        token,row = next(iter(self.launcher_baseline['records'].items()))
+        assert row['component'] == MAIN and self.launcher_baseline['resumed'] == [token]
         self.tap('Launch native client')
         current = self.wait_report('native-client-report.json', lambda x: x.get('assets_verified') is True and x.get('native', {}).get('frames', 0) >= 30, 'actual native scene preview frames')
         native = current['native']
@@ -872,6 +1000,7 @@ class Check:
         assert self.dump().attrib.get('rotation') == '1', 'Framework did not rotate into landscape'
         self.viewport('landscape-preview', landscape['native']['frames'])
         if self.args.ui_peer_binary:
+            self.scripted_character_picker(return_from_picker=True)
             self.scripted_character_picker()
         current = self.report('native-client-report.json')
         native = current['native']
@@ -898,7 +1027,7 @@ class Check:
         before_export = self.report('native-client-report.json')
         self.export_native()
         self.capture_visible_scene(before_export['native']['frames'] + 10)
-        self.adb('shell', 'input', 'keyevent', 'KEYCODE_BACK')
+        self.return_to_launcher('before-launcher-zip-export')
         self.export_retained_native_fixture()
         if self.args.protocol_binary:
             data = self.args.protocol_binary.read_bytes()

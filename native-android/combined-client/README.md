@@ -7,10 +7,12 @@ accepted native Session Client remain installed with their private data intact.
 
 Follow [THOR-TEST.md](THOR-TEST.md) for the consolidated device test.
 
-Current **0.1.4** repairs interrupted-start display isolation and improves report
-provenance and bounded guest-resource diagnostics. Install over Combined without
-repeating imports or setup. The separate observed Android low-memory exit remains
-unexplained; no memory protection or asset check is weakened. See the current
+Current **0.1.5** adds **Return to launcher** to the native client. Returning closes
+the native client through its existing lifecycle and leaves the owned server
+running so its status, stop control and report export are accessible. Install over
+Combined without repeating imports or setup. The 0.1.4 interrupted-start repair
+and diagnostics are retained. The separate earlier Android low-memory exit
+remains unexplained; no memory protection or asset check is weakened. See the current
 [Thor procedure](THOR-TEST.md) and [qualification record](QUALIFICATION.md).
 
 ## Scope
@@ -24,10 +26,13 @@ unexplained; no memory protection or asset check is weakened. See the current
   local server's `UseFakeAuth` policy, not a fabricated authenticated receipt.
 * Full scene/entity decoding and server-position rendering are incomplete.
   `SCENE_INCOMPLETE` is the current bounded endpoint, not a live-world success.
-* The 0.1.2 Thor report confirms actual server boot, a native DbServer character
-  list/selection and a requested Map handoff. Map acceptance, encrypted AuthServer
-  authentication and server-authoritative rendering remain pending. Deterministic
-  socket peers do not prove a real server session.
+* Physical Thor evidence confirms actual server boot and native DbServer
+  list/selection. The new exact 0.1.4 report additionally proves initial Map
+  application connection and shortcut-catalog acceptance, followed by a scene
+  request. Scene reception then fails with `COH_LIMIT` in queued decompression;
+  the rejected declared size is not recorded. Complete scene transfer, encrypted
+  AuthServer authentication and server-authoritative rendering remain pending.
+  Deterministic socket peers do not prove a real server session.
 
 ## External inputs
 

@@ -1,0 +1,1738 @@
+{
+  "format": 1,
+  "schema": "coh-native-combined-thor-014-connection-evidence-v1",
+  "recorded_utc_date": "2026-10-15",
+  "analysis_base_revision": "bfbbdbc487c4e4a53ce5d7396e3ff4bf9eebbed0",
+  "provenance": {
+    "original_inputs_committed": false,
+    "bundle": {
+      "bytes": 28191,
+      "sha256": "f555ec1b6d9dff5dbba6cff2b740577ec3c62211b4ba56bfe12e2a1f431ce8ce"
+    },
+    "earlier_standalone_client_report": {
+      "bytes": 274380,
+      "sha256": "7541a0efd3789b467a762af7d6a55cc65cad1728bf85cddd3bd09b950e8a7d2f"
+    },
+    "bundle_members": [
+      {
+        "role": "combined-report",
+        "bytes": 39057,
+        "sha256": "30dda4a19bf121c8c6806f57eeaf5ce6a216d5b00da766f38ec1e996ec62c85d"
+      },
+      {
+        "role": "native-client-report",
+        "bytes": 378780,
+        "sha256": "2ba9c6b83978af472c3423502a9a19f4c9bc854203006b2b2a91461188cb2d6c"
+      },
+      {
+        "role": "combined-server-latest-report",
+        "bytes": 30332,
+        "sha256": "6dced80f39f95e60c527799704d5c13ea9e38586ad5eacf241b3ea9c6bc55461"
+      },
+      {
+        "role": "combined-server-previous-attempts",
+        "bytes": 70478,
+        "sha256": "8f62ec910510916bfd881d2109b03f279e9fcc8a7420dcd45c2f7dcb95db5e24"
+      }
+    ],
+    "images": [
+      {
+        "role": "character_selection_visible",
+        "bytes": 117621,
+        "sha256": "d7c915fc51fe13fc4088c697d2daa7b24f4380abacb62dbbcfc66b20f914b62e",
+        "width": 1536,
+        "height": 864,
+        "observed_protocol_phase": "CHARACTERS_READY",
+        "observed_preview_frames": null,
+        "offline_preview_visible": true,
+        "private_character_label_not_copied": true
+      },
+      {
+        "role": "protocol_failed_preview_continues_earlier",
+        "bytes": 138808,
+        "sha256": "08042726479ba3900766b6e02ab9d325af1c6072a9f413e25fdb90bbd873087a",
+        "width": 1536,
+        "height": 864,
+        "observed_protocol_phase": "FAILED",
+        "observed_preview_frames": 1928,
+        "offline_preview_visible": true,
+        "private_character_label_not_copied": true
+      },
+      {
+        "role": "protocol_failed_preview_continues_later",
+        "bytes": 134050,
+        "sha256": "a2ecc645e12ea63853f4e198193769aa02e4dfbd636369645ff243485788a67f",
+        "width": 1536,
+        "height": 864,
+        "observed_protocol_phase": "FAILED",
+        "observed_preview_frames": 4826,
+        "offline_preview_visible": true,
+        "private_character_label_not_copied": true
+      }
+    ],
+    "sanitization": "Allowlisted public app identity, fixed statuses/stages, counters, timing, bounded memory/resource observations, and hashes. No original reports/images, account/character names or IDs, credentials/cookies, private paths, session/import IDs, or raw packets copied."
+  },
+  "installed_app": {
+    "combined": {
+      "package": "org.coh.nativecombined",
+      "version_name": "0.1.4-local-server-native",
+      "version_code": 5,
+      "installed_apk_status": "ready",
+      "installed_apk": {
+        "bytes": 11527815,
+        "sha256": "18b06672a11af3a50bd2ece77ce41bc2fecec7f8ebe6037408245119ca21ad2c"
+      },
+      "android_sdk": 33,
+      "abis": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "armeabi"
+      ]
+    },
+    "standalone_client": {
+      "package": "org.coh.nativecombined",
+      "version_name": "0.1.4-local-server-native",
+      "version_code": 5,
+      "installed_apk": {
+        "bytes": 11527815,
+        "sha256": "18b06672a11af3a50bd2ece77ce41bc2fecec7f8ebe6037408245119ca21ad2c"
+      }
+    },
+    "later_client": {
+      "package": "org.coh.nativecombined",
+      "version_name": "0.1.4-local-server-native",
+      "version_code": 5,
+      "installed_apk": {
+        "bytes": 11527815,
+        "sha256": "18b06672a11af3a50bd2ece77ce41bc2fecec7f8ebe6037408245119ca21ad2c"
+      }
+    },
+    "qualified_source": "294041ddff3b5f80ae4dbf25073b01e037ecc7ee",
+    "qualified_workflow": 38811852104,
+    "expected_arm64_delivery": {
+      "name": "CoH-Native-Combined-0.1.4-arm64.apk",
+      "bytes": 11527815,
+      "sha256": "18b06672a11af3a50bd2ece77ce41bc2fecec7f8ebe6037408245119ca21ad2c"
+    },
+    "all_three_reported_apk_identities_match_qualified_delivery": true
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "server_lifecycle": {
+    "final_server": {
+      "phase": "stopped",
+      "ready": false,
+      "guest_exit_code": 0,
+      "owned_process_alive": false,
+      "failure_code": "",
+      "last_stage": "server_running_manual_native_client",
+      "elapsed_ms": 920216,
+      "stage_elapsed_ms": 119918,
+      "stages": [
+        {
+          "stage": "guest_starting",
+          "elapsed_ms": 0
+        },
+        {
+          "stage": "server_memory_admission",
+          "elapsed_ms": 6
+        },
+        {
+          "stage": "prepare_immutable_server_inputs",
+          "elapsed_ms": 7
+        },
+        {
+          "stage": "preflight_local_server_ports",
+          "elapsed_ms": 381
+        },
+        {
+          "stage": "server_only_input_admission",
+          "elapsed_ms": 386
+        },
+        {
+          "stage": "prepare_private_server_inputs",
+          "elapsed_ms": 5629
+        },
+        {
+          "stage": "isolated_required_geometry_preparation",
+          "elapsed_ms": 12765
+        },
+        {
+          "stage": "persistent_server_profile",
+          "elapsed_ms": 14241
+        },
+        {
+          "stage": "postgres_native_combined",
+          "elapsed_ms": 14895
+        },
+        {
+          "stage": "preflight_selected_map_port",
+          "elapsed_ms": 15922
+        },
+        {
+          "stage": "prepare_owned_presentation_endpoint",
+          "elapsed_ms": 15929
+        },
+        {
+          "stage": "presentation_display",
+          "elapsed_ms": 15936
+        },
+        {
+          "stage": "wine_initialization",
+          "elapsed_ms": 16204
+        },
+        {
+          "stage": "local_login_odbc",
+          "elapsed_ms": 28997
+        },
+        {
+          "stage": "local_dbserver_startup",
+          "elapsed_ms": 43751
+        },
+        {
+          "stage": "local_atlas_startup",
+          "elapsed_ms": 594654
+        },
+        {
+          "stage": "server_running_manual_native_client",
+          "elapsed_ms": 800298
+        }
+      ]
+    },
+    "ready_stage_elapsed_ms": 800298,
+    "app_events": [
+      {
+        "name": "starting",
+        "elapsed_ms": 608006573
+      },
+      {
+        "name": "server_process_started",
+        "elapsed_ms": 608006641
+      },
+      {
+        "name": "server_ready",
+        "elapsed_ms": 608807633
+      },
+      {
+        "name": "stop_requested",
+        "elapsed_ms": 608922492
+      },
+      {
+        "name": "server_process_exited",
+        "elapsed_ms": 608926796
+      }
+    ],
+    "stop_request_to_process_exit_ms": 4304,
+    "guest": {
+      "format": 1,
+      "app_id": "org.coh.nativecombined",
+      "server_only": true,
+      "conventional_client_started": false,
+      "native_client_started_by_guest": false,
+      "encrypted_authentication_verified": false,
+      "native_world_entry_verified": false,
+      "original_profile_modified": false,
+      "status": "stopped",
+      "last_stage": "server_running_manual_native_client",
+      "primary_failure_code": null,
+      "cleanup_failure_code": null,
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true,
+        "presentation_socket_removed": true
+      },
+      "profile_preserved": true,
+      "cleanup_complete": true,
+      "failure_code": null,
+      "geometry_preparation": {
+        "policy": "isolated_original_geometry_before_servers",
+        "worker_used": false,
+        "worker_reaped": true,
+        "before_postgresql": true,
+        "before_wine": true,
+        "worker_peak_rss_kib": 0,
+        "parent_rss_kib_before": 32688,
+        "parent_rss_kib_after": 32700,
+        "elapsed_seconds": 1.474,
+        "status": "reused_verified_required_geometry",
+        "input_files_checked": 406,
+        "required_geometry_sha256": "c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43"
+      },
+      "presentation_endpoint": {
+        "policy": "fresh_session_bound_private_rfb_socket",
+        "session_bound": true,
+        "existing_endpoints_removed": 0,
+        "legacy_fixed_endpoint_reused": false,
+        "original_display_bootstrap_reused": true
+      },
+      "stage_history": [
+        {
+          "stage": "preflight_local_server_ports",
+          "started_utc": "2026-10-15T22:08:24.690018+00:00",
+          "finished_utc": "2026-10-15T22:08:24.692858+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.003
+        },
+        {
+          "stage": "server_only_input_admission",
+          "started_utc": "2026-10-15T22:08:24.695511+00:00",
+          "finished_utc": "2026-10-15T22:08:29.947250+00:00",
+          "status": "passed",
+          "elapsed_seconds": 5.252
+        },
+        {
+          "stage": "prepare_private_server_inputs",
+          "started_utc": "2026-10-15T22:08:29.948616+00:00",
+          "finished_utc": "2026-10-15T22:08:37.078785+00:00",
+          "status": "passed",
+          "elapsed_seconds": 7.131
+        },
+        {
+          "stage": "isolated_required_geometry_preparation",
+          "started_utc": "2026-10-15T22:08:37.081945+00:00",
+          "finished_utc": "2026-10-15T22:08:38.558257+00:00",
+          "status": "passed",
+          "elapsed_seconds": 1.477
+        },
+        {
+          "stage": "persistent_server_profile",
+          "started_utc": "2026-10-15T22:08:38.560168+00:00",
+          "elapsed_seconds": 0.651
+        },
+        {
+          "stage": "postgres_native_combined",
+          "started_utc": "2026-10-15T22:08:39.211262+00:00",
+          "finished_utc": "2026-10-15T22:08:40.061090+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.85
+        },
+        {
+          "stage": "preflight_selected_map_port",
+          "started_utc": "2026-10-15T22:08:40.238255+00:00",
+          "finished_utc": "2026-10-15T22:08:40.240251+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.002
+        },
+        {
+          "stage": "prepare_owned_presentation_endpoint",
+          "started_utc": "2026-10-15T22:08:40.241905+00:00",
+          "elapsed_seconds": 0.004
+        },
+        {
+          "stage": "presentation_display",
+          "started_utc": "2026-10-15T22:08:40.246070+00:00",
+          "finished_utc": "2026-10-15T22:08:40.519071+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.273
+        },
+        {
+          "stage": "wine_initialization",
+          "started_utc": "2026-10-15T22:08:40.523053+00:00",
+          "finished_utc": "2026-10-15T22:08:53.311918+00:00",
+          "status": "passed",
+          "elapsed_seconds": 12.789
+        },
+        {
+          "stage": "local_login_odbc",
+          "started_utc": "2026-10-15T22:08:53.314804+00:00",
+          "finished_utc": "2026-10-15T22:09:08.064440+00:00",
+          "status": "passed",
+          "elapsed_seconds": 14.75
+        },
+        {
+          "stage": "local_dbserver_startup",
+          "started_utc": "2026-10-15T22:09:08.067765+00:00",
+          "finished_utc": "2026-10-15T22:18:18.848969+00:00",
+          "status": "passed",
+          "elapsed_seconds": 550.781
+        },
+        {
+          "stage": "local_atlas_startup",
+          "started_utc": "2026-10-15T22:18:18.969699+00:00",
+          "finished_utc": "2026-10-15T22:21:44.607013+00:00",
+          "status": "passed",
+          "elapsed_seconds": 205.637
+        },
+        {
+          "stage": "server_running_manual_native_client",
+          "started_utc": "2026-10-15T22:21:44.616287+00:00",
+          "elapsed_seconds": 119.79
+        }
+      ],
+      "server_preparation_phase_seconds": {
+        "base_schema_and_native_runtime": 0.145444,
+        "required_original_geometry": 0.946149,
+        "native_dependencies_and_manual_atlas": 0.258191,
+        "server_data_cache_checkout": 0.021762,
+        "cold_server_data_mirror": 438.672194,
+        "cold_server_data_receipt_seal": 2.085772,
+        "prepared_server_definition_caches": 4.305548,
+        "server_fx_catalog": 0.395594,
+        "server_animation_pack": 2.724486,
+        "atlas_beacon_graph": 67.560703
+      }
+    },
+    "readiness": {
+      "format": 1,
+      "app_id": "org.coh.nativecombined",
+      "type": "server_ready",
+      "local_fake_auth": true,
+      "saved_character_available": true,
+      "character_count": 1,
+      "selection_authority": "preserved_postgresql_ents_staticmapid",
+      "native_client_started": false,
+      "conventional_client_started": false,
+      "encrypted_authentication_verified": false,
+      "native_world_entry_verified": false,
+      "observed_utc_ms": 1792103015300,
+      "heartbeat_max_age_ms": 15000,
+      "client_version": "coh-persistence-diagnostic",
+      "source_helper_used": true,
+      "native_character_creation_verified": false
+    },
+    "observed_result": "Real server boot and manual stop completed; final stopped snapshot follows ready stage rather than disproving boot."
+  },
+  "memory_and_resources": {
+    "android_observer": {
+      "format": 1,
+      "status": "running",
+      "admitted": true,
+      "stop_requested": false,
+      "samples": 897,
+      "invalid_samples": 0,
+      "sample_interval_ms": 1000,
+      "retained_sample_limit": 64,
+      "admission_reserve_bytes": 999756032,
+      "running_reserve_bytes": 249939008,
+      "java_heap_reserve_bytes": 16777216,
+      "minimum_system_headroom_bytes": 6732345344,
+      "minimum_java_heap_headroom_bytes": 177847968,
+      "pressure_started_elapsed_ms": null,
+      "pressure_samples": 0,
+      "last_elapsed_ms": 915520
+    },
+    "first_and_last_retained_android_samples": [
+      {
+        "elapsed_ms": 851697,
+        "valid": true,
+        "available_bytes": 8528220160,
+        "total_bytes": 15996096512,
+        "threshold_bytes": 226492416,
+        "low_memory": false,
+        "java_heap_used_bytes": 67756200,
+        "java_heap_limit_bytes": 268435456,
+        "system_headroom_bytes": 8301727744,
+        "java_heap_headroom_bytes": 200679256
+      },
+      {
+        "elapsed_ms": 915520,
+        "valid": true,
+        "available_bytes": 8483459072,
+        "total_bytes": 15996096512,
+        "threshold_bytes": 226492416,
+        "low_memory": false,
+        "java_heap_used_bytes": 63569208,
+        "java_heap_limit_bytes": 268435456,
+        "system_headroom_bytes": 8256966656,
+        "java_heap_headroom_bytes": 204866248
+      }
+    ],
+    "guest_resource_sample_count": 28,
+    "guest_resource_samples": [
+      {
+        "stage": "preflight",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:08:24.687388+00:00",
+        "rss_kib": 22464,
+        "peak_rss_kib": 22464,
+        "children_peak_rss_kib": 0,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "preflight_local_server_ports",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:08:24.690228+00:00",
+        "rss_kib": 22464,
+        "peak_rss_kib": 22464,
+        "children_peak_rss_kib": 0,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "preflight_local_server_ports",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:08:24.693216+00:00",
+        "rss_kib": 22464,
+        "peak_rss_kib": 22464,
+        "children_peak_rss_kib": 0,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "server_only_input_admission",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:08:24.695720+00:00",
+        "rss_kib": 22464,
+        "peak_rss_kib": 22464,
+        "children_peak_rss_kib": 0,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "server_only_input_admission",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:08:29.947489+00:00",
+        "rss_kib": 22716,
+        "peak_rss_kib": 24952,
+        "children_peak_rss_kib": 0,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "prepare_private_server_inputs",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:08:29.948768+00:00",
+        "rss_kib": 22716,
+        "peak_rss_kib": 24952,
+        "children_peak_rss_kib": 0,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "prepare_private_server_inputs",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:08:37.079968+00:00",
+        "rss_kib": 32688,
+        "peak_rss_kib": 43624,
+        "children_peak_rss_kib": 0,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "isolated_required_geometry_preparation",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:08:37.082160+00:00",
+        "rss_kib": 32688,
+        "peak_rss_kib": 43624,
+        "children_peak_rss_kib": 0,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "isolated_required_geometry_preparation",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:08:38.559194+00:00",
+        "rss_kib": 31728,
+        "peak_rss_kib": 43624,
+        "children_peak_rss_kib": 0,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "persistent_server_profile",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:08:38.560321+00:00",
+        "rss_kib": 31728,
+        "peak_rss_kib": 43624,
+        "children_peak_rss_kib": 0,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "persistent_server_profile",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:08:39.209386+00:00",
+        "rss_kib": 48292,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "postgres_native_combined",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:08:39.211472+00:00",
+        "rss_kib": 48292,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "postgres_native_combined",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:08:40.236411+00:00",
+        "rss_kib": 48308,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "preflight_selected_map_port",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:08:40.238479+00:00",
+        "rss_kib": 48308,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "preflight_selected_map_port",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:08:40.240509+00:00",
+        "rss_kib": 48308,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "prepare_owned_presentation_endpoint",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:08:40.242129+00:00",
+        "rss_kib": 48308,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "prepare_owned_presentation_endpoint",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:08:40.244793+00:00",
+        "rss_kib": 48308,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "presentation_display",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:08:40.246277+00:00",
+        "rss_kib": 48308,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "presentation_display",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:08:40.519704+00:00",
+        "rss_kib": 48308,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "wine_initialization",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:08:40.523373+00:00",
+        "rss_kib": 48308,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "wine_initialization",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:08:53.312477+00:00",
+        "rss_kib": 48320,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "local_login_odbc",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:08:53.315184+00:00",
+        "rss_kib": 48320,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 51524,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "local_login_odbc",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:09:08.065055+00:00",
+        "rss_kib": 48344,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 84904,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "local_dbserver_startup",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:09:08.068179+00:00",
+        "rss_kib": 48344,
+        "peak_rss_kib": 51524,
+        "children_peak_rss_kib": 84904,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "local_dbserver_startup",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:18:18.968381+00:00",
+        "rss_kib": 148436,
+        "peak_rss_kib": 317660,
+        "children_peak_rss_kib": 317660,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "local_atlas_startup",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:18:18.969925+00:00",
+        "rss_kib": 148436,
+        "peak_rss_kib": 317660,
+        "children_peak_rss_kib": 317660,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "local_atlas_startup",
+        "boundary": "leaving",
+        "time_utc": "2026-10-15T22:21:44.615343+00:00",
+        "rss_kib": 148464,
+        "peak_rss_kib": 317660,
+        "children_peak_rss_kib": 317660,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      },
+      {
+        "stage": "server_running_manual_native_client",
+        "boundary": "entered",
+        "time_utc": "2026-10-15T22:21:44.616442+00:00",
+        "rss_kib": 148464,
+        "peak_rss_kib": 317660,
+        "children_peak_rss_kib": 317660,
+        "cgroup_current_bytes": null,
+        "cgroup_max_bytes": null,
+        "cgroup_oom_kill_count": null
+      }
+    ],
+    "maximum_sampled_guest_rss_kib": 148464,
+    "maximum_reported_guest_self_peak_rss_kib": 317660,
+    "maximum_reported_reaped_children_peak_rss_kib": 317660,
+    "cgroup_fields_available": false,
+    "total_concurrent_process_tree_peak_memory_established": false,
+    "android_exit_history": {
+      "status": "collected",
+      "records": [
+        {
+          "reason": 3,
+          "status": 0,
+          "timestamp_utc_ms": 1792099579091,
+          "importance": 125,
+          "pss_kib": 79716,
+          "rss_kib": 172248,
+          "low_memory": true
+        },
+        {
+          "reason": 3,
+          "status": 0,
+          "timestamp_utc_ms": 1792099532637,
+          "importance": 100,
+          "pss_kib": 78634,
+          "rss_kib": 184828,
+          "low_memory": true
+        },
+        {
+          "reason": 10,
+          "status": 0,
+          "timestamp_utc_ms": 1792099424958,
+          "importance": 125,
+          "pss_kib": 98115,
+          "rss_kib": 196168,
+          "low_memory": false
+        },
+        {
+          "reason": 10,
+          "status": 0,
+          "timestamp_utc_ms": 1792095878701,
+          "importance": 125,
+          "pss_kib": 81790,
+          "rss_kib": 184160,
+          "low_memory": false
+        },
+        {
+          "reason": 10,
+          "status": 0,
+          "timestamp_utc_ms": 1792093965739,
+          "importance": 125,
+          "pss_kib": 98225,
+          "rss_kib": 194336,
+          "low_memory": false
+        },
+        {
+          "reason": 3,
+          "status": 0,
+          "timestamp_utc_ms": 1792091451014,
+          "importance": 100,
+          "pss_kib": 72888,
+          "rss_kib": 179156,
+          "low_memory": true
+        },
+        {
+          "reason": 10,
+          "status": 0,
+          "timestamp_utc_ms": 1792091414033,
+          "importance": 125,
+          "pss_kib": 91394,
+          "rss_kib": 195492,
+          "low_memory": false
+        }
+      ],
+      "newest_exit_utc": "2026-10-15T21:26:19.091000+00:00",
+      "newest_exit_predates_this_server_run": true,
+      "new_low_memory_exit_during_this_attempt_evidenced": false,
+      "low_memory_kill_prevention_qualified": false
+    }
+  },
+  "native_connection_before_export_pause": {
+    "updated_at": "2026-10-15T17:23:17.734-05:00",
+    "schema": "coh-native-local-numeric-v1",
+    "phase": "FAILED",
+    "local_development_auth": 1,
+    "server_identity_bound": 0,
+    "generation": 1,
+    "selection_generation": 1,
+    "db_phase": 11,
+    "map_phase": 7,
+    "last_status": 4,
+    "attempts": 1,
+    "character_lists": 1,
+    "character_choices": 1,
+    "map_handoffs": 1,
+    "policy_rejections": 0,
+    "failures": 1,
+    "suspends": 0,
+    "cancellations": 0,
+    "opened_sockets": 2,
+    "closed_sockets": 2,
+    "terminal_failure": 1,
+    "terminal_db_phase": 9,
+    "terminal_map_phase": 4,
+    "map_protocol": {
+      "phase": 7,
+      "stage": 2,
+      "last_status": 4,
+      "last_command_valid": 1,
+      "last_command": 4,
+      "last_payload_bits": 113102,
+      "last_byte_aligned": 0,
+      "accepted_messages": 2,
+      "rejected_messages": 0,
+      "malformed": 0,
+      "unsupported": 0,
+      "scene_prefixes": 0,
+      "entity_prefixes": 0,
+      "disconnects": 0,
+      "suspends": 0,
+      "timeouts": 0,
+      "udp": {
+        "state": 3,
+        "link_state": 5,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "datagrams_sent": 11,
+        "datagrams_received": 24,
+        "peer_rejects": 0,
+        "truncated": 0,
+        "empty": 0,
+        "malformed": 0,
+        "unsupported": 0,
+        "send_would_block": 0,
+        "interrupted": 0,
+        "io_errors": 0,
+        "receive_budget_exhausted": 0,
+        "suspends": 0,
+        "resumes": 0,
+        "cancellations": 0,
+        "timeouts": 0,
+        "last_system_error": 0,
+        "link": {
+          "sent": 11,
+          "received": 24,
+          "retransmits": 0,
+          "acknowledged": 5,
+          "duplicates": 0,
+          "malformed": 1,
+          "queue_limits": 0,
+          "fragment_expirations": 0,
+          "timeouts": 0,
+          "unsupported": 0,
+          "tx_pending": 0,
+          "rx_pending": 0,
+          "fragment_groups": 0,
+          "storage_bytes": 486488,
+          "codec_bytes": 275600,
+          "high_water_retained_bytes": 14139
+        }
+      }
+    },
+    "authserver_authenticated": false,
+    "live_world_rendered": false,
+    "counter_scope": "Current native connection handle. Activity events show three connect requests and three character-choice requests; handle counters are not lifetime aggregate totals.",
+    "last_status_symbol": "COH_LIMIT",
+    "terminal_map_phase_symbol": "COH_MAP_WAIT_SCENE",
+    "terminal_db_phase_symbol": "COH_DB_CLOSED",
+    "map_diagnostic_stage_symbol": "COH_MAP_STAGE_MESSAGE_NEXT",
+    "last_accepted_command_symbol": "COH_REP_SHORTCUTS",
+    "bounded_progress_supported_by_source": [
+      "real_local_DB_character_list",
+      "existing_character_choice",
+      "real_DB_to_Map_handoff",
+      "Map_CONNECT_MSG_accepted",
+      "Map_SHORTCUTS_accepted",
+      "Map_REQSCENE_successfully_queued"
+    ],
+    "failure_localization": "coh_net_udp_next / coh_net_next compressed message decoding returned COH_LIMIT before the next application message reached inspect.",
+    "last_payload_bits_describes_failed_message": false,
+    "exact_failed_message_command_or_decoded_size_known": false,
+    "exact_decode_limit_or_allocation_subcondition_known": false,
+    "complete_scene_message_or_world_state_accepted": false
+  },
+  "native_connection_after_export_pause": {
+    "updated_at": "2026-10-15T17:23:48.657-05:00",
+    "schema": "coh-native-local-numeric-v1",
+    "phase": "SUSPENDED",
+    "local_development_auth": 1,
+    "server_identity_bound": 0,
+    "generation": 1,
+    "selection_generation": 1,
+    "db_phase": 8,
+    "map_phase": 8,
+    "last_status": 4,
+    "attempts": 1,
+    "character_lists": 1,
+    "character_choices": 1,
+    "map_handoffs": 1,
+    "policy_rejections": 0,
+    "failures": 1,
+    "suspends": 2,
+    "cancellations": 0,
+    "opened_sockets": 2,
+    "closed_sockets": 2,
+    "terminal_failure": 1,
+    "terminal_db_phase": 9,
+    "terminal_map_phase": 4,
+    "map_protocol": {
+      "phase": 8,
+      "stage": 2,
+      "last_status": 4,
+      "last_command_valid": 1,
+      "last_command": 4,
+      "last_payload_bits": 113102,
+      "last_byte_aligned": 0,
+      "accepted_messages": 2,
+      "rejected_messages": 0,
+      "malformed": 0,
+      "unsupported": 0,
+      "scene_prefixes": 0,
+      "entity_prefixes": 0,
+      "disconnects": 0,
+      "suspends": 2,
+      "timeouts": 0,
+      "udp": {
+        "state": 2,
+        "link_state": 7,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "datagrams_sent": 11,
+        "datagrams_received": 24,
+        "peer_rejects": 0,
+        "truncated": 0,
+        "empty": 0,
+        "malformed": 0,
+        "unsupported": 0,
+        "send_would_block": 0,
+        "interrupted": 0,
+        "io_errors": 0,
+        "receive_budget_exhausted": 0,
+        "suspends": 2,
+        "resumes": 0,
+        "cancellations": 0,
+        "timeouts": 0,
+        "last_system_error": 0,
+        "link": {
+          "sent": 11,
+          "received": 24,
+          "retransmits": 0,
+          "acknowledged": 5,
+          "duplicates": 0,
+          "malformed": 1,
+          "queue_limits": 0,
+          "fragment_expirations": 0,
+          "timeouts": 0,
+          "unsupported": 0,
+          "tx_pending": 0,
+          "rx_pending": 0,
+          "fragment_groups": 0,
+          "storage_bytes": 486488,
+          "codec_bytes": 275600,
+          "high_water_retained_bytes": 14139
+        }
+      }
+    },
+    "authserver_authenticated": false,
+    "live_world_rendered": false
+  },
+  "preview_before_export_pause": {
+    "valid": true,
+    "failed": false,
+    "running": true,
+    "failure": "",
+    "frames": 4963,
+    "width": 1920,
+    "height": 469,
+    "contexts_started": 9,
+    "contexts_completed": 8,
+    "objects_released": false,
+    "gl_errors": 0,
+    "egl_error": 0,
+    "tf_mismatches": 0,
+    "depth_order_mismatches": 0,
+    "source_assets": {
+      "geo_loads": 3,
+      "texture_loads": 6,
+      "errors": 0
+    },
+    "stream": {
+      "catalog_instances": 11,
+      "selected_instances": 6,
+      "resident_bytes": 157491,
+      "budget_bytes": 524288,
+      "peak_resident_bytes": 157491,
+      "selection_updates": 1,
+      "cache_hits": 9,
+      "cache_misses": 8,
+      "evictions": 0,
+      "generation": 9
+    },
+    "preview_is_server_world": false
+  },
+  "preview_after_export_pause": {
+    "valid": true,
+    "failed": false,
+    "running": false,
+    "failure": "",
+    "frames": 6039,
+    "width": 1920,
+    "height": 469,
+    "contexts_started": 10,
+    "contexts_completed": 10,
+    "objects_released": true,
+    "gl_errors": 0,
+    "egl_error": 0,
+    "tf_mismatches": 0,
+    "depth_order_mismatches": 0,
+    "source_assets": {
+      "geo_loads": 3,
+      "texture_loads": 6,
+      "errors": 0
+    },
+    "stream": {
+      "catalog_instances": 11,
+      "selected_instances": 6,
+      "resident_bytes": 157491,
+      "budget_bytes": 524288,
+      "peak_resident_bytes": 157491,
+      "selection_updates": 1,
+      "cache_hits": 9,
+      "cache_misses": 8,
+      "evictions": 0,
+      "generation": 10
+    },
+    "preview_is_server_world": false
+  },
+  "viewport_policy": {
+    "schema": "coh-native-viewport-v1",
+    "maximum_controls_percent": 60,
+    "minimum_aspect": 0.25,
+    "maximum_aspect": 8,
+    "maximum_dimension": 16384,
+    "host_width": 1920,
+    "host_height": 469
+  },
+  "external_input_counts_later": {
+    "key_down": 0,
+    "key_up": 0,
+    "key_repeat": 0,
+    "motion": 298,
+    "touch_begin": 2,
+    "touch_move": 55,
+    "touch_end": 2,
+    "touch_cancel": 0,
+    "focus_clear": 10,
+    "device_removed": 0,
+    "controller_events": 298,
+    "left_axis_directions": 15,
+    "right_axis_directions": 11,
+    "button_down_mask": 0,
+    "touch_motion_directions": 15
+  },
+  "in_app_synthetic_input_counts_later": {
+    "key_down": 0,
+    "key_up": 0,
+    "key_repeat": 0,
+    "motion": 0,
+    "touch_begin": 0,
+    "touch_move": 0,
+    "touch_end": 0,
+    "touch_cancel": 0,
+    "focus_clear": 0,
+    "device_removed": 0,
+    "controller_events": 0,
+    "left_axis_directions": 0,
+    "right_axis_directions": 0,
+    "button_down_mask": 0,
+    "touch_motion_directions": 0
+  },
+  "activity_timeline": [
+    {
+      "sequence": 1,
+      "type": "session_created",
+      "elapsed_since_session_created_ms": 0
+    },
+    {
+      "sequence": 2,
+      "type": "resume",
+      "elapsed_since_session_created_ms": 1
+    },
+    {
+      "sequence": 3,
+      "type": "surface_changed",
+      "elapsed_since_session_created_ms": 20
+    },
+    {
+      "sequence": 4,
+      "type": "assets_loaded",
+      "elapsed_since_session_created_ms": 44,
+      "native": {
+        "frames": 0,
+        "width": 0,
+        "height": 0,
+        "failed": false,
+        "contexts_started": 0,
+        "contexts_completed": 0
+      }
+    },
+    {
+      "sequence": 5,
+      "type": "local_connect_requested",
+      "elapsed_since_session_created_ms": 5023,
+      "native": {
+        "frames": 292,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 1,
+        "contexts_completed": 0
+      }
+    },
+    {
+      "sequence": 6,
+      "type": "surface_changed",
+      "elapsed_since_session_created_ms": 5942,
+      "native": {
+        "frames": 347,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 1,
+        "contexts_completed": 0
+      }
+    },
+    {
+      "sequence": 7,
+      "type": "render_returned",
+      "elapsed_since_session_created_ms": 5953,
+      "native": {
+        "frames": 348,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 1,
+        "contexts_completed": 1
+      }
+    },
+    {
+      "sequence": 8,
+      "type": "input_clear_requested",
+      "elapsed_since_session_created_ms": 19110,
+      "native": {
+        "frames": 1135,
+        "width": 1920,
+        "height": 410,
+        "failed": false,
+        "contexts_started": 2,
+        "contexts_completed": 1
+      }
+    },
+    {
+      "sequence": 9,
+      "type": "local_character_choice_requested",
+      "elapsed_since_session_created_ms": 26061,
+      "native": {
+        "frames": 1552,
+        "width": 1920,
+        "height": 410,
+        "failed": false,
+        "contexts_started": 2,
+        "contexts_completed": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "type": "surface_changed",
+      "elapsed_since_session_created_ms": 26076,
+      "native": {
+        "frames": 1553,
+        "width": 1920,
+        "height": 410,
+        "failed": false,
+        "contexts_started": 2,
+        "contexts_completed": 1
+      }
+    },
+    {
+      "sequence": 11,
+      "type": "render_returned",
+      "elapsed_since_session_created_ms": 26092,
+      "native": {
+        "frames": 1554,
+        "width": 1920,
+        "height": 410,
+        "failed": false,
+        "contexts_started": 2,
+        "contexts_completed": 2
+      }
+    },
+    {
+      "sequence": 12,
+      "type": "input_clear_requested",
+      "elapsed_since_session_created_ms": 33137,
+      "native": {
+        "frames": 1975,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 3,
+        "contexts_completed": 2
+      }
+    },
+    {
+      "sequence": 13,
+      "type": "export_requested",
+      "elapsed_since_session_created_ms": 35897,
+      "native": {
+        "frames": 2140,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 3,
+        "contexts_completed": 2
+      }
+    },
+    {
+      "sequence": 14,
+      "type": "pause_requested",
+      "elapsed_since_session_created_ms": 35930,
+      "native": {
+        "frames": 2142,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 3,
+        "contexts_completed": 2
+      }
+    },
+    {
+      "sequence": 15,
+      "type": "input_clear_requested",
+      "elapsed_since_session_created_ms": 35930,
+      "native": {
+        "frames": 2142,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 3,
+        "contexts_completed": 2
+      }
+    },
+    {
+      "sequence": 16,
+      "type": "pause",
+      "elapsed_since_session_created_ms": 35931,
+      "native": {
+        "frames": 2142,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 3,
+        "contexts_completed": 2
+      }
+    },
+    {
+      "sequence": 17,
+      "type": "render_returned",
+      "elapsed_since_session_created_ms": 35945,
+      "native": {
+        "frames": 2143,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 3,
+        "contexts_completed": 3
+      }
+    },
+    {
+      "sequence": 18,
+      "type": "input_clear_requested",
+      "elapsed_since_session_created_ms": 35979,
+      "native": {
+        "frames": 2143,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 3,
+        "contexts_completed": 3
+      }
+    },
+    {
+      "sequence": 19,
+      "type": "surface_destroyed",
+      "elapsed_since_session_created_ms": 36495,
+      "native": {
+        "frames": 2143,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 3,
+        "contexts_completed": 3
+      }
+    },
+    {
+      "sequence": 20,
+      "type": "resume",
+      "elapsed_since_session_created_ms": 37408,
+      "native": {
+        "frames": 2143,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 3,
+        "contexts_completed": 3
+      }
+    },
+    {
+      "sequence": 21,
+      "type": "surface_changed",
+      "elapsed_since_session_created_ms": 37418,
+      "native": {
+        "frames": 2143,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 3,
+        "contexts_completed": 3
+      }
+    },
+    {
+      "sequence": 22,
+      "type": "export_complete",
+      "elapsed_since_session_created_ms": 37442,
+      "native": {
+        "frames": 2143,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 4,
+        "contexts_completed": 3
+      }
+    },
+    {
+      "sequence": 23,
+      "type": "local_connect_requested",
+      "elapsed_since_session_created_ms": 43833,
+      "native": {
+        "frames": 2525,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 4,
+        "contexts_completed": 3
+      }
+    },
+    {
+      "sequence": 24,
+      "type": "surface_changed",
+      "elapsed_since_session_created_ms": 44098,
+      "native": {
+        "frames": 2541,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 4,
+        "contexts_completed": 3
+      }
+    },
+    {
+      "sequence": 25,
+      "type": "render_returned",
+      "elapsed_since_session_created_ms": 44114,
+      "native": {
+        "frames": 2542,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 4,
+        "contexts_completed": 4
+      }
+    },
+    {
+      "sequence": 26,
+      "type": "local_character_choice_requested",
+      "elapsed_since_session_created_ms": 46134,
+      "native": {
+        "frames": 2660,
+        "width": 1920,
+        "height": 410,
+        "failed": false,
+        "contexts_started": 5,
+        "contexts_completed": 4
+      }
+    },
+    {
+      "sequence": 27,
+      "type": "surface_changed",
+      "elapsed_since_session_created_ms": 46149,
+      "native": {
+        "frames": 2661,
+        "width": 1920,
+        "height": 410,
+        "failed": false,
+        "contexts_started": 5,
+        "contexts_completed": 4
+      }
+    },
+    {
+      "sequence": 28,
+      "type": "render_returned",
+      "elapsed_since_session_created_ms": 46165,
+      "native": {
+        "frames": 2662,
+        "width": 1920,
+        "height": 410,
+        "failed": false,
+        "contexts_started": 5,
+        "contexts_completed": 5
+      }
+    },
+    {
+      "sequence": 29,
+      "type": "recreate_requested",
+      "elapsed_since_session_created_ms": 50585,
+      "native": {
+        "frames": 2925,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 6,
+        "contexts_completed": 5
+      }
+    },
+    {
+      "sequence": 30,
+      "type": "surface_changed",
+      "elapsed_since_session_created_ms": 50602,
+      "native": {
+        "frames": 2925,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 6,
+        "contexts_completed": 6
+      }
+    },
+    {
+      "sequence": 31,
+      "type": "render_returned",
+      "elapsed_since_session_created_ms": 50605,
+      "native": {
+        "frames": 2925,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 6,
+        "contexts_completed": 6
+      }
+    },
+    {
+      "sequence": 32,
+      "type": "input_clear_requested",
+      "elapsed_since_session_created_ms": 52603,
+      "native": {
+        "frames": 3042,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 7,
+        "contexts_completed": 6
+      }
+    },
+    {
+      "sequence": 33,
+      "type": "reset_requested",
+      "elapsed_since_session_created_ms": 52604,
+      "native": {
+        "frames": 3042,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 7,
+        "contexts_completed": 6
+      }
+    },
+    {
+      "sequence": 34,
+      "type": "local_connect_requested",
+      "elapsed_since_session_created_ms": 76347,
+      "native": {
+        "frames": 4466,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 7,
+        "contexts_completed": 6
+      }
+    },
+    {
+      "sequence": 35,
+      "type": "surface_changed",
+      "elapsed_since_session_created_ms": 76596,
+      "native": {
+        "frames": 4481,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 7,
+        "contexts_completed": 6
+      }
+    },
+    {
+      "sequence": 36,
+      "type": "render_returned",
+      "elapsed_since_session_created_ms": 76612,
+      "native": {
+        "frames": 4482,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 7,
+        "contexts_completed": 7
+      }
+    },
+    {
+      "sequence": 37,
+      "type": "local_character_choice_requested",
+      "elapsed_since_session_created_ms": 79415,
+      "native": {
+        "frames": 4647,
+        "width": 1920,
+        "height": 410,
+        "failed": false,
+        "contexts_started": 8,
+        "contexts_completed": 7
+      }
+    },
+    {
+      "sequence": 38,
+      "type": "surface_changed",
+      "elapsed_since_session_created_ms": 79430,
+      "native": {
+        "frames": 4648,
+        "width": 1920,
+        "height": 410,
+        "failed": false,
+        "contexts_started": 8,
+        "contexts_completed": 7
+      }
+    },
+    {
+      "sequence": 39,
+      "type": "render_returned",
+      "elapsed_since_session_created_ms": 79446,
+      "native": {
+        "frames": 4649,
+        "width": 1920,
+        "height": 410,
+        "failed": false,
+        "contexts_started": 8,
+        "contexts_completed": 8
+      }
+    },
+    {
+      "sequence": 40,
+      "type": "input_clear_requested",
+      "elapsed_since_session_created_ms": 83334,
+      "native": {
+        "frames": 4879,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 9,
+        "contexts_completed": 8
+      }
+    },
+    {
+      "sequence": 41,
+      "type": "export_requested",
+      "elapsed_since_session_created_ms": 84717,
+      "native": {
+        "frames": 4962,
+        "width": 1920,
+        "height": 469,
+        "failed": false,
+        "contexts_started": 9,
+        "contexts_completed": 8
+      }
+    }
+  ],
+  "retained_history": [
+    {
+      "version_name": "0.1.2-local-server-native",
+      "version_code": 3,
+      "phase": "ready",
+      "ready": true,
+      "failure_code": "",
+      "last_stage": "server_running_manual_native_client",
+      "elapsed_ms": 716398
+    },
+    {
+      "version_name": "0.1.3-local-server-native",
+      "version_code": 4,
+      "phase": "stopped",
+      "ready": false,
+      "failure_code": "SERVER_ADMISSION_FAILED",
+      "last_stage": "guest_starting",
+      "elapsed_ms": 8
+    },
+    {
+      "version_name": "0.1.3-local-server-native",
+      "version_code": 4,
+      "phase": "starting",
+      "ready": false,
+      "failure_code": "",
+      "last_stage": "server_only_input_admission",
+      "elapsed_ms": 5135
+    },
+    {
+      "version_name": "0.1.3-local-server-native",
+      "version_code": 4,
+      "phase": "failed",
+      "ready": false,
+      "failure_code": "OWNED_DISPLAY_SOCKET_ALREADY_EXISTS",
+      "last_stage": "preflight_selected_map_port",
+      "elapsed_ms": 15652
+    }
+  ],
+  "source_audit": {
+    "files": [
+      {
+        "path": "native-android/engine/mapclient/coh_mapclient.c",
+        "sha256": "2b180d4fc681debfcffb4614b79adf69afab3726c418e6268130dc5546f71b09"
+      },
+      {
+        "path": "native-android/engine/network/coh_net.c",
+        "sha256": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f"
+      },
+      {
+        "path": "native-android/engine/network/coh_net_zip.c",
+        "sha256": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8"
+      },
+      {
+        "path": "native-android/engine/network/coh_net_udp.c",
+        "sha256": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a"
+      }
+    ],
+    "enum_controls": {
+      "status": "passed",
+      "enum_controls": 5,
+      "COH_LIMIT": 4,
+      "COH_MAP_WAIT_SCENE": 4,
+      "COH_MAP_STAGE_MESSAGE_NEXT": 2,
+      "COH_REP_SHORTCUTS": 4,
+      "COH_DB_CLOSED": 9
+    },
+    "application_progress_reason": "WAIT_SCENE and two accepted_messages are reached only after accepted CONNECT_MSG, fully parsed SHORTCUTS, and successfully queued REQSCENE. No scene prefix was accepted.",
+    "receive_failure_reason": "Map MESSAGE_NEXT returns its error before inspect. The only COH_LIMIT path in coh_net_next is propagated from compressed-message decoding, which increments link malformed on failure; the report lacks the failed decode header/size."
+  },
+  "scope": {
+    "exact_qualified_014_ARM64_binary_observed": true,
+    "physical_014_server_boot_and_orderly_stop_observed": true,
+    "physical_014_local_DB_list_choice_handoff_observed": true,
+    "physical_014_bounded_Map_CONNECT_and_SHORTCUTS_acceptance_supported": true,
+    "physical_014_character_picker_preview_resize_without_camera_failure_observed": true,
+    "full_Map_session_or_native_world_accepted": false,
+    "encrypted_AuthServer_authentication_verified": false,
+    "server_authoritative_native_world_rendered": false,
+    "gate_25_26_or_27_full_acceptance_claimed": false,
+    "gates_1_to_24_implementation_or_acceptance_changed": false
+  },
+  "validation_receipt": {
+    "original_inputs_or_private_images_committed": false,
+    "source_and_input_consistency": "passed",
+    "private_identifier_name_and_path_scan": "passed",
+    "numeric_stage_and_counter_interpretation": "passed",
+    "scope": "Evidence extraction and enum/source checks only; no new runtime implementation, APK, emulator or physical acceptance test performed by this evidence worker."
+  }
+}

@@ -58,6 +58,8 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
     private volatile boolean destroying, writeFailed;
     private volatile boolean resumed;
     private boolean renderQueued, assetsVerified, exporting;
+    private boolean returningToLauncher;
+    private final Runnable returnDeadline = () -> finishReturnToLauncher(true);
     private long sequence, sessionStarted;
     private volatile long epoch;
     private String failure;
@@ -106,6 +108,9 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         controlsScroll.setContentDescription("Native client controls");
         controlsScroll.addView(controlsLayout);
         layout.addView(controlsScroll, new LinearLayout.LayoutParams(-1, -2));
+        Button launcher = new Button(this); launcher.setText("Return to launcher");
+        launcher.setOnClickListener(v -> returnToLauncher());
+        controlsLayout.addView(launcher, new LinearLayout.LayoutParams(-1, -2));
         TextView title = new TextView(this);
         title.setText("Native City of Heroes • Local development client");
         title.setTextSize(18); controlsLayout.addView(title);
@@ -210,6 +215,30 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         networkWorker.scheduleWithFixedDelay(this::networkTick, 0, 20, TimeUnit.MILLISECONDS);
         main.post(poll);
     }
+    private void returnToLauncher() {
+        if(destroying || returningToLauncher || isFinishing())return;
+        returningToLauncher=true;
+        networkForeground=false;networkRequested=false;networkAttempt++;
+        event("return_to_launcher_requested");saveReport();
+        // Capture client suspension without waiting on its owner from the UI
+        // thread. Normal pause/destroy still own input/render/handle teardown.
+        main.postDelayed(returnDeadline,2000);
+        networkWorker.execute(() -> {
+            if(networkHandle!=0){LocalNative.suspend(networkHandle);publishNetwork();}
+            main.post(() -> finishReturnToLauncher(false));
+        });
+    }
+    private void finishReturnToLauncher(boolean deadlineExpired) {
+        if(destroying || !returningToLauncher || isFinishing())return;
+        main.removeCallbacks(returnDeadline);
+        event(deadlineExpired ? "return_to_launcher_cleanup_pending" : "return_to_launcher_ready");
+        saveReport();
+        // A normal launcher→client stack retains MainActivity underneath.
+        // A direct client task needs its launcher created before it finishes.
+        if(isTaskRoot())startActivity(new Intent(this,MainActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        finish();
+    }
     private JSONObject localPolicy() throws Exception {
         String supplied=getIntent().getStringExtra("session_policy_path");
         File files=getFilesDir().getCanonicalFile();
@@ -234,7 +263,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         p.getBoolean("encryption_required");p.getBoolean("outbound_compressed");return p;
     }
     private void connectLocalServer() {
-        if(destroying||networkConnecting||!networkForeground)return;
+        if(destroying||returningToLauncher||networkConnecting||!networkForeground)return;
         final long attempt=++networkAttempt;networkRequested=true;
         networkConnecting=true;connectButton.setEnabled(false);
         characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);
@@ -519,7 +548,7 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
         networkForeground=false;networkRequested=false;networkAttempt++;
         networkWorker.execute(() -> { if(networkHandle!=0){LocalNative.close(networkHandle);networkHandle=0;} });
         networkWorker.shutdown();
-        destroying=true;resumed=false;epoch++;main.removeCallbacks(poll);
+        destroying=true;resumed=false;epoch++;main.removeCallbacks(poll);main.removeCallbacks(returnDeadline);
         if(currentHolder!=null)currentHolder.removeCallback(this);
         currentHolder=null;currentSurface=null;
         if(adapter!=null)adapter.clear();if(inputManager!=null)inputManager.unregisterInputDeviceListener(adapter);

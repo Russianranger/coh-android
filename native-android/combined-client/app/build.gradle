@@ -12,8 +12,8 @@ android {
         applicationId 'org.coh.nativecombined'
         minSdk 26
         targetSdk 35
-        versionCode 5
-        versionName '0.1.4-local-server-native'
+        versionCode 6
+        versionName '0.1.5-local-server-native'
         ndk { abiFilters.addAll(selectedAbis) }
         externalNativeBuild { cmake { arguments '-DCOH_CRYPTO_ROOT=' + file(cryptoRoot).absolutePath } }
     }

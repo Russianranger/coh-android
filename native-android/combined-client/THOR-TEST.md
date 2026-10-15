@@ -5,7 +5,33 @@ This is a new, separate app named **CoH Native Combined**
 0.1.0/0.2.0/0.3.0 apps and all existing assets and reports. Do not uninstall or
 clear their storage. Gates 22–24 remain accepted within their documented scope.
 
-## Current update: 0.1.4 interrupted-start recovery
+## Current update: 0.1.5 Return to launcher
+
+Install `CoH-Native-Combined-0.1.5-arm64.apk` **over Combined**. Keep the existing
+imports, runtime, saved test profile, accepted native apps and conventional
+launcher. Do not uninstall, clear storage or repeat setup.
+
+Your exact 0.1.4 report confirms a real server boot, character list/selection,
+initial Map connection acceptance and shortcut-catalog admission. Scene reception
+then fails with `COH_LIMIT` before a scene prefix reaches the parser. The visible
+scene remains the offline preview. This navigation update does not change that
+protocol bound or claim a completed live world.
+
+1. Start the server from the launcher, then open the native client manually.
+2. Tap **Return to launcher** at the top of the native controls. It must return
+   to the existing launcher so server status, **Stop server** and ZIP export are
+   available. Returning closes the client; it does not stop the server.
+3. Launch the native client again. Its preview must render, and connecting again
+   must require the explicit **Connect local server** button. Try returning while
+   the character list is visible and after the current scene-transfer failure.
+4. Export the launcher ZIP after the test or first failure, before another retry.
+   Stop the server through the launcher when finished. Keep the saved character.
+
+## Previous qualified 0.1.4 interrupted-start recovery
+
+Historical handoff; use the current 0.1.5 procedure above. The new physical report
+records successful startup and a clean manual stop. It does not test a separate
+force-stop/recover/restart cycle or identify the earlier Android memory-kill cause.
 
 Current ARM64 delivery: **11,527,815 bytes**, SHA256
 `18b06672a11af3a50bd2ece77ce41bc2fecec7f8ebe6037408245119ca21ad2c`.

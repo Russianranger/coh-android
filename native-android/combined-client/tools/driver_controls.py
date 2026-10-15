@@ -13,7 +13,8 @@ import tempfile
 import xml.etree.ElementTree as ET
 from unittest.mock import patch
 from emulator_check import (Check, PACKAGE, scene_pixels, settled_preview, viewport_contract,
-                            map_report_contract, installed_apk_contract, guest_resources_contract)
+                            map_report_contract, installed_apk_contract, guest_resources_contract,
+                            activity_inventory, retained_launcher)
 
 FILE = 'native-test-donor.apk'
 BACKGROUND = f'<node package="com.google.android.documentsui" text="{FILE}" bounds="[189,899][583,956]"/>'
@@ -236,6 +237,39 @@ def identity_resource_controls():
     return count
 
 
+def activity_controls():
+    header='ACTIVITY MANAGER ACTIVITIES (dumpsys activity activities)\n'
+    main=PACKAGE+'/.MainActivity';native=PACKAGE+'/.NativeClientActivity'
+    live='  * Hist  #0: ActivityRecord{abc123 u0 '+main+' t41}\n'
+    resumed='  ResumedActivity: ActivityRecord{abc123 u0 '+main+'} t41}\n'
+    historical='  mLastPausedActivity: ActivityRecord{def456 u0 '+native+' t41 f}}\n'
+    def parsed(text):return {**activity_inventory(header+text),'pid':1000}
+    baseline=parsed(live+resumed)
+    assert retained_launcher(baseline,parsed(live+resumed+resumed+historical))
+    count=1
+    brief=parsed(live.replace('* Hist  ','Hist  ').replace(main,PACKAGE+'/'+PACKAGE+'.MainActivity')+resumed)
+    assert retained_launcher(baseline,brief);count+=1
+    for changed in (
+        live+resumed+' * Hist #1: ActivityRecord{def456 u0 '+native+' t41}\n',
+        live+resumed+live.replace('abc123','eeee'),
+        (live+resumed).replace('abc123','eeee'),
+        live+resumed+live.replace('abc123','eeee').replace('t41','t99'),
+        live+resumed.replace('abc123','def456').replace(main,native),
+        live,
+        live+resumed+' * Fin #0: ActivityRecord{def456 u0 '+native+' t41 f}}\n',
+        live+resumed+' Stop #0: ActivityRecord{def456 u0 '+native+' t41}\n',
+    ):
+        assert not retained_launcher(baseline,parsed(changed));count+=1
+    changed=parsed(live+resumed);changed['pid']=1001
+    assert not retained_launcher(baseline,changed);count+=1
+    for raw in ('', 'Permission denied', live+resumed, header+' * Hist #0: broken '+main,
+                header+' * Hist #0: ActivityRecord{abc123 u0 '+main+'}\n'):
+        try:activity_inventory(raw)
+        except AssertionError:count+=1;continue
+        raise AssertionError('Malformed Activity inventory was admitted')
+    return count
+
+
 def main():
     with tempfile.TemporaryDirectory(prefix='coh-driver-controls-') as temp:
         driver = Driver(Path(temp), [BACKGROUND+DRAWER, BACKGROUND, APP])
@@ -297,7 +331,9 @@ def main():
         capture_checks=capture_controls(Path(temp)/'captures')
         viewport_protocol_checks=viewport_protocol_controls(Path(temp)/'viewport-protocol')
         identity_resource_checks=identity_resource_controls()
-    print(json.dumps({'passed':True,'checks':17+capture_checks+viewport_protocol_checks+identity_resource_checks,'capture_controls':capture_checks,
+        activity_checks=activity_controls()
+    print(json.dumps({'passed':True,'checks':17+capture_checks+viewport_protocol_checks+identity_resource_checks+activity_checks,'capture_controls':capture_checks,
+        'activity_inventory_controls':activity_checks,
         'identity_resource_controls':identity_resource_checks,
         'viewport_protocol_controls':viewport_protocol_checks,'scope':'Host regressions for document selection, strict fresh capture, native fault rejection, scene/viewport admission, bounded scrolling, exact APK identity and numeric protocol/resource privacy; no Android execution claim.'}))
 
