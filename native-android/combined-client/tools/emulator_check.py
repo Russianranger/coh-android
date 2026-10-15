@@ -17,6 +17,9 @@ import xml.etree.ElementTree as ET
 PACKAGE = 'org.coh.nativecombined'
 MAIN = PACKAGE + '/.MainActivity'
 NATIVE = PACKAGE + '/.NativeClientActivity'
+# AOSP DumpCommand reports these exact failures before writing a hierarchy.
+CAPTURE_TRANSIENTS = frozenset(('ERROR: could not get idle state.',
+    'ERROR: null root node returned by UiTestAutomationBridge.'))
 
 
 def memory_report_contract(value):
@@ -124,12 +127,14 @@ class Check:
         self.args = args
         self.proofs = []
         self.launcher_anrs = 0
+        self.capture_id = 0
         args.output.mkdir(parents=True, exist_ok=True)
 
     def adb(self, *args, check=True):
         r = subprocess.run([self.args.adb, '-s', self.args.serial, *map(str, args)], capture_output=True, timeout=45)
         if check and r.returncode:
-            raise RuntimeError('ADB command failed: ' + repr(args) + '\n' + r.stderr.decode(errors='replace'))
+            raise RuntimeError('ADB command failed: ' + repr(args) + '\nreturncode=' + str(r.returncode)
+                + '\nstdout:\n' + r.stdout.decode(errors='replace') + '\nstderr:\n' + r.stderr.decode(errors='replace'))
         return r
 
     def text(self, *args, check=True):
@@ -141,18 +146,23 @@ class Check:
         (self.args.output / 'progress.json').write_text(json.dumps(self.proofs, indent=2) + '\n')
         print(json.dumps(item), flush=True)
 
-    def system_anr_evidence(self, label):
-        last = self.text('shell', 'dumpsys', 'activity', 'lastanr', check=False)
-        events = self.text('logcat', '-d', '-b', 'events', '-s', 'am_anr', 'am_crash', check=False)
-        prefix = 'external-anr-' + str(self.launcher_anrs)
+    def native_fault_evidence(self, prefix):
+        last = self.text('shell', 'dumpsys', 'activity', 'lastanr')
+        events = self.text('logcat', '-d', '-b', 'events', '-s', 'am_anr', 'am_crash')
+        crashes = self.text('logcat', '-d', '-b', 'crash')
         (self.args.output / (prefix + '-lastanr.txt')).write_text(last)
         (self.args.output / (prefix + '-events.txt')).write_text(events)
+        (self.args.output / (prefix + '-crashes.txt')).write_text(crashes)
         # A CoH app ANR anywhere in this fresh disposable session invalidates the
         # run even if an external system process also displayed a dialog.
         native_anr = re.search(r'ANR in ' + re.escape(PACKAGE) + r'(?:[\s(/]|$)', last)
         native_event = re.search(r'am_(?:anr|crash)[^\n]*[,\[]' + re.escape(PACKAGE) + r'[,\]]', events)
-        if native_anr or native_event:
-            raise RuntimeError('Native app ANR found in framework diagnostics; no dismissal')
+        if native_anr or native_event or PACKAGE in crashes:
+            raise RuntimeError('Native app ANR or crash found in framework diagnostics; no retry or dismissal')
+        return last, events
+
+    def system_anr_evidence(self, label):
+        last, events = self.native_fault_evidence('external-anr-' + str(self.launcher_anrs))
         if label == "Files isn't responding":
             packages = ('com.google.android.documentsui', 'com.android.documentsui')
             identified = next((p for p in packages if re.search(r'ANR in ' + re.escape(p) + r'(?:[\s(/]|$)', last)), None)
@@ -163,14 +173,53 @@ class Check:
             return identified
         return 'com.google.android.apps.nexuslauncher'
 
+    def capture_command(self, prefix, phase, *command):
+        result = self.adb(*command, check=False)
+        (self.args.output / (prefix + '-' + phase + '.stdout')).write_bytes(result.stdout)
+        (self.args.output / (prefix + '-' + phase + '.stderr')).write_bytes(result.stderr)
+        (self.args.output / (prefix + '-' + phase + '.json')).write_text(json.dumps(
+            {'command':command, 'returncode':result.returncode}, indent=2) + '\n')
+        return result
+
+    def capture_ui(self):
+        self.capture_id += 1
+        remote = '/data/local/tmp/combined-ui.xml'
+        for attempt in range(1, 4):
+            prefix = 'ui-capture-' + str(self.capture_id) + '-attempt-' + str(attempt)
+            cleared = self.capture_command(prefix, 'clear', 'shell', 'rm', '-f', remote)
+            if cleared.returncode:
+                self.native_fault_evidence(prefix)
+                raise RuntimeError('Cannot remove previous UI capture; refusing stale XML: ' + prefix)
+            result = self.capture_command(prefix, 'dump', 'shell', 'uiautomator', 'dump', remote)
+            diagnostic = (result.stdout + b'\n' + result.stderr).decode(errors='replace').strip()
+            transient = diagnostic in CAPTURE_TRANSIENTS
+            if result.returncode or transient:
+                self.native_fault_evidence(prefix)
+                if transient and attempt < 3:
+                    time.sleep(.5)
+                    continue
+                raise RuntimeError('UI capture failed; raw stdout/stderr preserved: ' + prefix
+                    + '; returncode=' + str(result.returncode) + '; diagnostic=' + diagnostic)
+            read = self.capture_command(prefix, 'read', 'exec-out', 'cat', remote)
+            if read.returncode:
+                self.native_fault_evidence(prefix)
+                raise RuntimeError('Fresh UI capture file unavailable: ' + prefix)
+            raw = read.stdout
+            assert 0 < len(raw) < 8 << 20, 'Fresh UI capture is empty or unbounded'
+            root = ET.fromstring(raw)
+            if attempt > 1:
+                self.native_fault_evidence(prefix)
+                self.record('fresh UI capture after bounded framework idle retry', attempts=attempt,
+                            maximum_attempts=3, raw_command_results_preserved=True, stale_xml_used=False)
+            (self.args.output / 'last-ui.xml').write_bytes(raw)
+            return raw, root
+        raise RuntimeError('UI capture retry bound exhausted')
+
     def dump(self):
         for unused in range(4):
             # Keep driver snapshots outside shared storage so DocumentsUI does
             # not index its own rapidly-changing diagnostic XML as user files.
-            self.adb('shell', 'uiautomator', 'dump', '/data/local/tmp/combined-ui.xml')
-            raw = self.adb('exec-out', 'cat', '/data/local/tmp/combined-ui.xml').stdout
-            (self.args.output / 'last-ui.xml').write_bytes(raw)
-            root = ET.fromstring(raw)
+            raw, root = self.capture_ui()
             alerts = [n for n in root.iter('node') if n.attrib.get('resource-id') == 'android:id/alertTitle']
             external = next((n for n in alerts if n.attrib.get('text') in ("Pixel Launcher isn't responding", "Files isn't responding")), None)
             if external is None:
@@ -528,9 +577,8 @@ class Check:
                 self.record('Android native UDP DB-to-Map controller', checks=value['checks'], socket_scenarios=value['socket_scenarios'], real_server_interoperability=False)
             finally:
                 self.adb('shell', 'rm', '-f', remote, check=False)
-        crashes = self.text('logcat', '-d', '-b', 'crash')
-        assert PACKAGE not in crashes, 'App crash recorded'
-        self.record('no app crash recorded')
+        self.native_fault_evidence('final-app-fault-audit')
+        self.record('no app crash or ANR recorded')
         value = {'format': 1, 'status': 'passed', 'checks': self.proofs, 'device': {'api': self.text('shell', 'getprop', 'ro.build.version.sdk').strip(), 'abi': 'x86_64', 'emulator': True}, 'physical_thor_accepted': False, 'actual_server_interoperability_verified': False, 'real_authenticated_session': False, 'scope': 'Consolidated app Android framework import cancellation/admission, native preview GLES and lifecycle; optional source-layout scripted native UDP controller. ARM64 guest server startup and real local account handoff require device qualification.'}
         (self.args.output / 'receipt.json').write_text(json.dumps(value, indent=2) + '\n')
 
@@ -553,6 +601,7 @@ def main():
         for name, command in (
             ('failure-lastanr.txt', ('shell','dumpsys','activity','lastanr')),
             ('failure-events.txt', ('logcat','-d','-b','events','-s','am_anr','am_crash')),
+            ('failure-crashes.txt', ('logcat','-d','-b','crash')),
             ('failure-window.txt', ('shell','dumpsys','window','windows')),
         ):
             try:

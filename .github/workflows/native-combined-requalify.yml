@@ -5,7 +5,7 @@ on:
     paths:
       - native-android/combined-client/tools/emulator_check.py
       - native-android/combined-client/tools/driver_controls.py
-      - native-android/combined-client/tools/reuse_packages.py
+      - native-android/combined-client/tools/reuse_packages_012.py
       - .github/workflows/native-combined-requalify.yml
   workflow_dispatch:
 permissions:
@@ -26,8 +26,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api repos/Russianranger/coh-android/actions/artifacts/11987440686/zip > /tmp/combined-qualified-packages.zip
-          python3 native-android/combined-client/tools/reuse_packages.py --archive /tmp/combined-qualified-packages.zip --output native-android/results/combined-requalify --require-clean
+          gh api repos/Russianranger/coh-android/actions/artifacts/12002281757/zip > /tmp/combined-qualified-packages.zip
+          python3 native-android/combined-client/tools/reuse_packages_012.py --archive /tmp/combined-qualified-packages.zip --output native-android/results/combined-requalify --require-clean
           python3 -m pip install --disable-pip-version-check Pillow==12.3.0
           python3 native-android/combined-client/tools/driver_controls.py
       - uses: actions/setup-java@v4
@@ -55,7 +55,7 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
-          script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-requalify/CoH-Native-Combined-0.1.0-emulator-x86_64.apk --output native-android/results/combined-requalify/android13 --donor-apk /tmp/combined-donor.apk --protocol-binary native-android/results/combined-requalify/host/local-android/coh-local-x86_64 --protocol-receipt native-android/results/combined-requalify/host/local-android/android-build.json
+          script: python3 native-android/combined-client/tools/emulator_check.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --apk native-android/results/combined-requalify/CoH-Native-Combined-0.1.2-emulator-x86_64.apk --output native-android/results/combined-requalify/android13 --donor-apk /tmp/combined-donor.apk --protocol-binary native-android/results/combined-requalify/host/local-android/coh-local-x86_64 --protocol-receipt native-android/results/combined-requalify/host/local-android/android-build.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
