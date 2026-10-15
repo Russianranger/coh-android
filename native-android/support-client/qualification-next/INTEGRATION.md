@@ -79,3 +79,25 @@ unchanged pinned 0.1.0 artifact for its historical bounded test scope. Never res
 the integration branch. Device rollback removes only `org.coh.nativesupport`;
 preserve accepted 0.3.0 and the conventional launcher. Discarding this worker's
 tools does not alter session/network/server behavior or user character data.
+
+## Independent integration fault checks
+
+`tools/check_audio_owner.py` copies and hashes the coordinator's actual audio
+owner before compiling it with ASan/UBSan and controlled dependencies. It runs
+the real owner thread, latest-state mailbox, pause/resume and cleanup logic.
+Nine scenarios cover listener delivery, route reopening, device errors, retained
+failed close during both pause and desired-running route recovery, failed destroy
+plus cleanup-worker retry, and partial initialization. The final run recorded
+five opens/five closes and zero tracked asset/mixer/music/backend residue.
+Fake dependencies do not establish real AAudio callbacks, codec execution,
+Android focus events or physical route changes. LeakSanitizer is disabled; ASan,
+UBSan and explicit owner counts provide the stated bounded evidence.
+
+`tools/check_snapshot_bound.py` independently invokes the actual support/perf
+JSON exporters with mocked maximum-width subsystem counters and finite maximum
+listener floats. The JSON parses correctly at 7,697 bytes inside the actual
+16,384-byte JNI buffer under ASan/UBSan. This tests the current field layout;
+adding diagnostic fields warrants rerunning it. Both checkers pin tested source
+SHA256 identities in their receipts. `--listener-root` can explicitly reference
+the audio worker's isolated tree before coordinator integration; omit it after
+the header is integrated. They do not modify any tested runtime source.
