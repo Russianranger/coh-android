@@ -65,8 +65,12 @@ passed fresh install/launch, rendering and forward/backward motion, then failed
 the left-direction grounded predicate after prolonged travel in the selected
 scene. The [manifest](evidence/phases19-21/qualification.json) retains its exact
 scope and failed evidence. [Portable-core run 38663997261](https://github.com/Russianranger/coh-android/actions/runs/38663997261)
-passed. Physical gates 19–21 remain pending; 0.2.0 is a source/build-qualified
-test APK, not a fully emulator-qualified or physically accepted replacement.
+passed. **Physical gates 19–21 are accepted on AYN Thor as of October 14, 2026**,
+from the user's explicit success confirmation and exact-APK
+[Thor receipt](evidence/phases19-21/thor-acceptance-20261014.json). The report
+contains 6,120 frames, zero transform/non-tie depth mismatches, real both-stick
+coverage, six blocked/six sliding ticks and no safety-bound events. Complete
+emulator automation remains incomplete; its failed result is preserved separately.
 
 The current
 [CoH-Native-Session-Client-0.2.0-arm64.apk](https://chatgpt.com/api/library/files/libfile_1f69175230b08191b4c8ea65e369139c/download)

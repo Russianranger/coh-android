@@ -79,8 +79,11 @@ and [completed source stage](evidence/phases19-21/source-build-qualified/source-
 remain byte-identical during later driver-only runs. The strict reuse guard
 rejects runtime, application, asset, adapter, shader or source dependency changes.
 
-**Gates 19–21 are implemented and source/build qualified. Complete emulator
-qualification and physical Thor acceptance remain pending.** The latest
+**Gates 19–21 are physically accepted on AYN Thor as of October 14, 2026.**
+The [Thor acceptance receipt](evidence/phases19-21/thor-acceptance-20261014.json)
+and [raw exported report](evidence/phases19-21/COH-NativeSession-20261014-210302.json)
+record the user's successful combined test of the exact 0.2.0 APK. Source/build
+qualification remains intact; complete emulator automation remains incomplete. The latest
 [session run 38663997193](https://github.com/Russianranger/coh-android/actions/runs/38663997193)
 passed fresh installation, exact Activity launch, rendering and forward/backward
 source locomotion with release settling. It stopped during the left-direction
@@ -138,8 +141,8 @@ Download the current ARM64 test package:
 ([original GitHub artifact 11936304916](https://github.com/Russianranger/coh-android/actions/runs/38656997946/artifacts/11936304916)).
 It is **2,344,055 bytes**, SHA256
 `2d59e2b39af99facc6f3ac26b310aeba85802542efabb1e71d90e2d33a00de92`.
-This is a verified build for testing, with combined emulator and physical
-acceptance still pending. The accepted
+This exact build is physically accepted within the documented bounded offline
+scope. The separate combined emulator workflow remains incomplete. The accepted
 [0.1.0 rollback artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705)
 and [original Thor procedure](session-client/THOR-TEST-16-18.md) remain available.
 
@@ -147,3 +150,18 @@ No full Atlas, live server login/replication, full sequencer, GPU palette
 skinning or sustained performance acceptance is claimed.
 
 See the [combined new Thor procedure](session-client/THOR-TEST.md).
+
+## Physical Thor acceptance — October 14, 2026
+
+The exact installed APK/assets matched. The AYN Thor/Adreno 740 report contains
+6,120 frames, three contexts, 122,382 original-scene and 25,506 new-scene
+transform components with zero mismatches. Two reverse-order color differences
+are exact depth ties; zero non-tie mismatches and depth controls passed. Source
+WALK recorded six blocked and six sliding ticks, zero support-bound events and
+a grounded released actor. Both physical sticks reached all directions and all
+twelve animation move slots were sampled. Recreate, held-input Home cleanup,
+preserved pose/view on return, reset and the supplied exported report support
+the user's explicit success confirmation. Expected Surface cancellation remains
+separate from zero GL/EGL and cleanup errors. This does not certify continuous
+movement trajectories, every timing edge or sustained performance. Earlier
+failed emulator results remain unchanged; no duplicate APK build was needed.

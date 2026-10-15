@@ -1,0 +1,196 @@
+{
+  "schema": 1,
+  "gates": [
+    19,
+    20,
+    21
+  ],
+  "status": "physical_ayn_thor_accepted_within_bounded_offline_scope",
+  "accepted": true,
+  "accepted_date_local": "2026-10-14",
+  "user_confirmation": "This can be marked as a success - see log.",
+  "raw_report": {
+    "file": "COH-NativeSession-20261014-210302.json",
+    "bytes": 148445,
+    "sha256": "4c83c5e2883b7dc3e274a4763895ec520c192147e2ff587ee8defa7c632c45a3",
+    "library_file_id": "libfile_731c410351c48191b2f7ed550f0a6c0f",
+    "report_updated_at": "2026-10-14T21:03:02.360-05:00"
+  },
+  "runtime_source_commit": "8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d",
+  "app": {
+    "package": "org.coh.sessionclient.walk",
+    "version_name": "0.2.0-gates19-21",
+    "version_code": 2,
+    "installed_apk": {
+      "bytes": 2344055,
+      "sha256": "2d59e2b39af99facc6f3ac26b310aeba85802542efabb1e71d90e2d33a00de92"
+    }
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "gl_renderer": "Adreno (TM) 740",
+  "assets_verified": true,
+  "asset_manifest": {
+    "schema": 1,
+    "assets": {
+      "character.bin": {
+        "bytes": 4261100,
+        "sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7"
+      },
+      "locomotion.bin": {
+        "bytes": 147103,
+        "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+      },
+      "morph.bin": {
+        "bytes": 3028,
+        "sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02"
+      },
+      "rig.bin": {
+        "bytes": 11642,
+        "sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5"
+      },
+      "walkable.bin": {
+        "bytes": 202880,
+        "sha256": "d7694d1dc83e2d95cea045e7f4912c1f9211aafed3fdebbab42943aab30a4d62"
+      },
+      "world.bin": {
+        "bytes": 102176,
+        "sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f"
+      }
+    }
+  },
+  "measured": {
+    "frames": 6120,
+    "movement_ticks": 3060,
+    "contexts_started": 3,
+    "contexts_completed": 2,
+    "current_context_still_running": true,
+    "source_tf_components": 122382,
+    "source_tf_mismatches": 0,
+    "walkable_tf_components": 25506,
+    "walkable_tf_mismatches": 0,
+    "walkable_visible_pixels": 551361,
+    "raw_depth_order_color_differences": 2,
+    "exact_equal_depth_ties": 2,
+    "non_tie_depth_mismatches": 0,
+    "depth_sampler_controls_passed": true,
+    "gl_errors": 0,
+    "egl_error": 0,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "expected_surface_cancellation_count": 1,
+    "expected_surface_cancellation_egl_code": 12301,
+    "walk": {
+      "grounded": true,
+      "ground_y": 74,
+      "ground_hits": 3045,
+      "blocked_ticks": 6,
+      "sliding_ticks": 6,
+      "bounded_ticks": 0,
+      "collision_queries": 1345,
+      "triangle_tests": 1748,
+      "triangles": 276,
+      "bounded_scene": true,
+      "spawn_yaw": 3.1415925,
+      "obstacle_bounds_min": [
+        579.656189,
+        74,
+        -1387.60413
+      ],
+      "obstacle_bounds_max": [
+        585.343811,
+        77.682251,
+        -1385.06335
+      ]
+    },
+    "animation_move_samples": [
+      1948,
+      10,
+      321,
+      102,
+      101,
+      48,
+      121,
+      84,
+      154,
+      21,
+      127,
+      23
+    ],
+    "animation_transitions": 55,
+    "all_12_move_slots_sampled": true,
+    "external_android": {
+      "key_down": 4,
+      "key_up": 4,
+      "key_repeat": 0,
+      "motion": 2863,
+      "touch_begin": 5,
+      "touch_move": 266,
+      "touch_end": 5,
+      "touch_cancel": 0,
+      "focus_clear": 3,
+      "device_removed": 0,
+      "controller_events": 2871,
+      "left_axis_directions": 15,
+      "right_axis_directions": 15,
+      "button_down_mask": 2816,
+      "touch_motion_directions": 15
+    },
+    "in_app_synthetic": {
+      "key_down": 0,
+      "key_up": 0,
+      "key_repeat": 0,
+      "motion": 0,
+      "touch_begin": 0,
+      "touch_move": 0,
+      "touch_end": 0,
+      "touch_cancel": 0,
+      "focus_clear": 0,
+      "device_removed": 0,
+      "controller_events": 0,
+      "left_axis_directions": 0,
+      "right_axis_directions": 0,
+      "button_down_mask": 0,
+      "touch_motion_directions": 0
+    }
+  },
+  "lifecycle": {
+    "recreate_requested": true,
+    "recreate_request_and_new_surface_positions_match": true,
+    "home_interrupted_held_direction": 2,
+    "home_cleared_held_and_source_input": true,
+    "home_return_preserved_actor_and_camera": true,
+    "frames_at_home": 4058,
+    "frames_at_return": 4060,
+    "frames_at_reset": 4819,
+    "reset_returned_to_spawn": true,
+    "fresh_movement_after_reset_observed": true,
+    "export_requested_sequence": 26,
+    "exported_json_received": true,
+    "export_receipt_boundary": "User supplied the actual exported pre-picker report; capture precedes export_complete and is not an independent pre-picker byte-digest comparison."
+  },
+  "acceptance_basis": "User explicitly accepts the combined manual Thor test. Device log independently verifies exact APK/assets, physical controller callbacks, geometry checks, source collision/slide counters, directional clip coverage and lifecycle evidence. Individual quick-tap/reversal timing and continuous obstacle trajectories are not reconstructed from this coalesced report.",
+  "physical_controller_verified": true,
+  "thor_device_execution_verified": true,
+  "complete_emulator_qualification_passed": false,
+  "emulator_history": "Workflow38663997193 remains failed at its left-direction grounded predicate; original qualification.json and all failed evidence remain unchanged. Physical acceptance does not relabel that workflow as passing.",
+  "scope": "Selected authentic Atlas floor/obstacles with bounded source WALK and authored directional locomotion in the native Session Client.",
+  "limitations": [
+    "No full Atlas or tracker streaming.",
+    "No live-server interoperability, jumping/combat or complete sequencer claim.",
+    "Missing mono_station_floor_det still uses original source grey fallback.",
+    "No sustained FPS, thermal or performance qualification."
+  ],
+  "branch": "native-android",
+  "main_modified": false,
+  "runtime_or_apk_changed_for_acceptance": false
+}

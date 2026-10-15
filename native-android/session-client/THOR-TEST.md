@@ -8,15 +8,18 @@ the accepted 0.1.0 client as `org.coh.sessionclient.walk` and preserves
 existing app data and reports. This is the same native application trajectory.
 The conventional launcher/client and user imports remain separate. No server, account or asset
 import is needed. The accepted gates 16–18 APK remains the rollback artifact.
-Physical gates 19–21 require this new report and your observations.
+Physical gates 19–21 were accepted on October 14, 2026 from the user's
+successful combined check and [exact-APK report/receipt](../evidence/phases19-21/thor-acceptance-20261014.json).
+This procedure remains the regression check for the unchanged 0.2.0 APK.
 
 Package identity: **2,344,055 bytes**, SHA256
 `2d59e2b39af99facc6f3ac26b310aeba85802542efabb1e71d90e2d33a00de92`.
 Runtime source: `8629d6a7c4863f492ee50bc030c21c2b2d2f0c3d`;
 [build run 38656997946](https://github.com/Russianranger/coh-android/actions/runs/38656997946).
 Source/host checks, the complete 1,585-file source trick audit, ARM64/x86_64
-builds, lint, signatures and package integrity passed. **This is a test build.
-Complete emulator qualification and physical gates 19–21 remain pending.**
+builds, lint, signatures and package integrity passed. **Physical gates 19–21
+are accepted within the documented bounded offline scope.** Complete emulator
+automation remains incomplete; its failures are retained independently.
 The latest [emulator run](https://github.com/Russianranger/coh-android/actions/runs/38663997193)
 passed startup/rendering and forward/backward movement, then failed its left
 movement grounding predicate after prolonged travel in the selected scene.
@@ -55,7 +58,7 @@ The unchanged
 [accepted 0.1.0 artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705)
 and [original Thor procedure](THOR-TEST-16-18.md) remain the rollback path.
 
-The latest fully qualified and physically accepted rollback is
+The earlier fully emulator-qualified and physically accepted rollback is
 [CoH-Native-Session-Client-0.1.0-arm64.apk](https://chatgpt.com/api/library/files/libfile_bc1c1886923481919c358c8911bb9411/download)
 with SHA256 `eb763d8c6e5354da06a336e8fe09a244a893755e82ef708ea1d2139dc17b8634`.
 Its original [gates 16–18 procedure](THOR-TEST-16-18.md) remains unchanged.
