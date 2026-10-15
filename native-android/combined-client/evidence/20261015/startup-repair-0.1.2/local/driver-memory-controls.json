@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "positive_cases": 3,
+  "negative_cases": 12,
+  "negative_controls": [
+    "missing memory field",
+    "unexpected memory credential field",
+    "boolean counter",
+    "negative counter",
+    "more than64samples",
+    "incorrect configured bound",
+    "negative heap field",
+    "invalid sample carries raw values",
+    "more than8exit records",
+    "raw process exit description",
+    "boolean process exit number",
+    "negative process memory"
+  ],
+  "scope": "Host controls for driver report bounds/privacy; no Android or guest execution."
+}

@@ -1,0 +1,41 @@
+{
+  "abi": "arm64-v8a",
+  "accepted_scene_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+  "actual_server_interoperability_verified": false,
+  "apk": {
+    "bytes": 11519003,
+    "name": "CoH-Native-Combined-0.1.2-arm64.apk",
+    "sha256": "1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449"
+  },
+  "donor_apk_sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+  "embedded_asset_bytes": 9524547,
+  "embedded_asset_files": 74,
+  "format": 1,
+  "large_runtime_game_payloads_embedded": false,
+  "native_libraries": {
+    "lib/arm64-v8a/libcoh_combined_network.so": {
+      "bytes": 5455576,
+      "sha256": "b24e6fa4834506efdfd452c63a5cbeb8ee82cff6d77239c9218dc3c5819ed332"
+    },
+    "lib/arm64-v8a/libcoh_session_client.so": {
+      "bytes": 369480,
+      "sha256": "5362ae64938a46e9685e2a51c259b368e88f070dde9b962245b066b4f461b4c8"
+    },
+    "lib/arm64-v8a/libproot-loader.so": {
+      "bytes": 17624,
+      "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+    },
+    "lib/arm64-v8a/libproot.so": {
+      "bytes": 263648,
+      "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+    }
+  },
+  "package": "org.coh.nativecombined",
+  "scope": "Package identity, exact bounded scene and donor metadata, native ELF architecture, signer and absence of embedded large runtime/game payloads.",
+  "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "source_commit": "377584651471e748fbbd4a24cdf08bd2c48ca4a3",
+  "status": "passed",
+  "tracked_source_clean": true,
+  "version_code": "3",
+  "version_name": "0.1.2-local-server-native"
+}

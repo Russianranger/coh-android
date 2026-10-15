@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "o_cloexec": 524288,
+  "public_android_apis_since": {
+    "android/system/Os.fcntlInt(Ljava/io/FileDescriptor;II)I": 30,
+    "android/system/OsConstants.O_CLOEXEC": 27
+  },
+  "api_metadata_sha256": "74573d56d0712739b4763d2a5db64acfe309f3c098a6135257572f1f5302dbcf",
+  "ndk": "28.2.13676358",
+  "header_sha256": {
+    "asm-generic/fcntl.h": "0344cc9d595fd81deb2c0bdce745c189448f7955ffc0618ffc7be20bbfd4b509",
+    "aarch64-linux-android/asm/fcntl.h": "033e0650290b368ffa97c2f72c1fa670b17462a29cda067bc8cc95423d1e117d",
+    "x86_64-linux-android/asm/fcntl.h": "6c9355fe91c426182946518feb76bd73ea6264a6969deb1bfd66222bfa2b436d"
+  },
+  "android26_cross_compile": [
+    {
+      "abi": "arm64-v8a",
+      "api": 26,
+      "static_assert_passed": true
+    },
+    {
+      "abi": "x86_64",
+      "api": 26,
+      "static_assert_passed": true
+    }
+  ],
+  "scope": "Pinned Android SDK public API metadata plus both supported ABI kernel flag constants; no Android runtime execution."
+}

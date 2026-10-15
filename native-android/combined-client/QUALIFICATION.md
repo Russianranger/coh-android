@@ -1,11 +1,103 @@
 # Combined server/native client — October 15, 2026
 
+## Startup repair 0.1.2
+
+Source: `377584651471e748fbbd4a24cdf08bd2c48ca4a3`, tree
+`0329c6a8e9ee7454c7152f29ba85a4683ee4c964`, exclusively on `native-android`.
+The four local validation commits are preserved on
+`preserved/combined-012-local-validation`; publication used an expected-head
+check against `0b6abf77370d152462c3e9ba267f27f634d908c0` with no force update.
+
+The 0.1.1 Thor report identifies the exact unchanged FX regular-file guard.
+A writable imported payload acquired two hardlinks during setup; its pinned
+contents are correct. The actual donor regression reproduces the rejection,
+then passes the same guard after production Java seals the same inode and
+bytes. Existing ready generations are repaired in place after full streamed
+pin checks, with owner/type/no-follow validation and an atomic success receipt.
+Warm starts check protected metadata and retain the guest's own verification.
+The runtime identity and profile stay unchanged; imports/setup are not repeated.
+Explicit `Os.close` avoids Android's non-owning FileInputStream descriptor
+behavior. Atomic close-on-exec uses the Linux UAPI value verified by both pinned
+Android26 ABI compilers; final lint has zero errors and 74 existing warnings.
+
+The user reported a preceding Android low-memory kill, but that attempt was
+not retained in the ZIP. The exact donor's 48,591,999-byte visual manifest
+validates 10,401 files and 406 GEO identities in a reaped host subprocess with
+225,116 KiB peak RSS. This is host parser evidence, not Android peak usage or
+proof of the kill's cause. The cold original validator now finishes and is
+reaped before PostgreSQL/Wine start; the parent checks the original warm proof,
+and valid warm starts skip the child. No original manifest/archive/geometry
+checks are weakened. Cooperative Android memory admission and sustained-pressure
+cleanup retain bounded telemetry; they cannot guarantee prevention of OS kills.
+Exports include numeric OS exit evidence when available and four preceding
+attempts, without descriptions, traces, account identifiers or credentials.
+
+Eight local host suites pass, including ASan/UBSan transport contracts, 2,710
+memory-policy controls, 143 diagnostics, 67 imports and six canonical-path
+controls. Both current and exact-donor runtime suites execute 30 methods: 29
+pass and one AF_UNIX test is skipped per suite because the local sandbox blocks
+Unix sockets. Tests include real child cancellation/reaping, retained-source
+cold/warm behavior, tampering and startup order. ARM64 and x86_64 builds, lint
+and clean package audits pass. The source snapshot, upgrade comparison, ABI
+flag probes and failed/successful build-attempt hashes are preserved under
+`evidence/20261015/startup-repair-0.1.2/local/`.
+
+Independent workers ran concurrently in isolated worktrees: immutable imports,
+original-geometry lifecycle, pure Java memory policy, build/framework checks,
+and a read-only integration review. File ownership did not overlap. The
+coordinator integrated service/launcher reporting and publication. The update
+retains the same signer, raises versionCode 2 to 3 and preserves all 72 checked
+import/scene/donor/PRoot entries byte for byte.
+
+The delivery APK is **11,519,003 bytes**, SHA256
+`1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449`.
+The successful package/host job of [38795244645](https://github.com/Russianranger/coh-android/actions/runs/38795244645)
+produced the [exact package artifact](https://github.com/Russianranger/coh-android/actions/runs/38795244645/artifacts/12002281757).
+All 60 hosted current/donor runtime executions pass with zero skips. That run's
+Android step stopped at a nonzero hierarchy-capture command whose stdout the
+old driver discarded; its app screenshot and captured fault records show no
+recorded native ANR/crash. The first five checks and failure evidence remain
+preserved. The original capture cause remains unclassified.
+
+A driver-only continuation [38797308843](https://github.com/Russianranger/coh-android/actions/runs/38797308843),
+source `0f4240352a0d2878d1e1e86878267ef68997e027`, passes **all 18 Android13
+framework checks** using the unchanged APKs. Its [artifact](https://github.com/Russianranger/coh-android/actions/runs/38797308843/artifacts/12003880020)
+binds the archive/APK hashes, source ancestry and unchanged runtime/build inputs.
+Thirty host driver controls reject stale XML, unknown failures and native
+crashes/ANRs; only exact AOSP idle/null-root diagnostics permit bounded retries.
+No new APK was built for this continuation.
+
+Actual Android checks verify all 71 donor members have no write bits, retain
+the original 3,380,680-byte FX hash, and complete two SAF imports with app FD
+counts 111 → 114 → 115 within the declared cache-growth bounds. A failed attempt
+survives framework force-stop/relaunch without clearing data, with a numeric OS
+exit record. This is force-stop evidence, not a simulated low-memory kill. The
+x86 emulator refuses the ARM64 server before its memory admission; pressure
+policy execution is host-qualified and actual server memory behavior is pending.
+The visible native preview reaches 403 frames in context 6, zero GL/transform
+errors and 557,056 GPU bytes; the scene screenshot was independently viewed.
+Near/Far, Surface/Home recovery, JSON export and 464 scripted UDP controls across
+six scenarios pass. Those scripted peers do not prove real server exchange.
+The portable-core workflows also pass.
+
+Independent CI APK audits confirm the same signer, import identity, donor
+metadata, accepted scene and PRoot bytes. CI DEX/manifest/resources/all 74 assets
+match the clean local builds; native compiler outputs differ, so the exact CI
+APK is the delivery. The accepted prior APKs and every build attempt are kept.
+
+Actual 0.1.2 Thor server boot, DB/Map interoperability, encrypted AuthServer login
+and server-authoritative native world rendering remain pending. Gates 22–24
+remain physically accepted within their existing scope. Next work depends on the
+Thor boot report: qualify actual local DB/Map exchange, then source entity/scene
+decoding and authoritative spawn, while encrypted AuthServer negotiation is
+qualified independently against an authorized server with the required schema.
+
 ## Startup repair 0.1.1
 
 Runtime source: `d26253eaf38e254aadda7e1c18b4dfee39296dc8`.
 Client payload source: `623b51299f32cbc7d09195c039a63caaa9e06179`.
 Packaging/qualification source: `159a3a3ebb79c7e8173b2662331655d317037311`.
-The current ARM64 delivery is 11,242,291 bytes, SHA256
+The previous 0.1.1 ARM64 delivery is 11,242,291 bytes, SHA256
 `278363e57b04148a4e5653026105873b164cab557fece651feb0d20ffad9f4ec`.
 It retains `org.coh.nativecombined`, uses versionCode 2 and the established signer.
 The import contract, runtime pins, Atlas import settings and accepted scene assets

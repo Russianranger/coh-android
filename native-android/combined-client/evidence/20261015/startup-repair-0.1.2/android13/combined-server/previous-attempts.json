@@ -1,0 +1,93 @@
+{
+  "format": 1,
+  "maximum_attempts": 4,
+  "attempts": [
+    {
+      "session_id": "138b6a32fc1a493e874b63a5ce25d525",
+      "app": {
+        "schema": "coh-native-combined-app-v1",
+        "package": "org.coh.nativecombined",
+        "busy": false,
+        "runtime_ready": false,
+        "version_name": "0.1.2-local-server-native",
+        "version_code": 3,
+        "android_sdk": 33,
+        "abis": [
+          "x86_64"
+        ],
+        "storage_available_bytes": 5369618432,
+        "server_start_available_bytes": 5369618432,
+        "server_memory": {
+          "format": 1,
+          "status": "not_started",
+          "reason": "",
+          "scope": "cooperative server admission and pressure observation; cannot guarantee prevention of Android process kills",
+          "sample_unavailable_policy": "block_start_or_request_owned_cleanup",
+          "admitted": false,
+          "stop_requested": false,
+          "samples": 0,
+          "invalid_samples": 0,
+          "sample_interval_ms": 1000,
+          "required_pressure_samples": 3,
+          "required_pressure_span_ms": 3000,
+          "retained_sample_limit": 64,
+          "admission_reserve_bytes": null,
+          "running_reserve_bytes": null,
+          "java_heap_reserve_bytes": null,
+          "minimum_system_headroom_bytes": null,
+          "minimum_java_heap_headroom_bytes": null,
+          "pressure_started_elapsed_ms": null,
+          "pressure_samples": 0,
+          "last_elapsed_ms": null,
+          "recent_samples": []
+        },
+        "android_process_exits": [],
+        "android_exit_history_status": "collected",
+        "imports": "Server payload: import COH-Atlas-Gameplay-0.13.36.apk\nAssets 1.0.0 — import audio, base, reference, zones part(s)\nGame files: import all four asset parts\nProfile: no logical dump imported",
+        "message": "The server runtime requires an ARM64 Android device",
+        "progress_done": 0,
+        "progress_total": 0,
+        "server": {
+          "phase": "failed",
+          "ready": false,
+          "session_id": "138b6a32fc1a493e874b63a5ce25d525",
+          "guest_exit_code": -1,
+          "owned_process_alive": false,
+          "failure_code": "SERVER_ADMISSION_FAILED",
+          "last_stage": "guest_starting",
+          "elapsed_ms": 0,
+          "stage_elapsed_ms": 0,
+          "stages": [
+            {
+              "stage": "guest_starting",
+              "elapsed_ms": 0
+            }
+          ]
+        },
+        "local_development_auth": true,
+        "real_authserver_login_verified": false,
+        "native_live_world_verified": false,
+        "old_application_modified": false,
+        "updated_elapsed_ms": 96420,
+        "events": [
+          {
+            "name": "setting_up",
+            "elapsed_ms": 93425
+          },
+          {
+            "name": "operation_failed",
+            "elapsed_ms": 93446
+          },
+          {
+            "name": "starting",
+            "elapsed_ms": 96401
+          },
+          {
+            "name": "operation_failed",
+            "elapsed_ms": 96411
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "check": "fresh install and exact main Activity",
+    "passed": true,
+    "apk_sha256": "01ddd409b320b7edee72c187324c0d5094ab2a80e83ad552b71a22fe44273824"
+  },
+  {
+    "check": "fresh app initialized for external imports without failures",
+    "passed": true
+  },
+  {
+    "check": "bounded public memory and Android exit diagnostics",
+    "passed": true,
+    "memory_samples": 0,
+    "memory_status": "not_started",
+    "retained_memory_samples": 0,
+    "android_exit_records": 0,
+    "scope": "Actual combined-report schema and numeric privacy bounds; zero samples do not qualify ARM64 server memory admission or guest execution."
+  },
+  {
+    "check": "framework SAF cancellation and app return",
+    "passed": true,
+    "control": "Import launcher APK"
+  },
+  {
+    "check": "framework SAF cancellation and app return",
+    "passed": true,
+    "control": "Import game asset part"
+  }
+]

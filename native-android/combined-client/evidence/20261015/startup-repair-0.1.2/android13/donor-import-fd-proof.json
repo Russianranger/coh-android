@@ -1,0 +1,22 @@
+{
+  "before": {
+    "available": true,
+    "pid": 6774,
+    "count": 111
+  },
+  "after_first": {
+    "available": true,
+    "pid": 6774,
+    "count": 114
+  },
+  "after_repeat": {
+    "available": true,
+    "pid": 6774,
+    "count": 115
+  },
+  "complete_imports": 2,
+  "first_import_growth_limit": 32,
+  "repeat_growth_limit": 8,
+  "scope": "Actual app descriptor counts across two complete SAF donor imports, allowing bounded framework/provider cache growth; no guest server execution.",
+  "bounded_growth_verified": true
+}

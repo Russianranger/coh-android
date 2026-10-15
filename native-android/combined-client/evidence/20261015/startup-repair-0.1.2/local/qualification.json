@@ -1,0 +1,58 @@
+{
+  "schema": "coh-native-combined-012-local-v1",
+  "status": "passed",
+  "source_commit": "377584651471e748fbbd4a24cdf08bd2c48ca4a3",
+  "source_tree": "0329c6a8e9ee7454c7152f29ba85a4683ee4c964",
+  "source_clean": true,
+  "host_eight_suite_batch_passed": true,
+  "changed_import_suite_rerun_with_exact_donor": true,
+  "host_continuation_scope": "Eight integrated host suites passed before the API-only import compatibility follow-up. The changed import suite was rerun with the exact pinned donor; unchanged policy/runtime/protocol suites retain their recorded evidence. No Android execution is implied.",
+  "guest_diagnostic_controls": 143,
+  "memory_policy_checks": 2710,
+  "runtime_methods_each_source_and_donor": {
+    "passed": 29,
+    "skipped": 1,
+    "skip_reason": "Host sandbox does not permit AF_UNIX socket creation"
+  },
+  "import_controls": 67,
+  "canonical_path_controls": 6,
+  "exact_donor_fx_guard_and_readonly_seal_passed": true,
+  "android26_uapi_static_asserts_passed": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "apk_packages": {
+    "arm64-v8a": {
+      "bytes": 11607179,
+      "name": "CoH-Native-Combined-0.1.2-arm64.apk",
+      "sha256": "8e12bbf68571f7bc03a967902512e93dd1b8d34249dac07da4b32ffde25cd4fc"
+    },
+    "x86_64": {
+      "bytes": 11114888,
+      "name": "CoH-Native-Combined-0.1.2-emulator-x86_64.apk",
+      "sha256": "40678b7d2c68edd547b54abe5068107e15644ecb780e5252df2b8593da6ffb4c"
+    }
+  },
+  "arm64_built": true,
+  "x86_64_built": true,
+  "both_gradle_assemble_and_lint_passed": true,
+  "lint": {
+    "status": "passed",
+    "error_count": 0,
+    "warning_count": 74,
+    "issue_counts": {
+      "ApplySharedPref": 2,
+      "DataExtractionRules": 1,
+      "UsableSpace": 15,
+      "MissingApplicationIcon": 1,
+      "ClickableViewAccessibility": 5,
+      "SetTextI18n": 50
+    }
+  },
+  "apk_repackaged": false,
+  "local_emulator_executed": false,
+  "actual_guest_server_startup_verified": false,
+  "actual_server_interoperability_verified": false,
+  "physical_thor_accepted": false,
+  "scope": "New full Android builds with clean published source, preserved exact donor/accepted scene/import identity and host continuation evidence. Actual final APK Android framework qualification is separate hosted CI evidence; ARM64 guest startup remains device acceptance."
+}

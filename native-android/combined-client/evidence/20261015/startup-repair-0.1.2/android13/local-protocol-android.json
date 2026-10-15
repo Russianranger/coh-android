@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "checks": 464,
+  "socket_scenarios": 6,
+  "actual_os_udp": true,
+  "full_scripted_db_map_chain": true,
+  "source_layout_peer": true,
+  "real_server_interoperability": false,
+  "real_authenticated_session": false,
+  "native_live_world": false,
+  "socket_leak_check": true
+}

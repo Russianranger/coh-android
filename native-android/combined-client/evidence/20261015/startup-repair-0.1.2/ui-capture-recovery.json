@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "observed_failure": "uiautomator dump returned nonzero; the old helper discarded stdout and reported blank stderr",
+  "original_capture_cause": "unknown",
+  "passed_framework_checks_before_failure": 5,
+  "recorded_lastanr": "no ANR since boot",
+  "recorded_anr_crash_events_empty": true,
+  "old_capture_stdout_available": false,
+  "old_capture_stderr_available": "blank only in exception",
+  "apk_rebuild_required": false,
+  "driver_controls": {
+    "passed": true,
+    "checks": 30,
+    "capture_controls": 13,
+    "scope": "Host regressions for foreground document selection, strict fresh UI capture and bounded known-transient retries, unconditional native fault rejection, and scene admission; no Android execution claim."
+  },
+  "retry_policy": "Three total attempts,0.5seconds between positively identified AOSP idle/null-root failures; all unknown failures remain fatal. Each attempt deletes the remote XML first and requires a fresh successful capture. Native ANR/crash evidence always rejects qualification.",
+  "preserved_failure_files": {
+    "failure.json": "fbaf471e9c195d5f2e1ac143e765ed409494baab076712e17b65d9a370d3a9a9",
+    "failure-lastanr.txt": "42cf4931006fd0ff42d3522af31f9346431b409aa22a793ecc16b5aedeed28a1",
+    "failure-events.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "combined-report.json": "4599a72e25e45fe582b1161efd4759a96f5ce4b1ec6ec85ae807a81a143fad1c",
+    "failure.png": "19e34769e0cc987b83b7a0b3ea71bfdfdf5588c32287e02c16de06d456e5efb9",
+    "progress.json": "1774830eb97b2a5198cc4ea966cfd952b9f805b462932db3c2f82eaa1143fc34",
+    "initial-combined-report.json": "a4136b95d0a822aff01d2c80a2bc49bf0df19f449dfc4baabb16c98590c01a6f",
+    "failure-window.txt": "0c85d33663b1bc5ebae08710edd9c813ca17eac4024328749027d579ee2fd291",
+    "last-ui.xml": "9dac86a7f035bcc2cdd71e7220e9aa66123282997a96544171a934d995ae45b5"
+  },
+  "scope": "Failure diagnosis and deterministic host driver controls only; no successful continuation or Android server startup claim.",
+  "artifact_id": "12001184060",
+  "artifact_zip_sha256": "fabedd7ddabde1bea68e4d776ef6a3de9a0494e93786fecc9debcaf954f58366"
+}

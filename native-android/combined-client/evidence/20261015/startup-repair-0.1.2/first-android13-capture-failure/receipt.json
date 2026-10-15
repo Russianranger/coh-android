@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "workflow": 38795244645,
+  "job": 116631406053,
+  "artifact_id": 12001184060,
+  "artifact_sha256": "fabedd7ddabde1bea68e4d776ef6a3de9a0494e93786fecc9debcaf954f58366",
+  "passed_checks": 5,
+  "failure": "uiautomator dump nonzero; prior driver discarded stdout, stderr was empty",
+  "observed_anr_evidence": "No ANR recorded in captured dumpsys; captured events empty; screenshot shows app and ARM64-only admission message",
+  "scope": "Framework capture failure before Start server; not an ARM64 guest execution test",
+  "same_apks_reused_for_continuation": true
+}

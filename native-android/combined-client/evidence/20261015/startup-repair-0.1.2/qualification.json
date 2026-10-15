@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "status": "passed",
+  "apk_source": "377584651471e748fbbd4a24cdf08bd2c48ca4a3",
+  "driver_source": "0f4240352a0d2878d1e1e86878267ef68997e027",
+  "package_workflow": 38795244645,
+  "package_job_passed": true,
+  "initial_framework_result": "uiautomator capture failed; stdout was not retained by the prior driver",
+  "package_artifact": 12002281757,
+  "package_archive_sha256": "37f0a10a879ae94242a801153d6456dd33cf88e565408b22935548f3612dd43f",
+  "successful_framework_workflow": 38797308843,
+  "framework_artifact": 12003880020,
+  "framework_archive_sha256": "f0946ab325ff12df7cd2ef6e8d07196a7bf21c3c8a6effff69a6599fddb39e53",
+  "framework_checks": 18,
+  "source_and_exact_donor_runtime_executions": 60,
+  "runtime_skips_in_ci": 0,
+  "server_memory_host_controls": 2710,
+  "driver_controls": 30,
+  "apk": {
+    "name": "CoH-Native-Combined-0.1.2-arm64.apk",
+    "bytes": 11519003,
+    "sha256": "1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449"
+  },
+  "physical_thor_server_boot_verified": false,
+  "actual_server_interoperability_verified": false,
+  "real_authserver_login_verified": false,
+  "native_live_world_verified": false,
+  "unchanged_apks_reused": true,
+  "accepted_22_24_scope_unchanged": true
+}

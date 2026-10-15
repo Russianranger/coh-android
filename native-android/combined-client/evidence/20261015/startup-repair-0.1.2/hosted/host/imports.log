@@ -1,0 +1,4 @@
+combined import controls passed: 67
+canonical Android private path controls passed: 6
+Exact donor FX guard: writable shared inode rejected; production Java readonly seal accepted unchanged inode and bytes
+Accepted tar extractor and memory guard source identity: verified

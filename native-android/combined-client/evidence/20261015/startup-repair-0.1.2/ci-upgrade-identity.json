@@ -1,0 +1,127 @@
+{
+  "schema": "coh-native-combined-ci-upgrade-identity-v1",
+  "status": "passed",
+  "source_commit": "377584651471e748fbbd4a24cdf08bd2c48ca4a3",
+  "source_tree": "0329c6a8e9ee7454c7152f29ba85a4683ee4c964",
+  "source_clean": true,
+  "workflow": "38795244645",
+  "artifact_id": "12002281757",
+  "artifact_zip_sha256": "37f0a10a879ae94242a801153d6456dd33cf88e565408b22935548f3612dd43f",
+  "compared_old_apk_sha256": "278363e57b04148a4e5653026105873b164cab557fece651feb0d20ffad9f4ec",
+  "package": "org.coh.nativecombined",
+  "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "packages": {
+    "arm64-v8a": {
+      "apk": {
+        "bytes": 11519003,
+        "name": "CoH-Native-Combined-0.1.2-arm64.apk",
+        "sha256": "1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449"
+      },
+      "independent_package_audit_sha256": "9dac49d57ee2b9d7ee52711db8ee525eecfc247a1f56e6980a3bcb32c69cef1d",
+      "original_ci_package_receipt_sha256": "9dac49d57ee2b9d7ee52711db8ee525eecfc247a1f56e6980a3bcb32c69cef1d",
+      "same_signer_as_0_1_1": true,
+      "version_code_upgrade": [
+        2,
+        3
+      ],
+      "accepted_scene_asset_count": 11,
+      "unchanged_import_donor_scene_core_entries": 72,
+      "import_contract_sha256": "6a85249a48f394fbcb63c548d4bb10ae3e3eb6eb3ebe02196fa5f9afa41cf4a8",
+      "accepted_scene_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+      "donor_apk_sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+      "all_build_inputs_byte_identical_to_local_preparation": true,
+      "guest_helpers_match_clean_published_source": {
+        "check.py": {
+          "bytes": 4186,
+          "sha256": "245c7007a711ee95df8f3589e640cb1c63f54d327b98a8b9b5f5795bcf3ff9f1"
+        },
+        "server_runtime.py": {
+          "bytes": 57221,
+          "sha256": "6c8dbe452df0ca90a082c32e0fd81e18b46b64ea91006dd138b63556fa87e0e5"
+        },
+        "test_runtime.py": {
+          "bytes": 36066,
+          "sha256": "61cfc6464b527812302249bc12e78959c3a4cfecefb284c79b1e30cee711ef1f"
+        }
+      },
+      "java_dex_manifest_resources_and_assets_byte_identical_to_local_build": true,
+      "ci_vs_local_different_entries": [
+        "lib/arm64-v8a/libcoh_combined_network.so",
+        "lib/arm64-v8a/libcoh_session_client.so"
+      ],
+      "native_library_pins": {
+        "lib/arm64-v8a/libcoh_combined_network.so": {
+          "bytes": 5455576,
+          "sha256": "b24e6fa4834506efdfd452c63a5cbeb8ee82cff6d77239c9218dc3c5819ed332"
+        },
+        "lib/arm64-v8a/libcoh_session_client.so": {
+          "bytes": 369480,
+          "sha256": "5362ae64938a46e9685e2a51c259b368e88f070dde9b962245b066b4f461b4c8"
+        },
+        "lib/arm64-v8a/libproot-loader.so": {
+          "bytes": 17624,
+          "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+        },
+        "lib/arm64-v8a/libproot.so": {
+          "bytes": 263648,
+          "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+        }
+      }
+    },
+    "x86_64": {
+      "apk": {
+        "bytes": 11114892,
+        "name": "CoH-Native-Combined-0.1.2-emulator-x86_64.apk",
+        "sha256": "01ddd409b320b7edee72c187324c0d5094ab2a80e83ad552b71a22fe44273824"
+      },
+      "independent_package_audit_sha256": "1e6aad9b4db7f33dc4be59e2e6e2640a77f8e19a63760d42f68b7997a9da928e",
+      "original_ci_package_receipt_sha256": "1e6aad9b4db7f33dc4be59e2e6e2640a77f8e19a63760d42f68b7997a9da928e",
+      "same_signer_as_0_1_1": true,
+      "version_code_upgrade": [
+        2,
+        3
+      ],
+      "accepted_scene_asset_count": 11,
+      "unchanged_import_donor_scene_core_entries": 70,
+      "import_contract_sha256": "6a85249a48f394fbcb63c548d4bb10ae3e3eb6eb3ebe02196fa5f9afa41cf4a8",
+      "accepted_scene_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+      "donor_apk_sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+      "all_build_inputs_byte_identical_to_local_preparation": true,
+      "guest_helpers_match_clean_published_source": {
+        "check.py": {
+          "bytes": 4186,
+          "sha256": "245c7007a711ee95df8f3589e640cb1c63f54d327b98a8b9b5f5795bcf3ff9f1"
+        },
+        "server_runtime.py": {
+          "bytes": 57221,
+          "sha256": "6c8dbe452df0ca90a082c32e0fd81e18b46b64ea91006dd138b63556fa87e0e5"
+        },
+        "test_runtime.py": {
+          "bytes": 36066,
+          "sha256": "61cfc6464b527812302249bc12e78959c3a4cfecefb284c79b1e30cee711ef1f"
+        }
+      },
+      "java_dex_manifest_resources_and_assets_byte_identical_to_local_build": true,
+      "ci_vs_local_different_entries": [
+        "lib/x86_64/libcoh_combined_network.so",
+        "lib/x86_64/libcoh_session_client.so"
+      ],
+      "native_library_pins": {
+        "lib/x86_64/libcoh_combined_network.so": {
+          "bytes": 5826296,
+          "sha256": "e0fe5ed3c365b612785d7d294df6862552dcbcaca32655ee9510b2ca41daa48f"
+        },
+        "lib/x86_64/libcoh_session_client.so": {
+          "bytes": 389712,
+          "sha256": "e12116beb745e2bf953c17466e5de5e61b212d015841e88f9fa83bf3363f2129"
+        }
+      }
+    }
+  },
+  "rebuilt_or_repackaged_by_audit": false,
+  "emulator_qualification_included_in_this_receipt": false,
+  "actual_guest_server_startup_verified": false,
+  "actual_server_interoperability_verified": false,
+  "physical_thor_accepted": false,
+  "scope": "Read-only independent audit of exact CI APK bytes and original CI package receipts against clean published source, local preparation and delivered0.1.1 import/scene/signer identity. Hosted emulator qualification is separate; native ELF build outputs differ from local builds and are pinned here."
+}

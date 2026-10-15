@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "module": "local",
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "file": "coh-local-arm64-v8a",
+      "sha256": "388433c80d401f06398e278fcae077a6bfdd5b3dc804cf7dc84b5bbf2cadd82e",
+      "built": true,
+      "executed": false
+    },
+    {
+      "abi": "x86_64",
+      "file": "coh-local-x86_64",
+      "sha256": "eb384b3eec6243f7e3f0f285b6e91fb20d9145ded11f30c7bb7edd0b9791a466",
+      "built": true,
+      "executed": false
+    }
+  ],
+  "android_execution_qualified": false,
+  "actual_server_interoperability_verified": false
+}

@@ -1,0 +1,46 @@
+{
+  "format": 1,
+  "status": "passed",
+  "qualified_apk_source": "377584651471e748fbbd4a24cdf08bd2c48ca4a3",
+  "qualified_workflow": "38795244645",
+  "artifact_id": "12002281757",
+  "archive_sha256": "37f0a10a879ae94242a801153d6456dd33cf88e565408b22935548f3612dd43f",
+  "driver_source": "0f4240352a0d2878d1e1e86878267ef68997e027",
+  "driver_source_clean": true,
+  "changed_paths_since_qualified_apk": [
+    ".github/workflows/native-combined-requalify.yml",
+    "native-android/combined-client/tools/driver_controls.py",
+    "native-android/combined-client/tools/emulator_check.py",
+    "native-android/combined-client/tools/reuse_packages_012.py"
+  ],
+  "independent_support_changes_preserved": [],
+  "unchanged_source_closure_sha256": {
+    "native-android/combined-client/app/build.gradle": "bfae70f7b019401e717ebeb5666dc19a8d83574c1283681da4119ddad6a32c1c",
+    "native-android/combined-client/app/src/main/cpp/CMakeLists.txt": "2d5731119a36537d9d51c71d536601bb6ac029cec05f5146e23bdfc48f666fed",
+    "native-android/session-client/app/src/main/cpp/CMakeLists.txt": "6830fd93a74e37d0c53d37f909e66ef07d7d21589b2eea5170e286f5612c1a27"
+  },
+  "source_closure_boundary": "All runtime, engine and build inputs remain unchanged from the pinned 0.1.2 source; only explicit framework-driver, documentation and evidence paths are accepted.",
+  "packages": {
+    "arm64-v8a": {
+      "apk": {
+        "bytes": 11519003,
+        "name": "CoH-Native-Combined-0.1.2-arm64.apk",
+        "sha256": "1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449"
+      },
+      "build_receipt": "arm64-package.json",
+      "build_receipt_sha256": "9dac49d57ee2b9d7ee52711db8ee525eecfc247a1f56e6980a3bcb32c69cef1d"
+    },
+    "x86_64": {
+      "apk": {
+        "bytes": 11114892,
+        "name": "CoH-Native-Combined-0.1.2-emulator-x86_64.apk",
+        "sha256": "01ddd409b320b7edee72c187324c0d5094ab2a80e83ad552b71a22fe44273824"
+      },
+      "build_receipt": "x86_64-package.json",
+      "build_receipt_sha256": "1e6aad9b4db7f33dc4be59e2e6e2640a77f8e19a63760d42f68b7997a9da928e"
+    }
+  },
+  "rebuilt": false,
+  "actual_server_interoperability_verified": false,
+  "scope": "Exact previously host-qualified ARM64/x86 APKs, native ELFs and Android UDP contract binary reused for a driver-only Android framework continuation. Runtime/build input changes are rejected."
+}

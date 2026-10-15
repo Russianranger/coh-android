@@ -1,0 +1,5 @@
+{
+  "type": "RuntimeError",
+  "message": "ADB command failed: ('shell', 'uiautomator', 'dump', '/data/local/tmp/combined-ui.xml')\n",
+  "actual_server_interoperability_verified": false
+}

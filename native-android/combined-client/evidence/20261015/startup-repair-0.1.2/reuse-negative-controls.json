@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "status": "passed",
+  "checks": [
+    "modified artifact refused before extraction",
+    "dirty tracked driver source refused before extraction"
+  ],
+  "exact_artifact_positive_test": "combined-012-exact-reuse-local-proof/package-reuse-proof.json",
+  "rebuilt": false
+}

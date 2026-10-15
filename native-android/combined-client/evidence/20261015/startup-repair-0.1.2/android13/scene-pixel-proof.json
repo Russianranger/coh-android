@@ -1,0 +1,32 @@
+{
+  "surface_position_size": [
+    0,
+    872,
+    1080,
+    985
+  ],
+  "surface_bounds_ltrb": [
+    0,
+    872,
+    1080,
+    1857
+  ],
+  "screenshot_size": [
+    1080,
+    1920
+  ],
+  "surface_pixels": 1063800,
+  "bright_pixels": 556536,
+  "black_pixels": 1139,
+  "distinct_colors_at_least": 14199,
+  "minimum_bright_pixels": 10638,
+  "minimum_distinct_colors": 64,
+  "scope": "Actual device screenshot crop at Android framework-reported SurfaceView screen bounds; excludes app header, buttons and navigation bar.",
+  "passed": true,
+  "uiautomator_surface_bounds": [],
+  "bounds_source": "SurfaceView.getLocationOnScreen/getWidth/getHeight in input_area; crop uses left,top,left+width,top+height",
+  "screenshot_sha256": "9244170864a9d9a5ae36cb418f7bf85b0e60a74829fd4c94f1fd745ac3a23f6d",
+  "before_frames": 403,
+  "before_context": 6,
+  "before_gpu_bytes": 557056
+}

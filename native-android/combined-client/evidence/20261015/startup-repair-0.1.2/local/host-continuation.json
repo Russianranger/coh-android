@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "full_eight_suite_snapshot": "9c02f4a8a92a1fffd0b87add6a44519d6be44116",
+  "final_source_commit": "ddde660890dad592b83251bb36cd3bcbef858c15",
+  "subsequent_changed_paths": [
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ImportStore.java",
+    "native-android/combined-client/imports/tests/check_imports.py",
+    "native-android/combined-client/tools/host_check.py"
+  ],
+  "changed_import_suite_rerun_with_exact_donor": true,
+  "exact_donor_imports_log_sha256": "2afa47e12c707c3bf609583ab5ac6db5be129877d35f819c02e3c197b8a0adfd",
+  "unchanged_suites_reused": true,
+  "scope": "Eight integrated host suites passed before the API-only import compatibility follow-up. The changed import suite was rerun with the exact pinned donor; unchanged policy/runtime/protocol suites retain their recorded evidence. No Android execution is implied.",
+  "published_source_commit": "377584651471e748fbbd4a24cdf08bd2c48ca4a3",
+  "published_tree_matches_local_validation": true
+}

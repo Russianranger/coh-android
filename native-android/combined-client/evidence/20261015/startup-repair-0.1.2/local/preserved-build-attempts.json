@@ -1,0 +1,51 @@
+{
+  "status": "preserved",
+  "logs": {
+    "initial_api27_lint_failure": {
+      "path": "/workspace/scratch/cd30b2fc1c9e/combined-failure-012/arm64-gradle.log",
+      "bytes": 4827,
+      "sha256": "ebb5172220da47f307cff5d49fe89c7eaa85fb2b34e284997358b09fd765d01d"
+    },
+    "intermediate_api30_lint_failure": {
+      "path": "/workspace/scratch/cd30b2fc1c9e/combined-failure-012-qualified/arm64-gradle-api30-failed.log",
+      "bytes": 5033,
+      "sha256": "d8aefa9113c198b00b237872c3ad75ca2a1e1136a5164fcdafdeb4574468fdd0"
+    },
+    "final_arm64_build_and_lint_pass": {
+      "path": "/workspace/scratch/cd30b2fc1c9e/combined-failure-012-qualified/arm64-gradle.log",
+      "bytes": 3054,
+      "sha256": "b3663c7aa86193a7358a86eea7039a5af22d164ccdae9624a3bd5fc2863bfdfe"
+    },
+    "final_x86_build_and_lint_pass": {
+      "path": "/workspace/scratch/cd30b2fc1c9e/combined-failure-012-qualified/x86_64-gradle.log",
+      "bytes": 2792,
+      "sha256": "86f646806280848c5cae28fc8732647887b16350dcb107e32f49f2fece5eca92"
+    },
+    "original_full_host_batch": {
+      "path": "/workspace/scratch/cd30b2fc1c9e/combined-failure-012/host.log",
+      "bytes": 2950,
+      "sha256": "63478448fcc36ce7428600afa5c3d108d86913d4bb0425c236e55a908e74ff86"
+    }
+  },
+  "earlier_apks": {
+    "combined_0_1_0": {
+      "path": "/workspace/scratch/cd30b2fc1c9e/combined-corrected-hosted/packages/CoH-Native-Combined-0.1.0-arm64.apk",
+      "bytes": 11493783,
+      "sha256": "4ae4ef25c6ea60bfdcac000f4ff9016ae202aa42e3414024a40c99dcf66b97ee"
+    },
+    "combined_0_1_1": {
+      "path": "/workspace/scratch/cd30b2fc1c9e/combined-failure-011-delivery-clean/CoH-Native-Combined-0.1.1-arm64.apk",
+      "bytes": 11242291,
+      "sha256": "278363e57b04148a4e5653026105873b164cab557fece651feb0d20ffad9f4ec"
+    },
+    "accepted_session_0_3_0": {
+      "path": "/workspace/scratch/cd30b2fc1c9e/combined-failure-build-inputs/CoH-Native-Session-Client-0.3.0-arm64.apk",
+      "bytes": 1931361,
+      "sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639"
+    }
+  },
+  "failed_lint_apks_delivered": false,
+  "copied_precommit_worktree_preserved": "/workspace/scratch/cd30b2fc1c9e/fix-combined-build-012",
+  "clean_qualification_worktree": "/workspace/scratch/cd30b2fc1c9e/fix-combined-build-012-qualified",
+  "scope": "Earlier APK bytes, initial host evidence and both caught compatibility failures remain available. Final local delivery candidates are separate full builds from the clean published tree; no history reset or force checkout was used."
+}

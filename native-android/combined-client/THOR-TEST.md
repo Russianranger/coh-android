@@ -12,6 +12,15 @@ The package and signing identity are unchanged. Keep its data; do not uninstall,
 clear storage, repeat the imports or repeat runtime setup. Both prior reports
 confirm the imports and runtime setup are already complete.
 
+Current ARM64 APK: 11,519,003 bytes, SHA256
+`1913613656032400ee7ba70a46d56242567d23040b896032ad8a9bc90e9ae449`.
+The [package artifact](https://github.com/Russianranger/coh-android/actions/runs/38795244645/artifacts/12002281757)
+contains the ARM64 APK and reproducible build/host receipts.
+Source: `377584651471e748fbbd4a24cdf08bd2c48ca4a3`.
+The [Android13 exact-package continuation](https://github.com/Russianranger/coh-android/actions/runs/38797308843)
+passes all 18 framework checks without rebuilding either APK. Actual ARM64
+server startup still requires this Thor test.
+
 For this retry:
 
 1. Stop the server in the conventional COH launcher. Close other memory-heavy

@@ -1,0 +1,16 @@
+{
+  "manifest_bytes": 48591999,
+  "manifest_sha256": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2",
+  "files": 10401,
+  "selected_geos": 406,
+  "selected_geometry_sha256": "c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43",
+  "rss_before_kib": 20032,
+  "rss_after_parse_kib": 132800,
+  "peak_rss_kib": 225116,
+  "elapsed_seconds": 0.842,
+  "actual_server_executed": false,
+  "actual_android_memory_measured": false,
+  "scope": "exact_pinned_donor_manifest_host_parser_in_reaped_subprocess",
+  "worker_exit_code": 0,
+  "exact_donor_module_sha256": "b732478e4c33b7e15c8b55c14937a5e557b3d79f637a2f58109ef2f58c3962bb"
+}
