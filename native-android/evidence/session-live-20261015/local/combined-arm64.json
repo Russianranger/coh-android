@@ -1,0 +1,177 @@
+{
+  "schema": "coh-native-engine-build-v1",
+  "passed": true,
+  "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+  "command": [
+    "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+    "-std=c11",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-ffp-contract=off",
+    "-I/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/include",
+    "-I/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/src",
+    "-I/workspace/scratch/cd30b2fc1c9e/live-qualification/crypto/arm64-v8a/include",
+    "-shared",
+    "-fPIC",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/assets/coh_asset_loader.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/assets/coh_asset_geo.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/renderer/coh_renderer.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/network/coh_net.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/network/coh_net_frame.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/network/coh_net_zip.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/network/coh_net_udp.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/auth/coh_auth.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/login/coh_login.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/dbclient/coh_dbclient.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/dbclient/coh_db_session.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/mapclient/coh_mapclient.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/replication/coh_replication.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/session/coh_session_crypto.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/sequencer/coh_sequencer.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/ui/coh_ui.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/audio/coh_mixer.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/src/coh_assets.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/src/coh_dds.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/src/coh_blowfish.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/protocol/coh_protocol.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/animation/coh_animation.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/audio/coh_audio.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/renderer/coh_renderer_gles.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/audio/coh_mixer_aaudio.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/audio/coh_audio_session.c",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/auth/coh_auth_openssl.c",
+    "-lz",
+    "-lm",
+    "-lGLESv3",
+    "-laaudio",
+    "/workspace/scratch/cd30b2fc1c9e/live-qualification/crypto/arm64-v8a/lib/libcrypto.a",
+    "-ldl",
+    "-Wl,--no-undefined",
+    "-o",
+    "/workspace/scratch/cd30b2fc1c9e/live-qualification/engine-arm64/libcoh_native_engine.so"
+  ],
+  "android_arm64_bionic_cross_compiled": true,
+  "android_executed": false,
+  "physical_thor_qualified": false,
+  "sanitizers": [],
+  "library": {
+    "name": "libcoh_native_engine.so",
+    "bytes": 6325712,
+    "sha256": "19cc5a3839ef5cd344d59f7c2e2bf65d04e5ec340ceeb13ee0e9bb5ead1c2db4"
+  },
+  "sources": [
+    {
+      "path": "engine/assets/coh_asset_loader.c",
+      "sha256": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b"
+    },
+    {
+      "path": "engine/assets/coh_asset_geo.c",
+      "sha256": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71"
+    },
+    {
+      "path": "engine/renderer/coh_renderer.c",
+      "sha256": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00"
+    },
+    {
+      "path": "engine/network/coh_net.c",
+      "sha256": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f"
+    },
+    {
+      "path": "engine/network/coh_net_frame.c",
+      "sha256": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc"
+    },
+    {
+      "path": "engine/network/coh_net_zip.c",
+      "sha256": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8"
+    },
+    {
+      "path": "engine/network/coh_net_udp.c",
+      "sha256": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a"
+    },
+    {
+      "path": "engine/auth/coh_auth.c",
+      "sha256": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d"
+    },
+    {
+      "path": "engine/login/coh_login.c",
+      "sha256": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e"
+    },
+    {
+      "path": "engine/dbclient/coh_dbclient.c",
+      "sha256": "f721a976e38ee87aa8994c88db7d76635f668006c1f4be6da2d4865d1750b447"
+    },
+    {
+      "path": "engine/dbclient/coh_db_session.c",
+      "sha256": "8bb97ecfec6a99a87ec10b3789b088f1513442056443b47563a5f6d0ea92fe00"
+    },
+    {
+      "path": "engine/mapclient/coh_mapclient.c",
+      "sha256": "6bcaad9b0c852492bef787bd4c2792af958f3bb3828eb540c7b186af318eae94"
+    },
+    {
+      "path": "engine/replication/coh_replication.c",
+      "sha256": "29a066edcf42699f63c84007cbda66a2f390e4597d4607e33be56e420828f1f6"
+    },
+    {
+      "path": "engine/session/coh_session_crypto.c",
+      "sha256": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1"
+    },
+    {
+      "path": "engine/sequencer/coh_sequencer.c",
+      "sha256": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91"
+    },
+    {
+      "path": "engine/ui/coh_ui.c",
+      "sha256": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676"
+    },
+    {
+      "path": "engine/audio/coh_mixer.c",
+      "sha256": "275590a86da791cf6187de1991dc3a0fb8680d4f5355daba59cedc56fb819444"
+    },
+    {
+      "path": "src/coh_assets.c",
+      "sha256": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483"
+    },
+    {
+      "path": "src/coh_dds.c",
+      "sha256": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c"
+    },
+    {
+      "path": "src/coh_blowfish.c",
+      "sha256": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+    },
+    {
+      "path": "protocol/coh_protocol.c",
+      "sha256": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea"
+    },
+    {
+      "path": "animation/coh_animation.c",
+      "sha256": "98865ae06e3d8eeeb97383e3e36295d715ec7c2556cfd03129dbc79275cefdbb"
+    },
+    {
+      "path": "audio/coh_audio.c",
+      "sha256": "63e3bd4bbb1ea60e9b0ccf2bffa50e0500f54dde85820c137f2edfe7c1b925b3"
+    },
+    {
+      "path": "engine/renderer/coh_renderer_gles.c",
+      "sha256": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c"
+    },
+    {
+      "path": "engine/audio/coh_mixer_aaudio.c",
+      "sha256": "bddfdbcbb0564be3a99ec893cfa72ee6f1896dc71f08f0eb392369fce7bdd8ae"
+    },
+    {
+      "path": "engine/audio/coh_audio_session.c",
+      "sha256": "646e388250ec4d9954fb019bf9d4f6ce780643e73b8ddd870c77125a41a87b9b"
+    },
+    {
+      "path": "engine/auth/coh_auth_openssl.c",
+      "sha256": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1"
+    }
+  ],
+  "scope": "Combined opt-in libraries only. No APK, JNI, server exchange or gameplay performance claim.",
+  "public_android_crypto_provider_linked": true,
+  "public_crypto_receipt_sha256": "4f03592802142a2aef160b03d934383458e11c51f05c10c6eceada97b50cae14"
+}

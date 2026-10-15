@@ -1,0 +1,776 @@
+{
+  "schema": "coh-original-netlink-udp-oracle-v1",
+  "passed": true,
+  "cases": [
+    {
+      "version": 0,
+      "encrypted": false,
+      "dropped_initial_connect": false,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 39,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 0,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 0,
+        "decrypt_on": 0,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 0,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          20,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          20,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 0,
+      "encrypted": false,
+      "dropped_initial_connect": true,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 1059,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 1,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 0,
+        "decrypt_on": 0,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 1,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          20,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          20,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 0,
+      "encrypted": true,
+      "dropped_initial_connect": false,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 69,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 0,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 1,
+        "decrypt_on": 1,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 0,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          84,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          84,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 0,
+      "encrypted": true,
+      "dropped_initial_connect": true,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 1137,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 1,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 1,
+        "decrypt_on": 1,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 1,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          84,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          84,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 2,
+      "encrypted": false,
+      "dropped_initial_connect": false,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 39,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 0,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 0,
+        "decrypt_on": 0,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 0,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          20,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          20,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 2,
+      "encrypted": false,
+      "dropped_initial_connect": true,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 984,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 1,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 0,
+        "decrypt_on": 0,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 1,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          20,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          20,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 2,
+      "encrypted": true,
+      "dropped_initial_connect": false,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 69,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 0,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 1,
+        "decrypt_on": 1,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 0,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          84,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          84,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 2,
+      "encrypted": true,
+      "dropped_initial_connect": true,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 828,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 1,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 1,
+        "decrypt_on": 1,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 1,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          84,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          84,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 4,
+      "encrypted": false,
+      "dropped_initial_connect": false,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 39,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 0,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 0,
+        "decrypt_on": 0,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 0,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          20,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          20,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 4,
+      "encrypted": false,
+      "dropped_initial_connect": true,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 1110,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 1,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 0,
+        "decrypt_on": 0,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 1,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          20,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          20,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 4,
+      "encrypted": true,
+      "dropped_initial_connect": false,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 72,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 0,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 1,
+        "decrypt_on": 1,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 0,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          84,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          84,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 4,
+      "encrypted": true,
+      "dropped_initial_connect": true,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 1098,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 1,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 1,
+        "decrypt_on": 1,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 1,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          84,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          84,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 5,
+      "encrypted": false,
+      "dropped_initial_connect": false,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 114,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 0,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 0,
+        "decrypt_on": 0,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 0,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          20,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          20,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 5,
+      "encrypted": false,
+      "dropped_initial_connect": true,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 1089,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 1,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 0,
+        "decrypt_on": 0,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 1,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          20,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          20,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 5,
+      "encrypted": true,
+      "dropped_initial_connect": false,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 69,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 0,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 1,
+        "decrypt_on": 1,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 0,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          84,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          84,
+          20,
+          28,
+          20
+        ]
+      }
+    },
+    {
+      "version": 5,
+      "encrypted": true,
+      "dropped_initial_connect": true,
+      "native_negative_datagrams": 3,
+      "native": {
+        "checks": 816,
+        "connected": true,
+        "payload_exchange": true,
+        "closed": true,
+        "retransmits": 1,
+        "acknowledged": 4,
+        "sockets_opened": 1,
+        "sockets_closed": 1
+      },
+      "source": {
+        "connected": 1,
+        "encrypt_on": 1,
+        "decrypt_on": 1,
+        "test_payload_received": 1,
+        "original_ack_calls": 3,
+        "discarded": 1,
+        "connect_controls": 1,
+        "client_ack_controls": 1,
+        "disconnect_controls": 1,
+        "duplicates": 0,
+        "dropped": 1,
+        "negative_datagrams": 3,
+        "sockets_opened": 1,
+        "sockets_closed": 1,
+        "native_to_source_bytes": [
+          28,
+          84,
+          20,
+          20,
+          20,
+          20
+        ],
+        "source_to_native_bytes": [
+          84,
+          20,
+          28,
+          20
+        ]
+      }
+    }
+  ],
+  "source_function_count": 40,
+  "source_pin_mutation_rejected": true,
+  "native_malformed_datagrams": 48,
+  "real_os_udp_scenarios": 16,
+  "generated_source_sha256": "e84c7b990d2b21ba4cf2d2627ed625b4dfbf409cd6312e04c48dd80cf5b03d7e",
+  "source_pins_sha256": "1dc30ae5c03fdac6b67992ad6f277961ebcfb9e92fe7be9c2efe840732564340",
+  "native_sources_sha256": {
+    "engine/network/coh_net.c": "f47ec09305d1748a9329f6377c88d1d68b44927fd4b38936ed35bd0ee46c375f",
+    "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "engine/network/coh_net_zip.c": "f2754540bc676755615f49c47cab5adddd7171e981151e68a97d5e42d5dfb3b8",
+    "engine/network/coh_net_udp.c": "88058460cda577013c35f5111f4bd8105d0c4ca98f45b075a0153a3c08f5d73a",
+    "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+    "engine/session/coh_session_crypto.c": "c4f693c1d7d89500f5aeb7f61387e8396375e1088127363c38dfc26797f71cc1",
+    "engine/session/server-oracle/native_client.c": "ec76712e2d027da666afb4909b7e7b0809b318eb6c2d026f0ff7b65522116964"
+  },
+  "adapter_sources_sha256": {
+    "oracle_shims.h": "d2e345c8ff0b927492a58f606702ee1ba0942604513fc2863aee2bafcd87247f",
+    "oracle_adapter.c.inc": "10ac7e7b45dd4fec484da33d89b1ad2d2435475685e0a6b47c159a162bc8c89c",
+    "check.py": "5db3842d2f79e43c73368903bd957d6ddf226f696f75e3d4328e829df7ab728c",
+    "server_main.c.inc": "2853675fd38f130ff0092df0468d112a4302374416d7fcecb10682e13ada043c"
+  },
+  "sanitizers": "ASan+UBSan native client and new oracle shims/socket wrapper; original function bodies explicitly no_sanitize; leak sanitizer disabled",
+  "peer_scope": "unchanged pinned original NetLink handler/producer/unwrap functions behind documented host shims; real loopback UDP",
+  "full_original_server": false,
+  "authenticated_session": false,
+  "actual_mapserver_world": false,
+  "gate25_complete": false,
+  "android_execution": false,
+  "physical_thor_accepted": false,
+  "secrets_logged": false,
+  "openssl_version": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)"
+}

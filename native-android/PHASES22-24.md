@@ -1,5 +1,7 @@
 # Integrated source assets, bounded Atlas selection and generic rendering
 
+> Gates 22–24 are physically accepted on AYN Thor for Session Client 0.3.0. See [the acceptance receipt](evidence/phases22-24/thor-acceptance-20261015.json). No repeat of this test is required. Historical qualification sections below retain their original timing.
+
 Session Client 0.3.0 integrates gates 22–24 into the existing native offline
 Wretch client. Runtime source is `ac840d23026b92455e26a8a50fe4a97d7920f5c2`.
 The conventional launcher, accepted source WALK/animation kernels and older
@@ -30,7 +32,7 @@ bounded four-direction input, Near/Far selection, held-input Home/return,
 Recreate, document export and reset. Runtime source and qualification driver
 are bound separately; the retry reuses the exact packages from the original
 build. The first Home-test ordering failure remains preserved losslessly.
-Physical acceptance is separate and remains pending.
+Physical acceptance is recorded separately in the exact-package Thor receipt.
 
 Raw cache residency, bridge allocations and map metadata have separate bounded
 counters. They do not measure total application RAM or sustained performance.
@@ -44,8 +46,10 @@ server replication and sustained Thor FPS remain unqualified.
 
 See [the qualification receipt](evidence/phases22-24/qualification.json),
 [host GPU evidence](evidence/phases22-24/host-integrated-gpu-proof.json) and
-[one consolidated Thor test](session-client/THOR-TEST.md). Physical gates 22–24
-remain pending until the actual new-package Thor report is received.
+[original consolidated Thor test](session-client/THOR-TEST.md). Physical gates 22–24
+are accepted from the user confirmation and supplied 29,105-frame report;
+[the acceptance receipt](evidence/phases22-24/thor-acceptance-20261015.json)
+records that later evidence without rewriting the earlier emulator receipts.
 
 The next integrated batch is native NetLink/socket/lifecycle interoperability
 (gate 25), encrypted AuthServer/DB/Map login and character handoff (gate 26),

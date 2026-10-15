@@ -1,10 +1,14 @@
 # Native Android experiments - Phase 2
 
+> Gates 22–24 are physically accepted on AYN Thor for Session Client 0.3.0. See [the acceptance receipt](evidence/phases22-24/thor-acceptance-20261015.json). No repeat of this test is required. Historical qualification sections below retain their original timing.
+
 Latest continuation: [gates 25–27 session libraries](PHASES25-27.md) and
 [October 15 recovery](RECOVERY-20261015.md). Networking, authentication and
 replication have new source/host-qualified components; genuine account login
-and a live native world remain pending. The unchanged [Session Client 0.3.0
-Thor procedure](session-client/THOR-TEST.md) remains the next physical test.
+and a live native world remain pending. Session Client 0.3.0 is accepted; its
+[Thor procedure](session-client/THOR-TEST.md) is retained for regression reference.
+The separate [support-client handoff](support-client/README.md) remains available
+for its newer offline scope and has not been claimed physically accepted.
 
 Isolated C modules for Android Bionic `arm64-v8a`, based on the accepted client
 source. These targets are independent of the shipping Game and launcher targets.
@@ -89,7 +93,7 @@ accepted, with the unchanged
 [0.1.0 rollback artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705)
 and [original instructions](session-client/THOR-TEST-16-18.md) available.
 
-The current development batch integrates gates 22–24 in Session Client 0.3.0:
+The physically accepted gates 22–24 use Session Client 0.3.0:
 the indexed loader admits eight pinned original raw assets, a bounded source
 Atlas hierarchy selects three model endpoints, and the generic native renderer
 draws the authored floor plus ten bench instances. Near/Far view distance selects
@@ -105,5 +109,6 @@ uses the same `.walk` application ID and stable signer as 0.2.0. Source/host/GPU
 ARM64/x86 builds, lint and package checks passed. Complete Android 13
 [qualification](https://github.com/Russianranger/coh-android/actions/runs/38673357918)
 passed with 3,505 frames, five contexts, real input, Near/Far selection,
-Home/return, Recreate, export and reset. Physical gates 22–24 await the actual
-Thor report; use the [consolidated procedure](session-client/THOR-TEST.md).
+Home/return, Recreate, export and reset. Physical gates 22–24 are accepted from
+the exact APK/report and user confirmation; the [acceptance receipt](evidence/phases22-24/thor-acceptance-20261015.json)
+records 29,105 Thor frames and the bounded offline scope.

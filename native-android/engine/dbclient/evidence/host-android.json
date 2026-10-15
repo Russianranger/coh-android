@@ -1,0 +1,36 @@
+{
+  "actual_server_interoperability_verified": false,
+  "android_arm64_built": true,
+  "android_library_sha256": "87728003fd21c001e51ab26170725fc5c806979e6b445dd8abf2615216af6349",
+  "checks": {
+    "asan": {
+      "checks": 93836,
+      "malformed_inputs": 10000,
+      "passed": true,
+      "real_server_login": false
+    },
+    "release": {
+      "checks": 93836,
+      "malformed_inputs": 10000,
+      "passed": true,
+      "real_server_login": false
+    },
+    "ubsan": {
+      "checks": 93836,
+      "malformed_inputs": 10000,
+      "passed": true,
+      "real_server_login": false
+    }
+  },
+  "emulator_qualified": false,
+  "fixtures": 19,
+  "leak_sanitizer_enabled": false,
+  "leak_sanitizer_limitation": "Sandbox blocks /proc task walks; module has no heap allocations except zlib internal compression, ASan address checks remain enabled.",
+  "ndk_revision": "28.2.13676358",
+  "passed": true,
+  "physical_thor_accepted": false,
+  "schema": 1,
+  "scope": "pinned original login/choose producer statement blocks, original bit writer, synthetic full source-layout player lists; no server capture",
+  "source_files": 10,
+  "source_producer_profiles": 4
+}

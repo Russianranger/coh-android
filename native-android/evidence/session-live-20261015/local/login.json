@@ -1,0 +1,135 @@
+{
+  "schema": "coh-native-auth-tcp-controller-v1",
+  "source_audit": {
+    "source_revision": "pinned repository source",
+    "sha256_lf": {
+      "upstream/ouroboros/Game/src/clientcomm/authclient.c": "d1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015",
+      "upstream/ouroboros/Common/auth/auth.c": "589ca2a4353e5725cb1aad90c2f24e9dc852e6bbdad034e5932de17635bffa49",
+      "upstream/ouroboros/Common/auth/auth.h": "6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe"
+    },
+    "audit": [
+      "authLogin",
+      "authWaitFor",
+      "acGetProtocolVer",
+      "acGetLoginOK",
+      "acGetSendServerList",
+      "acGetPlayOK",
+      "authGetPacket",
+      "authSendPacket",
+      "setupPacketSizeOffset"
+    ],
+    "note": "Control-flow/source audit; credential/framing byte oracles remain in engine/auth/check.py. Scripted peer tests are not source server execution."
+  },
+  "tests": {
+    "release": {
+      "passed": true,
+      "checks": 523,
+      "socket_scenarios": 11,
+      "actual_os_tcp": true,
+      "synthetic_authserver": true,
+      "real_account_login_verified": false,
+      "passwords_logged": false,
+      "descriptor_cleanup": true
+    },
+    "asan_ubsan": {
+      "passed": true,
+      "checks": 523,
+      "socket_scenarios": 11,
+      "actual_os_tcp": true,
+      "synthetic_authserver": true,
+      "real_account_login_verified": false,
+      "passwords_logged": false,
+      "descriptor_cleanup": true
+    }
+  },
+  "android": {
+    "arm64-v8a": {
+      "passed": true,
+      "abi": "arm64-v8a",
+      "command": [
+        "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffp-contract=off",
+        "-I/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/include",
+        "-O2",
+        "-I/workspace/scratch/cd30b2fc1c9e/live-qualification/crypto/arm64-v8a/include",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/login/coh_login.c",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/auth/coh_auth.c",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/protocol/coh_protocol.c",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/src/coh_blowfish.c",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/login/test_login.c",
+        "-Wl,--wrap=connect,--wrap=send",
+        "/workspace/scratch/cd30b2fc1c9e/live-qualification/crypto/arm64-v8a/lib/libcoh_auth_android_crypto.a",
+        "/workspace/scratch/cd30b2fc1c9e/live-qualification/crypto/arm64-v8a/lib/libcrypto.a",
+        "-ldl",
+        "-lm",
+        "-o",
+        "/workspace/scratch/cd30b2fc1c9e/live-qualification/android/login/arm64-v8a/test_login_android"
+      ],
+      "binary_sha256": "1882da26dd1f02d72178ad651f3fc00df1e46b29b4fc0fa13bd79271e571581d",
+      "binary": "test_login_android",
+      "crypto_build_receipt_sha256": "4f03592802142a2aef160b03d934383458e11c51f05c10c6eceada97b50cae14",
+      "source_sha256": {
+        "engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+        "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+        "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+        "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+        "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+        "engine/login/test_login.c": "1e7babe5a78ebc732aea3182d7ec7ffe93d3f4c19c7b3202643bef712767c091",
+        "engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f"
+      },
+      "android_executed": false,
+      "real_account_login_verified": false
+    },
+    "x86_64": {
+      "passed": true,
+      "abi": "x86_64",
+      "command": [
+        "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android26-clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-ffp-contract=off",
+        "-I/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/include",
+        "-O2",
+        "-I/workspace/scratch/cd30b2fc1c9e/live-qualification/crypto/x86_64/include",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/login/coh_login.c",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/auth/coh_auth.c",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/protocol/coh_protocol.c",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/src/coh_blowfish.c",
+        "/workspace/scratch/cd30b2fc1c9e/coh-native/native-android/engine/login/test_login.c",
+        "-Wl,--wrap=connect,--wrap=send",
+        "/workspace/scratch/cd30b2fc1c9e/live-qualification/crypto/x86_64/lib/libcoh_auth_android_crypto.a",
+        "/workspace/scratch/cd30b2fc1c9e/live-qualification/crypto/x86_64/lib/libcrypto.a",
+        "-ldl",
+        "-lm",
+        "-o",
+        "/workspace/scratch/cd30b2fc1c9e/live-qualification/android/login/x86_64/test_login_android"
+      ],
+      "binary_sha256": "a057574ca499fed46d5302b4ed4d8e96948458b5f88c36825d49c2160ed89dfd",
+      "binary": "test_login_android",
+      "crypto_build_receipt_sha256": "fd575d27dc383fb8bea6b7684f78a49cd244a7d09c185027c7f1e5323c370408",
+      "source_sha256": {
+        "engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+        "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+        "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+        "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+        "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+        "engine/login/test_login.c": "1e7babe5a78ebc732aea3182d7ec7ffe93d3f4c19c7b3202643bef712767c091",
+        "engine/login/coh_login.h": "2cdd170ff75c73d42700c1718647ebd26592681474fab24e61cebb650bcff06f"
+      },
+      "android_executed": false,
+      "real_account_login_verified": false
+    }
+  },
+  "actual_server_interoperability_verified": false,
+  "real_account_login_verified": false,
+  "thor_accepted": false,
+  "scope": "Actual TCP sockets/real host or public Android crypto; scripted source-layout AuthServer replies. No real account database.",
+  "passed": true,
+  "leak_sanitizer": "not claimed locally; task enumeration unavailable, address/UB checks enabled"
+}

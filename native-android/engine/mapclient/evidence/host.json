@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "passed": true,
+  "scope": "source producer parity plus actual OS UDP with scripted synthetic peer; no real server/authentication/capture",
+  "source_files": 11,
+  "source_golden_packets": 240,
+  "checks": {
+    "release": {
+      "checks": 29514,
+      "negative_cases": 10652,
+      "scenarios": 17,
+      "actual_os_udp": true,
+      "scripted_peer_only": true,
+      "socket_leak_check": true,
+      "actual_authentication": false,
+      "live_world": false
+    },
+    "asan": {
+      "checks": 29514,
+      "negative_cases": 10652,
+      "scenarios": 17,
+      "actual_os_udp": true,
+      "scripted_peer_only": true,
+      "socket_leak_check": true,
+      "actual_authentication": false,
+      "live_world": false
+    },
+    "ubsan": {
+      "checks": 29514,
+      "negative_cases": 10652,
+      "scenarios": 17,
+      "actual_os_udp": true,
+      "scripted_peer_only": true,
+      "socket_leak_check": true,
+      "actual_authentication": false,
+      "live_world": false
+    }
+  },
+  "leak_sanitizer_enabled": false,
+  "leak_sanitizer_note": "ASan addresses checked; descriptor lifetime checked through /proc/self/fd. LeakSanitizer process inspection is unavailable in this execution environment.",
+  "android_arm64_object_built": true,
+  "emulator_qualified": false,
+  "thor_accepted": false,
+  "actual_server_interoperability": false,
+  "full_scene_parser": false,
+  "full_entity_parser": false,
+  "render_spawn_handoff": false,
+  "login_verified": false,
+  "android_arm64_object_sha256": "3435b19298f9272bee2e3a9fb690b5b1d291b42cc5d015b16df5f83733927675",
+  "android_executables": {
+    "arm64-v8a": {
+      "file": "arm64-v8a/test_mapclient_android",
+      "sha256": "b651bdba4c9926314e8e05f90c4ca3430801b178e348eca09b642565181d184e",
+      "bytes": 120472,
+      "api": 26,
+      "executed": false,
+      "receipt": "arm64-v8a/receipt.json"
+    },
+    "x86_64": {
+      "file": "x86_64/test_mapclient_android",
+      "sha256": "e48009e9f13d5e1756c212811858cf2a3f5950dfacd1c3c388a7641ead2b670f",
+      "bytes": 120128,
+      "api": 26,
+      "executed": false,
+      "receipt": "x86_64/receipt.json"
+    }
+  },
+  "android_executables_built": true,
+  "android_fixtures_sha256": "99c70180c021fcb109c3abc1bdff5bc39a331f0eed22652bf1b39588c0449783"
+}

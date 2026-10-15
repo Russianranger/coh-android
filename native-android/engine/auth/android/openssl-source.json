@@ -1,0 +1,16 @@
+{
+  "version": "3.5.9",
+  "series": "3.5 LTS",
+  "release_date": "2026-09-29",
+  "support_until": "2030-04-08",
+  "archive": "openssl-3.5.9.tar.gz",
+  "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+  "sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "checksum_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz.sha256",
+  "license": "Apache-2.0",
+  "license_file": "LICENSE.txt",
+  "license_sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a",
+  "android_instructions": "https://github.com/openssl/openssl/blob/openssl-3.5.9/NOTES-ANDROID.md",
+  "release_index": "https://openssl-library.org/source/",
+  "support_policy": "https://openssl-library.org/policies/releasestrat/"
+}

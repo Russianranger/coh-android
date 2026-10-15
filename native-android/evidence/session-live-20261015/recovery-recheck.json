@@ -1,0 +1,29 @@
+{
+  "schema": "coh-native-recovery-recheck-v1",
+  "observed_remote_head": "365bc1f3e507b2de7d94a3d7d12fc25d9afd3e9c",
+  "previous_checkpoint": "2c32f5686246fa28cf3341e8e89dd1014eacd5f4",
+  "old_source_tree": "/workspace/scratch/552733ac6bdc/coh-next",
+  "git_metadata_available": false,
+  "old_tracked_files_exact_at_checkpoint": 1151,
+  "unpublished_tracked_edits": 0,
+  "additional_files": {
+    "dependency": 81,
+    "generated_results": 80,
+    "python_cache": 67,
+    "acquired_fixture_source": 44,
+    "acquired_corpus": 26,
+    "packaged_assets": 25
+  },
+  "uncategorized_implementation_files": 0,
+  "published_payload_files_exact_at_checkpoint": 39,
+  "qualified_apk": {
+    "bytes": 1931361,
+    "sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+    "runtime_rebuilt": false
+  },
+  "actual_stalled_build_or_test_process_found": false,
+  "stopping_point": "Completed gates22\u201324 qualification and publication/handoff. Final preservation tree-list payload is truncated; this does not establish an exact process instruction or an implementation failure.",
+  "preserved_old_scratch": true,
+  "independent_concurrent_support_head_preserved": true,
+  "gates22_24_thor_accepted": true
+}

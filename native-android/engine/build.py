@@ -10,6 +10,9 @@ SOURCES = [
     'engine/renderer/coh_renderer.c',
     'engine/network/coh_net.c', 'engine/network/coh_net_frame.c', 'engine/network/coh_net_zip.c',
     'engine/network/coh_net_udp.c', 'engine/auth/coh_auth.c',
+    'engine/login/coh_login.c', 'engine/dbclient/coh_dbclient.c',
+    'engine/dbclient/coh_db_session.c', 'engine/live/coh_live.c',
+    'engine/mapclient/coh_mapclient.c',
     'engine/replication/coh_replication.c',
     'engine/session/coh_session_crypto.c',
     'engine/sequencer/coh_sequencer.c', 'engine/ui/coh_ui.c', 'engine/audio/coh_mixer.c',
@@ -24,6 +27,7 @@ def main():
     parser.add_argument('--ndk', type=Path)
     parser.add_argument('--codec-root', type=Path, help='Recovered pinned codec sources; copied and verified off-thread')
     parser.add_argument('--audio-fixture', type=Path, help='Original hash-pinned headset.ogg for asset/decoder/mixer ownership test')
+    parser.add_argument('--crypto-root', type=Path, help='Verified single-ABI public Android crypto build output')
     parser.add_argument('--sanitize', action='store_true')
     args = parser.parse_args()
     out = args.output.resolve()
@@ -36,6 +40,9 @@ def main():
     codec_receipt = None
     libraries = ['-lz', '-lm']
     readelf = 'readelf'
+    crypto_receipt = None
+    if args.crypto_root and not args.ndk:
+        parser.error('--crypto-root requires an Android NDK build')
     if args.ndk:
         if args.sanitize:
             parser.error('Android sanitizer execution needs a device; this build is release-only')
@@ -45,6 +52,20 @@ def main():
         sources += [ENGINE/'renderer/coh_renderer_gles.c', ENGINE/'audio/coh_mixer_aaudio.c',
                     ENGINE/'audio/coh_audio_session.c']
         libraries += ['-lGLESv3', '-laaudio']
+        if args.crypto_root:
+            crypto = args.crypto_root.resolve()
+            crypto_receipt = json.loads((crypto/'receipt.json').read_text())
+            if crypto_receipt['status'] != 'PASS' or crypto_receipt['abi'] != 'arm64-v8a':
+                raise RuntimeError('Android crypto receipt must qualify ARM64')
+            pin = json.loads((ENGINE/'auth/android/openssl-source.json').read_text())
+            if crypto_receipt['openssl_archive_sha256'] != pin['sha256'] or crypto_receipt['openssl_version'] != pin['version']:
+                raise RuntimeError('Android crypto dependency pin differs')
+            for path,sha in crypto_receipt['artifacts_sha256'].items():
+                if hashlib.sha256((crypto/path).read_bytes()).hexdigest()!=sha:
+                    raise RuntimeError('Android crypto artifact hash differs: '+path)
+            flags += ['-I'+str(crypto/'include')]
+            sources += [ENGINE/'auth/coh_auth_openssl.c']
+            libraries += [str(crypto/'lib/libcrypto.a'), '-ldl']
     if args.sanitize:
         flags += ['-fsanitize=address,undefined', '-fno-omit-frame-pointer']
     if args.codec_root:
@@ -92,7 +113,12 @@ def main():
         'sources': [{'path': str(p.relative_to(NATIVE)),
                      'sha256': hashlib.sha256(p.read_bytes()).hexdigest()} for p in sources],
         'scope': 'Combined opt-in libraries only. No APK, JNI, server exchange or gameplay performance claim.',
+        'public_android_crypto_provider_linked': bool(crypto_receipt),
     }
+    if crypto_receipt:
+        receipt['public_crypto_receipt_sha256']=hashlib.sha256((args.crypto_root/'receipt.json').read_bytes()).hexdigest()
+        if 'libcrypto.so' in elf or 'libssl.so' in elf:
+            raise RuntimeError('Private/dynamic platform crypto dependency is forbidden')
     if codec_receipt:
         receipt['pinned_codec_verification']=codec_receipt
         receipt['codec_sources']=[{'path':str(p.relative_to(out)), 'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in vendor_sources]

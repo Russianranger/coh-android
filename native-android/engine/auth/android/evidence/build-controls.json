@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "archive_checksum_mismatch": {
+      "rejected": true,
+      "returncode": 1
+    },
+    "existing_output_requires_explicit_rebuild": {
+      "rejected": true,
+      "returncode": 1
+    },
+    "tampered_executable_rejected_before_adb": {
+      "rejected": true,
+      "returncode": 1
+    },
+    "unsupported_abi": {
+      "rejected": true,
+      "returncode": 2
+    },
+    "unsupported_android_api": {
+      "rejected": true,
+      "returncode": 2
+    }
+  },
+  "status": "PASS"
+}

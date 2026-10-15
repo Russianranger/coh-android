@@ -1,0 +1,56 @@
+{
+  "schema": "coh-native-session-continuation-workers-v1",
+  "baseline": "365bc1f3e507b2de7d94a3d7d12fc25d9afd3e9c",
+  "actual_parallel_workers": 4,
+  "isolated_worktrees": true,
+  "workers": [
+    {
+      "scope": "Public Android crypto and qualification",
+      "worktree": "worker-crypto",
+      "commits": [
+        "b5674b3b3a83c239d166cc5c952b868350442d17",
+        "7d621abfcefd11f655aafb1bea3397dc4ef8612e"
+      ],
+      "result": "Both Android ABIs built; original host oracle passes; consolidated runner and workflow added."
+    },
+    {
+      "scope": "DB protocol and native socket controller",
+      "worktree": "worker-db",
+      "commits": [
+        "7e7a9e33cbcd4e55eb446083176e0a2a18ad34af",
+        "ae6b992"
+      ],
+      "result": "95925 wire checks plus715 controller checks/10 UDP scenarios; both ABI tests built."
+    },
+    {
+      "scope": "Native MapServer entry",
+      "worktree": "worker-map",
+      "commits": [
+        "1a2182e",
+        "3ef5ace"
+      ],
+      "result": "240 original producer goldens;29514 checks/10652 negatives/17 UDP scenarios; both ABI tests built."
+    },
+    {
+      "scope": "Original NetLink oracle then integrated stage owner",
+      "worktree": "worker-server",
+      "commits": [
+        "cf52ec67c7cbee23b7a195d61a095d83c7e29779",
+        "0dc6405f4e8aaa26f7879f334c14b96716d8b615"
+      ],
+      "result": "40 unchanged original functions/16 UDP scenarios;229 owneradapterchecks+41 realmoduleTCPchecks."
+    }
+  ],
+  "coordinator": "AuthServer TCP controller523checks/11scenarios, combined library integration, physical acceptance receipt, safe publication and qualification evidence.",
+  "independent_readonly_review": "Auth/TCP/controller, recovered files and session owner reviewed. Owner ID freshness/cumulative socket diagnostics/failclosedDBtimeout findings corrected and tested.",
+  "independent_support_work_preserved": {
+    "head": "365bc1f3e507b2de7d94a3d7d12fc25d9afd3e9c",
+    "workflow": "38702695275",
+    "artifact": "11957750066",
+    "apk_sha256": "4cf976478654ab5005257923a177a9c56126bc323871429ca73e70f0439ffde0"
+  },
+  "actual_authenticated_server_session": false,
+  "full_native_world": false,
+  "new_apk_created": false,
+  "accepted_apks_rebuilt": false
+}

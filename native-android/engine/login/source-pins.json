@@ -1,0 +1,20 @@
+{
+  "source_revision": "pinned repository source",
+  "sha256_lf": {
+    "upstream/ouroboros/Game/src/clientcomm/authclient.c": "d1f5ff0dae7728af8537e727ff781c8930345d536634e3438e661ebb8c3f3015",
+    "upstream/ouroboros/Common/auth/auth.c": "589ca2a4353e5725cb1aad90c2f24e9dc852e6bbdad034e5932de17635bffa49",
+    "upstream/ouroboros/Common/auth/auth.h": "6b80effb6fe431a9552b2e957262ec0da904af66caa716474bdd2d573b5835fe"
+  },
+  "audit": [
+    "authLogin",
+    "authWaitFor",
+    "acGetProtocolVer",
+    "acGetLoginOK",
+    "acGetSendServerList",
+    "acGetPlayOK",
+    "authGetPacket",
+    "authSendPacket",
+    "setupPacketSizeOffset"
+  ],
+  "note": "Control-flow/source audit; credential/framing byte oracles remain in engine/auth/check.py. Scripted peer tests are not source server execution."
+}

@@ -1,0 +1,23 @@
+{
+  "accepted_auth_provider_source_unchanged": true,
+  "actual_server_interoperability_verified": false,
+  "android_test_executed": false,
+  "api": 26,
+  "artifacts_sha256": {
+    "arm64-v8a": "fda2c392f369e09b5891a99f5110a8b7461aa4ea0d58d744f8c62b8e673b528a",
+    "x86_64": "3e425db4c12cefe37be159bb424624a3aca87dfb0e50d5b6e6a541513c4ac6b6"
+  },
+  "cmake_version": "3.31.10",
+  "compiled_and_linked_abis": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "environment_note": "Initial NDK ZIP extraction created regular files for 31 symlinks; root restored links from verified ZIP metadata before final link. The unchanged ARM64 libcrypto was reused.",
+  "native_source_fixture": "#include \"coh_auth.h\"\n__attribute__((visibility(\"default\"))) const CohAuthCrypto *coh_auth_smoke(void) {return coh_auth_openssl_provider();}\n",
+  "ndk_revision": "28.2.13676358",
+  "physical_thor_accepted": false,
+  "project_fixture": "cmake_minimum_required(VERSION 3.22)\nproject(coh_auth_android_smoke C)\nadd_subdirectory(\"/workspace/scratch/cd30b2fc1c9e/worker-crypto/native-android/engine/auth\" auth)\nadd_subdirectory(\"/workspace/scratch/cd30b2fc1c9e/worker-crypto/native-android/engine/auth/android\" crypto)\nadd_library(coh_auth_smoke SHARED entry.c \"/workspace/scratch/cd30b2fc1c9e/worker-crypto/native-android/src/coh_blowfish.c\" \"/workspace/scratch/cd30b2fc1c9e/worker-crypto/native-android/protocol/coh_protocol.c\")\ntarget_link_libraries(coh_auth_smoke PRIVATE coh_auth_android_crypto)\ntarget_link_options(coh_auth_smoke PRIVATE \"-Wl,-z,defs\" \"-Wl,-z,max-page-size=16384\" \"-Wl,--exclude-libs,ALL\")\n",
+  "shared_library_no_undefined_symbols": true,
+  "status": "PASS",
+  "wrong_abi_receipt_rejected": true
+}

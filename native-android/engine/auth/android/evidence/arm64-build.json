@@ -1,0 +1,53 @@
+{
+  "abi": "arm64-v8a",
+  "actual_server_interoperability_verified": false,
+  "android_crypto_provider_linked": true,
+  "android_test_executed": false,
+  "api": 26,
+  "artifacts_sha256": {
+    "lib/libcoh_auth_android_check.so": "117e7d8ddeb4123840a9ec5812424a2723417073d00326a8aa8451c3c09876df",
+    "lib/libcoh_auth_android_crypto.a": "d41cb452c49317da7c6135e52cb3b3be2e758e641452122c8e1684742cdc1aea",
+    "lib/libcrypto.a": "0f4e75215d38550a0648aae1b881813e6953255cd0690ba8dc17c91a403c8923",
+    "test_auth_android": "8f1884bcbf290e7a4626551e3b9484adfd0e132fb6a6c4a82986fef988cf8217"
+  },
+  "authenticated_server_session": false,
+  "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+  "configure_options": [
+    "android-arm64",
+    "-D__ANDROID_API__=26",
+    "no-shared",
+    "no-module",
+    "no-dso",
+    "no-engine",
+    "no-tests",
+    "no-docs",
+    "no-apps",
+    "-DOPENSSL_NO_AUTOLOAD_CONFIG",
+    "--prefix=/coh-native/openssl",
+    "--openssldir=/coh-native/openssl/ssl",
+    "--libdir=lib",
+    "-ffile-prefix-map=/workspace/scratch/cd30b2fc1c9e/crypto-build/build/arm64-v8a=openssl-build",
+    "-fPIC"
+  ],
+  "dynamic_openssl_dependency": false,
+  "emulator_qualified": false,
+  "native_source_sha256": {
+    "engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+    "engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+    "engine/auth/tests/test_auth.c": "db2193b84cb703ef5f2be9ed744d60775c874911f15cbbebf782310c4093772c",
+    "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470"
+  },
+  "ndk_revision": "28.2.13676358",
+  "openssl_archive_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "openssl_license": "Apache-2.0",
+  "openssl_license_sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a",
+  "openssl_version": "3.5.9",
+  "physical_thor_accepted": false,
+  "private_android_crypto_dependency": false,
+  "scope": "Android compile and link qualification only",
+  "shared_elf_machine": "AArch64",
+  "source_date_epoch": "1790640000",
+  "source_pin_sha256": "f3117dc4154a95c0d1a473e7ccf488ef3e5c73e560b4415dbb63366956f66239",
+  "status": "PASS"
+}

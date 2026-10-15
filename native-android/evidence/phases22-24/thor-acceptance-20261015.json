@@ -1,0 +1,83 @@
+{
+  "schema": "coh-native-gates22-24-physical-acceptance-v1",
+  "accepted": true,
+  "phases": [
+    22,
+    23,
+    24
+  ],
+  "basis": "User previously accepted this exact test and reaffirmed acceptance in this continuation. Offline bounded scene only.",
+  "apk": {
+    "bytes": 1931361,
+    "sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639"
+  },
+  "app": {
+    "package": "org.coh.sessionclient.walk",
+    "version_name": "0.3.0-gates22-24",
+    "version_code": 3
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "report": {
+    "name": "COH-NativeSession-20261015-015232.json",
+    "sha256": "cabd7a137c380a41714a59aaee723356d7969ccd931ea46f327e336a97e68b12",
+    "library_file_id": "libfile_a704ef939b5081919fadded25a4a44e4",
+    "download_url": "https://chatgpt.com/api/library/files/libfile_a704ef939b5081919fadded25a4a44e4/download"
+  },
+  "evidence": {
+    "frames": 29105,
+    "graphics_contexts_started": 5,
+    "graphics_contexts_completed_at_export": 4,
+    "gl_errors": 0,
+    "character_tf_mismatches": 0,
+    "walkable_tf_mismatches": 0,
+    "static_tf_mismatches": 0,
+    "static_tf_components": 326856,
+    "direction_mask": 15,
+    "controller_events": 6252,
+    "source_assets": {
+      "geo_loads": 3,
+      "texture_loads": 6,
+      "errors": 0
+    },
+    "cache_hits": 481,
+    "cache_misses": 8,
+    "near_reset_instances": 6,
+    "far_reset_instances": 11,
+    "scene_catalog_instances": 11,
+    "blocked_ticks": 493,
+    "sliding_ticks": 24,
+    "export_succeeded": true,
+    "lifecycle": "Two Recreate requests, two pause/resume interruptions and five Surface generations recorded; current Surface remains active during export."
+  },
+  "screenshots": [
+    {
+      "name": "01-1006612933.jpg",
+      "bytes": 139437,
+      "sha256": "15a20be4892e31249a01ac3b309ba75440abe40c0e6a08cbf9dc47ce2964b75c",
+      "observed": "Far 11/11 or Near 6/11 scene with actor and original benches"
+    },
+    {
+      "name": "02-1006612934.jpg",
+      "bytes": 137303,
+      "sha256": "a697e30af0af6a0bb9fc2c1dec7c4fbc10a1b4f3cf32f9b5c00d3499897009d4",
+      "observed": "Far 11/11 or Near 6/11 scene with actor and original benches"
+    }
+  ],
+  "limits": [
+    "No live server/login/entity replication",
+    "Not full Atlas",
+    "Not sustained full-game performance"
+  ],
+  "rerun_required": false,
+  "existing_host_emulator_receipts": "Historical receipts retain the pre-acceptance status applicable when originally written."
+}
