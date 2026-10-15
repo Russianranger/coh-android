@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.22.1)
+# Add engine/assets first; source groups never hide IO, renderer or GL work.
+if(NOT TARGET coh_engine_assets)
+    message(FATAL_ERROR "Add native-android/engine/assets before engine/world")
+endif()
+add_library(coh_engine_world STATIC coh_world_stream.c)
+target_include_directories(coh_engine_world PUBLIC .)
+target_compile_features(coh_engine_world PUBLIC c_std_11)
+target_compile_options(coh_engine_world PRIVATE -Wall -Wextra -Werror -pedantic -ffp-contract=off)
+target_link_libraries(coh_engine_world PUBLIC coh_engine_assets m)

@@ -33,6 +33,7 @@ PREAMBLE = r'''
 #include "coh_locomotion.h"
 #include "coh_walk.h"
 #include "coh_walkable_scene.h"
+#include "session_stream_world.h"
 typedef unsigned GLuint;
 typedef intptr_t jlong;
 typedef void *jclass;
@@ -74,6 +75,11 @@ int main(void) {
     s.walkable_draws=12123;s.walkable_tf_components=2600;s.walkable_visible_pixels=15700;
     s.motion.position[0]=31.25f;s.motion.position[1]=12.5f;s.motion.position[2]=-21.75f;
     s.walkable.spawn_yaw=.5f;s.obstacle_min[0]=1;s.obstacle_max[2]=9;
+    s.stream_stats=(CohSessionWorldStats){.catalog_instances=11,.selected_instances=6,.resident_bytes=12345,.budget_bytes=524288,
+        .peak_resident_bytes=20000,.selection_updates=3,.cache_hits=41,.cache_misses=8,.evictions=2,
+        .generation=3,.draws=120,.view_radius=24,.geo_loads=3,.texture_loads=6,.errors=0,
+        .draw_packets=120,.tf_components=6144,.tf_mismatches=0,.visible_pixels=41000,.material_mode_mask=3,
+        .owned_cpu_bytes=462508,.gpu_bytes=902144,.tf_max_error=.000001f};
     s.animation.move=COH_LOCOMOTION_RIGHT;
     for(unsigned i=0;i<COH_LOCOMOTION_CLIPS;i++)s.animation_move_samples[i]=1000u+i*13u;
     snprintf(s.failure,sizeof s.failure,"Test quoted \"failure\" \\ path\nline");
@@ -86,6 +92,14 @@ int main(void) {
     s.walking_grounded_ticks=s.walking_blocked_ticks=s.walking_slide_ticks=s.walking_bounded_ticks=UINT64_MAX;
     s.walkable_draws=s.walkable_tf_components=s.walkable_tf_mismatches=s.walkable_visible_pixels=UINT64_MAX;
     s.walking.collision_queries=s.walking.triangle_tests=s.walking.contact_hits=s.walking.wall_hits=s.walking.ground_hits=UINT32_MAX;
+    s.stream_stats.catalog_instances=s.stream_stats.selected_instances=s.stream_stats.resident_bytes=UINT64_MAX;
+    s.stream_stats.budget_bytes=s.stream_stats.peak_resident_bytes=s.stream_stats.selection_updates=UINT64_MAX;
+    s.stream_stats.cache_hits=s.stream_stats.cache_misses=s.stream_stats.evictions=s.stream_stats.draws=UINT64_MAX;
+    s.stream_stats.geo_loads=s.stream_stats.texture_loads=s.stream_stats.errors=s.stream_stats.draw_packets=UINT64_MAX;
+    s.stream_stats.tf_components=s.stream_stats.tf_mismatches=s.stream_stats.visible_pixels=UINT64_MAX;
+    s.stream_stats.owned_cpu_bytes=s.stream_stats.gpu_bytes=UINT64_MAX;
+    s.stream_stats.generation=s.stream_stats.material_mode_mask=UINT32_MAX;
+    s.stream_stats.tf_max_error=s.stream_stats.view_radius=3.402823466e38f;
     memset(s.failure,255,sizeof s.failure-1);s.failure[sizeof s.failure-1]=0;
     memset(s.gl_renderer,255,sizeof s.gl_renderer-1);s.gl_renderer[sizeof s.gl_renderer-1]=0;
     for(unsigned i=0;i<COH_LOCOMOTION_CLIPS;i++)s.animation_move_samples[i]=UINT64_MAX;
@@ -115,7 +129,7 @@ def main():
     include_paths = [core / 'world-probe/app/src/main/cpp',
                      core / 'character-probe/app/src/main/cpp',
                      core / 'material-probe/app/src/main/cpp',
-                     core / 'world', core / 'animation', core / 'character',
+                     core / 'session-client/app/src/main/cpp', core / 'world', core / 'animation', core / 'character',
                      core / 'motion', core / 'locomotion', core / 'walk', core / 'walkable']
     with tempfile.TemporaryDirectory(prefix='coh-snapshot-') as directory:
         code = Path(directory) / 'snapshot.c'
@@ -150,6 +164,20 @@ def main():
         'sliding_ticks': 17, 'bounded_ticks': 2, 'collision_queries': 23951,
         'triangle_tests': 82391, 'triangles': 276, 'bounded_scene': True,
         'spawn_yaw': .5, 'obstacle_bounds_min': [1, 0, 0], 'obstacle_bounds_max': [0, 0, 9]}
+    assert normal['stream'] == {'catalog_instances':11,'selected_instances':6,'resident_bytes':12345,
+        'budget_bytes':524288,'peak_resident_bytes':20000,'selection_updates':3,'cache_hits':41,
+        'cache_misses':8,'evictions':2,'generation':3,'draws':120,'view_radius':24}
+    assert normal['source_assets'] == {'geo_loads':3,'texture_loads':6,'errors':0}
+    assert normal['static_renderer']['tf_components'] == 6144
+    assert normal['static_renderer']['tf_mismatches'] == 0
+    assert normal['static_renderer']['visible_pixels'] == 41000
+    assert normal['static_renderer']['material_mode_mask'] == 3
+    assert normal['static_renderer']['owned_cpu_bytes'] == 462508
+    assert normal['static_renderer']['gpu_bytes'] == 902144
+    assert abs(normal['static_renderer']['tf_max_error']-1e-6) < 1e-12
+    assert maximum['stream']['draws'] == maximum['source_assets']['texture_loads'] == (1<<64)-1
+    assert maximum['static_renderer']['owned_cpu_bytes'] == (1<<64)-1
+    assert maximum['stream']['generation'] == maximum['static_renderer']['material_mode_mask'] == (1<<32)-1
     assert normal['walk_contact_hits'] == 352 and normal['walk_wall_hits'] == 42 and normal['walk_ground_hits'] == 310
     assert normal['walkable_tf_components'] == 2600 and normal['walkable_tf_mismatches'] == 0
     assert normal['walkable_visible_pixels'] == 15700 and normal['walkable_draws'] == 12123
@@ -186,7 +214,7 @@ def main():
         'json_cases': 3, 'directional_clip_counters': 12, 'maximum_depth_diagnostics': 16,
         'maximum_snapshot_bytes': max(map(len, lines)), 'snapshot_capacity_bytes': 16384,
         'quoted_backslash_newline_fields_verified': True,
-        'walk_and_authored_scene_counters_verified': True,
+        'walk_and_authored_scene_counters_verified': True, 'indexed_world_and_asset_renderer_counters_verified': True,
         'uint64_max_counter_preserved': True, 'positive_control_values_preserved': True,
         'address_and_undefined_sanitizers_passed': True,
         'leak_sanitizer_executed': False,

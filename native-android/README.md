@@ -72,13 +72,28 @@ contains 6,120 frames, zero transform/non-tie depth mismatches, real both-stick
 coverage, six blocked/six sliding ticks and no safety-bound events. Complete
 emulator automation remains incomplete; its failed result is preserved separately.
 
-The current
+The physically accepted 0.2.0
 [CoH-Native-Session-Client-0.2.0-arm64.apk](https://chatgpt.com/api/library/files/libfile_1f69175230b08191b4c8ea65e369139c/download)
 is 2,344,055 bytes, SHA256
 `2d59e2b39af99facc6f3ac26b310aeba85802542efabb1e71d90e2d33a00de92`
 ([original artifact 11936304916](https://github.com/Russianranger/coh-android/actions/runs/38656997946/artifacts/11936304916)).
 It installs alongside the accepted 0.1.0 app without deleting its data. Use the
-[combined Thor procedure](session-client/THOR-TEST.md). Gates 13–18 remain
+[original combined Thor procedure](session-client/THOR-TEST-19-21.md). Gates 13–18 remain
 accepted, with the unchanged
 [0.1.0 rollback artifact](https://github.com/Russianranger/coh-android/actions/runs/38637681649/artifacts/11929666705)
 and [original instructions](session-client/THOR-TEST-16-18.md) available.
+
+The current development batch integrates gates 22–24 in Session Client 0.3.0:
+the indexed loader admits eight pinned original raw assets, a bounded source
+Atlas hierarchy selects three model endpoints, and the generic native renderer
+draws the authored floor plus ten bench instances. Near/Far view distance selects
+six/eleven instances at the reset spawn. The expanded 2,304-triangle collision
+scene matches the same visual placements, retaining accepted source WALK and
+directional locomotion. This is a controlled neutral-ambient/no-fog station
+subset; full Atlas closure, environment lighting and live networking are later
+milestones. Host/source/ARM64 qualification is recorded in the
+[world module](engine/world/README.md) and [asset/render bridge](engine/bridge/README.md).
+New APK identity and integrated Android/Thor qualification are **pending**;
+the [consolidated 0.3.0 test](session-client/THOR-TEST.md) carries explicit pending
+artifact markers until the coordinator records the verified build. The existing
+0.2.0 physical acceptance and its independent emulator failure remain unchanged.

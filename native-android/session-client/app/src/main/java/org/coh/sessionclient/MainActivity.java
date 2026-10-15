@@ -72,11 +72,11 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         TextView title = new TextView(this);
-        title.setText("Native City of Heroes • Offline Atlas scene");
+        title.setText("Native City of Heroes • Streamed Atlas scene");
         title.setTextSize(18); layout.addView(title);
         TextView controls = new TextView(this);
         controls.setText("Left stick / WASD / D-pad: move • Right stick / drag: look\n"
-                + "Grounded WALK on authored ground. Test obstacles, wall sliding and direction changes.");
+                + "Authored Atlas assets • View distance selects a bounded part of the map. Use short movement presses.");
         layout.addView(controls);
         LinearLayout buttons = new LinearLayout(this);
         Button reset = new Button(this); reset.setText("Reset actor");
@@ -88,7 +88,13 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         buttons.addView(recreate);
         Button export = new Button(this); export.setText("Export report");
         export.setOnClickListener(v -> exportReport()); buttons.addView(export);
+        Button distance = new Button(this); distance.setText("View distance");
+        distance.setOnClickListener(v -> {
+            if (handle != 0) SessionNative.viewDistance(handle);
+            event("view_distance_requested"); saveReport();
+        });
         layout.addView(buttons);
+        layout.addView(distance);
         status = new TextView(this); status.setText("Preparing native scene…"); layout.addView(status);
         scene = new FrameLayout(this); layout.addView(scene, new LinearLayout.LayoutParams(-1, 0, 1));
         setContentView(layout);
@@ -127,7 +133,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
             try {
                 JSONObject manifest = new JSONObject(new String(readAsset("asset-manifest.json"), StandardCharsets.UTF_8));
                 JSONObject records = manifest.getJSONObject("assets");
-                String[] names = {"world.bin", "character.bin", "rig.bin", "morph.bin", "locomotion.bin", "walkable.bin"};
+                String[] names = {"world.bin", "character.bin", "rig.bin", "morph.bin", "locomotion.bin", "walkable.bin", "map.bin"};
                 byte[][] bytes = new byte[names.length][];
                 for (int i=0; i<names.length; i++) {
                     bytes[i] = readAsset(names[i]); JSONObject pin = records.getJSONObject(names[i]);
@@ -135,7 +141,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
                         throw new IllegalStateException("Asset integrity: " + names[i]);
                 }
                 JSONObject apk = apkIdentity();
-                long result = SessionNative.createSession(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5]);
+                long result = SessionNative.createSession(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6]);
                 if (result == 0) throw new IllegalStateException("Native scene rejected its fixtures");
                 handle = result;
                 main.post(() -> {
@@ -229,11 +235,11 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         JSONObject d=new JSONObject().put("manufacturer",Build.MANUFACTURER).put("model",Build.MODEL)
                 .put("sdk",Build.VERSION.SDK_INT).put("abis",new JSONArray(Build.SUPPORTED_ABIS))
                 .put("emulator_detected",Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk_gphone"));
-        JSONObject app=new JSONObject().put("package",getPackageName()).put("version_name","0.2.0-gates19-21")
-                .put("version_code",2).put("installed_apk",apkIdentity);
-        JSONObject j=new JSONObject().put("schema","coh-native-session-v1").put("phases",new JSONArray(new int[]{19,20,21}))
+        JSONObject app=new JSONObject().put("package",getPackageName()).put("version_name","0.3.0-gates22-24")
+                .put("version_code",3).put("installed_apk",apkIdentity);
+        JSONObject j=new JSONObject().put("schema","coh-native-session-v1").put("phases",new JSONArray(new int[]{22,23,24}))
                 .put("session_id",Long.toHexString(sessionStarted)).put("updated_at",new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX",Locale.US).format(new Date()))
-                .put("scope","Persistent offline Wretch with authored Atlas ground/obstacles, bounded source WALK collision and directional locomotion; no login, full map or replication")
+                .put("scope","Persistent native Wretch with indexed authentic assets, source-authored bounded Atlas selection and generic renderer; source WALK retained; no login, full map or replication")
                 .put("app",app).put("device",d).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest)
                 .put("events",new JSONArray(events.toString())).put("resumed",resumed).put("render_busy",renderQueued)
                 .put("report_write_failed",writeFailed).put("failure",failure==null?JSONObject.NULL:failure)
@@ -255,9 +261,12 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         try {
             JSONObject j=report(); pendingReport.set(j.toString(2).getBytes(StandardCharsets.UTF_8)); queueWriter();
             JSONObject n=j.optJSONObject("native");
+            JSONObject stream=n==null ? null : n.optJSONObject("stream");
             String move=n==null ? "starting" : n.optString("animation_move","starting");
             status.setText(failure!=null ? failure : !assetsVerified ? "Preparing native scene…" :
                     "Offline native session • " + move + " • " + (n==null ? "starting" : n.optLong("frames")+" frames")
+                    + (stream==null ? "" : " • " + (stream.optDouble("view_radius")<60 ? "Near" : "Far")
+                        + " • " + stream.optLong("selected_instances") + "/" + stream.optLong("catalog_instances") + " objects")
                     + (writeFailed ? " • report save failed" : " • report ready"));
         } catch(Exception ex) { failure=ex.toString(); status.setText(failure); }
     }

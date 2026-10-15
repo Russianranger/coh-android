@@ -15,7 +15,11 @@ execute_process(COMMAND "${Python3_EXECUTABLE}" "${WORLD_SHADER_ROOT}/embed_worl
 if(NOT EMBED_RESULT EQUAL 0)
     message(FATAL_ERROR "Could not embed accepted source world shaders")
 endif()
-add_library(coh_session_client SHARED session_renderer.c
+add_library(coh_session_client SHARED session_renderer.c session_stream_world.c session_stream_qualify.c
+    "${CORE_ROOT}/engine/assets/coh_asset_loader.c" "${CORE_ROOT}/engine/assets/coh_asset_geo.c"
+    "${CORE_ROOT}/engine/bridge/coh_asset_render.c" "${CORE_ROOT}/engine/world/coh_world_stream.c"
+    "${CORE_ROOT}/engine/renderer/coh_renderer.c" "${CORE_ROOT}/engine/renderer/coh_renderer_gles.c"
+    "${CORE_ROOT}/src/coh_assets.c" "${CORE_ROOT}/src/coh_dds.c"
     "${WORLD_CPP}/coh_world_scene.c" "${CHARACTER_CPP}/coh_scene.c"
     "${MATERIAL_CPP}/coh_mesh.c" "${CORE_ROOT}/world/coh_world.c"
     "${CORE_ROOT}/character/coh_character.c"
@@ -25,9 +29,11 @@ add_library(coh_session_client SHARED session_renderer.c
 target_include_directories(coh_session_client PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
     "${MATERIAL_CPP}" "${WORLD_CPP}" "${CHARACTER_CPP}" "${CORE_ROOT}/world"
     "${CORE_ROOT}/animation" "${CORE_ROOT}/character" "${CORE_ROOT}/motion"
-    "${CORE_ROOT}/locomotion" "${CORE_ROOT}/walk" "${CORE_ROOT}/walkable")
+    "${CORE_ROOT}/locomotion" "${CORE_ROOT}/walk" "${CORE_ROOT}/walkable"
+    "${CORE_ROOT}/include" "${CORE_ROOT}/engine/assets" "${CORE_ROOT}/engine/bridge"
+    "${CORE_ROOT}/engine/world" "${CORE_ROOT}/engine/renderer")
 target_compile_features(coh_session_client PRIVATE c_std_11)
 target_compile_options(coh_session_client PRIVATE -Wall -Wextra -Werror -ffp-contract=off -fno-strict-aliasing)
 set_source_files_properties("${CORE_ROOT}/walk/source_world.c" "${CORE_ROOT}/walk/source_ctri.c"
     PROPERTIES COMPILE_OPTIONS "-Wno-unused-variable;-Wno-unused-parameter;-Wno-unused-but-set-variable;-Wno-unused-function;-Wno-misleading-indentation")
-target_link_libraries(coh_session_client PRIVATE android EGL GLESv3 m)
+target_link_libraries(coh_session_client PRIVATE android EGL GLESv3 z m)

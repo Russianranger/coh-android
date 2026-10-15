@@ -1,0 +1,98 @@
+{
+  "schema": "coh-gate23-source-pins-v1",
+  "source_tree": "f1aab78ed5cd4e33046758f256e38e777a5ee4a3",
+  "source_files": [
+    {
+      "path": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt",
+      "bytes": 2617295,
+      "sha256": "e2fcea989f1030e6e4fc57d94d2130302a8271eaabcbd8b9a6488040d94e9e28"
+    },
+    {
+      "path": "upstream/i24/data/object_library/Streets/elements/misc_sm/misc_sm.txt",
+      "bytes": 2739,
+      "sha256": "713ab4539cf10d60c4f4656dd4b907b4cf81cee0ba8749992607a9dbea1e4061"
+    },
+    {
+      "path": "upstream/i24/data/object_library/Special_Buildings/trainstation/trainstation.txt",
+      "bytes": 49407,
+      "sha256": "24829d4ac33572f65f22ab7e8fe52b7c0411b2e7e9d9036c8d280ae4af212689"
+    },
+    {
+      "path": "upstream/i24/data/tricks/streets/elements/streets_misc.txt",
+      "bytes": 1214,
+      "sha256": "a43e2c151b3e40e3b98c026464e99a31c3d3dc5099c9b8aa829dde79c87ded33"
+    },
+    {
+      "path": "upstream/i24/data/tricks/streets/elements/monorail.txt",
+      "bytes": 2444,
+      "sha256": "a962f16fdd809705775d073d21a1daca87f15912aa1228e0cddc2e0a141a7af6"
+    }
+  ],
+  "unchanged_original_math_functions": {
+    "mathutil.c": {
+      "sha256_lf": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "functions": {
+        "createMat3YPR": "20ec80bc614452b9ab22a836ea9c4db022cca7daa6652583a3735333c5ccf688",
+        "mulMat3": "28003f31430d1d5b8adf25814c778b92b8c6fe86a0a8208a948fb99a1d39e720",
+        "transposeMat3": "af59d8cb8908aa5ff033137046d889973d3a768e04c53d07bc1751e7f003d480"
+      }
+    },
+    "mathutil.h": {
+      "sha256_lf": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "functions": {
+        "mathutil_sincosf": "f600ecc6d916fb395eee41a040a86167364330cc04bee1316dff0799f5f9e418",
+        "mulMat3Inline": "412407b7a6b082cadeb364046d87d55603ba0ececdbe92d24527edfe5ba462ca",
+        "mulMat4Inline": "b25d6f4ba5ed987884590b3e0d15cf48c9131d533e1024d951830de541ebd4e2",
+        "copyMat4": "ad9e31af15e00f444d897dcdb1fe705410928d3c0f7d5575f62b661080cec926",
+        "mulVecMat3": "34d84f255ae3628fad8a977a937eb904e6ce916ad988c2f0d7d2aa87293a78d8",
+        "mulVecMat4": "1108a1a6e685f826246bbdf53e9037b7ecd00bf6e2fd780353368eb6141d1c73",
+        "mulVecMat44": "152882d6e3e09e6d265b6c25deb2f490f7d7af1c39268d8bbaace2de83cca709"
+      },
+      "RAD_macro_sha256": "95f32722578c7aa0419524cd033f665b8dbbef4fa106c37387777f149575d126"
+    },
+    "gfx.c": {
+      "sha256_lf": "9965ea6a472a8b693015540a53142cdf023a2399ecc9dc88f338c5f0b4f42a7e",
+      "functions": {
+        "gfxSetViewMat": "7bb4e3489eb49588ff5cd9b8c150751793a460c7679f016b04d314fec36c7dca"
+      }
+    },
+    "renderUtil.c": {
+      "sha256_lf": "19d1cf0edd0e5a398adc7f05165bc9dc08f7957fa700f6786c00e8c485e6dbee",
+      "functions": {
+        "rdrFixMat": "9f9a9c7e29d3afa5a409450247dab6ab6b7215b0f43ef1fa7dac549e85f7d4d2",
+        "rdrSetupFrustum": "68f151f48a173e48e1cf50b5409e1307d7e5113bf16f197d7112902c595c5b0d",
+        "rdrSetupPerspectiveProjection": "cb7051dbf6dd492492d808ff1f80d8298d4b134b408abe17709b23b95e809441"
+      }
+    },
+    "textparser.c": {
+      "sha256_lf": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "functions": {
+        "degrees_parse": "d002bfdc376e8d85f6a454c32347bbc69209a9764362f9f727a9b23078eac6ac"
+      }
+    }
+  },
+  "reused_source_material_receipts": [
+    {
+      "path": "evidence/phase9/source-trick-resolution.json",
+      "bytes": 7882,
+      "sha256": "c557465621831bccb0d46bfe44972eb038652fead7fa438df5fa1b9fdd165c19"
+    },
+    {
+      "path": "evidence/phases19-21/source-build-qualified/source-floor-resolution.json",
+      "bytes": 580,
+      "sha256": "ec1821500b4c0564c0d08372452c77f192380bb8d1a0bac2fc2b9a47d00ddba0"
+    }
+  ],
+  "fixture": {
+    "bytes": 161654,
+    "sha256": "1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f",
+    "format": "COHWB001 app envelope; not original PIGG"
+  },
+  "expanded_collision": {
+    "walkable.bin": {
+      "bytes": 605048,
+      "sha256": "e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357"
+    }
+  },
+  "scope": "All source-authored placements reachable from Atlas geometry references for three explicitly admitted RootMod endpoints. Full Atlas dependency closure/streaming, source light grids, portals, sounds and other endpoint materials remain unsupported. Accepted WALK kernels remain unchanged; new bounded collision closure covers all eleven admitted source instances."
+}

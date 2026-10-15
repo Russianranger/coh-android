@@ -1,0 +1,387 @@
+{
+  "schema": "coh-session-stream-gpu-v1",
+  "passed": true,
+  "source_sha256": {
+    "session-client/tools/stream_gpu_fixture.c": "48184af7e0d1d6a7eaa37fbef0ad30e58a6f4ff8862e59829708a7e278a2627f",
+    "session-client/app/src/main/cpp/session_stream_qualify.c": "7b1233a768e5a908acd1704d6a297dc2b3d34b5abff0949f78898b6b95652c21",
+    "engine/world/coh_world_stream.c": "762e98f449b4cce22d77ec576c9d65019e9a2739b7ecfde2fc8230d7770eb561",
+    "engine/bridge/coh_asset_render.c": "50524a72baa219033a01073135ef4b61b8dd289c634d1be6cb85394210f0e983",
+    "engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "engine/assets/coh_asset_geo.c": "0a264bea3ab8ccda040c969ef6a46decbbca60152261ddf34870e326e96daf71",
+    "engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "engine/renderer/coh_renderer_gles.c": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c",
+    "src/coh_assets.c": "dc9ba4e177cf4a2362e33d9684269e6acfdfac3518eca40ccbb874b923135483",
+    "src/coh_dds.c": "9b2525dffedb2de2b52d88b554aaf51ef851201b9b40fd87754b95b91b9f247c",
+    "world/coh_world.c": "9a914b7326e4852bd55827c58bab360cef2516f85268a25cdd4ede2cdfe39c92",
+    "session-client/app/src/main/cpp/session_stream_world.c": "8a75db4cbae73cbccf405bcdb2409186c17b17bbea6a87699d10a7964c5d4433",
+    "session-client/app/src/main/cpp/session_stream_world.h": "a86f89abaef0058cd765fa055b891de7b0337de347da843d17297dc2900e1522",
+    "session-client/app/src/main/cpp/session_stream_qualify.h": "615dc7fafc09793c105fa72ee3fcc48f9fe46041694898fedb360b0478dd6eb7",
+    "session-client/tools/stream_gpu_check.py": "3d5343a3e67386e2d91b9aead71049246905865450f1d7126cf87e0f936b327e",
+    "session-client/tools/stream_qualify_check.py": "7f9e92c4e0428be9da518b7445732dc4a875d5bde3fc3c65e994e01bec962c36"
+  },
+  "accepted_binary_alias": {
+    "source_metadata_sha256": "b7da7d864eba90cd6ba70ce87736a0ac2f6d704c380d4021cb26f905394fc2a0",
+    "binary_alias": {
+      "world-material-reference.bin": "material-reference.bin"
+    },
+    "binary_sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77",
+    "binary_bytes_unchanged": true
+  },
+  "profiles": [
+    {
+      "gles_version": "3.2",
+      "diagnostics": {
+        "passed": true,
+        "host_software_gpu_only": true,
+        "android_execution": false,
+        "physical_thor": false,
+        "identity": {
+          "vendor": "Mesa",
+          "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+          "version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+          "glsl": "OpenGL ES GLSL ES 3.20"
+        },
+        "source_assets": {
+          "world_sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f",
+          "material_reference_sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77",
+          "vertices": 512,
+          "indices": 564,
+          "textures": 4
+        },
+        "actual_mesh_lighting_cases": [
+          {
+            "lighting": 0,
+            "tf_components": 6144,
+            "tf_mismatches": 0,
+            "visible_pixels": 32967,
+            "max_error": 2.384185791015625e-07
+          },
+          {
+            "lighting": 1,
+            "tf_components": 6144,
+            "tf_mismatches": 0,
+            "visible_pixels": 32913,
+            "max_error": 2.384185791015625e-07
+          },
+          {
+            "lighting": 2,
+            "tf_components": 6144,
+            "tf_mismatches": 0,
+            "visible_pixels": 32803,
+            "max_error": 2.384185791015625e-07
+          }
+        ],
+        "negative_cases": [
+          "offscreen_visibility",
+          "zero_source_normal",
+          "vertex_budget",
+          "external_queue_preserved",
+          "partial_submit_cancelled_before_draw"
+        ],
+        "state_restoration_checked": [
+          "separate_read_draw_fbo",
+          "viewport",
+          "pack_buffer_alignment_row_skip",
+          "sampler_units_0_1_2_unbound",
+          "active_texture",
+          "depth_lequal_write_cw_back",
+          "color_mask"
+        ],
+        "recovery_after_failures": true,
+        "max_total_vertices": 200000,
+        "tf_components_per_vertex": 12,
+        "tf_tolerance": 0.0001,
+        "sources": {
+          "session-client/app/src/main/cpp/session_stream_qualify.h": "615dc7fafc09793c105fa72ee3fcc48f9fe46041694898fedb360b0478dd6eb7",
+          "session-client/app/src/main/cpp/session_stream_qualify.c": "7b1233a768e5a908acd1704d6a297dc2b3d34b5abff0949f78898b6b95652c21"
+        }
+      }
+    },
+    {
+      "gles_version": "3.0",
+      "diagnostics": {
+        "passed": true,
+        "host_software_gpu_only": true,
+        "android_execution": false,
+        "physical_thor": false,
+        "identity": {
+          "vendor": "Mesa",
+          "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+          "version": "OpenGL ES 3.0 Mesa 25.2.8-0ubuntu0.24.04.2",
+          "glsl": "OpenGL ES GLSL ES 3.00"
+        },
+        "source_assets": {
+          "world_sha256": "7289eb3a4478648dcefce682121ccd0448aee6a21a7c4977ffd6415dd11ece6f",
+          "material_reference_sha256": "bc29868b4660fe8ca62a1d78ac599c02e0c4c9ff73e34927d807d3140f0e2a77",
+          "vertices": 512,
+          "indices": 564,
+          "textures": 4
+        },
+        "actual_mesh_lighting_cases": [
+          {
+            "lighting": 0,
+            "tf_components": 6144,
+            "tf_mismatches": 0,
+            "visible_pixels": 32967,
+            "max_error": 2.384185791015625e-07
+          },
+          {
+            "lighting": 1,
+            "tf_components": 6144,
+            "tf_mismatches": 0,
+            "visible_pixels": 32913,
+            "max_error": 2.384185791015625e-07
+          },
+          {
+            "lighting": 2,
+            "tf_components": 6144,
+            "tf_mismatches": 0,
+            "visible_pixels": 32803,
+            "max_error": 2.384185791015625e-07
+          }
+        ],
+        "negative_cases": [
+          "offscreen_visibility",
+          "zero_source_normal",
+          "vertex_budget",
+          "external_queue_preserved",
+          "partial_submit_cancelled_before_draw"
+        ],
+        "state_restoration_checked": [
+          "separate_read_draw_fbo",
+          "viewport",
+          "pack_buffer_alignment_row_skip",
+          "sampler_units_0_1_2_unbound",
+          "active_texture",
+          "depth_lequal_write_cw_back",
+          "color_mask"
+        ],
+        "recovery_after_failures": true,
+        "max_total_vertices": 200000,
+        "tf_components_per_vertex": 12,
+        "tf_tolerance": 0.0001,
+        "sources": {
+          "session-client/app/src/main/cpp/session_stream_qualify.h": "615dc7fafc09793c105fa72ee3fcc48f9fe46041694898fedb360b0478dd6eb7",
+          "session-client/app/src/main/cpp/session_stream_qualify.c": "7b1233a768e5a908acd1704d6a297dc2b3d34b5abff0949f78898b6b95652c21"
+        }
+      }
+    }
+  ],
+  "world": {
+    "passed": true,
+    "host_software_gpu_only": true,
+    "android_execution": false,
+    "physical_thor": false,
+    "identity": {
+      "vendor": "Mesa",
+      "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+      "version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+      "glsl": "OpenGL ES GLSL ES 3.20"
+    },
+    "bundle_sha256": "1b7141f49387d7f37fecda62f7241363aea150e021cfba9bf66a996a3dd22a7f",
+    "original_raw_assets": [
+      {
+        "path": "data/object_library/streets/elements/misc_sm/misc_sm.geo",
+        "bytes": 51138,
+        "sha256": "04d03d09fef6f7c85225ae92ba0954c880dcef3d2e3ec3791b720d0dcc3d8cd4"
+      },
+      {
+        "path": "data/object_library/special_buildings/trainstation/trainstation.geo",
+        "bytes": 66919,
+        "sha256": "e88a1246c46c634a3b95b94531697dc4f52ba3a65b95f01d41764191e05372bf"
+      },
+      {
+        "path": "data/texture_library/world/streets/elements/monorail/modern_bench.texture",
+        "bytes": 22225,
+        "sha256": "dbe3b554a798f235d1865234a652f7a0528b48231f4f271d4c42296222aecac1"
+      },
+      {
+        "path": "data/texture_library/world/swappables_and_decals/signs/billboard/billboard_structure/signmetal.texture",
+        "bytes": 1694,
+        "sha256": "bdd32c3ad587b81f0704391e5da21156d68dc413c0b5ac8890b27d2c72a88978"
+      },
+      {
+        "path": "data/texture_library/world/filler/white.texture",
+        "bytes": 327,
+        "sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9"
+      },
+      {
+        "path": "data/texture_library/world/filler/grey.texture",
+        "bytes": 894,
+        "sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013"
+      },
+      {
+        "path": "data/texture_library/world/streets/elements/monorail/mono_station_infloor.texture",
+        "bytes": 11241,
+        "sha256": "af2c13822d3998622746a856cbfffb0b6c53b8ac440d090eb06ef98ce11842c4"
+      },
+      {
+        "path": "data/texture_library/world/streets/elements/monorail/mono_station_infloor_sml.texture",
+        "bytes": 3053,
+        "sha256": "c196327fb76ecd33bb5c2ddd2c5c373a0e33d43687020a0566d98fdea927220b"
+      }
+    ],
+    "selection": {
+      "near": {
+        "nodes": [
+          4,
+          12,
+          14,
+          16,
+          18,
+          20
+        ],
+        "packets": 12,
+        "exact_source_matrix_projection_components": 384
+      },
+      "far": {
+        "nodes": [
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24
+        ],
+        "packets": 22,
+        "exact_source_matrix_projection_components": 704
+      },
+      "moved_camera": {
+        "nodes": [
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24
+        ],
+        "packets": 22,
+        "exact_source_matrix_projection_components": 704
+      }
+    },
+    "surface": [
+      {
+        "catalog_instances": 11,
+        "selected_instances": 6,
+        "resident_bytes": 157491,
+        "budget_bytes": 524288,
+        "peak_resident_bytes": 157491,
+        "selection_updates": 1,
+        "cache_hits": 9,
+        "cache_misses": 8,
+        "evictions": 0,
+        "draws": 0,
+        "geo_loads": 3,
+        "texture_loads": 6,
+        "errors": 0,
+        "draw_packets": 0,
+        "tf_components": 41496,
+        "tf_mismatches": 0,
+        "visible_pixels": 35862,
+        "owned_cpu_bytes": 267456,
+        "gpu_bytes": 557056,
+        "generation": 1,
+        "material_mode_mask": 3,
+        "view_radius": 24.0,
+        "tf_max_error": 7.62939453125e-06
+      },
+      {
+        "catalog_instances": 11,
+        "selected_instances": 6,
+        "resident_bytes": 157491,
+        "budget_bytes": 524288,
+        "peak_resident_bytes": 157491,
+        "selection_updates": 123,
+        "cache_hits": 985,
+        "cache_misses": 8,
+        "evictions": 0,
+        "draws": 2118,
+        "geo_loads": 3,
+        "texture_loads": 6,
+        "errors": 0,
+        "draw_packets": 2118,
+        "tf_components": 82992,
+        "tf_mismatches": 0,
+        "visible_pixels": 71724,
+        "owned_cpu_bytes": 267456,
+        "gpu_bytes": 557056,
+        "generation": 2,
+        "material_mode_mask": 3,
+        "view_radius": 24.0,
+        "tf_max_error": 7.62939453125e-06
+      },
+      {
+        "catalog_instances": 11,
+        "selected_instances": 11,
+        "resident_bytes": 157491,
+        "budget_bytes": 524288,
+        "peak_resident_bytes": 157491,
+        "selection_updates": 124,
+        "cache_hits": 993,
+        "cache_misses": 8,
+        "evictions": 0,
+        "draws": 2118,
+        "geo_loads": 3,
+        "texture_loads": 6,
+        "errors": 0,
+        "draw_packets": 2118,
+        "tf_components": 164280,
+        "tf_mismatches": 0,
+        "visible_pixels": 108443,
+        "owned_cpu_bytes": 267456,
+        "gpu_bytes": 557056,
+        "generation": 3,
+        "material_mode_mask": 3,
+        "view_radius": 96.0,
+        "tf_max_error": 7.62939453125e-06
+      }
+    ],
+    "near_render": {
+      "visible_pixels": 35862,
+      "nonblack_chromatic_pixels": 12836
+    },
+    "far_render": {
+      "visible_pixels": 36719,
+      "nonblack_chromatic_pixels": 13571
+    },
+    "bounded_cache": {
+      "toggle_draws": 120,
+      "budget_bytes": 524288,
+      "peak_resident_bytes": 157491,
+      "unchanged_bridge_allocated_bytes": 267456,
+      "geo_decode_count": 3,
+      "texture_decode_count": 6,
+      "raw_evictions": 0,
+      "all_admitted_raw_assets_fit_budget": true
+    },
+    "context_recreate": {
+      "passed": true,
+      "generations": 3,
+      "gpu_uploads": 18,
+      "geo_decodes_unchanged": 3,
+      "texture_decodes_unchanged": 6,
+      "cpu_bytes_unchanged": 267456
+    },
+    "recreated_render": {
+      "visible_pixels": 36719,
+      "nonblack_chromatic_pixels": 13571
+    }
+  },
+  "android_arm64_link": {
+    "passed": true,
+    "execution": false,
+    "bytes": 124360,
+    "sha256": "952d40781d52b93c597bb84d7e2f8c09e7a562cb3f71c511defb1de4a40c6ed5",
+    "elf": "/tmp/coh-stream-gpu-ln1ckl30/stream-arm64.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, not stripped"
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "schema": "coh-map-acquisition-integration-proof-v1",
+  "passed": true,
+  "script": {
+    "path": "native-android/tools/map_fixture/acquire.py",
+    "sha256": "a3c1fd29402125858148224ec1665c2da747238223e77ad3ac67998afcfc1a58"
+  },
+  "offline_admission": {
+    "schema": "coh-map-source-acquisition-admission-v1",
+    "passed": true,
+    "checks": 13,
+    "network_accessed": false,
+    "raw_allowlist": [
+      "bench.texture",
+      "grey.texture",
+      "misc.geo",
+      "mono_station_infloor.texture",
+      "mono_station_infloor_sml.texture",
+      "sign.texture",
+      "trainstation.geo",
+      "white.texture"
+    ]
+  },
+  "local_reuse": {
+    "schema": "coh-map-source-acquisition-v1",
+    "passed": true,
+    "acquisition_passed": true,
+    "pin_sources": [
+      {
+        "path": "world_fixture/pins.json",
+        "bytes": 4192,
+        "sha256": "da8c4bcc69cbfa709754cbec231d23b67f8e91eb0c66ff2d850eaf7e3ef9ae50"
+      },
+      {
+        "path": "walkable_fixture/pins.json",
+        "bytes": 1823,
+        "sha256": "88951b876abb4ff3ef837c0272e05791ab2f27e733c9eb1aa0f4cc20e4c6c81c"
+      }
+    ],
+    "records": [
+      {
+        "file_name": "misc.geo",
+        "name": "data/object_library/streets/elements/misc_sm/misc_sm.geo",
+        "bytes": 51138,
+        "sha256": "04d03d09fef6f7c85225ae92ba0954c880dcef3d2e3ec3791b720d0dcc3d8cd4",
+        "crc32": "40e8fb08"
+      },
+      {
+        "file_name": "bench.texture",
+        "name": "data/texture_library/world/streets/elements/monorail/modern_bench.texture",
+        "bytes": 22225,
+        "sha256": "dbe3b554a798f235d1865234a652f7a0528b48231f4f271d4c42296222aecac1",
+        "crc32": "dbcd5e30"
+      },
+      {
+        "file_name": "sign.texture",
+        "name": "data/texture_library/world/swappables_and_decals/signs/billboard/billboard_structure/signmetal.texture",
+        "bytes": 1694,
+        "sha256": "bdd32c3ad587b81f0704391e5da21156d68dc413c0b5ac8890b27d2c72a88978",
+        "crc32": "c1f50b6f"
+      },
+      {
+        "file_name": "white.texture",
+        "name": "assets/texture_library/world/filler/white.texture",
+        "bytes": 327,
+        "sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9",
+        "crc32": "a45335c4"
+      },
+      {
+        "file_name": "grey.texture",
+        "name": "assets/texture_library/world/filler/grey.texture",
+        "bytes": 894,
+        "sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013",
+        "crc32": "d28455ba"
+      },
+      {
+        "file_name": "trainstation.geo",
+        "name": "data/object_library/special_buildings/trainstation/trainstation.geo",
+        "bytes": 66919,
+        "sha256": "e88a1246c46c634a3b95b94531697dc4f52ba3a65b95f01d41764191e05372bf",
+        "crc32": "6eb878c3"
+      },
+      {
+        "file_name": "mono_station_infloor.texture",
+        "name": "data/texture_library/world/streets/elements/monorail/mono_station_infloor.texture",
+        "bytes": 11241,
+        "sha256": "af2c13822d3998622746a856cbfffb0b6c53b8ac440d090eb06ef98ce11842c4",
+        "crc32": "d05ce0e0"
+      },
+      {
+        "file_name": "mono_station_infloor_sml.texture",
+        "name": "data/texture_library/world/streets/elements/monorail/mono_station_infloor_sml.texture",
+        "bytes": 3053,
+        "sha256": "c196327fb76ecd33bb5c2ddd2c5c373a0e33d43687020a0566d98fdea927220b",
+        "crc32": "da965b84"
+      }
+    ],
+    "locally_reused_after_size_crc_sha_verification": [
+      "misc.geo",
+      "bench.texture",
+      "sign.texture",
+      "white.texture",
+      "grey.texture",
+      "trainstation.geo",
+      "mono_station_infloor.texture",
+      "mono_station_infloor_sml.texture"
+    ],
+    "acquired_members": [],
+    "range_bytes_downloaded": 0,
+    "range_count": 0,
+    "range_budget_bytes_per_archive": 8388608,
+    "exact_http_range_enforced": true,
+    "etag_stable": true,
+    "zip_member_crc32_verified": true,
+    "all_fixture_sha256_verified": true,
+    "outer_full_hash_locally_verified": false,
+    "inner_full_hash_locally_verified": false,
+    "ranges_by_archive": []
+  },
+  "corrupt_local_network_recovery": {
+    "schema": "coh-map-source-acquisition-v1",
+    "passed": true,
+    "acquisition_passed": true,
+    "pin_sources": [
+      {
+        "path": "world_fixture/pins.json",
+        "bytes": 4192,
+        "sha256": "da8c4bcc69cbfa709754cbec231d23b67f8e91eb0c66ff2d850eaf7e3ef9ae50"
+      },
+      {
+        "path": "walkable_fixture/pins.json",
+        "bytes": 1823,
+        "sha256": "88951b876abb4ff3ef837c0272e05791ab2f27e733c9eb1aa0f4cc20e4c6c81c"
+      }
+    ],
+    "records": [
+      {
+        "file_name": "misc.geo",
+        "name": "data/object_library/streets/elements/misc_sm/misc_sm.geo",
+        "bytes": 51138,
+        "sha256": "04d03d09fef6f7c85225ae92ba0954c880dcef3d2e3ec3791b720d0dcc3d8cd4",
+        "crc32": "40e8fb08"
+      },
+      {
+        "file_name": "bench.texture",
+        "name": "data/texture_library/world/streets/elements/monorail/modern_bench.texture",
+        "bytes": 22225,
+        "sha256": "dbe3b554a798f235d1865234a652f7a0528b48231f4f271d4c42296222aecac1",
+        "crc32": "dbcd5e30"
+      },
+      {
+        "file_name": "sign.texture",
+        "name": "data/texture_library/world/swappables_and_decals/signs/billboard/billboard_structure/signmetal.texture",
+        "bytes": 1694,
+        "sha256": "bdd32c3ad587b81f0704391e5da21156d68dc413c0b5ac8890b27d2c72a88978",
+        "crc32": "c1f50b6f"
+      },
+      {
+        "file_name": "white.texture",
+        "name": "assets/texture_library/world/filler/white.texture",
+        "bytes": 327,
+        "sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9",
+        "crc32": "a45335c4"
+      },
+      {
+        "file_name": "grey.texture",
+        "name": "assets/texture_library/world/filler/grey.texture",
+        "bytes": 894,
+        "sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013",
+        "crc32": "d28455ba"
+      },
+      {
+        "file_name": "trainstation.geo",
+        "name": "data/object_library/special_buildings/trainstation/trainstation.geo",
+        "bytes": 66919,
+        "sha256": "e88a1246c46c634a3b95b94531697dc4f52ba3a65b95f01d41764191e05372bf",
+        "crc32": "6eb878c3"
+      },
+      {
+        "file_name": "mono_station_infloor.texture",
+        "name": "data/texture_library/world/streets/elements/monorail/mono_station_infloor.texture",
+        "bytes": 11241,
+        "sha256": "af2c13822d3998622746a856cbfffb0b6c53b8ac440d090eb06ef98ce11842c4",
+        "crc32": "d05ce0e0"
+      },
+      {
+        "file_name": "mono_station_infloor_sml.texture",
+        "name": "data/texture_library/world/streets/elements/monorail/mono_station_infloor_sml.texture",
+        "bytes": 3053,
+        "sha256": "c196327fb76ecd33bb5c2ddd2c5c373a0e33d43687020a0566d98fdea927220b",
+        "crc32": "da965b84"
+      }
+    ],
+    "locally_reused_after_size_crc_sha_verification": [
+      "misc.geo",
+      "sign.texture",
+      "white.texture",
+      "grey.texture",
+      "trainstation.geo",
+      "mono_station_infloor.texture",
+      "mono_station_infloor_sml.texture"
+    ],
+    "acquired_members": [
+      "bench.texture"
+    ],
+    "range_bytes_downloaded": 146924,
+    "range_count": 3,
+    "range_budget_bytes_per_archive": 8388608,
+    "exact_http_range_enforced": true,
+    "etag_stable": true,
+    "zip_member_crc32_verified": true,
+    "all_fixture_sha256_verified": true,
+    "outer_full_hash_locally_verified": false,
+    "inner_full_hash_locally_verified": false,
+    "ranges_by_archive": [
+      {
+        "outer_asset_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip",
+        "inner_member": "payloads/runtime/atlas-world-supplement.zip",
+        "ranges": [
+          [
+            1630076928,
+            1630092779
+          ],
+          [
+            357695488,
+            357761023
+          ],
+          [
+            515244032,
+            515309567
+          ]
+        ]
+      }
+    ]
+  },
+  "scope": "New map acquisition orchestration only. Does not repeat accepted geometry/texture/source routines or verify full archives."
+}

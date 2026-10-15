@@ -1,0 +1,106 @@
+name: Native Android source assets, Atlas residency and static renderer
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/session-client/**
+      - native-android/engine/assets/**
+      - native-android/engine/renderer/**
+      - native-android/engine/bridge/**
+      - native-android/engine/world/**
+      - native-android/tools/map_fixture/**
+      - native-android/tools/session_fixture/prepare_world_session.py
+      - native-android/tools/session_fixture/package_check_world.py
+      - native-android/tools/session_fixture/snapshot_check.py
+      - .github/workflows/native-world-session-client.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-world-session-client-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  package-and-emulator:
+    if: github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      LIBGL_ALWAYS_SOFTWARE: '1'
+      EGL_PLATFORM: surfaceless
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Record the new integrated qualification scope
+        run: |
+          mkdir -p native-android/results/world-session-client
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path('native-android/results/world-session-client/source-validation-stage.json').write_text(json.dumps({'schema':1,'gates':[22,23,24],'status':'started','source_commit':os.environ['GITHUB_SHA'],'accepted_qualification_repeated':False,'scope':'New integrated source asset/Atlas residency/static renderer path; no repeat of the accepted gates19-21 emulator sequence'},indent=2)+'\n')
+          PY
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install pinned native build components and focused host dependencies
+        run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
+          python3 -m pip install Pillow==12.3.0
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libegl1 libgl1 libgl1-mesa-dri
+      - name: Recover only the pinned accepted package and eight bounded source inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/Russianranger/coh-android/actions/artifacts/11936304916/zip > /tmp/coh-accepted-world-session.zip
+          python3 native-android/tools/map_fixture/acquire.py --self-test
+          python3 native-android/tools/map_fixture/acquire.py --output native-android/results/world-raw --use-verified-local
+          cp native-android/results/world-raw/corpus.json native-android/results/world-session-client/raw-source-acquisition.json
+          python3 native-android/tools/session_fixture/prepare_world_session.py --accepted-archive /tmp/coh-accepted-world-session.zip --source-root . --corpus native-android/results/world-raw --output native-android/session-client/app/src/main/assets --evidence-output native-android/results/world-session-client
+      - name: Qualify the new raw-asset render bridge and expanded authored map
+        run: |
+          python3 native-android/engine/bridge/check.py --corpus native-android/results/world-raw --source-root . --ndk "$ANDROID_HOME/ndk/28.2.13676358" --output native-android/results/world-session-client/host-bridge-proof.json
+          python3 native-android/engine/world/check.py --prepared native-android/session-client/app/src/main/assets --sanitize --ndk "$ANDROID_HOME/ndk/28.2.13676358" --output native-android/results/world-session-client/host-map-proof.json
+      - name: Qualify the actual integrated static GPU path and recreated source cache
+        run: |
+          python3 native-android/session-client/tools/stream_gpu_check.py --prepared native-android/session-client/app/src/main/assets --accepted-assets native-android/results/world-session-client/accepted-0.2-provenance --ndk "$ANDROID_HOME/ndk/28.2.13676358" --output native-android/results/world-session-client/host-integrated-gpu-proof.json
+      - name: Qualify bounded framework admission, preserved selectors and expanded snapshots
+        run: |
+          python3 native-android/session-client/tools/nextbatch_host_check.py --output native-android/results/world-session-client/nextbatch-host-checks.json
+          python3 native-android/session-client/tools/tap_host_check.py --output native-android/results/world-session-client/shared-selector-host-checks.json
+          python3 native-android/tools/session_fixture/snapshot_check.py --output native-android/results/world-session-client/snapshot-host.json
+      - name: Build and lint the new ARM64 native client
+        run: |
+          python3 native-android/session-client/gradle.py :app:assembleDebug :app:lintDebug
+          cp native-android/session-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/world-session-client/CoH-Native-Session-Client-0.3.0-arm64.apk
+      - name: Build the disposable emulator package and verify exact bytes and signer
+        run: |
+          python3 native-android/session-client/gradle.py -PprobeAbis=x86_64 :app:assembleDebug
+          cp native-android/session-client/app/build/outputs/apk/debug/app-debug.apk native-android/results/world-session-client/CoH-Native-Session-Client-0.3.0-emulator-x86_64.apk
+          python3 native-android/tools/session_fixture/package_check_world.py --output native-android/results/world-session-client --assets native-android/session-client/app/src/main/assets
+      - name: Enable hosted Android emulator acceleration
+        run: |
+          test -c /dev/kvm
+          sudo chmod 666 /dev/kvm
+      - name: Android 13 bounded real input, source residency, renderer and lifecycle
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/session-client/tools/nextbatch_emulator_check.py --apk native-android/results/world-session-client/CoH-Native-Session-Client-0.3.0-emulator-x86_64.apk --output native-android/results/world-session-client
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-android-session-client-gates22-24
+          path: native-android/results/world-session-client/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application android:allowBackup="false" android:label="CoH Native Session Client 0.2.0"
+    <application android:allowBackup="false" android:label="CoH Native Session Client 0.3.0"
         android:theme="@android:style/Theme.Material.Light.NoActionBar" android:supportsRtl="true">
         <activity android:name="org.coh.sessionclient.MainActivity" android:exported="true"
             android:launchMode="singleTop" android:configChanges="orientation|screenSize">

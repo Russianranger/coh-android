@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.22.1)
+# Coordinator opts in after adding the existing asset/renderer subdirectories.
+if(NOT TARGET coh_engine_assets OR NOT TARGET coh_renderer)
+    message(FATAL_ERROR "Add engine/assets and engine/renderer before bridge")
+endif()
+add_library(coh_asset_render_bridge STATIC coh_asset_render.c)
+target_compile_features(coh_asset_render_bridge PUBLIC c_std_11)
+target_include_directories(coh_asset_render_bridge PUBLIC .)
+target_compile_options(coh_asset_render_bridge PRIVATE -Wall -Wextra -Werror -pedantic -ffp-contract=off)
+target_link_libraries(coh_asset_render_bridge PUBLIC coh_engine_assets coh_renderer)

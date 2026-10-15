@@ -1,20 +1,5 @@
 name: Native Android authored ground, WALK and directional locomotion
 on:
-  push:
-    branches: [native-android]
-    paths:
-      - native-android/session-client/**
-      - native-android/motion/**
-      - native-android/locomotion/**
-      - native-android/walk/**
-      - native-android/walkable/**
-      - native-android/tools/session_fixture/**
-      - native-android/tools/motion_fixture/**
-      - native-android/tools/locomotion_fixture/**
-      - native-android/tools/directional_fixture/**
-      - native-android/tools/walk_fixture/**
-      - native-android/tools/walkable_fixture/**
-      - .github/workflows/native-session-client.yml
   workflow_dispatch:
 permissions:
   contents: read
