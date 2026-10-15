@@ -13,6 +13,19 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def valid_socket_report(result):
+    # The C driver's zero exit status precedes this check. Its report exposes
+    # explicit invariants rather than a generic 'passed' field. Fixed counts
+    # bind the intended scenarios; both ABIs execute the same deterministic
+    # test source whose identity is recorded by build mode.
+    expected = {'checks': 886, 'negative_cases': 49, 'socket_scenarios': 16,
+                'actual_os_udp': True, 'socket_leak_check': True,
+                'live_server_interoperability': False}
+    return (isinstance(result, dict) and set(result) == set(expected)
+            and all(type(result[key]) is type(value) and result[key] == value
+                    for key, value in expected.items()))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', required=True, type=Path)
@@ -37,7 +50,7 @@ def main():
             raw = adb('shell', 'timeout', '30', target)
             (output/'android-udp-stdout.txt').write_text(raw+'\n')
             result = json.loads(raw)
-            if not result.get('passed'):
+            if not valid_socket_report(result):
                 raise RuntimeError('Android socket boundary failed')
             proof = {'schema': 'coh-native-android-socket-boundary-v1',
                      'passed': True, 'android_api': adb('shell', 'getprop', 'ro.build.version.sdk'),
