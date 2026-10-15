@@ -1,0 +1,163 @@
+{
+  "format": 1,
+  "status": "successful_repeat_after_preserved_runtime_failure",
+  "run_id": 36454174374,
+  "run_attempt": 2,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36454174374/attempts/2",
+  "repository_commit": "8944bd598990b33b63a750a64ae448403e4542cd",
+  "workflow_conclusion": "success",
+  "runtime_job_id": 109042596583,
+  "prior_failure_receipt": "dbserver-runtime-failure-36454174374.json",
+  "prior_failure_retained": true,
+  "prior_failure_reclassified": false,
+  "accepted_donor_36451873322_replaced": false,
+  "package_identity": {
+    "same_package_as_failed_attempt": true,
+    "package_manifest": {
+      "bytes": 23957,
+      "sha256": "007c963545062a934f8cc2034e35b5bd7d617044165e0e0b9baef1c0c82c6f44"
+    },
+    "manifest_evidence_file": "dbserver-package-failed-36454174374.json",
+    "fixture_executable": {
+      "bytes": 1673216,
+      "sha256": "9b98a2c4a68881985c035ad5dfff0f901275b732ba10b3c4388a0f6efcb40ec0"
+    },
+    "normal_executable": {
+      "bytes": 1659904,
+      "sha256": "370845a9ddbbdb4324ad1982eba2a49176b82716b630df89443bfaf61633be7a"
+    },
+    "all_package_binary_hashes_verified": true,
+    "source_configuration_identical_to_accepted_36451873322": true,
+    "source_package_rebuilt_during_retry": false,
+    "carried_forward_job_metadata": {
+      "tooling": {
+        "attempt1_id": 109036171212,
+        "attempt2_id": 109042597110,
+        "started_at": "2026-09-28T16:52:43Z",
+        "completed_at": "2026-09-28T16:53:14Z"
+      },
+      "build": {
+        "attempt1_id": 109036396178,
+        "attempt2_id": 109042660900,
+        "started_at": "2026-09-28T16:53:18Z",
+        "completed_at": "2026-09-28T17:00:34Z"
+      }
+    },
+    "carried_forward_basis": "Only original package artifact exists; retry report and embedded raw manifest match attempt 1 byte-for-byte. Build/tooling records have new IDs but exactly the original start/end timestamps, preceding retry execution."
+  },
+  "arm64": {
+    "started_utc": "2026-09-28T17:10:52.684610+00:00",
+    "finished_utc": "2026-09-28T17:14:03.047104+00:00",
+    "elapsed_seconds": 190.362494,
+    "stages_passed": 28,
+    "persistence_phases": 14,
+    "persistence_check_groups": 21,
+    "rebuild_process_exit_code": 0,
+    "rebuild_complete_marker": true,
+    "normal_schema_phases": 2,
+    "fixed_inputs_modes": [
+      {
+        "requested": false,
+        "startup_acknowledgement": null
+      },
+      {
+        "requested": true,
+        "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+      }
+    ],
+    "table_count": 99,
+    "ordered_column_count": 5935,
+    "attribute_rows": 58272,
+    "reload_stable": true,
+    "process_records": 111,
+    "all_process_input_output_closed": true,
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "owned_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 312,
+      "scanned_tasks": 0,
+      "dead_leaders_with_live_tasks": 0,
+      "owned_live_workers": 0,
+      "leader_exit_retries": 0,
+      "candidates": 0,
+      "term_signals": 0,
+      "kill_signals": 0,
+      "pidfd_signals": 0,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true
+    }
+  },
+  "inputs": {
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "package_manifest_sha256": "007c963545062a934f8cc2034e35b5bd7d617044165e0e0b9baef1c0c82c6f44",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "fixture_executable_sha256": "9b98a2c4a68881985c035ad5dfff0f901275b732ba10b3c4388a0f6efcb40ec0",
+    "normal_executable_sha256": "370845a9ddbbdb4324ad1982eba2a49176b82716b630df89443bfaf61633be7a",
+    "repository_commit": "8944bd598990b33b63a750a64ae448403e4542cd",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
+  },
+  "artifacts": [
+    {
+      "artifact_id": 10985484094,
+      "name": "wine-dbserver-arm64-evidence",
+      "bytes": 532301,
+      "sha256": "d403ae84d49ffe6b3f426ee187d97b568d35c60c52ee96fc099fc5f75d4b26b1"
+    },
+    {
+      "artifact_id": 10985042551,
+      "name": "wine-dbserver-package",
+      "bytes": 2181633,
+      "sha256": "d64be2e27bdf88b8ca41071fb075d67cb8d52168b4eb1be65dd78f4cc467f35a"
+    }
+  ],
+  "independent_validation": [
+    "archive hashes and bounded safe extraction",
+    "full package byte inventory and equality to attempt 1",
+    "host report validator against accepted runtime and artifact schema",
+    "guest source hash at tested commit",
+    "normal default/fixed-input stdout acknowledgement",
+    "isolated network and hosts",
+    "native PRoot source recipe and source cache chain"
+  ],
+  "preserved_files": {
+    "dbserver-arm64-repeat-36454174374-attempt2.json": {
+      "bytes": 169638,
+      "sha256": "6e04459bfee853c360352ad3cfce886b156d7c8cf1fef2141d6432ae5fc82637"
+    },
+    "dbserver-host-inputs-repeat-36454174374-attempt2.json": {
+      "bytes": 1538,
+      "sha256": "4aa7a145987eea59acbeb3c8bdb236e8529a6c77b9cf6fe982435a9e84a2b0f0"
+    },
+    "dbserver-network-repeat-36454174374-attempt2.json": {
+      "bytes": 424,
+      "sha256": "3a0f258e8d693438ad4ae307397b608da46dd01f5b8a95f0d06d07f0d1c578ee"
+    },
+    "dbserver-proot-repeat-36454174374-attempt2.json": {
+      "bytes": 3048,
+      "sha256": "39db5454c490a5e8fd002595058d4d07cee977778ae0c998c70f48b2614c662e"
+    },
+    "dbserver-hosts-repeat-36454174374-attempt2.txt": {
+      "bytes": 34,
+      "sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+    },
+    "dbserver-host-log-repeat-36454174374-attempt2.log": {
+      "bytes": 74256,
+      "sha256": "4b4e38254c7e3be3d2ad181f8da78829fed32737c78d0a1bc2c2b9442fa3f1a8"
+    },
+    "dbserver-job-repeat-36454174374-attempt2.log": {
+      "bytes": 147008,
+      "sha256": "cec5caadde285a4cb3817adac898fc907b9dfb0e0273789c7baf0f16f57b2811"
+    }
+  },
+  "interpretation": "One failed-job retry completed all fixture and normal-schema checks using the exact package from the failed attempt. This establishes intermittent behavior for that package in this environment; it does not explain or repair the preserved signal-11 failure during or after fixture shutdown. The Atlas gate continues to use accepted immutable donor 36451873322.",
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

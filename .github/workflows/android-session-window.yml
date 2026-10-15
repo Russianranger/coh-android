@@ -1,0 +1,147 @@
+name: Thor phase-aware Atlas gameplay and save windows from published APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: android-session-window
+  cancel-in-progress: false
+
+jobs:
+  observer:
+    if: >-
+      github.repository == 'Russianranger/coh-android' &&
+      github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Verify narrow session-window packaging and publication trust boundaries
+        run: |
+          python3 -m unittest discover -s tools/android/interactive -p 'test_session_window_package.py' -v
+          python3 -m unittest discover -s tools/android/interactive -p 'test_classify_interactive_change.py' -v
+      - name: Qualify bounded session phases, save reserves and unchanged ground/save guards
+        run: >-
+          python3 tools/android/interactive/qualify_session_window.py
+          --repository-commit "$GITHUB_SHA"
+          --output out/session-window-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-session-window-observer-evidence
+          path: out/session-window-qualification.json
+          if-no-files-found: error
+
+  apk:
+    needs: observer
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-ground-repair-packaging-evidence
+          path: out/donor-evidence
+          run-id: 36994687459
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-avatar-repair-packaging-evidence
+          path: out/avatar-evidence
+          run-id: 36944389469
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-gameplay-packaging-evidence
+          path: out/retained-source-evidence
+          run-id: 36937373454
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-session-window-observer-evidence
+          path: out/qualification
+      - name: Download the exact existing published 0.11.2 donor APK
+        run: >-
+          python3 tools/android/interactive/build_session_window_apk.py download-donor
+          --output out/donor/COH-Atlas-Gameplay-0.11.2.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Ensure the existing Android package tools
+        timeout-minutes: 4
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/aapt2" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/d8.jar" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" ]; then
+            timeout 180s sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Compile the qualified Android session shell and package only deadline hooks and metadata
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_session_window_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.11.2.apk
+          --donor-build-report out/donor-evidence/ground-repair-apk-build-report.json
+          --avatar-build-report out/avatar-evidence/avatar-repair-apk-build-report.json
+          --retained-source-report out/retained-source-evidence/atlas-gameplay-apk-build-report.json
+          --qualification out/qualification/session-window-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/session-window/COH-Atlas-Gameplay-0.11.3.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-session-window-packaging-evidence
+          path: |
+            out/session-window/session-window-apk-build-report.json
+            out/session-window/COH-Atlas-Gameplay-0.11.3.apk.sha256
+            out/session-window/COH-Atlas-Gameplay-0.11.3-testing.txt
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-session-window-apk
+          path: out/session-window/
+          if-no-files-found: error
+      - name: Publish the retained-signer update after focused budget/save-guard qualification
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_session_window_apk.py publish
+          --apk out/session-window/COH-Atlas-Gameplay-0.11.3.apk
+          --build-report out/session-window/session-window-apk-build-report.json
+          --donor-build-report out/donor-evidence/ground-repair-apk-build-report.json
+          --avatar-build-report out/avatar-evidence/avatar-repair-apk-build-report.json
+          --retained-source-report out/retained-source-evidence/atlas-gameplay-apk-build-report.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --qualification out/qualification/session-window-qualification.json
+      - name: Remove retained signing material
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

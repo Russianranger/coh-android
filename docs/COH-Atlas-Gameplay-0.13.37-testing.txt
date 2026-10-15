@@ -1,0 +1,29 @@
+COH Android 0.13.37 / code 52 — DEVELOPMENT SCAFFOLD, NOT PUBLISHED
+
+This guide is provisional until current source integration, native component
+qualification, signed APK audit and independent public-byte audit pass.
+The current published gameplay release remains 0.13.36.
+
+Preserve the existing app data, saved THORHERO, Wine prefix and Assets 1.0.0.
+Install the qualified successor over the existing application when published;
+run Set up / update runtime once. Do not reset or reimport assets.
+
+Your latest exported normal save is in Atlas Park. The launcher must query the
+authoritative PostgreSQL saved destination before preparing its MapServer.
+If the actual save is Kings Row, it must select Kings instead. Never alter the
+saved location to work around startup failure.
+
+First test: short saved-character reopen, movement/state verification, normal
+Save/Logout, Finish and export the complete outer diagnostic ZIP. Use manual
+Start test / Stop test capture; there is no gameplay countdown. Record total
+reopen-to-world time and GPU, Game and native MapServer loading separately.
+
+Second test: same-map reopen/save/export, to identify validated cache reuse.
+Then test one Atlas-to-Kings transfer and export; test the return afterward.
+Record request-to-native-ready, request-to-movable-world and whether the
+destination MapServer was already resident. Resident return is different from
+a new warm-cache server launch. Preserve incomplete/failed reports for review.
+
+Device acceptance targets: Game startup under 60 seconds, all tested zoning
+at or below 90 seconds, progressing toward 30 seconds. Host measurements do
+not establish these physical AYN Thor targets.

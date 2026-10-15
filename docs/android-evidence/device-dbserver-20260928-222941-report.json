@@ -1,0 +1,2773 @@
+{
+  "format": 1,
+  "recorded_utc": "2026-09-28T17:28:13-05:00",
+  "app_id": "io.github.russianranger.cohdiagnostic.m3",
+  "app_version": "0.2.0",
+  "android_uid": 10202,
+  "android_sdk": 33,
+  "device": "AYN AYN Thor",
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "armeabi"
+  ],
+  "runtime_manifest_sha256": "d68ae4374dadfacd3c5044ccdbfcc04a6d4104af263c3b100168d7ed7d6b7cb9",
+  "run_id": "fdf57671-4a0c-4d1c-a6c7-3053fb3d639b",
+  "operation": "dbserver",
+  "android_diagnostic_passed": true,
+  "client_probe_requested": false,
+  "real_dbserver_requested": true,
+  "real_dbserver_android_validated": true,
+  "gameplay_validated": false,
+  "generated_character_persistence_validated": false,
+  "guest": {
+    "format": 1,
+    "status": "passed",
+    "started_utc": "2026-09-28T22:22:34.644288+00:00",
+    "stages": [
+      {
+        "stage": "assets_and_architecture",
+        "started_utc": "2026-09-28T22:22:34.922470+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:22:34.936128+00:00",
+        "machine": "aarch64",
+        "guest_uid": 1000,
+        "postgres_native_arm64": true
+      },
+      {
+        "stage": "initialize_owned_cluster",
+        "started_utc": "2026-09-28T22:22:34.936505+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:22:38.790061+00:00",
+        "cluster_reused": false
+      },
+      {
+        "stage": "postgres_first_start",
+        "started_utc": "2026-09-28T22:22:38.792193+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:22:39.181504+00:00",
+        "loopback": "127.0.0.1",
+        "port": 56763,
+        "durability_verified": true,
+        "server_version": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit"
+      },
+      {
+        "stage": "restricted_fixture_database",
+        "started_utc": "2026-09-28T22:22:39.181823+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:22:40.522606+00:00",
+        "database": "coh_test_32a3c68e0a4462fc",
+        "role": "cohtest",
+        "migration_version": 2,
+        "reapplied": true
+      },
+      {
+        "stage": "wine_prefix_and_driver",
+        "started_utc": "2026-09-28T22:22:40.523051+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:24:11.295974+00:00",
+        "prefix_owned": true,
+        "architecture": "win64 with PE32 WoW64\/FEX",
+        "x_tcp": false,
+        "rfb_tcp": false,
+        "installer": {
+          "path": "C:\\windows\\syswow64\\msiexec.exe",
+          "pointer_bits": 32,
+          "sha256": "d4ed3551f449cfb68e609e1572b519b5eecd3bf0519bf16877ea02bd4fb01ed0"
+        }
+      },
+      {
+        "stage": "win32_odbc_driver",
+        "started_utc": "2026-09-28T22:24:11.297055+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:24:12.961911+00:00",
+        "driver_name": "PostgreSQL Unicode",
+        "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+        "pointer_bits": 32,
+        "registry_view": 32,
+        "driver_dll_loaded": true
+      },
+      {
+        "stage": "win32_runtime_dll",
+        "started_utc": "2026-09-28T22:24:12.962821+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:24:13.685008+00:00",
+        "pointer_bits": 32,
+        "dll_export_verified": true,
+        "odbc_manager_loaded": true
+      },
+      {
+        "stage": "dbserver_initial",
+        "started_utc": "2026-09-28T22:24:13.763683+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:24:25.920576+00:00",
+        "mode": "initial",
+        "expected_exit_code": 0
+      },
+      {
+        "stage": "dbserver_fail",
+        "started_utc": "2026-09-28T22:24:25.983013+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:24:35.390448+00:00",
+        "mode": "fail",
+        "expected_exit_code": 3
+      },
+      {
+        "stage": "dbserver_exhaust",
+        "started_utc": "2026-09-28T22:24:35.631353+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:24:45.834440+00:00",
+        "mode": "exhaust",
+        "expected_exit_code": 3
+      },
+      {
+        "stage": "dbserver_delete_fail",
+        "started_utc": "2026-09-28T22:24:46.141588+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:24:55.212240+00:00",
+        "mode": "delete-fail",
+        "expected_exit_code": 3
+      },
+      {
+        "stage": "dbserver_disconnect",
+        "started_utc": "2026-09-28T22:24:55.393665+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:25:04.514384+00:00",
+        "mode": "disconnect",
+        "expected_exit_code": 3
+      },
+      {
+        "stage": "dbserver_verify",
+        "started_utc": "2026-09-28T22:25:04.577125+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:25:14.064241+00:00",
+        "mode": "verify",
+        "expected_exit_code": 0
+      },
+      {
+        "stage": "postgres_clean_restart_ready",
+        "started_utc": "2026-09-28T22:25:14.538888+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:25:15.028090+00:00",
+        "loopback": "127.0.0.1",
+        "port": 56763,
+        "durability_verified": true,
+        "server_version": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit"
+      },
+      {
+        "stage": "dbserver_verify",
+        "started_utc": "2026-09-28T22:25:15.029056+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:25:24.595252+00:00",
+        "mode": "verify",
+        "expected_exit_code": 0
+      },
+      {
+        "stage": "postgres_immediate_restart",
+        "started_utc": "2026-09-28T22:25:24.596074+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:25:24.759525+00:00",
+        "immediate_shutdown": true
+      },
+      {
+        "stage": "postgres_wal_recovery_ready",
+        "started_utc": "2026-09-28T22:25:24.760125+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:25:25.800080+00:00",
+        "loopback": "127.0.0.1",
+        "port": 56763,
+        "durability_verified": true,
+        "server_version": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit"
+      },
+      {
+        "stage": "dbserver_verify",
+        "started_utc": "2026-09-28T22:25:25.800661+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:25:35.342610+00:00",
+        "mode": "verify",
+        "expected_exit_code": 0
+      },
+      {
+        "stage": "dbserver_rebuild",
+        "started_utc": "2026-09-28T22:25:35.343177+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:25:45.137658+00:00",
+        "mode": "rebuild",
+        "expected_exit_code": 0
+      },
+      {
+        "stage": "dbserver_verify_rebuilt",
+        "started_utc": "2026-09-28T22:25:45.138562+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:25:54.859932+00:00",
+        "mode": "verify-rebuilt",
+        "expected_exit_code": 0
+      },
+      {
+        "stage": "dbserver_rebuild_fail",
+        "started_utc": "2026-09-28T22:25:54.926595+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:26:04.840890+00:00",
+        "mode": "rebuild-fail",
+        "expected_exit_code": 2
+      },
+      {
+        "stage": "dbserver_rebuild_fail_view",
+        "started_utc": "2026-09-28T22:26:04.963845+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:26:14.368612+00:00",
+        "mode": "rebuild-fail-view",
+        "expected_exit_code": 2
+      },
+      {
+        "stage": "dbserver_verify_rebuilt",
+        "started_utc": "2026-09-28T22:26:14.560496+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:26:24.221657+00:00",
+        "mode": "verify-rebuilt",
+        "expected_exit_code": 0
+      },
+      {
+        "stage": "dbserver_backup_restore",
+        "started_utc": "2026-09-28T22:26:24.222951+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:26:25.483014+00:00",
+        "backup_sha256": "327d3b8947eb192af51b2ae80d2c14d9f6df33d0b2428e374db390a79e8e32d6",
+        "new_owned_database": true
+      },
+      {
+        "stage": "dbserver_verify_rebuilt",
+        "started_utc": "2026-09-28T22:26:25.483573+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:26:35.851356+00:00",
+        "mode": "verify-rebuilt",
+        "expected_exit_code": 0
+      },
+      {
+        "stage": "restricted_fixture_database",
+        "started_utc": "2026-09-28T22:26:35.852280+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:26:36.873268+00:00",
+        "database": "coh_test_72bd82c8c9211a50",
+        "role": "cohtest",
+        "migration_version": 2,
+        "reapplied": true
+      },
+      {
+        "stage": "normal_dbserver_schema_1",
+        "started_utc": "2026-09-28T22:26:37.125433+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:27:30.841425+00:00",
+        "table_count": 99,
+        "attribute_counts": {
+          "attributes": 56411,
+          "badgestatsattributes": 1771,
+          "pophelpattributes": 90
+        },
+        "fixed_inputs": {
+          "requested": true,
+          "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+        },
+        "loopback_only": {
+          "requested": true,
+          "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+          "endpoints": [
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6971
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6974
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6976
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6977
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6979
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6980
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6982
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6984
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6989
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6992
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6996
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6997
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6998
+            },
+            {
+              "protocol": "udp",
+              "address": "127.0.0.1",
+              "port": 7000
+            }
+          ]
+        }
+      },
+      {
+        "stage": "normal_dbserver_schema_2",
+        "started_utc": "2026-09-28T22:27:30.842380+00:00",
+        "status": "passed",
+        "finished_utc": "2026-09-28T22:28:07.767810+00:00",
+        "table_count": 99,
+        "attribute_counts": {
+          "attributes": 56411,
+          "badgestatsattributes": 1771,
+          "pophelpattributes": 90
+        },
+        "fixed_inputs": {
+          "requested": true,
+          "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+        },
+        "loopback_only": {
+          "requested": true,
+          "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+          "endpoints": [
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6971
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6974
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6976
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6977
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6979
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6980
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6982
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6984
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6989
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6992
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6996
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6997
+            },
+            {
+              "protocol": "tcp",
+              "address": "127.0.0.1",
+              "port": 6998
+            },
+            {
+              "protocol": "udp",
+              "address": "127.0.0.1",
+              "port": 7000
+            }
+          ]
+        }
+      }
+    ],
+    "processes": [
+      {
+        "label": "initdb",
+        "elapsed_seconds": 3.775,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "The files belonging to this database system will be owned by user \"coh\".\nThis user must also own the server process.\n\nThe database cluster will be initialized with locale \"C\".\nThe default text search configuration will be set to \"english\".\n\nData page checksums are enabled.\n\ncreating directory \/state\/diagnostic\/init-pending-c9e5e51030c5be13 ... ok\ncreating subdirectories ... ok\nselecting dynamic shared memory implementation ... sysv\nselecting default \"max_connections\" ... 100\nselecting default \"shared_buffers\" ... 128MB\nselecting default time zone ... UTC\ncreating configuration files ... ok\nrunning bootstrap script ... ok\nperforming post-bootstrap initialization ... ok\nsyncing data to disk ... ok\n\nSuccess. You can now start the database server using:\n\n    \/opt\/coh\/pgsql\/bin\/pg_ctl -D \/state\/diagnostic\/init-pending-c9e5e51030c5be13 -l logfile start\n\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 3.775
+        }
+      },
+      {
+        "label": "existing-cluster-status",
+        "elapsed_seconds": 0.063,
+        "exit_code": 3,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "pg_ctl: no server running\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 3,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.063
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.11,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "127.0.0.1|56763|\/state\/diagnostic\/pgdata|on|on|on\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.11
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "CREATE ROLE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.061,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "1\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.061
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.62,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "CREATE DATABASE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.62
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.066,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "REVOKE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.066
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.062,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "ALTER DATABASE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.062
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.062,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "REVOKE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.062
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.11,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "BEGIN\nCREATE SCHEMA\nCREATE SCHEMA\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 1\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 1\nCOMMIT\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.11
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.111,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "BEGIN\nNOTICE:  schema \"dbo\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  schema \"coh_meta\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  relation \"schema_version\" already exists, skipping\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 0\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 0\nCOMMIT\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.111
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "cohtest|2\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "wineboot",
+        "elapsed_seconds": 85.336,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 14c starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\"\n00e4:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\" in experimental wow64 mode\n00ec:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\iexplore.exe\" in experimental wow64 mode\n002c:trace:wineboot:update_wineprefix wine: configuration in L\"\/state\/diagnostic\/wine\" has been updated.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n0168:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n0168:trace:wineboot:process_run_key No commands to execute.\n0168:trace:wineboot:process_run_key Done.\n0168:trace:wineboot:process_run_key Done.\n0168:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n0168:trace:wineboot:process_run_key Done processing cmd 0.\n0168:trace:wineboot:process_run_key Done.\n0168:trace:wineboot:process_run_key Done.\n0168:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n0168:trace:wineboot:process_run_key No commands to execute.\n0168:trace:wineboot:process_run_key Done.\n0168:trace:wineboot:process_run_key No commands to execute.\n0168:trace:wineboot:process_run_key Done.\n0168:trace:wineboot:main Operation done\n0x3000c62830:1: Token id=0.1042 primary=1 impersonation level=-1\n0x3000c63e30:1: Fd unix_fd=283 user=0x3000c6eb10 options=00000000\n0x3000c6eb10:1: Process id=0334 handles=(nil)\n0x3000c57850:1: Completion depth=3\n0x3000c54f80:1: Job processes=1 child_jobs=0 parent=(nil)\n0x3000764b60:1: Token id=0.1022 primary=1 impersonation level=-1\n0x30001002b0:1: Fd unix_fd=80 user=0x30000c10e0 options=00000000\n0x30000c10e0:1: Process id=0158 handles=(nil)\n0x30000edf90:1: Token id=0.1021 primary=1 impersonation level=-1\n0x3000b9ce70:1: Fd unix_fd=94 user=0x30000d6cf0 options=00000000\n0x30000d6cf0:1: Process id=011c handles=(nil)\n0x300010e010:1: Token id=0.1013 primary=1 impersonation level=-1\n0x300010e1c0:1: Fd unix_fd=99 user=0x30000e8a10 options=00000000\n0x30000e8a10:1: Process id=006c handles=(nil)\n0x30000bf9b0:1: Completion depth=6\n0x30000d4630:3: Job processes=3 child_jobs=0 parent=(nil)\n",
+        "completion": {
+          "policy": "leader_exit_with_owned_background_output",
+          "leader_exit_code": 0,
+          "output_capture_open": true,
+          "elapsed_seconds": 85.336
+        }
+      },
+      {
+        "label": "install-x86-psqlodbc",
+        "elapsed_seconds": 5.31,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "01a4:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\msiexec.exe\" in experimental wow64 mode\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 5.31
+        }
+      },
+      {
+        "label": "odbc-driver-preflight",
+        "elapsed_seconds": 1.644,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "01e0:err:environ:init_peb starting L\"Z:\\\\opt\\\\coh\\\\runtime-probe.exe\" in experimental wow64 mode\nCOH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode view=32 key_error=0 driver_error=0 type=1 path=C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode(x86) view=32 key_error=0 driver_error=0 type=1 path=C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 NAME PostgreSQL Unicode\r\nCOH_ODBC_DRIVER_V1 DLL C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 PASS bits=32\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 1.644
+        }
+      },
+      {
+        "label": "runtime-probe",
+        "elapsed_seconds": 0.719,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "01e8:err:environ:init_peb starting L\"Z:\\\\opt\\\\coh\\\\runtime-probe.exe\" in experimental wow64 mode\nCOH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.719
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.058,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "CREATE TABLE\nINSERT 0 1\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.058
+        }
+      },
+      {
+        "label": "dbserver-initial",
+        "elapsed_seconds": 12.154,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "foItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40P01 ERROR: injected deadlock;\r\nError while executing the query\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40P01 ERROR: injected deadlock;\r\nError while executing the query\r\nPG_FIFO_RETRY command=2 SQLSTATE=40P01 attempt=1\r\nCOMMAND: SQLEndTran\r\nSQLERROR: 110 40001 ERROR: injected commit failure\r\nManual end transaction (commit 1) failed\r\nPG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=1\r\nPG_TEST_PASS real queue removes missing foreign keys before table creation\r\nPG_TEST_PASS real queue: multi-batch create\/update\/read\/delete, ordering, 16 writers, SQLSTATE 40001\/40P01 and commit retry, UTF-8, case lookup\r\nPG_TEST_COMPLETE initial\r\nFlushing log files to disk\r\nFlushing SQL fifo\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 12.154
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.061,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "CREATE SEQUENCE\nCREATE FUNCTION\nCREATE TRIGGER\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.061
+        }
+      },
+      {
+        "label": "dbserver-fail",
+        "elapsed_seconds": 9.406,
+        "exit_code": 3,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0330:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 23514 ERROR: injected permanent error;\r\nError while executing the query\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 23514 ERROR: injected permanent error;\r\nError while executing the query\r\nPG_FIFO_FAILED command=2 SQLSTATE=23514; save not acknowledged\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 3,
+          "output_capture_open": false,
+          "elapsed_seconds": 9.406
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "1\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "ALTER SEQUENCE\nCREATE FUNCTION\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "dbserver-exhaust",
+        "elapsed_seconds": 10.195,
+        "exit_code": 3,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "s restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nPG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=1\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nPG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=2\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nPG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=3\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nPG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=4\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nPG_FIFO_FAILED command=2 SQLSTATE=40001; save not acknowledged\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 3,
+          "output_capture_open": false,
+          "elapsed_seconds": 10.195
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.064,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "5\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.064
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.061,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "DROP TRIGGER\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.061
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "CREATE FUNCTION\nCREATE TRIGGER\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "dbserver-delete-fail",
+        "elapsed_seconds": 9.069,
+        "exit_code": 3,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "05b0:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nCOMMAND: DELETE FROM dbo.PgFifoItems WHERE ContainerId=101;DELETE FROM dbo.PgFifo WHERE ContainerId=101;\r\nSQLERROR: 1 23503 ERROR: injected delete failure;\r\nError while executing the query\r\nCOMMAND: DELETE FROM dbo.PgFifoItems WHERE ContainerId=101;DELETE FROM dbo.PgFifo WHERE ContainerId=101;\r\nSQLERROR: 1 23503 ERROR: injected delete failure;\r\nError while executing the query\r\nPG_FIFO_FAILED command=6 SQLSTATE=23503; save not acknowledged\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 3,
+          "output_capture_open": false,
+          "elapsed_seconds": 9.069
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.058,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "512\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.058
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "1\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "DROP TRIGGER\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "dbserver-disconnect",
+        "elapsed_seconds": 9.118,
+        "exit_code": 3,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "06bc:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nCOMMAND: UPDATE dbo.PgFifo SET Score=666 WHERE ContainerId=101; SELECT pg_terminate_backend(pg_backend_pid());\r\nSQLERROR: 35 57P01 FATAL: terminating connection due to administrator command;\r\nThe connection has been lost\r\nCOMMAND: UPDATE dbo.PgFifo SET Score=666 WHERE ContainerId=101; SELECT pg_terminate_backend(pg_backend_pid());\r\nSQLERROR: 35 57P01 FATAL: terminating connection due to administrator command;\r\nThe connection has been lost\r\nPG_FIFO_FAILED command=6 SQLSTATE=57P01; save not acknowledged\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 3,
+          "output_capture_open": false,
+          "elapsed_seconds": 9.118
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.061,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "555\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.061
+        }
+      },
+      {
+        "label": "dbserver-verify",
+        "elapsed_seconds": 9.484,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "07c8:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nPG_TEST_PASS reload through real container reader\r\nPG_TEST_COMPLETE verify\r\nFlushing SQL fifo\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 9.484
+        }
+      },
+      {
+        "label": "postgres-graceful-stop",
+        "elapsed_seconds": 0.469,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "waiting for server to shut down.... done\nserver stopped\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.469
+        }
+      },
+      {
+        "label": "postgres_first_start",
+        "elapsed_seconds": 155.743,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "WHERE ContainerId=101 AND SubId=481;UPDATE dbo.PgFifoItems SET ItemValue=483,Label='slot482' WHERE ContainerId=101 AND SubId=482;UPDATE dbo.PgFifoItems SET ItemValue=484,Label='slot483' WHERE ContainerId=101 AND SubId=483;UPDATE dbo.PgFifoItems SET ItemValue=485,Label='slot484' WHERE ContainerId=101 AND SubId=484;UPDATE dbo.PgFifoItems SET ItemValue=486,Label='slot485' WHERE ContainerId=101 AND SubId=485;UPDATE dbo.PgFifoItems SET ItemValue=487,Label='slot486' WHERE ContainerId=101 AND SubId=486;UPDATE dbo.PgFifoItems SET ItemValue=488,Label='slot487' WHERE ContainerId=101 AND SubId=487;UPDATE dbo.PgFifoItems SET ItemValue=489,Label='slot488' WHERE ContainerId=101 AND SubId=488;UPDATE dbo.PgFifoItems SET ItemValue=490,Label='slot489' WHERE ContainerId=101 AND SubId=489;UPDATE dbo.PgFifoItems SET ItemValue=491,Label='slot490' WHERE ContainerId=101 AND SubId=490;UPDATE dbo.PgFifoItems SET ItemValue=492,Label='slot491' WHERE ContainerId=101 AND SubId=491;UPDATE dbo.PgFifoItems SET ItemValue=493,Label='slot492' WHERE ContainerId=101 AND SubId=492;UPDATE dbo.PgFifoItems SET ItemValue=494,Label='slot493' WHERE ContainerId=101 AND SubId=493;UPDATE dbo.PgFifoItems SET ItemValue=495,Label='slot494' WHERE ContainerId=101 AND SubId=494;UPDATE dbo.PgFifoItems SET ItemValue=496,Label='slot495' WHERE ContainerId=101 AND SubId=495;UPDATE dbo.PgFifoItems SET ItemValue=497,Label='slot496' WHERE ContainerId=101 AND SubId=496;UPDATE dbo.PgFifoItems SET ItemValue=498,Label='slot497' WHERE ContainerId=101 AND SubId=497;UPDATE dbo.PgFifoItems SET ItemValue=499,Label='slot498' WHERE ContainerId=101 AND SubId=498;UPDATE dbo.PgFifoItems SET ItemValue=500,Label='slot499' WHERE ContainerId=101 AND SubId=499;UPDATE dbo.PgFifoItems SET ItemValue=501,Label='slot500' WHERE ContainerId=101 AND SubId=500;UPDATE dbo.PgFifoItems SET ItemValue=502,Label='slot501' WHERE ContainerId=101 AND SubId=501;UPDATE dbo.PgFifoItems SET ItemValue=503,Label='slot502' WHERE ContainerId=101 AND SubId=502;UPDATE dbo.PgFifoItems SET ItemValue=504,Label='slot503' WHERE ContainerId=101 AND SubId=503;UPDATE dbo.PgFifoItems SET ItemValue=505,Label='slot504' WHERE ContainerId=101 AND SubId=504;UPDATE dbo.PgFifoItems SET ItemValue=506,Label='slot505' WHERE ContainerId=101 AND SubId=505;UPDATE dbo.PgFifoItems SET ItemValue=507,Label='slot506' WHERE ContainerId=101 AND SubId=506;UPDATE dbo.PgFifoItems SET ItemValue=508,Label='slot507' WHERE ContainerId=101 AND SubId=507;UPDATE dbo.PgFifoItems SET ItemValue=509,Label='slot508' WHERE ContainerId=101 AND SubId=508;UPDATE dbo.PgFifoItems SET ItemValue=510,Label='slot509' WHERE ContainerId=101 AND SubId=509;UPDATE dbo.PgFifoItems SET ItemValue=511,Label='slot510' WHERE ContainerId=101 AND SubId=510;UPDATE dbo.PgFifoItems SET ItemValue=8888,Label='slot511' WHERE ContainerId=101 AND SubId=511;\n2026-09-28 22:24:24.925 UTC [21098] ERROR:  injected commit failure\n2026-09-28 22:24:24.925 UTC [21098] CONTEXT:  PL\/pgSQL function coh_meta.fifo_commit_fault() line 1 at RAISE\n2026-09-28 22:24:24.925 UTC [21098] STATEMENT:  COMMIT\n2026-09-28 22:24:35.224 UTC [21285] ERROR:  injected permanent error\n2026-09-28 22:24:35.224 UTC [21285] CONTEXT:  PL\/pgSQL function coh_meta.fifo_reject() line 1 at RAISE\n2026-09-28 22:24:35.224 UTC [21285] STATEMENT:  UPDATE dbo.PgFifoItems SET ItemValue=494,Label='slot493' WHERE ContainerId=103 AND SubId=493;UPDATE dbo.PgFifoItems SET ItemValue=495,Label='slot494' WHERE ContainerId=103 AND SubId=494;UPDATE dbo.PgFifoItems SET ItemValue=496,Label='slot495' WHERE ContainerId=103 AND SubId=495;UPDATE dbo.PgFifoItems SET ItemValue=497,Label='slot496' WHERE ContainerId=103 AND SubId=496;UPDATE dbo.PgFifoItems SET ItemValue=498,Label='slot497' WHERE ContainerId=103 AND SubId=497;UPDATE dbo.PgFifoItems SET ItemValue=499,Label='slot498' WHERE ContainerId=103 AND SubId=498;UPDATE dbo.PgFifoItems SET ItemValue=500,Label='slot499' WHERE ContainerId=103 AND SubId=499;UPDATE dbo.PgFifoItems SET ItemValue=501,Label='slot500' WHERE ContainerId=103 AND SubId=500;UPDATE dbo.PgFifoItems SET ItemValue=502,Label='slot501' WHERE ContainerId=103 AND SubId=501;UPDATE dbo.PgFifoItems SET ItemValue=503,Label='slot502' WHERE ContainerId=103 AND SubId=502;UPDATE dbo.PgFifoItems SET ItemValue=504,Label='slot503' WHERE ContainerId=103 AND SubId=503;UPDATE dbo.PgFifoItems SET ItemValue=505,Label='slot504' WHERE ContainerId=103 AND SubId=504;UPDATE dbo.PgFifoItems SET ItemValue=506,Label='slot505' WHERE ContainerId=103 AND SubId=505;UPDATE dbo.PgFifoItems SET ItemValue=507,Label='slot506' WHERE ContainerId=103 AND SubId=506;UPDATE dbo.PgFifoItems SET ItemValue=508,Label='slot507' WHERE ContainerId=103 AND SubId=507;UPDATE dbo.PgFifoItems SET ItemValue=509,Label='slot508' WHERE ContainerId=103 AND SubId=508;UPDATE dbo.PgFifoItems SET ItemValue=510,Label='slot509' WHERE ContainerId=103 AND SubId=509;UPDATE dbo.PgFifoItems SET ItemValue=511,Label='slot510' WHERE ContainerId=103 AND SubId=510;UPDATE dbo.PgFifoItems SET ItemValue=9999,Label='slot511' WHERE ContainerId=103 AND SubId=511;\n2026-09-28 22:24:44.884 UTC [21467] ERROR:  injected retry exhaustion\n2026-09-28 22:24:44.884 UTC [21467] CONTEXT:  PL\/pgSQL function coh_meta.fifo_reject() line 1 at RAISE\n2026-09-28 22:24:44.884 UTC [21467] STATEMENT:  UPDATE dbo.PgFifoItems SET ItemValue=494,Label='slot493' WHERE ContainerId=103 AND SubId=493;UPDATE dbo.PgFifoItems SET ItemValue=495,Label='slot494' WHERE ContainerId=103 AND SubId=494;UPDATE dbo.PgFifoItems SET ItemValue=496,Label='slot495' WHERE ContainerId=103 AND SubId=495;UPDATE dbo.PgFifoItems SET ItemValue=497,Label='slot496' WHERE ContainerId=103 AND SubId=496;UPDATE dbo.PgFifoItems SET ItemValue=498,Label='slot497' WHERE ContainerId=103 AND SubId=497;UPDATE dbo.PgFifoItems SET ItemValue=499,Label='slot498' WHERE ContainerId=103 AND SubId=498;UPDATE dbo.PgFifoItems SET ItemValue=500,Label='slot499' WHERE ContainerId=103 AND SubId=499;UPDATE dbo.PgFifoItems SET ItemValue=501,Label='slot500' WHERE ContainerId=103 AND SubId=500;UPDATE dbo.PgFifoItems SET ItemValue=502,Label='slot501' WHERE ContainerId=103 AND SubId=501;UPDATE dbo.PgFifoItems SET ItemValue=503,Label='slot502' WHERE ContainerId=103 AND SubId=502;UPDATE dbo.PgFifoItems SET ItemValue=504,Label='slot503' WHERE ContainerId=103 AND SubId=503;UPDATE dbo.PgFifoItems SET ItemValue=505,Label='slot504' WHERE ContainerId=103 AND SubId=504;UPDATE dbo.PgFifoItems SET ItemValue=506,Label='slot505' WHERE ContainerId=103 AND SubId=505;UPDATE dbo.PgFifoItems SET ItemValue=507,Label='slot506' WHERE ContainerId=103 AND SubId=506;UPDATE dbo.PgFifoItems SET ItemValue=508,Label='slot507' WHERE ContainerId=103 AND SubId=507;UPDATE dbo.PgFifoItems SET ItemValue=509,Label='slot508' WHERE ContainerId=103 AND SubId=508;UPDATE dbo.PgFifoItems SET ItemValue=510,Label='slot509' WHERE ContainerId=103 AND SubId=509;UPDATE dbo.PgFifoItems SET ItemValue=511,Label='slot510' WHERE ContainerId=103 AND SubId=510;UPDATE dbo.PgFifoItems SET ItemValue=9999,Label='slot511' WHERE ContainerId=103 AND SubId=511;\n2026-09-28 22:24:45.061 UTC [21467] ERROR:  injected retry exhaustion\n2026-09-28 22:24:45.061 UTC [21467] CONTEXT:  PL\/pgSQL function coh_meta.fifo_reject() line 1 at RAISE\n2026-09-28 22:24:45.061 UTC [21467] STATEMENT:  UPDATE dbo.PgFifoItems SET ItemValue=494,Label='slot493' WHERE ContainerId=103 AND SubId=493;UPDATE dbo.PgFifoItems SET ItemValue=495,Label='slot494' WHERE ContainerId=103 AND SubId=494;UPDATE dbo.PgFifoItems SET ItemValue=496,Label='slot495' WHERE ContainerId=103 AND SubId=495;UPDATE dbo.PgFifoItems SET ItemValue=497,Label='slot496' WHERE ContainerId=103 AND SubId=496;UPDATE dbo.PgFifoItems SET ItemValue=498,Label='slot497' WHERE ContainerId=103 AND SubId=497;UPDATE dbo.PgFifoItems SET ItemValue=499,Label='slot498' WHERE ContainerId=103 AND SubId=498;UPDATE dbo.PgFifoItems SET ItemValue=500,Label='slot499' WHERE ContainerId=103 AND SubId=499;UPDATE dbo.PgFifoItems SET ItemValue=501,Label='slot500' WHERE ContainerId=103 AND SubId=500;UPDATE dbo.PgFifoItems SET ItemValue=502,Label='slot501' WHERE ContainerId=103 AND SubId=501;UPDATE dbo.PgFifoItems SET ItemValue=503,Label='slot502' WHERE ContainerId=103 AND SubId=502;UPDATE dbo.PgFifoItems SET ItemValue=504,Label='slot503' WHERE ContainerId=103 AND SubId=503;UPDATE dbo.PgFifoItems SET ItemValue=505,Label='slot504' WHERE ContainerId=103 AND SubId=504;UPDATE dbo.PgFifoItems SET ItemValue=506,Label='slot505' WHERE ContainerId=103 AND SubId=505;UPDATE dbo.PgFifoItems SET ItemValue=507,Label='slot506' WHERE ContainerId=103 AND SubId=506;UPDATE dbo.PgFifoItems SET ItemValue=508,Label='slot507' WHERE ContainerId=103 AND SubId=507;UPDATE dbo.PgFifoItems SET ItemValue=509,Label='slot508' WHERE ContainerId=103 AND SubId=508;UPDATE dbo.PgFifoItems SET ItemValue=510,Label='slot509' WHERE ContainerId=103 AND SubId=509;UPDATE dbo.PgFifoItems SET ItemValue=511,Label='slot510' WHERE ContainerId=103 AND SubId=510;UPDATE dbo.PgFifoItems SET ItemValue=9999,Label='slot511' WHERE ContainerId=103 AND SubId=511;\n2026-09-28 22:24:45.240 UTC [21467] ERROR:  injected retry exhaustion\n2026-09-28 22:24:45.240 UTC [21467] CONTEXT:  PL\/pgSQL function coh_meta.fifo_reject() line 1 at RAISE\n2026-09-28 22:24:45.240 UTC [21467] STATEMENT:  UPDATE dbo.PgFifoItems SET ItemValue=494,Label='slot493' WHERE ContainerId=103 AND SubId=493;UPDATE dbo.PgFifoItems SET ItemValue=495,Label='slot494' WHERE ContainerId=103 AND SubId=494;UPDATE dbo.PgFifoItems SET ItemValue=496,Label='slot495' WHERE ContainerId=103 AND SubId=495;UPDATE dbo.PgFifoItems SET ItemValue=497,Label='slot496' WHERE ContainerId=103 AND SubId=496;UPDATE dbo.PgFifoItems SET ItemValue=498,Label='slot497' WHERE ContainerId=103 AND SubId=497;UPDATE dbo.PgFifoItems SET ItemValue=499,Label='slot498' WHERE ContainerId=103 AND SubId=498;UPDATE dbo.PgFifoItems SET ItemValue=500,Label='slot499' WHERE ContainerId=103 AND SubId=499;UPDATE dbo.PgFifoItems SET ItemValue=501,Label='slot500' WHERE ContainerId=103 AND SubId=500;UPDATE dbo.PgFifoItems SET ItemValue=502,Label='slot501' WHERE ContainerId=103 AND SubId=501;UPDATE dbo.PgFifoItems SET ItemValue=503,Label='slot502' WHERE ContainerId=103 AND SubId=502;UPDATE dbo.PgFifoItems SET ItemValue=504,Label='slot503' WHERE ContainerId=103 AND SubId=503;UPDATE dbo.PgFifoItems SET ItemValue=505,Label='slot504' WHERE ContainerId=103 AND SubId=504;UPDATE dbo.PgFifoItems SET ItemValue=506,Label='slot505' WHERE ContainerId=103 AND SubId=505;UPDATE dbo.PgFifoItems SET ItemValue=507,Label='slot506' WHERE ContainerId=103 AND SubId=506;UPDATE dbo.PgFifoItems SET ItemValue=508,Label='slot507' WHERE ContainerId=103 AND SubId=507;UPDATE dbo.PgFifoItems SET ItemValue=509,Label='slot508' WHERE ContainerId=103 AND SubId=508;UPDATE dbo.PgFifoItems SET ItemValue=510,Label='slot509' WHERE ContainerId=103 AND SubId=509;UPDATE dbo.PgFifoItems SET ItemValue=511,Label='slot510' WHERE ContainerId=103 AND SubId=510;UPDATE dbo.PgFifoItems SET ItemValue=9999,Label='slot511' WHERE ContainerId=103 AND SubId=511;\n2026-09-28 22:24:45.447 UTC [21467] ERROR:  injected retry exhaustion\n2026-09-28 22:24:45.447 UTC [21467] CONTEXT:  PL\/pgSQL function coh_meta.fifo_reject() line 1 at RAISE\n2026-09-28 22:24:45.447 UTC [21467] STATEMENT:  UPDATE dbo.PgFifoItems SET ItemValue=494,Label='slot493' WHERE ContainerId=103 AND SubId=493;UPDATE dbo.PgFifoItems SET ItemValue=495,Label='slot494' WHERE ContainerId=103 AND SubId=494;UPDATE dbo.PgFifoItems SET ItemValue=496,Label='slot495' WHERE ContainerId=103 AND SubId=495;UPDATE dbo.PgFifoItems SET ItemValue=497,Label='slot496' WHERE ContainerId=103 AND SubId=496;UPDATE dbo.PgFifoItems SET ItemValue=498,Label='slot497' WHERE ContainerId=103 AND SubId=497;UPDATE dbo.PgFifoItems SET ItemValue=499,Label='slot498' WHERE ContainerId=103 AND SubId=498;UPDATE dbo.PgFifoItems SET ItemValue=500,Label='slot499' WHERE ContainerId=103 AND SubId=499;UPDATE dbo.PgFifoItems SET ItemValue=501,Label='slot500' WHERE ContainerId=103 AND SubId=500;UPDATE dbo.PgFifoItems SET ItemValue=502,Label='slot501' WHERE ContainerId=103 AND SubId=501;UPDATE dbo.PgFifoItems SET ItemValue=503,Label='slot502' WHERE ContainerId=103 AND SubId=502;UPDATE dbo.PgFifoItems SET ItemValue=504,Label='slot503' WHERE ContainerId=103 AND SubId=503;UPDATE dbo.PgFifoItems SET ItemValue=505,Label='slot504' WHERE ContainerId=103 AND SubId=504;UPDATE dbo.PgFifoItems SET ItemValue=506,Label='slot505' WHERE ContainerId=103 AND SubId=505;UPDATE dbo.PgFifoItems SET ItemValue=507,Label='slot506' WHERE ContainerId=103 AND SubId=506;UPDATE dbo.PgFifoItems SET ItemValue=508,Label='slot507' WHERE ContainerId=103 AND SubId=507;UPDATE dbo.PgFifoItems SET ItemValue=509,Label='slot508' WHERE ContainerId=103 AND SubId=508;UPDATE dbo.PgFifoItems SET ItemValue=510,Label='slot509' WHERE ContainerId=103 AND SubId=509;UPDATE dbo.PgFifoItems SET ItemValue=511,Label='slot510' WHERE ContainerId=103 AND SubId=510;UPDATE dbo.PgFifoItems SET ItemValue=9999,Label='slot511' WHERE ContainerId=103 AND SubId=511;\n2026-09-28 22:24:45.680 UTC [21467] ERROR:  injected retry exhaustion\n2026-09-28 22:24:45.680 UTC [21467] CONTEXT:  PL\/pgSQL function coh_meta.fifo_reject() line 1 at RAISE\n2026-09-28 22:24:45.680 UTC [21467] STATEMENT:  UPDATE dbo.PgFifoItems SET ItemValue=494,Label='slot493' WHERE ContainerId=103 AND SubId=493;UPDATE dbo.PgFifoItems SET ItemValue=495,Label='slot494' WHERE ContainerId=103 AND SubId=494;UPDATE dbo.PgFifoItems SET ItemValue=496,Label='slot495' WHERE ContainerId=103 AND SubId=495;UPDATE dbo.PgFifoItems SET ItemValue=497,Label='slot496' WHERE ContainerId=103 AND SubId=496;UPDATE dbo.PgFifoItems SET ItemValue=498,Label='slot497' WHERE ContainerId=103 AND SubId=497;UPDATE dbo.PgFifoItems SET ItemValue=499,Label='slot498' WHERE ContainerId=103 AND SubId=498;UPDATE dbo.PgFifoItems SET ItemValue=500,Label='slot499' WHERE ContainerId=103 AND SubId=499;UPDATE dbo.PgFifoItems SET ItemValue=501,Label='slot500' WHERE ContainerId=103 AND SubId=500;UPDATE dbo.PgFifoItems SET ItemValue=502,Label='slot501' WHERE ContainerId=103 AND SubId=501;UPDATE dbo.PgFifoItems SET ItemValue=503,Label='slot502' WHERE ContainerId=103 AND SubId=502;UPDATE dbo.PgFifoItems SET ItemValue=504,Label='slot503' WHERE ContainerId=103 AND SubId=503;UPDATE dbo.PgFifoItems SET ItemValue=505,Label='slot504' WHERE ContainerId=103 AND SubId=504;UPDATE dbo.PgFifoItems SET ItemValue=506,Label='slot505' WHERE ContainerId=103 AND SubId=505;UPDATE dbo.PgFifoItems SET ItemValue=507,Label='slot506' WHERE ContainerId=103 AND SubId=506;UPDATE dbo.PgFifoItems SET ItemValue=508,Label='slot507' WHERE ContainerId=103 AND SubId=507;UPDATE dbo.PgFifoItems SET ItemValue=509,Label='slot508' WHERE ContainerId=103 AND SubId=508;UPDATE dbo.PgFifoItems SET ItemValue=510,Label='slot509' WHERE ContainerId=103 AND SubId=509;UPDATE dbo.PgFifoItems SET ItemValue=511,Label='slot510' WHERE ContainerId=103 AND SubId=510;UPDATE dbo.PgFifoItems SET ItemValue=9999,Label='slot511' WHERE ContainerId=103 AND SubId=511;\n2026-09-28 22:24:55.067 UTC [21667] ERROR:  injected delete failure\n2026-09-28 22:24:55.067 UTC [21667] CONTEXT:  PL\/pgSQL function coh_meta.fifo_reject_delete() line 1 at RAISE\n2026-09-28 22:24:55.067 UTC [21667] STATEMENT:  BEGIN;DELETE FROM dbo.PgFifoItems WHERE ContainerId=101;DELETE FROM dbo.PgFifo WHERE ContainerId=101;\n2026-09-28 22:25:04.359 UTC [21845] FATAL:  terminating connection due to administrator command\n2026-09-28 22:25:04.359 UTC [21845] STATEMENT:  BEGIN;UPDATE dbo.PgFifo SET Score=666 WHERE ContainerId=101; SELECT pg_terminate_backend(pg_backend_pid());\n2026-09-28 22:25:14.080 UTC [19868] LOG:  received fast shutdown request\n2026-09-28 22:25:14.083 UTC [19868] LOG:  aborting any active transactions\n2026-09-28 22:25:14.085 UTC [19868] LOG:  background worker \"logical replication launcher\" (PID 19879) exited with exit code 1\n2026-09-28 22:25:14.090 UTC [19874] LOG:  shutting down\n2026-09-28 22:25:14.091 UTC [19874] LOG:  checkpoint starting: shutdown immediate\n2026-09-28 22:25:14.415 UTC [19874] LOG:  checkpoint complete: wrote 1028 buffers (25.1%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.168 s, sync=0.142 s, total=0.326 s; sync files=339, longest=0.002 s, average=0.001 s; distance=6784 kB, estimate=6784 kB; lsn=0\/1D8F760, redo lsn=0\/1D8F760\n2026-09-28 22:25:14.450 UTC [19868] LOG:  database system is shut down\n"
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.116,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "127.0.0.1|56763|\/state\/diagnostic\/pgdata|on|on|on\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.116
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "dbserver-verify",
+        "elapsed_seconds": 9.564,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "01cc:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nPG_TEST_PASS reload through real container reader\r\nPG_TEST_COMPLETE verify\r\nFlushing SQL fifo\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 9.564
+        }
+      },
+      {
+        "label": "postgres-immediate-stop",
+        "elapsed_seconds": 0.16,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "waiting for server to shut down.... done\nserver stopped\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.16
+        }
+      },
+      {
+        "label": "postgres_clean_restart_ready",
+        "elapsed_seconds": 10.22,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "2026-09-28 22:25:14.668 UTC [22113] LOG:  starting PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n2026-09-28 22:25:14.669 UTC [22113] LOG:  listening on IPv4 address \"127.0.0.1\", port 56763\n2026-09-28 22:25:14.673 UTC [22113] LOG:  listening on Unix socket \"\/state\/diagnostic\/socket\/.s.PGSQL.56763\"\n2026-09-28 22:25:14.689 UTC [22134] LOG:  database system was shut down at 2026-09-28 22:25:14 UTC\n2026-09-28 22:25:14.800 UTC [22113] LOG:  database system is ready to accept connections\n2026-09-28 22:25:24.611 UTC [22113] LOG:  received immediate shutdown request\n2026-09-28 22:25:24.621 UTC [22113] LOG:  database system is shut down\n"
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.057,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "127.0.0.1|56763|\/state\/diagnostic\/pgdata|on|on|on\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.057
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.057,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.057
+        }
+      },
+      {
+        "label": "dbserver-verify",
+        "elapsed_seconds": 9.54,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "02d4:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nPG_TEST_PASS reload through real container reader\r\nPG_TEST_COMPLETE verify\r\nFlushing SQL fifo\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 9.54
+        }
+      },
+      {
+        "label": "dbserver-rebuild",
+        "elapsed_seconds": 9.792,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0400:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('PgFifo:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('PgFifo'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_c83ff57e25fdbc69cf6372683a4a8c11\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('PgFifo:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('PgFifo'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_c83ff57e25fdbc69cf6372683a4a8c11\" already exists, skipping\r\nPG_TEST_PASS real schema rebuild preserves rows, high-water and foreign key\r\nPG_TEST_COMPLETE rebuild\r\nFlushing log files to disk\r\nFlushing SQL fifo\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 9.792
+        }
+      },
+      {
+        "label": "dbserver-verify-rebuilt",
+        "elapsed_seconds": 9.719,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0504:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nPG_TEST_PASS reload through real container reader\r\nPG_TEST_COMPLETE verify-rebuilt\r\nFlushing SQL fifo\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 9.719
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.065,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "16445\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.065
+        }
+      },
+      {
+        "label": "dbserver-rebuild-fail",
+        "elapsed_seconds": 9.912,
+        "exit_code": 2,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "05fc:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nSQLGetStmtAttr failed to retrieve the APD\r\nCOMMAND: SELECT dbo.coh_rebuild_table('dbo.PgFifo'::regclass, 'ContainerId SERIAL NOT NULL,Active int4,Score int4,Name varchar(1),Flag int2,Rating int4,Notes text,PRIMARY KEY (ContainerId)', 'ContainerId,Active,Score,Name,Flag,Rating,Notes', true);\r\nSQLERROR: 1 22001 ERROR: value too long for type character varying(1);\r\nError while executing the query\r\nPG_TEST_FATAL: PostgreSQL rebuild of PgFifo failed; original table preserved. Fix the schema before restarting.\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 2,
+          "output_capture_open": false,
+          "elapsed_seconds": 9.912
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "16445\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "CREATE VIEW\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "dbserver-rebuild-fail-view",
+        "elapsed_seconds": 9.402,
+        "exit_code": 2,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0708:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nSQLGetStmtAttr failed to retrieve the APD\r\nCOMMAND: SELECT dbo.coh_rebuild_table('dbo.PgFifo'::regclass, 'ContainerId SERIAL NOT NULL,Active int4,Name varchar(64),Score int4,Flag int2,Notes text,PRIMARY KEY (ContainerId)', 'ContainerId,Active,Name,Score,Flag,Notes', true);\r\nSQLERROR: 1 2BP01 ERROR: cannot drop table dbo.pgfifo because other objects depend on it\r\nDETAIL: view coh_meta.schema_guard depends on table dbo.pgfifo;\r\nError while executing the query\r\nPG_TEST_FATAL: PostgreSQL rebuild of PgFifo failed; original table preserved. Fix the schema before restarting.\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 2,
+          "output_capture_open": false,
+          "elapsed_seconds": 9.402
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.064,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "16445\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.064
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.064,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "DROP VIEW\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.064
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.061,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.061
+        }
+      },
+      {
+        "label": "dbserver-verify-rebuilt",
+        "elapsed_seconds": 9.659,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0818:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nPG_TEST_PASS reload through real container reader\r\nPG_TEST_COMPLETE verify-rebuilt\r\nFlushing SQL fifo\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 9.659
+        }
+      },
+      {
+        "label": "dbserver-pg-dump",
+        "elapsed_seconds": 0.367,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.367
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.468,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "CREATE DATABASE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.468
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.062,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "REVOKE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.062
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.062,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "ALTER DATABASE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.062
+        }
+      },
+      {
+        "label": "dbserver-pg-restore",
+        "elapsed_seconds": 0.113,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.113
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "REVOKE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.111,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "BEGIN\nNOTICE:  schema \"dbo\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  schema \"coh_meta\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  relation \"schema_version\" already exists, skipping\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 0\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 0\nCOMMIT\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.111
+        }
+      },
+      {
+        "label": "dbserver-verify-rebuilt",
+        "elapsed_seconds": 10.366,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0200:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-f2b33846737c\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nPG_TEST_PASS reload through real container reader\r\nPG_TEST_COMPLETE verify-rebuilt\r\nFlushing SQL fifo\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 10.366
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.065,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.065
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.063,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "1\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.063
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "1\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.366,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "CREATE DATABASE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.365
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "REVOKE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "ALTER DATABASE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "REVOKE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.11,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "BEGIN\nCREATE SCHEMA\nCREATE SCHEMA\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 1\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 1\nCOMMIT\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.11
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.111,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "BEGIN\nNOTICE:  schema \"dbo\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  schema \"coh_meta\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  relation \"schema_version\" already exists, skipping\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 0\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 0\nCOMMIT\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.111
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "cohtest|2\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.058
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.066,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "[{\"version\":1,\"installed_at\":\"2026-09-28T22:26:36.625447+00:00\"}, \n {\"version\":2,\"installed_at\":\"2026-09-28T22:26:36.625447+00:00\"}]\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.066
+        }
+      },
+      {
+        "label": "normal-schema-1",
+        "elapsed_seconds": 52.664,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0324:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-normal-90566dd54688\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nCOH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved\r\n(800) Z:\/state\/diagnostic\/dbserver-normal-90566dd54688\/DbServer.exe Z:\\state\\diagnostic\\dbserver-normal-90566dd54688\\DbServer.exe -exportdump Z:\\state\\diagnostic\\schema-export-1-d6025bf44bdb.dump \r\nworking dir: Z:\\state\\diagnostic\\dbserver-normal-90566dd54688\r\nSVN Revision: Unknown\r\nWarning: couldn't find window named TempConsoleTitle: 800\r\nLoading Z:\/state\/diagnostic\/dbserver-normal-90566dd54688\/data\/server\/db\/servers.cfg\r\n  Loading Z:\/state\/diagnostic\/dbserver-normal-90566dd54688\/data\/server\/db\/servers.cfg done\r\nLoading server\/db\/weeklyTF.cfg\r\n[2026-09-28 22:26:40.145] [DEBUG] \tSet folder cache callback for server\/db\/WeeklyTF.cfg\r\nLoading Z:\/state\/diagnostic\/dbserver-normal-90566dd54688\/data\/server\/db\/loadBalanceDefault.cfg... done.\r\nLoading Z:\/state\/diagnostic\/dbserver-normal-90566dd54688\/data\/server\/db\/loadBalanceShardSpecific.cfg... done.\r\nLoaded load balancing config: 1 roles specified.\r\nWarning: No launcher specified to start the following server applications:\r\n     StatServer, ArenaServer, RaidServer\r\n[2026-09-28 22:26:40.194] [DEBUG] \tSet folder cache callback for server\/db\/loadBalance*.cfg\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6989\r\nstarted 2026-09-28 22:26:40\r\ndbserver starting\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6997\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6971\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6996\r\nNo auth server specified in servers.cfg - allowing all logins\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6992\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\n2026-09-28 22:26:46 SQL server 180006 connected\r\nLoading templates...                                                  (4.63)\r\nUpdate tables...COMMAND: ALTER TABLE IF EXISTS dbo.Ents2 DROP CONSTRAINT IF EXISTS FK_Ents2_LeaguesId_Leagues;\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents DROP CONSTRAINT IF EXISTS FK_Ents_TeamupsId_Teamups;\r\nSQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents DROP CONSTRAINT IF EXISTS FK_Ents_TeamupsId_Teamups;\r\nSQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping\r\nSQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents2 DROP CONSTRAINT IF EXISTS FK_Ents2_LeaguesId_Leagues;\r\nSQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping\r\n                                                      (24.60)\r\nClearing teamups and invalid characters...                            (6.31)\r\nMoving old characters to offline (non-sql) storage...                 (0.00)\r\nReading Backup Files...                                               (0.10)\r\nReading stats...                                                      (0.01)\r\nReading player names...                                               (0.01)\r\nReading last 30 days of event history records...\r\n\tLoaded 0 records    (0.01)\r\n[2026-09-28 22:27:26.934] [DEBUG] \tParsing defs\/account\/LoyaltyRewardTree.def from LoyaltyReward.bin\r\nParserLoadFiles: couldn't find LoyaltyReward.bin, loading text files instead\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6998\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6984\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6982\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6980\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6979\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6977\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6976\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6974\r\n[2026-09-28 22:27:27.018] [DEBUG] \tParsing defs\/account\/product_catalog.def from product_catalog.bin\r\nParserLoadFiles: couldn't find product_catalog.bin, loading text files instead\r\ngame checksum = 0, assuming dev mode\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=udp address=127.0.0.1 port=7000\r\nFlushing log files to disk\r\nFlushing SQL fifo\r\nwaiting for mapservers to sync (timeout in 58.977501 seconds)\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 52.664
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.118,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.118
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.161,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.161
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.061,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "56411\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.061
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.057,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.057
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "1771\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.061,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "90\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.061
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.162,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.162
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.112,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.111
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.066,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "[{\"version\":1,\"installed_at\":\"2026-09-28T22:26:36.625447+00:00\"}, \n {\"version\":2,\"installed_at\":\"2026-09-28T22:26:36.625447+00:00\"}]\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.066
+        }
+      },
+      {
+        "label": "normal-schema-2",
+        "elapsed_seconds": 35.937,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "032c:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-normal-90566dd54688\\\\DbServer.exe\" in experimental wow64 mode\n\r\nCOH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required\r\nCOH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved\r\n(1040) Z:\/state\/diagnostic\/dbserver-normal-90566dd54688\/DbServer.exe Z:\\state\\diagnostic\\dbserver-normal-90566dd54688\\DbServer.exe -exportdump Z:\\state\\diagnostic\\schema-export-2-5733ab99d4ff.dump \r\nworking dir: Z:\\state\\diagnostic\\dbserver-normal-90566dd54688\r\nSVN Revision: Unknown\r\nWarning: couldn't find window named TempConsoleTitle: 1040\r\nLoading Z:\/state\/diagnostic\/dbserver-normal-90566dd54688\/data\/server\/db\/servers.cfg\r\n  Loading Z:\/state\/diagnostic\/dbserver-normal-90566dd54688\/data\/server\/db\/servers.cfg done\r\nLoading server\/db\/weeklyTF.cfg\r\n[2026-09-28 22:27:33.800] [DEBUG] \tSet folder cache callback for server\/db\/WeeklyTF.cfg\r\nLoading Z:\/state\/diagnostic\/dbserver-normal-90566dd54688\/data\/server\/db\/loadBalanceDefault.cfg... done.\r\nLoading Z:\/state\/diagnostic\/dbserver-normal-90566dd54688\/data\/server\/db\/loadBalanceShardSpecific.cfg... done.\r\nLoaded load balancing config: 1 roles specified.\r\nWarning: No launcher specified to start the following server applications:\r\n     StatServer, ArenaServer, RaidServer\r\n[2026-09-28 22:27:33.839] [DEBUG] \tSet folder cache callback for server\/db\/loadBalance*.cfg\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6989\r\nstarted 2026-09-28 22:27:33\r\ndbserver starting\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6997\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6971\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6996\r\nNo auth server specified in servers.cfg - allowing all logins\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6992\r\nSQL PSQLODBC35W.DLL 18.00.0004 \/ ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\n2026-09-28 22:27:40 SQL server 180006 connected\r\nLoading templates...                                                  (4.35)\r\nUpdate tables...COMMAND: ALTER TABLE IF EXISTS dbo.Ents2 DROP CONSTRAINT IF EXISTS FK_Ents2_LeaguesId_Leagues;\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents DROP CONSTRAINT IF EXISTS FK_Ents_TeamupsId_Teamups;\r\nSQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping\r\nSQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents2 DROP CONSTRAINT IF EXISTS FK_Ents2_LeaguesId_Leagues;\r\nSQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents DROP CONSTRAINT IF EXISTS FK_Ents_TeamupsId_Teamups;\r\nSQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:TeamupsId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'TeamupsId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:TeamupsId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'TeamupsId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:SupergroupsId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'SupergroupsId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:SupergroupsId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'SupergroupsId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:TaskforcesId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'TaskforcesId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:TaskforcesId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'TaskforcesId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:AuthId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'AuthId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:AuthId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'AuthId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:AuthName_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'AuthName'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:AuthName_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'AuthName'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents2:AccSvrLock_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents2'), 'AccSvrLock'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents2:AccSvrLock_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents2'), 'AccSvrLock'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents2:RaidsId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents2'), 'RaidsId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents2:RaidsId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents2'), 'RaidsId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents2:LevelingPactsId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents2'), 'LevelingPactsId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents2:LevelingPactsId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents2'), 'LevelingPactsId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents2:LastDayJobsStart_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents2'), 'LastDayJobsStart'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents2:LastDayJobsStart_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents2'), 'LastDayJobsStart'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents2:LeaguesId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents2'), 'LeaguesId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Ents2:LeaguesId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Ents2'), 'LeaguesId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Supergroups:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Supergroups'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Supergroups:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Supergroups'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Recipients:Recipient_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Recipients'), 'Recipient'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Recipients:Recipient_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Recipients'), 'Recipient'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Petitions:Date_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Petitions'), 'Date'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Petitions:Date_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Petitions'), 'Date'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Base:UserId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Base'), 'UserId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Base:UserId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Base'), 'UserId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Base:SupergroupId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Base'), 'SupergroupId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Base:SupergroupId_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Base'), 'SupergroupId'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('MinedData:Field_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('MinedData'), 'Field'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('MinedData:Field_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('MinedData'), 'Field'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('MiningAccumulator:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('MiningAccumulator'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('MiningAccumulator:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('MiningAccumulator'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('ShardAccounts:AuthName_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('ShardAccounts'), 'AuthName'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('ShardAccounts:AuthName_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('ShardAccounts'), 'AuthName'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping\r\n                                                      (5.27)\r\nClearing teamups and invalid characters...COMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Petitions:Petitions_Fetched_date')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Petitions'), 'Fetched ASC, Date ASC'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('Petitions:Petitions_Fetched_date')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('Petitions'), 'Fetched ASC, Date ASC'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping\r\n                            (6.46)\r\nMoving old characters to offline (non-sql) storage...                 (0.00)\r\nReading Backup Files...                                               (0.11)\r\nReading stats...                                                      (0.01)\r\nReading player names...                                               (0.01)\r\nReading last 30 days of event history records...\r\n\tLoaded 0 records    (0.01)\r\n[2026-09-28 22:28:03.640] [DEBUG] \tParsing defs\/account\/LoyaltyRewardTree.def from LoyaltyReward.bin\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6998\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6984\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6982\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6980\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6979\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6977\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6976\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6974\r\n[2026-09-28 22:28:03.723] [DEBUG] \tParsing defs\/account\/product_catalog.def from product_catalog.bin\r\ngame checksum = 0, assuming dev mode\r\n\r\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=udp address=127.0.0.1 port=7000\r\nFlushing log files to disk\r\nFlushing SQL fifo\r\nwaiting for mapservers to sync (timeout in 58.976414 seconds)\r\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 35.937
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.109,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.109
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.163,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.163
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.061,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "56411\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.061
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.069,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.069
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "1771\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.058,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.058
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.059,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "90\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.059
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.163,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.163
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.06,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.06
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.057,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.057
+        }
+      },
+      {
+        "label": "sql-fixture",
+        "elapsed_seconds": 0.056,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "[{\"version\":1,\"installed_at\":\"2026-09-28T22:26:36.625447+00:00\"}, \n {\"version\":2,\"installed_at\":\"2026-09-28T22:26:36.625447+00:00\"}]\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.056
+        }
+      },
+      {
+        "label": "owned-wine-stop",
+        "elapsed_seconds": 2.285,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 2.285
+        }
+      },
+      {
+        "label": "owned-wine-wait",
+        "elapsed_seconds": 0.079,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.079
+        }
+      },
+      {
+        "label": "sql-admin",
+        "elapsed_seconds": 1.328,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "DROP DATABASE\nDROP DATABASE\nDROP DATABASE\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 1.328
+        }
+      },
+      {
+        "label": "postgres-graceful-stop",
+        "elapsed_seconds": 0.168,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "waiting for server to shut down.... done\nserver stopped\n",
+        "completion": {
+          "policy": "leader_exit_and_output_eof",
+          "leader_exit_code": 0,
+          "output_capture_open": false,
+          "elapsed_seconds": 0.168
+        }
+      },
+      {
+        "label": "postgres_wal_recovery_ready",
+        "elapsed_seconds": 168.186,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "2026-09-28 22:25:24.890 UTC [22370] LOG:  starting PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n2026-09-28 22:25:24.890 UTC [22370] LOG:  listening on IPv4 address \"127.0.0.1\", port 56763\n2026-09-28 22:25:24.894 UTC [22370] LOG:  listening on Unix socket \"\/state\/diagnostic\/socket\/.s.PGSQL.56763\"\n2026-09-28 22:25:24.905 UTC [22378] LOG:  database system was interrupted; last known up at 2026-09-28 22:25:14 UTC\n2026-09-28 22:25:25.593 UTC [22378] LOG:  database system was not properly shut down; automatic recovery in progress\n2026-09-28 22:25:25.601 UTC [22378] LOG:  redo starts at 0\/1D8F7D8\n2026-09-28 22:25:25.603 UTC [22378] LOG:  invalid record length at 0\/1D93790: expected at least 24, got 0\n2026-09-28 22:25:25.603 UTC [22378] LOG:  redo done at 0\/1D91770 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s\n2026-09-28 22:25:25.616 UTC [22376] LOG:  checkpoint starting: end-of-recovery immediate wait\n2026-09-28 22:25:25.632 UTC [22376] LOG:  checkpoint complete: wrote 2 buffers (0.0%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.001 s, total=0.018 s; sync files=4, longest=0.001 s, average=0.001 s; distance=16 kB, estimate=16 kB; lsn=0\/1D93790, redo lsn=0\/1D93790\n2026-09-28 22:25:25.634 UTC [22370] LOG:  database system is ready to accept connections\n2026-09-28 22:26:04.668 UTC [23012] ERROR:  value too long for type character varying(1)\n2026-09-28 22:26:04.668 UTC [23012] CONTEXT:  SQL statement \"INSERT INTO dbo.coh_rebuild_dc33e31c39c141adff52d67a0718b867 (ContainerId,Active,Score,Name,Flag,Rating,Notes) SELECT ContainerId,Active,Score,Name,Flag,Rating,Notes FROM dbo.pgfifo\"\n\tPL\/pgSQL function dbo.coh_rebuild_table(regclass,text,text,boolean) line 43 at EXECUTE\n2026-09-28 22:26:04.668 UTC [23012] STATEMENT:  SELECT dbo.coh_rebuild_table('dbo.PgFifo'::regclass, 'ContainerId SERIAL NOT NULL,Active int4,Score int4,Name varchar(1),Flag int2,Rating int4,Notes text,PRIMARY KEY (ContainerId)', 'ContainerId,Active,Score,Name,Flag,Rating,Notes', true);\n2026-09-28 22:26:14.242 UTC [23197] ERROR:  cannot drop table dbo.pgfifo because other objects depend on it\n2026-09-28 22:26:14.242 UTC [23197] DETAIL:  view coh_meta.schema_guard depends on table dbo.pgfifo\n2026-09-28 22:26:14.242 UTC [23197] HINT:  Use DROP ... CASCADE to drop the dependent objects too.\n2026-09-28 22:26:14.242 UTC [23197] CONTEXT:  SQL statement \"DROP TABLE dbo.pgfifo\"\n\tPL\/pgSQL function dbo.coh_rebuild_table(regclass,text,text,boolean) line 48 at EXECUTE\n2026-09-28 22:26:14.242 UTC [23197] STATEMENT:  SELECT dbo.coh_rebuild_table('dbo.PgFifo'::regclass, 'ContainerId SERIAL NOT NULL,Active int4,Name varchar(64),Score int4,Flag int2,Notes text,PRIMARY KEY (ContainerId)', 'ContainerId,Active,Name,Score,Flag,Notes', true);\n2026-09-28 22:27:25.705 UTC [24106] LOG:  skipping vacuum of \"attributes\" --- lock not available\n2026-09-28 22:28:11.501 UTC [22376] LOG:  checkpoint starting: immediate force wait\n2026-09-28 22:28:12.375 UTC [22376] LOG:  checkpoint complete: wrote 1832 buffers (44.7%), wrote 4 SLRU buffers; 0 WAL file(s) added, 0 removed, 2 recycled; write=0.352 s, sync=0.475 s, total=0.875 s; sync files=933, longest=0.002 s, average=0.001 s; distance=25550 kB, estimate=25550 kB; lsn=0\/3686FE8, redo lsn=0\/3686F90\n2026-09-28 22:28:12.479 UTC [22376] LOG:  checkpoint starting: immediate force wait\n2026-09-28 22:28:12.506 UTC [22376] LOG:  checkpoint complete: wrote 3 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.002 s, total=0.027 s; sync files=4, longest=0.001 s, average=0.001 s; distance=11 kB, estimate=22996 kB; lsn=0\/3689D40, redo lsn=0\/3689CE8\n2026-09-28 22:28:12.610 UTC [22376] LOG:  checkpoint starting: immediate force wait\n2026-09-28 22:28:12.645 UTC [22376] LOG:  checkpoint complete: wrote 4 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.002 s, total=0.036 s; sync files=4, longest=0.001 s, average=0.001 s; distance=18 kB, estimate=20698 kB; lsn=0\/368E768, redo lsn=0\/368E710\n2026-09-28 22:28:12.798 UTC [22370] LOG:  received fast shutdown request\n2026-09-28 22:28:12.802 UTC [22370] LOG:  aborting any active transactions\n2026-09-28 22:28:12.806 UTC [22370] LOG:  background worker \"logical replication launcher\" (PID 22453) exited with exit code 1\n2026-09-28 22:28:12.808 UTC [22376] LOG:  shutting down\n2026-09-28 22:28:12.809 UTC [22376] LOG:  checkpoint starting: shutdown immediate\n2026-09-28 22:28:12.830 UTC [22376] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.023 s; sync files=1, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=18628 kB; lsn=0\/368E890, redo lsn=0\/368E890\n2026-09-28 22:28:12.855 UTC [22370] LOG:  database system is shut down\n"
+      },
+      {
+        "label": "private-headless-x",
+        "elapsed_seconds": 332.439,
+        "exit_code": 0,
+        "forced_stop": true,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "_XSERVTransmkdir: ERROR: euid != 0,directory \/tmp\/.X11-unix will not be created.\n\nXvnc TigerVNC 1.12.0 - built 2023-01-06 16:01\nCopyright (C) 1999-2021 TigerVNC Team and many others (see README.rst)\nSee https:\/\/www.tigervnc.org for information on TigerVNC.\nUnderlying X server release 12101006, X.Org\n\n\nMon Sep 28 22:22:40 2026\n vncext:      VNC extension running!\n vncext:      Listening for VNC connections on\n              \/state\/diagnostic\/runtime\/vnc.sock (mode 0600)\n vncext:      created VNC server for screen 0\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 2\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 3\n\nMon Sep 28 22:28:12 2026\n ComparingUpdateTracker: 0 pixels in \/ 0 pixels out\n ComparingUpdateTracker: (1:nan ratio)\n"
+      }
+    ],
+    "failures": [],
+    "scope": "Real fixture-ON DbServer persistence and fixture-OFF accepted schema startup\/reload through Wine\/FEX on ARM64",
+    "passed": true,
+    "gameplay_validated": false,
+    "android_execution_validated": false,
+    "diagnostic_mode": "dbserver_persistence_and_generated_schema",
+    "execution_platform_requested": "android",
+    "generated_character_persistence_validated": false,
+    "android_listener_binding_validated": false,
+    "listener_policy": "device",
+    "accepted_device_runtime": {
+      "accepted_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+      "runtime_manifest_sha256": "d68ae4374dadfacd3c5044ccdbfcc04a6d4104af263c3b100168d7ed7d6b7cb9",
+      "augmented": true
+    },
+    "qualified_device_payload": {
+      "run_id": 36460867428,
+      "package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+      "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"
+    },
+    "inputs": {
+      "runtime_manifest_sha256": "d68ae4374dadfacd3c5044ccdbfcc04a6d4104af263c3b100168d7ed7d6b7cb9",
+      "package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+      "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+      "fixture_executable_sha256": "77d4677904d967dfdeffa3c6b2609ae0620ccc28177655c6f5f975a7ec4c2212",
+      "normal_executable_sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c",
+      "repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
+    },
+    "fixture": {
+      "status": "passed",
+      "check_count": 21,
+      "checks": [
+        "real 64-worker SQL FIFO and container serialization",
+        "foreign-key removal before table creation and when constraint is absent",
+        "multi-batch create and update with 512 child rows",
+        "ordered asynchronous read callback",
+        "16 concurrent records and repeated same-record writes",
+        "Unicode and unsigned byte 255",
+        "case-insensitive game cache and SQL name lookup",
+        "whole-save retry for 40001 and 40P01",
+        "commit-time retry before acknowledgement",
+        "atomic parent\/child deletion",
+        "permanent failure rolls back all save batches",
+        "five-attempt retry limit without acknowledgement",
+        "failed delete restores previously deleted child rows",
+        "connection loss stops without replay or acknowledgement; in-flight write rolled back",
+        "new-process container reload",
+        "clean PostgreSQL restart",
+        "WAL recovery of real saved containers",
+        "real template reorder\/add-column rebuild preserves high-water 9000",
+        "inbound foreign keys and indexes survive table replacement",
+        "failed data conversion and dependent-view rebuild preserve original table",
+        "backup\/restore reload through actual DbServer container reader"
+      ],
+      "phases": [
+        {
+          "mode": "initial",
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "markers": [
+            "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=1",
+            "PG_FIFO_RETRY command=2 SQLSTATE=40P01 attempt=1",
+            "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=1",
+            "PG_TEST_PASS real queue removes missing foreign keys before table creation",
+            "PG_TEST_PASS real queue: multi-batch create\/update\/read\/delete, ordering, 16 writers, SQLSTATE 40001\/40P01 and commit retry, UTF-8, case lookup",
+            "PG_TEST_COMPLETE initial"
+          ],
+          "output_sha256": "6b9303091ff01165146e9198a14b990a94ed14eccbbf97dc4bf22c039740b838",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "fail",
+          "exit_code": 3,
+          "expected_exit_code": 3,
+          "markers": [
+            "PG_FIFO_FAILED command=2 SQLSTATE=23514; save not acknowledged"
+          ],
+          "output_sha256": "49a5d714711d0d8f1916abe616975c8b2c366942b61a9cfa61c21f13375c8a50",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "exhaust",
+          "exit_code": 3,
+          "expected_exit_code": 3,
+          "markers": [
+            "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=1",
+            "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=2",
+            "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=3",
+            "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=4",
+            "PG_FIFO_FAILED command=2 SQLSTATE=40001; save not acknowledged"
+          ],
+          "output_sha256": "6932cce3c910ed81b1218b1572f033661009d1c158d7364e047dc0f8b3da208c",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "delete-fail",
+          "exit_code": 3,
+          "expected_exit_code": 3,
+          "markers": [
+            "PG_FIFO_FAILED command=6 SQLSTATE=23503; save not acknowledged"
+          ],
+          "output_sha256": "70241357fe9bdbc8e34219310dc516b8c9ab209647438cc9e9263f956e1ebec8",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "disconnect",
+          "exit_code": 3,
+          "expected_exit_code": 3,
+          "markers": [
+            "PG_FIFO_FAILED command=6 SQLSTATE=57P01; save not acknowledged"
+          ],
+          "output_sha256": "fb31b43512e4aa05db8b407d3974e2a27738a072ffc351215a64fb839ea3bbe5",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "verify",
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "markers": [
+            "PG_TEST_PASS reload through real container reader",
+            "PG_TEST_COMPLETE verify"
+          ],
+          "output_sha256": "f06e1e181111f322f4f1c6b06cce37f8ad0207628056ba56257d770954a1664c",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "verify",
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "markers": [
+            "PG_TEST_PASS reload through real container reader",
+            "PG_TEST_COMPLETE verify"
+          ],
+          "output_sha256": "0177ea8c95a02cef568bab378f1b0f9321f3bc05868e0deb9d6be1da1a0232d6",
+          "evidence": "clean_postgres_restart",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "verify",
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "markers": [
+            "PG_TEST_PASS reload through real container reader",
+            "PG_TEST_COMPLETE verify"
+          ],
+          "output_sha256": "b3617916378f6fc8a0b53d6da674453887807c50ed5e62b574067a075bb807af",
+          "evidence": "postgres_wal_recovery",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "rebuild",
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "markers": [
+            "PG_TEST_PASS real schema rebuild preserves rows, high-water and foreign key",
+            "PG_TEST_COMPLETE rebuild"
+          ],
+          "output_sha256": "2781d10c7f3a4984a601df86d3abecc6471ffe5eb1d3bbffeb28c8425ad1ab83",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "verify-rebuilt",
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "markers": [
+            "PG_TEST_PASS reload through real container reader",
+            "PG_TEST_COMPLETE verify-rebuilt"
+          ],
+          "output_sha256": "afe6f538d4362b246ae7e377cd35c12f48d9ba087efec5cfe1b554cf1267b41b",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "rebuild-fail",
+          "exit_code": 2,
+          "expected_exit_code": 2,
+          "markers": [
+            "PG_TEST_FATAL: PostgreSQL rebuild of PgFifo failed; original table preserved. Fix the schema before restarting."
+          ],
+          "output_sha256": "3f49a368a05d1db9cfd6770cffabadb23a9b3a5ff845636f494d47a1c5e7a3cc",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "rebuild-fail-view",
+          "exit_code": 2,
+          "expected_exit_code": 2,
+          "markers": [
+            "PG_TEST_FATAL: PostgreSQL rebuild of PgFifo failed; original table preserved. Fix the schema before restarting."
+          ],
+          "output_sha256": "537d0826ae4cf917de7557017f00489ea697aae898e81d9e97c2d8c6e5dfdf2b",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "verify-rebuilt",
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "markers": [
+            "PG_TEST_PASS reload through real container reader",
+            "PG_TEST_COMPLETE verify-rebuilt"
+          ],
+          "output_sha256": "99e6cef1c32ff651908024e9c789d9aee008dfec45435439389ff2a832b78e2d",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        },
+        {
+          "mode": "verify-rebuilt",
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "markers": [
+            "PG_TEST_PASS reload through real container reader",
+            "PG_TEST_COMPLETE verify-rebuilt"
+          ],
+          "output_sha256": "f3728c2811163c4d4c19f6a8eea6122d7796492f7e64d08dc0cf2a48276b0a15",
+          "evidence": "backup_restore",
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": []
+          }
+        }
+      ]
+    },
+    "generated_schema": {
+      "status": "passed",
+      "fixture_enabled": false,
+      "phases": [
+        {
+          "number": 1,
+          "exit_code": 0,
+          "failure_diagnostic_lines": [],
+          "benign_catalog_notices": {
+            "count": 8,
+            "lines": [
+              "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+              "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+              "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+              "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+              "260928 22:26:55 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+              "260928 22:26:55 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+              "260928 22:26:55 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+              "260928 22:26:55 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping"
+            ]
+          },
+          "logs": [
+            {
+              "path": "logs\/dbserver\/error_2026-09-28-22-00-00.log",
+              "redacted_sha256": "e6e763e505f22f00d8e8d2e58651abcebbc25a6b6db75833f477c3b7f682a39d",
+              "bytes": 802
+            }
+          ],
+          "fixed_inputs": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+          },
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": [
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6971
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6974
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6976
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6977
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6979
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6980
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6982
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6984
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6989
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6992
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6996
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6997
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6998
+              },
+              {
+                "protocol": "udp",
+                "address": "127.0.0.1",
+                "port": 7000
+              }
+            ]
+          },
+          "catalog_sha256": {
+            "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+            "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580",
+            "constraints": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0"
+          },
+          "attribute_sha256": {
+            "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+            "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+            "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+          },
+          "attribute_counts": {
+            "attributes": 56411,
+            "badgestatsattributes": 1771,
+            "pophelpattributes": 90
+          },
+          "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+          "table_count": 99,
+          "column_count": 5935,
+          "export_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "export_bytes": 0,
+          "input_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"
+        },
+        {
+          "number": 2,
+          "exit_code": 0,
+          "failure_diagnostic_lines": [],
+          "benign_catalog_notices": {
+            "count": 92,
+            "lines": [
+              "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+              "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+              "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+              "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+              "SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+              "260928 22:26:55 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+              "260928 22:26:55 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+              "260928 22:26:55 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+              "260928 22:26:55 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+              "260928 22:27:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+              "260928 22:27:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+              "260928 22:27:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+              "260928 22:27:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+              "260928 22:27:52 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+              "260928 22:27:54 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+              "260928 22:27:54 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+              "260928 22:27:54 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+              "260928 22:27:54 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+              "260928 22:27:54 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+              "260928 22:27:54 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+              "260928 22:27:55 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+              "260928 22:27:55 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+              "260928 22:27:55 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+              "260928 22:27:55 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+              "260928 22:27:56 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+              "260928 22:27:56 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+              "260928 22:27:56 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+              "260928 22:27:56 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+              "260928 22:27:56 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+              "260928 22:27:56 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+              "260928 22:27:57 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+              "260928 22:27:57 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping"
+            ]
+          },
+          "logs": [
+            {
+              "path": "logs\/dbserver\/error_2026-09-28-22-00-00.log",
+              "redacted_sha256": "e6e763e505f22f00d8e8d2e58651abcebbc25a6b6db75833f477c3b7f682a39d",
+              "bytes": 802
+            },
+            {
+              "path": "logs\/dbserver\/error_2026-09-28-22-27-51.log",
+              "redacted_sha256": "12517137571bbd430459b848d62155969b00b3b6fcb5c1486c20ab10261a1618",
+              "bytes": 14074
+            }
+          ],
+          "fixed_inputs": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+          },
+          "loopback_only": {
+            "requested": true,
+            "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+            "endpoints": [
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6971
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6974
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6976
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6977
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6979
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6980
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6982
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6984
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6989
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6992
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6996
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6997
+              },
+              {
+                "protocol": "tcp",
+                "address": "127.0.0.1",
+                "port": 6998
+              },
+              {
+                "protocol": "udp",
+                "address": "127.0.0.1",
+                "port": 7000
+              }
+            ]
+          },
+          "catalog_sha256": {
+            "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+            "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580",
+            "constraints": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0"
+          },
+          "attribute_sha256": {
+            "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+            "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+            "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+          },
+          "attribute_counts": {
+            "attributes": 56411,
+            "badgestatsattributes": 1771,
+            "pophelpattributes": 90
+          },
+          "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+          "table_count": 99,
+          "column_count": 5935,
+          "export_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "export_bytes": 0,
+          "input_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"
+        }
+      ],
+      "reload_stable": true
+    },
+    "asset_sha256": {
+      "001-coh-compat.sql": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a",
+      "odbc_probe.exe": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb",
+      "psqlodbc_x86.msi": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773",
+      "runtime-probe.exe": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842",
+      "probe.dll": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+    },
+    "postgres_port": 56763,
+    "wine_initialization": {
+      "policy": "initialize_once_then_reuse",
+      "state": "ready",
+      "ready_prefix_reused": false,
+      "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+      "update_timestamp_removed": false,
+      "timeout_seconds": 600,
+      "registration_processes": 3,
+      "wow64_registration_processes": 1,
+      "registration_passes": 1,
+      "elapsed_seconds": 85.339
+    },
+    "odbc_installer": {
+      "path": "C:\\windows\\syswow64\\msiexec.exe",
+      "pointer_bits": 32,
+      "sha256": "d4ed3551f449cfb68e609e1572b519b5eecd3bf0519bf16877ea02bd4fb01ed0"
+    },
+    "odbc_driver": {
+      "driver_name": "PostgreSQL Unicode",
+      "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+      "pointer_bits": 32,
+      "registry_view": 32,
+      "driver_dll_loaded": true
+    },
+    "wine_shutdown": {
+      "stop_exit_code": 0,
+      "wait_exit_code": 0,
+      "prefix_lock_free": true,
+      "server_socket_inactive": true
+    },
+    "wine_process_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 169,
+      "scanned_tasks": 40,
+      "dead_leaders_with_live_tasks": 4,
+      "owned_live_workers": 4,
+      "leader_exit_retries": 0,
+      "candidates": 4,
+      "term_signals": 4,
+      "kill_signals": 1,
+      "pidfd_signals": 5,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true
+    },
+    "finished_utc": "2026-09-28T22:28:12.970565+00:00",
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    }
+  },
+  "guest_hosts": {
+    "kernel_hostname": "localhost",
+    "guest_hosts_sha256": "081ef9d5367595d16e30b4b4549d9f43537320508b4ce0788963e10e4f808857",
+    "contents": "127.0.0.1 localhost\n"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "host_JVM_Java_gate_compatibility_only",
+  "repository_commit": "ea5c0e18d2971d8ae9ade3f6655cea7da87e30f5",
+  "apk_sha256": "1889ca4f005a6a4a9341daaba4eb7e4ec87e9564ab98f88ddbdbe1db729edf07",
+  "java_source_sha256": "cf272a3f63c724ef8ea1f4e225c7038b5e783015908182909d7bcabdaea64885",
+  "runtime_manifest_sha256": "3d1c522df288580e27fd06f22508c6f601c6e952d5d96d0ab04610ce687d9554",
+  "report_sha256": "cb48d95bc1a4a36a4051c054e68d9b37a5111c09c85904465464f8daa9815997",
+  "import_report_sha256": "94f76d72b2f4b9767f5e6b4406b41236a8443eb664addbb2c3542852c644ea8c",
+  "untouched_host_report_rejected": true,
+  "untouched_cleanup_accepted": true,
+  "adapted_report_accepted": true,
+  "original_evidence_unchanged": true,
+  "adapted_fields": [
+    {
+      "field": "execution_platform_requested",
+      "before": "host",
+      "after": "android"
+    }
+  ],
+  "android_execution_validated": false,
+  "android_listener_binding_validated": false,
+  "gameplay_validated": false,
+  "warning": "Scratch-only platform adaptation checks Java validator compatibility; it does not establish Android execution."
+}

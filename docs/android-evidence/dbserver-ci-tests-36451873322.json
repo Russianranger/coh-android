@@ -1,0 +1,74 @@
+{
+  "format": 1,
+  "run_id": 36451873322,
+  "source": "GitHub Actions decoded job logs",
+  "tooling": {
+    "job_id": 109028373602,
+    "suites": [
+      {
+        "name": "prepare Wine source",
+        "tests_run": 14,
+        "passed": 14,
+        "skipped": 0
+      },
+      {
+        "name": "DbServer tooling",
+        "tests_run": 55,
+        "passed": 47,
+        "skipped": 8
+      },
+      {
+        "name": "accepted talloc source recovery",
+        "tests_run": 8,
+        "passed": 8,
+        "skipped": 0
+      }
+    ],
+    "total_tests_run": 77,
+    "total_passed": 69,
+    "total_skipped": 8,
+    "summary_lines": [
+      "2026-09-28T16:33:47.7528381Z Ran 14 tests in 1.676s",
+      "2026-09-28T16:33:47.7528643Z OK",
+      "2026-09-28T16:33:49.2992133Z Ran 55 tests in 1.364s",
+      "2026-09-28T16:33:49.2992479Z OK (skipped=8)",
+      "2026-09-28T16:33:49.4312827Z Ran 8 tests in 0.023s",
+      "2026-09-28T16:33:49.4313181Z OK"
+    ]
+  },
+  "windows_contracts": {
+    "job_id": 109028598448,
+    "suites": [
+      {
+        "name": "dispatch progress",
+        "tests_run": 4,
+        "passed": 4,
+        "skipped": 0
+      },
+      {
+        "name": "fixed inputs",
+        "tests_run": 4,
+        "passed": 4,
+        "skipped": 0
+      }
+    ],
+    "total_tests_run": 8,
+    "total_passed": 8,
+    "total_skipped": 0,
+    "summary_lines": [
+      "2026-09-28T16:34:39.7321955Z test_disabled_mode_has_no_file_or_thread_and_marker_calls_remain_noops (__main__.DispatchProgressWindowsTests.test_disabled_mode_has_no_file_or_thread_and_marker_calls_remain_noops) ... ok",
+      "2026-09-28T16:34:39.7958667Z test_enabled_mapping_is_visible_externally_with_identity_and_ordered_progress (__main__.DispatchProgressWindowsTests.test_enabled_mapping_is_visible_externally_with_identity_and_ordered_progress) ... ok",
+      "2026-09-28T16:34:39.8532849Z test_existing_file_is_refused_without_modifying_evidence (__main__.DispatchProgressWindowsTests.test_existing_file_is_refused_without_modifying_evidence) ... ok",
+      "2026-09-28T16:34:40.0234362Z test_relative_missing_parent_and_directory_paths_are_refused (__main__.DispatchProgressWindowsTests.test_relative_missing_parent_and_directory_paths_are_refused) ... ok",
+      "2026-09-28T16:34:40.0244175Z Ran 4 tests in 14.558s",
+      "2026-09-28T16:34:40.0244509Z OK",
+      "2026-09-28T16:34:40.6651899Z test_absent_option_never_calls_library_or_acknowledges (__main__.FixedInputsWindowsTests.test_absent_option_never_calls_library_or_acknowledges) ... ok",
+      "2026-09-28T16:34:40.6775934Z test_exact_one_calls_library_once_then_acknowledges (__main__.FixedInputsWindowsTests.test_exact_one_calls_library_once_then_acknowledges) ... ok",
+      "2026-09-28T16:34:40.6890372Z test_existing_cache_refusal_does_not_acknowledge_activation (__main__.FixedInputsWindowsTests.test_existing_cache_refusal_does_not_acknowledge_activation) ... ok",
+      "2026-09-28T16:34:40.7787051Z test_invalid_options_never_call_library_or_acknowledge (__main__.FixedInputsWindowsTests.test_invalid_options_never_call_library_or_acknowledge) ... ok",
+      "2026-09-28T16:34:40.7795585Z Ran 4 tests in 0.663s",
+      "2026-09-28T16:34:40.7795923Z OK"
+    ]
+  },
+  "arm64_dispatch_publication_enabled": false
+}

@@ -1,0 +1,15 @@
+{
+  "actual_fork": true,
+  "inherited_mutex_locked": true,
+  "issue_and_consume_refused_before_lock": true,
+  "foreign_cleanup_unlinked_nothing": true,
+  "cleanup_report": {
+    "role": "new_host_only_fixture_cleanup",
+    "cleanup_complete": false,
+    "reasons": [
+      "foreign_process_cleanup_refused"
+    ],
+    "runtime_admission": false
+  },
+  "parent_still_consumed_ticket_and_cleaned_up": true
+}

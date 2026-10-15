@@ -1,0 +1,17 @@
+{
+  "version": "0.13.36",
+  "version_code": 51,
+  "donor_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+  "asset_version": "1.0.0",
+  "qualification_enabled": true,
+  "publish_enabled": true,
+  "native_rebuild_required": false,
+  "native_rebuild_scope": "none; exact .35 Game/DbServer/MapServer/client-launcher retained",
+  "asset_rebuild_required": false,
+  "runtime_refresh_required": true,
+  "manual_gameplay_expiry_removed": true,
+  "physical_startup_below_five_minutes_validated": false,
+  "physical_client_start_below_one_minute_validated": false,
+  "physical_zone_below_thirty_seconds_validated": false,
+  "qualification_revision": 1
+}

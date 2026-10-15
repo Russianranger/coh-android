@@ -1,0 +1,118 @@
+{
+  "status": "expected_candidate_differences_verified",
+  "candidate_run_id": 36736910061,
+  "prior_run_id": 36732627939,
+  "repository_commit": "fdd0acc492485455ce0fc8b43eb4b406da529ba1",
+  "apk_sha256": "8ada2e23cf8cf4986b4faacdff1839233ef6538cf4eb12602d2e11d1cb3d36ca",
+  "build_report_sha256": "924dc1a57f8b4a92eb8eedd9863d49904698e18f340e92c21f122370879d8ef8",
+  "unchanged_payload_count": 30,
+  "changed_payloads": {
+    "assets/runtime/client-launcher.exe": {
+      "before": {
+        "bytes": 245249,
+        "sha256": "9b376241f92ceb0afba5956fd4034c1996bc63cb8d4aa689ddc774c13785683e"
+      },
+      "after": {
+        "bytes": 245249,
+        "sha256": "e6a3ff87605d589996fcac0e149b8d940abe0f51ef98ff7cd4bcaef20e5a8893"
+      }
+    },
+    "assets/runtime/client-manifest.json": {
+      "before": {
+        "bytes": 2499,
+        "sha256": "9fec2ebf03070b59c5d1109a39b74b174fb67a02dd9257d5576ff789599fb2d3"
+      },
+      "after": {
+        "bytes": 2499,
+        "sha256": "4ba2337034f8dc35f2e37e9aa7e8f6fae7fef9b44a96ca941612f998dcbb1deb"
+      }
+    },
+    "assets/runtime/client-runtime.zip": {
+      "before": {
+        "bytes": 8575423,
+        "sha256": "58c2e03acd2e6fc3d0d7980fa977a0dfd90595cb05f3ce978f720e2f8eacedf9"
+      },
+      "after": {
+        "bytes": 8575424,
+        "sha256": "da36e542d995f6335270f79e10f6b7486e42841e6edceedcd0c610827adca6a6"
+      }
+    },
+    "assets/runtime/runtime-manifest.json": {
+      "before": {
+        "bytes": 11655,
+        "sha256": "d5635c0df5b19385f124ea212ec006865894a4d21d7d75b1346fcc0fd13b2f33"
+      },
+      "after": {
+        "bytes": 11655,
+        "sha256": "3c4ae284d0200b4bef23374f1adf6fce126e39a003b116a3a0cef4d7e9f0a355"
+      }
+    }
+  },
+  "changed_java_sources": {
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java": {
+      "before": {
+        "bytes": 21851,
+        "sha256": "73d4cf648d11488e2e2529e901e28d7fa298093e1a77b17c4841c8365ba2ba90"
+      },
+      "after": {
+        "bytes": 22811,
+        "sha256": "52d53d26d3b559d95fec152f31fd3ea43afe718e1ea98929e0183f36dcffd0e9"
+      }
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+      "before": {
+        "bytes": 62153,
+        "sha256": "b3e05d0732f5bc6ae4495aec4ab9d23e73aa65242354899f01d12038b9b251c8"
+      },
+      "after": {
+        "bytes": 63034,
+        "sha256": "aaff465cadb09c9c56b75129f9b11b544020d95c5319557073f8428ea0cd2849"
+      }
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java": {
+      "before": {
+        "bytes": 14770,
+        "sha256": "e35b61d5d8dc40fba3cd2983873f830aae5d6fc7f62ce596acd0ca46f1341abc"
+      },
+      "after": {
+        "bytes": 14920,
+        "sha256": "d68a11042be82d013dc8445439b9bb011e3c55bceb6980e32f11de7d709fd7f8"
+      }
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java": {
+      "before": {
+        "bytes": 10328,
+        "sha256": "4d24fbddeecdd0e85bd70e8f540fc21db6f3cb0c1baaf2958c505a19a3a660fb"
+      },
+      "after": {
+        "bytes": 13786,
+        "sha256": "f99319c3e415971c29ff3331fb49802942e532c78e41afd292b6445f0ea73d42"
+      }
+    }
+  },
+  "native_launcher_source_unchanged": true,
+  "runtime_changed_fields": [
+    "repository_commit",
+    "files"
+  ],
+  "client_runtime_changed_members": [
+    "client-package.json"
+  ],
+  "client_package_changed_fields": [
+    "repository_commit"
+  ],
+  "runtime_pass_claimed": false,
+  "device_pass_claimed": false,
+  "native_launcher_binary_difference": {
+    "source_unchanged": true,
+    "changed_byte_offsets": [
+      136,
+      137,
+      216,
+      217
+    ],
+    "only_coff_timestamp_and_pe_checksum": true,
+    "normalized_sha256": "d41caa9fb632695529f06501e6bc3d1c1b51323a717d8ff37baf8099cc2c5ad3",
+    "binary_size_bytes": 245249
+  }
+}

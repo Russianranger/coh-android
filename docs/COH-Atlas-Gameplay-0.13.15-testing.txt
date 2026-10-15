@@ -1,0 +1,38 @@
+COH Atlas Gameplay 0.13.15 — startup and gameplay performance test
+
+Install as an update over 0.13.14. Keep runtime, imported assets, THORHERO and
+app data. Complete the offered runtime update once, outside the stopwatch.
+Use the same Performance graphics preset. Remain in Atlas.
+
+Run 1 after update, then run 2 after normal save/logout and Finish:
+- Record launcher-open to login; also record pressing Reopen to login.
+- Record displayed local Atlas startup and actual client startup separately.
+- Record login to playable world, noting time typing/selecting separately.
+- Note any long preparation phase and whether it repeats on run 2.
+
+For each run, compare gameplay for about 30 seconds per activity:
+- Stand still in Atlas; walk through Atlas; rotate the camera.
+- Fight several NPCs; move through a populated area.
+- Open ordinary UI windows during gameplay.
+- Track a quest objective and observe NPC pursuit/pathing; note stutters.
+The accepted client cap remains 10 FPS; compare stutters and delivery within
+that cap. Record visible FPS if available, temperature, preset, and the activity in which
+stutters occur. The delivered-frame counter is not native game FPS.
+
+Confirm UI artwork remains complete, the beacon warning stays absent, and the
+existing character, level, XP and powers remain intact. Do not repeat character
+creation or broad asset/gameplay qualification. Do not test zoning this pass.
+
+Use ordinary Save character / log out, wait for Saved character verified, then
+Finish. Export the COMPLETE outer coh-atlas-gameplay-*.zip after EACH run.
+Keep android-client-report.json, operation.log and guest-report.zip intact.
+The inner latest-report.json contains server preparation subphases, cache key,
+cache reuse, geometry/beacon/visual/texture receipts and observer timings;
+client-console.log, character-atlas-console.txt and character-server-logs.zip
+provide native evidence. Screenshots are useful for a visible regression.
+If a stage fails, Abort, wait for owned cleanup and export that run's ZIP.
+
+The renderer, Wine/FEX stack, native game/server binaries, all 10,401 visuals,
+Atlas beacon graph and character persistence logic are retained. Hosted gates
+check conservation/correctness; new physical timing and smoothness gains require
+these first-update and warm Thor reports.

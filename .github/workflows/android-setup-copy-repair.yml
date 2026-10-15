@@ -1,0 +1,357 @@
+name: Thor bounded runtime setup copy repair
+# Recompile only the reviewed Java/DEX shell. Reuse exact public .23 runtime,
+# Game, native proof, GPU driver/probes and assets without rebuilding them.
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-setup-copy-repair.yml
+      - tools/android/interactive/build_setup_copy_repair_apk.py
+      - tools/android/interactive/qualify_setup_copy_repair.py
+      - tools/android/interactive/test_setup_copy_repair_package.py
+      - tools/android/interactive/test_setup_copy_memory.py
+      - tools/android/interactive/test_setup_io_memory.py
+      - tools/android/interactive/test_runtime_setup_reuse.py
+      - tools/android/interactive/test_setup_service.py
+      - tools/android/test_setup_memory_guard.py
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java
+      - android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java
+      - android/app/src/main/java/io/github/russianranger/cohdiagnostic/SetupMemoryGuard.java
+      - docs/COH-SETUP-COPY-0.13.24.md
+      - docs/COH-Atlas-Gameplay-0.13.24-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-setup-copy-repair-publication
+  cancel-in-progress: false
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      required: ${{ steps.gate.outputs.required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Preserve any complete existing publication
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import sys, json, os, urllib.error, urllib.request
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import build_setup_copy_repair_apk as current
+          if current.RELEASE_TAG != 'coh-atlas-gameplay-v0.13.24':
+              raise ValueError('Exact continuation release required')
+          request = urllib.request.Request('https://api.github.com/repos/'+current.REPOSITORY+'/releases/tags/'+current.RELEASE_TAG,
+              headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response: release = json.load(response)
+          except urllib.error.HTTPError as error:
+              if error.code != 404: raise
+              required = True
+          else:
+              current.validate_existing_release(release)
+              required = False
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output: output.write('required='+str(required).lower()+'\n')
+          print(json.dumps({'release_tag': current.RELEASE_TAG, 'publication_required': required,
+              'existing_release_modified': False, 'completed_gpu_probe_and_driver_builds_repeated': False}))
+          PY
+  client:
+    needs: changes
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Recover exact completed Game and Win32 proof without another native build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_setup_copy_repair_apk.py download-retained-native
+          --output out/setup-copy-repair-native
+      - name: Record original native and current publication owners separately
+        run: |
+          python3 - <<'PY'
+          import os, sys, json
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import build_setup_copy_repair_apk as current
+          evidence = {'format': 1, 'status': 'passed',
+              'native_build_provenance': current.native_build_provenance(),
+              'publication_provenance': current.publication_provenance(os.environ['GITHUB_SHA']),
+              'native_compile_repeated': False, 'native_manifest_relabelled': False}
+          Path('out/setup-copy-repair-native-recovery.json').write_text(json.dumps(evidence, indent=2, sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-setup-copy-repair-native
+          path: out/setup-copy-repair-native/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-setup-copy-repair-native-recovery-evidence
+          path: out/setup-copy-repair-native-recovery.json
+          if-no-files-found: error
+          retention-days: 90
+  qualify:
+    needs: [changes, client]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: coh-host-fixture
+          POSTGRES_DB: coh_test_startup_bundle
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-setup-copy-repair-native
+          path: out/setup-copy-repair-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Authenticate the published .23 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_setup_copy_repair_apk.py download-donor-evidence --output out/setup-copy-repair-donor/evidence
+      - name: Recover the exact public .23 runtime donor APK
+        run: python3 tools/android/interactive/build_setup_copy_repair_apk.py download-donor --output out/setup-copy-repair-donor/COH-Atlas-Gameplay-0.13.23.apk
+      - name: Install host-only Vulkan headers and software fixture driver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libvulkan-dev mesa-vulkan-drivers
+      - name: Qualify all 107 retained suites and focused setup repair checks
+        run: >-
+          python3 tools/android/interactive/qualify_setup_copy_repair.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/setup-copy-repair-donor/COH-Atlas-Gameplay-0.13.23.apk
+          --donor-build-report out/setup-copy-repair-donor/evidence/client-session-repair-apk-build-report.json
+          --retained-client-directory out/setup-copy-repair-native
+          --output out/setup-copy-repair-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-setup-copy-repair-qualification
+          path: out/setup-copy-repair-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [changes, client, qualify]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-setup-copy-repair-native
+          path: out/setup-copy-repair-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Authenticate the published .23 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_setup_copy_repair_apk.py download-donor-evidence --output out/setup-copy-repair-donor/evidence
+      - name: Recover the exact public .23 runtime donor APK
+        run: python3 tools/android/interactive/build_setup_copy_repair_apk.py download-donor --output out/setup-copy-repair-donor/COH-Atlas-Gameplay-0.13.23.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-setup-copy-repair-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Compile the reviewed .24 Java and DEX shell over exact .23 runtime bytes
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_setup_copy_repair_apk.py build
+          --donor-apk out/setup-copy-repair-donor/COH-Atlas-Gameplay-0.13.23.apk
+          --donor-build-report out/setup-copy-repair-donor/evidence/client-session-repair-apk-build-report.json
+          --qualification out/setup-copy-repair-qualification.json
+          --retained-client-directory out/setup-copy-repair-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/setup-copy-repair-apk/COH-Atlas-Gameplay-0.13.24.apk
+      - name: Fresh-process SDK signer and actual native/payload audit before publication
+        env:
+          PYTHONHASHSEED: '73422'
+        run: >-
+          python3 tools/android/interactive/build_setup_copy_repair_apk.py audit
+          --donor-apk out/setup-copy-repair-donor/COH-Atlas-Gameplay-0.13.23.apk
+          --donor-build-report out/setup-copy-repair-donor/evidence/client-session-repair-apk-build-report.json
+          --qualification out/setup-copy-repair-qualification.json
+          --retained-client-directory out/setup-copy-repair-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --apk out/setup-copy-repair-apk/COH-Atlas-Gameplay-0.13.24.apk
+          --build-report out/setup-copy-repair-apk/setup-copy-repair-apk-build-report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-setup-copy-repair-packaging-evidence
+          path: |
+            out/setup-copy-repair-apk/setup-copy-repair-apk-build-report.json
+            out/setup-copy-repair-apk/COH-Atlas-Gameplay-0.13.24-testing.txt
+            out/setup-copy-repair-apk/COH-Atlas-Gameplay-0.13.24.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-setup-copy-repair-apk
+          path: out/setup-copy-repair-apk/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only the newly qualified continuation prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_setup_copy_repair_apk.py publish
+          --donor-apk out/setup-copy-repair-donor/COH-Atlas-Gameplay-0.13.23.apk
+          --donor-build-report out/setup-copy-repair-donor/evidence/client-session-repair-apk-build-report.json
+          --qualification out/setup-copy-repair-qualification.json
+          --retained-client-directory out/setup-copy-repair-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --apk out/setup-copy-repair-apk/COH-Atlas-Gameplay-0.13.24.apk
+          --build-report out/setup-copy-repair-apk/setup-copy-repair-apk-build-report.json
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
+  public-audit:
+    needs: [changes, client, qualify, apk]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PYTHONHASHSEED: '2022'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-setup-copy-repair-native
+          path: out/setup-copy-repair-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Authenticate the published .23 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_setup_copy_repair_apk.py download-donor-evidence --output out/setup-copy-repair-donor/evidence
+      - name: Recover the exact public .23 runtime donor APK
+        run: python3 tools/android/interactive/build_setup_copy_repair_apk.py download-donor --output out/setup-copy-repair-donor/COH-Atlas-Gameplay-0.13.23.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-setup-copy-repair-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-setup-copy-repair-packaging-evidence
+          path: out/setup-copy-repair-public
+      - name: Download actual public APK, checksum and testing instructions
+        run: >-
+          python3 tools/android/interactive/build_setup_copy_repair_apk.py download-public
+          --build-report out/setup-copy-repair-public/setup-copy-repair-apk-build-report.json
+          --output out/setup-copy-repair-public
+      - name: Independently audit actual public bytes against exact donor, native proof and SDK signer
+        run: >-
+          python3 tools/android/interactive/build_setup_copy_repair_apk.py audit
+          --donor-apk out/setup-copy-repair-donor/COH-Atlas-Gameplay-0.13.23.apk
+          --donor-build-report out/setup-copy-repair-donor/evidence/client-session-repair-apk-build-report.json
+          --qualification out/setup-copy-repair-qualification.json
+          --retained-client-directory out/setup-copy-repair-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --apk out/setup-copy-repair-public/COH-Atlas-Gameplay-0.13.24.apk
+          --build-report out/setup-copy-repair-public/setup-copy-repair-apk-build-report.json
+      - name: Record truthful public byte qualification
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('out/setup-copy-repair-public/setup-copy-repair-apk-build-report.json').read_text())
+          evidence = {key: report[key] for key in ('bytes', 'sha256', 'repository_commit', 'runtime_repository_commit',
+              'retained_native_repository_commit', 'version_name', 'version_code', 'native_client_recompiled',
+              'native_client_compiled_in_current_publication_run', 'java_or_dex_recompiled', 'installed_runtime_identity_preserved',
+              'native_client_package_reused', 'mesa_driver_compiled_in_current_run', 'native_vulkan_probe_compiled_in_current_run',
+              'wgl_probe_compiled_in_current_run', 'guest_helpers_changed', 'runtime_manifest_changed', 'runtime_refresh_required',
+              'physical_setup_memory_validated', 'physical_performance_validated', 'physical_fps_gain_validated')}
+          evidence.update(format=1, status='passed', fresh_process_prepublication_audit_passed=True,
+              public_apk_checksum_and_notes_verified=True, sdk_signer_payload_audit_passed=True,
+              public_url='https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.24/COH-Atlas-Gameplay-0.13.24.apk')
+          Path('out/setup-copy-repair-public-byte-audit.json').write_text(json.dumps(evidence, indent=2, sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-setup-copy-repair-public-byte-audit
+          path: out/setup-copy-repair-public-byte-audit.json
+          if-no-files-found: error
+          retention-days: 90

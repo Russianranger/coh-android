@@ -1,0 +1,71 @@
+{
+  "format": 1,
+  "result": "wine_initializer_still_running_at_timeout",
+  "file": "coh-diagnostic-20260927-215955.zip",
+  "archive_sha256": "6b97553f17a30d1bbe3f789873f9e5dd8102c65d8841c13aba7fb110802fd919",
+  "source_commit": "1afb0610095ebe3cb8aba591ea22d749613b7276",
+  "app_version": "0.1.2",
+  "device": "AYN AYN Thor",
+  "android_sdk": 33,
+  "runtime_manifest_sha256": "b29141f00f82f3f06e853a2ea0146dd4c7ce298593324f10a04d7b12e2783e35",
+  "mode": "database",
+  "failures": [
+    "wineboot timed out"
+  ],
+  "stages": [
+    {
+      "stage": "assets_and_architecture",
+      "status": "passed"
+    },
+    {
+      "stage": "initialize_owned_cluster",
+      "status": "passed"
+    },
+    {
+      "stage": "postgres_first_start",
+      "status": "passed"
+    },
+    {
+      "stage": "restricted_fixture_database",
+      "status": "passed"
+    },
+    {
+      "stage": "wine_prefix_and_driver",
+      "status": "unfinished"
+    }
+  ],
+  "cluster_reused": false,
+  "wineboot": {
+    "elapsed_seconds": 151.258,
+    "exit_code": -15,
+    "forced_stop": true,
+    "output_capture_closed": false,
+    "input_closed": true,
+    "failure_observation": {
+      "leader_exit_code": null,
+      "output_capture_open": true,
+      "elapsed_seconds": 150.04,
+      "reason": "wineboot timed out"
+    }
+  },
+  "wine_shutdown": {
+    "stop_exit_code": 0,
+    "wait_exit_code": 0,
+    "prefix_lock_free": true,
+    "server_socket_inactive": true
+  },
+  "cleanup_complete": false,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": false
+  },
+  "supported_findings": [
+    "Four early native database stages passed on a fresh owned cluster",
+    "Wine initializer was still running at 150.040 seconds before any stop signal",
+    "The 0.1.2 inherited-output fix did not resolve this device failure",
+    "Wine prefix lock/socket and PostgreSQL shutdown passed, but the inherited output capture did not close; complete cleanup was not proved"
+  ],
+  "causal_limit": "This receipt proves the initializer exceeded 150 seconds; it does not identify a stuck internal Wine component. Cold registration duplication and a too-short startup budget are addressed based on pinned Wine source and same-runtime LSB evidence.",
+  "scope": "Selected diagnostic fields only; original user support archive remains private"
+}

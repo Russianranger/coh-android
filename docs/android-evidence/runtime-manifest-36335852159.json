@@ -1,0 +1,93 @@
+{
+  "format": 1,
+  "repository_commit": "69c04aab7d61106eca647af36ecbc5cf52311fc3",
+  "candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+  "files": {
+    "001-coh-compat.sql": {
+      "bytes": 7788,
+      "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "bytes": 2184,
+      "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+    },
+    "diagnostic.py": {
+      "bytes": 41490,
+      "sha256": "a6be140df68808bce91ff2b1f91fbba0bf3467e033ac997078e4a0240df3352b"
+    },
+    "odbc_probe.exe": {
+      "bytes": 270069,
+      "sha256": "35f47873a766cf4ee0edf94b7cb2e7006ad5478aca996c7ec7e3219d1d996a06"
+    },
+    "postgresql-build.json": {
+      "bytes": 163117,
+      "sha256": "c0372a6b8aeae68ff7e7ad1ab6c0105456bd2f584b4fb863ed4807ce3018f461"
+    },
+    "postgresql-runtime.tar.gz": {
+      "bytes": 9280905,
+      "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+    },
+    "probe.dll": {
+      "bytes": 82761,
+      "sha256": "151f2940b8de3db8a87b66140ef9ad223028203e2b37fd51903d7673a44d9da9"
+    },
+    "proot-build.json": {
+      "bytes": 3236,
+      "sha256": "564aab7c50eb9fa15798abc5bdd656eb83a7102052125299b2810811aca4f21e"
+    },
+    "psqlodbc_x86.msi": {
+      "bytes": 4079616,
+      "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+    },
+    "runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "runtime-probe.exe": {
+      "bytes": 245968,
+      "sha256": "ee75ae93a26c84cc6e4f5385916e96c970e9ea4229d88a83ecefa6b8dc2df26e"
+    }
+  },
+  "runtime_probe": {
+    "executable": "runtime-probe.exe",
+    "marker": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified",
+    "dll": "probe.dll"
+  },
+  "compiler": "i686-w64-mingw32-gcc (GCC) 13-posix",
+  "odbc_ansi_compatibility": {
+    "wine_export_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
+    "compile_aliases": {
+      "SQLDriverConnectA": "SQLDriverConnect",
+      "SQLExecDirectA": "SQLExecDirect",
+      "SQLColumnsA": "SQLColumns"
+    },
+    "verified_windows_manager_imports": [
+      "SQLAllocHandle",
+      "SQLBindParameter",
+      "SQLColumns",
+      "SQLDisconnect",
+      "SQLDriverConnect",
+      "SQLEndTran",
+      "SQLExecDirect",
+      "SQLFetch",
+      "SQLFreeHandle",
+      "SQLGetData",
+      "SQLGetDiagRec",
+      "SQLGetDiagRecA",
+      "SQLGetInfoW",
+      "SQLMoreResults",
+      "SQLSetConnectAttr",
+      "SQLSetEnvAttr"
+    ],
+    "fixture_sql_and_acceptance_markers_changed": false,
+    "wide_driver_version_workaround": {
+      "compile_define": "COH_ODBC_WIDE_INFO=1",
+      "api": "SQLGetInfoW",
+      "result_encoding": "UTF-16 with strict ASCII conversion",
+      "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975",
+      "reason": "Avoid ANSI-to-wide SQLGetInfo forwarding with a private driver handle"
+    },
+    "diagnostic_progress": "unbuffered output and credential-free ODBC call line numbers"
+  },
+  "scope": "APK build inputs; not proof of Android execution or gameplay"
+}

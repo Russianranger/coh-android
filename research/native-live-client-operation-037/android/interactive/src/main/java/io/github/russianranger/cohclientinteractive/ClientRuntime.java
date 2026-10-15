@@ -1,0 +1,2661 @@
+package io.github.russianranger.cohclientinteractive;
+
+import android.content.Context;
+import android.net.LocalSocket;
+import android.net.Uri;
+import io.github.russianranger.cohatlas.AtlasAssetImporter;
+
+import android.net.LocalSocketAddress;
+import android.os.Build;
+import android.os.SystemClock;
+import io.github.russianranger.cohdiagnostic.DiagnosticRuntime;
+import io.github.russianranger.cohdiagnostic.AssetPackStore;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+/** Runs the pinned CoH client with a persistent local PostgreSQL and DbServer profile. */
+public final class ClientRuntime {
+    public interface Listener {
+        void onStage(String stage, String detail);
+        void onLog(String line);
+        void onFrame(int[] argb, int width, int height, long sequence);
+        void onInputState(boolean ready, boolean finishing, boolean characterSaved, boolean canReturnGround, boolean canSaveLogout, long sent, long failed, long deadline, String phase, long saveDeadline, long movementDeadline);
+    }
+    public static final class Result {
+        public final boolean passed;
+        public final File report;
+        public final String summary;
+        Result(boolean passed, File report, String summary) {
+            this.passed = passed; this.report = report; this.summary = summary;
+        }
+    }
+
+    /** READY identifies an initialized database profile, never proof of a saved character.
+     * Missing profile and incomplete retained data require separate actions. */
+    public enum ProfileState { ABSENT, READY, PRESERVE }
+
+    private static final long MAX_JSON = 2L * 1024 * 1024, MAX_LOG = 1024 * 1024;
+    private static final long MAX_GUEST_ZIP = 260L * 1024 * 1024;
+    private static final long MAX_WORLD_IDENTITY = 8L * 1024 * 1024;
+    private static final String PROCESS_INSTANCE = UUID.randomUUID().toString();
+    private static final String BLOCK_MESSAGE = "Runtime cleanup needs attention. Force-stop COH Character Reopen in Android settings, then reopen it.";
+    private static boolean guardInitialized, blocked;
+    private static boolean operationActive;
+    private static Object storageOwner;
+    private final Context context;
+    private final Listener listener;
+    private final File home, work, state;
+    private final StringBuilder log = new StringBuilder();
+    private final List<Map<String, Object>> surfaceSamples = new ArrayList<>();
+    private final List<byte[]> surfacePngs = new ArrayList<>();
+    private static final int MAX_CAPTURE_TIMINGS = 20000;
+    private static final String[] CAPTURE_TIMING_KEYS = {"pixel_copy_wall_ms", "encoding_wall_ms",
+            "encoding_cpu_ms", "presentation_freeze_ms", "encode_queue_wall_ms"};
+    private final long[] captureTimingSums = new long[CAPTURE_TIMING_KEYS.length];
+    private final long[] captureTimingMaxima = new long[CAPTURE_TIMING_KEYS.length];
+    private long captureTimingSequence = -1, captureTimingCount, captureEncodingUiCount;
+    private long captureCoalescedFrames, capturePendingFramesPeak;
+    private boolean captureTimingLimitReached;
+    private final List<Map<String, Object>> loginSamples = new ArrayList<>();
+    private final List<byte[]> loginPngs = new ArrayList<>();
+    private volatile long loginObservedUptime = -1, loginFrameWatermark = -1;
+    private final List<Map<String, Object>> connectedSamples = new ArrayList<>();
+    private final List<byte[]> connectedPngs = new ArrayList<>();
+    private volatile long connectedObservedUptime = -1, connectedFrameWatermark = -1;
+    private volatile boolean connectedCapturedReady, relocationCapturedReady, stuckRequested, reopen;
+    private boolean resumeFirstCreation;
+    private final List<Map<String, Object>> relocationSamples = new ArrayList<>();
+    private final List<byte[]> relocationPngs = new ArrayList<>();
+    private volatile long relocatedObservedUptime = -1, relocatedFrameWatermark = -1;
+    private volatile JSONObject characterRelocatedEvent;
+    private final List<Map<String, Object>> characterSamples = new ArrayList<>();
+    private final List<byte[]> characterPngs = new ArrayList<>();
+    private volatile long characterObservedUptime = -1, characterFrameWatermark = -1;
+    private volatile JSONObject characterSavedEvent, characterConnectedEvent;
+    private volatile boolean saveLogoutRequested;
+    private volatile boolean characterSavedReady;
+    private boolean manualTestActive,manualTestOpeningCaptured;
+    private long manualTestStartedUptime,manualTestFrameWatermark,manualTestCapturesAccepted;
+    private final List<Map<String,Object>> manualTestEvents = new ArrayList<>();
+    public synchronized boolean manualTestActive() { return manualTestActive; }
+    public synchronized boolean canStartManualTest() {
+        return reopen && inputReady && characterConnectedEvent != null && !manualTestActive
+                && !saveLogoutRequested && !finished && !finishRequested && !cancelled
+                && !producerCompleted && manualTestEvents.size() < 64;
+    }
+    public synchronized boolean startManualTest() {
+        if (!canStartManualTest()) return false;
+        manualTestStartedUptime=SystemClock.uptimeMillis();manualTestFrameWatermark=decodedFrames;
+        manualTestOpeningCaptured=false;manualTestCapturesAccepted=0;
+        manualTestActive = true; recordManualTest("start", "user");
+        stage("Test capture started", "Play at your own pace. Tap Stop test to end this capture; Save / Logout and Finish remain separate.");
+        notifyInputState(); return true;
+    }
+    public synchronized boolean stopManualTest() {
+        if (!stopManualTest("user")) return false;
+        stage("Test capture stopped", "Capture timestamps are retained. Save / Logout when ready, then Finish and export the report.");
+        return true;
+    }
+    private synchronized boolean stopManualTest(String reason) {
+        if (!manualTestActive) return false;
+        manualTestActive = false; recordManualTest("stop", reason); notifyInputState(); return true;
+    }
+    private boolean manualCaptureEligible(long captured,long sequence) {
+        return manualTestActive && captured>=manualTestStartedUptime && sequence>manualTestFrameWatermark;
+    }
+    private void recordManualTest(String action, String reason) {
+        Map<String,Object> row = new LinkedHashMap<>();
+        row.put("test_id", manualTestEvents.size()/2+1);
+        row.put("action", action); row.put("reason", reason); row.put("session_id", session);
+        row.put("client_pid", observedClientPid); row.put("character_id", 1);
+        row.put("map_id", zoningEnabled() ? zoning.currentMap() : characterConnectedEvent.optInt("map_id", -1));
+        row.put("utc_ms", System.currentTimeMillis()); row.put("uptime_ms", SystemClock.uptimeMillis());
+        row.put("input_sent", inputSent); row.put("decoded_frames", decodedFrames);
+        row.put("capture_not_before_uptime_ms",manualTestStartedUptime);row.put("capture_frame_watermark",manualTestFrameWatermark);
+        row.put("captures_accepted",manualTestCapturesAccepted);
+        manualTestEvents.add(row); recordLifecycle("manual_test_" + action + " reason=" + reason); checkpoint();
+    }
+    /** Capture only evidence still needed, or an explicitly requested test. */
+    public synchronized boolean needsSurfaceCapture() {
+        if (finished || producerCompleted || cancelled || clientWindowObservedUptime < 0 || clientWindowEndedUptime >= 0) return false;
+        long now = SystemClock.uptimeMillis();
+        return manualTestActive || surfaceSamples.size() < 3
+                || loginObservedUptime >= 0 && loginSamples.size() < 3
+                || connectedObservedUptime >= 0 && connectedSamples.size() < 3
+                || relocatedObservedUptime >= 0 && relocationSamples.size() < 3
+                || characterObservedUptime >= 0 && characterSamples.size() < 3
+                || "capturing".equals(zoning.phase()) || contactCapture.pending(now)
+                || taskAcceptedCapture.pending(now) || taskCompletedCapture.pending(now);
+    }
+    private final List<Map<String, Object>> interactionSamples = new ArrayList<>();
+    private final List<byte[]> interactionPngs = new ArrayList<>();
+    private final ContactCaptureWindow contactCapture = new ContactCaptureWindow();
+    private final List<Map<String,Object>> contactRequests = new ArrayList<>();
+    private final List<Map<String,Object>> contactSamples = new ArrayList<>();
+    private final List<byte[]> contactPngs = new ArrayList<>();
+    private volatile JSONObject taskAcceptedEvent, taskCompletedEvent, taskCompletionReceipt;
+    private volatile boolean taskCompletionRequested;
+    private volatile boolean taskContactRequested;
+    private volatile JSONObject taskContactReceipt;
+    private final ContactCaptureWindow taskAcceptedCapture = new ContactCaptureWindow();
+    private final ContactCaptureWindow taskCompletedCapture = new ContactCaptureWindow();
+    private final List<Map<String,Object>> taskCaptureRequests = new ArrayList<>();
+    private final List<Map<String,Object>> taskSamples = new ArrayList<>();
+    private final List<byte[]> taskPngs = new ArrayList<>();
+    private final ThreadPoolExecutor inputWorker = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
+            new ArrayBlockingQueue<Runnable>(128), runnable -> new Thread(runnable, "coh-interactive-input"));
+    private volatile boolean inputReady, finishRequested;
+    private volatile boolean performanceCommandPending;
+    private long performanceCommandGeneration;
+    private final ClientZoning zoning = new ClientZoning();
+    private volatile boolean uiVisible, automaticTravel;
+    private long zoningDepartureDeadlineUtc;
+    private final List<Map<String,Object>> zoningTimings = new ArrayList<>();
+    private final ExecutorService checkpointWorker = Executors.newSingleThreadExecutor();
+    private final java.util.concurrent.atomic.AtomicReference<byte[]> pendingCheckpoint = new java.util.concurrent.atomic.AtomicReference<>();
+    private final java.util.concurrent.atomic.AtomicBoolean checkpointQueued = new java.util.concurrent.atomic.AtomicBoolean();
+    private volatile String checkpointFailure;
+    private final List<String> checkpointPngs = new ArrayList<>();
+    private final List<Map<String,Object>> zoningEvents = new ArrayList<>();
+    private final List<Map<String,Object>> zoningPreparationObservations = new ArrayList<>();
+    private boolean zoningPreparationObservationLimitReached;
+    private final List<Map<String,Object>> zoningSamples = new ArrayList<>();
+    private final List<byte[]> zoningPngs = new ArrayList<>();
+    private volatile long inputSent, inputFailed, readyDeadlineUptimeMillis;
+    private final ClientSessionBudget sessionBudget = new ClientSessionBudget(true);
+    private final List<Map<String,Object>> sessionBudgetEvents = new ArrayList<>();
+    private volatile long launcherBudgetStartedUptime = -1, relocationSentUtcMillis;
+    private volatile boolean deadlineInputSuppressed, interactionReadyObserved;
+    private long lastInputUptime = -1, lastInputFrameWatermark = -1, interactionCaptureId, lastInputRefresh;
+    private long lastCapturedInputCount = -1;
+    private boolean finishCaptureRetained;
+    private volatile AtlasAssetImporter.Control importControl;
+    private AtlasAssetImporter.Summary imported;
+    private volatile long clientWindowObservedUptime = -1, clientWindowEndedUptime = -1;
+    private final List<Map<String, Object>> lifecycle = new ArrayList<>();
+    private volatile Process child;
+    private volatile LocalSocket socket;
+    private volatile InteractiveRfbClient decoder;
+    private volatile DiagnosticRuntime installer;
+    private volatile boolean cancelled, finished, closingReceiver, runLaunched, producerCompleted, producerFailed;
+    private volatile String receiverFailure;
+    private volatile long decodedFrames;
+    private volatile int frameWidth, frameHeight;
+    private volatile File latestReport;
+    private volatile boolean freshReportRetained;
+    private JSONObject manifest, clientManifest;
+    private volatile long observedClientPid = -1, clientWindowFrameWatermark = -1;
+    private String manifestHash, session, operation, runId, error;
+    private String graphicsProfileRequested="standard";
+    private String gpuProfileRequested="software";
+    private File generation, operationDir;
+    private boolean operationOwned;
+    private static Object setupFinalizationOwner;
+    private Object setupReservation;
+    private long startedUptime, endedUptime;
+    private int processExit = -1;
+
+    public ClientRuntime(Context context, Listener listener) {
+        this.context = context.getApplicationContext(); this.listener = listener;
+        try {
+            File files = this.context.getFilesDir().getCanonicalFile();
+            home = new File(files, "m2"); work = new File(files, "client");
+            state = new File(work, "state");
+            work.mkdirs();
+            initializeReportStorage();
+            initializeGuard(this.context);
+            File pointer = new File(work, "latest-report.txt");
+            if (pointer.isFile()) {
+                File candidate = new File(new String(read(pointer, 4096), StandardCharsets.UTF_8).trim());
+                if (candidate.isFile() && candidate.getCanonicalPath().startsWith(new File(work, "reports").getCanonicalPath() + File.separator))
+                    latestReport = candidate;
+            }
+        } catch (IOException e) { throw new IllegalStateException("Cannot open private client storage", e); }
+    }
+
+    /** Compact active installer evidence; does not open or modify runtime files. */
+    public JSONObject getSetupProgressReceipt() throws Exception {
+        DiagnosticRuntime activeInstaller=installer;
+        return activeInstaller==null?null:activeInstaller.getSetupProgressReceipt();
+    }
+
+    public static synchronized boolean cleanupBlocked(Context context) {
+        initializeGuard(context.getApplicationContext());
+        return blocked;
+    }
+    public static boolean performanceGraphicsEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("performance-graphics", true);
+    }
+    public static void setPerformanceGraphicsEnabled(Context context, boolean enabled) {
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("performance-graphics", enabled).apply();
+    }
+    public static String gpuProfileEnabled(Context context) {
+        String selected=context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getString("gpu-profile", "software");
+        return "turnip".equals(selected)?"turnip":"software";
+    }
+    public static synchronized void setGpuProfileEnabled(Context context, String selected) {
+        if(!"software".equals(selected)&&!"turnip".equals(selected))throw new IllegalArgumentException("Unknown renderer profile");
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putString("gpu-profile", selected).apply();
+    }
+    public boolean isCleanupBlocked() { return cleanupBlocked(context); }
+    /** Shared ownership keeps storage work and report export away from a live guest. */
+    public static synchronized Object acquireStorage(Context context) throws IOException {
+        if (cleanupBlocked(context)) throw new IOException(BLOCK_MESSAGE);
+        return acquireIdleStorage();
+    }
+    public static synchronized Object acquireReportExport(Context context) throws IOException {
+        // A failed test's report remains exportable while destructive cleanup is blocked.
+        return acquireIdleStorage();
+    }
+    private static Object acquireIdleStorage() throws IOException {
+        if (operationActive || setupFinalizationOwner != null) throw new IOException("Wait for the current operation to finish");
+        Object owner = new Object(); storageOwner = owner; operationActive = true;
+        return owner;
+    }
+    public static synchronized void releaseStorage(Object owner) {
+        if (owner != null && owner == storageOwner) { storageOwner = null; operationActive = false; }
+    }
+    public static synchronized boolean operationInProgress() { return operationActive || setupFinalizationOwner != null; }
+    static synchronized Object acquireSetupReservation(Context context) throws IOException {
+        if (cleanupBlocked(context)) throw new IOException(BLOCK_MESSAGE);
+        if (operationActive || setupFinalizationOwner != null) throw new IOException("Wait for the current operation to finish");
+        setupFinalizationOwner = new Object();
+        return setupFinalizationOwner;
+    }
+    static synchronized boolean setupFinalizationInProgress() { return setupFinalizationOwner != null; }
+    static synchronized boolean ownsSetupReservation(Object owner) { return owner != null && owner == setupFinalizationOwner; }
+    static synchronized void releaseSetupReservation(Object owner) {
+        if (owner != null && owner == setupFinalizationOwner) setupFinalizationOwner = null;
+    }
+    void attachSetupReservation(Object owner) {
+        synchronized (ClientRuntime.class) {
+            if (owner == null || owner != setupFinalizationOwner || operationOwned)
+                throw new IllegalStateException("Runtime setup reservation changed");
+            setupReservation = owner;
+        }
+    }
+    /** Read at most two small identity files; never walk imported assets or a database. */
+    public static ProfileState characterProfileState(Context context) {
+        try { return inspectCharacterProfile(new StorageFiles(context.getApplicationContext().getFilesDir())); }
+        catch (Exception unreadable) { return ProfileState.PRESERVE; }
+    }
+    static ProfileState inspectCharacterProfile(StorageAudit.Fs files) throws IOException {
+        String path = "";
+        for (String component : new String[]{"client", "state", "diagnostic", "android-local-login"}) {
+            path = path.isEmpty() ? component : path + "/" + component;
+            StorageAudit.Stat entry = files.stat(path);
+            if (entry == null) return ProfileState.ABSENT;
+            if (entry.kind != StorageAudit.Kind.DIRECTORY) return ProfileState.PRESERVE;
+        }
+        String profile = "client/state/diagnostic/android-local-login";
+        if (!profileEntry(files, profile + "/profile.json", StorageAudit.Kind.FILE, 4096)
+                || !profileEntry(files, profile + "/pgdata", StorageAudit.Kind.DIRECTORY, 0)
+                || !profileEntry(files, profile + "/pgdata/PG_VERSION", StorageAudit.Kind.FILE, 32)
+                || !profileEntry(files, profile + "/credentials.json", StorageAudit.Kind.FILE, 4096))
+            return ProfileState.PRESERVE;
+        Map<String,Object> marker = files.json(files.read(profile + "/profile.json", 4096));
+        Map<String,Object> identity = new LinkedHashMap<>();
+        identity.put("format", 1); identity.put("purpose", "persistent_local_login");
+        identity.put("profile", "android-local-login"); identity.put("database", "coh_local_android");
+        identity.put("source_commit", "0b75ade0c801735e10c5798f641948a45cc50488");
+        identity.put("data_commit", "d51533ec8e6a9cf726b9214968077a05fdcf19f3");
+        identity.put("package_manifest_sha256", "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6");
+        identity.put("schema_manifest_sha256", "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92");
+        identity.put("initialized", Boolean.TRUE);
+        if (!identity.equals(marker)) return ProfileState.PRESERVE;
+        Map<String,Object> credentials = files.json(files.read(profile + "/credentials.json", 4096));
+        if (!credentials.keySet().equals(new HashSet<>(Arrays.asList("cohdiag_admin", "cohtest"))))
+            return ProfileState.PRESERVE;
+        for (Object credential : credentials.values())
+            if (!(credential instanceof String) || !((String)credential).matches("[0-9a-f]{64}"))
+                return ProfileState.PRESERVE;
+        return ProfileState.READY;
+    }
+    private static boolean profileEntry(StorageAudit.Fs files, String path, StorageAudit.Kind kind, int bound) throws IOException {
+        StorageAudit.Stat entry = files.stat(path);
+        return entry != null && entry.kind == kind && (kind == StorageAudit.Kind.DIRECTORY
+                || entry.links == 1 && entry.size > 0 && entry.size <= bound);
+    }
+    public static String profileRecoveryMessage(ProfileState profile) {
+        if (profile == ProfileState.ABSENT)
+            return "No saved character profile is present. After a fresh install, use Create fresh THORHERO once, then save normally. An earlier character requires an external database backup.";
+        if (profile == ProfileState.READY)
+            return "The initialized character profile is available; startup checks for a saved THORHERO. If first creation stopped before a save, use Resume first character creation. Existing characters are preserved.";
+        return "Existing character data is incomplete or unreadable. It has been preserved; export the report. Fresh creation is unavailable while any profile data remains.";
+    }
+    private void requireCharacterProfile(boolean reopening) throws IOException {
+        ProfileState profile = characterProfileState(context);
+        if (reopening && profile != ProfileState.READY)
+            throw new IOException(profileRecoveryMessage(profile));
+        if (!reopening && resumeFirstCreation && profile != ProfileState.READY)
+            throw new IOException("Resuming first creation requires the existing initialized profile. " + profileRecoveryMessage(profile));
+        if (!reopening && !resumeFirstCreation && profile != ProfileState.ABSENT)
+            throw new IOException("Fresh creation was refused because character profile data already exists. " + profileRecoveryMessage(profile));
+    }
+    private static File guard(Context context) { return new File(context.getFilesDir(), "client/cleanup-guard.json"); }
+    private static synchronized void initializeGuard(Context context) {
+        if (guardInitialized) return;
+        guardInitialized = true;
+        File file = guard(context);
+        if (!file.isFile()) return;
+        try {
+            JSONObject previous = json(file, 16384);
+            if (PROCESS_INSTANCE.equals(previous.optString("process_instance"))) {
+                blocked = "blocked".equals(previous.optString("status"));
+            } else if ("running".equals(previous.optString("status"))) {
+                // A crashed app may leave its guest descendants alive. Require an
+                // explicit force-stop/reopen before allowing another owned run.
+                block(context, "The previous client operation was interrupted");
+            } else if ("blocked".equals(previous.optString("status"))) {
+                if (!file.delete()) blocked = true;
+            } else {
+                block(context, "Unrecognized cleanup state");
+            }
+        } catch (Exception e) { block(context, "Could not read cleanup state"); }
+    }
+    private static synchronized void block(Context context, String reason) {
+        blocked = true;
+        try { write(guard(context), new JSONObject().put("status", "blocked")
+                .put("process_instance", PROCESS_INSTANCE).put("reason", reason).toString().getBytes(StandardCharsets.UTF_8)); }
+        catch (Exception ignored) { /* The in-process block remains authoritative. */ }
+    }
+    private synchronized void begin(String kind, String selectedSession) throws Exception {
+        synchronized (ClientRuntime.class) {
+            if (cleanupBlocked(context)) throw new IOException(BLOCK_MESSAGE);
+            if (operationActive || (setupFinalizationOwner != null
+                    && (setupReservation != setupFinalizationOwner || !"setup".equals(kind))))
+                throw new IOException("A client operation is already running");
+            operationActive = true;
+            operationOwned = true;
+        }
+        try {
+            ClientReports.recoverAll(home.getParentFile());
+            operation = kind; session = selectedSession;
+            runId = System.currentTimeMillis() + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+            operationDir = new File(work, "reports/" + runId);
+            if(!operationDir.mkdirs() && !operationDir.isDirectory())throw new IOException("Cannot allocate private operation report storage");
+            startedUptime = SystemClock.uptimeMillis();
+            // A replacement report is not authoritative until its ZIP is committed.
+            // Keep the previous report discoverable even if this attempt is interrupted.
+            recordLifecycle("operation_" + kind + "_started");
+        } catch(Exception | OutOfMemoryError failure) {
+            synchronized(ClientRuntime.class){operationActive=false;operationOwned=false;}
+            throw failure;
+        }
+    }
+    private void endOperation() {
+        try { finished = true; inputReady = false; automaticTravel=false; inputWorker.shutdownNow(); checkpointWorker.shutdown(); }
+        finally { synchronized (ClientRuntime.class) {
+            if (operationOwned) { operationActive = false; operationOwned = false; }
+        } }
+    }
+    public File getLatestReport() { return latestReport; }
+
+    public Result setup() throws Exception {
+        boolean ready = false;
+        try {
+            // The ownership boundary includes begin/report allocation and every
+            // evidence path: even a setup heap failure must release this owner.
+            begin("setup", null);
+            JSONObject report = new JSONObject();
+            boolean heapFailed = false;
+            try {
+                loadManifest(); check();
+                installer = new DiagnosticRuntime(context, new DiagnosticRuntime.Listener() {
+                    public void onStage(String name, String detail) { stage(name, detail); }
+                    public void onLog(String text) { line(text); }
+                });
+                check(); installer.setupRuntime(); check();
+                report.put("status", "setup_complete").put("passed", false)
+                        .put("scope", "Runtime installation only; no display or game execution claimed");
+                ready = true;
+            } catch (Exception e) {
+                error = message(e); report.put("status", cancelled ? "cancelled" : "failed").put("passed", false).put("error", error);
+            } catch (OutOfMemoryError failure) {
+                heapFailed = true;
+                throw failure;
+            } finally {
+                // The service releases its reserve and writes compact recovery
+                // evidence. Avoid masking the original heap failure with export.
+                if (!heapFailed) {
+                DiagnosticRuntime completedInstaller = installer;
+                if (completedInstaller != null) {
+                    try {
+                        JSONObject receipt = completedInstaller.getSetupReceipt();
+                        if (receipt != null) report.put("runtime_setup", receipt);
+                    } catch (Exception telemetryFailure) {
+                        report.put("runtime_setup_recording_error", telemetryFailure.getClass().getSimpleName());
+                    }
+                }
+                installer = null;
+                synchronized (this) {
+                    finished = true;
+                    if (cancelled) { ready = false; report.put("status", "cancelled").put("passed", false); }
+                }
+                endedUptime = SystemClock.uptimeMillis();
+                publish(report, false, false);
+                }
+            }
+            return new Result(ready, latestReport, ready ? "Runtime ready. Import the pinned Atlas assets if needed. " + profileRecoveryMessage(characterProfileState(context))
+                    : cancelled ? "Runtime setup stopped. Export the latest report." : "Runtime setup failed: " + error);
+        } finally {
+            installer = null;
+            endOperation();
+        }
+    }
+
+    private AtlasAssetImporter importer() throws IOException {
+        final AssetPackStore pack;
+        try {pack=manifest!=null&&manifest.has("external_asset_pack")?assetPack():null;}
+        catch(Exception failure){throw new IOException("Cannot load asset pack identity",failure);}
+        return new AtlasAssetImporter(new File(home.getParentFile(), "client-import"),
+                name -> pack!=null&&pack.contains("atlas/"+name)?pack.open("atlas/"+name):context.getAssets().open("atlas/" + name));
+    }
+
+    private AssetPackStore assetPack() throws Exception {
+        return new AssetPackStore(context,manifest,this::check,(phase,bytes,total)->listener.onStage(phase,
+                total>0?bytes/1048576+" / "+total/1048576+" MiB":bytes>0?bytes/1048576+" MiB":phase));
+    }
+
+    public Result importAssets(Uri selected) throws Exception {
+        if (selected == null) throw new IOException("Select the required versioned asset pack ZIP first");
+        begin("import", null);
+        JSONObject report = new JSONObject();
+        boolean ready = false;
+        String success = null;
+        AssetPackStore pack = null;
+        try {
+            loadManifest(); check();
+            if(manifest.has("external_asset_pack")) {
+                pack=assetPack();
+                InputStream input=context.getContentResolver().openInputStream(selected);
+                if(input==null)throw new IOException("The selected asset pack could not be opened");
+                String part=pack.importVolume(input);check();
+                if(!pack.isAccepted()) {
+                    ready=true;success="Asset pack "+pack.version+" part "+part+" verified. "+pack.status();
+                    report.put("status","asset_pack_part_complete").put("passed",false)
+                            .put("scope","Verified one asset part; remaining parts are required before runtime setup");
+                    listener.onStage("Asset part imported",success);
+                }
+            }
+            if(pack==null||pack.isAccepted()) {
+                importControl = new AtlasAssetImporter.Control();check();
+                AtlasAssetImporter assetImporter = importer();
+                // An APK update with the same pinned content keeps the existing import.
+                try {imported=pack==null?null:assetImporter.inspect();}catch(IOException incompatible){imported=null;}
+                if(imported==null) {
+                    InputStream input=pack==null?context.getContentResolver().openInputStream(selected):pack.open("atlas/atlas-assets.zip");
+                    if(input==null)throw new IOException("The selected asset archive could not be opened");
+                    imported=assetImporter.importArchive(input,(phase,files,totalFiles,bytes,totalBytes)->{
+                        String detail=totalFiles>0?files+" / "+totalFiles+" files":totalBytes>0?bytes/1048576+" / "+totalBytes/1048576+" MiB":phase;
+                        listener.onStage(phase,detail);
+                    },importControl);
+                }
+                ready=true;
+                success=(pack==null?"Verified game assets":("Asset pack "+pack.version))+" is ready. Apply Set up / update runtime, then "+profileRecoveryMessage(characterProfileState(context));
+                report.put("status","import_complete").put("passed",false)
+                        .put("scope","Verified asset import only; no client or game execution claimed");
+            }
+        } catch (Exception e) {
+            error = message(e);
+            report.put("status", cancelled || e instanceof AtlasAssetImporter.CancelledException ? "cancelled" : "failed")
+                    .put("passed", false).put("error", error);
+        } finally {
+            if(pack!=null)try{report.put("external_asset_pack",pack.receipt());}catch(Exception ignored){}
+            synchronized (this) { finished = true; importControl = null; }
+            endedUptime = SystemClock.uptimeMillis();
+            try { publish(report, false, false); } finally { endOperation(); }
+        }
+        return new Result(ready, latestReport, ready ? success
+                : cancelled ? "Asset import stopped; previous verified content and completed parts are preserved."
+                : "Asset import failed: " + error);
+    }
+
+    public Result run(String selectedSession) throws Exception {
+        resumeFirstCreation = false;
+        return runCharacter(selectedSession, true);
+    }
+
+    /** Explicit first-install creation; never a fallback for an existing or partial database. */
+    public Result runCreation(String selectedSession) throws Exception {
+        return runFreshCreation(selectedSession);
+    }
+    public Result runFreshCreation(String selectedSession) throws Exception {
+        resumeFirstCreation = false;
+        return runCharacter(selectedSession, false);
+    }
+
+    /** Explicit recovery of an initialized empty profile; the guest checks real SQL before native launch. */
+    public Result runResumeCreation(String selectedSession) throws Exception {
+        resumeFirstCreation = true;
+        return runCharacter(selectedSession, false);
+    }
+
+    private Result runCharacter(String selectedSession, boolean reopening) throws Exception {
+        reopen = reopening;
+        if (selectedSession == null || !selectedSession.matches("[0-9a-f]{32}")) throw new IOException("Invalid client session identity");
+        begin(reopen ? "character_reopen" : "character_creation", selectedSession);
+        graphicsProfileRequested=performanceGraphicsEnabled(context)?"performance":"standard";
+        gpuProfileRequested=gpuProfileEnabled(context);
+        JSONObject report = new JSONObject();
+        Thread output = null, receiver = null;
+        boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
+        try {
+            // The operation lock is held. Detect a missing/partial profile before
+            // runtime hashing, thin worktree staging, or any Wine/SQL process.
+            requireCharacterProfile(reopen);
+            loadManifest(); check(); validateInstalled();
+            imported = importer().inspect();
+            if (imported == null) throw new IOException("Import the pinned Atlas assets before starting the client");
+            state.mkdirs();
+            File tmp = new File(operationDir, "tmp"); tmp.mkdirs();
+            File guestHosts = new File(operationDir, "hosts");
+            write(guestHosts, localHosts(android.system.Os.uname().nodename).getBytes(StandardCharsets.US_ASCII));
+            File prootTmp = new File(home.getParentFile(), "p").getCanonicalFile(); prootTmp.mkdirs();
+            File socketDir = new File(home.getParentFile(), "s");
+            File socketFile = new File(socketDir, "view.sock");
+            if (prootTmp.getPath().getBytes(StandardCharsets.UTF_8).length + 27 > 107
+                    || socketFile.getPath().getBytes(StandardCharsets.UTF_8).length > 106)
+                throw new IOException("Private app path is too long for local display sockets");
+            if (ClientSocketRecovery.prepare(context, home.getParentFile()))
+                recordLifecycle("dead_owned_display_socket_recovered");
+            ClientReports.preservePrevious(home.getParentFile());
+            removePreviousGuestOutput();
+            File root = new File(generation, "rootfs"); new File(root, "presentation-socket").mkdirs();
+            new File(root, "game-import").mkdirs();
+            String nativeDir = context.getApplicationInfo().nativeLibraryDir;
+            File proot = new File(nativeDir, "libproot.so"), loader = new File(nativeDir, "libproot-loader.so");
+            if (!proot.canExecute() || !loader.canExecute()) throw new IOException("The APK process runtime is missing");
+            List<String> command = new ArrayList<>(Arrays.asList(proot.getPath(), "--link2symlink", "--kill-on-exit", "--sysvipc",
+                    "-i", "1000:1000", "-r", root.getPath(), "-b", "/dev", "-b", "/proc", "-b", "/sys",
+                    "-b", state.getPath() + ":/state", "-b", tmp.getPath() + ":/tmp",
+                    "-b", socketDir.getPath() + ":/presentation-socket",
+                    "-b", imported.dataDirectory.getParentFile().getCanonicalPath() + ":/game-import",
+                    "-b", new File(generation, "assets").getPath() + ":/opt/coh",
+                    "-b", new File(generation, "pg/opt/coh/pgsql").getPath() + ":/opt/coh/pgsql",
+                    "-b", new File(generation, "wine").getPath() + ":/opt/wine",
+                    "-b", new File(generation, "passwd").getPath() + ":/etc/passwd",
+                    "-b", new File(generation, "group").getPath() + ":/etc/group",
+                    "-b", guestHosts.getPath() + ":/etc/hosts",
+                    "-w", "/state", "/usr/bin/env", "-i", "HOME=/state", "USER=coh", "LOGNAME=coh",
+                    "PATH=/opt/coh/pgsql/bin:/usr/local/bin:/usr/bin:/bin", "LANG=C.UTF-8", "TZ=UTC", "TMPDIR=/tmp",
+                    "PYTHONUNBUFFERED=1", "PYTHONDONTWRITEBYTECODE=1",
+                    "COH_CLIENT_GRAPHICS_PROFILE="+graphicsProfileRequested,
+                    "COH_CLIENT_GPU_PROFILE="+gpuProfileRequested,
+                    "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
+                    "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
+                    "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
+                    "--game-data", "/game-import/data", "--socket-dir", "/presentation-socket",
+                    "--startup-timeout-seconds", "900", "--observation-seconds", "30", "--interaction-seconds", "1200", "--timeout-seconds", "5400"));
+            if (!reopen && resumeFirstCreation) command.add("--resume-empty-profile");
+            if (reopen && Boolean.TRUE.equals(manifest.opt("startup_only_reopen"))) command.add("--startup-only");
+            if (zoningEnabled()) command.add("--zoning");
+            ProcessBuilder builder = new ProcessBuilder(command).redirectErrorStream(true);
+            builder.environment().put("PROOT_LOADER", loader.getPath());
+            builder.environment().put("PROOT_TMP_DIR", prootTmp.getPath());
+            builder.environment().put("PROOT_NO_SECCOMP", "1");
+            write(guard(context), new JSONObject().put("status", "running").put("process_instance", PROCESS_INSTANCE)
+                    .put("session_id", session).put("operation_id", runId).toString().getBytes(StandardCharsets.UTF_8));
+            stage("Starting City of Heroes", "Starting the persistent local database and DbServer, verifying the saved destination, then opening its MapServer and graphical client.");
+            check(); child = builder.start(); launched = true; runLaunched = true;
+            Process process = child;
+            output = new Thread(() -> captureOutput(process), "coh-client-output"); output.start();
+            receiver = new Thread(() -> receiveFrames(process, socketFile), "coh-client-frames"); receiver.start();
+            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5500);
+            while (!process.waitFor(200, TimeUnit.MILLISECONDS)) {
+                check();
+                if (receiverFailure != null) throw new IOException("Local display connection failed: " + receiverFailure);
+                if ((!reopen || !interactionReadyObserved) && System.nanoTime() > deadline) throw new IOException("Character startup exceeded its 5500 second runtime limit");
+            }
+            processExit = process.exitValue();
+            output.join(2000); check();
+        } catch (Exception e) {
+            if (e instanceof InterruptedException || Thread.currentThread().isInterrupted()) cancelled = true;
+            error = message(e); line("Client operation: " + error);
+        } finally {
+            boolean interrupted = Thread.interrupted();
+            stopInputWorker();
+            Process process = child;
+            if (process != null && process.isAlive()) {
+                signalStop();
+                try {
+                    if (!process.waitFor(30, TimeUnit.SECONDS)) {
+                        process.destroy(); if (!process.waitFor(5, TimeUnit.SECONDS)) process.destroyForcibly();
+                    }
+                    process.waitFor(5, TimeUnit.SECONDS);
+                } catch (InterruptedException e) { process.destroyForcibly(); }
+            }
+            closingReceiver = true; closeReceiver();
+            try { inputWorker.awaitTermination(3, TimeUnit.SECONDS); } catch (InterruptedException ignored) {}
+            join(receiver, 3000); join(output, 2000);
+            boolean forcedCaptureClose = output != null && output.isAlive();
+            if (forcedCaptureClose && process != null) {
+                try { process.getInputStream().close(); } catch (IOException ignored) {}
+                join(output, 2000);
+            }
+            if (process != null && !process.isAlive()) processExit = process.exitValue();
+            synchronized (this) { finished = true; }
+            endedUptime = SystemClock.uptimeMillis();
+            try {
+                File guest = new File(state, "latest-report.json");
+                if (launched && guest.isFile()) {
+                    try { report = json(guest, MAX_JSON); }
+                    catch (Exception invalid) {
+                        report = new JSONObject().put("status", "failed").put("passed", false)
+                                .put("failures", new JSONArray().put("Guest report is unreadable"));
+                        error = "Guest report is unreadable: " + invalid.getClass().getSimpleName();
+                    }
+                }
+                else report.put("status", cancelled ? "cancelled" : "failed").put("passed", false)
+                        .put("failures", new JSONArray().put(error == null ? "No complete guest report" : error));
+                cleanup = !launched || (process != null && !process.isAlive() && !forcedCaptureClose
+                        && (receiver == null || !receiver.isAlive()) && inputWorker.isTerminated()
+                        && ClientAcceptance.cleanupSafe(jsonValue(report)));
+                if (!cleanup) { block(context, "Owned display processes could not be proved stopped"); error = BLOCK_MESSAGE; }
+                else if (guard(context).exists() && !guard(context).delete()) {
+                    block(context, "Cannot clear completed operation state"); cleanup = false; error = BLOCK_MESSAGE;
+                }
+                try { guestPassed = launched && processExit == 0 && guestAccepted(report); }
+                catch (Exception invalid) { error = "Guest acceptance evidence is invalid: " + invalid.getClass().getSimpleName(); }
+                if (launched && processExit == 0 && report.optBoolean("passed") && !guestPassed && error == null)
+                    error = "The guest completed, but its current-session client evidence did not match this APK.";
+                if (launched && processExit != 0 && !cancelled) {
+                    String guestFailure = currentGuestFailureMessage(report, session);
+                    if (guestFailure != null && (error == null || error.startsWith("Local display connection failed:")))
+                        error = guestFailure;
+                }
+                if (receiverFailure != null && error == null) error = "Local display connection failed: " + receiverFailure;
+                passed = guestPassed && cleanup && !cancelled && error == null && receiverFailure == null
+                        && inputFailed == 0 && surfaceAccepted(report) && loginSurfaceAccepted() && characterSurfaceAccepted(report);
+                saveRecorded = committedCharacterSaveObserved(jsonValue(report),jsonValue(characterSavedEvent),
+                        jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),
+                        zoningEnabled()?zoning.currentMap():1);
+                if (inputFailed > 0 && error == null) error = "Input transport failed; review the exported report.";
+                if (guestPassed && !passed && error == null) error = taskGateRequired()
+                        ? "Task gate incomplete: matching native and SQL task completion, accepted/completed task views, ordinary save evidence and fresh Android save captures are required."
+                        : saveRecorded ? "Committed character save recorded; Android report checks incomplete. Review the individual report gates."
+                        : "Character save evidence or Android report checks incomplete. Review the individual report gates.";
+                publish(report, passed, cleanup);
+            } finally {
+                child = null; endOperation();
+                if (interrupted) Thread.currentThread().interrupt();
+            }
+        }
+        String label = taskGateRequired() ? "Task save" : reopen ? "Character reopen" : "Character creation";
+        String summary = passed ? (taskGateRequired()
+                ? "One manually accepted task completed through the stock command and remained committed after ordinary logout, with matching native/SQL evidence, accepted/completed Android views and verified cleanup. Review both task views; combat, mission maps and reward turn-in remain separate."
+                : reopen
+                ? "The existing THORHERO was reopened and saved with its identity, powers and costume preserved, fresh Android captures after connection and save, and verified cleanup. Review the saved world view; rendering and gameplay require separate visual validation."
+                : "THORHERO was saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup. World rendering, movement and gameplay still need validation.")
+                : isCleanupBlocked() ? BLOCK_MESSAGE : cancelled ? label + " check stopped. Export the latest report."
+                : saveRecorded ? "Committed character save recorded; Android report checks incomplete. Export the latest report."
+                : guestPassed ? label + " check incomplete. Export the latest report."
+                : label + " check failed. " + (error == null ? "" : error + " ") + "Export the latest report.";
+        stage(passed ? label + " check complete" : isCleanupBlocked() ? "Cleanup needs attention" : cancelled ? label + " check stopped"
+                : guestPassed ? label + " check incomplete" : label + " check failed", summary);
+        return new Result(passed, latestReport, summary);
+    }
+
+    public synchronized boolean requestStop() {
+        if (finished || producerCompleted) return false;
+        AtlasAssetImporter.Control control = importControl;
+        if (control != null && !control.requestCancel()) return false;
+        inputReady = false; cancelPendingInput(); releaseAllInputs(session);
+        cancelled = true; signalStop(); notifyInputState();
+        DiagnosticRuntime activeInstaller = installer; if (activeInstaller != null) activeInstaller.requestStop();
+        return true;
+    }
+    private interface InputWrite { void write(InteractiveRfbClient active, long epoch) throws IOException; }
+    public boolean sendPointer(String selectedSession, int x, int y, int mask) {
+        if (x < 0 || y < 0 || mask < 0 || mask > 7) return false;
+        return queueInput(selectedSession, (active, epoch) -> active.sendPointer(x, y, mask, epoch), true);
+    }
+    public boolean sendKey(String selectedSession, int keysym, boolean down) {
+        if (keysym <= 0) return false;
+        return queueInput(selectedSession, (active, epoch) -> active.sendKey(keysym, down, epoch), down);
+    }
+    /** Keep field replacement and paced characters in one owned worker task. */
+    public synchronized boolean sendText(String selectedSession, String value, boolean replace) {
+        if (!ClientInput.validText(value)) return false;
+        final long selectedPid = observedClientPid;
+        return queueInput(selectedSession, (active, epoch) -> {
+            synchronized (ClientRuntime.this) {
+                if (!selectedSession.equals(session) || observedClientPid != selectedPid)
+                    throw new InteractiveRfbClient.InputCancelledException();
+            }
+            recordLifecycle("text_entry_dispatch");
+            try {
+                active.sendText(value, replace, epoch);
+                recordLifecycle("text_entry_submitted native_effect_verified=false");
+            } catch (InteractiveRfbClient.InputCancelledException cancelledInput) {
+                recordLifecycle("text_entry_cancelled");
+                throw cancelledInput;
+            }
+        }, true);
+    }
+    /** Ordinary paired Enter remains available in the owned login input phase. */
+    public synchronized boolean requestEnter(String selectedSession) {
+        return queueInput(selectedSession, (active, epoch) -> {
+            active.sendEnter(epoch);
+            recordLifecycle("sidebar_enter_submitted sent_utc_ms=" + System.currentTimeMillis());
+        }, true);
+    }
+    public boolean isPerformanceCommandPending() { return performanceCommandPending || zoning.blocksInput(); }
+    private boolean performanceCommandInputAllowed() {
+        return session != null && !session.isEmpty() && reopen && inputReady && !finishRequested && !finished && !cancelled && !producerCompleted
+                && connectedCapturedReady && characterConnectedEvent != null && observedClientPid > 0
+                && !saveLogoutRequested && characterSavedEvent == null && !zoning.blocksInput()
+                && (!stuckRequested || relocationCapturedReady)
+                && !(taskContactRequested && taskContactReceipt == null)
+                && !(taskCompletionRequested && taskCompletionReceipt == null)
+                && sessionBudget.canMove(SystemClock.uptimeMillis());
+    }
+    public synchronized boolean canSendPerformanceCommand() {
+        return !performanceCommandPending && decoder != null && !inputWorker.isShutdown()
+                && performanceCommandInputAllowed();
+    }
+    public synchronized boolean requestPerformanceCommand(ClientInput.PerformanceCommand command) {
+        if (command == null || !canSendPerformanceCommand()) return false;
+        final String selectedSession = session;
+        final long selectedPid = observedClientPid;
+        final long token = ++performanceCommandGeneration;
+        performanceCommandPending = true;
+        boolean queued = queueInput(selectedSession, (active, epoch) -> {
+            synchronized (ClientRuntime.this) {
+                if (token != performanceCommandGeneration || !performanceCommandPending || !selectedSession.equals(session)
+                        || observedClientPid != selectedPid || !performanceCommandInputAllowed())
+                    throw new InteractiveRfbClient.InputCancelledException();
+            }
+            recordLifecycle("performance_command_dispatch name=" + command.safeName
+                    + " dispatch_utc_ms=" + System.currentTimeMillis());
+            active.sendPerformanceCommand(command.safeName, epoch);
+            recordLifecycle("performance_command_submitted name=" + command.safeName
+                    + " submitted_utc_ms=" + System.currentTimeMillis() + " native_effect_verified=false");
+            stage("FPS command sent", "Check the in-game FPS display. The selected value is a cap.");
+        }, true, token);
+        if (!queued) { performanceCommandPending = false; return false; }
+        recordLifecycle("performance_command_queued name=" + command.safeName);
+        notifyInputState();
+        return true;
+    }
+    private boolean zoningEnabled() {
+        return reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"))
+                && !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"));
+    }
+    public synchronized String zoningStatus() {
+        if(!zoningEnabled())return "Zone travel becomes available after runtime update and Reopen.";
+        if(stuckRequested)return "Safe-ground recovery selected · Save and reopen before zoning.";
+        if(!zoning.enabled())return "Waiting for the saved character and destination controller.";
+        String phase=zoning.phase();String elapsed="";
+        if(!zoningTimings.isEmpty()) {
+            Map<String,Object> timing=zoningTimings.get(zoningTimings.size()-1);
+            long duration=timing.containsKey("total_elapsed_ms")?((Number)timing.get("total_elapsed_ms")).longValue():Math.max(0,SystemClock.uptimeMillis()-((Number)timing.get("request_uptime_ms")).longValue());
+            elapsed=" · "+(duration/1000)+"s total";
+        }
+        if("idle".equals(phase))return zoning.monorailRequiresReopen()&&zoning.currentMap()==1
+                ?"Back in Atlas Park · Save, Finish and Reopen to enable monorail travel"
+                :ClientZoning.name(zoning.currentMap())+" · "+zoning.epoch()+"/4 transfers requested"+elapsed;
+        if("preparing".equals(phase))return "Preparing "+ClientZoning.name(zoning.targetMap())
+                +(zoning.stockMonorail()||automaticTravel?" · travel follows automatically; stay in this app":" · automatic travel paused; tap Travel when ready")+elapsed;
+        if("ready".equals(phase))return ClientZoning.name(zoning.targetMap())+(zoning.stockMonorail()?" ready · boarding monorail":" ready · tap Travel to continue");
+        if("capturing".equals(phase))return "Native arrival verified · collecting fresh view "+zoning.captures()+"/3"+elapsed;
+        if("prepare_failed".equals(phase))return "Destination preparation failed · current map remains available; Save or export";
+        if("failed".equals(phase))return "Transfer not verified · Abort and export; Reopen preserves the saved map";
+        return "Travelling to "+ClientZoning.name(zoning.targetMap())+" · awaiting native arrival"+elapsed;
+    }
+    private boolean zoningRecoveryAllowed(){
+        return !zoningEnabled() || (zoning.enabled() && zoning.epoch()==0 && zoning.currentMap()==1);
+    }
+    public int zoningCurrentMap(){return zoning.currentMap();}
+    public synchronized void setUiVisible(boolean visible) {
+        uiVisible=visible;
+        if(!visible && automaticTravel){automaticTravel=false;if(!zoningTimings.isEmpty())zoningTimings.get(zoningTimings.size()-1).put("automatic_travel_cancelled_background",true);recordLifecycle("zoning_automatic_travel_cancelled_background");}
+    }
+    public synchronized boolean canRequestZoning(){return canPrepareZoning()||canTravelZoning();}
+    /** One user action covers preparation, native transfer and fresh destination views. */
+    public synchronized boolean requestZoning() {
+        if(!uiVisible || cancelled || finishRequested || !canRequestZoning())return false;
+        if(canTravelZoning()){
+            if(!zoningTimings.isEmpty()){Map<String,Object> timing=zoningTimings.get(zoningTimings.size()-1);timing.put("user_actions",((Number)timing.get("user_actions")).intValue()+1);}
+            recordLifecycle("zoning_travel_resume_requested epoch="+zoning.epoch());return requestTravelZoning();
+        }
+        automaticTravel=true;
+        if(!requestPrepareZoning()){automaticTravel=false;return false;}
+        return true;
+    }
+    private synchronized void dispatchPreparedZoning() {
+        if(!"ready".equals(zoning.phase()) || !automaticTravel)return;
+        automaticTravel=false;
+        if(uiVisible && !cancelled && !finishRequested && canTravelZoning())requestTravelZoning();
+        else recordLifecycle("zoning_automatic_travel_cancelled_gate");
+    }
+    private void markZoningTime(String point) {
+        if(zoningTimings.isEmpty())return;
+        Map<String,Object> timing=zoningTimings.get(zoningTimings.size()-1);
+        if(!Integer.valueOf(zoning.epoch()).equals(timing.get("epoch")))return;
+        long now=SystemClock.uptimeMillis();
+        timing.put(point+"_uptime_ms",now);
+        timing.put("request_to_"+point+"_ms",Math.max(0,now-((Number)timing.get("request_uptime_ms")).longValue()));
+        if("fresh_views".equals(point))timing.put("total_elapsed_ms",Math.max(0,now-((Number)timing.get("request_uptime_ms")).longValue()));
+    }
+    private static long preparationInteger(Object value){return value instanceof Integer||value instanceof Long?((Number)value).longValue():Long.MIN_VALUE;}
+    private static boolean nativePreparationStage(String value){
+        return value.matches("INITIALIZED|STARTUP|MAP_LOAD|DB_SETUP|READY_PUBLISH|READY_PUBLISHED|RUNTIME_PRIORITY|RUNTIME_PRIORITY_DONE|HEAP_VALIDATE|HEAP_VALIDATED|SG_VERIFY|SG_VERIFIED|CALLBACKS_ENABLE|CALLBACKS_ENABLED|RANDOM_SEED|ITEM_POWER_REQUEST|ITEM_POWER_REQUESTED|ERROR_QUEUE_DRAIN|ERROR_QUEUE_DRAINED|READY_STDOUT|LAUNCHER_CONTACT|LATE_STARTUP_DONE|LOOP_PRE_TICK|TICK_BEGIN|TICK_TOP|DB_COMM|DB_COMM_DONE|FOLDER_CALLBACKS|FOLDER_CALLBACKS_DONE|TICK_TOP_DONE|ENTITY_UPDATE|GAME_LOGIC|TICK_BOTTOM|TICK_DONE|LOOP_POST_TICK|SLEEP|SLEEP_DONE|COMPLETED_TICK");
+    }
+    /** Sparse observed stages survive interruption; they never advance transfer/save state. */
+    private synchronized boolean recordZoningPreparation(Map<?,?> event) {
+        long observed=preparationInteger(event.get("observed_utc_ms")),mono=preparationInteger(event.get("observed_monotonic_ms"));
+        long now=System.currentTimeMillis();
+        if(!zoningEnabled()||session==null||!session.equals(event.get("session_id"))||observedClientPid<=0
+                ||!"character_zoning_preparation".equals(event.get("type"))
+                ||preparationInteger(event.get("client_pid"))!=observedClientPid||preparationInteger(event.get("character_id"))!=1
+                ||zoning.epoch()<1||preparationInteger(event.get("epoch"))!=zoning.epoch()
+                ||preparationInteger(event.get("map_id"))!=zoning.targetMap()||zoningTimings.isEmpty()
+                ||observed<((Number)zoningTimings.get(zoningTimings.size()-1).get("request_utc_ms")).longValue()
+                ||observed>now+1000||now-observed>120000||mono<0)return false;
+        Map<String,Object> row=new LinkedHashMap<>();
+        for(String key:new String[]{"type","session_id","client_pid","character_id","epoch","map_id","observed_utc_ms","observed_monotonic_ms"})row.put(key,event.get(key));
+        String kind=event.containsKey("observation_kind")?String.valueOf(event.get("observation_kind")):"native_stage";
+        row.put("observation_kind",kind);row.put("native_arrival_verified",false);
+        if("native_stage".equals(kind)) {
+            Object stage=event.get("stage");long pid=preparationInteger(event.get("windows_pid")),tick=preparationInteger(event.get("tick_completed"));
+            if(!(stage instanceof String)||!nativePreparationStage((String)stage)||pid<=0||tick<0
+                    ||!Boolean.FALSE.equals(event.get("native_stage_duration_measured")))return false;
+            row.put("stage",stage);row.put("windows_pid",pid);row.put("tick_completed",tick);row.put("native_stage_duration_measured",false);
+        }else if("scheduler".equals(kind)) {
+            Object phase=event.get("scheduler_phase"),capability=event.get("capability");
+            if(!Arrays.asList("capability","weighted","restored").contains(phase)||!(capability instanceof Map)
+                    ||!(((Map<?,?>)capability).get("supported") instanceof Boolean)
+                    ||!(event.get("restore_complete") instanceof Boolean)||!Boolean.TRUE.equals(event.get("exact_destination_only"))
+                    ||!Boolean.FALSE.equals(event.get("physical_performance_gain_verified")))return false;
+            row.put("scheduler_phase",phase);Map<String,Object> small=new LinkedHashMap<>();
+            small.put("supported",((Map<?,?>)capability).get("supported"));
+            for(String key:new String[]{"original_nice","lowered_nice","restored_nice","rlimit_nice_soft","rlimit_nice_hard","errno"}){
+                Object value=((Map<?,?>)capability).get(key);if(value!=null){long number=preparationInteger(value);if(number==Long.MIN_VALUE)return false;small.put(key,number);}
+            }
+            for(String key:new String[]{"reason","error_type"}){
+                Object value=((Map<?,?>)capability).get(key);if(value!=null){if(!(value instanceof String)||!((String)value).matches("[A-Za-z0-9_]{1,80}"))return false;small.put(key,value);}
+            }
+            row.put("capability",small);
+            for(String key:new String[]{"changed_threads","restored_threads","exited_threads"}){long count=preparationInteger(event.get(key));if(count<0||count>1000000)return false;row.put(key,count);}
+            row.put("restore_complete",event.get("restore_complete"));row.put("exact_destination_only",true);row.put("physical_performance_gain_verified",false);
+        }else return false;
+        if(!zoningPreparationObservations.isEmpty()){
+            Map<String,Object> previous=zoningPreparationObservations.get(zoningPreparationObservations.size()-1);
+            if(preparationInteger(previous.get("epoch"))==zoning.epoch()
+                    && (observed<preparationInteger(previous.get("observed_utc_ms"))||mono<preparationInteger(previous.get("observed_monotonic_ms"))))return false;
+            if(previous.equals(row))return false;
+        }
+        if(zoningPreparationObservations.size()>=128){if(!zoningPreparationObservationLimitReached){zoningPreparationObservationLimitReached=true;checkpoint();}return false;}
+        zoningPreparationObservations.add(row);checkpoint();return true;
+    }
+    public synchronized boolean canPrepareZoning() {
+        return zoningEnabled() && !stuckRequested && zoning.canPrepare() && canSendPerformanceCommand()
+                && (sessionBudget.manual() || sessionBudget.movementDeadline()-SystemClock.uptimeMillis()>60000);
+    }
+    public synchronized boolean canTravelZoning() {
+        return zoningEnabled() && !stuckRequested && zoning.canTravel() && canSendPerformanceCommand()
+                && (sessionBudget.manual() || zoningDepartureDeadlineUtc>System.currentTimeMillis())
+                && (sessionBudget.manual() || sessionBudget.movementDeadline()-SystemClock.uptimeMillis()>60000);
+    }
+    private JSONObject zoningRequest(String action,long stamp) throws Exception {
+        return new JSONObject().put("format",1).put("session_id",session).put("client_pid",observedClientPid)
+                .put("character_id",1).put("epoch",zoning.epoch()).put("action",action)
+                .put("from_map_id",zoning.currentMap()).put("to_map_id",zoning.targetMap())
+                .put("prepare".equals(action)?"requested_utc_ms":"sent_utc_ms",stamp);
+    }
+    public synchronized boolean requestPrepareZoning() {
+        if(!canPrepareZoning())return false;
+        long utc=System.currentTimeMillis();
+        if(!zoning.prepare(utc))return false;
+        zoningDepartureDeadlineUtc=0;
+        Map<String,Object> timing=new LinkedHashMap<>();timing.put("epoch",zoning.epoch());
+        timing.put("request_utc_ms",utc);timing.put("request_uptime_ms",SystemClock.uptimeMillis());
+        timing.put("from_map_id",zoning.currentMap());timing.put("to_map_id",zoning.targetMap());
+        timing.put("one_action_requested",automaticTravel);timing.put("user_actions",1);zoningTimings.add(timing);
+        try { write(new File(state,"character-zoning-request.json"),zoningRequest("prepare",utc).toString().getBytes(StandardCharsets.UTF_8)); }
+        catch(Exception failed){zoning.fail();recordLifecycle("zoning_prepare_request_failed");notifyInputState();return false;}
+        recordLifecycle("zoning_prepare_requested epoch="+zoning.epoch());
+        stage("Preparing destination",zoningStatus());notifyInputState();return true;
+    }
+    public synchronized boolean requestTravelZoning() {
+        if(!uiVisible || !canTravelZoning())return false;
+        automaticTravel=false;
+        final String selectedSession=session;final long selectedPid=observedClientPid;
+        final int selectedEpoch=zoning.epoch(),target=zoning.targetMap();
+        final long token=++performanceCommandGeneration;
+        if(!zoning.beginTravel())return false;
+        performanceCommandPending=true;
+        boolean queued=queueInput(selectedSession,(active,inputEpoch)->{
+            synchronized(ClientRuntime.this){
+                if(!zoning.commandInFlight()||zoning.epoch()!=selectedEpoch||observedClientPid!=selectedPid
+                        ||!selectedSession.equals(session)||!uiVisible||saveLogoutRequested
+                        ||!sessionBudget.manual()&&zoningDepartureDeadlineUtc<=System.currentTimeMillis()||!sessionBudget.canMove(SystemClock.uptimeMillis()))
+                    throw new InteractiveRfbClient.InputCancelledException();
+            }
+            active.sendMapMove(target,inputEpoch);
+            synchronized(ClientRuntime.this){
+                try {
+                    long sent=System.currentTimeMillis();JSONObject receipt=zoningRequest("mapmove",sent);
+                    if(!zoning.delivered(sent))throw new IOException("Zoning command ownership changed");
+                    write(new File(state,"character-zoning-delivery.json"),receipt.toString().getBytes(StandardCharsets.UTF_8));
+                    markZoningTime("delivery");
+                    recordLifecycle("zoning_mapmove_delivered epoch="+selectedEpoch+" native_arrival_verified=false");
+                    stage("Travelling",zoningStatus());
+                }catch(Exception failure){zoning.fail();throw new IOException("Could not record completed zoning delivery",failure);}
+            }
+        },false,token);
+        if(!queued){performanceCommandPending=false;zoning.fail();notifyInputState();return false;}
+        stage("Travelling",zoningStatus());notifyInputState();return true;
+    }
+    private synchronized void completePerformanceCommand(long token) {
+        if (token != 0 && token == performanceCommandGeneration && performanceCommandPending) {
+            performanceCommandPending = false;
+            if(zoning.commandInFlight()) { zoning.fail(); stage("Transfer not delivered",zoningStatus()); }
+            notifyInputState();
+        }
+    }
+    /** Bounds manual contact-view evidence; it never proves a native dialog opened. */
+    private static final class ContactCaptureWindow {
+        static final int MAX_REQUESTS=3, FRAMES_PER_REQUEST=3;
+        static final long MAX_AGE_MS=120000;
+        private String session;
+        private long pid, requested, deadline, watermark, lastCapture=-1, lastSequence=-1;
+        private int batch, count;
+        boolean canRequest(long now) {
+            return now>=0 && now>=requested && (lastCapture<0 || now>=lastCapture) && batch<MAX_REQUESTS
+                    && (batch==0 || count==FRAMES_PER_REQUEST || now>deadline);
+        }
+        boolean request(String selectedSession,long selectedPid,long characterId,long now,long sequence) {
+            if(selectedSession==null || !selectedSession.matches("[0-9a-f]{32}") || selectedPid<=0
+                    || selectedPid>4294967295L || characterId!=1 || now>Long.MAX_VALUE-MAX_AGE_MS
+                    || sequence<0 || !canRequest(now))return false;
+            session=selectedSession;pid=selectedPid;requested=now;deadline=now+MAX_AGE_MS;
+            watermark=sequence;lastCapture=lastSequence=-1;count=0;batch++;
+            return true;
+        }
+        boolean accepts(String selectedSession,long selectedPid,long characterId,long captured,long sequence) {
+            return batch>0 && count<FRAMES_PER_REQUEST && session.equals(selectedSession) && pid==selectedPid
+                    && characterId==1 && captured>requested && captured<=deadline && sequence>watermark
+                    && sequence>lastSequence && (lastCapture<0 || captured-lastCapture>=1000);
+        }
+        boolean accept(String selectedSession,long selectedPid,long characterId,long captured,long sequence) {
+            if(!accepts(selectedSession,selectedPid,characterId,captured,sequence))return false;
+            lastCapture=captured;lastSequence=sequence;count++;return true;
+        }
+        boolean pending(long now){return batch>0 && count<FRAMES_PER_REQUEST && now<=deadline;}
+        int batch(){return batch;}
+        int count(){return count;}
+    }
+    public synchronized boolean canCaptureContact() {
+        return !zoning.blocksInput() && !performanceCommandPending && reopen && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
+                && connectedCapturedReady && characterConnectedEvent!=null && !saveLogoutRequested
+                && characterSavedEvent==null && (!stuckRequested || relocationCapturedReady)
+                && sessionBudget.canMove(SystemClock.uptimeMillis())
+                && contactCapture.canRequest(SystemClock.uptimeMillis());
+    }
+    public synchronized boolean requestContactCapture() {
+        if(!canCaptureContact())return false;
+        long now=SystemClock.uptimeMillis();
+        if(!contactCapture.request(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),now,decodedFrames))return false;
+        Map<String,Object> request=new LinkedHashMap<>();
+        request.put("session_id",session);request.put("client_pid",observedClientPid);request.put("character_id",1);
+        request.put("batch",contactCapture.batch());request.put("requested_uptime_ms",now);
+        request.put("frame_watermark",decodedFrames);request.put("dialog_semantics_verified",false);
+        contactRequests.add(request);
+        recordLifecycle("stationary_contact_view_capture_requested batch="+contactCapture.batch());
+        requestContactFullUpdate();
+        stage("Capturing contact view", "Keep the contact dialog visible while three fresh Android views are captured. Read a response, then close it normally and Save when ready.");
+        notifyInputState();return true;
+    }
+    private void requestContactFullUpdate() {
+        final InteractiveRfbClient expected=decoder;
+        final String expectedSession=session;
+        if(expected==null || inputWorker.isShutdown())return;
+        try { inputWorker.execute(()->{
+            if(decoder!=expected || !expectedSession.equals(session) || finished || cancelled || producerCompleted)return;
+            try { expected.requestFullUpdate(); }
+            catch(IOException failure) { inputFailure("Contact view refresh failed"); }
+        }); }
+        catch(RejectedExecutionException unavailable) { recordLifecycle("contact_view_refresh_queue_unavailable"); }
+    }
+    private boolean taskControlsAvailable() {
+        return !zoning.blocksInput() && taskGateRequired() && reopen && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
+                && connectedCapturedReady && characterConnectedEvent!=null && !saveLogoutRequested
+                && characterSavedEvent==null && (!stuckRequested || relocationCapturedReady)
+                && sessionBudget.canMove(SystemClock.uptimeMillis());
+    }
+    /** New input is reserved while a sidebar command types; native task evidence
+     * and captures already requested retain their ordinary availability gate. */
+    private boolean taskInputAvailable() {
+        return !performanceCommandPending && taskControlsAvailable();
+    }
+    public synchronized boolean canCaptureTask(boolean completed) {
+        if(!taskInputAvailable())return false;
+        return completed ? taskCompletedEvent!=null && taskCompletionReceipt!=null
+                && taskCompletedCapture.canRequest(SystemClock.uptimeMillis())
+                : taskAcceptedEvent!=null && !taskCompletionRequested
+                && taskAcceptedCapture.canRequest(SystemClock.uptimeMillis());
+    }
+    public synchronized boolean canOpenTaskContact() {
+        return taskInputAvailable() && !taskContactRequested && taskAcceptedEvent==null && !taskCompletionRequested;
+    }
+    public synchronized boolean requestOpenTaskContact() {
+        if(!canOpenTaskContact())return false;
+        final String selectedSession=session;
+        final long selectedPid=observedClientPid;
+        if(!queueInput(selectedSession,(active,epoch)->{
+            if(!taskInputAvailable() || taskAcceptedEvent!=null)
+                throw new InteractiveRfbClient.InputCancelledException();
+            active.sendOpenTaskContact(epoch);
+            try {
+                JSONObject receipt=new JSONObject().put("format",1).put("session_id",selectedSession)
+                        .put("client_pid",selectedPid).put("character_id",1).put("action","contactdialog")
+                        .put("contact_path","Contacts/Atlas_Park/Matthew_Habashy.contact")
+                        .put("commands",new JSONArray().put("/contactdialog Contacts/Atlas_Park/Matthew_Habashy.contact"))
+                        .put("sent_utc_ms",System.currentTimeMillis()).put("native_effect_verified",false);
+                write(new File(state,"character-task-contact.json"),receipt.toString().getBytes(StandardCharsets.UTF_8));
+                taskContactReceipt=receipt;
+                recordLifecycle("task_contact_dialog_delivered");
+            } catch(Exception failure) { throw new IOException("Could not record task contact command delivery",failure); }
+            stage("Task contact dialog sent","Choose Matthew Habashy's first offered task, What Was Lost / Part One: Demons and Gangsters, and accept it yourself. Close the dialog, open the Tasks journal, and wait for Accepted task verified. The task mentions five Hellions; the completion command avoids that combat.");
+        },true))return false;
+        taskContactRequested=true;
+        recordLifecycle("task_contact_dialog_requested");
+        stage("Opening task contact","The fixed stock contactdialog command is queued. Keep game dialogs closed and controls released while it types. This opens Matthew Habashy without relying on his model; it does not accept a task.");
+        notifyInputState();return true;
+    }
+    public synchronized boolean requestTaskCapture(boolean completed) {
+        if(!canCaptureTask(completed))return false;
+        ContactCaptureWindow window=completed?taskCompletedCapture:taskAcceptedCapture;
+        JSONObject event=completed?taskCompletedEvent:taskAcceptedEvent;
+        long now=SystemClock.uptimeMillis();
+        if(!window.request(session,observedClientPid,1,now,decodedFrames))return false;
+        try {
+            Map<String,Object> request=new LinkedHashMap<>();
+            request.put("session_id",session);request.put("client_pid",observedClientPid);request.put("character_id",1);
+            request.put("phase",completed?"completed":"accepted");request.put("batch",window.batch());
+            request.put("requested_uptime_ms",now);request.put("frame_watermark",decodedFrames);
+            request.put("task",jsonValue(event.getJSONObject("task")));request.put("dialog_semantics_verified",false);
+            taskCaptureRequests.add(request);
+        } catch(Exception failure) { inputFailure("Could not bind task capture identity");return false; }
+        recordLifecycle(completed?"completed_task_view_capture_requested":"accepted_task_view_capture_requested");
+        requestContactFullUpdate();
+        stage(completed?"Capturing completed task":"Capturing accepted task",
+                "Keep the matching task journal entry visible while three fresh Android views are captured.");
+        notifyInputState();return true;
+    }
+    public synchronized boolean canCompleteAcceptedTask() {
+        return taskInputAvailable() && taskAcceptedEvent!=null && taskCompletedEvent==null
+                && !taskCompletionRequested && taskAcceptedCapture.count()==ContactCaptureWindow.FRAMES_PER_REQUEST;
+    }
+    public synchronized boolean requestCompleteAcceptedTask() {
+        if(!canCompleteAcceptedTask())return false;
+        final JSONObject accepted=taskAcceptedEvent;
+        final String selectedSession=session;
+        final long selectedPid=observedClientPid;
+        if(!queueInput(selectedSession,(active,epoch)->{
+            if(!taskInputAvailable() || accepted!=taskAcceptedEvent || taskCompletedEvent!=null)
+                throw new InteractiveRfbClient.InputCancelledException();
+            active.sendCompleteAcceptedTask(epoch);
+            try {
+                JSONObject receipt=new JSONObject().put("format",1).put("session_id",selectedSession)
+                        .put("client_pid",selectedPid).put("character_id",1).put("action","completetask")
+                        .put("task_index",0).put("task",accepted.getJSONObject("task"))
+                        .put("sent_utc_ms",System.currentTimeMillis());
+                write(new File(state,"character-task-completion.json"),receipt.toString().getBytes(StandardCharsets.UTF_8));
+                taskCompletionReceipt=receipt;
+                recordLifecycle("accepted_task_completion_delivered");
+            } catch(Exception failure) { throw new IOException("Could not record completed task command delivery",failure); }
+        },true))return false;
+        taskCompletionRequested=true;
+        recordLifecycle("accepted_task_completion_requested");
+        stage("Completing accepted task","The stock /completetask 0 command is queued for the single verified task. Wait for native and SQL completion verification, then capture its completed journal entry.");
+        notifyInputState();return true;
+    }
+    private boolean gameplayInputAllowed() {
+        return !zoning.blocksInput() && (!reopen || sessionBudget.revision() < 1
+                || (!saveLogoutRequested && sessionBudget.canMove(SystemClock.uptimeMillis())));
+    }
+    /** Release held inputs even if the activity is paused when its movement cutoff arrives. */
+    public synchronized void enforceSessionDeadlines() {
+        if (!reopen || sessionBudget.revision() < 1 || deadlineInputSuppressed
+                || sessionBudget.canMove(SystemClock.uptimeMillis()) || finished || producerCompleted) return;
+        deadlineInputSuppressed = true;
+        // A queued normal save releases held input before typing its command.
+        // Do not cancel that command as the preceding movement window closes.
+        if (!saveLogoutRequested) discardPendingInputs(session);
+        recordLifecycle("session_movement_deadline_reached");
+        if (!saveLogoutRequested && characterSavedEvent == null)
+            stage("Stand still before saving", "The movement window has ended. Keep controls released for 60 seconds, then request Save before its countdown expires.");
+        notifyInputState();
+    }
+    private boolean queueInput(String selectedSession, InputWrite action) {
+        return queueInput(selectedSession, action, false);
+    }
+    private synchronized boolean queueInput(String selectedSession, InputWrite action, boolean gameplay) {
+        return queueInput(selectedSession, action, gameplay, 0);
+    }
+    private synchronized boolean queueInput(String selectedSession, InputWrite action, boolean gameplay, long performanceToken) {
+        if (!inputReady || finishRequested || finished || cancelled || producerCompleted
+                || session == null || !session.equals(selectedSession)
+                || (zoning.blocksInput() && performanceToken == 0)
+                || (performanceCommandPending && performanceToken != performanceCommandGeneration)
+                || (gameplay && !gameplayInputAllowed())
+                || (reopen && stuckRequested && !relocationCapturedReady)) return false;
+        InteractiveRfbClient queuedDecoder = decoder;
+        if (queuedDecoder == null) return false;
+        // Bind at queue acceptance: a task which starts after a lifecycle release
+        // must not adopt the new epoch and deliver a stale delayed press.
+        long queuedEpoch = queuedDecoder.inputEpoch();
+        try {
+            inputWorker.execute(() -> {
+                InteractiveRfbClient active = decoder;
+                try {
+                    if (!inputReady || finishRequested || finished || cancelled || producerCompleted || active != queuedDecoder
+                            || (zoning.blocksInput() && performanceToken == 0)
+                            || (performanceCommandPending && performanceToken != performanceCommandGeneration)
+                            || (gameplay && !gameplayInputAllowed())) return;
+                    // The executor and decoder both serialize writes. Never retain
+                    // key values or typed text in the evidence archive.
+                    action.write(active, queuedEpoch);
+                    synchronized (ClientRuntime.this) {
+                        inputSent++; lastInputUptime = SystemClock.uptimeMillis();
+                        lastInputFrameWatermark = decodedFrames;
+                    }
+                    long now = SystemClock.uptimeMillis();
+                    if (now - lastInputRefresh >= 500) { active.requestFullUpdate(); lastInputRefresh = now; }
+                    notifyInputState();
+                } catch (InteractiveRfbClient.InputCancelledException discarded) {
+                    // An intentionally discarded pending gesture is neither a
+                    // sent input event nor a transport failure.
+                } catch (IOException failure) { inputFailure("Input transport write failed"); }
+                finally { completePerformanceCommand(performanceToken); }
+            });
+            return true;
+        } catch (RejectedExecutionException full) {
+            inputFailure("Input queue exceeded its bound");
+            inputWorker.getQueue().clear();
+            releaseAllInputs(selectedSession);
+            return false;
+        }
+    }
+    private void notifyInputState() {
+        listener.onInputState(inputReady && !finishRequested && !producerCompleted && !cancelled && !finished,
+                finishRequested && !finished, characterSavedReady,
+                zoningRecoveryAllowed() && !zoning.blocksInput() && !performanceCommandPending && reopen && sessionBudget.canMove(SystemClock.uptimeMillis()) && connectedCapturedReady && !stuckRequested && !saveLogoutRequested,
+                !zoning.blocksInput() && !performanceCommandPending && characterConnectedEvent != null && (!reopen || (connectedCapturedReady && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis()))) && !saveLogoutRequested && characterSavedEvent == null,
+                inputSent, inputFailed, readyDeadlineUptimeMillis, sessionBudget.phase(), sessionBudget.saveDeadline(), sessionBudget.movementDeadline());
+    }
+    private synchronized void inputFailure(String detail) {
+        inputFailed++; inputReady = false; cancelPendingInput();
+        receiverFailure = detail; recordLifecycle(detail); notifyInputState();
+    }
+    private void releaseOnInputWorker() {
+        InteractiveRfbClient active = decoder;
+        if (active == null) return;
+        try { active.releaseAllInputs(); recordLifecycle("held_input_released"); }
+        catch (IOException failure) {
+            if (!producerCompleted && !producerFailed && !closingReceiver && !cancelled) inputFailure("Input release failed");
+        }
+    }
+    public synchronized void releaseAllInputs(String selectedSession) {
+        queueRelease(selectedSession, false);
+    }
+    public synchronized void discardPendingInputs(String selectedSession) {
+        queueRelease(selectedSession, true);
+    }
+    private void queueRelease(String selectedSession, boolean discard) {
+        if (session == null || !session.equals(selectedSession) || finished || inputWorker.isShutdown()) return;
+        if (finishRequested) return; // The queued Finish already releases input before writing its request.
+        // Once accepted, normal Save owns its input epoch until delivery.
+        // Surface disable/focus release must not interrupt the typed command;
+        // explicit Stop and transport failure still cancel it separately.
+        if (discard && !saveLogoutRequested && !zoning.commandInFlight()) {
+            cancelPendingInput(); inputWorker.getQueue().clear();
+            if (performanceCommandPending) {
+                performanceCommandPending = false;
+                ++performanceCommandGeneration;
+                recordLifecycle("performance_command_cancelled_by_input_release");
+                notifyInputState();
+            }
+        }
+        if (decoder == null || clientWindowObservedUptime < 0) return;
+        try { inputWorker.execute(this::releaseOnInputWorker); }
+        catch (RejectedExecutionException full) {
+            inputFailure("Input release queue exceeded its bound");
+            // Saturation must not leave an already-sent key/button held while
+            // the queued presses become ineligible after inputFailure.
+            inputWorker.getQueue().clear();
+            try { inputWorker.execute(this::releaseOnInputWorker); }
+            catch (RejectedExecutionException closed) { /* Socket closure in cleanup terminates the session. */ }
+        }
+    }
+    public synchronized boolean requestReturnToSafeGround() {
+        if (!zoningRecoveryAllowed() || zoning.blocksInput() || performanceCommandPending || !reopen || !inputReady || finished || finishRequested || cancelled || producerCompleted
+                || !sessionBudget.canMove(SystemClock.uptimeMillis()) || !connectedCapturedReady || characterConnectedEvent == null || stuckRequested
+                || saveLogoutRequested || characterSavedEvent != null) return false;
+        final String relocationSession = session;
+        final long relocationClientPid = observedClientPid;
+        final long relocationCharacterId = characterConnectedEvent.optLong("character_id", -1);
+        if (!queueInput(relocationSession, (active, epoch) -> {
+            active.sendReturnToSafeGround(epoch);
+            try {
+                long sentUtc = System.currentTimeMillis();
+                byte[] receipt = new JSONObject().put("format", 1).put("session_id", relocationSession)
+                        .put("client_pid", relocationClientPid).put("character_id", relocationCharacterId)
+                        .put("action", "stuck").put("sent_utc_ms", sentUtc)
+                        .toString().getBytes(StandardCharsets.UTF_8);
+                write(new File(state, "character-relocation.json"), receipt);
+                relocationSentUtcMillis = sentUtc;
+                recordLifecycle("ordinary_character_relocation_delivered");
+            } catch (Exception failure) {
+                throw new IOException("Could not record completed character recovery delivery", failure);
+            }
+        })) return false;
+        stuckRequested = true;
+        recordLifecycle("ordinary_character_relocation_requested");
+        stage("Returning to safe ground", "The ordinary /stuck command is queued. Stay still while the server checks two stable Atlas positions; this takes at least 25 seconds. Save remains disabled until ground verification and three fresh Android views. Save and reopen before starting zoning.");
+        notifyInputState();
+        return true;
+    }
+
+    /** Save readiness is separate from the connected-session capability used for movement and task input. */
+    public synchronized boolean canRequestSaveLogout() {
+        return !zoning.blocksInput() && !performanceCommandPending && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
+                && characterConnectedEvent != null && (!reopen || (connectedCapturedReady
+                && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis())))
+                && characterSavedEvent == null && !saveLogoutRequested && taskSaveReady();
+    }
+    private boolean taskSaveReady() {
+        if(!taskGateRequired())return true;
+        if(taskContactReceipt==null || taskCompletionReceipt==null)return false;
+        try {
+            return ClientAcceptance.taskSaveReady(jsonValue(taskAcceptedEvent),jsonValue(taskCompletedEvent),
+                    taskAcceptedCapture.count(),taskCompletedCapture.count(),session,observedClientPid);
+        } catch(Exception malformed) {return false;}
+    }
+    public synchronized boolean requestSaveLogout() {
+        if(!canRequestSaveLogout())return false;
+        final String logoutSession = session;
+        final long logoutClientPid = observedClientPid;
+        final long logoutCharacterId = characterConnectedEvent.optLong("character_id", -1);
+        if (!queueInput(logoutSession, (active, epoch) -> {
+            if ((reopen && !sessionBudget.canSave(SystemClock.uptimeMillis())) || !taskSaveReady()) {
+                saveLogoutRequested = false;
+                if(!taskSaveReady()) {
+                    recordLifecycle("ordinary_character_logout_task_gate_incomplete_before_delivery");
+                    stage("Task views required before Save", "Wait for matching accepted and completed task verification and capture both task journal views before saving.");
+                } else {
+                    recordLifecycle("ordinary_character_logout_deadline_expired_before_delivery");
+                    stage("Save window expired", "The save command was not delivered before its cutoff. Export this session after cleanup.");
+                }
+                notifyInputState();
+                throw new InteractiveRfbClient.InputCancelledException();
+            }
+            active.sendSaveLogout(epoch);
+            // This receipt records completed command transport, never merely a
+            // button press or queued work. The guest independently checks the
+            // current character's logout timer and committed SQL afterwards.
+            try {
+                byte[] receipt = new JSONObject().put("format", 1).put("session_id", logoutSession)
+                        .put("client_pid", logoutClientPid).put("character_id", logoutCharacterId)
+                        .put("action", "quittologin").put("sent_utc_ms", System.currentTimeMillis())
+                        .toString().getBytes(StandardCharsets.UTF_8);
+                write(new File(state, "character-logout.json"), receipt);
+                recordLifecycle("ordinary_character_logout_delivered");
+            } catch (Exception failure) {
+                recordLifecycle("ordinary_character_logout_receipt_failed");
+                throw new IOException("Could not record completed character logout delivery", failure);
+            }
+        })) return false;
+        stopManualTest("save_logout");
+        saveLogoutRequested = true;
+        recordLifecycle("ordinary_character_logout_requested");
+        stage("Saving character", "The ordinary /quittologin command is queued. Wait for logout and committed database verification, then three fresh Android captures.");
+        notifyInputState();
+        return true;
+    }
+
+    public synchronized boolean requestFinish() {
+        if (!inputReady || finished || finishRequested || cancelled || producerCompleted || observedClientPid < 1) return false;
+        if (!characterSavedReady) {
+            stage("Waiting for saved character", "Finish becomes available after THORHERO is committed to the database and three fresh Android views are captured.");
+            return false;
+        }
+        stopManualTest("finish");
+        finishRequested = true; inputReady = false; cancelPendingInput();
+        inputWorker.getQueue().clear(); notifyInputState();
+        try {
+            inputWorker.execute(() -> {
+                releaseOnInputWorker();
+                if (cancelled || finished || producerCompleted || inputFailed > 0) return;
+                try {
+                    byte[] request = new JSONObject().put("format", 1).put("session_id", session)
+                            .put("client_pid", observedClientPid).put("action", "finish_interaction")
+                            .toString().getBytes(StandardCharsets.UTF_8);
+                    write(new File(state, "interaction-finish.json"), request);
+                    recordLifecycle("interaction_finish_requested");
+                } catch (Exception failure) { inputFailure("Could not write interaction Finish request"); }
+            });
+            return true;
+        } catch (RejectedExecutionException closed) { inputFailure("Finish could not be queued"); return false; }
+    }
+    private void stopInputWorker() {
+        inputReady = false; cancelPendingInput();
+        inputWorker.getQueue().clear();
+        if (!inputWorker.isShutdown()) {
+            try { inputWorker.execute(this::releaseOnInputWorker); } catch (RejectedExecutionException ignored) {}
+            inputWorker.shutdown();
+            try { inputWorker.awaitTermination(2, TimeUnit.SECONDS); } catch (InterruptedException ignored) {}
+            inputWorker.shutdownNow();
+        }
+        notifyInputState();
+    }
+    private void cancelPendingInput() {
+        InteractiveRfbClient active = decoder;
+        if (active != null) active.cancelPendingInput();
+    }
+    private synchronized void signalStop() {
+        try { write(new File(state, "stop-request"), "stop\n".getBytes(StandardCharsets.UTF_8)); }
+        catch (IOException e) { line("Could not write stop request: " + e.getClass().getSimpleName()); }
+    }
+    /** Constant-size diagnostics for successful owned captures, including unretained views.
+     * These measurements do not certify PNGs or change any readiness/save predicate. */
+    public synchronized void recordCaptureTiming(Map<String, Object> record) {
+        if (finished || session == null || !session.equals(record.get("session_id"))
+                || clientWindowObservedUptime < 0 || clientWindowEndedUptime >= 0
+                || clientWindowFrameWatermark < 0 || !Boolean.TRUE.equals(record.get("pixel_copy_success"))) return;
+        long captured = captureMetric(record.get("captured_elapsed_ms"), Long.MAX_VALUE);
+        long sequence = captureMetric(record.get("sequence"), Long.MAX_VALUE);
+        if (captured < clientWindowObservedUptime || captured > SystemClock.uptimeMillis()
+                || sequence <= clientWindowFrameWatermark || sequence <= captureTimingSequence) return;
+        long[] values = new long[CAPTURE_TIMING_KEYS.length];
+        for (int i=0; i<values.length; i++) {
+            values[i] = captureMetric(record.get(CAPTURE_TIMING_KEYS[i]), 300000);
+            if (values[i] < 0) return;
+        }
+        long pending = captureMetric(record.get("pending_frames_peak"), Integer.MAX_VALUE);
+        long coalesced = captureMetric(record.get("frames_coalesced_during_copy"), Integer.MAX_VALUE);
+        Object onUi = record.get("encoding_on_ui_thread");
+        if (pending < 0 || coalesced < 0 || !(onUi instanceof Boolean)) return;
+        if (captureTimingCount >= MAX_CAPTURE_TIMINGS) { captureTimingLimitReached = true; return; }
+        captureTimingSequence = sequence; captureTimingCount++;
+        for (int i=0; i<values.length; i++) {
+            captureTimingSums[i] += values[i];
+            captureTimingMaxima[i] = Math.max(captureTimingMaxima[i], values[i]);
+        }
+        if (Boolean.TRUE.equals(onUi)) captureEncodingUiCount++;
+        capturePendingFramesPeak = Math.max(capturePendingFramesPeak, pending);
+        captureCoalescedFrames += coalesced;
+    }
+    private static long captureMetric(Object raw, long maximum) {
+        if (!(raw instanceof Byte || raw instanceof Short || raw instanceof Integer || raw instanceof Long)) return -1;
+        long value = ((Number)raw).longValue();
+        return value < 0 || value > maximum ? -1 : value;
+    }
+    private synchronized Map<String,Object> captureDiagnostics() {
+        Map<String,Object> result = new LinkedHashMap<>();
+        result.put("format", 1); result.put("captures_observed", captureTimingCount);
+        result.put("maximum_captures", MAX_CAPTURE_TIMINGS); result.put("limit_reached", captureTimingLimitReached);
+        result.put("scope", "Successful current-session PixelCopy captures, including views not retained as proof. Surface copy/encoding costs only; retained PNG verification and callback costs are excluded.");
+        result.put("native_fps_measurement", false);
+        result.put("encoding_ui_thread_count", captureEncodingUiCount);
+        result.put("pending_frames_peak", capturePendingFramesPeak);
+        result.put("frames_coalesced_during_copy", captureCoalescedFrames);
+        for (int i=0; i<CAPTURE_TIMING_KEYS.length; i++) {
+            Map<String,Object> metric = new LinkedHashMap<>();
+            metric.put("sum", captureTimingSums[i]); metric.put("maximum", captureTimingMaxima[i]);
+            metric.put("mean", captureTimingCount == 0 ? 0.0 : (double)captureTimingSums[i]/captureTimingCount);
+            result.put(CAPTURE_TIMING_KEYS[i], metric);
+        }
+        return result;
+    }
+    public synchronized void recordSurfaceCapture(Map<String, Object> record, byte[] png) {
+        if (finished || session == null || !session.equals(record.get("session_id"))
+                || clientWindowObservedUptime < 0 || clientWindowEndedUptime >= 0 || png == null
+                || png.length < 33 || png.length > 4 * 1024 * 1024
+                || !Boolean.TRUE.equals(record.get("pixel_copy_success"))
+                || !Boolean.TRUE.equals(record.get("non_uniform"))) return;
+        Object stamp = record.get("captured_elapsed_ms"), sequence = record.get("sequence");
+        if (!(stamp instanceof Number) || !(sequence instanceof Number) || clientWindowFrameWatermark < 0
+                || ((Number) sequence).doubleValue() != ((Number) sequence).longValue()
+                || ((Number) sequence).longValue() <= clientWindowFrameWatermark) return;
+        long captured = ((Number) stamp).longValue();
+        if (((Number) stamp).doubleValue() != captured || captured < clientWindowObservedUptime
+                || captured > SystemClock.uptimeMillis()) return;
+        boolean startupSample = surfaceSamples.size() < 3 && (surfaceSamples.isEmpty()
+                || captured - ((Number) surfaceSamples.get(surfaceSamples.size()-1).get("captured_elapsed_ms")).longValue() >= 1000);
+        boolean loginSample = loginObservedUptime >= 0 && captured >= loginObservedUptime
+                && ((Number) sequence).longValue() > loginFrameWatermark && loginSamples.size() < 3
+                && (loginSamples.isEmpty()
+                || captured - ((Number) loginSamples.get(loginSamples.size()-1).get("captured_elapsed_ms")).longValue() >= 1000);
+        boolean connectedSample = reopen && connectedObservedUptime >= 0 && captured >= connectedObservedUptime
+                && ((Number) sequence).longValue() > connectedFrameWatermark && connectedSamples.size() < 3
+                && (connectedSamples.isEmpty()
+                || captured - ((Number) connectedSamples.get(connectedSamples.size()-1).get("captured_elapsed_ms")).longValue() >= 1000);
+        boolean relocationSample = reopen && relocatedObservedUptime >= 0 && captured >= relocatedObservedUptime
+                && ((Number) sequence).longValue() > relocatedFrameWatermark && relocationSamples.size() < 3
+                && (relocationSamples.isEmpty()
+                || captured - ((Number) relocationSamples.get(relocationSamples.size()-1).get("captured_elapsed_ms")).longValue() >= 1000);
+        boolean characterSample = characterObservedUptime >= 0 && captured >= characterObservedUptime
+                && ((Number) sequence).longValue() > characterFrameWatermark && characterSamples.size() < 3
+                && (characterSamples.isEmpty()
+                || captured - ((Number) characterSamples.get(characterSamples.size()-1).get("captured_elapsed_ms")).longValue() >= 1000);
+        boolean afterInput = inputSent > 0 && captured >= lastInputUptime
+                && ((Number) sequence).longValue() > lastInputFrameWatermark;
+        boolean manualSample=manualCaptureEligible(captured,((Number)sequence).longValue());
+        boolean interactionSample = (manualSample && !manualTestOpeningCaptured)
+                || (manualSample || !reopen && readyDeadlineUptimeMillis > 0) && (interactionSamples.isEmpty()
+                    || (afterInput && inputSent > lastCapturedInputCount) || (finishRequested && !finishCaptureRetained));
+        boolean contactSample = characterConnectedEvent!=null && !saveLogoutRequested && characterSavedEvent==null
+                && (!stuckRequested || relocationCapturedReady) && sessionBudget.canMove(SystemClock.uptimeMillis())
+                && contactCapture.accepts(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),captured,((Number)sequence).longValue());
+        boolean zoningSample=zoning.canCapture(captured,((Number)sequence).longValue());
+        boolean acceptedTaskSample=taskControlsAvailable() && taskAcceptedEvent!=null && !taskCompletionRequested
+                && taskAcceptedCapture.accepts(session,observedClientPid,1,captured,((Number)sequence).longValue());
+        boolean completedTaskSample=taskControlsAvailable() && taskCompletedEvent!=null && taskCompletionReceipt!=null
+                && taskCompletedCapture.accepts(session,observedClientPid,1,captured,((Number)sequence).longValue());
+        if (!startupSample && !loginSample && !connectedSample && !relocationSample && !characterSample && !interactionSample && !contactSample && !acceptedTaskSample && !completedTaskSample && !zoningSample) return;
+        try {
+            // Bind the retained bytes to the PixelCopy record. The source Surface
+            // provides the nonuniform check; the PNG must be a bounded 800x600 image.
+            byte[] signature = {(byte)137,80,78,71,13,10,26,10};
+            for (int i=0;i<signature.length;i++) if (png[i] != signature[i]) return;
+            if (png[12] != 'I' || png[13] != 'H' || png[14] != 'D' || png[15] != 'R'
+                    || int32(png,16) != 800 || int32(png,20) != 600) return;
+            String digest = hex(MessageDigest.getInstance("SHA-256").digest(png));
+            if (!digest.equals(record.get("sha256"))) return;
+            Map<String,Object> sample = new LinkedHashMap<>(record);
+            sample.put("png_sha256", digest);
+            sample.put("png_verified", true);
+            sample.put("png_bytes", png.length);
+            if(zoningSample && zoning.capture(captured,((Number)sequence).longValue())) {
+                Map<String,Object> zoned=new LinkedHashMap<>(sample);
+                zoned.put("archive_path","android-zoning/capture-"+(zoningSamples.size()+1)+".png");
+                zoned.put("epoch",zoning.epoch());zoned.put("map_id",zoning.currentMap());
+                zoned.put("post_native_arrival_frame_observed",true);
+                zoningSamples.add(zoned);zoningPngs.add(png.clone());
+                if(zoning.captures()==3) {
+                    markZoningTime("fresh_views");retainCheckpointPng(zoned,zoningPngs.get(zoningPngs.size()-1));
+                    recordLifecycle("zoning_fresh_views_verified epoch="+zoning.epoch());
+                    stage("Destination view captured",zoningStatus()+" · movement available");notifyInputState();
+                }
+            }
+            if(acceptedTaskSample || completedTaskSample) {
+                boolean completed=completedTaskSample;
+                ContactCaptureWindow window=completed?taskCompletedCapture:taskAcceptedCapture;
+                JSONObject event=completed?taskCompletedEvent:taskAcceptedEvent;
+                if(window.accept(session,observedClientPid,1,captured,((Number)sequence).longValue())) {
+                    Map<String,Object> task=new LinkedHashMap<>(sample);
+                    task.put("client_pid",observedClientPid);task.put("character_id",1);
+                    task.put("phase",completed?"completed":"accepted");task.put("batch",window.batch());
+                    task.put("task",jsonValue(event.getJSONObject("task")));task.put("dialog_semantics_verified",false);
+                    task.put("archive_path","android-task/"+(completed?"completed":"accepted")+"-capture-"+(taskSamples.size()+1)+".png");
+                    taskSamples.add(task);taskPngs.add(png.clone());
+                    if(window.count()<ContactCaptureWindow.FRAMES_PER_REQUEST)requestContactFullUpdate();
+                    else {
+                        stage(completed?"Completed task view captured":"Accepted task view captured",
+                                completed?"Three completed-task views were saved for review. Release controls, then Save character / log out and Finish after verification."
+                                        :"Three accepted-task views were saved for review. Close the journal and contact dialog with B, then tap Complete accepted task once.");
+                        notifyInputState();
+                    }
+                }
+            }
+            if (contactSample && contactCapture.accept(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),captured,((Number)sequence).longValue())) {
+                Map<String,Object> contact = new LinkedHashMap<>(sample);
+                contact.put("client_pid",observedClientPid);contact.put("character_id",1);
+                contact.put("batch",contactCapture.batch());contact.put("dialog_semantics_verified",false);
+                contact.put("archive_path","android-contact/capture-"+(contactSamples.size()+1)+".png");
+                contactSamples.add(contact);contactPngs.add(png.clone());
+                if(contactCapture.count()<ContactCaptureWindow.FRAMES_PER_REQUEST)requestContactFullUpdate();
+                if(contactCapture.count()==ContactCaptureWindow.FRAMES_PER_REQUEST) {
+                    stage("Contact view captured", "Three fresh Android views were saved for review. Confirm the NPC and readable dialog, choose a normal response or Goodbye, then release controls before Save.");
+                    notifyInputState();
+                }
+            }
+            if (startupSample) {
+                sample.put("archive_path", "android-surface/capture-" + (surfaceSamples.size()+1) + ".png");
+                surfaceSamples.add(sample); surfacePngs.add(png.clone());
+            }
+            if (loginSample) {
+                Map<String,Object> login = new LinkedHashMap<>(sample);
+                login.put("archive_path", "android-login/capture-" + (loginSamples.size()+1) + ".png");
+                login.put("post_login_frame_observed", true);
+                loginSamples.add(login); loginPngs.add(png.clone());
+                if (loginSamples.size() == 3)
+                    stage("Local login verified", reopen ? "Select the existing THORHERO and click Enter Game. Keep its existing costume and powers. Do not create or delete a character." : "Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified.");
+            }
+            if (connectedSample) {
+                Map<String,Object> connected = new LinkedHashMap<>(sample);
+                connected.put("archive_path", "android-connected/capture-" + (connectedSamples.size()+1) + ".png");
+                connected.put("post_character_connection_frame_observed", true);
+                connected.put("character_id", characterConnectedEvent.getLong("character_id"));
+                connectedSamples.add(connected); connectedPngs.add(png.clone());
+                if (connectedSamples.size() == 3) {
+                    connectedCapturedReady = true;
+                    retainCheckpointPng(connected,connectedPngs.get(connectedPngs.size()-1));recordLifecycle("character_connected_views_verified");
+                    if (Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
+                        stage("Atlas connected for startup timing", "THORHERO connected and fresh Android views were captured. Note your loading time, then Stop and export this startup-only session. Existing tasks are preserved; no task or movement retest is requested.");
+                    else if(zoningEnabled())stage("Ready for zone travel","Use the monorail station to choose Kings Row or Atlas Park. Preparation happens on demand. Keep current graphics settings; tap Start test and Stop test for optional capture, then use ordinary Save and Finish when ready.");
+                    else stage("Atlas ready for task check", "THORHERO connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
+                    notifyInputState();
+                }
+            }
+            if (relocationSample) {
+                Map<String,Object> relocated = new LinkedHashMap<>(sample);
+                relocated.put("archive_path", "android-relocated/capture-" + (relocationSamples.size()+1) + ".png");
+                relocated.put("post_character_relocation_frame_observed", true);
+                relocated.put("character_id", characterRelocatedEvent.getLong("character_id"));
+                relocationSamples.add(relocated); relocationPngs.add(png.clone());
+                if (relocationSamples.size() == 3) {
+                    relocationCapturedReady = true;
+                    stage("Atlas position verified", "The server observed two stable positions after /stuck and three fresh Android views were captured. Release controls before Save; keep still through logout, then tap Finish after Saved character verified.");
+                    notifyInputState();
+                }
+            }
+            if (characterSample) {
+                Map<String,Object> saved = new LinkedHashMap<>(sample);
+                saved.put("archive_path", "android-character/capture-" + (characterSamples.size()+1) + ".png");
+                saved.put("post_character_save_frame_observed", true);
+                saved.put("character_id", characterSavedEvent.getLong("character_id"));
+                characterSamples.add(saved); characterPngs.add(png.clone());
+                if (characterSamples.size() == 3) {
+                    characterSavedReady = true;
+                    retainCheckpointPng(saved,characterPngs.get(characterPngs.size()-1));recordLifecycle("character_saved_views_verified");
+                    stage("Saved character verified", "THORHERO was committed to the local database and three fresh Android views were captured. Tap Finish and save report.");
+                    notifyInputState();
+                }
+            }
+            if (interactionSample) {
+                Map<String,Object> interactive = new LinkedHashMap<>(sample);
+                interactive.put("archive_path", "android-interaction/capture-" + (++interactionCaptureId) + ".png");
+                interactive.put("input_events_sent", inputSent);
+                interactive.put("last_input_uptime_ms", lastInputUptime);
+                interactive.put("input_frame_watermark", lastInputFrameWatermark);
+                interactive.put("post_input_frame_observed", afterInput);
+                interactive.put("input_effect_verified", false);
+                if (manualSample) {
+                    interactive.put("manual_test_id", manualTestEvents.size()/2+1);
+                    manualTestOpeningCaptured=true;manualTestCapturesAccepted++;
+                }
+                interactive.put("finish_requested", finishRequested);
+                if (interactionSamples.size() == 8) {
+                    // Keep the first available view plus the seven latest interaction views.
+                    interactionSamples.remove(1); interactionPngs.remove(1);
+                }
+                interactionSamples.add(interactive); interactionPngs.add(png.clone());
+                lastCapturedInputCount = inputSent;
+                if (finishRequested) finishCaptureRetained = true;
+            }
+        } catch (Exception e) { line("Android capture was not retained: " + e.getClass().getSimpleName()); }
+    }
+    private static int int32(byte[] bytes, int start) {
+        return ((bytes[start] & 255) << 24) | ((bytes[start+1] & 255) << 16)
+                | ((bytes[start+2] & 255) << 8) | (bytes[start+3] & 255);
+    }
+    public synchronized void recordLifecycle(String event) {
+        if (lifecycle.size() >= 512) return;
+        Map<String, Object> entry = new LinkedHashMap<>();
+        entry.put("event", clean(event)); entry.put("uptime_ms", SystemClock.uptimeMillis());
+        if (session != null) entry.put("session_id", session);
+        lifecycle.add(entry);
+        if(event.startsWith("operation_") || event.startsWith("character_") || event.startsWith("zoning_")
+                || event.startsWith("ordinary_character_") || event.startsWith("interaction_finish")
+                || event.startsWith("activity_visible="))checkpoint();
+    }
+    private static final ClientReports.IdentityReader REPORT_IDENTITIES=file->{
+        try {
+            android.system.StructStat stat=android.system.Os.lstat(file.getPath());
+            if(!android.system.OsConstants.S_ISREG(stat.st_mode))throw new IOException("Report is not a regular file");
+            return new ClientReports.FileIdentity(stat.st_nlink,stat.st_dev+":"+stat.st_ino);
+        }catch(android.system.ErrnoException failure){throw new IOException("Could not verify report identity",failure);}
+    };
+    static void initializeReportStorage(){ClientReports.setIdentityReader(REPORT_IDENTITIES);}
+    /** Small phase records contain identities and observations, never account credentials. */
+    private synchronized void checkpoint() {
+        if(operationDir==null || checkpointWorker.isShutdown())return;
+        try {
+            JSONObject evidence=new JSONObject().put("format",1).put("operation",operation).put("run_id",runId)
+                .put("session_id",session==null?JSONObject.NULL:session).put("app_version",appVersion())
+                .put("runtime_manifest_sha256",manifestHash).put("client_pid",observedClientPid)
+                .put("started_uptime_ms",startedUptime).put("checkpoint_uptime_ms",SystemClock.uptimeMillis())
+                .put("checkpoint_utc_ms",System.currentTimeMillis()).put("passed",false).put("interrupted_unverified",true)
+                .put("manual_test_events",new JSONArray(manualTestEvents)).put("manual_test_active",manualTestActive)
+                .put("finish_requested",finishRequested).put("save_logout_requested",saveLogoutRequested)
+                .put("character_saved_views_observed",characterSavedReady).put("character_connected_event",characterConnectedEvent)
+                .put("character_saved_event",characterSavedEvent).put("zoning_events",new JSONArray(zoningEvents))
+                .put("zoning_timings",new JSONArray(zoningTimings)).put("zoning_samples",new JSONArray(zoningSamples))
+                .put("zoning_preparation_observations",new JSONArray(zoningPreparationObservations))
+                .put("zoning_preparation_observation_limit_reached",zoningPreparationObservationLimitReached)
+                .put("connected_samples",new JSONArray(connectedSamples)).put("character_samples",new JSONArray(characterSamples))
+                .put("selected_png_paths",new JSONArray(checkpointPngs)).put("lifecycle",new JSONArray(lifecycle));
+            pendingCheckpoint.set(evidence.toString().getBytes(StandardCharsets.UTF_8));
+            scheduleCheckpoint();
+        }catch(Exception failure){checkpointFailure=failure.getClass().getSimpleName();}
+    }
+    private void scheduleCheckpoint() {
+        if(!checkpointQueued.compareAndSet(false,true))return;
+        try { checkpointWorker.execute(()->{
+            try { byte[] bytes;while((bytes=pendingCheckpoint.getAndSet(null))!=null)ClientReports.checkpoint(operationDir,bytes); }
+            catch(Exception failure){checkpointFailure=failure.getClass().getSimpleName();}
+            finally{checkpointQueued.set(false);if(pendingCheckpoint.get()!=null&&!checkpointWorker.isShutdown())scheduleCheckpoint();}
+        }); }catch(RejectedExecutionException ended){checkpointQueued.set(false);}
+    }
+    private void retainCheckpointPng(Map<String,Object> sample,byte[] png) {
+        String path=String.valueOf(sample.get("archive_path"));
+        if(checkpointPngs.size()>=6 || checkpointPngs.contains(path))return;
+        checkpointPngs.add(path);
+        final byte[] selected=png;
+        try {checkpointWorker.execute(()->{try{ClientReports.png(operationDir,path,selected);}catch(IOException failure){checkpointFailure=failure.getClass().getSimpleName();}});}
+        catch(RejectedExecutionException ended){checkpointFailure="checkpoint_worker_closed";}
+    }
+    private void check() throws InterruptedIOException {
+        if (cancelled || Thread.currentThread().isInterrupted()) throw new InterruptedIOException("Client operation stopped");
+    }
+    private void receiveFrames(Process process, File file) {
+        long deadline = System.nanoTime() + TimeUnit.MINUTES.toNanos(26);
+        try {
+            while (!cancelled && !closingReceiver && process.isAlive()) {
+                if (System.nanoTime() > deadline) throw new IOException("Timed out waiting for the private display socket");
+                LocalSocket candidate = new LocalSocket();
+                try {
+                    candidate.connect(new LocalSocketAddress(file.getPath(), LocalSocketAddress.Namespace.FILESYSTEM));
+                    socket = candidate;
+                    // This socket is app-private and there is no TCP listener or network fallback.
+                    decoder = new InteractiveRfbClient(candidate.getInputStream(), candidate.getOutputStream(), (pixels, width, height, sequence) -> {
+                        if (closingReceiver || cancelled) return;
+                        decodedFrames++; frameWidth = width; frameHeight = height;
+                        listener.onFrame(pixels, width, height, sequence);
+                    });
+                    decoder.run(); return;
+                } catch (IOException e) {
+                    try { candidate.close(); } catch (IOException ignored) {}
+                    if (socket == candidate) {
+                        // Do not silently accept an early disconnect and certify a
+                        // frozen framebuffer. The outer handler allows stdout to
+                        // deliver the already-emitted completion before deciding.
+                        throw e;
+                    }
+                    Thread.sleep(250);
+                }
+            }
+        } catch (Exception e) {
+            handleReceiverClosure(e);
+        } finally { closeReceiver(); }
+    }
+    private void handleReceiverClosure(Exception e) {
+        if (e instanceof EOFException && !closingReceiver && !cancelled && !producerCompleted && !producerFailed) {
+            long grace = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
+            while (!closingReceiver && !cancelled && !producerCompleted && !producerFailed && System.nanoTime() < grace) {
+                try { Thread.sleep(20); } catch (InterruptedException ignored) { break; }
+            }
+        }
+        if (!closingReceiver && !cancelled && !producerCompleted && !producerFailed)
+            receiverFailure = e instanceof EOFException ? "Display socket closed before client observation completed" : message(e);
+        else if (producerCompleted || producerFailed) recordLifecycle("display_socket_closed_after_producer: " + message(e));
+    }
+    private void closeReceiver() {
+        LocalSocket active = socket; socket = null;
+        if (active != null) try { active.close(); } catch (IOException ignored) {}
+        InteractiveRfbClient activeDecoder = decoder; decoder = null;
+        if (activeDecoder != null) try { activeDecoder.close(); } catch (IOException ignored) {}
+    }
+    private static void join(Thread thread, long millis) {
+        if (thread != null) try { thread.join(millis); } catch (InterruptedException ignored) {}
+    }
+    private void captureOutput(Process process) {
+        try (Reader in = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)) {
+            char[] block = new char[4096]; StringBuilder pending = new StringBuilder(); boolean omitted = false; int count;
+            while ((count = in.read(block)) != -1) for (int i = 0; i < count; i++) {
+                char c = block[i];
+                if (c == '\n') {
+                    String text = pending.toString(); pending.setLength(0);
+                    if (!omitted) try {
+                        JSONObject event = new JSONObject(text);
+                        observeFailedGuestResult(event);
+                        if ("client_display_ready".equals(event.optString("type"))
+                                && session.equals(event.optString("session_id"))
+                                && event.optInt("width", -1) == 800 && event.optInt("height", -1) == 600
+                                && event.optInt("startup_timeout_seconds", -1) == 900
+                                && launcherBudgetStartedUptime < 0 && !cancelled && !finished)
+                            launcherBudgetStartedUptime = SystemClock.uptimeMillis();
+                        if ("client_startup_observed".equals(event.optString("type"))
+                                && session.equals(event.optString("session_id")) && event.optLong("client_pid", -1) > 0) {
+                            synchronized (this) {
+                                clientWindowObservedUptime = SystemClock.uptimeMillis();
+                                clientWindowEndedUptime = -1;
+                                observedClientPid = event.getLong("client_pid");
+                                clientWindowFrameWatermark = decodedFrames;
+                                surfaceSamples.clear(); surfacePngs.clear();
+                            }
+                            InteractiveRfbClient activeDecoder = decoder;
+                            if (activeDecoder != null) {
+                                try { activeDecoder.requestFullUpdate(); }
+                                catch (IOException e) { receiverFailure = "Cannot refresh the observed client window: " + message(e); }
+                            }
+                            stage("Client window observed", "The client window is ready for the interactive session.");
+                        }
+                        if ("stage".equals(event.optString("type")) && "actual_client_interaction".equals(event.optString("stage"))
+                                && "passed".equals(event.optString("status"))) {
+                            producerCompleted = true; inputReady = false; clientWindowEndedUptime = SystemClock.uptimeMillis();
+                            releaseAllInputs(session); notifyInputState();
+                        }
+                        if ("client_interaction_finishing".equals(event.optString("type"))
+                                && session.equals(event.optString("session_id")) && observedClientPid > 0
+                                && observedClientPid == event.optLong("client_pid", -1)) {
+                            inputReady = false; discardPendingInputs(session); notifyInputState();
+                            stage("Finishing session", "Releasing input and saving the final view before cleanup.");
+                        }
+                        if ("client_login_ready".equals(event.optString("type"))
+                                && session.equals(event.optString("session_id")) && observedClientPid > 0
+                                && observedClientPid == event.optLong("client_pid", -1)
+                                && loginObservedUptime < 0 && !cancelled && !finished && !producerCompleted) {
+                            synchronized (this) {
+                                loginObservedUptime = SystemClock.uptimeMillis();
+                                loginFrameWatermark = decodedFrames;
+                                loginSamples.clear(); loginPngs.clear();
+                            }
+                            InteractiveRfbClient activeDecoder = decoder;
+                            if (activeDecoder != null) {
+                                try { activeDecoder.requestFullUpdate(); }
+                                catch (IOException e) { receiverFailure = "Cannot refresh the logged-in client: " + message(e); }
+                            }
+                            recordLifecycle("local_login_observed");
+                            stage("Local server login observed", reopen ? "The server sent the saved character list. Select THORHERO and click Enter Game. Do not create or delete a character." : "The server sent the character list. Create THORHERO as a Primal Earth Hero and skip the tutorial.");
+                        }
+                        if (reopen && zoningEnabled() && ClientAcceptance.savedDestinationEvent(jsonValue(event), session,
+                                Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")))
+                                && characterConnectedEvent == null && !cancelled && !finished && !producerCompleted) {
+                            stage("Saved destination verified", "THORHERO is saved in "
+                                + ClientZoning.name(event.optInt("map_id", -1)) + ". Preparing its native MapServer on port "
+                                + event.optInt("port", -1) + "; existing character data is preserved.");
+                            recordLifecycle("saved_destination_verified map_id=" + event.optInt("map_id", -1)
+                                + " port=" + event.optInt("port", -1));
+                        }
+                        if ((reopen ? ClientAcceptance.characterReopenConnectedEvent(jsonValue(event), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid))
+                                && characterConnectedEvent == null && loginObservedUptime >= 0
+                                && !cancelled && !finished && !producerCompleted) {
+                            synchronized (this) {
+                                characterConnectedEvent = event;
+                                connectedObservedUptime = SystemClock.uptimeMillis();
+                                connectedFrameWatermark = decodedFrames;
+                                connectedSamples.clear(); connectedPngs.clear(); connectedCapturedReady = false;
+                            }
+                            InteractiveRfbClient activeDecoder = decoder;
+                            if (activeDecoder != null) {
+                                try { activeDecoder.requestFullUpdate(); }
+                                catch (IOException e) { receiverFailure = "Cannot refresh the reopened character: " + message(e); }
+                            }
+                            recordLifecycle("character_connected_observed");
+                            stage("Character connected", reopen ? "THORHERO connected to "+ClientZoning.name(event.optInt("map_id",1))+". Waiting for fresh Android views and session ownership verification before movement and Save become available. Gameplay has no countdown." : "THORHERO connected to Atlas. Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
+                            notifyInputState();
+                        }
+                        if("character_zoning_preparation".equals(event.optString("type")))recordZoningPreparation((Map<?,?>)jsonValue(event));
+                        if (zoningEnabled() && "character_zoning".equals(event.optString("type"))
+                                && characterConnectedEvent!=null && !saveLogoutRequested && !cancelled && !finished && !producerCompleted) {
+                            synchronized(this) {
+                                if(zoningEvents.size()<32 && zoning.accept((Map<?,?>)jsonValue(event),session,observedClientPid,
+                                        characterConnectedEvent.optInt("map_id",-1),System.currentTimeMillis(),SystemClock.uptimeMillis(),decodedFrames,
+                                        Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")))) {
+                                    zoningEvents.add((Map<String,Object>)jsonValue(event));
+                                    if(zoning.stockMonorail()&&"preparing".equals(zoning.phase())) {
+                                        automaticTravel=false;
+                                        Map<String,Object> timing=new LinkedHashMap<>();
+                                        long requested=event.optLong("requested_utc_ms");
+                                        long now=System.currentTimeMillis(),uptime=SystemClock.uptimeMillis();
+                                        timing.put("epoch",zoning.epoch());timing.put("requested_utc_ms",requested);
+                                        timing.put("request_uptime_ms",Math.max(0,uptime-Math.max(0,now-requested)));
+                                        timing.put("request_clock_basis","guest_wall_time_correlated_at_observation");
+                                        timing.put("automatic",true);timing.put("user_actions",1);
+                                        timing.put("travel_method","stock_monorail");zoningTimings.add(timing);
+                                        cancelPendingInput();
+                                        try { inputWorker.execute(this::releaseOnInputWorker); }
+                                        catch(RejectedExecutionException closed) { zoning.fail(); }
+                                    }
+                                    if("ready".equals(zoning.phase())) {
+                                        Object departure=event.opt("departure_deadline_utc_ms");
+                                        zoningDepartureDeadlineUtc=departure instanceof Long||departure instanceof Integer?((Number)departure).longValue():0;
+                                        markZoningTime("ready");
+                                    }
+                                    if("capturing".equals(zoning.phase()))markZoningTime("native_arrival");
+                                    if(zoning.stockMonorail()&&"transferring".equals(zoning.phase()))markZoningTime("delivery");
+                                    recordLifecycle("zoning_"+zoning.phase()+" epoch="+zoning.epoch());
+                                    if("capturing".equals(zoning.phase()))requestContactFullUpdate();
+                                    stage("Zone travel",zoningStatus());notifyInputState();
+                                    dispatchPreparedZoning();
+                                } else recordLifecycle("zoning_event_rejected");
+                            }
+                        }
+                        if (reopen && stuckRequested && connectedCapturedReady && characterRelocatedEvent == null
+                                && ClientAcceptance.characterRelocatedEvent(jsonValue(event), session, observedClientPid)
+                                && !cancelled && !finished && !producerCompleted) {
+                            synchronized (this) {
+                                characterRelocatedEvent = event;
+                                relocatedObservedUptime = SystemClock.uptimeMillis();
+                                relocatedFrameWatermark = decodedFrames;
+                                relocationSamples.clear(); relocationPngs.clear(); relocationCapturedReady = false;
+                            }
+                            InteractiveRfbClient activeDecoder = decoder;
+                            if (activeDecoder != null) {
+                                try { activeDecoder.requestFullUpdate(); }
+                                catch (IOException e) { receiverFailure = "Cannot refresh the recovered character: " + message(e); }
+                            }
+                            recordLifecycle("character_relocation_verified");
+                            stage("Stable Atlas position observed", "The server verified stable ground after /stuck. Waiting for three fresh Android views before Save becomes available.");
+                        }
+                        if(taskAcceptedEvent==null && taskControlsAvailable()
+                                && ClientAcceptance.taskEvent(jsonValue(event),"character_task_accepted",session,observedClientPid)) {
+                            taskAcceptedEvent=event;
+                            recordLifecycle("accepted_task_verified");
+                            stage("Accepted task verified","The guest bound one current task to its native Task:Add and SQL state. Open that task in the journal and tap Capture accepted task.");
+                            notifyInputState();
+                        }
+                        if(taskCompletedEvent==null && taskCompletionRequested && taskAcceptedEvent!=null
+                                && taskControlsAvailable()
+                                && ClientAcceptance.taskEvent(jsonValue(event),"character_task_completed",session,observedClientPid)
+                                && ClientAcceptance.sameTaskIdentity(jsonValue(taskAcceptedEvent.getJSONObject("task")),jsonValue(event.getJSONObject("task")))) {
+                            taskCompletedEvent=event;
+                            recordLifecycle("accepted_task_completion_verified");
+                            stage("Task completion verified","The same accepted task completed through the stock command and current SQL state. Open its completed journal entry and tap Capture completed task; no combat is required.");
+                            notifyInputState();
+                        }
+                        if (ClientAcceptance.characterSavedEvent(jsonValue(event), session, observedClientPid)
+                                && characterObservedUptime < 0 && loginObservedUptime >= 0
+                                && characterConnectedEvent != null
+                                && event.getLong("character_id") == characterConnectedEvent.getLong("character_id")
+                                && (!zoningEnabled() || (!zoning.blocksInput() && event.optBoolean("zoning_enabled") && event.optInt("map_id",-1)==zoning.currentMap()))
+                                && !cancelled && !finished && !producerCompleted) {
+                            synchronized (this) {
+                                characterSavedEvent = event;
+                                characterObservedUptime = SystemClock.uptimeMillis();
+                                characterFrameWatermark = decodedFrames;
+                                characterSamples.clear(); characterPngs.clear();
+                            }
+                            InteractiveRfbClient activeDecoder = decoder;
+                            if (activeDecoder != null) {
+                                try { activeDecoder.requestFullUpdate(); }
+                                catch (IOException e) { receiverFailure = "Cannot refresh the saved character: " + message(e); }
+                            }
+                            recordLifecycle("character_saved_observed");
+                            stage("Character saved", "THORHERO is committed to the local database. Waiting for three fresh Android views before Finish.");
+                        }
+                        if (reopen && "character_session_budget".equals(event.optString("type"))
+                                && !cancelled && !finished && !producerCompleted) {
+                            long now = SystemClock.uptimeMillis();
+                            // Historical bounds are supplied only for legacy validation.
+                            // Manual policy requires exact zero deadlines and owned identity.
+                            long hardCap = Math.min(startedUptime + 5400000,
+                                    launcherBudgetStartedUptime < 0 ? now : launcherBudgetStartedUptime + 2100000);
+                            @SuppressWarnings("unchecked") Map<String,Object> value = (Map<String,Object>)jsonValue(event);
+                            if (sessionBudget.apply(value, session, observedClientPid,
+                                    characterConnectedEvent != null, characterRelocatedEvent != null,
+                                    relocationSentUtcMillis, System.currentTimeMillis(), now, hardCap,zoningEnabled(),
+                                    characterConnectedEvent==null?1:characterConnectedEvent.optInt("map_id",-1))) {
+                                synchronized (this) { sessionBudgetEvents.add(value); }
+                                readyDeadlineUptimeMillis = sessionBudget.deadline();
+                                recordLifecycle("character_session_budget_" + sessionBudget.phase());
+                                notifyInputState();
+                            } else {
+                                recordLifecycle("character_session_budget_rejected");
+                                stage("Session ownership not verified", "The current character's session policy could not be verified. Save remains guarded by the current session evidence; export this session after cleanup if it stays unavailable.");
+                            }
+                        }
+                        if ("client_interaction_ready".equals(event.optString("type"))
+                                && session.equals(event.optString("session_id")) && observedClientPid > 0
+                                && observedClientPid == event.optLong("client_pid", -1)
+                                && event.optInt("minimum_observation_seconds", -1) == (reopen ? 0 : 30)
+                                && event.optInt("interaction_timeout_seconds", -1) == (reopen ? 0 : 1200)
+                                && (!reopen || event.optBoolean("manual_session"))
+                                && !interactionReadyObserved && !cancelled && !finished) {
+                            interactionReadyObserved = true;
+                            if (sessionBudget.revision() == 0) readyDeadlineUptimeMillis = reopen ? 0 : SystemClock.uptimeMillis() + 1200000;
+                            inputReady = true; recordLifecycle("interaction_ready"); notifyInputState();
+                            stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select the existing THORHERO and click Enter Game. Do not create or delete a character. Login and gameplay have no countdown. Tap Start test when ready, then Stop test to end capture; Save / Logout and Finish preserve the character and report." : "Log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
+                        }
+                        // Keep the actionable save/Finish instruction visible while
+                        // the guest continues its generic five-second live heartbeat.
+                        boolean interactionHeartbeat = "stage".equals(event.optString("type"))
+                                && "running".equals(event.optString("status"))
+                                && "actual_client_interaction".equals(event.optString("stage"));
+                        if ("stage".equals(event.optString("type"))
+                                && !(interactionHeartbeat && (characterSavedReady || characterConnectedEvent != null)))
+                            listener.onStage(event.optString("stage", "Checking display"),
+                                clean(event.optString("message", event.optString("detail", ""))));
+                    } catch (Exception ignored) {}
+                    line(text + (omitted ? " [line truncated]" : "")); omitted = false;
+                } else if (pending.length() < 8192) pending.append(c); else omitted = true;
+            }
+            if (pending.length() > 0) line(pending.toString());
+        } catch (IOException e) { line("Output capture closed: " + e.getClass().getSimpleName()); }
+    }
+    private void loadManifest() throws Exception {
+        byte[] bytes;
+        try (InputStream in = context.getAssets().open("runtime/runtime-manifest.json")) { bytes = read(in, MAX_JSON); }
+        manifest = new JSONObject(new String(bytes, StandardCharsets.UTF_8));
+        manifestHash = hex(MessageDigest.getInstance("SHA-256").digest(bytes));
+        generation = new File(home, "runtime-" + manifestHash.substring(0, 16));
+        if (manifest.getInt("format") != 1) throw new IOException("Unsupported client package");
+        try (InputStream in = context.getAssets().open("runtime/client-manifest.json")) {
+            clientManifest = new JSONObject(new String(read(in, MAX_JSON), StandardCharsets.UTF_8));
+        }
+        // The shared pinned input inventory retains its accepted startup scope;
+        // the enclosing bundle and current guest result identify interaction.
+        if (clientManifest.getInt("format") != 1 || !"actual_client_startup_guest".equals(clientManifest.getString("scope"))
+                || !"actual_character_reopen_guest".equals(manifest.getJSONObject("client_bundle").optString("scope"))
+                || !"character_reopen_diagnostic.py".equals(manifest.getJSONObject("client_bundle").optString("guest_script")))
+            throw new IOException("The client package has the wrong scope");
+    }
+    private void validateInstalled() throws Exception {
+        File ready = new File(generation, "ready.json");
+        if (!ready.isFile() || !manifestHash.equals(json(ready, 16384).optString("manifest_sha256")))
+            throw new IOException("Set up the client runtime first");
+        JSONObject files = manifest.getJSONObject("files");
+        for (Iterator<String> it = files.keys(); it.hasNext();) {
+            String name = it.next();
+            if (!name.matches("[A-Za-z0-9_.-]+")) throw new IOException("Unsafe runtime member");
+            File file = new File(generation, "assets/" + name); JSONObject pin = files.getJSONObject(name);
+            if (!file.isFile() || file.length() != pin.getLong("bytes") || !sha(file).equals(pin.getString("sha256")))
+                throw new IOException("Runtime integrity check failed: " + name);
+        }
+        for (String name : new String[]{"character_reopen_diagnostic.py", "character_creation_diagnostic.py", "character_avatar_assets.py",
+                "character-avatar-defaults.zip", "character-avatar-defaults-manifest.json",
+                "local_login_server.py", "dbserver-package.tar.gz", "dbserver-schema.tar.gz", "client-manifest.json",
+                "client-runtime.zip", "client-caches.zip", "client-prerequisites.zip", "client-launcher.exe"})
+            if (!files.has(name)) throw new IOException("Client runtime payload is missing: " + name);
+    }
+    private void removePreviousGuestOutput() throws IOException {
+        retirePreviousGuestOutput(new StorageFiles(home.getParentFile()));
+    }
+    /** Retire only fixed session outputs, never any profile/cache/import directory. */
+    static void retirePreviousGuestOutput(StorageAudit.Fs files) throws IOException {
+        StorageAudit.Stat parent = files.stat("client/state");
+        if (parent == null || parent.kind != StorageAudit.Kind.DIRECTORY)
+            throw new IOException("Private guest output directory is unavailable");
+        Map<String,StorageAudit.Stat> previous = new LinkedHashMap<>();
+        for (String name : new String[]{"stop-request", "interaction-finish.json", "character-logout.json", "character-relocation.json", "latest-report.json", "report.zip", "character-task-contact.json", "character-task-completion.json", "character-zoning-request.json", "character-zoning-delivery.json"}) {
+            String path = "client/state/" + name;
+            StorageAudit.Stat entry = files.stat(path);
+            if (entry == null) continue;
+            if (entry.kind != StorageAudit.Kind.FILE && entry.kind != StorageAudit.Kind.SYMLINK)
+                throw new IOException("Cannot clear unsafe previous guest output: " + name);
+            previous.put(path, entry);
+        }
+        // Validate every fixed member first. remove() anchors the verified parent
+        // and unlinks a symlink itself, including a dangling link, without following it.
+        for (Map.Entry<String,StorageAudit.Stat> entry : previous.entrySet())
+            files.remove(entry.getKey(), entry.getValue(), parent);
+    }
+
+    private boolean gpuProfileReportMatches(JSONObject report) throws Exception {
+        JSONObject profile=report.optJSONObject("client_gpu_profile");
+        if(profile==null||!Integer.valueOf(1).equals(profile.opt("format"))
+                ||!session.equals(profile.optString("session_id"))
+                ||!gpuProfileRequested.equals(profile.optString("requested"))
+                ||!("actual-coh-client".equals(profile.optString("launch_label"))
+                    ||"actual-coh-client-retry".equals(profile.optString("launch_label")))
+                ||!Boolean.TRUE.equals(profile.opt("probe_cleanup_safe")))return false;
+        for(String flag:new String[]{"shared_wine_environment_modified","game_prefix_modified_by_probe",
+                "game_rendering_validated","hardware_acceleration_validated","physical_fps_improvement_validated",
+                "automatic_mid_game_fallback"})
+            if(!Boolean.FALSE.equals(profile.opt(flag)))return false;
+        String selected=profile.optString("selected"),state=profile.optString("state");
+        if("software".equals(gpuProfileRequested))
+            return "software".equals(selected)&&"software_default".equals(state)&&profile.isNull("fallback_reason");
+        if("software".equals(selected)) {
+            Object reason=profile.opt("fallback_reason");
+            return "software_fallback".equals(state)&&reason instanceof String
+                    &&((String)reason).length()>0&&((String)reason).length()<=500;
+        }
+        JSONObject nativeProbe=profile.optJSONObject("vulkan_probe"),wineProbe=profile.optJSONObject("wine_gl_probe");
+        JSONObject pin=manifest.getJSONObject("files").getJSONObject("hardware-renderer.zip");
+        return "turnip".equals(selected)&&"selected_after_probes".equals(state)
+                &&profile.isNull("fallback_reason")&&pin.getString("sha256").equals(profile.optString("archive_sha256"))
+                &&nativeProbe!=null&&wineProbe!=null&&"passed".equals(nativeProbe.optString("status"))
+                &&"passed".equals(wineProbe.optString("status"))&&Boolean.TRUE.equals(wineProbe.opt("passed"));
+    }
+
+    private boolean guestAccepted(JSONObject report) throws Exception {
+        if(manifest.has("client_gpu_profile")&&!gpuProfileReportMatches(report))return false;
+        if (!(report.optBoolean("passed") && "passed".equals(report.optString("status"))
+                && session.equals(report.optString("session_id"))
+                && (reopen ? Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "actual_character_startup_timing_guest" : "actual_character_reopen_guest" : "actual_character_creation_guest").equals(report.optString("scope"))
+                && (reopen ? Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "actual_character_startup_timing" : "actual_character_reopen" : "actual_character_creation").equals(report.optString("diagnostic_mode"))
+                && (!reopen || !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"))
+                    || Boolean.TRUE.equals(report.opt("startup_only_reopen")) && Boolean.FALSE.equals(report.opt("task_gate_required")))
+                && "android".equals(report.optString("execution_platform_requested"))
+                && report.optJSONArray("failures") != null && report.getJSONArray("failures").length() == 0
+                && Boolean.TRUE.equals(report.opt("postgres_started")) && Boolean.TRUE.equals(report.opt("server_started"))
+                && Boolean.TRUE.equals(report.opt("mapserver_started"))
+                && (reopen ? ClientAcceptance.characterReopenVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterCreationVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid))
+                && Boolean.FALSE.equals(report.opt("android_surface_validated"))
+                && Boolean.FALSE.equals(report.opt("game_validated")) && Boolean.FALSE.equals(report.opt("gameplay_validated"))
+                && Boolean.FALSE.equals(report.opt("menu_visual_validated"))
+                && Boolean.FALSE.equals(report.opt("hardware_acceleration_validated"))
+                && ClientAcceptance.interactionCompleted(jsonValue(report))
+                && report.optBoolean("presentation_socket_removed")
+                && ClientAcceptance.cleanupSafe(jsonValue(report)))) return false;
+        for (String key : new String[]{"client_process_started", "renderer_initialized", "all_data_loaded",
+                "client_main_loop_reached", "client_window_observed", "startup_observed"})
+            if (!Boolean.TRUE.equals(report.opt(key))) return false;
+        double elapsed = report.optDouble("startup_elapsed_seconds", -1);
+        if (!ClientAcceptance.clientObservationAccepted(jsonValue(report), sessionBudgetEvents,
+                session, observedClientPid, clientWindowObservedUptime, clientWindowEndedUptime,
+                sessionBudget.deadline(), launcherBudgetStartedUptime, startedUptime,zoningEnabled())
+                || !Double.isFinite(elapsed) || elapsed < 0 || elapsed > 900) return false;
+        JSONObject launch = report.optJSONObject("client_launch");
+        if (launch == null || !session.equals(launch.optString("session_id")) || observedClientPid < 1
+                || observedClientPid != launch.optLong("pid", -1)) return false;
+        JSONArray windows = report.optJSONArray("client_windows");
+        if (windows == null || windows.length() < 1 || windows.length() > 512) return false;
+        boolean actualWindow = false;
+        for (int i=0;i<windows.length();i++) {
+            JSONObject window = windows.getJSONObject(i);
+            JSONObject character = report.optJSONObject(reopen ? "character_reopen" : "character_creation");
+            int initialMap = characterConnectedEvent == null ? 1 : characterConnectedEvent.optInt("map_id", -1);
+            int currentMap = character == null ? -1 : character.optInt("map_id", -1);
+            boolean monorailQualified = zoningEnabled() && Boolean.TRUE.equals(manifest.opt("character_monorail_enabled"))
+                    && character != null && Boolean.TRUE.equals(character.opt("monorail_enabled"));
+            if (ClientAcceptance.clientWindowAccepted(jsonValue(window), observedClientPid,
+                    initialMap, currentMap, monorailQualified)) actualWindow = true;
+        }
+        if (!actualWindow) return false;
+        JSONObject hashes = report.optJSONObject("asset_sha256"), pins = manifest.getJSONObject("files");
+        JSONObject clientPins = clientManifest.getJSONObject("files");
+        if (hashes == null || hashes.length() != clientPins.length()) return false;
+        for (Iterator<String> it = clientPins.keys(); it.hasNext();) {
+            String name = it.next();
+            String digest = clientPins.getJSONObject(name).getString("sha256");
+            if (!pins.has(name) || !digest.equals(hashes.optString(name))
+                    || !pins.getJSONObject(name).getString("sha256").equals(digest)) return false;
+        }
+        JSONObject identity = report.optJSONObject("import_identity");
+        if (identity == null || imported == null || !imported.generation.equals(identity.optString("generation"))
+                || identity.optLong("file_count", -1) != imported.count || identity.optLong("total_bytes", -1) != imported.bytes)
+            return false;
+        File receipt = new File(imported.dataDirectory.getParentFile(), "complete.properties");
+        byte[] receiptBytes = read(receipt, 4096); Properties properties = new Properties();
+        properties.load(new ByteArrayInputStream(receiptBytes));
+        if (!hex(MessageDigest.getInstance("SHA-256").digest(receiptBytes)).equals(identity.optString("receipt_sha256"))
+                || !properties.getProperty("contract.sha256", "missing").equals(identity.optString("contract_sha256"))) return false;
+        JSONObject worktree = report.optJSONObject("client_worktree");
+        if (worktree == null || !"/game-import/data".equals(worktree.optString("source_data"))
+                || !Boolean.TRUE.equals(worktree.opt("imported_inputs_readonly"))
+                || !Boolean.TRUE.equals(worktree.opt("imported_input_bytes_unchanged"))
+                || !Boolean.TRUE.equals(worktree.opt("imported_metadata_normalized"))
+                || worktree.optLong("normalized_mtime_epoch", -1) != 1767225600L
+                || !pins.getJSONObject("client-caches.zip").getString("sha256").equals(worktree.optString("cache_archive_sha256"))
+                || !pins.getJSONObject("client-prerequisites.zip").getString("sha256").equals(worktree.optString("prerequisites_archive_sha256"))
+                || worktree.optInt("prepared_prerequisite_files", -1) != 3
+                || worktree.optLong("prepared_prerequisite_bytes", -1) != 54948L
+                || worktree.optLong("input_files", -1) != imported.count
+                || worktree.optLong("input_bytes", -1) != imported.bytes) return false;
+        JSONArray stages = report.optJSONArray("stages");
+        // The visual/animation stages are required only by an APK whose exact
+        // asset pins include the complete bundle. A guest flag cannot select
+        // a shorter path or excuse a missing/failed preparation stage.
+        int interactionStage = ClientAcceptance.clientInteractionStageIndex(
+                jsonValue(stages), jsonValue(clientPins));
+        if (interactionStage < 0) return false;
+        JSONObject inputs = stages.getJSONObject(0), startup = stages.getJSONObject(interactionStage);
+        if (!imported.sourceCommit.equals(inputs.optString("source_commit"))
+                || !imported.dataCommit.equals(inputs.optString("data_commit"))
+                || !ClientAcceptance.interactionObservationPolicyAccepted(jsonValue(startup), jsonValue(report),
+                    sessionBudget.manual(), sessionBudgetEvents)) return false;
+        JSONArray screenshots = report.optJSONArray("screenshots");
+        if (screenshots == null || screenshots.length() != 3) return false;
+        Set<String> actualCaptures = new HashSet<>();
+        for (int i=0;i<screenshots.length();i++) {
+            JSONObject capture = screenshots.getJSONObject(i);
+            if (!session.equals(capture.optString("session_id")) || capture.optInt("width") != 800
+                    || capture.optInt("height") != 600 || !capture.optString("sha256").matches("[0-9a-f]{64}")) return false;
+            if (capture.optInt("distinct_colors_capped") >= 8) actualCaptures.add(capture.optString("path"));
+        }
+        return actualCaptures.contains("client-startup.ppm") && actualCaptures.contains("client-observed.ppm");
+    }
+    private boolean surfaceAccepted(JSONObject report) {
+        synchronized (this) {
+            return decodedFrames >= 1 && ClientAcceptance.surfaceAccepted(surfaceSamples, session,
+                    startedUptime, endedUptime, clientWindowObservedUptime, clientWindowEndedUptime, clientWindowFrameWatermark);
+        }
+    }
+    private boolean loginSurfaceAccepted() {
+        synchronized (this) {
+            return ClientAcceptance.surfaceAccepted(loginSamples, session, startedUptime, endedUptime,
+                    loginObservedUptime, clientWindowEndedUptime, loginFrameWatermark);
+        }
+    }
+
+    private boolean characterSurfaceAccepted(JSONObject report) throws Exception {
+        synchronized (this) {
+            if (reopen) return characterSavedReady && connectedCapturedReady && (!stuckRequested || relocationCapturedReady)
+                    && (!taskGateRequired() || taskGateAccepted(report))
+                    && ClientAcceptance.characterReopenAccepted(jsonValue(report), jsonValue(characterSavedEvent),
+                    jsonValue(characterConnectedEvent), jsonValue(characterRelocatedEvent), connectedSamples, relocationSamples, characterSamples, session, observedClientPid,
+                    startedUptime, endedUptime, connectedObservedUptime, connectedFrameWatermark, relocatedObservedUptime, relocatedFrameWatermark,
+                    characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark,zoningEnabled());
+            return characterSavedReady && ClientAcceptance.characterCreationAccepted(jsonValue(report), jsonValue(characterSavedEvent),
+                    jsonValue(characterConnectedEvent), characterSamples, session, observedClientPid, startedUptime, endedUptime,
+                    characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark);
+        }
+    }
+    private boolean taskGateRequired() {
+        return reopen && manifest!=null && !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"))
+                && Boolean.TRUE.equals(manifest.opt("task_gate_required"));
+    }
+    private boolean taskGateAccepted(JSONObject report) throws Exception {
+        JSONObject proof=report.optJSONObject("task_gate");
+        if(proof==null || !Boolean.TRUE.equals(proof.opt("verified")) || taskContactReceipt==null
+                || !session.equals(proof.optString("session_id")) || proof.optLong("client_pid",-1)!=observedClientPid
+                || proof.optLong("character_id",-1)!=1
+                || taskAcceptedEvent==null || taskCompletedEvent==null || taskCompletionReceipt==null
+                || !ClientAcceptance.taskEvent(jsonValue(taskAcceptedEvent),"character_task_accepted",session,observedClientPid)
+                || !ClientAcceptance.taskEvent(jsonValue(taskCompletedEvent),"character_task_completed",session,observedClientPid)
+                || !ClientAcceptance.sameTaskIdentity(jsonValue(taskAcceptedEvent.getJSONObject("task")),jsonValue(taskCompletedEvent.getJSONObject("task")))
+                || !ClientAcceptance.sameTaskIdentity(jsonValue(taskAcceptedEvent.getJSONObject("task")),jsonValue(proof.optJSONObject("task"))))return false;
+        return taskAcceptedCapture.count()==ContactCaptureWindow.FRAMES_PER_REQUEST
+                && taskCompletedCapture.count()==ContactCaptureWindow.FRAMES_PER_REQUEST;
+    }
+
+    private static String localHosts(String hostname) throws IOException {
+        if (hostname == null || hostname.isEmpty() || hostname.length() > 253)
+            throw new IOException("Kernel hostname is not a safe hosts-file name");
+        String[] labels = hostname.split("\\.", -1);
+        for (String label : labels)
+            if (!label.matches("[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?"))
+                throw new IOException("Kernel hostname is not a safe hosts-file name");
+        return "127.0.0.1 " + String.join(" ", new LinkedHashSet<>(Arrays.asList("localhost", hostname, labels[0]))) + "\n";
+    }
+
+    private static JSONObject historicalProcessExits(Context context) throws Exception {
+        JSONObject result=new JSONObject().put("maximum_records",4).put("records",new JSONArray())
+                .put("own_processes_only",true).put("trace_streams_requested",false);
+        if(Build.VERSION.SDK_INT<30)return result.put("status","unsupported_api");
+        try { return ProcessExitHistory.collect(context,result); }
+        catch(RuntimeException e) {
+            // Exit history is optional evidence. A vendor/service failure must
+            // never prevent the current operation's report from being saved.
+            return result.put("status","unavailable").put("records",new JSONArray())
+                    .put("error_class",e.getClass().getSimpleName());
+        }
+    }
+    static JSONObject setupProcessExitHistory(Context context) throws Exception {
+        return historicalProcessExits(context);
+    }
+    /** Isolates Android 11 classes from the supported Android 8-10 path. */
+    private static final class ProcessExitHistory {
+        static JSONObject collect(Context context,JSONObject result) throws Exception {
+            android.app.ActivityManager manager=(android.app.ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+            if(manager==null)return result.put("status","unavailable");
+            String ownPackage=context.getPackageName();
+            List<android.app.ApplicationExitInfo> history=manager.getHistoricalProcessExitReasons(ownPackage,0,4);
+            JSONArray records=new JSONArray();
+            if(history!=null)for(int i=0;i<Math.min(history.size(),4);i++) {
+                android.app.ApplicationExitInfo info=history.get(i);
+                if(info==null)continue;
+                String processName=info.getProcessName();
+                if(processName==null||!(processName.equals(ownPackage)||processName.startsWith(ownPackage+":")))continue;
+                records.put(new JSONObject().put("timestamp_utc_ms",info.getTimestamp())
+                        .put("reason",info.getReason()).put("status",info.getStatus())
+                        .put("importance",info.getImportance()).put("pss_kib",info.getPss())
+                        .put("rss_kib",info.getRss()).put("pid",info.getPid())
+                        .put("process_name",processName.substring(0,Math.min(processName.length(),160))));
+            }
+            return result.put("status","available").put("records",records);
+        }
+    }
+
+    private JSONObject finalGuestReport;
+    private void publish(JSONObject guest, boolean passed, boolean cleanup) throws IOException {
+        finalGuestReport=guest;
+        checkpoint();checkpointWorker.shutdown();
+        try {if(!checkpointWorker.awaitTermination(10,TimeUnit.SECONDS))checkpointFailure="checkpoint_flush_timed_out";}
+        catch(InterruptedException interrupted){Thread.currentThread().interrupt();checkpointFailure="checkpoint_flush_interrupted";}
+        byte[] lastCheckpoint=pendingCheckpoint.getAndSet(null);
+        if(lastCheckpoint!=null)try{ClientReports.checkpoint(operationDir,lastCheckpoint);}catch(IOException failure){checkpointFailure=failure.getClass().getSimpleName();}
+        try {
+            JSONObject wrapper = new JSONObject().put("format", 1).put("operation", operation).put("run_id", runId)
+                    .put("session_id", session == null ? JSONObject.NULL : session).put("app_id", context.getPackageName())
+                    .put("app_version", appVersion()).put("android_sdk", Build.VERSION.SDK_INT)
+                    .put("android_uid", android.os.Process.myUid()).put("device", Build.MANUFACTURER + " " + Build.MODEL)
+                    .put("android_process_exit_history",historicalProcessExits(context))
+                    .put("runtime_setup_service",ClientService.setupMemoryEvidence(context))
+                    .put("abis", new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS)))
+                    .put("runtime_manifest_sha256", manifestHash).put("started_uptime_ms", startedUptime)
+                    .put("finished_uptime_ms", endedUptime).put("process_exit_code", processExit)
+                    .put("checkpoint_error",checkpointFailure==null?JSONObject.NULL:checkpointFailure)
+                    .put("passed", passed).put("android_surface_validated", passed).put("interaction_session_completed", passed)
+                    .put("menu_visual_validated", false).put("cleanup_verified", cleanup)
+                    .put("cleanup_blocked", isCleanupBlocked()).put("cancelled", cancelled)
+                    .put("gameplay_validated", false).put("game_rendering_validated", false)
+                    .put("hardware_acceleration_validated", false).put("controller_input_validated", false)
+                    .put("graphics_profile_requested", graphicsProfileRequested)
+                    .put("gpu_profile_requested", gpuProfileRequested)
+                    .put("fresh_profile_creation_requested", !reopen && !resumeFirstCreation && "character_creation".equals(operation))
+                    .put("resume_first_creation_requested", !reopen && resumeFirstCreation && "character_creation".equals(operation))
+                    .put("startup_only_reopen", reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
+                    .put("character_profile_state", characterProfileState(context).name())
+                    .put("input_effect_verified", false).put("input_events_sent", inputSent).put("input_events_failed", inputFailed)
+                    .put("input_transport_observed", inputSent > 0 && inputFailed == 0)
+                    .put("input_worker_stopped", inputWorker.isTerminated())
+                    .put("guest_failure_observed", producerFailed).put("finish_requested", finishRequested).put("interaction_deadline_uptime_ms", readyDeadlineUptimeMillis)
+                    .put("session_budget_revision", sessionBudget.revision()).put("session_budget_phase", sessionBudget.phase())
+                    .put("session_budget_events", new JSONArray(sessionBudgetEvents))
+                    .put("zoning",new JSONObject().put("enabled",zoningEnabled()).put("phase",zoning.phase()).put("epoch",zoning.epoch())
+                        .put("current_map_id",zoning.currentMap()).put("target_map_id",zoning.targetMap())
+                        .put("events",new JSONArray(zoningEvents)).put("samples",new JSONArray(zoningSamples))
+                        .put("android_timings",new JSONArray(zoningTimings))
+                        .put("preparation_observations",new JSONArray(zoningPreparationObservations))
+                        .put("preparation_observation_limit_reached",zoningPreparationObservationLimitReached)
+                        .put("scope","Finite supported-map travel; native arrival and three fresh views required; submitted input is not proof"))
+                    .put("save_request_deadline_uptime_ms", sessionBudget.saveDeadline())
+                    .put("movement_deadline_uptime_ms", sessionBudget.movementDeadline())
+                    .put("relocation_sent_utc_ms", relocationSentUtcMillis)
+                    .put("deadline_input_suppressed", deadlineInputSuppressed)
+                    .put("scope", reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "Saved THORHERO startup and connection timing only; existing tasks are preserved and task qualification is not requested. Stop produces timing evidence, not an ordinary save or gameplay pass." : taskGateRequired() ? "Manually accept one authored task, complete it through the stock command, and persist its completed state by ordinary THORHERO logout with fresh accepted/completed Android views; combat, mission maps and reward turn-in remain unvalidated" : reopen ? "Reopen the existing COHLOCAL THORHERO with preserved identity, powers and costume and fresh Android PixelCopy after native connection and ordinary save; rendering, movement and gameplay remain separately assessed" : "Graphical creation and committed SQL persistence of THORHERO with fresh Android PixelCopy after the save event; world rendering, movement and gameplay remain unvalidated")
+                    .put("local_login_verified", ClientAcceptance.localLoginVerified(jsonValue(guest), session, observedClientPid))
+                    .put("character_creation_verified", !reopen && "character_creation".equals(operation) && passed)
+                    .put("character_reopen_verified", reopen && passed)
+                    .put("committed_save_observed",committedCharacterSaveObserved(jsonValue(guest),jsonValue(characterSavedEvent),
+                            jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),zoningEnabled()?zoning.currentMap():1))
+                    .put("qualification_gates",qualificationGates(guest,passed,cleanup))
+                    .put("character_connected_observed_uptime_ms", connectedObservedUptime)
+                    .put("character_connected_frame_watermark", connectedFrameWatermark)
+                    .put("character_saved_event", characterSavedEvent == null ? JSONObject.NULL : characterSavedEvent)
+                    .put("character_connected_event", characterConnectedEvent == null ? JSONObject.NULL : characterConnectedEvent)
+                    .put("character_relocated_event", characterRelocatedEvent == null ? JSONObject.NULL : characterRelocatedEvent)
+                    .put("stuck_requested", stuckRequested)
+                    .put("character_relocated_observed_uptime_ms", relocatedObservedUptime)
+                    .put("character_relocated_frame_watermark", relocatedFrameWatermark)
+                    .put("save_logout_requested", saveLogoutRequested)
+                    .put("character_saved_observed_uptime_ms", characterObservedUptime)
+                    .put("character_saved_frame_watermark", characterFrameWatermark)
+                    .put("character_selection_visible", false)
+                    .put("login_observed_uptime_ms", loginObservedUptime)
+                    .put("login_frame_watermark", loginFrameWatermark)
+                    .put("decoded_frame_count", decodedFrames)
+                    .put("client_window_observed_uptime_ms", clientWindowObservedUptime)
+                    .put("client_window_frame_watermark", clientWindowFrameWatermark)
+                    .put("client_window_ended_uptime_ms", clientWindowEndedUptime)
+                    .put("source_width", frameWidth).put("source_height", frameHeight)
+                    .put("guest", guest);
+            if (error != null) wrapper.put("app_error", error);
+            if (receiverFailure != null) wrapper.put("receiver_error", receiverFailure);
+            synchronized (this) {
+                wrapper.put("android_capture_diagnostics", new JSONObject(captureDiagnostics()));
+                wrapper.put("surface_captures", new JSONArray(surfaceSamples));
+                wrapper.put("login_captures", new JSONArray(loginSamples));
+                wrapper.put("character_captures", new JSONArray(characterSamples));
+                wrapper.put("connected_captures", new JSONArray(connectedSamples));
+                wrapper.put("relocation_captures", new JSONArray(relocationSamples));
+                wrapper.put("interaction_captures", new JSONArray(interactionSamples));
+                    wrapper.put("manual_test_events", new JSONArray(manualTestEvents));
+                    wrapper.put("manual_test_active_at_finalization", manualTestActive);
+                    wrapper.put("manual_session", reopen);
+                List<Map<String,Object>> requests = new ArrayList<>();
+                for(Map<String,Object> original:contactRequests) {
+                    Map<String,Object> request=new LinkedHashMap<>(original);
+                    int count=0;
+                    for(Map<String,Object> capture:contactSamples)if(original.get("batch").equals(capture.get("batch")))count++;
+                    request.put("fresh_views_captured",count);request.put("capture_complete",count==ContactCaptureWindow.FRAMES_PER_REQUEST);
+                    requests.add(request);
+                }
+                wrapper.put("stationary_contact",new JSONObject().put("capture_requests",new JSONArray(requests))
+                        .put("captures",new JSONArray(contactSamples)).put("maximum_requests",ContactCaptureWindow.MAX_REQUESTS)
+                        .put("frames_per_request",ContactCaptureWindow.FRAMES_PER_REQUEST).put("dialog_semantics_verified",false)
+                        .put("native_interaction_effect_verified",false).put("user_visual_assessment_required",true));
+                List<Map<String,Object>> taskRequests=new ArrayList<>();
+                for(Map<String,Object> original:taskCaptureRequests) {
+                    Map<String,Object> request=new LinkedHashMap<>(original);
+                    int count=0;
+                    for(Map<String,Object> capture:taskSamples)
+                        if(original.get("phase").equals(capture.get("phase")) && original.get("batch").equals(capture.get("batch")))count++;
+                    request.put("fresh_views_captured",count);request.put("capture_complete",count==ContactCaptureWindow.FRAMES_PER_REQUEST);
+                    taskRequests.add(request);
+                }
+                wrapper.put("task_gate",new JSONObject()
+                        .put("required",taskGateRequired())
+                        .put("verified",taskGateRequired() && taskGateAccepted(guest))
+                        .put("contact_requested",taskContactRequested)
+                        .put("contact_delivered_receipt",taskContactReceipt==null?JSONObject.NULL:taskContactReceipt)
+                        .put("accepted_event",taskAcceptedEvent==null?JSONObject.NULL:taskAcceptedEvent)
+                        .put("completed_event",taskCompletedEvent==null?JSONObject.NULL:taskCompletedEvent)
+                        .put("completion_requested",taskCompletionRequested)
+                        .put("completion_delivered_receipt",taskCompletionReceipt==null?JSONObject.NULL:taskCompletionReceipt)
+                        .put("capture_requests",new JSONArray(taskRequests)).put("captures",new JSONArray(taskSamples))
+                        .put("maximum_requests_per_phase",ContactCaptureWindow.MAX_REQUESTS)
+                        .put("frames_per_request",ContactCaptureWindow.FRAMES_PER_REQUEST)
+                        .put("dialog_semantics_verified",false).put("user_visual_assessment_required",true)
+                        .put("combat_verified",false).put("mission_map_verified",false));
+                wrapper.put("recovery_requested",stuckRequested).put("recovery_verified",stuckRequested&&relocationCapturedReady);
+                wrapper.put("lifecycle", new JSONArray(lifecycle));
+            }
+            String status = isCleanupBlocked() ? "cleanup_failed" : cancelled ? "cancelled" : passed ? "passed"
+                    : ("setup".equals(operation) || "import".equals(operation)) ? guest.optString("status", "failed")
+                    : guest.optBoolean("passed") ? "client_incomplete" : "failed";
+            wrapper.put("status", status);
+            File target = new File(operationDir, (reopen ? "coh-character-reopen-" : "coh-character-creation-") + runId + ".zip");
+            File part = new File(operationDir, "support.zip.part");
+            try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(part.toPath(),java.nio.file.StandardOpenOption.CREATE_NEW,
+                    java.nio.file.StandardOpenOption.WRITE,java.nio.file.LinkOption.NOFOLLOW_LINKS))) {
+                if (imported != null) wrapper.put("import", new JSONObject().put("generation", imported.generation)
+                        .put("source_commit", imported.sourceCommit).put("data_commit", imported.dataCommit)
+                        .put("repository_commit", imported.repositoryCommit).put("files", imported.count).put("bytes", imported.bytes));
+                zipText(out, "android-client-report.json", wrapper.toString(2));
+                synchronized (this) { for (int i=0;i<surfacePngs.size();i++)
+                    zipBytes(out, "android-surface/capture-" + (i+1) + ".png", surfacePngs.get(i)); }
+                synchronized (this) { for (int i=0;i<loginPngs.size();i++)
+                    zipBytes(out, "android-login/capture-" + (i+1) + ".png", loginPngs.get(i)); }
+                synchronized (this) { for (int i=0;i<connectedPngs.size();i++)
+                    zipBytes(out, "android-connected/capture-" + (i+1) + ".png", connectedPngs.get(i)); }
+                synchronized (this) { for (int i=0;i<relocationPngs.size();i++)
+                    zipBytes(out, "android-relocated/capture-" + (i+1) + ".png", relocationPngs.get(i)); }
+                synchronized (this) { for (int i=0;i<characterPngs.size();i++)
+                    zipBytes(out, "android-character/capture-" + (i+1) + ".png", characterPngs.get(i)); }
+                synchronized (this) { for (int i=0;i<interactionPngs.size();i++)
+                    zipBytes(out, (String) interactionSamples.get(i).get("archive_path"), interactionPngs.get(i)); }
+                synchronized (this) { for (int i=0;i<contactPngs.size();i++)
+                    zipBytes(out, (String) contactSamples.get(i).get("archive_path"), contactPngs.get(i)); }
+                synchronized (this) { for (int i=0;i<taskPngs.size();i++)
+                    zipBytes(out, (String) taskSamples.get(i).get("archive_path"), taskPngs.get(i)); }
+                synchronized (this) { for (int i=0;i<zoningPngs.size();i++)
+                    zipBytes(out,(String)zoningSamples.get(i).get("archive_path"),zoningPngs.get(i)); }
+                synchronized (this) { zipText(out, "operation.log", log.toString()); }
+                zipText(out, "runtime-setup-service.json", ClientService.setupMemoryEvidence(context).toString());
+                if (manifest != null) zipText(out, "runtime-manifest.json", manifest.toString(2));
+                if (generation != null) {
+                    File assets = new File(generation, "assets");
+                    File[] identities = assets.listFiles((dir, name) -> name.endsWith("manifest.json") && !name.equals("runtime-manifest.json"));
+                    if (identities != null) for (File file : identities) {
+                        if ("atlas-world-supplement-manifest.json".equals(file.getName())) {
+                            // Keep the larger donor inventory raw. The runtime file pin
+                            // and compact guest world receipt bind its SHA-256; never
+                            // parse or embed the multi-megabyte document in the wrapper.
+                            zipFile(out, "identities/" + file.getName(), file, MAX_WORLD_IDENTITY);
+                        } else if (file.length() <= MAX_JSON)
+                            zipBytes(out, "identities/" + file.getName(), read(file, MAX_JSON));
+                    }
+                }
+                try (InputStream in = context.getAssets().open("runtime/runtime-lock.json")) {
+                    zipBytes(out, "runtime-lock.json", read(in, MAX_JSON));
+                }
+                try (InputStream in = context.getAssets().open("atlas/atlas-import.properties")) {
+                    zipBytes(out, "atlas-import.properties", read(in, 16384));
+                }
+                if (("character_creation".equals(operation) || "character_reopen".equals(operation)) && runLaunched) {
+                    File file = new File(state, "report.zip");
+                    if (file.isFile()) zipFile(out, "guest-report.zip", file, MAX_GUEST_ZIP);
+                    ClientReports.writeGuestOutputs(home.getParentFile(),out);
+                }
+            }
+            ClientReports.commitNormalArchive(home.getParentFile(),part,target);
+            recordCommittedReport(target);
+            if (("character_creation".equals(operation) || "character_reopen".equals(operation)) && runLaunched) {
+                try { ClientReports.completedGuest(home.getParentFile(),target,session); }
+                catch(IOException unavailable) { line("Completed guest preservation receipt unavailable; recovery remains available: "+unavailable.getClass().getSimpleName()); }
+            }
+        } catch (Exception e) {
+            line("Full support report assembly failed: "+e.getClass().getSimpleName());
+            try {
+                retainFailureReport(e,cleanup);
+                error="Full support report assembly failed; a diagnostic failure report was retained. "+message(e);
+            }catch(Exception unavailable){
+                IOException failure=new IOException("Could not save a fresh client support report or its failure carrier",e);
+                failure.addSuppressed(unavailable);throw failure;
+            }
+            // Do not let an earlier acceptance value turn a fallback carrier into a pass.
+            throw new IOException("Full support report assembly failed; export the retained diagnostic failure report",e);
+        }
+    }
+
+    private void recordCommittedReport(File target) throws IOException {
+        latestReport=target;freshReportRetained=true;
+        try { write(new File(work,"latest-report.txt"),target.getCanonicalPath().getBytes(StandardCharsets.UTF_8)); }
+        catch(IOException pointerFailure) { line("Complete current-session report retained without latest-report pointer"); }
+    }
+
+    /** Keep a failed operation exportable even if qualification throws before normal publication. */
+    File preserveFailureReport(Throwable failure) throws IOException {
+        if(freshReportRetained || operationDir==null)return latestReport;
+        return retainFailureReport(failure,false);
+    }
+    private Boolean terminalSaveObservation() {
+        if(finalGuestReport==null)return null;
+        try {
+            return committedCharacterSaveObserved(jsonValue(finalGuestReport),jsonValue(characterSavedEvent),
+                    jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),zoningEnabled()?zoning.currentMap():1);
+        }catch(Exception | OutOfMemoryError unavailable){return null;}
+    }
+    private File retainFailureReport(Throwable failure,boolean cleanup) throws IOException {
+        try {
+            String cause=message(failure);if(cause.length()>1024)cause=cause.substring(0,1024);
+            String previous=error;if(previous!=null && previous.length()>1024)previous=previous.substring(0,1024);
+            Boolean saveObservation=terminalSaveObservation();
+            JSONObject terminal=new JSONObject().put("format",1).put("operation",operation).put("run_id",runId)
+                    .put("session_id",session==null?JSONObject.NULL:session).put("app_id",context.getPackageName())
+                    .put("app_version",appVersion()).put("status","failed_report_assembly").put("passed",false)
+                    .put("normal_report_assembly_failed",true).put("assembly_error",cause)
+                    .put("app_error",previous==null?JSONObject.NULL:previous).put("cleanup_verified",cleanup)
+                    .put("cleanup_blocked",isCleanupBlocked()).put("cancelled",cancelled)
+                    .put("started_uptime_ms",startedUptime).put("finished_uptime_ms",endedUptime)
+                    .put("finalized_utc_ms",System.currentTimeMillis())
+                    .put("process_exit_code",processExit).put("character_save_qualification",false)
+                    .put("committed_save_observation_available",saveObservation!=null)
+                    .put("committed_save_observed",saveObservation==null?JSONObject.NULL:saveObservation)
+                    .put("character_saved_event",characterSavedEvent==null?JSONObject.NULL:characterSavedEvent)
+                    .put("character_connected_event",characterConnectedEvent==null?JSONObject.NULL:characterConnectedEvent)
+                    .put("save_logout_requested",saveLogoutRequested)
+                    .put("manual_test_events",new JSONArray(manualTestEvents)).put("manual_test_active",manualTestActive)
+                    .put("scope","Failed-session diagnostic carrier only; original guest/checkpoint observations are retained without conferring any pass.");
+            byte[] output;synchronized(this){output=log.toString().getBytes(StandardCharsets.UTF_8);}
+            latestReport=ClientReports.retainTerminalFailure(home.getParentFile(),operationDir,
+                    terminal.toString(2).getBytes(StandardCharsets.UTF_8),output);
+            freshReportRetained=true;
+            try{write(new File(work,"latest-report.txt"),latestReport.getCanonicalPath().getBytes(StandardCharsets.UTF_8));}
+            catch(IOException pointerFailure){line("Failure carrier retained without latest-report pointer");}
+            return latestReport;
+        }catch(Exception unavailable){throw new IOException("Could not preserve the failed session diagnostics",unavailable);}
+    }
+
+    private JSONObject qualificationGates(JSONObject report,boolean passed,boolean cleanup) throws Exception {
+        JSONObject gates=new JSONObject().put("overall_passed",passed).put("owned_cleanup",cleanup)
+                .put("not_cancelled",!cancelled).put("no_runtime_error",error==null)
+                .put("display_transport",receiverFailure==null).put("input_transport",inputFailed==0)
+                .put("current_session_guest_report",session!=null && session.equals(report.optString("session_id")))
+                .put("guest_report_passed",Boolean.TRUE.equals(report.opt("passed")) && "passed".equals(report.optString("status")))
+                .put("scope","Individual observations explain incomplete checks; none replaces the unchanged overall acceptance predicate.");
+        try{gates.put("guest_acceptance",guestAccepted(report));}catch(Exception invalid){gates.put("guest_acceptance",false);}
+        try{gates.put("complete_asset_stage_contract",clientManifest!=null && ClientAcceptance.clientInteractionStageIndex(
+                jsonValue(report.optJSONArray("stages")),jsonValue(clientManifest.optJSONObject("files")))>=0);}catch(Exception invalid){gates.put("complete_asset_stage_contract",false);}
+        try{gates.put("android_client_surface",surfaceAccepted(report));}catch(Exception invalid){gates.put("android_client_surface",false);}
+        gates.put("android_login_views",loginSurfaceAccepted());
+        try{gates.put("android_character_save_views",characterSurfaceAccepted(report));}catch(Exception invalid){gates.put("android_character_save_views",false);}
+        return gates;
+    }
+
+    /** A current producer's committed ordinary save remains a separate observation
+     * when later cleanup or Android capture qualification fails. Never confers a pass. */
+    static boolean committedCharacterSaveObserved(Object reportValue,Object savedValue,Object connectedValue,
+            String selectedSession,long pid,boolean reopening,boolean zoning,int currentMap) {
+        if(!(reportValue instanceof Map) || !(savedValue instanceof Map) || !(connectedValue instanceof Map)
+                || selectedSession==null || !selectedSession.matches("[0-9a-f]{32}") || pid<=0 || pid>=4294967296L)return false;
+        Map<?,?> report=(Map<?,?>)reportValue,saved=(Map<?,?>)savedValue,connected=(Map<?,?>)connectedValue;
+        Object proofValue=report.get(reopening?"character_reopen":"character_creation"),loginValue=report.get("local_login");
+        if(!(proofValue instanceof Map) || !(loginValue instanceof Map))return false;
+        Map<?,?> proof=(Map<?,?>)proofValue,login=(Map<?,?>)loginValue;
+        if(!selectedSession.equals(report.get("session_id")) || !"android".equals(report.get("execution_platform_requested"))
+                || !(reopening?"actual_character_reopen_guest":"actual_character_creation_guest").equals(report.get("scope"))
+                || !(reopening?"actual_character_reopen":"actual_character_creation").equals(report.get("diagnostic_mode"))
+                || !ClientAcceptance.characterSavedEvent(saved,selectedSession,pid)
+                || !(reopening?ClientAcceptance.characterReopenConnectedEvent(connected,selectedSession,pid,zoning)
+                    :ClientAcceptance.characterConnectedEvent(connected,selectedSession,pid)))return false;
+        for(Map<?,?> identity:new Map<?,?>[]{proof,login})
+            if(!selectedSession.equals(identity.get("session_id")) || preparationInteger(identity.get("client_pid"))!=pid)return false;
+        long id=preparationInteger(proof.get("character_id")),auth=preparationInteger(proof.get("auth_id"));
+        if(id!=1 || auth<=0 || auth>4294967295L || preparationInteger(saved.get("character_id"))!=id
+                || preparationInteger(connected.get("character_id"))!=id || preparationInteger(login.get("auth_id"))!=auth
+                || !"THORHERO".equals(proof.get("name")) || !"COHLOCAL".equals(proof.get("account"))
+                || !"android-local-login".equals(login.get("profile")) || preparationInteger(proof.get("map_id"))!=currentMap
+                || !(currentMap==1 || zoning && (currentMap==101 || currentMap==5 && Boolean.TRUE.equals(proof.get("monorail_enabled")))))return false;
+        for(String name:new String[]{"postgres_started","server_started","mapserver_started"})if(!Boolean.TRUE.equals(report.get(name)))return false;
+        for(String name:new String[]{"local_login_verified","local_account_verified","character_list_sent","character_list_response_sent"})
+            if(!Boolean.TRUE.equals(login.get(name)))return false;
+        for(String name:new String[]{"verified","connected_on_atlas","committed_sql_verified","requested_logout_observed",
+                "logout_timer_observed","disconnected_before_sql"})if(!Boolean.TRUE.equals(proof.get(name)))return false;
+        if(!Boolean.FALSE.equals(proof.get("forced_stop_before_save")))return false;
+        if(zoning && (!Boolean.TRUE.equals(proof.get("zoning_enabled")) || !Boolean.TRUE.equals(proof.get("connected_on_supported_map"))
+                || !Boolean.TRUE.equals(saved.get("zoning_enabled")) || preparationInteger(saved.get("map_id"))!=currentMap))return false;
+        if(reopening) {
+            for(String name:new String[]{"reopen_verified","existing_character_verified","preserved_existing_identity",
+                    "native_client_ready_observed","powers_preserved","costume_preserved","selected_rows_preserved","committed_native_position_verified"})
+                if(!Boolean.TRUE.equals(proof.get(name)))return false;
+            if(preparationInteger(proof.get("before_character_id"))!=id || preparationInteger(proof.get("baseline_character_id"))!=id)return false;
+            long beforeLogin=preparationInteger(proof.get("before_login_count")),afterLogin=preparationInteger(proof.get("login_count"));
+            if(beforeLogin<=0 || beforeLogin>=2147483647L || afterLogin!=beforeLogin+1)return false;
+            boolean recovered=Boolean.TRUE.equals(proof.get("recovery_requested"));
+            for(String name:new String[]{"recovery_verified","ordinary_stuck_observed","on_atlas_safe_position","stable_ground_verified","committed_safe_position_verified"})
+                if(!Boolean.valueOf(recovered).equals(proof.get(name)))return false;
+            if(!recovered && !Boolean.FALSE.equals(proof.get("recovery_requested")))return false;
+        }
+        Object countsValue=proof.get("row_counts"),hashesValue=proof.get("table_sha256"),snapshot=proof.get("snapshot_sha256");
+        if(!(countsValue instanceof Map) || !(hashesValue instanceof Map) || !(snapshot instanceof String)
+                || !((String)snapshot).matches("[0-9a-f]{64}"))return false;
+        Map<?,?> counts=(Map<?,?>)countsValue,hashes=(Map<?,?>)hashesValue;
+        for(String table:new String[]{"ents","ents2","powers","costumeparts"}) {
+            long rows=preparationInteger(counts.get(table));Object hash=hashes.get(table);
+            if(rows<=0 || (table.equals("ents") || table.equals("ents2")) && rows!=1
+                    || !(hash instanceof String) || !((String)hash).matches("[0-9a-f]{64}"))return false;
+        }
+        return true;
+    }
+    private String appVersion() {
+        try { return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName; }
+        catch (Exception e) { return "unknown"; }
+    }
+    private synchronized void line(String text) {
+        text = clean(text); if (text.length() > 8192) text = text.substring(0, 8192);
+        log.append(text).append('\n');
+        if (log.length() > MAX_LOG) log.delete(0, log.length() - (int) MAX_LOG);
+        listener.onLog(text);
+    }
+    private void stage(String name, String detail) { listener.onStage(name, detail); line(name + ": " + detail); }
+    private void observeFailedGuestResult(JSONObject event) {
+        if (failedGuestResult(event, session)) {
+            producerFailed = true;
+            if ("result".equals(event.optString("type"))) producerCompleted = true;
+            inputReady = false; clientWindowEndedUptime = SystemClock.uptimeMillis();
+            recordLifecycle("guest_failed_result_observed type=" + event.optString("type")); releaseAllInputs(session); notifyInputState();
+        }
+    }
+    static boolean failedGuestResult(JSONObject event, String selectedSession) {
+        return ("result".equals(event.optString("type")) || "character_session_failed".equals(event.optString("type")))
+                && selectedSession != null && !selectedSession.isEmpty()
+                && selectedSession.equals(event.optString("session_id"))
+                && "failed".equals(event.optString("status")) && Boolean.FALSE.equals(event.opt("passed"))
+                && event.optJSONArray("failures") != null && event.optJSONArray("failures").length() > 0
+                && event.optJSONArray("failures").opt(0) instanceof String;
+    }
+    static String currentGuestFailureMessage(JSONObject report, String selectedSession) {
+        String scope = report.optString("scope");
+        if (selectedSession == null || selectedSession.isEmpty() || !selectedSession.equals(report.optString("session_id"))
+                || !"failed".equals(report.optString("status")) || !Boolean.FALSE.equals(report.opt("passed"))
+                || !("actual_character_creation_guest".equals(scope) || "actual_character_reopen_guest".equals(scope)
+                    || "actual_character_startup_timing_guest".equals(scope))) return null;
+        return guestFailureMessage(report);
+    }
+    /** Only the bounded, sanitized first guest failure is presented; recovery wrappers never confer a pass. */
+    static String guestFailureMessage(JSONObject report) {
+        JSONArray failures = report.optJSONArray("failures");
+        if (failures == null || failures.length() == 0) return "The guest exited before completing its checks.";
+        Object first = failures.opt(0);
+        if (!(first instanceof String)) return "The guest failure report is invalid.";
+        String detail = clean((String) first).replaceAll("[\\p{Cntrl}]", " ").trim();
+        if (detail.isEmpty()) return "The guest exited before completing its checks.";
+        return detail.length() <= 512 ? detail : detail.substring(0, 512) + "…";
+    }
+    private static String clean(String value) {
+        return (value == null ? "" : value).replaceAll("(?i)(password|pwd|token|secret)(\\s*[=:]\\s*)([^;\\s]+)", "$1$2[redacted]");
+    }
+    private static String message(Throwable e) { return clean(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()); }
+    private String sha(File file) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        try (InputStream in = new FileInputStream(file)) {
+            byte[] data = new byte[1024 * 1024]; int count;
+            while ((count = in.read(data)) != -1) { check(); digest.update(data, 0, count); }
+        }
+        return hex(digest.digest());
+    }
+    private static String hex(byte[] bytes) {
+        StringBuilder out = new StringBuilder(); for (byte b : bytes) out.append(String.format(Locale.ROOT, "%02x", b & 255)); return out.toString();
+    }
+    private static JSONObject json(File file, long limit) throws Exception {
+        return new JSONObject(new String(read(file, limit), StandardCharsets.UTF_8));
+    }
+    private static byte[] read(File file, long limit) throws IOException {
+        try (InputStream in = new FileInputStream(file)) { return read(in, limit); }
+    }
+    private static void zipFile(ZipOutputStream out, String name, File file, long limit) throws IOException {
+        long expected = file.length(), copied = 0;
+        if (expected > limit) throw new IOException("Guest support archive exceeds size limit");
+        out.putNextEntry(new ZipEntry(name));
+        try (InputStream in = new FileInputStream(file)) {
+            byte[] buffer = new byte[65536]; int count;
+            while ((count = in.read(buffer)) != -1) {
+                if (copied + count > limit) throw new IOException("Guest support archive exceeds size limit");
+                out.write(buffer, 0, count); copied += count;
+            }
+        }
+        if (copied != expected) throw new IOException("Guest support archive changed during export");
+        out.closeEntry();
+    }
+    private static byte[] read(InputStream in, long limit) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(); byte[] bytes = new byte[8192]; int count;
+        while ((count = in.read(bytes)) != -1) {
+            if (out.size() + count > limit) throw new IOException("Support input exceeds size limit");
+            out.write(bytes, 0, count);
+        }
+        return out.toByteArray();
+    }
+    private static void write(File file, byte[] bytes) throws IOException {
+        file.getParentFile().mkdirs(); File part = new File(file.getParentFile(), file.getName() + ".part");
+        try (FileOutputStream out = new FileOutputStream(part)) { out.write(bytes); out.getFD().sync(); }
+        Files.move(part.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+    }
+    private static Object jsonValue(Object value) throws Exception {
+        if (value instanceof JSONObject) {
+            JSONObject source = (JSONObject) value; Map<String, Object> target = new LinkedHashMap<>();
+            for (Iterator<String> it = source.keys(); it.hasNext();) { String key = it.next(); target.put(key, jsonValue(source.get(key))); }
+            return target;
+        }
+        if (value instanceof JSONArray) {
+            JSONArray source = (JSONArray) value; List<Object> target = new ArrayList<>();
+            for (int i = 0; i < source.length(); i++) target.add(jsonValue(source.get(i))); return target;
+        }
+        return value;
+    }
+    private static void zipText(ZipOutputStream out, String name, String text) throws IOException {
+        zipBytes(out, name, text.getBytes(StandardCharsets.UTF_8));
+    }
+    private static void zipBytes(ZipOutputStream out, String name, byte[] bytes) throws IOException {
+        out.putNextEntry(new ZipEntry(name)); out.write(bytes); out.closeEntry();
+    }
+}

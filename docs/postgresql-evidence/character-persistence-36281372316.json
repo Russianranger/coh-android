@@ -1,0 +1,1052 @@
+{
+  "status": "character_persistence_validation_failed",
+  "started_utc": "2026-09-27T00:12:16.041279+00:00",
+  "failures": [
+    "TestClient console observer failed: GetConsoleScreenBufferInfo failed: [WinError 233] No process is on the other end of the pipe."
+  ],
+  "phases": [
+    {
+      "phase": "first_services_ready",
+      "time_utc": "2026-09-27T00:16:14.867409+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "account_empty",
+      "time_utc": "2026-09-27T00:16:16.369767+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "created_connected",
+      "time_utc": "2026-09-27T00:16:34.185518+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "influence_observed_while_connected",
+      "time_utc": "2026-09-27T00:16:38.109054+00:00",
+      "status": "passed",
+      "value": 12345,
+      "scope": "CMD debug live entity conPrintf response plus connected MapId1 status; no forced save"
+    },
+    {
+      "phase": "protocol_logout_committed",
+      "time_utc": "2026-09-27T00:16:44.124477+00:00",
+      "status": "passed",
+      "quitnow_is_save_ack": false,
+      "client_forced_stop_before_commit": false
+    }
+  ],
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+  "binary_sha256": {
+    "DbServer.exe": "fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8",
+    "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+    "TestClient.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31"
+  },
+  "schema_report_sha256": "ae73b29e193d34950be2043c8fb0ef41b9055d75d573f83e6059e12d95f1a5bf",
+  "comparison_report_sha256": "5425672253f7e6f9de4751500115052ac9ca1f0d2fe78471ddeec93add47eb4b",
+  "comparison_inputs_sha256": "078fe831204363a957100b98bebc5d9616ae425e6f9947ff2c1022fc5d297ca9",
+  "one_map_report_sha256": "ef45cc77ca53dfc00b4a44c7a61c1f13f8a0a5a4368b4f0b247f5ebea5b1b06c",
+  "source_contract": {
+    "list_id": 3,
+    "map_id": 1,
+    "map_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+    "influence": 12345,
+    "source_sha256": {
+      "Utilities/TestClient/src/main.c": "cac8255edf1946c910386669856040342bc0e5900695a564c8522622bd38ed83",
+      "Utilities/TestClient/src/testClientCmdParse.c": "c0a31cdaedfa91fde32f4236f6fbc2f78eb171d8848dc7fd78c41f9c97975dd6",
+      "DBServer/src/status.c": "2856f764f8da7daeb695cc08fe35d6008957d9b1d1108d807585214faadd5174",
+      "Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+      "MapServer/src/cmdparse/cmdserver.c": "914c1eb79ff79c35c31f8aada3826dcb51757e7cfc519495bfae84340958f57b",
+      "Utilities/TestClient/src/externs.c": "4ea3b83f408e447cd189f49b18527fa3d395b92b63cd2b2c20676ebada5575bb",
+      "MapServer/src/cmdparse/cmdservercsr.c": "8f50b7d05468692e7de3833d7449c9a36446ab3672abe884e19497bce36c65aa",
+      "Utilities/TestClient/src/chatter.c": "ab7a72bb24bc5231234e5cc4cb1b5d6ecb1c3f31a30ececb3d1f26487139b3f2",
+      "Utilities/TestClient/src/win_init.c": "e7ae3630c5a44ee3452f743af0e7aa99a629d40f38f64ef797c96fbf184e9c3c",
+      "libs/UtilitiesLib/src/utils/utils.c": "9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf"
+    },
+    "resume_scope": "Stock order-sensitive -justlogin -character clears CREATE and STAY_CONNECTED",
+    "quit_ack_scope": "QuitNow confirms the request only; server status plus committed SQL are required"
+  },
+  "selected_sql_contract": {
+    "fields": {
+      "ents": [
+        "containerid",
+        "authid",
+        "authname",
+        "name",
+        "class",
+        "origin",
+        "level",
+        "experiencepoints",
+        "influencepoints",
+        "description",
+        "motto",
+        "datecreated"
+      ],
+      "ents2": [
+        "containerid",
+        "subid",
+        "curbuild",
+        "originalprimary",
+        "originalsecondary",
+        "praetorianprogress",
+        "playersubtype",
+        "influencetype"
+      ],
+      "powers": [
+        "containerid",
+        "subid",
+        "powerid",
+        "categoryname",
+        "powersetname",
+        "powername",
+        "powerlevelbought",
+        "powernumboostsbought",
+        "powersetlevelbought",
+        "buildnum",
+        "uniqueid"
+      ],
+      "costumeparts": [
+        "containerid",
+        "subid",
+        "name",
+        "geom",
+        "tex1",
+        "tex2",
+        "displayname",
+        "region",
+        "bodyset",
+        "color1",
+        "color2",
+        "costumenum",
+        "fxname",
+        "color3",
+        "color4"
+      ]
+    },
+    "row_keys": {
+      "ents": [
+        "containerid"
+      ],
+      "ents2": [
+        "containerid",
+        "subid"
+      ],
+      "powers": [
+        "containerid",
+        "subid"
+      ],
+      "costumeparts": [
+        "containerid",
+        "subid"
+      ]
+    },
+    "separate_progression_field": "ents.logincount",
+    "expected_influence": 12345
+  },
+  "port_preflight": [
+    {
+      "service": "postgresql",
+      "protocol": "TCP",
+      "port": 15437,
+      "available_before_start": true
+    },
+    {
+      "service": "dbserver",
+      "protocol": "TCP",
+      "port": 6997,
+      "available_before_start": true
+    },
+    {
+      "service": "map_client",
+      "protocol": "UDP",
+      "port": 7001,
+      "available_before_start": true
+    }
+  ],
+  "diagnostic_version": "coh-persistence-diagnostic",
+  "diagnostic_version_source": "diagnostic fallback; reference package contains no patch version",
+  "version_compatibility_validated": false,
+  "no_version_check": true,
+  "testclient_console_capture": "Owned helper attaches to stock GUI console before launcher version reply and retains bounded screen buffer through client exit",
+  "character_persistence_validated": false,
+  "gameplay_validated": false,
+  "android_execution_validated": false,
+  "scope": "Fresh fake-auth create, influence command, protocol logout, committed SQL, service restart and short exact-name resume",
+  "network_scope": "Loopback queries; stock game listeners still bind INADDR_ANY on the private disposable host",
+  "raw_evidence_private": true,
+  "status_samples": [
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T00:14:59.900545+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T00:15:02.695058+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T00:15:05.466461+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T00:15:08.259010+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T00:15:11.048154+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T00:15:13.854898+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:15:16.646882+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:15:18.803182+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:15:23.130151+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:15:27.295322+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:15:31.277324+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:15:35.743078+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:15:39.826974+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:15:43.891880+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:15:48.027269+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:15:52.151789+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:15:56.355471+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T00:16:00.529081+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "raw": "City_01_01.txt S: 3/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-27T00:16:04.732095+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "raw": "City_01_01.txt S: 7/7  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-27T00:16:08.859196+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 0,
+      "stats_age_seconds": 0,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 0/0  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T00:16:13.101989+00:00"
+    }
+  ],
+  "character_status_samples": [
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T00:16:31.369689+00:00",
+      "phase": "created",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T00:16:38.109054+00:00",
+      "phase": "currency",
+      "character_id": 1
+    },
+    {
+      "loaded": false,
+      "connected": false,
+      "in_map_transfer": false,
+      "sampled_utc": "2026-09-27T00:16:43.822999+00:00",
+      "phase": "logout",
+      "character_id": 1
+    }
+  ],
+  "snapshots": {
+    "after_protocol_logout": {
+      "identity": {
+        "containerid": 1,
+        "authid": 1461315647,
+        "authname": "CohP93ad339811",
+        "name": "TEST60170"
+      },
+      "login_count": 1,
+      "rows": {
+        "ents": [
+          {
+            "containerid": 1,
+            "authid": 1461315647,
+            "authname": "CohP93ad339811",
+            "name": "TEST60170",
+            "class": 249,
+            "origin": 253,
+            "level": null,
+            "experiencepoints": null,
+            "influencepoints": 12345,
+            "description": "Bots are the\\tway to go",
+            "motto": "TEST60170",
+            "datecreated": "2026-09-27T00:16:24"
+          }
+        ],
+        "ents2": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "curbuild": null,
+            "originalprimary": "Dark_Melee",
+            "originalsecondary": "Fiery_Aura",
+            "praetorianprogress": null,
+            "playersubtype": null,
+            "influencetype": null
+          }
+        ],
+        "powers": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "powerid": 1,
+            "categoryname": 2312,
+            "powersetname": 2312,
+            "powername": 3116,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1684031311
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "powerid": 2,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 408,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1327800208
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "powerid": 3,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6759,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 446960276
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "powerid": 4,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6756,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1598813304
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "powerid": 5,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6740,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 49739768
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "powerid": 6,
+            "categoryname": 4315,
+            "powersetname": 3344,
+            "powername": 549,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 2078669040
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "powerid": 7,
+            "categoryname": 4320,
+            "powersetname": 3401,
+            "powername": 1512,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 407355682
+          }
+        ],
+        "costumeparts": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "name": null,
+            "geom": 16296,
+            "tex1": 18022,
+            "tex2": 18085,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "name": null,
+            "geom": 18125,
+            "tex1": 17995,
+            "tex2": 19618,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 18125,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "name": null,
+            "geom": 20630,
+            "tex1": 20645,
+            "tex2": 20646,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20551,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "name": null,
+            "geom": 23565,
+            "tex1": 18828,
+            "tex2": 23566,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 18125,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "name": null,
+            "geom": 23154,
+            "tex1": 17962,
+            "tex2": 18482,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "name": null,
+            "geom": 24004,
+            "tex1": 17312,
+            "tex2": 17313,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 18125,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "name": null,
+            "geom": 20622,
+            "tex1": 20620,
+            "tex2": 20621,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20551,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "name": null,
+            "geom": 20579,
+            "tex1": 20579,
+            "tex2": 20580,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20551,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "name": null,
+            "geom": 18125,
+            "tex1": 17679,
+            "tex2": 19232,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 18125,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 10,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 18125,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 13,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20551,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 27,
+            "name": null,
+            "geom": 22931,
+            "tex1": 17906,
+            "tex2": 17907,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 6702080,
+            "color2": 2228326,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          }
+        ]
+      }
+    }
+  },
+  "account": "CohP93ad339811",
+  "redacted_logs": [
+    {
+      "file": "selected-diagnostics.txt",
+      "sha256": "a74a5bdb2bf2ce140f9213fedd317c40128d3bb64570226087a8565e6cf1fc1d",
+      "bytes": 441,
+      "scope": "Selected diagnostics; complete raw logs and container payloads remain private"
+    }
+  ],
+  "benign_catalog_notices": {
+    "count": 8,
+    "lines": [
+      "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "260927 00:14:52 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "260927 00:14:52 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "260927 00:14:52 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "260927 00:14:52 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping"
+    ],
+    "line_limit": 100
+  },
+  "attribute_mapping_sha256": {
+    "attributes": "19a5b30a15442027e6ee6a05d1cd43898c353334bb2cb10e4ceb1aefaeb5b097",
+    "badgestatsattributes": "cc37f654c2a7160a4191c553d3a726eb904bfef40d6eee172f05197d4066411c",
+    "pophelpattributes": "aadbef3e6bb10c9945d6ec166d30aaec0c386c607e47ab1e6931fc1a6ca320bf"
+  },
+  "character": {
+    "container_id": 1,
+    "name": "TEST60170",
+    "account": "CohP93ad339811"
+  },
+  "influence_requested_utc": "2026-09-27T00:16:34.186520+00:00",
+  "live_currency_evidence": {
+    "player": "TEST60170",
+    "account": "CohP93ad339811",
+    "influence": 12345,
+    "time_utc": "2026-09-27T00:16:35.874333+00:00",
+    "sequence": 15
+  },
+  "quit_requested_utc": "2026-09-27T00:16:40.035382+00:00",
+  "first_session_pipe": {
+    "client_pid": 4312,
+    "pid_verified": true,
+    "version_requests": 1,
+    "disconnected": false,
+    "events": [
+      {
+        "kind": "PID",
+        "value": "4312",
+        "time_utc": "2026-09-27T00:16:16.962962+00:00",
+        "sequence": 1
+      },
+      {
+        "kind": "Status",
+        "value": "Loading",
+        "time_utc": "2026-09-27T00:16:16.963496+00:00",
+        "sequence": 3
+      },
+      {
+        "kind": "AuthName",
+        "value": "CohP93ad339811",
+        "time_utc": "2026-09-27T00:16:16.963496+00:00",
+        "sequence": 4
+      },
+      {
+        "kind": "VersionRequest",
+        "value": "NULL",
+        "time_utc": "2026-09-27T00:16:16.963496+00:00",
+        "sequence": 5
+      },
+      {
+        "kind": "Status",
+        "value": "Connecting",
+        "time_utc": "2026-09-27T00:16:24.634173+00:00",
+        "sequence": 6
+      },
+      {
+        "kind": "MapName",
+        "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "time_utc": "2026-09-27T00:16:24.990687+00:00",
+        "sequence": 9
+      },
+      {
+        "kind": "Player",
+        "value": "TEST60170",
+        "time_utc": "2026-09-27T00:16:24.990687+00:00",
+        "sequence": 10
+      },
+      {
+        "kind": "Status",
+        "value": "Running",
+        "time_utc": "2026-09-27T00:16:24.990687+00:00",
+        "sequence": 12
+      },
+      {
+        "kind": "QuitNow",
+        "value": "",
+        "time_utc": "2026-09-27T00:16:40.103952+00:00",
+        "sequence": 16
+      }
+    ]
+  },
+  "launcher_sessions": [
+    {
+      "client_pid": 4312,
+      "pid_verified": true,
+      "version_requests": 1,
+      "disconnected": true,
+      "events": [
+        {
+          "kind": "PID",
+          "value": "4312",
+          "time_utc": "2026-09-27T00:16:16.962962+00:00",
+          "sequence": 1
+        },
+        {
+          "kind": "Status",
+          "value": "Loading",
+          "time_utc": "2026-09-27T00:16:16.963496+00:00",
+          "sequence": 3
+        },
+        {
+          "kind": "AuthName",
+          "value": "CohP93ad339811",
+          "time_utc": "2026-09-27T00:16:16.963496+00:00",
+          "sequence": 4
+        },
+        {
+          "kind": "VersionRequest",
+          "value": "NULL",
+          "time_utc": "2026-09-27T00:16:16.963496+00:00",
+          "sequence": 5
+        },
+        {
+          "kind": "Status",
+          "value": "Connecting",
+          "time_utc": "2026-09-27T00:16:24.634173+00:00",
+          "sequence": 6
+        },
+        {
+          "kind": "MapName",
+          "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+          "time_utc": "2026-09-27T00:16:24.990687+00:00",
+          "sequence": 9
+        },
+        {
+          "kind": "Player",
+          "value": "TEST60170",
+          "time_utc": "2026-09-27T00:16:24.990687+00:00",
+          "sequence": 10
+        },
+        {
+          "kind": "Status",
+          "value": "Running",
+          "time_utc": "2026-09-27T00:16:24.990687+00:00",
+          "sequence": 12
+        },
+        {
+          "kind": "QuitNow",
+          "value": "",
+          "time_utc": "2026-09-27T00:16:40.103952+00:00",
+          "sequence": 16
+        }
+      ]
+    }
+  ],
+  "processes": [
+    {
+      "label": "first-dbserver",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 122.438
+    },
+    {
+      "label": "first-baseline-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 110.672
+    },
+    {
+      "label": "first-baseline-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 107.563
+    },
+    {
+      "label": "first-baseline-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 104.782
+    },
+    {
+      "label": "first-baseline-3",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 102.0
+    },
+    {
+      "label": "first-baseline-4",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 99.219
+    },
+    {
+      "label": "first-baseline-5",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 96.407
+    },
+    {
+      "label": "first-baseline-6",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 93.61
+    },
+    {
+      "label": "first-atlas-park",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 92.672
+    },
+    {
+      "label": "first-ready-7",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 91.657
+    },
+    {
+      "label": "first-ready-8",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 87.532
+    },
+    {
+      "label": "first-ready-9",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 83.079
+    },
+    {
+      "label": "first-ready-10",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 79.063
+    },
+    {
+      "label": "first-ready-11",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 74.829
+    },
+    {
+      "label": "first-ready-12",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 70.547
+    },
+    {
+      "label": "first-ready-13",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 66.532
+    },
+    {
+      "label": "first-ready-14",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 62.407
+    },
+    {
+      "label": "first-ready-15",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 58.266
+    },
+    {
+      "label": "first-ready-16",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 54.11
+    },
+    {
+      "label": "first-ready-17",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 49.938
+    },
+    {
+      "label": "first-ready-18",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 45.719
+    },
+    {
+      "label": "first-ready-19",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 41.579
+    },
+    {
+      "label": "first-ready-20",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 37.375
+    },
+    {
+      "label": "create-client",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 32.875
+    },
+    {
+      "label": "find-created-character",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 22.813
+    },
+    {
+      "label": "created-status-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 18.954
+    },
+    {
+      "label": "currency-status-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 12.219
+    },
+    {
+      "label": "logout-status-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 6.5
+    },
+    {
+      "label": "restart-dbserver",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 2.141
+    }
+  ],
+  "console_observers": [
+    {
+      "label": "create-client",
+      "ready": true,
+      "method": "exact_pid_console_screen_buffer",
+      "raw_evidence_private": true,
+      "buffer_rows_limit": 16384,
+      "capture_byte_limit": 16777216,
+      "width": 200,
+      "height": 16384,
+      "snapshots": 1,
+      "used_rows": 14,
+      "observer_error": "GetConsoleScreenBufferInfo failed: [WinError 233] No process is on the other end of the pipe.",
+      "observer": {
+        "label": "create-client-console-observer",
+        "exit_code": 1,
+        "forced_stop": false,
+        "elapsed_seconds": 32.86
+      }
+    }
+  ],
+  "shutdown_scope": "Owned disposable processes stopped; graceful whole-server shutdown remains unvalidated",
+  "finished_utc": "2026-09-27T00:16:49.314447+00:00"
+}

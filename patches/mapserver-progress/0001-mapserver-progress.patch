@@ -1,0 +1,225 @@
+--- a/MapServer/CMakeLists.txt
++++ b/MapServer/CMakeLists.txt
+@@ -526,6 +526,7 @@
+ 	src/svr/svr_init.c
+ 	src/svr/svr_player.c
+ 	src/svr/svr_tick.c
++	src/svr/wine_map_progress.c
+ 	src/taskforce.c
+ 	src/taskpvp.c
+ 	src/taskRandom.c
+--- a/MapServer/src/svr/svr_init.c
++++ b/MapServer/src/svr/svr_init.c
+@@ -1,4 +1,5 @@
+ #include <conio.h>
++#include <stdlib.h>
+ #include "storyarc/storyarc.h"
+ #include <utilitieslib/utils/StringUtil.h>
+ #include "entity/character_inventory.h"
+@@ -53,6 +54,7 @@
+ #include "language/langServerUtil.h"
+ #include "entity/load_def.h" // for load_AllDefs
+ #include <utilitieslib/utils/FolderCache.h>
++#include "wine_map_progress.h"
+ #include <utilitieslib/utils/textparser.h>
+ #include <utilitieslib/utils/sysutil.h>        // for getExecutableName()
+ #include "group/groupfilelib.h"
+@@ -1933,6 +1935,7 @@
+ int __cdecl main(int argc,char **argv)
+ {
+     int        startup_timer;
++    int        map_progress_status;
+ 
+ #if defined(_M_X64)
+     #pragma message("Don't even think about running 64 bit compiled MapServer binaries. The only reason they are compile-able in this state is to simplify batch builds")
+@@ -2008,6 +2011,19 @@
+     // Additionally, no console output can be outputted before this, otherwise it breaks
+     // -getcharacter and other -dbquery command lines
+ 
++    /* Direct Win32 observer I/O begins only after argument/file-mode setup. */
++    map_progress_status = cohMapProgressInit();
++    if (map_progress_status < 0) {
++        fprintf(stderr, "MapServer progress initialization failed (Windows error %lu).\n", GetLastError());
++        fflush(stderr);
++        return 2;
++    }
++    if (map_progress_status > 0 && atexit(cohMapProgressClose)) {
++        cohMapProgressClose();
++        return 2;
++    }
++    cohMapProgressMark(COH_MAP_STAGE_STARTUP);
++
+     trickGoogleDesktopDll(server_state.silent);
+ 
+     if(server_state.create_bins)
+@@ -2145,26 +2161,38 @@
+         if (map_batch_cmds)
+             groupdbRunBatch(map_batch_cmds);
+ 
++        cohMapProgressMark(COH_MAP_STAGE_MAP_LOAD);
+         groupLoadMap(db_state.map_name,0,!server_state.beaconProcessOnLoad);
++        cohMapProgressMark(COH_MAP_STAGE_DB_SETUP);
+         dbSetupMap();
++        cohMapProgressMark(COH_MAP_STAGE_READY_PUBLISH);
+         dbReadyForPlayers();
++        cohMapProgressMark(COH_MAP_STAGE_READY_PUBLISHED);
+     }
+ 
+     //memCheckDumpAllocs();
++    cohMapProgressMark(COH_MAP_STAGE_RUNTIME_PRIORITY);
+     setRuntimePriority();
++    cohMapProgressMark(COH_MAP_STAGE_RUNTIME_PRIORITY_DONE);
+     if (isDevelopmentMode())
+     {
+         loadstart_printf("Checking memory.. ");
++        cohMapProgressMark(COH_MAP_STAGE_HEAP_VALIDATE);
+         assert(heapValidateAll());
++        cohMapProgressMark(COH_MAP_STAGE_HEAP_VALIDATED);
+         loadend_printf("done");
+         loadstart_printf("Verifying SG permission tables.. ");
++        cohMapProgressMark(COH_MAP_STAGE_SG_VERIFY);
+         sgroup_verifyPermissionTable();
++        cohMapProgressMark(COH_MAP_STAGE_SG_VERIFIED);
+         loadend_printf("done");
+     }
+ 
+     // This needs to stay above the groupLoadMakeAllBin call, since the folder cache needs
+     // to get updated when files change that might get loaded in the next group load
++    cohMapProgressMark(COH_MAP_STAGE_CALLBACKS_ENABLE);
+     FolderCacheEnableCallbacks(1);
++    cohMapProgressMark(COH_MAP_STAGE_CALLBACKS_ENABLED);
+ 
+     // if we're creating bin files exit on completion
+     if( server_state.map_stats || server_state.map_minimaps)
+@@ -2200,6 +2228,7 @@
+         return 0;
+     }
+ 
++    cohMapProgressMark(COH_MAP_STAGE_RANDOM_SEED);
+     rule30Seed(timerCpuTicks64());
+     srand(timerCpuTicks64());
+ 
+@@ -2211,14 +2240,19 @@
+ //    ai_state.noNPCGroundSnap = isDevelopmentMode();
+     server_state.safe_player_count = 310;
+ 
++    cohMapProgressMark(COH_MAP_STAGE_ITEM_POWER_REQUEST);
+     requestItemOfPowerGameStateUpdate();
++    cohMapProgressMark(COH_MAP_STAGE_ITEM_POWER_REQUESTED);
+ 
+     // starting any zone scripts for this map
+ //    ZoneScriptsStart(); // now done in initmap
+ 
+     // stop queueing errors
++    cohMapProgressMark(COH_MAP_STAGE_ERROR_QUEUE_DRAIN);
+     ErrorvEndQueueing();
+-
++    cohMapProgressMark(COH_MAP_STAGE_ERROR_QUEUE_DRAINED);
++
++    cohMapProgressMark(COH_MAP_STAGE_READY_STDOUT);
+     printfColor(COLOR_RED|COLOR_GREEN|COLOR_BLUE | COLOR_BRIGHT, "Server ready.");
+     printf(" (took %f seconds)\n",timerElapsed(startup_timer));
+ 
+@@ -2226,9 +2260,11 @@
+     // This lets the launcher update it's metrics on starting maps for load balancing
+     if (db_state.from_launcher)
+     {
++        cohMapProgressMark(COH_MAP_STAGE_LAUNCHER_CONTACT);
+         contactLauncher(); // *After* parsing the -cookie and -map_id args!
+     }
+ 
++    cohMapProgressMark(COH_MAP_STAGE_LATE_STARTUP_DONE);
+     timerFree(startup_timer);
+     if (server_state.prune)
+         return 0;
+@@ -2238,6 +2274,7 @@
+ 
+     for(;;)
+     {
++        cohMapProgressMark(COH_MAP_STAGE_LOOP_PRE_TICK);
+         timerTickBegin();
+ 
+         startProfilingCPU();
+@@ -2246,11 +2283,14 @@
+             svrTick();
+         PERFINFO_AUTO_STOP_CHECKED("svrTick");
+ 
++        cohMapProgressMark(COH_MAP_STAGE_LOOP_POST_TICK);
+         endProfilingCPU();
+ 
+         timerTickEnd();
+ 
++        cohMapProgressMark(COH_MAP_STAGE_SLEEP);
+         sleepAndCalcTimers();
++        cohMapProgressMark(COH_MAP_STAGE_SLEEP_DONE);
+     }
+     EXCEPTION_HANDLER_END
+ }
+--- a/MapServer/src/svr/svr_tick.c
++++ b/MapServer/src/svr/svr_tick.c
+@@ -21,6 +21,7 @@
+ #include "dbcomm/dbmapxfer.h"
+ #include <utilitieslib/network/net_link.h>
+ #include <utilitieslib/utils/FolderCache.h>
++#include "wine_map_progress.h"
+ #include "dbcomm/dbquery.h"
+ #include "entity/friends.h"
+ #include "container/containerEmail.h"
+@@ -1961,7 +1962,9 @@
+     checkDbReconnect();
+ 
+     PERFINFO_AUTO_START("dbComm", 1);
++        cohMapProgressMark(COH_MAP_STAGE_DB_COMM);
+         dbComm();
++        cohMapProgressMark(COH_MAP_STAGE_DB_COMM_DONE);
+     PERFINFO_AUTO_STOP();
+ 
+     PERFINFO_AUTO_START("shardCommMonitor", 1);
+@@ -2002,7 +2005,9 @@
+     PERFINFO_AUTO_STOP();
+ 
+     PERFINFO_AUTO_START("FolderCacheDoCallbacks", 1);
++        cohMapProgressMark(COH_MAP_STAGE_FOLDER_CALLBACKS);
+         FolderCacheDoCallbacks();
++        cohMapProgressMark(COH_MAP_STAGE_FOLDER_CALLBACKS_DONE);
+     PERFINFO_AUTO_STOP();
+ 
+     PERFINFO_AUTO_START("mpCompactPools", 1);
+@@ -2030,14 +2035,19 @@
+ 
+ void svrTick()
+ {
++    cohMapProgressMark(COH_MAP_STAGE_TICK_BEGIN);
++    cohMapProgressMark(COH_MAP_STAGE_TICK_TOP);
+     PERFINFO_AUTO_START("svrTickTop", 1);
+         svrTickTop();
+     PERFINFO_AUTO_STOP();
+-
++    cohMapProgressMark(COH_MAP_STAGE_TICK_TOP_DONE);
++
++    cohMapProgressMark(COH_MAP_STAGE_ENTITY_UPDATE);
+     PERFINFO_AUTO_START("updateGameStateForEachEntity", 1);
+         updateGameStateForEachEntity(TIMESTEP/30.0f);
+     PERFINFO_AUTO_STOP_CHECKED("updateGameStateForEachEntity");
+ 
++    cohMapProgressMark(COH_MAP_STAGE_GAME_LOGIC);
+     if(!server_visible_state.pause)
+     {
+         PERFINFO_AUTO_START("nwStepScenes", 1);
+@@ -2073,6 +2083,7 @@
+         PERFINFO_AUTO_STOP();
+     }
+ 
++    cohMapProgressMark(COH_MAP_STAGE_TICK_BOTTOM);
+     PERFINFO_AUTO_START("svrTickBottom", 1);
+         PERFINFO_AUTO_START("playerCheckFailedConnections", 1);
+             playerCheckFailedConnections();
+@@ -2102,5 +2113,6 @@
+             beaconRequestUpdate();
+         PERFINFO_AUTO_STOP();
+     PERFINFO_AUTO_STOP();
+-}
+-
++    cohMapProgressMark(COH_MAP_STAGE_TICK_DONE);
++}
++

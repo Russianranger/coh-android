@@ -1,0 +1,165 @@
+name: Thor bounded storage and fresh-profile recovery
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-storage-recovery.yml
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageAudit.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageFiles.java
+      - android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java
+      - docs/COH-Atlas-Gameplay-0.13.2-testing.txt
+      - tools/android/interactive/build_storage_recovery_apk.py
+      - tools/android/interactive/qualify_storage_recovery.py
+      - tools/android/interactive/test_storage_recovery_package.py
+      - tools/android/interactive/test_storage_audit.py
+      - tools/android/interactive/test_fresh_profile_recovery.py
+      - tools/android/interactive/test_runtime_setup_reuse.py
+      - tools/android/interactive/test_storage_recovery_ui.py
+      - tools/android/interactive/test_storage_ui.py
+      - tools/android/interactive/classify_storage_cleanup_change.py
+      - tools/android/interactive/test_classify_storage_cleanup_change.py
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-storage-recovery-publication
+  cancel-in-progress: false
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      recovery_required: ${{ steps.scope.outputs.recovery_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - id: scope
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_storage_cleanup_change.py
+  qualify:
+    needs: changes
+    if: needs.changes.outputs.recovery_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-storage-cleanup-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37129906760
+          github-token: ${{ github.token }}
+      - name: Recover immutable public 0.13.1 donor
+        run: python3 tools/android/interactive/build_storage_recovery_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.1.apk
+      - name: Qualify bounded storage recovery and all retained task save input guards
+        run: >-
+          python3 tools/android/interactive/qualify_storage_recovery.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.1.apk
+          --donor-build-report out/donor-evidence/storage-cleanup-apk-build-report.json
+          --output out/storage-recovery-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-storage-recovery-qualification
+          path: out/storage-recovery-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [changes, qualify]
+    if: needs.changes.outputs.recovery_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-storage-cleanup-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37129906760
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-storage-recovery-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover immutable public 0.13.1 donor
+        run: python3 tools/android/interactive/build_storage_recovery_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.1.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build recovery wrapper retaining all runtime payloads
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_storage_recovery_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.1.apk
+          --donor-build-report out/donor-evidence/storage-cleanup-apk-build-report.json
+          --qualification out/storage-recovery-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/storage-recovery/COH-Atlas-Gameplay-0.13.2.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-storage-recovery-packaging-evidence
+          path: |
+            out/storage-recovery/storage-recovery-apk-build-report.json
+            out/storage-recovery/COH-Atlas-Gameplay-0.13.2-testing.txt
+            out/storage-recovery/COH-Atlas-Gameplay-0.13.2.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-storage-recovery-apk
+          path: out/storage-recovery/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only qualified new 0.13.2 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_storage_recovery_apk.py publish
+          --apk out/storage-recovery/COH-Atlas-Gameplay-0.13.2.apk
+          --build-report out/storage-recovery/storage-recovery-apk-build-report.json
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.1.apk
+          --donor-build-report out/donor-evidence/storage-cleanup-apk-build-report.json
+          --qualification out/storage-recovery-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

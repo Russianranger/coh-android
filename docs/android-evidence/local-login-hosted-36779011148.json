@@ -1,0 +1,234 @@
+{
+  "format": 1,
+  "scope": "exact_apk_local_login_hosted_acceptance_with_independent_visual_review",
+  "run_id": 36779011148,
+  "repository_commit": "a80bc9c9df684779987dd6d1c146c66960db9458",
+  "status": "passed",
+  "apk": {
+    "name": "COH-Local-Login-0.8.0.apk",
+    "bytes": 373845468,
+    "sha256": "76723c1b2f52d351f48d3b46a15625414c3977fdb8230965d83ec939d2af88fd",
+    "artifact_id": 11126443280
+  },
+  "evidence_artifact": {
+    "id": 11127426734,
+    "bytes": 30670217,
+    "sha256": "60e73ca10d2794dea964948431d39fc78db6f682b80a1b0015aa910bcdf05acd"
+  },
+  "runtime_manifest_sha256": "dffa27903d0a538913d6a496003809b9cef3d2a5cfeb30520e835783c2e96508",
+  "session_id": "7542d74ca77f7572862927c011e6dbb2",
+  "client_pid": 904,
+  "stages": {
+    "client_inputs": "passed",
+    "client_private_data": "passed",
+    "persistent_server_profile": "passed",
+    "postgres_local_login": "passed",
+    "presentation_display": "passed",
+    "wine_initialization": "passed",
+    "local_login_odbc": "passed",
+    "local_dbserver_startup": "passed",
+    "win32_runtime_dll": "passed",
+    "actual_client_startup": "passed",
+    "actual_client_interaction": "passed"
+  },
+  "failures": [],
+  "startup_elapsed_seconds": 441.389,
+  "observation_seconds": 49.235,
+  "host_elapsed_seconds": 671.27,
+  "interaction_completion_reason": "finish_requested",
+  "local_login": {
+    "profile": "android-local-login",
+    "account": "COHLOCAL",
+    "database": "coh_local_android",
+    "database_preserved": true,
+    "profile_reused": false,
+    "server_ready": true,
+    "auth_id": 1353310574,
+    "character_count": 0,
+    "local_login_verified": true,
+    "local_account_verified": true,
+    "character_list_sent": true,
+    "character_list_response_sent": true,
+    "client_pid": 904,
+    "verified_utc": "2026-09-30T21:39:20.615811+00:00",
+    "evidence_scope": "current_owned_dbserver_successful_login_and_post_send_system_specs_plus_sql",
+    "log_paths": [
+      "logs/dbserver/SystemSpecs_2026-09-30-21-00-00.log",
+      "logs/dbserver/debug_2026-09-30-21-00-00.log"
+    ],
+    "version_policy": {
+      "mode": "explicit_dev_stamp_comparison_skipped",
+      "native_launcher_mode": "--local-login",
+      "client_option": "-noversioncheck 1",
+      "protocol_version_check_retained": true,
+      "protocol_check_basis": "reviewed_pinned_DbServer_handleLogin_source",
+      "source_binary_pin_verified": true,
+      "scope": "private_loopback_fake_auth_only"
+    }
+  },
+  "loopback_endpoints": [
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6971
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6974
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6976
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6977
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6979
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6980
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6982
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6984
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6989
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6992
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6996
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6997
+    },
+    {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 6998
+    },
+    {
+      "protocol": "udp",
+      "address": "127.0.0.1",
+      "port": 7000
+    }
+  ],
+  "post_login_captures": [
+    {
+      "file": "login-character-list-000.png",
+      "png_sha256": "cec5959a35cab8d2697ee28ece0fe500b38c96486ba4166a492388f15a83846f",
+      "frame_sha256": "c68c23e8df6497f419600d42465c77b7747b416068c42a1c1dba2929f0d195c3",
+      "frame_sequence": 1106,
+      "frame_generation": 4,
+      "session_id": "7542d74ca77f7572862927c011e6dbb2",
+      "client_pid": 904,
+      "width": 800,
+      "height": 600,
+      "elapsed_since_ready": 40.268,
+      "login_event_generation": 1,
+      "distinct_colors_capped": 8
+    },
+    {
+      "file": "login-character-list-001.png",
+      "png_sha256": "1734337765351b94fcc3984fe167a8a91fbd16066f960ab81abdc4bfd51bcec9",
+      "frame_sha256": "d3115d1539e85ff760bc59a263a2f767403ada570435c146db82346d55e7aada",
+      "frame_sequence": 1108,
+      "frame_generation": 4,
+      "session_id": "7542d74ca77f7572862927c011e6dbb2",
+      "client_pid": 904,
+      "width": 800,
+      "height": 600,
+      "elapsed_since_ready": 41.591,
+      "login_event_generation": 1,
+      "distinct_colors_capped": 8
+    },
+    {
+      "file": "login-character-list-002.png",
+      "png_sha256": "1734337765351b94fcc3984fe167a8a91fbd16066f960ab81abdc4bfd51bcec9",
+      "frame_sha256": "d3115d1539e85ff760bc59a263a2f767403ada570435c146db82346d55e7aada",
+      "frame_sequence": 1110,
+      "frame_generation": 4,
+      "session_id": "7542d74ca77f7572862927c011e6dbb2",
+      "client_pid": 904,
+      "width": 800,
+      "height": 600,
+      "elapsed_since_ready": 42.895,
+      "login_event_generation": 1,
+      "distinct_colors_capped": 8
+    }
+  ],
+  "root_visual_review": {
+    "character_selection_visual_validated": true,
+    "empty_character_selection_visible": true,
+    "server_used_total": "0/12",
+    "create_character_slots": 12,
+    "settings_closed_and_login_screen_recovered": true,
+    "reviewed_screenshot_sha256": {
+      "login-before-observe_login_after_settings.png": "0501593c1f22960cf58fdc11498fcc090d1810f890b7834380ad34cd910cd23a",
+      "login-character-list-000.png": "cec5959a35cab8d2697ee28ece0fe500b38c96486ba4166a492388f15a83846f",
+      "login-character-list-002.png": "1734337765351b94fcc3984fe167a8a91fbd16066f960ab81abdc4bfd51bcec9"
+    },
+    "note": "Manual screenshot review is separate from raw guest and host automation flags; the original reports were not changed."
+  },
+  "independent_validation": {
+    "exact_apk_guest_report_validator": "passed",
+    "external_observer_validator": "passed",
+    "apk_manifest_matches_host_report": true,
+    "nested_guest_report_matches_top_level": true,
+    "image_hashes_and_dimensions_verified": true,
+    "image_session_and_pid_verified": true,
+    "settings_recovery_fresh_frames": 3,
+    "post_login_frame_span_seconds": 2.627,
+    "finish_request_hash_verified": true
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "cleanup_complete": true,
+  "owned_child_records": 63,
+  "all_child_exit_codes_recorded": true,
+  "all_child_input_and_output_captures_closed": true,
+  "remaining_owned_workers": 0,
+  "inspection_failures": 0,
+  "presentation_socket_removed": true,
+  "process_exit_note": "Owned client and DbServer exit codes were 1 after Wine shutdown; the display exited 0 with forced_stop recorded. Every child was reaped and its input/output closed; acceptance does not require every terminated child to exit 0.",
+  "automated_checks": {
+    "interactive": 77,
+    "client_and_cache": 26,
+    "total": 103
+  },
+  "android_execution_validated": false,
+  "android_surface_validated": false,
+  "persistent_account_reopen_validated": false,
+  "character_creation_validated": false,
+  "mapserver_started": false,
+  "gameplay_validated": false,
+  "next_action": "One Thor local-login session using this APK as an in-place update; stop at the empty character-selection screen, Finish, and export the report. Do not repeat Atlas, Settings or general menu-input testing."
+}

@@ -1,0 +1,51 @@
+{
+  "format": 1,
+  "status": "physical_reopen_blocked_by_stale_session_output",
+  "review_date_utc": "2026-10-04",
+  "apk_version": "0.13.3",
+  "uploaded_evidence": {
+    "name": "coh-atlas-gameplay-20261004-021301.zip",
+    "bytes": 991333,
+    "sha256": "c666ac576bbef47662348db25d02590b7192c689cac44039662f3763a122b2e7"
+  },
+  "session_id": "4d1073f010bc4388ae76622f5bd52580",
+  "started_utc": "2026-10-04T02:12:10.866918+00:00",
+  "finished_utc": "2026-10-04T02:12:41.433229+00:00",
+  "failure": "Stale task helper delivery receipt",
+  "postgres_login_failed": false,
+  "passed_stages": [
+    "client_inputs",
+    "client_private_data",
+    "persistent_server_profile",
+    "postgres_local_login"
+  ],
+  "persistent_profile_reused": true,
+  "profile_ready_on_Android": true,
+  "database_preserved_by_policy": true,
+  "postgres_durability_verified": true,
+  "postgres_admin_and_fixture_queries_passed": true,
+  "postgres_graceful_shutdown": true,
+  "owned_processes_reaped": true,
+  "cleanup_verified": true,
+  "wine_started": false,
+  "DbServer_Atlas_and_graphical_client_started": false,
+  "helper_commands_requested_in_this_session": false,
+  "root_cause": "Android removePreviousGuestOutput omitted character-task-contact.json and character-task-completion.json. The retained guest correctly rejects either leftover receipt at reopen initialization. Exact stale file and prior session are not included in this export.",
+  "world_preparation": {
+    "file_count": 2904,
+    "verified_file_count": 2904,
+    "installed_files": 0,
+    "reused_files": 2904,
+    "reuse_validation": "pinned_content_verification",
+    "archive_read_bytes": 207803201,
+    "decoded_files": 0,
+    "decoded_payload_bytes": 0,
+    "preparation_elapsed_seconds": 28.008408
+  },
+  "startup_timing_qualified": false,
+  "prior_accepted_gameplay_and_storage_milestones_preserved": true,
+  "next_correction": "Retire only fixed transient task receipts under the prelaunch operation lock, preserve guest current-session guards, and explicitly select ordinary startup-only reopen without requiring an empty task journal. Preserve all saved profile/task/import/native state.",
+  "installed_runtime_matches_published_0_13_3": true,
+  "runtime_manifest_sha256": "80a4f3999c1981462f8082f2119f992720cf276b9fda399f209fab126737c513",
+  "native_supplement_matches_published_manifest": true
+}

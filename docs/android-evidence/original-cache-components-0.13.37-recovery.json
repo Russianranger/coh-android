@@ -1,0 +1,53 @@
+{
+  "format": 1,
+  "role": "exact_public_asset_component_recovery",
+  "read_only": true,
+  "native_processes_executed": 0,
+  "outer_base_volume_fully_downloaded_or_SHA_authenticated": false,
+  "outer_size": 1630092780,
+  "outer_published_digest": "6d6e3304e48b89f8fdb218754a57380b3108140ef31bddb30f699ebcf28c2e3d",
+  "components": {
+    "runtime/server-caches.zip": {
+      "pin": {
+        "bytes": 29825263,
+        "sha256": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17"
+      },
+      "zip_method": 0,
+      "CRC32": "c538714c",
+      "component_download_range": [
+        1600266031,
+        1630091293
+      ],
+      "source_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip"
+    },
+    "runtime/server-cache-manifest.json": {
+      "pin": {
+        "bytes": 39041,
+        "sha256": "4e1a4c9c148509ef34245768f64ca2be4bb83659db845c6ef94ed594666b3fff"
+      },
+      "zip_method": 0,
+      "CRC32": "794d0772",
+      "component_download_range": [
+        1600226926,
+        1600265966
+      ],
+      "source_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip"
+    },
+    "runtime/client-caches.zip": {
+      "pin": {
+        "bytes": 27071659,
+        "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+      },
+      "zip_method": 0,
+      "CRC32": "82d9c6d6",
+      "component_download_range": [
+        567396879,
+        594468537
+      ],
+      "source_url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip"
+    }
+  },
+  "inner_archive_all_CRCs_and93_payload_SHA256_verified": true,
+  "original_native_generation_and_consumption_records_preserved": true,
+  "expected_component_authority": "independently_audited_public0.13.36_APK_assets/runtime/asset-pack-manifest.json"
+}

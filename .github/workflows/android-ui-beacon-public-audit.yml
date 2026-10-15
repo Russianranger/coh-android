@@ -1,0 +1,408 @@
+name: Audit unchanged published UI and Atlas beacon APK
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-ui-beacon-public-audit.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-ui-beacon-published-readonly-audit
+  cancel-in-progress: false
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+  COH_RELEASED_SOURCE_COMMIT: '25f821da9e782281953412543057054abd8dd320'
+  COH_ORIGINAL_PUBLICATION_RUN: '37392793426'
+jobs:
+  audit:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Preserve exact published source bytes
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 25f821da9e782281953412543057054abd8dd320
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Ensure original SDK 35 audit tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/apksigner" ]; then
+            sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          fi
+      - name: Authenticate failed publication and exact retained proof artifacts
+        timeout-minutes: 20
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64
+          import hashlib
+          import json
+          import os
+          from pathlib import Path, PurePosixPath
+          import shutil
+          import stat
+          import subprocess
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          import zipfile
+          repo = 'Russianranger/coh-android'
+          released = os.environ['COH_RELEASED_SOURCE_COMMIT']
+          original_run_id = int(os.environ['COH_ORIGINAL_PUBLICATION_RUN'])
+          if subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip() != released:
+              raise ValueError('Only the pristine released source may be the qualification ROOT')
+          api_root = 'https://api.github.com/repos/' + repo
+          headers = {'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+              'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28'}
+          def api(path):
+              with urllib.request.urlopen(urllib.request.Request(api_root + path, headers=headers), timeout=30) as response:
+                  raw = response.read(8 * 1024 * 1024 + 1)
+              if len(raw) > 8 * 1024 * 1024:
+                  raise ValueError('Bounded GitHub JSON response exceeded limit')
+              return json.loads(raw)
+          run = api('/actions/runs/' + str(original_run_id))
+          if (run.get('id') != original_run_id or run.get('status') != 'completed'
+                  or run.get('conclusion') != 'failure' or run.get('head_sha') != released
+                  or run.get('head_branch') != 'codex/character-persistence-continuation'
+                  or run.get('path') != '.github/workflows/android-ui-beacon.yml'):
+              raise ValueError('The original failed publication run/source must remain explicit')
+          jobs = api('/actions/runs/' + str(original_run_id) + '/jobs?per_page=100')
+          if jobs.get('total_count') != 5:
+              raise ValueError('Exact original five-job publication evidence required')
+          by_id = {job['id']: job for job in jobs['jobs']}
+          qualifying = by_id.get(112042175166)
+          packaging = by_id.get(112043909987)
+          if (qualifying is None or qualifying.get('name') != 'qualify'
+                  or qualifying.get('status') != 'completed' or qualifying.get('conclusion') != 'success'
+                  or packaging is None or packaging.get('name') != 'apk'
+                  or packaging.get('status') != 'completed' or packaging.get('conclusion') != 'failure'):
+              raise ValueError('Actual qualification success and failed post-publication audit are required')
+          required_steps = {
+              'Build 0.13.14 retaining native gameplay SQL and Android shell': 'success',
+              'Publish only qualified new 0.13.14 release': 'success',
+              'Download and checksum the actually public release bytes': 'success',
+              'Audit public download with SDK signer payload and frozen source checks': 'failure',
+              'Record only completed public SDK and payload audit': 'skipped'}
+          for name, conclusion in required_steps.items():
+              rows = [step for step in packaging['steps'] if step['name'] == name]
+              if len(rows) != 1 or rows[0].get('conclusion') != conclusion:
+                  raise ValueError('Actual publication step evidence differs: ' + name)
+          if any(step.get('conclusion') == 'failure' and step['name'] not in required_steps
+                  for step in packaging['steps']):
+              raise ValueError('An unrelated original publication failure cannot be reused')
+          release = api('/releases/404193274')
+          if (release.get('id') != 404193274 or release.get('tag_name') != 'coh-atlas-gameplay-v0.13.14'
+                  or release.get('draft') is not False or release.get('prerelease') is not True):
+              raise ValueError('Exact actually public retained release required')
+          public_pins = {
+              'COH-Atlas-Gameplay-0.13.14.apk': {'id': 613990752, 'bytes': 1557338724,
+                  'sha256': '1dab30d097978e6d8b7e299e868a932d73c924410dcc20d4e6e51f36353b11ee'},
+              'COH-Atlas-Gameplay-0.13.14.apk.sha256': {'id': 613992002, 'bytes': 97,
+                  'sha256': '33bb99e08f70f96339e91dee6465bc66c2af96aeeae87b865c716b13177cc959'},
+              'COH-Atlas-Gameplay-0.13.14-testing.txt': {'id': 613992013, 'bytes': 3285,
+                  'sha256': '600f9f34e9c25f2fbb92ebe65afbbeb32ba00747541b137ef34a321a2197b396'}}
+          public_assets = {asset['name']: asset for asset in release['assets']}
+          if set(public_assets) != set(public_pins):
+              raise ValueError('Original three public release assets differ')
+          for name, pin in public_pins.items():
+              asset = public_assets[name]
+              if (asset.get('id') != pin['id'] or asset.get('size') != pin['bytes']
+                      or asset.get('digest') != 'sha256:' + pin['sha256'] or asset.get('state') != 'uploaded'):
+                  raise ValueError('Actually published release asset identity differs: ' + name)
+          specs = [{"id":11382141613,"name":"coh-ui-beacon-visual","run_id":37392793426,"source_commit":"25f821da9e782281953412543057054abd8dd320","bytes":907668082,"sha256":"fc700e0faf107b7db2bbd5ca63adac9626cd788c82d7a644f029e2405709eb55","directory":"out/ui-beacon-visual"},{"id":11381713754,"name":"coh-ui-beacon-qualification","run_id":37392793426,"source_commit":"25f821da9e782281953412543057054abd8dd320","bytes":6137683,"sha256":"4c42683fe1cad44f6bed1df5f0a649d36b0bc68761f91f2ad26e78d4ecc60c8a","directory":"out"},{"id":11381709625,"name":"coh-ui-beacon-packaging-evidence","run_id":37392793426,"source_commit":"25f821da9e782281953412543057054abd8dd320","bytes":12500422,"sha256":"336b5d84d685eecbf7fbff17cc3db88e473c31731219c2a3cbb60d7994e41b1b","directory":"out/ui-beacon-apk"},{"id":11381509108,"name":"coh-ui-beacon-native","run_id":37392793426,"source_commit":"25f821da9e782281953412543057054abd8dd320","bytes":33402802,"sha256":"94876148ae601f6345114412b84971559802cefcda00d06315a2d9f9418d25e6","directory":"out/ui-beacon-native"},{"id":11351519402,"name":"coh-reopen-startup-repair-packaging-evidence","run_id":37324515114,"source_commit":"be955678b4b82f889b31c4071b3b979b0aef6771","bytes":5562153,"sha256":"17fd1e762616bc5e1b8b1605990c9c8a943b791071f8c06f9912f1fbf209e63d","directory":"out/ui-beacon-donor/evidence"}]
+          artifact_records = []
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, request, fp, code, msg, response_headers, newurl):
+                  return None
+          authenticated = urllib.request.build_opener(NoRedirect())
+          def signed_artifact_url(artifact_id):
+              request = urllib.request.Request(api_root + '/actions/artifacts/' + str(artifact_id) + '/zip', headers=headers)
+              try:
+                  with authenticated.open(request, timeout=30):
+                      raise ValueError('Expected signed artifact redirect')
+              except urllib.error.HTTPError as error:
+                  if error.code not in (301, 302, 303, 307, 308):
+                      raise
+                  target = error.headers.get('Location', '')
+              parsed = urllib.parse.urlsplit(target)
+              if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password or parsed.fragment:
+                  raise ValueError('Unsafe signed artifact download target')
+              return target
+          staging = Path(os.environ['RUNNER_TEMP']) / 'coh-published-artifact-downloads'
+          staging.mkdir(exist_ok=False)
+          for spec in specs:
+              artifact = api('/actions/artifacts/' + str(spec['id']))
+              origin = artifact.get('workflow_run', {})
+              if (artifact.get('id') != spec['id'] or artifact.get('name') != spec['name']
+                      or artifact.get('size_in_bytes') != spec['bytes'] or artifact.get('expired') is not False
+                      or artifact.get('digest') != 'sha256:' + spec['sha256']
+                      or origin.get('id') != spec['run_id'] or origin.get('head_sha') != spec['source_commit']
+                      or origin.get('head_branch') != 'codex/character-persistence-continuation'
+                      or origin.get('repository_id') != 1368730125 or origin.get('head_repository_id') != 1368730125):
+                  raise ValueError('Exact retained artifact metadata differs: ' + spec['name'])
+              archive_path = staging / (str(spec['id']) + '.zip')
+              for attempt in range(3):
+                  deadline = time.monotonic() + 300
+                  digest, count = hashlib.sha256(), 0
+                  try:
+                      # Do not forward the GitHub authorization header to the signed storage URL.
+                      with urllib.request.urlopen(signed_artifact_url(spec['id']), timeout=20) as response, archive_path.open('xb') as output:
+                          if response.status != 200:
+                              raise ValueError('Signed artifact download did not return HTTP 200')
+                          while True:
+                              if time.monotonic() >= deadline:
+                                  raise TimeoutError('Bounded signed artifact download timed out')
+                              chunk = response.read(1024 * 1024)
+                              if not chunk:
+                                  break
+                              count += len(chunk)
+                              if count > spec['bytes']:
+                                  raise ValueError('Retained artifact exceeds exact original byte count')
+                              digest.update(chunk); output.write(chunk)
+                      if count != spec['bytes'] or digest.hexdigest() != spec['sha256']:
+                          raise ValueError('Retained artifact outer ZIP differs')
+                      break
+                  except Exception:
+                      archive_path.unlink(missing_ok=True)
+                      if attempt == 2:
+                          raise
+                      time.sleep(5)
+              target = Path(spec['directory']); target.mkdir(parents=True, exist_ok=True)
+              with zipfile.ZipFile(archive_path) as archive:
+                  entries = archive.infolist()
+                  if not entries or len(entries) > 4096 or sum(entry.file_size for entry in entries) > 2 * 1024**3:
+                      raise ValueError('Retained artifact exceeds extraction bounds')
+                  seen = set()
+                  for entry in entries:
+                      name = entry.filename
+                      if entry.is_dir():
+                          continue
+                      logical = PurePosixPath(name)
+                      if (not name or not name.isascii() or '\\' in name or ':' in name
+                              or name.startswith('/') or logical.as_posix() != name
+                              or any(part in ('', '.', '..') for part in logical.parts)
+                              or name.casefold() in seen or entry.flag_bits & 1
+                              or stat.S_IFMT(entry.external_attr >> 16) not in (0, stat.S_IFREG)
+                              or entry.file_size < 0 or entry.file_size > 2 * 1024**3):
+                          raise ValueError('Unsafe or unbounded retained artifact member')
+                      seen.add(name.casefold())
+                      destination = target.joinpath(*logical.parts)
+                      destination.parent.mkdir(parents=True, exist_ok=True)
+                      with archive.open(entry) as source, destination.open('xb') as output:
+                          shutil.copyfileobj(source, output, length=1024 * 1024)
+              archive_path.unlink()
+              artifact_records.append({'id': spec['id'], 'name': spec['name'], 'run_id': spec['run_id'],
+                  'source_commit': spec['source_commit'], 'bytes': count, 'sha256': digest.hexdigest(),
+                  'signed_outer_zip_verified': True})
+          external = Path(os.environ['RUNNER_TEMP']) / 'coh-published-review-source'
+          external.mkdir(exist_ok=False)
+          reviewed = {}
+          for name, blob_sha in (
+                  ('builder', '86bea0a3f0a24753affa52334fe653df06e818e4'),
+                  ('tests', '53685a11602e12590e8987e182c8497b91fa364a')):
+              value = api('/git/blobs/' + blob_sha)
+              if value.get('sha') != blob_sha or value.get('encoding') != 'base64':
+                  raise ValueError('Exact detached reviewed source Git blob required')
+              raw = base64.b64decode(value['content'], validate=False)
+              if not 0 < len(raw) < 1024**2 or value.get('size') != len(raw):
+                  raise ValueError('Reviewed source size differs')
+              git_sha = hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest()
+              if git_sha != blob_sha:
+                  raise ValueError('Reviewed source Git object identity differs')
+              path = external / (name + '.py')
+              path.write_bytes(raw)
+              reviewed[name] = {'git_blob_sha': blob_sha, 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
+          workflow = api('/contents/.github/workflows/android-ui-beacon-public-audit.yml?ref=' + os.environ['GITHUB_SHA'])
+          workflow_raw = base64.b64decode(workflow['content'])
+          if (workflow.get('encoding') != 'base64' or workflow.get('type') != 'file'
+                  or hashlib.sha1(b'blob ' + str(len(workflow_raw)).encode() + b'\0' + workflow_raw).hexdigest() != workflow.get('sha')):
+              raise ValueError('Actual auditor workflow source identity differs')
+          result = {'format': 1, 'original_publication_run': {
+                  'id': original_run_id, 'head_sha': released, 'status': run['status'], 'conclusion': run['conclusion'],
+                  'qualification_job': {'id': qualifying['id'], 'conclusion': qualifying['conclusion']},
+                  'apk_job': {'id': packaging['id'], 'conclusion': packaging['conclusion']},
+                  'actual_publication_steps': required_steps},
+              'original_artifacts': artifact_records, 'public_release_id': release['id'],
+              'public_release_assets': public_pins, 'reviewed_external_sources': reviewed,
+              'auditor_repository_commit': os.environ['GITHUB_SHA'],
+              'auditor_workflow': {'git_blob_sha': workflow['sha'], 'bytes': len(workflow_raw),
+                  'sha256': hashlib.sha256(workflow_raw).hexdigest()},
+              'released_source_commit': released}
+          Path('out/published-ui-audit-inputs.json').write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
+          print('Authenticated original failed publication, successful qualification and exact retained artifact ZIPs')
+          PY
+      - name: Download exact retained public 0.13.13 donor
+        timeout-minutes: 10
+        run: python3 tools/android/interactive/build_ui_beacon_apk.py download-donor --output out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+      - name: Download and hash the unchanged actually public APK and companion files
+        timeout-minutes: 10
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          import time
+          import urllib.request
+          inputs = json.loads(Path('out/published-ui-audit-inputs.json').read_bytes())
+          directory = Path('out/ui-beacon-public'); directory.mkdir(exist_ok=False)
+          url_root = 'https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.14/'
+          for name, pin in inputs['public_release_assets'].items():
+              destination = directory / name
+              for attempt in range(3):
+                  deadline, digest, count = time.monotonic() + 160, hashlib.sha256(), 0
+                  try:
+                      request = urllib.request.Request(url_root + name,
+                          headers={'User-Agent': 'coh-published-readonly-audit/0.13.14', 'Accept': 'application/octet-stream'})
+                      with urllib.request.urlopen(request, timeout=20) as response, destination.open('xb') as output:
+                          if response.status != 200:
+                              raise ValueError('Public release download did not return HTTP 200')
+                          while True:
+                              if time.monotonic() >= deadline:
+                                  raise TimeoutError('Bounded public release download timed out')
+                              chunk = response.read(1024 * 1024)
+                              if not chunk:
+                                  break
+                              count += len(chunk)
+                              if count > pin['bytes']:
+                                  raise ValueError('Public release exceeds original published byte count')
+                              digest.update(chunk); output.write(chunk)
+                      if count != pin['bytes'] or digest.hexdigest() != pin['sha256']:
+                          raise ValueError('Actual public release bytes differ from original published identity')
+                      break
+                  except Exception:
+                      destination.unlink(missing_ok=True)
+                      if attempt == 2:
+                          raise
+                      time.sleep(5)
+          print('Actual public APK and both public companion files match their original release SHA-256 and byte counts')
+          PY
+      - name: Run reviewed order regressions and full original SDK source and payload audit
+        timeout-minutes: 20
+        run: |
+          python3 - <<'PY'
+          import argparse
+          import ast
+          import hashlib
+          import importlib
+          import io
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+          import sys
+          import types
+          import unittest
+          root = Path.cwd()
+          released = os.environ['COH_RELEASED_SOURCE_COMMIT']
+          sys.dont_write_bytecode = True
+          sys.path[:0] = [str(root / 'tools/android/interactive'), str(root / 'tools/android'),
+              str(root / 'tools/android/dbserver'), str(root / 'tools'), str(root / 'android/guest')]
+          inputs = json.loads(Path('out/published-ui-audit-inputs.json').read_bytes())
+          external = Path(os.environ['RUNNER_TEMP']) / 'coh-published-review-source'
+          legacy_path = root / 'tools/android/interactive/build_ui_beacon_apk.py'
+          original = legacy_path.read_bytes()
+          if hashlib.sha1(b'blob ' + str(len(original)).encode() + b'\0' + original).hexdigest() != '94b3cedf9274f7649ca091dad2719cf2dcb0d915':
+              raise ValueError('Pristine released legacy builder Git blob differs')
+          legacy_ast, revised_ast = ast.parse(original), ast.parse((external / 'builder.py').read_bytes())
+          def single_function(tree):
+              matches = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'verify_derivative']
+              if len(matches) != 1:
+                  raise ValueError('Only one verify_derivative function may be grafted')
+              return matches[0]
+          old_function, fixed_function = single_function(legacy_ast), single_function(revised_ast)
+          if ast.dump(old_function.args) != ast.dump(fixed_function.args):
+              raise ValueError('Reviewed repair changes the legacy function signature')
+          def without_function(tree):
+              return ast.dump(ast.Module(body=[node for node in tree.body
+                  if not (isinstance(node, ast.FunctionDef) and node.name == 'verify_derivative')], type_ignores=[]))
+          if without_function(legacy_ast) != without_function(revised_ast):
+              raise ValueError('Reviewed builder contains an unrelated AST change')
+          legacy = importlib.import_module('build_ui_beacon_apk')
+          if legacy.ROOT != root:
+              raise ValueError('Qualification ROOT must remain the pristine released checkout')
+          exec(compile(ast.Module(body=[fixed_function], type_ignores=[]), str(external / 'builder.py'), 'exec'), legacy.__dict__)
+          tests_source = (external / 'tests.py').read_bytes()
+          tests = types.ModuleType('reviewed_published_ui_order_tests')
+          tests.__file__ = str(root / 'tools/android/interactive/test_ui_beacon_package.py')
+          sys.modules[tests.__name__] = tests
+          sys.modules['build_ui_beacon_apk'] = legacy
+          exec(compile(tests_source, str(external / 'tests.py'), 'exec'), tests.__dict__)
+          suite = unittest.defaultTestLoader.loadTestsFromModule(tests)
+          if suite.countTestCases() != 16:
+              raise ValueError('Every exact reviewed package regression is required')
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          if not result.wasSuccessful() or result.skipped or result.testsRun != 16:
+              raise ValueError('Reviewed audit/package regression failed or skipped')
+          if legacy_path.read_bytes() != original or legacy.ROOT != root:
+              raise ValueError('Released source files or qualification ROOT changed')
+          subprocess.run(['git', 'diff', '--exit-code', 'HEAD'], check=True)
+          commit = legacy.builder().source_commit(released)
+          args = argparse.Namespace(
+              apk=Path('out/ui-beacon-public/COH-Atlas-Gameplay-0.13.14.apk'),
+              build_report=Path('out/ui-beacon-apk/ui-beacon-apk-build-report.json'),
+              donor_apk=Path('out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk'),
+              donor_build_report=Path('out/ui-beacon-donor/evidence/reopen-startup-repair-apk-build-report.json'),
+              visual_directory=Path('out/ui-beacon-visual'), beacon_directory=Path('out/ui-beacon-native'),
+              qualification=Path('out/ui-beacon-qualification.json'),
+              build_tools=Path(os.environ['ANDROID_HOME']) / 'build-tools/35.0.0',
+              testing_notes=legacy.NOTES)
+          report, checksum, notes = legacy.verify_report(args, commit)
+          if (report['bytes'] != 1557338724
+                  or report['sha256'] != '1dab30d097978e6d8b7e299e868a932d73c924410dcc20d4e6e51f36353b11ee'
+                  or report['repository_commit'] != released):
+              raise ValueError('Audited report differs from the unchanged actual public APK')
+          qualification = report['qualification']
+          if (qualification['tests_run'] != 1102 or len(qualification['test_suites']) != 68
+                  or any(value['status'] != 'passed' or value['skipped'] != 0
+                      for value in qualification['test_suites'].values())
+                  or len(qualification['postgresql_emission_fixtures']) != 3
+                  or len(qualification['postgresql_levelup_fixtures']) != 4):
+              raise ValueError('Exact original complete qualification and seven real PostgreSQL fixtures required')
+          subprocess.run(['git', 'diff', '--exit-code', 'HEAD'], check=True)
+          receipt = {
+              'format': 2, 'status': 'passed',
+              'public_url': 'https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.14/COH-Atlas-Gameplay-0.13.14.apk',
+              'sha256': report['sha256'], 'bytes': report['bytes'],
+              'released_repository_commit': released,
+              'auditor_repository_commit': os.environ['GITHUB_SHA'],
+              'auditor_workflow': inputs['auditor_workflow'],
+              'reviewed_external_sources': inputs['reviewed_external_sources'],
+              'legacy_builder_git_blob': '94b3cedf9274f7649ca091dad2719cf2dcb0d915',
+              'runtime_function_graft': {'name': 'verify_derivative', 'all_other_builder_ast_nodes_unchanged': True,
+                  'qualification_root_original_and_unmodified': True},
+              'original_publication_run': inputs['original_publication_run'],
+              'original_artifacts': inputs['original_artifacts'],
+              'reused_original_qualification': {'source_commit': released, 'run_id': 37392793426,
+                  'tests_run': 1102, 'test_suites': 68, 'skipped': 0, 'real_postgresql_fixtures': 7},
+              'reviewed_package_regressions': {'tests_run': result.testsRun, 'skipped': 0, 'status': 'passed'},
+              'sdk_build_tools': '35.0.0', 'signer_certificate_sha256': legacy.SIGNER,
+              'application_id': report['application_id'], 'version_name': report['version_name'],
+              'version_code': report['version_code'], 'public_bytes_verified': True,
+              'sdk_signer_payload_audit_passed': True,
+              'apk_rebuilt': False, 'release_modified': False, 'signing_key_loaded': False,
+              'physical_gameplay_validated': False}
+          Path('out/ui-beacon-public-audit.json').write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n')
+          print('COH_UI_BEACON_PUBLIC_AUDIT_V2 ' + json.dumps(receipt, sort_keys=True, separators=(',', ':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-ui-beacon-public-byte-audit
+          path: |
+            out/ui-beacon-public-audit.json
+            out/published-ui-audit-inputs.json
+          if-no-files-found: error
+          retention-days: 90

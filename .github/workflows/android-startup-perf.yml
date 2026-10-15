@@ -1,0 +1,184 @@
+name: Thor startup reuse and buffered RFB from published APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: android-startup-perf
+  cancel-in-progress: false
+
+jobs:
+  observer:
+    if: >-
+      github.repository == 'Russianranger/coh-android' &&
+      github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-session-window-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37015136168
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-ground-repair-packaging-evidence
+          path: out/ground-evidence
+          run-id: 36994687459
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-avatar-repair-packaging-evidence
+          path: out/avatar-evidence
+          run-id: 36944389469
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-gameplay-packaging-evidence
+          path: out/retained-source-evidence
+          run-id: 36937373454
+          github-token: ${{ github.token }}
+      - name: Download the exact existing published 0.11.3 donor APK
+        run: >-
+          python3 tools/android/interactive/build_startup_perf_apk.py download-donor
+          --output out/donor/COH-Atlas-Gameplay-0.11.3.apk
+      - name: Qualify isolated worktree reuse, readiness reads, RFB equivalence and retained guards
+        run: >-
+          python3 tools/android/interactive/qualify_startup_perf.py
+          --repository-commit "$GITHUB_SHA"
+          --output out/startup-perf-qualification.json
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.11.3.apk
+          --donor-build-report out/donor-evidence/session-window-apk-build-report.json
+          --ground-build-report out/ground-evidence/ground-repair-apk-build-report.json
+          --avatar-build-report out/avatar-evidence/avatar-repair-apk-build-report.json
+          --retained-source-report out/retained-source-evidence/atlas-gameplay-apk-build-report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-startup-perf-observer-evidence
+          path: out/startup-perf-qualification.json
+          if-no-files-found: error
+
+  apk:
+    needs: observer
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-session-window-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37015136168
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-ground-repair-packaging-evidence
+          path: out/ground-evidence
+          run-id: 36994687459
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-avatar-repair-packaging-evidence
+          path: out/avatar-evidence
+          run-id: 36944389469
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-gameplay-packaging-evidence
+          path: out/retained-source-evidence
+          run-id: 36937373454
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-perf-observer-evidence
+          path: out/qualification
+      - name: Download the exact existing published 0.11.3 donor APK
+        run: >-
+          python3 tools/android/interactive/build_startup_perf_apk.py download-donor
+          --output out/donor/COH-Atlas-Gameplay-0.11.3.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Ensure the existing Android package tools
+        timeout-minutes: 4
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/aapt2" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/d8.jar" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" ]; then
+            timeout 180s sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Compile the qualified RFB wrapper and package only startup helpers and metadata
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_startup_perf_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.11.3.apk
+          --donor-build-report out/donor-evidence/session-window-apk-build-report.json
+          --ground-build-report out/ground-evidence/ground-repair-apk-build-report.json
+          --avatar-build-report out/avatar-evidence/avatar-repair-apk-build-report.json
+          --retained-source-report out/retained-source-evidence/atlas-gameplay-apk-build-report.json
+          --qualification out/qualification/startup-perf-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/startup-perf/COH-Atlas-Gameplay-0.11.4.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-startup-perf-packaging-evidence
+          path: |
+            out/startup-perf/startup-perf-apk-build-report.json
+            out/startup-perf/COH-Atlas-Gameplay-0.11.4.apk.sha256
+            out/startup-perf/COH-Atlas-Gameplay-0.11.4-testing.txt
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-startup-perf-apk
+          path: out/startup-perf/
+          if-no-files-found: error
+      - name: Publish the retained-signer update after focused startup and retained-guard qualification
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_startup_perf_apk.py publish
+          --apk out/startup-perf/COH-Atlas-Gameplay-0.11.4.apk
+          --build-report out/startup-perf/startup-perf-apk-build-report.json
+          --donor-build-report out/donor-evidence/session-window-apk-build-report.json
+          --ground-build-report out/ground-evidence/ground-repair-apk-build-report.json
+          --avatar-build-report out/avatar-evidence/avatar-repair-apk-build-report.json
+          --retained-source-report out/retained-source-evidence/atlas-gameplay-apk-build-report.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --qualification out/qualification/startup-perf-qualification.json
+      - name: Remove retained signing material
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

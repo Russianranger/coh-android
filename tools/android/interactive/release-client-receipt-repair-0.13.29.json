@@ -1,0 +1,8 @@
+{
+  "version": "0.13.29",
+  "version_code": 44,
+  "donor_version": "0.13.28",
+  "donor_commit": "96c7f44456d711d815704d20ff93c3f095ba974d",
+  "asset_version": "1.0.0",
+  "publication_attempt": "packaging-only-receipt-order-repair"
+}

@@ -1,0 +1,169 @@
+{
+  "format": 1,
+  "status": "accepted_hosted_asset_import",
+  "milestone": "COH Atlas Setup 0.3.0 signed APK and complete reviewed content import; Thor execution pending",
+  "run_id": 36556279364,
+  "run_attempt": 1,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36556279364",
+  "repository_commit": "2f828ca3e626245ea9fd60055745980bc3f32001",
+  "workflow_conclusion": "success",
+  "accepted_utc": "2026-09-29T10:43:11.689342+00:00",
+  "jobs": {
+    "tooling": {
+      "id": 109366081023,
+      "conclusion": "success",
+      "started_at": "2026-09-29T10:33:17Z",
+      "completed_at": "2026-09-29T10:34:07Z"
+    },
+    "qualification": {
+      "id": 109366374451,
+      "conclusion": "success",
+      "started_at": "2026-09-29T10:34:10Z",
+      "completed_at": "2026-09-29T10:38:34Z"
+    }
+  },
+  "contract_tests_passed": 65,
+  "application_id": "io.github.russianranger.cohatlas",
+  "version_name": "0.3.0",
+  "apk": {
+    "name": "COH-Atlas-Setup-0.3.0.apk",
+    "bytes": 321041177,
+    "sha256": "df25f33f673988d3b0c1c6fea2c4ae95dd776cbf84505e65ba3889159165e9fb",
+    "signature_verified_by_CI": true,
+    "signer_certificate_sha256": "12c14badba8fb1bbb907ed489a8334c5afb1a37fc5e95659b131c220ee7057b7",
+    "signing": "Development/ephemeral CI certificate; not a stable release/update signing identity",
+    "downloaded_bytes_independently_rehashed": true,
+    "downloaded_payloads_independently_rehashed": true
+  },
+  "apk_payloads": {
+    "atlas-assets-index.tsv": {
+      "bytes": 2379733,
+      "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480"
+    },
+    "atlas-import.properties": {
+      "bytes": 923,
+      "sha256": "ecd844b0d16f5f7e82441d215c061cc6bf773bbe01f24d260c8312e4305ad287"
+    },
+    "atlas-text-index.tsv": {
+      "bytes": 21187391,
+      "sha256": "35bc97e032b286677bde32122c8cb3d14146bba2ded1f1fdc1a9a9486d37a5e8"
+    },
+    "atlas-text.zip": {
+      "bytes": 312807038,
+      "sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c"
+    }
+  },
+  "java_source_sha256": {
+    "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b",
+    "tools/android/atlas/java/io/github/russianranger/cohatlas/HostImport.java": "1164a1df37d8502b663dd4e51b0b7cb17d3d107d58812416503643ed93de3896"
+  },
+  "file_count": 173011,
+  "total_bytes": 2977730517,
+  "accepted_game_data_manifest_sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4",
+  "hosted_import": {
+    "scope": "hosted_JVM_import_of_exact_APK_assets_and_reviewed_archive",
+    "elapsed_seconds": 82.251799,
+    "imported_files_independently_rehashed": true,
+    "exact_APK_payloads_verified": true,
+    "recovery_and_previous_generation_preservation": true,
+    "interrupted_reimport_preserves_current": true
+  },
+  "asset_archive": {
+    "bytes": 615541018,
+    "sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07"
+  },
+  "text_archive": {
+    "bytes": 312807038,
+    "sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c"
+  },
+  "artifacts": [
+    {
+      "id": 11027848275,
+      "name": "coh-atlas-setup-apk",
+      "size_in_bytes": 287306090,
+      "digest": "sha256:d0b808c5598fa500127a933a5030686e09c31e1f9da9bfa0da5bffe29d93f2c9",
+      "expires_at": "2026-12-28T10:33:14Z"
+    },
+    {
+      "id": 11027818373,
+      "name": "coh-atlas-import-evidence",
+      "size_in_bytes": 5553,
+      "digest": "sha256:a75d4ffdd81af998b7e5fd236f69e8d741d54c975763a91bb7831eeee25c2458",
+      "expires_at": "2026-12-28T10:33:14Z"
+    }
+  ],
+  "github_artifact_digests_independently_verified": true,
+  "preserved_evidence": {
+    "path": "asset-import-evidence-36556279364.zip",
+    "bytes": 29257,
+    "sha256": "e700e8fd40fa4fd9f90f2f5d722be1bfe36599d383d0d90cfd4519e8faa85dc5",
+    "format": "Byte-exact original evidence members plus terminal Actions metadata and job logs, repacked into this ZIP",
+    "members": {
+      "artifacts.raw.json": {
+        "bytes": 1507,
+        "sha256": "6ed1793347241206fadadd5bb1c4ac9c29b715348452e6a3ad7079bcfe9635aa"
+      },
+      "assets/atlas-import-build.json": {
+        "bytes": 2193,
+        "sha256": "32609a3c8e101ed5f9010a2a1238e2d35d8eac072ca100a4be8b572c40940846"
+      },
+      "assets/atlas-import.properties": {
+        "bytes": 923,
+        "sha256": "ecd844b0d16f5f7e82441d215c061cc6bf773bbe01f24d260c8312e4305ad287"
+      },
+      "atlas-apk-build-report.json": {
+        "bytes": 4314,
+        "sha256": "bc0500d18134abc4176fe6893f8b0626402725c5d2d83637018e6760c2192da7"
+      },
+      "host-proof/host-import-report.json": {
+        "bytes": 1958,
+        "sha256": "2623ca6535c48b4e9a22bf3eb623dc2f8b57ee5c9c6f5ae2cf39560a9ea9cbe3"
+      },
+      "host-proof/host-import.log": {
+        "bytes": 978,
+        "sha256": "bb75f31530419cf531d01098a92a2c958434a0dd32db14aef5328ace7fd43e2d"
+      },
+      "host-proof/import-summary.properties": {
+        "bytes": 385,
+        "sha256": "8d2ca78ffa98d409d9e1aa9cba9442eb3a801308c9f5ddef18384d4d7fd2677e"
+      },
+      "jobs.raw.json": {
+        "bytes": 5720,
+        "sha256": "4a7b321b52dd2f17b6a66ec88cf26ebe818c9f37655b5b439ee8b5af0492a769"
+      },
+      "qualification-job.log": {
+        "bytes": 52783,
+        "sha256": "b99e603cd44ee8c408441b958774f01a9c7ab00baa09d2002bbaecea56ac6b0c"
+      },
+      "run.raw.json": {
+        "bytes": 13399,
+        "sha256": "3a4acaee706ebcb87a2618afc92bf72e73361545d2e04d61ec005fd1860162a6"
+      },
+      "tooling-job.log": {
+        "bytes": 32375,
+        "sha256": "4afcdd558b0fd5c31aee82ede14e06b4489519c6a734c5b92aad9a49d19cb824"
+      }
+    }
+  },
+  "preserved_reports": {
+    "asset-import-hosted-36556279364.json": {
+      "bytes": 1958,
+      "sha256": "2623ca6535c48b4e9a22bf3eb623dc2f8b57ee5c9c6f5ae2cf39560a9ea9cbe3"
+    },
+    "asset-import-apk-36556279364.json": {
+      "bytes": 4314,
+      "sha256": "bc0500d18134abc4176fe6893f8b0626402725c5d2d83637018e6760c2192da7"
+    }
+  },
+  "independent_review": "Reports, raw properties, current Java sources, complete inventory identity and downloaded APK/payload bytes agree; no hosted acceptance blocker found.",
+  "android_execution_validated": false,
+  "android_document_provider_and_lifecycle_validated": false,
+  "gameplay_validated": false,
+  "scope_limitations": [
+    "Full import ran on hosted JVM using the same importer source and exact signed APK assets. Android UI, document provider, foreground service and lifecycle still require physical Thor evidence.",
+    "The full resulting data tree was independently rehashed inside CI; post-run review verified reports, source identity, accepted inventory digest and downloaded APK payloads, not another full import.",
+    "82.251799-second hosted qualification is not a device timing estimate.",
+    "Ephemeral CI signing certificate is not a stable release/update identity."
+  ],
+  "next_gate": "Install separate COH Atlas Setup 0.3.0 on Thor; collect successful import, Stop preserving prior content, retry, reopening and background behavior reports. Then integrate qualified game services into the Android Atlas Park test."
+}

@@ -1,0 +1,99 @@
+{
+  "format": 1,
+  "status": "partial_device_progress_restart_failed",
+  "candidate_version": "0.4.0",
+  "candidate_repository_commit": "4a8534b46ec024ca8f97bcbdc689f5fe23746a69",
+  "runtime_manifest_sha256": "79cfcbec75de98ad3725526fe692937c0cb160191e8ff205eecbf5b0b77a38ed",
+  "device": "AYN AYN Thor",
+  "android_sdk": 33,
+  "reported_operation_status": "cleanup_failed",
+  "completed_stages": 13,
+  "failed_at_stage": "game_restart",
+  "failure": [
+    "Cannot inspect same-UID Wine ownership"
+  ],
+  "character": {
+    "container_id": 1,
+    "name": "TEST-47452",
+    "account": "CohA5e7fc2c7b5"
+  },
+  "first_committed_save": {
+    "protocol_quit": true,
+    "quitnow_is_save_ack": false,
+    "disconnected_before_sql": true,
+    "independent_committed_sql": true,
+    "forced_stop_before_save": false,
+    "login_count": 1,
+    "influence": 12345,
+    "snapshot_sha256": "0b8a66aec5ec592a09238be7db2574506007df3d83561b02864f4f4a1e527446",
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 8,
+      "costumeparts": 15
+    }
+  },
+  "restart_resume_completed": false,
+  "final_cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "final_owned_process_receipt": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 362,
+    "scanned_tasks": 119,
+    "dead_leaders_with_live_tasks": 7,
+    "owned_live_workers": 7,
+    "leader_exit_retries": 0,
+    "candidates": 3,
+    "term_signals": 8,
+    "kill_signals": 2,
+    "pidfd_signals": 10,
+    "identity_checked_signals": 0,
+    "inspection_failures": 1,
+    "remaining": 0,
+    "complete": true
+  },
+  "closed_child_records": 86,
+  "guard_blocked": true,
+  "resource_observations": {
+    "minimum_available_memory_bytes": 5173497856,
+    "minimum_free_storage_bytes": 148779397120,
+    "low_memory_observed": false,
+    "thermal_statuses": [
+      0
+    ]
+  },
+  "diagnosis": {
+    "observed": "First committed save succeeded. Wine stop/wait completed; ownership inspection then failed. Later cleanup reported no remaining owned processes while preserving the earlier inspection failure.",
+    "suspected_mechanism": "Shutdown race while a Wine worker exits between state and ownership-data reads. Existing worker path lacks the verified-exit recovery already present for leaders.",
+    "limitation": "The 0.4.0 report did not record the denied process/read, so that exact operation cannot be identified retrospectively.",
+    "correction_scope": "Candidate-only ownership scanner with identity-bound worker exit recovery and bounded retry; persistent live denial and PID reuse still fail; record bounded redacted operation/identity evidence.",
+    "not_indicated": [
+      "disk exhaustion",
+      "low-memory shutdown",
+      "guest deadline expiration"
+    ]
+  },
+  "full_atlas_device_gate_passed": false,
+  "background_screen_lock_validated": false,
+  "gameplay_validated": false,
+  "preserved_files": {
+    "atlas-test-thor-first-run-20260929-135024.zip": {
+      "bytes": 294925,
+      "sha256": "7d5650bd271743ca93c029283c3a83fdb5716c5c4b282583e38234040f0f75c8"
+    },
+    "atlas-test-thor-partial-review-20260929.json": {
+      "bytes": 7751,
+      "sha256": "0c1890bcf210beea475431e71b46e2e8088dd469f1b821002176b43cdf031eac"
+    }
+  },
+  "independent_partial_capture_validation": "passed; full sequence remains rejected",
+  "user_reported_recovery": {
+    "reported_at": "2026-09-29T09:00:58-05:00",
+    "action": "Force-stopped COH Atlas Test after cleanup warning",
+    "export_order": "User believes logs were exported before force-stop",
+    "interpretation": "Consistent with persisted cleanup failure preceding the later user recovery action; force-stop did not cause the recorded restart inspection failure."
+  }
+}

@@ -1,0 +1,221 @@
+{
+  "format": 1,
+  "status": "build_artifacts_verified_runtime_pending",
+  "workflow_run": 36630872719,
+  "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+  "scope": "independent byte/source/PE/PDB/native-contract build review; no game runtime execution",
+  "artifacts": [
+    {
+      "id": 11063795294,
+      "name": "wine-mapserver-progress-donor",
+      "bytes": 2954706,
+      "sha256": "f8207fb8fe4f394b6d1a7f00150e4e0d365368c592b46e24faad9c66aad9f8c0",
+      "all_extracted_file_bytes_verified": true
+    },
+    {
+      "id": 11063490422,
+      "name": "wine-mapserver-progress-build-evidence",
+      "bytes": 40807,
+      "sha256": "df57e81b83f3d65636e86598a2f804110e9ceb5ecd4399f49c0aec9f31e9d955",
+      "all_extracted_file_bytes_verified": true
+    },
+    {
+      "id": 11062915801,
+      "name": "wine-mapserver-progress-symbols",
+      "bytes": 13465357,
+      "sha256": "0d6e06ce46b040c31c9428b25afc4f65f20e3728a1a79bd7210f909e4b96e5ab",
+      "all_extracted_file_bytes_verified": true
+    }
+  ],
+  "checks": [
+    "All three archive digests/sizes and every extracted byte rechecked",
+    "Candidate package verifier reconstructs exact reviewed source overlay and validates accepted dependency closure",
+    "All three build manifests and two source receipts byte-identical; underlying loopback receipt unchanged",
+    "CMake cache hash, Win32 generator and persistence-fixture OFF verified",
+    "Six real native Windows contracts passed with no skips, in x86 compiler environment",
+    "PE32 executable and PDB hashes verified; CodeView GUID/age match",
+    "PDB contains unique Init/Mark/Close procedures in actual linked MapServer",
+    "Actual linked MapServer marker disassembled with no calls, locks, exchange, clock or syscall instructions"
+  ],
+  "donor": {
+    "role": "mapserver_progress",
+    "status": "diagnostic_build_packaged_runtime_unverified",
+    "manifest": {
+      "bytes": 30563,
+      "sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1"
+    },
+    "mapserver": {
+      "bytes": 6914048,
+      "sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+    },
+    "source_receipt": {
+      "bytes": 10207,
+      "sha256": "715eaca89904e31ab731cbb1df2bd5a55e681f64c9c544f28bde4891a3d2ed67"
+    },
+    "symbols": {
+      "bytes": 40038400,
+      "sha256": "d50ec81707e08ee59c3ce4da170f4f638fb96d4e5dc1baaa021fab2164f05e57"
+    },
+    "pe_machine": 332,
+    "image_base": "0x400000",
+    "image_size": 11124736,
+    "pe_timestamp": 1790716728
+  },
+  "native_contracts": {
+    "passed": 6,
+    "skipped": 0,
+    "tests": [
+      "test_compiled_marker_has_no_calls_locks_or_interlocked_instructions",
+      "test_disabled_mode_has_no_file_or_thread_and_markers_are_noops",
+      "test_existing_file_is_refused_without_modifying_evidence",
+      "test_live_external_reader_observes_every_stage_and_distinct_tick_counters",
+      "test_reinitialization_is_refused_without_replacing_live_publication",
+      "test_relative_drive_relative_unc_missing_parent_and_directory_paths_are_refused"
+    ],
+    "log": {
+      "bytes": 1557,
+      "sha256": "351d7b15a6decf3862a2bc1bad2cb366bd209a15f58f83537dd162783ab350ee"
+    },
+    "elapsed_seconds": 8.936
+  },
+  "codeview": {
+    "guid": "5b75b004-1d18-45d5-8121-368803aa0352",
+    "age": 1,
+    "path": "D:\\a\\coh-android\\coh-android\\out\\mapserver-progress-source\\out\\build\\vs2026\\bin\\OptDebug\\MapServer.pdb"
+  },
+  "pdb_identity": {
+    "guid": "5b75b004-1d18-45d5-8121-368803aa0352",
+    "age": 1
+  },
+  "pdb_codeview_match": true,
+  "compiled_producer_procedures": [
+    {
+      "name": "cohMapProgressClose",
+      "address": "0x73a7e0",
+      "size": 80,
+      "module": "D:\\a\\coh-android\\coh-android\\out\\mapserver-progress-source\\out\\build\\vs2026\\MapServer\\MapServer.dir\\OptDebug\\wine_map_progress.obj",
+      "object": "D:\\a\\coh-android\\coh-android\\out\\mapserver-progress-source\\out\\build\\vs2026\\MapServer\\MapServer.dir\\OptDebug\\wine_map_progress.obj"
+    },
+    {
+      "name": "cohMapProgressInit",
+      "address": "0x73a830",
+      "size": 590,
+      "module": "D:\\a\\coh-android\\coh-android\\out\\mapserver-progress-source\\out\\build\\vs2026\\MapServer\\MapServer.dir\\OptDebug\\wine_map_progress.obj",
+      "object": "D:\\a\\coh-android\\coh-android\\out\\mapserver-progress-source\\out\\build\\vs2026\\MapServer\\MapServer.dir\\OptDebug\\wine_map_progress.obj"
+    },
+    {
+      "name": "cohMapProgressMark",
+      "address": "0x73aa80",
+      "size": 107,
+      "module": "D:\\a\\coh-android\\coh-android\\out\\mapserver-progress-source\\out\\build\\vs2026\\MapServer\\MapServer.dir\\OptDebug\\wine_map_progress.obj",
+      "object": "D:\\a\\coh-android\\coh-android\\out\\mapserver-progress-source\\out\\build\\vs2026\\MapServer\\MapServer.dir\\OptDebug\\wine_map_progress.obj"
+    }
+  ],
+  "compiled_marker": {
+    "instruction_count": 42,
+    "prohibited_instructions_present": false,
+    "bytes": 107,
+    "disassembly": {
+      "bytes": 2437,
+      "sha256": "b26d4b8f553aa9af592aad674fc24885484ee99b2065d4b9daee1a5412635fe0"
+    }
+  },
+  "source_at_commit_sha256": {
+    ".github/workflows/android-map-progress.yml": "716bc04b1a9dfff0e6004dc7cd8e926ceb823f7f51740ddac6e05badff0b81a6",
+    "tools/prepare_mapserver_progress_source.py": "b832acb6a12db70e6f8a29d2d86fb990f1ef5fd5b11fd8c1f0149151942c2f5f",
+    "tools/android/game/package_mapserver_progress.py": "92a297fce71f0b27696c76c3d61ec2a301b7696760d2f554f8078629bf1a7502",
+    "tools/android/game/test_mapserver_progress.py": "d54445a755a34b9750f4f68ace21a2b936de34e8d669bbe7d67722a8d0da7ca3",
+    "database/mapserver-progress/tests/progress_contract.c": "ab5a610c468fba2d9d0be7e9fdb4dfca426023f890ab88a08d6407de6ad5588c",
+    "patches/mapserver-progress/0001-mapserver-progress.patch": "0fc278d0f04c979b5153421278156978f11fc58584c3413645937ecd83021b2c",
+    "database/mapserver-progress/overlay/MapServer/src/svr/wine_map_progress.c": "78eae983cc8a6e573b0500ca5d57d7424af2315b9afe58970de76e28b427940f",
+    "database/mapserver-progress/overlay/MapServer/src/svr/wine_map_progress.h": "e92f8f8b20513d81db7a170c96c0a19b2b6231ad04d91699e5fdcc113696af88"
+  },
+  "progress_contract": {
+    "environment_variable": "COH_WINE_MAP_PROGRESS",
+    "format": 1,
+    "record_bytes": 128,
+    "mapping_bytes": 4096,
+    "magic_hex": "434f484d41503100",
+    "byte_order": "little",
+    "offsets": {
+      "magic": 0,
+      "format": 8,
+      "record_bytes": 12,
+      "process_id": 16,
+      "main_thread_id": 20,
+      "sequence": 24,
+      "stage": 28,
+      "tick_started": 32,
+      "tick_completed": 36,
+      "flags": 40,
+      "stage_count": 44,
+      "reserved": 48
+    },
+    "reserved_bytes": 80,
+    "stages": {
+      "1": "INITIALIZED",
+      "2": "STARTUP",
+      "3": "MAP_LOAD",
+      "4": "DB_SETUP",
+      "5": "READY_PUBLISH",
+      "6": "READY_PUBLISHED",
+      "7": "RUNTIME_PRIORITY",
+      "8": "RUNTIME_PRIORITY_DONE",
+      "9": "HEAP_VALIDATE",
+      "10": "HEAP_VALIDATED",
+      "11": "SG_VERIFY",
+      "12": "SG_VERIFIED",
+      "13": "CALLBACKS_ENABLE",
+      "14": "CALLBACKS_ENABLED",
+      "15": "RANDOM_SEED",
+      "16": "ITEM_POWER_REQUEST",
+      "17": "ITEM_POWER_REQUESTED",
+      "18": "ERROR_QUEUE_DRAIN",
+      "19": "ERROR_QUEUE_DRAINED",
+      "20": "READY_STDOUT",
+      "21": "LAUNCHER_CONTACT",
+      "22": "LATE_STARTUP_DONE",
+      "23": "LOOP_PRE_TICK",
+      "24": "TICK_BEGIN",
+      "25": "TICK_TOP",
+      "26": "DB_COMM",
+      "27": "DB_COMM_DONE",
+      "28": "FOLDER_CALLBACKS",
+      "29": "FOLDER_CALLBACKS_DONE",
+      "30": "TICK_TOP_DONE",
+      "31": "ENTITY_UPDATE",
+      "32": "GAME_LOGIC",
+      "33": "TICK_BOTTOM",
+      "34": "TICK_DONE",
+      "35": "LOOP_POST_TICK",
+      "36": "SLEEP",
+      "37": "SLEEP_DONE"
+    },
+    "disabled_by_default": true,
+    "writer": "mapserver_main_thread",
+    "stage_semantics": "operation_about_to_run_unless_DONE_or_ED",
+    "sequence_semantics": "positive_even_stable_odd_updating_no_wrap",
+    "tick_started_stage": 24,
+    "tick_completed_stage": 34,
+    "counter_semantics": "monotonic_no_wrap_completed_not_greater_than_started",
+    "flags": {
+      "1": "sequence_or_counter_saturated_samples_unavailable"
+    },
+    "initialization_failure": "requested_launch_exits_nonzero",
+    "file_creation": "new_absolute_drive_path_private_parent_required",
+    "proves_readiness_or_game_success": false
+  },
+  "cmake_cache": {
+    "bytes": 39554,
+    "sha256": "2d5aa6589bb46adb3c1561064d83eaa14e95ad864bab3c28b4db37ab00bd1266"
+  },
+  "dependencies_unresolved": [],
+  "limits": [
+    "Windows producer contracts and build identity do not establish ARM64/FEX runtime behavior",
+    "ARM64 full-game diagnostic qualification is still pending",
+    "This is a separately identified host donor, not an accepted APK or physical Thor run",
+    "No cleanup repair or intermittent Atlas liveness root cause is established by build artifacts"
+  ],
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

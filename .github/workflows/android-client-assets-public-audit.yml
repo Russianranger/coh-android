@@ -1,0 +1,165 @@
+name: Independent public-byte audit of published COH 0.13.28
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths: [.github/workflows/android-client-assets-public-audit.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-assets-public-audit-0.13.28
+  cancel-in-progress: false
+jobs:
+  public-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Check out the exact published source, not the later audit workflow source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 96c7f44456d711d815704d20ff93c3f095ba974d
+          persist-credentials: false
+      - name: Authenticate publication owner and exact accepted artifact identities
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess, urllib.request
+          from pathlib import Path
+          repository = 'Russianranger/coh-android'
+          source = '96c7f44456d711d815704d20ff93c3f095ba974d'
+          publication = 38152969976
+          native_run = 38112251836
+          native_source = '492074101200f143fd19ba386f55de29ddfa5110'
+          assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip() == source
+          def api(path):
+            request = urllib.request.Request('https://api.github.com/repos/' + repository + path,
+              headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28'})
+            with urllib.request.urlopen(request, timeout=60) as response:
+              return json.load(response)
+          run = api('/actions/runs/' + str(publication))
+          assert run['id'] == publication and run['head_sha'] == source and run['status'] == 'completed'
+          assert run['conclusion'] == 'success'
+          assert run['repository']['full_name'] == run['head_repository']['full_name'] == repository
+          assert run['head_branch'] == 'codex/character-persistence-continuation'
+          assert run['path'] == '.github/workflows/android-client-assets.yml'
+          job = api('/actions/jobs/114510182925')
+          assert job['id'] == 114510182925 and job['run_id'] == publication and job['head_sha'] == source
+          assert job['name'] == 'apk' and job['status'] == 'completed' and job['conclusion'] == 'success'
+          native_job = api('/actions/jobs/114391446944')
+          assert native_job['id'] == 114391446944 and native_job['run_id'] == native_run
+          assert native_job['head_sha'] == native_source and native_job['name'] == 'native / monorail'
+          assert native_job['status'] == 'completed' and native_job['conclusion'] == 'success'
+          expected = (
+            (publication, source, 11708145233, 'coh-client-assets-packaging-evidence', 1329187,
+              '525a9bc0792356fad08582e66bbe8676e26ccaf9ffa8851f1be0e5a7c70ae542'),
+            (publication, source, 11706964931, 'coh-client-assets-qualification', 538452,
+              '05e05c2c32bb37b29922ae1c6510aaae8e2f6fd02b3bd01fb0183e5241d04b36'),
+            (native_run, native_source, 11692686103, 'coh-monorail-native', 2952522,
+              '3ecc72e3c22307d7aadbf876e22385e85bb02b8cf2c7ab38275f0864c83030c6'),
+          )
+          inventories = {}
+          receipts = []
+          for owner, commit, identity, name, size, digest in expected:
+            if owner not in inventories:
+              inventory = api('/actions/runs/' + str(owner) + '/artifacts?per_page=100')
+              assert inventory['total_count'] <= 100
+              inventories[owner] = inventory['artifacts']
+            matches = [row for row in inventories[owner] if row['name'] == name]
+            assert len(matches) == 1
+            artifact = matches[0]
+            assert artifact['id'] == identity and not artifact['expired']
+            assert artifact['size_in_bytes'] == size and artifact['digest'] == 'sha256:' + digest
+            assert artifact['workflow_run']['id'] == owner and artifact['workflow_run']['head_sha'] == commit
+            assert artifact['workflow_run']['head_branch'] == 'codex/character-persistence-continuation'
+            receipts.append({'id': identity, 'name': name, 'run_id': owner,
+              'repository_commit': commit, 'zip_bytes': size, 'zip_sha256': digest})
+          Path('out').mkdir(exist_ok=True)
+          Path('out/publication-owner-authentication.json').write_text(json.dumps({
+            'publication_run_id': publication, 'publication_job_id': job['id'], 'repository_commit': source,
+            'native_monorail_job_id': native_job['id'],
+            'audit_run_id': int(os.environ['GITHUB_RUN_ID']), 'audit_workflow_commit': os.environ['GITHUB_SHA'],
+            'accepted_artifacts': receipts}, indent=2) + '\n')
+          PY
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: SDK audit tools only
+        run: timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-assets-packaging-evidence
+          path: out/public
+          run-id: 38152969976
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-assets-qualification
+          path: out
+          run-id: 38152969976
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-monorail-native
+          path: out/monorail
+          run-id: 38112251836
+          github-token: ${{ github.token }}
+      - name: Verify the retained shipping MapServer source and owner
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, 'tools/android/interactive')
+          import package_monorail_native as native
+          receipt = native.validate_package('out/monorail', '492074101200f143fd19ba386f55de29ddfa5110')
+          assert receipt['run_url'] == 'https://github.com/Russianranger/coh-android/actions/runs/38112251836'
+          PY
+      - name: Authenticate unchanged donor and original native Game proof
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          python3 tools/android/interactive/build_client_assets_apk.py download-donor-evidence --output out/donor-evidence
+          python3 tools/android/interactive/build_client_assets_apk.py download-retained-native --output out/retained-game
+          python3 tools/android/interactive/build_client_assets_apk.py download-donor --output out/donor.apk
+      - name: Download actual published APK and every public asset volume and verify member hashes
+        run: |
+          python3 tools/android/interactive/build_client_assets_apk.py download-public --build-report out/public/client-assets-apk-build-report.json --output out/public-apk
+          python3 tools/android/interactive/build_client_assets_apk.py download-public-assets --build-report out/public/asset-pack-build-report.json --manifest out/public/asset-pack-manifest.json --lock out/public/kings-row-beacon-lock.json --output out/public-assets
+      - name: Independently audit all public bytes with the authenticated original publication provenance
+        run: >-
+          env GITHUB_RUN_ID=38152969976 PYTHONHASHSEED=2022
+          python3 tools/android/interactive/build_client_assets_apk.py audit
+          --repository-commit 96c7f44456d711d815704d20ff93c3f095ba974d
+          --native-commit 492074101200f143fd19ba386f55de29ddfa5110
+          --donor-apk out/donor.apk --donor-build-report out/donor-evidence/client-recovery-apk-build-report.json
+          --retained-client-directory out/retained-game --asset-directory out/public-assets --monorail-directory out/monorail
+          --qualification out/client-assets-qualification.json --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --apk out/public-apk/COH-Atlas-Gameplay-0.13.28.apk --build-report out/public/client-assets-apk-build-report.json
+      - name: Record actual audit owner separately from original publication owner
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          owner = json.loads(Path('out/publication-owner-authentication.json').read_text())
+          apk = json.loads(Path('out/public/client-assets-apk-build-report.json').read_text())
+          assets = json.loads(Path('out/public/asset-pack-build-report.json').read_text())
+          assert int(os.environ['GITHUB_RUN_ID']) == owner['audit_run_id']
+          assert apk['repository_commit'] == owner['repository_commit']
+          Path('out/client-assets-public-byte-audit.json').write_text(json.dumps({
+            'format': 1, 'status': 'passed', 'repository_commit': apk['repository_commit'],
+            'publication_run_id': owner['publication_run_id'], 'publication_job_id': owner['publication_job_id'],
+            'native_monorail_job_id': owner['native_monorail_job_id'],
+            'audit_run_id': owner['audit_run_id'], 'audit_workflow_commit': owner['audit_workflow_commit'],
+            'audit_run_url': 'https://github.com/Russianranger/coh-android/actions/runs/' + str(owner['audit_run_id']),
+            'authenticated_artifacts': owner['accepted_artifacts'],
+            'apk': {key: apk[key] for key in ('bytes', 'sha256', 'version_name', 'version_code')},
+            'asset_pack': assets, 'public_apk_verified': True, 'all_public_asset_volumes_verified': True,
+            'physical_kings_row_zoning_validated': False, 'physical_preparation_speedup_validated': False,
+            'physical_fps_gain_validated': False}, indent=2) + '\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-assets-public-byte-audit
+          path: out/client-assets-public-byte-audit.json
+          retention-days: 90
+          if-no-files-found: error

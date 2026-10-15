@@ -1,0 +1,13 @@
+{
+  "version": "0.13.34",
+  "version_code": 49,
+  "donor_commit": "e03943f76b13192680be363dac005d6f23c7a526",
+  "asset_version": "1.0.0",
+  "qualification_enabled": true,
+  "publish_enabled": true,
+  "native_rebuild_required": false,
+  "asset_rebuild_required": false,
+  "runtime_refresh_required": true,
+  "physical_kings_row_reopen_validated": false,
+  "physical_map_startup_speedup_validated": false
+}

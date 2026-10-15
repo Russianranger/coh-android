@@ -1,0 +1,90 @@
+{
+  "created_utc": "2026-10-14T01:35:53.414908+00:00",
+  "findings": [
+    "Authenticated actual9454whole ZIP281739bytes/SHA5a5bf01b901e5c5398bb42f07e4c1737ac8b13ee90e90fb297ca01cd08dfa34b and original client/server donor ZIPs. Derived preload subset107=22client+85server,191inventory,124unique observed names,17changed outputs and1unmapped token omitted;12identifier input files.",
+    "Actual failed8a world report is rejected. Controlled16-case worlds are unexecuted shape fixtures; no native world success is newly established by these tests.",
+    "Whole generated BIN/GroupBounds closure parity is separate from original donor eligibility. MessageStore caches are excluded from Parse6-only observation permission.",
+    "Ordered decode/freshness, SDK seven-DLL pins, selected map/port/tick/memory and post-auth document mutation refusal are tested. Diagnostic tokens identify observed names and are not content integrity or decoded ID-table proof.",
+    "Production entry authenticates original ZIP/member bytes and checks committed normalizer source bytes/Git blob; flat proof output pin is external/nonrecursive. All execution/derivation authorities remain closed."
+  ],
+  "format": 1,
+  "independently_executed_tests": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/android/interactive",
+      "-p",
+      "test_derive_native_metadata_cache_proof.py"
+    ],
+    "elapsed_seconds_from_unittest": 1.515,
+    "errors": 0,
+    "executed": 12,
+    "exit_code": 0,
+    "failed": 0,
+    "module": "test_derive_native_metadata_cache_proof",
+    "output": "............\n----------------------------------------------------------------------\nRan 12 tests in 1.515s\n\nOK\n",
+    "passed": 12,
+    "skipped": 0
+  },
+  "post_test_bytes_equal_reviewed_pre_test_bytes": true,
+  "remaining_gates": [
+    "Commit these exact reviewed source bytes before deriving final output.",
+    "Authenticate successful actual16-case world artifact at04b or explicitly reviewed successor; check actual8MiB JSON/256MiB ZIP/512-member bounds and source/helper provenance.",
+    "Audit final subset against exact warm native world inputs, then separately freeze/review any production authority; this receipt grants none."
+  ],
+  "reviewer": "/root/client_harness_review",
+  "role": "independent_closed_native_cache_normalizer_source_review",
+  "scope": {
+    "SQL_or_real_game_input_mutations_performed": false,
+    "controlled_world_and_authority_fixtures_explicitly_unexecuted": true,
+    "native_Game_MapServer_Wine_FEX_processes_executed_by_review": false,
+    "physical_Thor_performance_qualified": false,
+    "player_profile_or_persistent_database_opened": false,
+    "production_activation_implemented": false,
+    "production_cache_derivation_authority": null,
+    "production_component_authorities": {
+      "game": null,
+      "mapserver": null
+    },
+    "production_execution_review_authorities": {
+      "game": null,
+      "mapserver": null
+    },
+    "production_source_review_authority": null,
+    "runtime_or_publication_authority_granted_by_review": false,
+    "temporary_controlled_test_fixture_mutations_only": true
+  },
+  "source_foundation_commit": "1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e",
+  "source_post_test_pins": {
+    "tools/android/interactive/derive_native_metadata_cache_proof.py": {
+      "bytes": 29040,
+      "sha256": "f9c502a7f6cf4136dc4f04701e27b66cb3ab1eac3b3b76d4273b98309a5e833a"
+    },
+    "tools/android/interactive/test_derive_native_metadata_cache_proof.py": {
+      "bytes": 16174,
+      "sha256": "766c04854e1b7b10928f7e58a46798ea983d373549f919de588424f92fd82978"
+    }
+  },
+  "source_pre_test_pins": {
+    "tools/android/interactive/derive_native_metadata_cache_proof.py": {
+      "bytes": 29040,
+      "sha256": "f9c502a7f6cf4136dc4f04701e27b66cb3ab1eac3b3b76d4273b98309a5e833a"
+    },
+    "tools/android/interactive/test_derive_native_metadata_cache_proof.py": {
+      "bytes": 16174,
+      "sha256": "766c04854e1b7b10928f7e58a46798ea983d373549f919de588424f92fd82978"
+    }
+  },
+  "status": "approved_inactive_source_only",
+  "upstream_frozen_evidence": {
+    "filename": "native-cache-normalizer-source-freeze.json",
+    "pin": {
+      "bytes": 1842,
+      "sha256": "bf501d046bad038499de883b2c73541ac339820770ac6befc035285ebbb641cc"
+    }
+  },
+  "worktree": "/workspace/scratch/5d16603ca7ff/publication-037-activation"
+}

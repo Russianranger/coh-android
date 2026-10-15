@@ -1,0 +1,79 @@
+COH Atlas Gameplay 0.13.20 — opt-in GPU renderer test
+
+1. Install as an update, preserving app data, imported assets and THORHERO.
+Run Set up / update runtime ONCE and wait for Runtime ready. New GPU/helper
+payloads change the verified runtime generation. Do not clear data or reimport
+assets. Keep Performance graphics, 800x600, the same fan mode and charging state.
+Startup timing is optional in this pass; note a startup regression if observed.
+
+2. Software is the default renderer. Select it for a reference Reopen run,
+close chat with B/Esc, tap Show FPS, then 30 FPS. Sidebar commands include Enter;
+controller Start and sidebar Enter / Start also send Enter. Look below the top
+HUD near the upper left for native FPS and ms/frame. Allow ten seconds to settle.
+
+3. Record approximately thirty seconds each standing still, rotating the camera,
+walking through populated Atlas, and approaching buildings/interior edges or
+previously unseen scenery. Keep ten-second gaps. Note segment timestamps, FPS
+range, geometry/texture/NPC pauses, and any black flashes or tearing. Do not zone.
+Record temperature at world entry, after the route, and at the end/peak.
+
+4. Save normally, release controls for the displayed wait, wait for Saved
+character verified, then Finish. If strict comparison fails, export the FAILED
+report without clearing data or assuming character loss. Export latest report
+NOW, before another operation replaces it. Retain the complete outer ZIP.
+
+5. Select GPU test before the next Reopen. It runs bounded driver/device and
+real Wine OpenGL prerequisite checks. Record whether GPU was selected or the
+software fallback was used, including the displayed reason. A selected setting
+alone does not establish hardware rendering; the report must corroborate it.
+If cleanup cannot be proved, the launch stops rather than starting a fallback.
+Never force a GL version or type manual environment/driver commands.
+
+6. When Atlas is playable, tap Show FPS and 30 FPS, settle, then repeat exactly
+the same route with the same graphics/fan/charging conditions. Record FPS/ranges,
+hitches, new geometry/textures/NPC pauses and temperatures. Check heads/hands,
+NPCs, scenery, water, transparency, powers/inspirations, chat, quest UI, camera,
+movement and combat for missing textures, black strips, flicker or crashes.
+Stable 30 FPS is the goal; it is not promised by hosted qualification.
+
+7. Save/Finish and export the complete report after this run. If GPU causes a
+regression, stop/export, let owned cleanup finish, choose Software and reopen.
+Do not switch renderer in the middle of a Game session. Send both complete
+coh-atlas-gameplay-*.zip files plus timestamps/FPS/temperature/visual notes.
+If the GPU prerequisite check falls back, send that export even if software
+gameplay is unchanged; its exact reason determines the next fix.
+
+The outer operation.log and android-client-report.json record Android launch,
+requested renderer, capture metrics and retained screenshots. Inside
+guest-report.zip, latest-report.json contains client_gpu_profile and the bounded
+client_gpu_profile_attempts list: requested/selected mode, fallback_reason,
+archive/source pins, vulkan_probe, wine_gl_probe and probe_process_cleanup.
+client_gpu_payload_cleanup records removal of the private extracted payload
+after owned Game/server processes stop. The isolated Wine prefix's first
+initialization/check duration is wine_probe_initialization_and_execution_seconds;
+record a preflight delay separately from Game startup.
+Its processes entries named gpu-native-vulkan-prerequisites and
+gpu-wine-prerequisites preserve the native probe output and elapsed time;
+operation.log also records their stage/probe events. Include a fallback or
+failed-check export; these records tell us exactly which prerequisite failed.
+Probe success establishes prerequisites only. Corroborate the actual Game
+renderer in its startup log and report before attributing an FPS result to GPU.
+Native timings remain in guest-report.zip/client-evidence/client-console.log:
+COH_CLIENT_FRAME_TIMING_V1 separates pacing/main work/thread CPU;
+COH_CLIENT_SCENE_PHASE_V1 records geometry/texture completion;
+COH_CLIENT_RENDERER_ATTRIBUTION_V1 records gfx/backpressure, renderer batch,
+swap, selected upload/VBO/readback callback costs and long-frame distributions;
+COH_CLIENT_GAMEPLAY_PROFILE_V1 and COH_CLIENT_TEXTURE_ERRORS_V1 are retained.
+Send the COMPLETE outer report, rather than screenshots or one inner log.
+
+Begin the focused route promptly: each native stream stops after 120 roughly
+ten-second windows per thread, numeric cap/showfps observations after 64.
+Thread CPU excludes renderer workers; batches include queue gaps/driver waits/
+scheduling; texture callbacks do not isolate all disk/decode/GPU completion.
+Nested phases overlap and must not be summed. Retained-PNG verification and
+callback work are excluded from Android encoder metrics.
+
+The prior .19 export failed strict save comparison when a temporary Commuter
+power disappeared; the other fifteen powers had no semantic changes. The
+available evidence suggests expiry but does not prove stock eligibility.
+This update does not relax save rules or retroactively pass that report.

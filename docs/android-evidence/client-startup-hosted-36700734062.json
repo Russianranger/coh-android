@@ -1,0 +1,59 @@
+{
+  "format": 1,
+  "status": "failed",
+  "scope": "actual_client_startup_hosted",
+  "run_id": 36700734062,
+  "repository_commit": "4a3cd74286723a663c3b1b0a34b38849c11f44cb",
+  "apk_sha256": "f82f2cf707b65a01a2b296660893824dfcbbe87115ed43c57dbc1efa33948fba",
+  "runtime_manifest_sha256": "0c424e673830f4ae41014267844558a81c5b00a8d960fe5f5e3e3ef1f1af60ea",
+  "session_id": "a462011bcba3eb8a767b54f9677c5810",
+  "failures": [
+    "Actual CoH startup exceeded its bounded deadline"
+  ],
+  "stages_passed": [
+    "client_inputs",
+    "client_private_data",
+    "presentation_display",
+    "wine_initialization",
+    "win32_runtime_dll"
+  ],
+  "actual_client_started": true,
+  "startup_observed": false,
+  "last_registry_progress": "INIT: after rdrInitTopOfView()",
+  "console_bytes": 547,
+  "external_frame_updates": 1832,
+  "external_distinct_frames": 6,
+  "cleanup_complete": true,
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 294,
+    "scanned_tasks": 2,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "visual_review": "City of Heroes Freedom artwork appeared, cropped and offset. Source places this loading background after graphics, texture, font and input initialization. Main-loop startup was not established.",
+  "diagnostic_gaps": [
+    "Client created its own console and redirected later output away from the inherited pipe.",
+    "No generated-cache inventory or owned-process activity snapshot was exported."
+  ],
+  "interpretation": "Cold parsing without prebuilt client bins is plausible; the exact blocking load stage is unconfirmed.",
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

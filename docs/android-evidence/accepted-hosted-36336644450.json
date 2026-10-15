@@ -1,0 +1,214 @@
+{
+  "format": 1,
+  "milestone": "M2 Thor diagnostic APK",
+  "status": "hosted_qualified_device_pending",
+  "repository_commit": "0b61d7455f40f05709f912338cd5de8b1d72d750",
+  "workflow": {
+    "run_id": 36336644450,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/36336644450",
+    "completed_utc": "2026-09-27T17:29:16Z",
+    "jobs": [
+      {
+        "id": 108668652253,
+        "name": "tooling",
+        "conclusion": "success"
+      },
+      {
+        "id": 108668708022,
+        "name": "postgresql",
+        "conclusion": "success"
+      },
+      {
+        "id": 108669068220,
+        "name": "apk",
+        "conclusion": "success"
+      },
+      {
+        "id": 108669344044,
+        "name": "runtime",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "tooling": {
+    "passed": 80,
+    "skipped": 0
+  },
+  "postgresql_regression": {
+    "run_id": 36336644454,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/36336644454",
+    "jobs": [
+      {
+        "id": 108668652389,
+        "name": "PostgreSQL and ODBC integration (16)",
+        "conclusion": "success"
+      },
+      {
+        "id": 108668652623,
+        "name": "Win32 PostgreSQL ODBC integration",
+        "conclusion": "success"
+      },
+      {
+        "id": 108668652647,
+        "name": "PostgreSQL and ODBC integration (18)",
+        "conclusion": "success"
+      },
+      {
+        "id": 108668652658,
+        "name": "Real DbServer PostgreSQL persistence",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "id": 10938010374,
+      "name": "coh-diagnostic-apk",
+      "bytes": 13307818,
+      "digest": "sha256:996f297f6b96ce34487d880699eec64cc802e4a0656dad66e3adc2afff92d416",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/36336644450/artifacts/10938010374"
+    },
+    {
+      "id": 10938005420,
+      "name": "coh-proot-android-source-and-build",
+      "bytes": 1162471,
+      "digest": "sha256:2bec6e5cffc4a243d99185b522b82b660889149b232e2510adf5f4dd717c0e8a",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/36336644450/artifacts/10938005420"
+    },
+    {
+      "id": 10937835779,
+      "name": "coh-diagnostic-host-evidence",
+      "bytes": 11170,
+      "digest": "sha256:ea0005cbb3570e27225ee614e11fd2bb7f64160f97e218382fe11358f2a0c5fc",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/36336644450/artifacts/10937835779"
+    },
+    {
+      "id": 10937531092,
+      "name": "coh-diagnostic-runtime-inputs",
+      "bytes": 13163534,
+      "digest": "sha256:ea7395677d6a3bca05ccb66b3d432c5d678399bcbfaf643c649945052b1e1ab8",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/36336644450/artifacts/10937531092"
+    },
+    {
+      "id": 10937137773,
+      "name": "android-postgresql-runtime",
+      "bytes": 32076772,
+      "digest": "sha256:9961c186bc020d2662926b96be3fa4b7536ef6b4384d690639e8950594b01984",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/36336644450/artifacts/10937137773"
+    }
+  ],
+  "android_device_validated": false,
+  "gameplay_validated": false,
+  "scope": "Native ARM64 Linux hosted execution of the APK's exact guest payload through matching PRoot; Android APK build/signature/payload verification. Physical Thor lifecycle, SELinux/runtime behavior, performance and gameplay are not established.",
+  "apk": {
+    "format": 1,
+    "apk": "COH-Diagnostic-0.1.0.apk",
+    "bytes": 13309477,
+    "sha256": "80e53b03d95ec851623b8b743b067e87642e392a387d24679adcd81d119d38ac",
+    "application_id": "io.github.russianranger.cohdiagnostic",
+    "version_name": "0.1.0",
+    "version_code": 1,
+    "min_sdk": 26,
+    "target_sdk": 35,
+    "abi": "arm64-v8a",
+    "repository_commit": "0b61d7455f40f05709f912338cd5de8b1d72d750",
+    "runtime_manifest_sha256": "ace8964c905d4affbf9c28ee26e5922b6e4fc3fef3b0c88b7df5d8a806aaa14f",
+    "signature_verified": true,
+    "signer_certificate_sha256": "a6172785398fd703e7122fd51e292e09dcfb70cac0100541af4cc5911f39fbd4",
+    "signing": "Ephemeral CI certificate; not a stable release/update signing identity",
+    "package_badging_verified": true,
+    "payload_bytes_verified": true,
+    "device_validated": false,
+    "gameplay_validated": false
+  },
+  "verified_downloads": {
+    "apk_artifact_zip_sha256": "996f297f6b96ce34487d880699eec64cc802e4a0656dad66e3adc2afff92d416",
+    "host_evidence_zip_sha256": "ea0005cbb3570e27225ee614e11fd2bb7f64160f97e218382fe11358f2a0c5fc",
+    "apk_size_and_sha256_match_receipt": true,
+    "runtime_manifest_sha256_matches_apk_receipt": true,
+    "all_embedded_runtime_files_match_manifest": 11,
+    "all_guest_probe_input_hashes_match_apk_manifest": 5
+  },
+  "runtime": {
+    "started_utc": "2026-09-27T17:27:01.526060+00:00",
+    "finished_utc": "2026-09-27T17:29:12.849553+00:00",
+    "elapsed_seconds": 131.323,
+    "stages_passed": [
+      "assets_and_architecture",
+      "initialize_owned_cluster",
+      "postgres_first_start",
+      "restricted_fixture_database",
+      "wine_prefix_and_driver",
+      "win32_odbc_driver",
+      "win32_runtime_dll",
+      "odbc_fixture",
+      "postgres_clean_restart",
+      "postgres_restart_ready",
+      "odbc_after_restart"
+    ],
+    "odbc_checks": [
+      "PASS all 65 stock DbServer ODBC connections coexist",
+      "PASS ID ordering, deleted highest ID, rollback and bulk-import startup state",
+      "PASS indexes: duplicate field names, idempotence, schema isolation, legacy cleanup",
+      "PASS foreign keys: absent table/constraint removal, add/remove, child rows, orphan rejection",
+      "PASS bound values: integer limits, byte 255, float, UTF-16, timestamp, 32 KiB bytea chunks, long text and NULL",
+      "PASS SQLColumns: canonical PostgreSQL types, Unicode varchar, text and bytea",
+      "PASS atomic schema rebuild: row data, deleted-highest ID, foreign keys, indexes, conversion/dependency rollback, ASCII name keys",
+      "PASS column migration and connection reopen"
+    ],
+    "restart_checks": [
+      "PASS persisted fixture after reconnect/restart/restore"
+    ],
+    "driver": {
+      "driver_name": "PostgreSQL Unicode",
+      "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+      "pointer_bits": 32,
+      "registry_view": 32,
+      "driver_dll_loaded": true
+    },
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "wine_shutdown": {
+      "stop_exit_code": 1,
+      "wait_exit_code": 0,
+      "prefix_lock_free": true,
+      "server_socket_inactive": true
+    },
+    "failures": []
+  },
+  "evidence_files": {
+    "apk-build-36336644450.json": {
+      "bytes": 834,
+      "sha256": "a2399110d7aa088f083ee1a7fb5f1784e7e9381bd0cbca7122494a1e35ce4a40"
+    },
+    "runtime-manifest-36336644450.json": {
+      "bytes": 3664,
+      "sha256": "ace8964c905d4affbf9c28ee26e5922b6e4fc3fef3b0c88b7df5d8a806aaa14f"
+    },
+    "postgresql-build-36336644450.json": {
+      "bytes": 163117,
+      "sha256": "470f4fee3ec05a388f3f93e8c99a1d578afb40a63ba5950283be3fe8c090cde6"
+    },
+    "proot-android-build-36336644450.json": {
+      "bytes": 3236,
+      "sha256": "21c8111fda2f3c00a819bb34ebc6af7ea52c9bfcfb4d420761befb7ba4f90450"
+    },
+    "proot-build-receipt-36336644450.json": {
+      "bytes": 3048,
+      "sha256": "8dbc61bca057c5c6596a3e69868392b8e6aeebb2a0ae1ae1684de0246d035951"
+    },
+    "runtime-smoke-report-36336644450.json": {
+      "bytes": 28019,
+      "sha256": "42dec0bcca8ad40157b512beaa91000aef4475a3410e94bae8cfc8722d8e3b66"
+    },
+    "host-diagnostic-36336644450.log": {
+      "bytes": 20665,
+      "sha256": "59cf62e56e1eb767c66c5f83e8cee57d5144505cbd308271e64e3e7d554bfcc2"
+    }
+  },
+  "next_gate": "Install on physical AYN Thor, Setup runtime, Run diagnostics, Export latest report; repeat after activity close/reopen and exercise Stop. Submit exported ZIPs before claiming Android acceptance.",
+  "known_non_acceptance_summary_defect": "host_smoke console summary prints phases=0 because it looks up phases rather than stages; the acceptance gate uses passed/failures/cleanup, and the preserved raw report contains all 11 passed stages."
+}

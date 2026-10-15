@@ -1,0 +1,1116 @@
+{
+  "all_public_payload_pins_verified": true,
+  "apk": {
+    "bytes": 595104089,
+    "sha256": "f4e30c728046771cb91beece46fb54663b0fcd57a28b8e055f6fc8918dd3c899"
+  },
+  "apk_artifact": {
+    "bytes": 557674297,
+    "id": 11201865640,
+    "sha256": "9d479a4546f24c73b117e4c9afbaa1c2fe462ffe728a00bebb0711b538518342"
+  },
+  "apk_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.1/COH-Atlas-Gameplay-0.11.1.apk",
+  "application_id": "io.github.russianranger.cohclientinteractive",
+  "build_report": {
+    "abi": "arm64-v8a",
+    "apk": "COH-Atlas-Gameplay-0.11.1.apk",
+    "application_id": "io.github.russianranger.cohclientinteractive",
+    "bytes": 595104089,
+    "changed_apk_payloads": [
+      "assets/runtime/character_avatar_assets.py",
+      "assets/runtime/client-manifest.json",
+      "assets/runtime/runtime-manifest.json"
+    ],
+    "client_or_server_recompiled": false,
+    "donor": {
+      "apk": {
+        "bytes": 595099993,
+        "sha256": "e3a0760d23ef57747343ee8fd0c76e68a92194df040062266f3dc282cd15a924"
+      },
+      "build_report": {
+        "bytes": 45992,
+        "sha256": "cc0ad0f09bf06f598e6f65e706260fa9bb1a90e699ad1794d9df9ff1625d1d00"
+      },
+      "repository_commit": "1649e807d2b2310170e775c53bafa24cd932638a",
+      "run_id": 36937373454
+    },
+    "format": 1,
+    "java_or_dex_recompiled": false,
+    "native_libraries_changed": false,
+    "package_badging_verified": true,
+    "payload_bytes_verified": true,
+    "payloads": {
+      "assets/atlas/atlas-assets-index.tsv": {
+        "bytes": 2379733,
+        "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480"
+      },
+      "assets/atlas/atlas-import.properties": {
+        "bytes": 923,
+        "sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293"
+      },
+      "assets/atlas/atlas-text-index.tsv": {
+        "bytes": 21187391,
+        "sha256": "35bc97e032b286677bde32122c8cb3d14146bba2ded1f1fdc1a9a9486d37a5e8"
+      },
+      "assets/atlas/atlas-text.zip": {
+        "bytes": 312807038,
+        "sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c"
+      },
+      "assets/runtime/001-coh-compat.sql": {
+        "bytes": 7788,
+        "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+      },
+      "assets/runtime/THIRD_PARTY_NOTICES.md": {
+        "bytes": 2184,
+        "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+      },
+      "assets/runtime/accepted-runtime-manifest.json": {
+        "bytes": 4128,
+        "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+      },
+      "assets/runtime/atlas-world-supplement-manifest.json": {
+        "bytes": 4258210,
+        "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+      },
+      "assets/runtime/atlas-world-supplement.zip": {
+        "bytes": 207803201,
+        "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+      },
+      "assets/runtime/atlas_world_assets.py": {
+        "bytes": 13795,
+        "sha256": "554f6d76343dda55907b60811a2c93deb6ac76c8815534f6b3705ec08c27d494"
+      },
+      "assets/runtime/character-avatar-defaults-manifest.json": {
+        "bytes": 28554,
+        "sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7"
+      },
+      "assets/runtime/character-avatar-defaults.zip": {
+        "bytes": 1842488,
+        "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
+      },
+      "assets/runtime/character_avatar_assets.py": {
+        "bytes": 15165,
+        "sha256": "a19e1bf49f6d89b80e5be212cd8bbee5a9c4c7601305af50c9653e5cab927f73"
+      },
+      "assets/runtime/character_creation_diagnostic.py": {
+        "bytes": 14288,
+        "sha256": "169ddad093517209bc972b14f12d0c1c92df1435ff019e6a72b8d1d4e4fc2d9a"
+      },
+      "assets/runtime/character_reopen_diagnostic.py": {
+        "bytes": 3990,
+        "sha256": "d818c3d499648e060ec4f1ea3af64786df1953f5f52844ab7af7fca45bdc6b6e"
+      },
+      "assets/runtime/client-caches.zip": {
+        "bytes": 27071659,
+        "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+      },
+      "assets/runtime/client-launcher.exe": {
+        "bytes": 245249,
+        "sha256": "c0c84ea38e3da27168ec23988228bd3c55f463904b446139843dc3fd65d8c662"
+      },
+      "assets/runtime/client-manifest.json": {
+        "bytes": 4875,
+        "sha256": "1bccd8a5f37cbedd36dbd7637292d155614fc17c574e9fe94d2cc10a07797490"
+      },
+      "assets/runtime/client-prerequisites.zip": {
+        "bytes": 18757,
+        "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+      },
+      "assets/runtime/client-probe.exe": {
+        "bytes": 470392,
+        "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+      },
+      "assets/runtime/client-runtime.zip": {
+        "bytes": 8575422,
+        "sha256": "fa5413b346ffaca21e415be612bff67c2bb24ea1627028eec12d1ae8416cc335"
+      },
+      "assets/runtime/client_interactive_diagnostic.py": {
+        "bytes": 20972,
+        "sha256": "07f7a7d541659bd44be8f1f7c996c5164bbb70423479a66f9398ec9bd2f156e7"
+      },
+      "assets/runtime/client_login_diagnostic.py": {
+        "bytes": 15316,
+        "sha256": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf"
+      },
+      "assets/runtime/client_startup_diagnostic.py": {
+        "bytes": 57425,
+        "sha256": "60b2e64d7d06e83faeb4cc5744ec3d8d6f09cb93ed18f0ededfbf60b73de3686"
+      },
+      "assets/runtime/dbserver-package.tar.gz": {
+        "bytes": 2133821,
+        "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80"
+      },
+      "assets/runtime/dbserver-schema.tar.gz": {
+        "bytes": 1139794,
+        "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792"
+      },
+      "assets/runtime/dbserver_diagnostic.py": {
+        "bytes": 50159,
+        "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+      },
+      "assets/runtime/diagnostic.py": {
+        "bytes": 69529,
+        "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+      },
+      "assets/runtime/game-package.tar.gz": {
+        "bytes": 10937463,
+        "sha256": "5d677b9e26def071929d73ffe23ef62418d3dc6c9385abb470b9607af0c47864"
+      },
+      "assets/runtime/game_device_diagnostic.py": {
+        "bytes": 51035,
+        "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+      },
+      "assets/runtime/game_diagnostic.py": {
+        "bytes": 79536,
+        "sha256": "7155dfb29c8c1370d08abfd793295e0116888f120d4258aabaa5d44d43bbe539"
+      },
+      "assets/runtime/game_evidence.py": {
+        "bytes": 25884,
+        "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+      },
+      "assets/runtime/game_hang_evidence.py": {
+        "bytes": 22400,
+        "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+      },
+      "assets/runtime/game_map_progress.py": {
+        "bytes": 14789,
+        "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+      },
+      "assets/runtime/local_character_server.py": {
+        "bytes": 53201,
+        "sha256": "e1bf584623824fc559b15cfe8b3eb1add53240610001b455e0b371152b2112df"
+      },
+      "assets/runtime/local_login_server.py": {
+        "bytes": 19921,
+        "sha256": "b3704d9d60f513198fa4b5198ba474ffeeb5aca099d51aa30c318f8b044a4e7f"
+      },
+      "assets/runtime/odbc_probe.exe": {
+        "bytes": 270071,
+        "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+      },
+      "assets/runtime/postgresql-build.json": {
+        "bytes": 163117,
+        "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+      },
+      "assets/runtime/postgresql-runtime.tar.gz": {
+        "bytes": 9280905,
+        "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+      },
+      "assets/runtime/presentation_diagnostic.py": {
+        "bytes": 17396,
+        "sha256": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df"
+      },
+      "assets/runtime/probe.dll": {
+        "bytes": 82761,
+        "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+      },
+      "assets/runtime/proot-build.json": {
+        "bytes": 3236,
+        "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+      },
+      "assets/runtime/psqlodbc_x86.msi": {
+        "bytes": 4079616,
+        "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+      },
+      "assets/runtime/runtime-lock.json": {
+        "bytes": 1688,
+        "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+      },
+      "assets/runtime/runtime-manifest.json": {
+        "bytes": 17135,
+        "sha256": "c9818015487e822245e6157167bea29bc5bbc79d19e5c7ae781a6413bf04fb4a"
+      },
+      "assets/runtime/runtime-probe.exe": {
+        "bytes": 245968,
+        "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+      },
+      "lib/arm64-v8a/libproot-loader.so": {
+        "bytes": 17624,
+        "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+      },
+      "lib/arm64-v8a/libproot.so": {
+        "bytes": 263648,
+        "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+      }
+    },
+    "physical_gameplay_validated": false,
+    "qualification": {
+      "avatar_archive_sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29",
+      "avatar_manifest_sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7",
+      "donor_apk_sha256": "e3a0760d23ef57747343ee8fd0c76e68a92194df040062266f3dc282cd15a924",
+      "execution_platform": "native_proot",
+      "fixture": {
+        "exact_bytes_metadata_preserved": true,
+        "healthy_links_refused_unchanged": {
+          "all_entries_preserved": true,
+          "refused": true
+        },
+        "hidden_backing_entries_removed": true,
+        "interruption_cases": {
+          "after_intermediate_removal": {
+            "all_payloads_preserved": true,
+            "hidden_backing_entries_removed": true,
+            "retry_passed": true
+          },
+          "after_leaf_replacement": {
+            "all_payloads_preserved": true,
+            "hidden_backing_entries_removed": true,
+            "retry_passed": true
+          }
+        },
+        "negative_cases": {
+          "backing_symlink": {
+            "all_entries_preserved": true,
+            "refused": true
+          },
+          "foreign_leaf": {
+            "all_entries_preserved": true,
+            "refused": true
+          },
+          "multiple_links": {
+            "all_entries_preserved": true,
+            "refused": true
+          },
+          "payload": {
+            "all_entries_preserved": true,
+            "refused": true
+          },
+          "permissions": {
+            "all_entries_preserved": true,
+            "refused": true
+          },
+          "timestamp": {
+            "all_entries_preserved": true,
+            "refused": true
+          }
+        },
+        "negative_cases_passed": true,
+        "old_read_nofollow_errno": 40,
+        "repaired_files": 21,
+        "repeated_reused_files": 21,
+        "sentinels_preserved": true
+      },
+      "format": 1,
+      "gameplay_validated": false,
+      "guest_uid": 1000,
+      "helper_sha256": "a19e1bf49f6d89b80e5be212cd8bbee5a9c4c7601305af50c9653e5cab927f73",
+      "machine": "aarch64",
+      "native_proot_build": {
+        "android_api": null,
+        "android_cross_answers_sha256": "42d9baf16d4c21140b259f186914f1353fb5ad4134f3556e05165bd945a80d19",
+        "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "corresponding_sources": {
+          "bytes": 1014961,
+          "file": "proot-corresponding-sources.tar.gz",
+          "scope": "Original complete PRoot tree and talloc archive, exact build script, patches and attribution",
+          "sha256": "bbd4488d05aba816e38c398d84323e0e7187c46836a83554aa9c4a139e196376"
+        },
+        "files": {
+          "proot": {
+            "bytes": 287720,
+            "elf_machine": "aarch64",
+            "interpreter": [
+              "/lib/ld-linux-aarch64.so.1"
+            ],
+            "load_segment_alignment": [
+              16384,
+              16384
+            ],
+            "needed": [
+              "libc.so.6",
+              "ld-linux-aarch64.so.1"
+            ],
+            "sha256": "a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb"
+          },
+          "proot-loader": {
+            "bytes": 17672,
+            "elf_machine": "aarch64",
+            "interpreter": [],
+            "load_segment_alignment": [
+              16384
+            ],
+            "needed": [],
+            "sha256": "c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5"
+          }
+        },
+        "license_files": {
+          "PRoot-COPYING": {
+            "bytes": 19106,
+            "sha256": "0ffa6454acbe7e410ac6f0007df83b9b3161fe55484c1f4b87487c0f2d228a6d"
+          },
+          "talloc-LICENSE": {
+            "bytes": 7651,
+            "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+          },
+          "talloc-talloc.h": {
+            "bytes": 65526,
+            "sha256": "e01fb092aaed2b431be26674e2b791c77fb5984537c29b514e957582c6b31465"
+          }
+        },
+        "max_page_size": 16384,
+        "ndk_version": null,
+        "optional_acceleration_patch": false,
+        "patches": {
+          "0001-sysvipc-memfd.patch": {
+            "bytes": 1158,
+            "sha256": "e8e3cb956bdb8b1bcbdf72a23b67ad86fc33fa51430f3a1ee37e1a053f5f0330"
+          },
+          "0002-android-string-header.patch": {
+            "bytes": 300,
+            "sha256": "7508ab6e850dc1c1e687421085e69a24e770b4caabd050cf52da667b95c73178"
+          },
+          "0003-portable-loader-offset.patch": {
+            "bytes": 1107,
+            "sha256": "3f0f44f606c5e4e0424a24cc1f06cb15b4bdaa3d5cd2ad96df9b2a8feeb6c776"
+          }
+        },
+        "recipe_sha256": "de1f5dd127fc143cdbd8b253fb62f421541560857cb0a9868794470c42924491",
+        "runtime_validation": "unverified",
+        "schema_version": 1,
+        "source_commit": "7266fb3e8516535682f5a9c8f3a7e70f6506eddb",
+        "source_tree": "8fcee3911b8e0848a1fc75c2e9827316ba658a5a",
+        "source_url": "https://github.com/termux/proot.git",
+        "sources": {
+          "proot-7266fb3e8516535682f5a9c8f3a7e70f6506eddb.tar.gz": {
+            "bytes": 322163,
+            "sha256": "fa70c8dd29e983cb668ad9bee195a387b293a49d192770ad997c9b38f0f17c14"
+          },
+          "talloc-2.4.3.tar.gz": {
+            "bytes": 684092,
+            "sha256": "dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd"
+          }
+        },
+        "status": "native_built_runtime_unverified",
+        "sysvipc_memfd_patch": true,
+        "talloc_linkage": "static",
+        "talloc_source_url": "https://www.samba.org/ftp/talloc/talloc-2.4.3.tar.gz",
+        "talloc_version": "2.4.3",
+        "target": "linux-arm64"
+      },
+      "physical_android_execution_validated": false,
+      "qualifier_sha256": "84636720b8ecb83661cfe679e57d0d5dd8252687ad9308068b26160e1d5a1e0e",
+      "repository_commit": "34b763a5518e3fa3740c197c0e824c17da088536",
+      "saved_game_database_opened": false,
+      "scope": "legacy_avatar_hardlink_repair_native_proot",
+      "source_files": {
+        ".github/workflows/android-avatar-repair.yml": {
+          "bytes": 9225,
+          "sha256": "63bff17db26a1a6f6c903ef18de25715e1825914dcd52563d5b777fa60ccfd22"
+        },
+        "android/guest/character_avatar_assets.py": {
+          "bytes": 15165,
+          "sha256": "a19e1bf49f6d89b80e5be212cd8bbee5a9c4c7601305af50c9653e5cab927f73"
+        },
+        "tools/android/interactive/build_avatar_repair_apk.py": {
+          "bytes": 25257,
+          "sha256": "17c919786c0be1dd734ccd0d175d7c969be13d642008d7d1b849455426c19255"
+        },
+        "tools/android/interactive/qualify_avatar_repair.py": {
+          "bytes": 15497,
+          "sha256": "84636720b8ecb83661cfe679e57d0d5dd8252687ad9308068b26160e1d5a1e0e"
+        }
+      },
+      "status": "passed"
+    },
+    "qualification_receipt": {
+      "bytes": 6113,
+      "sha256": "1f315a3e1d1c6f232da1e5dbd0a4150786486dbf301ea0eea91d63ef1a46e257"
+    },
+    "repository_commit": "34b763a5518e3fa3740c197c0e824c17da088536",
+    "retained_android_resources": {
+      "res/drawable/ic_coh_client.xml": {
+        "bytes": 1000,
+        "sha256": "0518048aa0a4f2434494e0eb0780322dd395ba92b280789e34cce400256d24eb"
+      },
+      "resources.arsc": {
+        "bytes": 852,
+        "sha256": "a1fa0500d49ca08dc6af7b507d05b7308fb8ea3c8d706c488267643f9df112e6"
+      }
+    },
+    "retained_dex": {
+      "bytes": 214940,
+      "sha256": "c5263ced7f01ab885d0c5ad8f9bf4f83d13612739fe734f66640edc5a521171f"
+    },
+    "runtime_manifest": {
+      "accepted_base_runtime": {
+        "manifest": {
+          "candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+          "client_probe": {
+            "executable": "client-probe.exe",
+            "marker": "COH_CLIENT_PROBE_V1 ",
+            "optional": true,
+            "scope": "headless_wgl_client_capabilities"
+          },
+          "client_probe_windows_libraries": [
+            "GDI32.dll",
+            "KERNEL32.dll",
+            "OPENGL32.DLL",
+            "USER32.dll",
+            "dinput8.dll",
+            "msvcrt.dll"
+          ],
+          "compiler": "i686-w64-mingw32-gcc (GCC) 13-posix",
+          "files": {
+            "001-coh-compat.sql": {
+              "bytes": 7788,
+              "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+            },
+            "THIRD_PARTY_NOTICES.md": {
+              "bytes": 2184,
+              "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+            },
+            "client-probe.exe": {
+              "bytes": 470392,
+              "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+            },
+            "diagnostic.py": {
+              "bytes": 69529,
+              "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+            },
+            "odbc_probe.exe": {
+              "bytes": 270071,
+              "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+            },
+            "postgresql-build.json": {
+              "bytes": 163117,
+              "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+            },
+            "postgresql-runtime.tar.gz": {
+              "bytes": 9280905,
+              "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+            },
+            "probe.dll": {
+              "bytes": 82761,
+              "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+            },
+            "proot-build.json": {
+              "bytes": 3236,
+              "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+            },
+            "psqlodbc_x86.msi": {
+              "bytes": 4079616,
+              "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+            },
+            "runtime-lock.json": {
+              "bytes": 1688,
+              "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+            },
+            "runtime-probe.exe": {
+              "bytes": 245968,
+              "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+            }
+          },
+          "format": 1,
+          "odbc_ansi_compatibility": {
+            "compile_aliases": {
+              "SQLDriverConnectA": "SQLDriverConnect",
+              "SQLExecDirectA": "SQLExecDirect"
+            },
+            "diagnostic_progress": "unbuffered output and credential-free ODBC call line numbers",
+            "fixture_sql_and_acceptance_markers_changed": false,
+            "verified_windows_manager_imports": [
+              "SQLAllocHandle",
+              "SQLBindParameter",
+              "SQLColumnsW",
+              "SQLDisconnect",
+              "SQLDriverConnect",
+              "SQLEndTran",
+              "SQLExecDirect",
+              "SQLFetch",
+              "SQLFreeHandle",
+              "SQLGetData",
+              "SQLGetDiagRec",
+              "SQLGetDiagRecA",
+              "SQLGetInfoW",
+              "SQLMoreResults",
+              "SQLSetConnectAttr",
+              "SQLSetEnvAttr"
+            ],
+            "wide_columns_workaround": {
+              "api": "SQLColumnsW",
+              "compile_define": "COH_ODBC_WIDE_COLUMNS=1",
+              "filter_encoding": "UTF-16 schema/table; unchanged NULL catalog/column filters",
+              "reason": "Avoid ANSI SQLColumns rejecting optional NULL filters during conversion",
+              "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L1113"
+            },
+            "wide_driver_version_workaround": {
+              "api": "SQLGetInfoW",
+              "compile_define": "COH_ODBC_WIDE_INFO=1",
+              "reason": "Avoid ANSI-to-wide SQLGetInfo forwarding with a private driver handle",
+              "result_encoding": "UTF-16 with strict ASCII conversion",
+              "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975"
+            },
+            "wine_export_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec"
+          },
+          "repository_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+          "runtime_probe": {
+            "dll": "probe.dll",
+            "executable": "runtime-probe.exe",
+            "marker": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified"
+          },
+          "scope": "APK build inputs; not proof of Android execution or gameplay"
+        },
+        "manifest_file": "accepted-runtime-manifest.json",
+        "manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+        "repository_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+        "run_id": 36364550345
+      },
+      "candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+      "client_bundle": {
+        "android_execution_validated": false,
+        "avatar_supplement": {
+          "archive": "character-avatar-defaults.zip",
+          "archive_pin": {
+            "bytes": 1842488,
+            "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
+          },
+          "file_count": 21,
+          "gameplay_validated": false,
+          "imported_assets_modified": false,
+          "installation": "private_client_worktree_missing_files_only",
+          "manifest_file": "character-avatar-defaults-manifest.json",
+          "manifest_pin": {
+            "bytes": 28554,
+            "sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7"
+          },
+          "payload_bytes": 2980122,
+          "prepared_caches_modified": false,
+          "runtime_visual_validated": false,
+          "scope": "default_male_avatar_supplement"
+        },
+        "executable": "CityOfHeroes.exe",
+        "format": 1,
+        "game_assets_external": true,
+        "gameplay_validated": false,
+        "guest_script": "character_reopen_diagnostic.py",
+        "height": 600,
+        "local_server": {
+          "listener_policy": "device",
+          "mapserver": {
+            "apk_donor_run_id": 36638344040,
+            "apk_donor_sha256": "e502b80d91c92164021684d2ea311e9e9d5c99c1b9ac178c67619844f3c5d547",
+            "archive_pin": {
+              "bytes": 10937463,
+              "sha256": "5d677b9e26def071929d73ffe23ef62418d3dc6c9385abb470b9607af0c47864"
+            },
+            "dbserver_profile": "loopback",
+            "game_listener_profile": "loopback",
+            "mapserver_progress_producer": {
+              "manifest_sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1",
+              "mapserver_sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb",
+              "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f"
+            },
+            "mapserver_progress_profile": "dispatch_progress_v1",
+            "package_archive": "game-package.tar.gz",
+            "package_manifest_sha256": "ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd",
+            "package_repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+            "package_run_id": 36630872719
+          },
+          "mapserver_included": true,
+          "package_archive": "dbserver-package.tar.gz",
+          "package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+          "package_repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+          "package_run_id": 36460867428,
+          "persistent_profile": "android-local-login",
+          "schema_acceptance_run_id": 36088012666,
+          "schema_archive": "dbserver-schema.tar.gz",
+          "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+          "variant": "normal"
+        },
+        "reference_run_id": 36088012664,
+        "scope": "actual_character_reopen_guest",
+        "server_packages_included": true,
+        "transport": "private_unix_rfb",
+        "width": 800,
+        "world_supplement": {
+          "accepted_cache_archive_modified": false,
+          "archive": "atlas-world-supplement.zip",
+          "archive_pin": {
+            "bytes": 207803201,
+            "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+          },
+          "file_count": 2904,
+          "files_sha256": "1e61d6991a83949750184b2b8cc6496310730d53598c66b58445ec9b2f6d69d4",
+          "gameplay_validated": false,
+          "imported_assets_modified": false,
+          "installation": "private_client_and_server_worktrees_missing_files_only",
+          "manifest_file": "atlas-world-supplement-manifest.json",
+          "manifest_pin": {
+            "bytes": 4258210,
+            "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+          },
+          "payload_bytes": 318611871,
+          "runtime_visual_validated": false,
+          "scope": "atlas_world_geometry_texture_supplement"
+        }
+      },
+      "client_probe": {
+        "executable": "client-probe.exe",
+        "marker": "COH_CLIENT_PROBE_V1 ",
+        "optional": true,
+        "scope": "headless_wgl_client_capabilities"
+      },
+      "client_probe_windows_libraries": [
+        "GDI32.dll",
+        "KERNEL32.dll",
+        "OPENGL32.DLL",
+        "USER32.dll",
+        "dinput8.dll",
+        "msvcrt.dll"
+      ],
+      "compiler": "i686-w64-mingw32-gcc (GCC) 13-posix",
+      "files": {
+        "001-coh-compat.sql": {
+          "bytes": 7788,
+          "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+        },
+        "THIRD_PARTY_NOTICES.md": {
+          "bytes": 2184,
+          "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+        },
+        "accepted-runtime-manifest.json": {
+          "bytes": 4128,
+          "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+        },
+        "atlas-world-supplement-manifest.json": {
+          "bytes": 4258210,
+          "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+        },
+        "atlas-world-supplement.zip": {
+          "bytes": 207803201,
+          "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+        },
+        "atlas_world_assets.py": {
+          "bytes": 13795,
+          "sha256": "554f6d76343dda55907b60811a2c93deb6ac76c8815534f6b3705ec08c27d494"
+        },
+        "character-avatar-defaults-manifest.json": {
+          "bytes": 28554,
+          "sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7"
+        },
+        "character-avatar-defaults.zip": {
+          "bytes": 1842488,
+          "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
+        },
+        "character_avatar_assets.py": {
+          "bytes": 15165,
+          "sha256": "a19e1bf49f6d89b80e5be212cd8bbee5a9c4c7601305af50c9653e5cab927f73"
+        },
+        "character_creation_diagnostic.py": {
+          "bytes": 14288,
+          "sha256": "169ddad093517209bc972b14f12d0c1c92df1435ff019e6a72b8d1d4e4fc2d9a"
+        },
+        "character_reopen_diagnostic.py": {
+          "bytes": 3990,
+          "sha256": "d818c3d499648e060ec4f1ea3af64786df1953f5f52844ab7af7fca45bdc6b6e"
+        },
+        "client-caches.zip": {
+          "bytes": 27071659,
+          "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+        },
+        "client-launcher.exe": {
+          "bytes": 245249,
+          "sha256": "c0c84ea38e3da27168ec23988228bd3c55f463904b446139843dc3fd65d8c662"
+        },
+        "client-manifest.json": {
+          "bytes": 4875,
+          "sha256": "1bccd8a5f37cbedd36dbd7637292d155614fc17c574e9fe94d2cc10a07797490"
+        },
+        "client-prerequisites.zip": {
+          "bytes": 18757,
+          "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+        },
+        "client-probe.exe": {
+          "bytes": 470392,
+          "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+        },
+        "client-runtime.zip": {
+          "bytes": 8575422,
+          "sha256": "fa5413b346ffaca21e415be612bff67c2bb24ea1627028eec12d1ae8416cc335"
+        },
+        "client_interactive_diagnostic.py": {
+          "bytes": 20972,
+          "sha256": "07f7a7d541659bd44be8f1f7c996c5164bbb70423479a66f9398ec9bd2f156e7"
+        },
+        "client_login_diagnostic.py": {
+          "bytes": 15316,
+          "sha256": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf"
+        },
+        "client_startup_diagnostic.py": {
+          "bytes": 57425,
+          "sha256": "60b2e64d7d06e83faeb4cc5744ec3d8d6f09cb93ed18f0ededfbf60b73de3686"
+        },
+        "dbserver-package.tar.gz": {
+          "bytes": 2133821,
+          "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80"
+        },
+        "dbserver-schema.tar.gz": {
+          "bytes": 1139794,
+          "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792"
+        },
+        "dbserver_diagnostic.py": {
+          "bytes": 50159,
+          "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+        },
+        "diagnostic.py": {
+          "bytes": 69529,
+          "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+        },
+        "game-package.tar.gz": {
+          "bytes": 10937463,
+          "sha256": "5d677b9e26def071929d73ffe23ef62418d3dc6c9385abb470b9607af0c47864"
+        },
+        "game_device_diagnostic.py": {
+          "bytes": 51035,
+          "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+        },
+        "game_diagnostic.py": {
+          "bytes": 79536,
+          "sha256": "7155dfb29c8c1370d08abfd793295e0116888f120d4258aabaa5d44d43bbe539"
+        },
+        "game_evidence.py": {
+          "bytes": 25884,
+          "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+        },
+        "game_hang_evidence.py": {
+          "bytes": 22400,
+          "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+        },
+        "game_map_progress.py": {
+          "bytes": 14789,
+          "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+        },
+        "local_character_server.py": {
+          "bytes": 53201,
+          "sha256": "e1bf584623824fc559b15cfe8b3eb1add53240610001b455e0b371152b2112df"
+        },
+        "local_login_server.py": {
+          "bytes": 19921,
+          "sha256": "b3704d9d60f513198fa4b5198ba474ffeeb5aca099d51aa30c318f8b044a4e7f"
+        },
+        "odbc_probe.exe": {
+          "bytes": 270071,
+          "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+        },
+        "postgresql-build.json": {
+          "bytes": 163117,
+          "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+        },
+        "postgresql-runtime.tar.gz": {
+          "bytes": 9280905,
+          "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+        },
+        "presentation_diagnostic.py": {
+          "bytes": 17396,
+          "sha256": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df"
+        },
+        "probe.dll": {
+          "bytes": 82761,
+          "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+        },
+        "proot-build.json": {
+          "bytes": 3236,
+          "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+        },
+        "psqlodbc_x86.msi": {
+          "bytes": 4079616,
+          "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+        },
+        "runtime-lock.json": {
+          "bytes": 1688,
+          "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+        },
+        "runtime-probe.exe": {
+          "bytes": 245968,
+          "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+        }
+      },
+      "format": 1,
+      "odbc_ansi_compatibility": {
+        "compile_aliases": {
+          "SQLDriverConnectA": "SQLDriverConnect",
+          "SQLExecDirectA": "SQLExecDirect"
+        },
+        "diagnostic_progress": "unbuffered output and credential-free ODBC call line numbers",
+        "fixture_sql_and_acceptance_markers_changed": false,
+        "verified_windows_manager_imports": [
+          "SQLAllocHandle",
+          "SQLBindParameter",
+          "SQLColumnsW",
+          "SQLDisconnect",
+          "SQLDriverConnect",
+          "SQLEndTran",
+          "SQLExecDirect",
+          "SQLFetch",
+          "SQLFreeHandle",
+          "SQLGetData",
+          "SQLGetDiagRec",
+          "SQLGetDiagRecA",
+          "SQLGetInfoW",
+          "SQLMoreResults",
+          "SQLSetConnectAttr",
+          "SQLSetEnvAttr"
+        ],
+        "wide_columns_workaround": {
+          "api": "SQLColumnsW",
+          "compile_define": "COH_ODBC_WIDE_COLUMNS=1",
+          "filter_encoding": "UTF-16 schema/table; unchanged NULL catalog/column filters",
+          "reason": "Avoid ANSI SQLColumns rejecting optional NULL filters during conversion",
+          "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L1113"
+        },
+        "wide_driver_version_workaround": {
+          "api": "SQLGetInfoW",
+          "compile_define": "COH_ODBC_WIDE_INFO=1",
+          "reason": "Avoid ANSI-to-wide SQLGetInfo forwarding with a private driver handle",
+          "result_encoding": "UTF-16 with strict ASCII conversion",
+          "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975"
+        },
+        "wine_export_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec"
+      },
+      "repository_commit": "34b763a5518e3fa3740c197c0e824c17da088536",
+      "runtime_probe": {
+        "dll": "probe.dll",
+        "executable": "runtime-probe.exe",
+        "marker": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified"
+      },
+      "scope": "Published 0.11.0 gameplay candidate with focused native PRoot avatar reuse repair; physical reopening and gameplay remain pending"
+    },
+    "runtime_manifest_sha256": "c9818015487e822245e6157167bea29bc5bbc79d19e5c7ae781a6413bf04fb4a",
+    "scope": "Focused avatar reuse repair retaining the complete published 0.11.0 gameplay shell and world; physical reopening, Atlas rendering and ground recovery pending",
+    "sha256": "f4e30c728046771cb91beece46fb54663b0fcd57a28b8e055f6fc8918dd3c899",
+    "signature_verified": true,
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+    "signing_key_created": false,
+    "testing_notes": {
+      "bytes": 2161,
+      "sha256": "4750f012be47c459591d1bfd13f6115fae1ef46170573d72ec6a2f1e0ab153ff"
+    },
+    "version_code": 7,
+    "version_name": "0.11.1",
+    "world_assets_changed": false
+  },
+  "changed_members": [
+    "AndroidManifest.xml",
+    "assets/runtime/character_avatar_assets.py",
+    "assets/runtime/client-manifest.json",
+    "assets/runtime/runtime-manifest.json"
+  ],
+  "client_or_server_recompiled": false,
+  "format": 1,
+  "java_or_dex_recompiled": false,
+  "native_libraries_changed": false,
+  "next_action": "Update existing app in place, preserve data, Refresh runtime once, Reopen saved THORHERO and follow 0.11.1 focused physical test instructions.",
+  "packaging_artifact": {
+    "bytes": 10380,
+    "id": 11201154675,
+    "sha256": "63d4d78aecd13360536dba17ceebe71ae1ac9a46a53aad50baba34ad47e213b2"
+  },
+  "physical_gates": {
+    "atlas_rendering": "pending",
+    "existing_character_reopen": "pending_0.11.1_device_test",
+    "normal_second_save": "pending",
+    "return_to_ground": "pending",
+    "walking_jump_collision": "pending"
+  },
+  "public_apk_digest_matches_signed_build": true,
+  "qualification": {
+    "avatar_archive_sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29",
+    "avatar_manifest_sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7",
+    "donor_apk_sha256": "e3a0760d23ef57747343ee8fd0c76e68a92194df040062266f3dc282cd15a924",
+    "execution_platform": "native_proot",
+    "fixture": {
+      "exact_bytes_metadata_preserved": true,
+      "healthy_links_refused_unchanged": {
+        "all_entries_preserved": true,
+        "refused": true
+      },
+      "hidden_backing_entries_removed": true,
+      "interruption_cases": {
+        "after_intermediate_removal": {
+          "all_payloads_preserved": true,
+          "hidden_backing_entries_removed": true,
+          "retry_passed": true
+        },
+        "after_leaf_replacement": {
+          "all_payloads_preserved": true,
+          "hidden_backing_entries_removed": true,
+          "retry_passed": true
+        }
+      },
+      "negative_cases": {
+        "backing_symlink": {
+          "all_entries_preserved": true,
+          "refused": true
+        },
+        "foreign_leaf": {
+          "all_entries_preserved": true,
+          "refused": true
+        },
+        "multiple_links": {
+          "all_entries_preserved": true,
+          "refused": true
+        },
+        "payload": {
+          "all_entries_preserved": true,
+          "refused": true
+        },
+        "permissions": {
+          "all_entries_preserved": true,
+          "refused": true
+        },
+        "timestamp": {
+          "all_entries_preserved": true,
+          "refused": true
+        }
+      },
+      "negative_cases_passed": true,
+      "old_read_nofollow_errno": 40,
+      "repaired_files": 21,
+      "repeated_reused_files": 21,
+      "sentinels_preserved": true
+    },
+    "format": 1,
+    "gameplay_validated": false,
+    "guest_uid": 1000,
+    "helper_sha256": "a19e1bf49f6d89b80e5be212cd8bbee5a9c4c7601305af50c9653e5cab927f73",
+    "machine": "aarch64",
+    "native_proot_build": {
+      "android_api": null,
+      "android_cross_answers_sha256": "42d9baf16d4c21140b259f186914f1353fb5ad4134f3556e05165bd945a80d19",
+      "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "corresponding_sources": {
+        "bytes": 1014961,
+        "file": "proot-corresponding-sources.tar.gz",
+        "scope": "Original complete PRoot tree and talloc archive, exact build script, patches and attribution",
+        "sha256": "bbd4488d05aba816e38c398d84323e0e7187c46836a83554aa9c4a139e196376"
+      },
+      "files": {
+        "proot": {
+          "bytes": 287720,
+          "elf_machine": "aarch64",
+          "interpreter": [
+            "/lib/ld-linux-aarch64.so.1"
+          ],
+          "load_segment_alignment": [
+            16384,
+            16384
+          ],
+          "needed": [
+            "libc.so.6",
+            "ld-linux-aarch64.so.1"
+          ],
+          "sha256": "a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb"
+        },
+        "proot-loader": {
+          "bytes": 17672,
+          "elf_machine": "aarch64",
+          "interpreter": [],
+          "load_segment_alignment": [
+            16384
+          ],
+          "needed": [],
+          "sha256": "c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5"
+        }
+      },
+      "license_files": {
+        "PRoot-COPYING": {
+          "bytes": 19106,
+          "sha256": "0ffa6454acbe7e410ac6f0007df83b9b3161fe55484c1f4b87487c0f2d228a6d"
+        },
+        "talloc-LICENSE": {
+          "bytes": 7651,
+          "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+        },
+        "talloc-talloc.h": {
+          "bytes": 65526,
+          "sha256": "e01fb092aaed2b431be26674e2b791c77fb5984537c29b514e957582c6b31465"
+        }
+      },
+      "max_page_size": 16384,
+      "ndk_version": null,
+      "optional_acceleration_patch": false,
+      "patches": {
+        "0001-sysvipc-memfd.patch": {
+          "bytes": 1158,
+          "sha256": "e8e3cb956bdb8b1bcbdf72a23b67ad86fc33fa51430f3a1ee37e1a053f5f0330"
+        },
+        "0002-android-string-header.patch": {
+          "bytes": 300,
+          "sha256": "7508ab6e850dc1c1e687421085e69a24e770b4caabd050cf52da667b95c73178"
+        },
+        "0003-portable-loader-offset.patch": {
+          "bytes": 1107,
+          "sha256": "3f0f44f606c5e4e0424a24cc1f06cb15b4bdaa3d5cd2ad96df9b2a8feeb6c776"
+        }
+      },
+      "recipe_sha256": "de1f5dd127fc143cdbd8b253fb62f421541560857cb0a9868794470c42924491",
+      "runtime_validation": "unverified",
+      "schema_version": 1,
+      "source_commit": "7266fb3e8516535682f5a9c8f3a7e70f6506eddb",
+      "source_tree": "8fcee3911b8e0848a1fc75c2e9827316ba658a5a",
+      "source_url": "https://github.com/termux/proot.git",
+      "sources": {
+        "proot-7266fb3e8516535682f5a9c8f3a7e70f6506eddb.tar.gz": {
+          "bytes": 322163,
+          "sha256": "fa70c8dd29e983cb668ad9bee195a387b293a49d192770ad997c9b38f0f17c14"
+        },
+        "talloc-2.4.3.tar.gz": {
+          "bytes": 684092,
+          "sha256": "dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd"
+        }
+      },
+      "status": "native_built_runtime_unverified",
+      "sysvipc_memfd_patch": true,
+      "talloc_linkage": "static",
+      "talloc_source_url": "https://www.samba.org/ftp/talloc/talloc-2.4.3.tar.gz",
+      "talloc_version": "2.4.3",
+      "target": "linux-arm64"
+    },
+    "physical_android_execution_validated": false,
+    "qualifier_sha256": "84636720b8ecb83661cfe679e57d0d5dd8252687ad9308068b26160e1d5a1e0e",
+    "repository_commit": "34b763a5518e3fa3740c197c0e824c17da088536",
+    "saved_game_database_opened": false,
+    "scope": "legacy_avatar_hardlink_repair_native_proot",
+    "source_files": {
+      ".github/workflows/android-avatar-repair.yml": {
+        "bytes": 9225,
+        "sha256": "63bff17db26a1a6f6c903ef18de25715e1825914dcd52563d5b777fa60ccfd22"
+      },
+      "android/guest/character_avatar_assets.py": {
+        "bytes": 15165,
+        "sha256": "a19e1bf49f6d89b80e5be212cd8bbee5a9c4c7601305af50c9653e5cab927f73"
+      },
+      "tools/android/interactive/build_avatar_repair_apk.py": {
+        "bytes": 25257,
+        "sha256": "17c919786c0be1dd734ccd0d175d7c969be13d642008d7d1b849455426c19255"
+      },
+      "tools/android/interactive/qualify_avatar_repair.py": {
+        "bytes": 15497,
+        "sha256": "84636720b8ecb83661cfe679e57d0d5dd8252687ad9308068b26160e1d5a1e0e"
+      }
+    },
+    "status": "passed"
+  },
+  "qualification_artifact": {
+    "bytes": 4567,
+    "id": 11200818326,
+    "sha256": "f8585652820b4ecc749002729e3289dc84fb6c918939e60112290353fbeb190e"
+  },
+  "qualification_source_closure_verified": true,
+  "release_asset_id": 604407355,
+  "release_tag": "coh-atlas-gameplay-v0.11.1",
+  "repository_commit": "34b763a5518e3fa3740c197c0e824c17da088536",
+  "retained_members": 48,
+  "scope": "independent_public_download_review_of_qualified_avatar_repair",
+  "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "status": "passed",
+  "test_counts": {
+    "installer": 15,
+    "package_boundaries": 12,
+    "routing": 1
+  },
+  "version_code": 7,
+  "version_name": "0.11.1",
+  "workflow_run_id": 36944389469,
+  "world_assets_changed": false
+}

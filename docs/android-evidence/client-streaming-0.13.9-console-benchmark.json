@@ -1,0 +1,50 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "host_complete_console_identity_parsing_only",
+  "input": {
+    "bytes": 1334723,
+    "sha256": "ebec9cac51bfa68b5dcd1ec40ec0c85b74041af1b4ef7faf5cf5bd1e2eb3ed5c",
+    "lines": 23631
+  },
+  "iterations_per_round": 156,
+  "rounds": 5,
+  "utf8_decode_included_in_both_paths": true,
+  "current_identity_values_equal": true,
+  "candidate_splits_unrelated_lines": false,
+  "whole_console_rescanned_each_observation": true,
+  "identity_cache_added": false,
+  "stock_seconds": [
+    0.921894,
+    0.922698,
+    0.921015,
+    0.923744,
+    0.93502
+  ],
+  "candidate_seconds": [
+    0.137534,
+    0.166378,
+    0.139888,
+    0.152058,
+    0.147935
+  ],
+  "stock_median_seconds": 0.922698,
+  "candidate_median_seconds": 0.147935,
+  "physical_client_startup_savings_validated": false,
+  "interpretation": "Measures host parser CPU for repeated observations of the final console; does not apportion the device observer metric or predict Thor startup savings.",
+  "support_zip": {
+    "name": "coh-atlas-gameplay-20261004-121800.zip",
+    "bytes": 13287921,
+    "sha256": "5907cbe2875b61dc941221e21ec61dd9fe1010777a97ef11de27f365cd59c71e"
+  },
+  "source_files": {
+    "tools/android/interactive/benchmark_client_console_markers.py": {
+      "bytes": 4253,
+      "sha256": "f452f41a144ba664f03fa79b3dbd95648c9ceaa007eacca14b63ff8c8933053b"
+    },
+    "android/guest/client_startup_diagnostic.py": {
+      "bytes": 68148,
+      "sha256": "24fbe846f6d5f46bdde17080acbab76e928c6bb8a9932512352586a8e9bfe2a6"
+    }
+  }
+}

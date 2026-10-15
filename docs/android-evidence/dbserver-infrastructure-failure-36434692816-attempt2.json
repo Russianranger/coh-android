@@ -1,0 +1,122 @@
+{
+  "format": 1,
+  "status": "failed_before_runtime_dependency_download",
+  "run_id": 36434692816,
+  "attempt": 2,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36434692816",
+  "repository_commit": "73323b72262d7e61064c16023258e0bfe9016583",
+  "runtime_job_id": 108975133343,
+  "failed_step": {
+    "number": 6,
+    "name": "Build matching native ARM64 PRoot",
+    "command": "python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native"
+  },
+  "failure_utc": "2026-09-28T14:31:29.0473647Z",
+  "error": "PRoot build failed: HTTP Error 503: Service Unavailable",
+  "exit_code": 1,
+  "dependency": {
+    "name": "talloc",
+    "version": "2.4.3",
+    "url": "https://www.samba.org/ftp/talloc/talloc-2.4.3.tar.gz",
+    "required_sha256": "dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd",
+    "socket_inactivity_timeout_seconds": 60,
+    "transport_attempts": 3,
+    "retry_log_lines": [
+      "2026-09-28T14:30:37.1946390Z Retrying pinned talloc download after transport failure (attempt 2/3)",
+      "2026-09-28T14:31:04.5560168Z Retrying pinned talloc download after transport failure (attempt 3/3)"
+    ],
+    "proot_pinned_git_fetch_succeeded": true,
+    "classification": "Pinned dependency HTTP 503 after bounded transport retries, before native PRoot build and before ARM64 qualification execution."
+  },
+  "preceding_steps": {
+    "tooling": "passed",
+    "windows_dispatch_progress_contract": "passed",
+    "normal_and_fixture_build": "passed",
+    "windows_persistence_fixture": "passed"
+  },
+  "skipped_steps": [
+    "Stage accepted schema and minimal pinned text",
+    "Exercise actual DbServer against ARM64 PostgreSQL in an isolated network"
+  ],
+  "staged_package": {
+    "repository_commit": "73323b72262d7e61064c16023258e0bfe9016583",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "manifest": {
+      "bytes": 23957,
+      "sha256": "81f733a8ed718f78330b76097159d330ba77c69428343cd3d7db57743475228f"
+    },
+    "normal_dbserver": {
+      "bytes": 1659904,
+      "sha256": "086c56c8a3aefbeec946f3fdccbac82deb46fc5d4045d8a71f1f9a52d2f280f0"
+    },
+    "fixture_dbserver": {
+      "bytes": 1673216,
+      "sha256": "4543228d541d246d9f17a84d424fef659981f64864b672b9c6020d66fc55299d"
+    },
+    "files_independently_verified": true,
+    "fixed_input_mode": {
+      "environment_variable": "COH_WINE_DB_FIXED_INPUTS",
+      "enabled_value": "1",
+      "disabled_by_default": true,
+      "activation": "before_first_folder_cache_create",
+      "watcher_registration": "disabled",
+      "notification_updates": "disabled",
+      "initial_reads": "preserved",
+      "lookup_mode": "preserved",
+      "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved",
+      "proves_generic_notification_fix": false
+    },
+    "qualified_on_arm64": false
+  },
+  "windows_evidence": {
+    "artifact_id": 10974933688,
+    "archive": {
+      "bytes": 19381,
+      "sha256": "0451621f3cc643600cceb58208a5fc0d0ab1884769c82995f93a075728fef542"
+    },
+    "persistence_report": {
+      "bytes": 5043,
+      "sha256": "71feb0e2a44da362fd8c5f4b6ecfc282e2e1df4f6d513a8d6305696eda8d8f95"
+    },
+    "status": "passed",
+    "check_groups": 21,
+    "phases": 14,
+    "proves_arm64_execution": false
+  },
+  "package_archive": {
+    "artifact_id": 10974749019,
+    "bytes": 2181634,
+    "sha256": "a50ba0af38a78a6d2acc00b61562108b684e1a10d4315adb5f0f616c72a46d4d",
+    "download_hash_independently_verified": true
+  },
+  "archive": {
+    "artifact_id": 10975578465,
+    "name": "wine-dbserver-arm64-evidence",
+    "bytes": 5218,
+    "sha256": "4295e77a25782b49337cbb6d73a29d3b50ec660c1464a1bfba4d2ce5141a4c49",
+    "download_hash_independently_verified": true,
+    "safe_extraction_verified": true,
+    "preserved_path": "docs/android-evidence/dbserver-infrastructure-failure-36434692816-attempt2.raw.zip"
+  },
+  "archive_files": {
+    "wine-dbserver/package-manifest.json": {
+      "bytes": 23957,
+      "sha256": "81f733a8ed718f78330b76097159d330ba77c69428343cd3d7db57743475228f"
+    }
+  },
+  "archive_file_count": 1,
+  "runtime_job_log": {
+    "bytes": 41604,
+    "sha256": "e59329aaa61e0996aacc4b808f33908ba1153d278829afda9565fb2c6a2b057e",
+    "preserved_path": "docs/android-evidence/dbserver-infrastructure-failure-36434692816-attempt2.log",
+    "source": "GitHub decoded workflow job log; UTF-8 text preserved including final newline"
+  },
+  "runtime_started": false,
+  "runtime_report_present": false,
+  "proot_build_receipt_present": false,
+  "schema_manifest_present": false,
+  "arm64_execution_validated": false,
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "interpretation": "Infrastructure failure only. The normal and fixture binaries built and Windows contracts passed, but the ARM64 gate never ran. This package is not qualified for adoption. No new Atlas startup, character persistence, restart, or fixed-input-mode ARM64 result is claimed."
+}

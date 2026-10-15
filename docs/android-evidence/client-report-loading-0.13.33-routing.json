@@ -1,0 +1,415 @@
+{
+  "format": 1,
+  "role": "client_report_loading_successor_routing_and_offline_boundary",
+  "status": "host_routing_and_offline_boundaries_passed",
+  "baseline_commit": "66a273d4f8cc3e7e4a9180c12a60385f30de454f",
+  "working_tree_source_pins": {
+    "tools/android/interactive/classify_client_report_loading_change.py": {
+      "bytes": 3630,
+      "sha256": "31d4b959b1222950f2b9f4b935894daaca4d008669c42a1b5304da2ef08a02f0"
+    },
+    "tools/android/interactive/classify_client_animation_repair_change.py": {
+      "bytes": 4281,
+      "sha256": "4d242d63c113d3cac26f6cbcde6f421335afa7ed22a20755dd340d304e696980"
+    },
+    "tools/android/interactive/classify_client_profile_recovery_change.py": {
+      "bytes": 4995,
+      "sha256": "09926d33f323f7e4e8a16974b8cc89eec2521535cad349dfa8983fc76c1f4707"
+    },
+    "tools/android/interactive/classify_client_map_startup_change.py": {
+      "bytes": 6506,
+      "sha256": "cfa9903ccdb079752a6a6e7079f34549c2a63671dd1ba693b30832a2ff35e589"
+    },
+    "tools/android/interactive/test_classify_storage_cleanup_change.py": {
+      "bytes": 114295,
+      "sha256": "45798a2437ab171d351ae351ef8442579a0350da86fb3bdf2268c6a17ddda345"
+    },
+    "tools/qualify_map_startup_prerequisites.py": {
+      "bytes": 10740,
+      "sha256": "c5d168244b7699b36335384d8c4c13cebeb0b73202fa333a15cc344889b37228"
+    },
+    "tools/test_qualify_map_startup_prerequisites.py": {
+      "bytes": 6566,
+      "sha256": "5481748f161c5ba4b2f4c7f84a99799bbd035dac52b35bd7f07bf3bf12ff4314"
+    },
+    ".github/workflows/map-startup-prerequisites.yml": {
+      "bytes": 2035,
+      "sha256": "459499537e10fae4b6421793f2d33e5421a9f3123a94f8c26950ed7e020e1d81"
+    }
+  },
+  "retained_032_build_native_workflow_pins": {
+    ".github/workflows/android-client-map-startup.yml": {
+      "bytes": 18646,
+      "sha256": "77e80eb3e596cd03410ad1df96c0545a51616d8e7363397b604226ac6a1a3dfc"
+    },
+    ".github/workflows/android-map-startup-native.yml": {
+      "bytes": 11398,
+      "sha256": "8839a1ead01f21f08c5ed6f57c75a317d0da11033acf75d539ef9df727385f64"
+    },
+    "tools/android/interactive/build_client_map_startup_apk.py": {
+      "bytes": 50486,
+      "sha256": "21801df65d0b38f1644608de6ae7d5d20606a1b2447e7b137a18290c88541828"
+    },
+    "tools/android/interactive/qualify_client_map_startup.py": {
+      "bytes": 21588,
+      "sha256": "3545731efa402282b8f2946d3c19e86ad11279f6de9ab6d60a7e52c503e3a532"
+    },
+    "tools/android/interactive/package_map_startup_native.py": {
+      "bytes": 28895,
+      "sha256": "1404739eee08370801f68dc9d181071c581db54de02a0c3a09865c3de88154de"
+    }
+  },
+  "tests": {
+    "routing": {
+      "suites": 3,
+      "tests": 134,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "offline_prerequisites": {
+      "suites": 4,
+      "tests": 60,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "routing_scope": {
+    "marker": "tools/android/interactive/release-client-report-loading-0.13.33.json",
+    "finite_allowed_paths": 35,
+    "direct_parent_push_required": true,
+    "unknown_native_render_asset_changes_require_their_owners": true,
+    "historical_publisher_function_gates_verified": 16,
+    "historical_native_classifier_clis_verified": 5,
+    "actual_current_candidate_routes_to_successor": true
+  },
+  "offline_boundary": {
+    "baseline_commit": "005bc8eaa5d88744706de19ca37cb3f8a8053c7d",
+    "immutable_published_evidence_unchanged": true,
+    "existing_production_sources_unchanged": false,
+    "production_changes_observed": true,
+    "changed_production_sources": {
+      ".github/workflows/android-client-report-loading.yml": {
+        "state": "present",
+        "bytes": 17699,
+        "sha256": "cce7e9e7ffccf21660684270dc3e98282a79574d36d50390496b4d613b198e53",
+        "qualified_by_this_lane": false
+      },
+      "android/guest/atlas_beacon_package.py": {
+        "state": "present",
+        "bytes": 47656,
+        "sha256": "323b93fd8ee820d77096653f03438cdaa47ace893b095ad1f093fd30d361a54c",
+        "qualified_by_this_lane": false
+      },
+      "android/guest/kings_row_beacon_package.py": {
+        "state": "present",
+        "bytes": 9942,
+        "sha256": "2880537bcf05f4f9e2189fc86e655552d140e79ef3ea0167457bc9a05e78b35a",
+        "qualified_by_this_lane": false
+      },
+      "android/guest/local_character_server.py": {
+        "state": "present",
+        "bytes": 168455,
+        "sha256": "01721fe92b78f1371e88d6c28a21edfe4ccc49724d6ca5ea007864ba22f2bcd9",
+        "qualified_by_this_lane": false
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java": {
+        "state": "present",
+        "bytes": 54373,
+        "sha256": "b3fd3187215bbc98dbf6f15e7f56c24445a3c1394868e3928fa6ae6218a2b672",
+        "qualified_by_this_lane": false
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+        "state": "present",
+        "bytes": 190511,
+        "sha256": "22d25ec139b3141bc401bfc46d54dba2289885227c8303f2198ab2b8544cc870",
+        "qualified_by_this_lane": false
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java": {
+        "state": "present",
+        "bytes": 66771,
+        "sha256": "b3995ecce2a5ccb0721312c64252df04d1fca0cf06013b0d4d47d9cd9a6c1b1d",
+        "qualified_by_this_lane": false
+      },
+      "android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientReports.java": {
+        "state": "present",
+        "bytes": 54905,
+        "sha256": "284414a249f500b22abe568932ee74f6d2c84bf6f4d53151bfaf9441621258bd",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/build_client_report_loading_apk.py": {
+        "state": "present",
+        "bytes": 49280,
+        "sha256": "ac02cd73168b779febd22645aa74bc7c9b32b912cc7270c8608d96242dbde88e",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/classify_client_animation_repair_change.py": {
+        "state": "present",
+        "bytes": 4281,
+        "sha256": "4d242d63c113d3cac26f6cbcde6f421335afa7ed22a20755dd340d304e696980",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/classify_client_map_startup_change.py": {
+        "state": "present",
+        "bytes": 6506,
+        "sha256": "cfa9903ccdb079752a6a6e7079f34549c2a63671dd1ba693b30832a2ff35e589",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/classify_client_profile_recovery_change.py": {
+        "state": "present",
+        "bytes": 4995,
+        "sha256": "09926d33f323f7e4e8a16974b8cc89eec2521535cad349dfa8983fc76c1f4707",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/classify_client_report_loading_change.py": {
+        "state": "present",
+        "bytes": 3630,
+        "sha256": "31d4b959b1222950f2b9f4b935894daaca4d008669c42a1b5304da2ef08a02f0",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/qualify_client_report_loading.py": {
+        "state": "present",
+        "bytes": 22366,
+        "sha256": "0fb6a2ea8de68f527d8449e1a8fddc5862c5c4becaabb59538ea6a4ae95135c1",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/release-client-report-loading-0.13.33.json": {
+        "state": "present",
+        "bytes": 384,
+        "sha256": "da32a893d0e8c46d64c9cc752a8527c50c95c10a9e596d0003f1e4a3ce235d48",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/test_classify_storage_cleanup_change.py": {
+        "state": "present",
+        "bytes": 114295,
+        "sha256": "45798a2437ab171d351ae351ef8442579a0350da86fb3bdf2268c6a17ddda345",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/test_client_report_controls_java.py": {
+        "state": "present",
+        "bytes": 3456,
+        "sha256": "058157970af73b0d32e6398701ceee6d7e23a3679053b225255a7d59abd61792",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/test_client_report_lifecycle_java.py": {
+        "state": "present",
+        "bytes": 14844,
+        "sha256": "83688b8bc7597f0af5a4f840fd17501e15427b17e5d59271f2507816f2ea214b",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/test_client_report_loading_package.py": {
+        "state": "present",
+        "bytes": 61325,
+        "sha256": "89c9d79afc9c5bb6019c7552a266831e3aea38172c73dabfb715dd9a22ad3407",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/test_client_report_recovery_java.py": {
+        "state": "present",
+        "bytes": 27909,
+        "sha256": "f9f1d1aa1b100d6c81aa835b947032c0bd1b897ba3737a8c34766c7df68305ce",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/test_collision_input_snapshot.py": {
+        "state": "present",
+        "bytes": 19202,
+        "sha256": "9fbb54be7663bffa67e2a999eab383877dc7b02f77d2181cf82ef10a3321bef7",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/test_map_startup_observation.py": {
+        "state": "present",
+        "bytes": 12040,
+        "sha256": "dfe04875f2d653077ba57506e0559e7038ce66af5d77fe7824c904563bb0036d",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/test_profile_failure_presentation.py": {
+        "state": "present",
+        "bytes": 14306,
+        "sha256": "6610f500d4c250d77cb23b92cef005dd04b96490f9db78ab7319abf6c2c1f82f",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/test_shared_collision_input_proof.py": {
+        "state": "present",
+        "bytes": 12990,
+        "sha256": "a192cbe1bed992c7edb25be8ef57c6dc90a7a286dbe968a62e510c7ce132fcbb",
+        "qualified_by_this_lane": false
+      },
+      "tools/android/interactive/test_storage_ui.py": {
+        "state": "present",
+        "bytes": 33306,
+        "sha256": "4fa7ab5bfb26e1e20db1bd1c184464159a91fcefb488d51b57e6ef3bda4bcd3d",
+        "qualified_by_this_lane": false
+      }
+    },
+    "immutable_evidence_pins": {
+      "docs/COH-Atlas-Gameplay-0.13.32-testing.txt": {
+        "baseline_commit": "005bc8eaa5d88744706de19ca37cb3f8a8053c7d",
+        "bytes": 14932,
+        "sha256": "ddf7403c0fdd97b4f6a8d37b97f3f54ebd32ff3d988e50e4b046828357c43aa6"
+      },
+      "docs/android-evidence/client-map-startup-0.13.32-native.json": {
+        "baseline_commit": "005bc8eaa5d88744706de19ca37cb3f8a8053c7d",
+        "bytes": 7050,
+        "sha256": "28f16b9729d98dcced86010c8ee73bbae6b41acb529b1f525eae1ecf86f4b4f1"
+      },
+      "docs/android-evidence/client-map-startup-0.13.32-publication.json": {
+        "baseline_commit": "005bc8eaa5d88744706de19ca37cb3f8a8053c7d",
+        "bytes": 447708,
+        "sha256": "5caaca51f3274fbaf8c0193d39b08cf6ca7299c53abd84156709d7b3ec231fbb"
+      },
+      "docs/android-evidence/map-startup-prerequisites-20261012.json": {
+        "baseline_commit": "66a273d4f8cc3e7e4a9180c12a60385f30de454f",
+        "bytes": 11266,
+        "sha256": "79c5818a1c0af93238cca0ce42b1842713bd5bfb4caccca89a4df7062f565873"
+      }
+    },
+    "published_guide_sha256": "ddf7403c0fdd97b4f6a8d37b97f3f54ebd32ff3d988e50e4b046828357c43aa6",
+    "successor_shipping_qualified": false,
+    "production_change_policy": "observe_only_requires_separate_shipping_owner_acceptance"
+  },
+  "offline_working_tree_source_pins": {
+    ".github/workflows/map-startup-prerequisites.yml": {
+      "bytes": 2035,
+      "sha256": "459499537e10fae4b6421793f2d33e5421a9f3123a94f8c26950ed7e020e1d81"
+    },
+    "database/map-startup-observer/README.md": {
+      "bytes": 3713,
+      "sha256": "7244d208036b8faaf2dd31add9ac89c19ebf905db7ca50d7fb7cae3dd9f7e192"
+    },
+    "database/map-startup-observer/overlay/libs/UtilitiesLib/src/utils/coh_map_bin_observer.h": {
+      "bytes": 3981,
+      "sha256": "eb91f4347fcf29629c880e9cdfd8a4f70b48ae8d174a831a3c44e7ff31b65cdd"
+    },
+    "database/map-startup-physics/qualification/bounded_stream_fixture.cpp": {
+      "bytes": 15258,
+      "sha256": "595d3843b72fbe7c2146763b8ae2cabc1afc7e1ccb1fa9fb0e2336260af7f951"
+    },
+    "database/map-startup-physics/qualification/host-prerequisite-evidence.json": {
+      "bytes": 1980,
+      "sha256": "9ffc63fae7d15768a1dedb374a590b30479978b0826bbcf501350c29395eee4e"
+    },
+    "database/map-startup-physics/qualification/nx_owned_bounded_stream.h": {
+      "bytes": 2656,
+      "sha256": "841717863ec7d4280d0d52ba290d338a82675fd0d15e8fce8bccb1d8ac5b1710"
+    },
+    "database/map-startup-physics/qualification/owned_bounded_stream.h": {
+      "bytes": 6550,
+      "sha256": "0ecc069b4fb86f0ce933cc07ba075d03fc7aa2d2bfae42827f8697b46713c4ce"
+    },
+    "docs/schema-generation-evidence/accepted-36088012666.zip": {
+      "bytes": 665051,
+      "sha256": "62da453ef5673238e11b4b418692117ea7692597a079119b3aaf72504a2502ae"
+    },
+    "tools/android/interactive/analyze_enhancement_persistence.py": {
+      "bytes": 15426,
+      "sha256": "cc5ad7c3091dfd3638a7c6d7260a877cd636d9ab603047365a0bbf696ea94635"
+    },
+    "tools/android/interactive/test_analyze_enhancement_persistence.py": {
+      "bytes": 9794,
+      "sha256": "dde125fd0cbbc180d26ee7537593e2bcd823702df80e404781190d1994e32e45"
+    },
+    "tools/map_startup_namespace_certificate.py": {
+      "bytes": 7506,
+      "sha256": "de2bd2f9e02aaae71aec9a9ab244cad22315be4b798e968c257ecc42baa725e7"
+    },
+    "tools/prepare_map_startup_observer_source.py": {
+      "bytes": 8123,
+      "sha256": "e0e3bd7eb44e7949eca473f5611ae5def3a86a24b37aa6ab04ebbda9eb9bc88d"
+    },
+    "tools/qualify_map_startup_prerequisites.py": {
+      "bytes": 10740,
+      "sha256": "c5d168244b7699b36335384d8c4c13cebeb0b73202fa333a15cc344889b37228"
+    },
+    "tools/test_map_startup_bounded_stream.py": {
+      "bytes": 8518,
+      "sha256": "c35256b60867233737bed7653076d97aab76eacfdc7efd6e9bab45b51ce58fb4"
+    },
+    "tools/test_map_startup_namespace_certificate.py": {
+      "bytes": 11460,
+      "sha256": "f7adaa0c2d35fe776acae9758aff2fbe624d128a9e62c1778c06d236e0124e93"
+    },
+    "tools/test_map_startup_observer_source.py": {
+      "bytes": 15428,
+      "sha256": "2c57904476b974eea971dd23279b2d85e7b27933acdf192e5d34a771e053ae1d"
+    },
+    "tools/test_qualify_map_startup_prerequisites.py": {
+      "bytes": 6566,
+      "sha256": "5481748f161c5ba4b2f4c7f84a99799bbd035dac52b35bd7f07bf3bf12ff4314"
+    },
+    "upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/Nx.h": {
+      "bytes": 6876,
+      "sha256": "d4ce3e89b45b3666f6b28650ef49e562c3eb6abc57f020600734663dd1e102fc"
+    },
+    "upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/NxSimpleTypes.h": {
+      "bytes": 3201,
+      "sha256": "b0a16b2f0063008acc964fa3c3ed3743a5cefd3d12da0443b6a956a1c26f793b"
+    },
+    "upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/NxStream.h": {
+      "bytes": 4556,
+      "sha256": "14562397582bdad34f384951c6a5840dfaec928902440aab0cbf41eb4ef84899"
+    },
+    "upstream/ouroboros/Common/fxinfo.c": {
+      "bytes": 47104,
+      "sha256": "61f36247ec92e56395cc6548689c34b1e341283a25c78490627327eafd5e9a13"
+    },
+    "upstream/ouroboros/Common/seq/seqload.c": {
+      "bytes": 48866,
+      "sha256": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f"
+    },
+    "upstream/ouroboros/MapServer/src/container/containerloadsave.c": {
+      "bytes": 315643,
+      "sha256": "53eac63aab1577956d85a7cfacbe55fb63c856f6b185d9cb8e2b985117920aa8"
+    },
+    "upstream/ouroboros/MapServer/src/entity/character_db.c": {
+      "bytes": 53768,
+      "sha256": "688fa8a8678fa639457752dd2359980d248b4da3a9c2357af27f7bce47627f1d"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c": {
+      "bytes": 49055,
+      "sha256": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCacheNode.c": {
+      "bytes": 13441,
+      "sha256": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c": {
+      "bytes": 92002,
+      "sha256": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c": {
+      "bytes": 34279,
+      "sha256": "17a192e9a0fcd6016f670e1ece8e10c458c3853866945a0bed5eb72038710df7"
+    },
+    "upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c": {
+      "bytes": 264080,
+      "sha256": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
+    }
+  },
+  "historical_51_test_report_preserved": true,
+  "successor_shipping_qualified": false,
+  "native_binaries_built": false,
+  "apk_built_or_published": false,
+  "asset_pack_built_or_published": false,
+  "physical_thor_tested": false,
+  "performance_improvement_established": false,
+  "candidate_snapshot_refresh": {
+    "refreshed_utc": "2026-10-12T17:40:12.991753+00:00",
+    "after_final_source_freeze_and_marker_enablement": true,
+    "corrective_candidate_parent_commit": "ffa711374c9da93b75784d66cb3345a389019f16",
+    "corrective_candidate_paths": [
+      ".github/workflows/android-client-report-loading.yml",
+      "docs/HANDOFF.md",
+      "docs/android-evidence/client-report-loading-0.13.33-routing.json",
+      "tools/android/interactive/qualify_client_report_loading.py",
+      "tools/android/interactive/release-client-report-loading-0.13.33.json",
+      "tools/android/interactive/test_client_report_loading_package.py"
+    ],
+    "publication_attempt": "recoverable-reports-preparation-pinned-parser-fixture-3",
+    "qualification_enabled": true,
+    "publish_enabled": true,
+    "tested_input_pin_sets_unchanged_since_tests": true,
+    "completed_tests_rerun": false,
+    "builds_rerun": false,
+    "production_sources_qualified_by_this_receipt": false
+  }
+}

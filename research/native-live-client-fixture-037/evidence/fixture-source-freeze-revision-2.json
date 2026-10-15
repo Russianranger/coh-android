@@ -1,0 +1,27 @@
+{
+  "Game_executed": false,
+  "SQL_or_profile_touched": false,
+  "changes": "Final synchronous deadline gates and truthful packet-close cleanup attribution; two final-deadline controls and runner packet-close-Error control.",
+  "format": 1,
+  "native_Android_PRoOT_Wine_FEX_execution": false,
+  "paths": {
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryFixture.java": {
+      "bytes": 49318,
+      "sha256": "0834f290a7bd373dcf3d2ceda1fe10f14d50e29bc8320d1bf55e8cefe0fa024e"
+    },
+    "tools/android/interactive/test_client_live_directory_fixture.py": {
+      "bytes": 35369,
+      "sha256": "9a130cfb1d16929405b776464924779b61989efab3766491963805f4c07192d6"
+    }
+  },
+  "production_admission_allowed": false,
+  "revision": 2,
+  "role": "closed-current-Android-metadata-fixture-parser-owned-runner-source",
+  "source_root": "/workspace/scratch/5d16603ca7ff/live-service-037",
+  "source_tests": "actual release-8 JVM binary parser/FileChannel and typed custody/Process/JNI mocks; actual packaged adapter pending",
+  "supersedes_source_freeze": {
+    "bytes": 892,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/android-metadata-fixture-source-freeze.json",
+    "sha256": "71e8ad786ea0ef6ab4b457e83cfb019e9c4b2e91e191dc419c8641427a7af7b3"
+  }
+}

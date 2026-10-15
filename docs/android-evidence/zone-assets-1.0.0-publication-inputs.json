@@ -1,0 +1,109 @@
+{
+  "added_original_resources": 26053,
+  "all_named_map_audit": {
+    "bytes": 738718,
+    "file": "docs/android-evidence/zone-assets-1.0.0-all-maps.json",
+    "sha256": "74e0ab8a8e72b3363f4a0d4b9ace6eece6a3de374a20eddb44d94d3b806edb03",
+    "summary": {
+      "maps_with_missing_original_geometry": 0,
+      "maps_with_missing_original_sound_names": 63,
+      "maps_with_missing_original_submodels": 0,
+      "named_maps": 66,
+      "source_graph_complete": 60,
+      "source_present": 66
+    }
+  },
+  "all_original_resource_counts": {
+    "animations": 5878,
+    "audio": 6219,
+    "fonts": 46,
+    "geometry": 4971,
+    "textures": 38986,
+    "total": 56100
+  },
+  "asset_version": "1.0.0",
+  "audio": {
+    "archive": {
+      "bytes": 847802311,
+      "filename": "zones-audio-supplement.zip",
+      "sha256": "3bbc5773f50593e5b2e667c7e01e7f971c3a6a65137f149e0823423798d7b2a7"
+    },
+    "combined_native_sound_inventory": {
+      "additional_original_sounds": 2177,
+      "duplicate_basename_count": 0,
+      "native_80_byte_path_bound_verified": true,
+      "prior_zone_sounds_preserved": 4042,
+      "rule_source": "upstream/ouroboros/Game/src/sound/sound.c:soundLoadCallback",
+      "unique_names": 6219
+    },
+    "file_count": 2177,
+    "host_provenance": {
+      "bytes": 2388947,
+      "filename": "zones-audio-supplement-provenance.json",
+      "sha256": "b55c46cbe09d8044c955ec3a2e5bcfeaa5aea36e37ca088363a308c5763aad95"
+    },
+    "payload_bytes": 847514838,
+    "runtime_manifest": {
+      "bytes": 316144,
+      "sha256": "c819e1af90c1f29a64eac57a20b0bdfb61a50bd9791206ab1ce18c05d210ec6f"
+    }
+  },
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "excluded_generated_donor_caches": true,
+  "format": 1,
+  "frozen_donor_archives": 72,
+  "kings_row": {
+    "appearance_envelope_original_candidates_included": 1017,
+    "appearance_unresolved_dependencies": 65,
+    "appearance_unresolved_source_edges": 29,
+    "imported_map_layers": 35,
+    "library_source_files": 881,
+    "map_id": 5,
+    "missing_only_original_geometry_count": 52,
+    "missing_original_world_geometry": 0,
+    "missing_requested_world_models": 0,
+    "primary_authored_ambient_layer_audio_names_present": true,
+    "remaining_conservative_library_audio_names": [
+      "city_presence",
+      "mission16c_loop"
+    ],
+    "source_world_graph_complete": true,
+    "world_geometry_requests": 443
+  },
+  "latest_report_asset_audit": {
+    "bytes": 53353,
+    "file": "docs/android-evidence/zone-assets-1.0.0-thor-errors.json",
+    "sha256": "1966df870473f37282cb6a8e816e3a04f873f8947b3dace8edaa3382cd8fcf90"
+  },
+  "limitations": [
+    "All original geometry,texture,animation,font and Ogg assets in the upstream72-archive catalog are retained or added. Generated donor BIN/bounds and later-version source definitions are not substituted for pinned native/source-compatible data.",
+    "Six maps retain authored source group/sky gaps despite available original geometry; full live gameplay is not qualified for all66 maps.",
+    "Eleven unresolved native sound names remain in the conservative all-library envelope; all authored Kings Row ambient-layer names have original payloads.",
+    "Nine original zero-model FX geometry files remain explicitly unqualified as model witnesses.",
+    "The latest report caps each major missing-texture category at1024; availability of reported targets does not establish absence of other errors or physical fidelity."
+  ],
+  "native_collision_beacon_arrival_qualification": "separate_release_gate_not_claimed_by_asset_audit",
+  "native_executables_rebuilt_for_assets": false,
+  "physical_visual_audio_fps_qualification": false,
+  "retained_original_resources": 30047,
+  "scope": "coh_assets_1.0.0_original_resource_audit",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "zones": {
+    "archive": {
+      "bytes": 1663681523,
+      "filename": "zones-world-supplement.zip",
+      "sha256": "f12a0994cec20ab6d13c158495fe01402e89113ae756e412357e9c4a04833ad3"
+    },
+    "file_count": 23876,
+    "host_provenance": {
+      "bytes": 29961724,
+      "filename": "zones-world-supplement-provenance.json",
+      "sha256": "6b49594e9136925644a88246b53110f42c78f383a4c525ed0059622cc2987464"
+    },
+    "payload_bytes": 2884670561,
+    "runtime_manifest": {
+      "bytes": 4237139,
+      "sha256": "f466ad6c8ab6e84dabd16d404c3a05bcb9fbca3cfad5746852d53b04132d8f74"
+    }
+  }
+}

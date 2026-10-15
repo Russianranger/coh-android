@@ -1,0 +1,29 @@
+COH Atlas Gameplay 0.13.36 / version code 51 — AYN Thor
+
+CURRENT LOCATION
+The latest .35 native normal logout was in Atlas Park (Map 1, port 7001), after your successful Kings-to-Atlas trip. Final PostgreSQL location was not included in that report because Character Check threw first. Atlas is expected; the launcher MUST query your existing saved profile and select its authoritative map. Kings (Map 5, port 7003) remains equally supported. Never force a world or relocate the character to make a test pass.
+
+INSTALL
+Install the signed, independently audited .36 APK over the existing application. Keep all application data, THORHERO, imported runtime, Wine prefix and Assets 1.0.0 (four volumes). Run Set up / update runtime once for the changed guest scripts. Do not uninstall, reset the database, recreate THORHERO or reimport unchanged assets.
+
+A — SHORT SAVED-WORLD REOPEN, SAVE AND REPORT
+1. Tap Reopen saved THORHERO. Check the named saved destination against the location reported by the launcher. Atlas is expected from the latest native logout; a different authoritative database result must be investigated, not overwritten.
+2. Record tap-to-client-input and tap-to-usable-world separately, excluding time you deliberately spend away or logging in. Record GPU prerequisites, native MapServer and Game loading separately where shown. Capture FPS and temperature if available.
+3. Log in using Send Text/L3; it worked in .35. Check movement, powers, costume, enhancements, graphics and a short combat interaction.
+4. Tap Start test when ready; tap Stop test when finished. There is no gameplay countdown or minimum waiting gate. Save/Logout and Finish are separate controls.
+5. Use normal Save/Logout. Wait for the observed save/cleanup result, then Finish and export the complete outer diagnostic ZIP. Export storage scan JSON if useful. Report any failure/incomplete label together with the ZIP; it does not itself prove that a native committed save failed.
+6. Do not attempt a long monorail trip before this short test confirms save diagnostics and report export. If export is interrupted, try Recover Interrupted Reports and export the current-session evidence. Keep older archives too.
+
+B — SAME-WORLD WARM REOPEN
+Reopen the saved character again, checking the selected destination. Repeat a short test, normal save and outer ZIP export. Compare cold preparation and validated reuse; a closed data cache is not a resident MapServer. This test establishes whether the GPU-prefix and Atlas preparation fixes help on the actual Thor.
+
+C — ACTUAL MONORAIL TO THE OTHER WORLD
+Only after A and B pass, use the real monorail to the other supported map: expected Atlas-to-Kings, or Kings-to-Atlas if the authoritative saved start was Kings. Record destination preparation, native readiness, transfer and usable-world arrival separately. Confirm physical arrival and movement; check powers/enhancements/graphics/combat. Save normally and export the outer ZIP.
+
+D — PERSISTED DESTINATION, THEN OPTIONAL ROUND TRIP
+Reopen the newly saved destination and confirm it starts directly without unnecessarily launching the other MapServer. Save/export. Only then test a return transfer where appropriate, distinguishing a resident native process from filesystem/preparation-cache reuse. Compare memory, FPS, thermals and phases on similar sessions.
+
+FAILURES AND LIMITS
+Preserve the existing character and export current evidence if startup or a transfer fails. Never use /stuck, teleport, SQL edits or character recreation to work around startup. Do not delete unknown files or persistent profiles/databases. Read-only storage scans may be available when no conflicting operation is active; deletion still requires safe ownership/cleanup.
+
+.36 does not claim the requested targets have been achieved. Goals remain whole startup under 5 minutes, client startup under 1 minute and zones 30 seconds or less, demonstrated on the AYN Thor. Host fixtures and native preload research are not physical gameplay results. Current Game/Map native binaries are retained; further native work has separate qualification gates.

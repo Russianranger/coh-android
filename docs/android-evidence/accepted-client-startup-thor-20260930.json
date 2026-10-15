@@ -1,0 +1,298 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "independent_physical_Thor_0.6.0_actual_client_startup_evidence_review",
+  "archive": {
+    "filename": "coh-game-client-test-20260930-141120.zip",
+    "bytes": 4599070,
+    "sha256": "5a06061663f23483bf00bdb34a747afd3ead0e67f578edd3fdcc2970335232c5"
+  },
+  "archive_members": {
+    "android-client-report.json": {
+      "bytes": 59779,
+      "sha256": "adae108e62577cf1344e2ebc4bcc169e8fbcac29934147ee3765bf830432a094"
+    },
+    "android-surface/capture-1.png": {
+      "bytes": 563000,
+      "sha256": "8dbe1a62e0d85e7c8e5ec25a1de0bd960299e695b3058ebab262b48ad4dd092d"
+    },
+    "android-surface/capture-2.png": {
+      "bytes": 563073,
+      "sha256": "34056914bc4a60eaa6aeaed1f9f334f46baa0df4a2488a44b5bb23a712bc27f0"
+    },
+    "android-surface/capture-3.png": {
+      "bytes": 563081,
+      "sha256": "fc626193148b27688d1dccf787d936e5915127646d0ba172cfa5ebb5cd79bd3c"
+    },
+    "atlas-import.properties": {
+      "bytes": 923,
+      "sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293"
+    },
+    "guest-report.zip": {
+      "bytes": 2933595,
+      "sha256": "524093754d7de2d6fdd2992cd2e6982fd8d0382287da2177a79bf1aa28f2e17a"
+    },
+    "identities/accepted-runtime-manifest.json": {
+      "bytes": 4128,
+      "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+    },
+    "identities/client-manifest.json": {
+      "bytes": 2345,
+      "sha256": "b182d06d29d3ef1e7ab7c13f47d9d16a3c670ca3f61ccaa204129ee5be0caf05"
+    },
+    "operation.log": {
+      "bytes": 64114,
+      "sha256": "f2de72e2c53697c59121277c479579590779fb3fc98ae4c9d1595704f167fc8b"
+    },
+    "runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "runtime-manifest.json": {
+      "bytes": 11543,
+      "sha256": "322e69c65933560ed630793d8f9323c96d4ebadea551d609cfd5c72f8bc543b1"
+    }
+  },
+  "guest_report": {
+    "bytes": 53366,
+    "sha256": "d54e5e475094d504acd4617e889dfd77451f1030ffc46be5e936f8f066e933a6"
+  },
+  "device": {
+    "device": "AYN AYN Thor",
+    "android_sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "app_id": "io.github.russianranger.cohclienttest",
+    "app_version": "0.6.0"
+  },
+  "run_id": "1790776328076-a590a2be02a4",
+  "session_id": "c97ed5f3caab4af6a0d7174ca5ebd77b",
+  "client_pid": 476,
+  "candidate_commit": "5e4e8f2f0acc78e397a3ee8c1eb7df6f661953cb",
+  "qualified_apk": {
+    "apk": "COH-Game-Client-Test-0.6.0.apk",
+    "bytes": 370539567,
+    "sha256": "ca506e5c22369de04d80cb98b6a747bd818ef20c81245806b6d7271357f3377d",
+    "build_run_id": 36719533060,
+    "runtime_manifest_sha256": "f78e33baf8f924f2f54cb8c8c0659114f23e4e52240f4529357a32df85bdeb9c",
+    "signer_certificate_sha256": "9c3c78b6535322ba2f237748588323860aeb328afe1602c7abc0fd9bf6dd9543"
+  },
+  "apk_binding": "Exported manifest parsed content and reported original-byte digest match the exact qualified APK; four auxiliary identity files match its bytes. The phone export does not include the installed APK itself.",
+  "apk_payloads_rehashed": 33,
+  "apk_java_source_pins_verified": 14,
+  "guest_asset_pins_verified": 16,
+  "java_gate_source": {
+    "repository_path": "android/client/src/main/java/io/github/russianranger/cohclienttest/ClientAcceptance.java",
+    "bytes": 4218,
+    "sha256": "2fbf4c1d4fc55c778e53a38fe96eb888365c90857c5a7beabcdc4eba67ff92c1"
+  },
+  "java_gate_replay": "SHIPPED_JAVA_ACCEPTANCE_PASS cleanup=true surface=true",
+  "guest_checks": "Exact published host validate_report and shipped guest parse_launch, console_identity, startup_evidence replayed against raw evidence and the APK manifest.",
+  "import_identity": {
+    "generation": "generation-de2db9caa7134505a2f2906375c26755",
+    "receipt_sha256": "c2da9140415a6fd84563f56867d3932072be3065d4e39d5c7763a584de77808f",
+    "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+    "file_count": 173011,
+    "total_bytes": 2977730517
+  },
+  "import_receipt_note": "Exported Android and guest import identities agree; complete.properties is not exported, so its device-computed receipt digest is retained without claiming an independent rehash of that file.",
+  "timing": {
+    "android_total_seconds": 983.946,
+    "guest_total_seconds": 982.735676,
+    "private_data_preparation_seconds": 255.976827,
+    "wine_initialization_seconds": 63.297,
+    "renderer_initialized_utc": "2026-09-30T13:58:04.962000+00:00",
+    "renderer_initialized_after_guest_start_seconds": 356.238928,
+    "client_startup_readiness_seconds": 620.152,
+    "client_startup_observed_utc": "2026-09-30T14:07:52.381111+00:00",
+    "ready_event_to_passed_event_seconds": 35.122792,
+    "live_observation_seconds": 34.81,
+    "pixelcopy_span_seconds": 2.037,
+    "android_observation_window_seconds": 35.123,
+    "user_six_minute_observation_note": "User-reported visible boot at about six minutes is consistent with renderer initialization at 5m56s; the uploaded evidence records later full data/main-loop readiness and a 16m24s total operation. First visible artwork time was not separately captured."
+  },
+  "stages_passed": 6,
+  "readiness": {
+    "graphics_observation": {
+      "vendor": "Mesa/X.org",
+      "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+      "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+      "renderer_classification": "software"
+    },
+    "renderer_initialized": true,
+    "all_data_loaded": true,
+    "client_main_loop_reached": true,
+    "client_window_observed": true,
+    "client_windows": [
+      {
+        "window_id": 16777219,
+        "title": "City of Heroes : PID: 476",
+        "width": 800,
+        "height": 600,
+        "mapped": true
+      }
+    ],
+    "startup_observed": true,
+    "menu_visual_validated": false
+  },
+  "surface": {
+    "decoded_frame_count": 154,
+    "post_ready_frame_watermark": 66,
+    "captures": [
+      {
+        "session_id": "c97ed5f3caab4af6a0d7174ca5ebd77b",
+        "pixel_copy_success": true,
+        "captured_elapsed_ms": 216344376,
+        "sequence": 70,
+        "surface_generation": 5,
+        "source_width": 800,
+        "source_height": 600,
+        "surface_width": 1347,
+        "surface_height": 867,
+        "sha256": "8dbe1a62e0d85e7c8e5ec25a1de0bd960299e695b3058ebab262b48ad4dd092d",
+        "non_uniform": true,
+        "png_sha256": "8dbe1a62e0d85e7c8e5ec25a1de0bd960299e695b3058ebab262b48ad4dd092d",
+        "png_verified": true,
+        "png_bytes": 563000,
+        "archive_path": "android-surface/capture-1.png",
+        "independently_decoded_colors": 81209
+      },
+      {
+        "session_id": "c97ed5f3caab4af6a0d7174ca5ebd77b",
+        "pixel_copy_success": true,
+        "captured_elapsed_ms": 216345385,
+        "sequence": 73,
+        "surface_generation": 5,
+        "source_width": 800,
+        "source_height": 600,
+        "surface_width": 1347,
+        "surface_height": 867,
+        "sha256": "34056914bc4a60eaa6aeaed1f9f334f46baa0df4a2488a44b5bb23a712bc27f0",
+        "non_uniform": true,
+        "png_sha256": "34056914bc4a60eaa6aeaed1f9f334f46baa0df4a2488a44b5bb23a712bc27f0",
+        "png_verified": true,
+        "png_bytes": 563073,
+        "archive_path": "android-surface/capture-2.png",
+        "independently_decoded_colors": 81212
+      },
+      {
+        "session_id": "c97ed5f3caab4af6a0d7174ca5ebd77b",
+        "pixel_copy_success": true,
+        "captured_elapsed_ms": 216346413,
+        "sequence": 74,
+        "surface_generation": 5,
+        "source_width": 800,
+        "source_height": 600,
+        "surface_width": 1347,
+        "surface_height": 867,
+        "sha256": "fc626193148b27688d1dccf787d936e5915127646d0ba172cfa5ebb5cd79bd3c",
+        "non_uniform": true,
+        "png_sha256": "fc626193148b27688d1dccf787d936e5915127646d0ba172cfa5ebb5cd79bd3c",
+        "png_verified": true,
+        "png_bytes": 563081,
+        "archive_path": "android-surface/capture-3.png",
+        "independently_decoded_colors": 81212
+      }
+    ]
+  },
+  "screenshots": [
+    {
+      "path": "before-client.ppm",
+      "bytes": 1440015,
+      "sha256": "c3b3d73f6bbb08ab3fa3dfa65d01f89916ba25d37a4f5fbd8cd2202edaa58077",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 1,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "c97ed5f3caab4af6a0d7174ca5ebd77b",
+      "captured_utc": "2026-09-30T13:57:31.974050+00:00"
+    },
+    {
+      "path": "client-startup.ppm",
+      "bytes": 1440015,
+      "sha256": "e7cc3e01c39216f9cc1a781b6a93bfa04002b8b7d313a31411e14e0effc41732",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 256,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "c97ed5f3caab4af6a0d7174ca5ebd77b",
+      "captured_utc": "2026-09-30T14:07:52.381033+00:00"
+    },
+    {
+      "path": "client-observed.ppm",
+      "bytes": 1440015,
+      "sha256": "80e384d9e0ac6cc5e45ee43f720a0354a67f165fc8e4c61c658ec4e1a8ed2d92",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 256,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "c97ed5f3caab4af6a0d7174ca5ebd77b",
+      "captured_utc": "2026-09-30T14:08:27.172136+00:00"
+    }
+  ],
+  "console": {
+    "path": "client-console.log",
+    "bytes": 39463669,
+    "sha256": "b7c5114c47c33af175bcf618a745d6de926497c58e13ba943d063d5dc3a13fdc"
+  },
+  "visual_review": {
+    "images_inspected": 3,
+    "result": "All three Android PixelCopy PNGs show the rendered City of Heroes: Freedom login screen and centered graphics-capability dialog with Use Quality Settings, Use Ultra Settings and Cancel. No dialog dismissal or navigation is shown.",
+    "login_ui_visibly_rendered": true,
+    "input_interaction_validated": false
+  },
+  "prepared_cache": {
+    "files": 100,
+    "bytes": 364703716,
+    "archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+    "prerequisite_files": 3,
+    "prerequisite_bytes": 54948,
+    "prerequisites_archive_sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+  },
+  "owned_process_count": 38,
+  "cleanup_complete": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 72,
+    "scanned_tasks": 62,
+    "dead_leaders_with_live_tasks": 3,
+    "owned_live_workers": 3,
+    "leader_exit_retries": 0,
+    "candidates": 3,
+    "term_signals": 3,
+    "kill_signals": 1,
+    "pidfd_signals": 4,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "presentation_socket_removed": true,
+  "android_execution_validated": true,
+  "android_surface_validated": true,
+  "actual_client_startup_validated": true,
+  "gameplay_validated": false,
+  "controller_input_validated": false,
+  "hardware_acceleration_validated": false,
+  "performance_validated": false,
+  "review_method": "Uploaded evidence only; no phone rerun, Stop test, screen-lock test or lifecycle stress test requested or performed."
+}

@@ -1,0 +1,33 @@
+COH Atlas Gameplay 0.11.1 — saved THORHERO reopening repair
+
+This update fixes the avatar asset reuse failure in the exported 0.11.0 Thor
+report. That attempt stopped before Wine, DbServer, MapServer or the game client
+started. Physical saved-character reopening, Atlas materials and return-to-ground
+remain unaccepted. This APK retains the exact 0.11.0 game, server, world assets,
+native runtime and Android gameplay controls.
+Android app version and exported reports identify 0.11.1; the existing screen
+heading still shows v0.11.0.
+
+1. Install this APK as an update over the existing COH Atlas Gameplay app. Keep
+   app data, imported files, the saved THORHERO database and Wine profile.
+2. Run Refresh runtime / Set up runtime once, then Reopen saved THORHERO.
+   The update repairs only pinned avatar defaults in the existing worktree.
+3. At login use COHLOCAL / offline and select the local 127.0.0.1 server. Select
+   the existing THORHERO. Do not create another character.
+4. Wait for Saved character reopened. Dismiss the Help Me / None helper dialog
+   if it appears. Tap Return to safe ground once, even if THORHERO looks grounded,
+   and wait for Atlas position verified before movement. This also enables the
+   movement and normal save controls. Record whether THORHERO visibly lands.
+5. Inspect Atlas Park stairs, statue, buildings and ground materials. Take a
+   screenshot if textures are missing, white or visibly incorrect.
+6. Briefly test left-stick walking, X jump and shoulder-plus-right-stick camera.
+   Check grounded collision. Stop if the character falls through geometry.
+7. Leave controls neutral for 60 seconds, then tap Save character / log out
+   within 10 minutes of Return to safe ground. Wait for Saved character verified,
+   then tap Finish and save report and export it. If startup fails, export that
+   report first.
+
+The focused ARM64 PRoot migration check qualifies this file reuse repair. It
+does not establish physical Atlas rendering, movement or ground recovery.
+After those succeed, the next test is reopening the normally movement-saved
+THORHERO position and sustaining a bounded Atlas movement/collision session.

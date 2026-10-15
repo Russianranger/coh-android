@@ -1,0 +1,312 @@
+{
+  "format": 1,
+  "status": "accepted_after_host_contract_correction",
+  "milestone": "Hosted ARM64 Atlas create/save, owned Wine and PostgreSQL restart, exact-name resume, and second independently committed save.",
+  "run_id": 36454174481,
+  "run_attempt": 1,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36454174481",
+  "runtime_repository_commit": "8944bd598990b33b63a750a64ae448403e4542cd",
+  "original_workflow_conclusion": "failure",
+  "original_workflow_reclassified": false,
+  "original_failure_receipt": "game-runtime-failure-36454174481.json",
+  "post_execution_validation": {
+    "validated_utc": "2026-09-28T17:34:55.556342+00:00",
+    "status": "passed",
+    "execution": "offline strict validation of unchanged downloaded original report and captures",
+    "report_modified": false,
+    "capture_payloads_modified": false,
+    "run_reexecuted": false,
+    "validators": [
+      "validate_report",
+      "validate_capture_files",
+      "validate_service_captures"
+    ],
+    "report_validator_file": "tools/android/game/host_game_smoke.py",
+    "corrected_source": {
+      "bytes": 49514,
+      "sha256": "cdbf1ce2d18c795fdc9aca1571b222c984e281e4c9ea751d836a4bf5ec1d918b"
+    },
+    "correction_base_commit": "8944bd598990b33b63a750a64ae448403e4542cd",
+    "original_source": {
+      "bytes": 49288,
+      "sha256": "33ded65a1cca7a37639b3dea575fd17d3aa4b97399d8a7cfe3f5d2f023a174aa"
+    },
+    "exact_correction_diff": "diff --git a/tools/android/game/host_game_smoke.py b/tools/android/game/host_game_smoke.py\nindex d2e1fb0b5..7f7d7f989 100644\n--- a/tools/android/game/host_game_smoke.py\n+++ b/tools/android/game/host_game_smoke.py\n@@ -276,8 +276,12 @@ def validate_session(session):\n                     \"protocol_pid_verified\", \"initial_snapshot\"))\n             and result.get(\"error\") is None and result.get(\"final_snapshot\") is True\n             and result.get(\"pipe_framing_complete\") is True\n-            and result.get(\"pipe_disconnected\") is True and result.get(\"child_exited\") is True\n-            and type(result.get(\"child_exit_code\")) is int and type(result.get(\"child_forced_stop\")) is bool,\n+            and result.get(\"pipe_disconnected\") is True\n+            # The bridge publishes a non-null DWORD only after observing a\n+            # terminal GetExitCodeProcess result; it has no child_exited field.\n+            and type(result.get(\"child_exit_code\")) is int\n+            and 0 <= result[\"child_exit_code\"] <= 0xffffffff and result[\"child_exit_code\"] != 259\n+            and type(result.get(\"child_forced_stop\")) is bool,\n             \"TestClient bridge lacks completed identity-bound observation and final capture\")\n     require(ready.get(\"buffer_rows_limit\") == 16384\n             and all(type(item.get(\"version_requests\")) is int and item[\"version_requests\"] == 1\n",
+    "producer_file": "database/wine-game/TestClientBridge.c",
+    "producer_source_sha256_lf": "ce7f07eb903c885eb2b24e8e396a86decc92579d96632dc3d69b6153752b634c",
+    "producer_unchanged": true,
+    "producer_consumer_rationale": "The unchanged result serializer writes a DWORD child_exit_code when have_exit_code is true, otherwise null. It never writes child_exited. Cleanup requires successful GetExitCodeProcess with a result other than STILL_ACTIVE, sets failure otherwise, then calls result(exit_code, exited). The corrected validator requires an exact integer DWORD in [0, 4294967295] other than STILL_ACTIVE (259), retains error==null and every existing identity, final-snapshot, framing, disconnection, bounds, and proof-before-stop condition. Both captured sessions have terminal exit code 125 after controlled post-proof cleanup.",
+    "validation_scope": "All strict runtime/report/session, fixed-input, SQL snapshot, capture identity and service-output validators now pass. This does not change the historical GitHub Actions failure.",
+    "database_validator_dependency": {
+      "file": "tools/android/dbserver/host_dbserver_smoke.py",
+      "commit": "8944bd598990b33b63a750a64ae448403e4542cd",
+      "bytes": 29885,
+      "sha256": "d1308b8fef094cfd1b6393401860d0d238a51457928a2b6dfce7a6531466a189",
+      "loaded_from_tested_commit_for_revalidation": true
+    },
+    "revalidation_isolated_from_subsequent_loopback_work": true
+  },
+  "arm64": {
+    "started_utc": "2026-09-28T16:57:11.550333+00:00",
+    "finished_utc": "2026-09-28T17:28:18.780321+00:00",
+    "elapsed_seconds": 1867.229988,
+    "stages_passed": 18,
+    "atlas_ready_observation_seconds": 31.5647463600003,
+    "first_service_ready_seconds": 1051.623267,
+    "restart_service_ready_seconds": 192.987729,
+    "query_processes": 35,
+    "process_records": 122,
+    "all_process_input_output_closed": true,
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "owned_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 626,
+      "scanned_tasks": 8,
+      "dead_leaders_with_live_tasks": 0,
+      "owned_live_workers": 0,
+      "leader_exit_retries": 0,
+      "candidates": 0,
+      "term_signals": 0,
+      "kill_signals": 0,
+      "pidfd_signals": 0,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true
+    },
+    "sql_readiness_queries": 4,
+    "sql_readiness_queries_scope": "Guest database_ready() SQL schema/listener polling; excludes Atlas map-status readiness queries."
+  },
+  "game_proof": {
+    "character": {
+      "container_id": 1,
+      "name": "TEST01443",
+      "account": "CohA318dc5a821"
+    },
+    "created_connected": true,
+    "live_currency": {
+      "player": "TEST01443",
+      "account": "CohA318dc5a821",
+      "influence": 12345,
+      "elapsed_ms": 208865,
+      "sequence": 17
+    },
+    "first_save": {
+      "protocol_quit": true,
+      "quitnow_is_save_ack": false,
+      "disconnected_before_sql": true,
+      "independent_committed_sql": true,
+      "forced_stop_before_save": false,
+      "login_count": 1,
+      "influence": 12345,
+      "snapshot_sha256": "38c87cba520c7d6b348538ba154578134858e7ebe86e672fb535a8946e0cfdda",
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 8,
+        "costumeparts": 14
+      }
+    },
+    "restart": {
+      "same_cluster": true,
+      "same_database": true,
+      "no_reseed_or_restore": true,
+      "wine_shutdown": {
+        "prefix_lock_free": true,
+        "server_socket_inactive": true
+      },
+      "owned_cleanup": {
+        "policy": "same_real_uid_and_run_token",
+        "scanned_processes": 314,
+        "scanned_tasks": 4,
+        "dead_leaders_with_live_tasks": 0,
+        "owned_live_workers": 0,
+        "leader_exit_retries": 0,
+        "candidates": 0,
+        "term_signals": 0,
+        "kill_signals": 0,
+        "pidfd_signals": 0,
+        "identity_checked_signals": 0,
+        "inspection_failures": 0,
+        "remaining": 0,
+        "complete": true
+      },
+      "snapshot_sha256": "38c87cba520c7d6b348538ba154578134858e7ebe86e672fb535a8946e0cfdda",
+      "phase": "restart",
+      "identity_unchanged": true,
+      "selected_rows_unchanged": true,
+      "login_count_before": 1,
+      "login_count_after": 1,
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 8,
+        "costumeparts": 14
+      }
+    },
+    "resume": {
+      "slot": 0,
+      "database_id": 1,
+      "exact_name": "TEST01443",
+      "creation_disabled": true,
+      "database_id_source": "processed MapServer player entity update",
+      "scene_exchange_observed": true,
+      "processed_server_update_for_original_player": true,
+      "active_gameplay_confirmed": false,
+      "connected_on_atlas": true,
+      "processed_server_update": true
+    },
+    "second_save": {
+      "protocol_quit": true,
+      "quitnow_is_save_ack": false,
+      "disconnected_before_sql": true,
+      "independent_committed_sql": true,
+      "forced_stop_before_save": false,
+      "login_count": 2,
+      "influence": 12345,
+      "snapshot_sha256": "16ec8a7c660d20093231f34169011908d27b619e3e9dc3c258e7e12004c60b6e",
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 8,
+        "costumeparts": 14
+      },
+      "comparison": {
+        "phase": "second_logout",
+        "identity_unchanged": true,
+        "selected_rows_unchanged": true,
+        "login_count_before": 1,
+        "login_count_after": 2,
+        "row_counts": {
+          "ents": 1,
+          "ents2": 1,
+          "powers": 8,
+          "costumeparts": 14
+        }
+      }
+    },
+    "attributes_unchanged": true
+  },
+  "login_count_sequence": [
+    1,
+    1,
+    2
+  ],
+  "snapshot_sha256": {
+    "first": "38c87cba520c7d6b348538ba154578134858e7ebe86e672fb535a8946e0cfdda",
+    "restart": "38c87cba520c7d6b348538ba154578134858e7ebe86e672fb535a8946e0cfdda",
+    "second": "16ec8a7c660d20093231f34169011908d27b619e3e9dc3c258e7e12004c60b6e"
+  },
+  "selected_row_counts": {
+    "ents": 1,
+    "ents2": 1,
+    "powers": 8,
+    "costumeparts": 14
+  },
+  "normal_schema": {
+    "table_count": 99,
+    "ordered_column_count": 5935,
+    "attribute_rows": 58272,
+    "catalog_unchanged_across_restart": true,
+    "attributes_unchanged": true
+  },
+  "fixed_inputs": {
+    "schema_file_count": 62,
+    "file_count": 62,
+    "total_bytes": 4402846,
+    "inventory_sha256": "5bdecd6d14e14d89427cf25f58ff57f9f248345a4ff5188be4dd128215b5a70a",
+    "checks": [
+      {
+        "phase": "before-first",
+        "unchanged": true,
+        "inventory_sha256": "5bdecd6d14e14d89427cf25f58ff57f9f248345a4ff5188be4dd128215b5a70a",
+        "file_count": 62,
+        "total_bytes": 4402846
+      },
+      {
+        "phase": "after-first-save",
+        "unchanged": true,
+        "inventory_sha256": "5bdecd6d14e14d89427cf25f58ff57f9f248345a4ff5188be4dd128215b5a70a",
+        "file_count": 62,
+        "total_bytes": 4402846
+      },
+      {
+        "phase": "before-restart",
+        "unchanged": true,
+        "inventory_sha256": "5bdecd6d14e14d89427cf25f58ff57f9f248345a4ff5188be4dd128215b5a70a",
+        "file_count": 62,
+        "total_bytes": 4402846
+      },
+      {
+        "phase": "after-second-save",
+        "unchanged": true,
+        "inventory_sha256": "5bdecd6d14e14d89427cf25f58ff57f9f248345a4ff5188be4dd128215b5a70a",
+        "file_count": 62,
+        "total_bytes": 4402846
+      }
+    ],
+    "acknowledgements": [
+      {
+        "requested": true,
+        "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+      },
+      {
+        "requested": true,
+        "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+      }
+    ]
+  },
+  "inputs": {
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "game_package_sha256": "2042b79141781ed7552af43ba69a6ca18ad54adf6a18a81e5464794dbd20c49d",
+    "game_data_manifest_sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "repository_commit": "8944bd598990b33b63a750a64ae448403e4542cd",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "binary_sha256": {
+      "DbServer.exe": "659e9072234f75ad02c8cac2636df93f5249ff1de385c1ed7d6c6fc0c04a453a",
+      "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+      "TestClientCreate.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31",
+      "TestClientResume.exe": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856",
+      "TestClientBridge.exe": "1e92ca6ec61310539ca14d2482ce5e26215475e244be047684829c524a606c6a"
+    }
+  },
+  "accepted_dbserver_donor_run_id": 36451873322,
+  "original_archive": {
+    "artifact_id": 10986152932,
+    "bytes": 8991272,
+    "sha256": "9b1bf45f92bc9d029ff816be02594c8c0606dd79d877cfff236b06acbb275ef5",
+    "name": "wine-game-arm64-evidence"
+  },
+  "preservation_archive": {
+    "file": "game-evidence-36454174481.zip",
+    "bytes": 1026658,
+    "sha256": "43851ea34ed735073efd0111a9f771d5d206b4bb761b65711674fdc38d9f4af2",
+    "member_inventory_receipt": "game-runtime-failure-36454174481.json#preservation_archive",
+    "all_original_capture_payloads_preserved": true
+  },
+  "preserved_raw_report": {
+    "file": "game-arm64-failed-36454174481.json",
+    "bytes": 200473,
+    "sha256": "b5d0a1cdb50a2b27bbc5f3e71c82c8b7654360741c583fa855ba3df8bc1c4a71"
+  },
+  "generated_character_persistence_validated_on_host": true,
+  "android_execution_validated": false,
+  "android_listener_binding_validated": false,
+  "gameplay_validated": false,
+  "interactive_rendering_validated": false,
+  "hardware_acceleration_validated": false,
+  "generic_directory_notification_fix_validated": false,
+  "accepted_device_apk_unchanged": {
+    "version": "0.1.5",
+    "sha256": "bf78559ef47d3f679a93be48ca4127baa9c7238e838ed38799dffc7e0710ffd5"
+  },
+  "remaining_runtime_caveat": "The separate sibling DbServer repetition 36454174374 failed once with signal 11 during or after fixture shutdown and passed one retry using exactly the same package. That preserved intermittent failure is not explained by this bridge validator correction; Atlas uses separately accepted donor 36451873322.",
+  "next_work": "Preserve the corrected host validator and producer/consumer regression, then implement and qualify the next Android service integration without treating hosted success as device execution."
+}

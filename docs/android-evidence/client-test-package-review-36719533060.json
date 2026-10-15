@@ -1,0 +1,145 @@
+{
+  "status": "packaging_verified_host_qualification_pending",
+  "apk": "COH-Game-Client-Test-0.6.0.apk",
+  "bytes": 370539567,
+  "sha256": "ca506e5c22369de04d80cb98b6a747bd818ef20c81245806b6d7271357f3377d",
+  "repository_commit": "5e4e8f2f0acc78e397a3ee8c1eb7df6f661953cb",
+  "build_report": {
+    "bytes": 25878,
+    "sha256": "c11a90d4ac2524fafc7fa98e24a72d10ae849a5eb5898a057535a5eeef31be6c"
+  },
+  "payloads_verified": 33,
+  "java_sources_verified": 14,
+  "native_launcher_source_verified": 1,
+  "guest_sources_verified": 9,
+  "source_verifiers_replayed_from_immutable_commit": true,
+  "accepted_base_runtime_payloads_preserved": 12,
+  "accepted_import_payloads_preserved": 4,
+  "qualified_client_payloads_verified": 21,
+  "client_executable": {
+    "delay_imports": [],
+    "imports": [
+      "ADVAPI32.dll",
+      "cg.dll",
+      "cgGL.dll",
+      "COMDLG32.dll",
+      "DDRAW.dll",
+      "DINPUT8.dll",
+      "DSOUND.dll",
+      "GDI32.dll",
+      "GLU32.dll",
+      "IMM32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ole32.dll",
+      "OPENGL32.dll",
+      "PhysXCooking.dll",
+      "PhysXLoader.dll",
+      "SHELL32.dll",
+      "USER32.dll",
+      "VERSION.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "pe_machine": 332,
+    "sha256": "81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca",
+    "size": 9432576
+  },
+  "native_arm64_libraries_verified": 2,
+  "runtime_manifest_sha256": "f78e33baf8f924f2f54cb8c8c0659114f23e4e52240f4529357a32df85bdeb9c",
+  "prepared_cache": {
+    "archive": {
+      "bytes": 27071659,
+      "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+    },
+    "manifest": {
+      "bytes": 20195,
+      "sha256": "e5bc9ff306f90f96b6d34d4d481b30804af078b0e07845dafd71f7324dff6352"
+    },
+    "generation_repository_commit": "a40250b0032bd05a333514920722ddffa4427730",
+    "generation_launcher_source_sha256": "3fe4fa8509690fa546c1e9a3684b839b43e931220ff4ab07c106303dc9e88eff",
+    "reused_from_earlier_source_commit": true,
+    "files": 100,
+    "uncompressed_bytes": 364703716,
+    "dependency_records": 92046,
+    "dependency_timestamp_counts": {
+      "1767225600": 92046
+    },
+    "normalized_mtime_epoch": 1767225600,
+    "generated_noncache_outputs": [],
+    "shipped_guest_checks_replayed": true,
+    "native_generation_evidence": {
+      "generation_report": {
+        "bytes": 49976,
+        "sha256": "19c277e8634f679a79cd05ff8edc87f6877692d66fcea6e03d5de011e1a841e1"
+      },
+      "stdout": {
+        "bytes": 540132,
+        "sha256": "b3e7ddb98ac64ad8424cd427aca7b030d6c02af4691831358c3ba0f4e045da97"
+      },
+      "completion_marker_present": true,
+      "console_truncation_marker_present": false
+    },
+    "native_generation_report_included_in_apk": false,
+    "body_schema_semantics_verified": false
+  },
+  "client_prerequisites": {
+    "archive": {
+      "bytes": 18757,
+      "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+    },
+    "manifest_sha256": "32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f",
+    "cache_manifest_binding_verified": true,
+    "shipped_guest_checks_replayed": true,
+    "files": {
+      "data/server/db/templates/badges.attribute": {
+        "bytes": 51724,
+        "sha256": "789ed244ac7c686cc275a8a2914de95bbb044b00483875df950a713f05b66fea"
+      },
+      "data/server/db/templates/pophelp.attribute": {
+        "bytes": 2185,
+        "sha256": "34195086d3223c717dca5e1cd00bc35a947a05d5fe31b2408a863e85aea617a1"
+      },
+      "data/server/db/templates/supergroup_badges.attribute": {
+        "bytes": 1039,
+        "sha256": "d63b3c490fc23086aa6af4fd9add6c2af0892452011d32d6984cac2198d65a7e"
+      }
+    },
+    "uncompressed_bytes": 54948,
+    "donor_archive": {
+      "bytes": 1513061,
+      "sha256": "2746438d739a2f13c5d3d15fb96ff6e717de471b635ebdb5fd2100842e46d7c5"
+    },
+    "inner_donor_archive": {
+      "bytes": 682745,
+      "sha256": "30014f78a60fb3a7d4fd9ca6d285d8a2dc3cb82ad361f2988efc252b2fb68d3d"
+    },
+    "comparison_receipt_sha256": "5425672253f7e6f9de4751500115052ac9ca1f0d2fe78471ddeec93add47eb4b",
+    "exact_accepted_nested_donor_bytes_verified": true,
+    "server_executable_added": false
+  },
+  "source_data_bytes": {
+    "accepted_import_payload_bytes_preserved": true,
+    "accepted_external_asset_archive_pin_preserved": true,
+    "external_asset_archive_bytes_rehashed_in_this_review": false,
+    "normalization_policy": "Pinned guest changes imported mtimes and modes; copies writable caches/maps and symlinks remaining leaves.",
+    "device_input_byte_preservation_observed": false
+  },
+  "apk_identity": {
+    "application_id": "io.github.russianranger.cohclienttest",
+    "version_name": "0.6.0",
+    "version_code": 1,
+    "min_sdk": 26,
+    "target_sdk": 35,
+    "abi": "arm64-v8a"
+  },
+  "signature_verification": "CI build report records apksigner verification; this replay independently checks APK bytes and package report, not a second signature verification.",
+  "ci_signer_certificate_sha256": "9c3c78b6535322ba2f237748588323860aeb328afe1602c7abc0fd9bf6dd9543",
+  "normal_client_startup_proven": false,
+  "cache_consumption_proven": false,
+  "usable_menu_proven": false,
+  "performance_proven": false,
+  "host_runtime_pass_claimed": false,
+  "device_pass_claimed": false,
+  "gameplay_pass_claimed": false
+}

@@ -1,0 +1,190 @@
+{
+  "format": 1,
+  "milestone": "M2 Thor diagnostic APK",
+  "attempts": [
+    {
+      "run_id": 36330710846,
+      "repository_commit": "1dcdb6e99507e32ecc6cb59016be4009c3ba1645",
+      "result": "failed",
+      "tooling_tests_passed": 47,
+      "failed_job": 108652001202,
+      "stage": "PostgreSQL dependency verification after successful compile/install",
+      "reason": "Verifier rejected bundled libpgtypes.so.3 required by bundled libecpg.so",
+      "native_smoke_executed": false,
+      "apk_accepted": false,
+      "correction_commit": "19d5ed63cb7124403ec6a47456a686f092a54feb"
+    },
+    {
+      "run_id": 36331103456,
+      "repository_commit": "19d5ed63cb7124403ec6a47456a686f092a54feb",
+      "result": "failed",
+      "tooling_tests_passed": 51,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "failed_job": 108653484781,
+      "stage": "APK badging verification after Java/D8/native compilation and signature verification",
+      "reason": "SDK 35 aapt2 emitted minSdkVersion:'26'; verifier recognized only sdkVersion:'26'",
+      "android_proot_build": "passed",
+      "win32_input_assembly": "passed",
+      "apk_accepted": false,
+      "arm64_proot_runtime_executed": false,
+      "correction_commit": "c1006cf7c1f4b7691407ae99b90e417a1a28d3ce"
+    },
+    {
+      "run_id": 36331879591,
+      "repository_commit": "c1006cf7c1f4b7691407ae99b90e417a1a28d3ce",
+      "result": "failed",
+      "tooling_tests_passed": 61,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_and_payload_verification": "passed",
+      "android_and_linux_proot_builds": "passed",
+      "failed_job": 108655952175,
+      "stage": "odbc_fixture",
+      "reason": "Pinned Wine 10 stubs SQLDriverConnectA and three other ANSI A aliases; equivalent unsuffixed ANSI exports are implemented",
+      "guest_stages_passed": [
+        "assets_and_architecture",
+        "initialize_owned_cluster",
+        "postgres_first_start",
+        "restricted_fixture_database",
+        "wine_prefix_and_driver",
+        "win32_runtime_dll"
+      ],
+      "wine_cleanup_accepted": false,
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "source_of_compatibility_correction": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
+      "raw_report": "runtime-smoke-report-36331879591.json",
+      "correction_commit": "76f0302d65224812e220006b38fbbd500a59d3ea"
+    },
+    {
+      "run_id": 36332802885,
+      "repository_commit": "76f0302d65224812e220006b38fbbd500a59d3ea",
+      "result": "failed",
+      "tooling_tests_passed": 69,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_payload_and_compiled_odbc_import_verification": "passed",
+      "failed_job": 108658623477,
+      "stage": "odbc_fixture",
+      "reason": "SQLDriverConnect returned SQL_ERROR before any driver diagnostic record; no unimplemented-export failure remained",
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "wine_shutdown": {
+        "stop_exit_code": 1,
+        "wait_exit_code": 0,
+        "prefix_lock_free": true,
+        "server_socket_inactive": true
+      },
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "raw_report": "runtime-smoke-report-36332802885.json",
+      "next_diagnostic": "Explicit PE32 SysWOW64 MSI installer plus measured HKLM32 registration and native driver DLL load preflight",
+      "correction_commit": "ac927cc3701b8b6c58caac161747c8b718eb45fa"
+    },
+    {
+      "run_id": 36333868865,
+      "repository_commit": "ac927cc3701b8b6c58caac161747c8b718eb45fa",
+      "result": "failed",
+      "tooling_tests_passed": 73,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_payload_and_compiled_odbc_import_verification": "passed",
+      "failed_job": 108661545645,
+      "stage": "win32_odbc_driver",
+      "reason": "PE32 MSI installer established both HKLM32 registrations and driver DLL load; preflight incorrectly required ANSI SQLDriverConnect from the Unicode driver, which exports SQLDriverConnectW",
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "raw_report": "runtime-smoke-report-36333868865.json",
+      "correction_commit": "6a87286219113bc11a5c3e1cdcb84ea87bea3495"
+    },
+    {
+      "run_id": 36334034143,
+      "repository_commit": "6a87286219113bc11a5c3e1cdcb84ea87bea3495",
+      "result": "failed",
+      "tooling_tests_passed": 73,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_payload_and_compiled_odbc_import_verification": "passed",
+      "failed_job": 108662049487,
+      "stage": "odbc_fixture",
+      "reason": "Real HKLM32 driver registration, Windows Unicode DLL load and PE32 runtime fixture passed; ODBC fixture exceeded its 180-second bound without flushed output",
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "raw_report": "runtime-smoke-report-36334034143.json",
+      "next_diagnostic": "Unbuffered credential-free ODBC call progress and bounded pre-termination database wait-state snapshot; preserve 65 connections and all SQL assertions",
+      "correction_commit": "6580506e33e66ffb39b59badff7f0c870edc5ab0"
+    },
+    {
+      "run_id": 36334953501,
+      "repository_commit": "6580506e33e66ffb39b59badff7f0c870edc5ab0",
+      "result": "failed",
+      "tooling_tests_passed": 76,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_payload_and_compiled_odbc_import_verification": "passed",
+      "failed_job": 108664625266,
+      "stage": "odbc_fixture",
+      "reason": "Trace completed first connection and two SQL scalar checks, then stopped at CALL:234 (SQLGetInfo for SQL_DRIVER_VER); PostgreSQL had one idle ClientRead session for 176 seconds",
+      "root_cause": "Pinned Wine ANSI get_info_win32_a calls public SQLGetInfoW with a driver-private HDBC rather than dispatching its driver function pointer",
+      "source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975",
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "raw_report": "runtime-smoke-report-36334953501.json",
+      "next_correction": "Query the same driver version with SQLGetInfoW using the manager HDBC, validate bounded UTF-16 result and preserve all SQL assertions and 65-connection checks",
+      "correction_commit": "69c04aab7d61106eca647af36ecbc5cf52311fc3"
+    },
+    {
+      "run_id": 36335852159,
+      "repository_commit": "69c04aab7d61106eca647af36ecbc5cf52311fc3",
+      "result": "failed",
+      "tooling_tests_passed": 79,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_payload_and_compiled_odbc_import_verification": "passed",
+      "failed_job": 108667148210,
+      "stage": "odbc_fixture",
+      "reason": "SQLGetInfoW fix succeeded; fixture passed five check groups then SQLColumns returned SQL_ERROR at line 136 before any driver diagnostic",
+      "odbc_groups_passed": [
+        "PASS all 65 stock DbServer ODBC connections coexist",
+        "PASS ID ordering, deleted highest ID, rollback and bulk-import startup state",
+        "PASS indexes: duplicate field names, idempotence, schema isolation, legacy cleanup",
+        "PASS foreign keys: absent table/constraint removal, add/remove, child rows, orphan rejection",
+        "PASS bound values: integer limits, byte 255, float, UTF-16, timestamp, 32 KiB bytea chunks, long text and NULL"
+      ],
+      "root_cause": "Pinned Wine columns_win32_a treats conversion of a valid NULL catalog filter as an allocation failure; NULL column filter would fail similarly",
+      "source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L1113",
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "raw_report": "runtime-smoke-report-36335852159.json",
+      "next_correction": "SQLColumnsW with the same NULL catalog/column filters and dbo/pgprobe names; retain all row-count and canonical-type assertions",
+      "correction_commit": "0b61d7455f40f05709f912338cd5de8b1d72d750"
+    }
+  ],
+  "android_device_validated": false,
+  "gameplay_validated": false,
+  "accepted_hosted": {
+    "run_id": 36336644450,
+    "repository_commit": "0b61d7455f40f05709f912338cd5de8b1d72d750",
+    "status": "hosted_qualified_device_pending",
+    "receipt": "accepted-hosted-36336644450.json",
+    "android_device_validated": false,
+    "gameplay_validated": false
+  }
+}

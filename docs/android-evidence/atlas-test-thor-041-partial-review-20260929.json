@@ -1,0 +1,289 @@
+{
+  "format": 1,
+  "status": "partial_device_progress_verified_full_gate_failed",
+  "source_archive": {
+    "name": "coh-atlas-test-20260929-163218.zip",
+    "bytes": 324373,
+    "sha256": "a086926f8d6e71d8a945f391560f8e5a5471a198bd3c914ede4aedfad09487dc"
+  },
+  "app_version": "0.4.1",
+  "device": "AYN AYN Thor",
+  "candidate_repository_commit": "6b50467a1b96133acc92a378617ff961733f288c",
+  "runtime_manifest_sha256": "1c88865e94841fc3511dfc20b6d9e15e28dbb2ed646ae74295f6f2b994b74711",
+  "capture_counts": {
+    "game-captures": 5,
+    "game-service-captures": 10,
+    "game-hang-captures": 3
+  },
+  "all_exported_capture_hashes_verified": true,
+  "passed_stage_count": 15,
+  "incomplete_stage": "game_services_restart",
+  "character": {
+    "container_id": 1,
+    "name": "TEST25351",
+    "account": "CohAed8ad822d3"
+  },
+  "live_currency": {
+    "player": "TEST25351",
+    "account": "CohAed8ad822d3",
+    "influence": 12345,
+    "elapsed_ms": 340622,
+    "sequence": 17
+  },
+  "first_save": {
+    "protocol_quit": true,
+    "quitnow_is_save_ack": false,
+    "disconnected_before_sql": true,
+    "independent_committed_sql": true,
+    "forced_stop_before_save": false,
+    "login_count": 1,
+    "influence": 12345,
+    "snapshot_sha256": "adb62838207f14c0c350feb613a319cc21585992d542adab4afc294b31d9cf52",
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 8,
+      "costumeparts": 15
+    }
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 687,
+    "scanned_tasks": 120,
+    "dead_leaders_with_live_tasks": 8,
+    "owned_live_workers": 8,
+    "leader_exit_retries": 0,
+    "candidates": 3,
+    "term_signals": 8,
+    "kill_signals": 2,
+    "pidfd_signals": 10,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 2,
+    "worker_exit_rechecks": 1,
+    "permission_observations": [
+      {
+        "group_pid": 9855,
+        "group_starttime": 34129173,
+        "worker_tid": 20771,
+        "worker_starttime": 34224998,
+        "operation": "worker_environment",
+        "errno": 13,
+        "attempt": 1,
+        "worker_state_before": "R",
+        "resolution": "retry_same_live_worker",
+        "worker_state_after": "R"
+      },
+      {
+        "group_pid": 9855,
+        "group_starttime": 34129173,
+        "worker_tid": 20771,
+        "worker_starttime": 34224998,
+        "operation": "worker_environment",
+        "errno": 13,
+        "attempt": 2,
+        "worker_state_before": "R",
+        "resolution": "verified_disappearance",
+        "worker_state_after": "R"
+      }
+    ],
+    "permission_observations_omitted": 0
+  },
+  "cleanup_blocked": false,
+  "failure": {
+    "message": "Timed out waiting for DbServer main-thread dispatch publication",
+    "full_gate_validator_rejection": "Game runtime did not prove complete success",
+    "dispatch_wait_seconds_until_snapshot": 30.096566,
+    "active_dispatch_before": {
+      "available": true,
+      "sampled_utc": "2026-09-29T16:31:58.995292+00:00",
+      "format": 1,
+      "windows_pid": 32,
+      "main_thread_id": 36,
+      "sequence": 10,
+      "stage_id": 8,
+      "stage": "SQL_KEEPALIVE_QUEUE",
+      "loop_count": 0,
+      "flags": 0,
+      "stage_count": 37,
+      "file_identity": {
+        "device": 65045,
+        "inode": 6077191
+      },
+      "raw_record_hex": "434f484442503100010000008000000020000000240000000a00000008000000000000000000000025000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "raw_record_sha256": "e6917f21eb14fcc0076ab8f59a496807989c50221c60ce999cd1a04099c9ee7f",
+      "source": "opt-in DbServer main-thread publication",
+      "is_success_proof": false
+    },
+    "active_dispatch_after": {
+      "available": true,
+      "sampled_utc": "2026-09-29T16:32:01.639128+00:00",
+      "format": 1,
+      "windows_pid": 32,
+      "main_thread_id": 36,
+      "sequence": 10,
+      "stage_id": 8,
+      "stage": "SQL_KEEPALIVE_QUEUE",
+      "loop_count": 0,
+      "flags": 0,
+      "stage_count": 37,
+      "file_identity": {
+        "device": 65045,
+        "inode": 6077191
+      },
+      "raw_record_hex": "434f484442503100010000008000000020000000240000000a00000008000000000000000000000025000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "raw_record_sha256": "e6917f21eb14fcc0076ab8f59a496807989c50221c60ce999cd1a04099c9ee7f",
+      "source": "opt-in DbServer main-thread publication",
+      "is_success_proof": false
+    },
+    "snapshot_observation_seconds": 2.646,
+    "postgres_session_states": {
+      "('idle', 'Client', 'ClientRead')": 65
+    },
+    "diagnosis": "The 30-second publication gate timed out waiting for loop_count > 0. The restart dispatch record exists and is in SQL_KEEPALIVE_QUEUE on its first loop. It stayed unchanged during the 2.646-second pre-cleanup sample; that bounded observation alone does not establish a permanent deadlock. SQL sessions sampled then were idle, waiting on ClientRead.",
+    "cancelled": false,
+    "cancellation_basis": "Guest, app runtime and service statuses are failed; exact failure is dispatch timeout; lifecycle contains no Stop/cancellation event."
+  },
+  "timing_seconds": {
+    "guest_attempt": 3018.871264,
+    "outer_attempt": 3027.89,
+    "game_private_runtime": 1003.064128,
+    "assets_and_architecture": 0.018152,
+    "initialize_owned_cluster": 4.796923,
+    "postgres_first_start": 0.391494,
+    "restricted_fixture_database": 1.349706,
+    "wine_prefix_and_driver": 119.727936,
+    "win32_odbc_driver": 1.723639,
+    "win32_runtime_dll": 0.726943,
+    "game_services_first": 1449.644938,
+    "atlas_ready_observation": 32.280756,
+    "game_create_and_connect": 340.445988,
+    "game_live_currency": 4.053274,
+    "game_protocol_logout_first": 4.917383,
+    "game_restart": 4.113696,
+    "postgres_game_restart": 0.388291
+  },
+  "resource_summary": {
+    "android_samples": 302,
+    "minimum_available_memory_bytes": 6471290880,
+    "minimum_free_storage_bytes": 217289252864,
+    "low_memory_samples": 0,
+    "thermal_statuses": [
+      0
+    ],
+    "wine_fex_maximum_sampled_rss_kib": 4338684,
+    "rss_scope": "run_token_owned_Wine_FEX_processes_only",
+    "rss_instantaneous_peak_measured": false,
+    "rss_pss_measured": false,
+    "rss_successful_samples": 393,
+    "rss_unavailable_samples": 1
+  },
+  "lifecycle_lines": [
+    "1790696506599 elapsed_ms=0 operation_requested kind=atlas_server_test ui_visible=true screen_interactive=true",
+    "1790698307100 elapsed_ms=1800501 activity_visible=false",
+    "1790698307736 elapsed_ms=1801137 screen_event=android.intent.action.SCREEN_OFF",
+    "1790698394956 elapsed_ms=1888357 activity_visible=true",
+    "1790698395226 elapsed_ms=1888627 screen_event=android.intent.action.SCREEN_ON",
+    "1790699534489 elapsed_ms=3027890 operation_finished status=failed"
+  ],
+  "lifecycle_summary": {
+    "screen_off_observed": true,
+    "screen_off_seconds": 87.49,
+    "activity_hidden_seconds": 87.856,
+    "continued_after_screen_return": true,
+    "full_background_acceptance": false
+  },
+  "limits": [
+    "Full Android Atlas milestone remains failed; no successful second service start, exact-name resume or second save",
+    "Game and PostgreSQL restart stages passed, but no post-restart character SQL snapshot was reached",
+    "First-save snapshot identity, selected field shape, row counts and influence checked; this review does not reconstruct missing immutable attribute mapping files",
+    "0.4.1 worker-exit correction was exercised: bounded retries ended in verified disappearance, with zero ownership inspection failures",
+    "Sampled memory and thermal status are observations, not an OOM exclusion or instantaneous peak measurement",
+    "Raw Windows contexts are explicitly not validated as the current FEX instruction position; no stack-based deadlock claim",
+    "Screen-off/background interval occurred during the run, but full lifecycle acceptance requires a complete successful gate"
+  ],
+  "android_atlas_test_passed": false,
+  "generated_character_persistence_validated": false,
+  "gameplay_validated": false,
+  "capture_files": {
+    "game-captures/first-console.txt": {
+      "bytes": 8338,
+      "sha256": "3c57ca07aaaa8d6d950686561c3a6b6d29a3bd67059fc9d50ac423ee0f267064"
+    },
+    "game-captures/first-events.jsonl": {
+      "bytes": 3310,
+      "sha256": "c2fca8b84ae646363918410452acf0a6852438e78b970a8cc09884ac9b3081fb"
+    },
+    "game-captures/first-ready.json": {
+      "bytes": 278,
+      "sha256": "26ba4d803c645be66a8c537ca8dae554644c3aa731308f7b1c61e0641a50477e"
+    },
+    "game-captures/first-result.json": {
+      "bytes": 331,
+      "sha256": "a5aa059ed27856a74f154f0caae95a8727bbc2b4ac8c4f6ab3eef4c5ba689f02"
+    },
+    "game-captures/first-snapshot.json": {
+      "bytes": 5698,
+      "sha256": "a2aecdb6bf62998f288a15591d7bb6d0537cd17cca3ee26661adb58c7d6853ae"
+    },
+    "game-service-captures/first-atlas-stdout.txt": {
+      "bytes": 1016011,
+      "sha256": "c71cf178496d5e9ded8cb3d10e20b3f0b49887fcd231c5fcf70410d8616bffdc"
+    },
+    "game-service-captures/first-dbserver-stdout.txt": {
+      "bytes": 9724,
+      "sha256": "b69de957dfccf3703ca9afecb8574318e8e56ccce2ef4946790ded41a58d321e"
+    },
+    "game-service-captures/log-001.txt": {
+      "bytes": 76,
+      "sha256": "f6a41e5471d2b83a72a86e5c1ccaa8b970fcc5ad336a6be68ea6637318b8fd0c"
+    },
+    "game-service-captures/log-002.txt": {
+      "bytes": 16502,
+      "sha256": "5ef087bdb4130fe097b44740876edf42d02b775ce24ef6fe75fad2d33b96e4ee"
+    },
+    "game-service-captures/log-003.txt": {
+      "bytes": 92,
+      "sha256": "7f4432a05b20e28a4eb1fb93ac4334d45be55dea078542d5bc73f9c82f75e80a"
+    },
+    "game-service-captures/log-004.txt": {
+      "bytes": 1048614,
+      "sha256": "27227c8366a6821793ce33949b7290f56f0746e4acd200b33a994b000fa08ab3"
+    },
+    "game-service-captures/log-005.txt": {
+      "bytes": 14074,
+      "sha256": "5178afb06e04b1803844991dfbb4ec0ff7279d0ad0ab630a1212b497760bd24b"
+    },
+    "game-service-captures/log-006.txt": {
+      "bytes": 825585,
+      "sha256": "a9f2cceff80e5abcca91141962d75c236decdbff061f28389fa809eb9f0ca5b8"
+    },
+    "game-service-captures/manifest.json": {
+      "bytes": 2886,
+      "sha256": "bb607a8134740d4100242dae0fa2b2317fe7a7bacb283896bce6346b31c1cbdd"
+    },
+    "game-service-captures/restart-dbserver-stdout.txt": {
+      "bytes": 16805,
+      "sha256": "b95181fd7da75f08e2116d6e8533f759f47248b9e218f08e7de8a14d25db8c21"
+    },
+    "game-hang-captures/manifest.json": {
+      "bytes": 965,
+      "sha256": "21be05600d0aa432000afa445705666e0028231e877ef89d649a4e25f6e34db2"
+    },
+    "game-hang-captures/snapshot.json": {
+      "bytes": 387525,
+      "sha256": "55effce79621ec0a2ba5e6ccde21e072d33346e7d4a1cb4a32018814838d201d"
+    },
+    "game-hang-captures/windows-contexts.jsonl": {
+      "bytes": 88224,
+      "sha256": "4b8bed8c3564bbb382716c4f6975cec86c07d54322ffa9032b7052ecf0968b1b"
+    }
+  }
+}

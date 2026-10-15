@@ -1,0 +1,51 @@
+{
+  "format": 1,
+  "gate": "graphical_character_creation_hosted",
+  "status": "failed",
+  "run_id": 36801130531,
+  "repository_commit": "b3d3ee72565a6f4d673a35a5b648d03567042ccc",
+  "apk_sha256": "429524ec73fa23b459284cafcb8bac7b37558cb931c60ed345a58ebdac9b661a",
+  "runtime_artifact_id": 11135687339,
+  "runtime_artifact_sha256": "0b48cbb8447731adf03952d98accc25f33fd12a1e9c0187f44c673cf1ba1ee8f",
+  "session_id": "ea911ae03213566d990575faaf29652b",
+  "recorded_failures": [
+    "Unexpected game transport or invalid actual bound port"
+  ],
+  "failed_stage": "local_atlas_startup",
+  "root_cause_review": "MapServer console reports missing defs/powers and multiple definition files under top-level directory symlinks, then EXCEPTION_ACCESS_VIOLATION. The crash handler opens a loopback TCP listener, which the strict UDP listener parser rejects as the secondary reported failure. Replace directory symlinks with real directories and file-level readonly links.",
+  "graphical_client_started": false,
+  "character_created": false,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "cleanup_complete": true,
+  "wine_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 302,
+    "scanned_tasks": 4,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "database_preserved": true,
+  "report_sha256": "d8d5802a365c9bc8482db5da0d211d51cba979110d7f77994bad058735d75d7f",
+  "followup": "Correct data tree; additionally require actual CLIENT_READY and current delivered logout request plus ordered logout timer evidence and committed SQL. Preserve this failed candidate; no device test requested."
+}

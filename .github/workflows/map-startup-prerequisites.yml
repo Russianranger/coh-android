@@ -1,0 +1,48 @@
+name: MapServer offline observer, stream and persistence prerequisites
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/map-startup-prerequisites.yml
+      - tools/qualify_map_startup_prerequisites.py
+      - tools/test_qualify_map_startup_prerequisites.py
+      - tools/prepare_map_startup_observer_source.py
+      - tools/test_map_startup_observer_source.py
+      - tools/test_map_startup_bounded_stream.py
+      - database/map-startup-observer/**
+      - database/map-startup-physics/qualification/**
+      - tools/android/interactive/analyze_enhancement_persistence.py
+      - tools/android/interactive/test_analyze_enhancement_persistence.py
+  pull_request:
+    paths:
+      - .github/workflows/map-startup-prerequisites.yml
+      - tools/qualify_map_startup_prerequisites.py
+      - tools/test_qualify_map_startup_prerequisites.py
+      - tools/prepare_map_startup_observer_source.py
+      - tools/test_map_startup_observer_source.py
+      - tools/test_map_startup_bounded_stream.py
+      - database/map-startup-observer/**
+      - database/map-startup-physics/qualification/**
+      - tools/android/interactive/analyze_enhancement_persistence.py
+      - tools/android/interactive/test_analyze_enhancement_persistence.py
+permissions:
+  contents: read
+concurrency:
+  group: map-startup-prerequisites-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Host prototype qualification; freeze published proofs and observe production changes
+        run: python3 tools/qualify_map_startup_prerequisites.py --output out/map-startup-prerequisites.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: map-startup-offline-prerequisites
+          path: out/
+          if-no-files-found: error
+          retention-days: 30

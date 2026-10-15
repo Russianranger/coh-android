@@ -1,0 +1,1179 @@
+{
+  "format": 1,
+  "scope": "current_0_13_9_startup_partial_visual_improvement_and_hostile_target_defeat_with_false_save_row_rejection",
+  "recorded_utc": "2026-10-04",
+  "tested_version": "0.13.9",
+  "source_branch": "codex/character-persistence-continuation",
+  "branch_head_at_analysis": "09989889894861b0b91dadda113f000d033559f6",
+  "main_preserved_at": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "bundle": {
+    "path": "coh-atlas-gameplay-20261004-223940.zip",
+    "bytes": 9904514,
+    "sha256": "237799a32925bbdfd4c21009542a0c79541d55d97e04cc83a363a857846afc7c"
+  },
+  "raw_evidence_members": {
+    "latest-report.json": {
+      "bytes": 243190,
+      "sha256": "55eb2b1ce27343f5ab899405cc07b8a01d801d67c3fb04378ec48269d279bcc7"
+    },
+    "client-evidence/client-console.log": {
+      "bytes": 1902345,
+      "sha256": "1f532e7a18c57b5e0cb77fa7e79d9d5f85dee628b7af6aa1a63de46995c9fba2"
+    },
+    "client-evidence/character-atlas-console.txt": {
+      "bytes": 1163466,
+      "sha256": "fd42c940747bd9c445d247353c85c7918d8f2c1f815ae07f90f1dd17d1b576c5"
+    },
+    "client-evidence/local-dbserver-console.txt": {
+      "bytes": 19298,
+      "sha256": "cb62f0b8d3f4118adb0f8f6d507e2ab47353360b5d86e352baaacbc939184b55"
+    },
+    "client-evidence/character-reopen-before-snapshot.json": {
+      "bytes": 8683,
+      "sha256": "22f18835f94425042fa8e61638ec55b019ad8fe40d78faac0f32e6964ff2ac51"
+    },
+    "client-evidence/character-server-logs.zip": {
+      "bytes": 9951,
+      "sha256": "d790510afe49464d26e8ac2437ad0044acaffe540398fb885cb7fc7c6c350bc0"
+    },
+    "client-evidence/private-cache-inventory.json": {
+      "bytes": 169890,
+      "sha256": "308836d164195ac7afcebc27a1c90540911a1e11674adcb95c71c2fe559b5c2b"
+    }
+  },
+  "top_level_evidence": {
+    "android-client-report.json": {
+      "bytes": 294797,
+      "sha256": "b174d81fb0ab5001adc814b3384e758a78c6df5d50d103335bca6dda3f4453ec"
+    },
+    "runtime-manifest.json": {
+      "bytes": 26825,
+      "sha256": "e897aa3f639f36d88f4da109388867bf4348ac05be23b408a3d13f7078253266"
+    },
+    "runtime-setup-service.json": {
+      "bytes": 642,
+      "sha256": "fbbbc353c2d53cfe03f02dc9ae16dbd0a15d0249310eac5ffa37085595f6a050"
+    },
+    "identities/client-manifest.json": {
+      "bytes": 8271,
+      "sha256": "18eca8f36000996d97b0ba3fa708cda1afedd4dbc16004c6bbfc429828ec9c2d"
+    },
+    "identities/client-visual-manifest.json": {
+      "bytes": 1145658,
+      "sha256": "32cd85c643e2748532bf5ea4ba66d4ef843d58af07c5ebd276f99bad8e38014c"
+    }
+  },
+  "screenshots": [
+    {
+      "path": "Screenshot_20261004-173559.png",
+      "uploaded_local_name": "02-Screenshot_20261004-173559.png",
+      "bytes": 414020,
+      "sha256": "855b1cef1d13cb3703a1e89a2c05cc44907d0222c4eba0a779ddfc85353a044f"
+    },
+    {
+      "path": "Screenshot_20261004-173434.png",
+      "uploaded_local_name": "03-Screenshot_20261004-173434.png",
+      "bytes": 367517,
+      "sha256": "dd8ed6e4150071c5d366c2577313190d50b1e902f93ebdce7a04516974d4b0a9"
+    },
+    {
+      "path": "Screenshot_20261004-173423.png",
+      "uploaded_local_name": "04-Screenshot_20261004-173423.png",
+      "bytes": 360779,
+      "sha256": "01b584fd39e94b9ded0c1b42a613696ef8dc59267308437d64035e56bf51bc21"
+    },
+    {
+      "path": "Screenshot_20261004-173504.png",
+      "uploaded_local_name": "05-Screenshot_20261004-173504.png",
+      "bytes": 342381,
+      "sha256": "30943b522e4836757fa44bc178e33751118d2f83834af0d3c6dab28c9a11abf4"
+    },
+    {
+      "path": "Screenshot_20261004-173304.png",
+      "uploaded_local_name": "06-Screenshot_20261004-173304.png",
+      "bytes": 424314,
+      "sha256": "ef6f878a4e8e12904e5bd8d051cf4c5ca9c0ef377608f282ff315ad60653485e"
+    },
+    {
+      "path": "Screenshot_20261004-173246.png",
+      "uploaded_local_name": "07-Screenshot_20261004-173246.png",
+      "bytes": 406416,
+      "sha256": "18eb8a93605891fef0d90b9995d91ab7c80bdce6be11d44219d4bc05eb5836ab"
+    },
+    {
+      "path": "Screenshot_20261004-173212.png",
+      "uploaded_local_name": "08-Screenshot_20261004-173212.png",
+      "bytes": 433540,
+      "sha256": "f498d6d049c8ab30077cd4969193c721a324cf5034512cbdc61a4173349dbd84"
+    },
+    {
+      "path": "Screenshot_20261004-173150.png",
+      "uploaded_local_name": "09-Screenshot_20261004-173150.png",
+      "bytes": 343090,
+      "sha256": "6520b3e4d5cf8aa59acedd84320202e6496e32ddf82b5a6a3204011b0685ae78"
+    },
+    {
+      "path": "Screenshot_20261004-172359.png",
+      "uploaded_local_name": "10-Screenshot_20261004-172359.png",
+      "bytes": 112801,
+      "sha256": "c842224d9d03f8b0191b75a77172eb3eb7495169c75a00a08bf0f6888cd4521a"
+    }
+  ],
+  "user_observations": {
+    "actual_client_start_approximate_seconds": 255,
+    "atlas_initialization_approximate_seconds": 220,
+    "more_models_visible": true,
+    "remaining_head_hand_and_ground_texture_gaps": true,
+    "targeting_and_defeating_hostile_npcs_observed": true,
+    "screenshots_interpretation_owned_by_handoff_review": true
+  },
+  "device": {
+    "name": "AYN AYN Thor",
+    "android_sdk": 33,
+    "graphics_profile": "performance",
+    "vendor": "Mesa/X.org",
+    "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+    "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+    "renderer_classification": "software"
+  },
+  "identity": {
+    "run_id": "1791152361220-19a96b0576d1",
+    "session_id": "e5912c1210554a80b93e8be2b6f92f96",
+    "client_pid": 648,
+    "apk_source_commit": "7e905d6a9241848b4635a069a962c42382a9a200",
+    "runtime_manifest_sha256_matches": false,
+    "guest_client_report_identical_to_nested_android_report": true,
+    "guest_payload_pins": 56,
+    "all_client_manifest_payload_pins_match_current_guest": true,
+    "native_client_loading": {
+      "repository_commit": "f42ebb46675213809018b4f9825d13eb1cd6e952",
+      "manifest_sha256": "30eea74be80ac25ebf66cf74f857a3f181747f1dd812e7bdefe8d1b04b0fc133",
+      "base_client_executable_sha256": "e9f8522e07305a51f9464004ffce3f1b85fa065af04ab6892beaf47d1d095cd2",
+      "client_executable_sha256": "ec1a6c01b07d7c189bde743a7255c860b8dd96879225b4ffa50fd42eabbb721b",
+      "replacement_scope": "CityOfHeroes.exe_only",
+      "prepared_cache_schema_changed": false,
+      "graphics_profile_changed": false,
+      "runtime_execution_validated": false
+    },
+    "native_game_0_13_8_retained": true
+  },
+  "instrumented_timing": {
+    "guest_start_utc": "2026-10-04T22:19:21.952451+00:00",
+    "request_run_id_utc": "2026-10-04T22:19:21.220000+00:00",
+    "owned_atlas_ready_utc": "2026-10-04T22:24:44.403711+00:00",
+    "guest_start_to_owned_atlas_ready_seconds": 322.45126,
+    "request_to_owned_atlas_ready_seconds": 323.183711,
+    "atlas_native_stage_seconds": 222.857969,
+    "native_client_startup_observed_seconds": 259.26,
+    "actual_client_stage_seconds": 259.724268,
+    "atlas_ready_to_client_launcher_seconds": 57.413087,
+    "login_to_connected_observation_seconds": 68.687,
+    "native_ready_to_character_observation_ms": 7366,
+    "runtime_setup_seconds": 64.396,
+    "boundaries_note": "User Atlas time describes its native initialization interval, whereas total request-to-owned-Atlas includes wrapper/DbServer phases. User client measurement and native observation differ slightly. No pure world-load estimate excludes user input."
+  },
+  "stages": [
+    {
+      "stage": "client_inputs",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:19:21.961489+00:00",
+      "finished_utc": "2026-10-04T22:19:22.404125+00:00",
+      "elapsed_seconds": 0.442636
+    },
+    {
+      "stage": "client_private_data",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:19:22.404376+00:00",
+      "finished_utc": "2026-10-04T22:19:22.679936+00:00",
+      "elapsed_seconds": 0.27556
+    },
+    {
+      "stage": "persistent_server_profile",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:19:22.682188+00:00",
+      "finished_utc": "2026-10-04T22:19:23.196973+00:00",
+      "elapsed_seconds": 0.514785
+    },
+    {
+      "stage": "postgres_local_login",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:19:23.197600+00:00",
+      "finished_utc": "2026-10-04T22:19:23.742921+00:00",
+      "elapsed_seconds": 0.545321
+    },
+    {
+      "stage": "presentation_display",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:19:58.211658+00:00",
+      "finished_utc": "2026-10-04T22:19:58.270185+00:00",
+      "elapsed_seconds": 0.058527
+    },
+    {
+      "stage": "wine_initialization",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:19:58.270632+00:00",
+      "finished_utc": "2026-10-04T22:20:06.712892+00:00",
+      "elapsed_seconds": 8.44226
+    },
+    {
+      "stage": "local_login_odbc",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:20:06.713423+00:00",
+      "finished_utc": "2026-10-04T22:20:19.668169+00:00",
+      "elapsed_seconds": 12.954746
+    },
+    {
+      "stage": "local_dbserver_startup",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:20:19.669529+00:00",
+      "finished_utc": "2026-10-04T22:21:01.118923+00:00",
+      "elapsed_seconds": 41.449394
+    },
+    {
+      "stage": "local_atlas_startup",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:21:01.545742+00:00",
+      "finished_utc": "2026-10-04T22:24:44.403711+00:00",
+      "elapsed_seconds": 222.857969
+    },
+    {
+      "stage": "client_visual_assets",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:24:44.412791+00:00",
+      "finished_utc": "2026-10-04T22:24:46.929595+00:00",
+      "elapsed_seconds": 2.516804
+    },
+    {
+      "stage": "client_animation_pack",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:24:46.930166+00:00",
+      "finished_utc": "2026-10-04T22:25:01.041920+00:00",
+      "elapsed_seconds": 14.111754
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:25:01.047817+00:00",
+      "finished_utc": "2026-10-04T22:25:02.437474+00:00",
+      "elapsed_seconds": 1.389657
+    },
+    {
+      "stage": "actual_client_startup",
+      "status": "passed",
+      "started_utc": "2026-10-04T22:25:41.572630+00:00",
+      "finished_utc": "2026-10-04T22:30:01.296898+00:00",
+      "elapsed_seconds": 259.724268
+    },
+    {
+      "stage": "actual_client_interaction",
+      "status": null,
+      "started_utc": "2026-10-04T22:30:01.297369+00:00",
+      "finished_utc": null,
+      "elapsed_seconds": null
+    }
+  ],
+  "preservation": {
+    "client_worktree_reused": true,
+    "worktree": "client-work-285adbfb0389ed61b577b734",
+    "source_root_preserved": true,
+    "generated_cache_bytes_preserved": true,
+    "native_executable_upgrade_from_0_13_7": true,
+    "database_profile_reused": true,
+    "database_preserved": true,
+    "animation_pack": {
+      "format": 1,
+      "installed": true,
+      "reused": true,
+      "pigg": {
+        "animation_count": 5878,
+        "bytes": 97084456,
+        "metadata_bytes": 8703726,
+        "original_animation_bytes": 88380730,
+        "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+      },
+      "client_contract": {
+        "format": 1,
+        "role": "exact_native_client_animation_storage",
+        "runtime": "/state/diagnostic/client-work-285adbfb0389ed61b577b734",
+        "source_data": "/game-import/data",
+        "import": {
+          "generation": "generation-465fcafc89e648ecab66a94b14ad502b",
+          "receipt_sha256": "c67e2df0575173e4c2bac3f6900d316d117a0126657db78b84c067a0b1b2b7fe",
+          "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+          "file_count": 173011,
+          "total_bytes": 2977730517
+        },
+        "game_sha256": "ec1a6c01b07d7c189bde743a7255c860b8dd96879225b4ffa50fd42eabbb721b",
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+        "asset_archive_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+        "animation_inventory_sha256": "c3ac97e4a18d17bfa3de529c24597a668d099329cfdb663021688e248ec43a38",
+        "loose_animation_count": 5878
+      },
+      "storage": "owned_link_to_verified_runtime_payload",
+      "verified_payload_read_only": true,
+      "additional_animation_payload_bytes": 0,
+      "loose_inputs_preserved": true,
+      "native_animation_reader_changed": false,
+      "physical_startup_timing_validated": false,
+      "elapsed_seconds": 14.111
+    },
+    "visual_supplement": {
+      "format": 1,
+      "scope": "atlas_client_missing_visual_assets",
+      "manifest_sha256": "32cd85c643e2748532bf5ea4ba66d4ef843d58af07c5ebd276f99bad8e38014c",
+      "archive_sha256": "e7caf3f505ecf9fef0efc4dbb34c1aedc2905afbe58c0ac26bbcc03f6f71ccda",
+      "files_sha256": "07b61f301355f2bb0174db2b41f1254b3f2b80cfd660d5f467415c7f33707c09",
+      "file_count": 329,
+      "payload_bytes": 39521237,
+      "installed_files": 39,
+      "reused_files": 290,
+      "retained_baseline_file_count": 290,
+      "added_file_count": 33,
+      "retained_immediate_file_count": 323,
+      "added_encounter_file_count": 6,
+      "added_encounter_payload_bytes": 291538,
+      "retained_baseline_payloads_preserved": true,
+      "reuse_validation": "pinned_missing_only_client_visual_v1",
+      "fingerprint_reused": false,
+      "decoded_files": 39,
+      "decoded_payload_bytes": 2937589,
+      "verified_existing_bytes": 36583648,
+      "archive_read_bytes": 25400546,
+      "worktree": "client-work-285adbfb0389ed61b577b734",
+      "normalized_mtime_epoch": 1767225600,
+      "imported_files_modified": false,
+      "generated_caches_modified": false,
+      "existing_supplements_modified": false,
+      "runtime_visual_validated": false,
+      "full_global_asset_closure": false,
+      "unresolved_direct_material_names": [
+        "bf_boot_clogs",
+        "bm_boot_business_shoe",
+        "bm_chest_bum_flannel_01a",
+        "bm_eyes_glasses_01a",
+        "emblem_hero_corp"
+      ],
+      "absent_requested_models": [
+        {
+          "geometry": "data/player_library/male_collar.geo",
+          "model": "GEO_Collar_MAGIC"
+        }
+      ],
+      "unresolved_dependency_count": 6,
+      "preparation_elapsed_seconds": 2.515803
+    }
+  },
+  "texture_index": {
+    "format": 1,
+    "identity": "58ef0b4b779471544da976bd1b2a4d04db4d1408512233d52a5d9612d6e1279b",
+    "records": 11643,
+    "inventory_sha256": "83915d8ff86b71d99030cf56488e2f9faba0712383865b85a510358ad13a7284",
+    "client_executable_sha256": "ec1a6c01b07d7c189bde743a7255c860b8dd96879225b4ffa50fd42eabbb721b",
+    "identity_policy": "verified_client_content_v1",
+    "client_content_identity_sha256": "1cc5a61d4125c8eda272376803e84bc41f02307dcfc9e0b42e54a629f224a0f8",
+    "bytes": 2776528,
+    "sha256": "d20840aaa4ecf6c25278e8e55e4f8dfcfb5375d30324b1796501ec07b11e57df",
+    "original_header_bytes_sha256": "9eed617dcdaea1041ab4d214113f0c3045af4f3156b27a5916c3ce4f48d88f69",
+    "reused": false,
+    "preparation_seconds": 38.103,
+    "inventory_scan_passes": 2,
+    "preparation_phase_seconds": {
+      "complete_inventory": 30.419,
+      "original_header_reads": 7.646,
+      "validation_and_publication": 0.038
+    },
+    "legacy_identity_migrated": false,
+    "native_layer_identity_migrated": false,
+    "interrupted_envelope_recovered": false,
+    "native_file_opens_avoidable": 11643,
+    "original_texture_files_unchanged": true,
+    "native_fallback_available": true,
+    "native_hits": 11643,
+    "native_ordinary_reads": 0,
+    "native_miss_sample_count": 0,
+    "native_header_phase_seconds": 7.262
+  },
+  "texture_preparation_schedule": {
+    "status": "prepared_before_client",
+    "preparation_phase": "after_current_owned_atlas_readiness",
+    "overlapped_stage": "win32_runtime_dll",
+    "worker_started": true,
+    "worker_joined": true,
+    "shared_wine_prefix_access": false,
+    "private_server_cache_access": false,
+    "preparation_seconds": 38.136,
+    "actual_overlap_seconds": 1.387,
+    "overlap_timing_source": "current_owned_runtime_probe_completion",
+    "runtime_probe_completion_observed": true,
+    "wait_before_client_seconds": 36.737,
+    "physical_startup_savings_validated": false
+  },
+  "observer_metrics": {
+    "console_and_native_readiness": {
+      "calls": 143,
+      "total_ms": 104963.538,
+      "max_ms": 5403.204,
+      "last_ms": 1.949
+    },
+    "window_identity": {
+      "calls": 143,
+      "total_ms": 23295.171,
+      "max_ms": 730.153,
+      "last_ms": 39.616
+    },
+    "progress_registry": {
+      "calls": 19,
+      "total_ms": 33334.327,
+      "max_ms": 3007.644,
+      "last_ms": 1098.142
+    }
+  },
+  "console_identity_metrics": {
+    "policy": "complete_current_console_marker_search",
+    "calls": 144,
+    "total_ms": 200.241,
+    "max_ms": 4.73,
+    "whole_console_rescanned": true,
+    "identity_cache_added": false,
+    "last_ms": 1.957,
+    "last_console_characters": 1902345
+  },
+  "native_client_phases": [
+    {
+      "phase": "texture_headers",
+      "seconds": 7.262,
+      "start_marker": "Loading texture headers",
+      "end_marker": "Loaded texture headers",
+      "source": "current_owned_client_console_UTC_markers"
+    },
+    {
+      "phase": "sequencers",
+      "seconds": 52.886,
+      "start_marker": "Loading sequencers",
+      "end_marker": "Loaded sequencers",
+      "source": "current_owned_client_console_UTC_markers"
+    },
+    {
+      "phase": "powers",
+      "seconds": 53.151,
+      "start_marker": "Loading powers",
+      "end_marker": "Loaded powers",
+      "source": "current_owned_client_console_UTC_markers"
+    },
+    {
+      "phase": "fx_info",
+      "seconds": 28.006,
+      "start_marker": "Loading FX info",
+      "end_marker": "Loaded FX info",
+      "source": "current_owned_client_console_UTC_markers"
+    },
+    {
+      "phase": "costume_bins",
+      "seconds": 8.97,
+      "start_marker": "Loading costume bins",
+      "end_marker": "Loaded costume bins",
+      "source": "current_owned_client_console_UTC_markers"
+    }
+  ],
+  "bin_profile": {
+    "records_before_loaded_all_data": 292,
+    "total_milliseconds_before_loaded_all_data": {
+      "open": 2292.0,
+      "freshness": 116732.0,
+      "decode": 9136.0
+    },
+    "known_length_copies_before_loaded_all_data": 3556737,
+    "all_profile_records_succeeded": true,
+    "largest_startup_records": [
+      {
+        "phase": "freshness",
+        "path": "bin/powers.bin",
+        "milliseconds": 45418.0,
+        "success": 1,
+        "known_length_copies": 0,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "freshness",
+        "path": "bin/fxinfo.bin",
+        "milliseconds": 26524.0,
+        "success": 1,
+        "known_length_copies": 0,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "freshness",
+        "path": "bin/npcs_client.bin",
+        "milliseconds": 16441.0,
+        "success": 1,
+        "known_length_copies": 0,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "freshness",
+        "path": "bin/costume.bin",
+        "milliseconds": 8041.0,
+        "success": 1,
+        "known_length_copies": 0,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "freshness",
+        "path": "bin/mapstats.bin",
+        "milliseconds": 6535.0,
+        "success": 1,
+        "known_length_copies": 0,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "freshness",
+        "path": "bin/lods.bin",
+        "milliseconds": 4660.0,
+        "success": 1,
+        "known_length_copies": 0,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "freshness",
+        "path": "bin/kb.bin",
+        "milliseconds": 2662.0,
+        "success": 1,
+        "known_length_copies": 0,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "freshness",
+        "path": "bin/powercats.bin",
+        "milliseconds": 2364.0,
+        "success": 1,
+        "known_length_copies": 0,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "decode",
+        "path": "bin/sequencers.bin",
+        "milliseconds": 2055.0,
+        "success": 1,
+        "known_length_copies": 429,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "freshness",
+        "path": "bin/tricks.bin",
+        "milliseconds": 1811.0,
+        "success": 1,
+        "known_length_copies": 0,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "decode",
+        "path": "bin/powers.bin",
+        "milliseconds": 1495.0,
+        "success": 1,
+        "known_length_copies": 734550,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "decode",
+        "path": "bin/fxinfo.bin",
+        "milliseconds": 1320.0,
+        "success": 1,
+        "known_length_copies": 444926,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "decode",
+        "path": "bin/VillainCostume.bin",
+        "milliseconds": 735.0,
+        "success": 1,
+        "known_length_copies": 182908,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "decode",
+        "path": "bin/particles.bin",
+        "milliseconds": 685.0,
+        "success": 1,
+        "known_length_copies": 36262,
+        "before_loaded_all_data": true
+      },
+      {
+        "phase": "freshness",
+        "path": "bin/ent_types.bin",
+        "milliseconds": 552.0,
+        "success": 1,
+        "known_length_copies": 0,
+        "before_loaded_all_data": true
+      }
+    ],
+    "whole_session_record_count": 2276,
+    "whole_session_phase_milliseconds": {
+      "open": 9345.0,
+      "freshness": 117216.0,
+      "decode": 18059.0
+    },
+    "phase_overlap_caution": "Do not sum these timings with whole broad console phases; nested profile records and adjacent-marker phases have different boundaries."
+  },
+  "remaining_visual_diagnostics": {
+    "client_console_bytes": 1902345,
+    "client_console_lines": 27147,
+    "fileerror_records": 3345,
+    "custom_texture_error_records": 1236,
+    "missing_geo_file_records": 390,
+    "missing_root_geo_records": 114,
+    "texture_swap_warning_records": 4,
+    "bounded_texture_diagnostic_summaries": [
+      {
+        "stage": "tricks",
+        "reported_records": 1024,
+        "duplicate_records": 654,
+        "suppressed_records": 3429,
+        "sample_limit": 1024,
+        "retained_key_limit": 8192,
+        "validation_preserved": 1
+      },
+      {
+        "stage": "npc",
+        "reported_records": 1024,
+        "duplicate_records": 23243,
+        "suppressed_records": 25800,
+        "sample_limit": 1024,
+        "retained_key_limit": 8192,
+        "validation_preserved": 1
+      },
+      {
+        "stage": "costume",
+        "reported_records": 1024,
+        "duplicate_records": 10267,
+        "suppressed_records": 38978,
+        "sample_limit": 1024,
+        "retained_key_limit": 8192,
+        "validation_preserved": 1
+      }
+    ],
+    "reported_summary_total": 3072,
+    "duplicate_summary_total": 34164,
+    "suppressed_summary_total": 68207,
+    "summary_counters_cover_multiple_validation_messages_not_just_printed_CUSTOM_TEXTURE_errors": true,
+    "global_counts_do_not_identify_screenshot_asset_cause": true,
+    "stock_lod_distances_and_renderer_retained": true,
+    "texture_header_index_active_and_correct_record_count": true,
+    "asset_install_or_cache_corruption_proven": false
+  },
+  "limited_combat_evidence": {
+    "powers_log": {
+      "path": "logs/dbserver/powers_2026-10-04-22-00-00.log",
+      "bytes": 5994,
+      "sha256": "4f6b01444eab6dc24fcd59e21d295d29f9cae71eb6cb0be0555d10e6071ce86d"
+    },
+    "rewards_log": {
+      "path": "logs/dbserver/rewards_2026-10-04-22-00-00.log",
+      "bytes": 5551,
+      "sha256": "1e5f217d17747c52bb0876f533b843f0f95edaa7a53cd2547c9bb5681c26ed9e"
+    },
+    "hero_power_activations": 7,
+    "hero_power_hits": 7,
+    "hostile_power_activations": 7,
+    "hostile_hits": 3,
+    "defeated_hostiles": [
+      "261004 22:34:20 City_01_01_1:127.0.0.1:127.0.0.1 \"Blood Brother Slicer:\" 0 Villain Defeated: Hellions_Knife_Thug, level 1",
+      "261004 22:34:53 City_01_01_1:127.0.0.1:127.0.0.1 \"Blood Brother Slicer:\" 0 Villain Defeated: Hellions_Knife_Thug, level 1"
+    ],
+    "native_credited_points": [
+      {
+        "native_timestamp": "261004 22:34:20",
+        "xp": 15,
+        "debt": 0,
+        "influence": 7,
+        "prestige": 0,
+        "supergroup": 0,
+        "line_sha256": "3d9a821fb695ba5c34e1267673d5bc7f575f36ad89d7bd6b397d19e5485a50cf",
+        "line": "261004 22:34:20 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 15, Debt: 0, Inf: 7, Pres: 0 (SGMode off (0)) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 26980-26478-29281 19551:30837:11825"
+      },
+      {
+        "native_timestamp": "261004 22:34:53",
+        "xp": 10,
+        "debt": 0,
+        "influence": 7,
+        "prestige": 0,
+        "supergroup": 0,
+        "line_sha256": "ab2045b15c484e735e6fe0d93f7403fa6bdd79ce3130eb379177cbe9cbe5fc64",
+        "line": "261004 22:34:53 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 10, Debt: 0, Inf: 7, Pres: 0 (SGMode off (0)) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 18261-8285-24933 26980:26478:17184"
+      }
+    ],
+    "native_credited_experience_total": 25,
+    "native_credited_influence_total": 14,
+    "incoming_and_outgoing_damage_and_two_defeats_supported": true,
+    "complete_combat_or_visual_coverage_claimed": false
+  },
+  "save_validation_defect": {
+    "raw_android_passed": false,
+    "raw_guest_passed": false,
+    "raw_android_status": "failed",
+    "raw_guest_status": "failed",
+    "failures": [
+      "Committed existing character rows changed after reopen: ents"
+    ],
+    "raw_flags_preserved": true,
+    "ordinary_save_logout_requested": true,
+    "native_logout_lines": [
+      "261004 22:36:40 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Disconnect:Logout timer expired] Science Class_Blaster, Level:1 XPLevel:1 XP:25 HP:102.50 End:100.00 Debt: 0 Inf:14 AccessLvl: 9 WisLvl: 0 Wis: 0 Merits: 0 Tickets: 0 ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0125-00-32768 9888:17596:22266",
+      "261004 22:36:40 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 Logout location : map 1 (125.437500 18.187500 -203.500000) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 62964-18-123 22928:197:100"
+    ],
+    "captured_sql_final_selected_rows": {
+      "ents": [
+        {
+          "containerid": 1,
+          "authid": 1353310574,
+          "authname": "COHLOCAL",
+          "name": "THORHERO",
+          "class": 252,
+          "origin": 257,
+          "level": null,
+          "experiencepoints": 25,
+          "influencepoints": 14,
+          "description": null,
+          "motto": null,
+          "datecreated": "2026-10-03T23:44:34",
+          "logincount": 5
+        }
+      ],
+      "ents2": [
+        {
+          "containerid": 1,
+          "subid": 0,
+          "curbuild": null,
+          "originalprimary": "Archery",
+          "originalsecondary": "Gadgets",
+          "praetorianprogress": null,
+          "playersubtype": null,
+          "influencetype": null
+        }
+      ],
+      "powers": [
+        {
+          "containerid": 1,
+          "subid": 0,
+          "powerid": 1,
+          "categoryname": 2312,
+          "powersetname": 2312,
+          "powername": 3117,
+          "powerlevelbought": null,
+          "powernumboostsbought": null,
+          "powersetlevelbought": null,
+          "buildnum": null,
+          "uniqueid": 943238366
+        },
+        {
+          "containerid": 1,
+          "subid": 1,
+          "powerid": 2,
+          "categoryname": 1367,
+          "powersetname": 1367,
+          "powername": 408,
+          "powerlevelbought": null,
+          "powernumboostsbought": null,
+          "powersetlevelbought": null,
+          "buildnum": null,
+          "uniqueid": 1649555836
+        },
+        {
+          "containerid": 1,
+          "subid": 2,
+          "powerid": 3,
+          "categoryname": 1367,
+          "powersetname": 1367,
+          "powername": 6759,
+          "powerlevelbought": null,
+          "powernumboostsbought": null,
+          "powersetlevelbought": null,
+          "buildnum": null,
+          "uniqueid": 1311144360
+        },
+        {
+          "containerid": 1,
+          "subid": 3,
+          "powerid": 4,
+          "categoryname": 1367,
+          "powersetname": 1367,
+          "powername": 6756,
+          "powerlevelbought": null,
+          "powernumboostsbought": null,
+          "powersetlevelbought": null,
+          "buildnum": null,
+          "uniqueid": 1758889093
+        },
+        {
+          "containerid": 1,
+          "subid": 4,
+          "powerid": 5,
+          "categoryname": 1367,
+          "powersetname": 1367,
+          "powername": 6748,
+          "powerlevelbought": null,
+          "powernumboostsbought": null,
+          "powersetlevelbought": null,
+          "buildnum": null,
+          "uniqueid": 421988681
+        },
+        {
+          "containerid": 1,
+          "subid": 5,
+          "powerid": 6,
+          "categoryname": 11427,
+          "powersetname": 6153,
+          "powername": 981,
+          "powerlevelbought": null,
+          "powernumboostsbought": null,
+          "powersetlevelbought": null,
+          "buildnum": null,
+          "uniqueid": 1659675142
+        },
+        {
+          "containerid": 1,
+          "subid": 6,
+          "powerid": 7,
+          "categoryname": 11419,
+          "powersetname": 6142,
+          "powername": 1219,
+          "powerlevelbought": null,
+          "powernumboostsbought": null,
+          "powersetlevelbought": null,
+          "buildnum": null,
+          "uniqueid": 153892770
+        }
+      ],
+      "costumeparts": [
+        {
+          "containerid": 1,
+          "subid": 0,
+          "name": null,
+          "geom": 16296,
+          "tex1": 18023,
+          "tex2": null,
+          "displayname": null,
+          "region": 17890,
+          "bodyset": 16296,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 1,
+          "name": null,
+          "geom": 16296,
+          "tex1": 18023,
+          "tex2": null,
+          "displayname": null,
+          "region": 18669,
+          "bodyset": 16296,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 2,
+          "name": null,
+          "geom": 26184,
+          "tex1": 16560,
+          "tex2": null,
+          "displayname": null,
+          "region": 11808,
+          "bodyset": 14589,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 3,
+          "name": null,
+          "geom": 16294,
+          "tex1": 18309,
+          "tex2": null,
+          "displayname": null,
+          "region": 18669,
+          "bodyset": 16296,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 4,
+          "name": null,
+          "geom": 16294,
+          "tex1": 18309,
+          "tex2": null,
+          "displayname": null,
+          "region": 17890,
+          "bodyset": 16296,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 5,
+          "name": null,
+          "geom": null,
+          "tex1": null,
+          "tex2": null,
+          "displayname": null,
+          "region": 18669,
+          "bodyset": 16296,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 6,
+          "name": null,
+          "geom": 16709,
+          "tex1": 16681,
+          "tex2": 16682,
+          "displayname": null,
+          "region": 11808,
+          "bodyset": 14589,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 8,
+          "name": null,
+          "geom": null,
+          "tex1": null,
+          "tex2": null,
+          "displayname": null,
+          "region": 11808,
+          "bodyset": 14589,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 9,
+          "name": null,
+          "geom": null,
+          "tex1": null,
+          "tex2": null,
+          "displayname": null,
+          "region": 18669,
+          "bodyset": 16296,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 10,
+          "name": null,
+          "geom": null,
+          "tex1": null,
+          "tex2": null,
+          "displayname": null,
+          "region": 18669,
+          "bodyset": 16296,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 13,
+          "name": null,
+          "geom": null,
+          "tex1": null,
+          "tex2": null,
+          "displayname": null,
+          "region": 11808,
+          "bodyset": 14589,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 22,
+          "name": null,
+          "geom": null,
+          "tex1": null,
+          "tex2": null,
+          "displayname": null,
+          "region": 11808,
+          "bodyset": 14589,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        },
+        {
+          "containerid": 1,
+          "subid": 24,
+          "name": null,
+          "geom": null,
+          "tex1": null,
+          "tex2": null,
+          "displayname": null,
+          "region": 15800,
+          "bodyset": 15800,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": 26073,
+          "color3": 2039583,
+          "color4": 14935011
+        },
+        {
+          "containerid": 1,
+          "subid": 27,
+          "name": null,
+          "geom": null,
+          "tex1": null,
+          "tex2": null,
+          "displayname": null,
+          "region": 17890,
+          "bodyset": 16296,
+          "color1": 2039583,
+          "color2": 14935011,
+          "costumenum": null,
+          "fxname": null,
+          "color3": null,
+          "color4": null
+        }
+      ]
+    },
+    "baseline_selected_row_sha256": {
+      "ents": "032eeebe2d5aabcf217a51ccb89a73b5e9b0dc63f5d6c2ffb4696a48315f0b99",
+      "ents2": "36dd26e88ac48da0adda2a83b5f72bf8c291d9ac5032b49fafe5fd5990f3d1ff",
+      "powers": "a1df1aff0be4e36f5d62781c49a527f42651dc1d3b2ecf907e45947f39800aee",
+      "costumeparts": "1dbc429e682d91bdbd9d719b2ad769698901b9b3319a9ed671a402bb3309b7f2"
+    },
+    "selected_row_differences": {
+      "ents": [
+        {
+          "field": "experiencepoints",
+          "before": null,
+          "after": 25
+        },
+        {
+          "field": "influencepoints",
+          "before": null,
+          "after": 14
+        },
+        {
+          "field": "logincount",
+          "before": 4,
+          "after": 5
+        }
+      ],
+      "ents2": [],
+      "powers": [],
+      "costumeparts": []
+    },
+    "immutable_fields_power_and_costume_rows_unchanged": true,
+    "only_ents_login_and_logged_reward_fields_changed": true,
+    "reward_totals_exactly_match_captured_sql_delta": true,
+    "classification": "Retained reopen diagnostic compares every selected field except LoginCount to its prelogin baseline; legitimate native combat XP/influence commits cause false rejection before final save/position proof. Raw complete session remains failed. This is not evidence of character corruption.",
+    "source": "android/guest/local_character_server.py validate_saved_rows + saved_selected_rows_match at installed source SHA041b6d6adfd9a5e7e6ecff9463b897a9beb2b3b734f999d85126b9a7cd7b06ff",
+    "full_current_save_proof_validated": false
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true,
+    "complete": true,
+    "android_cleanup_verified": true,
+    "wine_process_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 402,
+      "scanned_tasks": 129,
+      "dead_leaders_with_live_tasks": 6,
+      "owned_live_workers": 6,
+      "leader_exit_retries": 0,
+      "candidates": 6,
+      "term_signals": 6,
+      "kill_signals": 2,
+      "pidfd_signals": 8,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true,
+      "permission_read_retries": 1,
+      "worker_exit_rechecks": 1,
+      "permission_observations": [
+        {
+          "group_pid": 9103,
+          "group_starttime": 79606830,
+          "worker_tid": 10969,
+          "worker_starttime": 79624115,
+          "operation": "worker_environment",
+          "errno": 13,
+          "error_type": "PermissionError",
+          "attempt": 1,
+          "worker_state_before": "R",
+          "resolution": "verified_disappearance",
+          "worker_state_after": "R"
+        }
+      ],
+      "permission_observations_omitted": 0,
+      "proc_read_retries": 0,
+      "proc_read_observations": [],
+      "proc_read_observations_omitted": 0,
+      "last_inspection_failure": null
+    }
+  },
+  "acceptance": {
+    "client_startup_reached_login": true,
+    "existing_THORHERO_identity_and_Atlas_connection": true,
+    "user_reported_partial_model_improvement": true,
+    "limited_target_attack_two_defeats_rewards": true,
+    "complete_visual_gate": false,
+    "complete_current_save_report": false,
+    "server_request_ready_at_or_under_300_seconds": false,
+    "physical_0_13_9_startup_algorithm_savings_attributed": false,
+    "earlier_accepted_gameplay_persistence_storage_gates_repeated_or_invalidated": false
+  }
+}

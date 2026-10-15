@@ -1,0 +1,39 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "independent_replay_of_candidate_hosted_acceptance_against_downloaded_exact_inputs",
+  "run_id": 36483331900,
+  "repository_commit": "f7dbba42ec29a1c054d856d71810146f5b53bac6",
+  "verified_utc": "2026-09-28T21:12:46.539725+00:00",
+  "validator_sources": {
+    "tools/android/dbserver/host_dbserver_smoke.py": {
+      "sha256": "9a5f2e95399eca3f1f2ffbc3e40ac4bf57251dd253f0d29c6ce172ae8a98fc8d"
+    },
+    "tools/android/dbserver/prepare_device_assets.py": {
+      "sha256": "3262cd7f28501d3202286e4ae18493716fdf470a469e0ff4485c46a4b2c1c48b"
+    }
+  },
+  "checks": {
+    "runtime_inventory_and_accepted_base_verified": true,
+    "qualified_package_and_schema_inventories_verified": true,
+    "guest_script_matches_candidate_commit_and_host_receipt": true,
+    "host_inputs_match_exact_runtime_package_schema_and_executable_hashes": true,
+    "report_matches_host_validate_report_with_device_policy": true,
+    "recorded_network_identity_namespace_and_loopback_only_contract_validated": true,
+    "controlled_guest_hosts_hash_size_and_aliases_verified": true,
+    "host_proot_hashes_match_linux_build_receipt": true,
+    "reported_base_asset_hashes_match_downloaded_assets": true,
+    "apk_hash_size_and_all_runtime_and_native_payload_bytes_reverified": true,
+    "all_three_jobs_completed_successfully": true
+  },
+  "network_replay_expectations": {
+    "original_uid": 1001,
+    "original_gid": 1001,
+    "host_network_namespace": "net:[4026531833]"
+  },
+  "network_replay_expectations_source": "Recorded hosted original identity/namespace; hosted runner separately validated these against its live pre-launch values.",
+  "android_execution_validated": false,
+  "android_listener_binding_validated": false,
+  "gameplay_validated": false,
+  "generated_character_persistence_validated": false
+}

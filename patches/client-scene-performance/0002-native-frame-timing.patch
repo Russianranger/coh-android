@@ -1,0 +1,110 @@
+--- a/Game/src/game.c
++++ b/Game/src/game.c
+@@ -1,6 +1,7 @@
+ // support functions for main.c 
+ 
+ #include "win/win_init.h"
++#include "cohClientFrameTiming.h"
+ #include <utilitieslib/utils/winutil.h>
+ #include "UI/uiConsole.h"
+ #include "win/input.h"
+@@ -737,6 +738,7 @@
+ 
+     hwlightTick();
+ 
++    cohFtPhaseBegin(COH_FT_SUBMIT_PHASE);
+     PERFINFO_AUTO_START("gfxUpdateFrame",1);
+         //Render (everything from here down should be non-destructive, so it could be called multiple times per frame)
+         if(game_state.stopInactiveDisplay && game_state.inactiveDisplay)
+@@ -744,6 +746,7 @@
+         else
+             gfxUpdateFrame(0, 0, 0);
+     PERFINFO_AUTO_STOP_CHECKED("gfxUpdateFrame");
++    cohFtPhaseEnd(COH_FT_SUBMIT_PHASE);
+ 
+     PERFINFO_AUTO_START("bottom",1);
+         PERFINFO_AUTO_START("seqClearRandomNumberUpdateFlag",1);
+@@ -754,6 +757,7 @@
+         if( game_state.animdebug & ANIM_SHOW_USEFLAGS )
+             showAnimationDebugInfo();
+ 
++        cohFtPhaseBegin(COH_FT_PACING_PHASE);
+         PERFINFO_AUTO_START("waitFps",1);
+             //If the frame rate is locked, slow down to match it.
+             if (game_state.maxInactiveFps && game_state.inactiveDisplay) {
+@@ -766,6 +770,8 @@
+                 waitFps( game_state.maxfps);
+             }
+         PERFINFO_AUTO_STOP();
++
++        cohFtPhaseEnd(COH_FT_PACING_PHASE);
+ 
+         //See if you need to change maps, if so, do it.
+         if (do_map_xfer)
+@@ -2304,6 +2310,9 @@
+         // Nothing goes above autoTimerTickBegin()!!!!!
+ 
+         autoTimerTickBegin();
++        if (cohFtActive(0))
++            cohFtMainBegin(loadingScreenVisible() ? COH_FT_LOADING :
++                (isMenu(MENU_GAME) ? COH_FT_GAMEPLAY : COH_FT_MENU));
+ 
+         startProfilingCPU();
+ 
+@@ -2335,9 +2344,11 @@
+         }
+ 
+ 
++        cohFtPhaseBegin(COH_FT_ENGINE_PHASE);
+         PERFINFO_AUTO_START("engine_update", 1);
+             engine_update();
+         PERFINFO_AUTO_STOP_CHECKED("engine_update");
++        cohFtPhaseEnd(COH_FT_ENGINE_PHASE);
+         
+         demoRecordClientInfo();
+ 
+@@ -2370,6 +2381,9 @@
+ //         if(isDevelopmentMode())
+ //             assert(heapValidateAll());
+ 
++        if (cohFtActive(0))
++            cohFtMainEnd(loadingScreenVisible() ? COH_FT_LOADING :
++                (isMenu(MENU_GAME) ? COH_FT_GAMEPLAY : COH_FT_MENU));
+         endProfilingCPU();
+ 
+         autoTimerTickEnd();
+--- a/Game/src/render/thread/rt_win_init.c
++++ b/Game/src/render/thread/rt_win_init.c
+@@ -1,4 +1,5 @@
+ #include "rt_win_init.h"
++#include "cohClientFrameTiming.h"
+ #include "render/thread/ogl.h"
+ #include <utilitieslib/utils/timing.h>
+ #include <utilitieslib/utils/fpmacros.h>
+@@ -331,6 +332,8 @@
+     U32 curSLI = (rdr_frame_state.curFrame % MAX_FRAMES);
+     U8 sliLimit = rdr_frame_state.sliLimit;
+ 
++    cohFtPresentBegin();
++
+     rdrBeginMarker(__FUNCTION__);
+ 
+     if (isDevelopmentMode())
+@@ -390,7 +393,9 @@
+     gldGetError();
+ 
+     rdrBeginMarker("SWAP");
++    cohFtSwapBegin();
+     SwapBuffers(hDC);
++    cohFtSwapEnd();
+     rdrEndMarker();
+ 
+     rdrEndFrameHistory(framesInProgress);
+@@ -405,6 +410,7 @@
+     SetEvent(frame_done_signal);
+ 
+     rdrEndMarker();
++    cohFtPresentEnd();
+ }
+ 
+ 

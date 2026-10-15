@@ -1,0 +1,293 @@
+--- a/Game/src/graphics/gfx.c
++++ b/Game/src/graphics/gfx.c
+@@ -72,6 +72,8 @@
+ #include "cohClientRendererAttribution.h"
+ #define COH_RP_IMPLEMENTATION
+ #include "cohClientRenderPipeline.h"
++#define COH_RQ_IMPLEMENTATION
++#include "cohClientRenderQueue.h"
+ 
+ /* The queue header is also included before Windows initialization headers.
+  * Keep these external adapters free of Win32/CRT headers at its callsites. */
+@@ -1131,11 +1133,15 @@
+ 
+     PERFINFO_AUTO_STOP_START("gfxSetupStuffToDraw", 1);
+ 
++    if (viewport == &s_mainviewport) cohRqPhaseBegin(COH_RQ_SETUP);
+     gfxSetupStuffToDraw(viewport);
++    if (viewport == &s_mainviewport) cohRqPhaseEnd(COH_RQ_SETUP);
+ 
+     PERFINFO_AUTO_STOP_START("sortModels", 1);
+ 
++    if (viewport == &s_mainviewport) cohRqPhaseBegin(COH_RQ_SORT);
+     sortModels(viewport->renderOpaquePass, viewport->renderAlphaPass);
++    if (viewport == &s_mainviewport) cohRqPhaseEnd(COH_RQ_SORT);
+ 
+     PERFINFO_AUTO_STOP_START("rdrClearScreen", 1);
+ 
+@@ -1173,7 +1179,9 @@
+     PERFINFO_AUTO_STOP_START("renderOpaquePass",1);
+     if (viewport->renderOpaquePass && !GFX_DEBUG_TEST(game_state.perf, GFXDEBUG_PERF_SKIP_OPAQUE_PASS))
+     {
++        if (viewport == &s_mainviewport) cohRqPhaseBegin(COH_RQ_DRAW);
+         drawSortedModels_ex(DSM_OPAQUE, viewport->doHeadshot, viewport, false);
++        if (viewport == &s_mainviewport) cohRqPhaseEnd(COH_RQ_DRAW);
+     }
+ 
+     PERFINFO_AUTO_STOP_START("draw lines",1);  
+@@ -1218,7 +1226,9 @@
+             viewport->clipping_info.flags[newPlaneIndex] = ClipPlaneFlags_CostumesOnly;
+             viewport->clipping_info.num_clip_planes++;
+ 
++            if (viewport == &s_mainviewport) cohRqPhaseBegin(COH_RQ_DRAW);
+             drawSortedModels_ex(DSM_ALPHA_UNDERWATER, viewport->doHeadshot, viewport, false);
++            if (viewport == &s_mainviewport) cohRqPhaseEnd(COH_RQ_DRAW);
+ 
+             viewport->clipping_info.num_clip_planes--;
+ 
+@@ -1251,7 +1261,9 @@
+             viewport->clipping_info.num_clip_planes++;
+         }
+ 
++        if (viewport == &s_mainviewport) cohRqPhaseBegin(COH_RQ_DRAW);
+         drawSortedModels_ex(DSM_ALPHA, viewport->doHeadshot, viewport, viewport->renderWater);
++        if (viewport == &s_mainviewport) cohRqPhaseEnd(COH_RQ_DRAW);
+ 
+         if (bDidUnderwaterAlphaPass)
+         {
+@@ -1268,7 +1280,9 @@
+ //        if (rdr_caps.chip & R200)
+ //            rdrClearScreenEx(CLEAR_STENCIL);
+ 
++        if (viewport == &s_mainviewport) cohRqPhaseBegin(COH_RQ_DRAW);
+         drawSortedModels_ex(DSM_SHADOWS, viewport->doHeadshot, viewport, viewport->renderWater);
++        if (viewport == &s_mainviewport) cohRqPhaseEnd(COH_RQ_DRAW);
+     }
+ 
+     PERFINFO_AUTO_STOP_START("stencilShadowFinishScene",1); 
+@@ -1563,6 +1577,7 @@
+         game_state.game_mode == SHOW_GAME && !shellMode() && !loadingScreenVisible();
+     cohRaMainBegin(!force_render_world && !headShot && !no_drawing, game_state.allow_frames_buffered, rdrIsThreaded(), game_state.sliLimit, game_state.frame_delay, game_state.maxfps, game_state.showfps);
+     cohRpMainBegin(coh_rp_gameplay_frame);
++    cohRqMainBegin(coh_rp_gameplay_frame);
+     rdrBeginMarker(__FUNCTION__);
+ 
+     rdrInitTopOfFrame();
+@@ -1761,6 +1776,24 @@
+     rdrEndMarker();
+     cohRaMainEnd(!force_render_world && !headShot && !no_drawing);
+     cohRpMainEnd(coh_rp_gameplay_frame);
++    if (cohRqEnabled())
++    {
++        WTRenderQueueStats stats;
++        CohRqQueueSnapshot snapshot;
++        wtGetRenderQueueStats(render_thread, &stats);
++        snapshot.commands = stats.commands;
++        snapshot.armed_observations = stats.armed_observations;
++        snapshot.wake_signals = stats.wake_signals;
++        snapshot.wake_signal_failures = stats.wake_signal_failures;
++        snapshot.pending_commands = stats.pending_commands;
++        snapshot.ring_waits = stats.ring_waits;
++        snapshot.ring_wait_iterations = stats.ring_wait_iterations;
++        snapshot.ring_wait_clock_failures = stats.ring_wait_clock_failures;
++        snapshot.ring_wait_wall_ms = stats.ring_wait_wall_ms;
++        snapshot.ring_wait_max_ms = stats.ring_wait_max_ms;
++        cohRqMainEnd(coh_rp_gameplay_frame, &snapshot);
++    }
++    else cohRqMainEnd(coh_rp_gameplay_frame, NULL);
+ }
+ 
+ #define AUTOPERF_TIME 5
+--- a/Game/src/render/thread/rt_queue.c
++++ b/Game/src/render/thread/rt_queue.c
+@@ -3,6 +3,7 @@
+ #include "render/thread/rt_queue.h"
+ #include "cohClientRendererAttribution.h"
+ #include "cohClientRenderPipeline.h"
++#include "cohClientRenderQueue.h"
+ #include "assert.h"
+ #include "render/rendertree.h"
+ #include "cmdparse/cmdgame.h"
+@@ -453,6 +454,7 @@
+         wtSetThreaded(render_thread, g_run_render_thread);
+     }
+ 
++    wtEnableWakeCoalescing(render_thread, cohRqEnabled());
+     wtStart(render_thread);
+ 
+     rdrQueueCmd(DRAWCMD_RDRSETUP);
+--- a/libs/UtilitiesLib/src/components/WorkerThread.c
++++ b/libs/UtilitiesLib/src/components/WorkerThread.c
+@@ -50,7 +50,10 @@
+     CmdQueue cmd_queue;
+     CmdQueue msg_queue;
+ 
+-    volatile int    thread_asleep; // thread sleeps when it has no data queued
++    volatile LONG thread_asleep; // legacy 0/1; render opt-in: awake/armed/notified
++    int wake_coalescing, queue_diagnostics;
++    double queue_clock_frequency;
++    WTRenderQueueStats queue_stats; // producer-owned, process-cumulative
+     HANDLE            data_queued; // event signalling that data is queued, wakes up sleeping thread
+ 
+     // thread info
+@@ -144,10 +147,44 @@
+         free(cmd->data);
+ }
+ 
++static INLINEDBG void wtQueueCounter(U64 *counter)
++{
++    if (*counter != ~(U64)0) ++*counter;
++}
++
++static int wtQueueWall(WorkerThread *wt, double *value)
++{
++    LARGE_INTEGER ticks;
++    if (wt->queue_clock_frequency <= 0.0 || !QueryPerformanceCounter(&ticks) || ticks.QuadPart < 0)
++        return 0;
++    *value = (double)ticks.QuadPart * 1000.0 / wt->queue_clock_frequency;
++    return *value >= 0.0 && *value < 1.0e12;
++}
++
++/* Must be selected by the render-instance owner before the worker starts.
++ * Other workers retain the accepted handshake and notification behavior. */
++void wtEnableWakeCoalescing(WorkerThread *wt, int diagnostics_enabled)
++{
++    LARGE_INTEGER frequency;
++    assert(wt && !wt->thread_handle && wt->thread_state == THREAD_NOTSTARTED);
++    wt->wake_coalescing = 1;
++    wt->queue_diagnostics = !!diagnostics_enabled;
++    if (wt->queue_diagnostics && QueryPerformanceFrequency(&frequency) && frequency.QuadPart > 0)
++        wt->queue_clock_frequency = (double)frequency.QuadPart;
++}
++
++void wtGetRenderQueueStats(WorkerThread *wt, WTRenderQueueStats *snapshot)
++{
++    assert(wt && snapshot);
++    *snapshot = wt->queue_stats;
++}
++
+ static INLINEDBG void *allocStoredCmd(WorkerThread *wt, CmdQueue *cmd_queue, int cmd_type, U32 size)
+ {
+     int            free_blocks,num_blocks,filler_blocks,contiguous_blocks,malloc_size;
+     QueuedCmd    *cmd;
++    int queue_waiting = 0, queue_wait_clock = 0;
++    double queue_wait_start = 0.0;
+ 
+     if (!wt || (size > (sizeof(*cmd) * cmd_queue->max_queued/2)))
+     {
+@@ -174,6 +211,18 @@
+         wtAssertNotWorkerThread(wt);
+ #endif
+ 
++        // Measure only a real producer ring-capacity block, never each command.
++        if (wt->queue_diagnostics)
++        {
++            if (!queue_waiting)
++            {
++                queue_waiting = 1;
++                wtQueueCounter(&wt->queue_stats.ring_waits);
++                queue_wait_clock = wtQueueWall(wt, &queue_wait_start);
++                if (!queue_wait_clock) wtQueueCounter(&wt->queue_stats.ring_wait_clock_failures);
++            }
++            wtQueueCounter(&wt->queue_stats.ring_wait_iterations);
++        }
+         // wait for worker thread to free some blocks
+         wtReqFlush(wt, 1);
+         wtDispatchMessages(wt);
+@@ -182,6 +231,18 @@
+         if(wt->stall_callback) {
+             wt->stall_callback();
+         }
++    }
++    if (queue_waiting && queue_wait_clock)
++    {
++        double queue_wait_end, elapsed;
++        if (wtQueueWall(wt, &queue_wait_end) && queue_wait_end >= queue_wait_start &&
++            (elapsed = queue_wait_end - queue_wait_start) < 1.0e12 &&
++            wt->queue_stats.ring_wait_wall_ms + elapsed < 1.0e12)
++        {
++            wt->queue_stats.ring_wait_wall_ms += elapsed;
++            if (elapsed > wt->queue_stats.ring_wait_max_ms) wt->queue_stats.ring_wait_max_ms = elapsed;
++        }
++        else wtQueueCounter(&wt->queue_stats.ring_wait_clock_failures);
+     }
+     cmd_queue->next_end = (cmd_queue->end + num_blocks + filler_blocks) & (cmd_queue->max_queued-1);
+ 
+@@ -366,13 +427,20 @@
+                  * checking the queue. A publication before ResetEvent is seen
+                  * by the recheck; one after the recheck signals an armed event.
+                  * Win32/x86 volatile publication and event ordering are retained. */
+-                wt->thread_asleep = 1;
++                if (wt->wake_coalescing) InterlockedExchange(&wt->thread_asleep, 1);
++                else wt->thread_asleep = 1;
+                 ResetEvent(wt->data_queued);
++                /* A consumed command can claim the next arm late. Reset may
++                 * erase its signal, so restore armed state before the final
++                 * recheck. A new command is then caught by peek or signals.
++                 * This atomic occurs only on the empty-queue transition. */
++                if (wt->wake_coalescing) InterlockedExchange(&wt->thread_asleep, 1);
+                 cmd = peekStoredCmd(&wt->cmd_queue);
+                 if (!cmd) {
+                     WaitForSingleObject(wt->data_queued, INFINITE);
+                 }
+-                wt->thread_asleep = 0;
++                if (wt->wake_coalescing) InterlockedExchange(&wt->thread_asleep, 0);
++                else wt->thread_asleep = 0;
+             }
+             continue;
+         }
+@@ -430,7 +498,33 @@
+ #if SAFETY_CHECKS_ON
+     wtAssertNotWorkerThread(wt);
+ #endif
+-    if (wt->thread_asleep && wt->data_queued)
++    if (wt->wake_coalescing)
++    {
++        LONG wake_state = wt->thread_asleep;
++        if (wt->queue_diagnostics) wtQueueCounter(&wt->queue_stats.commands);
++        if (wake_state == 1 && wt->data_queued)
++        {
++            if (wt->queue_diagnostics) wtQueueCounter(&wt->queue_stats.armed_observations);
++            /* Publish the queue first, then claim only the first armed wake.
++             * State 2 means a notification is pending, not an executed command.
++             * The consumer still arms before reset and rechecks before waiting. */
++            if (InterlockedCompareExchange(&wt->thread_asleep, 2, 1) == 1)
++            {
++                if (SetEvent(wt->data_queued))
++                {
++                    if (wt->queue_diagnostics) wtQueueCounter(&wt->queue_stats.wake_signals);
++                }
++                else
++                {
++                    if (wt->queue_diagnostics) wtQueueCounter(&wt->queue_stats.wake_signal_failures);
++                    InterlockedCompareExchange(&wt->thread_asleep, 1, 2);
++                }
++            }
++        }
++        else if (wake_state == 2 && wt->queue_diagnostics)
++            wtQueueCounter(&wt->queue_stats.pending_commands);
++    }
++    else if (wt->thread_asleep && wt->data_queued)
+         SetEvent(wt->data_queued);
+ }
+ 
+--- a/libs/UtilitiesLib/include/utilitieslib/components/WorkerThread.h
++++ b/libs/UtilitiesLib/include/utilitieslib/components/WorkerThread.h
+@@ -31,6 +31,17 @@
+ // creation/destruction
+ WorkerThread *wtCreate(WTDispatchCallback cmd_dispatch, int max_cmds, WTDispatchCallback msg_dispatch, WTStallCallback stall_callback, int max_msgs, void *user_data);
+ void wtDestroy(WorkerThread *wt);
++
++// Optional render-instance first-wake acknowledgement and producer diagnostics.
++// Counters are copied only by the command-producing thread, never by the worker.
++typedef struct WTRenderQueueStats
++{
++    U64 commands, armed_observations, wake_signals, wake_signal_failures, pending_commands;
++    U64 ring_waits, ring_wait_iterations, ring_wait_clock_failures;
++    double ring_wait_wall_ms, ring_wait_max_ms;
++} WTRenderQueueStats;
++void wtEnableWakeCoalescing(WorkerThread *wt, int diagnostics_enabled);
++void wtGetRenderQueueStats(WorkerThread *wt, WTRenderQueueStats *snapshot);
+ 
+ // set threading and start worker thread
+ void wtStart(WorkerThread *wt);

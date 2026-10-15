@@ -1,0 +1,1265 @@
+{
+  "format": 1,
+  "status": "failed",
+  "started_utc": "2026-09-28T13:34:21.463289+00:00",
+  "stages": [
+    {
+      "stage": "game_private_runtime",
+      "started_utc": "2026-09-28T13:34:21.915035+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-28T13:38:42.215517+00:00",
+      "input_files": 173011,
+      "input_bytes": 2977730517,
+      "accepted_schema_overlay_files": 62
+    },
+    {
+      "stage": "assets_and_architecture",
+      "started_utc": "2026-09-28T13:38:42.239790+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-28T13:38:42.249955+00:00",
+      "machine": "aarch64",
+      "guest_uid": 1000,
+      "postgres_native_arm64": true
+    },
+    {
+      "stage": "initialize_owned_cluster",
+      "started_utc": "2026-09-28T13:38:42.250160+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-28T13:38:44.297250+00:00",
+      "cluster_reused": false
+    },
+    {
+      "stage": "postgres_first_start",
+      "started_utc": "2026-09-28T13:38:44.297431+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-28T13:38:44.513008+00:00",
+      "loopback": "127.0.0.1",
+      "port": 60003,
+      "durability_verified": true,
+      "server_version": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit"
+    },
+    {
+      "stage": "restricted_fixture_database",
+      "started_utc": "2026-09-28T13:38:44.513170+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-28T13:38:45.319938+00:00",
+      "database": "coh_test_a66085f695d326a5",
+      "role": "cohtest",
+      "migration_version": 2,
+      "reapplied": true
+    },
+    {
+      "stage": "wine_prefix_and_driver",
+      "started_utc": "2026-09-28T13:38:45.320092+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-28T13:39:24.500617+00:00",
+      "prefix_owned": true,
+      "architecture": "win64 with PE32 WoW64/FEX",
+      "x_tcp": false,
+      "rfb_tcp": false,
+      "installer": {
+        "path": "C:\\windows\\syswow64\\msiexec.exe",
+        "pointer_bits": 32,
+        "sha256": "d4ed3551f449cfb68e609e1572b519b5eecd3bf0519bf16877ea02bd4fb01ed0"
+      }
+    },
+    {
+      "stage": "win32_odbc_driver",
+      "started_utc": "2026-09-28T13:39:24.500796+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-28T13:39:25.413266+00:00",
+      "driver_name": "PostgreSQL Unicode",
+      "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+      "pointer_bits": 32,
+      "registry_view": 32,
+      "driver_dll_loaded": true
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "started_utc": "2026-09-28T13:39:25.413469+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-28T13:39:25.820519+00:00",
+      "pointer_bits": 32,
+      "dll_export_verified": true,
+      "odbc_manager_loaded": true
+    },
+    {
+      "stage": "game_services_first",
+      "started_utc": "2026-09-28T13:39:25.828426+00:00"
+    }
+  ],
+  "processes": [
+    {
+      "label": "initdb",
+      "elapsed_seconds": 1.966,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "The files belonging to this database system will be owned by user \"coh\".\nThis user must also own the server process.\n\nThe database cluster will be initialized with locale \"C\".\nThe default text search configuration will be set to \"english\".\n\nData page checksums are enabled.\n\ncreating directory /state/diagnostic/init-pending-6c268b183531fb88 ... ok\ncreating subdirectories ... ok\nselecting dynamic shared memory implementation ... posix\nselecting default \"max_connections\" ... 100\nselecting default \"shared_buffers\" ... 128MB\nselecting default time zone ... UTC\ncreating configuration files ... ok\nrunning bootstrap script ... ok\nperforming post-bootstrap initialization ... ok\nsyncing data to disk ... ok\n\nSuccess. You can now start the database server using:\n\n    /opt/coh/pgsql/bin/pg_ctl -D /state/diagnostic/init-pending-6c268b183531fb88 -l logfile start\n\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.966
+      }
+    },
+    {
+      "label": "existing-cluster-status",
+      "elapsed_seconds": 0.055,
+      "exit_code": 3,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "pg_ctl: no server running\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 3,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "127.0.0.1|60003|/state/diagnostic/pgdata|on|on|on\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "CREATE ROLE\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "1\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.256,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "CREATE DATABASE\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.256
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "REVOKE\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "ALTER DATABASE\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "REVOKE\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.054,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "BEGIN\nCREATE SCHEMA\nCREATE SCHEMA\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 1\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 1\nCOMMIT\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.054
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "BEGIN\nNOTICE:  schema \"dbo\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  schema \"coh_meta\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  relation \"schema_version\" already exists, skipping\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 0\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 0\nCOMMIT\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "cohtest|2\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "wineboot",
+      "elapsed_seconds": 37.61,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 14c starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\"\n00e4:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\" in experimental wow64 mode\n00ec:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\iexplore.exe\" in experimental wow64 mode\n002c:trace:wineboot:update_wineprefix wine: configuration in L\"/state/diagnostic/wine\" has been updated.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n0154:trace:wineboot:process_run_key Done processing cmd 0.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:main Operation done\n0x3000cb1330:1: Token id=0.1046 primary=1 impersonation level=-1\n0x3000cacd90:1: Process id=03a0 handles=(nil)\n0x3000c51660:1: Token id=0.1032 primary=1 impersonation level=-1\n0x30000d39b0:1: Process id=019c handles=(nil)\n",
+      "completion": {
+        "policy": "leader_exit_with_owned_background_output",
+        "leader_exit_code": 0,
+        "output_capture_open": true,
+        "elapsed_seconds": 37.61
+      }
+    },
+    {
+      "label": "install-x86-psqlodbc",
+      "elapsed_seconds": 1.462,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0178:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\msiexec.exe\" in experimental wow64 mode\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.462
+      }
+    },
+    {
+      "label": "odbc-driver-preflight",
+      "elapsed_seconds": 0.91,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0190:err:environ:init_peb starting L\"Z:\\\\opt\\\\coh\\\\runtime-probe.exe\" in experimental wow64 mode\nCOH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode view=32 key_error=0 driver_error=0 type=1 path=C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode(x86) view=32 key_error=0 driver_error=0 type=1 path=C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 NAME PostgreSQL Unicode\r\nCOH_ODBC_DRIVER_V1 DLL C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 PASS bits=32\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.91
+      }
+    },
+    {
+      "label": "runtime-probe",
+      "elapsed_seconds": 0.407,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0198:err:environ:init_peb starting L\"Z:\\\\opt\\\\coh\\\\runtime-probe.exe\" in experimental wow64 mode\nCOH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.407
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "2875\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "5935\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.105,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.105
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.054,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "56411\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.054
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.056,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "1771\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.056
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.054,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "90\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.054
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.105,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.105
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-fixture",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "game-query-first-baseline",
+      "elapsed_seconds": 1.364,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0398:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:40:23\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:40:23.221] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.364
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 1.668,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "03ac:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:40:24\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:40:24.879] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.668
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 2.07,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "03bc:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:41:26\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:41:26.905] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.07
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 2.02,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "03c8:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:42:28\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:42:28.989] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.02
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 2.02,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "03d4:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:43:30\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:43:31.040] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.02
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 2.019,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "03e0:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:44:33\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:44:33.081] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.019
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 1.971,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "03ec:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:45:35\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:45:35.087] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 1.97
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 2.02,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "03f8:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:46:37\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:46:37.122] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.02
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 2.02,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0404:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:47:39\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:47:39.147] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.02
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 2.072,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0410:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:48:41\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:48:41.245] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.072
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 2.728,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "041c:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:49:43\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:49:43.958] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.728
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 2.123,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0428:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:50:46\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:50:46.142] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.123
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 2.121,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0438:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:51:48\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:51:48.330] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.121
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 2.172,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0444:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:52:50\r\nQuitting: Z:\\state\\diagnostic\\game-2ae8af39c8e5\\MapServer.exe  -db 127.0.0.1 -dbquery -timeout 10000 -getstatus 1 1 \r\n[2026-09-28 13:52:50.548] [INFO] Initialized error log Z:/state/diagnostic/game-2ae8af39c8e5/logs/mapserver/errorLogLastRun.log\r\n1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info \r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.172
+      }
+    },
+    {
+      "label": "game-hang-postgres",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "e\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":42976,\"backend_start\":\"2026-09-28T13:39:39.473716+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.125034+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.125058+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6423,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":42988,\"backend_start\":\"2026-09-28T13:39:39.524401+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.131704+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.131731+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6424,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43004,\"backend_start\":\"2026-09-28T13:39:39.575206+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.130322+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.130349+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6425,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43008,\"backend_start\":\"2026-09-28T13:39:39.625582+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.136205+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.136235+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6426,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43018,\"backend_start\":\"2026-09-28T13:39:39.67645+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.146044+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.146069+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6427,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43030,\"backend_start\":\"2026-09-28T13:39:39.72683+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.139784+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.139813+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6428,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43046,\"backend_start\":\"2026-09-28T13:39:39.777559+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.143587+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.143616+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6429,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43058,\"backend_start\":\"2026-09-28T13:39:39.828432+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.147825+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.14785+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6430,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43062,\"backend_start\":\"2026-09-28T13:39:39.879092+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.148538+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.14856+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6431,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43070,\"backend_start\":\"2026-09-28T13:39:39.928941+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.151801+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.151824+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6432,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43084,\"backend_start\":\"2026-09-28T13:39:39.979331+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.161552+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.161589+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6433,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43100,\"backend_start\":\"2026-09-28T13:39:40.029724+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.155508+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.155541+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6434,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43110,\"backend_start\":\"2026-09-28T13:39:40.08003+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.164036+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.164059+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6435,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43122,\"backend_start\":\"2026-09-28T13:39:40.130222+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.168405+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.168431+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6436,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43136,\"backend_start\":\"2026-09-28T13:39:40.180718+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.163365+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.163389+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6437,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43146,\"backend_start\":\"2026-09-28T13:39:40.231193+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.171842+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.171868+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6438,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43148,\"backend_start\":\"2026-09-28T13:39:40.28159+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.173309+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.173333+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6439,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43156,\"backend_start\":\"2026-09-28T13:39:40.332879+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.1754+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.175422+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6440,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43168,\"backend_start\":\"2026-09-28T13:39:40.386605+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.176857+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.176884+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6441,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43180,\"backend_start\":\"2026-09-28T13:39:40.438064+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.180499+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.180536+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6442,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43192,\"backend_start\":\"2026-09-28T13:39:40.489596+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.181767+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.18179+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6443,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43200,\"backend_start\":\"2026-09-28T13:39:40.540534+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.182977+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.182999+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6444,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43212,\"backend_start\":\"2026-09-28T13:39:40.590988+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.186264+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.186293+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6445,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43226,\"backend_start\":\"2026-09-28T13:39:40.641708+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.187725+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.18775+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6446,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43230,\"backend_start\":\"2026-09-28T13:39:40.691909+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.188829+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.188853+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6447,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43242,\"backend_start\":\"2026-09-28T13:39:40.743454+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.193716+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.193743+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6448,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43244,\"backend_start\":\"2026-09-28T13:39:40.794983+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.192138+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.192167+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6449,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43250,\"backend_start\":\"2026-09-28T13:39:40.845768+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.199347+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.199372+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6450,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43258,\"backend_start\":\"2026-09-28T13:39:40.897737+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.200358+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.200377+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6451,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43260,\"backend_start\":\"2026-09-28T13:39:40.949889+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.197861+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.197891+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6452,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43274,\"backend_start\":\"2026-09-28T13:39:41.001629+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.203583+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.203613+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6453,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43284,\"backend_start\":\"2026-09-28T13:39:41.053237+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.210924+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.210947+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6454,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43296,\"backend_start\":\"2026-09-28T13:39:41.10426+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.20567+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.205695+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6455,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43306,\"backend_start\":\"2026-09-28T13:39:41.156898+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.210311+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.210338+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6456,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43308,\"backend_start\":\"2026-09-28T13:39:41.20845+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.21649+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.216517+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6457,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43318,\"backend_start\":\"2026-09-28T13:39:41.260493+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.21341+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.213435+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6458,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43330,\"backend_start\":\"2026-09-28T13:39:41.312247+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.219306+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.219331+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6459,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43340,\"backend_start\":\"2026-09-28T13:39:41.364811+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.224184+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.224213+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}, {\"pid\":6460,\"backend_type\":\"client backend\",\"application_name\":\"\",\"client_addr\":\"127.0.0.1\",\"client_port\":43344,\"backend_start\":\"2026-09-28T13:39:41.417447+00:00\",\"state\":\"idle\",\"wait_event_type\":\"Client\",\"wait_event\":\"ClientRead\",\"query_start\":\"2026-09-28T13:53:06.220449+00:00\",\"xact_start\":null,\"state_change\":\"2026-09-28T13:53:06.220473+00:00\",\"backend_xid\":null,\"backend_xmin\":null,\"query\":\"COMMIT\",\"query_bytes\":6}]}\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "game-hang-windows",
+      "elapsed_seconds": 2.511,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "112448,\"entry_rva\":\"0x0041bbc0\",\"pe_checksum\":0}\r\n{\"kind\":\"thread\",\"pid\":928,\"tid\":932,\"context_valid\":true,\"suspend_count_before\":0,\"resume_ok\":true,\"suspend_error\":0,\"context_error\":0,\"read_error\":0,\"resume_error\":0,\"eip\":\"0x7b9c24e9\",\"esp\":\"0x0012f16c\",\"ebp\":\"0x0012f1c0\",\"eflags\":\"0x00000206\",\"eax\":\"0x0012f16c\",\"ebx\":\"0x00934010\",\"ecx\":\"0x00000010\",\"edx\":\"0x0012f1e8\",\"esi\":\"0x00000004\",\"edi\":\"0x0012f24c\",\"stack_bytes\":256,\"stack_words\":[\"0x44800000\",\"0x0012f2a4\",\"0x47140000\",\"0x46f80000\",\"0x00343732\",\"0x00000040\",\"0x5665539c\",\"0x00000008\",\"0x0012f1cc\",\"0x004a77c4\",\"0x5665539c\",\"0x0012f1b4\",\"0x45000000\",\"0x0012f2a4\",\"0x0012f234\",\"0x00000040\",\"0x33343031\",\"0x00303035\",\"0x47180000\",\"0x46f00000\",\"0x0012f234\",\"0x0012f4a4\",\"0x0012fa14\",\"0x00001392\",\"0x00000000\",\"0x00000000\",\"0x0012f20c\",\"0x004a76a4\",\"0x566554a4\",\"0x00000007\",\"0x0012f274\",\"0x00000080\",\"0x45800000\",\"0x0012f4a4\",\"0x47100000\",\"0x46e00000\",\"0x0012f274\",\"0x0012f4a4\",\"0x566554a4\",\"0x41700000\",\"0x0012f24c\",\"0x004a77c4\",\"0x566554a4\",\"0x0012f234\",\"0x42000000\",\"0x0012f4a4\",\"0x0012f2b4\",\"0x00000040\",\"0x42000000\",\"0x0012f4a4\",\"0x470f6000\",\"0x4700e000\",\"0x4700e000\",\"0x000000ff\",\"0x56655444\",\"0x00000008\",\"0x0012f28c\",\"0x004a77c4\",\"0x56655444\",\"0x0012f274\",\"0x42800000\",\"0x0012f4a4\",\"0x0012f2f4\",\"0x00000002\"]}\r\n{\"kind\":\"thread\",\"pid\":928,\"tid\":948,\"context_valid\":true,\"suspend_count_before\":0,\"resume_ok\":true,\"suspend_error\":0,\"context_error\":0,\"read_error\":0,\"resume_error\":0,\"eip\":\"0x7be0a470\",\"esp\":\"0x022bfff0\",\"ebp\":\"0x00000000\",\"eflags\":\"0x00000202\",\"eax\":\"0x008408ad\",\"ebx\":\"0x01ba42e8\",\"ecx\":\"0x00000000\",\"edx\":\"0x00000000\",\"esi\":\"0x00000000\",\"edi\":\"0x00000000\",\"stack_bytes\":256,\"stack_words\":[\"0x00000000\",\"0x008408ad\",\"0x01ba42e8\",\"0x00000000\",\"0x00000000\",\"0x001fffe8\",\"0x001fffe0\",\"0x01b8000c\",\"0x024c000c\",\"0x00170000\",\"0x0000007f\",\"0x80750000\",\"0x00000000\",\"0x80000000\",\"0x00000006\",\"0x00000000\",\"0x00120004\",\"0x80750000\",\"0x65657254\",\"0x00000073\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x000d0004\",\"0x80750001\",\"0x736f6847\",\"0x75614874\",\"0x0000746e\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x000e0004\",\"0x80750002\",\"0x72656d45\",\"0x636e6567\",\"0x00000065\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00110004\",\"0x80750003\",\"0x626d7552\",\"0x0000656c\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x000e0004\",\"0x80750004\",\"0x65746f54\",\"0x6c75506d\",\"0x0000006c\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00140004\",\"0x80750005\",\"0x0043504e\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\"]}\r\n{\"kind\":\"thread\",\"pid\":928,\"tid\":1072,\"context_valid\":true,\"suspend_count_before\":0,\"resume_ok\":true,\"suspend_error\":0,\"context_error\":0,\"read_error\":0,\"resume_error\":0,\"eip\":\"0x7be0a470\",\"esp\":\"0x0e03fff0\",\"ebp\":\"0x00000000\",\"eflags\":\"0x00000202\",\"eax\":\"0x008408ad\",\"ebx\":\"0x41a25218\",\"ecx\":\"0x00000000\",\"edx\":\"0x00000000\",\"esi\":\"0x00000000\",\"edi\":\"0x00000000\",\"stack_bytes\":256,\"stack_words\":[\"0x00000000\",\"0x008408ad\",\"0x41a25218\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\"]}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x00400000\",\"bytes\":11112448,\"name\":\"MapServer.exe\",\"path\":\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7bdc0000\",\"bytes\":2289664,\"name\":\"ntdll.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\ntdll.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7bc90000\",\"bytes\":1130496,\"name\":\"kernel32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\kernel32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7b9b0000\",\"bytes\":2895872,\"name\":\"kernelbase.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\kernelbase.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x10000000\",\"bytes\":77824,\"name\":\"PhysXLoader.dll\",\"path\":\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\PhysXLoader.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7b2a0000\",\"bytes\":454656,\"name\":\"IPHLPAPI.DLL\",\"path\":\"C:\\\\windows\\\\system32\\\\IPHLPAPI.DLL\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7b860000\",\"bytes\":688128,\"name\":\"advapi32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\advapi32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7b7f0000\",\"bytes\":331776,\"name\":\"sechost.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\sechost.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7b550000\",\"bytes\":2674688,\"name\":\"ucrtbase.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\ucrtbase.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7b320000\",\"bytes\":2183168,\"name\":\"msvcrt.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\msvcrt.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7b260000\",\"bytes\":196608,\"name\":\"dnsapi.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\dnsapi.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7b230000\",\"bytes\":98304,\"name\":\"nsi.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\nsi.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7b1b0000\",\"bytes\":421888,\"name\":\"ws2_32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\ws2_32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x00290000\",\"bytes\":409600,\"name\":\"PhysXCooking.dll\",\"path\":\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\PhysXCooking.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x78c50000\",\"bytes\":118784,\"name\":\"WSOCK32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\WSOCK32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7b0e0000\",\"bytes\":770048,\"name\":\"WINMM.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\WINMM.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7acf0000\",\"bytes\":4014080,\"name\":\"user32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\user32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7ab50000\",\"bytes\":1609728,\"name\":\"gdi32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\gdi32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7ab00000\",\"bytes\":249856,\"name\":\"win32u.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\win32u.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7a8a0000\",\"bytes\":2408448,\"name\":\"ole32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\ole32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7a790000\",\"bytes\":999424,\"name\":\"combase.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\combase.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7a5f0000\",\"bytes\":1601536,\"name\":\"rpcrt4.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\rpcrt4.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7a590000\",\"bytes\":286720,\"name\":\"coml2.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\coml2.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7a530000\",\"bytes\":282624,\"name\":\"msacm32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\msacm32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x78d80000\",\"bytes\":11407360,\"name\":\"SHELL32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\SHELL32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x78cc0000\",\"bytes\":700416,\"name\":\"shlwapi.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\shlwapi.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x78c80000\",\"bytes\":188416,\"name\":\"shcore.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\shcore.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x78af0000\",\"bytes\":1069056,\"name\":\"COMDLG32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\COMDLG32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x787c0000\",\"bytes\":3256320,\"name\":\"comctl32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\comctl32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7a4d0000\",\"bytes\":323584,\"name\":\"imm32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\imm32.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x78740000\",\"bytes\":401408,\"name\":\"winspool.drv\",\"path\":\"C:\\\\windows\\\\system32\\\\winspool.drv\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x78710000\",\"bytes\":122880,\"name\":\"compstui.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\compstui.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7a490000\",\"bytes\":65536,\"name\":\"winex11.drv\",\"path\":\"c:\\\\windows\\\\system32\\\\winex11.drv\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7a400000\",\"bytes\":466944,\"name\":\"uxtheme.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\uxtheme.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x7a4b0000\",\"bytes\":57344,\"name\":\"psapi.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\psapi.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x01c80000\",\"bytes\":3665920,\"name\":\"PhysXCore.dll\",\"path\":\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\PhysXCore.dll\"}\r\n{\"kind\":\"module\",\"pid\":928,\"base\":\"0x02000000\",\"bytes\":303104,\"name\":\"cudart32_30_9.dll\",\"path\":\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\cudart32_30_9.dll\"}\r\n{\"kind\":\"process\",\"pid\":1100,\"image_path\":\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\",\"image_base\":\"0x00400000\",\"pe_machine\":332,\"pe_timestamp\":1790305354,\"image_size\":11112448,\"entry_rva\":\"0x0041bbc0\",\"pe_checksum\":0}\r\n{\"kind\":\"thread\",\"pid\":1100,\"tid\":1104,\"context_valid\":true,\"suspend_count_before\":0,\"resume_ok\":true,\"suspend_error\":0,\"context_error\":0,\"read_error\":0,\"resume_error\":0,\"eip\":\"0x7b9c24e9\",\"esp\":\"0x0012fd0c\",\"ebp\":\"0x0012fd60\",\"eflags\":\"0x00000206\",\"eax\":\"0x0012fd0c\",\"ebx\":\"0x0088c910\",\"ecx\":\"0x00000010\",\"edx\":\"0x0012fd88\",\"esi\":\"0x00000004\",\"edi\":\"0x00a7b3c4\",\"stack_bytes\":256,\"stack_words\":[\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\"]}\r\n{\"kind\":\"thread\",\"pid\":1100,\"tid\":1108,\"context_valid\":true,\"suspend_count_before\":0,\"resume_ok\":true,\"suspend_error\":0,\"context_error\":0,\"read_error\":0,\"resume_error\":0,\"eip\":\"0x7be0a470\",\"esp\":\"0x021afff0\",\"ebp\":\"0x00000000\",\"eflags\":\"0x00000202\",\"eax\":\"0x008408ad\",\"ebx\":\"0x01bc4e70\",\"ecx\":\"0x00000000\",\"edx\":\"0x00000000\",\"esi\":\"0x00000000\",\"edi\":\"0x00000000\",\"stack_bytes\":256,\"stack_words\":[\"0x00000000\",\"0x008408ad\",\"0x01bc4e70\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\",\"0x00000000\"]}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x00400000\",\"bytes\":11112448,\"name\":\"MapServer.exe\",\"path\":\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7bdc0000\",\"bytes\":2289664,\"name\":\"ntdll.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\ntdll.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7bc90000\",\"bytes\":1130496,\"name\":\"kernel32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\kernel32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7b9b0000\",\"bytes\":2895872,\"name\":\"kernelbase.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\kernelbase.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x10000000\",\"bytes\":77824,\"name\":\"PhysXLoader.dll\",\"path\":\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\PhysXLoader.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7b2a0000\",\"bytes\":454656,\"name\":\"IPHLPAPI.DLL\",\"path\":\"C:\\\\windows\\\\system32\\\\IPHLPAPI.DLL\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7b860000\",\"bytes\":688128,\"name\":\"advapi32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\advapi32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7b7f0000\",\"bytes\":331776,\"name\":\"sechost.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\sechost.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7b550000\",\"bytes\":2674688,\"name\":\"ucrtbase.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\ucrtbase.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7b320000\",\"bytes\":2183168,\"name\":\"msvcrt.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\msvcrt.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7b260000\",\"bytes\":196608,\"name\":\"dnsapi.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\dnsapi.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7b230000\",\"bytes\":98304,\"name\":\"nsi.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\nsi.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7b1b0000\",\"bytes\":421888,\"name\":\"ws2_32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\ws2_32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x00290000\",\"bytes\":409600,\"name\":\"PhysXCooking.dll\",\"path\":\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\PhysXCooking.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x78c50000\",\"bytes\":118784,\"name\":\"WSOCK32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\WSOCK32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7b0e0000\",\"bytes\":770048,\"name\":\"WINMM.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\WINMM.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7acf0000\",\"bytes\":4014080,\"name\":\"user32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\user32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7ab50000\",\"bytes\":1609728,\"name\":\"gdi32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\gdi32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7ab00000\",\"bytes\":249856,\"name\":\"win32u.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\win32u.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7a8a0000\",\"bytes\":2408448,\"name\":\"ole32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\ole32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7a790000\",\"bytes\":999424,\"name\":\"combase.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\combase.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7a5f0000\",\"bytes\":1601536,\"name\":\"rpcrt4.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\rpcrt4.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7a590000\",\"bytes\":286720,\"name\":\"coml2.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\coml2.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7a530000\",\"bytes\":282624,\"name\":\"msacm32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\msacm32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x78d80000\",\"bytes\":11407360,\"name\":\"SHELL32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\SHELL32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x78cc0000\",\"bytes\":700416,\"name\":\"shlwapi.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\shlwapi.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x78c80000\",\"bytes\":188416,\"name\":\"shcore.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\shcore.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x78af0000\",\"bytes\":1069056,\"name\":\"COMDLG32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\COMDLG32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x787c0000\",\"bytes\":3256320,\"name\":\"comctl32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\comctl32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7a4d0000\",\"bytes\":323584,\"name\":\"imm32.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\imm32.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x78740000\",\"bytes\":401408,\"name\":\"winspool.drv\",\"path\":\"C:\\\\windows\\\\system32\\\\winspool.drv\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x78710000\",\"bytes\":122880,\"name\":\"compstui.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\compstui.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7a490000\",\"bytes\":65536,\"name\":\"winex11.drv\",\"path\":\"c:\\\\windows\\\\system32\\\\winex11.drv\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7a400000\",\"bytes\":466944,\"name\":\"uxtheme.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\uxtheme.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x7a4b0000\",\"bytes\":57344,\"name\":\"psapi.dll\",\"path\":\"C:\\\\windows\\\\system32\\\\psapi.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x01c80000\",\"bytes\":3665920,\"name\":\"PhysXCore.dll\",\"path\":\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\PhysXCore.dll\"}\r\n{\"kind\":\"module\",\"pid\":1100,\"base\":\"0x02000000\",\"bytes\":303104,\"name\":\"cudart32_30_9.dll\",\"path\":\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\cudart32_30_9.dll\"}\r\n{\"kind\":\"complete\",\"format\":1,\"processes\":3,\"threads\":72,\"modules\":114,\"errors\":0,\"truncated\":false,\"bytes_before_complete\":104346}\r\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.511
+      }
+    },
+    {
+      "label": "game-query-first-ready",
+      "elapsed_seconds": 93.112,
+      "exit_code": -15,
+      "forced_stop": true,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "0450:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\MapServer.exe\" in experimental wow64 mode\nstarted 2026-09-28 13:53:52\r\n",
+      "failure_observation": {
+        "leader_exit_code": null,
+        "output_capture_open": true,
+        "elapsed_seconds": 90.03,
+        "reason": "game-query-first-ready timed out"
+      }
+    },
+    {
+      "label": "owned-wine-stop",
+      "elapsed_seconds": 2.265,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.265
+      }
+    },
+    {
+      "label": "owned-wine-wait",
+      "elapsed_seconds": 0.055,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.055
+      }
+    },
+    {
+      "label": "sql-admin",
+      "elapsed_seconds": 0.105,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "DROP DATABASE\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.105
+      }
+    },
+    {
+      "label": "postgres-graceful-stop",
+      "elapsed_seconds": 0.155,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "waiting for server to shut down.... done\nserver stopped\n",
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.155
+      }
+    },
+    {
+      "label": "postgres_first_start",
+      "elapsed_seconds": 1002.388,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "2026-09-28 13:38:44.379 UTC [6119] LOG:  starting PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n2026-09-28 13:38:44.379 UTC [6119] LOG:  listening on IPv4 address \"127.0.0.1\", port 60003\n2026-09-28 13:38:44.381 UTC [6119] LOG:  listening on Unix socket \"/state/diagnostic/socket/.s.PGSQL.60003\"\n2026-09-28 13:38:44.387 UTC [6127] LOG:  database system was shut down at 2026-09-28 13:38:43 UTC\n2026-09-28 13:38:44.396 UTC [6119] LOG:  database system is ready to accept connections\n2026-09-28 13:40:04.473 UTC [6562] LOG:  skipping vacuum of \"attributes\" --- lock not available\n2026-09-28 13:43:44.388 UTC [6125] LOG:  checkpoint starting: time\n2026-09-28 13:47:25.946 UTC [6125] LOG:  checkpoint complete: wrote 2206 buffers (53.9%), wrote 6 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=221.445 s, sync=0.103 s, total=221.559 s; sync files=626, longest=0.002 s, average=0.001 s; distance=21252 kB, estimate=21252 kB; lsn=0/2BB07D8, redo lsn=0/2BB0748\n2026-09-28 13:55:26.444 UTC [6125] LOG:  checkpoint starting: immediate force wait\n2026-09-28 13:55:26.448 UTC [6125] LOG:  checkpoint complete: wrote 3 buffers (0.1%), wrote 0 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.005 s; sync files=3, longest=0.001 s, average=0.001 s; distance=16 kB, estimate=19128 kB; lsn=0/2BB48D0, redo lsn=0/2BB4878\n2026-09-28 13:55:26.536 UTC [6119] LOG:  received fast shutdown request\n2026-09-28 13:55:26.537 UTC [6119] LOG:  aborting any active transactions\n2026-09-28 13:55:26.538 UTC [6119] LOG:  background worker \"logical replication launcher\" (PID 6130) exited with exit code 1\n2026-09-28 13:55:26.539 UTC [6125] LOG:  shutting down\n2026-09-28 13:55:26.539 UTC [6125] LOG:  checkpoint starting: shutdown immediate\n2026-09-28 13:55:26.543 UTC [6125] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.005 s; sync files=1, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=17215 kB; lsn=0/2BB4A30, redo lsn=0/2BB4A30\n2026-09-28 13:55:26.552 UTC [6119] LOG:  database system is shut down\n"
+    },
+    {
+      "label": "private-headless-x",
+      "elapsed_seconds": 1001.38,
+      "exit_code": 0,
+      "forced_stop": true,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "_XSERVTransmkdir: ERROR: euid != 0,directory /tmp/.X11-unix will not be created.\n\nXvnc TigerVNC 1.12.0 - built 2023-01-06 16:01\nCopyright (C) 1999-2021 TigerVNC Team and many others (see README.rst)\nSee https://www.tigervnc.org for information on TigerVNC.\nUnderlying X server release 12101006, X.Org\n\n\nMon Sep 28 13:38:45 2026\n vncext:      VNC extension running!\n vncext:      Listening for VNC connections on\n              /state/diagnostic/runtime/vnc.sock (mode 0600)\n vncext:      created VNC server for screen 0\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 2\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 3\n\nMon Sep 28 13:55:26 2026\n ComparingUpdateTracker: 0 pixels in / 0 pixels out\n ComparingUpdateTracker: (1:nan ratio)\n"
+    },
+    {
+      "label": "first-dbserver",
+      "elapsed_seconds": 960.873,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "01a0:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\game-2ae8af39c8e5\\\\DbServer.exe\" in experimental wow64 mode\n(412) Z:/state/diagnostic/game-2ae8af39c8e5/DbServer.exe Z:\\state\\diagnostic\\game-2ae8af39c8e5\\DbServer.exe -start 0 \r\nworking dir: Z:\\state\\diagnostic\\game-2ae8af39c8e5\r\nSVN Revision: Unknown\r\nstarted 2026-09-28 13:39:37\r\ndbserver starting\r\nSQL PSQLODBC35W.DLL 18.00.0004 / ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\n2026-09-28 13:39:41 SQL server 180006 connected\r\nWarning: couldn't find window named TempConsoleTitle: 412\r\nLoading Z:/state/diagnostic/game-2ae8af39c8e5/data/server/db/servers.cfg\r\n  Loading Z:/state/diagnostic/game-2ae8af39c8e5/data/server/db/servers.cfg done\r\nLoading server/db/weeklyTF.cfg\r\n[2026-09-28 13:39:37.781] [DEBUG] \tSet folder cache callback for server/db/WeeklyTF.cfg\r\nLoading Z:/state/diagnostic/game-2ae8af39c8e5/data/server/db/loadBalanceDefault.cfg... done.\r\nLoading Z:/state/diagnostic/game-2ae8af39c8e5/data/server/db/loadBalanceShardSpecific.cfg... done.\r\nLoaded load balancing config: 1 roles specified.\r\nWarning: No launcher specified to start the following server applications:\r\n     StatServer, ArenaServer, RaidServer\r\n[2026-09-28 13:39:37.806] [DEBUG] \tSet folder cache callback for server/db/loadBalance*.cfg\r\nNo auth server specified in servers.cfg - allowing all logins\r\nLoading templates...                                                  (2.44)\r\nUpdate tables...COMMAND: ALTER TABLE IF EXISTS dbo.Ents2 DROP CONSTRAINT IF EXISTS FK_Ents2_LeaguesId_Leagues;\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents DROP CONSTRAINT IF EXISTS FK_Ents_TeamupsId_Teamups;\r\nSQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping\r\nSQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents2 DROP CONSTRAINT IF EXISTS FK_Ents2_LeaguesId_Leagues;\r\nCOMMAND: ALTER TABLE IF EXISTS dbo.Ents DROP CONSTRAINT IF EXISTS FK_Ents_TeamupsId_Teamups;\r\nSQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping\r\nSQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping\r\n                                                      (17.49)\r\nClearing teamups and invalid characters...                            (4.63)\r\nMoving old characters to offline (non-sql) storage...                 (0.00)\r\nReading Backup Files...                                               (0.07)\r\nReading stats...\r\n  Reading player names...                                             (0.01)\r\n  Reading last 30 days of event history records...2026-09-28 13:40:06 Waiting for launchers to link up...\r\n2026-09-28 13:40:21 No zone launchers connected.\r\nWould start map 1 maps/City_Zones/City_01_01/City_01_01.txt\r\nWould start map 9 maps/City_Zones/City_03_02/City_03_02.txt\r\nWould start map 12 maps/City_Zones/Hazard_01_01/Hazard_01_01.txt\r\nWould start map 13 maps/City_Zones/Hazard_02_01/Hazard_02_01.txt\r\nWould start map 24 maps/City_Zones/City_00_01/City_00_01.txt\r\nWould start map 36 maps/City_Zones/P_City_00_01/P_City_00_01.txt\r\nWould start map 40 maps/City_Zones/P_City_00_05/P_City_00_05.txt\r\nWould start map 41 maps/City_Zones/N_City_00_01/N_City_00_01.txt\r\nWould start map 49 maps/City_Zones/P_City_00_04/P_City_00_04.txt\r\nWould start map 70 maps/City_Zones/V_City_00_01/V_City_00_01.txt\r\nWould start map 71 maps/City_Zones/V_City_01_01/V_City_01_01.txt\r\nWould start map 73 maps/City_Zones/V_City_02_01/V_City_02_01.txt\r\nWould start map 74 maps/City_Zones/V_City_03_01/V_City_03_01.txt\r\nWould start map 82 maps/City_Zones/City_03_03/City_03_03.txt\r\nWould start 14 maps at startup on live\r\n2026-09-28 13:40:22 DbServer Ready.\r\n"
+    },
+    {
+      "label": "first-atlas",
+      "elapsed_seconds": 903.258,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "n_lairs/sewers/trays/rooms/3way/3way.txt\r\nERRORLOG FILEERROR: object_library/villain_lairs/sewers/trays/rooms/3way/3way.txt\r\nERRORLOG FILEERROR: object_library/villain_lairs/sewers/trays/rooms/3way/3way.txt\r\nGEO: Missing .geo file object_library/temp/pivot_test/pivot_test.geo (but rootnames exists)\r\nERRORLOG FILEERROR: object_library/villain_lairs/sewers/trays/rooms/3way/3way.txt\r\nERRORLOG FILEERROR: object_library/villain_lairs/sewers/trays/rooms/3way/3way.txt\r\nERRORLOG FILEERROR: object_library/villain_lairs/sewers/trays/rooms/3way/3way.txt\r\nERRORLOG FILEERROR: object_library/villain_lairs/sewers/trays/rooms/dead_end/dead_end.txt\r\nERRORLOG FILEERROR: maps/City_Zones/City_01_01/City_01_01_layer_Mission_Trays.txt\r\nERRORLOG FILEERROR: maps/City_Zones/City_01_01/City_01_01_layer_Mission_Trays.txt\r\nERRORLOG FILEERROR: maps/City_Zones/City_01_01/City_01_01_layer_Mission_Trays.txt\r\nERRORLOG FILEERROR: maps/City_Zones/City_01_01/City_01_01_layer_Mission_Trays.txt\r\nERRORLOG FILEERROR: maps/City_Zones/City_01_01/City_01_01_layer_Mission_Trays.txt\r\nERRORLOG FILEERROR: maps/City_Zones/City_01_01/City_01_01_layer_Mission_Trays.txt\r\nGEO: Missing .geo file object_library/villain_lairs/office01/trays/rooms/dead_end/dead_end.geo (but rootnames exists)\r\nERRORLOG FILEERROR: maps/City_Zones/City_01_01/City_01_01_layer_Mission_Trays.txt\r\nGEO: Missing .geo file object_library/villain_lairs/office01/structure/balconies/balconies.geo (but rootnames exists)\r\nERRORLOG FILEERROR: maps/City_Zones/City_01_01/City_01_01_layer_Mission_Trays.txt\r\nERRORLOG FILEERROR: maps/City_Zones/City_01_01/City_01_01_layer_Mission_Trays.txt\r\nERRORLOG FILEERROR: maps/City_Zones/City_01_01/City_01_01_layer_Mission_Trays.txt\r\nGEO: Missing .geo file object_library/villain_lairs/office01/trays/rooms/straight/straight.geo (but rootnames exists)\r\nGEO: Missing .geo file object_library/villain_lCant find root geo _ofc1_d_door_01\r\nCant find root geo _ofc1_d_frame_01\r\nCant find root geo _ofc1_d_door_01\r\nCant find root geo _ofc1_d_frame_01\r\nCant find root geo _ofc1_d_door_01\r\nCant find root geo Common_Decor/Warehouse/ware_crates_Med/Crate_lg_Wood_01\r\nFile: maps/City_Zones/City_01_01/City_01_01_layer_Zowies.txt\r\nLast Author/Status:UNKNOWN\r\nGroup grp_ThieryZowie_02\r\ncan't find member grp141172\r\n\r\nairs/office01/trays/doors/doors.geo (but rootnames exists)\r\nERRORLOG FILEERROR: maps/City_Zones/City_01_01/City_01_01_layer_Zowies.txt\r\n[2026-09-28 13:54:40.833] [DEBUG] \tSet folder cache callback for scenes/*.txt\r\n[2026-09-28 13:54:40.833] [DEBUG] \tSet folder cache callback for server/SpawnArea/*.txt\r\n  done                                                                (50.60)\r\nloading beacons.. Beacon file not loaded for map: maps/City_Zones/City_01_01/City_01_01.txt\r\ndone                                                (0.01)\r\nDoing initMap.. done                                                  (0.10)\r\nLoading persistent npcs.. [2026-09-28 13:54:41.001] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.003] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.005] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.005] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.005] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.005] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.006] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.007] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.008] [DEBUG] \tReading Prop_Basic.txt\r\n[2026-09-28 13:54:41.011] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.013] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.013] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.013] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.014] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.015] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.015] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.016] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.016] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.016] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.017] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.018] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.018] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.018] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.019] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.019] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.019] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.019] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.019] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.020] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.020] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.020] [DEBUG] \tReading Mannequin.txt\r\n[2026-09-28 13:54:41.022] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.023] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.023] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.023] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.023] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.023] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.023] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.024] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.024] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.024] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.024] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.025] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.025] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.026] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.026] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.026] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.026] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.026] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.027] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.027] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.027] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.028] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.028] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.028] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.028] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.028] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.029] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.029] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.029] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.029] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.029] [DEBUG] \tReading Rikti_Player.txt\r\n[2026-09-28 13:54:41.029] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.030] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.030] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.030] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.030] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.030] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.031] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.031] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.031] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.031] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.031] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.031] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.031] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.032] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.032] [DEBUGCant find root geo _v_destsmn_pad_glo\r\nCant find root geo _v_destsmn_pad\r\nCant find root geo _v_destsmn_pad_glo2\r\nCant find root geo _v_destsmn_pad_glo3\r\nCant find root geo _v_destsmn_crystal01\r\nCant find root geo _v_destsmn_crystalB02\r\nCant find root geo _v_destsmn_crystalB03\r\nCant find root geo _v_destsmn_crystal02\r\nCant find root geo _v_destsmn_crystal03\r\nCant find root geo _v_destsmn_arm01\r\nCant find root geo _v_destsmn_arm01_glo\r\nCant find root geo _v_destsmn_podium\r\nCant find root geo _v_destsmn_podium_glo\r\nCant find root geo _v_destsmn_pad02_glo2\r\nCant find root geo _v_destsmn_pad02\r\nCant find root geo _v_destsmn_arm02_glo\r\nCant find root geo _v_destsmn_arm02\r\nFile: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Summon_Circle_Pad_1&\r\ncan't find member _v_destsmn_arm01_glo\r\n\r\nFile: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Summon_Circle_Pad_1&\r\ncan't find member _v_destsmn_arm01\r\n\r\nFile: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Summon_Circle_Pad_6&\r\ncan't find member _v_destsmn_crystal02\r\n\r\nFile: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Summon_Circle_Pad_7&\r\ncan't find member _v_destsmn_crystal03\r\n\r\nFile: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Summon_Circle_Pad_8&\r\ncan't find member _v_destsmn_crystal01\r\n\r\nFile: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Summon_Circle_Pad_2&\r\ncan't find member _v_destsmn_pad_glo3\r\n\r\nFile: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Summon_Circle_Pad_2&\r\ncan't find member _v_destsmn_pad\r\n\r\nFile: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Summon_Circle_Podium\r\ncan't find member _v_destsmn_podium_glo\r\n\r\nFile: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Summon_Circle_Podium\r\ncan't find member _v_destsmn_podium\r\n\r\nCant find root geo _v_destartif_case\r\nCant find root geo _v_destartif_glass\r\nCant find root geo _v_destartif_case_glo\r\nCant find root geo _v_destartif_case_detail\r\nCant find root geo _v_destartif_case_interior\r\nCant find root geo _shpmgc_A_dsp_Btr2\r\nCant find root geo _shpmgc_A_dsp_Btr1\r\nCant find root geo _shpmgc_rug01\r\nCant find root geo _shpmgc_A_dsp_B\r\nCant find root geo _shpmgc_A_dsp_Bgls\r\nCant find root geo _shpmgc_box_sm01\r\nCant find root geo _shpmgc_box_sm02\r\nCant find root geo _shpmgc_box_sm04\r\nCant find root geo _shpmgc_box_sm03\r\nCant find root geo _shpmgc_box_sm05\r\nCant find root geo _shpmgc_box_sm06\r\nCant find root geo _shpmgc_box_sm07\r\nCant find root geo _shpmgc_box_sm08\r\nCant find root geo _shpmgc_A_shelf_sm02\r\nCant find root geo _shpmgc_A_shelf_sm01\r\nCant find root geo _shpmgc_A_dsp_Agls\r\nCant find root geo _shpmgc_A_dsp_A\r\nCant find root geo _shpmgc_A_curt\r\nCant find root geo _shpmgc_obelisk\r\nCant find root geo _shpmgc_displaycase_01\r\nCant find root geo _shpmgc_sign_01\r\nCant find root geo _shpmgc_sign_02\r\nCant find root geo _shpmgc_sign_03\r\nCant find root geo _shpmgc_light_01\r\nCant find root geo _shpmgc_lightglow1\r\nCant find root geo _shpmgc_sign_04\r\nCant find root geo _shpmgc_sign_05\r\nFile: object_library/v_cov/destructible_objects/V_Destructible_Artifact/v_destructible_artifact.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Dest_Artifact_1&\r\ncan't find member _v_destartif_case_interior\r\n\r\nFile: object_library/v_cov/destructible_objects/V_Destructible_Artifact/v_destructible_artifact.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Dest_Artifact\r\ncan't find member _v_destartif_glass\r\n\r\nFile: object_library/v_cov/destructible_objects/V_Destructible_Artifact/v_destructible_artifact.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Dest_Artifact\r\ncan't find member _v_destartif_case_detail\r\n\r\nFile: object_library/v_cov/destructible_objects/V_Destructible_Artifact/v_destructible_artifact.txt\r\nLast Author/Status:UNKNOWN\r\nGroup V_Dest_Artifact\r\ncan't find member _v_destartif_case\r\n\r\n] \tReading player.txt\r\n[2026-09-28 13:54:41.032] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.032] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.032] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.032] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.032] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.032] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.033] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.033] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.033] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.033] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.033] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.033] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.033] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.033] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.034] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.034] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.034] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.034] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.034] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.034] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.034] [DEBUG] \tReading Prop_basic.txt\r\n[2026-09-28 13:54:41.035] [DEBUG] \tReading Prop_basic.txt\r\n[2026-09-28 13:54:41.035] [DEBUG] \tReading Prop_basic.txt\r\n[2026-09-28 13:54:41.035] [DEBUG] \tReading Prop_Basic.txt\r\nGEO: Missing .geo file object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.geo (but rootnames exists)\r\n\r\nERRORLOG FILEERROR: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nERRORLOG FILEERROR: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nERRORLOG FILEERROR: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nERRORLOG FILEERROR: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nERRORLOG FILEERROR: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nERRORLOG FILEERROR: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nERRORLOG FILEERROR: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nERRORLOG FILEERROR: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\nERRORLOG FILEERROR: object_library/v_cov/objective_objects/V_Summon_Circle/v_summon_circle.txt\r\n[2026-09-28 13:54:41.242] [DEBUG] \tReading Prop_basic.txt\r\nGEO: Missing .geo file object_library/v_cov/destructible_objects/V_Destructible_Artifact/v_destructible_artifact.geo (but rootnames exists)\r\nGEO: Missing .geo file object_library/special_buildings/Shop_interiors/Shop_int_magic/shop_int_magic.geo (but rootnames exists)\r\nERRORLOG FILEERROR: object_library/v_cov/destructible_objects/V_Destructible_Artifact/v_destructible_artifact.txt\r\nERRORLOG FILEERROR: object_library/v_cov/destructible_objects/V_Destructible_Artifact/v_destructible_artifact.txt\r\nERRORLOG FILEERROR: object_library/v_cov/destructible_objects/V_Destructible_Artifact/v_destructible_artifact.txt\r\nERRORLOG FILEERROR: object_library/v_cov/destructible_objects/V_Destructible_Artifact/v_destructible_artifact.txt\r\n[2026-09-28 13:54:41.568] [DEBUG] \tReading Prop_basic.txt\r\n[2026-09-28 13:54:41.568] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.568] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.568] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.569] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.571] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.571] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.572] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.572] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.572] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.572] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.572] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.572] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.572] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.572] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.573] [DEBUG] \tReading BF.txt\r\n[2026-09-28 13:54:41.573] [DEBUG] \tReading bis.txt\r\n[2026-09-28 13:54:41.573] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.573] [DEBUG] \tReading player.txt\r\n[2026-09-28 13:54:41.573] [DEBUG] \tReading player.txt\r\n122 found                                                             (0.57)\r\nLoading named patrol routes.. 0 patrol routes                         (0.01)\r\nLoading encounter groups.. 2812 found                                 (0.69)\r\nLoading script markers.. 155 markers, 51 volumes                      (0.01)\r\nLoading script locations.. 4 script locations                         (0.01)\r\nLoad door animation points.. Warning: orphaned EmergeFromMe point at 128.00, 221.50, 1024.00 (needs at least one ExitPoint)\r\nWarning: orphaned EmergeFromMe point at -640.00, 221.50, -640.00 (needs at least one ExitPoint)\r\nWarning: orphaned EmergeFromMe point at 636.50, 1.04, -1043.50 (needs at least one ExitPoint)\r\n2504 found                               (0.03)\r\nRetrieving AutoCommands.. "
+    }
+  ],
+  "failures": [
+    "game-query-first-ready timed out"
+  ],
+  "scope": "Managed Atlas MapServer, stock fake-auth create/save, restart and diagnostic exact-name resume through ARM64 Wine/FEX",
+  "passed": false,
+  "gameplay_validated": false,
+  "android_execution_validated": false,
+  "diagnostic_mode": "atlas_character_persistence",
+  "execution_platform_requested": "host",
+  "android_surface_validated": false,
+  "hardware_acceleration_validated": false,
+  "interactive_rendering_validated": false,
+  "game": {
+    "status": "running",
+    "phases": [],
+    "map_samples": [
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-baseline",
+        "sampled_utc": "2026-09-28T13:40:23.443857+00:00",
+        "monotonic": 659.99934228
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:40:25.117369+00:00",
+        "monotonic": 661.672851382
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:41:27.214519+00:00",
+        "monotonic": 723.770018643
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:42:29.262949+00:00",
+        "monotonic": 785.818431535
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:43:31.306797+00:00",
+        "monotonic": 847.862280199
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:44:33.351115+00:00",
+        "monotonic": 909.906602648
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:45:35.347573+00:00",
+        "monotonic": 971.903055117
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:46:37.395959+00:00",
+        "monotonic": 1033.951441634
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:47:39.442837+00:00",
+        "monotonic": 1095.99832541
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:48:41.546754+00:00",
+        "monotonic": 1158.102241421
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:49:44.302415+00:00",
+        "monotonic": 1220.857896076
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:50:46.455941+00:00",
+        "monotonic": 1283.011429186
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:51:48.612208+00:00",
+        "monotonic": 1345.167689511
+      },
+      {
+        "ready": false,
+        "not_started": true,
+        "map_id": 1,
+        "phase": "first-ready",
+        "sampled_utc": "2026-09-28T13:52:50.824215+00:00",
+        "monotonic": 1407.379696947
+      }
+    ],
+    "character_samples": [],
+    "sessions": {},
+    "dispatch_progress": {
+      "enabled": true,
+      "format": 1,
+      "environment_variable": "COH_WINE_DB_PROGRESS",
+      "record_bytes": 128,
+      "mapping_bytes": 4096,
+      "stages": {
+        "1": "INITIALIZED",
+        "2": "STARTUP",
+        "3": "DB_INIT",
+        "4": "MAIN_LOOP",
+        "5": "MSG_SCAN",
+        "6": "SQL_KEEPALIVE_CHECK",
+        "7": "SQL_KEEPALIVE_FOREGROUND",
+        "8": "SQL_KEEPALIVE_QUEUE",
+        "9": "SQL_FIFO_TICK",
+        "10": "DELINK_MAPS",
+        "11": "DELINK_LAUNCHERS",
+        "12": "SQL_MEMORY_PRESSURE",
+        "13": "NM_MONITOR",
+        "14": "SVRMON_UPDATES",
+        "15": "AUTO_START",
+        "16": "AUTH_STATUS",
+        "17": "AUTH_RECONNECT",
+        "18": "WAITING_ENTITIES",
+        "19": "DB_RELAY",
+        "20": "CLIENT_LINKS",
+        "21": "BEACON_LAUNCHERS",
+        "22": "STATS",
+        "23": "SHARD_CHAT",
+        "24": "LOG_STATS",
+        "25": "AUCTION",
+        "26": "OVERLOAD",
+        "27": "TEMP_LOCKS",
+        "28": "CONSOLE_TITLE",
+        "29": "EXIT_REQUEST",
+        "30": "FOLDER_CALLBACKS",
+        "31": "POOL_COMPACT",
+        "32": "SHUTDOWN_TICK",
+        "33": "CONSOLE_POLL",
+        "34": "CONSOLE_READ",
+        "35": "CONSOLE_COMMAND",
+        "36": "LOOP_DONE",
+        "37": "READY"
+      },
+      "phases": {
+        "first": {
+          "available": true,
+          "sampled_utc": "2026-09-28T13:40:22.078983+00:00",
+          "format": 1,
+          "windows_pid": 412,
+          "main_thread_id": 416,
+          "sequence": 28,
+          "stage_id": 13,
+          "stage": "NM_MONITOR",
+          "loop_count": 1,
+          "flags": 0,
+          "stage_count": 37,
+          "file_identity": {
+            "device": 2049,
+            "inode": 7422616
+          },
+          "raw_record_hex": "434f48444250310001000000800000009c010000a00100001c0000000d000000010000000000000025000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "raw_record_sha256": "e53d6836ddfb58b862b4507a61f53bd57dea45b1b49a8de8df088aa71b1ab5cc",
+          "source": "opt-in DbServer main-thread publication",
+          "is_success_proof": false
+        }
+      },
+      "is_success_proof": false
+    },
+    "startup_policy": {
+      "first_atlas_timeout_seconds": 2400,
+      "restart_atlas_timeout_seconds": 900,
+      "startup_query_timeout_seconds": 90,
+      "first_poll_interval_seconds": 60,
+      "restart_poll_interval_seconds": 30,
+      "live_query_timeout_seconds": 25,
+      "overall_timeout_seconds": 3600
+    },
+    "account": "CohAb35f6b85c8",
+    "hang_capture": {
+      "attempted": true,
+      "started_utc": "2026-09-28T13:55:20.896304+00:00",
+      "before_service_cleanup": true,
+      "before_failed_query_stop": true,
+      "trigger_label": "game-query-first-ready",
+      "trigger_alive": true,
+      "dispatch_stage_before": "FOLDER_CALLBACKS",
+      "dispatch_stage_after": "FOLDER_CALLBACKS",
+      "dispatch_sequence_advanced": false,
+      "dispatch_loop_advanced": false,
+      "snapshot_written": true,
+      "elapsed_seconds": 3.061,
+      "windows_contexts_available": true
+    },
+    "hang_capture_files": {
+      "windows-contexts.jsonl": {
+        "bytes": 104770,
+        "sha256": "6a5d97afef95c706c26c5d710ca3f661e6658a2389d96c3c44e1343ecaa07e8a"
+      },
+      "snapshot.json": {
+        "bytes": 427197,
+        "sha256": "e64b3783d857b504dc90ab4e93fae313cb28fe0e4fb8767699681d012c1e38a3"
+      },
+      "manifest.json": {
+        "bytes": 979,
+        "sha256": "ddc6014b721b1817ed6d320727c6639ac997db674b912e910dcc8e66a2d97f03"
+      }
+    },
+    "capture_files": {},
+    "service_capture_files": {
+      "first-dbserver-stdout.txt": {
+        "bytes": 3631,
+        "sha256": "e561255703c78c1f1852146cdcade3be2643de17bedde1903e427eee8c0113a4"
+      },
+      "first-atlas-stdout.txt": {
+        "bytes": 880388,
+        "sha256": "6e10cc4f61a550339486cf76aa8ed6b91e7a6ab0ae2d4560e30dacb09d928737"
+      },
+      "log-001.txt": {
+        "bytes": 802,
+        "sha256": "7f0cebfcb3fb586078eba138bc415d02c9150418fc3ad470cdddb7dd66147044"
+      },
+      "log-002.txt": {
+        "bytes": 819546,
+        "sha256": "f08fc814319eefb8ac774255361de1c9a178dcea2964ed314ec4fa91f7a875e8"
+      },
+      "manifest.json": {
+        "bytes": 1359,
+        "sha256": "0d5c750b77a2ffd530e188619c1d56b63be226c62e1cdafcbf55ccdcd93e6c9e"
+      }
+    }
+  },
+  "inputs": {
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "game_package_sha256": "db460265f326198b69108d2bf513e6b0e594dea8aedd785845e4af0313790b6d",
+    "game_data_manifest_sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "repository_commit": "f32ccd7c0f1aa950d1f87ceb81ab09b2dba4e2ac",
+    "binary_sha256": {
+      "DbServer.exe": "3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830",
+      "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+      "TestClientCreate.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31",
+      "TestClientResume.exe": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856",
+      "TestClientBridge.exe": "41a994a17803d8ec11a828437971a3d8eb397351fcfe3cb2996963c5dc47d99b"
+    }
+  },
+  "asset_sha256": {
+    "001-coh-compat.sql": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a",
+    "odbc_probe.exe": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb",
+    "psqlodbc_x86.msi": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773",
+    "runtime-probe.exe": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842",
+    "probe.dll": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+  },
+  "postgres_port": 60003,
+  "wine_initialization": {
+    "policy": "initialize_once_then_reuse",
+    "state": "ready",
+    "ready_prefix_reused": false,
+    "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+    "update_timestamp_removed": false,
+    "timeout_seconds": 600,
+    "registration_processes": 3,
+    "wow64_registration_processes": 1,
+    "registration_passes": 1,
+    "elapsed_seconds": 37.611
+  },
+  "odbc_installer": {
+    "path": "C:\\windows\\syswow64\\msiexec.exe",
+    "pointer_bits": 32,
+    "sha256": "d4ed3551f449cfb68e609e1572b519b5eecd3bf0519bf16877ea02bd4fb01ed0"
+  },
+  "odbc_driver": {
+    "driver_name": "PostgreSQL Unicode",
+    "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+    "pointer_bits": 32,
+    "registry_view": 32,
+    "driver_dll_loaded": true
+  },
+  "wine_shutdown": {
+    "stop_exit_code": 0,
+    "wait_exit_code": 0,
+    "prefix_lock_free": true,
+    "server_socket_inactive": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 544,
+    "scanned_tasks": 4,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true
+  },
+  "finished_utc": "2026-09-28T13:55:26.741258+00:00",
+  "cleanup_complete": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  }
+}

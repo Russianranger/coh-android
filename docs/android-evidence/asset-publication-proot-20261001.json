@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "proot_commit": "7266fb3e8516535682f5a9c8f3a7e70f6506eddb",
+  "diagnosis": "Pinned link2symlink moves each os.link source to a hidden backing file and creates an intermediate and destination entry; unlinking the temporary source retains all three entries. Guest staging resolves/counts each entry.",
+  "source_equivalent_model": {
+    "logical_files": 3,
+    "logical_bytes": 93,
+    "directory_entries": 9,
+    "guest_accounted_bytes": 279,
+    "actual_traced_proot": false
+  },
+  "native_host_renameat2": {
+    "one_final_regular_entry": true,
+    "payload_and_mtime_preserved": true,
+    "existing_regular_and_symlink_destinations_preserved": true,
+    "noreplace_errno": 17
+  },
+  "pinned_renameat2_translation": "PR_renameat2 translates the two paths and retains syscall flags; absent destination bypasses link decrement.",
+  "local_runtime_limit": "Workspace ptrace(TRACEME) returns EPERM. Pinned PRoot and talloc built but traced native execution cannot run here. Real ARM64 hosted qualification is required.",
+  "correction": "Preflight existing target refusal and libc renameat2(RENAME_NOREPLACE), fail closed without replacing-rename or hard-link fallback."
+}

@@ -1,0 +1,288 @@
+name: Thor .33 report recovery and warm preparation, retaining certified .32 native
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - tools/android/interactive/release-client-report-loading-0.13.33.json
+      - .github/workflows/android-client-report-loading.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-report-loading-publication
+  cancel-in-progress: false
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      required: ${{ steps.gate.outputs.required }}
+      publish_enabled: ${{ steps.gate.outputs.publish_enabled }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - id: gate
+        name: Preserve completed .33 publication and require authenticated exact .32 donor
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys, urllib.error, urllib.request
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import build_client_report_loading_apk as current
+          marker = json.loads(Path('tools/android/interactive/release-client-report-loading-0.13.33.json').read_text())
+          assert marker['version'] == current.VERSION_NAME and marker['version_code'] == current.VERSION_CODE
+          assert marker['donor_commit'] == current.DONOR_COMMIT and marker['asset_version'] == '1.0.0'
+          assert type(marker['publish_enabled']) is bool
+          assert type(marker['qualification_enabled']) is bool
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
+            output.write('publish_enabled='+str(marker['publish_enabled']).lower()+'\n')
+          if not marker['qualification_enabled']:
+            with Path(os.environ['GITHUB_OUTPUT']).open('a') as output: output.write('required=false\n')
+            print('Reviewed report/helper gates remain disabled until the owning development pass enables qualification')
+            raise SystemExit(0)
+          request = urllib.request.Request('https://api.github.com/repos/'+current.REPOSITORY+'/releases/tags/'+current.RELEASE_TAG,
+            headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          try:
+            with urllib.request.urlopen(request, timeout=30) as response: release = json.load(response)
+          except urllib.error.HTTPError as error:
+            if error.code != 404: raise
+            required = True
+          else:
+            current.validate_existing_release(release); required = False
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
+            output.write('required='+str(required).lower()+'\n')
+          print('Publication required:', required, '; retained .32 Game/Map/DbServer/graphics and Assets 1.0.0')
+          PY
+  apk:
+    needs: changes
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    permissions: {contents: write, actions: read}
+    env:
+      COH_MAP_STARTUP_ASSET_CACHE: '${{ github.workspace }}/out/map-startup-assets'
+      COH_REQUIRE_POSTGRESQL: '1'
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Free unused hosted-runner toolchains for the measured complete asset fixture
+        run: |
+          test "${RUNNER_ENVIRONMENT:-}" = github-hosted
+          df -h "$GITHUB_WORKSPACE"
+          for unused in /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL; do
+            case "$unused" in
+              /usr/share/dotnet|/usr/share/swift|/usr/local/.ghcup|/opt/ghc|/opt/hostedtoolcache/CodeQL)
+                sudo rm -rf -- "$unused"
+                ;;
+              *) exit 1 ;;
+            esac
+          done
+          df -h "$GITHUB_WORKSPACE"
+          python3 - <<'PY'
+          import os, shutil
+          free = shutil.disk_usage(os.environ['GITHUB_WORKSPACE']).free
+          print('Available fixture headroom:', round(free / 1024**3, 2), 'GiB')
+          assert free >= 30 * 1024**3, 'Complete original asset preparation requires 30 GiB runner headroom'
+          PY
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: SDK signing tools and all retained PostgreSQL and Vulkan host fixtures
+        run: |
+          timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends postgresql-16 postgresql-client-16 libvulkan-dev mesa-vulkan-drivers python3-pil python3-yaml tesseract-ocr tesseract-ocr-eng
+          python3 - <<'PY'
+          import shutil, subprocess, sys
+          from PIL import Image
+          import yaml
+          assert shutil.which('tesseract'), 'Required real OCR fixture executable missing'
+          languages = subprocess.check_output(['tesseract', '--list-langs'], text=True)
+          assert 'eng' in languages.splitlines(), 'Required real OCR English fixture missing'
+          print('Verified host image/YAML/OCR dependencies for', sys.executable)
+          PY
+          sudo pg_ctlcluster 16 main start || /usr/lib/postgresql/16/bin/pg_isready --host "$PGHOST" --port "$PGPORT"
+          sudo -u postgres psql --no-psqlrc --dbname postgres --set ON_ERROR_STOP=1 --command "ALTER ROLE postgres WITH LOGIN PASSWORD 'coh-host-fixture'"
+          sudo -u postgres createdb --owner postgres coh_test_startup_bundle
+          test "$(psql --no-psqlrc --set ON_ERROR_STOP=1 --tuples-only --no-align --command "SELECT current_user = 'postgres' AND current_database() = 'coh_test_startup_bundle' AND current_setting('server_version_num')::integer / 10000 = 16")" = t
+      - name: Authenticate public .32, its independent public-byte proof and unchanged asset pack
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          python3 tools/android/interactive/build_client_report_loading_apk.py download-donor --output out/donor.apk
+          python3 tools/android/interactive/build_client_report_loading_apk.py download-donor-evidence --output out/donor-evidence
+          # Existing .31 parser fixture only; the shipping runtime donor remains .32.
+          python3 tools/android/interactive/build_client_map_startup_apk.py download-donor --output out/native-contract-031.apk
+      - name: Qualify current report/preparation repairs, exact native bytes, strict SQL and all applicable retained suites
+        run: >-
+          python3 tools/android/interactive/qualify_client_report_loading.py --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor.apk --donor-build-report out/donor-evidence/client-map-startup-apk-build-report.json
+          --native-contract-donor-apk out/native-contract-031.apk
+          --output out/client-report-loading-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-report-loading-qualification
+          path: out/client-report-loading-qualification.json
+          retention-days: 90
+          if-no-files-found: warn
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Compile report/lifecycle/control Java; retain every .32 native/GPU/Wine/FEX/asset byte
+        env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
+        run: >-
+          python3 tools/android/interactive/build_client_report_loading_apk.py build --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor.apk --donor-build-report out/donor-evidence/client-map-startup-apk-build-report.json
+          --qualification out/client-report-loading-qualification.json --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/client-report-loading-apk/COH-Atlas-Gameplay-0.13.33.apk
+      - name: Retain diagnostic candidates before independent audit without accepting them
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import shutil
+          target = Path('out/unaccepted-report-loading'); target.mkdir(parents=True, exist_ok=True)
+          for name in ('COH-Atlas-Gameplay-0.13.33.apk', 'COH-Atlas-Gameplay-0.13.33.apk.sha256',
+              'COH-Atlas-Gameplay-0.13.33-testing.txt', 'client-report-loading-apk-build-report.json'):
+            source = Path('out/client-report-loading-apk')/name
+            if source.is_file() and not source.is_symlink(): shutil.copyfile(source, target/name)
+          (target/'UNACCEPTED.txt').write_text('Diagnostic candidates only. These bytes precede the independent audit and do not authorize publication.\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-report-loading-unaccepted-diagnostics
+          path: out/unaccepted-report-loading/
+          retention-days: 90
+          compression-level: 0
+          if-no-files-found: error
+      - name: Fresh-process SDK signer and exact payload reconstruction with independent hash seed
+        env: {PYTHONHASHSEED: '73422'}
+        run: >-
+          python3 tools/android/interactive/build_client_report_loading_apk.py audit --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor.apk --donor-build-report out/donor-evidence/client-map-startup-apk-build-report.json
+          --qualification out/client-report-loading-qualification.json --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --apk out/client-report-loading-apk/COH-Atlas-Gameplay-0.13.33.apk
+          --build-report out/client-report-loading-apk/client-report-loading-apk-build-report.json
+          --audit-receipt out/client-report-loading-apk/client-report-loading-apk-audit.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-report-loading-apk
+          path: out/client-report-loading-apk/
+          retention-days: 90
+          compression-level: 0
+          if-no-files-found: error
+      - name: Publish the qualified APK only and verify unchanged Assets 1.0.0 metadata
+        if: needs.changes.outputs.publish_enabled == 'true'
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: >-
+          python3 tools/android/interactive/build_client_report_loading_apk.py publish --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor.apk --donor-build-report out/donor-evidence/client-map-startup-apk-build-report.json
+          --qualification out/client-report-loading-qualification.json --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --apk out/client-report-loading-apk/COH-Atlas-Gameplay-0.13.33.apk
+          --build-report out/client-report-loading-apk/client-report-loading-apk-build-report.json
+          --audit-receipt out/client-report-loading-apk/client-report-loading-apk-audit.json
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
+  public-audit:
+    needs: [changes, apk]
+    if: always() && needs.changes.result == 'success' && needs.apk.result == 'success' && needs.changes.outputs.required == 'true' && needs.changes.outputs.publish_enabled == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions: {contents: read, actions: read}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Free unused hosted-runner toolchains for the measured complete asset fixture
+        run: |
+          test "${RUNNER_ENVIRONMENT:-}" = github-hosted
+          df -h "$GITHUB_WORKSPACE"
+          for unused in /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL; do
+            case "$unused" in
+              /usr/share/dotnet|/usr/share/swift|/usr/local/.ghcup|/opt/ghc|/opt/hostedtoolcache/CodeQL)
+                sudo rm -rf -- "$unused"
+                ;;
+              *) exit 1 ;;
+            esac
+          done
+          df -h "$GITHUB_WORKSPACE"
+          python3 - <<'PY'
+          import os, shutil
+          free = shutil.disk_usage(os.environ['GITHUB_WORKSPACE']).free
+          print('Available fixture headroom:', round(free / 1024**3, 2), 'GiB')
+          assert free >= 30 * 1024**3, 'Complete original asset preparation requires 30 GiB runner headroom'
+          PY
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: SDK audit tools only
+        run: timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - uses: actions/download-artifact@v4
+        with: {name: coh-client-report-loading-apk, path: out/accepted}
+      - uses: actions/download-artifact@v4
+        with: {name: coh-client-report-loading-qualification, path: out}
+      - name: Authenticate exact public .32 donor and unchanged asset pack
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          python3 tools/android/interactive/build_client_report_loading_apk.py download-donor --output out/donor.apk
+          python3 tools/android/interactive/build_client_report_loading_apk.py download-donor-evidence --output out/donor-evidence
+          python3 tools/android/interactive/build_client_report_loading_apk.py verify-assets --donor-build-report out/donor-evidence/client-map-startup-apk-build-report.json
+      - name: Download actual public .33 APK, checksum and instructions
+        run: >-
+          python3 tools/android/interactive/build_client_report_loading_apk.py download-public
+          --build-report out/accepted/client-report-loading-apk-build-report.json --output out/public
+      - name: Audit actual public signer, DEX, exact retained .32 native/assets and complete current preparation
+        env: {PYTHONHASHSEED: '2022'}
+        run: >-
+          python3 tools/android/interactive/build_client_report_loading_apk.py audit --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor.apk --donor-build-report out/donor-evidence/client-map-startup-apk-build-report.json
+          --qualification out/client-report-loading-qualification.json --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --apk out/public/COH-Atlas-Gameplay-0.13.33.apk
+          --build-report out/accepted/client-report-loading-apk-build-report.json
+          --audit-receipt out/client-report-loading-public-apk-audit.json
+      - name: Record public-byte proof without physical Thor claims
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          report = json.loads(Path('out/accepted/client-report-loading-apk-build-report.json').read_text())
+          Path('out/client-report-loading-public-byte-audit.json').write_text(json.dumps({
+            'format': 1, 'status': 'passed', 'repository_commit': report['repository_commit'],
+            'run_id': int(os.environ['GITHUB_RUN_ID']), 'apk': {key: report[key] for key in ('bytes', 'sha256', 'version_name', 'version_code')},
+            'public_apk_verified': True, 'actual_runtime_asset_installers_verified': True, 'full_startup_orchestration_verified': True,
+            'java_or_dex_recompiled': True, 'native_runtime_booted': False,
+            'retained_game_and_dbserver_verified': True, 'retained_game_archive_native_members': 24,
+            'native_mapserver_recompiled': False, 'retained_032_map_startup_component_verified': True,
+            'all_native_member_bytes_retained': True,
+            'current_tests_run': report['qualification']['current_tests_run'],
+            'inherited_tests_retained': report['qualification']['inherited_tests_retained'],
+            'current_suites_run': report['qualification']['current_suites_run'],
+            'inherited_suites_retained': report['qualification']['inherited_suites_retained'],
+            'original_asset_public_byte_audit_artifact_id': 11708366753,
+            'unchanged_assets_1_0_0_metadata_verified': True, 'asset_release_republished': False,
+            'physical_recovery_validated': False, 'physical_kings_row_zoning_validated': False,
+            'physical_fps_gain_validated': False, 'physical_map_startup_speedup_validated': False,
+            'sub_30_second_map_startup_validated': False}, indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-report-loading-public-byte-audit
+          path: out/client-report-loading-public-byte-audit.json
+          retention-days: 90
+          if-no-files-found: error

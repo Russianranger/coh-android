@@ -1,0 +1,169 @@
+{
+  "format": 1,
+  "gate": "graphical_character_creation_and_ordinary_save_hosted",
+  "status": "passed",
+  "run_id": 36862027713,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36862027713",
+  "runtime_job_id": 110369664153,
+  "repository_commit": "bc4d750deab00f0fdbbd084b32b563aa3abdddce",
+  "external_driver_commit": "bc4d750deab00f0fdbbd084b32b563aa3abdddce",
+  "apk_sha256": "001e1dc4db87f1184814a8f75a33953504d6ee06b238490a8c26c71c4ca7f963",
+  "apk_bytes": 386658292,
+  "runtime_manifest_sha256": "e8191c6596067d1f697b37e3d2237af9f32350ca6568afd0aa157012a69e77e9",
+  "session_id": "539e536565799dcb9a3a33f40783da71",
+  "elapsed_seconds": 1746.178,
+  "guest_failures": [],
+  "review": {
+    "scope": "Graphical Male/Clear creator, first Atlas map connection and ordinary committed save; Atlas scenery remains incomplete.",
+    "creator_default_male_complete": true,
+    "creator_forearms_and_hands_rendered": true,
+    "creator_tights_boots_hair_rendered": true,
+    "atlas_hud_and_welcome_present": true,
+    "atlas_environment_rendered": false,
+    "atlas_visual_finding": "Black environment without visible ground, buildings or scenery, and a dark-blue avatar silhouette. Do not claim rendered Atlas or playable gameplay.",
+    "asset_warning_review": "879 distinct missing GEO paths include 37 Atlas makeover dependencies. These gaps are consistent with incomplete scenery, but this evidence does not establish the sole rendering cause.",
+    "ordinary_logout_returns_to_login": true,
+    "manual_review": "Root and independent reviewer inspected creator, connected and post-save screenshots.",
+    "tested_driver_revision": "bc4d750d; the subsequent host-only text-entry/OCR correction is separately validated and does not revalidate this historical receipt under its newer schema."
+  },
+  "progress": {
+    "client_startup_seconds": 399.92,
+    "local_login_verified": true,
+    "character_id": 1,
+    "auth_id": 1353310574,
+    "db_map_assignment_observed": true,
+    "map_autogroup_policy": {
+      "native_option": "-donotautogroup",
+      "configured_do_not_auto_group": true,
+      "policy_basis": "native_production_default"
+    },
+    "map_startup_guard_passed": true,
+    "character_progress_guard_passed": true,
+    "client_ready_evidence": {
+      "path": "logs/dbserver/entity_2026-10-01-13-00-00.log",
+      "line_sha256": "7e35a9a7857cd48f1d13375b89c3a29d34cca69e51d4728a7e4c0d990a59e46b",
+      "log_timestamp": "261001 13:01:10",
+      "log_route": "embedded_dbserver_logserver",
+      "map_instance": "City_01_01_1",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "source": "current_owned_mapserver_CLIENT_READY_resumeCharacter_success",
+      "loaded_world_assets": true
+    },
+    "client_ready_observed_utc": "2026-10-01T13:02:16.738185+00:00",
+    "logout_delivery": {
+      "action": "quittologin",
+      "character_id": 1,
+      "client_pid": 656,
+      "format": 1,
+      "sent_utc_ms": 1790859748123,
+      "session_id": "539e536565799dcb9a3a33f40783da71"
+    },
+    "logout_timer_evidence": {
+      "path": "logs/dbserver/entity_2026-10-01-13-00-00.log",
+      "line_sha256": "e0f89ba92b90b52a5641c8c766cddacd4678704b3ab576a18719109a7f5a20be",
+      "log_timestamp": "261001 13:02:29",
+      "log_route": "embedded_dbserver_logserver",
+      "map_instance": "City_01_01_1",
+      "reason": "Logout timer expired",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "source": "current_owned_server_entity_log_live_client_logout_timer"
+    },
+    "saved_utc": "2026-10-01T13:03:32.925078+00:00",
+    "snapshot_sha256": "82000c910d53694ea8386f74db261ace6f05d0026ddac0dbb8304558765d6e2d",
+    "table_sha256": {
+      "ents": "c12fa7e6e40a01f5fbd797e87cc270cf1977f7d53e41c2fef2650099dd7c2766",
+      "ents2": "36dd26e88ac48da0adda2a83b5f72bf8c291d9ac5032b49fafe5fd5990f3d1ff",
+      "powers": "0c508f982058cf200f13235ea0229d4d14b47b97a290c9064a308ca856a52361",
+      "costumeparts": "1dbc429e682d91bdbd9d719b2ad769698901b9b3319a9ed671a402bb3309b7f2"
+    },
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 14
+    },
+    "host_input_actions": 68,
+    "post_login_fresh_captures": 3,
+    "connected_fresh_captures": 3,
+    "post_save_fresh_captures": 3
+  },
+  "character_proof": {
+    "verified": true,
+    "connected_on_atlas": true,
+    "committed_sql_verified": true,
+    "requested_logout_observed": true,
+    "logout_timer_observed": true,
+    "disconnected_before_sql": true,
+    "forced_stop_before_save": false,
+    "reopen_verified": false,
+    "gameplay_verified": false
+  },
+  "platform_scope": {
+    "native_arm64_host": true,
+    "android_execution_validated": false,
+    "android_surface_validated": false,
+    "hardware_acceleration_validated": false,
+    "gameplay_validated": false,
+    "device_test_requested": "One in-place Thor creation/save session; Local Login0.8.1 was already accepted."
+  },
+  "cleanup": {
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "owned_workers_remaining": 0,
+    "inspection_failures": 0,
+    "host_cleanup": {
+      "stop_requested": false,
+      "grace_seconds": 180,
+      "forced_quit": false,
+      "forced_kill": false,
+      "errors": [],
+      "process_reaped": true
+    },
+    "guest_evidence_export": {
+      "files": [
+        "latest-report.json",
+        "report.zip"
+      ],
+      "fallback_used": false,
+      "errors": []
+    },
+    "database_preserved": true
+  },
+  "evidence": {
+    "runtime_artifact_id": 11164315967,
+    "runtime_artifact_bytes": 72279263,
+    "runtime_artifact_sha256": "b360972ceec148399c1eb0758ae2b3486b4d696f3bff8964fe54850c61c82d2f",
+    "files": {
+      "host-client-report.json": {
+        "bytes": 128387,
+        "sha256": "910f0f82b59dc9bb7d7e81a9e953c78ade2900bfe16a419a113cb110b30ed093"
+      },
+      "latest-report.json": {
+        "bytes": 151769,
+        "sha256": "e49595349a9c50b90ec95f29040942b6df76cc4201d09689ef203be5420a09db"
+      },
+      "report.zip": {
+        "bytes": 4780735,
+        "sha256": "c69bd824289c50a7a0b51618f8686cd0aea0d66ea214d6142b3a945d8454657f"
+      },
+      "character-49-before-accept_default_costume.png": {
+        "bytes": 463454,
+        "sha256": "2c6677dddbde5f9476b7aede25111f1552a8504d319eeeef40c72f0b06c621ae"
+      },
+      "connected_captures-001.png": {
+        "bytes": 129483,
+        "sha256": "d0933e76ad96b97c45f4384796d2a1630c82b93a377f0ad948f4447a0f2034ba"
+      },
+      "post_save_captures-002.png": {
+        "bytes": 962325,
+        "sha256": "9e80ee239e9529138ad3014a2d9258afcceac1eb28ce62bd5a449734fc2594ef"
+      }
+    }
+  }
+}

@@ -1,0 +1,2608 @@
+{
+  "status": "fresh_fakeauth_character_persistence_short_resume_passed_gameplay_unvalidated",
+  "started_utc": "2026-09-27T04:23:32.119979+00:00",
+  "failures": [],
+  "phases": [
+    {
+      "phase": "first_services_ready",
+      "time_utc": "2026-09-27T04:28:25.018035+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "account_empty",
+      "time_utc": "2026-09-27T04:28:26.604731+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "created_connected",
+      "time_utc": "2026-09-27T04:28:46.906077+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "influence_observed_while_connected",
+      "time_utc": "2026-09-27T04:28:51.643576+00:00",
+      "status": "passed",
+      "value": 12345,
+      "scope": "CMD debug live entity conPrintf response plus connected MapId1 status; no forced save"
+    },
+    {
+      "phase": "protocol_logout_committed",
+      "time_utc": "2026-09-27T04:28:58.822089+00:00",
+      "status": "passed",
+      "quitnow_is_save_ack": false,
+      "client_forced_stop_before_commit": false
+    },
+    {
+      "phase": "restart_services_ready",
+      "time_utc": "2026-09-27T04:29:48.354771+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "restart_saved_state",
+      "time_utc": "2026-09-27T04:29:50.086778+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "short_resume_and_committed_state",
+      "time_utc": "2026-09-27T04:30:05.176009+00:00",
+      "status": "passed"
+    }
+  ],
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+  "binary_sha256": {
+    "DbServer.exe": "fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8",
+    "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+    "TestClient.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31"
+  },
+  "schema_report_sha256": "ae73b29e193d34950be2043c8fb0ef41b9055d75d573f83e6059e12d95f1a5bf",
+  "comparison_report_sha256": "5425672253f7e6f9de4751500115052ac9ca1f0d2fe78471ddeec93add47eb4b",
+  "comparison_inputs_sha256": "078fe831204363a957100b98bebc5d9616ae425e6f9947ff2c1022fc5d297ca9",
+  "one_map_report_sha256": "ef45cc77ca53dfc00b4a44c7a61c1f13f8a0a5a4368b4f0b247f5ebea5b1b06c",
+  "source_contract": {
+    "list_id": 3,
+    "map_id": 1,
+    "map_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+    "influence": 12345,
+    "source_sha256": {
+      "Utilities/TestClient/src/main.c": "cac8255edf1946c910386669856040342bc0e5900695a564c8522622bd38ed83",
+      "Utilities/TestClient/src/testClientCmdParse.c": "c0a31cdaedfa91fde32f4236f6fbc2f78eb171d8848dc7fd78c41f9c97975dd6",
+      "DBServer/src/status.c": "2856f764f8da7daeb695cc08fe35d6008957d9b1d1108d807585214faadd5174",
+      "Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+      "MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+      "MapServer/src/cmdparse/cmdserver.c": "914c1eb79ff79c35c31f8aada3826dcb51757e7cfc519495bfae84340958f57b",
+      "Utilities/TestClient/src/externs.c": "4ea3b83f408e447cd189f49b18527fa3d395b92b63cd2b2c20676ebada5575bb",
+      "MapServer/src/cmdparse/cmdservercsr.c": "8f50b7d05468692e7de3833d7449c9a36446ab3672abe884e19497bce36c65aa",
+      "Utilities/TestClient/src/chatter.c": "ab7a72bb24bc5231234e5cc4cb1b5d6ecb1c3f31a30ececb3d1f26487139b3f2",
+      "Utilities/TestClient/src/win_init.c": "e7ae3630c5a44ee3452f743af0e7aa99a629d40f38f64ef797c96fbf184e9c3c",
+      "libs/UtilitiesLib/src/utils/utils.c": "9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf"
+    },
+    "resume_scope": "Stock order-sensitive -justlogin -character clears CREATE and STAY_CONNECTED",
+    "quit_ack_scope": "QuitNow confirms the request only; server status plus committed SQL are required"
+  },
+  "selected_sql_contract": {
+    "fields": {
+      "ents": [
+        "containerid",
+        "authid",
+        "authname",
+        "name",
+        "class",
+        "origin",
+        "level",
+        "experiencepoints",
+        "influencepoints",
+        "description",
+        "motto",
+        "datecreated"
+      ],
+      "ents2": [
+        "containerid",
+        "subid",
+        "curbuild",
+        "originalprimary",
+        "originalsecondary",
+        "praetorianprogress",
+        "playersubtype",
+        "influencetype"
+      ],
+      "powers": [
+        "containerid",
+        "subid",
+        "powerid",
+        "categoryname",
+        "powersetname",
+        "powername",
+        "powerlevelbought",
+        "powernumboostsbought",
+        "powersetlevelbought",
+        "buildnum",
+        "uniqueid"
+      ],
+      "costumeparts": [
+        "containerid",
+        "subid",
+        "name",
+        "geom",
+        "tex1",
+        "tex2",
+        "displayname",
+        "region",
+        "bodyset",
+        "color1",
+        "color2",
+        "costumenum",
+        "fxname",
+        "color3",
+        "color4"
+      ]
+    },
+    "row_keys": {
+      "ents": [
+        "containerid"
+      ],
+      "ents2": [
+        "containerid",
+        "subid"
+      ],
+      "powers": [
+        "containerid",
+        "subid"
+      ],
+      "costumeparts": [
+        "containerid",
+        "subid"
+      ]
+    },
+    "separate_progression_field": "ents.logincount",
+    "expected_influence": 12345
+  },
+  "port_preflight": [
+    {
+      "service": "postgresql",
+      "protocol": "TCP",
+      "port": 15437,
+      "available_before_start": true
+    },
+    {
+      "service": "dbserver",
+      "protocol": "TCP",
+      "port": 6997,
+      "available_before_start": true
+    },
+    {
+      "service": "map_client",
+      "protocol": "UDP",
+      "port": 7001,
+      "available_before_start": true
+    }
+  ],
+  "diagnostic_version": "coh-persistence-diagnostic",
+  "diagnostic_version_source": "diagnostic fallback; reference package contains no patch version",
+  "version_compatibility_validated": false,
+  "no_version_check": true,
+  "testclient_console_capture": "Owned helper attaches to stock GUI console before launcher version reply and retains bounded screen buffer through client exit",
+  "character_persistence_validated": true,
+  "gameplay_validated": false,
+  "android_execution_validated": false,
+  "scope": "Fresh fake-auth create, influence command, protocol logout, committed SQL, service restart and short exact-name resume",
+  "network_scope": "Loopback queries; stock game listeners still bind INADDR_ANY on the private disposable host",
+  "raw_evidence_private": true,
+  "status_samples": [
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T04:26:40.849012+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T04:26:43.975990+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T04:26:47.105106+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T04:26:50.227330+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T04:26:53.350058+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:26:56.480987+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:26:58.853049+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:03.211046+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:07.628529+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:12.221925+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:16.598019+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:20.958339+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:25.412272+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:29.763250+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:34.144091+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:38.491405+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:42.839173+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:47.203481+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:51.589799+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:27:56.030255+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:28:00.435129+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:28:04.869715+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:28:09.320580+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "raw": "City_01_01.txt S: 3/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-27T04:28:14.087954+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "raw": "City_01_01.txt S: 7/7  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-27T04:28:18.480929+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 1,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 1/1  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T04:28:22.937554+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T04:29:08.652027+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T04:29:11.904754+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T04:29:15.145869+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T04:29:18.378689+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-27T04:29:21.609573+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:29:24.806300+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:29:27.231924+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T04:29:31.678042+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "raw": "City_01_01.txt S: 2/2  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-27T04:29:36.363460+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "raw": "City_01_01.txt S: 7/7  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-27T04:29:40.788976+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 3,
+      "stats_age_seconds": 3,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 3/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T04:29:45.034701+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 0,
+      "stats_age_seconds": 0,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 0/0  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T04:30:01.818950+00:00"
+    }
+  ],
+  "character_status_samples": [
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T04:28:43.616970+00:00",
+      "phase": "created",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T04:28:51.643576+00:00",
+      "phase": "currency",
+      "character_id": 1
+    },
+    {
+      "loaded": false,
+      "connected": false,
+      "in_map_transfer": false,
+      "sampled_utc": "2026-09-27T04:28:58.414960+00:00",
+      "phase": "logout",
+      "character_id": 1
+    },
+    {
+      "loaded": false,
+      "connected": false,
+      "in_map_transfer": false,
+      "sampled_utc": "2026-09-27T04:29:57.307707+00:00",
+      "phase": "resume_disconnect",
+      "character_id": 1
+    }
+  ],
+  "snapshots": {
+    "after_protocol_logout": {
+      "identity": {
+        "containerid": 1,
+        "authid": 1079838664,
+        "authname": "CohP58bccab415",
+        "name": "TEST12427"
+      },
+      "login_count": 1,
+      "rows": {
+        "ents": [
+          {
+            "containerid": 1,
+            "authid": 1079838664,
+            "authname": "CohP58bccab415",
+            "name": "TEST12427",
+            "class": 245,
+            "origin": 257,
+            "level": null,
+            "experiencepoints": null,
+            "influencepoints": 12345,
+            "description": "Real players bite\\n\\qbite me!\\q",
+            "motto": "TEST12427",
+            "datecreated": "2026-09-27T04:28:35"
+          }
+        ],
+        "ents2": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "curbuild": null,
+            "originalprimary": "Claws",
+            "originalsecondary": "Willpower",
+            "praetorianprogress": null,
+            "playersubtype": null,
+            "influencetype": null
+          }
+        ],
+        "powers": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "powerid": 1,
+            "categoryname": 2312,
+            "powersetname": 2312,
+            "powername": 3117,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 401064466
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "powerid": 2,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 408,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1327800208
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "powerid": 3,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6759,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 446960276
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "powerid": 4,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6756,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1598813304
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "powerid": 5,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 1968,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 49739768
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "powerid": 6,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6744,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 101672052
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "powerid": 7,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6743,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 811536967
+          },
+          {
+            "containerid": 1,
+            "subid": 7,
+            "powerid": 8,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6205,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1451777400
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "powerid": 9,
+            "categoryname": 8865,
+            "powersetname": 2197,
+            "powername": 346,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 854716504
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "powerid": 10,
+            "categoryname": 8866,
+            "powersetname": 3349,
+            "powername": 2225,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 564586690
+          }
+        ],
+        "costumeparts": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "name": null,
+            "geom": 16296,
+            "tex1": 18507,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "name": null,
+            "geom": 20269,
+            "tex1": 18022,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "name": null,
+            "geom": 16437,
+            "tex1": 16554,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "name": null,
+            "geom": 18960,
+            "tex1": 17957,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "name": null,
+            "geom": 18421,
+            "tex1": 18173,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "name": null,
+            "geom": 19722,
+            "tex1": 16317,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "name": null,
+            "geom": 20974,
+            "tex1": 16805,
+            "tex2": 16806,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "name": null,
+            "geom": 16296,
+            "tex1": 17679,
+            "tex2": 19237,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 10,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 12,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 15800,
+            "bodyset": 15800,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": 16205,
+            "color3": 39320,
+            "color4": 5767423
+          },
+          {
+            "containerid": 1,
+            "subid": 13,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 20,
+            "name": null,
+            "geom": 20192,
+            "tex1": 20193,
+            "tex2": 20194,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 21,
+            "name": null,
+            "geom": 20314,
+            "tex1": 20222,
+            "tex2": 20223,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 22,
+            "name": null,
+            "geom": 16418,
+            "tex1": 16419,
+            "tex2": 16420,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 24,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 15800,
+            "bodyset": 15800,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": 16193,
+            "color3": 39320,
+            "color4": 5767423
+          },
+          {
+            "containerid": 1,
+            "subid": 27,
+            "name": null,
+            "geom": 17912,
+            "tex1": 17913,
+            "tex2": 17914,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          }
+        ]
+      }
+    },
+    "after_service_restart": {
+      "identity": {
+        "containerid": 1,
+        "authid": 1079838664,
+        "authname": "CohP58bccab415",
+        "name": "TEST12427"
+      },
+      "login_count": 1,
+      "rows": {
+        "ents": [
+          {
+            "containerid": 1,
+            "authid": 1079838664,
+            "authname": "CohP58bccab415",
+            "name": "TEST12427",
+            "class": 245,
+            "origin": 257,
+            "level": null,
+            "experiencepoints": null,
+            "influencepoints": 12345,
+            "description": "Real players bite\\n\\qbite me!\\q",
+            "motto": "TEST12427",
+            "datecreated": "2026-09-27T04:28:35"
+          }
+        ],
+        "ents2": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "curbuild": null,
+            "originalprimary": "Claws",
+            "originalsecondary": "Willpower",
+            "praetorianprogress": null,
+            "playersubtype": null,
+            "influencetype": null
+          }
+        ],
+        "powers": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "powerid": 1,
+            "categoryname": 2312,
+            "powersetname": 2312,
+            "powername": 3117,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 401064466
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "powerid": 2,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 408,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1327800208
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "powerid": 3,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6759,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 446960276
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "powerid": 4,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6756,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1598813304
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "powerid": 5,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 1968,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 49739768
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "powerid": 6,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6744,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 101672052
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "powerid": 7,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6743,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 811536967
+          },
+          {
+            "containerid": 1,
+            "subid": 7,
+            "powerid": 8,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6205,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1451777400
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "powerid": 9,
+            "categoryname": 8865,
+            "powersetname": 2197,
+            "powername": 346,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 854716504
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "powerid": 10,
+            "categoryname": 8866,
+            "powersetname": 3349,
+            "powername": 2225,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 564586690
+          }
+        ],
+        "costumeparts": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "name": null,
+            "geom": 16296,
+            "tex1": 18507,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "name": null,
+            "geom": 20269,
+            "tex1": 18022,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "name": null,
+            "geom": 16437,
+            "tex1": 16554,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "name": null,
+            "geom": 18960,
+            "tex1": 17957,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "name": null,
+            "geom": 18421,
+            "tex1": 18173,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "name": null,
+            "geom": 19722,
+            "tex1": 16317,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "name": null,
+            "geom": 20974,
+            "tex1": 16805,
+            "tex2": 16806,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "name": null,
+            "geom": 16296,
+            "tex1": 17679,
+            "tex2": 19237,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 10,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 12,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 15800,
+            "bodyset": 15800,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": 16205,
+            "color3": 39320,
+            "color4": 5767423
+          },
+          {
+            "containerid": 1,
+            "subid": 13,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 20,
+            "name": null,
+            "geom": 20192,
+            "tex1": 20193,
+            "tex2": 20194,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 21,
+            "name": null,
+            "geom": 20314,
+            "tex1": 20222,
+            "tex2": 20223,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 22,
+            "name": null,
+            "geom": 16418,
+            "tex1": 16419,
+            "tex2": 16420,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 24,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 15800,
+            "bodyset": 15800,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": 16193,
+            "color3": 39320,
+            "color4": 5767423
+          },
+          {
+            "containerid": 1,
+            "subid": 27,
+            "name": null,
+            "geom": 17912,
+            "tex1": 17913,
+            "tex2": 17914,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          }
+        ]
+      }
+    },
+    "after_short_resume": {
+      "identity": {
+        "containerid": 1,
+        "authid": 1079838664,
+        "authname": "CohP58bccab415",
+        "name": "TEST12427"
+      },
+      "login_count": 2,
+      "rows": {
+        "ents": [
+          {
+            "containerid": 1,
+            "authid": 1079838664,
+            "authname": "CohP58bccab415",
+            "name": "TEST12427",
+            "class": 245,
+            "origin": 257,
+            "level": null,
+            "experiencepoints": null,
+            "influencepoints": 12345,
+            "description": "Real players bite\\n\\qbite me!\\q",
+            "motto": "TEST12427",
+            "datecreated": "2026-09-27T04:28:35"
+          }
+        ],
+        "ents2": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "curbuild": null,
+            "originalprimary": "Claws",
+            "originalsecondary": "Willpower",
+            "praetorianprogress": null,
+            "playersubtype": null,
+            "influencetype": null
+          }
+        ],
+        "powers": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "powerid": 1,
+            "categoryname": 2312,
+            "powersetname": 2312,
+            "powername": 3117,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 401064466
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "powerid": 2,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 408,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1327800208
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "powerid": 3,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6759,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 446960276
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "powerid": 4,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6756,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1598813304
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "powerid": 5,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 1968,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 49739768
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "powerid": 6,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6744,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 101672052
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "powerid": 7,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6743,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 811536967
+          },
+          {
+            "containerid": 1,
+            "subid": 7,
+            "powerid": 8,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6205,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1451777400
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "powerid": 9,
+            "categoryname": 8865,
+            "powersetname": 2197,
+            "powername": 346,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 854716504
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "powerid": 10,
+            "categoryname": 8866,
+            "powersetname": 3349,
+            "powername": 2225,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 564586690
+          }
+        ],
+        "costumeparts": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "name": null,
+            "geom": 16296,
+            "tex1": 18507,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "name": null,
+            "geom": 20269,
+            "tex1": 18022,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "name": null,
+            "geom": 16437,
+            "tex1": 16554,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "name": null,
+            "geom": 18960,
+            "tex1": 17957,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "name": null,
+            "geom": 18421,
+            "tex1": 18173,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "name": null,
+            "geom": 19722,
+            "tex1": 16317,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "name": null,
+            "geom": 20974,
+            "tex1": 16805,
+            "tex2": 16806,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "name": null,
+            "geom": 16296,
+            "tex1": 17679,
+            "tex2": 19237,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 10,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 12,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 15800,
+            "bodyset": 15800,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": 16205,
+            "color3": 39320,
+            "color4": 5767423
+          },
+          {
+            "containerid": 1,
+            "subid": 13,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 20,
+            "name": null,
+            "geom": 20192,
+            "tex1": 20193,
+            "tex2": 20194,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 21,
+            "name": null,
+            "geom": 20314,
+            "tex1": 20222,
+            "tex2": 20223,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20144,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 22,
+            "name": null,
+            "geom": 16418,
+            "tex1": 16419,
+            "tex2": 16420,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20939,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 24,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 15800,
+            "bodyset": 15800,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": 16193,
+            "color3": 39320,
+            "color4": 5767423
+          },
+          {
+            "containerid": 1,
+            "subid": 27,
+            "name": null,
+            "geom": 17912,
+            "tex1": 17913,
+            "tex2": 17914,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 39320,
+            "color2": 5767423,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          }
+        ]
+      }
+    }
+  },
+  "account": "CohP58bccab415",
+  "redacted_logs": [
+    {
+      "file": "selected-diagnostics.txt",
+      "sha256": "746fdda7561a3d3527887322999181983583ae5095d32e9a87277e4f68cb1ccf",
+      "bytes": 657,
+      "scope": "Selected diagnostics; complete raw logs and container payloads remain private"
+    }
+  ],
+  "benign_catalog_notices": {
+    "count": 96,
+    "lines": [
+      "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+      "260927 04:26:33 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "260927 04:26:33 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "260927 04:26:33 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "260927 04:26:33 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+      "260927 04:29:06 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+      "260927 04:29:07 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping"
+    ],
+    "line_limit": 100
+  },
+  "attribute_mapping_sha256": {
+    "attributes": "19a5b30a15442027e6ee6a05d1cd43898c353334bb2cb10e4ceb1aefaeb5b097",
+    "badgestatsattributes": "cc37f654c2a7160a4191c553d3a726eb904bfef40d6eee172f05197d4066411c",
+    "pophelpattributes": "aadbef3e6bb10c9945d6ec166d30aaec0c386c607e47ab1e6931fc1a6ca320bf"
+  },
+  "character": {
+    "container_id": 1,
+    "name": "TEST12427",
+    "account": "CohP58bccab415"
+  },
+  "influence_requested_utc": "2026-09-27T04:28:46.907081+00:00",
+  "live_currency_evidence": {
+    "player": "TEST12427",
+    "account": "CohP58bccab415",
+    "influence": 12345,
+    "time_utc": "2026-09-27T04:28:48.473701+00:00",
+    "sequence": 15
+  },
+  "quit_requested_utc": "2026-09-27T04:28:53.892880+00:00",
+  "first_session_pipe": {
+    "client_pid": 7996,
+    "pid_verified": true,
+    "version_requests": 1,
+    "disconnected": false,
+    "events": [
+      {
+        "kind": "PID",
+        "value": "7996",
+        "time_utc": "2026-09-27T04:28:26.958600+00:00",
+        "sequence": 1
+      },
+      {
+        "kind": "Status",
+        "value": "Loading",
+        "time_utc": "2026-09-27T04:28:26.958600+00:00",
+        "sequence": 3
+      },
+      {
+        "kind": "AuthName",
+        "value": "CohP58bccab415",
+        "time_utc": "2026-09-27T04:28:26.959596+00:00",
+        "sequence": 4
+      },
+      {
+        "kind": "VersionRequest",
+        "value": "NULL",
+        "time_utc": "2026-09-27T04:28:26.959596+00:00",
+        "sequence": 5
+      },
+      {
+        "kind": "Status",
+        "value": "Connecting",
+        "time_utc": "2026-09-27T04:28:35.082909+00:00",
+        "sequence": 6
+      },
+      {
+        "kind": "MapName",
+        "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "time_utc": "2026-09-27T04:28:35.571941+00:00",
+        "sequence": 9
+      },
+      {
+        "kind": "Player",
+        "value": "TEST12427",
+        "time_utc": "2026-09-27T04:28:35.571941+00:00",
+        "sequence": 10
+      },
+      {
+        "kind": "Status",
+        "value": "Running",
+        "time_utc": "2026-09-27T04:28:35.571941+00:00",
+        "sequence": 12
+      },
+      {
+        "kind": "QuitNow",
+        "value": "",
+        "time_utc": "2026-09-27T04:28:53.903894+00:00",
+        "sequence": 16
+      }
+    ]
+  },
+  "restart_comparison": {
+    "phase": "restart",
+    "identity_unchanged": true,
+    "selected_rows_unchanged": true,
+    "only_expected_influence_change": false,
+    "login_count_before": 1,
+    "login_count_after": 1,
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 10,
+      "costumeparts": 17
+    }
+  },
+  "resume_probe": {
+    "slot": 0,
+    "scene_exchange_observed": true,
+    "creation_disabled": true,
+    "active_gameplay_confirmed": false,
+    "scope": "Short resume/scene probe; queued CLIENT_READY processing is unproven"
+  },
+  "resume_session_pipe": {
+    "client_pid": 736,
+    "pid_verified": true,
+    "version_requests": 1,
+    "disconnected": true,
+    "events": [
+      {
+        "kind": "PID",
+        "value": "736",
+        "time_utc": "2026-09-27T04:29:50.247438+00:00",
+        "sequence": 1
+      },
+      {
+        "kind": "Status",
+        "value": "Loading",
+        "time_utc": "2026-09-27T04:29:50.247438+00:00",
+        "sequence": 3
+      },
+      {
+        "kind": "AuthName",
+        "value": "CohP58bccab415",
+        "time_utc": "2026-09-27T04:29:50.247438+00:00",
+        "sequence": 4
+      },
+      {
+        "kind": "VersionRequest",
+        "value": "NULL",
+        "time_utc": "2026-09-27T04:29:50.247438+00:00",
+        "sequence": 5
+      },
+      {
+        "kind": "Status",
+        "value": "Connecting",
+        "time_utc": "2026-09-27T04:29:52.299764+00:00",
+        "sequence": 6
+      },
+      {
+        "kind": "MapName",
+        "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "time_utc": "2026-09-27T04:29:52.652782+00:00",
+        "sequence": 9
+      },
+      {
+        "kind": "Player",
+        "value": "TEST12427",
+        "time_utc": "2026-09-27T04:29:52.652782+00:00",
+        "sequence": 10
+      },
+      {
+        "kind": "Status",
+        "value": "Running",
+        "time_utc": "2026-09-27T04:29:52.652782+00:00",
+        "sequence": 12
+      }
+    ]
+  },
+  "resume_comparison": {
+    "phase": "resume",
+    "identity_unchanged": true,
+    "selected_rows_unchanged": true,
+    "only_expected_influence_change": false,
+    "login_count_before": 1,
+    "login_count_after": 2,
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 10,
+      "costumeparts": 17
+    }
+  },
+  "launcher_sessions": [
+    {
+      "client_pid": 7996,
+      "pid_verified": true,
+      "version_requests": 1,
+      "disconnected": true,
+      "events": [
+        {
+          "kind": "PID",
+          "value": "7996",
+          "time_utc": "2026-09-27T04:28:26.958600+00:00",
+          "sequence": 1
+        },
+        {
+          "kind": "Status",
+          "value": "Loading",
+          "time_utc": "2026-09-27T04:28:26.958600+00:00",
+          "sequence": 3
+        },
+        {
+          "kind": "AuthName",
+          "value": "CohP58bccab415",
+          "time_utc": "2026-09-27T04:28:26.959596+00:00",
+          "sequence": 4
+        },
+        {
+          "kind": "VersionRequest",
+          "value": "NULL",
+          "time_utc": "2026-09-27T04:28:26.959596+00:00",
+          "sequence": 5
+        },
+        {
+          "kind": "Status",
+          "value": "Connecting",
+          "time_utc": "2026-09-27T04:28:35.082909+00:00",
+          "sequence": 6
+        },
+        {
+          "kind": "MapName",
+          "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+          "time_utc": "2026-09-27T04:28:35.571941+00:00",
+          "sequence": 9
+        },
+        {
+          "kind": "Player",
+          "value": "TEST12427",
+          "time_utc": "2026-09-27T04:28:35.571941+00:00",
+          "sequence": 10
+        },
+        {
+          "kind": "Status",
+          "value": "Running",
+          "time_utc": "2026-09-27T04:28:35.571941+00:00",
+          "sequence": 12
+        },
+        {
+          "kind": "QuitNow",
+          "value": "",
+          "time_utc": "2026-09-27T04:28:53.903894+00:00",
+          "sequence": 16
+        }
+      ]
+    },
+    {
+      "client_pid": 736,
+      "pid_verified": true,
+      "version_requests": 1,
+      "disconnected": true,
+      "events": [
+        {
+          "kind": "PID",
+          "value": "736",
+          "time_utc": "2026-09-27T04:29:50.247438+00:00",
+          "sequence": 1
+        },
+        {
+          "kind": "Status",
+          "value": "Loading",
+          "time_utc": "2026-09-27T04:29:50.247438+00:00",
+          "sequence": 3
+        },
+        {
+          "kind": "AuthName",
+          "value": "CohP58bccab415",
+          "time_utc": "2026-09-27T04:29:50.247438+00:00",
+          "sequence": 4
+        },
+        {
+          "kind": "VersionRequest",
+          "value": "NULL",
+          "time_utc": "2026-09-27T04:29:50.247438+00:00",
+          "sequence": 5
+        },
+        {
+          "kind": "Status",
+          "value": "Connecting",
+          "time_utc": "2026-09-27T04:29:52.299764+00:00",
+          "sequence": 6
+        },
+        {
+          "kind": "MapName",
+          "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+          "time_utc": "2026-09-27T04:29:52.652782+00:00",
+          "sequence": 9
+        },
+        {
+          "kind": "Player",
+          "value": "TEST12427",
+          "time_utc": "2026-09-27T04:29:52.652782+00:00",
+          "sequence": 10
+        },
+        {
+          "kind": "Status",
+          "value": "Running",
+          "time_utc": "2026-09-27T04:29:52.652782+00:00",
+          "sequence": 12
+        }
+      ]
+    }
+  ],
+  "processes": [
+    {
+      "label": "first-dbserver",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 220.063
+    },
+    {
+      "label": "first-baseline-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 210.032
+    },
+    {
+      "label": "first-baseline-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 206.079
+    },
+    {
+      "label": "first-baseline-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 202.938
+    },
+    {
+      "label": "first-baseline-3",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 199.829
+    },
+    {
+      "label": "first-baseline-4",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 196.688
+    },
+    {
+      "label": "first-baseline-5",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 193.579
+    },
+    {
+      "label": "first-atlas-park",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 192.454
+    },
+    {
+      "label": "first-ready-6",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 191.313
+    },
+    {
+      "label": "first-ready-7",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 186.922
+    },
+    {
+      "label": "first-ready-8",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 182.5
+    },
+    {
+      "label": "first-ready-9",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 177.969
+    },
+    {
+      "label": "first-ready-10",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 173.579
+    },
+    {
+      "label": "first-ready-11",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 169.204
+    },
+    {
+      "label": "first-ready-12",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 164.797
+    },
+    {
+      "label": "first-ready-13",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 160.391
+    },
+    {
+      "label": "first-ready-14",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 156.047
+    },
+    {
+      "label": "first-ready-15",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 151.672
+    },
+    {
+      "label": "first-ready-16",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 147.313
+    },
+    {
+      "label": "first-ready-17",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 142.954
+    },
+    {
+      "label": "first-ready-18",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 138.594
+    },
+    {
+      "label": "first-ready-19",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 134.172
+    },
+    {
+      "label": "first-ready-20",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 129.782
+    },
+    {
+      "label": "first-ready-21",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 125.313
+    },
+    {
+      "label": "first-ready-22",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 120.875
+    },
+    {
+      "label": "first-ready-23",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 116.313
+    },
+    {
+      "label": "first-ready-24",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 111.704
+    },
+    {
+      "label": "first-ready-25",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 107.25
+    },
+    {
+      "label": "create-client",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 102.297
+    },
+    {
+      "label": "find-created-character",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 91.125
+    },
+    {
+      "label": "created-status-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 86.5
+    },
+    {
+      "label": "currency-status-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 78.5
+    },
+    {
+      "label": "logout-status-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 71.719
+    },
+    {
+      "label": "restart-dbserver",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 66.641
+    },
+    {
+      "label": "restart-baseline-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 63.594
+    },
+    {
+      "label": "restart-baseline-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 58.204
+    },
+    {
+      "label": "restart-baseline-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 54.954
+    },
+    {
+      "label": "restart-baseline-3",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 51.719
+    },
+    {
+      "label": "restart-baseline-4",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 48.5
+    },
+    {
+      "label": "restart-baseline-5",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 45.282
+    },
+    {
+      "label": "restart-atlas-park",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 44.125
+    },
+    {
+      "label": "restart-ready-6",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 42.985
+    },
+    {
+      "label": "restart-ready-7",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 38.532
+    },
+    {
+      "label": "restart-ready-8",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 33.875
+    },
+    {
+      "label": "restart-ready-9",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 29.422
+    },
+    {
+      "label": "restart-ready-10",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 25.079
+    },
+    {
+      "label": "resume-client",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 18.844
+    },
+    {
+      "label": "resume_disconnect-status-3",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 12.797
+    },
+    {
+      "label": "final-map-status",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 8.313
+    }
+  ],
+  "console_observers": [
+    {
+      "label": "create-client",
+      "ready": true,
+      "method": "exact_pid_console_screen_buffer",
+      "raw_evidence_private": true,
+      "buffer_rows_limit": 16384,
+      "capture_byte_limit": 16777216,
+      "width": 200,
+      "height": 16384,
+      "snapshots": 659,
+      "used_rows": 145,
+      "final_snapshot": true,
+      "observer": {
+        "label": "create-client-console-observer",
+        "exit_code": 0,
+        "forced_stop": false,
+        "elapsed_seconds": 102.282
+      }
+    },
+    {
+      "label": "resume-client",
+      "ready": true,
+      "method": "exact_pid_console_screen_buffer",
+      "raw_evidence_private": true,
+      "buffer_rows_limit": 16384,
+      "capture_byte_limit": 16777216,
+      "width": 200,
+      "height": 16384,
+      "snapshots": 47,
+      "used_rows": 116,
+      "final_snapshot": true,
+      "observer": {
+        "label": "resume-client-console-observer",
+        "exit_code": 0,
+        "forced_stop": false,
+        "elapsed_seconds": 18.844
+      }
+    }
+  ],
+  "shutdown_scope": "Owned disposable processes stopped; graceful whole-server shutdown remains unvalidated",
+  "finished_utc": "2026-09-27T04:30:08.939706+00:00"
+}

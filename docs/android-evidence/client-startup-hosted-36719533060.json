@@ -1,0 +1,650 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "exact_apk_actual_client_native_arm64_hosted_qualification",
+  "run_id": 36719533060,
+  "runtime_job_id": 109902400504,
+  "repository_commit": "5e4e8f2f0acc78e397a3ee8c1eb7df6f661953cb",
+  "source_tree": "91f5b8e68785a68b29354b26d27a7e5244c75129",
+  "apk": {
+    "bytes": 370539567,
+    "sha256": "ca506e5c22369de04d80cb98b6a747bd818ef20c81245806b6d7271357f3377d"
+  },
+  "evidence_artifact": {
+    "id": 11099850559,
+    "bytes": 19918376,
+    "sha256": "a3fb725787149bd85272a9fc9c9dea42f56f90e59ec5d70b4fb3ea481292b51e"
+  },
+  "raw_reports": {
+    "guest/latest-report.json": {
+      "sha256": "fd3dc93d4fc96f371cb60405156e234bd49e559c3541521d47ef18115e7985e7",
+      "bytes": 46926
+    },
+    "client-evidence/host-client-report.json": {
+      "sha256": "1c294bb6bd91b07766814055174f89176765337100bcd63a4d748233dc8166c7",
+      "bytes": 12515
+    }
+  },
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "client_executable_sha256": "81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca",
+  "client_executable_modified": false,
+  "runtime_manifest_sha256": "f78e33baf8f924f2f54cb8c8c0659114f23e4e52240f4529357a32df85bdeb9c",
+  "session_id": "40098db28122154bb08b139c2a3d7d6e",
+  "client_launch": {
+    "session_id": "40098db28122154bb08b139c2a3d7d6e",
+    "pid": 460
+  },
+  "startup_timeout_seconds": 900,
+  "required_observation_seconds": 30,
+  "failures": [],
+  "timing": {
+    "workflow_job_started_utc": "2026-09-30T13:12:51.4814444Z",
+    "host_step_started_utc": "2026-09-30T13:14:28.1538788Z",
+    "guest_started_utc": "2026-09-30T13:15:18.120408+00:00",
+    "private_data_ready_utc": "2026-09-30T13:16:43.290137+00:00",
+    "wine_initialization_seconds": 39.036,
+    "client_stage_started_utc": "2026-09-30T13:17:24.410523+00:00",
+    "startup_elapsed_seconds": 362.742,
+    "readiness_event": {
+      "type": "client_startup_observed",
+      "stage": "actual_client_startup",
+      "time_utc": "2026-09-30T13:23:27.609224+00:00",
+      "session_id": "40098db28122154bb08b139c2a3d7d6e",
+      "client_pid": 460,
+      "menu_visual_validated": false
+    },
+    "live_observation_seconds": 33.433,
+    "client_stage_passed_utc": "2026-09-30T13:24:01.358658+00:00",
+    "guest_cleanup_finished_utc": "2026-09-30T13:24:04.275184+00:00",
+    "host_elapsed_seconds": 527.923,
+    "workflow_job_cleanup_utc": "2026-09-30T13:24:07.9154827Z"
+  },
+  "readiness": {
+    "renderer_initialized": true,
+    "all_data_loaded": true,
+    "client_main_loop_reached": true,
+    "client_window_observed": true,
+    "startup_observed": true
+  },
+  "stages": [
+    {
+      "stage": "client_inputs",
+      "status": "passed",
+      "started_utc": "2026-09-30T13:15:18.144748+00:00",
+      "finished_utc": "2026-09-30T13:15:18.180624+00:00"
+    },
+    {
+      "stage": "client_private_data",
+      "status": "passed",
+      "started_utc": "2026-09-30T13:15:18.180829+00:00",
+      "finished_utc": "2026-09-30T13:16:43.290137+00:00"
+    },
+    {
+      "stage": "presentation_display",
+      "status": "passed",
+      "started_utc": "2026-09-30T13:16:43.290351+00:00",
+      "finished_utc": "2026-09-30T13:16:43.345938+00:00"
+    },
+    {
+      "stage": "wine_initialization",
+      "status": "passed",
+      "started_utc": "2026-09-30T13:16:43.346188+00:00",
+      "finished_utc": "2026-09-30T13:17:22.383167+00:00"
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "status": "passed",
+      "started_utc": "2026-09-30T13:17:22.383344+00:00",
+      "finished_utc": "2026-09-30T13:17:22.789621+00:00"
+    },
+    {
+      "stage": "actual_client_startup",
+      "status": "passed",
+      "started_utc": "2026-09-30T13:17:24.410523+00:00",
+      "finished_utc": "2026-09-30T13:24:01.358658+00:00"
+    }
+  ],
+  "observation_completed": true,
+  "client_windows": [
+    {
+      "window_id": 16777219,
+      "title": "City of Heroes : PID: 460",
+      "width": 800,
+      "height": 600,
+      "mapped": true
+    }
+  ],
+  "graphics_observation": {
+    "vendor": "Mesa/X.org",
+    "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+    "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+    "renderer_classification": "software"
+  },
+  "main_loop_registry_evidence": {
+    "fresh_before_launch_reset": true,
+    "completed_queries_with_marker": 2,
+    "output": "HKEY_CURRENT_USER\\Software\\Cryptic\\CoH\r\n    GameProgress    REG_SZ    game_mainLoop"
+  },
+  "console": {
+    "path": "client-console.log",
+    "bytes": 39463670,
+    "sha256": "2bc2dedbd20eccbaf7995a3f5940845bd9b8f88451fdabe6b9440eae86fffd6e",
+    "raw_spool_budget_bytes": 134217728,
+    "sha256_verified": true,
+    "parent_console_attachment": {
+      "session_id": "40098db28122154bb08b139c2a3d7d6e",
+      "pid": 460,
+      "attached": true
+    },
+    "fileerror_occurrences": 150577,
+    "texture_warning_occurrences": 79935,
+    "fatal_crash_marker_lines": [],
+    "selected_milestones": [
+      "[2026-09-30 13:17:46.393] [INFO] Renderer initialization complete",
+      "[2026-09-30 13:22:22.429] [DEBUG] Loading NPC definitions",
+      "[2026-09-30 13:22:30.790] [INFO] Loaded NPC definitions",
+      "[2026-09-30 13:22:47.745] [DEBUG] Loading costume bins",
+      "[2026-09-30 13:22:57.050] [INFO] Loaded costume bins",
+      "[2026-09-30 13:23:19.274] [INFO] Loaded all data!"
+    ],
+    "interpretation": "All normal startup data checks ran. Numerous missing-texture FILEERROR warnings remain in the reviewed loose-data bundle, but the exact client completed data loading and entered its main loop. Full bounded stdout is retained without truncation."
+  },
+  "import_identity": {
+    "generation": "generation-41dc293c70a740119d9ff661c3345f3d",
+    "receipt_sha256": "d14933a7694de7ccb033788f0afc007e3cd49ecd1fcdb8cfe905907620c0f8fe",
+    "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+    "file_count": 173011,
+    "total_bytes": 2977730517
+  },
+  "cache_consumption": {
+    "prepared_files": 100,
+    "prepared_bytes": 364703716,
+    "archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+    "prepared_prerequisite_files": 3,
+    "prepared_prerequisite_bytes": 54948,
+    "normalized_mtime_epoch": 1767225600,
+    "inventory_files": 103,
+    "inventory_truncated": false,
+    "new_or_recreated_files": [
+      {
+        "path": "data/server/bin/PC_Rewards.bin",
+        "bytes": 676,
+        "mtime_ns": 1790774579082480404
+      },
+      {
+        "path": "data/bin/PC_Def_NonSelectable_Entities.bin",
+        "bytes": 25952,
+        "mtime_ns": 1790774579163476094
+      },
+      {
+        "path": "data/bin/PC_Def_Animation.bin",
+        "bytes": 7004,
+        "mtime_ns": 1790774579350466146
+      },
+      {
+        "path": "data/bin/loadingtipmessages-en.bin",
+        "bytes": 37734,
+        "mtime_ns": 1790774253500892505
+      },
+      {
+        "path": "data/bin/PC_Def_MapSets.bin",
+        "bytes": 1484,
+        "mtime_ns": 1790774579275470136
+      },
+      {
+        "path": "data/bin/clientmessages-en.bin",
+        "bytes": 7336462,
+        "mtime_ns": 1790774253411898232
+      },
+      {
+        "path": "data/bin/PC_Def_MapUnique.bin",
+        "bytes": 23432,
+        "mtime_ns": 1790774579312468167
+      },
+      {
+        "path": "data/bin/PC_Def_DestructObject.bin",
+        "bytes": 2024,
+        "mtime_ns": 1790774579386464230
+      },
+      {
+        "path": "data/bin/PC_Def_Sequencer_Anims.bin",
+        "bytes": 19912,
+        "mtime_ns": 1790774579462460187
+      },
+      {
+        "path": "data/bin/PC_Def_Contacts.bin",
+        "bytes": 29144,
+        "mtime_ns": 1790774579202474019
+      },
+      {
+        "path": "data/bin/PC_Def_Entities.bin",
+        "bytes": 91768,
+        "mtime_ns": 1790774579124478169
+      },
+      {
+        "path": "data/bin/authmsg-en.bin",
+        "bytes": 4573,
+        "mtime_ns": 1790774432601394632
+      },
+      {
+        "path": "data/bin/PC_Def_Unlockable_Content.bin",
+        "bytes": 22260,
+        "mtime_ns": 1790774579425462156
+      },
+      {
+        "path": "data/bin/PC_Def_Objects.bin",
+        "bytes": 3952,
+        "mtime_ns": 1790774579239472051
+      }
+    ],
+    "prepared_pc_caches_reparsed": 11,
+    "interpretation": "Major prepared caches were consumed; three message caches were created and eleven small PC_* caches reparsed as observed in prior source review."
+  },
+  "external_observer": {
+    "scope": "host_external_unix_rfb_actual_client",
+    "desktop": "coh@runnervmoyp6c",
+    "session_id": "40098db28122154bb08b139c2a3d7d6e",
+    "updates": 861,
+    "distinct_frame_sha256": [
+      "124617c1f65e92d3bc895fbd869e4bb16a30754b198f59e6e973949b9aaa1b01",
+      "fd768db445ca4125a6d39915d13b1ed4f51855e57033ddb5f5296e19ea3f5cb2",
+      "61d26b6955a0bccd9156270fd0c916e4e3606f1cc724feaf81cde7e1dbfa6768",
+      "57e3ae63b5bf1af3be63e3c1533a963b5d6a24f3c7f21647557a313874d39a1a",
+      "8279a9cdd9d95f20f055ad3c67ae8b2142d028378e9e8034e84cfcda74124633",
+      "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+      "ab6299ebcfa78e5e377a4fb488587320dfb70e8787fb569498c82630960d37cf",
+      "1bda0c0124160d0d7770ca067edc8c6fbf53912f0d09447c735802288fc04996",
+      "26c40a24c3226adbc46de7d2985ef3c1e52a7da842c4487e51cec4a84c5868bb",
+      "9cf605609b03e49994292bc9a4846ed80fe14cfd4e378b09a1fe80b23a4cfbc4",
+      "6da67f9a895438330eb101de2ebc176c7950194ccc77c9e12de6b8cd39704edb",
+      "74497228580a3f9cb328a67050d350f5e211298f0bd02b524b6b72e81bd6e305",
+      "ff033a873f7e79ea89d6178f605ecac00b0f9073b4b5e655bc3dd9a6c963b6e9",
+      "9e15339d3fe255825d485db97c34aed15603787423f49c6b37c96d3496303e05",
+      "fbb5f34faffd151426527c4426cb9c40d45c7a4a10e1e3ef42a8634a1dd90dff",
+      "87e264ec0e1bc036b2deac84d6a33791d6a2f5dcbd7788fe0b78cd86551e6655",
+      "f2b67bcdd230b19dfc515dc8406d39401ad95731ccc1e84958ff9f36d390231b",
+      "6c8050d970b312c823266fc9d44906935ff7b004db2cad93852aaa2fa33a96b7",
+      "eb0136fd3c6c95943abd1ff6efda0bf30401a641c3dd19ee0d96b7f96ebe45ff",
+      "875b4a3814bb3714b720bf6d757882ec9039ff911b2640a0078cf4ff8f6c73fa",
+      "6db13527ba6e94d874c09d386741581d626039097520786bb8a98f97651a804e",
+      "328bc7636ec3e0d90ce38c1461562c2ca0b7726df7cb05c568cc5af1522f2244",
+      "1175e66e517bfa12bcf35e54a0af25d16bb659562795a86cb4b51ac9196bf53c",
+      "a753e9e825909e5cb9e0ce91e362c8e1e7f152d5b539d676f4f26520590e7ed5",
+      "c28416a552dddfa82b4cd74368039cb187c9442d5da089a13c11f17360d1c2ea",
+      "0b126cb7e4c11f4067011f6b21105e206fdd04698bb551154f359ad47255196f",
+      "41b4a84e93a248ccb1242a6ae5de01e88c75708c438e9088ffd723c224116f52",
+      "7406ab2d8de21c4404af8f7da7c6d152f9b02efc783247e66700bf2d358f4bd8",
+      "80238f448741636138185f1c5f3132a718f0b9513b4088d322c44a32d01edc09",
+      "e83d0bfb43d7346f452dd189eaf66d0c58f6d2b1b1ec3e82d9bf718aabfaaf9c",
+      "6947600f8f2342e1606074e539095cd33fc0c662635b9b6ada262fe10b7da4aa",
+      "d9a413ebf6d19c714f3f219fd1d5d37505499cdc61c36d22ed6e88e66132ffc8",
+      "576eacd27f92e204f8b63eec8906fa3ee6be027078c95e3134832a991aeefeb6",
+      "4a531d234a6caffb403d2d54452f119156889cb2583e3311c5528d62683f30b5",
+      "c38df4986a237e12abb562e59a2a785735b93adf4fad8fdc08d4f169ac7a8003"
+    ],
+    "snapshots": [
+      {
+        "file": "client-frame-000.png",
+        "elapsed_seconds": 0.012,
+        "frame_sha256": "124617c1f65e92d3bc895fbd869e4bb16a30754b198f59e6e973949b9aaa1b01",
+        "width": 800,
+        "height": 600,
+        "generation": 1
+      },
+      {
+        "file": "client-frame-001.png",
+        "elapsed_seconds": 20.028,
+        "frame_sha256": "fd768db445ca4125a6d39915d13b1ed4f51855e57033ddb5f5296e19ea3f5cb2",
+        "width": 800,
+        "height": 600,
+        "generation": 1
+      },
+      {
+        "file": "client-frame-002.png",
+        "elapsed_seconds": 40.143,
+        "frame_sha256": "61d26b6955a0bccd9156270fd0c916e4e3606f1cc724feaf81cde7e1dbfa6768",
+        "width": 800,
+        "height": 600,
+        "generation": 1
+      },
+      {
+        "file": "client-frame-003.png",
+        "elapsed_seconds": 60.499,
+        "frame_sha256": "57e3ae63b5bf1af3be63e3c1533a963b5d6a24f3c7f21647557a313874d39a1a",
+        "width": 800,
+        "height": 600,
+        "generation": 1
+      },
+      {
+        "file": "client-frame-004.png",
+        "elapsed_seconds": 80.816,
+        "frame_sha256": "124617c1f65e92d3bc895fbd869e4bb16a30754b198f59e6e973949b9aaa1b01",
+        "width": 800,
+        "height": 600,
+        "generation": 3
+      },
+      {
+        "file": "client-frame-005.png",
+        "elapsed_seconds": 101.132,
+        "frame_sha256": "124617c1f65e92d3bc895fbd869e4bb16a30754b198f59e6e973949b9aaa1b01",
+        "width": 800,
+        "height": 600,
+        "generation": 3
+      },
+      {
+        "file": "client-frame-006.png",
+        "elapsed_seconds": 121.441,
+        "frame_sha256": "124617c1f65e92d3bc895fbd869e4bb16a30754b198f59e6e973949b9aaa1b01",
+        "width": 800,
+        "height": 600,
+        "generation": 3
+      },
+      {
+        "file": "client-frame-007.png",
+        "elapsed_seconds": 141.751,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-008.png",
+        "elapsed_seconds": 162.091,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-009.png",
+        "elapsed_seconds": 182.433,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-010.png",
+        "elapsed_seconds": 202.773,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-011.png",
+        "elapsed_seconds": 223.115,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-012.png",
+        "elapsed_seconds": 243.465,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-013.png",
+        "elapsed_seconds": 263.808,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-014.png",
+        "elapsed_seconds": 284.322,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-015.png",
+        "elapsed_seconds": 304.595,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-016.png",
+        "elapsed_seconds": 324.736,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-017.png",
+        "elapsed_seconds": 344.898,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-018.png",
+        "elapsed_seconds": 365.257,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-019.png",
+        "elapsed_seconds": 385.65,
+        "frame_sha256": "26ddb91c9e20d9c89d50ceb4735bd269e399600532c27673d2a7f0ee45ff99ac",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-020.png",
+        "elapsed_seconds": 405.863,
+        "frame_sha256": "875b4a3814bb3714b720bf6d757882ec9039ff911b2640a0078cf4ff8f6c73fa",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      },
+      {
+        "file": "client-frame-021.png",
+        "elapsed_seconds": 426.203,
+        "frame_sha256": "c28416a552dddfa82b4cd74368039cb187c9442d5da089a13c11f17360d1c2ea",
+        "width": 800,
+        "height": 600,
+        "generation": 4
+      }
+    ],
+    "terminal_transport": "BrokenPipeError",
+    "desktop_size_events": [
+      {
+        "width": 800,
+        "height": 600,
+        "generation": 2,
+        "elapsed_seconds": 63.673
+      },
+      {
+        "width": 800,
+        "height": 600,
+        "generation": 3,
+        "elapsed_seconds": 64.177
+      },
+      {
+        "width": 800,
+        "height": 600,
+        "generation": 4,
+        "elapsed_seconds": 136.202
+      }
+    ],
+    "final_frame": {
+      "width": 800,
+      "height": 600,
+      "generation": 4,
+      "fresh_after_resize": true,
+      "updates_after_resize": 594
+    },
+    "post_startup_captures": [
+      {
+        "file": "client-startup-external-000.png",
+        "elapsed_seconds": 404.66403950899996,
+        "frame_sha256": "6c8050d970b312c823266fc9d44906935ff7b004db2cad93852aaa2fa33a96b7",
+        "png_sha256": "eaa22468b4f0f4ce0363dd94ac5b65f95f640e3aa47b66b345b48595e8cc45fa",
+        "session_id": "40098db28122154bb08b139c2a3d7d6e",
+        "client_pid": 460,
+        "width": 800,
+        "height": 600,
+        "distinct_colors_capped": 8,
+        "frame_sequence": 793,
+        "frame_generation": 4,
+        "event_generation": 1
+      },
+      {
+        "file": "client-startup-external-001.png",
+        "elapsed_seconds": 405.86335788099996,
+        "frame_sha256": "875b4a3814bb3714b720bf6d757882ec9039ff911b2640a0078cf4ff8f6c73fa",
+        "png_sha256": "f227d96050d510603aa2a9781122656415f165702db35c99bbf474c02183a2bc",
+        "session_id": "40098db28122154bb08b139c2a3d7d6e",
+        "client_pid": 460,
+        "width": 800,
+        "height": 600,
+        "distinct_colors_capped": 8,
+        "frame_sequence": 795,
+        "frame_generation": 4,
+        "event_generation": 1
+      },
+      {
+        "file": "client-startup-external-002.png",
+        "elapsed_seconds": 407.230014279,
+        "frame_sha256": "6db13527ba6e94d874c09d386741581d626039097520786bb8a98f97651a804e",
+        "png_sha256": "8da6fa10e05776366b949b8d140a23588678ba8735ec09f0beb350676c52e0ad",
+        "session_id": "40098db28122154bb08b139c2a3d7d6e",
+        "client_pid": 460,
+        "width": 800,
+        "height": 600,
+        "distinct_colors_capped": 8,
+        "frame_sequence": 797,
+        "frame_generation": 4,
+        "event_generation": 1
+      }
+    ],
+    "client_pid": 460,
+    "terminal_event_observed": true,
+    "failure": null,
+    "connected_outside_proot": true,
+    "android_surface_validated": false,
+    "gameplay_validated": false
+  },
+  "external_capture_verification": {
+    "png_hashes_verified": true,
+    "capture_count": 3,
+    "first_to_last_seconds": 2.5659747700000253,
+    "minimum_interval_seconds": 1.1993183719999934,
+    "all_exact_session_and_client_pid": true,
+    "all_same_frame_generation": true,
+    "terminal_transport_explanation": "BrokenPipe during normal display cleanup followed the passed terminal stage; external frames were retained only from the open session-bound readiness interval."
+  },
+  "cleanup_complete": true,
+  "cleanup_execution": {
+    "diagnostic_initialized": true,
+    "wine_started": true,
+    "owned_child_count": 27
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "wine_shutdown": {
+    "stop_exit_code": 0,
+    "wait_exit_code": 0,
+    "prefix_lock_free": true,
+    "server_socket_inactive": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 296,
+    "scanned_tasks": 2,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "presentation_socket_removed": true,
+  "screenshots": [
+    {
+      "path": "before-client.ppm",
+      "bytes": 1440015,
+      "sha256": "c3b3d73f6bbb08ab3fa3dfa65d01f89916ba25d37a4f5fbd8cd2202edaa58077",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 1,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "40098db28122154bb08b139c2a3d7d6e",
+      "captured_utc": "2026-09-30T13:17:24.639138+00:00"
+    },
+    {
+      "path": "client-startup.ppm",
+      "bytes": 1440015,
+      "sha256": "ebf036796158b83f854c0c61a628951b1707e7f8ab6446335c9f09f04dc103e3",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 256,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "40098db28122154bb08b139c2a3d7d6e",
+      "captured_utc": "2026-09-30T13:23:27.609158+00:00"
+    },
+    {
+      "path": "client-observed.ppm",
+      "bytes": 1440015,
+      "sha256": "9f4f8afc6398ce08f939da522e75ab79c80ff829ec09df5b0cf68e40411f359b",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 256,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "40098db28122154bb08b139c2a3d7d6e",
+      "captured_utc": "2026-09-30T13:24:01.047876+00:00"
+    }
+  ],
+  "manual_visual_review": {
+    "reviewer": "root agent",
+    "image": "client-evidence/client-startup-external-002.png",
+    "login_screen_visible": true,
+    "first_start_graphics_prompt_visible": true,
+    "description": "Recognizable City of Heroes Freedom login screen with account fields and an in-game Quality/Ultra graphics-settings prompt layered over it.",
+    "interaction_validated": false,
+    "android_execution_validated": false
+  },
+  "producer_menu_visual_validated": false,
+  "postgres_started": false,
+  "server_started": false,
+  "android_execution_validated": false,
+  "android_surface_validated": false,
+  "hardware_acceleration_validated": false,
+  "gameplay_validated": false,
+  "world_entry_validated": false,
+  "accepted_device_tests_rerun": false
+}

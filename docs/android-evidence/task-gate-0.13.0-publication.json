@@ -1,0 +1,253 @@
+{
+  "format": 1,
+  "status": "published_host_qualified_physical_task_pending",
+  "repository": "Russianranger/coh-android",
+  "branch": "codex/character-persistence-continuation",
+  "main_preserved": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "pull_request": 1,
+  "pull_request_draft": true,
+  "build_source_commit": "53c885896e9b4d838be0f36a1f09237f04c08a00",
+  "version_name": "0.13.0",
+  "version_code": 15,
+  "authorized_new_option": [
+    9
+  ],
+  "retained_prior_options": [
+    1,
+    2,
+    8,
+    3
+  ],
+  "public_release": {
+    "id": 402525575,
+    "tag": "coh-atlas-gameplay-v0.13.0",
+    "target_commitish": "53c885896e9b4d838be0f36a1f09237f04c08a00",
+    "draft": false,
+    "prerelease": true,
+    "html_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.0",
+    "assets": {
+      "COH-Atlas-Gameplay-0.13.0.apk": {
+        "bytes": 675268370,
+        "sha256": "18cffb361df26076c10f9c020548f384d10c21f8462ed06e77e9cae5c00de4d1"
+      },
+      "COH-Atlas-Gameplay-0.13.0.apk.sha256": {
+        "bytes": 96,
+        "sha256": "bdcbf1fef848fa7040c02b518d15bbb2dab975063b37b9bb5b232dbcf45f26d1"
+      },
+      "COH-Atlas-Gameplay-0.13.0-testing.txt": {
+        "bytes": 3044,
+        "sha256": "f1c51159ba2fa4eb4376d54ba09884267dcc5041a18400e6523a1b4c02258276"
+      }
+    }
+  },
+  "public_apk": {
+    "bytes": 675268370,
+    "sha256": "18cffb361df26076c10f9c020548f384d10c21f8462ed06e77e9cae5c00de4d1"
+  },
+  "ci": {
+    "run_id": 37125084672,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37125084672",
+    "conclusion": "success",
+    "host_checks": 308,
+    "test_suites": 24,
+    "skips": 0,
+    "source_files": 190,
+    "artifacts": [
+      {
+        "id": 11274985227,
+        "name": "coh-task-gate-observer-evidence",
+        "bytes": 12361,
+        "sha256": "9dfccba6fa395d0b2fb3bed8ebf9629a19fa8bf9b85cdc7a57fafc2a39aa2ada"
+      },
+      {
+        "id": 11275686126,
+        "name": "coh-prepared-server-animations",
+        "bytes": 90146040,
+        "sha256": "bc42c0283106054085c852af1cf05619703edd1525db747ddda9a5214e26b473"
+      },
+      {
+        "id": 11275481072,
+        "name": "coh-task-gate-packaging-evidence",
+        "bytes": 341998,
+        "sha256": "c571951d8d795c59860987694c86115de8f1d6ea30616d4196f248cee6620934"
+      },
+      {
+        "id": 11274766662,
+        "name": "coh-task-gate-apk",
+        "bytes": 676728251,
+        "sha256": "f2eebbee6b7c11e0139988435ed0119a721bccd3837684f8ff1efeb2c2e2d538"
+      }
+    ]
+  },
+  "server_animation_pack": {
+    "pigg": {
+      "animation_count": 5878,
+      "bytes": 97084456,
+      "metadata_bytes": 8703726,
+      "original_animation_bytes": 88380730,
+      "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+    },
+    "animation_inventory_sha256": "c3ac97e4a18d17bfa3de529c24597a668d099329cfdb663021688e248ec43a38",
+    "placement": "owned runtime/piggs/server-animations.pigg outside stable data cache",
+    "original_names_timestamps_headers_and_bodies_preserved": true,
+    "loose_inputs_preserved": true,
+    "native_client_or_server_recompiled": false,
+    "native_consumption_qualified_in_ci": true,
+    "native_proof_reverified_before_build_and_publication": true,
+    "native_evidence_claim_scope": "Actual stock MapServer completed loose baseline and cold/warm packed preloads, consumed exact existing 93 caches, read packed animation content without loose animation content reads in packed phases, preserved inputs/cache/identifiers and exited normally before traced prefix-lock quiescence. Original animation inventory is byte-verified; no assertion that all 5878 tracks were selected by preload.",
+    "traced_host_native_preload_seconds": {
+      "baseline": 232.204,
+      "cold": 192.199,
+      "warm": 191.128
+    },
+    "host_timings_predict_thor_savings": false,
+    "android_execution_validated": false,
+    "physical_startup_timing_validated": false
+  },
+  "task_gate": {
+    "scope": "manual authored task acceptance, stock command completion, ordinary committed save",
+    "contact": "Matthew Habashy",
+    "contact_path": "Contacts/Atlas_Park/Matthew_Habashy.contact",
+    "story": "What Was Lost / Part One: Demons and Gangsters",
+    "internal_task_name": "Mission1",
+    "task_index": 0,
+    "authored_objective": "five Hellions",
+    "manual_acceptance_required": true,
+    "fixed_open_command": "/contactdialog Contacts/Atlas_Park/Matthew_Habashy.contact",
+    "fixed_complete_command": "/completetask 0",
+    "completion_delivery_at_most_once": true,
+    "accepted_and_completed_capture_frames_each": 3,
+    "save_disabled_until_both_verified_phases_captured": true,
+    "required_proofs": [
+      "current owned native graphical THORHERO connection",
+      "authored attribute mappings and one active assigned task at slot zero",
+      "ContactDebug, Storyarc:Add and Task:Add bound after own fixed setup receipt",
+      "same task context/subhandle in native ForceComplete and Task:Success",
+      "actual bounded native reward credit and matching selected SQL state",
+      "ordinary logout and committed preserved character save",
+      "same completed task state 4 and subtasksuccess 1, XP/contact points in saved SQL"
+    ],
+    "existing_tasks_cleared_or_reassigned": false,
+    "sql_game_mutations_performed_by_observer": false,
+    "combat_required": false,
+    "npc_model_click_required": false,
+    "reward_turn_in_required": false,
+    "completed_task_pending_contact_return": true,
+    "physical_task_acceptance_completion_save_validated": false
+  },
+  "retained_payloads": {
+    "donor": {
+      "bytes": 625055087,
+      "sha256": "fee8880a53916e4ff746d67c8a6ab22f3f0cf2ab7779198cef59035ef4d6bf29"
+    },
+    "donor_payload_count": 60,
+    "candidate_payload_count": 65,
+    "server_cache_archive": {
+      "bytes": 29825263,
+      "sha256": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17"
+    },
+    "native_client_server_runtime_driver_world_avatar_preserved": true,
+    "stable_data_identity_and_wine_component_timestamps_preserved": true
+  },
+  "independent_public_audit": {
+    "format": 1,
+    "status": "independent_public_task_apk_verified",
+    "repository_commit": "53c885896e9b4d838be0f36a1f09237f04c08a00",
+    "public_apk": {
+      "bytes": 675268370,
+      "sha256": "18cffb361df26076c10f9c020548f384d10c21f8462ed06e77e9cae5c00de4d1"
+    },
+    "retained_donor": {
+      "bytes": 625055087,
+      "sha256": "fee8880a53916e4ff746d67c8a6ab22f3f0cf2ab7779198cef59035ef4d6bf29"
+    },
+    "retained_donor_payloads": 60,
+    "candidate_payloads": 65,
+    "actual_payload_hashes_verified": 65,
+    "actual_dex_verified": {
+      "bytes": 250320,
+      "sha256": "efdf07c4ce29ea3529df0069726b19b5ec47c109eae66cd0aae4a8d1679dc502"
+    },
+    "zip_crc_verified": true,
+    "retained_payload_conservation_verified": true,
+    "runtime_client_manifests_bound": true,
+    "real_guest_server_archive_extraction": {
+      "format": 1,
+      "status": "passed",
+      "archives": {
+        "dbserver-package.tar.gz": {
+          "bytes": 2133821,
+          "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80",
+          "file_count": 9,
+          "extracted_bytes": 4930397
+        },
+        "dbserver-schema.tar.gz": {
+          "bytes": 1139794,
+          "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792",
+          "file_count": 63,
+          "extracted_bytes": 9268640
+        },
+        "game-package.tar.gz": {
+          "bytes": 10976915,
+          "sha256": "d781779ea33b99591ed9972ee09aa614cf4eb6c5afc355bb88197f20881fe67d",
+          "file_count": 26,
+          "extracted_bytes": 28474910
+        }
+      }
+    },
+    "original_animation_pack": {
+      "animation_count": 5878,
+      "bytes": 97084456,
+      "metadata_bytes": 8703726,
+      "original_animation_bytes": 88380730,
+      "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+    },
+    "original_animations_verified": 5878,
+    "host_checks": 308,
+    "source_files_verified": 190,
+    "retained_signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+    "actual_v2_v3_signatures_verified": true,
+    "actual_version_abi_badging_verified": true,
+    "actual_binary_manifest_only_version_changed": true,
+    "signature_output_sha256": "cd2f9a8dde693544bb38a87456a865b8dcbdd176399fec5c3fca6d7f39518fdd",
+    "badging_output_sha256": "81e90f947515ae4794714686817752bc1d30d8029f4304663860bdbdbe5f7083",
+    "actual_android_gameplay_or_timing_validated": false,
+    "public_release": {
+      "id": 402525575,
+      "tag": "coh-atlas-gameplay-v0.13.0",
+      "target_commitish": "53c885896e9b4d838be0f36a1f09237f04c08a00",
+      "draft": false,
+      "prerelease": true,
+      "html_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.0",
+      "assets": {
+        "COH-Atlas-Gameplay-0.13.0.apk": {
+          "bytes": 675268370,
+          "sha256": "18cffb361df26076c10f9c020548f384d10c21f8462ed06e77e9cae5c00de4d1"
+        },
+        "COH-Atlas-Gameplay-0.13.0.apk.sha256": {
+          "bytes": 96,
+          "sha256": "bdcbf1fef848fa7040c02b518d15bbb2dab975063b37b9bb5b232dbcf45f26d1"
+        },
+        "COH-Atlas-Gameplay-0.13.0-testing.txt": {
+          "bytes": 3044,
+          "sha256": "f1c51159ba2fa4eb4376d54ba09884267dcc5041a18400e6523a1b4c02258276"
+        }
+      }
+    }
+  },
+  "independent_public_audit_receipt_sha256": "1e77a8f72404ebebb44965a2560b922ad1bbfcd71e9c0f31a1960a4bc5b352b7",
+  "packaging_receipt_sha256": "8d077767c1d3820f519558f19dc3cb05cee92de19f8c7a1c415296052a32740b",
+  "testing_notes": {
+    "path": "docs/COH-Atlas-Gameplay-0.13.0-testing.txt",
+    "bytes": 3044,
+    "sha256": "f1c51159ba2fa4eb4376d54ba09884267dcc5041a18400e6523a1b4c02258276"
+  },
+  "prior_accepted_physical_tests_repeated": false,
+  "included_observer_correction": "Use identity-bound final native ordinary-logout location rather than stale periodic position; original physical failed flags remain retained.",
+  "remaining_limits": [
+    "New Thor startup timing and task/save physical evidence pending.",
+    "Combat, mission maps, contact-return rewards/story progression are unqualified.",
+    "Ms. Liberty missing female costume assets remain a separate known issue.",
+    "Five-minute server readiness target remains unmet by the last accepted physical checkpoint."
+  ]
+}

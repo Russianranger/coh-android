@@ -1,0 +1,1330 @@
+{
+  "format": 1,
+  "role": "actual_authenticated_preload_original_donor_subset_research",
+  "status": "native_preload_subset_derived_world_gate_pending",
+  "normalizer_source": {
+    "path": "tools/android/interactive/derive_native_metadata_cache_proof.py",
+    "bytes": 25216,
+    "sha256": "bb64e127e33bffb788069d2ec44fce838ac6741f406d024bc4aad50475295f8c"
+  },
+  "raw_inputs": {
+    "preload": {
+      "repository_commit": "9454e7892ac81cf4503fd8ad961dc36c27cfc152",
+      "run_id": 38352862725,
+      "artifact_id": 11791389599,
+      "artifact_zip": {
+        "bytes": 281739,
+        "sha256": "5a5bf01b901e5c5398bb42f07e4c1737ac8b13ee90e90fb297ca01cd08dfa34b"
+      },
+      "member": "native-startup-profile-qualification.json",
+      "member_pin": {
+        "bytes": 375375,
+        "sha256": "a84aa918e89a8e4f60be80fc26ccd2960cffcac80c79ddf38d15619ffff5dfb7"
+      }
+    },
+    "client_cache_manifest": {
+      "origin": "exact_public_Assets_1_0_0_component",
+      "component_zip": {
+        "bytes": 27071659,
+        "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+      },
+      "member": "client-cache-manifest.json",
+      "member_pin": {
+        "bytes": 20195,
+        "sha256": "e5bc9ff306f90f96b6d34d4d481b30804af078b0e07845dafd71f7324dff6352"
+      }
+    },
+    "server_cache_manifest": {
+      "origin": "exact_public_Assets_1_0_0_component",
+      "component_zip": {
+        "bytes": 29825263,
+        "sha256": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17"
+      },
+      "member": "server-cache-manifest.json",
+      "member_pin": {
+        "bytes": 39041,
+        "sha256": "4e1a4c9c148509ef34245768f64ca2be4bb83659db845c6ef94ed594666b3fff"
+      }
+    }
+  },
+  "actual_tested_control": {
+    "bytes": 7478784,
+    "sha256": "fbfcf1d80a41a80aaeecb1a0ec275daffed2a9e1ba25df3f16e23b16a51a493d"
+  },
+  "actual_tested_candidate": {
+    "bytes": 7480832,
+    "sha256": "5927f87fdac50c5a839ac067ccbb34b5dfad6223e579287a66a2f866a7d4b2e6"
+  },
+  "inventory_only_count": 191,
+  "successfully_observed_unique_names": 124,
+  "eligible_original_donor_BIN_count": 107,
+  "identifier_input_file_count": 12,
+  "observed_native_bin_paths": [
+    "data/bin/BodyParts.bin",
+    "data/bin/PC_Def_UI.bin",
+    "data/bin/PopHelp.bin",
+    "data/bin/VillainCostume.bin",
+    "data/bin/attrib_descriptions.bin",
+    "data/bin/auctionconfig.bin",
+    "data/bin/baseupkeep.bin",
+    "data/bin/costume.bin",
+    "data/bin/depts.bin",
+    "data/bin/fxinfo.bin",
+    "data/bin/items.bin",
+    "data/bin/mapspecs.bin",
+    "data/bin/mapstats.bin",
+    "data/bin/minimap.bin",
+    "data/bin/powercustomizationcost.bin",
+    "data/bin/powercustomizationmenu.bin",
+    "data/bin/replacepowernames.bin",
+    "data/bin/sequencers.bin",
+    "data/bin/stores.bin",
+    "data/bin/supergroupColors.bin",
+    "data/bin/tailorcost.bin",
+    "data/bin/tricks.bin",
+    "data/server/bin/CustomCritterRewardMods.bin",
+    "data/server/bin/DayJobs.bin",
+    "data/server/bin/DifficultyCost.bin",
+    "data/server/bin/InvConcept.bin",
+    "data/server/bin/ItemSets.bin",
+    "data/server/bin/LevelBonus.bin",
+    "data/server/bin/MARTY_exp_mods.bin",
+    "data/server/bin/MapObjectives.bin",
+    "data/server/bin/NewFeatures.bin",
+    "data/server/bin/NictusHunterOptions.bin",
+    "data/server/bin/PC_Rewards.bin",
+    "data/server/bin/PowersetConversion.bin",
+    "data/server/bin/Proficiencies.bin",
+    "data/server/bin/RewardChoiceTables.bin",
+    "data/server/bin/RewardTables.bin",
+    "data/server/bin/Salvage.bin",
+    "data/server/bin/SouvenirClues.bin",
+    "data/server/bin/SupergroupMods.bin",
+    "data/server/bin/TFTimeLimits.bin",
+    "data/server/bin/TeamReward.bin",
+    "data/server/bin/TrackedSalvage.bin",
+    "data/server/bin/VillainDef.bin",
+    "data/server/bin/VillainGroups.bin",
+    "data/server/bin/attrib_names.bin",
+    "data/server/bin/badges.bin",
+    "data/server/bin/baserecipes.bin",
+    "data/server/bin/boost_effect_above.bin",
+    "data/server/bin/boost_effect_below.bin",
+    "data/server/bin/boost_effect_boosters.bin",
+    "data/server/bin/boostsets.bin",
+    "data/server/bin/classes.bin",
+    "data/server/bin/combat_mods.bin",
+    "data/server/bin/combat_mods_villain.bin",
+    "data/server/bin/combine_booster_chances.bin",
+    "data/server/bin/combine_chances.bin",
+    "data/server/bin/combine_same_set_chances.bin",
+    "data/server/bin/contacts.bin",
+    "data/server/bin/conversionsets.bin",
+    "data/server/bin/damagedecay.bin",
+    "data/server/bin/designer_contact_tip_types.bin",
+    "data/server/bin/detailcats.bin",
+    "data/server/bin/details.bin",
+    "data/server/bin/dialog.bin",
+    "data/server/bin/dialogdefs.bin",
+    "data/server/bin/dim_returns.bin",
+    "data/server/bin/emotes.bin",
+    "data/server/bin/exemplar_handicaps.bin",
+    "data/server/bin/experience.bin",
+    "data/server/bin/incarnate.bin",
+    "data/server/bin/inventory_sizes.bin",
+    "data/server/bin/inventory_tier_bonus.bin",
+    "data/server/bin/mapsspec.bin",
+    "data/server/bin/meritsRewards.bin",
+    "data/server/bin/missionhostagespawns.bin",
+    "data/server/bin/missionspawns.bin",
+    "data/server/bin/missionspecs.bin",
+    "data/server/bin/monorails.bin",
+    "data/server/bin/npcs_server.bin",
+    "data/server/bin/origins.bin",
+    "data/server/bin/petBattleCreatureInfo.bin",
+    "data/server/bin/plots.bin",
+    "data/server/bin/powercats.bin",
+    "data/server/bin/powers.bin",
+    "data/server/bin/powersets.bin",
+    "data/server/bin/pvptaskmodifiers.bin",
+    "data/server/bin/randomgroupselection.bin",
+    "data/server/bin/randommapselection.bin",
+    "data/server/bin/roomcategories.bin",
+    "data/server/bin/roomtemplates.bin",
+    "data/server/bin/schedules.bin",
+    "data/server/bin/scriptdefs.bin",
+    "data/server/bin/seqstatebits.bin",
+    "data/server/bin/spawndefs.bin",
+    "data/server/bin/storyarc.bin",
+    "data/server/bin/supergroup_badges.bin",
+    "data/server/bin/tasksets.bin",
+    "data/server/bin/turnstile_server.bin",
+    "data/server/bin/tut_votekick.bin",
+    "data/server/bin/villain_classes.bin",
+    "data/server/bin/villain_origins.bin",
+    "data/server/bin/villainrandomgroupselection.bin",
+    "data/server/bin/villainrandommapselection.bin",
+    "data/server/bin/visionPhases.bin",
+    "data/server/bin/visionPhasesExclusive.bin",
+    "data/server/bin/zone_event_karma.bin"
+  ],
+  "eligible_bins": {
+    "data/bin/BodyParts.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/BodyParts.bin"
+    },
+    "data/bin/PC_Def_UI.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/PC_Def_UI.bin"
+    },
+    "data/bin/PopHelp.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/PopHelp.bin"
+    },
+    "data/bin/VillainCostume.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/VillainCostume.bin"
+    },
+    "data/bin/attrib_descriptions.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/attrib_descriptions.bin"
+    },
+    "data/bin/auctionconfig.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/auctionconfig.bin"
+    },
+    "data/bin/baseupkeep.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/baseupkeep.bin"
+    },
+    "data/bin/costume.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/costume.bin"
+    },
+    "data/bin/depts.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/depts.bin"
+    },
+    "data/bin/fxinfo.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/fxinfo.bin"
+    },
+    "data/bin/items.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/items.bin"
+    },
+    "data/bin/mapspecs.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/mapspecs.bin"
+    },
+    "data/bin/mapstats.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/mapstats.bin"
+    },
+    "data/bin/minimap.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/minimap.bin"
+    },
+    "data/bin/powercustomizationcost.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/powercustomizationcost.bin"
+    },
+    "data/bin/powercustomizationmenu.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/powercustomizationmenu.bin"
+    },
+    "data/bin/replacepowernames.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/replacepowernames.bin"
+    },
+    "data/bin/sequencers.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/sequencers.bin"
+    },
+    "data/bin/stores.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/stores.bin"
+    },
+    "data/bin/supergroupColors.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/supergroupColors.bin"
+    },
+    "data/bin/tailorcost.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/tailorcost.bin"
+    },
+    "data/bin/tricks.bin": {
+      "archive": "client-caches.zip",
+      "member": "data/bin/tricks.bin"
+    },
+    "data/server/bin/CustomCritterRewardMods.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/CustomCritterRewardMods.bin"
+    },
+    "data/server/bin/DayJobs.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/DayJobs.bin"
+    },
+    "data/server/bin/DifficultyCost.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/DifficultyCost.bin"
+    },
+    "data/server/bin/InvConcept.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/InvConcept.bin"
+    },
+    "data/server/bin/ItemSets.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/ItemSets.bin"
+    },
+    "data/server/bin/LevelBonus.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/LevelBonus.bin"
+    },
+    "data/server/bin/MARTY_exp_mods.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/MARTY_exp_mods.bin"
+    },
+    "data/server/bin/MapObjectives.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/MapObjectives.bin"
+    },
+    "data/server/bin/NewFeatures.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/NewFeatures.bin"
+    },
+    "data/server/bin/NictusHunterOptions.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/NictusHunterOptions.bin"
+    },
+    "data/server/bin/PC_Rewards.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/PC_Rewards.bin"
+    },
+    "data/server/bin/PowersetConversion.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/PowersetConversion.bin"
+    },
+    "data/server/bin/Proficiencies.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/Proficiencies.bin"
+    },
+    "data/server/bin/RewardChoiceTables.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/RewardChoiceTables.bin"
+    },
+    "data/server/bin/RewardTables.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/RewardTables.bin"
+    },
+    "data/server/bin/Salvage.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/Salvage.bin"
+    },
+    "data/server/bin/SouvenirClues.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/SouvenirClues.bin"
+    },
+    "data/server/bin/SupergroupMods.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/SupergroupMods.bin"
+    },
+    "data/server/bin/TFTimeLimits.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/TFTimeLimits.bin"
+    },
+    "data/server/bin/TeamReward.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/TeamReward.bin"
+    },
+    "data/server/bin/TrackedSalvage.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/TrackedSalvage.bin"
+    },
+    "data/server/bin/VillainDef.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/VillainDef.bin"
+    },
+    "data/server/bin/VillainGroups.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/VillainGroups.bin"
+    },
+    "data/server/bin/attrib_names.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/attrib_names.bin"
+    },
+    "data/server/bin/badges.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/badges.bin"
+    },
+    "data/server/bin/baserecipes.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/baserecipes.bin"
+    },
+    "data/server/bin/boost_effect_above.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/boost_effect_above.bin"
+    },
+    "data/server/bin/boost_effect_below.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/boost_effect_below.bin"
+    },
+    "data/server/bin/boost_effect_boosters.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/boost_effect_boosters.bin"
+    },
+    "data/server/bin/boostsets.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/boostsets.bin"
+    },
+    "data/server/bin/classes.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/classes.bin"
+    },
+    "data/server/bin/combat_mods.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/combat_mods.bin"
+    },
+    "data/server/bin/combat_mods_villain.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/combat_mods_villain.bin"
+    },
+    "data/server/bin/combine_booster_chances.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/combine_booster_chances.bin"
+    },
+    "data/server/bin/combine_chances.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/combine_chances.bin"
+    },
+    "data/server/bin/combine_same_set_chances.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/combine_same_set_chances.bin"
+    },
+    "data/server/bin/contacts.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/contacts.bin"
+    },
+    "data/server/bin/conversionsets.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/conversionsets.bin"
+    },
+    "data/server/bin/damagedecay.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/damagedecay.bin"
+    },
+    "data/server/bin/designer_contact_tip_types.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/designer_contact_tip_types.bin"
+    },
+    "data/server/bin/detailcats.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/detailcats.bin"
+    },
+    "data/server/bin/details.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/details.bin"
+    },
+    "data/server/bin/dialog.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/dialog.bin"
+    },
+    "data/server/bin/dialogdefs.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/dialogdefs.bin"
+    },
+    "data/server/bin/dim_returns.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/dim_returns.bin"
+    },
+    "data/server/bin/emotes.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/emotes.bin"
+    },
+    "data/server/bin/exemplar_handicaps.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/exemplar_handicaps.bin"
+    },
+    "data/server/bin/experience.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/experience.bin"
+    },
+    "data/server/bin/incarnate.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/incarnate.bin"
+    },
+    "data/server/bin/inventory_sizes.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/inventory_sizes.bin"
+    },
+    "data/server/bin/inventory_tier_bonus.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/inventory_tier_bonus.bin"
+    },
+    "data/server/bin/mapsspec.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/mapsspec.bin"
+    },
+    "data/server/bin/meritsRewards.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/meritsRewards.bin"
+    },
+    "data/server/bin/missionhostagespawns.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/missionhostagespawns.bin"
+    },
+    "data/server/bin/missionspawns.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/missionspawns.bin"
+    },
+    "data/server/bin/missionspecs.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/missionspecs.bin"
+    },
+    "data/server/bin/monorails.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/monorails.bin"
+    },
+    "data/server/bin/npcs_server.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/npcs_server.bin"
+    },
+    "data/server/bin/origins.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/origins.bin"
+    },
+    "data/server/bin/petBattleCreatureInfo.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/petBattleCreatureInfo.bin"
+    },
+    "data/server/bin/plots.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/plots.bin"
+    },
+    "data/server/bin/powercats.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/powercats.bin"
+    },
+    "data/server/bin/powers.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/powers.bin"
+    },
+    "data/server/bin/powersets.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/powersets.bin"
+    },
+    "data/server/bin/pvptaskmodifiers.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/pvptaskmodifiers.bin"
+    },
+    "data/server/bin/randomgroupselection.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/randomgroupselection.bin"
+    },
+    "data/server/bin/randommapselection.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/randommapselection.bin"
+    },
+    "data/server/bin/roomcategories.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/roomcategories.bin"
+    },
+    "data/server/bin/roomtemplates.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/roomtemplates.bin"
+    },
+    "data/server/bin/schedules.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/schedules.bin"
+    },
+    "data/server/bin/scriptdefs.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/scriptdefs.bin"
+    },
+    "data/server/bin/seqstatebits.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/seqstatebits.bin"
+    },
+    "data/server/bin/spawndefs.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/spawndefs.bin"
+    },
+    "data/server/bin/storyarc.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/storyarc.bin"
+    },
+    "data/server/bin/supergroup_badges.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/supergroup_badges.bin"
+    },
+    "data/server/bin/tasksets.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/tasksets.bin"
+    },
+    "data/server/bin/turnstile_server.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/turnstile_server.bin"
+    },
+    "data/server/bin/tut_votekick.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/tut_votekick.bin"
+    },
+    "data/server/bin/villain_classes.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/villain_classes.bin"
+    },
+    "data/server/bin/villain_origins.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/villain_origins.bin"
+    },
+    "data/server/bin/villainrandomgroupselection.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/villainrandomgroupselection.bin"
+    },
+    "data/server/bin/villainrandommapselection.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/villainrandommapselection.bin"
+    },
+    "data/server/bin/visionPhases.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/visionPhases.bin"
+    },
+    "data/server/bin/visionPhasesExclusive.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/visionPhasesExclusive.bin"
+    },
+    "data/server/bin/zone_event_karma.bin": {
+      "archive": "server-caches.zip",
+      "member": "data/server/bin/zone_event_karma.bin"
+    }
+  },
+  "qualified_per_bin": {
+    "data/bin/BodyParts.bin": {
+      "schema_identity_sha256": "0c8ad9d2db13c0f7c6c665928633c5d4b9d9b5bc1c54390b18579a0ec2885369",
+      "output_sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/PC_Def_UI.bin": {
+      "schema_identity_sha256": "80e8aa9fa1945f45520cdeb72e48849e1c17033bee22405aa59d573a9c65269a",
+      "output_sha256": "d6c1ca0ca4c82243cca6ebb1ddd8b2db13427df26de9e3fd3bfd62dab24515ac",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/PopHelp.bin": {
+      "schema_identity_sha256": "90488ed001059954356f315bffc693161aa82706aef2887211f3bdd8dffbe758",
+      "output_sha256": "8da203d500c8d518ea7a7c8305fa2ed1aa50dbc5628b7d8c51456f6fc0ada9e5",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/VillainCostume.bin": {
+      "schema_identity_sha256": "2e6b5a5246f9da057691f04ef6dd2e753634eac46a48fe0513b029d1b36ba589",
+      "output_sha256": "94f2d86ce15785d8a4d69e269f8b495bb1d1982b484b19853babbb559c209cca",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/attrib_descriptions.bin": {
+      "schema_identity_sha256": "70074cbf281c898130e2c6f6ebbb99f6281cfe73c9a7e88c553c924d7467077d",
+      "output_sha256": "20f770f406e661050434284e4253f721699df2112ea4481de66b50146304c132",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/auctionconfig.bin": {
+      "schema_identity_sha256": "22b5caff3c4f8bdd3f30bf0d1a44c350181be36c723985994ecd90c0fe095020",
+      "output_sha256": "831cb9df5b09674453522e5d3f0d0fe10cfd7a3dbeed6fdd112809330a86a90b",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/baseupkeep.bin": {
+      "schema_identity_sha256": "5f0cff95ad2c93f48f7e8523ea45916e5aeb00006f885518db52609ec20591ad",
+      "output_sha256": "f8c82217241baa3e5e5031dcbbfb18f533748d3e195205fbef42bd44f2257c33",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/costume.bin": {
+      "schema_identity_sha256": "cc054df46989113cc9c5f8616e1265eb6015fe81017ee3f7254fcf478e2a2dc4",
+      "output_sha256": "10ef7562156be60bd1ef3c437c3b46d10b36b6b265129c10f39d25c4a4df5a77",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/depts.bin": {
+      "schema_identity_sha256": "fd8f20922f98d141e0ed0bdeefbe6656204dd7e7df62c015ae9a2f4115073e70",
+      "output_sha256": "eb60fe990086e4b86d60ddbd889a80e9254efc4586e4d1e6c52f7a862b5380c0",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/fxinfo.bin": {
+      "schema_identity_sha256": "b804c7bf047791a7090951b2f0ddf553b2207a7fc9b63543233a65d6b9594ecf",
+      "output_sha256": "3b1af6d146db65aa2a00fa9dbe4502776409cdea15f94f717e5455a3cda5fe70",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/items.bin": {
+      "schema_identity_sha256": "e43359a76ba355a13cf13e59fbaa752273c11e46b70d27a6e72e5105798329c4",
+      "output_sha256": "80e45680f9a22ac49ab1654a98c3389a5a2763f36bbd22d0470cd616c617e824",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/mapspecs.bin": {
+      "schema_identity_sha256": "2bab285beb44cf44653360ddf9269c102e4bf1e5869347bcbdad7b0e5e32f7da",
+      "output_sha256": "238b6876148ff6f19cc8f835ee36b8a9fe0b09a5d13601eb8adb5a3d858f077e",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/mapstats.bin": {
+      "schema_identity_sha256": "9e2fc5e7ef0de46486f5a3303416876a9d1ed5aa035b47d1380f513f048c149c",
+      "output_sha256": "b14c208848ef59529ceeb592a1c4a4e167d7a62683a13c9d1536b5166d0b44a8",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/minimap.bin": {
+      "schema_identity_sha256": "aa678a3eb7508c3f6d8e20bfc470f729d59a82f917e01d67e7d32a23bb317e35",
+      "output_sha256": "a9a2ba27bcf6c6e3ab7df66a8f1a96d74e6d3b7d9f2ccbe93395f65f2da259a2",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/powercustomizationcost.bin": {
+      "schema_identity_sha256": "19300bd91feb721c63c4a2c8bdde6dc6954e9dceb8bdf7c0a68434e9a1001b89",
+      "output_sha256": "50b968d708261f4a9775e73bc0508e4b0f9c6925e73d665bc0a2ba2195d4041c",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/powercustomizationmenu.bin": {
+      "schema_identity_sha256": "355018b8ca540d4535c698e603a7dea35688da13f8059603006b7195b56e7208",
+      "output_sha256": "f71aa71d1f27eaeee31aa26eedf9366da9a2e45074228e33dc433fdcabcbd30a",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/replacepowernames.bin": {
+      "schema_identity_sha256": "36252907e0a732b6190d82d99c7e97d7a9738bf0ae436f9e3b455c1bc15032d8",
+      "output_sha256": "7da843a2f3119967050dc704c2a93f7a1062f057d00090f9c152bc0d151d8eb3",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/sequencers.bin": {
+      "schema_identity_sha256": "c8f1e9ec3312ef331748af75a0c898a77419d7061312a1706c420b1aa17c28bb",
+      "output_sha256": "64362d2213da02a36e63235de7037eb0355b9cdfdc5982dce528d26a42783d53",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/stores.bin": {
+      "schema_identity_sha256": "f6357b23927fbbf611bf430d1141e7736935c83aeaa3d3babd5438c9c67be466",
+      "output_sha256": "68e8763476b39f3ac32a09a3fa578bb6876692a24829abcd0fe652ae583a00a2",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/supergroupColors.bin": {
+      "schema_identity_sha256": "8831255f98871b7e9579ec083fe03fe14a45889fbe38edcacbfb136cc656ce4f",
+      "output_sha256": "e5676ebbccc380f9d69322ef6750332b0b7e7a46d915bdfb591322862d22cb75",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/tailorcost.bin": {
+      "schema_identity_sha256": "2dd4ce503a358d65df20a32d86f09f8446b90fc36b9cf3041eeb6c9e03a0ff73",
+      "output_sha256": "aa70748cd9ab05239ffc811d579f8fa039d3bee4c5f0c1bda86cd8f5321266c9",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/bin/tricks.bin": {
+      "schema_identity_sha256": "6b272a5e801e9acaa439a044e097e23086ccbf88706d78fe3701e5ffe3c46476",
+      "output_sha256": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/CustomCritterRewardMods.bin": {
+      "schema_identity_sha256": "f00b1634cfc449afa741a972140ae4915c2c66b3c206e61c3f633dcfb8ff5470",
+      "output_sha256": "197e85b8715f14d464769489c9155969550288b727d88c48434e3b313eb9041d",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/DayJobs.bin": {
+      "schema_identity_sha256": "651b60f4defdba27e2df64dc838a022a34aa40b482caf422115626cd3c3e2f32",
+      "output_sha256": "f3d44c7af6913ded5eaf271a15a0d2e21e199ccfa4bbaf7069af78ca97814bc3",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/DifficultyCost.bin": {
+      "schema_identity_sha256": "8607945331e7c44d233e3dc7abac98542e2d697d898e7ab5d5ed16441708e53a",
+      "output_sha256": "8f31c63143b9d0da3a9909af2df8512fdbc5d4e13ab733100f236617c8bb0b92",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/InvConcept.bin": {
+      "schema_identity_sha256": "5938461195eeb9cd374c4db43d375f73d61c6170f4d327eae0aaa87308c0d8aa",
+      "output_sha256": "8ee9a606ecb4f341c7bceb7717c77da20caabe1a342606698fac98db726a01e0",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/ItemSets.bin": {
+      "schema_identity_sha256": "acf8cb84cdf3e6948bafb1ae94744705fa45841ffb2e648a38d8b40ad0fa17b6",
+      "output_sha256": "badc5fbcd6bdf917a714c0ef1768886156874400aa0ad3bb2510bb612d7e3d8c",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/LevelBonus.bin": {
+      "schema_identity_sha256": "3946e25a2f0f2bb4dd66bab2aed793cfbbb609b20500dcf36fbcb56a37741078",
+      "output_sha256": "b9819c0dd6d224e76f36ccdb51397725d4424f9ecf1c5083f35ab73f1d5ee46b",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/MARTY_exp_mods.bin": {
+      "schema_identity_sha256": "ed7940b9d1365bcc89a9c061bf13377ddcd420e4aa8031482c284f775fa78a0d",
+      "output_sha256": "d3d5c44524f061899f39cf6f1bac3d9e05d9b1b2b1927f3cb7ba754d3679ef42",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/MapObjectives.bin": {
+      "schema_identity_sha256": "98ebfa17c8f899c3769f3ab4354b69a4350d15d3efb2fce93ca630f47e025da1",
+      "output_sha256": "a8f0e8937278df81b1f894375ffbb97c200dd7b6b33296fac1db44f84815d59a",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/NewFeatures.bin": {
+      "schema_identity_sha256": "6d61b5a4067e139283f48431cbce0df07566d3b40f3af8deac1e302785c027d6",
+      "output_sha256": "d2b5550dc7677b314c74e9cd10763314dce09121b4454e1b0d6935d6dccbaf48",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/NictusHunterOptions.bin": {
+      "schema_identity_sha256": "36cea23cefbd6af54efe5e4382d94c1523deec8adab39a6f21e00b458f1b2576",
+      "output_sha256": "1599640b3383f3605beb7c3e14c81305d1a804007f5d6293b67cf751755fa5ef",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/PC_Rewards.bin": {
+      "schema_identity_sha256": "3f252c160ed6bb9bb48831030d51350611b7ec2fc39ed449929ebfe2bed9d57c",
+      "output_sha256": "fb6f4bcaddea4eb51d55fe9e0e101b07b7aa0d81b100127cdde0115185f5db2a",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/PowersetConversion.bin": {
+      "schema_identity_sha256": "67118195a47c5a7b5fc61b1503884e7726d2d6fe3550abb3975b152a7cf574fb",
+      "output_sha256": "d262596cf6281168633d2b06e3d8412a4b54924accd30472bbbaf325b188924a",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/Proficiencies.bin": {
+      "schema_identity_sha256": "9eb458b49ed72509e3d78e3b55f8e1127d8e7706b625fc17fa28cd594155ef05",
+      "output_sha256": "24837a0390efcc3f7be2696c49514998f74df0aca9c07de6ec5c24fd8f32188b",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/RewardChoiceTables.bin": {
+      "schema_identity_sha256": "1fc2f0830d277d89f5ffb9570fc461dfe32420c3641735f23fd5e48ad50277c0",
+      "output_sha256": "93c1ead857d523b33062e25df2fc392fb8a0f72b981f87ac0682ad32a97f7a82",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/RewardTables.bin": {
+      "schema_identity_sha256": "4d3d444dd380e8126903b69fa8143177929ab185aa412bfc32427a82feb4a59c",
+      "output_sha256": "dc5d2f2f2161b977a9ddee34731e06765bbb3920fa2d7b27b3f8cf035976bd05",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/Salvage.bin": {
+      "schema_identity_sha256": "0a45fedf4cfced877abe36182f0143d137fc53cd5de4107e16b27e9a646e6478",
+      "output_sha256": "bb351fc475d654578d8f613c38a07d2fb8bb05424853114a80c1fccc68b054ee",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/SouvenirClues.bin": {
+      "schema_identity_sha256": "d1c62d241f78bff7b3098c64d2f3969d47f851df51942eac2af1e088d93e7771",
+      "output_sha256": "5d10de29c150446d9104859dd853ca5f37a3c84ff1d21d73666ac5a734282a20",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/SupergroupMods.bin": {
+      "schema_identity_sha256": "703f13908149f1e8bbbb6b8b7c83f4834ae02a8b83b877e000496e9b01651d18",
+      "output_sha256": "8bc1c8d4b1e37febc4c6f0d7c17650ec750b0c1b72209d805d1426d24e0225f8",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/TFTimeLimits.bin": {
+      "schema_identity_sha256": "f353691933c9e649a3f1a6f12d2742b245790509642348c6790112f496b4250a",
+      "output_sha256": "d32f20cd0c1b4e7516ac0c9b21458ff3e1ac1961012631ece98e867416d34b64",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/TeamReward.bin": {
+      "schema_identity_sha256": "17bf06bd6e28242279498d4976ec0328d4e44a2f4fe7876332aeae914d073dbd",
+      "output_sha256": "dde272da2c4abcac0a398805e2443955cb44e31ed89c5e6fcff41294553c22ae",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/TrackedSalvage.bin": {
+      "schema_identity_sha256": "01d00b855360a02d9a6c6e0329f962d82d7d2c3f7d55deba3c7aa1b7fbfbda34",
+      "output_sha256": "70fa7b2d87e39a6c3640d676c03ffa5d6a2df47bcec26ceae22036c9aebfd6df",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/VillainDef.bin": {
+      "schema_identity_sha256": "dbe48a880c56bbee0c8ee8d2dc1456e0a6815b83ee808c8c309dca970c970fc6",
+      "output_sha256": "f529f6d0db231ecb3a26b23c3120e983aabea8999ae456268b2d4bb0ae195617",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/VillainGroups.bin": {
+      "schema_identity_sha256": "992e0d68b9c113e59da2e9e7f7d29406b52d95ca4344b7d54748d8932297305e",
+      "output_sha256": "c9f8f220be77ffcd71abf27340e71b148e6a83adce37f517c77ab2896dcab44b",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/attrib_names.bin": {
+      "schema_identity_sha256": "05c2fa7fa32b17a5fc9a8ccaef7bf11d44760e3d6cd243a50e217d56012dd5d4",
+      "output_sha256": "92daf1ec706f21b9a2f1f57d1ba941be43d4ed16b3f48c4e5028ac7e79162345",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/badges.bin": {
+      "schema_identity_sha256": "045e3daaef053275d1e21c59f3564cf7b4afd0713a4b3cab41202f8b49e53eff",
+      "output_sha256": "9dc0a979d68fe01e72f8601d4eac190c45646f31af230794301db257c51eec2b",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/baserecipes.bin": {
+      "schema_identity_sha256": "16db13a73c929ae796e239279536866426cb359a6268e182615cb00304dd9c6d",
+      "output_sha256": "4f358ca92b88f46de77eb75ce833e76c880d0d56d486861e2b5bd9023420e829",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/boost_effect_above.bin": {
+      "schema_identity_sha256": "ff4dd7349f40c4d6e00f2b83aba8faeaa0734b13f4f099891fbc29916eedbe20",
+      "output_sha256": "04c0643936f30f0c445899564c8b99c65ae933a1a59eab71fd1be2ba7560ac02",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/boost_effect_below.bin": {
+      "schema_identity_sha256": "7ac51bc0d3f47f8fabdd2db350e8e4b13018f7d29b90595e7548a01fd42815ad",
+      "output_sha256": "f888e14a84b042ed6f498aa800ffcd9c089cc26441a2660aa07f53500b418f8e",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/boost_effect_boosters.bin": {
+      "schema_identity_sha256": "a873ec4bc6d617493d475ac2357e981610cc1c306c8a5d877a8d0783bade85d6",
+      "output_sha256": "cc295ce81cd8dbabcd658dafb7f5043bbb524d6f3694d2c14d33ca118a326c35",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/boostsets.bin": {
+      "schema_identity_sha256": "6618e9e61816b98136f4b3f040d7a1c484c97c609d27e14143b058565e5dd6fa",
+      "output_sha256": "7af712b44bcbb93c18c45d42d21cb12bd7946c57506858f2f42c1070bb818c6c",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/classes.bin": {
+      "schema_identity_sha256": "5b243222a3df711b6077b53a9648b040622b970548c833f5427185d4723e523a",
+      "output_sha256": "91af1ca0b304d77e56f356d54e1a880309b910c40f1729672cc0af1b83dd6733",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/combat_mods.bin": {
+      "schema_identity_sha256": "5d52887ca2bbdce66d0cf4bb37e56e42e1fa848baf871189438d1ce99ccc4c63",
+      "output_sha256": "33d0393f4908d6c0c6dd6a5aaf1a8968bf4943819e654a1264d0b17981a26688",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/combat_mods_villain.bin": {
+      "schema_identity_sha256": "c87bd6f1092f4ee144806e8b133461ba4b9acd8ad557f371c0f85094399e3a3c",
+      "output_sha256": "f5153efb99bf23bde6cb5363d110f9d206deae9d845f7a29b43c36c30278acef",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/combine_booster_chances.bin": {
+      "schema_identity_sha256": "453396596a04c5f933c3241a0fdc5b2d03c48a7265357d7d6b03da3703776bad",
+      "output_sha256": "1bdae93fe8a14f45e0f08e0eb4cf590616ff6676c8e7c8bdc356c14e09a5a1fd",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/combine_chances.bin": {
+      "schema_identity_sha256": "9987a7fcf12ad30ff666db73f2cd1c0cbca14bdf1b7a355e2d0c938a82c1dddb",
+      "output_sha256": "041f1d89c637566b170ef267f990f41405b7b7e3931cc9d730df5ea8c022cfeb",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/combine_same_set_chances.bin": {
+      "schema_identity_sha256": "e8c88de37d369a7e9a0328715b117f4239b9ed7010ff49beecc8948974ade6af",
+      "output_sha256": "dd6f943d9c40f55f2dc322acaf3ff8bc77330f360df2ebd0a6885000fbf120b3",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/contacts.bin": {
+      "schema_identity_sha256": "d0af102ea7d9cbca939739ff60ada4bca581f3f5cd914db293f990946303a451",
+      "output_sha256": "93da4b8266e5db9650abd07378195fefa70b2ac43ea10ade8cf7431959650617",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/conversionsets.bin": {
+      "schema_identity_sha256": "3222b5c253c4c6087379c8d87f576c12823e32621cca8bd552d6c4b4b0186b61",
+      "output_sha256": "f49989a4537a4b9395a9b77dbd7f69d69d8132dc134a12fbe7a06aef021a1888",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/damagedecay.bin": {
+      "schema_identity_sha256": "2b324259411274f8e3d01f96da1c1e97a5ce6d4480f25922480524a6f3b6b87f",
+      "output_sha256": "288bcee933d4b2b43bc7a06ca559a1a3c2b8627ec13cc2ed2e88fec1a1c95c54",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/designer_contact_tip_types.bin": {
+      "schema_identity_sha256": "100d2a229ad20bc2798d1c7a59b38c0758ba426b1d98fb8da925a05fe730d9e1",
+      "output_sha256": "a45c8bc79f2703083bade43181eca2f758c9007933ce747d22043741a0af1de2",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/detailcats.bin": {
+      "schema_identity_sha256": "edc0581334b184b4707f5d7d11ae2e2105227bea24fc884a247a4dfe17da1f4a",
+      "output_sha256": "b3c0f24047dd138017ba7870d6652a5348f98535f807e8b54eabbebfceb4cbe4",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/details.bin": {
+      "schema_identity_sha256": "4dd4cae907ec56207554860431af5021e4fd584dba9f96cdd67900fec0500fe3",
+      "output_sha256": "d6e2c59a7ae3278e201ac6dc8c984f521d197345c0c0e0575cf9f3b189497f2a",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/dialog.bin": {
+      "schema_identity_sha256": "c3852102d0e78396843c439b477e30dd52043c0124df35fd5dbcd9954731f936",
+      "output_sha256": "c15afd70244fd610cd5b1c56b0c405085b24e84addb4a9b89208ea471ed45ed5",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/dialogdefs.bin": {
+      "schema_identity_sha256": "c134d3a942d1aa9924509def23f1ff1432a40da5245076fb7a4139a07ff550fa",
+      "output_sha256": "6cf5953eb5784ec95880671c0e6eb756d0e762581cd298bf861ba333a4dc6dd9",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/dim_returns.bin": {
+      "schema_identity_sha256": "48b002d284da8fc9d834cdb597f6aca6d2445b95d4fd1c182b3159632a402e78",
+      "output_sha256": "cf81588dc98b4264a5f4e27b86300d848363781834c81a8423f5ce6c74bd0c19",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/emotes.bin": {
+      "schema_identity_sha256": "dd362fb53d73dcfee4c4bdd1c386e69e73f7de174dadbf1ad3596374832503a1",
+      "output_sha256": "57dd7ef923c5b61b21fcc40cf4bc1fad4d7e7f6df6e27212717c329b71671168",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/exemplar_handicaps.bin": {
+      "schema_identity_sha256": "2fee98499dd96bc506aa8b57e5d9482dae613acde9aeb4a3ffffc06530eb8d8d",
+      "output_sha256": "626456e3797195e8d79ff56e2ce742e3a581b38d4399400affb43bb488f8cafb",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/experience.bin": {
+      "schema_identity_sha256": "d53ca8cb6a5d10a884edf92c2756b6bcb29a59610034d6a72d395bcfe4e0bc88",
+      "output_sha256": "1295f7e7ad69f49aa9187bf7a97f8fa4335af78df0bd778dcbc28d776669a4d0",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/incarnate.bin": {
+      "schema_identity_sha256": "e41ccd4753d6fd3279d6a5bdbb467bf23236c4702ebededfa09960f72eb6d29a",
+      "output_sha256": "2ffee43e712fdc2b7502b9cf524f622eb85b6fea14b691eed3378614ddb9313f",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/inventory_sizes.bin": {
+      "schema_identity_sha256": "8f1a5cd5945abdb9492e64f6b81dffe40377f9c525eb0b365e106f1901d34164",
+      "output_sha256": "fec2eac9e09b23f4491c4b4e04fd63b15476de1ea10e696362b9d03a32f1b76d",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/inventory_tier_bonus.bin": {
+      "schema_identity_sha256": "1d228086785db6dc008a7aa8e304640de59ddb4264e0c344274144fdad09f56f",
+      "output_sha256": "2be40f1058e99d97dc0a93f839bb61ef3885103bd7fc417e1c31181cfe6f55ff",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/mapsspec.bin": {
+      "schema_identity_sha256": "fea4b9ef467abba015353400819df12ac9cd48aaf13f8bf53498ee59e31f3492",
+      "output_sha256": "4d8af645a32eea00fcd2f3af1cb2cda7cc1131e3c9aff347c96196e2e8886ebb",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/meritsRewards.bin": {
+      "schema_identity_sha256": "e37340b26380e1663c2e53361f6726b365d8d35263dea95f728a7c409b1db161",
+      "output_sha256": "56b365ce8249ff628496e75684c14cb90c25ca7d3814f73b5133a6fec6142880",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/missionhostagespawns.bin": {
+      "schema_identity_sha256": "714b120d40014b1c5b560b8e2bfc9acbb4e07ab4dbfbd65c4e1e602f9e859d4c",
+      "output_sha256": "d493fb4cb08fdfe57c19b35002482365d5d41f1f15802c83916ac16d1fc1fd94",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/missionspawns.bin": {
+      "schema_identity_sha256": "138e150a4cb292fdf2fabd765fdd82b7d9f4f3c8627f01bc12379c97a8c74030",
+      "output_sha256": "ab47259759e1a47cfdf98f62f8f70b9dbecc5997b305a812be459a768d7074b3",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/missionspecs.bin": {
+      "schema_identity_sha256": "3f57dfb1136ee5c171bd771ea07e81f8e2884e7d9b02cc0329474a48b92e5ab0",
+      "output_sha256": "09fa2446df00c99a173fdd12f857aceaea286711a4bd2cd7abfddf883f822625",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/monorails.bin": {
+      "schema_identity_sha256": "eb9682254289663d02a8c889fea5d84646031d611e4b50b0d433ae4b9ece671a",
+      "output_sha256": "c5f729c836618796654cfd07c6c1f2b352a4bc26e05e09e80c712e06e8fec233",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/npcs_server.bin": {
+      "schema_identity_sha256": "20ef2a7a7f97d983dc0c904e1c4ce335aa40cfac2b830fc8f0ccef5a6c97af59",
+      "output_sha256": "011b30bbe643133f7bcc9c6a087f6ec42b590d3af66e2bd7dbc0f668690ebf8e",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/origins.bin": {
+      "schema_identity_sha256": "2ac2831cd48290cdd7aedaeeb310e0b1326871c96b5e67ea6060e03c6c36ebc7",
+      "output_sha256": "ec13f45bc83815bb6d2c440380360589217919c65cc637f94959e53c5410e033",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/petBattleCreatureInfo.bin": {
+      "schema_identity_sha256": "61e9c95fe056cb7b96807e3220778919a7af3f5e81d42273ed49e3e55032b0bd",
+      "output_sha256": "ee7ac2604a9db535fe21a9bf047be49f86e04e8262cfe1a0b73ca21a0b7c2766",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/plots.bin": {
+      "schema_identity_sha256": "4d57e8fd336c6949c471b9c46eace0395586f44915f5813e192cb376a7a944ed",
+      "output_sha256": "f3568a21a3eda0a3e9120d2addd77b90d35d9e9124fbf30ff78300a888d2a25a",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/powercats.bin": {
+      "schema_identity_sha256": "4ec08bc4d109fb97065c9c4b9e4f211bb9ab260145a1b82d347d59212147d1e7",
+      "output_sha256": "e236f92e9bd0c3dc33058f7cc01795db21e7c6aa4d1b36d82be84c68035357ee",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/powers.bin": {
+      "schema_identity_sha256": "85a556d9b53e56b8da34457534485e542b8a213783f9178e6bca82e0de062a66",
+      "output_sha256": "3b563ea562eb7c96c95bdc4200ffdf8432638e5dceb8f792fca4e2e29f2047f9",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/powersets.bin": {
+      "schema_identity_sha256": "d6427522b6a7025c0190ab4c1da2eddc58f155fc6b67df492e6dd3c483f9dcad",
+      "output_sha256": "5db7961a042540ad2675deea08a67905f0e596bb2997db9f2ec14e7d4babdebc",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/pvptaskmodifiers.bin": {
+      "schema_identity_sha256": "998e82c1eb7bbeb86660052c95d03254e8cf6c57985e2ad4785a22c5b5cbad37",
+      "output_sha256": "395ae902328e24db1c9f61add366784a02b66729d301d59bfe8c1d76e2c58437",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/randomgroupselection.bin": {
+      "schema_identity_sha256": "1602d467285ebb9ed22b012310fd5b81b821752ac3fbd0e3936531951309e2d0",
+      "output_sha256": "54e4cb30a3d07c46a8b622e70ca252aaf199641326a3602ec5e0697537616467",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/randommapselection.bin": {
+      "schema_identity_sha256": "b7638624eecc5bc139a82157174b96bbfdb38fbe4914b657c47b7f426bbc9b05",
+      "output_sha256": "c8190ad0104004dbc41b90b635a9c751aa93786e5a7714d295cbadae24231980",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/roomcategories.bin": {
+      "schema_identity_sha256": "a423e64ccb8f4affec0247c423714a8bdbae7438da9d62652fc5a4c296a16548",
+      "output_sha256": "47298da5fbd1034f1bd338124c09f1df9939d3f8762fbeb09860df48c7b12e02",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/roomtemplates.bin": {
+      "schema_identity_sha256": "5c5b27d603c08b1ecc1b0a66cf4eb3760945ec0915acb891b074dc029927a57b",
+      "output_sha256": "2fbd3f2fee1498a8c0dbb3eb21c278ff8734ea5d0013808cb1ac40b80408ffd3",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/schedules.bin": {
+      "schema_identity_sha256": "c327f6572d771fc86e5eb8b9bc3e64f0d0aa9e6c427161f8fed04b4de71f20e5",
+      "output_sha256": "a6b344b7f37b8bade2f5fbc28906d122690791ca08b381a10e6581664a348de6",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/scriptdefs.bin": {
+      "schema_identity_sha256": "93e2eeb898135701a3fd68180e9db461d2902e1dbf4efe9874e171bc3f0ec170",
+      "output_sha256": "c785a3ff7f2bad2612b39b1bd90b1fa8c58d3c2f405c59ffe7f10f37cd191d01",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/seqstatebits.bin": {
+      "schema_identity_sha256": "f41c8a43779bcf034b5e74fc4f14f309b783f728d8f6f97177e6d78f88f2a2d3",
+      "output_sha256": "9c4a5aab4c2bffb99eb2416e76a692449ee26927beed3cdd86dece02af2b2aac",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/spawndefs.bin": {
+      "schema_identity_sha256": "2c839965db35085bbc9c2c2f07fa09526958f8b2d9a71d4f8b287a66fcb6ca8d",
+      "output_sha256": "141fb3f67430c6d1cfad706cd9afd7664e63554462884b1b1dbfa6e5aa9ab81f",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/storyarc.bin": {
+      "schema_identity_sha256": "b9c8c7b55d013b823f9ab98f9099c62af276081f059f88d155ec69a8d9acfdac",
+      "output_sha256": "c0c667ae2e446e2dc959ae1f389588066469fb30e15de2d5a9568afe3e90b0e4",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/supergroup_badges.bin": {
+      "schema_identity_sha256": "7186352a7c8c9f1e6bea285575040a0a7b0b61c4e326d58a9eb37c3efa8d22d2",
+      "output_sha256": "d1dc7826ef9143b09bad9fcac6ca58fbfb8ed42257825489ae0945316d0dc688",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/tasksets.bin": {
+      "schema_identity_sha256": "bc0862e15bdd18be826f1f25421d918fb39d39d2f4fdd681172075cb151a5d93",
+      "output_sha256": "d7f995419751844011b80ae5052317287a1e92fc8e797be6463126da2e95192f",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/turnstile_server.bin": {
+      "schema_identity_sha256": "f8309f9d0fa09706568485914a0b7fb1087310d36a7803610aaab5179f65ac20",
+      "output_sha256": "229b31498370958d83b2776d9e59b637205a2f700bb419bf31070d83bff2056a",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/tut_votekick.bin": {
+      "schema_identity_sha256": "422861d3616f08634fc33a2a0b23816bef786593a7aa31b691e04ed9a6e832b1",
+      "output_sha256": "6471eeaeb972a186860e417eb321b62c4a21bd904cb0a26a29f215686e44fd58",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/villain_classes.bin": {
+      "schema_identity_sha256": "7d3e24235df235ee4a8e3012408a240d25cdc525809ac0db96301ebcd788c325",
+      "output_sha256": "bc0789f03941d845f9574f6df4dd1ad953ad35328a3d7323c07d02d92fdbd523",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/villain_origins.bin": {
+      "schema_identity_sha256": "93069308319a567741db0b0dabb71c6fdf5a1dd2e7a4773ec881951fd101ece6",
+      "output_sha256": "2432c9d535ef7021d2c86ab9ea2e7049148304721e88163af3a3a2611bbeba3a",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/villainrandomgroupselection.bin": {
+      "schema_identity_sha256": "ba55f3388d7ff26c7ba2060e93aa57483bb9a4e7ca8aba206d721a5f5eaea3cc",
+      "output_sha256": "ac0874d1554c88b80e7874b36a4cf63b1cf71bb6e1ccc240db8caf704aebd3b8",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/villainrandommapselection.bin": {
+      "schema_identity_sha256": "c02c81be8d128f51cab8c85902ee710e6f4fc1122431bb897ca17f535ebdc831",
+      "output_sha256": "29107e77a21db08151a9b32b7917da6f24475d001ac1bfbe68e91a1614f5b229",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/visionPhases.bin": {
+      "schema_identity_sha256": "3ac96626c99ca175d61dee663cb5355d042e01eb4500fe1f0ae52ba1ed543ea4",
+      "output_sha256": "4e1099f1b9234004b568c7e2899eecd8b63b6ed9a2c50c56b90ed6989f4a8d32",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/visionPhasesExclusive.bin": {
+      "schema_identity_sha256": "594a6f34437810cf566bf91fd4b4faf475322018cfbddfbb783e56506868c574",
+      "output_sha256": "60a6b76d7b7e481923eb87e1dd710dfe6dc3ab694999e061be2453514328ad15",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    },
+    "data/server/bin/zone_event_karma.bin": {
+      "schema_identity_sha256": "6ab0537832523b2a8d8c87b64979b60c83aefd995968e28dc4dcc363223a29b5",
+      "output_sha256": "3047b833eb5438a3a12a9b7eca57ae541d9e943dba509cae9e83ab4a61258b94",
+      "identifier_inputs_sha256": "311bf6ceb8419b8da901f9deef1323b02e210cf9623375e289141541ec56e59e",
+      "loader_decisions_sha256": "975ba03b8d4d0850a93a89e5468b44b4c0c3b3b6bdbb7a65d8e5c4638d186020"
+    }
+  },
+  "omissions": [
+    {
+      "name": "data/bin/LoyaltyReward.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/bin/PC_Def_Animation.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/bin/PC_Def_Contacts.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/bin/PC_Def_DestructObject.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/bin/PC_Def_Entities.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/bin/PC_Def_MapSets.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/bin/PC_Def_MapUnique.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/bin/PC_Def_NonSelectable_Entities.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/bin/PC_Def_Objects.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/bin/PC_Def_Sequencer_Anims.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/bin/PC_Def_Unlockable_Content.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/bin/product_catalog.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/server/bin/InvBaseDetail.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/server/bin/InvRecipe.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/server/bin/InvSalvage.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/server/bin/InvStoredSalvage.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "name": "data/server/bin/ProficiencyIds.bin",
+      "reason": "original_donor_output_changed"
+    },
+    {
+      "token": "811c9dc5",
+      "reason": "unmapped_or_ambiguous_diagnostic_name"
+    }
+  ],
+  "scope": {
+    "actual9454native_preload_evidence_reused": true,
+    "raw_artifact_membership_claimed_for_derived_summary": false,
+    "normalizer_committed_and_independently_reviewed": false,
+    "native_world_gate_passed": false,
+    "native_ID_tables_observed": false,
+    "runtime_authority_created": false,
+    "shipping_allowed": false,
+    "physical_timing_validated": false,
+    "native_processes_executed_by_deriver": false
+  }
+}

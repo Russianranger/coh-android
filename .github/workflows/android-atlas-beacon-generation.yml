@@ -1,0 +1,298 @@
+name: Generate authentic single-map Atlas native beacons
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-atlas-beacon-generation.yml
+      - tools/prepare_atlas_beacon_generator_source.py
+      - tools/android/interactive/generate_atlas_beacons.py
+      - patches/atlas-beacons/**
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-atlas-beacon-native-generation
+  cancel-in-progress: true
+jobs:
+  preflight:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Preserve exact preflight source bytes
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Audit exact public donor rich records and projected physical GEO pins
+        run: |
+          mkdir -p out/beacon-preflight out/ui-beacon-donor
+          curl --fail --location --retry 3 --output out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk \
+            https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.13/COH-Atlas-Gameplay-0.13.13.apk
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import generate_atlas_beacons as producer
+          value = producer.audit_visual_geometry_manifest(Path('out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk'))
+          Path('out/beacon-preflight/donor-geometry-projection-audit.json').write_bytes(producer.canonical(value))
+          summary = {key: item for key, item in value.items() if key != 'optional_input_files'}
+          print('COH_ATLAS_BEACON_DONOR_GEOMETRY ' + producer.canonical(summary).decode('ascii'), flush=True)
+          PY
+      - name: Test actual source and recovery contracts before native readback
+        run: |
+          python3 - <<'PY'
+          import json, sys, unittest
+          from pathlib import Path
+          sys.path[:0] = ['tools', 'tools/android/interactive']
+          modules = ['test_prepare_atlas_beacon_generator_source', 'test_generate_atlas_beacons',
+                     'test_atlas_beacon_package', 'test_beacon_runtime_profiles', 'test_ui_beacon_package',
+                     'test_classify_storage_cleanup_change', 'test_server_worktree_reuse']
+          excluded = 'test_ui_beacon_package.UiBeaconPackagingTests.test_workflow_uses_native_generation_and_exact_donor_then_sdk_identity_checks'
+          def leaves(suite):
+              for case in suite:
+                  if isinstance(case, unittest.TestSuite): yield from leaves(case)
+                  else: yield case
+          cases = [case for name in modules for case in leaves(unittest.defaultTestLoader.loadTestsFromName(name))]
+          omitted = [case.id() for case in cases if case.id() == excluded]
+          if omitted != [excluded]: raise SystemExit('Exact held publication-workflow test exclusion differs')
+          selected = unittest.TestSuite(case for case in cases if case.id() != excluded)
+          count = selected.countTestCases()
+          print('COH_ATLAS_BEACON_PREFLIGHT_TESTS ' + json.dumps({'count': count, 'modules': modules,
+                'excluded_uncommitted_publication_workflow_test': excluded,
+                'final_apk_qualification_must_include_excluded_test': True}, sort_keys=True), flush=True)
+          result = unittest.TextTestRunner(verbosity=1).run(selected)
+          if not result.wasSuccessful(): raise SystemExit(1)
+          Path('out/beacon-preflight').mkdir(parents=True, exist_ok=True)
+          Path('out/beacon-preflight/test-contract-summary.json').write_text(json.dumps({
+              'status': 'passed', 'selected_tests': count, 'excluded_test': excluded,
+              'native_generation_proof': False}, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-atlas-beacon-donor-preflight
+          path: out/beacon-preflight/*.json
+          if-no-files-found: warn
+          retention-days: 90
+  generate:
+    needs: preflight
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    # GitHub requires write permission to READ this existing reviewed draft
+    # release asset, as in the accepted server-cache workflow. No publishing step.
+    permissions:
+      contents: write
+      actions: read
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - name: Preserve exact generation source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-reopen-startup-repair-packaging-evidence
+          path: out/ui-beacon-donor/evidence
+          run-id: 37324515114
+          github-token: ${{ github.token }}
+      - name: Recover exact public working world and reviewed original import input
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $ProgressPreference = 'SilentlyContinue'
+          New-Item -ItemType Directory -Path out/ui-beacon-donor -Force | Out-Null
+          $donor = 'out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk'
+          if (Test-Path $donor) { throw 'Fresh public donor path required' }
+          Invoke-WebRequest -Uri 'https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.13/COH-Atlas-Gameplay-0.13.13.apk' -OutFile $donor -TimeoutSec 300
+          if ((Get-Item $donor).Length -ne 1535592811 -or (Get-FileHash $donor -Algorithm SHA256).Hash.ToLowerInvariant() -ne '81f199d6380faa09261a85efea6fd3abca6ed58749b8cc68c75d1cd579d454a4') { throw 'Exact public 0.13.13 donor differs' }
+          python tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --release-asset-id 588984151 --output out/ui-beacon-donor/reference-assets.zip
+          if ($LASTEXITCODE -ne 0) { throw 'Exact original import input download failed' }
+      - name: Stage a contained host-only single-map native generator
+        shell: pwsh
+        run: |
+          python tools/prepare_atlas_beacon_generator_source.py --output C:/bcn-src
+          if ($LASTEXITCODE -ne 0) { throw 'Native generator staging failed' }
+      - name: Authenticate failed-run primary generation and exact successful UI preparation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $ProgressPreference = 'SilentlyContinue'
+          $api = 'https://api.github.com/repos/Russianranger/coh-android/actions'
+          $headers = @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json'; 'X-GitHub-Api-Version' = '2022-11-28' }
+          New-Item -ItemType Directory -Path out/ui-beacon-recovery -Force | Out-Null
+          $run = Invoke-RestMethod -Uri "$api/runs/37377053417" -Headers $headers
+          $jobs = (Invoke-RestMethod -Uri "$api/runs/37377053417/jobs" -Headers $headers).jobs
+          $job = @($jobs | Where-Object { $_.id -eq 111989203448 })
+          if ($job.Count -ne 1) { throw 'Original native job identity differs' }
+          $compile = @($job[0].steps | Where-Object { $_.name -eq 'Compile Win32 generator without changing shipped MapServer' })
+          $stage = @($job[0].steps | Where-Object { $_.name -eq 'Stage a contained host-only single-map native generator' })
+          if ($compile.Count -ne 1 -or $stage.Count -ne 1) { throw 'Original native stage/compile evidence differs' }
+          $artifact = Invoke-RestMethod -Uri "$api/artifacts/11379217768" -Headers $headers
+          $metadata = @{
+            format = 1; status = 'authenticated_failed_run_primary_candidate'
+            run = @{ id = $run.id; head_sha = $run.head_sha; head_branch = $run.head_branch; path = $run.path
+                     status = $run.status; conclusion = $run.conclusion; run_attempt = $run.run_attempt }
+            job = @{ id = $job[0].id; name = $job[0].name; conclusion = $job[0].conclusion
+                     source_stage_conclusion = $stage[0].conclusion; compile_conclusion = $compile[0].conclusion }
+            artifact = @{ id = $artifact.id; name = $artifact.name; expired = $artifact.expired
+                          size_in_bytes = $artifact.size_in_bytes; digest = $artifact.digest
+                          run_id = $artifact.workflow_run.id; head_sha = $artifact.workflow_run.head_sha }
+          }
+          $metadata | ConvertTo-Json -Depth 12 | Set-Content -Encoding utf8NoBOM out/ui-beacon-recovery/api-metadata.json
+          @'
+          import json, sys
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import generate_atlas_beacons as producer
+          path = Path('out/ui-beacon-recovery/api-metadata.json')
+          value = json.loads(path.read_bytes())
+          value['source'] = producer.PRIMARY_RECOVERY
+          producer.validate_recovery_metadata(value)
+          path.write_bytes(producer.canonical(value))
+          print('COH_ATLAS_BEACON_AUTHENTICATED_PRIMARY ' + producer.canonical(value).decode())
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Failed-run primary API authentication refused' }
+          $archive = 'out/ui-beacon-recovery/primary-native-evidence.zip'
+          Invoke-WebRequest -Uri "$api/artifacts/11379217768/zip" -Headers $headers -OutFile $archive -TimeoutSec 180
+          if ((Get-Item $archive).Length -ne 33296543 -or
+              (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'a23fe422656874009013f56bc8a41a243a0511afb1d4fcb828196c03054731a4') {
+            throw 'Actual primary native artifact bytes differ'
+          }
+          $oldSource = 'out/ui-beacon-recovery/original-generation-source.py'
+          Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Russianranger/coh-android/3124723b93b4ae83b211f9319ffa8d6d8a3e851d/tools/android/interactive/generate_atlas_beacons.py' -OutFile $oldSource -TimeoutSec 120
+          if ((Get-Item $oldSource).Length -ne 44424 -or
+              (Get-FileHash $oldSource -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'eb89c170f0780e0b3ac61b0bd6e957b3f07b928dbeaf1c91653e7977720f16c2') {
+            throw 'Original generation implementation bytes differ'
+          }
+          $uiRun = Invoke-RestMethod -Uri "$api/runs/37379767112" -Headers $headers
+          $uiArtifact = Invoke-RestMethod -Uri "$api/artifacts/11373610942" -Headers $headers
+          if ($uiRun.head_sha -ne '52da9286c2fd1695c6c0c2979378fc418c418c99' -or
+              $uiRun.head_branch -ne 'codex/character-persistence-continuation' -or
+              $uiRun.path -ne '.github/workflows/android-ui-beacon.yml' -or
+              $uiRun.status -ne 'completed' -or $uiRun.conclusion -ne 'success' -or $uiRun.run_attempt -ne 1 -or
+              $uiArtifact.id -ne 11373610942 -or $uiArtifact.name -ne 'coh-ui-beacon-visual' -or
+              $uiArtifact.expired -or $uiArtifact.size_in_bytes -ne 907668082 -or
+              $uiArtifact.digest -ne 'sha256:ffd0e9e667ef460c662bdd8808d00a74600a61943c507e19daaadc162e97b364' -or
+              $uiArtifact.workflow_run.id -ne 37379767112 -or
+              $uiArtifact.workflow_run.head_sha -ne '52da9286c2fd1695c6c0c2979378fc418c418c99') {
+            throw 'Frozen successful complete-visual preparation provenance differs'
+          }
+          $uiArchive = 'out/ui-beacon-recovery/ui-preparation.zip'
+          Invoke-WebRequest -Uri "$api/artifacts/11373610942/zip" -Headers $headers -OutFile $uiArchive -TimeoutSec 300
+          if ((Get-Item $uiArchive).Length -ne 907668082 -or
+              (Get-FileHash $uiArchive -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'ffd0e9e667ef460c662bdd8808d00a74600a61943c507e19daaadc162e97b364') {
+            throw 'Frozen UI preparation archive bytes differ'
+          }
+          @'
+          import sys, zipfile
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import generate_atlas_beacons as producer
+          output = Path('out/ui-beacon-recovery')
+          with zipfile.ZipFile(output / 'ui-preparation.zip') as archive:
+              rows = archive.infolist()
+              producer.require(0 < len(rows) <= 128 and sum(row.file_size for row in rows) <= 2 * 1024**3,
+                               'Finite UI preparation artifact required')
+              names = [producer.safe(row.filename.rstrip('/')) for row in rows]
+              producer.require(len(set(name.casefold() for name in names)) == len(names), 'UI artifact aliases refused')
+              for leaf, expected in (('client-visual-assets.zip', producer.QUALIFICATION_VISUAL_ARCHIVE),
+                                     ('client-visual-manifest.json', producer.QUALIFICATION_VISUAL_MANIFEST)):
+                  selected = [row for row in rows if Path(row.filename).name == leaf and not row.is_dir()]
+                  producer.require(len(selected) == 1 and selected[0].file_size == expected['bytes'],
+                                   'Exact frozen UI artifact member required')
+                  with archive.open(selected[0]) as source:
+                      producer.copy_pinned(source, output / leaf, expected)
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Frozen complete visual source pair differs' }
+      - name: Recover actual primary graph and qualify two fresh required-geometry native layouts
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/generate_atlas_beacons.py
+          --donor-apk out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+          --donor-receipt out/ui-beacon-donor/evidence/reopen-startup-repair-apk-build-report.json
+          --asset-archive out/ui-beacon-donor/reference-assets.zip
+          --generator C:/bcn-src/out/build/vs2026/bin/OptDebug/MapServer.exe
+          --build-input C:/bcn-src/atlas-beacon-generator-build-input.json
+          --repository-commit "$env:GITHUB_SHA"
+          --work C:/bcn-run
+          --output out/ui-beacon-native
+          --timeout-seconds 5400
+          --recovery-artifact out/ui-beacon-recovery/primary-native-evidence.zip
+          --recovery-metadata out/ui-beacon-recovery/api-metadata.json
+          --original-generation-source out/ui-beacon-recovery/original-generation-source.py
+          --client-visual-archive out/ui-beacon-recovery/client-visual-assets.zip
+          --client-visual-manifest out/ui-beacon-recovery/client-visual-manifest.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-ui-beacon-native
+          path: out/ui-beacon-native/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Collect short-path host evidence on the repository drive
+        if: always()
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $destination = 'out/ui-beacon-native/evidence'
+          New-Item -ItemType Directory -Path $destination -Force | Out-Null
+          $files = @{
+            'C:/bcn-src/atlas-beacon-generator-build-input.json' = 'atlas-beacon-generator-build-input.json'
+            'C:/bcn-src/atlas-beacon-generator-compile-reuse.json' = 'host-compile-reuse.json'
+            'C:/bcn-src/out/build/vs2026/CMakeCache.txt' = 'CMakeCache.txt'
+            'C:/bcn-src/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml' = 'CMakeConfigureLog.yaml'
+            'C:/bcn-src/out/build/vs2026/bin/OptDebug/MapServer.exe' = 'host-only-beacon-generator.exe'
+            'C:/bcn-src/out/build/vs2026/bin/OptDebug/MapServer.pdb' = 'host-only-beacon-generator.pdb'
+          }
+          # All runtime evidence is copied onto D: before upload-artifact.
+          # The retained host EXE/PDB only runs new native proofs; it never ships.
+          # Owned native internal errors/minidumps are finite and preserved even
+          # when Python fails before it can write its role-failure receipt.
+          $diagnostics = Join-Path $destination 'native-internal'
+          New-Item -ItemType Directory -Path $diagnostics -Force | Out-Null
+          $total = 0L
+          $count = 0
+          foreach ($runtime in @('C:/bcn-run/r', 'C:/bcn-run/c')) {
+            if (-not (Test-Path -LiteralPath $runtime)) { continue }
+            $candidates = Get-ChildItem -LiteralPath $runtime -File -Recurse | Where-Object {
+              $_.Name -like 'errorLogLastRun*' -or $_.Extension -in @('.dmp', '.mdmp') -or
+              ($_.FullName -like '*\logs\*' -and $_.Extension -in @('.log', '.txt'))
+            }
+            foreach ($file in $candidates) {
+              if ($count -ge 128 -or $file.Length -gt 134217728 -or $total + $file.Length -gt 268435456) { continue }
+              $relative = [IO.Path]::GetRelativePath('C:/bcn-run', $file.FullName)
+              $target = Join-Path $diagnostics $relative
+              New-Item -ItemType Directory -Path (Split-Path $target) -Force | Out-Null
+              Copy-Item -LiteralPath $file.FullName -Destination $target -Force
+              $count++
+              $total += $file.Length
+            }
+          }
+          @{ copied_files = $count; copied_bytes = $total; max_files = 128; max_bytes = 268435456 } |
+            ConvertTo-Json | Set-Content -LiteralPath (Join-Path $destination 'native-internal-copy.json')
+          foreach ($source in $files.Keys) {
+            if (Test-Path -LiteralPath $source) {
+              Copy-Item -LiteralPath $source -Destination (Join-Path $destination $files[$source]) -Force
+            }
+          }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-ui-beacon-generation-evidence
+          path: |
+            out/ui-beacon-native/atlas-beacon-generation-report.json
+            out/ui-beacon-native/evidence/
+          if-no-files-found: warn
+          retention-days: 90

@@ -1,0 +1,430 @@
+{
+  "artifacts": [
+    {
+      "id": 11484240348,
+      "name": "coh-client-gameplay-performance-apk",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37622107943/artifacts/11484240348",
+      "zip_bytes": 1562394467,
+      "zip_downloaded_and_hash_verified": false,
+      "zip_sha256": "46b728ab849d288be7d755198790bfe0559dcbb2866bed6029fc010212b1b60d"
+    },
+    {
+      "id": 11484236049,
+      "members": {
+        "client-gameplay-performance-public-audit.json": {
+          "bytes": 540,
+          "sha256": "71d9697c4ea7e566ed8c07d478fe8b69feeee7c4cdc91cf0a3edb52bdfa3b912"
+        }
+      },
+      "name": "coh-client-gameplay-performance-public-byte-audit",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37622107943/artifacts/11484236049",
+      "zip_bytes": 553,
+      "zip_downloaded_and_hash_verified": true,
+      "zip_sha256": "4c08c2213542deab96595c627a1b3383fbad5079599b00e99372a36c37311f04"
+    },
+    {
+      "id": 11483756562,
+      "members": {
+        "client-gameplay-performance-qualification.json": {
+          "bytes": 1884668,
+          "sha256": "c43cf3d2efc54da0514b364ee6160f871cec76bc124e615caf5425d9a8f1e219"
+        }
+      },
+      "name": "coh-client-gameplay-performance-qualification",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37622107943/artifacts/11483756562",
+      "zip_bytes": 495448,
+      "zip_downloaded_and_hash_verified": true,
+      "zip_sha256": "35761193c7b27ef28843a7b239c21536bf1ee9f7d001644becbfa0f317b63cd4"
+    },
+    {
+      "id": 11483148941,
+      "members": {
+        "COH-Atlas-Gameplay-0.13.17-testing.txt": {
+          "bytes": 3959,
+          "sha256": "2564cb8c3d1ca05a913091ddda2196e30e450e90572ccee1d75b47037d9c8a74"
+        },
+        "COH-Atlas-Gameplay-0.13.17.apk.sha256": {
+          "bytes": 97,
+          "sha256": "24661a4fac89a1a65dc338d481d33cb239419f217631bac50ef8cddc2f1eda20"
+        },
+        "client-gameplay-performance-apk-build-report.json": {
+          "bytes": 5014125,
+          "sha256": "38ec339829afd5d326887fee3c5d5d537e86f38e317f22c8765ee7f650418eb4"
+        }
+      },
+      "name": "coh-client-gameplay-performance-packaging-evidence",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37622107943/artifacts/11483148941",
+      "zip_bytes": 1190333,
+      "zip_downloaded_and_hash_verified": true,
+      "zip_sha256": "c89d52d51e8449f5f0f1109a2c0cd3e93cf2ff7b2ac4b55d68a80b977eba9dc3"
+    },
+    {
+      "id": 11482658243,
+      "members": {
+        "client-frame-checks.json": {
+          "bytes": 1227,
+          "sha256": "5379987fabd5ea07dbaf9cff0cd8f8ecff07cfbbd36ef582d5d9295c4522f135"
+        },
+        "client-gameplay-checks.json": {
+          "bytes": 1262,
+          "sha256": "c5a075faa744fb5af5c7f022bac5db041095aaa48a6940132846055e4ccd8939"
+        },
+        "client-gameplay-performance-native-checks.json": {
+          "bytes": 19884,
+          "sha256": "d3d7137260ac2d089bf55ff9d119708ce5c31bebda5911e1f9c88aeb3917cb7f"
+        },
+        "client-gameplay-performance-native/client-gameplay-performance-native-manifest.json": {
+          "bytes": 59630,
+          "sha256": "251750a18691a8f78f66f656a5e8e9f18a59629925aafd1c75f7cd5786bbd960"
+        },
+        "client-gameplay-performance-source/character-events-build-input.json": {
+          "bytes": 15377,
+          "sha256": "b663ac59742ed9cb36be60c58a91275fd195789ee24cd26149cdad5271da1d5c"
+        },
+        "client-gameplay-performance-source/client-gameplay-performance-build-input.json": {
+          "bytes": 15683,
+          "sha256": "cc9e4b5dda3850a8432deb5d5744c4ff9953f18ae1585fe6e30bf5af1358eb09"
+        },
+        "client-gameplay-performance-source/client-graphics-build-input.json": {
+          "bytes": 1239,
+          "sha256": "3df43f20f8c3a65b4582553d6a03b9d21a901c53dbc52d11acc333fe09b14284"
+        },
+        "client-gameplay-performance-source/client-loading-native-build-input.json": {
+          "bytes": 5476,
+          "sha256": "d9edba951579ae01680d0f1a8711af508a4c9cc5682c8696aa0f84360a77cd5c"
+        },
+        "client-gameplay-performance-source/client-scene-performance-build-input.json": {
+          "bytes": 12937,
+          "sha256": "cdfa44327f8f2ef7624a724aa8b8ae2483c181e781a0aca70860c9353bc46877"
+        },
+        "client-gameplay-performance-source/client-startup-followup-build-input.json": {
+          "bytes": 9131,
+          "sha256": "0c975b39f8c0d5655f2d4a97ee00e3303218910d7e895ae4757712fd06d03d28"
+        },
+        "client-gameplay-performance-source/client-texture-build-input.json": {
+          "bytes": 1618,
+          "sha256": "209d01c796b2296df4a08d7ce6c41e2fe8d8ca03bdd28b3817509357ee94d1e5"
+        },
+        "client-gameplay-performance-source/game-loopback-build-input.json": {
+          "bytes": 6287,
+          "sha256": "6fd2bd793e3b4dc3c45da77c865fe79993d1191b9d8debcbd2fa544958ff69b0"
+        },
+        "client-gameplay-performance-source/mapserver-progress-build-input.json": {
+          "bytes": 10207,
+          "sha256": "9e72545e93f3e0410b81bb60cc9a166707b24e5d4f875b8b565413280b5c2dce"
+        },
+        "client-gameplay-performance-source/out/build/vs2026/CMakeCache.txt": {
+          "bytes": 40013,
+          "sha256": "8d1b5ba388e7d08ffee4ee26a9654264d6d793e3038b1ae86ceddb3aa581756a"
+        },
+        "client-gameplay-performance-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml": {
+          "bytes": 270608,
+          "sha256": "56822af29feb3e30ce6fee575a1f792b362a749a0436ba99300e2a72ef2e0b95"
+        },
+        "client-gameplay-performance-source/postgresql-build-input.json": {
+          "bytes": 2069,
+          "sha256": "6f21bb9493b4d56a9c06e6122b62ebab7673ada00daa5b1d9c12c59de7046230"
+        },
+        "client-gameplay-performance-source/responsiveness-source-input.json": {
+          "bytes": 20607,
+          "sha256": "9db04b43deb4ae2f2e46ff6ef9c7348f35a3524be6d97f59ac3faf1359f43b92"
+        },
+        "client-gameplay-performance-source/startup-bundle-client-build-input.json": {
+          "bytes": 3037,
+          "sha256": "3a3bb3563cf60f853adc015f6bdfb133621f225aa48faecd9ba1ee9de81047fe"
+        },
+        "client-scene-checks.json": {
+          "bytes": 751,
+          "sha256": "5e92fa85b7f9c2d29a6d4be09cc96c037fad180c7f95237ad18e28f0e5f90061"
+        },
+        "contracts/client-gameplay-performance.txt": {
+          "bytes": 724,
+          "sha256": "f4949be5bfa17421640f743af6754b9d0fd929e027db414bbd1ce5cf3e90811a"
+        }
+      },
+      "name": "coh-client-gameplay-performance-native-build-evidence",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37622107943/artifacts/11482658243",
+      "zip_bytes": 89979,
+      "zip_downloaded_and_hash_verified": true,
+      "zip_sha256": "f3feae54227a67045d3a408b14af992cbe5c0b85416b9cda70fc0ada535193e1"
+    },
+    {
+      "id": 11482608671,
+      "members": {
+        "CMakeCache.txt": {
+          "bytes": 40013,
+          "sha256": "8d1b5ba388e7d08ffee4ee26a9654264d6d793e3038b1ae86ceddb3aa581756a"
+        },
+        "CityOfHeroes.exe": {
+          "bytes": 9477120,
+          "sha256": "5b6cfb6d20eb5f6642d6d1124e6b5ba188e89f9ad58c26268f0be35d996134aa"
+        },
+        "client-gameplay-performance-native-checks.json": {
+          "bytes": 19884,
+          "sha256": "d3d7137260ac2d089bf55ff9d119708ce5c31bebda5911e1f9c88aeb3917cb7f"
+        },
+        "client-gameplay-performance-native-manifest.json": {
+          "bytes": 59630,
+          "sha256": "251750a18691a8f78f66f656a5e8e9f18a59629925aafd1c75f7cd5786bbd960"
+        }
+      },
+      "name": "coh-client-gameplay-performance-native",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37622107943/artifacts/11482608671",
+      "zip_bytes": 4037498,
+      "zip_downloaded_and_hash_verified": true,
+      "zip_sha256": "429c5ccbfb656c58225437d25d5a7110573d37669f03dc17181cae2bb222992f"
+    }
+  ],
+  "conservation": {
+    "added_payloads": [],
+    "asset_reimport_required": false,
+    "changed_java_sources": [],
+    "outer_runtime_payloads_verified": 75,
+    "replaced_payloads": [
+      "assets/runtime/client-manifest.json",
+      "assets/runtime/client-runtime.zip",
+      "assets/runtime/client_interactive_diagnostic.py",
+      "assets/runtime/client_startup_diagnostic.py",
+      "assets/runtime/native_responsiveness_contract.py",
+      "assets/runtime/runtime-manifest.json",
+      "assets/runtime/texture_header_index.py"
+    ],
+    "retained_android_resources": {
+      "res/drawable/ic_coh_client.xml": {
+        "bytes": 1000,
+        "sha256": "0518048aa0a4f2434494e0eb0780322dd395ba92b280789e34cce400256d24eb"
+      },
+      "resources.arsc": {
+        "bytes": 852,
+        "sha256": "a1fa0500d49ca08dc6af7b507d05b7308fb8ea3c8d706c488267643f9df112e6"
+      }
+    },
+    "retained_dex": {
+      "bytes": 355612,
+      "sha256": "e53a25bdb4da802efa3ed10bac3432c008f459d8b838d96ed6b037f389514626"
+    },
+    "retained_native_dlls_verified": 20,
+    "retained_payloads_verified": 68,
+    "runtime_refresh_required": true,
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282"
+  },
+  "continuation_branch": "codex/character-persistence-continuation",
+  "evidence_receipts": {
+    "client-gameplay-performance-apk-build-report.json": {
+      "bytes": 5014125,
+      "sha256": "38ec339829afd5d326887fee3c5d5d537e86f38e317f22c8765ee7f650418eb4"
+    },
+    "client-gameplay-performance-public-audit.json": {
+      "bytes": 540,
+      "sha256": "71d9697c4ea7e566ed8c07d478fe8b69feeee7c4cdc91cf0a3edb52bdfa3b912"
+    },
+    "client-gameplay-performance-qualification.json": {
+      "bytes": 1884668,
+      "sha256": "c43cf3d2efc54da0514b364ee6160f871cec76bc124e615caf5425d9a8f1e219"
+    }
+  },
+  "format": 1,
+  "hosted_run": {
+    "completed_at": "2026-10-07T13:01:54Z",
+    "conclusion": "success",
+    "created_at": "2026-10-07T12:35:35Z",
+    "id": 37622107943,
+    "jobs": [
+      {
+        "completed_at": "2026-10-07T12:36:10Z",
+        "conclusion": "success",
+        "id": 112794648722,
+        "name": "changes",
+        "started_at": "2026-10-07T12:35:39Z"
+      },
+      {
+        "completed_at": "2026-10-07T12:48:25Z",
+        "conclusion": "success",
+        "id": 112794881827,
+        "name": "client",
+        "started_at": "2026-10-07T12:36:15Z"
+      },
+      {
+        "completed_at": "2026-10-07T12:54:49Z",
+        "conclusion": "success",
+        "id": 112799926164,
+        "name": "qualify",
+        "started_at": "2026-10-07T12:48:28Z"
+      },
+      {
+        "completed_at": "2026-10-07T12:59:49Z",
+        "conclusion": "success",
+        "id": 112802557103,
+        "name": "apk",
+        "started_at": "2026-10-07T12:54:53Z"
+      },
+      {
+        "completed_at": "2026-10-07T13:01:54Z",
+        "conclusion": "success",
+        "id": 112804650845,
+        "name": "public-audit",
+        "started_at": "2026-10-07T12:59:52Z"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37622107943"
+  },
+  "immutable_tag": {
+    "commit": "4a57ffe3b75612fb9c356de9c4150729736e849e",
+    "ref": "refs/tags/coh-atlas-gameplay-v0.13.17",
+    "type": "commit"
+  },
+  "independent_verification": {
+    "actual_public_three_assets_download_and_fresh_sdk_audit_confirmed_in_job_log": true,
+    "qualification_source_pins_and_actual_native_package_revalidated_locally": true,
+    "release_api_tag_asset_digest_checksum_notes_closure_verified": true,
+    "second_full_apk_download_performed_locally": false,
+    "small_evidence_archives_authenticated_and_unique_safe_members_verified": true
+  },
+  "native_client": {
+    "actual_Game": {
+      "delay_imports": [],
+      "imports": [
+        "ADVAPI32.dll",
+        "cg.dll",
+        "cgGL.dll",
+        "COMDLG32.dll",
+        "DDRAW.dll",
+        "DINPUT8.dll",
+        "DSOUND.dll",
+        "GDI32.dll",
+        "GLU32.dll",
+        "IMM32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "ole32.dll",
+        "OPENGL32.dll",
+        "PhysXCooking.dll",
+        "PhysXLoader.dll",
+        "SHELL32.dll",
+        "USER32.dll",
+        "VERSION.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "pe_machine": 332,
+      "sha256": "5b6cfb6d20eb5f6642d6d1124e6b5ba188e89f9ad58c26268f0be35d996134aa",
+      "size": 9477120
+    },
+    "build_targets": [
+      "Game"
+    ],
+    "exact_accepted_scene_predecessor_retained": true,
+    "native_manifest_sha256": "251750a18691a8f78f66f656a5e8e9f18a59629925aafd1c75f7cd5786bbd960",
+    "new_dll_dependencies": 0,
+    "real_win32_scene_frame_gameplay_checks_passed": true
+  },
+  "physical": {
+    "assets_data_and_character_must_be_preserved": true,
+    "diagnostics": "guest-report.zip/client-evidence/client-console.log",
+    "fps_improvement_validated": false,
+    "menus_and_background_cap_retained": 10,
+    "previous_export": "docs/android-evidence/performance-0.13.16-thor-20261007.json",
+    "requested_gameplay_cap": 30,
+    "runtime_setup_required_once_after_install": true,
+    "stability_validated_for_0_13_17": false,
+    "standard_and_compatibility_cap": 10,
+    "startup_improvement_validated": false,
+    "testing_notes": "docs/COH-Atlas-Gameplay-0.13.17-testing.txt",
+    "zoning_deferred": true
+  },
+  "public_byte_audit": {
+    "bytes": 1557375588,
+    "format": 1,
+    "fresh_process_prepublication_audit_passed": true,
+    "physical_performance_validated": false,
+    "public_apk_checksum_and_notes_verified": true,
+    "public_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.17/COH-Atlas-Gameplay-0.13.17.apk",
+    "repository_commit": "4a57ffe3b75612fb9c356de9c4150729736e849e",
+    "sdk_signer_payload_audit_passed": true,
+    "sha256": "2da7436d165662b47780c19241cbcf3c16ef3bb903fb94f79b231f3f0c390bf3",
+    "status": "passed"
+  },
+  "qualification": {
+    "actual_native_ancestry_validation": {
+      "actual_external_donor_and_win32_receipts_verified": true,
+      "actual_scene_Game_predecessor_verified": true,
+      "full_guest_typed_client_wrapper_verified": true,
+      "older_native_history_unchanged": true,
+      "raw_source_histories_preserved": true,
+      "rejected_foreign_variants": [
+        "pg_header",
+        "pg_fixture",
+        "pg_extra",
+        "pg_patch",
+        "event_source",
+        "texture",
+        "event_bool",
+        "event_float",
+        "pg_digest",
+        "game_digest",
+        "progress_digest"
+      ],
+      "status": "passed"
+    },
+    "checks": {
+      "exact_game_only_payload_shell_source_and_server_extraction_verified": true,
+      "native_gameplay_profile_texture_diagnostics_and_guest_controls_verified": true,
+      "retained_ui_beacon_gameplay_postgresql_and_recovery_guards_verified": true
+    },
+    "postgresql_emission_fixtures": [
+      "cancelled_child_deletion_commits",
+      "delete_insert_replacement_commits",
+      "duplicate_insert_23505_rollback"
+    ],
+    "postgresql_levelup_fixtures": [
+      "empty_child_duplicate_23505_rollback",
+      "empty_child_training_commit",
+      "missing_child_insert_commit",
+      "shuffled_child_read_training_commit"
+    ],
+    "retained_java_sources_verified": 19,
+    "skipped": 0,
+    "source_files_verified": 9628,
+    "test_suites": 80,
+    "tests_run": 1197
+  },
+  "release": {
+    "assets": [
+      {
+        "bytes": 3959,
+        "id": 618705224,
+        "name": "COH-Atlas-Gameplay-0.13.17-testing.txt",
+        "sha256": "2564cb8c3d1ca05a913091ddda2196e30e450e90572ccee1d75b47037d9c8a74",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.17/COH-Atlas-Gameplay-0.13.17-testing.txt"
+      },
+      {
+        "bytes": 1557375588,
+        "id": 618702599,
+        "name": "COH-Atlas-Gameplay-0.13.17.apk",
+        "sha256": "2da7436d165662b47780c19241cbcf3c16ef3bb903fb94f79b231f3f0c390bf3",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.17/COH-Atlas-Gameplay-0.13.17.apk"
+      },
+      {
+        "bytes": 97,
+        "id": 618705187,
+        "name": "COH-Atlas-Gameplay-0.13.17.apk.sha256",
+        "sha256": "24661a4fac89a1a65dc338d481d33cb239419f217631bac50ef8cddc2f1eda20",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.17/COH-Atlas-Gameplay-0.13.17.apk.sha256"
+      }
+    ],
+    "draft": false,
+    "id": 405766496,
+    "prerelease": true,
+    "published_at": "2026-10-07T12:59:45Z",
+    "tag": "coh-atlas-gameplay-v0.13.17",
+    "target_commitish": "4a57ffe3b75612fb9c356de9c4150729736e849e",
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.17"
+  },
+  "repository_commit": "4a57ffe3b75612fb9c356de9c4150729736e849e",
+  "scope": "native_gameplay_30fps_and_bounded_texture_diagnostics_retaining_public_0_13_16",
+  "starting_head": "28fe7caae94f82c8f28171288e3951fbaf794f83",
+  "status": "passed",
+  "version_code": 32,
+  "version_name": "0.13.17"
+}

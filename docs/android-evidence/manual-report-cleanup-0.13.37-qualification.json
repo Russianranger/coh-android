@@ -1,0 +1,301 @@
+{
+  "apk_built": false,
+  "artifact": {
+    "created_at": "2026-10-13T22:32:37Z",
+    "digest": "sha256:9d1637a1c7a5022e3d0989c4272e9d839c39a4ec7a1effb5800ef8468ab05639",
+    "downloaded_bytes": 53056,
+    "downloaded_sha256": "9d1637a1c7a5022e3d0989c4272e9d839c39a4ec7a1effb5800ef8468ab05639",
+    "expired": false,
+    "id": 11856051175,
+    "name": "coh-manual-report-cleanup-037-38478387822-1",
+    "size_in_bytes": 53056,
+    "workflow_run": {
+      "head_branch": "codex/manual-report-cleanup-037",
+      "head_repository_id": 1368730125,
+      "head_sha": "1702d9c6b68cd72cac92a76bd07c82ad5e8b5a21",
+      "id": 38478387822,
+      "repository_id": 1368730125
+    }
+  },
+  "current_suites_run": 6,
+  "current_tests_run": 146,
+  "errors": 0,
+  "failures": 0,
+  "format": 1,
+  "genuine_kernel_native_tests": [
+    {
+      "elapsed_seconds": 1.566527,
+      "status": "passed",
+      "test": "test_game_device_diagnostic.DeviceOwnershipTests.test_real_dead_leader_worker_is_reaped_and_unrelated_same_shape_sentinel_survives"
+    },
+    {
+      "elapsed_seconds": 0.02009,
+      "status": "passed",
+      "test": "test_game_device_diagnostic.RealProcExitTests.test_real_held_status_and_stat_fds_after_reaping_are_task_disappearance"
+    },
+    {
+      "elapsed_seconds": 1.194937,
+      "status": "passed",
+      "test": "test_device_cleanup_lineage.CleanupLineageTests.test_real_pthread_dead_leader_worker_proof_before_shutdown"
+    },
+    {
+      "elapsed_seconds": 1.189933,
+      "status": "passed",
+      "test": "test_device_cleanup_lineage.CleanupLineageTests.test_real_pthread_leader_death_drains_only_authenticated_worker"
+    }
+  ],
+  "historical_test_code_reexecuted": true,
+  "inherited_results_reused": 0,
+  "job": {
+    "completed_at": "2026-10-13T22:32:40Z",
+    "conclusion": "success",
+    "head_sha": "1702d9c6b68cd72cac92a76bd07c82ad5e8b5a21",
+    "id": 115574660057,
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "name": "qualification",
+    "run_id": 38478387822,
+    "started_at": "2026-10-13T22:31:44Z",
+    "status": "completed",
+    "steps": [
+      {
+        "conclusion": "success",
+        "name": "Set up job",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Run actions/setup-java@v4",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Require the native host fixture compiler",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Execute all six suites sequentially with unwaived native process checks",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Retain an explicit failure receipt if an earlier step prevented finalization",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Preserve current-source test and native process evidence even on failure",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Post Run actions/setup-java@v4",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Complete job",
+        "status": "completed"
+      }
+    ],
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38478387822/job/115574660057"
+  },
+  "limitations": [
+    "Namespace absence and alias adversarial fixtures are synthetic; the genuine kernel pthread and held-proc-FD tests execute actual Linux process operations.",
+    "The manual report regression projects exact consumed .36 evidence fields and uses an explicitly synthetic private-import receipt adapter; it does not retroactively qualify the frozen .36 APK.",
+    "A new Android DEX and full successor packaging/public audit remain required before device installation."
+  ],
+  "local_permission_failures_preserved": "Previous shared-host full-/proc tests encountered unrelated same-UID namespace EACCES; those executions remain failures. This separate clean runner freshly executed both full suites successfully without filtering or waiving those tests.",
+  "permission_errors_waived": false,
+  "physical_device_validation": false,
+  "production_pid_signal_policy_changed": false,
+  "raw_qualification": {
+    "bytes": 169627,
+    "file": "qualification.json",
+    "sha256": "71ebbbdca76faa4a1985a04ba4109ab12f850fececdd038ab98392ea186f0e4e"
+  },
+  "repository": "Russianranger/coh-android",
+  "scope": "Fresh clean Linux host report attribution and owned-process qualification; no APK build, no native Game/Map/DbServer run and no AYN Thor gameplay or performance acceptance.",
+  "signed_publication": false,
+  "skipped": 0,
+  "source_branch": "codex/manual-report-cleanup-037",
+  "source_commit": "1702d9c6b68cd72cac92a76bd07c82ad5e8b5a21",
+  "source_parent": "31c9f75cc80907ccb49e75d6323b9adac9559386",
+  "source_pin_verification": {
+    "all_compared_to_exact_git_blobs": true,
+    "changed_during_tests": false,
+    "count": 560,
+    "full_inventory_sha256": "ad92fa58e7abc6d30e2007e0c80195552b80c4f890bd99d50be6f1438921a77b",
+    "reviewed_paths": {
+      ".github/workflows/android-manual-report-cleanup.yml": {
+        "bytes": 14202,
+        "sha256": "d5ed4374b1a38c2125213c24132305ebfe14025f22164798eba1cc9623dddfd3"
+      },
+      "android/guest/game_device_diagnostic.py": {
+        "bytes": 78433,
+        "sha256": "6138c6f0c75cd70b31dd250f73de12b262a08e36f7b6e47b02de172d4116830a"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java": {
+        "bytes": 32038,
+        "sha256": "ab987d86e962adad75843724d5d48e0208719254cc69bfa376793f01c0849d74"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+        "bytes": 199541,
+        "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9"
+      },
+      "tools/android/atlasgame/test_device_cleanup_lineage.py": {
+        "bytes": 34605,
+        "sha256": "9cd85e406ad4fed0a91a4a773ad4d41acd9cc959b216ef64eda6dd57d597aabd"
+      },
+      "tools/android/interactive/fixtures/thor-manual-report-0.13.36-20261013.json": {
+        "bytes": 36247,
+        "sha256": "60651cd12759542a1bfa346afacd4bc1e43091941da20e08cea1a659df70bc0d"
+      },
+      "tools/android/interactive/test_manual_report_acceptance.py": {
+        "bytes": 7826,
+        "sha256": "2d8c6f5c39998c4e140a04d90b625b85286cb75aebdac9b5a123e132abee50f6"
+      }
+    }
+  },
+  "source_tree": "c509957d926855cd233da43db536b19fab635ed6",
+  "status": "passed",
+  "suites": [
+    {
+      "elapsed_seconds": 4.291045,
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 0,
+      "receipt": {
+        "bytes": 2633,
+        "file": "test_manual_report_acceptance.json",
+        "sha256": "665ee27182015bc4d7c938b9d460f2de7ddaac312b9075be98b2078b40635524"
+      },
+      "skipped": 0,
+      "source_code_scope": "current_regression_code",
+      "status": "passed",
+      "suite": "test_manual_report_acceptance.py",
+      "test_source_origin_commit": "1702d9c6b68cd72cac92a76bd07c82ad5e8b5a21",
+      "tests_run": 5,
+      "unexpected_successes": 0
+    },
+    {
+      "elapsed_seconds": 3.061388,
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 0,
+      "receipt": {
+        "bytes": 3455,
+        "file": "test_client_gpu_repair_evidence.json",
+        "sha256": "a99268a4587435a44847ecef4efbcfc743be60ca6057ffc3aec795f8038775da"
+      },
+      "skipped": 0,
+      "source_code_scope": "retained_historical_test_code",
+      "status": "passed",
+      "suite": "test_client_gpu_repair_evidence.py",
+      "test_source_origin_commit": "bc8574247041fae97256d66b69a0ee92b1b59579",
+      "tests_run": 7,
+      "unexpected_successes": 0
+    },
+    {
+      "elapsed_seconds": 3.126898,
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 0,
+      "receipt": {
+        "bytes": 11577,
+        "file": "test_manual_session.json",
+        "sha256": "a239ebd0b993e166521ab4fe6e95913acfc8470630675a948ced82196bd17e5e"
+      },
+      "skipped": 0,
+      "source_code_scope": "retained_historical_test_code",
+      "status": "passed",
+      "suite": "test_manual_session.py",
+      "test_source_origin_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+      "tests_run": 29,
+      "unexpected_successes": 0
+    },
+    {
+      "elapsed_seconds": 7.321929,
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 0,
+      "receipt": {
+        "bytes": 5634,
+        "file": "test_complete_asset_stage_acceptance.json",
+        "sha256": "737fd51e403db89a186b348c98d62e5fd086bcbeadd5b52ad368591920f1c0b9"
+      },
+      "skipped": 0,
+      "source_code_scope": "retained_historical_test_code",
+      "status": "passed",
+      "suite": "test_complete_asset_stage_acceptance.py",
+      "test_source_origin_commit": "d456f06cd82a921964a895885a03c67137cb9257",
+      "tests_run": 12,
+      "unexpected_successes": 0
+    },
+    {
+      "elapsed_seconds": 2.212045,
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 0,
+      "receipt": {
+        "bytes": 27622,
+        "file": "test_game_device_diagnostic.json",
+        "sha256": "b383a3ee6e9dc07d650be9a28ccecf0fe79382c4f39176a4476ab62fdcd03619"
+      },
+      "skipped": 0,
+      "source_code_scope": "retained_historical_test_code",
+      "status": "passed",
+      "suite": "test_game_device_diagnostic.py",
+      "test_source_origin_commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+      "tests_run": 64,
+      "unexpected_successes": 0
+    },
+    {
+      "elapsed_seconds": 4.638077,
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 0,
+      "receipt": {
+        "bytes": 12681,
+        "file": "test_device_cleanup_lineage.json",
+        "sha256": "447e3a5145aed2bc49690cda7a396759995dfdfb6f77484656dc8c0b1ee33620"
+      },
+      "skipped": 0,
+      "source_code_scope": "current_regression_and_retained_test_code",
+      "status": "passed",
+      "suite": "test_device_cleanup_lineage.py",
+      "test_source_origin_commit": "1702d9c6b68cd72cac92a76bd07c82ad5e8b5a21",
+      "tests_run": 29,
+      "unexpected_successes": 0
+    }
+  ],
+  "unwaived_full_proc_checks": true,
+  "verified_utc": "2026-10-13T22:48:14.011839+00:00",
+  "workflow": {
+    "conclusion": "success",
+    "created_at": "2026-10-13T22:31:40Z",
+    "head_branch": "codex/manual-report-cleanup-037",
+    "head_sha": "1702d9c6b68cd72cac92a76bd07c82ad5e8b5a21",
+    "head_tree": "c509957d926855cd233da43db536b19fab635ed6",
+    "id": 38478387822,
+    "path": ".github/workflows/android-manual-report-cleanup.yml",
+    "repository": "Russianranger/coh-android",
+    "repository_id": 1368730125,
+    "run_attempt": 1,
+    "status": "completed",
+    "updated_at": "2026-10-13T22:32:40Z",
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38478387822"
+  }
+}

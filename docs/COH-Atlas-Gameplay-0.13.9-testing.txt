@@ -1,0 +1,75 @@
+COH Atlas Gameplay 0.13.9 — exact NPC textures and lower-cost client preparation
+
+Install over your existing app and run Set up runtime once. Keep the imported
+assets, THORHERO, database, completed tasks and the same graphics preset.
+
+This release preserves the exact 0.13.8 Game, its known-length string copy and
+BIN open/CRC/freshness/decode instrumentation, the corrected Android acceptance
+DEX, DbServer, MapServer, DLLs, graphics, generated-cache formats and animation
+pack. It adds only six exact original NPC textures named by the existing
+first-visit Atlas console. Every prior visual leaf remains unchanged, including
+the 0.13.8 Hellion geometry and selected vegetation/LOD material repair.
+
+Client console identity parsing searches the complete current console without
+splitting every unrelated native log line. Late duplicates, invalid identities,
+session/PID checks and retry boundaries are still checked on every observation.
+New timing separates this parsing from native protocol/character observation.
+Texture preparation computes shared paths once while retaining strict resolution
+and readonly metadata checks for every leaf. Its report separates full inventory,
+original-header reads and validation/publication. Native loading, LOD distances
+and rendering are unchanged. Host CPU improvements do not establish Thor savings.
+
+The six added textures require one texture-header index refresh. Record this
+prelaunch preparation separately from actual Game startup. Existing generated
+client caches and server/runtime reuse remain available.
+
+One focused run
+1. Reopen saved THORHERO once using the same preset as before. Note server/Atlas
+   readiness, actual client launch to visible login, then login-to-world time.
+   Separately note time spent waiting/typing credentials/selecting the hero.
+2. In Atlas, compare one previously white vegetation/object from far and near.
+   Take screenshots at both distances. Look at a nearby Blood Brother Chopper /
+   Hellion if available; report whether its model and clothing are visible.
+   Walk through one nearby section you have not visited during this session,
+   then retrace it once. Describe any first-pass pause or white/invisible NPCs.
+   This is one client session; a second boot is unnecessary.
+3. Use Abort operation, wait for owned cleanup, then Export latest report.
+   Send the entire new coh-atlas-gameplay-YYYYMMDD-HHMMSS.zip from this 0.13.9
+   attempt plus the far/near screenshots and your three timing observations.
+   The ZIP includes guest-report.zip; send the outer ZIP intact. If a stage
+   fails, export that attempt and preserve app data.
+
+Expected result
+- Existing hero reaches Atlas; previous visible assets do not disappear.
+- New NPC textures install or reuse successfully, and native client loading
+  still reports exact verified assets. Appearance remains a visual check.
+- White objects and hostile visibility are compared explicitly; unchanged
+  defects remain open rather than being called fixed.
+- Actual client startup does not regress materially versus your roughly 4:24
+  0.13.7 measurement using the same preset. A faster result is needed to accept
+  a physical startup improvement; one slower run alone does not isolate its cause.
+- Cleanup finishes with zero owned workers. Intentional Abort/cancelled is
+  expected for this visual/timing review and is not itself a failure.
+
+Failure for this candidate: crash, inability to reach Atlas, loss of previously
+visible assets, visual-package validation error, unclosed owned workers, or a
+material repeatable startup regression. Report the stage and export its ZIP.
+
+Please export the complete report containing:
+- Android client report, current-session guest report and owned client console;
+- COH_CLIENT_BIN_PROFILE_V1 open/CRC, freshness and decode timing;
+- client_console_identity_metrics and full observer timings;
+- texture_header_index preparation_phase_seconds, inventory pass count,
+  rebuild/reuse, native hits/misses and texture_preparation_schedule;
+- client visual install/reuse counts, original missing GEO/texture diagnostics
+  and suppressed totals, animation verification, login/Atlas connection timing;
+- owned cleanup and PostgreSQL shutdown evidence.
+
+No repeated character creation, task/combat/save milestone, asset reimport,
+clear-data, reinstall or storage-cleanup test is required. Save/logout remains
+available if desired; its accepted milestone is preserved.
+
+Known gaps: broad Atlas/environment/NPC/FX asset coverage is incomplete, and the
+exact cause of every distant white placeholder remains unproven. Original
+GEO_Collar_MAGIC and several old material aliases remain unresolved. Software
+llvmpipe is still in use. Full combat and hardware graphics are separate work.

@@ -1,0 +1,170 @@
+name: Wine DbServer ARM64 qualification
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/android-dbserver.yml'
+      - 'tools/prepare_wine_dbserver_source.py'
+      - 'tools/test_prepare_wine_dbserver_source.py'
+      - 'patches/wine-dbserver/**'
+      - 'database/wine-dbserver/**'
+      - 'tools/android/dbserver/**'
+      - 'tools/android/extract_talloc_source.py'
+      - 'tools/android/test_extract_talloc_source.py'
+      - 'android/guest/dbserver_diagnostic.py'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-dbserver-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Check isolated source, package, schema and runtime contracts
+        run: |
+          python3 -m unittest discover -s tools -p test_prepare_wine_dbserver_source.py -v
+          python3 -m unittest discover -s tools/android/dbserver -p 'test_*.py' -v
+          python3 -m unittest discover -s tools/android -p 'test_extract_talloc_source.py' -v
+  build:
+    needs: tooling
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          sparse-checkout: |
+            upstream/ouroboros
+            database
+            patches
+            tools
+            docs/source-manifest.json
+            upstream-lock.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Stage separately identified Wine source
+        run: python tools/prepare_wine_dbserver_source.py --output out/wine-source
+      - name: Verify opt-in dispatch, fixed-input and loopback contracts on Windows
+        shell: pwsh
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/dbserver/test_dispatch_progress.py --require-windows
+          if errorlevel 1 exit /b 1
+          python tools/android/dbserver/test_fixed_inputs.py --require-windows
+          if errorlevel 1 exit /b 1
+          python tools/android/dbserver/test_loopback_bind.py --require-windows
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/test-dispatch-progress.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\test-dispatch-progress.cmd
+          if ($LASTEXITCODE -ne 0) { throw 'DbServer Windows contracts failed' }
+      - name: Build normal DbServer and preserve its exact configuration
+        working-directory: out/wine-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Normal configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --target DbServer --parallel
+          if ($LASTEXITCODE -ne 0) { throw 'Normal build failed' }
+          New-Item -ItemType Directory -Path ../normal-build -Force | Out-Null
+          Copy-Item out/build/vs2026/bin/OptDebug/* ../normal-build -Recurse
+          Copy-Item out/build/vs2026/CMakeCache.txt ../normal-cache.txt
+      - name: Build controlled persistence fixture
+        working-directory: out/wine-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=ON
+          if ($LASTEXITCODE -ne 0) { throw 'Fixture configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --target DbServer --parallel
+          if ($LASTEXITCODE -ne 0) { throw 'Fixture build failed' }
+      - name: Package separate fixture and normal products
+        shell: pwsh
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          $crt = Get-ChildItem -Path "$installation/VC/Redist/MSVC/*/x86/Microsoft.VC*.CRT" -Directory | Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $crt) { throw 'App-local x86 CRT was not found' }
+          python tools/android/dbserver/package_dbserver.py --fixture-directory out/wine-source/out/build/vs2026/bin/OptDebug --normal-directory out/normal-build --fixture-cache out/wine-source/out/build/vs2026/CMakeCache.txt --normal-cache out/normal-cache.txt --crt-directory "$($crt.FullName)" --build-input out/wine-source/wine-dbserver-build-input.json --output out/wine-dbserver --repository-commit "$env:GITHUB_SHA"
+          if ($LASTEXITCODE -ne 0) { throw 'Wine DbServer package verification failed' }
+      - name: Install pinned x86 ODBC and run the real fixture on Windows
+        shell: pwsh
+        run: |
+          $installer = Join-Path $env:RUNNER_TEMP 'psqlodbc_x86.msi'
+          Invoke-WebRequest 'https://ftp.postgresql.org/pub/odbc/releases/REL-18_00_0004/psqlodbc_x86.msi' -OutFile $installer
+          if ((Get-FileHash $installer -Algorithm SHA256).Hash.ToLower() -ne '1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773') { throw 'ODBC installer hash mismatch' }
+          $result = Start-Process msiexec.exe -ArgumentList @('/i', $installer, '/qn', '/norestart') -Wait -PassThru
+          if ($result.ExitCode -notin @(0,3010)) { throw "ODBC install failed: $($result.ExitCode)" }
+          $driver = Get-OdbcDriver -Platform '32-bit' | Where-Object Name -Like 'PostgreSQL Unicode*' | Select-Object -First 1
+          if (-not $driver) { throw 'x86 ODBC driver missing' }
+          python database/postgresql/tests/run_dbserver.py --bin "$env:PGBIN" --dbserver out/wine-dbserver/fixture/DbServer.exe --root "$env:RUNNER_TEMP/coh-wine-fixture" --report out/windows-dbserver-persistence.json --driver "$($driver.Name)"
+          if ($LASTEXITCODE -ne 0) { throw 'Windows compatibility regression failed' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wine-dbserver-package
+          path: out/wine-dbserver/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wine-dbserver-windows-evidence
+          path: |
+            out/windows-dbserver-persistence.json
+            out/wine-source/wine-dbserver-build-input.json
+            out/normal-cache.txt
+            out/wine-source/out/build/vs2026/CMakeCache.txt
+          if-no-files-found: warn
+  runtime:
+    needs: build
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-dbserver-package
+          path: out/wine-dbserver
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/android/assets/runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/android/accepted-proot-sources
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover pinned talloc source from accepted runtime provenance
+        run: python3 tools/android/extract_talloc_source.py --assets out/android/assets/runtime --bundle out/android/accepted-proot-sources/proot-corresponding-sources.tar.gz --output out/android/source-cache/talloc-2.4.3.tar.gz > out/android/talloc-source-receipt.json
+      - name: Install host runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
+      - name: Build matching native ARM64 PRoot
+        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+      - name: Stage accepted schema and minimal pinned text
+        run: python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/dbserver-schema
+      - name: Exercise actual DbServer against ARM64 PostgreSQL in an isolated network
+        run: python3 tools/android/dbserver/host_dbserver_smoke.py --assets out/android/assets/runtime --package out/wine-dbserver --schema out/dbserver-schema
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wine-dbserver-arm64-evidence
+          path: |
+            out/android/dbserver-evidence/
+            out/dbserver-schema/schema-manifest.json
+            out/wine-dbserver/package-manifest.json
+            out/android/native/linux-arm64/proot-build-receipt.json
+            out/android/talloc-source-receipt.json
+          if-no-files-found: warn

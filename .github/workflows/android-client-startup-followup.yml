@@ -1,0 +1,322 @@
+name: Thor NPC appearance and guarded Game dependency preload
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-client-startup-followup.yml
+      - patches/client-startup-followup/**
+      - tools/android/interactive/package_client_startup_followup_native.py
+      - tools/android/interactive/test_client_startup_followup_native.py
+      - tools/android/interactive/test_client_startup_followup_contract.py
+      - tools/android/interactive/build_client_startup_followup_apk.py
+      - tools/android/interactive/qualify_client_startup_followup.py
+      - tools/android/interactive/test_client_startup_followup_package.py
+      - tools/android/interactive/test_client_startup_followup_limits.py
+      - tools/android/interactive/discover_client_appearance_assets.py
+      - tools/android/interactive/client_appearance_costumes.py
+      - tools/android/interactive/prepare_client_appearance_assets.py
+      - tools/android/interactive/test_client_appearance_assets.py
+      - tools/android/interactive/test_client_appearance_costumes.py
+      - tools/android/interactive/test_client_visual_assets.py
+      - assets/client-appearance-requests.json
+      - assets/client-appearance-manifest.json
+      - android/guest/client_visual_assets.py
+      - android/guest/client_startup_diagnostic.py
+      - android/guest/native_responsiveness_contract.py
+      - android/guest/texture_header_index.py
+      - docs/COH-Atlas-Gameplay-0.13.11-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-startup-followup-publication
+  cancel-in-progress: false
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      startup_followup_required: ${{ steps.scope.outputs.startup_followup_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - id: scope
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_storage_cleanup_change.py
+  client:
+    needs: changes
+    if: needs.changes.outputs.startup_followup_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Stage the frozen native client chain and separate startup layer
+        shell: pwsh
+        run: |
+          python tools/android/interactive/package_client_startup_followup_native.py stage --output out/client-startup-followup-source
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup staging failed' }
+      - name: Qualify exact production string semantics and Win32 copy assembly before building Game
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_startup_followup_native.py --windows-qualify --output out/client-startup-followup-native-checks.json
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/client-startup-followup.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\client-startup-followup.cmd 2>&1 | Tee-Object out/contracts/client-startup-followup.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Client loading native qualification failed' }
+      - name: Build only Game retaining the existing MapServer and graphics profile
+        working-directory: out/client-startup-followup-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup Game build failed' }
+      - name: Package Game with exact source and schema receipts
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/package_client_startup_followup_native.py package
+          --directory out/client-startup-followup-source/out/build/vs2026/bin/OptDebug
+          --source out/client-startup-followup-source
+          --cache out/client-startup-followup-source/out/build/vs2026/CMakeCache.txt
+          --checks out/client-startup-followup-native-checks.json
+          --repository-commit "$env:GITHUB_SHA"
+          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --output out/client-startup-followup-native
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-startup-followup-native
+          path: out/client-startup-followup-native/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-startup-followup-native-build-evidence
+          path: |
+            out/client-startup-followup-source/*build-input.json
+            out/client-startup-followup-source/responsiveness-source-input.json
+            out/client-startup-followup-source/out/build/vs2026/CMakeCache.txt
+            out/client-startup-followup-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+            out/client-startup-followup-native/client-startup-followup-native-manifest.json
+            out/client-startup-followup-native-checks.json
+            out/contracts/client-startup-followup.txt
+          if-no-files-found: warn
+          retention-days: 90
+  assets:
+    needs: changes
+    if: needs.changes.outputs.startup_followup_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-asset-closure-packaging-evidence
+          path: out/client-startup-followup-donor-evidence
+          run-id: 37249488856
+          github-token: ${{ github.token }}
+      - name: Recover the immutable public 0.13.10 donor
+        run: python3 tools/android/interactive/build_client_startup_followup_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.10.apk
+      - name: Prepare frozen appearance additions preserving all 5476 accepted original streams
+        run: |
+          python3 tools/android/interactive/build_client_startup_followup_apk.py extract-baseline --donor-apk out/donor/COH-Atlas-Gameplay-0.13.10.apk --donor-build-report out/client-startup-followup-donor-evidence/client-asset-closure-apk-build-report.json --output out/client-startup-followup-baseline
+          python3 tools/android/interactive/discover_client_appearance_assets.py --requests assets/client-appearance-requests.json --baseline-archive out/client-startup-followup-baseline/client-visual-assets.zip --baseline-manifest out/client-startup-followup-baseline/client-visual-manifest.json --metadata-cache out/client-startup-followup-metadata --payload-cache out/client-startup-followup-payloads --output out/client-startup-followup-discovery --plan-only
+          python3 tools/android/interactive/build_client_startup_followup_apk.py verify-discovery-plan --directory out/client-startup-followup-discovery --manifest assets/client-appearance-manifest.json
+          mkdir out/client-startup-followup-assets
+          python3 tools/android/interactive/prepare_client_appearance_assets.py --materialize --manifest assets/client-appearance-manifest.json --baseline-directory out/client-startup-followup-baseline --output out/client-startup-followup-assets
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-startup-followup-assets
+          path: out/client-startup-followup-assets/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-startup-followup-discovery-evidence
+          path: out/client-startup-followup-discovery/client-appearance-plan.json
+          if-no-files-found: error
+          retention-days: 90
+  qualify:
+    needs: [changes, client, assets]
+    if: needs.changes.outputs.startup_followup_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: coh-host-fixture
+          POSTGRES_DB: coh_test_startup_bundle
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-startup-followup-native
+          path: out/client-startup-followup-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-asset-closure-packaging-evidence
+          path: out/client-startup-followup-donor-evidence
+          run-id: 37249488856
+          github-token: ${{ github.token }}
+      - name: Recover the immutable public 0.13.10 donor
+        run: python3 tools/android/interactive/build_client_startup_followup_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.10.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-startup-followup-assets
+          path: out/client-startup-followup-assets
+      - name: Qualify client mount missing-only visual install and retained memory server cache and save guards
+        run: >-
+          python3 tools/android/interactive/qualify_client_startup_followup.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.10.apk
+          --donor-build-report out/client-startup-followup-donor-evidence/client-asset-closure-apk-build-report.json
+          --visual-directory out/client-startup-followup-assets
+          --client-directory out/client-startup-followup-native
+          --output out/client-startup-followup-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-startup-followup-qualification
+          path: out/client-startup-followup-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [changes, client, qualify]
+    if: needs.changes.outputs.startup_followup_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-startup-followup-native
+          path: out/client-startup-followup-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-asset-closure-packaging-evidence
+          path: out/client-startup-followup-donor-evidence
+          run-id: 37249488856
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-startup-followup-assets
+          path: out/client-startup-followup-assets
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-startup-followup-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover the immutable public 0.13.10 donor
+        run: python3 tools/android/interactive/build_client_startup_followup_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.10.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build the Game-only follow-up retaining servers DLLs and memory-protected Android DEX
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_client_startup_followup_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.10.apk
+          --donor-build-report out/client-startup-followup-donor-evidence/client-asset-closure-apk-build-report.json
+          --visual-directory out/client-startup-followup-assets
+          --client-directory out/client-startup-followup-native
+          --qualification out/client-startup-followup-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/client-startup-followup/COH-Atlas-Gameplay-0.13.11.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-startup-followup-packaging-evidence
+          path: |
+            out/client-startup-followup/client-startup-followup-apk-build-report.json
+            out/client-startup-followup/COH-Atlas-Gameplay-0.13.11-testing.txt
+            out/client-startup-followup/COH-Atlas-Gameplay-0.13.11.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-startup-followup-apk
+          path: out/client-startup-followup/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only qualified new 0.13.11 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_client_startup_followup_apk.py publish
+          --apk out/client-startup-followup/COH-Atlas-Gameplay-0.13.11.apk
+          --build-report out/client-startup-followup/client-startup-followup-apk-build-report.json
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.10.apk
+          --donor-build-report out/client-startup-followup-donor-evidence/client-asset-closure-apk-build-report.json
+          --visual-directory out/client-startup-followup-assets
+          --client-directory out/client-startup-followup-native
+          --qualification out/client-startup-followup-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

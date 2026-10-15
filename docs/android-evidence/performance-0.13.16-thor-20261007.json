@@ -1,0 +1,555 @@
+{
+  "app_version": "0.13.16",
+  "format": 1,
+  "limitations": [
+    "No GPU completion or Android/RFB display-latency measurement.",
+    "Native interval cadence is separate from Android delivered frames.",
+    "Thread CPU describes only the sampled main/render thread, not llvmpipe/Wine/FEX workers.",
+    "Histogram percentiles are bucket upper bounds; null means overflow.",
+    "Scene phases nest and must not be summed into startup or scene totals.",
+    "Native diagnostics are bounded and may omit a final partial ten-second window.",
+    "Single post-update run does not prove unchanged-warm preparation or repeat cost.",
+    "Main work_wall includes waits and is not CPU time.",
+    "Presentation role is unclassified across startup/menu/gameplay.",
+    "No physical 30 FPS test or repeat-suppression performance result yet."
+  ],
+  "measured_startup": {
+    "renderer": {
+      "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+      "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+      "renderer_classification": "software",
+      "vendor": "Mesa/X.org"
+    },
+    "result": {
+      "character_reopen_verified": true,
+      "cleanup_verified": true,
+      "passed": true
+    },
+    "stage_seconds": {
+      "actual_client_interaction": 429.406543,
+      "actual_client_startup": 193.540713,
+      "client_animation_pack": 20.315624,
+      "client_inputs": 1.191924,
+      "client_private_data": 0.282471,
+      "client_visual_assets": 70.400818,
+      "local_atlas_startup": 227.042736,
+      "local_dbserver_startup": 69.649379,
+      "local_login_odbc": 13.102797,
+      "persistent_server_profile": 0.497705,
+      "postgres_local_login": 0.491135,
+      "presentation_display": 0.112783,
+      "win32_runtime_dll": 1.177039,
+      "wine_initialization": 8.768147
+    },
+    "timing_seconds": {
+      "guest_to_client_ready": 670.210981,
+      "login_to_world_observation": 67.676,
+      "operation_to_login_observation": 691.012,
+      "operation_to_world_observation": 758.688,
+      "unlabelled_preparation_and_gaps": 63.63771
+    },
+    "visual_preparation": {
+      "archive_read_bytes": 859075775,
+      "decoded_files": 0,
+      "decoded_payload_bytes": 0,
+      "file_count": 10401,
+      "fingerprint_reused": false,
+      "installed_files": 0,
+      "preparation_elapsed_seconds": 70.346747,
+      "reused_files": 10401,
+      "verified_existing_bytes": 1534806726
+    }
+  },
+  "native_gameplay": {
+    "engine_wall": {
+      "count": 2203,
+      "histogram": [
+        0,
+        1,
+        5,
+        8,
+        35,
+        1046,
+        340,
+        249,
+        192,
+        205,
+        71,
+        40,
+        8,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "max_ms": 1454.978,
+      "mean_ms": 119.465,
+      "over_125ms_count": 519,
+      "over_200ms_count": 122,
+      "p50_upper_ms": 110,
+      "p95_upper_ms": 250
+    },
+    "frame_interval": {
+      "count": 2203,
+      "histogram": [
+        0,
+        0,
+        5,
+        7,
+        26,
+        652,
+        553,
+        388,
+        222,
+        215,
+        82,
+        42,
+        8,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "max_ms": 1455.443,
+      "mean_cadence_hz": 8.127,
+      "mean_ms": 123.047,
+      "over_125ms_count": 572,
+      "over_200ms_count": 135,
+      "p50_upper_ms": 110,
+      "p95_upper_ms": 250
+    },
+    "frame_wall": {
+      "count": 2203,
+      "histogram": [
+        0,
+        0,
+        5,
+        7,
+        26,
+        660,
+        555,
+        395,
+        223,
+        206,
+        75,
+        40,
+        8,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "max_ms": 1455.438,
+      "mean_ms": 122.204,
+      "over_125ms_count": 555,
+      "over_200ms_count": 126,
+      "p50_upper_ms": 110,
+      "p95_upper_ms": 250
+    },
+    "pacing_wall": {
+      "count": 2203,
+      "histogram": [
+        1299,
+        333,
+        326,
+        163,
+        82,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "max_ms": 80.16,
+      "mean_ms": 17.752,
+      "over_125ms_count": 0,
+      "over_200ms_count": 0,
+      "p50_upper_ms": 16,
+      "p95_upper_ms": 66
+    },
+    "submit_wall": {
+      "count": 2203,
+      "histogram": [
+        869,
+        491,
+        208,
+        181,
+        170,
+        131,
+        42,
+        39,
+        35,
+        24,
+        6,
+        4,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "max_ms": 708.499,
+      "mean_ms": 39.311,
+      "over_125ms_count": 72,
+      "over_200ms_count": 13,
+      "p50_upper_ms": 33,
+      "p95_upper_ms": 125
+    },
+    "work_wall": {
+      "count": 2203,
+      "histogram": [
+        0,
+        63,
+        196,
+        235,
+        327,
+        445,
+        184,
+        217,
+        204,
+        206,
+        75,
+        40,
+        8,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "max_ms": 1455.434,
+      "mean_ms": 104.452,
+      "over_125ms_count": 536,
+      "over_200ms_count": 126,
+      "p50_upper_ms": 100,
+      "p95_upper_ms": 250
+    }
+  },
+  "native_scene_entry": {
+    "client_connect_to_native_ready_seconds": 64.508,
+    "native_ready_utc_ms": 1791374786656,
+    "scope": "First map connection through loaded-world CLIENT_READY; excludes character-selection delay."
+  },
+  "native_scene_phases_non_additive": {
+    "client_ready_queued": {
+      "calls": 1,
+      "max_ms": 1,
+      "samples_ms": [
+        1
+      ],
+      "successful_calls": 1,
+      "total_ms": 1
+    },
+    "entities_network_and_processing": {
+      "calls": 1,
+      "max_ms": 330,
+      "samples_ms": [
+        330
+      ],
+      "successful_calls": 1,
+      "total_ms": 330
+    },
+    "geometry_loader_completion": {
+      "calls": 1,
+      "max_ms": 0,
+      "samples_ms": [
+        0
+      ],
+      "successful_calls": 1,
+      "total_ms": 0
+    },
+    "gfx_group_and_model_invalidation": {
+      "calls": 2,
+      "max_ms": 9,
+      "samples_ms": [
+        9,
+        0
+      ],
+      "successful_calls": 2,
+      "total_ms": 9
+    },
+    "gfx_renderer_background_default_scene": {
+      "calls": 2,
+      "max_ms": 90,
+      "samples_ms": [
+        90,
+        43
+      ],
+      "successful_calls": 2,
+      "total_ms": 133
+    },
+    "gfx_surviving_fx_preload": {
+      "calls": 2,
+      "max_ms": 18659,
+      "samples_ms": [
+        18659,
+        10107
+      ],
+      "successful_calls": 2,
+      "total_ms": 28766
+    },
+    "gfx_tree_reset": {
+      "calls": 2,
+      "max_ms": 16,
+      "samples_ms": [
+        1,
+        16
+      ],
+      "successful_calls": 2,
+      "total_ms": 17
+    },
+    "groups_collision_and_physics": {
+      "calls": 1,
+      "max_ms": 3602,
+      "samples_ms": [
+        3602
+      ],
+      "successful_calls": 1,
+      "total_ms": 3602
+    },
+    "groups_crc_and_counts": {
+      "calls": 1,
+      "max_ms": 0,
+      "samples_ms": [
+        0
+      ],
+      "successful_calls": 1,
+      "total_ms": 0
+    },
+    "groups_final_bounds_and_reset": {
+      "calls": 1,
+      "max_ms": 41,
+      "samples_ms": [
+        41
+      ],
+      "successful_calls": 1,
+      "total_ms": 41
+    },
+    "groups_finish_load_map": {
+      "calls": 1,
+      "max_ms": 1287,
+      "samples_ms": [
+        1287
+      ],
+      "successful_calls": 1,
+      "total_ms": 1287
+    },
+    "groups_initial_bounds": {
+      "calls": 1,
+      "max_ms": 3231,
+      "samples_ms": [
+        3231
+      ],
+      "successful_calls": 1,
+      "total_ms": 3231
+    },
+    "groups_libraries_and_definitions": {
+      "calls": 1,
+      "max_ms": 44343,
+      "samples_ms": [
+        44343
+      ],
+      "successful_calls": 1,
+      "total_ms": 44343
+    },
+    "groups_mission_and_finalize": {
+      "calls": 1,
+      "max_ms": 62,
+      "samples_ms": [
+        62
+      ],
+      "successful_calls": 1,
+      "total_ms": 62
+    },
+    "groups_network_and_processing": {
+      "calls": 1,
+      "max_ms": 53345,
+      "samples_ms": [
+        53345
+      ],
+      "successful_calls": 1,
+      "total_ms": 53345
+    },
+    "groups_references_and_trackers": {
+      "calls": 1,
+      "max_ms": 586,
+      "samples_ms": [
+        586
+      ],
+      "successful_calls": 1,
+      "total_ms": 586
+    },
+    "groups_reset_and_header": {
+      "calls": 1,
+      "max_ms": 25,
+      "samples_ms": [
+        25
+      ],
+      "successful_calls": 1,
+      "total_ms": 25
+    },
+    "groups_tracker_activation": {
+      "calls": 1,
+      "max_ms": 4,
+      "samples_ms": [
+        4
+      ],
+      "successful_calls": 1,
+      "total_ms": 4
+    },
+    "relevant_textures_request": {
+      "calls": 1,
+      "max_ms": 299,
+      "samples_ms": [
+        299
+      ],
+      "successful_calls": 1,
+      "total_ms": 299
+    },
+    "request_groups_setup": {
+      "calls": 1,
+      "max_ms": 1,
+      "samples_ms": [
+        1
+      ],
+      "successful_calls": 1,
+      "total_ms": 1
+    },
+    "startup_final_fx_preload": {
+      "calls": 1,
+      "max_ms": 76,
+      "samples_ms": [
+        76
+      ],
+      "successful_calls": 1,
+      "total_ms": 76
+    },
+    "startup_player_animations": {
+      "calls": 1,
+      "max_ms": 4,
+      "samples_ms": [
+        4
+      ],
+      "successful_calls": 1,
+      "total_ms": 4
+    },
+    "texture_queue_completion": {
+      "calls": 1,
+      "max_ms": 102,
+      "samples_ms": [
+        102
+      ],
+      "successful_calls": 1,
+      "total_ms": 102
+    }
+  },
+  "runtime_setup": {
+    "elapsed_ms": 99431,
+    "status": "complete"
+  },
+  "status": "physical_reopen_save_cleanup_passed_performance_measurement_available",
+  "support_zip": {
+    "bytes": 13537216,
+    "filename": "coh-atlas-gameplay-20261007-121318.zip",
+    "sha256": "36cb3284014b7963d8f2cb39e0c9f727acc4f82fa9d82a8ab5d0f718cf717471"
+  },
+  "texture_diagnostic_flood": {
+    "attempts_will_be_preserved": true,
+    "distinct_messages": 751,
+    "most_repeated_messages": [
+      {
+        "count": 2648,
+        "message": " MALE wants nonexistent texture X_Mission_Electro_Hips_01 as texture 1 on bone HIPS."
+      },
+      {
+        "count": 2648,
+        "message": " MALE wants nonexistent texture Hips_Circuitry_02 as texture 2 on bone HIPS."
+      },
+      {
+        "count": 2648,
+        "message": " MALE wants nonexistent texture X_Mission_Electro_Chest_01 as texture 1 on bone CHEST."
+      },
+      {
+        "count": 2648,
+        "message": " MALE wants nonexistent texture chest_Circuitry_02 as texture 2 on bone CHEST."
+      },
+      {
+        "count": 2648,
+        "message": " MALE wants nonexistent texture X_Mission_Electro_Head_01 as texture 1 on bone HEAD."
+      },
+      {
+        "count": 2648,
+        "message": " MALE wants nonexistent texture X_Mission_Electro_Glove_01 as texture 1 on bone LARMR."
+      },
+      {
+        "count": 2648,
+        "message": " MALE wants nonexistent texture X_Mission_Electro_Glove_01 as texture 1 on bone LARML."
+      },
+      {
+        "count": 2648,
+        "message": " MALE wants nonexistent texture X_Mission_Electro_Boot_01 as texture 1 on bone LLEGR."
+      },
+      {
+        "count": 2648,
+        "message": " MALE wants nonexistent texture X_Mission_Electro_Boot_01 as texture 1 on bone LLEGL."
+      },
+      {
+        "count": 6,
+        "message": " texture not found: Emblem_V_Tie_02_mask"
+      },
+      {
+        "count": 6,
+        "message": " texture not found: Emblem_V_Roman_02"
+      },
+      {
+        "count": 6,
+        "message": " texture not found: Emblem_V_Roman_02_Mask"
+      }
+    ],
+    "proposed_change": "bounded repeat diagnostic suppression only",
+    "total_custom_texture_error_lines": 24856
+  },
+  "user_observations": {
+    "additional_login_to_world_approximately_seconds": 73,
+    "fps_subjective": "fairly stable with some hitches",
+    "requested_next_test": "30 FPS with additional optimization",
+    "runtime_setup_required": true,
+    "startup_to_login_approximately_seconds": 660
+  }
+}

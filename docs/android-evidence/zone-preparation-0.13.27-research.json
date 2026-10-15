@@ -1,0 +1,588 @@
+{
+  "format": 1,
+  "research_started_utc": "2026-10-11T01:04:33Z",
+  "research_completed_utc": "2026-10-11T01:34:48.218697+00:00",
+  "minimum_requested_wall_seconds": 1800,
+  "status": "source_and_host_research_completed_device_validation_pending",
+  "initial_repository_commit": "2518f5df4b3b1907a70c0d72b7ac4a07be8a24c4",
+  "native_game_rebuilt": false,
+  "physical_preparation_speedup_verified": false,
+  "physical_fps_gain_verified": false,
+  "original_026_successful_session_archive_available": false,
+  "baseline_025_initial_startup_not_026_preparation": {
+    "source": "0.13.25 initial startup, not .26 second-zone preparation",
+    "report": "coh-atlas-gameplay-20261010-183224.zip",
+    "atlas_stage": {
+      "stage": "local_atlas_startup",
+      "started_utc": "2026-10-10T18:16:19.327880+00:00",
+      "status": "passed",
+      "finished_utc": "2026-10-10T18:20:15.940751+00:00",
+      "atlas_ready": true,
+      "map": {
+        "ready": true,
+        "not_started": false,
+        "map_id": 1,
+        "network_age_seconds": 2,
+        "stats_age_seconds": 2,
+        "address": "127.0.0.1",
+        "port": 7001
+      },
+      "loopback_only": true
+    },
+    "map_startup_guard": {
+      "before": {
+        "format": 1,
+        "windows_pid": 552,
+        "main_thread_id": 556,
+        "sequence": 320,
+        "stage_id": 26,
+        "stage": "DB_COMM",
+        "tick_started": 10,
+        "tick_completed": 9,
+        "flags": 0,
+        "stage_count": 37,
+        "raw_record_hex": "434f484d415031000100000080000000280200002c020000400100001a0000000a0000000900000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "raw_record_sha256": "63e7190d1a6eb74308655f98686452c4ab827ddbd10fe7fb1177eac3ed31c7ad",
+        "available": true,
+        "sampled_utc": "2026-10-10T18:20:14.239943+00:00",
+        "observed_monotonic": 83683.149876668,
+        "file_identity": {
+          "device": 65045,
+          "inode": 7102026
+        },
+        "source": "opt-in MapServer main-thread publication",
+        "is_success_proof": false,
+        "freshness": "unchanged",
+        "last_advance_monotonic": 83683.149003699,
+        "unchanged_seconds": 0.001
+      },
+      "after": {
+        "format": 1,
+        "windows_pid": 552,
+        "main_thread_id": 556,
+        "sequence": 1810,
+        "stage_id": 36,
+        "stage": "SLEEP",
+        "tick_started": 59,
+        "tick_completed": 59,
+        "flags": 0,
+        "stage_count": 37,
+        "raw_record_hex": "434f484d415031000100000080000000280200002c02000012070000240000003b0000003b00000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "raw_record_sha256": "93a18be1c1c14ab68e5ddf4c5bd7ccbec8fc6349e06f75f8288bc6aca8dfa857",
+        "available": true,
+        "sampled_utc": "2026-10-10T18:20:15.940655+00:00",
+        "observed_monotonic": 83684.850586667,
+        "file_identity": {
+          "device": 65045,
+          "inode": 7102026
+        },
+        "source": "opt-in MapServer main-thread publication",
+        "is_success_proof": false,
+        "freshness": "advanced",
+        "last_advance_monotonic": 83684.850586667,
+        "unchanged_seconds": 0.0
+      },
+      "protocol": {
+        "ready": true,
+        "not_started": false,
+        "map_id": 1,
+        "network_age_seconds": 2,
+        "stats_age_seconds": 2,
+        "address": "127.0.0.1",
+        "port": 7001
+      },
+      "requires_completed_tick_before_protocol": true,
+      "passed": true
+    },
+    "map_observer_metrics": {
+      "native_log_reads": {
+        "scope": "owned_runtime_root_and_complete_logs_subtree",
+        "reads": 17,
+        "total_ms": 117.316,
+        "max_ms": 9.863,
+        "last_ms": 8.044,
+        "last_files": 8,
+        "last_bytes": 76383,
+        "last_directories": 5,
+        "last_entries": 42
+      },
+      "native_ready_to_observation_ms": 4130,
+      "steady_state_policy": {
+        "policy": "native_connection_then_delivery_triggered_save",
+        "translated_status_probes_skipped": 6,
+        "sql_inventory_reads_skipped": 6,
+        "current_native_progress_required": true,
+        "optional_action_observers_preserved": true,
+        "current_native_event_identity_checks_preserved": true,
+        "fresh_full_save_proof_required": true
+      }
+    },
+    "server_preparation_phase_seconds": {
+      "base_schema_and_native_runtime": 0.101915,
+      "required_original_geometry": 5.056797,
+      "server_data_cache_checkout": 6.723558,
+      "warm_schema_restore": 0.13831,
+      "native_dependencies_and_manual_atlas": 0.057234,
+      "prepared_server_definition_caches": 1.793725,
+      "server_animation_pack": 1.906526,
+      "atlas_beacon_graph": 25.153885
+    },
+    "query_seconds": {
+      "character-atlas-baseline": 1.635,
+      "character-atlas-ready": 1.699
+    },
+    "native_console_saved_chars": 16384
+  },
+  "controlled_host_experiments": {
+    "prep-scheduler-experiment.json": {
+      "original_file_pin": {
+        "bytes": 5762,
+        "sha256": "a3c4fada9356f03eaaf05ce320bce93bab9c79f0fe6463a7cabace7ebfbf9f63"
+      },
+      "result": {
+        "format": 1,
+        "scope": "Controlled Linux CPU contention mechanism; no native CoH, Android, GPU or device performance claim",
+        "cpu": 0,
+        "rlimit_nice": [
+          0,
+          0
+        ],
+        "seconds_per_trial": 5,
+        "background_workers": 3,
+        "foreground_period_ms": 33.333333333333336,
+        "foreground_work_ms": 5,
+        "trials": [
+          {
+            "policy": "normal",
+            "foreground_iterations": 151,
+            "foreground_cpu_seconds": 0.654455041,
+            "p95_lateness_ms": 9.0266110128141,
+            "max_lateness_ms": 10.378288377978606,
+            "mean_lateness_ms": 3.25704268487737,
+            "background_work_units": 943345,
+            "background_cpu_seconds": 4.355495939,
+            "workers": [
+              {
+                "work_units": 313275,
+                "cpu_seconds": 1.451493868,
+                "wall_seconds": 5.009127385001193,
+                "nice": 0,
+                "policy": 0
+              },
+              {
+                "work_units": 314315,
+                "cpu_seconds": 1.448952432,
+                "wall_seconds": 5.0000078289995145,
+                "nice": 0,
+                "policy": 0
+              },
+              {
+                "work_units": 315755,
+                "cpu_seconds": 1.455049639,
+                "wall_seconds": 5.000007890001143,
+                "nice": 0,
+                "policy": 0
+              }
+            ]
+          },
+          {
+            "policy": "nice5",
+            "foreground_iterations": 151,
+            "foreground_cpu_seconds": 0.7072261790000001,
+            "p95_lateness_ms": 4.011042008642107,
+            "max_lateness_ms": 6.67510268613114,
+            "mean_lateness_ms": 2.1723794787923656,
+            "background_work_units": 929197,
+            "background_cpu_seconds": 4.303033806,
+            "workers": [
+              {
+                "work_units": 309200,
+                "cpu_seconds": 1.432891157,
+                "wall_seconds": 5.006877315001475,
+                "nice": 5,
+                "policy": 0
+              },
+              {
+                "work_units": 310102,
+                "cpu_seconds": 1.434196993,
+                "wall_seconds": 5.00824880500295,
+                "nice": 5,
+                "policy": 0
+              },
+              {
+                "work_units": 309895,
+                "cpu_seconds": 1.435945656,
+                "wall_seconds": 5.00638041899947,
+                "nice": 5,
+                "policy": 0
+              }
+            ]
+          },
+          {
+            "policy": "batch",
+            "foreground_iterations": 151,
+            "foreground_cpu_seconds": 0.656665992,
+            "p95_lateness_ms": 8.7931560119614,
+            "max_lateness_ms": 9.02701601444278,
+            "mean_lateness_ms": 3.9306985315445053,
+            "background_work_units": 955638,
+            "background_cpu_seconds": 4.354051719,
+            "workers": [
+              {
+                "work_units": 318555,
+                "cpu_seconds": 1.450100841,
+                "wall_seconds": 5.000015200999769,
+                "nice": 0,
+                "policy": 3
+              },
+              {
+                "work_units": 319890,
+                "cpu_seconds": 1.4517468850000002,
+                "wall_seconds": 5.00999937600136,
+                "nice": 0,
+                "policy": 3
+              },
+              {
+                "work_units": 317193,
+                "cpu_seconds": 1.4522039930000001,
+                "wall_seconds": 5.00001085400072,
+                "nice": 0,
+                "policy": 3
+              }
+            ]
+          },
+          {
+            "policy": "batch",
+            "foreground_iterations": 151,
+            "foreground_cpu_seconds": 0.6441861279999999,
+            "p95_lateness_ms": 8.831660386931617,
+            "max_lateness_ms": 9.762401379703078,
+            "mean_lateness_ms": 3.7382316073514166,
+            "background_work_units": 959846,
+            "background_cpu_seconds": 4.364763492,
+            "workers": [
+              {
+                "work_units": 318835,
+                "cpu_seconds": 1.451707765,
+                "wall_seconds": 5.000025302997528,
+                "nice": 0,
+                "policy": 3
+              },
+              {
+                "work_units": 319776,
+                "cpu_seconds": 1.452816785,
+                "wall_seconds": 5.0004847229974985,
+                "nice": 0,
+                "policy": 3
+              },
+              {
+                "work_units": 321235,
+                "cpu_seconds": 1.460238942,
+                "wall_seconds": 5.00001386599979,
+                "nice": 0,
+                "policy": 3
+              }
+            ]
+          },
+          {
+            "policy": "nice5",
+            "foreground_iterations": 151,
+            "foreground_cpu_seconds": 0.7415954010000001,
+            "p95_lateness_ms": 3.6532943740894552,
+            "max_lateness_ms": 10.362641998653999,
+            "mean_lateness_ms": 2.040876922623982,
+            "background_work_units": 950189,
+            "background_cpu_seconds": 4.270734907,
+            "workers": [
+              {
+                "work_units": 315051,
+                "cpu_seconds": 1.419856963,
+                "wall_seconds": 5.0000240379995375,
+                "nice": 5,
+                "policy": 0
+              },
+              {
+                "work_units": 316510,
+                "cpu_seconds": 1.42094786,
+                "wall_seconds": 5.000030057999538,
+                "nice": 5,
+                "policy": 0
+              },
+              {
+                "work_units": 318628,
+                "cpu_seconds": 1.429930084,
+                "wall_seconds": 5.000012821001292,
+                "nice": 5,
+                "policy": 0
+              }
+            ]
+          },
+          {
+            "policy": "normal",
+            "foreground_iterations": 151,
+            "foreground_cpu_seconds": 0.6550280059999998,
+            "p95_lateness_ms": 9.037213731062366,
+            "max_lateness_ms": 10.369362000346882,
+            "mean_lateness_ms": 3.3485334593897518,
+            "background_work_units": 969018,
+            "background_cpu_seconds": 4.357107457,
+            "workers": [
+              {
+                "work_units": 322830,
+                "cpu_seconds": 1.450523504,
+                "wall_seconds": 5.0044158160017105,
+                "nice": 0,
+                "policy": 0
+              },
+              {
+                "work_units": 321152,
+                "cpu_seconds": 1.450609274,
+                "wall_seconds": 5.0103647989999445,
+                "nice": 0,
+                "policy": 0
+              },
+              {
+                "work_units": 325036,
+                "cpu_seconds": 1.455974679,
+                "wall_seconds": 5.000010249998013,
+                "nice": 0,
+                "policy": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "incremental-console-experiment.json": {
+      "original_file_pin": {
+        "bytes": 360,
+        "sha256": "b12ae51a476e7ef59ddd9818c03c7b8342c6f768ac01f9f3ab98ff8b1666d073"
+      },
+      "result": {
+        "format": 1,
+        "fixture": "actual_.25_initial_Atlas_console_not_.26_destination",
+        "input_bytes": 133648,
+        "repeated_scans": 600,
+        "old_bytes_decoded": 80188800,
+        "new_bytes_scanned": 171984,
+        "old_host_seconds": 0.3350649300009536,
+        "new_host_seconds": 0.0013201429974287748,
+        "physical_fps_gain_measured": false,
+        "native_build_changed": false
+      }
+    },
+    "linux-scheduler-host-smoke-20261011.json": {
+      "original_file_pin": {
+        "bytes": 678,
+        "sha256": "00ec40edc273f51f94e504a1ffee69c1e9a2cb32e88db68c1a67626771125d20"
+      },
+      "result": {
+        "scope": "isolated_linux_host_syscall_smoke_not_Android_Wine_FEX_or_FPS",
+        "started_utc": "2026-10-11T01:11:58Z",
+        "uid": 0,
+        "rlimit_nice": [
+          0,
+          0
+        ],
+        "nice_original": 0,
+        "nice_after_demote": 5,
+        "new_native_thread": [
+          {
+            "native_tid": 7,
+            "nice": 5
+          }
+        ],
+        "exec_child_nice": 5,
+        "restore_errno": 13,
+        "nice_after_restore_attempt": 5,
+        "policy_round_trip": [
+          {
+            "requested": "batch",
+            "errno": null,
+            "observed_policy": 3,
+            "nice": 5
+          },
+          {
+            "requested": "other",
+            "errno": null,
+            "observed_policy": 0,
+            "nice": 5
+          }
+        ],
+        "parent_priority_unchanged": true,
+        "parent_nice": 0
+      }
+    },
+    "linux-fair-share-host-fixture-20261011.json": {
+      "original_file_pin": {
+        "bytes": 3017,
+        "sha256": "b5503fa994c2acc36e41c581c4160bd9eaa40d9a4aabc1b98290b75b96d18eeb"
+      },
+      "result": {
+        "format": 1,
+        "scope": "isolated Linux host, two synthetic CPU-bound children pinned to one allowed CPU; not Android/FEX/Game, not an FPS or preparation benchmark",
+        "started_utc": "2026-10-11T01:18:18.584832+00:00",
+        "uid": 0,
+        "rlimit_nice": [
+          0,
+          0
+        ],
+        "parent_nice": 0,
+        "cpu": 0,
+        "trials": [
+          {
+            "seconds": 1.1,
+            "foreground_nice": 0,
+            "destination_nice": 0,
+            "results": [
+              {
+                "nice": 0,
+                "cpu_seconds": 0.548639,
+                "loops": 22486951
+              },
+              {
+                "nice": 0,
+                "cpu_seconds": 0.5493049999999999,
+                "loops": 322836958
+              }
+            ],
+            "foreground_observed_cpu_share": 0.4996967058429209
+          },
+          {
+            "seconds": 1.1,
+            "foreground_nice": 0,
+            "destination_nice": 5,
+            "results": [
+              {
+                "nice": 0,
+                "cpu_seconds": 0.8269070000000001,
+                "loops": 442276951
+              },
+              {
+                "nice": 5,
+                "cpu_seconds": 0.272797,
+                "loops": 36980986
+              }
+            ],
+            "foreground_observed_cpu_share": 0.7519359754988616
+          },
+          {
+            "seconds": 1.1,
+            "foreground_nice": 0,
+            "destination_nice": 0,
+            "results": [
+              {
+                "nice": 0,
+                "cpu_seconds": 0.5519509999999999,
+                "loops": 777609972
+              },
+              {
+                "nice": 0,
+                "cpu_seconds": 0.549912,
+                "loops": 489753972
+              }
+            ],
+            "foreground_observed_cpu_share": 0.5009252511428371
+          },
+          {
+            "seconds": 1.1,
+            "foreground_nice": 0,
+            "destination_nice": 5,
+            "results": [
+              {
+                "nice": 0,
+                "cpu_seconds": 0.826636,
+                "loops": 465264937
+              },
+              {
+                "nice": 5,
+                "cpu_seconds": 0.271502,
+                "loops": 20488979
+              }
+            ],
+            "foreground_observed_cpu_share": 0.7527614926357161
+          },
+          {
+            "seconds": 1.1,
+            "foreground_nice": 0,
+            "destination_nice": 0,
+            "results": [
+              {
+                "nice": 0,
+                "cpu_seconds": 0.5491349999999999,
+                "loops": 797099965
+              },
+              {
+                "nice": 0,
+                "cpu_seconds": 0.549927,
+                "loops": 360317951
+              }
+            ],
+            "foreground_observed_cpu_share": 0.4996396927561866
+          },
+          {
+            "seconds": 1.1,
+            "foreground_nice": 0,
+            "destination_nice": 5,
+            "results": [
+              {
+                "nice": 0,
+                "cpu_seconds": 0.8261769999999999,
+                "loops": 216888930
+              },
+              {
+                "nice": 5,
+                "cpu_seconds": 0.272631,
+                "loops": 100448979
+              }
+            ],
+            "foreground_observed_cpu_share": 0.751884769677687
+          }
+        ],
+        "/proc/self/cgroup": "0::/",
+        "/proc/self/autogroup": {
+          "unavailable": "FileNotFoundError",
+          "errno": 2
+        },
+        "/proc/sys/kernel/sched_autogroup_enabled": {
+          "unavailable": "FileNotFoundError",
+          "errno": 2
+        },
+        "finished_utc": "2026-10-11T01:18:26.137080+00:00",
+        "parent_nice_unchanged": true
+      }
+    }
+  },
+  "selected": [
+    "incremental_console_scanning",
+    "conditional_owned_destination_nice_plus_5_with_verified_restoration",
+    "bounded_phase_and_resource_observations",
+    "automatic_travel_total_including_preparation"
+  ],
+  "deferred": [
+    "native_cache_phase_change_without_target_trace",
+    "shared_definition_heap",
+    "broad_production_mode",
+    "FEX_runtime_upgrade",
+    "empty_origin_retirement_or_quiescence"
+  ],
+  "measurement_limits": [
+    "Host fixtures are not Thor FPS or loading results",
+    "Nice reweights contention and may lengthen preparation",
+    "System pressure is not per-process attribution",
+    "RSS is not PSS or total app memory",
+    "Scene/renderer wall time is not pure GPU time",
+    "Cold destination means new MapServer; filesystem cache temperature unknown"
+  ],
+  "research_wall_seconds": 1815.219,
+  "research_coverage": [
+    "pinned_native_startup_and_parser_cache_paths",
+    "pinned_Wine_priority_and_directory_notifications",
+    "pinned_FEX_WoW64_cache_capabilities_and_later_release_scope",
+    "Android_nice_permissions_lifecycle_and_memory_pressure",
+    "Linux_scheduler_groups_heterogeneous_CPU_and_pressure_metrics",
+    "actual_025_startup_log_with_version_limits",
+    "controlled_host_scheduler_and_incremental_console_work",
+    "Kings_Row_pinned_dependency_and_original_geometry_foundation"
+  ]
+}

@@ -1,0 +1,667 @@
+{
+  "format": 1,
+  "source_url": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
+  "wine_commit": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+  "bytes": 7958,
+  "explicit_ordinals": 164,
+  "unassigned_exports": "@ declarations deliberately excluded; numeric ordinal is not guessed",
+  "exports": {
+    "1": {
+      "name": "SQLAllocConnect",
+      "kind": "stdcall"
+    },
+    "2": {
+      "name": "SQLAllocEnv",
+      "kind": "stdcall"
+    },
+    "3": {
+      "name": "SQLAllocStmt",
+      "kind": "stdcall"
+    },
+    "4": {
+      "name": "SQLBindCol",
+      "kind": "stdcall"
+    },
+    "5": {
+      "name": "SQLCancel",
+      "kind": "stdcall"
+    },
+    "6": {
+      "name": "SQLColAttributes",
+      "kind": "stdcall"
+    },
+    "7": {
+      "name": "SQLConnect",
+      "kind": "stdcall"
+    },
+    "8": {
+      "name": "SQLDescribeCol",
+      "kind": "stdcall"
+    },
+    "9": {
+      "name": "SQLDisconnect",
+      "kind": "stdcall"
+    },
+    "10": {
+      "name": "SQLError",
+      "kind": "stdcall"
+    },
+    "11": {
+      "name": "SQLExecDirect",
+      "kind": "stdcall"
+    },
+    "12": {
+      "name": "SQLExecute",
+      "kind": "stdcall"
+    },
+    "13": {
+      "name": "SQLFetch",
+      "kind": "stdcall"
+    },
+    "14": {
+      "name": "SQLFreeConnect",
+      "kind": "stdcall"
+    },
+    "15": {
+      "name": "SQLFreeEnv",
+      "kind": "stdcall"
+    },
+    "16": {
+      "name": "SQLFreeStmt",
+      "kind": "stdcall"
+    },
+    "17": {
+      "name": "SQLGetCursorName",
+      "kind": "stdcall"
+    },
+    "18": {
+      "name": "SQLNumResultCols",
+      "kind": "stdcall"
+    },
+    "19": {
+      "name": "SQLPrepare",
+      "kind": "stdcall"
+    },
+    "20": {
+      "name": "SQLRowCount",
+      "kind": "stdcall"
+    },
+    "21": {
+      "name": "SQLSetCursorName",
+      "kind": "stdcall"
+    },
+    "22": {
+      "name": "SQLSetParam",
+      "kind": "stdcall"
+    },
+    "23": {
+      "name": "SQLTransact",
+      "kind": "stdcall"
+    },
+    "24": {
+      "name": "SQLAllocHandle",
+      "kind": "stdcall"
+    },
+    "25": {
+      "name": "SQLBindParam",
+      "kind": "stdcall"
+    },
+    "26": {
+      "name": "SQLCloseCursor",
+      "kind": "stdcall"
+    },
+    "27": {
+      "name": "SQLColAttribute",
+      "kind": "stdcall"
+    },
+    "28": {
+      "name": "SQLCopyDesc",
+      "kind": "stdcall"
+    },
+    "29": {
+      "name": "SQLEndTran",
+      "kind": "stdcall"
+    },
+    "30": {
+      "name": "SQLFetchScroll",
+      "kind": "stdcall"
+    },
+    "31": {
+      "name": "SQLFreeHandle",
+      "kind": "stdcall"
+    },
+    "32": {
+      "name": "SQLGetConnectAttr",
+      "kind": "stdcall"
+    },
+    "33": {
+      "name": "SQLGetDescField",
+      "kind": "stdcall"
+    },
+    "34": {
+      "name": "SQLGetDescRec",
+      "kind": "stdcall"
+    },
+    "35": {
+      "name": "SQLGetDiagField",
+      "kind": "stdcall"
+    },
+    "36": {
+      "name": "SQLGetDiagRec",
+      "kind": "stdcall"
+    },
+    "37": {
+      "name": "SQLGetEnvAttr",
+      "kind": "stdcall"
+    },
+    "38": {
+      "name": "SQLGetStmtAttr",
+      "kind": "stdcall"
+    },
+    "39": {
+      "name": "SQLSetConnectAttr",
+      "kind": "stdcall"
+    },
+    "40": {
+      "name": "SQLColumns",
+      "kind": "stdcall"
+    },
+    "41": {
+      "name": "SQLDriverConnect",
+      "kind": "stdcall"
+    },
+    "42": {
+      "name": "SQLGetConnectOption",
+      "kind": "stdcall"
+    },
+    "43": {
+      "name": "SQLGetData",
+      "kind": "stdcall"
+    },
+    "44": {
+      "name": "SQLGetFunctions",
+      "kind": "stdcall"
+    },
+    "45": {
+      "name": "SQLGetInfo",
+      "kind": "stdcall"
+    },
+    "46": {
+      "name": "SQLGetStmtOption",
+      "kind": "stdcall"
+    },
+    "47": {
+      "name": "SQLGetTypeInfo",
+      "kind": "stdcall"
+    },
+    "48": {
+      "name": "SQLParamData",
+      "kind": "stdcall"
+    },
+    "49": {
+      "name": "SQLPutData",
+      "kind": "stdcall"
+    },
+    "50": {
+      "name": "SQLSetConnectOption",
+      "kind": "stdcall"
+    },
+    "51": {
+      "name": "SQLSetStmtOption",
+      "kind": "stdcall"
+    },
+    "52": {
+      "name": "SQLSpecialColumns",
+      "kind": "stdcall"
+    },
+    "53": {
+      "name": "SQLStatistics",
+      "kind": "stdcall"
+    },
+    "54": {
+      "name": "SQLTables",
+      "kind": "stdcall"
+    },
+    "55": {
+      "name": "SQLBrowseConnect",
+      "kind": "stdcall"
+    },
+    "56": {
+      "name": "SQLColumnPrivileges",
+      "kind": "stdcall"
+    },
+    "57": {
+      "name": "SQLDataSources",
+      "kind": "stdcall"
+    },
+    "58": {
+      "name": "SQLDescribeParam",
+      "kind": "stdcall"
+    },
+    "59": {
+      "name": "SQLExtendedFetch",
+      "kind": "stdcall"
+    },
+    "60": {
+      "name": "SQLForeignKeys",
+      "kind": "stdcall"
+    },
+    "61": {
+      "name": "SQLMoreResults",
+      "kind": "stdcall"
+    },
+    "62": {
+      "name": "SQLNativeSql",
+      "kind": "stdcall"
+    },
+    "63": {
+      "name": "SQLNumParams",
+      "kind": "stdcall"
+    },
+    "64": {
+      "name": "SQLParamOptions",
+      "kind": "stdcall"
+    },
+    "65": {
+      "name": "SQLPrimaryKeys",
+      "kind": "stdcall"
+    },
+    "66": {
+      "name": "SQLProcedureColumns",
+      "kind": "stdcall"
+    },
+    "67": {
+      "name": "SQLProcedures",
+      "kind": "stdcall"
+    },
+    "68": {
+      "name": "SQLSetPos",
+      "kind": "stdcall"
+    },
+    "69": {
+      "name": "SQLSetScrollOptions",
+      "kind": "stdcall"
+    },
+    "70": {
+      "name": "SQLTablePrivileges",
+      "kind": "stdcall"
+    },
+    "71": {
+      "name": "SQLDrivers",
+      "kind": "stdcall"
+    },
+    "72": {
+      "name": "SQLBindParameter",
+      "kind": "stdcall"
+    },
+    "73": {
+      "name": "SQLSetDescField",
+      "kind": "stdcall"
+    },
+    "74": {
+      "name": "SQLSetDescRec",
+      "kind": "stdcall"
+    },
+    "75": {
+      "name": "SQLSetEnvAttr",
+      "kind": "stdcall"
+    },
+    "76": {
+      "name": "SQLSetStmtAttr",
+      "kind": "stdcall"
+    },
+    "77": {
+      "name": "SQLAllocHandleStd",
+      "kind": "stdcall"
+    },
+    "78": {
+      "name": "SQLBulkOperations",
+      "kind": "stdcall"
+    },
+    "79": {
+      "name": "CloseODBCPerfData",
+      "kind": "stub"
+    },
+    "80": {
+      "name": "CollectODBCPerfData",
+      "kind": "stub"
+    },
+    "81": {
+      "name": "CursorLibLockDbc",
+      "kind": "stub"
+    },
+    "82": {
+      "name": "CursorLibLockDesc",
+      "kind": "stub"
+    },
+    "83": {
+      "name": "CursorLibLockStmt",
+      "kind": "stub"
+    },
+    "84": {
+      "name": "ODBCGetTryWaitValue",
+      "kind": "stub"
+    },
+    "85": {
+      "name": "CursorLibTransact",
+      "kind": "stub"
+    },
+    "86": {
+      "name": "ODBSetTryWaitValue",
+      "kind": "stub"
+    },
+    "89": {
+      "name": "ODBCSharedPerfMon",
+      "kind": "stub"
+    },
+    "90": {
+      "name": "ODBCSharedVSFlag",
+      "kind": "stub"
+    },
+    "106": {
+      "name": "SQLColAttributesW",
+      "kind": "stdcall"
+    },
+    "107": {
+      "name": "SQLConnectW",
+      "kind": "stdcall"
+    },
+    "108": {
+      "name": "SQLDescribeColW",
+      "kind": "stdcall"
+    },
+    "110": {
+      "name": "SQLErrorW",
+      "kind": "stdcall"
+    },
+    "111": {
+      "name": "SQLExecDirectW",
+      "kind": "stdcall"
+    },
+    "117": {
+      "name": "SQLGetCursorNameW",
+      "kind": "stdcall"
+    },
+    "119": {
+      "name": "SQLPrepareW",
+      "kind": "stdcall"
+    },
+    "121": {
+      "name": "SQLSetCursorNameW",
+      "kind": "stdcall"
+    },
+    "127": {
+      "name": "SQLColAttributeW",
+      "kind": "stdcall"
+    },
+    "132": {
+      "name": "SQLGetConnectAttrW",
+      "kind": "stdcall"
+    },
+    "133": {
+      "name": "SQLGetDescFieldW",
+      "kind": "stdcall"
+    },
+    "134": {
+      "name": "SQLGetDescRecW",
+      "kind": "stdcall"
+    },
+    "135": {
+      "name": "SQLGetDiagFieldW",
+      "kind": "stdcall"
+    },
+    "136": {
+      "name": "SQLGetDiagRecW",
+      "kind": "stdcall"
+    },
+    "138": {
+      "name": "SQLGetStmtAttrW",
+      "kind": "stdcall"
+    },
+    "139": {
+      "name": "SQLSetConnectAttrW",
+      "kind": "stdcall"
+    },
+    "140": {
+      "name": "SQLColumnsW",
+      "kind": "stdcall"
+    },
+    "141": {
+      "name": "SQLDriverConnectW",
+      "kind": "stdcall"
+    },
+    "142": {
+      "name": "SQLGetConnectOptionW",
+      "kind": "stdcall"
+    },
+    "145": {
+      "name": "SQLGetInfoW",
+      "kind": "stdcall"
+    },
+    "147": {
+      "name": "SQLGetTypeInfoW",
+      "kind": "stdcall"
+    },
+    "150": {
+      "name": "SQLSetConnectOptionW",
+      "kind": "stdcall"
+    },
+    "152": {
+      "name": "SQLSpecialColumnsW",
+      "kind": "stdcall"
+    },
+    "153": {
+      "name": "SQLStatisticsW",
+      "kind": "stdcall"
+    },
+    "154": {
+      "name": "SQLTablesW",
+      "kind": "stdcall"
+    },
+    "155": {
+      "name": "SQLBrowseConnectW",
+      "kind": "stdcall"
+    },
+    "156": {
+      "name": "SQLColumnPrivilegesW",
+      "kind": "stdcall"
+    },
+    "157": {
+      "name": "SQLDataSourcesW",
+      "kind": "stdcall"
+    },
+    "160": {
+      "name": "SQLForeignKeysW",
+      "kind": "stdcall"
+    },
+    "162": {
+      "name": "SQLNativeSqlW",
+      "kind": "stdcall"
+    },
+    "165": {
+      "name": "SQLPrimaryKeysW",
+      "kind": "stdcall"
+    },
+    "166": {
+      "name": "SQLProcedureColumnsW",
+      "kind": "stdcall"
+    },
+    "167": {
+      "name": "SQLProceduresW",
+      "kind": "stdcall"
+    },
+    "170": {
+      "name": "SQLTablePrivilegesW",
+      "kind": "stdcall"
+    },
+    "171": {
+      "name": "SQLDriversW",
+      "kind": "stdcall"
+    },
+    "173": {
+      "name": "SQLSetDescFieldW",
+      "kind": "stdcall"
+    },
+    "176": {
+      "name": "SQLSetStmtAttrW",
+      "kind": "stdcall"
+    },
+    "206": {
+      "name": "SQLColAttributesA",
+      "kind": "stub"
+    },
+    "207": {
+      "name": "SQLConnectA",
+      "kind": "stub"
+    },
+    "208": {
+      "name": "SQLDescribeColA",
+      "kind": "stub"
+    },
+    "210": {
+      "name": "SQLErrorA",
+      "kind": "stub"
+    },
+    "211": {
+      "name": "SQLExecDirectA",
+      "kind": "stub"
+    },
+    "217": {
+      "name": "SQLGetCursorNameA",
+      "kind": "stub"
+    },
+    "219": {
+      "name": "SQLPrepareA",
+      "kind": "stub"
+    },
+    "221": {
+      "name": "SQLSetCursorNameA",
+      "kind": "stub"
+    },
+    "227": {
+      "name": "SQLColAttributeA",
+      "kind": "stub"
+    },
+    "232": {
+      "name": "SQLGetConnectAttrA",
+      "kind": "stub"
+    },
+    "233": {
+      "name": "SQLGetDescFieldA",
+      "kind": "stub"
+    },
+    "234": {
+      "name": "SQLGetDescRecA",
+      "kind": "stub"
+    },
+    "235": {
+      "name": "SQLGetDiagFieldA",
+      "kind": "stub"
+    },
+    "236": {
+      "name": "SQLGetDiagRecA",
+      "kind": "stdcall"
+    },
+    "238": {
+      "name": "SQLGetStmtAttrA",
+      "kind": "stub"
+    },
+    "239": {
+      "name": "SQLSetConnectAttrA",
+      "kind": "stub"
+    },
+    "240": {
+      "name": "SQLColumnsA",
+      "kind": "stub"
+    },
+    "241": {
+      "name": "SQLDriverConnectA",
+      "kind": "stub"
+    },
+    "242": {
+      "name": "SQLGetConnectOptionA",
+      "kind": "stub"
+    },
+    "245": {
+      "name": "SQLGetInfoA",
+      "kind": "stub"
+    },
+    "247": {
+      "name": "SQLGetTypeInfoA",
+      "kind": "stub"
+    },
+    "250": {
+      "name": "SQLSetConnectOptionA",
+      "kind": "stub"
+    },
+    "252": {
+      "name": "SQLSpecialColumnsA",
+      "kind": "stub"
+    },
+    "253": {
+      "name": "SQLStatisticsA",
+      "kind": "stub"
+    },
+    "254": {
+      "name": "SQLTablesA",
+      "kind": "stub"
+    },
+    "255": {
+      "name": "SQLBrowseConnectA",
+      "kind": "stub"
+    },
+    "256": {
+      "name": "SQLColumnPrivilegesA",
+      "kind": "stub"
+    },
+    "257": {
+      "name": "SQLDataSourcesA",
+      "kind": "stdcall"
+    },
+    "260": {
+      "name": "SQLForeignKeysA",
+      "kind": "stub"
+    },
+    "262": {
+      "name": "SQLNativeSqlA",
+      "kind": "stub"
+    },
+    "265": {
+      "name": "SQLPrimaryKeysA",
+      "kind": "stub"
+    },
+    "266": {
+      "name": "SQLProcedureColumnsA",
+      "kind": "stub"
+    },
+    "267": {
+      "name": "SQLProceduresA",
+      "kind": "stub"
+    },
+    "270": {
+      "name": "SQLTablePrivilegesA",
+      "kind": "stub"
+    },
+    "271": {
+      "name": "SQLDriversA",
+      "kind": "stub"
+    },
+    "273": {
+      "name": "SQLSetDescFieldA",
+      "kind": "stub"
+    },
+    "276": {
+      "name": "SQLSetStmtAttrA",
+      "kind": "stub"
+    },
+    "300": {
+      "name": "ODBCSharedTraceFlag",
+      "kind": "stub"
+    },
+    "301": {
+      "name": "ODBCQualifyFileDSNW",
+      "kind": "stub"
+    }
+  },
+  "source_sha256": "2e9ce4715558914972e83fff0bb04f4dc3101619cf760616756e494c2fd49350"
+}

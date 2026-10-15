@@ -1,0 +1,111 @@
+{
+  "APK_qualification": false,
+  "actual_Android": false,
+  "actual_Wine_FEX_PRoot": false,
+  "actual_host_JNI_kernel_TCP": true,
+  "derived_host_scope_receipt": {
+    "bytes": 5276,
+    "sha256": "1fb29a80703c3859afa1d0737d69119ab7adbfc68afcd41ed4f181942d7eb4ae"
+  },
+  "finished_utc": "2026-10-15T00:59:08.986866+00:00",
+  "fixture_process_JNI_fstat_and_NT_evidence": "typed host mocks and synthetic packets",
+  "historical_test_bytes_modified": false,
+  "isolated_layout": "/workspace/scratch/21de240fd43a/qualification-layout",
+  "native_Game": false,
+  "native_compile_performed": false,
+  "original_job_status": "failed",
+  "original_report": {
+    "bytes": 17822,
+    "sha256": "9d28449756c06b539d906cf1cc1729233eebe6a63901e9eca80615c57845270f"
+  },
+  "overlapping_historical_controls_not_added": true,
+  "physical_Thor_performance": false,
+  "runner": {
+    "bytes": 10746,
+    "sha256": "e97bfa22d80052f1d5e49f691c78991eeaae1c783182bdb1bc5c4e5dadbeeca2"
+  },
+  "runtime_activation": false,
+  "schema": "coh-recovered-fixture-guest-host-JNI-replay-v1",
+  "sources": {
+    "bytes": 2546,
+    "sha256": "111d427e9796b37ece962e7a53d574a4a2f8f58fbd9a89420ba0b9841ee54697"
+  },
+  "status": "passed",
+  "suites": [
+    {
+      "cases_run": 75,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "test_client_live_directory_fixture",
+        "-v"
+      ],
+      "exit_code": 0,
+      "expected_cases": 75,
+      "module": "test_client_live_directory_fixture",
+      "status": "passed",
+      "stderr": {
+        "bytes": 7925,
+        "sha256": "acebb8ecc3f8bb99a19d60e05cbd9396fa6f29e39d9bf40c23236928c0c13853"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "wall_seconds": 10.100482
+    },
+    {
+      "cases_run": 36,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "test_client_live_directory_control",
+        "-v"
+      ],
+      "exit_code": 0,
+      "expected_cases": 36,
+      "module": "test_client_live_directory_control",
+      "status": "passed",
+      "stderr": {
+        "bytes": 6437,
+        "sha256": "dcdb6818bd3d3dddd6478cb4ec0d921b8c4784bbb179133fcf7ee4a71d20acff"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "wall_seconds": 0.125461
+    },
+    {
+      "cases_run": 5,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "test_client_live_directory_operation_jni",
+        "-v"
+      ],
+      "exit_code": 0,
+      "expected_cases": 5,
+      "module": "test_client_live_directory_operation_jni",
+      "status": "passed",
+      "stderr": {
+        "bytes": 974,
+        "sha256": "c69cb8ac5c9c35f560809ac58b02f4447f901f64d721a20d1e3b5a81d4fc1951"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "wall_seconds": 1.837154
+    }
+  ]
+}

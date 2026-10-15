@@ -1,0 +1,171 @@
+{
+  "format": 1,
+  "status": "failed_device_attempt_independently_reviewed",
+  "scope": "COH Local Login 0.8.0 Thor upgrade attempt; retain failed result and previously accepted startup/input evidence.",
+  "device": {
+    "app_id": "io.github.russianranger.cohclientinteractive",
+    "app_version": "0.8.0",
+    "device": "AYN AYN Thor",
+    "android_sdk": 33,
+    "session_id": "fe57441a179a4a6cb40be94655962918",
+    "run_id": "1790805681181-279e965de8e4"
+  },
+  "archive_integrity": [
+    {
+      "file": "coh-local-login-20260930-220534.zip",
+      "bytes": 26655,
+      "sha256": "075aafb248ee1535b943a06b7f7a0e6e5aa9c5519246594a315c54f6246d02a6",
+      "entries": 8,
+      "crc_verified": true,
+      "safe_unique_paths": true,
+      "extracted_bytes_equal": true
+    },
+    {
+      "file": "guest-report.zip",
+      "bytes": 6648,
+      "sha256": "23a1107059f594d80541cb8836e3adf435be7b31c7db7e551d2f07fc56a97fcb",
+      "entries": 1,
+      "crc_verified": true,
+      "safe_unique_paths": true,
+      "extracted_bytes_equal": true
+    }
+  ],
+  "identity": {
+    "guest_report_equals_android_embedded_guest": true,
+    "qualified_host_run_id": 36779011148,
+    "apk_sha256": "76723c1b2f52d351f48d3b46a15625414c3977fdb8230965d83ec939d2af88fd",
+    "apk_hash_matches_qualified_host": true,
+    "bundled_runtime_manifest_sha256": "dffa27903d0a538913d6a496003809b9cef3d2a5cfeb30520e835783c2e96508",
+    "bundled_manifest_hash_matches_device_and_host": true,
+    "exported_runtime_manifest_sha256": "c9c4598ae6d326c40611642e25c2188d9e636e23daf077feaba73e14e0d15730",
+    "exported_manifest_parsed_content_equals_bundled": true,
+    "manifest_serialization_note": "The export reserializes JSON; compare its parsed content with the bundled manifest and keep both byte hashes distinct.",
+    "repository_commit": "a80bc9c9df684779987dd6d1c146c66960db9458",
+    "guest_asset_hashes_all_match_bundled_manifest": true,
+    "client_manifest_hash_matches": true,
+    "client_manifest_pins_match": true,
+    "accepted_base_manifest_hash_matches": true,
+    "accepted_base_pins_preserved": true,
+    "runtime_lock_hash_matches": true,
+    "client_executable_sha256": "81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "scope_limit": "Report and exported metadata bind to the hash-verified qualified APK artifact; installed device APK/runtime bytes and imported/cache contents are not included and were not independently rehashed."
+  },
+  "failure": {
+    "android_status": "failed",
+    "guest_status": "failed",
+    "passed": false,
+    "process_exit_code": 1,
+    "failure_stage": "wine_initialization",
+    "guest_failures": [
+      "Wine initialization registration evidence differs"
+    ],
+    "passed_stages": [
+      "client_inputs",
+      "client_private_data",
+      "persistent_server_profile",
+      "postgres_local_login",
+      "presentation_display"
+    ],
+    "wine_stage_record_has_no_terminal_status": true,
+    "wineboot_exit_code": 0,
+    "wineboot_forced_stop": false,
+    "wineboot_leader_completion_policy": "leader_exit_with_owned_background_output",
+    "ready_prefix_reused": true,
+    "observed_registration_counts": [
+      3,
+      1,
+      1
+    ],
+    "reported_registration_counts": [
+      3,
+      1,
+      1
+    ],
+    "recount_matches_report": true,
+    "expected_registration_counts_for_ready_prefix": [
+      0,
+      0,
+      0
+    ],
+    "observed_counts_equal_normal_cold_initialization": true,
+    "boot_timeout_marker_absent": true,
+    "interpretation": "wineboot exited successfully after a complete single registration pass. The diagnostic rejected registration during a prefix it had classified as reusable. This is an initialization-evidence policy mismatch before DbServer/client launch, not a logged wineboot timeout or nonzero exit. The attachment does not establish why Wine repeated registration."
+  },
+  "preservation": {
+    "import_identity_matches_prior_0_7_0_attempt": true,
+    "import_generation": "generation-bdae47eb25ed42b0accee0efaebd31e6",
+    "import_files": 173011,
+    "import_bytes": 2977730517,
+    "worktree_reused": true,
+    "wrapper_only_migration": true,
+    "previous_package_sha256": "da36e542d995f6335270f79e10f6b7486e42841e6edceedcd0c610827adca6a6",
+    "current_package_sha256": "2bc9a2283ca112426ec423601085f5cd6ebb03b81718ff6bd7efd4e271f44395",
+    "imported_input_bytes_unchanged_reported": true,
+    "generated_cache_bytes_preserved_reported": true,
+    "prepared_cache_files": 100,
+    "prepared_cache_bytes": 364703716,
+    "cache_archive_pin_matches_prior_attempt": true,
+    "private_data_stage_seconds": 0.158635,
+    "local_profile_initialized": true,
+    "local_profile_reused": false,
+    "database_preserved_reported": true,
+    "scope_limit": "Preservation booleans are producer observations corroborated by unchanged import identity and cache pins, not a byte-level audit of device storage."
+  },
+  "cleanup": {
+    "verified_by_android": true,
+    "blocked": false,
+    "guest_complete": true,
+    "owned_child_count": 21,
+    "process_records": 21,
+    "all_integer_exit_codes": true,
+    "all_input_closed": true,
+    "all_output_capture_closed": true,
+    "wine_stop_exit_code": 0,
+    "wine_wait_exit_code": 0,
+    "postgres_graceful_stop_exit_code": 0,
+    "postgres_graceful": true,
+    "wine_prefix_lock_free": true,
+    "wine_server_socket_inactive": true,
+    "owned_workers_detected_and_cleaned": 2,
+    "remaining": 0,
+    "inspection_failures": 0,
+    "presentation_socket_removed": true,
+    "android_input_worker_stopped": true,
+    "nonzero_process_exits": [
+      {
+        "label": "local-cluster-status",
+        "exit_code": 3
+      }
+    ]
+  },
+  "evidence_limits": {
+    "postgres_started": true,
+    "dbserver_started": false,
+    "client_process_started": false,
+    "mapserver_started": false,
+    "local_login_verified": false,
+    "character_list_sent": false,
+    "input_events_sent": 0,
+    "surface_captures": 0,
+    "login_captures": 0,
+    "interaction_captures": 0,
+    "decoded_transport_frames": 4,
+    "client_readiness_event_observed": false,
+    "gameplay_validated": false,
+    "interpretation": "No DbServer/client startup, local login response, character-selection image, or input result was reached. Four transport frames alone do not prove the game rendered."
+  },
+  "timing": {
+    "guest_started_utc": "2026-09-30T22:01:21.692837+00:00",
+    "wine_stage_started_utc": "2026-09-30T22:01:29.205721+00:00",
+    "wineboot_completed_log_utc": "2026-09-30T22:02:33.950288+00:00",
+    "guest_cleanup_finished_utc": "2026-09-30T22:02:38.071237+00:00",
+    "result_event_utc": "2026-09-30T22:02:38.079113+00:00",
+    "wine_initialization_seconds": 64.737,
+    "wineboot_process_seconds": 64.736,
+    "guest_total_seconds": 76.3784,
+    "android_total_seconds": 76.956
+  },
+  "recommendation": "Correct handling of one successful registration pass on a reused Wine prefix, retain import/generated caches/database, and continue to the local-login milestone with the original failed evidence preserved."
+}

@@ -1,0 +1,38 @@
+COH Atlas Gameplay 0.13.13 — repaired saved-character startup
+
+Install over the existing app, run Set up runtime once, and keep app data,
+imported assets, THORHERO and the existing database. Use the same performance
+preset and Reopen saved THORHERO option as before.
+
+0.13.12 stopped inside DbServer before Atlas or the game client started. A
+longer build source path overflowed a diagnostic SQL-worker thread-name buffer.
+This update preserves the complete name without the fixed buffer. The listener
+guard remains strict. The empty AttribMods row repair, 123 original UI textures,
+saved-character dependency preload, verified visual cache and gameplay remain.
+
+1. Reopen THORHERO. Confirm startup now reaches the visible login screen,
+   character selection and playable Atlas. Log in normally and select the
+   existing character. Do not create a replacement or repeat accepted tasks.
+2. Record local Atlas startup, actual client startup to visible login, login to
+   playable world and total reopen separately. Keep runtime setup, resource
+   preparation and time typing/selecting separate. The support ZIP retains
+   phase instrumentation; no startup speed improvement is claimed yet.
+3. Check inspiration icons, top-right XP/level-up bubbles, tray/F-key labels,
+   trainer selection controls and selected power detail icons. Native trainer
+   rows use ownership checkmarks. Screenshot any missing UI.
+4. At Ms Liberty, choose the new power, press Next, complete training and close
+   the dialogue. Confirm normal gameplay, displayed level 2 and the new power.
+5. Use ordinary Save character / log out, wait for Saved character verified,
+   then Finish and export the complete outer support ZIP.
+6. Reopen once more. Check that level, XP and the new power persist. Record the
+   same phase times, save/log out, Finish and export the second support ZIP.
+
+If reopening fails, stop at that failure, wait for cleanup and export that ZIP.
+Do not clear app data, reimport assets or run repeated long boots. Include the
+last visible message. Keep the guest-report.zip inside the exported support ZIP.
+
+The prior 115 XP persisted, while the old training transaction rolled back.
+Training, UI restoration and startup savings remain unverified on Thor because
+0.13.12 never launched the game client. The 0.13.11 native timing baselines are
+Atlas 235.342s / 208.616s and client 334.499s / 324.792s. Five exact donor UI
+textures remain unavailable: four selection underlights and default_tray.

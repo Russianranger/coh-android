@@ -1,0 +1,303 @@
+name: Thor graphical saved character reopen candidate
+# Superseded historical donor pipeline. Current continuation publication uses
+# android-startup-caches.yml and preserves the published 0.12.0 donor.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-interactive-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      runtime_required: ${{ steps.changes.outputs.runtime_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Route bounded host fixes and gameplay updates without rebuilding the donor
+        id: changes
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_interactive_change.py
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install image dependency for graphical driver tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-pil
+      - name: Check actual client packaging, session evidence and package boundaries
+        run: python3 -m unittest discover -s tools/android/interactive -p 'test_*.py' -v
+      - name: Check prepared client cache reuse across package updates
+        run: python3 -m unittest discover -s tools/android/client -p 'test_guest.py' -v
+  client-caches:
+    if: github.event_name != 'pull_request' && needs.tooling.outputs.runtime_required != 'false'
+    needs: tooling
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-generated-caches
+          path: out/client-caches
+          run-id: 36707839624
+          github-token: ${{ github.token }}
+      - name: Verify exact prepared caches against current client inputs
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, pathlib, sys
+          sys.path.insert(0, 'tools/android/client')
+          import prepare_client_caches
+          receipt = prepare_client_caches.verify_accepted_cache_donor(pathlib.Path('out/client-caches'))
+          receipt['repository_commit'] = os.environ['GITHUB_SHA']
+          pathlib.Path('out/client-cache-reuse.json').write_text(json.dumps(receipt, indent=2)+'\n')
+          PYTHON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-generated-caches
+          path: |
+            out/client-caches/client-caches.zip
+            out/client-caches/client-caches.zip.sha256
+            out/client-caches/client-cache-manifest.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-cache-reuse-evidence
+          path: out/client-cache-reuse.json
+          if-no-files-found: warn
+  apk:
+    if: github.event_name != 'pull_request' && needs.tooling.outputs.runtime_required != 'false'
+    needs: [tooling, client-caches]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/client-inputs/runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/client-native/arm64-v8a
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: out/client-inputs/reference-archive
+          run-id: 36088012664
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-test-apk
+          path: out/client-inputs/atlas-apk
+          run-id: 36638344040
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-dbserver-package
+          path: out/client-inputs/dbserver
+          run-id: 36460867428
+          github-token: ${{ github.token }}
+      - name: Recover exact client and accepted import donors
+        run: |
+          python3 - <<'PYTHON'
+          import hashlib, pathlib, sys, zipfile
+          path=pathlib.Path('out/client-inputs/reference-archive/coh-reference-win32.zip')
+          assert hashlib.sha256(path.read_bytes()).hexdigest()=='dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
+          with zipfile.ZipFile(path) as archive:
+              assert all('/' not in n and '\\' not in n and n not in ('.','..') for n in archive.namelist())
+              archive.extractall('out/client-inputs/reference')
+          sys.path.insert(0,'tools/android/client')
+          import build_apk
+          build_apk.extract_import_donor('out/client-inputs/atlas-apk/COH-Atlas-Test-0.4.4.apk','out/client-inputs/import-assets')
+          PYTHON
+          python3 tools/android/client/package_client_runtime.py --reference out/client-inputs/reference \
+            --output out/client-inputs/client-package --repository-commit "$GITHUB_SHA"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
+      - name: Ensure SDK 35 is available
+        timeout-minutes: 4
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || \
+             [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ] || \
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/d8.jar" ] || \
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" ]; then
+            timeout 180s sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+          test -f "$ANDROID_HOME/platforms/android-35/android.jar"
+          test -x "$ANDROID_HOME/build-tools/35.0.0/aapt2"
+          test -f "$ANDROID_HOME/build-tools/35.0.0/lib/d8.jar"
+          test -f "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar"
+      - name: Install PE32 compiler with bounded downloads
+        timeout-minutes: 8
+        run: |
+          # Azure's package mirror can throttle large compiler packages. Keep
+          # Ubuntu's existing signed sources, using its canonical mirror.
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' /etc/apt/apt-mirrors.txt
+          fi
+          timeout 120s sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 update -qq
+          timeout 360s sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 install -y --no-install-recommends gcc-mingw-w64-i686-posix binutils-mingw-w64-i686
+          command -v i686-w64-mingw32-gcc
+          command -v i686-w64-mingw32-objdump
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-generated-caches
+          path: out/client-inputs/client-caches
+      - name: Verify pinned default-male avatar supplement
+        run: python3 tools/android/interactive/prepare_character_avatar_assets.py --verify
+      - name: Reconstruct the pinned Atlas world supplement
+        run: |
+          mkdir -p out/client
+          python3 tools/android/interactive/prepare_atlas_world_assets.py --materialize \
+            > out/client/atlas-world-materialization.json
+      - name: Verify pinned separate Atlas world supplement
+        run: python3 tools/android/interactive/prepare_atlas_world_assets.py --verify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-atlas-world-supplement
+          path: |
+            assets/atlas-world-supplement.zip
+            assets/atlas-world-supplement-manifest.json
+            out/client/atlas-world-materialization.json
+          if-no-files-found: error
+      - name: Preserve accepted runtime, client, DbServer and MapServer inputs
+        run: |
+          mkdir -p out/client
+          python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/client-inputs/schema
+          python3 tools/android/interactive/prepare_assets.py \
+            --assets out/client-inputs/runtime --output out/client/runtime \
+            --client out/client-inputs/client-package/client-runtime.zip \
+            --client-caches out/client-inputs/client-caches/client-caches.zip \
+            --dbserver-package out/client-inputs/dbserver --dbserver-schema out/client-inputs/schema \
+            --mapserver-apk out/client-inputs/atlas-apk/COH-Atlas-Test-0.4.4.apk \
+            --repository-commit "$GITHUB_SHA" > out/client/assets-preparation.json
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: out/client-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Build and verify same-package COH Character Reopen APK
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_apk.py
+          --runtime-assets out/client/runtime --native out/client-native
+          --import-assets out/client-inputs/import-assets
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore out/client-signing/coh-client-interactive.jks
+          --expected-cert-sha256 92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282
+          --output out/client/COH-Character-Reopen-0.10.0.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-interaction-apk
+          path: |
+            out/client/COH-Character-Reopen-0.10.0.apk
+            out/client/COH-Character-Reopen-0.10.0.apk.sha256
+            out/client/interactive-apk-build-report.json
+            out/client/assets-preparation.json
+            out/client/atlas-world-materialization.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-interaction-packaging-evidence
+          path: |
+            out/client/assets-preparation.json
+            out/client/atlas-world-materialization.json
+            out/client/interactive-apk-build-report.json
+            out/client/runtime/runtime-manifest.json
+            out/client/runtime/client-manifest.json
+          if-no-files-found: warn
+  runtime:
+    needs: apk
+    # GitHub requires write-level repository access to READ unpublished draft assets.
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interaction-apk
+          path: out/client
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/client-base-runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/client-accepted-proot
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover exact accepted native runtime source
+        run: >-
+          python3 tools/android/extract_talloc_source.py
+          --assets out/client-base-runtime
+          --bundle out/client-accepted-proot/proot-corresponding-sources.tar.gz
+          --output out/android/source-cache/talloc-2.4.3.tar.gz
+          > out/client/talloc-source-receipt.json
+      - name: Install host runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless tesseract-ocr python3-pil
+      - name: Build matching native ARM64 PRoot
+        run: >-
+          python3 tools/android/build_proot.py --target linux-arm64
+          --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+      - name: Retrieve the existing reviewed game asset ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/client-assets.zip --release-asset-id 588984151
+      - name: Exercise exact APK character save and reopening through private Unix RFB
+        run: >-
+          python3 tools/android/interactive/character_reopen_host_smoke.py
+          --apk out/client/COH-Character-Reopen-0.10.0.apk
+          --archive out/client-assets.zip
+          --build-report out/client/interactive-apk-build-report.json
+          --repository-commit "$GITHUB_SHA" --proot out/android/native/linux-arm64
+          --startup-timeout-seconds 900 --interaction-seconds 1200 --timeout-seconds 5400
+          --work out/client-host --evidence out/client-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-interaction-arm64-evidence
+          path: |
+            out/client-evidence/
+            out/client/talloc-source-receipt.json
+            out/android/native/linux-arm64/proot-build-receipt.json
+          if-no-files-found: warn

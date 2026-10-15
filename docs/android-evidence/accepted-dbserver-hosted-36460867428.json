@@ -1,0 +1,1064 @@
+{
+  "format": 1,
+  "status": "accepted_hosted_dbserver_fixture_and_normal_schema",
+  "milestone": "Qualify the separately receipted DbServer loopback bind mode on hosted ARM64: default normal export followed by acknowledged fixed-input plus loopback export. Android execution and Atlas adoption remain separate.",
+  "run_id": 36460867428,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36460867428",
+  "repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+  "workflow_conclusion": "success",
+  "workflow_terminal_observed_utc": "2026-09-28T18:03:05.198Z",
+  "jobs": {
+    "tooling": 109058781675,
+    "windows_build_and_persistence": 109059043544,
+    "arm64_runtime": 109061830416
+  },
+  "tooling_tests_run": 99,
+  "tooling_tests_passed": 91,
+  "tooling_tests_skipped": 8,
+  "tooling_suites": [
+    {
+      "name": "prepare Wine source",
+      "run": 18,
+      "passed": 18,
+      "skipped": 0
+    },
+    {
+      "name": "DbServer tooling",
+      "run": 73,
+      "passed": 65,
+      "skipped": 8
+    },
+    {
+      "name": "accepted talloc recovery",
+      "run": 8,
+      "passed": 8,
+      "skipped": 0
+    }
+  ],
+  "windows": {
+    "status": "passed",
+    "persistence_phases": 14,
+    "check_groups": 21,
+    "server": "PostgreSQL 17.11 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit",
+    "executable_sha256": "77d4677904d967dfdeffa3c6b2609ae0620ccc28177655c6f5f975a7ec4c2212",
+    "dispatch_contract_tests_run": 4,
+    "dispatch_contract_tests_passed": 4,
+    "fixed_inputs_contract_tests_run": 4,
+    "fixed_inputs_contract_tests_passed": 4,
+    "loopback_contract_tests_run": 11,
+    "loopback_contract_tests_passed": 11,
+    "loopback_socket_tests": 10,
+    "windows_crlf_patch_staging_tests": 1,
+    "runtime_scope": "Native MSVC/Winsock loopback contracts plus controlled persistence fixture. Normal product is exercised through the separate ARM64 gate."
+  },
+  "build": {
+    "configuration": "OptDebug",
+    "architecture": "Win32",
+    "variant_build_configuration": {
+      "normal": {
+        "fixture_flag": "OFF",
+        "cmake_cache_sha256": "2fc504f7aed9a5df2a1b29bbcdc7eb73b89e23c8ec3c6eb2cf0c059993d1f5e5"
+      },
+      "fixture": {
+        "fixture_flag": "ON",
+        "cmake_cache_sha256": "3ae7b2e29ed63245826cebad866bd6a979a38493939f02dbf73f99398de3d62a"
+      }
+    },
+    "variant_binary_inventory": {
+      "fixture": {
+        "CrashRpt.dll": {
+          "bytes": 39424,
+          "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "delay_imports": []
+        },
+        "vcruntime140.dll": {
+          "bytes": 123328,
+          "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll"
+          ],
+          "delay_imports": []
+        },
+        "msvcp140.dll": {
+          "bytes": 618944,
+          "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-environment-l1-1-0.dll",
+            "api-ms-win-crt-filesystem-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-locale-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "api-ms-win-crt-time-l1-1-0.dll",
+            "api-ms-win-crt-utility-l1-1-0.dll",
+            "KERNEL32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "delay_imports": []
+        },
+        "DbServer.exe": {
+          "bytes": 1674240,
+          "sha256": "77d4677904d967dfdeffa3c6b2609ae0620ccc28177655c6f5f975a7ec4c2212",
+          "pe_machine": 332,
+          "imports": [
+            "ADVAPI32.dll",
+            "GDI32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll",
+            "ODBC32.dll",
+            "USER32.dll",
+            "WINMM.dll",
+            "WS2_32.dll"
+          ],
+          "delay_imports": []
+        }
+      },
+      "normal": {
+        "CrashRpt.dll": {
+          "bytes": 39424,
+          "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "delay_imports": []
+        },
+        "vcruntime140.dll": {
+          "bytes": 123328,
+          "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll"
+          ],
+          "delay_imports": []
+        },
+        "msvcp140.dll": {
+          "bytes": 618944,
+          "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-environment-l1-1-0.dll",
+            "api-ms-win-crt-filesystem-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-locale-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "api-ms-win-crt-time-l1-1-0.dll",
+            "api-ms-win-crt-utility-l1-1-0.dll",
+            "KERNEL32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "delay_imports": []
+        },
+        "DbServer.exe": {
+          "bytes": 1661440,
+          "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c",
+          "pe_machine": 332,
+          "imports": [
+            "ADVAPI32.dll",
+            "GDI32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll",
+            "ODBC32.dll",
+            "USER32.dll",
+            "WINMM.dll",
+            "WS2_32.dll"
+          ],
+          "delay_imports": []
+        }
+      }
+    },
+    "wine_patch_sha256": "48e5433350017c0d050709c37c5f41b34b1be8ed7628ab510fdd477a57c1b673",
+    "source_receipt_file": "dbserver-build-input-36460867428.json",
+    "source_receipt_sha256": "fd7cb9a92ede77446c2d85ae5412b19ca13a7ab7ce2893477deb9324a004f80d",
+    "odbc_export_map_windows_crlf_verified": true
+  },
+  "arm64": {
+    "status": "passed",
+    "started_utc": "2026-09-28T17:58:59.864943+00:00",
+    "finished_utc": "2026-09-28T18:02:11.367291+00:00",
+    "elapsed_seconds": 191.502348,
+    "stages_passed": 28,
+    "persistence_phases": 14,
+    "persistence_check_groups": 21,
+    "normal_fixture_enabled": false,
+    "normal_exports": 2,
+    "normal_export_bytes": [
+      0,
+      0
+    ],
+    "normal_fixed_inputs_modes": [
+      {
+        "requested": false,
+        "startup_acknowledgement": null
+      },
+      {
+        "requested": true,
+        "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+      }
+    ],
+    "normal_loopback_modes": [
+      {
+        "requested": false,
+        "startup_acknowledgement": null,
+        "endpoints": []
+      },
+      {
+        "requested": true,
+        "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+        "endpoints": [
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6971
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6974
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6976
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6977
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6979
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6980
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6982
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6984
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6989
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6992
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6996
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6997
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6998
+          },
+          {
+            "protocol": "udp",
+            "address": "127.0.0.1",
+            "port": 7000
+          }
+        ]
+      }
+    ],
+    "table_count": 99,
+    "ordered_column_count": 5935,
+    "attribute_rows": 58272,
+    "attribute_counts": {
+      "attributes": 56411,
+      "badgestatsattributes": 1771,
+      "pophelpattributes": 90
+    },
+    "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+    "attribute_sha256": {
+      "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+      "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+      "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+    },
+    "catalog_sha256": {
+      "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+      "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580",
+      "constraints": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0"
+    },
+    "reload_stable": true,
+    "failure_diagnostics": 0,
+    "all_process_input_output_closed": true,
+    "process_records": 111,
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "owned_processes_remaining": 0,
+    "owned_process_inspection_failures": 0,
+    "wine_initialization": {
+      "policy": "initialize_once_then_reuse",
+      "state": "ready",
+      "ready_prefix_reused": false,
+      "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+      "update_timestamp_removed": false,
+      "timeout_seconds": 600,
+      "registration_processes": 3,
+      "wow64_registration_processes": 1,
+      "registration_passes": 1,
+      "elapsed_seconds": 38.351
+    },
+    "dispatch_observer_enabled": false
+  },
+  "loopback_binding": {
+    "qualification_platform": "hosted ARM64 Linux with pinned Wine/FEX",
+    "policy": {
+      "environment_variable": "COH_WINE_DB_LOOPBACK_ONLY",
+      "enabled_value": "1",
+      "disabled_by_default": true,
+      "activation": "before_common_startup_and_fixture_dispatch",
+      "late_activation": "refused_after_first_sockBind_attempt",
+      "wildcard_address": "127.0.0.1",
+      "explicit_addresses": "IPv4_127/8_only",
+      "endpoint_verification": "getsockname_and_SO_TYPE_after_each_successful_bind",
+      "socket_types": [
+        "tcp",
+        "udp"
+      ],
+      "endpoint_record": "protocol_address_port",
+      "scope": "explicit_IPv4_listener_binding",
+      "network_namespace_isolation": false,
+      "outbound_connections_restricted": false,
+      "failure": "close_socket_and_exit_2",
+      "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+      "android_execution_validated": false
+    },
+    "source_contract": {
+      "scope": "normal_schema_exportdump_fakeauth_noqueue_embedded_log",
+      "source_encoding": "UTF-8_LF",
+      "source_sha256": {
+        "Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+        "Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+        "Common/dbserver/servercfg.c": "bc4f88d167e4725786c2ad8ad46a332d89f14b604b1b076368b7f8e051dbeb32",
+        "DBServer/src/accountservercomm.c": "17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae",
+        "DBServer/src/arenacomm.c": "df6b5d9e69f676a04d42c2124cbc10e2c26072466451dd81e5aa02db959c8710",
+        "DBServer/src/auctionservercomm.c": "f85ceceaaf9042ac8b44cdf92ab9c9d2d49fdc335c556ff3bb63757ff6d1cf4e",
+        "DBServer/src/beaconservercomm.c": "aac1321a77f5cff36135588c8533beaff72e729372657fc0d9625ba4713e82c0",
+        "DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+        "DBServer/src/dbinit.c": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007",
+        "DBServer/src/launchercomm.c": "647746af7350adeb30a8397d592d7e4dc5fb7265604ae2668362f4d77bbc3c0c",
+        "DBServer/src/logserver.c": "fee4cd4113af5ef8225575c570a0f0d5d54564dac71dfcf2fa75eac587b3451d",
+        "DBServer/src/mapcrashreport.c": "cb1c8086cf5fe71e40340e9842395de5e89506bcf3b6f00691c22125b340845a",
+        "DBServer/src/missionservercomm.c": "3ee0ab67577a9b27840982710beb24db0ae9822535fb1e8f1af718739878b17d",
+        "DBServer/src/statservercomm.c": "6c2665f494740ebc1c50c3ece12e248d1ee0942f8e8abd5a3d35a288a6de5b4a",
+        "DBServer/src/svrmoncomm.c": "ced7f25a46753264c6ee0778b0ec15f12b875dbf621cf3a65a4677cd3bdc0ee1",
+        "DBServer/src/turnstileDb.c": "432f4b1f80bc6d17051e048b488b0ac3135a4ac64386388ad2aead82dce8c7cc",
+        "libs/UtilitiesLib/src/network/net_linklist.c": "3f9328a0fd15c6084b25ebb90d2e5b84c3a7d4211a5d1fa8b79ad73e4c7790ce"
+      },
+      "endpoints": [
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6971,
+          "constant": "DEFAULT_DBTURNSTILE_PORT",
+          "source": "DBServer/src/turnstileDb.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6974,
+          "constant": "DEFAULT_MISSIONSERVER_PORT",
+          "source": "DBServer/src/missionservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6976,
+          "constant": "DEFAULT_ACCOUNTSERVER_PORT",
+          "source": "DBServer/src/accountservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6977,
+          "constant": "DEFAULT_AUCTIONSERVER_HEROES_PORT",
+          "source": "DBServer/src/auctionservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6979,
+          "constant": "DEFAULT_BEACONCLIENT_PORT",
+          "source": "DBServer/src/beaconservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6980,
+          "constant": "DEFAULT_BEACONSERVER_PORT",
+          "source": "DBServer/src/beaconservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6982,
+          "constant": "DEFAULT_DBSTAT_PORT",
+          "source": "DBServer/src/statservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6984,
+          "constant": "DEFAULT_DBARENA_PORT",
+          "source": "DBServer/src/arenacomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6989,
+          "constant": "DEFAULT_LOG_PORT",
+          "source": "DBServer/src/logserver.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6992,
+          "constant": "DEFAULT_DBCRASHMAP_PORT",
+          "source": "DBServer/src/mapcrashreport.c",
+          "required_before_export": false
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6996,
+          "constant": "DEFAULT_SVRMON_PORT",
+          "source": "DBServer/src/svrmoncomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6997,
+          "constant": "DEFAULT_DB_PORT",
+          "source": "DBServer/src/dbinit.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6998,
+          "constant": "DEFAULT_DBLAUNCHER_PORT",
+          "source": "DBServer/src/launchercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "udp",
+          "address": "127.0.0.1",
+          "port": 7000,
+          "constant": "DEFAULT_DBGAMECLIENT_PORT",
+          "source": "Common/ClientLogin/clientcommLogin.c",
+          "required_before_export": true
+        }
+      ]
+    },
+    "required_bound_endpoints": [
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6971
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6974
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6976
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6977
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6979
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6980
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6982
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6984
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6989
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6996
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6997
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6998
+      },
+      {
+        "protocol": "udp",
+        "address": "127.0.0.1",
+        "port": 7000
+      }
+    ],
+    "optional_asynchronous_bound_endpoints": [
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6992
+      }
+    ],
+    "observed_bound_endpoints": [
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6971
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6974
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6976
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6977
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6979
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6980
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6982
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6984
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6989
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6992
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6996
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6997
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6998
+      },
+      {
+        "protocol": "udp",
+        "address": "127.0.0.1",
+        "port": 7000
+      }
+    ],
+    "required_endpoint_count": 13,
+    "required_tcp_endpoint_count": 12,
+    "required_udp_endpoint_count": 1,
+    "observed_endpoint_count": 14,
+    "asynchronous_crashmap_tcp_6992_observed": true,
+    "ack_and_all_endpoint_records_independently_reparsed_from_retained_process_output": true,
+    "proves_subsequent_listen_or_service_readiness": false,
+    "proves_network_namespace_isolation": false,
+    "restricts_outbound_connections": false
+  },
+  "network": {
+    "distinct_namespace": true,
+    "only_interface": "lo",
+    "external_network_disabled": true,
+    "guest_effective_uid": 1001,
+    "guest_hosts_sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+  },
+  "inputs": {
+    "format": 1,
+    "scope": "host_dbserver_runtime_inputs",
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+    "fixture_executable_sha256": "77d4677904d967dfdeffa3c6b2609ae0620ccc28177655c6f5f975a7ec4c2212",
+    "normal_executable_sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "kernel_hostname": "runnervmoyp6c",
+    "guest_hosts_sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d",
+    "guest_hosts_bytes": 34,
+    "guest_hosts_loopback_aliases": [
+      "localhost",
+      "runnervmoyp6c"
+    ],
+    "guest_hosts_evidence_file": "guest-etc-hosts",
+    "runtime_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+    "package_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+    "guest_script_sha256": "2c4e0df360cc2832e0e64f134785d0611ab63c2d2e9314633170b2e885f5a3b7",
+    "proot_sha256": "a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb",
+    "proot_loader_sha256": "c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5",
+    "schema_acceptance_run_id": 36088012666,
+    "normal_schema_listeners": {
+      "scope": "normal_schema_exportdump_fakeauth_noqueue_embedded_log",
+      "source_encoding": "UTF-8_LF",
+      "source_sha256": {
+        "Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+        "Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+        "Common/dbserver/servercfg.c": "bc4f88d167e4725786c2ad8ad46a332d89f14b604b1b076368b7f8e051dbeb32",
+        "DBServer/src/accountservercomm.c": "17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae",
+        "DBServer/src/arenacomm.c": "df6b5d9e69f676a04d42c2124cbc10e2c26072466451dd81e5aa02db959c8710",
+        "DBServer/src/auctionservercomm.c": "f85ceceaaf9042ac8b44cdf92ab9c9d2d49fdc335c556ff3bb63757ff6d1cf4e",
+        "DBServer/src/beaconservercomm.c": "aac1321a77f5cff36135588c8533beaff72e729372657fc0d9625ba4713e82c0",
+        "DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+        "DBServer/src/dbinit.c": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007",
+        "DBServer/src/launchercomm.c": "647746af7350adeb30a8397d592d7e4dc5fb7265604ae2668362f4d77bbc3c0c",
+        "DBServer/src/logserver.c": "fee4cd4113af5ef8225575c570a0f0d5d54564dac71dfcf2fa75eac587b3451d",
+        "DBServer/src/mapcrashreport.c": "cb1c8086cf5fe71e40340e9842395de5e89506bcf3b6f00691c22125b340845a",
+        "DBServer/src/missionservercomm.c": "3ee0ab67577a9b27840982710beb24db0ae9822535fb1e8f1af718739878b17d",
+        "DBServer/src/statservercomm.c": "6c2665f494740ebc1c50c3ece12e248d1ee0942f8e8abd5a3d35a288a6de5b4a",
+        "DBServer/src/svrmoncomm.c": "ced7f25a46753264c6ee0778b0ec15f12b875dbf621cf3a65a4677cd3bdc0ee1",
+        "DBServer/src/turnstileDb.c": "432f4b1f80bc6d17051e048b488b0ac3135a4ac64386388ad2aead82dce8c7cc",
+        "libs/UtilitiesLib/src/network/net_linklist.c": "3f9328a0fd15c6084b25ebb90d2e5b84c3a7d4211a5d1fa8b79ad73e4c7790ce"
+      },
+      "endpoints": [
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6971,
+          "constant": "DEFAULT_DBTURNSTILE_PORT",
+          "source": "DBServer/src/turnstileDb.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6974,
+          "constant": "DEFAULT_MISSIONSERVER_PORT",
+          "source": "DBServer/src/missionservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6976,
+          "constant": "DEFAULT_ACCOUNTSERVER_PORT",
+          "source": "DBServer/src/accountservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6977,
+          "constant": "DEFAULT_AUCTIONSERVER_HEROES_PORT",
+          "source": "DBServer/src/auctionservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6979,
+          "constant": "DEFAULT_BEACONCLIENT_PORT",
+          "source": "DBServer/src/beaconservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6980,
+          "constant": "DEFAULT_BEACONSERVER_PORT",
+          "source": "DBServer/src/beaconservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6982,
+          "constant": "DEFAULT_DBSTAT_PORT",
+          "source": "DBServer/src/statservercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6984,
+          "constant": "DEFAULT_DBARENA_PORT",
+          "source": "DBServer/src/arenacomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6989,
+          "constant": "DEFAULT_LOG_PORT",
+          "source": "DBServer/src/logserver.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6992,
+          "constant": "DEFAULT_DBCRASHMAP_PORT",
+          "source": "DBServer/src/mapcrashreport.c",
+          "required_before_export": false
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6996,
+          "constant": "DEFAULT_SVRMON_PORT",
+          "source": "DBServer/src/svrmoncomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6997,
+          "constant": "DEFAULT_DB_PORT",
+          "source": "DBServer/src/dbinit.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6998,
+          "constant": "DEFAULT_DBLAUNCHER_PORT",
+          "source": "DBServer/src/launchercomm.c",
+          "required_before_export": true
+        },
+        {
+          "protocol": "udp",
+          "address": "127.0.0.1",
+          "port": 7000,
+          "constant": "DEFAULT_DBGAMECLIENT_PORT",
+          "source": "Common/ClientLogin/clientcommLogin.c",
+          "required_before_export": true
+        }
+      ]
+    },
+    "android_execution_validated": false,
+    "gameplay_validated": false
+  },
+  "fixed_inputs_contract": {
+    "environment_variable": "COH_WINE_DB_FIXED_INPUTS",
+    "enabled_value": "1",
+    "disabled_by_default": true,
+    "activation": "before_first_folder_cache_create",
+    "watcher_registration": "disabled",
+    "notification_updates": "disabled",
+    "initial_reads": "preserved",
+    "lookup_mode": "preserved",
+    "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved",
+    "proves_generic_notification_fix": false
+  },
+  "dispatch_progress_contract": {
+    "environment_variable": "COH_WINE_DB_PROGRESS",
+    "format": 1,
+    "record_bytes": 128,
+    "mapping_bytes": 4096,
+    "magic_hex": "434f484442503100",
+    "byte_order": "little",
+    "offsets": {
+      "magic": 0,
+      "format": 8,
+      "record_bytes": 12,
+      "process_id": 16,
+      "main_thread_id": 20,
+      "sequence": 24,
+      "stage": 28,
+      "loop_count": 32,
+      "flags": 36,
+      "stage_count": 40,
+      "reserved": 44
+    },
+    "stages": {
+      "1": "INITIALIZED",
+      "2": "STARTUP",
+      "3": "DB_INIT",
+      "4": "MAIN_LOOP",
+      "5": "MSG_SCAN",
+      "6": "SQL_KEEPALIVE_CHECK",
+      "7": "SQL_KEEPALIVE_FOREGROUND",
+      "8": "SQL_KEEPALIVE_QUEUE",
+      "9": "SQL_FIFO_TICK",
+      "10": "DELINK_MAPS",
+      "11": "DELINK_LAUNCHERS",
+      "12": "SQL_MEMORY_PRESSURE",
+      "13": "NM_MONITOR",
+      "14": "SVRMON_UPDATES",
+      "15": "AUTO_START",
+      "16": "AUTH_STATUS",
+      "17": "AUTH_RECONNECT",
+      "18": "WAITING_ENTITIES",
+      "19": "DB_RELAY",
+      "20": "CLIENT_LINKS",
+      "21": "BEACON_LAUNCHERS",
+      "22": "STATS",
+      "23": "SHARD_CHAT",
+      "24": "LOG_STATS",
+      "25": "AUCTION",
+      "26": "OVERLOAD",
+      "27": "TEMP_LOCKS",
+      "28": "CONSOLE_TITLE",
+      "29": "EXIT_REQUEST",
+      "30": "FOLDER_CALLBACKS",
+      "31": "POOL_COMPACT",
+      "32": "SHUTDOWN_TICK",
+      "33": "CONSOLE_POLL",
+      "34": "CONSOLE_READ",
+      "35": "CONSOLE_COMMAND",
+      "36": "LOOP_DONE",
+      "37": "READY"
+    },
+    "disabled_by_default": true,
+    "writer": "dbserver_main_thread",
+    "stage_semantics": "operation_about_to_run",
+    "sequence_semantics": "positive_even_stable_odd_updating_no_wrap",
+    "flags": {
+      "1": "sequence_saturated_samples_unavailable"
+    },
+    "initialization_failure": "requested_normal_launch_exits_nonzero",
+    "file_creation": "new_absolute_drive_path_private_parent_required",
+    "proves_sql_or_game_success": false
+  },
+  "talloc_source_recovery": {
+    "format": 1,
+    "accepted_runtime_run_id": 36364550345,
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "proot_build_receipt": {
+      "bytes": 3236,
+      "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+    },
+    "corresponding_sources": {
+      "bytes": 1014688,
+      "sha256": "ae2a4de4b6008ceb3230e0cf77881b4b1fffe52f9ad5b1179b03b67d4395fee7"
+    },
+    "member": {
+      "bytes": 684092,
+      "sha256": "dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd",
+      "name": "sources/talloc-2.4.3.tar.gz"
+    },
+    "output": "out/android/source-cache/talloc-2.4.3.tar.gz",
+    "build_recipe_unchanged": true,
+    "runtime_execution_validated": false
+  },
+  "package_manifest_canonical_sha256": "b90c1d3f159dd18e7700eba4a1192924f452cba5160175d8513a80765e009d21",
+  "artifacts": [
+    {
+      "id": 10988087365,
+      "name": "wine-dbserver-package",
+      "bytes": 2185002,
+      "sha256": "f189f3a500a25a06340d41843b2450c19eb1e868268273a9fca3ab68bc9ecf2f"
+    },
+    {
+      "id": 10988047445,
+      "name": "wine-dbserver-windows-evidence",
+      "bytes": 21198,
+      "sha256": "9c34b2daefe62fd4123c5aa943090765ebe7349cb713d205ab4b38eed3d6e0ac"
+    },
+    {
+      "id": 10987838284,
+      "name": "wine-dbserver-arm64-evidence",
+      "bytes": 536074,
+      "sha256": "5876c03ac6fb9078da666505a780539ec5c42f8ad0bfdebb82153d64c49540a5"
+    }
+  ],
+  "artifact_download_hashes_independently_verified": true,
+  "independent_validation": {
+    "package_inventory_pe32_imports_and_dependency_closure": true,
+    "source_receipt_and_patch_overlay_match_tested_commit": true,
+    "native_windows_crlf_staging_and_socket_contracts_passed": true,
+    "both_build_cache_hashes_and_fixture_flags_match_package": true,
+    "windows_fixture_phases_and_binary_identity": true,
+    "arm64_report_against_accepted_runtime_and_schema": true,
+    "host_and_guest_inputs_match": true,
+    "guest_script_sha256_matches_tested_commit": true,
+    "source_derived_required_and_optional_endpoint_records_reparsed": true,
+    "default_launch_has_no_activation_records": true,
+    "fixed_input_and_loopback_reload_acknowledged": true,
+    "all_process_capture_streams_closed_and_owned_cleanup_complete": true,
+    "isolated_network_and_hosts_hash": true,
+    "accepted_talloc_source_chain_and_native_recipe_verified": true
+  },
+  "preserved_files": {
+    "dbserver-arm64-36460867428.json": {
+      "bytes": 175174,
+      "sha256": "8f61634e402a6ea0b1bfb1f4f93de5614b49f6e0038f5ca56cd09c46f06ffb28"
+    },
+    "dbserver-windows-36460867428.json": {
+      "bytes": 5043,
+      "sha256": "e585969798e88d0560ba2d8bf75cfc9a3eb53bbf7d873869470b97ec29e301cf"
+    },
+    "dbserver-package-36460867428.json": {
+      "bytes": 31325,
+      "sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6"
+    },
+    "dbserver-host-inputs-36460867428.json": {
+      "bytes": 6825,
+      "sha256": "ed68b0bb9ffb425b75a8b23f52c237c926c4a0e3fc72878d004557cecd74a306"
+    },
+    "dbserver-network-36460867428.json": {
+      "bytes": 424,
+      "sha256": "3a0f258e8d693438ad4ae307397b608da46dd01f5b8a95f0d06d07f0d1c578ee"
+    },
+    "dbserver-proot-36460867428.json": {
+      "bytes": 3048,
+      "sha256": "c50cfc2b8493c3f1c2cf92d4892b4caf6bb196c6a51bffada422fa58630bafba"
+    },
+    "dbserver-hosts-36460867428.txt": {
+      "bytes": 34,
+      "sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+    },
+    "dbserver-build-input-36460867428.json": {
+      "bytes": 14887,
+      "sha256": "fd7cb9a92ede77446c2d85ae5412b19ca13a7ab7ce2893477deb9324a004f80d"
+    },
+    "dbserver-ci-tests-36460867428.json": {
+      "bytes": 5111,
+      "sha256": "d4ff08419f05765e5615fcaa9f346e4732f14e12f3b15c24f2dec9158c3c097c"
+    },
+    "dbserver-talloc-source-36460867428.json": {
+      "bytes": 724,
+      "sha256": "3d15e54639ef937ba47887e5dda613e9b723661c8bd90c734ada304f11ea2a34"
+    },
+    "dbserver-normal-cmake-36460867428.txt": {
+      "bytes": 38840,
+      "sha256": "2fc504f7aed9a5df2a1b29bbcdc7eb73b89e23c8ec3c6eb2cf0c059993d1f5e5"
+    },
+    "dbserver-fixture-cmake-36460867428.txt": {
+      "bytes": 38967,
+      "sha256": "3ae7b2e29ed63245826cebad866bd6a979a38493939f02dbf73f99398de3d62a"
+    }
+  },
+  "preservation": "Artifact files copied byte-for-byte, including Windows CRLF. CI test summary records exact selected decoded log lines. Complete artifact ZIPs remain linked on the run.",
+  "prior_qualification_failure": {
+    "run_id": 36460005041,
+    "receipt": "dbserver-qualification-failure-36460005041.json",
+    "cause": "Windows test harness applied a checkout-converted CRLF PostgreSQL patch to immutable LF sources; zero loopback tests or server builds executed.",
+    "correction": "Normalize only the harness patch bytes to LF, matching production preparation; actual CRLF patch staging regression reproduces failure before and exact source hashes after."
+  },
+  "prior_accepted_runtime_run_id": 36451873322,
+  "atlas_donor_unchanged_run_id": 36451873322,
+  "android_execution_validated": false,
+  "android_listener_binding_validated": false,
+  "mapserver_validated": false,
+  "generated_character_persistence_validated": false,
+  "gameplay_validated": false,
+  "generic_directory_notification_fix_validated": false,
+  "accepted_device_apk_unchanged": {
+    "version": "0.1.5",
+    "sha256": "bf78559ef47d3f679a93be48ca4127baa9c7238e838ed38799dffc7e0710ffd5"
+  },
+  "next_work": [
+    "Retain the existing Atlas donor while its separate confirmation proceeds.",
+    "Integrate this qualified loopback package into a separately identified Android DbServer diagnostic before any claim of Android server or game execution."
+  ]
+}

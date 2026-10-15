@@ -1,0 +1,360 @@
+{
+  "format": 1,
+  "status": "passed",
+  "version_name": "0.13.8",
+  "version_code": 23,
+  "repository": "Russianranger/coh-android",
+  "branch": "codex/character-persistence-continuation",
+  "repository_commit": "17751a759240181f962d5b5ded962cf13b364e24",
+  "workflow_run_id": 37206208480,
+  "workflow_run_url": "https://github.com/Russianranger/coh-android/actions/runs/37206208480",
+  "workflow_conclusion": "success",
+  "release_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.8",
+  "audited_at_utc": "2026-10-04T13:43:22.949937+00:00",
+  "public_apk": {
+    "name": "COH-Atlas-Gameplay-0.13.8.apk",
+    "bytes": 701495575,
+    "sha256": "5cd4235aa0772b219b9d2efb21bd37435a3676eea5cc36f1b31d39e1c7320076",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.8/COH-Atlas-Gameplay-0.13.8.apk"
+  },
+  "public_checksum": {
+    "bytes": 96,
+    "sha256": "a56b24893ecc9614e06ed0263553ea4f36f25e214daf1f49e9986a0352bd7d5f"
+  },
+  "public_testing_notes": {
+    "name": "COH-Atlas-Gameplay-0.13.8-testing.txt",
+    "bytes": 3980,
+    "sha256": "aac075fff6a1c8246dd3c149fa092f93f2dc56161cd704634bd2d8064080350d",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.8/COH-Atlas-Gameplay-0.13.8-testing.txt"
+  },
+  "build_receipt": {
+    "bytes": 4102144,
+    "sha256": "9a79f1ed2809e5c6a7304072e4c18323dac312b6b78113b8e14a1e9ae1d37f0c"
+  },
+  "qualification_receipt": {
+    "bytes": 1313273,
+    "sha256": "d502c93be1f0c5abc14e2262203040c655226810cbcf927c4a507d4f9c658f40"
+  },
+  "tests_run": 708,
+  "test_suites": 43,
+  "source_files_verified": 261,
+  "skipped_checks": 0,
+  "all_three_postgresql_regression_fixtures_passed": true,
+  "source_hashes_match_formal_qualification": true,
+  "public_apk_matches_ci_build_and_github_release_digest": true,
+  "public_checksum_and_testing_notes_verified": true,
+  "payloads_verified": 71,
+  "retained_donor_payloads": 61,
+  "replaced_apk_payloads": [
+    "assets/runtime/character_creation_diagnostic.py",
+    "assets/runtime/client-manifest.json",
+    "assets/runtime/client-runtime.zip",
+    "assets/runtime/client-visual-assets.zip",
+    "assets/runtime/client-visual-manifest.json",
+    "assets/runtime/client_startup_diagnostic.py",
+    "assets/runtime/client_visual_assets.py",
+    "assets/runtime/native_responsiveness_contract.py",
+    "assets/runtime/runtime-manifest.json",
+    "assets/runtime/texture_header_index.py"
+  ],
+  "added_apk_payloads": [],
+  "authored_java_sources_retained_exactly": 17,
+  "changed_java_sources": [
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java",
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java"
+  ],
+  "new_dex": {
+    "bytes": 355612,
+    "sha256": "e53a25bdb4da802efa3ed10bac3432c008f459d8b838d96ed6b037f389514626"
+  },
+  "donor_dex": {
+    "bytes": 354660,
+    "sha256": "0662ba0cf83d32aa335f7cb38a44dbb8df2e1d9762cd06b41bed169d7aca0925"
+  },
+  "android_resources_retained_exactly": true,
+  "setup_memory_protection_sources_preserved": true,
+  "native_client_zip_members": 22,
+  "client_dlls_retained_exactly": 20,
+  "native_game": {
+    "sha256": "ec1a6c01b07d7c189bde743a7255c860b8dd96879225b4ffa50fd42eabbb721b",
+    "size": 9443840,
+    "pe_machine": 332,
+    "imports": [
+      "ADVAPI32.dll",
+      "cg.dll",
+      "cgGL.dll",
+      "COMDLG32.dll",
+      "DDRAW.dll",
+      "DINPUT8.dll",
+      "DSOUND.dll",
+      "GDI32.dll",
+      "GLU32.dll",
+      "IMM32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ole32.dll",
+      "OPENGL32.dll",
+      "PhysXCooking.dll",
+      "PhysXLoader.dll",
+      "SHELL32.dll",
+      "USER32.dll",
+      "VERSION.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "delay_imports": []
+  },
+  "native_dbserver": {
+    "bytes": 1664000,
+    "sha256": "baf97a253ddccf29575801f66ef56cb7ce75f168062bb0c4ffef796b419c2029",
+    "pe_machine": 332,
+    "imports": [
+      "ADVAPI32.dll",
+      "GDI32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ODBC32.dll",
+      "USER32.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "delay_imports": []
+  },
+  "native_mapserver": {
+    "sha256": "6a5bf60b2130c31df74f1767510de65c581652caa90f639a5a6e4a9453b47d36",
+    "size": 6912512,
+    "pe_machine": 332,
+    "imports": [
+      "ADVAPI32.dll",
+      "COMDLG32.dll",
+      "GDI32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "PhysXCooking.dll",
+      "PhysXLoader.dll",
+      "SHELL32.dll",
+      "USER32.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "delay_imports": []
+  },
+  "native_artifact_pins": {
+    "CMakeCache.txt": {
+      "bytes": 39350,
+      "sha256": "5672ae5126e8c1d6166f668ba7712b89897816e61a6e994675aeb75025d3462b"
+    },
+    "CityOfHeroes.exe": {
+      "bytes": 9443840,
+      "sha256": "ec1a6c01b07d7c189bde743a7255c860b8dd96879225b4ffa50fd42eabbb721b"
+    },
+    "client-loading-native-checks.json": {
+      "bytes": 7011,
+      "sha256": "c5bb5ce86ba4db4fad2bf079f9e410138e70b7c80d0fb8d7f2b4fcd12268edb0"
+    },
+    "client-loading-native-manifest.json": {
+      "bytes": 35846,
+      "sha256": "0d7e472b18254b3853a525efcc5b801ca8db8315124236139cf5a897bb81c894"
+    }
+  },
+  "native_producer": {
+    "repository_commit": "f42ebb46675213809018b4f9825d13eb1cd6e952",
+    "workflow_run_id": 37204837499,
+    "workflow_run_url": "https://github.com/Russianranger/coh-android/actions/runs/37204837499",
+    "workflow_conclusion": "failure",
+    "windows_job_id": 111443757374,
+    "windows_job_url": "https://github.com/Russianranger/coh-android/actions/runs/37204837499/job/111443757374",
+    "windows_job_source_binding": "Exact job run_id matched source-bearing original workflow run metadata",
+    "windows_job_conclusion": "success",
+    "artifact_id": 11304751532,
+    "artifact_name": "coh-client-loading-native",
+    "artifact_size_in_bytes": 4018883,
+    "artifact_archive": {
+      "bytes": 4018883,
+      "sha256": "22a214cd058886e35f394972064cebdf3723eab6d51935e4638d3ade1293677e"
+    },
+    "artifact_api_digest_verified": true,
+    "artifact_original_four_member_bytes_verified": true,
+    "source_files": {
+      "patches/client-loading/0001-known-length-string-copy-and-profile.patch": {
+        "bytes": 4255,
+        "sha256": "c989c1518af562b09bef114ba1c694b39410de56d6da9d3c55f77fe9ad6e6a5a"
+      },
+      "tools/android/interactive/package_client_loading_native.py": {
+        "bytes": 15478,
+        "sha256": "6aba37c93152fb492418328db050d8b3d2a67e6e8798dbf469b7124217f01f01"
+      },
+      "tools/android/interactive/test_client_loading_native.py": {
+        "bytes": 15832,
+        "sha256": "2981c2ae36468c4513060d6d3683554f1891a85768d56880ffa8f88ed45efc87"
+      }
+    },
+    "package_files": {
+      "CityOfHeroes.exe": {
+        "bytes": 9443840,
+        "sha256": "ec1a6c01b07d7c189bde743a7255c860b8dd96879225b4ffa50fd42eabbb721b"
+      },
+      "CMakeCache.txt": {
+        "bytes": 39350,
+        "sha256": "5672ae5126e8c1d6166f668ba7712b89897816e61a6e994675aeb75025d3462b"
+      },
+      "client-loading-native-checks.json": {
+        "bytes": 7011,
+        "sha256": "c5bb5ce86ba4db4fad2bf079f9e410138e70b7c80d0fb8d7f2b4fcd12268edb0"
+      },
+      "client-loading-native-manifest.json": {
+        "bytes": 35846,
+        "sha256": "0d7e472b18254b3853a525efcc5b801ca8db8315124236139cf5a897bb81c894"
+      }
+    },
+    "source_files_unchanged_at_apk_producer": true,
+    "manifest_producer_identity_relabelled": false,
+    "original_artifact_reused": true
+  },
+  "native_client_loading_source_receipt_verified": true,
+  "native_win32_equivalence_assembly_and_harness_receipt_verified": true,
+  "native_win32_benchmarks": [
+    {
+      "length": 8,
+      "stock_seconds": 0.155,
+      "candidate_seconds": 0.141,
+      "rounds": 5
+    },
+    {
+      "length": 48,
+      "stock_seconds": 0.27,
+      "candidate_seconds": 0.175,
+      "rounds": 5
+    },
+    {
+      "length": 128,
+      "stock_seconds": 0.551,
+      "candidate_seconds": 0.263,
+      "rounds": 5
+    },
+    {
+      "length": 512,
+      "stock_seconds": 1.859,
+      "candidate_seconds": 0.555,
+      "rounds": 5
+    },
+    {
+      "length": 11999,
+      "stock_seconds": 4.088,
+      "candidate_seconds": 1.276,
+      "rounds": 5
+    }
+  ],
+  "native_cmake_cache_verified": {
+    "bytes": 39350,
+    "sha256": "5672ae5126e8c1d6166f668ba7712b89897816e61a6e994675aeb75025d3462b"
+  },
+  "frozen_cache_schema_and_native_lineage_verified": true,
+  "retained_server_archives_match_donor": true,
+  "actual_server_archive_extraction_verified": true,
+  "client_manifest_members": 56,
+  "runtime_manifest_members": 64,
+  "retained_animation_tracks_verified": 5878,
+  "retained_animation_pigg": {
+    "animation_count": 5878,
+    "bytes": 97084456,
+    "metadata_bytes": 8703726,
+    "original_animation_bytes": 88380730,
+    "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+  },
+  "animation_original_bodies_and_cached_native_headers_verified": true,
+  "visual_archive": {
+    "bytes": 25221661,
+    "sha256": "db8a831bc674df6db41ec5d7a7e75e0256d20d4ad8cd3caa097a545f96090f24"
+  },
+  "visual_manifest": {
+    "bytes": 1113867,
+    "sha256": "0b3ef76dad49ff018485c7cf03f5f0c1b9a9ca7bd5272043484f0913e2ce4e22"
+  },
+  "visual_files": 323,
+  "visual_original_bytes": 39229699,
+  "visual_geometry_files": 53,
+  "visual_texture_files": 270,
+  "previous_visual_files_retained_byte_for_byte": 290,
+  "new_visual_files": 33,
+  "new_visual_payload_bytes": 2646051,
+  "visual_selected_payload_md5_sha256_and_cached_headers_verified": true,
+  "visual_requested_model_indices_and_source_proofs_verified": true,
+  "retained_vegetation_geometry_high_and_low_detail_material_edges_verified": true,
+  "visual_missing_only_install_policy_verified": true,
+  "visual_runtime_constants_match_producer": true,
+  "known_absent_requested_models": [
+    {
+      "geometry": "data/player_library/male_collar.geo",
+      "model": "GEO_Collar_MAGIC"
+    }
+  ],
+  "known_unresolved_direct_material_names": [
+    "bf_boot_clogs",
+    "bm_boot_business_shoe",
+    "bm_chest_bum_flannel_01a",
+    "bm_eyes_glasses_01a",
+    "emblem_hero_corp"
+  ],
+  "extension_unresolved_dependencies": [],
+  "full_global_visual_asset_closure": false,
+  "native_client_recompiled": true,
+  "native_client_recompiled_relative_to_0_13_7_donor": true,
+  "native_client_compiled_in_current_run": false,
+  "native_client_package_reused": true,
+  "native_source_commit": "f42ebb46675213809018b4f9825d13eb1cd6e952",
+  "native_source_provenance": {
+    "repository_commit": "f42ebb46675213809018b4f9825d13eb1cd6e952",
+    "run_id": 37204837499,
+    "artifact_id": 11304751532,
+    "source_files": {
+      "patches/client-loading/0001-known-length-string-copy-and-profile.patch": {
+        "bytes": 4255,
+        "sha256": "c989c1518af562b09bef114ba1c694b39410de56d6da9d3c55f77fe9ad6e6a5a"
+      },
+      "tools/android/interactive/package_client_loading_native.py": {
+        "bytes": 15478,
+        "sha256": "6aba37c93152fb492418328db050d8b3d2a67e6e8798dbf469b7124217f01f01"
+      },
+      "tools/android/interactive/test_client_loading_native.py": {
+        "bytes": 15832,
+        "sha256": "2981c2ae36468c4513060d6d3683554f1891a85768d56880ffa8f88ed45efc87"
+      }
+    },
+    "package_files": {
+      "CityOfHeroes.exe": {
+        "bytes": 9443840,
+        "sha256": "ec1a6c01b07d7c189bde743a7255c860b8dd96879225b4ffa50fd42eabbb721b"
+      },
+      "CMakeCache.txt": {
+        "bytes": 39350,
+        "sha256": "5672ae5126e8c1d6166f668ba7712b89897816e61a6e994675aeb75025d3462b"
+      },
+      "client-loading-native-checks.json": {
+        "bytes": 7011,
+        "sha256": "c5bb5ce86ba4db4fad2bf079f9e410138e70b7c80d0fb8d7f2b4fcd12268edb0"
+      },
+      "client-loading-native-manifest.json": {
+        "bytes": 35846,
+        "sha256": "0d7e472b18254b3853a525efcc5b801ca8db8315124236139cf5a897bb81c894"
+      }
+    }
+  },
+  "native_mapserver_recompiled": false,
+  "native_dbserver_recompiled": false,
+  "java_or_dex_recompiled": true,
+  "imports_or_profile_recreated": false,
+  "physical_client_timing_validated": false,
+  "physical_visual_assets_validated": false,
+  "physical_gameplay_gates_repeated": false,
+  "android_sdk_verification": {
+    "origin": "Completed CI official Android SDK 35 verification bound to independently downloaded identical public APK SHA-256",
+    "local_sdk_reverification_performed": false,
+    "ci_signature_v2_v3_verified": true,
+    "ci_package_badging_verified": true,
+    "ci_binary_manifest_version_only_verified": true,
+    "ci_signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+    "public_binary_manifest_sha256": "001ddbcab3f7d53e3648db525b20312f2e4413f75ae8ef51db0adb28538dd735",
+    "public_apk_sha256_bound_to_ci": "5cd4235aa0772b219b9d2efb21bd37435a3676eea5cc36f1b31d39e1c7320076"
+  }
+}

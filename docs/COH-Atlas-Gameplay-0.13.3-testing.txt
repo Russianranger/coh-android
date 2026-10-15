@@ -1,0 +1,41 @@
+COH Atlas Gameplay 0.13.3 — shorter startup preparation
+
+Install over the current app and keep its data. This pass targets startup
+options 7, 13, 18 and 4: reuse verified unchanged world supplements, skip the
+unused local native Launcher delay, defer client texture indexing until Atlas
+readiness and overlap that indexing with the independent runtime probe.
+The graphical renderer, Game/MapServer, imported content, prepared server
+caches, packed animations, character profile and prior accepted play remain.
+
+One-time activation:
+1. Set up runtime once for this new bundle. Changed helpers/DbServer change its
+   pinned runtime identity, so the old prepared generation cannot activate it.
+   Do not uninstall, clear storage, reimport assets or recreate THORHERO.
+2. Setup preserves the existing profile/imports and stages a new runtime for
+   rollback. The older generation can be removed later through the existing
+   reviewed Storage and cleanup tool after the update works. Repeated setup
+   of this unchanged bundle should reuse its generation.
+
+Focused startup comparison (one session; no task or movement retest):
+1. Keep the same graphics preset, power/charging state and temperature as the
+   preceding run if practical. Tap Reopen saved THORHERO.
+2. Note the elapsed time at Atlas/server readiness, visible login and actual
+   THORHERO connection to Atlas. The app/exported stages also retain timings.
+3. Once the saved hero connects, stop the session normally with the app's Stop
+   control and export the gameplay ZIP. No new task acceptance/completion,
+   helper command, safe-ground, contact, combat or storage test is requested.
+   A cancelled diagnostic verdict is expected for this startup-only session;
+   readiness/connection timings and cleanup are the evidence for this pass.
+4. Send that ZIP and your observed loading times, plus any crash or visible
+   rendering/input change. No immediate second long boot is required.
+
+The last 0.13.2 warm reopen reached Atlas readiness in 11m22.726s from guest
+start and connected the same THORHERO in 23m19.616s from Android run start.
+Its DbServer phase was 6m53.111s, Atlas phase 3m20.429s, actual client startup
+phase 10m09.694s and reused texture-index preparation 16.585s. The older cold
+texture preparation observation was 89.7s, not an every-boot guarantee.
+A new world reuse receipt is established after full verification once; later
+unchanged preparations skip archive decoding. The new receipt distinguishes
+verification/reuse work so we can assess the first update run honestly.
+These source changes do not establish a physical speedup or the <=5-minute
+Atlas-readiness target until your device result is reviewed.

@@ -1,0 +1,41 @@
+COH Atlas Gameplay 0.13.26 — Atlas instance zoning
+
+Install as an update. Preserve app data, imports and THORHERO. Apply Set up /
+update runtime once. Do not reimport assets, clear data or recreate the character.
+The accepted .25 GPU/FPS baseline and graphics settings are retained.
+
+First test: a native round trip
+1. Reopen saved THORHERO. Keep the same GPU mode, Performance preset, 800x600,
+   visual settings, fan and charging state. Show FPS and cap 30 may stay enabled.
+2. In Atlas instance 1, choose Prepare Atlas instance 2. Wait for the destination
+   ready status before choosing Travel to prepared instance. Cold preparation may take minutes;
+   record it separately from travel time. Preparing alone must not teleport you.
+3. Travel to Atlas instance 101. Both instances use the same Atlas world, so
+   appearance alone does not identify the destination. Wait for verified arrival
+   and fresh displayed views. Check walking, Jump, camera and clicking briefly.
+4. Choose Prepare return to Atlas Park, then Travel back to Atlas Park.
+   Check the arrival status, responsiveness, FPS, temperature and any artifacts.
+5. Release controls for the displayed neutral wait, Save character / log out,
+   wait for Saved character verified, then Finish and export the complete outer
+   report ZIP. Include cold preparation and each travel duration if measured.
+
+Destination persistence test, after a successful round trip
+Reopen, prepare and travel to instance 101, then perform the same ordinary
+verified save and export there. Reopen once more: it should restore THORHERO
+in instance 101. Prepare/travel back to instance 1, save and export again.
+This checks destination save/reopen without deliberately interrupting the app.
+
+The session allows at most four transfers and keeps its existing movement/save
+deadlines. Return to safe ground is available in the initial map-1 session only
+before preparing a destination. If used, complete the ordinary save and reopen
+before zoning. The two operations do not share a session after recovery.
+
+If preparation, arrival or save fails, or the client freezes or becomes
+unusable, export at the first safe opportunity. Preserve the existing data and
+do not repeat the same failed operation before its report is reviewed. Do not
+use Stop/force-stop as a substitute for a verified ordinary save.
+
+This release tests real map transfer between Atlas instances, not Kings Row,
+Galaxy City or mission interiors. Under-30-second zoning is a goal, not a
+qualified device result. No repeated .25 benchmark or long Software comparison
+is requested.

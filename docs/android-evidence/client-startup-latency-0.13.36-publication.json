@@ -1,0 +1,4347 @@
+{
+  "format": 1,
+  "status": "published_and_independently_audited",
+  "recovered_utc": "2026-10-13T21:09:48.427505+00:00",
+  "repository": "Russianranger/coh-android",
+  "branch": "codex/character-persistence-continuation",
+  "repository_commit": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+  "tree": "3ba011b6c653bd59eb39e1a4ed60babb95cc46f2",
+  "version": "0.13.36",
+  "version_code": 51,
+  "apk": {
+    "apk": "COH-Atlas-Gameplay-0.13.36.apk",
+    "bytes": 42076692,
+    "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+    "application_id": "io.github.russianranger.cohclientinteractive",
+    "abi": "arm64-v8a",
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282"
+  },
+  "release": {
+    "id": 411304728,
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.36",
+    "tag": "coh-atlas-gameplay-v0.13.36",
+    "published_at": "2026-10-13T05:15:56Z",
+    "prerelease": true,
+    "draft": false,
+    "assets": [
+      {
+        "id": 635975380,
+        "name": "COH-Atlas-Gameplay-0.13.36-testing.txt",
+        "bytes": 4122,
+        "sha256": "d2d8937b74107d466a30410d235bc358697faef199b5fc335963463fdf2ef93c",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36-testing.txt"
+      },
+      {
+        "id": 635975286,
+        "name": "COH-Atlas-Gameplay-0.13.36.apk",
+        "bytes": 42076692,
+        "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk"
+      },
+      {
+        "id": 635975346,
+        "name": "COH-Atlas-Gameplay-0.13.36.apk.sha256",
+        "bytes": 97,
+        "sha256": "e0d3a549912cc609d8a893776e6e434b83da3b97331ea422a63ac5fcd7593e5e",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.36/COH-Atlas-Gameplay-0.13.36.apk.sha256"
+      }
+    ]
+  },
+  "publication_workflow": {
+    "id": 38346809297,
+    "path": ".github/workflows/android-client-startup-latency.yml",
+    "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+    "tree": "3ba011b6c653bd59eb39e1a4ed60babb95cc46f2",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-10-13T04:30:55Z",
+    "updated_at": "2026-10-13T05:44:21Z",
+    "attempt": 1
+  },
+  "jobs": [
+    {
+      "id": 115130014149,
+      "name": "changes",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Preserve completed .36 publication and require exact audited .35 donor",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 115130271237,
+      "name": "db-minimal",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Preserve committed source byte line endings",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Authenticate original .34 native fixture input for current retained Db compatibility",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install exact donor x86 PostgreSQL ODBC driver",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Run actual retained native minimal Db startup, schema checks and restart",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 16,
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "number": 17,
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 115130651345,
+      "name": "apk",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Free unused hosted-runner toolchains for the measured complete asset fixture",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Run actions/setup-java@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Run android-actions/setup-android@v3",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "SDK signing tools and all retained PostgreSQL and Vulkan host fixtures",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Authenticate exact public .35 and original immutable native fixture inputs",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Preserve audited .35 native launcher and original Windows qualification identity",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Run actions/download-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Qualify client/GPU startup, map preparation, progression save checks, strict SQL and complete runtime assets",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Run actions/download-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Update version metadata and reviewed guest helpers; retain .35 DEX/native/runtime/assets",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Retain diagnostic candidates before independent audit without accepting them",
+          "conclusion": "success"
+        },
+        {
+          "number": 15,
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 16,
+          "name": "Fresh-process SDK signer and exact payload reconstruction with independent hash seed",
+          "conclusion": "success"
+        },
+        {
+          "number": 17,
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 18,
+          "name": "Publish the qualified APK only and verify unchanged Assets 1.0.0 metadata",
+          "conclusion": "success"
+        },
+        {
+          "number": 19,
+          "name": "Remove owned signing staging",
+          "conclusion": "success"
+        },
+        {
+          "number": 37,
+          "name": "Post Run actions/setup-java@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 38,
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "number": 39,
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 115141593507,
+      "name": "public-audit",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Free unused hosted-runner toolchains for the measured complete asset fixture",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Run actions/setup-java@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Run android-actions/setup-android@v3",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "SDK audit tools only",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Run actions/download-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Run actions/download-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Authenticate exact public .35 donor and unchanged asset pack",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Preserve audited .35 native launcher and original Windows qualification identity",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Run actions/download-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Download actual public .36 APK, checksum and instructions",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Audit actual public signer, DEX, retained Game/Db/Map/GPU/Wine/FEX/assets plus retained .35 launcher and complete current preparation",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Record public-byte proof without physical Thor claims",
+          "conclusion": "success"
+        },
+        {
+          "number": 15,
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 29,
+          "name": "Post Run actions/setup-java@v4",
+          "conclusion": "success"
+        },
+        {
+          "number": 30,
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "number": 31,
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "accepted_artifacts": [
+    {
+      "id": 11790804742,
+      "name": "coh-client-startup-latency-public-byte-audit",
+      "bytes": 850,
+      "sha256": "ef0b4e5b1299c00e7988a9323307e51746eacf3a6a24261551844e678e62c198",
+      "expired": false
+    },
+    {
+      "id": 11790511602,
+      "name": "coh-client-startup-latency-apk",
+      "bytes": 54708216,
+      "sha256": "3b3bdd9b9e3d6425b7ef40ca45468979bd2700606bab4c2318b54d799d5d6f7e",
+      "expired": false
+    },
+    {
+      "id": 11790485018,
+      "name": "coh-client-startup-latency-qualification",
+      "bytes": 1205356,
+      "sha256": "9da4806ddd03c789d9cf13a91cf8b6eb85e9b1e4f1481c58943daa01c8dd8a1a",
+      "expired": false
+    },
+    {
+      "id": 11789930455,
+      "name": "coh-client-minimal-db-native-diagnostics",
+      "bytes": 22958,
+      "sha256": "710434248c4ac66928fdb150d705a4d927d1af75aea87015cbe0dde3b3fe4c82",
+      "expired": false
+    },
+    {
+      "id": 11789885697,
+      "name": "coh-client-minimal-db-native-proof",
+      "bytes": 8843,
+      "sha256": "11ef8489e3cd5e7136ed50a0f2f34293644b04f729902ab4d1cc945f7cf7aecb",
+      "expired": false
+    }
+  ],
+  "diagnostic_candidates": [
+    {
+      "id": 11789149589,
+      "status": "unaccepted_diagnostics_before_independent_apk_audit",
+      "accepted": false
+    }
+  ],
+  "receipts": {
+    "client-startup-latency-apk-build-report.json": {
+      "bytes": 12621902,
+      "sha256": "7eaebff204771bd35f444f4a5294f467c682f27b77b9973294bb678e9e239e4e"
+    },
+    "client-startup-latency-apk-audit.json": {
+      "bytes": 4549,
+      "sha256": "4739ef60fde92896f86275c002024ac561a21d6a399772c55caeed47aa28feba"
+    },
+    "client-startup-latency-qualification.json": {
+      "bytes": 6155422,
+      "sha256": "5d932c34903ca5cf5dd1027a2b11a1589de740fa5cc0f79aabc8ffd5dee34a68"
+    },
+    "client-startup-latency-public-byte-audit.json": {
+      "bytes": 1707,
+      "sha256": "56f60e79bb0213869da59e8f1d2cec73f8994b5885f03ab3ecf85bd1b6f07e4d"
+    },
+    "minimal-db-native-proof.json": {
+      "bytes": 24111,
+      "sha256": "df77fdbe481db56f227d97700c168f8a32c362c2ed371bd673af4c9dd108a0a7"
+    }
+  },
+  "public_byte_audit": {
+    "format": 1,
+    "status": "passed",
+    "repository_commit": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+    "run_id": 38346809297,
+    "apk": {
+      "bytes": 42076692,
+      "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+      "version_name": "0.13.36",
+      "version_code": 51
+    },
+    "public_apk_verified": true,
+    "actual_runtime_asset_installers_verified": true,
+    "full_startup_orchestration_verified": true,
+    "java_or_dex_recompiled": false,
+    "exact_035_dex_retained": true,
+    "native_runtime_booted": false,
+    "retained_game_and_dbserver_verified": true,
+    "retained_game_archive_native_members": 24,
+    "native_mapserver_recompiled": false,
+    "retained_032_map_startup_component_verified": true,
+    "all_native_member_bytes_retained": true,
+    "retained_client_game_and_mapserver_verified": true,
+    "native_client_launcher_recompiled": false,
+    "native_client_launcher_qualification_inherited": true,
+    "native_client_launcher_windows_fixture_verified": true,
+    "actual_retained_minimal_db_host_fixture_verified": true,
+    "current_tests_run": 2848,
+    "inherited_tests_retained": 115,
+    "current_suites_run": 205,
+    "inherited_suites_retained": 8,
+    "original_asset_public_byte_audit_artifact_id": 11708366753,
+    "unchanged_assets_1_0_0_metadata_verified": true,
+    "asset_release_republished": false,
+    "physical_recovery_validated": false,
+    "physical_kings_row_zoning_validated": false,
+    "physical_kings_row_reopen_validated": false,
+    "physical_fps_gain_validated": false,
+    "physical_map_startup_speedup_validated": false,
+    "sub_30_second_map_startup_validated": false,
+    "sub_five_minute_total_startup_validated": false,
+    "sub_one_minute_client_start_validated": false
+  },
+  "recovery_public_downloads": {
+    "actual_bytes_downloaded": true,
+    "all_asset_api_digests_verified": true,
+    "public_checksum_matches_actual_apk": true,
+    "public_guide_matches_frozen_source": true,
+    "publication_or_audit_rerun": false
+  },
+  "qualification": {
+    "status": "passed",
+    "current_tests_run": 2848,
+    "current_suites_run": 205,
+    "inherited_tests_retained": 115,
+    "inherited_suites_retained": 8,
+    "current_failures": 0,
+    "current_errors": 0,
+    "current_skips": 0,
+    "current_suites": {
+      "test_startup_latency_preparation_proof": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_saved_gameplay_lifecycle": {
+        "tests_run": 17,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_native_cg_profile_source": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_qualify_native_startup_profile": {
+        "tests_run": 12,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_full_startup_preflight": {
+        "tests_run": 13,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_runtime_asset_preflight": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_startup_schedule_package": {
+        "tests_run": 22,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_startup_schedule": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_world_asset_reuse": {
+        "tests_run": 18,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_atlas_world_assets": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_local_launcher_wait": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_readiness": {
+        "tests_run": 25,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_server": {
+        "tests_run": 24,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_reopen_guest": {
+        "tests_run": 20,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_ground_repair": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_task_gate_integration": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_task_gate_evidence": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_runtime_setup_reuse": {
+        "tests_run": 15,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_fresh_profile_recovery": {
+        "tests_run": 25,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_storage_recovery_ui": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_storage_audit": {
+        "tests_run": 48,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_wine_refresh": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_server_worktree_reuse": {
+        "tests_run": 33,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_server_cache_package": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_texture_header_index": {
+        "tests_run": 19,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_session_budget_guest": {
+        "tests_run": 23,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_stable_worktree_identity": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_classify_interactive_change": {
+        "tests_run": 31,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_classify_storage_cleanup_change": {
+        "tests_run": 100,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_task_receipt_cleanup_package": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_task_receipt_cleanup": {
+        "tests_run": 25,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_setup_memory_package": {
+        "tests_run": 22,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_setup_memory_guard": {
+        "tests_run": 22,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_setup_service": {
+        "tests_run": 13,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_archive": {
+        "tests_run": 31,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_startup_bundle_package": {
+        "tests_run": 21,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_startup_bundle_client": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_startup_bundle_dbserver": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_startup_bundle_save": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_native_client_upgrade": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_animation_package": {
+        "tests_run": 34,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_visual_assets": {
+        "tests_run": 54,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_visual_schedule": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_visual_package": {
+        "tests_run": 24,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_stage_acceptance": {
+        "tests_run": 17,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_loading_package": {
+        "tests_run": 17,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_loading_native": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_loading_contract": {
+        "tests_run": 18,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_acceptance": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_streaming_package": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_console_markers": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_visual_candidates": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_asset_closure_package": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_visual_sweep": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_combat_reward_save": {
+        "tests_run": 15,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_visual_tricks": {
+        "tests_run": 21,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_visual_geometry": {
+        "tests_run": 3,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_startup_followup_limits": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_startup_followup_native": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_startup_followup_contract": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_appearance_assets": {
+        "tests_run": 12,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_appearance_costumes": {
+        "tests_run": 13,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_levelup_ui_repair_dbserver": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_ui_repair_assets": {
+        "tests_run": 32,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_levelup_ui_repair_contract": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_preload_launch": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_training_save": {
+        "tests_run": 19,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_reopen_dbserver_thread_name": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_ui_sweep_assets": {
+        "tests_run": 35,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_atlas_beacon_package": {
+        "tests_run": 28,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_beacon_runtime_profiles": {
+        "tests_run": 15,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_generate_atlas_beacons": {
+        "tests_run": 31,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_prepare_atlas_beacon_generator_source": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_map_data": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_thor_performance_package": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_thor_performance_report": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_scene_performance_native": {
+        "tests_run": 3,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_frame_timing_native": {
+        "tests_run": 3,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_frame_timing_source": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_scene_performance_contract": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_scene_performance_package": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_scene_performance_report": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_gameplay_performance_native": {
+        "tests_run": 3,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_gameplay_performance_source": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_gameplay_performance_contract": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_gameplay_performance_package": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_input": {
+        "tests_run": 40,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_sidebar_commands": {
+        "tests_run": 13,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_sidebar_runtime": {
+        "tests_run": 1,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_sidebar_package": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_renderer_attribution_native": {
+        "tests_run": 3,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_renderer_attribution_source": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_renderer_attribution_contract": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_renderer_attribution_package": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_surface_capture": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_capture_metrics": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_stock_power_delta": {
+        "tests_run": 14,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_gpu_profile_package": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_gpu_profile": {
+        "tests_run": 67,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_coh_gpu_probe_native": {
+        "tests_run": 18,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_coh_vulkan_gpu_probe": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_gpu_runtime_package": {
+        "tests_run": 21,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_gpu_repair_package": {
+        "tests_run": 13,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_renderer_performance_report": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_gpu_repair_evidence": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_pipeline_native": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_pipeline_source": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_pipeline_contract": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_pipeline_package": {
+        "tests_run": 12,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_pipeline_guest": {
+        "tests_run": 15,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_pipeline_report": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_session_repair_package": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_session_repair_java": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_setup_copy_repair_package": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_setup_copy_memory": {
+        "tests_run": 21,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_setup_io_memory": {
+        "tests_run": 15,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_queue_native": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_queue_source": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_queue_worker": {
+        "tests_run": 3,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_queue_contract": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_queue_package": {
+        "tests_run": 22,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_render_queue_guest": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_analyze_client_render_queue": {
+        "tests_run": 13,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_zoning": {
+        "tests_run": 38,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_zoning_java": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_zoning_package": {
+        "tests_run": 13,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_prepare_resume_client_source": {
+        "tests_run": 18,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_transfer": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_report_recovery_java": {
+        "tests_run": 51,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_socket_recovery_java": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_report_lifecycle_java": {
+        "tests_run": 21,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_zoning_scheduler": {
+        "tests_run": 15,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_kings_row_foundation": {
+        "tests_run": 13,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_recovery_package": {
+        "tests_run": 15,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_external_assets": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_asset_pack_import": {
+        "tests_run": 17,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_storage_files": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_assets_package": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_monorail_java": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_shared_asset_inputs": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_kings_row_beacons": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_monorail_native_package": {
+        "tests_run": 2,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_prepare_kings_row_beacon_generator_source": {
+        "tests_run": 2,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_monorail": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_monorail_observer": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_zone_asset_package": {
+        "tests_run": 17,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_zones_world_assets": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_classify_client_assets_change": {
+        "tests_run": 3,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_zones_audio_assets": {
+        "tests_run": 3,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_assets_reuse": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_game_receipt_order": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_animation_runtime_compatibility": {
+        "tests_run": 12,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_profile_eligibility": {
+        "tests_run": 26,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_profile_failure_presentation": {
+        "tests_run": 18,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_guest": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_host": {
+        "tests_run": 21,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_reopen_host": {
+        "tests_run": 12,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_login_guest": {
+        "tests_run": 15,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_storage_ui": {
+        "tests_run": 36,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_logout_position": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_character_server_logs": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_asset_closure_limits": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_attempt_retry": {
+        "tests_run": 12,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_contact_capture": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_graphics_profile": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_guest": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_host_transport": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_login_host": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_process_exit_history": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_rfb_buffered_input": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_runtime_timestamps": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_server_message_cache_format": {
+        "tests_run": 15,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_session_budget_java": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_startup_cache_integration": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_stationary_contact_evidence": {
+        "tests_run": 12,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_task_gate_java": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_task_gate_native_contract": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_kings_row_runtime_dependencies": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_kings_preparation_budgets": {
+        "tests_run": 17,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_device_cleanup_lineage": {
+        "tests_run": 19,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_complete_asset_stage_acceptance": {
+        "tests_run": 12,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_server_fx_catalog": {
+        "tests_run": 33,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_map_startup_namespace_certificate": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_server_fx_catalog_native_proof": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_prepare_server_fx_catalog_observer_source": {
+        "tests_run": 3,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_completed_guest_report_java": {
+        "tests_run": 22,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_map_startup_monorail_budget": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_map_startup_native_contract": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_map_startup_cache_reuse": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_report_controls_java": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_collision_input_snapshot": {
+        "tests_run": 19,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_shared_collision_input_proof": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_map_startup_observation": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_qualify_map_startup_prerequisites": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_saved_map_startup": {
+        "tests_run": 14,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_saved_map_window_java": {
+        "tests_run": 3,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_saved_map_postgresql": {
+        "tests_run": 20,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_manual_session": {
+        "tests_run": 29,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_text_entry": {
+        "tests_run": 18,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_saved_map_preparation": {
+        "tests_run": 35,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_manual_launcher_contract": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_native_startup_profile_source": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_saved_map_preparation_proof": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_minimal_db_runtime_contract": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      },
+      "test_client_startup_latency_package": {
+        "tests_run": 21,
+        "status": "passed",
+        "skipped": 0,
+        "source_scope": "current_036_candidate_sources",
+        "tests_executed_in_current_run": true
+      }
+    },
+    "inherited_suites": {
+      "test_client_animation_repair_package": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0,
+        "tests_executed_in_current_run": false,
+        "source_bound_lineage": [
+          {
+            "tests_run": 4,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_035_immutable_source_bound_contract",
+            "source_repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 10001934,
+              "sha256": "2b5828c41ef613d8b75d4bf600b930a2d390a326f8e1b6e3639b6519dcfbc744"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_animation_repair_package.py": {
+                "bytes": 6999,
+                "sha256": "5e5b4d56779a97b5a86fa635bd3ef8444503f919fa0803b40d7fc27120719744"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1787936,
+              "sha256": "0b596fa8c5fabbffde4a21d98354390954b5d48aada8d16523391d6d7d233b3a"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 4,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_034_immutable_source_bound_contract",
+            "source_repository_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8211105,
+              "sha256": "bc2e215ed7bbb8a047d3e52084deec1b0db0a68a4c8479f6302fd575a933fcd3"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_animation_repair_package.py": {
+                "bytes": 6999,
+                "sha256": "5e5b4d56779a97b5a86fa635bd3ef8444503f919fa0803b40d7fc27120719744"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1783273,
+              "sha256": "b00c7f4415373167c351c5a604fb58b5c48be563781147fc9ef20a2ab2924042"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 4,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_033_immutable_source_bound_contract",
+            "source_repository_commit": "e03943f76b13192680be363dac005d6f23c7a526",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8201429,
+              "sha256": "26e93ea6b3be82de6b525043eb20c83ffa84205c91f80c5371f460c695b14ba4"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_animation_repair_package.py": {
+                "bytes": 6999,
+                "sha256": "5e5b4d56779a97b5a86fa635bd3ef8444503f919fa0803b40d7fc27120719744"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1781383,
+              "sha256": "0d8a05fa9ac8782ae0fd4126424dba421a4c65a911826d438cb4fbe9b3b807d9"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 4,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_032_retained_contract",
+            "source_repository_commit": "6c4d1d74f34ecdea8fabcf6238368bf72003878f",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8175633,
+              "sha256": "88428c1423185d1e8c2efd7821f4fbbd742bbf85b79d82dd6d85ad169ddc0d04"
+            }
+          },
+          {
+            "tests_run": 4,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "frozen_031_historical_package_contract",
+            "source_repository_commit": "74fe247be85173e618f1af2c8af71b1316de4cd8"
+          }
+        ]
+      },
+      "test_client_manual_session_package": {
+        "tests_run": 20,
+        "status": "passed",
+        "skipped": 0,
+        "tests_executed_in_current_run": false,
+        "source_bound_lineage": [
+          {
+            "tests_run": 20,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_035_immutable_source_bound_contract",
+            "source_repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 10001934,
+              "sha256": "2b5828c41ef613d8b75d4bf600b930a2d390a326f8e1b6e3639b6519dcfbc744"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_manual_session_package.py": {
+                "bytes": 25560,
+                "sha256": "32ec5cd65b3ca5a9ddd5767567cc848997f41dbcdf5a05b897a872e7d286ed40"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1787936,
+              "sha256": "0b596fa8c5fabbffde4a21d98354390954b5d48aada8d16523391d6d7d233b3a"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 20,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "current_035_candidate_sources",
+            "tests_executed_in_current_run": true
+          }
+        ]
+      },
+      "test_client_map_startup_package": {
+        "tests_run": 19,
+        "status": "passed",
+        "skipped": 0,
+        "tests_executed_in_current_run": false,
+        "source_bound_lineage": [
+          {
+            "tests_run": 19,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_035_immutable_source_bound_contract",
+            "source_repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 10001934,
+              "sha256": "2b5828c41ef613d8b75d4bf600b930a2d390a326f8e1b6e3639b6519dcfbc744"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_map_startup_package.py": {
+                "bytes": 30708,
+                "sha256": "32b2c746df10948b4fd4bcbf98668557ba1ed38ecfff0398749e2b32b93ade80"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1787936,
+              "sha256": "0b596fa8c5fabbffde4a21d98354390954b5d48aada8d16523391d6d7d233b3a"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 19,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_034_immutable_source_bound_contract",
+            "source_repository_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8211105,
+              "sha256": "bc2e215ed7bbb8a047d3e52084deec1b0db0a68a4c8479f6302fd575a933fcd3"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_map_startup_package.py": {
+                "bytes": 30708,
+                "sha256": "32b2c746df10948b4fd4bcbf98668557ba1ed38ecfff0398749e2b32b93ade80"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1783273,
+              "sha256": "b00c7f4415373167c351c5a604fb58b5c48be563781147fc9ef20a2ab2924042"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 19,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_033_immutable_source_bound_contract",
+            "source_repository_commit": "e03943f76b13192680be363dac005d6f23c7a526",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8201429,
+              "sha256": "26e93ea6b3be82de6b525043eb20c83ffa84205c91f80c5371f460c695b14ba4"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_map_startup_package.py": {
+                "bytes": 30708,
+                "sha256": "32b2c746df10948b4fd4bcbf98668557ba1ed38ecfff0398749e2b32b93ade80"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1781383,
+              "sha256": "0d8a05fa9ac8782ae0fd4126424dba421a4c65a911826d438cb4fbe9b3b807d9"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 19,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_032_retained_contract",
+            "source_repository_commit": "6c4d1d74f34ecdea8fabcf6238368bf72003878f",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8175633,
+              "sha256": "88428c1423185d1e8c2efd7821f4fbbd742bbf85b79d82dd6d85ad169ddc0d04"
+            }
+          },
+          {
+            "tests_run": 19,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "current_032_candidate_sources"
+          }
+        ]
+      },
+      "test_client_profile_recovery_package": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "tests_executed_in_current_run": false,
+        "source_bound_lineage": [
+          {
+            "tests_run": 7,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_035_immutable_source_bound_contract",
+            "source_repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 10001934,
+              "sha256": "2b5828c41ef613d8b75d4bf600b930a2d390a326f8e1b6e3639b6519dcfbc744"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_profile_recovery_package.py": {
+                "bytes": 9647,
+                "sha256": "96f3eecde8fb24ecad034818a66889f7bde351607b5b24137aa55be7b8622b39"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1787936,
+              "sha256": "0b596fa8c5fabbffde4a21d98354390954b5d48aada8d16523391d6d7d233b3a"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 7,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_034_immutable_source_bound_contract",
+            "source_repository_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8211105,
+              "sha256": "bc2e215ed7bbb8a047d3e52084deec1b0db0a68a4c8479f6302fd575a933fcd3"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_profile_recovery_package.py": {
+                "bytes": 9647,
+                "sha256": "96f3eecde8fb24ecad034818a66889f7bde351607b5b24137aa55be7b8622b39"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1783273,
+              "sha256": "b00c7f4415373167c351c5a604fb58b5c48be563781147fc9ef20a2ab2924042"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 7,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_033_immutable_source_bound_contract",
+            "source_repository_commit": "e03943f76b13192680be363dac005d6f23c7a526",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8201429,
+              "sha256": "26e93ea6b3be82de6b525043eb20c83ffa84205c91f80c5371f460c695b14ba4"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_profile_recovery_package.py": {
+                "bytes": 9647,
+                "sha256": "96f3eecde8fb24ecad034818a66889f7bde351607b5b24137aa55be7b8622b39"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1781383,
+              "sha256": "0d8a05fa9ac8782ae0fd4126424dba421a4c65a911826d438cb4fbe9b3b807d9"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 7,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_032_retained_contract",
+            "source_repository_commit": "6c4d1d74f34ecdea8fabcf6238368bf72003878f",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8175633,
+              "sha256": "88428c1423185d1e8c2efd7821f4fbbd742bbf85b79d82dd6d85ad169ddc0d04"
+            }
+          },
+          {
+            "tests_run": 7,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "frozen_031_historical_package_contract",
+            "source_repository_commit": "74fe247be85173e618f1af2c8af71b1316de4cd8"
+          }
+        ]
+      },
+      "test_client_receipt_repair_package": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0,
+        "tests_executed_in_current_run": false,
+        "source_bound_lineage": [
+          {
+            "tests_run": 4,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_035_immutable_source_bound_contract",
+            "source_repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 10001934,
+              "sha256": "2b5828c41ef613d8b75d4bf600b930a2d390a326f8e1b6e3639b6519dcfbc744"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_receipt_repair_package.py": {
+                "bytes": 6701,
+                "sha256": "c74320e976d001e9b83cbb3594fa175b34149bde990811bcff94ede667f9e371"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1787936,
+              "sha256": "0b596fa8c5fabbffde4a21d98354390954b5d48aada8d16523391d6d7d233b3a"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 4,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_034_immutable_source_bound_contract",
+            "source_repository_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8211105,
+              "sha256": "bc2e215ed7bbb8a047d3e52084deec1b0db0a68a4c8479f6302fd575a933fcd3"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_receipt_repair_package.py": {
+                "bytes": 6701,
+                "sha256": "c74320e976d001e9b83cbb3594fa175b34149bde990811bcff94ede667f9e371"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1783273,
+              "sha256": "b00c7f4415373167c351c5a604fb58b5c48be563781147fc9ef20a2ab2924042"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 4,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_033_immutable_source_bound_contract",
+            "source_repository_commit": "e03943f76b13192680be363dac005d6f23c7a526",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8201429,
+              "sha256": "26e93ea6b3be82de6b525043eb20c83ffa84205c91f80c5371f460c695b14ba4"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_receipt_repair_package.py": {
+                "bytes": 6701,
+                "sha256": "c74320e976d001e9b83cbb3594fa175b34149bde990811bcff94ede667f9e371"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1781383,
+              "sha256": "0d8a05fa9ac8782ae0fd4126424dba421a4c65a911826d438cb4fbe9b3b807d9"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 4,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_032_retained_contract",
+            "source_repository_commit": "6c4d1d74f34ecdea8fabcf6238368bf72003878f",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8175633,
+              "sha256": "88428c1423185d1e8c2efd7821f4fbbd742bbf85b79d82dd6d85ad169ddc0d04"
+            }
+          },
+          {
+            "tests_run": 4,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "frozen_031_historical_package_contract",
+            "source_repository_commit": "74fe247be85173e618f1af2c8af71b1316de4cd8"
+          }
+        ]
+      },
+      "test_client_report_loading_package": {
+        "tests_run": 34,
+        "status": "passed",
+        "skipped": 0,
+        "tests_executed_in_current_run": false,
+        "source_bound_lineage": [
+          {
+            "tests_run": 34,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_035_immutable_source_bound_contract",
+            "source_repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 10001934,
+              "sha256": "2b5828c41ef613d8b75d4bf600b930a2d390a326f8e1b6e3639b6519dcfbc744"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_report_loading_package.py": {
+                "bytes": 61325,
+                "sha256": "89c9d79afc9c5bb6019c7552a266831e3aea38172c73dabfb715dd9a22ad3407"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1787936,
+              "sha256": "0b596fa8c5fabbffde4a21d98354390954b5d48aada8d16523391d6d7d233b3a"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 34,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_034_immutable_source_bound_contract",
+            "source_repository_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8211105,
+              "sha256": "bc2e215ed7bbb8a047d3e52084deec1b0db0a68a4c8479f6302fd575a933fcd3"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_report_loading_package.py": {
+                "bytes": 61325,
+                "sha256": "89c9d79afc9c5bb6019c7552a266831e3aea38172c73dabfb715dd9a22ad3407"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1783273,
+              "sha256": "b00c7f4415373167c351c5a604fb58b5c48be563781147fc9ef20a2ab2924042"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 34,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_033_immutable_source_bound_contract",
+            "source_repository_commit": "e03943f76b13192680be363dac005d6f23c7a526",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8201429,
+              "sha256": "26e93ea6b3be82de6b525043eb20c83ffa84205c91f80c5371f460c695b14ba4"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_report_loading_package.py": {
+                "bytes": 61325,
+                "sha256": "89c9d79afc9c5bb6019c7552a266831e3aea38172c73dabfb715dd9a22ad3407"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1781383,
+              "sha256": "0d8a05fa9ac8782ae0fd4126424dba421a4c65a911826d438cb4fbe9b3b807d9"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 34,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "current_033_candidate_sources",
+            "tests_executed_in_current_run": true
+          }
+        ]
+      },
+      "test_client_saved_map_reopen_package": {
+        "tests_run": 20,
+        "status": "passed",
+        "skipped": 0,
+        "tests_executed_in_current_run": false,
+        "source_bound_lineage": [
+          {
+            "tests_run": 20,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_035_immutable_source_bound_contract",
+            "source_repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 10001934,
+              "sha256": "2b5828c41ef613d8b75d4bf600b930a2d390a326f8e1b6e3639b6519dcfbc744"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_saved_map_reopen_package.py": {
+                "bytes": 24206,
+                "sha256": "581a17a6b7b93d3203bb84e08020c5440d6d20fc37d54adad4c1104b855d8088"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1787936,
+              "sha256": "0b596fa8c5fabbffde4a21d98354390954b5d48aada8d16523391d6d7d233b3a"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 20,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_034_immutable_source_bound_contract",
+            "source_repository_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8211105,
+              "sha256": "bc2e215ed7bbb8a047d3e52084deec1b0db0a68a4c8479f6302fd575a933fcd3"
+            },
+            "original_suite_source": {
+              "tools/android/interactive/test_client_saved_map_reopen_package.py": {
+                "bytes": 24206,
+                "sha256": "581a17a6b7b93d3203bb84e08020c5440d6d20fc37d54adad4c1104b855d8088"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1783273,
+              "sha256": "b00c7f4415373167c351c5a604fb58b5c48be563781147fc9ef20a2ab2924042"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 20,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "current_034_candidate_sources",
+            "tests_executed_in_current_run": true
+          }
+        ]
+      },
+      "test_map_startup_animation_certificate": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0,
+        "tests_executed_in_current_run": false,
+        "source_bound_lineage": [
+          {
+            "tests_run": 7,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_035_immutable_source_bound_contract",
+            "source_repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 10001934,
+              "sha256": "2b5828c41ef613d8b75d4bf600b930a2d390a326f8e1b6e3639b6519dcfbc744"
+            },
+            "original_suite_source": {
+              "tools/test_map_startup_animation_certificate.py": {
+                "bytes": 14071,
+                "sha256": "3e049a1aaf4de92e9fdb16f70ea25273378cc82a87b7dd3fd69cb1bbbc239ded"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1787936,
+              "sha256": "0b596fa8c5fabbffde4a21d98354390954b5d48aada8d16523391d6d7d233b3a"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 7,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_034_immutable_source_bound_contract",
+            "source_repository_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8211105,
+              "sha256": "bc2e215ed7bbb8a047d3e52084deec1b0db0a68a4c8479f6302fd575a933fcd3"
+            },
+            "original_suite_source": {
+              "tools/test_map_startup_animation_certificate.py": {
+                "bytes": 14071,
+                "sha256": "3e049a1aaf4de92e9fdb16f70ea25273378cc82a87b7dd3fd69cb1bbbc239ded"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1783273,
+              "sha256": "b00c7f4415373167c351c5a604fb58b5c48be563781147fc9ef20a2ab2924042"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 7,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_033_immutable_source_bound_contract",
+            "source_repository_commit": "e03943f76b13192680be363dac005d6f23c7a526",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8201429,
+              "sha256": "26e93ea6b3be82de6b525043eb20c83ffa84205c91f80c5371f460c695b14ba4"
+            },
+            "original_suite_source": {
+              "tools/test_map_startup_animation_certificate.py": {
+                "bytes": 14071,
+                "sha256": "3e049a1aaf4de92e9fdb16f70ea25273378cc82a87b7dd3fd69cb1bbbc239ded"
+              }
+            },
+            "original_qualification_source_closure": {
+              "bytes": 1781383,
+              "sha256": "0d8a05fa9ac8782ae0fd4126424dba421a4c65a911826d438cb4fbe9b3b807d9"
+            },
+            "native_producer_relabelled": false
+          },
+          {
+            "tests_run": 7,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "accepted_032_retained_contract",
+            "source_repository_commit": "6c4d1d74f34ecdea8fabcf6238368bf72003878f",
+            "tests_executed_in_current_run": false,
+            "donor_build_report": {
+              "bytes": 8175633,
+              "sha256": "88428c1423185d1e8c2efd7821f4fbbd742bbf85b79d82dd6d85ad169ddc0d04"
+            }
+          },
+          {
+            "tests_run": 7,
+            "status": "passed",
+            "skipped": 0,
+            "source_scope": "current_032_candidate_sources"
+          }
+        ]
+      }
+    },
+    "source_pin_count": 10035,
+    "source_pin_inventory_canonical_sha256": "bba1bf16af005c84a75e9862148210908933a40e7a213ea13c21cb0c03abd034",
+    "checks": {
+      "retained_regressions_and_postgresql_verified": true,
+      "actual_runtime_asset_installers_verified": true,
+      "full_startup_orchestration_verified": true,
+      "report_finalization_and_recovery_verified": true,
+      "saved_map_startup_and_preservation_verified": true,
+      "client_gpu_startup_reuse_verified": true,
+      "lawful_progression_save_checks_verified": true,
+      "bounded_cache_reuse_verified": true,
+      "manual_session_and_capture_verified": true,
+      "text_entry_transport_verified": true,
+      "native_launcher_lifecycle_verified": true,
+      "minimal_db_native_compatibility_verified": true,
+      "exact_035_game_db_map_graphics_and_assets_verified": true
+    },
+    "strict_postgresql": {
+      "postgresql_emission_fixtures": [
+        "cancelled_child_deletion_commits",
+        "delete_insert_replacement_commits",
+        "duplicate_insert_23505_rollback"
+      ],
+      "postgresql_levelup_fixtures": [
+        "empty_child_duplicate_23505_rollback",
+        "empty_child_training_commit",
+        "missing_child_insert_commit",
+        "shuffled_child_read_training_commit"
+      ],
+      "postgresql_profile_eligibility_fixtures": [
+        "advanced_empty_allocator_resume_refused",
+        "ambiguous_character_reopen_refused",
+        "empty_inventory_reopen",
+        "empty_inventory_resume",
+        "foreign_character_reopen_refused",
+        "foreign_character_resume_refused",
+        "missing_inventory_creation",
+        "missing_inventory_reopen",
+        "missing_power_rows_reopen_refused",
+        "post_dbserver_allocator_race_refused",
+        "post_dbserver_character_race_refused",
+        "provisional_character_reopen_refused",
+        "saved_character_reopen",
+        "saved_character_resume_refused"
+      ],
+      "postgresql_saved_map_fixtures": [
+        "account_identity_mismatch",
+        "atlas_assigned",
+        "atlas_instance_assigned",
+        "atlas_instance_unassigned",
+        "atlas_unassigned",
+        "foreign_account",
+        "foreign_name",
+        "inconsistent_active_map",
+        "kings_assigned",
+        "kings_unassigned",
+        "missing_costume_rows",
+        "missing_native_kings_qualification",
+        "missing_power_rows",
+        "nonfinite_saved_position",
+        "read_only_transaction_enforced",
+        "repeated_kings_selection",
+        "unsupported_saved_destination"
+      ],
+      "saved_map_postgresql_proof": {
+        "format": 1,
+        "status": "passed",
+        "scope": "actual_postgresql_readonly_saved_map_selection",
+        "postgresql_major": 16,
+        "fixtures": [
+          "account_identity_mismatch",
+          "atlas_assigned",
+          "atlas_instance_assigned",
+          "atlas_instance_unassigned",
+          "atlas_unassigned",
+          "foreign_account",
+          "foreign_name",
+          "inconsistent_active_map",
+          "kings_assigned",
+          "kings_unassigned",
+          "missing_costume_rows",
+          "missing_native_kings_qualification",
+          "missing_power_rows",
+          "nonfinite_saved_position",
+          "read_only_transaction_enforced",
+          "repeated_kings_selection",
+          "unsupported_saved_destination"
+        ],
+        "sql_transaction_mode": "READ ONLY",
+        "fixture_schema_isolated": true,
+        "player_database_accessed": false,
+        "native_process_booted": false,
+        "native_client_connected": false,
+        "native_save_logout_executed": false,
+        "physical_ayn_thor_validated": false,
+        "enhancement_no_mutation_scope": "actual_isolated_postgresql_full_34_field_boosts_rows",
+        "boost_fields": [
+          "containerid",
+          "subid",
+          "powerid",
+          "idx",
+          "categoryname",
+          "powersetname",
+          "boostname",
+          "level",
+          "numcombines",
+          "var0",
+          "var1",
+          "var2",
+          "var3",
+          "slottedpowerupsmask",
+          "powerupslottype0",
+          "powerupslotid0",
+          "powerupslottype1",
+          "powerupslotid1",
+          "powerupslottype2",
+          "powerupslotid2",
+          "powerupslottype3",
+          "powerupslotid3",
+          "powerupslottype4",
+          "powerupslotid4",
+          "powerupslottype5",
+          "powerupslotid5",
+          "powerupslottype6",
+          "powerupslotid6",
+          "powerupslottype7",
+          "powerupslotid7",
+          "powerupslottype8",
+          "powerupslotid8",
+          "powerupslottype9",
+          "powerupslotid9"
+        ],
+        "generated_boost_template_sha256": "295e82df5c9cd84d0571b5e5e4f44caf7a68e35faadfdb57952bf4fe9308c913",
+        "shipping_enhancement_capture_changed": true
+      }
+    },
+    "complete_asset_import": {
+      "files": 173011,
+      "bytes": 2977730517,
+      "all_leaf_sha256_checked": true,
+      "inventory_sha256": "52a6d86f7dafdaeb4f98e6314484d67cdfc6faf288b01adfb34876ae1594f186",
+      "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+      "android_import_service_executed": false
+    },
+    "asset_version": "1.0.0",
+    "asset_volumes": {
+      "audio": [
+        "runtime/zones-audio-supplement-manifest.json",
+        "runtime/zones-audio-supplement.zip"
+      ],
+      "base": [
+        "atlas/atlas-assets-index.tsv",
+        "atlas/atlas-text-index.tsv",
+        "atlas/atlas-text.zip",
+        "runtime/atlas-beacon-manifest.json",
+        "runtime/atlas-beacons.zip",
+        "runtime/atlas-world-supplement-manifest.json",
+        "runtime/atlas-world-supplement.zip",
+        "runtime/character-avatar-defaults-manifest.json",
+        "runtime/character-avatar-defaults.zip",
+        "runtime/client-caches.zip",
+        "runtime/client-visual-assets.zip",
+        "runtime/client-visual-manifest.json",
+        "runtime/server-animation-manifest.json",
+        "runtime/server-animations.pigg",
+        "runtime/server-cache-manifest.json",
+        "runtime/server-caches.zip"
+      ],
+      "reference": [
+        "atlas/atlas-assets.zip"
+      ],
+      "zones": [
+        "runtime/kings-row-beacon-manifest.json",
+        "runtime/kings-row-beacons.zip",
+        "runtime/zones-world-supplement-manifest.json",
+        "runtime/zones-world-supplement.zip"
+      ]
+    },
+    "asset_installers": {
+      "scope": "actual_packaged_guest_external_asset_installers",
+      "animation_count": 5878,
+      "fresh_create_payload_verified": true,
+      "saved_reopen_payload_verified": true,
+      "atlas_cold_and_reuse_verified": true,
+      "kings_cold_and_reuse_verified": true,
+      "prepared_caches_verified": true,
+      "full_private_worktree_mirror_executed": false,
+      "native_runtime_booted": false,
+      "physical_execution_validated": false
+    },
+    "full_startup": {
+      "format": 1,
+      "status": "passed",
+      "scope": "actual_packaged_guest_full_startup_orchestration",
+      "asset_version": "1.0.0",
+      "game_archive": {
+        "bytes": 11231995,
+        "sha256": "20445586ef4271b5f1ce34dd105d4131b8ec1a73fbd88f21c23b700a6913bfe6"
+      },
+      "server_fx_catalog_cold_and_reuse_verified": true,
+      "client_full_fx_unchanged": true,
+      "client_full_fx_pin": {
+        "bytes": 58505496,
+        "sha256": "3b1af6d146db65aa2a00fa9dbe4502776409cdea15f94f717e5455a3cda5fe70"
+      },
+      "original_import": {
+        "files": 173011,
+        "bytes": 2977730517,
+        "all_leaf_sha256_checked": true,
+        "inventory_sha256": "52a6d86f7dafdaeb4f98e6314484d67cdfc6faf288b01adfb34876ae1594f186",
+        "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+        "android_import_service_executed": false
+      },
+      "full_private_worktree_mirror_executed": true,
+      "full_prepare_runtime_executed": true,
+      "fresh_create_cold_preparation_verified": true,
+      "saved_reopen_warm_preparation_verified": true,
+      "full_kings_row_cold_and_reuse_preparation_verified": true,
+      "client_visual_orchestration_executed": true,
+      "client_visual_readiness_boundary_stubbed": true,
+      "complete_runtime_asset_inventory_verified": true,
+      "client_audio_orchestration_executed": true,
+      "owned_cache_return_and_credential_removal_executed": true,
+      "atlas_manual_and_kings_stock_dbserver_pins_verified": true,
+      "cache_cleanup_prerequisites_stubbed_no_native_processes_started": true,
+      "native_runtime_booted": false,
+      "physical_execution_validated": false,
+      "live_database_and_saved_character_executed": false,
+      "process_and_sql_boundary": "not_executed",
+      "gate_inventory": [
+        {
+          "stage": "original_import_leaf_inventory",
+          "execution": "executed_exact_original_bytes",
+          "regression_suites": []
+        },
+        {
+          "stage": "client_worktree_cold_and_reuse",
+          "execution": "executed_production_method",
+          "regression_suites": [
+            "test_stable_worktree_identity"
+          ]
+        },
+        {
+          "stage": "atlas_full_prepare_cold_and_reopen_reuse",
+          "execution": "executed_production_method",
+          "regression_suites": [
+            "test_character_map_data",
+            "test_server_worktree_reuse"
+          ]
+        },
+        {
+          "stage": "kings_full_prepare_cold_and_reuse",
+          "execution": "executed_production_method",
+          "regression_suites": [
+            "test_character_monorail",
+            "test_character_zoning"
+          ]
+        },
+        {
+          "stage": "client_visual_animation_zone_preparation",
+          "execution": "executed_production_method_after_stubbed_readiness",
+          "regression_suites": [
+            "test_client_asset_closure_package"
+          ]
+        },
+        {
+          "stage": "profile_eligibility_and_preservation",
+          "execution": "separate_regression_and_real_postgresql_gate",
+          "regression_suites": [
+            "test_character_profile_eligibility",
+            "test_fresh_profile_recovery",
+            "test_character_reopen_guest"
+          ]
+        },
+        {
+          "stage": "postgresql_persistent_profile_initialization",
+          "execution": "not_executed_native_boundary",
+          "regression_suites": [
+            "test_login_guest"
+          ]
+        },
+        {
+          "stage": "wine_registration_odbc_driver_loading",
+          "execution": "not_executed_native_boundary",
+          "regression_suites": [
+            "test_runtime_setup_reuse"
+          ]
+        },
+        {
+          "stage": "native_dbserver_fixed_inputs_loopback_dispatch_schema",
+          "execution": "not_executed_native_boundary",
+          "regression_suites": [
+            "test_character_server",
+            "test_login_guest"
+          ]
+        },
+        {
+          "stage": "native_mapserver_tick_listener_and_protocol_readiness",
+          "execution": "not_executed_native_boundary",
+          "regression_suites": [
+            "test_character_readiness",
+            "test_character_server"
+          ]
+        },
+        {
+          "stage": "native_game_login_creator_connection_and_gpu_rendering",
+          "execution": "not_executed_native_boundary",
+          "regression_suites": [
+            "test_character_guest",
+            "test_character_reopen_guest"
+          ]
+        },
+        {
+          "stage": "logout_delivery_native_timer_and_committed_full_sql_save",
+          "execution": "not_executed_native_boundary",
+          "regression_suites": [
+            "test_character_server",
+            "test_character_reopen_guest",
+            "test_startup_bundle_save"
+          ]
+        },
+        {
+          "stage": "next_session_preserved_identity_power_costume_and_position",
+          "execution": "not_executed_native_boundary",
+          "regression_suites": [
+            "test_character_reopen_guest",
+            "test_character_reopen_host"
+          ]
+        },
+        {
+          "stage": "native_station_monorail_transfer_and_return",
+          "execution": "not_executed_native_boundary",
+          "regression_suites": [
+            "test_character_monorail",
+            "test_character_zoning"
+          ]
+        },
+        {
+          "stage": "complete_runtime_asset_inventory_and_client_audio",
+          "execution": "executed_production_method",
+          "regression_suites": [
+            "test_zone_asset_package"
+          ]
+        },
+        {
+          "stage": "android_contentresolver_all_four_imports",
+          "execution": "not_executed_android_boundary",
+          "regression_suites": [
+            "test_asset_pack_import"
+          ]
+        },
+        {
+          "stage": "android_surface_input_lifecycle_capture_and_log_export",
+          "execution": "not_executed_android_boundary",
+          "regression_suites": [
+            "test_character_readiness",
+            "test_character_host"
+          ]
+        }
+      ]
+    },
+    "saved_atlas": {
+      "scope": "actual_packaged_guest_saved_atlas_cold_warm_and_kings_provider",
+      "cases": {
+        "cold": {
+          "selected_map_id": 1,
+          "selected_port": 7001,
+          "selected_world": "City_01_01",
+          "actual_native_processes_started": 0,
+          "controlled_initial_launches": [
+            {
+              "map_id": 1,
+              "port": 7001,
+              "world": "City_01_01",
+              "runtime_role": "private_destination_1",
+              "loopback_only": true,
+              "current_session_owned": true,
+              "native_executable": {
+                "bytes": 7475200,
+                "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+              }
+            }
+          ],
+          "controlled_total_launches": [
+            {
+              "map_id": 1,
+              "port": 7001,
+              "world": "City_01_01",
+              "runtime_role": "private_destination_1",
+              "loopback_only": true,
+              "current_session_owned": true,
+              "native_executable": {
+                "bytes": 7475200,
+                "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+              }
+            },
+            {
+              "map_id": 5,
+              "port": 7003,
+              "world": "City_01_02",
+              "runtime_role": "private_destination_5",
+              "loopback_only": true,
+              "current_session_owned": true,
+              "native_executable": {
+                "bytes": 7475200,
+                "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+              }
+            }
+          ],
+          "sql_baseline": {
+            "sql_boundary": "controlled_read_only_selected_rows_not_PostgreSQL",
+            "selected_row_reads": 8,
+            "rows_unchanged": true,
+            "identity_and_selected_powers_costume_preserved": true,
+            "saved_position": {
+              "containerid": 1,
+              "mapid": null,
+              "staticmapid": 1,
+              "posx": 12.5,
+              "posy": -20.0,
+              "posz": 40.25
+            },
+            "enhancement_fixture": {
+              "scope": "synthetic_read_only_34_field_Boosts_not_player_data",
+              "columns": 34,
+              "row_count": 1,
+              "selected_row_reads": 1,
+              "rows_unchanged": true,
+              "rows_sha256": "6315e3e6f27a8a97e21879474b3d8edc290a13ad83ef31817b1b0a47c3a052a1"
+            },
+            "selected_rows_sha256": "5404fc71cccc858c4aef648655eafdd4d0cb8d1fd6bd3c97a9fd7f5e6aa44c03"
+          },
+          "excluded_client_texture_inventory": {
+            "files": 38986,
+            "bytes": 4663291356,
+            "scope": "host_input_inventory_not_native_reads"
+          },
+          "actual_server_data_files": 165599,
+          "atlas": {
+            "cache_reused": false,
+            "graph_status": "installed_verified_graph",
+            "native_mapserver": {
+              "bytes": 7475200,
+              "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+            },
+            "native_dbserver": {
+              "bytes": 1661440,
+              "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+            }
+          },
+          "kings_on_demand": {
+            "cache_reused": false,
+            "graph_status": "installed_verified_graph",
+            "graph_map_id": 5,
+            "animation_count": 5878,
+            "input_full_byte_proof_reused_files": 5593,
+            "input_full_byte_proof_reused_bytes": 489916442,
+            "input_full_byte_proof_reuse_policy": "exact_full_byte_proved_owned_immutable_provider",
+            "input_payload_bytes_hashed": 10831264,
+            "native_mapserver": {
+              "bytes": 7475200,
+              "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+            },
+            "native_dbserver": {
+              "bytes": 1661440,
+              "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+            }
+          },
+          "native_readiness_scope": "controlled_status_and_progress_bytes_not_native_execution",
+          "world_entry_scope": "controlled_connected_status_not_Game",
+          "minimal_db_before_selected_world": true,
+          "unassigned_prelogin_mapid_preserved": true,
+          "only_selected_map_initially_launched_at_controlled_boundary": true,
+          "initial_native_readiness_separate_from_character_connection": true,
+          "db_schema_and_config_inodes_and_bytes_preserved": true,
+          "destination_runtimes_separate_from_live_db": true,
+          "texture_tree_excluded_from_servers_only": true,
+          "identity_position_powers_costume_preserved": true,
+          "both_caches_returned_after_controlled_cleanup": true,
+          "closed_cache_credentials_removed": true
+        },
+        "warm": {
+          "selected_map_id": 1,
+          "selected_port": 7001,
+          "selected_world": "City_01_01",
+          "actual_native_processes_started": 0,
+          "controlled_initial_launches": [
+            {
+              "map_id": 1,
+              "port": 7001,
+              "world": "City_01_01",
+              "runtime_role": "private_destination_1",
+              "loopback_only": true,
+              "current_session_owned": true,
+              "native_executable": {
+                "bytes": 7475200,
+                "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+              }
+            }
+          ],
+          "controlled_total_launches": [
+            {
+              "map_id": 1,
+              "port": 7001,
+              "world": "City_01_01",
+              "runtime_role": "private_destination_1",
+              "loopback_only": true,
+              "current_session_owned": true,
+              "native_executable": {
+                "bytes": 7475200,
+                "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+              }
+            },
+            {
+              "map_id": 5,
+              "port": 7003,
+              "world": "City_01_02",
+              "runtime_role": "private_destination_5",
+              "loopback_only": true,
+              "current_session_owned": true,
+              "native_executable": {
+                "bytes": 7475200,
+                "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+              }
+            }
+          ],
+          "sql_baseline": {
+            "sql_boundary": "controlled_read_only_selected_rows_not_PostgreSQL",
+            "selected_row_reads": 8,
+            "rows_unchanged": true,
+            "identity_and_selected_powers_costume_preserved": true,
+            "saved_position": {
+              "containerid": 1,
+              "mapid": null,
+              "staticmapid": 1,
+              "posx": 12.5,
+              "posy": -20.0,
+              "posz": 40.25
+            },
+            "enhancement_fixture": {
+              "scope": "synthetic_read_only_34_field_Boosts_not_player_data",
+              "columns": 34,
+              "row_count": 1,
+              "selected_row_reads": 1,
+              "rows_unchanged": true,
+              "rows_sha256": "6315e3e6f27a8a97e21879474b3d8edc290a13ad83ef31817b1b0a47c3a052a1"
+            },
+            "selected_rows_sha256": "5404fc71cccc858c4aef648655eafdd4d0cb8d1fd6bd3c97a9fd7f5e6aa44c03"
+          },
+          "excluded_client_texture_inventory": {
+            "files": 38986,
+            "bytes": 4663291356,
+            "scope": "host_input_inventory_not_native_reads"
+          },
+          "actual_server_data_files": 165599,
+          "atlas": {
+            "cache_reused": true,
+            "graph_status": "reused_verified_graph",
+            "native_mapserver": {
+              "bytes": 7475200,
+              "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+            },
+            "native_dbserver": {
+              "bytes": 1661440,
+              "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+            }
+          },
+          "kings_on_demand": {
+            "cache_reused": true,
+            "graph_status": "reused_verified_graph",
+            "graph_map_id": 5,
+            "animation_count": 5878,
+            "input_full_byte_proof_reused_files": 0,
+            "input_full_byte_proof_reused_bytes": 0,
+            "input_full_byte_proof_reuse_policy": "unchanged_destination_full_byte_graph_receipt",
+            "input_payload_bytes_hashed": 0,
+            "native_mapserver": {
+              "bytes": 7475200,
+              "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+            },
+            "native_dbserver": {
+              "bytes": 1661440,
+              "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+            }
+          },
+          "native_readiness_scope": "controlled_status_and_progress_bytes_not_native_execution",
+          "world_entry_scope": "controlled_connected_status_not_Game",
+          "minimal_db_before_selected_world": true,
+          "unassigned_prelogin_mapid_preserved": true,
+          "only_selected_map_initially_launched_at_controlled_boundary": true,
+          "initial_native_readiness_separate_from_character_connection": true,
+          "db_schema_and_config_inodes_and_bytes_preserved": true,
+          "destination_runtimes_separate_from_live_db": true,
+          "texture_tree_excluded_from_servers_only": true,
+          "identity_position_powers_costume_preserved": true,
+          "both_caches_returned_after_controlled_cleanup": true,
+          "closed_cache_credentials_removed": true
+        }
+      },
+      "boundary": {
+        "legacy_adapter_bytes_changed": true,
+        "legacy_scenarios_preserved": true,
+        "controlled_sql_fixture_revision": 2,
+        "production_preparation_methods_patched": false,
+        "production_command_and_readiness_methods_patched": false,
+        "saved_map_sql_boundary": "controlled_read_only_selected_rows_not_PostgreSQL",
+        "process_creation_boundary": "recorded_command_no_executable_started",
+        "native_readiness_boundary": "controlled_status_and_progress_bytes_not_native_execution",
+        "character_world_boundary": "controlled_connected_status_not_Game",
+        "client_visual_readiness_boundary": "controlled_host_facts_no_native_readiness",
+        "cleanup_prerequisites": "controlled_no_native_processes_started",
+        "native_runtime_booted": false,
+        "physical_execution_validated": false
+      },
+      "native_runtime_booted": false,
+      "physical_execution_validated": false
+    },
+    "saved_kings": {
+      "scope": "actual_packaged_guest_saved_kings_preparation",
+      "cases": {
+        "cold": {
+          "selected_map_id": 5,
+          "selected_port": 7003,
+          "unassigned_prelogin_mapid_preserved": true,
+          "db_schema_only_before_destination": true,
+          "atlas_deferred_until_explicit_prepare": true,
+          "atlas_runtime_separate_from_live_db": true,
+          "db_schema_and_config_inodes_and_bytes_preserved": true,
+          "texture_tree_excluded_from_server_only": true,
+          "native_processes_started": 0,
+          "sql_baseline": {
+            "sql_boundary": "controlled_read_only_selected_rows_not_PostgreSQL",
+            "selected_row_reads": 8,
+            "rows_unchanged": true,
+            "identity_and_selected_powers_costume_preserved": true,
+            "saved_position": {
+              "containerid": 1,
+              "mapid": null,
+              "staticmapid": 5,
+              "posx": 12.5,
+              "posy": -20.0,
+              "posz": 40.25
+            },
+            "enhancement_fixture": {
+              "scope": "synthetic_read_only_34_field_Boosts_not_player_data",
+              "columns": 34,
+              "row_count": 1,
+              "selected_row_reads": 1,
+              "rows_unchanged": true,
+              "rows_sha256": "6315e3e6f27a8a97e21879474b3d8edc290a13ad83ef31817b1b0a47c3a052a1"
+            },
+            "selected_rows_sha256": "5404fc71cccc858c4aef648655eafdd4d0cb8d1fd6bd3c97a9fd7f5e6aa44c03"
+          },
+          "kings": {
+            "cache_reused": false,
+            "graph_status": "installed_verified_graph",
+            "graph_map_id": 5,
+            "animation_count": 5878,
+            "prepared_cache_status": "installed",
+            "native_mapserver": {
+              "bytes": 7475200,
+              "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+            },
+            "native_dbserver": {
+              "bytes": 1661440,
+              "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+            }
+          },
+          "atlas_on_demand": {
+            "cache_reused": false,
+            "graph_status": "installed_verified_graph",
+            "native_mapserver": {
+              "bytes": 7475200,
+              "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+            },
+            "native_dbserver": {
+              "bytes": 1661440,
+              "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+            }
+          },
+          "source_projection": {
+            "policy": "exact_native_excluded_texture_directory_v1",
+            "excluded_top_level_directories": [
+              "texture_library"
+            ],
+            "native_consumer_sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363",
+            "native_source_path": "MapServer/src/svr/svr_init.c",
+            "native_source_sha256": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+            "client_inputs_modified": false,
+            "native_bytes_changed": false
+          },
+          "excluded_client_texture_inventory": {
+            "files": 38986,
+            "bytes": 4663291356,
+            "scope": "host_input_inventory_not_native_reads"
+          },
+          "actual_server_data_files": 165599,
+          "both_caches_returned_after_controlled_cleanup": true,
+          "closed_cache_credentials_removed": true
+        },
+        "warm": {
+          "selected_map_id": 5,
+          "selected_port": 7003,
+          "unassigned_prelogin_mapid_preserved": true,
+          "db_schema_only_before_destination": true,
+          "atlas_deferred_until_explicit_prepare": true,
+          "atlas_runtime_separate_from_live_db": true,
+          "db_schema_and_config_inodes_and_bytes_preserved": true,
+          "texture_tree_excluded_from_server_only": true,
+          "native_processes_started": 0,
+          "sql_baseline": {
+            "sql_boundary": "controlled_read_only_selected_rows_not_PostgreSQL",
+            "selected_row_reads": 8,
+            "rows_unchanged": true,
+            "identity_and_selected_powers_costume_preserved": true,
+            "saved_position": {
+              "containerid": 1,
+              "mapid": null,
+              "staticmapid": 5,
+              "posx": 12.5,
+              "posy": -20.0,
+              "posz": 40.25
+            },
+            "enhancement_fixture": {
+              "scope": "synthetic_read_only_34_field_Boosts_not_player_data",
+              "columns": 34,
+              "row_count": 1,
+              "selected_row_reads": 1,
+              "rows_unchanged": true,
+              "rows_sha256": "6315e3e6f27a8a97e21879474b3d8edc290a13ad83ef31817b1b0a47c3a052a1"
+            },
+            "selected_rows_sha256": "5404fc71cccc858c4aef648655eafdd4d0cb8d1fd6bd3c97a9fd7f5e6aa44c03"
+          },
+          "kings": {
+            "cache_reused": true,
+            "graph_status": "reused_verified_graph",
+            "graph_map_id": 5,
+            "animation_count": 5878,
+            "prepared_cache_status": "preserved_existing_native_caches",
+            "native_mapserver": {
+              "bytes": 7475200,
+              "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+            },
+            "native_dbserver": {
+              "bytes": 1661440,
+              "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+            }
+          },
+          "atlas_on_demand": {
+            "cache_reused": true,
+            "graph_status": "reused_verified_graph",
+            "native_mapserver": {
+              "bytes": 7475200,
+              "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+            },
+            "native_dbserver": {
+              "bytes": 1661440,
+              "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+            }
+          },
+          "source_projection": {
+            "policy": "exact_native_excluded_texture_directory_v1",
+            "excluded_top_level_directories": [
+              "texture_library"
+            ],
+            "native_consumer_sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363",
+            "native_source_path": "MapServer/src/svr/svr_init.c",
+            "native_source_sha256": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+            "client_inputs_modified": false,
+            "native_bytes_changed": false
+          },
+          "excluded_client_texture_inventory": {
+            "files": 38986,
+            "bytes": 4663291356,
+            "scope": "host_input_inventory_not_native_reads"
+          },
+          "actual_server_data_files": 165599,
+          "both_caches_returned_after_controlled_cleanup": true,
+          "closed_cache_credentials_removed": true
+        }
+      },
+      "process_and_sql_boundary": "not_executed",
+      "native_runtime_booted": false,
+      "physical_execution_validated": false,
+      "live_database_and_saved_character_executed": false
+    },
+    "claim_scope": "Current host qualification executes every changed saved-map/report/cache/SQL scope, all applicable retained regressions and actual packaged fresh-create/reopen Atlas/Kings preparation. The retained helper keeps its original .35 Windows process/console/lifecycle qualification and owner; Game/Db/Map native consumers, GPU/Wine/FEX and Assets 1.0.0 remain exact. Seven immutable historical packaging suites and unchanged certificate regression retain authenticated .35 source-bound results; nested .32 native producers keep their original identities and are never rebuilt or relabelled. Native reader/dependency/animation regression suites execute with original authenticated fixture inputs. Strict isolated PostgreSQL saved-map fixtures do not read or mutate the physical THORHERO database. No host gate establishes physical Kings Row direct reopen, graphics, save/export, startup speed or travel."
+  },
+  "companion_workflows": [
+    {
+      "id": 38346815358,
+      "path": ".github/workflows/map-startup-prerequisites.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346815358"
+    },
+    {
+      "id": 38346815625,
+      "path": ".github/workflows/character-session.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346815625"
+    },
+    {
+      "id": 38346815243,
+      "path": ".github/workflows/android-diagnostic.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346815243"
+    },
+    {
+      "id": 38346815285,
+      "path": ".github/workflows/client-performance-report.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346815285"
+    },
+    {
+      "id": 38346815256,
+      "path": ".github/workflows/android-presentation.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346815256"
+    },
+    {
+      "id": 38346815200,
+      "path": ".github/workflows/android-atlas-import.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346815200"
+    },
+    {
+      "id": 38346815230,
+      "path": ".github/workflows/character-persistence.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346815230"
+    },
+    {
+      "id": 38346815240,
+      "path": ".github/workflows/android-atlas-game.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346815240"
+    },
+    {
+      "id": 38346815274,
+      "path": ".github/workflows/postgresql.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346815274"
+    },
+    {
+      "id": 38346809139,
+      "path": ".github/workflows/android-ui-beacon.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809139"
+    },
+    {
+      "id": 38346809142,
+      "path": ".github/workflows/android-client-recovery.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809142"
+    },
+    {
+      "id": 38346809234,
+      "path": ".github/workflows/android-reopen-startup-repair.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809234"
+    },
+    {
+      "id": 38346809233,
+      "path": ".github/workflows/android-storage-cleanup.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809233"
+    },
+    {
+      "id": 38346809237,
+      "path": ".github/workflows/android-startup-schedule.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809237"
+    },
+    {
+      "id": 38346809241,
+      "path": ".github/workflows/android-client-render-pipeline.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809241"
+    },
+    {
+      "id": 38346809217,
+      "path": ".github/workflows/android-client-asset-closure.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809217"
+    },
+    {
+      "id": 38346809208,
+      "path": ".github/workflows/android-task-gate.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809208"
+    },
+    {
+      "id": 38346809244,
+      "path": ".github/workflows/android-client-render-queue.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809244"
+    },
+    {
+      "id": 38346809254,
+      "path": ".github/workflows/android-client-gpu-repair.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809254"
+    },
+    {
+      "id": 38346809095,
+      "path": ".github/workflows/android-client-loading.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809095"
+    },
+    {
+      "id": 38346809094,
+      "path": ".github/workflows/android-levelup-ui-repair.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809094"
+    },
+    {
+      "id": 38346809124,
+      "path": ".github/workflows/android-client-zoning.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809124"
+    },
+    {
+      "id": 38346809140,
+      "path": ".github/workflows/android-client-gpu-profile.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809140"
+    },
+    {
+      "id": 38346809214,
+      "path": ".github/workflows/android-storage-recovery.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809214"
+    },
+    {
+      "id": 38346809198,
+      "path": ".github/workflows/android-startup-bundle.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809198"
+    },
+    {
+      "id": 38346809239,
+      "path": ".github/workflows/android-client-gameplay-performance.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809239"
+    },
+    {
+      "id": 38346809219,
+      "path": ".github/workflows/android-client-visual.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809219"
+    },
+    {
+      "id": 38346809209,
+      "path": ".github/workflows/android-client-renderer-attribution.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809209"
+    },
+    {
+      "id": 38346809218,
+      "path": ".github/workflows/android-diagnostic.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809218"
+    },
+    {
+      "id": 38346809170,
+      "path": ".github/workflows/android-client-sidebar.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809170"
+    },
+    {
+      "id": 38346809127,
+      "path": ".github/workflows/android-thor-performance.yml",
+      "head_sha": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38346809127"
+    }
+  ],
+  "native_provenance": {
+    "game_producer_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+    "game_producer_run": 37988347729,
+    "map_component_repository_commit": "6c4d1d74f34ecdea8fabcf6238368bf72003878f",
+    "map_native_repository_commit": "d456f06cd82a921964a895885a03c67137cb9257",
+    "map_fx_repository_commit": "d456f06cd82a921964a895885a03c67137cb9257",
+    "component_files": {
+      "MapServer.exe": {
+        "bytes": 7475200,
+        "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+      },
+      "map-startup-animation-native.exe": {
+        "bytes": 714752,
+        "sha256": "715d8d4552963929a3e58f7fdeb0d29ad532f60c569391c206a0d8b962d38077"
+      },
+      "map-startup-animation-native.json": {
+        "bytes": 24310,
+        "sha256": "72eb14a03ca0f2951e07df164f156860ab429bc0c9dbfe5b06f4f35b2c0c95eb"
+      },
+      "map-startup-monorail-native.exe": {
+        "bytes": 128000,
+        "sha256": "eee4ee6d848393e5f14aa75cd7840f40be522b5d308dabb470bbf9489aeb1073"
+      },
+      "map-startup-monorail-native.json": {
+        "bytes": 2178,
+        "sha256": "73dd5a0daba9a2136ab9561cbf4003fdd6db5b05fb0ec53db736b9d17159914d"
+      },
+      "native-map-startup-build.json": {
+        "bytes": 39595,
+        "sha256": "5ee56719f7abc4e12d19670c15398ba3d3b83ee14749ac7941b61e7ea4b291c1"
+      },
+      "server-fx-catalog-manifest.json": {
+        "bytes": 1557,
+        "sha256": "ac29fb381b1ffe5c62b1827d3d41110b3cb8d9558c09ac3f96eb4d77b644dc99"
+      },
+      "server-fx-catalog-native-qualification.json": {
+        "bytes": 215988,
+        "sha256": "9d315e154d91247a568668a3f828cec3bccb39220b4ddb70da9b250361d2ca85"
+      },
+      "server-fx-catalog.bin": {
+        "bytes": 3380680,
+        "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+      }
+    },
+    "producer_artifacts": {
+      "format": 1,
+      "fx": {
+        "artifact": {
+          "bytes": 27932251,
+          "id": 11725180616,
+          "name": "coh-map-startup-qualified-fx",
+          "sha256": "a19ed3eab1a369282fd57536a7feafbe7efe05c6deecfe9f2ea049d3af6879c2"
+        },
+        "repository_commit": "d456f06cd82a921964a895885a03c67137cb9257",
+        "run_id": 38197257421
+      },
+      "native": {
+        "artifact": {
+          "bytes": 3655651,
+          "id": 11724362649,
+          "name": "coh-map-startup-native",
+          "sha256": "3a0df789eb97dc16b156d917e8a4d13f001efaa83240a32a297382abdd83d0c0"
+        },
+        "repository_commit": "d456f06cd82a921964a895885a03c67137cb9257",
+        "run_id": 38197257421
+      },
+      "status": "accepted_native_and_fx_components"
+    },
+    "native_launcher": {
+      "build": {
+        "format": 1,
+        "status": "built",
+        "role": "current_pe32_manual_client_launcher",
+        "repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+        "run_id": 38326347301,
+        "run_url": "https://github.com/Russianranger/coh-android/actions/runs/38326347301",
+        "source_files": {
+          "android/native/client-launcher.c": {
+            "bytes": 12770,
+            "sha256": "1a9b64f233399939f889f6da63004625d4ba9dd72040d17c5ad75e809870bbe8"
+          },
+          "tools/android/interactive/manual_launcher_contract.py": {
+            "bytes": 6300,
+            "sha256": "94d704e07ab30c642085b337239dc6ad7de81f944a9c3fc11b7770c64d58ec18"
+          },
+          "tools/android/interactive/package_manual_launcher.py": {
+            "bytes": 2871,
+            "sha256": "983ab20cba5984c4e8b02d317aa650900a609a175789a521bc3add837957b3ef"
+          },
+          "tools/android/interactive/qualify_manual_launcher_windows.py": {
+            "bytes": 15062,
+            "sha256": "ad6292a58dc2936275dd9df8eebb0b143e7df532329200fe8c23c20071bf55ed"
+          }
+        },
+        "compiler": "i686-w64-mingw32-gcc",
+        "compiler_version": "i686-w64-mingw32-gcc (GCC) 13-posix\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+        "compile_flags": [
+          "-std=c11",
+          "-O2",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-static-libgcc",
+          "-mconsole"
+        ],
+        "link_flags": [
+          "-luser32",
+          "-lkernel32"
+        ],
+        "windows_libraries": [
+          "kernel32.dll",
+          "msvcrt.dll",
+          "user32.dll"
+        ],
+        "executable": {
+          "bytes": 246319,
+          "sha256": "b453c42876408a842a4f3b717ef3857d4f10624f02462b6e1c6ce5bcdca92159"
+        },
+        "previous_helper": {
+          "bytes": 246319,
+          "sha256": "fd8a3724bd009d122fe98e03229e62516b5ee31245db9c093dfaceef73bd11db"
+        },
+        "game_db_map_recompiled": false,
+        "native_fixture_executed": false,
+        "physical_ayn_thor_validated": false
+      },
+      "qualification": {
+        "format": 1,
+        "status": "passed",
+        "role": "current_pe32_manual_client_launcher",
+        "repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+        "run_id": 38326347301,
+        "run_url": "https://github.com/Russianranger/coh-android/actions/runs/38326347301",
+        "build_receipt": {
+          "bytes": 1921,
+          "sha256": "2fbec5fcbeee947998d69e7a8f7b9d4b600be1843317207ffc0fc65407554cb7"
+        },
+        "executable": {
+          "bytes": 246319,
+          "sha256": "b453c42876408a842a4f3b717ef3857d4f10624f02462b6e1c6ce5bcdca92159"
+        },
+        "source_files": {
+          "android/native/client-launcher.c": {
+            "bytes": 12770,
+            "sha256": "1a9b64f233399939f889f6da63004625d4ba9dd72040d17c5ad75e809870bbe8"
+          },
+          "tools/android/interactive/manual_launcher_contract.py": {
+            "bytes": 6300,
+            "sha256": "94d704e07ab30c642085b337239dc6ad7de81f944a9c3fc11b7770c64d58ec18"
+          },
+          "tools/android/interactive/package_manual_launcher.py": {
+            "bytes": 2871,
+            "sha256": "983ab20cba5984c4e8b02d317aa650900a609a175789a521bc3add837957b3ef"
+          },
+          "tools/android/interactive/qualify_manual_launcher_windows.py": {
+            "bytes": 15062,
+            "sha256": "ad6292a58dc2936275dd9df8eebb0b143e7df532329200fe8c23c20071bf55ed"
+          }
+        },
+        "executed_cases": [
+          "cache_generation_mode_retained",
+          "creation_mode_retained",
+          "exact_source_deadline_policy_native_fixture",
+          "invalid_mode_refused",
+          "invalid_session_refused",
+          "local_login_mode_retained",
+          "manual_owned_console_child_exit",
+          "manual_owned_interruption_cleanup",
+          "missing_game_refused"
+        ],
+        "skipped": 0,
+        "windows_platform": "genuine_windows_x86_process_and_console_api",
+        "actual_shipping_helper_executed": true,
+        "actual_owned_child_console_verified": true,
+        "deadline_policy_fixture": {
+          "actual_source_function_compiled": true,
+          "simulated_elapsed_hours": 48,
+          "real_duration_48_hour_run": false,
+          "shipping_helper_binary_modified": false
+        },
+        "game_db_map_executed": false,
+        "physical_ayn_thor_validated": false
+      }
+    },
+    "minimal_db_current": {
+      "actual_native_map_query_executed": true,
+      "actual_retained_dbserver_host_fixture_executed": true,
+      "failures": [],
+      "finished_utc": "2026-10-13T04:33:22.259657+00:00",
+      "format": 1,
+      "fresh_minimal_runtime_each_start": true,
+      "full_runtime_executed": false,
+      "full_schema_and_attributes_restart_preserved": true,
+      "inputs": {
+        "donor_apk": {
+          "bytes": 42048020,
+          "sha256": "c2d859621476e22add673a76c4b6aae65c2143671e50c085d020108b6e19d95e"
+        },
+        "extra_world_data_files": 0,
+        "initial_files": {
+          "CrashRpt.dll": {
+            "bytes": 39424,
+            "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6"
+          },
+          "DbServer.exe": {
+            "bytes": 1664512,
+            "sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba"
+          },
+          "MapServer.exe": {
+            "bytes": 7475200,
+            "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+          },
+          "NxCharacter.dll": {
+            "bytes": 107872,
+            "sha256": "816fefac0c6b3d7da68daf3098a73e7fa0eff326ef83b3dba7f0fe2dcf0bd095"
+          },
+          "NxCooking.dll": {
+            "bytes": 749568,
+            "sha256": "5dc0333de6b18119b04f7a1beace3f5dfaff5754af62a0f4d8def9e73a09063c"
+          },
+          "PhysXCooking.dll": {
+            "bytes": 383840,
+            "sha256": "c6a1a1f4127bef756e8628775de18c57f93bb7cce22403efb3b519ea1f26a28d"
+          },
+          "PhysXCore.dll": {
+            "bytes": 3567456,
+            "sha256": "c1758f8deada5dad54eb384b4f94a43f69b54c6f671cdcabef4f64d9c6f1da3a"
+          },
+          "PhysXDevice.dll": {
+            "bytes": 65536,
+            "sha256": "6b9f40f2da693b935163935c7ab56847bf11f7160f5b268c4e4881d2973d9cb7"
+          },
+          "PhysXLoader.dll": {
+            "bytes": 64352,
+            "sha256": "db9ea1334a6364c4d02c2e3fe826ab48fb6b07242fff00bd41feb17524fde4de"
+          },
+          "TestClientBridge.exe": {
+            "bytes": 145920,
+            "sha256": "13fcf1b029f092046ba8e3086bf848cb9af98c09e54b4a53f8331cbe4ff9ff2a"
+          },
+          "TestClientCreate.exe": {
+            "bytes": 3143680,
+            "sha256": "9905c581fe222f3543dd3e8b7658d871e50fd5b927e8eb518512db7b710e1e58"
+          },
+          "TestClientResume.exe": {
+            "bytes": 3146240,
+            "sha256": "e9745917dc4943791923d04d4d84578498f67411a0fad3ce1489d85278b157f1"
+          },
+          "cg.dll": {
+            "bytes": 5667432,
+            "sha256": "52a2e2abd29fa59dd7d6dbae4f5b41f94e451bfbc3a7a21957c5cfbb51824b98"
+          },
+          "cgGL.dll": {
+            "bytes": 350824,
+            "sha256": "63bc68bf4e7e660be910e5c2cd47bb637d136f4779a171555cbc4ef0c876b0f4"
+          },
+          "concrt140.dll": {
+            "bytes": 314816,
+            "sha256": "63de7cc3187265b1b1871b84a11b8a91d8f249018dcfb34e910bf3eb2a193d11"
+          },
+          "cudart32_30_9.dll": {
+            "bytes": 290408,
+            "sha256": "08c137f66758b6c342c0dd32fa45e8fc8c9f0c287997e46e515610c2aa84d0ed"
+          },
+          "data/defs/account/loyaltyrewardtree.def": {
+            "bytes": 14112,
+            "sha256": "8b7c96accd8448a235dfa744ff775a3df40bc9e7968b8c192ff53a5de7065d43"
+          },
+          "data/defs/account/product_catalog.def": {
+            "bytes": 523341,
+            "sha256": "5e5375b3aa430b88fbcdada0ac87629fa35d5826ab817d9a9abd65baa677f300"
+          },
+          "data/defs/dbidmaps/invbasedetail.dbidmap": {
+            "bytes": 99378,
+            "sha256": "c2e85bca875e244b5ce54a6aa7e723047309cfc6c4fd2df83dba116fa9be874a"
+          },
+          "data/defs/dbidmaps/invrecipe.dbidmap": {
+            "bytes": 1243209,
+            "sha256": "1abfdc27ba3aba3a0a959266d02fc9db07e506ad91fe6ce40de42fe8ccb42c98"
+          },
+          "data/defs/dbidmaps/invsalvage.dbidmap": {
+            "bytes": 15001,
+            "sha256": "89cffb462496920daef0b43aaeb9b3e9528ab2852965946ab0fdf478ef603060"
+          },
+          "data/defs/dbidmaps/invstoredsalvage.dbidmap": {
+            "bytes": 14805,
+            "sha256": "30fd4951bf3c73f191a701d836a95892a2204181695af07e425fb2ec83e907ad"
+          },
+          "data/defs/proficiencyids.dbidmap": {
+            "bytes": 835,
+            "sha256": "cef52f3d5e2441638a314599861e544e085258792b596fc61033a2400865fa85"
+          },
+          "data/server/db/loadBalanceDefault.cfg": {
+            "bytes": 1886,
+            "sha256": "cf6274ced5409bd9316e3f90456610753f0de37da01c0b68dc63cf7d24baf76b"
+          },
+          "data/server/db/loadBalanceShardSpecific.cfg": {
+            "bytes": 71,
+            "sha256": "ce46881bc60c94f6e35854f68cea078a726f8b549ba3a6f63980b95aabe6a63c"
+          },
+          "data/server/db/maps.db": {
+            "bytes": 74291,
+            "sha256": "8aaa5085acfc86eae7b6a395da6c8ac4348eba503b71e845fdbeeb4725c53cf7"
+          },
+          "data/server/db/schemas/arenaevents.schema.html": {
+            "bytes": 7616,
+            "sha256": "f028cb642384bf2731084bd1a5f8866efb40f048c292151e2e1136b1cf322097"
+          },
+          "data/server/db/schemas/arenaplayers.schema.html": {
+            "bytes": 12872,
+            "sha256": "b2546884eca05924265968f2dba3f355c454e9efa4bc874dd9b252f44e14de82"
+          },
+          "data/server/db/schemas/autocommands.schema.html": {
+            "bytes": 659,
+            "sha256": "d07b2749e211e693f8ced6e2e026df409bca3b84f90ab7b8055150b9ecb5e80f"
+          },
+          "data/server/db/schemas/base.schema.html": {
+            "bytes": 578,
+            "sha256": "da23628c5ca2a5440c6e845f3f0e559b833fb4e49aa81fbec9c1999ae6757912"
+          },
+          "data/server/db/schemas/baseraids.schema.html": {
+            "bytes": 1347,
+            "sha256": "eae2323c44f91e443a40f1b0497b163e8408c8b0aacbdb99ee01be2aded68f38"
+          },
+          "data/server/db/schemas/email.schema.html": {
+            "bytes": 726,
+            "sha256": "5144dc321af4b1254f0d030aea55cd8bdbc13cd15bb275df421a10ff39e0cfc4"
+          },
+          "data/server/db/schemas/ents.schema.html": {
+            "bytes": 84724,
+            "sha256": "45ff4768d29beda2130c2fbcad3a9fc29a3fe647be7e09cb2f52397f32289903"
+          },
+          "data/server/db/schemas/eventhistory.schema.html": {
+            "bytes": 10832,
+            "sha256": "e2b875f95a94de59800cdcc8210fdadd2b5289d05e78970906e2ec357ea79cac"
+          },
+          "data/server/db/schemas/itemofpowergames.schema.html": {
+            "bytes": 588,
+            "sha256": "75056a653f2fdfc1a4024efd16d7fbe6d64e1f101f82adc3736fb507fbda1c94"
+          },
+          "data/server/db/schemas/itemsofpower.schema.html": {
+            "bytes": 552,
+            "sha256": "2f74c08fb12ccad248bc79bdff15a2d0d7540aeab5e13e725bf8e1f971747f39"
+          },
+          "data/server/db/schemas/leagues.schema.html": {
+            "bytes": 956,
+            "sha256": "223e2e670bfc7d8db5f328c318facbfb32f990617c45be0cde3b815dbbca1aa2"
+          },
+          "data/server/db/schemas/levelingpacts.schema.html": {
+            "bytes": 3264,
+            "sha256": "5309a01b56a09c0be35453cdb7a9b804d1a7730d8f757376c1465289317f6bcb"
+          },
+          "data/server/db/schemas/mapgroups.schema.html": {
+            "bytes": 657,
+            "sha256": "24953f199c18d171acd8ff911f72c1b7de32e07044c0b34a2149b558c2443314"
+          },
+          "data/server/db/schemas/miningaccumulator.schema.html": {
+            "bytes": 849,
+            "sha256": "4ed5e8b7eb04924329e9c368009997685f36d7cf69956d7d3f33b384f193dbf6"
+          },
+          "data/server/db/schemas/offline.schema.html": {
+            "bytes": 260,
+            "sha256": "360559f24f260fce881ac73224297954cf4a2c6ba224d3731e6ee725f15eceae"
+          },
+          "data/server/db/schemas/petitions.schema.html": {
+            "bytes": 1140,
+            "sha256": "5aa34925218aa1cf04396418fb82ab7b9a210c42fa9c2af31ecc4ac0ffbb9371"
+          },
+          "data/server/db/schemas/sgraidinfos.schema.html": {
+            "bytes": 722,
+            "sha256": "5c62468d70c12d307af10156f8330eb7f995f75d9fb29d5af53d46b9318f49b8"
+          },
+          "data/server/db/schemas/shardaccounts.schema.html": {
+            "bytes": 1965,
+            "sha256": "9e3414e061f64fc7757c02380256123932da58d40c21f31d62fb95a1b9b5f34a"
+          },
+          "data/server/db/schemas/supergroups.schema.html": {
+            "bytes": 8458,
+            "sha256": "37356f778dc9d7874ba7a5d24df127dfa83f9be41d10436fe564f5392cc84487"
+          },
+          "data/server/db/schemas/taskforces.schema.html": {
+            "bytes": 9571,
+            "sha256": "e1fca83efbd2741b3b3e3a0858d59628a8967094204819061f14008dd05f6bf9"
+          },
+          "data/server/db/schemas/teamups.schema.html": {
+            "bytes": 6678,
+            "sha256": "ee7d2e5958861206dcf03659d7eb150d9bcca57397226613e0454f75d8b1c7a1"
+          },
+          "data/server/db/schemas/testdatabasetypes.schema.html": {
+            "bytes": 1253,
+            "sha256": "a1439c7f7e333c81c170e9c555497664006dd4510c0dea9db09f8874837c8e1b"
+          },
+          "data/server/db/servers.cfg": {
+            "bytes": 12939,
+            "sha256": "539933dabd369fe57fde2c833f44317105faa77df4a7ff04ada32dfea3c8851d"
+          },
+          "data/server/db/templates/arenaevents.template": {
+            "bytes": 2194,
+            "sha256": "952f7404eccc9cf8726e65aa3fa4451784cf4f99224ba2b4cf9e4505af35560e"
+          },
+          "data/server/db/templates/arenaplayers.template": {
+            "bytes": 3219,
+            "sha256": "9c0a9347b2da737717954be9aa5614d43e666139cb7c44da0387880838bd2f40"
+          },
+          "data/server/db/templates/autocommands.template": {
+            "bytes": 102,
+            "sha256": "a6c9aeb57a944e1de4a239f9e1844dda71284a5b6c4667862b5f0ac017b967cc"
+          },
+          "data/server/db/templates/badges.attribute": {
+            "bytes": 51724,
+            "sha256": "789ed244ac7c686cc275a8a2914de95bbb044b00483875df950a713f05b66fea"
+          },
+          "data/server/db/templates/badgestats.attribute": {
+            "bytes": 62106,
+            "sha256": "ec57e497c6c044269d8d7e207b0869400ceeb18a03b94bda1a9d00a9d99cced2"
+          },
+          "data/server/db/templates/base.template": {
+            "bytes": 92,
+            "sha256": "32fa8e9a1f6f1bc72a4acfcc1d405d4b44412d7cda41fbceeb019dfde2a170c9"
+          },
+          "data/server/db/templates/baseraids.template": {
+            "bytes": 269,
+            "sha256": "644bd30dade4d7e958c2c35fd4251b9f5a67976510a6ef9eef310d7e311985b0"
+          },
+          "data/server/db/templates/email.template": {
+            "bytes": 179,
+            "sha256": "3966878019f3af7ac652640746d80bd5c22b85dcfd1bd1033288b853e75ac6fb"
+          },
+          "data/server/db/templates/ents.template": {
+            "bytes": 164583,
+            "sha256": "295e82df5c9cd84d0571b5e5e4f44caf7a68e35faadfdb57952bf4fe9308c913"
+          },
+          "data/server/db/templates/eventhistory.template": {
+            "bytes": 3879,
+            "sha256": "f535b56670e5b19b0a4d983d9eba021b00441474b27b65f3ea46ee73f1645f87"
+          },
+          "data/server/db/templates/itemofpowergames.template": {
+            "bytes": 100,
+            "sha256": "0e7b59085ee4b7f7ed5495a80dd06fb91b35ee338b9c9d09cce2390560309aca"
+          },
+          "data/server/db/templates/itemsofpower.template": {
+            "bytes": 99,
+            "sha256": "16befccbbad58e87d75455af8d240da5f299eaa08689cfc7b85e5e2ebb60434c"
+          },
+          "data/server/db/templates/leagues.template": {
+            "bytes": 112,
+            "sha256": "2f1018974bed27a271cc5c87e673356db2df7c5a6c9c7a3bf0b6a5c22b67536b"
+          },
+          "data/server/db/templates/levelingpacts.template": {
+            "bytes": 1428,
+            "sha256": "4fd6076ba33e8aebebe516dbde74d324721f3984047895bc2f6b3a1a7517b365"
+          },
+          "data/server/db/templates/mapgroups.template": {
+            "bytes": 198,
+            "sha256": "18a9bcbf1a566d3986b9fd2e31597093e4fe0f1dbd1f7142d573fc39bc496838"
+          },
+          "data/server/db/templates/miningaccumulator.template": {
+            "bytes": 198,
+            "sha256": "9e4646316ec1f4ef1cd0db486d3e2a68d2e17caaf84541dcdc837f46c349edeb"
+          },
+          "data/server/db/templates/offline.template": {
+            "bytes": 15,
+            "sha256": "1e55bf16fd0749d042c3481c2fdd28f339a17bd8eebec9d27f458f2f6265a67b"
+          },
+          "data/server/db/templates/petitions.template": {
+            "bytes": 260,
+            "sha256": "c28117e1efa5a2a487b330664d4349b524bf4482d862917ef1f469864895b045"
+          },
+          "data/server/db/templates/pophelp.attribute": {
+            "bytes": 2185,
+            "sha256": "34195086d3223c717dca5e1cd00bc35a947a05d5fe31b2408a863e85aea617a1"
+          },
+          "data/server/db/templates/sgraidinfos.template": {
+            "bytes": 95,
+            "sha256": "7bda51ccf348242d5bf8399a03381a480d6555a75c5aa0038b615afa611ae353"
+          },
+          "data/server/db/templates/shardaccounts.template": {
+            "bytes": 497,
+            "sha256": "388571567e563cfb3943d0e1c428e23b6f3d24c9a12f9bc0262b48972f964619"
+          },
+          "data/server/db/templates/statserver_supergroupstats.template": {
+            "bytes": 8348,
+            "sha256": "568f516d0b7f48b26de768d16442a7541ed280889ff8bcfb195c305343f098bd"
+          },
+          "data/server/db/templates/supergroup_badges.attribute": {
+            "bytes": 1039,
+            "sha256": "d63b3c490fc23086aa6af4fd9add6c2af0892452011d32d6984cac2198d65a7e"
+          },
+          "data/server/db/templates/supergroup_badgestats.attribute": {
+            "bytes": 6897,
+            "sha256": "f67e5677a244b919f674d545c990339caa674d1f8c299b8e0540dc2c8d65a6e9"
+          },
+          "data/server/db/templates/supergroups.template": {
+            "bytes": 2615,
+            "sha256": "a79ed03f51c0a2e7d33b9d4fd784c14970c42d63a53be7ac69d026fd80b73c78"
+          },
+          "data/server/db/templates/taskforces.template": {
+            "bytes": 3063,
+            "sha256": "47c405e582165df6d688b15b526cd9c70d0cf3c0ae005683dcd48c50526dffae"
+          },
+          "data/server/db/templates/teamups.template": {
+            "bytes": 2141,
+            "sha256": "ed2a5378f13d0503db0e38f03132e7888f150943de3a674eb5ef5a4977dc9ffc"
+          },
+          "data/server/db/templates/testdatabasetypes.template": {
+            "bytes": 491,
+            "sha256": "76e538c71248157120260f77bc21d84c940eecaed0cb5d69d958e5a689e642f1"
+          },
+          "data/server/db/templates/vars.attribute": {
+            "bytes": 1928476,
+            "sha256": "26c5f2bba77ab66ef7619c995f343633dc1748297dc9963605734ef3aa1053bb"
+          },
+          "msvcp140.dll": {
+            "bytes": 618944,
+            "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a"
+          },
+          "msvcp140_1.dll": {
+            "bytes": 33728,
+            "sha256": "b08edd7954ae9954d24eb344a8b0116a980c60179ff1b92d5219639e21028cc2"
+          },
+          "msvcp140_2.dll": {
+            "bytes": 261056,
+            "sha256": "5e3c52721f03d5f546d64dfdfa38302b1fc3eb79dc44a1ec7a3af69abb9653fe"
+          },
+          "msvcp140_atomic_wait.dll": {
+            "bytes": 57272,
+            "sha256": "e1142584f337b9b650d6d888652cb24f7b16a7dd93476840a050047bb00f0463"
+          },
+          "msvcp140_codecvt_ids.dll": {
+            "bytes": 30648,
+            "sha256": "d4874db10c63990323696984eb2e2e799d952a1846437924c92153065b7259e4"
+          },
+          "physxcudart_20.dll": {
+            "bytes": 197912,
+            "sha256": "e7b1965ab2ba441c2f4040f6203c10e7d9f02bfbb794a25d2a022d95b6f01c70"
+          },
+          "vccorlib140.dll": {
+            "bytes": 287160,
+            "sha256": "d50aab1e201dfb268d6010d4c3b5bf7a3fb8dd1f38296135b43c9e29821e5586"
+          },
+          "vcruntime140.dll": {
+            "bytes": 123328,
+            "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3"
+          },
+          "vcruntime140_threads.dll": {
+            "bytes": 36280,
+            "sha256": "7c372b0547fb45abd06e4bbdf5475cc99c3a915c998ef7e5c263de4762944e3b"
+          }
+        },
+        "manual_dbserver": {
+          "bytes": 1664512,
+          "sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba"
+        },
+        "mapserver": {
+          "bytes": 7475200,
+          "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+        },
+        "original_dbserver_package": "0cf5d97a8ddfff7da8dccc95b685ec1cc3d1edd1b62db9651c14315662c46142",
+        "retained_startup_manifest": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+        "schema_input_files": 62,
+        "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"
+      },
+      "launch_config": "exact_current_guest_game_config; disposable database and least-privilege coh_game role",
+      "native_character_gameplay_validated": false,
+      "native_world_started": false,
+      "owned_cleanup_verified": true,
+      "physical_execution_validated": false,
+      "player_profile_opened": false,
+      "postgresql_disposable_cluster_only": true,
+      "repository_commit": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+      "run_id": 38346809297,
+      "run_url": "https://github.com/Russianranger/coh-android/actions/runs/38346809297",
+      "scope": "actual_retained_manual_dbserver_minimal_schema_native_windows",
+      "source_pins": {
+        "android/guest/character_zoning.py": {
+          "bytes": 80879,
+          "sha256": "716a9ebd963c45abb2f10b5396013f4c4b87a284cfc887c657fe7423d7a5853f"
+        },
+        "android/guest/dbserver_diagnostic.py": {
+          "bytes": 50159,
+          "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+        },
+        "android/guest/game_diagnostic.py": {
+          "bytes": 80208,
+          "sha256": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737"
+        },
+        "android/guest/game_hang_evidence.py": {
+          "bytes": 22400,
+          "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+        },
+        "android/guest/local_character_server.py": {
+          "bytes": 207503,
+          "sha256": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180"
+        },
+        "android/guest/local_login_server.py": {
+          "bytes": 21351,
+          "sha256": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de"
+        },
+        "database/postgresql/001-coh-compat.sql": {
+          "bytes": 7788,
+          "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+        },
+        "database/postgresql/pg_local.py": {
+          "bytes": 11892,
+          "sha256": "d2665940bd0f932691c8a78c8b2aceaf638fba7550257ad31a089f79672689a0"
+        },
+        "database/postgresql/tests/character_console.py": {
+          "bytes": 15969,
+          "sha256": "a9b2bd409e6c6e32af2edac5af01beb95bc1f45ce2be5f7f5d44ba1dab4cd5f0"
+        },
+        "database/postgresql/tests/run_generated_schema.py": {
+          "bytes": 24884,
+          "sha256": "938d1dbbea79e9f39a74d0fdddc850b8c99b317541279b232c208a1bff7bbdeb"
+        },
+        "database/postgresql/tests/run_network_ack.py": {
+          "bytes": 25939,
+          "sha256": "c13c09f38abd727a8a76ca44c4c1fb8135633174e7a97a6d376f49ab02a30e9b"
+        },
+        "database/wine-dbserver/overlay/DBServer/src/wine_dispatch_progress.c": {
+          "bytes": 4227,
+          "sha256": "e02c2b059bf0ed11f1e48327523be17430dbc39711ef19338857392e8386efb0"
+        },
+        "database/wine-dbserver/overlay/DBServer/src/wine_dispatch_progress.h": {
+          "bytes": 2521,
+          "sha256": "607ff88eb950bd40be512d2b302965779c640076c24aa758313086c5c1b86e1b"
+        },
+        "tools/android/interactive/fixtures/minimal-db-native-inputs-0.13.34.json": {
+          "bytes": 11985,
+          "sha256": "d39162bbd4768f9d233077772a6c73604f5d2266f9a3b832f13d0b46d7505a7d"
+        },
+        "tools/android/interactive/qualify_minimal_db_runtime.py": {
+          "bytes": 27136,
+          "sha256": "3830dcdd5d1cdae4506d30b6d4d46bbc79b4f950de09c1104da0dc82132eb5a9"
+        },
+        "tools/android/interactive/test_minimal_db_runtime_contract.py": {
+          "bytes": 10123,
+          "sha256": "a7371bcc1fb50ada74cc6a836c3aa1aecb7c3cfddc9023a2ea6016f993187f16"
+        }
+      },
+      "sql_mutation_scope": "new_disposable_fixture_only",
+      "started_utc": "2026-10-13T04:33:03.218608+00:00",
+      "status": "passed",
+      "synthetic_fixture_digest": "b48ae05e0256642a1df7c0327d7cb8623d71fa4d6b669df7fe7b22c3dfe71abe",
+      "synthetic_identity_location_restart_preserved": true,
+      "wine_executed": false
+    },
+    "server_archives": {
+      "format": 1,
+      "status": "passed",
+      "archives": {
+        "dbserver-package.tar.gz": {
+          "bytes": 2133821,
+          "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80",
+          "file_count": 9,
+          "extracted_bytes": 4930397
+        },
+        "dbserver-schema.tar.gz": {
+          "bytes": 1139794,
+          "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792",
+          "file_count": 63,
+          "extracted_bytes": 9268640
+        },
+        "game-package.tar.gz": {
+          "bytes": 11231995,
+          "sha256": "20445586ef4271b5f1ce34dd105d4131b8ec1a73fbd88f21c23b700a6913bfe6",
+          "file_count": 26,
+          "extracted_bytes": 29134908
+        }
+      }
+    },
+    "native_producer_relabelled": false
+  },
+  "physical_claims_at_publication": {
+    "physical_recovery_validated": false,
+    "physical_kings_row_zoning_validated": false,
+    "physical_kings_row_reopen_validated": false,
+    "physical_fps_gain_validated": false,
+    "physical_map_startup_speedup_validated": false,
+    "sub_30_second_map_startup_validated": false,
+    "sub_five_minute_total_startup_validated": false,
+    "sub_one_minute_client_start_validated": false
+  },
+  "separate_followup_evidence": "Subsequent user physical testing and successor research are independent of this immutable .36 publication receipt; they must retain their own report/source/producer identities."
+}

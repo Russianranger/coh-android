@@ -1,0 +1,57 @@
+--- a/DBServer/CMakeLists.txt
++++ b/DBServer/CMakeLists.txt
+@@ -164,7 +164,7 @@
+ add_executable(DbServer
+ 	${DbServer_SOURCES} ${DbServer_HEADERS} ${DbServer_GENERATED})
+ # Isolated Wine variant: the stock PostgreSQL source preparation is unchanged.
+-target_sources(DbServer PRIVATE ../Common/sql/wine_odbc.c src/wine_dispatch_progress.c src/wine_fixed_inputs.c src/wine_loopback.c)
++target_sources(DbServer PRIVATE ../Common/sql/wine_odbc.c src/wine_dispatch_progress.c src/wine_fixed_inputs.c src/wine_loopback.c src/wine_manual_atlas.c)
+ target_compile_definitions(DbServer PRIVATE COH_WINE_ODBC=1)
+ option(COH_PG_PERSISTENCE_TESTS "Enable disposable PostgreSQL fixture entry point" OFF)
+ if(COH_PG_PERSISTENCE_TESTS)
+--- a/DBServer/src/dbinit.c
++++ b/DBServer/src/dbinit.c
+@@ -2,6 +2,7 @@
+ #include "wine_dispatch_progress.h"
+ #include "wine_fixed_inputs.h"
+ #include "wine_loopback.h"
++#include "wine_manual_atlas.h"
+ #include <utilitieslib/stdtypes.h>
+ #include "dbserver/auctionservercomm.h"
+ #include "accountservercomm.h"
+@@ -1086,6 +1087,7 @@
+     struct hostent    *host_ent;
+     int            i;
+     bool start_all = (start_static == INT_MAX);
++    int skip_launcher_wait;
+ 
+     initCtrlHandler();
+     lock_id_hashes = stashTableCreateInt(4);
+@@ -1284,6 +1286,13 @@
+     //tryConnectConnServer(server_cfg.conn_server,server_cfg.db_server_id,server_cfg.db_server_name);
+ 
+     launcherCommInit();
++    skip_launcher_wait = cohDbManualAtlasLauncherWait(start_static, server_cfg.fake_auth,
++        server_cfg.auth_server[0] != '\0', server_cfg.queue_server, server_cfg.use_logserver,
++        launcherCount(), launchersStillConnecting());
++    if (skip_launcher_wait < 0) {
++        printf_stderr("DbServer manual Atlas initialization failed (Windows error %lu).\n", GetLastError());
++        exit(2);
++    }
+ 
+     // launchers
+     if (start_static != -1) {
+@@ -1308,10 +1317,11 @@
+             int last_count=0;
+             launcherCommLog(1);
+             timerStart(timer);
+-            printf_stderr("%s Waiting for launchers to link up...\n", timerGetTimeString());
++            if (!skip_launcher_wait)
++                printf_stderr("%s Waiting for launchers to link up...\n", timerGetTimeString());
+             // Wait at least 15 seconds, then wait up to 5 more for 12 launchers to connect (that's all we need for static maps to start)
+             // Additionally, reset the count whenever a launcher connects or if anyone is still connecting
+-            while(timerElapsed(timer) < minTimeToWait && launcherCountStaticMapLaunchers() < minStaticMapLaunchers || timerElapsed(timer) < minTimeToWaitPerLauncher)
++            while(!skip_launcher_wait && ((timerElapsed(timer) < minTimeToWait && launcherCountStaticMapLaunchers() < minStaticMapLaunchers) || timerElapsed(timer) < minTimeToWaitPerLauncher))
+             {
+                 if (launcherCountStaticMapLaunchers()!=last_count || launchersStillConnecting()) {
+                     last_count = launcherCountStaticMapLaunchers();

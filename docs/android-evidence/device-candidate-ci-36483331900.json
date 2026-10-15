@@ -1,0 +1,86 @@
+{
+  "format": 1,
+  "scope": "selected_terminal_github_workflow_evidence",
+  "source_metadata_sha256": "431a7d3d86a632f9793be991ada316fd6070a8942ec183083cfc77abc0883911",
+  "run": {
+    "id": 36483331900,
+    "name": "Thor real DbServer candidate",
+    "head_branch": "codex/character-persistence-continuation",
+    "head_sha": "f7dbba42ec29a1c054d856d71810146f5b53bac6",
+    "path": ".github/workflows/android-diagnostic.yml",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/Russianranger/coh-android/actions/runs/36483331900",
+    "run_attempt": 1,
+    "created_at": "2026-09-28T21:01:55Z",
+    "updated_at": "2026-09-28T21:08:42Z"
+  },
+  "jobs": [
+    {
+      "id": 109134081682,
+      "name": "tooling",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 36483331900
+    },
+    {
+      "id": 109134397995,
+      "name": "apk",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 36483331900
+    },
+    {
+      "id": 109134780891,
+      "name": "runtime",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 36483331900
+    }
+  ],
+  "tooling_summary": [
+    "2026-09-28T21:02:39.8354198Z Ran 147 tests in 15.960s",
+    "2026-09-28T21:02:39.8354541Z OK",
+    "2026-09-28T21:02:45.0087925Z Ran 94 tests in 4.999s",
+    "2026-09-28T21:02:45.0088316Z OK (skipped=8)"
+  ],
+  "artifacts": [
+    {
+      "id": 10998095995,
+      "name": "coh-server-test-native-provenance",
+      "size_in_bytes": 1162455,
+      "digest": "sha256:f0d4cf72e7a495db0e82e4891d915ef6d8b41f41f67ea38123a5c925c3aee826",
+      "created_at": "2026-09-28T21:03:46Z",
+      "expires_at": "2026-12-27T21:01:55Z",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/10998095995/zip"
+    },
+    {
+      "id": 10998045921,
+      "name": "coh-server-test-runtime-inputs",
+      "size_in_bytes": 16531811,
+      "digest": "sha256:32ef286483a8065024a10b451a7a2924838adf51bbb4f4a49c2d8d3d35a00414",
+      "created_at": "2026-09-28T21:03:45Z",
+      "expires_at": "2026-12-27T21:01:55Z",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/10998045921/zip"
+    },
+    {
+      "id": 10997846165,
+      "name": "coh-server-test-apk",
+      "size_in_bytes": 16667390,
+      "digest": "sha256:8fa1a3b663a875580c73dbbcc3e22cb1e1bd97853ea36990cd995a57c15bb0f3",
+      "created_at": "2026-09-28T21:03:43Z",
+      "expires_at": "2026-12-27T21:01:55Z",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/10997846165/zip"
+    },
+    {
+      "id": 10997712373,
+      "name": "coh-server-test-arm64-evidence",
+      "size_in_bytes": 536800,
+      "digest": "sha256:ee38ef5531fc6350c9473bcccea11b6cc2bf72e79d29e37a413a69e8afc665cd",
+      "created_at": "2026-09-28T21:08:39Z",
+      "expires_at": "2026-12-27T21:01:55Z",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/10997712373/zip"
+    }
+  ]
+}

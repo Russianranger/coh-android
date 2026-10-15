@@ -1,0 +1,73 @@
+{
+  "format": 1,
+  "scope": "frozen_original_atlas_appearance_append_0_13_11",
+  "source_parent_commit": "ba876d2e27d9481c1262f19566c12ce3313ab1a3",
+  "donor_commit": "9c36a5f411290400cb4aa4b2711a4bdcd39ca8cb",
+  "donor_tag": "coh-atlas-gameplay-v0.13.10",
+  "baseline_files": 5476,
+  "ancestral_files": 329,
+  "added_files": 4014,
+  "added_geometry_files": 462,
+  "added_texture_files": 3552,
+  "final_files": 9490,
+  "new_decoded_bytes": 632462533,
+  "decoded_bytes": 1505717817,
+  "new_stored_bytes": 337583397,
+  "archive": {
+    "bytes": 854341235,
+    "sha256": "840619b3b40c24f206576580dfaedb779a66582f1df189f37002dd59c5399cb9"
+  },
+  "plaintext_manifest": {
+    "bytes": 42257673,
+    "sha256": "8b3f579a9ff48e80f40e06e252c91fe3357daf9f0b01441dea5bceaa5801f1e6"
+  },
+  "files_sha256": "e23299918437e5d0afa2e9d2003eb966151f59471eaeb430313d2824d42fe341",
+  "added_files_sha256": "c18ee3f0d2551249bfb98b921be8c230db5923a5a531cec2a55d0c03e80810ae",
+  "source_envelopes": {
+    "client-appearance-manifest.json": {
+      "bytes": 6135481,
+      "sha256": "43fd89facd9bc8f3280b78b881a39e7ea406778bd91682f677bd8d174462494d"
+    },
+    "client-appearance-requests.json": {
+      "bytes": 1235112,
+      "sha256": "6971f478a549cd2fe9d155aa2f2fa7d7e9b1917704d4552c4ed6c3276522359b"
+    }
+  },
+  "discovery_requests": {
+    "bytes": 13943112,
+    "sha256": "d775d0f7a86b1073edac75c403fd18f43ee8d362bb9613c9a42a728f4b380ec2"
+  },
+  "discovery_plan": {
+    "bytes": 18919266,
+    "sha256": "5e4b3a035c5687799eb8d0c6b6a7b0a57af1af4488055645fa40108ae05e6bf5"
+  },
+  "source_witnesses": 5776,
+  "local_checks": {
+    "all_decoded_sizes_sha_original_table_md5_headers_verified": true,
+    "preserved_encoded_streams": 5476,
+    "preserved_ancestral_encoded_streams": 329,
+    "fresh_source_requests_and_plan_byte_exact": true,
+    "native_parser_field_inventory_reviewed": true,
+    "new_basename_collisions_against_16378_retained_textures": 0,
+    "ambiguous_stock_definitions": 0,
+    "alias_cycles": 0
+  },
+  "unresolved_dependency_counts": {
+    "absent_geometry": 5,
+    "absent_requested_models": 9,
+    "invalid_native_geometry_header_model_counts": 3,
+    "absent_texture_or_material_stems": 83
+  },
+  "source_closure_gap_counts": {
+    "exact_authored_fx_behavior_paths_absent": 17,
+    "exact_fx_models_absent": 2,
+    "exact_parkour_includes_absent": 10,
+    "witnesses": 29,
+    "unique_targets": 22
+  },
+  "full_global_asset_closure": false,
+  "physical_visual_completeness_verified": false,
+  "physical_startup_savings_verified": false,
+  "gameplay_or_renderer_changed": false,
+  "count_change_reason": "Original4012 dependencies retained; valid OneShotFX fields restored after intermediate filter error; add two exact megaphone geometry/texture dependencies."
+}

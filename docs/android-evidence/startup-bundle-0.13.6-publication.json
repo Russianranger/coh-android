@@ -1,0 +1,380 @@
+{
+  "format": 1,
+  "status": "published_and_independently_payload_verified",
+  "review_date_utc": "2026-10-04",
+  "repository": "Russianranger/coh-android",
+  "branch": "codex/character-persistence-continuation",
+  "source_commit": "7b48762de0748e443a2df60c6e4b59e22b365e35",
+  "implementation_commit": "ecddc3983beb8e6c298aaa63e6a068eb341f4e25",
+  "main_preserved_at": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "pr_number": 1,
+  "pr_remains_draft": true,
+  "workflow": {
+    "run_id": 37192124009,
+    "conclusion": "success",
+    "jobs": [
+      "dbserver",
+      "client",
+      "qualify",
+      "apk"
+    ],
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37192124009",
+    "scope": "Dedicated startup-bundle native builds, real PostgreSQL qualification and APK publication; broader draft-PR baseline checks are separate."
+  },
+  "first_ci_attempt": {
+    "run_id": 37191737291,
+    "apk_generated": false,
+    "reason": "Windows save-test fixture applied CRLF patch bytes without the production LF normalization. A fixture-only correction and CRLF regression were committed; the production patch was unchanged."
+  },
+  "release": {
+    "tag": "coh-atlas-gameplay-v0.13.6",
+    "release_id": 402945930,
+    "prerelease": true,
+    "apk_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.6/COH-Atlas-Gameplay-0.13.6.apk",
+    "testing_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.6/COH-Atlas-Gameplay-0.13.6-testing.txt"
+  },
+  "apk": {
+    "version_name": "0.13.6",
+    "version_code": 21,
+    "bytes": 676132798,
+    "sha256": "6c3a11bcbe245c3938dbb9eb461fce40468097189dc115ab8819c496d26f5552",
+    "size_change_from_0_13_5_bytes": 12288,
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282"
+  },
+  "build_report": {
+    "bytes": 1572774,
+    "sha256": "67afe674de5f576625463b5bd185b485f8759406b88fb3b1616da63a2a29d542"
+  },
+  "qualification_report": {
+    "bytes": 96787,
+    "sha256": "98a7c05ae78c71236e3220eaa18962a163afc7ceadf5814ecb9870e6d9c1a44c"
+  },
+  "host_checks": {
+    "tests_run": 542,
+    "suite_count": 34,
+    "source_pin_count": 187,
+    "skips": 0,
+    "checks": {
+      "postgresql_save_emission_transaction_regression_verified": true,
+      "changed_startup_paths_and_failure_guards_verified": true,
+      "retained_save_task_storage_profile_and_memory_guards_verified": true,
+      "exact_payload_boundaries_and_actual_archive_extraction_verified": true
+    },
+    "real_postgresql_fixtures": [
+      "cancelled_child_deletion_commits",
+      "delete_insert_replacement_commits",
+      "duplicate_insert_23505_rollback"
+    ]
+  },
+  "changed_runtime_payloads": [
+    "assets/runtime/character_creation_diagnostic.py",
+    "assets/runtime/character_server_data_cache.py",
+    "assets/runtime/client-manifest.json",
+    "assets/runtime/client-runtime.zip",
+    "assets/runtime/client_interactive_diagnostic.py",
+    "assets/runtime/client_startup_diagnostic.py",
+    "assets/runtime/local_character_server.py",
+    "assets/runtime/native_responsiveness_contract.py",
+    "assets/runtime/runtime-manifest.json",
+    "assets/runtime/startup-dbserver-manifest.json",
+    "assets/runtime/startup-dbserver.exe",
+    "assets/runtime/texture_header_index.py"
+  ],
+  "unchanged_runtime_payloads": 55,
+  "added_runtime_payloads": [],
+  "runtime_manifest_sha256": "45ecff3efe30faa360db6d3911717534f94d5cffa313debef19a013cea1cf50c",
+  "setup_memory_java_sources_retained": 19,
+  "setup_memory_dex_retained": {
+    "bytes": 354660,
+    "sha256": "0662ba0cf83d32aa335f7cb38a44dbb8df2e1d9762cd06b41bed169d7aca0925"
+  },
+  "native_game_recompiled": true,
+  "native_normal_dbserver_recompiled": true,
+  "native_mapserver_recompiled": false,
+  "client_dlls_retained": 20,
+  "prepared_definition_message_animation_cache_archives_retained": true,
+  "native_runtime_archives_and_world_avatar_assets_retained": true,
+  "native_client": {
+    "CityOfHeroes.exe": {
+      "sha256": "e9f8522e07305a51f9464004ffce3f1b85fa065af04ab6892beaf47d1d095cd2",
+      "size": 9446912,
+      "pe_machine": 332,
+      "imports": [
+        "ADVAPI32.dll",
+        "cg.dll",
+        "cgGL.dll",
+        "COMDLG32.dll",
+        "DDRAW.dll",
+        "DINPUT8.dll",
+        "DSOUND.dll",
+        "GDI32.dll",
+        "GLU32.dll",
+        "IMM32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "ole32.dll",
+        "OPENGL32.dll",
+        "PhysXCooking.dll",
+        "PhysXLoader.dll",
+        "SHELL32.dll",
+        "USER32.dll",
+        "VERSION.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "delay_imports": []
+    }
+  },
+  "native_dbserver": {
+    "DbServer.exe": {
+      "bytes": 1664000,
+      "sha256": "baf97a253ddccf29575801f66ef56cb7ce75f168062bb0c4ffef796b419c2029",
+      "pe_machine": 332,
+      "imports": [
+        "ADVAPI32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "ODBC32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "delay_imports": []
+    }
+  },
+  "independent_public_verification": {
+    "format": 1,
+    "status": "passed",
+    "scope": "independent_downloaded_public_startup_bundle_audit",
+    "repository_commit": "7b48762de0748e443a2df60c6e4b59e22b365e35",
+    "ci": {
+      "run_id": 37192124009,
+      "repository_commit": "7b48762de0748e443a2df60c6e4b59e22b365e35",
+      "workflow": ".github/workflows/android-startup-bundle.yml",
+      "run_json": {
+        "bytes": 14955,
+        "sha256": "dc5b357397fffaa98b549b4b9d8f0df5ca1a347e32c07383379345a43556b752"
+      },
+      "jobs_json": {
+        "bytes": 9970,
+        "sha256": "1eae1536f29c96e47f0598beedc6b8f102ed7079718e5ef702f56c8e77e070e8"
+      },
+      "jobs": {
+        "apk": {
+          "id": 111408065415,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "client": {
+          "id": 111406610623,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "dbserver": {
+          "id": 111406610546,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "qualify": {
+          "id": 111407731356,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      }
+    },
+    "public_apk_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.6/COH-Atlas-Gameplay-0.13.6.apk",
+    "apk": {
+      "bytes": 676132798,
+      "sha256": "6c3a11bcbe245c3938dbb9eb461fce40468097189dc115ab8819c496d26f5552"
+    },
+    "apk_bytes_delta_from_0_13_5": 12288,
+    "donor_apk": {
+      "bytes": 676120510,
+      "sha256": "b02cfa71498418a0fef0f5b3219a37207fcbc713fcece0c2dcc3a1019b5c3a13"
+    },
+    "build_report": {
+      "bytes": 1572774,
+      "sha256": "67afe674de5f576625463b5bd185b485f8759406b88fb3b1616da63a2a29d542"
+    },
+    "qualification": {
+      "bytes": 96787,
+      "sha256": "98a7c05ae78c71236e3220eaa18962a163afc7ceadf5814ecb9870e6d9c1a44c"
+    },
+    "public_checksum": {
+      "bytes": 96,
+      "sha256": "9175c9409a5e7fae3deaad07c54811b46901512913f2e781bad665a59d7f3ef6"
+    },
+    "public_testing_notes": {
+      "bytes": 2531,
+      "sha256": "e68a6bf4eadfedae56678341fb53d60e911e0e1aac8940802edb43e699d911f0"
+    },
+    "payload_count": 67,
+    "retained_payload_count": 55,
+    "replaced_payload_count": 12,
+    "replaced_payloads": [
+      "assets/runtime/character_creation_diagnostic.py",
+      "assets/runtime/character_server_data_cache.py",
+      "assets/runtime/client-manifest.json",
+      "assets/runtime/client-runtime.zip",
+      "assets/runtime/client_interactive_diagnostic.py",
+      "assets/runtime/client_startup_diagnostic.py",
+      "assets/runtime/local_character_server.py",
+      "assets/runtime/native_responsiveness_contract.py",
+      "assets/runtime/runtime-manifest.json",
+      "assets/runtime/startup-dbserver-manifest.json",
+      "assets/runtime/startup-dbserver.exe",
+      "assets/runtime/texture_header_index.py"
+    ],
+    "all_payload_digests_recomputed": true,
+    "apk_crc_verified": true,
+    "nested_client_crc_verified": true,
+    "nested_client_member_count": 22,
+    "retained_client_dll_count": 20,
+    "nested_client_replaced_members": [
+      "CityOfHeroes.exe",
+      "client-package.json"
+    ],
+    "authored_java_source_count": 19,
+    "setup_memory_dex_retained": {
+      "bytes": 354660,
+      "sha256": "0662ba0cf83d32aa335f7cb38a44dbb8df2e1d9762cd06b41bed169d7aca0925"
+    },
+    "retained_android_resources": {
+      "resources.arsc": {
+        "bytes": 852,
+        "sha256": "a1fa0500d49ca08dc6af7b507d05b7308fb8ea3c8d706c488267643f9df112e6"
+      },
+      "res/drawable/ic_coh_client.xml": {
+        "bytes": 1000,
+        "sha256": "0518048aa0a4f2434494e0eb0780322dd395ba92b280789e34cce400256d24eb"
+      }
+    },
+    "qualification_tests_run": 542,
+    "qualification_suite_count": 34,
+    "qualification_source_pin_count": 187,
+    "qualification_source_pins_checked": true,
+    "native_package_receipts_bound_to_qualification": true,
+    "actual_server_archive_extraction_preflight": {
+      "format": 1,
+      "status": "passed",
+      "archives": {
+        "dbserver-package.tar.gz": {
+          "bytes": 2133821,
+          "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80",
+          "file_count": 9,
+          "extracted_bytes": 4930397
+        },
+        "dbserver-schema.tar.gz": {
+          "bytes": 1139794,
+          "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792",
+          "file_count": 63,
+          "extracted_bytes": 9268640
+        },
+        "game-package.tar.gz": {
+          "bytes": 10976915,
+          "sha256": "d781779ea33b99591ed9972ee09aa614cf4eb6c5afc355bb88197f20881fe67d",
+          "file_count": 26,
+          "extracted_bytes": 28474910
+        }
+      }
+    },
+    "retained_native_responsiveness_receipt": {
+      "bytes": 40754,
+      "sha256": "e3005754339365b88a41af12dadc2afd540033ba9ee927a18f9e353387e41fc3"
+    },
+    "native_client_startup": {
+      "repository_commit": "7b48762de0748e443a2df60c6e4b59e22b365e35",
+      "files": {
+        "CityOfHeroes.exe": {
+          "sha256": "e9f8522e07305a51f9464004ffce3f1b85fa065af04ab6892beaf47d1d095cd2",
+          "size": 9446912,
+          "pe_machine": 332,
+          "imports": [
+            "ADVAPI32.dll",
+            "cg.dll",
+            "cgGL.dll",
+            "COMDLG32.dll",
+            "DDRAW.dll",
+            "DINPUT8.dll",
+            "DSOUND.dll",
+            "GDI32.dll",
+            "GLU32.dll",
+            "IMM32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll",
+            "ole32.dll",
+            "OPENGL32.dll",
+            "PhysXCooking.dll",
+            "PhysXLoader.dll",
+            "SHELL32.dll",
+            "USER32.dll",
+            "VERSION.dll",
+            "WINMM.dll",
+            "WS2_32.dll"
+          ],
+          "delay_imports": []
+        }
+      }
+    },
+    "native_dbserver": {
+      "repository_commit": "7b48762de0748e443a2df60c6e4b59e22b365e35",
+      "files": {
+        "DbServer.exe": {
+          "bytes": 1664000,
+          "sha256": "baf97a253ddccf29575801f66ef56cb7ce75f168062bb0c4ffef796b419c2029",
+          "pe_machine": 332,
+          "imports": [
+            "ADVAPI32.dll",
+            "GDI32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll",
+            "ODBC32.dll",
+            "USER32.dll",
+            "WINMM.dll",
+            "WS2_32.dll"
+          ],
+          "delay_imports": []
+        }
+      }
+    },
+    "sdk_verification": {
+      "local_sdk_verification_rerun": false,
+      "evidence_source": "successful source-pinned CI build/publish receipt",
+      "bound_public_apk_sha256": "6c3a11bcbe245c3938dbb9eb461fce40468097189dc115ab8819c496d26f5552",
+      "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+      "ci_verified_signature": true,
+      "ci_verified_package_version": true,
+      "ci_verified_binary_manifest_version_only": true,
+      "v2_and_v3_required_by_pinned_production_verifier": true,
+      "claim_scope": "CI official SDK verification is bound to identical downloaded public bytes; the SDK was not rerun locally."
+    },
+    "physical_startup_timing_validated": false,
+    "physical_gameplay_repeated": false,
+    "physical_setup_memory_retested": false
+  },
+  "activation": {
+    "runtime_setup_once_required": true,
+    "asset_reimport_required": false,
+    "uninstall_data_clear_or_character_recreation_required": false,
+    "previous_generation_retained": true
+  },
+  "prior_accepted_physical_gates_preserved": [
+    "native login",
+    "character creation and default costume",
+    "prior save and reopen",
+    "Atlas rendering and movement",
+    "NPC dialogue",
+    "manual task acceptance and completion",
+    "storage cleanup",
+    "fresh-profile recovery",
+    "smooth 0.13.5 runtime setup"
+  ],
+  "new_observed_save_regression": "0.13.5 zeroed Windows child row emitted INSERT then cancelling DELETE, causing 23505 and DbServer exit 3 after connection. A narrow PostgreSQL child-command fix retains transactional ACK and rollback rules.",
+  "requested_physical_check": "Install over current app; one Set up runtime activation, one Reopen saved THORHERO using the same preset, record readiness/login/connection timings, one ordinary Save/logout, then export one report. No other accepted physical milestone or second long boot is requested.",
+  "physical_startup_speedup_qualified": false,
+  "server_readiness_300_second_target_qualified": false,
+  "physical_0_13_6_save_regression_qualified": false,
+  "device_result_receipt": "startup-bundle-0.13.5-device-result.json",
+  "testing_instructions": "../COH-Atlas-Gameplay-0.13.6-testing.txt"
+}

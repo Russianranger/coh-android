@@ -1,0 +1,316 @@
+{
+  "format": 1,
+  "status": "failed_hosted_atlas_startup_query_with_stationary_dispatch_marker",
+  "run_id": 36428915900,
+  "attempt": 1,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36428915900",
+  "repository_commit": "f32ccd7c0f1aa950d1f87ceb81ab09b2dba4e2ac",
+  "workflow_conclusion": "failure",
+  "runtime_job_id": 108950343263,
+  "started_utc": "2026-09-28T13:34:21.463289+00:00",
+  "finished_utc": "2026-09-28T13:55:26.741258+00:00",
+  "failures": [
+    "game-query-first-ready timed out"
+  ],
+  "stages_passed": 8,
+  "failed_stage": "game_services_first",
+  "preceding_readiness_queries_completed": 13,
+  "character_execution_started": false,
+  "restart_port_fix_exercised": false,
+  "startup_query_timeout_seconds": 90,
+  "observed_query_elapsed_seconds": 90.03,
+  "archive": {
+    "artifact_id": 10973164174,
+    "name": "wine-game-arm64-evidence",
+    "bytes": 8738855,
+    "sha256": "bc51de6db5afa732bfd92ca57ffa9d68c12c16013aacaea66736317be110d0ce",
+    "download_hash_independently_verified": true,
+    "safe_extraction_verified": true
+  },
+  "dependency_preparation": {
+    "proot_build_passed": true,
+    "download_retry_log_observed": false,
+    "interpretation": "The bounded transport retry change was present; this run does not demonstrate a retried download."
+  },
+  "dispatch_progress": {
+    "enabled_arm64_publication_validated": true,
+    "active_phase": "first",
+    "baseline": {
+      "available": true,
+      "sampled_utc": "2026-09-28T13:40:22.078983+00:00",
+      "format": 1,
+      "windows_pid": 412,
+      "main_thread_id": 416,
+      "sequence": 28,
+      "stage_id": 13,
+      "stage": "NM_MONITOR",
+      "loop_count": 1,
+      "flags": 0,
+      "stage_count": 37,
+      "file_identity": {
+        "device": 2049,
+        "inode": 7422616
+      },
+      "raw_record_hex": "434f48444250310001000000800000009c010000a00100001c0000000d000000010000000000000025000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "raw_record_sha256": "e53d6836ddfb58b862b4507a61f53bd57dea45b1b49a8de8df088aa71b1ab5cc",
+      "source": "opt-in DbServer main-thread publication",
+      "is_success_proof": false
+    },
+    "before": {
+      "available": true,
+      "sampled_utc": "2026-09-28T13:55:20.897226+00:00",
+      "format": 1,
+      "windows_pid": 412,
+      "main_thread_id": 416,
+      "sequence": 2449552,
+      "stage_id": 30,
+      "stage": "FOLDER_CALLBACKS",
+      "loop_count": 43741,
+      "flags": 0,
+      "stage_count": 37,
+      "file_identity": {
+        "device": 2049,
+        "inode": 7422616
+      },
+      "raw_record_hex": "434f48444250310001000000800000009c010000a0010000906025001e000000ddaa00000000000025000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "raw_record_sha256": "801c1fb49587de8fbe50eaf4966a7731c94ff42ad764bc9a4ec0e5120751a146",
+      "source": "opt-in DbServer main-thread publication",
+      "is_success_proof": false
+    },
+    "after": {
+      "available": true,
+      "sampled_utc": "2026-09-28T13:55:23.957056+00:00",
+      "format": 1,
+      "windows_pid": 412,
+      "main_thread_id": 416,
+      "sequence": 2449552,
+      "stage_id": 30,
+      "stage": "FOLDER_CALLBACKS",
+      "loop_count": 43741,
+      "flags": 0,
+      "stage_count": 37,
+      "file_identity": {
+        "device": 2049,
+        "inode": 7422616
+      },
+      "raw_record_hex": "434f48444250310001000000800000009c010000a0010000906025001e000000ddaa00000000000025000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "raw_record_sha256": "801c1fb49587de8fbe50eaf4966a7731c94ff42ad764bc9a4ec0e5120751a146",
+      "source": "opt-in DbServer main-thread publication",
+      "is_success_proof": false
+    },
+    "same_file_identity": true,
+    "sequence_advanced_since_baseline": true,
+    "loop_advanced_since_baseline": true,
+    "sequence_advanced_during_capture": false,
+    "loop_advanced_during_capture": false,
+    "interpretation": "Live source publication advanced from loop 1 to 43741 and remained at FOLDER_CALLBACKS across the bounded failure capture. This identifies folder callbacks or nested work, not a specific instruction or proof of deadlock."
+  },
+  "pre_cleanup_observation": {
+    "started_utc": "2026-09-28T13:55:20.896304+00:00",
+    "finished_utc": "2026-09-28T13:55:23.957132+00:00",
+    "elapsed_seconds": 3.061,
+    "before_service_cleanup": true,
+    "before_failed_query_stop": true,
+    "trigger_label": "game-query-first-ready",
+    "trigger_alive": true,
+    "trigger_alive_after": true,
+    "services": [
+      {
+        "label": "first-dbserver",
+        "pid": 6355,
+        "alive": true,
+        "forced_stop": false
+      },
+      {
+        "label": "first-atlas",
+        "pid": 6622,
+        "alive": true,
+        "forced_stop": false
+      }
+    ],
+    "failure_observation": {
+      "leader_exit_code": null,
+      "output_capture_open": true,
+      "elapsed_seconds": 90.03,
+      "reason": "game-query-first-ready timed out"
+    }
+  },
+  "postgres": {
+    "sampled_at": "2026-09-28T13:55:20.920326+00:00",
+    "sessions": 65,
+    "sessions_omitted": 0,
+    "all_idle": true,
+    "all_wait_client_read": true,
+    "active_transactions": 0,
+    "last_query_counts": {
+      ";": 1,
+      "COMMIT": 64
+    },
+    "foreground_backend_pid": 6396,
+    "foreground_last_query": ";",
+    "foreground_query_start": "2026-09-28T13:53:06.016613+00:00",
+    "foreground_query_age_seconds": 134.903713,
+    "track_activity_query_size": "1kB",
+    "interpretation": "No active database-side query or transaction was observed."
+  },
+  "linux": {
+    "owned_process_count": 13,
+    "tasks_examined": 120,
+    "fds_examined": 512,
+    "dbserver_linux_pid": 6355,
+    "process_syscall": "63 0x6 0x7ffffe0ff920 0x40 0x0 0x1 0x2 0x7ffffe0ff750 0xff241d5ddbcc\n",
+    "main_task_syscall": "50 0x15f 0x1 0xc 0x4000 0xf7ca1d8 0x1dd4f50cd399bc5 0x7ffffe0ff6a0 0xff241d5de64c\n",
+    "process_syscall_decoded": "aarch64 read(fd=6, count=64)",
+    "main_task_syscall_decoded": "aarch64 fchdir(fd=351)",
+    "interpretation": "Separate process/task reads are non-atomic and show changing native operations under PRoot. Continued native activity is compatible with folder work; the samples do not establish its request, throughput, or a deadlock.",
+    "socket_descriptor_coverage_complete": false,
+    "dbserver_descriptor_capture_omitted": "aggregate descriptor bound",
+    "kernel_stack_access": "PermissionError explicitly retained in raw snapshot"
+  },
+  "windows_observer": {
+    "sampled_utc": "2026-09-28T13:55:21.439924+00:00",
+    "kind": "Windows x86 raw contexts, stack words and module addresses",
+    "symbolized": false,
+    "current_execution_validated": false,
+    "context_limitation": "Pinned Wine/FEX GetThreadContext can return saved WOW64 startup state",
+    "timeout_seconds": 15,
+    "exit_code": 0,
+    "output_bytes": 104770,
+    "output_overflow": false,
+    "output_capture_closed": true,
+    "forced_stop": false,
+    "truncated": false,
+    "completion": {
+      "kind": "complete",
+      "format": 1,
+      "processes": 3,
+      "threads": 72,
+      "modules": 114,
+      "errors": 0,
+      "truncated": false,
+      "bytes_before_complete": 104346
+    },
+    "available": true
+  },
+  "atlas_final_stdout_marker": "Retrieving AutoCommands..",
+  "cleanup_complete": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "owned_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 544,
+    "scanned_tasks": 4,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true
+  },
+  "process_records": 57,
+  "all_process_input_output_closed": true,
+  "inputs": {
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "game_package_sha256": "db460265f326198b69108d2bf513e6b0e594dea8aedd785845e4af0313790b6d",
+    "game_data_manifest_sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "repository_commit": "f32ccd7c0f1aa950d1f87ceb81ab09b2dba4e2ac",
+    "binary_sha256": {
+      "DbServer.exe": "3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830",
+      "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+      "TestClientCreate.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31",
+      "TestClientResume.exe": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856",
+      "TestClientBridge.exe": "41a994a17803d8ec11a828437971a3d8eb397351fcfe3cb2996963c5dc47d99b"
+    }
+  },
+  "dbserver_donor": {
+    "run_id": 36425508780,
+    "repository_commit": "41f3aff596826e22e2774375e11590de895ca33d",
+    "manifest_sha256": "656c7e764798dc7ecee01cef836cd758177fd9cdcf1477799517e9d5a959c632"
+  },
+  "preserved_files": {
+    "game-arm64-failed-36428915900.json": {
+      "bytes": 110556,
+      "sha256": "bf425628c926e85579f6b3577952f609afac9eba0d1cadd788e7f482ab401a00"
+    },
+    "game-hang-36428915900/snapshot.json": {
+      "bytes": 427197,
+      "sha256": "e64b3783d857b504dc90ab4e93fae313cb28fe0e4fb8767699681d012c1e38a3"
+    },
+    "game-hang-36428915900/windows-contexts.jsonl": {
+      "bytes": 104770,
+      "sha256": "6a5d97afef95c706c26c5d710ca3f661e6658a2389d96c3c44e1343ecaa07e8a"
+    },
+    "game-hang-36428915900/manifest.json": {
+      "bytes": 979,
+      "sha256": "ddc6014b721b1817ed6d320727c6639ac997db674b912e910dcc8e66a2d97f03"
+    }
+  },
+  "verified_capture_inventories": {
+    "game-hang-captures": {
+      "windows-contexts.jsonl": {
+        "bytes": 104770,
+        "sha256": "6a5d97afef95c706c26c5d710ca3f661e6658a2389d96c3c44e1343ecaa07e8a"
+      },
+      "snapshot.json": {
+        "bytes": 427197,
+        "sha256": "e64b3783d857b504dc90ab4e93fae313cb28fe0e4fb8767699681d012c1e38a3"
+      },
+      "manifest.json": {
+        "bytes": 979,
+        "sha256": "ddc6014b721b1817ed6d320727c6639ac997db674b912e910dcc8e66a2d97f03"
+      }
+    },
+    "game-service-captures": {
+      "first-dbserver-stdout.txt": {
+        "bytes": 3631,
+        "sha256": "e561255703c78c1f1852146cdcade3be2643de17bedde1903e427eee8c0113a4"
+      },
+      "first-atlas-stdout.txt": {
+        "bytes": 880388,
+        "sha256": "6e10cc4f61a550339486cf76aa8ed6b91e7a6ab0ae2d4560e30dacb09d928737"
+      },
+      "log-001.txt": {
+        "bytes": 802,
+        "sha256": "7f0cebfcb3fb586078eba138bc415d02c9150418fc3ad470cdddb7dd66147044"
+      },
+      "log-002.txt": {
+        "bytes": 819546,
+        "sha256": "f08fc814319eefb8ac774255361de1c9a178dcea2964ed314ec4fa91f7a875e8"
+      },
+      "manifest.json": {
+        "bytes": 1359,
+        "sha256": "0d5c750b77a2ffd530e188619c1d56b63be226c62e1cdafcbf55ccdcd93e6c9e"
+      }
+    },
+    "game-captures": {}
+  },
+  "preservation": "Raw report and all three hang-capture files copied byte-for-byte from the hash-verified artifact. Full service captures remain in the linked verified artifact.",
+  "prior_partial_success": {
+    "run_id": 36416020268,
+    "first_create_and_atlas_entry": true,
+    "live_influence": 12345,
+    "first_committed_protocol_save": true,
+    "login_count": 1,
+    "full_restart_resume_gate_accepted": false
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "android_surface_validated": false,
+  "accepted_device_apk_unchanged": "0.1.5",
+  "next_work": [
+    "Review the folder callback operation and its nested work against the bounded source and native observations before selecting a runtime correction.",
+    "Requalify any selected DbServer change before Atlas adopts its package.",
+    "Complete the hosted restart/resume/second-save gate; this failure provides no new character or restart result."
+  ]
+}

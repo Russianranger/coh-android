@@ -1,0 +1,309 @@
+{
+  "app_version": "0.13.14",
+  "cache_work_observation": "First update versus unchanged warm run must be compared separately; one report cannot prove every-run repetition.",
+  "delivered_frame_count": 5601,
+  "format": 1,
+  "interaction_seconds": 535.589694,
+  "limitations": [
+    "Operation start does not measure time before pressing Reopen or APK/runtime installation.",
+    "Login/world observation includes typing and selection; guest client-ready is reported separately.",
+    "Delivered Android frames include initialization and UI; they are not native game FPS.",
+    "Subphases overlap containing stages and must not be added a second time."
+  ],
+  "measured_game_fps": null,
+  "observer_metrics": {
+    "console_and_native_readiness": {
+      "calls": 143,
+      "last_ms": 1.412,
+      "max_ms": 6616.444,
+      "total_ms": 127027.209
+    },
+    "progress_registry": {
+      "calls": 21,
+      "last_ms": 1086.996,
+      "max_ms": 3307.369,
+      "total_ms": 43089.82
+    },
+    "window_identity": {
+      "calls": 143,
+      "last_ms": 67.052,
+      "max_ms": 2933.855,
+      "total_ms": 34347.966
+    }
+  },
+  "operation": "character_reopen",
+  "renderer": {
+    "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+    "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+    "renderer_classification": "software",
+    "vendor": "Mesa/X.org"
+  },
+  "result": {
+    "character_reopen_verified": true,
+    "cleanup_verified": true,
+    "passed": true
+  },
+  "session_id": "c726775b4f9348cc9a65788bf95d2f0d",
+  "stage_seconds": {
+    "actual_client_interaction": 535.589694,
+    "actual_client_startup": 198.654376,
+    "client_animation_pack": 13.603977,
+    "client_inputs": 1.305602,
+    "client_private_data": 0.155321,
+    "client_visual_assets": 70.203457,
+    "local_atlas_startup": 198.837659,
+    "local_dbserver_startup": 538.664218,
+    "local_login_odbc": 13.234872,
+    "persistent_server_profile": 0.506222,
+    "postgres_local_login": 0.491194,
+    "presentation_display": 0.111053,
+    "win32_runtime_dll": 1.112184,
+    "wine_initialization": 9.144839
+  },
+  "stages": [
+    {
+      "finished_utc": "2026-10-06T03:11:09.637707+00:00",
+      "seconds": 1.305602,
+      "stage": "client_inputs",
+      "started_utc": "2026-10-06T03:11:08.332105+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:11:09.793283+00:00",
+      "seconds": 0.155321,
+      "stage": "client_private_data",
+      "started_utc": "2026-10-06T03:11:09.637962+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:11:10.302076+00:00",
+      "seconds": 0.506222,
+      "stage": "persistent_server_profile",
+      "started_utc": "2026-10-06T03:11:09.795854+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:11:10.793787+00:00",
+      "seconds": 0.491194,
+      "stage": "postgres_local_login",
+      "started_utc": "2026-10-06T03:11:10.302593+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:11:36.628732+00:00",
+      "seconds": 0.111053,
+      "stage": "presentation_display",
+      "started_utc": "2026-10-06T03:11:36.517679+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:11:45.774424+00:00",
+      "seconds": 9.144839,
+      "stage": "wine_initialization",
+      "started_utc": "2026-10-06T03:11:36.629585+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:11:59.010011+00:00",
+      "seconds": 13.234872,
+      "stage": "local_login_odbc",
+      "started_utc": "2026-10-06T03:11:45.775139+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:20:57.677286+00:00",
+      "seconds": 538.664218,
+      "stage": "local_dbserver_startup",
+      "started_utc": "2026-10-06T03:11:59.013068+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:24:16.952652+00:00",
+      "seconds": 198.837659,
+      "stage": "local_atlas_startup",
+      "started_utc": "2026-10-06T03:20:58.114993+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:25:27.169087+00:00",
+      "seconds": 70.203457,
+      "stage": "client_visual_assets",
+      "started_utc": "2026-10-06T03:24:16.965630+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:25:40.773978+00:00",
+      "seconds": 13.603977,
+      "stage": "client_animation_pack",
+      "started_utc": "2026-10-06T03:25:27.170001+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:25:41.888601+00:00",
+      "seconds": 1.112184,
+      "stage": "win32_runtime_dll",
+      "started_utc": "2026-10-06T03:25:40.776417+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:29:57.651526+00:00",
+      "seconds": 198.654376,
+      "stage": "actual_client_startup",
+      "started_utc": "2026-10-06T03:26:38.997150+00:00"
+    },
+    {
+      "finished_utc": "2026-10-06T03:38:53.241902+00:00",
+      "seconds": 535.589694,
+      "stage": "actual_client_interaction",
+      "started_utc": "2026-10-06T03:29:57.652208+00:00"
+    }
+  ],
+  "steady_state_policy": null,
+  "subphases_not_additive": {
+    "atlas_beacon_graph": {
+      "archive_decoded": true,
+      "fingerprint_walk": true,
+      "format": 3,
+      "full_world_crc": "0xb0c21ded",
+      "input_files_checked": 5637,
+      "input_inventory_walk": true,
+      "input_payload_bytes_hashed": 494184162,
+      "installed_files": 2,
+      "map": "maps/city_zones/city_01_01/city_01_01.txt",
+      "native_graph_readback_qualified": true,
+      "preparation_elapsed_seconds": 57.291178,
+      "server_geometry_profile": "required_original_object_geometry",
+      "status": "installed_verified_graph"
+    },
+    "atlas_required_geometry": {
+      "archive_decoded": false,
+      "cache_files_removed_this_prepare": 40,
+      "cache_refresh": {
+        "accepted_cache_archive_modified": false,
+        "performed": true,
+        "policy": "once_required_original_atlas_private_geobin_refresh_v1",
+        "removed_bytes": 3929564,
+        "removed_files": 40,
+        "removed_inventory_sha256": "04ce0ce75cd910599ab69e68bb4ab9e53c338f1f20275b0f14a8c8c1fa537656"
+      },
+      "cache_refresh_reused": false,
+      "format": 1,
+      "full_visual_preload": false,
+      "identity": {
+        "cache_policy": "once_required_original_atlas_private_geobin_refresh_v1",
+        "file_count": 406,
+        "format": 1,
+        "policy": "exact_required_original_atlas_object_geometry_v1",
+        "required_geometry_sha256": "c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43"
+      },
+      "input_files_checked": 406,
+      "installed_files": 0,
+      "native_graph_qualified": false,
+      "preparation_elapsed_seconds": 5.143301,
+      "selected_payload_bytes_hashed": 16559517,
+      "status": "installed_verified_required_geometry"
+    },
+    "atlas_world_supplement": {
+      "accepted_cache_archive_modified": false,
+      "archive_read_bytes": 207803201,
+      "archive_sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f",
+      "cache_refresh": {
+        "accepted_cache_archive_modified": false,
+        "performed": false,
+        "policy": "once_per_world_manifest_private_atlas_geobin_and_supplemented_object_library_only",
+        "removed_bytes": 0,
+        "removed_files": 0,
+        "removed_inventory_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "decoded_files": 0,
+      "decoded_payload_bytes": 0,
+      "file_count": 2904,
+      "files_sha256": "1e61d6991a83949750184b2b8cc6496310730d53598c66b58445ec9b2f6d69d4",
+      "format": 1,
+      "imported_files_modified": false,
+      "installed_files": 0,
+      "manifest_sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86",
+      "normalized_mtime_epoch": 1767225600,
+      "payload_bytes": 318611871,
+      "preparation_elapsed_seconds": 25.021317,
+      "reuse_validation": "pinned_content_verification",
+      "reused_files": 2904,
+      "runtime_visual_validated": false,
+      "scope": "atlas_world_geometry_texture_supplement",
+      "verified_file_count": 2904,
+      "visual_scope": "Atlas geometry and resolved direct/composite texture dependencies; ground, collision, rendering and gameplay require runtime qualification; recorded Atlas City Hall/statue/plaza shader/decal inputs added after visible geometry review; texture/lighting appearance still needs runtime inspection",
+      "worktree": "client-work-285adbfb0389ed61b577b734",
+      "worktree_identity_modified": false
+    },
+    "client_texture_startup_schedule": {
+      "actual_overlap_seconds": 1.109,
+      "overlap_timing_source": "current_owned_runtime_probe_completion",
+      "overlapped_stage": "win32_runtime_dll",
+      "physical_startup_savings_validated": false,
+      "preparation_phase": "after_current_owned_atlas_readiness",
+      "preparation_seconds": 55.848,
+      "private_server_cache_access": false,
+      "runtime_probe_completion_observed": true,
+      "shared_wine_prefix_access": false,
+      "status": "prepared_before_client",
+      "wait_before_client_seconds": 54.729,
+      "worker_joined": true,
+      "worker_started": true
+    },
+    "server_preparation": {
+      "cache_key": "d3f6b18b9ea8bf59a848686a",
+      "containing_stage": "local_dbserver_startup",
+      "counts": {
+        "copied_private_files": 1208,
+        "directories": 9962,
+        "files": 186535,
+        "linked_immutable_files": 185313,
+        "preserved_schema_files": 14
+      },
+      "migration_refused": "no_qualified_closed_generation",
+      "native_startup": {},
+      "phases": {},
+      "remaining_stage_includes": "native launch, readiness and SQL verification",
+      "remaining_stage_seconds": 30.265814,
+      "reused": false,
+      "seconds": 508.398404
+    },
+    "texture_header_index": {
+      "bytes": 5451315,
+      "client_content_identity_sha256": "91088631082e178b025fa173f01a45384adcfe562e6f031de4fa7a6d539b420c",
+      "client_executable_sha256": "cad33afc212113a5d116bf8fe63078034fa63c494c1a91ddadaf42cadf55fe9a",
+      "format": 1,
+      "identity": "8e315f95ff42755ceb2c9eeab9bce791c3606232dac76d0019f8a82203cc9732",
+      "identity_policy": "verified_client_content_v1",
+      "interrupted_envelope_recovered": false,
+      "inventory_scan_passes": 2,
+      "inventory_sha256": "73ca77683718c78417f8f41219f1f4ea1669fab52f2bfa63507967f68cebe9f6",
+      "legacy_identity_migrated": false,
+      "native_fallback_available": true,
+      "native_file_opens_avoidable": 20841,
+      "native_layer_identity_migrated": false,
+      "original_header_bytes_sha256": "15bf62977115d7a76a3a89c86818cacb32e1242508527b4031c02b2dc2c5fe05",
+      "original_texture_files_unchanged": true,
+      "preparation_phase_seconds": {
+        "complete_inventory": 43.337,
+        "original_header_reads": 12.417,
+        "validation_and_publication": 0.065
+      },
+      "preparation_seconds": 55.819,
+      "records": 20841,
+      "reused": false,
+      "sha256": "07f53c85b67a58bb27fb6e6914c1144d64faa07faa6a3a110ef268cd192fa258"
+    }
+  },
+  "support_zip": {
+    "bytes": 13208853,
+    "filename": "coh-atlas-gameplay-20261006-033901.zip",
+    "sha256": "d698a8152880a321d29b94365d831b3eea9bde358baca76361095961dae5a60c"
+  },
+  "timing_seconds": {
+    "guest_to_client_ready": 1129.319421,
+    "login_to_world_observation": 83.806,
+    "operation_to_login_observation": 1150.129,
+    "operation_to_world_observation": 1233.935,
+    "unlabelled_preparation_and_gaps": 83.294447
+  },
+  "visual_preparation": {
+    "archive_read_bytes": 859075775,
+    "decoded_files": 788,
+    "decoded_payload_bytes": 23704759,
+    "file_count": 10401,
+    "fingerprint_reused": false,
+    "installed_files": 788,
+    "preparation_elapsed_seconds": 70.159553,
+    "reused_files": 9613,
+    "verified_existing_bytes": 1511101967
+  }
+}

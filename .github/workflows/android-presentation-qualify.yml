@@ -1,0 +1,86 @@
+name: Qualify exact existing client presentation APK
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/android/presentation/host_smoke.py'
+      - '.github/workflows/android-presentation-qualify.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-presentation-qualify-${{ github.ref }}
+  cancel-in-progress: false
+# This job intentionally rebuilds neither APK nor game server. Source/payload
+# validation rejects any guest/Java difference from this exact signed donor.
+jobs:
+  runtime:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-test-apk
+          path: out/presentation
+          run-id: 36653423058
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/presentation-base-runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/presentation-accepted-proot
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Verify exact existing APK donor
+        run: |
+          python3 - <<'PYDONOR'
+          import hashlib, json, pathlib
+          root = pathlib.Path('out/presentation')
+          report = json.loads((root / 'presentation-apk-build-report.json').read_text())
+          expected = 'd0745f974567f798cf1254fb98b95eb056702021e11c2f29938e9cb407a83e71'
+          assert report['repository_commit'] == '6fdeef4494dd41f6137ee51d80ec4e39cf687b01'
+          assert report['sha256'] == expected
+          assert hashlib.sha256((root / 'COH-Client-Test-0.5.0.apk').read_bytes()).hexdigest() == expected
+          PYDONOR
+      - name: Recover exact accepted native runtime source
+        run: >-
+          python3 tools/android/extract_talloc_source.py
+          --assets out/presentation-base-runtime
+          --bundle out/presentation-accepted-proot/proot-corresponding-sources.tar.gz
+          --output out/android/source-cache/talloc-2.4.3.tar.gz
+          > out/presentation/talloc-source-receipt.json
+      - name: Install host runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless
+      - name: Check focused observer shutdown regressions
+        run: python3 -m unittest discover -s tools/android/presentation -p test_package.py -v
+      - name: Build matching native ARM64 PRoot
+        run: >-
+          python3 tools/android/build_proot.py --target linux-arm64
+          --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+      - name: Observe exact APK native probe through external private Unix RFB
+        run: >-
+          python3 tools/android/presentation/host_smoke.py
+          --apk out/presentation/COH-Client-Test-0.5.0.apk
+          --build-report out/presentation/presentation-apk-build-report.json
+          --repository-commit 6fdeef4494dd41f6137ee51d80ec4e39cf687b01
+          --verifier-commit "$GITHUB_SHA" --proot out/android/native/linux-arm64
+          --work out/presentation-host --evidence out/presentation-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-test-requalification-evidence
+          path: |
+            out/presentation-evidence/
+            out/presentation/talloc-source-receipt.json
+            out/android/native/linux-arm64/proot-build-receipt.json
+          if-no-files-found: warn

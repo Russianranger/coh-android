@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "build_role": "resume_only_diagnostic_testclient",
+  "status": "diagnostic_build_packaged_runtime_unverified",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "repository_commit": "5f2c561058a186de59d3f27301eea210bd4bb66d",
+  "configuration": "OptDebug",
+  "architecture": "Win32",
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36297542986",
+  "postgresql_persistence_fixture": false,
+  "resume_client_build_input": {
+    "schema_version": 1,
+    "build_role": "resume_only_diagnostic_testclient",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "postgresql_build_input_canonical_sha256": "c5dd8a6ecc42472d14a02c8a3986530aefecc4266ed94496a16df3d8fe2ce022",
+    "postgresql_build_input": {
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "patch_sha256": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+      "overlay_sha256": {
+        "Common/sql/pg_compat.h": "119ee1649b56cd859145a582e4d042bd3b3721831cba7c3b5acf9086a447e04e",
+        "DBServer/src/pg_persistence_test.c": "30fbf6ac294cc0c104287ea1450d579d31d61b6a03fc49dceadbf5aaa9cbd3c2"
+      },
+      "patched_sha256": {
+        "Common/sql/sqlconn.c": "8c987e869157cc66f1ba909332dca16d38edd696b88a2e94a2fd5e6c47563b8f",
+        "Common/sql/sqlconn.h": "955e760307896f57227c55d3f0ed478ac6de0cf4aae03f025cd3b86b95523249",
+        "DBServer/CMakeLists.txt": "9937c7f12639fa7b7b3813df35a606b56aa9e9a4d4b580ec75e0509c5603656a",
+        "DBServer/src/auctionservercomm.c": "629d40ce8a2f59ba81cd8344fed73616dc9294375d77a0ebbdbfb5991d6dfef6",
+        "DBServer/src/clientcomm.c": "99032cf01727e6cf7ceb710ee68287a07448d2d2c74f8fbdc8926f32f9349c1a",
+        "DBServer/src/container.c": "43163b69b1762363bff1ccee4bbd497e2a392b3163d1f3a0169b577f18726369",
+        "DBServer/src/container_sql.c": "7123f2dc01c88b23853e47c58266a33c5b5f8b6c41f577c789c66513c7ca5d08",
+        "DBServer/src/container_tplt.c": "5f0adfdb4f52a1ba4212afe2c2a644a92844555d1f750f627c1f679600d9c85f",
+        "DBServer/src/container_tplt_utils.c": "934eaae85397389cdcaa6e0bd4c2425545939a4d40ed654a62f586011cbfa530",
+        "DBServer/src/dbdispatch.c": "a81a29e724361e35a9fac40423da173583621b9edd987053e6254cfe29ceafde",
+        "DBServer/src/dbimport.c": "77432691fd400a4351038357bf989c49cfce9ecd6c540eec4ba8102b93f8961a",
+        "DBServer/src/dbinit.c": "9b7a8cde3b7553152f992292c0cfa3825acce3649b4ab2b97c3621f52e19d45f",
+        "DBServer/src/sql_fifo.c": "73b7f30ab56f3deb58066477ea4fb716e7c7094fda3505baede091eb7d4c04aa",
+        "DBServer/src/sql_fifo.h": "fb1a943714b315c454669645e98c0c0f586e95381fded697cf49bc4f38f8d8db",
+        "MapServer/src/dbcomm/dbcontainer.c": "35fcf37e35642735d61dacf8f960dc5e3b159c3748cc6052e37fb1a7eac0e759",
+        "MapServer/src/dbcomm/dbquery.c": "75a3de6cd707bed3f517ac2fbc73bbf0760ca171fb1e2a26b301d002d3960d70"
+      }
+    },
+    "resume_patch_sha256": "9a424a1befb942ae462df3ad636cdb69a168aaf406bcd936382fc6a891b95f01",
+    "source_sha256": {
+      "Utilities/TestClient/src/main.c": "cac8255edf1946c910386669856040342bc0e5900695a564c8522622bd38ed83"
+    },
+    "patched_sha256": {
+      "Utilities/TestClient/src/main.c": "00a7c8f96745c8511f6fa0aae97a363bf6e6d0748b9611784d893eeaaebc2a76"
+    },
+    "command_flag": "-resumeonly",
+    "required_argument": "-character NAME",
+    "creation_allowed": false,
+    "stay_connected": true,
+    "transfer_proof": {
+      "schema_version": 1,
+      "marker": "COH_RESUME_ONLY_TRANSFER_UPDATE",
+      "epoch": "successful_doMapXfer",
+      "endpoint": "connected_peer",
+      "readiness": "processed_SERVER_UPDATE",
+      "identity": "initial_received_player_entity"
+    },
+    "runtime_validation": "unverified"
+  },
+  "files": {
+    "TestClient.exe": {
+      "sha256": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856",
+      "size": 3143168,
+      "pe_machine": 332,
+      "imports": [
+        "ADVAPI32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "delay_imports": []
+    },
+    "resume-client-build-input.json": {
+      "sha256": "18a27dc8a801db05a69fa87936364f4266678e7c99effcf7d28d3cc4b3e06771",
+      "size": 3220
+    }
+  },
+  "symbols": {
+    "TestClient.pdb": {
+      "sha256": "f308b0fc6c09a5ddba6fb8d38b4a4fb8d5bf624abace2f962fbc2eca68a4b828",
+      "size": 26390528
+    }
+  },
+  "dependency_validation": "deferred_until_accepted_reference_runtime"
+}

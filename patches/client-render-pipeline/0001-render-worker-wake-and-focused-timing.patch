@@ -1,0 +1,159 @@
+--- a/Game/src/graphics/gfx.c
++++ b/Game/src/graphics/gfx.c
+@@ -70,6 +70,13 @@
+ #include "UI/sprite/sprite_base.h"
+ #define COH_RA_IMPLEMENTATION
+ #include "cohClientRendererAttribution.h"
++#define COH_RP_IMPLEMENTATION
++#include "cohClientRenderPipeline.h"
++
++/* The queue header is also included before Windows initialization headers.
++ * Keep these external adapters free of Win32/CRT headers at its callsites. */
++void cohRpQueueFlushBegin(void) { cohRpPhaseBegin(COH_RP_FLUSH); }
++void cohRpQueueFlushEnd(void) { cohRpPhaseEnd(COH_RP_FLUSH); }
+ 
+ GfxState gfx_state;
+ 
+@@ -1552,7 +1559,10 @@
+ {
+     static bool firstTime = true;
+     int fxdebugsave = game_state.fxdebug;
++    int coh_rp_gameplay_frame = !force_render_world && !headShot && !no_drawing &&
++        game_state.game_mode == SHOW_GAME && !shellMode() && !loadingScreenVisible();
+     cohRaMainBegin(!force_render_world && !headShot && !no_drawing, game_state.allow_frames_buffered, rdrIsThreaded(), game_state.sliLimit, game_state.frame_delay, game_state.maxfps, game_state.showfps);
++    cohRpMainBegin(coh_rp_gameplay_frame);
+     rdrBeginMarker(__FUNCTION__);
+ 
+     rdrInitTopOfFrame();
+@@ -1607,7 +1617,9 @@
+         // Render all the auxiliary viewports (e.g. shadows, reflections, etc.)
+         // This does NOT render the main viewport that is rendered explicitly below
+         PERFINFO_AUTO_START("viewport_RenderAll", 1);
++        cohRpPhaseBegin(COH_RP_AUX);
+         viewport_RenderAll();
++        cohRpPhaseEnd(COH_RP_AUX);
+         PERFINFO_AUTO_STOP();
+     }
+ 
+@@ -1644,14 +1656,18 @@
+ 
+     PERFINFO_AUTO_START("gfxRenderViewport", 1);
+     rdrBeginMarker(__FUNCTION__ " gfxRenderViewport(MAIN):%s", s_mainviewport.name);
++        cohRpPhaseBegin(COH_RP_MAINVIEW);
+         gfxRenderViewport(&s_mainviewport);
++        cohRpPhaseEnd(COH_RP_MAINVIEW);
+     rdrEndMarker();
+     PERFINFO_AUTO_STOP();
+ 
+     if (!force_render_world && !headShot)
+     {
+         PERFINFO_AUTO_START("sunVisible",1);
++        cohRpPhaseBegin(COH_RP_SUN);
+         sunVisible(); //calculate lens flare done after pix buf is full, and apply it next frame
++        cohRpPhaseEnd(COH_RP_SUN);
+         PERFINFO_AUTO_STOP();
+     }
+ 
+@@ -1670,6 +1686,7 @@
+         rdrEndMarker();
+     }
+ 
++    cohRpPhaseBegin(COH_RP_POST);
+     if (gfx_state.postprocessing) {
+         // draw to screen
+         PERFINFO_AUTO_START("rdrPostprocessing",1);
+@@ -1684,6 +1701,7 @@
+         winMakeCurrent();
+         PERFINFO_AUTO_STOP();
+     }
++    cohRpPhaseEnd(COH_RP_POST);
+     if (game_state.hdrThumbnail) {
+         PERFINFO_AUTO_STOP_START("rdrHDRThumbnailDebug",1);
+         rdrHDRThumbnailDebug();
+@@ -1694,6 +1712,7 @@
+     }
+ 
+     PERFINFO_AUTO_START("gfxDraw2DStuffPost3D", 1);
++    cohRpPhaseBegin(COH_RP_UI);
+ 
+     if (!game_state.disable2Dgraphics) 
+     {
+@@ -1706,10 +1725,13 @@
+     else if( headShot != 2 )
+         showFrameRate(); // timestep should probably be calculated even when there is no UI
+ 
++    cohRpPhaseEnd(COH_RP_UI);
+     PERFINFO_AUTO_STOP_START("gfxDrawFinishFrame", 1);
+ 
+     game_state.fxdebug = fxdebugsave;
++    cohRpPhaseBegin(COH_RP_FINISH);
+     gfxDrawFinishFrame(!headShot && !no_drawing && !gfx_state.screenshot, headShot, s_mainviewport.renderPass);
++    cohRpPhaseEnd(COH_RP_FINISH);
+ 
+     if (game_state.renderdump) {
+         gfxRenderDump("%s_finish", s_mainviewport.name);
+@@ -1738,6 +1760,7 @@
+     PERFINFO_AUTO_STOP();
+     rdrEndMarker();
+     cohRaMainEnd(!force_render_world && !headShot && !no_drawing);
++    cohRpMainEnd(coh_rp_gameplay_frame);
+ }
+ 
+ #define AUTOPERF_TIME 5
+--- a/Game/src/render/thread/rt_queue.c
++++ b/Game/src/render/thread/rt_queue.c
+@@ -2,6 +2,7 @@
+ #include "win/win_init.h"
+ #include "render/thread/rt_queue.h"
+ #include "cohClientRendererAttribution.h"
++#include "cohClientRenderPipeline.h"
+ #include "assert.h"
+ #include "render/rendertree.h"
+ #include "cmdparse/cmdgame.h"
+@@ -429,7 +430,11 @@
+ 
+ static void cmdDispatchCallback(void *unused, int type, void *data)
+ {
++    if (type == DRAWCMD_INITTOPOFFRAME) cohRpRendererBegin();
++    cohRpCommandBegin(type);
+     cmdDispatch(unused, (DrawType)type, data);
++    cohRpCommandEnd(type);
++    if (type == DRAWCMD_SWAPBUFFER) cohRpRendererEnd();
+ }
+ 
+ void renderThreadSetThreading(int run_thread)
+--- a/Game/src/render/thread/rt_queue.h
++++ b/Game/src/render/thread/rt_queue.h
+@@ -288,7 +288,9 @@
+ 
+ static INLINEDBG void rdrQueue(DrawType type,const void *data,int size) { wtQueueCmd(render_thread,type,data,size); }
+ static INLINEDBG void rdrQueueCmd(DrawType type) { wtQueueCmd(render_thread,type,0,0); }
+-static INLINEDBG void rdrQueueFlush(void) { failText("Render queue flushed (performance warning)"); wtFlush(render_thread); }
++void cohRpQueueFlushBegin(void);
++void cohRpQueueFlushEnd(void);
++static INLINEDBG void rdrQueueFlush(void) { failText("Render queue flushed (performance warning)"); cohRpQueueFlushBegin(); wtFlush(render_thread); cohRpQueueFlushEnd(); }
+ static INLINEDBG void rdrQueueMonitor(void) { wtMonitor(render_thread); }
+ static INLINEDBG int rdrIsThreaded(void) { return wtIsThreaded(render_thread); }
+ static INLINEDBG void rdrQueueDebug(WTDebugCallback callback_func,void *data,int size) { wtQueueDebugCmd(render_thread,callback_func,data,size); }
+--- a/libs/UtilitiesLib/src/components/WorkerThread.c
++++ b/libs/UtilitiesLib/src/components/WorkerThread.c
+@@ -362,13 +362,17 @@
+         {
+             if (wt->data_queued)
+             {
++                /* Arm the producer's wake handshake before resetting and
++                 * checking the queue. A publication before ResetEvent is seen
++                 * by the recheck; one after the recheck signals an armed event.
++                 * Win32/x86 volatile publication and event ordering are retained. */
++                wt->thread_asleep = 1;
+                 ResetEvent(wt->data_queued);
+                 cmd = peekStoredCmd(&wt->cmd_queue);
+                 if (!cmd) {
+-                    wt->thread_asleep = 1;
+                     WaitForSingleObject(wt->data_queued, INFINITE);
+-                    wt->thread_asleep = 0;
+                 }
++                wt->thread_asleep = 0;
+             }
+             continue;
+         }

@@ -1,0 +1,290 @@
+{
+  "format": 1,
+  "scope": "public_payload_pins_and_stage_order_from_accepted_0.13.7_device_report",
+  "guest_report_sha256": "9153fe0f178ab16c3598ccced6885d88b55007957a28814d608c3c321ef1f889",
+  "client_manifest_sha256": "822d6b014f2196c57453ecfd7195fac1e9c3cc1e7dab3cfc077badee797e2389",
+  "stages": [
+    {
+      "stage": "client_inputs",
+      "status": "passed"
+    },
+    {
+      "stage": "client_private_data",
+      "status": "passed"
+    },
+    {
+      "stage": "persistent_server_profile",
+      "status": "passed"
+    },
+    {
+      "stage": "postgres_local_login",
+      "status": "passed"
+    },
+    {
+      "stage": "presentation_display",
+      "status": "passed"
+    },
+    {
+      "stage": "wine_initialization",
+      "status": "passed"
+    },
+    {
+      "stage": "local_login_odbc",
+      "status": "passed"
+    },
+    {
+      "stage": "local_dbserver_startup",
+      "status": "passed"
+    },
+    {
+      "stage": "local_atlas_startup",
+      "status": "passed"
+    },
+    {
+      "stage": "client_visual_assets",
+      "status": "passed"
+    },
+    {
+      "stage": "client_animation_pack",
+      "status": "passed"
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "status": "passed"
+    },
+    {
+      "stage": "actual_client_startup",
+      "status": "passed"
+    },
+    {
+      "stage": "actual_client_interaction",
+      "status": "passed"
+    }
+  ],
+  "files": {
+    "001-coh-compat.sql": {
+      "bytes": 7788,
+      "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+    },
+    "atlas-world-supplement-manifest.json": {
+      "bytes": 4258210,
+      "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+    },
+    "atlas-world-supplement.zip": {
+      "bytes": 207803201,
+      "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+    },
+    "atlas_world_assets.py": {
+      "bytes": 24268,
+      "sha256": "4189cff59dce2f9da6d045d754ecc1fda56a09241124f842566b1da69b5865b6"
+    },
+    "character-avatar-defaults-manifest.json": {
+      "bytes": 28554,
+      "sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7"
+    },
+    "character-avatar-defaults.zip": {
+      "bytes": 1842488,
+      "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
+    },
+    "character_avatar_assets.py": {
+      "bytes": 15165,
+      "sha256": "a19e1bf49f6d89b80e5be212cd8bbee5a9c4c7601305af50c9653e5cab927f73"
+    },
+    "character_creation_diagnostic.py": {
+      "bytes": 24162,
+      "sha256": "3e18e7a6a20728fa67cd18172886d862e87169b2719441fc65d4ab8e7800b1eb"
+    },
+    "character_reopen_diagnostic.py": {
+      "bytes": 12328,
+      "sha256": "57f6a3ff09ca0f154f6bf0a540d345fc87867d2cfe5c7d8fe57d7983c8d278b9"
+    },
+    "client-caches.zip": {
+      "bytes": 27071659,
+      "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+    },
+    "client-launcher.exe": {
+      "bytes": 246319,
+      "sha256": "fd8a3724bd009d122fe98e03229e62516b5ee31245db9c093dfaceef73bd11db"
+    },
+    "client-prerequisites.zip": {
+      "bytes": 18757,
+      "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+    },
+    "client-runtime.zip": {
+      "bytes": 8594336,
+      "sha256": "eb9e1f4e378758bbe5d84c5c70818ea2cc61f247b20d86750b35fb6dd9f58d1c"
+    },
+    "client_interactive_diagnostic.py": {
+      "bytes": 24544,
+      "sha256": "d90dd412d672ca516d606cdc7dcacbf47b2b4908fdae76d52b1747b312e7d586"
+    },
+    "client_login_diagnostic.py": {
+      "bytes": 15316,
+      "sha256": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf"
+    },
+    "client_startup_diagnostic.py": {
+      "bytes": 65637,
+      "sha256": "202e6e36126850760af54dcaf9df76cef7f6da436c61c121d15c96db4273bfb5"
+    },
+    "dbserver-package.tar.gz": {
+      "bytes": 2133821,
+      "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80"
+    },
+    "dbserver-schema.tar.gz": {
+      "bytes": 1139794,
+      "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792"
+    },
+    "dbserver_diagnostic.py": {
+      "bytes": 50159,
+      "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+    },
+    "diagnostic.py": {
+      "bytes": 69529,
+      "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+    },
+    "game-package.tar.gz": {
+      "bytes": 10976915,
+      "sha256": "d781779ea33b99591ed9972ee09aa614cf4eb6c5afc355bb88197f20881fe67d"
+    },
+    "game_device_diagnostic.py": {
+      "bytes": 51035,
+      "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+    },
+    "game_diagnostic.py": {
+      "bytes": 79950,
+      "sha256": "0d7d13c0c6ad134cb099e4a838b951f6873e331f5c6f7d21464882084f842541"
+    },
+    "game_evidence.py": {
+      "bytes": 25884,
+      "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+    },
+    "game_hang_evidence.py": {
+      "bytes": 22400,
+      "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+    },
+    "game_map_progress.py": {
+      "bytes": 14789,
+      "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+    },
+    "local_character_server.py": {
+      "bytes": 95557,
+      "sha256": "041b6d6adfd9a5e7e6ecff9463b897a9beb2b3b734f999d85126b9a7cd7b06ff"
+    },
+    "local_login_server.py": {
+      "bytes": 20423,
+      "sha256": "4416353d615cc7821634d8cc370345f80f33fbd380db13258e62577dd3933dfc"
+    },
+    "presentation_diagnostic.py": {
+      "bytes": 17396,
+      "sha256": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df"
+    },
+    "probe.dll": {
+      "bytes": 82761,
+      "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+    },
+    "psqlodbc_x86.msi": {
+      "bytes": 4079616,
+      "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+    },
+    "runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "runtime-probe.exe": {
+      "bytes": 245968,
+      "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+    },
+    "character_session_budget.py": {
+      "bytes": 7608,
+      "sha256": "37abe0e486604a6d73071d557117ea64d067bb33a561606e45bb0b0711132582"
+    },
+    "character_server_data_cache.py": {
+      "bytes": 28620,
+      "sha256": "2dc561451d7186e42300466f833d09a821b99fc6a5facbceaf8106f90a9807bc"
+    },
+    "texture_header_index.py": {
+      "bytes": 15953,
+      "sha256": "821c683de1dfcf2c3e779d26e12e67e5ba90f44e5a5f67fd68e757e3a8bc550f"
+    },
+    "client_attempt_retry.py": {
+      "bytes": 12707,
+      "sha256": "afc9f16471eda4e7d18a2bdbafab46f27999141217b5c2db998317897f1b8380"
+    },
+    "native-responsiveness.json": {
+      "bytes": 40754,
+      "sha256": "e3005754339365b88a41af12dadc2afd540033ba9ee927a18f9e353387e41fc3"
+    },
+    "native_responsiveness_contract.py": {
+      "bytes": 11441,
+      "sha256": "b7e7d607ed4b0c8a64e8cf0fbd37e80e7ce76b292454a7fa08fa301095634e2d"
+    },
+    "native_character_events.py": {
+      "bytes": 6484,
+      "sha256": "2f9813e29530497e6834b21cfbcfc5fd9dd33fc8c64f49502eafab99f25b65b6"
+    },
+    "stationary_contact_evidence.py": {
+      "bytes": 11472,
+      "sha256": "40ae7dde35df5d4d44c83bf2b85e52c1fc56171034dbcb483d55aeb0fa29f47d"
+    },
+    "server-cache-manifest.json": {
+      "bytes": 39041,
+      "sha256": "4e1a4c9c148509ef34245768f64ca2be4bb83659db845c6ef94ed594666b3fff"
+    },
+    "server-caches.zip": {
+      "bytes": 29825263,
+      "sha256": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17"
+    },
+    "server_message_cache_format.py": {
+      "bytes": 4921,
+      "sha256": "e70fa5aa8c591c866f0c72f3840495cd93024031936f92944c813a9901d3d6ec"
+    },
+    "server_cache_package.py": {
+      "bytes": 20625,
+      "sha256": "2d38757408f978fc5b79245e6bc590b0f368ee695f3854acea6fb38cf3173d33"
+    },
+    "task_gate_evidence.py": {
+      "bytes": 30573,
+      "sha256": "8907f38418645156596947ad4f01c091c2e0473b4bb3eb9b7b358df207fd5de1"
+    },
+    "server_animation_package.py": {
+      "bytes": 10482,
+      "sha256": "9fcbc32e2aa7f43151f4ec1c4ddc51e6c12202d81076fb5521936721f5174f81"
+    },
+    "server-animation-manifest.json": {
+      "bytes": 1005794,
+      "sha256": "8f752dceeffa632287602176f26722c3129fcdc9941709793d8b26d22151859f"
+    },
+    "task-gate.json": {
+      "bytes": 300,
+      "sha256": "df780496663132d0537ed748634fcb9bc262094536ef3b53a831e860bf2b7bdc"
+    },
+    "server-animations.pigg": {
+      "bytes": 97084456,
+      "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+    },
+    "startup-dbserver-manifest.json": {
+      "bytes": 28754,
+      "sha256": "135b153572056c5b747eee21884c8a951cacce858fe6a5ebea7c52bec1e1820d"
+    },
+    "startup-dbserver.exe": {
+      "bytes": 1664000,
+      "sha256": "baf97a253ddccf29575801f66ef56cb7ce75f168062bb0c4ffef796b419c2029"
+    },
+    "client-visual-assets.zip": {
+      "bytes": 23887359,
+      "sha256": "2cb25dbf8a5749c6e2cf9abc4a7dab305f5b2698d6c59e460d638b9756a40809"
+    },
+    "client-visual-manifest.json": {
+      "bytes": 782080,
+      "sha256": "6b93b50a2b4d2bf6d2b16b5827517dec20f8b666c4fb853ccd58906659945c1b"
+    },
+    "client_animation_package.py": {
+      "bytes": 12408,
+      "sha256": "c6a291400e2614cab6007d6cb7c1dfd898a1a1b31b9a6f6985856ef6ec8150e4"
+    },
+    "client_visual_assets.py": {
+      "bytes": 11310,
+      "sha256": "dd36027c52ae849192cc0311c2fcdb2d8f779ad5f4a649b46ab4c0597e31fae5"
+    }
+  }
+}

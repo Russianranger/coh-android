@@ -1,0 +1,13 @@
+{
+  "version": "0.13.28",
+  "asset_version": "1.0.0",
+  "resource_run_id": "38112251836",
+  "resource_commit": "492074101200f143fd19ba386f55de29ddfa5110",
+  "native_run_id": "38112251836",
+  "native_commit": "492074101200f143fd19ba386f55de29ddfa5110",
+  "generator_run_id": "38112251836",
+  "generator_commit": "492074101200f143fd19ba386f55de29ddfa5110",
+  "beacon_run_id": "38143667104",
+  "beacon_commit": "d5e9f9f6bfa56da36f0c118bec26c764f60ef823",
+  "publication_attempt": "deterministic-package-audit"
+}

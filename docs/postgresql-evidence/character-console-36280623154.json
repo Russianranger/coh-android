@@ -1,0 +1,15 @@
+{
+  "workflow_run": 36280623154,
+  "commit": "fe3b57a3c1232a0a7e0be6d6bcd99f446cb4aec0",
+  "job_id": 108511616939,
+  "job": "tooling (windows-2025-vs2026)",
+  "conclusion": "failure",
+  "tests_run": 44,
+  "failures": 1,
+  "failing_test": "test_gui_allocconsole_reopens_output_unless_console_preexists",
+  "observed": "GUI-subsystem pythonw AllocConsole returned True even with CREATE_NEW_CONSOLE",
+  "assertion": "True != False",
+  "runtime_job": "skipped by failed tooling dependency",
+  "scope": "Rejected console preallocation hypothesis, not an engine persistence result",
+  "log_url": "https://github.com/Russianranger/coh-android/actions/runs/36280623154/job/108511616939"
+}

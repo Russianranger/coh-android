@@ -1,0 +1,179 @@
+{
+  "format": 1,
+  "accepted_utc": "2026-09-27T21:44:41Z",
+  "run_id": 36352420585,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36352420585",
+  "source_commit": "1afb0610095ebe3cb8aba591ea22d749613b7276",
+  "result": "all_five_jobs_passed",
+  "tooling_tests": {
+    "passed": 99,
+    "skipped": 0
+  },
+  "apk": {
+    "format": 1,
+    "apk": "COH-Diagnostic-0.1.2.apk",
+    "bytes": 13477490,
+    "sha256": "75cddbb74e5f6733e252a48989b014975e522a840ce1b36aa6e3a56030a90c01",
+    "application_id": "io.github.russianranger.cohdiagnostic",
+    "version_name": "0.1.2",
+    "version_code": 3,
+    "min_sdk": 26,
+    "target_sdk": 35,
+    "abi": "arm64-v8a",
+    "repository_commit": "1afb0610095ebe3cb8aba591ea22d749613b7276",
+    "runtime_manifest_sha256": "b29141f00f82f3f06e853a2ea0146dd4c7ce298593324f10a04d7b12e2783e35",
+    "signature_verified": true,
+    "signer_certificate_sha256": "4c8f0212c85be54f507cfff03439ecbd95deaea230a0381af3b9b42b1ebf536e",
+    "signing": "Ephemeral CI certificate; not a stable release/update signing identity",
+    "package_badging_verified": true,
+    "payload_bytes_verified": true,
+    "device_validated": false,
+    "gameplay_validated": false
+  },
+  "runtime_modes": {
+    "database": {
+      "passed": true,
+      "stages": 11,
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "report": "runtime-database-36352420585.json",
+      "report_sha256": "7992756974bb137035bbaddd7755e22a4ca3d34cc654722979effb874cc5cea6",
+      "wineboot": {
+        "label": "wineboot",
+        "elapsed_seconds": 71.537,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "",
+        "completion": {
+          "policy": "leader_exit_with_owned_background_output",
+          "leader_exit_code": 0,
+          "output_capture_open": true,
+          "elapsed_seconds": 71.537
+        }
+      }
+    },
+    "client": {
+      "passed": true,
+      "stages": 12,
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "report": "runtime-client-36352420585.json",
+      "report_sha256": "c7c75c0569ead7eb00207baf5821adee8f2cebd2ebaa9b2f356900b80bda2cef",
+      "wineboot": {
+        "label": "wineboot",
+        "elapsed_seconds": 78.376,
+        "exit_code": 0,
+        "forced_stop": false,
+        "output_capture_closed": true,
+        "input_closed": true,
+        "output": "",
+        "completion": {
+          "policy": "leader_exit_with_owned_background_output",
+          "leader_exit_code": 0,
+          "output_capture_open": true,
+          "elapsed_seconds": 78.376
+        }
+      }
+    }
+  },
+  "client_probe": {
+    "format": 1,
+    "status": "passed",
+    "failure_stage": "",
+    "pointer_bits": 32,
+    "win32_error": 0,
+    "scope": "headless_wgl_client_capabilities",
+    "gl": {
+      "vendor": "Mesa/X.org",
+      "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+      "version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+      "renderer_class": "software",
+      "arb_vertex_program": true,
+      "arb_fragment_program": true,
+      "arb_shader_objects": true,
+      "framebuffer_extension": true,
+      "wgl_pbuffer_entrypoint": true,
+      "wgl_pixel_format_entrypoint": true,
+      "pbuffer_exercised": false
+    },
+    "render": {
+      "textured_quad_verified": true,
+      "samples_verified": 4,
+      "swap_buffers": true,
+      "rgb_samples": [
+        [
+          255,
+          0,
+          0
+        ],
+        [
+          0,
+          255,
+          0
+        ],
+        [
+          0,
+          0,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "input": {
+      "scope": "synthetic_own_window_and_device_creation_only",
+      "window_messages_verified": true,
+      "keyboard_message_mask": 3,
+      "mouse_message_mask": 7,
+      "directinput_devices_created": true,
+      "directinput_hresult": 0,
+      "physical_input_validated": false
+    },
+    "audio": {
+      "scope": "device_enumeration_only",
+      "enumeration_hresult": 0,
+      "devices": 0,
+      "default_reported": false,
+      "playback_validated": false
+    },
+    "cg_shaders_validated": false,
+    "game_rendering_validated": false,
+    "android_surface_validated": false,
+    "hardware_acceleration_validated": false
+  },
+  "artifacts": {
+    "apk": {
+      "id": 10943061240,
+      "zip_sha256": "0622270a9aa6cdc043c85c34ef6ddaf49084ad430f58dc4cb503f14175078b4b"
+    },
+    "database": {
+      "id": 10943230886,
+      "zip_sha256": "0dbfcff6c3fd468386c29de094041db2518d5dfb899f3ca8f5f58174c7d2b849"
+    },
+    "client": {
+      "id": 10942753454,
+      "zip_sha256": "48e1e14c94c05fe5517ecb0212b1eac4805085edf8385ec2eec44fba248c8863"
+    }
+  },
+  "downloaded_apk_and_all_embedded_asset_hashes_verified": true,
+  "runtime_probe_hashes_match_apk": true,
+  "same_source_postgresql_regression": {
+    "run_id": 36352422996,
+    "conclusion": "success"
+  },
+  "device_failure_evidence": "thor-wineboot-failure-20260927.json",
+  "android_device_acceptance": "pending_retry",
+  "device_root_cause": "Unconfirmed: 0.1.1 recorded process exit status after forced stop, so the original reports cannot distinguish a running initializer from inherited output handles.",
+  "scope": "Hosted native ARM64 Wine/FEX prerequisites with llvmpipe software rendering; no Android surface, physical input, audible playback, Cg or CoH rendering qualification"
+}

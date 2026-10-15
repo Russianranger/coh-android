@@ -1,0 +1,28 @@
+COH Atlas Gameplay 0.13.11 — focused Thor startup and appearance check
+
+Install over the existing app. Keep the imported Atlas assets, THORHERO,
+character database and completed tasks. Run Set up runtime once after installing.
+Use the same performance preset and saved-character startup option as 0.13.10.
+
+Measure one first reopen and one subsequent reopen. Record separately:
+1. Local Atlas startup (0.13.10: 3:50; instrumented 229.246 seconds).
+2. Actual client startup (0.13.10: 5:22; native launcher 319.732 seconds).
+3. Login to playable Atlas Park.
+Keep runtime setup, first asset installation and texture-header preparation
+separate from those stage timings. The exported report records these boundaries.
+Do not assume a host benchmark proves the Thor's speedup.
+
+Compare the same places shown in the 0.13.10 screenshots:
+- Worried Citizen and Merit Vendor faces, hair, hands and body pieces.
+- Merit Reward Informant chest, shoulders, gloves and armor inside City Hall.
+- Police drone body near the Atlas statue and steps, including its lights/FX.
+- Ground, grass, benches, planters, nearby objects and distant pale geometry.
+Capture unresolved objects both near and far where practical. Preserve the
+ground and hands that already loaded correctly in 0.13.10.
+
+Use ordinary Save character / log out, then Finish and export the complete
+outer support ZIP, keeping guest-report.zip intact. Include screenshots of
+remaining white textures, missing geometry or startup errors. This is a focused
+startup/visual pass; no need to repeat accepted character creation or task gates.
+If a stage fails, Abort and wait for owned cleanup before exporting. Do not
+clear app data or reimport the assets to work around a failure.

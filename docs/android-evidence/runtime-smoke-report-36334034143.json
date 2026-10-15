@@ -1,0 +1,307 @@
+{
+  "format": 1,
+  "status": "failed",
+  "started_utc": "2026-09-27T16:44:58.564981+00:00",
+  "stages": [
+    {
+      "stage": "assets_and_architecture",
+      "started_utc": "2026-09-27T16:44:58.583873+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T16:44:58.592616+00:00",
+      "machine": "aarch64",
+      "guest_uid": 1000,
+      "postgres_native_arm64": true
+    },
+    {
+      "stage": "initialize_owned_cluster",
+      "started_utc": "2026-09-27T16:44:58.592804+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T16:45:03.533819+00:00",
+      "cluster_reused": false
+    },
+    {
+      "stage": "postgres_first_start",
+      "started_utc": "2026-09-27T16:45:03.534013+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T16:45:03.749386+00:00",
+      "loopback": "127.0.0.1",
+      "port": 50943,
+      "durability_verified": true,
+      "server_version": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit"
+    },
+    {
+      "stage": "restricted_fixture_database",
+      "started_utc": "2026-09-27T16:45:03.749586+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T16:45:04.556151+00:00",
+      "database": "coh_test_9bbca9aaf0fba513",
+      "role": "cohtest",
+      "migration_version": 2,
+      "reapplied": true
+    },
+    {
+      "stage": "wine_prefix_and_driver",
+      "started_utc": "2026-09-27T16:45:04.556367+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T16:46:28.749398+00:00",
+      "prefix_owned": true,
+      "architecture": "win64 with PE32 WoW64/FEX",
+      "x_tcp": false,
+      "rfb_tcp": false,
+      "installer": {
+        "path": "C:\\windows\\syswow64\\msiexec.exe",
+        "pointer_bits": 32,
+        "sha256": "d4ed3551f449cfb68e609e1572b519b5eecd3bf0519bf16877ea02bd4fb01ed0"
+      }
+    },
+    {
+      "stage": "win32_odbc_driver",
+      "started_utc": "2026-09-27T16:46:28.749677+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T16:46:37.095214+00:00",
+      "driver_name": "PostgreSQL Unicode",
+      "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+      "pointer_bits": 32,
+      "registry_view": 32,
+      "driver_dll_loaded": true
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "started_utc": "2026-09-27T16:46:37.095414+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T16:46:45.443495+00:00",
+      "pointer_bits": 32,
+      "dll_export_verified": true,
+      "odbc_manager_loaded": true
+    },
+    {
+      "stage": "odbc_fixture",
+      "started_utc": "2026-09-27T16:46:45.443718+00:00"
+    }
+  ],
+  "processes": [
+    {
+      "label": "initdb",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 4.88,
+      "output": "The files belonging to this database system will be owned by user \"coh\".\nThis user must also own the server process.\n\nThe database cluster will be initialized with locale \"C\".\nThe default text search configuration will be set to \"english\".\n\nData page checksums are enabled.\n\ncreating directory /state/diagnostic/init-pending-dd70035447fe35b4 ... ok\ncreating subdirectories ... ok\nselecting dynamic shared memory implementation ... posix\nselecting default \"max_connections\" ... 100\nselecting default \"shared_buffers\" ... 128MB\nselecting default time zone ... UTC\ncreating configuration files ... ok\nrunning bootstrap script ... ok\nperforming post-bootstrap initialization ... ok\nsyncing data to disk ... ok\n\nSuccess. You can now start the database server using:\n\n    /opt/coh/pgsql/bin/pg_ctl -D /state/diagnostic/init-pending-dd70035447fe35b4 -l logfile start\n\n"
+    },
+    {
+      "label": "existing-cluster-status",
+      "exit_code": 3,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "pg_ctl: no server running\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "127.0.0.1|50943|/state/diagnostic/pgdata|on|on|on\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "0\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "0\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "CREATE ROLE\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "1\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.256,
+      "output": "CREATE DATABASE\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "REVOKE\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.054,
+      "output": "ALTER DATABASE\n"
+    },
+    {
+      "label": "sql-fixture",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "REVOKE\n"
+    },
+    {
+      "label": "sql-fixture",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "BEGIN\nCREATE SCHEMA\nCREATE SCHEMA\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 1\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 1\nCOMMIT\n"
+    },
+    {
+      "label": "sql-fixture",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "BEGIN\nNOTICE:  schema \"dbo\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  schema \"coh_meta\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  relation \"schema_version\" already exists, skipping\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 0\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 0\nCOMMIT\n"
+    },
+    {
+      "label": "sql-fixture",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "cohtest|2\n"
+    },
+    {
+      "label": "wineboot",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 75.284,
+      "output": ""
+    },
+    {
+      "label": "install-x86-psqlodbc",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 8.803,
+      "output": ""
+    },
+    {
+      "label": "odbc-driver-preflight",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 8.343,
+      "output": "COH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode view=32 key_error=0 driver_error=0 type=1 path=C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode(x86) view=32 key_error=0 driver_error=0 type=1 path=C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 NAME PostgreSQL Unicode\r\nCOH_ODBC_DRIVER_V1 DLL C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 PASS bits=32\r\n"
+    },
+    {
+      "label": "runtime-probe",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 8.348,
+      "output": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified\r\n"
+    },
+    {
+      "label": "odbc-fixture",
+      "exit_code": -15,
+      "forced_stop": true,
+      "elapsed_seconds": 181.259,
+      "output": ""
+    },
+    {
+      "label": "owned-wine-stop",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.105,
+      "output": ""
+    },
+    {
+      "label": "owned-wine-wait",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": ""
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.104,
+      "output": "DROP DATABASE\n"
+    },
+    {
+      "label": "postgres-graceful-stop",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.155,
+      "output": "waiting for server to shut down.... done\nserver stopped\n"
+    },
+    {
+      "label": "postgres_first_start",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 283.59,
+      "output": "2026-09-27 16:45:03.616 UTC [5947] LOG:  starting PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n2026-09-27 16:45:03.616 UTC [5947] LOG:  listening on IPv4 address \"127.0.0.1\", port 50943\n2026-09-27 16:45:03.618 UTC [5947] LOG:  listening on Unix socket \"/state/diagnostic/socket/.s.PGSQL.50943\"\n2026-09-27 16:45:03.624 UTC [5955] LOG:  database system was shut down at 2026-09-27 16:45:00 UTC\n2026-09-27 16:45:03.634 UTC [5947] LOG:  database system is ready to accept connections\n2026-09-27 16:49:46.882 UTC [5953] LOG:  checkpoint starting: immediate force wait\n2026-09-27 16:49:46.892 UTC [5953] LOG:  checkpoint complete: wrote 56 buffers (1.4%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.003 s, total=0.011 s; sync files=23, longest=0.002 s, average=0.001 s; distance=4469 kB, estimate=4469 kB; lsn=0/1B4CD70, redo lsn=0/1B4CD18\n2026-09-27 16:49:46.974 UTC [5947] LOG:  received fast shutdown request\n2026-09-27 16:49:46.975 UTC [5947] LOG:  aborting any active transactions\n2026-09-27 16:49:46.976 UTC [5947] LOG:  background worker \"logical replication launcher\" (PID 5958) exited with exit code 1\n2026-09-27 16:49:46.976 UTC [5953] LOG:  shutting down\n2026-09-27 16:49:46.977 UTC [5953] LOG:  checkpoint starting: shutdown immediate\n2026-09-27 16:49:46.982 UTC [5953] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.006 s; sync files=1, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=4022 kB; lsn=0/1B4CED0, redo lsn=0/1B4CED0\n2026-09-27 16:49:46.990 UTC [5947] LOG:  database system is shut down\n"
+    },
+    {
+      "label": "private-headless-x",
+      "exit_code": 0,
+      "forced_stop": true,
+      "elapsed_seconds": 282.575,
+      "output": "_XSERVTransmkdir: ERROR: euid != 0,directory /tmp/.X11-unix will not be created.\n\nXvnc TigerVNC 1.12.0 - built 2023-01-06 16:01\nCopyright (C) 1999-2021 TigerVNC Team and many others (see README.rst)\nSee https://www.tigervnc.org for information on TigerVNC.\nUnderlying X server release 12101006, X.Org\n\n\nSun Sep 27 16:45:04 2026\n vncext:      VNC extension running!\n vncext:      Listening for VNC connections on\n              /state/diagnostic/runtime/vnc.sock (mode 0600)\n vncext:      created VNC server for screen 0\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 2\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 3\n\nSun Sep 27 16:49:47 2026\n ComparingUpdateTracker: 0 pixels in / 0 pixels out\n ComparingUpdateTracker: (1:nan ratio)\n"
+    }
+  ],
+  "failures": [
+    "odbc-fixture timed out"
+  ],
+  "scope": "Native ARM64 PostgreSQL, Wine/FEX PE32 DLL and ODBC fixtures with clean restart",
+  "passed": false,
+  "gameplay_validated": false,
+  "android_execution_validated": false,
+  "execution_platform_requested": "host",
+  "asset_sha256": {
+    "001-coh-compat.sql": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a",
+    "odbc_probe.exe": "493a3043e537d2a3bd1eecba1db4dfee9ab23bfa82d92f3a303e91f45565bc61",
+    "psqlodbc_x86.msi": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773",
+    "runtime-probe.exe": "0127f7de65fae705ad560d3ad20adeb68874f1e22644b8f385d3772938bdfd22",
+    "probe.dll": "c6a57ae9eb6bf4102bb4840b1394a60234bd25b19efe79886f5c436acee1619c"
+  },
+  "postgres_port": 50943,
+  "odbc_installer": {
+    "path": "C:\\windows\\syswow64\\msiexec.exe",
+    "pointer_bits": 32,
+    "sha256": "d4ed3551f449cfb68e609e1572b519b5eecd3bf0519bf16877ea02bd4fb01ed0"
+  },
+  "odbc_driver": {
+    "driver_name": "PostgreSQL Unicode",
+    "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+    "pointer_bits": 32,
+    "registry_view": 32,
+    "driver_dll_loaded": true
+  },
+  "wine_shutdown": {
+    "stop_exit_code": 0,
+    "wait_exit_code": 0,
+    "prefix_lock_free": true,
+    "server_socket_inactive": true
+  },
+  "finished_utc": "2026-09-27T16:49:47.132688+00:00",
+  "cleanup_complete": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  }
+}

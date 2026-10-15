@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "run_id": 36372550440,
+  "repository_commit": "1fbb107e52c4f46418d148da77c724ff19bd7a86",
+  "tooling_job": {"id": 108771698746, "status": "passed", "test_count": 48},
+  "bridge_job": {"id": 108771818611, "status": "failed"},
+  "phase": "windows_batch_invocation_before_compilation",
+  "diagnostic": "'out' is not recognized as an internal or external command",
+  "cause": "cmd /c interpreted the forward slash in out/build-bridge.cmd as command syntax",
+  "correction": "Invoke .\\out\\build-bridge.cmd using a Windows path",
+  "arm64_game_execution_started": false,
+  "android_execution_validated": false
+}

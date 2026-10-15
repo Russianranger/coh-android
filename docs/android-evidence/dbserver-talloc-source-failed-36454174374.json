@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "accepted_runtime_run_id": 36364550345,
+  "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+  "proot_build_receipt": {
+    "bytes": 3236,
+    "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+  },
+  "corresponding_sources": {
+    "bytes": 1014688,
+    "sha256": "ae2a4de4b6008ceb3230e0cf77881b4b1fffe52f9ad5b1179b03b67d4395fee7"
+  },
+  "member": {
+    "bytes": 684092,
+    "sha256": "dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd",
+    "name": "sources/talloc-2.4.3.tar.gz"
+  },
+  "output": "out/android/source-cache/talloc-2.4.3.tar.gz",
+  "build_recipe_unchanged": true,
+  "runtime_execution_validated": false
+}

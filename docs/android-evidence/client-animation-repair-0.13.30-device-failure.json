@@ -1,0 +1,207 @@
+{
+  "format": 1,
+  "scope": "recovered_0_13_29_animation_identity_failure_for_0_13_30_guest_repair",
+  "recorded_date_utc": "2026-10-11",
+  "status": "device_failure_recorded_candidate_host_and_publication_evidence_recorded_separately",
+  "archive": {
+    "filename": "coh-atlas-gameplay-20261011-191259.zip",
+    "bytes": 40120,
+    "sha256": "08b57e05e527cd7445c1d862f97797d1a87a854554805151e1be457df82eaed3",
+    "members": {
+      "recovery-manifest.json": {
+        "bytes": 276,
+        "sha256": "b693e3df1b4cf761323fdfb135a30680fa4bc6b33c236a460095e12b79de7ad5"
+      },
+      "previous-guest/latest-report.json": {
+        "bytes": 71057,
+        "sha256": "f40463da17a99cb0745362de1a2ba2de4b67aa4b73f64798635518aa0895f88f"
+      },
+      "previous-guest/report.zip": {
+        "bytes": 20044,
+        "sha256": "cfad3923c9329bfd0ca1d87f809167068435be0d7c2d2f9572212f4ca7d33ab3"
+      }
+    }
+  },
+  "recovery": {
+    "format": 1,
+    "status": "interrupted_unverified",
+    "passed": false,
+    "verified": false,
+    "recovery_kind": "previous_guest_outputs",
+    "session_attribution_verified": false,
+    "note": "Preserved diagnostic evidence only. No successful Finish, character save, or zoning qualification is inferred."
+  },
+  "evidence_integrity": {
+    "outer_archive_read_without_modification": true,
+    "inner_report_members": [
+      "latest-report.json",
+      "client-evidence/character-server-logs.zip"
+    ],
+    "inner_latest_report_byte_identical_to_outer_preserved_report": true
+  },
+  "identity": {
+    "guest_scope": "actual_character_creation_guest",
+    "diagnostic_mode": "actual_character_creation",
+    "execution_platform_requested": "android",
+    "machine": "aarch64",
+    "outer_android_report_present": false,
+    "session_attribution_verified": false,
+    "version_association": "The retained guest pins match the repaired .29 game archive and Assets 1.0.0. The wrapper contains no Android app-version report and does not authenticate interrupted-session attribution.",
+    "game_package_sha256": "36d815fd6e9b8eeebbf04de756ea05fa9ee4f29a5330a6cde15926522a4215aa",
+    "accepted_Game_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+    "asset_pack_manifest_sha256": "9570447b93e7d6e42768e1b0e16b791256b82d509d9caf007aca5c88cd7fd05c",
+    "server_animation_manifest_sha256": "8f752dceeffa632287602176f26722c3129fcdc9941709793d8b26d22151859f",
+    "server_animations_pigg_sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+  },
+  "observed_failure": {
+    "status": "failed",
+    "failures": [
+      "Animation runtime/native identity differs"
+    ],
+    "started_utc": "2026-10-11T19:05:47.896461+00:00",
+    "finished_utc": "2026-10-11T19:12:16.773008+00:00",
+    "postgres_started": true,
+    "server_started": false,
+    "mapserver_started": false,
+    "client_process_started": false,
+    "cleanup_complete": true,
+    "cleanup_execution": {
+      "diagnostic_initialized": true,
+      "wine_started": true,
+      "owned_child_count": 23
+    },
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "elapsed_seconds": 388.876547,
+    "elapsed_human_approximate": "6 minutes 29 seconds",
+    "timing_scope": "Preserved guest start through finish timestamps, not APK launch, playable-world entry or monorail travel.",
+    "stages": [
+      {
+        "stage": "client_inputs",
+        "status": "passed",
+        "started_utc": "2026-10-11T19:05:47.905741+00:00",
+        "finished_utc": "2026-10-11T19:05:51.620787+00:00",
+        "elapsed_seconds": 3.715046
+      },
+      {
+        "stage": "client_private_data",
+        "status": "passed",
+        "started_utc": "2026-10-11T19:05:51.621272+00:00",
+        "finished_utc": "2026-10-11T19:05:51.835882+00:00",
+        "elapsed_seconds": 0.21461
+      },
+      {
+        "stage": "persistent_server_profile",
+        "status": "passed",
+        "started_utc": "2026-10-11T19:05:51.836311+00:00",
+        "finished_utc": "2026-10-11T19:05:55.956792+00:00",
+        "elapsed_seconds": 4.120481
+      },
+      {
+        "stage": "postgres_local_login",
+        "status": "passed",
+        "started_utc": "2026-10-11T19:05:55.957531+00:00",
+        "finished_utc": "2026-10-11T19:05:56.294664+00:00",
+        "elapsed_seconds": 0.337133
+      },
+      {
+        "stage": "presentation_display",
+        "status": "passed",
+        "started_utc": "2026-10-11T19:06:50.769431+00:00",
+        "finished_utc": "2026-10-11T19:06:50.980162+00:00",
+        "elapsed_seconds": 0.210731
+      },
+      {
+        "stage": "wine_initialization",
+        "status": "passed",
+        "started_utc": "2026-10-11T19:06:50.980563+00:00",
+        "finished_utc": "2026-10-11T19:07:47.703437+00:00",
+        "elapsed_seconds": 56.722874
+      },
+      {
+        "stage": "local_login_odbc",
+        "status": "passed",
+        "started_utc": "2026-10-11T19:07:47.704012+00:00",
+        "finished_utc": "2026-10-11T19:07:51.645416+00:00",
+        "elapsed_seconds": 3.941404
+      },
+      {
+        "stage": "local_dbserver_startup",
+        "started_utc": "2026-10-11T19:07:51.646676+00:00"
+      }
+    ],
+    "server_preparation_phase_seconds": {
+      "base_schema_and_native_runtime": 0.095501,
+      "required_original_geometry": 6.398031,
+      "server_data_cache_checkout": 0.003559,
+      "cold_server_data_mirror": 250.224235,
+      "cold_server_data_receipt_seal": 1.057214,
+      "native_dependencies_and_manual_atlas": 0.094132,
+      "prepared_server_definition_caches": 3.92966
+    },
+    "mapserver_producer": {
+      "repository_commit": "492074101200f143fd19ba386f55de29ddfa5110",
+      "manifest_sha256": "a574d7ca0ada390c9b1841f04cb5e5163138008915315166cff4961de7ef5487",
+      "mapserver_sha256": "53ff6ee013690670abbaed39e44d66267caf8753486fbc05c64766a56d9c0713"
+    },
+    "client_worktree_reused": true,
+    "postgres_durability_verified": true,
+    "odbc_driver_loaded": true,
+    "wine_cleanup_remaining": 0,
+    "interpretation": "The .29 receipt repair was passed. PostgreSQL, Wine and ODBC initialization completed; server-data animation compatibility validation failed before DbServer, MapServer or Game launch. Cleanup completed."
+  },
+  "diagnosis": {
+    "classification": "animation_asset_producer_identity_used_as_exact_consumer_identity",
+    "basis": "Source inspection of the original animation guard and authenticated monorail native provenance, separate from the device report itself.",
+    "mechanism": "The unchanged animation pack records its original MapServer producer. The qualified monorail MapServer has a different executable digest while preserving the native animation loader; the old direct digest comparison rejected this consumer.",
+    "observed_gate": "Animation runtime/native identity differs",
+    "repair_scope": "Accept only the original producer or the one exact source-verified monorail consumer, retain all original animation identity and byte checks, and pass native provenance through Atlas and Kings Row installation paths.",
+    "sources": [
+      "android/guest/server_animation_package.py",
+      "android/guest/local_character_server.py",
+      "android/guest/server_cache_package.py",
+      "android/guest/native_monorail_contract.py",
+      "tools/android/interactive/test_animation_runtime_compatibility.py",
+      "tools/android/interactive/qualify_runtime_asset_preflight.py"
+    ]
+  },
+  "repair_candidate": {
+    "version_name": "0.13.30",
+    "version_code": 45,
+    "physical_recovery_validated": false,
+    "accepted_Game_expected_retained": true,
+    "native_server_binaries_expected_retained": true,
+    "receipt_order_repair_expected_retained": true,
+    "guest_helpers_changed": [
+      "server_animation_package.py",
+      "local_character_server.py"
+    ],
+    "java_or_dex_recompiled": false,
+    "android_resources_expected_retained": true,
+    "gpu_stack_expected_retained": true,
+    "external_assets_version": "1.0.0",
+    "external_assets_expected_retained": true,
+    "asset_reimport_required_for_verified_1_0_0": false,
+    "runtime_refresh_required": true,
+    "uninstall_required": false,
+    "qualification_evidence": "Host preflight, regression results, publication and public-byte audit are recorded separately; not claimed by this device-failure summary."
+  },
+  "pending_device_gates": [
+    "Install .30 over the existing app and refresh runtime once; retain verified Assets 1.0.0 and any existing profile.",
+    "Pass the former animation compatibility failure, launch servers/client, and enter the world on the offered create or saved-reopen path.",
+    "Complete ordinary verified save, Finish, export and saved-character reopen.",
+    "Then test both Atlas Park-Kings Row monorail directions and Kings Row save/reopen, controls, visuals/audio.",
+    "Measure actual loading time, memory, temperature and FPS; confirm complete and interrupted export as applicable."
+  ],
+  "limitations": [
+    "Recovery wrapper explicitly marks interrupted_unverified and session_attribution_verified=false.",
+    "This retained guest failure and completed cleanup do not establish the Android lifecycle cause, OOM or a GPU crash.",
+    "No successful Finish, character save, world entry, zoning or playable session is inferred.",
+    "PostgreSQL setup preserved the profile, but the failed attempt did not verify a character save.",
+    "Cold mirror preparation was 250.224235 seconds; no startup speedup or sub-30-second zoning is claimed.",
+    "Host tests of real assets and exact compatibility do not substitute for physical Thor qualification."
+  ]
+}

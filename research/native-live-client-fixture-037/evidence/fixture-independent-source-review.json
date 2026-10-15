@@ -1,0 +1,122 @@
+{
+  "format": 1,
+  "role": "independent_dormant_Android_metadata_fixture_source_review",
+  "disposition": "approved_for_closed_source_integration_only",
+  "source_freeze": {
+    "bytes": 1318,
+    "sha256": "9796090bd0ebb6197c36f7da0ea7dfa3c92325f10cf49632af63b6535915c70c"
+  },
+  "owned_source_pins": {
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryFixture.java": {
+      "bytes": 49318,
+      "sha256": "0834f290a7bd373dcf3d2ceda1fe10f14d50e29bc8320d1bf55e8cefe0fa024e"
+    },
+    "tools/android/interactive/test_client_live_directory_fixture.py": {
+      "bytes": 35369,
+      "sha256": "9a130cfb1d16929405b776464924779b61989efab3766491963805f4c07192d6"
+    }
+  },
+  "all_source_and_dependency_pre_post_pins_unchanged": true,
+  "independent_current_controls": {
+    "tests": 75,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "ResourceWarning": "error",
+    "wall_seconds": 18.09978829100146,
+    "compiler": "actual java jdk.compiler --release8",
+    "layout": "isolated installed project with copied unchanged source dependencies",
+    "replay_receipt": {
+      "bytes": 4212,
+      "sha256": "9a27d397b5abe0ca873a3caa5484c8dcbea22c9f327242dd161688c7b31da1a9"
+    },
+    "log": {
+      "bytes": 7925,
+      "sha256": "fc40e5bc3e147bc0888fe9d33fa6deaf130263f98a9344c58774a3f8b9c6932b"
+    }
+  },
+  "reviewed_guarantees": [
+    "Exact bounded COHNTB1/raw FileBothDirectoryInformation3 8192-byte geometry, NT chain/count/status/EOF/cleanup and bridge 320-byteWFD/328-byte row parser.",
+    "Constructor authority limited to name,sizeLow,writeFILETIME and DIR/READONLY/HIDDEN/SYSTEM; unused native fields remain raw observation, not qualification.",
+    "Exact frozen session16 wire bytes must match Pins.sessionId before factory preparation; four case tokens unique and copied; basic aliases refused.",
+    "All four selected directories match independently provided current realUID/device and held JNI inode/canonical path; root paths revalidated around observations.",
+    "Probe packet accepts only a held regular FileInputStream/FileChannel with typed fstat identity and current owner/device/size/retarget checks; asynchronous reads and console collectors use one operation deadline.",
+    "Post-last-native-work and final-root-validation deadline refusals prevent late comparison success; finite cleanup grace is separate from gameplay/login time.",
+    "Throwable/interruption cannot retry advanced cursor rows; each independent cursor/process/packet/stream/root cleanup is attempted and failure poisons aggregate cleanup.",
+    "Failed/incomplete/oversize/exit/interruption paths retain bounded available raw NT packet, partial consoles and delivered bridge frames through defensive getters with omission records.",
+    "Source and compiled-component/op/runtime/probe/helper/recipe/build attribution are immutable; diagnostic JSON is not admission authority.",
+    "productionAdmissionAllowed always false; concrete packaged owner and platform controls remain pending."
+  ],
+  "actual_host_vs_mock_scope": {
+    "actual_JVM_byte_parsing_and_release8_compile": true,
+    "actual_host_regular_FileChannel_IO_and_FD_cleanup_controls": true,
+    "native_NT_packets_synthetic": true,
+    "JNI_and_fstat_metadata_typed_mocks": true,
+    "owned_Process_typed_mocks": true,
+    "actual_Windows_NT_API_executed": false,
+    "actual_Android_executed": false,
+    "actual_JNI_executed": false,
+    "Wine_FEX_PRoot_executed": false
+  },
+  "remaining_gates": [
+    "Reviewed concrete Android Os.fstat/nofollow output-parent custody, fresh synthetic fixture bindings and exact current native-child verifier/starter/cleanup adapter.",
+    "Actual unchanged packaged Android Wine/FEX/PRoot plus actual app UID and compiled JNI/probe field/batch/case/path tests.",
+    "Separate current runtime alias, native NT sharing and concurrent-retarget controls; this basic comparator refuses aliases and cannot qualify them.",
+    "Current native Game consumer SDK/runtime tests and physical Thor startup/zoning measurements."
+  ],
+  "unchanged_scope": {
+    "source_edited_by_reviewer": false,
+    "native_build_or_repetition": false,
+    "workflow_dispatched": false,
+    "player_profiles_SQL_or_imports_accessed": false,
+    "Game_DbServer_MapServer_started": false,
+    "gameplay_timers_added": false,
+    "native_registration_allowed": false,
+    "publication_allowed": false
+  },
+  "preserved_revision1": {
+    "freeze": {
+      "bytes": 892,
+      "sha256": "71e8ad786ea0ef6ab4b457e83cfb019e9c4b2e91e191dc419c8641427a7af7b3"
+    },
+    "independent72_replay": {
+      "bytes": 4212,
+      "sha256": "56e986a590b6e2d2bd27f9734e0dd08e90aca448f1d21f7d4d6fa9c3cc39827b"
+    },
+    "exact_source_copy": "/workspace/scratch/5d16603ca7ff/native037-recovery/android-fixture-independent-review/installed-layout"
+  },
+  "source_dependencies": {
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java": {
+      "bytes": 22515,
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java": {
+      "bytes": 1119,
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java": {
+      "bytes": 16096,
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java": {
+      "bytes": 30653,
+      "sha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryFixture.java": {
+      "bytes": 49318,
+      "sha256": "0834f290a7bd373dcf3d2ceda1fe10f14d50e29bc8320d1bf55e8cefe0fa024e"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+      "bytes": 199541,
+      "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9"
+    },
+    "tools/android/interactive/test_client_live_directory_fixture.py": {
+      "bytes": 35369,
+      "sha256": "9a130cfb1d16929405b776464924779b61989efab3766491963805f4c07192d6"
+    },
+    "tools/android/interactive/test_client_guest_namespace.py": {
+      "bytes": 21587,
+      "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77"
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "role": "dormant_guest_private_file_handoff_source_freeze",
+  "files": {
+    "android/guest/client_live_directory_control.py": {
+      "bytes": 12719,
+      "sha256": "596f7bc6523ed6da95d1a162c1d332fa2f77ccfa1aa651d7096fdfa86ad923c3"
+    },
+    "tools/android/interactive/test_client_live_directory_control.py": {
+      "bytes": 17012,
+      "sha256": "c85d4ebcaee5991766d125aee66847d37862630d8b4168c801d3a106d04a20cc"
+    }
+  },
+  "source_pre": {
+    "android/guest/client_live_directory_control.py": {
+      "bytes": 12719,
+      "sha256": "596f7bc6523ed6da95d1a162c1d332fa2f77ccfa1aa651d7096fdfa86ad923c3"
+    },
+    "tools/android/interactive/test_client_live_directory_control.py": {
+      "bytes": 17012,
+      "sha256": "c85d4ebcaee5991766d125aee66847d37862630d8b4168c801d3a106d04a20cc"
+    }
+  },
+  "source_post": {
+    "android/guest/client_live_directory_control.py": {
+      "bytes": 12719,
+      "sha256": "596f7bc6523ed6da95d1a162c1d332fa2f77ccfa1aa651d7096fdfa86ad923c3"
+    },
+    "tools/android/interactive/test_client_live_directory_control.py": {
+      "bytes": 17012,
+      "sha256": "c85d4ebcaee5991766d125aee66847d37862630d8b4168c801d3a106d04a20cc"
+    }
+  },
+  "source_unchanged": true,
+  "current_control_keys": [
+    "auth_nonce",
+    "descriptor_sha256",
+    "device",
+    "endpoint",
+    "format",
+    "game_bytes",
+    "game_sha256",
+    "guest_root",
+    "helper_sha256",
+    "operation_id",
+    "process_instance",
+    "recipe",
+    "runtime_sha256",
+    "session_id"
+  ],
+  "fresh_controls": 32,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "elapsed_host_seconds": 0.10798297000292223,
+  "ResourceWarning_as_error": true,
+  "config_path_production": "/tmp/client-live-directory-control.json",
+  "max_config_bytes": 16384,
+  "fixture_producer_authority": "trusted typed caller context only; default None; never a document flag",
+  "native_or_SQL_or_player_execution": false,
+  "network_executed_by_guest_module": false,
+  "production_registry": false,
+  "Android_Wine_PRoot_FEX_authority": false,
+  "Runtime_integration": false,
+  "old_same_source_Service_71_pass_receipt": {
+    "path": "native037-recovery/live-service-independent-review/guest-handoff-plus-final-Thread-JVM-controls.json",
+    "sha256": "7890f6144ba7cdbc98d3d544d34f5fa40d44786bdee5eaa95a966cdb1284379a",
+    "scope": "71 actual JVM TCP cases remain current exact Service/test source; earlier32guestcase source superseded by canonical path guard"
+  }
+}

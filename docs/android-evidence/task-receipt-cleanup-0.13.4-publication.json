@@ -1,0 +1,111 @@
+{
+  "format": 1,
+  "status": "published_and_independently_payload_verified",
+  "review_date_utc": "2026-10-04",
+  "repository": "Russianranger/coh-android",
+  "branch": "codex/character-persistence-continuation",
+  "source_commit": "6d16acf8330774e5fee4c0410c9cc56746d60b58",
+  "main_preserved_at": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "pr_number": 1,
+  "pr_remains_draft": true,
+  "workflow": {
+    "run_id": 37171443387,
+    "conclusion": "success",
+    "jobs": [
+      "qualify",
+      "apk"
+    ],
+    "native_build_requested": false,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37171443387"
+  },
+  "release": {
+    "tag": "coh-atlas-gameplay-v0.13.4",
+    "prerelease": true,
+    "apk_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.4/COH-Atlas-Gameplay-0.13.4.apk",
+    "testing_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.4/COH-Atlas-Gameplay-0.13.4-testing.txt"
+  },
+  "apk": {
+    "version_name": "0.13.4",
+    "version_code": 19,
+    "bytes": 676108222,
+    "sha256": "5cfd2cd929467f1797d72a142cd39999c3d5dbceee65a02d4baf7bba287f2052",
+    "size_change_from_0_13_3_bytes": 0,
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282"
+  },
+  "build_report": {
+    "bytes": 1477146,
+    "sha256": "289f3b6a2f7b22253bfdedcf40d3b961ef4362b8e6382d4140cab1eae130afe2"
+  },
+  "qualification_report": {
+    "bytes": 33105,
+    "sha256": "2861db5763b6e26268a4867f32b54c2a3349787eceab7c153d8561c0a31abcf0"
+  },
+  "runtime_manifest_sha256": "1cb4987151dc6cc8eb8525b585e3a9090fd8404bd7f78793f73854e08dc3e051",
+  "recompiled_dex": {
+    "bytes": 327996,
+    "sha256": "dc08c32d5611ced23fd1f8d4eee73f0a6127182308f9b47669123ba694bc06c8"
+  },
+  "host_checks": {
+    "tests_run": 374,
+    "suite_count": 25,
+    "source_pin_count": 148,
+    "skips": 0,
+    "checks": {
+      "previous_task_receipt_retirement_and_failure_guards_verified": true,
+      "explicit_startup_only_reopen_and_historical_task_guards_verified": true,
+      "ordinary_save_identity_and_prior_startup_guards_verified": true,
+      "source_bound_retained_native_payloads_and_actual_archive_extraction_verified": true
+    }
+  },
+  "changed_authored_Java_sources": [
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java"
+  ],
+  "changed_runtime_payloads": [
+    "assets/runtime/character_reopen_diagnostic.py",
+    "assets/runtime/client-manifest.json",
+    "assets/runtime/runtime-manifest.json"
+  ],
+  "unchanged_runtime_payloads": 64,
+  "retained_native_startup_source_commit": "dee916f80e9e336f374f31228535afdbe2c928ca",
+  "native_client_and_server_recompiled": false,
+  "prior_startup_options_7_13_18_4_retained": true,
+  "independent_public_verification": {
+    "format": 1,
+    "status": "passed",
+    "repository_commit": "6d16acf8330774e5fee4c0410c9cc56746d60b58",
+    "apk": {
+      "bytes": 676108222,
+      "sha256": "5cfd2cd929467f1797d72a142cd39999c3d5dbceee65a02d4baf7bba287f2052"
+    },
+    "payload_digests_verified": 67,
+    "unchanged_runtime_payloads": 64,
+    "zip_crcs_verified": true,
+    "corrected_Dex_and_retained_Android_resources_verified": true,
+    "actual_retained_server_archive_extraction_verified": true,
+    "runtime_manifest_and_raw_client_pin_verified": true,
+    "CI_qualification_source_pins_verified": 148,
+    "public_checksum_and_instructions_verified": true,
+    "signature_scope": "CI official SDK signature/version checks bound to identical downloaded public SHA-256; no separate local SDK rerun",
+    "physical_startup_timing_validated": false
+  },
+  "activation": {
+    "one_runtime_setup_required": true,
+    "asset_reimport_required": false,
+    "uninstall_data_clear_or_character_recreation_required": false,
+    "previous_generation_retained_for_rollback_and_reviewed_cleanup": true,
+    "same_manifest_setup_reuses_generation": true
+  },
+  "reopen_policy": {
+    "startup_only_reopen": true,
+    "task_journal_preserved": true,
+    "task_qualification_requested": false,
+    "historical_task_mode_guards_retained": true,
+    "ordinary_saved_identity_and_native_readiness_guards_retained": true,
+    "ordinary_save_proof_required_for_pass": true,
+    "stop_without_save_is_cancelled_timing_evidence": true
+  },
+  "physical_startup_speedup_qualified": false,
+  "prior_accepted_gameplay_storage_and_recovery_milestones_preserved": true,
+  "device_failure_receipt": "startup-schedule-0.13.3-reopen-blocked.json",
+  "testing_instructions": "../COH-Atlas-Gameplay-0.13.4-testing.txt"
+}

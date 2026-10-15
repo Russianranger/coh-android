@@ -1,0 +1,1459 @@
+{
+  "target_commit": "65c4d83a533400118932685b170c640a77bc9435",
+  "artifacts": [
+    {
+      "id": 11884140724,
+      "file": "coh-closed-native-live-directory-SDK.zip",
+      "run": 38542388690,
+      "bytes": 4296426,
+      "sha256": "a9be555d76f4ca67052d938c0c2745284ef56196ce5c8ac022aca9385e96b8db",
+      "crc_check": "passed",
+      "members": [
+        {
+          "path": "coh-live-bridge-probe.exe",
+          "bytes": 126464,
+          "sha256": "62ab9da87df1bdf1fe39d4b4ebc72db15cb6b1a6eb1d5afa04bebc4170a1003a"
+        },
+        {
+          "path": "CMakeCache.txt",
+          "bytes": 38090,
+          "sha256": "8706bbde3d179c21ed447b9714712ab6bc25bdf808648fee9f517b52595b2b4b"
+        },
+        {
+          "path": "CityOfHeroes.exe",
+          "bytes": 9490432,
+          "sha256": "3f1fc6cfb388337ea042aa2c1bb3d7848dc175f775b13d80ac7c5fb07cc53229"
+        },
+        {
+          "path": "Game.vcxproj",
+          "bytes": 159281,
+          "sha256": "4740a2c919ece5086457bc257c90f7142d8ac1b1be208a61843f65be9ff48556"
+        },
+        {
+          "path": "native-client-live-directory-build-input.json",
+          "bytes": 3771,
+          "sha256": "25d5b4747de4f01d6e33e40449020fced4829ba3a0eef7a2b8134bad1933ab01"
+        },
+        {
+          "path": "portable-controls.json",
+          "bytes": 4478,
+          "sha256": "6ceacd854ab5b6e1247865b429c2b989051e012425ed66f72eb2086e5831312b"
+        },
+        {
+          "path": "probe-share-block.bin",
+          "bytes": 284,
+          "sha256": "500e081999579e7180c55caa5f0b433959168899b9055be152a5b9447ec381f0"
+        },
+        {
+          "path": "native-live-directory-SDK-package.json",
+          "bytes": 989530,
+          "sha256": "945efdba2948eb6751d4575810ed75255dccca05996dab8ce109fc8143edf500"
+        },
+        {
+          "path": "probe-sharing-refusal.bin",
+          "bytes": 208,
+          "sha256": "36e19340949ed9a58794a14f117ef54b4b7729ec709f6bd32eddde0adc6cbcfd"
+        },
+        {
+          "path": "probe-stock.bin",
+          "bytes": 53452,
+          "sha256": "a3d7de02d00ca2136a2207763adc933ebe495fc530d7e460e4dd379b53d89b9a"
+        },
+        {
+          "path": "UtilitiesLib.vcxproj",
+          "bytes": 66012,
+          "sha256": "d48d302ed01a72f5240958bb44687b7955b8b11349109a5de604142e3a35b2c3"
+        },
+        {
+          "path": "windows-controls.json",
+          "bytes": 290306,
+          "sha256": "e7686df1dd0d687e9c46a28599af9b5e782db6c35cc920603039980b849fbd7e"
+        }
+      ]
+    },
+    {
+      "id": 11878700818,
+      "file": "coh-native-live-original-host-helper.zip",
+      "run": 38531585318,
+      "bytes": 1053771,
+      "sha256": "6bcbef4ee2c521d0ba4736d8fda8a5723f814667475bced5f65962ff8c1de62d",
+      "crc_check": "passed",
+      "members": [
+        {
+          "path": "out/native-live-directory-037/NDK-compiler-version.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/classes/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.class",
+          "bytes": 711,
+          "sha256": "54da2e493eeb6f6f5ab539d60866e0b406d94385627f147c7cfb6b58aa5ef5a3"
+        },
+        {
+          "path": "out/native-live-directory-037/NDK-compiler-version.stdout",
+          "bytes": 345,
+          "sha256": "835f1507a752737c6b98c8d2a16d58dc47e33eb4b9cc9b473beae6349678167d"
+        },
+        {
+          "path": "out/native-live-directory-037/classes/io/github/russianranger/cohclientinteractive/NativeLiveDirectoryFixture$Action.class",
+          "bytes": 389,
+          "sha256": "343db9b2a3cdf743db6eb32d042bd6bcea3bb4f397789e177ba2f926f006cb82"
+        },
+        {
+          "path": "out/native-live-directory-037/classes/io/github/russianranger/cohclientinteractive/NativeLiveDirectoryFixture.class",
+          "bytes": 9785,
+          "sha256": "217a2e979b927adf9d29f868313c7b41ca6d6d8fa20b240ebdc00c24c11f4003"
+        },
+        {
+          "path": "out/native-live-directory-037/compile-Bionic-ARM64-JNI.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/compile-Bionic-ARM64-JNI.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/compile-Bionic-ARM64-fixture.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/compile-Bionic-ARM64-fixture.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/compile-Java-facade-fixture.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/compile-Java-facade-fixture.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/compile-host-JNI.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/compile-host-JNI.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/compile-host-fixture.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/compile-host-fixture.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/execute-Bionic-ARM64-fixture.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/execute-Bionic-ARM64-fixture.stdout",
+          "bytes": 301,
+          "sha256": "f5a375b4a146cabbfdaea2ade6b3fed0b213638a462d38c5987e2c66f4826c7e"
+        },
+        {
+          "path": "out/native-live-directory-037/execute-host-JNI.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/execute-host-JNI.stdout",
+          "bytes": 140,
+          "sha256": "458c8f566d9546ba21af930bdb443abf1dcada08940dd67cc3de45be78c1cebf"
+        },
+        {
+          "path": "out/native-live-directory-037/execute-host-fixture.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/execute-host-fixture.stdout",
+          "bytes": 299,
+          "sha256": "78287411aedbc6827fcc8ee92b739b0a5c13482071052327d8b7efdf8ecdd6d3"
+        },
+        {
+          "path": "out/native-live-directory-037/host-native-kernel-tests.stderr",
+          "bytes": 5223,
+          "sha256": "55e8caa83574b59f3896aaa172ab3f650d548ab8832db4dfb9dff92487a4ac19"
+        },
+        {
+          "path": "out/native-live-directory-037/host-native-kernel-tests.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/inspect-Bionic-ARM64-JNI.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/inspect-Bionic-ARM64-JNI.stdout",
+          "bytes": 6774,
+          "sha256": "0f5d7f7a66b00f9628ce67c72ed99195f2582aa0e5cf190c5b47ab84dd237762"
+        },
+        {
+          "path": "out/native-live-directory-037/inspect-Bionic-ARM64-fixture.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-directory-037/inspect-Bionic-ARM64-fixture.stdout",
+          "bytes": 940,
+          "sha256": "84e0b946759ac1bc14a676cc7fea4e5fee0a8f74f99a04ae4d6c3da4a31c7d70"
+        },
+        {
+          "path": "out/native-live-directory-037/libcoh_live_directory-host.so",
+          "bytes": 35664,
+          "sha256": "cec249a49fa8758b4caf2f074c133fb687f5d53e1c580ab1aa8031b822d653a8"
+        },
+        {
+          "path": "out/native-live-directory-037/libcoh_live_directory.so",
+          "bytes": 29992,
+          "sha256": "3d21ece5894b46e9315eb14c3cc12f8d2fcbd3082f99031b4bcbde3e03d5e282"
+        },
+        {
+          "path": "out/native-live-directory-037/native-live-Bionic-ARM64-fixture",
+          "bytes": 2283592,
+          "sha256": "6a17fabff96e8aa3f91a45ae3072a9d012a52814ef5d78ac2037338d157dd482"
+        },
+        {
+          "path": "out/native-live-directory-037/native-live-host-fixture",
+          "bytes": 39896,
+          "sha256": "c90f2fd61412c5e7769a1c266b59d0fbb0c594bb561dc45c328170b58cf232a5"
+        },
+        {
+          "path": "out/native-live-directory-037/qualification.json",
+          "bytes": 17822,
+          "sha256": "9d28449756c06b539d906cf1cc1729233eebe6a63901e9eca80615c57845270f"
+        },
+        {
+          "path": "tools/native_live_directory/NativeLiveDirectory.java",
+          "bytes": 1119,
+          "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+        },
+        {
+          "path": "tools/native_live_directory/NativeLiveDirectoryFixture.java",
+          "bytes": 5877,
+          "sha256": "fdc89a03cbf44afc17a08e8f11af0a23366127e2616bb89300c347ce7f11fc1c"
+        },
+        {
+          "path": "tools/native_live_directory/coh_live_directory_core.c",
+          "bytes": 22987,
+          "sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c"
+        },
+        {
+          "path": "tools/native_live_directory/README.md",
+          "bytes": 4624,
+          "sha256": "06c1412fd59765c2ace319b2ce8087382507db8a11212e96632972979cdf1528"
+        },
+        {
+          "path": "tools/native_live_directory/coh_live_directory_core.h",
+          "bytes": 3125,
+          "sha256": "a1f2142a093ea475286b04ed8fbea293cd18640daae8125b656620402e3b728d"
+        },
+        {
+          "path": "tools/native_live_directory/coh_live_directory_jni.c",
+          "bytes": 9835,
+          "sha256": "397190cf97af337f5eb0a6bec6d38cf79d58eecb7cd214e16378b575469d8c6b"
+        },
+        {
+          "path": "tools/native_live_directory/native_core_faults.c",
+          "bytes": 2177,
+          "sha256": "3d2430507d2533b2cf794cbd239ccaf7e5ca17c3b7802c4959301c7866f4ff31"
+        },
+        {
+          "path": "tools/native_live_directory/native_live_fixture.c",
+          "bytes": 11383,
+          "sha256": "b0ab8aa0fbc3f76be237e0f632576241c59342a4ae55b8fd4c43b5506e51cbde"
+        },
+        {
+          "path": "tools/native_live_directory/qualify_native_live_directory.py",
+          "bytes": 7749,
+          "sha256": "745bf714fae48d2c20762f7405d3de414f8f8c504d5a7b06acfb2574a6987771"
+        },
+        {
+          "path": "tools/native_live_directory/test_native_live_directory_core.py",
+          "bytes": 22432,
+          "sha256": "16a5fc9cc22fb3ac7815e2ef4e9f2dc53c6517418d704ef7c698d85ec62d4694"
+        },
+        {
+          "path": ".github/workflows/android-native-live-directory-arm-037.yml",
+          "bytes": 1874,
+          "sha256": "f99b84b62ad5dc635e2deeb55eea1531087c5b4ee295325e376680585c0bc8ac"
+        }
+      ]
+    },
+    {
+      "id": 11879777713,
+      "file": "retained-arm-audit-11879777713.zip",
+      "run": 38534800834,
+      "bytes": 85256,
+      "sha256": "794c229b48d8494d5dfd50520c3b4222626dccae898718d1990816e26148a07b",
+      "crc_check": "passed",
+      "members": [
+        {
+          "path": "out/native-live-retained-inspection-037/Android-clang-d8003-CommonArgs.cpp",
+          "bytes": 104088,
+          "sha256": "3a11a5bf60be20136d9f80cf6e145c36a00dbe6ed568fd3469204cf3639bce19"
+        },
+        {
+          "path": "out/native-live-retained-inspection-037/fresh-ELF-inspection.stdout",
+          "bytes": 8471,
+          "sha256": "515762433efc674220fe4c825ebe955af9eaeeec2cfba82bdbfdfc3f4525644e"
+        },
+        {
+          "path": "out/native-live-retained-inspection-037/fresh-ELF-inspection.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-retained-inspection-037/fresh-compiler-version.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-retained-inspection-037/fresh-compiler-version.stdout",
+          "bytes": 345,
+          "sha256": "835f1507a752737c6b98c8d2a16d58dc47e33eb4b9cc9b473beae6349678167d"
+        },
+        {
+          "path": "out/native-live-retained-inspection-037/fresh-driver-dry-run.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "out/native-live-retained-inspection-037/fresh-driver-dry-run.stderr",
+          "bytes": 6208,
+          "sha256": "a26b451d5be398809cfcdf07a64b008e759d3cff814b10f8038a78bf75c738eb"
+        },
+        {
+          "path": "out/native-live-retained-inspection-037/libcoh_live_directory.so",
+          "bytes": 29992,
+          "sha256": "3d21ece5894b46e9315eb14c3cc12f8d2fcbd3082f99031b4bcbde3e03d5e282"
+        },
+        {
+          "path": "out/native-live-retained-inspection-037/retained-inspection.json",
+          "bytes": 6437,
+          "sha256": "d58516498f7bded2c9681293a0090809b0704c8d5acebc74a97ecb2ba14f5690"
+        },
+        {
+          "path": "tools/native_live_directory/NativeLiveDirectory.java",
+          "bytes": 1119,
+          "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+        },
+        {
+          "path": "tools/native_live_directory/NativeLiveDirectoryFixture.java",
+          "bytes": 5877,
+          "sha256": "fdc89a03cbf44afc17a08e8f11af0a23366127e2616bb89300c347ce7f11fc1c"
+        },
+        {
+          "path": "tools/native_live_directory/README.md",
+          "bytes": 5216,
+          "sha256": "df7dfcb184f57b47bd7519917edf433093799d7b8da4962b0d19113d0b76fd04"
+        },
+        {
+          "path": "tools/native_live_directory/audit_retained_native_live_directory.py",
+          "bytes": 10938,
+          "sha256": "82f24c24d9dcab05a534b6be1101579e87c4a6b79bce480aefaf870da197dc48"
+        },
+        {
+          "path": "tools/native_live_directory/coh_live_directory_core.c",
+          "bytes": 22987,
+          "sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c"
+        },
+        {
+          "path": "tools/native_live_directory/coh_live_directory_core.h",
+          "bytes": 3125,
+          "sha256": "a1f2142a093ea475286b04ed8fbea293cd18640daae8125b656620402e3b728d"
+        },
+        {
+          "path": "tools/native_live_directory/coh_live_directory_jni.c",
+          "bytes": 9835,
+          "sha256": "397190cf97af337f5eb0a6bec6d38cf79d58eecb7cd214e16378b575469d8c6b"
+        },
+        {
+          "path": "tools/native_live_directory/native_core_faults.c",
+          "bytes": 2177,
+          "sha256": "3d2430507d2533b2cf794cbd239ccaf7e5ca17c3b7802c4959301c7866f4ff31"
+        },
+        {
+          "path": "tools/native_live_directory/native_live_fixture.c",
+          "bytes": 11383,
+          "sha256": "b0ab8aa0fbc3f76be237e0f632576241c59342a4ae55b8fd4c43b5506e51cbde"
+        },
+        {
+          "path": "tools/native_live_directory/qualify_native_live_directory.py",
+          "bytes": 7749,
+          "sha256": "745bf714fae48d2c20762f7405d3de414f8f8c504d5a7b06acfb2574a6987771"
+        },
+        {
+          "path": "tools/native_live_directory/retained-ARM-artifact-11878700818.json",
+          "bytes": 8733,
+          "sha256": "7e0e40eaba31112ef54160c618ae4dbb2efe4685a30c7c54b9eb33b90e7933a9"
+        },
+        {
+          "path": "tools/native_live_directory/test_audit_retained_native_live_directory.py",
+          "bytes": 4741,
+          "sha256": "bbb765af0413dc73ab4aceb71a250d756eaa4631b59710118846e4e9eabcd01b"
+        },
+        {
+          "path": ".github/workflows/android-native-live-directory-arm-037.yml",
+          "bytes": 2359,
+          "sha256": "15c09d6aafd1eb946828b3c64b28838a747735ee4c435ceb288f52a24a19dc18"
+        },
+        {
+          "path": "tools/native_live_directory/test_native_live_directory_core.py",
+          "bytes": 22432,
+          "sha256": "16a5fc9cc22fb3ac7815e2ef4e9f2dc53c6517418d704ef7c698d85ec62d4694"
+        }
+      ]
+    }
+  ],
+  "source_recovery": {
+    "durable_branches": {
+      "closed_operation": "dcd2cda50e24db72bf11074b4de45da91fa5ffbc",
+      "closed_fixture": "d8073f4b2b9027136009477677efe437ef1a7b19",
+      "SDK": "9db50a68dabb9e7c79a0c35b98d60ca1393f5cb0",
+      "helper": "2d030678e7013891547ecd7d35fc0cf40ffabff9",
+      "unexecuted_ancestor_candidate": "7cf6fd23d4d4319bdbc456df89df1a2428885197"
+    },
+    "not_found": [
+      "ClientLiveDirectoryAndroidFixture.java exact64d3aba0 source/test",
+      "client_live_fixture_owner.py revision3 e3b9dd1c source/test",
+      "HostNativeLiveService.java",
+      "sdk_custody.py",
+      "native037-recovery frozen local files",
+      "reused-validation-package",
+      "live-original-CI-host-reuse"
+    ],
+    "not_found_scope": "Current scratch non-upstream filenames; exact continuation android/tools/docs subtree inventory; recovery branch android/tools; reviewed durable operation/fixture commit file lists; original helper/Game artifacts and recent100 workflow inventory. Original offline executor unavailable; absence here does not prove original bytes lost."
+  },
+  "compilers_or_workflows_started": false,
+  "schema": "coh_standard_037_recovery_inventory_v1",
+  "branch_inventory": {
+    "branches": [
+      {
+        "branch": "codex/folder-cache-census-producer-037",
+        "sha": "c0c8857af79cdecaff01e7cc9dbf35a71b9d28e5",
+        "tree": "c0c8857af79cdecaff01e7cc9dbf35a71b9d28e5",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "f63e63107f53a837a5339469a30bb478a82ad104"
+          },
+          {
+            "path": "database",
+            "sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664"
+          },
+          {
+            "path": "tools",
+            "sha": "26f999b3a2353d13d673d219f38af627365e88cb"
+          }
+        ]
+      },
+      {
+        "branch": "codex/manual-report-cleanup-037",
+        "sha": "1702d9c6b68cd72cac92a76bd07c82ad5e8b5a21",
+        "tree": "1702d9c6b68cd72cac92a76bd07c82ad5e8b5a21",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "889385d0c3a210f90ef6dcad6de7dfd56fc4fba2"
+          },
+          {
+            "path": "database",
+            "sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664"
+          },
+          {
+            "path": "tools",
+            "sha": "3affc0ddd328c3e422d9859a242cbacf5894067d"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-client-folder-sort-037",
+        "sha": "9325f67e1bb4a3e6696dcfd1308ba8e4183171b0",
+        "tree": "9325f67e1bb4a3e6696dcfd1308ba8e4183171b0",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "553cd74e5f4feb594929526150c07e468c6bb787"
+          },
+          {
+            "path": "database",
+            "sha": "10c7eba43ee4c6ed064e44df3aa0e6b98ade278d"
+          },
+          {
+            "path": "tools",
+            "sha": "cff98bbe63c155c14f8077b5618e3e7ffde93308"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-client-folder-sort-wine-037",
+        "sha": "13b654f33938b6c355fbeb277c3a504f21c1c653",
+        "tree": "13b654f33938b6c355fbeb277c3a504f21c1c653",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "553cd74e5f4feb594929526150c07e468c6bb787"
+          },
+          {
+            "path": "database",
+            "sha": "10c7eba43ee4c6ed064e44df3aa0e6b98ade278d"
+          },
+          {
+            "path": "tools",
+            "sha": "da93f0cc7e970d002cc297994a4c78628daf98af"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-client-live-directory-research-037",
+        "sha": "3b737d617e9d02b9083ba485bfc42bd4bd099023",
+        "tree": "3b737d617e9d02b9083ba485bfc42bd4bd099023",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "941e38530cef0610bee8e495d1c6d8171ece6888"
+          },
+          {
+            "path": "database",
+            "sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664"
+          },
+          {
+            "path": "research",
+            "sha": "bad81888d9265a63c0368d52b2232917f37aba39"
+          },
+          {
+            "path": "tools",
+            "sha": "2316dfc49c6478635d91a72e34066fa50197dc8a"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-client-live-directory-sdk-037",
+        "sha": "9db50a68dabb9e7c79a0c35b98d60ca1393f5cb0",
+        "tree": "9db50a68dabb9e7c79a0c35b98d60ca1393f5cb0",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "200d28724b0cb7cabd66ee6db16cf1322c26fc24"
+          },
+          {
+            "path": "database",
+            "sha": "adf5805e434c8af06a7b2d139ea40463125df77a"
+          },
+          {
+            "path": "tools",
+            "sha": "252c32cde10cd5f94f5928981f14588631bfb1fe"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-client-metadata-capture-037",
+        "sha": "4e3188d7dffd2790bbc73e49f9e3fa55df90f016",
+        "tree": "4e3188d7dffd2790bbc73e49f9e3fa55df90f016",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "553cd74e5f4feb594929526150c07e468c6bb787"
+          },
+          {
+            "path": "database",
+            "sha": "4895d7c9b5c45e35ab64e390a610ea07fb60afef"
+          },
+          {
+            "path": "tools",
+            "sha": "357c223c01c0566bd4990b51fce27a198aacf2e7"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-client-metadata-capture-reuse-wine-037",
+        "sha": "6662a056cb5a80b3a3b51d3741b10793fb8b6300",
+        "tree": "6662a056cb5a80b3a3b51d3741b10793fb8b6300",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "735f30e85b05bbb1690ee2aff0f92129863513c8"
+          },
+          {
+            "path": "database",
+            "sha": "0f508e99a359ca47dd9cd7e1278ff0bbae579c2a"
+          },
+          {
+            "path": "tools",
+            "sha": "b1cdc3ff153c4ab5cf4c4264cfd97c55ca58482d"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-client-metadata-capture-wine-037",
+        "sha": "28c0bf73eb6e924af908fab973f4a32ba566e6bc",
+        "tree": "28c0bf73eb6e924af908fab973f4a32ba566e6bc",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "735f30e85b05bbb1690ee2aff0f92129863513c8"
+          },
+          {
+            "path": "database",
+            "sha": "33e63d1fcbfc43ec86f598e10d574f04fd839e29"
+          },
+          {
+            "path": "tools",
+            "sha": "015d21cff52b0f097d4b653ef3867b0b4c9c4730"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-client-metadata-census-prototype-037",
+        "sha": "7f3d37fc191f3f30c124d6d57581afb64cceef42",
+        "tree": "7f3d37fc191f3f30c124d6d57581afb64cceef42",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "553cd74e5f4feb594929526150c07e468c6bb787"
+          },
+          {
+            "path": "database",
+            "sha": "b6c58f67973d29f75d8a8c444a28a450e7614495"
+          },
+          {
+            "path": "tools",
+            "sha": "a867b6be257ed1c2a06812df168f2211cf61e93d"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-client-metadata-probe-bound-037",
+        "sha": "10f3ac8853b270088456db8116275108615b0e87",
+        "tree": "10f3ac8853b270088456db8116275108615b0e87",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "735f30e85b05bbb1690ee2aff0f92129863513c8"
+          },
+          {
+            "path": "database",
+            "sha": "c85813c78bf0cc12fdfaf7c361acc0b13d3415e1"
+          },
+          {
+            "path": "tools",
+            "sha": "4da0ab60b1d6ada1b931476916f09793925b6a21"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-client-startup-037",
+        "sha": "a2544251d35630eadc6cf988e8e1b3bfa78a0935",
+        "tree": "a2544251d35630eadc6cf988e8e1b3bfa78a0935",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "553cd74e5f4feb594929526150c07e468c6bb787"
+          },
+          {
+            "path": "database",
+            "sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664"
+          },
+          {
+            "path": "tools",
+            "sha": "4b77e7cdb3c2505af463672543eae15be2ea9b4e"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-live-ancestor-candidate-037",
+        "sha": "7cf6fd23d4d4319bdbc456df89df1a2428885197",
+        "tree": "7cf6fd23d4d4319bdbc456df89df1a2428885197",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "200d28724b0cb7cabd66ee6db16cf1322c26fc24"
+          },
+          {
+            "path": "database",
+            "sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664"
+          },
+          {
+            "path": "research",
+            "sha": "1c06507164eedd27b4f0e6d259d359e1b172e5a5"
+          },
+          {
+            "path": "tools",
+            "sha": "252c32cde10cd5f94f5928981f14588631bfb1fe"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-live-client-fixture-research-037",
+        "sha": "d8073f4b2b9027136009477677efe437ef1a7b19",
+        "tree": "d8073f4b2b9027136009477677efe437ef1a7b19",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "200d28724b0cb7cabd66ee6db16cf1322c26fc24"
+          },
+          {
+            "path": "database",
+            "sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664"
+          },
+          {
+            "path": "research",
+            "sha": "117d19dcd51e7b863429bb3d2841bc7a1d72c433"
+          },
+          {
+            "path": "tools",
+            "sha": "252c32cde10cd5f94f5928981f14588631bfb1fe"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-live-client-operation-research-037",
+        "sha": "dcd2cda50e24db72bf11074b4de45da91fa5ffbc",
+        "tree": "dcd2cda50e24db72bf11074b4de45da91fa5ffbc",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "200d28724b0cb7cabd66ee6db16cf1322c26fc24"
+          },
+          {
+            "path": "database",
+            "sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664"
+          },
+          {
+            "path": "research",
+            "sha": "6fdca9489b97b32aafeffe792da20b883e39a18b"
+          },
+          {
+            "path": "tools",
+            "sha": "252c32cde10cd5f94f5928981f14588631bfb1fe"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-live-directory-arm-037",
+        "sha": "2d030678e7013891547ecd7d35fc0cf40ffabff9",
+        "tree": "2d030678e7013891547ecd7d35fc0cf40ffabff9",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "200d28724b0cb7cabd66ee6db16cf1322c26fc24"
+          },
+          {
+            "path": "database",
+            "sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664"
+          },
+          {
+            "path": "tools",
+            "sha": "bacd5c07b3b20c8bb64ac34f5e507c95e9be4f27"
+          }
+        ]
+      },
+      {
+        "branch": "codex/native-map-world-037",
+        "sha": "c83fa799b158ca036ff64c00f68c2720e9d2b54e",
+        "tree": "c83fa799b158ca036ff64c00f68c2720e9d2b54e",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "553cd74e5f4feb594929526150c07e468c6bb787"
+          },
+          {
+            "path": "database",
+            "sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664"
+          },
+          {
+            "path": "tools",
+            "sha": "ee595ab82417a2c6e767a8ba3d4e4e6598ab5754"
+          }
+        ]
+      },
+      {
+        "branch": "codex/startup-recovery-20261014",
+        "sha": "398b46680c02026714665e4d8864e9ef4af6822e",
+        "tree": "398b46680c02026714665e4d8864e9ef4af6822e",
+        "subtrees": [
+          {
+            "path": "android",
+            "sha": "4628051b315a937369a1b76c5c81eda9b384fe65"
+          },
+          {
+            "path": "database",
+            "sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664"
+          },
+          {
+            "path": "tools",
+            "sha": "2044fb8d5aae3891adc5baee773127ff4eca885a"
+          }
+        ]
+      }
+    ],
+    "subtrees_scanned": [
+      {
+        "sha": "f63e63107f53a837a5339469a30bb478a82ad104",
+        "truncated": false,
+        "total": 218,
+        "matches": []
+      },
+      {
+        "sha": "0e3c9a9edc5d92da9aa99d02e160647ac6ed1664",
+        "truncated": false,
+        "total": 172,
+        "matches": []
+      },
+      {
+        "sha": "26f999b3a2353d13d673d219f38af627365e88cb",
+        "truncated": false,
+        "total": 634,
+        "matches": []
+      },
+      {
+        "sha": "889385d0c3a210f90ef6dcad6de7dfd56fc4fba2",
+        "truncated": false,
+        "total": 216,
+        "matches": []
+      },
+      {
+        "sha": "3affc0ddd328c3e422d9859a242cbacf5894067d",
+        "truncated": false,
+        "total": 619,
+        "matches": []
+      },
+      {
+        "sha": "553cd74e5f4feb594929526150c07e468c6bb787",
+        "truncated": false,
+        "total": 216,
+        "matches": []
+      },
+      {
+        "sha": "10c7eba43ee4c6ed064e44df3aa0e6b98ade278d",
+        "truncated": false,
+        "total": 177,
+        "matches": []
+      },
+      {
+        "sha": "cff98bbe63c155c14f8077b5618e3e7ffde93308",
+        "truncated": false,
+        "total": 621,
+        "matches": []
+      },
+      {
+        "sha": "da93f0cc7e970d002cc297994a4c78628daf98af",
+        "truncated": false,
+        "total": 628,
+        "matches": []
+      },
+      {
+        "sha": "941e38530cef0610bee8e495d1c6d8171ece6888",
+        "truncated": false,
+        "total": 217,
+        "matches": []
+      },
+      {
+        "sha": "bad81888d9265a63c0368d52b2232917f37aba39",
+        "truncated": false,
+        "total": 14,
+        "matches": []
+      },
+      {
+        "sha": "2316dfc49c6478635d91a72e34066fa50197dc8a",
+        "truncated": false,
+        "total": 637,
+        "matches": []
+      },
+      {
+        "sha": "200d28724b0cb7cabd66ee6db16cf1322c26fc24",
+        "truncated": false,
+        "total": 217,
+        "matches": []
+      },
+      {
+        "sha": "adf5805e434c8af06a7b2d139ea40463125df77a",
+        "truncated": false,
+        "total": 206,
+        "matches": []
+      },
+      {
+        "sha": "252c32cde10cd5f94f5928981f14588631bfb1fe",
+        "truncated": false,
+        "total": 637,
+        "matches": []
+      },
+      {
+        "sha": "4895d7c9b5c45e35ab64e390a610ea07fb60afef",
+        "truncated": false,
+        "total": 181,
+        "matches": []
+      },
+      {
+        "sha": "357c223c01c0566bd4990b51fce27a198aacf2e7",
+        "truncated": false,
+        "total": 627,
+        "matches": []
+      },
+      {
+        "sha": "735f30e85b05bbb1690ee2aff0f92129863513c8",
+        "truncated": false,
+        "total": 217,
+        "matches": []
+      },
+      {
+        "sha": "0f508e99a359ca47dd9cd7e1278ff0bbae579c2a",
+        "truncated": false,
+        "total": 187,
+        "matches": []
+      },
+      {
+        "sha": "b1cdc3ff153c4ab5cf4c4264cfd97c55ca58482d",
+        "truncated": false,
+        "total": 643,
+        "matches": []
+      },
+      {
+        "sha": "33e63d1fcbfc43ec86f598e10d574f04fd839e29",
+        "truncated": false,
+        "total": 185,
+        "matches": []
+      },
+      {
+        "sha": "015d21cff52b0f097d4b653ef3867b0b4c9c4730",
+        "truncated": false,
+        "total": 639,
+        "matches": []
+      },
+      {
+        "sha": "b6c58f67973d29f75d8a8c444a28a450e7614495",
+        "truncated": false,
+        "total": 178,
+        "matches": []
+      },
+      {
+        "sha": "a867b6be257ed1c2a06812df168f2211cf61e93d",
+        "truncated": false,
+        "total": 620,
+        "matches": []
+      },
+      {
+        "sha": "c85813c78bf0cc12fdfaf7c361acc0b13d3415e1",
+        "truncated": false,
+        "total": 186,
+        "matches": []
+      },
+      {
+        "sha": "4da0ab60b1d6ada1b931476916f09793925b6a21",
+        "truncated": false,
+        "total": 641,
+        "matches": []
+      },
+      {
+        "sha": "4b77e7cdb3c2505af463672543eae15be2ea9b4e",
+        "truncated": false,
+        "total": 622,
+        "matches": []
+      },
+      {
+        "sha": "1c06507164eedd27b4f0e6d259d359e1b172e5a5",
+        "truncated": false,
+        "total": 9,
+        "matches": []
+      },
+      {
+        "sha": "117d19dcd51e7b863429bb3d2841bc7a1d72c433",
+        "truncated": false,
+        "total": 28,
+        "matches": []
+      },
+      {
+        "sha": "6fdca9489b97b32aafeffe792da20b883e39a18b",
+        "truncated": false,
+        "total": 43,
+        "matches": []
+      },
+      {
+        "sha": "bacd5c07b3b20c8bb64ac34f5e507c95e9be4f27",
+        "truncated": false,
+        "total": 651,
+        "matches": []
+      },
+      {
+        "sha": "ee595ab82417a2c6e767a8ba3d4e4e6598ab5754",
+        "truncated": false,
+        "total": 636,
+        "matches": []
+      },
+      {
+        "sha": "4628051b315a937369a1b76c5c81eda9b384fe65",
+        "truncated": false,
+        "total": 217,
+        "matches": []
+      },
+      {
+        "sha": "2044fb8d5aae3891adc5baee773127ff4eca885a",
+        "truncated": false,
+        "total": 635,
+        "matches": []
+      }
+    ],
+    "complete": true,
+    "unique_subtree_count": 34,
+    "patterns": [
+      "ClientLiveDirectoryAndroidFixture",
+      "client_live_fixture_owner",
+      "HostNativeLiveService",
+      "sdk_custody",
+      "native037-recovery",
+      "live-service-037",
+      "client-live-native-037"
+    ],
+    "all_results_empty": true,
+    "excluded": "native-android and its refs were not fetched"
+  },
+  "source_pin_documents": {
+    "d8073f4b2b9027136009477677efe437ef1a7b19": {
+      "git_blob_sha1": "553ba030a1e3012e45658dbc09bc3e6050bebd2c",
+      "document": {
+        "files": {
+          "README.md": {
+            "bytes": 3126,
+            "sha256": "fc713dd0d961ed5effd56639359541713927c918f5faf184362fe8f2acecb2a6"
+          },
+          "evidence/fixture-independent-source-review.json": {
+            "bytes": 6628,
+            "sha256": "d1d45a963df13aa1e4699a55e69d2699d7222ab614f6a0884c03ae01f9c453e5"
+          },
+          "evidence/fixture-owner-host-qualification-revision-2.json": {
+            "bytes": 4409,
+            "sha256": "d428a7dae5bba66b1fea084cc6f48f73e4932a2d80e6a37344aca0977a749ec0"
+          },
+          "evidence/fixture-source-freeze-revision-2.json": {
+            "bytes": 1318,
+            "sha256": "9796090bd0ebb6197c36f7da0ea7dfa3c92325f10cf49632af63b6535915c70c"
+          },
+          "evidence/guest-ASCII-case-source-freeze.json": {
+            "bytes": 3624,
+            "sha256": "f44454f8fbbb305ccf03e363ea9d063fc4702143761b3fcaada80519c7022c8e"
+          },
+          "evidence/guest-current36-root.log": {
+            "bytes": 6437,
+            "sha256": "b05fa5376920d2ecab60b553c0e337d1d40c58c5bcfe349a55f5e83cc63c0622"
+          },
+          "qualification.json": {
+            "bytes": 7152,
+            "sha256": "71f44aa2dde674ad5eb0d0b2866a837d64b6de45c3a985486eefa80cb18bd934"
+          },
+          "source/android/guest/client_live_directory_control.py": {
+            "bytes": 13303,
+            "sha256": "80f5e02e17992fcae58331b8f4cbea789f2ca571e7306b62747b62e463bf70af"
+          },
+          "source/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryFixture.java": {
+            "bytes": 49318,
+            "sha256": "0834f290a7bd373dcf3d2ceda1fe10f14d50e29bc8320d1bf55e8cefe0fa024e"
+          },
+          "source/tools/android/interactive/test_client_live_directory_control.py": {
+            "bytes": 20369,
+            "sha256": "64308ffaa70270ccdde99518466bc8c8334d244afd03697648bc7c779ae86644"
+          },
+          "source/tools/android/interactive/test_client_live_directory_fixture.py": {
+            "bytes": 35369,
+            "sha256": "9a130cfb1d16929405b776464924779b61989efab3766491963805f4c07192d6"
+          }
+        },
+        "format": 1,
+        "native_registration_allowed": false,
+        "publication_allowed": false,
+        "role": "closed_client_fixture_guest_increment_source_pins",
+        "self_pin_omitted_intentionally": true,
+        "source_parent_commit": "270ad89b4f2f85333692f54446901cc4da3cb4e4"
+      }
+    },
+    "dcd2cda50e24db72bf11074b4de45da91fa5ffbc": {
+      "git_blob_sha1": "6cfbcd83744dd7c68ec6ee1e8e56b70159edcb40",
+      "document": {
+        "files": [
+          {
+            "bytes": 7815,
+            "gitBlobSha1": "24b33c33c379e95c00f4ca4e79f9faae283b684c",
+            "repositoryPath": "research/native-live-client-operation-037/README.md",
+            "sha256": "5081ec13d3ad50a1e88963f891bcee3a8aa97b8c6b11ebceb27cd606489c2c5a",
+            "stageRelativePath": "README.md"
+          },
+          {
+            "bytes": 12719,
+            "gitBlobSha1": "e23f169528cc359ea88554e37f91ced4acbc2c5e",
+            "repositoryPath": "research/native-live-client-operation-037/android/guest/client_live_directory_control.py",
+            "sha256": "596f7bc6523ed6da95d1a162c1d332fa2f77ccfa1aa651d7096fdfa86ad923c3",
+            "stageRelativePath": "android/guest/client_live_directory_control.py"
+          },
+          {
+            "bytes": 22515,
+            "gitBlobSha1": "fa7c5b6c3e254bb2b48a1744d2cc2963d1ca0b5e",
+            "repositoryPath": "research/native-live-client-operation-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java",
+            "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c",
+            "stageRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java"
+          },
+          {
+            "bytes": 30653,
+            "gitBlobSha1": "5df6372f78e607cd063d1388374507cdff02fe9e",
+            "repositoryPath": "research/native-live-client-operation-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java",
+            "sha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a",
+            "stageRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java"
+          },
+          {
+            "bytes": 16096,
+            "gitBlobSha1": "41d5131ec6beeb651dcbb94bca7907651ea3fed8",
+            "repositoryPath": "research/native-live-client-operation-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java",
+            "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0",
+            "stageRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java"
+          },
+          {
+            "bytes": 199541,
+            "gitBlobSha1": "aa6f77b8fcb805b97b3609bc8e4bc0bf3c12f77b",
+            "repositoryPath": "research/native-live-client-operation-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+            "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9",
+            "stageRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java"
+          },
+          {
+            "bytes": 1119,
+            "gitBlobSha1": "4009351cd7ff7474dc8287239a554a5556a7346d",
+            "repositoryPath": "research/native-live-client-operation-037/android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java",
+            "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b",
+            "stageRelativePath": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java"
+          },
+          {
+            "bytes": 12779,
+            "gitBlobSha1": "bdc507eedd647e3f7ab1d8c1214276eb1c86ce10",
+            "repositoryPath": "research/native-live-client-operation-037/qualification.json",
+            "sha256": "eda92ebd8fcc8b833d69aa23f286540773bd19ee3fab45bafea7f297ca293f88",
+            "stageRelativePath": "qualification.json"
+          },
+          {
+            "bytes": 1219,
+            "gitBlobSha1": "0beb8a4d0a031ef927beec4f37d21dda55fd9421",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/guest-current-root-32-review.json",
+            "sha256": "05d085455460869b20e83c1e0ade652222fea0737e08afa25e004ebf363bf29d",
+            "stageRelativePath": "qualification/guest-current-root-32-review.json"
+          },
+          {
+            "bytes": 2458,
+            "gitBlobSha1": "28847b982c5e639596b506614836d8d3df78ccd5",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/guest-current-source-freeze.json",
+            "sha256": "b5feb0fbb01c70ddb6d9ca281cbeb9c4879baeee981a2c9a107148a7280b3b58",
+            "stageRelativePath": "qualification/guest-current-source-freeze.json"
+          },
+          {
+            "bytes": 8300,
+            "gitBlobSha1": "1aace088c285284745fde85116201ea46c5164e8",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/historical-operation-revision2-review.json",
+            "sha256": "f11f99e4460fa7f90a61976a1a510180b8eefb9a3184083457ceee9050ad5abe",
+            "stageRelativePath": "qualification/historical-operation-revision2-review.json"
+          },
+          {
+            "bytes": 1988,
+            "gitBlobSha1": "6df06b5e0c6864db81bf64d1987ff6df7085fc6d",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/historical-operation-revision2-source-recovery.json",
+            "sha256": "b0c1ad83a24cdf7be11435a311a9e678fef7269d896bf829e14b01aa10d29c28",
+            "stageRelativePath": "qualification/historical-operation-revision2-source-recovery.json"
+          },
+          {
+            "bytes": 4900,
+            "gitBlobSha1": "0ec9b3008e454546e94799c6971776b335848969",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/namespace-current-36-qualification.json",
+            "sha256": "89b6dbb6b7da17fcab0e0a0cd8172ee797c591c4a1bc49554cc575a096b213e3",
+            "stageRelativePath": "qualification/namespace-current-36-qualification.json"
+          },
+          {
+            "bytes": 914,
+            "gitBlobSha1": "47d358c738d1d0207cd5f60dd2ec2e919206b24b",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/namespace-current-source-freeze.json",
+            "sha256": "4f8cc3e13560861ad1c47e2dd78faf6d2e3825705fb0193d4aea50a057aaeeeb",
+            "stageRelativePath": "qualification/namespace-current-source-freeze.json"
+          },
+          {
+            "bytes": 2176,
+            "gitBlobSha1": "74483f2008c57603448f572533421866f7bcd8e9",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/operation-current-revision3-72-controls.json",
+            "sha256": "4c7abbfeb67da1de5055abaa4b283f66c4fb7f75e2b67a69d479ea829294e58c",
+            "stageRelativePath": "qualification/operation-current-revision3-72-controls.json"
+          },
+          {
+            "bytes": 6924,
+            "gitBlobSha1": "232ed9d1d95aa1f6627ed25c80fab75ef01ac3ec",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/operation-current-revision3-independent-review.json",
+            "sha256": "6101f5d0606eb2f48198ef10cf9d5d37258a887bf068a95ad1ea5ce0072a34bd",
+            "stageRelativePath": "qualification/operation-current-revision3-independent-review.json"
+          },
+          {
+            "bytes": 2521,
+            "gitBlobSha1": "0137213a92a5033e1f941fee82e00188b5c93f0f",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/operation-current-revision3-source-freeze.json",
+            "sha256": "0c1b9ef069399c12306e9818508231a8ceeaeda54983bb290c6c8430796638e7",
+            "stageRelativePath": "qualification/operation-current-revision3-source-freeze.json"
+          },
+          {
+            "bytes": 10093,
+            "gitBlobSha1": "45339fce5a7bb070ea3bba1cf4f4743891b74892",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/original-host-helper-build-receipt.json",
+            "sha256": "1b7feb737cc335f34775caff0ad769508c03a369f18d9fd83d2f92877f136fe6",
+            "stageRelativePath": "qualification/original-host-helper-build-receipt.json"
+          },
+          {
+            "bytes": 2667,
+            "gitBlobSha1": "ac3be14259ecddac81bfb2b2c68d8069aeebc555",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/real-host-JNI-current-5-controls.json",
+            "sha256": "bbdf6f4d356a190752a4b529b6b06e71c79500f5a1a9378eb4869cd98668ac46",
+            "stageRelativePath": "qualification/real-host-JNI-current-5-controls.json"
+          },
+          {
+            "bytes": 16625,
+            "gitBlobSha1": "264f8b05976f74ea517a389ea4d53392e0679db4",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/retained-ARM-component-independent-review.json",
+            "sha256": "9be0dd89361f518b81bb028ab4f2e195bba8c8f88e5cf3fc01ae04fb69eaee74",
+            "stageRelativePath": "qualification/retained-ARM-component-independent-review.json"
+          },
+          {
+            "bytes": 2137,
+            "gitBlobSha1": "1498df958566b20dcb80b08d8f1e5198968cdb13",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/service-current-71-controls.json",
+            "sha256": "7890f6144ba7cdbc98d3d544d34f5fa40d44786bdee5eaa95a966cdb1284379a",
+            "stageRelativePath": "qualification/service-current-71-controls.json"
+          },
+          {
+            "bytes": 6592,
+            "gitBlobSha1": "e5b65e450bf40323b147daba748b11d3e464d5bd",
+            "repositoryPath": "research/native-live-client-operation-037/qualification/staged-layout-216-controls.json",
+            "sha256": "3d703e85ae64a4e778270c9327c9af236547c0c07e7fd7eabfb49822f52240ec",
+            "stageRelativePath": "qualification/staged-layout-216-controls.json"
+          },
+          {
+            "bytes": 21587,
+            "gitBlobSha1": "8fbff19cd857a7f22632697a49edb6a8c247ecc5",
+            "repositoryPath": "research/native-live-client-operation-037/tools/android/interactive/test_client_guest_namespace.py",
+            "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77",
+            "stageRelativePath": "tools/android/interactive/test_client_guest_namespace.py"
+          },
+          {
+            "bytes": 17012,
+            "gitBlobSha1": "803e035b1f89030db3dd0540da4e87f2ca3b50d8",
+            "repositoryPath": "research/native-live-client-operation-037/tools/android/interactive/test_client_live_directory_control.py",
+            "sha256": "c85d4ebcaee5991766d125aee66847d37862630d8b4168c801d3a106d04a20cc",
+            "stageRelativePath": "tools/android/interactive/test_client_live_directory_control.py"
+          },
+          {
+            "bytes": 36618,
+            "gitBlobSha1": "1518496072638d5c0d54964160936fb5720c4cba",
+            "repositoryPath": "research/native-live-client-operation-037/tools/android/interactive/test_client_live_directory_operation.py",
+            "sha256": "da72d28b5e5a453dddb0b94f86c4bd86aed27b048155c63655be19840c43a415",
+            "stageRelativePath": "tools/android/interactive/test_client_live_directory_operation.py"
+          },
+          {
+            "bytes": 13197,
+            "gitBlobSha1": "448ffc89971edd5a3c158ea7554eb41fce993c10",
+            "repositoryPath": "research/native-live-client-operation-037/tools/android/interactive/test_client_live_directory_operation_jni.py",
+            "sha256": "302ecdd27b1ea0219b9bd3eb8f346c5261fdf0b9696ec861c0918f54a9dc3353",
+            "stageRelativePath": "tools/android/interactive/test_client_live_directory_operation_jni.py"
+          },
+          {
+            "bytes": 24329,
+            "gitBlobSha1": "c251f1aa5db0924f039653de634112d781222eb9",
+            "repositoryPath": "research/native-live-client-operation-037/tools/android/interactive/test_client_live_directory_service.py",
+            "sha256": "5ffeb08e28d35441c73e2478f897207df8870cb05384a72b14403468e8252cad",
+            "stageRelativePath": "tools/android/interactive/test_client_live_directory_service.py"
+          }
+        ],
+        "schema": "coh_closed_source_stage_file_pins_v1",
+        "scope": "source and JSON receipts only; no native binaries or credentials",
+        "thisPinsDocumentExcludedFromOwnRecursivePinList": true
+      }
+    },
+    "7cf6fd23d4d4319bdbc456df89df1a2428885197": {
+      "git_blob_sha1": "fb664c9a41b677dd3de0137493de48b45381e538",
+      "document": {
+        "schema": "coh-native-live-ancestor-candidate-source-only-pins-v1",
+        "baseline": [
+          {
+            "path": "tools/native_live_directory/coh_live_directory_core.c",
+            "bytes": 22987,
+            "Git_blob": "2fd985b52ecc3e82dbbdecc342edf717a6305e24",
+            "sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c",
+            "raw_public_body_verified": true,
+            "source_commit": "2d030678e7013891547ecd7d35fc0cf40ffabff9"
+          },
+          {
+            "path": "tools/native_live_directory/test_native_live_directory_core.py",
+            "bytes": 22432,
+            "Git_blob": "9d458d7354ef6c7e9dd40b037d4c4d58cca1939b",
+            "sha256": "16a5fc9cc22fb3ac7815e2ef4e9f2dc53c6517418d704ef7c698d85ec62d4694",
+            "raw_public_body_verified": true,
+            "source_commit": "2d030678e7013891547ecd7d35fc0cf40ffabff9"
+          }
+        ],
+        "baseline_complete_directory_Git_members": [
+          {
+            "path": "tools/native_live_directory/NativeLiveDirectory.java",
+            "Git_blob": "4009351cd7ff7474dc8287239a554a5556a7346d",
+            "bytes": 1119,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/NativeLiveDirectoryFixture.java",
+            "Git_blob": "65a1ca190bd46faefc6dba4e84ea392ef2eb8d20",
+            "bytes": 5877,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/README.md",
+            "Git_blob": "fa7c383cde02fd6438437a862186ac41b60dc4ab",
+            "bytes": 5216,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/audit_retained_native_live_directory.py",
+            "Git_blob": "c3b5905c50016500fbfb922ea6d16224ea38a7d8",
+            "bytes": 10938,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/coh_live_directory_core.c",
+            "Git_blob": "2fd985b52ecc3e82dbbdecc342edf717a6305e24",
+            "bytes": 22987,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/coh_live_directory_core.h",
+            "Git_blob": "898b8b9cb8c4cdb0acbf9a94014091dcf48ed14a",
+            "bytes": 3125,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/coh_live_directory_jni.c",
+            "Git_blob": "9f6afe3ab06673c18c521035ec6e6ae5c976bbf3",
+            "bytes": 9835,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/native_core_faults.c",
+            "Git_blob": "d0766c45b71f9220f8a309da3d3f25d1e94eee28",
+            "bytes": 2177,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/native_live_fixture.c",
+            "Git_blob": "d118ea4fd3ecd5603552545190eaae2b03977aba",
+            "bytes": 11383,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/qualify_native_live_directory.py",
+            "Git_blob": "e2dbf420709997462674bfc763233fbac780916f",
+            "bytes": 7749,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/retained-ARM-artifact-11878700818.json",
+            "Git_blob": "2915a919b5813fb8d752f9178dcdc7b6d12d5f0e",
+            "bytes": 8733,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/test_audit_retained_native_live_directory.py",
+            "Git_blob": "5756c73a6d1caeda14b9f35d4c71740afb567332",
+            "bytes": 4741,
+            "type": "file"
+          },
+          {
+            "path": "tools/native_live_directory/test_native_live_directory_core.py",
+            "Git_blob": "9d458d7354ef6c7e9dd40b037d4c4d58cca1939b",
+            "bytes": 22432,
+            "type": "file"
+          }
+        ],
+        "candidate": [
+          {
+            "path": "research/native-live-ancestor-candidate-037/source/tools/native_live_directory/coh_live_directory_core.c",
+            "bytes": 23229,
+            "sha256": "2fcf0cdcf7d840131f923a91af9697be2c1d2b13cbef719199e2a91622ac249b",
+            "Git_blob": "d55e7b92ab5e322ec6baf9ddcbd5179f5ac4a0db",
+            "immutable_blob_readback_byte_exact": true
+          },
+          {
+            "path": "research/native-live-ancestor-candidate-037/source/tools/native_live_directory/test_native_live_directory_core.py",
+            "bytes": 32516,
+            "sha256": "8415a319499643955f2481ef9e2308ebeed0961af1f20360ed2b695d21064f1b",
+            "Git_blob": "ac8fe28a065cc6a4cce8dfcd9dc2e9899a08974f",
+            "immutable_blob_readback_byte_exact": true
+          }
+        ],
+        "immutable_candidate_blobs_retrieved_byte_exact": true,
+        "ASCII_SHA256_check": {
+          "empty_vector": true,
+          "abc_vector": true,
+          "exact_historical_core_and_test_SHA256_vectors": true
+        },
+        "local_temp_index_reconstruction_performed": false,
+        "complete_source_compilation_performed": false,
+        "shipping_allowed": false
+      }
+    }
+  },
+  "missing_exact_source": [
+    {
+      "path": "ClientLiveDirectoryAndroidFixture.java",
+      "bytes": 39309,
+      "sha256": "64d3aba05ac96103702efa2ea7d467ada86fd83684f6a5b74bf7c72d9e8d272c"
+    },
+    {
+      "path": "test_client_live_directory_android_fixture.py (filename not independently known)",
+      "bytes": 28269,
+      "sha256": "1513553cee166c61bfdc7940710efd1bdad1d6c36d613d773897eea2b034811f"
+    },
+    {
+      "path": "android/guest/client_live_fixture_owner.py",
+      "bytes": 28072,
+      "sha256": "e3b9dd1cbf830e52f4cdf09d38d6be117fae70882ed50e6ef7d6e3df2cf3a8d9"
+    },
+    {
+      "path": "tools/android/interactive/test_client_live_fixture_owner.py",
+      "bytes": 27980,
+      "sha256": "3a87e490c26c767a4a2dd07a0ed5cfd6f866fed960e1a78af82f289f6c2438d4"
+    },
+    {
+      "path": "native037-recovery/client-live-fixture-owner-source-freeze-revision-3.json",
+      "bytes": 1414,
+      "sha256": "d121defcb1b9f2d8a835319ae323bd972521dc8a22e55bb0492e5d4f99a22817"
+    },
+    {
+      "path": "client-live-native-037/wine/HostNativeLiveService.java",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "sdk_custody.py",
+      "bytes": null,
+      "sha256": null
+    }
+  ],
+  "known_not_written": [
+    "namespace.py",
+    "test_namespace.py",
+    "installed PackageInfo/signer/nativeLibraryDir authority correction",
+    "8 child nonce cap and refusal control"
+  ],
+  "gap_conclusion": "The exact unpublished adapter, guest-owner revision3, and native-driver/sdk-custody bytes are unavailable from the accessible remote branches, inspected artifacts and current scratch. The original offline working tree was not accessible. Their historical controls and hashes are documentation evidence only, not current-source replay. Reconstruction must be recorded as new work, never as recovered exact source.",
+  "note": "No compiler or workflow was invoked by this artifact audit; downloads, CRC and SHA-256 checks only."
+}

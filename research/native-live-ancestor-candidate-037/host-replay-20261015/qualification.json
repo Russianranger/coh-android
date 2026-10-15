@@ -1,0 +1,96 @@
+{
+  "schema": "coh-native-ancestor-independent-host-replay-v1",
+  "timestamp_utc": "2026-10-15T00:59:04.942585+00:00",
+  "source_checkpoint": "7cf6fd23d4d4319bdbc456df89df1a2428885197",
+  "baseline_source": "2d030678e7013891547ecd7d35fc0cf40ffabff9",
+  "baseline_core_sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c",
+  "candidate_source": {
+    "coh_live_directory_core.c": {
+      "sha256": "2fcf0cdcf7d840131f923a91af9697be2c1d2b13cbef719199e2a91622ac249b",
+      "bytes": 23229
+    },
+    "test_native_live_directory_core.py": {
+      "sha256": "8415a319499643955f2481ef9e2308ebeed0961af1f20360ed2b695d21064f1b",
+      "bytes": 32516
+    }
+  },
+  "candidate_source_changed_during_replay": false,
+  "unchanged_dependencies_from": "tools/native_live_directory at recovered origin/recovery-live-directory",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+  "gcc_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "candidate_test_command": "python /workspace/scratch/21de240fd43a/native-ancestor-validation/candidate/test_native_live_directory_core.py",
+  "candidate_tests": {
+    "total": 51,
+    "original": 42,
+    "new_permission_controls": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log": "candidate-51-tests.stderr",
+    "host_core_compilation": "one source-justified GCC shared test library, with test-only fault interposition; destroyed by TemporaryDirectory teardown"
+  },
+  "retained_baseline": {
+    "library_sha256": "cec249a49fa8758b4caf2f074c133fb687f5d53e1c580ab1aa8031b822d653a8",
+    "library_bytes": 35664,
+    "library_recompiled": false,
+    "actual_DAC_negative_control": {
+      "CapEff": "0000000000000000",
+      "CapInh": "0000000000000000",
+      "CapPrm": "0000000000000000",
+      "NoNewPrivs": "1",
+      "euid": 0,
+      "fallback": true,
+      "fd_counts_before_after": [
+        4,
+        4
+      ],
+      "final_known_name_direct_open_succeeded": true,
+      "namespace_opened": false,
+      "native_errno": 13,
+      "parent_O_RDONLY_errno": 13,
+      "rows": 0,
+      "uid": 0
+    }
+  },
+  "unrecovered_baseline_library": {
+    "sha256": "b264121c80afb11ff84248b98099939a6657251c56bd2175174f260615d45708",
+    "replayed": false
+  },
+  "code_review": {
+    "reviewer": "native_ancestor_fix",
+    "result": "Focused source inspection passed: O_PATH used only for nonfinal root components; final root retains O_RDONLY; nofollow, directory, cloexec, canonical path and root device/inode/UID checks unchanged",
+    "independent_root_review": {
+      "reviewer": "root",
+      "result": "passed focused host source review",
+      "rationale": "Only nonfinal open/openat flags change to O_PATH with strtok lookahead; final root remains O_RDONLY, O_NOFOLLOW/O_DIRECTORY/O_CLOEXEC retained, and existing identity and namespace revalidation checks remain unchanged",
+      "scope": "Host source candidate only; no ARM or Android qualification claim"
+    }
+  },
+  "authority_limits": {
+    "ARM_JNI_build_performed": false,
+    "Android_OS_execution": false,
+    "PRoot_Wine_parity_proven": false,
+    "Game_or_probe_rebuilt": false,
+    "physical_Thor_qualification": false,
+    "measured_startup_or_zone_performance": null,
+    "runtime_admission": false,
+    "APK_build_or_publication_allowed": false,
+    "player_data_accessed": false
+  },
+  "historical_source_pins_and_receipts_modified": false,
+  "evidence_files": {
+    "candidate-51-tests.stderr": {
+      "bytes": 6499,
+      "sha256": "f70f8690481c7d147f76124d921e0e823aca3e77edc626fade74bab94d83b9ef"
+    },
+    "retained_baseline_dac_child.py": {
+      "bytes": 1990,
+      "sha256": "e0b1c121f3bc02498dce286a415a6c2e66c92c6e09f196bc1f52cc043c97f169"
+    },
+    "retained-baseline-DAC.stdout": {
+      "bytes": 318,
+      "sha256": "d545fdd1a124c0cb5bdab219d0b709e4f4584594a0e5dfae4ad5c6eb6378d8ee"
+    }
+  }
+}

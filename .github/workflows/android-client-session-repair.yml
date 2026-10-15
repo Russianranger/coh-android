@@ -1,0 +1,357 @@
+name: Thor session movement repair and focused rendering isolation
+# Retain the original 5af0e27cc / run 37924638566 Game and native proof.
+# This host-only owner never compiles native clients, servers, Mesa or probes.
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-client-session-repair.yml
+      - tools/android/interactive/build_client_session_repair_apk.py
+      - tools/android/interactive/qualify_client_session_repair.py
+      - tools/android/interactive/test_client_session_repair_package.py
+      - tools/android/interactive/test_client_session_repair_java.py
+      - tools/android/interactive/test_session_budget_guest.py
+      - tools/android/interactive/test_character_reopen_guest.py
+      - tools/android/interactive/test_client_render_pipeline_guest.py
+      - android/guest/client_interactive_diagnostic.py
+      - android/guest/character_reopen_diagnostic.py
+      - android/guest/character_session_budget.py
+      - docs/COH-PERFORMANCE-0.13.23.md
+      - docs/COH-Atlas-Gameplay-0.13.23-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-session-repair-publication
+  cancel-in-progress: false
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      required: ${{ steps.gate.outputs.required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Preserve any complete existing publication
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import sys, json, os, urllib.error, urllib.request
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import build_client_session_repair_apk as current
+          if current.RELEASE_TAG != 'coh-atlas-gameplay-v0.13.23':
+              raise ValueError('Exact continuation release required')
+          request = urllib.request.Request('https://api.github.com/repos/'+current.REPOSITORY+'/releases/tags/'+current.RELEASE_TAG,
+              headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response: release = json.load(response)
+          except urllib.error.HTTPError as error:
+              if error.code != 404: raise
+              required = True
+          else:
+              current.validate_existing_release(release)
+              required = False
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output: output.write('required='+str(required).lower()+'\n')
+          print(json.dumps({'release_tag': current.RELEASE_TAG, 'publication_required': required,
+              'existing_release_modified': False, 'completed_gpu_probe_and_driver_builds_repeated': False}))
+          PY
+  client:
+    needs: changes
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Recover exact completed Game and Win32 proof without another native build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_client_session_repair_apk.py download-retained-native
+          --output out/client-session-repair-native
+      - name: Record original native and current publication owners separately
+        run: |
+          python3 - <<'PY'
+          import os, sys, json
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import build_client_session_repair_apk as current
+          evidence = {'format': 1, 'status': 'passed',
+              'native_build_provenance': current.native_build_provenance(),
+              'publication_provenance': current.publication_provenance(os.environ['GITHUB_SHA']),
+              'native_compile_repeated': False, 'native_manifest_relabelled': False}
+          Path('out/client-session-repair-native-recovery.json').write_text(json.dumps(evidence, indent=2, sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-session-repair-native
+          path: out/client-session-repair-native/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-session-repair-native-recovery-evidence
+          path: out/client-session-repair-native-recovery.json
+          if-no-files-found: error
+          retention-days: 90
+  qualify:
+    needs: [changes, client]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: coh-host-fixture
+          POSTGRES_DB: coh_test_startup_bundle
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-session-repair-native
+          path: out/client-session-repair-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Authenticate the original published .21 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_client_session_repair_apk.py download-donor-evidence --output out/client-session-repair-donor/evidence
+      - name: Recover the exact physically accepted public .21 APK
+        run: python3 tools/android/interactive/build_client_session_repair_apk.py download-donor --output out/client-session-repair-donor/COH-Atlas-Gameplay-0.13.21.apk
+      - name: Install host-only Vulkan headers and software fixture driver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libvulkan-dev mesa-vulkan-drivers
+      - name: Qualify all 105 retained suites and focused session repair checks
+        run: >-
+          python3 tools/android/interactive/qualify_client_session_repair.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/client-session-repair-donor/COH-Atlas-Gameplay-0.13.21.apk
+          --donor-build-report out/client-session-repair-donor/evidence/client-gpu-repair-apk-build-report.json
+          --client-directory out/client-session-repair-native
+          --output out/client-session-repair-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-session-repair-qualification
+          path: out/client-session-repair-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [changes, client, qualify]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-session-repair-native
+          path: out/client-session-repair-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Authenticate the original published .21 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_client_session_repair_apk.py download-donor-evidence --output out/client-session-repair-donor/evidence
+      - name: Recover the exact physically accepted public .21 APK
+        run: python3 tools/android/interactive/build_client_session_repair_apk.py download-donor --output out/client-session-repair-donor/COH-Atlas-Gameplay-0.13.21.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-session-repair-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Build native Game continuation retaining the exact accepted .21 DEX and GPU archive
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_client_session_repair_apk.py build
+          --donor-apk out/client-session-repair-donor/COH-Atlas-Gameplay-0.13.21.apk
+          --donor-build-report out/client-session-repair-donor/evidence/client-gpu-repair-apk-build-report.json
+          --qualification out/client-session-repair-qualification.json
+          --client-directory out/client-session-repair-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/client-session-repair-apk/COH-Atlas-Gameplay-0.13.23.apk
+      - name: Fresh-process SDK signer and actual native/payload audit before publication
+        env:
+          PYTHONHASHSEED: '73422'
+        run: >-
+          python3 tools/android/interactive/build_client_session_repair_apk.py audit
+          --donor-apk out/client-session-repair-donor/COH-Atlas-Gameplay-0.13.21.apk
+          --donor-build-report out/client-session-repair-donor/evidence/client-gpu-repair-apk-build-report.json
+          --qualification out/client-session-repair-qualification.json
+          --client-directory out/client-session-repair-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --apk out/client-session-repair-apk/COH-Atlas-Gameplay-0.13.23.apk
+          --build-report out/client-session-repair-apk/client-session-repair-apk-build-report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-session-repair-packaging-evidence
+          path: |
+            out/client-session-repair-apk/client-session-repair-apk-build-report.json
+            out/client-session-repair-apk/COH-Atlas-Gameplay-0.13.23-testing.txt
+            out/client-session-repair-apk/COH-Atlas-Gameplay-0.13.23.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-session-repair-apk
+          path: out/client-session-repair-apk/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only the newly qualified continuation prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_client_session_repair_apk.py publish
+          --donor-apk out/client-session-repair-donor/COH-Atlas-Gameplay-0.13.21.apk
+          --donor-build-report out/client-session-repair-donor/evidence/client-gpu-repair-apk-build-report.json
+          --qualification out/client-session-repair-qualification.json
+          --client-directory out/client-session-repair-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --apk out/client-session-repair-apk/COH-Atlas-Gameplay-0.13.23.apk
+          --build-report out/client-session-repair-apk/client-session-repair-apk-build-report.json
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
+  public-audit:
+    needs: [changes, client, qualify, apk]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PYTHONHASHSEED: '2022'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-session-repair-native
+          path: out/client-session-repair-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Authenticate the original published .21 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_client_session_repair_apk.py download-donor-evidence --output out/client-session-repair-donor/evidence
+      - name: Recover the exact physically accepted public .21 APK
+        run: python3 tools/android/interactive/build_client_session_repair_apk.py download-donor --output out/client-session-repair-donor/COH-Atlas-Gameplay-0.13.21.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-session-repair-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-session-repair-packaging-evidence
+          path: out/client-session-repair-public
+      - name: Download actual public APK, checksum and testing instructions
+        run: >-
+          python3 tools/android/interactive/build_client_session_repair_apk.py download-public
+          --build-report out/client-session-repair-public/client-session-repair-apk-build-report.json
+          --output out/client-session-repair-public
+      - name: Independently audit actual public bytes against exact donor, native proof and SDK signer
+        run: >-
+          python3 tools/android/interactive/build_client_session_repair_apk.py audit
+          --donor-apk out/client-session-repair-donor/COH-Atlas-Gameplay-0.13.21.apk
+          --donor-build-report out/client-session-repair-donor/evidence/client-gpu-repair-apk-build-report.json
+          --qualification out/client-session-repair-qualification.json
+          --client-directory out/client-session-repair-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --apk out/client-session-repair-public/COH-Atlas-Gameplay-0.13.23.apk
+          --build-report out/client-session-repair-public/client-session-repair-apk-build-report.json
+      - name: Record truthful public byte qualification
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('out/client-session-repair-public/client-session-repair-apk-build-report.json').read_text())
+          evidence = {key: report[key] for key in ('bytes', 'sha256', 'repository_commit', 'version_name', 'version_code',
+              'native_client_recompiled', 'native_client_compiled_in_current_publication_run',
+              'reused_previous_native_build', 'raw_native_producer_preserved', 'java_or_dex_recompiled', 'mesa_driver_compiled_in_current_run',
+              'native_vulkan_probe_compiled_in_current_run', 'wgl_probe_compiled_in_current_run',
+              'successful_gpu_driver_and_both_probes_retained', 'software_fallback_preserved',
+              'owned_presentation_session_deadline_repair', 'render_pipeline_instrumentation_enabled',
+              'render_pipeline_instrumentation_isolation', 'accepted_Game_bytes_retained',
+              'runtime_refresh_required', 'physical_performance_validated', 'physical_fps_gain_validated')}
+          evidence.update(format=1, status='passed', fresh_process_prepublication_audit_passed=True,
+              public_apk_checksum_and_notes_verified=True, sdk_signer_payload_audit_passed=True,
+              public_url='https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.23/COH-Atlas-Gameplay-0.13.23.apk')
+          Path('out/client-session-repair-public-byte-audit.json').write_text(json.dumps(evidence, indent=2, sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-session-repair-public-byte-audit
+          path: out/client-session-repair-public-byte-audit.json
+          if-no-files-found: error
+          retention-days: 90

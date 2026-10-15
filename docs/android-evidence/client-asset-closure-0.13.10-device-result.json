@@ -1,0 +1,698 @@
+{
+  "format": 1,
+  "scope": "exact_0_13_10_Thor_startup_partial_visual_improvement_and_ordinary_native_reward_save_with_remaining_visual_gaps",
+  "recorded_utc": "2026-10-05",
+  "tested_version": "0.13.10",
+  "release_tag": "coh-atlas-gameplay-v0.13.10",
+  "source_branch": "codex/character-persistence-continuation",
+  "implementation_source_commit": "9c36a5f411290400cb4aa4b2711a4bdcd39ca8cb",
+  "branch_head_at_analysis": "37404945f3c53c0897c275beb94a2fec4ed915b2",
+  "main_preserved_at": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "bundle": {
+    "path": "coh-atlas-gameplay-20261005-022547.zip",
+    "bytes": 13243218,
+    "sha256": "3be616a41e3e08cc187d9eb8d66df1577bd4cd9ab72f18c6f4037ed5a9fa0cf3"
+  },
+  "source_files": {
+    "android-client-report.json": {
+      "bytes": 324357,
+      "sha256": "533437291e7a9c4bb87e61db4e624d7611c4d276b03b6e42e8b3d1d595ef7051"
+    },
+    "runtime-manifest.json": {
+      "bytes": 27524,
+      "sha256": "98d4e0933c8aa65c9d7ec0fdad34bdb34f61e0ccab7c37a0fa62cf33ee536dd5"
+    },
+    "runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "runtime-setup-service.json": {
+      "bytes": 644,
+      "sha256": "8f376c38e2d0752c562199aa6f4c9aa0024b9217a42c8d4743e7693f41703279"
+    },
+    "identities/accepted-runtime-manifest.json": {
+      "bytes": 4128,
+      "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+    },
+    "identities/client-manifest.json": {
+      "bytes": 8274,
+      "sha256": "f4a2c397849288d9c27b3546db2c88d6e36b1e3aee7cb0f59762f01fe312a27e"
+    },
+    "guest-report.zip": {
+      "bytes": 3641740,
+      "sha256": "20c204505f91b7ab31b28d02cd98b302f46280404791838601d449ecd80245e3"
+    },
+    "guest/latest-report.json": {
+      "bytes": 269429,
+      "sha256": "bcb38fd73217e7b5daae465bb427c81df199f14a0aeddf9743253fb68fac392d"
+    },
+    "guest/client-evidence/character-reopen-before-snapshot.json": {
+      "bytes": 8679,
+      "sha256": "74b71905e918fbd35d06569b4bac2be8d37697f035d12d7877a548ef179911f2"
+    },
+    "guest/client-evidence/character-saved-snapshot.json": {
+      "bytes": 8679,
+      "sha256": "131437cffd48f89813dd907a03d8429a053fb13cbd730035bf000b20786fef1e"
+    },
+    "guest/client-evidence/character-server-logs.zip": {
+      "bytes": 10199,
+      "sha256": "5e9834ebdfede456e92f17468b0ce011bc1efa7529c2ddeeac4aa4f67f48b17e"
+    },
+    "guest/client-evidence/client-console.log": {
+      "bytes": 1810015,
+      "sha256": "9916a2e59f41b226cc31e6fae889a48a0b93908640ba6004ec431e5fed9c4f98"
+    },
+    "guest/client-evidence/character-atlas-console.txt": {
+      "bytes": 1571487,
+      "sha256": "dcdd8ab9795a5322e755a551bbdc8d9a3b3cc0a5149afefa76f1e104b473e336"
+    },
+    "guest/client-evidence/local-dbserver-console.txt": {
+      "bytes": 19298,
+      "sha256": "b08d82b609fba41ae577fcead9e87ed8a733a9058b56d433fe71479cfd9f79dd"
+    }
+  },
+  "screenshots": [
+    {
+      "path": "Screenshot_20261004-211950.png",
+      "uploaded_local_name": "02-Screenshot_20261004-211950.png",
+      "bytes": 435070,
+      "sha256": "febb20602adacc145ef83e80bd2ccc5e6798fd40b31588813a2206ca93c54868",
+      "width": 1920,
+      "height": 1080,
+      "observation": "NPC hands and face visible at city-hall doorway.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211933.png",
+      "uploaded_local_name": "03-Screenshot_20261004-211933.png",
+      "bytes": 419726,
+      "sha256": "fa8ee1a4e3d438dac1f5ddb980de78168b2eac48e922b10dde30cb83f3f1572c",
+      "width": 1920,
+      "height": 1080,
+      "observation": "Merit Reward Informant torso/armor is white; lower body textured.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211919.png",
+      "uploaded_local_name": "04-Screenshot_20261004-211919.png",
+      "bytes": 496986,
+      "sha256": "4ac10b2f2c883fb4d83ed6c122f1bfa070c44fd1a479a6990176770d1e3ad3b3",
+      "width": 1920,
+      "height": 1080,
+      "observation": "City-hall citizen hands and hair visible; face flat white.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211858.png",
+      "uploaded_local_name": "05-Screenshot_20261004-211858.png",
+      "bytes": 331447,
+      "sha256": "9f2b1fc6954b3d9ed477c5bc90e2cdfbde89320bcae6952602dd970a1d6e7835",
+      "width": 1920,
+      "height": 1080,
+      "observation": "Outdoor civilian and pavement visible.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211845.png",
+      "uploaded_local_name": "06-Screenshot_20261004-211845.png",
+      "bytes": 282889,
+      "sha256": "9acd11c9e05e6781ea1538c77452134f1975b94c0c49d446085c935f7e8472dd",
+      "width": 1920,
+      "height": 1080,
+      "observation": "Atlas steps, wall and pavement visible.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211827.png",
+      "uploaded_local_name": "07-Screenshot_20261004-211827.png",
+      "bytes": 326527,
+      "sha256": "c4495437763a931572260d47a50686ddf9518cc271fef8646c393e5409364dc6",
+      "width": 1920,
+      "height": 1080,
+      "observation": "News reporter face, hands, clothing and held object visible.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211810.png",
+      "uploaded_local_name": "08-Screenshot_20261004-211810.png",
+      "bytes": 478786,
+      "sha256": "2b8943ecddad2dcad1da87eb9bc86f3ea5d6c945d85972be194e16c8184cb273",
+      "width": 1920,
+      "height": 1080,
+      "observation": "Sunstorm and Atlas statue visible; residual distant/flat world surfaces.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211648.png",
+      "uploaded_local_name": "09-Screenshot_20261004-211648.png",
+      "bytes": 536503,
+      "sha256": "a7ebdbd33a0704b43816a1863f49d36eaac363676961f9a373d245bfbd886661",
+      "width": 1920,
+      "height": 1080,
+      "observation": "Grass, tree, rock and ground textures visible.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211747.png",
+      "uploaded_local_name": "10-Screenshot_20261004-211747.png",
+      "bytes": 498016,
+      "sha256": "e1dd0e40973086be14c47a7abfbc310d81bd4e8cbf09ae22a2784ac8e8ab1b0c",
+      "width": 1920,
+      "height": 1080,
+      "observation": "Atlas plaza and vegetation visible; residual flat distant vegetation.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211723.png",
+      "uploaded_local_name": "11-Screenshot_20261004-211723.png",
+      "bytes": 421723,
+      "sha256": "8ba06632ef30f20361bd37077f2c031e093aaa22f0ec4c959c6b849b313ba602",
+      "width": 1920,
+      "height": 1080,
+      "observation": "Paired red/blue lights float near Atlas stairs, consistent with reported missing police-drone body; exact asset not identified by image alone.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211623.png",
+      "uploaded_local_name": "12-Screenshot_20261004-211623.png",
+      "bytes": 566885,
+      "sha256": "bd0c993571dbd2aed888c5115a659bcb30568b4e924c9deb7981856f8a8ad543",
+      "width": 1920,
+      "height": 1080,
+      "observation": "Selected defeated Blood Brother Slammer; chat shows defeat, 10 experience and 7 influence.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211328.png",
+      "uploaded_local_name": "13-Screenshot_20261004-211328.png",
+      "bytes": 521043,
+      "sha256": "9cbcee2bda9608e636038bdf4d71f186122a09cf24b593398d404888600ccc79",
+      "width": 1920,
+      "height": 1080,
+      "observation": "Initial connected Atlas view with ground, vegetation and player visible.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "Screenshot_20261004-211503.png",
+      "uploaded_local_name": "14-Screenshot_20261004-211503.png",
+      "bytes": 574024,
+      "sha256": "4fc41ef8bc2643952fd2419421b233c40a3a7cd0a7220d66a568c6efe3612ed1",
+      "width": 1920,
+      "height": 1080,
+      "observation": "Merit Vendor hair and hands visible; face flat white.",
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    }
+  ],
+  "user_observations": {
+    "ground_textures_and_hands_now_loaded": true,
+    "many_additional_assets_visible": true,
+    "remaining_categories": [
+      "white NPC face textures",
+      "white armor/material surfaces",
+      "missing police-drone body/models",
+      "additional missing textures and models",
+      "remaining distant/flat world and vegetation surfaces"
+    ],
+    "local_atlas_startup_approximate_seconds": 230,
+    "actual_client_start_approximate_seconds": 322,
+    "client_start_slower_than_previous_0_13_9_approximate_255_seconds": true,
+    "requested_next_focus": [
+      "reduce startup through persistent preparation/preload or other evidence-backed optimizations",
+      "continue comprehensive missing texture/model dependency sweep"
+    ],
+    "full_visual_completeness_accepted": false
+  },
+  "exact_device_identity": {
+    "app_id": "io.github.russianranger.cohclientinteractive",
+    "app_version": "0.13.10",
+    "android_sdk": 33,
+    "device": "AYN AYN Thor",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "graphics_profile_requested": "performance",
+    "session_id": "9d4f5593e6cb461b9e54b30ece9cf49d",
+    "run_id": "1791165491587-e4641a02eb76",
+    "runtime_manifest_sha256": "e6c834b02e6c779ea493a36192545a737ccda104aea32dbdf2920d5dfdbe2db8"
+  },
+  "package_identity": {
+    "public_apk": {
+      "path": "COH-Atlas-Gameplay-0.13.10.apk",
+      "bytes": 1194150167,
+      "sha256": "4c02b4f5f1ff9b82ab8b96fe5b4d2f402b687c3ee66ef1d8535a1a68f0c07d4a"
+    },
+    "exported_runtime_manifest_sha256": "98d4e0933c8aa65c9d7ec0fdad34bdb34f61e0ccab7c37a0fa62cf33ee536dd5",
+    "apk_embedded_runtime_manifest_sha256": "e6c834b02e6c779ea493a36192545a737ccda104aea32dbdf2920d5dfdbe2db8",
+    "android_recorded_runtime_manifest_sha256": "e6c834b02e6c779ea493a36192545a737ccda104aea32dbdf2920d5dfdbe2db8",
+    "android_recorded_digest_matches_exact_apk_manifest": true,
+    "exported_runtime_manifest_serialization_digest_differs": true,
+    "exported_and_apk_manifest_structural_content_exact": true,
+    "canonical_sorted_compact_manifest_sha256": "a706116fdd7cd3751434c938d45307c782e5c3c7c39e83a1a3d9b9ca2da9e1c0",
+    "installed_save_helper_matches_implementation_source": true,
+    "interpretation": "Export rewrites JSON serialization, producing a different byte digest. Parsed exported manifest content exactly equals the pinned public APK manifest; Android records the original APK manifest digest. This is a serialization difference, not a runtime identity mismatch."
+  },
+  "raw_report_contract": {
+    "guest": {
+      "passed": true,
+      "status": "passed",
+      "scope": "actual_character_startup_timing_guest",
+      "diagnostic_mode": "actual_character_startup_timing",
+      "startup_only_reopen": true,
+      "startup_validation_scope": "saved_character_startup_connection_timing_only",
+      "gameplay_validated": false,
+      "android_execution_validated": false,
+      "hardware_acceleration_validated": false,
+      "menu_visual_validated": false,
+      "input_effect_verified": false,
+      "started_utc": "2026-10-05T01:58:12.720255+00:00",
+      "finished_utc": "2026-10-05T02:21:35.591963+00:00",
+      "failures": []
+    },
+    "android": {
+      "passed": true,
+      "status": "passed",
+      "scope": "Saved THORHERO startup and connection timing only; existing tasks are preserved and task qualification is not requested. Stop produces timing evidence, not an ordinary save or gameplay pass.",
+      "startup_only_reopen": true,
+      "gameplay_validated": false,
+      "game_rendering_validated": false,
+      "hardware_acceleration_validated": false,
+      "controller_input_validated": false,
+      "input_effect_verified": false,
+      "process_exit_code": 0,
+      "save_logout_requested": true,
+      "character_reopen_verified": true,
+      "cleanup_verified": true,
+      "cleanup_blocked": false
+    },
+    "interpretation": "The requested startup-only profile passed its timing/connection contract. Separately, this run contains genuine ordinary Save proof and exact native point credits persisted to SQL. Overall gameplay/rendering/controller qualification flags remain false and are not reclassified as full gameplay or visual acceptance.",
+    "raw_reports_reclassified": false
+  },
+  "timing": {
+    "stages": [
+      {
+        "stage": "client_inputs",
+        "status": "passed",
+        "started_utc": "2026-10-05T01:58:12.729609+00:00",
+        "finished_utc": "2026-10-05T01:58:13.630155+00:00",
+        "seconds": 0.900546
+      },
+      {
+        "stage": "client_private_data",
+        "status": "passed",
+        "started_utc": "2026-10-05T01:58:13.630449+00:00",
+        "finished_utc": "2026-10-05T01:58:13.781874+00:00",
+        "seconds": 0.151425
+      },
+      {
+        "stage": "persistent_server_profile",
+        "status": "passed",
+        "started_utc": "2026-10-05T01:58:13.784213+00:00",
+        "finished_utc": "2026-10-05T01:58:14.298701+00:00",
+        "seconds": 0.514488
+      },
+      {
+        "stage": "postgres_local_login",
+        "status": "passed",
+        "started_utc": "2026-10-05T01:58:14.299177+00:00",
+        "finished_utc": "2026-10-05T01:58:14.838009+00:00",
+        "seconds": 0.538832
+      },
+      {
+        "stage": "presentation_display",
+        "status": "passed",
+        "started_utc": "2026-10-05T01:58:47.363146+00:00",
+        "finished_utc": "2026-10-05T01:58:47.473131+00:00",
+        "seconds": 0.109985
+      },
+      {
+        "stage": "wine_initialization",
+        "status": "passed",
+        "started_utc": "2026-10-05T01:58:47.473627+00:00",
+        "finished_utc": "2026-10-05T01:58:56.070295+00:00",
+        "seconds": 8.596668
+      },
+      {
+        "stage": "local_login_odbc",
+        "status": "passed",
+        "started_utc": "2026-10-05T01:58:56.071145+00:00",
+        "finished_utc": "2026-10-05T01:59:09.170665+00:00",
+        "seconds": 13.09952
+      },
+      {
+        "stage": "local_dbserver_startup",
+        "status": "passed",
+        "started_utc": "2026-10-05T01:59:09.171575+00:00",
+        "finished_utc": "2026-10-05T01:59:49.303859+00:00",
+        "seconds": 40.132284
+      },
+      {
+        "stage": "local_atlas_startup",
+        "status": "passed",
+        "started_utc": "2026-10-05T01:59:49.736492+00:00",
+        "finished_utc": "2026-10-05T02:03:38.982915+00:00",
+        "seconds": 229.246423
+      },
+      {
+        "stage": "client_visual_assets",
+        "status": "passed",
+        "started_utc": "2026-10-05T02:03:38.991738+00:00",
+        "finished_utc": "2026-10-05T02:04:40.213499+00:00",
+        "seconds": 61.221761
+      },
+      {
+        "stage": "client_animation_pack",
+        "status": "passed",
+        "started_utc": "2026-10-05T02:04:40.214175+00:00",
+        "finished_utc": "2026-10-05T02:04:54.533827+00:00",
+        "seconds": 14.319652
+      },
+      {
+        "stage": "win32_runtime_dll",
+        "status": "passed",
+        "started_utc": "2026-10-05T02:04:54.536178+00:00",
+        "finished_utc": "2026-10-05T02:04:55.803769+00:00",
+        "seconds": 1.267591
+      },
+      {
+        "stage": "actual_client_startup",
+        "status": "passed",
+        "started_utc": "2026-10-05T02:05:44.881844+00:00",
+        "finished_utc": "2026-10-05T02:11:05.084710+00:00",
+        "seconds": 320.202866
+      },
+      {
+        "stage": "actual_client_interaction",
+        "status": "passed",
+        "started_utc": "2026-10-05T02:11:05.085516+00:00",
+        "finished_utc": "2026-10-05T02:21:31.008546+00:00",
+        "seconds": 625.92303
+      }
+    ],
+    "native_client_launcher_to_observed_startup_seconds": 319.732,
+    "initial_visual_asset_install_seconds": 61.209518,
+    "visual_install_fingerprint_reused": false,
+    "initial_asset_install_timing_excluded_from_actual_client_startup_stage": true,
+    "warm_repeat_after_new_visual_install_present": false,
+    "comparison_warning": "First installation of 5,147 new visual files precedes actual client startup and does not explain away the measured client-stage slowdown. No warm-run savings or startup optimization is claimed."
+  },
+  "physical_visual_install": {
+    "manifest_sha256": "447868d63b0eea536cba6355fe69763e3d7b24a703a756b13e0ebafb4031a34b",
+    "archive_sha256": "1ae0892bc76e44d864bfd97a59702c125693c6850e41bd63999a82e8639389ea",
+    "files_sha256": "99021fe01af691b88335f9d3e6fc6c16687ab12dbf652b80ff432f266f617542",
+    "file_count": 5476,
+    "payload_bytes": 873255284,
+    "installed_files": 5147,
+    "reused_files": 329,
+    "decoded_files": 5147,
+    "decoded_payload_bytes": 833734047,
+    "verified_existing_bytes": 39521237,
+    "retained_baseline_payloads_preserved": true,
+    "reuse_validation": "pinned_missing_only_client_visual_v1",
+    "worktree": "client-work-285adbfb0389ed61b577b734",
+    "imported_files_modified": false,
+    "generated_caches_modified": false,
+    "existing_supplements_modified": false,
+    "runtime_visual_validated": false,
+    "full_global_asset_closure": false,
+    "unresolved_dependency_count": 30,
+    "unresolved_direct_material_names": [
+      "_ind_elements_metal01",
+      "_ind_elements_metal01a",
+      "_ind_elements_metal02",
+      "bf_boot_clogs",
+      "bm_boot_business_shoe",
+      "bm_chest_bum_flannel_01a",
+      "bm_eyes_glasses_01a",
+      "boot_banded01",
+      "brown_plush",
+      "chest_skin_leather_01a",
+      "chest_skin_leather_01b",
+      "crey_respawner_05",
+      "door_molding",
+      "door_rusty_metal",
+      "emblem_hero_corp",
+      "face_makeup_3",
+      "fire",
+      "glove_skin_bracer_01a",
+      "glove_skin_bracer_01b",
+      "hips_bikini_3",
+      "medical_ceiling_vent_01",
+      "pwn_cloth_rack",
+      "top_korea_01a",
+      "top_korea_01b",
+      "wood",
+      "x_deco_skyscraper_05_lod",
+      "x_fx_windstream_01",
+      "x_praet_gravelroof.",
+      "x_praet_scichair"
+    ],
+    "absent_requested_models": [
+      {
+        "geometry": "data/player_library/male_collar.geo",
+        "model": "GEO_Collar_MAGIC"
+      }
+    ]
+  },
+  "ordinary_save_and_persistence": {
+    "retained_save_contract_verified_from_actual_report": true,
+    "host_validation_scope": "Read-only replay of actual complete report, snapshots, sender receipt and unmodified native server logs; no new physical test performed.",
+    "replay_timezone": "UTC, matching captured native log timestamps and report epoch",
+    "flags": {
+      "verified": true,
+      "reopen_verified": true,
+      "gameplay_verified": false,
+      "committed_sql_verified": true,
+      "requested_logout_observed": true,
+      "logout_timer_observed": true,
+      "disconnected_before_sql": true,
+      "forced_stop_before_save": false,
+      "preserved_existing_identity": true,
+      "powers_preserved": true,
+      "costume_preserved": true,
+      "selected_rows_preserved": true,
+      "selected_non_reward_rows_preserved": true,
+      "native_reward_values_committed_verified": true,
+      "committed_native_position_verified": true,
+      "recovery_requested": false,
+      "recovery_verified": false,
+      "sql_game_mutations_performed": false
+    },
+    "identity": {
+      "containerid": 1,
+      "authid": 1353310574,
+      "authname": "COHLOCAL",
+      "name": "THORHERO"
+    },
+    "before_login_count": 5,
+    "saved_login_count": 6,
+    "before_reward_values": {
+      "experiencepoints": 25,
+      "influencepoints": 14
+    },
+    "saved_reward_values": {
+      "experiencepoints": 50,
+      "influencepoints": 28
+    },
+    "selected_row_differences": {
+      "ents": [
+        {
+          "field": "experiencepoints",
+          "before": 25,
+          "after": 50
+        },
+        {
+          "field": "influencepoints",
+          "before": 14,
+          "after": 28
+        },
+        {
+          "field": "logincount",
+          "before": 5,
+          "after": 6
+        }
+      ],
+      "ents2": [],
+      "powers": [],
+      "costumeparts": []
+    },
+    "all_other_selected_fields_power_and_costume_rows_unchanged": true,
+    "ordinary_logout_delivery": {
+      "format": 1,
+      "session_id": "9d4f5593e6cb461b9e54b30ece9cf49d",
+      "client_pid": 648,
+      "character_id": 1,
+      "action": "quittologin",
+      "sent_utc_ms": 1791166815109
+    },
+    "native_logout_evidence": {
+      "path": "logs/dbserver/entity_2026-10-05-02-00-00.log",
+      "line_sha256": "71d933556a2d6f412a171ee9825eb5658fb93f5ccfa439b279adbe683880bb17",
+      "log_timestamp": "261005 02:20:15",
+      "log_route": "embedded_dbserver_logserver",
+      "map_instance": "City_01_01_1",
+      "reason": "Logout timer expired",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "source": "current_owned_server_entity_log_live_client_logout_timer"
+    },
+    "native_position_evidence": {
+      "path": "logs/dbserver/entity_2026-10-05-02-00-00.log",
+      "line_sha256": "dd10303c92335017459a530fe8027b982d0039cf3f2645c05d280228c125b037",
+      "log_timestamp": "261005 02:20:15",
+      "utc_ms": 1791166815000,
+      "position": [
+        117.46875,
+        -768.0,
+        -712.40625
+      ],
+      "map_id": 1,
+      "source": "current_owned_server_entity_log_ordinary_logout_position",
+      "session_id": "9d4f5593e6cb461b9e54b30ece9cf49d",
+      "db_id": 1,
+      "auth_id": 1353310574,
+      "client_pid": 648
+    },
+    "saved_sql_position": {
+      "containerid": 1,
+      "mapid": 1,
+      "staticmapid": 1,
+      "posx": 117.46408,
+      "posy": -768,
+      "posz": -712.4072
+    },
+    "canonical_saved_snapshot_sha256": "8df47ec4d70ef5a548bc453cbaef6813cdce21b4e544b5549a14c308be611912",
+    "canonical_saved_snapshot_digest_matches": true,
+    "saved_utc": "2026-10-05T02:21:16.926056+00:00",
+    "native_point_credit_summary": {
+      "scope": "owned_atlas_exact_native_point_credits_before_ordinary_logout",
+      "verified": true,
+      "ready_utc_ms": 1791166379461,
+      "logout_utc_ms": 1791166815000,
+      "native_log_timestamp_precision_ms": 1000,
+      "duplicate_positive_credit_policy": "reject_even_mirrored_logger_routes",
+      "candidate_count": 4,
+      "parsed_reward_count": 4,
+      "positive_credit_count": 2,
+      "experiencepoints_delta": 25,
+      "influencepoints_delta": 14,
+      "sql_game_mutations_performed": false,
+      "combat_defeat_verified": false,
+      "reward_source_classification_verified": false
+    },
+    "positive_native_credit_lines": [
+      {
+        "path": "logs/dbserver/rewards_2026-10-05-02-00-00.log",
+        "line_sha256": "48bcb505f0e21606b9ab3a8835145e40831c621e5082f3039a1b58b732b125c6",
+        "log_timestamp": "261005 02:15:49",
+        "utc_ms": 1791166549000,
+        "log_route": "embedded_dbserver_logserver",
+        "fields": {
+          "teamup": "0",
+          "xp": "15",
+          "debt": "0",
+          "influence": "7",
+          "prestige": "0",
+          "supergroup": "0",
+          "level": "1",
+          "alignment": "0",
+          "archetype": "Class_Blaster",
+          "incarnate": "0"
+        }
+      },
+      {
+        "path": "logs/dbserver/rewards_2026-10-05-02-00-00.log",
+        "line_sha256": "60adf7c39552fd41238a41f4eca3cb22e57b115429759b4275a94c034a5834d3",
+        "log_timestamp": "261005 02:16:17",
+        "utc_ms": 1791166577000,
+        "log_route": "embedded_dbserver_logserver",
+        "fields": {
+          "teamup": "0",
+          "xp": "10",
+          "debt": "0",
+          "influence": "7",
+          "prestige": "0",
+          "supergroup": "0",
+          "level": "1",
+          "alignment": "0",
+          "archetype": "Class_Blaster",
+          "incarnate": "0"
+        }
+      }
+    ],
+    "complete_unmodified_native_log_replay_matches_report_and_sql_delta": true,
+    "synthetic_sender_receipt_used": false,
+    "character_corruption_observed": false,
+    "normal_position_save_does_not_claim_stable_ground_or_full_collision": true
+  },
+  "limited_combat_observation": {
+    "screenshot": "Screenshot_20261004-211623.png",
+    "visible_evidence": "Targeted Blood Brother Slammer is defeated; chat shows 10 experience and 7 influence. Native rewards log additionally records Chopper and Slammer defeats and exact point credits.",
+    "native_rewards_log": "logs/dbserver/rewards_2026-10-05-02-00-00.log",
+    "bounded_target_defeat_and_rewards_observed": true,
+    "full_combat_or_gameplay_qualification_claimed": false,
+    "overall_report_gameplay_validated": false
+  },
+  "accepted_runtime_and_inputs_preserved": {
+    "accepted_base_runtime": {
+      "run_id": 36364550345,
+      "repository_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+      "manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+    },
+    "accepted_base_manifest_hash_matches_physical_identity_file": true,
+    "runtime_candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+    "native_dbserver_recompiled": false,
+    "native_client_recompiled": false,
+    "native_mapserver_recompiled": false,
+    "existing_server_cache_and_save_fix_preserved": true,
+    "existing_wine_prefix_preserved": true,
+    "existing_wine_prefix_reused": true,
+    "existing_client_worktree_reused": true,
+    "client_import_identity": {
+      "generation": "generation-465fcafc89e648ecab66a94b14ad502b",
+      "receipt_sha256": "c67e2df0575173e4c2bac3f6900d316d117a0126657db78b84c067a0b1b2b7fe",
+      "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+      "file_count": 173011,
+      "total_bytes": 2977730517
+    },
+    "imported_input_bytes_unchanged": true,
+    "source_root_preserved": true,
+    "local_character_server_helper_sha256": "7ccf0ac8500d502737af69a036ac9ca9e3e62459aa4e83496af3b4f37b969853",
+    "installed_save_helper_matches_implementation_source": true,
+    "wine_guest_native_architecture_replaced": false,
+    "accepted_physical_tests_repeated": false
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true,
+    "guest_cleanup_complete": true,
+    "android_cleanup_verified": true,
+    "android_cleanup_blocked": false,
+    "remaining_owned_wine_workers": 0
+  },
+  "acceptance": {
+    "exact_0_13_10_startup_and_connection_report_passed": true,
+    "exact_0_13_10_ordinary_native_reward_save_fix_physically_verified": true,
+    "all_5476_visual_files_installed_or_reused": true,
+    "ground_and_hand_visual_improvement_accepted": true,
+    "full_visual_completeness_gate": false,
+    "startup_speed_improvement_accepted": false,
+    "full_gameplay_rendering_controller_qualification": false,
+    "existing_accepted_runtime_and_previous_gameplay_behavior_preserved": true
+  }
+}

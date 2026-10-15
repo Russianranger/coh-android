@@ -1,0 +1,69 @@
+{
+  "format": 1,
+  "status": "failed_device_partial_progress",
+  "app_version": "0.4.1",
+  "candidate_repository_commit": "6b50467a1b96133acc92a378617ff961733f288c",
+  "runtime_manifest_sha256": "1c88865e94841fc3511dfc20b6d9e15e28dbb2ed646ae74295f6f2b994b74711",
+  "reported_failure": "Timed out waiting for DbServer main-thread dispatch publication",
+  "failed_stage": "game_services_restart",
+  "passed_stages": 15,
+  "cleanup_blocked": false,
+  "cleanup_recovery_physically_exercised": {
+    "permission_read_retries": 2,
+    "resolution": "verified_disappearance",
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true
+  },
+  "character": {
+    "name": "TEST25351",
+    "container_id": 1,
+    "influence": 12345,
+    "committed_login_count": 1
+  },
+  "diagnosis": {
+    "schema_listener_ready_utc": "2026-09-29T16:31:28.015557+00:00",
+    "dispatch_wait_began_utc": "2026-09-29T16:31:28.896828+00:00",
+    "launcher_wait_began_utc": "2026-09-29T16:31:50+00:00",
+    "dispatch_timeout_utc": "2026-09-29T16:31:58.993533+00:00",
+    "minimum_launcher_wait_seconds": 15,
+    "dispatch_wait_limit_seconds": 30,
+    "dispatch_record_present": true,
+    "observed_stage": "SQL_KEEPALIVE_QUEUE",
+    "loop_count": 0,
+    "conclusion": "Existing restart schema satisfied the preliminary readiness check before DbServer initialization finished. The separate dispatch deadline expired before the normal minimum launcher wait could complete.",
+    "limit": "Does not prove that later startup, exact-character resume or second save would succeed."
+  },
+  "code_references": {
+    "upstream/ouroboros/DBServer/src/dbinit.c": {
+      "bytes": 79450,
+      "sha256": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007"
+    },
+    "android/guest/game_diagnostic.py": {
+      "bytes": 70922,
+      "sha256": "605ebc439833ac88301ecfa5e0305dc11a1da627166823cbf13878316aa421dd"
+    }
+  },
+  "correction": {
+    "candidate": "0.4.2",
+    "scope": "Device adapter shared 600-second DbServer startup budget across schema/listener and positive main-loop dispatch",
+    "accepted_base_and_binary_inputs_unchanged": true,
+    "readiness_predicate_unchanged": true,
+    "overall_deadline_health_and_cancellation_preserved": true,
+    "qualification": "pending"
+  },
+  "cancellation_evidence": "Recorded timeout; no Stop/cancellation event in supplied lifecycle or operation report",
+  "physical_full_atlas_acceptance": false,
+  "resume_and_second_save_verified": false,
+  "next_gate": "Qualify 0.4.2, then one full Thor test/export before remaining Stop/rerun checks",
+  "preserved_files": {
+    "atlas-test-thor-041-20260929-163218.zip": {
+      "bytes": 324373,
+      "sha256": "a086926f8d6e71d8a945f391560f8e5a5471a198bd3c914ede4aedfad09487dc"
+    },
+    "atlas-test-thor-041-partial-review-20260929.json": {
+      "bytes": 11344,
+      "sha256": "f9d335a3dd743251269d4da55e94762ab43ace8db26504c1794a3b01a49f517f"
+    }
+  }
+}

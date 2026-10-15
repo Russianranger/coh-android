@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "target": "linux-arm64",
+  "source_commit": "7266fb3e8516535682f5a9c8f3a7e70f6506eddb",
+  "source_tree": "8fcee3911b8e0848a1fc75c2e9827316ba658a5a",
+  "source_url": "https://github.com/termux/proot.git",
+  "sources": {
+    "proot-7266fb3e8516535682f5a9c8f3a7e70f6506eddb.tar.gz": {
+      "bytes": 322163,
+      "sha256": "fa70c8dd29e983cb668ad9bee195a387b293a49d192770ad997c9b38f0f17c14"
+    },
+    "talloc-2.4.3.tar.gz": {
+      "bytes": 684092,
+      "sha256": "dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd"
+    }
+  },
+  "talloc_version": "2.4.3",
+  "talloc_source_url": "https://www.samba.org/ftp/talloc/talloc-2.4.3.tar.gz",
+  "patches": {
+    "0001-sysvipc-memfd.patch": {
+      "bytes": 1158,
+      "sha256": "e8e3cb956bdb8b1bcbdf72a23b67ad86fc33fa51430f3a1ee37e1a053f5f0330"
+    },
+    "0002-android-string-header.patch": {
+      "bytes": 300,
+      "sha256": "7508ab6e850dc1c1e687421085e69a24e770b4caabd050cf52da667b95c73178"
+    },
+    "0003-portable-loader-offset.patch": {
+      "bytes": 1107,
+      "sha256": "3f0f44f606c5e4e0424a24cc1f06cb15b4bdaa3d5cd2ad96df9b2a8feeb6c776"
+    }
+  },
+  "recipe_sha256": "452a5396506a6ab4d0da22ac730cdbc97eca43c9701f7fbc19fd1189136623cd",
+  "android_cross_answers_sha256": "42d9baf16d4c21140b259f186914f1353fb5ad4134f3556e05165bd945a80d19",
+  "optional_acceleration_patch": false,
+  "sysvipc_memfd_patch": true,
+  "runtime_validation": "unverified",
+  "status": "native_built_runtime_unverified",
+  "files": {
+    "proot": {
+      "bytes": 287720,
+      "sha256": "a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb",
+      "elf_machine": "aarch64",
+      "needed": [
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ],
+      "interpreter": [
+        "/lib/ld-linux-aarch64.so.1"
+      ],
+      "load_segment_alignment": [
+        16384,
+        16384
+      ]
+    },
+    "proot-loader": {
+      "bytes": 17672,
+      "sha256": "c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5",
+      "elf_machine": "aarch64",
+      "needed": [],
+      "interpreter": [],
+      "load_segment_alignment": [
+        16384
+      ]
+    }
+  },
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "ndk_version": null,
+  "android_api": null,
+  "max_page_size": 16384,
+  "talloc_linkage": "static",
+  "corresponding_sources": {
+    "bytes": 1014710,
+    "sha256": "2f7b90898287a62ed03ec50250c778d202a2b4d35859dc726eb987a559898087",
+    "file": "proot-corresponding-sources.tar.gz",
+    "scope": "Original complete PRoot tree and talloc archive, exact build script, patches and attribution"
+  },
+  "license_files": {
+    "PRoot-COPYING": {
+      "bytes": 19106,
+      "sha256": "0ffa6454acbe7e410ac6f0007df83b9b3161fe55484c1f4b87487c0f2d228a6d"
+    },
+    "talloc-LICENSE": {
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    "talloc-talloc.h": {
+      "bytes": 65526,
+      "sha256": "e01fb092aaed2b431be26674e2b791c77fb5984537c29b514e957582c6b31465"
+    }
+  }
+}

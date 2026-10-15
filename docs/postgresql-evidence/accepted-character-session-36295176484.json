@@ -1,0 +1,305 @@
+{
+  "recorded_utc": "2026-09-27T05:10:42.277774+00:00",
+  "repository": "Russianranger/coh-android",
+  "workflow_run": {
+    "id": 36295176484,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/36295176484",
+    "conclusion": "success",
+    "commit": "4e8058c3ffe20acda61b55023202d409ed1d0df1",
+    "completed_utc": "2026-09-27T05:08:11Z"
+  },
+  "artifact": {
+    "id": 10924041414,
+    "name": "character-session-evidence",
+    "bytes": 12505,
+    "sha256": "410e79e8815ef829a387dc5812f8e4b9b5bc050a3dee855262847366e899dbdc",
+    "archive": "character-session-36295176484.zip",
+    "members": [
+      {
+        "path": "character-persistence-report.json",
+        "bytes": 117887,
+        "sha256": "9da5de0a0aeddf7cb85a57f9392d43505903a6909928dd8740e96717bd49a28a"
+      },
+      {
+        "path": "selected-diagnostics.txt",
+        "bytes": 2310,
+        "sha256": "07c9f0af92b3d8709709f1f4eec080c05d6f32de52c8bba7ac3574ef2ee56acc"
+      }
+    ]
+  },
+  "report": {
+    "file": "character-session-36295176484.json",
+    "status": "fresh_fakeauth_character_sustained_resume_second_save_passed_gameplay_unvalidated",
+    "failures": [],
+    "phases": [
+      {
+        "phase": "first_services_ready",
+        "time_utc": "2026-09-27T05:04:33.505092+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "account_empty",
+        "time_utc": "2026-09-27T05:04:35.043017+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "created_connected",
+        "time_utc": "2026-09-27T05:04:55.944180+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "influence_observed_while_connected",
+        "time_utc": "2026-09-27T05:04:59.561732+00:00",
+        "status": "passed",
+        "value": 12345,
+        "scope": "CMD debug live entity conPrintf response plus connected MapId1 status; no forced save"
+      },
+      {
+        "phase": "protocol_logout_committed",
+        "time_utc": "2026-09-27T05:05:05.426508+00:00",
+        "status": "passed",
+        "quitnow_is_save_ack": false,
+        "client_forced_stop_before_commit": false
+      },
+      {
+        "phase": "restart_services_ready",
+        "time_utc": "2026-09-27T05:05:52.269616+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "restart_saved_state",
+        "time_utc": "2026-09-27T05:05:54.045731+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "missing_name_refused_without_mutation",
+        "time_utc": "2026-09-27T05:06:03.665229+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "restored_currency_while_connected",
+        "time_utc": "2026-09-27T05:06:14.100795+00:00",
+        "status": "passed",
+        "value": 12345
+      },
+      {
+        "phase": "sustained_connected_observation",
+        "time_utc": "2026-09-27T05:07:29.454873+00:00",
+        "status": "passed",
+        "required_seconds": 60,
+        "observed_seconds": 66.95299999999997,
+        "sample_count": 10,
+        "maximum_sample_gap_seconds": 7.625,
+        "connected_map_id": 1,
+        "current_server_heartbeats": true
+      },
+      {
+        "phase": "second_influence_observed_while_connected",
+        "time_utc": "2026-09-27T05:07:33.118907+00:00",
+        "status": "passed",
+        "value": 23456
+      },
+      {
+        "phase": "second_protocol_logout_committed",
+        "time_utc": "2026-09-27T05:07:42.694297+00:00",
+        "status": "passed",
+        "quitnow_is_save_ack": false,
+        "client_forced_stop_before_commit": false
+      }
+    ],
+    "character": {
+      "container_id": 1,
+      "name": "TEST-37762",
+      "account": "CohP62b581371c"
+    },
+    "missing_name_probe": {
+      "requested_name": "CohAbsent1474e746a27a",
+      "exit_code": 3,
+      "explicit_refusal": true,
+      "creation_or_scene_observed": false,
+      "counts_as_login_or_save": false,
+      "character_count_before": 1,
+      "character_count_after": 1,
+      "independent_sql_unchanged": true
+    },
+    "missing_name_comparison": {
+      "phase": "missing_name",
+      "identity_unchanged": true,
+      "selected_rows_unchanged": true,
+      "only_expected_influence_change": false,
+      "login_count_before": 1,
+      "login_count_after": 1,
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 7,
+        "costumeparts": 16
+      }
+    },
+    "resume_probe": {
+      "slot": 0,
+      "database_id": 1,
+      "database_id_source": "processed MapServer player entity update",
+      "exact_name": "TEST-37762",
+      "creation_disabled": true,
+      "scene_exchange_observed": true,
+      "processed_server_update_for_original_player": true,
+      "active_gameplay_confirmed": false,
+      "scope": "Connected existing-character session; combat, movement and rendered gameplay unvalidated"
+    },
+    "sustained_observation": {
+      "required_seconds": 60,
+      "observed_seconds": 66.95299999999997,
+      "sample_count": 10,
+      "maximum_sample_gap_seconds": 7.625,
+      "connected_map_id": 1,
+      "current_server_heartbeats": true
+    },
+    "restored_live_currency_evidence": {
+      "player": "TEST-37762",
+      "account": "CohP62b581371c",
+      "influence": 12345,
+      "time_utc": "2026-09-27T05:06:11.929301+00:00",
+      "sequence": 13
+    },
+    "restored_live_currency_after_observation": {
+      "player": "TEST-37762",
+      "account": "CohP62b581371c",
+      "influence": 12345,
+      "time_utc": "2026-09-27T05:07:27.197545+00:00",
+      "sequence": 21
+    },
+    "second_live_currency_evidence": {
+      "player": "TEST-37762",
+      "account": "CohP62b581371c",
+      "influence": 23456,
+      "time_utc": "2026-09-27T05:07:30.822020+00:00",
+      "sequence": 22
+    },
+    "second_logout_comparison": {
+      "phase": "second_logout",
+      "identity_unchanged": true,
+      "selected_rows_unchanged": false,
+      "only_expected_influence_change": true,
+      "login_count_before": 1,
+      "login_count_after": 2,
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 7,
+        "costumeparts": 16
+      }
+    },
+    "attribute_mapping_sha256": {
+      "attributes": "19a5b30a15442027e6ee6a05d1cd43898c353334bb2cb10e4ceb1aefaeb5b097",
+      "badgestatsattributes": "cc37f654c2a7160a4191c553d3a726eb904bfef40d6eee172f05197d4066411c",
+      "pophelpattributes": "aadbef3e6bb10c9945d6ec166d30aaec0c386c607e47ab1e6931fc1a6ca320bf"
+    },
+    "binary_sha256": {
+      "DbServer.exe": "fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8",
+      "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+      "TestClient.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31"
+    },
+    "diagnostic_testclient_sha256": "b09a82d8aaffac18dc74828753ccee466d71a37f913dddc05934cb84957e6f7e",
+    "login_count_progression": [
+      1,
+      1,
+      1,
+      2
+    ],
+    "protocol_saves_before_forced_cleanup": true,
+    "console_observers_finalized": true
+  },
+  "diagnostic_build": {
+    "artifact": {
+      "id": 10923304995,
+      "name": "resume-testclient-win32",
+      "size_in_bytes": 3149837,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/10923304995",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/10923304995/zip",
+      "expired": false,
+      "created_at": "2026-09-27T04:52:44Z",
+      "expires_at": "2026-10-27T04:52:43Z",
+      "updated_at": "2026-09-27T04:52:44Z",
+      "digest": "sha256:cd66865e3a2a6b7f77078699aa6981753c47b2c6e039a09e9ac1ac967a209049",
+      "workflow_run": {
+        "id": 36295176484,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "codex/character-persistence-continuation",
+        "head_sha": "4e8058c3ffe20acda61b55023202d409ed1d0df1"
+      }
+    },
+    "manifest_file": "resume-testclient-build-36295176484.json",
+    "source_receipt_file": "resume-testclient-source-36295176484.json",
+    "executable": {
+      "sha256": "b09a82d8aaffac18dc74828753ccee466d71a37f913dddc05934cb84957e6f7e",
+      "size": 3142144,
+      "pe_machine": 332,
+      "imports": [
+        "ADVAPI32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "delay_imports": []
+    },
+    "patch_sha256": "89d7b620e640ed061c5043528f131c0a028e454b9c2ed38f3bb100e294babd00"
+  },
+  "tooling": {
+    "windows": {
+      "character_passed": 60,
+      "map_passed": 13,
+      "diagnostic_client_passed": 30,
+      "skipped": 0
+    },
+    "linux": {
+      "character_passed": 55,
+      "map_passed": 13,
+      "diagnostic_client_passed": 30,
+      "skipped": 5
+    }
+  },
+  "legacy_regression": {
+    "run_id": 36295176352,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/36295176352",
+    "commit": "4e8058c3ffe20acda61b55023202d409ed1d0df1",
+    "conclusion": "success",
+    "artifact_id": 10924025343,
+    "archive": "character-persistence-36295176352.zip",
+    "bytes": 8201,
+    "sha256": "dccf2310c7a8b23bc91c7636595029664f164d09b91c415a04ef4b21f51e1926",
+    "report": "character-persistence-36295176352.json"
+  },
+  "postgresql_regression": {
+    "run_id": 36295176473,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/36295176473",
+    "commit": "4e8058c3ffe20acda61b55023202d409ed1d0df1",
+    "conclusion": "success",
+    "jobs_passed": [
+      "PostgreSQL 16 and ODBC",
+      "PostgreSQL 18 and ODBC",
+      "Win32 PostgreSQL ODBC",
+      "Real DbServer PostgreSQL persistence"
+    ]
+  },
+  "accepted_inputs": {
+    "reference_run": 36088012664,
+    "schema_run": 36088012666,
+    "reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+    "template_and_map_run": 36176806895,
+    "reviewed_asset_id": 588984151,
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
+  },
+  "scope": "Fresh fake-auth creation, live currency, protocol save, same-cluster/service restart, missing-name refusal without mutation, exact-name sustained connected resume with processed player update and restored live state, second currency change and committed protocol save.",
+  "unvalidated": [
+    "Combat, movement and rendered/custom-client gameplay",
+    "Map transfers and auxiliary services",
+    "Graceful whole-server shutdown",
+    "Android execution, APK packaging and performance"
+  ]
+}

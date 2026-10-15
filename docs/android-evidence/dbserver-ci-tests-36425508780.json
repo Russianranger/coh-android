@@ -1,0 +1,45 @@
+{
+  "format": 1,
+  "run_id": 36425508780,
+  "source": "GitHub Actions decoded job logs",
+  "tooling": {
+    "job_id": 108938361092,
+    "suites": [
+      {
+        "name": "prepare Wine source",
+        "tests_run": 12,
+        "passed": 12,
+        "skipped": 0
+      },
+      {
+        "name": "DbServer tooling",
+        "tests_run": 45,
+        "passed": 41,
+        "skipped": 4
+      }
+    ],
+    "total_tests_run": 57,
+    "total_passed": 53,
+    "total_skipped": 4,
+    "summary_lines": [
+      "2026-09-28T13:00:35.1812197Z Ran 12 tests in 1.385s",
+      "2026-09-28T13:00:35.1812525Z OK",
+      "2026-09-28T13:00:36.7315988Z Ran 45 tests in 1.296s",
+      "2026-09-28T13:00:36.7316705Z OK (skipped=4)"
+    ]
+  },
+  "windows_dispatch_contract": {
+    "job_id": 108938578862,
+    "tests_run": 4,
+    "passed": 4,
+    "skipped": 0,
+    "enabled_publication_tested": true,
+    "summary_lines": [
+      "2026-09-28T13:01:27.4981978Z test_disabled_mode_has_no_file_or_thread_and_marker_calls_remain_noops (__main__.DispatchProgressWindowsTests.test_disabled_mode_has_no_file_or_thread_and_marker_calls_remain_noops) ... ok",
+      "2026-09-28T13:01:27.5726616Z test_enabled_mapping_is_visible_externally_with_identity_and_ordered_progress (__main__.DispatchProgressWindowsTests.test_enabled_mapping_is_visible_externally_with_identity_and_ordered_progress) ... ok",
+      "2026-09-28T13:01:27.7989573Z Ran 4 tests in 14.933s",
+      "2026-09-28T13:01:27.7991907Z OK"
+    ]
+  },
+  "arm64_dispatch_publication_enabled": false
+}

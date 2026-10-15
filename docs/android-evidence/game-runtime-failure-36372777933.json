@@ -1,0 +1,39 @@
+{
+  "format": 1,
+  "run_id": 36372777933,
+  "repository_commit": "6dea310f1ebbf5ea2b48490c4740841f7bc099c6",
+  "status": "failed",
+  "stage": "game_services_first",
+  "failure": [
+    "game-query-first-ready timed out"
+  ],
+  "tooling_tests_passed": 48,
+  "bridge_build_and_native_contracts_passed": true,
+  "runtime_artifact": {
+    "id": 10950402940,
+    "bytes": 8545057,
+    "sha256": "090c82c1a019d3c1fffae81667e1e3db7cc7f1a929c07472c1e85fd47d7a15ee"
+  },
+  "raw_report": {
+    "path": "docs/android-evidence/game-arm64-failed-36372777933.json",
+    "bytes": 118931,
+    "sha256": "33ca6b9c9014bde093db5eca4c03d0d95f1dd2228d9d36fb5fdbbc6bf2d30cb3"
+  },
+  "private_data_staging_seconds": 296.867938,
+  "data_files": 173011,
+  "data_bytes": 2977730517,
+  "dbserver_ready": true,
+  "atlas_ready": false,
+  "character_execution_started": false,
+  "retained_geometry_warning_lines_matching_accepted_windows": 103,
+  "interpretation": "Retained warnings also occur in accepted Windows logs. Map loading advanced before a 25-second status-query timeout; slow cold loading is supported, a source/data defect is not established.",
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "cleanup_complete": true,
+  "remaining_owned_processes": 0,
+  "ownership_inspection_failures": 0,
+  "process_records": 101
+}

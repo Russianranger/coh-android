@@ -1,0 +1,209 @@
+{
+  "format": 1,
+  "status": "failed_startup_deadline",
+  "scope": "actual_client_startup_hosted_qualification",
+  "run_id": 36711916066,
+  "runtime_job_id": 109876871619,
+  "repository_commit": "36a9a4e1942ff09f91ee54224b6e1de0b6c07475",
+  "apk": {
+    "bytes": 370539567,
+    "sha256": "30caaf872ad085abd7ffc197351ce3d5a0f45a2cfee873ab5586e173447dcd4d"
+  },
+  "evidence_artifact": {
+    "id": 11095052930,
+    "bytes": 1232372,
+    "sha256": "10a1f9104753f8d7b6ce53a61270208d90ec177057de7c310cbebca97648bf04"
+  },
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "client_executable_sha256": "81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca",
+  "session_id": "0f17c47474bbeb30776daa57d0be3870",
+  "startup_timeout_seconds": 900,
+  "required_observation_seconds": 30,
+  "failures": [
+    "Actual CoH startup exceeded its bounded deadline"
+  ],
+  "timing": {
+    "workflow_job_started_utc": "2026-09-30T12:03:26.9450400Z",
+    "host_step_started_utc": "2026-09-30T12:04:48.4646509Z",
+    "guest_started_utc": "2026-09-30T12:05:38.792740+00:00",
+    "private_data_ready_utc": "2026-09-30T12:07:08.330432+00:00",
+    "wine_initialization_seconds": 41.718,
+    "client_stage_started_utc": "2026-09-30T12:07:52.235151+00:00",
+    "failure_capture_utc": "2026-09-30T12:22:52.748003+00:00",
+    "guest_cleanup_finished_utc": "2026-09-30T12:22:55.559080+00:00",
+    "workflow_job_cleanup_utc": "2026-09-30T12:22:57.2352614Z"
+  },
+  "readiness": {
+    "renderer_initialized": true,
+    "all_data_loaded": false,
+    "client_main_loop_reached": false,
+    "client_window_observed": false,
+    "startup_observed": false
+  },
+  "observation_completed": false,
+  "last_completed": "Generated mission maker data",
+  "last_phase": "Preloading player_library/",
+  "phase_timing": {
+    "npc_definition_texture_verification": {
+      "start_utc": "2026-09-30T12:13:51.523Z",
+      "finish_utc": "2026-09-30T12:18:23.446Z",
+      "seconds": 271.923
+    },
+    "costume_bins": {
+      "start_utc": "2026-09-30T12:18:41.830Z",
+      "finish_utc": "2026-09-30T12:22:43.571Z",
+      "seconds": 241.741
+    },
+    "player_library_preload_started_utc": "2026-09-30T12:22:50.531Z"
+  },
+  "console": {
+    "bytes": 5793250,
+    "sha256": "50e8c7086646d433a9a2fe41a6349a8077b038dc57b60bfbfce808f79bd1f13b",
+    "native_budget_bytes": 8388608,
+    "guest_output_budget_bytes": 10485760,
+    "native_truncation_marker_observed": false,
+    "unique_npc_missing_texture_records": 8424,
+    "fatal_crash_marker_lines": []
+  },
+  "cache_consumption": {
+    "prepared_files": 100,
+    "prepared_bytes": 364703716,
+    "archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+    "prepared_prerequisite_files": 3,
+    "prepared_prerequisite_bytes": 54948,
+    "recreated_cache_files": [
+      "data/server/bin/PC_Rewards.bin",
+      "data/bin/PC_Def_NonSelectable_Entities.bin",
+      "data/bin/PC_Def_Animation.bin",
+      "data/bin/loadingtipmessages-en.bin",
+      "data/bin/PC_Def_MapSets.bin",
+      "data/bin/clientmessages-en.bin",
+      "data/bin/PC_Def_MapUnique.bin",
+      "data/bin/PC_Def_DestructObject.bin",
+      "data/bin/PC_Def_Sequencer_Anims.bin",
+      "data/bin/PC_Def_Contacts.bin",
+      "data/bin/PC_Def_Entities.bin",
+      "data/bin/authmsg-en.bin",
+      "data/bin/PC_Def_Unlockable_Content.bin",
+      "data/bin/PC_Def_Objects.bin"
+    ],
+    "prepared_pc_caches_reparsed": 11,
+    "interpretation": "Major caches were consumed. Eleven small PC_* caches were rejected because their dependency inventories omitted script files; this reparse took approximately 1.5 seconds."
+  },
+  "owned_process_snapshot": {
+    "source": "client-evidence/owned-processes.json",
+    "counters_unit": "Linux /proc/stat clock ticks",
+    "note": "Cumulative counters at one sample; they do not prove the Windows user-space execution location or a deadlock.",
+    "processes": [
+      {
+        "proc_pid": 6136,
+        "starttime_ticks": 66140,
+        "process_name": "wineserver",
+        "user_cpu_ticks": 923,
+        "system_cpu_ticks": 16009,
+        "total_cpu_ticks": 16932,
+        "nice": 0,
+        "state": "S",
+        "wchan": "ep_poll",
+        "kernel_threads": 1
+      },
+      {
+        "proc_pid": 6244,
+        "starttime_ticks": 70546,
+        "process_name": "client-launcher",
+        "user_cpu_ticks": 63,
+        "system_cpu_ticks": 225,
+        "total_cpu_ticks": 288,
+        "nice": 0,
+        "state": "S",
+        "wchan": "anon_pipe_read",
+        "kernel_threads": 1
+      },
+      {
+        "proc_pid": 6253,
+        "starttime_ticks": 70607,
+        "process_name": "CityOfHeroes.ex",
+        "user_cpu_ticks": 3980,
+        "system_cpu_ticks": 9782,
+        "total_cpu_ticks": 13762,
+        "nice": 0,
+        "state": "S",
+        "wchan": "0",
+        "kernel_threads": 14
+      },
+      {
+        "proc_pid": 6256,
+        "starttime_ticks": 70735,
+        "process_name": "conhost.exe",
+        "user_cpu_ticks": 1428,
+        "system_cpu_ticks": 5383,
+        "total_cpu_ticks": 6811,
+        "nice": 0,
+        "state": "S",
+        "wchan": "anon_pipe_read",
+        "kernel_threads": 1
+      }
+    ]
+  },
+  "cleanup_complete": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 455,
+    "scanned_tasks": 2,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "screenshots": [
+    {
+      "path": "before-client.ppm",
+      "bytes": 1440015,
+      "sha256": "c3b3d73f6bbb08ab3fa3dfa65d01f89916ba25d37a4f5fbd8cd2202edaa58077",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 1,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "0f17c47474bbeb30776daa57d0be3870",
+      "captured_utc": "2026-09-30T12:07:52.466688+00:00"
+    },
+    {
+      "path": "client-final.ppm",
+      "bytes": 1440015,
+      "sha256": "3e9540ccae09ef31c743d4f463f691eaad3abd7046b9cb8cbd897af3696ff17c",
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 256,
+      "kind": "owned_x_desktop",
+      "menu_visual_validated": false,
+      "session_id": "0f17c47474bbeb30776daa57d0be3870",
+      "captured_utc": "2026-09-30T12:22:52.748003+00:00"
+    }
+  ],
+  "visual_review": "Full 800x600 City of Heroes Freedom loading background; no login menu or world observed.",
+  "next_candidate": "Normal-launch CREATE_NEW_CONSOLE with existing STARTF_USESTDHANDLES may preserve inherited stdout pipes because the unchanged game only freopen(CONOUT$) when AllocConsole succeeds. Keep every game validation, launch flag, readiness gate and deadline.",
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

@@ -1,0 +1,25 @@
+{
+  "version": "0.13.37",
+  "version_code": 52,
+  "donor_commit": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+  "asset_version": "1.0.0",
+  "qualification_enabled": false,
+  "publish_enabled": false,
+  "reviewed_source_integrated": true,
+  "native_promotions": {
+    "game": {
+      "enabled": false
+    },
+    "mapserver": {
+      "enabled": false
+    }
+  },
+  "java_recompile_required": true,
+  "asset_rebuild_required": false,
+  "runtime_refresh_required": true,
+  "manual_gameplay_expiry_removed": true,
+  "physical_client_start_below_one_minute_validated": false,
+  "physical_zone_below_ninety_seconds_for_all_destinations_validated": false,
+  "physical_zone_below_thirty_seconds_validated": false,
+  "qualification_revision": 9
+}

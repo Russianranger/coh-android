@@ -1,0 +1,308 @@
+{
+  "status": "failed_not_accepted",
+  "run_id": 36599606621,
+  "run_attempt": 1,
+  "repository_commit": "ea5c0e18d2971d8ae9ade3f6655cea7da87e30f5",
+  "apk_sha256": "1889ca4f005a6a4a9341daaba4eb7e4ec87e9564ab98f88ddbdbe1db729edf07",
+  "failure": [
+    "Atlas lost current readiness during observation"
+  ],
+  "stages": [
+    {
+      "stage": "game_private_runtime",
+      "started_utc": "2026-09-29T16:49:32.865631+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-29T16:54:09.119898+00:00",
+      "input_files": 173011,
+      "input_bytes": 2977730517,
+      "accepted_schema_overlay_files": 62
+    },
+    {
+      "stage": "assets_and_architecture",
+      "started_utc": "2026-09-29T16:54:09.144651+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-29T16:54:09.152515+00:00",
+      "machine": "aarch64",
+      "guest_uid": 1000,
+      "postgres_native_arm64": true
+    },
+    {
+      "stage": "initialize_owned_cluster",
+      "started_utc": "2026-09-29T16:54:09.152732+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-29T16:54:11.258656+00:00",
+      "cluster_reused": false
+    },
+    {
+      "stage": "postgres_first_start",
+      "started_utc": "2026-09-29T16:54:11.258832+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-29T16:54:11.474380+00:00",
+      "loopback": "127.0.0.1",
+      "port": 60389,
+      "durability_verified": true,
+      "server_version": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit"
+    },
+    {
+      "stage": "restricted_fixture_database",
+      "started_utc": "2026-09-29T16:54:11.474554+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-29T16:54:12.282783+00:00",
+      "database": "coh_test_4cf7c112812ec41d",
+      "role": "cohtest",
+      "migration_version": 2,
+      "reapplied": true
+    },
+    {
+      "stage": "wine_prefix_and_driver",
+      "started_utc": "2026-09-29T16:54:12.282943+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-29T16:54:52.314902+00:00",
+      "prefix_owned": true,
+      "architecture": "win64 with PE32 WoW64/FEX",
+      "x_tcp": false,
+      "rfb_tcp": false,
+      "installer": {
+        "path": "C:\\windows\\syswow64\\msiexec.exe",
+        "pointer_bits": 32,
+        "sha256": "d4ed3551f449cfb68e609e1572b519b5eecd3bf0519bf16877ea02bd4fb01ed0"
+      }
+    },
+    {
+      "stage": "win32_odbc_driver",
+      "started_utc": "2026-09-29T16:54:52.315060+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-29T16:54:53.494726+00:00",
+      "driver_name": "PostgreSQL Unicode",
+      "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+      "pointer_bits": 32,
+      "registry_view": 32,
+      "driver_dll_loaded": true
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "started_utc": "2026-09-29T16:54:53.495009+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-29T16:54:53.902512+00:00",
+      "pointer_bits": 32,
+      "dll_export_verified": true,
+      "odbc_manager_loaded": true
+    },
+    {
+      "stage": "game_services_first",
+      "started_utc": "2026-09-29T16:54:53.988275+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-29T17:10:24.841148+00:00",
+      "baseline_not_started": true,
+      "atlas_ready": true,
+      "table_count": 99
+    },
+    {
+      "stage": "atlas_ready_observation",
+      "started_utc": "2026-09-29T17:10:24.841403+00:00"
+    }
+  ],
+  "device_dbserver_startup": {
+    "first": {
+      "scope": "service_startup_entry_through_positive_main_loop",
+      "budget_seconds": 600,
+      "milestones": {
+        "schema_and_listener": {
+          "status": "passed",
+          "elapsed_since_startup_seconds": 42.468
+        },
+        "positive_main_loop": {
+          "status": "passed",
+          "elapsed_since_startup_seconds": 57.217
+        }
+      }
+    }
+  },
+  "map_samples": [
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-baseline",
+      "sampled_utc": "2026-09-29T16:55:52.570744+00:00",
+      "monotonic": 702.021346644
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T16:55:54.371921+00:00",
+      "monotonic": 703.822520135
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T16:56:56.489981+00:00",
+      "monotonic": 765.940587281
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T16:57:58.662524+00:00",
+      "monotonic": 828.11312395
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T16:59:00.806165+00:00",
+      "monotonic": 890.256764807
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T17:00:03.019919+00:00",
+      "monotonic": 952.470519142
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T17:01:05.053395+00:00",
+      "monotonic": 1014.503995668
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T17:02:07.160582+00:00",
+      "monotonic": 1076.611182839
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T17:03:09.330647+00:00",
+      "monotonic": 1138.7812509
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T17:04:11.616660+00:00",
+      "monotonic": 1201.067259923
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T17:05:13.657356+00:00",
+      "monotonic": 1263.107954509
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T17:06:16.007666+00:00",
+      "monotonic": 1325.458264568
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T17:07:18.191943+00:00",
+      "monotonic": 1387.64254171
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T17:08:20.424521+00:00",
+      "monotonic": 1449.875120024
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "map_id": 1,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T17:09:22.617071+00:00",
+      "monotonic": 1512.06767137
+    },
+    {
+      "ready": true,
+      "not_started": false,
+      "map_id": 1,
+      "network_age_seconds": 3,
+      "stats_age_seconds": 3,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "phase": "first-ready",
+      "sampled_utc": "2026-09-29T17:10:24.838981+00:00",
+      "monotonic": 1574.289581864
+    },
+    {
+      "ready": true,
+      "not_started": false,
+      "map_id": 1,
+      "network_age_seconds": 5,
+      "stats_age_seconds": 5,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "phase": "first-observation",
+      "sampled_utc": "2026-09-29T17:10:26.860889+00:00",
+      "monotonic": 1576.311488662
+    },
+    {
+      "ready": true,
+      "not_started": false,
+      "map_id": 1,
+      "network_age_seconds": 17,
+      "stats_age_seconds": 17,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "phase": "first-observation",
+      "sampled_utc": "2026-09-29T17:10:39.148224+00:00",
+      "monotonic": 1588.59882291
+    },
+    {
+      "ready": true,
+      "not_started": false,
+      "map_id": 1,
+      "network_age_seconds": 29,
+      "stats_age_seconds": 29,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "phase": "first-observation",
+      "sampled_utc": "2026-09-29T17:10:51.380865+00:00",
+      "monotonic": 1600.83146415
+    }
+  ],
+  "cleanup_complete": true,
+  "verified_captures": [
+    "game-service-captures/first-atlas-stdout.txt",
+    "game-service-captures/first-dbserver-stdout.txt",
+    "game-service-captures/log-001.txt",
+    "game-service-captures/log-002.txt",
+    "game-service-captures/manifest.json",
+    "game-hang-captures/manifest.json",
+    "game-hang-captures/snapshot.json",
+    "game-hang-captures/windows-contexts.jsonl"
+  ],
+  "evidence_zip": {
+    "bytes": 231774,
+    "sha256": "6e5118b8a597a8b9343762d9bca9a89e8a16159218b2f0c216b9c9be9f577cf5",
+    "artifact_id": 11049608005
+  },
+  "finding": "Atlas reported Ready, but heartbeat ages advanced from 3 to 29 seconds without refresh. DbServer dispatch advanced. No character stage reached. MapServer tail lacks Server ready; exact cause not established. Raw Windows contexts are not validated current execution. Original failure remains a failed result."
+}

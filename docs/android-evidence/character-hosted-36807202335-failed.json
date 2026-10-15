@@ -1,0 +1,189 @@
+{
+  "format": 1,
+  "gate": "graphical_character_creation_hosted",
+  "status": "failed",
+  "run_id": 36807202335,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36807202335",
+  "runtime_job_id": 110195050502,
+  "repository_commit": "80e776f30de896605b6db4101baa5ab16957a29a",
+  "apk_sha256": "8f7f684e0f89f708333bae7cb841e32edb411b8ddbbb899218f35c19cd774f1d",
+  "runtime_manifest_sha256": "6e16667665d57a523f2589d9c02820502ab1427f9889c679d99bf8f7d8b952ea",
+  "session_id": "1b1781e7580f2c8cfea9a5ae9c821faf",
+  "client_pid": 656,
+  "elapsed_seconds": 1566.463,
+  "host_failure": {
+    "type": "ValueError",
+    "message": "Rendered Yes button not found; inspect retained creator frames"
+  },
+  "guest_failures": [
+    "Server log evidence exceeded bound",
+    "Cannot retain server evidence: Server log evidence exceeded bound"
+  ],
+  "failure_review": {
+    "host": "The final screenshot shows the Complete character creation and enter game? dialog; the cursor covers the Yes label and the hosted driver could not recognize that button.",
+    "guest": "The guest reported Server log evidence exceeded bound during character observation and again while retaining server evidence. The exported report ZIP lacks the raw server logs and the separate Atlas console; full entity-log review is unavailable for this run.",
+    "avatar": "All 13 pinned supplement files installed, but the reviewed default Male preview shows a head, fragmented white torso and glove pieces with the lower body and limbs absent. Installation integrity passed; complete avatar rendering did not.",
+    "scope": "The runtime is not qualified. This run provides no character creation, map connection, logout or saved-character proof."
+  },
+  "observed_progress": {
+    "atlas_started": true,
+    "atlas_ready": true,
+    "atlas_ready_utc": "2026-10-01T03:05:10.901143+00:00",
+    "atlas_completed_tick_guard_passed": true,
+    "local_login_verified": true,
+    "local_login_ready_utc": "2026-10-01T03:13:18.985351+00:00",
+    "character_list_sent": true,
+    "character_count_at_login": 0,
+    "creator_register_screen_reached": true,
+    "character_name": "THORHERO",
+    "origin": "Science",
+    "archetype": "Blaster",
+    "visible_powers": [
+      "Snap Shot",
+      "Web Grenade"
+    ],
+    "tutorial_declined": true,
+    "hero_alignment_selected": true,
+    "last_visible_prompt": "Complete character creation and enter game?",
+    "script_steps_recorded": 62,
+    "script_completed": false,
+    "ocr_buttons_recognized": [
+      "No",
+      "Hero"
+    ],
+    "connected_captures": 0,
+    "post_save_captures": 0,
+    "empty_character_inventory_observations": 10,
+    "character_status_samples": 0
+  },
+  "character_proof": {
+    "verified": false,
+    "connected_on_atlas": false,
+    "committed_sql_verified": false,
+    "requested_logout_observed": false,
+    "logout_timer_observed": false,
+    "disconnected_before_sql": false,
+    "forced_stop_before_save": false,
+    "reopen_verified": false,
+    "gameplay_verified": false
+  },
+  "avatar_supplement": {
+    "scope": "default_male_avatar_supplement",
+    "manifest_sha256": "a308e160b43df57856935ed241bd5cbae09f7b159fa8788ccf7ba81b893279c8",
+    "archive_sha256": "4676f4f55fdca4df50815174d7cd57190e007084d83cb420037ab88942c87ef1",
+    "file_count": 13,
+    "payload_bytes": 1787064,
+    "installed_files": 13,
+    "reused_files": 0,
+    "worktree": "client-work-2aa95352905d79de07277218",
+    "normalized_mtime_epoch": 1767225600,
+    "imported_files_modified": false,
+    "worktree_identity_modified": false,
+    "cache_files_modified": false,
+    "runtime_visual_validated": false,
+    "visual_review": {
+      "complete_default_male_rendering_validated": false,
+      "partial_head_and_white_torso_visible": true,
+      "lower_body_and_limbs_missing": true,
+      "reviewed_frames": [
+        "character-57-before-register_play.png",
+        "client-frame-final.png"
+      ]
+    }
+  },
+  "acceptance": {
+    "character_creation": false,
+    "character_map_entry": false,
+    "committed_character_save": false,
+    "complete_default_male_rendering": false,
+    "android_execution": false,
+    "android_surface": false,
+    "gameplay": false
+  },
+  "cleanup": {
+    "guest_report_exported": true,
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "wine_shutdown": {
+      "stop_exit_code": 0,
+      "wait_exit_code": 0,
+      "prefix_lock_free": true,
+      "server_socket_inactive": true
+    },
+    "owned_workers_remaining": 0,
+    "inspection_failures": 0,
+    "presentation_socket_removed": true,
+    "database_preserved": true,
+    "host_cleanup": {
+      "stop_requested": true,
+      "grace_seconds": 180,
+      "forced_quit": false,
+      "forced_kill": false,
+      "errors": [],
+      "process_reaped": true
+    },
+    "guest_evidence_export": {
+      "files": [
+        "latest-report.json",
+        "report.zip"
+      ],
+      "fallback_used": false,
+      "errors": []
+    }
+  },
+  "evidence": {
+    "runtime_artifact_id": 11139321901,
+    "runtime_artifact": {
+      "file": "artifact.zip",
+      "bytes": 71596926,
+      "sha256": "3e6421058b60e8a2ee68816810215a921614e4d5941dbe84579e5a82928e6315"
+    },
+    "artifact_subdirectory": "client-evidence",
+    "files": {
+      "host-client-report.json": {
+        "bytes": 99139,
+        "sha256": "f2d13d5efe1bfebed1b30183273ed12d20c41ef9695aa46058e62685a1de763f"
+      },
+      "latest-report.json": {
+        "bytes": 119450,
+        "sha256": "eb9101a0afb9b387b2cfa508f8f670b0e032b5b390fd335dde20774f0e3846f3"
+      },
+      "report.zip": {
+        "bytes": 2895933,
+        "sha256": "69a06aed2de2013279cf4c3dae744b008f0278dbc42af0f7ae02d14a5e2906a6"
+      },
+      "host-client.log": {
+        "bytes": 98798,
+        "sha256": "86f72733fcff9e3d13d02151f1df7dee012a1f1109187f378a57f8811a7ba5d3"
+      },
+      "client-console.log": {
+        "bytes": 40469346,
+        "sha256": "9f065b2b5bcbab671c1f6f9cf5e855063b119936596e233358692aacb2c19876"
+      },
+      "character-57-before-register_play.png": {
+        "bytes": 414243,
+        "sha256": "a779cdb9a69a86c2454df7497d69aee0d8707cf6703ccfec5f6f6b2d29a9d3d3"
+      },
+      "character-59-before-skip_tutorial.png": {
+        "bytes": 405387,
+        "sha256": "8fecf2762a763eb0f61e481a492d24e4f3aa18e8b7f3a8d9f88fd09ab97d872d"
+      },
+      "character-61-before-choose_hero.png": {
+        "bytes": 404846,
+        "sha256": "c95e3d1787b749262e2bc90eeb2520d9592d035b045d0cc1a57bf4ad37dca3b3"
+      },
+      "client-frame-final.png": {
+        "bytes": 403295,
+        "sha256": "ffc264b5f8393b9f7b9b943d3ac2d7bbe19d1e4b5bab94aaec6217273b37cdfe"
+      }
+    },
+    "selected_frame_review": "Independent review confirms the final creation confirmation and cursor over Yes. The supplement improves the previously empty preview only to partial head and fragmented white torso/glove rendering; complete default Male rendering remains unvalidated.",
+    "raw_server_logs_retained": false,
+    "separate_atlas_console_retained": false
+  },
+  "followup": "Retain this failed run. The next protocol trial must recognize the visible confirmation reliably and retain complete bounded character-server evidence. The default Male asset dependencies need further review; successful installation of this 13-file supplement does not qualify avatar rendering."
+}

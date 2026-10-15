@@ -1,0 +1,37 @@
+COH Atlas Gameplay 0.11.0 — one AYN Thor session
+
+Install this APK as an update over your existing COH character app. Keep app
+storage, imported assets and the saved COHLOCAL / THORHERO. Tap Refresh runtime
+once after updating, then Reopen saved THORHERO. Allow the normal startup.
+
+1. Log in with COHLOCAL / offline, choose 127.0.0.1 and enter the existing
+   THORHERO. Keep the current costume and powers.
+2. After Saved character reopened, dismiss Welcome/help (choose None on the helper prompt), then tap
+   Return to safe ground once. Stay still until Atlas position verified.
+3. Check the Atlas plaza, statue, City Hall surfaces and your character. Take a
+   screenshot of Atlas. The new walking controls become available here.
+4. Use the left stick to walk forward/back and strafe left/right briefly.
+   Release the stick and check that movement stops. Use X to jump once.
+   The right stick remains the cursor; A clicks and B sends Escape. Hold a
+   shoulder button with the right stick to try the game's camera look.
+   The on-screen movement buttons provide the same walking and jump inputs.
+5. Walk only a short distance for this first test. Check that you stay above
+   the ground and scenery changes as you move. Stop all movement and wait
+   60 seconds for fresh stationary server observations. Request Save within
+   10 minutes of Return to safe ground.
+6. Tap Save character / log out once. Keep controls neutral during the normal
+   countdown. After Saved character verified, tap Finish and save report.
+7. Export latest report and send the ZIP with the Atlas screenshot. Include
+   whether scenery appeared, walking stopped when released, jump/camera worked,
+   and the character stayed on the ground.
+
+This test advances initial movement and Atlas materials. It adds 27 textures
+requested by the City Hall/statue/plaza material definitions. Their appearance
+needs this device observation. Wider collision,
+combat, missions, audio and performance remain later steps. The app's existing
+automated checks still verify preserved character state and ordinary saving;
+visual world appearance and walking behavior require your observations.
+
+If the scene remains empty, the character falls, or a step fails, tap Abort
+operation, wait for cleanup and export the report. Preserve the character and
+app data; a second long boot is not needed to report the failure.

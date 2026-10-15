@@ -1,0 +1,79 @@
+{
+  "schema": "coh-new-dormant-guest-owner-independent-review-v1",
+  "timestamp_utc": "2026-10-15T01:05:05.827555+00:00",
+  "reviewer": "native_ancestor_fix",
+  "source_is_new_successor_not_recovered_revision3": true,
+  "reviewed_files": {
+    "owner.py": {
+      "bytes": 19603,
+      "sha256": "c16cb01c0a6e01a180a389ac1ba07f7d15037d9ae90b1846d1f220a74b36b77e"
+    },
+    "test_owner.py": {
+      "bytes": 21962,
+      "sha256": "074c093183f7f50970ffd59ff123b67b49602088c43ecb7e0a0ed5fbf089dd8c"
+    }
+  },
+  "source_unchanged_during_independent_review": true,
+  "review_result": "accepted for documented dormant host-only scope; no runtime admission",
+  "findings_resolved_before_freeze": [
+    {
+      "issue": "successful mkdir then root admission failure could incorrectly claim complete cleanup",
+      "resolution": "explicit root-created tracking, incomplete-cleanup reporting and fixed fixture_creation_cleanup_incomplete error; tested"
+    },
+    {
+      "issue": "foreign process could block on inherited locked mutex",
+      "resolution": "PID guard before issue/consume lock and foreign close without inherited lock; mocked suite and independent actual host fork passed"
+    },
+    {
+      "issue": "cleanup could close unrelated replacement descriptor after identity refusal",
+      "resolution": "original dev/inode required before closing registered descriptors; replacement preserved by test"
+    },
+    {
+      "issue": "fresh open followed by first fstat failure could leak unpublished descriptor",
+      "resolution": "fresh-descriptor helper closes immediately on failed first fstat; dedicated child/directory tests"
+    }
+  ],
+  "reviewed_contract": [
+    "Eight lifetime issued tickets, consumed included; ninth refusal before RNG/redaction/IO/state effects",
+    "Exact current typed operation fields, opaque ticket identity, nonce uniqueness and burn-before-read semantics",
+    "No-follow directory ancestry and file opens; held/named inode/device/UID/mode and file timestamp/link/size checks",
+    "Fixed nonsecret error codes, private repr/serialization refusals and bounded nonce redaction registry",
+    "4 KiB strict ASCII JSON with exact keys/types, duplicate/nonfinite refusal; membership scan bounded at nine entries",
+    "Cleanup preserves unexpected entries, retargeted names, shared inodes and unrelated reused descriptors; no recursive deletion"
+  ],
+  "independent_suite_replay": {
+    "command": "python3 -W error::ResourceWarning -m unittest discover -s research/native-live-recovery-037/guest-owner-successor -p 'test_owner.py' -v",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "actual_host_uid": 0,
+    "methods": 41,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "observed_duration_seconds": 0.033,
+    "raw_result_location": "independent-host-controls.log",
+    "historical_37_41_44_revision3_counts_inherited": false,
+    "raw_log_sha256": "6d883a71865929c7a3a34e620fa8bddfbbec7fe368d0d7527f7685ce405fd563",
+    "raw_log_bytes": 5713,
+    "durable_capture_note": "One final replay captured directly to file at root request after initial interactive replay; historical source counts not inherited."
+  },
+  "supplemental_actual_host_fork": {
+    "result": "passed one separate actual os.fork scenario",
+    "receipt": "independent-actual-fork.json",
+    "scope": "Real host PID change, inherited mutex, child descriptor close, unchanged parent document and successful subsequent parent consume/cleanup; no Wine child execution"
+  },
+  "remaining_closed_gates": [
+    "Externally enforced same-UID writer/lifecycle exclusion",
+    "Atomic compare-and-unlink or equivalent lifecycle guarantee",
+    "Native NT alias/sharing/retarget qualification",
+    "Native PID/thread/start-identity and finalized guest schema",
+    "Current installed-package/probe/SDK provenance and seven data-root identity joins",
+    "Android DAC/SELinux/namespace admission",
+    "Wine/PRoot/FEX orchestration and bounded process/native/console cleanup",
+    "Physical Thor performance and gameplay qualification"
+  ],
+  "runtime_admission": false,
+  "APK_build_or_publication_allowed": false,
+  "Game_probe_or_ARM_compilation_performed": false,
+  "player_data_or_existing_runtime_accessed": false
+}

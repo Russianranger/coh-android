@@ -1,0 +1,85 @@
+name: Published 0.12.1 cache consumption evidence
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - '.github/workflows/android-startup-cache-evidence.yml'
+      - 'tools/android/atlasgame/qualify_published_server_caches.py'
+      - 'tools/android/atlasgame/test_qualify_published_server_caches.py'
+      - 'tools/android/atlasgame/prepare_server_caches.py'
+      - 'tools/android/atlasgame/test_prepare_server_caches.py'
+      - 'tools/android/atlasgame/server_message_source_contract.py'
+      - 'tools/android/atlasgame/test_server_message_source_contract.py'
+      - 'tools/android/interactive/qualify_startup_caches.py'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-published-startup-cache-evidence
+  cancel-in-progress: false
+jobs:
+  consume-published-caches:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    # Required to READ the existing reviewed unpublished draft asset bundle.
+    # This job has no build, signing, cache generation, or publishing step.
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-contact-interaction-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37071344940
+          github-token: ${{ github.token }}
+      - name: Recover exact published 0.12.0 donor
+        run: python3 tools/android/interactive/build_startup_caches_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.12.0.apk
+      - name: Download unchanged public 0.12.1 APK
+        run: |
+          mkdir -p out/published
+          curl --fail --location --retry 3 --output out/published/COH-Atlas-Gameplay-0.12.1.apk https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.12.1/COH-Atlas-Gameplay-0.12.1.apk
+      - name: Qualify startup reuse and evidence observer guards
+        run: >-
+          python3 tools/android/interactive/qualify_startup_caches.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.12.0.apk
+          --donor-build-report out/donor-evidence/contact-interaction-apk-build-report.json
+          --output out/startup-caches-qualification.json
+      - name: Install native x86 consumption qualification tools
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends wine wine32:i386 wine64 gcc-mingw-w64-i686 strace xvfb xauth
+      - name: Fetch exact reviewed asset inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/reviewed-assets.zip --release-asset-id 588984151
+      - name: Prove consumption of exact published cache bytes
+        run: >-
+          xvfb-run -a python3 tools/android/atlasgame/qualify_published_server_caches.py
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.12.0.apk
+          --donor-build-report out/donor-evidence/contact-interaction-apk-build-report.json
+          --published-apk out/published/COH-Atlas-Gameplay-0.12.1.apk
+          --asset-archive out/reviewed-assets.zip
+          --work out/published-cache-work --output out/published-cache-evidence
+          --repository-commit "$GITHUB_SHA" --timeout-seconds 1800
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-published-startup-cache-consumption-evidence
+          path: |
+            out/startup-caches-qualification.json
+            out/published-cache-evidence/
+          if-no-files-found: warn
+          compression-level: 6
+          retention-days: 90

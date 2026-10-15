@@ -1,0 +1,33 @@
+COH Atlas Gameplay 0.11.3 — bounded play and normal-save window
+
+Install this APK as an update. Keep app data, imported assets and saved THORHERO.
+Tap Refresh runtime once, then Reopen saved THORHERO. Log in COHLOCAL / offline.
+If the initial map load returns you to login, wait and enter the existing character
+again. This update retains the current native loading/network behavior.
+
+The login window remains 20 minutes. A verified native character connection gets
+its own allowance, bounded by the existing launcher lifetime. After ordinary
+Return to safe ground, the actual delivered /stuck command anchors these limits:
+movement ends at 6 minutes, Save cutoff at 7 minutes, and save proof/Finish at
+10 minutes. The launcher and overall-operation caps can shorten these windows.
+Follow the app's separate movement, Save and proof countdowns.
+
+Focused next test:
+1. Enter the existing character. Dismiss help, tap Return to safe ground once,
+   and stay still until Atlas position verified.
+2. Take one brief route outside City Hall to a safe outdoor spot. Preserve the
+   already accepted controls; there is no need to replay a long movement test.
+3. Release all controls and stand still for at least 60 seconds. Tap Save
+   character / log out before the Save countdown expires. Keep still during
+   logout and database verification.
+4. Wait for Saved character verified, tap Finish and save report, then export
+   the ZIP. Report the initial login retry and where you stopped outdoors.
+
+A later reopen can verify that saved outdoor position. Do not create/delete the
+character, reset data, or force-stop while a normal save is running.
+
+This APK changes Android deadline display/input cutoff and guest deadline hooks.
+It retains the previous signer, native runtime, client/server, world, avatar and
+normal-save evidence guards. Host regressions qualify the budget policy; the new
+physical save window is not yet tested. Atlas beacon input preflight found no
+generated navigation graph. NPC pathing and combat remain a separate milestone.

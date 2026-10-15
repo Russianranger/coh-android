@@ -1,0 +1,1282 @@
+{
+  "actual_Game_renderer": {
+    "GPU_payload_sha256": "55f50f8434375cb6587bbfc81b7e9829bdbc8f7ba9a8403eb705315e17ce6f38",
+    "GPU_time_measured": false,
+    "WGL_probe_passed": true,
+    "console_lines": [
+      55,
+      56,
+      57
+    ],
+    "fallback_reason": null,
+    "generic_flag_limit": "Conservative flag false is not loss of confirmed Turnip startup.",
+    "generic_hardware_flag": false,
+    "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+    "native_Vulkan_executed": true,
+    "native_Vulkan_probe_passed": true,
+    "renderer": "zink (Turnip Adreno (TM) 740)",
+    "requested": "turnip",
+    "selected": "turnip",
+    "vendor": "Collabora Ltd"
+  },
+  "android_capture_diagnostics": {
+    "captures_observed": 541,
+    "encode_queue_wall_ms": {
+      "maximum": 1,
+      "mean": 0.09057301293900184,
+      "sum": 49
+    },
+    "encoding_cpu_ms": {
+      "maximum": 146,
+      "mean": 103.20147874306839,
+      "sum": 55832
+    },
+    "encoding_ui_thread_count": 0,
+    "encoding_wall_ms": {
+      "maximum": 248,
+      "mean": 104.44916820702403,
+      "sum": 56507
+    },
+    "format": 1,
+    "frames_coalesced_during_copy": 0,
+    "limit_reached": false,
+    "maximum_captures": 20000,
+    "native_fps_measurement": false,
+    "pending_frames_peak": 1,
+    "pixel_copy_wall_ms": {
+      "maximum": 34,
+      "mean": 2.9279112754158967,
+      "sum": 1584
+    },
+    "presentation_freeze_ms": {
+      "maximum": 34,
+      "mean": 2.9279112754158967,
+      "sum": 1584
+    },
+    "scope": "Successful current-session PixelCopy captures, including views not retained as proof. Surface copy/encoding costs only; retained PNG verification and callback costs are excluded."
+  },
+  "detailed_sampler": {
+    "COH_CLIENT_RENDER_PIPELINE_V1_records": 0,
+    "conclusion": "Slow current native cadence persists with detailed pipeline instrumentation disabled; disabling it did not restore sustained30FPS in this session.",
+    "legacy_frame_timing_records": 110,
+    "legacy_renderer_attribution_records": 105,
+    "receipt": {
+      "blocking_gpu_measurement": false,
+      "client_executable_sha256": "1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72",
+      "command_sample_interval": null,
+      "disabled_reason": "thor_0_13_22_performance_regression_isolation",
+      "enabled": false,
+      "format": 1,
+      "frame_timing_retained": true,
+      "launch_label": "actual-coh-client",
+      "native_source_sha256": "a5e52ed003044df43ea5666b0e18ec9861a5b50fbf74d9b17c6ae217f51bfdc7",
+      "performance_isolation": true,
+      "physical_fps_improvement_validated": false,
+      "policy": "current_verified_Game_attempt_only",
+      "producer_manifest_sha256": "cbb6f1ea6ade85fa8b3605988a110934a3199361e9f67eb5fd196a5a5c1d0773",
+      "record_prefix": null,
+      "render_pipeline": "0",
+      "renderer_attribution_retained": true,
+      "shared_wine_environment_modified": false
+    }
+  },
+  "format": 1,
+  "graphics_and_cap": {
+    "console_gameplay_profile_line": 60,
+    "console_profile_line": 59,
+    "existing_profile": "performance",
+    "inactive_cap": 10,
+    "menu_cap": 10,
+    "native_UI_and_source_size": [
+      800,
+      600
+    ],
+    "native_state_console_line": 17030,
+    "note": "Launch command starts maxfps10, but native gameplay profile reports effective30 and renderer state confirms maxfps30. App-submitted repeat cap30 alone is not a native effect witness.",
+    "observed_native_state_change": {
+      "event": "state",
+      "format": 1,
+      "maxfps": 30,
+      "ordinal": 1,
+      "showfps": 1.0
+    },
+    "observed_render_scale": 0.75,
+    "requested_and_effective_gameplay_cap": 30,
+    "runtime_command_events": [
+      {
+        "event": "performance_command_queued name=cap_30",
+        "session_id": "f657c39823544c7b8900c6bbedeb481a",
+        "uptime_ms": 47775813
+      },
+      {
+        "event": "performance_command_dispatch name=cap_30 dispatch_utc_ms=1791575599450",
+        "session_id": "f657c39823544c7b8900c6bbedeb481a",
+        "uptime_ms": 47775818
+      },
+      {
+        "event": "performance_command_submitted name=cap_30 submitted_utc_ms=1791575602689 native_effect_verified=false",
+        "session_id": "f657c39823544c7b8900c6bbedeb481a",
+        "uptime_ms": 47779055
+      }
+    ]
+  },
+  "identities": {
+    "app_version": "0.13.24",
+    "client_launch": {
+      "pid": 632,
+      "session_id": "f657c39823544c7b8900c6bbedeb481a"
+    },
+    "console_attached_identity": {
+      "attached": true,
+      "pid": 632,
+      "session_id": "f657c39823544c7b8900c6bbedeb481a"
+    },
+    "device": "AYN AYN Thor",
+    "native_Game_producer": {
+      "client_executable_sha256": "1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72",
+      "manifest_sha256": "cbb6f1ea6ade85fa8b3605988a110934a3199361e9f67eb5fd196a5a5c1d0773",
+      "native_source_sha256": "a5e52ed003044df43ea5666b0e18ec9861a5b50fbf74d9b17c6ae217f51bfdc7",
+      "policy": "exact_retained_renderer_Game_then_full_typed_render_pipeline_v1",
+      "repository_commit": "5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396",
+      "retained_renderer_executable_sha256": "adcabb11135fe44b2c1f997a088ec58e4ea0d90e9defaa9f88efea34538caa44",
+      "retained_renderer_manifest_sha256": "406b49ff12d74446baf8cf1977658c1b264e17a92ef2376f74b239a14b98a960",
+      "retained_renderer_repository_commit": "a4a658be25d2b5ca1393b7d3daedd83a7d9ca1f4"
+    },
+    "native_Game_unchanged_from_022": true,
+    "run_id": "1791574513478-d5d26f0bdf60",
+    "runtime_manifest_app_declared_sha256": "f8ea8895f7694815990fd5474896ac6b8d6eb75c7f3c78b086918a70a13120ef",
+    "runtime_manifest_export_serialization_note": "Export raw JSON reserializes slash escapes. Parsed insertion-order indent2+newline exactly reproduces the app-declared original hash.",
+    "runtime_reencoded_sha256": "f8ea8895f7694815990fd5474896ac6b8d6eb75c7f3c78b086918a70a13120ef",
+    "runtime_repository_commit": "ac255fee7546b28a4ae06074f385d3ad73b235ad",
+    "session_id": "f657c39823544c7b8900c6bbedeb481a"
+  },
+  "independent_nearby_attribution": {
+    "main": {
+      "callback_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "console_lines": [
+        17352,
+        17364,
+        17371,
+        17379,
+        17383,
+        17392,
+        17401,
+        17409,
+        17417,
+        17425,
+        17432,
+        17437,
+        17442,
+        17447,
+        17458,
+        17462,
+        17469
+      ],
+      "incomplete_batches": 0,
+      "measured_thread_cpu_ms": 48180.0,
+      "metrics": {
+        "backpressure_wall": {
+          "count": 888,
+          "histogram": [
+            886,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "max_ms": 37.27,
+          "mean_ms": 0.131437,
+          "p50_upper_ms": 16,
+          "p95_upper_ms": 16
+        },
+        "gfx_other_wall": {
+          "count": 888,
+          "histogram": [
+            38,
+            50,
+            94,
+            52,
+            58,
+            58,
+            26,
+            48,
+            32,
+            83,
+            55,
+            181,
+            107,
+            5,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "max_ms": 1391.631,
+          "mean_ms": 174.697958,
+          "p50_upper_ms": 150,
+          "p95_upper_ms": 500
+        },
+        "gfx_wall": {
+          "count": 888,
+          "histogram": [
+            32,
+            53,
+            97,
+            52,
+            58,
+            58,
+            26,
+            48,
+            32,
+            83,
+            55,
+            181,
+            107,
+            5,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "max_ms": 1391.632,
+          "mean_ms": 174.829162,
+          "p50_upper_ms": 150,
+          "p95_upper_ms": 500
+        }
+      },
+      "reports": [
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "scope": "Independent attribution windows emitted within console region17352\u201317471. They have no native game-state labels and are not joined by ordinal with main frame timing.",
+      "thread_cpu_window_fraction": 0.279424,
+      "wait_iterations": 29,
+      "window_ms": 172426.017
+    },
+    "renderer": {
+      "callback_counts": [
+        212,
+        16,
+        302,
+        0
+      ],
+      "console_lines": [
+        17353,
+        17365,
+        17372,
+        17381,
+        17384,
+        17393,
+        17402,
+        17410,
+        17419,
+        17426,
+        17434,
+        17439,
+        17443,
+        17448,
+        17459,
+        17463,
+        17471
+      ],
+      "incomplete_batches": 0,
+      "measured_thread_cpu_ms": 41660.0,
+      "metrics": {
+        "framebuffer_readback_wall": {
+          "count": 889,
+          "histogram": [
+            889,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "max_ms": 0.0,
+          "mean_ms": 0.0,
+          "p50_upper_ms": 16,
+          "p95_upper_ms": 16
+        },
+        "renderer_batch_non_swap_wall": {
+          "count": 889,
+          "histogram": [
+            20,
+            36,
+            111,
+            49,
+            57,
+            66,
+            30,
+            45,
+            37,
+            79,
+            52,
+            180,
+            117,
+            9,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "max_ms": 1398.052,
+          "mean_ms": 179.966774,
+          "p50_upper_ms": 150,
+          "p95_upper_ms": 500
+        },
+        "renderer_batch_wall": {
+          "count": 889,
+          "histogram": [
+            16,
+            35,
+            107,
+            51,
+            54,
+            61,
+            36,
+            40,
+            49,
+            80,
+            49,
+            174,
+            127,
+            9,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "max_ms": 1407.59,
+          "mean_ms": 183.459738,
+          "p50_upper_ms": 150,
+          "p95_upper_ms": 500
+        },
+        "swap_wall": {
+          "count": 889,
+          "histogram": [
+            887,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "max_ms": 31.68,
+          "mean_ms": 3.492904,
+          "p50_upper_ms": 16,
+          "p95_upper_ms": 16
+        },
+        "texture_copy_wall": {
+          "count": 889,
+          "histogram": [
+            889,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "max_ms": 13.467,
+          "mean_ms": 0.105705,
+          "p50_upper_ms": 16,
+          "p95_upper_ms": 16
+        },
+        "texture_subcopy_wall": {
+          "count": 889,
+          "histogram": [
+            889,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "max_ms": 0.056,
+          "mean_ms": 0.00012,
+          "p50_upper_ms": 16,
+          "p95_upper_ms": 16
+        },
+        "vbo_create_wall": {
+          "count": 889,
+          "histogram": [
+            889,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "max_ms": 5.412,
+          "mean_ms": 0.035575,
+          "p50_upper_ms": 16,
+          "p95_upper_ms": 16
+        }
+      },
+      "reports": [
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+      ],
+      "scope": "Independent attribution windows emitted within console region17352\u201317471. They have no native game-state labels and are not joined by ordinal with main frame timing.",
+      "thread_cpu_window_fraction": 0.241377,
+      "wait_iterations": 0,
+      "window_ms": 172592.789
+    }
+  },
+  "limitations": [
+    "Frame timing, renderer attribution and presentation windows have independent anchors; their ordinals are not a join key.",
+    "gfx_other_wall includes synchronous render flush/fence waits and is not pure geometry/scene CPU work. Renderer batch includes queue starvation, scheduling and driver waits, not pure GPU time.",
+    "GetThreadTimes accounts current sampled threads only; other Wine/FEX/Mesa/server threads are excluded.",
+    "Histogram percentiles are bucket upper bounds; zero measured readback does not exclude implicit driver/WSI readback elsewhere.",
+    "Raw console identifies the current owned Game/session/renderer, but this review does not rehash the installed PE executable or independently qualify its source closure.",
+    "Input transport succeeds while movement/task/gameplay acceptance stays unqualified in this startup-only operation.",
+    "No resolution/asset/visual feature reduction or build/test/repository mutation was performed by this analysis."
+  ],
+  "measured_limit_findings": [
+    "Main render submission/gfx wall dominates the ~194ms native frame interval. Pacing ~0.208ms is negligible; cap30 is not the bottleneck.",
+    "Nearby renderer non-swap batch wall ~180ms dominates; swap ~3.49ms and instrumented texture/VBO callback work are small; framebuffer-readback callbacks are zero.",
+    "Main CPU~54.25ms per recorded pure gameplay frame alone exceeds33.33ms; render CPU~24% of nearby wall windows also matters. Both thread window CPU fractions are well below100%, so renderer pipeline waits/scheduling remain substantial.",
+    "PixelCopy freeze mean2.928ms/max34ms is much shorter than sustained native render wall. Off-UI encoding meanCPU103.201ms can compete for CPU; whole-session capture metrics are not native FPS or pure-gameplay-aligned.",
+    "Detailed sampler-off evidence rules out that sampler as the sole explanation. Actual Game worker-wake repair remains active. No current timer directly measures producer SetEvent overhead, queue-full blocking, command gaps, GL-driver waits or GPU time."
+  ],
+  "milestones_and_acceptance": {
+    "accepted_session_budget_receipts": [
+      {
+        "account": "COHLOCAL",
+        "character_id": 1,
+        "client_pid": 632,
+        "deadline_utc_ms": 1791576741927,
+        "format": 1,
+        "generated_utc_ms": 1791575541927,
+        "map_id": 1,
+        "movement_deadline_utc_ms": 1791576501927,
+        "name": "THORHERO",
+        "native_client_ready_observed": true,
+        "phase": "connected",
+        "reopen_verified": true,
+        "revision": 1,
+        "save_request_deadline_utc_ms": 1791576561927,
+        "session_id": "f657c39823544c7b8900c6bbedeb481a",
+        "stage": "actual_client_interaction",
+        "time_utc": "2026-10-09T19:52:21.927518+00:00",
+        "type": "character_session_budget"
+      }
+    ],
+    "android_budget_acceptance_events": [
+      {
+        "event": "character_session_budget_connected",
+        "session_id": "f657c39823544c7b8900c6bbedeb481a",
+        "uptime_ms": 47718295
+      }
+    ],
+    "android_budget_rejection_events": [],
+    "cleanup_verified": true,
+    "connected": {
+      "account": "COHLOCAL",
+      "baseline_character_id": 1,
+      "character_id": 1,
+      "client_pid": 632,
+      "existing_character_verified": true,
+      "map_id": 1,
+      "name": "THORHERO",
+      "native_client_ready_observed": true,
+      "preserved_existing_identity": true,
+      "reopen_verified": true,
+      "session_id": "f657c39823544c7b8900c6bbedeb481a",
+      "stage": "actual_client_interaction",
+      "time_utc": "2026-10-09T19:52:21.923301+00:00",
+      "type": "character_connected"
+    },
+    "existing_character_reopen_verified": true,
+    "finish_reason": "finish_requested",
+    "gameplay_validated": false,
+    "input_effect_verified": false,
+    "input_events_failed": 0,
+    "input_events_sent": 297,
+    "input_transport_observed": true,
+    "local_login_verified": true,
+    "movement_relocation_event": null,
+    "persisted_position_change": {
+      "baseline": {
+        "containerid": 1,
+        "mapid": 1,
+        "posx": 198.96379,
+        "posy": 16.085938,
+        "posz": -449.4336,
+        "staticmapid": 1
+      },
+      "delta_xyz": [
+        -247.40187,
+        -0.001404,
+        16.96415
+      ],
+      "horizontal_displacement": 247.982797,
+      "native_logout_position_evidence": {
+        "account": "COHLOCAL",
+        "auth_id": 1353310574,
+        "client_pid": 632,
+        "connection_binding": "previously_validated_current_session_reopen_connection",
+        "db_id": 1,
+        "line_sha256": "f5efc343aa808f4bb503005489d933260602a848c6a6f49af576bd4976151638",
+        "log_route": "embedded_dbserver_logserver",
+        "log_timestamp": "261009 19:55:25",
+        "logout_timer_evidence": {
+          "line_sha256": "5be334edcb8939e3cf8c51778efd5a11b1793e3f9e452ec3476c262866b16818",
+          "log_route": "embedded_dbserver_logserver",
+          "log_timestamp": "261009 19:55:25",
+          "map_instance": "City_01_01_1",
+          "path": "logs/dbserver/entity_2026-10-09-19-00-00.log"
+        },
+        "map_id": 1,
+        "map_instance": "City_01_01_1",
+        "name": "THORHERO",
+        "native_log_contains_character_db_id": false,
+        "native_log_contains_session_or_client_pid": false,
+        "path": "logs/dbserver/entity_2026-10-09-19-00-00.log",
+        "position": [
+          -48.4375,
+          16.078125,
+          -432.46875
+        ],
+        "prior_native_position_evidence": {
+          "account": "COHLOCAL",
+          "auth_id": 1353310574,
+          "db_id": 1,
+          "format": 1,
+          "kind": "position",
+          "line_sha256": "d5e3c470d8fb0bb343233504d73c5b8971e0eea0720a8b8845e7f9c7ad1d8511",
+          "log_route": "immediate_owned_mapserver_console",
+          "log_timestamp": "261009 19:55:18",
+          "main_thread_id": 556,
+          "map_id": 1,
+          "name": "THORHERO",
+          "pid": 552,
+          "port": 0,
+          "position": [
+            -48.44,
+            16.08,
+            -432.47
+          ],
+          "sequence": 7,
+          "session_id": "f657c39823544c7b8900c6bbedeb481a",
+          "source": "current_owned_mapserver_immediate_position",
+          "tid": 556,
+          "utc_ms": 1791575718023,
+          "windows_pid": 552
+        },
+        "session_id": "f657c39823544c7b8900c6bbedeb481a",
+        "source": "current_owned_server_entity_log_ordinary_logout_position",
+        "utc_ms": 1791575725000
+      },
+      "saved": {
+        "containerid": 1,
+        "mapid": 1,
+        "posx": -48.43808,
+        "posy": 16.084534,
+        "posz": -432.46945,
+        "staticmapid": 1
+      },
+      "scope_note": "Committed position changed in the same map and has current owned native position witnesses. This does not replace the explicit input_effect_verified=false, gameplay_validated=false and startup-only task scope."
+    },
+    "process_exit_code": 0,
+    "runtime_setup_elapsed_ms": 342591,
+    "runtime_setup_status": "complete",
+    "save": {
+      "character_id": 1,
+      "client_pid": 632,
+      "committed_native_position_verified": true,
+      "committed_sql_verified": true,
+      "costume_preserved": true,
+      "name": "THORHERO",
+      "powers_preserved": true,
+      "preserved_existing_identity": true,
+      "recovery_requested": false,
+      "recovery_verified": false,
+      "reopen_verified": true,
+      "session_id": "f657c39823544c7b8900c6bbedeb481a",
+      "stage": "actual_client_interaction",
+      "time_utc": "2026-10-09T19:56:38.624011+00:00",
+      "type": "character_saved"
+    },
+    "scope_note": "Setup/login/connection are completed device milestones. Save event verifies committed SQL, identity, powers, costume and native position. This startup-only run does not qualify movement/tasks or overall gameplay.",
+    "startup_only_reopen": true,
+    "task_qualification_requested": false
+  },
+  "native_display_snapshots": [
+    {
+      "captured_elapsed_ms": 47766938,
+      "file": {
+        "bytes": 350401,
+        "path": "/workspace/scratch/58ff2855521f/analysis-new/device-024/android-interaction/capture-20.png",
+        "sha256": "27d40bc554a4658817f951aa109605b3c87c0da7cf864035a8aa85ac319a0036"
+      },
+      "scope": "Single native display snapshot, not an aggregate or matched-route benchmark. Both show the same statue/plaza camera.",
+      "visually_read_ms_per_frame": 320.0,
+      "visually_read_native_FPS_overlay": 3.12
+    },
+    {
+      "captured_elapsed_ms": 47783258,
+      "file": {
+        "bytes": 350424,
+        "path": "/workspace/scratch/58ff2855521f/analysis-new/device-024/android-interaction/capture-23.png",
+        "sha256": "2b8e64c81bfe46ba07529aa4405ac5e99651f2b8f3ddb349ed9b3615d33fd42c"
+      },
+      "scope": "Single native display snapshot, not an aggregate or matched-route benchmark. Both show the same statue/plaza camera.",
+      "visually_read_ms_per_frame": 279.3,
+      "visually_read_native_FPS_overlay": 3.58
+    }
+  ],
+  "next_measurement_needed": "Choose a fidelity-preserving synchronization/CPU change, retain these legacy frame/renderer streams, and compare a short same-position/route cap30 Thor session. Source hypotheses need focused bounded wake-signal/queue-wait counters or an isolated physical before/after; do not claim sustained gains before that test.",
+  "pure_gameplay_at_observed_30_cap": {
+    "console_lines": [
+      17354,
+      17366,
+      17373,
+      17380,
+      17385,
+      17394,
+      17403,
+      17411,
+      17418,
+      17427,
+      17433,
+      17438,
+      17444,
+      17449,
+      17460,
+      17464,
+      17470
+    ],
+    "intervals_at_most_33ms_percent": 1.126126,
+    "mean_cadence_hz": 5.150256,
+    "measured_thread_cpu_ms": 48170.0,
+    "metrics": {
+      "engine_wall": {
+        "count": 888,
+        "histogram": [
+          0,
+          21,
+          84,
+          77,
+          53,
+          64,
+          28,
+          52,
+          58,
+          81,
+          54,
+          155,
+          148,
+          12,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max_ms": 1437.227,
+        "mean_ms": 192.061419,
+        "over_125ms_count": 509,
+        "over_200ms_count": 370,
+        "p50_upper_ms": 200,
+        "p95_upper_ms": 500
+      },
+      "frame_interval": {
+        "count": 888,
+        "histogram": [
+          0,
+          10,
+          92,
+          78,
+          55,
+          64,
+          26,
+          51,
+          60,
+          77,
+          57,
+          150,
+          153,
+          14,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max_ms": 1437.868,
+        "mean_ms": 194.165104,
+        "over_125ms_count": 512,
+        "over_200ms_count": 375,
+        "p50_upper_ms": 200,
+        "p95_upper_ms": 500
+      },
+      "frame_wall": {
+        "count": 888,
+        "histogram": [
+          0,
+          10,
+          92,
+          78,
+          55,
+          64,
+          26,
+          51,
+          61,
+          80,
+          54,
+          152,
+          152,
+          12,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max_ms": 1437.864,
+        "mean_ms": 192.661325,
+        "over_125ms_count": 512,
+        "over_200ms_count": 371,
+        "p50_upper_ms": 200,
+        "p95_upper_ms": 500
+      },
+      "pacing_wall": {
+        "count": 888,
+        "histogram": [
+          888,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max_ms": 15.142,
+        "mean_ms": 0.207815,
+        "over_125ms_count": 0,
+        "over_200ms_count": 0,
+        "p50_upper_ms": 16,
+        "p95_upper_ms": 16
+      },
+      "submit_wall": {
+        "count": 888,
+        "histogram": [
+          32,
+          53,
+          97,
+          52,
+          58,
+          58,
+          25,
+          47,
+          32,
+          85,
+          53,
+          181,
+          108,
+          6,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max_ms": 1391.642,
+        "mean_ms": 175.435928,
+        "over_125ms_count": 466,
+        "over_200ms_count": 349,
+        "p50_upper_ms": 150,
+        "p95_upper_ms": 500
+      },
+      "work_wall": {
+        "count": 888,
+        "histogram": [
+          0,
+          24,
+          78,
+          78,
+          55,
+          64,
+          26,
+          51,
+          61,
+          80,
+          54,
+          152,
+          152,
+          12,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max_ms": 1437.861,
+        "mean_ms": 192.453494,
+        "over_125ms_count": 512,
+        "over_200ms_count": 371,
+        "p50_upper_ms": 200,
+        "p95_upper_ms": 500
+      }
+    },
+    "native_cap": 30,
+    "per_window_cadence_range_hz": [
+      3.083127,
+      6.244497
+    ],
+    "reports": [
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+    ],
+    "scope": "Pure native main gameplay windows only; mixed loading/menu windows26 and44 excluded. Native cadence is not Android delivered FPS or GPU completion rate.",
+    "thread_cpu_ms_per_recorded_frame": 54.245495,
+    "thread_cpu_window_fraction": 0.279366,
+    "window_details": [
+      {
+        "console_line": 17354,
+        "frame_interval_count": 62,
+        "frame_interval_mean_ms": 160.42,
+        "pacing_wall_mean_ms": 0.039,
+        "report": 27,
+        "submit_wall_mean_ms": 139.278,
+        "thread_cpu_ms": 2950.0,
+        "window_ms": 10114.523
+      },
+      {
+        "console_line": 17366,
+        "frame_interval_count": 55,
+        "frame_interval_mean_ms": 183.641,
+        "pacing_wall_mean_ms": 0.279,
+        "report": 28,
+        "submit_wall_mean_ms": 163.078,
+        "thread_cpu_ms": 2890.0,
+        "window_ms": 10128.612
+      },
+      {
+        "console_line": 17373,
+        "frame_interval_count": 58,
+        "frame_interval_mean_ms": 172.786,
+        "pacing_wall_mean_ms": 0.677,
+        "report": 29,
+        "submit_wall_mean_ms": 141.583,
+        "thread_cpu_ms": 2900.0,
+        "window_ms": 10059.9
+      },
+      {
+        "console_line": 17380,
+        "frame_interval_count": 31,
+        "frame_interval_mean_ms": 324.346,
+        "pacing_wall_mean_ms": 0.004,
+        "report": 30,
+        "submit_wall_mean_ms": 295.816,
+        "thread_cpu_ms": 1840.0,
+        "window_ms": 10184.722
+      },
+      {
+        "console_line": 17385,
+        "frame_interval_count": 43,
+        "frame_interval_mean_ms": 244.05,
+        "pacing_wall_mean_ms": 0.004,
+        "report": 31,
+        "submit_wall_mean_ms": 219.246,
+        "thread_cpu_ms": 2550.0,
+        "window_ms": 10348.505
+      },
+      {
+        "console_line": 17394,
+        "frame_interval_count": 44,
+        "frame_interval_mean_ms": 232.477,
+        "pacing_wall_mean_ms": 0.355,
+        "report": 32,
+        "submit_wall_mean_ms": 206.684,
+        "thread_cpu_ms": 2910.0,
+        "window_ms": 10170.0
+      },
+      {
+        "console_line": 17403,
+        "frame_interval_count": 45,
+        "frame_interval_mean_ms": 222.363,
+        "pacing_wall_mean_ms": 0.004,
+        "report": 33,
+        "submit_wall_mean_ms": 208.339,
+        "thread_cpu_ms": 2700.0,
+        "window_ms": 10152.675
+      },
+      {
+        "console_line": 17411,
+        "frame_interval_count": 56,
+        "frame_interval_mean_ms": 184.564,
+        "pacing_wall_mean_ms": 0.167,
+        "report": 34,
+        "submit_wall_mean_ms": 163.199,
+        "thread_cpu_ms": 2890.0,
+        "window_ms": 10013.841
+      },
+      {
+        "console_line": 17418,
+        "frame_interval_count": 58,
+        "frame_interval_mean_ms": 174.315,
+        "pacing_wall_mean_ms": 0.005,
+        "report": 35,
+        "submit_wall_mean_ms": 161.004,
+        "thread_cpu_ms": 3010.0,
+        "window_ms": 10151.937
+      },
+      {
+        "console_line": 17427,
+        "frame_interval_count": 60,
+        "frame_interval_mean_ms": 166.346,
+        "pacing_wall_mean_ms": 0.277,
+        "report": 36,
+        "submit_wall_mean_ms": 155.119,
+        "thread_cpu_ms": 3060.0,
+        "window_ms": 10270.057
+      },
+      {
+        "console_line": 17433,
+        "frame_interval_count": 52,
+        "frame_interval_mean_ms": 198.957,
+        "pacing_wall_mean_ms": 0.004,
+        "report": 37,
+        "submit_wall_mean_ms": 182.427,
+        "thread_cpu_ms": 2980.0,
+        "window_ms": 10199.72
+      },
+      {
+        "console_line": 17438,
+        "frame_interval_count": 56,
+        "frame_interval_mean_ms": 182.903,
+        "pacing_wall_mean_ms": 0.004,
+        "report": 38,
+        "submit_wall_mean_ms": 167.89,
+        "thread_cpu_ms": 2930.0,
+        "window_ms": 10191.339
+      },
+      {
+        "console_line": 17444,
+        "frame_interval_count": 59,
+        "frame_interval_mean_ms": 170.912,
+        "pacing_wall_mean_ms": 0.126,
+        "report": 39,
+        "submit_wall_mean_ms": 157.285,
+        "thread_cpu_ms": 2960.0,
+        "window_ms": 10171.107
+      },
+      {
+        "console_line": 17449,
+        "frame_interval_count": 49,
+        "frame_interval_mean_ms": 209.617,
+        "pacing_wall_mean_ms": 0.356,
+        "report": 40,
+        "submit_wall_mean_ms": 190.68,
+        "thread_cpu_ms": 2940.0,
+        "window_ms": 10163.409
+      },
+      {
+        "console_line": 17460,
+        "frame_interval_count": 45,
+        "frame_interval_mean_ms": 221.401,
+        "pacing_wall_mean_ms": 0.46,
+        "report": 41,
+        "submit_wall_mean_ms": 205.934,
+        "thread_cpu_ms": 2850.0,
+        "window_ms": 10062.002
+      },
+      {
+        "console_line": 17464,
+        "frame_interval_count": 64,
+        "frame_interval_mean_ms": 160.141,
+        "pacing_wall_mean_ms": 0.308,
+        "report": 42,
+        "submit_wall_mean_ms": 142.556,
+        "thread_cpu_ms": 3000.0,
+        "window_ms": 10027.585
+      },
+      {
+        "console_line": 17470,
+        "frame_interval_count": 51,
+        "frame_interval_mean_ms": 195.774,
+        "pacing_wall_mean_ms": 0.381,
+        "report": 43,
+        "submit_wall_mean_ms": 180.73,
+        "thread_cpu_ms": 2810.0,
+        "window_ms": 10016.013
+      }
+    ],
+    "window_ms": 172425.947
+  },
+  "raw_files": {
+    "android-client-report.json": {
+      "bytes": 317888,
+      "path": "/workspace/scratch/58ff2855521f/analysis-new/device-024/android-client-report.json",
+      "sha256": "88d56286143058da8bd4c8dc0490f781f4271fe86182d5d661a5d4f79f6f11f4"
+    },
+    "guest/client-evidence/client-console.log": {
+      "bytes": 1140644,
+      "path": "/workspace/scratch/58ff2855521f/analysis-new/device-024/guest/client-evidence/client-console.log",
+      "sha256": "7f48b6f303da24f1b6132e229b45629e4ec9ca2c792c501d8218abba0827f86c"
+    },
+    "guest/latest-report.json": {
+      "bytes": 257578,
+      "path": "/workspace/scratch/58ff2855521f/analysis-new/device-024/guest/latest-report.json",
+      "sha256": "991dbdffd202560beb78232a7fa3ad223e7857d2b417fda3b41e8a2846ccfd31"
+    },
+    "operation.log": {
+      "bytes": 124533,
+      "path": "/workspace/scratch/58ff2855521f/analysis-new/device-024/operation.log",
+      "sha256": "7bcb0cfe825213d6ff14834d8cc82426b9cb7b5b414f6c20cec6c220fa644f21"
+    },
+    "pipeline-summary.json": {
+      "bytes": 81961,
+      "path": "/workspace/scratch/58ff2855521f/analysis-new/device-024/pipeline-summary.json",
+      "sha256": "1a144f00380a03611268b3ebdc0b6e43353199a3393eaf7ff3e7422aaca55fbe"
+    },
+    "runtime-manifest.json": {
+      "bytes": 1344176,
+      "path": "/workspace/scratch/58ff2855521f/analysis-new/device-024/runtime-manifest.json",
+      "sha256": "b1a83a2811f2983ff4d49a59c3d51382cac2f1c9b44b2814d29371217810d915"
+    }
+  },
+  "reviewed_input": {
+    "bytes": 13704444,
+    "path": "/workspace/scratch/58ff2855521f/upload/coh-atlas-gameplay-20261009-195656.zip",
+    "sha256": "ab4e657d9cbcf133f3875d11b3c951ad5cfc4e0381e1e9a19e512f6950136521"
+  },
+  "scope": "Read-only review of user .24 Thor FPS regression attachment; no repository/build/test changes",
+  "short_comparison": {
+    "limits": "Different scene routes, camera/input availability, durations and unrecorded temperature/frequency states prevent a controlled causal performance ratio or attributing the whole regression to one change.",
+    "matched_experiment": false,
+    "prior_reviewed_files": [
+      {
+        "bytes": 50056,
+        "path": "/workspace/scratch/58ff2855521f/coh-android/docs/android-evidence/renderer-sync-0.13.21-thor-20261009.json",
+        "sha256": "42100da867a33afc486d53a3893be2f3ea0435a4fbad078fc3f16cf57200b20a"
+      },
+      {
+        "bytes": 34351,
+        "path": "/workspace/scratch/58ff2855521f/coh-android/docs/android-evidence/session-repair-0.13.22-thor-20261009.json",
+        "sha256": "b03500a7780af2b9e8760d2eb57623641fa864f52845b68f2f23d7fdaabe811b"
+      }
+    ],
+    "same_actual_backend": true,
+    "sessions": {
+      "0.13.21": {
+        "cadence_hz": 19.161,
+        "detailed_pipeline_sampler_present": false,
+        "frame_interval_mean_ms": 52.189,
+        "main_thread_cpu_ms_per_frame": 18.008,
+        "samples": 5196,
+        "submit_wall_mean_ms": 27.402,
+        "work_wall_mean_ms": 48.951
+      },
+      "0.13.22": {
+        "cadence_hz": 6.577,
+        "detailed_pipeline_sampler_present": true,
+        "frame_interval_mean_ms": 152.044,
+        "main_thread_cpu_ms_per_frame": 43.33485401459854,
+        "samples": 2192,
+        "submit_wall_mean_ms": 134.621,
+        "work_wall_mean_ms": 150.981
+      },
+      "0.13.24": {
+        "cadence_hz": 5.150256,
+        "detailed_pipeline_sampler_present": false,
+        "frame_interval_mean_ms": 194.165104,
+        "samples": 888
+      }
+    }
+  }
+}

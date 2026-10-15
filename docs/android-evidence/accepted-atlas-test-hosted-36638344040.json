@@ -1,0 +1,599 @@
+{
+  "format": 1,
+  "status": "accepted_hosted_atlas_device_candidate",
+  "run_id": 36638344040,
+  "run_attempt": 1,
+  "workflow_conclusion": "success",
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/36638344040",
+  "repository_commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+  "jobs": {
+    "tooling": {
+      "id": 109644393836,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-09-29T22:14:13Z",
+      "completed_at": "2026-09-29T22:15:26Z"
+    },
+    "apk": {
+      "id": 109644820249,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-09-29T22:15:29Z",
+      "completed_at": "2026-09-29T22:18:24Z"
+    },
+    "runtime": {
+      "id": 109645798689,
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-09-29T22:18:30Z",
+      "completed_at": "2026-09-29T22:53:39Z"
+    }
+  },
+  "scope": "Exact signed APK import and isolated native ARM64 guest adapter execution; physical Thor 0.4.4 confirmation pending",
+  "apk": {
+    "apk": "COH-Atlas-Test-0.4.4.apk",
+    "bytes": 355130247,
+    "sha256": "e502b80d91c92164021684d2ea311e9e9d5c99c1b9ac178c67619844f3c5d547",
+    "application_id": "io.github.russianranger.cohatlastest",
+    "version_name": "0.4.4",
+    "version_code": 5,
+    "signer_certificate_sha256": "eb80c0129ff7891179043fb264633dfcfbf525d0b8bbf2546e3d76d173085133"
+  },
+  "runtime_manifest_sha256": "2d0cabd598af74f383d7973429a1d9359d5764fdcb8aba348a5e6bc29cdf43aa",
+  "import_contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+  "accepted_game_package_run_id": 36510836956,
+  "accepted_game_repository_commit": "ac4c1f7978be444a893f65f5177641191861d42f",
+  "accepted_supporting_donors": {
+    "run_id": 36510836956,
+    "repository_commit": "ac4c1f7978be444a893f65f5177641191861d42f",
+    "manifest_sha256": "ebfdbbab3984627f7c39220f42a9c3e67b78ffe555aa742621a7a1450731fb2a"
+  },
+  "selected_package_run_id": 36630872719,
+  "selected_package_repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+  "selected_package_manifest_sha256": "ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd",
+  "mapserver_progress_profile": "dispatch_progress_v1",
+  "mapserver_progress_producer": {
+    "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+    "manifest_sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1",
+    "mapserver_sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+  },
+  "qualified_mapserver_donor_acceptance_record": {
+    "file": "accepted-mapserver-progress-hosted-36630872719.json",
+    "bytes": 12954,
+    "sha256": "a0eea28f0c6c5c116b254251a0d0448d1ade50631192d749ee1964cf48fa319e"
+  },
+  "tooling": {
+    "new_contract_checks_passed": 149,
+    "accepted_import_checks_passed": 65,
+    "accepted_game_checks_run": 179,
+    "accepted_game_checks_passed": 172,
+    "windows_only_checks_skipped": 7,
+    "mapserver_native_contracts": {
+      "run_id": 36630872719,
+      "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+      "passed": 6,
+      "skipped": 0
+    }
+  },
+  "correction": {
+    "scope": "Qualified MapServer observer and selected completed-tick startup guard; retained 0.4.3 ownership correction",
+    "behavior": "Fresh coherent observation with a positive completed-tick count required before the startup protocol query, then a same-identity coherent after-read; invalid or missing observations never reuse cached success",
+    "original_twenty_second_protocol_freshness_preserved": true,
+    "original_thirty_second_observation_preserved": true,
+    "overall_deadline_and_cancellation_preserved": true,
+    "accepted_base_runtime_unchanged": true,
+    "accepted_supporting_game_binaries_unchanged": true,
+    "MapServer_replaced_by_qualified_instrumented_binary": true,
+    "android_Java_acceptance_extended_for_profile_and_raw_startup_evidence": true,
+    "owned_cleanup_correction_retained": true,
+    "exact_Thor_exception_proven": false
+  },
+  "qualification": {
+    "stages_passed": 18,
+    "total_seconds_including_import": 1990.790313,
+    "import_seconds": 54.536957,
+    "guest_seconds": 1935.340692,
+    "file_count": 173011,
+    "total_bytes": 2977730517,
+    "independent_import_hashes_verified": true,
+    "immutable_import_generation_preserved": true,
+    "game_and_service_captures_verified": true,
+    "network_namespace_verified": true,
+    "character": {
+      "container_id": 1,
+      "name": "TEST26340",
+      "account": "CohA5c196c228e"
+    },
+    "influence": 12345,
+    "same_cluster_restart": true,
+    "exact_name_resume": "TEST26340",
+    "resume_creation_disabled": true,
+    "first_committed_login_count": 1,
+    "second_committed_login_count": 2,
+    "closed_process_records": 101,
+    "dbserver_startup": {
+      "first": {
+        "scope": "service_startup_entry_through_positive_main_loop",
+        "budget_seconds": 600,
+        "milestones": {
+          "schema_and_listener": {
+            "status": "passed",
+            "elapsed_since_startup_seconds": 42.596
+          },
+          "positive_main_loop": {
+            "status": "passed",
+            "elapsed_since_startup_seconds": 58.2
+          }
+        }
+      },
+      "restart": {
+        "scope": "service_startup_entry_through_positive_main_loop",
+        "budget_seconds": 600,
+        "milestones": {
+          "schema_and_listener": {
+            "status": "passed",
+            "elapsed_since_startup_seconds": 5.49
+          },
+          "positive_main_loop": {
+            "status": "passed",
+            "elapsed_since_startup_seconds": 32.451
+          }
+        }
+      }
+    },
+    "mapserver_startup": {
+      "profile": "dispatch_progress_v1",
+      "requires_completed_tick_before_protocol": true,
+      "phases": {
+        "first": {
+          "attempts": 18,
+          "status": "passed",
+          "before": {
+            "format": 1,
+            "windows_pid": 928,
+            "main_thread_id": 932,
+            "sequence": 30970,
+            "stage_id": 36,
+            "stage": "SLEEP",
+            "tick_started": 1031,
+            "tick_completed": 1031,
+            "flags": 0,
+            "stage_count": 37,
+            "raw_record_hex": "434f484d415031000100000080000000a0030000a4030000fa78000024000000070400000704000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "raw_record_sha256": "f75d7a1504c39387693a70aabd4a103844836018ec49230aba0d3ca3da66ade1",
+            "available": true,
+            "sampled_utc": "2026-09-29T22:44:50.088192+00:00",
+            "observed_monotonic": 1598.687998931,
+            "file_identity": {
+              "device": 2049,
+              "inode": 7423563
+            },
+            "source": "opt-in MapServer main-thread publication",
+            "is_success_proof": false,
+            "freshness": "advanced",
+            "last_advance_monotonic": 1598.687998931,
+            "unchanged_seconds": 0.0,
+            "reason": "startup-tick-before:first-ready",
+            "sample_number": 207
+          },
+          "after": {
+            "format": 1,
+            "windows_pid": 928,
+            "main_thread_id": 932,
+            "sequence": 32230,
+            "stage_id": 36,
+            "stage": "SLEEP",
+            "tick_started": 1073,
+            "tick_completed": 1073,
+            "flags": 0,
+            "stage_count": 37,
+            "raw_record_hex": "434f484d415031000100000080000000a0030000a4030000e67d000024000000310400003104000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "raw_record_sha256": "d5eb555e154c0ce9e4a364157cd8e26718a602a01b86d782696be09cb6d35d37",
+            "available": true,
+            "sampled_utc": "2026-09-29T22:44:51.507861+00:00",
+            "observed_monotonic": 1600.107652089,
+            "file_identity": {
+              "device": 2049,
+              "inode": 7423563
+            },
+            "source": "opt-in MapServer main-thread publication",
+            "is_success_proof": false,
+            "freshness": "unchanged",
+            "last_advance_monotonic": 1600.107335252,
+            "unchanged_seconds": 0.0,
+            "reason": "startup-tick-after:first-ready",
+            "sample_number": 210
+          },
+          "protocol": {
+            "ready": true,
+            "not_started": false,
+            "map_id": 1,
+            "network_age_seconds": 6,
+            "stats_age_seconds": 7,
+            "address": "127.0.0.1",
+            "port": 7001,
+            "phase": "first-ready",
+            "sampled_utc": "2026-09-29T22:44:51.507616+00:00",
+            "monotonic": 1600.107407624
+          }
+        },
+        "restart": {
+          "attempts": 6,
+          "status": "passed",
+          "before": {
+            "format": 1,
+            "windows_pid": 556,
+            "main_thread_id": 560,
+            "sequence": 520,
+            "stage_id": 36,
+            "stage": "SLEEP",
+            "tick_started": 16,
+            "tick_completed": 16,
+            "flags": 0,
+            "stage_count": 37,
+            "raw_record_hex": "434f484d4150310001000000800000002c020000300200000802000024000000100000001000000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "raw_record_sha256": "1d33d4cf7e88fbd2c1dedddf835b2d1c915e0617d2a6ede697b56eaff3771a38",
+            "available": true,
+            "sampled_utc": "2026-09-29T22:52:19.237477+00:00",
+            "observed_monotonic": 2047.83728478,
+            "file_identity": {
+              "device": 2049,
+              "inode": 7423572
+            },
+            "source": "opt-in MapServer main-thread publication",
+            "is_success_proof": false,
+            "freshness": "advanced",
+            "last_advance_monotonic": 2047.83728478,
+            "unchanged_seconds": 0.0,
+            "reason": "startup-tick-before:restart-ready",
+            "sample_number": 33
+          },
+          "after": {
+            "format": 1,
+            "windows_pid": 556,
+            "main_thread_id": 560,
+            "sequence": 1630,
+            "stage_id": 36,
+            "stage": "SLEEP",
+            "tick_started": 53,
+            "tick_completed": 53,
+            "flags": 0,
+            "stage_count": 37,
+            "raw_record_hex": "434f484d4150310001000000800000002c020000300200005e06000024000000350000003500000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "raw_record_sha256": "a21584746687842cf6933278b203dbce29f3a9b5fd85008af184f73df91d594e",
+            "available": true,
+            "sampled_utc": "2026-09-29T22:52:20.507932+00:00",
+            "observed_monotonic": 2049.107722855,
+            "file_identity": {
+              "device": 2049,
+              "inode": 7423572
+            },
+            "source": "opt-in MapServer main-thread publication",
+            "is_success_proof": false,
+            "freshness": "unchanged",
+            "last_advance_monotonic": 2049.107424458,
+            "unchanged_seconds": 0.0,
+            "reason": "startup-tick-after:restart-ready",
+            "sample_number": 36
+          },
+          "protocol": {
+            "ready": true,
+            "not_started": false,
+            "map_id": 1,
+            "network_age_seconds": 2,
+            "stats_age_seconds": 2,
+            "address": "127.0.0.1",
+            "port": 7001,
+            "phase": "restart-ready",
+            "sampled_utc": "2026-09-29T22:52:20.507696+00:00",
+            "monotonic": 2049.107487342
+          }
+        }
+      }
+    },
+    "mapserver_progress": {
+      "profile": "dispatch_progress_v1",
+      "producer": {
+        "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+        "manifest_sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1",
+        "mapserver_sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+      },
+      "phases": {
+        "first": {
+          "sample_count": 271,
+          "retained_samples": 128,
+          "dropped_samples": 143,
+          "file_identity": {
+            "device": 2049,
+            "inode": 7423563
+          },
+          "windows_pid": 928,
+          "main_thread_id": 932,
+          "first_tick_completed": 0,
+          "last_tick_completed": 8571,
+          "startup_attempts": 18,
+          "startup_witnesses": {
+            "before": {
+              "sample_number": 207,
+              "sequence": 30970,
+              "stage": "SLEEP",
+              "tick_started": 1031,
+              "tick_completed": 1031,
+              "observed_monotonic": 1598.687998931,
+              "raw_record_sha256": "f75d7a1504c39387693a70aabd4a103844836018ec49230aba0d3ca3da66ade1",
+              "retained_in_final_history": true
+            },
+            "after": {
+              "sample_number": 210,
+              "sequence": 32230,
+              "stage": "SLEEP",
+              "tick_started": 1073,
+              "tick_completed": 1073,
+              "observed_monotonic": 1600.107652089,
+              "raw_record_sha256": "d5eb555e154c0ce9e4a364157cd8e26718a602a01b86d782696be09cb6d35d37",
+              "retained_in_final_history": true
+            }
+          },
+          "protocol": {
+            "ready": true,
+            "not_started": false,
+            "map_id": 1,
+            "network_age_seconds": 6,
+            "stats_age_seconds": 7,
+            "address": "127.0.0.1",
+            "port": 7001,
+            "phase": "first-ready",
+            "sampled_utc": "2026-09-29T22:44:51.507616+00:00",
+            "monotonic": 1600.107407624
+          }
+        },
+        "restart": {
+          "sample_count": 51,
+          "retained_samples": 51,
+          "dropped_samples": 0,
+          "file_identity": {
+            "device": 2049,
+            "inode": 7423572
+          },
+          "windows_pid": 556,
+          "main_thread_id": 560,
+          "first_tick_completed": 0,
+          "last_tick_completed": 2090,
+          "startup_attempts": 6,
+          "startup_witnesses": {
+            "before": {
+              "sample_number": 33,
+              "sequence": 520,
+              "stage": "SLEEP",
+              "tick_started": 16,
+              "tick_completed": 16,
+              "observed_monotonic": 2047.83728478,
+              "raw_record_sha256": "1d33d4cf7e88fbd2c1dedddf835b2d1c915e0617d2a6ede697b56eaff3771a38",
+              "retained_in_final_history": true
+            },
+            "after": {
+              "sample_number": 36,
+              "sequence": 1630,
+              "stage": "SLEEP",
+              "tick_started": 53,
+              "tick_completed": 53,
+              "observed_monotonic": 2049.107722855,
+              "raw_record_sha256": "a21584746687842cf6933278b203dbce29f3a9b5fd85008af184f73df91d594e",
+              "retained_in_final_history": true
+            }
+          },
+          "protocol": {
+            "ready": true,
+            "not_started": false,
+            "map_id": 1,
+            "network_age_seconds": 2,
+            "stats_age_seconds": 2,
+            "address": "127.0.0.1",
+            "port": 7001,
+            "phase": "restart-ready",
+            "sampled_utc": "2026-09-29T22:52:20.507696+00:00",
+            "monotonic": 2049.107487342
+          }
+        }
+      },
+      "raw_available_samples_verified": 173
+    },
+    "owned_process_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 627,
+      "scanned_tasks": 8,
+      "dead_leaders_with_live_tasks": 0,
+      "owned_live_workers": 0,
+      "leader_exit_retries": 0,
+      "candidates": 0,
+      "term_signals": 0,
+      "kill_signals": 0,
+      "pidfd_signals": 0,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true,
+      "permission_read_retries": 0,
+      "worker_exit_rechecks": 0,
+      "permission_observations": [],
+      "permission_observations_omitted": 0,
+      "proc_read_retries": 0,
+      "proc_read_observations": [],
+      "proc_read_observations_omitted": 0,
+      "last_inspection_failure": null
+    },
+    "restart_owned_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 312,
+      "scanned_tasks": 4,
+      "dead_leaders_with_live_tasks": 0,
+      "owned_live_workers": 0,
+      "leader_exit_retries": 0,
+      "candidates": 0,
+      "term_signals": 0,
+      "kill_signals": 0,
+      "pidfd_signals": 0,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true,
+      "permission_read_retries": 0,
+      "worker_exit_rechecks": 0,
+      "permission_observations": [],
+      "permission_observations_omitted": 0,
+      "proc_read_retries": 0,
+      "proc_read_observations": [],
+      "proc_read_observations_omitted": 0,
+      "last_inspection_failure": null
+    },
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    }
+  },
+  "java_acceptance_compatibility": {
+    "untouched_host_report_rejected": true,
+    "untouched_cleanup_accepted": true,
+    "scratch_only_platform_field_adaptation_accepted": true,
+    "physical_android_execution_proved": false
+  },
+  "memory_observation": {
+    "scope": "run_token_owned_Wine_FEX_processes_only",
+    "measurement": "sampled_sum_of_process_VmRSS_kibibytes",
+    "minimum_interval_seconds": 5,
+    "inspection_budget_seconds": 1,
+    "excludes": [
+      "PostgreSQL",
+      "Python",
+      "Java",
+      "Android app"
+    ],
+    "shared_pages_may_be_counted_more_than_once": true,
+    "instantaneous_peak_measured": false,
+    "pss_measured": false,
+    "successful_samples": 319,
+    "unavailable_samples": 1,
+    "maximum_sampled_rss_kib": 4354352,
+    "last_unavailable_type": "DiagnosticError"
+  },
+  "prior_043": {
+    "run_id": 36621227369,
+    "repository_commit": "d75ec1e5efeeccd8dcb51aaad574ecdb1a3ce76a",
+    "status": "unqualified",
+    "failed_attempts": [
+      {
+        "run_attempt": 1,
+        "failure": "Atlas lost current readiness during observation",
+        "evidence": "atlas-test-evidence-36621227369-attempt1-failed.zip",
+        "review": "atlas-test-review-36621227369-attempt1-failed.json"
+      },
+      {
+        "run_attempt": 2,
+        "failure": "Atlas lost current readiness during observation",
+        "evidence": "atlas-test-evidence-36621227369-attempt2-failed.zip",
+        "review": "atlas-test-review-36621227369-attempt2-failed.json"
+      }
+    ],
+    "both_failed_before_character_creation_or_restart": true,
+    "same_failed_APK_retries_stopped": true,
+    "earlier_failures_repaired_by_this_hosted_pass": false,
+    "uninstrumented_failure_root_cause_established": false
+  },
+  "startup_guard_rationale": {
+    "qualified_donor_first_tick_folder_callback_interval_seconds": 114.233,
+    "interpretation": "The instrumented hosted donor exposed a long interval before its first completed tick; the stronger startup guard prevents accepting an earlier ready flag.",
+    "earlier_uninstrumented_root_cause_proven": false,
+    "folder_callback_duration_repaired": false
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "android_surface_validated": false,
+  "hardware_acceleration_validated": false,
+  "physical_android_execution_validated": false,
+  "next_gate": "Install exact 0.4.4, prepare runtime/import and complete one physical Thor test/export before Stop/rerun and lifecycle checks",
+  "installation": "Same Atlas Test application ID. Builds use an ephemeral signing key; if Android reports a signature conflict, uninstall Atlas Test before installing 0.4.4, then set up runtime and import again. Earlier accepted diagnostic/setup apps remain separate.",
+  "preserved_files": {
+    "atlas-test-evidence-36638344040.zip": {
+      "bytes": 506667,
+      "sha256": "c629e1811953baae070801ced43855e569b14f618036144c7d72e92f65acf902"
+    },
+    "atlas-test-packaging-36638344040.zip": {
+      "bytes": 14251,
+      "sha256": "83dfe1712bac2cba9a2d75a7e5099fcbf5aa1fd5d1f23445a2f43e72238de43c"
+    },
+    "atlas-test-apk-build-36638344040.json": {
+      "bytes": 24992,
+      "sha256": "39f4e75aa947d5519e42d176d756c317adae21ed18ea03fcdeb155b6bb7535ea"
+    },
+    "atlas-test-apk-verification-36638344040.json": {
+      "bytes": 16281,
+      "sha256": "0c42619a9852452b9cc67c73cc32b7889b18319159dbad62336ca7ef2b30f120"
+    },
+    "atlas-test-preparation-36638344040.json": {
+      "bytes": 4072,
+      "sha256": "d07bc7901c87c66c8b4412e91302738c9fcb2cecbad73ec58b6d0c9950273afa"
+    },
+    "atlas-test-host-qualification-36638344040.json": {
+      "bytes": 1162,
+      "sha256": "eb4a6dcf817f68569513f4ed8d791061f4df5e91ee7ba4757523d288a6fefbfe"
+    },
+    "atlas-test-host-inputs-36638344040.json": {
+      "bytes": 4290,
+      "sha256": "0beddd81b35a03708e1b5f47fb8f2364550563dbdb916940124020856bb01698"
+    },
+    "atlas-test-arm64-36638344040.json": {
+      "bytes": 473848,
+      "sha256": "0e1c737bec94eaefe9caf85ed0277fe7d80e98bf5cf4460a76fccc9cf1d76819"
+    },
+    "atlas-test-import-36638344040.json": {
+      "bytes": 1801,
+      "sha256": "07224cf80c7216b2ae64ae3049dd32ab630299a17b8de05c8278c99920074f75"
+    },
+    "atlas-test-java-gate-compatibility-36638344040.json": {
+      "bytes": 2814,
+      "sha256": "271f78324efe855f452c2b19f41064ef9626d026f23f0a6258bae9457cffdb52"
+    },
+    "atlas-test-independent-revalidation-36638344040.json": {
+      "bytes": 16343,
+      "sha256": "f6e60da3a91ea9c2fcb7937e89ab62da816dbb08f2009e981894fde15b158b6e"
+    },
+    "atlas-test-workflow-36638344040.json": {
+      "bytes": 15217,
+      "sha256": "e58cb18bb03a78f981b644ad88aaf8ca9d0c8d0f31d5306f5f12417345176ab9"
+    },
+    "atlas-test-workflow-jobs-36638344040.json": {
+      "bytes": 15445,
+      "sha256": "10e4c93b1ae890ca66529c78daa0bf8051db1e36f8cbf3345ec4113f5d420f0e"
+    },
+    "atlas-test-artifacts-36638344040.json": {
+      "bytes": 2581,
+      "sha256": "bb270fdc640b9f13e0a2d844381b83f478eb2fe0b0b8aed46a92c79c35397348"
+    }
+  },
+  "github_artifacts": [
+    {
+      "id": 11066608259,
+      "name": "coh-atlas-test-arm64-evidence",
+      "size_in_bytes": 506667,
+      "digest": "sha256:c629e1811953baae070801ced43855e569b14f618036144c7d72e92f65acf902",
+      "created_at": "2026-09-29T22:53:37Z"
+    },
+    {
+      "id": 11065123997,
+      "name": "coh-atlas-test-packaging-evidence",
+      "size_in_bytes": 14251,
+      "digest": "sha256:83dfe1712bac2cba9a2d75a7e5099fcbf5aa1fd5d1f23445a2f43e72238de43c",
+      "created_at": "2026-09-29T22:18:22Z"
+    },
+    {
+      "id": 11065273626,
+      "name": "coh-atlas-test-apk",
+      "size_in_bytes": 321097532,
+      "digest": "sha256:d59877ae9778be95c42adeab6ca7972827aae804332e2af3ae6ed19192abbfa6",
+      "created_at": "2026-09-29T22:18:21Z"
+    }
+  ],
+  "runtime_workflow_job_id": 109645798689,
+  "independent_downloaded_evidence_revalidation": "passed"
+}

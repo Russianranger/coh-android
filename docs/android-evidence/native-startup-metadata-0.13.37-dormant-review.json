@@ -1,0 +1,78 @@
+{
+  "authority_records": {
+    "game": null,
+    "mapserver": null
+  },
+  "behavioral_collision_qualified": false,
+  "format": 1,
+  "independent_counterprobes_rejected": [
+    "previous_consumer_differs_from_actual_restored_native_record",
+    "float_32_header_width",
+    "arbitrary_source_pin",
+    "boolean_current_source_byte_count",
+    "boolean_previous_source_byte_count",
+    "boolean_bridge_source_byte_count",
+    "partial_four_of_seven_source_closure"
+  ],
+  "independent_tests": {
+    "actual_audited_036_donor_apk": {
+      "bytes": 42076692,
+      "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f"
+    },
+    "candidate_fixture": "Final-byte mutation of retained PE used only for unexecuted archive/contract unit checks.",
+    "errors": 0,
+    "executed": 20,
+    "failures": 0,
+    "native_processes_executed": 0,
+    "seconds": 10.343,
+    "skips": 0,
+    "source_unchanged_before_and_after": true
+  },
+  "limitations": [
+    "Approval covers dormant source/archive-contract integrity only.",
+    "Real source recipes, original build/qualification artifact authorities and actual native runtime/collision parity must pass separate gates before authority records can be populated.",
+    "The .37 builder continues to retain exact qualified .36 native components."
+  ],
+  "original_review_gaps": "Wrong old-cache consumer and weak texture metadata checks were reproduced, corrected by the owning agent and independently rejected under the final source.",
+  "physical_timing_qualified": false,
+  "reviewed_properties": [
+    "Whole producer/recovery/qualification ZIP fingerprints and exact member closure",
+    "Exact Win32 PE machine and import/delay-import ABI comparison",
+    "Historical raw Game and Map manifest restoration preserves byte order and serialization",
+    "Only target executable and additive manifest change; all other archive member bytes preserved",
+    "Per-BIN schema/output/native-ID/loader-decision hashes bound to exact provider/recipe/proof and both actual consumers",
+    "Game texture bridge requires exact integer32 and complete unchanged seven-source reader/producer/header/root closure",
+    "Map texture projection requires exact native consumer and pinned svr_init.c exclusion proof",
+    "Absent real authorities fail before candidate material reads",
+    "No Game/Map launch, player SQL access, profile mutation or cache deletion exists in this scaffold"
+  ],
+  "reviewer_pushes": false,
+  "reviewer_source_edits": false,
+  "runtime_activation_approved": false,
+  "runtime_activation_implemented": false,
+  "shipping_native_replacement_approved": false,
+  "source_files": {
+    "android/guest/native_startup_metadata_contract.py": {
+      "bytes": 14681,
+      "sha256": "298b0485714f0b2841760ccf9b6b53827f5de0eb619536b97c7bbfb0d05ba355"
+    },
+    "tools/android/interactive/native_startup_component_migration.py": {
+      "bytes": 11130,
+      "sha256": "928c19588f387db5dc0b530655e060a869587bb0c42d1c3adad44a7a9a40b86f"
+    },
+    "tools/android/interactive/test_native_startup_component_migration.py": {
+      "bytes": 7549,
+      "sha256": "f840008f6eda545111c4156407b5c2ccdf5bb1e1bfce33549bcdf5805bd08a56"
+    },
+    "tools/android/interactive/test_native_startup_metadata_contract.py": {
+      "bytes": 13737,
+      "sha256": "a1f9b2470b765cbf6a994feb6398caf070b7690c8b79809842145137d43648ab"
+    }
+  },
+  "source_manifest": {
+    "bytes": 2237,
+    "sha256": "bb87b86986b9e65420a5f843b6c1a6aa9ec1d704ce3fbbf572fd3265e703fcfa"
+  },
+  "status": "approved_dormant_scaffold_only",
+  "verified_utc": "2026-10-13T23:30:35.103098+00:00"
+}

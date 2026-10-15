@@ -1,0 +1,291 @@
+--- a/MapServer/src/beacon/beaconClientServer.c
++++ b/MapServer/src/beacon/beaconClientServer.c
+@@ -424,6 +424,9 @@
+                             S32 earlyMutexRelease,
+                             S32 hideNewWindow)
+ {
++    /* Host-only producer: the orchestrator owns all exact executable paths. */
++    return 1;
++
+     const char* exeFileName = beaconGetExeFileName();
+     const char* baseFolder = "c:/beaconizer/";
+     const char* folderPrefix = "beaconcopy.";
+@@ -2842,8 +2845,11 @@
+ 
+ void beaconizerStart()
+ {
+-    if(!beaconizerInit.clientServerType){
+-        return;
++    /* -nogui skips console stdio setup; use the native FileWrapper API. */
++    setvbuf(fileGetStdout(), NULL, _IONBF, 0);
++    if(!beaconizerInit.clientServerType || beaconIsProductionMode()){
++        FatalErrorf("Host Atlas beacon producer requires nonproduction native beacon roles");
++        exit(2);
+     }
+     
+     logBackgroundWriterSetSleep(500);
+--- a/MapServer/src/beacon/beaconServer.c
++++ b/MapServer/src/beacon/beaconServer.c
+@@ -658,7 +658,7 @@
+     client->uid = beacon_server.nextClientUID++;
+ 
+     if(    !beacon_server.localOnly ||
+-        !stricmp(beaconGetLinkIPStr(link), makeIpStr(getHostLocalIp())))
++        !stricmp(beaconGetLinkIPStr(link), "127.0.0.1"))
+     {
+         beaconServerSetClientState(client, BCS_NOT_CONNECTED);
+     }else{
+@@ -2611,33 +2611,12 @@
+ }
+ 
+ static void beaconServerLoadMapFileList(S32 justLocal){
+-    char* mapListFileDir = "server/maps/beaconprocess";
+-
++    /* Finite native Atlas graph producer; no personal or global map lists. */
+     eaClearEx(&beacon_server.mapList, NULL);
+-
+-    beaconServerLoadLocalMapList();
+-
+-    if(!justLocal){
+-        printf("Reading map file names from spec files:\n");
+-
+-        beaconServerLoadMapFilesFromSpec();
+-
+-        printf("Reading maplist files:\n");
+-        beaconPrintfDim(COLOR_GREEN, "  Source: %s/maps*.txt\n", mapListFileDir);
+-
+-        fileScanAllDataDirs(mapListFileDir, readMapFile);
+-    }
+-
+-    beacon_server.mapCount = eaSize(&beacon_server.mapList);
++    eaPush(&beacon_server.mapList,
++           strdup("maps/city_zones/city_01_01/city_01_01.txt"));
++    beacon_server.mapCount = 1;
+     beacon_server.curMapIndex = -1;
+-
+-    //if(!beacon_server.mapCount){
+-    //    sprintf(buffer, "No existing maps specified in: %s", fileName);
+-    //    assertmsg(0, buffer);
+-    //    exit(0);
+-    //}
+-
+-    printf("Added %d map files to the list.\n", beacon_server.mapCount);
+ }
+ 
+ static const char* getClientStateName(BeaconClientState state){
+@@ -2757,7 +2736,7 @@
+ 
+ static void beaconServerGetLatestData(void){
+     
+-    _chdir("c:\\game\\");
++    /* Keep the orchestrator-owned current data directory. */
+     
+     beaconPrintf(COLOR_YELLOW, "Skipping Perforce get because it is disabled\n");
+ }
+@@ -2866,6 +2845,9 @@
+ #undef BUFSIZE
+ 
+ static void beaconServerInstall(void){
++    /* This binary is a host-only producer; no installation or registry writes. */
++    return;
++
+     HANDLE hMutex;
+     DWORD result;
+ 
+@@ -2927,6 +2909,64 @@
+             exit(0);
+         }
+     }
++}
++
++static void beaconHostRequire(S32 condition, const char* reason){
++    if(!condition){
++        FatalErrorf("Host Atlas beacon qualification failed: %s", reason);
++        exit(2);
++    }
++}
++
++static void beaconHostVerifyCurrentAtlasGraph(void){
++    S32 i, connected = 0, ground = 0, raised = 0, paths = 0;
++    S32 mapMatches;
++    U32 freshWorldCRC;
++    char freshMapName[] = "maps/city_zones/city_01_01/city_01_01.txt";
++    NavSearch* search;
++    groupLoadMap(freshMapName, 0, 0);
++    /* The matcher freshly traverses the ordinary loaded world and compares
++       its full CRC with the native date sidecar. Capture that proof before
++       graph readback/path operations change runtime state. Never put this
++       required call inside an assertion macro. */
++    mapMatches = beaconDoesTheBeaconFileMatchTheMap(1);
++    beaconHostRequire(mapMatches, "fresh ordinary world/date CRC mismatch");
++    freshWorldCRC = beacon_process.fullMapCRC;
++    printf("COH_ATLAS_BEACON_FRESH_WORLD_V1 crc=0x%08x\n", freshWorldCRC);
++    fflush(fileGetStdout());
++    beaconReload();
++    beaconHostRequire(beaconGetReadFileVersion() == 8, "native graph reader version");
++    beaconHostRequire(combatBeaconArray.size > 1000 && combatBeaconArray.size <= 1000000, "native combat beacon count");
++    beaconHostRequire(combatBeaconGridBlockArray.size > 0, "native graph block count");
++    for(i = 0; i < combatBeaconArray.size; i++){
++        Beacon* b = combatBeaconArray.storage[i];
++        connected += b->gbConns.size || b->rbConns.size;
++        ground += b->gbConns.size;
++        raised += b->rbConns.size;
++    }
++    beaconHostRequire(connected > 1000 && ground > 1000, "native graph connections");
++    beaconSetPathFindEntity(NULL, 0);
++    search = createNavSearch();
++    for(i = 0; i < combatBeaconArray.size && paths < 32; i += max(1, combatBeaconArray.size / 1000)){
++        Beacon* src = combatBeaconArray.storage[i];
++        Beacon* dst = src;
++        NavSearchResults result = {0};
++        S32 j;
++        for(j = 0; j < 12 && dst->gbConns.size; j++){
++            BeaconConnection* c = dst->gbConns.storage[(i + j) % dst->gbConns.size];
++            dst = c->destBeacon;
++        }
++        if(distance3(posPoint(src), posPoint(dst)) < 20) continue;
++        clearNavSearch(search);
++        beaconPathFind(search, posPoint(src), posPoint(dst), &result);
++        if(result.resultType == NAV_RESULT_SUCCESS && search->path.waypointCount >= 2) paths++;
++    }
++    destroyNavSearch(search);
++    beaconHostRequire(paths == 32, "32 native pathfinder routes");
++    printf("COH_ATLAS_BEACON_NATIVE_V1 crc=0x%08x combat=%d connected=%d ground=%d raised=%d blocks=%d paths=%d\n",
++           freshWorldCRC, combatBeaconArray.size, connected,
++           ground, raised, combatBeaconGridBlockArray.size, paths);
++    fflush(fileGetStdout());
+ }
+ 
+ static void beaconServerStartupSetServerType(BeaconizerType beaconizerType){
+@@ -2974,8 +3014,15 @@
+     }
+ 
+     beaconServerStartupSetServerType(beaconizerType);
+-    beacon_server.onePassOnly = onePassOnly;
+-    beacon_server.forceRebuild = forceRebuild;
++    if(!beacon_server.isMasterServer){
++        beaconHostRequire(!beacon_server.isRequestServer, "owned server role");
++        beaconHostRequire(masterServerName && !strcmp(masterServerName, "127.0.0.1"), "owned loopback master");
++        beacon_server.isAutoServer = 1;
++        beacon_server.loadMaps = 1;
++    }
++    beacon_server.localOnly = 1;
++    beacon_server.onePassOnly = 1;
++    beacon_server.forceRebuild = 1;
+ 
+     if(!beacon_server.isMasterServer){
+         if(masterServerName){
+@@ -3058,7 +3105,7 @@
+     }
+ 
+     if(!beaconIsProductionMode()){
+-        checkForCorrectExePath(beaconServerExeName, beaconMyCmdLineParams(noNetStart), 0, 0);
++        /* Exact owned executable/cwd: no relocation command-line evaluation. */
+         pktSetDebugInfo();
+     }
+ 
+@@ -5851,6 +5898,7 @@
+         printf("Writing file: ");
+         beaconWriteCurrentFile(false);
+         printf("Done!\n");
++        beaconHostVerifyCurrentAtlasGraph();
+     }else{
+         beaconServerUpdateTitle("Writing beacon file to memory!");
+ 
+@@ -6653,6 +6701,15 @@
+ 
+ void beaconServer(BeaconizerType beaconizerType, const char* masterServerName, S32 noNetStart, S32 onePassOnly, S32 forceRebuild){
+     beaconServerStartup(beaconizerType, masterServerName, noNetStart, onePassOnly, forceRebuild);
++    {
++        const char* verifyOnly = getenv("COH_ATLAS_BEACON_VERIFY_ONLY");
++        if(verifyOnly){
++            beaconHostRequire(!strcmp(verifyOnly, "1"), "verify-only environment value");
++            beaconHostRequire(!beacon_server.isMasterServer && !beacon_server.isRequestServer && noNetStart, "isolated verify-only role");
++            beaconHostVerifyCurrentAtlasGraph();
++            exit(0);
++        }
++    }
+ 
+     while(1){
+         beaconServerMonitorNetworkOrSleep();
+--- a/MapServer/src/beacon/beaconClient.c
++++ b/MapServer/src/beacon/beaconClient.c
+@@ -978,12 +978,7 @@
+             if(totalTime >= 10){
+                 printf("Starting a new sentry!\n");
+                 
+-                beaconStartNewExe(    beaconClientExeName,
+-                                    beacon_client.exeData,
+-                                    beacon_client.exeSize,
+-                                    beaconClientGetCmdLine(1, 0, 1),
+-                                    0, 0,
+-                                    hideClient);
++                /* The orchestrator owns and bounds the one worker; never spawn. */
+                 
+                 totalTime = 0;
+                 lastTime = 0;
+@@ -1087,12 +1082,7 @@
+                 
+                 // Start a new client.
+ 
+-                beaconStartNewExe(    beaconClientExeName,
+-                                    beacon_client.exeData,
+-                                    beacon_client.exeSize,
+-                                    beaconClientGetCmdLine(1, 0, 1),
+-                                    0, 0,
+-                                    hideClient);
++                /* The orchestrator owns and bounds the one worker; never spawn. */
+             }
+         }
+         else if(!beaconIsProductionMode()) {
+@@ -1809,12 +1799,8 @@
+     if(curReceived + curBytes == totalBytes){
+         beaconPrintf(COLOR_GREEN, "Starting new exe!\n");
+         
+-        beaconStartNewExe(    beaconClientExeName,
+-                            beacon_client.newExeData.data,
+-                            totalBytes,
+-                            beaconClientGetCmdLine(1, 1, 1), 
+-                            1,
+-                            !beaconClientIsSentry(), hideClient);
++        FatalErrorf("Owned host beacon roles reject executable self-update");
++        exit(2);
+     }else{
+         BEACON_CLIENT_PACKET_CREATE(BMSG_C2ST_NEED_MORE_EXE_DATA);
+ 
+@@ -2068,6 +2054,9 @@
+ }
+ 
+ static void beaconClientInstall(void){
++    /* Host-only producer; no autorun or machine installation. */
++    return;
++
+     HANDLE hMutex;
+     
+     if(    beaconIsProductionMode() ||
+@@ -2200,7 +2189,7 @@
+         
+         GetSystemInfo(&si);
+ 
+-        beacon_client.cpuCount = si.dwNumberOfProcessors;
++        beacon_client.cpuCount = 1; /* The orchestrator starts exactly one worker. */
+         
+         consoleSetColor(COLOR_BRIGHT|COLOR_GREEN, 0);
+         printf("I'm the sentry!!!  (%d CPU%s)\n", beacon_client.cpuCount, beacon_client.cpuCount > 1 ? "s" : "");
+@@ -2217,14 +2206,7 @@
+ 
+     _beginthreadex(NULL, 0, beaconClientWindowThread, NULL, 0, NULL);
+     
+-    if(!beaconIsProductionMode()){
+-        if(!checkForCorrectExePath(    beaconClientExeName,
+-                                    beaconClientGetCmdLine(1, 1, 1),
+-                                    !beaconClientIsSentry(),
+-                                    hideClient))
+-        {
+-            assert(0);
+-        }
+-    }
++    /* The host orchestrator owns relocation. Do not evaluate GetCmdLine:
++       its legacy raw common-argument append overflows this EString. */
+     
+     // Connect to the dbserver.

@@ -1,0 +1,49 @@
+COH Atlas Gameplay 0.13.1 — storage inspection and selected cleanup
+
+Finish your current 0.13.0 task/save test and export its gameplay ZIP before
+installing this update. Install over the existing app; keep application data,
+COHLOCAL, THORHERO and imported assets. Do not uninstall or clear app storage.
+
+This is an Android wrapper update. Every runtime, server, client, prepared
+cache and animation payload is identical to 0.13.0. Keep the existing runtime;
+no Refresh runtime, asset reimport or repeat of the gameplay test is required.
+Your current task/save findings remain the evidence for that gameplay gate.
+
+1. After the test has finished and the app is idle, note Android Settings'
+   current app storage usage. Open Storage and cleanup, then Scan storage.
+   The scan reads metadata without starting Wine, the server or the client.
+   Large installations can take time. If the scan is incomplete or finds an
+   unsafe identity, cleanup remains disabled; export its report instead.
+2. Review allocated storage and Estimated removable. Apparent size counts
+   file lengths; allocated size counts actual blocks once per inode and never
+   follows links into imported data. The app's private files total excludes
+   the installed APK, Android-managed storage and its small audit-report cache,
+   so it need not equal Android Settings' total.
+3. Select only the disposable categories you want removed: verified older
+   runtimes, runtime download cache, and older completed test reports. Tap
+   Review selected cleanup. Check the categories, candidate paths and estimate,
+   then tap Clean selected if you want those files deleted.
+4. Read the fresh result. Changed files invalidate the reviewed plan before
+   deletion starts. A later deletion error stops cleanup and reports partial
+   progress. Export storage report saves a JSON file containing the inventory
+   or cleanup result and its fresh totals. Note Android's storage usage again.
+5. Send that JSON and before/after Android storage figures with your current
+   gameplay ZIP and task/save observations. No additional long gameplay run
+   is requested for this storage update.
+
+Cleanup protects the current runtime, the complete character/database/Wine/
+server-cache state tree, all imported generations, the latest gameplay report
+and the newest three report directories. Runtime dependencies referenced by
+protected links are retained. Unknown, incomplete and unverified paths are
+preserved. Nothing is automatically pruned on installation or launch.
+
+Deleting a cached component download does not affect the installed runtime;
+a future genuine runtime change may need to download that component again.
+Older support reports selected for deletion cannot be exported afterward.
+Export anything you want to retain before selecting that category.
+
+The scan, rather than the reported 57.44 GB alone, determines the recoverable
+amount. State and imports are measured but intentionally preserved in this
+pass; their breakdown can guide later work without risking the saved profile
+or discarding startup caches. Host qualification does not establish actual
+device cleanup, reclaimed space or new startup timing.

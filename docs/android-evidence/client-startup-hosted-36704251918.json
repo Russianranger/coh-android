@@ -1,0 +1,96 @@
+{
+  "format": 1,
+  "status": "failed",
+  "scope": "actual_client_startup_hosted",
+  "run_id": 36704251918,
+  "repository_commit": "1161d13c655b21c581e821fd9cd990c660960ac8",
+  "apk_sha256": "012eaa328c5fde8d2c86ae184f7768bd219ce64440b5c617d9e549477289cb6d",
+  "runtime_manifest_sha256": "d647194464f02ff578dbcd7b52a69da422632a12c83ca3065e2069c26de8f4f3",
+  "session_id": "c66600a28c61a2f5f13c7ba0291f298b",
+  "startup_timeout_seconds": 300,
+  "failures": [
+    "Actual CoH startup exceeded its bounded deadline"
+  ],
+  "stages_passed": [
+    "client_inputs",
+    "client_private_data",
+    "presentation_display",
+    "wine_initialization",
+    "win32_runtime_dll"
+  ],
+  "actual_client_started": true,
+  "startup_observed": false,
+  "renderer_initialized": true,
+  "all_data_loaded": false,
+  "client_main_loop_reached": false,
+  "graphics_observation": {
+    "vendor": "Mesa/X.org",
+    "renderer": "llvmpipe (LLVM 15.0.6, 128",
+    "gl_version": "4.3 (Compatibility Profile)",
+    "renderer_classification": "software"
+  },
+  "console_capture": {
+    "session_id": "c66600a28c61a2f5f13c7ba0291f298b",
+    "pid": 452,
+    "attached": true
+  },
+  "console_bytes": 430654,
+  "external_frame_updates": 156,
+  "external_distinct_frames": 5,
+  "cleanup_complete": true,
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 465,
+    "scanned_tasks": 2,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "cache_inventory": {
+    "path": "private-cache-inventory.json",
+    "files": 9,
+    "truncated": false
+  },
+  "last_completed_milestones": [
+    "renderer initialization",
+    "texture headers",
+    "fonts",
+    "3224 group libraries with 75433 names",
+    "LOD data"
+  ],
+  "last_console_phase": "Sequencer text parsing; sequencers.bin absent. Phase began about 71 seconds before deadline.",
+  "visual_review": "Full correctly fitted 800x600 City of Heroes Freedom loading background; no main-loop or login readiness established.",
+  "interpretation": "Actual rendering and attached console work. Cold data parsing is observed, with nine generated caches. A single process snapshot does not establish a deadlock. Texture warnings were followed by successful texture headers, fonts, group libraries and LOD loading.",
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "missing_texture_review": {
+    "distinct_trick_texture_pairs": 797,
+    "unique_texture_names": 716,
+    "names_found_in_exact_asset_index": 0,
+    "texture_files_in_asset_index": 8936,
+    "source_behavior": "Non-LWC client logs and skips the missing composite texture trick; tricks.c:1278-1295.",
+    "startup_block_established": false,
+    "later_world_rendering_complete": false
+  },
+  "sequencer_inputs": {
+    "files": 661,
+    "approximate_bytes": 7510000,
+    "observed_parse_interval_seconds": 71
+  }
+}

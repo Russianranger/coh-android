@@ -1,0 +1,127 @@
+{
+  "format": 1,
+  "file": "coh-diagnostic-20260927-222649.zip",
+  "archive_sha256": "922c4b1d0d2519fbb138c5390a024bf841af8a9dbb23a8e86b0cb92d422afb2b",
+  "source_commit": "49c1626c10636e46a38493047f34ab61a9a5d5ca",
+  "app_version": "0.1.3",
+  "device": "AYN AYN Thor",
+  "android_sdk": 33,
+  "runtime_manifest_sha256": "4348030259b192a5711395704949c153e2f1e0fc0f337e70a05b55ad33300aa1",
+  "result": "all_eleven_functional_stages_passed_cleanup_failed",
+  "mode": "database",
+  "failures": [
+    "Owned process input/output capture did not close: wineboot"
+  ],
+  "stages": [
+    {
+      "stage": "assets_and_architecture",
+      "status": "passed"
+    },
+    {
+      "stage": "initialize_owned_cluster",
+      "status": "passed"
+    },
+    {
+      "stage": "postgres_first_start",
+      "status": "passed"
+    },
+    {
+      "stage": "restricted_fixture_database",
+      "status": "passed"
+    },
+    {
+      "stage": "wine_prefix_and_driver",
+      "status": "passed"
+    },
+    {
+      "stage": "win32_odbc_driver",
+      "status": "passed"
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "status": "passed"
+    },
+    {
+      "stage": "odbc_fixture",
+      "status": "passed",
+      "checks": [
+        "PASS all 65 stock DbServer ODBC connections coexist",
+        "PASS ID ordering, deleted highest ID, rollback and bulk-import startup state",
+        "PASS indexes: duplicate field names, idempotence, schema isolation, legacy cleanup",
+        "PASS foreign keys: absent table/constraint removal, add/remove, child rows, orphan rejection",
+        "PASS bound values: integer limits, byte 255, float, UTF-16, timestamp, 32 KiB bytea chunks, long text and NULL",
+        "PASS SQLColumns: canonical PostgreSQL types, Unicode varchar, text and bytea",
+        "PASS atomic schema rebuild: row data, deleted-highest ID, foreign keys, indexes, conversion/dependency rollback, ASCII name keys",
+        "PASS column migration and connection reopen"
+      ]
+    },
+    {
+      "stage": "postgres_clean_restart",
+      "status": "passed"
+    },
+    {
+      "stage": "postgres_restart_ready",
+      "status": "passed"
+    },
+    {
+      "stage": "odbc_after_restart",
+      "status": "passed",
+      "checks": [
+        "PASS persisted fixture after reconnect/restart/restore"
+      ]
+    }
+  ],
+  "wine_initialization": {
+    "policy": "initialize_once_then_reuse",
+    "state": "ready",
+    "ready_prefix_reused": false,
+    "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+    "update_timestamp_removed": false,
+    "timeout_seconds": 600,
+    "registration_processes": 3,
+    "wow64_registration_processes": 1,
+    "registration_passes": 1,
+    "elapsed_seconds": 90.927
+  },
+  "wineboot": {
+    "elapsed_seconds": 90.923,
+    "exit_code": 0,
+    "forced_stop": true,
+    "output_capture_closed": false,
+    "input_closed": true,
+    "completion": {
+      "policy": "leader_exit_with_owned_background_output",
+      "leader_exit_code": 0,
+      "output_capture_open": true,
+      "elapsed_seconds": 90.923
+    }
+  },
+  "wine_shutdown": {
+    "stop_exit_code": 0,
+    "wait_exit_code": 0,
+    "prefix_lock_free": true,
+    "server_socket_inactive": true
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": false
+  },
+  "cleanup_complete": false,
+  "asset_sha256": {
+    "001-coh-compat.sql": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a",
+    "odbc_probe.exe": "cb7989d47648b73bcfc8ba01a83c291b0440eab189bb8ad58a6f1331da8407b3",
+    "psqlodbc_x86.msi": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773",
+    "runtime-probe.exe": "0325cb8fa046a263ff7c5fb88d8d7c11496e490953e1d309ce695eff44c914ff",
+    "probe.dll": "0ebed5f84cfff061d396af9f47254beb69ed62ec16b3d3812a19e038646b619b"
+  },
+  "supported_findings": [
+    "Cold Wine initialization completed in 90.927 seconds with exactly one registration pass",
+    "Native PostgreSQL, real PE32 DLL loading, all 65 ODBC connections and SQL/value/metadata fixtures passed on Thor",
+    "Durable same-cluster restart and ODBC persisted-data verification passed",
+    "The only recorded failure was the wineboot output capture remaining open after prefix shutdown",
+    "All directly owned processes exited; complete descendant shutdown was not established"
+  ],
+  "causal_limit": "The report does not identify the remaining pipe writer. A Wine server lock/socket shutdown is not proof that every Unix helper exited. Exact run ownership must identify any remaining helpers before signaling them.",
+  "scope": "Selected diagnostic fields only; original user support archive remains private; client graphics were not requested and game execution is unvalidated"
+}

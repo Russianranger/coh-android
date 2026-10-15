@@ -1,0 +1,80 @@
+{
+  "format": 1,
+  "scope": "hosted_preserved_wine_prefix_refresh_failed_candidate",
+  "run_id": 36784616495,
+  "repository_commit": "356579cdef610428032750b4d50ca57b1f453249",
+  "status": "failed",
+  "apk_sha256": "5e7b07950867f7c4efba9da05d2057e63405489a2bdde9eec1209b6f5c21a242",
+  "artifact_id": 11129198594,
+  "artifact_sha256": "a1afb2875e313ed37881a1af0963fab64797f3cdb264ee404ea7d26a89008499",
+  "session_id": "5728a5247220931dd5bae6522fbc0436",
+  "real_seed_passed": true,
+  "real_seed_runtime_probe": {
+    "pointer_bits": 32,
+    "dll_export_verified": true,
+    "odbc_manager_loaded": true
+  },
+  "seed_owned_child_records": 5,
+  "seed_cleanup_complete": true,
+  "failed_stage": "wine_initialization",
+  "failures": [
+    "Wine update timestamp content is invalid"
+  ],
+  "wine_initialization": {
+    "policy": "initialize_once_then_reuse",
+    "state": "failed",
+    "ready_prefix_reused": false,
+    "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+    "update_timestamp_removed": true,
+    "timeout_seconds": 600,
+    "prior_ready_prefix": true,
+    "existing_prefix_preserved": true,
+    "installed_wine_inf": {
+      "path": "/opt/wine/share/wine/wine.inf",
+      "bytes": 143804,
+      "sha256": "b8586ae73d000f2c21a9c019636976df255c61f0168ce49d6813643ab1d47361",
+      "mtime_seconds": 1790806933,
+      "mtime_ns": 1790806933903386688,
+      "device": 2049,
+      "inode": 7089693
+    },
+    "refresh_reason": "wine_inf_timestamp_changed",
+    "update_timestamp_content_before": 1790806932,
+    "update_timestamp_content_after": null,
+    "registration_timestamp_verified": false,
+    "registration_processes": 3,
+    "wow64_registration_processes": 1,
+    "registration_passes": 1,
+    "elapsed_seconds": 37.773
+  },
+  "warm_prefix_setup": {
+    "mode": "real_prefix_then_stale_wine_inf_timestamp",
+    "session_id": "5728a5247220931dd5bae6522fbc0436",
+    "prefix_device": 2049,
+    "prefix_inode": 7090503,
+    "prefix_sentinel_sha256": "a0aae24bd424dbae41961c07b82cfe8bf4dcb423feac7eb4f9dc274371651671",
+    "ready_marker_sha256": "866bf42b592f9759b18e6f86f965fd6f8e5482763cb04bd1a65a58054da82823",
+    "wine_inf_sha256": "b8586ae73d000f2c21a9c019636976df255c61f0168ce49d6813643ab1d47361",
+    "wine_inf_mtime": 1790806933,
+    "timestamp_before": 1790806933,
+    "timestamp_staged": 1790806932,
+    "seed_driver_sha256": "b3f8a659b3090ef1788819b346d73d187915213d7f5000062bd773ae877e5172"
+  },
+  "host_elapsed_seconds": 131.881,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "cleanup_complete": true,
+  "owned_child_records": 21,
+  "remaining_owned_workers": 0,
+  "inspection_failures": 0,
+  "database_preserved": true,
+  "server_started": false,
+  "client_process_started": false,
+  "analysis": "The real seed passed PE32 verification. A stale saved timestamp correctly triggered exactly one successful 3/1/1 Wine registration; post-bootstrap raw-byte timestamp parsing rejected the result. The parser required LF only, while Wine CRT text-mode output can use CRLF. The original archive does not contain timestamp bytes. Next candidate accepts either exact LF or CRLF decimal lines and records seed raw timestamp bytes to corroborate this explanation. No device run requested for this failed candidate.",
+  "android_execution_validated": false,
+  "local_login_validated": false,
+  "gameplay_validated": false
+}

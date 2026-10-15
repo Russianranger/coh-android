@@ -1,0 +1,45 @@
+{
+  "format": 1,
+  "result": "failed_before_runtime",
+  "run_id": 36367594924,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36367594924",
+  "repository_commit": "c72d0bd8134cd8565081bff3148c1318d05e7545",
+  "tooling_tests": {
+    "passed": 43
+  },
+  "build_variants": {
+    "normal": {
+      "compiled": true,
+      "postgresql_persistence_fixture": false
+    },
+    "fixture": {
+      "compiled": true,
+      "postgresql_persistence_fixture": true
+    }
+  },
+  "failure": {
+    "stage": "package_dbserver",
+    "reason": "Packaging rejected MSVC ODBC imports encoded by ordinal before resolving them against the pinned Wine export table.",
+    "runtime_started": false,
+    "scope": "Packaging failure; no DbServer runtime incompatibility or fixture failure was established."
+  },
+  "windows_artifact": {
+    "id": 10948435966,
+    "api_bytes": 16278,
+    "api_digest": "sha256:849554c0da28fd270d74b4ac9128dab3f9522cd1163ec29362e3099508b0fcce",
+    "created_utc": "2026-09-28T01:58:07Z",
+    "contents": [
+      "Normal and fixture CMake caches",
+      "Wine source receipt"
+    ],
+    "compiled_binaries_included": false,
+    "api_metadata_verified": true,
+    "archive_preserved": false,
+    "local_archive_sha256_verified": false
+  },
+  "correction_commit": "c0f4e09928c1c49abb3bcdebc4db998d6cdf7058",
+  "windows_fixture_executed": false,
+  "hosted_arm64_executed": false,
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

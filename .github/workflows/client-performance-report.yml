@@ -1,0 +1,41 @@
+name: Thor renderer report analysis
+on:
+  push:
+    branches: [main, codex/character-persistence-continuation]
+    paths:
+      - '.github/workflows/client-performance-report.yml'
+      - 'tools/android/interactive/analyze_thor_performance.py'
+      - 'tools/android/interactive/analyze_client_scene_performance.py'
+      - 'tools/android/interactive/analyze_client_renderer_performance.py'
+      - 'tools/android/interactive/test_thor_performance_report.py'
+      - 'tools/android/interactive/test_client_scene_performance_report.py'
+      - 'tools/android/interactive/test_client_renderer_performance_report.py'
+  pull_request:
+    paths:
+      - '.github/workflows/client-performance-report.yml'
+      - 'tools/android/interactive/analyze_thor_performance.py'
+      - 'tools/android/interactive/analyze_client_scene_performance.py'
+      - 'tools/android/interactive/analyze_client_renderer_performance.py'
+      - 'tools/android/interactive/test_thor_performance_report.py'
+      - 'tools/android/interactive/test_client_scene_performance_report.py'
+      - 'tools/android/interactive/test_client_renderer_performance_report.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: client-performance-report-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  analyze:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          sparse-checkout: tools/android/interactive
+      - name: Check bounded native measurements and backend evidence
+        run: |
+          python3 -m unittest discover -s tools/android/interactive -p test_thor_performance_report.py -v
+          python3 -m unittest discover -s tools/android/interactive -p test_client_scene_performance_report.py -v
+          python3 -m unittest discover -s tools/android/interactive -p test_client_renderer_performance_report.py -v

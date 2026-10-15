@@ -1,0 +1,34 @@
+name: Reviewed startup recovery source and workflow scope
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-startup-recovery-review.yml
+      - .github/workflows/android-map-startup-native.yml
+      - android/guest/native_map_startup_contract.py
+      - tools/android/interactive/**
+  pull_request:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-startup-recovery-review.yml
+      - .github/workflows/android-map-startup-native.yml
+      - android/guest/native_map_startup_contract.py
+      - tools/android/interactive/**
+permissions: {contents: read}
+concurrency:
+  group: startup-recovery-review-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Authenticate committed source audit and exercise actual Git routing without native promotion
+        env:
+          PYTHONPATH: tools/android/interactive:android/guest:tools/android:tools/android/dbserver:tools/android/atlasgame:tools/android/game:tools:database/postgresql/tests
+        run: >-
+          python3 -m unittest -v
+          test_native_startup_metadata_admission.NativeMetadataAdmissionTests
+          test_map_startup_native_change

@@ -1,0 +1,153 @@
+{
+  "recorded_utc": "2026-09-27",
+  "repository": "Russianranger/coh-android",
+  "workflow_run": {
+    "id": 36282414135,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/36282414135",
+    "conclusion": "success",
+    "commit": "86e512e85c8350714bc7b58668bf11443dc164f8",
+    "completed_utc": "2026-09-27T00:40:07Z"
+  },
+  "artifact": {
+    "id": 10918974991,
+    "name": "character-persistence-evidence",
+    "bytes": 7936,
+    "sha256": "0dafdeb556326fb743d49ffd4d4075fe989aee2975eec31857256fc5b424db99",
+    "archive": "character-persistence-36282414135.zip",
+    "members": [
+      {
+        "path": "character-persistence-report.json",
+        "bytes": 72528,
+        "sha256": "8c6ac482a82df1ae201803bcabd837d58a0db0e446522a79e78dab8f41e2c7ce"
+      },
+      {
+        "path": "selected-diagnostics.txt",
+        "bytes": 657,
+        "sha256": "0ed94d2b265484289b2799d4558f0961a01cdfd0328a73795b2e31847177ccf3"
+      }
+    ]
+  },
+  "report": {
+    "file": "character-persistence-36282414135.json",
+    "status": "fresh_fakeauth_character_persistence_short_resume_passed_gameplay_unvalidated",
+    "failures": [],
+    "phases": [
+      {
+        "phase": "first_services_ready",
+        "time_utc": "2026-09-27T00:37:57.366851+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "account_empty",
+        "time_utc": "2026-09-27T00:37:58.893752+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "created_connected",
+        "time_utc": "2026-09-27T00:38:20.015895+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "influence_observed_while_connected",
+        "time_utc": "2026-09-27T00:38:24.716543+00:00",
+        "status": "passed",
+        "value": 12345,
+        "scope": "CMD debug live entity conPrintf response plus connected MapId1 status; no forced save"
+      },
+      {
+        "phase": "protocol_logout_committed",
+        "time_utc": "2026-09-27T00:38:31.732306+00:00",
+        "status": "passed",
+        "quitnow_is_save_ack": false,
+        "client_forced_stop_before_commit": false
+      },
+      {
+        "phase": "restart_services_ready",
+        "time_utc": "2026-09-27T00:39:22.555867+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "restart_saved_state",
+        "time_utc": "2026-09-27T00:39:24.661117+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "short_resume_and_committed_state",
+        "time_utc": "2026-09-27T00:39:40.141655+00:00",
+        "status": "passed"
+      }
+    ],
+    "character": {
+      "container_id": 1,
+      "name": "TEST20636",
+      "account": "CohPfb1d386ecb"
+    },
+    "influence": 12345,
+    "restart_comparison": {
+      "phase": "restart",
+      "identity_unchanged": true,
+      "selected_rows_unchanged": true,
+      "login_count_before": 1,
+      "login_count_after": 1,
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 7,
+        "costumeparts": 13
+      }
+    },
+    "resume_comparison": {
+      "phase": "resume",
+      "identity_unchanged": true,
+      "selected_rows_unchanged": true,
+      "login_count_before": 1,
+      "login_count_after": 2,
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 7,
+        "costumeparts": 13
+      }
+    },
+    "resume_probe": {
+      "slot": 0,
+      "scene_exchange_observed": true,
+      "creation_disabled": true,
+      "active_gameplay_confirmed": false,
+      "scope": "Short resume/scene probe; queued CLIENT_READY processing is unproven"
+    },
+    "protocol_logout_before_forced_cleanup": true,
+    "console_observers_finalized": true
+  },
+  "tooling": {
+    "windows": {
+      "character_passed": 54,
+      "map_passed": 13,
+      "character_skipped": 0
+    },
+    "linux": {
+      "character_passed": 49,
+      "map_passed": 13,
+      "character_skipped": 5
+    }
+  },
+  "postgresql_regression": {
+    "run_id": 36282414187,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/36282414187",
+    "commit": "86e512e85c8350714bc7b58668bf11443dc164f8",
+    "jobs_passed": [
+      "PostgreSQL 16 and ODBC",
+      "PostgreSQL 18 and ODBC",
+      "Win32 PostgreSQL ODBC",
+      "Real DbServer PostgreSQL persistence"
+    ]
+  },
+  "scope": "Fresh disposable fake-auth character creation, live currency command, protocol logout and committed selected SQL, same PostgreSQL cluster and game-service restart, exact-name short scene resume with creation disabled.",
+  "unvalidated": [
+    "Sustained second player session and active gameplay",
+    "Queued CLIENT_READY processing in the short resume",
+    "Map transfers and auxiliary services",
+    "Graceful whole-server shutdown",
+    "Android execution and APK packaging"
+  ]
+}

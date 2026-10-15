@@ -1,0 +1,30 @@
+name: Exact Atlas encounter visual candidate evidence
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-client-visual-candidates.yml
+      - tools/android/interactive/discover_client_visual_candidates.py
+      - tools/android/interactive/test_client_visual_candidates.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  discover:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Read retained pinned metadata and only six exact encountered texture leaves
+        run: |
+          python3 -m unittest discover -s tools/android/interactive -p 'test_client_visual_candidates.py' -v
+          python3 tools/android/interactive/discover_client_visual_candidates.py --output out/atlas-encounter-candidates
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-atlas-encounter-candidates
+          path: out/atlas-encounter-candidates/
+          if-no-files-found: error
+          retention-days: 90

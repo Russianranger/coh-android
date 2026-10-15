@@ -1,0 +1,116 @@
+{
+  "schema": "coh-standard-037-recovery-progress-v1",
+  "recorded_utc": "2026-10-15T01:05:14.847265+00:00",
+  "branch": "codex/character-persistence-continuation",
+  "recovered_from": "65c4d83a533400118932685b170c640a77bc9435",
+  "exact_source_import_commit": "00c8f088b063afdfae545201e24956f50a4f8d01",
+  "source_inventory": {
+    "path": "docs/android-evidence/continuation-037-recovery-inventory-20261015.json",
+    "bytes": 57414,
+    "sha256": "ffdbf8a74c2327e99d450ac61183b52457e361f02eeb7b119df3d37ef6995148"
+  },
+  "receipts": [
+    {
+      "path": "research/native-live-recovery-037/fixture-replay/evidence/replay-qualification.json",
+      "bytes": 3387,
+      "sha256": "b6c5fdcda7251fec47fb9b70834c2a0074b85d894e544850a160a87ef88b603d"
+    },
+    {
+      "path": "research/native-live-recovery-037/fixture-replay/evidence/runner-hardening-qualification.json",
+      "bytes": 1945,
+      "sha256": "8cfabfa0d70f4825aac241169fd4cdfad762da9c0945853453e49ae5b5abf21e"
+    },
+    {
+      "path": "research/native-live-recovery-037/android-adapter-successor/host-policy-receipt.json",
+      "bytes": 2396,
+      "sha256": "5ca7eb28077825a00db6e4e4be365b158fe78aaf0ba5acaaec73adc674d7e2b7"
+    },
+    {
+      "path": "research/native-live-recovery-037/android-adapter-successor/independent-host-policy-review.json",
+      "bytes": 1145,
+      "sha256": "f02c1a64d106afa9a7e921dc895780bd2a728bde55af9244f8bcfc88cac0f251"
+    },
+    {
+      "path": "research/native-live-recovery-037/guest-owner-successor/qualification.json",
+      "bytes": 1964,
+      "sha256": "90fc943fa8ebc9f3c3242e26cfd17ecb3ce21d81f462e2ced2196bf8bd76bd93"
+    },
+    {
+      "path": "research/native-live-ancestor-candidate-037/host-replay-20261015/qualification.json",
+      "bytes": 3875,
+      "sha256": "6fbcc247b78915da7206fbbde39d569bb9dd1d9d4c31123c4f268a56ebf84ba5"
+    },
+    {
+      "path": "research/native-live-recovery-037/guest-owner-successor/independent-review.json",
+      "bytes": 4266,
+      "sha256": "921860aa3138e50aa514f3a5c1f74569ec444ec322dc42adf92b59b87698e777"
+    }
+  ],
+  "verified_scopes": {
+    "exact_installed_layout_fixture": 75,
+    "exact_guest_loader": 36,
+    "reused_original_CI_host_JNI_kernel_TCP": 5,
+    "recovered_ancestor_candidate_host_kernel": {
+      "total": 51,
+      "original_controls": 42,
+      "new_permission_controls": 9
+    },
+    "new_package_policy_host_mocks": 59,
+    "new_guest_owner_host_custody": 41,
+    "replay_runner_negative_controls": 10,
+    "overlap_policy": "Do not add repeated or historical counts; independent reruns are the same cases."
+  },
+  "native_artifact_reuse": {
+    "Game_probe_artifact": 11884140724,
+    "original_helpers_artifact": 11878700818,
+    "retained_audit_artifact": 11879777713,
+    "original_failed_job_still_failed": true,
+    "Game_recompiled": false,
+    "probe_recompiled": false,
+    "JNI_helper_recompiled": false,
+    "changed_C_candidate_test_library_compiled": true
+  },
+  "unavailable_exact_source": [
+    "ClientLiveDirectoryAndroidFixture.java and original test",
+    "guest fixture owner revision 3 and original tests",
+    "HostNativeLiveService.java",
+    "sdk_custody.py"
+  ],
+  "new_source_is_not_recovered_original": true,
+  "remaining_blockers": [
+    "Successor ARM helper ABI build after focused source/kernel review.",
+    "Real held-FD Android package/filesRoot/ancestor custody and Android SDK compilation.",
+    "Native service/SDK process owner, exact two-mount isolation, owned closure/cleanup and alias normalization.",
+    "Genuine Wine/Game compatibility using compiled Game/probe and current packaged Android/Wine/FEX/PRoot fixture.",
+    "Integrated current source/artifact pins and full report/export/saved-profile/SQL qualification before APK."
+  ],
+  "release": {
+    "latest_gameplay": "0.13.36",
+    "successor_APK_built": false,
+    "successor_APK_qualified": false,
+    "successor_APK_published": false,
+    "activation_allowed": false,
+    "Map_prefetch_candidate": "rejected/default-off",
+    "PR2": "draft/unmerged; superseded source logic retained; narrow workflow correction separate"
+  },
+  "physical_performance": {
+    "new_device_measurements": null,
+    "targets_seconds": {
+      "client_initialization_less_than": 60,
+      "ordinary_test_zoning_approximately_at_most": 90
+    },
+    "inherited_036_only": {
+      "Game_initialization_approx_seconds": 264,
+      "first_Kings_native_MapServer_seconds": 285.590637,
+      "first_Kings_complete_request_seconds": 399.273,
+      "resident_Atlas_return_request_seconds": 82.844,
+      "resident_Atlas_observer_confirmation_seconds": 96.891
+    },
+    "qualification": "No speedup, RAM reduction or device target claimed."
+  },
+  "preserved": {
+    "saved_characters_assets_databases_runtime": true,
+    "actual_saved_destination_must_be_queried": true,
+    "native_android_branch_source_workflows_and_qualifications_used": false
+  }
+}

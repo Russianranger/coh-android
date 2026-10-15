@@ -1,0 +1,291 @@
+{
+  "format": 1,
+  "status": "physical_contact_accepted_startup_improved_with_save_observer_rejection",
+  "repository_base_commit": "4ba032ecf4fe9008fa15eab0f1ad10cbc8f1913a",
+  "source_zip": {
+    "name": "coh-atlas-gameplay-20261003-110806.zip",
+    "bytes": 12394577,
+    "sha256": "0c479665b302590f87df92363f6cc56eec7e38b2c4b2f66c176b64dae99354f9",
+    "android_client_report_sha256": "75fd0f7b496c079e2f5173002f81be7e8fb3336784438ae02fd0e984e0ce7d7d",
+    "guest_report_zip_sha256": "89285f259a03f29fa8d252e31958b7041e4b68ab86cc8ed87c7c978aee7907d8",
+    "guest_report_json_sha256": "3ba56d02bdb78079ce3fded5f1429ccfaa89a38c550dc0740b43b0ad8fa83987",
+    "operation_log_sha256": "423882b541d4b99e3775a312aa77900053ece5e276521426754aa9c2e5497692"
+  },
+  "device": {
+    "model": "AYN AYN Thor",
+    "android_sdk": 33,
+    "app_version": "0.12.1",
+    "app_id": "io.github.russianranger.cohclientinteractive"
+  },
+  "operation": {
+    "run_id": "1791023823013-7c558dfc7e57",
+    "session_id": "cb216f7fcefc4ad1b4e9f059b2128df8",
+    "guest_started_utc": "2026-10-03T10:37:03.630600+00:00",
+    "guest_finished_utc": "2026-10-03T11:07:54.713908+00:00",
+    "android_passed": false,
+    "guest_passed": false,
+    "failures": [
+      "Committed character position differs from the current native Atlas observation"
+    ],
+    "finish_requested": false,
+    "cleanup_verified": true
+  },
+  "user_assessment": {
+    "boot": "approximately 24-25 minutes, 4-5 minutes improved; accepted for now",
+    "contact_gate": "passed; both outdoor NPC and Merit Reward Informant opened dialogue and allowed information progression",
+    "badge": "earned during ordinary gameplay",
+    "ms_liberty": "model invisible; green circle visible; interaction not established",
+    "accepted_contact_gate": true,
+    "five_minute_server_target_accepted": false
+  },
+  "timings": {
+    "session_to_dbserver_ready_seconds": 645.471,
+    "session_to_atlas_ready_seconds": 875.812,
+    "session_to_client_menu_seconds": 1436.276,
+    "session_to_local_login_seconds": 1455.587,
+    "session_to_character_connected_seconds": 1539.175,
+    "client_startup_seconds": 556.981,
+    "private_server_data_preparation_seconds": 410.21826,
+    "wine_initialization_seconds": 65.423,
+    "texture_header_preparation_seconds": 64.716,
+    "baseline_atlas_ready_seconds": 1310,
+    "baseline_client_startup_seconds": 586,
+    "atlas_ready_improvement_seconds": 434.188,
+    "five_minute_server_target_seconds": 300,
+    "five_minute_target_met": false
+  },
+  "cache_evidence": {
+    "installed_files": 91,
+    "preserved_existing_files": 2,
+    "preserved_paths": [
+      "data/server/bin/PC_Rewards.bin",
+      "data/server/bin/PowersetConversion.bin"
+    ],
+    "all_93_cache_names_observed_in_native_loader_console": true,
+    "native_atlas_outdated_cache_notice_observed": false,
+    "private_server_cache_reused": false,
+    "first_use_requires_full_staging": true,
+    "migration_refused": "no_qualified_closed_generation",
+    "cache_created": true,
+    "returned_after_owned_cleanup": true,
+    "credential_config_removed": true,
+    "warm_start_physical_timing_validated": false,
+    "client_worktree_reused": true,
+    "wrapper_only_migration": true,
+    "source_root_preserved": true,
+    "generated_cache_bytes_preserved": true,
+    "wine_refresh_reason": "wine_inf_timestamp_changed",
+    "wine_registration_timestamp_verified": true
+  },
+  "contact_evidence": {
+    "contacts": [
+      "Sunstorm",
+      "Merit Reward Informant"
+    ],
+    "android_capture_requests": 2,
+    "fresh_capture_count": 6,
+    "capture_hashes_verified": true,
+    "captures": [
+      {
+        "path": "android-contact/capture-1.png",
+        "bytes": 278976,
+        "sha256": "986a60d147cf042c1e4f6cc1e5453e41ca31ca2a300773d3db20ed3284d96854",
+        "batch": 1,
+        "sequence": 1846,
+        "session_id": "cb216f7fcefc4ad1b4e9f059b2128df8",
+        "client_pid": 664,
+        "character_id": 1
+      },
+      {
+        "path": "android-contact/capture-2.png",
+        "bytes": 280478,
+        "sha256": "73da118d6b86915d92e69da925ec44750ff9cb86bd63c1ffad02df8fe7e6ae71",
+        "batch": 1,
+        "sequence": 1857,
+        "session_id": "cb216f7fcefc4ad1b4e9f059b2128df8",
+        "client_pid": 664,
+        "character_id": 1
+      },
+      {
+        "path": "android-contact/capture-3.png",
+        "bytes": 283325,
+        "sha256": "36c06430e9c08f8df63256702aecd86b9bb81d2297f3de037bf40c44fc860f3c",
+        "batch": 1,
+        "sequence": 1868,
+        "session_id": "cb216f7fcefc4ad1b4e9f059b2128df8",
+        "client_pid": 664,
+        "character_id": 1
+      },
+      {
+        "path": "android-contact/capture-4.png",
+        "bytes": 351234,
+        "sha256": "71e4e0cd4da2efcb5c0fe80de7a68c2b72f91f66ea98eed2fd6722f3308c8b0d",
+        "batch": 2,
+        "sequence": 2820,
+        "session_id": "cb216f7fcefc4ad1b4e9f059b2128df8",
+        "client_pid": 664,
+        "character_id": 1
+      },
+      {
+        "path": "android-contact/capture-5.png",
+        "bytes": 351768,
+        "sha256": "47e02add267c34c82aaa9f8a35c45f6d19ffba330d1899beb41213a2563089d9",
+        "batch": 2,
+        "sequence": 2831,
+        "session_id": "cb216f7fcefc4ad1b4e9f059b2128df8",
+        "client_pid": 664,
+        "character_id": 1
+      },
+      {
+        "path": "android-contact/capture-6.png",
+        "bytes": 348874,
+        "sha256": "0c2d5779602c478b7fc2c89048734a4ccfaae12b9b224b37f49793ac9e98756b",
+        "batch": 2,
+        "sequence": 2844,
+        "session_id": "cb216f7fcefc4ad1b4e9f059b2128df8",
+        "client_pid": 664,
+        "character_id": 1
+      }
+    ],
+    "native_log": "guest/client-evidence/character-server-logs.zip:logs/dbserver/entity_2026-10-03-11-00-00.log",
+    "sunstorm_open_utc": "2026-10-03T11:04:20Z",
+    "sunstorm_close_response_utc": "2026-10-03T11:04:42Z",
+    "merit_open_and_script_utc": "2026-10-03T11:05:40Z",
+    "merit_information_response_utc": "2026-10-03T11:05:55Z",
+    "merit_close_response_utc": "2026-10-03T11:06:07Z",
+    "merit_dialogue_progression_visible_in_uploaded_screenshot": true,
+    "original_optional_native_contact_observer_status": "not_observed",
+    "original_observer_limits": "Only two originally selected NPC names; stock BuildNumber suffix rejected; scripted Merit responses use handle zero. Absence is optional and did not cause the failure.",
+    "mission_acceptance_validated": false,
+    "task_completion_validated": false,
+    "npc_pathing_validated": false,
+    "combat_validated": false
+  },
+  "posthoc_save_analysis": {
+    "automatic_save_verified_event_observed": false,
+    "original_report_status_preserved": true,
+    "cause": "SQL compared against preceding periodic movement sample rather than later final ordinary logout location",
+    "prior_periodic_position": [
+      121.1,
+      -768.0,
+      -702.51
+    ],
+    "prior_periodic_timestamp": "2026-10-03T11:06:08Z",
+    "native_logout_timer_and_location_timestamp": "2026-10-03T11:06:37Z",
+    "native_logout_position": [
+      112.46875,
+      -768.0,
+      -660.765625
+    ],
+    "sql_position": [
+      112.461586,
+      -768,
+      -660.7662
+    ],
+    "sql_query_utc": "2026-10-03T11:07:48.939843+00:00",
+    "absolute_position_deltas": [
+      0.007164,
+      0.0,
+      0.000575
+    ],
+    "euclidean_position_delta": 0.007187038,
+    "normal_logout_timer_expired": true,
+    "native_netlink_closed": true,
+    "selected_table_preservation": {
+      "ents": {
+        "rows": 1,
+        "unchanged_except_expected_login_count": true,
+        "selected_rows_preserved": true,
+        "before_query_utc": "2026-10-03T10:47:49.271956+00:00",
+        "after_query_utc": "2026-10-03T11:07:48.636843+00:00"
+      },
+      "ents2": {
+        "rows": 1,
+        "unchanged_except_expected_login_count": false,
+        "selected_rows_preserved": true,
+        "before_query_utc": "2026-10-03T10:47:49.331724+00:00",
+        "after_query_utc": "2026-10-03T11:07:48.705585+00:00"
+      },
+      "powers": {
+        "rows": 7,
+        "unchanged_except_expected_login_count": false,
+        "selected_rows_preserved": true,
+        "before_query_utc": "2026-10-03T10:47:49.388153+00:00",
+        "after_query_utc": "2026-10-03T11:07:48.774196+00:00"
+      },
+      "costumeparts": {
+        "rows": 14,
+        "unchanged_except_expected_login_count": false,
+        "selected_rows_preserved": true,
+        "before_query_utc": "2026-10-03T10:47:49.445828+00:00",
+        "after_query_utc": "2026-10-03T11:07:48.843243+00:00"
+      }
+    },
+    "login_count_before": 7,
+    "login_count_after": 8,
+    "new_badge_persistence_independently_verified": false,
+    "full_application_save_finish_gate_passed": false,
+    "private_save_sender_receipt_exported": false,
+    "regression_fixture_delivery_timestamp_is_synthetic": true
+  },
+  "remaining_visual_defect": {
+    "npc": "Ms. Liberty",
+    "body_geometry_gaps": [
+      "GEO_HIPS_Miniskirt in FEM_PANTS.geo",
+      "GEO_CHEST_Tight in FEM_SHIRT.geo",
+      "GEO_HEAD_standard in FEM_HEAD.geo",
+      "GEO_LLEGR_Folded and GEO_LLEGL_Folded in FEM_BOOT.geo",
+      "GEO_HAIR_Long_05 in FEM_HAIR.geo",
+      "GEO_BELT_Miss_Liberty in FEM_BELT.geo",
+      "GEO_SPADR_MsLiberty in FEM_SPADR.geo"
+    ],
+    "texture_gaps_observed": true,
+    "missing_animation_claimed": false,
+    "complete_npc_rendering_accepted": false,
+    "ms_liberty_interaction_accepted": false
+  },
+  "preserved_progress": {
+    "prior_physical_milestones_retained": true,
+    "contact_retest_required": false,
+    "database_reset_required": false,
+    "reimport_required": false,
+    "current_public_apk_replaced": false
+  },
+  "user_screenshots": [
+    {
+      "name": "Screenshot_20261003-060524.png",
+      "bytes": 462871,
+      "sha256": "7233f2411ccc8a3665ceebda01ffcd5fdf10a9f9a475e08a973c98fd5ba6e6a8"
+    },
+    {
+      "name": "Screenshot_20261003-060559.png",
+      "bytes": 409431,
+      "sha256": "e7556ed16b7ce4200d55434a64b91a32672d3068a58a26ed700e8153b8ce32f7"
+    }
+  ],
+  "published_candidate_identity": {
+    "apk_source_commit": "1fcabfa28f1f32a8c78de2cac496d6647fd376a9",
+    "apk_sha256": "fee8880a53916e4ff746d67c8a6ab22f3f0cf2ab7779198cef59035ef4d6bf29",
+    "android_reported_runtime_manifest_sha256": "33552580ac4589fc3a494aef46c4e4f581332bca48a73fe36a7dd98cf8f802f2",
+    "matches_published_runtime_manifest_identity": true,
+    "exported_runtime_manifest_semantically_matches_published": true,
+    "exported_runtime_manifest_sha256": "6902d11aaf423fd49eb0f995e96d900a8d3461e94c8571d3dcba7cbd597a377e",
+    "exported_manifest_serialization_differs": true,
+    "independent_installed_apk_byte_attestation_claimed": false
+  },
+  "observer_correction": {
+    "packaged_in_current_public_apk": false,
+    "focused_tests_passed": 88,
+    "skipped_tests": 0,
+    "tested_modules": [
+      "test_character_server",
+      "test_character_reopen_guest",
+      "test_ground_repair",
+      "test_character_logout_position",
+      "test_character_readiness",
+      "test_stationary_contact_evidence"
+    ],
+    "source_contract_checks": "Native and authored data files checked against complete pinned source/data manifests",
+    "physical_retest_completed": false
+  }
+}

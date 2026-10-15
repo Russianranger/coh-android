@@ -1,0 +1,185 @@
+{
+  "format": 1,
+  "status": "accepted_hosted_atlas_device_candidate",
+  "run_id": 36579726816,
+  "workflow_conclusion": "success",
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/36579726816",
+  "repository_commit": "6b50467a1b96133acc92a378617ff961733f288c",
+  "scope": "Exact signed APK import and isolated native ARM64 guest adapter execution; corrected physical Thor execution pending",
+  "apk": {
+    "apk": "COH-Atlas-Test-0.4.1.apk",
+    "bytes": 355105590,
+    "sha256": "781dfb978b07e2d129c1b65b50913cee669df78e24058ee5f780aa4157502734",
+    "application_id": "io.github.russianranger.cohatlastest",
+    "version_name": "0.4.1",
+    "version_code": 2,
+    "signer_certificate_sha256": "e9211f925074fc3ddda9ebc941f47135125beb1ae2173c2f9ef65144f7ec8e2f"
+  },
+  "runtime_manifest_sha256": "1c88865e94841fc3511dfc20b6d9e15e28dbb2ed646ae74295f6f2b994b74711",
+  "import_contract_sha256": "6866cbeb54a555b76ffb53f0d7432adc1aedd6fec4eb835dbb829df64961af15",
+  "accepted_game_package_run_id": 36510836956,
+  "accepted_game_repository_commit": "ac4c1f7978be444a893f65f5177641191861d42f",
+  "tooling": {
+    "new_contract_checks_passed": 91,
+    "accepted_import_checks_passed": 65,
+    "accepted_game_checks_run": 143,
+    "accepted_game_checks_passed": 142,
+    "windows_only_checks_skipped": 1
+  },
+  "correction": {
+    "scope": "Candidate-only Wine process ownership scanner",
+    "behavior": "Identity-verified worker exit recovery, bounded fresh full ownership retries, sanitized permission-denial observations",
+    "persistent_live_denial_and_changed_identity_still_fail": true,
+    "accepted_base_runtime_and_game_binaries_unchanged": true,
+    "android_java_acceptance_guards_unchanged": true,
+    "original_device_denied_pid_or_operation_known": false,
+    "original_device_failure_receipt": "atlas-test-thor-restart-failure-20260929.json"
+  },
+  "qualification": {
+    "stages_passed": 18,
+    "total_seconds_including_import": 1968.534312,
+    "import_seconds": 55.219958,
+    "guest_seconds": 1912.375267,
+    "file_count": 173011,
+    "total_bytes": 2977730517,
+    "independent_import_hashes_verified": true,
+    "immutable_import_generation_preserved": true,
+    "game_and_service_captures_verified": true,
+    "capture_counts": {
+      "game-captures": 11,
+      "game-service-captures": 14
+    },
+    "network_namespace_verified": true,
+    "character": {
+      "container_id": 1,
+      "name": "TEST40653",
+      "account": "CohAa1165eaa4c"
+    },
+    "influence": 12345,
+    "same_cluster_restart": true,
+    "exact_name_resume": "TEST40653",
+    "resume_creation_disabled": true,
+    "first_committed_login_count": 1,
+    "second_committed_login_count": 2,
+    "closed_process_records": 122,
+    "owned_process_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 630,
+      "scanned_tasks": 8,
+      "dead_leaders_with_live_tasks": 0,
+      "owned_live_workers": 0,
+      "leader_exit_retries": 0,
+      "candidates": 0,
+      "term_signals": 0,
+      "kill_signals": 0,
+      "pidfd_signals": 0,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true,
+      "permission_read_retries": 0,
+      "worker_exit_rechecks": 0,
+      "permission_observations": [],
+      "permission_observations_omitted": 0
+    },
+    "restart_owned_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 316,
+      "scanned_tasks": 4,
+      "dead_leaders_with_live_tasks": 0,
+      "owned_live_workers": 0,
+      "leader_exit_retries": 0,
+      "candidates": 0,
+      "term_signals": 0,
+      "kill_signals": 0,
+      "pidfd_signals": 0,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true,
+      "permission_read_retries": 0,
+      "worker_exit_rechecks": 0,
+      "permission_observations": [],
+      "permission_observations_omitted": 0
+    },
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    }
+  },
+  "java_acceptance_compatibility": {
+    "untouched_host_report_rejected": true,
+    "untouched_cleanup_accepted": true,
+    "scratch_only_platform_field_adaptation_accepted": true,
+    "physical_android_execution_proved": false
+  },
+  "memory_observation": {
+    "scope": "run_token_owned_Wine_FEX_processes_only",
+    "measurement": "sampled_sum_of_process_VmRSS_kibibytes",
+    "minimum_interval_seconds": 5,
+    "inspection_budget_seconds": 1,
+    "excludes": [
+      "PostgreSQL",
+      "Python",
+      "Java",
+      "Android app"
+    ],
+    "shared_pages_may_be_counted_more_than_once": true,
+    "instantaneous_peak_measured": false,
+    "pss_measured": false,
+    "successful_samples": 316,
+    "unavailable_samples": 1,
+    "maximum_sampled_rss_kib": 4291472,
+    "last_unavailable_type": "DiagnosticError"
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "android_surface_validated": false,
+  "hardware_acceleration_validated": false,
+  "next_gate": "Uninstall only failed Atlas Test 0.4.0, install 0.4.1, prepare runtime/import, run one full Thor test and review its exported report before continuing Stop/rerun and lifecycle checks",
+  "installation": "Ephemeral CI signing identity changed; same application ID requires uninstall of 0.4.0 and fresh private setup/import. Earlier accepted diagnostic/setup apps remain installed.",
+  "preserved_files": {
+    "atlas-test-evidence-36579726816.zip": {
+      "bytes": 479145,
+      "sha256": "2d58bce318b322ff4363903543197553611891c2ecd7ab66c3831458794c5c3e"
+    },
+    "atlas-test-packaging-36579726816.zip": {
+      "bytes": 13073,
+      "sha256": "7628d78c7ab5ca98f907bbe4b1950ec82b5e4d38dee43badf70785964d87e708"
+    },
+    "atlas-test-apk-build-36579726816.json": {
+      "bytes": 23819,
+      "sha256": "6b2fe5953c351f73a6158df00516e5c7e1b9fd08b366171208a6d46e8707d2cb"
+    },
+    "atlas-test-preparation-36579726816.json": {
+      "bytes": 3541,
+      "sha256": "52602e06f222c81f1ac67f6f33512703d4ddc6234305a1f0a85864f217c4ce09"
+    },
+    "atlas-test-host-qualification-36579726816.json": {
+      "bytes": 583,
+      "sha256": "94c4487f013ad6073a7d0a885ab8bd479a43f1f390fea7e03361704a1a44ac6d"
+    },
+    "atlas-test-host-inputs-36579726816.json": {
+      "bytes": 3615,
+      "sha256": "44fad85e95c38f7e28eb83d8a08c17d12863b696e4af8ecf3561272d7551ac59"
+    },
+    "atlas-test-arm64-36579726816.json": {
+      "bytes": 249758,
+      "sha256": "87536858e677137d13cce549a7d149700ad4b2bc2fa71e5467e4b2ebda1b38ff"
+    },
+    "atlas-test-import-36579726816.json": {
+      "bytes": 1801,
+      "sha256": "d71a227c5d9a4ccaada3f333f41bff4a9d22fdf0ec1d7d806c41d81501190ee9"
+    },
+    "atlas-test-java-gate-compatibility-36579726816.json": {
+      "bytes": 1151,
+      "sha256": "0577bf5ce261850adf2095777aa950fae690b7f257f7d6a2043900e427710f61"
+    },
+    "atlas-test-independent-revalidation-36579726816.json": {
+      "bytes": 9914,
+      "sha256": "00f8e96035c783b5864ee9d6747c03a2721be44d7947ee693af0e18acf6e60fc"
+    }
+  },
+  "independent_downloaded_evidence_revalidation": "passed"
+}

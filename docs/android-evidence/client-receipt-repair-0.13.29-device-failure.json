@@ -1,0 +1,165 @@
+{
+  "format": 1,
+  "scope": "recovered_0_13_28_startup_receipt_failure_for_0_13_29_packaging_repair",
+  "recorded_date_utc": "2026-10-11",
+  "status": "device_failure_recorded_repair_candidate_not_yet_published_or_physically_qualified",
+  "archive": {
+    "filename": "coh-atlas-gameplay-20261011-181500.zip",
+    "bytes": 16466,
+    "sha256": "94c2800878dc4a9d66b2bf36dd0a4df59ead13e6cc457a2bea744d3f4a819ded",
+    "members": {
+      "recovery-manifest.json": {
+        "bytes": 276,
+        "sha256": "b693e3df1b4cf761323fdfb135a30680fa4bc6b33c236a460095e12b79de7ad5"
+      },
+      "previous-guest/latest-report.json": {
+        "bytes": 23118,
+        "sha256": "a37ebf996ff24a2091834528bd151224b2ac3ee9006af022ad4138d06a9be739"
+      },
+      "previous-guest/report.zip": {
+        "bytes": 8226,
+        "sha256": "30ae6dd627e57ddb6062395b6fb5587763c59769623b88f4aac6c5a908b1ed90"
+      }
+    }
+  },
+  "recovery": {
+    "format": 1,
+    "status": "interrupted_unverified",
+    "passed": false,
+    "verified": false,
+    "recovery_kind": "previous_guest_outputs",
+    "session_attribution_verified": false,
+    "note": "Preserved diagnostic evidence only. No successful Finish, character save, or zoning qualification is inferred."
+  },
+  "evidence_integrity": {
+    "outer_archive_read_without_modification": true,
+    "inner_report_members": [
+      "latest-report.json",
+      "client-evidence/character-server-logs.zip"
+    ],
+    "inner_latest_report_byte_identical_to_outer_preserved_report": true
+  },
+  "identity": {
+    "guest_report_session_id": "5dbc6f912f8f484789eaa934e20f9419",
+    "guest_scope": "actual_character_creation_guest",
+    "diagnostic_mode": "actual_character_creation",
+    "execution_platform_requested": "android",
+    "machine": "aarch64",
+    "outer_android_report_present": false,
+    "session_attribution_verified": false,
+    "version_association": "The retained guest asset pins match the published .28 game package and accepted Game. This recovery archive has no Android app-version report and does not authenticate interrupted-session attribution.",
+    "game_package_sha256": "b6023faf7fad044e8bff05776bd5596354bb9877bda21de60f83f66384918262",
+    "accepted_Game_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+    "asset_pack_manifest_sha256": "9570447b93e7d6e42768e1b0e16b791256b82d509d9caf007aca5c88cd7fd05c"
+  },
+  "observed_failure": {
+    "guest_status": "failed",
+    "failures": [
+      "Game listener donor receipt bytes differ"
+    ],
+    "started_utc": "2026-10-11T18:11:52.345498+00:00",
+    "finished_utc": "2026-10-11T18:14:29.388838+00:00",
+    "elapsed_seconds": 157.04334,
+    "elapsed_seconds_rounded": 157.043,
+    "elapsed_human_approximate": "2 minutes 37 seconds",
+    "timing_scope": "Preserved guest report start through finish UTC timestamps; not APK launch time, MapServer startup time or monorail travel time.",
+    "stages": [
+      {
+        "stage": "client_inputs",
+        "status": "passed",
+        "started_utc": "2026-10-11T18:11:52.375953+00:00",
+        "finished_utc": "2026-10-11T18:11:55.980726+00:00",
+        "elapsed_seconds": 3.604773
+      },
+      {
+        "stage": "client_private_data",
+        "status": "passed",
+        "started_utc": "2026-10-11T18:11:55.981002+00:00",
+        "finished_utc": "2026-10-11T18:14:28.129565+00:00",
+        "elapsed_seconds": 152.148563
+      },
+      {
+        "stage": "persistent_server_profile",
+        "started_utc": "2026-10-11T18:14:28.129809+00:00"
+      }
+    ],
+    "last_started_stage": "persistent_server_profile",
+    "client_private_data_seconds_rounded": 152.149,
+    "client_worktree": {
+      "input_files": 173011,
+      "input_bytes": 2977730517,
+      "linked_files": 173005,
+      "copied_writable_files": 6,
+      "prepared_cache_files": 100,
+      "prepared_cache_bytes": 364703716,
+      "reused": false,
+      "imported_inputs_readonly": true,
+      "imported_input_bytes_unchanged": true
+    },
+    "processes": [],
+    "postgres_started": false,
+    "server_started": false,
+    "mapserver_started": false,
+    "client_process_started": false,
+    "cleanup_complete": true,
+    "cleanup_execution": {
+      "diagnostic_initialized": true,
+      "wine_started": false,
+      "owned_child_count": 0
+    },
+    "interpretation": "The retained attempt failed in payload receipt validation before any recorded owned child, PostgreSQL, Wine, MapServer or client started."
+  },
+  "diagnosis": {
+    "classification": "packaging_receipt_serialization_order_mismatch",
+    "basis": "Inspection of the exact .28 donor game-package fixture and unchanged guest byte-contract validation, separate from the device report itself.",
+    "mechanism": "Recursive JSON key sorting changed the insertion order of two embedded historical receipts. Their semantic values were preserved but the unchanged validators reconstruct and hash their original serialized bytes.",
+    "device_observed_first_gate": "Game listener donor receipt bytes differ",
+    "additional_packaging_gate": "The MapServer progress producer receipt has the same historical ordering requirement; the supplied attempt did not reach this second gate.",
+    "original_receipt_sha256": {
+      "loopback_game": "d10e61be69555da91cea1f5b4a0f9852f0c564f9a768a91896b485f0774c0791",
+      "mapserver_progress": "e6234deaa55931551efca0e9450cfaea93f2462b194a2ebfa9a638d097c63c94"
+    },
+    "sources": [
+      "docs/android-evidence/client-receipt-repair-0.13.29-donor-game-package.json",
+      "docs/android-evidence/game-listeners-package-36510836956.json",
+      "docs/android-evidence/client-receipt-repair-0.13.29-mapserver-progress-original.json",
+      "android/guest/game_diagnostic.py",
+      "android/guest/local_character_server.py",
+      "tools/android/interactive/repair_game_receipt_order.py"
+    ]
+  },
+  "repair_candidate": {
+    "version_name": "0.13.29",
+    "version_code": 44,
+    "published_at_recording": false,
+    "physical_recovery_validated": false,
+    "scope": "Restore only the two historical embedded receipt orders and update their enclosing package/client/runtime hash manifests.",
+    "native_game_package_members_expected_retained": 25,
+    "accepted_Game_expected_retained": true,
+    "guest_validators_changed": false,
+    "guest_helpers_changed": false,
+    "java_or_dex_recompiled": false,
+    "android_resources_expected_retained": true,
+    "gpu_stack_expected_retained": true,
+    "external_assets_version": "1.0.0",
+    "external_assets_expected_retained": true,
+    "asset_reimport_required_for_verified_1_0_0": false,
+    "runtime_refresh_required": true,
+    "uninstall_required": false,
+    "host_qualification_and_publication_evidence": "Recorded separately by the dedicated .29 qualification/publication receipts; not claimed by this device-failure summary."
+  },
+  "pending_device_gates": [
+    "Install .29 in place and refresh runtime once without reimporting verified Assets 1.0.0.",
+    "Pass the former payload gate and reach login/world on the appropriate create or reopen path.",
+    "Complete ordinary verified save, Finish, report export and saved-character reopen.",
+    "Then test Atlas Park to Kings Row and return, controls, visuals/audio and saving/reopening in Kings Row.",
+    "Check storage and complete/interrupted report export as applicable."
+  ],
+  "limitations": [
+    "The outer recovery manifest explicitly marks interrupted_unverified and session_attribution_verified=false; retained guest observations are not a completed successful session.",
+    "No successful Finish, character save, zoning or playable-world qualification is inferred.",
+    "The report does not establish Android process termination, OOM, memory exhaustion, a GPU crash or the cause of the interruption.",
+    "The 157.043-second interval includes 152.149 seconds of private client data work; it is not a measured server startup or zoning result.",
+    "A packaging or host-validator pass does not prove full runtime startup, Thor performance or physical monorail/save correctness."
+  ]
+}

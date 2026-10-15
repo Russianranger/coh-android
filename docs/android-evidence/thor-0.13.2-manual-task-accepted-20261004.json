@@ -1,0 +1,111 @@
+{
+  "format": 1,
+  "scope": "physical_thor_user_accepted_manual_task_acceptance_and_completion",
+  "status": "accepted_by_user_with_documented_scope",
+  "review_date_utc": "2026-10-04",
+  "source_commit": "c0d10f8cd873449962f5a723d489b9ead18642d0",
+  "repository_head_before_acceptance": "178e358f52a702b1a295dea03f70aebd0a31ac61",
+  "runtime_repository_commit": "53c885896e9b4d838be0f36a1f09237f04c08a00",
+  "upload": {
+    "name": "coh-atlas-gameplay-20261004-003136.zip",
+    "bytes": 10085589,
+    "sha256": "eb9029b53d3724a61fbe30c8cf609d1dfdcc16422e8da34a6949c968afa79ecd",
+    "zip_members": 29
+  },
+  "user_assessment": "So I actually was able to manually accept and complete the task in game without the commands, but it prevented me from being able to use the commands on the left. Mark this as a success regardless of logs.",
+  "user_acceptance": {
+    "manual_task_acceptance": true,
+    "manual_task_completion": true,
+    "requires_repeat": false,
+    "overrides_diagnostic_verdict_for_manual_gameplay": true,
+    "exact_task_identity": "not independently established by this upload",
+    "completion_helper_path_qualified": false,
+    "task_specific_save_persistence_qualified": false,
+    "reward_turn_in_qualified": false,
+    "combat_qualified": false,
+    "mission_maps_qualified": false
+  },
+  "device": {
+    "name": "AYN AYN Thor",
+    "android_sdk": 33,
+    "app_version": "0.13.2"
+  },
+  "diagnostic_run": {
+    "operation": "character_reopen",
+    "run_id": "1791071610390-4faf0c7d8ac5",
+    "session_id": "35b0270a8fd14933854906849f727b5b",
+    "passed": false,
+    "cancelled": true,
+    "save_logout_requested": false,
+    "finish_requested": false,
+    "saved_event": null,
+    "cleanup_verified": true,
+    "cleanup_blocked": false
+  },
+  "native_connected_event": {
+    "type": "character_connected",
+    "stage": "actual_client_interaction",
+    "time_utc": "2026-10-04T00:16:50.009283+00:00",
+    "session_id": "35b0270a8fd14933854906849f727b5b",
+    "client_pid": 664,
+    "character_id": 1,
+    "name": "THORHERO",
+    "account": "COHLOCAL",
+    "map_id": 1,
+    "reopen_verified": true,
+    "baseline_character_id": 1,
+    "existing_character_verified": true,
+    "preserved_existing_identity": true,
+    "native_client_ready_observed": true
+  },
+  "guest_failures": [
+    "Cancellation requested"
+  ],
+  "android_task_gate": {
+    "required": true,
+    "verified": false,
+    "contact_requested": true,
+    "contact_delivered_receipt": {
+      "format": 1,
+      "session_id": "35b0270a8fd14933854906849f727b5b",
+      "client_pid": 664,
+      "character_id": 1,
+      "action": "contactdialog",
+      "contact_path": "Contacts/Atlas_Park/Matthew_Habashy.contact",
+      "commands": [
+        "/contactdialog Contacts/Atlas_Park/Matthew_Habashy.contact"
+      ],
+      "sent_utc_ms": 1791073254455,
+      "native_effect_verified": false
+    },
+    "accepted_event": null,
+    "completed_event": null,
+    "completion_requested": false,
+    "completion_delivered_receipt": null,
+    "capture_requests": [],
+    "captures": [],
+    "combat_verified": false,
+    "mission_map_verified": false
+  },
+  "guest_task_gate": {
+    "status": "not_observed",
+    "verified": false,
+    "reason": "Current task is outside the finite authored simple task contract",
+    "task_accepted_verified": false,
+    "task_completed_verified": false,
+    "task_save_verified": false,
+    "native_task_verified": false,
+    "sql_task_verified": false,
+    "reward_turn_in_verified": false,
+    "combat_verified": false,
+    "mission_map_verified": false,
+    "sql_game_mutations_performed": false
+  },
+  "follow_up": {
+    "helper_controls": "User reports manual task play prevented use of left-side commands. Separate diagnostic UI follow-up; no app changes made in this acceptance.",
+    "task_persistence": "Carry into next ordinary progression/save/reopen checkpoint without repeating accepted manual task.",
+    "previous_acceptance": "Preserve all prior ordinary character save/reopen, contact, movement, storage and fresh-profile recovery milestones.",
+    "raw_reports": "Original uploaded reports and diagnostic false/cancelled values retained. No logs edited to manufacture a pass.",
+    "new_apk_generated": false
+  }
+}

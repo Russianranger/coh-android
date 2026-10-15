@@ -1,0 +1,342 @@
+{
+  "format": 1,
+  "role": "narrow_Map_metadata_consumer_source_and_historical_collision_boundary",
+  "status": "source_delta_verified_fresh_world_gate_pending",
+  "shipping_allowed": false,
+  "physical_candidate_behavior_measured": false,
+  "shipping_036": {
+    "APK_sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+    "MapServer": {
+      "bytes": 7475200,
+      "delay_imports": [],
+      "imports": [
+        "ADVAPI32.dll",
+        "COMDLG32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "PhysXCooking.dll",
+        "PhysXLoader.dll",
+        "SHELL32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "pe_machine": 332,
+      "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+    },
+    "native_build_repository_commit": "d456f06cd82a921964a895885a03c67137cb9257",
+    "native_build_manifest": {
+      "bytes": 39595,
+      "sha256": "5ee56719f7abc4e12d19670c15398ba3d3b83ee14749ac7941b61e7ea4b291c1"
+    },
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488"
+  },
+  "observed_control": {
+    "native_source_commit": "da5cf809925d9d91e029a117d8be184af03db2b6",
+    "unobserved_control": {
+      "delay_imports": [],
+      "imports": [
+        "ADVAPI32.dll",
+        "COMDLG32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "PhysXCooking.dll",
+        "PhysXLoader.dll",
+        "SHELL32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "pe_machine": 332,
+      "sha256": "77c1f245132b76668e9f689bec26699ec980382c1079f000314d24b149e089ea",
+      "size": 7477248
+    },
+    "observed_Map": {
+      "delay_imports": [],
+      "imports": [
+        "ADVAPI32.dll",
+        "COMDLG32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "PhysXCooking.dll",
+        "PhysXLoader.dll",
+        "SHELL32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "pe_machine": 332,
+      "sha256": "fbfcf1d80a41a80aaeecb1a0ec275daffed2a9e1ba25df3f16e23b16a51a493d",
+      "size": 7478784
+    },
+    "shipping_base_recipe_exactly_equal": true
+  },
+  "metadata_candidate": {
+    "source_commit": "47e40d4d586d29e273e31ed4d0d51d160832b89d",
+    "native": {
+      "delay_imports": [],
+      "imports": [
+        "ADVAPI32.dll",
+        "COMDLG32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "PhysXCooking.dll",
+        "PhysXLoader.dll",
+        "SHELL32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "pe_machine": 332,
+      "sha256": "5927f87fdac50c5a839ac067ccbb34b5dfad6223e579287a66a2f866a7d4b2e6",
+      "size": 7480832
+    },
+    "build_input": {
+      "CRC_and_schema_checks_preserved": true,
+      "UtilitiesLib_SERVER_define_assumed": false,
+      "architecture": "Win32",
+      "build_targets": [
+        "MapServer"
+      ],
+      "configuration": "OptDebug",
+      "environment": {
+        "disabled_by_default": true,
+        "enabled_value": "1",
+        "name": "COH_MAP_ANIMATION_METADATA_PREFETCH"
+      },
+      "exact_request": {
+        "directory": "sequencers",
+        "filemask": ".txt",
+        "persistfile": "bin/sequencers.bin",
+        "tree": "player_library/animations"
+      },
+      "format": 1,
+      "freshness_body_exact_except_request": true,
+      "helper_sha256": "b1ed267f299219469ab11d0e94f9cdfb47e375e8ab0b43d03f6c36160ba7cb88",
+      "native_decoder_preserved": true,
+      "native_execution_validated": false,
+      "new_asset_bytes_preloaded": false,
+      "patched_sha256": {
+        "libs/UtilitiesLib/src/utils/textparser.c": "8008614d86bb33290f037b08536a0d81a747f4049612b8f76c4d2e8ad2dc9315"
+      },
+      "persistent_cache_authority_added": false,
+      "physical_savings_validated": false,
+      "provider_precedence_preserved": true,
+      "publication_allowed": false,
+      "retained_Game_reference": {
+        "patches/client-startup-followup/0001-preload-power-dependency-tree.patch": {
+          "bytes": 1993,
+          "sha256": "96559ac8ef1470c1a9b3d78c8928bc68f960fdf4fcfaa8b59b37cf680b50b178"
+        }
+      },
+      "retained_callsites_sha256": {
+        "Common/seq/seqload.c": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f",
+        "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+        "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+        "libs/UtilitiesLib/src/utils/file.c": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1"
+      },
+      "role": "nonshipping_map_sequencer_metadata_prefetch",
+      "scope": "ordinary_FolderCache_metadata_only_after_valid_BIN_dependency_header",
+      "shipping_allowed": false,
+      "source_date_and_membership_checks_preserved": true,
+      "source_local_Map_only_staging": true,
+      "source_sha256": {
+        "libs/UtilitiesLib/src/utils/textparser.c": "860118093e7abd9a443d89ebeafb72e18f6ae78d42dbc67c2613cb80c1e7f56f"
+      },
+      "staged_callsites_sha256": {
+        "Common/seq/seqload.c": "524018cc27f24d043d4f384a54b644c4983ddb0777b89196bb3189af0d4eb392",
+        "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+        "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+        "libs/UtilitiesLib/src/utils/file.c": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1"
+      },
+      "stock_text_and_failure_fallback_preserved": true
+    },
+    "baseline_import_tables_exactly_preserved": true,
+    "parser_changes_after_observer_exactly_one_helper_and_one_call": true
+  },
+  "complete_upstream_and_PhysX_source_trees_identical": {
+    "d456f06cd82a921964a895885a03c67137cb9257": {
+      "upstream/ouroboros": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+      "upstream/ouroboros/3rdparty/PhysX": "8dcff92f61c34ec8a7ab35440253e4740cd014bf",
+      "upstream/ouroboros/Common/NovodeX": "34351117a24d51e7bb131f11913849922d3e4f81",
+      "upstream/ouroboros/Common/gridcoll": "915aad2f63c0a6411da955277bd9f7f053aaa428",
+      "upstream/ouroboros/Common/group": "83adfe8abd79ee783cb8f7728a4b4986b4d70dfe"
+    },
+    "da5cf809925d9d91e029a117d8be184af03db2b6": {
+      "upstream/ouroboros": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+      "upstream/ouroboros/3rdparty/PhysX": "8dcff92f61c34ec8a7ab35440253e4740cd014bf",
+      "upstream/ouroboros/Common/NovodeX": "34351117a24d51e7bb131f11913849922d3e4f81",
+      "upstream/ouroboros/Common/gridcoll": "915aad2f63c0a6411da955277bd9f7f053aaa428",
+      "upstream/ouroboros/Common/group": "83adfe8abd79ee783cb8f7728a4b4986b4d70dfe"
+    },
+    "47e40d4d586d29e273e31ed4d0d51d160832b89d": {
+      "upstream/ouroboros": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+      "upstream/ouroboros/3rdparty/PhysX": "8dcff92f61c34ec8a7ab35440253e4740cd014bf",
+      "upstream/ouroboros/Common/NovodeX": "34351117a24d51e7bb131f11913849922d3e4f81",
+      "upstream/ouroboros/Common/gridcoll": "915aad2f63c0a6411da955277bd9f7f053aaa428",
+      "upstream/ouroboros/Common/group": "83adfe8abd79ee783cb8f7728a4b4986b4d70dfe"
+    }
+  },
+  "unchanged_collision_geometry_cooking_source_pins": {
+    "MapServer/src/beacon/beaconConnection.c": {
+      "bytes": 157353,
+      "sha256": "93422a659fd2e3da9d8a522512a17a32f13b817b7c04e819e3efa38579638340"
+    },
+    "Common/gridcoll/gridcoll.c": {
+      "bytes": 15111,
+      "sha256": "e25032c077b32896353e79929e74c81d4735564e8a8714c0d7c739db883655d4"
+    },
+    "Common/NovodeX/NwWrapper.cpp": {
+      "bytes": 115965,
+      "sha256": "d666fcf6dba5a15f7b2cffd1d6b9227ad2b4dbbb7ab598d47bb0c61911661db6"
+    },
+    "MapServer/src/beacon/beaconGenerate.c": {
+      "bytes": 150968,
+      "sha256": "eeaf26ddb3b2f65628aece1c77a9ba272318dc3581e3379616dc86c3ee355c38"
+    },
+    "Common/NovodeX/NwCoreDump.cpp": {
+      "bytes": 148672,
+      "sha256": "727fb50ed2a8639955dcea596577c556a92f8ed3b47c392e74934b6f9fc12b8d"
+    },
+    "MapServer/src/beacon/beaconPath.c": {
+      "bytes": 88817,
+      "sha256": "40092b27b9b6b73e19349422570ce1f0978aedacb6cf0d648af858fd46b69e14"
+    },
+    "Common/group/groupnovodex.c": {
+      "bytes": 18132,
+      "sha256": "445614b01f26bac995957dab705c9cc4129818a71bcc041559282955ce30e782"
+    },
+    "MapServer/src/beacon/beaconFile.c": {
+      "bytes": 79037,
+      "sha256": "2693b3cd9eb2432248605810a167a4aed8ab71f569c8f2fdc89fe4aa4271ad60"
+    },
+    "Common/NovodeX/NwWrapper.h": {
+      "bytes": 12725,
+      "sha256": "074a256d48e9b324efd39acb43d7737ec8f8545610eab5d6f892bf457eec77f3"
+    },
+    "Common/group/groupfileload.c": {
+      "bytes": 63848,
+      "sha256": "5fc2891ed78626b9fa38b181fd5fc975b69f000bf2f79bbb3c5527c86503e8d7"
+    }
+  },
+  "unchanged_collision_function_pins": {
+    "Common/gridcoll/gridcoll.c::int collGrid(": {
+      "bytes": 3681,
+      "sha256": "7aea75468f6adbd356acedbb0c49a9d1b1435abd5748e27f5fc8d4f7267b9d89",
+      "source_function_unchanged": true
+    },
+    "Common/group/groupnovodex.c::static void createGroupDefNxShape(": {
+      "bytes": 2653,
+      "sha256": "3c9874bab2ab6f6a9d04bb73884444185d441df0c14e3e16f5239558c6ca4eac",
+      "source_function_unchanged": true
+    },
+    "Common/group/groupnovodex.c::int createNxWorldShapes(": {
+      "bytes": 902,
+      "sha256": "be094622c03058e96a328b19de166f9fa13b305a2e11e82b2877f50cf5bd5fcb",
+      "source_function_unchanged": true
+    },
+    "Common/NovodeX/NwWrapper.cpp::void nwCreatePhysicsSDK(": {
+      "bytes": 993,
+      "sha256": "2afbe13eb5f028e9825e3db46576287048c89deb5baa6e42ffc1e8e7014e30d8",
+      "source_function_unchanged": true
+    },
+    "Common/NovodeX/NwWrapper.cpp::U8 nwCookMeshShape(": {
+      "bytes": 1582,
+      "sha256": "3b8381ffc28d47b39cd4ea4787c930795a525d8749f6f613b69799c1ff8a2db4",
+      "source_function_unchanged": true
+    },
+    "MapServer/src/beacon/beaconPath.c::void beaconPathFind(": {
+      "bytes": 6948,
+      "sha256": "566f84141266493b415beed1a9b703e3c8711f7363cadc43b088cb2b9adbd5a1",
+      "source_function_unchanged": true
+    }
+  },
+  "historical_cooking_and_SDK_runtime_DLLs_to_require_in_fresh_world_inputs": {
+    "NxCharacter.dll": {
+      "bytes": 107872,
+      "sha256": "816fefac0c6b3d7da68daf3098a73e7fa0eff326ef83b3dba7f0fe2dcf0bd095"
+    },
+    "NxCooking.dll": {
+      "bytes": 749568,
+      "sha256": "5dc0333de6b18119b04f7a1beace3f5dfaff5754af62a0f4d8def9e73a09063c"
+    },
+    "PhysXCooking.dll": {
+      "bytes": 383840,
+      "sha256": "c6a1a1f4127bef756e8628775de18c57f93bb7cce22403efb3b519ea1f26a28d"
+    },
+    "PhysXCore.dll": {
+      "bytes": 3567456,
+      "sha256": "c1758f8deada5dad54eb384b4f94a43f69b54c6f671cdcabef4f64d9c6f1da3a"
+    },
+    "PhysXDevice.dll": {
+      "bytes": 65536,
+      "sha256": "6b9f40f2da693b935163935c7ab56847bf11f7160f5b268c4e4881d2973d9cb7"
+    },
+    "PhysXLoader.dll": {
+      "bytes": 64352,
+      "sha256": "db9ea1334a6364c4d02c2e3fe826ab48fb6b07242fff00bd41feb17524fde4de"
+    },
+    "physxcudart_20.dll": {
+      "bytes": 197912,
+      "sha256": "e7b1965ab2ba441c2f4040f6203c10e7d9f02bfbb794a25d2a022d95b6f01c70"
+    }
+  },
+  "staged_delta": {
+    "modified_existing_translation_units": [
+      "libs/UtilitiesLib/src/utils/textparser.c",
+      "Common/seq/seqload.c"
+    ],
+    "shipping_to_observed_control": "Source-local bounded QueryPerformanceCounter freshness/BIN/sequencer observers; all original decode/freshness operations and decisions retained",
+    "observed_control_to_metadata_candidate": "One ordinary FolderCacheRequestTree(player_library/animations) after valid sequencers BIN dependency header; opt-in flag only, CRC/source-date/membership/decoder/fallback retained",
+    "retained_FolderCache_FolderNode_file_PIG_implementations": {
+      "Common/fxinfo.c": "61f36247ec92e56395cc6548689c34b1e341283a25c78490627327eafd5e9a13",
+      "Common/seq/animtrackanimate.c": "ad976409823db61d1610e3cece2ba323ffc7623af8be1c2c1ac8b38abdcebf21",
+      "Common/seq/seqload.c": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f",
+      "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+      "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+      "libs/UtilitiesLib/src/utils/PigFileWrapper.c": "e4347a4694045a559c8db4d97d4dfc60748378d272e4365508ace3e2ef90909e",
+      "libs/UtilitiesLib/src/utils/file.c": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1",
+      "libs/UtilitiesLib/src/utils/piglib.c": "786ea2c5e9b8cf14fe4dfd4880b9cfe85a138afbccd56759e59b30b7663ed528",
+      "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
+    },
+    "retained_staged_svr_init_door_svr_tick_build_recipe": {
+      "MapServer/CMakeLists.txt": "88e9cc8e0eb9b4d50cd379062d7b1f993f0883c2977daf80df57507fe0f5af14",
+      "MapServer/src/door.c": "8bf53acf10f29b7f20ce96322d04f69201be9090a2fafe1ae95ac43b6a3aa2ce",
+      "MapServer/src/svr/svr_init.c": "398081161ebe9e9253b326e8a5f94f502a7bc0a9974a442f1ce83a46ee0f9ae3",
+      "MapServer/src/svr/svr_tick.c": "a3810c112556b258ee2456a51eb28d6afeefd14b81c2fa97ed431659ae42a3d5"
+    },
+    "no_global_SDK_ownership_cooking_geometry_source_or_recipe_change": true,
+    "new_owned_bounded_PhysX_stream_prototype_integrated": false
+  },
+  "qualification_boundary": {
+    "fresh_actual_native_preload_source": "9454e7892ac81cf4503fd8ad961dc36c27cfc152",
+    "fresh_actual_native_preload_run": 38352862725,
+    "fresh_full_world_gate_source": "365c6f967c351b3f2ba0b2ea408e10d139bfc2a5",
+    "fresh_full_world_gate_run": 38480106638,
+    "fresh_full_world_status": "in_progress_no_actual_output_artifact_yet",
+    "required_fresh_facts": [
+      "both Atlas1/7001 and Kings5/7003 actual native Db status and post-query held-PID Map tick advance",
+      "exact full and SERVER-only FX consumption and generated BIN/ID/provider/graph/geometry bytes",
+      "native PhysX object counts Atlas2311 Kings2166 and loaded spore grid",
+      "actual SDK/cooking DLL hashes equal retained shipping identity",
+      "native certified animation subset counts unchanged",
+      "bounded Map memory working-set/privatecommit observations"
+    ],
+    "fresh_world_behavioral_collision_proven": false,
+    "historical_behavior_inherited_under_original_producer_identities": true,
+    "inherited_graph_gate": "Original Assets1.0.0 Atlas/Kings graph locks and source-bound complete geometry inventory; older dedicated native generator full-graph readback, fresh ordinary-world CRC, and32 native pathfinder successes in cold/reopened layouts",
+    "inherited_physical_behavior": "User observed working movement/graphics/combat/actual native monorail and committed saves under retained old native Map; latest .36 session observations remain bound to actualuploaded outerZIPs andoriginal Map identity",
+    "physical_candidate_acceptance_required": "Existing saved character movement/powers/graphics/combat/normal save/export and genuine monorail under candidate remains a subsequent Thor test; timing goals unproven"
+  },
+  "unsafe_existing_colltest_not_executed": {
+    "source": "upstream/ouroboros/Common/gridcoll/gridcollperftest.c",
+    "hardcoded_file": "C:/temp/gridcoll.bin",
+    "loop": "unbounded",
+    "input_records": "unchecked raw CollRecord array",
+    "executed": false
+  }
+}

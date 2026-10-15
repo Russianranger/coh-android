@@ -1,0 +1,119 @@
+COH Atlas Gameplay 0.13.33 / version code 48
+Compatible assets: unchanged COH Assets 1.0.0, all four verified volumes
+
+APK:
+https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.33/COH-Atlas-Gameplay-0.13.33.apk
+Release and adjacent checksum:
+https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.33
+
+Publication requires the dedicated qualified, signed and public-byte-audited
+workflow. This guide does not claim device qualification or a measured speedup.
+
+RECOVERED .32 PHYSICAL RESULT
+
+The user successfully reopened and saved the existing character twice, with
+graphics/combat working, and reached Kings Row from the actual Atlas monorail.
+Approximate whole-operation times: 22 minutes first Reopen to world, 13 minutes
+second Reopen to world, and nearly 12 minutes station confirmation to usable
+Kings. These are user stopwatch estimates, not isolated native-ready timings.
+Return travel was not attempted because no usable reports could be obtained.
+Character Check Incomplete appeared after Save/Logout; report recovery showed
+generic completed archives and Storage cleanup was disabled. Loading optimization
+and report generation/export therefore failed their physical acceptance goals.
+No source attribution, native activation or memory/FPS timing can be established
+from these observations without a report. The character was not reported lost.
+
+WHAT THIS RELEASE CHANGES
+
+- Terminal failures retain a current diagnostic ZIP instead of depending on a
+  completely successful full report. Failed/corrupt report assembly and optional
+  attachment problems remain failures; their evidence is retained for export.
+- A truncated carrier cannot suppress interrupted-report recovery. Normal report
+  labels say Session report, rather than implying gameplay passed. Report-save
+  failure distinguishes unavailable current evidence from older retained reports.
+- Failure during operation allocation/checkpointing releases admission ownership.
+  Reports and read-only storage scans are accessible after failed cleanup when
+  no operation is running. Actual file deletion remains disabled until safe owned
+  cleanup is proved. No unknown process is killed and no save data is reset.
+- Collision input verification uses a bounded inventory snapshot to avoid
+  repeated pathname resolution/stat passes while preserving complete independent
+  inventories before and after consumption.
+- Kings may reuse Atlas's previously full-byte-proved COMMON collision leaves
+  only through the same-process, same-owner/cache-generation proof and exact
+  immutable physical provider identity. Changed, copied, missing, mismatched or
+  unproved inputs are hashed normally. Warm proof is explicitly attributed to
+  the existing verified generation, not represented as a fresh rehash.
+- Startup evidence distinguishes preparation, actual native-ready and world
+  arrival, full bytes hashed versus proof reuse, installed Map/FX identity and
+  observed native animation counters. Missing observations remain unknown.
+
+Original Game, MapServer, DbServer, GPU/FEX/Wine, animation/FX components,
+graphics fidelity, controller mappings, ordinary saves and Assets 1.0.0 are
+retained. No new native consumer or asset pack is required. The .32 FX projection
+and animation certificates stay present; this release does not fabricate their
+physical benefit. The new graph/preparation changes cannot alone establish a
+sub-30-second MapServer start or sustained 30 FPS.
+
+INSTALL -- KEEP THORHERO AND VERIFIED IMPORTS
+
+1. Install the APK OVER the current app. Do not uninstall, clear app data,
+   recreate THORHERO or reimport completed Assets 1.0.0. Diagnostic ZIPs are not
+   database restoration backups.
+2. Run Set up / update runtime ONCE and wait for Runtime ready. APK installation
+   alone does not replace installed guest helpers. Leave working storage space.
+3. Keep the established GPU test, Performance/800x600, 30 FPS cap, fan and charging
+   conditions. Existing Performance world resolution is 600x450 inside 800x600 UI.
+
+TEST REPORTS FIRST -- ONE ATLAS SESSION
+
+1. Choose 2 · Reopen saved THORHERO. Log in with COHLOCAL / offline, select the
+   existing character and verify costume/powers/enhancements and movement.
+2. Record Reopen-to-usable-world time and starting/world-entry temperature/FPS.
+   Do only a brief movement/combat check; release controls for the normal
+   60-second neutral wait, then Save character / log out.
+3. If Saved character verified appears while gameplay remains active, choose
+   Finish and save report. If the operation instead ends with incomplete/failed
+   checks, use Reports / export immediately. A diagnostic ZIP must remain
+   accessible even when overall gameplay/cleanup qualification fails.
+4. Choose the newest UTC-timestamped Session report, Recovered / incomplete report
+   or Report finalization failed diagnostic. Use Android's document picker, Save,
+   and wait for Report exported.
+   Attach the COMPLETE OUTER coh-atlas-gameplay-YYYYMMDD-HHMMSS.zip. A failure
+   carrier may have omitted attachments; include it rather than discarding it.
+5. If a report is unavailable after interruption, choose Recover interrupted
+   reports and retry Reports / export. Existing private archives remain retained.
+   Do not intentionally terminate an unsaved character. If the private report is
+   present but export fails, retain it and retry a different destination.
+6. With no operation running, open Storage and cleanup and Scan storage. Export
+   the storage JSON even if deletion is disabled. After an unresolved cleanup
+   guard, follow its force-stop/reopen instruction before starting another session;
+   do not delete runtime or character files manually.
+
+Do not proceed to long zoning measurements until the complete outer report can
+be exported. A committed save and incomplete overall checks are separate results.
+
+LOADING AND ZONING AFTER REPORT EXPORT PASSES
+
+1. Reopen again with comparable settings/temperature and record the second time.
+   Distinguish first runtime refresh, validated later data reuse and resident-map
+   reuse. Reused input proof does not prove Android page-cache warmth.
+2. In a separate focused Atlas session, request Kings Row at the actual station
+   immediately after connection (roughly the first minute). Keep the app foreground
+   and stay near the station during preparation/readiness. Require actual Map 5
+   arrival AND working movement, not only a native ready line.
+3. Record confirmation-to-usable-world, individual report phases, FPS/temperature
+   and any error. Check terrain/buildings, models/textures/loading screen, NPCs,
+   combat, audio, Jump, camera and clicks. Save in Kings normally, finish/export.
+4. In a separate session, reopen the Kings save, confirm map/position/enhancements,
+   and promptly travel back to Atlas. Complete another verified save/export and
+   reopen. The .32 arrival is accepted; RETURN and saved Kings reopen are still
+   separate physical gates.
+5. Attempt a reused-cache round trip only after those focused gates. Sessions
+   allow at most two resident MapServers, four transfer epochs and a finite
+   connected window. Long cold loading may leave insufficient return/save time;
+   save, finish and reopen instead of weakening the safety budget.
+
+Attach full normal/failure/recovery reports and storage JSON for anomalies. The
+reports will separate actual hashing work, validated proof reuse, native startup,
+activation counters, world arrival, save observations and cleanup. Host operation
+counts and byte savings are not physical loading-time or RAM measurements.

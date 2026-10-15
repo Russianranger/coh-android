@@ -1,0 +1,31 @@
+COH Atlas Gameplay 0.13.25 — render-worker wake coalescing
+
+1. Install as an update and keep app data, imported assets and THORHERO. Apply
+Set up / update runtime once because this version supplies a changed Game.
+Runtime setup and world login are already confirmed milestones; no standalone
+setup timing or asset reimport is requested.
+
+2. Keep GPU, the same Performance preset, 800x600 selection, fan and charging
+state. Reopen THORHERO. Enable Show FPS and cap 30. Confirm walking and X/Jump,
+camera and click still work; close focused chat/dialogs with B/Esc if needed.
+If movement is stuck or a control is disabled, export immediately instead of
+waiting through a long immobile benchmark. The inherited status can still say
+startup timing even though ordinary play/save remains available.
+
+3. Settle ten seconds, then spend about 30 seconds standing, 30 seconds rotating
+the camera and 30 seconds walking the same short Atlas route. Note the FPS
+range/dips, temperature and any visible change or artifact. Keep all visual
+settings unchanged. If performance becomes unusable, end the test early and
+preserve the complete report.
+
+4. Release movement for the displayed neutral wait, Save character / log out,
+wait for Saved character verified, then Finish and export the COMPLETE outer
+ZIP. If runtime setup or login unexpectedly fails, export before retrying.
+
+This version reduces repeated render-worker wake signals and adds sparse scene
+and full-ring-wait measurements. It retains the .24 setup repair, existing GPU
+and Software fallback, assets, visual features, controls and character saving.
+There is no claimed physical FPS improvement yet. The report will establish
+actual Game renderer and native cadence and show whether remaining stalls sit
+in scene work or render-queue pressure. It does not measure pure GPU duration.
+No startup/zoning comparison or long unchanged Software benchmark is requested.

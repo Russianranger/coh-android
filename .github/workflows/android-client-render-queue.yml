@@ -1,0 +1,503 @@
+name: Thor render queue wake coalescing and sparse scene timing
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-client-render-queue.yml
+      - patches/client-render-queue/**
+      - database/client-render-queue/**
+      - tools/android/interactive/package_client_render_queue_native.py
+      - tools/android/interactive/build_client_render_queue_apk.py
+      - tools/android/interactive/qualify_client_render_queue.py
+      - tools/android/interactive/test_client_render_queue*.py
+      - tools/android/interactive/analyze_client_render_queue.py
+      - tools/android/interactive/test_analyze_client_render_queue.py
+      - android/guest/native_responsiveness_contract.py
+      - android/guest/client_startup_diagnostic.py
+      - android/guest/client_gpu_profile.py
+      - android/guest/texture_header_index.py
+      - docs/COH-PERFORMANCE-0.13.25.md
+      - docs/COH-Atlas-Gameplay-0.13.25-testing.txt
+  workflow_dispatch:
+    inputs:
+      reuse_native_run_id:
+        description: Completed .25 Game owner to reuse after a host-only correction
+        required: false
+        type: string
+      reuse_native_source_commit:
+        description: Exact native producer commit from that completed owner
+        required: false
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-render-queue-publication
+  cancel-in-progress: false
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      required: ${{ steps.gate.outputs.required }}
+      reuse_native_run_id: ${{ steps.gate.outputs.reuse_native_run_id }}
+      reuse_native_source_commit: ${{ steps.gate.outputs.reuse_native_source_commit }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Preserve any complete existing publication
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+          COH_REUSE_NATIVE_RUN: ${{ inputs.reuse_native_run_id }}
+          COH_REUSE_NATIVE_COMMIT: ${{ inputs.reuse_native_source_commit }}
+        run: |
+          python3 - <<'PY'
+          import sys, json, os, re, urllib.error, urllib.request
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import build_client_render_queue_apk as current
+          if current.RELEASE_TAG != 'coh-atlas-gameplay-v0.13.25':
+              raise ValueError('Exact continuation release required')
+          request = urllib.request.Request('https://api.github.com/repos/'+current.REPOSITORY+'/releases/tags/'+current.RELEASE_TAG,
+              headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response: release = json.load(response)
+          except urllib.error.HTTPError as error:
+              if error.code != 404: raise
+              required = True
+          else:
+              current.validate_existing_release(release)
+              required = False
+          recovery_dispatch_required = False
+          reuse_run = os.environ.get('COH_REUSE_NATIVE_RUN', '')
+          reuse_commit = os.environ.get('COH_REUSE_NATIVE_COMMIT', '')
+          if not ((not reuse_run and not reuse_commit) or
+                  (re.fullmatch('[1-9][0-9]*', reuse_run) and re.fullmatch('[0-9a-f]{40}', reuse_commit))):
+              raise ValueError('Both exact completed native owner and source are required')
+          if required and os.environ['GITHUB_EVENT_NAME'] == 'push':
+              import subprocess
+              from classify_storage_cleanup_change import render_queue_push, render_queue_native_push
+              head = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
+              parent = subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip()
+              names = subprocess.check_output(['git','diff','--name-only','-z',parent,head]).decode().rstrip('\0').split('\0')
+              owned = render_queue_push('push',os.environ.get('COH_PUSH_BEFORE'),head,parent,names)
+              required = render_queue_native_push('push',os.environ.get('COH_PUSH_BEFORE'),head,parent,names)
+              pinned_host_recovery = (owned and not required and
+                  parent == 'e69f2a66abf02e26712691bb1cd29955fe671e8b' and
+                  set(names) <= current.HOST_NATIVE_REUSE_FILES)
+              if pinned_host_recovery:
+                  required = True
+                  reuse_run = '37988347729'
+                  reuse_commit = 'c512e912a004b66886a7667640aa1a967e95de64'
+              recovery_dispatch_required = owned and not required
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
+              output.write('required='+str(required).lower()+'\n')
+              output.write('reuse_native_run_id='+reuse_run+'\n')
+              output.write('reuse_native_source_commit='+reuse_commit+'\n')
+          print(json.dumps({'release_tag': current.RELEASE_TAG, 'publication_required': required,
+              'existing_release_modified': False, 'completed_gpu_probe_and_driver_builds_repeated': False,
+              'recovery_dispatch_required': recovery_dispatch_required,
+              'reuse_native_run_id': reuse_run, 'reuse_native_source_commit': reuse_commit,
+              'recovery_policy': 'The bounded e69 host recovery reuses the authenticated c512 completed Game; other source-equivalent host corrections require explicit reuse dispatch.'}))
+          PY
+  client:
+    needs: changes
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 80
+    outputs:
+      native_commit: ${{ steps.producer.outputs.native_commit }}
+    steps:
+      - name: Preserve exact LF native inputs on Windows
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Validate optional completed native reuse inputs
+        shell: pwsh
+        env:
+          REUSE_NATIVE_RUN: ${{ needs.changes.outputs.reuse_native_run_id }}
+          REUSE_NATIVE_COMMIT: ${{ needs.changes.outputs.reuse_native_source_commit }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python -c "import os,re; r=os.environ.get('REUSE_NATIVE_RUN',''); c=os.environ.get('REUSE_NATIVE_COMMIT',''); assert (not r and not c) or (re.fullmatch('[1-9][0-9]*',r) and re.fullmatch('[0-9a-f]{40}',c)), 'Both exact completed native owner and source are required'"
+          if ($LASTEXITCODE -ne 0) { throw 'Native reuse scope rejected' }
+          if ($env:REUSE_NATIVE_RUN) {
+            python tools/android/interactive/build_client_render_queue_apk.py validate-native-reuse --run-id $env:REUSE_NATIVE_RUN --native-source-commit $env:REUSE_NATIVE_COMMIT --repository-commit $env:GITHUB_SHA --output out/client-render-queue-native-reuse.json
+            if ($LASTEXITCODE -ne 0) { throw 'Native owner/source audit rejected reuse' }
+          }
+      - name: Authenticate the original completed current Game artifact ZIP
+        if: needs.changes.outputs.reuse_native_run_id != ''
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python tools/android/interactive/build_client_render_queue_apk.py download-native-reuse --receipt out/client-render-queue-native-reuse.json --repository-commit $env:GITHUB_SHA --output out/client-render-queue-native
+          if ($LASTEXITCODE -ne 0) { throw 'Original completed Game artifact authentication failed' }
+      - name: Stage the immutable native chain and reviewed rendering continuation
+        if: needs.changes.outputs.reuse_native_run_id == ''
+        shell: pwsh
+        run: |
+          python tools/android/interactive/package_client_render_queue_native.py stage --output out/client-render-queue-source
+          if ($LASTEXITCODE -ne 0) { throw 'Native render queue staging failed' }
+      - name: Qualify retained Win32 logic and current render-worker scheduling
+        if: needs.changes.outputs.reuse_native_run_id == ''
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_scene_performance_native.py --windows-qualify --output out/client-scene-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_frame_timing_native.py --windows-qualify --output out/client-frame-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_gameplay_performance_native.py --windows-qualify --output out/client-gameplay-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_renderer_attribution_native.py --windows-qualify --output out/client-renderer-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_render_pipeline_native.py --windows-qualify --output out/client-pipeline-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_render_queue_native.py --windows-qualify --output out/client-queue-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/package_client_render_queue_native.py combine-checks --scene-checks out/client-scene-checks.json --frame-checks out/client-frame-checks.json --gameplay-checks out/client-gameplay-checks.json --renderer-checks out/client-renderer-checks.json --pipeline-checks out/client-pipeline-checks.json --queue-checks out/client-queue-checks.json --output out/client-render-queue-native-checks.json
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/client-render-queue.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\client-render-queue.cmd 2>&1 | Tee-Object out/contracts/client-render-queue.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Win32 render queue qualification failed' }
+      - name: Build only Game; retain successful GPU driver and probes
+        if: needs.changes.outputs.reuse_native_run_id == ''
+        working-directory: out/client-render-queue-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Native render queue configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
+          if ($LASTEXITCODE -ne 0) { throw 'Native Game build failed' }
+      - name: Bind Game to exact native source, ancestry and Win32 receipts
+        if: needs.changes.outputs.reuse_native_run_id == ''
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/package_client_render_queue_native.py package
+          --directory out/client-render-queue-source/out/build/vs2026/bin/OptDebug
+          --source out/client-render-queue-source
+          --cache out/client-render-queue-source/out/build/vs2026/CMakeCache.txt
+          --checks out/client-render-queue-native-checks.json
+          --repository-commit "$env:GITHUB_SHA"
+          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --output out/client-render-queue-native
+      - name: Verify exact current or explicitly reused native producer
+        id: producer
+        shell: pwsh
+        env:
+          REUSE_NATIVE_RUN: ${{ needs.changes.outputs.reuse_native_run_id }}
+          REUSE_NATIVE_COMMIT: ${{ needs.changes.outputs.reuse_native_source_commit }}
+        run: |
+          $code = @'
+          import os,sys,json
+          from pathlib import Path
+          sys.path.insert(0,'tools/android/interactive')
+          import package_client_render_queue_native as native
+          source=os.environ.get('REUSE_NATIVE_COMMIT') or os.environ['GITHUB_SHA']
+          owner=os.environ.get('REUSE_NATIVE_RUN') or os.environ['GITHUB_RUN_ID']
+          manifest=native.validate_package(Path('out/client-render-queue-native'),source)
+          if manifest['run_url'] != 'https://github.com/Russianranger/coh-android/actions/runs/'+owner:
+              raise ValueError('Original current queue producer owner differs')
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output: output.write('native_commit='+source+'\n')
+          '@
+          python -c $code
+          if ($LASTEXITCODE -ne 0) { throw 'Native producer verification failed' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-render-queue-native
+          path: out/client-render-queue-native/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-render-queue-native-build-evidence
+          path: |
+            out/client-render-queue-source/*build-input.json
+            out/client-render-queue-source/responsiveness-source-input.json
+            out/client-render-queue-source/out/build/vs2026/CMakeCache.txt
+            out/client-render-queue-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+            out/client-render-queue-native/*.json
+            out/client-render-queue-native/CMakeCache.txt
+            out/client-*-checks.json
+            out/contracts/client-render-queue.txt
+            out/client-render-queue-native-reuse.json
+          if-no-files-found: warn
+          retention-days: 90
+  qualify:
+    needs: [changes, client]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Start required host PostgreSQL 16 fixtures
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends postgresql-16 postgresql-client-16
+          if pg_lsclusters --no-header | awk '$1 == "16" && $2 == "main" { found = 1 } END { exit !found }'; then
+            if ! /usr/lib/postgresql/16/bin/pg_isready --host "$PGHOST" --port "$PGPORT"; then
+              sudo pg_ctlcluster 16 main start
+            fi
+          else
+            sudo pg_createcluster 16 main --port 5432 --start
+          fi
+          test "$(sudo -u postgres psql --no-psqlrc --host /var/run/postgresql --port 5432 --dbname postgres --tuples-only --no-align --command "SELECT current_setting('server_version_num')::integer / 10000")" = 16
+          sudo -u postgres psql --no-psqlrc --host /var/run/postgresql --port 5432 --dbname postgres --set ON_ERROR_STOP=1 --command "ALTER ROLE postgres WITH LOGIN PASSWORD 'coh-host-fixture'"
+          coh_fixture_database_exists="$(sudo -u postgres psql --no-psqlrc --host /var/run/postgresql --port 5432 --dbname postgres --set ON_ERROR_STOP=1 --tuples-only --no-align --command "SELECT 1 FROM pg_database WHERE datname = 'coh_test_startup_bundle'")"
+          if [ "$coh_fixture_database_exists" != 1 ]; then
+            sudo -u postgres createdb --host /var/run/postgresql --port 5432 --owner postgres coh_test_startup_bundle
+          fi
+          test "$(psql --no-psqlrc --set ON_ERROR_STOP=1 --tuples-only --no-align --command "SELECT current_user = 'postgres' AND current_database() = 'coh_test_startup_bundle' AND current_setting('server_version_num')::integer / 10000 = 16")" = t
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-queue-native
+          path: out/client-render-queue-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Authenticate the published .24 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_client_render_queue_apk.py download-donor-evidence --output out/client-render-queue-donor/evidence
+      - name: Recover the exact public .24 runtime donor APK
+        run: python3 tools/android/interactive/build_client_render_queue_apk.py download-donor --output out/client-render-queue-donor/COH-Atlas-Gameplay-0.13.24.apk
+      - name: Install host-only Vulkan headers and software fixture driver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libvulkan-dev mesa-vulkan-drivers
+      - name: Qualify all 110 retained suites and focused new checks
+        run: >-
+          python3 tools/android/interactive/qualify_client_render_queue.py
+          --repository-commit "$GITHUB_SHA"
+          --native-source-commit "${{ needs.client.outputs.native_commit }}"
+          --donor-apk out/client-render-queue-donor/COH-Atlas-Gameplay-0.13.24.apk
+          --donor-build-report out/client-render-queue-donor/evidence/setup-copy-repair-apk-build-report.json
+          --client-directory out/client-render-queue-native
+          --output out/client-render-queue-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-render-queue-qualification
+          path: out/client-render-queue-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [changes, client, qualify]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-queue-native
+          path: out/client-render-queue-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Authenticate the published .24 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_client_render_queue_apk.py download-donor-evidence --output out/client-render-queue-donor/evidence
+      - name: Recover the exact public .24 runtime donor APK
+        run: python3 tools/android/interactive/build_client_render_queue_apk.py download-donor --output out/client-render-queue-donor/COH-Atlas-Gameplay-0.13.24.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-queue-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Build native Game continuation retaining the exact .24 Java and DEX and GPU archive
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_client_render_queue_apk.py build
+          --donor-apk out/client-render-queue-donor/COH-Atlas-Gameplay-0.13.24.apk
+          --donor-build-report out/client-render-queue-donor/evidence/setup-copy-repair-apk-build-report.json
+          --qualification out/client-render-queue-qualification.json
+          --client-directory out/client-render-queue-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --native-source-commit "${{ needs.client.outputs.native_commit }}"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/client-render-queue-apk/COH-Atlas-Gameplay-0.13.25.apk
+      - name: Fresh-process SDK signer and actual native/payload audit before publication
+        env:
+          PYTHONHASHSEED: '73422'
+        run: >-
+          python3 tools/android/interactive/build_client_render_queue_apk.py audit
+          --donor-apk out/client-render-queue-donor/COH-Atlas-Gameplay-0.13.24.apk
+          --donor-build-report out/client-render-queue-donor/evidence/setup-copy-repair-apk-build-report.json
+          --qualification out/client-render-queue-qualification.json
+          --client-directory out/client-render-queue-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --native-source-commit "${{ needs.client.outputs.native_commit }}"
+          --apk out/client-render-queue-apk/COH-Atlas-Gameplay-0.13.25.apk
+          --build-report out/client-render-queue-apk/client-render-queue-apk-build-report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-render-queue-packaging-evidence
+          path: |
+            out/client-render-queue-apk/client-render-queue-apk-build-report.json
+            out/client-render-queue-apk/COH-Atlas-Gameplay-0.13.25-testing.txt
+            out/client-render-queue-apk/COH-Atlas-Gameplay-0.13.25.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-render-queue-apk
+          path: out/client-render-queue-apk/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only the newly qualified continuation prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_client_render_queue_apk.py publish
+          --donor-apk out/client-render-queue-donor/COH-Atlas-Gameplay-0.13.24.apk
+          --donor-build-report out/client-render-queue-donor/evidence/setup-copy-repair-apk-build-report.json
+          --qualification out/client-render-queue-qualification.json
+          --client-directory out/client-render-queue-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --native-source-commit "${{ needs.client.outputs.native_commit }}"
+          --apk out/client-render-queue-apk/COH-Atlas-Gameplay-0.13.25.apk
+          --build-report out/client-render-queue-apk/client-render-queue-apk-build-report.json
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
+  public-audit:
+    needs: [changes, client, qualify, apk]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PYTHONHASHSEED: '2022'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-queue-native
+          path: out/client-render-queue-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Authenticate the published .24 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_client_render_queue_apk.py download-donor-evidence --output out/client-render-queue-donor/evidence
+      - name: Recover the exact public .24 runtime donor APK
+        run: python3 tools/android/interactive/build_client_render_queue_apk.py download-donor --output out/client-render-queue-donor/COH-Atlas-Gameplay-0.13.24.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-queue-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-queue-packaging-evidence
+          path: out/client-render-queue-public
+      - name: Download actual public APK, checksum and testing instructions
+        run: >-
+          python3 tools/android/interactive/build_client_render_queue_apk.py download-public
+          --build-report out/client-render-queue-public/client-render-queue-apk-build-report.json
+          --output out/client-render-queue-public
+      - name: Independently audit actual public bytes against exact donor, native proof and SDK signer
+        run: >-
+          python3 tools/android/interactive/build_client_render_queue_apk.py audit
+          --donor-apk out/client-render-queue-donor/COH-Atlas-Gameplay-0.13.24.apk
+          --donor-build-report out/client-render-queue-donor/evidence/setup-copy-repair-apk-build-report.json
+          --qualification out/client-render-queue-qualification.json
+          --client-directory out/client-render-queue-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --native-source-commit "${{ needs.client.outputs.native_commit }}"
+          --apk out/client-render-queue-public/COH-Atlas-Gameplay-0.13.25.apk
+          --build-report out/client-render-queue-public/client-render-queue-apk-build-report.json
+      - name: Record truthful public byte qualification
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('out/client-render-queue-public/client-render-queue-apk-build-report.json').read_text())
+          evidence = {key: report[key] for key in ('bytes', 'sha256', 'repository_commit', 'version_name', 'version_code',
+              'native_client_recompiled', 'runtime_repository_commit', 'native_build_repository_commit', 'retained_native_repository_commit',
+              'native_client_compiled_in_current_publication_run', 'java_or_dex_recompiled', 'mesa_driver_compiled_in_current_run',
+              'native_vulkan_probe_compiled_in_current_run', 'wgl_probe_compiled_in_current_run',
+              'successful_gpu_driver_and_both_probes_retained', 'software_fallback_preserved',
+              'runtime_refresh_required', 'physical_performance_validated', 'physical_fps_gain_validated')}
+          evidence.update(format=1, status='passed', fresh_process_prepublication_audit_passed=True,
+              public_apk_checksum_and_notes_verified=True, sdk_signer_payload_audit_passed=True,
+              public_url='https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.25/COH-Atlas-Gameplay-0.13.25.apk')
+          Path('out/client-render-queue-public-byte-audit.json').write_text(json.dumps(evidence, indent=2, sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-render-queue-public-byte-audit
+          path: out/client-render-queue-public-byte-audit.json
+          if-no-files-found: error
+          retention-days: 90

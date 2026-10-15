@@ -1,0 +1,355 @@
+{
+  "format": 1,
+  "status": "published_and_public_bytes_independently_verified",
+  "scope": "bounded_storage_recovery_fresh_profile_and_retained_0130_runtime",
+  "verified_date_utc": "2026-10-03",
+  "repository": "Russianranger/coh-android",
+  "source_commit": "c0d10f8cd873449962f5a723d489b9ead18642d0",
+  "runtime_repository_commit": "53c885896e9b4d838be0f36a1f09237f04c08a00",
+  "branch": "codex/character-persistence-continuation",
+  "main_commit": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "pr_number": 1,
+  "pr_draft": true,
+  "pr_merged": false,
+  "failure_review": "docs/android-evidence/thor-0.13.1-reinstall-failure-20261003.json",
+  "release": {
+    "id": 402657288,
+    "tag": "coh-atlas-gameplay-v0.13.2",
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.2",
+    "published_at": "2026-10-03T19:23:28Z",
+    "draft": false,
+    "prerelease": true,
+    "apk_asset_id": 608387340,
+    "apk_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.2/COH-Atlas-Gameplay-0.13.2.apk"
+  },
+  "apk": {
+    "name": "COH-Atlas-Gameplay-0.13.2.apk",
+    "bytes": 675301138,
+    "sha256": "28e3eda8dbc3982bc42d42dee6ab4f35e985d96af31bff4a2c691b806a207e1f",
+    "growth_from_0131_bytes": 12288,
+    "application_id": "io.github.russianranger.cohclientinteractive",
+    "version_name": "0.13.2",
+    "version_code": 17,
+    "abi": "arm64-v8a",
+    "retained_signer_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282"
+  },
+  "public_notes": {
+    "bytes": 4312,
+    "sha256": "0a688d1740a4ac40c141c1daa72e90e248c6cfcfe74391723361b0cd0f1bfcb0"
+  },
+  "public_checksum": {
+    "bytes": 96,
+    "sha256": "b7893a676892f09cbee021f9bb96b39a10a96102a6ed3c2fc125cdf1d201223d"
+  },
+  "ci": {
+    "run_id": 37147463123,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37147463123",
+    "conclusion": "success",
+    "jobs": {
+      "qualify": {
+        "id": 111274259434,
+        "conclusion": "success"
+      },
+      "apk": {
+        "id": 111274569033,
+        "conclusion": "success"
+      }
+    },
+    "artifacts": {
+      "qualification": {
+        "id": 11282657650,
+        "bytes": 13764,
+        "sha256": "ee48d0d05b232987cc1fbcdbdc8a7f526e50d2ef38a59d8350c2f92b2c7aee7b"
+      },
+      "packaging_evidence": {
+        "id": 11283092163,
+        "bytes": 345956,
+        "sha256": "e38dc69a05ecd8b50777456820db508bf07c0788ab10f686ad73032f27207e2b"
+      },
+      "apk": {
+        "id": 11283082125,
+        "bytes": 676767669,
+        "sha256": "2976fc84b4362956052497a2caca796829d6ec36bdd9d1086fceed46164525e5",
+        "artifact_zip_downloaded_for_this_audit": false
+      }
+    }
+  },
+  "qualification": {
+    "receipt": {
+      "bytes": 45577,
+      "sha256": "e21f5c862802d0bce47e4639a821298166e60f993b1d46aa08f6c6442efc4535"
+    },
+    "tests_run": 489,
+    "suite_count": 32,
+    "source_pin_count": 209,
+    "skips": 0,
+    "checks": {
+      "bounded_streaming_storage_and_protected_paths_verified": true,
+      "explicit_fresh_character_creation_recovery_verified": true,
+      "same_runtime_setup_reuse_and_growth_diagnostics_verified": true,
+      "owned_cleanup_identity_and_failure_guards_verified": true,
+      "storage_ui_idle_session_and_export_guards_verified": true,
+      "retained_task_input_save_and_cache_guards_verified": true,
+      "all_runtime_payloads_and_actual_archive_extraction_verified": true
+    },
+    "test_suites": {
+      "test_task_gate_package": {
+        "tests_run": 18,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_task_gate_evidence": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_task_gate_native_contract": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_task_gate_integration": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_task_gate_java": {
+        "tests_run": 6,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_character_logout_position": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_stationary_contact_evidence": {
+        "tests_run": 12,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_contact_capture": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_character_server": {
+        "tests_run": 24,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_character_reopen_guest": {
+        "tests_run": 20,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_ground_repair": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_character_readiness": {
+        "tests_run": 14,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_session_budget_guest": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_session_budget_java": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_input": {
+        "tests_run": 30,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_rfb_buffered_input": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_server_worktree_reuse": {
+        "tests_run": 15,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_wine_refresh": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_stable_worktree_identity": {
+        "tests_run": 4,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_server_cache_package": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_server_message_cache_format": {
+        "tests_run": 15,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_classify_interactive_change": {
+        "tests_run": 2,
+        "status": "passed",
+        "skipped": 0
+      },
+      "task_native_animation_pack_regressions": {
+        "tests_run": 13,
+        "status": "passed",
+        "skipped": 0
+      },
+      "task_retained_tar_extractor_regressions": {
+        "tests_run": 26,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_storage_cleanup_package": {
+        "tests_run": 22,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_storage_audit": {
+        "tests_run": 44,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_storage_ui": {
+        "tests_run": 34,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_classify_storage_cleanup_change": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_storage_recovery_package": {
+        "tests_run": 28,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_fresh_profile_recovery": {
+        "tests_run": 22,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_runtime_setup_reuse": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_storage_recovery_ui": {
+        "tests_run": 12,
+        "status": "passed",
+        "skipped": 0
+      }
+    }
+  },
+  "build_report": {
+    "bytes": 1461453,
+    "sha256": "33028c44f9dd733fd0bf862f4c5d176c5f96081ddaf28e56634f5bdbdfeb41ef"
+  },
+  "java": {
+    "authored_sources": 18,
+    "changed_sources": [
+      "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageAudit.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageFiles.java"
+    ],
+    "added_sources": [],
+    "android_35_compilation_verified": true
+  },
+  "retained_runtime": {
+    "payload_count": 65,
+    "changed_payloads": [],
+    "added_payloads": [],
+    "replaced_payloads": [],
+    "runtime_manifest_sha256": "bf96a52f3b5e5a093839e0eed272edadc82e6e2e8eea7b9262b4e65f4f5b4add",
+    "runtime_manifest_bytes_unchanged": true,
+    "client_manifest_bytes_unchanged": true,
+    "native_client_or_server_recompiled": false,
+    "runtime_refresh_required": false,
+    "asset_reimport_required": false,
+    "source_payloads_match_exact_public_0131": true,
+    "original_animation_and_startup_cache_qualification_retained_by_exact_identity": true
+  },
+  "independent_public_audit": {
+    "status": "passed",
+    "public_apk_downloaded_separately_from_actions": true,
+    "apk_length_and_sha256": true,
+    "all_actual_payloads_streamed_to_eof_digest_and_zip_crc_verified": true,
+    "actual_dex_and_android_resources_verified": true,
+    "archive_inventory_and_duplicate_member_guards": true,
+    "binary_manifest_only_version_metadata_changed": true,
+    "official_v2_and_v3_signature_verified": true,
+    "retained_signer_verified": true,
+    "official_alignment_badging_abi_version_verified": true,
+    "all_209_current_source_pins_and_ci_build_closure_verified": true,
+    "public_notes_and_checksum_match_ci": true,
+    "real_guest_server_archive_extraction": {
+      "format": 1,
+      "status": "passed",
+      "archives": {
+        "dbserver-package.tar.gz": {
+          "bytes": 2133821,
+          "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80",
+          "file_count": 9,
+          "extracted_bytes": 4930397
+        },
+        "dbserver-schema.tar.gz": {
+          "bytes": 1139794,
+          "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792",
+          "file_count": 63,
+          "extracted_bytes": 9268640
+        },
+        "game-package.tar.gz": {
+          "bytes": 10976915,
+          "sha256": "d781779ea33b99591ed9972ee09aa614cf4eb6c5afc355bb88197f20881fe67d",
+          "file_count": 26,
+          "extracted_bytes": 28474910
+        }
+      }
+    },
+    "verifier": "tools/android/interactive/build_storage_recovery_apk.py audit-public",
+    "exit_code": 0
+  },
+  "historical_workflows": {
+    "task_run": 37147463010,
+    "observer": "skipped",
+    "server_animations": "skipped",
+    "task_apk": "skipped",
+    "storage_0131_run": 37147463088,
+    "storage_0131_qualify": "skipped",
+    "storage_0131_apk": "skipped"
+  },
+  "device_results": {
+    "earlier_storage_or_gameplay_crash_cause": "Not established from post-uninstall evidence.",
+    "storage_62gb_attribution": "Pending device inventory; not an established reclaimable amount.",
+    "physical_storage_scan_or_cleanup_validated": false,
+    "physical_reclaimed_bytes": null,
+    "physical_fresh_profile_recovery_validated": false,
+    "physical_task_save_gate_validated": false,
+    "new_startup_speed_claim": false,
+    "prior_accepted_physical_milestones_repeated": false
+  },
+  "next_tests": [
+    "Install in place; keep the successful runtime setup and asset import.",
+    "When idle, scan storage and export JSON with Android before/after totals; only review cleanup from a complete scan.",
+    "Run setup once to export its short reuse/download/extraction receipt, with Android before/after totals.",
+    "Because uninstall deleted the old profile, explicitly create fresh THORHERO, ordinary Save/log out, Finish and export its creator-save ZIP.",
+    "Stop and send findings before another long reopened task gate."
+  ]
+}

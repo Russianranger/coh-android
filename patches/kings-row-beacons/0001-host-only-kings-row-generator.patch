@@ -1,0 +1,138 @@
+--- a/MapServer/src/beacon/beaconClientServer.c
++++ b/MapServer/src/beacon/beaconClientServer.c
+@@ -2848,7 +2848,7 @@
+     /* -nogui skips console stdio setup; use the native FileWrapper API. */
+     setvbuf(fileGetStdout(), NULL, _IONBF, 0);
+     if(!beaconizerInit.clientServerType || beaconIsProductionMode()){
+-        FatalErrorf("Host Atlas beacon producer requires nonproduction native beacon roles");
++        FatalErrorf("Host Kings Row beacon producer requires nonproduction native beacon roles");
+         exit(2);
+     }
+     
+--- a/MapServer/src/beacon/beaconServer.c
++++ b/MapServer/src/beacon/beaconServer.c
+@@ -2611,10 +2611,10 @@
+ }
+ 
+ static void beaconServerLoadMapFileList(S32 justLocal){
+-    /* Finite native Atlas graph producer; no personal or global map lists. */
++    /* Finite native Kings Row graph producer; no personal or global map lists. */
+     eaClearEx(&beacon_server.mapList, NULL);
+     eaPush(&beacon_server.mapList,
+-           strdup("maps/city_zones/city_01_01/city_01_01.txt"));
++           strdup("maps/city_zones/city_01_02/city_01_02.txt"));
+     beacon_server.mapCount = 1;
+     beacon_server.curMapIndex = -1;
+ }
+@@ -2913,18 +2913,20 @@
+ 
+ static void beaconHostRequire(S32 condition, const char* reason){
+     if(!condition){
+-        FatalErrorf("Host Atlas beacon qualification failed: %s", reason);
++        FatalErrorf("Host Kings Row beacon qualification failed: %s", reason);
+         exit(2);
+     }
+ }
+ 
+-static void beaconHostVerifyCurrentAtlasGraph(void){
++static void beaconHostVerifyCurrentKingsRowGraph(void){
+     S32 i, connected = 0, ground = 0, raised = 0, paths = 0;
+     S32 mapMatches;
+     U32 freshWorldCRC;
+-    char freshMapName[] = "maps/city_zones/city_01_01/city_01_01.txt";
++    char freshMapName[] = "maps/city_zones/city_01_02/city_01_02.txt";
+     NavSearch* search;
+     groupLoadMap(freshMapName, 0, 0);
++    printf("COH_KINGS_ROW_COLLISION_LOAD_V1 missing_groups=0 missing_root_models=0\n");
++    fflush(fileGetStdout());
+     /* The matcher freshly traverses the ordinary loaded world and compares
+        its full CRC with the native date sidecar. Capture that proof before
+        graph readback/path operations change runtime state. Never put this
+@@ -2932,7 +2934,7 @@
+     mapMatches = beaconDoesTheBeaconFileMatchTheMap(1);
+     beaconHostRequire(mapMatches, "fresh ordinary world/date CRC mismatch");
+     freshWorldCRC = beacon_process.fullMapCRC;
+-    printf("COH_ATLAS_BEACON_FRESH_WORLD_V1 crc=0x%08x\n", freshWorldCRC);
++    printf("COH_KINGS_ROW_BEACON_FRESH_WORLD_V1 crc=0x%08x\n", freshWorldCRC);
+     fflush(fileGetStdout());
+     beaconReload();
+     beaconHostRequire(beaconGetReadFileVersion() == 8, "native graph reader version");
+@@ -2963,7 +2965,7 @@
+     }
+     destroyNavSearch(search);
+     beaconHostRequire(paths == 32, "32 native pathfinder routes");
+-    printf("COH_ATLAS_BEACON_NATIVE_V1 crc=0x%08x combat=%d connected=%d ground=%d raised=%d blocks=%d paths=%d\n",
++    printf("COH_KINGS_ROW_BEACON_NATIVE_V1 crc=0x%08x combat=%d connected=%d ground=%d raised=%d blocks=%d paths=%d\n",
+            freshWorldCRC, combatBeaconArray.size, connected,
+            ground, raised, combatBeaconGridBlockArray.size, paths);
+     fflush(fileGetStdout());
+@@ -5898,7 +5900,7 @@
+         printf("Writing file: ");
+         beaconWriteCurrentFile(false);
+         printf("Done!\n");
+-        beaconHostVerifyCurrentAtlasGraph();
++        beaconHostVerifyCurrentKingsRowGraph();
+     }else{
+         beaconServerUpdateTitle("Writing beacon file to memory!");
+ 
+@@ -6702,11 +6704,11 @@
+ void beaconServer(BeaconizerType beaconizerType, const char* masterServerName, S32 noNetStart, S32 onePassOnly, S32 forceRebuild){
+     beaconServerStartup(beaconizerType, masterServerName, noNetStart, onePassOnly, forceRebuild);
+     {
+-        const char* verifyOnly = getenv("COH_ATLAS_BEACON_VERIFY_ONLY");
++        const char* verifyOnly = getenv("COH_KINGS_ROW_BEACON_VERIFY_ONLY");
+         if(verifyOnly){
+             beaconHostRequire(!strcmp(verifyOnly, "1"), "verify-only environment value");
+             beaconHostRequire(!beacon_server.isMasterServer && !beacon_server.isRequestServer && noNetStart, "isolated verify-only role");
+-            beaconHostVerifyCurrentAtlasGraph();
++            beaconHostVerifyCurrentKingsRowGraph();
+             exit(0);
+         }
+     }
+--- a/Common/group/groupfileload.c
++++ b/Common/group/groupfileload.c
+@@ -1043,7 +1043,7 @@
+                 if (!entry->def)
+                 {
+                     if (!stashFindPointer(futureDefs,newname,NULL) && stricmp(groupLoad->name,"object_library/Omni/NAVCMBT")!=0 && stricmp(groupLoad->name,"object_library/Omni/_NAVCMBT")!=0)
+-                        ErrorFilenamef( fname, "Group %s\ncan't find member %s\n", def->name, groupLoad->name );
++                        { FatalErrorf("Host Kings Row collision missing group %s in %s", groupLoad->name, fname); exit(2); }
+                     entry->def = groupDefFuture(newname);
+                 }
+             }
+@@ -1062,7 +1062,7 @@
+         else
+         {
+             if (!stashFindPointer(futureDefs,newname,NULL) && stricmp(groupLoad->name,"object_library/Omni/NAVCMBT")!=0 && stricmp(groupLoad->name,"object_library/Omni/_NAVCMBT")!=0)
+-                ErrorFilenamef( fname, "Group %s\ncan't find member %s\n", def->name, groupLoad->name );
++                { FatalErrorf("Host Kings Row collision missing group %s in %s", groupLoad->name, fname); exit(2); }
+             #if SERVER
+             if (server_state.prune)
+             {
+@@ -1299,7 +1299,7 @@
+     {
+         def->model = groupModelFind(defload->obj_name);
+         if (!def->model)
+-            Errorf("Cant find root geo %s",defload->obj_name);
++            { FatalErrorf("Host Kings Row collision missing root geometry %s", defload->obj_name); exit(2); }
+         groupSetTrickFlags(def);
+     }
+     groupDefName(def,file->fullname,newname); //TO DO how exactly this work?
+@@ -1396,7 +1396,7 @@
+     def = loadDef(newname);
+     if (!def)
+     {
+-        Errorf("Missing reference: %s\n",newname);
++        { FatalErrorf("Host Kings Row collision missing reference %s", newname); exit(2); }
+         return 0;
+     }
+     #else
+@@ -1407,7 +1407,7 @@
+         def = groupDefFind(newname);
+         if (!def)
+         {
+-            Errorf("Missing reference: %s\n",newname);
++            { FatalErrorf("Host Kings Row collision missing reference %s", newname); exit(2); }
+             def = groupDefFuture(newname);
+         }
+     }

@@ -1,0 +1,67 @@
+{
+  "format": 1,
+  "status": "reproduced",
+  "source_zip": {
+    "name": "coh-atlas-gameplay-20261002-203058.zip",
+    "bytes": 650857,
+    "sha256": "52d70d85a19164e4f75a219323d453a01068b5de19627394a5e8fec6cf692ab2"
+  },
+  "device": {
+    "model": "AYN Thor",
+    "android_sdk": 33,
+    "app_version": "0.11.5"
+  },
+  "observed_failure": {
+    "stage": "persistent_server_profile",
+    "started_utc": "2026-10-02T20:30:55.121477+00:00",
+    "finished_utc": "2026-10-02T20:30:56.025667+00:00",
+    "error": "Server payload archive metadata differs",
+    "postgres_started": false,
+    "dbserver_started": false,
+    "mapserver_started": false,
+    "wine_started": false,
+    "client_started": false,
+    "cleanup_complete": true,
+    "persistent_database_opened": false,
+    "character_rows_modified_by_failed_operation": false,
+    "client_worktree_reused": true
+  },
+  "published_apk": {
+    "version": "0.11.5",
+    "bytes": 595194816,
+    "sha256": "5ba95d45bfbe0a2cda74bb632b80d1499058f5c8b40c48d9d422a9304cdb9941",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.5/COH-Atlas-Gameplay-0.11.5.apk"
+  },
+  "cause": {
+    "writer": "tools/android/interactive/build_responsiveness_apk.py:apply_native",
+    "consumer": "android/guest/local_login_server.py:extract_regular",
+    "game_archive_sha256": "0909fd12c47bdb79d8a039c6fd157a5105838963850f748fc08a8e4ec3ad3195",
+    "members": 26,
+    "members_with_rejected_timestamp": 26,
+    "actual_tar_mtime": 1767225600,
+    "required_tar_mtime": 0,
+    "other_required_tar_metadata_valid": true
+  },
+  "independent_reproduction": {
+    "actual_guest_extractor": "failed before writing first CrashRpt.dll",
+    "metadata_only_repair": "passes actual guest extraction, native inventory, PE hashes, receipts, loopback/listener/progress checks",
+    "dbserver_schema_and_package": "passes unchanged actual guest extraction and pinned payload/input checks",
+    "client_package": "passes archive_manifest and all 21 binary hashes",
+    "sql_or_native_runtime_executed": false
+  },
+  "runtime_refresh": {
+    "reported_app_closures": true,
+    "crash_trace_in_zip": false,
+    "cause_confirmed": false,
+    "identified_allocation_issue": "fresh 1 MiB transfer buffer per archive member",
+    "repair": "one reusable 64 KiB buffer per archive",
+    "host_fixture": {
+      "members": 1002,
+      "heap_mib": 32,
+      "old_gc_collections": 125,
+      "new_gc_collections": 1
+    },
+    "new_diagnostics": "bounded own-app Android process exit metadata in support report"
+  },
+  "physical_repair_validation": "pending"
+}

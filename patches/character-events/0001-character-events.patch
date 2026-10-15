@@ -1,0 +1,75 @@
+--- a/MapServer/CMakeLists.txt
++++ b/MapServer/CMakeLists.txt
+@@ -527,6 +527,7 @@
+ 	src/svr/svr_player.c
+ 	src/svr/svr_tick.c
+ 	src/svr/wine_map_progress.c
++	src/svr/wine_character_events.c
+ 	src/taskforce.c
+ 	src/taskpvp.c
+ 	src/taskRandom.c
+--- a/MapServer/src/svr/svr_init.c
++++ b/MapServer/src/svr/svr_init.c
+@@ -55,6 +55,7 @@
+ #include "entity/load_def.h" // for load_AllDefs
+ #include <utilitieslib/utils/FolderCache.h>
+ #include "wine_map_progress.h"
++#include "wine_character_events.h"
+ #include <utilitieslib/utils/textparser.h>
+ #include <utilitieslib/utils/sysutil.h>        // for getExecutableName()
+ #include "group/groupfilelib.h"
+@@ -1936,6 +1937,7 @@
+ {
+     int        startup_timer;
+     int        map_progress_status;
++    int        character_event_status;
+ 
+ #if defined(_M_X64)
+     #pragma message("Don't even think about running 64 bit compiled MapServer binaries. The only reason they are compile-able in this state is to simplify batch builds")
+@@ -2023,6 +2025,12 @@
+         return 2;
+     }
+     cohMapProgressMark(COH_MAP_STAGE_STARTUP);
++    character_event_status = cohCharacterEventsInit();
++    if (character_event_status < 0) {
++        fprintf(stderr, "Character event initialization failed (Windows error %lu).\n", GetLastError());
++        fflush(stderr);
++        return 2;
++    }
+ 
+     trickGoogleDesktopDll(server_state.silent);
+ 
+--- a/MapServer/src/svr/svr_tick.c
++++ b/MapServer/src/svr/svr_tick.c
+@@ -22,6 +22,7 @@
+ #include <utilitieslib/network/net_link.h>
+ #include <utilitieslib/utils/FolderCache.h>
+ #include "wine_map_progress.h"
++#include "wine_character_events.h"
+ #include "dbcomm/dbquery.h"
+ #include "entity/friends.h"
+ #include "container/containerEmail.h"
+@@ -450,6 +451,9 @@
+                     }
+                 }
+                 LOG_ENT( client->entity, LOG_ENTITY, LOG_LEVEL_IMPORTANT, 0, "Connection:ResumeCharacter from %s:%d AuthName \"%s\"",makeIpStr(client->link->addr.sin_addr.S_un.S_addr),client->link->addr.sin_port, client->entity->auth_name);
++                cohCharacterEventReady(db_state.map_id, client->entity->db_id, client->entity->auth_id,
++                    client->entity->name, client->entity->auth_name,
++                    makeIpStr(client->link->addr.sin_addr.S_un.S_addr), client->link->addr.sin_port);
+ 
+                 for (i = 0; i < eaSize(&g_SalvageTrackedList.ppTrackedSalvage); ++i)
+                 {
+@@ -757,8 +761,12 @@
+ 
+         // currently we get here once per second
+         // seems like a good place to log periodic entity info
+-        if(log_periodic_info)
++        if(log_periodic_info) {
+             LOG_ENT( e, LOG_ENTITY, LOG_LEVEL_IMPORTANT, 0, "PeriodicInfo pos=<%.2f,%.2f,%.2f>",ENTPOSPARAMS(e));
++            if (e && e->ready && !e->dbcomm_state.map_xfer_step)
++                cohCharacterEventPosition(db_state.map_id, e->db_id, e->auth_id,
++                    e->name, e->auth_name, ENTPOSPARAMS(e));
++        }
+     }
+ 
+     if (count) {

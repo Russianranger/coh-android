@@ -1,0 +1,280 @@
+{
+  "format": 1,
+  "status": "passed",
+  "run_id": 36579726816,
+  "repository_commit": "6b50467a1b96133acc92a378617ff961733f288c",
+  "scope": "independent_downloaded_hosted_evidence_revalidation_against_verified_APK_build_receipt",
+  "apk": {
+    "bytes": 355105590,
+    "sha256": "781dfb978b07e2d129c1b65b50913cee669df78e24058ee5f780aa4157502734"
+  },
+  "checks": [
+    "Fresh import payload/contract identities equal verified 0.4.1 APK",
+    "Reconstructed generation receipt and import recovery/cancellation proof",
+    "All eighteen stages and complete owned cleanup under original host validators",
+    "All client/service capture bytes rehashed and semantics validated",
+    "Exact-name character resume, SQL snapshots and influence/login progression",
+    "Source-bound loopback bindings and independent namespace receipt",
+    "Current adapter source provenance and accepted donor/base identity"
+  ],
+  "limits": [
+    "APK bytes/payloads were already independently rehashed during delivery; this review compares evidence to that receipt",
+    "Does not rerun the host runtime or recreate the imported full-data generation",
+    "Physical Android cleanup recovery and full 0.4.1 device milestone remain unvalidated"
+  ],
+  "capture_counts": {
+    "game-captures": 11,
+    "game-service-captures": 14
+  },
+  "stages": 18,
+  "character": {
+    "container_id": 1,
+    "name": "TEST40653",
+    "account": "CohAa1165eaa4c"
+  },
+  "influence": 12345,
+  "login_counts": [
+    1,
+    2
+  ],
+  "row_counts": {
+    "ents": 1,
+    "ents2": 1,
+    "powers": 8,
+    "costumeparts": 14
+  },
+  "same_cluster_without_reseed_or_restore": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 630,
+    "scanned_tasks": 8,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0
+  },
+  "restart_owned_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 316,
+    "scanned_tasks": 4,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0
+  },
+  "elapsed_seconds": {
+    "host_gate": 1968.534312,
+    "import": 55.219958,
+    "game": 1912.375267,
+    "game_private_runtime": 279.446041,
+    "assets_and_architecture": 0.0078,
+    "initialize_owned_cluster": 2.156288,
+    "postgres_first_start": 0.215999,
+    "restricted_fixture_database": 0.809042,
+    "wine_prefix_and_driver": 41.828426,
+    "win32_odbc_driver": 0.914462,
+    "win32_runtime_dll": 0.407177,
+    "game_services_first": 1055.142433,
+    "atlas_ready_observation": 31.584217,
+    "game_create_and_connect": 219.067011,
+    "game_live_currency": 3.360537,
+    "game_protocol_logout_first": 3.92734,
+    "game_restart": 2.661418,
+    "postgres_game_restart": 0.316424,
+    "game_services_restart": 194.647172,
+    "game_resume_exact_name": 64.733567,
+    "game_protocol_logout_second": 4.960138
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "evidence_files": {
+    "game-captures/first-console.txt": {
+      "bytes": 8307,
+      "sha256": "101562a782936ea2fb2de0a11d26cee314151ffd348812835d0750174b6d22d7"
+    },
+    "game-captures/first-events.jsonl": {
+      "bytes": 3299,
+      "sha256": "a1eb574351a8e5bffd8de7621be21c65d0d165870de5a9183226d6a5e792ff51"
+    },
+    "game-captures/first-ready.json": {
+      "bytes": 278,
+      "sha256": "6c26b10bcb1030d82dffcef8b299302b16bed2c6f7910112ef8c4cca88d04599"
+    },
+    "game-captures/first-result.json": {
+      "bytes": 331,
+      "sha256": "67798c262bbe90dbb9e5de10487b3914c4a1c065c8c6b96be95685a9141253ec"
+    },
+    "game-captures/first-snapshot.json": {
+      "bytes": 5460,
+      "sha256": "0cbceb329e3fd8d03a748641ba00eee25d3288b72ca760d847a2139092d77b38"
+    },
+    "game-captures/restart-snapshot.json": {
+      "bytes": 5460,
+      "sha256": "0cbceb329e3fd8d03a748641ba00eee25d3288b72ca760d847a2139092d77b38"
+    },
+    "game-captures/second-console.txt": {
+      "bytes": 8921,
+      "sha256": "4f887e9211fced28d26fd0e98ccc3ce31769787030f8d3b9221cd3eec32643f7"
+    },
+    "game-captures/second-events.jsonl": {
+      "bytes": 1861,
+      "sha256": "2dfbc5e49d3cd81a6ef6ba46ee59592889225939e408225c8b93503952f58486"
+    },
+    "game-captures/second-ready.json": {
+      "bytes": 276,
+      "sha256": "a26738dbd204010544b6ae2a48d0e785fac5a94354828c931dde89dfbf9a7d6c"
+    },
+    "game-captures/second-result.json": {
+      "bytes": 329,
+      "sha256": "98a479f9d67517be3f59cca395a4f1c4ebff1597e1c946c9303d68a0c6ec2708"
+    },
+    "game-captures/second-snapshot.json": {
+      "bytes": 5460,
+      "sha256": "c39f2e4c2833614b7aa63861c5d7d3a10cbab22e81b562d061a829a6366c2acf"
+    },
+    "game-captures.json": {
+      "bytes": 1610,
+      "sha256": "e0a4be451be1ec14d214b8fb3a3718870ae63103cd21fb73ac22265560383649"
+    },
+    "game-hang-captures.json": {
+      "bytes": 78,
+      "sha256": "57d20d77a89b8f8a9ccb8ec6e0ed6bc4d2bb89dc204d869ba4b9a04a42b98033"
+    },
+    "game-runtime-report.json": {
+      "bytes": 249758,
+      "sha256": "87536858e677137d13cce549a7d149700ad4b2bc2fa71e5467e4b2ebda1b38ff"
+    },
+    "game-service-captures/first-atlas-stdout.txt": {
+      "bytes": 1016007,
+      "sha256": "2438d8c5025ca49272aa6e00da4f8bd614638b199de4453597e5c3f5e3c713ff"
+    },
+    "game-service-captures/first-dbserver-stdout.txt": {
+      "bytes": 5471,
+      "sha256": "01ae6d8f623abb23fd03d3b9d9330d89487ed382cd64d9826d0d338d9a92eecc"
+    },
+    "game-service-captures/log-001.txt": {
+      "bytes": 76,
+      "sha256": "c0ccb89bc8e1f452e96a20b10a67257676fcfc2f37a0f37b9be6a0d609d145f2"
+    },
+    "game-service-captures/log-002.txt": {
+      "bytes": 76,
+      "sha256": "f27c53bb7f2fd6ed4e1e6673dd819ae323dc8a0e31379be33941b36a1a8a66ba"
+    },
+    "game-service-captures/log-003.txt": {
+      "bytes": 16932,
+      "sha256": "c066c6c626de5bed46ecdb87496752545aff46128128d69bc0c50e2103c5bb22"
+    },
+    "game-service-captures/log-004.txt": {
+      "bytes": 4097,
+      "sha256": "b9d7c34c69365c1c663ceb3b13d582ca715736e8c007213734fe54a5f8d2b94b"
+    },
+    "game-service-captures/log-005.txt": {
+      "bytes": 91,
+      "sha256": "810db21c78a10f4cc80becfd15a314c6029a52f091f66a4b6562a9bed4f73fa6"
+    },
+    "game-service-captures/log-006.txt": {
+      "bytes": 91,
+      "sha256": "6df1cc639adb256bc35e2607e5598edf4c6dbf546e719fe25278d7b220689946"
+    },
+    "game-service-captures/log-007.txt": {
+      "bytes": 1048614,
+      "sha256": "0d627bbb941461ddc7f9915e896064d7b9bd8474fbb0b2265e902f08874cc600"
+    },
+    "game-service-captures/log-008.txt": {
+      "bytes": 1048614,
+      "sha256": "6acaccbd4f4ace59346b7c1db769932dc0b0a404a0318ae59c327f42a0e66aaf"
+    },
+    "game-service-captures/log-009.txt": {
+      "bytes": 1048614,
+      "sha256": "7ca0ae2e7dd4bf5ae73d56e6b293c7bff9f488c7fb2b5a6acd1e730d9ee137e0"
+    },
+    "game-service-captures/manifest.json": {
+      "bytes": 4108,
+      "sha256": "28e47efa39e643b3fb9a122e9f4cdccffea0dc8e76a6f7abe1f3313ef27980dd"
+    },
+    "game-service-captures/restart-atlas-stdout.txt": {
+      "bytes": 1000536,
+      "sha256": "e6729d48c189676fc9828ae7bd4bb8f5f834ec5fac13a357263be8d536f848e2"
+    },
+    "game-service-captures/restart-dbserver-stdout.txt": {
+      "bytes": 18258,
+      "sha256": "78f40c6288edde5417e5b01efff2e98e25ac19283bf4ee0fd9f656ddf196be2f"
+    },
+    "game-service-captures.json": {
+      "bytes": 1993,
+      "sha256": "fb76e0e8bf7593d7e3bb550d30775756b4667b804b908ce5349f5509540ea375"
+    },
+    "guest-etc-hosts": {
+      "bytes": 34,
+      "sha256": "7f4d1593f124051d060d76104c04569330c90bf8c0a2cd8f12375e15b93e719c"
+    },
+    "host-device-inputs.json": {
+      "bytes": 3615,
+      "sha256": "44fad85e95c38f7e28eb83d8a08c17d12863b696e4af8ecf3561272d7551ac59"
+    },
+    "host-device-qualification.json": {
+      "bytes": 583,
+      "sha256": "94c4487f013ad6073a7d0a885ab8bd479a43f1f390fea7e03361704a1a44ac6d"
+    },
+    "host-game.log": {
+      "bytes": 158765,
+      "sha256": "5030134c1bddb857f12139409fb19b576c283922607effcb655cde2f5717ca56"
+    },
+    "imported/host-import-report.json": {
+      "bytes": 1801,
+      "sha256": "d71a227c5d9a4ccaada3f333f41bff4a9d22fdf0ec1d7d806c41d81501190ee9"
+    },
+    "imported/host-import.log": {
+      "bytes": 824,
+      "sha256": "6a0cb46207cd48fb004e4ff4695c1bade09e32988c98d31cb71553b90bfba044"
+    },
+    "imported/import-summary.properties": {
+      "bytes": 393,
+      "sha256": "552888840b2fbb9bf8125d06dc9bdd232e3ff131b958eb3a1ebf55a4cb90c068"
+    },
+    "network-isolation.json": {
+      "bytes": 424,
+      "sha256": "3a0f258e8d693438ad4ae307397b608da46dd01f5b8a95f0d06d07f0d1c578ee"
+    },
+    "stack-probe-build.json": {
+      "bytes": 577,
+      "sha256": "7e8ea3b34917160222e56cec0012860eec2b1d684907723365222d369a399185"
+    }
+  },
+  "memory_observation_summary": {
+    "scope": "run_token_owned_Wine_FEX_processes_only",
+    "measurement": "sampled_sum_of_process_VmRSS_kibibytes",
+    "successful_samples": 316,
+    "unavailable_samples": 1,
+    "maximum_sampled_rss_kib": 4291472,
+    "instantaneous_peak_measured": false,
+    "pss_measured": false
+  }
+}

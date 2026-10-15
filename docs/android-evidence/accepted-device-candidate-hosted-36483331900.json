@@ -1,0 +1,176 @@
+{
+  "format": 1,
+  "status": "accepted_hosted_device_candidate_physical_thor_pending",
+  "milestone": "Side-by-side 0.2.0 APK packages the qualified real DbServer and passes the exact-bundle ARM64 device-policy gate; physical Thor execution remains pending.",
+  "run_id": 36483331900,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36483331900",
+  "run_attempt": 1,
+  "repository_commit": "f7dbba42ec29a1c054d856d71810146f5b53bac6",
+  "workflow_conclusion": "success",
+  "workflow_updated_utc": "2026-09-28T21:08:42Z",
+  "independently_verified_utc": "2026-09-28T21:12:46.539725+00:00",
+  "jobs": {
+    "tooling": 109134081682,
+    "apk": 109134397995,
+    "runtime": 109134780891
+  },
+  "tooling_tests_run": 241,
+  "tooling_tests_passed": 233,
+  "tooling_tests_skipped": 8,
+  "tooling_suites": [
+    {
+      "name": "android",
+      "run": 147,
+      "passed": 147,
+      "skipped": 0
+    },
+    {
+      "name": "dbserver",
+      "run": 94,
+      "passed": 86,
+      "skipped": 8
+    }
+  ],
+  "apk": {
+    "apk": "COH-Server-Test-0.2.0.apk",
+    "bytes": 16668615,
+    "sha256": "cb5cf453af1b81cbaa02917a6d7cb55ab8b8f2a910a46b0a85f4ae399883188b",
+    "application_id": "io.github.russianranger.cohdiagnostic.m3",
+    "version_name": "0.2.0",
+    "version_code": 7,
+    "min_sdk": 26,
+    "target_sdk": 35,
+    "abi": "arm64-v8a",
+    "signature_verified": true,
+    "signer_certificate_sha256": "6f6c6ea01724f4bc77605fb9ef102bcd43f44349bfd4b18e0bb39082e87e755f",
+    "package_badging_verified": true,
+    "payload_bytes_verified": true
+  },
+  "signing": "Ephemeral CI certificate; not a stable release/update signing identity",
+  "inputs": {
+    "runtime_manifest_sha256": "d68ae4374dadfacd3c5044ccdbfcc04a6d4104af263c3b100168d7ed7d6b7cb9",
+    "base_runtime_run_id": 36364550345,
+    "base_runtime_repository_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+    "base_runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "guest_script_sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2",
+    "package_run_id": 36460867428,
+    "package_repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+    "package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+    "fixture_executable_sha256": "77d4677904d967dfdeffa3c6b2609ae0620ccc28177655c6f5f975a7ec4c2212",
+    "normal_executable_sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c",
+    "schema_acceptance_run_id": 36088012666,
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "host_inputs_receipt": "device-candidate-host-inputs-36483331900.json"
+  },
+  "arm64": {
+    "status": "passed",
+    "execution_platform_requested": "host",
+    "listener_policy": "device",
+    "stages_passed": 28,
+    "elapsed_seconds": 191.288442,
+    "fresh_cluster": true,
+    "fixture_phases": 14,
+    "fixture_check_groups": 21,
+    "normal_schema_passes": 2,
+    "table_count": 99,
+    "column_count": 5935,
+    "attribute_rows": 58272,
+    "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+    "catalog_stable_across_reload": true,
+    "required_loopback_endpoints_per_normal_pass": 13,
+    "optional_loopback_endpoints_observed_per_normal_pass": 1,
+    "observed_loopback_endpoints_per_normal_pass": [
+      14,
+      14
+    ],
+    "all_fixture_loopback_acknowledgements": true,
+    "both_normal_fixed_inputs_acknowledgements": true,
+    "process_captures_closed": 111,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "wine_shutdown": {
+      "stop_exit_code": 0,
+      "wait_exit_code": 0,
+      "prefix_lock_free": true,
+      "server_socket_inactive": true
+    },
+    "wine_owned_remaining": 0,
+    "wine_ownership_inspection_failures": 0,
+    "network_isolation_receipt": "device-candidate-network-36483331900.json"
+  },
+  "verification_receipts": {
+    "ci": "device-candidate-ci-36483331900.json",
+    "independent_payloads": "device-candidate-payload-verification-36483331900.json",
+    "independent_host_replay": "device-candidate-validation-36483331900.json"
+  },
+  "preserved_files": {
+    "device-candidate-arm64-36483331900.json": {
+      "bytes": 185875,
+      "sha256": "b69c3bfaf3f9e43d5119b3f9addbe78b79130cf1b7ddbb1fb18c372c84cdca23"
+    },
+    "device-candidate-host-inputs-36483331900.json": {
+      "bytes": 6937,
+      "sha256": "505cb77d63bd9aa573469500fd24e5187919451466021fc0587ebaeb4541f7af"
+    },
+    "device-candidate-network-36483331900.json": {
+      "bytes": 424,
+      "sha256": "3a0f258e8d693438ad4ae307397b608da46dd01f5b8a95f0d06d07f0d1c578ee"
+    },
+    "device-candidate-hosts-36483331900.txt": {
+      "bytes": 34,
+      "sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+    },
+    "device-candidate-apk-build-36483331900.json": {
+      "bytes": 1657,
+      "sha256": "ccb4134e6e867fecc2cebc70b0136504c9e1a2f58b2b2fd8b7421558ad4b48a2"
+    },
+    "device-candidate-assets-preparation-36483331900.json": {
+      "bytes": 1933,
+      "sha256": "6fc0c6f71cca4dabb0c33f0ea7c54dce314c02758102b21befc6c1258d2eec82"
+    },
+    "device-candidate-runtime-manifest-36483331900.json": {
+      "bytes": 10291,
+      "sha256": "d68ae4374dadfacd3c5044ccdbfcc04a6d4104af263c3b100168d7ed7d6b7cb9"
+    },
+    "device-candidate-payload-verification-36483331900.json": {
+      "bytes": 1537,
+      "sha256": "1eb60a4d1d4069b15d7e54333d5b20c8d92dc6bdca66ce6510d8cae90c1da400"
+    },
+    "device-candidate-bundle-verification-36483331900.json": {
+      "bytes": 381,
+      "sha256": "fbe897385f7e6353db4c1197b689aafce955615178198c3218a42c36a52a970e"
+    },
+    "device-candidate-proot-linux-36483331900.json": {
+      "bytes": 3048,
+      "sha256": "7cc7993370213b07bb2b1cad404f6c575a40f7866faa50b170be2935ea2f9a47"
+    },
+    "device-candidate-talloc-source-36483331900.json": {
+      "bytes": 724,
+      "sha256": "3d15e54639ef937ba47887e5dda613e9b723661c8bd90c734ada304f11ea2a34"
+    },
+    "device-candidate-ci-36483331900.json": {
+      "bytes": 3095,
+      "sha256": "8ffec1e45487a4d821620fcdf495e9ca0057a81432b97c6da65cfa36747fe9cd"
+    },
+    "device-candidate-validation-36483331900.json": {
+      "bytes": 1842,
+      "sha256": "8aa7063ddb5a3e7544a49b48b019b22fb870bcba262d6dd3c92108a50b33c227"
+    }
+  },
+  "reused_preserved_donor_evidence": {
+    "receipt": "accepted-dbserver-hosted-36460867428.json",
+    "package_manifest": "dbserver-package-36460867428.json",
+    "package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+    "reason": "The unchanged qualified donor and generated schema are referenced by exact hashes instead of duplicating their large inventories."
+  },
+  "android_execution_validated": false,
+  "android_listener_binding_validated": false,
+  "gameplay_validated": false,
+  "generated_character_persistence_validated": false,
+  "android_lifecycle_validated": false,
+  "peak_device_memory_measured": false,
+  "next_gate": "Install side-by-side on Thor, run real DbServer to completion, Stop during active child work, then rerun with app-switch and screen-lock checks; export each result."
+}

@@ -1,0 +1,232 @@
+name: Thor immutable character APK qualification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/android-character-qualification.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: android-character-qualification-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install image dependency for graphical driver tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-pil
+      - name: Check actual client packaging, session evidence and package boundaries
+        run: python3 -m unittest discover -s tools/android/interactive -p 'test_*.py' -v
+      - name: Check prepared client cache reuse across package updates
+        run: python3 -m unittest discover -s tools/android/client -p 'test_guest.py' -v
+
+  runtime:
+    needs: tooling
+    # Required only to read the already reviewed unpublished game asset ZIP.
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 100
+    steps:
+      # Current checkout supplies the corrected external driver. Packaged Java,
+      # native launcher and guest sources remain checked against the donor APK.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Require the verified immutable APK donor
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, pathlib, subprocess, urllib.request
+
+          # BEGIN DONOR_VALIDATION
+          DONOR = {
+              'repository_id': 1368730125,
+              'run_id': 36855035567,
+              'artifact_id': 11159086092,
+              'artifact_name': 'coh-client-interaction-apk',
+              'artifact_digest': 'sha256:02f7ae93328753a5369bc7a48254c78cae721fc4cc94226efe6e715de534e165',
+              'artifact_bytes': 351973100,
+              'repository_commit': '19879ed57eb74d4e55aa42c5160c8c539ff5bb6d',
+              'workflow_path': '.github/workflows/android-client-interactive.yml',
+              'apk_name': 'COH-Character-Creation-0.9.0.apk',
+              'apk_bytes': 386658292,
+              'apk_sha256': '1da4719cf7af825092199c73067fb5fd3423fcaa8543a37d366ad1a0557ed681',
+              'build_report_name': 'interactive-apk-build-report.json',
+              'build_report_bytes': 35029,
+              'build_report_sha256': 'db5281c5d925fb5862851a38579fd51ace49dfab4df984283c488b6b82471000',
+          }
+
+          def validate_donor(repository, run, jobs, artifact):
+              def require(value, message):
+                  if not value:
+                      raise ValueError(message)
+
+              require(run.get('id') == DONOR['run_id']
+                      and run.get('status') == 'completed'
+                      and run.get('head_repository', {}).get('full_name') == repository
+                      and run.get('repository', {}).get('full_name') == repository
+                      and run.get('repository', {}).get('id') == DONOR['repository_id']
+                      and run.get('head_repository', {}).get('id') == DONOR['repository_id']
+                      and run.get('head_sha') == DONOR['repository_commit']
+                      and run.get('path') == DONOR['workflow_path'],
+                      'Immutable APK donor repository, source or workflow differs')
+              # The complete donor run failed in external Settings interaction
+              # before login. Its signed APK job must independently be successful.
+              apk_jobs = [job for job in jobs.get('jobs', []) if job.get('name') == 'apk']
+              require(len(apk_jobs) == 1 and apk_jobs[0].get('run_id') == DONOR['run_id']
+                      and apk_jobs[0].get('status') == 'completed'
+                      and apk_jobs[0].get('conclusion') == 'success',
+                      'Immutable APK donor build job did not succeed')
+              workflow = artifact.get('workflow_run', {})
+              require(artifact.get('id') == DONOR['artifact_id']
+                      and artifact.get('name') == DONOR['artifact_name']
+                      and artifact.get('expired') is False
+                      and artifact.get('size_in_bytes') == DONOR['artifact_bytes']
+                      and artifact.get('digest') == DONOR['artifact_digest']
+                      and workflow.get('id') == DONOR['run_id']
+                      and workflow.get('head_sha') == DONOR['repository_commit']
+                      and workflow.get('repository_id') == DONOR['repository_id']
+                      and workflow.get('head_repository_id') == DONOR['repository_id'],
+                      'Immutable APK artifact identity or bytes differ')
+          # END DONOR_VALIDATION
+
+          repository = os.environ['GITHUB_REPOSITORY']
+          headers = {'Authorization': 'Bearer '+os.environ['GH_TOKEN'],
+                     'Accept': 'application/vnd.github+json',
+                     'X-GitHub-Api-Version': '2022-11-28'}
+          base = 'https://api.github.com/repos/'+repository+'/actions'
+          def fetch(path):
+              request = urllib.request.Request(base+path, headers=headers)
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  return json.load(response)
+          run = fetch('/runs/'+str(DONOR['run_id']))
+          jobs = fetch('/runs/'+str(DONOR['run_id'])+'/jobs?filter=latest&per_page=100')
+          artifact = fetch('/artifacts/'+str(DONOR['artifact_id']))
+          validate_donor(repository, run, jobs, artifact)
+          driver_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          if driver_commit != os.environ['GITHUB_SHA']:
+              raise ValueError('External qualification driver checkout differs')
+          inputs = {'format': 1, 'scope': 'immutable_apk_graphical_character_qualification',
+                    'workflow_commit': driver_commit, 'driver_repository_commit': driver_commit,
+                    'repository_commit': DONOR['repository_commit'],
+                    'apk_source_repository_commit': DONOR['repository_commit'],
+                    'apk_donor_run_id': DONOR['run_id'], 'apk_artifact_id': DONOR['artifact_id'],
+                    'apk_artifact_sha256': DONOR['artifact_digest'].split(':', 1)[1],
+                    'apk_sha256': DONOR['apk_sha256'], 'apk_bytes': DONOR['apk_bytes'],
+                    'build_report_sha256': DONOR['build_report_sha256'],
+                    'build_report_bytes': DONOR['build_report_bytes'],
+                    'donor_apk_job_verified_successful': True,
+                    'startup_timeout_seconds': 900, 'interaction_timeout_seconds': 1200,
+                    'overall_timeout_seconds': 5400, 'apk_rebuilt': False,
+                    'caches_regenerated': False, 'apk_file_pins_verified': False}
+          pathlib.Path('out/qualification').mkdir(parents=True)
+          pathlib.Path('out/qualification/qualification-inputs.json').write_text(json.dumps(inputs, indent=2)+'\n')
+          print('Accepted immutable character APK donor', DONOR['run_id'], DONOR['repository_commit'])
+          PYTHON
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interaction-apk
+          path: out/client
+          run-id: 36855035567
+          github-token: ${{ github.token }}
+      - name: Verify immutable signed APK and build receipt bytes
+        run: |
+          python3 - <<'PYTHON'
+          import hashlib, json, pathlib
+          root = pathlib.Path('out/client')
+          inputs_path = pathlib.Path('out/qualification/qualification-inputs.json')
+          inputs = json.loads(inputs_path.read_text())
+          expected = {
+              'COH-Character-Creation-0.9.0.apk': (inputs['apk_bytes'], inputs['apk_sha256']),
+              'interactive-apk-build-report.json': (inputs['build_report_bytes'], inputs['build_report_sha256']),
+          }
+          for name, (size, digest) in expected.items():
+              path = root/name
+              if not path.is_file() or path.is_symlink() or path.stat().st_size != size:
+                  raise ValueError('Immutable qualification file size/type differs: '+name)
+              with path.open('rb') as stream:
+                  if hashlib.file_digest(stream, 'sha256').hexdigest() != digest:
+                      raise ValueError('Immutable qualification file digest differs: '+name)
+          report = json.loads((root/'interactive-apk-build-report.json').read_text())
+          if (report.get('repository_commit') != inputs['apk_source_repository_commit']
+                  or report.get('sha256') != inputs['apk_sha256']
+                  or report.get('bytes') != inputs['apk_bytes']
+                  or report.get('signature_verified') is not True
+                  or report.get('payload_bytes_verified') is not True
+                  or report.get('application_id') != 'io.github.russianranger.cohclientinteractive'
+                  or report.get('version_name') != '0.9.0' or report.get('version_code') != 4
+                  or report.get('signer_certificate_sha256') != '92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282'):
+              raise ValueError('Immutable signed APK build receipt identity differs')
+          inputs['apk_file_pins_verified'] = True
+          inputs_path.write_text(json.dumps(inputs, indent=2)+'\n')
+          PYTHON
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/client-base-runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/client-accepted-proot
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover exact accepted native runtime source
+        run: >-
+          python3 tools/android/extract_talloc_source.py
+          --assets out/client-base-runtime
+          --bundle out/client-accepted-proot/proot-corresponding-sources.tar.gz
+          --output out/android/source-cache/talloc-2.4.3.tar.gz
+          > out/client/talloc-source-receipt.json
+      - name: Install host runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless tesseract-ocr python3-pil
+      - name: Build matching native ARM64 PRoot
+        run: >-
+          python3 tools/android/build_proot.py --target linux-arm64
+          --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+      - name: Retrieve the existing reviewed game asset ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/client-assets.zip --release-asset-id 588984151
+      - name: Exercise immutable APK character creation through private Unix RFB
+        # Exact APK extraction verifies Java/native/guest source closure, the
+        # original imported assets, accepted runtime and embedded cache pins.
+        run: >-
+          python3 tools/android/interactive/character_host_smoke.py
+          --apk out/client/COH-Character-Creation-0.9.0.apk
+          --archive out/client-assets.zip
+          --build-report out/client/interactive-apk-build-report.json
+          --repository-commit 19879ed57eb74d4e55aa42c5160c8c539ff5bb6d --proot out/android/native/linux-arm64
+          --startup-timeout-seconds 900 --interaction-seconds 1200 --timeout-seconds 5400
+          --work out/client-host --evidence out/client-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-character-immutable-apk-arm64-evidence
+          path: |
+            out/client-evidence/
+            out/qualification/qualification-inputs.json
+            out/client/talloc-source-receipt.json
+            out/android/native/linux-arm64/proot-build-receipt.json
+          if-no-files-found: warn

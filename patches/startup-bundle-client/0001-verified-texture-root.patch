@@ -1,0 +1,80 @@
+--- a/Game/src/render/tex.c
++++ b/Game/src/render/tex.c
+@@ -5,6 +5,7 @@
+ #include <utilitieslib/utils/file.h>
+ #include "render/tex.h"
+ #include "render/coh_texture_header_index.h"
++#include "render/coh_texture_header_root.h"
+ #include "graphics/jpeg.h"
+ #include "cmdparse/cmdgame.h"
+ #include "UI/uiConsole.h"
+@@ -1227,10 +1228,12 @@
+ static CohTextureHeaderIndex coh_texture_index;
+ static unsigned char *coh_texture_index_data;
+ static unsigned int coh_texture_index_hits, coh_texture_index_fallbacks;
++static const char *coh_texture_verified_root;
+ static void cohTextureIndexBegin(void)
+ {
+     const char *path = getenv("COH_TEXTURE_HEADER_PACK");
+     const char *identity = getenv("COH_TEXTURE_HEADER_ID");
+     FILE *input;
+     long bytes;
++    coh_texture_verified_root = getenv("COH_TEXTURE_HEADER_ROOT");
+     if (!path || !identity || sizeof(TextureFileHeader) != COH_THI_TEXTURE_STRUCT_BYTES)
+@@ -1267,9 +1270,14 @@
+ static StashTable coh_missing_texture_diagnostics;
+ static unsigned int coh_missing_texture_duplicates;
+ static int coh_missing_texture_active;
++static int coh_missing_texture_bounded;
++static unsigned int coh_missing_texture_reported, coh_missing_texture_suppressed;
+ void texMissingDiagnosticBegin(void)
+ {
+     const char *enabled = getenv("COH_TEXTURE_DIAGNOSTIC_DEDUP");
++    const char *bounded = getenv("COH_STARTUP_DIAGNOSTIC_BOUND");
++    coh_missing_texture_bounded = bounded && strcmp(bounded, "1") == 0;
++    coh_missing_texture_reported = coh_missing_texture_suppressed = 0;
+     coh_missing_texture_active = enabled && strcmp(enabled, "1") == 0;
+     coh_missing_texture_duplicates = 0;
+     if (!coh_missing_texture_active) return;
+@@ -1290,6 +1298,11 @@
+     }
+     if (stashGetValidElementCount(coh_missing_texture_diagnostics) < 8192)
+         stashAddInt(coh_missing_texture_diagnostics, key, 1, false);
++    if (coh_missing_texture_bounded && coh_missing_texture_reported >= 1024) {
++        ++coh_missing_texture_suppressed;
++        return 0;
++    }
++    ++coh_missing_texture_reported;
+     return 1;
+ }
+ void texMissingDiagnosticEnd(const char *stage)
+@@ -1297,6 +1310,9 @@
+     if (coh_missing_texture_active)
+         printf("COH_TEXTURE_DIAGNOSTICS_V1 stage=%s duplicate_records=%u first_records=%u\n",
+             stage, coh_missing_texture_duplicates, stashGetValidElementCount(coh_missing_texture_diagnostics));
++    if (coh_missing_texture_active && coh_missing_texture_bounded)
++        printf("COH_TEXTURE_DIAGNOSTICS_V2 stage=%s reported_records=%u duplicate_records=%u suppressed_records=%u sample_limit=1024 retained_key_limit=8192 validation_preserved=1\n",
++            stage, coh_missing_texture_reported, coh_missing_texture_duplicates, coh_missing_texture_suppressed);
+     coh_missing_texture_active = 0;
+ }
+ 
+@@ -1323,12 +1339,17 @@
+ 
+     bind->flags &= ~(TEX_ALPHA|TEX_BUMPMAP|TEX_TGA|TEX_DDS|TEX_JPEG); // clear flags set in this function
+ 
+-    indexed_header = cohThiFind(&coh_texture_index, filename);
++    indexed_header = cohThiFindVerifiedRoot(&coh_texture_index, filename, coh_texture_verified_root);
+     if (indexed_header) {
+         memcpy(&tfh, indexed_header->header, sizeof(tfh));
+         ++coh_texture_index_hits;
+     } else {
+-        if (coh_texture_index.count) ++coh_texture_index_fallbacks;
++        if (coh_texture_index.count) {
++            if (coh_texture_index_fallbacks < 3)
++                printf("COH_TEXTURE_INDEX_MISS_V1 path=%s verified_root=%s\n",
++                    filename, coh_texture_verified_root ? coh_texture_verified_root : "<unset>");
++            ++coh_texture_index_fallbacks;
++        }
+         logging = fileSetLogging(0);
+         tex_file = fileOpen(filename, "rbR");
+         fileSetLogging(logging);

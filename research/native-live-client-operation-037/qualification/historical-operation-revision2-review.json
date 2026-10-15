@@ -1,0 +1,147 @@
+{
+  "Android_PRooot_Wine_FEX_Game_or_Bionic_qualification_granted": false,
+  "Android_native_consumer_or_runtime_authority_created": false,
+  "Java_release8_source_and_fixture_compiled_by_reviewer": true,
+  "actual_host_JNI_controls": [
+    "Current held dev/inode ACK and real current file/directory fields",
+    "Exact current names/order and multiple NT8KiB observation batches",
+    "Real sizeLow and100ns writeFILETIME",
+    "Guest-absolute bound import symlink",
+    "Samebranch guest-relative owned symlink",
+    "Outsidebranch relative target initial decline before rows",
+    "Late directory rename/replacement terminates after delivered rows without restart"
+  ],
+  "decision": "APPROVED revision2 dormant operation owner/test and hostJNI composition scope for combined closed source stage. Current reviewed nativeGame/ARMABI/packagedPRootWineFEX/Artifact/Runtime gates must still be genuinely established before any production use; these68host cases do not grant Android activation or performance authority.",
+  "dependency_source_pins": [
+    {
+      "bytes": 22515,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java",
+      "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c"
+    },
+    {
+      "bytes": 1119,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java",
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    },
+    {
+      "bytes": 16096,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java",
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0"
+    },
+    {
+      "bytes": 21587,
+      "path": "tools/android/interactive/test_client_guest_namespace.py",
+      "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77"
+    },
+    {
+      "bytes": 199541,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+      "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9"
+    }
+  ],
+  "format": 1,
+  "fresh_focused_test_result": {
+    "ResourceWarning_is_error": true,
+    "cases": 68,
+    "errors": 0,
+    "failures": 0,
+    "modules": [
+      "test_client_live_directory_operation",
+      "test_client_live_directory_operation_jni"
+    ],
+    "passed": true,
+    "seconds": 18.87014899499627,
+    "skips": 0
+  },
+  "fresh_scope_counts": {
+    "JVM_TCP_controls_with_typed_native_metadata_activation_mocks": 63,
+    "actual_Android_or_PRoot_Wine_FEX_Game_controls": 0,
+    "actual_JNI_warnings": 0,
+    "actual_host_JNI_kernel_TCP_controls_reusing_original_helper": 5
+  },
+  "full_provider_assets_accessed": false,
+  "inherited_dependency_qualification": {
+    "rerun_as_standalone_suites_by_this_reviewer": false,
+    "root_supplied_Service_JVM_TCP_controls": 71,
+    "root_supplied_descriptor_JVM_controls": 36,
+    "scope": "Exact dependency bytes were recompiled/composed by these68fresh tests; earlier standalone qualification remains separately sourced."
+  },
+  "native_SQL_or_player_profile_opened": false,
+  "native_compiler_invoked_by_reviewer": false,
+  "owned_source_pins": [
+    {
+      "bytes": 26875,
+      "path": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java",
+      "sha256": "8cbd836f7a826371b6a31be68dab96d2f4a71824df4cc942c863d000303cd9b1"
+    },
+    {
+      "bytes": 30332,
+      "path": "tools/android/interactive/test_client_live_directory_operation.py",
+      "sha256": "bca29decb2ca6e54916324af1528d71408dfbfad1ac134816f3dfc987cb2d836"
+    }
+  ],
+  "physical_Thor_speed_or_RAM_gain_claimed": false,
+  "prior_root_actual_JNI_attempt_preserved": {
+    "failed": 1,
+    "passed": 3,
+    "reason": "Relative fixture target was outside admitted fx/LOC branch; corrected test now separately proves safe refusal plus admitted same-branch target; production source unchanged for this test correction",
+    "tests": 4
+  },
+  "production_activation_added": false,
+  "real_JNI_composition_test_source": {
+    "path": "/workspace/scratch/5d16603ca7ff/live-service-037/tools/android/interactive/test_client_live_directory_operation_jni.py",
+    "pin": {
+      "bytes": 12553,
+      "sha256": "e828badee884c461000e3c4fb1fc3fa1b0257f11076ca88240cec1e58f1d50bf"
+    }
+  },
+  "reused_original_host_JNI_build_receipt": {
+    "host_JNI": true,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-host-qualification-revision-4/qualification.json",
+    "pin": {
+      "bytes": 10093,
+      "sha256": "1b7feb737cc335f34775caff0ad769508c03a369f18d9fd83d2f92877f136fe6"
+    },
+    "status": "host-only-passed"
+  },
+  "reused_original_host_JNI_helper": {
+    "native_recompiled_by_reviewer": false,
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-arm-core-host-qualification-revision-4/libcoh_live_directory-host.so",
+    "pin": {
+      "bytes": 35664,
+      "sha256": "b264121c80afb11ff84248b98099939a6657251c56bd2175174f260615d45708"
+    }
+  },
+  "review_findings": {
+    "accepted_scope": [
+      "Factory requires a trusted external ActivationContract and immutable complete six-gate proof identities tied to namespace SHA, exact current operation/session/process/realUID/runtime/Game bytes/helper roots/recipe. No untrusted activation parser or default enabled flag exists.",
+      "Current nofollow metadata for app root and seven finalized bindings checks owner/type/symlink/device/uniqueinode and rechecks after native registration; native independently holds/revalidates expected roots and ancestors.",
+      "Only initial currentGame fx/scripts.loc requests enter shortcut. Legitimate current/import samebranch case/absolute/relative aliases preserve original request while separately pinning a safe resolved target; other profile/view/passthrough/crossbranch/dot/legacy/null targets refuse before rows.",
+      "Current held native dev/inode/UID join and target are checked before rows; original request is preserved for core resolution before/after batches. Actual kernel/JNI alias and late rename controls confirm current source attribution.",
+      "Late native errors or OOME after advancing poison/close this operation namespace without cursor retry; reusedhandle, retarget and cleanup errors are surfaced with owned releases. Initial known refusal remains eligible for ordinary fallback before rows.",
+      "Factory catches Throwable and releases only its current namespace/backend/service; Service constructor owns and closes any listening socket if its thread construction/start fails before constructor return.",
+      "Private Game-only control contains credentials for a separately owned0600 handoff; diagnosticDescriptor omits auth nonce and no private control file is written here. Immutable diagnostic/statistics maps retain operation identity and actual boundedcore labels without claiming total syscalls/RSS.",
+      "Authenticated currentGame transport has no idle/session expiry; finite preauthentication admission and ownedcleanup limits remain distinct from gameplay timers.",
+      "Source search finds no production runtime caller, activationvalidator implementation, loadLibrary, nativeGame provider registration, artifact admission or release authority for this operation owner."
+    ],
+    "blocking": []
+  },
+  "role": "independent_dormant_ClientLiveDirectoryOperation_revision2_and_actual_host_JNI_TCP_composition_review",
+  "source_freeze": {
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-directory-operation-source-freeze-revision-2.json",
+    "pin": {
+      "bytes": 2430,
+      "sha256": "51f4ecf2d23eb0d96d28f36c5bf2ec2977b5d538ad81c07399bf4bc0ec7683e3"
+    }
+  },
+  "source_mutated_by_reviewer": false,
+  "source_pins_pre_post_unchanged": true,
+  "test_log": {
+    "path": "/workspace/scratch/5d16603ca7ff/native037-recovery/live-service-independent-review/independent-operation63-plus-realJNI5-controls.log",
+    "pin": {
+      "bytes": 9198,
+      "sha256": "0ee39bbbc053c755d0e1f09ed8c65a67b9271f51cccb2d3f927e6d19fe3e1acc"
+    }
+  },
+  "timestamp_utc": "2026-10-14T08:22:55.570632+00:00"
+}

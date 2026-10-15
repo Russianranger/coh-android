@@ -1,0 +1,110 @@
+{
+  "format": 1,
+  "status": "failed_fixture_native_process_exit_after_complete_marker",
+  "run_id": 36454174374,
+  "run_attempt": 1,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36454174374",
+  "repository_commit": "8944bd598990b33b63a750a64ae448403e4542cd",
+  "runtime_job_id": 109039309888,
+  "failed_step": "Exercise actual DbServer against ARM64 PostgreSQL in an isolated network",
+  "failed_stage": "dbserver_rebuild",
+  "failures": [
+    "DbServer exit code differs: dbserver-rebuild"
+  ],
+  "started_utc": "2026-09-28T17:02:17.838990+00:00",
+  "finished_utc": "2026-09-28T17:04:00.061917+00:00",
+  "stages_passed": 18,
+  "completed_fixture_phases": 8,
+  "failed_process": {
+    "label": "dbserver-rebuild",
+    "elapsed_seconds": 7.611,
+    "exit_code": -11,
+    "forced_stop": false,
+    "output_capture_closed": true,
+    "input_closed": true,
+    "output": "0360:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-fe110a06a944\\\\DbServer.exe\" in experimental wow64 mode\nSQL PSQLODBC35W.DLL 18.00.0004 / ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('PgFifo:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('PgFifo'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_c83ff57e25fdbc69cf6372683a4a8c11\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('PgFifo:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('PgFifo'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_c83ff57e25fdbc69cf6372683a4a8c11\" already exists, skipping\r\nPG_TEST_PASS real schema rebuild preserves rows, high-water and foreign key\r\nPG_TEST_COMPLETE rebuild\r\nFlushing log files to disk\r\nFlushing SQL fifo\r\n",
+    "completion": {
+      "policy": "leader_exit_and_output_eof",
+      "leader_exit_code": -11,
+      "output_capture_open": false,
+      "elapsed_seconds": 7.611
+    }
+  },
+  "normal_schema_executed": false,
+  "source_cache_recovery_passed": true,
+  "native_proot_build_passed": true,
+  "archive": {
+    "artifact_id": 10985392649,
+    "name": "wine-dbserver-arm64-evidence",
+    "bytes": 521613,
+    "sha256": "6f1467eebddf1514e62316b28dd72c8d8f31468d8fa69ecadd6adbbf57ec0b01",
+    "download_hash_independently_verified": true,
+    "safe_extraction_verified": true
+  },
+  "inputs": {
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "package_manifest_sha256": "007c963545062a934f8cc2034e35b5bd7d617044165e0e0b9baef1c0c82c6f44",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "fixture_executable_sha256": "9b98a2c4a68881985c035ad5dfff0f901275b732ba10b3c4388a0f6efcb40ec0",
+    "normal_executable_sha256": "370845a9ddbbdb4324ad1982eba2a49176b82716b630df89443bfaf61633be7a",
+    "repository_commit": "8944bd598990b33b63a750a64ae448403e4542cd",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
+  },
+  "build_input_identical_to_accepted_36451873322": true,
+  "accepted_donor_36451873322_replaced": false,
+  "accepted_donor_fixture_sha256": "e7a62e81a50eed4f0b2353cb3bb226c079a0c79bf1a51077fd793ca75d4c4b2b",
+  "interpretation": "The fixture emitted its complete marker but its Linux process exited with signal 11 during or after shutdown. The exact faulting module is not established. This is a substantive failed repetition of the same receipted source configuration, not an infrastructure failure. The Atlas run uses the separately accepted immutable donor from run 36451873322; the failed sibling package is not adopted.",
+  "cleanup_complete": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "owned_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 318,
+    "scanned_tasks": 0,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true
+  },
+  "process_records": 57,
+  "all_process_input_output_closed": true,
+  "preserved_files": {
+    "dbserver-arm64-failed-36454174374.json": {
+      "bytes": 99766,
+      "sha256": "137645e0f0a0aa643786f4f4212699e28c025ad98fa467b40c48d5068bc77f49"
+    },
+    "dbserver-package-failed-36454174374.json": {
+      "bytes": 23957,
+      "sha256": "007c963545062a934f8cc2034e35b5bd7d617044165e0e0b9baef1c0c82c6f44"
+    },
+    "dbserver-host-inputs-failed-36454174374.json": {
+      "bytes": 1538,
+      "sha256": "4aa7a145987eea59acbeb3c8bdb236e8529a6c77b9cf6fe982435a9e84a2b0f0"
+    },
+    "dbserver-host-log-failed-36454174374.log": {
+      "bytes": 45973,
+      "sha256": "b2e4a460194023239408980ce9b093e9b0250c335338b9e5b080231dd581d5be"
+    },
+    "dbserver-job-failed-36454174374.log": {
+      "bytes": 173677,
+      "sha256": "c8d8fb98bab8375f686550ec6e85e96b8f09c2f949422e03de422c8bee5103aa"
+    },
+    "dbserver-talloc-source-failed-36454174374.json": {
+      "bytes": 724,
+      "sha256": "3d15e54639ef937ba47887e5dda613e9b723661c8bd90c734ada304f11ea2a34"
+    }
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

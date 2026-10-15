@@ -1,0 +1,923 @@
+{
+  "apk": {
+    "asset_id": 622047996,
+    "bytes": 1560271624,
+    "sha256": "ac99a528e088bccce6e3164de62b55408624e3027ebaef24bce0f8c9f9e8b94e",
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.20/COH-Atlas-Gameplay-0.13.20.apk"
+  },
+  "authenticated_evidence_archives": {
+    "gpu_runtime": {
+      "archive": {
+        "bytes": 2796369,
+        "file": "coh-client-gpu-runtime.zip",
+        "sha256": "4f3623ac98719f056dbcfa5d619769ff1c2295093ec6a6536f6a854614de2b6a"
+      },
+      "artifact_id": 11555587823,
+      "artifact_metadata_receipt": {
+        "bytes": 771,
+        "file": "github-gpu-artifact-metadata.json",
+        "sha256": "c2c1e9aecc61da01e297d3a508f3e66f801f9101fcc63f86b85cd558ce45973b"
+      },
+      "artifact_name": "coh-client-gpu-runtime",
+      "members": {
+        "THIRD_PARTY_NOTICES.md": {
+          "bytes": 49802,
+          "mode": 420,
+          "sha256": "3667c88e1e9f53a6f8254ff893858502e2a0e0820089d9163f13b94baf3da79e"
+        },
+        "coh-gpu-probe.exe": {
+          "bytes": 134656,
+          "mode": 420,
+          "sha256": "9133f9790579aa2318f406955ea679ece545c2a10ef25a2ebaf106c570547b0a"
+        },
+        "coh-vulkan-gpu-probe": {
+          "bytes": 67944,
+          "mode": 493,
+          "sha256": "c82b30c17bea00f3af2556c1a9979cbd8e6a949ea35873e1169a38f9f0b3d646"
+        },
+        "hardware-renderer-build-input.json": {
+          "bytes": 41469,
+          "mode": 420,
+          "sha256": "29ba2b42c3f3ba22581b89cba65de51f89d6b449d67fee41eaeb8a1bfb2fdbf1"
+        },
+        "libvulkan_freedreno.so": {
+          "bytes": 13841568,
+          "mode": 420,
+          "sha256": "e8cf15e9e4bee47e80395b689facea84276334dce3debc1bcabd8f354476feea"
+        }
+      }
+    },
+    "packaging": {
+      "archive": {
+        "bytes": 1233817,
+        "file": "coh-client-gpu-profile-packaging-evidence.zip",
+        "sha256": "fcf22d6cd946ab75b5f1e673764d9776bb93663898b98015af3131da925164e2"
+      },
+      "artifact_id": 11556029386,
+      "artifact_metadata_receipt": {
+        "bytes": 1350,
+        "file": "github-packaging-artifact-metadata.json",
+        "sha256": "ca4e062a2c9f5598d20609db01afbe5e9a4778405d6ee55f422edafd427a4cb7"
+      },
+      "artifact_name": "coh-client-gpu-profile-packaging-evidence",
+      "members": {
+        "COH-Atlas-Gameplay-0.13.20-testing.txt": {
+          "bytes": 5214,
+          "sha256": "fb3e81b078255adf4b1cc133f6d9f2bfded078068e0c821c69da995986d4162e"
+        },
+        "COH-Atlas-Gameplay-0.13.20.apk.sha256": {
+          "bytes": 97,
+          "sha256": "d3f1c0844f417ea8ebc377674a74840625cf7ffb1d9534d815b7093bee26ea45"
+        },
+        "client-gpu-profile-apk-build-report.json": {
+          "bytes": 5244666,
+          "sha256": "2a86d163f90a4f1bd30a7d799c5030647a717d890d7395f8931aac67397fa848"
+        }
+      }
+    },
+    "public_audit": {
+      "archive": {
+        "bytes": 606,
+        "file": "coh-client-gpu-profile-public-audit.zip",
+        "sha256": "f70e5cc323673d814e55bd0e5e15034b39f2b9a989ac1df0f4d3ff55d2f806f8"
+      },
+      "artifact_id": 11557505233,
+      "artifact_metadata_receipt": {
+        "bytes": 1022,
+        "file": "github-public-artifact-metadata.json",
+        "sha256": "2382ca9b0b3619ca0ecf59cb9b5b8b03946fc00e2b369e343ec98a538e17f305"
+      },
+      "artifact_name": "coh-client-gpu-profile-public-byte-audit",
+      "members": {
+        "client-gpu-profile-public-audit.json": {
+          "bytes": 734,
+          "sha256": "17a8eb232c564d47d40297c35132979d1f4cb213b07a850e40d2b7b476853e18"
+        }
+      }
+    },
+    "qualification": {
+      "archive": {
+        "bytes": 512593,
+        "file": "coh-client-gpu-profile-qualification.zip",
+        "sha256": "41a8991e6123294fbd5ddbfdbcb86412b247a2d60a66fc01dde1da64ed59d928"
+      },
+      "artifact_id": 11555953733,
+      "artifact_metadata_receipt": {
+        "bytes": 1026,
+        "file": "github-qualification-artifact-metadata.json",
+        "sha256": "2b00e499dce82d5e468b60646ca91d9623614d88fc5303eef72f4f55d5d963b5"
+      },
+      "artifact_name": "coh-client-gpu-profile-qualification",
+      "members": {
+        "client-gpu-profile-qualification.json": {
+          "bytes": 1971356,
+          "sha256": "8ffef937ead39cd5f760836284ccdf37c5adab408776ca4847358260c00e58ba"
+        }
+      }
+    },
+    "windows_probe": {
+      "actual_production_and_helper_files": {
+        "coh-gpu-probe-helper-checks.c": {
+          "bytes": 8928,
+          "sha256": "c0552f843ff82486d15b6dd8793977610762c28560c41e9bcd3994a6e7f2cd76"
+        },
+        "coh-gpu-probe-helper-checks.exe": {
+          "bytes": 129536,
+          "sha256": "e80a06a7d8cb5ccc2deb0f3ba5a4426626d105fa401067156934fcd76deb2421"
+        },
+        "coh-gpu-probe-native-checks.json": {
+          "bytes": 9096,
+          "sha256": "15542be5c3b32f22e0157b3652c58820316caac821e0175c85ab616c43243119"
+        },
+        "coh-gpu-probe.exe": {
+          "bytes": 134656,
+          "sha256": "9133f9790579aa2318f406955ea679ece545c2a10ef25a2ebaf106c570547b0a"
+        },
+        "qualification.txt": {
+          "bytes": 2687,
+          "sha256": "686dc028f60ee73665ae0ada35ebb677ed878fcee3dd04760b67121209d47fd9"
+        }
+      },
+      "archive": {
+        "bytes": 154091,
+        "file": "coh-client-gpu-probe.zip",
+        "sha256": "ff309d59f36ddf780ac513b865011812ddd3b249d2e8c6e3e334a802aeda873a"
+      },
+      "artifact_id": 11555552263,
+      "artifact_metadata_receipt": {
+        "bytes": 768,
+        "file": "github-windows-artifact-metadata.json",
+        "sha256": "fd38a589d1afa109443e176b5ea85cf075e843bd95b7cf503229a118db9de6d2"
+      },
+      "artifact_name": "coh-client-gpu-probe"
+    }
+  },
+  "build_receipt": {
+    "bytes": 5244666,
+    "file": "client-gpu-profile-apk-build-report.json",
+    "sha256": "2a86d163f90a4f1bd30a7d799c5030647a717d890d7395f8931aac67397fa848"
+  },
+  "diagnostic_limits": [
+    "Requested selection and prerequisite success are not proof of actual Game hardware rendering; corroborate the Game startup renderer.",
+    "Thread CPU excludes llvmpipe/Wine/FEX workers. Renderer batch wall time includes queue gaps, waits and scheduling.",
+    "Selected upload/VBO/readback callbacks do not isolate all disk/decode/GPU completion. Nested phases overlap.",
+    "Frame and renderer timing streams stop after 120 roughly ten-second windows per thread; numeric state changes after 64. Scene-phase completion records have separate bounds.",
+    "The .19 strict save comparison failed on removed Commuter. Expiry is an inference without authoritative grant/eligibility proof; save rules remain strict."
+  ],
+  "failed_candidates": [
+    {
+      "concrete_issue_and_fix": "Bookworm Python 3.11.2 does not support the tarfile filter keyword. Only the new source extractor and its tests changed to a bounded explicit confined extractor.",
+      "owner_run_id": 37785646941,
+      "published": false,
+      "receipts": {
+        "failure.json": {
+          "bytes": 217,
+          "sha256": "6a6ccaf1ea7df74b7fb7201756187515eb43fec70eb68044f15fe82020497053"
+        },
+        "gpu-job.log": {
+          "bytes": 112103,
+          "sha256": "c56befcfd7366275c82d08427414d6110ec74b8df8a51eb746c51863d53f69c9"
+        },
+        "owner-jobs.json": {
+          "bytes": 12536,
+          "sha256": "11e6e674e7f9eae58c4f42c8e41a004db2ab657c341e0f58cdb33be098ad29c5"
+        }
+      },
+      "repository_commit": "da733789591564b5c3cd87bbe15d3a3241cf8392",
+      "run_url": "https://github.com/Russianranger/coh-android/actions/runs/37785646941"
+    },
+    {
+      "concrete_issue_and_fix": "After successful Mesa and native probe compilation, the new recipe referenced absent Mesa 26 COPYING. Only the recipe and tests changed to preserve actual license.rst and seven license catalog texts.",
+      "owner_run_id": 37787069258,
+      "published": false,
+      "receipts": {
+        "failure.json": {
+          "bytes": 219,
+          "sha256": "abbb3fa151034a63c70bc0fe64127e9ed12cc2fa119339e429f39aea6a61b7ae"
+        },
+        "gpu-job.log": {
+          "bytes": 315062,
+          "sha256": "cbf5048650055d66b2c0f106e50a142df96dae097953abeffb621843f96d2a7c"
+        },
+        "owner-jobs.json": {
+          "bytes": 12536,
+          "sha256": "74d4fd7acb63e4f503b9333f2bfb1e24f103aab805fc09e803d34ab075605fdf"
+        }
+      },
+      "repository_commit": "f3e022468993e84e11fe3b96d7e35874458b2189",
+      "run_url": "https://github.com/Russianranger/coh-android/actions/runs/37787069258"
+    }
+  ],
+  "format": 1,
+  "gpu_package": {
+    "Game_attempt_limit": 4,
+    "actual_ARM64_ELF_and_exact_base_ABI_verified": true,
+    "actual_PE32_probe_and_native_helpers_verified": true,
+    "archive": {
+      "bytes": 2854913,
+      "sha256": "5dff0392ddf724b43a6f3da900dfe8edc2926c116d8e190b1c75125c202df17d"
+    },
+    "current_source_and_owner_run_bound": true,
+    "fallback_requires_proved_owned_cleanup": true,
+    "members": {
+      "THIRD_PARTY_NOTICES.md": {
+        "bytes": 49802,
+        "sha256": "3667c88e1e9f53a6f8254ff893858502e2a0e0820089d9163f13b94baf3da79e"
+      },
+      "coh-gpu-probe.exe": {
+        "bytes": 134656,
+        "sha256": "9133f9790579aa2318f406955ea679ece545c2a10ef25a2ebaf106c570547b0a"
+      },
+      "coh-vulkan-gpu-probe": {
+        "bytes": 67944,
+        "sha256": "c82b30c17bea00f3af2556c1a9979cbd8e6a949ea35873e1169a38f9f0b3d646"
+      },
+      "hardware-renderer-build-input.json": {
+        "bytes": 41469,
+        "sha256": "29ba2b42c3f3ba22581b89cba65de51f89d6b449d67fee41eaeb8a1bfb2fdbf1"
+      },
+      "hardware-renderer-manifest.json": {
+        "bytes": 1329,
+        "sha256": "05a5338a77d1c2b79bebd409dc2f84c96722b7b069f294767972ecdb5edf481d"
+      },
+      "libvulkan_freedreno.so": {
+        "bytes": 13841568,
+        "sha256": "e8cf15e9e4bee47e80395b689facea84276334dce3debc1bcabd8f354476feea"
+      }
+    },
+    "native_vulkan_preflight_timeout_seconds": 30,
+    "physical_hardware_validated": false,
+    "private_Wine_GL_preflight_timeout_seconds": 90,
+    "receipt": {
+      "bytes": 63643,
+      "file": "gpu/client-gpu-runtime-manifest.json",
+      "sha256": "4df16f191f8abad428206487b6b98133d1e643a471ee246b997ef0ddd4341593"
+    },
+    "retained_GLX_Zink_Mesa_version": "22.3.6",
+    "software_default": true,
+    "source_built_Turnip_version": "26.0.0"
+  },
+  "independent_audit_scope": "Continuation authenticated bounded artifact ZIPs against GitHub size/digest and source/run metadata; rehashed all 9,676 qualification source pins and all 19 Java sources; revalidated the actual ARM64/PE binaries, retained Game/20 DLL native package and donor/payload/source receipts. It checked release/tag/asset/checksum/notes closure. The separate hosted public-audit job downloaded the full actual public APK and ran SDK 35, signer, source/payload and donor conservation checks. The continuation did not download a second full APK. None of these establish Thor GPU activation, full Game rendering, FPS, thermal or visual correctness.",
+  "independent_public_audit": {
+    "receipt": {
+      "bytes": 734,
+      "file": "client-gpu-profile-public-audit.json",
+      "sha256": "17a8eb232c564d47d40297c35132979d1f4cb213b07a850e40d2b7b476853e18"
+    },
+    "result": {
+      "bytes": 1560271624,
+      "format": 1,
+      "fresh_process_prepublication_audit_passed": true,
+      "native_Game_recompiled": false,
+      "physical_hardware_renderer_validated": false,
+      "physical_performance_validated": false,
+      "public_apk_checksum_and_notes_verified": true,
+      "public_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.20/COH-Atlas-Gameplay-0.13.20.apk",
+      "repository_commit": "5a592380a5272a187248a1f971d9798a298ca5c0",
+      "runtime_refresh_required": true,
+      "save_acceptance_relaxed": false,
+      "sdk_signer_payload_audit_passed": true,
+      "sha256": "ac99a528e088bccce6e3164de62b55408624e3027ebaef24bce0f8c9f9e8b94e",
+      "software_default_preserved": true,
+      "status": "passed"
+    }
+  },
+  "independent_source_audit": {
+    "GPU_package_and_actual_binary_ABI_verified": true,
+    "actual_Windows_helper_and_production_probes_rehashed": true,
+    "added_runtime_payloads": 2,
+    "apk_bytes": 1560271624,
+    "apk_sha256": "ac99a528e088bccce6e3164de62b55408624e3027ebaef24bce0f8c9f9e8b94e",
+    "changed_java_sources": 2,
+    "donor_payload_and_java_conservation_verified": true,
+    "hosted_actual_public_APK_audit_passed": true,
+    "java_sources": 19,
+    "owner_run_id": 37788954170,
+    "physical_hardware_validated": false,
+    "physical_performance_validated": false,
+    "postgresql_fixtures": 7,
+    "qualification_source_files": 9676,
+    "replaced_runtime_payloads": 4,
+    "repository_commit": "5a592380a5272a187248a1f971d9798a298ca5c0",
+    "retained_Game_and_twenty_DLLs_verified": true,
+    "retained_java_sources": 17,
+    "retained_runtime_payloads": 71,
+    "root_downloaded_full_public_APK": false,
+    "runtime_payloads": 77,
+    "signer_and_resources_verified": true,
+    "skipped": 0,
+    "status": "passed",
+    "test_suites": 96,
+    "tests_run": 1427
+  },
+  "native_Game": {
+    "bytes": 9487872,
+    "repository_commit": "a4a658be25d2b5ca1393b7d3daedd83a7d9ca1f4",
+    "sha256": "adcabb11135fe44b2c1f997a088ec58e4ea0d90e9defaa9f88efea34538caa44"
+  },
+  "owner_run": {
+    "head_sha": "5a592380a5272a187248a1f971d9798a298ca5c0",
+    "id": 37788954170,
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 113350891876,
+        "logs_url": null,
+        "name": "changes",
+        "run_id": 37788954170,
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Preserve any already published performance release",
+            "number": 3,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 6,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 7,
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "conclusion": "success",
+        "id": 113351303132,
+        "logs_url": null,
+        "name": "probe",
+        "run_id": 37788954170,
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Preserve exact LF probe source on Windows",
+            "number": 2,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 3,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Compile actual PE32 WGL compatibility probe and execute native guard qualification",
+            "number": 4,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/upload-artifact@v4",
+            "number": 5,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 10,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "conclusion": "success",
+        "id": 113352127786,
+        "logs_url": null,
+        "name": "gpu",
+        "run_id": 37788954170,
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 3,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Recover exact locked Bookworm base for GPU ABI dependency audit",
+            "number": 4,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Source-build only glibc ARM64 KGSL Turnip and bounded Vulkan probe",
+            "number": 5,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/upload-artifact@v4",
+            "number": 6,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 12,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "conclusion": "success",
+        "id": 113354909980,
+        "logs_url": null,
+        "name": "qualify",
+        "run_id": 37788954170,
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Initialize containers",
+            "number": 2,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 3,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 4,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 5,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/setup-java@v4",
+            "number": 6,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 7,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Recover exact physically accepted public donor",
+            "number": 8,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Install host-only Vulkan headers and software fixture driver",
+            "number": 9,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Qualify every retained gameplay guard and all seven real PostgreSQL fixtures",
+            "number": 10,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/upload-artifact@v4",
+            "number": 11,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/setup-java@v4",
+            "number": 20,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 21,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Stop containers",
+            "number": 22,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 23,
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "conclusion": "success",
+        "id": 113359081739,
+        "logs_url": null,
+        "name": "apk",
+        "run_id": 37788954170,
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 3,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 4,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/setup-java@v4",
+            "number": 5,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run android-actions/setup-android@v3",
+            "number": 6,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 7,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 8,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 9,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Recover exact physically accepted public donor",
+            "number": 10,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Ensure SDK 35 tools",
+            "number": 11,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Build reviewed selector/helpers and optional GPU archive retaining Game and software default",
+            "number": 12,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Fresh-process SDK source payload and signer audit before publication",
+            "number": 13,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/upload-artifact@v4",
+            "number": 14,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/upload-artifact@v4",
+            "number": 15,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Publish only the newly qualified optional GPU prerelease",
+            "number": 16,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Remove owned signing staging",
+            "number": 17,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/setup-java@v4",
+            "number": 33,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 34,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 35,
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "conclusion": "success",
+        "id": 113361647379,
+        "logs_url": null,
+        "name": "public-audit",
+        "run_id": 37788954170,
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 3,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 4,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/setup-java@v4",
+            "number": 5,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run android-actions/setup-android@v3",
+            "number": 6,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 7,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 8,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/download-artifact@v4",
+            "number": 9,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Ensure SDK 35 audit tools",
+            "number": 10,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Recover exact public donor for independent conservation audit",
+            "number": 11,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Download actual public APK checksum and testing notes",
+            "number": 12,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Independent fresh-job public SDK signer exact payload and source audit",
+            "number": 13,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Record only the completed independent public byte audit",
+            "number": 14,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/upload-artifact@v4",
+            "number": 15,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/setup-java@v4",
+            "number": 29,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 30,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 31,
+            "status": "completed"
+          }
+        ]
+      }
+    ],
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37788954170"
+  },
+  "packaging": {
+    "added_apk_payloads": [
+      "assets/runtime/client_gpu_profile.py",
+      "assets/runtime/hardware-renderer.zip"
+    ],
+    "asset_reimport_required": false,
+    "changed_java_sources": [
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java"
+    ],
+    "display_transport_changed": false,
+    "graphics_driver_changed": true,
+    "native_client_compiled_in_current_run": false,
+    "native_client_package_reused": true,
+    "replaced_apk_payloads": [
+      "assets/runtime/client-manifest.json",
+      "assets/runtime/client_interactive_diagnostic.py",
+      "assets/runtime/client_startup_diagnostic.py",
+      "assets/runtime/runtime-manifest.json"
+    ],
+    "retained_baseline_payloads_verified": 71,
+    "retained_java_sources_verified": 17,
+    "rootfs_changed": false,
+    "runtime_manifest_sha256": "acb477170c107810ad501d80e4774dbd69537bf899c60374754b7ef28a26605e",
+    "runtime_refresh_required": true,
+    "save_acceptance_relaxed": false,
+    "wine_or_fex_changed": false
+  },
+  "physical_0_13_19_evidence": {
+    "bytes": 75473,
+    "file": "docs/android-evidence/gpu-profile-0.13.19-thor-20261008.json",
+    "sha256": "edf246b03d06f240c48fd0ab979c901b0230de7ac7a6f324a168f55c41b94355"
+  },
+  "physical_black_glitch_fix_validated": false,
+  "physical_gameplay_validated": false,
+  "physical_hardware_renderer_validated": false,
+  "physical_performance_gain_validated": false,
+  "physical_temperature_gain_validated": false,
+  "physical_testing_notes": "docs/COH-Atlas-Gameplay-0.13.20-testing.txt",
+  "published_at": "2026-10-08T14:23:11Z",
+  "published_testing_notes_erratum": "The phrase each native stream in the immutable release notes refers to frame/renderer timed windows only. Scene phases use up to 128 phase-completion records per translation unit; gameplay profile emits once and texture-error progress reports have a separate count-triggered limit of 32.",
+  "qualification": {
+    "postgresql_emission_fixtures": [
+      "cancelled_child_deletion_commits",
+      "delete_insert_replacement_commits",
+      "duplicate_insert_23505_rollback"
+    ],
+    "postgresql_levelup_fixtures": [
+      "empty_child_duplicate_23505_rollback",
+      "empty_child_training_commit",
+      "missing_child_insert_commit",
+      "shuffled_child_read_training_commit"
+    ],
+    "receipt": {
+      "bytes": 1971356,
+      "file": "client-gpu-profile-qualification.json",
+      "sha256": "8ffef937ead39cd5f760836284ccdf37c5adab408776ca4847358260c00e58ba"
+    },
+    "skipped": 0,
+    "source_files_independently_rehashed": 9676,
+    "test_suites": 96,
+    "tests_run": 1427
+  },
+  "release_assets": [
+    {
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.20/COH-Atlas-Gameplay-0.13.20-testing.txt",
+      "digest": "sha256:fb3e81b078255adf4b1cc133f6d9f2bfded078068e0c821c69da995986d4162e",
+      "id": 622049941,
+      "name": "COH-Atlas-Gameplay-0.13.20-testing.txt",
+      "size": 5214,
+      "state": "uploaded"
+    },
+    {
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.20/COH-Atlas-Gameplay-0.13.20.apk",
+      "digest": "sha256:ac99a528e088bccce6e3164de62b55408624e3027ebaef24bce0f8c9f9e8b94e",
+      "id": 622047996,
+      "name": "COH-Atlas-Gameplay-0.13.20.apk",
+      "size": 1560271624,
+      "state": "uploaded"
+    },
+    {
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.20/COH-Atlas-Gameplay-0.13.20.apk.sha256",
+      "digest": "sha256:d3f1c0844f417ea8ebc377674a74840625cf7ffb1d9534d815b7093bee26ea45",
+      "id": 622049917,
+      "name": "COH-Atlas-Gameplay-0.13.20.apk.sha256",
+      "size": 97,
+      "state": "uploaded"
+    }
+  ],
+  "release_id": 406916952,
+  "release_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.20",
+  "repository_commit": "5a592380a5272a187248a1f971d9798a298ca5c0",
+  "retained_Game_repository_commit": "a4a658be25d2b5ca1393b7d3daedd83a7d9ca1f4",
+  "runtime_install_instruction": "Install as an update preserving app data/imports/character. Run Set up / update runtime ONCE and wait for Runtime ready; no asset reimport or data reset.",
+  "status": "passed",
+  "tag": "coh-atlas-gameplay-v0.13.20",
+  "version_code": 35,
+  "version_name": "0.13.20",
+  "zoning_implemented": false
+}

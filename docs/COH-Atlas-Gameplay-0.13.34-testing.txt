@@ -1,0 +1,109 @@
+COH Android 0.13.34 / version code 49
+Compatible external assets: COH Assets 1.0.0, all four existing verified volumes.
+Starting character: existing THORHERO, saved in Kings Row (Map ID 5).
+
+INSTALLATION
+
+Use this guide only with the successor APK after its signed publication and
+independent public-byte audit have passed. Install over the existing app.
+Keep all application data, the persistent character profile, Wine prefix,
+runtime imports and Assets 1.0.0. Run Set up / update runtime once to refresh
+the reviewed guest helpers. Keep the accepted GPU, FEX/Wine, controls,
+presentation and 800x600 settings. Log in with COHLOCAL / offline.
+
+Do not uninstall, clear application data, reset the database, recreate THORHERO,
+reimport the four assets unnecessarily, use /stuck or teleport as a startup fix.
+An unsupported/inconsistent saved location must stop with diagnostic evidence.
+
+CHANGES AND QUALIFICATION LIMITS
+
+- Startup reads the existing PostgreSQL character identity, staticmapid, mapid
+  and saved position. Kings Row selects map 5 / port 7003; Atlas selects its
+  supported saved instance / port. A valid unassigned pre-login mapid is retained.
+- Destination progress and window/readiness checks are tied to the selected
+  saved map. Shared Atlas preparation can supply common prerequisites; it is
+  not evidence that an Atlas native MapServer must start for a Kings reopen.
+- Interrupted report recovery preserves a compact current-session carrier
+  before optional enrichment. Report-pointer, optional attachment and dispatch
+  failures retain useful evidence and release report operation ownership.
+- Read-only storage scanning remains accessible when idle. Actual deletion
+  still requires proved safe owned cleanup. Unknown files/profiles are retained.
+- Warm immutable directory validation uses one current no-follow metadata
+  snapshot instead of two. All prior generation, ownership, anchor, private
+  input and fallback checks remain. No BIN freshness or physics bypass ships.
+- Native Game/MapServer/DbServer, GPU/FEX/Wine, animation/FX and Assets 1.0.0
+  retain their accepted bytes and original producer identities.
+
+Host regressions, isolated real PostgreSQL queries, full asset preparation,
+Android compilation/signing and public artifact audits qualify only their
+recorded scopes. They do not establish physical Thor gameplay, successful
+Android document-provider export, a speed/RAM/FPS gain or sub-30-second native
+startup. Missing observations must remain unknown. Character save success is
+separate from an incomplete overall Character Check or report finalization.
+
+TEST A -- DIRECT KINGS ROW REOPEN AND LOGGING (FIRST PHYSICAL GATE)
+
+1. Start with THORHERO already saved in Kings Row. Install/update as above.
+2. Select Reopen saved THORHERO. Confirm the selected destination is Kings Row,
+   map 5 / port 7003. Record time from Reopen until the world is usable.
+3. Verify actual entry into Kings Row and normal movement. Check identity,
+   position, powers, costume, enhancements, graphics and combat. Record FPS
+   and temperature using the same settings as the previous build.
+4. Keep this first session short. Do not attempt long monorail travel.
+5. Release controls for the normal 60-second neutral wait. Use Save character /
+   log out. Wait for the committed save observation, then Finish and export.
+6. Use Reports / export to save the complete outer diagnostic ZIP. Confirm the
+   ZIP is available and nonempty. Keep it even if Character Check is incomplete.
+7. If a normal carrier is unavailable, use Recover interrupted reports, then
+   select the evidence matching this session/time. Export its outer ZIP.
+8. If idle, open Storage and cleanup, Scan storage and Export storage report.
+   Retain scan JSON/notes. Do not delete character profiles or unknown files.
+
+Acceptance: direct Kings startup, movement/state preserved, committed ordinary
+save in Kings and a usable current-session outer ZIP. Stop after Test A and
+provide that ZIP for review before another long zone test.
+
+If startup fails, preserve THORHERO exactly as saved. Stop/Finish using ordinary
+owned cleanup and recover/export diagnostic evidence. Do not relocate him.
+
+TEST B -- KINGS ROW TO ATLAS PARK (ONLY AFTER TEST A PASSES)
+
+1. Reopen THORHERO; he must still start in Kings Row.
+2. Use the actual monorail and choose Atlas Park.
+3. Record station request, preparation completion, native launch/readiness,
+   transfer and usable-world arrival separately where reported.
+4. Confirm actual Atlas entry and movement, then powers, enhancements,
+   graphics and combat. Save normally in Atlas and export the outer ZIP.
+5. Respect the finite connected-session budget. If admission refuses a later
+   transfer or the budget expires, save/export safely without forcing travel.
+
+TEST C -- ATLAS PERSISTED REOPEN
+
+1. Reopen the same character after the Atlas save from Test B.
+2. Confirm startup selects Atlas and the saved instance/position, preserving
+   identity and character state. Kings native MapServer must not start merely
+   because the preceding session began there.
+3. Verify movement, save normally and export the complete outer ZIP.
+
+TEST D -- VALIDATED WARM CACHE AND ROUND TRIP (AFTER A-C PASS)
+
+Compare cold/reboot conditions with validated content reuse. Name what was
+actually cold: fresh native process, cold filesystem or absent persistent cache.
+Test Atlas-to-Kings and Kings-to-Atlas where the finite budget permits. Report
+resident MapServer reuse separately from a newly launched process using warm
+filesystem/input caches. Preserve ordinary saves and outer ZIPs after zoning.
+
+MEASUREMENTS TO KEEP SEPARATE
+
+- Launcher preparation and data validation/hashing versus authenticated reuse.
+- Native MapServer launch to selected-map readiness (not request-to-world time).
+- Game/DbServer connection, world entry and usable movement.
+- Zoning preparation, native readiness, transfer and arrival.
+- Whole owned-workload peak/settled memory (RSS/PSS when available), FPS and
+  temperatures. Missing memory/timing data remains unknown.
+
+Prior .32 observations: approximately 22 min first reopen, 13 min second reopen
+and 12 min Atlas-to-Kings. These are user-observed whole operations, not isolated
+MapServer timings. Successful saves, graphics/combat and Atlas-to-Kings are
+preserved physical accomplishments. Direct Kings reopen, return travel,
+reliable exports and physical loading gains remain this build's device gates.

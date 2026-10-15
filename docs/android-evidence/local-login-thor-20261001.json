@@ -1,0 +1,99 @@
+{
+  "format": 1,
+  "gate": "local_graphical_login_thor",
+  "status": "accepted",
+  "reviewed_utc": "2026-10-01T01:10:08.869439+00:00",
+  "report_archive": "coh-local-login-20261001-010523.zip",
+  "report_sha256": "83042410066dd484e4a48e4c7cefbacbd8a443fbaa1c3fa468e6814a1a4872a6",
+  "apk": "COH-Local-Login-0.8.1.apk",
+  "apk_sha256": "2f9663f43c24b071714a7ea2f63a2f8abd624a49bca4b64298f58c7e56278a20",
+  "device": "AYN AYN Thor",
+  "android_sdk": 33,
+  "app_id": "io.github.russianranger.cohclientinteractive",
+  "app_version": "0.8.1",
+  "run_id": "1790815726630-052a32fe6055",
+  "session_id": "35a3ab8d766a401593115e3522ce3b27",
+  "identity": {
+    "runtime_manifest_apk_sha256": "90cda748f6c4f0be306b09e4a496ba4e3c336ae465806afafd50fd45a604c29b",
+    "runtime_manifest_export_sha256": "9aa0f3e0bb8cf147848bcff2694e0c3af6f12fbc4107f70c92f6014bfef54e70",
+    "runtime_manifest_semantically_equal_to_apk": true,
+    "runtime_manifest_export_reserialized": true,
+    "repository_commit": "1fb4c6057fda579da1913670889922ba8e53bbdc",
+    "accepted_runtime_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+    "dbserver_package_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+    "dbserver_package_run_id": 36460867428,
+    "game_source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "game_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "import_repository_commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+    "client_executable_sha256": "81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca",
+    "all_guest_asset_hashes_match_apk": true,
+    "matched_guest_assets": 23,
+    "accepted_runtime_client_and_lock_manifests_byte_identical": true,
+    "guest_embedded_report_equals_archived_report": true
+  },
+  "login": {
+    "android_report_passed": true,
+    "guest_report_passed": true,
+    "local_login_verified": true,
+    "account": "COHLOCAL",
+    "auth_id": 1353310574,
+    "character_list_response_sent": true,
+    "character_count": 0,
+    "loopback_only": true,
+    "login_evidence": "Owned DbServer successful-login log plus post-send SystemSpecs record and SQL account verification",
+    "character_selection_visual_review": {
+      "accepted": true,
+      "reviewed_images": [
+        "android-login/capture-1.png",
+        "android-interaction/capture-24.png"
+      ],
+      "observation": "Character selection is visible with Server Used/Total: 0/12 and twelve Create Character slots.",
+      "automatic_visual_flags_remain_false": "The diagnostic deliberately leaves visual review pending; this receipt records independent image review."
+    }
+  },
+  "capture_integrity": {
+    "android_pngs_verified": 14,
+    "guest_images_verified": 4,
+    "all_hashes_sizes_and_session_ids_match": true,
+    "fresh_post_login_pixelcopy_captures": 3,
+    "reviewed_login_png_sha256": "f4c9ae61ff432168c0d95a1047e972f1cc6926b5bb44440b1c25155270883032"
+  },
+  "state_preservation": {
+    "profile": "android-local-login",
+    "profile_reused": true,
+    "database_preserved": true,
+    "wine_existing_prefix_preserved": true,
+    "wine_registration_timestamp_verified": true,
+    "wrapper_only_cache_migration": true,
+    "generated_cache_bytes_preserved": true,
+    "imported_input_bytes_unchanged": true
+  },
+  "cleanup": {
+    "android_verified": true,
+    "guest_complete": true,
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true,
+    "remaining_workers": 0,
+    "inspection_failures": 0,
+    "presentation_socket_removed": true,
+    "input_worker_stopped": true,
+    "process_exit_code": 0
+  },
+  "timing_and_input": {
+    "overall_elapsed_seconds": 988.62,
+    "input_ready_elapsed_seconds": 801.183,
+    "client_startup_seconds": 668.061,
+    "wine_refresh_seconds": 64.955,
+    "interaction_seconds": 182.271,
+    "completion_reason": "interaction_timeout",
+    "input_events_sent": 272,
+    "input_events_failed": 0
+  },
+  "scope_limits": [
+    "No character creation or character persistence yet",
+    "No mapserver or world entry tested",
+    "No gameplay or hardware acceleration acceptance"
+  ],
+  "next_gate": "Graphical character creation and persistent save; allow substantially more than the prior 180-second interaction window."
+}

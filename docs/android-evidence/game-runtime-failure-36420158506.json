@@ -1,0 +1,244 @@
+{
+  "format": 1,
+  "status": "failed_hosted_atlas_startup_query_with_pre_cleanup_capture",
+  "run_id": 36420158506,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36420158506",
+  "repository_commit": "04b9771120737f3e8daf7b4740d2a9fcd6850f28",
+  "workflow_conclusion": "failure",
+  "runtime_job_id": 108921126623,
+  "started_utc": "2026-09-28T12:15:18.043128+00:00",
+  "finished_utc": "2026-09-28T12:36:25.216098+00:00",
+  "failures": [
+    "game-query-first-ready timed out"
+  ],
+  "stages_passed": 8,
+  "failed_stage": "game_services_first",
+  "character_execution_started": false,
+  "restart_port_fix_exercised": false,
+  "startup_query_timeout_seconds": 90,
+  "observed_query_elapsed_seconds": 90.041,
+  "archive": {
+    "artifact_id": 10970283084,
+    "name": "wine-game-arm64-evidence",
+    "bytes": 8736139,
+    "sha256": "811106aac6577990fd376f772ed411e80b579f39ac284e5883263969ec938487",
+    "download_hash_independently_verified": true
+  },
+  "pre_cleanup_observation": {
+    "started_utc": "2026-09-28T12:36:19.387224+00:00",
+    "finished_utc": "2026-09-28T12:36:22.332284+00:00",
+    "elapsed_seconds": 2.945,
+    "before_service_cleanup": true,
+    "before_failed_query_stop": true,
+    "trigger_label": "game-query-first-ready",
+    "trigger_alive": true,
+    "trigger_alive_after": true,
+    "services": [
+      {
+        "label": "first-dbserver",
+        "pid": 6337,
+        "alive": true,
+        "forced_stop": false
+      },
+      {
+        "label": "first-atlas",
+        "pid": 6610,
+        "alive": true,
+        "forced_stop": false
+      }
+    ],
+    "failure_observation": {
+      "leader_exit_code": null,
+      "output_capture_open": true,
+      "elapsed_seconds": 90.041,
+      "reason": "game-query-first-ready timed out"
+    }
+  },
+  "postgres": {
+    "sampled_at": "2026-09-28T12:36:19.409497+00:00",
+    "sessions": 65,
+    "sessions_omitted": 0,
+    "all_idle": true,
+    "all_wait_client_read": true,
+    "active_transactions": 0,
+    "last_query_counts": {
+      ";": 1,
+      "COMMIT": 64
+    },
+    "foreground_backend_pid": 6370,
+    "foreground_last_query": ";",
+    "foreground_query_start": "2026-09-28T12:33:59.001463+00:00",
+    "foreground_query_age_seconds": 140.408034,
+    "track_activity_query_size": "1kB",
+    "interpretation": "No active database-side query or transaction was observed; this does not locate the waiting Windows client operation."
+  },
+  "linux": {
+    "owned_process_count": 13,
+    "tasks_examined": 120,
+    "fds_examined": 512,
+    "aggregate_fd_limit": 512,
+    "socket_tables_present": true,
+    "socket_tables_truncated": false,
+    "socket_descriptor_coverage_complete": false,
+    "kernel_stack_access": "PermissionError for all 13 process and 120 task stack reads",
+    "syscall_permission_denials": 48,
+    "process_and_task_stat_status_wchan_captured": true
+  },
+  "windows_observer": {
+    "api_capture_completed": true,
+    "exit_code": 0,
+    "capture_closed": true,
+    "forced_stop": false,
+    "overflow": false,
+    "truncated": false,
+    "completion": {
+      "kind": "complete",
+      "format": 1,
+      "processes": 3,
+      "threads": 72,
+      "modules": 114,
+      "errors": 0,
+      "truncated": false,
+      "bytes_before_complete": 104346
+    },
+    "x86_context_currentness_under_fex_validated": false,
+    "decoded_dbserver_context": {
+      "windows_pid": 412,
+      "windows_tid": 416,
+      "eip": "0x7b9c24e9",
+      "eip_module": "kernelbase.dll",
+      "eip_module_offset": "0x124e9",
+      "raw_stack_candidates": [
+        {
+          "word_index": 35,
+          "address": "0x00483a6d",
+          "site": "Return after PostQueuedCompletionStatus in NMAddLinkList"
+        },
+        {
+          "word_index": 44,
+          "address": "0x00403d32",
+          "site": "Caller clientCommLoginInitStartListening, UDP 7000 initialization"
+        }
+      ],
+      "startup_work_precedes_observed_readiness_and_successful_queries": true,
+      "live_unwind_validated": false
+    },
+    "interpretation": "Completed Windows snapshot API calls do not establish that FEX returned the current translated guest x86 context. Do not treat the decoded startup path as the live main-loop blocking operation.",
+    "main_loop_fix_justified": false
+  },
+  "cleanup_complete": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "owned_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 522,
+    "scanned_tasks": 4,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true
+  },
+  "process_records": 59,
+  "all_process_input_output_closed": true,
+  "inputs": {
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "game_package_sha256": "072205bf9715cc6c625ed6fd71ccbf6dc2c8bb1601314c59c0bd8e5126ced409",
+    "game_data_manifest_sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "repository_commit": "04b9771120737f3e8daf7b4740d2a9fcd6850f28",
+    "binary_sha256": {
+      "DbServer.exe": "b6ce3b447e31daced5d9502a99d80ddb8dd0cd74e6bbdd75456f8a6ba802ef6b",
+      "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+      "TestClientCreate.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31",
+      "TestClientResume.exe": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856",
+      "TestClientBridge.exe": "7ebff3cdffe72e45b26c4c535cdfd3b14936f847cb23a2ae562b40641c1e367c"
+    }
+  },
+  "preserved_files": {
+    "game-arm64-failed-36420158506.json": {
+      "bytes": 110222,
+      "sha256": "55ea277bdf3fe9b166ac84c21accefb5f09c3f9780c0820bf051f9adc88ef71b"
+    },
+    "game-hang-36420158506/snapshot.json": {
+      "bytes": 425200,
+      "sha256": "4a06ed26bc89c50f1b639a9b307133c03d8806224a0346acd3c8a7c38f939ec8"
+    },
+    "game-hang-36420158506/windows-contexts.jsonl": {
+      "bytes": 104770,
+      "sha256": "d720cc544ad181495b30d7ff9fe98b63ab29d55fd12d617eb72a123252460223"
+    },
+    "game-hang-36420158506/manifest.json": {
+      "bytes": 804,
+      "sha256": "e3bc55fca70a05e18ec353b08e0d377ddbfc44d6cc46c3075ec324d4ee0901dc"
+    }
+  },
+  "verified_capture_inventories": {
+    "game-hang-captures": {
+      "windows-contexts.jsonl": {
+        "bytes": 104770,
+        "sha256": "d720cc544ad181495b30d7ff9fe98b63ab29d55fd12d617eb72a123252460223"
+      },
+      "snapshot.json": {
+        "bytes": 425200,
+        "sha256": "4a06ed26bc89c50f1b639a9b307133c03d8806224a0346acd3c8a7c38f939ec8"
+      },
+      "manifest.json": {
+        "bytes": 804,
+        "sha256": "e3bc55fca70a05e18ec353b08e0d377ddbfc44d6cc46c3075ec324d4ee0901dc"
+      }
+    },
+    "game-service-captures": {
+      "first-dbserver-stdout.txt": {
+        "bytes": 3631,
+        "sha256": "ab4181e672651c156e315ae4fdccfd4fe1a1e0d9d4757367d2d0580cbf6f96fa"
+      },
+      "first-atlas-stdout.txt": {
+        "bytes": 880388,
+        "sha256": "0ff02c788f52a1e4e18472dd6dc25a33a2d8950143b99998cda5f9d4ebe17d25"
+      },
+      "log-001.txt": {
+        "bytes": 802,
+        "sha256": "9f47f0f85081c7a20bbf6036f09391c4f829c0e39e0c36281c6e0bae21a8d90e"
+      },
+      "log-002.txt": {
+        "bytes": 819546,
+        "sha256": "3fa1c21d61a82937821b1ecdef405302c0f8b82a6ff8adca771c176479d187b7"
+      },
+      "manifest.json": {
+        "bytes": 1359,
+        "sha256": "077d5b7bdd205f9de94bd7ccd90410b7edd19e1aaab59ba533b5c93bbc664955"
+      }
+    },
+    "game-captures": {}
+  },
+  "preservation": "Raw report and all three hang-capture files copied byte-for-byte from the hash-verified artifact. Full service captures remain in the linked verified artifact.",
+  "prior_partial_success": {
+    "run_id": 36416020268,
+    "first_create_and_atlas_entry": true,
+    "live_influence": 12345,
+    "first_committed_protocol_save": true,
+    "login_count": 1,
+    "full_restart_resume_gate_accepted": false
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "android_surface_validated": false,
+  "accepted_device_apk_unchanged": "0.1.5",
+  "next_work": [
+    "Validate whether Windows thread contexts are current under FEX, or use a supported translated-context observation path.",
+    "Do not change the game main loop based on the unvalidated decoded startup context.",
+    "Exercise the TCP preflight correction in a complete hosted restart/resume/second-save run after the startup diagnosis is resolved."
+  ]
+}

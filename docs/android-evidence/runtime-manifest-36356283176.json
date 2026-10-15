@@ -1,0 +1,117 @@
+{
+  "format": 1,
+  "repository_commit": "83f132ddb8077c9d5175ae7cd039e0754b70074e",
+  "candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+  "files": {
+    "001-coh-compat.sql": {
+      "bytes": 7788,
+      "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "bytes": 2184,
+      "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+    },
+    "client-probe.exe": {
+      "bytes": 470392,
+      "sha256": "69045c7c654512af5f956e22fadaf15c614132f20ecb9773a5e0b7211bae4810"
+    },
+    "diagnostic.py": {
+      "bytes": 64224,
+      "sha256": "a0d5e1992d83409e63071a3ce949e67e65797cfa513ef44f22705487f3399261"
+    },
+    "odbc_probe.exe": {
+      "bytes": 270071,
+      "sha256": "3a74c955b3ee3263e56cab2be2c41c6a3d935038caa366a93e4673d6795a9791"
+    },
+    "postgresql-build.json": {
+      "bytes": 163117,
+      "sha256": "1dcf9a797c63b1907bf3865228119a0acabf915a1da5ecc364021f5a124b811f"
+    },
+    "postgresql-runtime.tar.gz": {
+      "bytes": 9280905,
+      "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+    },
+    "probe.dll": {
+      "bytes": 82761,
+      "sha256": "bf57116f1dc52f0dc68e8be6ae636329bf6a344235b69514445eca7f761a8d24"
+    },
+    "proot-build.json": {
+      "bytes": 3236,
+      "sha256": "10134aadb951f5c80d13422ffff1fab50d12240d5652c00d5dda1d15f492d15f"
+    },
+    "psqlodbc_x86.msi": {
+      "bytes": 4079616,
+      "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+    },
+    "runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "runtime-probe.exe": {
+      "bytes": 245968,
+      "sha256": "fb4c429cf0d55bfa40c4af5724cbedbd264968e2caf0ce11c2712126fa1008f7"
+    }
+  },
+  "runtime_probe": {
+    "executable": "runtime-probe.exe",
+    "marker": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified",
+    "dll": "probe.dll"
+  },
+  "client_probe": {
+    "executable": "client-probe.exe",
+    "marker": "COH_CLIENT_PROBE_V1 ",
+    "scope": "headless_wgl_client_capabilities",
+    "optional": true
+  },
+  "client_probe_windows_libraries": [
+    "GDI32.dll",
+    "KERNEL32.dll",
+    "OPENGL32.DLL",
+    "USER32.dll",
+    "dinput8.dll",
+    "msvcrt.dll"
+  ],
+  "compiler": "i686-w64-mingw32-gcc (GCC) 13-posix",
+  "odbc_ansi_compatibility": {
+    "wine_export_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
+    "compile_aliases": {
+      "SQLDriverConnectA": "SQLDriverConnect",
+      "SQLExecDirectA": "SQLExecDirect"
+    },
+    "verified_windows_manager_imports": [
+      "SQLAllocHandle",
+      "SQLBindParameter",
+      "SQLColumnsW",
+      "SQLDisconnect",
+      "SQLDriverConnect",
+      "SQLEndTran",
+      "SQLExecDirect",
+      "SQLFetch",
+      "SQLFreeHandle",
+      "SQLGetData",
+      "SQLGetDiagRec",
+      "SQLGetDiagRecA",
+      "SQLGetInfoW",
+      "SQLMoreResults",
+      "SQLSetConnectAttr",
+      "SQLSetEnvAttr"
+    ],
+    "fixture_sql_and_acceptance_markers_changed": false,
+    "wide_driver_version_workaround": {
+      "compile_define": "COH_ODBC_WIDE_INFO=1",
+      "api": "SQLGetInfoW",
+      "result_encoding": "UTF-16 with strict ASCII conversion",
+      "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975",
+      "reason": "Avoid ANSI-to-wide SQLGetInfo forwarding with a private driver handle"
+    },
+    "wide_columns_workaround": {
+      "compile_define": "COH_ODBC_WIDE_COLUMNS=1",
+      "api": "SQLColumnsW",
+      "filter_encoding": "UTF-16 schema/table; unchanged NULL catalog/column filters",
+      "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L1113",
+      "reason": "Avoid ANSI SQLColumns rejecting optional NULL filters during conversion"
+    },
+    "diagnostic_progress": "unbuffered output and credential-free ODBC call line numbers"
+  },
+  "scope": "APK build inputs; not proof of Android execution or gameplay"
+}

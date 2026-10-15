@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "independent_root_review_and_actual_private_file_controls; typed_fixture_producer_not_runtime_authority",
+  "current_tests_run": 32,
+  "failed": 0,
+  "skipped": 0,
+  "sources": {
+    "android/guest/client_live_directory_control.py": {
+      "bytes": 12719,
+      "sha256": "596f7bc6523ed6da95d1a162c1d332fa2f77ccfa1aa651d7096fdfa86ad923c3"
+    },
+    "tools/android/interactive/test_client_live_directory_control.py": {
+      "bytes": 17012,
+      "sha256": "c85d4ebcaee5991766d125aee66847d37862630d8b4168c801d3a106d04a20cc"
+    }
+  },
+  "log": {
+    "bytes": 5675,
+    "sha256": "c81435b6e60326ff83d598c0481a2c4879423dfd42103a0f39612500ee9f7d41"
+  },
+  "no_Runtime_call_or_Android_activation": true,
+  "reviewed": [
+    "default authority absent and all inherited LIVE settings removed",
+    "external typed current proof independent of config JSON flags",
+    "mode0600/currentUID/device/regular singlelink/heldFD/path identity/ancestor custody",
+    "16KiB duplicate-key and malformed JSON bounded refusal",
+    "currentGame-only first-attempt identity and nonsecret report",
+    "nonce registered before error reporting; no secret values in refusal messages"
+  ]
+}

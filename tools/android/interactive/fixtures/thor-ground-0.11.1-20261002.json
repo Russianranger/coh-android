@@ -1,0 +1,157 @@
+{
+  "format": 1,
+  "scope": "focused_native_position_parser_replay_from_actual_physical_AYN_Thor_0.11.1_failure",
+  "original_upload": {
+    "name": "coh-atlas-gameplay-20261002-095609.zip",
+    "sha256": "6f857ddfacbc429c59b9e642382b7c781a712779ce141ba31acdb780b3e9d44f"
+  },
+  "server_logs_archive": {
+    "sha256": "3c0cd512f6f983dd523a23b9734c96bb98f181b95f68d648387ce3397414ef50",
+    "member": "logs/dbserver/entity_2026-10-02-09-00-00.log",
+    "member_sha256": "01b1cd1d8076544f0c13dfc9af9354c6ceb25b5a48da4266956d02955d5a1690"
+  },
+  "fixture": {
+    "path": "thor-ground-0.11.1-20261002.log",
+    "sha256": "1de5ac10932874ec0a766e749ac4475c5d62eb4a7f23c20f8835e579a7e3f38c",
+    "line_count": 5,
+    "lines_are_exact_unmodified_original_log_records": true,
+    "selection": "native ResumeCharacter plus initial below-map sample and three recovered samples; no credentials or non-loopback addresses"
+  },
+  "session_id": "43bc8f5e788342bfb0d0bd6a1f813213",
+  "character_id": 1,
+  "account": "COHLOCAL",
+  "character": "THORHERO",
+  "client_pid": 672,
+  "command_timing": {
+    "exact_receipt_available": false,
+    "inference_only": true,
+    "utc_anchor": {
+      "type": "character_connected",
+      "time_utc": "2026-10-02T09:44:40.142687+00:00",
+      "uptime_ms": 269846148
+    },
+    "request": {
+      "uptime_ms": 269857840,
+      "estimated_utc_ms": 1790934291835,
+      "estimated_utc": "2026-10-02T09:44:51.835000+00:00"
+    },
+    "completed_transport": {
+      "uptime_ms": 269860118,
+      "estimated_utc_ms": 1790934294113,
+      "estimated_utc": "2026-10-02T09:44:54.113000+00:00"
+    },
+    "note": "Recovery receipt itself was not exported. UTC estimates align Android monotonic lifecycle against guest connected event; they do not establish an exact transport timestamp."
+  },
+  "replay": {
+    "synthetic_sent_utc_ms": 1790934295000,
+    "synthetic_now_utc_ms": 1790934360000,
+    "receipt_is_synthetic_for_parser_exercise_only": true,
+    "initial_position": [
+      106.45,
+      -2000.0,
+      -114.45
+    ],
+    "initial_position_must_remain_rejected": true,
+    "recovered_position": [
+      123.5,
+      -768.0,
+      -579.0
+    ],
+    "expected_stable_recovered_sample_gap_ms": 30000,
+    "target_acceptance": "authored City Hall interior spawn: numerical stability recovery only; physical movement/collision/save remain pending"
+  },
+  "map_source": {
+    "path": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt",
+    "spawn_property": "spn_cthl_inside_fr_outside01",
+    "spawn_group": "grp93994",
+    "spawn_property_line": 68169,
+    "translation_chain": [
+      {
+        "parent": "grp9112131",
+        "line": 68202,
+        "translation": [
+          -8.5,
+          0,
+          -7
+        ]
+      },
+      {
+        "parent": "grp9112132",
+        "line": 68220,
+        "translation": [
+          0,
+          0,
+          68
+        ]
+      },
+      {
+        "parent": "grp9112133",
+        "line": 68237,
+        "translation": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "parent": "grp9112134",
+        "line": 68254,
+        "translation": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "parent": "grp91012",
+        "line": 68268,
+        "translation": [
+          0,
+          -799.931458,
+          0
+        ]
+      },
+      {
+        "parent": "grp141198",
+        "line": 101355,
+        "translation": [
+          -83.063049,
+          23.360718,
+          344.957153
+        ]
+      },
+      {
+        "parent": "grp_Geometry",
+        "line": 113570,
+        "translation": [
+          -296.317322,
+          -417.42926,
+          -280.957397
+        ]
+      },
+      {
+        "parent": "root",
+        "line": 113580,
+        "translation": [
+          511.380371,
+          426,
+          -703.999756
+        ]
+      }
+    ],
+    "all_chain_rotations_zero": true,
+    "composed_position": [
+      123.5,
+      -768,
+      -579
+    ],
+    "sha256": "e2fcea989f1030e6e4fc57d94d2130302a8271eaabcbd8b9a6488040d94e9e28"
+  },
+  "physical_acceptance": {
+    "existing_character_reopened": true,
+    "rendering": "user reports scenery mostly rendered; screenshots show interior and UI; full outdoor Atlas material/rendering gate incomplete",
+    "app_ground_gate_completed": false,
+    "physical_movement_verified": false,
+    "ordinary_save_verified": false
+  }
+}

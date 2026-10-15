@@ -1,0 +1,21 @@
+{
+  "kernel": "6.18.44",
+  "scope": "Linux proc-file exit behavior reproduced with an owned child only",
+  "reads": {
+    "status": {
+      "error_type": "ProcessLookupError",
+      "errno": 3
+    },
+    "stat": {
+      "error_type": "ProcessLookupError",
+      "errno": 3
+    },
+    "environ": {
+      "bytes": 0
+    }
+  },
+  "format": 1,
+  "relevance": "A real status/stat ESRCH path was absent from the previous candidate scanner. The Thor 0.4.2 report omitted the original exception; this reproduction does not prove its exact cause.",
+  "physical_device_reproduction": false,
+  "regression_test": "tools/android/atlasgame/test_game_device_diagnostic.py:RealProcExitTests"
+}

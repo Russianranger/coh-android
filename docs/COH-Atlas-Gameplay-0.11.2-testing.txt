@@ -1,0 +1,46 @@
+COH Atlas Gameplay 0.11.2 — City Hall ground-verification correction
+
+This in-place update fixes the observer that kept Return to safe ground busy
+in the physical 0.11.1 report. Native /stuck placed THORHERO at the authored
+City Hall interior spawn (123.5, -768, -579), but the old observer incorrectly
+rejected every position below -100. The correction accepts stable native
+positions above Atlas's -2000 fallback floor, with one unit of clearance.
+Identity, current owned-server logs, freshness, stability and normal-save
+position matching remain required. Two stable observations do not establish
+complete physical terrain/collision behavior.
+
+1. Install 0.11.2 as an update over the current installation. Keep THORHERO,
+   app data, imports, private caches and the existing database/Wine profile.
+   Run Refresh runtime / Set up runtime once, then Reopen saved THORHERO.
+   The retained screen heading may still say 0.11.0; Android app version and
+   exported reports identify 0.11.2.
+2. Log in as COHLOCAL / offline, choose 127.0.0.1 and the existing THORHERO.
+   After Saved character reopened, tap Return to safe ground once and leave
+   controls neutral. Wait for Atlas position verified. Normally two native
+   30-second samples plus the polling/capture interval require about 30–90
+   seconds. If this status still does not appear after two minutes, abort,
+   wait for cleanup and export the complete report; do not wait ten minutes.
+3. Recovery may put THORHERO inside City Hall, facing a doorway with an EXIT
+   sign. That is an authored part of Atlas, below outdoor plaza elevation.
+   Capture a screenshot. Check the visible floor, walls and character.
+4. Briefly test left-stick forward/back/strafe, then release to neutral and
+   verify movement stops. Test X jump and landing. Check right-stick cursor,
+   A click and shoulder-plus-right-stick camera. The on-screen movement
+   buttons should now be enabled. Stay nearby for this focused test.
+5. Stop if THORHERO falls through the floor or severe missing materials prevent
+   play. Otherwise stop at a stable nearby position and leave all controls
+   neutral for 60 seconds. Tap Save character / log out within ten minutes of
+   Return to safe ground. Keep controls neutral through normal logout.
+6. After Saved character verified, tap Finish and save report and export the
+   full diagnostic/support ZIP. Export on failure as well. Return the ZIP,
+   screenshot and whether ground status, walk/stop, jump/landing, camera and
+   normal save worked.
+
+The 0.11.1 report already establishes physical existing-character reopening
+and partially visible scenery. Movement, collision, normal movement-save and
+reopening the movement-saved position remain pending. This candidate only
+repairs that observed verifier defect; it preserves the 0.11.1 avatar fix,
+world/runtime/game/server payloads, DEX, application ID and signing identity.
+After the focused movement/save report passes, reopen the saved position and
+qualify sustained Atlas movement/collision and outdoor scenery before beaconing
+or native NPC/powers/combat work. Character creation is already accepted.

@@ -1,0 +1,528 @@
+{
+  "format": 1,
+  "scope": "physical_AYN_Thor_0.11.2_interior_movement_camera_jump_normal_save_passed",
+  "upload": {
+    "name": "coh-atlas-gameplay-20261002-115211.zip",
+    "bytes": 15889032,
+    "sha256": "7f8614a8ecb19f78482ba4b8cce69d2ba2d4c9607a54cc7c1520a2564dc56b4d"
+  },
+  "app_version": "0.11.2",
+  "run_id": "1790939222581-2cdcf451df1c",
+  "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+  "candidate_commit": "7e2f44b122417192ec1d9dd6d973b27b594e0a82",
+  "branch_head_at_review": "8f559a5710f50616537d0aa2b10a4ccf7cdeeae3",
+  "physical_user_acceptance": {
+    "source": "User statement and attached City Hall screenshots in this run",
+    "user_statement": "Everything was a success in this run. Movement, camera, jump all succeeded, and the map rendered well enough in the interior space",
+    "movement_passed": true,
+    "camera_passed": true,
+    "jump_passed": true,
+    "interior_rendering_usable": true,
+    "automated_visual_or_controller_proof_claimed": false,
+    "screenshots": [
+      {
+        "name": "02-Screenshot_20261002-064525.png",
+        "bytes": 566200,
+        "sha256": "19db7798bbde2aafa95fe97cf377185812fa5f3a5beb8f4e3e14c214e6c99fd4"
+      },
+      {
+        "name": "03-Screenshot_20261002-064307.png",
+        "bytes": 535452,
+        "sha256": "c4943e2555a787c09e527c49c4cc4155a69f8d8bad2b771d6e0073d0690bf006"
+      }
+    ]
+  },
+  "android": {
+    "app_id": "io.github.russianranger.cohclientinteractive",
+    "device": "AYN AYN Thor",
+    "android_sdk": 33,
+    "status": "passed",
+    "passed": true,
+    "process_exit_code": 0,
+    "character_reopen_verified": true,
+    "stuck_requested": true,
+    "save_logout_requested": true,
+    "input_events_sent": 375,
+    "input_events_failed": 0,
+    "input_transport_observed": true,
+    "input_worker_stopped": true,
+    "finish_requested": true,
+    "cleanup_verified": true,
+    "cancelled": false,
+    "decoded_frame_count": 3216
+  },
+  "native_and_sql": {
+    "character_id": 1,
+    "auth_id": 1353310574,
+    "account": "COHLOCAL",
+    "name": "THORHERO",
+    "map_id": 1,
+    "verified": true,
+    "existing_character_verified": true,
+    "preserved_existing_identity": true,
+    "native_client_ready_observed": true,
+    "ordinary_stuck_observed": true,
+    "on_atlas_safe_position": true,
+    "stable_ground_verified": true,
+    "requested_logout_observed": true,
+    "logout_timer_observed": true,
+    "disconnected_before_sql": true,
+    "forced_stop_before_save": false,
+    "committed_sql_verified": true,
+    "committed_safe_position_verified": true,
+    "powers_preserved": true,
+    "costume_preserved": true,
+    "selected_rows_preserved": true,
+    "sql_game_mutations_performed": false,
+    "client_ready_evidence": {
+      "path": "logs/dbserver/entity_2026-10-02-11-00-00.log",
+      "line_sha256": "7de792577b61f65481437394acf79f366af7e8e0a272e92685c04aa2baa5cf98",
+      "log_timestamp": "261002 11:40:17",
+      "log_route": "embedded_dbserver_logserver",
+      "map_instance": "City_01_01_1",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "source": "current_owned_mapserver_CLIENT_READY_resumeCharacter_success",
+      "loaded_world_assets": true
+    },
+    "relocation_delivery": {
+      "format": 1,
+      "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+      "client_pid": 672,
+      "character_id": 1,
+      "action": "stuck",
+      "sent_utc_ms": 1790941347537
+    },
+    "ground_evidence": {
+      "verified": true,
+      "samples": [
+        {
+          "path": "logs/dbserver/entity_2026-10-02-11-00-00.log",
+          "line_sha256": "455c81baa525ca5e21923334494f55e58e204a3e0a0a40c2c30e9d0612aab22e",
+          "log_timestamp": "261002 11:46:30",
+          "log_route": "embedded_dbserver_logserver",
+          "map_instance": "City_01_01_1",
+          "position": [
+            133.93,
+            -768.0,
+            -594.65
+          ],
+          "utc_ms": 1790941590000,
+          "account": "COHLOCAL",
+          "name": "THORHERO",
+          "source": "current_owned_mapserver_periodic_entity_physics_position"
+        },
+        {
+          "path": "logs/dbserver/entity_2026-10-02-11-00-00.log",
+          "line_sha256": "7750a52ab370ffc6f64bdab59958b8c5a4275cd513a5c117eb45b85e59affc6c",
+          "log_timestamp": "261002 11:47:00",
+          "log_route": "embedded_dbserver_logserver",
+          "map_instance": "City_01_01_1",
+          "position": [
+            133.93,
+            -768.0,
+            -594.65
+          ],
+          "utc_ms": 1790941620000,
+          "account": "COHLOCAL",
+          "name": "THORHERO",
+          "source": "current_owned_mapserver_periodic_entity_physics_position"
+        }
+      ],
+      "elapsed_ms": 30000,
+      "position": [
+        133.93,
+        -768.0,
+        -594.65
+      ],
+      "ordinary_command": "stuck",
+      "scope": "two_current_native_physics_positions_stable_above_fall_boundary_after_ordinary_stuck",
+      "full_collision_geometry_verified": false
+    },
+    "ground_observed_utc": "2026-10-02T11:44:10.890977+00:00",
+    "logout_delivery": {
+      "format": 1,
+      "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+      "client_pid": 672,
+      "character_id": 1,
+      "action": "quittologin",
+      "sent_utc_ms": 1790941631842
+    },
+    "logout_timer_evidence": {
+      "path": "logs/dbserver/entity_2026-10-02-11-00-00.log",
+      "line_sha256": "9b597767f21676822d84ee9d121806712b4fe62d94e2086f08e74071edaad3bb",
+      "log_timestamp": "261002 11:47:12",
+      "log_route": "embedded_dbserver_logserver",
+      "map_instance": "City_01_01_1",
+      "reason": "Logout timer expired",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "source": "current_owned_server_entity_log_live_client_logout_timer"
+    },
+    "saved_utc": "2026-10-02T11:49:06.783270+00:00",
+    "verified_utc": "2026-10-02T11:49:07.131816+00:00",
+    "saved_position": {
+      "containerid": 1,
+      "mapid": 1,
+      "staticmapid": 1,
+      "posx": 133.92833,
+      "posy": -768,
+      "posz": -594.64825
+    },
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 14
+    },
+    "table_sha256": {
+      "ents": "400649ea311338a11bd1f6864b57f7520e30fcece45a9e3ed63fd3e1a8282a72",
+      "ents2": "36dd26e88ac48da0adda2a83b5f72bf8c291d9ac5032b49fafe5fd5990f3d1ff",
+      "powers": "bc49fb4c2808bf03d362d71cb48c49d7c5582fcbeecaebc5bf4a10ba162fd2fc",
+      "costumeparts": "1dbc429e682d91bdbd9d719b2ad769698901b9b3319a9ed671a402bb3309b7f2"
+    },
+    "baseline": {
+      "character_id": 1,
+      "auth_id": 1353310574,
+      "identity_sha256": "a5fe5f09ecb4493fd4bd1c6c3f73b890dcaf042881787ebd10304f8c38b192e8",
+      "snapshot_sha256": "9cbd5a631e4c3b02c5b0dde051f44fa8babffbf65c0f24d4a41a75029d981d84",
+      "table_sha256": {
+        "ents": "c17366a839e0cb32d19eaa70b597b7d3bf1e87887818da6939120a198a1d69a3",
+        "ents2": "36dd26e88ac48da0adda2a83b5f72bf8c291d9ac5032b49fafe5fd5990f3d1ff",
+        "powers": "bc49fb4c2808bf03d362d71cb48c49d7c5582fcbeecaebc5bf4a10ba162fd2fc",
+        "costumeparts": "1dbc429e682d91bdbd9d719b2ad769698901b9b3319a9ed671a402bb3309b7f2"
+      },
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 7,
+        "costumeparts": 14
+      },
+      "login_count": 2,
+      "captured_utc": "2026-10-02T11:16:18.082470+00:00",
+      "saved_position": {
+        "containerid": 1,
+        "mapid": 1,
+        "staticmapid": 1,
+        "posx": 123.5,
+        "posy": -768,
+        "posz": -579
+      }
+    }
+  },
+  "independent_archive_review": {
+    "raw_native_line_hashes_verified": 4,
+    "snapshot_canonical_hashes_verified": true,
+    "identity_preserved": true,
+    "ents2_powers_and_costume_rows_identical": true,
+    "selected_ents_identical_except_logincount": true,
+    "login_count_before": 2,
+    "login_count_after": 3,
+    "horizontal_displacement_units": 18.804728,
+    "retained_android_png_hashes_verified": 23,
+    "fresh_post_connection_ground_save_frames_verified": true
+  },
+  "android_event_frame_evidence": {
+    "connected": {
+      "event_frame_watermark": 1212,
+      "event_observed_uptime_ms": 276866863,
+      "captures": [
+        {
+          "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 276867687,
+          "sequence": 1216,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "fcdbb62fcc7f8c15af81225d068e05a710f4a97a0c6deb0d22066f946f57d7c7",
+          "non_uniform": true,
+          "png_sha256": "fcdbb62fcc7f8c15af81225d068e05a710f4a97a0c6deb0d22066f946f57d7c7",
+          "png_verified": true,
+          "png_bytes": 421124,
+          "archive_path": "android-connected/capture-1.png",
+          "post_character_connection_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 276868695,
+          "sequence": 1219,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "6e61950746e914097d3a0c472135642eddb5e42de5f1e234fc45689793748a29",
+          "non_uniform": true,
+          "png_sha256": "6e61950746e914097d3a0c472135642eddb5e42de5f1e234fc45689793748a29",
+          "png_verified": true,
+          "png_bytes": 420792,
+          "archive_path": "android-connected/capture-2.png",
+          "post_character_connection_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 276869704,
+          "sequence": 1224,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "c1510b9db700d22a0ba560abf5e6566a223efb0e3193c4d2c97998fbc007505d",
+          "non_uniform": true,
+          "png_sha256": "c1510b9db700d22a0ba560abf5e6566a223efb0e3193c4d2c97998fbc007505d",
+          "png_verified": true,
+          "png_bytes": 420615,
+          "archive_path": "android-connected/capture-3.png",
+          "post_character_connection_frame_observed": true,
+          "character_id": 1
+        }
+      ]
+    },
+    "relocation": {
+      "event_frame_watermark": 1933,
+      "event_observed_uptime_ms": 277016896,
+      "captures": [
+        {
+          "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 277017137,
+          "sequence": 1934,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "df3c487b444f85d6e66622e17742ed8079053aa2de2557ccecb31bf873870c5a",
+          "non_uniform": true,
+          "png_sha256": "df3c487b444f85d6e66622e17742ed8079053aa2de2557ccecb31bf873870c5a",
+          "png_verified": true,
+          "png_bytes": 425683,
+          "archive_path": "android-relocated/capture-1.png",
+          "post_character_relocation_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 277018146,
+          "sequence": 1938,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "f06509a0eea1609012db65b0774bde5cd39b2c4ff6cd7c5ba10fbf7168e23790",
+          "non_uniform": true,
+          "png_sha256": "f06509a0eea1609012db65b0774bde5cd39b2c4ff6cd7c5ba10fbf7168e23790",
+          "png_verified": true,
+          "png_bytes": 424803,
+          "archive_path": "android-relocated/capture-2.png",
+          "post_character_relocation_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 277019154,
+          "sequence": 1942,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "c9cbaeff22a2e7676ed71faa2cd67014ad5913d30a7884d05356e8765ef63f22",
+          "non_uniform": true,
+          "png_sha256": "c9cbaeff22a2e7676ed71faa2cd67014ad5913d30a7884d05356e8765ef63f22",
+          "png_verified": true,
+          "png_bytes": 424929,
+          "archive_path": "android-relocated/capture-3.png",
+          "post_character_relocation_frame_observed": true,
+          "character_id": 1
+        }
+      ]
+    },
+    "character": {
+      "event_frame_watermark": 3130,
+      "event_observed_uptime_ms": 277313137,
+      "captures": [
+        {
+          "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 277313464,
+          "sequence": 3133,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "edd3a86b06769c6cdac37f03837b6c0209f09dde766a3c51dfe89f38c458ee3c",
+          "non_uniform": true,
+          "png_sha256": "edd3a86b06769c6cdac37f03837b6c0209f09dde766a3c51dfe89f38c458ee3c",
+          "png_verified": true,
+          "png_bytes": 562975,
+          "archive_path": "android-character/capture-1.png",
+          "post_character_save_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 277314473,
+          "sequence": 3135,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "edd3a86b06769c6cdac37f03837b6c0209f09dde766a3c51dfe89f38c458ee3c",
+          "non_uniform": true,
+          "png_sha256": "edd3a86b06769c6cdac37f03837b6c0209f09dde766a3c51dfe89f38c458ee3c",
+          "png_verified": true,
+          "png_bytes": 562975,
+          "archive_path": "android-character/capture-2.png",
+          "post_character_save_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "2b2b9d84ee3c476da3705e4ef8e70b0d",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 277315488,
+          "sequence": 3138,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "52bbac3b36d16877e32e1d2818b0aef5cd6d752e04062488f8eb60eeaa28d202",
+          "non_uniform": true,
+          "png_sha256": "52bbac3b36d16877e32e1d2818b0aef5cd6d752e04062488f8eb60eeaa28d202",
+          "png_verified": true,
+          "png_bytes": 562857,
+          "archive_path": "android-character/capture-3.png",
+          "post_character_save_frame_observed": true,
+          "character_id": 1
+        }
+      ]
+    }
+  },
+  "cleanup": {
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "wine_shutdown": {
+      "stop_exit_code": 0,
+      "wait_exit_code": 0,
+      "prefix_lock_free": true,
+      "server_socket_inactive": true
+    },
+    "wine_process_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 271,
+      "scanned_tasks": 106,
+      "dead_leaders_with_live_tasks": 6,
+      "owned_live_workers": 6,
+      "leader_exit_retries": 0,
+      "candidates": 6,
+      "term_signals": 6,
+      "kill_signals": 2,
+      "pidfd_signals": 8,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true,
+      "permission_read_retries": 1,
+      "worker_exit_rechecks": 1,
+      "permission_observations": [
+        {
+          "group_pid": 2335,
+          "group_starttime": 58337520,
+          "worker_tid": 11052,
+          "worker_starttime": 58396890,
+          "operation": "worker_environment",
+          "errno": 13,
+          "error_type": "PermissionError",
+          "attempt": 1,
+          "worker_state_before": "R",
+          "resolution": "verified_disappearance",
+          "worker_state_after": "R"
+        }
+      ],
+      "permission_observations_omitted": 0,
+      "proc_read_retries": 0,
+      "proc_read_observations": [],
+      "proc_read_observations_omitted": 0,
+      "last_inspection_failure": null
+    },
+    "presentation_socket_removed": true
+  },
+  "raw_artifact_pins": {
+    "android-client-report.json": {
+      "bytes": 218560,
+      "sha256": "41566dc7cb8f3857fb8145568e8b448ffe0e6bfd29f38e55649be6f0f6f9e270"
+    },
+    "guest/latest-report.json": {
+      "bytes": 187333,
+      "sha256": "68ec6b31e79b360f46a1dabf70041119638b4fccadda1b8972b3e1c45b6e2075"
+    },
+    "guest/client-evidence/character-reopen-before-snapshot.json": {
+      "bytes": 8682,
+      "sha256": "35fa8a39510147d167dcb010f9323a4c72d979136a153841b86a47251e923c09"
+    },
+    "guest/client-evidence/character-saved-snapshot.json": {
+      "bytes": 8682,
+      "sha256": "14e31cf0031902b203c11109d29b33536ec829c0db5d411ebf27f376b3ac7444"
+    },
+    "guest/client-evidence/character-server-logs.zip": {
+      "bytes": 8621,
+      "sha256": "ff5493a8d99955f4cbe97bf176aa9720c423aed5017ed2b1a2cb42eb343d559c"
+    }
+  },
+  "automated_scope_limits": {
+    "gameplay_validated": false,
+    "game_rendering_validated": false,
+    "hardware_acceleration_validated": false,
+    "controller_input_validated": false,
+    "input_effect_verified": false
+  },
+  "remaining_gates": {
+    "movement_saved_position_reopened": false,
+    "sustained_outdoor_collision_verified": false,
+    "outdoor_materials_verified": false,
+    "full_collision_geometry_verified": false,
+    "map_beaconing_verified": false,
+    "native_npc_powers_combat_verified": false
+  },
+  "next_test": {
+    "apk": "retain_installed_0.11.2",
+    "runtime_refresh_required": false,
+    "initial_neutral_seconds_before_stuck": 60,
+    "expected_saved_position": {
+      "containerid": 1,
+      "mapid": 1,
+      "staticmapid": 1,
+      "posx": 133.92833,
+      "posy": -768,
+      "posz": -594.64825
+    },
+    "position_restoration_assessment": "Compare baseline SQL with initial native records before recovery; reopening status alone proves identity and readiness.",
+    "procedure": "docs/COH-Atlas-Gameplay-0.11.2-saved-position-outdoor-testing.txt"
+  },
+  "preserve": {
+    "main": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+    "branch": "codex/character-persistence-continuation",
+    "pr": 1,
+    "pr_draft": true,
+    "existing_character_and_data": true
+  }
+}

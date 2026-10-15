@@ -1,0 +1,43 @@
+COH Atlas Gameplay 0.13.4 — reopen session cleanup and startup-only timing
+
+The 0.13.3 report confirms PostgreSQL started, passed durability/login checks,
+reused the existing saved profile and shut down cleanly. Reopen stopped because
+a previous task-helper delivery receipt remained in the shared session output
+directory. The new wrapper retires both task-helper receipts before launching
+the guest. Saved character, database, task journal and imported assets remain.
+
+This build explicitly uses ordinary saved-character reopen for the approved
+startup timing pass. It does not require an empty task journal or another task
+acceptance/completion gate. The historical task diagnostic remains available
+to configurations without the explicit startup-only flag. No task SQL is erased
+or rewritten to qualify the test. All four 0.13.3 startup improvements and its
+native server/client/renderer payloads are retained.
+
+Activation:
+1. Install over the current app, keeping its data.
+2. Set up runtime once to activate the changed reopen helper. Keep the current
+   imports, saved THORHERO and existing task journal. Do not uninstall, clear
+   storage, reimport assets or recreate the character.
+3. Setup retains the previous runtime generation for rollback. After the update
+   works, the existing reviewed Storage and cleanup tool can retire older
+   generations. Repeated setup of this same bundle should reuse its generation.
+
+One continuation timing session:
+1. Keep the same graphics preset/power state and similar device temperature if
+   practical. Tap Reopen saved THORHERO.
+2. Note elapsed times at server/Atlas readiness, visible login and actual hero
+   connection. Do not accept another task or use the task helper commands.
+3. Once the saved hero connects, use the app's Stop control and export the
+   gameplay ZIP. The startup-only diagnostic may report cancelled because
+   ordinary logout/save was not requested; readiness, connection and cleanup
+   are the evidence for this pass.
+4. Send the ZIP and observed times, plus any crash or changed rendering/input.
+   No immediate second long boot or repeat of task, movement, contact, ground,
+   storage or fresh-profile qualification is requested.
+
+The 0.13.3 failed session stopped before Wine/DbServer/Atlas/client startup,
+so it cannot measure the server speedup. World preparation verified all 2,904
+existing leaves with zero decodes; it established the new reuse receipt once.
+The prior warm 0.13.2 baseline was Atlas readiness 11m22.726s from guest start
+and THORHERO connection 23m19.616s from Android start. The <=5-minute server
+readiness target remains open until a complete device timing result is reviewed.

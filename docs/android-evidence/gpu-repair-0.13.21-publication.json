@@ -1,0 +1,218 @@
+{
+  "format": 1,
+  "status": "passed",
+  "version_name": "0.13.21",
+  "version_code": 36,
+  "repository_commit": "20b559420b1bb0978b7eac6e6eecdfe2a468f693",
+  "scope": "Published GPU presentation/owned cleanup and Android session-budget evidence repair; physical GPU Game validation pending",
+  "release": {
+    "id": 407231536,
+    "tag": "coh-atlas-gameplay-v0.13.21",
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.21",
+    "prerelease": true,
+    "assets": [
+      {
+        "id": 622913714,
+        "name": "COH-Atlas-Gameplay-0.13.21-testing.txt",
+        "bytes": 4567,
+        "sha256": "4f807498d32b2a5a2cbae9a0eaf7f091c3ae7d0a9d650c6992b7ef3c4c1acf9c",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.21/COH-Atlas-Gameplay-0.13.21-testing.txt"
+      },
+      {
+        "id": 622911506,
+        "name": "COH-Atlas-Gameplay-0.13.21.apk",
+        "bytes": 1560283912,
+        "sha256": "67a8fe01d8f6e7cbb5139d7d1cecc7706d33b25671d0072a93808b1fc04bbe76",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.21/COH-Atlas-Gameplay-0.13.21.apk"
+      },
+      {
+        "id": 622913681,
+        "name": "COH-Atlas-Gameplay-0.13.21.apk.sha256",
+        "bytes": 97,
+        "sha256": "c052574dc2a44da1868518ec3bbf1348905d0a8b5ce6031eaee6316d7cee1bba",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.21/COH-Atlas-Gameplay-0.13.21.apk.sha256"
+      }
+    ]
+  },
+  "owner": {
+    "id": 37837207655,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37837207655",
+    "head_sha": "20b559420b1bb0978b7eac6e6eecdfe2a468f693",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 113517183922,
+        "name": "changes",
+        "conclusion": "success"
+      },
+      {
+        "id": 113517401504,
+        "name": "probe",
+        "conclusion": "success"
+      },
+      {
+        "id": 113517890191,
+        "name": "gpu",
+        "conclusion": "success"
+      },
+      {
+        "id": 113518169563,
+        "name": "qualify",
+        "conclusion": "success"
+      },
+      {
+        "id": 113521814612,
+        "name": "apk",
+        "conclusion": "success"
+      },
+      {
+        "id": 113523883501,
+        "name": "public-audit",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "qualification": {
+    "tests_run": 1470,
+    "suites": 99,
+    "skipped": 0,
+    "retained_suites": 96,
+    "new_or_continuation_suites": 3,
+    "real_postgresql_fixtures": 7
+  },
+  "public_byte_audit": {
+    "bytes": 1560283912,
+    "format": 1,
+    "fresh_process_prepublication_audit_passed": true,
+    "mesa_driver_compiled_in_current_run": false,
+    "native_Game_recompiled": false,
+    "native_vulkan_probe_compiled_in_current_run": false,
+    "physical_hardware_renderer_validated": false,
+    "physical_performance_validated": false,
+    "public_apk_checksum_and_notes_verified": true,
+    "public_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.21/COH-Atlas-Gameplay-0.13.21.apk",
+    "repository_commit": "20b559420b1bb0978b7eac6e6eecdfe2a468f693",
+    "runtime_refresh_required": true,
+    "save_acceptance_relaxed": false,
+    "sdk_signer_payload_audit_passed": true,
+    "sha256": "67a8fe01d8f6e7cbb5139d7d1cecc7706d33b25671d0072a93808b1fc04bbe76",
+    "software_default_preserved": true,
+    "status": "passed",
+    "two_reviewed_Java_evidence_validators_recompiled": true,
+    "wgl_probe_compiled_in_current_run": true
+  },
+  "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "actions_artifact_zip_metadata": [
+    {
+      "id": 11576995710,
+      "name": "coh-client-gpu-repair-runtime",
+      "zip_bytes": 2823505,
+      "zip_sha256": "0c51551950e4492da381497cd314e429961cb9deb5841926bf34768f6f968396",
+      "expired": false
+    },
+    {
+      "id": 11576623377,
+      "name": "coh-client-gpu-repair-public-byte-audit",
+      "zip_bytes": 675,
+      "zip_sha256": "d7047606c38a80c8e3fcb47835c9d309f46aec783221557f2956262bb836426c",
+      "expired": false
+    },
+    {
+      "id": 11576462686,
+      "name": "coh-client-gpu-repair-apk",
+      "zip_bytes": 1565670427,
+      "zip_sha256": "52b94d6b8fcd624834d4b8a8bc859eee1b7ccf75100d119f736cc849d200b0d6",
+      "expired": false
+    },
+    {
+      "id": 11576337894,
+      "name": "coh-client-gpu-repair-qualification",
+      "zip_bytes": 521638,
+      "zip_sha256": "f13319b49a6bcb7413304f488440a9437f78a9ec633e3a370ad684e2cf75548a",
+      "expired": false
+    },
+    {
+      "id": 11576253333,
+      "name": "coh-client-gpu-repair-packaging-evidence",
+      "zip_bytes": 1255583,
+      "zip_sha256": "2aad94d4dacd07d1c02fafafc9e41f8b65f92322b6d6fdd369caaf2935223b2e",
+      "expired": false
+    },
+    {
+      "id": 11575744144,
+      "name": "coh-client-gpu-repair-probe",
+      "zip_bytes": 159503,
+      "zip_sha256": "d72d8b9ee5e06ba292a63bb506ec295b1f189b3fc26d7a84238f35a66f551cd8",
+      "expired": false
+    }
+  ],
+  "retained": {
+    "donor_source": "5a592380a5272a187248a1f971d9798a298ca5c0",
+    "donor_apk_bytes": 1560271624,
+    "donor_apk_sha256": "ac99a528e088bccce6e3164de62b55408624e3027ebaef24bce0f8c9f9e8b94e",
+    "game_source": "a4a658be25d2b5ca1393b7d3daedd83a7d9ca1f4",
+    "game_bytes": 9487872,
+    "game_sha256": "adcabb11135fe44b2c1f997a088ec58e4ea0d90e9defaa9f88efea34538caa44",
+    "client_dlls": 20,
+    "runtime_payloads": 77,
+    "byte_identical_payloads": 73,
+    "changed_payloads": [
+      "assets/runtime/client_gpu_profile.py",
+      "assets/runtime/hardware-renderer.zip",
+      "assets/runtime/client-manifest.json",
+      "assets/runtime/runtime-manifest.json"
+    ],
+    "authored_java_sources": 19,
+    "byte_identical_java_sources": 17,
+    "changed_java_sources": [
+      "ClientAcceptance.java",
+      "ClientRuntime.java"
+    ],
+    "gpu_driver_sha256": "e8cf15e9e4bee47e80395b689facea84276334dce3debc1bcabd8f354476feea",
+    "native_vulkan_probe_sha256": "c82b30c17bea00f3af2556c1a9979cbd8e6a949ea35873e1169a38f9f0b3d646",
+    "game_driver_vulkan_servers_assets_wine_fex_rootfs_display_input_preserved": true
+  },
+  "physical_input_reports": [
+    {
+      "file": "coh-atlas-gameplay-20261008-185209.zip",
+      "bytes": 1700091,
+      "sha256": "56672993697367eaa82a86a328ccc14b91b941b7de8a766e5fcdbe64faa898bf",
+      "mode": "GPU test",
+      "game_started": false,
+      "original_failure": "post_swap_frontbuffer_readback",
+      "native_adreno740_queue_passed": true,
+      "wine_draw_texture_swap_checks_passed": true,
+      "physical_game_hardware_rendering_validated": false
+    },
+    {
+      "file": "coh-atlas-gameplay-20261008-193638.zip",
+      "bytes": 13113683,
+      "sha256": "1606847ddc691ad16afc5ec802cb59cee2c4d6a6638099553a0942d228aecda0",
+      "mode": "Software",
+      "actual_renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+      "native_pure_gameplay_frames": 7366,
+      "configured_cap": 30,
+      "mean_frame_interval_ms": 106.587,
+      "mean_native_cadence_hz": 9.382,
+      "p95_interval_histogram_upper_ms": 200,
+      "max_interval_ms": 567.247,
+      "guest_strict_save_and_reopen_passed": true,
+      "android_completion_passed": false,
+      "false_rejection_cause": "observation_seconds1304.498 exceeded legacy1210 ceiling despite accepted current-session connection budget"
+    }
+  ],
+  "unpublished_candidate": {
+    "source": "cbb62e7730c00914b2ad53cc79c96dbc8a337ec0",
+    "owner_run": 37836795752,
+    "failure": "MSVC /W4 /WX C4701 uninitialized RECT on GetClientRect failure path",
+    "corrected_by": "20b559420b1bb0978b7eac6e6eecdfe2a468f693",
+    "published_apk": false
+  },
+  "historical_workflow_note": {
+    "run": 37836795523,
+    "recipe_version": "0.13.4",
+    "result": "Legacy frozen builder rejected expanded two-Java-source boundary; no old APK rebuilt or published. Its regression guards pass in current .21 qualification."
+  },
+  "next": "Thor GPU preflight, actual Game backend and Atlas correctness; matched 30-cap route, actual cadence/renderer/presentation costs and black-flash evidence; save/Finish then export complete outer ZIP. No physical FPS gain claimed."
+}

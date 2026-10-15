@@ -1,0 +1,345 @@
+{
+  "auxiliary_stable_records": 54,
+  "cases": [
+    {
+      "accepted_raw_frame": {
+        "bytes": 1440015,
+        "distinct_colors_capped": 256,
+        "height": 600,
+        "kind": "owned_x_desktop",
+        "menu_visual_validated": false,
+        "path": "startup.ppm",
+        "sha256": "e3caa5aa549e0930159d80da349b6b53508dfc744326fa860f84654f227d5e97",
+        "width": 800
+      },
+      "actual_Cg": {
+        "create_us": 0,
+        "driver_load_us": 0,
+        "object_count": 0,
+        "source_count": 0
+      },
+      "cleanup_passed": true,
+      "first_accepted_current_startup_witness_seconds": 25.511592,
+      "label": "first-launch",
+      "lane": "retained",
+      "native_BIN_delta_count": 14,
+      "native_console_first_to_all_data_seconds": 20.363,
+      "native_console_phases_seconds": {
+        "FX_info": 1.881,
+        "group_catalog": 1.205,
+        "renderer": 3.327,
+        "sequencers": 1.034,
+        "texture_headers": 1.524
+      },
+      "native_errorLog_to_all_data_seconds": null,
+      "phase_receipt": {
+        "bytes": 13803,
+        "path": "native-client-paired/retained/first-launch/native-client-phase.json",
+        "sha256": "65c4e43f4c6e6c3216d0b93cabd3b90ec7c4a295bf62a2a149d3d68d605226a6"
+      },
+      "positive_login_frame_after_OCR_seconds": 26.457356,
+      "registry_observer_timeout_count": 1,
+      "status": "passed"
+    },
+    {
+      "accepted_raw_frame": {
+        "bytes": 1440015,
+        "distinct_colors_capped": 256,
+        "height": 600,
+        "kind": "owned_x_desktop",
+        "menu_visual_validated": false,
+        "path": "startup.ppm",
+        "sha256": "5c2d1efefe356af07595f7eab7de91378616490ece4fe666389f2c349a6ce560",
+        "width": 800
+      },
+      "actual_Cg": {
+        "create_us": 0,
+        "driver_load_us": 0,
+        "object_count": 0,
+        "source_count": 0
+      },
+      "cleanup_passed": true,
+      "first_accepted_current_startup_witness_seconds": 19.236088,
+      "label": "closed-prefix-second-launch",
+      "lane": "retained",
+      "native_BIN_delta_count": 0,
+      "native_console_first_to_all_data_seconds": 15.167,
+      "native_console_phases_seconds": {
+        "FX_info": 1.84,
+        "group_catalog": 1.161,
+        "renderer": 1.54,
+        "sequencers": 0.964,
+        "texture_headers": 1.382
+      },
+      "native_errorLog_to_all_data_seconds": null,
+      "phase_receipt": {
+        "bytes": 8878,
+        "path": "native-client-paired/retained/closed-prefix-second-launch/native-client-phase.json",
+        "sha256": "ad8170b0c53fb599b30b388bb785a044ac67ea901426d3e1bd92b7f87781c82a"
+      },
+      "positive_login_frame_after_OCR_seconds": 20.174734,
+      "registry_observer_timeout_count": 1,
+      "status": "passed"
+    },
+    {
+      "accepted_raw_frame": {
+        "bytes": 1440015,
+        "distinct_colors_capped": 256,
+        "height": 600,
+        "kind": "owned_x_desktop",
+        "menu_visual_validated": false,
+        "path": "startup.ppm",
+        "sha256": "26a07f26bc72e7e05907d84030709604bc12e6b7346f627863dc4a744d713393",
+        "width": 800
+      },
+      "actual_Cg": {
+        "create_us": 0,
+        "driver_load_us": 0,
+        "object_count": 0,
+        "source_count": 0
+      },
+      "actual_constructor_rows": 184,
+      "cleanup_passed": true,
+      "first_accepted_current_startup_witness_seconds": 19.217011,
+      "label": "first-candidate-closed-prefix",
+      "lane": "candidate",
+      "logical_counts": {
+        "group_catalog_observations": [
+          [
+            3224,
+            75433
+          ]
+        ],
+        "ordinary_header_reads": 0,
+        "texture_header_hits": 38986
+      },
+      "max_observed_batch_bytes": 2654208,
+      "native_BIN_delta_count": 0,
+      "native_console_first_to_all_data_seconds": 15.421,
+      "native_console_phases_seconds": {
+        "FX_info": 1.956,
+        "group_catalog": 1.204,
+        "renderer": 1.65,
+        "sequencers": 1.018,
+        "texture_headers": 1.384
+      },
+      "native_errorLog_to_all_data_seconds": null,
+      "phase_receipt": {
+        "bytes": 8880,
+        "path": "native-client-paired/candidate/first-candidate-closed-prefix/native-client-phase.json",
+        "sha256": "aae318bd8ceb74e1061804782b1565d359ced90ed96a2a1e5a6f291e01a7a66c"
+      },
+      "positive_login_frame_after_OCR_seconds": 20.126562,
+      "registry_observer_timeout_count": 1,
+      "status": "passed"
+    },
+    {
+      "accepted_raw_frame": {
+        "bytes": 1440015,
+        "distinct_colors_capped": 256,
+        "height": 600,
+        "kind": "owned_x_desktop",
+        "menu_visual_validated": false,
+        "path": "startup.ppm",
+        "sha256": "5c2d1efefe356af07595f7eab7de91378616490ece4fe666389f2c349a6ce560",
+        "width": 800
+      },
+      "actual_Cg": {
+        "create_us": 0,
+        "driver_load_us": 0,
+        "object_count": 0,
+        "source_count": 0
+      },
+      "actual_constructor_rows": 184,
+      "cleanup_passed": true,
+      "first_accepted_current_startup_witness_seconds": 19.482232,
+      "label": "second-candidate-closed-prefix",
+      "lane": "candidate",
+      "logical_counts": {
+        "group_catalog_observations": [
+          [
+            3224,
+            75433
+          ]
+        ],
+        "ordinary_header_reads": 0,
+        "texture_header_hits": 38986
+      },
+      "max_observed_batch_bytes": 2654208,
+      "native_BIN_delta_count": 0,
+      "native_console_first_to_all_data_seconds": 15.563,
+      "native_console_phases_seconds": {
+        "FX_info": 1.912,
+        "group_catalog": 1.157,
+        "renderer": 1.645,
+        "sequencers": 1.028,
+        "texture_headers": 1.534
+      },
+      "native_errorLog_to_all_data_seconds": null,
+      "phase_receipt": {
+        "bytes": 10367,
+        "path": "native-client-paired/candidate/second-candidate-closed-prefix/native-client-phase.json",
+        "sha256": "87dc82fc3d366f01917000475f55a4d68525739a780501f9cf18845e2621d2a3"
+      },
+      "positive_login_frame_after_OCR_seconds": 20.405703,
+      "registry_observer_timeout_count": 0,
+      "status": "passed"
+    },
+    {
+      "accepted_raw_frame": {
+        "bytes": 1440015,
+        "distinct_colors_capped": 256,
+        "height": 600,
+        "kind": "owned_x_desktop",
+        "menu_visual_validated": false,
+        "path": "startup.ppm",
+        "sha256": "26a07f26bc72e7e05907d84030709604bc12e6b7346f627863dc4a744d713393",
+        "width": 800
+      },
+      "actual_Cg": {
+        "create_us": 170067,
+        "driver_load_us": 499233,
+        "object_count": 249,
+        "source_count": 0
+      },
+      "cleanup_passed": true,
+      "first_accepted_current_startup_witness_seconds": 19.224286,
+      "label": "first-cg-closed-prefix",
+      "lane": "cg-observed",
+      "native_BIN_delta_count": 0,
+      "native_console_first_to_all_data_seconds": 15.82,
+      "native_console_phases_seconds": {
+        "FX_info": 1.908,
+        "group_catalog": 1.147,
+        "renderer": 1.63,
+        "sequencers": 1.396,
+        "texture_headers": 1.341
+      },
+      "native_errorLog_to_all_data_seconds": null,
+      "phase_receipt": {
+        "bytes": 67335,
+        "path": "native-client-paired/cg-observed/first-cg-closed-prefix/native-client-phase.json",
+        "sha256": "4a563114c73ee67d04a5b8c335830e9e19ef326a5375e429ee6cf71f78bf9e6f"
+      },
+      "positive_login_frame_after_OCR_seconds": 20.15223,
+      "registry_observer_timeout_count": 1,
+      "status": "passed"
+    },
+    {
+      "accepted_raw_frame": {
+        "bytes": 1440015,
+        "distinct_colors_capped": 256,
+        "height": 600,
+        "kind": "owned_x_desktop",
+        "menu_visual_validated": false,
+        "path": "startup-retry-2.ppm",
+        "sha256": "247ba35ddc60bb1c43b1ad1fdee45b4e18077a209e27be6205a2c7f0ab5406bd",
+        "width": 800
+      },
+      "actual_Cg": {
+        "create_us": 168845,
+        "driver_load_us": 498325,
+        "object_count": 249,
+        "source_count": 0
+      },
+      "cleanup_passed": true,
+      "first_accepted_current_startup_witness_seconds": 19.206672,
+      "label": "second-cg-closed-prefix",
+      "lane": "cg-observed",
+      "native_BIN_delta_count": 0,
+      "native_console_first_to_all_data_seconds": 16.109,
+      "native_console_phases_seconds": {
+        "FX_info": 1.946,
+        "group_catalog": 1.202,
+        "renderer": 1.64,
+        "sequencers": 1.396,
+        "texture_headers": 1.462
+      },
+      "native_errorLog_to_all_data_seconds": null,
+      "phase_receipt": {
+        "bytes": 72792,
+        "path": "native-client-paired/cg-observed/second-cg-closed-prefix/native-client-phase.json",
+        "sha256": "cfdbe5962665f2a8d7380682f7f72bdd77ff651db89ca6bab85ac59baadf470e"
+      },
+      "positive_login_frame_after_OCR_seconds": 23.352053,
+      "registry_observer_timeout_count": 1,
+      "status": "passed"
+    }
+  ],
+  "exact_renderer": {
+    "gl_version": "4.5 (Compatibility Profile) Mesa 25.2.8-0ubuntu0.24.04.4",
+    "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+    "renderer_classification": "software",
+    "vendor": "Mesa"
+  },
+  "format": 1,
+  "fresh_execution": {
+    "Cg_observer_cases": 2,
+    "Cg_reuse_guard_cases": 12,
+    "candidate_cases": 2,
+    "host_guard_cases": 53,
+    "real_Game_launches": 6,
+    "retained_cases": 2
+  },
+  "historical_failed_runs_preserved": [
+    38470080682,
+    38484481041,
+    38487155137
+  ],
+  "native_producer": {
+    "Game": {
+      "bytes": 9478144,
+      "sha256": "1329d2abf8e5cd4a298cb5b1d6fb3706f5be8aefcf4c786881106f6373deb48d"
+    },
+    "artifact_id": 11856633816,
+    "fresh_Windows_constructor_cases": 398,
+    "job_id": 115577567808,
+    "run_id": 38479270330,
+    "source_commit": "9325f67e1bb4a3e6696dcfd1308ba8e4183171b0"
+  },
+  "provider_preservation": {
+    "bytes": 8566369583,
+    "complete_bytes_rehashed": true,
+    "directories": 10637,
+    "files": 212393,
+    "format": 1,
+    "membership_and_content_sha256": "8d552fe6c0be488012e939ef0a73ebb0b9e9eedfdbc8fabef949127cd7ebe713",
+    "native_visible_mtime_permissions_and_readonly_bound": true,
+    "persistent_authority_created": false
+  },
+  "qualification": {
+    "artifact_id": 11861292635,
+    "artifact_zip": {
+      "bytes": 9267700,
+      "sha256": "5219124846f80f4d1bc3f52192e9c00c3db9f54b2b8e40a52418cb20d421d3bf"
+    },
+    "job_id": 115608891302,
+    "original_paired_receipt": {
+      "bytes": 349583,
+      "sha256": "6f0010dee155b476edc1478a79e5333f7cf42dca220eee984b71530df79745e5"
+    },
+    "run_id": 38488820206,
+    "source_commit": "13b654f33938b6c355fbeb277c3a504f21c1c653"
+  },
+  "role": "executed_nonshipping_Game_constructor_Wine_startup_evidence",
+  "scope": {
+    "Cg_object_is_not_driver_cache_hit_proof": true,
+    "Cg_probe_excludes_effect_and_deferred_combo_paths": true,
+    "candidate_inherits_retained_prefix_Cg_Mesa_and_filesystem_caches": true,
+    "character_login_executed": false,
+    "cold_candidate_executed": false,
+    "database_opened": false,
+    "native_runtime_process_RSS_PSS_measured": false,
+    "native_window_console_registry_renderer_all_data_and_login_text_observed": true,
+    "native_world_entry_qualified": false,
+    "ordered_warm_host": true,
+    "physical_AYN_Thor_executed": false,
+    "publication_allowed": false,
+    "reverse_or_randomized_comparison_executed": false,
+    "startup_speed_improvement_demonstrated": false,
+    "sub_60_second_Thor_startup_claimed": false,
+    "visual_or_gameplay_parity_claimed": false
+  },
+  "status": "passed_native_host_compatibility_no_demonstrated_speed_gain",
+  "warmed_BIN_count": 103
+}

@@ -1,0 +1,3254 @@
+{
+  "format": 1,
+  "purpose": "Read-only analysis of new physical .35 reports for .36 development",
+  "analysis_date_utc": "2026-10-13",
+  "inputs_unchanged": true,
+  "user_observations": {
+    "first_boot_minutes": 14,
+    "second_reopen_to_world_seconds": 580,
+    "gpu_prerequisites_seconds": 72,
+    "client_startup_seconds": 263,
+    "Kings_to_Atlas_minutes": 11,
+    "send_text": "works again"
+  },
+  "sessions": [
+    {
+      "source_archive": {
+        "name": "coh-atlas-gameplay-20261013-031950.zip",
+        "bytes": 9079923,
+        "sha256": "d264f273bfcc9a21e9611187a086ffb2f825f0c5afc785f0cc0e41c9367f7f92"
+      },
+      "android": {
+        "operation": "character_reopen",
+        "run_id": "1791860575694-decb7578b8c4",
+        "session_id": "c1bb7d8231c7485eb2ba9b028af159c3",
+        "app_version": "0.13.35",
+        "status": "failed",
+        "started_uptime_ms": 166799302,
+        "finished_uptime_ms": 167787573,
+        "passed": false,
+        "process_exit_code": 1,
+        "app_error": "Committed existing character rows changed after reopen: powers",
+        "cleanup_verified": true,
+        "cleanup_blocked": false,
+        "qualification_gates": {
+          "overall_passed": false,
+          "owned_cleanup": true,
+          "not_cancelled": true,
+          "no_runtime_error": false,
+          "display_transport": true,
+          "input_transport": true,
+          "current_session_guest_report": true,
+          "guest_report_passed": false,
+          "scope": "Individual observations explain incomplete checks; none replaces the unchanged overall acceptance predicate.",
+          "guest_acceptance": false,
+          "complete_asset_stage_contract": false,
+          "android_client_surface": true,
+          "android_login_views": true,
+          "android_character_save_views": false
+        },
+        "committed_save_observed": false,
+        "input_events_sent": 344,
+        "input_events_failed": 0,
+        "input_transport_observed": true,
+        "character_connected_event": {
+          "type": "character_connected",
+          "stage": "actual_client_interaction",
+          "time_utc": "2026-10-13T03:17:16.519157+00:00",
+          "session_id": "c1bb7d8231c7485eb2ba9b028af159c3",
+          "client_pid": 624,
+          "character_id": 1,
+          "name": "THORHERO",
+          "account": "COHLOCAL",
+          "map_id": 5,
+          "reopen_verified": true,
+          "baseline_character_id": 1,
+          "existing_character_verified": true,
+          "preserved_existing_identity": true,
+          "native_client_ready_observed": true,
+          "zoning_enabled": true,
+          "connected_on_supported_map": true,
+          "monorail_enabled": true
+        },
+        "character_saved_event": null,
+        "manual_test_events": [],
+        "android_capture_diagnostics": {
+          "format": 1,
+          "captures_observed": 8,
+          "maximum_captures": 20000,
+          "limit_reached": false,
+          "scope": "Successful current-session PixelCopy captures, including views not retained as proof. Surface copy/encoding costs only; retained PNG verification and callback costs are excluded.",
+          "native_fps_measurement": false,
+          "encoding_ui_thread_count": 0,
+          "pending_frames_peak": 1,
+          "frames_coalesced_during_copy": 0,
+          "pixel_copy_wall_ms": {
+            "sum": 25,
+            "maximum": 9,
+            "mean": 3.125
+          },
+          "encoding_wall_ms": {
+            "sum": 849,
+            "maximum": 129,
+            "mean": 106.125
+          },
+          "encoding_cpu_ms": {
+            "sum": 840,
+            "maximum": 128,
+            "mean": 105
+          },
+          "presentation_freeze_ms": {
+            "sum": 25,
+            "maximum": 9,
+            "mean": 3.125
+          },
+          "encode_queue_wall_ms": {
+            "sum": 1,
+            "maximum": 1,
+            "mean": 0.125
+          }
+        },
+        "whole_operation_seconds": 988.271,
+        "uptime_milestone_seconds_from_operation": {
+          "client_window_observed_uptime_ms": 763.906,
+          "login_observed_uptime_ms": 793.403,
+          "character_connected_observed_uptime_ms": 860.825
+        },
+        "zoning_timings": []
+      },
+      "guest": {
+        "status": "failed",
+        "started_utc": "2026-10-13T03:02:59.582459+00:00",
+        "finished_utc": "2026-10-13T03:19:23.573564+00:00",
+        "failures": [
+          "Committed existing character rows changed after reopen: powers"
+        ],
+        "startup_elapsed_seconds": 202.935,
+        "client_independent_startup_elapsed_seconds": 202.935,
+        "startup_dependencies_join_elapsed_seconds": 202.935,
+        "client_launcher_timing": {
+          "started_utc": "2026-10-13T03:12:16.416010+00:00",
+          "started_monotonic": 167360.023744329,
+          "source": "current_owned_launcher_start_returned",
+          "startup_timeout_seconds": 900
+        },
+        "cleanup": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true
+        }
+      },
+      "stages": [
+        {
+          "name": "client_inputs",
+          "started_utc": "2026-10-13T03:02:59.636222+00:00",
+          "finished_utc": "2026-10-13T03:03:03.230503+00:00",
+          "status": "passed",
+          "elapsed_seconds": 3.594281,
+          "startup_timing": null
+        },
+        {
+          "name": "client_private_data",
+          "started_utc": "2026-10-13T03:03:03.230780+00:00",
+          "finished_utc": "2026-10-13T03:03:03.442863+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.212083,
+          "startup_timing": null
+        },
+        {
+          "name": "persistent_server_profile",
+          "started_utc": "2026-10-13T03:03:03.445141+00:00",
+          "finished_utc": "2026-10-13T03:03:04.099958+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.654817,
+          "startup_timing": null
+        },
+        {
+          "name": "postgres_local_login",
+          "started_utc": "2026-10-13T03:03:04.100519+00:00",
+          "finished_utc": "2026-10-13T03:03:04.596207+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.495688,
+          "startup_timing": null
+        },
+        {
+          "name": "presentation_display",
+          "started_utc": "2026-10-13T03:03:30.180806+00:00",
+          "finished_utc": "2026-10-13T03:03:30.394280+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.213474,
+          "startup_timing": null
+        },
+        {
+          "name": "wine_initialization",
+          "started_utc": "2026-10-13T03:03:30.394778+00:00",
+          "finished_utc": "2026-10-13T03:03:38.779958+00:00",
+          "status": "passed",
+          "elapsed_seconds": 8.38518,
+          "startup_timing": null
+        },
+        {
+          "name": "local_login_odbc",
+          "started_utc": "2026-10-13T03:03:38.780706+00:00",
+          "finished_utc": "2026-10-13T03:03:51.701636+00:00",
+          "status": "passed",
+          "elapsed_seconds": 12.92093,
+          "startup_timing": null
+        },
+        {
+          "name": "local_dbserver_startup",
+          "started_utc": "2026-10-13T03:03:51.703360+00:00",
+          "finished_utc": "2026-10-13T03:04:30.477930+00:00",
+          "status": "passed",
+          "elapsed_seconds": 38.77457,
+          "startup_timing": {
+            "runtime_preparation_seconds": 3.532515,
+            "runtime_configuration_seconds": 0.00609,
+            "native_launch_started_utc": "2026-10-13T03:03:55.242233+00:00",
+            "native_dispatch_ready_seconds": 34.412875,
+            "schema_snapshot_seconds": 0.822784,
+            "runtime_preparation_phase_seconds": {
+              "base_schema_and_native_runtime": 0.091613,
+              "required_original_geometry": 2.836264,
+              "native_dependencies_and_manual_atlas": 0.565379
+            }
+          }
+        },
+        {
+          "name": "local_atlas_startup",
+          "started_utc": "2026-10-13T03:04:30.928857+00:00",
+          "finished_utc": "2026-10-13T03:14:06.531329+00:00",
+          "status": "passed",
+          "elapsed_seconds": 575.602472,
+          "startup_timing": null
+        },
+        {
+          "name": "client_visual_assets",
+          "started_utc": "2026-10-13T03:09:43.869868+00:00",
+          "finished_utc": "2026-10-13T03:10:00.987773+00:00",
+          "status": "passed",
+          "elapsed_seconds": 17.117905,
+          "startup_timing": null
+        },
+        {
+          "name": "client_animation_pack",
+          "started_utc": "2026-10-13T03:10:00.988554+00:00",
+          "finished_utc": "2026-10-13T03:10:08.116839+00:00",
+          "status": "passed",
+          "elapsed_seconds": 7.128285,
+          "startup_timing": null
+        },
+        {
+          "name": "client_all_zone_assets",
+          "started_utc": "2026-10-13T03:10:08.117759+00:00",
+          "finished_utc": "2026-10-13T03:10:36.140232+00:00",
+          "status": "passed",
+          "elapsed_seconds": 28.022473,
+          "startup_timing": null
+        },
+        {
+          "name": "client_all_zone_audio",
+          "started_utc": "2026-10-13T03:10:36.141359+00:00",
+          "finished_utc": "2026-10-13T03:10:38.582446+00:00",
+          "status": "passed",
+          "elapsed_seconds": 2.441087,
+          "startup_timing": null
+        },
+        {
+          "name": "win32_runtime_dll",
+          "started_utc": "2026-10-13T03:10:38.584208+00:00",
+          "finished_utc": "2026-10-13T03:10:40.769461+00:00",
+          "status": "passed",
+          "elapsed_seconds": 2.185253,
+          "startup_timing": null
+        },
+        {
+          "name": "actual_client_startup",
+          "started_utc": "2026-10-13T03:10:59.555405+00:00",
+          "finished_utc": "2026-10-13T03:15:39.600215+00:00",
+          "status": "passed",
+          "elapsed_seconds": 280.04481,
+          "startup_timing": null
+        },
+        {
+          "name": "actual_client_interaction",
+          "started_utc": "2026-10-13T03:15:39.600984+00:00",
+          "finished_utc": null,
+          "status": null,
+          "elapsed_seconds": null,
+          "startup_timing": null
+        }
+      ],
+      "gpu": {
+        "requested": "turnip",
+        "selected": "turnip",
+        "state": "selected_after_probes",
+        "fallback_reason": null,
+        "probe_cleanup_safe": true,
+        "wine_probe_initialization_and_execution_seconds": 70.847,
+        "probe_prefix_cache": {
+          "policy": "closed_owned_gpu_probe_prefix_v1",
+          "reused": false,
+          "published_closed": true,
+          "fresh_wgl_probe_required": true,
+          "hardware_result_reused": false,
+          "generation": "gpu-probe-prefix-8ec9fb07498cfd798bc590ce-67db081866ae20314a3c575f5df1dc94",
+          "current_native_prefix_shutdown": {
+            "prefix_lock_free": true,
+            "server_socket_inactive": true
+          },
+          "inventory": {
+            "directory": [
+              65045,
+              8870718,
+              1000
+            ],
+            "root_state": [
+              65045,
+              8870718,
+              1000,
+              1000,
+              16832,
+              3452,
+              1791861133660782039,
+              1791861133660782039,
+              4
+            ],
+            "entries": 1896,
+            "regular_bytes": 966060467,
+            "inventory_sha256": "80ed6592a778755bdd578dfec9ebfb4801b37f0c11c2bfcff5c3fe56e6694c23"
+          }
+        },
+        "vulkan_probe": {
+          "format": 1,
+          "pointer_bits": 64,
+          "status": "passed",
+          "failure_stage": "",
+          "vendor_id": 20803,
+          "device_id": 1124403713,
+          "device_type": 1,
+          "api_version": 4211023,
+          "driver_version": 109051904,
+          "driver_id": 18,
+          "kgsl_chip_id": 1124403713,
+          "kgsl_verified": true,
+          "native_gpu_executed": true,
+          "fill_verified": true,
+          "bytes_verified": 4096,
+          "expected_bytes": 4096,
+          "elapsed_ms": 27
+        },
+        "wine_gl_probe": {
+          "format": 2,
+          "build_marker": "COH_GPU_PROBE_BUILD:production",
+          "status": "passed",
+          "passed": true,
+          "failure": "",
+          "scope": "bounded_wgl_gpu_prerequisites",
+          "pointer_bits": 32,
+          "win32_error": 0,
+          "gl_error": 0,
+          "gl_vendor": "Collabora Ltd",
+          "gl_renderer": "zink (Turnip Adreno (TM) 740)",
+          "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+          "zink_nonsoftware": true,
+          "multitexture": true,
+          "texture_compression": true,
+          "arb_vertex_program": true,
+          "arb_fragment_program": true,
+          "framebuffer_extension": true,
+          "vertex_buffer_object": true,
+          "s3tc": true,
+          "npot": true,
+          "bgra_extension": true,
+          "api_loaded": true,
+          "arb_programs": true,
+          "multitexture_render": true,
+          "vbo_render": true,
+          "npot_depth24_fbo": true,
+          "dxt1_render": true,
+          "dxt3_render": true,
+          "dxt5_render": true,
+          "dxt1_mipmaps": true,
+          "dxt3_mipmaps": true,
+          "dxt5_mipmaps": true,
+          "dxt1_subimage": true,
+          "dxt3_subimage": true,
+          "dxt5_subimage": true,
+          "bgra_render": true,
+          "bgra_subimage": true,
+          "backbuffer_render": true,
+          "swapped": true,
+          "frontbuffer_readback": false,
+          "cleanup_ok": true,
+          "presented_pattern_first": true,
+          "presented_pattern_second": true,
+          "presented_readback": true,
+          "frontbuffer_gl_error": 0,
+          "presentation_method": "win32_screen_getpixel_two_patterns",
+          "presentation_sample_count": 4,
+          "presentation_pattern_count": 2,
+          "presentation_client_width": 64,
+          "presentation_client_height": 64,
+          "presentation_attempts_first": 1,
+          "presentation_attempts_second": 1,
+          "presentation_elapsed_ms_first": 88,
+          "presentation_elapsed_ms_second": 77,
+          "presented_pixels_first": [
+            [
+              255,
+              0,
+              0
+            ],
+            [
+              0,
+              255,
+              0
+            ],
+            [
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              255,
+              255
+            ]
+          ],
+          "presented_pixels_second": [
+            [
+              41,
+              93,
+              173
+            ],
+            [
+              211,
+              57,
+              99
+            ],
+            [
+              77,
+              201,
+              33
+            ],
+            [
+              163,
+              29,
+              227
+            ]
+          ],
+          "fp_max_local_parameters": 2048,
+          "fp_max_temporaries": 2147483647,
+          "fp_max_native_temporaries": 2147483647,
+          "game_rendering_validated": false,
+          "cg_shaders_validated": false,
+          "android_surface_validated": false,
+          "hardware_acceleration_validated": false
+        },
+        "prerequisite_progress_events": [
+          {
+            "type": "stage",
+            "stage": "actual_client_startup",
+            "time_utc": "2026-10-13T03:11:00.580543+00:00",
+            "status": "running",
+            "message": "Checking GPU test prerequisites before Game launch"
+          },
+          {
+            "type": "stage",
+            "stage": "actual_client_startup",
+            "time_utc": "2026-10-13T03:12:16.409023+00:00",
+            "status": "running",
+            "message": "GPU test prerequisites passed; starting Game with the GPU candidate"
+          }
+        ],
+        "progress_prerequisites_elapsed_seconds": 75.82848
+      },
+      "map_startup": {
+        "5": {
+          "format": 1,
+          "map_id": 5,
+          "runtime": "local-login-server-c1bb7d8231c7485eb2ba9b028af159c3-kings-row",
+          "private_runtime_identity": {
+            "device": 65045,
+            "inode": 8695202,
+            "uid": 1000,
+            "mode": 448
+          },
+          "preparation_finished_utc_ms": 1791860983806,
+          "preparation_elapsed_seconds": 311.215666,
+          "preparation_phase_seconds": {
+            "server_data_cache_checkout": 0.185195,
+            "cold_server_data_mirror": 264.475799,
+            "required_original_collision_geometry": 0.530463,
+            "server_data_receipt_seal": 0.958581,
+            "native_dependencies_and_session_configuration": 0.176099,
+            "prepared_server_definition_caches": 4.264136,
+            "server_fx_catalog": 0.38706,
+            "server_animation_pack": 2.177066,
+            "kings_row_beacon_graph": 38.061247
+          },
+          "actual_installed_mapserver": {
+            "bytes": 7475200,
+            "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+          },
+          "source_package_mapserver_pin_equal": true,
+          "launched": true,
+          "launcher_pid": 13127,
+          "native_ready_verified": true,
+          "native_ready_elapsed_seconds": 262.695834,
+          "server_fx_provider": {
+            "status": "installed_verified_server_fx_projection",
+            "logical_provider": "data/bin/fxinfo.bin",
+            "actual_payload": {
+              "bytes": 3380680,
+              "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+            },
+            "private_owned_regular_provider": true,
+            "projected_payload_present": true,
+            "native_provider_open_observed": false,
+            "native_provider_open_status": "unknown_without_native_io_trace",
+            "post_native_ready": {
+              "status": "actual_owned_private_fx_bytes_after_native_ready",
+              "observed": true,
+              "actual_payload": {
+                "bytes": 3380680,
+                "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+              },
+              "payload_bytes_hashed": 3380680,
+              "hash_elapsed_seconds": 0.006042,
+              "native_provider_open_observed": false,
+              "native_provider_open_status": "unknown_without_native_io_trace",
+              "projected_payload_present": true,
+              "full_original_payload_present": false,
+              "matches_preparation_payload": true
+            }
+          },
+          "animation_storage": {
+            "installed": true,
+            "payload": {
+              "animation_count": 5878,
+              "bytes": 97084456,
+              "metadata_bytes": 8703726,
+              "original_animation_bytes": 88380730,
+              "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+            },
+            "native_certificate": {
+              "status": "actual_owned_native_console_counter",
+              "observed": true,
+              "pack_sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b",
+              "counter_rows_observed": 5,
+              "opened": 5120,
+              "certified": 5120,
+              "fallback": 0,
+              "crypto_failed": 0,
+              "raw_bytes": 78662741,
+              "hash_us": 1122290,
+              "stock_us": 0,
+              "skipped_rot_keys": 10793381,
+              "skipped_pos_keys": 1155406,
+              "scanned_rot_keys": 0,
+              "scanned_pos_keys": 0
+            }
+          },
+          "collision_input_proof": {
+            "status": "installed_verified_graph",
+            "input_validation": "bounded_single_walk_inventory_and_fingerprints",
+            "input_files_checked": 8396,
+            "input_payload_bytes_hashed": 500747706,
+            "input_full_byte_proof_reused_files": 0,
+            "input_full_byte_proof_reused_bytes": 0,
+            "input_full_byte_proof_reuse_policy": "no_current_process_owned_atlas_proof",
+            "input_validation_basis": null,
+            "input_full_byte_proof_reuse_basis": "all_destination_inputs_fully_hashed",
+            "same_process_shared_certificate_exported": null
+          },
+          "gameplay_or_collision_parity_certified_by_observation": false,
+          "actual_launched_mapserver": {
+            "bytes": 7475200,
+            "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+          },
+          "launch_path_binding_observed": true,
+          "launch_utc_ms": 1791860983835,
+          "native_process_launch_binding": "exact_owned_ctx_start_child_for_this_private_runtime",
+          "native_ready_time_scope": "sampled_upper_bound_after_owned_existing_protocol_tick_gate; observer_delay_not_bounded"
+        }
+      },
+      "startup_overlap": {
+        "format": 1,
+        "policy": "owned_kings_map_and_client_initialization_v1",
+        "map_id": 5,
+        "native_map_launch_utc_ms": 1791860983835,
+        "native_map_launch_monotonic": 167207.44323095,
+        "client_preparation_overlap_started_monotonic": 167207.4511622,
+        "private_map_preparation_complete": true,
+        "native_map_ready_verified": true,
+        "client_input_admitted": true,
+        "native_processes_share_mutable_data": false,
+        "initializing_progress_observations": [
+          {
+            "stage": "STARTUP",
+            "observed_monotonic": 167212.473866729,
+            "observed_utc_ms": 1791860988870,
+            "completed_ticks": 0
+          },
+          {
+            "stage": "MAP_LOAD",
+            "observed_monotonic": 167415.428186131,
+            "observed_utc_ms": 1791861191821,
+            "completed_ticks": 0
+          },
+          {
+            "stage": "DB_SETUP",
+            "observed_monotonic": 167465.919482362,
+            "observed_utc_ms": 1791861242312,
+            "completed_ticks": 0
+          }
+        ],
+        "physical_loading_gain_validated": false,
+        "peak_memory_effect_measured": false,
+        "last_initializing_progress_observed_monotonic": 167465.919482362,
+        "first_completed_tick_observed_monotonic": 167466.203123143,
+        "first_completed_tick_observed_utc_ms": 1791861242595,
+        "first_completed_tick_observed_seconds": 258.759892,
+        "first_tick_observation_is_sampled_upper_bound": true,
+        "first_tick_alone_grants_readiness": false,
+        "native_map_ready_utc_ms": 1791861246531,
+        "native_map_ready_monotonic": 167470.139013818,
+        "native_map_ready_seconds": 262.695783,
+        "native_ready_timing_is_sampled_upper_bound": true,
+        "native_client_launch_monotonic": 167360.017304017,
+        "observed_native_process_overlap_seconds": 110.12171,
+        "observed_client_preparation_overlap_seconds": 262.687852,
+        "observed_native_initialization_overlap_lower_bound_seconds": 105.902178,
+        "overlap_scope": "owned_process_residency_until_sampled_readiness; initialization_overlap_requires_zero_tick_progress_witness; not_an_isolated_cpu_speedup_measurement",
+        "client_and_map_readiness_join_monotonic": 167774.199073859
+      },
+      "saved_startup": {
+        "map_id": 5,
+        "name": "King's Row",
+        "world": "City_01_02",
+        "port": 7003,
+        "saved_position": {
+          "containerid": 1,
+          "mapid": 5,
+          "staticmapid": 5,
+          "posx": -1613.0712,
+          "posy": -10,
+          "posz": 677.3567
+        },
+        "authority": "preserved_postgresql_ents_staticmapid",
+        "sql_game_mutations_performed": false,
+        "native_ready_verified": true,
+        "character_world_entry_verified": true,
+        "native_map": {
+          "map_id": 5,
+          "ready": true,
+          "address": "127.0.0.1",
+          "port": 7003,
+          "network_age_seconds": 4,
+          "stats_age_seconds": 4
+        },
+        "native_maps_started": [
+          5
+        ]
+      },
+      "cache": {
+        "key": "489e307c899c98022b3ef9dd",
+        "reused": false,
+        "legacy_session_tree_adopted": false,
+        "first_use_requires_full_staging": true,
+        "migration_refused": "no_qualified_closed_generation",
+        "migration_candidates_examined": 6,
+        "cache_created": true,
+        "immutable_directory_checks": 8116,
+        "immutable_anchor_checks": 21,
+        "immutable_directory_metadata_queries": null,
+        "private_entries_checked": null,
+        "private_bytes": null
+      },
+      "zoning": {
+        "transfers": [],
+        "preparations": [],
+        "preparation_phase_observations": [],
+        "sql_game_mutations_performed": false,
+        "finite_process_limit": 2,
+        "native_event_observations": {
+          "5": {
+            "event_count": 4,
+            "latest_event": {
+              "pid": 552,
+              "tid": 556,
+              "sequence": 4,
+              "utc_ms": 1791861488515,
+              "map_id": 5,
+              "db_id": 1,
+              "auth_id": 1353310574,
+              "port": 0,
+              "request": 0,
+              "target": 0,
+              "format": 1,
+              "kind": "position",
+              "session_id": "c1bb7d8231c7485eb2ba9b028af159c3",
+              "name": "THORHERO",
+              "account": "COHLOCAL",
+              "position": [
+                -1607.12,
+                -10.0,
+                748.04
+              ],
+              "windows_pid": 552,
+              "main_thread_id": 556,
+              "log_timestamp": "261013 03:18:08",
+              "line_sha256": "33b751bf30618e0c1005bd942945be82951e1306d4a4da93b75da3b3c428ef02",
+              "log_route": "immediate_owned_mapserver_console",
+              "source": "current_owned_mapserver_monorail_position"
+            },
+            "console_bytes_scanned": 250084,
+            "observed_utc_ms": 1791861555606
+          }
+        }
+      },
+      "save": {
+        "baseline": {
+          "character_id": 1,
+          "auth_id": 1353310574,
+          "identity_sha256": "a5fe5f09ecb4493fd4bd1c6c3f73b890dcaf042881787ebd10304f8c38b192e8",
+          "snapshot_sha256": "c4879568957144548e392eafb9c3d3354fedd305d6bbdbafc64442e862c3baa3",
+          "table_sha256": {
+            "ents": "6d8eb025161cf444fce0eceafb9776f06af3185de994cc32f8f4564dcc6580ab",
+            "ents2": "77ec33b6b6baddab8274b33a4526e99ebc08988a603d4bb5b0989e3e53df2713",
+            "powers": "0815aea7b4637eee5b47f0138776492f9b1ab81ba9c904002c9d5525030a6e22",
+            "costumeparts": "4bab38b6af68848b01e76acc3e63b20305a8465b165f9289fd6ae829933edbbc"
+          },
+          "row_counts": {
+            "ents": 1,
+            "ents2": 1,
+            "powers": 7,
+            "costumeparts": 13
+          },
+          "login_count": 5,
+          "captured_utc": "2026-10-13T03:04:30.928101+00:00",
+          "saved_position": {
+            "containerid": 1,
+            "mapid": 5,
+            "staticmapid": 5,
+            "posx": -1613.0712,
+            "posy": -10,
+            "posz": 677.3567
+          }
+        },
+        "save_comparison_failure": {
+          "format": 1,
+          "status": "failed",
+          "failed_table": "powers",
+          "save_verified": false,
+          "save_acceptance_changed": false,
+          "after_snapshot_sha256": "7d4fe3243858ef318549f45f4af4eab3d637612d35e8cdb2df528db8bea9acc8",
+          "power_delta": {
+            "format": 1,
+            "optional": true,
+            "status": "observed",
+            "save_acceptance_changed": false,
+            "dayjob_grant_verified": false,
+            "login_eligibility_verified": false,
+            "spatial_predicates_verified": false,
+            "badge_predicates_verified": false,
+            "sql_game_mutations_performed": false,
+            "before_power_count": 7,
+            "after_power_count": 8,
+            "before_power_rows_sha256": "0815aea7b4637eee5b47f0138776492f9b1ab81ba9c904002c9d5525030a6e22",
+            "after_power_rows_sha256": "c6a5eaa54de8317af10d6246da695a5bf5b667d1a8bb4da6801718f6ab643fe4",
+            "attribute_mapping_sha256": "048063a9731b29a3edff27d8385b2519449e688e994f94958a0049867e987543",
+            "prior_powers_preserved_by_uniqueid": true,
+            "all_prior_semantic_fields_preserved": true,
+            "current_native_indexes_contiguous": true,
+            "deleted_uniqueids": [],
+            "changed_prior_powers": [],
+            "added_powers": [
+              {
+                "uniqueid": 184084171,
+                "selected_row": {
+                  "containerid": 1,
+                  "subid": 0,
+                  "powerid": 1,
+                  "categoryname": 2312,
+                  "powersetname": 2344,
+                  "powername": 2449,
+                  "powerlevelbought": null,
+                  "powernumboostsbought": null,
+                  "powersetlevelbought": null,
+                  "buildnum": null,
+                  "uniqueid": 184084171
+                },
+                "resolved_power": "temporary_powers.day_job_powers.day_job_movement_increase_lesser"
+              }
+            ]
+          },
+          "after_snapshot_export_status": "available"
+        },
+        "requested_logout_observed": false,
+        "logout_timer_observed": false,
+        "disconnected_before_sql": false,
+        "forced_stop_before_save": false,
+        "sql_game_mutations_performed": false,
+        "committed_sql_verified": false,
+        "character_samples": [
+          {
+            "loaded": true,
+            "connected": true,
+            "in_map_transfer": false,
+            "map_id": 5,
+            "static_map_id": 5,
+            "address": "127.0.0.1"
+          },
+          {
+            "loaded": false,
+            "connected": false,
+            "in_map_transfer": false
+          },
+          {
+            "loaded": false,
+            "connected": false,
+            "in_map_transfer": false
+          },
+          {
+            "loaded": false,
+            "connected": false,
+            "in_map_transfer": false
+          },
+          {
+            "loaded": false,
+            "connected": false,
+            "in_map_transfer": false
+          },
+          {
+            "loaded": false,
+            "connected": false,
+            "in_map_transfer": false
+          }
+        ],
+        "identity_unchanged": true,
+        "costume_rows_unchanged": true,
+        "ents2_rows_unchanged": true,
+        "login_counts": [
+          5,
+          6
+        ],
+        "ents_deltas": [
+          {
+            "logincount": {
+              "before": 5,
+              "after": 6
+            }
+          }
+        ],
+        "snapshot_provenance": {
+          "character-reopen-before-snapshot.json": {
+            "bytes": 8306,
+            "sha256": "d511fffe0ddf2df5bb9e9474869de8101e5886aa61bb708ec86f9dd4340f5042"
+          },
+          "character-reopen-failed-after-snapshot.json": {
+            "bytes": 9665,
+            "sha256": "db0b70610fafc02a52939cd825c4fbfdd91ea0ddc17aad5ca83fe12ed643dec3"
+          }
+        },
+        "native_logout_evidence": [
+          {
+            "file": "coh-atlas-gameplay-20261013-031950/serverlogs/logs/dbserver/entity_2026-10-13-03-00-00.log",
+            "line": 427,
+            "text": "261013 03:18:12 City_01_02_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Disconnect:Logout timer expired] Technology Class_Blaster, Level:1 XPLevel:1 XP:20 HP:102.50 End:99.87 Debt: 0 Inf:17 AccessLvl: 9 WisLvl: 0 Wis: 0 Merits: 0 Tickets: 0 ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0014-00-00 65535:03:00"
+          },
+          {
+            "file": "coh-atlas-gameplay-20261013-031950/serverlogs/logs/dbserver/entity_2026-10-13-03-00-00.log",
+            "line": 430,
+            "text": "261013 03:18:12 City_01_02_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 Logout location : map 5 (-1607.125000 -10.000000 748.031250) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 11264-32764-32768 01:00:00"
+          }
+        ]
+      },
+      "console_analysis": [
+        {
+          "file": "coh-atlas-gameplay-20261013-031950/guest/client-evidence/character-atlas-console.txt",
+          "bytes": 250084,
+          "sha256": "1d633cef2cb10bd27763cc084de198411dfa7c3eeb94ab5c5c2fc56e98b39dd2",
+          "native_ready_markers": [
+            "Server ready. (took 256.832703 seconds)"
+          ],
+          "timestamp_gaps_above_8_seconds": [
+            {
+              "seconds": 87.448,
+              "before_line": 23,
+              "after_line": 29,
+              "before": "[2026-10-13 03:09:47.355] [DEBUG] \tsequencers",
+              "after": "Caching relevant folders.. [2026-10-13 03:11:14.803] [DEBUG] Caching relevant folders",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 23.848,
+              "before_line": 60,
+              "after_line": 61,
+              "before": "[2026-10-13 03:11:27.287] [DEBUG] \tobject_library",
+              "after": "[2026-10-13 03:11:51.135] [INFO] Loaded grouplibs: 3224 files, 75433 names",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 27.762,
+              "before_line": 185,
+              "after_line": 186,
+              "before": "[2026-10-13 03:11:56.449] [DEBUG] \tfx",
+              "after": "[2026-10-13 03:12:24.211] [INFO] Loaded FX info",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 19.162,
+              "before_line": 261,
+              "after_line": 262,
+              "before": "[2026-10-13 03:12:30.263] [DEBUG] \tScripts.loc",
+              "after": "[2026-10-13 03:12:49.425] [DEBUG] \tParsing defs/DifficultyCost.def from DifficultyCost.bin",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.159,
+              "before_line": 264,
+              "after_line": 265,
+              "before": "[2026-10-13 03:12:49.558] [DEBUG] \tmaps",
+              "after": "[2026-10-13 03:12:57.717] [DEBUG] \tParsing .minimap from minimap.bin",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 34.673,
+              "before_line": 363,
+              "after_line": 370,
+              "before": "[2026-10-13 03:13:09.241] [DEBUG] \tSet folder cache callback for server/db/commands.cfg",
+              "after": "loading map: maps/City_Zones/City_01_02/City_01_02.txt..[2026-10-13 03:13:43.914] [DEBUG] \tSet folder cache callback for scenes/*.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 121.36,
+              "before_line": 1070,
+              "after_line": 1071,
+              "before": "[2026-10-13 03:14:08.370] [DEBUG] \tReading 5cw.txt",
+              "after": "[2026-10-13 03:16:09.730] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 58.351,
+              "before_line": 1071,
+              "after_line": 1077,
+              "before": "[2026-10-13 03:16:09.730] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:17:08.081] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 17.295,
+              "before_line": 4292,
+              "after_line": 4294,
+              "before": "[2026-10-13 03:17:14.998] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:17:32.293] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 10.108,
+              "before_line": 4319,
+              "after_line": 4321,
+              "before": "[2026-10-13 03:17:39.432] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:17:49.540] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            }
+          ],
+          "native_texture_header_lines": [],
+          "Cg_program_load_log_rows": 0,
+          "Cg_log_interpretation": "The native Compiled Cg/CgFX Shader log is emitted for both cached CG_OBJECT loading and CG_SOURCE compilation. These rows do not identify cache hits/misses, compilation mode, or recompilation count.",
+          "Cg_compile_or_object_load_mode": "unproven_by_this_report"
+        },
+        {
+          "file": "coh-atlas-gameplay-20261013-031950/guest/client-evidence/client-console.log",
+          "bytes": 215124,
+          "sha256": "6394af9cdc6f9948eb6aa58ecfe12fc8a7c1d255330882ba66326ecfcac02413",
+          "native_ready_markers": [],
+          "timestamp_gaps_above_8_seconds": [
+            {
+              "seconds": 26.259,
+              "before_line": 79,
+              "after_line": 297,
+              "before": "[2026-10-13 03:12:30.655] [INFO] Compiling fragment shaders",
+              "after": "[2026-10-13 03:12:56.914] [INFO] Compiling vertex shaders",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 22.879,
+              "before_line": 345,
+              "after_line": 349,
+              "before": "[2026-10-13 03:13:06.906] [DEBUG] \ttexture_library",
+              "after": "[2026-10-13 03:13:29.785] [DEBUG] \tSet folder cache callback for texture_library/*.texture",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 25.078,
+              "before_line": 354,
+              "after_line": 355,
+              "before": "[2026-10-13 03:13:36.960] [DEBUG] \tobject_library",
+              "after": "[2026-10-13 03:14:02.038] [INFO] Loaded grouplibs: 3224 files, 75433 names",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 13.438,
+              "before_line": 484,
+              "after_line": 485,
+              "before": "[2026-10-13 03:14:31.604] [DEBUG] \tSCRIPTS.LOC",
+              "after": "[2026-10-13 03:14:45.042] [DEBUG] Loading items",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 24.567,
+              "before_line": 492,
+              "after_line": 493,
+              "before": "[2026-10-13 03:14:45.598] [DEBUG] \tfx",
+              "after": "[2026-10-13 03:15:10.165] [INFO] Loaded FX info",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 10.85,
+              "before_line": 838,
+              "after_line": 841,
+              "before": "[2026-10-13 03:15:22.649] [DEBUG] \tobject_library",
+              "after": "[2026-10-13 03:15:33.499] [DEBUG] \tSet folder cache callback for scenes/*.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 26.875,
+              "before_line": 869,
+              "after_line": 881,
+              "before": "[2026-10-13 03:15:37.434] [VERBOSE] ParserLoadFiles: couldn't find any files in directory customwindows",
+              "after": "[2026-10-13 03:16:04.309] [INFO] Connecting to DBServer 127.0.0.1:7000 (UDP) Cookie: 0",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 52.736,
+              "before_line": 898,
+              "after_line": 953,
+              "before": "[2026-10-13 03:16:10.411] [DEBUG] \tobject_library",
+              "after": "[2026-10-13 03:17:03.147] [DEBUG] Detailing trays",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.003,
+              "before_line": 1172,
+              "after_line": 1175,
+              "before": "[2026-10-13 03:17:59.324] [DEBUG] \tReading BF.txt",
+              "after": "[2026-10-13 03:18:07.327] [DEBUG] \tReading bis.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            }
+          ],
+          "native_texture_header_lines": [],
+          "Cg_program_load_log_rows": 249,
+          "Cg_log_interpretation": "The native Compiled Cg/CgFX Shader log is emitted for both cached CG_OBJECT loading and CG_SOURCE compilation. These rows do not identify cache hits/misses, compilation mode, or recompilation count.",
+          "Cg_compile_or_object_load_mode": "unproven_by_this_report"
+        }
+      ]
+    },
+    {
+      "source_archive": {
+        "name": "coh-atlas-gameplay-20261013-032001.zip",
+        "bytes": 2375087,
+        "sha256": "670cdbc282c5a8a7147b6157fd4ae2fd80a289e0f8e056a77f101aba51632827"
+      },
+      "android": {
+        "operation": "setup",
+        "run_id": "1791860411418-1c76e7e72ae7",
+        "session_id": null,
+        "app_version": "0.13.35",
+        "status": "setup_complete",
+        "started_uptime_ms": 166635027,
+        "finished_uptime_ms": 166786011,
+        "passed": false,
+        "process_exit_code": -1,
+        "app_error": null,
+        "cleanup_verified": false,
+        "cleanup_blocked": false,
+        "qualification_gates": {
+          "overall_passed": false,
+          "owned_cleanup": false,
+          "not_cancelled": true,
+          "no_runtime_error": true,
+          "display_transport": true,
+          "input_transport": true,
+          "current_session_guest_report": false,
+          "guest_report_passed": false,
+          "scope": "Individual observations explain incomplete checks; none replaces the unchanged overall acceptance predicate.",
+          "guest_acceptance": false,
+          "complete_asset_stage_contract": false,
+          "android_client_surface": false,
+          "android_login_views": false,
+          "android_character_save_views": false
+        },
+        "committed_save_observed": false,
+        "input_events_sent": 0,
+        "input_events_failed": 0,
+        "input_transport_observed": false,
+        "character_connected_event": null,
+        "character_saved_event": null,
+        "manual_test_events": [],
+        "android_capture_diagnostics": {
+          "format": 1,
+          "captures_observed": 0,
+          "maximum_captures": 20000,
+          "limit_reached": false,
+          "scope": "Successful current-session PixelCopy captures, including views not retained as proof. Surface copy/encoding costs only; retained PNG verification and callback costs are excluded.",
+          "native_fps_measurement": false,
+          "encoding_ui_thread_count": 0,
+          "pending_frames_peak": 0,
+          "frames_coalesced_during_copy": 0,
+          "pixel_copy_wall_ms": {
+            "sum": 0,
+            "maximum": 0,
+            "mean": 0
+          },
+          "encoding_wall_ms": {
+            "sum": 0,
+            "maximum": 0,
+            "mean": 0
+          },
+          "encoding_cpu_ms": {
+            "sum": 0,
+            "maximum": 0,
+            "mean": 0
+          },
+          "presentation_freeze_ms": {
+            "sum": 0,
+            "maximum": 0,
+            "mean": 0
+          },
+          "encode_queue_wall_ms": {
+            "sum": 0,
+            "maximum": 0,
+            "mean": 0
+          }
+        },
+        "whole_operation_seconds": 150.984,
+        "uptime_milestone_seconds_from_operation": {},
+        "zoning_timings": []
+      },
+      "setup": {
+        "status": "running",
+        "phase": "Runtime ready",
+        "detail": "Setup complete. Run diagnostics next.",
+        "elapsed_ms": 150943,
+        "system_memory": {
+          "available": true,
+          "available_bytes": 11164262400,
+          "total_bytes": 15996096512,
+          "threshold_bytes": 226492416,
+          "low_memory": false
+        },
+        "process_memory": {
+          "rss_bytes": 262578176,
+          "anonymous_rss_bytes": 169078784,
+          "file_rss_bytes": 92168192,
+          "shared_rss_bytes": 1331200,
+          "available": true,
+          "source": "bounded_proc_self_status",
+          "maximum_source_bytes": 32768
+        },
+        "runtime_setup_progress": {
+          "format": 1,
+          "mode": "installed",
+          "reused": false,
+          "installation_started": true,
+          "runtime_activated": true,
+          "download_started": false,
+          "downloaded_archive_bytes": 0,
+          "extraction_started": true,
+          "archives_extracted": 5,
+          "runtime_payload_files_copied": 70,
+          "runtime_payload_bytes_copied": 47688730,
+          "runtime_payload_files_reused": 19,
+          "runtime_payload_bytes_reused": 3834884580,
+          "runtime_contents_inventory_performed": false,
+          "automatic_cleanup_performed": false,
+          "staging_cleanup_deferred": false,
+          "external_asset_pack": {
+            "format": 1,
+            "version": "1.0.0",
+            "manifest_sha256": "9570447b93e7d6e42768e1b0e16b791256b82d509d9caf007aca5c88cd7fd05c",
+            "complete": true,
+            "missing_parts": [],
+            "memory_control": {
+              "format": 1,
+              "status": "not_started",
+              "scope": "cooperative setup-only polling and paced streaming; cannot guarantee prevention of Android process kills",
+              "sample_unavailable_policy": "stop_before_more_setup_io",
+              "poll_bytes": 1048576,
+              "poll_interval_ms": 250,
+              "persistent_pressure_limit_ms": 15000,
+              "total_pressure_pause_limit_ms": 60000,
+              "resume_hysteresis_bytes": 67108864,
+              "write_window_bytes": 8388608,
+              "write_window_pace_ms": 25,
+              "file_sync_policy": "each closed regular file; active large file at write window",
+              "combined_io_window_bytes": 4194304,
+              "maximum_io_callback_bytes": 67108864,
+              "healthy_combined_io_bytes_per_second": 33554432,
+              "pressure_combined_io_bytes_per_second": 8388608,
+              "ample_combined_io_bytes_per_second": 131072000,
+              "ample_memory_system_headroom_reserves": 4,
+              "ample_memory_heap_headroom_minimum_bytes": 33554432,
+              "ample_memory_heap_headroom_divisor": 4,
+              "ample_combined_io_windows": 0,
+              "normal_combined_io_windows": 0,
+              "pressure_combined_io_windows": 0,
+              "combined_io_paced_windows": 0,
+              "combined_io_paced_ms": 0,
+              "checks": 0,
+              "samples": 0,
+              "read_bytes": 0,
+              "read_bytes_scope": "aggregate guarded input bytes, including compressed source and decoded archive reads; not unique storage bytes",
+              "written_bytes": 0,
+              "file_syncs": 0,
+              "paced_write_windows": 0,
+              "active_dirty_bytes": 0,
+              "maximum_active_dirty_bytes": 0,
+              "pressure_events": 0,
+              "pressure_samples": 0,
+              "pressure_paused_ms": 0,
+              "minimum_available_bytes": null,
+              "minimum_java_heap_headroom_bytes": null,
+              "last_available_bytes": null,
+              "last_total_bytes": null,
+              "last_threshold_bytes": null,
+              "last_reserve_bytes": null,
+              "last_low_memory": null,
+              "last_java_heap_used_bytes": null,
+              "last_java_heap_limit_bytes": null
+            }
+          },
+          "generation": "runtime-115f0a538368a7f3",
+          "runtime_manifest_sha256": "115f0a538368a7f341fac3a1294ca16488e40d450384abbdca50d14adadcc6ad",
+          "packaged_runtime_asset_logical_bytes": 3882573310,
+          "current_input_file": "server_fx_catalog.py",
+          "current_input_operation": "sha256",
+          "current_input_expected_bytes": 15400,
+          "current_input_processed_bytes": 15400,
+          "same_generation_staging_retained": false,
+          "current_asset": "server_fx_catalog.py",
+          "current_asset_expected_bytes": 15400,
+          "current_asset_copied_bytes": 0,
+          "current_asset_source": "installed_runtime",
+          "runtime_payload_verified_bytes": 3882573310,
+          "setup_memory_control": {
+            "format": 1,
+            "status": "complete",
+            "scope": "cooperative setup-only polling and paced streaming; cannot guarantee prevention of Android process kills",
+            "sample_unavailable_policy": "stop_before_more_setup_io",
+            "poll_bytes": 1048576,
+            "poll_interval_ms": 250,
+            "persistent_pressure_limit_ms": 15000,
+            "total_pressure_pause_limit_ms": 60000,
+            "resume_hysteresis_bytes": 67108864,
+            "write_window_bytes": 8388608,
+            "write_window_pace_ms": 25,
+            "file_sync_policy": "each closed regular file; active large file at write window",
+            "combined_io_window_bytes": 4194304,
+            "maximum_io_callback_bytes": 67108864,
+            "healthy_combined_io_bytes_per_second": 33554432,
+            "pressure_combined_io_bytes_per_second": 8388608,
+            "ample_combined_io_bytes_per_second": 131072000,
+            "ample_memory_system_headroom_reserves": 4,
+            "ample_memory_heap_headroom_minimum_bytes": 33554432,
+            "ample_memory_heap_headroom_divisor": 4,
+            "ample_combined_io_windows": 3799,
+            "normal_combined_io_windows": 0,
+            "pressure_combined_io_windows": 0,
+            "combined_io_paced_windows": 3799,
+            "combined_io_paced_ms": 59389,
+            "checks": 8592212,
+            "samples": 15063,
+            "read_bytes": 12536155637,
+            "read_bytes_scope": "aggregate guarded input bytes, including compressed source and decoded archive reads; not unique storage bytes",
+            "written_bytes": 3400543184,
+            "file_syncs": 16858,
+            "paced_write_windows": 405,
+            "active_dirty_bytes": 0,
+            "maximum_active_dirty_bytes": 8453642,
+            "pressure_events": 0,
+            "pressure_samples": 0,
+            "pressure_paused_ms": 0,
+            "minimum_available_bytes": 8992653312,
+            "minimum_java_heap_headroom_bytes": 184375240,
+            "last_available_bytes": 11164262400,
+            "last_total_bytes": 15996096512,
+            "last_threshold_bytes": 226492416,
+            "last_reserve_bytes": 999756032,
+            "last_low_memory": false,
+            "last_java_heap_used_bytes": 52675608,
+            "last_java_heap_limit_bytes": 268435456
+          }
+        }
+      },
+      "setup_status_interpretation": "setup_complete; generic gameplay qualification fields are not setup acceptance criteria; no guest gameplay report expected"
+    },
+    {
+      "source_archive": {
+        "name": "coh-atlas-gameplay-20261013-034513.zip",
+        "bytes": 13944916,
+        "sha256": "ee2dd8918284d430c409728b013ded7291ddbd175f937e6e9a8f90e08a8d3f7d"
+      },
+      "android": {
+        "operation": "character_reopen",
+        "run_id": "1791861632940-0bdc6e7a902a",
+        "session_id": "113a93e87fad438585a27237a520c909",
+        "app_version": "0.13.35",
+        "status": "failed",
+        "started_uptime_ms": 167856549,
+        "finished_uptime_ms": 169326180,
+        "passed": false,
+        "process_exit_code": 1,
+        "app_error": "Committed existing character rows changed after reopen: ents",
+        "cleanup_verified": true,
+        "cleanup_blocked": false,
+        "qualification_gates": {
+          "overall_passed": false,
+          "owned_cleanup": true,
+          "not_cancelled": true,
+          "no_runtime_error": false,
+          "display_transport": true,
+          "input_transport": true,
+          "current_session_guest_report": true,
+          "guest_report_passed": false,
+          "scope": "Individual observations explain incomplete checks; none replaces the unchanged overall acceptance predicate.",
+          "guest_acceptance": false,
+          "complete_asset_stage_contract": false,
+          "android_client_surface": true,
+          "android_login_views": true,
+          "android_character_save_views": false
+        },
+        "committed_save_observed": false,
+        "input_events_sent": 594,
+        "input_events_failed": 0,
+        "input_transport_observed": true,
+        "character_connected_event": {
+          "type": "character_connected",
+          "stage": "actual_client_interaction",
+          "time_utc": "2026-10-13T03:30:17.254928+00:00",
+          "session_id": "113a93e87fad438585a27237a520c909",
+          "client_pid": 848,
+          "character_id": 1,
+          "name": "THORHERO",
+          "account": "COHLOCAL",
+          "map_id": 5,
+          "reopen_verified": true,
+          "baseline_character_id": 1,
+          "existing_character_verified": true,
+          "preserved_existing_identity": true,
+          "native_client_ready_observed": true,
+          "zoning_enabled": true,
+          "connected_on_supported_map": true,
+          "monorail_enabled": true
+        },
+        "character_saved_event": null,
+        "manual_test_events": [
+          {
+            "test_id": 1,
+            "action": "start",
+            "reason": "user",
+            "session_id": "113a93e87fad438585a27237a520c909",
+            "client_pid": 848,
+            "character_id": 1,
+            "map_id": 5,
+            "utc_ms": 1791862298417,
+            "uptime_ms": 168522025,
+            "input_sent": 126,
+            "decoded_frames": 1940,
+            "capture_not_before_uptime_ms": 168522025,
+            "capture_frame_watermark": 1940,
+            "captures_accepted": 0
+          },
+          {
+            "test_id": 1,
+            "action": "stop",
+            "reason": "save_logout",
+            "session_id": "113a93e87fad438585a27237a520c909",
+            "client_pid": 848,
+            "character_id": 1,
+            "map_id": 1,
+            "utc_ms": 1791863020926,
+            "uptime_ms": 169244534,
+            "input_sent": 593,
+            "decoded_frames": 11510,
+            "capture_not_before_uptime_ms": 168522025,
+            "capture_frame_watermark": 1940,
+            "captures_accepted": 43
+          }
+        ],
+        "android_capture_diagnostics": {
+          "format": 1,
+          "captures_observed": 696,
+          "maximum_captures": 20000,
+          "limit_reached": false,
+          "scope": "Successful current-session PixelCopy captures, including views not retained as proof. Surface copy/encoding costs only; retained PNG verification and callback costs are excluded.",
+          "native_fps_measurement": false,
+          "encoding_ui_thread_count": 0,
+          "pending_frames_peak": 1,
+          "frames_coalesced_during_copy": 0,
+          "pixel_copy_wall_ms": {
+            "sum": 2606,
+            "maximum": 53,
+            "mean": 3.7442528735632186
+          },
+          "encoding_wall_ms": {
+            "sum": 71975,
+            "maximum": 217,
+            "mean": 103.41235632183908
+          },
+          "encoding_cpu_ms": {
+            "sum": 71375,
+            "maximum": 216,
+            "mean": 102.55028735632185
+          },
+          "presentation_freeze_ms": {
+            "sum": 2606,
+            "maximum": 53,
+            "mean": 3.7442528735632186
+          },
+          "encode_queue_wall_ms": {
+            "sum": 37,
+            "maximum": 1,
+            "mean": 0.05316091954022988
+          }
+        },
+        "whole_operation_seconds": 1469.631,
+        "uptime_milestone_seconds_from_operation": {
+          "client_window_observed_uptime_ms": 491.503,
+          "login_observed_uptime_ms": 515.869,
+          "character_connected_observed_uptime_ms": 584.314
+        },
+        "zoning_timings": [
+          {
+            "epoch": 1,
+            "requested_utc_ms": 1791862238973,
+            "request_uptime_ms": 168462581,
+            "request_clock_basis": "guest_wall_time_correlated_at_observation",
+            "automatic": true,
+            "user_actions": 1,
+            "travel_method": "stock_monorail",
+            "ready_uptime_ms": 169044983,
+            "request_to_ready_ms": 582402,
+            "delivery_uptime_ms": 169049556,
+            "request_to_delivery_ms": 586975,
+            "native_arrival_uptime_ms": 169135408,
+            "request_to_native_arrival_ms": 672827,
+            "fresh_views_uptime_ms": 169137703,
+            "request_to_fresh_views_ms": 675122,
+            "total_elapsed_ms": 675122
+          }
+        ]
+      },
+      "guest": {
+        "status": "failed",
+        "started_utc": "2026-10-13T03:20:37.997241+00:00",
+        "finished_utc": "2026-10-13T03:45:02.113571+00:00",
+        "failures": [
+          "Committed existing character rows changed after reopen: ents"
+        ],
+        "startup_elapsed_seconds": 263.847,
+        "client_independent_startup_elapsed_seconds": 263.847,
+        "startup_dependencies_join_elapsed_seconds": 263.847,
+        "client_launcher_timing": {
+          "started_utc": "2026-10-13T03:24:20.357954+00:00",
+          "started_monotonic": 168083.965689418,
+          "source": "current_owned_launcher_start_returned",
+          "startup_timeout_seconds": 900
+        },
+        "cleanup": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true
+        }
+      },
+      "stages": [
+        {
+          "name": "client_inputs",
+          "started_utc": "2026-10-13T03:20:38.050121+00:00",
+          "finished_utc": "2026-10-13T03:20:41.808304+00:00",
+          "status": "passed",
+          "elapsed_seconds": 3.758183,
+          "startup_timing": null
+        },
+        {
+          "name": "client_private_data",
+          "started_utc": "2026-10-13T03:20:41.808587+00:00",
+          "finished_utc": "2026-10-13T03:20:42.034750+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.226163,
+          "startup_timing": null
+        },
+        {
+          "name": "persistent_server_profile",
+          "started_utc": "2026-10-13T03:20:42.037496+00:00",
+          "finished_utc": "2026-10-13T03:20:42.670453+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.632957,
+          "startup_timing": null
+        },
+        {
+          "name": "postgres_local_login",
+          "started_utc": "2026-10-13T03:20:42.671001+00:00",
+          "finished_utc": "2026-10-13T03:20:43.054874+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.383873,
+          "startup_timing": null
+        },
+        {
+          "name": "presentation_display",
+          "started_utc": "2026-10-13T03:20:47.778295+00:00",
+          "finished_utc": "2026-10-13T03:20:47.939858+00:00",
+          "status": "passed",
+          "elapsed_seconds": 0.161563,
+          "startup_timing": null
+        },
+        {
+          "name": "wine_initialization",
+          "started_utc": "2026-10-13T03:20:47.940419+00:00",
+          "finished_utc": "2026-10-13T03:20:55.813594+00:00",
+          "status": "passed",
+          "elapsed_seconds": 7.873175,
+          "startup_timing": null
+        },
+        {
+          "name": "local_login_odbc",
+          "started_utc": "2026-10-13T03:20:55.814316+00:00",
+          "finished_utc": "2026-10-13T03:21:08.886659+00:00",
+          "status": "passed",
+          "elapsed_seconds": 13.072343,
+          "startup_timing": null
+        },
+        {
+          "name": "local_dbserver_startup",
+          "started_utc": "2026-10-13T03:21:08.887287+00:00",
+          "finished_utc": "2026-10-13T03:21:37.259423+00:00",
+          "status": "passed",
+          "elapsed_seconds": 28.372136,
+          "startup_timing": {
+            "runtime_preparation_seconds": 1.452311,
+            "runtime_configuration_seconds": 0.00635,
+            "native_launch_started_utc": "2026-10-13T03:21:10.346103+00:00",
+            "native_dispatch_ready_seconds": 26.150374,
+            "schema_snapshot_seconds": 0.7629,
+            "runtime_preparation_phase_seconds": {
+              "base_schema_and_native_runtime": 0.093404,
+              "required_original_geometry": 0.729445,
+              "native_dependencies_and_manual_atlas": 0.5892
+            }
+          }
+        },
+        {
+          "name": "local_atlas_startup",
+          "started_utc": "2026-10-13T03:21:37.702160+00:00",
+          "finished_utc": "2026-10-13T03:27:16.825674+00:00",
+          "status": "passed",
+          "elapsed_seconds": 339.123514,
+          "startup_timing": null
+        },
+        {
+          "name": "client_visual_assets",
+          "started_utc": "2026-10-13T03:22:00.574350+00:00",
+          "finished_utc": "2026-10-13T03:22:16.272717+00:00",
+          "status": "passed",
+          "elapsed_seconds": 15.698367,
+          "startup_timing": null
+        },
+        {
+          "name": "client_animation_pack",
+          "started_utc": "2026-10-13T03:22:16.273331+00:00",
+          "finished_utc": "2026-10-13T03:22:22.674434+00:00",
+          "status": "passed",
+          "elapsed_seconds": 6.401103,
+          "startup_timing": null
+        },
+        {
+          "name": "client_all_zone_assets",
+          "started_utc": "2026-10-13T03:22:22.675093+00:00",
+          "finished_utc": "2026-10-13T03:22:49.175817+00:00",
+          "status": "passed",
+          "elapsed_seconds": 26.500724,
+          "startup_timing": null
+        },
+        {
+          "name": "client_all_zone_audio",
+          "started_utc": "2026-10-13T03:22:49.176763+00:00",
+          "finished_utc": "2026-10-13T03:22:51.481928+00:00",
+          "status": "passed",
+          "elapsed_seconds": 2.305165,
+          "startup_timing": null
+        },
+        {
+          "name": "win32_runtime_dll",
+          "started_utc": "2026-10-13T03:22:51.484068+00:00",
+          "finished_utc": "2026-10-13T03:22:53.111824+00:00",
+          "status": "passed",
+          "elapsed_seconds": 1.627756,
+          "startup_timing": null
+        },
+        {
+          "name": "actual_client_startup",
+          "started_utc": "2026-10-13T03:23:07.975890+00:00",
+          "finished_utc": "2026-10-13T03:28:44.444712+00:00",
+          "status": "passed",
+          "elapsed_seconds": 336.468822,
+          "startup_timing": null
+        },
+        {
+          "name": "actual_client_interaction",
+          "started_utc": "2026-10-13T03:28:44.445115+00:00",
+          "finished_utc": null,
+          "status": null,
+          "elapsed_seconds": null,
+          "startup_timing": null
+        }
+      ],
+      "gpu": {
+        "requested": "turnip",
+        "selected": "turnip",
+        "state": "selected_after_probes",
+        "fallback_reason": null,
+        "probe_cleanup_safe": true,
+        "wine_probe_initialization_and_execution_seconds": 66.441,
+        "probe_prefix_cache": {
+          "policy": "closed_owned_gpu_probe_prefix_v1",
+          "reused": false,
+          "published_closed": true,
+          "fresh_wgl_probe_required": true,
+          "hardware_result_reused": false,
+          "reuse_refused": "GPU prefix is not independently stopped: Wine server lock missing; cannot prove prefix shutdown",
+          "generation": "gpu-probe-prefix-8ec9fb07498cfd798bc590ce-9fd282dcd716e8ae49476a9c3d650872",
+          "current_native_prefix_shutdown": {
+            "prefix_lock_free": true,
+            "server_socket_inactive": true
+          },
+          "inventory": {
+            "directory": [
+              65045,
+              8873006,
+              1000
+            ],
+            "root_state": [
+              65045,
+              8873006,
+              1000,
+              1000,
+              16832,
+              3452,
+              1791861858068781763,
+              1791861858068781763,
+              4
+            ],
+            "entries": 1896,
+            "regular_bytes": 966060467,
+            "inventory_sha256": "455237fdb665c3bc9ec0bb95fed04a7ac2b1926981fdec43986c5cd5e9b8cb1c"
+          }
+        },
+        "vulkan_probe": {
+          "format": 1,
+          "pointer_bits": 64,
+          "status": "passed",
+          "failure_stage": "",
+          "vendor_id": 20803,
+          "device_id": 1124403713,
+          "device_type": 1,
+          "api_version": 4211023,
+          "driver_version": 109051904,
+          "driver_id": 18,
+          "kgsl_chip_id": 1124403713,
+          "kgsl_verified": true,
+          "native_gpu_executed": true,
+          "fill_verified": true,
+          "bytes_verified": 4096,
+          "expected_bytes": 4096,
+          "elapsed_ms": 31
+        },
+        "wine_gl_probe": {
+          "format": 2,
+          "build_marker": "COH_GPU_PROBE_BUILD:production",
+          "status": "passed",
+          "passed": true,
+          "failure": "",
+          "scope": "bounded_wgl_gpu_prerequisites",
+          "pointer_bits": 32,
+          "win32_error": 0,
+          "gl_error": 0,
+          "gl_vendor": "Collabora Ltd",
+          "gl_renderer": "zink (Turnip Adreno (TM) 740)",
+          "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+          "zink_nonsoftware": true,
+          "multitexture": true,
+          "texture_compression": true,
+          "arb_vertex_program": true,
+          "arb_fragment_program": true,
+          "framebuffer_extension": true,
+          "vertex_buffer_object": true,
+          "s3tc": true,
+          "npot": true,
+          "bgra_extension": true,
+          "api_loaded": true,
+          "arb_programs": true,
+          "multitexture_render": true,
+          "vbo_render": true,
+          "npot_depth24_fbo": true,
+          "dxt1_render": true,
+          "dxt3_render": true,
+          "dxt5_render": true,
+          "dxt1_mipmaps": true,
+          "dxt3_mipmaps": true,
+          "dxt5_mipmaps": true,
+          "dxt1_subimage": true,
+          "dxt3_subimage": true,
+          "dxt5_subimage": true,
+          "bgra_render": true,
+          "bgra_subimage": true,
+          "backbuffer_render": true,
+          "swapped": true,
+          "frontbuffer_readback": false,
+          "cleanup_ok": true,
+          "presented_pattern_first": true,
+          "presented_pattern_second": true,
+          "presented_readback": true,
+          "frontbuffer_gl_error": 0,
+          "presentation_method": "win32_screen_getpixel_two_patterns",
+          "presentation_sample_count": 4,
+          "presentation_pattern_count": 2,
+          "presentation_client_width": 64,
+          "presentation_client_height": 64,
+          "presentation_attempts_first": 1,
+          "presentation_attempts_second": 1,
+          "presentation_elapsed_ms_first": 63,
+          "presentation_elapsed_ms_second": 64,
+          "presented_pixels_first": [
+            [
+              255,
+              0,
+              0
+            ],
+            [
+              0,
+              255,
+              0
+            ],
+            [
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              255,
+              255
+            ]
+          ],
+          "presented_pixels_second": [
+            [
+              41,
+              93,
+              173
+            ],
+            [
+              211,
+              57,
+              99
+            ],
+            [
+              77,
+              201,
+              33
+            ],
+            [
+              163,
+              29,
+              227
+            ]
+          ],
+          "fp_max_local_parameters": 2048,
+          "fp_max_temporaries": 2147483647,
+          "fp_max_native_temporaries": 2147483647,
+          "game_rendering_validated": false,
+          "cg_shaders_validated": false,
+          "android_surface_validated": false,
+          "hardware_acceleration_validated": false
+        },
+        "prerequisite_progress_events": [
+          {
+            "type": "stage",
+            "stage": "actual_client_startup",
+            "time_utc": "2026-10-13T03:23:09.003927+00:00",
+            "status": "running",
+            "message": "Checking GPU test prerequisites before Game launch"
+          },
+          {
+            "type": "stage",
+            "stage": "actual_client_startup",
+            "time_utc": "2026-10-13T03:24:20.351998+00:00",
+            "status": "running",
+            "message": "GPU test prerequisites passed; starting Game with the GPU candidate"
+          }
+        ],
+        "progress_prerequisites_elapsed_seconds": 71.348071
+      },
+      "map_startup": {
+        "5": {
+          "format": 1,
+          "map_id": 5,
+          "runtime": "local-login-server-113a93e87fad438585a27237a520c909-kings-row",
+          "private_runtime_identity": {
+            "device": 65045,
+            "inode": 8872908,
+            "uid": 1000,
+            "mode": 448
+          },
+          "preparation_finished_utc_ms": 1791861720519,
+          "preparation_elapsed_seconds": 21.07263,
+          "preparation_phase_seconds": {
+            "server_data_cache_checkout": 7.168545,
+            "warm_schema_restore": 0.130534,
+            "required_original_collision_geometry": 0.286234,
+            "server_data_receipt_seal": 1.3e-05,
+            "native_dependencies_and_session_configuration": 0.126055,
+            "prepared_server_definition_caches": 1.894355,
+            "server_fx_catalog": 0.265777,
+            "server_animation_pack": 2.463412,
+            "kings_row_beacon_graph": 8.737679
+          },
+          "actual_installed_mapserver": {
+            "bytes": 7475200,
+            "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+          },
+          "source_package_mapserver_pin_equal": true,
+          "launched": true,
+          "launcher_pid": 22184,
+          "native_ready_verified": true,
+          "native_ready_elapsed_seconds": 316.293014,
+          "server_fx_provider": {
+            "status": "reused_verified_server_fx_projection",
+            "logical_provider": "data/bin/fxinfo.bin",
+            "actual_payload": {
+              "bytes": 3380680,
+              "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+            },
+            "private_owned_regular_provider": true,
+            "projected_payload_present": true,
+            "native_provider_open_observed": false,
+            "native_provider_open_status": "unknown_without_native_io_trace",
+            "post_native_ready": {
+              "status": "actual_owned_private_fx_bytes_after_native_ready",
+              "observed": true,
+              "actual_payload": {
+                "bytes": 3380680,
+                "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+              },
+              "payload_bytes_hashed": 3380680,
+              "hash_elapsed_seconds": 0.007248,
+              "native_provider_open_observed": false,
+              "native_provider_open_status": "unknown_without_native_io_trace",
+              "projected_payload_present": true,
+              "full_original_payload_present": false,
+              "matches_preparation_payload": true
+            }
+          },
+          "animation_storage": {
+            "installed": true,
+            "payload": {
+              "animation_count": 5878,
+              "bytes": 97084456,
+              "metadata_bytes": 8703726,
+              "original_animation_bytes": 88380730,
+              "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+            },
+            "native_certificate": {
+              "status": "actual_owned_native_console_counter",
+              "observed": true,
+              "pack_sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b",
+              "counter_rows_observed": 5,
+              "opened": 5120,
+              "certified": 5120,
+              "fallback": 0,
+              "crypto_failed": 0,
+              "raw_bytes": 78662741,
+              "hash_us": 1108835,
+              "stock_us": 0,
+              "skipped_rot_keys": 10793381,
+              "skipped_pos_keys": 1155406,
+              "scanned_rot_keys": 0,
+              "scanned_pos_keys": 0
+            }
+          },
+          "collision_input_proof": {
+            "status": "reused_verified_graph",
+            "input_validation": "bounded_single_walk_inventory_and_fingerprints",
+            "input_files_checked": 8396,
+            "input_payload_bytes_hashed": 0,
+            "input_full_byte_proof_reused_files": 0,
+            "input_full_byte_proof_reused_bytes": 0,
+            "input_full_byte_proof_reuse_policy": "unchanged_destination_full_byte_graph_receipt",
+            "input_validation_basis": null,
+            "input_full_byte_proof_reuse_basis": "authenticated_prior_full_byte_receipt_and_current_immutable_provider_fingerprints",
+            "same_process_shared_certificate_exported": null
+          },
+          "gameplay_or_collision_parity_certified_by_observation": false,
+          "actual_launched_mapserver": {
+            "bytes": 7475200,
+            "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+          },
+          "launch_path_binding_observed": true,
+          "launch_utc_ms": 1791861720532,
+          "native_process_launch_binding": "exact_owned_ctx_start_child_for_this_private_runtime",
+          "native_ready_time_scope": "sampled_upper_bound_after_owned_existing_protocol_tick_gate; observer_delay_not_bounded"
+        },
+        "1": {
+          "format": 1,
+          "map_id": 1,
+          "runtime": "local-login-server-113a93e87fad438585a27237a520c909-atlas-park",
+          "private_runtime_identity": {
+            "device": 65045,
+            "inode": 8874883,
+            "uid": 1000,
+            "mode": 448
+          },
+          "preparation_finished_utc_ms": 1791862547621,
+          "preparation_elapsed_seconds": 302.792853,
+          "preparation_phase_seconds": {
+            "server_data_cache_checkout": 0.215243,
+            "cold_server_data_mirror": 243.078332,
+            "cold_server_data_receipt_seal": 1.028247,
+            "prepared_server_definition_caches": 4.53642,
+            "server_fx_catalog": 0.427993,
+            "server_animation_pack": 3.770322,
+            "atlas_beacon_graph": 49.736279
+          },
+          "actual_installed_mapserver": {
+            "bytes": 7475200,
+            "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+          },
+          "source_package_mapserver_pin_equal": true,
+          "launched": true,
+          "launcher_pid": 29451,
+          "native_ready_verified": true,
+          "native_ready_elapsed_seconds": 274.640085,
+          "server_fx_provider": {
+            "status": "installed_verified_server_fx_projection",
+            "logical_provider": "data/bin/fxinfo.bin",
+            "actual_payload": {
+              "bytes": 3380680,
+              "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+            },
+            "private_owned_regular_provider": true,
+            "projected_payload_present": true,
+            "native_provider_open_observed": false,
+            "native_provider_open_status": "unknown_without_native_io_trace",
+            "post_native_ready": {
+              "status": "actual_owned_private_fx_bytes_after_native_ready",
+              "observed": true,
+              "actual_payload": {
+                "bytes": 3380680,
+                "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+              },
+              "payload_bytes_hashed": 3380680,
+              "hash_elapsed_seconds": 0.011789,
+              "native_provider_open_observed": false,
+              "native_provider_open_status": "unknown_without_native_io_trace",
+              "projected_payload_present": true,
+              "full_original_payload_present": false,
+              "matches_preparation_payload": true
+            }
+          },
+          "animation_storage": {
+            "installed": true,
+            "payload": {
+              "animation_count": 5878,
+              "bytes": 97084456,
+              "metadata_bytes": 8703726,
+              "original_animation_bytes": 88380730,
+              "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+            },
+            "native_certificate": {
+              "status": "actual_owned_native_console_counter",
+              "observed": true,
+              "pack_sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b",
+              "counter_rows_observed": 5,
+              "opened": 5120,
+              "certified": 5120,
+              "fallback": 0,
+              "crypto_failed": 0,
+              "raw_bytes": 78662741,
+              "hash_us": 1137338,
+              "stock_us": 0,
+              "skipped_rot_keys": 10793381,
+              "skipped_pos_keys": 1155406,
+              "scanned_rot_keys": 0,
+              "scanned_pos_keys": 0
+            }
+          },
+          "collision_input_proof": {
+            "status": "installed_verified_graph",
+            "input_validation": "bounded_single_walk_inventory_and_fingerprints",
+            "input_files_checked": 5637,
+            "input_payload_bytes_hashed": 494184162,
+            "input_full_byte_proof_reused_files": null,
+            "input_full_byte_proof_reused_bytes": null,
+            "input_full_byte_proof_reuse_policy": null,
+            "input_validation_basis": "current_complete_input_sha256_and_same_provider_snapshots",
+            "input_full_byte_proof_reuse_basis": null,
+            "same_process_shared_certificate_exported": true
+          },
+          "gameplay_or_collision_parity_certified_by_observation": false,
+          "actual_launched_mapserver": {
+            "bytes": 7475200,
+            "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+          },
+          "launch_path_binding_observed": true,
+          "launch_utc_ms": 1791862547835,
+          "native_process_launch_binding": "exact_owned_ctx_start_child_for_this_private_runtime",
+          "native_ready_time_scope": "sampled_upper_bound_after_owned_existing_protocol_tick_gate; observer_delay_not_bounded"
+        }
+      },
+      "startup_overlap": {
+        "format": 1,
+        "policy": "owned_kings_map_and_client_initialization_v1",
+        "map_id": 5,
+        "native_map_launch_utc_ms": 1791861720532,
+        "native_map_launch_monotonic": 167944.140358221,
+        "client_preparation_overlap_started_monotonic": 167944.145979367,
+        "private_map_preparation_complete": true,
+        "native_map_ready_verified": true,
+        "client_input_admitted": true,
+        "native_processes_share_mutable_data": false,
+        "initializing_progress_observations": [
+          {
+            "stage": "STARTUP",
+            "observed_monotonic": 167949.174578532,
+            "observed_utc_ms": 1791861725567,
+            "completed_ticks": 0
+          },
+          {
+            "stage": "MAP_LOAD",
+            "observed_monotonic": 168195.168863073,
+            "observed_utc_ms": 1791861971561,
+            "completed_ticks": 0
+          }
+        ],
+        "physical_loading_gain_validated": false,
+        "peak_memory_effect_measured": false,
+        "last_initializing_progress_observed_monotonic": 168251.085816541,
+        "first_completed_tick_observed_monotonic": 168255.839098831,
+        "first_completed_tick_observed_utc_ms": 1791862032232,
+        "first_completed_tick_observed_seconds": 311.698741,
+        "first_tick_observation_is_sampled_upper_bound": true,
+        "first_tick_alone_grants_readiness": false,
+        "native_map_ready_utc_ms": 1791862036825,
+        "native_map_ready_monotonic": 168260.433392996,
+        "native_map_ready_seconds": 316.293035,
+        "native_ready_timing_is_sampled_upper_bound": true,
+        "native_client_launch_monotonic": 168083.960320251,
+        "observed_native_process_overlap_seconds": 176.473073,
+        "observed_client_preparation_overlap_seconds": 316.287414,
+        "observed_native_initialization_overlap_lower_bound_seconds": 167.125496,
+        "overlap_scope": "owned_process_residency_until_sampled_readiness; initialization_overlap_requires_zero_tick_progress_witness; not_an_isolated_cpu_speedup_measurement",
+        "client_and_map_readiness_join_monotonic": 169312.353572439
+      },
+      "saved_startup": {
+        "map_id": 5,
+        "name": "King's Row",
+        "world": "City_01_02",
+        "port": 7003,
+        "saved_position": {
+          "containerid": 1,
+          "mapid": 5,
+          "staticmapid": 5,
+          "posx": -1607.124,
+          "posy": -10,
+          "posz": 748.0371
+        },
+        "authority": "preserved_postgresql_ents_staticmapid",
+        "sql_game_mutations_performed": false,
+        "native_ready_verified": true,
+        "character_world_entry_verified": true,
+        "native_map": {
+          "map_id": 5,
+          "ready": true,
+          "address": "127.0.0.1",
+          "port": 7003,
+          "network_age_seconds": 5,
+          "stats_age_seconds": 5
+        },
+        "native_maps_started": [
+          5
+        ]
+      },
+      "cache": {
+        "key": "489e307c899c98022b3ef9dd",
+        "reused": true,
+        "legacy_session_tree_adopted": false,
+        "first_use_requires_full_staging": false,
+        "migration_refused": null,
+        "migration_candidates_examined": null,
+        "cache_created": null,
+        "immutable_directory_checks": 8116,
+        "immutable_anchor_checks": 21,
+        "immutable_directory_metadata_queries": 8116,
+        "private_entries_checked": 2520,
+        "private_bytes": 836574964
+      },
+      "zoning": {
+        "transfers": [
+          {
+            "epoch": 1,
+            "from_map_id": 5,
+            "to_map_id": 1,
+            "delivery": {
+              "format": 1,
+              "session_id": "113a93e87fad438585a27237a520c909",
+              "client_pid": 848,
+              "character_id": 1,
+              "epoch": 1,
+              "action": "mapmove",
+              "from_map_id": 5,
+              "to_map_id": 1,
+              "sent_utc_ms": 1791862821408,
+              "native_station_departure": {
+                "pid": 776,
+                "tid": 780,
+                "sequence": 24,
+                "utc_ms": 1791862821408,
+                "map_id": 5,
+                "db_id": 1,
+                "auth_id": 1353310574,
+                "port": 0,
+                "request": 3,
+                "target": 1,
+                "format": 1,
+                "kind": "station_departure",
+                "session_id": "113a93e87fad438585a27237a520c909",
+                "name": "THORHERO",
+                "account": "COHLOCAL",
+                "position": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "windows_pid": 776,
+                "main_thread_id": 780,
+                "log_timestamp": "261013 03:40:21",
+                "line_sha256": "62de85aa997e555d91ab6711aaa6c023b2d6c45022b70045a857da409342b5a6",
+                "log_route": "immediate_owned_mapserver_console",
+                "source": "current_owned_mapserver_monorail_station_departure"
+              }
+            },
+            "native_ready": {
+              "pid": 924,
+              "tid": 928,
+              "sequence": 1,
+              "utc_ms": 1791862897753,
+              "map_id": 1,
+              "db_id": 1,
+              "auth_id": 1353310574,
+              "port": 44165,
+              "request": 0,
+              "target": 0,
+              "format": 1,
+              "kind": "ready",
+              "session_id": "113a93e87fad438585a27237a520c909",
+              "name": "THORHERO",
+              "account": "COHLOCAL",
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "windows_pid": 924,
+              "main_thread_id": 928,
+              "log_timestamp": "261013 03:41:37",
+              "line_sha256": "ec058735645fa44f790e526504fcb3203d3a6d6648a520ad63ed0c7a9d20596d",
+              "log_route": "immediate_owned_mapserver_console",
+              "source": "current_owned_mapserver_monorail_ready",
+              "loaded_world_assets": true
+            },
+            "character_status": {
+              "loaded": true,
+              "connected": true,
+              "in_map_transfer": false,
+              "map_id": 1,
+              "static_map_id": 1,
+              "address": "127.0.0.1"
+            },
+            "initial_character_status": {
+              "loaded": true,
+              "connected": true,
+              "in_map_transfer": false,
+              "map_id": 1,
+              "static_map_id": 1,
+              "address": "127.0.0.1"
+            },
+            "map_status": {
+              "map_id": 1,
+              "ready": true,
+              "address": "127.0.0.1",
+              "port": 7001,
+              "network_age_seconds": 3,
+              "stats_age_seconds": 3
+            },
+            "owned_progress": {
+              "format": 1,
+              "windows_pid": 924,
+              "main_thread_id": 928,
+              "sequence": 85990,
+              "stage_id": 36,
+              "stage": "SLEEP",
+              "tick_started": 2865,
+              "tick_completed": 2865,
+              "flags": 0,
+              "stage_count": 37,
+              "raw_record_hex": "434f484d4150310001000000800000009c030000a0030000e64f010024000000310b0000310b000000000000250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "raw_record_sha256": "b0d4df710e3c61845b2cf0673ee88b8686aedaa87e5f15f4f0c5a8ca37fe1227",
+              "available": true,
+              "sampled_utc": "2026-10-13T03:41:51.799946+00:00",
+              "observed_monotonic": 169135.40769761,
+              "file_identity": {
+                "device": 65045,
+                "inode": 9050683
+              },
+              "source": "opt-in MapServer main-thread publication",
+              "is_success_proof": false,
+              "freshness": "advanced",
+              "last_advance_monotonic": 169135.40769761,
+              "unchanged_seconds": 0.0
+            },
+            "elapsed_ms": 90391,
+            "native_timestamp_precision_ms": 1,
+            "same_client_pid": 848,
+            "observed_transfer_flag_or_disconnected": false,
+            "arrival_native_verified": true,
+            "sql_transfer_commit_acknowledged": false,
+            "requested_utc_ms": 1791862238973,
+            "preparation_started_utc_ms": 1791862239384,
+            "preparation_ready_utc_ms": 1791862821374,
+            "preparation_elapsed_ms": 582401,
+            "preparation_kind": "cold",
+            "preparation_budget_seconds": 600,
+            "python_preparation_budget_seconds": 0,
+            "native_ready_budget_seconds": 600,
+            "preparation_budget_policy": "bounded_python_then_native_ready_v1",
+            "preparation_phase": "native_readiness",
+            "preparation_deadline_utc_ms": 1791862839384,
+            "preparation_absolute_cap_basis": "accepted_preparation_clock",
+            "preparation_request_age_ms": 411,
+            "python_preparation_started_utc_ms": 1791862244436,
+            "python_preparation_finished_utc_ms": 1791862547646,
+            "python_preparation_elapsed_ms": 308257,
+            "runtime_preparation_elapsed_ms": 303211,
+            "python_preparation_completed": true,
+            "python_preparation_deadline_utc_ms": 1791862839384,
+            "native_ready_started_utc_ms": 1791862547646,
+            "native_ready_finished_utc_ms": 1791862821374,
+            "native_ready_elapsed_ms": 273728,
+            "native_ready_deadline_utc_ms": 1791862839388,
+            "departure_deadline_utc_ms": 0,
+            "session_deadline_utc_ms": 0,
+            "session_budget_extended": false,
+            "manual_session": true,
+            "travel_method": "stock_monorail",
+            "native_transfer_observed_ms": 90391,
+            "total_to_native_arrival_ms": 672826,
+            "native_ready_after_send_lower_bound_ms": 76345,
+            "native_ready_after_send_upper_bound_ms": 76345,
+            "observer_queries_included": true,
+            "fresh_android_display_included": false
+          }
+        ],
+        "preparations": [
+          {
+            "epoch": 1,
+            "from_map_id": 5,
+            "to_map_id": 1,
+            "requested_utc_ms": 1791862238973,
+            "preparation_started_utc_ms": 1791862239384,
+            "preparation_ready_utc_ms": 1791862821374,
+            "preparation_elapsed_ms": 582401,
+            "preparation_kind": "cold",
+            "preparation_budget_seconds": 600,
+            "python_preparation_budget_seconds": 0,
+            "native_ready_budget_seconds": 600,
+            "preparation_budget_policy": "bounded_python_then_native_ready_v1",
+            "preparation_phase": "native_readiness",
+            "preparation_deadline_utc_ms": 1791862839384,
+            "preparation_absolute_cap_basis": "accepted_preparation_clock",
+            "preparation_request_age_ms": 411,
+            "python_preparation_started_utc_ms": 1791862244436,
+            "python_preparation_finished_utc_ms": 1791862547646,
+            "python_preparation_elapsed_ms": 308257,
+            "runtime_preparation_elapsed_ms": 303211,
+            "python_preparation_completed": true,
+            "python_preparation_deadline_utc_ms": 1791862839384,
+            "native_ready_started_utc_ms": 1791862547646,
+            "native_ready_finished_utc_ms": 1791862821374,
+            "native_ready_elapsed_ms": 273728,
+            "native_ready_deadline_utc_ms": 1791862839388,
+            "departure_deadline_utc_ms": 0,
+            "session_deadline_utc_ms": 0,
+            "session_budget_extended": false,
+            "manual_session": true
+          }
+        ],
+        "preparation_phase_observations": [
+          {
+            "epoch": 1,
+            "map_id": 1,
+            "observation_kind": "phase_budget",
+            "observed_utc_ms": 1791862239390,
+            "observed_monotonic_ms": 168462998,
+            "native_arrival_verified": false,
+            "physical_performance_gain_verified": false,
+            "requested_utc_ms": 1791862238973,
+            "preparation_started_utc_ms": 1791862239384,
+            "preparation_kind": "cold",
+            "preparation_budget_seconds": 600,
+            "python_preparation_budget_seconds": 0,
+            "native_ready_budget_seconds": 600,
+            "preparation_budget_policy": "bounded_python_then_native_ready_v1",
+            "preparation_phase": "native_readiness",
+            "preparation_deadline_utc_ms": 1791862839384,
+            "preparation_absolute_cap_basis": "accepted_preparation_clock",
+            "preparation_request_age_ms": 411,
+            "native_ready_started_utc_ms": 1791862239384,
+            "native_ready_deadline_utc_ms": 1791862839384,
+            "departure_deadline_utc_ms": 0,
+            "session_deadline_utc_ms": 0,
+            "session_budget_extended": false,
+            "manual_session": true
+          },
+          {
+            "epoch": 1,
+            "map_id": 1,
+            "observation_kind": "phase_budget",
+            "observed_utc_ms": 1791862547646,
+            "observed_monotonic_ms": 168771254,
+            "native_arrival_verified": false,
+            "physical_performance_gain_verified": false,
+            "requested_utc_ms": 1791862238973,
+            "preparation_started_utc_ms": 1791862239384,
+            "preparation_kind": "cold",
+            "preparation_budget_seconds": 600,
+            "python_preparation_budget_seconds": 0,
+            "native_ready_budget_seconds": 600,
+            "preparation_budget_policy": "bounded_python_then_native_ready_v1",
+            "preparation_phase": "native_readiness",
+            "preparation_deadline_utc_ms": 1791862839384,
+            "preparation_absolute_cap_basis": "accepted_preparation_clock",
+            "preparation_request_age_ms": 411,
+            "python_preparation_started_utc_ms": 1791862244436,
+            "python_preparation_finished_utc_ms": 1791862547646,
+            "python_preparation_elapsed_ms": 308257,
+            "runtime_preparation_elapsed_ms": 303211,
+            "python_preparation_completed": true,
+            "python_preparation_deadline_utc_ms": 1791862839384,
+            "native_ready_started_utc_ms": 1791862547646,
+            "native_ready_deadline_utc_ms": 1791862839388,
+            "departure_deadline_utc_ms": 0,
+            "session_deadline_utc_ms": 0,
+            "session_budget_extended": false,
+            "manual_session": true
+          }
+        ],
+        "sql_game_mutations_performed": false,
+        "finite_process_limit": 2,
+        "native_event_observations": {
+          "5": {
+            "event_count": 24,
+            "latest_event": {
+              "pid": 776,
+              "tid": 780,
+              "sequence": 24,
+              "utc_ms": 1791862821408,
+              "map_id": 5,
+              "db_id": 1,
+              "auth_id": 1353310574,
+              "port": 0,
+              "request": 3,
+              "target": 1,
+              "format": 1,
+              "kind": "station_departure",
+              "session_id": "113a93e87fad438585a27237a520c909",
+              "name": "THORHERO",
+              "account": "COHLOCAL",
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "windows_pid": 776,
+              "main_thread_id": 780,
+              "log_timestamp": "261013 03:40:21",
+              "line_sha256": "62de85aa997e555d91ab6711aaa6c023b2d6c45022b70045a857da409342b5a6",
+              "log_route": "immediate_owned_mapserver_console",
+              "source": "current_owned_mapserver_monorail_station_departure"
+            },
+            "console_bytes_scanned": 271315,
+            "observed_utc_ms": 1791862911798
+          },
+          "1": {
+            "event_count": 6,
+            "latest_event": {
+              "pid": 924,
+              "tid": 928,
+              "sequence": 6,
+              "utc_ms": 1791863022796,
+              "map_id": 1,
+              "db_id": 1,
+              "auth_id": 1353310574,
+              "port": 0,
+              "request": 0,
+              "target": 0,
+              "format": 1,
+              "kind": "position",
+              "session_id": "113a93e87fad438585a27237a520c909",
+              "name": "THORHERO",
+              "account": "COHLOCAL",
+              "position": [
+                706.34,
+                58.0,
+                -1416.79
+              ],
+              "windows_pid": 924,
+              "main_thread_id": 928,
+              "log_timestamp": "261013 03:43:42",
+              "line_sha256": "9c7f78f10a56db47fcad9caf70cc4a2a6cb5acc1ffa2d1c2a8820f369a596b51",
+              "log_route": "immediate_owned_mapserver_console",
+              "source": "current_owned_mapserver_monorail_position"
+            },
+            "console_bytes_scanned": 131968,
+            "observed_utc_ms": 1791863093764
+          }
+        }
+      },
+      "save": {
+        "baseline": {
+          "character_id": 1,
+          "auth_id": 1353310574,
+          "identity_sha256": "a5fe5f09ecb4493fd4bd1c6c3f73b890dcaf042881787ebd10304f8c38b192e8",
+          "snapshot_sha256": "7d4fe3243858ef318549f45f4af4eab3d637612d35e8cdb2df528db8bea9acc8",
+          "table_sha256": {
+            "ents": "3d36969bbb370422d0c84d26c397c2ca9b40158ed73205762ad94844e6578b36",
+            "ents2": "77ec33b6b6baddab8274b33a4526e99ebc08988a603d4bb5b0989e3e53df2713",
+            "powers": "c6a5eaa54de8317af10d6246da695a5bf5b667d1a8bb4da6801718f6ab643fe4",
+            "costumeparts": "4bab38b6af68848b01e76acc3e63b20305a8465b165f9289fd6ae829933edbbc"
+          },
+          "row_counts": {
+            "ents": 1,
+            "ents2": 1,
+            "powers": 8,
+            "costumeparts": 13
+          },
+          "login_count": 6,
+          "captured_utc": "2026-10-13T03:21:37.701200+00:00",
+          "saved_position": {
+            "containerid": 1,
+            "mapid": 5,
+            "staticmapid": 5,
+            "posx": -1607.124,
+            "posy": -10,
+            "posz": 748.0371
+          }
+        },
+        "save_comparison_failure": {
+          "format": 1,
+          "status": "failed",
+          "failed_table": "ents",
+          "save_verified": false,
+          "save_acceptance_changed": false,
+          "after_snapshot_sha256": "1166d38ae2693a6360a7240ead9cd0da76c2080d6bd87e7b318e51336ea718fa",
+          "power_delta": {
+            "format": 1,
+            "optional": true,
+            "status": "observed",
+            "save_acceptance_changed": false,
+            "dayjob_grant_verified": false,
+            "login_eligibility_verified": false,
+            "spatial_predicates_verified": false,
+            "badge_predicates_verified": false,
+            "sql_game_mutations_performed": false,
+            "before_power_count": 8,
+            "after_power_count": 7,
+            "before_power_rows_sha256": "c6a5eaa54de8317af10d6246da695a5bf5b667d1a8bb4da6801718f6ab643fe4",
+            "after_power_rows_sha256": "0815aea7b4637eee5b47f0138776492f9b1ab81ba9c904002c9d5525030a6e22",
+            "attribute_mapping_sha256": "048063a9731b29a3edff27d8385b2519449e688e994f94958a0049867e987543",
+            "prior_powers_preserved_by_uniqueid": false,
+            "all_prior_semantic_fields_preserved": false,
+            "current_native_indexes_contiguous": true,
+            "deleted_uniqueids": [
+              184084171
+            ],
+            "changed_prior_powers": [],
+            "added_powers": []
+          },
+          "after_snapshot_export_status": "available"
+        },
+        "requested_logout_observed": false,
+        "logout_timer_observed": false,
+        "disconnected_before_sql": false,
+        "forced_stop_before_save": false,
+        "sql_game_mutations_performed": false,
+        "committed_sql_verified": false,
+        "character_samples": [
+          {
+            "loaded": true,
+            "connected": true,
+            "in_map_transfer": false,
+            "map_id": 5,
+            "static_map_id": 5,
+            "address": "127.0.0.1"
+          },
+          {
+            "loaded": false,
+            "connected": false,
+            "in_map_transfer": false
+          },
+          {
+            "loaded": false,
+            "connected": false,
+            "in_map_transfer": false
+          },
+          {
+            "loaded": false,
+            "connected": false,
+            "in_map_transfer": false
+          },
+          {
+            "loaded": false,
+            "connected": false,
+            "in_map_transfer": false
+          },
+          {
+            "loaded": false,
+            "connected": false,
+            "in_map_transfer": false
+          }
+        ],
+        "identity_unchanged": true,
+        "costume_rows_unchanged": true,
+        "ents2_rows_unchanged": true,
+        "login_counts": [
+          6,
+          7
+        ],
+        "ents_deltas": [
+          {
+            "experiencepoints": {
+              "before": 20,
+              "after": 45
+            },
+            "logincount": {
+              "before": 6,
+              "after": 7
+            },
+            "influencepoints": {
+              "before": 17,
+              "after": 34
+            }
+          }
+        ],
+        "snapshot_provenance": {
+          "character-reopen-before-snapshot.json": {
+            "bytes": 8643,
+            "sha256": "49d3ef4e5cb4cb12e42bceb0db94be15693f64ef58795ba428fc6ce5acc4effc"
+          },
+          "character-reopen-failed-after-snapshot.json": {
+            "bytes": 9300,
+            "sha256": "e242766212625cf6f506f5e230e680e55b1481cc1d96bffe47d71d8bd1525337"
+          }
+        },
+        "native_logout_evidence": [
+          {
+            "file": "coh-atlas-gameplay-20261013-034513/serverlogs/logs/dbserver/entity_2026-10-13-03-00-00.log",
+            "line": 598,
+            "text": "261013 03:40:26 City_01_02_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 Logout location : map 5 (-1600.000000 -10.000000 785.000000) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 61995-18-18 01:00:60380"
+          },
+          {
+            "file": "coh-atlas-gameplay-20261013-034513/serverlogs/logs/dbserver/entity_2026-10-13-03-00-00.log",
+            "line": 736,
+            "text": "261013 03:43:45 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Disconnect:Logout timer expired] Technology Class_Blaster, Level:1 XPLevel:1 XP:45 HP:102.50 End:100.00 Debt: 0 Inf:34 AccessLvl: 9 WisLvl: 0 Wis: 0 Merits: 0 Tickets: 0 ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 54672-00-22188 00:16256:36790"
+          },
+          {
+            "file": "coh-atlas-gameplay-20261013-034513/serverlogs/logs/dbserver/entity_2026-10-13-03-00-00.log",
+            "line": 739,
+            "text": "261013 03:43:45 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 Logout location : map 1 (706.343750 58.000000 -1416.796875) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 11264-32764-32768 01:00:00"
+          }
+        ],
+        "native_rewards_evidence": {
+          "rows": [
+            {
+              "file": "coh-atlas-gameplay-20261013-034513/serverlogs/logs/dbserver/rewards_2026-10-13-03-00-00.log",
+              "line": 9,
+              "text": "261013 03:42:41 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 15, Debt: 0, Inf: 7, Pres: 0 (SGMode off (0)) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0000-00-00 00:00:00"
+            },
+            {
+              "file": "coh-atlas-gameplay-20261013-034513/serverlogs/logs/dbserver/rewards_2026-10-13-03-00-00.log",
+              "line": 14,
+              "text": "261013 03:42:41 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 0, Debt: 0, Inf: 0, Pres: 0 (SGMode off (0)) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0000-00-00 01:00:37"
+            },
+            {
+              "file": "coh-atlas-gameplay-20261013-034513/serverlogs/logs/dbserver/rewards_2026-10-13-03-00-00.log",
+              "line": 26,
+              "text": "261013 03:42:59 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 10, Debt: 0, Inf: 7, Pres: 0 (SGMode off (0)) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0000-00-00 00:00:00"
+            },
+            {
+              "file": "coh-atlas-gameplay-20261013-034513/serverlogs/logs/dbserver/rewards_2026-10-13-03-00-00.log",
+              "line": 29,
+              "text": "261013 03:42:59 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 0, Debt: 0, Inf: 0, Pres: 0 (SGMode off (0)) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0000-00-00 00:00:00"
+            },
+            {
+              "file": "coh-atlas-gameplay-20261013-034513/serverlogs/logs/dbserver/rewards_2026-10-13-03-00-00.log",
+              "line": 41,
+              "text": "261013 03:43:03 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 0, Debt: 0, Inf: 0, Pres: 0 (SGMode off (0)) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0031-10-08 62692:18:63576"
+            },
+            {
+              "file": "coh-atlas-gameplay-20261013-034513/serverlogs/logs/dbserver/rewards_2026-10-13-03-00-00.log",
+              "line": 47,
+              "text": "261013 03:43:03 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 0, Debt: 0, Inf: 3, Pres: 0 (SGMode off (0)) ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0010-00-00 00:00:60216"
+            }
+          ],
+          "total_experience": 25,
+          "total_influence": 17,
+          "matches_after_SQL_deltas": true,
+          "scope": "Read-only same-session native reward log evidence supports observed normal gameplay progression; this analysis does not change save acceptance."
+        },
+        "temporary_power_removal_scope": "The only removed uniqueid maps to the prior added day-job temporary power; exact expiry/grant native policy still requires source-qualified validation, not proved by this report alone."
+      },
+      "console_analysis": [
+        {
+          "file": "coh-atlas-gameplay-20261013-034513/guest/client-evidence/character-atlas-console.txt",
+          "bytes": 131968,
+          "sha256": "49bb8b868b1f4ead7539ace4f01063d87c0f2f34046b5abdffdc8ba5202b5298",
+          "native_ready_markers": [
+            "Server ready. (took 261.865509 seconds)"
+          ],
+          "timestamp_gaps_above_8_seconds": [
+            {
+              "seconds": 82.156,
+              "before_line": 22,
+              "after_line": 28,
+              "before": "[2026-10-13 03:35:51.813] [DEBUG] \tsequencers",
+              "after": "Caching relevant folders.. [2026-10-13 03:37:13.969] [DEBUG] Caching relevant folders",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 25.221,
+              "before_line": 59,
+              "after_line": 60,
+              "before": "[2026-10-13 03:37:26.270] [DEBUG] \tobject_library",
+              "after": "[2026-10-13 03:37:51.491] [INFO] Loaded grouplibs: 3224 files, 75433 names",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 28.645,
+              "before_line": 184,
+              "after_line": 185,
+              "before": "[2026-10-13 03:37:56.508] [DEBUG] \tfx",
+              "after": "[2026-10-13 03:38:25.153] [INFO] Loaded FX info",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 15.774,
+              "before_line": 260,
+              "after_line": 261,
+              "before": "[2026-10-13 03:38:30.657] [DEBUG] \tScripts.loc",
+              "after": "[2026-10-13 03:38:46.431] [DEBUG] \tParsing defs/DifficultyCost.def from DifficultyCost.bin",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 35.413,
+              "before_line": 362,
+              "after_line": 369,
+              "before": "[2026-10-13 03:39:05.477] [DEBUG] \tSet folder cache callback for server/db/commands.cfg",
+              "after": "loading map: maps/City_Zones/City_01_01/City_01_01.txt..[2026-10-13 03:39:40.890] [DEBUG] \tSet folder cache callback for scenes/*.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 18.732,
+              "before_line": 514,
+              "after_line": 515,
+              "before": "Starting novodex...[2026-10-13 03:39:52.015] [DEBUG] Loading PhysX objects",
+              "after": "[2026-10-13 03:40:10.747] [INFO] Created 2311 PhysX objects",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 15.764,
+              "before_line": 517,
+              "after_line": 523,
+              "before": "[2026-10-13 03:40:10.749] [INFO] Loaded actor spore grid",
+              "after": "[2026-10-13 03:40:26.513] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 71.507,
+              "before_line": 523,
+              "after_line": 529,
+              "before": "[2026-10-13 03:40:26.513] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:41:38.020] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 18.764,
+              "before_line": 2054,
+              "after_line": 2055,
+              "before": "[2026-10-13 03:41:44.062] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:42:02.826] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 15.048,
+              "before_line": 2088,
+              "after_line": 2089,
+              "before": "[2026-10-13 03:42:16.802] [DEBUG] \tReading bis.txt",
+              "after": "[2026-10-13 03:42:31.850] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 18.108,
+              "before_line": 2094,
+              "after_line": 2099,
+              "before": "[2026-10-13 03:42:33.546] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:42:51.654] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.707,
+              "before_line": 2133,
+              "after_line": 2134,
+              "before": "[2026-10-13 03:43:22.133] [DEBUG] \tReading Rikti_Pylon.txt",
+              "after": "[2026-10-13 03:43:30.840] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            }
+          ],
+          "native_texture_header_lines": [],
+          "Cg_program_load_log_rows": 0,
+          "Cg_log_interpretation": "The native Compiled Cg/CgFX Shader log is emitted for both cached CG_OBJECT loading and CG_SOURCE compilation. These rows do not identify cache hits/misses, compilation mode, or recompilation count.",
+          "Cg_compile_or_object_load_mode": "unproven_by_this_report"
+        },
+        {
+          "file": "coh-atlas-gameplay-20261013-034513/guest/client-evidence/client-console.log",
+          "bytes": 629821,
+          "sha256": "d0f4598de7348e4bced088aa5a954dc6541aeba346e43ee23f3b23ae414c3eaf",
+          "native_ready_markers": [],
+          "timestamp_gaps_above_8_seconds": [
+            {
+              "seconds": 40.554,
+              "before_line": 79,
+              "after_line": 297,
+              "before": "[2026-10-13 03:24:37.184] [INFO] Compiling fragment shaders",
+              "after": "[2026-10-13 03:25:17.738] [INFO] Compiling vertex shaders",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 12.89,
+              "before_line": 330,
+              "after_line": 331,
+              "before": "[2026-10-13 03:25:20.110] [INFO] Renderer initialization complete",
+              "after": "[2026-10-13 03:25:33.000] [DEBUG] Loading tricks",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 29.826,
+              "before_line": 345,
+              "after_line": 349,
+              "before": "[2026-10-13 03:25:40.356] [DEBUG] \ttexture_library",
+              "after": "[2026-10-13 03:26:10.182] [DEBUG] \tSet folder cache callback for texture_library/*.texture",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 30.848,
+              "before_line": 354,
+              "after_line": 355,
+              "before": "[2026-10-13 03:26:17.438] [DEBUG] \tobject_library",
+              "after": "[2026-10-13 03:26:48.286] [INFO] Loaded grouplibs: 3224 files, 75433 names",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.22,
+              "before_line": 358,
+              "after_line": 359,
+              "before": "[2026-10-13 03:26:48.323] [DEBUG] \tlods",
+              "after": "[2026-10-13 03:26:56.543] [DEBUG] \tSet folder cache callback for lods/*.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 15.573,
+              "before_line": 484,
+              "after_line": 485,
+              "before": "[2026-10-13 03:27:27.756] [DEBUG] \tSCRIPTS.LOC",
+              "after": "[2026-10-13 03:27:43.329] [DEBUG] Loading items",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 25.197,
+              "before_line": 492,
+              "after_line": 493,
+              "before": "[2026-10-13 03:27:43.881] [DEBUG] \tfx",
+              "after": "[2026-10-13 03:28:09.078] [INFO] Loaded FX info",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 11.386,
+              "before_line": 838,
+              "after_line": 841,
+              "before": "[2026-10-13 03:28:22.394] [DEBUG] \tobject_library",
+              "after": "[2026-10-13 03:28:33.780] [DEBUG] \tSet folder cache callback for scenes/*.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 27.079,
+              "before_line": 869,
+              "after_line": 881,
+              "before": "[2026-10-13 03:28:38.087] [VERBOSE] ParserLoadFiles: couldn't find any files in directory customwindows",
+              "after": "[2026-10-13 03:29:05.166] [INFO] Connecting to DBServer 127.0.0.1:7000 (UDP) Cookie: 0",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 56.366,
+              "before_line": 898,
+              "after_line": 953,
+              "before": "[2026-10-13 03:29:10.682] [DEBUG] \tobject_library",
+              "after": "[2026-10-13 03:30:07.048] [DEBUG] Detailing trays",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.453,
+              "before_line": 1116,
+              "after_line": 1121,
+              "before": "[2026-10-13 03:30:31.293] [DEBUG] \tReading BF.txt",
+              "after": "[2026-10-13 03:30:39.746] [DEBUG] \tReading bis.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.413,
+              "before_line": 1231,
+              "after_line": 1237,
+              "before": "[2026-10-13 03:32:36.323] [DEBUG] \tReading bis.txt",
+              "after": "[2026-10-13 03:32:44.736] [DEBUG] \tReading Car_Truck.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 9.501,
+              "before_line": 1323,
+              "after_line": 1329,
+              "before": "[2026-10-13 03:34:14.733] [DEBUG] \tReading bis.txt",
+              "after": "[2026-10-13 03:34:24.234] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 9.04,
+              "before_line": 1399,
+              "after_line": 1404,
+              "before": "[2026-10-13 03:35:37.748] [DEBUG] \tReading BF.txt",
+              "after": "[2026-10-13 03:35:46.788] [DEBUG] \tReading bis.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 10.504,
+              "before_line": 1427,
+              "after_line": 1433,
+              "before": "[2026-10-13 03:36:09.222] [DEBUG] \tReading bis.txt",
+              "after": "[2026-10-13 03:36:19.726] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 14.692,
+              "before_line": 1433,
+              "after_line": 1444,
+              "before": "[2026-10-13 03:36:19.726] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:36:34.418] [DEBUG] \tReading bis.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 17.214,
+              "before_line": 1468,
+              "after_line": 1479,
+              "before": "[2026-10-13 03:36:58.733] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:37:15.947] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 10.035,
+              "before_line": 1487,
+              "after_line": 1493,
+              "before": "[2026-10-13 03:37:28.247] [DEBUG] \tReading Car_Truck.txt",
+              "after": "[2026-10-13 03:37:38.282] [DEBUG] \tReading bis.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.521,
+              "before_line": 1495,
+              "after_line": 1501,
+              "before": "[2026-10-13 03:37:41.756] [DEBUG] \tReading BF.txt",
+              "after": "[2026-10-13 03:37:50.277] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 10.611,
+              "before_line": 1538,
+              "after_line": 1543,
+              "before": "[2026-10-13 03:38:31.814] [DEBUG] \tReading bis.txt",
+              "after": "[2026-10-13 03:38:42.425] [DEBUG] \tReading bis.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 62.629,
+              "before_line": 1653,
+              "after_line": 1670,
+              "before": "[2026-10-13 03:40:29.739] [DEBUG] \tobject_library",
+              "after": "[2026-10-13 03:41:32.368] [DEBUG] Detailing trays",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.149,
+              "before_line": 1931,
+              "after_line": 1934,
+              "before": "[2026-10-13 03:43:18.546] [DEBUG] \tReading BF.txt",
+              "after": "[2026-10-13 03:43:26.695] [DEBUG] \tReading Car_Lux2.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            }
+          ],
+          "native_texture_header_lines": [],
+          "Cg_program_load_log_rows": 249,
+          "Cg_log_interpretation": "The native Compiled Cg/CgFX Shader log is emitted for both cached CG_OBJECT loading and CG_SOURCE compilation. These rows do not identify cache hits/misses, compilation mode, or recompilation count.",
+          "Cg_compile_or_object_load_mode": "unproven_by_this_report"
+        },
+        {
+          "file": "coh-atlas-gameplay-20261013-034513/guest/client-evidence/character-zoning-map-5-console.txt",
+          "bytes": 271315,
+          "sha256": "653bb9ae05a853da23d6f26e2d4334e42971306254296a42cf102201fbe872ee",
+          "native_ready_markers": [
+            "Server ready. (took 309.837830 seconds)"
+          ],
+          "timestamp_gaps_above_8_seconds": [
+            {
+              "seconds": 96.461,
+              "before_line": 23,
+              "after_line": 29,
+              "before": "[2026-10-13 03:22:04.484] [DEBUG] \tsequencers",
+              "after": "Caching relevant folders.. [2026-10-13 03:23:40.945] [DEBUG] Caching relevant folders",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 29.187,
+              "before_line": 60,
+              "after_line": 61,
+              "before": "[2026-10-13 03:23:58.570] [DEBUG] \tobject_library",
+              "after": "[2026-10-13 03:24:27.757] [INFO] Loaded grouplibs: 3224 files, 75433 names",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 40.801,
+              "before_line": 185,
+              "after_line": 186,
+              "before": "[2026-10-13 03:24:35.295] [DEBUG] \tfx",
+              "after": "[2026-10-13 03:25:16.096] [INFO] Loaded FX info",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 19.793,
+              "before_line": 261,
+              "after_line": 262,
+              "before": "[2026-10-13 03:25:22.485] [DEBUG] \tScripts.loc",
+              "after": "[2026-10-13 03:25:42.278] [DEBUG] \tParsing defs/DifficultyCost.def from DifficultyCost.bin",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 12.173,
+              "before_line": 264,
+              "after_line": 265,
+              "before": "[2026-10-13 03:25:42.453] [DEBUG] \tmaps",
+              "after": "[2026-10-13 03:25:54.626] [DEBUG] \tParsing .minimap from minimap.bin",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 45.453,
+              "before_line": 363,
+              "after_line": 370,
+              "before": "[2026-10-13 03:26:07.060] [DEBUG] \tSet folder cache callback for server/db/commands.cfg",
+              "after": "loading map: maps/City_Zones/City_01_02/City_01_02.txt..[2026-10-13 03:26:52.513] [DEBUG] \tSet folder cache callback for scenes/*.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 110.943,
+              "before_line": 1070,
+              "after_line": 1071,
+              "before": "[2026-10-13 03:27:19.054] [DEBUG] \tReading 5cw.txt",
+              "after": "[2026-10-13 03:29:09.997] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 61.964,
+              "before_line": 1071,
+              "after_line": 1077,
+              "before": "[2026-10-13 03:29:09.997] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:30:11.961] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 29.203,
+              "before_line": 4323,
+              "after_line": 4330,
+              "before": "[2026-10-13 03:30:25.029] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:30:54.232] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 28.595,
+              "before_line": 4330,
+              "after_line": 4333,
+              "before": "[2026-10-13 03:30:54.232] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:31:22.827] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 38.385,
+              "before_line": 4349,
+              "after_line": 4352,
+              "before": "[2026-10-13 03:31:32.373] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:32:10.758] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 19.095,
+              "before_line": 4352,
+              "after_line": 4355,
+              "before": "[2026-10-13 03:32:10.758] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:32:29.853] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 19.187,
+              "before_line": 4355,
+              "after_line": 4356,
+              "before": "[2026-10-13 03:32:29.853] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:32:49.040] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 23.461,
+              "before_line": 4356,
+              "after_line": 4359,
+              "before": "[2026-10-13 03:32:49.040] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:33:12.501] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.019,
+              "before_line": 4404,
+              "after_line": 4405,
+              "before": "[2026-10-13 03:33:36.894] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:33:44.913] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 19.985,
+              "before_line": 4452,
+              "after_line": 4455,
+              "before": "[2026-10-13 03:34:05.675] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:34:25.660] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 16.852,
+              "before_line": 4479,
+              "after_line": 4480,
+              "before": "[2026-10-13 03:34:25.939] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:34:42.791] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 11.472,
+              "before_line": 4481,
+              "after_line": 4484,
+              "before": "[2026-10-13 03:34:43.854] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:34:55.326] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 25.332,
+              "before_line": 4498,
+              "after_line": 4501,
+              "before": "[2026-10-13 03:34:55.616] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:35:20.948] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 29.751,
+              "before_line": 4501,
+              "after_line": 4504,
+              "before": "[2026-10-13 03:35:20.948] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:35:50.699] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.548,
+              "before_line": 4504,
+              "after_line": 4505,
+              "before": "[2026-10-13 03:35:50.699] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:35:59.247] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 38.094,
+              "before_line": 4505,
+              "after_line": 4508,
+              "before": "[2026-10-13 03:35:59.247] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:36:37.341] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 11.158,
+              "before_line": 4523,
+              "after_line": 4526,
+              "before": "[2026-10-13 03:36:38.258] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:36:49.416] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.676,
+              "before_line": 4533,
+              "after_line": 4534,
+              "before": "[2026-10-13 03:36:49.769] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:36:58.445] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 10.323,
+              "before_line": 4540,
+              "after_line": 4541,
+              "before": "[2026-10-13 03:37:05.005] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:37:15.328] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 20.584,
+              "before_line": 4550,
+              "after_line": 4553,
+              "before": "[2026-10-13 03:37:15.543] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:37:36.127] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 12.973,
+              "before_line": 4591,
+              "after_line": 4592,
+              "before": "[2026-10-13 03:37:52.757] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:38:05.730] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 15.412,
+              "before_line": 4592,
+              "after_line": 4595,
+              "before": "[2026-10-13 03:38:05.730] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:38:21.142] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.971,
+              "before_line": 4609,
+              "after_line": 4610,
+              "before": "[2026-10-13 03:38:21.441] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:38:30.412] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 37.826,
+              "before_line": 4610,
+              "after_line": 4613,
+              "before": "[2026-10-13 03:38:30.412] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:39:08.238] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 32.858,
+              "before_line": 4614,
+              "after_line": 4617,
+              "before": "[2026-10-13 03:39:13.529] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:39:46.387] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 18.331,
+              "before_line": 4617,
+              "after_line": 4620,
+              "before": "[2026-10-13 03:39:46.387] [DEBUG] \tReading Car_Compact.txt",
+              "after": "[2026-10-13 03:40:04.718] [DEBUG] \tReading player.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            },
+            {
+              "seconds": 8.987,
+              "before_line": 4644,
+              "after_line": 4647,
+              "before": "[2026-10-13 03:40:11.477] [DEBUG] \tReading player.txt",
+              "after": "[2026-10-13 03:40:20.464] [DEBUG] \tReading Car_Compact.txt",
+              "scope": "interval_between_logged_markers_not_isolated_CPU_measurement"
+            }
+          ],
+          "native_texture_header_lines": [],
+          "Cg_program_load_log_rows": 0,
+          "Cg_log_interpretation": "The native Compiled Cg/CgFX Shader log is emitted for both cached CG_OBJECT loading and CG_SOURCE compilation. These rows do not identify cache hits/misses, compilation mode, or recompilation count.",
+          "Cg_compile_or_object_load_mode": "unproven_by_this_report"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "No APK or player database was modified.",
+    "Selected SQL failed-after snapshots do not include map/position; latest native logout location is Atlas, but final PostgreSQL location is not present in these archives. Reopen must query current authoritative saved location.",
+    "A failed strict acceptance predicate does not prove that native character saving failed.",
+    "Cached preparation and native startup are separate measurements; nested or overlapping durations must not be added as independent wall time.",
+    "No controlled thermal/FPS/whole-session peak-memory comparison is available.",
+    "The 249 Compiled Cg/CgFX Shader program-load log rows per client startup do not prove fresh compilation or cache misses; native cached CG_OBJECT and CG_SOURCE paths emit the same text."
+  ],
+  "cross_session_findings": {
+    "first_after_snapshot_matches_second_baseline": true,
+    "Kings_preparation_cold_seconds": 311.215666,
+    "Kings_preparation_validated_warm_seconds": 21.07263,
+    "Kings_native_console_seconds": [
+      256.832703,
+      309.83783
+    ],
+    "Game_startup_seconds": [
+      202.935,
+      263.847
+    ],
+    "native_durations_worsened_on_second_run": true,
+    "worsening_cause": "Not isolated by these reports; CPU contention/temperature/scheduling are hypotheses only.",
+    "native_Atlas_final_logout_location": {
+      "map_id": 1,
+      "position": [
+        706.34375,
+        58.0,
+        -1416.796875
+      ],
+      "logged_at_utc": "2026-10-13T03:43:45+00:00",
+      "postgres_final_location_available": false
+    },
+    "save_checker_issues": [
+      "First failure rejects sole addition of native day-job temporary movement power while all prior power semantic fields are preserved.",
+      "Second failure rejects gained experience20\u219245 and influence17\u219234; temporary day-job power has expired/been removed, leaving original seven power rows.",
+      "Strict exceptions prevent downstream save evidence flags from being populated; false booleans are incomplete observations, not contradictory proof that logout did not occur."
+    ],
+    "next_destination_policy": "Expect Atlas from latest native logout evidence; query PostgreSQL before startup and never force Atlas/Kings.",
+    "Kings_preparation_observed_interval_difference_seconds": 290.143036,
+    "Kings_preparation_comparison_scope": {
+      "field": "guest.map_startup_observation.5.preparation_elapsed_seconds",
+      "same_reported_interval_field": true,
+      "first_status": "cold first full staging",
+      "second_status": "validated warm reuse",
+      "interpretation": "The second observed preparation interval was 290.143036 seconds shorter. This is a cold-versus-reused device observation, not an isolated benchmark or a controlled release comparison."
+    },
+    "native_duration_comparison_scope": {
+      "Kings": "Native Server ready took console interval in both runs;309.837830 versus256.832703 seconds.",
+      "Game": "guest.client_independent_startup_elapsed_seconds in both runs;263.847 versus202.935 seconds.",
+      "claim_limit": "Observed second-run intervals are longer; this does not establish why, an isolated CPU slowdown, or a controlled release regression."
+    }
+  }
+}

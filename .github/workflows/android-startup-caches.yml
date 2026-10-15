@@ -1,0 +1,218 @@
+name: Thor exact server caches and stable startup reuse
+on:
+  # 0.12.1 is already immutable and publicly verified. Host-only evidence
+  # corrections use android-startup-cache-evidence.yml without another build.
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-startup-caches-publication
+  cancel-in-progress: false
+jobs:
+  observer:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-contact-interaction-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37071344940
+          github-token: ${{ github.token }}
+      - name: Recover exact published 0.12.0 donor
+        run: python3 tools/android/interactive/build_startup_caches_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.12.0.apk
+      - name: Qualify startup reuse and retained persistence/contact guards
+        run: >-
+          python3 tools/android/interactive/qualify_startup_caches.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.12.0.apk
+          --donor-build-report out/donor-evidence/contact-interaction-apk-build-report.json
+          --output out/startup-caches-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-startup-caches-observer-evidence
+          path: out/startup-caches-qualification.json
+          if-no-files-found: error
+  runtime-archives:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Recover exact published runtime lock
+        run: python3 tools/android/interactive/build_startup_caches_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.12.0.apk
+      - name: Require real base and Wine extraction with preserved timestamps
+        run: >-
+          python3 tools/android/interactive/qualify_runtime_timestamps.py
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.12.0.apk
+          --repository-commit "$GITHUB_SHA" --work out/runtime-timestamp-work
+          --output out/runtime-timestamps-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-runtime-timestamp-evidence
+          path: out/runtime-timestamps-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  server-caches:
+    # Required to READ the existing reviewed unpublished draft asset bundle;
+    # this job never publishes and checkout never persists its credential.
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-contact-interaction-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37071344940
+          github-token: ${{ github.token }}
+      - name: Recover exact published 0.12.0 donor
+        run: python3 tools/android/interactive/build_startup_caches_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.12.0.apk
+      - name: Install native x86 cache qualification tools
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends wine wine32:i386 wine64 gcc-mingw-w64-i686 strace xvfb xauth
+      - name: Fetch exact reviewed asset inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/reviewed-assets.zip --release-asset-id 588984151
+      - name: Generate and prove exact MapServer cache consumption
+        run: >-
+          xvfb-run -a python3 tools/android/atlasgame/prepare_server_caches.py
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.12.0.apk
+          --donor-build-report out/donor-evidence/contact-interaction-apk-build-report.json
+          --asset-archive out/reviewed-assets.zip
+          --work out/server-cache-work --output out/server-caches
+          --repository-commit "$GITHUB_SHA" --timeout-seconds 1800
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-prepared-server-caches
+          path: out/server-caches/
+          if-no-files-found: warn
+          compression-level: 6
+          retention-days: 90
+
+  apk:
+    needs: [observer, server-caches, runtime-archives]
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-contact-interaction-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37071344940
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-caches-observer-evidence
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-runtime-timestamp-evidence
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-prepared-server-caches
+          path: out/server-caches
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover exact published 0.12.0 donor
+        run: python3 tools/android/interactive/build_startup_caches_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.12.0.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build qualified retained-signer startup update
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_startup_caches_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.12.0.apk
+          --donor-build-report out/donor-evidence/contact-interaction-apk-build-report.json
+          --qualification out/startup-caches-qualification.json
+          --server-caches out/server-caches --runtime-timestamps out/runtime-timestamps-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/startup-caches/COH-Atlas-Gameplay-0.12.1.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-startup-caches-packaging-evidence
+          path: |
+            out/startup-caches/startup-caches-apk-build-report.json
+            out/startup-caches/COH-Atlas-Gameplay-0.12.1-testing.txt
+            out/startup-caches/COH-Atlas-Gameplay-0.12.1.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-startup-caches-apk
+          path: out/startup-caches/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only qualified new 0.12.1 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_startup_caches_apk.py publish
+          --apk out/startup-caches/COH-Atlas-Gameplay-0.12.1.apk
+          --build-report out/startup-caches/startup-caches-apk-build-report.json
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.12.0.apk
+          --donor-build-report out/donor-evidence/contact-interaction-apk-build-report.json
+          --server-caches out/server-caches --runtime-timestamps out/runtime-timestamps-qualification.json
+          --qualification out/startup-caches-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

@@ -1,0 +1,12 @@
+{
+  "version": "0.13.33",
+  "version_code": 48,
+  "donor_version": "0.13.32",
+  "donor_commit": "6c4d1d74f34ecdea8fabcf6238368bf72003878f",
+  "asset_version": "1.0.0",
+  "publish_enabled": true,
+  "qualification_enabled": true,
+  "publication_attempt": "recoverable-reports-preparation-pinned-parser-fixture-3",
+  "native_rebuild_required": false,
+  "asset_rebuild_required": false
+}

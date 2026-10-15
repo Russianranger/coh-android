@@ -1,0 +1,48 @@
+{
+  "format": 1,
+  "run_id": 38480106638,
+  "job_id": 115582354482,
+  "source_commit": "365c6f967c351b3f2ba0b2ea408e10d139bfc2a5",
+  "status": "failed",
+  "world_qualification_report": {
+    "bytes": 18585,
+    "sha256": "d1f3889c97805f32fea5316ae8c3c366d8829a9b5da3ff599988aa97f37cf8ee"
+  },
+  "actual_completed_native_world_cases": 0,
+  "failure": [
+    "ValueError: TestClient console observer failed: Console process list exceeded verification bound"
+  ],
+  "owned_cleanup_verified": true,
+  "failed_case": "Atlas_map1_SERVER_only_stock_generation",
+  "native_warm_cases_attempted": 0,
+  "BIN_delta_counts": {
+    "added": 0,
+    "removed": 0,
+    "changed": 0
+  },
+  "provider_unchanged": true,
+  "original_artifacts": {
+    "11858826303": {
+      "bytes": 40531,
+      "sha256": "c51848a2b71c354abb73a948b4993afea331cc903994a2d8eca4d8303d8ad027"
+    },
+    "11858476334": {
+      "bytes": 8671,
+      "sha256": "53a119082cdd6e368ef383766902d373aa600bb3a4d560ab566952d167f1f5a1"
+    }
+  },
+  "correction": "qualifier-only Windows Popen CREATE_NEW_CONSOLE with retained native handle/file-backed outputs; ConsoleCapture32-peer bound unchanged",
+  "successful_preparation_reused": {
+    "original_run_id": 38477608206,
+    "original_successful_job_id": 115572069249,
+    "original_artifact_id": 11856696807,
+    "zip_bytes": 2070662208,
+    "zip_sha256": "d61ba32c646bd3f8815a92759abba737e997a3b9de489d26126bf3015f1e6d2c"
+  },
+  "native_rebuild_performed": false,
+  "Linux_provider_preparation_reexecuted": false,
+  "initialization_geometry_parity_proven": false,
+  "behavioral_collision_proven": false,
+  "physical_device_executed": false,
+  "shipping_allowed": false
+}

@@ -1,0 +1,53 @@
+{
+  "role": "controlled_guest_private_file_and_actual_JVM_TCP_handoff_controls",
+  "source_pre": {
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java": {
+      "bytes": 16096,
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0"
+    },
+    "tools/android/interactive/test_client_live_directory_service.py": {
+      "bytes": 24329,
+      "sha256": "5ffeb08e28d35441c73e2478f897207df8870cb05384a72b14403468e8252cad"
+    },
+    "android/guest/client_live_directory_control.py": {
+      "bytes": 12695,
+      "sha256": "4c47133a4dc80b39e50c6adf0c62bbb78f9bc91dadd4f76b7bdffb680bde7edf"
+    },
+    "tools/android/interactive/test_client_live_directory_control.py": {
+      "bytes": 16947,
+      "sha256": "d15da9bd26a34f8afbb0c7aa77dfe9793dfa48d90209a6681104705a62b05fa4"
+    }
+  },
+  "source_post": {
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java": {
+      "bytes": 16096,
+      "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0"
+    },
+    "tools/android/interactive/test_client_live_directory_service.py": {
+      "bytes": 24329,
+      "sha256": "5ffeb08e28d35441c73e2478f897207df8870cb05384a72b14403468e8252cad"
+    },
+    "android/guest/client_live_directory_control.py": {
+      "bytes": 12695,
+      "sha256": "4c47133a4dc80b39e50c6adf0c62bbb78f9bc91dadd4f76b7bdffb680bde7edf"
+    },
+    "tools/android/interactive/test_client_live_directory_control.py": {
+      "bytes": 16947,
+      "sha256": "d15da9bd26a34f8afbb0c7aa77dfe9793dfa48d90209a6681104705a62b05fa4"
+    }
+  },
+  "source_unchanged": true,
+  "guest_private_file_cases": 32,
+  "actual_JVM_TCP_cases": 71,
+  "total": 103,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "elapsed_host_seconds": 16.253796308003075,
+  "ResourceWarning_error": true,
+  "typed_mock_fixture_producer_and_Backend": true,
+  "actual_Android_JNI_PRoot_Wine_FEX_Game_SQL": false,
+  "production": false,
+  "default_authority_absent": true,
+  "no_current_native_source_fixture_qualification_from_config": true
+}

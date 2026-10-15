@@ -1,0 +1,339 @@
+name: Thor versioned assets and Kings Row monorail
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths: [tools/android/interactive/release-client-assets-0.13.28.json]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-assets-publication
+  cancel-in-progress: false
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      required: ${{ steps.gate.outputs.required }}
+      native_run_id: ${{ steps.gate.outputs.native_run_id }}
+      native_commit: ${{ steps.gate.outputs.native_commit }}
+      resource_run_id: ${{ steps.gate.outputs.resource_run_id }}
+      resource_commit: ${{ steps.gate.outputs.resource_commit }}
+      generator_run_id: ${{ steps.gate.outputs.generator_run_id }}
+      generator_commit: ${{ steps.gate.outputs.generator_commit }}
+      beacon_run_id: ${{ steps.gate.outputs.beacon_run_id }}
+      beacon_commit: ${{ steps.gate.outputs.beacon_commit }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - id: gate
+        name: Preserve completed publication and explicit reusable artifact owners
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: >-
+          python3 tools/android/interactive/client_assets_reuse.py gate
+          --marker tools/android/interactive/release-client-assets-0.13.28.json
+          --commit "$GITHUB_SHA" --output out/client-assets-reuse.json
+      - uses: actions/upload-artifact@v4
+        with: {name: coh-client-assets-reuse, path: out/client-assets-reuse.json, retention-days: 90, if-no-files-found: error}
+  resources:
+    needs: changes
+    if: needs.changes.outputs.required == 'true' && needs.changes.outputs.resource_run_id == ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions: {contents: write, actions: read}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Reuse exact accepted public .27 donor
+        run: python3 tools/android/interactive/build_client_assets_apk.py download-donor --output out/resources/donor.apk
+      - name: Fetch authenticated original reference assets
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/resources/reference.zip --release-asset-id 588984151
+      - name: Audit frozen source resources and assemble complete missing zone visuals and audio
+        run: python3 tools/android/interactive/prepare_zones_world_assets.py --metadata-cache out/zone-metadata --payload-cache out/zone-payloads --output out/zones --workers 8
+      - name: Complete original audio from all fifteen standalone sound archives
+        run: python3 tools/android/interactive/prepare_zones_audio_assets.py --metadata-cache out/zone-metadata --payload-cache out/audio-payloads --output out/audio --workers 8
+      - name: Audit every named zone source graph against the original resource inventory
+        run: python3 tools/android/interactive/audit_zone_asset_coverage.py --metadata-cache out/zone-metadata --output out/zones/zone-asset-coverage.json
+      - name: Stage exact zone inputs
+        run: |
+          cp out/zones/zones-world-supplement.zip out/resources/
+          cp out/zones/zones-world-supplement-manifest.json out/resources/
+          cp out/zones/zones-world-supplement-provenance.json out/resources/
+          cp out/zones/zone-asset-coverage.json out/resources/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-assets-resource-inputs
+          path: out/resources/
+          compression-level: 0
+          retention-days: 90
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-assets-audio-inputs
+          path: out/audio/
+          compression-level: 0
+          retention-days: 90
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-assets-world-audit
+          path: |
+            out/zones/zones-world-plan.json
+            out/zones/zone-asset-coverage.json
+            out/zones/zones-world-supplement-provenance.json
+            out/audio/zones-audio-supplement-provenance.json
+            out/audio/zones-audio-supplement-manifest.json
+            out/zones/zones-world-supplement-manifest.json
+          retention-days: 90
+          if-no-files-found: error
+  native:
+    needs: [changes, resources]
+    if: always() && needs.changes.outputs.required == 'true' && (needs.changes.outputs.native_run_id == '' || needs.changes.outputs.beacon_run_id == '') && (needs.resources.result == 'success' || needs.changes.outputs.resource_run_id != '')
+    uses: ./.github/workflows/android-kings-row-native.yml
+    with:
+      resource_artifact: coh-assets-resource-inputs
+      resource_run_id: ${{ needs.changes.outputs.resource_run_id }}
+      native_run_id: ${{ needs.changes.outputs.native_run_id }}
+      generator_run_id: ${{ needs.changes.outputs.generator_run_id }}
+      generator_commit: ${{ needs.changes.outputs.generator_commit }}
+      beacon_run_id: ${{ needs.changes.outputs.beacon_run_id }}
+    permissions: {contents: read, actions: read}
+  apk:
+    needs: [changes, resources, native]
+    if: always() && needs.changes.outputs.required == 'true' && (needs.native.result == 'success' || (needs.changes.outputs.native_run_id != '' && needs.changes.outputs.beacon_run_id != '')) && (needs.resources.result == 'success' || needs.changes.outputs.resource_run_id != '')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions: {contents: write, actions: read}
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false, fetch-depth: 2}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: SDK and required host PostgreSQL and Vulkan fixtures
+        run: |
+          timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends postgresql-16 postgresql-client-16 libvulkan-dev mesa-vulkan-drivers
+          sudo pg_ctlcluster 16 main start || /usr/lib/postgresql/16/bin/pg_isready --host "$PGHOST" --port "$PGPORT"
+          sudo -u postgres psql --no-psqlrc --dbname postgres --set ON_ERROR_STOP=1 --command "ALTER ROLE postgres WITH LOGIN PASSWORD 'coh-host-fixture'"
+          sudo -u postgres createdb --owner postgres coh_test_startup_bundle
+          test "$(psql --no-psqlrc --set ON_ERROR_STOP=1 --tuples-only --no-align --command "SELECT current_user = 'postgres' AND current_database() = 'coh_test_startup_bundle' AND current_setting('server_version_num')::integer / 10000 = 16")" = t
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-assets-resource-inputs
+          path: out/resources
+          run-id: ${{ needs.changes.outputs.resource_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-assets-audio-inputs
+          path: out/resources
+          run-id: ${{ needs.changes.outputs.resource_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-monorail-native
+          path: out/monorail
+          run-id: ${{ needs.changes.outputs.native_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-kings-row-beacons
+          path: out/beacons
+          run-id: ${{ needs.changes.outputs.beacon_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify shipping MapServer owner and completed beacon source independently
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, 'tools/android/interactive')
+          import package_monorail_native as native
+          import generate_kings_row_beacons as beacons
+          receipt = native.validate_package('out/monorail', '${{ needs.changes.outputs.native_commit }}')
+          assert receipt['run_url'] == 'https://github.com/${{ github.repository }}/actions/runs/${{ needs.changes.outputs.native_run_id || github.run_id }}'
+          beacons.validate_package('out/beacons', '${{ needs.changes.outputs.beacon_commit }}')
+          PY
+      - name: Authenticate completed .27 evidence and original unchanged Game proof
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          python3 tools/android/interactive/build_client_assets_apk.py download-donor-evidence --output out/donor-evidence
+          python3 tools/android/interactive/build_client_assets_apk.py download-retained-native --output out/retained-game
+      - name: Create separately versioned Base, Reference, Zones and Audio asset volumes
+        run: >-
+          python3 tools/android/interactive/build_client_assets_apk.py prepare-assets
+          --donor-apk out/resources/donor.apk --donor-build-report out/donor-evidence/client-recovery-apk-build-report.json
+          --reference-archive out/resources/reference.zip --zones-directory out/resources --beacons-directory out/beacons --output out/asset-pack
+      - name: Retain every previous regression suite and seven PostgreSQL fixtures; qualify new assets and monorail
+        run: >-
+          python3 tools/android/interactive/qualify_client_assets.py
+          --repository-commit "$GITHUB_SHA" --native-commit "${{ needs.changes.outputs.native_commit }}"
+          --donor-apk out/resources/donor.apk --donor-build-report out/donor-evidence/client-recovery-apk-build-report.json
+          --retained-client-directory out/retained-game --asset-directory out/asset-pack --monorail-directory out/monorail
+          --output out/client-assets-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: coh-client-assets-qualification, path: out/client-assets-qualification.json, if-no-files-found: error, retention-days: 90}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Compile small launcher over unchanged accepted Game and reviewed MapServer
+        env: {COH_INTERACTIVE_KEYSTORE_PASSWORD: android}
+        run: >-
+          python3 tools/android/interactive/build_client_assets_apk.py build
+          --repository-commit "$GITHUB_SHA" --native-commit "${{ needs.changes.outputs.native_commit }}"
+          --donor-apk out/resources/donor.apk --donor-build-report out/donor-evidence/client-recovery-apk-build-report.json
+          --retained-client-directory out/retained-game --asset-directory out/asset-pack --monorail-directory out/monorail
+          --qualification out/client-assets-qualification.json --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/client-assets-apk/COH-Atlas-Gameplay-0.13.28.apk
+      - name: Preserve unaccepted APK and flat packaging diagnostics before the fresh process audit
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json, os, shutil
+          from pathlib import Path
+          output = Path('out/unaccepted-package-diagnostics')
+          output.mkdir(parents=True, exist_ok=True)
+          sources = [
+            Path('out/client-assets-apk') / name for name in (
+              'COH-Atlas-Gameplay-0.13.28.apk', 'client-assets-apk-build-report.json',
+              'COH-Atlas-Gameplay-0.13.28-testing.txt', 'COH-Atlas-Gameplay-0.13.28.apk.sha256')]
+          sources += [Path('out/asset-pack') / name for name in (
+            'asset-pack-manifest.json', 'asset-pack-build-report.json', 'kings-row-beacon-lock.json',
+            'COH-Assets-1.0.0-Base.zip.sha256', 'COH-Assets-1.0.0-Reference.zip.sha256',
+            'COH-Assets-1.0.0-Zones.zip.sha256', 'COH-Assets-1.0.0-Audio.zip.sha256')]
+          sources += [Path('out/client-assets-qualification.json')]
+          retained, missing = [], []
+          for source in sources:
+            if source.is_file() and not source.is_symlink():
+              shutil.copyfile(source, output / source.name)
+              retained.append(source.name)
+            else:
+              missing.append(str(source))
+          (output / 'UNACCEPTED.txt').write_text(
+            'DIAGNOSTIC CANDIDATES ONLY. These bytes are retained before the independent fresh-process audit. '
+            'Embedded reports do not certify that audit or authorize release publication. '
+            'Use only the separately qualified accepted artifacts and public-byte audit as release evidence.\n')
+          (output / 'diagnostic-retention.json').write_text(json.dumps({
+            'status': 'unaccepted_diagnostic_candidate', 'repository_commit': os.environ['GITHUB_SHA'],
+            'run_id': os.environ['GITHUB_RUN_ID'], 'fresh_process_audit_accepted': False,
+            'publication_authorized': False, 'retained_files': retained, 'missing_files': missing}, indent=2) + '\n')
+          PY
+      - name: Retain unaccepted diagnostic candidates independently of publication gates
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-assets-unaccepted-diagnostics
+          path: out/unaccepted-package-diagnostics/
+          compression-level: 0
+          retention-days: 90
+          if-no-files-found: error
+      - name: Fresh process SDK signer and complete payload audit
+        env: {PYTHONHASHSEED: '73422'}
+        run: >-
+          python3 tools/android/interactive/build_client_assets_apk.py audit
+          --repository-commit "$GITHUB_SHA" --native-commit "${{ needs.changes.outputs.native_commit }}"
+          --donor-apk out/resources/donor.apk --donor-build-report out/donor-evidence/client-recovery-apk-build-report.json
+          --retained-client-directory out/retained-game --asset-directory out/asset-pack --monorail-directory out/monorail
+          --qualification out/client-assets-qualification.json --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --apk out/client-assets-apk/COH-Atlas-Gameplay-0.13.28.apk --build-report out/client-assets-apk/client-assets-apk-build-report.json
+      - uses: actions/upload-artifact@v4
+        with: {name: coh-client-assets-apk, path: out/client-assets-apk/, compression-level: 0, retention-days: 90, if-no-files-found: error}
+      - name: Stage flat packaging evidence for the independent public audit
+        run: |
+          mkdir out/packaging-evidence
+          cp out/client-assets-apk/client-assets-apk-build-report.json out/packaging-evidence/
+          cp out/client-assets-apk/COH-Atlas-Gameplay-0.13.28-testing.txt out/packaging-evidence/
+          cp out/client-assets-apk/COH-Atlas-Gameplay-0.13.28.apk.sha256 out/packaging-evidence/
+          cp out/asset-pack/asset-pack-manifest.json out/packaging-evidence/
+          cp out/asset-pack/asset-pack-build-report.json out/packaging-evidence/
+          cp out/asset-pack/kings-row-beacon-lock.json out/packaging-evidence/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-assets-packaging-evidence
+          path: out/packaging-evidence/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Publish independent versioned assets and then the qualified small APK
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: >-
+          python3 tools/android/interactive/build_client_assets_apk.py publish
+          --repository-commit "$GITHUB_SHA" --native-commit "${{ needs.changes.outputs.native_commit }}"
+          --donor-apk out/resources/donor.apk --donor-build-report out/donor-evidence/client-recovery-apk-build-report.json
+          --retained-client-directory out/retained-game --asset-directory out/asset-pack --monorail-directory out/monorail
+          --qualification out/client-assets-qualification.json --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --apk out/client-assets-apk/COH-Atlas-Gameplay-0.13.28.apk --build-report out/client-assets-apk/client-assets-apk-build-report.json
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
+  public-audit:
+    needs: [changes, apk]
+    if: always() && needs.changes.result == 'success' && needs.apk.result == 'success' && needs.changes.outputs.required == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: SDK tools
+        run: timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - uses: actions/download-artifact@v4
+        with: {name: coh-client-assets-packaging-evidence, path: out/public}
+      - uses: actions/download-artifact@v4
+        with: {name: coh-client-assets-qualification, path: out}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-monorail-native
+          path: out/monorail
+          run-id: ${{ needs.changes.outputs.native_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - name: Authenticate unchanged donor and original native Game proof
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          python3 tools/android/interactive/build_client_assets_apk.py download-donor-evidence --output out/donor-evidence
+          python3 tools/android/interactive/build_client_assets_apk.py download-retained-native --output out/retained-game
+          python3 tools/android/interactive/build_client_assets_apk.py download-donor --output out/donor.apk
+      - name: Download actual published APK and all independent asset volumes
+        run: |
+          python3 tools/android/interactive/build_client_assets_apk.py download-public --build-report out/public/client-assets-apk-build-report.json --output out/public-apk
+          python3 tools/android/interactive/build_client_assets_apk.py download-public-assets --build-report out/public/asset-pack-build-report.json --manifest out/public/asset-pack-manifest.json --lock out/public/kings-row-beacon-lock.json --output out/public-assets
+      - name: Independently verify public payloads, native source boundaries, SDK signer, asset hashes and inventories
+        env: {PYTHONHASHSEED: '2022'}
+        run: >-
+          python3 tools/android/interactive/build_client_assets_apk.py audit
+          --repository-commit "$GITHUB_SHA" --native-commit "${{ needs.changes.outputs.native_commit }}"
+          --donor-apk out/donor.apk --donor-build-report out/donor-evidence/client-recovery-apk-build-report.json
+          --retained-client-directory out/retained-game --asset-directory out/public-assets --monorail-directory out/monorail
+          --qualification out/client-assets-qualification.json --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --apk out/public-apk/COH-Atlas-Gameplay-0.13.28.apk --build-report out/public/client-assets-apk-build-report.json
+      - name: Record public byte qualification without physical performance claims
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          apk=json.loads(Path('out/public/client-assets-apk-build-report.json').read_text())
+          assets=json.loads(Path('out/public/asset-pack-build-report.json').read_text())
+          Path('out/client-assets-public-byte-audit.json').write_text(json.dumps({'format':1,'status':'passed',
+            'repository_commit':apk['repository_commit'],'apk':{k:apk[k] for k in ('bytes','sha256','version_name','version_code')},
+            'asset_pack':assets,'public_apk_verified':True,'all_public_asset_volumes_verified':True,
+            'physical_kings_row_zoning_validated':False,'physical_preparation_speedup_validated':False,'physical_fps_gain_validated':False},indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with: {name: coh-client-assets-public-byte-audit, path: out/client-assets-public-byte-audit.json, retention-days: 90, if-no-files-found: error}

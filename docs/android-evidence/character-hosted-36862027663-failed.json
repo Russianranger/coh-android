@@ -1,0 +1,107 @@
+{
+  "format": 1,
+  "gate": "immutable_apk_graphical_character_qualification",
+  "status": "failed",
+  "run_id": 36862027663,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36862027663",
+  "runtime_job_id": 110368882267,
+  "repository_commit": "19879ed57eb74d4e55aa42c5160c8c539ff5bb6d",
+  "external_driver_commit": "bc4d750deab00f0fdbbd084b32b563aa3abdddce",
+  "apk_sha256": "1da4719cf7af825092199c73067fb5fd3423fcaa8543a37d366ad1a0557ed681",
+  "runtime_manifest_sha256": "a65595bcabe5ede2431df72a6d2a089495eae9dfaae2076a38eb06e1c55916c0",
+  "session_id": "d95b10bb46a0f97e328a8c62c1b8f85c",
+  "elapsed_seconds": 1496.319,
+  "host_failure": {
+    "type": "ValueError",
+    "message": "Host character login exceeded 180-second stage bound before fresh character-list proof"
+  },
+  "guest_failures": [
+    "Cancellation requested"
+  ],
+  "input_identity_verified": {
+    "format": 1,
+    "scope": "immutable_apk_graphical_character_qualification",
+    "workflow_commit": "bc4d750deab00f0fdbbd084b32b563aa3abdddce",
+    "driver_repository_commit": "bc4d750deab00f0fdbbd084b32b563aa3abdddce",
+    "repository_commit": "19879ed57eb74d4e55aa42c5160c8c539ff5bb6d",
+    "apk_source_repository_commit": "19879ed57eb74d4e55aa42c5160c8c539ff5bb6d",
+    "apk_donor_run_id": 36855035567,
+    "apk_artifact_id": 11159086092,
+    "apk_artifact_sha256": "02f7ae93328753a5369bc7a48254c78cae721fc4cc94226efe6e715de534e165",
+    "apk_sha256": "1da4719cf7af825092199c73067fb5fd3423fcaa8543a37d366ad1a0557ed681",
+    "apk_bytes": 386658292,
+    "build_report_sha256": "db5281c5d925fb5862851a38579fd51ace49dfab4df984283c488b6b82471000",
+    "build_report_bytes": 35029,
+    "donor_apk_job_verified_successful": true,
+    "startup_timeout_seconds": 900,
+    "interaction_timeout_seconds": 1200,
+    "overall_timeout_seconds": 5400,
+    "apk_rebuilt": false,
+    "caches_regenerated": false,
+    "apk_file_pins_verified": true
+  },
+  "failure_review": {
+    "finding": "Host typing lost the initial C: retained account field reads OHLOCAL before submission. Empty character selection was displayed, but exact COHLOCAL protocol/account proof did not arrive and the 180-second login-stage guard stopped the run.",
+    "native_atlas_policy_exercised": false,
+    "character_creation_exercised": false,
+    "cause_scope": "First-letter loss is observed. Source permits loss during the focus-gained frame or treating C as Ctrl+C if modifier sampling remains stale; exact runtime cause is not recorded.",
+    "next_host_correction": "Separate focus and Ctrl-release from typing by fresh frames, lengthen key settles and require whole-field COHLOCAL OCR before submission, with at most three bounded replacement attempts. No APK payload changes."
+  },
+  "character_proof": {
+    "verified": false,
+    "connected_on_atlas": false,
+    "committed_sql_verified": false,
+    "requested_logout_observed": false,
+    "logout_timer_observed": false,
+    "disconnected_before_sql": false,
+    "forced_stop_before_save": false,
+    "reopen_verified": false,
+    "gameplay_verified": false
+  },
+  "cleanup": {
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "owned_workers_remaining": 0,
+    "inspection_failures": 0,
+    "host_cleanup": {
+      "stop_requested": true,
+      "grace_seconds": 180,
+      "forced_quit": false,
+      "forced_kill": false,
+      "errors": [],
+      "process_reaped": true
+    },
+    "database_preserved": true
+  },
+  "evidence": {
+    "runtime_artifact_id": 11163114818,
+    "runtime_artifact_bytes": 34945967,
+    "runtime_artifact_sha256": "72a815bdfe7d392a81910e1551d98e103f94cfadb491ec2728ea5b612d2314bb",
+    "files": {
+      "host-client-report.json": {
+        "bytes": 47369,
+        "sha256": "67899aba99dc6b40e3199936d795ff8178b25155e2c00284ae5739568c747f4b"
+      },
+      "latest-report.json": {
+        "bytes": 113921,
+        "sha256": "30448232c70c065737816b46264950e4d9f8914220422c07ce2af332543b926d"
+      },
+      "report.zip": {
+        "bytes": 2721495,
+        "sha256": "dfcd7c7111172760333cc62415ac86bda28f4c4f007dccdce52f88c75ce355ea"
+      },
+      "character-09-before-submit_local_login.png": {
+        "bytes": 962964,
+        "sha256": "4df29fef28d26486a47d5074d1d88220a34c4a70c7e9f64d4c9e2ba6157828e4"
+      },
+      "client-frame-067.png": {
+        "bytes": 412462,
+        "sha256": "c9ad980bac40812012760c7cfa33a0d9aff7200038d8d091901ae42313527975"
+      }
+    }
+  }
+}

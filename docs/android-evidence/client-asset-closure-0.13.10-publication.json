@@ -1,0 +1,1988 @@
+{
+  "actual_server_archive_extraction_verified": true,
+  "added_apk_payloads": [],
+  "all_three_postgresql_regression_fixtures_passed": true,
+  "android_resources_retained_exactly": true,
+  "animation_original_bodies_and_cached_native_headers_verified": true,
+  "apk_job_conclusion": "success",
+  "apk_job_id": 111574943484,
+  "asset_reimport_required": false,
+  "audited_at_utc": "2026-10-05T01:08:46.464279+00:00",
+  "authored_java_sources_retained_exactly": 19,
+  "branch": "codex/character-persistence-continuation",
+  "build_receipt": {
+    "bytes": 46029749,
+    "sha256": "11f3420fe7b278851b25e91726114af0cbcdcb5fc3a33f6fe6eb3b826681deb1"
+  },
+  "changed_java_sources": [],
+  "client_dlls_retained_exactly": 20,
+  "client_manifest_members": 56,
+  "format": 1,
+  "frozen_cache_schema_and_native_lineage_verified": true,
+  "full_global_visual_asset_closure": false,
+  "hosted_dependency_discovery": {
+    "artifact_bytes": 880198,
+    "artifact_id": 11321025042,
+    "artifact_sha256": "40e1fb3b8fe1cf1e64c609b7bcdc9430a8e64b81ba4f6b2ce62a9d9bbdd8b936",
+    "exact_unresolved_new_names": 24,
+    "model_proofs": 412,
+    "plan_byte_identical_to_recovered_final_v3": true,
+    "plan_bytes": 16725338,
+    "plan_sha256": "5be2a54df9d55bd840bb738c6be6b6641e542854777d4ea4ab93f86f6dfdda2b",
+    "source_pins": 888,
+    "status": "passed",
+    "tests_run": 34,
+    "workflow_run_id": 37249488857
+  },
+  "java_or_dex_recompiled": false,
+  "local_official_sdk_or_signature_reverification_performed": false,
+  "local_sdk_limitation": "Official SDK tools unavailable locally; successful official CI build step and source-bound build receipt are linked to the independently downloaded exact public APK SHA-256.",
+  "native_client_compiled_in_current_run": false,
+  "native_client_package_reused": true,
+  "native_client_recompiled": false,
+  "native_client_zip_members": 22,
+  "native_dbserver": {
+    "android_execution_validated": false,
+    "architecture": "Win32",
+    "base_normal_cmake_cache_sha256": "2fc504f7aed9a5df2a1b29bbcdc7eb73b89e23c8ec3c6eb2cf0c059993d1f5e5",
+    "base_normal_executable": {
+      "bytes": 1661440,
+      "delay_imports": [],
+      "imports": [
+        "ADVAPI32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "ODBC32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "pe_machine": 332,
+      "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+    },
+    "base_package_archive_changed": false,
+    "base_package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+    "base_startup_executable": {
+      "bytes": 1663488,
+      "sha256": "539afab70c6d57aef4b2230e607e218c7a77d31de7ad10ad89f0253f5c1a09d3"
+    },
+    "build_input": {
+      "architecture": "Win32",
+      "base_wine_build_input": {
+        "build_role": "wine_dbserver",
+        "compile_definitions": {
+          "DbServer": [
+            "COH_WINE_ODBC=1"
+          ]
+        },
+        "dispatch_progress": {
+          "byte_order": "little",
+          "disabled_by_default": true,
+          "environment_variable": "COH_WINE_DB_PROGRESS",
+          "file_creation": "new_absolute_drive_path_private_parent_required",
+          "flags": {
+            "1": "sequence_saturated_samples_unavailable"
+          },
+          "format": 1,
+          "initialization_failure": "requested_normal_launch_exits_nonzero",
+          "magic_hex": "434f484442503100",
+          "mapping_bytes": 4096,
+          "offsets": {
+            "flags": 36,
+            "format": 8,
+            "loop_count": 32,
+            "magic": 0,
+            "main_thread_id": 20,
+            "process_id": 16,
+            "record_bytes": 12,
+            "reserved": 44,
+            "sequence": 24,
+            "stage": 28,
+            "stage_count": 40
+          },
+          "proves_sql_or_game_success": false,
+          "record_bytes": 128,
+          "sequence_semantics": "positive_even_stable_odd_updating_no_wrap",
+          "stage_semantics": "operation_about_to_run",
+          "stages": {
+            "1": "INITIALIZED",
+            "10": "DELINK_MAPS",
+            "11": "DELINK_LAUNCHERS",
+            "12": "SQL_MEMORY_PRESSURE",
+            "13": "NM_MONITOR",
+            "14": "SVRMON_UPDATES",
+            "15": "AUTO_START",
+            "16": "AUTH_STATUS",
+            "17": "AUTH_RECONNECT",
+            "18": "WAITING_ENTITIES",
+            "19": "DB_RELAY",
+            "2": "STARTUP",
+            "20": "CLIENT_LINKS",
+            "21": "BEACON_LAUNCHERS",
+            "22": "STATS",
+            "23": "SHARD_CHAT",
+            "24": "LOG_STATS",
+            "25": "AUCTION",
+            "26": "OVERLOAD",
+            "27": "TEMP_LOCKS",
+            "28": "CONSOLE_TITLE",
+            "29": "EXIT_REQUEST",
+            "3": "DB_INIT",
+            "30": "FOLDER_CALLBACKS",
+            "31": "POOL_COMPACT",
+            "32": "SHUTDOWN_TICK",
+            "33": "CONSOLE_POLL",
+            "34": "CONSOLE_READ",
+            "35": "CONSOLE_COMMAND",
+            "36": "LOOP_DONE",
+            "37": "READY",
+            "4": "MAIN_LOOP",
+            "5": "MSG_SCAN",
+            "6": "SQL_KEEPALIVE_CHECK",
+            "7": "SQL_KEEPALIVE_FOREGROUND",
+            "8": "SQL_KEEPALIVE_QUEUE",
+            "9": "SQL_FIFO_TICK"
+          },
+          "writer": "dbserver_main_thread"
+        },
+        "fixed_inputs": {
+          "activation": "before_first_folder_cache_create",
+          "disabled_by_default": true,
+          "enabled_value": "1",
+          "environment_variable": "COH_WINE_DB_FIXED_INPUTS",
+          "initial_reads": "preserved",
+          "lookup_mode": "preserved",
+          "notification_updates": "disabled",
+          "proves_generic_notification_fix": false,
+          "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved",
+          "watcher_registration": "disabled"
+        },
+        "fixture_startup": {
+          "assert_mode": "stderr_and_exit",
+          "initialize_file_cache_and_log_before_sql_workers": true,
+          "log_directory": "pg-persistence-test"
+        },
+        "loopback_only": {
+          "activation": "before_common_startup_and_fixture_dispatch",
+          "android_execution_validated": false,
+          "disabled_by_default": true,
+          "enabled_value": "1",
+          "endpoint_record": "protocol_address_port",
+          "endpoint_verification": "getsockname_and_SO_TYPE_after_each_successful_bind",
+          "environment_variable": "COH_WINE_DB_LOOPBACK_ONLY",
+          "explicit_addresses": "IPv4_127/8_only",
+          "failure": "close_socket_and_exit_2",
+          "late_activation": "refused_after_first_sockBind_attempt",
+          "network_namespace_isolation": false,
+          "outbound_connections_restricted": false,
+          "scope": "explicit_IPv4_listener_binding",
+          "socket_types": [
+            "tcp",
+            "udp"
+          ],
+          "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+          "wildcard_address": "127.0.0.1"
+        },
+        "normal_schema_listeners": {
+          "endpoints": [
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_DBTURNSTILE_PORT",
+              "port": 6971,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/turnstileDb.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_MISSIONSERVER_PORT",
+              "port": 6974,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/missionservercomm.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_ACCOUNTSERVER_PORT",
+              "port": 6976,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/accountservercomm.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_AUCTIONSERVER_HEROES_PORT",
+              "port": 6977,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/auctionservercomm.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_BEACONCLIENT_PORT",
+              "port": 6979,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/beaconservercomm.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_BEACONSERVER_PORT",
+              "port": 6980,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/beaconservercomm.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_DBSTAT_PORT",
+              "port": 6982,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/statservercomm.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_DBARENA_PORT",
+              "port": 6984,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/arenacomm.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_LOG_PORT",
+              "port": 6989,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/logserver.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_DBCRASHMAP_PORT",
+              "port": 6992,
+              "protocol": "tcp",
+              "required_before_export": false,
+              "source": "DBServer/src/mapcrashreport.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_SVRMON_PORT",
+              "port": 6996,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/svrmoncomm.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_DB_PORT",
+              "port": 6997,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/dbinit.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_DBLAUNCHER_PORT",
+              "port": 6998,
+              "protocol": "tcp",
+              "required_before_export": true,
+              "source": "DBServer/src/launchercomm.c"
+            },
+            {
+              "address": "127.0.0.1",
+              "constant": "DEFAULT_DBGAMECLIENT_PORT",
+              "port": 7000,
+              "protocol": "udp",
+              "required_before_export": true,
+              "source": "Common/ClientLogin/clientcommLogin.c"
+            }
+          ],
+          "scope": "normal_schema_exportdump_fakeauth_noqueue_embedded_log",
+          "source_encoding": "UTF-8_LF",
+          "source_sha256": {
+            "Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+            "Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+            "Common/dbserver/servercfg.c": "bc4f88d167e4725786c2ad8ad46a332d89f14b604b1b076368b7f8e051dbeb32",
+            "DBServer/src/accountservercomm.c": "17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae",
+            "DBServer/src/arenacomm.c": "df6b5d9e69f676a04d42c2124cbc10e2c26072466451dd81e5aa02db959c8710",
+            "DBServer/src/auctionservercomm.c": "f85ceceaaf9042ac8b44cdf92ab9c9d2d49fdc335c556ff3bb63757ff6d1cf4e",
+            "DBServer/src/beaconservercomm.c": "aac1321a77f5cff36135588c8533beaff72e729372657fc0d9625ba4713e82c0",
+            "DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+            "DBServer/src/dbinit.c": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007",
+            "DBServer/src/launchercomm.c": "647746af7350adeb30a8397d592d7e4dc5fb7265604ae2668362f4d77bbc3c0c",
+            "DBServer/src/logserver.c": "fee4cd4113af5ef8225575c570a0f0d5d54564dac71dfcf2fa75eac587b3451d",
+            "DBServer/src/mapcrashreport.c": "cb1c8086cf5fe71e40340e9842395de5e89506bcf3b6f00691c22125b340845a",
+            "DBServer/src/missionservercomm.c": "3ee0ab67577a9b27840982710beb24db0ae9822535fb1e8f1af718739878b17d",
+            "DBServer/src/statservercomm.c": "6c2665f494740ebc1c50c3ece12e248d1ee0942f8e8abd5a3d35a288a6de5b4a",
+            "DBServer/src/svrmoncomm.c": "ced7f25a46753264c6ee0778b0ec15f12b875dbf621cf3a65a4677cd3bdc0ee1",
+            "DBServer/src/turnstileDb.c": "432f4b1f80bc6d17051e048b488b0ac3135a4ac64386388ad2aead82dce8c7cc",
+            "libs/UtilitiesLib/src/network/net_linklist.c": "3f9328a0fd15c6084b25ebb90d2e5b84c3a7d4211a5d1fa8b79ad73e4c7790ce"
+          }
+        },
+        "odbc_imports": {
+          "forbidden": [
+            "SQLDriverConnectA",
+            "SQLExecDirectA",
+            "SQLPrepareA",
+            "SQLGetInfo",
+            "SQLGetInfoA",
+            "SQLColumns",
+            "SQLColumnsA",
+            "SQLTables",
+            "SQLTablesA",
+            "SQLForeignKeys",
+            "SQLForeignKeysA"
+          ],
+          "required": [
+            "SQLDriverConnect",
+            "SQLExecDirect",
+            "SQLPrepare",
+            "SQLGetDiagRecA",
+            "SQLGetInfoW",
+            "SQLColumnsW",
+            "SQLTablesW",
+            "SQLForeignKeysW"
+          ]
+        },
+        "patched_sha256": {
+          "Common/sql/sqlinclude.h": "e7d8736d15de458ff77cd3db540ce20da20f4e10c9b1bc69e60fdd0257d59a91",
+          "DBServer/CMakeLists.txt": "33ec283a5637adee9ed981056323934d274800f03d9808190db6c390cdfa32a9",
+          "DBServer/src/dbinit.c": "c0ec479a89e6f590240f446dc121e41f8905d7eb1401619e137d1b234dbb90ea",
+          "libs/UtilitiesLib/include/utilitieslib/network/sock.h": "a5e9eb08ac987a847fec48723ff5227694e1a8e2516acf7425414bc5285567e5",
+          "libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h": "00afa8b9a486fe7b0800b774ffa40f32032d3eaf9eb9debe4303d1ef94a2d93d",
+          "libs/UtilitiesLib/src/network/sock.c": "80a6b42f33541b8c25d41daee933c74a8ba4d573a2ca557391fd533eadb37fea",
+          "libs/UtilitiesLib/src/utils/FolderCache.c": "0cba5a9d841a3cea2e973475aad420741ef0ce344b0f50ffaa5605e9798fb0bf"
+        },
+        "persistence_configurations": [
+          "OFF",
+          "ON"
+        ],
+        "postgresql_build_input": {
+          "overlay_sha256": {
+            "Common/sql/pg_compat.h": "119ee1649b56cd859145a582e4d042bd3b3721831cba7c3b5acf9086a447e04e",
+            "DBServer/src/pg_persistence_test.c": "30fbf6ac294cc0c104287ea1450d579d31d61b6a03fc49dceadbf5aaa9cbd3c2"
+          },
+          "patch_sha256": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+          "patched_sha256": {
+            "Common/sql/sqlconn.c": "8c987e869157cc66f1ba909332dca16d38edd696b88a2e94a2fd5e6c47563b8f",
+            "Common/sql/sqlconn.h": "955e760307896f57227c55d3f0ed478ac6de0cf4aae03f025cd3b86b95523249",
+            "DBServer/CMakeLists.txt": "9937c7f12639fa7b7b3813df35a606b56aa9e9a4d4b580ec75e0509c5603656a",
+            "DBServer/src/auctionservercomm.c": "629d40ce8a2f59ba81cd8344fed73616dc9294375d77a0ebbdbfb5991d6dfef6",
+            "DBServer/src/clientcomm.c": "99032cf01727e6cf7ceb710ee68287a07448d2d2c74f8fbdc8926f32f9349c1a",
+            "DBServer/src/container.c": "43163b69b1762363bff1ccee4bbd497e2a392b3163d1f3a0169b577f18726369",
+            "DBServer/src/container_sql.c": "7123f2dc01c88b23853e47c58266a33c5b5f8b6c41f577c789c66513c7ca5d08",
+            "DBServer/src/container_tplt.c": "5f0adfdb4f52a1ba4212afe2c2a644a92844555d1f750f627c1f679600d9c85f",
+            "DBServer/src/container_tplt_utils.c": "934eaae85397389cdcaa6e0bd4c2425545939a4d40ed654a62f586011cbfa530",
+            "DBServer/src/dbdispatch.c": "a81a29e724361e35a9fac40423da173583621b9edd987053e6254cfe29ceafde",
+            "DBServer/src/dbimport.c": "77432691fd400a4351038357bf989c49cfce9ecd6c540eec4ba8102b93f8961a",
+            "DBServer/src/dbinit.c": "9b7a8cde3b7553152f992292c0cfa3825acce3649b4ab2b97c3621f52e19d45f",
+            "DBServer/src/sql_fifo.c": "73b7f30ab56f3deb58066477ea4fb716e7c7094fda3505baede091eb7d4c04aa",
+            "DBServer/src/sql_fifo.h": "fb1a943714b315c454669645e98c0c0f586e95381fded697cf49bc4f38f8d8db",
+            "MapServer/src/dbcomm/dbcontainer.c": "35fcf37e35642735d61dacf8f960dc5e3b159c3748cc6052e37fb1a7eac0e759",
+            "MapServer/src/dbcomm/dbquery.c": "75a3de6cd707bed3f517ac2fbc73bbf0760ca171fb1e2a26b301d002d3960d70"
+          },
+          "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488"
+        },
+        "postgresql_build_input_canonical_sha256": "c5dd8a6ecc42472d14a02c8a3986530aefecc4266ed94496a16df3d8fe2ce022",
+        "runtime_validation": "unverified",
+        "schema_version": 1,
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "source_sha256": {
+          "Common/sql/sqlinclude.h": "f49bff920b233a4c611ab3c79cd3585cd3096103bde72ede0609ef91fe1faf23",
+          "DBServer/CMakeLists.txt": "9937c7f12639fa7b7b3813df35a606b56aa9e9a4d4b580ec75e0509c5603656a",
+          "DBServer/src/dbinit.c": "9b7a8cde3b7553152f992292c0cfa3825acce3649b4ab2b97c3621f52e19d45f",
+          "libs/UtilitiesLib/include/utilitieslib/network/sock.h": "5fc76eec5dcd8903458060d28d85cb7248f0161910d592365ad5cf33b8316306",
+          "libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h": "42f1b9c5555abdc93afe7029cdf02bb551d572c18557fed00d7610d6c58e177c",
+          "libs/UtilitiesLib/src/network/sock.c": "e8ba6fccb09af31fe805019bf383a14367057cf72f3a57882bd461b0dd39642b",
+          "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c"
+        },
+        "wine_commit": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+        "wine_overlay_sha256": {
+          "Common/sql/wine_odbc.c": "b5390becf88f2ca481df052d94b200ff640278750ef9da1dcc900ab6c4b64242",
+          "Common/sql/wine_odbc.h": "6fe3475bd0098e0a193971a4c19023356d865cee2cc3ec7ee2855b7f47d75a0f",
+          "DBServer/src/wine_dispatch_progress.c": "e02c2b059bf0ed11f1e48327523be17430dbc39711ef19338857392e8386efb0",
+          "DBServer/src/wine_dispatch_progress.h": "607ff88eb950bd40be512d2b302965779c640076c24aa758313086c5c1b86e1b",
+          "DBServer/src/wine_fixed_inputs.c": "d5f8cc502dbe2909c5f28ef2702816e74a9391f1d9a18ecd3bb0cccbbb10fbf2",
+          "DBServer/src/wine_fixed_inputs.h": "ee51a3846818db37532c6eb1483b2544f350e28cbad13b84045809b59b534ea0",
+          "DBServer/src/wine_loopback.c": "be7d8a1bf0e473249335254e531d45fb214a1616d461a2ad96aa31cac2ea0fbb",
+          "DBServer/src/wine_loopback.h": "66ffd168c4638a7b9e31f7a6c25e138bb5f79ba56042dcaae5ac7d6e09ed91a6"
+        },
+        "wine_patch_sha256": "48e5433350017c0d050709c37c5f41b34b1be8ed7628ab510fdd477a57c1b673"
+      },
+      "base_wine_build_input_canonical_sha256": "74724039f4ad207d7109861153b9e8c271de72e225bb618cbdb318d0b8675b0d",
+      "build_role": "manual_atlas_dbserver_startup_supplement",
+      "built_target": "DbServer",
+      "configuration": "OptDebug",
+      "format": 1,
+      "launcher_wait": {
+        "activation": "after_launcher_listener_before_connection_wait",
+        "android_execution_validated": false,
+        "disabled_by_default": true,
+        "enabled_value": "1",
+        "environment_variable": "COH_WINE_DB_MANUAL_ATLAS",
+        "invalid_request": "exit_2_before_launcher_wait",
+        "original_minimum_wait_seconds": 15,
+        "preserved": [
+          "launcher_listener",
+          "server_auto_start",
+          "static_map_list_initialization",
+          "remaining_db_init",
+          "sql_fifo_finish",
+          "dispatch_main_loop",
+          "mapserver_readiness"
+        ],
+        "required_native_configuration": {
+          "COH_WINE_DB_FIXED_INPUTS": "1",
+          "COH_WINE_DB_LOOPBACK_ONLY": "1",
+          "auth_server_present": false,
+          "fake_auth": true,
+          "launcher_count": 0,
+          "launchers_connecting": false,
+          "queue_server": false,
+          "start_static": 0,
+          "use_logserver": 0
+        },
+        "skipped_operation": "unused_launcher_connection_wait_only",
+        "startup_acknowledgement": "COH_WINE_DB_MANUAL_ATLAS=1 active: unused Launcher connection wait skipped; manual Atlas launch; ordinary DbServer readiness required"
+      },
+      "overlay_sha256": {
+        "DBServer/src/wine_manual_atlas.c": "21e8b6e5f83aa8e44ddd63379fac49bd180bb88b80f0ee356b75b3d242946192",
+        "DBServer/src/wine_manual_atlas.h": "f725648a8d6bd8a3953772318ee2237ebfb31acd3c4c4e311ef651b20372e1b9"
+      },
+      "patch": "patches/startup-dbserver/0001-manual-atlas-launcher-wait.patch",
+      "patch_sha256": "ab1b7a6bc627aebf817acbde49e4c5659ec1aa98722f64c4aa61e0a9d6ec97b7",
+      "patched_sha256": {
+        "DBServer/CMakeLists.txt": "9e91617210fc5e664b4d56203055ad2bf5df8cb6f869376b472437a08d4d82e8",
+        "DBServer/src/dbinit.c": "d79f265c1605bc03b7d1fd1100830aba2a4dae192dd5b04a9f226427079f642b"
+      },
+      "postgresql_persistence_fixture": false,
+      "runtime_validation": "unverified",
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "source_sha256": {
+        "DBServer/CMakeLists.txt": "33ec283a5637adee9ed981056323934d274800f03d9808190db6c390cdfa32a9",
+        "DBServer/src/dbinit.c": "c0ec479a89e6f590240f446dc121e41f8905d7eb1401619e137d1b234dbb90ea"
+      }
+    },
+    "cmake_cache": {
+      "bytes": 39503,
+      "sha256": "f20be1e2a54e0c3f539577d71a40646ea7db14cc4d345fea76dd10004620ee92"
+    },
+    "configuration": "OptDebug",
+    "dependency_report": {
+      "explicit_dynamic_dependencies": [
+        "CrashRpt.dll",
+        "cg.dll",
+        "cgGL.dll",
+        "NxCharacter.dll",
+        "PhysXCooking.dll",
+        "PhysXCore.dll",
+        "PhysXLoader.dll",
+        "cudart32_30_9.dll",
+        "NxCooking.dll",
+        "physxcudart_20.dll",
+        "PhysXDevice.dll"
+      ],
+      "files": {
+        "CrashRpt.dll": {
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "MSVCP140.dll": {
+            "file": "msvcp140.dll",
+            "kind": "packaged"
+          },
+          "VCRUNTIME140.dll": {
+            "file": "vcruntime140.dll",
+            "kind": "packaged"
+          },
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-stdio-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-string-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "DbServer.exe": {
+          "ADVAPI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "GDI32.dll": {
+            "kind": "windows_system_api"
+          },
+          "IPHLPAPI.DLL": {
+            "kind": "windows_system_api"
+          },
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "ODBC32.dll": {
+            "kind": "windows_system_api"
+          },
+          "USER32.dll": {
+            "kind": "windows_system_api"
+          },
+          "WINMM.dll": {
+            "kind": "windows_system_api"
+          },
+          "WS2_32.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "msvcp140.dll": {
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "VCRUNTIME140.dll": {
+            "file": "vcruntime140.dll",
+            "kind": "packaged"
+          },
+          "api-ms-win-crt-convert-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-environment-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-filesystem-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-locale-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-math-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-stdio-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-string-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-time-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-utility-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          }
+        },
+        "vcruntime140.dll": {
+          "KERNEL32.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-convert-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-heap-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-runtime-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-stdio-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          },
+          "api-ms-win-crt-string-l1-1-0.dll": {
+            "kind": "windows_system_api"
+          }
+        }
+      },
+      "limitation": "Import inventory and explicit dynamic allowlist; execution not validated",
+      "optional_dynamic_driver_probes": [
+        "lightfx.dll",
+        "nvcpl.dll",
+        "nvcuda.dll"
+      ],
+      "unresolved": []
+    },
+    "files": {
+      "DbServer.exe": {
+        "bytes": 1664000,
+        "delay_imports": [],
+        "imports": [
+          "ADVAPI32.dll",
+          "GDI32.dll",
+          "IPHLPAPI.DLL",
+          "KERNEL32.dll",
+          "ODBC32.dll",
+          "USER32.dll",
+          "WINMM.dll",
+          "WS2_32.dll"
+        ],
+        "pe_machine": 332,
+        "sha256": "baf97a253ddccf29575801f66ef56cb7ce75f168062bb0c4ffef796b419c2029"
+      }
+    },
+    "format": 1,
+    "gameplay_validated": false,
+    "odbc_imports": [
+      "SQLAllocHandle",
+      "SQLBindCol",
+      "SQLBindParameter",
+      "SQLCancel",
+      "SQLCloseCursor",
+      "SQLColumnsW",
+      "SQLDisconnect",
+      "SQLDriverConnect",
+      "SQLEndTran",
+      "SQLExecDirect",
+      "SQLExecDirectW",
+      "SQLExecute",
+      "SQLFetch",
+      "SQLForeignKeysW",
+      "SQLFreeHandle",
+      "SQLFreeStmt",
+      "SQLGetData",
+      "SQLGetDescField",
+      "SQLGetDiagRecA",
+      "SQLGetInfoW",
+      "SQLGetStmtAttr",
+      "SQLMoreResults",
+      "SQLPrepare",
+      "SQLSetConnectAttr",
+      "SQLSetEnvAttr",
+      "SQLTablesW"
+    ],
+    "postgresql_persistence_fixture": false,
+    "replacement_scope": "fresh_owned_manual_atlas_runtime_DbServer.exe_only",
+    "repository_commit": "7b48762de0748e443a2df60c6e4b59e22b365e35",
+    "retained_normal_files": {
+      "CrashRpt.dll": {
+        "bytes": 39424,
+        "delay_imports": [],
+        "imports": [
+          "api-ms-win-crt-heap-l1-1-0.dll",
+          "api-ms-win-crt-runtime-l1-1-0.dll",
+          "api-ms-win-crt-stdio-l1-1-0.dll",
+          "api-ms-win-crt-string-l1-1-0.dll",
+          "KERNEL32.dll",
+          "MSVCP140.dll",
+          "VCRUNTIME140.dll"
+        ],
+        "pe_machine": 332,
+        "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6"
+      },
+      "msvcp140.dll": {
+        "bytes": 618944,
+        "delay_imports": [],
+        "imports": [
+          "api-ms-win-crt-convert-l1-1-0.dll",
+          "api-ms-win-crt-environment-l1-1-0.dll",
+          "api-ms-win-crt-filesystem-l1-1-0.dll",
+          "api-ms-win-crt-heap-l1-1-0.dll",
+          "api-ms-win-crt-locale-l1-1-0.dll",
+          "api-ms-win-crt-math-l1-1-0.dll",
+          "api-ms-win-crt-runtime-l1-1-0.dll",
+          "api-ms-win-crt-stdio-l1-1-0.dll",
+          "api-ms-win-crt-string-l1-1-0.dll",
+          "api-ms-win-crt-time-l1-1-0.dll",
+          "api-ms-win-crt-utility-l1-1-0.dll",
+          "KERNEL32.dll",
+          "VCRUNTIME140.dll"
+        ],
+        "pe_machine": 332,
+        "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a"
+      },
+      "vcruntime140.dll": {
+        "bytes": 123328,
+        "delay_imports": [],
+        "imports": [
+          "api-ms-win-crt-convert-l1-1-0.dll",
+          "api-ms-win-crt-heap-l1-1-0.dll",
+          "api-ms-win-crt-runtime-l1-1-0.dll",
+          "api-ms-win-crt-stdio-l1-1-0.dll",
+          "api-ms-win-crt-string-l1-1-0.dll",
+          "KERNEL32.dll"
+        ],
+        "pe_machine": 332,
+        "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3"
+      }
+    },
+    "role": "manual_atlas_dbserver_startup_bundle",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "startup_bundle_build_input": {
+      "architecture": "Win32",
+      "base_startup_build_input_canonical_sha256": "12f42bdb973c2f5712408f7717bee631e23c9cf73e1e38b2f2be4d2cb943a9c2",
+      "build_role": "manual_atlas_dbserver_startup_bundle",
+      "built_target": "DbServer",
+      "configuration": "OptDebug",
+      "format": 1,
+      "patch": "patches/startup-bundle/0001-pg-cancelled-child-insert.patch",
+      "patch_sha256": "36ee0b86fad6207166b6a46a6334b0e9846f90d81140fec49dc187d2fb45a600",
+      "patched_sha256": {
+        "DBServer/src/container_sql.c": "0becda9957c9cbe35b11fa28d4c62ad63af5f08faf492bd0013746dadfbec4fc"
+      },
+      "postgresql_persistence_fixture": false,
+      "runtime_validation": "unverified",
+      "save_contract": {
+        "UPSERT": false,
+        "android_execution_validated": false,
+        "ignored_SQL_failures": false,
+        "match": "next_command_with_identical_table_pointer_and_SubId_is_DELETE",
+        "profile_reset": false,
+        "provider": "PostgreSQL",
+        "retained": [
+          "matched_DELETE",
+          "all_other_row_commands",
+          "all_column_updates",
+          "DELETE_then_INSERT_order",
+          "SQL_Server_provider",
+          "parent_container_inserts",
+          "FIFO_transaction_commit_before_completion",
+          "save_ACK_after_SQL_completion",
+          "permanent_failure_rollback_and_exit_without_ACK"
+        ],
+        "schema_migration": false,
+        "scope": "cancelled_provisional_child_INSERT_only",
+        "table_type": "TT_SUBCONTAINER"
+      },
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "source_sha256": {
+        "DBServer/src/container_sql.c": "7123f2dc01c88b23853e47c58266a33c5b5f8b6c41f577c789c66513c7ca5d08"
+      },
+      "unchanged_merger_sha256": "45849f2b9c2ff92db6aadb6e6dcbcfe412b55f57971647e49dbec4ff486e307e"
+    }
+  },
+  "native_dbserver_recompiled": false,
+  "native_game": {
+    "bytes": 9443840,
+    "sha256": "ec1a6c01b07d7c189bde743a7255c860b8dd96879225b4ffa50fd42eabbb721b"
+  },
+  "native_game_client_zip_server_cache_and_animation_bytes_match_immediate_donor": true,
+  "native_mapserver_recompiled": false,
+  "native_responsiveness": {
+    "architecture": "Win32",
+    "build_inputs": {
+      "character_events": {
+        "build_role": "character_events",
+        "build_targets": [
+          "MapServer"
+        ],
+        "events_contract": {
+          "changes_native_game_state": false,
+          "clock": "windows_utc_milliseconds",
+          "disabled_by_default": true,
+          "environment_variable": "COH_WINE_CHARACTER_EVENTS_SESSION",
+          "format": 1,
+          "full_collision_geometry_verified": false,
+          "identity": {
+            "account": "COHLOCAL",
+            "auth_id": "positive_current_account",
+            "db_id": "positive_current_character",
+            "map_id": 1,
+            "name": "THORHERO",
+            "peer": "127.0.0.1",
+            "process_and_thread": "current_owned_progress_record"
+          },
+          "initialization_failure": "requested_launch_exits_nonzero",
+          "position_callsite": "stock_30_second_PeriodicInfo_ready_entity_not_transferring",
+          "prefix": "COH_CHARACTER_EVENT_V1",
+          "ready_callsite": "CLIENT_READY_after_resumeCharacter_success",
+          "sequence": "positive_u32_monotonic_no_wrap",
+          "session_token": "32_lowercase_hex_current_launch",
+          "transport": "owned_mapserver_stdout_complete_flushed_line",
+          "writer": "mapserver_main_thread"
+        },
+        "events_overlay_sha256": {
+          "MapServer/src/svr/wine_character_events.c": "0c1a5fa786799ef8bced64d1c443d52254026f63945535661682fad0834dff57",
+          "MapServer/src/svr/wine_character_events.h": "42a30b3a4a122e429bbc9165e91e168847fa497dbd6907431686188618d794b1"
+        },
+        "events_patch_sha256": "79db1abc8538d4fcdbc7e544639e11f809a1527de8a5dbfb258c051235fd49b7",
+        "patched_sha256": {
+          "MapServer/CMakeLists.txt": "61f39bf2810836d27efa49e1f71447dcfe77291e290c28e6c761137c6af247df",
+          "MapServer/src/svr/svr_init.c": "f909b797d6e48cfd6b862eed5eadf6a8731e4367face5d22e171fb6e67480abb",
+          "MapServer/src/svr/svr_tick.c": "aeb963558a1ebaeda7c79aacb860658df2e12f7ada74e1ca772554a3562310d4"
+        },
+        "progress_build_input": {
+          "build_role": "mapserver_progress",
+          "build_targets": [
+            "MapServer"
+          ],
+          "game_build_input": {
+            "build_role": "game_loopback",
+            "game_patch_sha256": "7c4f4b25ab134a0dac2f4501f7cf2a5cccbfcd9482775350e3be0e1df532b8a6",
+            "loopback_only": {
+              "activation": "before_common_startup",
+              "android_execution_validated": false,
+              "client_UDP": "explicit_loopback_ephemeral_bind_before_first_send",
+              "disabled_by_default": true,
+              "enabled_value": "1",
+              "endpoint_record": "protocol_address_port",
+              "endpoint_verification": "getsockname_and_SO_TYPE_after_each_successful_bind",
+              "environment_variable": "COH_GAME_LOOPBACK_ONLY",
+              "explicit_addresses": "IPv4_127/8_only",
+              "failure": "close_socket_and_exit_2",
+              "late_activation": "refused_after_first_explicit_or_client_UDP_bind_attempt",
+              "network_namespace_isolation": false,
+              "outbound_TCP": "unchanged",
+              "outbound_connections_restricted": false,
+              "scope": "explicit_IPv4_listeners_and_client_UDP_bindings",
+              "socket_types": [
+                "tcp",
+                "udp"
+              ],
+              "startup_acknowledgement": "COH_GAME_LOOPBACK_ONLY=1 active: IPv4 loopback binding policy",
+              "wildcard_address": "127.0.0.1"
+            },
+            "patched_sha256": {
+              "MapServer/src/svr/svr_init.c": "7aa0098ebc60b0f9409afdd3c8d63bc35a04ee3687265768d4f878afeb59749a",
+              "Utilities/TestClient/src/main.c": "e32330b1750fa4a71634ea4f8561fdc1c93f05ee11e8c68c22a3fa7d44860cba",
+              "Utilities/TestClient/src/packetFlood.c": "3798a071f8959239d500d404b72ea14f6780d31858a5ef456476e8f470848801",
+              "libs/UtilitiesLib/include/utilitieslib/network/sock.h": "9b09d7ec9e6f207924eb40ad8adb5ce0588dcea9575394fd8e90cf2368e2b433",
+              "libs/UtilitiesLib/src/network/net_link.c": "afaca395a02efb395fa4afb74263c51b1ecf54e05680eb44243fe523b295628e",
+              "libs/UtilitiesLib/src/network/sock.c": "882c80138c9bfa6be451fa9c1e07ab6856d3787147fe63dce585f29f50a323d7"
+            },
+            "postgresql_build_input": {
+              "overlay_sha256": {
+                "Common/sql/pg_compat.h": "119ee1649b56cd859145a582e4d042bd3b3721831cba7c3b5acf9086a447e04e",
+                "DBServer/src/pg_persistence_test.c": "30fbf6ac294cc0c104287ea1450d579d31d61b6a03fc49dceadbf5aaa9cbd3c2"
+              },
+              "patch_sha256": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+              "patched_sha256": {
+                "Common/sql/sqlconn.c": "8c987e869157cc66f1ba909332dca16d38edd696b88a2e94a2fd5e6c47563b8f",
+                "Common/sql/sqlconn.h": "955e760307896f57227c55d3f0ed478ac6de0cf4aae03f025cd3b86b95523249",
+                "DBServer/CMakeLists.txt": "9937c7f12639fa7b7b3813df35a606b56aa9e9a4d4b580ec75e0509c5603656a",
+                "DBServer/src/auctionservercomm.c": "629d40ce8a2f59ba81cd8344fed73616dc9294375d77a0ebbdbfb5991d6dfef6",
+                "DBServer/src/clientcomm.c": "99032cf01727e6cf7ceb710ee68287a07448d2d2c74f8fbdc8926f32f9349c1a",
+                "DBServer/src/container.c": "43163b69b1762363bff1ccee4bbd497e2a392b3163d1f3a0169b577f18726369",
+                "DBServer/src/container_sql.c": "7123f2dc01c88b23853e47c58266a33c5b5f8b6c41f577c789c66513c7ca5d08",
+                "DBServer/src/container_tplt.c": "5f0adfdb4f52a1ba4212afe2c2a644a92844555d1f750f627c1f679600d9c85f",
+                "DBServer/src/container_tplt_utils.c": "934eaae85397389cdcaa6e0bd4c2425545939a4d40ed654a62f586011cbfa530",
+                "DBServer/src/dbdispatch.c": "a81a29e724361e35a9fac40423da173583621b9edd987053e6254cfe29ceafde",
+                "DBServer/src/dbimport.c": "77432691fd400a4351038357bf989c49cfce9ecd6c540eec4ba8102b93f8961a",
+                "DBServer/src/dbinit.c": "9b7a8cde3b7553152f992292c0cfa3825acce3649b4ab2b97c3621f52e19d45f",
+                "DBServer/src/sql_fifo.c": "73b7f30ab56f3deb58066477ea4fb716e7c7094fda3505baede091eb7d4c04aa",
+                "DBServer/src/sql_fifo.h": "fb1a943714b315c454669645e98c0c0f586e95381fded697cf49bc4f38f8d8db",
+                "MapServer/src/dbcomm/dbcontainer.c": "35fcf37e35642735d61dacf8f960dc5e3b159c3748cc6052e37fb1a7eac0e759",
+                "MapServer/src/dbcomm/dbquery.c": "75a3de6cd707bed3f517ac2fbc73bbf0760ca171fb1e2a26b301d002d3960d70"
+              },
+              "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488"
+            },
+            "postgresql_build_input_canonical_sha256": "c5dd8a6ecc42472d14a02c8a3986530aefecc4266ed94496a16df3d8fe2ce022",
+            "resume_build_input": null,
+            "runtime_validation": "unverified",
+            "schema_version": 1,
+            "socket_contract": {
+              "mapserver": {
+                "required_endpoints": [
+                  {
+                    "address": "127.0.0.1",
+                    "constant": "BASE_MAPSERVER_PORT",
+                    "port": 7001,
+                    "protocol": "udp"
+                  }
+                ]
+              },
+              "scope": "fakeauth_Atlas_create_save_restart_resume",
+              "source_sha256": {
+                "Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+                "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+                "Utilities/TestClient/src/packetFlood.c": "9934a2e607948655f56ddc23db869150d4589853e9a90f5ce730dc0b407c2ceb",
+                "Utilities/TestClient/src/win_init.c": "e7ae3630c5a44ee3452f743af0e7aa99a629d40f38f64ef797c96fbf184e9c3c",
+                "libs/UtilitiesLib/src/network/net_link.c": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9",
+                "libs/UtilitiesLib/src/network/net_linklist.c": "3f9328a0fd15c6084b25ebb90d2e5b84c3a7d4211a5d1fa8b79ad73e4c7790ce"
+              },
+              "testclient": {
+                "address": "127.0.0.1",
+                "minimum_binds_per_session": 2,
+                "paths": [
+                  "netOpenSocketUdp",
+                  "sendToUDP",
+                  "sendToUDPStream"
+                ],
+                "port": "assigned_nonzero",
+                "protocol": "udp"
+              }
+            },
+            "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+            "source_sha256": {
+              "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+              "Utilities/TestClient/src/main.c": "cac8255edf1946c910386669856040342bc0e5900695a564c8522622bd38ed83",
+              "Utilities/TestClient/src/packetFlood.c": "9934a2e607948655f56ddc23db869150d4589853e9a90f5ce730dc0b407c2ceb",
+              "libs/UtilitiesLib/include/utilitieslib/network/sock.h": "5fc76eec5dcd8903458060d28d85cb7248f0161910d592365ad5cf33b8316306",
+              "libs/UtilitiesLib/src/network/net_link.c": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9",
+              "libs/UtilitiesLib/src/network/sock.c": "e8ba6fccb09af31fe805019bf383a14367057cf72f3a57882bd461b0dd39642b"
+            },
+            "variant": "creation"
+          },
+          "game_build_input_canonical_sha256": "d7ecf58b4a016592fb5602579b7fe2ca9f719a86ff40b5fc9656ceca79f360ee",
+          "patched_sha256": {
+            "MapServer/CMakeLists.txt": "c5f306938d0bc12497ac27db115f46b36ba4c8f42f10870f9c83615fe04ffb9b",
+            "MapServer/src/svr/svr_init.c": "e5c15d8fa93da08b4476e73adf318906e39b3365778924d80cc2e3c6615893f8",
+            "MapServer/src/svr/svr_tick.c": "c1039e69e811cc84ff4e974119974702a0bc69bf0d5f0da751fb7e8d4856902c"
+          },
+          "progress_contract": {
+            "byte_order": "little",
+            "counter_semantics": "monotonic_no_wrap_completed_not_greater_than_started",
+            "disabled_by_default": true,
+            "environment_variable": "COH_WINE_MAP_PROGRESS",
+            "file_creation": "new_absolute_drive_path_private_parent_required",
+            "flags": {
+              "1": "sequence_or_counter_saturated_samples_unavailable"
+            },
+            "format": 1,
+            "initialization_failure": "requested_launch_exits_nonzero",
+            "magic_hex": "434f484d41503100",
+            "mapping_bytes": 4096,
+            "offsets": {
+              "flags": 40,
+              "format": 8,
+              "magic": 0,
+              "main_thread_id": 20,
+              "process_id": 16,
+              "record_bytes": 12,
+              "reserved": 48,
+              "sequence": 24,
+              "stage": 28,
+              "stage_count": 44,
+              "tick_completed": 36,
+              "tick_started": 32
+            },
+            "proves_readiness_or_game_success": false,
+            "record_bytes": 128,
+            "reserved_bytes": 80,
+            "sequence_semantics": "positive_even_stable_odd_updating_no_wrap",
+            "stage_semantics": "operation_about_to_run_unless_DONE_or_ED",
+            "stages": {
+              "1": "INITIALIZED",
+              "10": "HEAP_VALIDATED",
+              "11": "SG_VERIFY",
+              "12": "SG_VERIFIED",
+              "13": "CALLBACKS_ENABLE",
+              "14": "CALLBACKS_ENABLED",
+              "15": "RANDOM_SEED",
+              "16": "ITEM_POWER_REQUEST",
+              "17": "ITEM_POWER_REQUESTED",
+              "18": "ERROR_QUEUE_DRAIN",
+              "19": "ERROR_QUEUE_DRAINED",
+              "2": "STARTUP",
+              "20": "READY_STDOUT",
+              "21": "LAUNCHER_CONTACT",
+              "22": "LATE_STARTUP_DONE",
+              "23": "LOOP_PRE_TICK",
+              "24": "TICK_BEGIN",
+              "25": "TICK_TOP",
+              "26": "DB_COMM",
+              "27": "DB_COMM_DONE",
+              "28": "FOLDER_CALLBACKS",
+              "29": "FOLDER_CALLBACKS_DONE",
+              "3": "MAP_LOAD",
+              "30": "TICK_TOP_DONE",
+              "31": "ENTITY_UPDATE",
+              "32": "GAME_LOGIC",
+              "33": "TICK_BOTTOM",
+              "34": "TICK_DONE",
+              "35": "LOOP_POST_TICK",
+              "36": "SLEEP",
+              "37": "SLEEP_DONE",
+              "4": "DB_SETUP",
+              "5": "READY_PUBLISH",
+              "6": "READY_PUBLISHED",
+              "7": "RUNTIME_PRIORITY",
+              "8": "RUNTIME_PRIORITY_DONE",
+              "9": "HEAP_VALIDATE"
+            },
+            "tick_completed_stage": 34,
+            "tick_started_stage": 24,
+            "writer": "mapserver_main_thread"
+          },
+          "progress_overlay_sha256": {
+            "MapServer/src/svr/wine_map_progress.c": "78eae983cc8a6e573b0500ca5d57d7424af2315b9afe58970de76e28b427940f",
+            "MapServer/src/svr/wine_map_progress.h": "e92f8f8b20513d81db7a170c96c0a19b2b6231ad04d91699e5fdcc113696af88"
+          },
+          "progress_patch_sha256": "0fc278d0f04c979b5153421278156978f11fc58584c3413645937ecd83021b2c",
+          "runtime_validation": "unverified",
+          "schema_version": 1,
+          "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+          "source_sha256": {
+            "MapServer/CMakeLists.txt": "e2fd7a6a7015dea05b578236f2296a56504eb3de13d0b4b2580dbb0cd1aa3954",
+            "MapServer/src/svr/svr_init.c": "7aa0098ebc60b0f9409afdd3c8d63bc35a04ee3687265768d4f878afeb59749a",
+            "MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+          }
+        },
+        "progress_build_input_canonical_sha256": "6b367d9c4c3570f2800598e88f8738e558ca8d3d2b1047d9349e93ab8242f657",
+        "progress_contract": {
+          "byte_order": "little",
+          "counter_semantics": "monotonic_no_wrap_completed_not_greater_than_started",
+          "disabled_by_default": true,
+          "environment_variable": "COH_WINE_MAP_PROGRESS",
+          "file_creation": "new_absolute_drive_path_private_parent_required",
+          "flags": {
+            "1": "sequence_or_counter_saturated_samples_unavailable"
+          },
+          "format": 1,
+          "initialization_failure": "requested_launch_exits_nonzero",
+          "magic_hex": "434f484d41503100",
+          "mapping_bytes": 4096,
+          "offsets": {
+            "flags": 40,
+            "format": 8,
+            "magic": 0,
+            "main_thread_id": 20,
+            "process_id": 16,
+            "record_bytes": 12,
+            "reserved": 48,
+            "sequence": 24,
+            "stage": 28,
+            "stage_count": 44,
+            "tick_completed": 36,
+            "tick_started": 32
+          },
+          "proves_readiness_or_game_success": false,
+          "record_bytes": 128,
+          "reserved_bytes": 80,
+          "sequence_semantics": "positive_even_stable_odd_updating_no_wrap",
+          "stage_semantics": "operation_about_to_run_unless_DONE_or_ED",
+          "stages": {
+            "1": "INITIALIZED",
+            "10": "HEAP_VALIDATED",
+            "11": "SG_VERIFY",
+            "12": "SG_VERIFIED",
+            "13": "CALLBACKS_ENABLE",
+            "14": "CALLBACKS_ENABLED",
+            "15": "RANDOM_SEED",
+            "16": "ITEM_POWER_REQUEST",
+            "17": "ITEM_POWER_REQUESTED",
+            "18": "ERROR_QUEUE_DRAIN",
+            "19": "ERROR_QUEUE_DRAINED",
+            "2": "STARTUP",
+            "20": "READY_STDOUT",
+            "21": "LAUNCHER_CONTACT",
+            "22": "LATE_STARTUP_DONE",
+            "23": "LOOP_PRE_TICK",
+            "24": "TICK_BEGIN",
+            "25": "TICK_TOP",
+            "26": "DB_COMM",
+            "27": "DB_COMM_DONE",
+            "28": "FOLDER_CALLBACKS",
+            "29": "FOLDER_CALLBACKS_DONE",
+            "3": "MAP_LOAD",
+            "30": "TICK_TOP_DONE",
+            "31": "ENTITY_UPDATE",
+            "32": "GAME_LOGIC",
+            "33": "TICK_BOTTOM",
+            "34": "TICK_DONE",
+            "35": "LOOP_POST_TICK",
+            "36": "SLEEP",
+            "37": "SLEEP_DONE",
+            "4": "DB_SETUP",
+            "5": "READY_PUBLISH",
+            "6": "READY_PUBLISHED",
+            "7": "RUNTIME_PRIORITY",
+            "8": "RUNTIME_PRIORITY_DONE",
+            "9": "HEAP_VALIDATE"
+          },
+          "tick_completed_stage": 34,
+          "tick_started_stage": 24,
+          "writer": "mapserver_main_thread"
+        },
+        "runtime_validation": "unverified",
+        "schema_version": 1,
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "source_sha256": {
+          "MapServer/CMakeLists.txt": "c5f306938d0bc12497ac27db115f46b36ba4c8f42f10870f9c83615fe04ffb9b",
+          "MapServer/src/svr/svr_init.c": "e5c15d8fa93da08b4476e73adf318906e39b3365778924d80cc2e3c6615893f8",
+          "MapServer/src/svr/svr_tick.c": "c1039e69e811cc84ff4e974119974702a0bc69bf0d5f0da751fb7e8d4856902c"
+        }
+      },
+      "client_texture": {
+        "fallback": "ordinary_native_file_reads",
+        "format": 1,
+        "full_texture_asset_changes": false,
+        "overlay_sha256": {
+          "Game/src/render/coh_texture_header_index.h": "7751215ae9c6b76778e9cdb88bb860155227cd052a610ad01b5cd3a7df911cff"
+        },
+        "parse6_schema_changes": false,
+        "patch_sha256": "880b2f09e4666552e739fe37ca319f4d42ad6b5f15ea1a276803f7bc14e31a3a",
+        "patched_sha256": {
+          "Common/gameComm/NPC.c": "3a29ac19011f9836fffb77b516e6dfc9db914c2f4797985ff454f4c1fbd1470c",
+          "Common/gameData/costume_data.c": "186cb4bc4e6fdd3b80462b9326bfaa6dc78bc164a91bc5b97504dfe1d483c92d",
+          "Common/seq/tricks.c": "37a6df5714a26f08b54633c4ef21e69ef2af963702bbde6cf29ffd28676211b6",
+          "Game/src/render/tex.c": "62a2bbdc5ade668ccf941baaf5757ce3d72142f06a61ee4f50e554a1357107de",
+          "Game/src/render/tex.h": "dcbdb5ceeb855ac9ce8746dff5d7608e43373ea62e2944dc08aa46dca0781b46"
+        },
+        "role": "opt_in_client_texture_header_index",
+        "runtime_performance_validated": false,
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "source_sha256": {
+          "Common/gameComm/NPC.c": "6d56de265c788f83c3511d0593fdb8b9fcdef8001332bb5335dc1ec1c58decc9",
+          "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+          "Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7",
+          "Game/src/render/tex.c": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+          "Game/src/render/tex.h": "56e56aea12a4126250f5f6f4d2211f62814b7eae4ad2598271f5423b60680552"
+        },
+        "texture_header_struct_bytes": 32
+      },
+      "graphics_profile": {
+        "build_role": "client_graphics_profile",
+        "build_targets": [
+          "Game"
+        ],
+        "graphics_contract": {
+          "default_native_profile": "standard",
+          "device_fps_gain_measured": false,
+          "enabled_value": "performance",
+          "environment_variable": "COH_CLIENT_GRAPHICS_PROFILE",
+          "native_preset": "gfxGetMinAdvancedSettings",
+          "preserve_saved_preferences": "capture_before_first_apply_restore_on_save",
+          "renderer": "unchanged",
+          "scope": "Game_graphics_only",
+          "ui_resolution": [
+            800,
+            600
+          ],
+          "world_render_scale": 0.75
+        },
+        "graphics_overlay_sha256": {
+          "Game/src/graphics/cohAndroidGraphicsProfile.h": "5f8cd88f9c384bbb5347ce736676f52a0792d8d8f3d41e152ade26dd16190988"
+        },
+        "graphics_patch_sha256": "10dc0364e0caf1bdf68a1d2a5350964a76fa5d96e1c46986c7336c973018a8a4",
+        "patched_sha256": {
+          "Game/src/graphics/gfxSettings.c": "8a3d010fb05f91895e32346e302f455f56440e00357aad3ded67513d78d874d1"
+        },
+        "runtime_validation": "unverified",
+        "schema_version": 1,
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "source_sha256": {
+          "Game/src/graphics/gfxSettings.c": "a7cc1134d009f34fb6cf1e42c0ec32f3fa73dfde53c0b178cdaf4851b505c415"
+        }
+      }
+    },
+    "build_provenance": {
+      "cmake_cache_sha256": "48c49d1f33302016a9a5a5f8666f5006cdb653f5f2ecc10e39a64a5f008a1ab2",
+      "launcher_source": {
+        "bytes": 12286,
+        "sha256": "07fce7987f7766648a21cf405ade80480c9c7f97712ce848b6d969ca604c4047"
+      },
+      "native_build_manifest": {
+        "bytes": 22561,
+        "sha256": "1f35acde8891d69c9b5ba91a11dbcdd7eb88015c0f697df1bbf376541a6728e2"
+      },
+      "native_build_repository_commit": "0ddd27dfaddf9ac53a6a65548c8199bced767fbe",
+      "run_url": "https://github.com/Russianranger/coh-android/actions/runs/37048610759"
+    },
+    "configuration": "OptDebug",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "files": {
+      "CityOfHeroes.exe": {
+        "delay_imports": [],
+        "imports": [
+          "ADVAPI32.dll",
+          "cg.dll",
+          "cgGL.dll",
+          "COMDLG32.dll",
+          "DDRAW.dll",
+          "DINPUT8.dll",
+          "DSOUND.dll",
+          "GDI32.dll",
+          "GLU32.dll",
+          "IMM32.dll",
+          "IPHLPAPI.DLL",
+          "KERNEL32.dll",
+          "ole32.dll",
+          "OPENGL32.dll",
+          "PhysXCooking.dll",
+          "PhysXLoader.dll",
+          "SHELL32.dll",
+          "USER32.dll",
+          "VERSION.dll",
+          "WINMM.dll",
+          "WS2_32.dll"
+        ],
+        "pe_machine": 332,
+        "sha256": "1f42cc47eb6a1e10e361de70280bcfd8dcc86acd1a03b0a6529a6580a36995da",
+        "size": 9441280
+      },
+      "MapServer.exe": {
+        "delay_imports": [],
+        "imports": [
+          "ADVAPI32.dll",
+          "COMDLG32.dll",
+          "GDI32.dll",
+          "IPHLPAPI.DLL",
+          "KERNEL32.dll",
+          "PhysXCooking.dll",
+          "PhysXLoader.dll",
+          "SHELL32.dll",
+          "USER32.dll",
+          "WINMM.dll",
+          "WS2_32.dll"
+        ],
+        "pe_machine": 332,
+        "sha256": "6a5bf60b2130c31df74f1767510de65c581652caa90f639a5a6e4a9453b47d36",
+        "size": 6912512
+      },
+      "client-launcher.exe": {
+        "delay_imports": [],
+        "imports": [
+          "KERNEL32.dll",
+          "msvcrt.dll",
+          "USER32.dll"
+        ],
+        "pe_machine": 332,
+        "sha256": "fd8a3724bd009d122fe98e03229e62516b5ee31245db9c093dfaceef73bd11db",
+        "size": 246319
+      }
+    },
+    "format": 1,
+    "postgresql_persistence_fixture": false,
+    "repository_commit": "6557a21dbd696c9ac8e9b9344a0e8d7553d5a345",
+    "retained_cache": {
+      "archive": {
+        "bytes": 27071659,
+        "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+      },
+      "executable_sha256": "81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca",
+      "schema_changed": false,
+      "schema_sources_sha256": {
+        "Common/seq/seqload.c": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f",
+        "Common/seq/seqload.h": "d5e18647985c120bb9637827cc594c39db35bef45c8fb1312eed329675dadff9",
+        "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+        "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
+      }
+    },
+    "retained_native_files": {
+      "client": {
+        "CrashRpt.dll": {
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "54b99f56b2085ab7cc1602cd91cb85b0eeae44fbb6dcd5a553713c6b58cd8bf2",
+          "size": 39424
+        },
+        "NxCharacter.dll": {
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll",
+            "PhysXLoader.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "816fefac0c6b3d7da68daf3098a73e7fa0eff326ef83b3dba7f0fe2dcf0bd095",
+          "size": 107872
+        },
+        "NxCooking.dll": {
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll",
+            "WSOCK32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "5dc0333de6b18119b04f7a1beace3f5dfaff5754af62a0f4d8def9e73a09063c",
+          "size": 749568
+        },
+        "PhysXCooking.dll": {
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll",
+            "WSOCK32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "c6a1a1f4127bef756e8628775de18c57f93bb7cce22403efb3b519ea1f26a28d",
+          "size": 383840
+        },
+        "PhysXCore.dll": {
+          "delay_imports": [],
+          "imports": [
+            "cudart32_30_9.dll",
+            "KERNEL32.dll",
+            "USER32.dll",
+            "WSOCK32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "c1758f8deada5dad54eb384b4f94a43f69b54c6f671cdcabef4f64d9c6f1da3a",
+          "size": 3567456
+        },
+        "PhysXDevice.dll": {
+          "delay_imports": [],
+          "imports": [
+            "ADVAPI32.dll",
+            "KERNEL32.dll",
+            "USER32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "6b9f40f2da693b935163935c7ab56847bf11f7160f5b268c4e4881d2973d9cb7",
+          "size": 65536
+        },
+        "PhysXLoader.dll": {
+          "delay_imports": [],
+          "imports": [
+            "ADVAPI32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "db9ea1334a6364c4d02c2e3fe826ab48fb6b07242fff00bd41feb17524fde4de",
+          "size": 64352
+        },
+        "cg.dll": {
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "52a2e2abd29fa59dd7d6dbae4f5b41f94e451bfbc3a7a21957c5cfbb51824b98",
+          "size": 5667432
+        },
+        "cgGL.dll": {
+          "delay_imports": [],
+          "imports": [
+            "cg.dll",
+            "KERNEL32.dll",
+            "OPENGL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "63bc68bf4e7e660be910e5c2cd47bb637d136f4779a171555cbc4ef0c876b0f4",
+          "size": 350824
+        },
+        "concrt140.dll": {
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "63de7cc3187265b1b1871b84a11b8a91d8f249018dcfb34e910bf3eb2a193d11",
+          "size": 314816
+        },
+        "cudart32_30_9.dll": {
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "08c137f66758b6c342c0dd32fa45e8fc8c9f0c287997e46e515610c2aa84d0ed",
+          "size": 290408
+        },
+        "msvcp140.dll": {
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-environment-l1-1-0.dll",
+            "api-ms-win-crt-filesystem-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-locale-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "api-ms-win-crt-time-l1-1-0.dll",
+            "api-ms-win-crt-utility-l1-1-0.dll",
+            "KERNEL32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a",
+          "size": 618944
+        },
+        "msvcp140_1.dll": {
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "b08edd7954ae9954d24eb344a8b0116a980c60179ff1b92d5219639e21028cc2",
+          "size": 33728
+        },
+        "msvcp140_2.dll": {
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-locale-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "5e3c52721f03d5f546d64dfdfa38302b1fc3eb79dc44a1ec7a3af69abb9653fe",
+          "size": 261056
+        },
+        "msvcp140_atomic_wait.dll": {
+          "delay_imports": [],
+          "imports": [
+            "ADVAPI32.dll",
+            "api-ms-win-core-synch-l1-2-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-locale-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "e1142584f337b9b650d6d888652cb24f7b16a7dd93476840a050047bb00f0463",
+          "size": 57272
+        },
+        "msvcp140_codecvt_ids.dll": {
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "KERNEL32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "d4874db10c63990323696984eb2e2e799d952a1846437924c92153065b7259e4",
+          "size": 30648
+        },
+        "physxcudart_20.dll": {
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "e7b1965ab2ba441c2f4040f6203c10e7d9f02bfbb794a25d2a022d95b6f01c70",
+          "size": 197912
+        },
+        "vccorlib140.dll": {
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-core-winrt-error-l1-1-0.dll",
+            "api-ms-win-core-winrt-l1-1-0.dll",
+            "api-ms-win-core-winrt-string-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "ole32.dll",
+            "OLEAUT32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "d50aab1e201dfb268d6010d4c3b5bf7a3fb8dd1f38296135b43c9e29821e5586",
+          "size": 287160
+        },
+        "vcruntime140.dll": {
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3",
+          "size": 123328
+        },
+        "vcruntime140_threads.dll": {
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-time-l1-1-0.dll",
+            "KERNEL32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "7c372b0547fb45abd06e4bbdf5475cc99c3a915c998ef7e5c263de4762944e3b",
+          "size": 36280
+        }
+      },
+      "game": {
+        "CrashRpt.dll": {
+          "bytes": 39424,
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6"
+        },
+        "DbServer.exe": {
+          "bytes": 1661440,
+          "delay_imports": [],
+          "imports": [
+            "ADVAPI32.dll",
+            "GDI32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll",
+            "ODBC32.dll",
+            "USER32.dll",
+            "WINMM.dll",
+            "WS2_32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+        },
+        "NxCharacter.dll": {
+          "bytes": 107872,
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll",
+            "PhysXLoader.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "816fefac0c6b3d7da68daf3098a73e7fa0eff326ef83b3dba7f0fe2dcf0bd095"
+        },
+        "NxCooking.dll": {
+          "bytes": 749568,
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll",
+            "WSOCK32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "5dc0333de6b18119b04f7a1beace3f5dfaff5754af62a0f4d8def9e73a09063c"
+        },
+        "PhysXCooking.dll": {
+          "bytes": 383840,
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll",
+            "WSOCK32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "c6a1a1f4127bef756e8628775de18c57f93bb7cce22403efb3b519ea1f26a28d"
+        },
+        "PhysXCore.dll": {
+          "bytes": 3567456,
+          "delay_imports": [],
+          "imports": [
+            "cudart32_30_9.dll",
+            "KERNEL32.dll",
+            "USER32.dll",
+            "WSOCK32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "c1758f8deada5dad54eb384b4f94a43f69b54c6f671cdcabef4f64d9c6f1da3a"
+        },
+        "PhysXDevice.dll": {
+          "bytes": 65536,
+          "delay_imports": [],
+          "imports": [
+            "ADVAPI32.dll",
+            "KERNEL32.dll",
+            "USER32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "6b9f40f2da693b935163935c7ab56847bf11f7160f5b268c4e4881d2973d9cb7"
+        },
+        "PhysXLoader.dll": {
+          "bytes": 64352,
+          "delay_imports": [],
+          "imports": [
+            "ADVAPI32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "db9ea1334a6364c4d02c2e3fe826ab48fb6b07242fff00bd41feb17524fde4de"
+        },
+        "TestClientBridge.exe": {
+          "bytes": 145920,
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "13fcf1b029f092046ba8e3086bf848cb9af98c09e54b4a53f8331cbe4ff9ff2a"
+        },
+        "TestClientCreate.exe": {
+          "bytes": 3143680,
+          "delay_imports": [],
+          "imports": [
+            "ADVAPI32.dll",
+            "GDI32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll",
+            "USER32.dll",
+            "WINMM.dll",
+            "WS2_32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "9905c581fe222f3543dd3e8b7658d871e50fd5b927e8eb518512db7b710e1e58"
+        },
+        "TestClientResume.exe": {
+          "bytes": 3146240,
+          "delay_imports": [],
+          "imports": [
+            "ADVAPI32.dll",
+            "GDI32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll",
+            "USER32.dll",
+            "WINMM.dll",
+            "WS2_32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "e9745917dc4943791923d04d4d84578498f67411a0fad3ce1489d85278b157f1"
+        },
+        "cg.dll": {
+          "bytes": 5667432,
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "52a2e2abd29fa59dd7d6dbae4f5b41f94e451bfbc3a7a21957c5cfbb51824b98"
+        },
+        "cgGL.dll": {
+          "bytes": 350824,
+          "delay_imports": [],
+          "imports": [
+            "cg.dll",
+            "KERNEL32.dll",
+            "OPENGL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "63bc68bf4e7e660be910e5c2cd47bb637d136f4779a171555cbc4ef0c876b0f4"
+        },
+        "concrt140.dll": {
+          "bytes": 314816,
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "63de7cc3187265b1b1871b84a11b8a91d8f249018dcfb34e910bf3eb2a193d11"
+        },
+        "cudart32_30_9.dll": {
+          "bytes": 290408,
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "08c137f66758b6c342c0dd32fa45e8fc8c9f0c287997e46e515610c2aa84d0ed"
+        },
+        "msvcp140.dll": {
+          "bytes": 618944,
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-environment-l1-1-0.dll",
+            "api-ms-win-crt-filesystem-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-locale-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "api-ms-win-crt-time-l1-1-0.dll",
+            "api-ms-win-crt-utility-l1-1-0.dll",
+            "KERNEL32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a"
+        },
+        "msvcp140_1.dll": {
+          "bytes": 33728,
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "b08edd7954ae9954d24eb344a8b0116a980c60179ff1b92d5219639e21028cc2"
+        },
+        "msvcp140_2.dll": {
+          "bytes": 261056,
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-locale-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "5e3c52721f03d5f546d64dfdfa38302b1fc3eb79dc44a1ec7a3af69abb9653fe"
+        },
+        "msvcp140_atomic_wait.dll": {
+          "bytes": 57272,
+          "delay_imports": [],
+          "imports": [
+            "ADVAPI32.dll",
+            "api-ms-win-core-synch-l1-2-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-locale-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "e1142584f337b9b650d6d888652cb24f7b16a7dd93476840a050047bb00f0463"
+        },
+        "msvcp140_codecvt_ids.dll": {
+          "bytes": 30648,
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "KERNEL32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "d4874db10c63990323696984eb2e2e799d952a1846437924c92153065b7259e4"
+        },
+        "physxcudart_20.dll": {
+          "bytes": 197912,
+          "delay_imports": [],
+          "imports": [
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "e7b1965ab2ba441c2f4040f6203c10e7d9f02bfbb794a25d2a022d95b6f01c70"
+        },
+        "vccorlib140.dll": {
+          "bytes": 287160,
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-core-winrt-error-l1-1-0.dll",
+            "api-ms-win-core-winrt-l1-1-0.dll",
+            "api-ms-win-core-winrt-string-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "ole32.dll",
+            "OLEAUT32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "d50aab1e201dfb268d6010d4c3b5bf7a3fb8dd1f38296135b43c9e29821e5586"
+        },
+        "vcruntime140.dll": {
+          "bytes": 123328,
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3"
+        },
+        "vcruntime140_threads.dll": {
+          "bytes": 36280,
+          "delay_imports": [],
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-time-l1-1-0.dll",
+            "KERNEL32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "pe_machine": 332,
+          "sha256": "7c372b0547fb45abd06e4bbdf5475cc99c3a915c998ef7e5c263de4762944e3b"
+        }
+      }
+    },
+    "role": "native_responsiveness_candidate",
+    "runtime_execution_validated": false,
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488"
+  },
+  "native_source_commit": "f42ebb46675213809018b4f9825d13eb1cd6e952",
+  "native_source_provenance": {
+    "artifact_id": 11304751532,
+    "package_files": {
+      "CMakeCache.txt": {
+        "bytes": 39350,
+        "sha256": "5672ae5126e8c1d6166f668ba7712b89897816e61a6e994675aeb75025d3462b"
+      },
+      "CityOfHeroes.exe": {
+        "bytes": 9443840,
+        "sha256": "ec1a6c01b07d7c189bde743a7255c860b8dd96879225b4ffa50fd42eabbb721b"
+      },
+      "client-loading-native-checks.json": {
+        "bytes": 7011,
+        "sha256": "c5bb5ce86ba4db4fad2bf079f9e410138e70b7c80d0fb8d7f2b4fcd12268edb0"
+      },
+      "client-loading-native-manifest.json": {
+        "bytes": 35846,
+        "sha256": "0d7e472b18254b3853a525efcc5b801ca8db8315124236139cf5a897bb81c894"
+      }
+    },
+    "repository_commit": "f42ebb46675213809018b4f9825d13eb1cd6e952",
+    "run_id": 37204837499,
+    "source_files": {
+      "patches/client-loading/0001-known-length-string-copy-and-profile.patch": {
+        "bytes": 4255,
+        "sha256": "c989c1518af562b09bef114ba1c694b39410de56d6da9d3c55f77fe9ad6e6a5a"
+      },
+      "tools/android/interactive/package_client_loading_native.py": {
+        "bytes": 15478,
+        "sha256": "6aba37c93152fb492418328db050d8b3d2a67e6e8798dbf469b7124217f01f01"
+      },
+      "tools/android/interactive/test_client_loading_native.py": {
+        "bytes": 15832,
+        "sha256": "2981c2ae36468c4513060d6d3683554f1891a85768d56880ffa8f88ed45efc87"
+      }
+    }
+  },
+  "new_visual_files": 5147,
+  "new_visual_payload_bytes": 833734047,
+  "official_sdk_checks_bound_to_same_public_apk_sha256": "4c02b4f5f1ff9b82ab8b96fe5b4d2f402b687c3ee66ef1d8535a1a68f0c07d4a",
+  "official_sdk_signature_badging_alignment_and_binary_manifest_checks_passed_in_ci": true,
+  "payloads_verified": 71,
+  "physical_client_timing_validated": false,
+  "physical_gameplay_validated": false,
+  "physical_result": "AYN Thor timing and visual validation remain pending. No physical success inferred from host checks.",
+  "physical_visual_assets_validated": false,
+  "preserved_repository_state": {
+    "main_commit": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+    "open_draft_pr": 1,
+    "previous_release_source": "7e905d6a9241848b4635a069a962c42382a9a200",
+    "previous_release_tag": "coh-atlas-gameplay-v0.13.9",
+    "same_continuation_branch": "codex/character-persistence-continuation"
+  },
+  "previous_runtime_generation_retained": true,
+  "previous_visual_files_retained_byte_for_byte": 329,
+  "public_apk": {
+    "bytes": 1194150167,
+    "name": "COH-Atlas-Gameplay-0.13.10.apk",
+    "sha256": "4c02b4f5f1ff9b82ab8b96fe5b4d2f402b687c3ee66ef1d8535a1a68f0c07d4a",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.10/COH-Atlas-Gameplay-0.13.10.apk"
+  },
+  "public_apk_matches_ci_build_and_github_release_digest": true,
+  "public_checksum": {
+    "bytes": 97,
+    "sha256": "e258e8bd1a39ddd39754760261343de6a17df3dfbabdcac16d0653cf5f6513ba"
+  },
+  "public_checksum_and_testing_notes_verified": true,
+  "public_testing_notes": {
+    "bytes": 4601,
+    "name": "COH-Atlas-Gameplay-0.13.10-testing.txt",
+    "sha256": "27337a36fdf5c17e1cc3f0f162d7df154ccc6ba9e54c1e3a38cec0be65de5cd4",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.10/COH-Atlas-Gameplay-0.13.10-testing.txt"
+  },
+  "qualification_receipt": {
+    "bytes": 21965417,
+    "sha256": "43b418e49e95a3677c8fcdd4c0c8241315f14cadbdac20f25bf389bf4d981b82"
+  },
+  "release_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.10",
+  "replaced_apk_payloads": [
+    "assets/runtime/client-manifest.json",
+    "assets/runtime/client-visual-assets.zip",
+    "assets/runtime/client-visual-manifest.json",
+    "assets/runtime/client_startup_diagnostic.py",
+    "assets/runtime/client_visual_assets.py",
+    "assets/runtime/local_character_server.py",
+    "assets/runtime/runtime-manifest.json"
+  ],
+  "repository": "Russianranger/coh-android",
+  "repository_commit": "9c36a5f411290400cb4aa4b2711a4bdcd39ca8cb",
+  "retained_animation_pigg": {
+    "animation_count": 5878,
+    "bytes": 97084456,
+    "metadata_bytes": 8703726,
+    "original_animation_bytes": 88380730,
+    "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+  },
+  "retained_animation_tracks_verified": 5878,
+  "retained_dex": {
+    "bytes": 355612,
+    "sha256": "e53a25bdb4da802efa3ed10bac3432c008f459d8b838d96ed6b037f389514626"
+  },
+  "retained_donor_payloads": 64,
+  "retained_server_archives_match_donor": true,
+  "runtime_manifest_members": 64,
+  "runtime_refresh_required": true,
+  "setup_memory_protection_sources_preserved": true,
+  "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "skipped_checks": 0,
+  "source_files_verified": 1162,
+  "source_hashes_match_formal_qualification": true,
+  "status": "passed",
+  "test_suites": 52,
+  "tests_run": 838,
+  "version_code": 25,
+  "version_name": "0.13.10",
+  "visual_archive": {
+    "bytes": 515813056,
+    "sha256": "1ae0892bc76e44d864bfd97a59702c125693c6850e41bd63999a82e8639389ea"
+  },
+  "visual_files": 5476,
+  "visual_independent_audit": {
+    "conservative_max_width_install_marker_bytes": 1769065,
+    "files": 5476,
+    "frozen_donor_metadata_archives_sha256_verified": 57,
+    "guest_archive_limit_bytes": 536870912,
+    "guest_manifest_limit_bytes": 16777216,
+    "install_marker_limit_bytes": 4194304,
+    "new_original_leaf_bodies_sha256_and_table_md5_verified": 5147,
+    "new_original_leaf_inventory_sha256": "c359e0575df07ca51da3471781ef3c3c27baac3ecc3e0e315aac4094110747ae",
+    "new_original_stored_streams_and_cached_native_headers_verified": 5147,
+    "payload_bytes": 873255284,
+    "physical_install_and_memory_pressure_validated": false,
+    "retained_Android_optional_large_manifest_export_omission_verified": true,
+    "retained_encoded_member_inventory_sha256": "fa20afd238af5187c5d07dade0ce1ce24765a4eea6f2061d3217ffb6356e53f9",
+    "retained_old_compressed_member_streams": 329,
+    "retained_old_original_bodies": 329,
+    "retained_old_requests_provenance_and_extension_objects": true,
+    "runtime_and_guest_manifest_archive_file_pins_preserve_exported_identity": true
+  },
+  "visual_manifest": {
+    "bytes": 16272899,
+    "sha256": "447868d63b0eea536cba6355fe69763e3d7b24a703a756b13e0ebafb4031a34b"
+  },
+  "visual_missing_only_install_policy_verified": true,
+  "visual_original_bytes": 873255284,
+  "workflow_conclusion": "success",
+  "workflow_run_id": 37249488856,
+  "workflow_run_url": "https://github.com/Russianranger/coh-android/actions/runs/37249488856"
+}

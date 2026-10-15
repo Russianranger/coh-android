@@ -1,0 +1,202 @@
+{
+  "acceptance": "Both reports verify reopen, loaded-world native readiness, committed save and cleanup; user reports greatly improved startup.",
+  "accepted_app_version": "0.13.15",
+  "analysis_date_utc": "2026-10-07",
+  "analysis_source": "f346ccd3e2979dc12369de9c31f97e418745cb8f",
+  "format": 1,
+  "limitations": [
+    "Report world observation differs from manually observed playable entry.",
+    "Client connection to native CLIENT_READY excludes character-selection time but is not an already-measured zone transfer.",
+    "Nested scene/server phases and observer totals are not additive.",
+    "New scene/frame instrumentation requires a new physical Thor run."
+  ],
+  "native_game_fps_measured": false,
+  "reports": [
+    {
+      "app_version": "0.13.15",
+      "native_frame_instrumentation_present": false,
+      "observer_metrics": {
+        "console_and_native_readiness": {
+          "calls": 87,
+          "last_ms": 4.126,
+          "max_ms": 4519.506,
+          "total_ms": 27832.15
+        },
+        "progress_registry": {
+          "calls": 2,
+          "last_ms": 1089.532,
+          "max_ms": 1089.532,
+          "total_ms": 2114.993
+        },
+        "window_identity": {
+          "calls": 87,
+          "last_ms": 38.517,
+          "max_ms": 1402.384,
+          "total_ms": 14126.773
+        }
+      },
+      "renderer": {
+        "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+        "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+        "renderer_classification": "software",
+        "vendor": "Mesa/X.org"
+      },
+      "result": {
+        "character_reopen_verified": true,
+        "cleanup_verified": true,
+        "passed": true
+      },
+      "scene_entry": {
+        "client_connect_to_native_ready_seconds": 75.33,
+        "native_ready_utc_ms": 1791312129950,
+        "scope": "First map connection through loaded-world CLIENT_READY; excludes character-selection delay."
+      },
+      "server_cache": {
+        "counts": {
+          "copied_private_files": 0,
+          "directories": 9962,
+          "files": 186535,
+          "linked_immutable_files": 0,
+          "preserved_schema_files": 62
+        },
+        "key": "d3f6b18b9ea8bf59a848686a",
+        "preparation_seconds": 39.585009,
+        "reused": true
+      },
+      "stage_seconds": {
+        "actual_client_interaction": 232.304353,
+        "actual_client_startup": 203.694812,
+        "client_animation_pack": 14.480637,
+        "client_inputs": 1.327384,
+        "client_private_data": 0.161177,
+        "client_visual_assets": 70.235848,
+        "local_atlas_startup": 235.664534,
+        "local_dbserver_startup": 69.651933,
+        "local_login_odbc": 13.517505,
+        "persistent_server_profile": 0.561766,
+        "postgres_local_login": 0.641533,
+        "presentation_display": 0.267181,
+        "win32_runtime_dll": 0.994492,
+        "wine_initialization": 9.247553
+      },
+      "support_zip": {
+        "bytes": 14150766,
+        "filename": "coh-atlas-gameplay-20261006-184433.zip",
+        "sha256": "37ee8cffee23845650b9a610126efa672936b2b7d74f600784762daaa729ce16"
+      },
+      "timing_seconds": {
+        "guest_to_client_ready": 675.709715,
+        "login_to_world_observation": 84.737,
+        "operation_to_login_observation": 697.078,
+        "operation_to_world_observation": 781.815,
+        "unlabelled_preparation_and_gaps": 55.26336
+      },
+      "visual_preparation": {
+        "archive_read_bytes": 859075775,
+        "decoded_files": 0,
+        "decoded_payload_bytes": 0,
+        "file_count": 10401,
+        "fingerprint_reused": false,
+        "installed_files": 0,
+        "preparation_elapsed_seconds": 70.173368,
+        "reused_files": 10401,
+        "verified_existing_bytes": 1534806726
+      }
+    },
+    {
+      "app_version": "0.13.15",
+      "native_frame_instrumentation_present": false,
+      "observer_metrics": {
+        "console_and_native_readiness": {
+          "calls": 84,
+          "last_ms": 1.432,
+          "max_ms": 4978.148,
+          "total_ms": 28573.699
+        },
+        "progress_registry": {
+          "calls": 2,
+          "last_ms": 980.84,
+          "max_ms": 992.909,
+          "total_ms": 1973.749
+        },
+        "window_identity": {
+          "calls": 84,
+          "last_ms": 59.962,
+          "max_ms": 2515.76,
+          "total_ms": 18335.616
+        }
+      },
+      "renderer": {
+        "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+        "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+        "renderer_classification": "software",
+        "vendor": "Mesa/X.org"
+      },
+      "result": {
+        "character_reopen_verified": true,
+        "cleanup_verified": true,
+        "passed": true
+      },
+      "scene_entry": {
+        "client_connect_to_native_ready_seconds": 77.793,
+        "native_ready_utc_ms": 1791312952687,
+        "scope": "First map connection through loaded-world CLIENT_READY; excludes character-selection delay."
+      },
+      "server_cache": {
+        "counts": {
+          "copied_private_files": 0,
+          "directories": 9962,
+          "files": 186535,
+          "linked_immutable_files": 0,
+          "preserved_schema_files": 62
+        },
+        "key": "d3f6b18b9ea8bf59a848686a",
+        "preparation_seconds": 32.555364,
+        "reused": true
+      },
+      "stage_seconds": {
+        "actual_client_interaction": 217.466201,
+        "actual_client_startup": 203.401292,
+        "client_animation_pack": 12.770123,
+        "client_inputs": 1.19197,
+        "client_private_data": 0.126795,
+        "client_visual_assets": 32.054145,
+        "local_atlas_startup": 203.396011,
+        "local_dbserver_startup": 61.770735,
+        "local_login_odbc": 13.000015,
+        "persistent_server_profile": 0.61018,
+        "postgres_local_login": 0.388859,
+        "presentation_display": 0.108112,
+        "win32_runtime_dll": 1.227108,
+        "wine_initialization": 8.056768
+      },
+      "support_zip": {
+        "bytes": 13256399,
+        "filename": "coh-atlas-gameplay-20261006-185813.zip",
+        "sha256": "9fc55bca606aff98b41a57b224bf7d0bdc3580bc1f1b095b4bc0113d77c7ce36"
+      },
+      "timing_seconds": {
+        "guest_to_client_ready": 571.51866,
+        "login_to_world_observation": 85.432,
+        "operation_to_login_observation": 592.567,
+        "operation_to_world_observation": 677.999,
+        "unlabelled_preparation_and_gaps": 33.416547
+      },
+      "visual_preparation": {
+        "archive_read_bytes": 0,
+        "decoded_files": 0,
+        "decoded_payload_bytes": 0,
+        "file_count": 10401,
+        "fingerprint_reused": true,
+        "installed_files": 0,
+        "preparation_elapsed_seconds": 32.008517,
+        "reused_files": 10401,
+        "verified_existing_bytes": 0
+      }
+    }
+  ],
+  "user_stopwatch_reopen_to_world_seconds": {
+    "first": 780,
+    "warm": 690
+  }
+}

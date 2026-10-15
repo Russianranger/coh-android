@@ -1,0 +1,97 @@
+{
+  "format": 1,
+  "status": "diagnostic_deadline_exceeded",
+  "scope": "exact_apk_cached_client_short_diagnostic",
+  "run_id": 36707839624,
+  "repository_commit": "a40250b0032bd05a333514920722ddffa4427730",
+  "apk_sha256": "7ef2ec40931ada23910f2e6125ad0d754049003aba9deb882dbaee4ea6f3d803",
+  "session_id": "0805553562112e4634e257023e2744f2",
+  "startup_timeout_seconds": 300,
+  "failures": [
+    "Actual CoH startup exceeded its bounded deadline"
+  ],
+  "renderer_initialized": true,
+  "all_data_loaded": false,
+  "client_main_loop_reached": false,
+  "client_worktree": {
+    "format": 1,
+    "source_data": "/game-import/data",
+    "import": {
+      "generation": "generation-c8ef65d1c41c4ef58495c5f11d48c4d3",
+      "receipt_sha256": "9e7afc2a707a605d4be852596202c40f1a6a66b97d90b7b9d7c2a7808a2b7104",
+      "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+      "file_count": 173011,
+      "total_bytes": 2977730517
+    },
+    "package_sha256": "77fdcfa6eea4620d568a0db0953407f4f66700c4a5adf0135c2525d9860041a4",
+    "cache_archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+    "prerequisites_archive_sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e",
+    "prerequisites_manifest_sha256": "32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f",
+    "normalized_mtime_epoch": 1767225600,
+    "linked_files": 173005,
+    "copied_writable_files": 6,
+    "input_files": 173011,
+    "input_bytes": 2977730517,
+    "imported_inputs_readonly": true,
+    "imported_input_bytes_unchanged": true,
+    "imported_metadata_normalized": true,
+    "prepared_cache_files": 100,
+    "prepared_cache_bytes": 364703716,
+    "prepared_prerequisite_files": 3,
+    "prepared_prerequisite_bytes": 54948,
+    "writable_cache_roots": [
+      "bin",
+      "server/bin",
+      "geobin"
+    ],
+    "reused": false
+  },
+  "cleanup_complete": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 453,
+    "scanned_tasks": 2,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "console_bytes": 478064,
+  "cache_consumption_review": {
+    "prepared_files": 100,
+    "prepared_files_regenerated": 0,
+    "cache_miss_or_date_schema_diagnostics": 0,
+    "completed": [
+      "sequencers",
+      "powers",
+      "badges and pophelp",
+      "NPCs",
+      "items"
+    ],
+    "last_phase": "Loading FX info from fxinfo.bin"
+  },
+  "visual_review": "Correctly fitted 800x600 Freedom loading background; no menu or main-loop claim.",
+  "next_step": "Qualify this same exact APK using its already defined normal 900-second startup budget; keep readiness, observation and cleanup predicates unchanged.",
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

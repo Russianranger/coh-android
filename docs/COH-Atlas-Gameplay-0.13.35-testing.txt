@@ -1,0 +1,99 @@
+COH Android 0.13.35 — manual capture, text entry and startup reuse
+Version code 50. Install over the existing application. Keep THORHERO, the
+persistent database, imported runtime, Wine prefix and Assets 1.0.0 (four parts).
+Do not uninstall, reset the profile or reimport unchanged assets.
+
+STARTING STATE
+THORHERO is saved in Kings Row, Map ID 5, native port 7003. The two supplied
+0.13.34 physical reports confirm Kings Row entry and ordinary save. Their
+incomplete overall result does not invalidate that committed save. Startup was
+still slow, and incomplete worker cleanup prevented authenticated warm reuse.
+The user's observed previous startup was about 24 minutes before login, with
+Local DB around 5:53 and Kings Row around 8:29. These are operation observations,
+not a demonstrated isolated native startup benchmark.
+
+CHANGES
+Reopen uses manual gameplay lifetime rather than a countdown. Start test and
+Stop test control evidence capture when you are ready; neither closes gameplay
+or starts a countdown. Individual startup, save and cancellation operations
+retain their guarded deadlines and exact process ownership.
+
+The PE32 client-launcher helper is freshly built and qualified on genuine
+Windows for its explicit manual mode. The client Game, DbServer, MapServer,
+renderer, GPU/Wine/FEX and Assets 1.0.0 retain the qualified donor bytes. A native
+helper fixture is separate from physical Android gameplay qualification.
+
+Preparation defers Atlas bulk inputs when the saved destination is Kings Row,
+uses a validated server input projection, and prepares Atlas separately on an
+actual travel request. For Kings Row, client initialization overlaps native map loading; Atlas
+startup retains its serial flow. Input becomes ready only after the required client and selected-map proofs.
+Exact native cache identities and fallback checks remain required. Qualified
+client input caches and an isolated probe-prefix may be reused only when their
+full ownership/content proofs hold. The actual Vulkan/WGL probes still run.
+Runtime update uses faster pacing only with ample measured memory headroom.
+Worker cleanup retains a strong owned identity before teardown.
+
+Send text and L3 use one owned, paced ASCII input task. Text values are omitted
+from diagnostic records. Opening a text editor binds its submission to the
+current session, so a stale dialog cannot type into a later session.
+
+Five-minute total startup is the priority target. This release does not claim a
+measured AYN Thor startup improvement, that target achieved, or sub-30-second
+native MapServer startup. Native on-demand zoning and resident map-process reuse already exist.
+Scheduling alone does not remove per-process definition/sequencer loading.
+New profiling source stages are not shipping Game/MapServer replacements.
+
+FIRST TEST — KINGS ROW, MANUAL CAPTURE AND REPORTS
+1. Install the qualified APK as an update and run Set up / update runtime once.
+2. Select Reopen saved THORHERO. Verify Kings Row is the saved destination.
+3. Record total preparation to login-ready time. Take separate Local DB,
+   Kings preparation, native MapServer readiness and usable-world observations
+   from the progress/report evidence. Do not count time spent on other duties
+   before login as native loading time.
+4. Log in with COHLOCAL / offline when convenient. Enter Kings Row and verify
+   movement, costume, powers, enhancements, graphics and combat.
+5. Tap Start test when ready to capture evidence. Test Send text/L3 by focusing
+   a suitable client text field, opening the editor and submitting a harmless
+   short ASCII value. Check the actual characters in the game, not just the
+   diagnostic input counter. The external keyboard remains available.
+6. Tap Stop test when finished. You can continue gameplay afterward. Record FPS
+   and temperature while moving and during comparable combat.
+7. Release held controls and use Save character / log out. Wait for Saved
+   character verified, then Finish and Reports / export. Export the complete
+   outer ZIP, even when the overall Character Check remains incomplete.
+8. Preserve the ZIP. Export the read-only storage scan if cleanup/reuse remains
+   unavailable. Recover interrupted reports if normal finalization is interrupted.
+
+FOLLOW-UP TESTS — ONLY AFTER THE SHORT KINGS SAVE/EXPORT PASSES
+B. Reopen THORHERO in Kings Row and use the actual monorail to Atlas Park.
+   Record preparation, native startup, transfer and usable-world arrival
+   separately. Confirm movement and character state, save normally in Atlas
+   and export the complete outer ZIP.
+C. Reopen the newly saved Atlas character. Confirm Atlas is selected, position
+   and state persist, and Kings is not started unnecessarily. Save/export.
+D. Only after A-C pass, compare cold versus authenticated warm-cache startup
+   and test Atlas-to-Kings and return travel where practical. Use Start/Stop
+   capture when convenient. Distinguish same-session resident maps from a new
+   process with warm filesystem caches; compare loading phases, FPS, thermals
+   and available memory. Preserve saved data and export failure evidence if
+   a guarded startup or transfer cannot complete.
+
+This ordered follow-up section updates the bundled release notes, which group
+warm comparison with travel. The signed APK and bundled notes retain their
+original source and byte identities in the publication receipt.
+
+FAILURES
+On a startup/input/report/cleanup failure, preserve the existing saved character
+and export current evidence. Never use relocation, /stuck, profile recreation,
+SQL changes, database reset or asset reimport as a startup workaround. A startup
+failure still has bounded diagnostics; manual gameplay does not expire simply
+because login or test capture is delayed.
+
+QUALIFICATION AND CLAIM BOUNDARIES
+The publication gate requires current changed-scope host tests, actual strict
+PostgreSQL fixtures, complete original-asset preparation including direct saved
+Kings cold/warm and deferred Atlas, a freshly built native helper with genuine
+Windows lifecycle evidence, signed APK assembly and an independent public-byte
+audit. Immutable historical package/native qualification keeps its original
+source and producer attribution. Current native helper tests do not qualify
+physical text entry, Android idle lifetime, map travel or startup speed.

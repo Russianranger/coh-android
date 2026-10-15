@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "scope": "bounded failure-only observations before owned service cleanup",
+  "snapshot_byte_limit": 1048576,
+  "windows_byte_limit": 393216,
+  "files": {
+    "windows-contexts.jsonl": {
+      "bytes": 104770,
+      "sha256": "d720cc544ad181495b30d7ff9fe98b63ab29d55fd12d617eb72a123252460223"
+    },
+    "snapshot.json": {
+      "bytes": 425200,
+      "sha256": "4a06ed26bc89c50f1b639a9b307133c03d8806224a0346acd3c8a7c38f939ec8"
+    }
+  },
+  "summary": {
+    "attempted": true,
+    "started_utc": "2026-09-28T12:36:19.387224+00:00",
+    "before_service_cleanup": true,
+    "before_failed_query_stop": true,
+    "trigger_label": "game-query-first-ready",
+    "trigger_alive": true,
+    "snapshot_written": true,
+    "elapsed_seconds": 2.945,
+    "windows_contexts_available": true
+  }
+}

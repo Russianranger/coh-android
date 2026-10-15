@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "source": "User's physical AYN Thor test report, October 12, 2026",
+  "candidate_version": "0.13.32",
+  "candidate_version_inferred_from_current_test_checkpoint": true,
+  "outer_support_archive_available": false,
+  "native_or_sql_evidence_independently_verified": false,
+  "user_observed": {
+    "existing_character_reopen": "successful twice",
+    "ordinary_character_save": "successful both times",
+    "graphics_and_combat": "successful",
+    "atlas_to_kings_row_arrival": "successful",
+    "kings_to_atlas_return": "not attempted because reports were unavailable",
+    "reports": "unavailable; Recover interrupted reports showed only completed archives",
+    "terminal_status_after_save_logout": "Character Check Incomplete",
+    "storage_cleanup_control": "grayed out"
+  },
+  "user_stopwatch_estimates_seconds": {
+    "first_reopen_to_world": 1320,
+    "second_reopen_to_world": 780,
+    "monorail_confirmation_to_usable_kings": 720
+  },
+  "timing_scope": "Approximate user-observed whole operations, not isolated preparation, native-ready or controlled A/B measurements",
+  "acceptance": {
+    "zoning_arrival_user_observed": true,
+    "save_user_observed": true,
+    "graphics_combat_user_observed": true,
+    "return_travel_qualified": false,
+    "map_loading_optimization_successful": false,
+    "report_generation_export_successful": false,
+    "native_fx_animation_activation_verified_on_device": false,
+    "fps_temperature_ram_measured": false,
+    "sub_30_second_map_startup_qualified": false
+  },
+  "next_priority": "Repair durable failed-session report generation/recovery/export and idle diagnostic access, then reduce duplicated loading validation with activation/work counters. Preserve the existing saved character, graphics, combat and successful Atlas-to-Kings arrival."
+}

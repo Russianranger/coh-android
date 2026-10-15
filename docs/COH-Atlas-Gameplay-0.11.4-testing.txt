@@ -1,0 +1,32 @@
+COH Atlas Gameplay 0.11.4 — startup and readiness performance
+
+Install as an update, keep app data and imported assets, then tap Refresh runtime
+once. Reopen the existing THORHERO with COHLOCAL / offline.
+
+This update removes repeated full data-tree scans from readiness checks, buffers
+incoming display frames and allows completed private server data to be reused.
+The first start after this update still prepares a new data tree. After proven
+server shutdown at Finish, later starts with the same imported generation can
+reuse it. An interrupted or invalid cache is preserved and bypassed with fresh
+preparation. No device startup-time or gameplay-FPS improvement is claimed yet.
+
+Keep the comparison short:
+1. Note the time from Reopen to the login menu and from entering the character
+   to usable movement. If initial loading returns to login, wait and reenter the
+   existing character. The native loading timeout remains unchanged.
+2. Dismiss help, tap Return to safe ground once and stay still until Atlas
+   position verified. Briefly check movement/camera outside and note frame pace.
+3. Release all controls and stand still for at least 60 seconds. Tap Save
+   character / log out before its countdown expires, then keep still.
+4. Wait for Saved character verified, tap Finish and save report, and export
+   the ZIP. This report includes preparation and observer timing for comparison.
+
+There is no need to repeat the accepted long movement, camera or jump tests.
+On a later necessary reopen, compare startup again to assess warm data reuse.
+Keep the ordinary movement/Save/proof countdowns. Do not create/delete THORHERO,
+reset app data, or force-stop a normal save.
+
+The same app ID and signer are retained, together with the native runtime,
+client/server, 800x600 display, world/avatar assets, character identity and normal
+save/ground/deadline guards. Rendering still uses software llvmpipe; accelerated
+graphics, complete materials/minimap and NPC/combat remain separate milestones.

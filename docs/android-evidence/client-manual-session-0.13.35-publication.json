@@ -1,0 +1,2940 @@
+{
+  "format": 1,
+  "status": "published_and_independently_public_byte_audited",
+  "branch": "codex/character-persistence-continuation",
+  "recovered_commit": "0b224087f618a47cbfa4ecfec56d3e4817975c68",
+  "assembly_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+  "assembly_tree": "03bc33ab7e2b10e5fcc80662a0f54c40cc2ea4fa",
+  "qualification_revision": 4,
+  "main_commit": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "draft_pr": 1,
+  "pr_kept_draft_unmerged": true,
+  "branch_policy_verification_scope": "GitHub API checked immediately after publication and before final documentation commit; main unchanged, PR1 draft/open/unmerged, release tag exactly pins application source.",
+  "version": "0.13.35",
+  "version_code": 50,
+  "planned_release_tag": "coh-atlas-gameplay-v0.13.35",
+  "release_tag": "coh-atlas-gameplay-v0.13.35",
+  "release_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.35",
+  "release_status": "published_and_independently_public_byte_audited",
+  "workflow_run_id": 38326347301,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38326347301",
+  "workflow_status": "success",
+  "release_jobs": {
+    "changes": "success",
+    "launcher-build": "success",
+    "launcher-qualify": "success",
+    "db-minimal": "success",
+    "apk": "success",
+    "public-audit": "success"
+  },
+  "apk": {
+    "status": "published_public_bytes_verified",
+    "name": "COH-Atlas-Gameplay-0.13.35.apk",
+    "bytes": 42064404,
+    "sha256": "6d8b74782186561a30d201400cbfddeb7ce81d2d471477950c1c4da69eafae31",
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+    "signature_verified": true,
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.35/COH-Atlas-Gameplay-0.13.35.apk",
+    "release_asset_id": 635458502
+  },
+  "notes": {
+    "status": "published_public_bytes_verified",
+    "name": "COH-Atlas-Gameplay-0.13.35-testing.txt",
+    "bytes": 5757,
+    "sha256": "c9068cc2c719052bff67cfcd6d9391883e96ec063d5364f5f4e85e618690c54e",
+    "followup_order_clarification": "Final HANDOFF and COH-SAVED-KINGS-STARTUP-0.13.35.md specify A short Kings save/export, B Kings-to-Atlas, C persisted Atlas reopen, then D warm/round-trip; bundled notes group warm comparison with follow-up travel.",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.35/COH-Atlas-Gameplay-0.13.35-testing.txt",
+    "release_asset_id": 635458592,
+    "ordered_followup_guide": "docs/COH-Atlas-Gameplay-0.13.35-testing.txt at the final documentation commit clarifies A Kings, B Kings-to-Atlas, C Atlas saved reopen, D warm/round-trip; immutable release notes retain the recorded original bytes."
+  },
+  "checksum_file": {
+    "status": "published_public_bytes_verified",
+    "name": "COH-Atlas-Gameplay-0.13.35.apk.sha256",
+    "bytes": 97,
+    "sha256": "098b06135acacc04c412eab875d2c6c6372688439d2e34a41085139c8f883754",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.35/COH-Atlas-Gameplay-0.13.35.apk.sha256",
+    "release_asset_id": 635458577
+  },
+  "donor": {
+    "run_id": 38302653186,
+    "repository_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+    "apk": {
+      "bytes": 42048020,
+      "sha256": "c2d859621476e22add673a76c4b6aae65c2143671e50c085d020108b6e19d95e"
+    },
+    "build_report": {
+      "bytes": 8211105,
+      "sha256": "bc2e215ed7bbb8a047d3e52084deec1b0db0a68a4c8479f6302fd575a933fcd3"
+    },
+    "build_report_artifact_id": 11772107531,
+    "build_report_artifact_zip": {
+      "bytes": 50269915,
+      "sha256": "9c4ba6faafb1a62cbdd0cda45b435de1ee8358b25dc65ef4842bfa2189b70d3b"
+    },
+    "public_byte_audit_artifact_id": 11772433681,
+    "public_byte_audit_artifact_zip": {
+      "bytes": 760,
+      "sha256": "73b746509ade89565557fad37d19ad9fae51a62364ba1c21f8ccb57c314af68a"
+    },
+    "successful_publication_rerun": false
+  },
+  "qualification": {
+    "status": "passed",
+    "artifact_id": 11781823758,
+    "artifact_zip": {
+      "bytes": 1014040,
+      "sha256": "67f46592ae8a2566bb11ca1f60adf11ad5f8bd73781e99cd2ff1d422b01cb325"
+    },
+    "receipt": {
+      "bytes": 4866374,
+      "sha256": "24489ff1c3a2867d34fe327aaea085f0330eedaec3b91520bb48408c61baa9b5"
+    },
+    "current_suites": 201,
+    "current_cases": 2772,
+    "current_failures": 0,
+    "current_skips": 0,
+    "inherited_suites": 7,
+    "inherited_cases": 95,
+    "checks": {
+      "retained_regressions_and_postgresql_verified": true,
+      "actual_runtime_asset_installers_verified": true,
+      "full_startup_orchestration_verified": true,
+      "report_finalization_and_recovery_verified": true,
+      "saved_map_startup_and_preservation_verified": true,
+      "bounded_cache_reuse_verified": true,
+      "manual_session_and_capture_verified": true,
+      "text_entry_transport_verified": true,
+      "native_launcher_lifecycle_verified": true,
+      "minimal_db_native_compatibility_verified": true,
+      "exact_034_game_db_map_graphics_and_assets_verified": true
+    },
+    "qualified_source_files": 9995,
+    "inventory_only": false,
+    "inherited_scope": "Seven exact source-bound historical packaging/certificate contracts retain authenticated .34 evidence and original nested native donor identities; inherited evidence is not current execution.",
+    "current_errors": 0,
+    "saved_map_postgresql_proof": {
+      "format": 1,
+      "status": "passed",
+      "scope": "actual_postgresql_readonly_saved_map_selection",
+      "postgresql_major": 16,
+      "fixtures": [
+        "account_identity_mismatch",
+        "atlas_assigned",
+        "atlas_instance_assigned",
+        "atlas_instance_unassigned",
+        "atlas_unassigned",
+        "foreign_account",
+        "foreign_name",
+        "inconsistent_active_map",
+        "kings_assigned",
+        "kings_unassigned",
+        "missing_costume_rows",
+        "missing_native_kings_qualification",
+        "missing_power_rows",
+        "nonfinite_saved_position",
+        "read_only_transaction_enforced",
+        "repeated_kings_selection",
+        "unsupported_saved_destination"
+      ],
+      "sql_transaction_mode": "READ ONLY",
+      "fixture_schema_isolated": true,
+      "player_database_accessed": false,
+      "native_process_booted": false,
+      "native_client_connected": false,
+      "native_save_logout_executed": false,
+      "physical_ayn_thor_validated": false,
+      "enhancement_no_mutation_scope": "actual_isolated_postgresql_full_34_field_boosts_rows",
+      "boost_fields": [
+        "containerid",
+        "subid",
+        "powerid",
+        "idx",
+        "categoryname",
+        "powersetname",
+        "boostname",
+        "level",
+        "numcombines",
+        "var0",
+        "var1",
+        "var2",
+        "var3",
+        "slottedpowerupsmask",
+        "powerupslottype0",
+        "powerupslotid0",
+        "powerupslottype1",
+        "powerupslotid1",
+        "powerupslottype2",
+        "powerupslotid2",
+        "powerupslottype3",
+        "powerupslotid3",
+        "powerupslottype4",
+        "powerupslotid4",
+        "powerupslottype5",
+        "powerupslotid5",
+        "powerupslottype6",
+        "powerupslotid6",
+        "powerupslottype7",
+        "powerupslotid7",
+        "powerupslottype8",
+        "powerupslotid8",
+        "powerupslottype9",
+        "powerupslotid9"
+      ],
+      "generated_boost_template_sha256": "295e82df5c9cd84d0571b5e5e4f44caf7a68e35faadfdb57952bf4fe9308c913",
+      "shipping_enhancement_capture_changed": false
+    },
+    "claim_scope": "Current host qualification executes every changed saved-map/report/cache/SQL scope, all applicable retained regressions and actual packaged fresh-create/reopen Atlas/Kings preparation. The fresh helper has independent actual Windows process/console/lifecycle qualification; Game/Db/Map native consumers, GPU/Wine/FEX and Assets 1.0.0 remain exact. Six immutable historical packaging suites and unchanged certificate regression retain authenticated .34 source-bound results; nested .32 native producers keep their original identities and are never rebuilt or relabelled. Native reader/dependency/animation regression suites execute with original authenticated fixture inputs. Strict isolated PostgreSQL saved-map fixtures do not read or mutate the physical THORHERO database. No host gate establishes physical Kings Row direct reopen, graphics, save/export, startup speed or travel."
+  },
+  "accepted_packaging": {
+    "status": "passed",
+    "artifact_id": 11782530752,
+    "artifact_zip": {
+      "bytes": 52078623,
+      "sha256": "790edabf3e00facb0d76817b4de23862cca965af0a96bda1848664e5d878dba6"
+    },
+    "build_report": {
+      "bytes": 10001934,
+      "sha256": "2b5828c41ef613d8b75d4bf600b930a2d390a326f8e1b6e3639b6519dcfbc744"
+    },
+    "signed_audit": {
+      "bytes": 5581,
+      "sha256": "8cebc9af3fd660d171be44b7a0aae646b2fe4b2e72f7e786d30b1da63b220eca"
+    },
+    "proof": {
+      "format": 1,
+      "status": "passed",
+      "scope": "actual_signed_apk_independent_host_audit",
+      "repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+      "repository_tree": "03bc33ab7e2b10e5fcc80662a0f54c40cc2ea4fa",
+      "apk": {
+        "apk": "COH-Atlas-Gameplay-0.13.35.apk",
+        "bytes": 42064404,
+        "sha256": "6d8b74782186561a30d201400cbfddeb7ce81d2d471477950c1c4da69eafae31",
+        "version_name": "0.13.35",
+        "version_code": 50
+      },
+      "build_report": {
+        "bytes": 10001934,
+        "sha256": "2b5828c41ef613d8b75d4bf600b930a2d390a326f8e1b6e3639b6519dcfbc744"
+      },
+      "qualification_receipt": {
+        "bytes": 4866374,
+        "sha256": "24489ff1c3a2867d34fe327aaea085f0330eedaec3b91520bb48408c61baa9b5"
+      },
+      "donor": {
+        "run_id": 38302653186,
+        "repository_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+        "apk": {
+          "bytes": 42048020,
+          "sha256": "c2d859621476e22add673a76c4b6aae65c2143671e50c085d020108b6e19d95e"
+        },
+        "build_report": {
+          "bytes": 8211105,
+          "sha256": "bc2e215ed7bbb8a047d3e52084deec1b0db0a68a4c8479f6302fd575a933fcd3"
+        },
+        "build_report_artifact_id": 11772107531,
+        "build_report_artifact_zip": {
+          "bytes": 50269915,
+          "sha256": "9c4ba6faafb1a62cbdd0cda45b435de1ee8358b25dc65ef4842bfa2189b70d3b"
+        },
+        "public_byte_audit_artifact_id": 11772433681,
+        "public_byte_audit_artifact_zip": {
+          "bytes": 760,
+          "sha256": "73b746509ade89565557fad37d19ad9fae51a62364ba1c21f8ccb57c314af68a"
+        }
+      },
+      "independently_recompiled_dex": {
+        "bytes": 522096,
+        "sha256": "0676d91881ca67a7b6befeed07d71cb5153f4789efb016117f78a4e0e933a69a"
+      },
+      "qualified_source_closure": {
+        "bytes": 1787936,
+        "sha256": "0b596fa8c5fabbffde4a21d98354390954b5d48aada8d16523391d6d7d233b3a"
+      },
+      "candidate_payload_inventory": {
+        "bytes": 11242,
+        "sha256": "dc0a47347e194b258f06bdec32ddfe7470ebd0aa4369932e220c59de6881b074"
+      },
+      "reviewed_guest_inputs": {
+        "atlas_world_assets.py": {
+          "bytes": 25852,
+          "sha256": "b36dbb96b36b7dc20b613d7bd86592f835e890a9a8766bed08eb557e1f8816a3"
+        },
+        "character_creation_diagnostic.py": {
+          "bytes": 27535,
+          "sha256": "81d4f8f86008e17e24f36cdb2dd9c0aeb93d19cf030ef0bb7429961738765e24"
+        },
+        "character_reopen_diagnostic.py": {
+          "bytes": 15440,
+          "sha256": "97a9e2e84b7f53546d38437a651d0adfe743edb1bbfcb69651c48263b212f7b5"
+        },
+        "character_server_data_cache.py": {
+          "bytes": 34134,
+          "sha256": "4d1e067fc32662c1dc2da53e36e02c0342958d5f08f3df01bf752c84d03d461a"
+        },
+        "character_session_budget.py": {
+          "bytes": 9526,
+          "sha256": "78fc86437be60fa32930f771256e9f59eedb52844aa8699f74e5d0450b279b79"
+        },
+        "character_zoning.py": {
+          "bytes": 80010,
+          "sha256": "51140d622a614fb8d2a5b058ce40898c915d731d36309241d778cba277514fc8"
+        },
+        "client_animation_package.py": {
+          "bytes": 13921,
+          "sha256": "c11559a9c95ff3efb9e9518b5ba585369a48c6a0a3235701c0e44ae50d183f64"
+        },
+        "client_gpu_profile.py": {
+          "bytes": 56687,
+          "sha256": "c2711d74ff058852af6a2eeb9b5d621abfcef39a79aa4befadacfd4671aef230"
+        },
+        "client_interactive_diagnostic.py": {
+          "bytes": 33958,
+          "sha256": "f56eb4a80284dc197f1213b01264e872db9c81f37eaec2babfc36af943c2d08c"
+        },
+        "client_visual_assets.py": {
+          "bytes": 27639,
+          "sha256": "b732478e4c33b7e15c8b55c14937a5e557b3d79f637a2f58109ef2f58c3962bb"
+        },
+        "game_device_diagnostic.py": {
+          "bytes": 69019,
+          "sha256": "1a4441f0b7c0e7d4954ac8e486ce148bae0f49035dd8597dff5c900844886d60"
+        },
+        "local_character_server.py": {
+          "bytes": 177794,
+          "sha256": "fa168b14aa2115c9129bba78afedb32dea7b8c22177a43ccf4f83598e237abac"
+        },
+        "server_fx_catalog.py": {
+          "bytes": 15400,
+          "sha256": "e0f347e156548b6a78e4f5cb6beba48d053e244e508cfb5d105c316e0fa7148a"
+        },
+        "texture_header_index.py": {
+          "bytes": 18204,
+          "sha256": "5f4b7601c3a98d6f4eaeff1c95496e544d336f783826bea15a674bae6e01a2c5"
+        },
+        "zone_asset_package.py": {
+          "bytes": 15364,
+          "sha256": "eba33c606c047b2a4b95c6965e717c0fa649f29dd82878f649ea63b258e6b4b6"
+        }
+      },
+      "runtime_manifest_sha256": "115f0a538368a7f341fac3a1294ca16488e40d450384abbdca50d14adadcc6ad",
+      "current_native_launcher": {
+        "bytes": 4199,
+        "sha256": "5cb19cea6e0e41041f7691389de4d269beb3cb1ea217e56a2d9fac9610431a05"
+      },
+      "current_retained_minimal_db_fixture": {
+        "bytes": 31147,
+        "sha256": "4a0a684bae0d9a541a01f22de17cce357eb1bd18796ce981d4d67da8b553a1eb"
+      },
+      "retained_native_server_archives": {
+        "bytes": 671,
+        "sha256": "c3c43902887ce89eb1ed44369ed17dbd4884e807fa8f8a5881124059f4a7c683"
+      },
+      "retained_map_startup_component": {
+        "bytes": 359256,
+        "sha256": "557df41c89476bd29da9c7af73a7c987978d333a4d0cf7ad389ecd1f9ef18f73"
+      },
+      "retained_external_assets": {
+        "bytes": 4799,
+        "sha256": "8f20e454af4c71d3246ca375daf5bed3db4ca2faef0d680cc38d93b90fbba6ec"
+      },
+      "actual_package_preflight": {
+        "bytes": 2391376,
+        "sha256": "6240f471726f99df29533e8a2d9b43fc49cf1c1b8e6aac0aca7856d0c156f29a"
+      },
+      "actual_runtime_asset_installers_verified": true,
+      "full_startup_orchestration_verified": true,
+      "signature_and_version_only_manifest_verified": true,
+      "exact_native_and_payload_boundaries_verified": true,
+      "native_runtime_booted": false,
+      "physical_execution_validated": false,
+      "live_database_and_saved_character_executed": false,
+      "process_and_sql_boundary": "not_executed",
+      "physical_map_startup_speedup_validated": false,
+      "sub_30_second_map_startup_validated": false
+    }
+  },
+  "public_audit": {
+    "status": "passed",
+    "job_id": 115077945880,
+    "job_url": "https://github.com/Russianranger/coh-android/actions/runs/38326347301/job/115077945880",
+    "artifact_id": 11783555735,
+    "artifact_zip": {
+      "bytes": 818,
+      "sha256": "180dbc1186a7a45c13839d66e0762a700d46bf1f3fb27f905ca3ac790d7326bf"
+    },
+    "receipt": {
+      "bytes": 1563,
+      "sha256": "c4c6f2233eaf255e46e3afccf523ff042755836225763b09fbf95fcbd8b99284"
+    },
+    "proof": {
+      "format": 1,
+      "status": "passed",
+      "repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+      "run_id": 38326347301,
+      "apk": {
+        "bytes": 42064404,
+        "sha256": "6d8b74782186561a30d201400cbfddeb7ce81d2d471477950c1c4da69eafae31",
+        "version_name": "0.13.35",
+        "version_code": 50
+      },
+      "public_apk_verified": true,
+      "actual_runtime_asset_installers_verified": true,
+      "full_startup_orchestration_verified": true,
+      "java_or_dex_recompiled": true,
+      "native_runtime_booted": false,
+      "retained_game_and_dbserver_verified": true,
+      "retained_game_archive_native_members": 24,
+      "native_mapserver_recompiled": false,
+      "retained_032_map_startup_component_verified": true,
+      "all_native_member_bytes_retained": false,
+      "retained_client_game_and_mapserver_verified": true,
+      "native_client_launcher_recompiled": true,
+      "native_client_launcher_windows_fixture_verified": true,
+      "actual_retained_minimal_db_host_fixture_verified": true,
+      "current_tests_run": 2772,
+      "inherited_tests_retained": 95,
+      "current_suites_run": 201,
+      "inherited_suites_retained": 7,
+      "original_asset_public_byte_audit_artifact_id": 11708366753,
+      "unchanged_assets_1_0_0_metadata_verified": true,
+      "asset_release_republished": false,
+      "physical_recovery_validated": false,
+      "physical_kings_row_zoning_validated": false,
+      "physical_kings_row_reopen_validated": false,
+      "physical_fps_gain_validated": false,
+      "physical_map_startup_speedup_validated": false,
+      "sub_30_second_map_startup_validated": false,
+      "sub_five_minute_total_startup_validated": false
+    }
+  },
+  "current_native_gates": {
+    "status": "passed_current_revision_4_native_components_signed_packaging_and_public_audit",
+    "repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+    "run_id": 38326347301,
+    "launcher": {
+      "status": "passed",
+      "repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+      "run_id": 38326347301,
+      "job_id": 115066381954,
+      "artifact_id": 11780594194,
+      "artifact_zip": {
+        "bytes": 105263,
+        "sha256": "19306bdf4017618c91c5862ee7af3a8a3ea37ffb30df89614601c71d3530eb1c"
+      },
+      "receipt": {
+        "bytes": 2019,
+        "sha256": "196ad4ade325551c878e4f29344d9645223d65693027a217a5d6ca4296511899"
+      },
+      "build_receipt": {
+        "bytes": 1921,
+        "sha256": "2fbec5fcbeee947998d69e7a8f7b9d4b600be1843317207ffc0fc65407554cb7"
+      },
+      "executable": {
+        "bytes": 246319,
+        "sha256": "b453c42876408a842a4f3b717ef3857d4f10624f02462b6e1c6ce5bcdca92159"
+      },
+      "proof": {
+        "format": 1,
+        "status": "passed",
+        "role": "current_pe32_manual_client_launcher",
+        "repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+        "run_id": 38326347301,
+        "run_url": "https://github.com/Russianranger/coh-android/actions/runs/38326347301",
+        "build_receipt": {
+          "bytes": 1921,
+          "sha256": "2fbec5fcbeee947998d69e7a8f7b9d4b600be1843317207ffc0fc65407554cb7"
+        },
+        "executable": {
+          "bytes": 246319,
+          "sha256": "b453c42876408a842a4f3b717ef3857d4f10624f02462b6e1c6ce5bcdca92159"
+        },
+        "source_files": {
+          "android/native/client-launcher.c": {
+            "bytes": 12770,
+            "sha256": "1a9b64f233399939f889f6da63004625d4ba9dd72040d17c5ad75e809870bbe8"
+          },
+          "tools/android/interactive/manual_launcher_contract.py": {
+            "bytes": 6300,
+            "sha256": "94d704e07ab30c642085b337239dc6ad7de81f944a9c3fc11b7770c64d58ec18"
+          },
+          "tools/android/interactive/package_manual_launcher.py": {
+            "bytes": 2871,
+            "sha256": "983ab20cba5984c4e8b02d317aa650900a609a175789a521bc3add837957b3ef"
+          },
+          "tools/android/interactive/qualify_manual_launcher_windows.py": {
+            "bytes": 15062,
+            "sha256": "ad6292a58dc2936275dd9df8eebb0b143e7df532329200fe8c23c20071bf55ed"
+          }
+        },
+        "executed_cases": [
+          "cache_generation_mode_retained",
+          "creation_mode_retained",
+          "exact_source_deadline_policy_native_fixture",
+          "invalid_mode_refused",
+          "invalid_session_refused",
+          "local_login_mode_retained",
+          "manual_owned_console_child_exit",
+          "manual_owned_interruption_cleanup",
+          "missing_game_refused"
+        ],
+        "skipped": 0,
+        "windows_platform": "genuine_windows_x86_process_and_console_api",
+        "actual_shipping_helper_executed": true,
+        "actual_owned_child_console_verified": true,
+        "deadline_policy_fixture": {
+          "actual_source_function_compiled": true,
+          "simulated_elapsed_hours": 48,
+          "real_duration_48_hour_run": false,
+          "shipping_helper_binary_modified": false
+        },
+        "game_db_map_executed": false,
+        "physical_ayn_thor_validated": false
+      },
+      "execution_scope": "Actual shipping PE32 helper on genuine Windows with owned native console children. Exact-source elapsed-clock fixture covers simulated48hours; not a48hour wall-clock run. No Game/MapServer/device execution."
+    },
+    "minimal_db": {
+      "status": "passed",
+      "repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+      "run_id": 38326347301,
+      "job_id": 115066186047,
+      "artifact_id": 11780688906,
+      "artifact_zip": {
+        "bytes": 8834,
+        "sha256": "5c0067f94dec0552a9ac26eb5371e89662681697263b00f9b57354f6e17af7e7"
+      },
+      "receipt": {
+        "bytes": 24111,
+        "sha256": "0676b79810ca2d271adc20b7ae5818aaf14e2500e52bf775f5b9c821b767a737"
+      },
+      "proof": {
+        "actual_native_map_query_executed": true,
+        "actual_retained_dbserver_host_fixture_executed": true,
+        "failures": [],
+        "finished_utc": "2026-10-13T00:18:32.340290+00:00",
+        "format": 1,
+        "fresh_minimal_runtime_each_start": true,
+        "full_runtime_executed": false,
+        "full_schema_and_attributes_restart_preserved": true,
+        "inputs": {
+          "donor_apk": {
+            "bytes": 42048020,
+            "sha256": "c2d859621476e22add673a76c4b6aae65c2143671e50c085d020108b6e19d95e"
+          },
+          "extra_world_data_files": 0,
+          "initial_files": {
+            "CrashRpt.dll": {
+              "bytes": 39424,
+              "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6"
+            },
+            "DbServer.exe": {
+              "bytes": 1664512,
+              "sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba"
+            },
+            "MapServer.exe": {
+              "bytes": 7475200,
+              "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+            },
+            "NxCharacter.dll": {
+              "bytes": 107872,
+              "sha256": "816fefac0c6b3d7da68daf3098a73e7fa0eff326ef83b3dba7f0fe2dcf0bd095"
+            },
+            "NxCooking.dll": {
+              "bytes": 749568,
+              "sha256": "5dc0333de6b18119b04f7a1beace3f5dfaff5754af62a0f4d8def9e73a09063c"
+            },
+            "PhysXCooking.dll": {
+              "bytes": 383840,
+              "sha256": "c6a1a1f4127bef756e8628775de18c57f93bb7cce22403efb3b519ea1f26a28d"
+            },
+            "PhysXCore.dll": {
+              "bytes": 3567456,
+              "sha256": "c1758f8deada5dad54eb384b4f94a43f69b54c6f671cdcabef4f64d9c6f1da3a"
+            },
+            "PhysXDevice.dll": {
+              "bytes": 65536,
+              "sha256": "6b9f40f2da693b935163935c7ab56847bf11f7160f5b268c4e4881d2973d9cb7"
+            },
+            "PhysXLoader.dll": {
+              "bytes": 64352,
+              "sha256": "db9ea1334a6364c4d02c2e3fe826ab48fb6b07242fff00bd41feb17524fde4de"
+            },
+            "TestClientBridge.exe": {
+              "bytes": 145920,
+              "sha256": "13fcf1b029f092046ba8e3086bf848cb9af98c09e54b4a53f8331cbe4ff9ff2a"
+            },
+            "TestClientCreate.exe": {
+              "bytes": 3143680,
+              "sha256": "9905c581fe222f3543dd3e8b7658d871e50fd5b927e8eb518512db7b710e1e58"
+            },
+            "TestClientResume.exe": {
+              "bytes": 3146240,
+              "sha256": "e9745917dc4943791923d04d4d84578498f67411a0fad3ce1489d85278b157f1"
+            },
+            "cg.dll": {
+              "bytes": 5667432,
+              "sha256": "52a2e2abd29fa59dd7d6dbae4f5b41f94e451bfbc3a7a21957c5cfbb51824b98"
+            },
+            "cgGL.dll": {
+              "bytes": 350824,
+              "sha256": "63bc68bf4e7e660be910e5c2cd47bb637d136f4779a171555cbc4ef0c876b0f4"
+            },
+            "concrt140.dll": {
+              "bytes": 314816,
+              "sha256": "63de7cc3187265b1b1871b84a11b8a91d8f249018dcfb34e910bf3eb2a193d11"
+            },
+            "cudart32_30_9.dll": {
+              "bytes": 290408,
+              "sha256": "08c137f66758b6c342c0dd32fa45e8fc8c9f0c287997e46e515610c2aa84d0ed"
+            },
+            "data/defs/account/loyaltyrewardtree.def": {
+              "bytes": 14112,
+              "sha256": "8b7c96accd8448a235dfa744ff775a3df40bc9e7968b8c192ff53a5de7065d43"
+            },
+            "data/defs/account/product_catalog.def": {
+              "bytes": 523341,
+              "sha256": "5e5375b3aa430b88fbcdada0ac87629fa35d5826ab817d9a9abd65baa677f300"
+            },
+            "data/defs/dbidmaps/invbasedetail.dbidmap": {
+              "bytes": 99378,
+              "sha256": "c2e85bca875e244b5ce54a6aa7e723047309cfc6c4fd2df83dba116fa9be874a"
+            },
+            "data/defs/dbidmaps/invrecipe.dbidmap": {
+              "bytes": 1243209,
+              "sha256": "1abfdc27ba3aba3a0a959266d02fc9db07e506ad91fe6ce40de42fe8ccb42c98"
+            },
+            "data/defs/dbidmaps/invsalvage.dbidmap": {
+              "bytes": 15001,
+              "sha256": "89cffb462496920daef0b43aaeb9b3e9528ab2852965946ab0fdf478ef603060"
+            },
+            "data/defs/dbidmaps/invstoredsalvage.dbidmap": {
+              "bytes": 14805,
+              "sha256": "30fd4951bf3c73f191a701d836a95892a2204181695af07e425fb2ec83e907ad"
+            },
+            "data/defs/proficiencyids.dbidmap": {
+              "bytes": 835,
+              "sha256": "cef52f3d5e2441638a314599861e544e085258792b596fc61033a2400865fa85"
+            },
+            "data/server/db/loadBalanceDefault.cfg": {
+              "bytes": 1886,
+              "sha256": "cf6274ced5409bd9316e3f90456610753f0de37da01c0b68dc63cf7d24baf76b"
+            },
+            "data/server/db/loadBalanceShardSpecific.cfg": {
+              "bytes": 71,
+              "sha256": "ce46881bc60c94f6e35854f68cea078a726f8b549ba3a6f63980b95aabe6a63c"
+            },
+            "data/server/db/maps.db": {
+              "bytes": 74291,
+              "sha256": "8aaa5085acfc86eae7b6a395da6c8ac4348eba503b71e845fdbeeb4725c53cf7"
+            },
+            "data/server/db/schemas/arenaevents.schema.html": {
+              "bytes": 7616,
+              "sha256": "f028cb642384bf2731084bd1a5f8866efb40f048c292151e2e1136b1cf322097"
+            },
+            "data/server/db/schemas/arenaplayers.schema.html": {
+              "bytes": 12872,
+              "sha256": "b2546884eca05924265968f2dba3f355c454e9efa4bc874dd9b252f44e14de82"
+            },
+            "data/server/db/schemas/autocommands.schema.html": {
+              "bytes": 659,
+              "sha256": "d07b2749e211e693f8ced6e2e026df409bca3b84f90ab7b8055150b9ecb5e80f"
+            },
+            "data/server/db/schemas/base.schema.html": {
+              "bytes": 578,
+              "sha256": "da23628c5ca2a5440c6e845f3f0e559b833fb4e49aa81fbec9c1999ae6757912"
+            },
+            "data/server/db/schemas/baseraids.schema.html": {
+              "bytes": 1347,
+              "sha256": "eae2323c44f91e443a40f1b0497b163e8408c8b0aacbdb99ee01be2aded68f38"
+            },
+            "data/server/db/schemas/email.schema.html": {
+              "bytes": 726,
+              "sha256": "5144dc321af4b1254f0d030aea55cd8bdbc13cd15bb275df421a10ff39e0cfc4"
+            },
+            "data/server/db/schemas/ents.schema.html": {
+              "bytes": 84724,
+              "sha256": "45ff4768d29beda2130c2fbcad3a9fc29a3fe647be7e09cb2f52397f32289903"
+            },
+            "data/server/db/schemas/eventhistory.schema.html": {
+              "bytes": 10832,
+              "sha256": "e2b875f95a94de59800cdcc8210fdadd2b5289d05e78970906e2ec357ea79cac"
+            },
+            "data/server/db/schemas/itemofpowergames.schema.html": {
+              "bytes": 588,
+              "sha256": "75056a653f2fdfc1a4024efd16d7fbe6d64e1f101f82adc3736fb507fbda1c94"
+            },
+            "data/server/db/schemas/itemsofpower.schema.html": {
+              "bytes": 552,
+              "sha256": "2f74c08fb12ccad248bc79bdff15a2d0d7540aeab5e13e725bf8e1f971747f39"
+            },
+            "data/server/db/schemas/leagues.schema.html": {
+              "bytes": 956,
+              "sha256": "223e2e670bfc7d8db5f328c318facbfb32f990617c45be0cde3b815dbbca1aa2"
+            },
+            "data/server/db/schemas/levelingpacts.schema.html": {
+              "bytes": 3264,
+              "sha256": "5309a01b56a09c0be35453cdb7a9b804d1a7730d8f757376c1465289317f6bcb"
+            },
+            "data/server/db/schemas/mapgroups.schema.html": {
+              "bytes": 657,
+              "sha256": "24953f199c18d171acd8ff911f72c1b7de32e07044c0b34a2149b558c2443314"
+            },
+            "data/server/db/schemas/miningaccumulator.schema.html": {
+              "bytes": 849,
+              "sha256": "4ed5e8b7eb04924329e9c368009997685f36d7cf69956d7d3f33b384f193dbf6"
+            },
+            "data/server/db/schemas/offline.schema.html": {
+              "bytes": 260,
+              "sha256": "360559f24f260fce881ac73224297954cf4a2c6ba224d3731e6ee725f15eceae"
+            },
+            "data/server/db/schemas/petitions.schema.html": {
+              "bytes": 1140,
+              "sha256": "5aa34925218aa1cf04396418fb82ab7b9a210c42fa9c2af31ecc4ac0ffbb9371"
+            },
+            "data/server/db/schemas/sgraidinfos.schema.html": {
+              "bytes": 722,
+              "sha256": "5c62468d70c12d307af10156f8330eb7f995f75d9fb29d5af53d46b9318f49b8"
+            },
+            "data/server/db/schemas/shardaccounts.schema.html": {
+              "bytes": 1965,
+              "sha256": "9e3414e061f64fc7757c02380256123932da58d40c21f31d62fb95a1b9b5f34a"
+            },
+            "data/server/db/schemas/supergroups.schema.html": {
+              "bytes": 8458,
+              "sha256": "37356f778dc9d7874ba7a5d24df127dfa83f9be41d10436fe564f5392cc84487"
+            },
+            "data/server/db/schemas/taskforces.schema.html": {
+              "bytes": 9571,
+              "sha256": "e1fca83efbd2741b3b3e3a0858d59628a8967094204819061f14008dd05f6bf9"
+            },
+            "data/server/db/schemas/teamups.schema.html": {
+              "bytes": 6678,
+              "sha256": "ee7d2e5958861206dcf03659d7eb150d9bcca57397226613e0454f75d8b1c7a1"
+            },
+            "data/server/db/schemas/testdatabasetypes.schema.html": {
+              "bytes": 1253,
+              "sha256": "a1439c7f7e333c81c170e9c555497664006dd4510c0dea9db09f8874837c8e1b"
+            },
+            "data/server/db/servers.cfg": {
+              "bytes": 12939,
+              "sha256": "539933dabd369fe57fde2c833f44317105faa77df4a7ff04ada32dfea3c8851d"
+            },
+            "data/server/db/templates/arenaevents.template": {
+              "bytes": 2194,
+              "sha256": "952f7404eccc9cf8726e65aa3fa4451784cf4f99224ba2b4cf9e4505af35560e"
+            },
+            "data/server/db/templates/arenaplayers.template": {
+              "bytes": 3219,
+              "sha256": "9c0a9347b2da737717954be9aa5614d43e666139cb7c44da0387880838bd2f40"
+            },
+            "data/server/db/templates/autocommands.template": {
+              "bytes": 102,
+              "sha256": "a6c9aeb57a944e1de4a239f9e1844dda71284a5b6c4667862b5f0ac017b967cc"
+            },
+            "data/server/db/templates/badges.attribute": {
+              "bytes": 51724,
+              "sha256": "789ed244ac7c686cc275a8a2914de95bbb044b00483875df950a713f05b66fea"
+            },
+            "data/server/db/templates/badgestats.attribute": {
+              "bytes": 62106,
+              "sha256": "ec57e497c6c044269d8d7e207b0869400ceeb18a03b94bda1a9d00a9d99cced2"
+            },
+            "data/server/db/templates/base.template": {
+              "bytes": 92,
+              "sha256": "32fa8e9a1f6f1bc72a4acfcc1d405d4b44412d7cda41fbceeb019dfde2a170c9"
+            },
+            "data/server/db/templates/baseraids.template": {
+              "bytes": 269,
+              "sha256": "644bd30dade4d7e958c2c35fd4251b9f5a67976510a6ef9eef310d7e311985b0"
+            },
+            "data/server/db/templates/email.template": {
+              "bytes": 179,
+              "sha256": "3966878019f3af7ac652640746d80bd5c22b85dcfd1bd1033288b853e75ac6fb"
+            },
+            "data/server/db/templates/ents.template": {
+              "bytes": 164583,
+              "sha256": "295e82df5c9cd84d0571b5e5e4f44caf7a68e35faadfdb57952bf4fe9308c913"
+            },
+            "data/server/db/templates/eventhistory.template": {
+              "bytes": 3879,
+              "sha256": "f535b56670e5b19b0a4d983d9eba021b00441474b27b65f3ea46ee73f1645f87"
+            },
+            "data/server/db/templates/itemofpowergames.template": {
+              "bytes": 100,
+              "sha256": "0e7b59085ee4b7f7ed5495a80dd06fb91b35ee338b9c9d09cce2390560309aca"
+            },
+            "data/server/db/templates/itemsofpower.template": {
+              "bytes": 99,
+              "sha256": "16befccbbad58e87d75455af8d240da5f299eaa08689cfc7b85e5e2ebb60434c"
+            },
+            "data/server/db/templates/leagues.template": {
+              "bytes": 112,
+              "sha256": "2f1018974bed27a271cc5c87e673356db2df7c5a6c9c7a3bf0b6a5c22b67536b"
+            },
+            "data/server/db/templates/levelingpacts.template": {
+              "bytes": 1428,
+              "sha256": "4fd6076ba33e8aebebe516dbde74d324721f3984047895bc2f6b3a1a7517b365"
+            },
+            "data/server/db/templates/mapgroups.template": {
+              "bytes": 198,
+              "sha256": "18a9bcbf1a566d3986b9fd2e31597093e4fe0f1dbd1f7142d573fc39bc496838"
+            },
+            "data/server/db/templates/miningaccumulator.template": {
+              "bytes": 198,
+              "sha256": "9e4646316ec1f4ef1cd0db486d3e2a68d2e17caaf84541dcdc837f46c349edeb"
+            },
+            "data/server/db/templates/offline.template": {
+              "bytes": 15,
+              "sha256": "1e55bf16fd0749d042c3481c2fdd28f339a17bd8eebec9d27f458f2f6265a67b"
+            },
+            "data/server/db/templates/petitions.template": {
+              "bytes": 260,
+              "sha256": "c28117e1efa5a2a487b330664d4349b524bf4482d862917ef1f469864895b045"
+            },
+            "data/server/db/templates/pophelp.attribute": {
+              "bytes": 2185,
+              "sha256": "34195086d3223c717dca5e1cd00bc35a947a05d5fe31b2408a863e85aea617a1"
+            },
+            "data/server/db/templates/sgraidinfos.template": {
+              "bytes": 95,
+              "sha256": "7bda51ccf348242d5bf8399a03381a480d6555a75c5aa0038b615afa611ae353"
+            },
+            "data/server/db/templates/shardaccounts.template": {
+              "bytes": 497,
+              "sha256": "388571567e563cfb3943d0e1c428e23b6f3d24c9a12f9bc0262b48972f964619"
+            },
+            "data/server/db/templates/statserver_supergroupstats.template": {
+              "bytes": 8348,
+              "sha256": "568f516d0b7f48b26de768d16442a7541ed280889ff8bcfb195c305343f098bd"
+            },
+            "data/server/db/templates/supergroup_badges.attribute": {
+              "bytes": 1039,
+              "sha256": "d63b3c490fc23086aa6af4fd9add6c2af0892452011d32d6984cac2198d65a7e"
+            },
+            "data/server/db/templates/supergroup_badgestats.attribute": {
+              "bytes": 6897,
+              "sha256": "f67e5677a244b919f674d545c990339caa674d1f8c299b8e0540dc2c8d65a6e9"
+            },
+            "data/server/db/templates/supergroups.template": {
+              "bytes": 2615,
+              "sha256": "a79ed03f51c0a2e7d33b9d4fd784c14970c42d63a53be7ac69d026fd80b73c78"
+            },
+            "data/server/db/templates/taskforces.template": {
+              "bytes": 3063,
+              "sha256": "47c405e582165df6d688b15b526cd9c70d0cf3c0ae005683dcd48c50526dffae"
+            },
+            "data/server/db/templates/teamups.template": {
+              "bytes": 2141,
+              "sha256": "ed2a5378f13d0503db0e38f03132e7888f150943de3a674eb5ef5a4977dc9ffc"
+            },
+            "data/server/db/templates/testdatabasetypes.template": {
+              "bytes": 491,
+              "sha256": "76e538c71248157120260f77bc21d84c940eecaed0cb5d69d958e5a689e642f1"
+            },
+            "data/server/db/templates/vars.attribute": {
+              "bytes": 1928476,
+              "sha256": "26c5f2bba77ab66ef7619c995f343633dc1748297dc9963605734ef3aa1053bb"
+            },
+            "msvcp140.dll": {
+              "bytes": 618944,
+              "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a"
+            },
+            "msvcp140_1.dll": {
+              "bytes": 33728,
+              "sha256": "b08edd7954ae9954d24eb344a8b0116a980c60179ff1b92d5219639e21028cc2"
+            },
+            "msvcp140_2.dll": {
+              "bytes": 261056,
+              "sha256": "5e3c52721f03d5f546d64dfdfa38302b1fc3eb79dc44a1ec7a3af69abb9653fe"
+            },
+            "msvcp140_atomic_wait.dll": {
+              "bytes": 57272,
+              "sha256": "e1142584f337b9b650d6d888652cb24f7b16a7dd93476840a050047bb00f0463"
+            },
+            "msvcp140_codecvt_ids.dll": {
+              "bytes": 30648,
+              "sha256": "d4874db10c63990323696984eb2e2e799d952a1846437924c92153065b7259e4"
+            },
+            "physxcudart_20.dll": {
+              "bytes": 197912,
+              "sha256": "e7b1965ab2ba441c2f4040f6203c10e7d9f02bfbb794a25d2a022d95b6f01c70"
+            },
+            "vccorlib140.dll": {
+              "bytes": 287160,
+              "sha256": "d50aab1e201dfb268d6010d4c3b5bf7a3fb8dd1f38296135b43c9e29821e5586"
+            },
+            "vcruntime140.dll": {
+              "bytes": 123328,
+              "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3"
+            },
+            "vcruntime140_threads.dll": {
+              "bytes": 36280,
+              "sha256": "7c372b0547fb45abd06e4bbdf5475cc99c3a915c998ef7e5c263de4762944e3b"
+            }
+          },
+          "manual_dbserver": {
+            "bytes": 1664512,
+            "sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba"
+          },
+          "mapserver": {
+            "bytes": 7475200,
+            "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+          },
+          "original_dbserver_package": "0cf5d97a8ddfff7da8dccc95b685ec1cc3d1edd1b62db9651c14315662c46142",
+          "retained_startup_manifest": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+          "schema_input_files": 62,
+          "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"
+        },
+        "launch_config": "exact_current_guest_game_config; disposable database and least-privilege coh_game role",
+        "native_character_gameplay_validated": false,
+        "native_world_started": false,
+        "owned_cleanup_verified": true,
+        "phases": [
+          {
+            "console": {
+              "buffer_rows_limit": 16384,
+              "capture_byte_limit": 16777216,
+              "final_snapshot": true,
+              "height": 16384,
+              "label": "fresh-db",
+              "method": "exact_pid_console_screen_buffer",
+              "observer": {
+                "elapsed_seconds": 10.453,
+                "exit_code": 0,
+                "forced_stop": false,
+                "label": "fresh-db-console-observer"
+              },
+              "raw_evidence_private": true,
+              "ready": true,
+              "snapshots": 202,
+              "used_rows": 1,
+              "width": 200
+            },
+            "dispatch_after": {
+              "loop_count": 364,
+              "main_thread_id": 5240,
+              "raw_record_sha256": "e63bbc8d2656cab124b0ac1fa4bdf4d766f45a11704a476ce132870cbf0dff94",
+              "sequence": 20356,
+              "stage": 13,
+              "windows_pid": 7792
+            },
+            "dispatch_before": {
+              "loop_count": 27,
+              "main_thread_id": 5240,
+              "raw_record_sha256": "99fea9319040f064104e320a54f5899ac8a944c206452b816fa84f293a97912c",
+              "sequence": 1484,
+              "stage": 13,
+              "windows_pid": 7792
+            },
+            "dispatch_loop_advanced": true,
+            "elapsed_seconds": 10.468,
+            "fixed_inputs_ack": true,
+            "loopback_ack": true,
+            "manual_launcher_wait_ack": true,
+            "map_status": [
+              {
+                "map_id": 1,
+                "native_response_sha256": "168b380d3478bbe0ad40f07d8ced9fa544c5128784db2e9e7896c8bdce72def2",
+                "not_started": true,
+                "world": "City_01_01"
+              },
+              {
+                "map_id": 5,
+                "native_response_sha256": "da6127c98251145ab70b81bb5c7da7f1bd0f5e3090489791e4eff141ec3457d2",
+                "not_started": true,
+                "world": "City_01_02"
+              }
+            ],
+            "name": "fresh",
+            "native_process_exit_owned": true,
+            "schema_snapshot": {
+              "attribute_counts": {
+                "attributes": 56411,
+                "badgestatsattributes": 1771,
+                "pophelpattributes": 90
+              },
+              "attribute_sha256": {
+                "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+                "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+                "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+              },
+              "catalog_sha256": {
+                "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+                "constraints": "08082f84bc07e1bd8b125b198b87c46ef6934adfdf79d4b79a7e030294ac23f6",
+                "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580"
+              },
+              "column_count": 5935,
+              "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+              "table_count": 99
+            },
+            "schema_verified": true,
+            "started_native_pid": 7792
+          },
+          {
+            "console": {
+              "buffer_rows_limit": 16384,
+              "capture_byte_limit": 16777216,
+              "final_snapshot": true,
+              "height": 16384,
+              "label": "restart-db",
+              "method": "exact_pid_console_screen_buffer",
+              "observer": {
+                "elapsed_seconds": 4.61,
+                "exit_code": 0,
+                "forced_stop": false,
+                "label": "restart-db-console-observer"
+              },
+              "raw_evidence_private": true,
+              "ready": true,
+              "snapshots": 87,
+              "used_rows": 1,
+              "width": 200
+            },
+            "dispatch_after": {
+              "loop_count": 348,
+              "main_thread_id": 5020,
+              "raw_record_sha256": "faa031ed174a4a7512c055ec4ad779e8aca9da9377068b74964bdbd7b0ddb793",
+              "sequence": 19460,
+              "stage": 13,
+              "windows_pid": 8000
+            },
+            "dispatch_before": {
+              "loop_count": 23,
+              "main_thread_id": 5020,
+              "raw_record_sha256": "9918e824bfe43e22889da2986fb6bd7c168c853597bc046a80119733dcda4070",
+              "sequence": 1260,
+              "stage": 13,
+              "windows_pid": 8000
+            },
+            "dispatch_loop_advanced": true,
+            "elapsed_seconds": 4.61,
+            "fixed_inputs_ack": true,
+            "loopback_ack": true,
+            "manual_launcher_wait_ack": true,
+            "map_status": [
+              {
+                "map_id": 1,
+                "native_response_sha256": "da8d076eb37e89c298976c33454f9fee1237758f434bfeafeaca5a25aa639147",
+                "not_started": true,
+                "world": "City_01_01"
+              },
+              {
+                "map_id": 5,
+                "native_response_sha256": "a3024614a05aa0b748f8c6ee27fcb5fee4766efb15cb22d0ab3e227c6e2d3d2f",
+                "not_started": true,
+                "world": "City_01_02"
+              }
+            ],
+            "name": "restart",
+            "native_process_exit_owned": true,
+            "schema_snapshot": {
+              "attribute_counts": {
+                "attributes": 56411,
+                "badgestatsattributes": 1771,
+                "pophelpattributes": 90
+              },
+              "attribute_sha256": {
+                "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+                "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+                "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+              },
+              "catalog_sha256": {
+                "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+                "constraints": "08082f84bc07e1bd8b125b198b87c46ef6934adfdf79d4b79a7e030294ac23f6",
+                "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580"
+              },
+              "column_count": 5935,
+              "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+              "table_count": 99
+            },
+            "schema_verified": true,
+            "started_native_pid": 8000
+          }
+        ],
+        "physical_execution_validated": false,
+        "player_profile_opened": false,
+        "postgresql_disposable_cluster_only": true,
+        "redacted_logs": [
+          [
+            {
+              "bytes": 810,
+              "file": "log-000.txt",
+              "sha256": "2d0c8ac74cfac3dbaaf599b5ece2bdfb62fb401da16da830b7ab4d60c67a5223",
+              "source": "runtime/logs/dbserver/error_2026-10-13-00-00-00.log"
+            },
+            {
+              "bytes": 120,
+              "file": "log-001.txt",
+              "sha256": "37cf1c9b105e1d9a7eda1d299a9100a0b9b1ee977fbcb587fc04f81f75a84b76",
+              "source": "runtime/logs/mapserver/error.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-002.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/fresh-db-console-observer-stderr.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-003.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/fresh-db-console-observer-stdout.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-004.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/fresh-db-console.log"
+            },
+            {
+              "bytes": 2196,
+              "file": "log-005.txt",
+              "sha256": "2f79eac48a85e1333f5f5b63d4cda2963ebe6e37832f5d3cfc2ffe28f075aa1e",
+              "source": "raw-logs/fresh-db-stderr.log"
+            },
+            {
+              "bytes": 3116,
+              "file": "log-006.txt",
+              "sha256": "d3727d8c108c38339f2a14566a02fdadd38ab086d90638214b3abae74e20e60c",
+              "source": "raw-logs/fresh-db-stdout.log"
+            },
+            {
+              "bytes": 211,
+              "file": "log-007.txt",
+              "sha256": "e25843cb21de294ab39b30bfaddb8c7746b4bb9c5a6dba72ac7058882eeafd6d",
+              "source": "raw-logs/fresh-map-1-stderr.log"
+            },
+            {
+              "bytes": 169,
+              "file": "log-008.txt",
+              "sha256": "f53181afb0a5578e26828fa2f7419e802cbd6c57734db411a62e495219da7bf7",
+              "source": "raw-logs/fresh-map-1-stdout.log"
+            },
+            {
+              "bytes": 211,
+              "file": "log-009.txt",
+              "sha256": "867c4f7670106ab202b6777949fe05eac425e63a223d073f3fbae598c8716f87",
+              "source": "raw-logs/fresh-map-5-stderr.log"
+            },
+            {
+              "bytes": 169,
+              "file": "log-010.txt",
+              "sha256": "b22c0a3f85adccc802e035571b9207e11ea413a15219d15f2dc373a6ecab863d",
+              "source": "raw-logs/fresh-map-5-stdout.log"
+            }
+          ],
+          [
+            {
+              "bytes": 14162,
+              "file": "log-000.txt",
+              "sha256": "dcbe2243d8c8c7dd3037660b44cdeb74e7c504ec09cc4b4154560604b831ff12",
+              "source": "runtime/logs/dbserver/error_2026-10-13-00-00-00.log"
+            },
+            {
+              "bytes": 120,
+              "file": "log-001.txt",
+              "sha256": "bb3feb00ff6bbc20302ccc8f610856bfcef21e6e6580d5966e44efd05b67b7b5",
+              "source": "runtime/logs/mapserver/error.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-002.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/restart-db-console-observer-stderr.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-003.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/restart-db-console-observer-stdout.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-004.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/restart-db-console.log"
+            },
+            {
+              "bytes": 14034,
+              "file": "log-005.txt",
+              "sha256": "46a2ffef9679de6719b50ec56f21c06c9882dc2cd883d97081444252539b53e1",
+              "source": "raw-logs/restart-db-stderr.log"
+            },
+            {
+              "bytes": 3116,
+              "file": "log-006.txt",
+              "sha256": "8072fc0a0f6e373dacb80168353364c05ad2831396cb203be282395a30fa364b",
+              "source": "raw-logs/restart-db-stdout.log"
+            },
+            {
+              "bytes": 213,
+              "file": "log-007.txt",
+              "sha256": "306424a4d6a920f9f3abe66f9544c8b31b186558da1a8ee59e9740c38fe781da",
+              "source": "raw-logs/restart-map-1-stderr.log"
+            },
+            {
+              "bytes": 169,
+              "file": "log-008.txt",
+              "sha256": "f83182b774172b3ce2914489732cb8815a52f4c2838e161e0bf9ba409d49a7d1",
+              "source": "raw-logs/restart-map-1-stdout.log"
+            },
+            {
+              "bytes": 213,
+              "file": "log-009.txt",
+              "sha256": "577c52954efc130ef72a82c1a860eb5238068da14d66a1de5ff7fcdf96695402",
+              "source": "raw-logs/restart-map-5-stderr.log"
+            },
+            {
+              "bytes": 169,
+              "file": "log-010.txt",
+              "sha256": "878479e63639dbfd9d53dcdc7ed1c5f0da144ce34affd27647f45c2406fe4dc9",
+              "source": "raw-logs/restart-map-5-stdout.log"
+            }
+          ]
+        ],
+        "repository_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+        "run_id": 38326347301,
+        "run_url": "https://github.com/Russianranger/coh-android/actions/runs/38326347301",
+        "scope": "actual_retained_manual_dbserver_minimal_schema_native_windows",
+        "source_pins": {
+          "android/guest/character_zoning.py": {
+            "bytes": 80010,
+            "sha256": "51140d622a614fb8d2a5b058ce40898c915d731d36309241d778cba277514fc8"
+          },
+          "android/guest/dbserver_diagnostic.py": {
+            "bytes": 50159,
+            "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+          },
+          "android/guest/game_diagnostic.py": {
+            "bytes": 80208,
+            "sha256": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737"
+          },
+          "android/guest/game_hang_evidence.py": {
+            "bytes": 22400,
+            "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+          },
+          "android/guest/local_character_server.py": {
+            "bytes": 177794,
+            "sha256": "fa168b14aa2115c9129bba78afedb32dea7b8c22177a43ccf4f83598e237abac"
+          },
+          "android/guest/local_login_server.py": {
+            "bytes": 21351,
+            "sha256": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de"
+          },
+          "database/postgresql/001-coh-compat.sql": {
+            "bytes": 7788,
+            "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+          },
+          "database/postgresql/pg_local.py": {
+            "bytes": 11892,
+            "sha256": "d2665940bd0f932691c8a78c8b2aceaf638fba7550257ad31a089f79672689a0"
+          },
+          "database/postgresql/tests/character_console.py": {
+            "bytes": 15969,
+            "sha256": "a9b2bd409e6c6e32af2edac5af01beb95bc1f45ce2be5f7f5d44ba1dab4cd5f0"
+          },
+          "database/postgresql/tests/run_generated_schema.py": {
+            "bytes": 24884,
+            "sha256": "938d1dbbea79e9f39a74d0fdddc850b8c99b317541279b232c208a1bff7bbdeb"
+          },
+          "database/postgresql/tests/run_network_ack.py": {
+            "bytes": 25939,
+            "sha256": "c13c09f38abd727a8a76ca44c4c1fb8135633174e7a97a6d376f49ab02a30e9b"
+          },
+          "database/wine-dbserver/overlay/DBServer/src/wine_dispatch_progress.c": {
+            "bytes": 4227,
+            "sha256": "e02c2b059bf0ed11f1e48327523be17430dbc39711ef19338857392e8386efb0"
+          },
+          "database/wine-dbserver/overlay/DBServer/src/wine_dispatch_progress.h": {
+            "bytes": 2521,
+            "sha256": "607ff88eb950bd40be512d2b302965779c640076c24aa758313086c5c1b86e1b"
+          },
+          "tools/android/interactive/fixtures/minimal-db-native-inputs-0.13.34.json": {
+            "bytes": 11985,
+            "sha256": "d39162bbd4768f9d233077772a6c73604f5d2266f9a3b832f13d0b46d7505a7d"
+          },
+          "tools/android/interactive/qualify_minimal_db_runtime.py": {
+            "bytes": 27136,
+            "sha256": "3830dcdd5d1cdae4506d30b6d4d46bbc79b4f950de09c1104da0dc82132eb5a9"
+          },
+          "tools/android/interactive/test_minimal_db_runtime_contract.py": {
+            "bytes": 10123,
+            "sha256": "a7371bcc1fb50ada74cc6a836c3aa1aecb7c3cfddc9023a2ea6016f993187f16"
+          }
+        },
+        "sql_mutation_scope": "new_disposable_fixture_only",
+        "started_utc": "2026-10-13T00:18:13.177433+00:00",
+        "status": "passed",
+        "synthetic_fixture_after_restart": {
+          "canonical_rows": [
+            {
+              "authid": 77,
+              "authname": "COHMINIMAL",
+              "containerid": 90001,
+              "logincount": 3,
+              "mapid": null,
+              "name": "MINIMALFIXTURE",
+              "posx": 12.5,
+              "posy": -20.0,
+              "posz": 40.25,
+              "staticmapid": 5
+            }
+          ],
+          "canonical_sha256": "b48ae05e0256642a1df7c0327d7cb8623d71fa4d6b669df7fe7b22c3dfe71abe",
+          "numeric_normalization": "exact_fixture_real_coordinates_only",
+          "raw_sql_rows": [
+            {
+              "authid": 77,
+              "authname": "COHMINIMAL",
+              "containerid": 90001,
+              "logincount": 3,
+              "mapid": null,
+              "name": "MINIMALFIXTURE",
+              "posx": 12.5,
+              "posy": -20,
+              "posz": 40.25,
+              "staticmapid": 5
+            }
+          ]
+        },
+        "synthetic_fixture_before_restart": {
+          "canonical_rows": [
+            {
+              "authid": 77,
+              "authname": "COHMINIMAL",
+              "containerid": 90001,
+              "logincount": 3,
+              "mapid": null,
+              "name": "MINIMALFIXTURE",
+              "posx": 12.5,
+              "posy": -20.0,
+              "posz": 40.25,
+              "staticmapid": 5
+            }
+          ],
+          "canonical_sha256": "b48ae05e0256642a1df7c0327d7cb8623d71fa4d6b669df7fe7b22c3dfe71abe",
+          "numeric_normalization": "exact_fixture_real_coordinates_only",
+          "raw_sql_rows": [
+            {
+              "authid": 77,
+              "authname": "COHMINIMAL",
+              "containerid": 90001,
+              "logincount": 3,
+              "mapid": null,
+              "name": "MINIMALFIXTURE",
+              "posx": 12.5,
+              "posy": -20,
+              "posz": 40.25,
+              "staticmapid": 5
+            }
+          ]
+        },
+        "synthetic_fixture_digest": "b48ae05e0256642a1df7c0327d7cb8623d71fa4d6b669df7fe7b22c3dfe71abe",
+        "synthetic_identity_location_restart_preserved": true,
+        "wine_executed": false
+      },
+      "diagnostic_artifact": {
+        "artifact_id": 11780559262,
+        "artifact_zip_sha256": "f80d413184fb1cea81478ab3798310a2daafb7cb92c23b7abd3a8bcc04b0c1a6",
+        "pin_provenance": "Root/native-research verified download"
+      },
+      "timing_scope": "10.468/4.610 seconds are genuine Windows fixture lifetimes, not Android/device performance."
+    },
+    "current_run_consumption_required": true,
+    "prior_pass_does_not_satisfy_current_publication_gate": true
+  },
+  "attempt_history": [
+    {
+      "qualification_revision": 1,
+      "run_id": 38323435123,
+      "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38323435123",
+      "repository_commit": "0a3dcf46f8df0a147d88cd510d53b3b5a3c2087c",
+      "status": "failed",
+      "publication_accepted": false,
+      "failed_job_id": 115056670946,
+      "failed_gate": "minimal_db_native_final_fixture_digest",
+      "cause": "PostgreSQL JSON represented the exact fixture coordinate as -20, while Python construction used -20.0; raw serialization differed despite equal numeric coordinates. Validation threw before report serialization.",
+      "observed_before_failure": "Two genuine native DbServer starts completed and native map queries, schema and synthetic fixture preservation were observed. The qualification gate still failed.",
+      "diagnostic_artifact_id": 11780280309,
+      "diagnostic_artifact_zip": {
+        "bytes": 14152,
+        "sha256": "a397b42f26d670979596d05f42442737e3de685d3282806b1d6ce92e0d2b272d"
+      },
+      "correction_commit": "d7105c4fe7abf9e4901dc61b2a29b0688c55386f",
+      "correction": "Normalize only the exact synthetic fixture real-coordinate representation; preserve raw rows and failure evidence; validate identity/location/schema unchanged."
+    },
+    {
+      "qualification_revision": 2,
+      "run_id": 38323836476,
+      "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38323836476",
+      "repository_commit": "d7105c4fe7abf9e4901dc61b2a29b0688c55386f",
+      "status": "failed",
+      "publication_accepted": false,
+      "apk_assembled": false,
+      "failed_job_id": 115058622167,
+      "failed_gate": "current_host_test_task_receipt_cleanup",
+      "completed_suites_before_failure": 33,
+      "errors": 3,
+      "cause": "Constructor-bypassing startup mocks did not initialize local_server required by the corrected production readiness checks.",
+      "native_launcher_gate": "passed_in_this_prior_attempt",
+      "minimal_db_native_gate": "passed_in_this_prior_attempt",
+      "correction_commit": "33f31586b43399e25f61e13c6c4411e09c6b6d60",
+      "correction": "Complete fixture ownership state and dependency closure; retain all production ownership/readiness guards."
+    },
+    {
+      "qualification_revision": 3,
+      "run_id": 38325717243,
+      "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38325717243",
+      "repository_commit": "33f31586b43399e25f61e13c6c4411e09c6b6d60",
+      "status": "intentionally_cancelled_before_apk_assembly",
+      "publication_accepted": false,
+      "apk_assembled": false,
+      "reason": "Superseded by narrowly scoped saved-world startup and manual-session UI label corrections; no gameplay or native runtime change.",
+      "completed_suites_before_cancellation": 79,
+      "completed_cases_before_cancellation": 1361,
+      "completed_failures": 0,
+      "completed_errors": 0,
+      "completed_skips": 0,
+      "full_qualification_completed": false,
+      "native_launcher_gate": "passed_in_this_prior_attempt",
+      "minimal_db_native_gate": "passed_in_this_prior_attempt",
+      "unaccepted_artifact_id": 11780728578,
+      "unaccepted_artifact_zip": {
+        "bytes": 246,
+        "sha256": "137bcfb1a1035ca4fbdf629cdb4e14954c6419c58548997a6dd50cbb350cd816"
+      },
+      "artifact_scope": "Only UNACCEPTED text marker; no APK created.",
+      "superseding_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+      "superseding_run_id": 38326347301
+    }
+  ],
+  "prior_attempt_genuine_native_evidence": {
+    "status": "passed_components_of_failed_revision_2_not_current_publication",
+    "repository_commit": "d7105c4fe7abf9e4901dc61b2a29b0688c55386f",
+    "run_id": 38323836476,
+    "minimal_db": {
+      "proof_pin": {
+        "bytes": 24114,
+        "sha256": "3729c55b53fe51e751c9fb7bcfaf5959dabe56351ed55e8441959efbaaf208bf"
+      },
+      "artifact_zip_pin": {
+        "bytes": 8844,
+        "sha256": "ddfece3b85f7a1538bdd569b2a2ebf299117c91d628be12ab4d6ac3a8f9ffd1c"
+      },
+      "scope": "actual_retained_manual_dbserver_minimal_schema_native_windows",
+      "status": "passed",
+      "actual_retained_dbserver_host_fixture_executed": true,
+      "actual_native_map_query_executed": true,
+      "wine_executed": false,
+      "physical_execution_validated": false,
+      "fresh_minimal_runtime_each_start": true,
+      "full_runtime_executed": false,
+      "full_schema_and_attributes_restart_preserved": true,
+      "synthetic_identity_location_restart_preserved": true,
+      "owned_cleanup_verified": true,
+      "postgresql_disposable_cluster_only": true,
+      "player_profile_opened": false,
+      "native_world_started": false,
+      "native_character_gameplay_validated": false,
+      "phase_seconds": {
+        "fresh": 11.156,
+        "restart": 5.687
+      },
+      "map_ids_queried": [
+        1,
+        5
+      ],
+      "synthetic_fixture_digest": "b48ae05e0256642a1df7c0327d7cb8623d71fa4d6b669df7fe7b22c3dfe71abe",
+      "extra_world_data_files": 0,
+      "timing_limit": "Genuine hosted Windows fixture timing, not Android/FEX/Wine or physical device startup timing.",
+      "initial_files_including_native_executables_and_dlls": 87,
+      "authenticated_minimal_data_bundle_files": 62
+    },
+    "launcher": {
+      "proof_pin": {
+        "bytes": 2019,
+        "sha256": "26260c5f36cb045bb31423922c0155d9531ac36b36aae9e1ce30adc0806980a4"
+      },
+      "status": "passed",
+      "scope": "current_pe32_manual_client_launcher",
+      "build_receipt": {
+        "bytes": 1921,
+        "sha256": "b3d0414d24564424fc64eb0f53f9176e29f158f006eea5fcc04b04860bd6be65"
+      },
+      "executable": {
+        "bytes": 246319,
+        "sha256": "b9d35d08ec42ae9453506374601151fd31c13d3c1fcfada27ce779958b203e56"
+      },
+      "windows_platform": "genuine_windows_x86_process_and_console_api",
+      "actual_shipping_helper_executed": true,
+      "actual_owned_child_console_verified": true,
+      "executed_cases": [
+        "cache_generation_mode_retained",
+        "creation_mode_retained",
+        "exact_source_deadline_policy_native_fixture",
+        "invalid_mode_refused",
+        "invalid_session_refused",
+        "local_login_mode_retained",
+        "manual_owned_console_child_exit",
+        "manual_owned_interruption_cleanup",
+        "missing_game_refused"
+      ],
+      "skipped": 0,
+      "deadline_policy_fixture": {
+        "actual_source_function_compiled": true,
+        "simulated_elapsed_hours": 48,
+        "real_duration_48_hour_run": false,
+        "shipping_helper_binary_modified": false
+      },
+      "game_db_map_executed": false,
+      "physical_ayn_thor_validated": false
+    }
+  },
+  "revision_3_corrections": {
+    "production_integrity_guards_weakened": false,
+    "source_commit": "33f31586b43399e25f61e13c6c4411e09c6b6d60",
+    "changes": [
+      "Constructor-bypassing task cleanup fixtures initialize ownership and local-server state.",
+      "Visual/preload fixtures supply the complete startup-probe interface.",
+      "Host beacon generator AST extraction includes exact shipped fingerprint function and os namespace.",
+      "Collision final-anchor mutation fixture triggers after the earlier actual directory scan, not a brittle lstat-call count.",
+      "Packaging/classifier explicitly permit only reviewed host-helper/fixture deltas."
+    ],
+    "affected_rerun": {
+      "command": "PYTHONPATH=tools/android/interactive:android/guest python -m unittest tools.android.interactive.test_collision_input_snapshot tools.android.interactive.test_generate_atlas_beacons tools.android.interactive.test_atlas_world_assets tools.android.interactive.test_client_visual_assets tools.android.interactive.test_zone_asset_package tools.android.interactive.test_texture_header_index tools.android.interactive.test_client_animation_package -q",
+      "tests_run": 184,
+      "elapsed_seconds": 9.402,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "explicit_module_reruns": {
+      "test_collision_input_snapshot": {
+        "tests_run": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "test_generate_atlas_beacons": {
+        "tests_run": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "scope_limit": "Focused corrected-source host execution; complete revision3 CI intentionally cancelled after 79 suites/1361 cases. Final revision4 qualification separately passed 201 current suites/2772 cases; see qualification."
+  },
+  "local_diagnostics": {
+    "release_qualification": false,
+    "overlapping_invocations_not_additive": true,
+    "client_preparation": {
+      "evidence": {
+        "path": "docs/android-evidence/client-preparation-0.13.35-host-tests.json",
+        "bytes": 5792,
+        "sha256": "0f711e12244a763e74c554cba4b45e121cead107f2157bc119840739c8c8b7e3"
+      },
+      "focused_result": {
+        "tests_run": 186,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "elapsed_seconds": 9.881
+      },
+      "related_result": {
+        "tests_run": 68,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "elapsed_seconds": 13.471
+      },
+      "gpu_prefix_fixture_scope": {
+        "tests_added": 17,
+        "real_filesystem_and_flock": true,
+        "native_wgl_result_fixture": true,
+        "native_process_cleanup_fixture": true,
+        "native_prefix_stopped_fixture": true,
+        "current_native_hardware_executed": false,
+        "independent_source_review": "text_input agent reviewed prelaunch ownership, cache publication failure and cleanup safety; identified races fixed and covered by regression tests."
+      }
+    },
+    "saved_kings_startup": {
+      "evidence": {
+        "path": "docs/android-evidence/saved-kings-startup-0.13.35-host-tests.json",
+        "bytes": 3444,
+        "sha256": "3d8c8bbf232ffa10ca2e5e54d3df6a3a83826f5330284f222396eb50e0fa9860"
+      },
+      "result": {
+        "tests_run": 236,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "elapsed_seconds": 12.117
+      },
+      "authenticated_animation_donor": {
+        "version": "0.13.29",
+        "bytes": 41199716,
+        "sha256": "b417827778f451335ec5299b92e4ba2f6d2a30d6c7706d4a2a4405139236171b",
+        "native_process_executed": false
+      },
+      "native_process_executed": false
+    },
+    "report_storage": {
+      "current_suites": 8,
+      "current_cases": 218,
+      "failures": 0,
+      "skips": 0,
+      "elapsed_seconds": 38.408,
+      "source": "Committed HANDOFF fresh local host evidence, followed by exact final revision4 CI qualification; local and CI invocations retain separate attribution."
+    },
+    "local_limitations": [
+      "Vulkan native harness dependency was unavailable on this local host; final current hosted Vulkan suite subsequently passed 8 cases, zero skips.",
+      "Real /proc cleanup tests encountered unrelated same-UID namespace access denials on this shared host; final current hosted cleanup suite subsequently passed 19 cases, zero skips.",
+      "Initial import-path errors, too-short local harness timeout and stale fixture failures are preserved separately; corrected reruns do not turn failed attempts into passing releases."
+    ]
+  },
+  "physical_0_13_34_evidence": {
+    "status": "prior_version_physical_device_evidence",
+    "analysis": {
+      "path": "docs/android-evidence/coh-physical-startup-0.13.34-analysis.json",
+      "bytes": 29311,
+      "sha256": "28c14464a0aeb279b5bbf05ca57380a91492f3faf1523cc324dbb552a11f5c54"
+    },
+    "archives": [
+      {
+        "bytes": 2372673,
+        "filename": "coh-atlas-gameplay-20261012-224645.zip",
+        "members": 19,
+        "report_sha256": "d13bca385129565606210422f579b077882c9d6fe3cbda201e18650b581a22be",
+        "sha256": "633c30f79728332c55ddf79e25313d7afcbe6a8cfa9657119e6036b07c890c1d",
+        "zip_crc_passed": true
+      },
+      {
+        "bytes": 15380588,
+        "filename": "coh-atlas-gameplay-20261012-224656.zip",
+        "members": 43,
+        "report_sha256": "ae6eb2a958c058a1021877c3f34f704d249b0276dd2e45f9b0015acdd984084e",
+        "sha256": "f63d80bb627d26943652581c3949a24b7167aad45a5b985083b4048bb4175238",
+        "zip_crc_passed": true
+      }
+    ],
+    "run_id": "1791842318487-fe35155428ab",
+    "session_id": "75371bd3c5ce48a69a089f885c34e63a",
+    "device": "AYN AYN Thor",
+    "user_observations": {
+      "direct_kings_row_entry": true,
+      "kings_row_label_seconds_approximate": 509,
+      "local_database_label_seconds_approximate": 353,
+      "normal_save": true,
+      "send_text_l3_worked": false,
+      "startup_excluding_login_seconds_approximate": 1440,
+      "still_saved_in_kings_row": true
+    },
+    "operation_to_input_ready_seconds": 1398.724,
+    "guest_to_input_ready_seconds": 1394.86425,
+    "postgresql_startup_seconds": 0.496193,
+    "local_db_stage_seconds": 362.308368,
+    "local_server_preparation_seconds": 331.594855,
+    "native_db_dispatch_seconds": 29.946781,
+    "kings_stage_seconds": 507.916929,
+    "kings_preparation_seconds": 269.819796,
+    "kings_native_observed_ready_seconds": 236.365107,
+    "kings_native_console_ready_seconds": 232.543076,
+    "native_client_startup_seconds": 213.596,
+    "cold_mirror_total_seconds": 505.529029,
+    "native_sequencer_interval_seconds": 99.481,
+    "nested_phases_not_additive": true,
+    "human_login_time_excluded_from_operation_to_input": true,
+    "actual_kings_native_entry_observed": true,
+    "committed_save_observed": true,
+    "outer_zip_export_usable": true,
+    "overall_character_check_passed": false,
+    "overall_failure": "cleanup_failed",
+    "saved_character": "THORHERO",
+    "saved_static_map_id": 5,
+    "saved_position": [
+      -1613.0712,
+      -10,
+      677.3567
+    ],
+    "unnecessary_atlas_native_process_started": false,
+    "startup_speed_improvement_demonstrated": false,
+    "send_text_delivery_effect_proved": false,
+    "interpretation": "Successful committed save and usable current diagnostic archive are distinct from incomplete overall cleanup/Character Check. This is not successor qualification."
+  },
+  "saved_start_destination": {
+    "character": "THORHERO",
+    "map": "Kings Row",
+    "static_map_id": 5,
+    "port": 7003,
+    "authority": "read_only_authoritative_postgresql_character_baseline",
+    "valid_unassigned_prelogin_mapid_supported": true,
+    "no_sql_relocation_or_character_recreation": true
+  },
+  "development": {
+    "saved_kings_only_preparation": true,
+    "minimal_db_runtime_before_selected_map_provider": true,
+    "atlas_provider_deferred_until_requested_transfer": true,
+    "exact_native_consumer_top_level_server_texture_projection": true,
+    "saved_kings_game_and_map_initialization_overlap": true,
+    "input_admitted_only_after_independent_game_and_native_map_readiness": true,
+    "atlas_direct_startup_schedule": "retained_serial",
+    "manual_gameplay_and_capture_controls": true,
+    "gameplay_expiry_removed": true,
+    "stalled_startup_query_transfer_and_cleanup_bounds_retained": true,
+    "paced_session_owned_text_entry_and_modifier_cleanup": true,
+    "authenticated_client_generation_rebind": true,
+    "fresh_leaf_checks_and_per_pass_parent_resolution": true,
+    "isolated_gpu_probe_initialization_reuse": true,
+    "fresh_native_vulkan_wgl_pixel_checks_every_attempt": true,
+    "exact_authenticated_worker_cleanup_after_environment_eacces": true,
+    "setup_pacing_uses_current_memory_headroom": true,
+    "minimal_db_input_file_count": 62,
+    "minimal_db_is_not_sql_ddl_only": true
+  },
+  "native_components": {
+    "new_native_component": "client-launcher.exe only; freshly compiled and genuine Windows-qualified for exact revision4 source and run. Game/DbServer/MapServer replacements are not shipped.",
+    "game_db_map_runtime_bytes": "retained exact accepted .34 Game/DbServer and .32 MapServer identities; signed package and independent public-byte verification passed",
+    "graphics_wine_fex_assets": "unchanged; exact signed package and independent public-byte verification passed",
+    "native_mapserver_recompiled": false,
+    "dynamic_mapserver_integration_shipped": false,
+    "isolated_phase_profiler_shipping": false,
+    "profiler_scope": "Nonshipping source/portable-control-flow diagnostic stage, 23 host tests passed; full Win32 build and Atlas/Kings native parity still required."
+  },
+  "optimization": {
+    "measured_physical_successor_savings_seconds": null,
+    "device_benefit_estimate": "unknown_until_comparable_Kings_first_cold_and_closed_cache_reopen_reports",
+    "host_measurements": {
+      "path": "docs/android-evidence/client-preparation-0.13.35-host-metadata.json",
+      "bytes": 1622,
+      "sha256": "abba88294e604d31747a5cea2bfc66cd5172079ed01f7fb67db52ba15db9e49f"
+    },
+    "host_target_resolver_metadata_calls": {
+      "before": 16715,
+      "after": 210
+    },
+    "host_texture_inventory_metadata_calls": {
+      "before": 52318,
+      "after": 12728
+    },
+    "host_texture_inventory_seconds": {
+      "before": 0.212453,
+      "after": 0.240936
+    },
+    "texture_host_walltime_improvement_claimed": false,
+    "saved_kings_small_cache_fixture": {
+      "fixture_immutable_leaves": 4002,
+      "cold_seconds": 0.624156,
+      "warm_seconds": 0.003152,
+      "cold_symlink_creations": 4002,
+      "warm_symlink_creations": 0,
+      "warm_immutable_directory_checks": 25,
+      "device_speedup_estimate": false
+    },
+    "physical_memory_or_fps_or_thermal_measurement_executed": false,
+    "ram_implication": "Parallel native initialization can increase transient contention/peak RAM; bounded probe-prefix inventory and on-disk initialization reuse do not retain processes. Device RSS/PSS remains unmeasured.",
+    "dynamic_mapserver_finding": "Current native engine already supports on-demand per-map processes; no separate faster dynamic binary exists in inspected source. Android already started only Kings in the .34 reopen; duplicated Atlas preparation was the measured waste.",
+    "native_bin_freshness_bypass_shipped": false,
+    "physx_cooked_cache_integration_shipped": false
+  },
+  "assets": {
+    "version": "1.0.0",
+    "volumes": 4,
+    "unchanged": true,
+    "reimport_required": false,
+    "runtime_update_required": true,
+    "application_data_reset_required": false
+  },
+  "physical_kings_row_reopen_validated": false,
+  "physical_report_export_validated": false,
+  "physical_send_text_repair_validated": false,
+  "physical_manual_capture_validated": false,
+  "physical_kings_to_atlas_travel_validated": false,
+  "physical_map_startup_speedup_validated": false,
+  "sub_five_minute_total_startup_validated": false,
+  "sub_30_second_native_startup_validated": false,
+  "physical_flag_scope": "All top-level physical flags describe 0.13.35; prior .34 successful Kings entry/save/report evidence appears separately above.",
+  "remaining_gates": [
+    "Physical A: install over existing data, update runtime, reopen THORHERO saved in Kings, test SendText/L3, manual Start/Stop capture, movement/state, normal Save/Logout and outer ZIP export. No long monorail in this first test.",
+    "Physical B after A: actual Kings-to-Atlas monorail, separate preparation/native/transfer/arrival measurements, save/export.",
+    "Physical C: persisted Atlas reopen selects Atlas without starting Kings unnecessarily; save/export.",
+    "Physical D after A-C: compare cold vs proved closed caches, same-session resident maps vs filesystem warmth, round-trip movement/save/export and memory/FPS/thermals.",
+    "Measure .35 sub-five-minute startup target on Thor; do not infer it from old phase subtraction or host results.",
+    "Fresh native phase profiler build and Atlas/Kings parity before native BIN provider or PhysX cache changes."
+  ],
+  "remaining_report_limits": [
+    "unsafe mandatory evidence is refused without mutation",
+    "unusable private root or root-wide inventory beyond the safe bound is refused",
+    "write failure before compact publication can prevent archive creation",
+    "document provider failures retain private source; destination can be partial"
+  ],
+  "prior_revision_3_native_components": {
+    "status": "completed_components_of_intentionally_cancelled_revision_3_not_final_publication",
+    "repository_commit": "33f31586b43399e25f61e13c6c4411e09c6b6d60",
+    "run_id": 38325717243,
+    "minimal_db": {
+      "status": "passed",
+      "repository_commit": "33f31586b43399e25f61e13c6c4411e09c6b6d60",
+      "run_id": 38325717243,
+      "job_id": 115063923757,
+      "artifact_id": 11780383308,
+      "artifact_zip": {
+        "bytes": 8845,
+        "sha256": "bc5975b2a2a2f7f758ff8974a3b5844d184a334d0386f7acfdd3bb687c92be06"
+      },
+      "receipt": {
+        "bytes": 24111,
+        "sha256": "50133cefcab94c27026b4cf873f6ce6cd16853b19d20e469faaea282c1e4ea4a"
+      },
+      "proof": {
+        "actual_native_map_query_executed": true,
+        "actual_retained_dbserver_host_fixture_executed": true,
+        "failures": [],
+        "finished_utc": "2026-10-13T00:10:01.166896+00:00",
+        "format": 1,
+        "fresh_minimal_runtime_each_start": true,
+        "full_runtime_executed": false,
+        "full_schema_and_attributes_restart_preserved": true,
+        "inputs": {
+          "donor_apk": {
+            "bytes": 42048020,
+            "sha256": "c2d859621476e22add673a76c4b6aae65c2143671e50c085d020108b6e19d95e"
+          },
+          "extra_world_data_files": 0,
+          "initial_files": {
+            "CrashRpt.dll": {
+              "bytes": 39424,
+              "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6"
+            },
+            "DbServer.exe": {
+              "bytes": 1664512,
+              "sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba"
+            },
+            "MapServer.exe": {
+              "bytes": 7475200,
+              "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+            },
+            "NxCharacter.dll": {
+              "bytes": 107872,
+              "sha256": "816fefac0c6b3d7da68daf3098a73e7fa0eff326ef83b3dba7f0fe2dcf0bd095"
+            },
+            "NxCooking.dll": {
+              "bytes": 749568,
+              "sha256": "5dc0333de6b18119b04f7a1beace3f5dfaff5754af62a0f4d8def9e73a09063c"
+            },
+            "PhysXCooking.dll": {
+              "bytes": 383840,
+              "sha256": "c6a1a1f4127bef756e8628775de18c57f93bb7cce22403efb3b519ea1f26a28d"
+            },
+            "PhysXCore.dll": {
+              "bytes": 3567456,
+              "sha256": "c1758f8deada5dad54eb384b4f94a43f69b54c6f671cdcabef4f64d9c6f1da3a"
+            },
+            "PhysXDevice.dll": {
+              "bytes": 65536,
+              "sha256": "6b9f40f2da693b935163935c7ab56847bf11f7160f5b268c4e4881d2973d9cb7"
+            },
+            "PhysXLoader.dll": {
+              "bytes": 64352,
+              "sha256": "db9ea1334a6364c4d02c2e3fe826ab48fb6b07242fff00bd41feb17524fde4de"
+            },
+            "TestClientBridge.exe": {
+              "bytes": 145920,
+              "sha256": "13fcf1b029f092046ba8e3086bf848cb9af98c09e54b4a53f8331cbe4ff9ff2a"
+            },
+            "TestClientCreate.exe": {
+              "bytes": 3143680,
+              "sha256": "9905c581fe222f3543dd3e8b7658d871e50fd5b927e8eb518512db7b710e1e58"
+            },
+            "TestClientResume.exe": {
+              "bytes": 3146240,
+              "sha256": "e9745917dc4943791923d04d4d84578498f67411a0fad3ce1489d85278b157f1"
+            },
+            "cg.dll": {
+              "bytes": 5667432,
+              "sha256": "52a2e2abd29fa59dd7d6dbae4f5b41f94e451bfbc3a7a21957c5cfbb51824b98"
+            },
+            "cgGL.dll": {
+              "bytes": 350824,
+              "sha256": "63bc68bf4e7e660be910e5c2cd47bb637d136f4779a171555cbc4ef0c876b0f4"
+            },
+            "concrt140.dll": {
+              "bytes": 314816,
+              "sha256": "63de7cc3187265b1b1871b84a11b8a91d8f249018dcfb34e910bf3eb2a193d11"
+            },
+            "cudart32_30_9.dll": {
+              "bytes": 290408,
+              "sha256": "08c137f66758b6c342c0dd32fa45e8fc8c9f0c287997e46e515610c2aa84d0ed"
+            },
+            "data/defs/account/loyaltyrewardtree.def": {
+              "bytes": 14112,
+              "sha256": "8b7c96accd8448a235dfa744ff775a3df40bc9e7968b8c192ff53a5de7065d43"
+            },
+            "data/defs/account/product_catalog.def": {
+              "bytes": 523341,
+              "sha256": "5e5375b3aa430b88fbcdada0ac87629fa35d5826ab817d9a9abd65baa677f300"
+            },
+            "data/defs/dbidmaps/invbasedetail.dbidmap": {
+              "bytes": 99378,
+              "sha256": "c2e85bca875e244b5ce54a6aa7e723047309cfc6c4fd2df83dba116fa9be874a"
+            },
+            "data/defs/dbidmaps/invrecipe.dbidmap": {
+              "bytes": 1243209,
+              "sha256": "1abfdc27ba3aba3a0a959266d02fc9db07e506ad91fe6ce40de42fe8ccb42c98"
+            },
+            "data/defs/dbidmaps/invsalvage.dbidmap": {
+              "bytes": 15001,
+              "sha256": "89cffb462496920daef0b43aaeb9b3e9528ab2852965946ab0fdf478ef603060"
+            },
+            "data/defs/dbidmaps/invstoredsalvage.dbidmap": {
+              "bytes": 14805,
+              "sha256": "30fd4951bf3c73f191a701d836a95892a2204181695af07e425fb2ec83e907ad"
+            },
+            "data/defs/proficiencyids.dbidmap": {
+              "bytes": 835,
+              "sha256": "cef52f3d5e2441638a314599861e544e085258792b596fc61033a2400865fa85"
+            },
+            "data/server/db/loadBalanceDefault.cfg": {
+              "bytes": 1886,
+              "sha256": "cf6274ced5409bd9316e3f90456610753f0de37da01c0b68dc63cf7d24baf76b"
+            },
+            "data/server/db/loadBalanceShardSpecific.cfg": {
+              "bytes": 71,
+              "sha256": "ce46881bc60c94f6e35854f68cea078a726f8b549ba3a6f63980b95aabe6a63c"
+            },
+            "data/server/db/maps.db": {
+              "bytes": 74291,
+              "sha256": "8aaa5085acfc86eae7b6a395da6c8ac4348eba503b71e845fdbeeb4725c53cf7"
+            },
+            "data/server/db/schemas/arenaevents.schema.html": {
+              "bytes": 7616,
+              "sha256": "f028cb642384bf2731084bd1a5f8866efb40f048c292151e2e1136b1cf322097"
+            },
+            "data/server/db/schemas/arenaplayers.schema.html": {
+              "bytes": 12872,
+              "sha256": "b2546884eca05924265968f2dba3f355c454e9efa4bc874dd9b252f44e14de82"
+            },
+            "data/server/db/schemas/autocommands.schema.html": {
+              "bytes": 659,
+              "sha256": "d07b2749e211e693f8ced6e2e026df409bca3b84f90ab7b8055150b9ecb5e80f"
+            },
+            "data/server/db/schemas/base.schema.html": {
+              "bytes": 578,
+              "sha256": "da23628c5ca2a5440c6e845f3f0e559b833fb4e49aa81fbec9c1999ae6757912"
+            },
+            "data/server/db/schemas/baseraids.schema.html": {
+              "bytes": 1347,
+              "sha256": "eae2323c44f91e443a40f1b0497b163e8408c8b0aacbdb99ee01be2aded68f38"
+            },
+            "data/server/db/schemas/email.schema.html": {
+              "bytes": 726,
+              "sha256": "5144dc321af4b1254f0d030aea55cd8bdbc13cd15bb275df421a10ff39e0cfc4"
+            },
+            "data/server/db/schemas/ents.schema.html": {
+              "bytes": 84724,
+              "sha256": "45ff4768d29beda2130c2fbcad3a9fc29a3fe647be7e09cb2f52397f32289903"
+            },
+            "data/server/db/schemas/eventhistory.schema.html": {
+              "bytes": 10832,
+              "sha256": "e2b875f95a94de59800cdcc8210fdadd2b5289d05e78970906e2ec357ea79cac"
+            },
+            "data/server/db/schemas/itemofpowergames.schema.html": {
+              "bytes": 588,
+              "sha256": "75056a653f2fdfc1a4024efd16d7fbe6d64e1f101f82adc3736fb507fbda1c94"
+            },
+            "data/server/db/schemas/itemsofpower.schema.html": {
+              "bytes": 552,
+              "sha256": "2f74c08fb12ccad248bc79bdff15a2d0d7540aeab5e13e725bf8e1f971747f39"
+            },
+            "data/server/db/schemas/leagues.schema.html": {
+              "bytes": 956,
+              "sha256": "223e2e670bfc7d8db5f328c318facbfb32f990617c45be0cde3b815dbbca1aa2"
+            },
+            "data/server/db/schemas/levelingpacts.schema.html": {
+              "bytes": 3264,
+              "sha256": "5309a01b56a09c0be35453cdb7a9b804d1a7730d8f757376c1465289317f6bcb"
+            },
+            "data/server/db/schemas/mapgroups.schema.html": {
+              "bytes": 657,
+              "sha256": "24953f199c18d171acd8ff911f72c1b7de32e07044c0b34a2149b558c2443314"
+            },
+            "data/server/db/schemas/miningaccumulator.schema.html": {
+              "bytes": 849,
+              "sha256": "4ed5e8b7eb04924329e9c368009997685f36d7cf69956d7d3f33b384f193dbf6"
+            },
+            "data/server/db/schemas/offline.schema.html": {
+              "bytes": 260,
+              "sha256": "360559f24f260fce881ac73224297954cf4a2c6ba224d3731e6ee725f15eceae"
+            },
+            "data/server/db/schemas/petitions.schema.html": {
+              "bytes": 1140,
+              "sha256": "5aa34925218aa1cf04396418fb82ab7b9a210c42fa9c2af31ecc4ac0ffbb9371"
+            },
+            "data/server/db/schemas/sgraidinfos.schema.html": {
+              "bytes": 722,
+              "sha256": "5c62468d70c12d307af10156f8330eb7f995f75d9fb29d5af53d46b9318f49b8"
+            },
+            "data/server/db/schemas/shardaccounts.schema.html": {
+              "bytes": 1965,
+              "sha256": "9e3414e061f64fc7757c02380256123932da58d40c21f31d62fb95a1b9b5f34a"
+            },
+            "data/server/db/schemas/supergroups.schema.html": {
+              "bytes": 8458,
+              "sha256": "37356f778dc9d7874ba7a5d24df127dfa83f9be41d10436fe564f5392cc84487"
+            },
+            "data/server/db/schemas/taskforces.schema.html": {
+              "bytes": 9571,
+              "sha256": "e1fca83efbd2741b3b3e3a0858d59628a8967094204819061f14008dd05f6bf9"
+            },
+            "data/server/db/schemas/teamups.schema.html": {
+              "bytes": 6678,
+              "sha256": "ee7d2e5958861206dcf03659d7eb150d9bcca57397226613e0454f75d8b1c7a1"
+            },
+            "data/server/db/schemas/testdatabasetypes.schema.html": {
+              "bytes": 1253,
+              "sha256": "a1439c7f7e333c81c170e9c555497664006dd4510c0dea9db09f8874837c8e1b"
+            },
+            "data/server/db/servers.cfg": {
+              "bytes": 12939,
+              "sha256": "539933dabd369fe57fde2c833f44317105faa77df4a7ff04ada32dfea3c8851d"
+            },
+            "data/server/db/templates/arenaevents.template": {
+              "bytes": 2194,
+              "sha256": "952f7404eccc9cf8726e65aa3fa4451784cf4f99224ba2b4cf9e4505af35560e"
+            },
+            "data/server/db/templates/arenaplayers.template": {
+              "bytes": 3219,
+              "sha256": "9c0a9347b2da737717954be9aa5614d43e666139cb7c44da0387880838bd2f40"
+            },
+            "data/server/db/templates/autocommands.template": {
+              "bytes": 102,
+              "sha256": "a6c9aeb57a944e1de4a239f9e1844dda71284a5b6c4667862b5f0ac017b967cc"
+            },
+            "data/server/db/templates/badges.attribute": {
+              "bytes": 51724,
+              "sha256": "789ed244ac7c686cc275a8a2914de95bbb044b00483875df950a713f05b66fea"
+            },
+            "data/server/db/templates/badgestats.attribute": {
+              "bytes": 62106,
+              "sha256": "ec57e497c6c044269d8d7e207b0869400ceeb18a03b94bda1a9d00a9d99cced2"
+            },
+            "data/server/db/templates/base.template": {
+              "bytes": 92,
+              "sha256": "32fa8e9a1f6f1bc72a4acfcc1d405d4b44412d7cda41fbceeb019dfde2a170c9"
+            },
+            "data/server/db/templates/baseraids.template": {
+              "bytes": 269,
+              "sha256": "644bd30dade4d7e958c2c35fd4251b9f5a67976510a6ef9eef310d7e311985b0"
+            },
+            "data/server/db/templates/email.template": {
+              "bytes": 179,
+              "sha256": "3966878019f3af7ac652640746d80bd5c22b85dcfd1bd1033288b853e75ac6fb"
+            },
+            "data/server/db/templates/ents.template": {
+              "bytes": 164583,
+              "sha256": "295e82df5c9cd84d0571b5e5e4f44caf7a68e35faadfdb57952bf4fe9308c913"
+            },
+            "data/server/db/templates/eventhistory.template": {
+              "bytes": 3879,
+              "sha256": "f535b56670e5b19b0a4d983d9eba021b00441474b27b65f3ea46ee73f1645f87"
+            },
+            "data/server/db/templates/itemofpowergames.template": {
+              "bytes": 100,
+              "sha256": "0e7b59085ee4b7f7ed5495a80dd06fb91b35ee338b9c9d09cce2390560309aca"
+            },
+            "data/server/db/templates/itemsofpower.template": {
+              "bytes": 99,
+              "sha256": "16befccbbad58e87d75455af8d240da5f299eaa08689cfc7b85e5e2ebb60434c"
+            },
+            "data/server/db/templates/leagues.template": {
+              "bytes": 112,
+              "sha256": "2f1018974bed27a271cc5c87e673356db2df7c5a6c9c7a3bf0b6a5c22b67536b"
+            },
+            "data/server/db/templates/levelingpacts.template": {
+              "bytes": 1428,
+              "sha256": "4fd6076ba33e8aebebe516dbde74d324721f3984047895bc2f6b3a1a7517b365"
+            },
+            "data/server/db/templates/mapgroups.template": {
+              "bytes": 198,
+              "sha256": "18a9bcbf1a566d3986b9fd2e31597093e4fe0f1dbd1f7142d573fc39bc496838"
+            },
+            "data/server/db/templates/miningaccumulator.template": {
+              "bytes": 198,
+              "sha256": "9e4646316ec1f4ef1cd0db486d3e2a68d2e17caaf84541dcdc837f46c349edeb"
+            },
+            "data/server/db/templates/offline.template": {
+              "bytes": 15,
+              "sha256": "1e55bf16fd0749d042c3481c2fdd28f339a17bd8eebec9d27f458f2f6265a67b"
+            },
+            "data/server/db/templates/petitions.template": {
+              "bytes": 260,
+              "sha256": "c28117e1efa5a2a487b330664d4349b524bf4482d862917ef1f469864895b045"
+            },
+            "data/server/db/templates/pophelp.attribute": {
+              "bytes": 2185,
+              "sha256": "34195086d3223c717dca5e1cd00bc35a947a05d5fe31b2408a863e85aea617a1"
+            },
+            "data/server/db/templates/sgraidinfos.template": {
+              "bytes": 95,
+              "sha256": "7bda51ccf348242d5bf8399a03381a480d6555a75c5aa0038b615afa611ae353"
+            },
+            "data/server/db/templates/shardaccounts.template": {
+              "bytes": 497,
+              "sha256": "388571567e563cfb3943d0e1c428e23b6f3d24c9a12f9bc0262b48972f964619"
+            },
+            "data/server/db/templates/statserver_supergroupstats.template": {
+              "bytes": 8348,
+              "sha256": "568f516d0b7f48b26de768d16442a7541ed280889ff8bcfb195c305343f098bd"
+            },
+            "data/server/db/templates/supergroup_badges.attribute": {
+              "bytes": 1039,
+              "sha256": "d63b3c490fc23086aa6af4fd9add6c2af0892452011d32d6984cac2198d65a7e"
+            },
+            "data/server/db/templates/supergroup_badgestats.attribute": {
+              "bytes": 6897,
+              "sha256": "f67e5677a244b919f674d545c990339caa674d1f8c299b8e0540dc2c8d65a6e9"
+            },
+            "data/server/db/templates/supergroups.template": {
+              "bytes": 2615,
+              "sha256": "a79ed03f51c0a2e7d33b9d4fd784c14970c42d63a53be7ac69d026fd80b73c78"
+            },
+            "data/server/db/templates/taskforces.template": {
+              "bytes": 3063,
+              "sha256": "47c405e582165df6d688b15b526cd9c70d0cf3c0ae005683dcd48c50526dffae"
+            },
+            "data/server/db/templates/teamups.template": {
+              "bytes": 2141,
+              "sha256": "ed2a5378f13d0503db0e38f03132e7888f150943de3a674eb5ef5a4977dc9ffc"
+            },
+            "data/server/db/templates/testdatabasetypes.template": {
+              "bytes": 491,
+              "sha256": "76e538c71248157120260f77bc21d84c940eecaed0cb5d69d958e5a689e642f1"
+            },
+            "data/server/db/templates/vars.attribute": {
+              "bytes": 1928476,
+              "sha256": "26c5f2bba77ab66ef7619c995f343633dc1748297dc9963605734ef3aa1053bb"
+            },
+            "msvcp140.dll": {
+              "bytes": 618944,
+              "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a"
+            },
+            "msvcp140_1.dll": {
+              "bytes": 33728,
+              "sha256": "b08edd7954ae9954d24eb344a8b0116a980c60179ff1b92d5219639e21028cc2"
+            },
+            "msvcp140_2.dll": {
+              "bytes": 261056,
+              "sha256": "5e3c52721f03d5f546d64dfdfa38302b1fc3eb79dc44a1ec7a3af69abb9653fe"
+            },
+            "msvcp140_atomic_wait.dll": {
+              "bytes": 57272,
+              "sha256": "e1142584f337b9b650d6d888652cb24f7b16a7dd93476840a050047bb00f0463"
+            },
+            "msvcp140_codecvt_ids.dll": {
+              "bytes": 30648,
+              "sha256": "d4874db10c63990323696984eb2e2e799d952a1846437924c92153065b7259e4"
+            },
+            "physxcudart_20.dll": {
+              "bytes": 197912,
+              "sha256": "e7b1965ab2ba441c2f4040f6203c10e7d9f02bfbb794a25d2a022d95b6f01c70"
+            },
+            "vccorlib140.dll": {
+              "bytes": 287160,
+              "sha256": "d50aab1e201dfb268d6010d4c3b5bf7a3fb8dd1f38296135b43c9e29821e5586"
+            },
+            "vcruntime140.dll": {
+              "bytes": 123328,
+              "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3"
+            },
+            "vcruntime140_threads.dll": {
+              "bytes": 36280,
+              "sha256": "7c372b0547fb45abd06e4bbdf5475cc99c3a915c998ef7e5c263de4762944e3b"
+            }
+          },
+          "manual_dbserver": {
+            "bytes": 1664512,
+            "sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba"
+          },
+          "mapserver": {
+            "bytes": 7475200,
+            "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+          },
+          "original_dbserver_package": "0cf5d97a8ddfff7da8dccc95b685ec1cc3d1edd1b62db9651c14315662c46142",
+          "retained_startup_manifest": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+          "schema_input_files": 62,
+          "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"
+        },
+        "launch_config": "exact_current_guest_game_config; disposable database and least-privilege coh_game role",
+        "native_character_gameplay_validated": false,
+        "native_world_started": false,
+        "owned_cleanup_verified": true,
+        "phases": [
+          {
+            "console": {
+              "buffer_rows_limit": 16384,
+              "capture_byte_limit": 16777216,
+              "final_snapshot": true,
+              "height": 16384,
+              "label": "fresh-db",
+              "method": "exact_pid_console_screen_buffer",
+              "observer": {
+                "elapsed_seconds": 10.579,
+                "exit_code": 0,
+                "forced_stop": false,
+                "label": "fresh-db-console-observer"
+              },
+              "raw_evidence_private": true,
+              "ready": true,
+              "snapshots": 203,
+              "used_rows": 1,
+              "width": 200
+            },
+            "dispatch_after": {
+              "loop_count": 334,
+              "main_thread_id": 5792,
+              "raw_record_sha256": "d97c4bacca75311bfb72d4aa2f3fe4bcc459102f70e1ae71a51959ca2047946e",
+              "sequence": 18676,
+              "stage": 13,
+              "windows_pid": 6944
+            },
+            "dispatch_before": {
+              "loop_count": 3,
+              "main_thread_id": 5792,
+              "raw_record_sha256": "76529132658d2e4987bc086ec0013dbe51b181c93f119b1ea3d78be18d71c062",
+              "sequence": 140,
+              "stage": 13,
+              "windows_pid": 6944
+            },
+            "dispatch_loop_advanced": true,
+            "elapsed_seconds": 10.594,
+            "fixed_inputs_ack": true,
+            "loopback_ack": true,
+            "manual_launcher_wait_ack": true,
+            "map_status": [
+              {
+                "map_id": 1,
+                "native_response_sha256": "9470c486dafeb7ce4a9b0ecc7f6e9f16ede0c0019749c09b8ff0300febe4d741",
+                "not_started": true,
+                "world": "City_01_01"
+              },
+              {
+                "map_id": 5,
+                "native_response_sha256": "68beb4cc77fdca4867c39b95d0abf04436a44d6a2a3b5b5002bd7ba0b7446c96",
+                "not_started": true,
+                "world": "City_01_02"
+              }
+            ],
+            "name": "fresh",
+            "native_process_exit_owned": true,
+            "schema_snapshot": {
+              "attribute_counts": {
+                "attributes": 56411,
+                "badgestatsattributes": 1771,
+                "pophelpattributes": 90
+              },
+              "attribute_sha256": {
+                "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+                "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+                "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+              },
+              "catalog_sha256": {
+                "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+                "constraints": "08082f84bc07e1bd8b125b198b87c46ef6934adfdf79d4b79a7e030294ac23f6",
+                "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580"
+              },
+              "column_count": 5935,
+              "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+              "table_count": 99
+            },
+            "schema_verified": true,
+            "started_native_pid": 6944
+          },
+          {
+            "console": {
+              "buffer_rows_limit": 16384,
+              "capture_byte_limit": 16777216,
+              "final_snapshot": true,
+              "height": 16384,
+              "label": "restart-db",
+              "method": "exact_pid_console_screen_buffer",
+              "observer": {
+                "elapsed_seconds": 4.718,
+                "exit_code": 0,
+                "forced_stop": false,
+                "label": "restart-db-console-observer"
+              },
+              "raw_evidence_private": true,
+              "ready": true,
+              "snapshots": 89,
+              "used_rows": 1,
+              "width": 200
+            },
+            "dispatch_after": {
+              "loop_count": 321,
+              "main_thread_id": 5528,
+              "raw_record_sha256": "fb6b37005dd27328f3dd8c391d266dbbb33ee14d4da5d2800fa63db4058f24d1",
+              "sequence": 17948,
+              "stage": 13,
+              "windows_pid": 5596
+            },
+            "dispatch_before": {
+              "loop_count": 27,
+              "main_thread_id": 5528,
+              "raw_record_sha256": "e9ec279187445a431d88496dcf0f374b83fab3191b617d797cd18c23c1955f29",
+              "sequence": 1484,
+              "stage": 13,
+              "windows_pid": 5596
+            },
+            "dispatch_loop_advanced": true,
+            "elapsed_seconds": 4.718,
+            "fixed_inputs_ack": true,
+            "loopback_ack": true,
+            "manual_launcher_wait_ack": true,
+            "map_status": [
+              {
+                "map_id": 1,
+                "native_response_sha256": "20873792af7932fddf6e34025fc15d2b0a849df5d9dfec655feec371fa6f8f94",
+                "not_started": true,
+                "world": "City_01_01"
+              },
+              {
+                "map_id": 5,
+                "native_response_sha256": "70e22a506800a6e654f672b92ccd236b785ffcb03ce7162e93adbf35629ec69d",
+                "not_started": true,
+                "world": "City_01_02"
+              }
+            ],
+            "name": "restart",
+            "native_process_exit_owned": true,
+            "schema_snapshot": {
+              "attribute_counts": {
+                "attributes": 56411,
+                "badgestatsattributes": 1771,
+                "pophelpattributes": 90
+              },
+              "attribute_sha256": {
+                "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+                "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+                "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+              },
+              "catalog_sha256": {
+                "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+                "constraints": "08082f84bc07e1bd8b125b198b87c46ef6934adfdf79d4b79a7e030294ac23f6",
+                "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580"
+              },
+              "column_count": 5935,
+              "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+              "table_count": 99
+            },
+            "schema_verified": true,
+            "started_native_pid": 5596
+          }
+        ],
+        "physical_execution_validated": false,
+        "player_profile_opened": false,
+        "postgresql_disposable_cluster_only": true,
+        "redacted_logs": [
+          [
+            {
+              "bytes": 810,
+              "file": "log-000.txt",
+              "sha256": "9254d64ef4ed63b8c9df2f2ba471ecf89d1a03a0b2b537d5fd81176b10fbd208",
+              "source": "runtime/logs/dbserver/error_2026-10-13-00-00-00.log"
+            },
+            {
+              "bytes": 120,
+              "file": "log-001.txt",
+              "sha256": "b8212ca8349106e61bacd1378a15293cc1be1f26e592959dc006b066997e3092",
+              "source": "runtime/logs/mapserver/error.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-002.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/fresh-db-console-observer-stderr.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-003.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/fresh-db-console-observer-stdout.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-004.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/fresh-db-console.log"
+            },
+            {
+              "bytes": 2196,
+              "file": "log-005.txt",
+              "sha256": "0043d8839f9a412f32c8cf3059f869638f77f6ee6c71ccb5dc3b3d518fd8b8c9",
+              "source": "raw-logs/fresh-db-stderr.log"
+            },
+            {
+              "bytes": 3116,
+              "file": "log-006.txt",
+              "sha256": "bb752ea2355c617ac5138ea052d5aa6fbd5578638d82b42f1d903e8fd6b1c83f",
+              "source": "raw-logs/fresh-db-stdout.log"
+            },
+            {
+              "bytes": 211,
+              "file": "log-007.txt",
+              "sha256": "fc53b195314469ed0362e7afd9445fecd278c5ecd87ebf9b0bbca89b7464a4ef",
+              "source": "raw-logs/fresh-map-1-stderr.log"
+            },
+            {
+              "bytes": 169,
+              "file": "log-008.txt",
+              "sha256": "02fc29d5d7dd5bf6790a0c38130bcf26cc9fe827016b7d4da05a9134e89c26e1",
+              "source": "raw-logs/fresh-map-1-stdout.log"
+            },
+            {
+              "bytes": 211,
+              "file": "log-009.txt",
+              "sha256": "e83a7a426310000f5dc8befadda177dd7e8b0bdb7122c009341a1ee2a8bc0ff8",
+              "source": "raw-logs/fresh-map-5-stderr.log"
+            },
+            {
+              "bytes": 169,
+              "file": "log-010.txt",
+              "sha256": "a00c3a61570f179e4b543970bfc81cb46c3beab5b71bd472c1ed5bcd2d83d17e",
+              "source": "raw-logs/fresh-map-5-stdout.log"
+            }
+          ],
+          [
+            {
+              "bytes": 14162,
+              "file": "log-000.txt",
+              "sha256": "c78af44aaea41ae0594ba7d122819130d7dc33c3172af6b1156cf6221d5d4b30",
+              "source": "runtime/logs/dbserver/error_2026-10-13-00-00-00.log"
+            },
+            {
+              "bytes": 120,
+              "file": "log-001.txt",
+              "sha256": "48800e122598b380315f2ed31e39974c4cbf4eb01476bf1d75218b072cd93477",
+              "source": "runtime/logs/mapserver/error.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-002.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/restart-db-console-observer-stderr.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-003.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/restart-db-console-observer-stdout.log"
+            },
+            {
+              "bytes": 0,
+              "file": "log-004.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "source": "raw-logs/restart-db-console.log"
+            },
+            {
+              "bytes": 14034,
+              "file": "log-005.txt",
+              "sha256": "cb2fb1e9a61a5e92638e4cf4719d8d7619a38c423ddf39e9c98733501ed7128f",
+              "source": "raw-logs/restart-db-stderr.log"
+            },
+            {
+              "bytes": 3116,
+              "file": "log-006.txt",
+              "sha256": "29e69178deed6f1466fb480d79c591acbb1f828f721ae39631dff14dc3494355",
+              "source": "raw-logs/restart-db-stdout.log"
+            },
+            {
+              "bytes": 213,
+              "file": "log-007.txt",
+              "sha256": "26e955482abccecef88e2773ae099d2bc4b2036cbdff09764392dfe9afcc4a23",
+              "source": "raw-logs/restart-map-1-stderr.log"
+            },
+            {
+              "bytes": 169,
+              "file": "log-008.txt",
+              "sha256": "6670e00fe0e06d85ba86ca196bff0d624041aabba73eb687702118306820d867",
+              "source": "raw-logs/restart-map-1-stdout.log"
+            },
+            {
+              "bytes": 213,
+              "file": "log-009.txt",
+              "sha256": "19070cd72bb6e147a7beb122870d1beea2248fda6c6546a7c3d93e14d34742c6",
+              "source": "raw-logs/restart-map-5-stderr.log"
+            },
+            {
+              "bytes": 169,
+              "file": "log-010.txt",
+              "sha256": "2ced7e21f6246325c53e94f1c68e8d162ba9a471654ad88d4d8e19c4120b56a8",
+              "source": "raw-logs/restart-map-5-stdout.log"
+            }
+          ]
+        ],
+        "repository_commit": "33f31586b43399e25f61e13c6c4411e09c6b6d60",
+        "run_id": 38325717243,
+        "run_url": "https://github.com/Russianranger/coh-android/actions/runs/38325717243",
+        "scope": "actual_retained_manual_dbserver_minimal_schema_native_windows",
+        "source_pins": {
+          "android/guest/character_zoning.py": {
+            "bytes": 80010,
+            "sha256": "51140d622a614fb8d2a5b058ce40898c915d731d36309241d778cba277514fc8"
+          },
+          "android/guest/dbserver_diagnostic.py": {
+            "bytes": 50159,
+            "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+          },
+          "android/guest/game_diagnostic.py": {
+            "bytes": 80208,
+            "sha256": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737"
+          },
+          "android/guest/game_hang_evidence.py": {
+            "bytes": 22400,
+            "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+          },
+          "android/guest/local_character_server.py": {
+            "bytes": 177794,
+            "sha256": "fa168b14aa2115c9129bba78afedb32dea7b8c22177a43ccf4f83598e237abac"
+          },
+          "android/guest/local_login_server.py": {
+            "bytes": 21351,
+            "sha256": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de"
+          },
+          "database/postgresql/001-coh-compat.sql": {
+            "bytes": 7788,
+            "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+          },
+          "database/postgresql/pg_local.py": {
+            "bytes": 11892,
+            "sha256": "d2665940bd0f932691c8a78c8b2aceaf638fba7550257ad31a089f79672689a0"
+          },
+          "database/postgresql/tests/character_console.py": {
+            "bytes": 15969,
+            "sha256": "a9b2bd409e6c6e32af2edac5af01beb95bc1f45ce2be5f7f5d44ba1dab4cd5f0"
+          },
+          "database/postgresql/tests/run_generated_schema.py": {
+            "bytes": 24884,
+            "sha256": "938d1dbbea79e9f39a74d0fdddc850b8c99b317541279b232c208a1bff7bbdeb"
+          },
+          "database/postgresql/tests/run_network_ack.py": {
+            "bytes": 25939,
+            "sha256": "c13c09f38abd727a8a76ca44c4c1fb8135633174e7a97a6d376f49ab02a30e9b"
+          },
+          "database/wine-dbserver/overlay/DBServer/src/wine_dispatch_progress.c": {
+            "bytes": 4227,
+            "sha256": "e02c2b059bf0ed11f1e48327523be17430dbc39711ef19338857392e8386efb0"
+          },
+          "database/wine-dbserver/overlay/DBServer/src/wine_dispatch_progress.h": {
+            "bytes": 2521,
+            "sha256": "607ff88eb950bd40be512d2b302965779c640076c24aa758313086c5c1b86e1b"
+          },
+          "tools/android/interactive/fixtures/minimal-db-native-inputs-0.13.34.json": {
+            "bytes": 11985,
+            "sha256": "d39162bbd4768f9d233077772a6c73604f5d2266f9a3b832f13d0b46d7505a7d"
+          },
+          "tools/android/interactive/qualify_minimal_db_runtime.py": {
+            "bytes": 27136,
+            "sha256": "3830dcdd5d1cdae4506d30b6d4d46bbc79b4f950de09c1104da0dc82132eb5a9"
+          },
+          "tools/android/interactive/test_minimal_db_runtime_contract.py": {
+            "bytes": 10123,
+            "sha256": "a7371bcc1fb50ada74cc6a836c3aa1aecb7c3cfddc9023a2ea6016f993187f16"
+          }
+        },
+        "sql_mutation_scope": "new_disposable_fixture_only",
+        "started_utc": "2026-10-13T00:09:41.506235+00:00",
+        "status": "passed",
+        "synthetic_fixture_after_restart": {
+          "canonical_rows": [
+            {
+              "authid": 77,
+              "authname": "COHMINIMAL",
+              "containerid": 90001,
+              "logincount": 3,
+              "mapid": null,
+              "name": "MINIMALFIXTURE",
+              "posx": 12.5,
+              "posy": -20.0,
+              "posz": 40.25,
+              "staticmapid": 5
+            }
+          ],
+          "canonical_sha256": "b48ae05e0256642a1df7c0327d7cb8623d71fa4d6b669df7fe7b22c3dfe71abe",
+          "numeric_normalization": "exact_fixture_real_coordinates_only",
+          "raw_sql_rows": [
+            {
+              "authid": 77,
+              "authname": "COHMINIMAL",
+              "containerid": 90001,
+              "logincount": 3,
+              "mapid": null,
+              "name": "MINIMALFIXTURE",
+              "posx": 12.5,
+              "posy": -20,
+              "posz": 40.25,
+              "staticmapid": 5
+            }
+          ]
+        },
+        "synthetic_fixture_before_restart": {
+          "canonical_rows": [
+            {
+              "authid": 77,
+              "authname": "COHMINIMAL",
+              "containerid": 90001,
+              "logincount": 3,
+              "mapid": null,
+              "name": "MINIMALFIXTURE",
+              "posx": 12.5,
+              "posy": -20.0,
+              "posz": 40.25,
+              "staticmapid": 5
+            }
+          ],
+          "canonical_sha256": "b48ae05e0256642a1df7c0327d7cb8623d71fa4d6b669df7fe7b22c3dfe71abe",
+          "numeric_normalization": "exact_fixture_real_coordinates_only",
+          "raw_sql_rows": [
+            {
+              "authid": 77,
+              "authname": "COHMINIMAL",
+              "containerid": 90001,
+              "logincount": 3,
+              "mapid": null,
+              "name": "MINIMALFIXTURE",
+              "posx": 12.5,
+              "posy": -20,
+              "posz": 40.25,
+              "staticmapid": 5
+            }
+          ]
+        },
+        "synthetic_fixture_digest": "b48ae05e0256642a1df7c0327d7cb8623d71fa4d6b669df7fe7b22c3dfe71abe",
+        "synthetic_identity_location_restart_preserved": true,
+        "wine_executed": false
+      },
+      "timing_scope": "10.594/4.718 seconds are genuine Windows fixture lifetimes, not Android/device performance."
+    },
+    "launcher": {
+      "artifact_id": null,
+      "artifact_zip": {
+        "status": "not_downloaded_historical_component",
+        "bytes": null,
+        "sha256": null
+      },
+      "receipt": {
+        "status": "not_downloaded_historical_component",
+        "bytes": null,
+        "sha256": null
+      },
+      "proof": null,
+      "status": "historical_ci_job_success_receipt_not_downloaded_not_used_for_final_qualification",
+      "run_id": 38325717243,
+      "job_id": 115064122388
+    },
+    "current_run_gate_satisfied": false
+  },
+  "revision_4_changes": {
+    "source_commit": "6136171e842eb69807636dbad9aedff0af6c5887",
+    "scope": "Three saved-world/manual-session UI string corrections and one regression case.",
+    "native_runtime_or_player_data_changes": false,
+    "workflow_trigger": "Narrow push-only successor supersession; successful prior publications not repeated.",
+    "focused_host_results": {
+      "manual_session": {
+        "tests_run": 51,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "package": {
+        "tests_run": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "routing": {
+        "tests_run": 134,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "result_provenance": "Fresh local focused executions, followed by accepted exact final source CI receipt at qualification; local focused counts are not added to that CI total.",
+    "counts_additive": false
+  },
+  "companion_workflow_failures": [
+    {
+      "run_id": 38325717305,
+      "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38325717305",
+      "source_commit": "33f31586b43399e25f61e13c6c4411e09c6b6d60",
+      "scope": "Historical beacon companion; two legacy .14 reconstruction cases.",
+      "status": "failed",
+      "failed_cases": 2,
+      "current_generator_tests": "passed",
+      "retained_native_graph_bytes_changed": false,
+      "correction_status": "Proposed fixture repair preserved on separate unmerged branch codex/beacon-preflight-historical-fixtures-035 at ce60d748a55267cbec4f0276821f1dce072b6b9e; 10 driver cases pass, complete donor/native qualification unexecuted. See preserved_unqualified_followup.",
+      "all_ci_pass_claimed": false
+    }
+  ],
+  "preserved_unqualified_followup": {
+    "branch": "codex/beacon-preflight-historical-fixtures-035",
+    "commit": "ce60d748a55267cbec4f0276821f1dce072b6b9e",
+    "tree": "f2e5a24d901c771217573a8374a0714eea7b022f",
+    "base": "6136171e842eb69807636dbad9aedff0af6c5887",
+    "shipping_change": false,
+    "merged": false,
+    "draft_runner_tests": 10,
+    "original_donor_cases_executed": false,
+    "native_generation_executed": false,
+    "reason": "Preserve proposed repair for historical .14 beacon reconstruction tests without modifying the qualified .35 source."
+  },
+  "published_release": {
+    "id": 411125470,
+    "tag_name": "coh-atlas-gameplay-v0.13.35",
+    "draft": false,
+    "prerelease": true,
+    "created_at": "2026-10-13T00:15:32Z",
+    "published_at": "2026-10-13T01:02:10Z",
+    "target_commitish": "6136171e842eb69807636dbad9aedff0af6c5887",
+    "html_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.35",
+    "assets": [
+      {
+        "id": 635458592,
+        "name": "COH-Atlas-Gameplay-0.13.35-testing.txt",
+        "size": 5757,
+        "digest": "sha256:c9068cc2c719052bff67cfcd6d9391883e96ec063d5364f5f4e85e618690c54e",
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.35/COH-Atlas-Gameplay-0.13.35-testing.txt",
+        "created_at": "2026-10-13T01:02:08Z",
+        "updated_at": "2026-10-13T01:02:09Z"
+      },
+      {
+        "id": 635458502,
+        "name": "COH-Atlas-Gameplay-0.13.35.apk",
+        "size": 42064404,
+        "digest": "sha256:6d8b74782186561a30d201400cbfddeb7ce81d2d471477950c1c4da69eafae31",
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.35/COH-Atlas-Gameplay-0.13.35.apk",
+        "created_at": "2026-10-13T01:02:06Z",
+        "updated_at": "2026-10-13T01:02:08Z"
+      },
+      {
+        "id": 635458577,
+        "name": "COH-Atlas-Gameplay-0.13.35.apk.sha256",
+        "size": 97,
+        "digest": "sha256:098b06135acacc04c412eab875d2c6c6372688439d2e34a41085139c8f883754",
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.35/COH-Atlas-Gameplay-0.13.35.apk.sha256",
+        "created_at": "2026-10-13T01:02:08Z",
+        "updated_at": "2026-10-13T01:02:08Z"
+      }
+    ]
+  },
+  "current_companion_workflows": [
+    {
+      "id": 38326352766,
+      "name": "Character session and Atlas transfer",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326352766",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326352316,
+      "name": "Thor renderer report analysis",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326352316",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326352357,
+      "name": "Thor client presentation candidate",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326352357",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326352349,
+      "name": "MapServer offline observer, stream and persistence prerequisites",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326352349",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326352447,
+      "name": "Thor real DbServer candidate",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326352447",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326352381,
+      "name": "Thor Atlas asset import candidate",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326352381",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326352435,
+      "name": "Thor Atlas Park server candidate",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326352435",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326352353,
+      "name": "Character persistence",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326352353",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326352473,
+      "name": "PostgreSQL backend",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326352473",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347303,
+      "name": "Thor renderer attribution bounded captures and strict save diagnostics",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347303",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347283,
+      "name": "Thor report recovery and Atlas preparation",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347283",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347273,
+      "name": "Thor bounded runtime setup copy repair",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347273",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347261,
+      "name": "Thor bounded storage and fresh-profile recovery",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347261",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347313,
+      "name": "Thor same-profile startup-only reopen and task receipt cleanup",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347313",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347364,
+      "name": "Thor optional probed Turnip Zink GPU profile",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347364",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347267,
+      "name": "Thor Android sidebar fixed commands and Start Enter",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347267",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347315,
+      "name": "Thor client loading and LOD enemy visual repair",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347315",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347318,
+      "name": "Thor GPU presentation and owned cleanup repair",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347318",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347272,
+      "name": "Thor storage audit cleanup and retained runtime",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347272",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347352,
+      "name": "Thor bounded runtime setup memory and cancellation",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347352",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347293,
+      "name": "Thor task acceptance command completion and animation pack",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347293",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    },
+    {
+      "id": 38326347248,
+      "name": "Thor real DbServer candidate",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/38326347248",
+      "source": "6136171e842eb69807636dbad9aedff0af6c5887"
+    }
+  ],
+  "branch_policy_verification": {
+    "main_commit": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+    "pr": 1,
+    "state": "open",
+    "draft": true,
+    "merged": false,
+    "head": "6136171e842eb69807636dbad9aedff0af6c5887",
+    "base": "main",
+    "release_tag_commit": "6136171e842eb69807636dbad9aedff0af6c5887"
+  },
+  "evidence_finalized_utc": "2026-10-13T01:19:58.128581+00:00",
+  "evidence_draft_started_utc": "2026-10-13T00:11:04.865458+00:00"
+}

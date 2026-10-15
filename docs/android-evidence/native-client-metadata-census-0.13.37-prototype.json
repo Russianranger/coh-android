@@ -1,0 +1,80 @@
+{
+  "branch": "codex/native-client-metadata-census-prototype-037",
+  "current_provider_lease_qualified": false,
+  "format": 1,
+  "independent_review": "approved; manifest pins verified and 12 fresh cases rerun",
+  "measured_startup_benefit": false,
+  "native_game_executed": false,
+  "native_windows_executed": false,
+  "native_wine_executed": false,
+  "physical_device_executed": false,
+  "production_activation_available": false,
+  "production_registration_present": false,
+  "publication_allowed": false,
+  "remaining_gates": [
+    "actual native PIG index and defined WFD capture",
+    "fresh complete source generation with actual asset link layout",
+    "exact scripts.loc boundary",
+    "native constructor/scan/override/world-entry parity",
+    "whole-operation time and memory comparison"
+  ],
+  "role": "closed_native_metadata_census_source_checkpoint",
+  "root_independent_tests": {
+    "command": "python -m unittest discover -s tools -p 'test_native_client_metadata_census_*.py' -v",
+    "errors": 0,
+    "failures": 0,
+    "scope": "portable decoder and extracted C stock-constructor fixtures; not native Game/Wine",
+    "seconds": 3.0,
+    "skips": 0,
+    "tests": 12
+  },
+  "source_checkpoint": {
+    "base_commit": "3570430cefdb15d9b239563e85cccf4d8fe6f32e",
+    "base_tree": "3ba011b6c653bd59eb39e1a4ed60babb95cc46f2",
+    "format": 1,
+    "native_build_authorized_by_manifest": false,
+    "paths": {
+      "database/client-metadata-census/README.md": {
+        "bytes": 6417,
+        "mode": "100644",
+        "sha256": "44bfd9585697c28cd9a9bff350e65cf46e8e02f35d7bb992a07b7e4acf22e7bf"
+      },
+      "database/client-metadata-census/overlay/coh_folder_census.h": {
+        "bytes": 14590,
+        "mode": "100644",
+        "sha256": "1748606b4aad4a92fe4aad11c931b3bff35594cb7c70c09fb778f61b4fbcc601"
+      },
+      "database/client-metadata-census/overlay/coh_folder_census_adapter.h": {
+        "bytes": 8473,
+        "mode": "100644",
+        "sha256": "5674d44afdbc84f9a4817185c62c649049d814280a27136048a5ee7661f578dd"
+      },
+      "database/client-metadata-census/portable-qualification.json": {
+        "bytes": 11649,
+        "mode": "100644",
+        "sha256": "b91a9d4cc21b7bcf64b66c9a3a0b76d5075a1b3d3a324b7a48c62202e9f3c107"
+      },
+      "tools/prepare_native_client_metadata_census_source.py": {
+        "bytes": 11696,
+        "mode": "100644",
+        "sha256": "ec6eb6de101061752f96c99e20b613dd1c7ff43f1378f48419ae72e1e3390731"
+      },
+      "tools/test_native_client_metadata_census_decode.py": {
+        "bytes": 20898,
+        "mode": "100644",
+        "sha256": "2a15fedfe5ed46838db9cfe01eedc5a9c7e73ce90a4370b85bd3b4a569dee03d"
+      },
+      "tools/test_native_client_metadata_census_source.py": {
+        "bytes": 26832,
+        "mode": "100644",
+        "sha256": "6e63ad19f2e5afaa378b69ffcc2551d21e8f976d4397368bca8330fff00ad154"
+      }
+    },
+    "production_activation_available": false,
+    "publication_allowed": false,
+    "role": "closed_metadata_census_source_and_portable_fixture_checkpoint"
+  },
+  "source_checkpoint_sha256": "6e3d6b2d9d0c4f7ffdd7f616cba812f15d09b6e9522ebc1ee9f5403ec0cac885",
+  "source_commit": "7f3d37fc191f3f30c124d6d57581afb64cceef42",
+  "source_tree": "a26d9290f00812f3915e3a1c1ae940e402184e4a"
+}

@@ -1,0 +1,34 @@
+COH Atlas Gameplay 0.11.6 — immediate reopen and runtime-refresh repair
+
+Install as an update over the existing app. Keep app data, imports and THORHERO.
+Tap Refresh runtime once, then Reopen saved THORHERO with COHLOCAL / offline.
+
+0.11.5's server archive had nonzero tar timestamps and was rejected before any
+database, Wine or client process started. This update restores canonical archive
+metadata and checks the actual guest extraction path before signing/publication.
+Game and MapServer binaries are reused from the completed 0.11.5 native build;
+the readiness events, texture-header index and graphics profile remain included.
+
+Runtime extraction now reuses one bounded copy buffer, reducing allocation and
+garbage-collection pressure. The earlier refresh crashes had no crash trace in
+the supplied ZIP, so their exact cause remains unconfirmed. New support reports
+include bounded recent app-exit metadata to help identify another closure.
+
+First check that Refresh completes and Reopen advances beyond persistent server
+preparation instead of failing immediately. Then let it reach the existing
+character. If you want the low graphics preset, enable Use performance graphics
+before Reopen; your previous checkbox choice is preserved.
+
+If the character loads, dismiss help, tap Return to safe ground once and remain
+still until Atlas position verified. Briefly assess loading and movement, then
+release controls and stand still for at least 60 seconds. Use normal Save
+character / log out, wait for Saved character verified, then Finish and export
+the ZIP. There is no need to repeat the accepted long camera/jump tests.
+
+If Refresh still closes the app, reopen it and export the available report. Do
+not clear app data or reimport the world to troubleshoot this packaging failure.
+
+Cold server work and first-time texture-index preparation still take time.
+Device speed gains remain unmeasured. GPU acceleration is deferred; software
+llvmpipe, 800x600 UI, the existing 10 FPS cap and normal Save/ground/deadline
+guards remain. Cross-session warm-server reuse remains pending.

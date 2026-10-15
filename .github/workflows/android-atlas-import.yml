@@ -1,0 +1,96 @@
+name: Thor Atlas asset import candidate
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'android/atlas/**'
+      - 'tools/android/atlas/**'
+      - '.github/workflows/android-atlas-import.yml'
+  pull_request:
+    paths:
+      - 'android/atlas/**'
+      - 'tools/android/atlas/**'
+      - '.github/workflows/android-atlas-import.yml'
+permissions:
+  contents: read
+concurrency:
+  group: android-atlas-import-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Check archive validation, cancellation, recovery and app packaging
+        run: python3 -m unittest discover -s tools/android/atlas -p 'test_*.py' -v
+  qualification:
+    if: github.event_name != 'pull_request'
+    needs: tooling
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    # Existing reviewed assets are in an unpublished draft release. GitHub
+    # requires this permission to read drafts; it is limited to this job.
+    # This workflow does not create, modify or publish a release.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
+      - name: Install pinned Android build tools
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Package immutable text and reviewed import contracts
+        run: python3 tools/android/atlas/package_game_import.py --output out/atlas-import/assets --repository-commit "$GITHUB_SHA"
+      - name: Build and verify the separate setup APK
+        run: >-
+          python3 tools/android/atlas/build_apk.py
+          --assets out/atlas-import/assets --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-atlas-setup.jks"
+          --output out/atlas-import/COH-Atlas-Setup-0.3.0.apk
+      - name: Retrieve the existing reviewed asset ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/asset-inputs.zip --release-asset-id 588984151
+      - name: Qualify exact APK data with the complete reviewed import
+        run: >-
+          python3 tools/android/atlas/host_import_smoke.py
+          --apk out/atlas-import/COH-Atlas-Setup-0.3.0.apk
+          --archive out/asset-inputs.zip --output out/atlas-import/host-proof
+          --repository-commit "$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-atlas-setup-apk
+          path: |
+            out/atlas-import/COH-Atlas-Setup-0.3.0.apk
+            out/atlas-import/COH-Atlas-Setup-0.3.0.apk.sha256
+            out/atlas-import/atlas-apk-build-report.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-atlas-import-evidence
+          path: |
+            out/atlas-import/assets/atlas-import-build.json
+            out/atlas-import/assets/atlas-import.properties
+            out/atlas-import/atlas-apk-build-report.json
+            out/atlas-import/host-proof/host-import-report.json
+            out/atlas-import/host-proof/import-summary.properties
+            out/atlas-import/host-proof/host-import.log
+          if-no-files-found: warn

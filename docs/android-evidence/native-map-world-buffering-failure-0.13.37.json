@@ -1,0 +1,82 @@
+{
+  "format": 1,
+  "source_commit": "52b83c06677bbf9d1b6b52896e4b9bbd2beb70b4",
+  "run_id": 38483702397,
+  "job_id": 115592965307,
+  "status": "failed",
+  "actual_completed_world_cases": 0,
+  "primary_failure": [
+    "ValueError: Owned native world readiness timed out"
+  ],
+  "owned_cleanup_verified": true,
+  "actual_stock_selected_world": {
+    "map_id": 1,
+    "port": 7001,
+    "world": "City_01_01",
+    "native_stdout_windows_pid": 1136,
+    "PhysX_objects": 2311,
+    "loaded_actor_spore_grid_observed": true,
+    "geo_release_and_memory_check_observed": true,
+    "Server_ready_observed": false,
+    "last_flushed_stdout_text": "Verifying SG permission tables..",
+    "first_native_DLL_preload_timestamp_UTC": "2026-10-13T23:40:14.195Z",
+    "native_created_PhysX_and_sporegrid_timestamp_UTC": "2026-10-13T23:40:27.466Z",
+    "partial_DLL_preload_to_PhysX_objects_wall_seconds": 13.271,
+    "complete_readiness_measured": false,
+    "Map_progress_raw_retained": false,
+    "Map_memory_retained": false,
+    "independent_Db_getstatus_attempted": false
+  },
+  "partial_native_certified_animation_latest": {
+    "opened": 5120,
+    "certified": 5120,
+    "fallback": 0,
+    "crypto_failed": 0,
+    "raw_bytes": 78662741,
+    "hash_us": 69742,
+    "stock_us": 0,
+    "skipped_rot_keys": 10793381,
+    "skipped_pos_keys": 1155406,
+    "scanned_rot_keys": 0,
+    "scanned_pos_keys": 0
+  },
+  "cache_delta": {
+    "global_added": [
+      "data/bin/animlists.bin",
+      "data/bin/behavioralias.bin",
+      "data/server/bin/ai_config.bin",
+      "data/server/bin/plaquemsg-en.bin"
+    ],
+    "global_changed": 18,
+    "global_removed": 0,
+    "provider_extra_leaves_not_individually_retained": 1047,
+    "provider_extra_bytes": 16291280,
+    "source_explanation_pending_actual_leaf_confirmation": "Native makeBinName produces data/geobin/{object_library,maps}/*.bin outside historical globalcache snapshot. Expected new globalplaques uses MessageStore20090521, others Parse6."
+  },
+  "native_components_unchanged": true,
+  "identifier_files_unchanged": true,
+  "world_graph_source_pins_unchanged": true,
+  "buffering_hypothesis": {
+    "proven_runtime_cause": false,
+    "source_facts": "-nogui returns before newConsoleWindow setvbuf; loadstart_printf explicitly flushes, loadend/ServerReady do not. Laststdout alone cannot prove SGassert/stall. Next repaired harness retainsraw mapping/held-PID/CPU/memory/read-only nativeDbquery evenonfailure."
+  },
+  "artifact": {
+    "id": 11859549176,
+    "zip_bytes": 47288,
+    "zip_sha256": "a3821dee6571c86384250396e7920c4e2d550ae8f4014662ba4b7423781ab459"
+  },
+  "qualification_report": {
+    "bytes": 18771,
+    "sha256": "f26a0ab02a00bbcb520a4f182841e118c6bc6f86b2b130c175d3241c4d2cbef8"
+  },
+  "native_stdout": {
+    "bytes": 36615,
+    "sha256": "d42abdd9f0f6bb6c4459eeca1a65537288fbafb273d87610721e85fa218f3c1e"
+  },
+  "behavioral_collision_proven": false,
+  "physical_device_measured": false,
+  "candidate_worlds_executed": 0,
+  "shipping_allowed": false,
+  "Linux_preparation_reexecuted": false,
+  "native_rebuild_performed": false
+}

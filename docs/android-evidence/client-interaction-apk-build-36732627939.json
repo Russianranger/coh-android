@@ -1,0 +1,618 @@
+{
+  "format": 1,
+  "apk": "COH-Client-Interaction-0.7.0.apk",
+  "bytes": 370556044,
+  "sha256": "bbf45610becb3b8e2309d67cab2e701b8ff8bf9cf14414c1fd044c87197533e7",
+  "application_id": "io.github.russianranger.cohclientinteractive",
+  "version_name": "0.7.0",
+  "version_code": 1,
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "abi": "arm64-v8a",
+  "permissions": [
+    "android.permission.FOREGROUND_SERVICE",
+    "android.permission.FOREGROUND_SERVICE_DATA_SYNC",
+    "android.permission.INTERNET",
+    "android.permission.POST_NOTIFICATIONS",
+    "android.permission.WAKE_LOCK"
+  ],
+  "repository_commit": "73e2fa5623d2ca85c11166e5b2777fccf955a443",
+  "bundle_contract": {
+    "format": 1,
+    "scope": "actual_client_interaction_guest",
+    "guest_script": "client_interactive_diagnostic.py",
+    "executable": "CityOfHeroes.exe",
+    "reference_run_id": 36088012664,
+    "width": 800,
+    "height": 600,
+    "transport": "private_unix_rfb",
+    "server_packages_included": false,
+    "game_assets_external": true,
+    "android_execution_validated": false,
+    "gameplay_validated": false
+  },
+  "import_donor": {
+    "run_id": 36638344040,
+    "repository_commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+    "apk_sha256": "e502b80d91c92164021684d2ea311e9e9d5c99c1b9ac178c67619844f3c5d547",
+    "apk_bytes": 355130247,
+    "build_receipt_sha256": "39f4e75aa947d5519e42d176d756c317adae21ed18ea03fcdeb155b6bb7535ea",
+    "payloads": {
+      "assets/atlas/atlas-assets-index.tsv": {
+        "bytes": 2379733,
+        "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480"
+      },
+      "assets/atlas/atlas-import.properties": {
+        "bytes": 923,
+        "sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293"
+      },
+      "assets/atlas/atlas-text-index.tsv": {
+        "bytes": 21187391,
+        "sha256": "35bc97e032b286677bde32122c8cb3d14146bba2ded1f1fdc1a9a9486d37a5e8"
+      },
+      "assets/atlas/atlas-text.zip": {
+        "bytes": 312807038,
+        "sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c"
+      }
+    }
+  },
+  "import_contract": {
+    "format": 1,
+    "source.commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data.commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "repository.commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+    "asset.archive.bytes": 615541018,
+    "asset.archive.sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+    "asset.manifest.bytes": 3832869,
+    "asset.manifest.sha256": "cf96742b1b65306356df69d065fcfb5bda0986ec8700d47ae1422452a1c0db7f",
+    "asset.count": 16721,
+    "asset.bytes": 985644857,
+    "text.archive.bytes": 312807038,
+    "text.archive.sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c",
+    "text.count": 156290,
+    "text.bytes": 1992085660,
+    "text.index.bytes": 21187391,
+    "text.index.sha256": "35bc97e032b286677bde32122c8cb3d14146bba2ded1f1fdc1a9a9486d37a5e8",
+    "asset.index.bytes": 2379733,
+    "asset.index.sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480",
+    "total.count": 173011,
+    "total.bytes": 2977730517,
+    "storage.reserve.bytes": 268435456,
+    "storage.per.file.bytes": 4096
+  },
+  "runtime_manifest_sha256": "d5635c0df5b19385f124ea212ec006865894a4d21d7d75b1346fcc0fd13b2f33",
+  "runtime_manifest": {
+    "format": 1,
+    "repository_commit": "73e2fa5623d2ca85c11166e5b2777fccf955a443",
+    "candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+    "files": {
+      "001-coh-compat.sql": {
+        "bytes": 7788,
+        "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+      },
+      "THIRD_PARTY_NOTICES.md": {
+        "bytes": 2184,
+        "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+      },
+      "client-probe.exe": {
+        "bytes": 470392,
+        "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+      },
+      "diagnostic.py": {
+        "bytes": 69529,
+        "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+      },
+      "odbc_probe.exe": {
+        "bytes": 270071,
+        "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+      },
+      "postgresql-build.json": {
+        "bytes": 163117,
+        "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+      },
+      "postgresql-runtime.tar.gz": {
+        "bytes": 9280905,
+        "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+      },
+      "probe.dll": {
+        "bytes": 82761,
+        "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+      },
+      "proot-build.json": {
+        "bytes": 3236,
+        "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+      },
+      "psqlodbc_x86.msi": {
+        "bytes": 4079616,
+        "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+      },
+      "runtime-lock.json": {
+        "bytes": 1688,
+        "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+      },
+      "runtime-probe.exe": {
+        "bytes": 245968,
+        "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+      },
+      "accepted-runtime-manifest.json": {
+        "bytes": 4128,
+        "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+      },
+      "client-caches.zip": {
+        "bytes": 27071659,
+        "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+      },
+      "client-launcher.exe": {
+        "bytes": 245249,
+        "sha256": "9b376241f92ceb0afba5956fd4034c1996bc63cb8d4aa689ddc774c13785683e"
+      },
+      "client-manifest.json": {
+        "bytes": 2499,
+        "sha256": "9fec2ebf03070b59c5d1109a39b74b174fb67a02dd9257d5576ff789599fb2d3"
+      },
+      "client-prerequisites.zip": {
+        "bytes": 18757,
+        "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+      },
+      "client-runtime.zip": {
+        "bytes": 8575423,
+        "sha256": "58c2e03acd2e6fc3d0d7980fa977a0dfd90595cb05f3ce978f720e2f8eacedf9"
+      },
+      "client_interactive_diagnostic.py": {
+        "bytes": 16555,
+        "sha256": "f976e16644c247e1f0438f0bda9c646798026b7b07c4d7708d76b53dbef089c7"
+      },
+      "client_startup_diagnostic.py": {
+        "bytes": 52595,
+        "sha256": "1dba2592ff8984e6fefd4649f0d84d75e1fb84856ce570bc5a33545e52a8e19f"
+      },
+      "dbserver_diagnostic.py": {
+        "bytes": 50159,
+        "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+      },
+      "game_device_diagnostic.py": {
+        "bytes": 51035,
+        "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+      },
+      "game_diagnostic.py": {
+        "bytes": 79536,
+        "sha256": "7155dfb29c8c1370d08abfd793295e0116888f120d4258aabaa5d44d43bbe539"
+      },
+      "game_evidence.py": {
+        "bytes": 25884,
+        "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+      },
+      "game_hang_evidence.py": {
+        "bytes": 22400,
+        "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+      },
+      "game_map_progress.py": {
+        "bytes": 14789,
+        "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+      },
+      "presentation_diagnostic.py": {
+        "bytes": 17396,
+        "sha256": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df"
+      }
+    },
+    "runtime_probe": {
+      "executable": "runtime-probe.exe",
+      "marker": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified",
+      "dll": "probe.dll"
+    },
+    "client_probe": {
+      "executable": "client-probe.exe",
+      "marker": "COH_CLIENT_PROBE_V1 ",
+      "scope": "headless_wgl_client_capabilities",
+      "optional": true
+    },
+    "client_probe_windows_libraries": [
+      "GDI32.dll",
+      "KERNEL32.dll",
+      "OPENGL32.DLL",
+      "USER32.dll",
+      "dinput8.dll",
+      "msvcrt.dll"
+    ],
+    "compiler": "i686-w64-mingw32-gcc (GCC) 13-posix",
+    "odbc_ansi_compatibility": {
+      "wine_export_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
+      "compile_aliases": {
+        "SQLDriverConnectA": "SQLDriverConnect",
+        "SQLExecDirectA": "SQLExecDirect"
+      },
+      "verified_windows_manager_imports": [
+        "SQLAllocHandle",
+        "SQLBindParameter",
+        "SQLColumnsW",
+        "SQLDisconnect",
+        "SQLDriverConnect",
+        "SQLEndTran",
+        "SQLExecDirect",
+        "SQLFetch",
+        "SQLFreeHandle",
+        "SQLGetData",
+        "SQLGetDiagRec",
+        "SQLGetDiagRecA",
+        "SQLGetInfoW",
+        "SQLMoreResults",
+        "SQLSetConnectAttr",
+        "SQLSetEnvAttr"
+      ],
+      "fixture_sql_and_acceptance_markers_changed": false,
+      "wide_driver_version_workaround": {
+        "compile_define": "COH_ODBC_WIDE_INFO=1",
+        "api": "SQLGetInfoW",
+        "result_encoding": "UTF-16 with strict ASCII conversion",
+        "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975",
+        "reason": "Avoid ANSI-to-wide SQLGetInfo forwarding with a private driver handle"
+      },
+      "wide_columns_workaround": {
+        "compile_define": "COH_ODBC_WIDE_COLUMNS=1",
+        "api": "SQLColumnsW",
+        "filter_encoding": "UTF-16 schema/table; unchanged NULL catalog/column filters",
+        "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L1113",
+        "reason": "Avoid ANSI SQLColumns rejecting optional NULL filters during conversion"
+      },
+      "diagnostic_progress": "unbuffered output and credential-free ODBC call line numbers"
+    },
+    "scope": "Interactive graphical client candidate inputs; device interaction and gameplay unvalidated",
+    "accepted_base_runtime": {
+      "run_id": 36364550345,
+      "repository_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+      "manifest_file": "accepted-runtime-manifest.json",
+      "manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+      "manifest": {
+        "format": 1,
+        "repository_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+        "candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+        "files": {
+          "001-coh-compat.sql": {
+            "bytes": 7788,
+            "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+          },
+          "THIRD_PARTY_NOTICES.md": {
+            "bytes": 2184,
+            "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+          },
+          "client-probe.exe": {
+            "bytes": 470392,
+            "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+          },
+          "diagnostic.py": {
+            "bytes": 69529,
+            "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+          },
+          "odbc_probe.exe": {
+            "bytes": 270071,
+            "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+          },
+          "postgresql-build.json": {
+            "bytes": 163117,
+            "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+          },
+          "postgresql-runtime.tar.gz": {
+            "bytes": 9280905,
+            "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+          },
+          "probe.dll": {
+            "bytes": 82761,
+            "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+          },
+          "proot-build.json": {
+            "bytes": 3236,
+            "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+          },
+          "psqlodbc_x86.msi": {
+            "bytes": 4079616,
+            "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+          },
+          "runtime-lock.json": {
+            "bytes": 1688,
+            "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+          },
+          "runtime-probe.exe": {
+            "bytes": 245968,
+            "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+          }
+        },
+        "runtime_probe": {
+          "executable": "runtime-probe.exe",
+          "marker": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified",
+          "dll": "probe.dll"
+        },
+        "client_probe": {
+          "executable": "client-probe.exe",
+          "marker": "COH_CLIENT_PROBE_V1 ",
+          "scope": "headless_wgl_client_capabilities",
+          "optional": true
+        },
+        "client_probe_windows_libraries": [
+          "GDI32.dll",
+          "KERNEL32.dll",
+          "OPENGL32.DLL",
+          "USER32.dll",
+          "dinput8.dll",
+          "msvcrt.dll"
+        ],
+        "compiler": "i686-w64-mingw32-gcc (GCC) 13-posix",
+        "odbc_ansi_compatibility": {
+          "wine_export_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
+          "compile_aliases": {
+            "SQLDriverConnectA": "SQLDriverConnect",
+            "SQLExecDirectA": "SQLExecDirect"
+          },
+          "verified_windows_manager_imports": [
+            "SQLAllocHandle",
+            "SQLBindParameter",
+            "SQLColumnsW",
+            "SQLDisconnect",
+            "SQLDriverConnect",
+            "SQLEndTran",
+            "SQLExecDirect",
+            "SQLFetch",
+            "SQLFreeHandle",
+            "SQLGetData",
+            "SQLGetDiagRec",
+            "SQLGetDiagRecA",
+            "SQLGetInfoW",
+            "SQLMoreResults",
+            "SQLSetConnectAttr",
+            "SQLSetEnvAttr"
+          ],
+          "fixture_sql_and_acceptance_markers_changed": false,
+          "wide_driver_version_workaround": {
+            "compile_define": "COH_ODBC_WIDE_INFO=1",
+            "api": "SQLGetInfoW",
+            "result_encoding": "UTF-16 with strict ASCII conversion",
+            "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975",
+            "reason": "Avoid ANSI-to-wide SQLGetInfo forwarding with a private driver handle"
+          },
+          "wide_columns_workaround": {
+            "compile_define": "COH_ODBC_WIDE_COLUMNS=1",
+            "api": "SQLColumnsW",
+            "filter_encoding": "UTF-16 schema/table; unchanged NULL catalog/column filters",
+            "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L1113",
+            "reason": "Avoid ANSI SQLColumns rejecting optional NULL filters during conversion"
+          },
+          "diagnostic_progress": "unbuffered output and credential-free ODBC call line numbers"
+        },
+        "scope": "APK build inputs; not proof of Android execution or gameplay"
+      }
+    },
+    "client_bundle": {
+      "format": 1,
+      "scope": "actual_client_interaction_guest",
+      "guest_script": "client_interactive_diagnostic.py",
+      "executable": "CityOfHeroes.exe",
+      "reference_run_id": 36088012664,
+      "width": 800,
+      "height": 600,
+      "transport": "private_unix_rfb",
+      "server_packages_included": false,
+      "game_assets_external": true,
+      "android_execution_validated": false,
+      "gameplay_validated": false
+    }
+  },
+  "payloads": {
+    "assets/atlas/atlas-assets-index.tsv": {
+      "bytes": 2379733,
+      "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480"
+    },
+    "assets/atlas/atlas-import.properties": {
+      "bytes": 923,
+      "sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293"
+    },
+    "assets/atlas/atlas-text-index.tsv": {
+      "bytes": 21187391,
+      "sha256": "35bc97e032b286677bde32122c8cb3d14146bba2ded1f1fdc1a9a9486d37a5e8"
+    },
+    "assets/atlas/atlas-text.zip": {
+      "bytes": 312807038,
+      "sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c"
+    },
+    "assets/runtime/001-coh-compat.sql": {
+      "bytes": 7788,
+      "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+    },
+    "assets/runtime/THIRD_PARTY_NOTICES.md": {
+      "bytes": 2184,
+      "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+    },
+    "assets/runtime/accepted-runtime-manifest.json": {
+      "bytes": 4128,
+      "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+    },
+    "assets/runtime/client-caches.zip": {
+      "bytes": 27071659,
+      "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+    },
+    "assets/runtime/client-launcher.exe": {
+      "bytes": 245249,
+      "sha256": "9b376241f92ceb0afba5956fd4034c1996bc63cb8d4aa689ddc774c13785683e"
+    },
+    "assets/runtime/client-manifest.json": {
+      "bytes": 2499,
+      "sha256": "9fec2ebf03070b59c5d1109a39b74b174fb67a02dd9257d5576ff789599fb2d3"
+    },
+    "assets/runtime/client-prerequisites.zip": {
+      "bytes": 18757,
+      "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+    },
+    "assets/runtime/client-probe.exe": {
+      "bytes": 470392,
+      "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+    },
+    "assets/runtime/client-runtime.zip": {
+      "bytes": 8575423,
+      "sha256": "58c2e03acd2e6fc3d0d7980fa977a0dfd90595cb05f3ce978f720e2f8eacedf9"
+    },
+    "assets/runtime/client_interactive_diagnostic.py": {
+      "bytes": 16555,
+      "sha256": "f976e16644c247e1f0438f0bda9c646798026b7b07c4d7708d76b53dbef089c7"
+    },
+    "assets/runtime/client_startup_diagnostic.py": {
+      "bytes": 52595,
+      "sha256": "1dba2592ff8984e6fefd4649f0d84d75e1fb84856ce570bc5a33545e52a8e19f"
+    },
+    "assets/runtime/dbserver_diagnostic.py": {
+      "bytes": 50159,
+      "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+    },
+    "assets/runtime/diagnostic.py": {
+      "bytes": 69529,
+      "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+    },
+    "assets/runtime/game_device_diagnostic.py": {
+      "bytes": 51035,
+      "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+    },
+    "assets/runtime/game_diagnostic.py": {
+      "bytes": 79536,
+      "sha256": "7155dfb29c8c1370d08abfd793295e0116888f120d4258aabaa5d44d43bbe539"
+    },
+    "assets/runtime/game_evidence.py": {
+      "bytes": 25884,
+      "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+    },
+    "assets/runtime/game_hang_evidence.py": {
+      "bytes": 22400,
+      "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+    },
+    "assets/runtime/game_map_progress.py": {
+      "bytes": 14789,
+      "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+    },
+    "assets/runtime/odbc_probe.exe": {
+      "bytes": 270071,
+      "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+    },
+    "assets/runtime/postgresql-build.json": {
+      "bytes": 163117,
+      "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+    },
+    "assets/runtime/postgresql-runtime.tar.gz": {
+      "bytes": 9280905,
+      "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+    },
+    "assets/runtime/presentation_diagnostic.py": {
+      "bytes": 17396,
+      "sha256": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df"
+    },
+    "assets/runtime/probe.dll": {
+      "bytes": 82761,
+      "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+    },
+    "assets/runtime/proot-build.json": {
+      "bytes": 3236,
+      "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+    },
+    "assets/runtime/psqlodbc_x86.msi": {
+      "bytes": 4079616,
+      "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+    },
+    "assets/runtime/runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "assets/runtime/runtime-probe.exe": {
+      "bytes": 245968,
+      "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+    },
+    "assets/runtime/runtime-manifest.json": {
+      "bytes": 11655,
+      "sha256": "d5635c0df5b19385f124ea212ec006865894a4d21d7d75b1346fcc0fd13b2f33"
+    },
+    "lib/arm64-v8a/libproot-loader.so": {
+      "bytes": 17624,
+      "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+    },
+    "lib/arm64-v8a/libproot.so": {
+      "bytes": 263648,
+      "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+    }
+  },
+  "java_sources": {
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java": {
+      "bytes": 4635,
+      "sha256": "7b393832946d4b75f2ccdb80169c761030d3e064b6921ae8572f61c427bceb44"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java": {
+      "bytes": 21851,
+      "sha256": "73d4cf648d11488e2e2529e901e28d7fa298093e1a77b17c4841c8365ba2ba90"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java": {
+      "bytes": 2125,
+      "sha256": "58fd113e06d66666ca92eed0ee4122a9adcb3c2ca83d36aaf801d162bdf3695e"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+      "bytes": 62153,
+      "sha256": "b3e05d0732f5bc6ae4495aec4ab9d23e73aa65242354899f01d12038b9b251c8"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java": {
+      "bytes": 14770,
+      "sha256": "e35b61d5d8dc40fba3cd2983873f830aae5d6fc7f62ce596acd0ca46f1341abc"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java": {
+      "bytes": 19627,
+      "sha256": "6d1a4901e0489f4a304bb8805d035cc699f18e788bae4d59a2625d9f438f515a"
+    },
+    "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java": {
+      "bytes": 10328,
+      "sha256": "4d24fbddeecdd0e85bd70e8f540fc21db6f3cb0c1baaf2958c505a19a3a660fb"
+    },
+    "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java": {
+      "bytes": 37139,
+      "sha256": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java": {
+      "bytes": 14749,
+      "sha256": "198c485d3749b0750472f27b45c44d41fe40dc1f566495d477d7970ba01156fa"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DeviceHosts.java": {
+      "bytes": 879,
+      "sha256": "f5911d577902f24a4ab6323d710b8835e8d809722cdd281d5fad61496e8ec5f6"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticOutcome.java": {
+      "bytes": 1017,
+      "sha256": "9602b52d52a84bd2ce15b85ad766d66c2c9c9554e68d8c071410da262bf7479d"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticReports.java": {
+      "bytes": 1208,
+      "sha256": "afbd4cab1ad3246b7cf5af6cc0ade2c420c1982062fb515a4cb33104e14198b8"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/CleanupGuard.java": {
+      "bytes": 1294,
+      "sha256": "b695b469a0e43276c304bf7e8a46c467e792fe0d8cede095e6fe9fa10d0878b3"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java": {
+      "bytes": 28774,
+      "sha256": "d7c52a856a8c625ccc5657acf68a5c8cf128a18e2ae0820bd8e2bdd593c4e4c3"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DbServerAcceptance.java": {
+      "bytes": 6109,
+      "sha256": "d1e74551a51fe1a5e52774582184ad02d53b528c5a357f82034755b220d370a6"
+    }
+  },
+  "native_launcher_source": {
+    "android/native/client-launcher.c": {
+      "bytes": 9966,
+      "sha256": "20f740c108cbad9be987a24b84973d3b689768e49cb454b5994a4305b92bffdb"
+    }
+  },
+  "signature_verified": true,
+  "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "signing_key_created": false,
+  "signing": "Retained CI development identity; certificate pinned before and after signing",
+  "signing_alias": "coh-client-interactive",
+  "expected_signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "package_badging_verified": true,
+  "badging": "package: name='io.github.russianranger.cohclientinteractive' versionCode='1' versionName='0.7.0' platformBuildVersionName='15' platformBuildVersionCode='35' compileSdkVersion='35' compileSdkVersionCodename='15'\nminSdkVersion:'26'\ntargetSdkVersion:'35'\nuses-permission: name='android.permission.FOREGROUND_SERVICE'\nuses-permission: name='android.permission.FOREGROUND_SERVICE_DATA_SYNC'\nuses-permission: name='android.permission.POST_NOTIFICATIONS'\nuses-permission: name='android.permission.WAKE_LOCK'\nuses-permission: name='android.permission.INTERNET'\napplication-label:'COH Client Interaction'\napplication-icon-160:'res/drawable/ic_coh_client.xml'\napplication: label='COH Client Interaction' icon='res/drawable/ic_coh_client.xml'\nlaunchable-activity: name='io.github.russianranger.cohclientinteractive.ClientActivity'  label='' icon=''\nfeature-group: label=''\n  uses-feature: name='android.hardware.faketouch'\n  uses-implied-feature: name='android.hardware.faketouch' reason='default feature for all apps'\n  uses-feature: name='android.hardware.screen.landscape'\n  uses-implied-feature: name='android.hardware.screen.landscape' reason='one or more activities have specified a landscape orientation'\nmain\nother-services\nsupports-screens: 'small' 'normal' 'large' 'xlarge'\nsupports-any-density: 'true'\nlocales: '--_--'\ndensities: '160'\nnative-code: 'arm64-v8a'\n",
+  "payload_bytes_verified": true,
+  "device_validated": false,
+  "gameplay_validated": false,
+  "candidate_role": "physical_thor_actual_client_interaction_test",
+  "scope": "Pinned CityOfHeroes interactive Android surface; device interaction and gameplay remain unvalidated",
+  "installation": "Separate Client Interaction app with retained development signing identity. Reuses reviewed asset ZIP; no server boot."
+}

@@ -1,0 +1,158 @@
+{
+  "format": 1,
+  "status": "passed",
+  "repository_commit": "bfa5a3da01789c634bdcab8e2d7134f71f54fe24",
+  "apk": {
+    "name": "COH-Atlas-Gameplay-0.11.5.apk",
+    "bytes": 595194816,
+    "sha256": "5ba95d45bfbe0a2cda74bb632b80d1499058f5c8b40c48d9d422a9304cdb9941"
+  },
+  "build_receipt": {
+    "bytes": 129536,
+    "sha256": "2a34e5471dc1a6dc5c12bb4ead88358a273f5b09ecd571b85a69dc2439401a2f"
+  },
+  "donor_apk": {
+    "bytes": 595116556,
+    "sha256": "8f5a398f15adc4d94ed1137817a7db696bafa3c03aa0e7a54638e5570bfb0fa3"
+  },
+  "donor_build_receipt": {
+    "bytes": 65042,
+    "sha256": "7608f24579a23a6b538cf77c7153d3cf69f4e7178588fd5eb7cfb87d8be8978f"
+  },
+  "signing": {
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+    "schemes": [
+      {
+        "scheme": "v2",
+        "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+        "signature_algorithms": [
+          "0x103"
+        ],
+        "sdk_bounds": null,
+        "signed_data_zero_trailer_bytes": 4,
+        "cryptographic_signed_data_signature_verified": true
+      },
+      {
+        "scheme": "v3",
+        "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+        "signature_algorithms": [
+          "0x103"
+        ],
+        "sdk_bounds": [
+          24,
+          2147483647
+        ],
+        "signed_data_zero_trailer_bytes": 0,
+        "cryptographic_signed_data_signature_verified": true
+      }
+    ],
+    "whole_apk_chunked_content_digest_verified": true,
+    "content_chunks": 570,
+    "content_digests": {
+      "sha256": "ab4c4ab132ac6a1d73220b06277b80a33e3dab80ee41ce7f8d772a947954ad8c"
+    }
+  },
+  "binary_android_manifest": {
+    "versionCode": 11,
+    "versionName": "0.11.5",
+    "compileSdkVersion": 35,
+    "compileSdkVersionCodename": "15",
+    "package": "io.github.russianranger.cohclientinteractive",
+    "platformBuildVersionCode": 35,
+    "platformBuildVersionName": 15
+  },
+  "payload_count": 55,
+  "actual_replaced_payloads": [
+    "assets/runtime/character_creation_diagnostic.py",
+    "assets/runtime/character_reopen_diagnostic.py",
+    "assets/runtime/client-launcher.exe",
+    "assets/runtime/client-manifest.json",
+    "assets/runtime/client-runtime.zip",
+    "assets/runtime/client_interactive_diagnostic.py",
+    "assets/runtime/client_startup_diagnostic.py",
+    "assets/runtime/game-package.tar.gz",
+    "assets/runtime/game_diagnostic.py",
+    "assets/runtime/local_character_server.py",
+    "assets/runtime/runtime-manifest.json"
+  ],
+  "actual_added_payloads": [
+    "assets/runtime/client_attempt_retry.py",
+    "assets/runtime/native-responsiveness.json",
+    "assets/runtime/native_character_events.py",
+    "assets/runtime/native_responsiveness_contract.py",
+    "assets/runtime/texture_header_index.py"
+  ],
+  "recompiled_dex": {
+    "bytes": 224312,
+    "sha256": "300ca158ae9b661ac2c615185e99f92d749aff876eaf8f96b7327d5302e932ab"
+  },
+  "qualified_source_files": 120,
+  "host_regression_tests": 195,
+  "qualified_source_closure_matches_current_bytes": true,
+  "zip_crc_and_unique_inventory_verified": true,
+  "all_public_payloads_match_build_receipt": true,
+  "native_container_donor_comparison_verified": true,
+  "retained_android_resources": {
+    "resources.arsc": {
+      "bytes": 852,
+      "sha256": "a1fa0500d49ca08dc6af7b507d05b7308fb8ea3c8d706c488267643f9df112e6"
+    },
+    "res/drawable/ic_coh_client.xml": {
+      "bytes": 1000,
+      "sha256": "0518048aa0a4f2434494e0eb0780322dd395ba92b280789e34cce400256d24eb"
+    }
+  },
+  "physical_gameplay_validated_for_this_update": false,
+  "gpu_acceleration_deferred": true,
+  "release": {
+    "id": 402072455,
+    "tag": "coh-atlas-gameplay-v0.11.5",
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.11.5",
+    "apk_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.5/COH-Atlas-Gameplay-0.11.5.apk",
+    "github_asset_digest": "sha256:5ba95d45bfbe0a2cda74bb632b80d1499058f5c8b40c48d9d422a9304cdb9941",
+    "public": true,
+    "prerelease": true
+  },
+  "native_build": {
+    "commit": "0ddd27dfaddf9ac53a6a65548c8199bced767fbe",
+    "run_id": 37048610759,
+    "job_id": 110976116815,
+    "conclusion": "success",
+    "artifact_id": 11245671997,
+    "artifact_sha256": "abaa58f8cf4e4b06a2f307b1a4c1e555f85ea71c66d3528d582d47667e8f970a",
+    "real_windows_event_fixture_passed": true,
+    "targets": [
+      "Game",
+      "MapServer"
+    ],
+    "native_gameplay_runtime_booted": false
+  },
+  "apk_build": {
+    "run_id": 37049707089,
+    "observer_job_id": 110979730869,
+    "apk_job_id": 110980261095,
+    "conclusion": "success",
+    "packaging_artifact_id": 11245802659,
+    "packaging_artifact_sha256": "c42f45742635b9932bda2f10c534433670be78c2d14414613ce0238634c5c1cf"
+  },
+  "local_interactive_regression": {
+    "tests_run": 434,
+    "status": "passed",
+    "skipped": 0
+  },
+  "repository": {
+    "branch": "codex/character-persistence-continuation",
+    "main": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+    "pull_request": 1,
+    "draft": true
+  },
+  "measured_device_speedup": false,
+  "limitations": [
+    "First run still includes texture-index preparation and cold server work.",
+    "Warm-server reuse is limited to one early pre-menu client-exit retry within an active operation; cross-session reuse remains pending.",
+    "GPU acceleration is deferred. Rendering remains llvmpipe with 800x600 UI and existing 10 FPS cap.",
+    "Physical 0.11.5 loading time, frame rate, saved exterior reopen and presentation remain unverified.",
+    "Normal save, completed MapServer ticks, stable-ground intervals and fresh Android capture proofs remain required."
+  ],
+  "audited_utc": "2026-10-02T18:53:54.740274+00:00"
+}

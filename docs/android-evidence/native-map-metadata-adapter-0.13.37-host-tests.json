@@ -1,0 +1,1975 @@
+{
+  "actual107_context_measurements": {
+    "actual_native_world_gate_used": false,
+    "cold": {
+      "actual_tested_candidate": {
+        "bytes": 7480832,
+        "sha256": "5927f87fdac50c5a839ac067ccbb34b5dfad6223e579287a66a2f866a7d4b2e6"
+      },
+      "actual_tested_control_consumers": [
+        {
+          "bytes": 7478784,
+          "sha256": "fbfcf1d80a41a80aaeecb1a0ec275daffed2a9e1ba25df3f16e23b16a51a493d"
+        }
+      ],
+      "archive_names": [
+        "client-caches.zip",
+        "server-caches.zip"
+      ],
+      "archive_observations": [
+        {
+          "archive": "client-prerequisites.zip",
+          "archive_bytes": 18757,
+          "authentication_elapsed_seconds": 8.9e-05,
+          "decompressed_member_bytes_read": 56184,
+          "member_reads": {
+            "client-prerequisites-manifest.json": {
+              "bytes": 1236,
+              "reads": 1
+            },
+            "data/server/db/templates/badges.attribute": {
+              "bytes": 51724,
+              "reads": 1
+            },
+            "data/server/db/templates/pophelp.attribute": {
+              "bytes": 2185,
+              "reads": 1
+            },
+            "data/server/db/templates/supergroup_badges.attribute": {
+              "bytes": 1039,
+              "reads": 1
+            }
+          },
+          "payload_bytes_hashed": 18757,
+          "same_operation_full_hash_reused": false
+        },
+        {
+          "archive": "client-caches.zip",
+          "archive_bytes": 27071659,
+          "authentication_elapsed_seconds": 0.02599,
+          "decompressed_member_bytes_read": 40390,
+          "member_reads": {
+            "client-cache-manifest.json": {
+              "bytes": 40390,
+              "reads": 2
+            }
+          },
+          "payload_bytes_hashed": 27071659,
+          "same_operation_full_hash_reused": false
+        },
+        {
+          "archive": "server-caches.zip",
+          "archive_bytes": 29825263,
+          "authentication_elapsed_seconds": 0.027021,
+          "decompressed_member_bytes_read": 39041,
+          "member_reads": {
+            "server-cache-manifest.json": {
+              "bytes": 39041,
+              "reads": 1
+            }
+          },
+          "payload_bytes_hashed": 29825263,
+          "same_operation_full_hash_reused": false
+        }
+      ],
+      "archive_payload_bytes_hashed": 56915679,
+      "authenticated_original_bin_count": 107,
+      "behavioral_collision_validated": false,
+      "bin_recipe_identity_sha256": "0b4196363753b72e7c7721bdca3df93d9d702a79642e0091b5f653118647b811",
+      "committed_source_compatibility_review": {
+        "actual_tested_candidate": {
+          "bytes": 7480832,
+          "sha256": "5927f87fdac50c5a839ac067ccbb34b5dfad6223e579287a66a2f866a7d4b2e6"
+        },
+        "actual_tested_control_consumers": [
+          {
+            "bytes": 7478784,
+            "sha256": "fbfcf1d80a41a80aaeecb1a0ec275daffed2a9e1ba25df3f16e23b16a51a493d"
+          }
+        ],
+        "audited_control_consumers": [
+          {
+            "bytes": 7477248,
+            "sha256": "77c1f245132b76668e9f689bec26699ec980382c1079f000314d24b149e089ea"
+          },
+          {
+            "bytes": 7478784,
+            "sha256": "fbfcf1d80a41a80aaeecb1a0ec275daffed2a9e1ba25df3f16e23b16a51a493d"
+          }
+        ],
+        "committed_source_review": {
+          "commit": "1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e",
+          "content": {
+            "bytes": 15614,
+            "sha256": "e5a268b0fbae23230e518f8dcbb49fdccdcdd998293de61b133cc7b5bbf1fd44"
+          },
+          "git_blob": "6b6d373a275029476f28c77cc5fcfe010e58b9bb",
+          "path": "docs/android-evidence/native-map-metadata-source-boundary-0.13.37.json",
+          "repository": "Russianranger/coh-android",
+          "scope": {
+            "behavioral_collision_validated": false,
+            "native_ID_tables_observed": false,
+            "new_native_runtime_qualification_proven": false,
+            "physical_timing_validated": false,
+            "runtime_activation_allowed": false,
+            "shipping_allowed": false,
+            "shipping_predecessor_execution_validated": false,
+            "source_compatibility_only": true
+          }
+        },
+        "native_execution_or_physical_results_added_by_source_review": false,
+        "previous_shipping_consumer": {
+          "bytes": 7475200,
+          "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+        },
+        "scope": {
+          "behavioral_collision_validated": false,
+          "native_ID_tables_observed": false,
+          "new_native_runtime_qualification_proven": false,
+          "physical_timing_validated": false,
+          "runtime_activation_allowed": false,
+          "shipping_allowed": false,
+          "shipping_predecessor_execution_validated": false,
+          "source_compatibility_only": true
+        },
+        "source_decoder_and_schema_checks_preserved": true,
+        "upstream_sdk_source_trees_identical": true
+      },
+      "construction_elapsed_seconds": 0.12903,
+      "construction_phase_seconds": {
+        "admission_provider_and_prerequisites": 0.039311,
+        "derived_proof_and_source_review": 0.001917,
+        "final_context_and_owner_checks": 0.029237,
+        "original_archives_and_manifest_records": 0.058572
+      },
+      "current_consumer_sha256": "5927f87fdac50c5a839ac067ccbb34b5dfad6223e579287a66a2f866a7d4b2e6",
+      "current_private_bin_body_bytes_read": 0,
+      "current_private_cache_body_evidence": "unknown_ordinary_native_schema_and_freshness_fallback",
+      "current_private_or_device_generated_bin_body_equality_claimed": false,
+      "decompressed_original_archive_member_bytes_read": 135615,
+      "derived_proof_bytes_read": 55651,
+      "eligible_bin_paths": [
+        "data/bin/BodyParts.bin",
+        "data/bin/PC_Def_UI.bin",
+        "data/bin/PopHelp.bin",
+        "data/bin/VillainCostume.bin",
+        "data/bin/attrib_descriptions.bin",
+        "data/bin/auctionconfig.bin",
+        "data/bin/baseupkeep.bin",
+        "data/bin/costume.bin",
+        "data/bin/depts.bin",
+        "data/bin/fxinfo.bin",
+        "data/bin/items.bin",
+        "data/bin/mapspecs.bin",
+        "data/bin/mapstats.bin",
+        "data/bin/minimap.bin",
+        "data/bin/powercustomizationcost.bin",
+        "data/bin/powercustomizationmenu.bin",
+        "data/bin/replacepowernames.bin",
+        "data/bin/sequencers.bin",
+        "data/bin/stores.bin",
+        "data/bin/supergroupColors.bin",
+        "data/bin/tailorcost.bin",
+        "data/bin/tricks.bin",
+        "data/server/bin/CustomCritterRewardMods.bin",
+        "data/server/bin/DayJobs.bin",
+        "data/server/bin/DifficultyCost.bin",
+        "data/server/bin/InvConcept.bin",
+        "data/server/bin/ItemSets.bin",
+        "data/server/bin/LevelBonus.bin",
+        "data/server/bin/MARTY_exp_mods.bin",
+        "data/server/bin/MapObjectives.bin",
+        "data/server/bin/NewFeatures.bin",
+        "data/server/bin/NictusHunterOptions.bin",
+        "data/server/bin/PC_Rewards.bin",
+        "data/server/bin/PowersetConversion.bin",
+        "data/server/bin/Proficiencies.bin",
+        "data/server/bin/RewardChoiceTables.bin",
+        "data/server/bin/RewardTables.bin",
+        "data/server/bin/Salvage.bin",
+        "data/server/bin/SouvenirClues.bin",
+        "data/server/bin/SupergroupMods.bin",
+        "data/server/bin/TFTimeLimits.bin",
+        "data/server/bin/TeamReward.bin",
+        "data/server/bin/TrackedSalvage.bin",
+        "data/server/bin/VillainDef.bin",
+        "data/server/bin/VillainGroups.bin",
+        "data/server/bin/attrib_names.bin",
+        "data/server/bin/badges.bin",
+        "data/server/bin/baserecipes.bin",
+        "data/server/bin/boost_effect_above.bin",
+        "data/server/bin/boost_effect_below.bin",
+        "data/server/bin/boost_effect_boosters.bin",
+        "data/server/bin/boostsets.bin",
+        "data/server/bin/classes.bin",
+        "data/server/bin/combat_mods.bin",
+        "data/server/bin/combat_mods_villain.bin",
+        "data/server/bin/combine_booster_chances.bin",
+        "data/server/bin/combine_chances.bin",
+        "data/server/bin/combine_same_set_chances.bin",
+        "data/server/bin/contacts.bin",
+        "data/server/bin/conversionsets.bin",
+        "data/server/bin/damagedecay.bin",
+        "data/server/bin/designer_contact_tip_types.bin",
+        "data/server/bin/detailcats.bin",
+        "data/server/bin/details.bin",
+        "data/server/bin/dialog.bin",
+        "data/server/bin/dialogdefs.bin",
+        "data/server/bin/dim_returns.bin",
+        "data/server/bin/emotes.bin",
+        "data/server/bin/exemplar_handicaps.bin",
+        "data/server/bin/experience.bin",
+        "data/server/bin/incarnate.bin",
+        "data/server/bin/inventory_sizes.bin",
+        "data/server/bin/inventory_tier_bonus.bin",
+        "data/server/bin/mapsspec.bin",
+        "data/server/bin/meritsRewards.bin",
+        "data/server/bin/missionhostagespawns.bin",
+        "data/server/bin/missionspawns.bin",
+        "data/server/bin/missionspecs.bin",
+        "data/server/bin/monorails.bin",
+        "data/server/bin/npcs_server.bin",
+        "data/server/bin/origins.bin",
+        "data/server/bin/petBattleCreatureInfo.bin",
+        "data/server/bin/plots.bin",
+        "data/server/bin/powercats.bin",
+        "data/server/bin/powers.bin",
+        "data/server/bin/powersets.bin",
+        "data/server/bin/pvptaskmodifiers.bin",
+        "data/server/bin/randomgroupselection.bin",
+        "data/server/bin/randommapselection.bin",
+        "data/server/bin/roomcategories.bin",
+        "data/server/bin/roomtemplates.bin",
+        "data/server/bin/schedules.bin",
+        "data/server/bin/scriptdefs.bin",
+        "data/server/bin/seqstatebits.bin",
+        "data/server/bin/spawndefs.bin",
+        "data/server/bin/storyarc.bin",
+        "data/server/bin/supergroup_badges.bin",
+        "data/server/bin/tasksets.bin",
+        "data/server/bin/turnstile_server.bin",
+        "data/server/bin/tut_votekick.bin",
+        "data/server/bin/villain_classes.bin",
+        "data/server/bin/villain_origins.bin",
+        "data/server/bin/villainrandomgroupselection.bin",
+        "data/server/bin/villainrandommapselection.bin",
+        "data/server/bin/visionPhases.bin",
+        "data/server/bin/visionPhasesExclusive.bin",
+        "data/server/bin/zone_event_karma.bin"
+      ],
+      "eligible_original_bin_bytes_authenticated_by_exact_archive_and_manifest": 618301716,
+      "identifier_inputs_and_loader_decisions_basis": "exact_authenticated_native_qualification_receipt_and_unchanged_decoder_source_closure",
+      "local_owner_fingerprints": {
+        "/tmp/coh-owned-cache-unit-1tjyhh0k/client-work": [
+          27,
+          1631352,
+          4096,
+          1791941066027392342,
+          1791941066027392342,
+          16877,
+          0,
+          0,
+          3
+        ],
+        "/tmp/coh-owned-cache-unit-1tjyhh0k/client-work/data": [
+          27,
+          1631353,
+          4096,
+          1791941062842528881,
+          1791941062842528881,
+          16877,
+          0,
+          0,
+          3
+        ],
+        "/tmp/coh-owned-cache-unit-1tjyhh0k/imported/data": [
+          27,
+          1631356,
+          4096,
+          1791941062842528881,
+          1791941062842528881,
+          16877,
+          0,
+          0,
+          2
+        ]
+      },
+      "native_ID_tables_observed": false,
+      "native_consumption_scope": "only_exact_authority_selected_observed_bin_operation_names",
+      "original_asset_manifest_bytes_read": 397,
+      "original_bin_body_bytes_read": 0,
+      "original_manifest_bytes_read_including_repeated_validation": 79431,
+      "original_manifest_unique_bytes": 59236,
+      "original_proof_sha256": "761298714fcbd56834bcd07577c56bdd3cb05c88c7f1a37c55ec240549b04392",
+      "physical_timing_validated": false,
+      "portable_identity_excludes_path_generation_owner": true,
+      "previous_shipping_consumer_sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363",
+      "provider_identity_sha256": "023e20396cef9f2de2678e8d5e0bde3052111ad46ee0e10193d3ed619b62dd50",
+      "provider_receipt_bytes_read": 1688,
+      "runtime_cache_proof_derivation": {
+        "derivation_source": {
+          "git_blob": "3333333333333333333333333333333333333333",
+          "path": "tools/android/interactive/controlled_unexecuted_normalizer.py",
+          "pin": {
+            "bytes": 32,
+            "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+          },
+          "repository_commit": "2222222222222222222222222222222222222222"
+        },
+        "output": {
+          "filename": "controlled.json",
+          "pin": {
+            "bytes": 55651,
+            "sha256": "eaf5fc8e857a5cdf607b51d841cafe17fc1a8d9cb67a636c599f235aa483c592"
+          }
+        },
+        "raw_inputs": {
+          "client_cache_manifest": {
+            "component_zip": {
+              "bytes": 27071659,
+              "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+            },
+            "member": "client-cache-manifest.json",
+            "member_pin": {
+              "bytes": 20195,
+              "sha256": "e5bc9ff306f90f96b6d34d4d481b30804af078b0e07845dafd71f7324dff6352"
+            },
+            "origin": "exact_public_Assets_1_0_0_component"
+          },
+          "native_world": {
+            "artifact_id": 4,
+            "artifact_zip": {
+              "bytes": 100,
+              "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "member": "controlled-unexecuted-world.json",
+            "member_pin": {
+              "bytes": 32,
+              "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+            },
+            "repository_commit": "5555555555555555555555555555555555555555",
+            "run_id": 3
+          },
+          "preload": {
+            "artifact_id": 11791389599,
+            "artifact_zip": {
+              "bytes": 281739,
+              "sha256": "5a5bf01b901e5c5398bb42f07e4c1737ac8b13ee90e90fb297ca01cd08dfa34b"
+            },
+            "member": "native-startup-profile-qualification.json",
+            "member_pin": {
+              "bytes": 375375,
+              "sha256": "a84aa918e89a8e4f60be80fc26ccd2960cffcac80c79ddf38d15619ffff5dfb7"
+            },
+            "repository_commit": "9454e7892ac81cf4503fd8ad961dc36c27cfc152",
+            "run_id": 38352862725
+          },
+          "server_cache_manifest": {
+            "component_zip": {
+              "bytes": 29825263,
+              "sha256": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17"
+            },
+            "member": "server-cache-manifest.json",
+            "member_pin": {
+              "bytes": 39041,
+              "sha256": "4e1a4c9c148509ef34245768f64ca2be4bb83659db845c6ef94ed594666b3fff"
+            },
+            "origin": "exact_public_Assets_1_0_0_component"
+          }
+        },
+        "scope": {
+          "behavioral_collision_validated": false,
+          "derived_by_source_reviewed_normalizer": true,
+          "native_ID_tables_observed": false,
+          "original_artifact_membership_claimed": false,
+          "physical_timing_validated": false,
+          "shipping_bytes_executed_claimed": false
+        }
+      },
+      "status": "actual_owned_provider_and_original_donor_records_authenticated",
+      "unselected_original_inventory_claimed_freshly_consumed": false
+    },
+    "cold_means_no_same_operation_archive_receipt_not_cold_device_or_filesystem": true,
+    "contexts_equal": true,
+    "fixture_preparation_time_excluded": true,
+    "native_program_executed_in_adapter_test": false,
+    "same_operation_original_server_catalog_witness_reuse": {
+      "bin_body_bytes_read": 0,
+      "elapsed_seconds": 0.002321,
+      "files": 93
+    },
+    "same_operation_warm": {
+      "actual_tested_candidate": {
+        "bytes": 7480832,
+        "sha256": "5927f87fdac50c5a839ac067ccbb34b5dfad6223e579287a66a2f866a7d4b2e6"
+      },
+      "actual_tested_control_consumers": [
+        {
+          "bytes": 7478784,
+          "sha256": "fbfcf1d80a41a80aaeecb1a0ec275daffed2a9e1ba25df3f16e23b16a51a493d"
+        }
+      ],
+      "archive_names": [
+        "client-caches.zip",
+        "server-caches.zip"
+      ],
+      "archive_observations": [
+        {
+          "archive": "client-prerequisites.zip",
+          "archive_bytes": 18757,
+          "authentication_elapsed_seconds": 2.2e-05,
+          "decompressed_member_bytes_read": 56184,
+          "member_reads": {
+            "client-prerequisites-manifest.json": {
+              "bytes": 1236,
+              "reads": 1
+            },
+            "data/server/db/templates/badges.attribute": {
+              "bytes": 51724,
+              "reads": 1
+            },
+            "data/server/db/templates/pophelp.attribute": {
+              "bytes": 2185,
+              "reads": 1
+            },
+            "data/server/db/templates/supergroup_badges.attribute": {
+              "bytes": 1039,
+              "reads": 1
+            }
+          },
+          "payload_bytes_hashed": 0,
+          "same_operation_full_hash_reused": true
+        },
+        {
+          "archive": "client-caches.zip",
+          "archive_bytes": 27071659,
+          "authentication_elapsed_seconds": 2.2e-05,
+          "decompressed_member_bytes_read": 40390,
+          "member_reads": {
+            "client-cache-manifest.json": {
+              "bytes": 40390,
+              "reads": 2
+            }
+          },
+          "payload_bytes_hashed": 0,
+          "same_operation_full_hash_reused": true
+        },
+        {
+          "archive": "server-caches.zip",
+          "archive_bytes": 29825263,
+          "authentication_elapsed_seconds": 2.5e-05,
+          "decompressed_member_bytes_read": 39041,
+          "member_reads": {
+            "server-cache-manifest.json": {
+              "bytes": 39041,
+              "reads": 1
+            }
+          },
+          "payload_bytes_hashed": 0,
+          "same_operation_full_hash_reused": true
+        }
+      ],
+      "archive_payload_bytes_hashed": 0,
+      "authenticated_original_bin_count": 107,
+      "behavioral_collision_validated": false,
+      "bin_recipe_identity_sha256": "0b4196363753b72e7c7721bdca3df93d9d702a79642e0091b5f653118647b811",
+      "committed_source_compatibility_review": {
+        "actual_tested_candidate": {
+          "bytes": 7480832,
+          "sha256": "5927f87fdac50c5a839ac067ccbb34b5dfad6223e579287a66a2f866a7d4b2e6"
+        },
+        "actual_tested_control_consumers": [
+          {
+            "bytes": 7478784,
+            "sha256": "fbfcf1d80a41a80aaeecb1a0ec275daffed2a9e1ba25df3f16e23b16a51a493d"
+          }
+        ],
+        "audited_control_consumers": [
+          {
+            "bytes": 7477248,
+            "sha256": "77c1f245132b76668e9f689bec26699ec980382c1079f000314d24b149e089ea"
+          },
+          {
+            "bytes": 7478784,
+            "sha256": "fbfcf1d80a41a80aaeecb1a0ec275daffed2a9e1ba25df3f16e23b16a51a493d"
+          }
+        ],
+        "committed_source_review": {
+          "commit": "1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e",
+          "content": {
+            "bytes": 15614,
+            "sha256": "e5a268b0fbae23230e518f8dcbb49fdccdcdd998293de61b133cc7b5bbf1fd44"
+          },
+          "git_blob": "6b6d373a275029476f28c77cc5fcfe010e58b9bb",
+          "path": "docs/android-evidence/native-map-metadata-source-boundary-0.13.37.json",
+          "repository": "Russianranger/coh-android",
+          "scope": {
+            "behavioral_collision_validated": false,
+            "native_ID_tables_observed": false,
+            "new_native_runtime_qualification_proven": false,
+            "physical_timing_validated": false,
+            "runtime_activation_allowed": false,
+            "shipping_allowed": false,
+            "shipping_predecessor_execution_validated": false,
+            "source_compatibility_only": true
+          }
+        },
+        "native_execution_or_physical_results_added_by_source_review": false,
+        "previous_shipping_consumer": {
+          "bytes": 7475200,
+          "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+        },
+        "scope": {
+          "behavioral_collision_validated": false,
+          "native_ID_tables_observed": false,
+          "new_native_runtime_qualification_proven": false,
+          "physical_timing_validated": false,
+          "runtime_activation_allowed": false,
+          "shipping_allowed": false,
+          "shipping_predecessor_execution_validated": false,
+          "source_compatibility_only": true
+        },
+        "source_decoder_and_schema_checks_preserved": true,
+        "upstream_sdk_source_trees_identical": true
+      },
+      "construction_elapsed_seconds": 0.070554,
+      "construction_phase_seconds": {
+        "admission_provider_and_prerequisites": 0.030637,
+        "derived_proof_and_source_review": 0.001671,
+        "final_context_and_owner_checks": 0.033053,
+        "original_archives_and_manifest_records": 0.005199
+      },
+      "current_consumer_sha256": "5927f87fdac50c5a839ac067ccbb34b5dfad6223e579287a66a2f866a7d4b2e6",
+      "current_private_bin_body_bytes_read": 0,
+      "current_private_cache_body_evidence": "unknown_ordinary_native_schema_and_freshness_fallback",
+      "current_private_or_device_generated_bin_body_equality_claimed": false,
+      "decompressed_original_archive_member_bytes_read": 135615,
+      "derived_proof_bytes_read": 55651,
+      "eligible_bin_paths": [
+        "data/bin/BodyParts.bin",
+        "data/bin/PC_Def_UI.bin",
+        "data/bin/PopHelp.bin",
+        "data/bin/VillainCostume.bin",
+        "data/bin/attrib_descriptions.bin",
+        "data/bin/auctionconfig.bin",
+        "data/bin/baseupkeep.bin",
+        "data/bin/costume.bin",
+        "data/bin/depts.bin",
+        "data/bin/fxinfo.bin",
+        "data/bin/items.bin",
+        "data/bin/mapspecs.bin",
+        "data/bin/mapstats.bin",
+        "data/bin/minimap.bin",
+        "data/bin/powercustomizationcost.bin",
+        "data/bin/powercustomizationmenu.bin",
+        "data/bin/replacepowernames.bin",
+        "data/bin/sequencers.bin",
+        "data/bin/stores.bin",
+        "data/bin/supergroupColors.bin",
+        "data/bin/tailorcost.bin",
+        "data/bin/tricks.bin",
+        "data/server/bin/CustomCritterRewardMods.bin",
+        "data/server/bin/DayJobs.bin",
+        "data/server/bin/DifficultyCost.bin",
+        "data/server/bin/InvConcept.bin",
+        "data/server/bin/ItemSets.bin",
+        "data/server/bin/LevelBonus.bin",
+        "data/server/bin/MARTY_exp_mods.bin",
+        "data/server/bin/MapObjectives.bin",
+        "data/server/bin/NewFeatures.bin",
+        "data/server/bin/NictusHunterOptions.bin",
+        "data/server/bin/PC_Rewards.bin",
+        "data/server/bin/PowersetConversion.bin",
+        "data/server/bin/Proficiencies.bin",
+        "data/server/bin/RewardChoiceTables.bin",
+        "data/server/bin/RewardTables.bin",
+        "data/server/bin/Salvage.bin",
+        "data/server/bin/SouvenirClues.bin",
+        "data/server/bin/SupergroupMods.bin",
+        "data/server/bin/TFTimeLimits.bin",
+        "data/server/bin/TeamReward.bin",
+        "data/server/bin/TrackedSalvage.bin",
+        "data/server/bin/VillainDef.bin",
+        "data/server/bin/VillainGroups.bin",
+        "data/server/bin/attrib_names.bin",
+        "data/server/bin/badges.bin",
+        "data/server/bin/baserecipes.bin",
+        "data/server/bin/boost_effect_above.bin",
+        "data/server/bin/boost_effect_below.bin",
+        "data/server/bin/boost_effect_boosters.bin",
+        "data/server/bin/boostsets.bin",
+        "data/server/bin/classes.bin",
+        "data/server/bin/combat_mods.bin",
+        "data/server/bin/combat_mods_villain.bin",
+        "data/server/bin/combine_booster_chances.bin",
+        "data/server/bin/combine_chances.bin",
+        "data/server/bin/combine_same_set_chances.bin",
+        "data/server/bin/contacts.bin",
+        "data/server/bin/conversionsets.bin",
+        "data/server/bin/damagedecay.bin",
+        "data/server/bin/designer_contact_tip_types.bin",
+        "data/server/bin/detailcats.bin",
+        "data/server/bin/details.bin",
+        "data/server/bin/dialog.bin",
+        "data/server/bin/dialogdefs.bin",
+        "data/server/bin/dim_returns.bin",
+        "data/server/bin/emotes.bin",
+        "data/server/bin/exemplar_handicaps.bin",
+        "data/server/bin/experience.bin",
+        "data/server/bin/incarnate.bin",
+        "data/server/bin/inventory_sizes.bin",
+        "data/server/bin/inventory_tier_bonus.bin",
+        "data/server/bin/mapsspec.bin",
+        "data/server/bin/meritsRewards.bin",
+        "data/server/bin/missionhostagespawns.bin",
+        "data/server/bin/missionspawns.bin",
+        "data/server/bin/missionspecs.bin",
+        "data/server/bin/monorails.bin",
+        "data/server/bin/npcs_server.bin",
+        "data/server/bin/origins.bin",
+        "data/server/bin/petBattleCreatureInfo.bin",
+        "data/server/bin/plots.bin",
+        "data/server/bin/powercats.bin",
+        "data/server/bin/powers.bin",
+        "data/server/bin/powersets.bin",
+        "data/server/bin/pvptaskmodifiers.bin",
+        "data/server/bin/randomgroupselection.bin",
+        "data/server/bin/randommapselection.bin",
+        "data/server/bin/roomcategories.bin",
+        "data/server/bin/roomtemplates.bin",
+        "data/server/bin/schedules.bin",
+        "data/server/bin/scriptdefs.bin",
+        "data/server/bin/seqstatebits.bin",
+        "data/server/bin/spawndefs.bin",
+        "data/server/bin/storyarc.bin",
+        "data/server/bin/supergroup_badges.bin",
+        "data/server/bin/tasksets.bin",
+        "data/server/bin/turnstile_server.bin",
+        "data/server/bin/tut_votekick.bin",
+        "data/server/bin/villain_classes.bin",
+        "data/server/bin/villain_origins.bin",
+        "data/server/bin/villainrandomgroupselection.bin",
+        "data/server/bin/villainrandommapselection.bin",
+        "data/server/bin/visionPhases.bin",
+        "data/server/bin/visionPhasesExclusive.bin",
+        "data/server/bin/zone_event_karma.bin"
+      ],
+      "eligible_original_bin_bytes_authenticated_by_exact_archive_and_manifest": 618301716,
+      "identifier_inputs_and_loader_decisions_basis": "exact_authenticated_native_qualification_receipt_and_unchanged_decoder_source_closure",
+      "local_owner_fingerprints": {
+        "/tmp/coh-owned-cache-unit-1tjyhh0k/client-work": [
+          27,
+          1631352,
+          4096,
+          1791941066027392342,
+          1791941066027392342,
+          16877,
+          0,
+          0,
+          3
+        ],
+        "/tmp/coh-owned-cache-unit-1tjyhh0k/client-work/data": [
+          27,
+          1631353,
+          4096,
+          1791941062842528881,
+          1791941062842528881,
+          16877,
+          0,
+          0,
+          3
+        ],
+        "/tmp/coh-owned-cache-unit-1tjyhh0k/imported/data": [
+          27,
+          1631356,
+          4096,
+          1791941062842528881,
+          1791941062842528881,
+          16877,
+          0,
+          0,
+          2
+        ]
+      },
+      "native_ID_tables_observed": false,
+      "native_consumption_scope": "only_exact_authority_selected_observed_bin_operation_names",
+      "original_asset_manifest_bytes_read": 397,
+      "original_bin_body_bytes_read": 0,
+      "original_manifest_bytes_read_including_repeated_validation": 79431,
+      "original_manifest_unique_bytes": 59236,
+      "original_proof_sha256": "761298714fcbd56834bcd07577c56bdd3cb05c88c7f1a37c55ec240549b04392",
+      "physical_timing_validated": false,
+      "portable_identity_excludes_path_generation_owner": true,
+      "previous_shipping_consumer_sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363",
+      "provider_identity_sha256": "023e20396cef9f2de2678e8d5e0bde3052111ad46ee0e10193d3ed619b62dd50",
+      "provider_receipt_bytes_read": 1688,
+      "runtime_cache_proof_derivation": {
+        "derivation_source": {
+          "git_blob": "3333333333333333333333333333333333333333",
+          "path": "tools/android/interactive/controlled_unexecuted_normalizer.py",
+          "pin": {
+            "bytes": 32,
+            "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+          },
+          "repository_commit": "2222222222222222222222222222222222222222"
+        },
+        "output": {
+          "filename": "controlled.json",
+          "pin": {
+            "bytes": 55651,
+            "sha256": "eaf5fc8e857a5cdf607b51d841cafe17fc1a8d9cb67a636c599f235aa483c592"
+          }
+        },
+        "raw_inputs": {
+          "client_cache_manifest": {
+            "component_zip": {
+              "bytes": 27071659,
+              "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+            },
+            "member": "client-cache-manifest.json",
+            "member_pin": {
+              "bytes": 20195,
+              "sha256": "e5bc9ff306f90f96b6d34d4d481b30804af078b0e07845dafd71f7324dff6352"
+            },
+            "origin": "exact_public_Assets_1_0_0_component"
+          },
+          "native_world": {
+            "artifact_id": 4,
+            "artifact_zip": {
+              "bytes": 100,
+              "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "member": "controlled-unexecuted-world.json",
+            "member_pin": {
+              "bytes": 32,
+              "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+            },
+            "repository_commit": "5555555555555555555555555555555555555555",
+            "run_id": 3
+          },
+          "preload": {
+            "artifact_id": 11791389599,
+            "artifact_zip": {
+              "bytes": 281739,
+              "sha256": "5a5bf01b901e5c5398bb42f07e4c1737ac8b13ee90e90fb297ca01cd08dfa34b"
+            },
+            "member": "native-startup-profile-qualification.json",
+            "member_pin": {
+              "bytes": 375375,
+              "sha256": "a84aa918e89a8e4f60be80fc26ccd2960cffcac80c79ddf38d15619ffff5dfb7"
+            },
+            "repository_commit": "9454e7892ac81cf4503fd8ad961dc36c27cfc152",
+            "run_id": 38352862725
+          },
+          "server_cache_manifest": {
+            "component_zip": {
+              "bytes": 29825263,
+              "sha256": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17"
+            },
+            "member": "server-cache-manifest.json",
+            "member_pin": {
+              "bytes": 39041,
+              "sha256": "4e1a4c9c148509ef34245768f64ca2be4bb83659db845c6ef94ed594666b3fff"
+            },
+            "origin": "exact_public_Assets_1_0_0_component"
+          }
+        },
+        "scope": {
+          "behavioral_collision_validated": false,
+          "derived_by_source_reviewed_normalizer": true,
+          "native_ID_tables_observed": false,
+          "original_artifact_membership_claimed": false,
+          "physical_timing_validated": false,
+          "shipping_bytes_executed_claimed": false
+        }
+      },
+      "status": "actual_owned_provider_and_original_donor_records_authenticated",
+      "unselected_original_inventory_claimed_freshly_consumed": false
+    },
+    "scope": "genuine_actual107_preload_subset_and_native_PE_with_explicitly_controlled_pending_world_normalizer_and_execution_authorities"
+  },
+  "actual107_preload_research": {
+    "bytes": 70722,
+    "eligible_client_BINs": 22,
+    "eligible_original_donor_BIN_count": 107,
+    "eligible_server_BINs": 85,
+    "identifier_input_file_count": 12,
+    "native_ID_tables_observed": false,
+    "original_inventory_only_count": 191,
+    "original_outputs_changed_and_excluded": 17,
+    "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/actual-preload-107-cache-subset-research.json",
+    "scope": {
+      "actual9454native_preload_evidence_reused": true,
+      "native_ID_tables_observed": false,
+      "native_processes_executed_by_deriver": false,
+      "native_world_gate_passed": false,
+      "normalizer_committed_and_independently_reviewed": false,
+      "physical_timing_validated": false,
+      "raw_artifact_membership_claimed_for_derived_summary": false,
+      "runtime_authority_created": false,
+      "shipping_allowed": false
+    },
+    "sha256": "fa566ee62b2fa46d5d85a841ba0b6474bb8104da2da3d37364b5c90fbe90fbcb",
+    "successfully_observed_unique_names": 124,
+    "unmapped_token_excluded": 1
+  },
+  "capacity191_context_measurements_inherited": {
+    "cold": {
+      "actual_tested_candidate": {
+        "bytes": 7475200,
+        "sha256": "478977758ec0ba4b668aff61c2f92cb4fc4490b41dc90a2fe15d10ef50392f69"
+      },
+      "actual_tested_control_consumers": [
+        {
+          "bytes": 7475200,
+          "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+        },
+        {
+          "bytes": 7480320,
+          "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ],
+      "archive_names": [
+        "client-caches.zip",
+        "server-caches.zip"
+      ],
+      "archive_observations": [
+        {
+          "archive": "client-prerequisites.zip",
+          "archive_bytes": 18757,
+          "authentication_elapsed_seconds": 0.000315,
+          "decompressed_member_bytes_read": 56184,
+          "member_reads": {
+            "client-prerequisites-manifest.json": {
+              "bytes": 1236,
+              "reads": 1
+            },
+            "data/server/db/templates/badges.attribute": {
+              "bytes": 51724,
+              "reads": 1
+            },
+            "data/server/db/templates/pophelp.attribute": {
+              "bytes": 2185,
+              "reads": 1
+            },
+            "data/server/db/templates/supergroup_badges.attribute": {
+              "bytes": 1039,
+              "reads": 1
+            }
+          },
+          "payload_bytes_hashed": 18757,
+          "same_operation_full_hash_reused": false
+        },
+        {
+          "archive": "client-caches.zip",
+          "archive_bytes": 27071659,
+          "authentication_elapsed_seconds": 0.024057,
+          "decompressed_member_bytes_read": 40390,
+          "member_reads": {
+            "client-cache-manifest.json": {
+              "bytes": 40390,
+              "reads": 2
+            }
+          },
+          "payload_bytes_hashed": 27071659,
+          "same_operation_full_hash_reused": false
+        },
+        {
+          "archive": "server-caches.zip",
+          "archive_bytes": 29825263,
+          "authentication_elapsed_seconds": 0.029722,
+          "decompressed_member_bytes_read": 39041,
+          "member_reads": {
+            "server-cache-manifest.json": {
+              "bytes": 39041,
+              "reads": 1
+            }
+          },
+          "payload_bytes_hashed": 29825263,
+          "same_operation_full_hash_reused": false
+        }
+      ],
+      "archive_payload_bytes_hashed": 56915679,
+      "authenticated_original_bin_count": 191,
+      "behavioral_collision_validated": false,
+      "bin_recipe_identity_sha256": "cb90f6f1abf43d507c3bdbd98dc22b271bac3dc53e1ff2e99a1c44b6d8291989",
+      "committed_source_compatibility_review": {
+        "actual_tested_candidate": {
+          "bytes": 7475200,
+          "sha256": "478977758ec0ba4b668aff61c2f92cb4fc4490b41dc90a2fe15d10ef50392f69"
+        },
+        "actual_tested_control_consumers": [
+          {
+            "bytes": 7475200,
+            "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+          },
+          {
+            "bytes": 7480320,
+            "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+          }
+        ],
+        "audited_control_consumers": [
+          {
+            "bytes": 7475200,
+            "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+          },
+          {
+            "bytes": 7480320,
+            "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+          }
+        ],
+        "committed_source_review": {
+          "commit": "1111111111111111111111111111111111111111",
+          "content": {
+            "bytes": 15615,
+            "sha256": "9181797fae13fdf97eccfcbdbcf575538253f752fe30a10ddc1d523db17dce21"
+          },
+          "git_blob": "f9c7bb2809d45e3533ff82b2fb0f5cbe038005a0",
+          "path": "docs/android-evidence/native-map-metadata-source-boundary-0.13.37.json",
+          "repository": "Russianranger/coh-android",
+          "scope": {
+            "behavioral_collision_validated": false,
+            "native_ID_tables_observed": false,
+            "new_native_runtime_qualification_proven": false,
+            "physical_timing_validated": false,
+            "runtime_activation_allowed": false,
+            "shipping_allowed": false,
+            "shipping_predecessor_execution_validated": false,
+            "source_compatibility_only": true
+          }
+        },
+        "native_execution_or_physical_results_added_by_source_review": false,
+        "previous_shipping_consumer": {
+          "bytes": 7475200,
+          "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+        },
+        "scope": {
+          "behavioral_collision_validated": false,
+          "native_ID_tables_observed": false,
+          "new_native_runtime_qualification_proven": false,
+          "physical_timing_validated": false,
+          "runtime_activation_allowed": false,
+          "shipping_allowed": false,
+          "shipping_predecessor_execution_validated": false,
+          "source_compatibility_only": true
+        },
+        "source_decoder_and_schema_checks_preserved": true,
+        "upstream_sdk_source_trees_identical": true
+      },
+      "construction_elapsed_seconds": 0.170264,
+      "construction_phase_seconds": {
+        "admission_provider_and_prerequisites": 0.069191,
+        "derived_proof_and_source_review": 0.002381,
+        "final_context_and_owner_checks": 0.038498,
+        "original_archives_and_manifest_records": 0.060199
+      },
+      "current_consumer_sha256": "478977758ec0ba4b668aff61c2f92cb4fc4490b41dc90a2fe15d10ef50392f69",
+      "current_private_bin_body_bytes_read": 0,
+      "current_private_cache_body_evidence": "unknown_ordinary_native_schema_and_freshness_fallback",
+      "current_private_or_device_generated_bin_body_equality_claimed": false,
+      "decompressed_original_archive_member_bytes_read": 135615,
+      "derived_proof_bytes_read": 95160,
+      "eligible_bin_paths": [
+        "data/bin/BodyParts.bin",
+        "data/bin/Cards.bin",
+        "data/bin/CustomCritterRewardMods.bin",
+        "data/bin/InvBaseDetail.bin",
+        "data/bin/InvConcept.bin",
+        "data/bin/InvRecipe.bin",
+        "data/bin/InvSalvage.bin",
+        "data/bin/InvStoredSalvage.bin",
+        "data/bin/LoyaltyReward.bin",
+        "data/bin/PC_Def_Animation.bin",
+        "data/bin/PC_Def_Contacts.bin",
+        "data/bin/PC_Def_DestructObject.bin",
+        "data/bin/PC_Def_Entities.bin",
+        "data/bin/PC_Def_MapSets.bin",
+        "data/bin/PC_Def_MapUnique.bin",
+        "data/bin/PC_Def_NonSelectable_Entities.bin",
+        "data/bin/PC_Def_Objects.bin",
+        "data/bin/PC_Def_Sequencer_Anims.bin",
+        "data/bin/PC_Def_UI.bin",
+        "data/bin/PC_Def_Unlockable_Content.bin",
+        "data/bin/PopHelp.bin",
+        "data/bin/Proficiencies.bin",
+        "data/bin/ProficiencyIds.bin",
+        "data/bin/Salvage.bin",
+        "data/bin/VillainCostume.bin",
+        "data/bin/VillainDef.bin",
+        "data/bin/VillainGroups.bin",
+        "data/bin/arenamaps.bin",
+        "data/bin/attrib_descriptions.bin",
+        "data/bin/attrib_names.bin",
+        "data/bin/auctionconfig.bin",
+        "data/bin/badges.bin",
+        "data/bin/baserecipes.bin",
+        "data/bin/baseupkeep.bin",
+        "data/bin/behaviors.bin",
+        "data/bin/boost_effect_above.bin",
+        "data/bin/boost_effect_below.bin",
+        "data/bin/boost_effect_boosters.bin",
+        "data/bin/boostsets.bin",
+        "data/bin/capes.bin",
+        "data/bin/chestGeoLink.bin",
+        "data/bin/classes.bin",
+        "data/bin/clothColInfo.bin",
+        "data/bin/clothWindInfo.bin",
+        "data/bin/combine_booster_chances.bin",
+        "data/bin/combine_chances.bin",
+        "data/bin/combine_same_set_chances.bin",
+        "data/bin/command.bin",
+        "data/bin/conversionsets.bin",
+        "data/bin/costume.bin",
+        "data/bin/costumeWeaponStances.bin",
+        "data/bin/defaultBodyCfg.bin",
+        "data/bin/defnames.bin",
+        "data/bin/depts.bin",
+        "data/bin/detailcats.bin",
+        "data/bin/details.bin",
+        "data/bin/dim_returns.bin",
+        "data/bin/ent_types.bin",
+        "data/bin/exemplar_handicaps.bin",
+        "data/bin/experience.bin",
+        "data/bin/fxinfo.bin",
+        "data/bin/items.bin",
+        "data/bin/kb.bin",
+        "data/bin/kbkorea.bin",
+        "data/bin/lods.bin",
+        "data/bin/map.bin",
+        "data/bin/mapspecs.bin",
+        "data/bin/mapstats.bin",
+        "data/bin/menuAnimations.bin",
+        "data/bin/minimap.bin",
+        "data/bin/npcs_client.bin",
+        "data/bin/origins.bin",
+        "data/bin/particles.bin",
+        "data/bin/plots.bin",
+        "data/bin/powercats.bin",
+        "data/bin/powercustomizationcost.bin",
+        "data/bin/powercustomizationmenu.bin",
+        "data/bin/powers.bin",
+        "data/bin/powersets.bin",
+        "data/bin/product_catalog.bin",
+        "data/bin/replacepowernames.bin",
+        "data/bin/roomcategories.bin",
+        "data/bin/roomtemplates.bin",
+        "data/bin/schedules.bin",
+        "data/bin/seqstatebits.bin",
+        "data/bin/sequencers.bin",
+        "data/bin/soundinfo.bin",
+        "data/bin/stores.bin",
+        "data/bin/supergroupColors.bin",
+        "data/bin/supergroupEmblems.bin",
+        "data/bin/supergroup_badges.bin",
+        "data/bin/tailorcost.bin",
+        "data/bin/texWords.bin",
+        "data/bin/tricks.bin",
+        "data/bin/villain_classes.bin",
+        "data/bin/villain_origins.bin",
+        "data/bin/visionPhases.bin",
+        "data/bin/visionPhasesExclusive.bin",
+        "data/server/bin/CustomCritterRewardMods.bin",
+        "data/server/bin/DayJobs.bin",
+        "data/server/bin/DifficultyCost.bin",
+        "data/server/bin/InvBaseDetail.bin",
+        "data/server/bin/InvConcept.bin",
+        "data/server/bin/InvRecipe.bin",
+        "data/server/bin/InvSalvage.bin",
+        "data/server/bin/InvStoredSalvage.bin",
+        "data/server/bin/ItemSets.bin",
+        "data/server/bin/LevelBonus.bin",
+        "data/server/bin/MARTY_exp_mods.bin",
+        "data/server/bin/MapObjectives.bin",
+        "data/server/bin/NewFeatures.bin",
+        "data/server/bin/NictusHunterOptions.bin",
+        "data/server/bin/PC_Rewards.bin",
+        "data/server/bin/PowersetConversion.bin",
+        "data/server/bin/Proficiencies.bin",
+        "data/server/bin/ProficiencyIds.bin",
+        "data/server/bin/RewardChoiceTables.bin",
+        "data/server/bin/RewardTables.bin",
+        "data/server/bin/Salvage.bin",
+        "data/server/bin/SouvenirClues.bin",
+        "data/server/bin/SupergroupMods.bin",
+        "data/server/bin/TFTimeLimits.bin",
+        "data/server/bin/TeamReward.bin",
+        "data/server/bin/TrackedSalvage.bin",
+        "data/server/bin/VillainDef.bin",
+        "data/server/bin/VillainGroups.bin",
+        "data/server/bin/attrib_names.bin",
+        "data/server/bin/badges.bin",
+        "data/server/bin/baserecipes.bin",
+        "data/server/bin/boost_effect_above.bin",
+        "data/server/bin/boost_effect_below.bin",
+        "data/server/bin/boost_effect_boosters.bin",
+        "data/server/bin/boostsets.bin",
+        "data/server/bin/classes.bin",
+        "data/server/bin/combat_mods.bin",
+        "data/server/bin/combat_mods_villain.bin",
+        "data/server/bin/combine_booster_chances.bin",
+        "data/server/bin/combine_chances.bin",
+        "data/server/bin/combine_same_set_chances.bin",
+        "data/server/bin/contacts.bin",
+        "data/server/bin/conversionsets.bin",
+        "data/server/bin/damagedecay.bin",
+        "data/server/bin/designer_contact_tip_types.bin",
+        "data/server/bin/detailcats.bin",
+        "data/server/bin/details.bin",
+        "data/server/bin/dialog.bin",
+        "data/server/bin/dialogdefs.bin",
+        "data/server/bin/dim_returns.bin",
+        "data/server/bin/emotes.bin",
+        "data/server/bin/exemplar_handicaps.bin",
+        "data/server/bin/experience.bin",
+        "data/server/bin/incarnate.bin",
+        "data/server/bin/inventory_sizes.bin",
+        "data/server/bin/inventory_tier_bonus.bin",
+        "data/server/bin/mapsspec.bin",
+        "data/server/bin/meritsRewards.bin",
+        "data/server/bin/messages-en.bin",
+        "data/server/bin/missionhostagespawns.bin",
+        "data/server/bin/missionspawns.bin",
+        "data/server/bin/missionspecs.bin",
+        "data/server/bin/monorails.bin",
+        "data/server/bin/npcs_server.bin",
+        "data/server/bin/origins.bin",
+        "data/server/bin/petBattleCreatureInfo.bin",
+        "data/server/bin/plots.bin",
+        "data/server/bin/powercats.bin",
+        "data/server/bin/powers.bin",
+        "data/server/bin/powersets.bin",
+        "data/server/bin/pvptaskmodifiers.bin",
+        "data/server/bin/randomgroupselection.bin",
+        "data/server/bin/randommapselection.bin",
+        "data/server/bin/roomcategories.bin",
+        "data/server/bin/roomtemplates.bin",
+        "data/server/bin/schedules.bin",
+        "data/server/bin/scriptdefs.bin",
+        "data/server/bin/seqstatebits.bin",
+        "data/server/bin/spawndefs.bin",
+        "data/server/bin/staticmsg-en.bin",
+        "data/server/bin/storyarc.bin",
+        "data/server/bin/storyarcmsg-en.bin",
+        "data/server/bin/supergroup_badges.bin",
+        "data/server/bin/tasksets.bin",
+        "data/server/bin/turnstile_server.bin",
+        "data/server/bin/tut_votekick.bin",
+        "data/server/bin/villain_classes.bin",
+        "data/server/bin/villain_origins.bin",
+        "data/server/bin/villainrandomgroupselection.bin",
+        "data/server/bin/villainrandommapselection.bin",
+        "data/server/bin/visionPhases.bin",
+        "data/server/bin/visionPhasesExclusive.bin",
+        "data/server/bin/zone_event_karma.bin"
+      ],
+      "eligible_original_bin_bytes_authenticated_by_exact_archive_and_manifest": 789405231,
+      "identifier_inputs_and_loader_decisions_basis": "exact_authenticated_native_qualification_receipt_and_unchanged_decoder_source_closure",
+      "local_owner_fingerprints": {
+        "/tmp/coh-map-final-actual-read-clock-sjh1yia5/client-work": [
+          27,
+          1635813,
+          4096,
+          1791940810330630261,
+          1791940810330630261,
+          16877,
+          0,
+          0,
+          3
+        ],
+        "/tmp/coh-map-final-actual-read-clock-sjh1yia5/client-work/data": [
+          27,
+          1635816,
+          4096,
+          1791940806353926746,
+          1791940806353926746,
+          16877,
+          0,
+          0,
+          3
+        ],
+        "/tmp/coh-map-final-actual-read-clock-sjh1yia5/imported/data": [
+          27,
+          1635825,
+          4096,
+          1791940806353926746,
+          1791940806353926746,
+          16877,
+          0,
+          0,
+          2
+        ]
+      },
+      "native_ID_tables_observed": false,
+      "native_consumption_scope": "only_exact_authority_selected_observed_bin_operation_names",
+      "original_asset_manifest_bytes_read": 397,
+      "original_bin_body_bytes_read": 0,
+      "original_manifest_bytes_read_including_repeated_validation": 79431,
+      "original_manifest_unique_bytes": 59236,
+      "original_proof_sha256": "761298714fcbd56834bcd07577c56bdd3cb05c88c7f1a37c55ec240549b04392",
+      "physical_timing_validated": false,
+      "portable_identity_excludes_path_generation_owner": true,
+      "previous_shipping_consumer_sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363",
+      "provider_identity_sha256": "023e20396cef9f2de2678e8d5e0bde3052111ad46ee0e10193d3ed619b62dd50",
+      "provider_receipt_bytes_read": 1710,
+      "runtime_cache_proof_derivation": {
+        "derivation_source": {
+          "git_blob": "3333333333333333333333333333333333333333",
+          "path": "tools/android/interactive/controlled_unexecuted_normalizer.py",
+          "pin": {
+            "bytes": 32,
+            "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+          },
+          "repository_commit": "2222222222222222222222222222222222222222"
+        },
+        "output": {
+          "filename": "controlled.json",
+          "pin": {
+            "bytes": 95160,
+            "sha256": "75377df585ce39c3e591b8e4621f9b4cda3c661838aa4414c395bf87cb57bded"
+          }
+        },
+        "raw_inputs": {
+          "client_cache_manifest": {
+            "component_zip": {
+              "bytes": 27071659,
+              "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+            },
+            "member": "client-cache-manifest.json",
+            "member_pin": {
+              "bytes": 20195,
+              "sha256": "e5bc9ff306f90f96b6d34d4d481b30804af078b0e07845dafd71f7324dff6352"
+            },
+            "origin": "exact_public_Assets_1_0_0_component"
+          },
+          "native_world": {
+            "artifact_id": 4,
+            "artifact_zip": {
+              "bytes": 100,
+              "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "member": "controlled-unexecuted-world.json",
+            "member_pin": {
+              "bytes": 32,
+              "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+            },
+            "repository_commit": "5555555555555555555555555555555555555555",
+            "run_id": 3
+          },
+          "preload": {
+            "artifact_id": 2,
+            "artifact_zip": {
+              "bytes": 100,
+              "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+            },
+            "member": "controlled-unexecuted-preload.json",
+            "member_pin": {
+              "bytes": 32,
+              "sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+            },
+            "repository_commit": "5555555555555555555555555555555555555555",
+            "run_id": 1
+          },
+          "server_cache_manifest": {
+            "component_zip": {
+              "bytes": 29825263,
+              "sha256": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17"
+            },
+            "member": "server-cache-manifest.json",
+            "member_pin": {
+              "bytes": 39041,
+              "sha256": "4e1a4c9c148509ef34245768f64ca2be4bb83659db845c6ef94ed594666b3fff"
+            },
+            "origin": "exact_public_Assets_1_0_0_component"
+          }
+        },
+        "scope": {
+          "behavioral_collision_validated": false,
+          "derived_by_source_reviewed_normalizer": true,
+          "native_ID_tables_observed": false,
+          "original_artifact_membership_claimed": false,
+          "physical_timing_validated": false,
+          "shipping_bytes_executed_claimed": false
+        }
+      },
+      "status": "actual_owned_provider_and_original_donor_records_authenticated",
+      "unselected_original_inventory_claimed_freshly_consumed": false
+    },
+    "cold_means_no_same_operation_archive_receipt_not_cold_device_or_filesystem": true,
+    "contexts_equal": true,
+    "fixture_preparation_time_excluded": true,
+    "measurement_provenance": {
+      "native_execution_claimed": false,
+      "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/map-activation-read-attribution-final-host-evidence.json",
+      "pin": {
+        "bytes": 45104,
+        "sha256": "466237550a950f62176bb64081d1105a8d89d9459f45d627ecdd335e853f5192"
+      },
+      "same_server_cache_source_pin": {
+        "bytes": 49892,
+        "sha256": "e45bab2546e4b9c7fdd701d9abc1d071c39b000562924997c3ea9e0a8a5b667c"
+      }
+    },
+    "same_operation_original_server_catalog_witness_reuse": {
+      "bin_body_bytes_read": 0,
+      "elapsed_seconds": 0.000616,
+      "files": 93
+    },
+    "same_operation_warm": {
+      "actual_tested_candidate": {
+        "bytes": 7475200,
+        "sha256": "478977758ec0ba4b668aff61c2f92cb4fc4490b41dc90a2fe15d10ef50392f69"
+      },
+      "actual_tested_control_consumers": [
+        {
+          "bytes": 7475200,
+          "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+        },
+        {
+          "bytes": 7480320,
+          "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ],
+      "archive_names": [
+        "client-caches.zip",
+        "server-caches.zip"
+      ],
+      "archive_observations": [
+        {
+          "archive": "client-prerequisites.zip",
+          "archive_bytes": 18757,
+          "authentication_elapsed_seconds": 2.2e-05,
+          "decompressed_member_bytes_read": 56184,
+          "member_reads": {
+            "client-prerequisites-manifest.json": {
+              "bytes": 1236,
+              "reads": 1
+            },
+            "data/server/db/templates/badges.attribute": {
+              "bytes": 51724,
+              "reads": 1
+            },
+            "data/server/db/templates/pophelp.attribute": {
+              "bytes": 2185,
+              "reads": 1
+            },
+            "data/server/db/templates/supergroup_badges.attribute": {
+              "bytes": 1039,
+              "reads": 1
+            }
+          },
+          "payload_bytes_hashed": 0,
+          "same_operation_full_hash_reused": true
+        },
+        {
+          "archive": "client-caches.zip",
+          "archive_bytes": 27071659,
+          "authentication_elapsed_seconds": 2.3e-05,
+          "decompressed_member_bytes_read": 40390,
+          "member_reads": {
+            "client-cache-manifest.json": {
+              "bytes": 40390,
+              "reads": 2
+            }
+          },
+          "payload_bytes_hashed": 0,
+          "same_operation_full_hash_reused": true
+        },
+        {
+          "archive": "server-caches.zip",
+          "archive_bytes": 29825263,
+          "authentication_elapsed_seconds": 0.000174,
+          "decompressed_member_bytes_read": 39041,
+          "member_reads": {
+            "server-cache-manifest.json": {
+              "bytes": 39041,
+              "reads": 1
+            }
+          },
+          "payload_bytes_hashed": 0,
+          "same_operation_full_hash_reused": true
+        }
+      ],
+      "archive_payload_bytes_hashed": 0,
+      "authenticated_original_bin_count": 191,
+      "behavioral_collision_validated": false,
+      "bin_recipe_identity_sha256": "cb90f6f1abf43d507c3bdbd98dc22b271bac3dc53e1ff2e99a1c44b6d8291989",
+      "committed_source_compatibility_review": {
+        "actual_tested_candidate": {
+          "bytes": 7475200,
+          "sha256": "478977758ec0ba4b668aff61c2f92cb4fc4490b41dc90a2fe15d10ef50392f69"
+        },
+        "actual_tested_control_consumers": [
+          {
+            "bytes": 7475200,
+            "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+          },
+          {
+            "bytes": 7480320,
+            "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+          }
+        ],
+        "audited_control_consumers": [
+          {
+            "bytes": 7475200,
+            "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+          },
+          {
+            "bytes": 7480320,
+            "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+          }
+        ],
+        "committed_source_review": {
+          "commit": "1111111111111111111111111111111111111111",
+          "content": {
+            "bytes": 15615,
+            "sha256": "9181797fae13fdf97eccfcbdbcf575538253f752fe30a10ddc1d523db17dce21"
+          },
+          "git_blob": "f9c7bb2809d45e3533ff82b2fb0f5cbe038005a0",
+          "path": "docs/android-evidence/native-map-metadata-source-boundary-0.13.37.json",
+          "repository": "Russianranger/coh-android",
+          "scope": {
+            "behavioral_collision_validated": false,
+            "native_ID_tables_observed": false,
+            "new_native_runtime_qualification_proven": false,
+            "physical_timing_validated": false,
+            "runtime_activation_allowed": false,
+            "shipping_allowed": false,
+            "shipping_predecessor_execution_validated": false,
+            "source_compatibility_only": true
+          }
+        },
+        "native_execution_or_physical_results_added_by_source_review": false,
+        "previous_shipping_consumer": {
+          "bytes": 7475200,
+          "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+        },
+        "scope": {
+          "behavioral_collision_validated": false,
+          "native_ID_tables_observed": false,
+          "new_native_runtime_qualification_proven": false,
+          "physical_timing_validated": false,
+          "runtime_activation_allowed": false,
+          "shipping_allowed": false,
+          "shipping_predecessor_execution_validated": false,
+          "source_compatibility_only": true
+        },
+        "source_decoder_and_schema_checks_preserved": true,
+        "upstream_sdk_source_trees_identical": true
+      },
+      "construction_elapsed_seconds": 0.086619,
+      "construction_phase_seconds": {
+        "admission_provider_and_prerequisites": 0.037724,
+        "derived_proof_and_source_review": 0.003171,
+        "final_context_and_owner_checks": 0.03869,
+        "original_archives_and_manifest_records": 0.007039
+      },
+      "current_consumer_sha256": "478977758ec0ba4b668aff61c2f92cb4fc4490b41dc90a2fe15d10ef50392f69",
+      "current_private_bin_body_bytes_read": 0,
+      "current_private_cache_body_evidence": "unknown_ordinary_native_schema_and_freshness_fallback",
+      "current_private_or_device_generated_bin_body_equality_claimed": false,
+      "decompressed_original_archive_member_bytes_read": 135615,
+      "derived_proof_bytes_read": 95160,
+      "eligible_bin_paths": [
+        "data/bin/BodyParts.bin",
+        "data/bin/Cards.bin",
+        "data/bin/CustomCritterRewardMods.bin",
+        "data/bin/InvBaseDetail.bin",
+        "data/bin/InvConcept.bin",
+        "data/bin/InvRecipe.bin",
+        "data/bin/InvSalvage.bin",
+        "data/bin/InvStoredSalvage.bin",
+        "data/bin/LoyaltyReward.bin",
+        "data/bin/PC_Def_Animation.bin",
+        "data/bin/PC_Def_Contacts.bin",
+        "data/bin/PC_Def_DestructObject.bin",
+        "data/bin/PC_Def_Entities.bin",
+        "data/bin/PC_Def_MapSets.bin",
+        "data/bin/PC_Def_MapUnique.bin",
+        "data/bin/PC_Def_NonSelectable_Entities.bin",
+        "data/bin/PC_Def_Objects.bin",
+        "data/bin/PC_Def_Sequencer_Anims.bin",
+        "data/bin/PC_Def_UI.bin",
+        "data/bin/PC_Def_Unlockable_Content.bin",
+        "data/bin/PopHelp.bin",
+        "data/bin/Proficiencies.bin",
+        "data/bin/ProficiencyIds.bin",
+        "data/bin/Salvage.bin",
+        "data/bin/VillainCostume.bin",
+        "data/bin/VillainDef.bin",
+        "data/bin/VillainGroups.bin",
+        "data/bin/arenamaps.bin",
+        "data/bin/attrib_descriptions.bin",
+        "data/bin/attrib_names.bin",
+        "data/bin/auctionconfig.bin",
+        "data/bin/badges.bin",
+        "data/bin/baserecipes.bin",
+        "data/bin/baseupkeep.bin",
+        "data/bin/behaviors.bin",
+        "data/bin/boost_effect_above.bin",
+        "data/bin/boost_effect_below.bin",
+        "data/bin/boost_effect_boosters.bin",
+        "data/bin/boostsets.bin",
+        "data/bin/capes.bin",
+        "data/bin/chestGeoLink.bin",
+        "data/bin/classes.bin",
+        "data/bin/clothColInfo.bin",
+        "data/bin/clothWindInfo.bin",
+        "data/bin/combine_booster_chances.bin",
+        "data/bin/combine_chances.bin",
+        "data/bin/combine_same_set_chances.bin",
+        "data/bin/command.bin",
+        "data/bin/conversionsets.bin",
+        "data/bin/costume.bin",
+        "data/bin/costumeWeaponStances.bin",
+        "data/bin/defaultBodyCfg.bin",
+        "data/bin/defnames.bin",
+        "data/bin/depts.bin",
+        "data/bin/detailcats.bin",
+        "data/bin/details.bin",
+        "data/bin/dim_returns.bin",
+        "data/bin/ent_types.bin",
+        "data/bin/exemplar_handicaps.bin",
+        "data/bin/experience.bin",
+        "data/bin/fxinfo.bin",
+        "data/bin/items.bin",
+        "data/bin/kb.bin",
+        "data/bin/kbkorea.bin",
+        "data/bin/lods.bin",
+        "data/bin/map.bin",
+        "data/bin/mapspecs.bin",
+        "data/bin/mapstats.bin",
+        "data/bin/menuAnimations.bin",
+        "data/bin/minimap.bin",
+        "data/bin/npcs_client.bin",
+        "data/bin/origins.bin",
+        "data/bin/particles.bin",
+        "data/bin/plots.bin",
+        "data/bin/powercats.bin",
+        "data/bin/powercustomizationcost.bin",
+        "data/bin/powercustomizationmenu.bin",
+        "data/bin/powers.bin",
+        "data/bin/powersets.bin",
+        "data/bin/product_catalog.bin",
+        "data/bin/replacepowernames.bin",
+        "data/bin/roomcategories.bin",
+        "data/bin/roomtemplates.bin",
+        "data/bin/schedules.bin",
+        "data/bin/seqstatebits.bin",
+        "data/bin/sequencers.bin",
+        "data/bin/soundinfo.bin",
+        "data/bin/stores.bin",
+        "data/bin/supergroupColors.bin",
+        "data/bin/supergroupEmblems.bin",
+        "data/bin/supergroup_badges.bin",
+        "data/bin/tailorcost.bin",
+        "data/bin/texWords.bin",
+        "data/bin/tricks.bin",
+        "data/bin/villain_classes.bin",
+        "data/bin/villain_origins.bin",
+        "data/bin/visionPhases.bin",
+        "data/bin/visionPhasesExclusive.bin",
+        "data/server/bin/CustomCritterRewardMods.bin",
+        "data/server/bin/DayJobs.bin",
+        "data/server/bin/DifficultyCost.bin",
+        "data/server/bin/InvBaseDetail.bin",
+        "data/server/bin/InvConcept.bin",
+        "data/server/bin/InvRecipe.bin",
+        "data/server/bin/InvSalvage.bin",
+        "data/server/bin/InvStoredSalvage.bin",
+        "data/server/bin/ItemSets.bin",
+        "data/server/bin/LevelBonus.bin",
+        "data/server/bin/MARTY_exp_mods.bin",
+        "data/server/bin/MapObjectives.bin",
+        "data/server/bin/NewFeatures.bin",
+        "data/server/bin/NictusHunterOptions.bin",
+        "data/server/bin/PC_Rewards.bin",
+        "data/server/bin/PowersetConversion.bin",
+        "data/server/bin/Proficiencies.bin",
+        "data/server/bin/ProficiencyIds.bin",
+        "data/server/bin/RewardChoiceTables.bin",
+        "data/server/bin/RewardTables.bin",
+        "data/server/bin/Salvage.bin",
+        "data/server/bin/SouvenirClues.bin",
+        "data/server/bin/SupergroupMods.bin",
+        "data/server/bin/TFTimeLimits.bin",
+        "data/server/bin/TeamReward.bin",
+        "data/server/bin/TrackedSalvage.bin",
+        "data/server/bin/VillainDef.bin",
+        "data/server/bin/VillainGroups.bin",
+        "data/server/bin/attrib_names.bin",
+        "data/server/bin/badges.bin",
+        "data/server/bin/baserecipes.bin",
+        "data/server/bin/boost_effect_above.bin",
+        "data/server/bin/boost_effect_below.bin",
+        "data/server/bin/boost_effect_boosters.bin",
+        "data/server/bin/boostsets.bin",
+        "data/server/bin/classes.bin",
+        "data/server/bin/combat_mods.bin",
+        "data/server/bin/combat_mods_villain.bin",
+        "data/server/bin/combine_booster_chances.bin",
+        "data/server/bin/combine_chances.bin",
+        "data/server/bin/combine_same_set_chances.bin",
+        "data/server/bin/contacts.bin",
+        "data/server/bin/conversionsets.bin",
+        "data/server/bin/damagedecay.bin",
+        "data/server/bin/designer_contact_tip_types.bin",
+        "data/server/bin/detailcats.bin",
+        "data/server/bin/details.bin",
+        "data/server/bin/dialog.bin",
+        "data/server/bin/dialogdefs.bin",
+        "data/server/bin/dim_returns.bin",
+        "data/server/bin/emotes.bin",
+        "data/server/bin/exemplar_handicaps.bin",
+        "data/server/bin/experience.bin",
+        "data/server/bin/incarnate.bin",
+        "data/server/bin/inventory_sizes.bin",
+        "data/server/bin/inventory_tier_bonus.bin",
+        "data/server/bin/mapsspec.bin",
+        "data/server/bin/meritsRewards.bin",
+        "data/server/bin/messages-en.bin",
+        "data/server/bin/missionhostagespawns.bin",
+        "data/server/bin/missionspawns.bin",
+        "data/server/bin/missionspecs.bin",
+        "data/server/bin/monorails.bin",
+        "data/server/bin/npcs_server.bin",
+        "data/server/bin/origins.bin",
+        "data/server/bin/petBattleCreatureInfo.bin",
+        "data/server/bin/plots.bin",
+        "data/server/bin/powercats.bin",
+        "data/server/bin/powers.bin",
+        "data/server/bin/powersets.bin",
+        "data/server/bin/pvptaskmodifiers.bin",
+        "data/server/bin/randomgroupselection.bin",
+        "data/server/bin/randommapselection.bin",
+        "data/server/bin/roomcategories.bin",
+        "data/server/bin/roomtemplates.bin",
+        "data/server/bin/schedules.bin",
+        "data/server/bin/scriptdefs.bin",
+        "data/server/bin/seqstatebits.bin",
+        "data/server/bin/spawndefs.bin",
+        "data/server/bin/staticmsg-en.bin",
+        "data/server/bin/storyarc.bin",
+        "data/server/bin/storyarcmsg-en.bin",
+        "data/server/bin/supergroup_badges.bin",
+        "data/server/bin/tasksets.bin",
+        "data/server/bin/turnstile_server.bin",
+        "data/server/bin/tut_votekick.bin",
+        "data/server/bin/villain_classes.bin",
+        "data/server/bin/villain_origins.bin",
+        "data/server/bin/villainrandomgroupselection.bin",
+        "data/server/bin/villainrandommapselection.bin",
+        "data/server/bin/visionPhases.bin",
+        "data/server/bin/visionPhasesExclusive.bin",
+        "data/server/bin/zone_event_karma.bin"
+      ],
+      "eligible_original_bin_bytes_authenticated_by_exact_archive_and_manifest": 789405231,
+      "identifier_inputs_and_loader_decisions_basis": "exact_authenticated_native_qualification_receipt_and_unchanged_decoder_source_closure",
+      "local_owner_fingerprints": {
+        "/tmp/coh-map-final-actual-read-clock-sjh1yia5/client-work": [
+          27,
+          1635813,
+          4096,
+          1791940810330630261,
+          1791940810330630261,
+          16877,
+          0,
+          0,
+          3
+        ],
+        "/tmp/coh-map-final-actual-read-clock-sjh1yia5/client-work/data": [
+          27,
+          1635816,
+          4096,
+          1791940806353926746,
+          1791940806353926746,
+          16877,
+          0,
+          0,
+          3
+        ],
+        "/tmp/coh-map-final-actual-read-clock-sjh1yia5/imported/data": [
+          27,
+          1635825,
+          4096,
+          1791940806353926746,
+          1791940806353926746,
+          16877,
+          0,
+          0,
+          2
+        ]
+      },
+      "native_ID_tables_observed": false,
+      "native_consumption_scope": "only_exact_authority_selected_observed_bin_operation_names",
+      "original_asset_manifest_bytes_read": 397,
+      "original_bin_body_bytes_read": 0,
+      "original_manifest_bytes_read_including_repeated_validation": 79431,
+      "original_manifest_unique_bytes": 59236,
+      "original_proof_sha256": "761298714fcbd56834bcd07577c56bdd3cb05c88c7f1a37c55ec240549b04392",
+      "physical_timing_validated": false,
+      "portable_identity_excludes_path_generation_owner": true,
+      "previous_shipping_consumer_sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363",
+      "provider_identity_sha256": "023e20396cef9f2de2678e8d5e0bde3052111ad46ee0e10193d3ed619b62dd50",
+      "provider_receipt_bytes_read": 1710,
+      "runtime_cache_proof_derivation": {
+        "derivation_source": {
+          "git_blob": "3333333333333333333333333333333333333333",
+          "path": "tools/android/interactive/controlled_unexecuted_normalizer.py",
+          "pin": {
+            "bytes": 32,
+            "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+          },
+          "repository_commit": "2222222222222222222222222222222222222222"
+        },
+        "output": {
+          "filename": "controlled.json",
+          "pin": {
+            "bytes": 95160,
+            "sha256": "75377df585ce39c3e591b8e4621f9b4cda3c661838aa4414c395bf87cb57bded"
+          }
+        },
+        "raw_inputs": {
+          "client_cache_manifest": {
+            "component_zip": {
+              "bytes": 27071659,
+              "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+            },
+            "member": "client-cache-manifest.json",
+            "member_pin": {
+              "bytes": 20195,
+              "sha256": "e5bc9ff306f90f96b6d34d4d481b30804af078b0e07845dafd71f7324dff6352"
+            },
+            "origin": "exact_public_Assets_1_0_0_component"
+          },
+          "native_world": {
+            "artifact_id": 4,
+            "artifact_zip": {
+              "bytes": 100,
+              "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "member": "controlled-unexecuted-world.json",
+            "member_pin": {
+              "bytes": 32,
+              "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+            },
+            "repository_commit": "5555555555555555555555555555555555555555",
+            "run_id": 3
+          },
+          "preload": {
+            "artifact_id": 2,
+            "artifact_zip": {
+              "bytes": 100,
+              "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+            },
+            "member": "controlled-unexecuted-preload.json",
+            "member_pin": {
+              "bytes": 32,
+              "sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+            },
+            "repository_commit": "5555555555555555555555555555555555555555",
+            "run_id": 1
+          },
+          "server_cache_manifest": {
+            "component_zip": {
+              "bytes": 29825263,
+              "sha256": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17"
+            },
+            "member": "server-cache-manifest.json",
+            "member_pin": {
+              "bytes": 39041,
+              "sha256": "4e1a4c9c148509ef34245768f64ca2be4bb83659db845c6ef94ed594666b3fff"
+            },
+            "origin": "exact_public_Assets_1_0_0_component"
+          }
+        },
+        "scope": {
+          "behavioral_collision_validated": false,
+          "derived_by_source_reviewed_normalizer": true,
+          "native_ID_tables_observed": false,
+          "original_artifact_membership_claimed": false,
+          "physical_timing_validated": false,
+          "shipping_bytes_executed_claimed": false
+        }
+      },
+      "status": "actual_owned_provider_and_original_donor_records_authenticated",
+      "unselected_original_inventory_claimed_freshly_consumed": false
+    },
+    "scope": "genuine_original_public_archives_with_controlled_unexecuted_new_native_derivation_authority_and_import_fixture"
+  },
+  "closed_production_gates": {
+    "ACTIVATION_IMPLEMENTED": false,
+    "RUNTIME_CACHE_PROOF_DERIVATION": null,
+    "SOURCE_ONLY_COMPATIBILITY_REVIEW": null,
+    "component_authority": null,
+    "execution_review": null
+  },
+  "created_utc": "2026-10-14T01:24:27.012399+00:00",
+  "dependencies_unchanged_during_tests": true,
+  "errors": 0,
+  "executed": 174,
+  "failed": 0,
+  "format": 1,
+  "passed": 174,
+  "patch": {
+    "bytes": 142859,
+    "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/map-activation-actual107-final-review.patch",
+    "sha256": "0ab297652341206d98afdd79e86962fcf6b2b6c6dfefb148233507eda4a3becf"
+  },
+  "qualification_boundaries": {
+    "actual107_native_world_and_normalizer_review_pending": true,
+    "actual107_production_authority_created": false,
+    "actual107_source_derived_controlled_adapter_test_passed": true,
+    "all_191_original_bins_freshly_consumed_in_real_native_tests_claimed": false,
+    "current_private_or_geobin_body_current_native_id_qualification_claimed": false,
+    "full_Assets_Base_outer_hash_authenticated": false,
+    "genuine_original_public_donor_archive_bytes_used": true,
+    "native_ID_tables_observed": false,
+    "new_native_or_device_execution_claimed": false,
+    "new_shipping_bytes_executed_claimed": false,
+    "ordinary_native_schema_and_freshness_retained": true,
+    "previous_168_case_review_superseded_for_changed_paths": true,
+    "synthetic_authority_import_and_controls_explicitly_unexecuted": true
+  },
+  "role": "dormant_map_final_actual107_preload_controlled_adapter_and_exact_source_provenance_qualification",
+  "shared_contract_dependencies": {
+    "android/guest/native_startup_metadata_contract.py": {
+      "bytes": 25257,
+      "sha256": "3f82bfc36f515d96427a42f70af27abfd3d81b6f6988dba9b8811356c3851f56"
+    },
+    "tools/android/interactive/test_native_startup_metadata_contract.py": {
+      "bytes": 16579,
+      "sha256": "91cedf636fc7adc5dab987e3a272523d05f7b41755b7a74543949770c8ff6980"
+    }
+  },
+  "skipped": 0,
+  "source_files": {
+    "android/guest/atlas_beacon_package.py": {
+      "bytes": 49831,
+      "sha256": "d357f30f8bb38afc9fa9e425323f0ba8b574af0fa241b3f4473f1fd7eee2ed87"
+    },
+    "android/guest/character_zoning.py": {
+      "bytes": 81456,
+      "sha256": "1b912601f2689b535d4136b5be46a4ea8955cfab26358ff0341691a9092e57e5"
+    },
+    "android/guest/game_diagnostic.py": {
+      "bytes": 82317,
+      "sha256": "dc448fcff57129d188824f8508cdfe8d8aeee1844519acfd2e67996c17b09710"
+    },
+    "android/guest/local_character_server.py": {
+      "bytes": 215356,
+      "sha256": "ba56251a0af7463fe8c7df909aca2ef2bba7934e317f6017e8183338310286cc"
+    },
+    "android/guest/native_map_startup_contract.py": {
+      "bytes": 29323,
+      "sha256": "e8e8c6aec44d365d3c17981598aa928bfb35ef94e2b28c9b7116be2f7e3e0da8"
+    },
+    "android/guest/server_animation_package.py": {
+      "bytes": 14716,
+      "sha256": "56825a9b66669133380c761d9475b57b6ccd4ee5cf71b6044474c0ff32bbc91d"
+    },
+    "android/guest/server_cache_package.py": {
+      "bytes": 49892,
+      "sha256": "e45bab2546e4b9c7fdd701d9abc1d071c39b000562924997c3ea9e0a8a5b667c"
+    },
+    "android/guest/server_fx_catalog.py": {
+      "bytes": 17251,
+      "sha256": "e363303241bcf4c27466d54e8a1a7bef5726e3bc28fafae73d0a1c2e890a32b4"
+    },
+    "tools/android/interactive/test_native_metadata_map_activation.py": {
+      "bytes": 59202,
+      "sha256": "70391bfe7825d1a555bd2f252fcedfa52c2cfd449746dd7c6cd48d021b4c8407"
+    }
+  },
+  "source_foundation_commit": "1b8da4eb850c0e7c4f4ef0a49e43e15ac948ca2e",
+  "source_unchanged_during_tests": true,
+  "supersedes": {
+    "path": "/workspace/scratch/5d16603ca7ff/publication-037-evidence/map-activation-read-attribution-final-host-evidence.json",
+    "pin": {
+      "bytes": 45104,
+      "sha256": "466237550a950f62176bb64081d1105a8d89d9459f45d627ecdd335e853f5192"
+    },
+    "reason": "actual107 preload rows exercised with actual candidate and source/control identity in explicit pending-world controlled adapter fixture"
+  },
+  "tests": [
+    {
+      "elapsed_seconds": 22.300996,
+      "errors": 0,
+      "executed": 26,
+      "failed": 0,
+      "module": "test_native_metadata_map_activation",
+      "output": "..........................\n----------------------------------------------------------------------\nRan 26 tests in 22.214s\n\nOK\n",
+      "passed": 26,
+      "skipped": 0
+    },
+    {
+      "elapsed_seconds": 0.057439,
+      "errors": 0,
+      "executed": 14,
+      "failed": 0,
+      "module": "test_saved_map_startup",
+      "output": "..............\n----------------------------------------------------------------------\nRan 14 tests in 0.057s\n\nOK\n",
+      "passed": 14,
+      "skipped": 0
+    },
+    {
+      "elapsed_seconds": 0.09443,
+      "errors": 0,
+      "executed": 38,
+      "failed": 0,
+      "module": "test_character_zoning",
+      "output": "......................................\n----------------------------------------------------------------------\nRan 38 tests in 0.094s\n\nOK\n",
+      "passed": 38,
+      "skipped": 0
+    },
+    {
+      "elapsed_seconds": 0.031122,
+      "errors": 0,
+      "executed": 10,
+      "failed": 0,
+      "module": "test_server_cache_package",
+      "output": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.031s\n\nOK\n",
+      "passed": 10,
+      "skipped": 0
+    },
+    {
+      "elapsed_seconds": 5.851168,
+      "errors": 0,
+      "executed": 28,
+      "failed": 0,
+      "module": "test_atlas_beacon_package",
+      "output": "............................\n----------------------------------------------------------------------\nRan 28 tests in 5.849s\n\nOK\n",
+      "passed": 28,
+      "skipped": 0
+    },
+    {
+      "elapsed_seconds": 0.128575,
+      "errors": 0,
+      "executed": 13,
+      "failed": 0,
+      "module": "test_server_animations",
+      "output": ".............\n----------------------------------------------------------------------\nRan 13 tests in 0.122s\n\nOK\n",
+      "passed": 13,
+      "skipped": 0
+    },
+    {
+      "elapsed_seconds": 0.194354,
+      "errors": 0,
+      "executed": 35,
+      "failed": 0,
+      "module": "test_saved_map_preparation",
+      "output": "...................................\n----------------------------------------------------------------------\nRan 35 tests in 0.187s\n\nOK\n",
+      "passed": 35,
+      "skipped": 0
+    },
+    {
+      "elapsed_seconds": 0.042465,
+      "errors": 0,
+      "executed": 10,
+      "failed": 0,
+      "module": "test_saved_map_preparation_proof",
+      "output": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.027s\n\nOK\n",
+      "passed": 10,
+      "skipped": 0
+    }
+  ]
+}

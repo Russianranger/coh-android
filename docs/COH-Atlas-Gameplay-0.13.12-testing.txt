@@ -1,0 +1,45 @@
+COH Atlas Gameplay 0.13.12 — focused training, UI and startup check
+
+Install over the existing app and run Set up runtime once. Keep the imported
+Atlas assets, THORHERO, database, experience and completed tasks. Use the same
+performance preset and saved-character reopen option as 0.13.11.
+
+The 0.13.11 reports confirm 115 experience persisted. Its training transaction
+failed and rolled back, so the selected power and completed level are not yet
+confirmed saved. This candidate fixes how the PostgreSQL reader remembers
+existing empty child rows. It preserves failure rollback and commit-before-save
+acknowledgement. It also adds original missing UI textures and enables the
+already packaged Game metadata preload on the saved-character launch path.
+
+On the first reopen, check the top-right experience/level-up bubbles, inspiration
+icons, tray/F-key labels and power-selection controls. Visit Ms Liberty, select
+the offered new power, press Next, complete training and close the dialogue.
+Confirm the character remains playable, displayed level is 2 and the new power
+appears and can be used. Hover/select a power to inspect its detail icon; the
+native trainer rows use ownership checkmarks. Capture any remaining missing UI.
+
+Use ordinary Save character / log out, then Finish and export the complete
+outer support ZIP with its guest-report.zip intact. Reopen once more and confirm
+the earned experience, trained level and selected power survived. Save/log out,
+Finish and export that second report as well.
+
+Measure local Atlas startup, actual client startup to visible login, login to
+playable world, and total reopen time separately on both runs. Note time spent
+typing/selecting separately. The support report retains launcher/setup,
+dependency preload, Wine/FEX/client initialization and BIN freshness/decode
+timings; include the complete report to identify which phase changed. The
+0.13.11 native observations were Atlas 235.342s / 208.616s and client 334.499s /
+324.792s. Keep runtime setup, first UI installation and texture-header
+preparation separate. Preload activation is now reachable; physical startup
+savings and successful training still require this device pass.
+
+Preserve the models, drone and Informant armor that now load. No need to repeat
+accepted character creation or task milestones. If a stage fails, Abort and
+wait for owned cleanup before exporting. Do not clear app data or reimport.
+
+Five exact donor textures remain unavailable (four selection underlights and
+default_tray); no similar-name substitutes were used. Warm UI preparation reuses
+its verified receipt, while native per-process metadata still observes ordinary
+source freshness. The new purchase is accepted only with native training logs,
+matching SQL rows and an ordinary successful logout/save; no gameplay state is
+fabricated by the validator.

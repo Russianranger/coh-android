@@ -1,0 +1,54 @@
+{
+  "android/guest/client_live_directory_control.py": {
+    "bytes": 13303,
+    "sha256": "80f5e02e17992fcae58331b8f4cbea789f2ca571e7306b62747b62e463bf70af"
+  },
+  "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientGuestNamespace.java": {
+    "bytes": 22515,
+    "sha256": "cf860b853004a6758434e9bf397a0161e097f0c19b8ec87bd77ae0029e4ada6c"
+  },
+  "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryFixture.java": {
+    "bytes": 49318,
+    "sha256": "0834f290a7bd373dcf3d2ceda1fe10f14d50e29bc8320d1bf55e8cefe0fa024e"
+  },
+  "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryOperation.java": {
+    "bytes": 30653,
+    "sha256": "2f4d3c64284d1a18a6ee71666476286b6f1e3d5c3019681e4f6ad851eaaba53a"
+  },
+  "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientLiveDirectoryService.java": {
+    "bytes": 16096,
+    "sha256": "3b22cdb7daaab091c6f65cd5697aea77414ba94c88f9b09787106225f1eb54d0"
+  },
+  "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+    "bytes": 199541,
+    "sha256": "827773adbba17e4702bcf0732b1afed5fbcfde3c30cec41362b425ef2967bdf9"
+  },
+  "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/NativeLiveDirectory.java": {
+    "bytes": 1119,
+    "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+  },
+  "tools/android/interactive/test_client_guest_namespace.py": {
+    "bytes": 21587,
+    "sha256": "b3fe22f797604df29757f5e568449e868a553ddb2f6bf8be0cbdd174e4547a77"
+  },
+  "tools/android/interactive/test_client_live_directory_control.py": {
+    "bytes": 20369,
+    "sha256": "64308ffaa70270ccdde99518466bc8c8334d244afd03697648bc7c779ae86644"
+  },
+  "tools/android/interactive/test_client_live_directory_fixture.py": {
+    "bytes": 35369,
+    "sha256": "9a130cfb1d16929405b776464924779b61989efab3766491963805f4c07192d6"
+  },
+  "tools/android/interactive/test_client_live_directory_operation.py": {
+    "bytes": 36618,
+    "sha256": "da72d28b5e5a453dddb0b94f86c4bd86aed27b048155c63655be19840c43a415"
+  },
+  "tools/android/interactive/test_client_live_directory_operation_jni.py": {
+    "bytes": 13197,
+    "sha256": "302ecdd27b1ea0219b9bd3eb8f346c5261fdf0b9696ec861c0918f54a9dc3353"
+  },
+  "tools/android/interactive/test_client_live_directory_service.py": {
+    "bytes": 24329,
+    "sha256": "5ffeb08e28d35441c73e2478f897207df8870cb05384a72b14403468e8252cad"
+  }
+}

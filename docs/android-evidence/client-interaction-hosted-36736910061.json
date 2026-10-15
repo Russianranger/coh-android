@@ -1,0 +1,418 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "exact_apk_actual_client_interaction_native_arm64_hosted_qualification",
+  "run_id": 36736910061,
+  "runtime_job_id": 109967824484,
+  "workflow_conclusion": "success",
+  "repository_commit": "fdd0acc492485455ce0fc8b43eb4b406da529ba1",
+  "source_tree": "02ca043f44fcf19f4ec2c9b82df2fc738d743c5d",
+  "apk": {
+    "bytes": 370560140,
+    "sha256": "8ada2e23cf8cf4986b4faacdff1839233ef6538cf4eb12602d2e11d1cb3d36ca"
+  },
+  "evidence_artifact": {
+    "id": 11110116915,
+    "name": "coh-client-interaction-arm64-evidence",
+    "bytes": 23577203,
+    "sha256": "3a0b647531f4c6d51a6695169b41294ef1f81c729c968a92896b199e0d7d3a0c",
+    "github_digest_verified": true
+  },
+  "raw_reports": {
+    "guest/latest-report.json": {
+      "bytes": 48593,
+      "sha256": "a27b66a112b7131b4c9c7c57e16b7b0166813d490660c9d429cb2fde25cf53c4"
+    },
+    "client-evidence/host-client-report.json": {
+      "bytes": 20000,
+      "sha256": "2942f164340ceb84a24daae3ea32ea9d63ef9ea2aa7044a6a74bf4296a968475"
+    },
+    "independent-host-review.json": {
+      "bytes": 1068,
+      "sha256": "26cec2faf83acfd5362b4b3c6ba345175730c6a69edadbbd67f660d70892ab90"
+    },
+    "artifact-download-review.json": {
+      "bytes": 193,
+      "sha256": "ba56a48d45cc1e479c2f3393b3252503638af40cd5948728d942e609d35daa2d"
+    }
+  },
+  "runtime_manifest_sha256": "3c4ae284d0200b4bef23374f1adf6fce126e39a003b116a3a0cef4d7e9f0a355",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "client_executable_sha256": "81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca",
+  "client_executable_modified": false,
+  "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+  "client_launch": {
+    "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+    "pid": 460
+  },
+  "mechanical_acceptance": {
+    "status": "passed",
+    "guest_status": "passed",
+    "guest_failures": [],
+    "host_status": "passed",
+    "host_failure": null,
+    "terminal_event_observed": true,
+    "readiness": {
+      "renderer_initialized": true,
+      "all_data_loaded": true,
+      "client_main_loop_reached": true,
+      "client_window_observed": true,
+      "startup_observed": true
+    },
+    "interaction_session_completed": true,
+    "producer_input_effect_verified": false,
+    "interaction_completion_reason": "finish_requested",
+    "finish_request": {
+      "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+      "client_pid": 460,
+      "action": "finish_interaction",
+      "bytes": 115,
+      "sha256": "9bc0964ba18f486443c7a72c93822dc37c8fd77320a30a9ab5eeba174e80c427",
+      "received_utc": "2026-09-30T15:54:53.166427+00:00"
+    },
+    "owned_children_closed": 27,
+    "cleanup_complete": true,
+    "wine_cleanup_remaining": 0,
+    "wine_cleanup_inspection_failures": 0,
+    "presentation_socket_removed": true,
+    "independent_saved_evidence_audit": {
+      "acceptance": "PASS_transport_readiness_finish_cleanup_pending_visual_input_review",
+      "host_workflow_run_id": 36736910061,
+      "workflow_run_identity_source": "caller supplied; verify outer artifact provenance separately",
+      "repository_commit": "fdd0acc492485455ce0fc8b43eb4b406da529ba1",
+      "apk_sha256": "8ada2e23cf8cf4986b4faacdff1839233ef6538cf4eb12602d2e11d1cb3d36ca",
+      "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+      "client_pid": 460,
+      "stages_passed": 7,
+      "startup_seconds": 362.627,
+      "live_observation_seconds": 33.543,
+      "ready_to_terminal_seconds": 33.819784,
+      "finish_request_hash_verified": true,
+      "startup_pngs_verified": 3,
+      "interaction_pngs_verified": 4,
+      "interaction_frame_sequences": [
+        797,
+        801,
+        807,
+        811
+      ],
+      "post_action_freshness_verified": true,
+      "guest_ppms_verified": 3,
+      "processes_closed": 27,
+      "cleanup_remaining": 0,
+      "cleanup_inspection_failures": 0,
+      "preposition_and_focus_settling_gates_verified": true,
+      "input_effect_verified": false,
+      "input_effect_independently_visually_reviewed": false
+    }
+  },
+  "timing": {
+    "guest_started_utc": "2026-09-30T15:46:12.044295+00:00",
+    "private_data_ready_utc": "2026-09-30T15:47:36.937483+00:00",
+    "wine_initialization_seconds": 37.738,
+    "client_stage_started_utc": "2026-09-30T15:48:16.762142+00:00",
+    "startup_elapsed_seconds": 362.627,
+    "interaction_stage_started_utc": "2026-09-30T15:54:19.850698+00:00",
+    "live_observation_seconds": 33.543,
+    "interaction_stage_passed_utc": "2026-09-30T15:54:53.670516+00:00",
+    "guest_cleanup_finished_utc": "2026-09-30T15:54:56.581926+00:00",
+    "host_elapsed_seconds": 526.46
+  },
+  "stages": [
+    {
+      "stage": "client_inputs",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:46:12.078157+00:00",
+      "finished_utc": "2026-09-30T15:46:12.115125+00:00"
+    },
+    {
+      "stage": "client_private_data",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:46:12.115340+00:00",
+      "finished_utc": "2026-09-30T15:47:36.937483+00:00"
+    },
+    {
+      "stage": "presentation_display",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:47:36.937760+00:00",
+      "finished_utc": "2026-09-30T15:47:36.993550+00:00"
+    },
+    {
+      "stage": "wine_initialization",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:47:36.993796+00:00",
+      "finished_utc": "2026-09-30T15:48:14.733288+00:00"
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:48:14.733466+00:00",
+      "finished_utc": "2026-09-30T15:48:15.140493+00:00"
+    },
+    {
+      "stage": "actual_client_startup",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:48:16.762142+00:00",
+      "finished_utc": "2026-09-30T15:54:19.850498+00:00"
+    },
+    {
+      "stage": "actual_client_interaction",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:54:19.850698+00:00",
+      "finished_utc": "2026-09-30T15:54:53.670516+00:00"
+    }
+  ],
+  "client_windows": [
+    {
+      "window_id": 16777219,
+      "title": "City of Heroes : PID: 460",
+      "width": 800,
+      "height": 600,
+      "mapped": true
+    }
+  ],
+  "graphics_observation": {
+    "vendor": "Mesa/X.org",
+    "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+    "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+    "renderer_classification": "software"
+  },
+  "post_readiness_captures": [
+    {
+      "file": "client-startup-external-000.png",
+      "elapsed_seconds": 403.097653448,
+      "frame_sha256": "c270931b2a2724258926a3595c3148be8fc0f5ec5be9ca0081960b774095d341",
+      "png_sha256": "95e62074c0ccfa16c3ce0efb6e9bbdc453c4be17e68e47c99d16396b5f23880a",
+      "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+      "client_pid": 460,
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 8,
+      "frame_sequence": 793,
+      "frame_generation": 4,
+      "event_generation": 1
+    },
+    {
+      "file": "client-startup-external-001.png",
+      "elapsed_seconds": 404.293585478,
+      "frame_sha256": "3b3e82d15d538303d01b7279cfaa25b31b83add53f2d883f1a5f0caa35bac4f6",
+      "png_sha256": "341407c79d05b5b93da69a50889b8752779e5f0d8ed5bb81ad23768536427ae7",
+      "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+      "client_pid": 460,
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 8,
+      "frame_sequence": 795,
+      "frame_generation": 4,
+      "event_generation": 1
+    },
+    {
+      "file": "client-startup-external-002.png",
+      "elapsed_seconds": 405.49479334100005,
+      "frame_sha256": "fbb5f34faffd151426527c4426cb9c40d45c7a4a10e1e3ef42a8634a1dd90dff",
+      "png_sha256": "5325c221d5a04732f1a31991135fcb86c0712c95ae308642a540d2a4726d499d",
+      "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+      "client_pid": 460,
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 8,
+      "frame_sequence": 797,
+      "frame_generation": 4,
+      "event_generation": 1
+    }
+  ],
+  "interaction_script": {
+    "scope": "host_rfb_pointer_keyboard_delivery",
+    "input_effect_verified": false,
+    "script_completed": true,
+    "test_marker": "COHINPUT",
+    "pointer_preposition_fresh_frames": 2,
+    "pointer_press_ms": 120,
+    "account_focus_fresh_frames": 1,
+    "steps": [
+      {
+        "action": "preposition_cancel_graphics_prompt",
+        "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+        "client_pid": 460,
+        "after_frame_sequence": 797,
+        "fresh_frames_since_previous_action": 0,
+        "elapsed_since_ready": 2.397
+      },
+      {
+        "action": "cancel_graphics_prompt",
+        "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+        "client_pid": 460,
+        "after_frame_sequence": 799,
+        "fresh_frames_since_previous_action": 2,
+        "elapsed_since_ready": 3.945
+      },
+      {
+        "action": "preposition_account_field",
+        "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+        "client_pid": 460,
+        "after_frame_sequence": 801,
+        "fresh_frames_since_previous_action": 2,
+        "elapsed_since_ready": 5.086
+      },
+      {
+        "action": "focus_account_field",
+        "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+        "client_pid": 460,
+        "after_frame_sequence": 803,
+        "fresh_frames_since_previous_action": 2,
+        "elapsed_since_ready": 6.282
+      },
+      {
+        "action": "type_visible_test_marker",
+        "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+        "client_pid": 460,
+        "after_frame_sequence": 805,
+        "fresh_frames_since_previous_action": 2,
+        "elapsed_since_ready": 7.423
+      },
+      {
+        "action": "preposition_login_settings",
+        "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+        "client_pid": 460,
+        "after_frame_sequence": 807,
+        "fresh_frames_since_previous_action": 2,
+        "elapsed_since_ready": 8.927
+      },
+      {
+        "action": "open_login_settings",
+        "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+        "client_pid": 460,
+        "after_frame_sequence": 809,
+        "fresh_frames_since_previous_action": 2,
+        "elapsed_since_ready": 10.122
+      }
+    ],
+    "screenshots": [
+      {
+        "file": "interaction-before-input.png",
+        "png_sha256": "5325c221d5a04732f1a31991135fcb86c0712c95ae308642a540d2a4726d499d",
+        "frame_sha256": "fbb5f34faffd151426527c4426cb9c40d45c7a4a10e1e3ef42a8634a1dd90dff",
+        "frame_sequence": 797,
+        "frame_generation": 4,
+        "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+        "client_pid": 460,
+        "width": 800,
+        "height": 600,
+        "elapsed_since_ready": 2.397
+      },
+      {
+        "file": "interaction-after-cancel.png",
+        "png_sha256": "bfc2b708c89386e2bb0fe6d2677752003fd594f4e82eee481690b52bc8f933f3",
+        "frame_sha256": "f14530e4a68035ab7882f3bd0b8a6afd3665189f220ec4f670c9a372c5c43272",
+        "frame_sequence": 801,
+        "frame_generation": 4,
+        "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+        "client_pid": 460,
+        "width": 800,
+        "height": 600,
+        "elapsed_since_ready": 5.086
+      },
+      {
+        "file": "interaction-after-text.png",
+        "png_sha256": "98593355a898212b3598b2b82f219e095613023a917dd9ce5fc1606197656b96",
+        "frame_sha256": "42ee4fcc2a17ad78b8cd0b69a5bf49115262e93aa17692afce168f836a049470",
+        "frame_sequence": 807,
+        "frame_generation": 4,
+        "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+        "client_pid": 460,
+        "width": 800,
+        "height": 600,
+        "elapsed_since_ready": 8.927
+      },
+      {
+        "file": "interaction-settings.png",
+        "png_sha256": "6efe0669b1b59f8767adaa632e983b8681a1dcbef8779f7662d71a4b09b486d8",
+        "frame_sha256": "eb186d5732ee1d69ae14999efb3784a5b89112aa7505804337f7ca51b18abfd2",
+        "frame_sequence": 811,
+        "frame_generation": 4,
+        "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+        "client_pid": 460,
+        "width": 800,
+        "height": 600,
+        "elapsed_since_ready": 11.263
+      }
+    ],
+    "finish_request": {
+      "format": 1,
+      "session_id": "af3ec8ee98b0c92961d843510a8f7109",
+      "client_pid": 460,
+      "action": "finish_interaction",
+      "bytes": 115,
+      "sha256": "9bc0964ba18f486443c7a72c93822dc37c8fd77320a30a9ab5eeba174e80c427"
+    }
+  },
+  "manual_visual_review": {
+    "status": "passed",
+    "reviewer": "root",
+    "review_method": "Root inspected all four saved interaction PNGs from this exact hosted session.",
+    "login_screen_visible": true,
+    "first_start_graphics_prompt_visible_before_input": true,
+    "cancel_graphics_prompt_effect_verified": true,
+    "graphics_prompt_still_visible_after_cancel": false,
+    "typed_test_marker_visible": true,
+    "test_marker": "COHINPUT",
+    "test_marker_field": "Account Name",
+    "settings_open_effect_verified": true,
+    "test_marker_visible_with_settings_open": true,
+    "graphics_prompt_visible_with_settings_open": false,
+    "all_scripted_input_effects_verified": true,
+    "failures": [],
+    "scope_note": "Manual visual review establishes the hosted RFB Cancel, account text and Settings effects. Producer input_effect_verified remains false. Android touch, controller and keyboard effects still require the separate device interaction gate."
+  },
+  "client_worktree": {
+    "format": 1,
+    "source_data": "/game-import/data",
+    "import": {
+      "generation": "generation-2ef36a9c4aa6456da1467b6f67d957a1",
+      "receipt_sha256": "2708ef46ed8f2d2a12d2f83531f1b99833f8e39927b91faa1d3c7da7b6be1360",
+      "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+      "file_count": 173011,
+      "total_bytes": 2977730517
+    },
+    "package_sha256": "da36e542d995f6335270f79e10f6b7486e42841e6edceedcd0c610827adca6a6",
+    "cache_archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+    "prerequisites_archive_sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e",
+    "prerequisites_manifest_sha256": "32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f",
+    "normalized_mtime_epoch": 1767225600,
+    "linked_files": 173005,
+    "copied_writable_files": 6,
+    "input_files": 173011,
+    "input_bytes": 2977730517,
+    "imported_inputs_readonly": true,
+    "imported_input_bytes_unchanged": true,
+    "imported_metadata_normalized": true,
+    "prepared_cache_files": 100,
+    "prepared_cache_bytes": 364703716,
+    "prepared_prerequisite_files": 3,
+    "prepared_prerequisite_bytes": 54948,
+    "writable_cache_roots": [
+      "bin",
+      "server/bin",
+      "geobin"
+    ],
+    "reused": false
+  },
+  "console": {
+    "path": "client-console.log",
+    "bytes": 39463670,
+    "sha256": "c17d240106f3134308f04fa31d6b33dfe3c8d7c0e46b23c3c110c676b5e92d05"
+  },
+  "private_cache_inventory": {
+    "path": "private-cache-inventory.json",
+    "files": 103,
+    "truncated": false
+  },
+  "android_execution_validated": false,
+  "android_surface_validated": false,
+  "android_input_validated": false,
+  "hardware_acceleration_validated": false,
+  "gameplay_validated": false,
+  "server_started": false,
+  "accepted_atlas_and_physical_client_startup_retested": false
+}

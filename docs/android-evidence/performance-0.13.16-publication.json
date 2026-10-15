@@ -1,0 +1,847 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "native_game_scene_and_frame_performance_retaining_public_0_13_15",
+  "repository_commit": "d41aab3dd1a2f169a0ec71ff47d56767a8eb65e5",
+  "continuation_branch": "codex/character-persistence-continuation",
+  "starting_head": "f346ccd3e2979dc12369de9c31f97e418745cb8f",
+  "version_name": "0.13.16",
+  "version_code": 31,
+  "release": {
+    "id": 405309851,
+    "tag": "coh-atlas-gameplay-v0.13.16",
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.16",
+    "draft": false,
+    "prerelease": true,
+    "target_commitish": "d41aab3dd1a2f169a0ec71ff47d56767a8eb65e5",
+    "published_at": "2026-10-07T02:21:31Z",
+    "assets": [
+      {
+        "id": 617314471,
+        "name": "COH-Atlas-Gameplay-0.13.16-testing.txt",
+        "bytes": 2837,
+        "sha256": "4382b8391ccb3210e95a2823fd61356706f3e293c85712a206be06401e874f4a",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.16/COH-Atlas-Gameplay-0.13.16-testing.txt"
+      },
+      {
+        "id": 617312668,
+        "name": "COH-Atlas-Gameplay-0.13.16.apk",
+        "bytes": 1557359204,
+        "sha256": "ddb1f26913291295248cd4195d0184c02b24849921a6b47fda391dd7af26c7d7",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.16/COH-Atlas-Gameplay-0.13.16.apk"
+      },
+      {
+        "id": 617314452,
+        "name": "COH-Atlas-Gameplay-0.13.16.apk.sha256",
+        "bytes": 97,
+        "sha256": "8476b40fc069fc4fdf0395c08aa5fdb178b4c16098f324ec6c56abf6ccee5307",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.16/COH-Atlas-Gameplay-0.13.16.apk.sha256"
+      }
+    ]
+  },
+  "immutable_tag": {
+    "ref": "refs/tags/coh-atlas-gameplay-v0.13.16",
+    "type": "commit",
+    "commit": "d41aab3dd1a2f169a0ec71ff47d56767a8eb65e5"
+  },
+  "hosted_run": {
+    "id": 37559820885,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37559820885",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-10-07T01:59:53Z",
+    "completed_at": "2026-10-07T02:24:13Z",
+    "jobs": [
+      {
+        "id": 112594362113,
+        "name": "changes",
+        "conclusion": "success",
+        "started_at": "2026-10-07T02:00:03Z",
+        "completed_at": "2026-10-07T02:00:29Z"
+      },
+      {
+        "id": 112594493301,
+        "name": "client",
+        "conclusion": "success",
+        "started_at": "2026-10-07T02:00:32Z",
+        "completed_at": "2026-10-07T02:10:59Z"
+      },
+      {
+        "id": 112597185524,
+        "name": "qualify",
+        "conclusion": "success",
+        "started_at": "2026-10-07T02:11:02Z",
+        "completed_at": "2026-10-07T02:16:51Z"
+      },
+      {
+        "id": 112598693474,
+        "name": "apk",
+        "conclusion": "success",
+        "started_at": "2026-10-07T02:16:54Z",
+        "completed_at": "2026-10-07T02:21:34Z"
+      },
+      {
+        "id": 112599879027,
+        "name": "public-audit",
+        "conclusion": "success",
+        "started_at": "2026-10-07T02:21:38Z",
+        "completed_at": "2026-10-07T02:24:12Z"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "id": 11457092428,
+      "name": "coh-client-scene-performance-public-byte-audit",
+      "zip_bytes": 546,
+      "zip_sha256": "6ec82dc27cbac1d3f6ca51905fe1b2bc2926d53135e6d35117ff55fded490183",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559820885/artifacts/11457092428",
+      "zip_downloaded_and_hash_verified": true
+    },
+    {
+      "id": 11456827065,
+      "name": "coh-client-scene-performance-qualification",
+      "zip_bytes": 492669,
+      "zip_sha256": "15595de49b0bf6aaeb92c0af6e73bebe7f6e6ed92d9b01bafca2b8344545392b",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559820885/artifacts/11456827065",
+      "zip_downloaded_and_hash_verified": true
+    },
+    {
+      "id": 11456671659,
+      "name": "coh-client-scene-performance-native",
+      "zip_bytes": 4033303,
+      "zip_sha256": "7b0f3bb76f1268537aafa20a82bf25e5027e7cfdf07fdf7a087ddfeea19512af",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559820885/artifacts/11456671659",
+      "zip_downloaded_and_hash_verified": true
+    },
+    {
+      "id": 11456666632,
+      "name": "coh-client-scene-performance-native-build-evidence",
+      "zip_bytes": 81697,
+      "zip_sha256": "9920dc1cd6bfcc7fcdc9715bb35928e94a7dd020dafa7b8a0b6a9b9ccbc0b357",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559820885/artifacts/11456666632",
+      "zip_downloaded_and_hash_verified": true
+    },
+    {
+      "id": 11456642652,
+      "name": "coh-client-scene-performance-packaging-evidence",
+      "zip_bytes": 1184451,
+      "zip_sha256": "8281a8a997cf02af56a62c462da3383f3837bbe62db0194d2604f4a01f0df625",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559820885/artifacts/11456642652",
+      "zip_downloaded_and_hash_verified": true
+    },
+    {
+      "id": 11456587762,
+      "name": "coh-client-scene-performance-apk",
+      "zip_bytes": 1562357368,
+      "zip_sha256": "95dc623775c7834eb46cc5e0c0529ffdddff523b7589217a735f0a7d32c795e2",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559820885/artifacts/11456587762",
+      "zip_downloaded_and_hash_verified": false
+    }
+  ],
+  "verified_receipt_files": {
+    "client-scene-performance-qualification.json": {
+      "bytes": 1873772,
+      "sha256": "b568013e8570a54aa5f274e9049a335c2f266f33458cc562879654bf7e52a97e",
+      "tests_run": 1163,
+      "suite_count": 76,
+      "skipped": 0,
+      "source_file_count": 9615,
+      "unchanged_java_file_count": 19,
+      "postgresql_emission_fixtures": [
+        "cancelled_child_deletion_commits",
+        "delete_insert_replacement_commits",
+        "duplicate_insert_23505_rollback"
+      ],
+      "postgresql_levelup_fixtures": [
+        "empty_child_duplicate_23505_rollback",
+        "empty_child_training_commit",
+        "missing_child_insert_commit",
+        "shuffled_child_read_training_commit"
+      ],
+      "actual_native_ancestry_validation": {
+        "actual_external_donor_and_win32_receipts_verified": true,
+        "full_guest_typed_client_wrapper_verified": true,
+        "older_native_history_unchanged": true,
+        "raw_source_histories_preserved": true,
+        "rejected_foreign_variants": [
+          "pg_header",
+          "pg_fixture",
+          "pg_extra",
+          "pg_patch",
+          "event_source",
+          "texture",
+          "event_bool",
+          "event_float",
+          "pg_digest",
+          "game_digest",
+          "progress_digest"
+        ],
+        "status": "passed"
+      }
+    },
+    "client-scene-performance-apk-build-report.json": {
+      "bytes": 4994538,
+      "sha256": "1135803a6a5bb68364d2baa3d94e7e4bbd148d0e7840fdc8b8a67e46c456bad6"
+    },
+    "client-scene-performance-native-manifest.json": {
+      "bytes": 52406,
+      "sha256": "b705eb00164400e01f815baec8ba0da11547f6049c77492c8750540819495cf6"
+    },
+    "client-scene-performance-native-checks.json": {
+      "bytes": 15691,
+      "sha256": "597f65cd29b1fea44ee937f2e84ac85594ddc35c43debc47cba7e4dcdd1b6bdc"
+    },
+    "CMakeCache.txt": {
+      "bytes": 39860,
+      "sha256": "8a5a374e1d58c58c28813cbe0132086f3a71357f3958ba676cf17f59aba15049"
+    },
+    "client-scene-performance-public-audit.json": {
+      "bytes": 540,
+      "sha256": "bf44963f4e0e3603e4ff48a6e3a67ff1d50112abb45d24400da38940a139d618",
+      "receipt": {
+        "bytes": 1557359204,
+        "format": 1,
+        "fresh_process_prepublication_audit_passed": true,
+        "physical_performance_validated": false,
+        "public_apk_checksum_and_notes_verified": true,
+        "public_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.16/COH-Atlas-Gameplay-0.13.16.apk",
+        "repository_commit": "d41aab3dd1a2f169a0ec71ff47d56767a8eb65e5",
+        "sdk_signer_payload_audit_passed": true,
+        "sha256": "ddb1f26913291295248cd4195d0184c02b24849921a6b47fda391dd7af26c7d7",
+        "status": "passed"
+      }
+    },
+    "COH-Atlas-Gameplay-0.13.16.apk.sha256": {
+      "bytes": 97,
+      "sha256": "8476b40fc069fc4fdf0395c08aa5fdb178b4c16098f324ec6c56abf6ccee5307"
+    },
+    "COH-Atlas-Gameplay-0.13.16-testing.txt": {
+      "bytes": 2837,
+      "sha256": "4382b8391ccb3210e95a2823fd61356706f3e293c85712a206be06401e874f4a"
+    }
+  },
+  "qualification": {
+    "tests_run": 1163,
+    "suites": 76,
+    "skipped": 0,
+    "postgresql_fixture_count": 7,
+    "postgresql_server": "16.15",
+    "source_files": 9615,
+    "unchanged_authored_java_files": 19,
+    "checks": {
+      "exact_game_only_payload_shell_source_and_server_extraction_verified": true,
+      "native_scene_frame_and_guest_controls_verified": true,
+      "retained_ui_beacon_gameplay_postgresql_and_recovery_guards_verified": true
+    },
+    "actual_native_ancestry_validation": {
+      "actual_external_donor_and_win32_receipts_verified": true,
+      "full_guest_typed_client_wrapper_verified": true,
+      "older_native_history_unchanged": true,
+      "raw_source_histories_preserved": true,
+      "rejected_foreign_variants": [
+        "pg_header",
+        "pg_fixture",
+        "pg_extra",
+        "pg_patch",
+        "event_source",
+        "texture",
+        "event_bool",
+        "event_float",
+        "pg_digest",
+        "game_digest",
+        "progress_digest"
+      ],
+      "status": "passed"
+    }
+  },
+  "conservation": {
+    "payload_members": 75,
+    "replaced": 7,
+    "byte_identical": 68,
+    "added": 0,
+    "replaced_paths": [
+      "assets/runtime/client-manifest.json",
+      "assets/runtime/client-runtime.zip",
+      "assets/runtime/client_interactive_diagnostic.py",
+      "assets/runtime/client_startup_diagnostic.py",
+      "assets/runtime/native_responsiveness_contract.py",
+      "assets/runtime/runtime-manifest.json",
+      "assets/runtime/texture_header_index.py"
+    ],
+    "wine_fex_mesa_unchanged": true,
+    "native_game_recompiled": true,
+    "native_mapserver_dbserver_unchanged": true,
+    "native_client_dll_dependencies_unchanged": true,
+    "client_archive_members": 22,
+    "byte_identical_client_dll_members": 20,
+    "android_shell_dex_resources_unchanged": true,
+    "android_binary_manifest_version_only_changed": true,
+    "original_ui_visual_geo_beacon_payloads_unchanged": true,
+    "prepared_client_server_cache_archives_unchanged": true,
+    "server_payload_extraction_preflight_unchanged": true,
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+    "signing_key_created": false,
+    "asset_reimport_required": false
+  },
+  "native_game": {
+    "compiled_in_current_run": true,
+    "package_reused": false,
+    "build_targets": [
+      "Game"
+    ],
+    "configuration": "OptDebug",
+    "architecture": "Win32",
+    "run_url": "https://github.com/Russianranger/coh-android/actions/runs/37559820885",
+    "executable": {
+      "sha256": "4de0e49d028ed75271b44838bffb570ae0112460183d1c441174cf9d9dc282d4",
+      "size": 9473024,
+      "pe_machine": 332,
+      "imports": [
+        "ADVAPI32.dll",
+        "cg.dll",
+        "cgGL.dll",
+        "COMDLG32.dll",
+        "DDRAW.dll",
+        "DINPUT8.dll",
+        "DSOUND.dll",
+        "GDI32.dll",
+        "GLU32.dll",
+        "IMM32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "ole32.dll",
+        "OPENGL32.dll",
+        "PhysXCooking.dll",
+        "PhysXLoader.dll",
+        "SHELL32.dll",
+        "USER32.dll",
+        "VERSION.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "delay_imports": []
+    },
+    "base_accepted_executable": {
+      "sha256": "cad33afc212113a5d116bf8fe63078034fa63c494c1a91ddadaf42cadf55fe9a",
+      "size": 9449984,
+      "pe_machine": 332,
+      "imports": [
+        "ADVAPI32.dll",
+        "cg.dll",
+        "cgGL.dll",
+        "COMDLG32.dll",
+        "DDRAW.dll",
+        "DINPUT8.dll",
+        "DSOUND.dll",
+        "GDI32.dll",
+        "GLU32.dll",
+        "IMM32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "ole32.dll",
+        "OPENGL32.dll",
+        "PhysXCooking.dll",
+        "PhysXLoader.dll",
+        "SHELL32.dll",
+        "USER32.dll",
+        "VERSION.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "delay_imports": []
+    },
+    "retained_imports_unchanged": true,
+    "postgresql_persistence_fixture": false,
+    "raw_cmake_cache_semantics_verified": {
+      "COH_PG_PERSISTENCE_TESTS": "OFF",
+      "CMAKE_GENERATOR_PLATFORM": "Win32",
+      "pin": {
+        "bytes": 39860,
+        "sha256": "8a5a374e1d58c58c28813cbe0132086f3a71357f3958ba676cf17f59aba15049"
+      }
+    },
+    "schema_sources_sha256": {
+      "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
+      "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+      "Common/seq/seqload.c": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f",
+      "Common/seq/seqload.h": "d5e18647985c120bb9637827cc594c39db35bef45c8fb1312eed329675dadff9"
+    },
+    "native_patch_sha256": {
+      "patches/client-scene-performance/0001-scene-loading-phase-and-preload.patch": "964183b9bf34361dbae465002b7417fb8abf2d76dc2666c6c529783f38d45158",
+      "patches/client-scene-performance/0002-native-frame-timing.patch": "6db278fee631001e7976122326bfb7befa47ae870d2e75835932565f0d841d73"
+    },
+    "native_headers_sha256": {
+      "Game/src/cohClientSceneTiming.h": "7f204ae0dea3dee4b2a8f77822e790f51aae0be624498051183503f17380afca",
+      "Game/src/cohClientFrameTiming.h": "1a96d2a31c719e5cec470b04e28fbdabc871749e65efe037198374be7cfe541b"
+    },
+    "native_source_sha256": {
+      "Game/src/game.c": "7a970aa0db124fb68ec37e8b4eb6f5907c4883f9f17a5475ec5b58e5dfa9adde",
+      "Game/src/graphics/gfx.c": "9965ea6a472a8b693015540a53142cdf023a2399ecc9dc88f338c5f0b4f42a7e",
+      "Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+      "Game/src/group/groupnetrecv.c": "f4cccb5a51acea3448191965470eaa349034c4f6fa1c729fa52aed0888c7004d",
+      "Common/seq/gfxtree.c": "14a7c61a8285acd31c58a45d92ff91a1a9d4d6be41c912a1f373724158d72903",
+      "Common/seq/gfxtree.h": "3d3e331c45447b29663c09539574220982bda5a631902414301e05f06fe4fc9f",
+      "Game/src/render/thread/rt_win_init.c": "857f427d41ea719a7407ebfa908c739620c5839c7415ccbf33fbbe01808c9512"
+    },
+    "native_patched_sha256": {
+      "Game/src/game.c": "186d1ad202392022be2fc65502964ab12906525be788ea8806ab480fa352dc3f",
+      "Game/src/graphics/gfx.c": "2c710504992c89693f0082f57053ee57223efef56b7819413df7ef71a0ffcd09",
+      "Game/src/clientcomm/clientcomm.c": "2055de10b84a553919fdb6dde6a7340a5217bb22b74996763c1e4ec0bf569657",
+      "Game/src/group/groupnetrecv.c": "c9e859e4b032c45b2fe88801968c98a4c46ac4d9c3986f60f547fb3a9f96623e",
+      "Common/seq/gfxtree.c": "2da00d11165df9c2313a54a4b767a540acefb00db6d65cbd561c0a0ffbdcbfa2",
+      "Common/seq/gfxtree.h": "3adf5efeffc863a4460ed0a2f1d7be66f9f0e08536b76944b02bc9a61f9c528b",
+      "Game/src/render/thread/rt_win_init.c": "dd5872fccaeee91ed1e01980ad8a890346dfcfa5969e0c0055ede5f9eb6de109"
+    },
+    "reverse_patch_exact_base_verified": true,
+    "cache_encoding_changed": false,
+    "source_freshness_changed": false,
+    "renderer_changed": false,
+    "windows_qualification": {
+      "format": 1,
+      "status": "passed",
+      "platform": "windows",
+      "architecture": "Win32",
+      "configuration": "OptDebug",
+      "build_input": {
+        "format": 1,
+        "role": "bounded_client_scene_and_frame_performance",
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "base_client_startup_followup_build_input": {
+          "format": 1,
+          "role": "bounded_client_dependency_preload",
+          "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+          "base_client_loading_build_input": {
+            "format": 1,
+            "role": "bounded_client_binary_loading",
+            "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+            "base_startup_client_build_input": {
+              "format": 1,
+              "role": "verified_root_client_startup_supplement",
+              "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+              "base_texture_build_input": {
+                "format": 1,
+                "role": "opt_in_client_texture_header_index",
+                "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+                "patch_sha256": "880b2f09e4666552e739fe37ca319f4d42ad6b5f15ea1a276803f7bc14e31a3a",
+                "source_sha256": {
+                  "Game/src/render/tex.c": "4507ee6fa752ed9452e78c4c989a9de0bdf93d81dd3597f1b1db063d73f1ca5c",
+                  "Game/src/render/tex.h": "56e56aea12a4126250f5f6f4d2211f62814b7eae4ad2598271f5423b60680552",
+                  "Common/gameComm/NPC.c": "6d56de265c788f83c3511d0593fdb8b9fcdef8001332bb5335dc1ec1c58decc9",
+                  "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+                  "Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7"
+                },
+                "patched_sha256": {
+                  "Game/src/render/tex.c": "62a2bbdc5ade668ccf941baaf5757ce3d72142f06a61ee4f50e554a1357107de",
+                  "Game/src/render/tex.h": "dcbdb5ceeb855ac9ce8746dff5d7608e43373ea62e2944dc08aa46dca0781b46",
+                  "Common/gameComm/NPC.c": "3a29ac19011f9836fffb77b516e6dfc9db914c2f4797985ff454f4c1fbd1470c",
+                  "Common/gameData/costume_data.c": "186cb4bc4e6fdd3b80462b9326bfaa6dc78bc164a91bc5b97504dfe1d483c92d",
+                  "Common/seq/tricks.c": "37a6df5714a26f08b54633c4ef21e69ef2af963702bbde6cf29ffd28676211b6"
+                },
+                "overlay_sha256": {
+                  "Game/src/render/coh_texture_header_index.h": "7751215ae9c6b76778e9cdb88bb860155227cd052a610ad01b5cd3a7df911cff"
+                },
+                "texture_header_struct_bytes": 32,
+                "parse6_schema_changes": false,
+                "full_texture_asset_changes": false,
+                "fallback": "ordinary_native_file_reads",
+                "runtime_performance_validated": false
+              },
+              "patch": "patches/startup-bundle-client/0001-verified-texture-root.patch",
+              "patch_sha256": "00cb463cdc4d32b4de622922e6b91316cca5dcb2da46ae00a51b6ab23fd6b470",
+              "source_sha256": {
+                "Game/src/render/tex.c": "62a2bbdc5ade668ccf941baaf5757ce3d72142f06a61ee4f50e554a1357107de"
+              },
+              "patched_sha256": {
+                "Game/src/render/tex.c": "9fb84c3c988c1b5d4d2977a5123cc1b5251b3b1543c1aec39ec5e4db9e8655ac"
+              },
+              "overlay_sha256": {
+                "Game/src/render/coh_texture_header_root.h": "99f0726de4a90915f5ce8501d25e1fea1c4640459e5450375b22cda07762969e"
+              },
+              "build_targets": [
+                "Game"
+              ],
+              "configuration": "OptDebug",
+              "architecture": "Win32",
+              "parse6_schema_changes": false,
+              "full_texture_asset_changes": false,
+              "graphics_profile_changes": false,
+              "gameplay_validation_changes": false,
+              "verified_root_environment": "COH_TEXTURE_HEADER_ROOT",
+              "missing_texture_reporting": {
+                "environment_variable": "COH_STARTUP_DIAGNOSTIC_BOUND",
+                "enabled_value": "1",
+                "disabled_by_default": true,
+                "sample_limit_per_stage": 1024,
+                "retained_key_limit_per_stage": 8192,
+                "all_validation_retained": true
+              },
+              "runtime_execution_validated": false
+            },
+            "patch": "patches/client-loading/0001-known-length-string-copy-and-profile.patch",
+            "patch_sha256": "c989c1518af562b09bef114ba1c694b39410de56d6da9d3c55f77fe9ad6e6a5a",
+            "source_sha256": {
+              "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
+            },
+            "patched_sha256": {
+              "libs/UtilitiesLib/src/utils/textparser.c": "37fd5d37ba3122cf4fdd08c3c9882a978bda46a6b394151d55ebafc3f3694c17"
+            },
+            "preserved_functions_sha256": {
+              "int ParseTableCRC(": "7dd0a9cbe0439d394c42f0b7c744acfb1ed9702e50aa4238f47205eba4f7a9af",
+              "int ParserReadBinaryTable(": "d16ffc12c52e3b9b8ec51fd47f223f70f3e05dd704c1c96b3bb15a434aab6a63",
+              "void*    StructAllocRawDbg(": "ead2f0d7a9568db2c5155bc068f03814cc4ccced75f7f6f92727e9e6e332cb94",
+              "void    StructFree(": "a0b9935c1b179b4245f9e2c0b8bd8f535c58040ba37c3d67d597d697603550f9",
+              "void StructFreeString(": "e3b34de084e4cf2860da5e228af2ef8920209fabb156f18ab3f4e89226d77b17",
+              "static FileScanAction DateCheckCallback(": "dcd45feed3c7ca5ba4c8c977d85140eeb7e75b74757501d79e29a3f148c4eab7"
+            },
+            "reverse_patch_exact_base_verified": true,
+            "known_length_copy": {
+              "environment_variable": "COH_CLIENT_KNOWN_STRING_COPY",
+              "enabled_value": "1",
+              "disabled_by_default": true,
+              "negative_length_only": true,
+              "explicit_length_secure_crt_preserved": true,
+              "allocation_and_free_behavior_preserved": true
+            },
+            "bin_profile": {
+              "environment_variable": "COH_CLIENT_BIN_PROFILE",
+              "enabled_value": "1",
+              "disabled_by_default": true,
+              "record_prefix": "COH_CLIENT_BIN_PROFILE_V1",
+              "phases": [
+                "open",
+                "freshness",
+                "decode"
+              ],
+              "thread_local_flags_and_counters": true,
+              "stock_freshness_and_crc_preserved": true,
+              "clock": "GetTickCount_unsigned_wrap"
+            },
+            "build_targets": [
+              "Game"
+            ],
+            "configuration": "OptDebug",
+            "architecture": "Win32",
+            "cache_encoding_changed": false,
+            "parse6_schema_changes": false,
+            "source_freshness_changed": false,
+            "graphics_profile_changes": false,
+            "runtime_execution_validated": false
+          },
+          "patch": "patches/client-startup-followup/0001-preload-power-dependency-tree.patch",
+          "patch_sha256": "96559ac8ef1470c1a9b3d78c8928bc68f960fdf4fcfaa8b59b37cf680b50b178",
+          "source_sha256": {
+            "libs/UtilitiesLib/src/utils/textparser.c": "37fd5d37ba3122cf4fdd08c3c9882a978bda46a6b394151d55ebafc3f3694c17"
+          },
+          "patched_sha256": {
+            "libs/UtilitiesLib/src/utils/textparser.c": "818bedf2e48b53d3acc77d178f9be2fef986a43846d7909e46757cc0485dad49"
+          },
+          "preserved_functions_sha256": {
+            "int ParseTableCRC(": "7dd0a9cbe0439d394c42f0b7c744acfb1ed9702e50aa4238f47205eba4f7a9af",
+            "int ParserReadBinaryTable(": "d16ffc12c52e3b9b8ec51fd47f223f70f3e05dd704c1c96b3bb15a434aab6a63",
+            "int ParserReadBinaryFile(": "02044be973527347de72e1ea38627d1b324d97a3cbf4f882b022c6d4f7260261",
+            "char* StructAllocStringLenDbg(": "59f6cb2a6e3a055ab6ad1ae845677a1a588bccb75cc638267f5614d9fa50fa60",
+            "static FileScanAction DateCheckCallback(": "dcd45feed3c7ca5ba4c8c977d85140eeb7e75b74757501d79e29a3f148c4eab7",
+            "void*    StructAllocRawDbg(": "ead2f0d7a9568db2c5155bc068f03814cc4ccced75f7f6f92727e9e6e332cb94",
+            "void    StructFree(": "a0b9935c1b179b4245f9e2c0b8bd8f535c58040ba37c3d67d597d697603550f9",
+            "void StructFreeString(": "e3b34de084e4cf2860da5e228af2ef8920209fabb156f18ab3f4e89226d77b17"
+          },
+          "reverse_patch_exact_base_verified": true,
+          "freshness_body_exact_except_preload_call": true,
+          "native_callsite_sources_sha256": {
+            "Common/entity/load_def.c": "b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5",
+            "Common/entity/powers_load.c": "c5b7bbf32621922a36ba097d566840bdd9d4afc692d8e3baacd0e207dc1e12b8",
+            "Common/seq/seqload.c": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f",
+            "libs/UtilitiesLib/src/utils/FolderCache.c": "93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c",
+            "libs/UtilitiesLib/src/utils/FolderCacheNode.c": "36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524",
+            "libs/UtilitiesLib/src/utils/file.c": "8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1"
+          },
+          "dependency_preload": {
+            "environment_variable": "COH_CLIENT_DEPENDENCY_PRELOAD",
+            "enabled_value": "1",
+            "disabled_by_default": true,
+            "requests": [
+              {
+                "persistfile": "bin/powers.bin",
+                "directory": "defs/powers/",
+                "filemask": ".powers",
+                "requested_tree": "Menu"
+              },
+              {
+                "persistfile": "bin/sequencers.bin",
+                "directory": "sequencers",
+                "filemask": ".txt",
+                "requested_tree": "player_library/animations"
+              }
+            ],
+            "scope": "ordinary_FolderCache_metadata_only",
+            "source_freshness_preserved": true,
+            "crc_validation_preserved": true,
+            "cache_encoding_changed": false,
+            "full_asset_bytes_preloaded": false,
+            "native_fallback_preserved": true,
+            "record_prefix": "COH_CLIENT_DEPENDENCY_PRELOAD_V1"
+          },
+          "build_targets": [
+            "Game"
+          ],
+          "configuration": "OptDebug",
+          "architecture": "Win32",
+          "cache_encoding_changed": false,
+          "parse6_schema_changes": false,
+          "source_freshness_changed": false,
+          "graphics_profile_changes": false,
+          "runtime_execution_validated": false
+        },
+        "patches_sha256": {
+          "patches/client-scene-performance/0001-scene-loading-phase-and-preload.patch": "964183b9bf34361dbae465002b7417fb8abf2d76dc2666c6c529783f38d45158",
+          "patches/client-scene-performance/0002-native-frame-timing.patch": "6db278fee631001e7976122326bfb7befa47ae870d2e75835932565f0d841d73"
+        },
+        "source_sha256": {
+          "Game/src/game.c": "7a970aa0db124fb68ec37e8b4eb6f5907c4883f9f17a5475ec5b58e5dfa9adde",
+          "Game/src/graphics/gfx.c": "9965ea6a472a8b693015540a53142cdf023a2399ecc9dc88f338c5f0b4f42a7e",
+          "Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+          "Game/src/group/groupnetrecv.c": "f4cccb5a51acea3448191965470eaa349034c4f6fa1c729fa52aed0888c7004d",
+          "Common/seq/gfxtree.c": "14a7c61a8285acd31c58a45d92ff91a1a9d4d6be41c912a1f373724158d72903",
+          "Common/seq/gfxtree.h": "3d3e331c45447b29663c09539574220982bda5a631902414301e05f06fe4fc9f",
+          "Game/src/render/thread/rt_win_init.c": "857f427d41ea719a7407ebfa908c739620c5839c7415ccbf33fbbe01808c9512"
+        },
+        "patched_sha256": {
+          "Game/src/game.c": "186d1ad202392022be2fc65502964ab12906525be788ea8806ab480fa352dc3f",
+          "Game/src/graphics/gfx.c": "2c710504992c89693f0082f57053ee57223efef56b7819413df7ef71a0ffcd09",
+          "Game/src/clientcomm/clientcomm.c": "2055de10b84a553919fdb6dde6a7340a5217bb22b74996763c1e4ec0bf569657",
+          "Game/src/group/groupnetrecv.c": "c9e859e4b032c45b2fe88801968c98a4c46ac4d9c3986f60f547fb3a9f96623e",
+          "Common/seq/gfxtree.c": "2da00d11165df9c2313a54a4b767a540acefb00db6d65cbd561c0a0ffbdcbfa2",
+          "Common/seq/gfxtree.h": "3adf5efeffc863a4460ed0a2f1d7be66f9f0e08536b76944b02bc9a61f9c528b",
+          "Game/src/render/thread/rt_win_init.c": "dd5872fccaeee91ed1e01980ad8a890346dfcfa5969e0c0055ede5f9eb6de109"
+        },
+        "overlay_sha256": {
+          "Game/src/cohClientSceneTiming.h": "7f204ae0dea3dee4b2a8f77822e790f51aae0be624498051183503f17380afca",
+          "Game/src/cohClientFrameTiming.h": "1a96d2a31c719e5cec470b04e28fbdabc871749e65efe037198374be7cfe541b"
+        },
+        "reverse_patch_exact_base_verified": true,
+        "controls": {
+          "scene_profile": {
+            "environment_variable": "COH_CLIENT_SCENE_PROFILE",
+            "enabled_value": "1",
+            "disabled_by_default": true,
+            "record_prefix": "COH_CLIENT_SCENE_PHASE_V1",
+            "bounded": true
+          },
+          "discarded_fx_preload": {
+            "environment_variable": "COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD",
+            "enabled_value": "1",
+            "disabled_by_default": true,
+            "stock_fallback_preserved": true,
+            "surviving_post_invalidation_preload_preserved": true
+          },
+          "frame_profile": {
+            "environment_variable": "COH_CLIENT_FRAME_TIMING",
+            "enabled_value": "1",
+            "disabled_by_default": true,
+            "record_prefix": "COH_CLIENT_FRAME_TIMING_V1",
+            "aggregate_only": true,
+            "bounded": true
+          }
+        },
+        "build_targets": [
+          "Game"
+        ],
+        "configuration": "OptDebug",
+        "architecture": "Win32",
+        "cache_encoding_changed": false,
+        "parse6_schema_changes": false,
+        "source_freshness_changed": false,
+        "graphics_profile_changes": false,
+        "renderer_changed": false,
+        "gameplay_validation_changes": false,
+        "runtime_execution_validated": false
+      },
+      "scene": {
+        "format": 1,
+        "status": "passed",
+        "platform": "windows",
+        "architecture": "Win32",
+        "configuration": "OptDebug",
+        "compiler_options": [
+          "/O2",
+          "/Oy-",
+          "/MT",
+          "/TC"
+        ],
+        "harness_sha256": "0b81cd600917232cf9aacca9a58409529233eacceff030a1a6ea16bcc16ce1e3",
+        "patch_sha256": "964183b9bf34361dbae465002b7417fb8abf2d76dc2666c6c529783f38d45158",
+        "header_sha256": "7f204ae0dea3dee4b2a8f77822e790f51aae0be624498051183503f17380afca",
+        "baseline_fallback_verified": true,
+        "discarded_preload_elision_verified": true,
+        "surviving_preload_and_invalidation_verified": true,
+        "scene_phase_bound_verified": true,
+        "scene_failure_and_wait_paths_preserved": true,
+        "physical_scene_savings_validated": false
+      },
+      "frame": {
+        "format": 1,
+        "status": "passed",
+        "platform": "windows",
+        "architecture": "Win32",
+        "configuration": "OptDebug",
+        "compiler_options": [
+          "/O2",
+          "/Oy-",
+          "/MT",
+          "/TC"
+        ],
+        "patch_sha256": "6db278fee631001e7976122326bfb7befa47ae870d2e75835932565f0d841d73",
+        "header_sha256": "1a96d2a31c719e5cec470b04e28fbdabc871749e65efe037198374be7cfe541b",
+        "harness_sha256": "73a4ebb43824a776bbc482b20568dbd12e899cea5b802327402eae3390b4c3c4",
+        "production_harness_sha256": "9d36740da30706ad58c54257ebbd68c994fe379f3f9f20277bbb0d61eeccefaa",
+        "wall_pacing_and_submission_separation_verified": true,
+        "presentation_swap_wall_verified": true,
+        "histogram_upper_bounds_verified": true,
+        "menu_loading_gameplay_mixed_states_verified": true,
+        "report_rate_and_120_report_cap_verified": true,
+        "disabled_without_clock_cpu_or_logging_verified": true,
+        "clock_failure_nonfatal_verified": true,
+        "fixed_buffer_full_state_format_verified": true,
+        "genuine_win32_qpc_and_thread_cpu_verified": true,
+        "genuine_win32_tls_and_concurrent_json_verified": true,
+        "retained_native_crt_macro_isolation_and_restoration_verified": true,
+        "physical_frame_rate_or_gpu_latency_validated": false
+      }
+    },
+    "raw_source_histories_preserved": true,
+    "source_ancestry_eol_policy": "Only the two independently hashed PostgreSQL C/H LF/CRLF variants and their three verified enclosing canonical digests may differ; typed canonical comparison preserves every other JSON field. Older native layers remain exact."
+  },
+  "performance_changes": {
+    "discarded_fx_preload": "Opt-in elision only of the gfx tree FX preload immediately discarded by groupReset/modelFreeAllCache; mandatory surviving preload and stock fallback retained.",
+    "scene_profile": "COH_CLIENT_SCENE_PROFILE=1 emits bounded COH_CLIENT_SCENE_PHASE_V1 phases.",
+    "frame_profile": "COH_CLIENT_FRAME_TIMING=1 emits bounded 10-second COH_CLIENT_FRAME_TIMING_V1 main/presentation wall and thread CPU aggregates.",
+    "controls": {
+      "scene_profile": {
+        "environment_variable": "COH_CLIENT_SCENE_PROFILE",
+        "enabled_value": "1",
+        "disabled_by_default": true,
+        "record_prefix": "COH_CLIENT_SCENE_PHASE_V1",
+        "bounded": true
+      },
+      "discarded_fx_preload": {
+        "environment_variable": "COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD",
+        "enabled_value": "1",
+        "disabled_by_default": true,
+        "stock_fallback_preserved": true,
+        "surviving_post_invalidation_preload_preserved": true
+      },
+      "frame_profile": {
+        "environment_variable": "COH_CLIENT_FRAME_TIMING",
+        "enabled_value": "1",
+        "disabled_by_default": true,
+        "record_prefix": "COH_CLIENT_FRAME_TIMING_V1",
+        "aggregate_only": true,
+        "bounded": true
+      }
+    },
+    "legacy_bin_profile": "Disabled only for the verified current scene/frame producer; existing known-length copy and guarded dependency preload remain enabled.",
+    "renderer_resolution_frame_cap_unchanged": true,
+    "shader_driver_runtime_changes": false,
+    "zoning_implementation_changed": false
+  },
+  "physical_validation": {
+    "status": "pending",
+    "physical_startup_savings_validated": false,
+    "physical_fps_or_smoothness_improvement_validated": false,
+    "physical_visual_gameplay_validated_for_this_build": false,
+    "accepted_prior_evidence": "0.13.14 UI/beacons/objective tracking/NPC movement/combat/task completion retained; 0.13.15 physical startup evidence in docs/android-evidence/performance-0.13.15-thor-20261007.json.",
+    "next_test_checklist": "docs/COH-Atlas-Gameplay-0.13.16-testing.txt",
+    "phase_report_tool": "tools/android/interactive/analyze_client_scene_performance.py"
+  },
+  "other_workflow_outcomes": [
+    {
+      "id": 37559824526,
+      "name": "Thor Atlas Park server candidate",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559824526"
+    },
+    {
+      "id": 37559824548,
+      "name": "Character persistence",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559824548"
+    },
+    {
+      "id": 37559824614,
+      "name": "Character session and Atlas transfer",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559824614"
+    },
+    {
+      "id": 37559824518,
+      "name": "PostgreSQL backend",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559824518"
+    },
+    {
+      "id": 37559824421,
+      "name": "Thor client presentation candidate",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559824421"
+    },
+    {
+      "id": 37559824422,
+      "name": "Thor real DbServer candidate",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559824422"
+    },
+    {
+      "id": 37559824485,
+      "name": "Thor Atlas asset import candidate",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559824485"
+    },
+    {
+      "id": 37559820911,
+      "name": "Thor NPC appearance and guarded Game dependency preload",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559820911"
+    },
+    {
+      "id": 37559820867,
+      "name": "Thor verified startup cache and client lookup bundle",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559820867"
+    },
+    {
+      "id": 37559820903,
+      "name": "Thor client loading and LOD enemy visual repair",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559820903"
+    },
+    {
+      "id": 37559820907,
+      "name": "Thor real DbServer candidate",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37559820907"
+    }
+  ]
+}

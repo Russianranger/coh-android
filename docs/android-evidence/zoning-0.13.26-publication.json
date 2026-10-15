@@ -1,0 +1,575 @@
+{
+  "accepted_baseline": {
+    "archive_sha256": "5aae571b698eaed74f67436a54effb0867cb9b1a8d5bbc8099061a85d9de9e5b",
+    "every_control_physically_qualified": false,
+    "evidence": "docs/android-evidence/render-queue-0.13.25-thor-20261010.json",
+    "mean_hz": 23.278,
+    "mean_interval_ms": 42.959,
+    "native_renderer": "zink (Turnip Adreno (TM) 740)",
+    "pure_cap30_gameplay_frames": 1866,
+    "report": "coh-atlas-gameplay-20261010-183224.zip",
+    "user_acceptance": "Much improved FPS; serviceable testing baseline, sustained 30 FPS still unmet",
+    "version": "0.13.25"
+  },
+  "apk": {
+    "apk": "COH-Atlas-Gameplay-0.13.26.apk",
+    "bytes": 1560361816,
+    "runtime_manifest_sha256": "6b40f4335b7ed1216bc40ddd2e8639fbc6492f2c2cf47f5e64fc891cffdea351",
+    "sha256": "b14bfd307fc2c51bd628670efbed1e03fc2283408ee73546aa8b6fe8bbbf3c60",
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282"
+  },
+  "artifacts": {
+    "packaging": {
+      "id": 11679725521,
+      "name": "coh-client-zoning-packaging-evidence",
+      "receipt": {
+        "bytes": 5636646,
+        "name": "client-zoning-apk-build-report.json",
+        "sha256": "301cce32b71ff31cd275bbd0bd73592f88e37ec4921a21fbe6afb0a095161238"
+      },
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11679725521",
+      "zip_bytes": 1307615,
+      "zip_sha256": "328e847d26d9e9c7960b79d7a672d2ba5c43eab70b48bb84701ceab44d7bbb5f"
+    },
+    "public-audit": {
+      "id": 11678703964,
+      "name": "coh-client-zoning-public-byte-audit",
+      "receipt": {
+        "bytes": 1243,
+        "name": "client-zoning-public-byte-audit.json",
+        "sha256": "a686e0bca6c03a78234011a26b26c9377630dc027fa84d64f7738aba3516dd0c"
+      },
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11678703964",
+      "zip_bytes": 749,
+      "zip_sha256": "d05b86a457446c74d4cc5b4535ffee79a07cfdb2fef1b6268ef8c097060ebb71"
+    },
+    "qualification": {
+      "id": 11679539068,
+      "name": "coh-client-zoning-qualification",
+      "receipt": {
+        "bytes": 2088124,
+        "name": "client-zoning-qualification.json",
+        "sha256": "d40f02e79726c74ac666082dd911fd587b021d4ed4c39d946be4c43afaafebd2"
+      },
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11679539068",
+      "zip_bytes": 532712,
+      "zip_sha256": "700f0ed2a880999eac78bb82bb9384d8e63819969d41e38f474bc51c0fe3e571"
+    }
+  },
+  "attempt_history": [
+    {
+      "conclusion": "failure",
+      "reason": "Retained Java test harness lacked zoningEnabled API; no APK published",
+      "run_id": 38077272560,
+      "source": "8ddeec9bc2ca6f2233ee3c55556d5ba70978989d"
+    },
+    {
+      "conclusion": "cancelled",
+      "reason": "Superseded while pending by final runtime-profile and startup-stage fixes; no jobs or APK",
+      "run_id": 38077528829,
+      "source": "bc8574247041fae97256d66b69a0ee92b1b59579"
+    }
+  ],
+  "branch": "codex/character-persistence-continuation",
+  "conservation": {
+    "added_apk_payloads": [
+      "assets/runtime/character_zoning.py"
+    ],
+    "added_java_sources": [
+      "android/zoning/src/main/java/io/github/russianranger/cohclientinteractive/ClientZoning.java"
+    ],
+    "authored_java_sources_verified": 20,
+    "baseline_payloads_verified": 77,
+    "changed_apk_payloads": [
+      "assets/runtime/character_creation_diagnostic.py",
+      "assets/runtime/character_reopen_diagnostic.py",
+      "assets/runtime/character_session_budget.py",
+      "assets/runtime/client-manifest.json",
+      "assets/runtime/local_character_server.py",
+      "assets/runtime/runtime-manifest.json"
+    ],
+    "changed_java_sources": [
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSessionBudget.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java"
+    ],
+    "graphics_driver_changed": false,
+    "native_client_recompiled": false,
+    "native_dbserver_recompiled": false,
+    "native_mapserver_recompiled": false,
+    "retained_baseline_payloads_verified": 71,
+    "retained_java_sources_verified": 13,
+    "retained_native_repository_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+    "retained_runtime_repository_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+    "save_acceptance_relaxed": false,
+    "setup_memory_guards_preserved": true,
+    "software_fallback_preserved": true,
+    "successful_gpu_driver_and_both_probes_retained": true,
+    "world_assets_changed": false
+  },
+  "device_followups": [
+    {
+      "attachment": {
+        "bytes": 1604927,
+        "members": [
+          {
+            "bytes": 8338,
+            "name": "android-client-report.json"
+          },
+          {
+            "bytes": 109,
+            "name": "operation.log"
+          },
+          {
+            "bytes": 990,
+            "name": "runtime-setup-service.json"
+          },
+          {
+            "bytes": 1357863,
+            "name": "runtime-manifest.json"
+          },
+          {
+            "bytes": 4128,
+            "name": "identities/accepted-runtime-manifest.json"
+          },
+          {
+            "bytes": 934650,
+            "name": "identities/atlas-beacon-manifest.json"
+          },
+          {
+            "bytes": 4258210,
+            "name": "identities/atlas-world-supplement-manifest.json"
+          },
+          {
+            "bytes": 28554,
+            "name": "identities/character-avatar-defaults-manifest.json"
+          },
+          {
+            "bytes": 9284,
+            "name": "identities/client-manifest.json"
+          },
+          {
+            "bytes": 1005794,
+            "name": "identities/server-animation-manifest.json"
+          },
+          {
+            "bytes": 39041,
+            "name": "identities/server-cache-manifest.json"
+          },
+          {
+            "bytes": 32549,
+            "name": "identities/startup-dbserver-manifest.json"
+          },
+          {
+            "bytes": 1688,
+            "name": "runtime-lock.json"
+          },
+          {
+            "bytes": 923,
+            "name": "atlas-import.properties"
+          }
+        ],
+        "name": "coh-atlas-gameplay-20261011-003909.zip",
+        "sha256": "edf14b2b78a62299873af0a46feb4ea609710c96ecf3d36349131aa5a891f9ee",
+        "zip_integrity_passed": true
+      },
+      "captured_attempt": {
+        "character_saved_event": null,
+        "cleanup_scope": "No launch in this retry; not proof that the preceding live session cleaned up",
+        "cleanup_verified": true,
+        "decoded_frames": 0,
+        "elapsed_ms": 1684,
+        "error": "A previous private display socket remains. Export the report before running another check.",
+        "finish_requested": false,
+        "finished_utc_derived_from_elapsed": "2026-10-11T00:39:00.616000+00:00",
+        "input_events_sent": 0,
+        "process_exit_code": -1,
+        "profile_state": "READY",
+        "profile_state_scope": "Structural readiness, not committed SQL save proof",
+        "run_id": "1791679138932-6f3912917830",
+        "save_logout_requested": false,
+        "scope": "Later reopen preflight; not the user-reported successful zoning session",
+        "session_id": "cc1e3e4a780048e7979f6b0e97d98979",
+        "started_utc": "2026-10-11T00:38:58.932000+00:00",
+        "zoning_events": 0,
+        "zoning_samples": 0
+      },
+      "exit_history": {
+        "interpretation": "A prior .26 process has REASON_LOW_MEMORY. Missing earlier session timeline prevents binding it to Finish or backgrounding. Android 13 reason 10 is not unique to force-stop. No crash trace is present.",
+        "low_memory_record": {
+          "importance": 100,
+          "milliseconds_before_captured_retry": 15711972,
+          "pid": 28592,
+          "reason": 3,
+          "same_pid_as_026_runtime_setup": true,
+          "timestamp_utc": "2026-10-10T20:17:06.960000+00:00"
+        },
+        "records": [
+          {
+            "importance": 400,
+            "pid": 16347,
+            "process_name": "io.github.russianranger.cohclientinteractive",
+            "pss_kib": 66102,
+            "reason": 10,
+            "rss_kib": 172452,
+            "status": 0,
+            "timestamp_utc_ms": 1791663460326
+          },
+          {
+            "importance": 400,
+            "pid": 15958,
+            "process_name": "io.github.russianranger.cohclientinteractive",
+            "pss_kib": 0,
+            "reason": 10,
+            "rss_kib": 0,
+            "status": 0,
+            "timestamp_utc_ms": 1791663440717
+          },
+          {
+            "importance": 100,
+            "pid": 28592,
+            "process_name": "io.github.russianranger.cohclientinteractive",
+            "pss_kib": 138789,
+            "reason": 3,
+            "rss_kib": 243200,
+            "status": 0,
+            "timestamp_utc_ms": 1791663426960
+          },
+          {
+            "importance": 400,
+            "pid": 18270,
+            "process_name": "io.github.russianranger.cohclientinteractive",
+            "pss_kib": 99244,
+            "reason": 10,
+            "rss_kib": 209412,
+            "status": 0,
+            "timestamp_utc_ms": 1791657633952
+          }
+        ],
+        "reference": "https://developer.android.com/reference/android/app/ApplicationExitInfo"
+      },
+      "identity": {
+        "actual_Game_execution_in_captured_run": false,
+        "actual_renderer_observed": null,
+        "android_sdk": 33,
+        "app_version": "0.13.26",
+        "declared_retained_native_source": "c512e912a004b66886a7667640aa1a967e95de64",
+        "device": "AYN AYN Thor",
+        "exported_pretty_manifest_sha256": "d4653fbdf40537753e616678bd32a354a3a01a04cc13fa6b738ab7d045aa5cd5",
+        "gpu_requested": "turnip",
+        "graphics_requested": "performance",
+        "installed_runtime_manifest_sha256_reported": "6b40f4335b7ed1216bc40ddd2e8639fbc6492f2c2cf47f5e64fc891cffdea351",
+        "manifest_content_equals_published_runtime": true,
+        "manifest_serialization_note": "ClientRuntime publishes parsed manifest via toString(2); exported member bytes differ from the installed asset while JSON content matches exactly",
+        "runtime_repository_commit": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b"
+      },
+      "missing_evidence": [
+        "Original zoning session lifecycle and native arrival logs",
+        "Guest report ZIP",
+        "Saved-character SQL/native-position receipt",
+        "Actual Game renderer and FPS samples",
+        "Exact transfer destinations and durations",
+        "Crash or ANR trace"
+      ],
+      "native_or_graphics_changed": false,
+      "new_build_performed": false,
+      "next_scope": [
+        "Preserve and expose earlier evidence before a retry",
+        "Durable live-session checkpoints and interruption reports",
+        "Check ownership/liveness before narrow dead-socket recovery; never blindly unlink",
+        "Foreground-service-owned bounded report export"
+      ],
+      "no_repeat_of_user_success_requested": true,
+      "recorded_date_utc": "2026-10-11",
+      "save_acceptance_relaxed": false,
+      "source_review": {
+        "accepted_Finish_foreground_until_internal_report": true,
+        "external_export_owner": "Activity executor without foreground/wake ownership",
+        "live_zoning_lifecycle_checkpointed_before_final_report": false,
+        "old_archives_exposed_in_UI": false,
+        "older_completed_archives_may_remain": true,
+        "retry_invalidates_latest_pointer_before_preflight": true,
+        "retry_retires_fixed_guest_outputs_before_socket_preflight": true,
+        "source": "40edd1524b9ab0f1bcfaa037d8f86cdf4b5cd249"
+      },
+      "user_local_date": "2026-10-10",
+      "user_observation": {
+        "cause_confirmed": false,
+        "exact_destinations_and_final_save_verified_from_archive": false,
+        "interruption": "App disappeared after attempting Finish/report save and switching to another app",
+        "successful_transfers": 2,
+        "suspected_cause": "Android background-process termination",
+        "zoning_test_accepted": true
+      },
+      "user_timezone": "America/Chicago"
+    }
+  ],
+  "device_qualification": {
+    "different_city_or_mission_assets_qualified": false,
+    "pending": [
+      "Atlas 1 to 101 and return arrival",
+      "Walking, Jump, camera and click after arrival",
+      "Ordinary verified save and reopen on 101",
+      "Memory and temperature with two owned maps",
+      "Cold preparation and observed transfer durations"
+    ],
+    "physical_026_fps_gain_validated": false,
+    "physical_zoning_validated": false,
+    "testing_notes": "docs/COH-Atlas-Gameplay-0.13.26-testing.txt"
+  },
+  "format": 1,
+  "independent_source_receipt_review": {
+    "actual_apk_download_repeated": false,
+    "claim_scope": "Authenticated small host receipts, all source pins, closed payload conservation and original native proof; no actual new APK downloaded or independently inspected locally",
+    "format": 1,
+    "host_tests_replayed": false,
+    "native_builds_replayed": false,
+    "owner": 38077801231,
+    "packaging_receipt_conservation_source_and_flags_passed": true,
+    "qualification_source_reader_passed": true,
+    "repository_commit": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+    "status": "passed"
+  },
+  "main_commit": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "native_Game": {
+    "bytes": 9499648,
+    "original_owner": 37988347729,
+    "original_source": "c512e912a004b66886a7667640aa1a967e95de64",
+    "recompiled_for_publication": false,
+    "sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b"
+  },
+  "other_source_workflows": [
+    {
+      "conclusion": "success",
+      "head_sha": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+      "id": 38077804139,
+      "name": "Thor renderer report analysis",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+      "id": 38077803999,
+      "name": "Thor Atlas asset import candidate",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+      "id": 38077803983,
+      "name": "Thor client presentation candidate",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+      "id": 38077804165,
+      "name": "Character session and Atlas transfer",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+      "id": 38077804052,
+      "name": "Character persistence",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+      "id": 38077803940,
+      "name": "Thor real DbServer candidate",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+      "id": 38077803942,
+      "name": "Thor Atlas Park server candidate",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+      "id": 38077803908,
+      "name": "PostgreSQL backend",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+      "id": 38077801285,
+      "name": "Thor real DbServer candidate",
+      "status": "completed"
+    }
+  ],
+  "public_byte_audit": {
+    "bytes": 1560361816,
+    "format": 1,
+    "fresh_process_prepublication_audit_passed": true,
+    "java_or_dex_recompiled": true,
+    "mesa_driver_compiled_in_current_run": false,
+    "native_client_compiled_in_current_publication_run": false,
+    "native_client_recompiled": false,
+    "native_vulkan_probe_compiled_in_current_run": false,
+    "physical_fps_gain_validated": false,
+    "physical_performance_validated": false,
+    "physical_zoning_validated": false,
+    "public_apk_checksum_and_notes_verified": true,
+    "public_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.26/COH-Atlas-Gameplay-0.13.26.apk",
+    "repository_commit": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+    "retained_native_repository_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+    "runtime_refresh_required": true,
+    "runtime_repository_commit": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+    "sdk_signer_payload_audit_passed": true,
+    "sha256": "b14bfd307fc2c51bd628670efbed1e03fc2283408ee73546aa8b6fe8bbbf3c60",
+    "software_fallback_preserved": true,
+    "status": "passed",
+    "successful_gpu_driver_and_both_probes_retained": true,
+    "version_code": 41,
+    "version_name": "0.13.26",
+    "wgl_probe_compiled_in_current_run": false
+  },
+  "pull_request": {
+    "draft": true,
+    "merged": false,
+    "number": 1,
+    "state": "open"
+  },
+  "qualification": {
+    "checks": {
+      "exact_025_native_graphics_assets_and_reviewed_shell_verified": true,
+      "owned_zoning_transfer_recovery_and_input_guards_verified": true,
+      "retained_gameplay_postgresql_gpu_cleanup_and_recovery_guards_verified": true
+    },
+    "postgresql_emission_fixtures": [
+      "cancelled_child_deletion_commits",
+      "delete_insert_replacement_commits",
+      "duplicate_insert_23505_rollback"
+    ],
+    "postgresql_levelup_fixtures": [
+      "empty_child_duplicate_23505_rollback",
+      "empty_child_training_commit",
+      "missing_child_insert_commit",
+      "shuffled_child_read_training_commit"
+    ],
+    "retained_suites": 117,
+    "skips": 0,
+    "source_pins": 9770,
+    "suites": 122,
+    "tests": 1749
+  },
+  "recorded_date": "2026-10-10",
+  "recovery_limits": {
+    "initial_verified_branch_head": "c30af19ade11df9237d33f2b9beeb6bebac6d1cb",
+    "main_merged": false,
+    "new_checkout_used": true,
+    "previous_private_workspace_accessible": false,
+    "prior_uncommitted_work_discarded": false
+  },
+  "release": {
+    "assets": [
+      {
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.26/COH-Atlas-Gameplay-0.13.26-testing.txt",
+        "digest": "sha256:7ff0fb3bc20dbb3091fcbf4c540435589b2e717eca9dc08714f3e058d1d04b69",
+        "id": 628778890,
+        "name": "COH-Atlas-Gameplay-0.13.26-testing.txt",
+        "size": 2585
+      },
+      {
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.26/COH-Atlas-Gameplay-0.13.26.apk",
+        "digest": "sha256:b14bfd307fc2c51bd628670efbed1e03fc2283408ee73546aa8b6fe8bbbf3c60",
+        "id": 628777418,
+        "name": "COH-Atlas-Gameplay-0.13.26.apk",
+        "size": 1560361816
+      },
+      {
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.26/COH-Atlas-Gameplay-0.13.26.apk.sha256",
+        "digest": "sha256:f128fa74b8bbcbe1105ac75db0171dc4b25943aa4b85a939f117cdd90ed51632",
+        "id": 628778869,
+        "name": "COH-Atlas-Gameplay-0.13.26.apk.sha256",
+        "size": 97
+      }
+    ],
+    "draft": false,
+    "id": 409150379,
+    "prerelease": true,
+    "published_at": "2026-10-10T19:13:34Z",
+    "tag": "coh-atlas-gameplay-v0.13.26",
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.26"
+  },
+  "repository": "Russianranger/coh-android",
+  "repository_commit": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+  "runtime_profile": {
+    "character_zoning_enabled": true,
+    "startup_only_reopen": false,
+    "task_gate_required": false
+  },
+  "runtime_repository_commit": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+  "scope": {
+    "added_guest_helpers": [
+      "character_zoning.py"
+    ],
+    "base_map_id": 1,
+    "changed_guest_helpers": [
+      "character_creation_diagnostic.py",
+      "character_reopen_diagnostic.py",
+      "character_session_budget.py",
+      "local_character_server.py"
+    ],
+    "character_zoning_enabled": true,
+    "format": 1,
+    "graphics_settings_changed": false,
+    "map_container_ids": [
+      1,
+      101
+    ],
+    "native_Game_changed_from_public_0_13_25": false,
+    "native_Game_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+    "native_build_repeated": false,
+    "physical_zoning_validated": false,
+    "scope": "Two owned Atlas instances; different-city zones remain deferred",
+    "startup_only_reopen": false,
+    "task_gate_required": false
+  },
+  "status": "published_and_public_bytes_audited",
+  "version_code": 41,
+  "version_name": "0.13.26",
+  "workflow": {
+    "conclusion": "success",
+    "head_sha": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b",
+    "id": 38077801231,
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 114288669620,
+        "name": "changes",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "id": 114288774046,
+        "name": "qualify",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "id": 114290534518,
+        "name": "apk",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "id": 114291697153,
+        "name": "public-audit",
+        "status": "completed"
+      }
+    ],
+    "status": "completed",
+    "updated_at": "2026-10-10T19:15:56Z",
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38077801231"
+  }
+}

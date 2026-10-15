@@ -1,0 +1,79 @@
+{
+  "alternating_order": true,
+  "baseline_commit": "af7e6a52926f842044b3115ae4729809df8997a2",
+  "benchmark_script": {
+    "path": "tools/android/interactive/benchmark_texture_inventory.py",
+    "sha256": "6a6d276d214d61384b4d7c3c48c53305627ce941b23cb2061991ffa1db605265"
+  },
+  "boundaries": {
+    "all_leaf_strict_resolution_preserved": true,
+    "android_or_thor_executed": false,
+    "cache_format_or_identity_schema_changed": false,
+    "game_executed": false,
+    "native_decoder_executed": false,
+    "original_header_payloads_read": false,
+    "physical_startup_savings_validated": false,
+    "readonly_metadata_validation_preserved": true,
+    "server_executed": false
+  },
+  "equivalence": {
+    "all_records_and_inventory_sha256_and_client_receipts_identical": true,
+    "fixture_inventory_sha256": "3c41851dc89b660dce330aae49a55e391141f32c3844dfee0a3806224ce2f9f7",
+    "timed_full_tuple_comparisons": 10,
+    "untimed_instrumented_full_tuple_comparisons": 2
+  },
+  "fixture": {
+    "imported_readonly_symlink_leaves": 11367,
+    "local_readonly_regular_leaves": 245,
+    "records": 11612,
+    "synthetic_names_and_payloads": true,
+    "temporary_fixture_removed": true
+  },
+  "format": 1,
+  "helper_path": "android/guest/texture_header_index.py",
+  "helper_source_sha256": {
+    "current": "cf3ddc4cd807bbe7512bcf1fdad4622590bb08641b96a66ce7079525d04fc3b2",
+    "previous": "3e3648a6ea8b69f7f19b611b97802c9d2dc5c6602adfd6ee7969f43dd47966ec"
+  },
+  "host": {
+    "machine": "x86_64",
+    "python": "3.12.14",
+    "system": "Linux"
+  },
+  "median_reduction_percent": 33.079,
+  "median_seconds": {
+    "current": 0.771422,
+    "previous": 1.152739
+  },
+  "reproduce": "python tools/android/interactive/benchmark_texture_inventory.py --rounds 5 --output docs/android-evidence/client-streaming-0.13.9-texture-benchmark.json",
+  "rounds": 5,
+  "samples_seconds": {
+    "current": [
+      0.934356,
+      0.703745,
+      0.692026,
+      0.771422,
+      0.820642
+    ],
+    "previous": [
+      1.187327,
+      1.150843,
+      1.285162,
+      1.092112,
+      1.152739
+    ]
+  },
+  "scope": "linux_host_synthetic_texture_inventory_algorithm_comparison",
+  "untimed_resolution_instrumentation": {
+    "current": {
+      "all_resolve_calls": 11615,
+      "each_leaf_resolved_exactly_once": true,
+      "strict_leaf_calls": 11612
+    },
+    "previous": {
+      "all_resolve_calls": 11858,
+      "each_leaf_resolved_exactly_once": true,
+      "strict_leaf_calls": 11612
+    }
+  }
+}

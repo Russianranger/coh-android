@@ -1,0 +1,852 @@
+{
+  "format": 1,
+  "status": "accepted_hosted_atlas_loopback_character_persistence",
+  "milestone": "Hosted ARM64 Atlas create/save, owned Wine/PostgreSQL restart, exact-name resume and second committed save passed with the separately identified loopback DbServer donor; both DbServer starts proved source-derived loopback bindings.",
+  "run_id": 36493722153,
+  "run_attempt": 1,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36493722153",
+  "repository_commit": "708878f78a3361b595dcc03a0c4b14fb6cd2e6c3",
+  "workflow_conclusion": "success",
+  "workflow_terminal_observed_utc": "2026-09-28T23:17:08.923291+00:00",
+  "jobs": {
+    "tooling": {
+      "id": 109168260625,
+      "conclusion": "success",
+      "started_at": "2026-09-28T22:39:57Z",
+      "completed_at": "2026-09-28T22:40:30Z"
+    },
+    "bridge": {
+      "id": 109168453352,
+      "conclusion": "success",
+      "started_at": "2026-09-28T22:40:33Z",
+      "completed_at": "2026-09-28T22:41:11Z"
+    },
+    "runtime": {
+      "id": 109168666699,
+      "conclusion": "success",
+      "started_at": "2026-09-28T22:41:17Z",
+      "completed_at": "2026-09-28T23:16:16Z"
+    }
+  },
+  "dbserver_profile": "loopback",
+  "prior_accepted_profile_receipt": "accepted-game-hosted-36460005201.json",
+  "interpretation": "This is a separate qualified composite using loopback DbServer donor 36460867428. The earlier accepted-profile receipt remains unchanged. Loopback applies to DbServer only; the hosted network namespace remains mandatory for this game test.",
+  "independent_validation": {
+    "status": "passed",
+    "validator_source_commit": "708878f78a3361b595dcc03a0c4b14fb6cd2e6c3",
+    "validator_source_sha256": {
+      "tools/android/game/host_game_smoke.py": "e3a19ff94e25daf3e7509d6a8d6522ee563dab0ccd8df30e012fc8e01e00d7d2",
+      "tools/android/dbserver/host_dbserver_smoke.py": "9a5f2e95399eca3f1f2ffbc3e40ac4bf57251dd253f0d29c6ce172ae8a98fc8d",
+      "tools/prepare_wine_dbserver_source.py": "59b8a8518cdc0d2a6c2e9a5c73cebe8724932a26d3eeba6cb887597eb9d793f9"
+    },
+    "validators": [
+      "validate_report",
+      "validate_capture_files",
+      "validate_service_captures(expected=loopback)",
+      "validate_network_receipt"
+    ],
+    "exact_tested_validator_modules_loaded": true,
+    "report_modified": false,
+    "capture_payloads_modified": false,
+    "original_archive_hash_and_bounded_safe_extraction": true,
+    "donor_receipts_and_file_selection": true,
+    "exact_source_data_schema_identities": true,
+    "full_game_data_inventory_receipt_verified": true,
+    "bridge_observer_and_guest_hashes_at_tested_commit": true,
+    "every_capture_size_and_sha256": true,
+    "sql_snapshot_identity_and_login_count_progression": true,
+    "four_fixed_input_inventory_checks_and_two_startup_acknowledgements": true,
+    "both_loopback_readiness_records_and_final_owned_stdout": true,
+    "isolated_network_and_hosts_receipts": true,
+    "binary_revalidation_scope": "The artifact contains binary receipts, not complete executable payloads. The hosted gate verified actual package inventory and PE metadata before execution; this independent replay validates accepted donor and file-selection receipt bindings and recorded dependency metadata without claiming to rehash absent binaries.",
+    "network_revalidation_scope": "The saved network receipt was validated for a distinct namespace, only loopback, disabled external networking and retained non-root identity; historical host namespace/UID observations cannot be reobserved after runner termination."
+  },
+  "arm64": {
+    "started_utc": "2026-09-28T22:44:49.580440+00:00",
+    "finished_utc": "2026-09-28T23:16:13.116309+00:00",
+    "elapsed_seconds": 1883.535869,
+    "stages_passed": 18,
+    "first_service_ready_seconds": 1051.973091,
+    "restart_service_ready_seconds": 193.471767,
+    "atlas_ready_observation_seconds": 31.55992242299999,
+    "query_processes": 35,
+    "sql_readiness_queries": 4,
+    "sql_readiness_queries_scope": "Guest database_ready() SQL schema/listener polling; excludes Atlas map-status readiness queries.",
+    "process_records": 122,
+    "all_process_input_output_closed": true,
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "owned_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 630,
+      "scanned_tasks": 8,
+      "dead_leaders_with_live_tasks": 0,
+      "owned_live_workers": 0,
+      "leader_exit_retries": 0,
+      "candidates": 0,
+      "term_signals": 0,
+      "kill_signals": 0,
+      "pidfd_signals": 0,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true
+    }
+  },
+  "game_proof": {
+    "character": {
+      "container_id": 1,
+      "name": "TEST-60538",
+      "account": "CohA9af417e1ff"
+    },
+    "created_connected": true,
+    "live_currency": {
+      "player": "TEST-60538",
+      "account": "CohA9af417e1ff",
+      "influence": 12345,
+      "elapsed_ms": 211279,
+      "sequence": 17
+    },
+    "first_save": {
+      "protocol_quit": true,
+      "quitnow_is_save_ack": false,
+      "disconnected_before_sql": true,
+      "independent_committed_sql": true,
+      "forced_stop_before_save": false,
+      "login_count": 1,
+      "influence": 12345,
+      "snapshot_sha256": "d2a0c2e72142bdc8ffe33a91efe2d6f45e835d79961ce56884ef05d267441ccb",
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 8,
+        "costumeparts": 13
+      }
+    },
+    "restart": {
+      "same_cluster": true,
+      "same_database": true,
+      "no_reseed_or_restore": true,
+      "wine_shutdown": {
+        "prefix_lock_free": true,
+        "server_socket_inactive": true
+      },
+      "owned_cleanup": {
+        "policy": "same_real_uid_and_run_token",
+        "scanned_processes": 318,
+        "scanned_tasks": 4,
+        "dead_leaders_with_live_tasks": 0,
+        "owned_live_workers": 0,
+        "leader_exit_retries": 0,
+        "candidates": 0,
+        "term_signals": 0,
+        "kill_signals": 0,
+        "pidfd_signals": 0,
+        "identity_checked_signals": 0,
+        "inspection_failures": 0,
+        "remaining": 0,
+        "complete": true
+      },
+      "snapshot_sha256": "d2a0c2e72142bdc8ffe33a91efe2d6f45e835d79961ce56884ef05d267441ccb",
+      "phase": "restart",
+      "identity_unchanged": true,
+      "selected_rows_unchanged": true,
+      "login_count_before": 1,
+      "login_count_after": 1,
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 8,
+        "costumeparts": 13
+      }
+    },
+    "resume": {
+      "slot": 0,
+      "database_id": 1,
+      "exact_name": "TEST-60538",
+      "creation_disabled": true,
+      "database_id_source": "processed MapServer player entity update",
+      "scene_exchange_observed": true,
+      "processed_server_update_for_original_player": true,
+      "active_gameplay_confirmed": false,
+      "connected_on_atlas": true,
+      "processed_server_update": true
+    },
+    "second_save": {
+      "protocol_quit": true,
+      "quitnow_is_save_ack": false,
+      "disconnected_before_sql": true,
+      "independent_committed_sql": true,
+      "forced_stop_before_save": false,
+      "login_count": 2,
+      "influence": 12345,
+      "snapshot_sha256": "581cd96632d52607f2b1e9d48245a8581056a91fdd1eeb5b8a49f7e0439e0faa",
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 8,
+        "costumeparts": 13
+      },
+      "comparison": {
+        "phase": "second_logout",
+        "identity_unchanged": true,
+        "selected_rows_unchanged": true,
+        "login_count_before": 1,
+        "login_count_after": 2,
+        "row_counts": {
+          "ents": 1,
+          "ents2": 1,
+          "powers": 8,
+          "costumeparts": 13
+        }
+      }
+    },
+    "attributes_unchanged": true
+  },
+  "login_count_sequence": [
+    1,
+    1,
+    2
+  ],
+  "selected_row_counts": {
+    "ents": 1,
+    "ents2": 1,
+    "powers": 8,
+    "costumeparts": 13
+  },
+  "snapshot_sha256": {
+    "first": "d2a0c2e72142bdc8ffe33a91efe2d6f45e835d79961ce56884ef05d267441ccb",
+    "restart": "d2a0c2e72142bdc8ffe33a91efe2d6f45e835d79961ce56884ef05d267441ccb",
+    "second": "581cd96632d52607f2b1e9d48245a8581056a91fdd1eeb5b8a49f7e0439e0faa"
+  },
+  "normal_schema": {
+    "table_count": 99,
+    "ordered_column_count": 5935,
+    "attribute_rows": 58272,
+    "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+    "attribute_counts": {
+      "attributes": 56411,
+      "badgestatsattributes": 1771,
+      "pophelpattributes": 90
+    },
+    "attribute_sha256": {
+      "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+      "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+      "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+    },
+    "catalog_sha256": {
+      "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+      "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580",
+      "constraints": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0"
+    },
+    "catalog_unchanged_across_restart": true,
+    "attributes_unchanged": true
+  },
+  "fixed_inputs": {
+    "schema_file_count": 62,
+    "file_count": 62,
+    "total_bytes": 4402846,
+    "inventory_sha256": "899e1b93a0bdf767e628d72a8c14cff43ec4de5d0d8a5c11efc9d99968b7d717",
+    "checks": [
+      {
+        "phase": "before-first",
+        "unchanged": true,
+        "inventory_sha256": "899e1b93a0bdf767e628d72a8c14cff43ec4de5d0d8a5c11efc9d99968b7d717",
+        "file_count": 62,
+        "total_bytes": 4402846
+      },
+      {
+        "phase": "after-first-save",
+        "unchanged": true,
+        "inventory_sha256": "899e1b93a0bdf767e628d72a8c14cff43ec4de5d0d8a5c11efc9d99968b7d717",
+        "file_count": 62,
+        "total_bytes": 4402846
+      },
+      {
+        "phase": "before-restart",
+        "unchanged": true,
+        "inventory_sha256": "899e1b93a0bdf767e628d72a8c14cff43ec4de5d0d8a5c11efc9d99968b7d717",
+        "file_count": 62,
+        "total_bytes": 4402846
+      },
+      {
+        "phase": "after-second-save",
+        "unchanged": true,
+        "inventory_sha256": "899e1b93a0bdf767e628d72a8c14cff43ec4de5d0d8a5c11efc9d99968b7d717",
+        "file_count": 62,
+        "total_bytes": 4402846
+      }
+    ],
+    "acknowledgements": [
+      {
+        "requested": true,
+        "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+      },
+      {
+        "requested": true,
+        "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+      }
+    ]
+  },
+  "loopback": {
+    "scope": "DbServer IPv4 listener bindings only; not all game-service listeners or outgoing connections",
+    "metadata": {
+      "environment_variable": "COH_WINE_DB_LOOPBACK_ONLY",
+      "enabled_value": "1",
+      "disabled_by_default": true,
+      "activation": "before_common_startup_and_fixture_dispatch",
+      "late_activation": "refused_after_first_sockBind_attempt",
+      "wildcard_address": "127.0.0.1",
+      "explicit_addresses": "IPv4_127/8_only",
+      "endpoint_verification": "getsockname_and_SO_TYPE_after_each_successful_bind",
+      "socket_types": [
+        "tcp",
+        "udp"
+      ],
+      "endpoint_record": "protocol_address_port",
+      "scope": "explicit_IPv4_listener_binding",
+      "network_namespace_isolation": false,
+      "outbound_connections_restricted": false,
+      "failure": "close_socket_and_exit_2",
+      "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+      "android_execution_validated": false
+    },
+    "expected_endpoints": {
+      "required": [
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6971
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6974
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6976
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6977
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6979
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6980
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6982
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6984
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6989
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6996
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6997
+        },
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6998
+        },
+        {
+          "protocol": "udp",
+          "address": "127.0.0.1",
+          "port": 7000
+        }
+      ],
+      "optional": [
+        {
+          "protocol": "tcp",
+          "address": "127.0.0.1",
+          "port": 6992
+        }
+      ]
+    },
+    "phases": [
+      {
+        "phase": "first_services_ready",
+        "requested": true,
+        "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+        "endpoints": [
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6971
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6974
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6976
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6977
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6979
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6980
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6982
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6984
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6989
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6992
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6996
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6997
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6998
+          },
+          {
+            "protocol": "udp",
+            "address": "127.0.0.1",
+            "port": 7000
+          }
+        ]
+      },
+      {
+        "phase": "restart_services_ready",
+        "requested": true,
+        "startup_acknowledgement": "COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required",
+        "endpoints": [
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6971
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6974
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6976
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6977
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6979
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6980
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6982
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6984
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6989
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6992
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6996
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6997
+          },
+          {
+            "protocol": "tcp",
+            "address": "127.0.0.1",
+            "port": 6998
+          },
+          {
+            "protocol": "udp",
+            "address": "127.0.0.1",
+            "port": 7000
+          }
+        ]
+      }
+    ],
+    "both_final_owned_stdout_captures_verified": true,
+    "all_observed_addresses": "127.0.0.1",
+    "final_owned_stdout_endpoint_counts": {
+      "first": {
+        "total": 14,
+        "tcp": 13,
+        "udp": 1
+      },
+      "restart": {
+        "total": 14,
+        "tcp": 13,
+        "udp": 1
+      }
+    }
+  },
+  "network_isolation": {
+    "format": 1,
+    "scope": "isolated_loopback_only_host_network",
+    "host_network_namespace": "net:[4026531833]",
+    "guest_network_namespace": "net:[4026532263]",
+    "distinct_network_namespace": true,
+    "original_uid": 1001,
+    "original_gid": 1001,
+    "effective_uid": 1001,
+    "effective_gid": 1001,
+    "interfaces": [
+      "lo"
+    ],
+    "loopback_up": true,
+    "external_network_disabled": true,
+    "guest_runs_as_root": false
+  },
+  "inputs": {
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "game_package_sha256": "9c3757c13e163fd27c0d7e3065668cb39ec132681e05122f7b2d69598ceec520",
+    "game_data_manifest_sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "repository_commit": "708878f78a3361b595dcc03a0c4b14fb6cd2e6c3",
+    "binary_sha256": {
+      "DbServer.exe": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c",
+      "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+      "TestClientCreate.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31",
+      "TestClientResume.exe": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856",
+      "TestClientBridge.exe": "f0f83d804127be0a63d5b8e981bc3c609c975cc72f53930b1730b1b10a63dea6"
+    }
+  },
+  "accepted_dbserver_donor_run_id": 36460867428,
+  "original_archive": {
+    "artifact_id": 11003568632,
+    "bytes": 8995510,
+    "sha256": "890ff39c5dbab23e55efb6e1c0723163bb6312312fb1112a3bf75672fd92ee74",
+    "name": "wine-game-arm64-evidence",
+    "github_artifact_digest_verified": true
+  },
+  "preservation_archive": {
+    "file": "game-loopback-evidence-36493722153.zip",
+    "bytes": 949533,
+    "sha256": "9a2d90b09537a984468cf491686e6ff6e985794ff64cbb66fa818137b651f561",
+    "format": "ZIP of byte-exact raw Actions artifact members, exact terminal run/jobs JSON and decoded job log; repacked, not original Actions ZIP",
+    "files": {
+      "android/game-evidence/game-captures.json": {
+        "bytes": 1610,
+        "sha256": "3148a3b8827e081f6a6c381febc21df7319454c243109cefa0802404bebea4a0"
+      },
+      "android/game-evidence/game-captures/first-console.txt": {
+        "bytes": 8106,
+        "sha256": "ac0ad288d43e994767d6a2da5eb06e88bd441940e54b578711c778c44cf0a1bb"
+      },
+      "android/game-evidence/game-captures/first-events.jsonl": {
+        "bytes": 3337,
+        "sha256": "f7fa6ec54a3c19753781576b1dced680b54c1a06a6ada532437342ec6655c079"
+      },
+      "android/game-evidence/game-captures/first-ready.json": {
+        "bytes": 278,
+        "sha256": "6c26b10bcb1030d82dffcef8b299302b16bed2c6f7910112ef8c4cca88d04599"
+      },
+      "android/game-evidence/game-captures/first-result.json": {
+        "bytes": 331,
+        "sha256": "5a4c944e8b55f2aec43e8b34213b979878fcb28d3eb5e16177b705f47530980c"
+      },
+      "android/game-evidence/game-captures/first-snapshot.json": {
+        "bytes": 5219,
+        "sha256": "a7962d678e08ffe85ceb21de042b2afc223052474d0fdc177fc48fbd68d2533f"
+      },
+      "android/game-evidence/game-captures/restart-snapshot.json": {
+        "bytes": 5219,
+        "sha256": "a7962d678e08ffe85ceb21de042b2afc223052474d0fdc177fc48fbd68d2533f"
+      },
+      "android/game-evidence/game-captures/second-console.txt": {
+        "bytes": 8704,
+        "sha256": "b5a9fb144f7ee2793ddf5ecab845d8c6df3e5ea6fec5cabc6db077b81ff2610c"
+      },
+      "android/game-evidence/game-captures/second-events.jsonl": {
+        "bytes": 1863,
+        "sha256": "c6674791a6e8b44517f81616cf47b31afe1185212d1d758419fcc51b64619e4a"
+      },
+      "android/game-evidence/game-captures/second-ready.json": {
+        "bytes": 276,
+        "sha256": "4e98f5c8a1b6d1608fa548ae6aa9bb2f1a0a85c93a135ed929c4b4ce0dc44faf"
+      },
+      "android/game-evidence/game-captures/second-result.json": {
+        "bytes": 329,
+        "sha256": "e9d384a391b516499a353e4e897c1225f15190cffb66846a4d3dbdd777fd6b83"
+      },
+      "android/game-evidence/game-captures/second-snapshot.json": {
+        "bytes": 5219,
+        "sha256": "a551e123eff469f23c1bb8b0c013ab3c307e5ed41b002e1d18349592b6d938c2"
+      },
+      "android/game-evidence/game-hang-captures.json": {
+        "bytes": 78,
+        "sha256": "57d20d77a89b8f8a9ccb8ec6e0ed6bc4d2bb89dc204d869ba4b9a04a42b98033"
+      },
+      "android/game-evidence/game-runtime-report.json": {
+        "bytes": 206749,
+        "sha256": "ebac0278a959359be07ec8fdbb2c4a60d73a0fe60b9967e1045d6d7bec547b4d"
+      },
+      "android/game-evidence/game-service-captures.json": {
+        "bytes": 2124,
+        "sha256": "216ad739d78dda6735a8e54645098030d39b05355a678b76b0d9a9a7f3dc2f93"
+      },
+      "android/game-evidence/game-service-captures/first-atlas-stdout.txt": {
+        "bytes": 1015860,
+        "sha256": "e765cf7b584e6741ba64e3297fe24575e8dad0b29c72e6c4c05c7662bd1adf1c"
+      },
+      "android/game-evidence/game-service-captures/first-dbserver-stdout.txt": {
+        "bytes": 5471,
+        "sha256": "62446c614b548c1a75f9243250209684f71a754efdba28bf4f3d52d370df90fa"
+      },
+      "android/game-evidence/game-service-captures/log-001.txt": {
+        "bytes": 76,
+        "sha256": "7ba443782f69340f72d424c70f8a2bb66d8d9110792482ca7f651e04a789dc1b"
+      },
+      "android/game-evidence/game-service-captures/log-002.txt": {
+        "bytes": 76,
+        "sha256": "c9300ff9c8fc9522b3df05cc24c8fb33501096d9184f8f8d604e894f858b57fa"
+      },
+      "android/game-evidence/game-service-captures/log-003.txt": {
+        "bytes": 16926,
+        "sha256": "bcedf530dcd6ca7110568c91df9b9276da0e1bf7dc51c2c9ac36f030687257d9"
+      },
+      "android/game-evidence/game-service-captures/log-004.txt": {
+        "bytes": 3273,
+        "sha256": "505218680e00045d7b0d07ae39822076b453b14082160fe7c38e9d1a90dbd591"
+      },
+      "android/game-evidence/game-service-captures/log-005.txt": {
+        "bytes": 93,
+        "sha256": "a9990d91ad90a4512b223c2ef60b321f2bcdce53895dbd69897fcfa2a91a1e30"
+      },
+      "android/game-evidence/game-service-captures/log-006.txt": {
+        "bytes": 93,
+        "sha256": "439b4b610c7dfc764175b290b88dbe713f35c14958023a3c33f67b3541a19481"
+      },
+      "android/game-evidence/game-service-captures/log-007.txt": {
+        "bytes": 802,
+        "sha256": "24f2710a8f6e3af0f30052b16bd2042f69d666ad0182682dee0f5f2e726da149"
+      },
+      "android/game-evidence/game-service-captures/log-008.txt": {
+        "bytes": 1048614,
+        "sha256": "2ffc45b6ff3351b243a93366e54e76996a2ce85d1374a322e82104f87e8aa32f"
+      },
+      "android/game-evidence/game-service-captures/log-009.txt": {
+        "bytes": 1048614,
+        "sha256": "10c39f86058a99c824a15db385c5d96f7170dc7d28b37f584a8f8d5d639c6eb4"
+      },
+      "android/game-evidence/game-service-captures/log-010.txt": {
+        "bytes": 1048614,
+        "sha256": "a76356eb060f7e727b0ae576c0e27ebd6886e2a2d7b6e944d37e25f9b306ed7a"
+      },
+      "android/game-evidence/game-service-captures/manifest.json": {
+        "bytes": 4400,
+        "sha256": "a1f05effc2b7f416535690be10696f5f4cfb20af9fdb181fd4afd4a6a02b4f06"
+      },
+      "android/game-evidence/game-service-captures/restart-atlas-stdout.txt": {
+        "bytes": 1000389,
+        "sha256": "7285dcb553bd2fb5ed89b5f8d8529e18c5b4efe0a3e3b474f012ba9f4a1c6997"
+      },
+      "android/game-evidence/game-service-captures/restart-dbserver-stdout.txt": {
+        "bytes": 18258,
+        "sha256": "76d003e53ac3fc8f2b08b97d9e235480dc341ccdd60046c2c504f375c273a4fa"
+      },
+      "android/game-evidence/guest-etc-hosts": {
+        "bytes": 34,
+        "sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+      },
+      "android/game-evidence/host-game-inputs.json": {
+        "bytes": 2980,
+        "sha256": "6f2bd78dfb16177e8722fb753389a594b5021faac7a3cec2b631e8ffa9e2ef48"
+      },
+      "android/game-evidence/host-game.log": {
+        "bytes": 156688,
+        "sha256": "57749448a1913f7d6f92ea59058a52be2443431ab03323d76bb05b3d4a152b7d"
+      },
+      "android/game-evidence/network-isolation.json": {
+        "bytes": 424,
+        "sha256": "3a0f258e8d693438ad4ae307397b608da46dd01f5b8a95f0d06d07f0d1c578ee"
+      },
+      "android/game-evidence/stack-probe-build.json": {
+        "bytes": 577,
+        "sha256": "05d681c6fc692eb82c6fe80b130b4476c44f03ac0f1c60c085a9d83fb884efcc"
+      },
+      "android/native/linux-arm64/proot-build-receipt.json": {
+        "bytes": 3048,
+        "sha256": "9cb3fe70e9fbd2619adde93441ed4e9975e0ee4aa4cb036ade58b32befad7d7b"
+      },
+      "android/talloc-source-receipt.json": {
+        "bytes": 724,
+        "sha256": "3d15e54639ef937ba47887e5dda613e9b723661c8bd90c734ada304f11ea2a34"
+      },
+      "bridge/bridge-build.json": {
+        "bytes": 776,
+        "sha256": "294122c1baa149452cc301503ea8740a1d58a559e4e39d93b3047c5851d4a2f0"
+      },
+      "dbserver-schema/schema-manifest.json": {
+        "bytes": 4865901,
+        "sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"
+      },
+      "jobs.raw.json": {
+        "bytes": 8606,
+        "sha256": "d3c050a9d940ef7c905217d1b3eacbda7784ed23cf4785dc35c1945e541a73b6"
+      },
+      "run.raw.json": {
+        "bytes": 13373,
+        "sha256": "f4be2a0d1a286692c091d7fc4472279479e1d781ef48b1808fb33bd78f738431"
+      },
+      "runtime-job.log": {
+        "bytes": 245768,
+        "sha256": "7ccac5289a473243620e9bce5242643d7f83f2494553fe057bdba08b37029e9b"
+      },
+      "wine-game/game-package.json": {
+        "bytes": 103344,
+        "sha256": "9c3757c13e163fd27c0d7e3065668cb39ec132681e05122f7b2d69598ceec520"
+      }
+    },
+    "omitted_original_members": {
+      "game-data/game-data-manifest.json": {
+        "bytes": 32184737,
+        "sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4"
+      }
+    },
+    "omission_reason": "Large deterministic game-data inventory independently verified against accepted SHA and exact 173011-file/2977730517-byte counts during this replay; original Actions ZIP retains it.",
+    "all_original_capture_payloads_preserved": true
+  },
+  "preserved_files": {
+    "game-loopback-arm64-36493722153.json": {
+      "bytes": 206749,
+      "sha256": "ebac0278a959359be07ec8fdbb2c4a60d73a0fe60b9967e1045d6d7bec547b4d"
+    },
+    "game-loopback-package-36493722153.json": {
+      "bytes": 103344,
+      "sha256": "9c3757c13e163fd27c0d7e3065668cb39ec132681e05122f7b2d69598ceec520"
+    },
+    "game-loopback-host-inputs-36493722153.json": {
+      "bytes": 2980,
+      "sha256": "6f2bd78dfb16177e8722fb753389a594b5021faac7a3cec2b631e8ffa9e2ef48"
+    }
+  },
+  "generated_character_persistence_validated_on_host": true,
+  "dbserver_loopback_binding_validated_on_host": true,
+  "android_execution_validated": false,
+  "android_listener_binding_validated": false,
+  "gameplay_validated": false,
+  "interactive_rendering_validated": false,
+  "hardware_acceleration_validated": false,
+  "generic_directory_notification_fix_validated": false,
+  "accepted_physical_device_dbserver_receipt_unchanged": "accepted-dbserver-thor-20260928.json",
+  "privacy_review": {
+    "status": "passed",
+    "inspected_original_archive_sha256": "890ff39c5dbab23e55efb6e1c0723163bb6312312fb1112a3bf75672fd92ee74",
+    "original_members_reviewed": 41,
+    "original_member_bytes_reviewed": 42780234,
+    "credentials_or_private_user_identifiers_detected": false,
+    "classification_notes": [
+      "Original artifact member scan had no credentials, private keys, access-token formats or email matches.",
+      "Terminal run metadata contains only the already-public GitHub noreply author/committer addresses; these are retained byte-exact.",
+      "Runtime-job log authorization and GH_TOKEN fields contain GitHub-provided masks, not credential values."
+    ],
+    "source_redaction": "Guest diagnostic reports and process captures apply the existing export redaction; GitHub masks CI secrets. No additional redaction or JSON normalization was applied to preserved evidence.",
+    "reviewed_metadata_and_log": {
+      "run.raw.json": {
+        "bytes": 13373,
+        "sha256": "f4be2a0d1a286692c091d7fc4472279479e1d781ef48b1808fb33bd78f738431"
+      },
+      "jobs.raw.json": {
+        "bytes": 8606,
+        "sha256": "d3c050a9d940ef7c905217d1b3eacbda7784ed23cf4785dc35c1945e541a73b6"
+      },
+      "runtime-job.log": {
+        "bytes": 245768,
+        "sha256": "7ccac5289a473243620e9bce5242643d7f83f2494553fe057bdba08b37029e9b"
+      }
+    }
+  },
+  "scope_limitations": [
+    "Offline replay of a completed hosted ARM64 run; no new runtime or physical Android test was executed.",
+    "The complete binary/game-data payloads are omitted from this Actions artifact. Donor receipts, file-selection hashes, dependency metadata and full data/schema inventories were replayed; executable bytes, PE headers and payload inventories were verified by the CI gate before execution and are not independently rehashed here.",
+    "The network receipt proves its recorded contract and internal consistency. Original host namespace/UID observations are historical; this replay cannot reobserve that terminated runner.",
+    "Loopback qualification covers DbServer bindings. Atlas/MapServer and other components still require the hosted isolated network namespace; no device-wide network isolation is claimed.",
+    "Physical Atlas, gameplay, interactive rendering and hardware acceleration remain unvalidated."
+  ],
+  "next_gate": "Package the fully isolated Atlas sequence for physical Android only after every required service listener/network constraint is addressed; this hosted DbServer loopback result alone is not physical Atlas acceptance."
+}

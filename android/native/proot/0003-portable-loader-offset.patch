@@ -1,0 +1,31 @@
+--- a/src/GNUmakefile
++++ b/src/GNUmakefile
+@@ -243,7 +243,7 @@
+ endif
+ 
+ loader/loader-info.c: loader/loader
+-	readelf -s $< | awk -f loader/loader-info.awk > $@
++	python3 loader/loader-info.py $< > $@
+ 
+ ######################################################################
+ # Dependencies
+--- /dev/null
++++ b/src/loader/loader-info.py
+@@ -0,0 +1,17 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++# Equivalent to PRoot's loader-info.awk; accepts the selected toolchain readelf.
++import os
++import subprocess
++import sys
++
++symbols = {}
++output = subprocess.check_output(
++    [os.environ.get('READELF', 'readelf'), '-sW', sys.argv[1]], text=True)
++for line in output.splitlines():
++    columns = line.split()
++    if len(columns) >= 8 and columns[-1] in ('_start', 'pokedata_workaround'):
++        symbols[columns[-1]] = int(columns[1], 16)
++if set(symbols) != {'_start', 'pokedata_workaround'}:
++    raise SystemExit('Missing required PRoot loader symbols')
++print('#include <unistd.h>')
++print('const ssize_t offset_to_pokedata_workaround=%d;' % (symbols['pokedata_workaround'] - symbols['_start']))

@@ -1,0 +1,208 @@
+name: Map startup native certificate and genuine FX qualification
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-map-startup-native.yml
+      - tools/android/interactive/classify_map_startup_native_change.py
+      - tools/android/interactive/test_map_startup_native_change.py
+      - tools/prepare_map_startup_source.py
+      - tools/map_startup_animation_certificate.py
+      - tools/map_startup_monorail_budget.py
+      - tools/test_map_startup_animation_certificate.py
+      - tools/test_map_startup_monorail_budget.py
+      - tools/prepare_server_fx_catalog_observer_source.py
+      - tools/android/interactive/package_map_startup_native.py
+      - tools/android/interactive/map_startup_inputs.py
+      - tools/android/atlasgame/prepare_server_fx_catalog.py
+      - tools/android/atlasgame/prepare_server_fx_control_fixture.py
+      - android/guest/server_animation_package.py
+      - android/guest/native_map_startup_contract.py
+      - database/map-startup/**
+  workflow_dispatch:
+permissions: {contents: read, actions: read}
+concurrency:
+  group: ${{ github.event_name == 'workflow_dispatch' && format('android-map-startup-native-manual-{0}', github.run_id) || 'android-map-startup-native' }}
+  # A host-only push must not cancel an already running genuine qualification.
+  cancel-in-progress: false
+jobs:
+  change-scope:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      native_required: ${{ steps.scope.outputs.native_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          sparse-checkout: |
+            .github/workflows
+            tools/android/interactive
+      - name: Host change-scope and retained native-body regression gates
+        run: python3 -m unittest discover -s tools/android/interactive -p test_map_startup_native_change.py -v
+      - name: Admit only proved host-only changes to retained native consumers
+        id: scope
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_map_startup_native_change.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: coh-map-startup-change-scope, path: out/map-startup-change-scope.json, if-no-files-found: warn, retention-days: 90}
+  native:
+    needs: change-scope
+    if: ${{ always() && (needs.change-scope.result != 'success' || needs.change-scope.outputs.native_required != 'false') }}
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 90
+    steps:
+      - name: Preserve exact LF validator and fixture bytes before checkout
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Stage original published inputs without rebuilding .31 or assets
+        shell: pwsh
+        run: |
+          python tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+          if ($LASTEXITCODE -ne 0) { throw 'Exact original native inputs failed' }
+      - name: Genuine Win32 certificate and station deadline fixtures
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation not found' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/test_map_startup_animation_certificate.py --animations-pigg out/native-inputs/server-animations.pigg --animation-manifest out/native-inputs/server-animation-manifest.json --require-windows --native-evidence out/map-startup-animation-native.json
+          if errorlevel 1 exit /b 1
+          python tools/test_map_startup_monorail_budget.py --require-windows --native-evidence out/map-startup-monorail-native.json
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/native.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\native.cmd 2>&1 | Tee-Object out/contracts/native-fixtures.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Genuine native startup fixtures failed' }
+      - name: Stage the shipping MapServer and separate nonshipping FX observer
+        shell: pwsh
+        run: |
+          python tools/prepare_map_startup_source.py --output C:/map-startup-src --animations-pigg out/native-inputs/server-animations.pigg --animation-manifest out/native-inputs/server-animation-manifest.json
+          if ($LASTEXITCODE -ne 0) { throw 'Shipping MapServer source staging failed' }
+          python tools/prepare_server_fx_catalog_observer_source.py --output C:/fx-observer-src
+          if ($LASTEXITCODE -ne 0) { throw 'Nonshipping FX observer source staging failed' }
+      - name: Compile only shipping MapServer
+        working-directory: C:/map-startup-src
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Shipping MapServer configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target MapServer
+          if ($LASTEXITCODE -ne 0) { throw 'Shipping MapServer compile failed' }
+      - name: Compile the separate nonshipping FX observer
+        working-directory: C:/fx-observer-src
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'FX observer configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target MapServer
+          if ($LASTEXITCODE -ne 0) { throw 'FX observer compile failed' }
+      - name: Package native source, binary and actual fixture evidence
+        shell: pwsh
+        run: |
+          python tools/android/interactive/package_map_startup_native.py package --directory C:/map-startup-src/out/build/vs2026/bin/OptDebug --source C:/map-startup-src --cache C:/map-startup-src/out/build/vs2026/CMakeCache.txt --native-evidence out/map-startup-animation-native.json --monorail-evidence out/map-startup-monorail-native.json --repository-commit "${{ github.sha }}" --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" --output out/native-map-startup
+          if ($LASTEXITCODE -ne 0) { throw 'Shipping native evidence failed' }
+          python tools/android/atlasgame/prepare_server_fx_catalog.py package-observer --directory C:/fx-observer-src/out/build/vs2026/bin/OptDebug --source C:/fx-observer-src --cache C:/fx-observer-src/out/build/vs2026/CMakeCache.txt --repository-commit "${{ github.sha }}" --output out/fx-observer
+          if ($LASTEXITCODE -ne 0) { throw 'FX observer evidence failed' }
+      - uses: actions/upload-artifact@v4
+        with: {name: coh-map-startup-native, path: out/native-map-startup/, if-no-files-found: error, retention-days: 90}
+      - uses: actions/upload-artifact@v4
+        with: {name: coh-map-startup-fx-observer, path: out/fx-observer/, if-no-files-found: error, retention-days: 90}
+      - name: Retain diagnostic evidence without accepting an unfinished package
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path out/native-diagnostics -Force | Out-Null
+          foreach ($file in @('C:/map-startup-src/map-startup-build-input.json', 'C:/map-startup-src/out/build/vs2026/CMakeCache.txt', 'C:/fx-observer-src/server-fx-catalog-observer-build-input.json', 'out/map-startup-animation-native.json', 'out/map-startup-monorail-native.json')) {
+            if (Test-Path $file) { Copy-Item $file out/native-diagnostics/ }
+          }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: coh-map-startup-native-diagnostics, path: 'out/native-diagnostics/', if-no-files-found: warn, retention-days: 90}
+  fx-native:
+    needs: native
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Admit headroom and install actual Wine/native provider tools
+        run: |
+          test "${RUNNER_ENVIRONMENT:-}" = github-hosted
+          sudo rm -rf -- /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL
+          python3 -c "import shutil; assert shutil.disk_usage('.').free >= 30*1024**3"
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends wine wine32:i386 gcc-mingw-w64-i686 strace xvfb xauth
+      - uses: actions/download-artifact@v4
+        with: {name: coh-map-startup-fx-observer, path: out/fx-observer}
+      - uses: actions/download-artifact@v4
+        with: {name: coh-map-startup-native, path: out/native-map-startup}
+      - name: Stage exact original public inputs and all reused volume bytes
+        run: |
+          python3 tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, 'tools/android/interactive')
+          import qualify_runtime_asset_preflight as preflight
+          preflight.ensure_assets('out/asset-cache')
+          PY
+      - name: Prepare an actual complete .31 native control namespace
+        run: >-
+          python3 tools/android/atlasgame/prepare_server_fx_control_fixture.py
+          --donor-apk out/native-inputs/COH-Atlas-Gameplay-0.13.31.apk
+          --payloads out/asset-cache/payloads --output out/fx-control
+      - name: Produce the exact server-only projection
+        run: >-
+          python3 tools/android/atlasgame/prepare_server_fx_catalog.py projection
+          --client-caches out/native-inputs/client-caches.zip --output out/fx-projection
+          --repository-commit "${{ github.sha }}"
+      - name: Six fresh native processes prove stock IDs and the shipping startup consumer
+        run: |
+          task_fx_runtime=$(python3 -c "import json; print(json.load(open('out/fx-control/control-fixture.json'))['runtime_host_path'])")
+          xvfb-run -a python3 tools/android/atlasgame/prepare_server_fx_catalog.py qualify \
+            --runtime "$task_fx_runtime" \
+            --control-fixture out/fx-control/control-fixture.json --observer-directory out/fx-observer \
+            --startup-native-directory out/native-map-startup \
+            --projection out/fx-projection --work out/fx-work --output out/qualified-fx \
+            --repository-commit "${{ github.sha }}"
+      - uses: actions/upload-artifact@v4
+        with: {name: coh-map-startup-qualified-fx, path: out/qualified-fx/, if-no-files-found: error, retention-days: 90}
+      - name: Preserve bounded unaccepted failure diagnostics
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json, shutil
+          from pathlib import Path
+          output = Path('out/fx-diagnostics'); output.mkdir(parents=True, exist_ok=True)
+          files = [Path('out/fx-control/input-parent-mutation.json'), Path('out/fx-control/control-fixture.json'),
+            Path('out/qualified-fx/server-fx-catalog-native-qualification.json')]
+          files += sorted(p for p in Path('out/qualified-fx/evidence').rglob('*')
+            if p.suffix in {'.json', '.log', '.tsv'} and p.is_file() and not p.is_symlink())
+          used, kept, omitted = 0, [], []
+          for source in files:
+            if not source.is_file() or source.is_symlink(): continue
+            size = source.stat().st_size
+            if size > 16*1024**2 or used+size > 64*1024**2:
+              omitted.append({'path':str(source), 'bytes':size}); continue
+            target = output/source.relative_to('out')
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, target); used += size; kept.append(str(source))
+          (output/'diagnostic-scope.json').write_text(json.dumps({'accepted':False,
+            'scope':'bounded_diagnostics_only_not_native_qualification', 'bytes':used,
+            'kept':kept, 'omitted':omitted}, indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: coh-map-startup-fx-diagnostics, path: out/fx-diagnostics/, if-no-files-found: warn, retention-days: 90}

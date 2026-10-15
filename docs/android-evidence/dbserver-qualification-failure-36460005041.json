@@ -1,0 +1,107 @@
+{
+  "format": 1,
+  "status": "failed_windows_loopback_contract_fixture_setup",
+  "run_id": 36460005041,
+  "run_attempt": 1,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36460005041",
+  "repository_commit": "cfc8ac477e449037213d5242f43480acf4f1cb85",
+  "workflow_conclusion": "failure",
+  "jobs": {
+    "tooling": {
+      "id": 109055914411,
+      "conclusion": "success",
+      "started_at": "2026-09-28T17:42:20Z",
+      "completed_at": "2026-09-28T17:42:53Z"
+    },
+    "build": {
+      "id": 109056144966,
+      "conclusion": "failure",
+      "started_at": "2026-09-28T17:43:12Z",
+      "completed_at": "2026-09-28T17:43:56Z"
+    },
+    "runtime": {
+      "id": 109056564230,
+      "conclusion": "skipped",
+      "started_at": "2026-09-28T17:43:57Z",
+      "completed_at": "2026-09-28T17:43:56Z"
+    }
+  },
+  "failed_step": "Verify opt-in dispatch, fixed-input and loopback contracts on Windows",
+  "failure": {
+    "test": "LoopbackBindTests.setUpClass",
+    "file": "tools/android/dbserver/test_loopback_bind.py",
+    "line": 38,
+    "command": [
+      "git",
+      "-c",
+      "core.autocrlf=false",
+      "apply",
+      "--check",
+      "-"
+    ],
+    "exit_status": 1,
+    "observed_exception": "subprocess.CalledProcessError",
+    "loopback_contract_tests_run": 0,
+    "failure_before_loopback_contract_execution": true,
+    "confirmed_cause": "The temporary native-contract fixture applied the PostgreSQL patch without normalizing CRLF from its Windows checkout. The target upstream files retain LF. Normalizing the patch text to LF makes the PostgreSQL and Wine patches apply in the local reproduction.",
+    "diagnosis_basis": "The loopback implementation agent reproduced the git apply --check failure on 16 files using the actual PostgreSQL patch converted to CRLF, then confirmed both patches apply after normalization. The CI log exposes the command failure, not the captured patch stderr.",
+    "correction_scope": "Normalize only patch text consumed by the native test fixture and add a CRLF regression; no production-source behavior change is inferred from this setup failure."
+  },
+  "completed_checks": {
+    "linux_tooling_job": "passed",
+    "wine_source_staging": "passed",
+    "windows_dispatch_native_contracts": 4,
+    "windows_fixed_inputs_native_contracts": 4
+  },
+  "not_executed": {
+    "windows_loopback_native_contracts": true,
+    "normal_dbserver_build": true,
+    "fixture_dbserver_build": true,
+    "windows_persistence_fixture": true,
+    "arm64_runtime": true
+  },
+  "package_artifact_produced": false,
+  "loopback_runtime_qualified": false,
+  "source_receipt_artifact": {
+    "artifact_id": 10987875191,
+    "name": "wine-dbserver-windows-evidence",
+    "bytes": 5353,
+    "sha256": "f9f32906d9683c32d5a9c0aa377255e734b48b82e8a0ad092675123aeef27d74",
+    "download_hash_independently_verified": true,
+    "safe_extraction_verified": true,
+    "members": {
+      "wine-source/wine-dbserver-build-input.json": {
+        "bytes": 14887,
+        "sha256": "fd7cb9a92ede77446c2d85ae5412b19ca13a7ab7ce2893477deb9324a004f80d"
+      }
+    },
+    "scope": "Staged source build-input receipt only; no compiled binary or runtime report."
+  },
+  "preserved_files": {
+    "dbserver-run-failed-36460005041.json": {
+      "bytes": 13388,
+      "sha256": "c0e2ea7ad6e26925bacbfff4f797175d28c49cde78f48eff71b5a167a1f8db10"
+    },
+    "dbserver-jobs-failed-36460005041.json": {
+      "bytes": 6016,
+      "sha256": "81e34a8e5ee2a0329655fbb77c722ef3eb7ea3858841db1f745b9b3ae874fb70"
+    },
+    "dbserver-job-failed-36460005041.log": {
+      "bytes": 28271,
+      "sha256": "7cae09dac0e73d9e05d0f04f32e1640d14cd83b10a2b4a7df183684282b51171"
+    },
+    "dbserver-build-input-failed-36460005041.json": {
+      "bytes": 14887,
+      "sha256": "fd7cb9a92ede77446c2d85ae5412b19ca13a7ab7ce2893477deb9324a004f80d"
+    },
+    "dbserver-windows-failed-36460005041.raw.zip": {
+      "bytes": 5353,
+      "sha256": "f9f32906d9683c32d5a9c0aa377255e734b48b82e8a0ad092675123aeef27d74"
+    }
+  },
+  "preservation": "Run and jobs JSON strings are preserved as returned by GitHub fetch. The decoded job log and source artifact member are copied byte-for-byte; original artifact ZIP is preserved.",
+  "accepted_dbserver_donor_run_id": 36451873322,
+  "accepted_donor_replaced": false,
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

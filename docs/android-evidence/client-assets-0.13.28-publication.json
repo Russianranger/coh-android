@@ -1,0 +1,694 @@
+{
+  "format": 1,
+  "status": "published_public_bytes_verified_physical_thor_pending",
+  "version": "0.13.28",
+  "version_code": 43,
+  "asset_version": "1.0.0",
+  "recovered_source_commit": "492074101200f143fd19ba386f55de29ddfa5110",
+  "branch": "codex/character-persistence-continuation",
+  "draft_pr": 1,
+  "main_merged": false,
+  "original_run": {
+    "id": 38112251836,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38112251836",
+    "conclusion": "failure",
+    "resources": "success",
+    "shipping_monorail": "success",
+    "beacons": "failure",
+    "apk": "skipped",
+    "public_audit": "skipped",
+    "failure": "Kings generation time bound exceeded after 5400 seconds",
+    "observed_total_beacons": 336308,
+    "last_received_beacon_index": 174899,
+    "no_resumable_checkpoint_in_artifact": true
+  },
+  "original_artifacts": [
+    {
+      "id": 11694453333,
+      "name": "coh-kings-row-beacon-evidence",
+      "size_in_bytes": 141189,
+      "digest": "sha256:b165acc53dbd6e253e964340e0188c7aa5bc83b4690ef9526a6d80f2a01cb3bf",
+      "expired": false
+    },
+    {
+      "id": 11692805951,
+      "name": "coh-kings-row-host-generator",
+      "size_in_bytes": 16498301,
+      "digest": "sha256:8b00b330a6c6610c49e6cd1691221f1674ff4db83a71da0a047b827446de93e8",
+      "expired": false
+    },
+    {
+      "id": 11692686103,
+      "name": "coh-monorail-native",
+      "size_in_bytes": 2952522,
+      "digest": "sha256:3ecc72e3c22307d7aadbf876e22385e85bb02b8cf2c7ab38275f0864c83030c6",
+      "expired": false
+    },
+    {
+      "id": 11692636167,
+      "name": "coh-monorail-native-evidence",
+      "size_in_bytes": 33031,
+      "digest": "sha256:2436b094b16232c065a5343d6864df1145a9802d5ef50437c764263608fdafbe",
+      "expired": false
+    },
+    {
+      "id": 11692168131,
+      "name": "coh-assets-audio-inputs",
+      "size_in_bytes": 850507900,
+      "digest": "sha256:5de3e2a3ee69e0830a3a10725bec9d779eb3aff012de6b058528328ebd0c7d9b",
+      "expired": false
+    },
+    {
+      "id": 11692158049,
+      "name": "coh-assets-resource-inputs",
+      "size_in_bytes": 3874175234,
+      "digest": "sha256:1198c89779d90adcf171f8d1f161e98468daccbd1e2c1a8ee04d31d68e78a865",
+      "expired": false
+    },
+    {
+      "id": 11691644220,
+      "name": "coh-assets-world-audit",
+      "size_in_bytes": 5863350,
+      "digest": "sha256:9245c9c5c8b7bd0750049fe8dc894a4447ef298315d0edcdcb25c617673e2e2b",
+      "expired": false
+    }
+  ],
+  "other_source_runs": [
+    {
+      "id": 38112254359,
+      "name": "Thor renderer report analysis",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254319,
+      "name": "Thor client presentation candidate",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254324,
+      "name": "Thor Atlas Park server candidate",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254323,
+      "name": "Thor Atlas asset import candidate",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254344,
+      "name": "Thor real DbServer candidate",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254327,
+      "name": "Character persistence",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254499,
+      "name": "Character session and Atlas transfer",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254308,
+      "name": "PostgreSQL backend",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251578,
+      "name": "Wine Atlas game listener ARM64 qualification",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251610,
+      "name": "Opt-in MapServer startup and tick ARM64 diagnostic",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251475,
+      "name": "Thor client streaming inventory and exact visual follow-up",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251477,
+      "name": "Thor Atlas asset closure and exact reward save acceptance",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251495,
+      "name": "Thor bounded storage and fresh-profile recovery",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251480,
+      "name": "Thor bounded runtime setup memory and cancellation",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251478,
+      "name": "Thor bounded runtime setup copy repair",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251499,
+      "name": "Thor report recovery and Atlas preparation",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251524,
+      "name": "Thor Android sidebar fixed commands and Start Enter",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251585,
+      "name": "Thor verified startup cache and client lookup bundle",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251566,
+      "name": "Thor Atlas instance zoning milestone",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251591,
+      "name": "Thor client loading and LOD enemy visual repair",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251656,
+      "name": "Thor render worker wake repair and focused frame attribution",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251582,
+      "name": "Thor storage audit cleanup and retained runtime",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251530,
+      "name": "Thor NPC appearance and guarded Game dependency preload",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251574,
+      "name": "Thor session movement repair and focused rendering isolation",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251493,
+      "name": "Thor original UI sweep and native Atlas beacons",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251569,
+      "name": "Thor render queue wake coalescing and sparse scene timing",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251516,
+      "name": "Thor renderer attribution bounded captures and strict save diagnostics",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251583,
+      "name": "Thor task acceptance command completion and animation pack",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251589,
+      "name": "Thor native Game 30 FPS and bounded texture diagnostics",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251571,
+      "name": "Thor level-up save and append-only UI repair",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251584,
+      "name": "Thor client animation reuse and missing visual assets",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251568,
+      "name": "Thor real DbServer candidate",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251608,
+      "name": "Thor native Game scene and frame performance",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251600,
+      "name": "Thor saved-character DbServer startup repair",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251595,
+      "name": "Thor same-profile startup-only reopen and task receipt cleanup",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251614,
+      "name": "Thor GPU presentation and owned cleanup repair",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251532,
+      "name": "Thor guest-only startup and gameplay performance",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251496,
+      "name": "Thor optional probed Turnip Zink GPU profile",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251479,
+      "name": "Thor Atlas-first startup and source-bound DbServer supplement",
+      "conclusion": "success"
+    }
+  ],
+  "preserved": {
+    "accepted_game": true,
+    "dbserver": true,
+    "gpu_renderer": true,
+    "character_persistence_gates": true,
+    "separate_research_workspaces": true
+  },
+  "physical_kings_row_zoning_validated": false,
+  "physical_preparation_speedup_validated": false,
+  "physical_fps_gain_validated": false,
+  "public_apk_verified": true,
+  "all_public_asset_volumes_verified": true,
+  "recovery_run": {
+    "id": 38133200295,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38133200295",
+    "source_commit": "858b788532329ef3f79f3a1d5d8f1388be7f4c3e",
+    "status_at_checkpoint": "completed",
+    "ownership_gate": "passed",
+    "resource_rebuild": "skipped_reused",
+    "shipping_mapserver_rebuild": "skipped_reused",
+    "host_generator_source_receipt": "passed",
+    "native_graph_and_profiles": "passed_before_final_python_validation",
+    "apk": "skipped",
+    "public_byte_audit": "skipped",
+    "generation_seconds_limit": 14400,
+    "job_minutes_limit": 270,
+    "conclusion": "failure",
+    "failure": "Final validate_package imported Android-only fcntl on Windows",
+    "elapsed_native_seconds": 8794.593,
+    "cleanup_complete": true,
+    "retained_graph_payload": false,
+    "evidence_artifact": {
+      "id": 11703113905,
+      "name": "coh-kings-row-beacon-evidence",
+      "bytes": 989026,
+      "sha256": "09219bf913abcc8416a64ef98bf17a7bd25d9e7782ea3ab292d1e727a2e5a6e4",
+      "entries": 11
+    },
+    "lost_archive": {
+      "bytes": 23708312,
+      "sha256": "f1b18e22e27cab385928d589ce2d781cc330a50717b9d1045cf0d52a00db7c2c"
+    },
+    "native": {
+      "crc": "0xec7ae491",
+      "missing_groups": 0,
+      "missing_root_models": 0,
+      "combat": 281178,
+      "connected": 281176,
+      "ground_connections": 3105979,
+      "raised_connections": 4451559,
+      "blocks": 1019,
+      "paths": 32,
+      "cold_world": "passed",
+      "reopened_world": "passed"
+    }
+  },
+  "qualified_beacon_run": {
+    "id": 38143667104,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38143667104",
+    "source_commit": "d5e9f9f6bfa56da36f0c118bec26c764f60ef823",
+    "conclusion": "failure",
+    "beacons": "success",
+    "apk": "failure",
+    "public_audit": "skipped",
+    "failure": "test_character_reopen_guest old Mock path incompatible with .28 inode fingerprint; same active fixture pattern corrected in test_client_startup_followup_limits",
+    "graph_artifact": {
+      "id": 11706337916,
+      "bytes": 24133765,
+      "sha256": "d66f98796e03e36ede7ab9ffbb6c7a158bbfb00aa90d60d0cdce16136a3933e0"
+    },
+    "inner_archive": {
+      "bytes": 23708626,
+      "sha256": "6a7bcfba0d6f64a13d31fc6c31bd8cd366344c6ffa92b546a26ef3f132c2d64c"
+    },
+    "evidence_artifact": {
+      "id": 11705643922,
+      "bytes": 25118965,
+      "sha256": "8a825d9a248185994e657f8ff7c13f2f4acae949d1dfa4e5631c502798a8d8c4"
+    },
+    "independent_package_validation": "passed",
+    "source_files_verified": 8,
+    "elapsed_native_seconds": 5038.656,
+    "native": {
+      "crc": "0xec7ae491",
+      "combat": 281178,
+      "connected": 281176,
+      "ground_connections": 3105979,
+      "raised_connections": 4451559,
+      "blocks": 1019,
+      "paths": 32,
+      "collision_inputs": 8396,
+      "missing_groups": 0,
+      "missing_root_models": 0,
+      "cold_world": "passed",
+      "reopened_world": "passed",
+      "owned_processes_after_cleanup": 0
+    },
+    "physical_thor_validated": false
+  },
+  "fixture_repair": {
+    "runtime_or_native_source_changes": false,
+    "completed_beacon_sources_changed": false,
+    "real_sparse_path_fixtures": [
+      "test_character_reopen_guest",
+      "test_client_startup_followup_limits"
+    ],
+    "historical_atlas_pin_gate_preserved_and_refusal_tested": true,
+    "all_repaired_tests_in_current_qualification": true,
+    "beacon_reuse_run_id": 38143667104
+  },
+  "qualified_launcher_run": {
+    "id": 38151300701,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38151300701",
+    "source_commit": "d038dd75362db90da6c2e7551266311ecf63f2bb",
+    "conclusion": "failure",
+    "resource_rebuild": "skipped",
+    "native_rebuild": "skipped",
+    "qualification": "passed",
+    "suites": 144,
+    "tests": 1961,
+    "skips": 0,
+    "real_postgresql_fixtures": 7,
+    "qualification_artifact": {
+      "id": 11706907382,
+      "bytes": 538466,
+      "sha256": "d58329c926a706af7d5cb47281108cc31aad59879c721dbec3039034930bd558"
+    },
+    "qualification_receipt": {
+      "bytes": 2110832,
+      "sha256": "ab3c626dac16a121a0cf1eec0527863fe89515e0d3ad0ecc8c19e6a93303da48"
+    },
+    "apk_compile_and_same_process_audit": "passed",
+    "fresh_process_audit": "failure",
+    "failure": "Frozenset-derived manifest insertion order changes serialized payload pins across Python hash seeds",
+    "candidate_apk_sha256": "9cae808540669eeb18fd6ed3139a07edeb6616a63ebb43f6db0ade67fe5f6d64",
+    "candidate_apk_retained": false,
+    "public_audit": "skipped",
+    "accepted_game_gpu_dbserver_unchanged": true,
+    "physical_thor_validated": false
+  },
+  "published_source_commit": "96c7f44456d711d815704d20ff93c3f095ba974d",
+  "publication": {
+    "source_commit": "96c7f44456d711d815704d20ff93c3f095ba974d",
+    "run_id": 38152969976,
+    "run_url": "https://github.com/Russianranger/coh-android/actions/runs/38152969976",
+    "apk_job_id": 114510182925,
+    "conclusion": "success",
+    "resources": "reused",
+    "native": "reused",
+    "qualification": {
+      "suites": 144,
+      "tests": 1962,
+      "skips": 0,
+      "real_postgresql_fixtures": 7,
+      "artifact_id": 11706964931,
+      "receipt_bytes": 2110832,
+      "receipt_sha256": "bd4e1df48aa62d7715076b3d2fdc75c10ed3dba6b599c394a224b9cf04e215e8"
+    },
+    "apk_release": {
+      "id": 409773782,
+      "tag": "coh-atlas-gameplay-v0.13.28",
+      "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.28",
+      "published_at": "2026-10-11T16:09:59Z",
+      "draft": false,
+      "prerelease": true,
+      "target_commit": "96c7f44456d711d815704d20ff93c3f095ba974d",
+      "assets": [
+        {
+          "id": 631183269,
+          "name": "COH-Atlas-Gameplay-0.13.28-testing.txt",
+          "bytes": 5849,
+          "sha256": "7ad21df89c349079fb864408ddbc5e0a50d4a429fa5bcf2467fd46d35606abaa",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.28/COH-Atlas-Gameplay-0.13.28-testing.txt"
+        },
+        {
+          "id": 631183152,
+          "name": "COH-Atlas-Gameplay-0.13.28.apk",
+          "bytes": 41195620,
+          "sha256": "2f0f924524e6eb19d18ec94406976676501187f99a87d170fa2fc914af2e1a8a",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.28/COH-Atlas-Gameplay-0.13.28.apk"
+        },
+        {
+          "id": 631183247,
+          "name": "COH-Atlas-Gameplay-0.13.28.apk.sha256",
+          "bytes": 97,
+          "sha256": "42368439a0fdc35bacdbfa26ccf108908ddc2be1d6ab2f132e221959bb021edf",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.28/COH-Atlas-Gameplay-0.13.28.apk.sha256"
+        }
+      ]
+    },
+    "asset_release": {
+      "id": 409771858,
+      "tag": "coh-assets-v1.0.0",
+      "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-assets-v1.0.0",
+      "published_at": "2026-10-11T16:09:53Z",
+      "draft": false,
+      "prerelease": true,
+      "target_commit": "96c7f44456d711d815704d20ff93c3f095ba974d",
+      "assets": [
+        {
+          "id": 631182916,
+          "name": "asset-pack-build-report.json",
+          "bytes": 1228,
+          "sha256": "4eb80545f875218a6a7b087a71823de0024a37444c877412579ce53878d6c3f7",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/asset-pack-build-report.json"
+        },
+        {
+          "id": 631182899,
+          "name": "asset-pack-manifest.json",
+          "bytes": 3946,
+          "sha256": "9570447b93e7d6e42768e1b0e16b791256b82d509d9caf007aca5c88cd7fd05c",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/asset-pack-manifest.json"
+        },
+        {
+          "id": 631175972,
+          "name": "COH-Assets-1.0.0-Audio.zip",
+          "bytes": 848122891,
+          "sha256": "2c4bff8917d30a3835bd92e4f139a948f3c76f1e60900db01bc524b434e39d0b",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Audio.zip"
+        },
+        {
+          "id": 631177416,
+          "name": "COH-Assets-1.0.0-Audio.zip.sha256",
+          "bytes": 93,
+          "sha256": "95448b806a4bc6381b2bb2c3cbd97e12c2d6f5bd1514eabe8e3f8b63ff0fe185",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Audio.zip.sha256"
+        },
+        {
+          "id": 631177430,
+          "name": "COH-Assets-1.0.0-Base.zip",
+          "bytes": 1630092780,
+          "sha256": "6d6e3304e48b89f8fdb218754a57380b3108140ef31bddb30f699ebcf28c2e3d",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip"
+        },
+        {
+          "id": 631179486,
+          "name": "COH-Assets-1.0.0-Base.zip.sha256",
+          "bytes": 92,
+          "sha256": "752c6ce995ddc28f7807c99cdeddb37cb26cbf8b26b5d458dc7fc03a5fe89a5e",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip.sha256"
+        },
+        {
+          "id": 631179515,
+          "name": "COH-Assets-1.0.0-Reference.zip",
+          "bytes": 615545248,
+          "sha256": "e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip"
+        },
+        {
+          "id": 631180663,
+          "name": "COH-Assets-1.0.0-Reference.zip.sha256",
+          "bytes": 97,
+          "sha256": "5c2cc9e77a743e7294da34dd9e0a0f9599cd070ff5731069ec98984aad98740e",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip.sha256"
+        },
+        {
+          "id": 631180689,
+          "name": "COH-Assets-1.0.0-Zones.zip",
+          "bytes": 1693058889,
+          "sha256": "f3a3f78caceeccbe00dc97723244e12910161e2c952347e70e83b56a29558087",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Zones.zip"
+        },
+        {
+          "id": 631182876,
+          "name": "COH-Assets-1.0.0-Zones.zip.sha256",
+          "bytes": 93,
+          "sha256": "f4f86c27e5f4c930b3ada55af590369f590518258284801e5bcd6269e9333ff5",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Zones.zip.sha256"
+        },
+        {
+          "id": 631182943,
+          "name": "zone-asset-coverage.json",
+          "bytes": 362386,
+          "sha256": "63962c58c7c9da65585dd3ba3a54d3624c9bda005f5ddce49b6916345e97ee29",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/zone-asset-coverage.json"
+        },
+        {
+          "id": 631183049,
+          "name": "zones-audio-supplement-provenance.json",
+          "bytes": 2388947,
+          "sha256": "b55c46cbe09d8044c955ec3a2e5bcfeaa5aea36e37ca088363a308c5763aad95",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/zones-audio-supplement-provenance.json"
+        },
+        {
+          "id": 631182960,
+          "name": "zones-world-supplement-provenance.json",
+          "bytes": 29961724,
+          "sha256": "6b49594e9136925644a88246b53110f42c78f383a4c525ed0059622cc2987464",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/zones-world-supplement-provenance.json"
+        }
+      ]
+    },
+    "public_byte_audit_artifact": {
+      "id": 11708366753,
+      "name": "coh-client-assets-public-byte-audit",
+      "size_in_bytes": 1562,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11708366753",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11708366753/zip",
+      "expired": false,
+      "created_at": "2026-10-11T16:21:51Z",
+      "expires_at": "2027-01-09T16:16:05Z",
+      "updated_at": "2026-10-11T16:21:51Z",
+      "digest": "sha256:d4ccb5e8d18e001e7d08472081ef2aa24b8032e86b925f729bd4053a59ee0974",
+      "workflow_run": {
+        "id": 38154742520,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "codex/character-persistence-continuation",
+        "head_sha": "2823b93494ead72105191eb3a54e22132dfc05e4"
+      }
+    },
+    "public_byte_audit_receipt": {
+      "bytes": 3313,
+      "sha256": "faf9f4075c7de22059d44eed1cb3d5b65e26eaa8bb861916fb20794047792650"
+    }
+  },
+  "public_byte_audit": {
+    "format": 1,
+    "status": "passed",
+    "repository_commit": "96c7f44456d711d815704d20ff93c3f095ba974d",
+    "publication_run_id": 38152969976,
+    "publication_job_id": 114510182925,
+    "native_monorail_job_id": 114391446944,
+    "audit_run_id": 38154742520,
+    "audit_workflow_commit": "2823b93494ead72105191eb3a54e22132dfc05e4",
+    "audit_run_url": "https://github.com/Russianranger/coh-android/actions/runs/38154742520",
+    "authenticated_artifacts": [
+      {
+        "id": 11708145233,
+        "name": "coh-client-assets-packaging-evidence",
+        "run_id": 38152969976,
+        "repository_commit": "96c7f44456d711d815704d20ff93c3f095ba974d",
+        "zip_bytes": 1329187,
+        "zip_sha256": "525a9bc0792356fad08582e66bbe8676e26ccaf9ffa8851f1be0e5a7c70ae542"
+      },
+      {
+        "id": 11706964931,
+        "name": "coh-client-assets-qualification",
+        "run_id": 38152969976,
+        "repository_commit": "96c7f44456d711d815704d20ff93c3f095ba974d",
+        "zip_bytes": 538452,
+        "zip_sha256": "05e05c2c32bb37b29922ae1c6510aaae8e2f6fd02b3bd01fb0183e5241d04b36"
+      },
+      {
+        "id": 11692686103,
+        "name": "coh-monorail-native",
+        "run_id": 38112251836,
+        "repository_commit": "492074101200f143fd19ba386f55de29ddfa5110",
+        "zip_bytes": 2952522,
+        "zip_sha256": "3ecc72e3c22307d7aadbf876e22385e85bb02b8cf2c7ab38275f0864c83030c6"
+      }
+    ],
+    "apk": {
+      "bytes": 41195620,
+      "sha256": "2f0f924524e6eb19d18ec94406976676501187f99a87d170fa2fc914af2e1a8a",
+      "version_name": "0.13.28",
+      "version_code": 43
+    },
+    "asset_pack": {
+      "all_payloads_streamed_and_verified": true,
+      "all_volumes_required_for_fresh_install": true,
+      "asset_manifest": {
+        "bytes": 3946,
+        "sha256": "9570447b93e7d6e42768e1b0e16b791256b82d509d9caf007aca5c88cd7fd05c"
+      },
+      "asset_pack_version": "1.0.0",
+      "audit_files": {
+        "zone-asset-coverage.json": {
+          "bytes": 362386,
+          "sha256": "63962c58c7c9da65585dd3ba3a54d3624c9bda005f5ddce49b6916345e97ee29"
+        },
+        "zones-audio-supplement-provenance.json": {
+          "bytes": 2388947,
+          "sha256": "b55c46cbe09d8044c955ec3a2e5bcfeaa5aea36e37ca088363a308c5763aad95"
+        },
+        "zones-world-supplement-provenance.json": {
+          "bytes": 29961724,
+          "sha256": "6b49594e9136925644a88246b53110f42c78f383a4c525ed0059622cc2987464"
+        }
+      },
+      "existing_pack_reusable_by_future_apk_if_manifest_unchanged": true,
+      "format": 1,
+      "volumes": {
+        "COH-Assets-1.0.0-Audio.zip": {
+          "bytes": 848122891,
+          "sha256": "2c4bff8917d30a3835bd92e4f139a948f3c76f1e60900db01bc524b434e39d0b"
+        },
+        "COH-Assets-1.0.0-Base.zip": {
+          "bytes": 1630092780,
+          "sha256": "6d6e3304e48b89f8fdb218754a57380b3108140ef31bddb30f699ebcf28c2e3d"
+        },
+        "COH-Assets-1.0.0-Reference.zip": {
+          "bytes": 615545248,
+          "sha256": "e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e"
+        },
+        "COH-Assets-1.0.0-Zones.zip": {
+          "bytes": 1693058889,
+          "sha256": "f3a3f78caceeccbe00dc97723244e12910161e2c952347e70e83b56a29558087"
+        }
+      }
+    },
+    "public_apk_verified": true,
+    "all_public_asset_volumes_verified": true,
+    "physical_kings_row_zoning_validated": false,
+    "physical_preparation_speedup_validated": false,
+    "physical_fps_gain_validated": false
+  },
+  "pending_physical_thor_gates": [
+    "Fresh four-volume import and runtime setup",
+    "Atlas Park to Kings Row and return through real monorail",
+    "Walking Jump camera clicking and visual/audio correctness",
+    "Verified save/finish/reopen including Kings Row",
+    "Complete normal/interrupted report export and storage report",
+    "Measured internal storage peak memory loading time and FPS"
+  ],
+  "next_milestones": [
+    "Collect focused physical Thor reports for pending gates",
+    "Repair demonstrated regressions while preserving accepted Game GPU and strict save acceptance",
+    "Measure preparation transfer memory and FPS under controlled settings",
+    "Qualify additional destinations individually; keep separate MapServer/ARM64 research out of release delivery"
+  ]
+}

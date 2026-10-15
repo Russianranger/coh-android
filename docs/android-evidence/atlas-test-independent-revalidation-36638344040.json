@@ -1,0 +1,454 @@
+{
+  "format": 1,
+  "status": "passed",
+  "run_id": 36638344040,
+  "run_attempt": 1,
+  "repository_commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+  "scope": "independent_downloaded_hosted_evidence_revalidation_against_exact_APK_manifests_and_verified_build_receipt",
+  "apk": {
+    "bytes": 355130247,
+    "sha256": "e502b80d91c92164021684d2ea311e9e9d5c99c1b9ac178c67619844f3c5d547"
+  },
+  "checks": [
+    "Fresh import contracts equal exact APK and verified build identities",
+    "Reconstructed committed generation receipt and import cancellation/recovery",
+    "All eighteen stages and complete owned cleanup under existing strict validators",
+    "All client/service capture bytes rehashed and semantic validators",
+    "Exact-name resume and two SQL snapshots preserve identity and influence, increment login count",
+    "Both DbServer starts share 600-second budgets; schema/listener and positive-loop milestones passed within budget",
+    "Raw source-published dispatch records prove a positive loop for each startup",
+    "Device adapter provenance, loopback listeners and independent private namespace receipt",
+    "Explicit qualified progress D donor remains distinct from candidate APK and old accepted supporting binaries",
+    "All31 actual APK payloads,14 Java sources and six guest scripts independently rehashed",
+    "Raw source-bound two-phase completed-tick startup witnesses enclose current protocol and respect real history eviction"
+  ],
+  "limits": [
+    "APK signing/badging/platform manifest verification is separately provided by the independent delivery verifier; this review independently hashes APK, all31 payloads, all14 Java sources and six guest scripts",
+    "No runtime rerun or recreation of the imported full-data generation",
+    "Physical Android restart and complete 0.4.4 device milestone remain unvalidated"
+  ],
+  "artifact": {
+    "id": 11066608259,
+    "bytes": 506667,
+    "sha256": "c629e1811953baae070801ced43855e569b14f618036144c7d72e92f65acf902",
+    "all_extracted_evidence_bytes_verified": true
+  },
+  "apk_inventory": {
+    "apk_bytes_rehashed": true,
+    "payloads_rehashed": 31,
+    "java_sources_rehashed": 14,
+    "guest_sources_rehashed": 6,
+    "guest_source_sha256": {
+      "game_device_diagnostic.py": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca",
+      "game_diagnostic.py": "7155dfb29c8c1370d08abfd793295e0116888f120d4258aabaa5d44d43bbe539",
+      "game_evidence.py": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d",
+      "game_hang_evidence.py": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef",
+      "dbserver_diagnostic.py": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2",
+      "game_map_progress.py": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+    }
+  },
+  "mapserver_progress": {
+    "profile": "dispatch_progress_v1",
+    "producer": {
+      "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+      "manifest_sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1",
+      "mapserver_sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+    },
+    "phases": {
+      "first": {
+        "sample_count": 271,
+        "retained_samples": 128,
+        "dropped_samples": 143,
+        "file_identity": {
+          "device": 2049,
+          "inode": 7423563
+        },
+        "windows_pid": 928,
+        "main_thread_id": 932,
+        "first_tick_completed": 0,
+        "last_tick_completed": 8571,
+        "startup_attempts": 18,
+        "startup_witnesses": {
+          "before": {
+            "sample_number": 207,
+            "sequence": 30970,
+            "stage": "SLEEP",
+            "tick_started": 1031,
+            "tick_completed": 1031,
+            "observed_monotonic": 1598.687998931,
+            "raw_record_sha256": "f75d7a1504c39387693a70aabd4a103844836018ec49230aba0d3ca3da66ade1",
+            "retained_in_final_history": true
+          },
+          "after": {
+            "sample_number": 210,
+            "sequence": 32230,
+            "stage": "SLEEP",
+            "tick_started": 1073,
+            "tick_completed": 1073,
+            "observed_monotonic": 1600.107652089,
+            "raw_record_sha256": "d5eb555e154c0ce9e4a364157cd8e26718a602a01b86d782696be09cb6d35d37",
+            "retained_in_final_history": true
+          }
+        },
+        "protocol": {
+          "ready": true,
+          "not_started": false,
+          "map_id": 1,
+          "network_age_seconds": 6,
+          "stats_age_seconds": 7,
+          "address": "127.0.0.1",
+          "port": 7001,
+          "phase": "first-ready",
+          "sampled_utc": "2026-09-29T22:44:51.507616+00:00",
+          "monotonic": 1600.107407624
+        }
+      },
+      "restart": {
+        "sample_count": 51,
+        "retained_samples": 51,
+        "dropped_samples": 0,
+        "file_identity": {
+          "device": 2049,
+          "inode": 7423572
+        },
+        "windows_pid": 556,
+        "main_thread_id": 560,
+        "first_tick_completed": 0,
+        "last_tick_completed": 2090,
+        "startup_attempts": 6,
+        "startup_witnesses": {
+          "before": {
+            "sample_number": 33,
+            "sequence": 520,
+            "stage": "SLEEP",
+            "tick_started": 16,
+            "tick_completed": 16,
+            "observed_monotonic": 2047.83728478,
+            "raw_record_sha256": "1d33d4cf7e88fbd2c1dedddf835b2d1c915e0617d2a6ede697b56eaff3771a38",
+            "retained_in_final_history": true
+          },
+          "after": {
+            "sample_number": 36,
+            "sequence": 1630,
+            "stage": "SLEEP",
+            "tick_started": 53,
+            "tick_completed": 53,
+            "observed_monotonic": 2049.107722855,
+            "raw_record_sha256": "a21584746687842cf6933278b203dbce29f3a9b5fd85008af184f73df91d594e",
+            "retained_in_final_history": true
+          }
+        },
+        "protocol": {
+          "ready": true,
+          "not_started": false,
+          "map_id": 1,
+          "network_age_seconds": 2,
+          "stats_age_seconds": 2,
+          "address": "127.0.0.1",
+          "port": 7001,
+          "phase": "restart-ready",
+          "sampled_utc": "2026-09-29T22:52:20.507696+00:00",
+          "monotonic": 2049.107487342
+        }
+      }
+    },
+    "raw_available_samples_verified": 173
+  },
+  "capture_counts": {
+    "game-captures": 12,
+    "game-service-captures": 14
+  },
+  "stages": 18,
+  "device_dbserver_startup": {
+    "first": {
+      "scope": "service_startup_entry_through_positive_main_loop",
+      "budget_seconds": 600,
+      "milestones": {
+        "schema_and_listener": {
+          "status": "passed",
+          "elapsed_since_startup_seconds": 42.596
+        },
+        "positive_main_loop": {
+          "status": "passed",
+          "elapsed_since_startup_seconds": 58.2
+        }
+      }
+    },
+    "restart": {
+      "scope": "service_startup_entry_through_positive_main_loop",
+      "budget_seconds": 600,
+      "milestones": {
+        "schema_and_listener": {
+          "status": "passed",
+          "elapsed_since_startup_seconds": 5.49
+        },
+        "positive_main_loop": {
+          "status": "passed",
+          "elapsed_since_startup_seconds": 32.451
+        }
+      }
+    }
+  },
+  "character": {
+    "container_id": 1,
+    "name": "TEST26340",
+    "account": "CohA5c196c228e"
+  },
+  "influence": 12345,
+  "login_counts": [
+    1,
+    2
+  ],
+  "row_counts": {
+    "ents": 1,
+    "ents2": 1,
+    "powers": 7,
+    "costumeparts": 14
+  },
+  "same_cluster_without_reseed_or_restore": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 627,
+    "scanned_tasks": 8,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "restart_owned_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 312,
+    "scanned_tasks": 4,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "elapsed_seconds": {
+    "host_gate": 1990.790313,
+    "import": 54.536957,
+    "game": 1935.340692,
+    "game_private_runtime": 281.611739,
+    "assets_and_architecture": 0.008208,
+    "initialize_owned_cluster": 2.205578,
+    "postgres_first_start": 0.215502,
+    "restricted_fixture_database": 0.809607,
+    "wine_prefix_and_driver": 40.893092,
+    "win32_odbc_driver": 0.915057,
+    "win32_runtime_dll": 0.407872,
+    "game_services_first": 1083.21895,
+    "atlas_ready_observation": 31.556743,
+    "game_create_and_connect": 221.254686,
+    "game_live_currency": 3.496805,
+    "game_protocol_logout_first": 3.993372,
+    "game_restart": 2.66644,
+    "postgres_game_restart": 0.316855,
+    "game_services_restart": 185.63247,
+    "game_resume_exact_name": 65.00325,
+    "game_protocol_logout_second": 5.00817
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "evidence_files": {
+    "game-captures/first-console.txt": {
+      "bytes": 8323,
+      "sha256": "704d51ceda1d92edc6e77cbf2ed1692a04f1305bef86534f2ad19a6f29b8304f"
+    },
+    "game-captures/first-events.jsonl": {
+      "bytes": 3323,
+      "sha256": "e9a751329885dc06c8a47c27b932c8206eb30363c7eca1ec00f6d54793227713"
+    },
+    "game-captures/first-ready.json": {
+      "bytes": 278,
+      "sha256": "bbe06868c5712b7c9c934886ddbc9506b991bc720509b1fbe66f4dd36e1843c7"
+    },
+    "game-captures/first-result.json": {
+      "bytes": 331,
+      "sha256": "07a3481db22372ea35994dd22d45005d51b0b5e638e963b8fed9907a061c2c0c"
+    },
+    "game-captures/first-snapshot.json": {
+      "bytes": 5212,
+      "sha256": "3c40b613d90b46c6e372b2c48a61b977e1e874bd0812f1bf0e5e528f56a0476b"
+    },
+    "game-captures/mapserver-progress.json": {
+      "bytes": 220168,
+      "sha256": "89df09e3a34f9a0f666fe7675c168cf3f21338c158a338cf5caf3ebb64242c9a"
+    },
+    "game-captures/restart-snapshot.json": {
+      "bytes": 5212,
+      "sha256": "3c40b613d90b46c6e372b2c48a61b977e1e874bd0812f1bf0e5e528f56a0476b"
+    },
+    "game-captures/second-console.txt": {
+      "bytes": 8920,
+      "sha256": "629bfad3be3a3405d7e12e238705c13a1aa139e4a7060985a7d261548d1bb313"
+    },
+    "game-captures/second-events.jsonl": {
+      "bytes": 1865,
+      "sha256": "63e8905354417f4cd21c2a1e217d8158a7a93c551de41ff24e4fbdff91539a42"
+    },
+    "game-captures/second-ready.json": {
+      "bytes": 276,
+      "sha256": "2f0c6519661d7cc7f698eed15f8e61f5df20dca187a20f1bd45b9de40b12761a"
+    },
+    "game-captures/second-result.json": {
+      "bytes": 329,
+      "sha256": "9343cdc59be42a6e1d7147477011b7d09623555b68b0e7778f05a5d917ce3447"
+    },
+    "game-captures/second-snapshot.json": {
+      "bytes": 5212,
+      "sha256": "c9d4e247b4791b7cd102cccbd8c2152d399735315dc13de4c51e610cb2f0255b"
+    },
+    "game-captures.json": {
+      "bytes": 1756,
+      "sha256": "4e4ec7a3fc85245dccc98b4365b64ed0ad265a4701de0c030cd256b2dd7afc8d"
+    },
+    "game-hang-captures.json": {
+      "bytes": 78,
+      "sha256": "57d20d77a89b8f8a9ccb8ec6e0ed6bc4d2bb89dc204d869ba4b9a04a42b98033"
+    },
+    "game-runtime-report.json": {
+      "bytes": 473848,
+      "sha256": "0e1c737bec94eaefe9caf85ed0277fe7d80e98bf5cf4460a76fccc9cf1d76819"
+    },
+    "game-service-captures/first-atlas-stdout.txt": {
+      "bytes": 1016007,
+      "sha256": "38179de00721c28be0a7dbc964629f0ea93781bbe52667b0a8f914636cd0d7ec"
+    },
+    "game-service-captures/first-dbserver-stdout.txt": {
+      "bytes": 5471,
+      "sha256": "08a73c2e46254375f08f5be00f4c2cd0820078ad37101e34dc09b10ad1857f0f"
+    },
+    "game-service-captures/log-001.txt": {
+      "bytes": 76,
+      "sha256": "dfbfad8d9d4283e783d56d4b0daad51ae2feeb9c8a0b2949a5d5d1eced06f841"
+    },
+    "game-service-captures/log-002.txt": {
+      "bytes": 76,
+      "sha256": "bb750b7bc3e86ddc160237f8d33780b1c5affd415fed6dfec475d718e6f1c63c"
+    },
+    "game-service-captures/log-003.txt": {
+      "bytes": 14798,
+      "sha256": "43cd891351af0eb351c8f839a435e9343bed9b25b3808e225fbbb2ddfe668cca"
+    },
+    "game-service-captures/log-004.txt": {
+      "bytes": 3687,
+      "sha256": "7e3013f898075c43b82d2237e3d4811ed428bb7ded5dcbccbb32a396c310812d"
+    },
+    "game-service-captures/log-005.txt": {
+      "bytes": 93,
+      "sha256": "5c4f4450ac4de32e38b49540bf3b427e1fdacb569eec7bda2a7998b6caca04ec"
+    },
+    "game-service-captures/log-006.txt": {
+      "bytes": 93,
+      "sha256": "e61ce2bc35ec33a525b3cde8b9d96e82938a3d586700a2e9d2990149a08fb556"
+    },
+    "game-service-captures/log-007.txt": {
+      "bytes": 1048614,
+      "sha256": "a168a85a598e5bb22c746d0d48b4248dbca49b7d46b8806e744a2c8ee81aa348"
+    },
+    "game-service-captures/log-008.txt": {
+      "bytes": 1048614,
+      "sha256": "84c0bbc93a8ff71b1a651f5febc5f0a5f5b177b154d44e8b737727858bf4acd8"
+    },
+    "game-service-captures/log-009.txt": {
+      "bytes": 1048614,
+      "sha256": "4499ad5c5fac432b458c96229c1fae33c22e01b9e39b9af22c607c90786f0be8"
+    },
+    "game-service-captures/manifest.json": {
+      "bytes": 4108,
+      "sha256": "056aadde41353a24955d359c961d61192162b1393925c70c1fb8216616b1d939"
+    },
+    "game-service-captures/restart-atlas-stdout.txt": {
+      "bytes": 1000536,
+      "sha256": "836d88d0a58361a9ef3a02b16cec69c2729df50dc305613ef2d54cb152592d0a"
+    },
+    "game-service-captures/restart-dbserver-stdout.txt": {
+      "bytes": 18258,
+      "sha256": "60c760f05f288425979f28b7734da80bee614865927c2e7f1198ca20d2b33b22"
+    },
+    "game-service-captures.json": {
+      "bytes": 1993,
+      "sha256": "7505d4aaad1012166f50493fcecfa689f1e56d23fa3a8e453a87db3ed0ba0321"
+    },
+    "guest-etc-hosts": {
+      "bytes": 34,
+      "sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+    },
+    "host-device-inputs.json": {
+      "bytes": 4290,
+      "sha256": "0beddd81b35a03708e1b5f47fb8f2364550563dbdb916940124020856bb01698"
+    },
+    "host-device-qualification.json": {
+      "bytes": 1162,
+      "sha256": "eb4a6dcf817f68569513f4ed8d791061f4df5e91ee7ba4757523d288a6fefbfe"
+    },
+    "host-game.log": {
+      "bytes": 141474,
+      "sha256": "c1b8512ba64586d9b87ed3099e30cf49394c1013c393f885bdc070c45028c521"
+    },
+    "imported/host-import-report.json": {
+      "bytes": 1801,
+      "sha256": "07224cf80c7216b2ae64ae3049dd32ab630299a17b8de05c8278c99920074f75"
+    },
+    "imported/host-import.log": {
+      "bytes": 824,
+      "sha256": "48ce9b04c21dca50f81fb8993c41cc7a6fcf25f715532b96e0cef03a8a39862c"
+    },
+    "imported/import-summary.properties": {
+      "bytes": 393,
+      "sha256": "cff928532dd2176218010b0995c383a909f94d52d0156f12b17fd1accd97173f"
+    },
+    "network-isolation.json": {
+      "bytes": 424,
+      "sha256": "3a0f258e8d693438ad4ae307397b608da46dd01f5b8a95f0d06d07f0d1c578ee"
+    },
+    "stack-probe-build.json": {
+      "bytes": 577,
+      "sha256": "7e8ea3b34917160222e56cec0012860eec2b1d684907723365222d369a399185"
+    }
+  },
+  "memory_observation_summary": {
+    "scope": "run_token_owned_Wine_FEX_processes_only",
+    "measurement": "sampled_sum_of_process_VmRSS_kibibytes",
+    "successful_samples": 319,
+    "unavailable_samples": 1,
+    "maximum_sampled_rss_kib": 4354352,
+    "instantaneous_peak_measured": false,
+    "pss_measured": false
+  }
+}

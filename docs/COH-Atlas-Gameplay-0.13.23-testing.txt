@@ -1,0 +1,37 @@
+COH Atlas Gameplay 0.13.23 — movement deadline repair and timing isolation
+
+1. Install as an update and keep app data, imports and THORHERO. Run Set up /
+update runtime once, wait for Runtime ready, and select GPU test before Reopen.
+Keep the accepted Performance preset, 800x600, fan and charging state. No asset
+reimport, startup comparison or zoning test is requested.
+
+2. After Atlas connects and fresh views complete, check that Jump is enabled.
+Close focused chat/dialogs with B/Esc. Check left-stick walking, X/Jump, camera
+and click. The inherited status may still say "startup timing"; normal movement
+and Save remain supported. If Jump stays disabled, export the outer ZIP and
+report that immediately; do not wait through a long immobile session.
+
+3. Select Show FPS and 30 FPS, settle ten seconds, then spend about 30 seconds
+standing, 30 seconds rotating the camera and 30 seconds walking the same short
+Atlas route. Note each segment's FPS range/dips and entry/end temperature.
+Check the visible scenery, character, transparency and UI for regressions.
+No new .21 or long Software baseline is needed.
+
+4. Release movement for the displayed neutral wait, use Save character / log
+out, wait for Saved character verified, then Finish. Export the COMPLETE
+coh-atlas-gameplay-*.zip before another operation replaces it. Send it with the
+control/FPS/temperature notes. Preserve a failed export without clearing data.
+
+What changed: guest deadlines are capped against the earlier owned display
+clock as well as the launcher and operation limits. This fixes the .22 report's
+2.475-second mismatch that disabled movement and saving. On Reopen, the new
+detailed pipeline timing is disabled to check its physical cost while keeping
+the exact .22 Game, wakeup repair and GPU driver/probes. Older frame, scene and
+renderer counters remain active. Assets, resolution and visual features are
+retained. No sustained FPS gain is claimed.
+
+The next result must confirm an accepted movement/save budget, actual Zink /
+Turnip Game, and detailed pipeline timing disabled on Reopen. It resolves
+whether FPS recovers without that added timing. If not, scene production and
+hidden queue-capacity waits need finer attribution before a native change.
+Only a new GPU startup failure calls for a brief cleanup-proved fallback check.

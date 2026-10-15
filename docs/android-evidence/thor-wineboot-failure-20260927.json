@@ -1,0 +1,103 @@
+{
+  "format": 1,
+  "result": "both_modes_failed_before_odbc_or_graphics",
+  "source_commit": "c1097bdc0aab433fd3cb1560fd07175c6c3dc6b0",
+  "reports": [
+    {
+      "file": "coh-diagnostic-20260927-212717.zip",
+      "archive_sha256": "2fcc71eca35bf950c69b3b1ef724f94b5f433a9668faa7c4d80b04a35a063120",
+      "app_version": "0.1.1",
+      "device": "AYN AYN Thor",
+      "android_sdk": 33,
+      "runtime_manifest_sha256": "9aebda10d6c438a48b52353989df17cf5f80104ffa56d5149b01e29c6fd17218",
+      "mode": "database",
+      "failures": [
+        "wineboot timed out"
+      ],
+      "stages": [
+        {
+          "stage": "assets_and_architecture",
+          "status": "passed"
+        },
+        {
+          "stage": "initialize_owned_cluster",
+          "status": "passed"
+        },
+        {
+          "stage": "postgres_first_start",
+          "status": "passed"
+        },
+        {
+          "stage": "restricted_fixture_database",
+          "status": "passed"
+        },
+        {
+          "stage": "wine_prefix_and_driver",
+          "status": "unfinished"
+        }
+      ],
+      "wineboot": {
+        "exit_code": 0,
+        "forced_stop": true,
+        "elapsed_seconds": 151.253
+      },
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      }
+    },
+    {
+      "file": "coh-diagnostic-20260927-213001.zip",
+      "archive_sha256": "f6af0c3cc6136acff616f7a84f8110e42dff83132b14c052f4ef17ba92e6f12e",
+      "app_version": "0.1.1",
+      "device": "AYN AYN Thor",
+      "android_sdk": 33,
+      "runtime_manifest_sha256": "9aebda10d6c438a48b52353989df17cf5f80104ffa56d5149b01e29c6fd17218",
+      "mode": "database_and_client",
+      "failures": [
+        "wineboot timed out"
+      ],
+      "stages": [
+        {
+          "stage": "assets_and_architecture",
+          "status": "passed"
+        },
+        {
+          "stage": "initialize_owned_cluster",
+          "status": "passed"
+        },
+        {
+          "stage": "postgres_first_start",
+          "status": "passed"
+        },
+        {
+          "stage": "restricted_fixture_database",
+          "status": "passed"
+        },
+        {
+          "stage": "wine_prefix_and_driver",
+          "status": "unfinished"
+        }
+      ],
+      "wineboot": {
+        "exit_code": 0,
+        "forced_stop": true,
+        "elapsed_seconds": 151.231
+      },
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      }
+    }
+  ],
+  "supported_findings": [
+    "Native ARM64 PostgreSQL initialization and restricted SQL fixture setup passed on AYN Thor Android13",
+    "Both modes reported wineboot timed out at150seconds",
+    "Second run reused the same diagnostic cluster",
+    "Owned PostgreSQL and Wine cleanup passed in both reports"
+  ],
+  "causal_limit": "Exit code0 was recorded after cleanup signals; reports cannot prove wineboot had exited before timeout. A retained-pipe timeout is reproduced in the harness and is the leading hypothesis, not confirmed device causality.",
+  "scope": "Selected diagnostic fields only; original user support archives remain private"
+}

@@ -1,0 +1,350 @@
+{
+  "format": 1,
+  "run_id": 36354263676,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36354263676",
+  "source_commit": "49c1626c10636e46a38493047f34ab61a9a5d5ca",
+  "result": "all_five_jobs_and_cold_repeat_modes_passed",
+  "tooling_tests": {
+    "passed": 109,
+    "skipped": 0
+  },
+  "apk": {
+    "format": 1,
+    "apk": "COH-Diagnostic-0.1.3.apk",
+    "bytes": 13477490,
+    "sha256": "208b2251421a515b2416834d7c6ec1a0d322fa5fdd7903e5e8547df18f7fd879",
+    "application_id": "io.github.russianranger.cohdiagnostic",
+    "version_name": "0.1.3",
+    "version_code": 4,
+    "min_sdk": 26,
+    "target_sdk": 35,
+    "abi": "arm64-v8a",
+    "repository_commit": "49c1626c10636e46a38493047f34ab61a9a5d5ca",
+    "runtime_manifest_sha256": "4348030259b192a5711395704949c153e2f1e0fc0f337e70a05b55ad33300aa1",
+    "signature_verified": true,
+    "signer_certificate_sha256": "54d55d36bc729460a5f09a6344642806d0c8c1cf4c46c1c2383bc41addd5ed1a",
+    "signing": "Ephemeral CI certificate; not a stable release/update signing identity",
+    "package_badging_verified": true,
+    "payload_bytes_verified": true,
+    "device_validated": false,
+    "gameplay_validated": false
+  },
+  "runtime_modes": {
+    "database": {
+      "cold": {
+        "passed": true,
+        "stages": 11,
+        "cleanup": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true
+        },
+        "wine_initialization": {
+          "policy": "initialize_once_then_reuse",
+          "state": "ready",
+          "ready_prefix_reused": false,
+          "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+          "update_timestamp_removed": false,
+          "timeout_seconds": 600,
+          "registration_processes": 3,
+          "wow64_registration_processes": 1,
+          "registration_passes": 1,
+          "elapsed_seconds": 39.911
+        },
+        "report": "runtime-database-36354263676.json",
+        "report_sha256": "55ce59e322a83a0cba922b26212e98cd1fee96ea3d378c48797c203d7aecb942",
+        "wineboot": {
+          "label": "wineboot",
+          "elapsed_seconds": 39.91,
+          "exit_code": 0,
+          "forced_stop": false,
+          "output_capture_closed": true,
+          "input_closed": true,
+          "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 14c starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\"\n00e4:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\" in experimental wow64 mode\n00ec:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\iexplore.exe\" in experimental wow64 mode\n002c:trace:wineboot:update_wineprefix wine: configuration in L\"/state/diagnostic/wine\" has been updated.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n0154:trace:wineboot:runCmd Successfully ran command L\"C:\\\\windows\\\\system32\\\\winemenubuilder.exe -a -r\" - Created process handle 0000000000000054\n0154:trace:wineboot:process_run_key Done processing cmd 0.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:main Operation done\n",
+          "completion": {
+            "policy": "leader_exit_with_owned_background_output",
+            "leader_exit_code": 0,
+            "output_capture_open": true,
+            "elapsed_seconds": 39.91
+          }
+        }
+      },
+      "repeat": {
+        "passed": true,
+        "stages": 11,
+        "cleanup": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true
+        },
+        "wine_initialization": {
+          "policy": "initialize_once_then_reuse",
+          "state": "ready",
+          "ready_prefix_reused": true,
+          "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+          "update_timestamp_removed": false,
+          "timeout_seconds": 600,
+          "registration_processes": 0,
+          "wow64_registration_processes": 0,
+          "registration_passes": 0,
+          "elapsed_seconds": 4.629
+        },
+        "report": "runtime-database-repeat-36354263676.json",
+        "report_sha256": "4f130ea3e6590747dfebbda38723d2e5960f851ea5125568e0a52db9a1b9fa34",
+        "wineboot": {
+          "label": "wineboot",
+          "elapsed_seconds": 4.629,
+          "exit_code": 0,
+          "forced_stop": false,
+          "output_capture_closed": true,
+          "input_closed": true,
+          "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:runCmd Successfully ran command L\"C:\\\\windows\\\\system32\\\\winemenubuilder.exe -a -r\" - Created process handle 0000000000000044\n002c:trace:wineboot:process_run_key Done processing cmd 0.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n0120:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n0120:trace:wineboot:process_run_key No commands to execute.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:process_run_key No commands to execute.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n0120:trace:wineboot:runCmd Successfully ran command L\"C:\\\\windows\\\\system32\\\\winemenubuilder.exe -a -r\" - Created process handle 0000000000000054\n0120:trace:wineboot:process_run_key Done processing cmd 0.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:process_run_key No commands to execute.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n0120:trace:wineboot:process_run_key No commands to execute.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:process_run_key No commands to execute.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:main Operation done\n",
+          "completion": {
+            "policy": "leader_exit_with_owned_background_output",
+            "leader_exit_code": 0,
+            "output_capture_open": true,
+            "elapsed_seconds": 4.629
+          }
+        }
+      }
+    },
+    "client": {
+      "cold": {
+        "passed": true,
+        "stages": 12,
+        "cleanup": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true
+        },
+        "wine_initialization": {
+          "policy": "initialize_once_then_reuse",
+          "state": "ready",
+          "ready_prefix_reused": false,
+          "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+          "update_timestamp_removed": false,
+          "timeout_seconds": 600,
+          "registration_processes": 3,
+          "wow64_registration_processes": 1,
+          "registration_passes": 1,
+          "elapsed_seconds": 40.305
+        },
+        "report": "runtime-client-36354263676.json",
+        "report_sha256": "dcf4e494ff50152e8addf10eccd37341d74704e6ba29d1a09373cc534e42fb42",
+        "wineboot": {
+          "label": "wineboot",
+          "elapsed_seconds": 40.305,
+          "exit_code": 0,
+          "forced_stop": false,
+          "output_capture_closed": true,
+          "input_closed": true,
+          "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 14c starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\"\n00e4:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\" in experimental wow64 mode\n00ec:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\iexplore.exe\" in experimental wow64 mode\n002c:trace:wineboot:update_wineprefix wine: configuration in L\"/state/diagnostic/wine\" has been updated.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n0154:trace:wineboot:runCmd Successfully ran command L\"C:\\\\windows\\\\system32\\\\winemenubuilder.exe -a -r\" - Created process handle 0000000000000054\n0154:trace:wineboot:process_run_key Done processing cmd 0.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:main Operation done\n",
+          "completion": {
+            "policy": "leader_exit_with_owned_background_output",
+            "leader_exit_code": 0,
+            "output_capture_open": true,
+            "elapsed_seconds": 40.305
+          }
+        },
+        "client_probe": {
+          "format": 1,
+          "status": "passed",
+          "failure_stage": "",
+          "pointer_bits": 32,
+          "win32_error": 0,
+          "scope": "headless_wgl_client_capabilities",
+          "gl": {
+            "vendor": "Mesa/X.org",
+            "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+            "version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+            "renderer_class": "software",
+            "arb_vertex_program": true,
+            "arb_fragment_program": true,
+            "arb_shader_objects": true,
+            "framebuffer_extension": true,
+            "wgl_pbuffer_entrypoint": true,
+            "wgl_pixel_format_entrypoint": true,
+            "pbuffer_exercised": false
+          },
+          "render": {
+            "textured_quad_verified": true,
+            "samples_verified": 4,
+            "swap_buffers": true,
+            "rgb_samples": [
+              [
+                255,
+                0,
+                0
+              ],
+              [
+                0,
+                255,
+                0
+              ],
+              [
+                0,
+                0,
+                255
+              ],
+              [
+                255,
+                255,
+                255
+              ]
+            ]
+          },
+          "input": {
+            "scope": "synthetic_own_window_and_device_creation_only",
+            "window_messages_verified": true,
+            "keyboard_message_mask": 3,
+            "mouse_message_mask": 7,
+            "directinput_devices_created": true,
+            "directinput_hresult": 0,
+            "physical_input_validated": false
+          },
+          "audio": {
+            "scope": "device_enumeration_only",
+            "enumeration_hresult": 0,
+            "devices": 0,
+            "default_reported": false,
+            "playback_validated": false
+          },
+          "cg_shaders_validated": false,
+          "game_rendering_validated": false,
+          "android_surface_validated": false,
+          "hardware_acceleration_validated": false
+        }
+      },
+      "repeat": {
+        "passed": true,
+        "stages": 12,
+        "cleanup": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true
+        },
+        "wine_initialization": {
+          "policy": "initialize_once_then_reuse",
+          "state": "ready",
+          "ready_prefix_reused": true,
+          "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+          "update_timestamp_removed": false,
+          "timeout_seconds": 600,
+          "registration_processes": 0,
+          "wow64_registration_processes": 0,
+          "registration_passes": 0,
+          "elapsed_seconds": 4.629
+        },
+        "report": "runtime-client-repeat-36354263676.json",
+        "report_sha256": "f2c8d5744ad83369c13e20e07dcf55fa29cd2fa697c753d7777deb111c1ce37c",
+        "wineboot": {
+          "label": "wineboot",
+          "elapsed_seconds": 4.628,
+          "exit_code": 0,
+          "forced_stop": false,
+          "output_capture_closed": true,
+          "input_closed": true,
+          "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:runCmd Successfully ran command L\"C:\\\\windows\\\\system32\\\\winemenubuilder.exe -a -r\" - Created process handle 0000000000000044\n002c:trace:wineboot:process_run_key Done processing cmd 0.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n0120:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n0120:trace:wineboot:process_run_key No commands to execute.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:process_run_key No commands to execute.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n0120:trace:wineboot:runCmd Successfully ran command L\"C:\\\\windows\\\\system32\\\\winemenubuilder.exe -a -r\" - Created process handle 0000000000000054\n0120:trace:wineboot:process_run_key Done processing cmd 0.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:process_run_key No commands to execute.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n0120:trace:wineboot:process_run_key No commands to execute.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:process_run_key No commands to execute.\n0120:trace:wineboot:process_run_key Done.\n0120:trace:wineboot:main Operation done\n",
+          "completion": {
+            "policy": "leader_exit_with_owned_background_output",
+            "leader_exit_code": 0,
+            "output_capture_open": true,
+            "elapsed_seconds": 4.628
+          }
+        },
+        "client_probe": {
+          "format": 1,
+          "status": "passed",
+          "failure_stage": "",
+          "pointer_bits": 32,
+          "win32_error": 0,
+          "scope": "headless_wgl_client_capabilities",
+          "gl": {
+            "vendor": "Mesa/X.org",
+            "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+            "version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+            "renderer_class": "software",
+            "arb_vertex_program": true,
+            "arb_fragment_program": true,
+            "arb_shader_objects": true,
+            "framebuffer_extension": true,
+            "wgl_pbuffer_entrypoint": true,
+            "wgl_pixel_format_entrypoint": true,
+            "pbuffer_exercised": false
+          },
+          "render": {
+            "textured_quad_verified": true,
+            "samples_verified": 4,
+            "swap_buffers": true,
+            "rgb_samples": [
+              [
+                255,
+                0,
+                0
+              ],
+              [
+                0,
+                255,
+                0
+              ],
+              [
+                0,
+                0,
+                255
+              ],
+              [
+                255,
+                255,
+                255
+              ]
+            ]
+          },
+          "input": {
+            "scope": "synthetic_own_window_and_device_creation_only",
+            "window_messages_verified": true,
+            "keyboard_message_mask": 3,
+            "mouse_message_mask": 7,
+            "directinput_devices_created": true,
+            "directinput_hresult": 0,
+            "physical_input_validated": false
+          },
+          "audio": {
+            "scope": "device_enumeration_only",
+            "enumeration_hresult": 0,
+            "devices": 0,
+            "default_reported": false,
+            "playback_validated": false
+          },
+          "cg_shaders_validated": false,
+          "game_rendering_validated": false,
+          "android_surface_validated": false,
+          "hardware_acceleration_validated": false
+        }
+      }
+    }
+  },
+  "artifacts": {
+    "apk": {
+      "id": 10942919938,
+      "zip_sha256": "0e365650b25152cf222b8a71ed263f7fda4a8cab7e0b05ea9e2a0fbeab3dbe64"
+    },
+    "database": {
+      "id": 10943845686,
+      "zip_sha256": "6f5c991f590f88982aac161f62ff799834200864c80dc58ba886db663fbd640d"
+    },
+    "client": {
+      "id": 10943495999,
+      "zip_sha256": "595300d95ccc0cc21ae92d4f02ecd10a83950f0a8f6d0d3e46ffacd275954ce9"
+    }
+  },
+  "downloaded_apk_and_all_embedded_asset_hashes_verified": true,
+  "runtime_probe_hashes_match_apk": true,
+  "device_failure_evidence": "thor-initializer-timeout-20260927.json",
+  "android_device_acceptance": "pending_retry",
+  "scope": "Hosted ARM64 Wine/FEX cold and warm prerequisites. Physical Thor initialization, Android presentation, hardware acceleration and gameplay remain unvalidated.",
+  "accepted_utc": "2026-09-27T22:16:35Z",
+  "same_source_postgresql_regression": {
+    "run_id": 36354266044,
+    "conclusion": "success"
+  }
+}

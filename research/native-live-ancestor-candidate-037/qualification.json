@@ -1,0 +1,72 @@
+{
+  "schema": "coh-native-live-ancestor-candidate-unexecuted-research-v1",
+  "status": "unexecuted_unreviewed_environment_offline",
+  "proposed_only": true,
+  "base_parent": "270ad89b4f2f85333692f54446901cc4da3cb4e4",
+  "baseline_source": "2d030678e7013891547ecd7d35fc0cf40ffabff9",
+  "actual_execution_platform": null,
+  "host_control_passed": false,
+  "tests_executed": 0,
+  "proposed_new_permission_controls": 9,
+  "original_host_test_source_methods": 42,
+  "candidate_host_test_source_methods": 51,
+  "independent_review": "pending",
+  "initial_nonroot_fixture_attempt": {
+    "source_ref": "2d030678e7013891547ecd7d35fc0cf40ffabff9",
+    "actual_core_bytes": 22987,
+    "actual_core_sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c",
+    "attempt": "Create disposable app root owned by UID65534 before executing old qualified library",
+    "result": "OSError errno22 EINVAL from os.chown before any child or native test executed",
+    "native_control_executed": false,
+    "qualification_pass_claimed": false,
+    "old_native_binaries_changed": false,
+    "afterwards_exec_transport": "Unavailable even for pwd; root acknowledged broad outage"
+  },
+  "proposed_alternative_control": {
+    "same_UID_child": true,
+    "capabilities_effective_permitted_inheritable_all_zero_required": true,
+    "no_new_privileges_before_exec_required": true,
+    "real_O_RDONLY_EACCES_on_mode0111_parent_required": true,
+    "root_DAC_bypass_pass_forbidden": true,
+    "actually_executed": false
+  },
+  "retained_host_libraries": [
+    {
+      "bytes": 35664,
+      "sha256": "cec249a49fa8758b4caf2f074c133fb687f5d53e1c580ab1aa8031b822d653a8"
+    },
+    {
+      "bytes": 35664,
+      "sha256": "b264121c80afb11ff84248b98099939a6657251c56bd2175174f260615d45708"
+    }
+  ],
+  "retained_ARM_library": {
+    "bytes": 29992,
+    "sha256": "3d21ece5894b46e9315eb14c3cc12f8d2fcbd3082f99031b4bcbde3e03d5e282"
+  },
+  "old_binary_bytes_changed": false,
+  "qualified_producer_branch_modified": false,
+  "new_native_binary_built": false,
+  "new_ARM_ABI_build_started": false,
+  "new_Map_Game_probe_build_started": false,
+  "Android_executed": false,
+  "PRoot_Wine_consumer_parity_proven": false,
+  "wire_schema_ABI_heap_limit_unchanged": "proposed source delta only; no executable claim",
+  "original_heap_limit_bytes": 33554432,
+  "final_root_readable_descriptor_required": true,
+  "final_root_device_inode_UID_checks_retained_in_proposed_source": true,
+  "ancestor_alias_or_retarget_refusal_may_not_be_waived": true,
+  "post_row_failure_stock_fallback_forbidden": true,
+  "runtime_admission": false,
+  "shipping_allowed": false,
+  "APK_publication_allowed": false,
+  "player_profile_accessed": false,
+  "blocking_condition": "executor transport offline; no source compilation or real permission controls executed",
+  "required_next_gates": [
+    "Reproduce old retained host-library refusal under genuinely capability-free DAC",
+    "Compile and execute complete original plus nine new kernel controls",
+    "Independently review frozen source and refusal evidence",
+    "One new ARM ABI build justified by the source change, after root approval",
+    "Actual Android/PRoot/Wine fixture parity and device acceptance"
+  ]
+}

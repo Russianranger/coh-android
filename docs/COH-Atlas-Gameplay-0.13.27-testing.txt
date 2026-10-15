@@ -1,0 +1,50 @@
+COH Atlas Gameplay 0.13.27 / version code 42
+
+Purpose: measure realistic loading from a single Travel tap, test preparation
+contention changes, and close report-recovery/save gaps. Your two successful .26
+transfers remain accepted. This is a new automatic-loading and recovery test.
+Kings Row is not enabled yet; its asset foundation is being audited.
+
+1. Install as an update. Preserve app data, imports and THORHERO. Apply
+   "Set up / update runtime" once. Do not clear data or reimport assets.
+   Keep the same GPU mode, Performance preset, 800x600 selection, visual
+   settings, fan and charging state. Enable Show FPS and cap 30.
+
+2. If an earlier session was interrupted, use "Recover interrupted reports"
+   and "Reports / export" before a new session. Export any recovered earlier
+   report; it may be incomplete and does not prove a saved character. If the
+   cleanup guard asks for force-stop/reopen, do that once, then retry recovery.
+   An ambiguous socket/process state remains blocked; do not clear app data.
+
+3. Reopen THORHERO with COHLOCAL / offline and let gameplay settle. Tap
+   "Travel to Atlas instance 2" once. Do not manually prepare the destination.
+   Stay in the app until arrival. Record approximate tap-to-usable time, FPS
+   range/dips during preparation, temperature and any artifacts. The report
+   separates preparation, native transfer and fresh destination views.
+   After arrival check walking, Jump, camera and click. A submitted event alone
+   does not qualify the control. If movement is stuck or performance unusable,
+   Abort/Finish as available and export early instead of waiting immobile.
+
+4. To cover the remaining persistence gap, keep controls released for the
+   normal 60-second neutral wait, choose "Save character / log out", wait for
+   "Saved character verified", then Finish. Export the complete outer report
+   through "Reports / export". Once copying has visibly started, switching to
+   another app and back checks the new foreground export path; retain/export
+   the internal report again if the external copy fails. If the provider
+   remains stuck opening a file, reopen the app before another export; the
+   internal report remains available.
+
+5. Reopen the saved character and confirm the same destination and position.
+   Tap "Travel back to Atlas Park" once; record loading time. Complete the
+   neutral wait, verified Save, Finish and export. A destination already
+   running in the same session is a warm case; a new process is labelled cold.
+   Neither label proves that Android's filesystem cache was cold.
+
+If Android terminates the app, reopen and recover/export the interrupted
+report before starting another run. Also retain the later retry report.
+Report whether "Saved character verified" appeared before the interruption.
+Do not deliberately force-stop an unsaved character solely for this test.
+
+No long Software comparison, lower resolution or reduced visual features is
+requested. Sustained 30 FPS remains the goal; this build has no measured Thor
+speedup yet. Startup time and Kings Row arrival are not qualified by this test.

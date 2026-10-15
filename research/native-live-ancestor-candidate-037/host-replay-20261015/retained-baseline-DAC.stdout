@@ -1,0 +1,1 @@
+{"CapEff": "0000000000000000", "CapInh": "0000000000000000", "CapPrm": "0000000000000000", "NoNewPrivs": "1", "euid": 0, "fallback": true, "fd_counts_before_after": [4, 4], "final_known_name_direct_open_succeeded": true, "namespace_opened": false, "native_errno": 13, "parent_O_RDONLY_errno": 13, "rows": 0, "uid": 0}

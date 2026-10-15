@@ -1,0 +1,48 @@
+{
+  "format": 1,
+  "scope": "android_dbserver_device_assets_preparation",
+  "repository_commit": "f7dbba42ec29a1c054d856d71810146f5b53bac6",
+  "runtime_manifest_sha256": "d68ae4374dadfacd3c5044ccdbfcc04a6d4104af263c3b100168d7ed7d6b7cb9",
+  "accepted_base_runtime": {
+    "run_id": 36364550345,
+    "repository_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+    "manifest_file": "accepted-runtime-manifest.json",
+    "manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+  },
+  "dbserver_device_bundle": {
+    "format": 1,
+    "package_run_id": 36460867428,
+    "package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+    "package_repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "schema_acceptance_run_id": 36088012666,
+    "guest_script": "dbserver_diagnostic.py",
+    "package_archive": "dbserver-package.tar.gz",
+    "schema_archive": "dbserver-schema.tar.gz",
+    "listener_policy": "device",
+    "android_execution_validated": false,
+    "gameplay_validated": false
+  },
+  "additional_files": {
+    "accepted-runtime-manifest.json": {
+      "bytes": 4128,
+      "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+    },
+    "dbserver-package.tar.gz": {
+      "bytes": 2133821,
+      "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80"
+    },
+    "dbserver-schema.tar.gz": {
+      "bytes": 1139794,
+      "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792"
+    },
+    "dbserver_diagnostic.py": {
+      "bytes": 50159,
+      "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+    }
+  },
+  "base_file_bytes_preserved": true,
+  "archive_roundtrip_verified": true,
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

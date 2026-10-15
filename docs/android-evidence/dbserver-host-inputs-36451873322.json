@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "scope": "host_dbserver_runtime_inputs",
+  "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+  "package_manifest_sha256": "e4f8a66802f29643b13aec2228ada1549a80c22efa11de1549a9b145bb43e06b",
+  "fixture_executable_sha256": "e7a62e81a50eed4f0b2353cb3bb226c079a0c79bf1a51077fd793ca75d4c4b2b",
+  "normal_executable_sha256": "659e9072234f75ad02c8cac2636df93f5249ff1de385c1ed7d6c6fc0c04a453a",
+  "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+  "repository_commit": "53c6270dff8a0efcc6be09da756408504d8313bd",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "kernel_hostname": "runnervmoyp6c",
+  "guest_hosts_sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d",
+  "guest_hosts_bytes": 34,
+  "guest_hosts_loopback_aliases": [
+    "localhost",
+    "runnervmoyp6c"
+  ],
+  "guest_hosts_evidence_file": "guest-etc-hosts",
+  "runtime_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+  "package_commit": "53c6270dff8a0efcc6be09da756408504d8313bd",
+  "guest_script_sha256": "0b5c08cababfd5477ecd99e9a7396698cc90a55b99533c1f82f37ac1a81ea9e5",
+  "proot_sha256": "a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb",
+  "proot_loader_sha256": "c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5",
+  "schema_acceptance_run_id": 36088012666,
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

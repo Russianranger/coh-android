@@ -1,0 +1,113 @@
+{
+  "format": 1,
+  "status": "source_review_passed",
+  "scope": "Independent read-only source integration review; qualification and physical device acceptance pending",
+  "base_commit": "2863c7e9b1fcfee85fa72a19febe460baabad296",
+  "reviewed_utc": "2026-09-29T22:12:56.800683+00:00",
+  "files": {
+    ".github/workflows/android-atlas-game.yml": {
+      "bytes": 14330,
+      "sha256": "5043dfa9beb1fcb46ffbf131b9c596ec469a4dc9248c7d1093df4bc09e7d2c2e"
+    },
+    "android/atlasgame/src/main/AndroidManifest.xml": {
+      "bytes": 1685,
+      "sha256": "f47bb9d6d44fd9b49401d083ff6332dad42e2cab881f6c38a2c71140e1e26258"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohatlastest/AtlasActivity.java": {
+      "bytes": 14498,
+      "sha256": "5ba67d861603604b7258365a453b19aa7188fcc381d9b6af09b458715217b6a9"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohatlastest/AtlasGameReports.java": {
+      "bytes": 6891,
+      "sha256": "bc51fa7097b0b3bab321ede629a715ab6c6e262a4150692184d576e98b72cd37"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasGameAcceptance.java": {
+      "bytes": 20028,
+      "sha256": "871a2bbba6dfe497126a4405d9e90370b405c8b9b5d36c48311bd8333458643b"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasGameCapturePolicy.java": {
+      "bytes": 1382,
+      "sha256": "da5740fb2b456156cbeea080c75893a097215872af38b214c63699f0b03baeed"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasGameRuntime.java": {
+      "bytes": 38469,
+      "sha256": "c70b840b9cb557f706392c88d22447210ed926e059f5f7b72e830312ed1f577c"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasMapProgressAcceptance.java": {
+      "bytes": 12320,
+      "sha256": "82a14a9c4d4d887a63d652e2789d0ee19d3e2980f8b78c7bce1117e17fda7956"
+    },
+    "android/guest/game_device_diagnostic.py": {
+      "bytes": 51035,
+      "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+    },
+    "tools/android/atlasgame/build_apk.py": {
+      "bytes": 20860,
+      "sha256": "687958152cd5c2c378fad3ea34a2df02ee5a23302ca990da3206e2fed1adbf9c"
+    },
+    "tools/android/atlasgame/host_device_smoke.py": {
+      "bytes": 28107,
+      "sha256": "482587d7fb40195f1b12f967954b45f4e608e270bd8bbf830dcb4313c26a0db3"
+    },
+    "tools/android/atlasgame/prepare_device_assets.py": {
+      "bytes": 20958,
+      "sha256": "18d680913085d283ab700813d71aecc38c27ef7e3b0b47fbaef1d5b2a27a84d4"
+    },
+    "tools/android/atlasgame/test_atlas_game_build_apk.py": {
+      "bytes": 18777,
+      "sha256": "826e51869435328246ec63a4a36cad8078aeb28eeed9eb0a73d5271d92231498"
+    },
+    "tools/android/atlasgame/test_atlas_game_prepare_assets.py": {
+      "bytes": 25497,
+      "sha256": "50b37cc0b672ff07205f92b8f8a7eef4487a5fb5331c63097ccf269ba987fce8"
+    },
+    "tools/android/atlasgame/test_game_acceptance.py": {
+      "bytes": 21049,
+      "sha256": "88ab0a4eb5a049db5e6f1915b01a43cb3f11efd382e2521890f9e6db9c94ea0e"
+    },
+    "tools/android/atlasgame/test_game_device_diagnostic.py": {
+      "bytes": 75635,
+      "sha256": "4109fd9209e688d575bb5806f6e6f3a3f55401cc912d2f6c6f0a8afcd3200213"
+    },
+    "tools/android/atlasgame/test_host_device_smoke.py": {
+      "bytes": 20272,
+      "sha256": "dd8203cabff3898d68641f79e25e6eb98ad46624c498c9c6614d8cd6c347203e"
+    }
+  },
+  "checks": [
+    "Explicit dispatch_progress_v1 selection binds qualified donor run36630872719/source003b07bcd98cb100c1505c15670c07d11a240c8f and exact MapServer binary/manifest/package pins; APK wrapper commit remains separate",
+    "Original accepted non-MapServer supporting donors, runtime/schema/data and observer identities remain pinned",
+    "All six helper scripts are payload-pinned and copied from exact APK bytes; undeclared checkout helper set fails",
+    "Selected startup guard requires a newly read coherent positive completed tick before original protocol query and matching fresh after-read; unavailable/invalid/replaced records do not reuse prior success",
+    "Real parent protocol timestamp is produced after query and parent post-query sample, then enclosed by adapter before/after raw records",
+    "Both host and Java decode raw128bytes and bind PID/thread/file identity to distinct owned launch phases; successful protocol matches original ready phase",
+    "Retained history obeys first16 plus latest112; bounded increasing startup ordinals require exact retained-copy equality or legitimate eviction; self-contained evidence survives eviction",
+    "Original 20-second heartbeat ages, 30-second observation, startup budgets, total deadlines and full18-stage acceptance remain",
+    "Client progress capture is exactly named, bounded512KiB, actual-byte hashed, parsed and compared to report",
+    "DeviceWineProcessOwner and WineMemorySampler classes and existing DeviceGameDiagnostic methods other than constructor/new map_status remain AST-identical; Java cumulative owned cleanup guards preserved",
+    "Version0.4.4/code5 consistent in builder, manifest, UI and reports"
+  ],
+  "resolved_finding": {
+    "description": "Startup witness could contradict retained sample with same ordinal while still pass",
+    "reproduction": "Synthetic before observed_monotonic102.0 changed to102.25 while retained ordinal2 remained102.0",
+    "resolution": "Both independent validators now verify bounded increasing ordinals and exact retained copy consistency; detached witness only in actual evicted middle window",
+    "verified_rejection": "Device MapServer startup witness differs from retained observation"
+  },
+  "independent_targeted_checks": {
+    "passed": 4,
+    "tests": [
+      "host startup raw positive protocol guard",
+      "host genuine witness history eviction",
+      "Java retained ordinal consistency",
+      "Java actual retention policy eviction"
+    ],
+    "original_reproduction_rejected": true
+  },
+  "limitations": [
+    "Source review is not exact APK runtime qualification",
+    "Actual Android lifecycle, restart cleanup and complete device milestone remain unvalidated",
+    "Positive first-tick guard is a stronger startup criterion; it does not establish the root cause of prior uninstrumented failures",
+    "The separate progress donor hosted pass does not qualify this new APK until its exact payload gate passes"
+  ],
+  "blocking_findings": []
+}
