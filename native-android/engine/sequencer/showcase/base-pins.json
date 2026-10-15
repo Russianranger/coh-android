@@ -1,0 +1,14 @@
+{
+  "assets/player_library/animations/male/skel_ready2.anim": {
+    "bytes": 7112,
+    "sha256": "6757e276eae273d303ea945eaaa410b806f831ac0a869d017ab44a47a00372a7"
+  },
+  "assets/player_library/animations/fem/skel_ready2.anim": {
+    "bytes": 6228,
+    "sha256": "c3ab8a8e5a9cf0cdbf1e3d5ac5365cde133fdde6c59a82bb750e05aeecbaa177"
+  },
+  "assets/player_library/animations/huge/skel_ready.anim": {
+    "bytes": 6171,
+    "sha256": "19edb695bb8ca18ea492ac556a68809e7eaebe40fe8d0bf550b7902f78f604e6"
+  }
+}
