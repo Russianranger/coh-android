@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "passed": true,
+  "asset_identities": 13,
+  "java_asset_paths": [
+    "asset-manifest.json",
+    "support-asset-manifest.json"
+  ],
+  "audio_asset_paths": [
+    "music.ogg",
+    "ambient.ogg"
+  ],
+  "negative_closure_cases": 3,
+  "protected_source_changes": [],
+  "network_protocol_linked": false,
+  "native_source_count": 69,
+  "android_execution": false,
+  "physical_acceptance": false
+}

@@ -1,0 +1,39 @@
+{
+  "scope": [
+    [
+      "physics",
+      "3963019c8f46c69f96f7eca761ef796a17352c3e"
+    ],
+    [
+      "appearance",
+      "5faf57514316bc47e72db9ce4489f0a0bcc9ba1e"
+    ],
+    [
+      "audio",
+      "276386c1385d07caf18ab69ba7a5bc7cf2d7df6f"
+    ],
+    [
+      "perf",
+      "e21b553b5d4ed4b107e744d0804020a04c223d8f"
+    ]
+  ],
+  "commands": [
+    [
+      "physics",
+      "python native-android/engine/physics/check.py --source-root /workspace/scratch/bd17f7dd7d03/coh-second-coordinator --fixture /workspace/scratch/552733ac6bdc/nextbatch-prepared-assets/walkable.bin --ndk /workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c --disable-leak-sanitizer --output /workspace/scratch/bd17f7dd7d03/coordinator-validation/output/physics.json"
+    ],
+    [
+      "appearance",
+      "python native-android/engine/appearance/check.py --source-root /workspace/scratch/bd17f7dd7d03/coh-second-coordinator --corpus-root /workspace/scratch/bd17f7dd7d03/support-appearance-corpus --sanitize --ndk /workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c --output /workspace/scratch/bd17f7dd7d03/coordinator-validation/output/appearance.json"
+    ],
+    [
+      "audio",
+      "python native-android/engine/audio/android-integration/check.py --source-root /workspace/scratch/bd17f7dd7d03/coh-second-coordinator --stream-corpus /tmp/coh-audio-stream-corpus --output /workspace/scratch/bd17f7dd7d03/coordinator-validation/output/audio-host.json && python native-android/engine/audio/android-integration/check.py --source-root /workspace/scratch/bd17f7dd7d03/coh-second-coordinator --stream-corpus /tmp/coh-audio-stream-corpus --sanitize --output /workspace/scratch/bd17f7dd7d03/coordinator-validation/output/audio-sanitizer.json && python native-android/engine/audio/android-integration/check.py --source-root /workspace/scratch/bd17f7dd7d03/coh-second-coordinator --stream-corpus /tmp/coh-audio-stream-corpus --ndk /workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c --build-dir /workspace/scratch/bd17f7dd7d03/coordinator-validation/output/audio-arm64 --output /workspace/scratch/bd17f7dd7d03/coordinator-validation/output/audio-arm64.json"
+    ],
+    [
+      "perf",
+      "python native-android/engine/perf/check.py --source-root /workspace/scratch/bd17f7dd7d03/coh-second-coordinator --apk /workspace/scratch/cd30b2fc1c9e/recovered-world-qualified/CoH-Native-Session-Client-0.3.0-arm64.apk --ndk /workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c --output /workspace/scratch/bd17f7dd7d03/coordinator-validation/output/perf.json"
+    ]
+  ],
+  "concurrency": "Four check commands launched concurrently via Promise.allSettled, each from exact-commit source-only archive. Source-only snapshots avoid repeated 165k upstream checkouts; authoritative original source borrowed read-only."
+}

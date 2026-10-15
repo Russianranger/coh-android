@@ -1,0 +1,18 @@
+{
+  "prior_coordinator": {
+    "directory": "/workspace/scratch/bd17f7dd7d03/coh-native-coordinator",
+    "git_available": false,
+    "head": "",
+    "branch": "",
+    "status": [],
+    "mutated": false
+  },
+  "primary_read_only": {
+    "directory": "/workspace/scratch/cd30b2fc1c9e/coh-native",
+    "git_available": true,
+    "head": "239dc9e0613d3cebcc093d33f430d2855bed80b9",
+    "branch": "native-android",
+    "status": [],
+    "mutated": false
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "state": "failed",
+  "serial": "emulator-5556",
+  "port": 5556,
+  "pid": 2,
+  "avd": "coh-support-qualification",
+  "started_unix": 1792049291.0712965,
+  "error": "Emulator exited during startup: -11"
+}

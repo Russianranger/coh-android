@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "local_and_default_acquisition_outputs_byte_identical": true,
+  "asset_files": 14,
+  "reference_network_bytes": 2487104,
+  "audio_network_bytes": 960534,
+  "font_header_sha256": "79b2bf96955bc1c87fd6f4f0504b22115a1a52973399663a9c66ec1e01b6e710",
+  "accepted_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+  "negative_proof": "support-preparation-negative.json"
+}

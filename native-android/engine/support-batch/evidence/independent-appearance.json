@@ -1,0 +1,267 @@
+{
+  "schema": "coh-appearance-gate31-v1",
+  "implemented": true,
+  "host_qualified": true,
+  "arm64_built": true,
+  "emulator_qualified": false,
+  "physical_qualified": false,
+  "host": {
+    "passed": true,
+    "negative_cases": 20,
+    "maximum_draws": 120,
+    "corpus_models_checked": 402,
+    "workspace_bytes": 157440,
+    "draw_bytes": 1312,
+    "module_heap_allocations": 0,
+    "iterations": 10000,
+    "maximum_case_cpu_seconds": 0.459061
+  },
+  "source_oracle": {
+    "passed": true,
+    "body_descriptors_exact": 9,
+    "authentic_costumes": [
+      {
+        "name": "Model_Aaron_Thiery_NoRing",
+        "body_type": 0,
+        "parts": 28,
+        "draw_requests": 24,
+        "source": "upstream/i24/data/defs/npc/contacts_atlas.nd",
+        "source_sha256_lf": "2d1cfb0fb804f8d194d0d8ab297ceecf63ed53e01d128b071e3529bce48cf5c3",
+        "all_names_sockets_colors_exact": true,
+        "actual_new_model_rendering": false
+      },
+      {
+        "name": "Model_Nightward_BurningBody_Talon",
+        "body_type": 1,
+        "parts": 28,
+        "draw_requests": 24,
+        "source": "upstream/i24/data/defs/villaincostume/i23_unique_costumes.nd",
+        "source_sha256_lf": "af6a4f577dfdcaa56728b2a52dec756842181d3a9f132194c9ccc93cb8b18187",
+        "all_names_sockets_colors_exact": true,
+        "actual_new_model_rendering": false
+      },
+      {
+        "name": "Arachnos_Archetype_03",
+        "body_type": 4,
+        "parts": 26,
+        "draw_requests": 23,
+        "source": "upstream/i24/data/defs/v_villain_costumes/v_arachnos_henchmen.nd",
+        "source_sha256_lf": "db73b840f0339fb211ac75bcb3680f85de8ff60daf23793f9480fd6a5f02f419",
+        "all_names_sockets_colors_exact": true,
+        "actual_new_model_rendering": false
+      },
+      {
+        "name": "Arachnos_Wretch",
+        "body_type": 4,
+        "parts": 12,
+        "draw_requests": 14,
+        "source": "upstream/i24/data/defs/v_villain_costumes/v_arachnos_henchmen.nd",
+        "source_sha256_lf": "db73b840f0339fb211ac75bcb3680f85de8ff60daf23793f9480fd6a5f02f419",
+        "all_names_sockets_colors_exact": true,
+        "actual_new_model_rendering": false
+      }
+    ],
+    "source_identity_comparisons": 1292,
+    "color_bytes_compared": 2040,
+    "branch_cases": 14,
+    "existence_inventories_mocked": true,
+    "original_gpu_or_fullclient_execution": false
+  },
+  "adapters": {
+    "run": true,
+    "GEO_models_exact": 402,
+    "files": [
+      {
+        "name": "fem_pants.geo",
+        "bytes": 150615,
+        "sha256": "bbf556074c0743b82dbf35bcebba5f0ba856cb46523aed9129384795a6721531",
+        "model_count": 48,
+        "source_GEO_reference_exact": true
+      },
+      {
+        "name": "fem_shirt.geo",
+        "bytes": 154728,
+        "sha256": "d31ea02ef56c233b8e7049ab2f7cb40ccb2f65587062b91fa4b1974741e15045",
+        "model_count": 51,
+        "source_GEO_reference_exact": true
+      },
+      {
+        "name": "huge_pants.geo",
+        "bytes": 119625,
+        "sha256": "579f8e31c4e2d9a1ca89e120634f7b58dc520b2a7a114a9557c3607c6cc6509b",
+        "model_count": 39,
+        "source_GEO_reference_exact": true
+      },
+      {
+        "name": "huge_shirt.geo",
+        "bytes": 85988,
+        "sha256": "61cf0ee10600d9d6c60068bc940ac26696ab9e0289dfa23000d61b3bb75667c1",
+        "model_count": 27,
+        "source_GEO_reference_exact": true
+      },
+      {
+        "name": "v_fem_head.geo",
+        "bytes": 352723,
+        "sha256": "e4b25169fe89ebe2eb51c6b7c527e7b22be1b6a6af5f1bec666e9abd2dd26763",
+        "model_count": 87,
+        "source_GEO_reference_exact": true
+      },
+      {
+        "name": "v_male_pants.geo",
+        "bytes": 545244,
+        "sha256": "cbf9c375d3641b6d6aff27b782c30bc4a838cd08327f2da4f8129afa3e509e7d",
+        "model_count": 96,
+        "source_GEO_reference_exact": true
+      },
+      {
+        "name": "v_male_shirt.geo",
+        "bytes": 229961,
+        "sha256": "c950f8b486c9c38d134d7ec9c8eb7bb666a90f32e99a745093c1246941ad7d82",
+        "model_count": 54,
+        "source_GEO_reference_exact": true
+      }
+    ],
+    "accepted_rig_regression": {
+      "run": true,
+      "passed": true,
+      "accepted_palette_float_components_exact": 3240,
+      "rig_sha256": "2b1e862dc61744d51d568f05f54ee1a0ce723ba7529c55adb7e373d2c42b8dd5",
+      "morph_sha256": "ceba092c4e80fa9945cecb08fc438e28e69786253c4638512549baf7af021e02",
+      "new_body_morph_support": false,
+      "reference": "existing accepted unchanged character palette kernel"
+    },
+    "original_source_delta_decode": {
+      "passed": true,
+      "original_source_sha256_lf": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+      "original_function_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+      "models_compared": 402,
+      "delta_channels": 1608,
+      "scalar_elements": 908735,
+      "texture_pixels": 0,
+      "assets": [
+        {
+          "virtual": "data/player_library/fem_pants.geo",
+          "sha256": "bbf556074c0743b82dbf35bcebba5f0ba856cb46523aed9129384795a6721531",
+          "bytes": 150615,
+          "pin": "engine/appearance/corpus-pins.json",
+          "version": 8,
+          "models": 48,
+          "original_delta_byte_exact": true
+        },
+        {
+          "virtual": "data/player_library/fem_shirt.geo",
+          "sha256": "d31ea02ef56c233b8e7049ab2f7cb40ccb2f65587062b91fa4b1974741e15045",
+          "bytes": 154728,
+          "pin": "engine/appearance/corpus-pins.json",
+          "version": 8,
+          "models": 51,
+          "original_delta_byte_exact": true
+        },
+        {
+          "virtual": "data/player_library/huge_pants.geo",
+          "sha256": "579f8e31c4e2d9a1ca89e120634f7b58dc520b2a7a114a9557c3607c6cc6509b",
+          "bytes": 119625,
+          "pin": "engine/appearance/corpus-pins.json",
+          "version": 8,
+          "models": 39,
+          "original_delta_byte_exact": true
+        },
+        {
+          "virtual": "data/player_library/huge_shirt.geo",
+          "sha256": "61cf0ee10600d9d6c60068bc940ac26696ab9e0289dfa23000d61b3bb75667c1",
+          "bytes": 85988,
+          "pin": "engine/appearance/corpus-pins.json",
+          "version": 8,
+          "models": 27,
+          "original_delta_byte_exact": true
+        },
+        {
+          "virtual": "data/player_library/v_fem_head.geo",
+          "sha256": "e4b25169fe89ebe2eb51c6b7c527e7b22be1b6a6af5f1bec666e9abd2dd26763",
+          "bytes": 352723,
+          "pin": "engine/appearance/corpus-pins.json",
+          "version": 8,
+          "models": 87,
+          "original_delta_byte_exact": true
+        },
+        {
+          "virtual": "data/player_library/v_male_pants.geo",
+          "sha256": "cbf9c375d3641b6d6aff27b782c30bc4a838cd08327f2da4f8129afa3e509e7d",
+          "bytes": 545244,
+          "pin": "engine/appearance/corpus-pins.json",
+          "version": 8,
+          "models": 96,
+          "original_delta_byte_exact": true
+        },
+        {
+          "virtual": "data/player_library/v_male_shirt.geo",
+          "sha256": "c950f8b486c9c38d134d7ec9c8eb7bb666a90f32e99a745093c1246941ad7d82",
+          "bytes": 229961,
+          "pin": "engine/appearance/corpus-pins.json",
+          "version": 8,
+          "models": 54,
+          "original_delta_byte_exact": true
+        }
+      ],
+      "original_game_execution": false
+    }
+  },
+  "sanitizers": {
+    "run": true,
+    "asan": true,
+    "ubsan": true,
+    "result": {
+      "passed": true,
+      "negative_cases": 20,
+      "maximum_draws": 120,
+      "corpus_models_checked": 402,
+      "workspace_bytes": 157440,
+      "draw_bytes": 1312,
+      "module_heap_allocations": 0,
+      "iterations": 10000,
+      "maximum_case_cpu_seconds": 1.402279
+    },
+    "leak_detection": false,
+    "note": "Fixed caller workspace and output. Module uses no heap. LeakSanitizer disabled for restricted /proc environment."
+  },
+  "android": {
+    "built": true,
+    "api": 26,
+    "abi": "arm64-v8a",
+    "library_sha256": "48fa2416d848504e650eec96568aedd0efb5cabdbd0d1dc36dec6fc6a8ef0936",
+    "library_bytes": 58480,
+    "elf_machine": "AArch64",
+    "undefined_symbols_link_rejected": true,
+    "emulator_executed": false,
+    "physical_executed": false
+  },
+  "source_pins": {
+    "source_files": {
+      "upstream/i24/data/defs/ui/bodyparts.bp": "21aedaa7b4c901a6e6b8a1a7684f343dba675adc0472bdc6053d378ece37558d",
+      "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+      "upstream/ouroboros/Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+      "upstream/ouroboros/Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+      "upstream/ouroboros/Game/src/entity/costume_client.c": "b89818e2c2c834efd14f90e8af882d572b9c24337f9f2a699150d2d1648925f2",
+      "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+      "upstream/i24/data/defs/npc/contacts_atlas.nd": "2d1cfb0fb804f8d194d0d8ab297ceecf63ed53e01d128b071e3529bce48cf5c3",
+      "upstream/i24/data/defs/villaincostume/i23_unique_costumes.nd": "af6a4f577dfdcaa56728b2a52dec756842181d3a9f132194c9ccc93cb8b18187",
+      "upstream/i24/data/defs/v_villain_costumes/v_arachnos_henchmen.nd": "db73b840f0339fb211ac75bcb3680f85de8ff60daf23793f9480fd6a5f02f419"
+    },
+    "executed_functions": {
+      "get_color": "c6af8391d21b253447fd9ebcd2913198fd4e6b6ab55849f272166f6a0a9fc932",
+      "gender_prefix_fixup": "5873a87144ead081ea398abe63efd1e215ae7fd2b7a87d210525c0cbe8a1dfce",
+      "bodyPartIsLinkedToChest": "8020778d69c54ccef1d6802090cdcb5b81e412db05a6eb648fee03eb3482a25b",
+      "doChangeGeo": "267e655aeadbdfedac90c0aaf6d110df84739bba83b0aac350273bab8541e52d",
+      "determineTextureNames": "fb560f6e3f62c211291eb7d17e98d9dea6b6b6e55f69cc567d9f2f0bc7b297de",
+      "calc_tex_types1": "cf8567fb139037fb4e10fb88e95b17068a769cba337dba6c3b96d2d1f819ebfa",
+      "costumePrefixName": "b587babd89f0f5114ec562d5eb059c06a9a9b70ce9f03b84423919fe3cc5cd9a",
+      "g_BodyTypeInfos": "4e8861ed9a4f3ff91809adb8424cc38db1521a233c7418aaddfad462df2be462"
+    }
+  },
+  "limitations": [
+    "Full Gate31 remains pending: new Male/Female morphology/rig/GPU output is not qualified.",
+    "New original GEO resources are parsed/resolved without full costume texture/material/GPU playback.",
+    "Source Costume/BodyPart parsing is test tooling; production importer must construct validated public API records.",
+    "No live server, session, renderer, JNI, accepted APK or network code changes."
+  ]
+}

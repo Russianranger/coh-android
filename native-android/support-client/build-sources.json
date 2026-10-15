@@ -1,0 +1,240 @@
+{
+  "schema": 1,
+  "library": "coh_support_client",
+  "sources": [
+    "native-android/support-client/src/offline_scene.c",
+    "native-android/support-client/src/support_bridge.c",
+    "native-android/support-client/src/support_physics.c",
+    "native-android/support-client/src/support_animation.c",
+    "native-android/support-client/src/support_ui.c",
+    "native-android/support-client/src/support_audio.c",
+    "native-android/session-client/app/src/main/cpp/session_stream_world.c",
+    "native-android/session-client/app/src/main/cpp/session_stream_qualify.c",
+    "native-android/engine/assets/coh_asset_loader.c",
+    "native-android/engine/assets/coh_asset_geo.c",
+    "native-android/engine/bridge/coh_asset_render.c",
+    "native-android/engine/world/coh_world_stream.c",
+    "native-android/engine/renderer/coh_renderer.c",
+    "native-android/engine/renderer/coh_renderer_gles.c",
+    "native-android/src/coh_assets.c",
+    "native-android/src/coh_dds.c",
+    "native-android/world-probe/app/src/main/cpp/coh_world_scene.c",
+    "native-android/character-probe/app/src/main/cpp/coh_scene.c",
+    "native-android/material-probe/app/src/main/cpp/coh_mesh.c",
+    "native-android/world/coh_world.c",
+    "native-android/character/coh_character.c",
+    "native-android/motion/coh_motion.c",
+    "native-android/locomotion/coh_locomotion.c",
+    "native-android/walkable/coh_walkable_scene.c",
+    "native-android/walk/coh_walk.c",
+    "native-android/walk/source_ctri.c",
+    "native-android/walk/source_world.c",
+    "native-android/walk/source_tritri.c",
+    "native-android/engine/appearance/coh_appearance.c",
+    "native-android/engine/appearance/coh_appearance_adapters.c",
+    "native-android/engine/physics/coh_physics.c",
+    "native-android/engine/sequencer/coh_sequencer.c",
+    "native-android/engine/sequencer/coh_seq_playback.c",
+    "native-android/engine/ui/coh_ui.c",
+    "native-android/engine/ui/coh_hud.c",
+    "native-android/engine/ui/gameplay/coh_hud_android.c",
+    "native-android/engine/ui/gameplay/coh_hud_atlas.c",
+    "native-android/engine/ui/gameplay/coh_hud_gles.c",
+    "native-android/engine/ui/gameplay/coh_hud_quad.c",
+    "native-android/engine/audio/coh_mixer.c",
+    "native-android/engine/audio/coh_mixer_aaudio.c",
+    "native-android/engine/audio/coh_music.c",
+    "native-android/engine/audio/coh_resample.c",
+    "native-android/audio/coh_audio.c",
+    "native-android/engine/perf/coh_perf.c",
+    "native-android/engine/perf/coh_skin_cache.c",
+    "{codec_root}/ogg/src/bitwise.c",
+    "{codec_root}/ogg/src/framing.c",
+    "{codec_root}/vorbis/lib/mdct.c",
+    "{codec_root}/vorbis/lib/smallft.c",
+    "{codec_root}/vorbis/lib/block.c",
+    "{codec_root}/vorbis/lib/envelope.c",
+    "{codec_root}/vorbis/lib/window.c",
+    "{codec_root}/vorbis/lib/lsp.c",
+    "{codec_root}/vorbis/lib/lpc.c",
+    "{codec_root}/vorbis/lib/analysis.c",
+    "{codec_root}/vorbis/lib/synthesis.c",
+    "{codec_root}/vorbis/lib/psy.c",
+    "{codec_root}/vorbis/lib/info.c",
+    "{codec_root}/vorbis/lib/floor1.c",
+    "{codec_root}/vorbis/lib/floor0.c",
+    "{codec_root}/vorbis/lib/res0.c",
+    "{codec_root}/vorbis/lib/mapping0.c",
+    "{codec_root}/vorbis/lib/registry.c",
+    "{codec_root}/vorbis/lib/codebook.c",
+    "{codec_root}/safe/sharedbook.c",
+    "{codec_root}/vorbis/lib/lookup.c",
+    "{codec_root}/vorbis/lib/bitrate.c",
+    "{codec_root}/vorbis/lib/vorbisfile.c"
+  ],
+  "include_dirs": [
+    "native-android/support-client/src",
+    "native-android/session-client/app/src/main/cpp",
+    "native-android/material-probe/app/src/main/cpp",
+    "native-android/world-probe/app/src/main/cpp",
+    "native-android/character-probe/app/src/main/cpp",
+    "native-android/world",
+    "native-android/animation",
+    "native-android/character",
+    "native-android/motion",
+    "native-android/locomotion",
+    "native-android/walk",
+    "native-android/walkable",
+    "native-android/include",
+    "native-android/engine/assets",
+    "native-android/engine/bridge",
+    "native-android/engine/world",
+    "native-android/engine/renderer",
+    "native-android/engine/ui",
+    "native-android/engine/ui/gameplay",
+    "native-android/engine/audio",
+    "native-android/engine/perf",
+    "native-android/engine/sequencer",
+    "native-android/support-client/generated",
+    "{codec_root}/ogg/include",
+    "{codec_root}/vorbis/include",
+    "{codec_root}/vorbis/lib"
+  ],
+  "cflags": [
+    "-Werror",
+    "-DHAVE_ALLOCA_H=1"
+  ],
+  "ldlibs": [
+    "android",
+    "EGL",
+    "GLESv3",
+    "aaudio",
+    "z",
+    "m"
+  ],
+  "per_source_cflags": {
+    "{codec_root}/ogg/src/bitwise.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/ogg/src/framing.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/mdct.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/smallft.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/block.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/envelope.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/window.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/lsp.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/lpc.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/analysis.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/synthesis.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/psy.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/info.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/floor1.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/floor0.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/res0.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/mapping0.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/registry.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/codebook.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/safe/sharedbook.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/lookup.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/bitrate.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "{codec_root}/vorbis/lib/vorbisfile.c": [
+      "-Wno-error",
+      "-Wno-unused-parameter"
+    ],
+    "native-android/walk/source_ctri.c": [
+      "-Wno-unused-variable",
+      "-Wno-unused-parameter",
+      "-Wno-unused-but-set-variable",
+      "-Wno-unused-function",
+      "-Wno-misleading-indentation"
+    ],
+    "native-android/walk/source_world.c": [
+      "-Wno-unused-variable",
+      "-Wno-unused-parameter",
+      "-Wno-unused-but-set-variable",
+      "-Wno-unused-function",
+      "-Wno-misleading-indentation"
+    ]
+  },
+  "generated": [
+    {
+      "command": [
+        "{python}",
+        "native-android/world-probe/shaders/embed_world_shaders.py",
+        "native-android/world-probe/shaders",
+        "{generated}/world_shader_sources.h"
+      ],
+      "outputs": [
+        "{generated}/world_shader_sources.h"
+      ]
+    }
+  ],
+  "java_sources": [
+    "native-android/support-client/java",
+    "native-android/systems-probe/app/src/main/java/org/coh/systemsprobe/InputAdapter.java"
+  ]
+}

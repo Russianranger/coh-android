@@ -1,0 +1,90 @@
+name: Native offline support client consolidated qualification
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - 'native-android/support-client/**'
+      - '.github/workflows/native-support-client.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-support-client-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build-and-emulator:
+    if: github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install pinned standalone Android toolchains
+        run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;28.2.13676358'
+          python3 -m pip install Pillow==12.3.0
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libfreetype6
+      - name: Recover immutable accepted0.3 input without old execution evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p native-android/results/support-client
+          gh api repos/Russianranger/coh-android/actions/artifacts/11945040803/zip > /tmp/coh-accepted0.3.zip
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, zipfile
+          archive=Path('/tmp/coh-accepted0.3.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest()=='48cb364da4392af2a782e14fad5ff95e4465a21e6669afe685e61dfb854db36d'
+          name='CoH-Native-Session-Client-0.3.0-arm64.apk'
+          with zipfile.ZipFile(archive) as bundle:
+              assert bundle.testzip() is None
+              data=bundle.read(name)
+          assert hashlib.sha256(data).hexdigest()=='75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639'
+          Path('/tmp/'+name).write_bytes(data)
+          PY
+      - name: Acquire pinned codec sources and prepare bounded offline support assets
+        run: |
+          python3 native-android/tools/decode_fixture/acquire.py
+          python3 native-android/support-client/tools/prepare_assets.py --source-root . --accepted-apk /tmp/CoH-Native-Session-Client-0.3.0-arm64.apk --output native-android/support-client/assets --evidence-output native-android/results/support-client
+      - name: Build separate ARM64 and x86_64 native support APKs
+        run: |
+          python3 native-android/support-client/tools/build_apk.py --source-root . --sdk "$ANDROID_HOME" --ndk "$ANDROID_HOME/ndk/28.2.13676358" --codec-root native-android/decode/.deps --output native-android/results/support-client
+      - name: Enable disposable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Execute consolidated Android framework support scenario
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -no-snapshot -noaudio -no-boot-anim -gpu swiftshader_indirect
+          disable-animations: true
+          script: python3 native-android/support-client/tools/emulator_check.py --apk native-android/results/support-client/CoH-Native-Support-Client-0.1.0-support-batch-emulator-x86_64.apk --scenario native-android/support-client/emulator-scenario.json --output native-android/results/support-client
+      - name: Upload exact APKs and qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-support-client-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            native-android/results/support-client/*.apk
+            native-android/results/support-client/*.json
+            native-android/results/support-client/*.txt
+            native-android/results/support-client/*.png
+            native-android/results/support-client/SHA256SUMS

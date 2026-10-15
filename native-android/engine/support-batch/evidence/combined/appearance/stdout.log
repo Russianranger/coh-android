@@ -1,0 +1,1 @@
+{"implemented": true, "host_qualified": true, "arm64_built": true, "emulator_qualified": false, "physical_qualified": false, "host": {"passed": true, "negative_cases": 20, "maximum_draws": 120, "corpus_models_checked": 402, "workspace_bytes": 157440, "draw_bytes": 1312, "module_heap_allocations": 0, "iterations": 10000, "maximum_case_cpu_seconds": 0.480321}}

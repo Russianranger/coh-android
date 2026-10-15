@@ -1,0 +1,106 @@
+{
+  "schema": "coh-native-physics-continuation-v1",
+  "passed": true,
+  "source_revision": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "original_source_sha256_lf": {
+    "upstream/ouroboros/Common/entity/entworldcoll.c": "e5c0cab8c310f36ec88c9a97190739af2612e524e487128d409cbb23f4cf71a4",
+    "upstream/ouroboros/Common/gridcoll/ctri.c": "506a32b5546ab24efa9ef8077c3bd197cb5e1a601f6a735cea0f38161bee6b46",
+    "upstream/ouroboros/Common/gridcoll/tritri_isectline.c": "fe3a730d7ac5b04c83d8f39f2a41aaedafe0248ffa5ba76793a08386cc25c7db",
+    "upstream/ouroboros/Common/gridcoll/gridcollobj.c": "a3c516bd673dfcea11829281faab091ef104fe04548327e6410a14fe98dde2d5",
+    "upstream/ouroboros/Common/gridcoll/gridcoll.h": "4ade01161636f8e87ca253a4a8a19926fee3006c5558ef75bf4fc08098546c8e"
+  },
+  "ctri_active_tokens_identical": true,
+  "independently_compiled_original_ctri_parity": true,
+  "host": {
+    "passed": true,
+    "checks": 15331,
+    "failed": 0,
+    "contact_oracle_cases": 2050,
+    "accepted_walk_exact_steps": 378,
+    "large_scene_triangles": 32768,
+    "large_scene_owned_bytes": 7995448,
+    "max_query_nodes": 47,
+    "max_query_triangle_tests": 8,
+    "query_and_walk_allocator_calls": 0,
+    "outstanding_tracked_allocations": 0,
+    "synthetic_oracle_batch_cpu_seconds": 1.395021
+  },
+  "asan_ubsan": {
+    "passed": true,
+    "checks": 15331,
+    "failed": 0,
+    "contact_oracle_cases": 2050,
+    "accepted_walk_exact_steps": 378,
+    "large_scene_triangles": 32768,
+    "large_scene_owned_bytes": 7995448,
+    "max_query_nodes": 47,
+    "max_query_triangle_tests": 8,
+    "query_and_walk_allocator_calls": 0,
+    "outstanding_tracked_allocations": 0,
+    "synthetic_oracle_batch_cpu_seconds": 1.799435
+  },
+  "sanitizers_passed": true,
+  "leak_sanitizer_enabled": false,
+  "authentic_fixture": {
+    "name": "walkable.bin",
+    "bytes": 605048,
+    "sha256": "e69fe7339d3207208627f612c2c1b6d742515c5d8b48db46a6c1b88f99f53357"
+  },
+  "android": {
+    "built": true,
+    "abi": "arm64-v8a",
+    "api": 26,
+    "ndk": "android-ndk-r28c",
+    "library": {
+      "bytes": 243440,
+      "sha256": "74b2b4d53dfb0aabe33270342cd2d8385076dfac66fd0ab7eea76eb6847a46e5"
+    },
+    "exports": [
+      "coh_physics_query",
+      "coh_physics_scene_create",
+      "coh_physics_scene_destroy",
+      "coh_physics_scene_info",
+      "coh_physics_walker_clear",
+      "coh_physics_walker_destroy",
+      "coh_physics_walker_prepare",
+      "coh_physics_walker_step"
+    ],
+    "emulator_qualified": false,
+    "physical_thor_accepted": false
+  },
+  "scope": "Immutable static-world segments, bounded BVH source CTri queries, off-tick neighborhoods around unchanged accepted WALK. Synthetic elevation/slope oracle witnesses and authentic floor/bench collision regression. No jump implementation, full-map qualification, network prediction or Thor acceptance.",
+  "runtime_source": {
+    "native-android/engine/physics/coh_physics.c": {
+      "bytes": 12503,
+      "sha256": "50bca0b54db61a6ac8318241c2e94ab9e0d347567f41c950dd3aaa4ee0837871"
+    },
+    "native-android/walk/coh_walk.c": {
+      "bytes": 15089,
+      "sha256": "998c64c472613cf6e8da38218a8d30bcbf49d29c273520180948d4a2e90c50be"
+    },
+    "native-android/walk/coh_walk_selftest.c": {
+      "bytes": 2171,
+      "sha256": "0b5d71334e5d0f883b14a63d30bdfc8295bc5fddb5f8936d3b8c28bf613ec84f"
+    },
+    "native-android/walk/source_world.c": {
+      "bytes": 35313,
+      "sha256": "4225a8576a5a536cac44ab107cbfe9bdd7bd3d1ab04bbdb6c2679b375aec9d55"
+    },
+    "native-android/motion/coh_motion.c": {
+      "bytes": 6899,
+      "sha256": "857240b5eff8a0b88aa102826b03e1fb9318158b89c44487473e03f3a39a454b"
+    },
+    "native-android/walk/source_ctri.c": {
+      "bytes": 41795,
+      "sha256": "1862c65a355ddfa71d1264671effa36addc2a8a3497b7c0825465835603a5670"
+    },
+    "native-android/walk/source_tritri.c": {
+      "bytes": 25477,
+      "sha256": "c3fabb12b9a31baac2b6f0bf83b9c0f9456941f897167524e5dfcd88837005c3"
+    },
+    "native-android/engine/physics/coh_physics.h": {
+      "bytes": 3755,
+      "sha256": "13d8697f0a2be95bc20502a477a46317abed016e7de320c7201a10967ec730d7"
+    }
+  }
+}

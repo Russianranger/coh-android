@@ -1,0 +1,6 @@
+{
+  "returncode": 0,
+  "stdout": "{\"checks\":102,\"fault_scenarios\":6,\"retained_close_failure_owners\":1,\"outstanding_allocations\":0}\n",
+  "stderr": "",
+  "scope": "Exact extracted cleanup/configure function fault injection; shim dependencies, ASan/UBSan, no real AAudio close failure"
+}

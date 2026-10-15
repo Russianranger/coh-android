@@ -1,0 +1,29 @@
+/tmp/coh-appearance-k7wzmp3n/original.c: In function ‘costumePrefixName’:
+/tmp/coh-appearance-k7wzmp3n/original.c:68:16: warning: assignment discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+   68 |         pchRet = g_BodyTypeInfos[appearance->bodytype].pchEntType;
+      |                ^
+/tmp/coh-appearance-k7wzmp3n/original.c: In function ‘doChangeGeo’:
+/tmp/coh-appearance-k7wzmp3n/original.c:226:37: warning: ‘_’ directive writing 1 byte into a region of size between 0 and 255 [-Wformat-overflow=]
+  226 |                 sprintf( tmp, "%s_%s_%s", geo_name, possibleChestNames[i], name );
+      |                                     ^
+/tmp/coh-appearance-k7wzmp3n/original.c:226:17: note: ‘sprintf’ output 3 or more bytes (assuming 258) into a destination of size 256
+  226 |                 sprintf( tmp, "%s_%s_%s", geo_name, possibleChestNames[i], name );
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/coh-appearance-k7wzmp3n/original.c:236:37: warning: ‘sprintf’ may write a terminating nul past the end of the destination [-Wformat-overflow=]
+  236 |                 sprintf( tmp, "%s_%s", geo_name, name );
+      |                                     ^
+/tmp/coh-appearance-k7wzmp3n/original.c:236:17: note: ‘sprintf’ output 2 or more bytes (assuming 257) into a destination of size 256
+  236 |                 sprintf( tmp, "%s_%s", geo_name, name );
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/coh-appearance-k7wzmp3n/original.c:254:33: warning: ‘sprintf’ may write a terminating nul past the end of the destination [-Wformat-overflow=]
+  254 |             sprintf( tmp, "%s_%s", base_geo_name, name );
+      |                                 ^
+/tmp/coh-appearance-k7wzmp3n/original.c:254:13: note: ‘sprintf’ output 2 or more bytes (assuming 257) into a destination of size 256
+  254 |             sprintf( tmp, "%s_%s", base_geo_name, name );
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/coh-appearance-k7wzmp3n/original.c:160:36: warning: ‘sprintf’ may write a terminating nul past the end of the destination [-Wformat-overflow=]
+  160 |                 sprintf(tmp, "%s_%s", geo_name, possibleChestNames[i]);
+      |                                    ^
+/tmp/coh-appearance-k7wzmp3n/original.c:160:17: note: ‘sprintf’ output 2 or more bytes (assuming 257) into a destination of size 256
+  160 |                 sprintf(tmp, "%s_%s", geo_name, possibleChestNames[i]);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

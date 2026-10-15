@@ -1,0 +1,437 @@
+{
+  "schema": "coh-sequencer-continuation-v1",
+  "gate": 33,
+  "status": "implemented; host-qualified bounded raw-pose playback extension; full gate pending",
+  "host": {
+    "host": {
+      "checks": 20620965,
+      "source_pose_scalar_comparisons": 20523420,
+      "maximum_error": 0,
+      "raw_rigs": 12,
+      "retained_actor_bytes": 7960,
+      "heap_calls_per_sample": 0,
+      "frames": 18002,
+      "elapsed_seconds": 0.3170151160011301,
+      "heap_blocking_symbol_audit": "passed",
+      "compiler_stack_usage": [
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:19:12:same_topology\t8\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:28:18:bindings_valid\t128\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:99:12:crosses\t8\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:36:11:coh_seq_playback_init\t8048\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:56:11:coh_seq_playback_rebind\t32\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:110:11:coh_seq_playback_sample\t15760\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:192:11:coh_seq_playback_state\t176\tstatic"
+      ]
+    },
+    "asan-ubsan": {
+      "checks": 20620965,
+      "source_pose_scalar_comparisons": 20523420,
+      "maximum_error": 0,
+      "raw_rigs": 12,
+      "retained_actor_bytes": 7960,
+      "heap_calls_per_sample": 0,
+      "frames": 18002,
+      "elapsed_seconds": 1.8586317809968023,
+      "heap_blocking_symbol_audit": "passed",
+      "compiler_stack_usage": [
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:19:12:same_topology\t80\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:28:18:bindings_valid\t416\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:99:12:crosses\t64\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:105:13:event\t80\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:36:11:coh_seq_playback_init\t8464\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:56:11:coh_seq_playback_rebind\t96\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:110:11:coh_seq_playback_sample\t16608\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:192:11:coh_seq_playback_state\t352\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:202:1:_sub_D_00099_0\t16\tstatic",
+        "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c:202:1:_sub_I_00099_1\t16\tstatic"
+      ]
+    }
+  },
+  "additional_authentic_families": {
+    "status": "original raw-key + original per-bone transition comparisons passed",
+    "raw_assets": [
+      {
+        "body": "male",
+        "family": "combat",
+        "asset": "male/1_2punch",
+        "source_sha256": "d3e1980892b43a0ff17adf49cd57c7d70626b3be4f63fa325f17e50e157d3051",
+        "raw_bytes": 13266,
+        "clip_last": 62.0,
+        "bones": 68,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/male-1_2punch.bin",
+        "rig_sha256": "0664ef6d3dd1adb584dbbf74af54428067c12787c322368b9569d9edca6a0601"
+      },
+      {
+        "body": "male",
+        "family": "jump power",
+        "asset": "male/jump_n_smash",
+        "source_sha256": "82e1e5cc509d52ad438c6229562d06adf4431a566e3bbca341035903e47fec5a",
+        "raw_bytes": 21246,
+        "clip_last": 124.0,
+        "bones": 68,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/male-jump_n_smash.bin",
+        "rig_sha256": "ba01d0aeec66d269a43291f76b0d1dabbd4cc452fda648bcd9471699be04405f"
+      },
+      {
+        "body": "male",
+        "family": "reaction",
+        "asset": "male/fallout",
+        "source_sha256": "062960991dfb7c1c34d9cfd1415825cbefc06934eb0ae6f87407306f971aa27c",
+        "raw_bytes": 24218,
+        "clip_last": 147.0,
+        "bones": 68,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/male-fallout.bin",
+        "rig_sha256": "dfdf82115ee2ff34bde5d052d48f15a2b664313bc8aa45f256a88bf59032f28a"
+      },
+      {
+        "body": "male",
+        "family": "landing",
+        "asset": "male/comb_postjump",
+        "source_sha256": "8c108e755a3b958338fe6162a955fc34a5d5867d1eaaee42c387589d881a8248",
+        "raw_bytes": 14632,
+        "clip_last": 69.0,
+        "bones": 68,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/male-comb_postjump.bin",
+        "rig_sha256": "101724869bbc31c48abf0fade6dfe4687b43e0d19b3c63a38f1063f58bdd8ea2"
+      },
+      {
+        "body": "male",
+        "family": "emote",
+        "asset": "male/a_yes_wave",
+        "source_sha256": "851c567a72e8cf6157c1e25cbae19811c8a745f873ddb989c80865481d66813d",
+        "raw_bytes": 27153,
+        "clip_last": 175.0,
+        "bones": 68,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/male-a_yes_wave.bin",
+        "rig_sha256": "2b2e3e0404e12cc76e86811b0cdfde10fc1f1b09814b0b53418fce02675bc3df"
+      },
+      {
+        "body": "fem",
+        "family": "combat",
+        "asset": "fem/1_2punch",
+        "source_sha256": "165c1ba849d5ef58169da89c29e104661be2edde3d7c74dcdf6e24aa1aed769a",
+        "raw_bytes": 10656,
+        "clip_last": 62.0,
+        "bones": 63,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/fem-1_2punch.bin",
+        "rig_sha256": "dca1ca100a3dbf0dff910dcaecb585704d9b8218b59159daedfe422fc137ee06"
+      },
+      {
+        "body": "fem",
+        "family": "jump power",
+        "asset": "fem/jump_n_smash",
+        "source_sha256": "84c3629e77d5721369421ee319258abe52d4b09c3f6b4bc562a25e966ef02048",
+        "raw_bytes": 19746,
+        "clip_last": 124.0,
+        "bones": 63,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/fem-jump_n_smash.bin",
+        "rig_sha256": "b43ca1517320af635e5e57c9a7d64f30f436901cc6a97e3c73728c7bb40a2d89"
+      },
+      {
+        "body": "fem",
+        "family": "reaction",
+        "asset": "fem/fallout",
+        "source_sha256": "3ea9892ae5beae9108a97d3d708fa2d12e7705e957e1681bc57f14a3118068bb",
+        "raw_bytes": 23042,
+        "clip_last": 147.0,
+        "bones": 63,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/fem-fallout.bin",
+        "rig_sha256": "d8a2a925b3c4cb4847ae6903c94b590c04ba78f63c43479f45a1ef2a3a2a57d7"
+      },
+      {
+        "body": "fem",
+        "family": "landing",
+        "asset": "fem/combat_postjump",
+        "source_sha256": "1d8f51ac26b4b0a97718fcc0fe07d4a2de0e2639187d550610ff329a3b38d4f4",
+        "raw_bytes": 6385,
+        "clip_last": 32.0,
+        "bones": 63,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/fem-combat_postjump.bin",
+        "rig_sha256": "40b9ff209c5d29a539e0bc4084d785eec2f5cea70fb4e93f92e2f1553065e05b"
+      },
+      {
+        "body": "huge",
+        "family": "combat",
+        "asset": "huge/1_2punch",
+        "source_sha256": "60125cb256e5eef5b3b833ded923b2b3b15e7841f0760159efb53ce18a46d4f4",
+        "raw_bytes": 10783,
+        "clip_last": 62.0,
+        "bones": 60,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/huge-1_2punch.bin",
+        "rig_sha256": "d14594d77eca3b570f0016016a8156887e656d47a0214a4a1e54c3ef2ec4b771"
+      },
+      {
+        "body": "huge",
+        "family": "jump power",
+        "asset": "huge/jump_n_smash",
+        "source_sha256": "3e7126e1e96b90c5ffa9eb23e2dc8a5e3d41ee712b90fe7ec926dec15cfc77e9",
+        "raw_bytes": 19914,
+        "clip_last": 124.0,
+        "bones": 60,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/huge-jump_n_smash.bin",
+        "rig_sha256": "dbe6cb7fee990f39b457f026a788f92b747b60001dd7beeb5131f7696781068b"
+      },
+      {
+        "body": "huge",
+        "family": "reaction",
+        "asset": "huge/fallout",
+        "source_sha256": "9b3eeac37206313a4ed9466e6de5246f084933d095041355a78adbceae1d64f0",
+        "raw_bytes": 23042,
+        "clip_last": 147.0,
+        "bones": 60,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/huge-fallout.bin",
+        "rig_sha256": "002937884fc0ece20402c4134833797987ce045a61004c907109b2657929202e"
+      },
+      {
+        "body": "huge",
+        "family": "landing",
+        "asset": "huge/combat_postjump",
+        "source_sha256": "6904cb48497cd4749f354c9974b2d7ac5454bf56d0eefcaf35890e91aca9fa24",
+        "raw_bytes": 11881,
+        "clip_last": 69.0,
+        "bones": 60,
+        "rig_file": "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/families/huge-combat_postjump.bin",
+        "rig_sha256": "f2c02866c9202f94ee9e68c143b39b4ea17a0afeec278d340b8157a6a04c9b43"
+      }
+    ],
+    "body_playback": [
+      {
+        "body": "male",
+        "poses": 1500,
+        "authentic_clips": 5
+      },
+      {
+        "body": "fem",
+        "poses": 1500,
+        "authentic_clips": 4
+      },
+      {
+        "body": "huge",
+        "poses": 1500,
+        "authentic_clips": 4
+      }
+    ],
+    "raw_decoder_source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "expanded_source_graph": {
+      "source_graph_move_count": 6,
+      "source_step_comparisons": 36000,
+      "explicit_missing_clip_or_edge": 0
+    },
+    "scalar_comparisons": 5478444,
+    "maximum_error": 0.0,
+    "limitations": [
+      "Full raw clip ranges tested; full original move graph, CANTMOVE/NOCOLLISION side effects and authored PlayFx routing remain pending.",
+      "No new Android execution or device pose acceptance.",
+      "Wave asset is raw-pose evidence; its authored emote state binding is not qualified."
+    ],
+    "asan_ubsan": {
+      "authentic_family_samples": 26000,
+      "rig_files": 13
+    }
+  },
+  "original_source_oracle": true,
+  "provenance": {
+    "files": {
+      "libs/UtilitiesLib/src/utils/Quat.c": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b",
+      "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+      "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+      "Common/seq/seqanimate.c": "a4926555f4da4052058f06d28a195edcedae16cb7e905c05e8963afe9915ed22"
+    },
+    "unchanged_functions": {
+      "quatNormalize": "393503ca9d73f9b9f68ead000d9b2b32938191891e24bf72c2002a6ca9e587d3",
+      "quatInterp": "d8c97643a5f524ad2a4390b63047c42cfe8cfaf9a0e55e44d09c752b0e8f67df",
+      "quatToMat": "6981d8e5ebb0ad2a79b828cce3d4034c3351f5e3e7cdf9c457a41c788bbeb73e",
+      "posInterp": "5db0f8d07fdb628d1c8a917e18bebfb0adacd2f5b172564766671cbafca978a3",
+      "nearSameVec3Tol": "1b6fde1ff869de7d45ac6ea54e15bc8139bd334e01fcd5bc5e9936771e9ebd31",
+      "animInterpNodeWithLastPosition": "fe9817396ab43b81a83e48abd5b8cc650cd7bc98e17f4e9a3f1550b71c495889"
+    },
+    "timing": "original animPlayInst percent_new expression, neutral source timestep"
+  },
+  "android": {
+    "status": "ARM64 API26 object compiled; execution not qualified",
+    "bytes": 7496,
+    "sha256": "b5bf4fa47d27f81dd3621ad66f5f6804f914e2bff8f754fb07c1408dbba6b34a"
+  },
+  "emulator": "not run",
+  "physical_thor": "not run",
+  "fixture": {
+    "locomotion.bin": {
+      "bytes": 147103,
+      "sha256": "8c42bd6c72223ec0d32519143fe90fa23f9528006ed914659ae44f78592b63d7"
+    }
+  },
+  "existing_selection_regression": {
+    "host": {
+      "host": {
+        "assertions": 1848320,
+        "original_kernel_comparisons": 89111,
+        "unresolved_source_steps_safely_blocked": 10909,
+        "source_visited_masks": [
+          94013,
+          94013
+        ],
+        "stress_steps": 1000000,
+        "host_stress_elapsed_ns": 27082319,
+        "actor_retained_bytes": 216,
+        "engine_heap_allocations": 0
+      },
+      "asan-ubsan": {
+        "assertions": 1848320,
+        "original_kernel_comparisons": 89111,
+        "unresolved_source_steps_safely_blocked": 10909,
+        "source_visited_masks": [
+          94013,
+          94013
+        ],
+        "stress_steps": 1000000,
+        "host_stress_elapsed_ns": 117327768,
+        "actor_retained_bytes": 216,
+        "engine_heap_allocations": 0
+      }
+    },
+    "original_source_kernel_oracle": true,
+    "source_families": [
+      "jump",
+      "fall",
+      "combat kick",
+      "emote",
+      "knockdown cycle"
+    ]
+  },
+  "module_sha256": {
+    "coh_seq_playback.c": "2ef50d335651caef3538777273ed9f29c884b76a6ade5e683ffc2f5ba16caa5e",
+    "coh_seq_playback.h": "eab4ad496200cfe7e471d2b795aa06a0b4402c95da157ca86da6d15ac87672bd",
+    "continuation/tests/playback_test.c": "82877634dc068b00bffcd90875fab6bd497e58e516dc9931ab76ed456e611b2e"
+  },
+  "limits": [
+    "Additional raw combat/jump-power/reaction/landing poses require --extra-corpus; existing graph has unresolved edges and side effects.",
+    "Neutral rigs; body morphing/root-motion/registration/FX not implemented.",
+    "Event markers are a local deterministic adapter contract, not original FX timing or network packets.",
+    "No Android execution or new Thor acceptance claimed.",
+    "LeakSanitizer disabled due to known executor /proc limitation; ASan and UBSan active, module heap imports absent."
+  ],
+  "commands": [
+    [
+      "cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-fstack-usage",
+      "-O2",
+      "-c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/host-playback.o"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-O2",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/locomotion",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/continuation/tests/playback_test.c",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/host-playback.o",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_sequencer.c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/character/coh_character.c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/locomotion/coh_locomotion.c",
+      "-lm",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/host-playback-test",
+      "-DCOH_PLAYBACK_ORACLE",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/original-playback.c",
+      "-Wno-unused-variable",
+      "-Wno-unused-function"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-fstack-usage",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-fno-pie",
+      "-no-pie",
+      "-c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/asan-ubsan-playback.o"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ffp-contract=off",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-fno-pie",
+      "-no-pie",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/locomotion",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/continuation/tests/playback_test.c",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/asan-ubsan-playback.o",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_sequencer.c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/character/coh_character.c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/locomotion/coh_locomotion.c",
+      "-lm",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/asan-ubsan-playback-test",
+      "-DCOH_PLAYBACK_ORACLE",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/original-playback.c",
+      "-Wno-unused-variable",
+      "-Wno-unused-function"
+    ],
+    [
+      "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/coh_seq_playback-arm64.o"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-fno-pie",
+      "-no-pie",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/continuation/tests/families_sanitizer.c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_seq_playback.c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_sequencer.c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/animation/coh_animation.c",
+      "-lm",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/asan-family-test"
+    ]
+  ]
+}

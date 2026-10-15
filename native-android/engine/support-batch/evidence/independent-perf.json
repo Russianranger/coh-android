@@ -1,0 +1,1622 @@
+{
+  "schema": 1,
+  "status": "host-qualified-and-arm64-built",
+  "full_gate_44_45_accepted": false,
+  "host": {
+    "machine": "x86_64",
+    "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+    "runs": [
+      {
+        "status": "passed",
+        "checks": 410542,
+        "host_only": true,
+        "mesh_vertices": 318,
+        "mesh_bones": 5,
+        "cache_allocated_bytes": 46560,
+        "observer_bytes": 19016,
+        "iterations": 1000,
+        "repeated_pose_baseline_cpu_ns": 39523769,
+        "repeated_pose_hit_cpu_ns_including_memcmp_oracle": 483580,
+        "dynamic_pose_iterations": 100,
+        "dynamic_pose_baseline_cpu_ns": 3345770,
+        "dynamic_pose_miss_cpu_ns_including_memcmp_oracle": 3183658,
+        "observer_10000_frames_cpu_ns": 189091,
+        "hot_path_allocations": 0,
+        "cache_kernel_vertices_for_1000_repeats": 318,
+        "cache_compared_bytes": 15504000,
+        "perf": {
+          "schema": 1,
+          "module": "coh-native-perf",
+          "time_unit": "ns",
+          "clock": "caller_monotonic",
+          "percentile_bucket_ns": 500000,
+          "enabled": true,
+          "paused": false,
+          "surface_generation": 2,
+          "epoch": 5,
+          "target_frame_ns": 33333333,
+          "stall_ns": 100000000,
+          "dropped_frames": 2,
+          "invalid_samples": 5,
+          "over_budget": 571,
+          "stalls": 0,
+          "resident_bytes": 1024,
+          "peak_resident_bytes": 4096,
+          "gpu_unavailable": 1,
+          "gpu_disjoint": 1,
+          "gpu_stale": 2,
+          "gpu_not_ready": 1,
+          "frame": {
+            "samples": 1000,
+            "sum_ns": 39700000000,
+            "max_ns": 80000000,
+            "p50_upper_ns": 39499999,
+            "p95_upper_ns": 76499999,
+            "p99_upper_ns": 80000000
+          },
+          "gpu": {
+            "samples": 1,
+            "sum_ns": 123456,
+            "max_ns": 123456,
+            "p50_upper_ns": 123456,
+            "p95_upper_ns": 123456,
+            "p99_upper_ns": 123456
+          },
+          "stages": {
+            "animation": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "skinning": {
+              "samples": 1000,
+              "sum_ns": 9925000000,
+              "max_ns": 20000000,
+              "p50_upper_ns": 9999999,
+              "p95_upper_ns": 19499999,
+              "p99_upper_ns": 20000000
+            },
+            "collision": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "asset_loading": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "render_submit": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "present": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "audio_control": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            }
+          },
+          "counters": {
+            "copied_bytes": 0,
+            "upload_bytes": 96000,
+            "draw_calls": 5995,
+            "state_binds": 0,
+            "skinned_vertices": 0,
+            "collision_tests": 0,
+            "asset_hits": 0,
+            "asset_misses": 0,
+            "asset_evictions": 0,
+            "readbacks": 0,
+            "explicit_waits": 0,
+            "allocations": 0
+          }
+        }
+      },
+      {
+        "status": "passed",
+        "checks": 510733,
+        "host_only": true,
+        "mesh_vertices": 409,
+        "mesh_bones": 9,
+        "cache_allocated_bytes": 60048,
+        "observer_bytes": 19016,
+        "iterations": 1000,
+        "repeated_pose_baseline_cpu_ns": 48768189,
+        "repeated_pose_hit_cpu_ns_including_memcmp_oracle": 637730,
+        "dynamic_pose_iterations": 100,
+        "dynamic_pose_baseline_cpu_ns": 4751092,
+        "dynamic_pose_miss_cpu_ns_including_memcmp_oracle": 5232538,
+        "observer_10000_frames_cpu_ns": 184665,
+        "hot_path_allocations": 0,
+        "cache_kernel_vertices_for_1000_repeats": 409,
+        "cache_compared_bytes": 20064000,
+        "perf": {
+          "schema": 1,
+          "module": "coh-native-perf",
+          "time_unit": "ns",
+          "clock": "caller_monotonic",
+          "percentile_bucket_ns": 500000,
+          "enabled": true,
+          "paused": false,
+          "surface_generation": 2,
+          "epoch": 5,
+          "target_frame_ns": 33333333,
+          "stall_ns": 100000000,
+          "dropped_frames": 2,
+          "invalid_samples": 5,
+          "over_budget": 571,
+          "stalls": 0,
+          "resident_bytes": 1024,
+          "peak_resident_bytes": 4096,
+          "gpu_unavailable": 1,
+          "gpu_disjoint": 1,
+          "gpu_stale": 2,
+          "gpu_not_ready": 1,
+          "frame": {
+            "samples": 1000,
+            "sum_ns": 39700000000,
+            "max_ns": 80000000,
+            "p50_upper_ns": 39499999,
+            "p95_upper_ns": 76499999,
+            "p99_upper_ns": 80000000
+          },
+          "gpu": {
+            "samples": 1,
+            "sum_ns": 123456,
+            "max_ns": 123456,
+            "p50_upper_ns": 123456,
+            "p95_upper_ns": 123456,
+            "p99_upper_ns": 123456
+          },
+          "stages": {
+            "animation": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "skinning": {
+              "samples": 1000,
+              "sum_ns": 9925000000,
+              "max_ns": 20000000,
+              "p50_upper_ns": 9999999,
+              "p95_upper_ns": 19499999,
+              "p99_upper_ns": 20000000
+            },
+            "collision": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "asset_loading": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "render_submit": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "present": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "audio_control": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            }
+          },
+          "counters": {
+            "copied_bytes": 0,
+            "upload_bytes": 96000,
+            "draw_calls": 5995,
+            "state_binds": 0,
+            "skinned_vertices": 0,
+            "collision_tests": 0,
+            "asset_hits": 0,
+            "asset_misses": 0,
+            "asset_evictions": 0,
+            "readbacks": 0,
+            "explicit_waits": 0,
+            "allocations": 0
+          }
+        }
+      },
+      {
+        "status": "passed",
+        "checks": 236584,
+        "host_only": true,
+        "mesh_vertices": 160,
+        "mesh_bones": 2,
+        "cache_allocated_bytes": 23520,
+        "observer_bytes": 19016,
+        "iterations": 1000,
+        "repeated_pose_baseline_cpu_ns": 7716615,
+        "repeated_pose_hit_cpu_ns_including_memcmp_oracle": 146729,
+        "dynamic_pose_iterations": 100,
+        "dynamic_pose_baseline_cpu_ns": 819831,
+        "dynamic_pose_miss_cpu_ns_including_memcmp_oracle": 792330,
+        "observer_10000_frames_cpu_ns": 155501,
+        "hot_path_allocations": 0,
+        "cache_kernel_vertices_for_1000_repeats": 160,
+        "cache_compared_bytes": 7776000,
+        "perf": {
+          "schema": 1,
+          "module": "coh-native-perf",
+          "time_unit": "ns",
+          "clock": "caller_monotonic",
+          "percentile_bucket_ns": 500000,
+          "enabled": true,
+          "paused": false,
+          "surface_generation": 2,
+          "epoch": 5,
+          "target_frame_ns": 33333333,
+          "stall_ns": 100000000,
+          "dropped_frames": 2,
+          "invalid_samples": 5,
+          "over_budget": 571,
+          "stalls": 0,
+          "resident_bytes": 1024,
+          "peak_resident_bytes": 4096,
+          "gpu_unavailable": 1,
+          "gpu_disjoint": 1,
+          "gpu_stale": 2,
+          "gpu_not_ready": 1,
+          "frame": {
+            "samples": 1000,
+            "sum_ns": 39700000000,
+            "max_ns": 80000000,
+            "p50_upper_ns": 39499999,
+            "p95_upper_ns": 76499999,
+            "p99_upper_ns": 80000000
+          },
+          "gpu": {
+            "samples": 1,
+            "sum_ns": 123456,
+            "max_ns": 123456,
+            "p50_upper_ns": 123456,
+            "p95_upper_ns": 123456,
+            "p99_upper_ns": 123456
+          },
+          "stages": {
+            "animation": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "skinning": {
+              "samples": 1000,
+              "sum_ns": 9925000000,
+              "max_ns": 20000000,
+              "p50_upper_ns": 9999999,
+              "p95_upper_ns": 19499999,
+              "p99_upper_ns": 20000000
+            },
+            "collision": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "asset_loading": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "render_submit": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "present": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "audio_control": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            }
+          },
+          "counters": {
+            "copied_bytes": 0,
+            "upload_bytes": 96000,
+            "draw_calls": 5995,
+            "state_binds": 0,
+            "skinned_vertices": 0,
+            "collision_tests": 0,
+            "asset_hits": 0,
+            "asset_misses": 0,
+            "asset_evictions": 0,
+            "readbacks": 0,
+            "explicit_waits": 0,
+            "allocations": 0
+          }
+        }
+      },
+      {
+        "status": "passed",
+        "checks": 467794,
+        "host_only": true,
+        "mesh_vertices": 370,
+        "mesh_bones": 7,
+        "cache_allocated_bytes": 54240,
+        "observer_bytes": 19016,
+        "iterations": 1000,
+        "repeated_pose_baseline_cpu_ns": 35083510,
+        "repeated_pose_hit_cpu_ns_including_memcmp_oracle": 637489,
+        "dynamic_pose_iterations": 100,
+        "dynamic_pose_baseline_cpu_ns": 4019864,
+        "dynamic_pose_miss_cpu_ns_including_memcmp_oracle": 3603233,
+        "observer_10000_frames_cpu_ns": 181721,
+        "hot_path_allocations": 0,
+        "cache_kernel_vertices_for_1000_repeats": 370,
+        "cache_compared_bytes": 18096000,
+        "perf": {
+          "schema": 1,
+          "module": "coh-native-perf",
+          "time_unit": "ns",
+          "clock": "caller_monotonic",
+          "percentile_bucket_ns": 500000,
+          "enabled": true,
+          "paused": false,
+          "surface_generation": 2,
+          "epoch": 5,
+          "target_frame_ns": 33333333,
+          "stall_ns": 100000000,
+          "dropped_frames": 2,
+          "invalid_samples": 5,
+          "over_budget": 571,
+          "stalls": 0,
+          "resident_bytes": 1024,
+          "peak_resident_bytes": 4096,
+          "gpu_unavailable": 1,
+          "gpu_disjoint": 1,
+          "gpu_stale": 2,
+          "gpu_not_ready": 1,
+          "frame": {
+            "samples": 1000,
+            "sum_ns": 39700000000,
+            "max_ns": 80000000,
+            "p50_upper_ns": 39499999,
+            "p95_upper_ns": 76499999,
+            "p99_upper_ns": 80000000
+          },
+          "gpu": {
+            "samples": 1,
+            "sum_ns": 123456,
+            "max_ns": 123456,
+            "p50_upper_ns": 123456,
+            "p95_upper_ns": 123456,
+            "p99_upper_ns": 123456
+          },
+          "stages": {
+            "animation": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "skinning": {
+              "samples": 1000,
+              "sum_ns": 9925000000,
+              "max_ns": 20000000,
+              "p50_upper_ns": 9999999,
+              "p95_upper_ns": 19499999,
+              "p99_upper_ns": 20000000
+            },
+            "collision": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "asset_loading": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "render_submit": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "present": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "audio_control": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            }
+          },
+          "counters": {
+            "copied_bytes": 0,
+            "upload_bytes": 96000,
+            "draw_calls": 5995,
+            "state_binds": 0,
+            "skinned_vertices": 0,
+            "collision_tests": 0,
+            "asset_hits": 0,
+            "asset_misses": 0,
+            "asset_evictions": 0,
+            "readbacks": 0,
+            "explicit_waits": 0,
+            "allocations": 0
+          }
+        }
+      },
+      {
+        "status": "passed",
+        "checks": 313654,
+        "host_only": true,
+        "mesh_vertices": 230,
+        "mesh_bones": 3,
+        "cache_allocated_bytes": 33696,
+        "observer_bytes": 19016,
+        "iterations": 1000,
+        "repeated_pose_baseline_cpu_ns": 15341175,
+        "repeated_pose_hit_cpu_ns_including_memcmp_oracle": 294048,
+        "dynamic_pose_iterations": 100,
+        "dynamic_pose_baseline_cpu_ns": 1649055,
+        "dynamic_pose_miss_cpu_ns_including_memcmp_oracle": 1632491,
+        "observer_10000_frames_cpu_ns": 220228,
+        "hot_path_allocations": 0,
+        "cache_kernel_vertices_for_1000_repeats": 230,
+        "cache_compared_bytes": 11184000,
+        "perf": {
+          "schema": 1,
+          "module": "coh-native-perf",
+          "time_unit": "ns",
+          "clock": "caller_monotonic",
+          "percentile_bucket_ns": 500000,
+          "enabled": true,
+          "paused": false,
+          "surface_generation": 2,
+          "epoch": 5,
+          "target_frame_ns": 33333333,
+          "stall_ns": 100000000,
+          "dropped_frames": 2,
+          "invalid_samples": 5,
+          "over_budget": 571,
+          "stalls": 0,
+          "resident_bytes": 1024,
+          "peak_resident_bytes": 4096,
+          "gpu_unavailable": 1,
+          "gpu_disjoint": 1,
+          "gpu_stale": 2,
+          "gpu_not_ready": 1,
+          "frame": {
+            "samples": 1000,
+            "sum_ns": 39700000000,
+            "max_ns": 80000000,
+            "p50_upper_ns": 39499999,
+            "p95_upper_ns": 76499999,
+            "p99_upper_ns": 80000000
+          },
+          "gpu": {
+            "samples": 1,
+            "sum_ns": 123456,
+            "max_ns": 123456,
+            "p50_upper_ns": 123456,
+            "p95_upper_ns": 123456,
+            "p99_upper_ns": 123456
+          },
+          "stages": {
+            "animation": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "skinning": {
+              "samples": 1000,
+              "sum_ns": 9925000000,
+              "max_ns": 20000000,
+              "p50_upper_ns": 9999999,
+              "p95_upper_ns": 19499999,
+              "p99_upper_ns": 20000000
+            },
+            "collision": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "asset_loading": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "render_submit": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "present": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "audio_control": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            }
+          },
+          "counters": {
+            "copied_bytes": 0,
+            "upload_bytes": 96000,
+            "draw_calls": 5995,
+            "state_binds": 0,
+            "skinned_vertices": 0,
+            "collision_tests": 0,
+            "asset_hits": 0,
+            "asset_misses": 0,
+            "asset_evictions": 0,
+            "readbacks": 0,
+            "explicit_waits": 0,
+            "allocations": 0
+          }
+        }
+      },
+      {
+        "status": "passed",
+        "checks": 313654,
+        "host_only": true,
+        "mesh_vertices": 230,
+        "mesh_bones": 3,
+        "cache_allocated_bytes": 33696,
+        "observer_bytes": 19016,
+        "iterations": 1000,
+        "repeated_pose_baseline_cpu_ns": 15986615,
+        "repeated_pose_hit_cpu_ns_including_memcmp_oracle": 314448,
+        "dynamic_pose_iterations": 100,
+        "dynamic_pose_baseline_cpu_ns": 1138084,
+        "dynamic_pose_miss_cpu_ns_including_memcmp_oracle": 1841090,
+        "observer_10000_frames_cpu_ns": 108912,
+        "hot_path_allocations": 0,
+        "cache_kernel_vertices_for_1000_repeats": 230,
+        "cache_compared_bytes": 11184000,
+        "perf": {
+          "schema": 1,
+          "module": "coh-native-perf",
+          "time_unit": "ns",
+          "clock": "caller_monotonic",
+          "percentile_bucket_ns": 500000,
+          "enabled": true,
+          "paused": false,
+          "surface_generation": 2,
+          "epoch": 5,
+          "target_frame_ns": 33333333,
+          "stall_ns": 100000000,
+          "dropped_frames": 2,
+          "invalid_samples": 5,
+          "over_budget": 571,
+          "stalls": 0,
+          "resident_bytes": 1024,
+          "peak_resident_bytes": 4096,
+          "gpu_unavailable": 1,
+          "gpu_disjoint": 1,
+          "gpu_stale": 2,
+          "gpu_not_ready": 1,
+          "frame": {
+            "samples": 1000,
+            "sum_ns": 39700000000,
+            "max_ns": 80000000,
+            "p50_upper_ns": 39499999,
+            "p95_upper_ns": 76499999,
+            "p99_upper_ns": 80000000
+          },
+          "gpu": {
+            "samples": 1,
+            "sum_ns": 123456,
+            "max_ns": 123456,
+            "p50_upper_ns": 123456,
+            "p95_upper_ns": 123456,
+            "p99_upper_ns": 123456
+          },
+          "stages": {
+            "animation": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "skinning": {
+              "samples": 1000,
+              "sum_ns": 9925000000,
+              "max_ns": 20000000,
+              "p50_upper_ns": 9999999,
+              "p95_upper_ns": 19499999,
+              "p99_upper_ns": 20000000
+            },
+            "collision": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "asset_loading": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "render_submit": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "present": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "audio_control": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            }
+          },
+          "counters": {
+            "copied_bytes": 0,
+            "upload_bytes": 96000,
+            "draw_calls": 5995,
+            "state_binds": 0,
+            "skinned_vertices": 0,
+            "collision_tests": 0,
+            "asset_hits": 0,
+            "asset_misses": 0,
+            "asset_evictions": 0,
+            "readbacks": 0,
+            "explicit_waits": 0,
+            "allocations": 0
+          }
+        }
+      },
+      {
+        "status": "passed",
+        "checks": 168322,
+        "host_only": true,
+        "mesh_vertices": 98,
+        "mesh_bones": 1,
+        "cache_allocated_bytes": 14496,
+        "observer_bytes": 19016,
+        "iterations": 1000,
+        "repeated_pose_baseline_cpu_ns": 4919470,
+        "repeated_pose_hit_cpu_ns_including_memcmp_oracle": 118656,
+        "dynamic_pose_iterations": 100,
+        "dynamic_pose_baseline_cpu_ns": 606944,
+        "dynamic_pose_miss_cpu_ns_including_memcmp_oracle": 502508,
+        "observer_10000_frames_cpu_ns": 182922,
+        "hot_path_allocations": 0,
+        "cache_kernel_vertices_for_1000_repeats": 98,
+        "cache_compared_bytes": 4752000,
+        "perf": {
+          "schema": 1,
+          "module": "coh-native-perf",
+          "time_unit": "ns",
+          "clock": "caller_monotonic",
+          "percentile_bucket_ns": 500000,
+          "enabled": true,
+          "paused": false,
+          "surface_generation": 2,
+          "epoch": 5,
+          "target_frame_ns": 33333333,
+          "stall_ns": 100000000,
+          "dropped_frames": 2,
+          "invalid_samples": 5,
+          "over_budget": 571,
+          "stalls": 0,
+          "resident_bytes": 1024,
+          "peak_resident_bytes": 4096,
+          "gpu_unavailable": 1,
+          "gpu_disjoint": 1,
+          "gpu_stale": 2,
+          "gpu_not_ready": 1,
+          "frame": {
+            "samples": 1000,
+            "sum_ns": 39700000000,
+            "max_ns": 80000000,
+            "p50_upper_ns": 39499999,
+            "p95_upper_ns": 76499999,
+            "p99_upper_ns": 80000000
+          },
+          "gpu": {
+            "samples": 1,
+            "sum_ns": 123456,
+            "max_ns": 123456,
+            "p50_upper_ns": 123456,
+            "p95_upper_ns": 123456,
+            "p99_upper_ns": 123456
+          },
+          "stages": {
+            "animation": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "skinning": {
+              "samples": 1000,
+              "sum_ns": 9925000000,
+              "max_ns": 20000000,
+              "p50_upper_ns": 9999999,
+              "p95_upper_ns": 19499999,
+              "p99_upper_ns": 20000000
+            },
+            "collision": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "asset_loading": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "render_submit": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "present": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "audio_control": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            }
+          },
+          "counters": {
+            "copied_bytes": 0,
+            "upload_bytes": 96000,
+            "draw_calls": 5995,
+            "state_binds": 0,
+            "skinned_vertices": 0,
+            "collision_tests": 0,
+            "asset_hits": 0,
+            "asset_misses": 0,
+            "asset_evictions": 0,
+            "readbacks": 0,
+            "explicit_waits": 0,
+            "allocations": 0
+          }
+        }
+      },
+      {
+        "status": "passed",
+        "checks": 414946,
+        "host_only": true,
+        "mesh_vertices": 322,
+        "mesh_bones": 1,
+        "cache_allocated_bytes": 46752,
+        "observer_bytes": 19016,
+        "iterations": 1000,
+        "repeated_pose_baseline_cpu_ns": 18956425,
+        "repeated_pose_hit_cpu_ns_including_memcmp_oracle": 492693,
+        "dynamic_pose_iterations": 100,
+        "dynamic_pose_baseline_cpu_ns": 1938255,
+        "dynamic_pose_miss_cpu_ns_including_memcmp_oracle": 2021418,
+        "observer_10000_frames_cpu_ns": 193308,
+        "hot_path_allocations": 0,
+        "cache_kernel_vertices_for_1000_repeats": 322,
+        "cache_compared_bytes": 15504000,
+        "perf": {
+          "schema": 1,
+          "module": "coh-native-perf",
+          "time_unit": "ns",
+          "clock": "caller_monotonic",
+          "percentile_bucket_ns": 500000,
+          "enabled": true,
+          "paused": false,
+          "surface_generation": 2,
+          "epoch": 5,
+          "target_frame_ns": 33333333,
+          "stall_ns": 100000000,
+          "dropped_frames": 2,
+          "invalid_samples": 5,
+          "over_budget": 571,
+          "stalls": 0,
+          "resident_bytes": 1024,
+          "peak_resident_bytes": 4096,
+          "gpu_unavailable": 1,
+          "gpu_disjoint": 1,
+          "gpu_stale": 2,
+          "gpu_not_ready": 1,
+          "frame": {
+            "samples": 1000,
+            "sum_ns": 39700000000,
+            "max_ns": 80000000,
+            "p50_upper_ns": 39499999,
+            "p95_upper_ns": 76499999,
+            "p99_upper_ns": 80000000
+          },
+          "gpu": {
+            "samples": 1,
+            "sum_ns": 123456,
+            "max_ns": 123456,
+            "p50_upper_ns": 123456,
+            "p95_upper_ns": 123456,
+            "p99_upper_ns": 123456
+          },
+          "stages": {
+            "animation": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "skinning": {
+              "samples": 1000,
+              "sum_ns": 9925000000,
+              "max_ns": 20000000,
+              "p50_upper_ns": 9999999,
+              "p95_upper_ns": 19499999,
+              "p99_upper_ns": 20000000
+            },
+            "collision": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "asset_loading": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "render_submit": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "present": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "audio_control": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            }
+          },
+          "counters": {
+            "copied_bytes": 0,
+            "upload_bytes": 96000,
+            "draw_calls": 5995,
+            "state_binds": 0,
+            "skinned_vertices": 0,
+            "collision_tests": 0,
+            "asset_hits": 0,
+            "asset_misses": 0,
+            "asset_evictions": 0,
+            "readbacks": 0,
+            "explicit_waits": 0,
+            "allocations": 0
+          }
+        }
+      },
+      {
+        "status": "passed",
+        "checks": 399532,
+        "host_only": true,
+        "mesh_vertices": 308,
+        "mesh_bones": 4,
+        "cache_allocated_bytes": 45024,
+        "observer_bytes": 19016,
+        "iterations": 1000,
+        "repeated_pose_baseline_cpu_ns": 23666537,
+        "repeated_pose_hit_cpu_ns_including_memcmp_oracle": 676717,
+        "dynamic_pose_iterations": 100,
+        "dynamic_pose_baseline_cpu_ns": 2511819,
+        "dynamic_pose_miss_cpu_ns_including_memcmp_oracle": 2458670,
+        "observer_10000_frames_cpu_ns": 214480,
+        "hot_path_allocations": 0,
+        "cache_kernel_vertices_for_1000_repeats": 308,
+        "cache_compared_bytes": 14976000,
+        "perf": {
+          "schema": 1,
+          "module": "coh-native-perf",
+          "time_unit": "ns",
+          "clock": "caller_monotonic",
+          "percentile_bucket_ns": 500000,
+          "enabled": true,
+          "paused": false,
+          "surface_generation": 2,
+          "epoch": 5,
+          "target_frame_ns": 33333333,
+          "stall_ns": 100000000,
+          "dropped_frames": 2,
+          "invalid_samples": 5,
+          "over_budget": 571,
+          "stalls": 0,
+          "resident_bytes": 1024,
+          "peak_resident_bytes": 4096,
+          "gpu_unavailable": 1,
+          "gpu_disjoint": 1,
+          "gpu_stale": 2,
+          "gpu_not_ready": 1,
+          "frame": {
+            "samples": 1000,
+            "sum_ns": 39700000000,
+            "max_ns": 80000000,
+            "p50_upper_ns": 39499999,
+            "p95_upper_ns": 76499999,
+            "p99_upper_ns": 80000000
+          },
+          "gpu": {
+            "samples": 1,
+            "sum_ns": 123456,
+            "max_ns": 123456,
+            "p50_upper_ns": 123456,
+            "p95_upper_ns": 123456,
+            "p99_upper_ns": 123456
+          },
+          "stages": {
+            "animation": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "skinning": {
+              "samples": 1000,
+              "sum_ns": 9925000000,
+              "max_ns": 20000000,
+              "p50_upper_ns": 9999999,
+              "p95_upper_ns": 19499999,
+              "p99_upper_ns": 20000000
+            },
+            "collision": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "asset_loading": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "render_submit": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "present": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "audio_control": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            }
+          },
+          "counters": {
+            "copied_bytes": 0,
+            "upload_bytes": 96000,
+            "draw_calls": 5995,
+            "state_binds": 0,
+            "skinned_vertices": 0,
+            "collision_tests": 0,
+            "asset_hits": 0,
+            "asset_misses": 0,
+            "asset_evictions": 0,
+            "readbacks": 0,
+            "explicit_waits": 0,
+            "allocations": 0
+          }
+        }
+      },
+      {
+        "status": "passed",
+        "checks": 188140,
+        "host_only": true,
+        "mesh_vertices": 116,
+        "mesh_bones": 3,
+        "cache_allocated_bytes": 17280,
+        "observer_bytes": 19016,
+        "iterations": 1000,
+        "repeated_pose_baseline_cpu_ns": 9176919,
+        "repeated_pose_hit_cpu_ns_including_memcmp_oracle": 142562,
+        "dynamic_pose_iterations": 100,
+        "dynamic_pose_baseline_cpu_ns": 869224,
+        "dynamic_pose_miss_cpu_ns_including_memcmp_oracle": 789626,
+        "observer_10000_frames_cpu_ns": 174860,
+        "hot_path_allocations": 0,
+        "cache_kernel_vertices_for_1000_repeats": 116,
+        "cache_compared_bytes": 5712000,
+        "perf": {
+          "schema": 1,
+          "module": "coh-native-perf",
+          "time_unit": "ns",
+          "clock": "caller_monotonic",
+          "percentile_bucket_ns": 500000,
+          "enabled": true,
+          "paused": false,
+          "surface_generation": 2,
+          "epoch": 5,
+          "target_frame_ns": 33333333,
+          "stall_ns": 100000000,
+          "dropped_frames": 2,
+          "invalid_samples": 5,
+          "over_budget": 571,
+          "stalls": 0,
+          "resident_bytes": 1024,
+          "peak_resident_bytes": 4096,
+          "gpu_unavailable": 1,
+          "gpu_disjoint": 1,
+          "gpu_stale": 2,
+          "gpu_not_ready": 1,
+          "frame": {
+            "samples": 1000,
+            "sum_ns": 39700000000,
+            "max_ns": 80000000,
+            "p50_upper_ns": 39499999,
+            "p95_upper_ns": 76499999,
+            "p99_upper_ns": 80000000
+          },
+          "gpu": {
+            "samples": 1,
+            "sum_ns": 123456,
+            "max_ns": 123456,
+            "p50_upper_ns": 123456,
+            "p95_upper_ns": 123456,
+            "p99_upper_ns": 123456
+          },
+          "stages": {
+            "animation": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "skinning": {
+              "samples": 1000,
+              "sum_ns": 9925000000,
+              "max_ns": 20000000,
+              "p50_upper_ns": 9999999,
+              "p95_upper_ns": 19499999,
+              "p99_upper_ns": 20000000
+            },
+            "collision": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "asset_loading": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "render_submit": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "present": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "audio_control": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            }
+          },
+          "counters": {
+            "copied_bytes": 0,
+            "upload_bytes": 96000,
+            "draw_calls": 5995,
+            "state_binds": 0,
+            "skinned_vertices": 0,
+            "collision_tests": 0,
+            "asset_hits": 0,
+            "asset_misses": 0,
+            "asset_evictions": 0,
+            "readbacks": 0,
+            "explicit_waits": 0,
+            "allocations": 0
+          }
+        }
+      },
+      {
+        "status": "passed",
+        "checks": 131989,
+        "host_only": true,
+        "mesh_vertices": 65,
+        "mesh_bones": 7,
+        "cache_allocated_bytes": 10320,
+        "observer_bytes": 19016,
+        "iterations": 1000,
+        "repeated_pose_baseline_cpu_ns": 6562477,
+        "repeated_pose_hit_cpu_ns_including_memcmp_oracle": 90144,
+        "dynamic_pose_iterations": 100,
+        "dynamic_pose_baseline_cpu_ns": 706642,
+        "dynamic_pose_miss_cpu_ns_including_memcmp_oracle": 600194,
+        "observer_10000_frames_cpu_ns": 177975,
+        "hot_path_allocations": 0,
+        "cache_kernel_vertices_for_1000_repeats": 65,
+        "cache_compared_bytes": 3456000,
+        "perf": {
+          "schema": 1,
+          "module": "coh-native-perf",
+          "time_unit": "ns",
+          "clock": "caller_monotonic",
+          "percentile_bucket_ns": 500000,
+          "enabled": true,
+          "paused": false,
+          "surface_generation": 2,
+          "epoch": 5,
+          "target_frame_ns": 33333333,
+          "stall_ns": 100000000,
+          "dropped_frames": 2,
+          "invalid_samples": 5,
+          "over_budget": 571,
+          "stalls": 0,
+          "resident_bytes": 1024,
+          "peak_resident_bytes": 4096,
+          "gpu_unavailable": 1,
+          "gpu_disjoint": 1,
+          "gpu_stale": 2,
+          "gpu_not_ready": 1,
+          "frame": {
+            "samples": 1000,
+            "sum_ns": 39700000000,
+            "max_ns": 80000000,
+            "p50_upper_ns": 39499999,
+            "p95_upper_ns": 76499999,
+            "p99_upper_ns": 80000000
+          },
+          "gpu": {
+            "samples": 1,
+            "sum_ns": 123456,
+            "max_ns": 123456,
+            "p50_upper_ns": 123456,
+            "p95_upper_ns": 123456,
+            "p99_upper_ns": 123456
+          },
+          "stages": {
+            "animation": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "skinning": {
+              "samples": 1000,
+              "sum_ns": 9925000000,
+              "max_ns": 20000000,
+              "p50_upper_ns": 9999999,
+              "p95_upper_ns": 19499999,
+              "p99_upper_ns": 20000000
+            },
+            "collision": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "asset_loading": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "render_submit": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "present": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            },
+            "audio_control": {
+              "samples": 0,
+              "sum_ns": 0,
+              "max_ns": 0,
+              "p50_upper_ns": 0,
+              "p95_upper_ns": 0,
+              "p99_upper_ns": 0
+            }
+          },
+          "counters": {
+            "copied_bytes": 0,
+            "upload_bytes": 96000,
+            "draw_calls": 5995,
+            "state_binds": 0,
+            "skinned_vertices": 0,
+            "collision_tests": 0,
+            "asset_hits": 0,
+            "asset_misses": 0,
+            "asset_evictions": 0,
+            "readbacks": 0,
+            "explicit_waits": 0,
+            "allocations": 0
+          }
+        }
+      }
+    ],
+    "timing_scope": "instrumented host CPU process time, no inference about Thor/full game; cache hit workload repeats the same controlled pose",
+    "total_checks": 3555890
+  },
+  "source_pins": {
+    "upstream/ouroboros/Game/src/render/thread/rt_bonedmodel.c": "e64ec178a7fc90b260da7c9be8aadbd5014c2dd0e909ae221630b5ea4ae74325",
+    "upstream/ouroboros/Game/src/render/thread/rt_model_cache.c": "7818494b2c50eacd9dad6dd181d5db91924e8e5f4007fd0af6b10f602ad76739",
+    "upstream/ouroboros/Common/gridcoll/gridcollperftest.c": "c8bf55bb37b0f246d4f510cfc3723e14bf30ee5c2bbe13da3448ded0c288f747",
+    "upstream/i24/data/shaders/cgfx/vp_master_vp.cg": "fc9878f4fe57ff430a018c66c208e18e8c00dcad6737a4a48c8d16f4ef8ecfd8",
+    "upstream/i24/data/shaders/cgfx/functions.cgh": "5b602cf7f03b7ce7a6ea4e02fc34c1a2a33331a9c3a6516762b8823679f9a6ca",
+    "native-android/material-probe/app/src/main/cpp/coh_mesh.c": "18f82e3ad598336f4876ba2ebb1afff6ca0ae77509960e8beb38672bb3fd4be1",
+    "native-android/session-client/app/src/main/cpp/session_renderer.c": "15467486339dfb5d7c28b6be1e1345fb07f3fb4b5e32c30084e4c5909cfc8552",
+    "native-android/engine/renderer/coh_renderer_gles.c": "7c23caedfc92b4763302351d6ec443391fa3f49e0cfbdd20d430467ebed7006c",
+    "native-android/engine/renderer/coh_renderer.c": "4b68547379abc31f500b1dc04c11e12dea44f75441aa77c88322965ee0159a00",
+    "native-android/engine/assets/coh_asset_loader.c": "c3375060c7a9f70bb5d595033d50a28bf9cebd13f205fc08889454b56aec9d3b",
+    "native-android/walk/coh_walk.c": "998c64c472613cf6e8da38218a8d30bcbf49d29c273520180948d4a2e90c50be"
+  },
+  "authentic_assets": {
+    "apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+    "character_bin_sha256": "59dae233f6a6b980f134be71b1ef6d7d112fca46f49b01468f932787fbe33ea7",
+    "source": "unchanged authentic Wretch/Huge eleven-part meshes from physically accepted bounded APK; controlled palettes are mocks",
+    "meshes": [
+      {
+        "part": 0,
+        "sha256": "5f9a13182724b4f6f9463622eefc3fc5288c420608791e056421ada8612953ca",
+        "bytes": 19788
+      },
+      {
+        "part": 1,
+        "sha256": "ac2d6e9a8b55a1bd2c27ae88cadd4e7c0d0c1a159acf6495454e01945f0e60d1",
+        "bytes": 25972
+      },
+      {
+        "part": 2,
+        "sha256": "8a4015e2c4dc369dec8e190cde85bcfa7cb05c4a0f4fedfdff04b8d1e7f0241d",
+        "bytes": 10908
+      },
+      {
+        "part": 3,
+        "sha256": "e44b40f435014c9a38bfa09bcba43d395f7fef45847bfca9b392c4ff90453489",
+        "bytes": 22040
+      },
+      {
+        "part": 4,
+        "sha256": "825fcbcfe8480c6bc19c87fbe8e92b67d7cc89dfb83879eb5edaca18ac84044e",
+        "bytes": 13660
+      },
+      {
+        "part": 5,
+        "sha256": "184e999fc69e9fb1d9c49e211b8653ea4f113711250bfabeafeabf613a13e428",
+        "bytes": 13660
+      },
+      {
+        "part": 6,
+        "sha256": "8f2649ab4380b604350f97ef08fb2f128c1dd33643ed9033266b26d55e860f18",
+        "bytes": 5684
+      },
+      {
+        "part": 7,
+        "sha256": "c726d558660b4060315403d0ea439efc73f77a4c27f7d5e6d670147915051fd1",
+        "bytes": 18980
+      },
+      {
+        "part": 8,
+        "sha256": "5f7c30c0d55e4a2fa197937f5615107729a25e442ca35822da1a5fc4a3db7b94",
+        "bytes": 19832
+      },
+      {
+        "part": 9,
+        "sha256": "65e62ef126df267186b221c04a29f440019536f59171ddf68fa86728ca7a1661",
+        "bytes": 8020
+      },
+      {
+        "part": 10,
+        "sha256": "44ee97923e7158990dddbcccaf50cc477a2218d0f8f4cab3cb50e41df147de7c",
+        "bytes": 4220
+      }
+    ]
+  },
+  "scalar_source_reference": {
+    "status": "passed",
+    "comparisons": 63024,
+    "max_absolute_error": 3.004533937200904e-07,
+    "tolerance": "2e-5 absolute + 2e-5 relative",
+    "scope": "independent Python scalar interpretation of pinned Cg blend_bone_positions/blend_bone_normals, authentic meshes, four controlled palettes; no GPU/original application execution"
+  },
+  "independent_trace_reference": "1000 scripted frame intervals, stage durations, percentiles, copied counters and lifecycle boundaries matched Python arithmetic",
+  "sanitizers": {
+    "status": "passed",
+    "address": true,
+    "undefined": true,
+    "leak_detection": false,
+    "leak_detection_limitation": "Initial LeakSanitizer attempt failed: cannot open /proc/task; LeakSanitizer cannot work under ptrace in execution environment. No code diagnostic was emitted; explicit module malloc/calloc/free balance verified instead.",
+    "module_allocator_balance": "every directly linked module/test allocation released; zero malloc/calloc/realloc calls across warm sample workload",
+    "runs": [
+      {
+        "part": 0,
+        "checks": 410542,
+        "status": "passed"
+      },
+      {
+        "part": 1,
+        "checks": 510733,
+        "status": "passed"
+      },
+      {
+        "part": 2,
+        "checks": 236584,
+        "status": "passed"
+      },
+      {
+        "part": 3,
+        "checks": 467794,
+        "status": "passed"
+      },
+      {
+        "part": 4,
+        "checks": 313654,
+        "status": "passed"
+      },
+      {
+        "part": 5,
+        "checks": 313654,
+        "status": "passed"
+      },
+      {
+        "part": 6,
+        "checks": 168322,
+        "status": "passed"
+      },
+      {
+        "part": 7,
+        "checks": 414946,
+        "status": "passed"
+      },
+      {
+        "part": 8,
+        "checks": 399532,
+        "status": "passed"
+      },
+      {
+        "part": 9,
+        "checks": 188140,
+        "status": "passed"
+      },
+      {
+        "part": 10,
+        "checks": 131989,
+        "status": "passed"
+      }
+    ]
+  },
+  "android_arm64": {
+    "status": "built",
+    "api": 26,
+    "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)",
+    "elf_machine": "AArch64",
+    "so_sha256": "28f0f550a70b1cbe893aec766ef54bfd48336e7338fccacae72396e938abe4f2",
+    "so_bytes": 18840,
+    "scope": "all module sources plus unchanged scalar mesh kernel; no JNI/GL integration/execution"
+  },
+  "emulator_qualified": false,
+  "physical_thor_accepted": false,
+  "standalone_cmake": {
+    "status": "not-run",
+    "reason": "cmake executable unavailable in worker environment; direct host and real NDK compile/link succeeded"
+  },
+  "module_hashes": {
+    "coh_perf.c": "63fbfb006497e897f80373c56dc45444ae7630db9c004bb04674314c5cd44970",
+    "coh_skin_cache.c": "6491f613e198dfd710d801eafcf0859ec7b82d9bd8ce9c7e396d799a13ae8c4c",
+    "coh_perf.h": "0d6928135f27aaa7dd1454c2974c07314bbd818163cdeaac155875f1aa70dbdc",
+    "coh_skin_cache.h": "c88997202da49fecf992532bc716a0b2f52855a969836f68d06a9613b6be5fdf",
+    "test_perf.c": "65845e4f215550960866fef1baac85f1060c34a16e5fd4a0d1b186a1b5f397e7",
+    "check.py": "2247fab4e8a4ffaa84965923c49f45750ae0f09c9ec45c55c6acd43895137a61"
+  },
+  "limitations": [
+    "Observer must be connected by coordinator; no accepted hot-path changes.",
+    "No actual GPU query adapter or GPU measurements; asynchronous result admission tested with scripted data only.",
+    "Exact skin cache accelerates identical poses; continuously changing poses miss and incur comparison/copy overhead.",
+    "Cache storage includes duplicate source/palette/output; use small caps and evaluate real workload before enabling.",
+    "No ARM64 execution, emulator or physical acceptance is claimed by this standalone driver.",
+    "cmake executable unavailable; supplied standalone target is not configured here."
+  ]
+}

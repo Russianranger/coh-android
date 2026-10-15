@@ -1,0 +1,571 @@
+{
+  "version": 1,
+  "scope": "selection/timing only; explicit authored ranges, unresolved original clip ends preserved",
+  "states": {
+    "COMBAT": 20,
+    "PUNCH": 256,
+    "COMBO2": 292,
+    "JUMPNSMASH": 354,
+    "STRONG": 682,
+    "RAISEDEAD": 323
+  },
+  "moves": [
+    {
+      "name": "JumpPost",
+      "source": "data/sequencers/player/motion/motion_jump.inc",
+      "requires": [],
+      "members": [
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<BLOCKIRQ>",
+        "<ATTACKIRQ>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESALL>",
+        "<IRQENCOUNTERS>",
+        "<JUMPS>",
+        "<READY>"
+      ],
+      "interrupts": [],
+      "flags": 0,
+      "priority": 0,
+      "scale": 0.7,
+      "interpolate": 1.0,
+      "next_name": "postReady_back",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 69.0
+        },
+        "praetorianpolice": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 69.0
+        },
+        "resistancemale": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 69.0
+        },
+        "resistancefem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 69.0
+        },
+        "camerashaker": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 69.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/combat_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 69.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/combat_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 32.0
+        },
+        "rocksuit": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 69.0
+        },
+        "invisiblemaletarget_silent": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/comb_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 69.0
+        },
+        "p_apparitions_minion": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/combat_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 32.0
+        },
+        "p_apparitions_lieutenant": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/combat_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 32.0
+        },
+        "p_apparitions_minion_merged": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/combat_postjump.anim",
+          "first_frame": 1.0,
+          "last_frame": 32.0
+        }
+      },
+      "required": [],
+      "member_words": [
+        18,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": null
+    },
+    {
+      "name": "1_2punch",
+      "source": "data/sequencers/player/powers.inc",
+      "requires": [
+        "COMBAT",
+        "PUNCH",
+        "COMBO2"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<ATTACKIRQ>"
+      ],
+      "interrupts": [
+        "<ATTACKIRQ>"
+      ],
+      "flags": 128,
+      "priority": 3,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "1_2punchpost",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/1_2punch.anim",
+          "first_frame": 1.0,
+          "last_frame": 40.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/1_2punch.anim",
+          "first_frame": 1.0,
+          "last_frame": 40.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/1_2punch.anim",
+          "first_frame": 1.0,
+          "last_frame": 40.0
+        }
+      },
+      "required": [
+        20,
+        256,
+        292
+      ],
+      "member_words": [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 2
+    },
+    {
+      "name": "1_2punchpost",
+      "source": "data/sequencers/player/powers.inc",
+      "requires": [
+        "COMBAT"
+      ],
+      "members": [
+        "<COMBAT>",
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<ATTACKIRQ>",
+        "<BLOCKIRQ>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESALL>",
+        "<IRQENCOUNTERS>",
+        "<JUMPS>"
+      ],
+      "interrupts": [],
+      "flags": 136,
+      "priority": 0,
+      "scale": 0.5,
+      "interpolate": 5.0,
+      "next_name": "Brawlcycle_15",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/1_2punch.anim",
+          "first_frame": 40.0,
+          "last_frame": 62.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/1_2punch.anim",
+          "first_frame": 40.0,
+          "last_frame": 62.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/1_2punch.anim",
+          "first_frame": 40.0,
+          "last_frame": 62.0
+        }
+      },
+      "required": [
+        20
+      ],
+      "member_words": [
+        18,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": null
+    },
+    {
+      "name": "jumpNsmash",
+      "source": "data/sequencers/player/powers.inc",
+      "requires": [
+        "COMBAT",
+        "JUMPNSMASH"
+      ],
+      "members": [
+        "<DEATHIRQ>",
+        "<ATTACKIRQ>"
+      ],
+      "interrupts": [
+        "<ATTACKIRQ>"
+      ],
+      "flags": 128,
+      "priority": 2,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "jumpNsmash_post",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/jump_n_smash.anim",
+          "first_frame": 1.0,
+          "last_frame": 98.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/jump_n_smash.anim",
+          "first_frame": 1.0,
+          "last_frame": 98.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/jump_n_smash.anim",
+          "first_frame": 1.0,
+          "last_frame": 98.0
+        },
+        "rocksuit": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/beast/jump_n_smash.anim",
+          "first_frame": 1.0,
+          "last_frame": 98.0
+        }
+      },
+      "required": [
+        20,
+        354
+      ],
+      "member_words": [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": 4
+    },
+    {
+      "name": "jumpNsmash_post",
+      "source": "data/sequencers/player/powers.inc",
+      "requires": [
+        "COMBAT"
+      ],
+      "members": [
+        "<COMBAT>",
+        "<DEATHIRQ>",
+        "<HITIRQ>",
+        "<REACTIRQ>",
+        "<ATTACKIRQ>",
+        "<BLOCKIRQ>",
+        "<IRQREST>",
+        "<MOVEIRQ>",
+        "<IRQEMOTESALL>",
+        "<IRQENCOUNTERS>",
+        "<JUMPS>"
+      ],
+      "interrupts": [],
+      "flags": 136,
+      "priority": 0,
+      "scale": 0.5,
+      "interpolate": 5.0,
+      "next_name": "jumpNsmash_cycle_15",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/jump_n_smash.anim",
+          "first_frame": 98.0,
+          "last_frame": 124.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/jump_n_smash.anim",
+          "first_frame": 98.0,
+          "last_frame": 124.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/jump_n_smash.anim",
+          "first_frame": 98.0,
+          "last_frame": 124.0
+        },
+        "rocksuit": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/beast/jump_n_smash.anim",
+          "first_frame": 98.0,
+          "last_frame": null
+        }
+      },
+      "required": [
+        20
+      ],
+      "member_words": [
+        18,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": null
+    },
+    {
+      "name": "Fallout",
+      "source": "data/sequencers/player/reactions.inc",
+      "requires": [
+        "STRONG",
+        "RAISEDEAD"
+      ],
+      "members": [],
+      "interrupts": [
+        "<RAISEDEADIRQ>",
+        "<RAISEDEADBACKIRQ>",
+        "<REACTIRQ>"
+      ],
+      "flags": 640,
+      "priority": 2,
+      "scale": 1.0,
+      "interpolate": 5.0,
+      "next_name": "KHF_Deathcycle",
+      "types": {
+        "male": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/male/fallout.anim",
+          "first_frame": 1.0,
+          "last_frame": 147.0
+        },
+        "huge": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/huge/fallout.anim",
+          "first_frame": 1.0,
+          "last_frame": 147.0
+        },
+        "fem": {
+          "type_scale": 1.0,
+          "asset": "ANIMS/fem/fallout.anim",
+          "first_frame": 1.0,
+          "last_frame": 147.0
+        }
+      },
+      "required": [
+        682,
+        323
+      ],
+      "member_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "interrupt_words": [
+        28,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "next_move": null
+    }
+  ],
+  "source_sha256": {
+    "i24/data/sequencers/player.txt": "c334dfc0719e5e1d4b4e17cd6707d8cc10b4c66e826de71f4313f9fcd7678258",
+    "i24/data/sequencers/player/motion.inc": "a4491460f5ffc093dbdd4333b60694e94d91581a8e6ba55009e17560fa221fcd",
+    "ouroboros/Common/seq/seqstate.h": "56c692d96a91b753bbeb456f214e2a7d3b91912210334268303b373b874d2dab",
+    "ouroboros/Common/seq/seqstate.c": "750079414254758fa3e0e478403f68416687475cdb5f852f2472ef30ef4b460e",
+    "ouroboros/Common/seq/TriggeredMove.h": "82499d5298f2da605a1efc64d2281cc6ccaf48fba0fdc1feb5ad5e35b7bdc175",
+    "i24/data/sequencers/statebits.statebits": "22ad5edb2e5cf2132ff754fb338a50bb1b3669445f161c37f7ec7f52cf00f77b",
+    "ouroboros/Common/seq/seq.h": "78a5b4c3d4536a6d97e26f162cd219ef5d9852d99f7f384b5f6be5d5d002c44c",
+    "ouroboros/Common/seq/seqload.c": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f",
+    "ouroboros/Common/seq/seqsequence.c": "7c816b4dacdfbfac8eecef08c105caf55bb5c1652fac6b100d69ddb4a4b1aefa",
+    "ouroboros/libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
+    "i24/data/sequencers/player/motion/motion_jump.inc": "5291bf53a2cd652e99179588e865584d7e689dac6d34838c137fc06041b61c56",
+    "i24/data/sequencers/members/readies.inc": "724e25d550d7c140ff2c5763a574ac8b2d1813d376b18f0351eb8f9db10d3c1a",
+    "i24/data/sequencers/player/powers.inc": "f36db75bf6652aa4ca9469be66a3e0e25398eb9f17afc6627e996f1a978301e8",
+    "i24/data/sequencers/members/combat.inc": "ed1636357a0f36c68525cbaa734372b7de6d1bcae73ac9906842d4c8187fad25",
+    "i24/data/sequencers/player/reactions.inc": "89c668698da7d31a04ee8d6d98c8908a43e5d7c4a19ccbb5f264d9bd70bacfa8"
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "gate": 33,
+  "status": "host-qualified bounded selection/timing module; full gate pending",
+  "original_source_kernel_oracle": true,
+  "source_moves": 18,
+  "source_families": [
+    "jump",
+    "fall",
+    "combat kick",
+    "emote",
+    "knockdown cycle"
+  ],
+  "host": {
+    "host": {
+      "assertions": 1848320,
+      "original_kernel_comparisons": 89111,
+      "unresolved_source_steps_safely_blocked": 10909,
+      "source_visited_masks": [
+        94013,
+        94013
+      ],
+      "stress_steps": 1000000,
+      "host_stress_elapsed_ns": 27082319,
+      "actor_retained_bytes": 216,
+      "engine_heap_allocations": 0
+    },
+    "asan-ubsan": {
+      "assertions": 1848320,
+      "original_kernel_comparisons": 89111,
+      "unresolved_source_steps_safely_blocked": 10909,
+      "source_visited_masks": [
+        94013,
+        94013
+      ],
+      "stress_steps": 1000000,
+      "host_stress_elapsed_ns": 117327768,
+      "actor_retained_bytes": 216,
+      "engine_heap_allocations": 0
+    }
+  },
+  "android": {
+    "status": "not run; coordinator ARM64 build/device admission pending"
+  },
+  "physical_thor": "not run",
+  "emulator": "not run",
+  "leak_sanitizer": "not run: executor /proc task restrictions; ASan+UBSan enabled and module imports no heap allocator",
+  "fixture_sha256": "4f39ad4a6d747fdf1759bb56a40f82ffcd2ff7f3657d08dc3748928fe4886368",
+  "module_sha256": {
+    "coh_sequencer.c": "dd2ad08204ca037ee9ae29262db709dfe4d7be9b1a1a8acb06af44c9e80c8a91",
+    "coh_sequencer.h": "895b888ef2c4d8aa441c2a07b9ccaf0ac8c5b0affd548fe3dcda1ecf152c6f16",
+    "tests/test_sequencer.c": "3f1dad6193c78d1f5e0508f1a306f6b5eec46f73252f06e40e3792062b2ff1e7"
+  },
+  "commands": [
+    [
+      "cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build",
+      "-O2",
+      "-Werror",
+      "-c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_sequencer.c",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build/host-module.o"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build",
+      "-O2",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/tests/test_sequencer.c",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build/host-module.o",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/../../animation/coh_animation.c",
+      "-lm",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build/host-test",
+      "-DCOH_SEQ_ORACLE",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build/original_oracle.c",
+      "-Wno-unused-function",
+      "-Wno-unused-variable",
+      "-Wno-unused-but-set-variable"
+    ],
+    [
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build/host-test"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-fno-pie",
+      "-no-pie",
+      "-Werror",
+      "-c",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/coh_sequencer.c",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build/asan-ubsan-module.o"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer",
+      "-I",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-fno-pie",
+      "-no-pie",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/tests/test_sequencer.c",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build/asan-ubsan-module.o",
+      "/workspace/scratch/bd17f7dd7d03/coh-second-coordinator/native-android/engine/sequencer/../../animation/coh_animation.c",
+      "-lm",
+      "-o",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build/asan-ubsan-test",
+      "-DCOH_SEQ_ORACLE",
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build/original_oracle.c",
+      "-Wno-unused-function",
+      "-Wno-unused-variable",
+      "-Wno-unused-but-set-variable"
+    ],
+    [
+      "/workspace/scratch/bd17f7dd7d03/support-batch-validation/sequencer/playback-build/sequencer-build/asan-ubsan-test"
+    ]
+  ],
+  "limitations": [
+    "New non-ground encoded clips are not decoded/visually qualified; explicit authored source ranges are selection/timing evidence only.",
+    "Unresolved animation end frames remain ready=0; missing next-moves remain COH_SEQ_NONE and fail atomically.",
+    "Attachments, root motion, FX, per-bone transition blending, ragdolls and authoritative server reconciliation remain external/unqualified.",
+    "Performance is a host microbenchmark; no device gameplay FPS claim."
+  ]
+}

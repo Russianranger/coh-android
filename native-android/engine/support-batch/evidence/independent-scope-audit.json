@@ -1,0 +1,86 @@
+{
+  "physics": {
+    "commit": "3963019c8f46c69f96f7eca761ef796a17352c3e",
+    "source_only_snapshot": "/workspace/scratch/bd17f7dd7d03/coordinator-validation/physics",
+    "changed_file_count": 8,
+    "scope_only": true,
+    "files": [
+      "native-android/engine/physics/CMakeLists.txt",
+      "native-android/engine/physics/PROVENANCE.md",
+      "native-android/engine/physics/README.md",
+      "native-android/engine/physics/check.py",
+      "native-android/engine/physics/coh_physics.c",
+      "native-android/engine/physics/coh_physics.h",
+      "native-android/engine/physics/qualification/host-arm64.json",
+      "native-android/engine/physics/tests/test_physics.c"
+    ]
+  },
+  "appearance": {
+    "commit": "5faf57514316bc47e72db9ce4489f0a0bcc9ba1e",
+    "source_only_snapshot": "/workspace/scratch/bd17f7dd7d03/coordinator-validation/appearance",
+    "changed_file_count": 18,
+    "scope_only": true,
+    "files": [
+      "native-android/engine/appearance/.gitignore",
+      "native-android/engine/appearance/CMakeLists.txt",
+      "native-android/engine/appearance/README.md",
+      "native-android/engine/appearance/SOURCE-AUDIT.md",
+      "native-android/engine/appearance/acquire.py",
+      "native-android/engine/appearance/check.py",
+      "native-android/engine/appearance/coh_appearance.c",
+      "native-android/engine/appearance/coh_appearance.h",
+      "native-android/engine/appearance/coh_appearance_adapters.c",
+      "native-android/engine/appearance/corpus-pins.json",
+      "native-android/engine/appearance/evidence/host.json",
+      "native-android/engine/appearance/source-pins.json",
+      "native-android/engine/appearance/tests/adapters.c",
+      "native-android/engine/appearance/tests/bindings.py",
+      "native-android/engine/appearance/tests/corpus.c",
+      "native-android/engine/appearance/tests/host.c",
+      "native-android/engine/appearance/tests/original_oracle.py",
+      "native-android/engine/appearance/tests/source_data.py"
+    ]
+  },
+  "audio": {
+    "commit": "276386c1385d07caf18ab69ba7a5bc7cf2d7df6f",
+    "source_only_snapshot": "/workspace/scratch/bd17f7dd7d03/coordinator-validation/audio",
+    "changed_file_count": 13,
+    "scope_only": true,
+    "files": [
+      "native-android/engine/audio/android-integration/CMakeLists.txt",
+      "native-android/engine/audio/android-integration/README.md",
+      "native-android/engine/audio/android-integration/acquire.py",
+      "native-android/engine/audio/android-integration/android-build.json",
+      "native-android/engine/audio/android-integration/check.py",
+      "native-android/engine/audio/android-integration/corpus-proof.json",
+      "native-android/engine/audio/android-integration/host-proof.json",
+      "native-android/engine/audio/android-integration/sanitizer-proof.json",
+      "native-android/engine/audio/android-integration/test_music.c",
+      "native-android/engine/audio/coh_music.c",
+      "native-android/engine/audio/coh_music.h",
+      "native-android/engine/audio/coh_resample.c",
+      "native-android/engine/audio/coh_resample.h"
+    ]
+  },
+  "perf": {
+    "commit": "e21b553b5d4ed4b107e744d0804020a04c223d8f",
+    "source_only_snapshot": "/workspace/scratch/bd17f7dd7d03/coordinator-validation/perf",
+    "changed_file_count": 12,
+    "scope_only": true,
+    "files": [
+      "native-android/engine/perf/AUDIT-AND-BACKLOG.md",
+      "native-android/engine/perf/CMakeLists.txt",
+      "native-android/engine/perf/README.md",
+      "native-android/engine/perf/check.py",
+      "native-android/engine/perf/coh_perf.c",
+      "native-android/engine/perf/coh_perf.h",
+      "native-android/engine/perf/coh_skin_cache.c",
+      "native-android/engine/perf/coh_skin_cache.h",
+      "native-android/engine/perf/diagnostics.schema.json",
+      "native-android/engine/perf/evidence/qualification.json",
+      "native-android/engine/perf/source-pins.json",
+      "native-android/engine/perf/tests/test_perf.c"
+    ]
+  },
+  "baseline_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639"
+}

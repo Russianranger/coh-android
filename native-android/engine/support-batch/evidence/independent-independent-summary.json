@@ -1,0 +1,53 @@
+{
+  "all_reproduction_commands_succeeded": true,
+  "scope_audit": "scope-audit.json",
+  "reports": {
+    "physics": {
+      "report": "/workspace/scratch/bd17f7dd7d03/coordinator-validation/output/physics.json",
+      "top_level": {
+        "passed": true
+      }
+    },
+    "appearance": {
+      "report": "/workspace/scratch/bd17f7dd7d03/coordinator-validation/output/appearance.json",
+      "top_level": {
+        "implemented": true,
+        "host_qualified": true,
+        "arm64_built": true,
+        "emulator_qualified": false,
+        "physical_qualified": false
+      }
+    },
+    "audio-host": {
+      "report": "/workspace/scratch/bd17f7dd7d03/coordinator-validation/output/audio-host.json",
+      "top_level": {
+        "passed": true
+      }
+    },
+    "audio-sanitizer": {
+      "report": "/workspace/scratch/bd17f7dd7d03/coordinator-validation/output/audio-sanitizer.json",
+      "top_level": {
+        "passed": true
+      }
+    },
+    "audio-arm64": {
+      "report": "/workspace/scratch/bd17f7dd7d03/coordinator-validation/output/audio-arm64.json",
+      "top_level": {
+        "passed": true
+      }
+    },
+    "perf": {
+      "report": "/workspace/scratch/bd17f7dd7d03/coordinator-validation/output/perf.json",
+      "top_level": {
+        "status": "host-qualified-and-arm64-built",
+        "emulator_qualified": false
+      }
+    }
+  },
+  "emulator_or_physical_execution_performed": false,
+  "notes": [
+    "Source-only archives at exact local commits avoid changes to original worker trees or primary worktree.",
+    "ASan/UBSan succeed; LSan environment limitations are explicit in receipts.",
+    "No full gate, GPU performance or actual audio device acceptance follows from host/build checks."
+  ]
+}

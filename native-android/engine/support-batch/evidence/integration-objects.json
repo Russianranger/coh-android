@@ -1,0 +1,30 @@
+[
+  {
+    "abi": "arm64",
+    "source": "support_bridge.c",
+    "source_sha256": "7daa4eed10a5d97f23aff4016fac2f7d0f3f6d0a46a48196fccfa779d7838c40",
+    "object_sha256": "a25909b1c0f38aba370ff3a0b8964a39fd08f443f531c6dcfc45cc5ab1ce7fd2",
+    "object_bytes": 13528
+  },
+  {
+    "abi": "arm64",
+    "source": "offline_scene.c",
+    "source_sha256": "d26e7651bf1646fc29b5f35782c9df24478aa6ee6fa33a63791d89c26f4be1d1",
+    "object_sha256": "23011b2ef4484393b7ef0940498bea27063710fc081e67333432df20de9be7d5",
+    "object_bytes": 86936
+  },
+  {
+    "abi": "x86_64",
+    "source": "support_bridge.c",
+    "source_sha256": "7daa4eed10a5d97f23aff4016fac2f7d0f3f6d0a46a48196fccfa779d7838c40",
+    "object_sha256": "de236473c2687e216305e96be962f8b4563a35621c128eaf0ef134ddcca4f96a",
+    "object_bytes": 14008
+  },
+  {
+    "abi": "x86_64",
+    "source": "offline_scene.c",
+    "source_sha256": "d26e7651bf1646fc29b5f35782c9df24478aa6ee6fa33a63791d89c26f4be1d1",
+    "object_sha256": "50d2ce03602d9b6f0e875dedb00ffe109af4c01b58d86fddd1b935945de42116",
+    "object_bytes": 97088
+  }
+]
