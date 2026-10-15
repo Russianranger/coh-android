@@ -1,0 +1,23 @@
+{
+  "source_files": {
+    "upstream/i24/data/defs/ui/bodyparts.bp": "21aedaa7b4c901a6e6b8a1a7684f343dba675adc0472bdc6053d378ece37558d",
+    "upstream/ouroboros/Common/seq/bones.h": "90d046b7077feb21b6a05dffc54c81fe32b932f83671de20ff32ceb22f90fa17",
+    "upstream/ouroboros/Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+    "upstream/ouroboros/Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+    "upstream/ouroboros/Game/src/entity/costume_client.c": "b89818e2c2c834efd14f90e8af882d572b9c24337f9f2a699150d2d1648925f2",
+    "upstream/ouroboros/Common/seq/anim.c": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+    "upstream/i24/data/defs/npc/contacts_atlas.nd": "2d1cfb0fb804f8d194d0d8ab297ceecf63ed53e01d128b071e3529bce48cf5c3",
+    "upstream/i24/data/defs/villaincostume/i23_unique_costumes.nd": "af6a4f577dfdcaa56728b2a52dec756842181d3a9f132194c9ccc93cb8b18187",
+    "upstream/i24/data/defs/v_villain_costumes/v_arachnos_henchmen.nd": "db73b840f0339fb211ac75bcb3680f85de8ff60daf23793f9480fd6a5f02f419"
+  },
+  "executed_functions": {
+    "get_color": "c6af8391d21b253447fd9ebcd2913198fd4e6b6ab55849f272166f6a0a9fc932",
+    "gender_prefix_fixup": "5873a87144ead081ea398abe63efd1e215ae7fd2b7a87d210525c0cbe8a1dfce",
+    "bodyPartIsLinkedToChest": "8020778d69c54ccef1d6802090cdcb5b81e412db05a6eb648fee03eb3482a25b",
+    "doChangeGeo": "267e655aeadbdfedac90c0aaf6d110df84739bba83b0aac350273bab8541e52d",
+    "determineTextureNames": "fb560f6e3f62c211291eb7d17e98d9dea6b6b6e55f69cc567d9f2f0bc7b297de",
+    "calc_tex_types1": "cf8567fb139037fb4e10fb88e95b17068a769cba337dba6c3b96d2d1f819ebfa",
+    "costumePrefixName": "b587babd89f0f5114ec562d5eb059c06a9a9b70ce9f03b84423919fe3cc5cd9a",
+    "g_BodyTypeInfos": "4e8861ed9a4f3ff91809adb8424cc38db1521a233c7418aaddfad462df2be462"
+  }
+}
