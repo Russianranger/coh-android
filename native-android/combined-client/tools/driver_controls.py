@@ -34,10 +34,13 @@ class Driver(Check):
 class AnrDriver(Check):
     def record(self, name, **details):
         self.proofs.append({'host_fixture':True,'check':name,**details})
-    def __init__(self, path, frames):
+    def __init__(self, path, frames, lastanr='', events=''):
         super().__init__(SimpleNamespace(output=path))
+        self.lastanr, self.events = lastanr, events
         self.frames = iter(x.encode() for x in frames)
         self.commands = []
+    def text(self, *args, check=True):
+        return self.lastanr if 'lastanr' in args else self.events
     def adb(self, *args, check=True):
         if args[:2] == ('exec-out', 'cat'):
             return SimpleNamespace(stdout=next(self.frames))
@@ -67,7 +70,25 @@ def main():
             raise AssertionError('Native app ANR was admitted')
         except RuntimeError as failure:
             assert 'without dismissal' in str(failure) and not own.commands
-    print(json.dumps({'passed':True,'checks':6,'scope':'Host regression for Android 13 accessibility drawer occlusion and actual app-return admission; no Android execution claim.'}))
+        files = AnrDriver(Path(temp), [anr.replace('Pixel Launcher','Files'), '<hierarchy>'+APP+'</hierarchy>'], 'ANR in com.google.android.documentsui (com.google.android.documentsui/.files.FilesActivity)')
+        files.dump()
+        assert files.commands == [('shell','input','tap',540,1087)] and files.proofs[0]['external_component'] == 'com.google.android.documentsui'
+        cpu_only = AnrDriver(Path(temp), [anr.replace('Pixel Launcher','Files'), '<hierarchy>'+APP+'</hierarchy>'], 'ANR in com.android.documentsui\nCPU usage: 1% '+PACKAGE)
+        cpu_only.dump()
+        assert cpu_only.commands == [('shell','input','tap',540,1087)]
+        unknown = AnrDriver(Path(temp), [anr.replace('Pixel Launcher','Files')])
+        try:
+            unknown.dump()
+            raise AssertionError('Unidentified Files ANR was admitted')
+        except RuntimeError as failure:
+            assert 'not positively identified' in str(failure) and not unknown.commands
+        native_trace = AnrDriver(Path(temp), [anr], 'ANR in '+PACKAGE)
+        try:
+            native_trace.dump()
+            raise AssertionError('Native app ANR trace was admitted')
+        except RuntimeError as failure:
+            assert 'Native app ANR' in str(failure) and not native_trace.commands
+    print(json.dumps({'passed':True,'checks':10,'scope':'Host regression for Android 13 accessibility drawer occlusion and actual app-return admission; no Android execution claim.'}))
 
 
 if __name__ == '__main__':

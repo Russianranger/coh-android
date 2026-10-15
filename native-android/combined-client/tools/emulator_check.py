@@ -41,33 +41,55 @@ class Check:
         (self.args.output / 'progress.json').write_text(json.dumps(self.proofs, indent=2) + '\n')
         print(json.dumps(item), flush=True)
 
+    def system_anr_evidence(self, label):
+        last = self.text('shell', 'dumpsys', 'activity', 'lastanr', check=False)
+        events = self.text('logcat', '-d', '-b', 'events', '-s', 'am_anr', 'am_crash', check=False)
+        prefix = 'external-anr-' + str(self.launcher_anrs)
+        (self.args.output / (prefix + '-lastanr.txt')).write_text(last)
+        (self.args.output / (prefix + '-events.txt')).write_text(events)
+        # A CoH app ANR anywhere in this fresh disposable session invalidates the
+        # run even if an external system process also displayed a dialog.
+        native_anr = re.search(r'ANR in ' + re.escape(PACKAGE) + r'(?:[\s(/]|$)', last)
+        native_event = re.search(r'am_(?:anr|crash)[^\n]*[,\[]' + re.escape(PACKAGE) + r'[,\]]', events)
+        if native_anr or native_event:
+            raise RuntimeError('Native app ANR found in framework diagnostics; no dismissal')
+        if label == "Files isn't responding":
+            packages = ('com.google.android.documentsui', 'com.android.documentsui')
+            identified = next((p for p in packages if re.search(r'ANR in ' + re.escape(p) + r'(?:[\s(/]|$)', last)), None)
+            if identified is None:
+                identified = next((p for p in packages if re.search(r'am_anr[^\n]*[,\[]' + re.escape(p) + r'[,\]]', events)), None)
+            if identified is None:
+                raise RuntimeError('Files ANR process was not positively identified; traces preserved without dismissal')
+            return identified
+        return 'com.google.android.apps.nexuslauncher'
+
     def dump(self):
         for unused in range(4):
-            self.adb('shell', 'uiautomator', 'dump', '/sdcard/combined-ui.xml')
-            raw = self.adb('exec-out', 'cat', '/sdcard/combined-ui.xml').stdout
+            # Keep driver snapshots outside shared storage so DocumentsUI does
+            # not index its own rapidly-changing diagnostic XML as user files.
+            self.adb('shell', 'uiautomator', 'dump', '/data/local/tmp/combined-ui.xml')
+            raw = self.adb('exec-out', 'cat', '/data/local/tmp/combined-ui.xml').stdout
             (self.args.output / 'last-ui.xml').write_bytes(raw)
             root = ET.fromstring(raw)
             alerts = [n for n in root.iter('node') if n.attrib.get('resource-id') == 'android:id/alertTitle']
-            launcher = next((n for n in alerts if n.attrib.get('text') == "Pixel Launcher isn't responding"), None)
-            if launcher is None:
+            external = next((n for n in alerts if n.attrib.get('text') in ("Pixel Launcher isn't responding", "Files isn't responding")), None)
+            if external is None:
                 if any("isn't responding" in n.attrib.get('text', '') for n in alerts):
                     raise RuntimeError('App or nonallowlisted component ANR; qualification failed without dismissal')
                 return root
-            # This is an observed headless-emulator launcher failure, before any
-            # native preview starts. Recover only that exact external component;
-            # an app ANR remains a qualification failure and is never dismissed.
             self.launcher_anrs += 1
             (self.args.output / ('external-launcher-anr-' + str(self.launcher_anrs) + '.xml')).write_bytes(raw)
+            component = self.system_anr_evidence(external.attrib['text'])
             if self.launcher_anrs > 3:
-                raise RuntimeError('External Pixel Launcher repeatedly failed to respond')
+                raise RuntimeError('External Android UI components repeatedly failed to respond')
             wait = next((n for n in root.iter('node') if n.attrib.get('resource-id') == 'android:id/aerr_wait' and n.attrib.get('text') == 'Wait'), None)
             if wait is None:
-                raise RuntimeError('Observed external launcher ANR has no framework Wait action')
+                raise RuntimeError('Observed external UI ANR has no framework Wait action')
             xy = [int(v) for v in re.findall(r'\d+', wait.attrib['bounds'])]
             self.adb('shell', 'input', 'tap', (xy[0]+xy[2])//2, (xy[1]+xy[3])//2)
-            self.record('external Pixel Launcher ANR observed and framework Wait selected', external_component='com.google.android.apps.nexuslauncher', occurrence=self.launcher_anrs, native_app_anr_dismissed=False)
+            self.record('external Android UI ANR observed and framework Wait selected', external_component=component, occurrence=self.launcher_anrs, native_app_anr_dismissed=False, framework_process_traces_preserved=True)
             time.sleep(.5)
-        raise RuntimeError('External launcher dialog did not clear')
+        raise RuntimeError('External Android UI dialog did not clear')
 
     def tap(self, label):
         deadline = time.monotonic() + 15
@@ -119,17 +141,23 @@ class Check:
 
     def picker_cancel(self, label):
         self.tap(label)
-        deadline = time.monotonic() + 10
+        deadline = time.monotonic() + 15
         while time.monotonic() < deadline:
-            focus = self.text('shell', 'dumpsys', 'window', 'windows')
-            if 'com.google.android.documentsui' in focus or 'com.android.documentsui' in focus:
+            root = self.dump()
+            if any('documentsui' in n.attrib.get('package', '') for n in root.iter('node')):
                 break
-            time.sleep(.15)
+            time.sleep(.2)
         else:
-            raise RuntimeError('SAF picker did not open: ' + label)
+            raise RuntimeError('Actual SAF provider UI did not open: ' + label)
         self.adb('shell', 'input', 'keyevent', 'KEYCODE_BACK')
-        time.sleep(.3)
-        self.record('framework SAF cancellation', control=label)
+        deadline = time.monotonic() + 15
+        while time.monotonic() < deadline:
+            root = self.dump()
+            if any(n.attrib.get('package') == PACKAGE for n in root.iter('node')):
+                self.record('framework SAF cancellation and app return', control=label)
+                return
+            time.sleep(.2)
+        raise RuntimeError('SAF cancellation did not return to the app: ' + label)
 
     def select_document(self, control, filename):
         self.tap(control)
@@ -223,6 +251,8 @@ class Check:
         assert self.text('shell', 'getprop', 'ro.boot.qemu').strip() == '1', 'Qualification is limited to its disposable CI emulator'
         assert self.text('shell', 'getprop', 'ro.product.cpu.abi').strip() == 'x86_64'
         assert not self.text('shell', 'pm', 'list', 'packages', '--user', '0', PACKAGE).strip(), 'Require fresh disposable emulator; never clear user data'
+        print(json.dumps({'stage':'cold_boot_settle','seconds':30,'scope':'Allow first-boot Android system providers to settle before installing the app'}), flush=True)
+        time.sleep(30)
         installed = self.text('install', '-g', self.args.apk)
         assert re.search(r'^Success\s*$', installed, re.M)
         self.launch(MAIN)
@@ -316,7 +346,26 @@ def main():
     p.add_argument('--protocol-binary', type=Path)
     p.add_argument('--donor-apk', type=Path)
     p.add_argument('--protocol-receipt', type=Path)
-    Check(p.parse_args()).run()
+    args = p.parse_args()
+    driver = Check(args)
+    try:
+        driver.run()
+    except Exception as failure:
+        (args.output / 'failure.json').write_text(json.dumps({'type':type(failure).__name__,'message':str(failure),'actual_server_interoperability_verified':False},indent=2)+'\n')
+        for name, command in (
+            ('failure-lastanr.txt', ('shell','dumpsys','activity','lastanr')),
+            ('failure-events.txt', ('logcat','-d','-b','events','-s','am_anr','am_crash')),
+            ('failure-window.txt', ('shell','dumpsys','window','windows')),
+        ):
+            try:
+                (args.output / name).write_bytes(driver.adb(*command,check=False).stdout)
+            except Exception:
+                pass
+        try:
+            (args.output / 'failure.png').write_bytes(driver.adb('exec-out','screencap','-p',check=False).stdout)
+        except Exception:
+            pass
+        raise
 
 
 if __name__ == '__main__':
