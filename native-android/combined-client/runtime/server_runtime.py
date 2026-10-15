@@ -519,6 +519,10 @@ def runtime_classes():
             self.provision_if_requested()
 
         def prepare_runtime(self):
+            # LocalLoginServer.start reaches this seam only after its actual
+            # PE32 ODBC install and validated driver probe. Preserve that Wine
+            # proof before later map-data preparation can fail or be cancelled.
+            self.owner.mark_wine_ready()
             character.LocalCharacterServer.prepare_runtime(self)
             self.qualify_monorail_preparation()
             require(self.manual_atlas_startup is not None,
@@ -670,8 +674,6 @@ def runtime_classes():
             # registration/MSI; no CityOfHeroes.exe or client-launcher executes.
             self.start_wine()
             self.server.start()
-            # The retained LocalLoginServer ODBC driver probe has now passed.
-            self.mark_wine_ready()
             self.server.health()
             require(self.server.report.get('server_ready') is True
                     and self.server.creation_report.get('map_ready') is True,

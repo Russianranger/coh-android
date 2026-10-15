@@ -276,6 +276,49 @@ class RetainedSourceContractTests(unittest.TestCase):
             self.assertEqual(owner.presentation_socket.read_text(), 'preserved replacement')
             self.assertFalse(owner.cleanup_status['presentation_socket_removed'])
 
+    def test_wine_marker_survives_later_prepare_failure_only_after_valid_odbc(self):
+        server_class = inspect.getclosurevars(self.Owner.__init__).nonlocals['Server']
+        valid_probe = ("COH_ODBC_DRIVER_V1 NAME PostgreSQL Unicode(x86)\n"
+                       "COH_ODBC_DRIVER_V1 DLL C:\\windows\\syswow64\\psqlodbc35w.dll\n"
+                       "COH_ODBC_DRIVER_V1 PASS bits=32\n")
+        for probe_ok in (True, False):
+            with self.subTest(valid_probe=probe_ok), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                owner = self.Owner.__new__(self.Owner)
+                owner.wineprefix = root / 'prefix'; owner.wineprefix.mkdir()
+                owner.wine_ready_marker = owner.wineprefix / '.coh-wine-ready.json'
+                owner.wine_ready_identity = {'format': 1, 'purpose': 'coh-wine-initialization',
+                                             'runtime_lock_sha256': 'd' * 64}
+                owner.wine_initialization = {'state': 'initialized'}
+                (owner.wineprefix / '.update-timestamp').write_text('1700000000\n')
+                owner.args = SimpleNamespace(wine=root / 'wine', assets=root / 'assets')
+                owner.wine_env = {}; owner.port = 5432
+                owner.credentials = {'cohtest': 'private-test-fixture'}
+                calls = []
+                def run(label, argv, **kwargs):
+                    calls.append(label)
+                    return {'exit_code': 0, 'output': valid_probe if probe_ok else 'FAIL invalid driver'}
+                ctx = SimpleNamespace(stage=lambda name: None, passed=lambda **fields: None,
+                                      run=run, report={})
+                server = server_class.__new__(server_class)
+                server.owner = owner; server.ctx = ctx
+                with mock.patch.object(runtime.base, 'verify_pe32'), \
+                     mock.patch.object(runtime.character.LocalCharacterServer, 'prepare_runtime',
+                                       side_effect=RuntimeError('expected later preparation failure')) as preparation:
+                    if probe_ok:
+                        with self.assertRaisesRegex(RuntimeError, 'expected later preparation failure'):
+                            runtime.login.LocalLoginServer.start(server)
+                        preparation.assert_called_once_with(server)
+                    else:
+                        with self.assertRaises(runtime.base.DiagnosticError):
+                            runtime.login.LocalLoginServer.start(server)
+                        preparation.assert_not_called()
+                self.assertEqual(calls, ['local-install-x86-psqlodbc', 'local-odbc-driver'])
+                self.assertEqual(owner.wine_ready_marker.exists(), probe_ok)
+                self.assertEqual(owner.wine_initialization['state'], 'ready' if probe_ok else 'initialized')
+                if probe_ok:
+                    self.assertEqual(json.loads(owner.wine_ready_marker.read_text()), owner.wine_ready_identity)
+
     def test_wine_timestamp_reuse_matches_retained_policy(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
