@@ -12,13 +12,15 @@ import json
 import os
 from pathlib import Path
 import re
+import shlex
 import shutil
 import subprocess
 import tempfile
 import zipfile
 
 PACKAGE='org.coh.nativesupport'
-VERSION='0.1.0-support-batch'
+VERSION='0.2.0-gameplay'
+VERSION_CODE=200
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
 TARGETS={'arm64-v8a':'aarch64-linux-android26-clang','x86_64':'x86_64-linux-android26-clang'}
@@ -77,7 +79,7 @@ def compile_native(a,abi,config,values,sources,includes,build):
         except ValueError:key=str(source)
         selected=per_source.get(source_entry,per_source.get(key,per_source.get(str(source),[])))
         flags=[expand(x,values) for x in selected]
-        jobs.append(([cc,*common,*flags,'-c',source,'-o',obj],obj))
+        jobs.append(([cc,*common,*flags,'-MMD','-MF',obj.with_suffix('.d'),'-c',source,'-o',obj],obj))
     with ThreadPoolExecutor(max_workers=a.jobs) as pool:
         list(pool.map(lambda item:run(item[0],cwd=a.source_root),jobs))
     name=config.get('library','coh_support_client')
@@ -89,8 +91,21 @@ def compile_native(a,abi,config,values,sources,includes,build):
          *['-l'+x for x in ldlibs],*config.get('ldflags',[]),'-o',so])
     elf=run([tools/'llvm-readelf','-h',so]);machine='AArch64' if abi=='arm64-v8a' else 'Advanced Micro Devices X86-64'
     require(machine in elf,'Native ELF architecture differs')
+    dependencies=set()
+    for _,obj in jobs:
+        depfile=obj.with_suffix('.d')
+        require(depfile.is_file(),'Compiler dependency receipt missing')
+        body=depfile.read_text().replace('\\\n',' ').partition(':')[2]
+        for name in shlex.split(body):
+            dependency=Path(name)
+            if not dependency.is_absolute():dependency=a.source_root/dependency
+            dependency=dependency.resolve()
+            require(dependency.is_file(),'Compiler dependency disappeared')
+            dependencies.add(dependency)
     return so,{'abi':abi,'elf_machine':machine,'sha256':sha(so),'bytes':so.stat().st_size,
-               'compiler':run([cc,'--version']).splitlines()[0]}
+               'compiler':run([cc,'--version']).splitlines()[0],
+               'compiled_inputs':[identity(p,a.source_root) for p in sorted(dependencies)],
+               'compiled_inputs_scope':'Compiler -MMD closure includes direct/indirect non-system headers and generated inputs; NDK system headers are bound by NDK revision.'}
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
@@ -122,7 +137,7 @@ def main():
         classes=build/'classes';classes.mkdir();dex=build/'dex';dex.mkdir();generated_java=build/'java';generated_java.mkdir()
         resources=build/'resources.apk'
         link=[tools/'aapt2','link','--manifest',app/'AndroidManifest.xml','-I',android_jar,
-              '--min-sdk-version','26','--target-sdk-version','33','--version-code','100',
+              '--min-sdk-version','26','--target-sdk-version','33','--version-code',str(VERSION_CODE),
               '--version-name',VERSION,'--rename-manifest-package',PACKAGE,'--java',generated_java,
               '-A',a.assets,'-o',resources]
         if (app/'res').is_dir():
@@ -162,6 +177,9 @@ def main():
             signature=run([tools/'apksigner','verify','--verbose','--print-certs',apk])
             badging=run([tools/'aapt2','dump','badging',apk]);require("package: name='"+PACKAGE+"'" in badging,'APK identity differs')
             require("versionName='"+VERSION+"'" in badging,'APK version differs')
+            require("versionCode='"+str(VERSION_CODE)+"'" in badging,'APK version code differs')
+            certificates=re.findall(r'Signer #\d+ certificate SHA-256 digest: ([0-9a-f]{64})',signature)
+            require(len(certificates)==1,'APK must have exactly one verified signing identity')
             with zipfile.ZipFile(apk) as z:
                 require(z.testzip() is None,'APK zip integrity failure')
                 require(all(not name.startswith('lib/') or name.startswith('lib/'+abi+'/') for name in z.namelist()),'Unexpected APK ABI')
@@ -170,12 +188,17 @@ def main():
             (a.output/('apk-signature-'+abi+'.txt')).write_text(signature)
             (a.output/('apk-badging-'+abi+'.txt')).write_text(badging)
             artifacts.append(dict(identity(apk,a.output),signature_verified=True,manifest_verified=True,
-                                  packaged_assets_verified=True,native=native))
+                                  packaged_assets_verified=True,native=native,
+                                  signer_certificate_sha256=certificates[0]))
         try:commit=run(['git','rev-parse','HEAD'],cwd=a.source_root).strip()
         except ValueError:commit=None
-        try:dirty=run(['git','status','--porcelain','--','native-android/support-client',*[str(s.relative_to(a.source_root)) for s in sources if s.is_relative_to(a.source_root)]],cwd=a.source_root).splitlines()
+        compiled_paths=sorted({entry['file'] for artifact in artifacts for entry in artifact['native']['compiled_inputs']
+                               if not Path(entry['file']).is_absolute()})
+        try:dirty=run(['git','status','--porcelain','--','native-android/support-client',*compiled_paths,
+                       *[str(s.relative_to(a.source_root)) for s in java_sources if s.is_relative_to(a.source_root)]],cwd=a.source_root).splitlines()
         except ValueError:dirty=['No Git checkout: packaging smoke or external source tree']
         receipt={'schema':1,'passed':True,'source_commit':commit,'package':PACKAGE,'version':VERSION,
+                 'version_name':VERSION,'version_code':VERSION_CODE,
                  'source_tree_clean':not dirty,'source_tree_changes':dirty,
                  'scope':'separate offline support client; accepted0.3 APK unchanged; no live server',
                  'source_manifest':identity(a.config,a.source_root),'sources':[identity(x,a.source_root) for x in sources],

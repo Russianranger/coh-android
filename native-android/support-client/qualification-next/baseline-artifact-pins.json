@@ -1,0 +1,27 @@
+{
+  "schema": "coh-support-qualified-artifact-pins-v1",
+  "qualified_source_commit": "b69bbf232e1746f1fb35ef1aa624a636f2cce490",
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38702695275",
+  "artifact_url": "https://github.com/Russianranger/coh-android/actions/runs/38702695275/artifacts/11957750066",
+  "artifact_id": 11957750066,
+  "archive_sha256": "71bd89e52b113222e0e9a8ba22f09c39bf3880edeb6807e6c77eb24e0d2b1594",
+  "package": "org.coh.nativesupport",
+  "version_name": "0.1.0-support-batch",
+  "version_code": 100,
+  "signer_certificate_sha256": "74872f53c9a805dc1dd054c579e299686b4b5584dceec27fb03cf0904e7397c5",
+  "apks": {
+    "arm64-v8a": {
+      "file": "CoH-Native-Support-Client-0.1.0-support-batch-arm64.apk",
+      "bytes": 2393455,
+      "sha256": "4cf976478654ab5005257923a177a9c56126bc323871429ca73e70f0439ffde0"
+    },
+    "x86_64": {
+      "file": "CoH-Native-Support-Client-0.1.0-support-batch-emulator-x86_64.apk",
+      "bytes": 2442604,
+      "sha256": "bd6f0caf69d6a636594486a70b19817a3955a99fa07cdbe2e1ede1776503f0a8"
+    }
+  },
+  "accepted_session_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+  "physical_thor_accepted": false,
+  "full_gates_accepted": false
+}

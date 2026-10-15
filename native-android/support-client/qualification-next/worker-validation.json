@@ -1,0 +1,36 @@
+{
+  "schema": "coh-support-worker-a-validation-v1",
+  "pinned_start_commit": "3c5da1d8cd501d778e270d395109d40666fbe37a",
+  "recovered_qualified_source": "b69bbf232e1746f1fb35ef1aa624a636f2cce490",
+  "previous_qualification_reused": true,
+  "new_emulator_run": false,
+  "new_android_build": false,
+  "artifact_recovery_passed": true,
+  "tracked_runtime_inputs_compared": 105,
+  "local_headers_compared": 47,
+  "accepted_assets_independently_compared": 7,
+  "signer_certificate_sha256": "74872f53c9a805dc1dd054c579e299686b4b5584dceec27fb03cf0904e7397c5",
+  "retained_emulator_scenarios": 13,
+  "negative_controls": {
+    "isolated_header_drift_rejected": true,
+    "corrupt_apk_identity_rejected": true,
+    "wrong_metadata_package_rejected": true,
+    "wrong_metadata_version_code_rejected": true,
+    "wrong_metadata_version_name_rejected": true,
+    "wrong_metadata_apk_hash_rejected": true,
+    "wrong_metadata_apk_size_rejected": true,
+    "baseline_version_code_defect_detected": true
+  },
+  "python_compile_passed": true,
+  "build_tool_updates": {
+    "version_name": "0.2.0-gameplay",
+    "version_code": 200,
+    "records_verified_signer": true,
+    "compiler_mmd_dependency_closure": true,
+    "header_dirtiness_checked": true,
+    "requires_new_android_build_before_qualification": true
+  },
+  "sanitizers": "No native runtime modifications in Worker A; retained baseline sanitizer receipts remain unchanged.",
+  "physical_thor_accepted": false,
+  "full_gates_accepted": false
+}

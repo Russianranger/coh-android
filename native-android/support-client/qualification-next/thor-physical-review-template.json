@@ -1,0 +1,121 @@
+{
+  "schema": "coh-support-thor-physical-review-v1",
+  "physical_thor_accepted": false,
+  "review_status": "pending_user_device_evidence",
+  "expected_package": "org.coh.nativesupport",
+  "build_source_commit": null,
+  "installed_apk_sha256": null,
+  "first_report": null,
+  "final_report": null,
+  "near_screenshot": null,
+  "far_screenshot": null,
+  "active_duration_seconds": null,
+  "observed_audio_route": null,
+  "checks": [
+    {
+      "id": "scene_wretch",
+      "coverage": "Original Wretch and native scene",
+      "machine_evidence": "native.startup_checked; native.world_visible_pixels; native.actor_visible_pixels",
+      "human_observation_required": "Visual geometry/material/rig correctness",
+      "status": "pending"
+    },
+    {
+      "id": "hud_health_endurance",
+      "coverage": "Source-font health/endurance HUD",
+      "machine_evidence": "support.hud.frames; support.hud.gl_errors",
+      "human_observation_required": "Readable font and responsive bars",
+      "status": "pending"
+    },
+    {
+      "id": "icons",
+      "coverage": "Authentic icons",
+      "machine_evidence": "New icon resource identities when integrated",
+      "human_observation_required": "Baseline icon/skin closure is incomplete; assess only resources actually integrated",
+      "status": "pending"
+    },
+    {
+      "id": "controller_touch",
+      "coverage": "Controller and touchscreen navigation",
+      "machine_evidence": "input_adapter; support.hud.intents; support.hud.power_uses",
+      "human_observation_required": "Both analog sticks, D-pad, shoulders, A, and touch with no camera drift during HUD capture",
+      "status": "pending"
+    },
+    {
+      "id": "keyboard_chat",
+      "coverage": "Android keyboard/chat input",
+      "machine_evidence": "support.hud.chat_submits",
+      "human_observation_required": "Open real Android IME, compose and send text; focus returns to gameplay",
+      "status": "pending"
+    },
+    {
+      "id": "near_far",
+      "coverage": "Near/Far instance selection",
+      "machine_evidence": "native.stream.view_radius; native.stream",
+      "human_observation_required": "Near/Far scene differences and continued actor rendering",
+      "status": "pending"
+    },
+    {
+      "id": "walk_collision",
+      "coverage": "Original source WALK and collision",
+      "machine_evidence": "native.walk; support.physics",
+      "human_observation_required": "Walls block/sliding/ground contacts; no unsupported jump physics claim",
+      "status": "pending"
+    },
+    {
+      "id": "mock_animation",
+      "coverage": "Mock authentic animation previews",
+      "machine_evidence": "support.animation.samples; support.animation.triggers",
+      "human_observation_required": "Punch, jump-power and reaction then return to grounded WALK",
+      "status": "pending"
+    },
+    {
+      "id": "audio",
+      "coverage": "Music and positional ambience",
+      "machine_evidence": "support.audio; quiescent callback counters",
+      "human_observation_required": "Audible correct music, attenuation/panning and no duplicate/distorted output",
+      "status": "pending"
+    },
+    {
+      "id": "surface",
+      "coverage": "Multiple Surface recreations",
+      "machine_evidence": "native.contexts_started; support.hud.surface_recreates",
+      "human_observation_required": "Recreate twice; retain HUD/chat and recover graphics",
+      "status": "pending"
+    },
+    {
+      "id": "background",
+      "coverage": "Home/background recovery",
+      "machine_evidence": "native.contexts_started; support.audio.opens; input_adapter",
+      "human_observation_required": "Home/resume three times; movement clears and audio resumes once",
+      "status": "pending"
+    },
+    {
+      "id": "routes",
+      "coverage": "Audio route transition",
+      "machine_evidence": "support.audio.device_error; new route observations when integrated",
+      "human_observation_required": "Switch available speaker/headphone route; sound resumes",
+      "status": "pending"
+    },
+    {
+      "id": "sustained",
+      "coverage": "Ten-minute active session",
+      "machine_evidence": "First/final reports plus elapsed-time notes",
+      "human_observation_required": "At least 600 seconds active movement/selection/audio after lifecycle checks",
+      "status": "pending"
+    },
+    {
+      "id": "export",
+      "coverage": "Exported JSON diagnostics",
+      "machine_evidence": "schema; app.installed_apk; assets_verified; native; support",
+      "human_observation_required": "Export readable nontruncated JSON and Near/Far screenshots",
+      "status": "pending"
+    }
+  ],
+  "acceptance_rules": [
+    "Machine reports do not establish audible quality, visual parity, actual IME composition or physical controller acceptance.",
+    "Do not accept a full gameplay gate from a bounded offline support scene.",
+    "All relevant GL/transform/cleanup/support failures must remain zero; unavailable counters are not zero-cost observations.",
+    "native.total_ms measures the latest render lifetime and resets after lifecycle restart; it cannot establish aggregate ten-minute foreground duration alone.",
+    "No physical acceptance exists until actual Thor reports and human observations are returned."
+  ]
+}

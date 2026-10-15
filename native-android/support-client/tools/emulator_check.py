@@ -44,6 +44,18 @@ def matches(value,conditions,baseline=None):
         return True
     except (KeyError,IndexError,TypeError,ValueError):return False
 
+def verify_report_identity(value,build,artifact):
+    app=value.get('app',{})
+    require(app.get('package')==build.get('package')==PACKAGE,'Report package differs from APK receipt')
+    require(isinstance(build.get('version_code'),int) and build['version_code']>0,
+            'Build receipt must contain explicit manifest version_code')
+    require(app.get('version_code')==build['version_code'],'Report version_code differs from APK manifest receipt')
+    require(app.get('version_name')==build.get('version_name')==build.get('version'),
+            'Report version_name differs from APK manifest receipt')
+    require(app.get('installed_apk',{}).get('sha256')==artifact['sha256'] and
+            app.get('installed_apk',{}).get('bytes')==artifact['bytes'],
+            'Report installed APK differs from admitted source-bound artifact')
+
 class Check:
     def __init__(self,a,scenario):
         self.a=a;self.scenario=scenario;self.commands=[];self.last=None;self.steps=[]
@@ -145,6 +157,7 @@ class Check:
         require(re.search(rb'^Status:\s*ok\s*$',launched.stdout,re.M),'Android Activity launch failed')
         ready=self.scenario['ready'];require(ready,'Scenario must declare actual readiness observations')
         first=self.wait(ready,'Native support client ready',timeout=self.a.startup_timeout)
+        verify_report_identity(first,build,admitted[0])
         self.save('emulator-initial-report.json',first);self.screenshot('emulator-initial.png')
         previous=first
         for i,step in enumerate(self.scenario.get('steps',[])):
@@ -159,6 +172,7 @@ class Check:
             print(json.dumps({'step':step['label'],'passed':True}),flush=True);previous=current
         self.save('emulator-final-report.json',previous);self.screenshot('emulator-final.png')
         summary={'schema':1,'passed':True,'package':PACKAGE,'source_commit':self.source_commit,
+                 'version_name':build['version_name'],'version_code':build['version_code'],
                  'installed_apk':{'bytes':self.a.apk.stat().st_size,'sha256':hashlib.sha256(self.a.apk.read_bytes()).hexdigest()},
                  'scope':'actual Android emulator framework input/lifecycle and native report assertions in separate offline support client',
                  'scenario_sha256':hashlib.sha256(self.a.scenario.read_bytes()).hexdigest(),'steps':self.steps,

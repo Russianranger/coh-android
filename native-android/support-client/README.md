@@ -2,7 +2,8 @@
 
 This separate test package exercises new opt-in support libraries without editing
 the accepted Session Client, production launcher or gates 25–27. Package identity
-is `org.coh.nativesupport`, version `0.1.0-support-batch`. It coexists with the
+is `org.coh.nativesupport`. The retained qualified artifact is `0.1.0-support-batch`;
+the next integrated build is `0.2.0-gameplay` (manifest code `200`). It coexists with the
 physically accepted 0.3.0 client. It does not require a server.
 
 The coordinator-owned `offline_scene.c` is a test-harness derivative of the
@@ -43,7 +44,7 @@ from the last quiescent checkpoint. A failed close retains the whole native
 Session and AssetManager; one process-wide cleanup slot blocks another Session
 until cleanup succeeds. Both Java and native admission enforce this bound.
 
-The present harness records CPU frame/stage timing. Generic performance counters
+The retained 0.1.0 harness records CPU frame/stage timing. Generic performance counters
 that have no caller adapter remain uninstrumented; their zero values do not
 mean the scene made no allocations, copies or draw calls. Module cache/physics/
 audio/HUD receipts report their own explicit bytes and counters.
@@ -58,7 +59,7 @@ establish full-game FPS, full-map memory use or Adreno performance.
    from the named Actions artifact; check its SHA256 against `SHA256SUMS`.
    A replacement support build may use another disposable debug certificate;
    export its report and uninstall only the previous support app first.
-2. Open **CoH Native Support 0.1.0**. Confirm scene and source-font HUD render,
+2. Open **CoH Native Support**. Confirm scene and source-font HUD render,
    mock health/endurance update, and music plus positional ambient audio play.
 3. Use left/right sticks, short WASD/D-pad movement and touch dragging; check
    grounded movement, blocking, sliding and Near/Far selection. Reset actor.
@@ -82,3 +83,11 @@ physical result is recorded yet. Remove only `org.coh.nativesupport` to roll
 back the test application; the accepted client and launcher remain installed.
 Opt-in library commits may be reverted additively in reverse dependency order;
 never reset or rewrite the shared branch.
+
+The source-bound artifact recovery checker and complete pending physical review
+matrix are documented in [qualification-next/INTEGRATION.md](qualification-next/INTEGRATION.md).
+The retained artifact passed 13 Android emulator scenarios; these have not been
+repeated. Its report incorrectly labels version code `1` although the verified
+APK manifest code is `100`. New builds must report installed package metadata
+and pass the stricter emulator identity checks. Original font glyphs are present;
+baseline original UI icon/skin closure remains incomplete.
