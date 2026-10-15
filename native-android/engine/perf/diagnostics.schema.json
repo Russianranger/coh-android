@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "coh-native-perf observer snapshot v1",
+  "type": "object",
+  "required": ["schema", "module", "time_unit", "clock", "enabled", "paused", "surface_generation", "epoch", "frame", "gpu", "stages", "counters"],
+  "properties": {
+    "schema": {"const": 1},
+    "module": {"const": "coh-native-perf"},
+    "time_unit": {"const": "ns"},
+    "clock": {"const": "caller_monotonic"},
+    "percentile_bucket_ns": {"const": 500000},
+    "enabled": {"type": "boolean"},
+    "paused": {"type": "boolean"},
+    "surface_generation": {"$ref": "#/$defs/counter"},
+    "epoch": {"$ref": "#/$defs/counter"},
+    "frame": {"$ref": "#/$defs/histogram"},
+    "gpu": {"$ref": "#/$defs/histogram"},
+    "stages": {
+      "type": "object",
+      "required": ["animation", "skinning", "collision", "asset_loading", "render_submit", "present", "audio_control"],
+      "additionalProperties": {"$ref": "#/$defs/histogram"}
+    },
+    "counters": {
+      "type": "object",
+      "required": ["copied_bytes", "upload_bytes", "draw_calls", "state_binds", "skinned_vertices", "collision_tests", "asset_hits", "asset_misses", "asset_evictions", "readbacks", "explicit_waits", "allocations"],
+      "additionalProperties": {"$ref": "#/$defs/counter"}
+    }
+  },
+  "additionalProperties": {"$ref": "#/$defs/counter"},
+  "$defs": {
+    "counter": {"type": "integer", "minimum": 0, "maximum": 18446744073709551615},
+    "histogram": {
+      "type": "object",
+      "required": ["samples", "sum_ns", "max_ns", "p50_upper_ns", "p95_upper_ns", "p99_upper_ns"],
+      "additionalProperties": {"$ref": "#/$defs/counter"}
+    }
+  }
+}
