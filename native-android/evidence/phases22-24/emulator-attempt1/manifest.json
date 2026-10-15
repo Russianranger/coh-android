@@ -1,0 +1,136 @@
+{
+  "schema": 1,
+  "run": 38671972824,
+  "artifact": 11945040803,
+  "artifact_bytes": 7897912,
+  "artifact_sha256": "48cb364da4392af2a782e14fad5ff95e4465a21e6669afe685e61dfb854db36d",
+  "runtime_commit": "ac840d23026b92455e26a8a50fe4a97d7920f5c2",
+  "conclusion": "failure",
+  "failed_predicate": "Home event trace lacks actual held and moving source input immediately before clear",
+  "native_failed": false,
+  "native_gl_egl_asset_errors": 0,
+  "scope_passed": [
+    "source scene GPU startup",
+    "Near6/Far11 selection",
+    "finite real keyboard WASD movement",
+    "camera",
+    "Recreate",
+    "CPU cache reuse and GPU resource restoration"
+  ],
+  "failure_cause": "Driver neutral joystick event reached Activity before asynchronous HOME pause callback; actual source motion and native cleanup occurred but the required held-source pre-clear witness was absent. Retain the strict predicate and synchronize with actual HOME activity completion before neutral.",
+  "evidence_encoding": "gzip; decompression returns original bytes exactly",
+  "files": [
+    {
+      "file": "build-receipt.json",
+      "bytes": 5119,
+      "sha256": "8b9d7666677cc20306eb4731def6af68daa6fa827082d6d17e0399a33c316fe4",
+      "gzip_bytes": 1850,
+      "gzip_sha256": "626c15fcbba9d90f7cecb75fb2e5934124341558cd9c06c95246bff42dfd6796"
+    },
+    {
+      "file": "emulator-bounded-framework-setting.json",
+      "bytes": 230,
+      "sha256": "f415e547de441862c02c63d20142d86d1095ae43bfb2a75c08b21a94bcf838ba",
+      "gzip_bytes": 164,
+      "gzip_sha256": "6172815f11d8d2da2e56c010323da91b7365adcff23a898dfbe39b6a45747b8f"
+    },
+    {
+      "file": "emulator-bounded-home-proof.json",
+      "bytes": 202531,
+      "sha256": "5a0574b8c48b261df050ba365fca85bdfb8f856f9fb830c41a14d371064dcce4",
+      "gzip_bytes": 8094,
+      "gzip_sha256": "d553146270614eb2b4ee01f0525eac6263104fbe45cd31645df5e53697b32712"
+    },
+    {
+      "file": "emulator-bounded-input-proof.json",
+      "bytes": 1600553,
+      "sha256": "299e060b486c591699c2e0283cfc1ab5103de6ce25c6c19c387b8a9205347075",
+      "gzip_bytes": 61134,
+      "gzip_sha256": "6931027ae644329835c675247bd6b8c5b4f80e7e82598f44669b7f7b7af9f7df"
+    },
+    {
+      "file": "emulator-button-tap-proof.json",
+      "bytes": 62484,
+      "sha256": "1776f1f720367bcdb0ca487c5d84ed23a48efadf1e5a3fcaf4c5d797a9186d78",
+      "gzip_bytes": 3246,
+      "gzip_sha256": "9c0e667abeb5c78d17749b31047bccf9a15511fb7221f595e98ce9b8060e9a7a"
+    },
+    {
+      "file": "emulator-camera-proof.json",
+      "bytes": 2493,
+      "sha256": "0742ab765b4700bcefcc9ee4438c26ce5dcc55135e6661bf7ba43cfe70aa5281",
+      "gzip_bytes": 621,
+      "gzip_sha256": "c77422537c1dac2397a6519728f8175bbd48f4589f34267be70abd8858adfc2c"
+    },
+    {
+      "file": "emulator-initial-report.json",
+      "bytes": 27038,
+      "sha256": "0eaac2a8441aac297b3497ed2f73a9c8dbdb0f9a47e91422b5fd714797ed1963",
+      "gzip_bytes": 4037,
+      "gzip_sha256": "f382dd7477a696966a833fbcafae85d039d23d1cd4a3d11835de07cc22a0344c"
+    },
+    {
+      "file": "emulator-input-area-proof.json",
+      "bytes": 1294,
+      "sha256": "a88552b0eac7271165536fb2abd8777d80cbe0ea0a82a0aaf3161ef234de3463",
+      "gzip_bytes": 340,
+      "gzip_sha256": "9798a1a177404e12d5e9fc74ef39001adea0cd62905b89a98d01b287d76b2d08"
+    },
+    {
+      "file": "emulator-install-launch-proof.json",
+      "bytes": 1934,
+      "sha256": "94065852c6b2eb4653ab4afc60a570feb8da4b62619bb90856bd51afb9ebd18c",
+      "gzip_bytes": 590,
+      "gzip_sha256": "10b7a59a923a3fab62e8db350f0b4e7f06beb23f15b34d5f5f0df20b7f724725"
+    },
+    {
+      "file": "emulator-logcat.txt",
+      "bytes": 6185761,
+      "sha256": "19de226f77035f3cb67994aede841b12c65564bc8f46d7dcd5b1ab7dbad24cde",
+      "gzip_bytes": 861858,
+      "gzip_sha256": "2f2c2a228383d178a5ba09ed0d00d8314783010af419d5c7b1e7662d30823a3a"
+    },
+    {
+      "file": "emulator-moved-report.json",
+      "bytes": 152625,
+      "sha256": "e38d5979192ac39557a3c4847bc20a7ca8712eed031ad7b489b1b347cda12933",
+      "gzip_bytes": 6881,
+      "gzip_sha256": "20ea095bd161a8b287dcc211fda3b436516bde30bc1e3b0087d45908c0a3e8f9"
+    },
+    {
+      "file": "emulator-recreated-report.json",
+      "bytes": 173575,
+      "sha256": "56145a7808865d88eae402e87617233c30508625e72697646aa54feeebab62e6",
+      "gzip_bytes": 7251,
+      "gzip_sha256": "94f2203bc8f14fa9fcc072102164ea749e891ada15952c96c06198912c96b3af"
+    },
+    {
+      "file": "emulator-session-report.json",
+      "bytes": 222491,
+      "sha256": "768d577d90d492633d05c9ae890f9be9b45b37f9db924c9c0ab8c917e13c61c1",
+      "gzip_bytes": 7948,
+      "gzip_sha256": "7f0c752051ec7d932ed9eaaa35359e79a1ef94683a2a69d7bb6884b45d11bef0"
+    },
+    {
+      "file": "emulator-view-distance-24-proof.json",
+      "bytes": 138992,
+      "sha256": "d3d4025ea1e381fa7a4b652f4f311581a9d684cf98b363f16e26f98de7941367",
+      "gzip_bytes": 10955,
+      "gzip_sha256": "b9c238123669faef2d82a96cd410ce9216abb8192ae73c3b7d8ec74a97f2b5ae"
+    },
+    {
+      "file": "emulator-view-distance-96-proof.json",
+      "bytes": 116473,
+      "sha256": "ae377103998a62d5901a5b44d0de57d8a15c08dab789117b29e77499d3192479",
+      "gzip_bytes": 9198,
+      "gzip_sha256": "0cbd0e385387e9fe0788df9c62e9db62c53c6d3c63978186fb6017e27f0b9aff"
+    },
+    {
+      "file": "emulator-walk-settling-proof.json",
+      "bytes": 2511342,
+      "sha256": "e80bc4ba0bc183eaba5b3ab2183e0316bcfce4a5713ac18e234ba4c9755aa946",
+      "gzip_bytes": 95304,
+      "gzip_sha256": "328b235f66347dede62faa64437961e797172b88a89a65f50d049ffb7e3064d8"
+    }
+  ]
+}

@@ -1,0 +1,289 @@
+{
+  "schema": "coh-native-source-publication-v1",
+  "branch": "native-android",
+  "parent_commit": "dc0639d0c289386c20e71554372fd6c13ed565d6",
+  "runtime_commit": "ac840d23026b92455e26a8a50fe4a97d7920f5c2",
+  "runtime_tree": "e004d0ad4e23d4a626d65eecb77b9bf85a381106",
+  "added_or_modified_files": [
+    {
+      "path": "native-android/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e28ff452f5e5c204bfc5ee28ccbc8e4448ee5dca"
+    },
+    {
+      "path": "native-android/session-client/THOR-TEST-19-21.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "23e4099db6cfcd3c86573f4e03bbab2293bff389"
+    },
+    {
+      "path": "native-android/session-client/THOR-TEST.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db718255eaef5ceb8793a55aa7d0998954abdb5b"
+    },
+    {
+      "path": "native-android/tools/map_fixture/walkable.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1d2697d4e3fa0bf8e0c825e5f92d79235929c49a"
+    },
+    {
+      "path": "native-android/tools/map_fixture/acquire.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b2de40df742f3360b2297241c19e62480b588320"
+    },
+    {
+      "path": "native-android/tools/map_fixture/prepare.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d55bbfd38519aabc3b32266c4fe700fa755a6bcf"
+    },
+    {
+      "path": "native-android/tools/session_fixture/package_check_world.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2fab672564d8c30f694861488ed4cdc8f0877052"
+    },
+    {
+      "path": "native-android/tools/session_fixture/prepare_world_session.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fff5ab009ecc159ed1addc9b2f6d5d07ef242917"
+    },
+    {
+      "path": "native-android/tools/session_fixture/snapshot_check.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "535cd1579fd198f7bce9f73c36d855d4569a9ad4"
+    },
+    {
+      "path": "native-android/evidence/phases22-24/host-integrated-gpu-proof.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "540175835ca7544837ae42f56e7320556fb90a06"
+    },
+    {
+      "path": "native-android/evidence/phases22-24/local-source/raw-source-acquisition-proof.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04b0c63f7d59c0117fd796a14fefe328bbf7f48b"
+    },
+    {
+      "path": "native-android/evidence/phases22-24/local-source/bounded-framework-host.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "74f2db6382282750b1495936699ffa10a601131b"
+    },
+    {
+      "path": "native-android/evidence/phases22-24/local-source/snapshot-host.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a2062a190a8abceb373b5881651d9ca1f45e8a79"
+    },
+    {
+      "path": "native-android/session-client/app/build.gradle",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "320bb4f36ca89776a83addec694e33ebeed0b7a2"
+    },
+    {
+      "path": "native-android/session-client/tools/stream_gpu_fixture.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e062309bcae91ec37456780ec1eddb9af7de7c1"
+    },
+    {
+      "path": "native-android/session-client/tools/nextbatch_emulator_check.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f34b7394a284fa1d633967b3bb321ac050b9175"
+    },
+    {
+      "path": "native-android/session-client/tools/stream_gpu_check.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b52328c246f91a3cc67775fdc5dd2223370b2e6"
+    },
+    {
+      "path": "native-android/session-client/tools/stream_qualify_check.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a6287f003529a2f2ab7fc3ca6b1acea5fc56aaf7"
+    },
+    {
+      "path": "native-android/session-client/tools/nextbatch_host_check.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "29bc2b76cccfc2db83930c95e4b4331ffe298b68"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/AndroidManifest.xml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e265ea7060a3691b8f50141abe4ef690fbad3f51"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/cpp/session_stream_world.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5cd8ac5e747df3326f2db3aa788cd92d78e8c63e"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/cpp/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "213d99080e69f1dd3c84a7d82363debab463b8d2"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/cpp/session_stream_qualify.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7b5852fde52fb12f8673b4eefd0c4c20def4040"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/cpp/session_stream_world.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "02fecdabf9f633858ba03cce4bd68710fb3e94fb"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/cpp/session_renderer.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2b0d33b8edb730d395f54d0d4f9fee738a58560a"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/cpp/session_stream_qualify.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9551fd2d3b8e37b106843b0276dc1fcb05daf914"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/java/org/coh/sessionclient/MainActivity.java",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aea4b47155cd0ee46024f6916b6b14202df4fe4e"
+    },
+    {
+      "path": "native-android/session-client/app/src/main/java/org/coh/sessionclient/SessionNative.java",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e91cc0040385b7efb97518d37e5683355209654"
+    },
+    {
+      "path": "native-android/engine/world/coh_world_stream.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "358a83b0de9266e388f08f0295240a6ad28f1d5f"
+    },
+    {
+      "path": "native-android/engine/world/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed9a960651c1f5cc27c1db288e022a6a8285aa59"
+    },
+    {
+      "path": "native-android/engine/world/test_world.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "09334329dba02b5c8bb1b596cb95626d6d624e4f"
+    },
+    {
+      "path": "native-android/engine/world/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e9d437d006b67ba5573918fb2dc75f9b5e2a43a2"
+    },
+    {
+      "path": "native-android/engine/world/qualification.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "52f6427881db7d1c3c370671167fb09f65c1e6a1"
+    },
+    {
+      "path": "native-android/engine/world/source-pins.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a4fcbfef3a6d6158c3919e97bdcb92d289ac9e0c"
+    },
+    {
+      "path": "native-android/engine/world/coh_world_stream.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9d0d758936f94054df1b6555c5f71d065bce728a"
+    },
+    {
+      "path": "native-android/engine/world/test_walkable.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "312966036069a06f40f559ee22ade1dd1a92ab9a"
+    },
+    {
+      "path": "native-android/engine/world/check.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bad2abf25f413ae3b2927b7b6d877b01d43510b2"
+    },
+    {
+      "path": "native-android/engine/bridge/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b307e1f27082f5434543225638a345ad6eaf5a58"
+    },
+    {
+      "path": "native-android/engine/bridge/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "61fd7b88bf93e587230edecd8691b3059acb5f62"
+    },
+    {
+      "path": "native-android/engine/bridge/qualification.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5c893b51aeb8e0cb1f525a1a5767dff98eac9a85"
+    },
+    {
+      "path": "native-android/engine/bridge/coh_asset_render.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "72f69f965ef58c51ca4066b3941d3d0f9afbc2e0"
+    },
+    {
+      "path": "native-android/engine/bridge/coh_asset_render.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cfe0e01bf9af247ae548148f088c2cd189a96211"
+    },
+    {
+      "path": "native-android/engine/bridge/check.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8e0d23a12298a766f292a2a56d2fff0ef0df3dc2"
+    },
+    {
+      "path": "native-android/engine/bridge/tests/test_bridge.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "51743d451ff4feb7287647e921f8824fb7b69d69"
+    },
+    {
+      "path": ".github/workflows/native-world-session-client.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8d69ed087a051b2c2f6c828d0145d0d3a69a7ea5"
+    },
+    {
+      "path": ".github/workflows/native-session-client.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c0369aecdfbd7631df97893ae36e89d95cfa5903"
+    }
+  ],
+  "prior_parallel_engine_source_recovered_and_verified": true,
+  "previous_accepted_evidence_deleted_or_modified": false,
+  "main_updated": false,
+  "physical_gates22_24_accepted": false
+}

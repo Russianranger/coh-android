@@ -93,7 +93,8 @@ directional locomotion. This is a controlled neutral-ambient/no-fog station
 subset; full Atlas closure, environment lighting and live networking are later
 milestones. Host/source/ARM64 qualification is recorded in the
 [world module](engine/world/README.md) and [asset/render bridge](engine/bridge/README.md).
-New APK identity and integrated Android/Thor qualification are **pending**;
-the [consolidated 0.3.0 test](session-client/THOR-TEST.md) carries explicit pending
-artifact markers until the coordinator records the verified build. The existing
-0.2.0 physical acceptance and its independent emulator failure remain unchanged.
+The integrated [gates 22–24 implementation and scope](PHASES22-24.md) is committed
+on `native-android`. [Session Client 0.3.0](https://chatgpt.com/api/library/files/libfile_7909bc8bae848191911760e360ae9884/download)
+uses the same `.walk` application ID and stable signer as 0.2.0. Source/host/GPU,
+ARM64/x86 builds, lint and package checks passed. Combined Android qualification
+is recorded separately; physical gates 22–24 await the actual Thor report.

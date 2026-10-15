@@ -1,12 +1,14 @@
 # AYN Thor: one combined test for integrated gates 22–24
 
 Test package: **CoH-Native-Session-Client-0.3.0-arm64.apk**.
-Download: **PENDING_0_3_QUALIFIED_APK_LINK**.
-Package bytes/SHA256: **PENDING_0_3_PACKAGE_IDENTITY**.
-Build/qualification run: **PENDING_0_3_QUALIFICATION_RUN**.
-These pending markers must be replaced with verified artifact information before
-the package is handed off as qualified. Android execution and physical acceptance
-are separate results; this document does not supply either by itself.
+Download: [CoH-Native-Session-Client-0.3.0-arm64.apk](https://chatgpt.com/api/library/files/libfile_7909bc8bae848191911760e360ae9884/download).
+Package bytes/SHA256: **1,931,361 bytes**, SHA256 `75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639`.
+Build/qualification run: [build/package run 38671972824](https://github.com/Russianranger/coh-android/actions/runs/38671972824); [exact-APK qualification retry 38673357918](https://github.com/Russianranger/coh-android/actions/runs/38673357918).
+Build/lint, signatures, source/host/GPU checks and initial scoped Android execution
+passed. The first Android run failed the strict Home pre-clear input witness;
+the corrected driver is being qualified against these same APK bytes. The
+[receipt](../evidence/phases22-24/qualification.json) records the separate results.
+Physical gates 22–24 remain pending the actual new-package Thor report.
 
 Install the new package over **CoH Native Session Client 0.2.0** and open
 **CoH Native Session Client 0.3.0**. Version code 3 keeps the same
