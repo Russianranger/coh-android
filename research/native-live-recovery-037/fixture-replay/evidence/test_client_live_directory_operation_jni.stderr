@@ -1,0 +1,10 @@
+test_actual_current_fields_order_geometry_and_held_identity (test_client_live_directory_operation_jni.OperationJniTests.test_actual_current_fields_order_geometry_and_held_identity) ... ok
+test_actual_guest_absolute_bound_link (test_client_live_directory_operation_jni.OperationJniTests.test_actual_guest_absolute_bound_link) ... ok
+test_actual_guest_relative_owned_link (test_client_live_directory_operation_jni.OperationJniTests.test_actual_guest_relative_owned_link) ... ok
+test_actual_late_directory_retarget_terminal_without_retry (test_client_live_directory_operation_jni.OperationJniTests.test_actual_late_directory_retarget_terminal_without_retry) ... ok
+test_actual_relative_target_outside_selected_branch_declines_before_rows (test_client_live_directory_operation_jni.OperationJniTests.test_actual_relative_target_outside_selected_branch_declines_before_rows) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.784s
+
+OK

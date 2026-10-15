@@ -1,0 +1,505 @@
+{
+  "Android_OS_Wine_FEX_PRoot_parity": false,
+  "Bionic_ARM64_fixture": true,
+  "Bionic_ARM64_fixture_result": {
+    "android_os_or_wine_or_game_qualified": false,
+    "controls_passed": 26,
+    "elapsed_seconds": 0.081259946,
+    "failures": 0,
+    "libc": "Bionic",
+    "metadata_requests": 1165,
+    "peak_owned_heap_bytes": 638416,
+    "pointer_bytes": 8,
+    "schema": "coh-live-native-kernel-fixture-v1",
+    "shipping_admission": false,
+    "stat_bytes": 128,
+    "uid": 1001
+  },
+  "NDK": {
+    "compiler": {
+      "bytes": 201,
+      "sha256": "953fdbecacf318f6c27ac631c044646f32219f354fe3e9194378dc57a88c0541"
+    },
+    "compiler_version": "Android (12470979, +pgo, +bolt, +lto, +mlgo, based on r522817c) clang version 18.0.3 (https://android.googlesource.com/toolchain/llvm-project d8003a456d14a3deb8054cdaa529ffbf02d9b262)\nTarget: aarch64-unknown-linux-android29\nThread model: posix\nInstalledDir: /usr/local/lib/android/sdk/ndk/27.2.12479018/toolchains/llvm/prebuilt/linux-x86_64/bin\n",
+    "source_properties": {
+      "bytes": 108,
+      "sha256": "70f1c5165e6d997b18782a49cff71da7a3caacd0c4cd811da24c43359fb83cf6"
+    },
+    "version": "27.2.12479018"
+  },
+  "artifacts": {
+    "NDK-compiler-version.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "NDK-compiler-version.stdout": {
+      "bytes": 345,
+      "sha256": "835f1507a752737c6b98c8d2a16d58dc47e33eb4b9cc9b473beae6349678167d"
+    },
+    "compile-Bionic-ARM64-JNI.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-Bionic-ARM64-JNI.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-Bionic-ARM64-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-Bionic-ARM64-fixture.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-Java-facade-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-Java-facade-fixture.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-host-JNI.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-host-JNI.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-host-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "compile-host-fixture.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execute-Bionic-ARM64-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execute-Bionic-ARM64-fixture.stdout": {
+      "bytes": 301,
+      "sha256": "f5a375b4a146cabbfdaea2ade6b3fed0b213638a462d38c5987e2c66f4826c7e"
+    },
+    "execute-host-JNI.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execute-host-JNI.stdout": {
+      "bytes": 140,
+      "sha256": "458c8f566d9546ba21af930bdb443abf1dcada08940dd67cc3de45be78c1cebf"
+    },
+    "execute-host-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execute-host-fixture.stdout": {
+      "bytes": 299,
+      "sha256": "78287411aedbc6827fcc8ee92b739b0a5c13482071052327d8b7efdf8ecdd6d3"
+    },
+    "host-native-kernel-tests.stderr": {
+      "bytes": 5223,
+      "sha256": "55e8caa83574b59f3896aaa172ab3f650d548ab8832db4dfb9dff92487a4ac19"
+    },
+    "host-native-kernel-tests.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "inspect-Bionic-ARM64-JNI.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "inspect-Bionic-ARM64-JNI.stdout": {
+      "bytes": 6774,
+      "sha256": "0f5d7f7a66b00f9628ce67c72ed99195f2582aa0e5cf190c5b47ab84dd237762"
+    },
+    "inspect-Bionic-ARM64-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "inspect-Bionic-ARM64-fixture.stdout": {
+      "bytes": 940,
+      "sha256": "84e0b946759ac1bc14a676cc7fea4e5fee0a8f74f99a04ae4d6c3da4a31c7d70"
+    },
+    "libcoh_live_directory-host.so": {
+      "bytes": 35664,
+      "sha256": "cec249a49fa8758b4caf2f074c133fb687f5d53e1c580ab1aa8031b822d653a8"
+    },
+    "libcoh_live_directory.so": {
+      "bytes": 29992,
+      "sha256": "3d21ece5894b46e9315eb14c3cc12f8d2fcbd3082f99031b4bcbde3e03d5e282"
+    },
+    "native-live-Bionic-ARM64-fixture": {
+      "bytes": 2283592,
+      "sha256": "6a17fabff96e8aa3f91a45ae3072a9d012a52814ef5d78ac2037338d157dd482"
+    },
+    "native-live-host-fixture": {
+      "bytes": 39896,
+      "sha256": "c90f2fd61412c5e7769a1c266b59d0fbb0c594bb561dc45c328170b58cf232a5"
+    }
+  },
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-W",
+        "error::ResourceWarning",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/test_native_live_directory_core.py"
+      ],
+      "elapsed_seconds": 1.1761340290000035,
+      "exit_code": 0,
+      "label": "host-native-kernel-tests",
+      "stderr": {
+        "bytes": 5223,
+        "sha256": "55e8caa83574b59f3896aaa172ab3f650d548ab8832db4dfb9dff92487a4ac19"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wpedantic",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/coh_live_directory_core.c",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/native_live_fixture.c",
+        "-o",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/native-live-host-fixture"
+      ],
+      "elapsed_seconds": 0.3217477219999978,
+      "exit_code": 0,
+      "label": "compile-host-fixture",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/native-live-host-fixture"
+      ],
+      "elapsed_seconds": 0.025124074999993695,
+      "exit_code": 0,
+      "label": "execute-host-fixture",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 299,
+        "sha256": "78287411aedbc6827fcc8ee92b739b0a5c13482071052327d8b7efdf8ecdd6d3"
+      }
+    },
+    {
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wpedantic",
+        "-fPIC",
+        "-shared",
+        "-pthread",
+        "-I/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64/include",
+        "-I/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64/include/linux",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/coh_live_directory_core.c",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/coh_live_directory_jni.c",
+        "-o",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/libcoh_live_directory-host.so"
+      ],
+      "elapsed_seconds": 0.3003970829999929,
+      "exit_code": 0,
+      "label": "compile-host-JNI",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "java",
+        "-m",
+        "jdk.compiler/com.sun.tools.javac.Main",
+        "-d",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/classes",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/NativeLiveDirectory.java",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/NativeLiveDirectoryFixture.java"
+      ],
+      "elapsed_seconds": 0.5090092749999968,
+      "exit_code": 0,
+      "label": "compile-Java-facade-fixture",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "java",
+        "-Xcheck:jni",
+        "-cp",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/classes",
+        "io.github.russianranger.cohclientinteractive.NativeLiveDirectoryFixture",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/libcoh_live_directory-host.so"
+      ],
+      "elapsed_seconds": 0.12780157500000655,
+      "exit_code": 0,
+      "label": "execute-host-JNI",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 140,
+        "sha256": "458c8f566d9546ba21af930bdb443abf1dcada08940dd67cc3de45be78c1cebf"
+      }
+    },
+    {
+      "command": [
+        "/usr/local/lib/android/sdk/ndk/27.2.12479018/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang",
+        "--version"
+      ],
+      "elapsed_seconds": 0.009014984999993203,
+      "exit_code": 0,
+      "label": "NDK-compiler-version",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 345,
+        "sha256": "835f1507a752737c6b98c8d2a16d58dc47e33eb4b9cc9b473beae6349678167d"
+      }
+    },
+    {
+      "command": [
+        "/usr/local/lib/android/sdk/ndk/27.2.12479018/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wpedantic",
+        "-static",
+        "-pthread",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/coh_live_directory_core.c",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/native_live_fixture.c",
+        "-o",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/native-live-Bionic-ARM64-fixture"
+      ],
+      "elapsed_seconds": 0.31221883599999956,
+      "exit_code": 0,
+      "label": "compile-Bionic-ARM64-fixture",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/usr/local/lib/android/sdk/ndk/27.2.12479018/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf",
+        "--file-header",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/native-live-Bionic-ARM64-fixture"
+      ],
+      "elapsed_seconds": 0.0019506940000013628,
+      "exit_code": 0,
+      "label": "inspect-Bionic-ARM64-fixture",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 940,
+        "sha256": "84e0b946759ac1bc14a676cc7fea4e5fee0a8f74f99a04ae4d6c3da4a31c7d70"
+      }
+    },
+    {
+      "command": [
+        "qemu-aarch64",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/native-live-Bionic-ARM64-fixture"
+      ],
+      "elapsed_seconds": 0.09309455500000752,
+      "exit_code": 0,
+      "label": "execute-Bionic-ARM64-fixture",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 301,
+        "sha256": "f5a375b4a146cabbfdaea2ade6b3fed0b213638a462d38c5987e2c66f4826c7e"
+      }
+    },
+    {
+      "command": [
+        "/usr/local/lib/android/sdk/ndk/27.2.12479018/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wpedantic",
+        "-fPIC",
+        "-shared",
+        "-pthread",
+        "-fstack-protector-strong",
+        "-Wl,-z,relro,-z,now",
+        "-Wl,--no-undefined",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/coh_live_directory_core.c",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/coh_live_directory_jni.c",
+        "-o",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/libcoh_live_directory.so"
+      ],
+      "elapsed_seconds": 0.1746755510000071,
+      "exit_code": 0,
+      "label": "compile-Bionic-ARM64-JNI",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/usr/local/lib/android/sdk/ndk/27.2.12479018/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf",
+        "--wide",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/libcoh_live_directory.so"
+      ],
+      "elapsed_seconds": 0.002219839999995088,
+      "exit_code": 0,
+      "label": "inspect-Bionic-ARM64-JNI",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 6774,
+        "sha256": "0f5d7f7a66b00f9628ce67c72ed99195f2582aa0e5cf190c5b47ab84dd237762"
+      }
+    }
+  ],
+  "failure": {
+    "message": "JNI dependency boundary changed",
+    "type": "ValueError"
+  },
+  "finished_utc": "2026-10-14T07:56:34.085839+00:00",
+  "host": {
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+    "uid": 1001
+  },
+  "host_JNI": true,
+  "host_JNI_fixture": {
+    "android_vm_or_game_qualified": false,
+    "controls_passed": 28,
+    "failures": 0,
+    "schema": "coh-live-host-JNI-fixture-v1",
+    "shipping_admission": false
+  },
+  "host_JNI_headers": {
+    "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64/include/jni.h": {
+      "bytes": 75678,
+      "sha256": "1266aea5b9f5d5db1cb6f8e5c6c43cfa7f80bc4f72d7fe42c6131bb939dc70f4"
+    },
+    "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64/include/linux/jni_md.h": {
+      "bytes": 2208,
+      "sha256": "88cb5c33e306900dd35a78d5a439087123b8e91b0986bb5acb42cc9bd2fcc42e"
+    }
+  },
+  "host_fixture": {
+    "android_os_or_wine_or_game_qualified": false,
+    "controls_passed": 26,
+    "elapsed_seconds": 0.024098637,
+    "failures": 0,
+    "libc": "host",
+    "metadata_requests": 1165,
+    "peak_owned_heap_bytes": 638416,
+    "pointer_bytes": 8,
+    "schema": "coh-live-native-kernel-fixture-v1",
+    "shipping_admission": false,
+    "stat_bytes": 144,
+    "uid": 1001
+  },
+  "host_native_kernel": true,
+  "native_SQL_or_player_data_touched": false,
+  "physical_Thor_performance": false,
+  "registered_Game_consumer": false,
+  "schema": "coh-live-native-directory-qualification-v1",
+  "shipping_admission": false,
+  "source_files": {
+    "NativeLiveDirectory.java": {
+      "bytes": 1119,
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    },
+    "NativeLiveDirectoryFixture.java": {
+      "bytes": 5877,
+      "sha256": "fdc89a03cbf44afc17a08e8f11af0a23366127e2616bb89300c347ce7f11fc1c"
+    },
+    "README.md": {
+      "bytes": 4624,
+      "sha256": "06c1412fd59765c2ace319b2ce8087382507db8a11212e96632972979cdf1528"
+    },
+    "coh_live_directory_core.c": {
+      "bytes": 22987,
+      "sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c"
+    },
+    "coh_live_directory_core.h": {
+      "bytes": 3125,
+      "sha256": "a1f2142a093ea475286b04ed8fbea293cd18640daae8125b656620402e3b728d"
+    },
+    "coh_live_directory_jni.c": {
+      "bytes": 9835,
+      "sha256": "397190cf97af337f5eb0a6bec6d38cf79d58eecb7cd214e16378b575469d8c6b"
+    },
+    "native_core_faults.c": {
+      "bytes": 2177,
+      "sha256": "3d2430507d2533b2cf794cbd239ccaf7e5ca17c3b7802c4959301c7866f4ff31"
+    },
+    "native_live_fixture.c": {
+      "bytes": 11383,
+      "sha256": "b0ab8aa0fbc3f76be237e0f632576241c59342a4ae55b8fd4c43b5506e51cbde"
+    },
+    "qualify_native_live_directory.py": {
+      "bytes": 7749,
+      "sha256": "745bf714fae48d2c20762f7405d3de414f8f8c504d5a7b06acfb2574a6987771"
+    },
+    "test_native_live_directory_core.py": {
+      "bytes": 22432,
+      "sha256": "16a5fc9cc22fb3ac7815e2ef4e9f2dc53c6517418d704ef7c698d85ec62d4694"
+    }
+  },
+  "started_utc": "2026-10-14T07:56:30.985681+00:00",
+  "status": "failed"
+}

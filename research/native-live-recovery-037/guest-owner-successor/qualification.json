@@ -1,0 +1,61 @@
+{
+  "format": 1,
+  "role": "NEW_dormant_guest_owner_successor_host_controls",
+  "not_recovered_revision_3": true,
+  "executed_utc": "2026-10-15T01:03:53.823554+00:00",
+  "command": [
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "research/native-live-recovery-037/guest-owner-successor",
+    "-p",
+    "test_owner.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.10582402100408217,
+  "fresh_unittest_methods": 41,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "historical_counts_inherited": 0,
+  "source_pins": {
+    "owner.py": {
+      "bytes": 19603,
+      "sha256": "c16cb01c0a6e01a180a389ac1ba07f7d15037d9ae90b1846d1f220a74b36b77e"
+    },
+    "test_owner.py": {
+      "bytes": 21962,
+      "sha256": "074c093183f7f50970ffd59ff123b67b49602088c43ecb7e0a0ed5fbf089dd8c"
+    },
+    "README.md": {
+      "bytes": 4919,
+      "sha256": "4015cd9d07a3bad375284b39da23d9844f9be4dbb85c931f5065e87ad098da84"
+    }
+  },
+  "log": {
+    "bytes": 5713,
+    "sha256": "2cf9b19a77f47dd91872aa2cf8cfa1e6cdf288d7202cb6370cd7e737e5f38f5d"
+  },
+  "actual_Linux_temporary_file_and_descriptor_IO": true,
+  "PID_change_controls_use_mocked_observation": true,
+  "parser_controls_repin_synthetic_documents": true,
+  "independent_replay_by_this_receipt": false,
+  "active_runtime_caller": false,
+  "Android_admission": false,
+  "Wine_FEX_PRoot_executed": false,
+  "JNI_or_Game_executed": false,
+  "native_NT_sharing_qualified": false,
+  "player_SQL_or_assets_accessed": false,
+  "physical_performance_measured": false,
+  "production_admission_allowed": false,
+  "source_recovery_gaps": [
+    "Original owner revision 3 module and tests are unavailable; this is new source, not recovered bytes.",
+    "Current native process/namespace/installed-package/probe ownership adapters remain absent.",
+    "External writer exclusion and genuine native alias/sharing/concurrent-retarget controls remain closed."
+  ]
+}

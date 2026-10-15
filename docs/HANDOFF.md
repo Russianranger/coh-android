@@ -1,3 +1,60 @@
+# CURRENT RECOVERY — executable host restored; Android/Wine release gates closed
+
+The standard continuation was recovered from `65c4d83a533400118932685b170c640a77bc9435`.
+The earlier `409 environment_offline` block below is historical. This host can run
+source/kernel/JVM controls. It does not have a current Android device, Android SDK
+or Wine runtime for the remaining packaged integration gates.
+
+Exact dormant source stages and authenticated artifact inventory are committed at
+`00c8f088b063afdfae545201e24956f50a4f8d01`. See
+`docs/android-evidence/continuation-037-recovery-inventory-20261015.json` and
+`research/native-live-recovery-037/README.md` for source provenance, fresh receipts,
+new successor limits and remaining gates. Eighteen accessible recovery branches
+and 34 distinct source subtrees were inspected without using `native-android`.
+
+The original uncommitted Android fixture adapter, guest-owner revision 3,
+`HostNativeLiveService.java` and `sdk_custody.py` remain unavailable in accessible
+storage. Their historical hashes/control counts cannot qualify replacement bytes.
+New dormant Android installation-policy and guest-owner sources are explicitly
+successors, not recovered originals. The native service/SDK and two-mount
+orchestration remain unfinished; no current Wine/Game or Android admission exists.
+
+The additional durable ancestor candidate at `7cf6fd23d4d4319bdbc456df89df1a2428885197`
+was recovered without source changes. It passed 51 host controls, including nine
+real capability-free DAC controls. The exact original CEC249 host helper reproduced
+the old EACCES refusal. Independent review supports the focused O_PATH ancestor
+change while final app roots remain read-only and identity/retarget checks remain.
+No successor ARM/JNI binary was compiled or admitted.
+
+The exact compiled Game/probe artifact `11884140724`, original host/ARM helper
+artifact `11878700818` and retained audit `11879777713` were recovered and hashed.
+The exact installed-layout fixture 75, guest-loader 36 and actual host JNI/TCP five
+controls passed using the original CI helper. The original CI report remains
+failed at its later Bionic dependency audit; successful host evidence is separately
+scoped. Repeated/overlapping cases are not additional distinct qualification.
+No Game, probe, JNI helper or APK rebuild occurred.
+
+The new dormant installed-package policy passed 59 host adversarial controls and
+an independent root replay. The new guest-owner successor passed 41 host controls
+and independent replay; a separate actual Linux fork/locked-mutex check passed.
+These are new source scopes, not inherited qualification of the missing adapters.
+
+PR #2 remains draft/unmerged. Target source-review/package logic already supersedes
+its old versions. A narrow independently reviewed workflow correction is prepared
+separately: retain the exact native/FX job bodies, prevent source pushes cancelling
+active native qualification and run source-only review without an incidental APK
+build. It must be replayed against its exact committed direct parent before push.
+
+No new Thor timing or RAM benefit is measured. The inherited .36 Game time is
+about 264 s; first Kings request 399.273 s (native MapServer 285.591 s); resident
+Atlas return request 82.844 s with observer confirmation at 96.891 s. Targets remain
+client initialization under 60 s and ordinary test zoning about 90 s or less.
+The rejected Map prefetch candidate remains default-off. No .37 APK is qualified
+or published; .36 remains the latest gameplay release. Saved profiles, actual
+PostgreSQL destination, Assets 1.0.0, databases and runtime components are preserved.
+
+---
+
 # EXECUTION BLOCK — preserve .37 continuation before workspace recovery
 
 The execution service became unavailable during remaining validation. A fresh root read-only command failed with **409 Conflict, environment_offline: Environment is not connected**. No native, Android, filesystem or shell qualification can continue in that environment. This is an infrastructure blocker, not a passing result or a request to reset the project. GitHub remains reachable. No .37 APK is signed or published; .36 is still the independently audited gameplay release.

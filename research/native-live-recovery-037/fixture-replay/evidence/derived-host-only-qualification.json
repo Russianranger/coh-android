@@ -1,0 +1,152 @@
+{
+  "Android_OS_Wine_FEX_PRoot_parity": false,
+  "artifacts": {
+    "libcoh_live_directory-host.so": {
+      "bytes": 35664,
+      "sha256": "cec249a49fa8758b4caf2f074c133fb687f5d53e1c580ab1aa8031b822d653a8"
+    }
+  },
+  "host_JNI": true,
+  "host_JNI_fixture": {
+    "android_vm_or_game_qualified": false,
+    "controls_passed": 28,
+    "failures": 0,
+    "schema": "coh-live-host-JNI-fixture-v1",
+    "shipping_admission": false
+  },
+  "host_commands": [
+    {
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wpedantic",
+        "-fPIC",
+        "-shared",
+        "-pthread",
+        "-I/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64/include",
+        "-I/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64/include/linux",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/coh_live_directory_core.c",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/coh_live_directory_jni.c",
+        "-o",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/libcoh_live_directory-host.so"
+      ],
+      "elapsed_seconds": 0.3003970829999929,
+      "exit_code": 0,
+      "label": "compile-host-JNI",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "java",
+        "-m",
+        "jdk.compiler/com.sun.tools.javac.Main",
+        "-d",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/classes",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/NativeLiveDirectory.java",
+        "/home/runner/work/coh-android/coh-android/tools/native_live_directory/NativeLiveDirectoryFixture.java"
+      ],
+      "elapsed_seconds": 0.5090092749999968,
+      "exit_code": 0,
+      "label": "compile-Java-facade-fixture",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "java",
+        "-Xcheck:jni",
+        "-cp",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/classes",
+        "io.github.russianranger.cohclientinteractive.NativeLiveDirectoryFixture",
+        "/home/runner/work/coh-android/coh-android/out/native-live-directory-037/libcoh_live_directory-host.so"
+      ],
+      "elapsed_seconds": 0.12780157500000655,
+      "exit_code": 0,
+      "label": "execute-host-JNI",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 140,
+        "sha256": "458c8f566d9546ba21af930bdb443abf1dcada08940dd67cc3de45be78c1cebf"
+      }
+    }
+  ],
+  "original_artifact_id": 11878700818,
+  "original_ci_failure": {
+    "message": "JNI dependency boundary changed",
+    "type": "ValueError"
+  },
+  "original_ci_report": {
+    "bytes": 17822,
+    "sha256": "9d28449756c06b539d906cf1cc1729233eebe6a63901e9eca80615c57845270f"
+  },
+  "original_ci_status": "failed",
+  "original_run_id": 38531585318,
+  "physical_Thor_performance": false,
+  "registered_Game_consumer": false,
+  "schema": "coh-recovered-derived-host-only-qualification-v1",
+  "scope": "Derived only from authenticated original host source/compile/execute evidence; original job remains failed",
+  "shipping_admission": false,
+  "source_files": {
+    "NativeLiveDirectory.java": {
+      "bytes": 1119,
+      "sha256": "ee433a397ff57f96ede144c111afc8b9f60aadbb4ab026ed20ebd4a114823a9b"
+    },
+    "NativeLiveDirectoryFixture.java": {
+      "bytes": 5877,
+      "sha256": "fdc89a03cbf44afc17a08e8f11af0a23366127e2616bb89300c347ce7f11fc1c"
+    },
+    "README.md": {
+      "bytes": 4624,
+      "sha256": "06c1412fd59765c2ace319b2ce8087382507db8a11212e96632972979cdf1528"
+    },
+    "coh_live_directory_core.c": {
+      "bytes": 22987,
+      "sha256": "b2ebd02a2b30cc985eb1e376d044155bb729ecab5809798528fd43744008ec8c"
+    },
+    "coh_live_directory_core.h": {
+      "bytes": 3125,
+      "sha256": "a1f2142a093ea475286b04ed8fbea293cd18640daae8125b656620402e3b728d"
+    },
+    "coh_live_directory_jni.c": {
+      "bytes": 9835,
+      "sha256": "397190cf97af337f5eb0a6bec6d38cf79d58eecb7cd214e16378b575469d8c6b"
+    },
+    "native_core_faults.c": {
+      "bytes": 2177,
+      "sha256": "3d2430507d2533b2cf794cbd239ccaf7e5ca17c3b7802c4959301c7866f4ff31"
+    },
+    "native_live_fixture.c": {
+      "bytes": 11383,
+      "sha256": "b0ab8aa0fbc3f76be237e0f632576241c59342a4ae55b8fd4c43b5506e51cbde"
+    },
+    "qualify_native_live_directory.py": {
+      "bytes": 7749,
+      "sha256": "745bf714fae48d2c20762f7405d3de414f8f8c504d5a7b06acfb2574a6987771"
+    },
+    "test_native_live_directory_core.py": {
+      "bytes": 22432,
+      "sha256": "16a5fc9cc22fb3ac7815e2ef4e9f2dc53c6517418d704ef7c698d85ec62d4694"
+    }
+  },
+  "status": "host-only-passed"
+}

@@ -1,0 +1,15 @@
+test_tampered_original_receipt_refused (__main__.AuthenticationRefusalTests.test_tampered_original_receipt_refused) ... ok
+test_tampered_recovered_source_refused (__main__.AuthenticationRefusalTests.test_tampered_recovered_source_refused) ... ok
+test_tampered_retained_helper_refused (__main__.AuthenticationRefusalTests.test_tampered_retained_helper_refused) ... ok
+test_dangling_destination_symlink_refused_before_target_creation (__main__.DestinationSafetyTests.test_dangling_destination_symlink_refused_before_target_creation) ... ok
+test_existing_layout_refused_before_output_creation (__main__.DestinationSafetyTests.test_existing_layout_refused_before_output_creation) ... ok
+test_existing_output_refused_before_layout_creation (__main__.DestinationSafetyTests.test_existing_output_refused_before_layout_creation) ... ok
+test_explicit_output_argument_required (__main__.DestinationSafetyTests.test_explicit_output_argument_required) ... ok
+test_layout_inside_output_refused_before_any_write (__main__.DestinationSafetyTests.test_layout_inside_output_refused_before_any_write) ... ok
+test_output_inside_layout_refused_before_any_write (__main__.DestinationSafetyTests.test_output_inside_layout_refused_before_any_write) ... ok
+test_same_destination_refused_before_any_write (__main__.DestinationSafetyTests.test_same_destination_refused_before_any_write) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.010s
+
+OK

@@ -1,0 +1,56 @@
+test_85_row_cap_still_observes_nonfitting_86th_candidate (__main__.KernelTests.test_85_row_cap_still_observes_nonfitting_86th_candidate) ... ok
+test_absolute_guest_link_uses_bound_root (__main__.KernelTests.test_absolute_guest_link_uses_bound_root) ... ok
+test_alias_target_change_is_initial_binding_refusal (__main__.KernelTests.test_alias_target_change_is_initial_binding_refusal) ... ok
+test_ancestor_missing_search_permission_real_DAC_refused (__main__.KernelTests.test_ancestor_missing_search_permission_real_DAC_refused) ... ok
+test_cross_device_bind_is_initial_refusal (__main__.KernelTests.test_cross_device_bind_is_initial_refusal) ... ok
+test_current_dos_xattr_hidden_system_projection (__main__.KernelTests.test_current_dos_xattr_hidden_system_projection) ... ok
+test_cursor_bound_and_namespace_owns_all_descriptors (__main__.KernelTests.test_cursor_bound_and_namespace_owns_all_descriptors) ... ok
+test_deleted_name_is_current_proven_absence (__main__.KernelTests.test_deleted_name_is_current_proven_absence) ... ok
+test_directory_path_replacement_is_terminal_binding_refusal (__main__.KernelTests.test_directory_path_replacement_is_terminal_binding_refusal) ... ok
+test_duplicate_binding_refuses (__main__.KernelTests.test_duplicate_binding_refuses) ... ok
+test_exact_directory_name_bound_including_dot_entries (__main__.KernelTests.test_exact_directory_name_bound_including_dot_entries) ... ok
+test_exact_held_identity_and_resolved_guest_target (__main__.KernelTests.test_exact_held_identity_and_resolved_guest_target) ... ok
+test_execute_only_ancestor_readable_final_real_DAC (__main__.KernelTests.test_execute_only_ancestor_readable_final_real_DAC) ... ok
+test_execute_only_ancestor_retarget_after_rows_no_fallback (__main__.KernelTests.test_execute_only_ancestor_retarget_after_rows_no_fallback) ... ok
+test_execute_only_ancestor_retarget_initial_refused (__main__.KernelTests.test_execute_only_ancestor_retarget_initial_refused) ... ok
+test_execute_only_ancestor_same_inode_alias_after_rows_no_fallback (__main__.KernelTests.test_execute_only_ancestor_same_inode_alias_after_rows_no_fallback) ... ok
+test_execute_only_ancestor_same_inode_alias_initial_refused (__main__.KernelTests.test_execute_only_ancestor_same_inode_alias_initial_refused) ... ok
+test_execute_only_final_read_permission_removed_refused (__main__.KernelTests.test_execute_only_final_read_permission_removed_refused) ... ok
+test_execute_only_final_root_real_DAC_refused (__main__.KernelTests.test_execute_only_final_root_real_DAC_refused) ... ok
+test_execute_only_symlink_ancestor_real_kernel_refused (__main__.KernelTests.test_execute_only_symlink_ancestor_real_kernel_refused) ... ok
+test_final_cursor_cannot_restart (__main__.KernelTests.test_final_cursor_cannot_restart) ... ok
+test_host_symlink_ancestor_refuses (__main__.KernelTests.test_host_symlink_ancestor_refuses) ... ok
+test_late_unknown_link_is_terminal_no_restart (__main__.KernelTests.test_late_unknown_link_is_terminal_no_restart) ... ok
+test_late_xattr_error_retains_terminal_failure (__main__.KernelTests.test_late_xattr_error_retains_terminal_failure) ... ok
+test_legacy_link_target_refuses_not_missing (__main__.KernelTests.test_legacy_link_target_refuses_not_missing) ... ok
+test_legacy_name_refuses_before_metadata (__main__.KernelTests.test_legacy_name_refuses_before_metadata) ... ok
+test_link_loop_is_bounded (__main__.KernelTests.test_link_loop_is_bounded) ... ok
+test_link_unknown_root_is_refusal_not_absence (__main__.KernelTests.test_link_unknown_root_is_refusal_not_absence) ... ok
+test_membership_snapshot_excludes_later_new_name (__main__.KernelTests.test_membership_snapshot_excludes_later_new_name) ... ok
+test_memory_reclaimed_when_cursor_closes (__main__.KernelTests.test_memory_reclaimed_when_cursor_closes) ... ok
+test_metadata_mutates_between_native_batches (__main__.KernelTests.test_metadata_mutates_between_native_batches) ... ok
+test_native_current_fields_and_uppercase_order (__main__.KernelTests.test_native_current_fields_and_uppercase_order) ... ok
+test_native_root_wrong_inode_refuses (__main__.KernelTests.test_native_root_wrong_inode_refuses) ... ok
+test_native_root_wrong_uid_refuses (__main__.KernelTests.test_native_root_wrong_uid_refuses) ... ok
+test_nested_bind_longest_component_boundary (__main__.KernelTests.test_nested_bind_longest_component_boundary) ... ok
+test_nonascii_membership_refuses_before_rows (__main__.KernelTests.test_nonascii_membership_refuses_before_rows) ... ok
+test_overflow_entry_is_reobserved_not_cached (__main__.KernelTests.test_overflow_entry_is_reobserved_not_cached) ... ok
+test_owned_fd_cleanup_on_namespace_allocation_failure (__main__.KernelTests.test_owned_fd_cleanup_on_namespace_allocation_failure) ... ok
+test_owned_fd_cleanup_on_open_listing_allocation_failures (__main__.KernelTests.test_owned_fd_cleanup_on_open_listing_allocation_failures) ... ok
+test_owned_fd_cleanup_on_readlink_and_xattr_failure (__main__.KernelTests.test_owned_fd_cleanup_on_readlink_and_xattr_failure) ... ok
+test_proven_broken_supported_link_is_skipped (__main__.KernelTests.test_proven_broken_supported_link_is_skipped) ... ok
+test_readonly_any_permission_bit_and_hidden_option (__main__.KernelTests.test_readonly_any_permission_bit_and_hidden_option) ... ok
+test_readonly_service_preserves_control_profile_bytes (__main__.KernelTests.test_readonly_service_preserves_control_profile_bytes) ... ok
+test_relative_link_after_directory_rename_is_binding_refusal (__main__.KernelTests.test_relative_link_after_directory_rename_is_binding_refusal) ... ok
+test_relative_parent_and_directory_link (__main__.KernelTests.test_relative_parent_and_directory_link) ... ok
+test_root_replacement_late_fails_and_preserves_prior_rows (__main__.KernelTests.test_root_replacement_late_fails_and_preserves_prior_rows) ... ok
+test_signed_xattr_overflow_matches_reviewed_Wine_flags (__main__.KernelTests.test_signed_xattr_overflow_matches_reviewed_Wine_flags) ... ok
+test_special_file_refuses_without_body_read (__main__.KernelTests.test_special_file_refuses_without_body_read) ... ok
+test_unknown_guest_root_and_prefix_collision (__main__.KernelTests.test_unknown_guest_root_and_prefix_collision) ... ok
+test_unknown_xattr_is_refusal (__main__.KernelTests.test_unknown_xattr_is_refusal) ... ok
+test_windows_invalid_name_refuses_before_rows (__main__.KernelTests.test_windows_invalid_name_refuses_before_rows) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 1.471s
+
+OK

@@ -1,0 +1,60 @@
+{
+  "Android_Wine_Game_APK_or_Thor_admission": false,
+  "authentication_and_suite_execution_changed": false,
+  "changes": [
+    "--output required explicitly",
+    "refuse existing output and layout before authentication/writes",
+    "refuse shared/ancestor/descendant destinations",
+    "refuse dangling destination symlinks",
+    "create fresh output and layout with exist_ok=False"
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "-W",
+    "error::ResourceWarning",
+    "research/native-live-recovery-037/fixture-replay/test_replay_safety.py",
+    "-v"
+  ],
+  "controls_passed": 10,
+  "current_runner": {
+    "bytes": 11293,
+    "sha256": "693b298792db21d65011a4234311c1a1b750e9dfcd18e7ba4d09b11b677870ed"
+  },
+  "documentation": {
+    "bytes": 4633,
+    "sha256": "422520cbbdb24674f9eed197e6c0dfd4d5f784df9afd782ca27f08feffeb401a"
+  },
+  "finished_utc": "2026-10-15T01:02:28.592657+00:00",
+  "historical_replay_counts": [
+    75,
+    36,
+    5
+  ],
+  "historical_replay_reexecuted": false,
+  "historical_results_relabelled_for_current_runner": false,
+  "historical_runner": {
+    "bytes": 10746,
+    "path": "executed-replay.py",
+    "sha256": "e97bfa22d80052f1d5e49f691c78991eeaae1c783182bdb1bc5c4e5dadbeeca2"
+  },
+  "negative_receipts_are_controlled_not_admitted": true,
+  "negative_tests": {
+    "bytes": 6954,
+    "sha256": "942ed05b4eaf336de112b91d84919f0b7a28406a1ad6ebb39e52d854d637729d"
+  },
+  "schema": "coh-recovered-replay-runner-destination-hardening-v1",
+  "status": "passed",
+  "stderr": {
+    "bytes": 1467,
+    "sha256": "f6e5f9eaf095d8a0ae92eb2dd0266255f15d28883a731d7db6c8975daf6a0b76"
+  },
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "unchanged_historical_replay_receipt": {
+    "bytes": 3387,
+    "sha256": "b6c5fdcda7251fec47fb9b70834c2a0074b85d894e544850a160a87ef88b603d"
+  }
+}

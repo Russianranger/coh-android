@@ -1,0 +1,26 @@
+{
+  "schema": "COH_037_ANDROID_POLICY_INDEPENDENT_REVIEW_V1",
+  "reviewer": "root",
+  "executed_utc": "2026-10-15T01:03:24.842246+00:00",
+  "host_controls": 59,
+  "failures": 0,
+  "owner_receipt_sha256": "5ca7eb28077825a00db6e4e4be365b158fe78aaf0ba5acaaec73adc674d7e2b7",
+  "source_pins_match": true,
+  "source_review": [
+    "Installed current PackageInfo/signers/nativeLibraryDir identity is compared independently from data-root uid ownership.",
+    "Exact packaged system-owned library is allowed only against current installation path and byte pins.",
+    "Seven private roots require exact app UID and pinned common appDataDevice.",
+    "Before/after package and object snapshots must agree; actual held FD/ancestor collector remains absent.",
+    "Admission is always false and no runtime caller exists."
+  ],
+  "log": {
+    "path": "independent-host-policy-controls.log",
+    "bytes": 6657,
+    "sha256": "863869b46a1445c5381077778300068a2bc96c7f2c9664acf1d373ec3e2141f7"
+  },
+  "actual_Android": false,
+  "Android_API_binding_compiled": false,
+  "Wine_FEX_PRoot": false,
+  "shipping_admission": false,
+  "physical_performance": false
+}

@@ -1,0 +1,65 @@
+{
+  "android_admission": false,
+  "apk_built_or_published": false,
+  "compiled": [
+    "InstalledPackagePreflight.java",
+    "InstalledPackagePreflightHarness.java"
+  ],
+  "compiler": "java com.sun.tools.javac.Main --release 8; installed OpenJDK 17",
+  "elapsed_seconds": 2.9986801740014926,
+  "executed_at_utc": "2026-10-15T01:02:41.637263+00:00",
+  "exit_code": 0,
+  "host_command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "research/native-live-recovery-037/android-adapter-successor/tests",
+    "-p",
+    "test_installed_package_preflight.py",
+    "-v"
+  ],
+  "host_controls": 59,
+  "independently_replayed": false,
+  "log": {
+    "bytes": 6657,
+    "path": "host-policy-controls.log",
+    "sha256": "f1fd872927fe84147f2697623d2b8dcf46704c09c4fa2d88ef968825f56c8380"
+  },
+  "new_source_not_recovered": true,
+  "observations": "Typed host package/file mocks; no actual PackageManager/filesystem/Android/PRoot/Wine/FEX fixture",
+  "original_missing_adapter_sha256": "64d3aba05ac96103702efa2ea7d467ada86fd83684f6a5b74bf7c72d9e8d272c",
+  "original_missing_test_sha256": "1513553cee166c61bfdc7940710efd1bdad1d6c36d613d773897eea2b034811f",
+  "performance_measured": false,
+  "production_runtime_callers_added": false,
+  "schema": "COH_037_NEW_ANDROID_POLICY_SUCCESSOR_HOST_RECEIPT_V1",
+  "source_files": [
+    {
+      "bytes": 4110,
+      "path": "README.md",
+      "sha256": "de164076140d9d78122fd5ce4315fd2031b90c90f50c345472ca01bd61211c31"
+    },
+    {
+      "bytes": 3516,
+      "path": "source/io/github/russianranger/cohclientinteractive/recovery037/AndroidCurrentPackageState.java",
+      "sha256": "24b2a05371f0e7a81257d3d5dcd575cfe0129fd4bd7b3f52f4139e2323e34ee4"
+    },
+    {
+      "bytes": 12914,
+      "path": "source/io/github/russianranger/cohclientinteractive/recovery037/InstalledPackagePreflight.java",
+      "sha256": "792d22b33711440f8a6376f6d718a210b7c02a2347062d338f12888e40c60e4d"
+    },
+    {
+      "bytes": 9567,
+      "path": "tests/InstalledPackagePreflightHarness.java",
+      "sha256": "fceb7a7ebe72df1644ecf02fa47062a94bb612ba8bbbb17cd9d37a71888a4107"
+    },
+    {
+      "bytes": 3046,
+      "path": "tests/test_installed_package_preflight.py",
+      "sha256": "7feae04b48922112410fa4642c2cdf478063d6cb24784104c14eb0927ba98557"
+    }
+  ],
+  "uncompiled_android_api_binding": "AndroidCurrentPackageState.java: no Android SDK available"
+}
