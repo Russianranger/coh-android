@@ -1,0 +1,9 @@
+{
+  "run_id": 38939957569,
+  "artifact_id": 12062832232,
+  "sha256": "b17c20c4eea667502a03db5062fbf9716e09a200a3fbcb6a5ef57b6c9e2881bf",
+  "source_revision": "2d94aad69ed303d3587c509321eb7e79cb44f0b7",
+  "scope": "standalone_source_contracts",
+  "accepted_apks_rebuilt": false,
+  "physical_thor_accepted": false
+}

@@ -1,0 +1,48 @@
+{
+  "accepted_combined_archive_unchanged": true,
+  "accepted_combined_cache_detail": "unknown_omitted_by_deliberate_curated_boundary",
+  "android_or_physical_execution": false,
+  "artifact_sha256": {
+    "native-android/combined-client/evidence/20261016/startup-receipt-reader/README.md": "355d6772788fd9ebf9a77bc3dbef8478a696645ef48eb298444f00bc9fa79fe6",
+    "native-android/combined-client/evidence/20261016/startup-receipt-reader/combined-017-existing-receipt.json": "a3005f07acd43aa7cbc6decc858c4d9495255b623bcc5d7ee942c37f417325de",
+    "native-android/combined-client/evidence/20261016/startup-receipt-reader/original-producer-fixtures.json": "8ca53d77d8a79ae333acd7d6641a33a99a03a34db1b8d5b23aa62f1766fdee74"
+  },
+  "base_commit": "732f118cf2299c64ac509d6402e5b5448b754867",
+  "failed": 0,
+  "independent_review": {
+    "affected_tests_independently_passed": 23,
+    "no_remaining_blocker_in_offline_scope": true,
+    "raw_nul_filename_rejection_verified": true,
+    "reviewer": "worker_b_scenegraph",
+    "timestamp_retry_segment_scope_verified": true,
+    "zip_preconstruction_directory_admission_verified": true
+  },
+  "native_sanitizers_applicable": false,
+  "new_tests_passed": 23,
+  "original_methods_executed": 5,
+  "previous_resource_tests_passed": 15,
+  "producer_source_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+  "producer_source_sha256": {
+    "android/guest/diagnostic.py": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf",
+    "android/guest/local_character_server.py": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180"
+  },
+  "regression_controls": {
+    "accepted_combined_projection_byte_identical_after_changes": true,
+    "embedded_nul_rejected_before_zipinfo_truncation": true,
+    "failed_stage_retry_interval_ms": 5000,
+    "forged_small_eocd_count_actual_257_headers_rejected_before_zipfile": true,
+    "log_segments_do_not_claim_complete_stage_duration": true,
+    "zip64_multidisk_directory_overflow_rejected_before_zipfile": true
+  },
+  "review_baseline_commit": "8fa37a1b51a514202903835ffc47b531ac75bee7",
+  "runtime_profile_private_writer_changed": false,
+  "schema": "coh-existing-startup-receipt-reader-qualification-v1",
+  "source_file_fixtures": "synthetic, disposable, no executable server",
+  "speedup_claimed": false,
+  "tool_sha256": {
+    "native-android/combined-client/diagnostics/continuation-20261016/analyze_startup.py": "a136aefdc0d9db35955aa870b0171191bb3d57321954d264528b5d856a115727",
+    "native-android/combined-client/tools/analyze_startup_resources.py": "312530e9780fa2e51b1425b54d303a3409a267b26c8264cb18105e9853251832",
+    "native-android/combined-client/tools/read_startup_receipts.py": "eaff2ac9c6c99854134f52ab73eb8a20a3527ccd0d783f389c8e8bc046ebfc96",
+    "native-android/combined-client/tools/test_startup_receipts.py": "ed834543b6ae5f7c45d1b9d5560e03ccaf7ba994b18693eb2aaa50f42b36b151"
+  }
+}

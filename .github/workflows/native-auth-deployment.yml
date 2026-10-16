@@ -1,0 +1,66 @@
+name: Nonshipping encrypted-auth deployment staging
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/engine/auth-interop/deployment/**
+      - .github/workflows/native-auth-deployment.yml
+  workflow_dispatch:
+    inputs:
+      execute_staging:
+        description: Build original AuthServer and test a fresh private LocalDB; no login or installed profile
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: native-auth-deployment-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-controls:
+    if: >-
+      github.repository == 'Russianranger/coh-android' &&
+      github.ref == 'refs/heads/native-android' &&
+      ((github.event_name == 'workflow_dispatch' && inputs.execute_staging) ||
+       (github.event_name == 'push' && contains(github.event.head_commit.message, '[auth-stage]')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Qualify source policy, admission and isolated deployment controls
+        run: >-
+          python3 native-android/engine/auth-interop/deployment/check.py
+          --source-root . --sanitize --output out/auth-staging-controls/qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-auth-staging-source-controls
+          path: out/auth-staging-controls/
+          if-no-files-found: error
+          retention-days: 90
+  original-win32-and-disposable-sql:
+    needs: source-controls
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - name: Preserve exact original LF source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Stage original AuthServer and execute original x86 ODBC bindings in private LocalDB
+        shell: pwsh
+        run: |
+          python native-android/engine/auth-interop/deployment/hosted_auth_stage.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-auth-staging"
+          if ($LASTEXITCODE -ne 0) { throw 'Isolated auth staging did not qualify; preserve exact diagnostics' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-auth-original-win32-disposable-sql
+          path: ${{ runner.temp }}/coh-auth-staging/
+          if-no-files-found: error
+          retention-days: 90

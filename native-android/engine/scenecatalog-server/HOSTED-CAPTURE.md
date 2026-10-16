@@ -1,9 +1,12 @@
 # Opt-in disposable hosted native capture
 
 `capture_disposable.py` prepares the missing runtime attempt using the exact
-existing nonshipping PE. It remains unexecuted until a coordinator-owned hosted
-job runs it. Its local controls do not qualify Wine, PostgreSQL/ODBC, normal
-MapServer startup or authentic catalog capture.
+existing nonshipping PE. The first hosted attempt, run38939438638 at source
+`cc92cad36eb8136274794a2beed9c6945647abbe`, executed DbServer but reached its
+600-second readiness deadline before MapServer launch. No catalog was captured.
+Owned process/prefix/PostgreSQL cleanup and unchanged source inventory passed.
+Its local controls do not qualify Wine, PostgreSQL/ODBC, normal MapServer startup
+or authentic catalog capture.
 
 The reusable `.github/workflows/android-map-startup-native.yml` FX job already
 prepares complete public .31 Atlas assets and runs actual Win32 code under Wine.
@@ -26,7 +29,15 @@ Sparse local checkouts must include `android/guest`, `android/native` and
 `database/postgresql`; these paths are present in repository HEAD.
 
 Use a fresh nonroot GitHub-hosted Ubuntu24.04 runner, at least30GiB initial free
-space, Wine plus wine32:i386, Xvfb/xauth and PostgreSQL16. No root PostgreSQL,
+space, a pinned Wine release supporting Windows ODBC drivers and PE32 execution,
+Xvfb/xauth and PostgreSQL16. Ubuntu24.04's default Wine9.0 is unsuitable: its
+[original ODBC manager](https://github.com/wine-mirror/wine/blob/wine-9.0/dlls/odbc32/proxyodbc.c)
+forwards to Unix libodbc, while
+[Wine9.13](https://github.com/wine-mirror/wine/blob/wine-9.13/dlls/odbc32/proxyodbc.c)
+introduces Windows-driver loading. The runner refuses versions below9.13;
+passing this necessary floor does not qualify a particular Wine build. Preserve
+the installed package/version evidence and execute the exact retained driver's
+preflight. No root PostgreSQL,
 existing database/service or installed user runtime is admitted. Source fixture
 copying must retain at least16GiB free at capture admission. The runner's output
 and work directories must be absent, private and separate from all inputs.
@@ -126,3 +137,26 @@ compares508files/33roots and original CRCs3173822562/3649375123 separately.
 receive live GROUPS or inspect device assets. No graph, actor, auth, render or
 physical acceptance is granted by this receipt. A mismatch retains the authentic
 isolated export as evidence; it must not be imported as the device's catalog.
+
+## First hosted failure and bounded follow-up
+
+The first receipt is retained in `evidence/capture-38939438638/`. Full artifact
+12062693451 has SHA256
+`3bc0763b51f3923d8d4367ea0d014b41c96a7da3c1583ca9deadb15da90e388c`.
+The DbServer emitted fixed-input and loopback acknowledgments and six verified
+TCP binds, but no manual-map acknowledgment or SQL-connected message. Original
+`dbInit` next enters name/hostname and SQL initialization. This bounds the last
+observed location; neither a particular stalled instruction nor an SQL failure
+was captured. The Wine9.0 manager mismatch is independently source established,
+not inferred solely from the timeout.
+
+The follow-up preserves the exact DbServer/MapServer binaries. Before database
+startup it executes the hash-verified `.34` donor's existing `runtime-probe.exe
+--odbc-driver` and applies the unchanged accepted `validate_odbc_driver` parser.
+The actual registered name, including `PostgreSQL Unicode(x86)` where selected,
+feeds the original guest configuration. No connection/checksum policy is skipped.
+On a later failure the receipt retains the validated dispatch stage and a
+three-second read-only query of private PostgreSQL session/activity/lock/DDL
+counts. SQL statements are not retained in that query. Redacted PostgreSQL log
+tails and labeled owned process logs accompany it. These controls are host
+qualified only until the corrected hosted attempt executes.

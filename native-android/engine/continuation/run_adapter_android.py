@@ -26,6 +26,12 @@ REQUIRED = {
 COMMAND_OUTPUT_MAX = 1024 * 1024
 
 
+class CommandFailure(RuntimeError):
+    def __init__(self, log, returncode):
+        super().__init__('Android command failed; retained log ' + log.name)
+        self.returncode = returncode
+
+
 def bounded_execute(command, log, timeout=60):
     """Keep failure logs, and bound their in-memory decode before JSON parsing.
 
@@ -44,7 +50,7 @@ def bounded_execute(command, log, timeout=60):
     if len(raw) > COMMAND_OUTPUT_MAX:
         raise ValueError('Android command output exceeds decode ceiling')
     if process.returncode:
-        raise RuntimeError('Android command failed; retained log ' + log.name)
+        raise CommandFailure(log, process.returncode)
     return raw.decode('utf-8')
 
 
@@ -134,6 +140,9 @@ def main():
         parser.error('Execution evidence directory must be empty')
     result = {'schema': 'coh-world-adapter-android-execution-v1', 'passed': False,
               'android_executed': False, 'emulator_qualified': False,
+              'device_test_command_attempted': False,
+              'device_test_command_exit_code': None,
+              'native_result_validated': False,
               'fixture_only': True, 'authentic_world_entry': False,
               **{key: False for key in c.CLAIMS}, 'errors': {},
               'runner_sha256': c.digest(Path(__file__))}
@@ -170,14 +179,23 @@ def main():
         run([*adb, 'shell', 'chmod', '700', destination])
         # Device-side deadline ends a hung test even if adb later disconnects.
         # The host deadline allows the device timeout to finish first.
-        actual = c.native_result(c.loads(run(
-            [*adb, 'shell', 'timeout', '-s', 'KILL', '90', destination], timeout=180)))
+        result.update(binary_sha256=entry['sha256'],
+                      build_receipt_sha256=entry['build_receipt_sha256'],
+                      device_test_command_attempted=True)
+        try:
+            raw = run([*adb, 'shell', 'timeout', '-s', 'KILL', '90', destination], timeout=180)
+            result['device_test_command_exit_code'] = 0
+        except CommandFailure as error:
+            result['device_test_command_exit_code'] = error.returncode
+            raise
+        # A command attempt alone does not prove native execution: adb, the
+        # shell or timeout may fail first. Retain that distinction on failures.
+        actual = c.native_result(c.loads(raw))
         result['android_executed'] = True
         if not c.json_equal(actual, expected):
             c.write(args.output.parent / 'unexpected-result.json', actual)
             raise ValueError('Android result differs from sanitized host result')
-        result.update(result=actual, binary_sha256=entry['sha256'],
-                      build_receipt_sha256=entry['build_receipt_sha256'])
+        result.update(result=actual, native_result_validated=True)
         c.verify_sources(repo, proof['source_sha256'])
         if c.git_state(repo) != state:
             raise ValueError('Source state changed during execution')

@@ -1,0 +1,33 @@
+{
+  "run": 38939957550,
+  "artifact": 12062457449,
+  "artifact_sha256": "bbc44c94bab1b7b9b9e1f9d01c8cc0cecc22478c41da780159265e2280449c4d",
+  "source_revision": "2d94aad69ed303d3587c509321eb7e79cb44f0b7",
+  "source_tree": "47ccb40c25acd78e3e36a0ada1c5b35874bfb46d",
+  "host": {
+    "passed": true,
+    "checks": 16720,
+    "original_matrix_cases": 512,
+    "bounded_mutations": 5000,
+    "published_generations": 2000,
+    "concurrent_readers": 3,
+    "max_draws_tested": 4096,
+    "render_allocations": 0,
+    "render_frees": 0,
+    "fixture_only": true,
+    "authentic_world_entry": false
+  },
+  "source_byte_map_verified": true,
+  "builds": {
+    "arm64-v8a": {
+      "sha256": "9849e7840c1c4a9d7dfea1c4e67e171885401ce2c25abf693b39c8e9e135d06b",
+      "elf_machine": 183,
+      "executed": false
+    },
+    "x86_64": {
+      "sha256": "3d63986896b858b310863e7b792cadff9f85388843f216e50625dc2ad49966e2",
+      "elf_machine": 62,
+      "executed": false
+    }
+  }
+}

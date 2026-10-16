@@ -9,6 +9,40 @@ def run(cmd,**kw):
     if p.returncode: raise RuntimeError(repr(cmd)+'\n'+p.stdout+p.stderr)
     return p
 
+
+META_U32 = [('in_use','in_use'),('mod_time','mod_time'),('lod_fadenode','lod_fadenode'),('parent_fade','parent_fade'),('child_parent_fade','child_parent_fade'),('no_fog_clip','no_fog_clip'),('no_coll','no_coll'),('open_tracker','open_tracker'),('child_light','child_light'),('child_ambient','child_ambient'),('child_volume','child_volume'),('child_beacon','child_beacon'),('child_no_fog_clip','child_no_fog_clip'),('lib_ungroupable','lib_ungroupable'),('has_light','has_light'),('has_ambient','has_ambient'),('has_cubemap','has_cubemap'),('cubemap_generation_size','cubemapGenSize'),('cubemap_capture_size','cubemapCaptureSize'),('has_sound','has_sound'),('sound_volume','sound_vol'),('sound_exclude','sound_exclude'),('has_fog','has_fog'),('has_volume','has_volume'),('has_beacon','has_beacon'),('has_tint_color','has_tint_color'),('has_tex','has_tex'),('has_alpha','has_alpha'),('has_properties','has_properties'),('hide_for_gameplay','hideForGameplay')]
+META_FLOAT = [('lod_scale','lod_scale'),('lod_near','lod_near'),('lod_far','lod_far'),('lod_nearfade','lod_nearfade'),('lod_farfade','lod_farfade'),('sound_radius','sound_radius'),('shadow_dist','shadow_dist'),('light_radius','light_radius'),('cubemap_blur_angle','cubemapBlurAngle'),('cubemap_capture_time','cubemapCaptureTime'),('sound_ramp','sound_ramp'),('fog_near','fog_near'),('fog_far','fog_far'),('fog_radius','fog_radius'),('fog_speed','fog_speed'),('box_scale[0]','box_scale[0]'),('box_scale[1]','box_scale[1]'),('box_scale[2]','box_scale[2]'),('beacon_radius','beacon_radius'),('alpha','groupdef_alpha')]
+META_STRING = [('type_name','type_name'),('sound_name','sound_name'),('sound_script','sound_script_filename'),('beacon_name','beacon_name'),('textures[0]','tex_names[0]'),('textures[1]','tex_names[1]'),('geometry','model ? d->model->name : NULL')]
+def metadata_fixtures(source_root,directory,source):
+    body=(HERE/'tests/metadata_source_harness.inc').read_text()
+    body += '\nvoid metadata_fields(U32 *u,float *f,char *strings,U8 *colors){GroupDef *d=metadata_definition;\n'
+    body += ''.join('u[%d]=d->%s;\n'%(i,field) for i,(_,field) in enumerate(META_U32))
+    body += ''.join('f[%d]=d->%s;\n'%(i,field) for i,(_,field) in enumerate(META_FLOAT))
+    for i,(_,field) in enumerate(META_STRING):body += '{const char *value=d->'+field+';if(value)strcpy(strings+'+str(i*256)+',value); }\n'
+    body+='memcpy(colors,d->color,8); }\n'
+    original=directory/'metadata-original.c';original.write_text(source.read_text()+'\n'+body)
+    libpath=directory/'metadata-original.so'
+    run(['cc','-std=c99','-O0','-fno-strict-aliasing','-fPIC','-shared','-w','-I'+str(source_root/'native-android/include'),str(original),'-lm','-lz','-o',str(libpath)])
+    lib=C.CDLL(str(libpath));lib.metadata_original.argtypes=[C.c_uint32,C.c_uint32,C.c_void_p,C.POINTER(C.c_uint32)];lib.metadata_fields.argtypes=[C.c_void_p]*4
+    header=directory/'scenegraph_fixtures.h';lines=[];rows=[]
+    lines.append('typedef struct {const unsigned char *wire;size_t bytes,bits;unsigned aligned,which;uint32_t u['+str(len(META_U32))+'];float f['+str(len(META_FLOAT))+'];char strings[7][256];uint8_t colors[8];} MetadataFixture;\n')
+    for which in range(7):
+      for aligned in (0,1):
+        wire=(C.c_uint8*(1<<20))();bits=C.c_uint32();u=(C.c_uint32*len(META_U32))();f=(C.c_float*len(META_FLOAT))();strings=(C.c_uint8*(7*256))();colors=(C.c_uint8*8)()
+        assert lib.metadata_original(which,aligned,wire,C.byref(bits))==1
+        lib.metadata_fields(u,f,strings,colors)
+        raw=bytes(wire[:(bits.value+7)//8]);i=len(rows);name='metadata_wire_'+str(i)
+        lines.append('static const unsigned char '+name+'[]={'+','.join(map(str,raw))+'};\n')
+        texts=[bytes(strings[j*256:(j+1)*256]).split(b'\0',1)[0].decode() for j in range(7)]
+        rows.append('{'+','.join([name,str(len(raw)),str(bits.value),str(aligned),str(which),'{'+','.join(map(str,u))+'}','{'+','.join(float(v).hex()+'f' for v in f)+'}','{'+','.join(json.dumps(x) for x in texts)+'}','{'+','.join(map(str,colors))+'}'])+'}')
+    lines.append('static const MetadataFixture metadata_fixtures[]={'+',\n'.join(rows)+'};\n')
+    for name,fields,accessor in [('u32',META_U32,'u'),('float',META_FLOAT,'f'),('string',META_STRING,'strings')]:
+        lines.append('#define METADATA_COMPARE_'+name.upper()+'(m,expected,CHECK) do {')
+        for i,(field,_) in enumerate(fields):lines.append('CHECK('+('strcmp((m)->'+field+', (expected)->strings['+str(i)+'])==0' if name=='string' else '(m)->'+field+'==(expected)->'+accessor+'['+str(i)+']')+');')
+        lines.append('} while(0)\n')
+    with header.open('a') as out:out.write(''.join(lines))
+    return {'fixtures':len(rows),'producer_body':'unchanged original sendDef; source objects read independently after serialization','consumer_body_executed':False,'source_extension_sha256':hashlib.sha256(body.encode()).hexdigest(),'harness_sha256':hashlib.sha256((HERE/'tests/metadata_source_harness.inc').read_bytes()).hexdigest()}
+
 def prepare(source_root,directory):
     spec=importlib.util.spec_from_file_location('sg_original_groups',HERE.parent/'replication/groups_oracle.py')
     oracle=importlib.util.module_from_spec(spec);spec.loader.exec_module(oracle)
@@ -85,6 +119,7 @@ void scenegraph_source_roots(float *out) {memcpy(out,oracle_refs[0].mat,48);memc
             f.write('static const unsigned char '+name+'[]={'+','.join(map(str,payload))+'};\n')
         f.write('static const size_t stress_wire_bits='+str(bits.value)+';\n')
     receipt['stress_catalog']={'producer':catreceipt,'source_counts':list(counts),'catalog_sha256':hashlib.sha256(raw).hexdigest(),'wire_sha256':hashlib.sha256(w).hexdigest(),'independent_record_comparisons':compared,'real_server_capture':False}
+    receipt['metadata_oracle']=metadata_fixtures(source_root,directory,src)
     receipt['graph_extension_sha256']=hashlib.sha256(extra.encode()).hexdigest()
     receipt['graph_fixture_header_sha256']=hashlib.sha256((directory/'scenegraph_fixtures.h').read_bytes()).hexdigest()
     return receipt,len(fixtures)
@@ -98,8 +133,8 @@ def main():
         if a.prepare_only:
             if not a.fixtures_output:ap.error('--prepare-only requires --fixtures-output')
             return
-        sources=[HERE/'coh_scenegraph.c',HERE.parent/'scenecatalog/coh_scenecatalog.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenegraph.c']
-        hashed_sources=[*sources,HERE/'coh_scenegraph.h',HERE/'check.py',HERE.parent/'replication/coh_replication.h',HERE.parent/'replication/coh_groups.h',HERE.parent/'replication/groups-source-pins.json',HERE.parent/'scenecatalog/coh_scenecatalog.h',HERE.parent/'scenecatalog/check.py',HERE.parent/'scenecatalog/source_export.inc',HERE.parent/'scenecatalog/tests/source_catalog_harness.c']
+        sources=[HERE/'coh_scenegraph.c',HERE/'coh_scene_metadata.c',HERE.parent/'scenecatalog/coh_scenecatalog.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenegraph.c']
+        hashed_sources=[*sources,HERE/'coh_scenegraph.h',HERE/'coh_scene_metadata.h',HERE/'tests/metadata_source_harness.inc',HERE/'check.py',HERE.parent/'replication/coh_replication.h',HERE.parent/'replication/coh_groups.h',HERE.parent/'replication/groups-source-pins.json',HERE.parent/'scenecatalog/coh_scenecatalog.h',HERE.parent/'scenecatalog/check.py',HERE.parent/'scenecatalog/source_export.inc',HERE.parent/'scenecatalog/tests/source_catalog_harness.c']
         source_hashes={str(p.relative_to(REPO)):hashlib.sha256(p.read_bytes()).hexdigest() for p in hashed_sources}
         fixture_sha=hashlib.sha256((d/'scenegraph_fixtures.h').read_bytes()).hexdigest()
         flags=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(d),'-I'+str(HERE),'-Wl,--wrap=malloc,--wrap=calloc,--wrap=free']

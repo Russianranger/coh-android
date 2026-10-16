@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "abi": "arm64-v8a",
+  "binary": "coh_scenegraph_test",
+  "binary_sha256": "af02cd7cecee1608631b3082034c191e973690a62c2b1f60ed1033704b646a0e",
+  "execution_qualified": false,
+  "fixtures_sha256": "37508b2b2ce5ea5dd5d35e7563a4eacacc99a0f4f42e12ba660933ae0f804063",
+  "source_sha256": {
+    "native-android/engine/scenegraph/coh_scenegraph.c": "9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933",
+    "native-android/engine/scenecatalog/coh_scenecatalog.c": "627cdbfa29529971287aace4e26d634d1584daa88d8fbe0356b6f09054974ebc",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+    "native-android/engine/scenegraph/tests/test_scenegraph.c": "4bfb40a64804fee09f153024bb83284bba96bc982b7bafe85c982debdd0f6860",
+    "native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+    "native-android/engine/scenegraph/check.py": "38b2000245e5a380fb4653f1a7c5dc2c418c34c32c38befacba5e662a524e328",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/replication/coh_groups.h": "58d1d99d2efc8f5a49ad98f4e2efd3215f649fd0ea91ab42c836b6ee99a46ca3",
+    "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+    "native-android/engine/scenecatalog/coh_scenecatalog.h": "b49f094df3589c6325acc41befd5c21ffccb2727b25719a7855a89e694c6b2b9",
+    "native-android/engine/scenecatalog/check.py": "90540e0441afce0a86628168fddab01e53a0aedf095eb6d6ecab23f8976ee8f9",
+    "native-android/engine/scenecatalog/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+    "native-android/engine/scenecatalog/tests/source_catalog_harness.c": "f14b98edd0410260948fd9fa19baea50e01852b085414d1188f1a72a59d86fdf"
+  }
+}

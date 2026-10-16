@@ -3,34 +3,51 @@
     "commits": [
       "0cf7a45bd",
       "e2becd19c",
-      "c305d55bd"
+      "c305d55bd",
+      "b01db2e82772450379f28632a3a6468d2d7beeb4"
     ],
-    "status": "delivery, exact-PE staging, isolated capture controls and retained source-qualified native validator host/ASan/UBSan qualified; hosted execution pending"
+    "status": "First disposable runtime attempt38939438638 failed DB readiness before MapServer; cleanup/source unchanged verified. Wine9.0 WindowsODBC mismatch identified. Version/driver preflight and bounded failure diagnostics23tests host-qualified; compatible pinned environment retry pending. No authentic catalog."
   },
   "B": {
-    "commit": "c147e36ac",
-    "status": "dynamic indexed graph host/source/ASan/UBSan qualified;124804 checks per mode"
+    "status": "dynamic indexed graph124804checks Android13 qualified at2d94aad69; rawmetadata extension159514checks host/source/sanitizer qualified; new Android gate pending",
+    "commits": [
+      "c147e36ac",
+      "72b2518fb",
+      "3124352f2"
+    ]
   },
   "C": {
-    "status": "stats, appearance references and bounded NetFX host/source/ASan/UBSan qualified;550302 checks per mode; complete character/global transaction still unavailable",
+    "status": "stats/NetFX550302checks Android13 qualified at2d94aad69; complete bounded standalone costume envelope and sparse dictionary1083422checks host/source/sanitizer qualified; full entity transaction and initial character still incomplete; Android followup pending",
     "commits": [
       "e5bb08d493c68f5faf80caf397aa25691d084502",
-      "8c742201412316acd0fa0e325596fde676ca48bc"
+      "8c742201412316acd0fa0e325596fde676ca48bc",
+      "8475ce3e5d641b393904dfdce61f4b486eca4a0e",
+      "fe3cd7b52cde3ab029bec55a698f0d1348b35ed5"
     ]
   },
   "D": {
-    "commit": "1286ec2cff8c1a420e92ba74f2ef0d56ced4e023",
-    "status": "read-only deployment admission and19-input source audit qualified; real encrypted login unavailable"
+    "status": "27-input source audit and24host controls qualified; original/corrected checksum135controls each release/ASan/UBSan. Isolated original AuthServer build and original-schema/x86ODBC staging independently reviewed; Windows execution and encrypted login remain unverified.",
+    "commits": [
+      "1286ec2cff8c1a420e92ba74f2ef0d56ced4e023",
+      "81f0533da"
+    ]
   },
   "E": {
     "commits": [
       "641424d3e5ad8fdccc799fbe33cb680789453eec",
-      "121400b57"
+      "121400b57",
+      "a23e693b7e34277009a1ef170c8332b824c94463",
+      "afba82d12"
     ],
-    "status": "immutable renderer adapter host/source/ASan/UBSan qualified;16720 checks per mode; no live activation"
+    "status": "ARM64/x86 built at2d94aad69; Android native concurrent test failed combined consistency/readcount assertion; diagnostic harness correction16745checks host/source/sanitizer qualified, Android rerun pending; production adapter unchanged"
   },
   "F": {
-    "commit": "732f118cf",
-    "status": "offline startup analysis15 added+26 existing tests and51 source-function comparisons qualified; no device speedup claim"
+    "status": "read-only resource and bounded receipt readers qualified;23 receipt tests independently reviewed; no device startup improvement",
+    "commits": [
+      "732f118cf",
+      "c608ed770",
+      "8fa37a1b5",
+      "d841d3bdd"
+    ]
   }
 }

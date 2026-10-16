@@ -1,4 +1,5 @@
 #include "coh_scenegraph.h"
+#include "coh_scene_metadata.h"
 #include "../../scenecatalog/coh_scenecatalog.h"
 #include <assert.h>
 #include <math.h>
@@ -129,6 +130,57 @@ static void stress(void){
     CHECK(strcmp(g->definitions[12191].name,"catalog_stress_12191")==0&&g->definitions[0].children[0].resolved==12191);
     coh_scenegraph_free(g);CHECK(live_allocations==0&&live_bytes==0);
 }
+static unsigned metadata_checks,metadata_truncations;
+static void metadata(void){
+    unsigned before_checks=checks;
+    for(size_t i=0;i<sizeof(metadata_fixtures)/sizeof(*metadata_fixtures);i++){
+        const MetadataFixture *f=&metadata_fixtures[i];CohSgDefinition d={0};CohRepReader r;size_t owned=0;
+        CHECK(coh_rep_reader_bounded(&r,(CohBytes){f->wire,f->bytes},f->bits,(int)f->aligned,COH_REP_BOUNDED_MESSAGE_MAX)==COH_OK);
+        CHECK(coh_scenegraph_definition_read(&d,&r,0,COH_SG_MEMORY_MAX,&owned)==COH_OK&&r.cursor==r.bits);
+        CohSceneGraph g={0};g.generation=19;g.asset_generation=7;g.definition_count=1;g.definitions=&d;
+        CohSgMetadata m={0};size_t allocations_before=allocation_calls;
+        CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_OK&&allocation_calls==allocations_before);
+        CHECK(m.scene_generation==19&&m.asset_generation==7&&m.file==0&&m.slot==d.id);
+        METADATA_COMPARE_U32(&m,f,CHECK);METADATA_COMPARE_FLOAT(&m,f,CHECK);METADATA_COMPARE_STRING(&m,f,CHECK);
+        CHECK(memcmp(m.color,f->colors,8)==0);
+        CHECK(m.unresolved_requirements&COH_SG_META_BOUNDS_LOD);
+        CohSgPropertyCursor cursor;CohSgProperty prop={0};CHECK(coh_scenegraph_property_begin(&m,&cursor)==COH_OK);
+        if(f->which==0||f->which==5||f->which==6){
+            CHECK(m.property_count==2&&m.swap_count==2&&m.has_geometry==1);
+            CHECK(m.unresolved_requirements==(COH_SG_META_BOUNDS_LOD|COH_SG_META_GEOMETRY|COH_SG_META_TEXTURES|COH_SG_META_COMPOSITE|COH_SG_META_PROPERTIES|COH_SG_META_TYPE|COH_SG_META_LIGHTING|COH_SG_META_FOG|COH_SG_META_CUBEMAP|COH_SG_META_SOUND|COH_SG_META_VOLUME|COH_SG_META_BEACON|COH_SG_META_VISIBILITY|COH_SG_META_MODEL_TRICKS));
+            CHECK(coh_scenegraph_property_next(&cursor,&prop)==COH_OK&&prop.type==0);
+            CHECK(strcmp(prop.name,f->which==6?"TexWordLayout":"OracleString")==0);
+            if(f->which==6)CHECK(strcmp(prop.value,"layouts/original_fixture.texword")==0);else CHECK(strlen(prop.value)==192);
+            CHECK(coh_scenegraph_property_next(&cursor,&prop)==COH_OK&&prop.type==1&&strcmp(prop.name,"OracleRadius")==0&&strcmp(prop.value,"12.5")==0);
+        }else CHECK(m.property_count==0);
+        CohSgProperty last=prop;CohSgPropertyCursor last_cursor=cursor;
+        CHECK(coh_scenegraph_property_next(&cursor,&prop)==COH_NOT_FOUND&&memcmp(&prop,&last,sizeof(prop))==0&&memcmp(&cursor,&last_cursor,sizeof(cursor))==0);
+        /* Every logical bit truncation preserves the metadata output. */
+        size_t complete=d.wire_bits;CohSgMetadata old=m;
+        for(size_t bit=0;bit<complete;bit++){
+            d.wire_bits=bit;CHECK(coh_scenegraph_metadata(&g,0,&m)!=COH_OK&&memcmp(&m,&old,sizeof(m))==0);metadata_truncations++;
+        }
+        d.wire_bits=complete;CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_OK);
+        d.mod_time++;CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_STATE&&memcmp(&m,&old,sizeof(m))==0);d.mod_time--;
+        g.asset_generation=0;CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_INVALID);g.asset_generation=7;
+        CHECK(coh_scenegraph_metadata(&g,1,&m)==COH_INVALID);
+        g.definitions=NULL;CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_INVALID);g.definitions=&d;
+        if(d.swap_count){CohSgSwap *swaps=d.swaps;d.swaps=NULL;CHECK(coh_scenegraph_metadata(&g,0,&m)==COH_INVALID&&memcmp(&m,&old,sizeof(m))==0);d.swaps=swaps;}
+        if(m.property_count){
+            CHECK(coh_scenegraph_property_begin(&m,&cursor)==COH_OK);cursor.reader.bits=cursor.reader.cursor;last_cursor=cursor;last=prop;
+            CHECK(coh_scenegraph_property_next(&cursor,&prop)!=COH_OK&&memcmp(&prop,&last,sizeof(prop))==0&&memcmp(&cursor,&last_cursor,sizeof(cursor))==0);
+        }
+        CHECK(allocation_calls==allocations_before);
+        coh_scenegraph_definition_dispose(&d);CHECK(!live_allocations&&!live_bytes);
+    }
+    /* Long properties use the existing4096-byte policy, not name length256. */
+    {CohSceneGraph *g=NULL;Control c={0};CHECK(apply(&g,fixture(12,1,0),&c,NULL)==COH_OK);
+     CohSgMetadata m;CohSgPropertyCursor cursor;CohSgProperty property;
+     CHECK(coh_scenegraph_metadata(g,0,&m)==COH_OK&&coh_scenegraph_property_begin(&m,&cursor)==COH_OK);
+     CHECK(coh_scenegraph_property_next(&cursor,&property)==COH_OK&&strlen(property.value)==1023);
+     coh_scenegraph_free(g);CHECK(!live_allocations&&!live_bytes);}
+    metadata_checks=checks-before_checks;
+}
 int main(void) {
     unsigned accepted=0,rejected=0;
     for(size_t i=0;i<sizeof(fixtures)/sizeof(*fixtures);i++) {
@@ -219,6 +271,7 @@ int main(void) {
      CHECK(apply(&g,fixture(4,1,0),&c,&failure)==COH_UNSUPPORTED);
      CHECK(g->file_count==3);coh_scenegraph_free(g);CHECK(!live_bytes);}
     stress();
-    printf("{\"passed\":true,\"checks\":%u,\"allocation_failure_points\":%u,\"source_fixtures_accepted\":%u,\"source_fixtures_rejected\":%u,\"stress_controls\":%u,\"stress_definitions\":12192,\"stress_children\":36567,\"stress_graph_bytes\":%zu,\"stress_candidate_peak_bytes\":%zu,\"stress_aggregate_peak_bytes\":%zu,\"live_world\":false}\n",checks,allocation_failures,accepted,rejected,stress_controls,stress_graph_bytes,stress_candidate_peak,stress_aggregate_peak);
+    metadata();
+    printf("{\"passed\":true,\"checks\":%u,\"allocation_failure_points\":%u,\"source_fixtures_accepted\":%u,\"source_fixtures_rejected\":%u,\"stress_controls\":%u,\"stress_definitions\":12192,\"stress_children\":36567,\"stress_graph_bytes\":%zu,\"stress_candidate_peak_bytes\":%zu,\"stress_aggregate_peak_bytes\":%zu,\"metadata_checks\":%u,\"metadata_truncations\":%u,\"live_world\":false}\n",checks,allocation_failures,accepted,rejected,stress_controls,stress_graph_bytes,stress_candidate_peak,stress_aggregate_peak,metadata_checks,metadata_truncations);
     return 0;
 }

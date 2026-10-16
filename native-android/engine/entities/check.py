@@ -13,7 +13,7 @@ FILES=['MapServer/src/entity/entsend.c','Game/src/entity/entrecv.c',
        'Common/entity/entity_enum.h','Common/entity/entVarUpdate.h','Common/entity/entity.h','Common/entity/ragdoll.h',
        'libs/UtilitiesLib/src/components/BitStream.c','libs/UtilitiesLib/src/network/netcomp.c',
        'libs/UtilitiesLib/src/network/net_packetutil.c','libs/UtilitiesLib/src/utils/Quat.c',
-       'libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h','Common/entity/gametypes.h','MapServer/src/entity/entserver.c','MapServer/src/entity/entsend.h','Common/entity/character_net.c','Common/entity/character_inventory.h','Common/comm_game.h','libs/UtilitiesLib/src/utils/structNet.c','Game/src/entity/character_net_client.c','Common/entity/attrib_net.c','libs/UtilitiesLib/src/utils/textparser.c','libs/UtilitiesLib/include/utilitieslib/utils/textparser.h','Common/entity/netfx.h']
+       'libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h','Common/entity/gametypes.h','MapServer/src/entity/entserver.c','MapServer/src/entity/entsend.h','Common/entity/character_net.c','Common/entity/character_inventory.h','Common/comm_game.h','libs/UtilitiesLib/src/utils/structNet.c','Game/src/entity/character_net_client.c','Common/entity/attrib_net.c','libs/UtilitiesLib/src/utils/textparser.c','libs/UtilitiesLib/include/utilitieslib/utils/textparser.h','Common/entity/netfx.h','Common/entity/costume.c','Common/entity/costume.h','Common/entity/entPlayer.h','Common/gameData/costume_data.c','Common/gameData/BodyPart.c','libs/UtilitiesLib/src/utils/mathutil.c']
 def run(cmd,**kw):
     p=subprocess.run([str(c) for c in cmd],text=True,capture_output=True,**kw)
     if p.returncode:raise RuntimeError(repr(cmd)+'\n'+p.stdout+p.stderr)
@@ -344,6 +344,17 @@ def fixtures(lib,directory):
         fxprefix=p(1,1)+u(2,1)+u(32,100)+u(1,0)*10
         for name,seq in [('netfx_origin_type',fxprefix+opt(2,3)),('netfx_bone_limit',fxprefix+u(1,0)*2+p(2,256)),('netfx_target_limit',fxprefix+u(1,0)*2+p(2,0)+u(1,0)+opt(12,10240,True)),('netfx_infinite_position',fxprefix+opt(2,1)+u(32,0x7f800000))]:
             emit(name+str(mode),*fields(seq,mode))
+        # Costume failure fixtures use original scalar writers in source field order.
+        costume_head=u(1,0)*2+p(6,1)+u(32,0)+u(1,0)+u(3,0)+u(1,1)+u(32,0)*72
+        costume_body=costume_head+u(32,0)*30
+        nullparts=u(1,0)*2+u(1,1)*3
+        for name,seq in [('costume_bad_empty_cache',u(1,1)*2),('costume_bad_hole',u(1,1)+u(1,0)+u(1,1)*2+p(4,2)),('costume_bad_index',u(1,1)+u(1,0)+u(1,1)*2+p(4,16)),('costume_bad_long',u(1,1)+u(1,0)+u(1,1)+u(1,0)+string('x'*260)),('costume_bad_body',u(1,0)*2+p(6,6)+u(32,0)+u(1,0)+u(3,0)+u(1,0)),('costume_bad_nan',costume_head+u(32,0x7fc00000)),('costume_bad_parts',costume_body+u(1,1)+p(4,5)),('costume_bad_color_cache',costume_body+u(1,1)+p(4,1)+nullparts+u(1,0)+u(1,1)),('costume_bad_color_hole',costume_body+u(1,1)+p(4,1)+nullparts+u(1,0)*2+u(1,1)+p(3,1))]:
+            emit(name+str(mode),*fields(seq,mode))
+        self_envelope=opt(2,1,True)+u(1,1)
+        own_empty_rewards=self_envelope+u(32,0)*2+u(1,0)
+        for name,seq in [('envelope_unknown',opt(2,5,True)),('envelope_reward_limit',self_envelope+u(32,257)),('envelope_reward_hole',self_envelope+u(32,1)+u(1,1)*3+p(4,2)),('envelope_reward_null',self_envelope+u(32,1)+u(1,1)+u(1,0)),('envelope_slots',own_empty_rewards+u(8,10)+u(8,0)),('envelope_current',own_empty_rewards+u(8,255)+u(8,3)),('envelope_count_zero',own_empty_rewards+u(8,0)+u(8,3)+u(1,1)+u(4,0)),('envelope_count_limit',own_empty_rewards+u(8,0)+u(8,10)+u(1,1)+u(4,11)),('envelope_other_multiple',opt(2,1,True)+u(1,0)*2+u(1,1)+u(4,1)),('envelope_custom_flag',opt(2,3,True)+p(12,1)+p(1,0)+u(1,0)+p(1,2)),('envelope_sequence_long',opt(2,4,True)+string('x'*260)),('envelope_fx_long',opt(2,1,True)+u(1,0)*3+costume_body+u(1,1)+p(4,0)+u(1,0)+u(1,1)+string('x'*260))]:
+            emit(name+str(mode),*fields(seq,mode))
+        emit('envelope_rewards_max'+str(mode),*fields(self_envelope+u(32,256)+u(1,0)*256+u(32,256)+u(1,0)*256+u(1,0)+u(8,0)+u(8,255)+u(1,0)+costume_body+u(1,1)+p(4,0)+u(1,0)*3,mode))
         # Manual zero-field fixture complements original nonempty stats.
         pchar=npc+u(1,0)+pos+qrot+u(1,1)+u(1,0)*2+u(1,1)*2+u(1,0)+vision+auto(8)+u(1,0)+u(1,1)+status+u(1,0)
         emit('record_pchar'+str(mode),*fields(pchar,mode))
@@ -377,11 +388,15 @@ def main():
     if bool(args.ndk)!=bool(args.android_output):ap.error('--ndk and --android-output must be supplied together')
     with tempfile.TemporaryDirectory(prefix='coh-entities-') as d:
         directory=Path(d);lib,pins,names=oracle(args.source_root.resolve(),directory);n=fixtures(lib,directory)
+        spec=importlib.util.spec_from_file_location('costume_oracle',HERE/'costume_oracle.py');costume_module=importlib.util.module_from_spec(spec);spec.loader.exec_module(costume_module)
+        spec=importlib.util.spec_from_file_location('costume_bit_adapter',args.source_root.resolve()/'native-android/tools/protocol_fixture/prepare.py');costume_helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(costume_helper)
+        costume_proof=costume_module.generate(args.source_root.resolve(),directory,costume_helper,run)
         if args.fixtures_output:
             args.fixtures_output.parent.mkdir(parents=True,exist_ok=True)
             shutil.copyfile(directory/'fixtures.h',args.fixtures_output)
+            shutil.copyfile(directory/'costume_fixtures.h',args.fixtures_output.parent/'costume_fixtures.h')
         common=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(directory),'-I'+str(HERE)]
-        sources=[HERE/'coh_entities.c',HERE/'../replication/coh_replication.c',HERE/'test_entities.c']
+        sources=[HERE/'coh_entities.c',HERE/'coh_costume.c',HERE/'../replication/coh_replication.c',HERE/'test_entities.c',HERE/'test_costume.c']
         checks={};modes=[('release',['-O2'])]
         if args.sanitize:modes += [('asan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=address','-no-pie']),('ubsan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=undefined','-fno-sanitize-recover=all'])]
         for name,flags in modes:
@@ -389,18 +404,19 @@ def main():
             env=os.environ.copy();env['ASAN_OPTIONS']='detect_leaks=0:halt_on_error=1';env['UBSAN_OPTIONS']='halt_on_error=1:print_stacktrace=1'
             checks[name]=json.loads(run([exe],env=env).stdout)
         fixture_sha=hashlib.sha256((directory/'fixtures.h').read_bytes()).hexdigest()
-        source_hashes={str(p.resolve().relative_to(REPO.resolve())):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*sources,HERE/'coh_entities.h',HERE/'check.py',HERE/'oracle_shim.h',HERE/'stats_oracle_shim.h',HERE/'source-pins.json',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',REPO/'native-android/tools/protocol_fixture/prepare.py']}
+        source_hashes={str(p.resolve().relative_to(REPO.resolve())):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*sources,HERE/'CMakeLists.txt',HERE/'coh_entities.h',HERE/'coh_costume.h',HERE/'costume_oracle.py',HERE/'costume_oracle_shim.h',HERE/'costume_envelope_oracle_shim.h',HERE/'costume_envelope_oracle.c.inc',HERE/'costume_envelope_fixture.c.inc',HERE/'check.py',HERE/'oracle_shim.h',HERE/'stats_oracle_shim.h',HERE/'source-pins.json',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',REPO/'native-android/tools/protocol_fixture/prepare.py']}
         android={}
         if args.ndk:
             args.android_output.mkdir(parents=True,exist_ok=True)
             shutil.copyfile(directory/'fixtures.h',args.android_output/'fixtures.h')
+            shutil.copyfile(directory/'costume_fixtures.h',args.android_output/'costume_fixtures.h')
             tc=args.ndk/'toolchains/llvm/prebuilt/linux-x86_64/bin'
             for abi,target in [('arm64-v8a','aarch64-linux-android26-clang'),('x86_64','x86_64-linux-android26-clang')]:
                 dest=args.android_output/abi;dest.mkdir(parents=True,exist_ok=True);exe=dest/'coh_entities_test'
                 run([tc/target,*common,'-O2',*sources,'-lm','-o',exe]);sha=hashlib.sha256(exe.read_bytes()).hexdigest()
-                receipt={'passed':True,'abi':abi,'binary':exe.name,'binary_sha256':sha,'executed':False,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes}
+                receipt={'passed':True,'abi':abi,'binary':exe.name,'binary_sha256':sha,'executed':False,'fixtures_sha256':fixture_sha,'costume_fixtures_sha256':costume_proof['fixtures_sha256'],'source_sha256':source_hashes}
                 (dest/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');android[abi]=receipt
-        proof={'schema':1,'passed':True,'scope':'original create/pet CRC, NPC/sequence costume, target, inventory, pose/sequence/delete component producers; original NetFX producer/consumer parity; exact original basic/self schema producer and consumer comparisons; synthetic record/list compositions; no original complete sendEntity/entSendUpdate execution','source_files':len(pins),'original_functions':names,'fixtures':n,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes,'checks':checks,'android':android,'full_update_tail_supported':False,'real_server_interoperability':False,'renderable_authoritative_actor':False,'emulator_qualified':False,'thor_accepted':False}
+        proof={'schema':1,'passed':True,'scope':'original create/pet CRC, NPC/sequence costume, target, inventory, pose/sequence/delete component producers; original NetFX and standalone complete appearance/costume/reward producer/consumer parity; exact original basic/self schema producer and consumer comparisons; synthetic record/list compositions; no original complete sendEntity/entSendUpdate execution','source_files':len(pins),'original_functions':names,'fixtures':n,'fixtures_sha256':fixture_sha,'costume_fixtures_sha256':costume_proof['fixtures_sha256'],'source_sha256':source_hashes,'checks':checks,'costume_oracle':costume_proof,'android':android,'full_update_tail_supported':False,'real_server_interoperability':False,'renderable_authoritative_actor':False,'emulator_qualified':False,'thor_accepted':False}
         if args.output:args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(proof,indent=2)+'\n')
         print(json.dumps(proof,indent=2))
 if __name__=='__main__':main()

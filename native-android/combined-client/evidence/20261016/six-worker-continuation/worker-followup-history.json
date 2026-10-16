@@ -1,0 +1,23 @@
+{
+  "coordinator_head": "d748974ac740811cc019441e0f02269a60b6ca13",
+  "original_worker_tips": [
+    "b01db2e82772450379f28632a3a6468d2d7beeb4",
+    "3124352f20f06d979f51dc94d20277a19848f26f",
+    "fe3cd7b52cde3ab029bec55a698f0d1348b35ed5",
+    "81f0533dae6d9e364f6f60dcb4bced856d8290b5",
+    "afba82d12cb226c71865d6abb3c13940f41b29f5",
+    "d841d3bddb08d3c15cb6dc7fe0cef4be593e283d"
+  ],
+  "excluded_ancestors": [
+    "2d94aad69ed303d3587c509321eb7e79cb44f0b7",
+    "c305d55bd72e990f97f1651c4ca2606583ad87ae",
+    "c147e36ace2c40cd4d632a1841488f661386ea31",
+    "8c742201412316acd0fa0e325596fde676ca48bc",
+    "1286ec2cff8c1a420e92ba74f2ef0d56ced4e023",
+    "121400b57a7402b5bdb68d5a9c7d5e257e80bcf1",
+    "732f118cf2299c64ac509d6402e5b5448b754867"
+  ],
+  "bundle_sha256": "0589fe44266c245896418f78a163bfa1f703fb6fd09aa22847d488656c97f096",
+  "bundle_bytes": 215346,
+  "purpose": "Preserve exact independent followup commits alongside guarded connected GitHub tree publication; prerequisite objects are existing remote history and worker-history.bundle."
+}

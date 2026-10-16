@@ -22,6 +22,12 @@ def manifest_suite(out, module, host):
             raise ValueError("Preserved fixture differs from the host oracle: " + module)
         fixture = {"path": fixture_path.relative_to(out).as_posix(), "sha256": fixture_sha}
     entries = {}
+    costume = None
+    if module == "entities":
+        path = child(out, "android/entities/costume_fixtures.h")
+        if digest(path) != host.get("costume_fixtures_sha256"):
+            raise ValueError("Preserved costume fixture differs from original oracle")
+        costume = {"path": path.relative_to(out).as_posix(), "sha256": digest(path)}
     for abi in ABIS:
         receipt_path = out / "android" / module / abi / "receipt.json"
         receipt = read(receipt_path)
@@ -29,6 +35,8 @@ def manifest_suite(out, module, host):
             raise ValueError("Android build receipt did not pass: " + module + "/" + abi)
         if fixture and receipt.get("fixtures_sha256") != fixture["sha256"]:
             raise ValueError("Android fixture differs from the host oracle: " + module + "/" + abi)
+        if costume and receipt.get("costume_fixtures_sha256") != costume["sha256"]:
+            raise ValueError("Android costume fixture differs from original oracle")
         name = receipt["binary"]
         if Path(name).name != name:
             raise ValueError("Android executable name must be a basename")
@@ -40,7 +48,7 @@ def manifest_suite(out, module, host):
                         "sha256": digest(binary), "bytes": binary.stat().st_size,
                         "receipt": receipt_path.relative_to(out).as_posix(),
                         "receipt_sha256": digest(receipt_path)}
-    return {"expected": expected, "abis": entries, "fixture": fixture,
+    return {"expected": expected, "abis": entries, "fixture": fixture, "costume_fixture": costume,
             "host_receipt": host_path.relative_to(out).as_posix(),
             "host_receipt_sha256": digest(host_path)}
 

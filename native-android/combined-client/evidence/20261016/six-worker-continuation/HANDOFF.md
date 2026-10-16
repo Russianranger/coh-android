@@ -89,3 +89,56 @@ No new APK/release or physical acceptance exists. The adapter remains disconnect
 from Combined until actual scene/material and complete character/global producers
 can supply every prerequisite. Gate27 remains open. Real encrypted AuthServer
 acceptance remains separate from provisional development-auth world entry.
+
+## Follow-up checkpoint and preserved hosted results
+
+Published source `cc92cad36` reproduced a strict Android Clang indentation
+diagnostic, corrected without behavior change in `2d94aad69`. Run38939957569
+then passed catalog/graph/entity host, source, sanitizer, both Android ABI builds
+and Android13 x86_64 execution. Run38939957550 passed native protocol/auth policy
+execution, but the separate renderer adapter test failed its combined reader
+consistency/read-count assertion. The retained native log does not distinguish
+those causes. A test-only correction now requires reader observation checkpoints
+and reports them separately; production adapter C/H remain unchanged. Its
+16,745 host checks per mode pass, but a new Android run is required.
+
+The next standalone checkpoint includes allocation-free raw scene metadata
+(159,514 checks), original raw costume/NPC bodies with copied sparse appearance
+dictionaries (646,790 checks), and bounded startup receipt parsing. These are
+independently reviewed source contracts. Costume body support does not complete
+its entity envelope, authentic dictionary import, full character or global tails.
+Raw scene metadata does not resolve inherited model/trick/material semantics.
+
+The private disposable catalog capture run38939438638 failed DB readiness after
+600 seconds. MapServer did not launch and no catalog was captured. Cleanup,
+absence of owned process groups and unchanged source-runtime inventory passed.
+The hosted Wine9.0 ODBC manager cannot load the exact Windows PostgreSQL driver;
+this concrete mismatch does not prove the precise stalled instruction. The next
+candidate admits a compatible pinned Wine version, reuses the exact donor's
+original runtime-probe and driver-name validator, and records bounded dispatch/
+PostgreSQL diagnostics. Its23 controls pass. This remains a disposable public
+fixture, separate from the actual Thor generation and live GROUPS validation.
+
+The separately reviewed auth candidate builds unchanged original AuthServer and
+executes original account/schema bindings in fresh Windows LocalDB, with strict
+cleanup and no user credential. Its24 host controls and135 original/candidate
+checksum controls per release/ASan/UBSan mode pass. Windows execution is pending;
+it does not start AuthServer, patch the accepted DbServer or qualify login.
+The declared fail-closed checksum correction remains a nonshipping source
+candidate requiring packet, binary and full-service negative controls.
+
+An additional C checkpoint now qualifies the complete bounded standalone
+appearance envelope:1,083,422 checks per release/ASan/UBSan mode,211,896 every-bit
+truncations and28 original producer/consumer costume fixtures. It preserves
+additional earned slots separately from actual costume count. Its692,064-byte
+output and772,984-byte workspace need explicit future aggregate admission.
+The record parser still refuses this branch until the entire surrounding initial
+transaction is supported; authentic dictionary import and full actor publication
+remain open. Android ARM64 builds and emulator execution are pending.
+
+Exact original six-worker history is retained in `worker-history.bundle` with
+SHA256 and prerequisite commit in `worker-history.json`. Importing that bundle
+into a repository containing its prerequisite recovers every listed original
+worker commit object, even though connected GitHub publication assigns different
+commit identities. Remote trees were verified byte-for-byte before guarded
+non-force updates. Local worktrees were preserved.

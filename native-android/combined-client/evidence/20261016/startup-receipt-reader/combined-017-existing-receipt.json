@@ -1,0 +1,167 @@
+{
+  "new_device_execution": false,
+  "observation": {
+    "cache_outcomes": {
+      "beacon": "unknown",
+      "definitions": "unknown",
+      "server_data": "unknown"
+    },
+    "cache_projection": {
+      "beacon": {
+        "archive_decoded": null,
+        "input_files_checked": null,
+        "input_full_byte_proof_reused_bytes": null,
+        "input_full_byte_proof_reused_files": null,
+        "input_payload_bytes_hashed": null,
+        "installed_files": null,
+        "native_graph_consumption_proven": false,
+        "status": "unknown"
+      },
+      "beacon_receipt_present": false,
+      "definition_receipt_present": false,
+      "definitions": {
+        "fallback_reason_present": false,
+        "installed_files": null,
+        "native_cache_consumption_proven": false,
+        "preserved_existing_files": null,
+        "status": "unknown"
+      },
+      "server_data": {
+        "changed_parent_directory_checks": null,
+        "changed_parent_entry_checks": null,
+        "immutable_anchor_checks": null,
+        "immutable_directory_checks": null,
+        "immutable_directory_metadata_queries": null,
+        "private_bytes": null,
+        "private_entries_checked": null,
+        "refusal_code": "unknown",
+        "refusal_present": false,
+        "reused": null
+      },
+      "server_data_receipt_present": false
+    },
+    "kind": "combined_guest_final_receipt",
+    "maps": [],
+    "native_cache_consumption_proven": false,
+    "session_binding": "internal_receipt_session_only_not_android_wrapper_acceptance",
+    "source_report_cold_phase_present": false,
+    "source_report_warm_phase_present": true,
+    "speedup_measured": false,
+    "stage_intervals": [
+      {
+        "finished_utc_ms": 1792162531574,
+        "recorded_wall_interval_ms": 3,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "preflight_local_server_ports",
+        "started_utc_ms": 1792162531571
+      },
+      {
+        "finished_utc_ms": 1792162536930,
+        "recorded_wall_interval_ms": 5353,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "server_only_input_admission",
+        "started_utc_ms": 1792162531577
+      },
+      {
+        "finished_utc_ms": 1792162544730,
+        "recorded_wall_interval_ms": 7799,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "prepare_private_server_inputs",
+        "started_utc_ms": 1792162536931
+      },
+      {
+        "finished_utc_ms": 1792162546044,
+        "recorded_wall_interval_ms": 1312,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "isolated_required_geometry_preparation",
+        "started_utc_ms": 1792162544732
+      },
+      {
+        "finished_utc_ms": null,
+        "recorded_wall_interval_ms": null,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "persistent_server_profile",
+        "started_utc_ms": 1792162546046
+      },
+      {
+        "finished_utc_ms": 1792162547690,
+        "recorded_wall_interval_ms": 903,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "postgres_native_combined",
+        "started_utc_ms": 1792162546787
+      },
+      {
+        "finished_utc_ms": 1792162547870,
+        "recorded_wall_interval_ms": 3,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "preflight_selected_map_port",
+        "started_utc_ms": 1792162547867
+      },
+      {
+        "finished_utc_ms": null,
+        "recorded_wall_interval_ms": null,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "prepare_owned_presentation_endpoint",
+        "started_utc_ms": 1792162547871
+      },
+      {
+        "finished_utc_ms": 1792162548143,
+        "recorded_wall_interval_ms": 268,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "presentation_display",
+        "started_utc_ms": 1792162547875
+      },
+      {
+        "finished_utc_ms": 1792162560966,
+        "recorded_wall_interval_ms": 12818,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "wine_initialization",
+        "started_utc_ms": 1792162548148
+      },
+      {
+        "finished_utc_ms": 1792162575860,
+        "recorded_wall_interval_ms": 14891,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "local_login_odbc",
+        "started_utc_ms": 1792162560969
+      },
+      {
+        "finished_utc_ms": 1792162646428,
+        "recorded_wall_interval_ms": 70563,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "local_dbserver_startup",
+        "started_utc_ms": 1792162575865
+      },
+      {
+        "finished_utc_ms": 1792162918257,
+        "recorded_wall_interval_ms": 271714,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "local_atlas_startup",
+        "started_utc_ms": 1792162646543
+      },
+      {
+        "finished_utc_ms": null,
+        "recorded_wall_interval_ms": null,
+        "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+        "stage": "server_running_manual_native_client",
+        "started_utc_ms": 1792162918266
+      }
+    ],
+    "wrapper_present": false
+  },
+  "private_context_recovered_or_exported": false,
+  "provenance": [
+    {
+      "bytes": 37864,
+      "level": 0,
+      "sha256": "e802501bce9738d538d8438cdcdbdb304810a9d7854d45a0dbb47a7188542b73"
+    },
+    {
+      "bytes": 30283,
+      "level": 1,
+      "sha256": "a5a1526dcefdb308d303953e8484069f61e66acfbcdb8ed3253b6df1ba7447bb"
+    }
+  ],
+  "runtime_modified": false,
+  "schema": "coh-offline-existing-startup-receipts-v1"
+}

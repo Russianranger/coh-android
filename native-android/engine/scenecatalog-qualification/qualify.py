@@ -53,9 +53,16 @@ def host_suite(out, module, value, sanitize):
     if digest(fixture) != value.get("fixtures_sha256"):
         raise ValueError("Preserved fixture differs from host oracle: " + module)
     suite_sources(module, value.get("source_sha256"))
+    costume = None
+    if module == "entities":
+        path = child(out, "fixtures/entities/costume_fixtures.h")
+        if digest(path) != value.get("costume_fixtures_sha256"):
+            raise ValueError("Preserved costume fixture differs from original oracle")
+        costume = {"path": path.relative_to(out).as_posix(), "sha256": digest(path)}
     host = out / "host" / (module + ".json")
     return {"expected": expected, "source_sha256": value["source_sha256"],
             "fixture": {"path": fixture.relative_to(out).as_posix(), "sha256": digest(fixture)},
+            "costume_fixture": costume,
             "host_receipt": host.relative_to(out).as_posix(), "host_receipt_sha256": digest(host)}
 
 
@@ -66,6 +73,8 @@ def manifest_suite(out, module, host, sanitize):
         receipt_path = out / "android" / module / abi / "receipt.json"
         receipt = read(receipt_path)
         reject_compile_claims(receipt)
+        if suite["costume_fixture"] and receipt.get("costume_fixtures_sha256") != suite["costume_fixture"]["sha256"]:
+            raise ValueError("Android costume fixture differs from original oracle")
         if (receipt.get("passed") is not True or receipt.get("abi") != abi
                 or receipt.get("fixtures_sha256") != suite["fixture"]["sha256"]
                 or not json_equal(receipt.get("source_sha256"), suite["source_sha256"])):

@@ -1,0 +1,120 @@
+{
+  "schema": "coh-disposable-winehq-package-audit-v1",
+  "observed_utc": "2026-10-16T17:55:05.241639+00:00",
+  "source": "official WineHQ noble signed InRelease and amd64/i386 Packages",
+  "key_url": "https://dl.winehq.org/wine-builds/winehq.key",
+  "signing_key_fingerprint": "D43F640145369C51D786DDEA76F1A20FF987672F",
+  "inrelease_signature_verified": true,
+  "package_indices_bound_to_signed_inrelease": true,
+  "metadata": [
+    {
+      "file": "winehq.key",
+      "bytes": 3212,
+      "sha256": "d965d646defe94b3dfba6d5b4406900ac6c81065428bf9d9303ad7a72ee8d1b8"
+    },
+    {
+      "file": "InRelease",
+      "bytes": 8909,
+      "sha256": "6400fd8695d1439a331d251b8d46dfb4a6feb44686c9bf6870a8ed141d90fcdd"
+    },
+    {
+      "file": "amd64.Packages",
+      "bytes": 1244478,
+      "sha256": "f3c2fd8ffe9611ab68de4661615867c2a729651d3850a48db2e6f7dfa2f1c0e5"
+    },
+    {
+      "file": "i386.Packages",
+      "bytes": 1212498,
+      "sha256": "d1e188eab99227ae710404d43fd514efae56b689cd4534cb5b80b1619e10975b"
+    },
+    {
+      "file": "winehq-noble.sources",
+      "bytes": 163,
+      "sha256": "b5962429ece1f831c9f713c13f9f0d26bb367117ef56706648ff385f004779fb"
+    }
+  ],
+  "packages": [
+    {
+      "name": "wine-stable",
+      "version": "10.0.0.0~noble-1",
+      "architecture": "amd64",
+      "official_url": "https://dl.winehq.org/wine-builds/ubuntu/pool/main/w/wine/wine-stable_10.0.0.0~noble-1_amd64.deb",
+      "bytes": 2816424,
+      "sha256": "31e6eb2e15ae2e38ef72c9865c0d01da4bc587e554e7db46fe1a75b4420878e1",
+      "dependencies": "debconf (>= 0.5) | debconf-2.0, libc6 (>= 2.38), wine-stable-i386 (= 10.0.0.0~noble-1), wine-stable-amd64 (= 10.0.0.0~noble-1)"
+    },
+    {
+      "name": "wine-stable-amd64",
+      "version": "10.0.0.0~noble-1",
+      "architecture": "amd64",
+      "official_url": "https://dl.winehq.org/wine-builds/ubuntu/pool/main/w/wine/wine-stable-amd64_10.0.0.0~noble-1_amd64.deb",
+      "bytes": 117345946,
+      "sha256": "393d545040fe5c029eadeb31fcea52126714473e6c11b3cd851447b2dcbf1f72",
+      "dependencies": "libasound2t64 (>= 1.0.16), libc6 (>= 2.38), libglib2.0-0t64 (>= 2.79.0), libgphoto2-6t64 (>= 2.5.10), libgphoto2-port12t64 (>= 2.5.10), libgstreamer-plugins-base1.0-0 (>= 1.8.0), libgstreamer1.0-0 (>= 1.4.0), libpcap0.8t64 (>= 1.10.0), libpulse0 (>= 0.99.1), libsane1 (>= 1.0.27), libudev1 (>= 183), libunwind8, libusb-1.0-0 (>= 2:1.0.21), libwayland-client0 (>= 1.20.0), libwayland-egl1 (>= 1.15.0), libx11-6, libxext6, libxkbcommon0 (>= 0.5.0), libxkbregistry0 (>= 1.0.0), ocl-icd-libopencl1 | libopencl1, ocl-icd-libopencl1 (>= 1.0) | libopencl-1.2-1, libasound2-plugins, libncurses6 | libncurses5 | libncurses"
+    },
+    {
+      "name": "winehq-stable",
+      "version": "10.0.0.0~noble-1",
+      "architecture": "amd64",
+      "official_url": "https://dl.winehq.org/wine-builds/ubuntu/pool/main/w/wine/winehq-stable_10.0.0.0~noble-1_amd64.deb",
+      "bytes": 1756,
+      "sha256": "794ed19f7fc8319d005c10da60833fd0925e2cd2587355b3b97fafdb9e95d368",
+      "dependencies": "wine-stable (= 10.0.0.0~noble-1)"
+    },
+    {
+      "name": "wine-stable-i386",
+      "version": "10.0.0.0~noble-1",
+      "architecture": "i386",
+      "official_url": "https://dl.winehq.org/wine-builds/ubuntu/pool/main/w/wine/wine-stable-i386_10.0.0.0~noble-1_i386.deb",
+      "bytes": 110481570,
+      "sha256": "5ba523409f013b12953f577bc3322aeae599bb16afac66c59ebe2dde7b337bfa",
+      "dependencies": "libasound2t64 (>= 1.0.16), libc6 (>= 2.38), libglib2.0-0t64 (>= 2.79.0), libgphoto2-6t64 (>= 2.5.10), libgphoto2-port12t64 (>= 2.5.10), libgstreamer-plugins-base1.0-0 (>= 1.8.0), libgstreamer1.0-0 (>= 1.4.0), libpcap0.8t64 (>= 1.10.0), libpulse0 (>= 0.99.1), libsane1 (>= 1.0.27), libudev1 (>= 183), libusb-1.0-0 (>= 2:1.0.21), libwayland-client0 (>= 1.20.0), libwayland-egl1 (>= 1.15.0), libx11-6, libxext6, libxkbcommon0 (>= 0.5.0), libxkbregistry0 (>= 1.0.0), ocl-icd-libopencl1 | libopencl1, ocl-icd-libopencl1 (>= 1.0) | libopencl-1.2-1, libasound2-plugins, libncurses6 | libncurses5 | libncurses"
+    }
+  ],
+  "binary_observations": [
+    {
+      "package_member": "./opt/wine-stable/bin/wine",
+      "bytes": 13672,
+      "sha256": "d6d27cb2507dd904986e1a27383fcf2b9d8010cea4d4338cf3176b7d8da64a8b",
+      "format": "ELF",
+      "elf_class": 1,
+      "machine": 3
+    },
+    {
+      "package_member": "./opt/wine-stable/lib/wine/i386-unix/ntdll.so",
+      "bytes": 597200,
+      "sha256": "193db7d4e33e9ef04b7cb7935f5196266fa8ee6d51ec9d2d93f6be7bd33c8c50",
+      "format": "ELF",
+      "elf_class": 1,
+      "machine": 3
+    },
+    {
+      "package_member": "./opt/wine-stable/lib/wine/i386-windows/msiexec.exe",
+      "bytes": 284457,
+      "sha256": "836eeeedce420ddf94ebef009d96028d813722b32246f3d146dbd09bf4b0f0e0",
+      "format": "PE",
+      "machine": 332,
+      "optional_magic": 267
+    },
+    {
+      "package_member": "./opt/wine-stable/lib/wine/i386-windows/odbc32.dll",
+      "bytes": 852049,
+      "sha256": "4d1dafee58d7c6050571932d9fe8ab4883afc5f4f7cd196839f18683add93dc0",
+      "format": "PE",
+      "machine": 332,
+      "optional_magic": 267
+    }
+  ],
+  "downloaded_verified_packages": [
+    "wine-stable:amd64",
+    "wine-stable-i386:i386"
+  ],
+  "classic32_binary_verified": true,
+  "runtime_executed": false,
+  "driver_or_db_interoperability_verified": false,
+  "notes": [
+    "Exact i386 package digest matches signed index; loader and Unix ntdll are ELF32 EM_386, MSI/ODBC are PE32 I386.",
+    "Do not infer actual server/runtime qualification from package inspection. Fresh prefix and exact donor preflight must execute in hosted capture.",
+    "Use scoped dearmored key and four explicit apt version/architecture pins; no Ubuntu Wine9 package."
+  ]
+}

@@ -1,4 +1,5 @@
 #include "coh_entities.h"
+#include "coh_costume.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -335,7 +336,9 @@ static void expanded_record(Fixture f,unsigned mode,unsigned type){
     list_bad(F(list_capacity_missing##m),m,COH_NOT_FOUND,COH_ENT_STAGE_LIST); \
     list_bad(F(list_late_unsupported##m),m,COH_UNSUPPORTED,COH_ENT_STAGE_APPEARANCE); \
 }while(0)
+void costume_run_tests(unsigned *,unsigned *,unsigned *);
 int main(void){
+    costume_run_tests(&checks,&truncations,&randomized);
     RUN_MODE(0);RUN_MODE(1);fuzz();
     CohRepReader r=reader(F(end0),0),oldr=r;CohEntFailure d;
     CHECK(coh_ent_full_update_tail(&r,&d)==COH_UNSUPPORTED);CHECK(d.stage==COH_ENT_STAGE_FULL_UPDATE_TAIL&&d.bit==0);same_reader(&r,&oldr);
@@ -343,6 +346,6 @@ int main(void){
     CHECK(coh_ent_record(&r,4242,5,2,&invalid,&rec,&d)==COH_INVALID);same_reader(&r,&oldr);
     coh_ent_slot_init(&invalid,0);CHECK(coh_ent_record(&r,4242,5,2,&invalid,&rec,&d)==COH_OK);CHECK(rec.identity.end);
     CHECK(coh_ent_create(NULL,4242,NULL,NULL)==COH_INVALID);CHECK(coh_ent_deletes(NULL,NULL,NULL)==COH_INVALID);
-    printf("{\"passed\":true,\"slot_bytes\":%zu,\"workspace_bytes\":%zu,\"record_bytes\":%zu,\"checks\":%u,\"every_bit_truncations\":%u,\"randomized_cases\":%u,\"list_cases\":%u,\"list_every_bit_truncations\":%u,\"full_update_accepted\":false,\"render_spawn\":false}\n",sizeof(CohEntSlot),sizeof(CohEntListWorkspace),sizeof(CohEntRecord),checks,truncations,randomized,list_checks,list_truncations);
+    printf("{\"passed\":true,\"slot_bytes\":%zu,\"workspace_bytes\":%zu,\"record_bytes\":%zu,\"costume_bytes\":%zu,\"costume_workspace_bytes\":%zu,\"custom_costume_bytes\":%zu,\"costume_envelope_bytes\":%zu,\"costume_envelope_workspace_bytes\":%zu,\"checks\":%u,\"every_bit_truncations\":%u,\"randomized_cases\":%u,\"list_cases\":%u,\"list_every_bit_truncations\":%u,\"full_update_accepted\":false,\"render_spawn\":false}\n",sizeof(CohEntSlot),sizeof(CohEntListWorkspace),sizeof(CohEntRecord),sizeof(CohEntCostume),sizeof(CohEntCostumeWorkspace),sizeof(CohEntCustomCostume),sizeof(CohEntCostumeEnvelope),sizeof(CohEntCostumeEnvelopeWorkspace),checks,truncations,randomized,list_checks,list_truncations);
     return 0;
 }

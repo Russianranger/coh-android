@@ -15,6 +15,10 @@ Gates 25–27 remain open.
 | `coh_ent_create` | Full audited create-header branches including player/self/DBID, pet basepower full-name CRC, class/origin indices, titles/name/phase/seed and other bounded references |
 | `coh_ent_orientation` | Original nonlinear 9-bit XYZ quaternion reconstruction and per-component packet ordering |
 | `coh_ent_appearance` | NPC dictionary index/costume index and sequence-name appearances, world-group string, translucency; full, owned and custom NPC costumes fail closed |
+| `coh_ent_costume_dictionary_load` | Immutable generation-bound deep copy of original sparse string/color table slots, at most 4 MiB; import identity must be independently verified |
+| `coh_ent_costume` | Complete pinned raw `costume_receive` body shared by full/owned costumes; standalone and reused by the appearance envelope, outside entity record integration |
+| `coh_ent_custom_costume` | Complete pinned raw `NPCcostume_receive` custom color body; standalone and reused by the appearance envelope, outside entity record integration |
+| `coh_ent_costume_envelope` | Standalone complete pinned appearance wire envelope: self rewards, full/single/multiple/deferred, supergroup, FX, NPC/custom fallthrough, owned and sequence variants; not yet composed into entity records |
 | `coh_ent_character_stats` | Complete pinned basic/self absolute non-debug stat schemas: current/max attributes, levels, XP/debt/rest/influence, per-scalar packet ordering |
 | `coh_ent_netfx` | Complete bounded original NetFX grammar, including entity/position origins and targets; unresolved events only |
 | `coh_ent_target` | Target, assist, taunter, self clear-target and bounded placater list |
@@ -67,7 +71,8 @@ source boundary. Neither means `receiveCharacterFromServer` is complete.
 
 ## Limits, ownership and rollback
 
-No parser allocates memory or retains packet pointers. NetFX is copied into
+No wire parser allocates memory or retains packet pointers. The separate costume
+dictionary loader deep-copies an admitted import into one allocation. NetFX is copied into
 `CohEntRecord` as bounded unresolved event metadata. The existing list inspection
 API does not retain per-record event lists; a future complete transaction owner
 must explicitly retain them before publishing or executing any effects. List
@@ -81,6 +86,12 @@ unspecified and must never be published. On the current 64-bit ABI:
 - 256-slot caller table: 921,600 bytes.
 - `CohEntListWorkspace`: 922,624 bytes.
 - Table plus scratch: 1,844,224 bytes, excluding packet and caller metadata.
+- `CohEntCostume`: 49,008 bytes; its separate workspace: 80,920 bytes.
+- `CohEntCustomCostume`: 16,904 bytes; one bounded local candidate during parsing.
+- `CohEntCostumeEnvelope`: 692,064 bytes; separate workspace: 772,984 bytes.
+- Immutable costume dictionary: at most 4,194,304 bytes, including slot tables,
+  palette, strings and owner metadata. A generation swap retaining the old owner
+  may temporarily require two dictionaries; see `COSTUME_IMPORT_CONTRACT.md`.
 
 Allocate the table and scratch on the heap, arena or static owner, never the
 Android thread stack. Query `sizeof` on the target ABI. Record-local temporaries
@@ -104,7 +115,7 @@ state together through `coh_ent_slot_init`.
 
 ## Source oracles and evidence
 
-`check.py` pins 23 original files imported at
+`check.py` pins 29 original files imported at
 `0b75ade0c801735e10c5798f641948a45cc50488`. It compiles unchanged original BitStream
 functions, create/pet/position/quaternion/sequence/AI/delete/costume/target and
 inventory producers. Exact original `ParserSend`, `sdPackStruct`, scalar/struct
@@ -114,9 +125,18 @@ Original quaternion consumption remains independently compared. Original
 `entSendNetFx` and `entReceiveNetFx` independently verify all event fields, both
 origin/target modes, forced/incremental source filtering and zero counts.
 
-`oracle_shim.h` and `stats_oracle_shim.h` adapt deterministic synthetic engine
+`oracle_shim.h`, `stats_oracle_shim.h` and `costume_oracle_shim.h` adapt deterministic synthetic engine
 objects/storage. Unsupported engine callbacks abort. Original NPC/sequence
-costume producer paths are executed; full/owned costume paths are not. Target
+costume producer paths are executed. The separate costume oracle executes the
+unchanged raw `costume_send`/`costume_receive` and
+`NPCcostume_send`/`NPCcostume_receive` producer/consumer pairs, including original
+cached/indexed string and color functions. It compares all 30 scales, all 72
+supergroup color words, part strings/colors and body metadata in both wire
+alignment modes. The outer appearance producer `entSendCostume`, consumer
+`entReceiveCostume` and both original reward functions now execute independently
+as well. Fixture storage/menu/render adapters provide deterministic destinations
+and side effects; runtime costume application, deferred scheduling, FX
+canonicalization and resource lookup are not qualified. Target
 and inventory fixtures execute complete original component producers. Status
 strings are manual source-layout fixtures, not executed original status
 producers/consumers. Complete supported record/list fixtures compose original
@@ -126,7 +146,9 @@ server traffic.
 
 Tests include every-bit truncation/rollback, malformed and duplicate fields,
 negative statistics, per-field stale packets, tombstones, ownership conflicts,
-and 20,000 randomized bodies. Release, ASan and UBSan run the same native tests.
+and 25,000 randomized bodies. Costume tests include immutable dictionary copies,
+generation mismatches, sparse holes, cache underflow, invalid indexed references,
+nonfinite scales and aggregate dictionary budget refusal. Release, ASan and UBSan run the same native tests.
 The historical source oracle runs trusted padded inputs at `-O0` outside
 sanitizers; LeakSanitizer is disabled because sandbox `/proc` walking is
 unavailable. Cross-build receipts are not emulator or physical acceptance.
@@ -136,6 +158,13 @@ python native-android/engine/entities/check.py --source-root . --sanitize \
   --fixtures-output /tmp/entities-fixtures.h --output /tmp/entities-host.json \
   --ndk /path/to/android-ndk-r28c --android-output /tmp/entities-android
 ```
+
+Generated fixtures require both the requested fixture header and its sibling
+`costume_fixtures.h`; the checker copies both into the Android output directory.
+No authentic costume dictionary has been captured. The load API compares a
+supplied generation and manifest identity; it does not calculate a capture
+digest or authenticate that identity. See `COSTUME_IMPORT_CONTRACT.md` for the
+external verification prerequisite and unresolved asset boundaries.
 
 See `INITIAL_UPDATE_CLOSURE.md` for precise remaining source-ordered branches and
 actor admission rules. Rollback is reverting this additive module change; no

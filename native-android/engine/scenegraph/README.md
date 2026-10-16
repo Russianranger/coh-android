@@ -169,3 +169,56 @@ claim Android emulator execution or physical Thor acceptance. This continuation
 host has no CMake/CTest or Android NDK executable, so the direct compiler driver
 is qualified locally; CMake and Android builds/execution remain hosted gates. Existing Combined
 0.1.7 bytes remain unchanged; the new module is not linked into that APK.
+
+## Original definition metadata boundary
+
+`coh_scene_metadata.h` adds allocation-free, transactional inspection of a
+validated graph's **complete retained original definition body**. It returns a
+caller-owned value with scene/asset generation, original file/slot identity,
+raw LOD/fade/collision/tracker flags, light/fog/tint colors, cubemap settings,
+sound fields, volume/beacon values, texture names, alpha, geometry identity,
+swap count, gameplay hiding and a bounded property span. It verifies exact
+record consumption, finite scalars, identity and explicit geometry/texture/swap
+agreement; output stays unchanged on failure. Missing original wire records
+reject instead of inferring metadata from an offline catalog.
+
+Properties remain borrowed views over the immutable graph's owned wire bytes.
+`coh_scenegraph_property_begin` and `coh_scenegraph_property_next` copy one
+bounded property into caller-owned storage (64-byte name, at most 4,095 value
+bytes plus terminator). Cursor and output commit together. These APIs retain
+wire order and duplicates and do not claim original stash-table insertion or
+replacement semantics. Retain the graph until property iteration completes.
+All metadata/property preparation belongs off the render thread; account for
+caller output/workspace in external memory reservations. No per-definition
+allocation or graph-layout expansion was added, so stress ownership is unchanged.
+
+The parser preserves `receiveDef`'s **raw wire conventions before client fixups**:
+absent values are zero, light then fog then tint writes overwrite the same
+color buffer in source order, tint writes only RGB and preserves alpha bytes,
+`has_alpha` remains distinct from an alpha value of zero, and empty sound-script
+names remain empty. It does not guess the meaning of a zero LOD distance or
+convert byte colors into renderer-ready lighting.
+
+`unresolved_requirements` deliberately records remaining adapter obligations.
+Every live definition requires bounds/LOD qualification; geometry also requires
+original model/trick qualification. Textures, composite swaps, properties
+(including `TexWordLayout`/parameters), type-dependent FX, lighting, fog,
+cubemaps, sound, volumes, beacons and visibility each retain explicit obligations
+when present. A successful metadata read does not clear any of these obligations,
+validate asset bytes, pin a loader generation or authorize rendering. Those steps
+still require exact original loader/material/bounds behavior on the captured
+asset generation. In particular, `setClientFlags`, `getGeo`, `groupSetTrickFlags`,
+`groupSetDrawInfo`, `groupSetBounds` and `groupSetVisBounds` are not executed here.
+
+Fourteen packed/aligned fixtures execute **unchanged original `sendDef`**, then
+independently read the source `GroupDef` fields to compare 50 scalar fields,
+seven strings and eight color bytes. They cover all transmitted metadata
+branches, default/empty cases, ambient-only/light-only data, zero optional
+values, empty sound-script names and a `TexWordLayout` property. The original
+`receiveDef` source is hash-pinned and audited, **not executed by this oracle**.
+The metadata controls add 34,710 checks, including 33,623 every-bit truncations,
+property end/rollback, generation/identity refusal, and the existing 1,023-byte
+property fixture. Release, ASan and UBSan each pass **159,514 total checks**;
+see `evidence/metadata-qualification.json`. Android execution remains a separate
+hosted gate. Host GCC `-O2 -fstack-usage` reports 7,024 bytes for metadata decoding
+and 4,272 bytes for property iteration, with no recursion or allocation.

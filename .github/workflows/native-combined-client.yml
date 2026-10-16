@@ -8,6 +8,8 @@ on:
       - "!native-android/combined-client/tools/analyze_startup_resources.py"
       - "!native-android/combined-client/tools/test_startup_resources.py"
       - "!native-android/combined-client/tools/bench_startup_console.py"
+      - "!native-android/combined-client/tools/read_startup_receipts.py"
+      - "!native-android/combined-client/tools/test_startup_receipts.py"
       - native-android/engine/local/**
       - .github/workflows/native-combined-client.yml
   workflow_dispatch:

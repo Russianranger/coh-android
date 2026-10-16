@@ -1,0 +1,15 @@
+{
+  "schema": "coh-catalog-hosted-diagnostics-controls-v1",
+  "passed": true,
+  "tests": 23,
+  "source_sha256": {
+    "capture_disposable.py": "fddad8c870105e848683e6d44d317fcdc6a320c4373087c09b055fbb5b460a54",
+    "test_capture_disposable.py": "63e0a435e478d1db40c6a5823de7a5586af260510b82dd703208d937484da4de"
+  },
+  "original_driver_validator_reused": true,
+  "hosted_followup_executed": false,
+  "catalog_captured": false,
+  "apk_changed": false,
+  "new_server_binary_built": false,
+  "changes": "Wine Windows ODBC floor; retained donor probe; observed registration; read-only bounded failure diagnostics"
+}

@@ -16,7 +16,7 @@ Checkpoint: additive entity continuation from remote
 | 5 | sequence movement | Supported numeric sequence/tick/bits; no resolved animation resource |
 | 6 | triggered moves and AI animation list | Bounded metadata; no FX execution |
 | 7 | pchar flag and NetFX flag | Complete bounded NetFX event grammar supported; event handles/resources remain unresolved, list inspection does not retain events |
-| 8 | costume and translucency | NPC index and sequence-name references supported; entire, owned and custom NPC costumes unsupported |
+| 8 | costume and translucency | NPC index and sequence-name references supported. Complete appearance wire envelope and raw full/owned/custom bodies source-qualified standalone, including rewards/multiple/super/FX/NPC fallthrough. Entity records still reject these variants pending dictionary capture, complete transaction ownership and semantic state composition |
 | 9 | power customization and titles if very rare | Unsupported |
 | 10 | ragdoll | Bounded scalar consumption; not skeleton-qualified publication |
 | 11 | basic character stats if pchar | Complete pinned basic absolute non-debug schema supported |
@@ -82,9 +82,15 @@ Unknown data must never be skipped by scanning for a plausible later sentinel.
 
 First close complete **selected self create**, then the global initial tail:
 
-1. Import/version the exact costume string dictionaries and body-part metadata;
-   implement original cached indexed strings/colors, full costume/rewards/
-   fallthrough, and power customization. Consume through read-only additive
+1. Capture/import the exact costume string/color stash slots and source body-part
+   metadata through the new bounded versioned dictionary contract. Raw costume
+   bodies, cached/indexed string/color grammar and the complete original outer
+   appearance envelope are now source-qualified standalone. Compose those wire
+   events into the complete entity transaction: packet order, prior costume
+   ownership, deferred intent, optional-field retain/clear rules and generation
+   lifetimes. Add power customization and very-rare titles. Preserve every
+   candidate costume event across the complete record under an explicit aggregate
+   budget; do not embed the large envelope in every slot. Consume through read-only additive
    contracts with gameplay appearance ownership; do not edit its internals.
 2. Retain/resolve staged NetFX events and implement the entire very-rare per-entity stream, plus interpolation
    and buffs encountered by the actual source profile. Independent original

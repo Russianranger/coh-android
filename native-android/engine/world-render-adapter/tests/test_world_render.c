@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 static unsigned checks;
 #define CHECK(x) do { ++checks; if (!(x)) { fprintf(stderr,"line %d: %s\n",__LINE__,#x); exit(1); } } while(0)
@@ -308,9 +309,18 @@ static void renderer_and_original_matrix(void) {
     coh_renderer_destroy(renderer); CHECK(coh_wr_budget_destroy(b)==COH_OK);
 }
 
-typedef struct { CohWrMailbox *mailbox; atomic_uint failed,reads; atomic_int stop; } Concurrent;
+typedef struct {
+    CohWrMailbox *mailbox;
+    atomic_uint failed,reads;
+    atomic_int stop;
+    atomic_uint_fast64_t observed[3];
+    pthread_mutex_t observation_mutex;
+    pthread_cond_t observation_condition;
+} Concurrent;
+typedef struct { Concurrent *concurrent; unsigned index; } Reader;
 static void *read_thread(void *p) {
-    Concurrent *c=p;
+    Reader *reader=p;
+    Concurrent *c=reader->concurrent;
     uint64_t last=0;
     while(!atomic_load(&c->stop)) {
         CohWrSnapshot *s=NULL;
@@ -320,10 +330,35 @@ static void *read_thread(void *p) {
             const CohWrActor *a=coh_wr_actor(s);
             if(r->snapshot<last || (uint64_t)a->position[0]!=r->snapshot || a->dbid!=r->selected_dbid)
                 atomic_store(&c->failed,1);
-            last=r->snapshot; atomic_fetch_add(&c->reads,1); coh_wr_release(s);
+            last=r->snapshot; atomic_fetch_add(&c->reads,1);
+            atomic_store(&c->observed[reader->index],last);
+            coh_wr_release(s);
+            pthread_mutex_lock(&c->observation_mutex);
+            pthread_cond_broadcast(&c->observation_condition);
+            pthread_mutex_unlock(&c->observation_mutex);
         } else if(status!=COH_NOT_FOUND) atomic_store(&c->failed,1);
     }
     return NULL;
+}
+/* Readers must actually run before the producer can finish. Checkpoints every
+ * 128 publications preserve independently racing readers/writer between them;
+ * this is not a serialized one-publish/one-read test. A bounded wait diagnoses
+ * scheduling/no-progress separately from immutable-state consistency errors. */
+static int wait_for_readers(Concurrent *c,uint64_t target) {
+    struct timespec deadline={time(NULL)+10,0};
+    int status=0,complete;
+    pthread_mutex_lock(&c->observation_mutex);
+    do {
+        complete=1;
+        for(unsigned i=0;i<3;++i) if(atomic_load(&c->observed[i])<target) complete=0;
+        if(!complete) status=pthread_cond_timedwait(&c->observation_condition,&c->observation_mutex,&deadline);
+    } while(!complete && status==0);
+    pthread_mutex_unlock(&c->observation_mutex);
+    if(status) fprintf(stderr,"reader observation timeout: target=%llu, reads=%u, consistency_failure=%u, observed=%llu/%llu/%llu\n",
+        (unsigned long long)target,atomic_load(&c->reads),atomic_load(&c->failed),
+        (unsigned long long)atomic_load(&c->observed[0]),(unsigned long long)atomic_load(&c->observed[1]),
+        (unsigned long long)atomic_load(&c->observed[2]));
+    return status==0;
 }
 static void concurrent_publication(void) {
     CohWrBudget *b=NULL;
@@ -331,21 +366,33 @@ static void concurrent_publication(void) {
     CohWrSnapshot *s=NULL;
     Fixture f;
     Concurrent c;
+    Reader readers[3];
     pthread_t threads[3];
     unsigned i;
     CHECK(coh_wr_budget_create(8*1024*1024,0,&b)==COH_OK);
     CHECK(coh_wr_mailbox_create(b,&m)==COH_OK);
     c.mailbox=m; atomic_init(&c.failed,0); atomic_init(&c.reads,0); atomic_init(&c.stop,0);
-    for(i=0;i<3;++i) CHECK(pthread_create(threads+i,NULL,read_thread,&c)==0);
+    CHECK(pthread_mutex_init(&c.observation_mutex,NULL)==0);
+    CHECK(pthread_cond_init(&c.observation_condition,NULL)==0);
+    for(i=0;i<3;++i) {
+        atomic_init(&c.observed[i],0); readers[i]=(Reader){&c,i};
+        CHECK(pthread_create(threads+i,NULL,read_thread,readers+i)==0);
+    }
     for(i=1;i<=2000;++i) {
         fixture(&f,i); f.input.player.position[0]=(float)i;
         CHECK(coh_wr_prepare_fixture(&f.input,b,never,&s)==COH_OK);
         CHECK(coh_wr_publish(m,s)==COH_OK); coh_wr_release(s);
         if(i%10==0) coh_wr_collect(b);
+        if(i==1 || i%128==0 || i==2000) CHECK(wait_for_readers(&c,i));
     }
     atomic_store(&c.stop,1);
     for(i=0;i<3;++i) CHECK(pthread_join(threads[i],NULL)==0);
-    CHECK(!atomic_load(&c.failed) && atomic_load(&c.reads)>0);
+    if(atomic_load(&c.failed)) fprintf(stderr,"immutable publication consistency failure; reads=%u\n",atomic_load(&c.reads));
+    CHECK(!atomic_load(&c.failed));
+    CHECK(atomic_load(&c.reads)>=3);
+    for(i=0;i<3;++i) CHECK(atomic_load(&c.observed[i])==2000);
+    CHECK(pthread_cond_destroy(&c.observation_condition)==0);
+    CHECK(pthread_mutex_destroy(&c.observation_mutex)==0);
     coh_wr_mailbox_destroy(m); coh_wr_collect(b); CHECK(coh_wr_budget_destroy(b)==COH_OK);
 }
 

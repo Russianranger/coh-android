@@ -1,0 +1,295 @@
+{
+  "schema": "coh-auth-deployment-qualification-v1",
+  "passed": true,
+  "metadata_tests": {
+    "passed": true,
+    "runner_log": "test_all_parameter_fields_are_checked (test_deployment.MetadataTests.test_all_parameter_fields_are_checked) ... ok\ntest_all_required_columns_are_checked (test_deployment.MetadataTests.test_all_required_columns_are_checked) ... ok\ntest_duplicate_json_nonfinite_invalid_and_oversized (test_deployment.MetadataTests.test_duplicate_json_nonfinite_invalid_and_oversized) ... ok\ntest_duplicates_aliases_unexpected_fields_and_secrets_reject (test_deployment.MetadataTests.test_duplicates_aliases_unexpected_fields_and_secrets_reject) ... ok\ntest_exact_binding_fixture_is_only_metadata (test_deployment.MetadataTests.test_exact_binding_fixture_is_only_metadata) ... ok\ntest_existing_2019_schema_needs_driver_conversion_test (test_deployment.MetadataTests.test_existing_2019_schema_needs_driver_conversion_test) ... ok\ntest_legacy_eleven_parameter_procedure_fails (test_deployment.MetadataTests.test_legacy_eleven_parameter_procedure_fails) ... ok\ntest_metadata_query_does_not_read_account_rows_or_execute_procedures (test_deployment.MetadataTests.test_metadata_query_does_not_read_account_rows_or_execute_procedures) ... ok\ntest_missing_metadata_does_not_succeed (test_deployment.MetadataTests.test_missing_metadata_does_not_succeed) ... ok\ntest_source_sql_signatures_handle_comments_and_datetime_scale (test_deployment.MetadataTests.test_source_sql_signatures_handle_comments_and_datetime_scale) ... ok\ntest_types_bool_integer_and_limits (test_deployment.MetadataTests.test_types_bool_integer_and_limits) ... ok\ntest_utf16_schema_and_lf_normalization (test_deployment.MetadataTests.test_utf16_schema_and_lf_normalization) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.046s\n\nOK\n"
+  },
+  "source_audit": {
+    "schema": "coh-auth-deployment-source-audit-v1",
+    "source_pins_verified": true,
+    "source_identities": {
+      "upstream/ouroboros/AuthServer/src/Account.cpp": {
+        "sha256": "3e959ac3aa3fcef281fecdf8104c5da297c1b216a7c2553a3d33c4ee15c097d5",
+        "sha256_utf8_lf": "3e959ac3aa3fcef281fecdf8104c5da297c1b216a7c2553a3d33c4ee15c097d5",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/AccountDB.cpp": {
+        "sha256": "b00306c11f77fdce7d02ba07202ee6bb7ca963f3ceca66731e22ae6b5c34d9bd",
+        "sha256_utf8_lf": "b00306c11f77fdce7d02ba07202ee6bb7ca963f3ceca66731e22ae6b5c34d9bd",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/ServerList.cpp": {
+        "sha256": "17ec8216324d817fb38691ecbcf96fd161592a4799935ee562a5c37d590ecd7a",
+        "sha256_utf8_lf": "17ec8216324d817fb38691ecbcf96fd161592a4799935ee562a5c37d590ecd7a",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/Config.cpp": {
+        "sha256": "07e090aeab0911ecec950109c1bdfc49bda8532e818dd005f4d091fea0898ff0",
+        "sha256_utf8_lf": "07e090aeab0911ecec950109c1bdfc49bda8532e818dd005f4d091fea0898ff0",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/Common/ClientLogin/clientcommLogin.c": {
+        "sha256": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+        "sha256_utf8_lf": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/DBServer/src/clientcomm.c": {
+        "sha256": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+        "sha256_utf8_lf": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/Auth_DB_account_procedures.sql": {
+        "sha256": "588330419abf37602ba05eb73320a509ec39e1f83b1d8d44d0e6c719f5c1ff76",
+        "sha256_utf8_lf": "588330419abf37602ba05eb73320a509ec39e1f83b1d8d44d0e6c719f5c1ff76",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/Auth_DB_objects.sql": {
+        "sha256": "305a8d76cd9298b2a7d7c6095a745816153042eec912c389d9c8e2cb9036fe8f",
+        "sha256_utf8_lf": "cf1d4e0f292882f366c522853ea426ab884174a2a5a27a8692037ee0ee0799f0",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/Auth_DB_objects_additional.sql": {
+        "sha256": "6ef71179e32703d40bb8d92c37fc22525102d0eebe3ba192894ae90c39f47326",
+        "sha256_utf8_lf": "6ef71179e32703d40bb8d92c37fc22525102d0eebe3ba192894ae90c39f47326",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/Auth_DB_procedures_additional.sql": {
+        "sha256": "238676f86d556dd3204a4597e016bce5b7d8e57005751db9f5d2d2ebcb63f058",
+        "sha256_utf8_lf": "238676f86d556dd3204a4597e016bce5b7d8e57005751db9f5d2d2ebcb63f058",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/Auth_DB_triggers.sql": {
+        "sha256": "81feda1c0216834f6e7ecfade87d7a04582b8c740ef666f5cc861530af2502f3",
+        "sha256_utf8_lf": "81feda1c0216834f6e7ecfade87d7a04582b8c740ef666f5cc861530af2502f3",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/patch_1.sql": {
+        "sha256": "21548bc60dae5d60769155c4bacc21f669c4dc54dd637f07d1f0aa3f95088916",
+        "sha256_utf8_lf": "21548bc60dae5d60769155c4bacc21f669c4dc54dd637f07d1f0aa3f95088916",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/patch_2.sql": {
+        "sha256": "e0f3dec1e84f58d4d8ef2c664ee1722d04e2a76a1870059ee59d9a9628f15b5d",
+        "sha256_utf8_lf": "e0f3dec1e84f58d4d8ef2c664ee1722d04e2a76a1870059ee59d9a9628f15b5d",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/patch_3.sql": {
+        "sha256": "65eb2fc1d12992d7021232f6a51640e1ffa60e44c0b8ce4247d3edeb12f7f5ca",
+        "sha256_utf8_lf": "65eb2fc1d12992d7021232f6a51640e1ffa60e44c0b8ce4247d3edeb12f7f5ca",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/patch_4.sql": {
+        "sha256": "aaa3289d2db1d0e963e984ce33cb1a2f32e33fb748842eea8d45c70d2a6672cd",
+        "sha256_utf8_lf": "aaa3289d2db1d0e963e984ce33cb1a2f32e33fb748842eea8d45c70d2a6672cd",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/patch_5.sql": {
+        "sha256": "8081189ab4bdb908f87e3735133faeaf903bb774b1c9f37ffe86e37f8ae43138",
+        "sha256_utf8_lf": "8081189ab4bdb908f87e3735133faeaf903bb774b1c9f37ffe86e37f8ae43138",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/patch_6.sql": {
+        "sha256": "da30bb688b128305e360d86d65c4cd98797b8c0d8d0e8699d0d51a112c393eb9",
+        "sha256_utf8_lf": "da30bb688b128305e360d86d65c4cd98797b8c0d8d0e8699d0d51a112c393eb9",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/patch_7.sql": {
+        "sha256": "7621c3c4760d54b332bbfd370113cb754180febe826f7941fa7d453d9a49af20",
+        "sha256_utf8_lf": "7621c3c4760d54b332bbfd370113cb754180febe826f7941fa7d453d9a49af20",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/AuthServer/src/schema/patch_8.sql": {
+        "sha256": "aec460cf0c4517479603eec5bf997b4aad252cf283b66fef2d4ac75b551727cf",
+        "sha256_utf8_lf": "aec460cf0c4517479603eec5bf997b4aad252cf283b66fef2d4ac75b551727cf",
+        "read_from": "source_file"
+      },
+      "upstream/ouroboros/Assets/DBSchemas/cohauth.sql": {
+        "sha256": "d18756ba04f9f16d40a5f6d55772d19ed430a6438316327aa51fde818a349cbf",
+        "sha256_utf8_lf": "d18756ba04f9f16d40a5f6d55772d19ed430a6438316327aa51fde818a349cbf",
+        "read_from": "source_file"
+      }
+    },
+    "odbc_contracts": {
+      "ap_GPwd": {
+        "source_call_parameters": 4,
+        "bound_parameter_ordinals": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "checked_in_declarations": [
+          {
+            "source": "upstream/ouroboros/AuthServer/src/schema/patch_2.sql",
+            "parameter_count": 4,
+            "matches_source_binding_without_type_conversion": true,
+            "types": [
+              "varchar",
+              "binary",
+              "tinyint",
+              "int"
+            ],
+            "datetime2_scales": []
+          },
+          {
+            "source": "upstream/ouroboros/Assets/DBSchemas/cohauth.sql",
+            "parameter_count": 4,
+            "matches_source_binding_without_type_conversion": false,
+            "types": [
+              "varchar",
+              "binary",
+              "int",
+              "int"
+            ],
+            "datetime2_scales": []
+          }
+        ]
+      },
+      "ap_GStat": {
+        "source_call_parameters": 13,
+        "bound_parameter_ordinals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "checked_in_declarations": [
+          {
+            "source": "upstream/ouroboros/AuthServer/src/schema/patch_2.sql",
+            "parameter_count": 11,
+            "matches_source_binding_without_type_conversion": false,
+            "types": [
+              "varchar",
+              "int",
+              "int",
+              "int",
+              "int",
+              "int",
+              "int",
+              "int",
+              "tinyint",
+              "datetime",
+              "int"
+            ],
+            "datetime2_scales": []
+          },
+          {
+            "source": "upstream/ouroboros/Assets/DBSchemas/cohauth.sql",
+            "parameter_count": 13,
+            "matches_source_binding_without_type_conversion": false,
+            "types": [
+              "varchar",
+              "int",
+              "int",
+              "int",
+              "int",
+              "int",
+              "int",
+              "int",
+              "tinyint",
+              "datetime2",
+              "int",
+              "int",
+              "int"
+            ],
+            "datetime2_scales": [
+              3
+            ]
+          }
+        ]
+      },
+      "get_server_groups": {
+        "source_call_parameters": 1,
+        "bound_parameter_ordinals": [
+          1
+        ],
+        "checked_in_declarations": [
+          {
+            "source": "upstream/ouroboros/AuthServer/src/schema/patch_5.sql",
+            "parameter_count": 1,
+            "matches_source_binding_without_type_conversion": true,
+            "types": [
+              "int"
+            ],
+            "datetime2_scales": []
+          },
+          {
+            "source": "upstream/ouroboros/Assets/DBSchemas/cohauth.sql",
+            "parameter_count": 1,
+            "matches_source_binding_without_type_conversion": true,
+            "types": [
+              "int"
+            ],
+            "datetime2_scales": []
+          }
+        ]
+      }
+    },
+    "checked_in_gstat_has_full_parameter_count": true,
+    "checked_in_gstat_matches_binding_without_conversion": false,
+    "loyalty_referenced_in_checked_in_schema": true,
+    "checksum_generated_objects": {
+      "32": {
+        "pointer_bytes": 4,
+        "checksum_array_bytes": 16,
+        "source_sha256": "53f711bb2e30aef95e56567d82fdc9175b28456d4bb7ad65d106e00813ab46ed",
+        "object_sha256": "dff17bd50da3f2f5944bf0e1aa157db1a1a70d8c2471bf5238430c36355eeea5",
+        "text_hex": "31c0c3",
+        "undefined_symbols": 0,
+        "generated_function_always_returns_zero": true,
+        "executed": false,
+        "deployed_binary_inspected": false
+      },
+      "64": {
+        "pointer_bytes": 8,
+        "checksum_array_bytes": 16,
+        "source_sha256": "c7941009a05e54509010ab03cc51fe05f75e98386e9f2db25cf780070e047ddf",
+        "object_sha256": "e8d5b7101d01b46d6312ba581f0c7bb0a341e49232c3f59e7b3eafb989db9890",
+        "text_hex": "f30f1efa31c0c3",
+        "undefined_symbols": 0,
+        "generated_function_always_returns_zero": true,
+        "executed": false,
+        "deployed_binary_inspected": false
+      }
+    },
+    "checksum_original_function_sha256": "1c84209510b34ce36b4db844d442808d603e60dc041f3c0ee470c54fd558b103",
+    "checksum_source_repaired": false,
+    "deployed_binary_inspected": false,
+    "real_account_login_verified": false,
+    "native_live_world": false
+  },
+  "sql_executed": false,
+  "schema_changed": false,
+  "real_account_login_verified": false,
+  "native_live_world": false,
+  "physical_thor_accepted": false,
+  "environment_tools_available": {
+    "wine": false,
+    "wine64": false,
+    "sqlcmd": false,
+    "odbcinst": false,
+    "cc": true,
+    "objcopy": true,
+    "nm": true
+  },
+  "network_connections_opened": false,
+  "process_or_listener_probing": false,
+  "source_sha256": {
+    "admit_schema.py": "c7cf7424233be085926fc0022bbb6e4b7d21bc4b9484a6d08687d2bf55ddf686",
+    "check.py": "ee328abf4f00b4efbac38acafa8d1c7eadfbdd8c3cf4c34e10c5603a38c3559b",
+    "inspect_schema.sql": "44a573a17800b96990a9a52850b15623336ad304046ddeb41d7b424cb830e0dc",
+    "source-pins.json": "04bc4687664fdf9655680d17943cb49750f1fcb9b1d8b72f05be14e52ab08a30",
+    "source_audit.py": "bb654d46403100cc34953af9cb89e70f8735e1dd328cde93dd50b86538bb1e1f",
+    "test_deployment.py": "5d4270727423473b8fe64ced4041fd40f54feed56f9e438e18ebeeb9f6f22b79"
+  }
+}

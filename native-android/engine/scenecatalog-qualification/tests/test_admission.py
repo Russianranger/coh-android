@@ -1,6 +1,7 @@
 """Malformed or mixed evidence must fail before the Android runner is used."""
 from pathlib import Path
 import copy
+import json
 import struct
 import subprocess
 import sys
@@ -32,10 +33,17 @@ class ArtifactAdmission(unittest.TestCase):
             fixture_path.parent.mkdir(parents=True, exist_ok=True)
             fixture_path.write_text("/* exact original-source fixture bytes */\n")
             fixture = {"path": fixture_path.relative_to(self.root).as_posix(), "sha256": digest(fixture_path)}
+            costume = None
+            extra = {}
+            if module == "entities":
+                path = self.root / module / "costume_fixtures.h"
+                path.write_text("/* original costume fixture */\n")
+                costume = {"path": path.relative_to(self.root).as_posix(), "sha256": digest(path)}
+                extra["costume_fixtures_sha256"] = costume["sha256"]
             host = self.root / module / "host.json"
-            write(host, {"passed": True, "fixtures": 4, "fixtures_sha256": fixture["sha256"],
+            write(host, {**extra, "passed": True, "fixtures": 4, "fixtures_sha256": fixture["sha256"],
                 "source_sha256": sources, "checks": {mode: result for mode in ("release", "asan", "ubsan")}})
-            suite = {"expected": result, "abis": {}, "fixture": fixture, "source_sha256": sources,
+            suite = {"expected": result, "abis": {}, "fixture": fixture, "costume_fixture": costume, "source_sha256": sources,
                 "host_receipt": host.relative_to(self.root).as_posix(), "host_receipt_sha256": digest(host)}
             for abi, machine in ABIS.items():
                 folder = self.root / module / abi
@@ -46,7 +54,7 @@ class ArtifactAdmission(unittest.TestCase):
                 struct.pack_into("<HHI", header, 16, 3, machine, 1)
                 binary.write_bytes(header)
                 receipt = folder / "receipt.json"
-                write(receipt, {"passed": True, "abi": abi, "binary": binary.name,
+                write(receipt, {**extra, "passed": True, "abi": abi, "binary": binary.name,
                     "binary_sha256": digest(binary), "fixtures_sha256": fixture["sha256"],
                     "source_sha256": sources, "executed": False})
                 suite["abis"][abi] = {"abi": abi, "binary": binary.relative_to(self.root).as_posix(),
@@ -64,6 +72,31 @@ class ArtifactAdmission(unittest.TestCase):
         receipt[field] = value
         write(path, receipt)
         item["receipt_sha256"] = digest(path)
+
+    def test_costume_fixture_required_and_bound_to_both_abis(self):
+        suite = self.manifest["suites"]["entities"]
+        costume = suite["costume_fixture"]
+        for mode in ("missing", "tampered", "unexecuted_abi"):
+            with self.subTest(mode=mode):
+                value = copy.deepcopy(self.manifest)
+                target = self.root / costume["path"]
+                old = target.read_bytes()
+                descriptor = value["suites"]["entities"]["abis"]["arm64-v8a"]
+                receipt_path = self.root / descriptor["receipt"]
+                old_receipt = receipt_path.read_bytes()
+                if mode == "missing":
+                    del value["suites"]["entities"]["costume_fixture"]
+                elif mode == "tampered":
+                    target.write_bytes(b"tampered")
+                else:
+                    data = json.loads(old_receipt)
+                    data["costume_fixtures_sha256"] = "0" * 64
+                    write(receipt_path, data)
+                    descriptor["receipt_sha256"] = digest(receipt_path)
+                with self.assertRaises(ValueError):
+                    validate(self.root, value, "x86_64")
+                target.write_bytes(old)
+                receipt_path.write_bytes(old_receipt)
 
     def test_complete_manifest_both_abis(self):
         for abi in ABIS:

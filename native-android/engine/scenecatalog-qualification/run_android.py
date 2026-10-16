@@ -54,6 +54,15 @@ def validate(root, manifest, abi):
         if (fixture_path.name != FIXTURES[name] or digest(fixture_path) != hash_value(fixture.get("sha256"))
                 or host.get("fixtures_sha256") != fixture["sha256"]):
             raise ValueError("Preserved fixture differs from its source oracle: " + name)
+        costume = suite.get("costume_fixture")
+        if name == "entities":
+            mapping(costume, "Original costume fixture")
+            path = child(root, costume.get("path"))
+            if (path.name != "costume_fixtures.h" or digest(path) != hash_value(costume.get("sha256"))
+                    or host.get("costume_fixtures_sha256") != costume["sha256"]):
+                raise ValueError("Costume fixture differs from original host oracle")
+        elif costume is not None:
+            raise ValueError("Unexpected costume fixture")
         for built_abi in ABIS:
             item = mapping(suite["abis"][built_abi], "ABI artifact")
             binary, receipt_path = child(root, item.get("binary")), child(root, item.get("receipt"))
@@ -66,6 +75,8 @@ def validate(root, manifest, abi):
             elf_identity(binary, built_abi)
             receipt = mapping(read(receipt_path), "Build receipt")
             reject_compile_claims(receipt)
+            if costume and receipt.get("costume_fixtures_sha256") != costume["sha256"]:
+                raise ValueError("Both ABI costume fixtures must match original oracle")
             if (receipt.get("passed") is not True or receipt.get("abi") != built_abi
                     or receipt.get("binary") != binary.name
                     or receipt.get("binary_sha256") != item["sha256"]

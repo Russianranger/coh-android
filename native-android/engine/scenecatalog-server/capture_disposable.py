@@ -46,7 +46,8 @@ SOURCE_PATHS = ('native-android/engine/scenecatalog-server/capture_disposable.py
                 'tools/android/interactive/qualify_minimal_db_runtime.py',
                 'database/postgresql/pg_local.py', 'database/postgresql/001-coh-compat.sql',
                 'android/guest/dbserver_diagnostic.py', 'android/guest/game_diagnostic.py',
-                'android/guest/game_evidence.py',
+                'android/guest/game_evidence.py', 'android/guest/diagnostic.py',
+                'android/native/runtime-probe.c',
                 'tools/package_reference_runtime.py')
 
 
@@ -108,20 +109,57 @@ def fixture_modules():
             importlib.import_module('pg_local'), importlib.import_module('package_reference_runtime'))
 
 
-def dispatch_ready(progress, stages):
+def wine_version(raw):
+    value = raw.decode('ascii').strip()
+    match = re.fullmatch(r'wine-(\d+)\.(\d+)(?:\.\d+)?(?: \([^\r\n]{1,160}\))?', value)
+    d.require(match is not None, 'WINE_VERSION')
+    # Wine 9.0 forwards all ODBC through Unix libodbc. Windows driver support
+    # entered upstream in 9.13. This is a necessary floor, not qualification.
+    d.require(tuple(map(int, match.groups())) >= (9, 13), 'WINE_WINDOWS_ODBC_UNSUPPORTED')
+    return value
+
+
+def dispatch_snapshot(progress, stages):
     if not progress.exists():
-        return False
+        return {'present': False, 'stable': False}
     d.require(progress.is_file() and not progress.is_symlink() and progress.stat().st_size == 4096, 'DISPATCH_FILE')
     with progress.open('rb') as stream:
         first = stream.read(128); stream.seek(0); second = stream.read(128)
     if first != second or len(first) != 128:
-        return False
+        return {'present': True, 'stable': False}
     magic, version, size, pid, tid, seq, stage, loops, flags, count = struct.unpack_from('<8s9I', first)
     if seq == 0 or seq & 1:
-        return False
+        return {'present': True, 'stable': False}
     d.require(magic == b'COHDBP1\0' and version == 1 and size == 128 and pid > 0 and tid > 0
               and str(stage) in stages and count == len(stages) and flags == 0 and not any(first[44:]), 'DISPATCH')
-    return loops > 0
+    return {'present': True, 'stable': True, 'process_id': pid, 'thread_id': tid,
+            'sequence': seq, 'stage': stage, 'stage_name': stages[str(stage)], 'loop_count': loops}
+
+
+def dispatch_ready(progress, stages):
+    return dispatch_snapshot(progress, stages).get('loop_count', 0) > 0
+
+
+def postgres_activity(cluster):
+    """Read only private aggregate counts; never retain statements or values."""
+    database = cluster.meta['database']
+    d.require(re.fullmatch('[a-z][a-z0-9_]{0,47}', database) is not None, 'PG_DATABASE')
+    query = """SELECT json_build_object('sessions',count(*),'active',
+count(*) FILTER(WHERE state='active'),'waiting_locks',count(*) FILTER(WHERE wait_event_type='Lock'),
+'schema_ddl',count(*) FILTER(WHERE query ~* '^(create|alter|drop)'))
+FROM pg_stat_activity WHERE usename='coh_game' AND datname='%s';""" % database
+    env = {k:v for k,v in os.environ.items() if not k.startswith('PG')}
+    env.update(PGHOST='127.0.0.1', PGPORT=str(cluster.meta['port']), PGUSER='coh_admin',
+               PGDATABASE='postgres', PGPASSFILE=str(cluster.root/'pgpass'), PGCONNECT_TIMEOUT='2',
+               PGOPTIONS='-c statement_timeout=2000')
+    result = subprocess.run([str(Path(cluster.meta['bin'])/'psql'), '-X', '-q', '-A', '-t',
+                             '-v', 'ON_ERROR_STOP=1'], input=query, text=True, env=env,
+                            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=3)
+    d.require(result.returncode == 0 and len(result.stdout) < 1024, 'PG_ACTIVITY')
+    value = d.json_object(result.stdout.encode())
+    d.require(set(value) == {'sessions','active','waiting_locks','schema_ddl'} and
+              all(type(n) is int and 0 <= n <= 1000 for n in value.values()), 'PG_ACTIVITY')
+    return dict(value, raw_sql_included=False)
 
 
 def bounded_logs(paths):
@@ -230,7 +268,7 @@ def capture(args):
               'hard_process_memory_cap_established': False, 'log_limits_polled_not_kernel_enforced': True,
               'historical_thor_footer_matches': False, 'cleanup_verified': False}
     children, handles, logs, secrets = [], [], [], []
-    cluster, environment = None, None
+    cluster, environment, progress = None, None, None
     deadline = time.monotonic() + args.timeout_seconds
     def health():
         d.require(time.monotonic() < deadline, 'CAPTURE_TIMEOUT')
@@ -250,6 +288,8 @@ def capture(args):
         d.require(child.returncode == 0, 'CHILD_FAILED')
         return stdout, stderr
     try:
+        out, err = run('wine-version', [args.wine, '--version'], work, os.environ.copy(), 15)
+        report['wine_version'] = wine_version(d.read(out, 1024))
         # Dereference into private files: native loader cannot write through to any input.
         runtime = work / 'map-runtime'
         report['source_runtime_inventory'] = inventory(source, runtime)
@@ -269,6 +309,14 @@ def capture(args):
         report['native_dependency_closure_sha256'] = d.digest(json.dumps(closure, sort_keys=True).encode())
         with zipfile.ZipFile(args.db_donor_apk) as archive:
             installer = archive.read('assets/runtime/psqlodbc_x86.msi')
+            manifest = d.json_object(archive.read('assets/runtime/runtime-manifest.json'))
+            name = 'runtime-probe.exe'
+            d.require(0 < archive.getinfo('assets/runtime/'+name).file_size <= 8*1024**2, 'DRIVER_PROBE_SIZE')
+            probe_bytes = archive.read('assets/runtime/'+name)
+            probe_identity = {'bytes':len(probe_bytes), 'sha256':d.digest(probe_bytes)}
+            d.require(probe_identity == manifest['files'][name], 'DRIVER_PROBE_IDENTITY')
+            probe = work / name; probe.write_bytes(probe_bytes)
+            report['driver_probe'] = dict(probe_identity, exact_admitted_donor=True, rebuilt=False)
         d.require(d.digest(installer) == ODBC_SHA256, 'ODBC_IDENTITY')
         installer_path = work / 'psqlodbc_x86.msi'; installer_path.write_bytes(installer)
         environment = {k: v for k, v in os.environ.items() if not k.startswith(('PG', 'COH_'))}
@@ -276,11 +324,17 @@ def capture(args):
                            WINEDLLOVERRIDES='winemenubuilder.exe=d;mscoree=d;mshtml=d', TZ='UTC', LANG='C.UTF-8')
         run('wineboot', [args.wine, 'wineboot', '--init'], work, environment, 180)
         run('odbc', [args.wine, 'msiexec', '/i', windows_path(installer_path), '/qn', '/norestart'], work, environment, 180)
-        cluster = pg.initialize(work / 'pg', args.pg_bin, 15437, 'coh_catalog_disposable', 'PostgreSQL Unicode')
+        out, err = run('odbc-driver', [args.wine, windows_path(probe), '--odbc-driver'], work, environment, 60)
+        validation = {'require': d.require, 're': re}
+        db.load_functions('android/guest/diagnostic.py', ('validate_odbc_driver',), validation)
+        report['odbc_driver'] = validation['validate_odbc_driver'](
+            (d.read(out, MAX_LOG)+d.read(err, MAX_LOG)).decode(errors='replace'))
+        driver = report['odbc_driver']['driver_name']
+        cluster = pg.initialize(work / 'pg', args.pg_bin, 15437, 'coh_catalog_disposable', driver)
         secrets = list(cluster.secrets.values())
         config = db_runtime / 'data/server/db/servers.cfg'
         config.write_text(db.guest_config(config.read_text(), cluster.meta['database'],
-                                         cluster.connection_string('PostgreSQL Unicode')))
+                                         cluster.connection_string(driver)))
         progress = db_runtime / 'dispatch.bin'
         db_env = dict(environment, COH_WINE_DB_FIXED_INPUTS='1', COH_WINE_DB_LOOPBACK_ONLY='1',
                       COH_WINE_DB_MANUAL_ATLAS='1', COH_WINE_DB_PROGRESS=windows_path(progress))
@@ -334,6 +388,12 @@ def capture(args):
     except Exception as error:
         report['failure_type'] = type(error).__name__
         report['failure_code'] = str(error) if isinstance(error, d.Refused) else 'DEPENDENCY_OR_RUNTIME_FAILURE'
+        if progress is not None:
+            try: report['db_dispatch_at_failure'] = dispatch_snapshot(progress, dbdoc['wine_build_input']['dispatch_progress']['stages'])
+            except Exception as observation: report['db_dispatch_observation_error'] = type(observation).__name__
+        if cluster is not None:
+            try: report['db_activity_at_failure'] = postgres_activity(cluster)
+            except Exception as observation: report['db_activity_observation_error'] = type(observation).__name__
     finally:
         cleanup = []
         for child in reversed(children):
@@ -353,6 +413,8 @@ def capture(args):
             report['wine_prefix_cleanup'] = wine_cleanup
         try: cleanup.append(cleanup_postgresql(cluster, work/'pg', pg))
         except Exception: cleanup.append(False)
+        pg_log = work/'pg'/'postgres.log'
+        if pg_log.is_file(): logs.append(pg_log)
         groups_deadline = time.monotonic() + 5
         while any(not process_group_absent(child) for child in children) and time.monotonic() < groups_deadline:
             time.sleep(.1)
@@ -373,7 +435,8 @@ def capture(args):
                 target = output / ('diagnostic-%02d.txt' % index)
                 target.write_text(text)
                 report['diagnostics'].append({'file': target.name, 'bytes': target.stat().st_size,
-                                              'sha256': d.hash_file(target, MAX_LOG)[1]})
+                                              'sha256': d.hash_file(target, MAX_LOG)[1],
+                                              'owned_source': log.relative_to(work).as_posix()})
             except Exception: report['passed'] = False
         d.emit_json(output/'capture-receipt.json', report)
     return report

@@ -1,0 +1,186 @@
+{
+  "authentic_cache_hit_proven": false,
+  "fixture_inputs": "synthetic fake MapServer bytes, caller-provided graph status, deterministic clocks and disposable temporary files; no server execution",
+  "map_receipt_projection": {
+    "cache_outcomes": {
+      "beacon": "unknown",
+      "definitions": "unknown",
+      "server_data": "unknown"
+    },
+    "cache_projection": {
+      "beacon": {
+        "archive_decoded": null,
+        "input_files_checked": null,
+        "input_full_byte_proof_reused_bytes": null,
+        "input_full_byte_proof_reused_files": null,
+        "input_payload_bytes_hashed": null,
+        "installed_files": null,
+        "native_graph_consumption_proven": false,
+        "status": "unknown"
+      },
+      "beacon_receipt_present": false,
+      "definition_receipt_present": false,
+      "definitions": {
+        "fallback_reason_present": false,
+        "installed_files": null,
+        "native_cache_consumption_proven": false,
+        "preserved_existing_files": null,
+        "status": "unknown"
+      },
+      "server_data": {
+        "changed_parent_directory_checks": null,
+        "changed_parent_entry_checks": null,
+        "immutable_anchor_checks": null,
+        "immutable_directory_checks": null,
+        "immutable_directory_metadata_queries": null,
+        "private_bytes": null,
+        "private_entries_checked": null,
+        "refusal_code": "unknown",
+        "refusal_present": false,
+        "reused": null
+      },
+      "server_data_receipt_present": false
+    },
+    "kind": "standalone_map_startup_observation",
+    "maps": [
+      {
+        "beacon": {
+          "archive_decoded": null,
+          "input_files_checked": 777,
+          "input_full_byte_proof_reused_bytes": null,
+          "input_full_byte_proof_reused_files": null,
+          "input_payload_bytes_hashed": 0,
+          "installed_files": null,
+          "native_graph_consumption_proven": false,
+          "status": "reused_verified_graph"
+        },
+        "beacon_outcome": "hit",
+        "launch_utc_ms": null,
+        "launched": false,
+        "launched_mapserver": null,
+        "map_id": 1,
+        "native_ready_elapsed_sampled_upper_bound_seconds": null,
+        "native_ready_verified_reported": false,
+        "preparation_elapsed_seconds": 1.25,
+        "preparation_finished_utc_ms": 1792108800000,
+        "prepared_mapserver": {
+          "bytes": 22,
+          "sha256": "517f003d822d3e8d2e7de4ba570d9f744757c7f47e3cc6d3ea2bc5e06c5ff931"
+        },
+        "ready_time_scope": "sampled_upper_bound_observer_delay_unbounded_not_exact_readiness",
+        "source_identities_independently_verified_by_this_reader": false,
+        "source_package_mapserver_pin_equal": true
+      }
+    ],
+    "native_cache_consumption_proven": false,
+    "session_binding": "internal_receipt_session_only_not_android_wrapper_acceptance",
+    "source_report_cold_phase_present": false,
+    "source_report_warm_phase_present": false,
+    "speedup_measured": false,
+    "stage_intervals": [],
+    "wrapper_present": false
+  },
+  "new_device_performance_measured": false,
+  "observation_file_sha256": "f768cae80c46809b59f0ba35796d90f466ca073a28ba2d05f72309770e96dae5",
+  "original_functions_executed": [
+    "LocalCharacterServer.record_startup_preparation",
+    "LocalCharacterServer.persist_startup_observation",
+    "Context.event",
+    "Context.stage",
+    "Context.passed"
+  ],
+  "original_retry_log_projection": {
+    "cache_outcomes": {
+      "beacon": "unknown",
+      "definitions": "unknown",
+      "server_data": "unknown"
+    },
+    "events": 3,
+    "ignored_lines": 1,
+    "kind": "original_json_line_stage_events",
+    "running_event_may_be_progress_heartbeat": true,
+    "scope": "latest_explicit_running_passed_UTC_pairs_only_not_total_stage_or_native_cpu",
+    "session_binding": "unbound_log_never_joined_to_receipts",
+    "speedup_measured": false,
+    "stage_intervals": [
+      {
+        "finished_utc_ms": 1792108815000,
+        "recorded_wall_interval_ms": 5000,
+        "scope": "latest_explicit_running_to_passed_pair_not_total_stage_duration",
+        "stage": "local_atlas_startup",
+        "started_utc_ms": 1792108810000
+      }
+    ],
+    "unclosed_stage": false
+  },
+  "original_retry_segment_ms": 5000,
+  "original_retry_stage_rows": [
+    {
+      "finished_utc_ms": null,
+      "recorded_wall_interval_ms": null,
+      "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+      "stage": "local_atlas_startup",
+      "started_utc_ms": 1792108800000
+    },
+    {
+      "finished_utc_ms": 1792108815000,
+      "recorded_wall_interval_ms": 5000,
+      "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+      "stage": "local_atlas_startup",
+      "started_utc_ms": 1792108810000
+    }
+  ],
+  "schema": "coh-startup-existing-original-function-fixtures-v1",
+  "source_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+  "source_sha256": {
+    "android/guest/diagnostic.py": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf",
+    "android/guest/local_character_server.py": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180"
+  },
+  "stage_log_projection": {
+    "cache_outcomes": {
+      "beacon": "unknown",
+      "definitions": "unknown",
+      "server_data": "unknown"
+    },
+    "events": 4,
+    "ignored_lines": 0,
+    "kind": "original_json_line_stage_events",
+    "running_event_may_be_progress_heartbeat": true,
+    "scope": "latest_explicit_running_passed_UTC_pairs_only_not_total_stage_or_native_cpu",
+    "session_binding": "unbound_log_never_joined_to_receipts",
+    "speedup_measured": false,
+    "stage_intervals": [
+      {
+        "finished_utc_ms": 1792108803000,
+        "recorded_wall_interval_ms": 2000,
+        "scope": "latest_explicit_running_to_passed_pair_not_total_stage_duration",
+        "stage": "local_dbserver_startup",
+        "started_utc_ms": 1792108801000
+      },
+      {
+        "finished_utc_ms": 1792108807000,
+        "recorded_wall_interval_ms": 2000,
+        "scope": "latest_explicit_running_to_passed_pair_not_total_stage_duration",
+        "stage": "local_atlas_startup",
+        "started_utc_ms": 1792108805000
+      }
+    ],
+    "unclosed_stage": false
+  },
+  "stage_row_projection": [
+    {
+      "finished_utc_ms": 1792108802000,
+      "recorded_wall_interval_ms": 2000,
+      "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+      "stage": "local_dbserver_startup",
+      "started_utc_ms": 1792108800000
+    },
+    {
+      "finished_utc_ms": 1792108806000,
+      "recorded_wall_interval_ms": 2000,
+      "scope": "recorded_wall_clock_pair_only_not_native_cpu",
+      "stage": "local_atlas_startup",
+      "started_utc_ms": 1792108804000
+    }
+  ]
+}

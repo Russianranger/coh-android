@@ -1,0 +1,126 @@
+{
+  "accepted_apks_rebuilt": false,
+  "actual_server_interoperability_verified": false,
+  "android_executed": false,
+  "full_live_world_verified": false,
+  "gates25_27_complete": false,
+  "passed": true,
+  "physical_thor_accepted": false,
+  "real_account_login_verified": false,
+  "schema": "coh-primary-continuation-android-v1",
+  "scope": "Additive bounded scene graph, entity records and authentication admission contracts",
+  "source_revision": "2d94aad69ed303d3587c509321eb7e79cb44f0b7",
+  "source_worktree_dirty": false,
+  "suites": {
+    "auth-interop": {
+      "abis": {
+        "arm64-v8a": {
+          "abi": "arm64-v8a",
+          "binary": "android/auth-interop/arm64-v8a/test_auth_interop",
+          "bytes": 15888,
+          "receipt": "android/auth-interop/arm64-v8a/receipt.json",
+          "receipt_sha256": "8f9146a684364881fa62a9226f27fad85af59036561c30a2eef40b061ddb39d1",
+          "sha256": "e4887e4241247493c6e913182ee6d825cef84d073c4536ccd31823c21725efea"
+        },
+        "x86_64": {
+          "abi": "x86_64",
+          "binary": "android/auth-interop/x86_64/test_auth_interop",
+          "bytes": 15600,
+          "receipt": "android/auth-interop/x86_64/receipt.json",
+          "receipt_sha256": "05ea15a66cb16de0c0b7940131f2b2ee19849aed7f65336b519f6e9a43cef7dc",
+          "sha256": "f8de181ad74bd23ca2c05475279bd26f7395a276fdcfa4f399ffd23c7cd5d0c1"
+        }
+      },
+      "expected": {
+        "checks": 2147,
+        "native_live_world": false,
+        "network_connections": 0,
+        "passed": true,
+        "policy_only": true,
+        "real_account_login_verified": false
+      },
+      "fixture": null,
+      "host_receipt": "host/auth-interop.json",
+      "host_receipt_sha256": "62a68678a03b918c911028ea8b1e24b1b30fdd3d49b5ad3c766d694a51dcb6d4"
+    },
+    "entities": {
+      "abis": {
+        "arm64-v8a": {
+          "abi": "arm64-v8a",
+          "binary": "android/entities/arm64-v8a/coh_entities_test",
+          "bytes": 122144,
+          "receipt": "android/entities/arm64-v8a/receipt.json",
+          "receipt_sha256": "0f811f002dbebd002a7b801fd7e65945157ce29fcbe0f3248ae326c25c8b2933",
+          "sha256": "25bbd73274ade136a02c7153aa8784788d3d2c26a3d685372ef500cea013e963"
+        },
+        "x86_64": {
+          "abi": "x86_64",
+          "binary": "android/entities/x86_64/coh_entities_test",
+          "bytes": 127632,
+          "receipt": "android/entities/x86_64/receipt.json",
+          "receipt_sha256": "f7ac28213b0828bedb8a105f36e88a510d1e0bfa079efb8086a22b0d3ff2bda6",
+          "sha256": "f4d2978a45554399ffd8736cc2eeca1c12ca97edf0a10d51d40aacd590f87fdc"
+        }
+      },
+      "expected": {
+        "checks": 550302,
+        "every_bit_truncations": 46261,
+        "full_update_accepted": false,
+        "list_cases": 50,
+        "list_every_bit_truncations": 9084,
+        "passed": true,
+        "randomized_cases": 20000,
+        "record_bytes": 3824,
+        "render_spawn": false,
+        "slot_bytes": 3600,
+        "workspace_bytes": 922624
+      },
+      "fixture": {
+        "path": "android/entities/fixtures.h",
+        "sha256": "ca8cee6c4ea4f4f9c93504a60d50e35785c113e8efe86358c6fc4493212d128d"
+      },
+      "host_receipt": "host/entities.json",
+      "host_receipt_sha256": "2383d1d3788a199605f5ff37e74f9085fde626052e6c3e72445c28020b2a8e4a"
+    },
+    "scenegraph": {
+      "abis": {
+        "arm64-v8a": {
+          "abi": "arm64-v8a",
+          "binary": "android/scenegraph/arm64-v8a/coh_scenegraph_test",
+          "bytes": 2359104,
+          "receipt": "android/scenegraph/arm64-v8a/receipt.json",
+          "receipt_sha256": "63cc978f7f33acb1bb0a65b8da812a3eab0806f8f1cd02936cade63218508b97",
+          "sha256": "af02cd7cecee1608631b3082034c191e973690a62c2b1f60ed1033704b646a0e"
+        },
+        "x86_64": {
+          "abi": "x86_64",
+          "binary": "android/scenegraph/x86_64/coh_scenegraph_test",
+          "bytes": 2363736,
+          "receipt": "android/scenegraph/x86_64/receipt.json",
+          "receipt_sha256": "f4429e0e109cacdcc3a217902eff95fba6097698e1476f3813827455d7cec514",
+          "sha256": "8e5475507cda796f032a226b50d517c7abe1b3972f76bbd3fc64989e837ea4a2"
+        }
+      },
+      "expected": {
+        "allocation_failure_points": 34,
+        "checks": 124804,
+        "live_world": false,
+        "passed": true,
+        "source_fixtures_accepted": 44,
+        "source_fixtures_rejected": 8,
+        "stress_aggregate_peak_bytes": 81706049,
+        "stress_candidate_peak_bytes": 26843167,
+        "stress_children": 36567,
+        "stress_controls": 18,
+        "stress_definitions": 12192,
+        "stress_graph_bytes": 26806591
+      },
+      "fixture": {
+        "path": "android/scenegraph/scenegraph_fixtures.h",
+        "sha256": "37508b2b2ce5ea5dd5d35e7563a4eacacc99a0f4f42e12ba660933ae0f804063"
+      },
+      "host_receipt": "host/scenegraph.json",
+      "host_receipt_sha256": "463088d9d0c6fb18621323110284358daecab7194c6092ef4ea2152560183c40"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved
+(368) Z:/tmp/coh-catalog-capture/db-runtime/DbServer.exe Z:\tmp\coh-catalog-capture\db-runtime\DbServer.exe -start 0 
+working dir: Z:\tmp\coh-catalog-capture\db-runtime
+SVN Revision: Unknown
+Could not find appropriate game data dir
+started 2026-10-16 17:31:30
+dbserver starting

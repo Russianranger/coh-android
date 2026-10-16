@@ -13,6 +13,8 @@ on:
       - native-android/combined-client/tools/analyze_startup_resources.py
       - native-android/combined-client/tools/test_startup_resources.py
       - native-android/combined-client/tools/bench_startup_console.py
+      - native-android/combined-client/tools/read_startup_receipts.py
+      - native-android/combined-client/tools/test_startup_receipts.py
       - native-android/include/**
       - native-android/tools/protocol_fixture/**
       - upstream/ouroboros/Common/**
@@ -69,6 +71,7 @@ jobs:
         run: |
           python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_delivery.py -v
           python3 -m unittest discover -s native-android/combined-client/tools -p test_startup_resources.py -v
+          python3 -m unittest discover -s native-android/combined-client/tools -p test_startup_receipts.py -v
           python3 -m unittest discover -s native-android/combined-client/diagnostics/continuation-20261016 -p 'test_*.py' -v
       - uses: actions/upload-artifact@v4
         if: always()

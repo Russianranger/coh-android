@@ -21,6 +21,13 @@
     "upstream/ouroboros/AuthServer/src/schema/patch_6.sql": "da30bb688b128305e360d86d65c4cd98797b8c0d8d0e8699d0d51a112c393eb9",
     "upstream/ouroboros/AuthServer/src/schema/patch_7.sql": "7621c3c4760d54b332bbfd370113cb754180febe826f7941fa7d453d9a49af20",
     "upstream/ouroboros/AuthServer/src/schema/patch_8.sql": "aec460cf0c4517479603eec5bf997b4aad252cf283b66fef2d4ac75b551727cf",
-    "upstream/ouroboros/Assets/DBSchemas/cohauth.sql": "d18756ba04f9f16d40a5f6d55772d19ed430a6438316327aa51fde818a349cbf"
+    "upstream/ouroboros/Assets/DBSchemas/cohauth.sql": "d18756ba04f9f16d40a5f6d55772d19ed430a6438316327aa51fde818a349cbf",
+    "upstream/ouroboros/Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+    "upstream/ouroboros/AuthServer/src/DBConn.cpp": "9b2715d756e6b51a170fa2c544bab3bd8d84a396bd5b8e9d70a5a766cf036dd9",
+    "upstream/ouroboros/AuthServer/src/Account.h": "570ad0d15ea6aa54f5f1f51b50a880a74fbda15ab25fdd2a0a75cd4c996fc84d",
+    "upstream/ouroboros/AuthServer/src/Protocol.h": "0b863fe331643ec30f5f103b18711dc91d1783a9da98cd215c22278ccac80d46",
+    "upstream/ouroboros/AuthServer/src/ServerId.h": "89213a9f2a99c44c42738038d527d76bf2228769689ceba44f0490a6ccd57cd8",
+    "upstream/ouroboros/libs/UtilitiesLib/src/version/AppVersion.c": "afd7d5bee67581b34ba202d4a89eb680c3b7e09842bb613c9706d46ba84bfc23",
+    "upstream/ouroboros/Game/CMakeLists.txt": "1c36eef4c7484c6f2f236826197ace5cf1ad17f505c9b5a5f783c0f40caf799b"
   }
 }

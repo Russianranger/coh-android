@@ -1,9 +1,13 @@
 # Isolated encrypted-auth deployment candidate
 
 This directory adds read-only metadata admission and original-source audit. It
-does not deploy a server, connect to SQL, execute stored procedures, migrate a
-database, create accounts, or change native authentication. No real encrypted
-login or DB-to-Map handoff was observed.
+does not change native authentication. The original metadata/audit tools do not
+connect to SQL. The additional [hosted staging candidate](HOSTED-STAGING.md) can
+build original AuthServer and run original account methods against a uniquely
+owned disposable LocalDB instance; it requires a fresh GitHub-hosted Windows
+runner and remains unexecuted on Windows at this checkpoint. It never starts
+AuthServer or logs in an account. No real encrypted login or DB-to-Map handoff
+was observed.
 
 ## Source and schema discovery
 
@@ -99,8 +103,9 @@ the existing native probe/source-oracle qualification retains its own scope.
    `cohauth.sql`'s two known conversion differences are expected refusals. Review
    stored procedure bodies and execute driver-level positive/negative controls
    in the disposable environment before qualifying conversions; do not silence
-   the refusal or narrow procedure outputs without evidence. No ODBC execution
-   harness is supplied/qualified by this checkpoint.
+   the refusal or narrow procedure outputs without evidence. The new hosted
+   original-function ODBC harness is supplied as an execution candidate, with
+   actual Windows/ODBC execution still pending.
 5. Record actual `Encrypt`, `DesApply`, supported `ProtocolVersion`, nonqueued
    list policy, explicit `UseFakeAuth 0`, version and approved checksum policy.
    Disable packet dumps and verbose/debug logging that can include secrets.
@@ -117,8 +122,10 @@ the existing native probe/source-oracle qualification retains its own scope.
    auth cache binding, DB/Map handoff and exact socket cleanup. Protocol progress
    alone is not source provenance or authoritative world entry.
 
-Current blockers are the unavailable isolated Windows/ODBC/SQL runtime, exact
-server binaries/configuration, disposable account/character and approved
-endpoints; ODBC conversions and real checksum policy cannot be qualified here.
+The hosted image inventory makes a fresh source-bound AuthServer build and
+disposable LocalDB experiment feasible; exact public evidence, commands and
+remaining account/probe/DbServer requirements are in `HOSTED-STAGING.md`.
+This Linux environment cannot execute that Windows stage. ODBC conversions,
+original missing-account behavior and real checksum policy remain unqualified.
 No listeners were probed. Rollback is omission of this additive tooling; no
 APK, database, profile or active server was changed.

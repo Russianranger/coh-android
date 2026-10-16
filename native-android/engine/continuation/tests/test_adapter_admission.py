@@ -140,10 +140,11 @@ class AdapterAdmission(unittest.TestCase):
         self.assertEqual((self.root/'oversize.log').stat().st_size, COMMAND_OUTPUT_MAX+1)
 
     def test_failed_command_retains_log(self):
-        with self.assertRaisesRegex(RuntimeError, 'command failed'):
+        with self.assertRaisesRegex(RuntimeError, 'command failed') as caught:
             bounded_execute([sys.executable, '-c', 'print("failed fixture"); raise SystemExit(7)'],
                             self.root/'failed.log')
         self.assertEqual((self.root/'failed.log').read_text(), 'failed fixture\n')
+        self.assertEqual(caught.exception.returncode, 7)
 
 
 if __name__ == '__main__':

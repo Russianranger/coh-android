@@ -35,6 +35,17 @@ def validate(root, manifest, abi):
             raise ValueError("Invalid executable byte count")
         elf_identity(binary, abi)
         receipt, host = read(receipt_path), read(host_path)
+        costume = suite.get("costume_fixture")
+        if name == "entities":
+            if not isinstance(costume, dict):
+                raise ValueError("Original costume fixture is required")
+            costume_path = child(root, costume["path"])
+            if (costume_path.name != "costume_fixtures.h"
+                    or digest(costume_path) != costume["sha256"]
+                    or host.get("costume_fixtures_sha256") != costume["sha256"]):
+                raise ValueError("Costume fixture differs from original host oracle")
+        elif costume is not None:
+            raise ValueError("Unexpected costume fixture")
         fixture = suite.get("fixture")
         if name in FIXTURES:
             if not isinstance(fixture, dict):
@@ -52,6 +63,8 @@ def validate(root, manifest, abi):
                         or built_receipt.get("abi") != built_abi
                         or built_receipt.get("fixtures_sha256") != fixture["sha256"]):
                     raise ValueError("Both Android ABI fixtures must match the host oracle: " + name)
+                if costume and built_receipt.get("costume_fixtures_sha256") != costume["sha256"]:
+                    raise ValueError("Both ABI costume fixtures must match original oracle")
         elif fixture is not None:
             raise ValueError("Unexpected external fixture for the standalone auth policy suite")
         if (receipt.get("passed") is not True or receipt.get("abi") != abi

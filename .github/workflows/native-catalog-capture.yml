@@ -45,7 +45,30 @@ jobs:
           python3 -c "import shutil; assert shutil.disk_usage('.').free >= 30*1024**3"
           sudo dpkg --add-architecture i386
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends wine wine32:i386 xvfb xauth postgresql-16 postgresql-client-16 gcc zlib1g-dev
+          sudo apt-get install -y --no-install-recommends ca-certificates gnupg xvfb xauth postgresql-16 postgresql-client-16 gcc zlib1g-dev
+      - name: Install exact classic Win32 Wine with native Windows ODBC support
+        run: |
+          mkdir -p out/catalog-inputs/wine-packages out/catalog-evidence/wine
+          curl --fail --silent --show-error --location https://dl.winehq.org/wine-builds/winehq.key -o out/catalog-evidence/wine/winehq.key
+          echo 'd965d646defe94b3dfba6d5b4406900ac6c81065428bf9d9303ad7a72ee8d1b8  out/catalog-evidence/wine/winehq.key' | sha256sum -c -
+          test "$(gpg --show-keys --with-colons out/catalog-evidence/wine/winehq.key | awk -F: '$1=="fpr" {print $10; exit}')" = D43F640145369C51D786DDEA76F1A20FF987672F
+          gpg --dearmor --output out/catalog-inputs/winehq.gpg out/catalog-evidence/wine/winehq.key
+          sudo install -d -m 0755 /etc/apt/keyrings
+          sudo install -m 0644 out/catalog-inputs/winehq.gpg /etc/apt/keyrings/winehq-catalog.gpg
+          echo 'deb [arch=amd64,i386 signed-by=/etc/apt/keyrings/winehq-catalog.gpg] https://dl.winehq.org/wine-builds/ubuntu noble main' | sudo tee /etc/apt/sources.list.d/winehq-catalog.list
+          sudo apt-get update -qq
+          cd out/catalog-inputs/wine-packages
+          apt-get download winehq-stable:amd64=10.0.0.0~noble-1 wine-stable:amd64=10.0.0.0~noble-1 wine-stable-amd64:amd64=10.0.0.0~noble-1 wine-stable-i386:i386=10.0.0.0~noble-1
+          cat > ../../catalog-evidence/wine/packages.sha256 <<'EOF'
+          794ed19f7fc8319d005c10da60833fd0925e2cd2587355b3b97fafdb9e95d368  winehq-stable_10.0.0.0~noble-1_amd64.deb
+          31e6eb2e15ae2e38ef72c9865c0d01da4bc587e554e7db46fe1a75b4420878e1  wine-stable_10.0.0.0~noble-1_amd64.deb
+          393d545040fe5c029eadeb31fcea52126714473e6c11b3cd851447b2dcbf1f72  wine-stable-amd64_10.0.0.0~noble-1_amd64.deb
+          5ba523409f013b12953f577bc3322aeae599bb16afac66c59ebe2dde7b337bfa  wine-stable-i386_10.0.0.0~noble-1_i386.deb
+          EOF
+          sha256sum -c ../../catalog-evidence/wine/packages.sha256
+          sudo apt-get install -y --install-recommends ./*.deb
+          dpkg-query -W -f='${Package}\t${Architecture}\t${Version}\n' winehq-stable:amd64 wine-stable:amd64 wine-stable-amd64:amd64 wine-stable-i386:i386 > ../../catalog-evidence/wine/installed-packages.tsv
+          /opt/wine-stable/bin/wine --version | tee ../../catalog-evidence/wine/version.txt
       - name: Reuse the exact admitted nonshipping exporter without rebuilding it
         env:
           GH_TOKEN: ${{ github.token }}
@@ -75,6 +98,7 @@ jobs:
             --runtime "$catalog_runtime" --control-fixture out/catalog-control/control-fixture.json \
             --db-donor-apk out/catalog-inputs/db-donor.apk --candidate-directory out/catalog-candidate \
             --native-validator out/catalog-inputs/catalog-validator --pg-bin /usr/lib/postgresql/16/bin \
+            --wine /opt/wine-stable/bin/wine --wineserver /opt/wine-stable/bin/wineserver \
             --work /tmp/coh-catalog-capture --output out/catalog-evidence/capture --generation 20261016 --timeout-seconds 2400
       - name: Preserve capture input provenance separately from runtime acceptance
         if: always()

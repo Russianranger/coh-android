@@ -1,0 +1,13 @@
+{
+  "run_id": 38939438549,
+  "artifact_id": 12062507267,
+  "source_revision": "cc92cad36eb8136274794a2beed9c6945647abbe",
+  "passed": false,
+  "errors": {
+    "scenegraph": "Command exited 1; diagnostic log: scenegraph.log"
+  },
+  "reason": "Android clang -Werror,-Wmisleading-indentation in graph name-index loop; host GCC/source/sanitizers passed. No emulator admission granted.",
+  "correction_remote_revision": "2d94aad69ed303d3587c509321eb7e79cb44f0b7",
+  "accepted_apks_rebuilt": false,
+  "rerun_result": "pending"
+}

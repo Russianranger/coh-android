@@ -1,0 +1,98 @@
+{
+  "accepted_runtime_modified": false,
+  "catalog_captured": false,
+  "cleanup_verified": true,
+  "control_fixture_sha256": "8f5c9d7e8aecf6808b6e27e3e726356d033e5da9a6e2b0f7c308fedb8ef69bb8",
+  "db_donor": {
+    "bytes": 42048020,
+    "sha256": "c2d859621476e22add673a76c4b6aae65c2143671e50c085d020108b6e19d95e"
+  },
+  "diagnostics": [
+    {
+      "bytes": 0,
+      "file": "diagnostic-00.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 162,
+      "file": "diagnostic-01.txt",
+      "sha256": "c03ed6f63fae846e3d030c3e83b9647be6b013972aa917fd24dd7db7e9f089bd"
+    },
+    {
+      "bytes": 0,
+      "file": "diagnostic-02.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "file": "diagnostic-03.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1334,
+      "file": "diagnostic-04.txt",
+      "sha256": "3081c0aa98c376e26dccddbbe9c4420886c90176d74b142dfab0e476d76ab95f"
+    },
+    {
+      "bytes": 391,
+      "file": "diagnostic-05.txt",
+      "sha256": "ec14739c2faad115aca08b9e3914da051d221a635f31049a567f8c5b5b994a1f"
+    }
+  ],
+  "disposable_db_only": true,
+  "exporter_sha256": "f96f5d51467083a58523187760458ad77e6a48d7b696b0d090aafa8e94e95f39",
+  "exporter_source_revision": "887bef22f5f6403d8589ac00a1269c9438e263a6",
+  "failure_code": "DB_NOT_READY",
+  "failure_type": "Refused",
+  "generation": 20261016,
+  "hard_process_memory_cap_established": false,
+  "historical_thor_footer_matches": false,
+  "log_limits_polled_not_kernel_enforced": true,
+  "matching_groups_transaction_captured": false,
+  "native_decode_completed": false,
+  "native_dependency_closure_sha256": "852f4f7e8748ddc9f8a693e403cb12c7d5e5a16031e5a2900b4f82a6c5263d81",
+  "native_validator_sha256": "9589c9a4a0971a9a74ae9dba020da22867f452bdf65ef1eb1af8d55bdf23cd20",
+  "orchestration_source_revision": "cc92cad36eb8136274794a2beed9c6945647abbe",
+  "orchestration_source_tree": "4f3d7c50cba538bd7acda8378d094e39b678afa2",
+  "owned_process_groups_absent": true,
+  "passed": false,
+  "physical_thor_generation_verified": false,
+  "player_profile_opened": false,
+  "renderer_authorized": false,
+  "runtime_executed": true,
+  "schema": "coh-disposable-native-capture-v1",
+  "source_runtime_inventory": {
+    "bytes": 4273662856,
+    "files": 176613,
+    "ordered_inventory_sha256": "febcc91b8d28867c14dfd898c77e039d4ef39ee5e206a14bdd92c4ef7f4c3e48"
+  },
+  "source_runtime_unchanged": true,
+  "source_sha256": {
+    "android/guest/dbserver_diagnostic.py": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2",
+    "android/guest/game_diagnostic.py": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737",
+    "android/guest/game_evidence.py": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d",
+    "database/postgresql/001-coh-compat.sql": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a",
+    "database/postgresql/pg_local.py": "d2665940bd0f932691c8a78c8b2aceaf638fba7550257ad31a089f79672689a0",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+    "native-android/engine/replication/coh_groups.h": "58d1d99d2efc8f5a49ad98f4e2efd3215f649fd0ea91ab42c836b6ee99a46ca3",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/scenecatalog-server/capture_disposable.py": "2d1e8f9a4beca1c29a77be90f227c6ea4e3958c545fd3e8266f403deff295506",
+    "native-android/engine/scenecatalog-server/delivery.py": "c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8",
+    "native-android/engine/scenecatalog/coh_scenecatalog.c": "627cdbfa29529971287aace4e26d634d1584daa88d8fbe0356b6f09054974ebc",
+    "native-android/engine/scenecatalog/coh_scenecatalog.h": "b49f094df3589c6325acc41befd5c21ffccb2727b25719a7855a89e694c6b2b9",
+    "native-android/engine/scenecatalog/validate_file.c": "6267834ec1372a429fe54513d1dfcf57624c4f3af781535afedefd8bcf6ea7c1",
+    "native-android/engine/scenegraph/coh_scenegraph.c": "7474b458f6d61a8e55cca85b8dca6e1c0ecc6dcbb25d08382856b778cc82629d",
+    "native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+    "tools/android/atlasgame/prepare_server_fx_catalog.py": "dfe73c626b1a1722baf001f449e6d8185eda2322335afac937b6aa98658593f3",
+    "tools/android/atlasgame/prepare_server_fx_control_fixture.py": "dba537cde48a595e20c127b1f22fb83525205dbf6b12568ca4d3c762dbb50383",
+    "tools/android/interactive/qualify_minimal_db_runtime.py": "3830dcdd5d1cdae4506d30b6d4d46bbc79b4f950de09c1104da0dc82132eb5a9",
+    "tools/package_reference_runtime.py": "53de7076e7798b527e8d6cb823d877693668c3474b32cad810ac4fe752f3dd59"
+  },
+  "wine_prefix_cleanup": {
+    "kill_exit_code": 0,
+    "private_fresh_prefix": true,
+    "wait_exit_code": 0
+  }
+}

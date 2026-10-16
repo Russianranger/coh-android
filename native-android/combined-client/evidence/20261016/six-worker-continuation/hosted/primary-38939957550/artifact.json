@@ -1,0 +1,8 @@
+{
+  "run_id": 38939957550,
+  "artifact_id": 12062457449,
+  "artifact_sha256": "bbc44c94bab1b7b9b9e1f9d01c8cc0cecc22478c41da780159265e2280449c4d",
+  "source_revision": "2d94aad69ed303d3587c509321eb7e79cb44f0b7",
+  "scope": "host_source_sanitizers_and_ARM64_x86_64_standalone_builds",
+  "physical_thor_accepted": false
+}

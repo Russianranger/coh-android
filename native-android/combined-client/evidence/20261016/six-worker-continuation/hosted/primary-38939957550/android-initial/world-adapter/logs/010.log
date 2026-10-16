@@ -1,0 +1,1 @@
+line 348: !atomic_load(&c.failed) && atomic_load(&c.reads)>0

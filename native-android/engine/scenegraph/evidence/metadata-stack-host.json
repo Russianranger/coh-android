@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "flags": [
+    "-std=c99",
+    "-O2",
+    "-fstack-usage"
+  ],
+  "source_sha256": {
+    "native-android/engine/scenegraph/coh_scene_metadata.c": "a73e7f6ae882e67c764f873875129822b7100d47feddf7205c8fa8546b56b885"
+  },
+  "report": "native-android/engine/scenegraph/coh_scene_metadata.c:5:18:bits\t32\tstatic\nnative-android/engine/scenegraph/coh_scene_metadata.c:10:18:color\t64\tstatic\nnative-android/engine/scenegraph/coh_scene_metadata.c:7:18:number\t32\tstatic\nnative-android/engine/scenegraph/coh_scene_metadata.c:8:18:optional\t48\tstatic\nnative-android/engine/scenegraph/coh_scene_metadata.c:21:18:property\t64\tstatic\nnative-android/engine/scenegraph/coh_scene_metadata.c:28:11:coh_scenegraph_property_begin\t8\tstatic\nnative-android/engine/scenegraph/coh_scene_metadata.c:33:11:coh_scenegraph_property_next\t4272\tstatic\nnative-android/engine/scenegraph/coh_scene_metadata.c:108:11:coh_scenegraph_metadata\t7024\tstatic\n",
+  "metadata_frame_bytes": 7024,
+  "property_iteration_frame_bytes": 4272,
+  "android_stack_measured": false,
+  "caller_workspace_included": false,
+  "allocation_performed": false
+}

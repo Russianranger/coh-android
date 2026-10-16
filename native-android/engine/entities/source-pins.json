@@ -23,6 +23,12 @@
     "Common/entity/attrib_net.c": "dc634ef7f142e1f5e1ca9f49b2b99dc82a0455717b0d84250b39d309e309ce90",
     "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef",
     "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
-    "Common/entity/netfx.h": "b86429ca627be5aecf6b993617ae871ab1e3de2eef7a58e9c4c38f1765246e73"
+    "Common/entity/netfx.h": "b86429ca627be5aecf6b993617ae871ab1e3de2eef7a58e9c4c38f1765246e73",
+    "Common/entity/costume.c": "94c67d357424bd9084262d2277393078afaa3d266226d0b4887db514b9c7c554",
+    "Common/entity/costume.h": "510454f06b4f9c1151c946d037b97e2aeffdcb40574710999ecac2714b020c34",
+    "Common/entity/entPlayer.h": "8d8474b21f369e51c9da0e77defa6e07f16b6a226149fa09d0c4a334fec24b0e",
+    "Common/gameData/costume_data.c": "261b065dc8143934489b9b8632d950981188920dd9dad879551a18c660f8fc11",
+    "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
+    "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f"
   }
 }

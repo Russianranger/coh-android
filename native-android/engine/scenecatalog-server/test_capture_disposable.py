@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import struct
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest import mock
 import capture_disposable as c
@@ -86,6 +87,61 @@ class CaptureControls(unittest.TestCase):
 
     def test_missing_dispatch(self):
         self.assertFalse(c.dispatch_ready(self.root/'absent', {'1': 'READY'}))
+
+    def test_dispatch_snapshot_retains_stall_without_claiming_ready(self):
+        value = c.dispatch_snapshot(self.dispatch(loops=0), {'1': 'INITIALIZED'})
+        self.assertEqual(value['stage_name'], 'INITIALIZED')
+        self.assertEqual(value['loop_count'], 0)
+        self.assertTrue(value['present'] and value['stable'])
+        self.assertEqual(c.dispatch_snapshot(self.root/'absent', {}), {'present':False,'stable':False})
+
+    def test_wine_native_driver_floor(self):
+        for raw in (b'wine-9.13\n', b'wine-10.0\n', b'wine-11.0 (Ubuntu 11.0~noble-1)\n'):
+            self.assertEqual(c.wine_version(raw), raw.decode().strip())
+        for raw in (b'wine-9.0 (Ubuntu 9.0~repack-4build3)', b'wine-9.12', b'wine-8.23',
+                    b'wine-11', b'unknown', b'wine-11.0\nextra'):
+            with self.subTest(raw=raw):
+                with self.assertRaises(d.Refused): c.wine_version(raw)
+
+    def test_private_activity_counts_exclude_sql_and_inherited_environment(self):
+        cluster = SimpleNamespace(root=self.root, meta={'database':'coh_catalog_disposable',
+                                                        'port':15437,'bin':'/private/bin'})
+        result = SimpleNamespace(returncode=0, stdout='{"sessions":2,"active":1,"waiting_locks":0,"schema_ddl":1}')
+        with mock.patch.dict(os.environ, {'PGHOST':'external','PGPASSWORD':'DO_NOT_INHERIT'}):
+            with mock.patch.object(c.subprocess, 'run', return_value=result) as run:
+                value = c.postgres_activity(cluster)
+        self.assertEqual(value['sessions'], 2)
+        self.assertFalse(value['raw_sql_included'])
+        kwargs = run.call_args.kwargs
+        self.assertEqual(kwargs['env']['PGHOST'], '127.0.0.1')
+        self.assertNotIn('PGPASSWORD', kwargs['env'])
+        self.assertEqual(kwargs['timeout'], 3)
+        self.assertIn("usename='coh_game'", kwargs['input'])
+        self.assertNotIn('select query', kwargs['input'].lower())
+
+    def test_private_activity_rejects_malformed_counts_and_database(self):
+        cluster = SimpleNamespace(root=self.root, meta={'database':'coh_catalog_disposable',
+                                                        'port':15437,'bin':'/private/bin'})
+        for value in ({'sessions':True,'active':0,'waiting_locks':0,'schema_ddl':0},
+                      {'sessions':1001,'active':0,'waiting_locks':0,'schema_ddl':0},
+                      {'query':'sensitive'}, {}):
+            with mock.patch.object(c.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stdout=json.dumps(value))):
+                with self.assertRaises(d.Refused): c.postgres_activity(cluster)
+        cluster.meta['database'] = "bad'identifier"
+        with mock.patch.object(c.subprocess, 'run') as run:
+            with self.assertRaises(d.Refused): c.postgres_activity(cluster)
+            run.assert_not_called()
+
+    def test_existing_driver_validator_selects_observed_registration(self):
+        _, db, _, _ = c.fixture_modules()
+        namespace = {'require':d.require, 're':c.re}
+        db.load_functions('android/guest/diagnostic.py', ('validate_odbc_driver',), namespace)
+        for name in ('PostgreSQL Unicode', 'PostgreSQL Unicode(x86)'):
+            value = namespace['validate_odbc_driver']('COH_ODBC_DRIVER_V1 NAME '+name+'\n'
+                'COH_ODBC_DRIVER_V1 DLL C:\\private\\psqlodbc35w.dll\nCOH_ODBC_DRIVER_V1 PASS bits=32\n')
+            self.assertEqual(value['driver_name'], name)
+            self.assertTrue(value['driver_dll_loaded'])
+        with self.assertRaises(d.Refused): namespace['validate_odbc_driver']('COH_ODBC_DRIVER_V1 FAIL stage=load_driver error=126')
 
     def test_dispatch_reserved_tail(self):
         path = self.dispatch(); raw = bytearray(path.read_bytes()); raw[127] = 1; path.write_bytes(raw)
