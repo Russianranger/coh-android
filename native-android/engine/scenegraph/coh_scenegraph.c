@@ -285,7 +285,8 @@ static CohStatus build_names(CohSceneGraph *g){
         if(!valid_name(name,0)||strchr(name,'/')||strchr(name,'\\'))return COH_UNSUPPORTED;
         if(coh_scenegraph_find_name(g,name,&duplicate)==COH_OK)return COH_INVALID;
         TRY(index_put(g->name_index,g->name_index_capacity,name_hash(name),i));
-    }return COH_OK;
+    }
+    return COH_OK;
 }
 static int def_less(const CohSgDefinition *a,const CohSgDefinition *b){return a->file!=b->file?a->file<b->file:a->id<b->id;}
 /* In-place heapsort avoids libc qsort's implementation-dependent temporary
