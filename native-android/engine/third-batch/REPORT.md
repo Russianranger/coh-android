@@ -4,12 +4,13 @@ This batch develops the separate, entirely offline `org.coh.nativesupport` app
 and reusable modules. It does not qualify live gameplay or replace the accepted
 Session Client. Release identity and emulator results are recorded in `release.json`.
 Implementation, build and emulator status must not be read as physical acceptance.
-The published source is `bae8cca2b4ae0e43070d5e86ca1c6f1df668bc00`; its Git tree
-exactly matches local reviewed integration `4ea4b7352e37f16178cd13005a75a0d834cfe7c1`.
-Shell push lacked credentials, so publication used the connected GitHub app with
-`expected_sha=8e237b984c188dd19c171387914e795916712556` and `force=false`.
-Worker/local commits remain preserved; GitHub received one additive integration
-commit, not a rewrite of existing history.
+The current signed runtime source is `e89f20c56619cbab87728bd49eff8f835b3b3c98`;
+its Git tree exactly matches local reviewed integration
+`872b3f32e3551cafbb0584a9f1d99b31f0805d9b`. Publication used the connected GitHub
+app with an inspected `expected_sha` and `force=false`; shell push credentials
+were unavailable. Worker/local commits remain preserved. GitHub received additive
+integration commits, not rewritten history. `release.json` records both runtime
+and qualification-driver revisions, release attempts and exact artifact identities.
 
 ## Repository, recovery and ownership
 
@@ -111,12 +112,13 @@ Commits `49420fc8645546fbb1ac7137d7ab95781e77b341` and
 `c083907355a1fed442e798136a76d8d035b477c3` add the actor/preview adapter.
 It resolves eight authentic Male costume parts,
 original textures and matching neutral Male rig: chest, hips, two gloves, two
-boots, head and hair. It preserves source selection, explicit first `None` mask
-choice, material/color behavior and attachment transforms. Package preparation
-is hash-pinned and reproducible; missing Female/Huge resources are explicit.
+boots, head and hair. It preserves source selection, explicit source-authored `None` mask
+choice, source dual-texture color/skin routing and attachment transforms. Package
+preparation is hash-pinned and reproducible; Female/Huge asset/material/morphology
+closure remains pending. Original trick/culling/lighting image equivalence remains open.
 
 The qualified fixture contains 943 vertices and 3,792 indices. Source comparison
-covers 789 geometry models / 1,160,514 scalars, 137 costume identities and 192
+covers 789 geometry models / 1,160,514 scalars, 137 identity comparisons and 192
 color bytes. Negative/lifecycle checks, ASan/UBSan, ARM64/x86_64 linkage and actual
 host GLES rendering across context recreation are independently recorded under
 `engine/appearance/`. E reviewed source-mask evidence and failure cleanup; F
@@ -222,6 +224,40 @@ A samples on its report worker at 1 Hz through a zero-session-handle JNI call,
 publishes JSON/time/duration atomically and yields between queued report writes.
 No proc-file I/O occurs in GL/audio/UI hot paths. Physical audio route quality,
 thermal endurance, GPU timing and sustainable full-game FPS remain unqualified.
+
+## Consolidated package and execution qualification
+
+The corrected ARM64 and x86_64 packages were built and signed in
+[run 38841247759](https://github.com/Russianranger/coh-android/actions/runs/38841247759).
+Both signatures, native libraries, package/code201 and fifteen packaged assets
+were independently checked. ARM64 SHA256:
+`ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc`.
+The test certificate SHA256 is
+`cea53d96cb0953a57ce798a6aa7dce9c1c0289f538d19bba2194cc357ac3f03f`.
+This is a test-signed release, not a production-key promise.
+
+That run reached scenario 19 before the driver incorrectly assumed landscape
+would persist across Home/resume. Android changed to portrait and the app
+correctly expanded its controls; mock state and audio were preserved with zero
+reported native/GL/EGL errors. The corrected driver explicitly selects and
+observes orientation after resume, retaining state and lifecycle assertions.
+A separate continuation workflow reuses the exact signed APKs and independently
+records the driver revision. Its reuse gate compares compiled source/header/Java,
+manifest/build and generated-input dependencies against the original source and
+current checkout; APK/native/asset identity is checked without rebuilding.
+No old emulator reports or screenshots are copied into the new execution result.
+Final continuation status is recorded in `release.json`.
+
+The earlier run 38839177252 passed counter checks but failed manual image review;
+its APK was rejected. The camera/preview correction is included in the current
+packages. Final acceptance additionally requires full-body landscape and portrait
+screenshots with the presentation panel hidden. All failed-attempt evidence is
+retained; none establishes physical Thor acceptance.
+
+[THOR-TEST.md](THOR-TEST.md) provides one consolidated procedure and required
+reports/screenshots. Keep accepted Session and Combined applications and their
+data intact. A different installed Support signing key may prevent an in-place
+upgrade; report the installation error rather than clearing or uninstalling.
 
 ## Acceptance boundaries and next batch
 

@@ -1,0 +1,37 @@
+{
+  "schema": "coh-support-driver-reuse-controls-v1",
+  "passed": true,
+  "apk_source_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "archive_sha256": "474c3c1ca94f7ce8f27f4d972d02704ded73fef2e6f6c09687e0b188152cf983",
+  "scenario_steps": 23,
+  "all_original_step_assertions_unchanged": true,
+  "actual_failed_report_sha256": "ea8f82d7d3ac369a68a3451c23bd9dd8d2fe4b197271598950014d572b5a8c2a",
+  "actual_failure_fields": [
+    "input_area.controls_expanded",
+    "input_area.scene_fraction"
+  ],
+  "rotation_positive_cases": 2,
+  "rotation_negative_cases": 4,
+  "original_resume_negative_assertions": 3,
+  "reuse_tracked_inputs": 183,
+  "reuse_generation_inputs": 63,
+  "reuse_changed_input_rejections": [
+    {
+      "path": "native-android/support-client/src/support_ui.h",
+      "rejected": true,
+      "reason": "Current runtime/header/Java input differs: native-android/support-client/src/support_ui.h"
+    },
+    {
+      "path": "native-android/support-client/java/org/coh/sessionclient/MainActivity.java",
+      "rejected": true,
+      "reason": "Current runtime/header/Java input differs: native-android/support-client/java/org/coh/sessionclient/MainActivity.java"
+    },
+    {
+      "path": "native-android/world-probe/shaders/world.vert",
+      "rejected": true,
+      "reason": "Tracked generator input differs: native-android/world-probe/shaders/world.vert"
+    }
+  ],
+  "wrong_archive_pin_rejected": true,
+  "scope": "Host replay of actual failed Android report and mocked rotation command/report sequence; exact retained APK/source input verification with read-byte fault injection. No new emulator execution or physical acceptance."
+}

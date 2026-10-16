@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build-and-emulator:
-    if: github.ref == 'refs/heads/native-android'
+    if: github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[support-201-requalify]'))
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:

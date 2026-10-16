@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "run_id": 38841247759,
+  "source_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "runtime_modified_for_retry": false,
+  "diagnosis": "post-Home orientation must be selected and observed explicitly in the driver",
+  "reports": [
+    {
+      "file": "emulator-step-18-report.json",
+      "sha256": "3875498ee856005247162b88b97e474f6df5fd713827533eea9ff4a0181fc75a",
+      "observation": {
+        "updated_at": "2026-10-16T02:41:46.514Z",
+        "input_area": {
+          "left": 0,
+          "top": 228,
+          "width": 1920,
+          "height": 789,
+          "shown": true,
+          "surface_ready": true,
+          "controls_expanded": false,
+          "root_width": 1920,
+          "root_height": 954,
+          "scene_fraction": 0.8270440251572327
+        },
+        "native": {
+          "width": 1920,
+          "height": 789,
+          "running": true,
+          "frames": 1156,
+          "contexts_started": 4,
+          "native_errors": null,
+          "gl_errors": 0,
+          "egl_errors": null
+        },
+        "presentation": {
+          "events": 4,
+          "cues": 4,
+          "target_health": 12,
+          "visible": false,
+          "tab": 4
+        },
+        "audio": {
+          "running": 1,
+          "last_status": 0,
+          "opens": 4,
+          "diagnostics_valid": 0
+        }
+      }
+    },
+    {
+      "file": "emulator-latest-report.json",
+      "sha256": "ea8f82d7d3ac369a68a3451c23bd9dd8d2fe4b197271598950014d572b5a8c2a",
+      "observation": {
+        "updated_at": "2026-10-16T02:42:50.494Z",
+        "input_area": {
+          "left": 0,
+          "top": 898,
+          "width": 1080,
+          "height": 959,
+          "shown": true,
+          "surface_ready": true,
+          "controls_expanded": true,
+          "root_width": 1080,
+          "root_height": 1794,
+          "scene_fraction": 0.5345596432552955
+        },
+        "native": {
+          "width": 1080,
+          "height": 959,
+          "running": true,
+          "frames": 1915,
+          "contexts_started": 6,
+          "native_errors": null,
+          "gl_errors": 0,
+          "egl_errors": null
+        },
+        "presentation": {
+          "events": 4,
+          "cues": 4,
+          "target_health": 12,
+          "visible": false,
+          "tab": 4
+        },
+        "audio": {
+          "running": 1,
+          "last_status": 0,
+          "opens": 6,
+          "diagnostics_valid": 0
+        }
+      }
+    }
+  ],
+  "full_report_location": "Original Actions artifact12020633973; original report SHA256 values retained here"
+}

@@ -1,0 +1,910 @@
+{
+  "schema": 1,
+  "status": "artifact-integrity-and-source-inputs-reviewed-not-emulator-qualified",
+  "source_revision": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "build_receipt_sha256": "eca16116cc6c27f62e9928e6ec1156749cbc5d8af1de7142a14bbfa53bf0401b",
+  "build_receipt_reports_clean_tree": true,
+  "apk_outputs": [
+    {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-code201-arm64.apk",
+      "abi": "arm64-v8a",
+      "bytes": 2917815,
+      "sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc",
+      "certificate_sha256": "cea53d96cb0953a57ce798a6aa7dce9c1c0289f538d19bba2194cc357ac3f03f",
+      "signature_v2_verified": true,
+      "signature_v3_verified": true,
+      "package_verified": "org.coh.nativesupport",
+      "version_name": "0.2.0-gameplay",
+      "version_code": 201,
+      "native_elf_sha256": "d2e2800fdc9f50fa872c2c3e6392a9f40feb79b0ab0d4a255f21f8607f2dce79",
+      "native_elf_machine": 183,
+      "packaged_assets_verified": 15
+    },
+    {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-code201-emulator-x86_64.apk",
+      "abi": "x86_64",
+      "bytes": 2966964,
+      "sha256": "67e8f0e3a5a5048205ce81bb30c85f32fdb50e68e9cc2221ae11949f01b21321",
+      "certificate_sha256": "cea53d96cb0953a57ce798a6aa7dce9c1c0289f538d19bba2194cc357ac3f03f",
+      "signature_v2_verified": true,
+      "signature_v3_verified": true,
+      "package_verified": "org.coh.nativesupport",
+      "version_name": "0.2.0-gameplay",
+      "version_code": 201,
+      "native_elf_sha256": "0298d45155c41e1cbc806f03bdabf5b1c330790181c3253a3fd48306fe3c1185",
+      "native_elf_machine": 62,
+      "packaged_assets_verified": 15
+    }
+  ],
+  "source_audit": {
+    "unique_pinned_inputs": 168,
+    "verified_inputs": 168,
+    "by_origin": {
+      "git:e89f20c56619cbab87728bd49eff8f835b3b3c98": 117,
+      "retained local codec input": 48,
+      "retained local generated input": 3
+    },
+    "unverified_or_mismatching_inputs": [],
+    "detail": [
+      {
+        "file": "native-android/support-client/build-sources.json",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/src/offline_scene.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/src/support_bridge.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/src/support_physics.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/src/support_animation.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/src/support_ui.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/src/support_audio.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/session-client/app/src/main/cpp/session_stream_world.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/session-client/app/src/main/cpp/session_stream_qualify.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/assets/coh_asset_loader.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/assets/coh_asset_geo.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/bridge/coh_asset_render.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/world/coh_world_stream.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/renderer/coh_renderer.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/renderer/coh_renderer_gles.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/src/coh_assets.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/src/coh_dds.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/world-probe/app/src/main/cpp/coh_world_scene.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/character-probe/app/src/main/cpp/coh_scene.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/material-probe/app/src/main/cpp/coh_mesh.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/world/coh_world.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/character/coh_character.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/motion/coh_motion.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/locomotion/coh_locomotion.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/walkable/coh_walkable_scene.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/walk/coh_walk.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/walk/source_ctri.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/walk/source_world.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/walk/source_tritri.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/appearance/coh_appearance.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/appearance/coh_appearance_adapters.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/physics/coh_physics.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/sequencer/coh_sequencer.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/sequencer/coh_seq_playback.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/coh_ui.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/coh_hud.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/gameplay/coh_hud_android.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/gameplay/coh_hud_atlas.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/gameplay/coh_hud_gles.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/gameplay/coh_hud_quad.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/audio/coh_mixer.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/audio/coh_mixer_aaudio.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/audio/coh_music.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/audio/coh_resample.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/audio/coh_audio.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/perf/coh_perf.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/perf/coh_skin_cache.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/decode/.deps/ogg/src/bitwise.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/ogg/src/framing.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/mdct.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/smallft.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/block.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/envelope.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/window.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/lsp.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/lpc.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/analysis.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/synthesis.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/psy.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/info.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/floor1.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/floor0.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/res0.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/mapping0.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/registry.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/codebook.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/safe/sharedbook.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/lookup.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/bitrate.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/vorbisfile.c",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/engine/audio/coh_audio_listener.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/perf/coh_perf_bridge.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/gameplay/coh_hud_axis_navigation.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/perf/coh_process_memory.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/gameplay/presentation/coh_presentation.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/appearance/coh_appearance_mesh.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/appearance/coh_appearance_render.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/appearance/coh_appearance_actor.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/appearance/coh_appearance_preview.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/java/org/coh/sessionclient/SupportControllerNavigation.java",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/java/org/coh/sessionclient/SupportNative.java",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/java/org/coh/sessionclient/MainActivity.java",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/java/org/coh/sessionclient/SupportAudioEnvironment.java",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/java/org/coh/sessionclient/SessionNative.java",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/systems-probe/app/src/main/java/org/coh/systemsprobe/InputAdapter.java",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/animation/coh_animation.c",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/animation/coh_animation.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/audio/coh_audio.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/audio/source_gain_golden.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/character/coh_character.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/character-probe/app/src/main/cpp/coh_scene.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/decode/.deps/ogg/include/ogg/config_types.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/ogg/include/ogg/ogg.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/ogg/include/ogg/os_types.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/ogg/src/crctable.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/include/vorbis/codec.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/include/vorbis/vorbisfile.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/backends.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/bitrate.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/codebook.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/codec_internal.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/envelope.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/highlevel.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/lookup.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/lookup_data.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/lpc.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/lsp.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/masking.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/mdct.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/misc.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/os.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/psy.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/registry.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/scales.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/smallft.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/decode/.deps/vorbis/lib/window.h",
+        "verified": true,
+        "origin": "retained local codec input"
+      },
+      {
+        "file": "native-android/engine/appearance/coh_appearance.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/appearance/coh_appearance_actor.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/appearance/coh_appearance_preview.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/appearance/coh_appearance_render.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/assets/coh_asset_geo.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/assets/coh_asset_loader.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/audio/coh_audio_listener.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/audio/coh_mixer.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/audio/coh_mixer_aaudio.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/audio/coh_music.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/audio/coh_resample.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/bridge/coh_asset_render.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/coh_contracts.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/perf/coh_perf.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/perf/coh_perf_bridge.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/perf/coh_process_memory.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/perf/coh_skin_cache.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/physics/coh_physics.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/renderer/coh_renderer.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/renderer/coh_renderer_gles.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/renderer/coh_renderer_shaders.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/sequencer/coh_seq_playback.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/sequencer/coh_sequencer.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/coh_hud.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/coh_ui.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/gameplay/coh_hud_android.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/gameplay/coh_hud_atlas.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/gameplay/coh_hud_axis_navigation.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/gameplay/coh_hud_gles.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/ui/gameplay/presentation/coh_presentation.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/engine/world/coh_world_stream.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/include/coh_native_core.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/locomotion/coh_locomotion.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/material-probe/app/src/main/cpp/coh_mesh.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/motion/coh_motion.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/session-client/app/src/main/cpp/session_stream_qualify.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/session-client/app/src/main/cpp/session_stream_world.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/src/byte_reader.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/generated/support_font.h",
+        "verified": true,
+        "origin": "retained local generated input"
+      },
+      {
+        "file": "native-android/support-client/src/support_animation.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/src/support_audio.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/src/support_bridge.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/src/support_physics.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/support-client/src/support_ui.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/walk/coh_walk.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/walk/source_math.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/walk/source_types.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/walkable/coh_walkable_scene.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/world/coh_world.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "native-android/world-probe/app/src/main/cpp/coh_world_scene.h",
+        "verified": true,
+        "origin": "git:e89f20c56619cbab87728bd49eff8f835b3b3c98"
+      },
+      {
+        "file": "/tmp/coh-support-package-dqeg6p65/generated/support_tray.h",
+        "verified": true,
+        "origin": "retained local generated input"
+      },
+      {
+        "file": "/tmp/coh-support-package-dqeg6p65/generated/world_shader_sources.h",
+        "verified": true,
+        "origin": "retained local generated input"
+      }
+    ],
+    "font_provenance": {
+      "font_name": "mont_hvbold.ttf",
+      "font_sha256": "714351827092d0ed290a8625a75780636b66c66fcc91d575bb80a633ae0c4329",
+      "font_header_sha256": "79b2bf96955bc1c87fd6f4f0504b22115a1a52973399663a9c66ec1e01b6e710",
+      "scope": "Retained generated font header exactly matches compiler closure and preparation receipt; original external asset font source identity unchanged."
+    }
+  },
+  "execution_evidence": {
+    "step_reports_present": 19,
+    "successful_completion_summary_present": false,
+    "final_report_present": false,
+    "interpretation": "Partial run retained through step18; parent reports driver orientation assertion at step19. This APK/source audit does not convert that incomplete run into emulator qualification."
+  },
+  "android_emulator_qualified": false,
+  "physical_thor_accepted": false,
+  "limitations": [
+    "This verifies immutable source/dependency/generated-input hashes against recorded compiler closure; it is not an independent bit-identical rebuild.",
+    "Disposable debug signing certificate verified; no install or app-data operation performed.",
+    "Final performance/audio/memory metrics intentionally withheld until a complete successful new run."
+  ]
+}

@@ -60,6 +60,7 @@ class Check:
     def __init__(self,a,scenario):
         self.a=a;self.scenario=scenario;self.commands=[];self.last=None;self.steps=[]
         self.relay=None;self.rotation_settings=None
+        self.qualification_source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=Path(__file__).resolve().parents[3],text=True).strip()
         if a.relay:
             spec=importlib.util.spec_from_file_location('support_emulator_relay',Path(__file__).with_name('emulator_relay.py'))
             self.relay=importlib.util.module_from_spec(spec);spec.loader.exec_module(self.relay)
@@ -141,7 +142,21 @@ class Check:
             if self.rotation_settings is None:
                 self.rotation_settings={k:self.adb('shell','settings','get','system',k).stdout.strip().decode() for k in ('accelerometer_rotation','user_rotation')}
             self.adb('shell','settings','put','system','accelerometer_rotation','0')
-            self.adb('shell','settings','put','system','user_rotation',str(rotation))
+            # Home may restore portrait while the settings row still contains 1.
+            # Ask WindowManager directly, then observe two fresh matching reports.
+            self.adb('shell','wm','user-rotation','lock',str(rotation))
+            deadline=time.monotonic()+60;matched_updates=set()
+            while time.monotonic()<deadline:
+                report=self.report()
+                if report:
+                    area=report.get('input_area',{});native=report.get('native',{})
+                    landscape=area.get('root_width',0)>area.get('root_height',0)>0
+                    if area.get('root_width',0)>0 and area.get('root_height',0)>0 and area.get('width',0)>0 and area.get('height',0)>0 and area.get('surface_ready') and native.get('running') and isinstance(report.get('updated_at'),str) and report['updated_at'] and landscape==(rotation in (1,3)) and area.get('width')==native.get('width') and area.get('height')==native.get('height'):
+                        matched_updates.add(report.get('updated_at'))
+                        if len(matched_updates)>=2:break
+                    else:matched_updates.clear()
+                time.sleep(.2)
+            else:raise TimeoutError('Requested display orientation did not reach a live matching Surface')
         elif kind=='wait':time.sleep(min(10,float(value.get('seconds',1))))
         else:raise ValueError('Unsupported framework action: '+kind)
     def execute(self):
@@ -183,7 +198,10 @@ class Check:
                     spec=importlib.util.spec_from_file_location('coh_preview_image',Path(__file__).with_name('preview_image.py'))
                     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
                     visual=module.verify_preview_image(self.a.output/name,current)
-                    visual['source_commit']=self.source_commit;visual['report_sha256']=hashlib.sha256((self.a.output/('emulator-step-%02d-report.json'%i)).read_bytes()).hexdigest()
+                    visual['source_commit']=self.source_commit;visual['qualification_source_commit']=self.qualification_source_commit;visual['expected_display_orientation']=step.get('expected_display_orientation')
+                    orientation='landscape' if current['input_area']['root_width']>current['input_area']['root_height'] else 'portrait'
+                    require(orientation==step.get('expected_display_orientation'),'Male screenshot report has wrong display orientation')
+                    visual['observed_display_orientation']=orientation;visual['report_sha256']=hashlib.sha256((self.a.output/('emulator-step-%02d-report.json'%i)).read_bytes()).hexdigest()
                     visual['verifier_sha256']=hashlib.sha256(Path(__file__).with_name('preview_image.py').read_bytes()).hexdigest()
                     self.save('emulator-step-%02d-image-proof.json'%i,visual)
                     require(visual['passed'],'Male preview image bounds failed: '+str(visual['errors']))
@@ -192,6 +210,8 @@ class Check:
         self.save('emulator-final-report.json',previous);require(self.screenshot('emulator-final.png'),'Final screenshot capture failed')
         summary={'schema':1,'passed':True,'package':PACKAGE,'source_commit':self.source_commit,
                  'version_name':build['version_name'],'version_code':build['version_code'],
+                 'qualification_source_commit':self.qualification_source_commit,
+                 'driver_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                  'installed_apk':{'bytes':self.a.apk.stat().st_size,'sha256':hashlib.sha256(self.a.apk.read_bytes()).hexdigest()},
                  'scope':'actual Android emulator framework input/lifecycle and native report assertions in separate offline support client',
                  'scenario_sha256':hashlib.sha256(self.a.scenario.read_bytes()).hexdigest(),'steps':self.steps,
@@ -208,6 +228,10 @@ def main():
     try:c.execute()
     finally:
         if c.rotation_settings:
+            try:
+                if c.rotation_settings.get('accelerometer_rotation')=='1':c.adb('shell','wm','user-rotation','free')
+                else:c.adb('shell','wm','user-rotation','lock',c.rotation_settings.get('user_rotation','0'))
+            except Exception as error:c.save('emulator-rotation-restore-error.json',{'error':str(error)})
             for key,value in c.rotation_settings.items():
                 try:
                     if value=='null':c.adb('shell','settings','delete','system',key)

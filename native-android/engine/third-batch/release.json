@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "source_commit": "bae8cca2b4ae0e43070d5e86ca1c6f1df668bc00",
-  "source_tree": "8643e57b40f423c7e1e6efca905a5d1eb01ce1bb",
-  "local_identical_tree_commit": "4ea4b7352e37f16178cd13005a75a0d834cfe7c1",
+  "source_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "source_tree": "5416c28689a1122709c7423f3b85f29b2ef499a8",
+  "local_identical_tree_commit": "872b3f32e3551cafbb0584a9f1d99b31f0805d9b",
   "publication": {
     "branch": "native-android",
     "method": "connected GitHub app Git data API",
-    "expected_previous_head": "8e237b984c188dd19c171387914e795916712556",
+    "expected_previous_head": "27efb628d4d01bc5b63a8fb4d9d1996c7b1fbc8e",
     "force": false,
     "tree_equality_verified": true,
     "primary_workflow_canceled_or_restarted": false,
@@ -19,16 +19,18 @@
   "package": "org.coh.nativesupport",
   "version_name": "0.2.0-gameplay",
   "version_code": 201,
-  "workflow_run_id": 38839177252,
-  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38839177252",
+  "workflow_run_id": 38841247759,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38841247759",
   "stages": {
     "implemented": true,
     "host_source_qualified": true,
-    "android_arm64_built_local": true,
     "android_emulator_qualified": false,
-    "physical_ayn_thor_qualified": false
+    "physical_ayn_thor_qualified": false,
+    "android_arm64_built_hosted": true,
+    "android_x86_64_companion_built_hosted": true,
+    "changed_modules_arm64_compiled_locally": true
   },
-  "hosted_result": "first candidate rejected by visual review; corrected source qualification pending",
+  "hosted_result": "ARM64/x86_64 built; run stopped at scenario 19 because Android changed orientation after Home; runtime preserved state; exact-package continuation pending",
   "physical_acceptance": "pending actual AYN Thor report and observations",
   "scope": "bounded offline support application, authentic custom Male neutral preview; no live-server or full-zone qualification",
   "attempts": [
@@ -42,6 +44,61 @@
       "release_accepted": false,
       "reason": "Male preview samples full jump motion beyond first-pose camera bounds; actual screenshot shows clipped costume",
       "arm64_sha256": "5aba7cd516f5588d76ebc4dc04c28798f27a45d2804f229640b04376d1bedbe3"
+    },
+    {
+      "source_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+      "run_id": 38841247759,
+      "artifact_id": 12020633973,
+      "workflow_result": "failure",
+      "counter_scenarios_passed": 19,
+      "release_accepted": false,
+      "reason": "Step19 landscape Home/resume test did not explicitly restore requested orientation; Android reported portrait and correctly expanded controls. State/audio/native/GL/EGL checks remained sound. Driver-only correction and unchanged-APK rerun pending.",
+      "arm64_sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc",
+      "artifact_zip_sha256": "474c3c1ca94f7ce8f27f4d972d02704ded73fef2e6f6c09687e0b188152cf983"
     }
-  ]
+  ],
+  "publication_history": [
+    {
+      "branch": "native-android",
+      "method": "connected GitHub app Git data API",
+      "expected_previous_head": "8e237b984c188dd19c171387914e795916712556",
+      "force": false,
+      "tree_equality_verified": true,
+      "primary_workflow_canceled_or_restarted": false,
+      "previous_primary_run": {
+        "id": 38838677592,
+        "result_observed_after_our_publication": "success",
+        "canceled_or_restarted_by_us": false
+      },
+      "source_commit": "bae8cca2b4ae0e43070d5e86ca1c6f1df668bc00",
+      "source_tree": "8643e57b40f423c7e1e6efca905a5d1eb01ce1bb"
+    }
+  ],
+  "android_emulator_arch": "x86_64",
+  "android_api_level": 33,
+  "arm64_execution": "physical AYN Thor pending",
+  "additional_device_checks_pending": [
+    "audible focus and output route recovery",
+    "physical controller",
+    "Android external report export flow",
+    "ten active minute endurance",
+    "Adreno frame pacing and thermal behavior"
+  ],
+  "artifacts": {
+    "arm64": {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-code201-arm64.apk",
+      "bytes": 2917815,
+      "sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc"
+    },
+    "x86_64": {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-code201-emulator-x86_64.apk",
+      "sha256": "67e8f0e3a5a5048205ce81bb30c85f32fdb50e68e9cc2221ae11949f01b21321"
+    }
+  },
+  "signing": {
+    "type": "disposable test certificate",
+    "apk_v2_v3_verified": true,
+    "certificate_sha256": "cea53d96cb0953a57ce798a6aa7dce9c1c0289f538d19bba2194cc357ac3f03f",
+    "both_abis_same_signer": true
+  }
 }

@@ -458,6 +458,10 @@
         },
         {
           "kind": "launch"
+        },
+        {
+          "kind": "rotate",
+          "rotation": 1
         }
       ],
       "assert": {
@@ -499,7 +503,8 @@
         }
       },
       "screenshot": true,
-      "image_check": "male_neutral_full_body"
+      "image_check": "male_neutral_full_body",
+      "expected_display_orientation": "landscape"
     },
     {
       "label": "Male preview survives background and Surface recovery",
@@ -513,6 +518,10 @@
         },
         {
           "kind": "launch"
+        },
+        {
+          "kind": "rotate",
+          "rotation": 0
         }
       ],
       "assert": {
@@ -530,7 +539,8 @@
         "support.audio.running": 1
       },
       "screenshot": true,
-      "image_check": "male_neutral_full_body"
+      "image_check": "male_neutral_full_body",
+      "expected_display_orientation": "portrait"
     },
     {
       "label": "Return to accepted Wretch scene after Male preview",

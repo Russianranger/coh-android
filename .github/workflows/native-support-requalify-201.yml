@@ -1,0 +1,89 @@
+name: Native support code201 exact-package Android qualification
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - 'native-android/support-client/tools/emulator_check.py'
+      - 'native-android/support-client/tools/verify_reusable_build.py'
+      - 'native-android/support-client/emulator-scenario.json'
+      - '.github/workflows/native-support-requalify-201.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-support-code201-exact-package-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  emulator-exact-package:
+    if: github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[support-201-requalify]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Recover exact signed runtime packages and original build receipts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git fetch --no-tags --depth=1 origin e89f20c56619cbab87728bd49eff8f835b3b3c98
+          python3 -m pip install Pillow==12.3.0
+          gh api repos/Russianranger/coh-android/actions/artifacts/12020633973/zip > /tmp/coh-support-code201-e89.zip
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import hashlib, zipfile
+          archive=Path('/tmp/coh-support-code201-e89.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest()=='474c3c1ca94f7ce8f27f4d972d02704ded73fef2e6f6c09687e0b188152cf983'
+          output=Path('native-android/results/support-client')
+          output.mkdir(parents=True,exist_ok=True)
+          names={'build-receipt.json','preparation.json','controller-routing-host.json','SHA256SUMS'}
+          with zipfile.ZipFile(archive) as bundle:
+              assert bundle.testzip() is None
+              for entry in bundle.infolist():
+                  p=PurePosixPath(entry.filename)
+                  assert not p.is_absolute() and '..' not in p.parts and len(p.parts)==1
+                  if entry.filename in names or entry.filename.endswith('.apk') or entry.filename.startswith(('apk-badging-','apk-signature-')):
+                      (output/entry.filename).write_bytes(bundle.read(entry))
+          PY
+      - name: Verify unchanged runtime and record separate driver revision
+        run: |
+          python3 native-android/support-client/tools/verify_reusable_build.py --source-root . --artifact-dir native-android/results/support-client --archive /tmp/coh-support-code201-e89.zip --expected-archive-sha256 474c3c1ca94f7ce8f27f4d972d02704ded73fef2e6f6c09687e0b188152cf983 --expected-source-commit e89f20c56619cbab87728bd49eff8f835b3b3c98 --output native-android/results/support-client/reuse-source-review.json
+      - name: Enable disposable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Execute all scenarios including explicit post-resume orientation and image checks
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -no-snapshot -noaudio -no-boot-anim -gpu swiftshader_indirect
+          disable-animations: true
+          script: python3 native-android/support-client/tools/emulator_check.py --apk native-android/results/support-client/CoH-Native-Support-Client-0.2.0-gameplay-code201-emulator-x86_64.apk --scenario native-android/support-client/emulator-scenario.json --output native-android/results/support-client
+      - name: Upload exact packages and new execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-support-client-code201-requalified-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            native-android/results/support-client/*.apk
+            native-android/results/support-client/*.json
+            native-android/results/support-client/*.txt
+            native-android/results/support-client/*.png
+            native-android/results/support-client/*.xml
+            native-android/results/support-client/SHA256SUMS

@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "base_head": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "commit_marker": "[support-201-requalify]",
+  "changed_scopes": [
+    ".github/workflows/native-support-client.yml",
+    ".github/workflows/native-support-requalify-201.yml",
+    "native-android/support-client/tools/emulator_check.py",
+    "native-android/support-client/tools/verify_reusable_build.py",
+    "native-android/support-client/emulator-scenario.json",
+    "native-android/engine/third-batch/release.json",
+    "native-android/engine/third-batch/second-candidate-resume-evidence.json"
+  ],
+  "path_matched_workflows": [
+    {
+      "workflow": "native-support-requalify-201.yml",
+      "concurrency": {
+        "group": "native-support-code201-exact-package-${{ github.ref }}",
+        "cancel-in-progress": "false"
+      },
+      "job_conditions": {
+        "emulator-exact-package": "github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[support-201-requalify]'))"
+      }
+    },
+    {
+      "workflow": "native-android-core.yml",
+      "concurrency": null,
+      "job_conditions": {
+        "host-and-android": null
+      }
+    },
+    {
+      "workflow": "native-support-client.yml",
+      "concurrency": {
+        "group": "native-support-client-${{ github.ref }}",
+        "cancel-in-progress": "false"
+      },
+      "job_conditions": {
+        "build-and-emulator": "github.ref == 'refs/heads/native-android' && (github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[support-201-requalify]'))"
+      }
+    }
+  ],
+  "full_build_skipped_by_marker": true,
+  "primary_workflow_changes": false,
+  "primary_path_changes": false,
+  "all_changed_concurrency_cancel_in_progress": false,
+  "source_apk_reused": true,
+  "apk_source_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "no_old_emulator_evidence_copied": true
+}
