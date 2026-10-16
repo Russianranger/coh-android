@@ -122,6 +122,8 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_LocalNative_report(JNIEnv 
     (void)cls;Combined *h=owner(handle);if(!h)return (*env)->NewStringUTF(env,"{\"phase\":\"CLOSED\"}");
     CohLocalDiagnostics d;memset(&d,0,sizeof(d));coh_local_diagnostics(h->local,&d);
     const CohMapDiagnostics *m=&d.map_protocol;
+    const CohGroupsInspection *g=&m->scene_inspection;
+    const CohGroupsFailure *f=&m->scene_failure;
     const CohNetUdpDiagnostics *u=&m->udp;const CohNetDiagnostics *n=&u->link;
     char json[6144];
 #define COUNT(v) (unsigned long long)(v)
@@ -135,6 +137,13 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_LocalNative_report(JNIEnv 
         "\"last_command\":%u,\"last_payload_bits\":%u,\"last_decoded_bytes\":%u,\"scene_decoded_bytes\":%u,\"last_byte_aligned\":%u,"
         "\"accepted_messages\":%llu,\"rejected_messages\":%llu,\"malformed\":%llu,\"unsupported\":%llu,"
         "\"scene_prefixes\":%llu,\"entity_prefixes\":%llu,\"disconnects\":%llu,\"suspends\":%llu,\"timeouts\":%llu,"
+        "\"scene_structures\":%llu,\"scene_inspection\":{\"new_world\":%u,\"files\":%u,\"present_files\":%u,"
+        "\"defs\":%u,\"removed_defs\":%u,\"children\":%u,\"roots\":%u,\"removed_roots\":%u,"
+        "\"properties\":%u,\"swaps\":%u,\"raw_matrices\":%u,\"packed_matrices\":%u,"
+        "\"strings\":%u,\"string_bytes\":%u,\"work_units\":%u,\"max_def_id\":%u,\"max_root_id\":%u,"
+        "\"footer_file_count\":%u,\"footer_active_roots\":%u,\"footer_defs_crc\":%u,\"footer_refs_crc\":%u,"
+        "\"prefix_bits\":%llu,\"consumed_bits\":%llu},"
+        "\"scene_failure\":{\"stage\":%u,\"bit_offset\":%llu,\"status\":%u},"
         "\"udp\":{\"state\":%u,\"link_state\":%u,\"sockets_opened\":%llu,\"sockets_closed\":%llu,"
         "\"datagrams_sent\":%llu,\"datagrams_received\":%llu,\"peer_rejects\":%llu,\"truncated\":%llu,"
         "\"empty\":%llu,\"malformed\":%llu,\"unsupported\":%llu,\"send_would_block\":%llu,\"interrupted\":%llu,"
@@ -159,6 +168,11 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_LocalNative_report(JNIEnv 
         m->last_byte_aligned,COUNT(m->accepted_messages),
         COUNT(m->rejected_messages),COUNT(m->malformed),COUNT(m->unsupported),COUNT(m->scene_prefixes),
         COUNT(m->entity_prefixes),COUNT(m->disconnects),COUNT(m->suspends),COUNT(m->timeouts),
+        COUNT(m->scene_structures),g->new_world,g->files,g->present_files,g->defs,g->removed_defs,
+        g->children,g->roots,g->removed_roots,g->properties,g->swaps,g->raw_matrices,g->packed_matrices,
+        g->strings,g->string_bytes,g->work_units,g->max_def_id,g->max_root_id,g->footer_file_count,
+        g->footer_active_roots,g->footer_defs_crc,g->footer_refs_crc,COUNT(g->prefix_bits),COUNT(g->consumed_bits),
+        (unsigned)f->stage,COUNT(f->bit_offset),(unsigned)f->status,
         (unsigned)u->state,(unsigned)u->link_state,COUNT(u->sockets_opened),COUNT(u->sockets_closed),
         COUNT(u->datagrams_sent),COUNT(u->datagrams_received),COUNT(u->peer_rejects),COUNT(u->truncated),
         COUNT(u->empty),COUNT(u->malformed),COUNT(u->unsupported),COUNT(u->send_would_block),COUNT(u->interrupted),

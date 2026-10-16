@@ -3,6 +3,7 @@
 #include "../auth/coh_auth.h"
 #include "../network/coh_net_udp.h"
 #include "../replication/coh_replication.h"
+#include "../replication/coh_groups.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -28,9 +29,10 @@ typedef enum { COH_MAP_IDLE, COH_MAP_NET_CONNECTING, COH_MAP_WAIT_CONNECT,
     COH_MAP_WAIT_SHORTCUTS, COH_MAP_WAIT_SCENE, COH_MAP_SCENE_INCOMPLETE,
     COH_MAP_DISCONNECTING, COH_MAP_CLOSED, COH_MAP_SUSPENDED,
     COH_MAP_TIMED_OUT, COH_MAP_FAILED } CohMapPhase;
-/* There is deliberately no LIVE state. The pinned replication parser reads
- * scene/entity prefixes only. This controller NEVER sends REQALLENTS, READY,
- * ACK_FULL_UPDATE or RECEIVED_CHARACTER after prefix-only acceptance. */
+/* There is deliberately no LIVE state. Normal GROUPS structural traversal
+ * does not resolve the imported asset graph or own-entity identity. This
+ * controller NEVER sends REQALLENTS, READY, ACK_FULL_UPDATE or
+ * RECEIVED_CHARACTER after structural inspection. */
 typedef struct {
     CohNetUdpConfig udp;
     uint64_t application_timeout_ms;
@@ -55,7 +57,8 @@ typedef enum { COH_MAP_STAGE_NONE, COH_MAP_STAGE_UDP_SERVICE,
     COH_MAP_STAGE_MESSAGE_NEXT, COH_MAP_STAGE_COMMAND,
     COH_MAP_STAGE_CONNECT, COH_MAP_STAGE_SHORTCUTS,
     COH_MAP_STAGE_SCENE_PREFIX, COH_MAP_STAGE_ENTITY_PREFIX,
-    COH_MAP_STAGE_SEND_COMMAND, COH_MAP_STAGE_APPLICATION_TIMEOUT } CohMapStage;
+    COH_MAP_STAGE_SEND_COMMAND, COH_MAP_STAGE_APPLICATION_TIMEOUT,
+    COH_MAP_STAGE_SCENE_STRUCTURE } CohMapStage;
 typedef struct {
     CohMapPhase phase;
     CohMapStage stage;
@@ -71,6 +74,12 @@ typedef struct {
     unsigned character_identity_verified; /* always0 until complete own-entity decode */
     uint64_t accepted_messages, rejected_messages, malformed, unsupported;
     uint64_t scene_prefixes, entity_prefixes, disconnects, suspends, timeouts;
+    uint64_t scene_structures;
+    /* Last completely inspected normal GROUPS structure; transactional on
+     * failure. The separate failure checkpoint is numeric and owns no input.
+     * Footer CRCs are observed source fields, not verified asset checksums. */
+    CohGroupsInspection scene_inspection;
+    CohGroupsFailure scene_failure;
     CohRepPhase inspector_phase;
     CohNetUdpDiagnostics udp;
     /* No account, password, key, cookie, body or remote error string. */

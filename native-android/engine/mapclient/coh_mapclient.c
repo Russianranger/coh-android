@@ -105,6 +105,9 @@ CohStatus coh_map_client_begin(CohMapClient *m,const CohMapAuthorization *a,uint
     m->diag.stage=COH_MAP_STAGE_NONE;m->diag.last_status=COH_OK;
     m->diag.last_command=m->diag.last_payload_bits=0;
     m->diag.last_decoded_bytes=m->diag.scene_decoded_bytes=0;
+    m->diag.scene_structures=0;
+    memset(&m->diag.scene_inspection,0,sizeof(m->diag.scene_inspection));
+    memset(&m->diag.scene_failure,0,sizeof(m->diag.scene_failure));
     m->diag.last_command_valid=m->diag.last_byte_aligned=0;
     m->diag.generation++;m->diag.phase=COH_MAP_NET_CONNECTING;m->phase_ms=m->last_ms=now;return COH_OK;
 }
@@ -131,7 +134,7 @@ static CohStatus inspect(CohMapClient *m,const CohNetOwnedMessage *message,uint6
     if(m->config.udp.link.version<4){if(cmd<7){s=COH_UNSUPPORTED;goto rejected;}cmd-=5;}
     m->diag.last_command=cmd;m->diag.last_command_valid=1;
     /* A large envelope is not a license for unsupported oversized commands.
-     * This milestone only expands the source GROUPS prefix inspection path. */
+     * Only the source GROUPS structural inspection path uses this budget. */
     if(message->payload_bytes>COH_REP_MESSAGE_MAX&&cmd!=COH_REP_GROUPS){s=COH_LIMIT;goto rejected;}
     if(cmd==COH_REP_CONNECT_MSG) {
         m->diag.stage=COH_MAP_STAGE_CONNECT;
@@ -150,6 +153,7 @@ static CohStatus inspect(CohMapClient *m,const CohNetOwnedMessage *message,uint6
         m->diag.stage=COH_MAP_STAGE_ENTITY_PREFIX;
         if(m->diag.phase!=COH_MAP_SCENE_INCOMPLETE){s=COH_STATE;goto rejected;}
     } else {s=COH_UNSUPPORTED;goto rejected;}
+    CohRepReader groups_reader=reader;
     if(m->diag.selected_dbid) {
         s=coh_rep_session_message_bounded(&m->inspector,&m->schema,b,message->payload_bits,
             message->compressed,m->config.udp.link.version<4,(int)m->authorized,COH_NET_DECODED_MAX);
@@ -169,8 +173,14 @@ static CohStatus inspect(CohMapClient *m,const CohNetOwnedMessage *message,uint6
     if(cmd==COH_REP_GROUPS) {
         m->diag.scene_decoded_bytes=(uint32_t)message->payload_bytes;
         m->diag.scene_prefixes++;m->diag.phase=COH_MAP_SCENE_INCOMPLETE;
-        /* Group filename/reference records are unparsed even if their bytes
-         * happen to be empty. A prefix never proves a complete scene. */
+        m->diag.stage=COH_MAP_STAGE_SCENE_STRUCTURE;
+        CohGroupsInspection inspection;CohGroupsFailure failure={0};
+        s=coh_rep_groups(&groups_reader,&inspection,&failure);
+        m->diag.scene_failure=failure;
+        if(s!=COH_OK)goto rejected;
+        m->diag.scene_inspection=inspection;m->diag.scene_structures++;
+        /* Complete normal grammar is not an imported/resolved scene graph.
+         * No CRC or authoritative character acceptance is inferred here. */
         s=COH_UNSUPPORTED;goto rejected;
     }
     if(cmd==COH_REP_UPDATE||cmd==COH_REP_ALLENTS) {

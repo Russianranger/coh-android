@@ -5,18 +5,20 @@ existing Android loopback PostgreSQL / DbServer / MapServer stack. It accepts
 no password and creates no `CohDbAuthReceipt`. Full AuthServer authentication
 and live-world rendering remain separate, unfinished milestones.
 
-The 0.1.6 Map role opts into a bounded owned decoded body (4 MiB maximum).
+The Map role opts into a bounded owned decoded body (4 MiB maximum).
 The DB role retains its accepted ordinary 16 KiB path. The local owner still
-reports `SCENE_INCOMPLETE` after a valid GROUPS prefix; it never promotes the
+reports `SCENE_INCOMPLETE` after normal GROUPS structural inspection; it never promotes the
 accepted offline preview into server-authoritative rendering.
 
-The qualification-only UI peer now sends a fragmented compressed source
-GROUPS body that expands to 128 KiB. Its prefix comes from the unchanged
-original BitStream writer and its remaining tail is explicitly synthetic
-and unparsed. Peer receipts mark `large_body_fixture=true`,
-`scene_tail_parsed=false`, and `real_server_interoperability=false`. The
-headless local client verifies the decoded size and release of every owned
-body; Android UI qualification independently executes the same fixture.
+The 0.1.7 qualification-only UI peer sends a complete fragmented compressed
+normal GROUPS fixture emitted by the pinned original producer and original
+BitStream writer. Independently constructed fixture counts are compared with
+the Map inspection receipt; the entire logical body must be consumed.
+Peer receipts mark `large_body_fixture=true`, `scene_tail_parsed=true`,
+`scene_assets_resolved=false`, `scene_crc_verified=false`, and
+`real_server_interoperability=false`. The headless local client verifies
+structural counts and release of every owned body; Android UI qualification
+independently executes the same fixture.
 
 `evidence/scene-owned-016-host.json` records 659 local-owner checks in seven
 socket scenarios per release, ASan and UBSan mode, plus a separate complete
@@ -25,6 +27,17 @@ headless DB-to-Map peer flow in every mode. Each large fixture expanded from
 after inspection, and closed both sockets. The linked library and complete
 local/peer tests were cross-built for ARM64 and x86_64; Android execution and
 physical device acceptance require their own evidence.
+
+`evidence/groups-structure-017-host.json` records the 0.1.7 replacement:
+1,078 local-owner checks in nine actual socket scenarios per release, ASan
+and UBSan mode, including malformed normal-tail failure and unsupported base
+handling. Each mode also completes the separate headless DB-to-Map UI peer
+flow using 3,575 compressed bytes / 139,794 decoded bytes. Full normal
+structure is inspected through all 1,118,352 bits, zero body bytes remain
+owned and both sockets close. Independent source-produced expectations are
+recorded separately from the parser diagnostics. Complete local and peer
+executables were cross-built for ARM64 and x86_64; Android execution and
+physical acceptance require separate evidence.
 
 The caller must explicitly enable development mode and authorize a loopback
 DB endpoint before creation. The bind address and every selected MapServer
@@ -49,7 +62,7 @@ the character's saved destination rather than overriding it with Atlas.
 The actual DB map response supplies the one-use cookie, map ID and endpoint.
 The owner follows a loopback address from that response, using
 `authenticated=0, local_development_authorized=1` at the Map boundary.
-The unchanged bounded Map parser stops at `SCENE_INCOMPLETE`; no READY,
+The bounded Map parser stops at `SCENE_INCOMPLETE`; no READY,
 REQALLENTS, application full-update acknowledgement, invented DBID or rendered
 spawn is generated from a scene/entity prefix.
 
@@ -111,8 +124,8 @@ account `Fixture`, and never represent it as actual server evidence.
 
 The peer waits for actual UI selection of synthetic `Native Fixture` slot 0,
 then sends the original-writer player list, source-layout handoff, accepted
-Map handshake, fragmented 915-name source command catalog and an intentionally
-incomplete scene prefix. It supports bounded identical response replay for
+Map handshake, fragmented 915-name source command catalog and a complete
+normal GROUPS structural fixture with unresolved imported assets. It supports bounded identical response replay for
 duplicate request IDs, writes atomic numeric lifecycle reports, responds to
 SIGTERM/SIGINT, and exits after at most 180 seconds. No READY or entity spawn
 is manufactured. The host checker runs a separate real native client through

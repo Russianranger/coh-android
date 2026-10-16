@@ -24,6 +24,9 @@ NATIVE = PACKAGE + '/.NativeClientActivity'
 # AOSP DumpCommand reports these exact failures before writing a hierarchy.
 CAPTURE_TRANSIENTS = frozenset(('ERROR: could not get idle state.',
     'ERROR: null root node returned by UiTestAutomationBridge.'))
+SCENE_INSPECTION_FIELDS = ('new_world files present_files defs removed_defs children roots removed_roots '
+    'properties swaps raw_matrices packed_matrices strings string_bytes work_units max_def_id max_root_id '
+    'footer_file_count footer_active_roots footer_defs_crc footer_refs_crc prefix_bits consumed_bits').split()
 
 
 def activity_inventory(text):
@@ -126,7 +129,7 @@ def map_report_contract(value):
         'terminal_failure terminal_db_phase terminal_map_phase').split()
     fields = ('phase stage last_status last_command_valid last_command last_payload_bits last_byte_aligned '
         'accepted_messages rejected_messages malformed unsupported scene_prefixes entity_prefixes disconnects suspends timeouts '
-        'last_decoded_bytes scene_decoded_bytes').split()
+        'last_decoded_bytes scene_decoded_bytes scene_structures').split()
     udp_fields = ('state link_state sockets_opened sockets_closed datagrams_sent datagrams_received peer_rejects '
         'truncated empty malformed unsupported send_would_block interrupted io_errors receive_budget_exhausted '
         'suspends resumes cancellations timeouts last_system_error').split()
@@ -137,7 +140,21 @@ def map_report_contract(value):
         assert isinstance(data, dict) and set(data) == set(numeric) | set(extras), 'Unexpected public protocol fields'
         assert all(type(data[k]) is int and (k in signed or data[k] >= 0) for k in numeric)
     exact(value, numbers, ('schema', 'phase', 'map_protocol', 'authserver_authenticated', 'live_world_rendered'))
-    mapping = value['map_protocol']; exact(mapping, fields, ('udp',))
+    mapping = value['map_protocol']; exact(mapping, fields, ('udp','scene_inspection','scene_failure'))
+    inspection = mapping['scene_inspection']; exact(inspection, SCENE_INSPECTION_FIELDS)
+    failure = mapping['scene_failure']; exact(failure, ('stage','bit_offset','status'))
+    # These are traversal ceilings from coh_groups.h, never retained server strings.
+    ceilings = {'new_world':1, 'files':1024, 'present_files':1024, 'defs':65536, 'removed_defs':65536,
+        'children':262144, 'roots':65536, 'removed_roots':65536, 'properties':65536, 'swaps':65536,
+        'raw_matrices':327680, 'packed_matrices':327680, 'strings':1048576, 'string_bytes':3145728,
+        'work_units':1048576, 'max_def_id':65535, 'max_root_id':1048575,
+        'footer_file_count':1024, 'footer_active_roots':65536,
+        'footer_defs_crc':4294967295, 'footer_refs_crc':4294967295,
+        'prefix_bits':33554432, 'consumed_bits':33554432}
+    assert all(inspection[k] <= maximum for k, maximum in ceilings.items())
+    assert inspection['present_files'] <= inspection['files']
+    assert inspection['prefix_bits'] <= inspection['consumed_bits']
+    assert failure['stage'] <= 12 and failure['bit_offset'] <= 33554432 and failure['status'] <= 7
     udp = mapping['udp']; exact(udp, udp_fields, ('link',), ('last_system_error',))
     link = udp['link']; exact(link, link_fields, ('decode',))
     decode_fields = ('failure_kind compressed_bytes declared_raw_bytes output_budget normalized_command command_valid').split()
@@ -157,14 +174,14 @@ def map_report_contract(value):
             'numeric_privacy_bounds_verified': True}
 
 
-def large_scene_contract(value, peer):
+def large_scene_contract(value, peer, *, tail_parsed=False):
     """Bind real app diagnostics to one explicitly scripted compressed body."""
     proof = map_report_contract(value)
     assert value['phase'] == 'SCENE_INCOMPLETE' and value['terminal_failure'] == 0
     assert peer.get('scripted_source_layout') is True and peer.get('real_server_interoperability') is False
-    assert peer.get('large_body_fixture') is True and peer.get('scene_tail_parsed') is False
+    assert peer.get('large_body_fixture') is True and peer.get('scene_tail_parsed') is tail_parsed
     assert peer.get('scene_compressed') is True and peer.get('scene_ordered') is False
-    assert type(peer.get('scene_decoded_bytes')) is int and peer['scene_decoded_bytes'] == 131072
+    assert type(peer.get('scene_decoded_bytes')) is int and 16384 < peer['scene_decoded_bytes'] <= 4194304
     assert type(peer.get('scene_payload_bits')) is int and peer['scene_payload_bits'] == peer['scene_decoded_bytes']*8
     assert type(peer.get('scene_compressed_bytes')) is int and 8 < peer['scene_compressed_bytes'] < 16384
     assert type(peer.get('decoded_budget_bytes')) is int and peer['decoded_budget_bytes'] == 4194304
@@ -179,7 +196,30 @@ def large_scene_contract(value, peer):
     return {**proof, 'scene_decoded_bytes':mapping['scene_decoded_bytes'],
         'scene_compressed_bytes':decode['compressed_bytes'], 'decoded_budget_bytes':decode['output_budget'],
         'owned_retained_bytes':link['owned_retained_bytes'], 'owned_high_water_bytes':link['owned_high_water_bytes'],
-        'large_body_fixture':True, 'scene_tail_parsed':False}
+        'large_body_fixture':True, 'scene_tail_parsed':tail_parsed}
+
+
+def complete_scene_contract(value, peer):
+    """Require a complete source-layout grammar walk, without accepting a world."""
+    proof = large_scene_contract(value, peer, tail_parsed=True)
+    mapping = value['map_protocol']; inspection = mapping['scene_inspection']
+    # DB transport generation binding is distinct from selected-character identity.
+    assert value['server_identity_bound'] == 1 and mapping['entity_prefixes'] == 0
+    assert peer.get('scene_assets_resolved') is False and peer.get('scene_crc_verified') is False
+    expected = peer.get('scene_expected_counts')
+    required = set(('files present_files defs children roots properties swaps raw_matrices packed_matrices '
+                    'footer_file_count footer_active_roots footer_defs_crc footer_refs_crc').split())
+    assert isinstance(expected, dict) and required <= set(expected) <= set(SCENE_INSPECTION_FIELDS)
+    assert all(type(v) is int and v >= 0 for v in expected.values())
+    assert mapping['scene_structures'] == 1 and all(inspection[k] == v for k,v in expected.items())
+    assert mapping['scene_failure'] == {'stage':0,'bit_offset':0,'status':0}
+    assert mapping['stage'] == 10 and inspection['consumed_bits'] == peer['scene_payload_bits']
+    assert 0 < inspection['prefix_bits'] < inspection['consumed_bits']
+    assert inspection['new_world'] == 1 and inspection['files'] > 0 and inspection['defs'] > 0 and inspection['roots'] > 0
+    assert inspection['present_files'] > 0 and inspection['footer_file_count'] == inspection['files']
+    return {**proof, 'scene_structures':1, 'scene_inspection':inspection,
+        'scene_assets_resolved':False, 'scene_crc_verified':False,
+        'authserver_authenticated':False, 'live_world_rendered':False}
 
 
 def memory_report_contract(value):
@@ -615,6 +655,9 @@ class Check:
                 reopened = self.report('native-client-report.json')
                 assert reopened['server_protocol']['phase'] == 'IDLE' and reopened['native']['held_dirs'] == 0
                 assert reopened['server_protocol'].get('attempts',0) == 0
+                map_report_contract(reopened['server_protocol'])
+                assert reopened['server_protocol']['map_protocol']['scene_structures'] == 0
+                assert all(v == 0 for v in reopened['server_protocol']['map_protocol']['scene_inspection'].values())
                 peer = json.loads(self.adb('exec-out','cat',report_path).stdout)
                 assert peer['character_lists'] == 1 and peer['character_choices'] == 0
                 self.record('native relaunch requires explicit reconnect',new_preview_session=True,
@@ -622,13 +665,13 @@ class Check:
                     independent_peer_survived_return=True,actual_server_interoperability_verified=False)
             else:
                 self.tap('Native Fixture', prefix=True)
-                selected = self.wait_report('native-client-report.json', lambda x:x.get('server_protocol',{}).get('phase') == 'SCENE_INCOMPLETE', 'actual character selection and bounded Map scene prefix', seconds=60)
+                selected = self.wait_report('native-client-report.json', lambda x:x.get('server_protocol',{}).get('phase') == 'SCENE_INCOMPLETE', 'actual character selection and complete bounded Map scene structure', seconds=60)
                 protocol = selected['server_protocol']; map_report_contract(protocol)
                 assert protocol['character_lists'] == 1 and protocol['character_choices'] == 1 and protocol['map_handoffs'] == 1
                 assert protocol['terminal_failure'] == 0 and protocol['map_protocol']['scene_prefixes'] >= 1
                 mapping = protocol['map_protocol']
                 assert (mapping['accepted_messages'],mapping['phase'],mapping['stage'],mapping['last_status'],
-                        mapping['last_command_valid'],mapping['last_command']) == (2,5,6,2,1,6)
+                        mapping['last_command_valid'],mapping['last_command']) == (2,5,10,2,1,6)
                 assert mapping['udp']['link']['queue_limits'] == 0
                 self.viewport('after-character-selection', before['native']['frames']+5)
                 peer_raw = self.adb('exec-out','cat',report_path).stdout
@@ -638,12 +681,16 @@ class Check:
                 assert peer.get('authserver_authenticated') is False and peer.get('live_world') is False and peer.get('failed') is False
                 assert all(peer.get(k) == 1 for k in ('character_lists','character_choices','map_handoffs','map_connects','source_command_catalogs','scene_prefixes'))
                 assert peer.get('source_command_count') == 915 and peer.get('selected_wire_slot') == 0
-                proof = large_scene_contract(protocol, peer)
+                proof = large_scene_contract(protocol, peer, tail_parsed=True)
+                complete = complete_scene_contract(protocol, peer)
                 (self.args.output/(peer_prefix+'-report.json')).write_bytes(peer_raw)
                 assert not errors, 'Scripted policy refresh failed: '+repr(errors)
                 self.record('actual app character picker and native DB-to-Map scene boundary', **proof,
                     peer_binary_sha256=hashlib.sha256(data).hexdigest(), scripted_source_layout=True,
                     real_server_interoperability=False, real_authenticated_session=False, preview_is_server_world=False)
+                self.record('actual app complete source-layout GROUPS structure consumes exact logical body', **complete,
+                    scripted_source_layout=True, real_server_interoperability=False, real_authenticated_session=False,
+                    preview_is_server_world=False)
                 self.tap('Disconnect client')
                 disconnected = self.wait_report('native-client-report.json',lambda x:
                     x.get('session_id') == selected['session_id'] and x.get('server_protocol',{}).get('phase') == 'CLOSED',
@@ -651,9 +698,13 @@ class Check:
                 stopped = disconnected['server_protocol']; map_report_contract(stopped)
                 assert stopped['opened_sockets'] == stopped['closed_sockets'] == 2
                 assert stopped['map_protocol']['udp']['link']['owned_retained_bytes'] == 0
+                assert stopped['map_protocol']['scene_structures'] == mapping['scene_structures']
+                assert stopped['map_protocol']['scene_inspection'] == mapping['scene_inspection']
+                assert stopped['map_protocol']['scene_failure'] == mapping['scene_failure']
                 self.record('bounded scene disconnect closes client sockets and releases owned body',
                     opened_sockets=stopped['opened_sockets'], closed_sockets=stopped['closed_sockets'],
-                    owned_retained_bytes=0, actual_server_interoperability_verified=False)
+                    owned_retained_bytes=0, numeric_scene_inspection_retained=True,
+                    actual_server_interoperability_verified=False)
             completed = True
         finally:
             stop.set()
@@ -1097,7 +1148,7 @@ class Check:
                 self.adb('shell', 'rm', '-f', remote, check=False)
         self.native_fault_evidence('final-app-fault-audit')
         self.record('no app crash or ANR recorded')
-        value = {'format': 1, 'status': 'passed', 'checks': self.proofs, 'device': {'api': self.text('shell', 'getprop', 'ro.build.version.sdk').strip(), 'abi': 'x86_64', 'emulator': True}, 'physical_thor_accepted': False, 'actual_server_interoperability_verified': False, 'real_authenticated_session': False, 'scope': 'Consolidated app Android framework imports, native preview GLES, landscape viewport and lifecycle; optional source-layout UDP peer drives the actual app character picker to its bounded Map scene prefix. This does not qualify ARM64 guest execution, a real authenticated session or live-world rendering.'}
+        value = {'format': 1, 'status': 'passed', 'checks': self.proofs, 'device': {'api': self.text('shell', 'getprop', 'ro.build.version.sdk').strip(), 'abi': 'x86_64', 'emulator': True}, 'physical_thor_accepted': False, 'actual_server_interoperability_verified': False, 'real_authenticated_session': False, 'scope': 'Consolidated app Android framework imports, native preview GLES, landscape viewport and lifecycle; optional source-layout UDP peer drives the actual app character picker through complete bounded normal-world GROUPS structural inspection. This does not qualify asset resolution, CRC verification, ARM64 guest execution, a real authenticated session or live-world rendering.'}
         (self.args.output / 'receipt.json').write_text(json.dumps(value, indent=2) + '\n')
 
 

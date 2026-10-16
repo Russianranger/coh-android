@@ -25,12 +25,12 @@ def main():
  pins={f:normalized(repo/f) for f in PINNED}
  if pins!=json.loads((HERE/'source-pins.json').read_text())['sha256_lf']:raise ValueError('local login source pin mismatch')
  spec=importlib.util.spec_from_file_location('qualified_db_oracle',native/'engine/dbclient/check.py');db=importlib.util.module_from_spec(spec);spec.loader.exec_module(db)
- relative=['engine/dbclient/coh_dbclient.c','engine/dbclient/coh_db_session.c','engine/mapclient/coh_mapclient.c','engine/replication/coh_replication.c','engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c','engine/network/coh_net_udp.c','engine/auth/coh_auth.c','protocol/coh_protocol.c','src/coh_blowfish.c']
+ relative=['engine/dbclient/coh_dbclient.c','engine/dbclient/coh_db_session.c','engine/mapclient/coh_mapclient.c','engine/replication/coh_replication.c','engine/replication/coh_groups.c','engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c','engine/network/coh_net_udp.c','engine/auth/coh_auth.c','protocol/coh_protocol.c','src/coh_blowfish.c']
  sources=[HERE/'coh_local.c',*[native/f for f in relative]]
  with tempfile.TemporaryDirectory(prefix='coh-native-local-') as tmp:
   d=Path(tmp);oracle,_=db.oracle(repo,d);fixtures=db.fixtures(oracle,d)
   spec=importlib.util.spec_from_file_location('qualified_map_commands',native/'engine/mapclient/check.py')
-  maps=importlib.util.module_from_spec(spec);spec.loader.exec_module(maps);maps.command_fixtures(repo,d)
+  maps=importlib.util.module_from_spec(spec);spec.loader.exec_module(maps);maps.command_fixtures(repo,d);groups_receipt=maps.groups_fixtures(repo,d)
   flags=['-std=c11','-Wall','-Wextra','-Werror','-I'+str(native/'include'),'-I'+str(d)]
   checks={};peer_checks={};modes=[('release',['-O2'])]
   if a.sanitize:modes += [('asan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=address','-no-pie']),('ubsan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=undefined','-fno-sanitize-recover=all'])]
@@ -57,7 +57,8 @@ def main():
     if process.returncode:raise RuntimeError('Scripted UI peer failed: '+error+out)
    receipt=json.loads(report.read_text())
    if receipt['closed_sockets']!=2 or receipt['source_command_catalogs']!=1 or receipt['scene_prefixes']!=1 or receipt['failed']:raise ValueError('Scripted UI peer lifecycle/catalog did not complete')
-   if receipt['scene_decoded_bytes']!=128*1024 or not 1440<receipt['scene_compressed_bytes']<16384 or receipt['scene_payload_bits']!=128*1024*8 or receipt['scene_compressed'] is not True or receipt['scene_ordered'] is not False or receipt['large_body_fixture'] is not True or receipt['scene_tail_parsed'] is not False or receipt['decoded_budget_bytes']!=4*1024*1024:raise ValueError('Scripted large source-layout scene fixture did not complete')
+   large=groups_receipt['large_fixture'];expected=large['expected'];decoded=(large['payload_bits']+7)//8
+   if receipt['scene_decoded_bytes']!=decoded or not 1440<receipt['scene_compressed_bytes']<16384 or receipt['scene_payload_bits']!=large['payload_bits'] or receipt['scene_compressed'] is not True or receipt['scene_ordered'] is not False or receipt['large_body_fixture'] is not True or receipt['scene_tail_parsed'] is not True or receipt['scene_assets_resolved'] is not False or receipt['scene_crc_verified'] is not False or receipt['decoded_budget_bytes']!=4*1024*1024 or receipt['scene_expected_counts']!=expected:raise ValueError('Scripted complete normal GROUPS fixture did not complete')
    peer_checks[label]['peer']=receipt
 
   android={'arm64_built':False,'executed':False}
@@ -77,6 +78,8 @@ def main():
     (a.android_output/'android-build.json').write_text(json.dumps(receipt,indent=2)+'\n');android['artifacts']=artifacts;android['scripted_ui_peer_artifacts']=peer_artifacts
   proof={'schema':'coh-native-local-owner-v1','passed':True,'checks':checks,'scripted_ui_peer_checks':peer_checks,'source_files':len(pins),'source_sha256_lf':pins,'source_fixture_count':fixtures,'implementation_sha256':{str(v.relative_to(native)):sha(v) for v in [*sources,HERE/'coh_local.h',HERE/'test_local.c',HERE/'test_ui_peer.c',HERE/'test_ui_peer_client.c',HERE/'check.py',native/'engine/dbclient/coh_db_session.h',native/'engine/dbclient/coh_dbclient.h',native/'engine/dbclient/tests/test_db_session.c',native/'engine/mapclient/coh_mapclient.h']},'android':android,'sanitizers':'ASan+UBSan' if a.sanitize else 'not requested','leak_sanitizer_enabled':False,'leak_sanitizer_limitation':'Executor /proc task-walk compatibility; explicit before/after FD checks remain enabled.','actual_server_interoperability_verified':False,'authserver_authenticated_session':False,'native_live_world':False,'physical_thor_accepted':False,'credentials_logged':False}
   proof['implementation_sha256']['engine/mapclient/tests/large_scene_fixture.h']=sha(native/'engine/mapclient/tests/large_scene_fixture.h')
+  proof['implementation_sha256']['engine/replication/coh_groups.h']=sha(native/'engine/replication/coh_groups.h')
   proof['server_command_fixtures_sha256']=sha(d/'server-command-fixtures.h')
+  proof['groups_producer_oracle']=groups_receipt;proof['groups_fixtures_sha256']=sha(d/'groups-fixtures.h')
   a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(proof,indent=2)+'\n');print(json.dumps(proof,indent=2))
 if __name__=='__main__':main()

@@ -337,6 +337,20 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                     : "POLICY_UNAVAILABLE".equals(phase) ? " • Start/verify the server in the launcher, then reconnect."
                     : "SUSPENDED".equals(phase) ? " • Connect again after returning; no background reconnection." : "";
             JSONObject map=report.optJSONObject("map_protocol");
+            JSONObject sceneFailure=map==null?null:map.optJSONObject("scene_failure");
+            if("SCENE_INCOMPLETE".equals(phase)&&map!=null&&map.optLong("scene_structures")>0
+                    &&sceneFailure!=null&&sceneFailure.optInt("status")==0) {
+                detail=" • Scene structure decoded; server world rendering is pending.";
+            }
+            if("SCENE_INCOMPLETE".equals(phase)&&map!=null&&map.optInt("stage")==10
+                    &&sceneFailure!=null&&sceneFailure.optInt("status")==2) {
+                detail=" • Server scene format needs further decoding. Export the report.";
+            }
+            if("FAILED".equals(phase)&&map!=null&&map.optInt("stage")==10) {
+                detail=sceneFailure!=null&&sceneFailure.optInt("status")==4
+                        ? " • Server scene exceeds the current decoding limit. Export the report."
+                        : " • Server scene could not be decoded. Export the report.";
+            }
             JSONObject udp=map==null?null:map.optJSONObject("udp");
             JSONObject link=udp==null?null:udp.optJSONObject("link");
             JSONObject decode=link==null?null:link.optJSONObject("decode");

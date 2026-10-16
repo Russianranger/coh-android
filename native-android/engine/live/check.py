@@ -13,7 +13,7 @@ def run(cmd,**kwargs):
 def main():
  p=argparse.ArgumentParser();p.add_argument('--source-root',type=Path,required=True);p.add_argument('--sanitize',action='store_true');p.add_argument('--ndk',type=Path);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
  native=a.source_root.resolve()/'native-android'
- relative=['engine/login/coh_login.c','engine/dbclient/coh_dbclient.c','engine/dbclient/coh_db_session.c','engine/mapclient/coh_mapclient.c','engine/replication/coh_replication.c','engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c','engine/network/coh_net_udp.c','engine/session/coh_session_crypto.c','engine/auth/coh_auth.c','engine/auth/coh_auth_openssl.c','protocol/coh_protocol.c','src/coh_blowfish.c']
+ relative=['engine/login/coh_login.c','engine/dbclient/coh_dbclient.c','engine/dbclient/coh_db_session.c','engine/mapclient/coh_mapclient.c','engine/replication/coh_replication.c','engine/replication/coh_groups.c','engine/network/coh_net.c','engine/network/coh_net_frame.c','engine/network/coh_net_zip.c','engine/network/coh_net_udp.c','engine/session/coh_session_crypto.c','engine/auth/coh_auth.c','engine/auth/coh_auth_openssl.c','protocol/coh_protocol.c','src/coh_blowfish.c']
  dependencies=[native/path for path in relative]
  with tempfile.TemporaryDirectory(prefix='coh-live-owner-') as tmp:
   d=Path(tmp);flags=['-std=c11','-Wall','-Wextra','-Werror','-O1','-g','-I'+str(native/'include')]

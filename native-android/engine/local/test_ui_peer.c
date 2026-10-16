@@ -50,14 +50,14 @@ static void write_report(const UiPeer *u){
         "\"db_port\":%u,\"map_port\":%u,\"db_phase\":%u,\"map_phase\":%u,"
         "\"character_lists\":%u,\"character_choices\":%u,\"map_handoffs\":%u,\"map_connects\":%u,"
         "\"source_command_catalogs\":%u,\"source_command_count\":%u,\"scene_prefixes\":%u,"
-        "\"large_body_fixture\":true,\"scene_tail_parsed\":false,\"scene_decoded_bytes\":%zu,"
+        "\"large_body_fixture\":true,\"scene_tail_parsed\":true,\"scene_assets_resolved\":false,\"scene_crc_verified\":false,\"scene_decoded_bytes\":%zu,"
         "\"scene_compressed_bytes\":%zu,\"scene_payload_bits\":%zu,\"scene_compressed\":%s,"
-        "\"scene_ordered\":false,\"decoded_budget_bytes\":%u,"
+        "\"scene_ordered\":false,\"decoded_budget_bytes\":%u,\"scene_expected_counts\":%s,"
         "\"selected_wire_slot\":%u,\"opened_sockets\":2,\"closed_sockets\":%u}\n",
         u->failed?"true":"false",(long)getpid(),u->db.endpoint.port,u->map.endpoint.port,
         u->db_phase,u->map_phase,u->lists,u->choices,u->handoffs,u->connects,u->catalogs,
         SOURCE_ACCESSIBLE_COMMAND_COUNT,u->scenes,u->scene_decoded_bytes,u->scene_compressed_bytes,
-        u->scene_decoded_bytes*8,u->scenes?"true":"false",COH_NET_DECODED_MAX,u->selected_slot,u->closed)>0);
+        u->scene_decoded_bytes*8,u->scenes?"true":"false",COH_NET_DECODED_MAX,SOURCE_GROUPS_EXPECTED_JSON,u->selected_slot,u->closed)>0);
     CHECK(!fclose(f));CHECK(!rename(temporary,u->report));
 }
 static void response(Peer *p,unsigned cmd,CohNetPacket *out,CohProtocolBits *b){

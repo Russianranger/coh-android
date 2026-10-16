@@ -13,6 +13,7 @@ render spawn, Android execution or physical Thor acceptance is claimed.**
 | `SERVER_CONNECT_MSG` accepted flag and timezone / rejection string | Complete body parser; rejection text discarded |
 | `SERVER_CMDSHORTCUTS` ID/name list and accessible commands | Complete body parser; bounded IDs/strings/count; only ten original server-visible variable schemas admitted |
 | `SERVER_GROUPS` editor counts and map metadata | Prefix through original map path and beacon availability; reports exact group-file tail offset |
+| `SERVER_GROUPS` complete normal-file wire body | Separate opt-in structural inspection of files, defs, conditional material/property fields, affine matrix encodings, sparse roots and footer; no graph publication |
 | `SERVER_ALLENTS` full-update ID, odd bit, command values, clocks, debug/interpolation settings | Prefix through exact entity-tail offset; never emits an ACK for an unparsed full update |
 | `SERVER_UPDATE` same header without full-update ID | Same bounded prefix, dynamic source shortcut schema required |
 | `entGetPosition` full and partial quantized position | Exact 24-bit, scale-64 kernel with per-bit packet ordering; starts at the position substructure only |
@@ -38,6 +39,8 @@ The host tests deliberately call them at known synthetic fixture boundaries.
 ```sh
 python native-android/engine/replication/check.py --source-root . --sanitize \
   --output native-android/engine/replication/qualification.json
+python native-android/engine/replication/groups_check.py --source-root . --sanitize \
+  --output /tmp/coh-groups-qualification.json
 cmake -S native-android/engine/replication -B /tmp/coh-replication-build
 cmake --build /tmp/coh-replication-build
 ```
@@ -116,10 +119,86 @@ remap. Their zero-filled tails are synthetic, unparsed and never asserted to
 be authentic complete scenes. Tests cover prefix truncation at every bit,
 logical-end reads, 4 MiB + 1 rejection, `SIZE_MAX` claims, invalid budgets,
 reader corruption and 4,000 additional randomized large-buffer prefix cases.
-Release, ASan and UBSan exercise the same cases. Complete GROUPS files/defs,
-reference transforms and footer validation remain future decoder work; no
-readiness, full-update acknowledgement or authoritative actor follows from
-accepting a larger prefix.
+Release, ASan and UBSan exercise the same cases. The existing prefix APIs remain
+prefix-only. Complete normal-file structural traversal is a separate entry point
+below; no readiness, full-update acknowledgement or authoritative actor follows
+from accepting either result.
+
+### Complete normal GROUPS structural inspection
+
+`coh_rep_groups(reader, inspection, failure)` in `coh_groups.h` starts immediately
+after the GROUPS command. It reuses the accepted bounded prefix parser, then
+traverses the complete supported normal-world grammar through the four-field
+footer and exact logical end. Both scalar representations are supported. In
+source `byteAlignedMode` all scalar widths round to whole bytes, so the complete
+grammar ends at a byte boundary; packed-mode callers must preserve transport's
+logical payload bit count. Extra zero bits are not silently accepted as padding.
+
+The inspector validates flags and packed ranges, finite floats, optional
+definition blocks, both raw and packed 4-by-3 affine matrix representations,
+texture swaps and all conditional tricks fields, property names/values/types,
+removal records and sparse root IDs. Forward definition names and definitions
+omitted from saved libraries are permitted. File slot order is the producer's
+implicit `1..N-1,0`. Definition IDs increase within each file; root update IDs
+increase within their list. Duplicate or decreasing IDs are rejected without
+an identity table or allocation. Unsupported base/raid bodies and unknown
+texture-mask bits fail closed. Matrices are traversed for structural validity
+and finite values; their transforms are not reconstructed by this inspection.
+
+Admission policies are explicit: 1,024 file slots, 65,536 transmitted definitions
+with per-file IDs at most 65,535, 262,144 total children, 65,536 root updates
+with sparse IDs at most 1,048,575, 65,536 properties and 65,536 swaps. Names use
+the existing 256-byte bound, property names the source 64-byte bound, and
+property values a 4,096-byte bound, all including NUL. Tail strings have a
+3 MiB cumulative byte ceiling, and a separate 1,048,576 scalar-work ceiling
+can reject smaller bodies with too many small operations. These are finite
+native admission policies, not claims that every original map fits them.
+
+Only numeric counts, observed footer checksums and bit boundaries are retained.
+The footer file count must match the transmitted file-slot count; active roots
+are bounded but are not incorrectly compared to the number of changed root
+records. Both checksum values are metadata. Matching definitions may reside in
+imported libraries, so neither checksums nor a resolved graph can be validated
+from the transmitted records alone. The parser allocates nothing, retains no
+body pointers or strings, and uses no large local arrays. On failure its reader
+and inspection output remain unchanged. The optional failure receipt gives a
+numeric stage, status and last completed read boundary; a prefix failure reports
+the prefix start because the reused prefix parser is transactional. Tail scalar
+validation failures report the boundary after that scalar was read.
+
+The separate checker compiles 41 exact functions from 16 pinned original source
+files, including the original `worldSendUpdate`, `sendGroupFile`, `sendDef`,
+property writer, BitStream and matrix helpers. Its engine/services fixture shim
+is explicit and bounded. The exact original compression/alignment helpers run;
+packed fixtures use incremental sends, while full updates set compression and
+select byte-aligned mode. Initial-world incremental fixtures use a zero
+last-update time; the existing changed-only fixture retains its older checkpoint.
+The original group
+count/CRC traversal executes with
+an independent zlib Adler32 adapter matching the source Crypto++ digest byte
+order; Crypto++ itself is not executed. The native parser only reports those
+values and makes no checksum-match claim. Forty-four deterministic fixtures
+cover modern/legacy commands and both scalar profiles, including all optional
+definition blocks, forward names, omitted saved definitions, deletions, raw and
+packed matrices (including original PYR and singular-scale branches), force
+reload of saved definitions, incremental absent slots, alternate light/ambient
+tricks and four unsupported-base header cases.
+The complete large source fixture is 139,794 decoded bytes, with 192 definitions,
+384 children, 384 properties and 384 swaps. This is synthetic source execution,
+not a captured server body or authenticated scene.
+
+Release, ASan and UBSan run every-bit truncation for the small complete fixtures,
+sampled boundaries plus every bit of the final 128 bits for large fixtures,
+malformed counts/IDs/flags, nonfinite transforms, duplicate/decreasing IDs,
+unknown masks, resource ceilings, exact-end checks and 40,000 deterministic
+random/mutated cases. Wrapped allocation/free functions check that every parser
+call performs zero allocations and deallocations. The team-area prefix field is
+structural numeric metadata; values 5 through 7 do not change this grammar and
+are tested without granting team semantics. Existing reader/session/prefix
+tests remain independent.
+Successful structural inspection does not advance the session prefix state,
+send `REQALLENTS`, acknowledge full updates, emit `READY`, resolve assets or
+publish an authoritative actor. Those remain later integration milestones.
 
 ## Exact source sequence and remaining work
 

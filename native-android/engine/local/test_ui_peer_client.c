@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "groups-fixtures.h"
 static uint64_t now_ms(void){struct timespec t;if(clock_gettime(CLOCK_MONOTONIC,&t))exit(2);return (uint64_t)t.tv_sec*1000+(uint64_t)t.tv_nsec/1000000;}
 int main(int argc,char **argv){
     if(argc!=2)return 2;
@@ -25,13 +26,22 @@ int main(int argc,char **argv){
     int ok=status==COH_UNSUPPORTED&&d.phase==COH_LOCAL_SCENE_INCOMPLETE&&d.character_lists==1&&d.character_choices==1&&
         d.map_handoffs==1&&d.map_protocol.scene_prefixes==1&&d.map_protocol.accepted_messages==2&&
         !d.map_protocol.character_identity_verified&&d.map_protocol.last_command==COH_REP_GROUPS&&
-        d.map_protocol.last_decoded_bytes==128u*1024u&&d.map_protocol.scene_decoded_bytes==128u*1024u&&
-        d.map_protocol.last_payload_bits==128u*1024u*8&&d.map_protocol.last_byte_aligned==1&&
-        !d.map_protocol.udp.link.owned_retained_bytes&&d.map_protocol.udp.link.owned_high_water_bytes==128u*1024u;
+        d.map_protocol.last_decoded_bytes==sizeof(source_groups_large_world_byte_aligned)&&d.map_protocol.scene_decoded_bytes==sizeof(source_groups_large_world_byte_aligned)&&
+        d.map_protocol.last_payload_bits==source_groups_large_world_byte_aligned_bits&&d.map_protocol.last_byte_aligned==1&&
+        d.map_protocol.scene_structures==1&&d.map_protocol.scene_inspection.consumed_bits==source_groups_large_world_byte_aligned_bits&&
+        !d.map_protocol.scene_failure.stage&&!d.map_protocol.scene_failure.bit_offset&&!d.map_protocol.scene_failure.status&&
+        d.map_protocol.scene_inspection.files==source_groups_expected_files&&d.map_protocol.scene_inspection.present_files==source_groups_expected_present_files&&
+        d.map_protocol.scene_inspection.defs==source_groups_expected_defs&&d.map_protocol.scene_inspection.children==source_groups_expected_children&&
+        d.map_protocol.scene_inspection.roots==source_groups_expected_roots&&d.map_protocol.scene_inspection.properties==source_groups_expected_properties&&
+        d.map_protocol.scene_inspection.swaps==source_groups_expected_swaps&&d.map_protocol.scene_inspection.raw_matrices==source_groups_expected_raw_matrices&&
+        d.map_protocol.scene_inspection.packed_matrices==source_groups_expected_packed_matrices&&d.map_protocol.scene_inspection.footer_file_count==source_groups_expected_footer_file_count&&
+        d.map_protocol.scene_inspection.footer_active_roots==source_groups_expected_footer_active_roots&&
+        d.map_protocol.scene_inspection.footer_defs_crc==source_groups_expected_footer_defs_crc&&d.map_protocol.scene_inspection.footer_refs_crc==source_groups_expected_footer_refs_crc&&
+        !d.map_protocol.udp.link.owned_retained_bytes&&d.map_protocol.udp.link.owned_high_water_bytes==sizeof(source_groups_large_world_byte_aligned);
     coh_local_close(local);coh_local_diagnostics(local,&d);
     ok=ok&&d.opened_sockets==2&&d.closed_sockets==2;
     printf("{\"passed\":%s,\"status\":%u,\"stage\":%u,\"command\":%u,\"phase\":%u,\"scripted_source_layout\":true,"
-        "\"source_command_count\":915,\"large_body_fixture\":true,\"scene_tail_parsed\":false,"
+        "\"source_command_count\":915,\"large_body_fixture\":true,\"scene_tail_parsed\":true,\"scene_assets_resolved\":false,\"scene_crc_verified\":false,"
         "\"scene_decoded_bytes\":%u,\"scene_compressed_bytes\":%zu,\"owned_retained_bytes\":%zu,"
         "\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"real_server_interoperability\":false}\n",
         ok?"true":"false",(unsigned)status,(unsigned)d.map_protocol.stage,d.map_protocol.last_command,

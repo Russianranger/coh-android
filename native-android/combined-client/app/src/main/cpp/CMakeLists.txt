@@ -3,7 +3,7 @@ project(coh_combined_client LANGUAGES C)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 get_filename_component(NATIVE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../../.." ABSOLUTE)
 # Build the exact accepted renderer sources as a dependency. The new network
-# owner never publishes its incomplete scene prefix into this local preview.
+# owner never publishes inspected server messages into this local preview.
 add_subdirectory("${NATIVE_ROOT}/session-client/app/src/main/cpp" "${CMAKE_CURRENT_BINARY_DIR}/accepted-scene")
 
 if(NOT DEFINED COH_CRYPTO_ROOT OR COH_CRYPTO_ROOT STREQUAL "")
@@ -26,6 +26,7 @@ add_library(coh_combined_network SHARED combined_network.c
     "${ENGINE}/local/coh_local.c"
     "${ENGINE}/dbclient/coh_dbclient.c" "${ENGINE}/dbclient/coh_db_session.c"
     "${ENGINE}/mapclient/coh_mapclient.c" "${ENGINE}/replication/coh_replication.c"
+    "${ENGINE}/replication/coh_groups.c"
     "${ENGINE}/network/coh_net.c" "${ENGINE}/network/coh_net_frame.c"
     "${ENGINE}/network/coh_net_zip.c" "${ENGINE}/network/coh_net_udp.c"
     "${ENGINE}/auth/coh_auth.c" "${ENGINE}/auth/coh_auth_openssl.c"

@@ -14,7 +14,8 @@ import xml.etree.ElementTree as ET
 from unittest.mock import patch
 from emulator_check import (Check, PACKAGE, scene_pixels, settled_preview, viewport_contract,
                             map_report_contract, installed_apk_contract, guest_resources_contract,
-                            activity_inventory, retained_launcher, large_scene_contract)
+                            activity_inventory, retained_launcher, large_scene_contract,
+                            complete_scene_contract, SCENE_INSPECTION_FIELDS)
 
 FILE = 'native-test-donor.apk'
 BACKGROUND = f'<node package="com.google.android.documentsui" text="{FILE}" bounds="[189,899][583,956]"/>'
@@ -156,7 +157,7 @@ def viewport_protocol_controls(path):
     fitted['native'].update(width=1096,height=137);viewport_contract(fitted);count+=1
     mapping_fields = ('phase stage last_status last_command_valid last_command last_payload_bits last_byte_aligned '
         'accepted_messages rejected_messages malformed unsupported scene_prefixes entity_prefixes disconnects suspends timeouts '
-        'last_decoded_bytes scene_decoded_bytes').split()
+        'last_decoded_bytes scene_decoded_bytes scene_structures').split()
     udp_fields = ('state link_state sockets_opened sockets_closed datagrams_sent datagrams_received peer_rejects '
         'truncated empty malformed unsupported send_would_block interrupted io_errors receive_budget_exhausted '
         'suspends resumes cancellations timeouts last_system_error').split()
@@ -170,6 +171,8 @@ def viewport_protocol_controls(path):
     protocol.update(schema='coh-native-local-numeric-v1',phase='SCENE_INCOMPLETE',authserver_authenticated=False,
         live_world_rendered=False,map_protocol=dict.fromkeys(mapping_fields,0))
     protocol['map_protocol']['udp']=dict.fromkeys(udp_fields,0)
+    protocol['map_protocol']['scene_inspection']=dict.fromkeys(SCENE_INSPECTION_FIELDS,0)
+    protocol['map_protocol']['scene_failure']=dict(stage=0,bit_offset=0,status=0)
     protocol['map_protocol']['udp']['link']=dict.fromkeys(link_fields,0)
     protocol['map_protocol']['udp']['link']['decode']=dict.fromkeys(
         ('failure_kind','compressed_bytes','declared_raw_bytes','output_budget','normalized_command','command_valid'),0)
@@ -197,6 +200,33 @@ def viewport_protocol_controls(path):
         lambda v:v['map_protocol']['udp']['link']['decode'].update(normalized_command=6),
         lambda v:v['map_protocol']['udp']['link']['decode'].update(output_budget=4194304,command_valid=1,normalized_command=7),
         lambda v:v['map_protocol']['udp']['link']['decode'].update(failure_kind=True),
+        lambda v:v['map_protocol'].update(scene_structures=True),
+        lambda v:v['map_protocol']['scene_inspection'].update(asset_path='private'),
+        lambda v:v['map_protocol']['scene_inspection'].update(defs=-1),
+        lambda v:v['map_protocol']['scene_inspection'].update(new_world=2),
+        lambda v:v['map_protocol']['scene_inspection'].update(files=1025),
+        lambda v:v['map_protocol']['scene_inspection'].update(present_files=1),
+        lambda v:v['map_protocol']['scene_inspection'].update(defs=65537),
+        lambda v:v['map_protocol']['scene_inspection'].update(children=262145),
+        lambda v:v['map_protocol']['scene_inspection'].update(roots=65537),
+        lambda v:v['map_protocol']['scene_inspection'].update(properties=65537),
+        lambda v:v['map_protocol']['scene_inspection'].update(swaps=65537),
+        lambda v:v['map_protocol']['scene_inspection'].update(raw_matrices=327681),
+        lambda v:v['map_protocol']['scene_inspection'].update(strings=1048577),
+        lambda v:v['map_protocol']['scene_inspection'].update(string_bytes=3145729),
+        lambda v:v['map_protocol']['scene_inspection'].update(work_units=1048577),
+        lambda v:v['map_protocol']['scene_inspection'].update(max_def_id=65536),
+        lambda v:v['map_protocol']['scene_inspection'].update(max_root_id=1048576),
+        lambda v:v['map_protocol']['scene_inspection'].update(footer_file_count=1025),
+        lambda v:v['map_protocol']['scene_inspection'].update(footer_active_roots=65537),
+        lambda v:v['map_protocol']['scene_inspection'].update(footer_defs_crc=4294967296),
+        lambda v:v['map_protocol']['scene_inspection'].update(prefix_bits=1),
+        lambda v:v['map_protocol']['scene_inspection'].update(consumed_bits=33554433),
+        lambda v:v['map_protocol']['scene_inspection'].update(consumed_bits=True),
+        lambda v:v['map_protocol']['scene_failure'].update(packet_body='private'),
+        lambda v:v['map_protocol']['scene_failure'].update(stage=13),
+        lambda v:v['map_protocol']['scene_failure'].update(bit_offset=33554433),
+        lambda v:v['map_protocol']['scene_failure'].update(status=8),
     ):
         value=copy.deepcopy(protocol);mutate(value);reject(map_report_contract,value)
     protocol['map_protocol']['udp']['last_system_error']=-11
@@ -228,6 +258,37 @@ def viewport_protocol_controls(path):
                    {'scene_compressed_bytes':16384},{'decoded_budget_bytes':8388608}):
         value=copy.deepcopy(peer);value.update(change)
         reject(lambda fixture:large_scene_contract(expanded,fixture),value)
+    complete=copy.deepcopy(expanded);complete['server_identity_bound']=1
+    complete_map=complete['map_protocol']
+    complete_map.update(scene_structures=1,stage=10)
+    complete_map['scene_inspection'].update(new_world=1,files=1,present_files=1,defs=1,children=1,roots=1,
+        raw_matrices=2,strings=1,string_bytes=4,work_units=20,footer_file_count=1,footer_active_roots=1,
+        prefix_bits=80,consumed_bits=1048576)
+    complete_peer=copy.deepcopy(peer)
+    complete_peer.update(scene_tail_parsed=True,scene_assets_resolved=False,scene_crc_verified=False,
+        scene_expected_counts={k:complete_map['scene_inspection'][k] for k in ('files present_files defs children '
+            'roots properties swaps raw_matrices packed_matrices footer_file_count footer_active_roots '
+            'footer_defs_crc footer_refs_crc').split()})
+    complete_scene_contract(complete,complete_peer);count+=1
+    for mutate in (
+        lambda v:v.update(server_identity_bound=0),
+        lambda v:v['map_protocol'].update(entity_prefixes=1),
+        lambda v:v['map_protocol'].update(scene_structures=0),
+        lambda v:v['map_protocol'].update(stage=6),
+        lambda v:v['map_protocol']['scene_inspection'].update(defs=2),
+        lambda v:v['map_protocol']['scene_inspection'].update(consumed_bits=1048575),
+        lambda v:v['map_protocol']['scene_inspection'].update(prefix_bits=1048576),
+        lambda v:v['map_protocol']['scene_failure'].update(stage=4,status=2),
+    ):
+        value=copy.deepcopy(complete);mutate(value)
+        reject(lambda report:complete_scene_contract(report,complete_peer),value)
+    for change in ({'scene_tail_parsed':False},{'scene_assets_resolved':True},{'scene_crc_verified':True},
+                   {'scene_expected_counts':{}},{'scene_expected_counts':{'account':'private'}}):
+        value=copy.deepcopy(complete_peer);value.update(change)
+        reject(lambda fixture:complete_scene_contract(complete,fixture),value)
+    for key,wrong in (('files',True),('footer_file_count',2),('password',0)):
+        value=copy.deepcopy(complete_peer);value['scene_expected_counts'][key]=wrong
+        reject(lambda fixture:complete_scene_contract(complete,fixture),value)
     class ScrollDriver(Check):
         def __init__(self):
             super().__init__(SimpleNamespace(output=path/'scroll'))

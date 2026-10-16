@@ -13,7 +13,7 @@ SOURCES = [
     'engine/login/coh_login.c', 'engine/dbclient/coh_dbclient.c',
     'engine/dbclient/coh_db_session.c', 'engine/live/coh_live.c',
     'engine/mapclient/coh_mapclient.c',
-    'engine/replication/coh_replication.c',
+    'engine/replication/coh_replication.c', 'engine/replication/coh_groups.c',
     'engine/session/coh_session_crypto.c',
     'engine/sequencer/coh_sequencer.c', 'engine/ui/coh_ui.c', 'engine/audio/coh_mixer.c',
     'src/coh_assets.c', 'src/coh_dds.c', 'src/coh_blowfish.c',

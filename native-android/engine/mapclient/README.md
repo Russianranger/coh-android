@@ -17,11 +17,12 @@ Implemented:
 3. Full successful `SERVER_CONNECT_MSG` admission, then `CLIENT_REQSHORTCUTS`;
    full bounded shortcuts admission, then `CLIENT_REQSCENE` with the source
    zero stealth bit.
-4. Explicit scene/entity **prefix inspection** using the existing replication
-   parsers. A known DBID uses `CohRepSession`; an unknown DBID uses standalone
-   parsers and keeps that session disconnected. Prefixes return
-   `COH_UNSUPPORTED`, with diagnostic counters, and never prove character
-   identity, complete entity data, a spawn or a live session.
+4. Complete bounded structural inspection of the supported normal `GROUPS`
+   grammar, followed by the existing entity prefix boundary. A known DBID
+   uses `CohRepSession`; an unknown DBID uses standalone parsers and keeps
+   that session disconnected. Structural inspection returns
+   `COH_UNSUPPORTED`, with diagnostic counters, while imported assets,
+   footer checksums and authoritative character identity remain unresolved.
 5. Application timeout, malformed/unsupported input handling, source refusal,
    cancel, reliable disconnect/ACK, socket cleanup and suspend. Reuse requires
    fresh authorization and a different transport connection ID. No background
@@ -29,7 +30,8 @@ Implemented:
 
 There is no `LIVE` state. The controller does not send `REQALLENTS`, `READY`,
 `ACK_FULL_UPDATE` or `RECEIVED_CHARACTER` based on a prefix. It remains in
-`SCENE_INCOMPLETE` while complete group and own-entity parsers are pending.
+`SCENE_INCOMPLETE` while the imported group graph and own-entity decode are
+pending.
 The ordinary NetLink transport ACK remains enabled so that a parser boundary
 does not turn into a retransmission loop.
 
@@ -93,7 +95,8 @@ The controller retains the last rejected command's normalized numeric ID,
 payload bit count, byte-alignment profile, status and parser checkpoint after
 socket cleanup. Checkpoints are 0 none, 1 UDP service, 2 next message /
 decompression, 3 command decode, 4 connect response, 5 shortcuts, 6 scene
-prefix, 7 entity prefix, 8 command queueing, and 9 application timeout. The
+prefix, 7 entity prefix, 8 command queueing, 9 application timeout, and
+10 complete normal GROUPS structural inspection. The
 first rejected message ends that service call so later messages cannot erase
 its checkpoint. This does not relax malformed or unsupported-message policy.
 
@@ -135,3 +138,43 @@ live-world acceptance is established by this change.
 cases and 29 actual-socket scenarios in each release, ASan and UBSan run.
 Complete ARM64 and x86_64 API26 test executables were cross-built; that receipt
 does not claim Android execution or physical Thor acceptance.
+
+### Complete normal GROUPS structural inspection (0.1.7)
+
+After accepting a valid source prefix, the Map role synchronously calls
+`coh_rep_groups` on the complete borrowed body. The decoder traverses normal
+group-file definitions, child and root transforms, material/trick fields,
+properties, removals and the four-field footer through the exact logical end.
+It retains no strings, matrices or input bytes and allocates no graph. The
+transport lease is released on every inspection result before receiving
+another body.
+
+`scene_structures` counts completely inspected supported messages.
+`scene_inspection` retains bounded numeric counts, consumed bit positions and
+the source footer values from the most recent success. Failed inspection
+preserves that receipt and updates only `scene_failure` with numeric parser
+stage, status and bit offset. The new fields reset on a fresh begin and
+remain available after cleanup. Footer CRC values are observed, never
+validated against a resolved asset graph.
+
+A supported malformed normal tail fails the local session and closes its
+sockets. Base/raid grammar and other unsupported extensions retain
+`SCENE_INCOMPLETE` with a specific numeric failure receipt. Even complete
+normal structural inspection remains `SCENE_INCOMPLETE`: no application
+READY, REQALLENTS, full-update acknowledgement or selected-character spawn is
+sent. Normal NetLink transport acknowledgements remain unchanged.
+
+Qualification fixtures come from the pinned original producer and original
+BitStream implementation. The large fixture now contains complete meaningful
+normal grammar rather than the historical 0.1.6 unparsed synthetic tail.
+These controlled peer fixtures are not server captures or evidence of an
+authenticated/live-world session.
+
+`evidence/groups-structure-017-host.json` records 31,480 checks, 10,665
+negative cases and 33 actual UDP scenarios in each release, ASan and UBSan
+mode. The complete fixture has 139,794 decoded bytes / 1,118,352 bits and
+3,575 compressed wire bytes. Independent source expectations cover 192
+definitions, 384 children/properties/swaps, four roots, 194 raw matrices and
+194 packed matrices. Both Android ARM64 and x86_64 API26 complete Map test
+executables were cross-built; this evidence does not claim execution on
+Android or a new physical server result.

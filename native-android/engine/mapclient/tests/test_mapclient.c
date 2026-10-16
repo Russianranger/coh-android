@@ -253,9 +253,13 @@ static void local_authorization_tests(void) {
     CHECK(!diagnostics(m).udp.sockets_opened);coh_map_client_destroy(m);peer_close(p);scenarios++;
 }
 static CohNetPacket scene_prefix(unsigned version,unsigned aligned,uint32_t id) {
-    CohNetPacket p=profile_packet(id,COH_REP_GROUPS,version<4,aligned);CohProtocolBits b=append(&p);
-    pack_value(&b,aligned,0);pack_value(&b,aligned,0);
-    scalar_value(&b,aligned,1,0);scalar_value(&b,aligned,1,1);p.payload_bits=(uint32_t)b.bit_length;return p;
+    const uint8_t *data;uint32_t bits;
+    if(version<4&&aligned){data=source_groups_minimal_world_legacy_byte_aligned;bits=source_groups_minimal_world_legacy_byte_aligned_bits;}
+    else if(version<4){data=source_groups_minimal_world_legacy_packed;bits=source_groups_minimal_world_legacy_packed_bits;}
+    else if(aligned){data=source_groups_minimal_world_byte_aligned;bits=source_groups_minimal_world_byte_aligned_bits;}
+    else {data=source_groups_minimal_world_packed;bits=source_groups_minimal_world_packed_bits;}
+    CohNetPacket p={0};p.id=id;p.compressed=(uint8_t)aligned;p.payload_bits=bits;
+    CHECK((bits+7)/8<=sizeof(p.payload));memcpy(p.payload,data,(bits+7)/8);return p;
 }
 static CohNetPacket entity_prefix(unsigned version,unsigned aligned,uint32_t id) {
     CohNetPacket p=profile_packet(id,COH_REP_ALLENTS,version<4,aligned);CohProtocolBits b=append(&p);
@@ -271,7 +275,8 @@ static void actual_socket_inspection(void) {
         uint64_t now=handshake(m,p,version,aligned,profile==11?12345:0,41,100,0);
         CohNetPacket scene=scene_prefix(version,aligned,104);send_packet(p,local(m),version,scene);
         CHECK(coh_map_client_service(m,now++,(CohCancel){0})==COH_UNSUPPORTED);drain_idle(p,version);
-        CohMapDiagnostics d=diagnostics(m);CHECK(d.phase==COH_MAP_SCENE_INCOMPLETE&&d.scene_prefixes==1&&!d.character_identity_verified);
+        CohMapDiagnostics d=diagnostics(m);CHECK(d.phase==COH_MAP_SCENE_INCOMPLETE&&d.scene_prefixes==1&&d.scene_structures==1&&!d.character_identity_verified);
+        CHECK(d.scene_inspection.consumed_bits==scene.payload_bits&&d.scene_failure.status==COH_OK);
         CohNetPacket ent=entity_prefix(version,aligned,105);send_packet(p,local(m),version,ent);
         CHECK(coh_map_client_service(m,now++,(CohCancel){0})==COH_UNSUPPORTED);drain_idle(p,version);
         d=diagnostics(m);CHECK(d.phase==COH_MAP_SCENE_INCOMPLETE&&d.entity_prefixes==1&&d.accepted_messages==2&&!d.character_identity_verified);
@@ -311,10 +316,10 @@ static void source_catalog_over_udp(void) {
         CohNetPacket scene=scene_prefix(5,aligned,120);send_packet(p,local(m),5,scene);
         CHECK(coh_map_client_service(m,now,(CohCancel){0})==COH_UNSUPPORTED);drain_idle(p,5);
         d=diagnostics(m);CHECK(d.phase==COH_MAP_SCENE_INCOMPLETE&&d.scene_prefixes==1);
-        CHECK(d.stage==COH_MAP_STAGE_SCENE_PREFIX&&d.last_status==COH_UNSUPPORTED);
+        CHECK(d.stage==COH_MAP_STAGE_SCENE_STRUCTURE&&d.last_status==COH_UNSUPPORTED);
         CHECK(d.last_command==COH_REP_GROUPS&&d.last_command_valid&&!d.character_identity_verified);
         coh_map_client_close(m);d=diagnostics(m);
-        CHECK(d.phase==COH_MAP_CLOSED&&d.stage==COH_MAP_STAGE_SCENE_PREFIX&&d.last_status==COH_UNSUPPORTED);
+        CHECK(d.phase==COH_MAP_CLOSED&&d.stage==COH_MAP_STAGE_SCENE_STRUCTURE&&d.last_status==COH_UNSUPPORTED);
         CHECK(d.udp.sockets_opened==d.udp.sockets_closed&&!d.udp.link.tx_pending);
         coh_map_client_destroy(m);peer_close(p);scenarios++;
     }
@@ -330,7 +335,14 @@ static void expanded_scene_over_udp(void) {
         send_encoded(p,local(m),5,encoded,bytes,200,ordered);
         CHECK(coh_map_client_service(m,now++,(CohCancel){0})==COH_UNSUPPORTED);drain_idle(p,5);
         CohMapDiagnostics d=diagnostics(m);
-        CHECK(d.phase==COH_MAP_SCENE_INCOMPLETE&&d.stage==COH_MAP_STAGE_SCENE_PREFIX&&d.scene_prefixes==1);
+        CHECK(d.phase==COH_MAP_SCENE_INCOMPLETE&&d.stage==COH_MAP_STAGE_SCENE_STRUCTURE&&d.scene_prefixes==1&&d.scene_structures==1);
+        CHECK(d.scene_inspection.files==source_groups_expected_files&&d.scene_inspection.defs==source_groups_expected_defs);
+        CHECK(d.scene_inspection.roots==source_groups_expected_roots&&d.scene_inspection.children==source_groups_expected_children);
+        CHECK(d.scene_inspection.properties==source_groups_expected_properties&&d.scene_inspection.swaps==source_groups_expected_swaps);
+        CHECK(d.scene_inspection.raw_matrices==source_groups_expected_raw_matrices&&d.scene_inspection.packed_matrices==source_groups_expected_packed_matrices);
+        CHECK(d.scene_inspection.footer_file_count==source_groups_expected_footer_file_count&&d.scene_inspection.footer_active_roots==source_groups_expected_footer_active_roots);
+        CHECK(d.scene_inspection.footer_defs_crc==source_groups_expected_footer_defs_crc&&d.scene_inspection.footer_refs_crc==source_groups_expected_footer_refs_crc);
+        CHECK(d.scene_inspection.consumed_bits==source_groups_large_world_byte_aligned_bits&&!d.scene_failure.stage&&!d.scene_failure.bit_offset&&!d.scene_failure.status);
         CHECK(d.last_payload_bits==SCENE_FIXTURE_DECODED_BYTES*8&&d.last_decoded_bytes==SCENE_FIXTURE_DECODED_BYTES);
         CHECK(d.scene_decoded_bytes==SCENE_FIXTURE_DECODED_BYTES&&d.accepted_messages==2&&!d.character_identity_verified);
         CHECK(d.last_byte_aligned==1&&d.last_command==COH_REP_GROUPS&&d.last_status==COH_UNSUPPORTED);
@@ -338,7 +350,7 @@ static void expanded_scene_over_udp(void) {
         CHECK(d.udp.link.decode.failure_kind==COH_NET_DECODE_NONE&&d.udp.link.decode.compressed_bytes==bytes);
         CHECK(d.udp.link.decode.declared_raw_bytes==SCENE_FIXTURE_DECODED_BYTES&&d.udp.link.decode.output_budget==COH_NET_DECODED_MAX);
         CHECK(d.inspector_phase==(known_dbid?COH_REP_SCENE_PREFIX_SEEN:COH_REP_DISCONNECTED));
-        /* Prefix inspection emitted no application READY/REQALLENTS/spawn. */
+        /* Structural inspection emitted no application READY/REQALLENTS/spawn. */
         struct pollfd unread={p.fd,POLLIN,0};CHECK(poll(&unread,1,0)==0);
         if(profile==0)coh_map_client_close(m);
         else if(profile==1)coh_map_client_suspend(m);
@@ -346,6 +358,7 @@ static void expanded_scene_over_udp(void) {
         else {CHECK(coh_map_client_disconnect(m,now++)==COH_OK);coh_map_client_close(m);}
         d=diagnostics(m);CHECK(d.udp.sockets_opened==d.udp.sockets_closed&&!d.udp.link.owned_retained_bytes);
         CHECK(d.scene_decoded_bytes==SCENE_FIXTURE_DECODED_BYTES);
+        CHECK(d.scene_structures==1&&d.scene_inspection.consumed_bits==source_groups_large_world_byte_aligned_bits);
         coh_map_client_destroy(m);peer_close(p);scenarios++;
     }
 }
@@ -387,6 +400,43 @@ static void expanded_scene_wrong_state(void) {
     CHECK(diagnostics(m).udp.sockets_opened==diagnostics(m).udp.sockets_closed);
     coh_map_client_destroy(m);peer_close(p);negative++;scenarios++;
 }
+static void scene_structure_failure_receipts(void) {
+    for(unsigned which=0;which<4;which++) {
+        Peer p=peer_open();CohMapConfig c=configuration(p,5);CohMapClient *m=coh_map_client_create(&c);CHECK(m);
+        uint64_t now=handshake(m,p,5,1,0,101,100,0);
+        CohNetPacket good=scene_prefix(5,1,1100);send_packet(p,local(m),5,good);
+        CHECK(coh_map_client_service(m,now++,(CohCancel){0})==COH_UNSUPPORTED);drain_idle(p,5);
+        CohMapDiagnostics before=diagnostics(m);CHECK(before.scene_structures==1&&!before.scene_failure.status);
+        CohNetPacket bad=good;bad.id=1101;
+        CohStatus wanted=COH_INVALID;CohGroupsStage stage=COH_GROUPS_STAGE_FOOTER;
+        if(which==0)bad.payload_bits-=8; /* supported grammar, truncated footer */
+        else if(which==1){bad.payload_bits+=8;wanted=COH_UNSUPPORTED;stage=COH_GROUPS_STAGE_END;}
+        else if(which==2) {
+            memcpy(bad.payload,source_groups_unsupported_base_byte_aligned,sizeof(source_groups_unsupported_base_byte_aligned));
+            bad.payload_bits=source_groups_unsupported_base_byte_aligned_bits;wanted=COH_UNSUPPORTED;stage=COH_GROUPS_STAGE_FILE;
+        } else {
+            CohRepReader reader;CohRepScenePrefix prefix;uint32_t command_id;
+            CHECK(coh_rep_reader(&reader,(CohBytes){bad.payload,(bad.payload_bits+7)/8},bad.payload_bits,1)==COH_OK);
+            CHECK(coh_rep_pack(&reader,1,&command_id)==COH_OK&&command_id==COH_REP_GROUPS);
+            CHECK(coh_rep_scene_prefix(&reader,&prefix)==COH_OK);
+            CohProtocolBits writer;CHECK(coh_protocol_bits_init(&writer,bad.payload,sizeof(bad.payload),bad.payload_bits,1)==COH_OK);
+            writer.cursor=prefix.group_tail_bit;CHECK(coh_protocol_write(&writer,32,COH_GROUPS_FILE_MAX+1)==COH_OK);
+            wanted=COH_LIMIT;stage=COH_GROUPS_STAGE_FILES;
+        }
+        send_packet(p,local(m),5,bad);CHECK(coh_map_client_service(m,now++,(CohCancel){0})==wanted);drain_idle(p,5);
+        CohMapDiagnostics after=diagnostics(m);
+        CHECK(after.stage==COH_MAP_STAGE_SCENE_STRUCTURE&&after.phase==COH_MAP_SCENE_INCOMPLETE);
+        CHECK(after.scene_prefixes==2&&after.scene_structures==1&&after.scene_failure.stage==stage&&after.scene_failure.status==wanted);
+        CHECK(after.scene_failure.bit_offset<=bad.payload_bits&&after.scene_failure.bit_offset>0);
+        CHECK(!memcmp(&after.scene_inspection,&before.scene_inspection,sizeof(before.scene_inspection)));
+        CHECK(!after.udp.link.owned_retained_bytes&&!after.character_identity_verified&&after.accepted_messages==2);
+        coh_map_client_close(m);after=diagnostics(m);CHECK(after.udp.sockets_opened==after.udp.sockets_closed);
+        CHECK(after.scene_failure.stage==stage&&after.scene_failure.status==wanted&&after.scene_structures==1);
+        CohMapAuthorization a=authorized(p);CHECK(coh_map_client_begin(m,&a,102,now)==COH_OK);after=diagnostics(m);
+        CHECK(!after.scene_structures&&!after.scene_inspection.consumed_bits&&!after.scene_failure.stage&&!after.scene_failure.bit_offset&&!after.scene_failure.status);
+        coh_map_client_destroy(m);peer_close(p);negative++;scenarios++;
+    }
+}
 static void first_rejection_precedes_deadline(void) {
     Peer p=peer_open();CohMapConfig c=configuration(p,5);c.application_timeout_ms=10;
     CohMapClient *m=coh_map_client_create(&c);CHECK(m);
@@ -427,9 +477,9 @@ static void timeout_and_cancel(void) {
     coh_map_client_destroy(m);peer_close(p);scenarios++;
 }
 int main(void) {
-    unsigned fds=fd_count();serializers();configuration_tests();local_authorization_tests();actual_socket_inspection();source_catalog_over_udp();expanded_scene_over_udp();expanded_scene_rejections();expanded_scene_wrong_state();first_rejection_precedes_deadline();timeout_and_cancel();CHECK(fd_count()==fds);
+    unsigned fds=fd_count();serializers();configuration_tests();local_authorization_tests();actual_socket_inspection();source_catalog_over_udp();expanded_scene_over_udp();expanded_scene_rejections();expanded_scene_wrong_state();scene_structure_failure_receipts();first_rejection_precedes_deadline();timeout_and_cancel();CHECK(fd_count()==fds);
     printf("{\"checks\":%u,\"negative_cases\":%u,\"scenarios\":%u,\"actual_os_udp\":true,\"scripted_peer_only\":true,\"socket_leak_check\":true,"
-        "\"expanded_scene_fixture\":true,\"scene_tail_parsed\":false,\"large_scene_decoded_bytes\":%u,\"large_scene_max_wire_bytes\":%zu,"
+        "\"expanded_scene_fixture\":true,\"scene_tail_parsed\":true,\"scene_assets_resolved\":false,\"scene_crc_verified\":false,\"large_scene_decoded_bytes\":%u,\"large_scene_max_wire_bytes\":%zu,"
         "\"decoded_budget_bytes\":%u,\"actual_authentication\":false,\"live_world\":false}\n",
         checks,negative,scenarios,SCENE_FIXTURE_DECODED_BYTES,scene_wire_max,COH_NET_DECODED_MAX);return 0;
 }

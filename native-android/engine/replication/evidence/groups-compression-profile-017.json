@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "passed": true,
+  "scope": "trusted original-source oracle profile correction; no server or device execution",
+  "historical_oracle_commit": "b2cc464defaba42ae4fbffee5554487827b1960f",
+  "payloads_bit_identical": 44,
+  "expected_aggregates_identical": 44,
+  "repeated_current_generation_identical": true,
+  "packed_full_updates": 0,
+  "compression_helpers_unchanged": 3,
+  "source_files": 16,
+  "compiled_original_functions": 41,
+  "source_pin_sha256": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+  "original_harness_sha256": "265ec1a45f255df334adae872ab82a56f1da92a7d35b0f069a82d0517d8054af",
+  "large_fixture_sha256": "7bef42694975fa322319de16ef7d9c8c3328fd2e5173bec822a1fca4b21531fc",
+  "large_fixture_bytes": 139794,
+  "large_fixture_bits": 1118352,
+  "original_producer_sanitized": false,
+  "actual_server_interoperability": false
+}

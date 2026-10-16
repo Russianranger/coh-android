@@ -5,6 +5,7 @@
 #include "../dbclient/tests/test_db_session.c"
 #undef main
 #include "coh_local.h"
+#include "groups-fixtures.h"
 static CohLocalDiagnostics diag(CohLocal *s){CohLocalDiagnostics d={0};coh_local_diagnostics(s,&d);return d;}
 static CohNetPacket read_target(Peer *p,CohNetEndpoint *target,int connecting){
     struct pollfd f={p->fd,POLLIN,0};CHECK(poll(&f,1,100)==1);
@@ -80,9 +81,9 @@ static void happy_chain(unsigned malformed_catalog){
     reply=application(&map,COH_REP_CONNECT_MSG);CohProtocolBits b=append_packet(&reply);CHECK(!coh_protocol_write_pack(&b,1,1));CHECK(!coh_protocol_write(&b,32,0));application_send(&map,map_target,reply,&b,request.id);
     service_ok(s,111);drain_ack(&map,5);service_ok(s,112);request=frame_read(&map,5,0);CHECK(command(&request,5,0)==COH_MAP_REQSHORTCUTS);
     reply=application(&map,COH_REP_SHORTCUTS);b=append_packet(&reply);CHECK(!coh_protocol_write_pack(&b,1,UINT32_MAX));
-    CHECK(!coh_protocol_write_pack(&b,1,malformed_catalog?COH_REP_ACCESSIBLE_COMMAND_MAX+1:0));
+    CHECK(!coh_protocol_write_pack(&b,1,malformed_catalog==1?COH_REP_ACCESSIBLE_COMMAND_MAX+1:0));
     application_send(&map,map_target,reply,&b,request.id);
-    if(malformed_catalog) {
+    if(malformed_catalog==1) {
         CHECK(coh_local_service(s,113,(CohCancel){0})==COH_LIMIT);drain_ack(&map,5);
         CohLocalDiagnostics d=diag(s);CHECK(d.phase==COH_LOCAL_FAILED&&d.last_status==COH_LIMIT);
         CHECK(d.terminal_failure&&d.terminal_map_phase==COH_MAP_WAIT_SHORTCUTS&&d.map_phase==COH_MAP_CLOSED);
@@ -96,9 +97,24 @@ static void happy_chain(unsigned malformed_catalog){
         coh_local_destroy(s);peer_close(&map);peer_close(&db);scenarios++;return;
     }
     service_ok(s,113);drain_ack(&map,5);service_ok(s,114);request=frame_read(&map,5,0);CHECK(command(&request,5,0)==COH_MAP_REQSCENE);
-    reply=application(&map,COH_REP_GROUPS);b=append_packet(&reply);CHECK(!coh_protocol_write_pack(&b,1,0));CHECK(!coh_protocol_write_pack(&b,1,0));CHECK(!coh_protocol_write(&b,1,0));CHECK(!coh_protocol_write(&b,1,0));application_send(&map,map_target,reply,&b,request.id);
+    if(malformed_catalog==3)peer_message(&map,map_target,5,source_groups_unsupported_base_byte_aligned,source_groups_unsupported_base_byte_aligned_bits,1,request.id);
+    else peer_message(&map,map_target,5,source_groups_minimal_world_packed,source_groups_minimal_world_packed_bits-(malformed_catalog==2?1:0),0,request.id);
+    if(malformed_catalog==2) {
+        CHECK(coh_local_service(s,115,(CohCancel){0})==COH_INVALID);drain_ack(&map,5);
+        CohLocalDiagnostics d=diag(s);CHECK(d.phase==COH_LOCAL_FAILED&&d.last_status==COH_INVALID);
+        CHECK(d.terminal_failure&&d.terminal_map_phase==COH_MAP_SCENE_INCOMPLETE&&d.map_phase==COH_MAP_CLOSED);
+        CHECK(d.map_protocol.stage==COH_MAP_STAGE_SCENE_STRUCTURE&&d.map_protocol.scene_prefixes==1&&!d.map_protocol.scene_structures);
+        CHECK(d.map_protocol.scene_failure.stage==COH_GROUPS_STAGE_FOOTER&&d.map_protocol.scene_failure.status==COH_INVALID);
+        CHECK(!d.map_protocol.scene_inspection.consumed_bits&&!d.map_protocol.udp.link.owned_retained_bytes);
+        CHECK(d.opened_sockets==2&&d.closed_sockets==2&&!d.map_protocol.character_identity_verified);
+        coh_local_suspend(s);CHECK(diag(s).map_protocol.scene_failure.status==COH_INVALID);
+        coh_local_destroy(s);peer_close(&map);peer_close(&db);scenarios++;return;
+    }
     CHECK(coh_local_service(s,115,(CohCancel){0})==COH_UNSUPPORTED);drain_ack(&map,5);
     CHECK(diag(s).phase==COH_LOCAL_SCENE_INCOMPLETE&&diag(s).local_development_auth&&diag(s).map_phase==COH_MAP_SCENE_INCOMPLETE);
+    if(malformed_catalog==3)CHECK(!diag(s).map_protocol.scene_structures&&diag(s).map_protocol.scene_failure.stage==COH_GROUPS_STAGE_FILE&&diag(s).map_protocol.scene_failure.status==COH_UNSUPPORTED);
+    else CHECK(diag(s).map_protocol.scene_structures==1&&diag(s).map_protocol.scene_inspection.consumed_bits==source_groups_minimal_world_packed_bits&&!diag(s).map_protocol.scene_failure.status);
+    CHECK(!diag(s).map_protocol.udp.link.owned_retained_bytes&&!diag(s).map_protocol.character_identity_verified);
     struct pollfd f={map.fd,POLLIN,0};CHECK(poll(&f,1,0)==0); /* no READY/full entities/spawn */
     coh_local_suspend(s);CHECK(diag(s).phase==COH_LOCAL_SUSPENDED&&diag(s).opened_sockets==2&&diag(s).closed_sockets==2&&!diag(s).server_identity_bound);
     CohDbLogin p;coh_local_login_policy(&p);CHECK(coh_local_begin(s,&p,"Fixture",101,102,116)==COH_INVALID);
@@ -122,6 +138,6 @@ int main(void){
     unsigned before=descriptors();CohLocalConfig c=coh_local_default_config();c.db.transport.peer=(CohNetEndpoint){{127,0,0,1},7000};
     CHECK(!coh_local_create(&c));c.local_development_enabled=1;c.db.transport.peer.address[0]=10;CHECK(!coh_local_create(&c));
     c.db.transport.peer.address[0]=127;c.map.udp.local.address[0]=0;CHECK(!coh_local_create(&c));
-    happy_chain(0);happy_chain(1);failures();CHECK(descriptors()==before);
+    happy_chain(0);happy_chain(1);happy_chain(2);happy_chain(3);failures();CHECK(descriptors()==before);
     printf("{\"passed\":true,\"checks\":%u,\"socket_scenarios\":%u,\"actual_os_udp\":true,\"full_scripted_db_map_chain\":true,\"source_layout_peer\":true,\"real_server_interoperability\":false,\"real_authenticated_session\":false,\"native_live_world\":false,\"socket_leak_check\":true}\n",checks,scenarios);return 0;
 }

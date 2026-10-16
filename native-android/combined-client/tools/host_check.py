@@ -43,6 +43,7 @@ def main():
         ('db-protocol', [sys.executable, native / 'engine/dbclient/check.py', '--source-root', args.source_root.resolve(), '--sanitize', '--output', args.output / 'db-protocol.json']),
         ('map-protocol', [sys.executable, native / 'engine/mapclient/check.py', '--source-root', args.source_root.resolve(), '--sanitize', '--ndk', ndk.resolve(), '--android-output', args.output / 'map-android', '--output', args.output / 'map-protocol.json']),
         ('replication', [sys.executable, native / 'engine/replication/check.py', '--source-root', args.source_root.resolve(), '--sanitize', '--output', args.output / 'replication.json']),
+        ('scene-structure', [sys.executable, native / 'engine/replication/groups_check.py', '--source-root', args.source_root.resolve(), '--sanitize', '--output', args.output / 'scene-structure.json']),
     ]
     results = []
     for name, command in commands:
