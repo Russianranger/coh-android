@@ -57,9 +57,15 @@ def cmake_identity(path, staged):
         if name in fields:
             raise ValueError("Duplicate CMake cache key")
         fields[name] = value
+    configurations = [(name, value) for name, value in fields.items()
+                      if name == "CMAKE_CONFIGURATION_TYPES" or name.startswith("CMAKE_CONFIGURATION_TYPES:")]
+    # Untyped CMakePresets cacheVariables retain UNINITIALIZED in real VS2026
+    # caches; an explicitly typed entry uses STRING. Reject conflicting aliases.
+    configuration_types = (configurations[0][1] if len(configurations) == 1 and
+        configurations[0][0] in ("CMAKE_CONFIGURATION_TYPES:STRING", "CMAKE_CONFIGURATION_TYPES:UNINITIALIZED") else "")
     if (fields.get("CMAKE_GENERATOR:INTERNAL") != "Visual Studio 18 2026"
             or fields.get("CMAKE_GENERATOR_PLATFORM:INTERNAL") != "Win32"
-            or "OptDebug" not in fields.get("CMAKE_CONFIGURATION_TYPES:STRING", "").split(";")
+            or "OptDebug" not in configuration_types.split(";")
             or Path(fields.get("CMAKE_HOME_DIRECTORY:INTERNAL", "")).resolve() != staged.resolve()):
         raise ValueError("Expected the isolated VS2026 Win32 MapServer source/build cache")
 

@@ -76,6 +76,22 @@ class CompileArtifactAdmission(unittest.TestCase):
             with self.subTest(key=key), self.assertRaises(ValueError):
                 validate_inputs({**receipt, key: value}, helper)
 
+    def test_real_vs2026_untyped_preset_cache(self):
+        # Exact relevant fields from run 38924800093, diagnostics artifact
+        # 12057255869: a successful real MapServer compile retains this type.
+        cache = self.root / "CMakeCache.txt"
+        actual = ("CMAKE_CONFIGURATION_TYPES:UNINITIALIZED=Debug;Release;OptDebug\r\n"
+            "CMAKE_GENERATOR:INTERNAL=Visual Studio 18 2026\r\n"
+            "CMAKE_GENERATOR_PLATFORM:INTERNAL=Win32\r\n"
+            "CMAKE_HOME_DIRECTORY:INTERNAL=C:/scene-catalog-export-src\r\n")
+        cache.write_bytes(actual.encode())
+        cmake_identity(cache, Path("C:/scene-catalog-export-src"))
+        for malformed in (actual.replace(":UNINITIALIZED=", ":BOOL="),
+                          actual + "CMAKE_CONFIGURATION_TYPES:STRING=Debug;Release;OptDebug\r\n"):
+            cache.write_bytes(malformed.encode())
+            with self.assertRaises(ValueError):
+                cmake_identity(cache, Path("C:/scene-catalog-export-src"))
+
 
 if __name__ == "__main__":
     unittest.main()
