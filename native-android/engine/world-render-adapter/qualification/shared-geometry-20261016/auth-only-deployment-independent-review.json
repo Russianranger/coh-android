@@ -1,0 +1,59 @@
+{
+  "reviewer": "Worker E independent read-only review of Worker D auth-only deployment and coordinator workflow",
+  "passed": true,
+  "blocking_findings": [],
+  "worker_revision_context": "f77ec501c997029187d43be63047d6764cd71c45",
+  "reviewed_source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_auth_login.py": "cd2f54113ef3ab3b2a90b1bc4fd7f51f68ea30b718704889921aad5ddcf7263a",
+    "native-android/engine/auth-interop/deployment/auth_service_profile.py": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4",
+    "native-android/engine/auth-interop/deployment/test_auth_login_stage.py": "396d3688a7f64d913b24822b0252faf469954a0af4ab00022e55c41422157aa6",
+    "native-android/engine/auth-interop/deployment/qualify_auth_only.py": "189f45d71c5845507a199dc6d4c5a093520fdcbf45f7187214b506867febeccf",
+    "native-android/engine/auth-interop/deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+    "native-android/engine/auth-interop/deployment/password_fixture.py": "0518446903dbcb16f78399871139db871a535f3e85995373a163502401605cdd",
+    "native-android/engine/auth-interop/deployment/windows/auth_only_probe.c": "9bf261ba6cd927ba1d4923c7bbd9c5fb05129dbef9a17e80310489aac537271c",
+    "native-android/engine/auth-interop/deployment/windows/wrapped_login.c": "4163131d9f76f0a96a490820587018900a780d30738e278d1057c6afcee36e02",
+    "native-android/engine/auth-interop/deployment/windows/winsock_compat.c": "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad",
+    "native-android/engine/auth-interop/deployment/windows/winsock_compat.h": "27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e",
+    "native-android/engine/auth-interop/deployment/windows/compat/fcntl.h": "7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402",
+    "native-android/engine/auth-interop/deployment/windows/compat/poll.h": "7e7c4481497ad68233f402199758d4202c5fd995c64b33901bbae10da4c673c5",
+    "native-android/engine/auth-interop/deployment/windows/compat/unistd.h": "29690125951c12f239a664848651c83b438132252037e959c67a00581d588646",
+    "native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8",
+    "native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8",
+    ".github/workflows/native-auth-login.yml": "16752e1639d4601694e20d933a036c5881e9a7dcdaed9130e1f8bf0915d07823"
+  },
+  "scope": "Source/build policy/receipt/cleanup review before first genuine Windows service experiment. No native or Windows tests repeated.",
+  "checks": [
+    "Hosted-only guard requires exact repository commit and original-source subtree, clean tracked native/original sources and new RUNNER_TEMP output",
+    "Original PE32 AuthServer, build receipt/source tree and completed ODBC files admitted against exact prior identity manifests; executable copy rechecked before start",
+    "Archive workflow admits exact bytes/SHA, unique bounded safe ZIP members and preserves failed/successful nonshipping artifacts",
+    "Original AuthServer policy configuration requires Encrypt=true, DesApply=true, protocol191021, normal payment checks, no fake auth, no DbServer/MapServer/checksum override",
+    "Disposable account/profile are independently generated in private temporary paths; SQL fixture output discarded and raw service logs never copied to artifact directory",
+    "Only known public disposable account exists in native probe; no arbitrary endpoint/account parameters; original native auth/login code compiled unchanged behind isolated Winsock adapter",
+    "Probe CMake static runtime matches pinned OpenSSL no-shared /MT build setting; Win64 console PE and OpenSSL runtime version identity recorded",
+    "Loopback-only native endpoint and exact owned-process listener ports tie exchange to unchanged original service; Windows inbound rule limits remote IPv4 and requires enabled firewall",
+    "Positive receipt requires exactly3 received frames and SHARDS_READY with empty shard list, nonzero bounded sends and complete socket cleanup",
+    "Wrong-password/missing-account controls require exact original failure command/reason, corrupt-frame injection changes outgoing bytes only in isolated transport",
+    "Overall passed requires all4 admitted controls, surviving owned original process, source unchanged, private files removed, process/firewall/LocalDB cleanup",
+    "Exception receipts permit symbolic errors only; public build logs and narrow redacted native JSON may be exported; no secret-bearing SQL output/private raw server logs",
+    "Job kill-on-close applies after process assignment; normal exception cleanup has direct-owned-child kill fallback and does not claim cleanup success if fallback required",
+    "Workflow runs only native-android and explicit auth-login trigger, does not cancel other workflows, and preserves bounded artifacts on failure"
+  ],
+  "openssl_source_crosscheck": {
+    "archive_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+    "configuration_path": "Configurations/10-main.conf",
+    "configuration_sha256": "25d1cb4bfe4f4f7354f35df3640eeebd5d72df35600485a4428e5f8de5f43d36",
+    "observation": "VC-noCE-common selects /MT /Zl for no-shared libcrypto; generated probe requests MultiThreaded. Inspected pinned source, no Windows linker execution claimed."
+  },
+  "tests_repeated": false,
+  "limitations": [
+    "MSVC compilation, actual LocalDB/AuthServer service login and four Windows controls remain first hosted execution gates",
+    "A positive auth-only exchange never establishes DbServer/MapServer handoff, checksum-policy acceptance, Android execution or live world authority",
+    "encrypted_account_login_verified may preserve a completed positive exchange when a later negative control fails; overall passed remains false",
+    "Job ownership begins after immediate Popen-to-AssignProcessToJobObject handoff; workflow job termination remains the outer hosted-runner interruption boundary"
+  ],
+  "real_windows_execution": false,
+  "encrypted_account_login_verified": false,
+  "authenticated_db_map_handoff_verified": false,
+  "physical_thor_accepted": false,
+  "live_world_verified": false
+}

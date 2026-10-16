@@ -1,0 +1,192 @@
+{
+  "schema": "coh-entity-globals-qualification-v1",
+  "passed": true,
+  "original": {
+    "source_sha256_lf": {
+      "Common/entity/PowerInfo.c": "98ef9b93ec9e51623a7955aa173a5e53c24208e1b4ebca972a60753e81dda925",
+      "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4"
+    },
+    "original_functions": {
+      "initBitStream": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3",
+      "bsWriteBits": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0",
+      "bsWriteBitsPack": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb",
+      "bsReadBits": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea",
+      "bsReadBitsPack": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620",
+      "bsAlignByte": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40",
+      "bsGetCursorBitPosition": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac",
+      "entity_SendPowerModeUpdate": "1d2d43267c1123786cc9b2439c80f4db627ec528055977ce8ef12cc98cfd9432",
+      "entity_ReceivePowerModeUpdate": "3f310cb44efe1e2d8f88101b8d3b7069c06548880fbba9f084634ceeafef7b3e"
+    },
+    "generated_oracle_sha256": "7f622c6c027effcaad9643a5f26f0e62438fb75f0c51e8cf0f22fb60d97e950f",
+    "producer_consumer": "both complete unchanged power-mode grammar functions executed",
+    "adapters": "non-debug packet wrappers, bounded deterministic owner/earray shells; no original dictionaries or allocator",
+    "source_oracle_sanitized": false,
+    "scope": "trusted padded fixtures at O0; native parser separately sanitized; no malformed original consumer calls"
+  },
+  "badge_original": {
+    "source_sha256_lf": {
+      "MapServer/src/player/badges_server.c": "d4c8913ebdbc26e911f6fb07e09269e67e8b636dd1ef902266e69df62aa7d677",
+      "Game/src/player/badges_client.c": "3959968a1d593706d8569062d1a3080496dbb5cdb9ae4beb39fca03940c54e6d",
+      "Common/player/badges.c": "ae401ec7e7b3897ef128f7f9a1cf04be6276f96cd3350171c9332389b4320673",
+      "Common/player/badges.h": "c45c938ab679a0d158a3e79dbc421202b848413be440d008d84ff41b1d392f4b",
+      "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+    },
+    "original_function_sha256_lf": {
+      "initBitStream": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3",
+      "bsWriteBits": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0",
+      "bsWriteBitsPack": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb",
+      "bsReadBits": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea",
+      "bsReadBitsPack": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620",
+      "bsAlignByte": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40",
+      "bsGetCursorBitPosition": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac",
+      "bsWriteString": "2372093f7922b6925661f85d851e5538f9d657c4d26492e238f1de70b38e3f81",
+      "bsReadStringAndLength": "e7606801ddc22b76d0aeec630597a653ab025a2f501653ecdbe341a692fe0c3f",
+      "pktSendIfSetBitsPack": "bb355f0f50556e55d323d3bc1e12bbc17dcc4669f6f7246b2bad12bbf3f00559",
+      "pktGetIfSetBitsPack": "8085a057f64fe94f1643ab276f547c9e065315577a5b924e073a909d93ca92b3",
+      "pktSendIfSetBits": "96da67b5ad03dbedf9abc5b0dff7198efad724e094b9719eac232ad72340a1dd",
+      "pktGetIfSetBits": "496ae13fc7bd8008cbf8169a7c172a046dd3b6fb44b88a6de20139c4ddd02c2b",
+      "entity_SendBadgeUpdate": "25262fe30f83a63a17deaf2bbc2cfff433a9bc4df7a6c8c97e35bc7e5c68a4ff",
+      "entity_ReceiveBadgeUpdate": "8c16fa20db0bf67383a8dacbaa2be421c5ffcd510e3828fbb4a2bf147ef87e39",
+      "badgeMonitor_SendInfo": "9bfa651123ff02f11b3fb9c1fd2a94a97a4b8fe5754e95c926b06b964cd55cab",
+      "badgeMonitor_ReceiveInfo": "1c4c35be03dacadfe8cd5993d4292081f746df3b8963beac47fb3dce33a2423f"
+    },
+    "generated_oracle_sha256": "73913159868c8a60744ce724e20a4c7c5f1adeb4236c22ffd9133b27a00320c0",
+    "whole_functions_executed": [
+      "entity_SendBadgeUpdate",
+      "entity_ReceiveBadgeUpdate",
+      "badgeMonitor_SendInfo",
+      "badgeMonitor_ReceiveInfo"
+    ],
+    "oracle_sanitized": false,
+    "dictionary_ui_and_owner_shells": "fixed valid badge dictionary; original strings allocated/freed; UI no-op; monitor CheckAndSortInfo raw-entry observer only",
+    "consumer_projection": "all numeric state, recent records, raw monitor IDs, non-security FNV filename comparison; source dictionary/text/UI semantics are not qualification claims"
+  },
+  "badge_fixtures": {
+    "producer_fixtures": 170,
+    "supported_consumer_comparisons": 150,
+    "admission_refused_source_fixtures": 20,
+    "observation_bytes": 41612,
+    "sha256": "4f12b32abe49df113beb5d7ad6601f6588f4edb5d970453f26cf17db1d489c7f"
+  },
+  "fixtures": {
+    "count": 110,
+    "producer_consumer_comparisons": 100,
+    "sha256": "31ab9c4aed3756c15006d4d4ff4c00e4727a73bf805a5b18378e53d386030dc1",
+    "power_modes_only_sha256": "1acee51b1cc021821d789e2d7478154d9b80eec4857e1299a7d04a14814ff6e3"
+  },
+  "fixtures_sha256": "31ab9c4aed3756c15006d4d4ff4c00e4727a73bf805a5b18378e53d386030dc1",
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 6968876,
+      "source_fixtures": 110,
+      "truncation_cases": 48692,
+      "random_cases": 25000,
+      "mode_limit": 1024,
+      "state_bytes": 4100,
+      "full_update_complete": false,
+      "acknowledgments_enabled": false,
+      "badges": {
+        "passed": true,
+        "checks": 1038766,
+        "source_fixtures": 170,
+        "truncations": 191830,
+        "random_cases": 10000,
+        "update_bytes": 168884,
+        "workspace_bytes": 168884,
+        "monitor_bytes": 40,
+        "full_update_complete": false,
+        "dictionary_bindings_verified": false,
+        "acknowledgments_enabled": false
+      }
+    },
+    "asan": {
+      "passed": true,
+      "checks": 6968876,
+      "source_fixtures": 110,
+      "truncation_cases": 48692,
+      "random_cases": 25000,
+      "mode_limit": 1024,
+      "state_bytes": 4100,
+      "full_update_complete": false,
+      "acknowledgments_enabled": false,
+      "badges": {
+        "passed": true,
+        "checks": 1038766,
+        "source_fixtures": 170,
+        "truncations": 191830,
+        "random_cases": 10000,
+        "update_bytes": 168884,
+        "workspace_bytes": 168884,
+        "monitor_bytes": 40,
+        "full_update_complete": false,
+        "dictionary_bindings_verified": false,
+        "acknowledgments_enabled": false
+      }
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 6968876,
+      "source_fixtures": 110,
+      "truncation_cases": 48692,
+      "random_cases": 25000,
+      "mode_limit": 1024,
+      "state_bytes": 4100,
+      "full_update_complete": false,
+      "acknowledgments_enabled": false,
+      "badges": {
+        "passed": true,
+        "checks": 1038766,
+        "source_fixtures": 170,
+        "truncations": 191830,
+        "random_cases": 10000,
+        "update_bytes": 168884,
+        "workspace_bytes": 168884,
+        "monitor_bytes": 40,
+        "full_update_complete": false,
+        "dictionary_bindings_verified": false,
+        "acknowledgments_enabled": false
+      }
+    }
+  },
+  "android": {},
+  "source_revision": "01c3db24e695e0eb27ded47efb8abcab613a7379",
+  "source_tree": "b72d6d264182535263d09d43fcfcd03c700b18d1",
+  "source_worktree_clean_before": true,
+  "source_worktree_clean_after": true,
+  "cpp_link_passed": true,
+  "source_unchanged_during_qualification": true,
+  "leak_sanitizer_enabled": false,
+  "full_update_complete": false,
+  "acknowledgments_enabled": false,
+  "real_server_interoperability": false,
+  "thor_accepted": false,
+  "source_sha256": {
+    "native-android/engine/entity-globals/coh_entity_globals.c": "3656bfd2a763ec3f65816479ca6fc2460a1d7e76fb37b9001a83d42b01d61234",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entity-globals/test_entity_globals.c": "417b67bc75553cec3bd96699742ea04b4ba635cd57ac232eef81ea910e867a06",
+    "native-android/engine/entity-globals/coh_badges.c": "951e650c9c4838c228947be76b9141cb5ed3f868a77719f1c5b5ab4a0bdec4be",
+    "native-android/engine/entity-globals/test_badges.c": "1d318a20a679fa013f269caa9b423ab5481c5a4a6246dc99de7c244aab2ea126",
+    "native-android/engine/entity-globals/badge_observation.h": "4cf2c9efdb7fb84a9abdb818dd9eab55e24016482a9e40bd589556e28139ff86",
+    "native-android/engine/entity-globals/badge_oracle_shim.h": "7c82c14e2665c2d0455da5c3eb729ddf3b05af277cd43b8cb52d29349fdada61",
+    "native-android/engine/entity-globals/coh_badges.h": "dba64d426808c5f51850b1624a14e7ecfb2dcac1a4c6e44443ee90e5f7091a0d",
+    "native-android/engine/entity-globals/coh_entity_globals.h": "5309b04457cad416cbf72b7e65197721bdf1ed1ec086b11c77fca4f85f7c0359",
+    "native-android/engine/entity-globals/oracle_shim.h": "de0d47ac13882de9f794879392e44714cabd041a5fa0825e53805af0007ad8d2",
+    "native-android/engine/entity-globals/CMakeLists.txt": "f221a4d3e93f399c993ba17db0723052572354185be82e2324de616f6ba530d4",
+    "native-android/engine/entity-globals/check.py": "272144368c220bc50916ba1b930c752e894f9e22056e6a8e3f428eff2eb545dd",
+    "native-android/engine/entity-globals/oracle_fixture.c.inc": "8350c2c37be2feaca268b0ac5a1fcee1cf3eb14294d991d2472df289e6c646e8",
+    "native-android/engine/entity-globals/source-pins.json": "33f59bdce99cb30aae7464252f3e5e1e6933e2f688096c081261caac6c31723f",
+    "native-android/engine/entity-globals/check_badges.py": "d071c864ed33af0f30163dc6666c7e88bc198d965d003d665efe0b46b7df903b",
+    "native-android/engine/entity-globals/badge-source-pins.json": "002bfb32e1fe4c85ee7a698351b61370f814d4e5b5df0f3ffcb73ee3a4d6ce9e",
+    "native-android/engine/entity-globals/badge_oracle_fixture.c.inc": "f282f4c07a165cd0ba5117f008bcc2e7660a2ae5121887fcd2492f682fd9549b",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  }
+}

@@ -1,0 +1,234 @@
+# Primary recovery and six-worker continuation
+
+Integration target is `native-android` only. Recovery fetched actual remote HEAD
+`66146bbee161304ba4e4e14cbb53cba6958fb03b`, tree
+`61122af99c59f0c70259060a933d2ee8e8e2d5d6`.
+
+## Recovery checkpoint
+
+The prior six worker trees, published/integration trees, source/build outputs and
+catalog survived under `/workspace/scratch/78494e933b7f`. Their linked Git metadata
+points to a missing earlier directory. A fresh clone and six separate sparse
+worktrees preserve all old directories unchanged. No prior compiler or server
+process was observed; this environment cannot inspect another chat's agent state.
+
+The canonical six-source bundle and the later streaming bundle were verified and
+imported, preserving all listed original commit identities. The actual unpublished
+work consisted of compact topology files/integration edits, a world-capture probe,
+and an AuthServer service profile/WinSock adapter. Twenty-eight original files are
+preserved byte-for-byte in `unpublished-source-recovery.tar.gz`; `recovery.json`
+records individual hashes and archive integrity. Inherited catalog files in B's
+old tree were already published, not additional B work. Sparse absent files were
+not interpreted as deletions.
+
+The previous session stopped after publishing and successfully qualifying bounded
+catalog streaming, while those three candidates remained unpublished. It had
+neither completed world entry nor reached a final integration-ready checkpoint.
+
+## Reused qualification and accepted boundary
+
+The four exact-HEAD runs 38953090075, 38953089898, 38953090330 and38953090176 all
+completed successfully. `reused-hosted-runs.json` preserves their source and result
+identities. This continuation does not rebuild accepted Session0.3.0,
+Combined0.1.7 or Support0.2.0 code201 packages.
+
+The original catalog remains12179670bytes, SHA256
+`61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763`.
+Its exact committed ZIP remains2145443bytes, SHA256
+`6f45437efd8fe7c16b7468634f2ad1914ba446b739632e59d65dc6912624ade3`.
+It contains508files,40225slots,130314links and33root-count metadata, with original
+definition/reference CRCs3173822562/3649375123. No new MapServer catalog capture is
+needed or started. Root matrices, matching physical generation, asset mappings,
+complete actor transaction and renderer publication remain distinct requirements.
+
+## Active implementation ownership
+
+All six new workers ran concurrently from the same pinned remote revision.
+`ownership.json` records exact boundaries. A owns catalog lifetime/matching;
+B compact topology; C entity/character/control/global grammar and recovered capture;
+D encrypted AuthServer; E renderer adapter; F read-only startup attribution.
+Shared qualification workflows, integration and publication are coordinator-owned.
+Support/gameplay implementations remain protected.
+
+This handoff is updated at integration/qualification checkpoints below. No READY,
+RECEIVED_CHARACTER, full-update ACK, world-ready flag, new APK or physical
+acceptance is authorized by a standalone module result.
+
+## First reviewed implementation tranche
+
+All six isolated workers completed useful source work. This tranche changes
+standalone engines, nonshipping diagnostics and qualification only. The accepted
+Combined, Session and Support APKs and the server profile were not rebuilt,
+replaced or retested. No production renderer or protocol-completion path is enabled.
+
+| Worker | Implementation and host evidence | Remaining boundary |
+|---|---|---|
+| A | Immutable catalog owner, byte SHA provider, generation/lifetime guards, indexed slot identity and diagnostic GROUPS comparison. 370,752 checks per release/ASan/UBSan mode; authentic capture owner replay plus 8 negatives per mode; 31 unchanged-source missing-name controls per mode. | Numeric/count similarity does not bind an actual runtime generation. New owner Android execution pending this tranche's CI. |
+| B | Recovered compact topology, aggregate budget and complete bounded missing-name audit. 493,373 standalone checks per mode; 473,979 integrated checks per mode, including 208,484 compact checks. | Authentic capture correctly refuses complete graph publication on seven unresolved names. GROUPS roots, runtime future objects and assets remain absent. |
+| C | Recovered diagnostic GROUPS capture and complete standalone badge/player/supergroup/history/ten-monitor wire staging. Integrated globals 6,968,876 checks per mode; 170 whole-source badge fixtures and 150 consumer comparisons. Capture 439,300 checks per mode plus 6 synthetic peer controls per mode. | This is additional grammar, not complete ALLENTS/UPDATE. Dictionary resolution, very-rare records, PowerInfo, inventory/team/UI/account tails and atomic enclosing ownership remain substantial. |
+| D | Original AuthServer-only encrypted account experiment, recovered WinSock probe and exact artifact reuse. 20 admission suites, 46 WinSock controls, 56 original config-parser comparisons and 8 actual compiled probe controls in release and ASan/UBSan. | Windows execution pending. Empty-shard AuthServer login, if passed, still does not prove AuthServer→DB→Map handoff or Gate 26. |
+| E | Immutable repeated geometry shares exact identity/generation while retaining draw transforms/materials and transactional rollback. 29,148 checks in release/ASan/UBSan. Independent F review; E reviewed compact Android admission and D deployment. | Fixture adapter only. Current renderer draw/scan limits and actual graph/actor resource publication remain separate. |
+| F | Bounded cache-operation/hash/decode/write attribution, exact beacon reuse source controls and accepted-export memory boundary analysis. 77 tests; independent E review. | No physical speedup, process-tree peak or historical crash cause is established. |
+
+### Exact catalog and missing-name status
+
+The retained original ZIP and catalog identities above are unchanged. Existing
+stream validation of every record/link remains qualified; this tranche does not
+repeat disposable MapServer startup. The catalog has the original 33-root count
+and CRC metadata, but does not contain the actual root matrices needed to select
+reachable definitions and reconstruct the matching physical scene.
+
+The seven missing child names are:
+
+- `_cot_warpgate_base`
+- `_cot_warpgate_glow`
+- `_mmayhem_curtain_8_01c`
+- `_mmayhem_curtain_8_02c`
+- `_mmayhem_curtain_8_03c`
+- `_mmayhem_curtain_16_01c`
+- `_mmayhem_curtain_16_02c`
+
+Their original i24 records are empty `RootMod` declarations, absent from the
+corresponding `.rootnames`. The original `addDef` empty-definition guard omits
+these; `addGroups` may call `groupDefFuture`, whose definitions live outside the
+ordinary exported file slots. An executable unchanged-source fixture verifies
+that ownership distinction. This is source evidence of the missing dependency,
+not proof of which future definitions actually existed or were reachable in the
+captured process. No dummy definitions, case-folded aliases or forced resolution
+were introduced. See `engine/scenecatalog/MISSING_SOURCE_NAMES.md`.
+
+### Measured memory and source parity
+
+A's owner retains 12,511,918 bytes (catalog 12,179,670; indexes 331,960; owner 288).
+Its measured/accounted creation peak is 26,477,502 bytes, including caller input,
+validation scratch and two 64 KiB provider/stack reserves. B's compact pool is
+9,360,555 bytes; strict authentic refusal peak is 23,195,067 bytes; complete
+all-reference diagnostics reserve 23,305,987 bytes. These are named accounting
+boundaries, not whole-process RSS. They are separately measured components;
+combined lifetime ownership must account for every retained resource and avoid
+double-counting the catalog span. No 96 MB eager materializer cap was increased.
+
+Definition CRC is recomputed. Reference CRC cannot be recomputed from a catalog
+which lacks root transforms; matching roots remain mandatory. Source order,
+strict missing-name refusal, rollback and owned allocation cleanup are tested.
+Original file/definition lookup, transforms and asset authority remain separate
+from mere catalog traversal. GEO version 8 and complete inherited material/trick
+semantics are not silently declared supported.
+
+E's 4,096-instance capacity fixture owns 5,964,128 snapshot bytes plus 49,152
+scratch bytes; measured aggregate reservation is 45,580,768 bytes including
+39,518,208 declared external resources. The previously repeated geometry would
+have required 18,253,611,008 bytes. This is CPU ownership/capacity evidence, not
+GPU throughput. The protected renderer's current 512-draw queue and per-instance
+scans still need a separately reviewed handoff before large-scene activation.
+
+### Character and renderer authority
+
+`engine/entities/INITIAL_UPDATE_CLOSURE.md` is the authoritative grammar gap
+ledger. Badge and monitor parsers preserve raw ordered events and fail atomically
+within their own bodies; their output is not an immutable validated actor.
+The recovered capture probe can preserve exact fully parsed GROUPS bytes under
+explicit source/session/profile inputs and a normal loopback socket lease. Its
+selected DBID is explicitly unverified. No live GROUPS capture was run here.
+
+No READY, RECEIVED_CHARACTER or full-update completion ACK may be sent until the
+whole required message, dictionaries, self identity, selected DBID and generation
+are validated. No offline Wretch metadata was promoted to server identity.
+Renderer publication still requires a complete immutable world and actor bound
+to the same session/generation. Fixture rendering remains labeled fixture-only.
+
+### Encrypted authentication experiment
+
+`.github/workflows/native-auth-login.yml` is opt-in by `[auth-login]` on this
+branch, or an explicit workflow-dispatch input. It reuses exact original x86
+AuthServer artifact 12064402579 and successful ODBC artifact 12066189514; it
+builds only the native test probe against checksum-pinned OpenSSL 3.5.9. It uses
+fresh disposable LocalDB/account state, bounded private temporary files, a
+nonloopback firewall rule and an owned Windows Job Object. Credentials and raw
+SQL/service logs are excluded from published artifacts. It preserves encryption,
+version/checksum policy and the accepted development `UseFakeAuth` path.
+
+Positive admission requires the native client to complete the encrypted three-
+frame exchange through `SHARDS_READY` with an empty shard list from the original
+AuthServer. Wrong-password, missing-account and corrupted-login controls also
+have to pass; cleanup is mandatory. The documented checksum-pointer behavior is
+not bypassed. A policy/version/service failure must be retained and explained;
+it must not be relabeled successful authentication or a complete Gate 26.
+
+### Startup and memory findings
+
+The exact accepted export `COH-NativeCombined-1792163012982.zip` was reused,
+SHA256 `e802501bce9738d538d8438cdcdbdb304810a9d7854d45a0dbb47a7188542b73`.
+Its readiness remains 387,340 ms, DB 70,678 ms and Atlas 271,736 ms. Coordinator
+VmRSS changed from 49,520 to 114,976 KiB across DB (+65,456), then 114,976 to
+114,232 KiB across Atlas (-744). Thirty-two boundary samples leave a 271,718 ms
+largest gap; these cannot establish server/Android overlap or peak memory.
+
+Source controls distinguish graph payload writes from archive decoding and
+marker rewrites: zero graph writes alone does not prove a warm reuse hit.
+The accepted export lacks the required beacon/definition refusal receipts.
+Read-only analyzer median 18.736 ms and tracemalloc 16,809,154 bytes are host
+measurements only. Safe priorities: capture exact cache refusal reasons at the
+existing boundaries; quantify decode/hash/write separately; measure bounded
+whole-process overlap; only then change one verified fallback with rollback and
+physical timing. See worker F's evidence and ranked plan.
+
+### Qualification and publication protocol
+
+Worker-source receipts are retained, including failed mixed-worktree linker
+attempts and a wrong-source baseline attempt. B observed tracked files reverting
+in its linked worktree; its accepted integrated result instead used `git archive`
+of commit `52c3d50ac558adc95bd22d29ebd51ac3a2f3143a`, and all 31 source hashes
+matched committed blobs. Integrate commit objects; do not trust a stale tree.
+The trailing blank line in the raw failed linker log is preserved as evidence.
+
+The coordinator independently compared source receipts against the integrated
+tree. A adds digest fields to generated catalog fixtures and owner sources to
+the shared checker; B's pinned-base checker receipt therefore differs only at
+that shared driver. Fresh integrated CI must qualify this composition. Both
+Android ABIs are built as standalone ELFs; Android 13 executes x86_64. An ARM64
+build is not a physical Thor execution. New compact Android replay transfers the
+exact preserved catalog, audits all links/seven names and requires strict refusal,
+matching host results, binary/source hashes and zero live owned allocations.
+
+Git command-line publication lacks credentials here. Reviewed changes are
+published using GitHub Git-data APIs with a freshly inspected parent,
+`expected_sha`, `force=false` and exact tree-SHA comparison. Original worker
+commits remain recoverable through the attached continuation history bundle;
+public integration commit identity can differ from local cherry-pick identities.
+No main branch, accepted APK workflow or another coordinator's workflow is changed.
+
+### Precise remaining world-entry prerequisites
+
+1. Capture the matching authentic GROUPS transaction, source/runtime manifest and
+   generation identity without repeating catalog startup merely to obtain the
+   same saved catalog. Establish whether future definitions are reachable, and
+   preserve their actual source ownership if they are required.
+2. Resolve the full reachable topology and both CRCs; admit real object-library,
+   model/GEO, texture/material/trick and geometry-version dependencies under one
+   measured total ownership budget. Unsupported render semantics stay rejected.
+3. Close and compose the complete initial entity/full-character/global transaction
+   listed in the ledger, with original full-producer comparison and authentic
+   dictionary/packet evidence. Publish a validated immutable actor only after
+   exact-end, DBID/self, pose, appearance and generation checks.
+4. Integrate world/actor snapshots into Combined only after those prerequisites;
+   preserve launcher, Surface lifecycle, Return cleanup and labeled offline fallback.
+5. Qualify clean host/sanitizers, both Android ABIs and Android 13 application;
+   only then produce one successor APK, exact SHA256 and one meaningful physical
+   Thor procedure with native JSON plus launcher ZIP evidence.
+6. Independently complete original encrypted account→DB→Map handoff for Gate 26.
+
+There is no qualified successor Combined APK or genuine first world entry in this
+tranche. Gates 25–27 remain open. This is implemented, independently tested
+progress with explicit admission boundaries; all previous physical acceptances
+remain preserved.
+
+## Local prepublication receipt
+
+The original seven continuation tips (six workers plus reviewed coordinator
+integration) are preserved in `six-worker-next-history.bundle`; prerequisite is
+`66146bbee161304ba4e4e14cbb53cba6958fb03b`. `source-history.json` records full commit IDs,
+archive SHA256 and verification. The integrated compact release replay passes
+493373 checks against the exact authentic catalog after A/B source composition;
+`compact-integrated-release.json` preserves it. Hosted sanitizer/Android and
+Windows AuthServer results are recorded in a later checkpoint below.

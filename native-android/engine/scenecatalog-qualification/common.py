@@ -15,7 +15,10 @@ REQUIRED_SOURCES = {name: {"native-android/engine/" + name + "/" + suffix for su
      ("" if name == "entities" else "tests/") + "test_" + name + ".c")} for name in MODULES}
 REQUIRED_SOURCES["scenecatalog"].update({"native-android/engine/scenecatalog/source_export.inc",
                                        "native-android/engine/scenecatalog/tests/source_catalog_harness.c",
-                                       "native-android/engine/scenecatalog/tests/test_walk.c.inc"})
+                                       "native-android/engine/scenecatalog/tests/test_walk.c.inc",
+                                       "native-android/engine/scenecatalog/coh_catalog_owner.c",
+                                       "native-android/engine/scenecatalog/coh_catalog_owner.h",
+                                       "native-android/engine/scenecatalog/tests/test_owner.c.inc"})
 REQUIRED_SOURCES["entities"].update({"native-android/engine/entities/" + name for name in
     ("coh_costume.c", "coh_costume.h", "test_costume.c", "costume_oracle.py", "costume_oracle_shim.h",
      "costume_envelope_oracle_shim.h", "costume_envelope_oracle.c.inc", "costume_envelope_fixture.c.inc",
@@ -27,7 +30,8 @@ REQUIRED_SOURCES["entities"].update({"native-android/engine/entities/" + name fo
 REQUIRED_SOURCES["scenegraph"].update({"native-android/engine/scenegraph/" + name for name in
     ("coh_scene_metadata.c", "coh_scene_metadata.h", "tests/metadata_source_harness.inc",
      "check_lookup.py", "lookup-source-pins.json", "coh_scene_lookup.c", "coh_scene_lookup.h",
-     "tests/lookup_oracle_shim.h", "tests/test_scene_lookup.c")})
+     "tests/lookup_oracle_shim.h", "tests/test_scene_lookup.c",
+     "coh_scene_compact.c", "coh_scene_compact.h", "tests/test_scene_compact.c")})
 CLAIMS = ("physical_thor_accepted", "actual_server_interoperability_verified",
           "real_account_login_verified", "full_live_world_verified", "gates25_27_complete",
           "accepted_apks_rebuilt")

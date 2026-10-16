@@ -1,0 +1,221 @@
+{
+  "schema": "coh-primary-recovery-next-v1",
+  "actual_remote_head": "66146bbee161304ba4e4e14cbb53cba6958fb03b",
+  "actual_remote_tree": "61122af99c59f0c70259060a933d2ee8e8e2d5d6",
+  "target_branch": "native-android",
+  "prior_execution_directory": "/workspace/scratch/78494e933b7f",
+  "prior_worktrees_modified": false,
+  "prior_git_metadata_accessible": false,
+  "prior_git_metadata_reason": "gitdir targets under /workspace/scratch/9c69943dc291/coh-next no longer exist",
+  "six_original_histories_restored": true,
+  "canonical_bundle_sha256": "32da5c492d67c84dd9dc45f002f9244abdebdbf47647224ba14eab791f2a727b",
+  "stream_bundle_also_restored": true,
+  "prior_compiler_or_server_process_observed": false,
+  "cross_chat_agent_status_available": false,
+  "unpublished_archive": {
+    "path": "unpublished-source-recovery.tar.gz",
+    "bytes": 41507,
+    "sha256": "2fda6214e52f3b40163e3684c2a00c432b721aeeb3998d6eb4a3ba008ddc1225",
+    "files": [
+      {
+        "worker": "b",
+        "path": "native-android/engine/scenegraph/coh_scene_compact.c",
+        "status": "untracked",
+        "bytes": 13314,
+        "sha256": "e5b5e4f76c17e1be56f8acf4b13f0173f4161f087d7ba42264c5756807c34afa"
+      },
+      {
+        "worker": "b",
+        "path": "native-android/engine/scenegraph/CMakeLists.txt",
+        "status": "modified",
+        "bytes": 1844,
+        "sha256": "bba89e00b449f9992ba012125d788af7c6c2b0cad30242ed8ad8c86720fbc09b"
+      },
+      {
+        "worker": "b",
+        "path": "native-android/engine/scenegraph/check_compact.py",
+        "status": "untracked",
+        "bytes": 6844,
+        "sha256": "ce8fcce1f17468b4f2af697932cf614a3d562652ed0e5cb0eaccf8f6903722a0"
+      },
+      {
+        "worker": "b",
+        "path": "native-android/engine/scenegraph/coh_scene_compact.h",
+        "status": "untracked",
+        "bytes": 3859,
+        "sha256": "8b419e602fc97a7cae51aef2bd6d690b81596774c0ce221208ec4a5a8c55074c"
+      },
+      {
+        "worker": "b",
+        "path": "native-android/engine/scenegraph/check.py",
+        "status": "modified",
+        "bytes": 17891,
+        "sha256": "0fb8c518f1dabb6541d8d74e292b62895e9a34b5be193d7f8b7cde492ba86777"
+      },
+      {
+        "worker": "b",
+        "path": "native-android/engine/scenegraph/tests/test_scenegraph.c",
+        "status": "modified",
+        "bytes": 24871,
+        "sha256": "57baff0be2c829271ca23bb7c6c71065d88616fa636795e31e23e9784797be93"
+      },
+      {
+        "worker": "b",
+        "path": "native-android/engine/scenegraph/tests/compact_missing_audit.c",
+        "status": "untracked",
+        "bytes": 1910,
+        "sha256": "9783232d95cc38cbede61800ade83c1c0605fc0f20756948d3b9e65c73267fc3"
+      },
+      {
+        "worker": "b",
+        "path": "native-android/engine/scenegraph/tests/test_scene_compact.c",
+        "status": "untracked",
+        "bytes": 11062,
+        "sha256": "f18338d1df79ab6dcfce9c0e751676369e80f09d9937c8ef59eacf201a22e8ab"
+      },
+      {
+        "worker": "c",
+        "path": "native-android/engine/world-capture/probe.c",
+        "status": "untracked",
+        "bytes": 7836,
+        "sha256": "706e6e7475e2b86ffd1dc935b6b69c2e91c3b91ae4e44f4cca5b034c17590856"
+      },
+      {
+        "worker": "c",
+        "path": "native-android/engine/world-capture/test_capture.c",
+        "status": "untracked",
+        "bytes": 7716,
+        "sha256": "c71c29ec935e2e9943ab7a335a81ad0355b8aff4030ff870b79a9084d7458c1d"
+      },
+      {
+        "worker": "c",
+        "path": "native-android/engine/world-capture/capture_hooks.h",
+        "status": "untracked",
+        "bytes": 752,
+        "sha256": "70db53fd6318d26a6aedfca6e8e907e69a3051bee2e57ec2865bdf558bce78e7"
+      },
+      {
+        "worker": "c",
+        "path": "native-android/engine/world-capture/capture_hooks.c",
+        "status": "untracked",
+        "bytes": 3784,
+        "sha256": "2e7615fdf37ba66e7a50bce2ab5f628c7cb8aa3827d8a274b9640201362d2bd2"
+      },
+      {
+        "worker": "c",
+        "path": "native-android/engine/world-capture/coh_world_capture.c",
+        "status": "untracked",
+        "bytes": 5028,
+        "sha256": "706c1550aad7c8862c4a16ecf589f600a722fac4362bde3d10013310f737b8cf"
+      },
+      {
+        "worker": "c",
+        "path": "native-android/engine/world-capture/coh_world_capture.h",
+        "status": "untracked",
+        "bytes": 2431,
+        "sha256": "46e6c921b105fdfe983efc51977f01a123ac6bb46f7da9085fe0df8085520c75"
+      },
+      {
+        "worker": "c",
+        "path": "native-android/engine/world-capture/check.py",
+        "status": "untracked",
+        "bytes": 10193,
+        "sha256": "7abb7c461ef7fdc80f38f14ed4cec904980e9e7be1e1b3a9cf76fd1bf41335c8"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/qualify_windows_adapter.py",
+        "status": "untracked",
+        "bytes": 2456,
+        "sha256": "d412943acb74b913d99bc93545445cd6e663241fc21f07b31b4738e1995608d8"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/auth_service_profile.py",
+        "status": "untracked",
+        "bytes": 5366,
+        "sha256": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/windows/winsock_compat.h",
+        "status": "untracked",
+        "bytes": 2194,
+        "sha256": "27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/windows/auth_only_probe.c",
+        "status": "untracked",
+        "bytes": 4361,
+        "sha256": "9bf261ba6cd927ba1d4923c7bbd9c5fb05129dbef9a17e80310489aac537271c"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/windows/test_winsock_api.h",
+        "status": "untracked",
+        "bytes": 1699,
+        "sha256": "246f32d8ffb2a04c593fcafddb64c47e127acc8e6328e567018edbd2e91fc019"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/windows/winsock_compat.c",
+        "status": "untracked",
+        "bytes": 5866,
+        "sha256": "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/windows/wrapped_login.c",
+        "status": "untracked",
+        "bytes": 250,
+        "sha256": "4163131d9f76f0a96a490820587018900a780d30738e278d1057c6afcee36e02"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/windows/test_winsock_compat.c",
+        "status": "untracked",
+        "bytes": 5840,
+        "sha256": "eef165af9e013c6e354d98b7d8c6ede53125e099e15b81e55bc873025fa448e9"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/windows/compat/fcntl.h",
+        "status": "untracked",
+        "bytes": 69,
+        "sha256": "7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/windows/compat/poll.h",
+        "status": "untracked",
+        "bytes": 73,
+        "sha256": "7e7c4481497ad68233f402199758d4202c5fd995c64b33901bbae10da4c673c5"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/windows/compat/unistd.h",
+        "status": "untracked",
+        "bytes": 72,
+        "sha256": "29690125951c12f239a664848651c83b438132252037e959c67a00581d588646"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h",
+        "status": "untracked",
+        "bytes": 75,
+        "sha256": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+      },
+      {
+        "worker": "d",
+        "path": "native-android/engine/auth-interop/deployment/windows/compat/arpa/inet.h",
+        "status": "untracked",
+        "bytes": 75,
+        "sha256": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+      }
+    ]
+  },
+  "source_diff_classification": "Only owned graph, capture and auth changes archived. Inherited catalog changes in prior B are already published, not new B code. Sparse absent paths are not treated as deletions.",
+  "accepted_apks_rebuilt": false,
+  "new_physical_acceptance": false
+}

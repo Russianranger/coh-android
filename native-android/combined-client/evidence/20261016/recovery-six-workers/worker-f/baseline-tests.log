@@ -1,0 +1,31 @@
+test_array_bounds (test_analyze_startup.AnalysisTests.test_array_bounds) ... ok
+test_backwards_boolean_and_duplicate_ready_clock_rejected (test_analyze_startup.AnalysisTests.test_backwards_boolean_and_duplicate_ready_clock_rejected) ... ok
+test_conflicting_cache_evidence_is_unknown (test_analyze_startup.AnalysisTests.test_conflicting_cache_evidence_is_unknown) ... ok
+test_current_in_history_rejected (test_analyze_startup.AnalysisTests.test_current_in_history_rejected) ... ok
+test_current_ready_uses_boundary_not_age (test_analyze_startup.AnalysisTests.test_current_ready_uses_boundary_not_age) ... ok
+test_duplicate_current_guests_rejected (test_analyze_startup.AnalysisTests.test_duplicate_current_guests_rejected) ... ok
+test_exit_history_does_not_become_current_kill (test_analyze_startup.AnalysisTests.test_exit_history_does_not_become_current_kill) ... ok
+test_foreign_standalone_guest_schema_rejected (test_analyze_startup.AnalysisTests.test_foreign_standalone_guest_schema_rejected) ... ok
+test_historical_cold_receipt_stays_historical (test_analyze_startup.AnalysisTests.test_historical_cold_receipt_stays_historical) ... ok
+test_identity_not_filename_controls_binding (test_analyze_startup.AnalysisTests.test_identity_not_filename_controls_binding) ... ok
+test_invalid_current_identity_and_schema (test_analyze_startup.AnalysisTests.test_invalid_current_identity_and_schema) ... ok
+test_invalid_guest_format_does_not_bind (test_analyze_startup.AnalysisTests.test_invalid_guest_format_does_not_bind) ... ok
+test_invalid_numbers_not_coerced (test_analyze_startup.AnalysisTests.test_invalid_numbers_not_coerced) ... ok
+test_json_duplicates_nonfinite_depth_and_root (test_analyze_startup.AnalysisTests.test_json_duplicates_nonfinite_depth_and_root) ... ok
+test_memory_peaks_not_added (test_analyze_startup.AnalysisTests.test_memory_peaks_not_added) ... ok
+test_mismatched_historical_guest_not_summarized (test_analyze_startup.AnalysisTests.test_mismatched_historical_guest_not_summarized) ... ok
+test_no_guest_means_cache_unknown (test_analyze_startup.AnalysisTests.test_no_guest_means_cache_unknown) ... ok
+test_redaction_is_allowlist_not_blacklist (test_analyze_startup.AnalysisTests.test_redaction_is_allowlist_not_blacklist) ... ok
+test_stale_guest_filename_cannot_bind_current (test_analyze_startup.AnalysisTests.test_stale_guest_filename_cannot_bind_current) ... ok
+test_typed_stage_values_redacted_without_exception (test_analyze_startup.AnalysisTests.test_typed_stage_values_redacted_without_exception) ... ok
+test_cli_error_never_exports_input_path_or_json (test_analyze_startup.ArchiveTests.test_cli_error_never_exports_input_path_or_json) ... ok
+test_crc_failure_and_invalid_archive (test_analyze_startup.ArchiveTests.test_crc_failure_and_invalid_archive) ... ok
+test_deflate_failure_is_bounded_error (test_analyze_startup.ArchiveTests.test_deflate_failure_is_bounded_error) ... ok
+test_reads_crc_and_bound_provenance (test_analyze_startup.ArchiveTests.test_reads_crc_and_bound_provenance) ... ok
+test_symlink_and_oversized_members (test_analyze_startup.ArchiveTests.test_symlink_and_oversized_members) ... ok
+test_unknown_traversal_absolute_backslash_and_duplicate_members (test_analyze_startup.ArchiveTests.test_unknown_traversal_absolute_backslash_and_duplicate_members) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.015s
+
+OK

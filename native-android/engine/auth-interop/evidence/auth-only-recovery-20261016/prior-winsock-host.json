@@ -1,0 +1,33 @@
+{
+  "schema": "coh-winsock-adapter-host-v1",
+  "passed": true,
+  "executions": {
+    "release": {
+      "binary_sha256": "95f1864a8412d00e5e0944ce6e41023620bd58ffa4d8a2b69f0f1e9df3965625",
+      "result": {
+        "passed": true,
+        "checks": 46,
+        "real_windows_execution": false,
+        "real_account_login_verified": false
+      }
+    },
+    "asan_ubsan": {
+      "binary_sha256": "5449b0dc76f8746a7dfde33b47003c640aa259ec4a615bb2221f54e11d430b8b",
+      "result": {
+        "passed": true,
+        "checks": 46,
+        "real_windows_execution": false,
+        "real_account_login_verified": false
+      }
+    }
+  },
+  "inputs_sha256": {
+    "windows/winsock_compat.h": "27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e",
+    "windows/winsock_compat.c": "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad",
+    "windows/test_winsock_api.h": "246f32d8ffb2a04c593fcafddb64c47e127acc8e6328e567018edbd2e91fc019",
+    "windows/test_winsock_compat.c": "eef165af9e013c6e354d98b7d8c6ede53125e099e15b81e55bc873025fa448e9"
+  },
+  "real_windows_execution": false,
+  "real_account_login_verified": false,
+  "leak_sanitizer_enabled": false
+}

@@ -1,4 +1,10 @@
-# Standalone power-mode global update
+# Standalone global wire updates
+
+The recovery continuation adds complete standalone badge and monitor wire bodies
+alongside unchanged power modes. See [BADGE_CONTRACT.md](BADGE_CONTRACT.md) for
+exact source, memory, rollback and qualification boundaries. The single checker
+now runs both suites with one fixture hash for both Android ABI executables.
+Neither parser completes ALLENTS or publishes actors.
 
 This additive module decodes the complete, unchanged-source-defined
 `entity_SendPowerModeUpdate` / `entity_ReceivePowerModeUpdate` grammar from
@@ -82,14 +88,16 @@ Recent history has an eight-bit wire count and only 50 destination slots; a new
 bounded consumer must reject excess counts before application. Supergroup owned
 records assume a dictionary entry before accessing it. The badge monitor sends
 ten optional packed IDs and then runs dictionary/state-dependent validation and
-sorting. None of these three badge functions is implemented or claimed by this
-checkpoint. They require their own whole-grammar and side-effect boundary review.
+sorting. The recovery checkpoint now implements complete badge-update and
+monitor wire staging with whole original producer/consumer fixtures. Dictionary/
+UI application and monitor state-dependent filtering/sorting remain separate
+from that wire qualification; see the badge contract for exact boundaries.
 
 No packet ID, DBID, selected-player identity or generation is encoded in this
 power-mode body. The enclosing transaction owner must verify those, stage this
 state alongside every required field, and discard stale or invalid transactions
-without publishing partial state. Worker C owns record/full-update composition;
-Worker F owns the initial character envelope. Complete global tails, immutable
+without publishing partial state. Worker C now owns record/full-update,
+character-data, control and globals protocol composition. Complete global tails, immutable
 authoritative actor publication and full-update acknowledgments remain closed.
 Removing the standalone target and source references rolls this module back;
 accepted APKs, shared interfaces and server runtime are unchanged.

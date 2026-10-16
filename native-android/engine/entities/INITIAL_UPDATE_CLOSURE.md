@@ -46,8 +46,8 @@ validate any row below. `coh_ent_full_update_tail` rejects without consuming dat
 | 3 | `entReceiveDeletes` | Standalone parser and staging apply supported; correct outer offset not established |
 | 4 | `receiveCharacterFromServer` for full update | Unsupported composition; expanded below |
 | 4a | otherwise `SendCharacterToSelf` stats | Standalone complete absolute schema supported; correct outer offset not established |
-| 5 | power-info update, power-mode update | Unsupported; power dictionary and bounded metadata ownership required |
-| 6 | badge update and full-update badge monitor | Unsupported |
+| 5 | power-info update, power-mode update | PowerInfoUpdate remains unsupported. Complete standalone power-mode replacement/retain wire grammar is source/Android qualified in `engine/entity-globals/`; enclosing offsets, dictionary resolution and transaction composition remain open |
+| 6 | badge update and full-update badge monitor | Complete bounded standalone badge/player/supergroup/history and ten monitor-ID wire bodies source/host/sanitizer qualified in `engine/entity-globals/coh_badges.*`; dictionary/UI application, original monitor filtering/sorting and enclosing transaction remain open. Fresh Android qualification required |
 | 7 | generic inventory and invention updates | Unsupported |
 | 8 | workshop string | Unsupported in outer transaction |
 | 9 | conditional team, super stats, conditional league | Unsupported |
@@ -63,7 +63,11 @@ validate any row below. `coh_ent_full_update_tail` rejects without consuming dat
 2. `character_Receive`: class/origin **names** and dictionary lookup; packed
    level, combat-mod shift, build, location; complete power builds/sets/powers;
    inspirations; boosts; inventory contents. Numeric create class/origin indices
-   alone do not satisfy this name/dictionary identity.
+   alone do not satisfy this name/dictionary identity. The separately qualified
+   `engine/character-data/` stages complete `character_Send` wire metadata under
+   an explicitly bound shared-powerset profile. Its class/origin/power/reward/
+   inventory references remain unresolved. Complete original gameplay-consumer
+   application, dictionary authority and the outer transaction remain open.
 3. Original power-set names; ally and PvP; `SendCharacterToSelf` statistics
    (only this standalone statistic substructure is implemented).
 4. Tray and tray mode; entity name; entity strings; full help state;
@@ -74,7 +78,8 @@ validate any row below. `coh_ent_full_update_tail` rejects without consuming dat
    mouse settings; dividers; control-first/nocoll; friends; combat-monitor stats;
    rename flag.
 
-All six groups still require a bounded transactional owner. Apparent optional
+All six groups still require a bounded transactional owner. Reuse the qualified
+standalone parsers; they do not establish whole-message admission. Apparent optional
 absence cannot be assumed; native parsing must validate the actual wire flags.
 Unknown data must never be skipped by scanning for a plausible later sentinel.
 

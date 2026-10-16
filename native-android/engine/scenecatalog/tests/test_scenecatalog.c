@@ -1,4 +1,5 @@
 #include "coh_scenecatalog.h"
+#include "coh_catalog_owner.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,8 +24,10 @@ static CohStatus apply(CohSceneCatalog *c,const CatalogFixture *f,CohSceneGraph 
 static uint32_t u32(const unsigned char *p){return (uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24;}
 static void put(unsigned char *p,uint32_t n){p[0]=(unsigned char)n;p[1]=(unsigned char)(n>>8);p[2]=(unsigned char)(n>>16);p[3]=(unsigned char)(n>>24);}
 #include "test_walk.c.inc"
+#include "test_owner.c.inc"
 int main(void){
     walk_tests();
+    owner_tests();
     unsigned accepted=0,allocation_failures=0;size_t large_owned=0,large_peak=0;
     for(size_t i=0;i<sizeof(catalog_fixtures)/sizeof(*catalog_fixtures);i++){
         const CatalogFixture *f=&catalog_fixtures[i];CohSceneCatalog *c=NULL;CohCatalogReport pre,r;CohSceneGraph *g=NULL;

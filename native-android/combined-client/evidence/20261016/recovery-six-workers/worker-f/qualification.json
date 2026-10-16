@@ -1,0 +1,78 @@
+{
+  "artifact_sha256": {
+    "native-android/combined-client/evidence/20261016/recovery-six-workers/worker-f/HANDOFF.md": "d947cab5c234c64082982ba54e90fe2a6799472c247018b690f113a396b99848",
+    "native-android/combined-client/evidence/20261016/recovery-six-workers/worker-f/analyzer-benchmark.json": "c9c4d3380fffe867a8e0adfcd91726fd0e12d1a1780fbb1abee2467153646ec7",
+    "native-android/combined-client/evidence/20261016/recovery-six-workers/worker-f/baseline-tests.log": "a7e628e93dc48176267e7b413dcb02b55411291425dbcec4c43bad3dbc601661",
+    "native-android/combined-client/evidence/20261016/recovery-six-workers/worker-f/original-operation-oracles.json": "635dfd03022f44c955d57bc810d10f665e5265e8a50bc18c45abe9b13e571585",
+    "native-android/combined-client/evidence/20261016/recovery-six-workers/worker-f/receipts-tests.log": "fdf47a42f71c01e43a92d037bee3f5d02cb2472715fdf23492bab88a1dcae02f",
+    "native-android/combined-client/evidence/20261016/recovery-six-workers/worker-f/resources-tests.log": "5f294ba80f53d1fce2d28f4c0d2e995bae8aa55b4e6cd294559c7ef8bb5bbf80",
+    "native-android/combined-client/evidence/20261016/recovery-six-workers/worker-f/thor-017-operation-memory-analysis.json": "c925ad9309e86d53b8e2b2aa624b91db503a502ae13b5d619f527c1e7a3654c9",
+    "native-android/combined-client/tools/analyze_startup_resources.py": "a39fb33e9d22f809a12a1e66e00615643fc541e6f730f9a60ce4dc5b0396db76",
+    "native-android/combined-client/tools/read_startup_receipts.py": "deb6d80adbe1fa5a1e01e03e495c9daa8a423af52ae2edcd5887ca85c8cbb7c5",
+    "native-android/combined-client/tools/startup_bench_resources.py": "42325623b16c242859531a5a0b1213e0a3b4cdfd9ea3b8748263d4853fcd27dd",
+    "native-android/combined-client/tools/startup_operation_oracles.py": "c6926a5c18bbd69570756e8c7e28a2214c2482290b9cf9acc01c3abdf00f5385",
+    "native-android/combined-client/tools/test_startup_resources.py": "7d33d0c738451e16a0ed6168e23b8e51e2a79d51144cc2799b5c9a0ed5e31f5e"
+  },
+  "base_commit": "66146bbee161304ba4e4e14cbb53cba6958fb03b",
+  "schema": "coh-startup-offline-operation-qualification-v1",
+  "scope": {
+    "new_apk": false,
+    "new_device_test": false,
+    "offline_tools_only": true,
+    "physical_speedup_measured": false,
+    "runtime_modified": false,
+    "server_started": false,
+    "whole_process_memory_peak_measured": false
+  },
+  "source_function_cases": 7,
+  "tests": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "native-android/combined-client/diagnostics/continuation-20261016",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "suite": "baseline",
+      "tests": 26
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "native-android/combined-client/tools",
+        "-p",
+        "test_startup_resources.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "suite": "resources",
+      "tests": 28
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "native-android/combined-client/tools",
+        "-p",
+        "test_startup_receipts.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "suite": "receipts",
+      "tests": 23
+    }
+  ]
+}

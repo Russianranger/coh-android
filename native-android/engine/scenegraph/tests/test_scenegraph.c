@@ -24,6 +24,8 @@ static void track(void *p,size_t n){
 void *__wrap_malloc(size_t n){allocation_calls++;if(fail_at&&allocation_calls==fail_at)return NULL;void *p=__real_malloc(n);track(p,n);return p;}
 void *__wrap_calloc(size_t n,size_t z){allocation_calls++;if(fail_at&&allocation_calls==fail_at)return NULL;void *p=__real_calloc(n,z);track(p,n*z);return p;}
 void coh_lookup_test_fail_next(void){fail_at=allocation_calls+1;}
+void coh_compact_test_fail_next(void){fail_at=allocation_calls+1;}
+unsigned coh_scene_compact_tests(CohBytes,uint32_t);
 unsigned coh_scene_lookup_tests(void);
 void __wrap_free(void *p){if(p){size_t i=allocation_index(p);while(allocations[i].p!=p){assert(allocations[i].p);i=(i+1)%131072;}assert(live_allocations);live_allocations--;live_bytes-=allocations[i].n;allocations[i].p=(void *)(uintptr_t)1;__real_free(p);}}
 #define CHECK(x) do{checks++;if(!(x)){fprintf(stderr,"check failed %s:%d: %s\n",__FILE__,__LINE__,#x);abort();}}while(0)
@@ -294,6 +296,7 @@ int main(void) {
     stress();
     metadata();
     unsigned lookup_checks=coh_scene_lookup_tests();checks+=lookup_checks;CHECK(live_allocations==0);
-    printf("{\"passed\":true,\"checks\":%u,\"allocation_failure_points\":%u,\"source_fixtures_accepted\":%u,\"source_fixtures_rejected\":%u,\"stress_controls\":%u,\"stress_definitions\":12192,\"stress_children\":36567,\"stress_graph_bytes\":%zu,\"stress_candidate_peak_bytes\":%zu,\"stress_aggregate_peak_bytes\":%zu,\"lookup_checks\":%u,\"metadata_checks\":%u,\"metadata_truncations\":%u,\"live_world\":false}\n",checks,allocation_failures,accepted,rejected,stress_controls,stress_graph_bytes,stress_candidate_peak,stress_aggregate_peak,lookup_checks,metadata_checks,metadata_truncations);
+    unsigned compact_checks=coh_scene_compact_tests((CohBytes){stress_catalog,sizeof(stress_catalog)},7);checks+=compact_checks;CHECK(live_allocations==0);
+    printf("{\"passed\":true,\"checks\":%u,\"allocation_failure_points\":%u,\"source_fixtures_accepted\":%u,\"source_fixtures_rejected\":%u,\"stress_controls\":%u,\"stress_definitions\":12192,\"stress_children\":36567,\"stress_graph_bytes\":%zu,\"stress_candidate_peak_bytes\":%zu,\"stress_aggregate_peak_bytes\":%zu,\"lookup_checks\":%u,\"compact_checks\":%u,\"metadata_checks\":%u,\"metadata_truncations\":%u,\"live_world\":false}\n",checks,allocation_failures,accepted,rejected,stress_controls,stress_graph_bytes,stress_candidate_peak,stress_aggregate_peak,lookup_checks,compact_checks,metadata_checks,metadata_truncations);
     return 0;
 }

@@ -243,6 +243,158 @@ static void generation_and_capacity(void) {
     CHECK(coh_wr_budget_destroy(b)==COH_OK);
 }
 
+static CohWrMetrics large_metrics;
+static size_t large_peak, large_external;
+static void shared_geometry_and_capacity(void) {
+    Fixture f;
+    CohWrBudget *b=NULL;
+    CohWrSnapshot *s=NULL, *sentinel=(CohWrSnapshot *)(uintptr_t)1;
+    CohWrBindings *bindings=NULL;
+    CohRenderDraw first,second;
+    CohRenderVertex duplicate[3];
+    uint32_t duplicate_indices[3];
+    CohWrMemory baseline;
+    CohWrMetrics metrics;
+    Resolver r={0};
+    unsigned i,successes=0;
+    CHECK(coh_wr_budget_create(COH_WR_MAX_MEMORY,0,&b)==COH_OK);
+    baseline=coh_wr_budget_memory(b);
+    fixture(&f,1);
+    /* IDs 1 and 2 collide in the four-slot preparation index. Equal source
+     * bytes under distinct identities must retain distinct mesh ownership. */
+    f.draws[0].geometry.identity=1; f.draws[1].geometry.identity=2;
+    CHECK(coh_wr_prepare_fixture(&f.input,b,never,&s)==COH_OK);
+    CHECK(coh_wr_metrics(s).unique_geometries==2);
+    CHECK(coh_wr_bindings_create(s,&bindings)==COH_OK);
+    CHECK(coh_wr_bind(bindings,1,resolve,&r,never)==COH_OK);
+    CHECK(coh_wr_draw(bindings,1,0,ident,ident,&first)==COH_OK);
+    CHECK(coh_wr_draw(bindings,1,1,ident,ident,&second)==COH_OK);
+    CHECK(first.geometry.identity==1 && second.geometry.identity==2);
+    CHECK(first.geometry.vertices!=second.geometry.vertices);
+    coh_wr_bindings_destroy(bindings); coh_wr_release(s); coh_wr_collect(b);
+    CHECK(coh_wr_budget_destroy(b)==COH_OK);
+    CHECK(coh_wr_budget_create(COH_WR_MAX_MEMORY,0,&b)==COH_OK);
+    baseline=coh_wr_budget_memory(b);
+    fixture(&f,1);
+    memcpy(duplicate,f.vertices,sizeof(duplicate));
+    memcpy(duplicate_indices,f.indices,sizeof(duplicate_indices));
+    f.draws[1].geometry=f.draws[0].geometry;
+    f.draws[1].geometry.vertices=duplicate;
+    f.draws[1].geometry.indices=duplicate_indices;
+    f.draws[1].world[12]=11;
+    f.draws[1].material.const0[0]=0.25f;
+    CHECK(coh_wr_prepare_fixture(&f.input,b,never,&s)==COH_OK);
+    metrics=coh_wr_metrics(s);
+    CHECK(metrics.draws==2 && metrics.unique_geometries==1);
+    CHECK(metrics.unique_vertices==3 && metrics.unique_indices==3);
+    CHECK(metrics.instanced_vertices==6 && metrics.instanced_indices==6);
+    CHECK(metrics.geometry_bytes==sizeof(duplicate)+sizeof(duplicate_indices));
+    CHECK(metrics.instanced_geometry_bytes==2*metrics.geometry_bytes);
+    CHECK(coh_wr_budget_memory(b).owned_bytes==baseline.owned_bytes+metrics.snapshot_bytes);
+    CHECK(coh_wr_budget_memory(b).peak_bytes==baseline.owned_bytes+metrics.snapshot_bytes+metrics.prepare_scratch_bytes);
+    CHECK(coh_wr_bindings_create(s,&bindings)==COH_OK);
+    CHECK(coh_wr_bind(bindings,1,resolve,&r,never)==COH_OK);
+    CHECK(coh_wr_draw(bindings,1,0,ident,ident,&first)==COH_OK);
+    CHECK(coh_wr_draw(bindings,1,1,ident,ident,&second)==COH_OK);
+    CHECK(first.geometry.vertices==second.geometry.vertices && first.geometry.indices==second.geometry.indices);
+    CHECK(first.geometry.vertices!=f.vertices && first.geometry.vertices!=duplicate);
+    CHECK(second.model_view[12]==11 && second.material.const0[0]==0.25f);
+    duplicate[0].position[0]=99;
+    CHECK(second.geometry.vertices[0].position[0]==1);
+    coh_wr_bindings_destroy(bindings); coh_wr_release(s); coh_wr_collect(b);
+    CHECK(coh_wr_budget_memory(b).owned_bytes==baseline.owned_bytes);
+    for(i=0;i<5;++i) {
+        CohStatus status;
+        memcpy(duplicate,f.vertices,sizeof(duplicate));
+        memcpy(duplicate_indices,f.indices,sizeof(duplicate_indices));
+        f.draws[1].geometry.vertex_count=3;
+        switch(i) {
+        case 0: duplicate[0].position[0]=99; break;
+        case 1: duplicate_indices[0]=2; break;
+        case 2: f.draws[1].geometry.vertex_count=2; break;
+        case 3: duplicate[0].color[0]=NAN; break;
+        case 4: duplicate_indices[1]=999; break;
+        }
+        s=sentinel; status=coh_wr_prepare_fixture(&f.input,b,never,&s);
+        CHECK(status==COH_INVALID && s==sentinel);
+        CHECK(coh_wr_budget_memory(b).owned_bytes==baseline.owned_bytes);
+    }
+    memcpy(duplicate,f.vertices,sizeof(duplicate));
+    memcpy(duplicate_indices,f.indices,sizeof(duplicate_indices));
+    for(i=0;i<40;++i) {
+        int n=(int)i; CohCancel cancel={cancel_at,&n}; CohStatus status;
+        s=sentinel; status=coh_wr_prepare_fixture(&f.input,b,cancel,&s);
+        if(status==COH_OK) { ++successes; coh_wr_release(s); coh_wr_collect(b); }
+        else CHECK(status==COH_CANCELLED && s==sentinel);
+        CHECK(coh_wr_budget_memory(b).owned_bytes==baseline.owned_bytes);
+    }
+    CHECK(successes>0 && successes<40);
+    for(i=0;i<2;++i) {
+        s=sentinel; atomic_store(&fail_after,(long)i);
+        CHECK(coh_wr_prepare_fixture(&f.input,b,never,&s)==COH_LIMIT && s==sentinel);
+        atomic_store(&fail_after,-1);
+        CHECK(coh_wr_budget_memory(b).owned_bytes==baseline.owned_bytes);
+    }
+    /* Scratch and candidate coexist. Exact-budget admission cannot silently
+     * omit the lookup map while old generations/source storage are reserved. */
+    CHECK(coh_wr_budget_external(b,baseline.limit-baseline.owned_bytes-metrics.snapshot_bytes-metrics.prepare_scratch_bytes+1)==COH_OK);
+    s=sentinel;
+    CHECK(coh_wr_prepare_fixture(&f.input,b,never,&s)==COH_LIMIT && s==sentinel);
+    CHECK(coh_wr_budget_memory(b).owned_bytes==baseline.owned_bytes);
+    CHECK(coh_wr_budget_external(b,baseline.limit-baseline.owned_bytes-metrics.snapshot_bytes-metrics.prepare_scratch_bytes)==COH_OK);
+    CHECK(coh_wr_prepare_fixture(&f.input,b,never,&s)==COH_OK);
+    coh_wr_release(s); coh_wr_collect(b);
+    CHECK(coh_wr_budget_destroy(b)==COH_OK);
+    {
+        CohWrDrawInput *draws=calloc(COH_WR_MAX_DRAWS,sizeof(*draws));
+        CohRenderVertex *vertices=calloc(COH_WR_MAX_VERTICES,sizeof(*vertices));
+        uint32_t *indices=calloc(COH_WR_MAX_INDICES,sizeof(*indices));
+        size_t source_bytes=COH_WR_MAX_DRAWS*sizeof(*draws)+COH_WR_MAX_VERTICES*sizeof(*vertices)+COH_WR_MAX_INDICES*sizeof(*indices);
+        unsigned aa,ff;
+        CHECK(draws && vertices && indices);
+        for(i=0;i<COH_WR_MAX_VERTICES;++i) {
+            vertices[i].position[0]=(float)i; vertices[i].normal[2]=1;
+            vertices[i].color[0]=vertices[i].color[1]=vertices[i].color[2]=vertices[i].color[3]=1;
+        }
+        for(i=0;i<COH_WR_MAX_INDICES;++i) indices[i]=i%COH_WR_MAX_VERTICES;
+        fixture(&f,1);
+        for(i=0;i<COH_WR_MAX_DRAWS;++i) {
+            draws[i]=f.draws[i&1];
+            draws[i].geometry=(CohRenderGeometry){vertices,COH_WR_MAX_VERTICES,indices,COH_WR_MAX_INDICES,77,2};
+            draws[i].world[12]=(float)i;
+        }
+        f.input.draws=draws; f.input.draw_count=COH_WR_MAX_DRAWS;
+        large_external=32u*1024u*1024u+source_bytes;
+        CHECK(coh_wr_budget_create(COH_WR_MAX_MEMORY,large_external,&b)==COH_OK);
+        baseline=coh_wr_budget_memory(b);
+        CHECK(coh_wr_prepare_fixture(&f.input,b,never,&s)==COH_OK);
+        large_metrics=coh_wr_metrics(s);
+        CHECK(large_metrics.unique_geometries==1 && large_metrics.draws==COH_WR_MAX_DRAWS);
+        CHECK(large_metrics.unique_vertices==COH_WR_MAX_VERTICES && large_metrics.unique_indices==COH_WR_MAX_INDICES);
+        CHECK(large_metrics.instanced_vertices==(size_t)COH_WR_MAX_DRAWS*COH_WR_MAX_VERTICES);
+        CHECK(large_metrics.instanced_indices==(size_t)COH_WR_MAX_DRAWS*COH_WR_MAX_INDICES);
+        CHECK(large_metrics.geometry_bytes==COH_WR_MAX_VERTICES*sizeof(*vertices)+COH_WR_MAX_INDICES*sizeof(*indices));
+        CHECK(large_metrics.instanced_geometry_bytes==COH_WR_MAX_DRAWS*large_metrics.geometry_bytes);
+        CHECK(large_metrics.instanced_geometry_bytes>COH_WR_MAX_MEMORY);
+        CHECK(coh_wr_bindings_create(s,&bindings)==COH_OK);
+        CHECK(coh_wr_bind(bindings,1,resolve,&r,never)==COH_OK);
+        CHECK(coh_wr_draw(bindings,1,0,ident,ident,&first)==COH_OK);
+        aa=atomic_load(&allocations); ff=atomic_load(&frees);
+        for(i=0;i<COH_WR_MAX_DRAWS;++i) {
+            CHECK(coh_wr_draw(bindings,1,i,ident,ident,&second)==COH_OK);
+            CHECK(second.geometry.vertices==first.geometry.vertices && second.geometry.indices==first.geometry.indices);
+            CHECK(second.model_view[12]==(float)i);
+        }
+        CHECK(atomic_load(&allocations)==aa && atomic_load(&frees)==ff);
+        large_peak=coh_wr_budget_memory(b).peak_bytes;
+        CHECK(large_peak<=COH_WR_MAX_MEMORY);
+        coh_wr_bindings_destroy(bindings); coh_wr_release(s); coh_wr_collect(b);
+        CHECK(coh_wr_budget_memory(b).owned_bytes==baseline.owned_bytes);
+        CHECK(coh_wr_budget_destroy(b)==COH_OK);
+        free(draws); free(vertices); free(indices);
+    }
+}
+
 typedef struct { unsigned compile,draw,destroy; } Backend;
 static CohStatus compile_shader(void *p,CohMaterialFamily f,const char *v,const char *q,uint32_t *o) {
     Backend *b=p; (void)f; if(!v||!q) return COH_INVALID; *o=++b->compile; return COH_OK;
@@ -398,9 +550,17 @@ static void concurrent_publication(void) {
 
 int main(void) {
     rejection_and_lifetime(); rollback_tests(); generation_and_capacity();
-    renderer_and_original_matrix(); concurrent_publication();
+    shared_geometry_and_capacity(); renderer_and_original_matrix(); concurrent_publication();
     printf("{\"passed\":true,\"checks\":%u,\"original_matrix_cases\":512,\"bounded_mutations\":5000,"
         "\"published_generations\":2000,\"concurrent_readers\":3,\"max_draws_tested\":4096,"
-        "\"render_allocations\":0,\"render_frees\":0,\"fixture_only\":true,\"authentic_world_entry\":false}\n",checks);
+        "\"render_allocations\":0,\"render_frees\":0,\"fixture_only\":true,\"authentic_world_entry\":false,"
+        "\"shared_geometry\":{\"unique_meshes\":%zu,\"unique_vertices\":%zu,\"unique_indices\":%zu,"
+        "\"instanced_vertices\":%zu,\"instanced_indices\":%zu,\"geometry_bytes\":%zu,"
+        "\"instanced_geometry_bytes\":%zu,\"snapshot_bytes\":%zu,\"scratch_bytes\":%zu,"
+        "\"reserved_external_bytes\":%zu,\"aggregate_peak_bytes\":%zu,\"gpu_execution\":false}}\n",
+        checks,large_metrics.unique_geometries,large_metrics.unique_vertices,large_metrics.unique_indices,
+        large_metrics.instanced_vertices,large_metrics.instanced_indices,large_metrics.geometry_bytes,
+        large_metrics.instanced_geometry_bytes,large_metrics.snapshot_bytes,large_metrics.prepare_scratch_bytes,
+        large_external,large_peak);
     return 0;
 }

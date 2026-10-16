@@ -38,6 +38,12 @@ DATA_COUNTS = ('immutable_directory_checks', 'immutable_anchor_checks',
     'changed_parent_directory_checks', 'changed_parent_entry_checks')
 GRAPH_COUNTS = ('installed_files', 'input_files_checked', 'input_payload_bytes_hashed',
     'input_full_byte_proof_reused_files', 'input_full_byte_proof_reused_bytes')
+SHARED_PROOF_POLICIES = frozenset(('no_current_process_owned_atlas_proof',
+    'owned_source_generation_or_contract_missing', 'owned_source_generation_or_contract_changed',
+    'exact_full_byte_proved_owned_immutable_provider'))
+DEFINITION_REFUSALS = frozenset(('donor_absent', 'Linked server cache ancestor refused',
+    'Case-conflicting server cache directory', 'Invalid server cache directory',
+    'Case-conflicting server cache leaf', 'Invalid existing server cache leaf'))
 
 
 def enum(value, choices):
@@ -66,12 +72,106 @@ def projected_caches(report):
             'installed_files': base.number(definitions.get('installed_files')),
             'preserved_existing_files': base.number(definitions.get('preserved_existing_files')),
             'fallback_reason_present': 'reason' in definitions,
+            'fallback_reason_code': enum(definitions.get('reason'), DEFINITION_REFUSALS),
             'native_cache_consumption_proven': False},
         'beacon_receipt_present': bool(graph),
         'beacon': {'status': enum(graph.get('status'), GRAPH_STATUS),
             'archive_decoded': base.boolean(graph.get('archive_decoded')),
             **{key: base.number(graph.get(key)) for key in GRAPH_COUNTS},
+            'input_inventory_walk': base.boolean(graph.get('input_inventory_walk')),
+            'fingerprint_walk': base.boolean(graph.get('fingerprint_walk')),
+            'shared_proof_policy': enum(graph.get('input_full_byte_proof_reuse_policy'), SHARED_PROOF_POLICIES),
+            'preparation_elapsed_seconds': base.seconds(graph.get('preparation_elapsed_seconds')),
             'native_graph_consumption_proven': False}}
+
+
+def cache_operations(projection):
+    """Attribute reported operations without treating a decoder as a writer.
+
+    A successful original cold beacon path always decodes the archive, even
+    when every graph file already exists. Its final marker write is distinct
+    from graph-payload writes. Missing fields remain unknown. These are source
+    report statements, not fresh verification of cache or native consumption.
+    """
+    graph = projection['beacon']
+    status, written = graph['status'], graph['installed_files']
+    hashed, decoded = graph['input_payload_bytes_hashed'], graph['archive_decoded']
+    reused_files, reused_bytes = (graph['input_full_byte_proof_reused_files'],
+                                 graph['input_full_byte_proof_reused_bytes'])
+    base.need(not (status == 'reused_verified_graph' and
+        (written not in (None, 0) or hashed not in (None, 0) or decoded is True)), 'CACHE_RECEIPT_CONFLICT')
+    base.need(not (status == 'installed_verified_graph' and decoded is False), 'CACHE_RECEIPT_CONFLICT')
+    base.need(not (reused_files == 0 and reused_bytes not in (None, 0)), 'CACHE_RECEIPT_CONFLICT')
+    base.need(not (reused_files is not None and graph['input_files_checked'] is not None
+                  and reused_files > graph['input_files_checked']), 'CACHE_RECEIPT_CONFLICT')
+    definitions = projection['definitions']
+    base.need(not (definitions['status'] in ('preserved_existing_native_caches', 'skipped_native_fallback')
+                  and definitions['installed_files'] not in (None, 0)), 'CACHE_RECEIPT_CONFLICT')
+    return {'beacon': {
+        'input_inventory_walk_reported': graph['input_inventory_walk'],
+        'input_fingerprint_walk_reported': graph['fingerprint_walk'],
+        'input_files_checked': graph['input_files_checked'],
+        'input_payload_bytes_hashed': hashed,
+        'full_byte_proof_reused_files': reused_files, 'full_byte_proof_reused_bytes': reused_bytes,
+        'shared_proof_policy': graph['shared_proof_policy'],
+        'archive_decode_reported': decoded,
+        'graph_payload_files_written': written,
+        'decoded_without_graph_payload_write': (decoded is True and written == 0)
+                                               if decoded is not None and written is not None else None,
+        'marker_write_source_implied': True if status == 'installed_verified_graph' else
+                                       False if status == 'reused_verified_graph' else None,
+        'source_path': 'warm_receipt' if status == 'reused_verified_graph' else
+                       'archive_validation' if status == 'installed_verified_graph' else 'unknown',
+        'suboperation_elapsed_seconds': None,
+        'elapsed_seconds': graph['preparation_elapsed_seconds']},
+        'definitions': {'payload_files_written': definitions['installed_files'],
+            'preserved_existing_files': definitions['preserved_existing_files'],
+            'fallback_reason_code': definitions['fallback_reason_code'],
+            'archive_payload_bytes_hashed': None, 'suboperation_elapsed_seconds': None},
+        'scope': 'existing_report_fields_and_pinned_producer_control_flow_not_fresh_cache_validation',
+        'suboperation_time_inferred_from_phase_duration': False,
+        'native_cache_consumption_proven': False}
+
+
+def resource_boundaries(app):
+    """Pair adjacent receiver-timestamped boundaries, never sum high waters.
+
+    The ring contains at most 32 observations. A matching entered/leaving pair
+    measures the Python coordinator's VmRSS delta, not MapServer RSS, PSS or
+    Android+server overlap. Missing/disordered rows cannot fabricate a pair.
+    """
+    samples = base.rows(app.get('guest_resources', []), 32)
+    pairs, pending, previous, clocks, unknown = [], None, -1, [], 0
+    for row in samples:
+        clock = base.number(row.get('elapsed_ms'))
+        # Older fixtures/reports can omit clocks; retain their existing maxima
+        # but refuse to create a paired interval across an unknown timestamp.
+        if clock is None:
+            pending = None; unknown += 1; continue
+        base.need(clock >= previous, 'RESOURCE_CLOCK_ORDER')
+        previous = clock; clocks.append(clock)
+        stage, boundary = enum(row.get('stage'), base.STAGES), row.get('boundary')
+        if stage == 'unknown' or boundary not in ('entered', 'leaving'):
+            pending = None; unknown += 1; continue
+        if boundary == 'entered':
+            pending = (stage, clock, base.number(row.get('rss_kib')))
+        elif pending is not None:
+            if pending[0] == stage:
+                after = base.number(row.get('rss_kib'))
+                pairs.append({'stage': stage, 'entered_ms': pending[1], 'leaving_ms': clock,
+                    'receiver_boundary_interval_ms': clock - pending[1],
+                    'coordinator_rss_entered_kib': pending[2], 'coordinator_rss_leaving_kib': after,
+                    'coordinator_rss_delta_kib': after - pending[2] if after is not None and pending[2] is not None else None,
+                    'coordinator_peak_rss_high_water_kib': base.number(row.get('peak_rss_kib')),
+                    'reaped_children_peak_rss_high_water_kib': base.number(row.get('children_peak_rss_kib'))})
+            pending = None
+    return {'retained_samples': len(samples), 'unusable_boundary_samples': unknown,
+        'clocked_samples': len(clocks), 'paired_stages': pairs,
+        'retained_span_ms': clocks[-1] - clocks[0] if len(clocks) >= 2 else None,
+        'largest_adjacent_sample_gap_ms': max((b-a for a, b in zip(clocks, clocks[1:])), default=None),
+        'scope': 'coordinator_self_rss_at_received_boundaries_not_server_process_tree',
+        'whole_process_tree_transient_peak_measured': False, 'android_server_overlap_measured': False,
+        'high_waters_summed': False}
 
 
 def guest_detail(guest):
@@ -98,6 +198,7 @@ def guest_detail(guest):
             **{k: base.boolean(geometry.get(k)) for k in
                ('worker_used', 'worker_reaped', 'before_postgresql', 'before_wine')}},
         'cache_projection': projected_caches(guest),
+        'cache_operations': cache_operations(projected_caches(guest)),
         'process_output': {'records': len(processes), 'sum_recorded_bytes': sum(sizes),
             'maximum_recorded_bytes': max(sizes) if sizes else None,
             'overflow_records': sum(p.get('output_overflow') is True for p in processes),
@@ -136,6 +237,7 @@ def analyze(docs, provenance):
         guest = base.obj(item.get('guest'))
         details.append(guest_detail(guest) if base.guest_matches(guest, item.get('session_id')) else None)
     attempts = []
+    apps = [app, *[base.obj(item.get('app')) for item in history]]
     for index, (summary, detail) in enumerate(zip(summaries, details)):
         classification = base.obj(summary['guest_detail']).get('cache_classification', 'unknown')
         attempts.append({'scope': 'current' if index == 0 else 'historical',
@@ -145,6 +247,7 @@ def analyze(docs, provenance):
             'cache_classification': classification,
             'timing': timing(summary), 'memory': summary['memory'],
             'guest_resources': summary['guest_resources'],
+            'resource_boundaries': resource_boundaries(apps[index]),
             'preparation_seconds': base.obj(summary['guest_detail']).get('preparation_seconds', {}),
             'detail': detail})
     cohorts = {}

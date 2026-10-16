@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "passed": true,
+  "qualified_source_commit": "52c3d50ac558adc95bd22d29ebd51ac3a2f3143a",
+  "integration_qualification": "exact git archive in /tmp/coh-worker-b-qualified-52c3d50, every source receipt SHA256 compared with committed blob",
+  "source_blob_checks": 31,
+  "standalone_checks": {
+    "release": 493373,
+    "asan": 493373,
+    "ubsan": 493373
+  },
+  "integrated_checks": {
+    "release": {
+      "checks": 473979,
+      "compact_checks": 208484,
+      "passed": true,
+      "live_world": false
+    },
+    "asan": {
+      "checks": 473979,
+      "compact_checks": 208484,
+      "passed": true,
+      "live_world": false
+    },
+    "ubsan": {
+      "checks": 473979,
+      "compact_checks": 208484,
+      "passed": true,
+      "live_world": false
+    },
+    "reader_padding": {
+      "checks": 473979,
+      "compact_checks": 208484,
+      "passed": true,
+      "live_world": false
+    }
+  },
+  "preserved_failed_link_log": "compact-integrated-interrupted.log",
+  "preserved_wrong_source_retry": "compact-baseline-reversion.json",
+  "wrong_source_retry_acceptance": false,
+  "authentic_catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+  "all_captured_references_audited": 130314,
+  "missing_references": 7,
+  "missing_names_resolved": false,
+  "missing_name_original_source_audit_commit": "07d378a3108735f258cdd3b45953dd9498f587ce",
+  "reachable_graph_validated": false,
+  "references_crc_recomputed": false,
+  "source_defs_crc_recomputed": true,
+  "renderer_authorized": false,
+  "android_built": false,
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "apk_rebuilt": false
+}

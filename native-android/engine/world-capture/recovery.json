@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "recovered_from": "/workspace/scratch/78494e933b7f/worker-c/native-android/engine/world-capture",
+  "base_remote": "66146bbee161304ba4e4e14cbb53cba6958fb03b",
+  "prior_worktree_modified": false,
+  "files": {
+    "probe.c": {
+      "bytes": 7836,
+      "sha256": "706e6e7475e2b86ffd1dc935b6b69c2e91c3b91ae4e44f4cca5b034c17590856",
+      "recovered_byte_exact": true
+    },
+    "test_capture.c": {
+      "bytes": 7716,
+      "sha256": "c71c29ec935e2e9943ab7a335a81ad0355b8aff4030ff870b79a9084d7458c1d",
+      "recovered_byte_exact": true
+    },
+    "capture_hooks.h": {
+      "bytes": 752,
+      "sha256": "70db53fd6318d26a6aedfca6e8e907e69a3051bee2e57ec2865bdf558bce78e7",
+      "recovered_byte_exact": true
+    },
+    "capture_hooks.c": {
+      "bytes": 3784,
+      "sha256": "2e7615fdf37ba66e7a50bce2ab5f628c7cb8aa3827d8a274b9640201362d2bd2",
+      "recovered_byte_exact": true
+    },
+    "coh_world_capture.c": {
+      "bytes": 5028,
+      "sha256": "706c1550aad7c8862c4a16ecf589f600a722fac4362bde3d10013310f737b8cf",
+      "recovered_byte_exact": true
+    },
+    "coh_world_capture.h": {
+      "bytes": 2431,
+      "sha256": "46e6c921b105fdfe983efc51977f01a123ac6bb46f7da9085fe0df8085520c75",
+      "recovered_byte_exact": true
+    },
+    "check.py": {
+      "bytes": 10193,
+      "sha256": "7abb7c461ef7fdc80f38f14ed4cec904980e9e7be1e1b3a9cf76fd1bf41335c8",
+      "recovered_byte_exact": true
+    }
+  },
+  "preserved_original_archive": {
+    "path": "native-android/engine/world-capture/qualification/recovery-20261016/original-unpublished-world-capture.tar.gz",
+    "bytes": 11864,
+    "sha256": "527bae67dae058116321d696291d98535f890688bf2aa483d63322aaf8fc9259",
+    "contains": "All seven original unpublished source files; before corrections."
+  }
+}

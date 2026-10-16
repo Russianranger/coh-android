@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "preserved_failures": [
+    {
+      "stage": "recovered original sparse-checkout qualification",
+      "error": "FileNotFoundError for upstream/ouroboros/Common/auth/auth.h",
+      "correction": "Temporary exact Git mirror covers DB/Map/replication original helpers; no shared oracle source changed."
+    },
+    {
+      "stage": "recovered original synthetic peer success case",
+      "error": "Capture confirmation refused: fixture supplied link_id=17 as expected_map_id; actual map_id=5.",
+      "correction": "Harness expects map_id5 and now tests wrong_map6 refusal. Production confirmation stayed strict."
+    },
+    {
+      "stage": "new badge ASan with leak scanning",
+      "error": "LeakSanitizer has encountered a fatal error; does not work under ptrace.",
+      "correction": "Use established detect_leaks=0 executor policy, retain ASan/UBSan and explicit fixed-owner cleanup."
+    }
+  ],
+  "subsequent_final_host_receipts": {
+    "globals": "native-android/engine/entity-globals/qualification/recovery-20261016/host.json",
+    "capture": "native-android/engine/world-capture/qualification/recovery-20261016/host.json"
+  }
+}

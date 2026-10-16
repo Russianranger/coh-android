@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "prior_stream_android_reused": {
+    "source": "66146bbee161304ba4e4e14cbb53cba6958fb03b",
+    "run_id": 38953090330,
+    "result": "success",
+    "android13_artifact": {
+      "id": 12069580771,
+      "bytes": 6589,
+      "sha256": "3d2dd127567f6c30f7bcef509a5c88b153a3c6aa58f5115b381f234e7c22423e"
+    },
+    "host_abi_artifact": {
+      "id": 12069173528,
+      "bytes": 2064685,
+      "sha256": "eb8b82423adfd4f049cf885118dbbb2911910d8cff619d67d2c0b2445d5a8c88"
+    }
+  },
+  "new_owner_android_executed": false,
+  "owner_review": {
+    "reviewer": "Worker B",
+    "result": "no blocker found",
+    "checks": [
+      "owned copied bytes SHA256 callback before parse",
+      "refcount-initialized failure cleanup",
+      "source+copy+old+indexes+walk scratch budget",
+      "file/slot offsets remain in immutable copied bytes",
+      "holes/tombstones preserved",
+      "generation provenance drift rejected",
+      "detached owner cannot match GROUPS",
+      "footer comparison explicitly grants no live/geometry/ACK authority"
+    ]
+  },
+  "leak_sanitizer_attempt": {
+    "passed": false,
+    "error": "Cannot open /proc/<pid>/task; LeakSanitizer fatal under managed executor ptrace restriction",
+    "retry": "ASan detect_leaks=0; malloc/calloc/free tracked in portable owner suite",
+    "leak_sanitizer_accepted": false
+  },
+  "accepted_apks_changed": false,
+  "server_started": false,
+  "seven_missing_refs_resolved_to_real_defs": false,
+  "matching_groups_roots_available": false,
+  "root_reachability_verified": false
+}

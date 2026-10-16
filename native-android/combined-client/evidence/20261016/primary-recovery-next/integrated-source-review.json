@@ -1,0 +1,53 @@
+{
+  "schema": "coh-six-worker-source-composition-v1",
+  "receipts": [
+    {
+      "receipt": "native-android/engine/scenecatalog/evidence/owner-20261016/host.json",
+      "sha256": "5a68100b21da9987774df38258444e5ecac9f4354a81ed7a9f4717dc1c2d37e2",
+      "source_inputs": 16,
+      "mismatches": []
+    },
+    {
+      "receipt": "native-android/engine/scenecatalog/evidence/owner-20261016/authentic-owner.json",
+      "sha256": "ec2b37058106929252f6ae8f4689fe2481e0a096e8dc572b42c723555101b06c",
+      "source_inputs": 11,
+      "mismatches": []
+    },
+    {
+      "receipt": "native-android/engine/scenegraph/evidence/compact-integrated-qualification.json",
+      "sha256": "f677b21f7f2a3ffc165ffaf003f7197c4efedaaaa551a44dfcfba138ff5ee283",
+      "source_inputs": 31,
+      "mismatches": [
+        "native-android/engine/scenecatalog/check.py"
+      ]
+    },
+    {
+      "receipt": "native-android/engine/scenegraph/evidence/compact-qualification.json",
+      "sha256": "3504853e2b9d99e070c41dcfb4277ead6a3db293e8cd16929cb60ed37f0452b5",
+      "source_inputs": 21,
+      "mismatches": [
+        "native-android/engine/scenecatalog/check.py"
+      ]
+    },
+    {
+      "receipt": "native-android/engine/world-render-adapter/qualification/shared-geometry-20261016/host.json",
+      "sha256": "1830c7e4004fe3ee06aaca928cb85a79bf042ab101e2af71bf98fb85dd161e58",
+      "source_inputs": 10,
+      "mismatches": []
+    },
+    {
+      "receipt": "native-android/combined-client/evidence/20261016/recovery-six-workers/worker-f/independent-badge-host-receipt.json",
+      "sha256": "2da27ce5d1d17e1b306519bdca5eeb649829e2691f443163afbe4bc97af53719",
+      "source_inputs": 21,
+      "mismatches": []
+    }
+  ],
+  "catalog_admission_unit_tests": 56,
+  "primary_admission_unit_tests": 29,
+  "android_execution_pending": true,
+  "composition_delta": {
+    "path": "native-android/engine/scenecatalog/check.py",
+    "reason": "Worker A adds owner source/test inputs to the shared catalog checker; B qualified its own pinned base. Native compact production and oracle emitter are unchanged. Fresh integrated exact-source CI is required and configured.",
+    "new_integrated_qualification_required": true
+  }
+}

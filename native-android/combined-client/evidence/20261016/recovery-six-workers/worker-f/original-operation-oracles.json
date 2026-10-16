@@ -1,0 +1,269 @@
+{
+  "beacon": {
+    "cases": [
+      {
+        "case": "cold_missing",
+        "observed": {
+          "archive_opens": 1,
+          "archive_payload_read_bytes": 36,
+          "graph_writes": 2,
+          "input_hash_bytes": 29,
+          "input_hash_files": 2,
+          "inventory_walks": 3,
+          "marker_writes": 1
+        },
+        "receipt": {
+          "archive_decoded": true,
+          "fingerprint_walk": true,
+          "format": 3,
+          "full_world_crc": "0x00007ab7",
+          "input_files_checked": 2,
+          "input_full_byte_proof_reuse_basis": "all_destination_inputs_fully_hashed",
+          "input_full_byte_proof_reuse_policy": "no_current_process_owned_atlas_proof",
+          "input_full_byte_proof_reused_bytes": 0,
+          "input_full_byte_proof_reused_files": 0,
+          "input_inventory_walk": true,
+          "input_payload_bytes_hashed": 29,
+          "input_validation": "bounded_single_walk_inventory_and_fingerprints",
+          "input_validation_basis": "current_complete_input_sha256_and_same_provider_snapshots",
+          "installed_files": 2,
+          "map": "fixture-only",
+          "native_graph_readback_qualified": true,
+          "preparation_elapsed_seconds": 0.001279,
+          "same_process_shared_certificate_exported": true,
+          "server_geometry_profile": "fixture-profile",
+          "status": "installed_verified_graph"
+        }
+      },
+      {
+        "case": "warm_hit",
+        "observed": {
+          "archive_opens": 0,
+          "archive_payload_read_bytes": 0,
+          "graph_writes": 0,
+          "input_hash_bytes": 0,
+          "input_hash_files": 0,
+          "inventory_walks": 1,
+          "marker_writes": 0
+        },
+        "receipt": {
+          "archive_decoded": false,
+          "fingerprint_walk": true,
+          "format": 3,
+          "full_world_crc": "0x00007ab7",
+          "input_files_checked": 2,
+          "input_inventory_walk": true,
+          "input_payload_bytes_hashed": 0,
+          "input_validation": "bounded_single_walk_inventory_and_fingerprints",
+          "input_validation_basis": "authenticated_prior_full_byte_receipt_and_current_immutable_provider_fingerprints",
+          "installed_files": 0,
+          "map": "fixture-only",
+          "preparation_elapsed_seconds": 0.000219,
+          "same_process_shared_certificate_exported": false,
+          "server_geometry_profile": "fixture-profile",
+          "status": "reused_verified_graph"
+        }
+      },
+      {
+        "case": "existing_graph_missing_marker",
+        "observed": {
+          "archive_opens": 1,
+          "archive_payload_read_bytes": 36,
+          "graph_writes": 0,
+          "input_hash_bytes": 29,
+          "input_hash_files": 2,
+          "inventory_walks": 2,
+          "marker_writes": 1
+        },
+        "receipt": {
+          "archive_decoded": true,
+          "fingerprint_walk": true,
+          "format": 3,
+          "full_world_crc": "0x00007ab7",
+          "input_files_checked": 2,
+          "input_full_byte_proof_reuse_basis": "all_destination_inputs_fully_hashed",
+          "input_full_byte_proof_reuse_policy": "no_current_process_owned_atlas_proof",
+          "input_full_byte_proof_reused_bytes": 0,
+          "input_full_byte_proof_reused_files": 0,
+          "input_inventory_walk": true,
+          "input_payload_bytes_hashed": 29,
+          "input_validation": "bounded_single_walk_inventory_and_fingerprints",
+          "input_validation_basis": "current_complete_input_sha256_and_same_provider_snapshots",
+          "installed_files": 0,
+          "map": "fixture-only",
+          "native_graph_readback_qualified": true,
+          "preparation_elapsed_seconds": 0.000396,
+          "same_process_shared_certificate_exported": false,
+          "server_geometry_profile": "fixture-profile",
+          "status": "installed_verified_graph"
+        }
+      },
+      {
+        "case": "shared_proof",
+        "observed": {
+          "archive_opens": 1,
+          "archive_payload_read_bytes": 36,
+          "graph_writes": 0,
+          "input_hash_bytes": 0,
+          "input_hash_files": 0,
+          "inventory_walks": 3,
+          "marker_writes": 1
+        },
+        "receipt": {
+          "archive_decoded": true,
+          "fingerprint_walk": true,
+          "format": 3,
+          "full_world_crc": "0x00007ab7",
+          "input_files_checked": 2,
+          "input_full_byte_proof_reuse_basis": "current_complete_input_sha256_and_same_provider_snapshots",
+          "input_full_byte_proof_reuse_policy": "exact_full_byte_proved_owned_immutable_provider",
+          "input_full_byte_proof_reused_bytes": 29,
+          "input_full_byte_proof_reused_files": 2,
+          "input_inventory_walk": true,
+          "input_payload_bytes_hashed": 0,
+          "input_validation": "bounded_single_walk_inventory_and_fingerprints",
+          "input_validation_basis": "authenticated_shared_provider_pins_and_hashed_destination_delta",
+          "installed_files": 0,
+          "map": "fixture-only",
+          "native_graph_readback_qualified": true,
+          "preparation_elapsed_seconds": 0.00081,
+          "same_process_shared_certificate_exported": false,
+          "server_geometry_profile": "fixture-profile",
+          "status": "installed_verified_graph"
+        }
+      },
+      {
+        "case": "changed_generation",
+        "observed": {
+          "archive_opens": 1,
+          "archive_payload_read_bytes": 36,
+          "graph_writes": 0,
+          "input_hash_bytes": 29,
+          "input_hash_files": 2,
+          "inventory_walks": 3,
+          "marker_writes": 1
+        },
+        "receipt": {
+          "archive_decoded": true,
+          "fingerprint_walk": true,
+          "format": 3,
+          "full_world_crc": "0x00007ab7",
+          "input_files_checked": 2,
+          "input_full_byte_proof_reuse_basis": "all_destination_inputs_fully_hashed",
+          "input_full_byte_proof_reuse_policy": "owned_source_generation_or_contract_changed",
+          "input_full_byte_proof_reused_bytes": 0,
+          "input_full_byte_proof_reused_files": 0,
+          "input_inventory_walk": true,
+          "input_payload_bytes_hashed": 29,
+          "input_validation": "bounded_single_walk_inventory_and_fingerprints",
+          "input_validation_basis": "current_complete_input_sha256_and_same_provider_snapshots",
+          "installed_files": 0,
+          "map": "fixture-only",
+          "native_graph_readback_qualified": true,
+          "preparation_elapsed_seconds": 0.00087,
+          "same_process_shared_certificate_exported": false,
+          "server_geometry_profile": "fixture-profile",
+          "status": "installed_verified_graph"
+        }
+      },
+      {
+        "case": "missing_generation",
+        "observed": {
+          "archive_opens": 1,
+          "archive_payload_read_bytes": 36,
+          "graph_writes": 0,
+          "input_hash_bytes": 29,
+          "input_hash_files": 2,
+          "inventory_walks": 3,
+          "marker_writes": 1
+        },
+        "receipt": {
+          "archive_decoded": true,
+          "fingerprint_walk": true,
+          "format": 3,
+          "full_world_crc": "0x00007ab7",
+          "input_files_checked": 2,
+          "input_full_byte_proof_reuse_basis": "all_destination_inputs_fully_hashed",
+          "input_full_byte_proof_reuse_policy": "owned_source_generation_or_contract_missing",
+          "input_full_byte_proof_reused_bytes": 0,
+          "input_full_byte_proof_reused_files": 0,
+          "input_inventory_walk": true,
+          "input_payload_bytes_hashed": 29,
+          "input_validation": "bounded_single_walk_inventory_and_fingerprints",
+          "input_validation_basis": "current_complete_input_sha256_and_same_provider_snapshots",
+          "installed_files": 0,
+          "map": "fixture-only",
+          "native_graph_readback_qualified": true,
+          "preparation_elapsed_seconds": 0.000794,
+          "same_process_shared_certificate_exported": false,
+          "server_geometry_profile": "fixture-profile",
+          "status": "installed_verified_graph"
+        }
+      },
+      {
+        "case": "changed_provider",
+        "observed": {
+          "archive_opens": 1,
+          "archive_payload_read_bytes": 36,
+          "graph_writes": 0,
+          "input_hash_bytes": 18,
+          "input_hash_files": 1,
+          "inventory_walks": 3,
+          "marker_writes": 1
+        },
+        "receipt": {
+          "archive_decoded": true,
+          "fingerprint_walk": true,
+          "format": 3,
+          "full_world_crc": "0x00007ab7",
+          "input_files_checked": 2,
+          "input_full_byte_proof_reuse_basis": "current_complete_input_sha256_and_same_provider_snapshots",
+          "input_full_byte_proof_reuse_policy": "exact_full_byte_proved_owned_immutable_provider",
+          "input_full_byte_proof_reused_bytes": 11,
+          "input_full_byte_proof_reused_files": 1,
+          "input_inventory_walk": true,
+          "input_payload_bytes_hashed": 18,
+          "input_validation": "bounded_single_walk_inventory_and_fingerprints",
+          "input_validation_basis": "authenticated_shared_provider_pins_and_hashed_destination_delta",
+          "installed_files": 0,
+          "map": "fixture-only",
+          "native_graph_readback_qualified": true,
+          "preparation_elapsed_seconds": 0.000588,
+          "same_process_shared_certificate_exported": false,
+          "server_geometry_profile": "fixture-profile",
+          "status": "installed_verified_graph"
+        }
+      }
+    ],
+    "fixture_only": true,
+    "source_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+    "source_sha256": "37a8db39c4af994bcd5b4fd077319801bacfe90c70d4414d06929408b010d981",
+    "unchanged_function_sha256": {
+      "VerifiedCollisionInputs": "c204425d86a5fc8f5dec099c11c5c3d1089cfbeb62fba2fbc24a78255e172fd7",
+      "canonical": "9234d110b0f120c0ea274f998b59165120c66341dd942a9cae50121ca7002ca2",
+      "eligible_shared_provider": "9a90f081376f4892476e0bc46859c61f3f10cb42515b91e67edae7340bdd57e5",
+      "install": "03ab2d8a9b440b77fb151fe2e05c771968865bafb7ab8d2043e9cf65d63536fb",
+      "mint_shared_inputs": "beb457a4482d7f83525074b4d37b2b3e3bc56511f5a97dfe449364a81e7c3b52",
+      "proof_owner_identity": "faccd251d5d95ae281a82917fcb83c2b0258b7d1ea4dc9ff8f8fc5b1280ca05a",
+      "reusable_shared_inputs": "2799fac08cefdd043282425adcb44ef16029e8cdd78c6d12ae3985a24ee66e9d"
+    }
+  },
+  "memory": {
+    "fixture_only": true,
+    "function_sha256": "ae10fc937ab17938bdf11d31d810b16e8d6a9f94a29ac1f709f207303d8cbb18",
+    "getrusage_sources": [
+      "self",
+      "children"
+    ],
+    "observed": {
+      "cgroup_current_bytes": null,
+      "cgroup_max_bytes": null,
+      "cgroup_oom_kill_count": null,
+      "children_peak_rss_kib": 73,
+      "peak_rss_kib": 41,
+      "rss_kib": 29
+    },
+    "real_process_measurement": false,
+    "source_sha256": "36d4853bfd696254a326f8fd6b9595b1dbac3a9c761808b2a9654ceae91b5895"
+  }
+}

@@ -43,7 +43,11 @@ saved Atlas catalog, selected real player, or encrypted login was exercised.
    asset generation alone does not identify animated vertex bytes.
 2. Preparation validates bounded numbers, material enums, finite values, indices,
    selected-player identity and all prerequisites. It deep-copies geometry and
-   descriptors into a single immutable allocation. Both world and selected-player
+   descriptors into a single immutable allocation. Geometry with the same exact
+   identity/generation is stored once; byte/count conflicts reject the snapshot.
+   Different IDs remain separate even with identical bytes. Temporary bounded
+   indexing is charged to the shared budget while the candidate is allocated.
+   Both world and selected-player
    draw ownership must be represented. Failed validation/allocation/cancellation
    preserves output and memory accounting; existing published generations remain.
 3. `coh_wr_publish` retains one complete scene+actor snapshot under a short mutex.
@@ -97,7 +101,12 @@ stacks, GPU/driver storage and the separate local server are not measured here.
 
 Limits are **4,096 draws**, **65,536 vertices per draw**, and **196,608 indices per
 draw**, with aggregate reservation normally rejecting much earlier. Geometry is
-copied per draw; there is no shared-mesh cache or whole-Atlas capacity claim.
+shared only inside each immutable snapshot; there is no cross-generation mesh
+cache or whole-Atlas capacity claim. Per-draw transforms, material and texture
+identities are preserved. Identical pointer spans skip repeat byte scans under
+the immutable-input contract; distinct spans with the same identity must compare
+exactly. The hash lookup allocates at most 49,152 bytes, reserved alongside both
+old snapshots and the candidate, and releases that scratch before return.
 The 12,192-definition graph stress fixture is not a renderer throughput fixture.
 The accepted renderer's default queue is 512 draws. Integration must use a
 qualified larger configuration or bounded batches, preserving translucent order
@@ -109,6 +118,17 @@ One large candidate copy is bounded by the aggregate cap, with cancellation
 polled during validation and between per-draw copies (maximum roughly 4.4 MiB
 geometry copy per draw). Control-thread preparation may stall and must never
 run on Android UI/render callbacks. Mutex acquisition is short but not lock-free.
+`coh_wr_metrics` exposes unique versus instance vertex/index work, geometry and
+snapshot ownership, and temporary preparation bytes without scans/allocations.
+The retained shared-geometry fixture admits 4,096 draws of one 65,536-vertex,
+196,608-index mesh: 4,456,448 geometry bytes and 5,964,128 snapshot bytes. Its
+45,580,768-byte aggregate peak includes 39,518,208 externally reserved bytes
+(32 MiB other ownership plus exact source draws/geometry) and bindings. This
+replaces a calculated 18,253,611,008 bytes of per-instance geometry copies, but
+**does not reduce 268,435,456 instanced vertices or 805,306,368 instanced indices**.
+The stress fixture only reads adapter draw spans; it does not submit that workload
+to the renderer or GPU. No real-world capacity or frame-time claim follows.
+
 Renderer queue admission/flush can independently fail; a caller must preflight
 its configuration and explicitly abandon pending submissions on failure. This
 adapter guarantees atomic CPU publication, not atomic framebuffer rendering.
@@ -123,7 +143,10 @@ The coordinator owns Android emulator execution and preserved source matching.
 
 Tests cover malformed identity/generations/materials/geometry, cancellation at
 validation/copy stages, allocation failure, aggregate-budget refusal/rollback,
-4,096 draws, old-generation leases, 2,000 publications with three reader threads,
+4,096 draws at maximum per-draw geometry, exact identity conflicts and distinct
+identity hash collisions, byte-equal separate source spans, exact scratch-plus-
+candidate budget boundaries, both preparation allocation failures, old-generation
+leases, 2,000 publications with three reader threads,
 transactional texture binding, Surface recreation, renderer submission/flush,
 zero allocation/free during the measured render path, and 512 unchanged-original
 matrix comparisons. 5,000 bounded mutations use valid allocated buffers; this

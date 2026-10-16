@@ -1,0 +1,58 @@
+{
+  "badge_checks_per_mode": 1038766,
+  "fresh_million_case_suite_rerun": false,
+  "host_stack_usage_bytes_per_function": {
+    "coh_global_badge_monitor": 192,
+    "coh_global_badges": 240,
+    "records": 112
+  },
+  "improvements_from_review": [
+    "before/after native and original source hash stability guards added and passed",
+    "integrated C++ link now calls new badge and monitor APIs",
+    "outer-frame rollback obligation explicitly documented"
+  ],
+  "independent_actions": [
+    "reviewed every parser branch and original sender/consumer field order",
+    "verified exact source byte identities against clean commit and retained host/sanitizer receipt",
+    "strict C99 -O2 compile with -Wall -Wextra -Werror -pedantic",
+    "host compiler stack-use observations only; no whole-call-stack or Android inference"
+  ],
+  "integration_limits": [
+    "badge and monitor individually atomic; entire UPDATE owner must stage both plus all remaining tails",
+    "original dictionary text/UI and monitor CheckAndSortInfo semantics are not qualified",
+    "declared source-valid filename overflow cases deliberately refused",
+    "Android ABI and Android13 execution still required for new native bytes",
+    "test-only original oracle is unsanitized; native modes are release ASan UBSan; LSan unavailable"
+  ],
+  "native_inputs_verified_against_git_and_receipt": 21,
+  "original_badge_files_verified": 8,
+  "qualification_checks_per_mode": 6968876,
+  "qualification_modes": [
+    "release",
+    "asan",
+    "ubsan"
+  ],
+  "qualification_receipt_sha256": "2da27ce5d1d17e1b306519bdca5eeb649829e2691f443163afbe4bc97af53719",
+  "result": "no_blocking_findings",
+  "review_scope": "entity-globals badge/monitor staging, source oracle, tests and integration checker only; world-capture is outside this review",
+  "reviewed_invariants": [
+    "record count checked before slot access; player and SG offsets fit 5146-entry POD",
+    "indices bounded to source destination arrays; duplicates retained in wire order",
+    "1023-byte filename plus NUL cap and 65536-byte total copied pool",
+    "absent filename distinct from explicit empty; absent history distinct from empty history",
+    "output/workspace/input/reader spans disjoint before scratch zeroing",
+    "budget charges both 168,884-byte PODs, full input, 8,192-byte stack reserve and retained owner",
+    "late body failures leave reader/output unchanged; monitor has independent 40-byte candidate",
+    "monitor preserves ten optional pack8 raw integer patterns without claiming dictionary sorting",
+    "no production full-frame integration ACK readiness or actor publication"
+  ],
+  "reviewed_source_revision": "01c3db24e695e0eb27ded47efb8abcab613a7379",
+  "reviewer": "worker-f",
+  "schema": "coh-independent-badge-grammar-review-v1",
+  "whole_original_functions_verified": {
+    "badgeMonitor_ReceiveInfo": "1c4c35be03dacadfe8cd5993d4292081f746df3b8963beac47fb3dce33a2423f",
+    "badgeMonitor_SendInfo": "9bfa651123ff02f11b3fb9c1fd2a94a97a4b8fe5754e95c926b06b964cd55cab",
+    "entity_ReceiveBadgeUpdate": "8c16fa20db0bf67383a8dacbaa2be421c5ffcd510e3828fbb4a2bf147ef87e39",
+    "entity_SendBadgeUpdate": "25262fe30f83a63a17deaf2bbc2cfff433a9bc4df7a6c8c97e35bc7e5c68a4ff"
+  }
+}

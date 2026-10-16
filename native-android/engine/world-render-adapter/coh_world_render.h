@@ -65,6 +65,11 @@ typedef struct CohWrSnapshot CohWrSnapshot;
 typedef struct CohWrMailbox CohWrMailbox;
 typedef struct CohWrBindings CohWrBindings;
 typedef struct { size_t limit, external_bytes, owned_bytes, peak_bytes, retired; } CohWrMemory;
+typedef struct {
+    size_t draws, unique_geometries;
+    size_t unique_vertices, unique_indices, instanced_vertices, instanced_indices;
+    size_t geometry_bytes, instanced_geometry_bytes, snapshot_bytes, prepare_scratch_bytes;
+} CohWrMetrics;
 
 /* Shared aggregate cap includes reserved catalog/old+candidate graph/scratch/
  * source-asset storage AND all adapter-owned snapshots, bindings and mailboxes.
@@ -80,12 +85,20 @@ CohStatus coh_wr_budget_destroy(CohWrBudget *); /* STATE while any objects remai
 /* Full validation, bounded copy and allocation happen OFF the render thread.
  * Borrowed inputs must remain immutable through return. Output is unchanged on
  * failure. A fixture can never be relabeled as production after preparation.
- * No current production upstream is authorized to set missing prerequisites. */
+ * Exact geometry identity + generation is shared within one snapshot only.
+ * Repeated identities must have identical vertex/index counts and bytes; a
+ * conflicting identity rejects the entire snapshot. Material and transforms
+ * remain per draw. CPU-skinned identities must include pose generation.
+ * Temporary lookup ownership is charged to the same aggregate budget and freed
+ * before return. No current upstream may set missing prerequisites. */
 CohStatus coh_wr_prepare(const CohWrInput *, CohWrBudget *, CohCancel, CohWrSnapshot **);
 CohStatus coh_wr_prepare_fixture(const CohWrInput *, CohWrBudget *, CohCancel, CohWrSnapshot **);
 const CohWrReceipt *coh_wr_receipt(const CohWrSnapshot *);
 const CohWrActor *coh_wr_actor(const CohWrSnapshot *);
 size_t coh_wr_draw_count(const CohWrSnapshot *);
+/* Named CPU ownership/capacity only, not GPU allocation or measured throughput.
+ * No allocation/scans; immutable for the snapshot lifetime. NULL returns zero. */
+CohWrMetrics coh_wr_metrics(const CohWrSnapshot *);
 CohStatus coh_wr_retain(CohWrSnapshot *);
 /* Final release queues CPU retirement; it does NOT free/GL-delete on renderer.
  * The budget must outlive every object and the control thread must collect. */

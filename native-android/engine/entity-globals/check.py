@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Standalone power-mode grammar; unchanged original send/receive oracle."""
+"""Standalone power modes and badges; unchanged whole send/receive oracles."""
 import argparse
 import ctypes as C
 import hashlib
@@ -93,24 +93,30 @@ def main():
     if args.source_root.resolve()!=ROOT:parser.error('--source-root must identify this driver checkout')
     if bool(args.ndk)!=bool(args.android_output):parser.error('both --ndk and --android-output required')
     before=run(['git','-C',ROOT,'status','--porcelain']).strip();revision=run(['git','-C',ROOT,'rev-parse','HEAD']).strip();tree=run(['git','-C',ROOT,'rev-parse','HEAD^{tree}']).strip()
+    sources=[HERE/'coh_entity_globals.c',HERE/'../replication/coh_replication.c',HERE/'test_entity_globals.c',HERE/'coh_badges.c',HERE/'test_badges.c']
+    paths=[*sources,*sorted(HERE.glob('*.h')),HERE/'CMakeLists.txt',HERE/'check.py',HERE/'oracle_fixture.c.inc',HERE/'source-pins.json',HERE/'check_badges.py',HERE/'badge-source-pins.json',HERE/'badge_oracle_fixture.c.inc',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',ROOT/'native-android/include/coh_native_core.h',ROOT/'native-android/tools/protocol_fixture/prepare.py']
+    source_hashes={str(p.resolve().relative_to(ROOT)):sha(p.read_bytes()) for p in paths}
     with tempfile.TemporaryDirectory(prefix='coh-entity-globals-') as name:
         directory=Path(name);lib,original=oracle(ROOT,directory);fixture=fixtures(lib,directory)
+        spec=importlib.util.spec_from_file_location('badge_wire_checker',HERE/'check_badges.py')
+        badges=importlib.util.module_from_spec(spec);spec.loader.exec_module(badges)
+        badge_lib,badge_original=badges.oracle(directory);badge_fixture=badges.fixtures(badge_lib,directory)
+        power_fixture=(directory/'fixtures.h').read_text();badge_text=(directory/'badge_fixtures.h').read_text()
+        (directory/'fixtures.h').write_text('#ifndef COH_BADGE_FIXTURES_ONLY\n'+power_fixture+'#else\n'+badge_text+'#endif\n')
+        fixture['power_modes_only_sha256']=fixture['sha256'];fixture['sha256']=sha((directory/'fixtures.h').read_bytes())
         if args.fixtures_output:args.fixtures_output.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(directory/'fixtures.h',args.fixtures_output)
-        sources=[HERE/'coh_entity_globals.c',HERE/'../replication/coh_replication.c',HERE/'test_entity_globals.c']
-        common=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(directory),'-I'+str(HERE)]
+        common=['-DCOH_GLOBALS_BADGES=1','-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(directory),'-I'+str(HERE)]
         modes=[('release',['-O2'])]+([('asan',['-O1','-g','-fsanitize=address','-fno-omit-frame-pointer','-no-pie']),('ubsan',['-O1','-g','-fsanitize=undefined','-fno-sanitize-recover=all'])] if args.sanitize else [])
         checks={};env=dict(os.environ,ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1:print_stacktrace=1')
         for mode,flags in modes:
             binary=directory/mode;run([os.environ.get('CC','cc'),*common,*flags,*sources,'-lm','-o',binary]);checks[mode]=json.loads(run([binary],env=env))
         if any(v!=checks['release'] for v in checks.values()):raise ValueError('native mode results differ')
         # A real C++ link verifies the additive public ABI guard.
-        cpp=directory/'abi.cpp';cpp.write_text('#include "coh_entity_globals.h"\nint main(){return coh_global_power_modes(nullptr,nullptr,nullptr)==COH_INVALID?0:1;}\n')
+        cpp=directory/'abi.cpp';cpp.write_text('#include "coh_entity_globals.h"\n#include "coh_badges.h"\nint main(){return coh_global_power_modes(nullptr,nullptr,nullptr)==COH_INVALID && coh_global_badges(nullptr,nullptr,nullptr,0,1)==COH_INVALID && coh_global_badge_monitor(nullptr,nullptr)==COH_INVALID?0:1;}\n')
         objects=[]
-        for i,p in enumerate(sources[:2]):
+        for i,p in enumerate([*sources[:2],sources[3]]):
             obj=directory/(str(i)+'.o');run([os.environ.get('CC','cc'),*common,'-O2','-c',p,'-o',obj]);objects.append(obj)
         run([os.environ.get('CXX','c++'),'-std=c++11','-Wall','-Wextra','-Werror','-I'+str(HERE),cpp,*objects,'-lm','-o',directory/'cpp-abi']);run([directory/'cpp-abi'])
-        paths=[*sources,*sorted(HERE.glob('*.h')),HERE/'CMakeLists.txt',HERE/'check.py',HERE/'oracle_fixture.c.inc',HERE/'source-pins.json',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',ROOT/'native-android/include/coh_native_core.h',ROOT/'native-android/tools/protocol_fixture/prepare.py']
-        source_hashes={str(p.resolve().relative_to(ROOT)):sha(p.read_bytes()) for p in paths}
         android={}
         if args.ndk:
             args.android_output.mkdir(parents=True,exist_ok=True);shutil.copyfile(directory/'fixtures.h',args.android_output/'fixtures.h')
@@ -119,10 +125,14 @@ def main():
                 run([args.ndk/'toolchains/llvm/prebuilt/linux-x86_64/bin'/compiler,*common,'-O2',*sources,'-lm','-o',binary])
                 receipt={'passed':True,'abi':abi,'binary':binary.name,'binary_sha256':sha(binary.read_bytes()),'fixtures_sha256':fixture['sha256'],'source_sha256':source_hashes,'executed':False}
                 (dest/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');android[abi]=receipt
+        if source_hashes!={str(p.resolve().relative_to(ROOT)):sha(p.read_bytes()) for p in paths}:raise ValueError('native source changed during qualification')
+        for original_receipt in (original,badge_original):
+            for path,digest in original_receipt['source_sha256_lf'].items():
+                if sha(source(ROOT,path).encode())!=digest:raise ValueError('original source changed during qualification')
         after=run(['git','-C',ROOT,'status','--porcelain']).strip()
-        proof={'schema':'coh-entity-globals-qualification-v1','passed':True,'original':original,'fixtures':fixture,'fixtures_sha256':fixture['sha256'],'checks':checks,'android':android,
+        proof={'schema':'coh-entity-globals-qualification-v1','passed':True,'original':original,'badge_original':badge_original,'badge_fixtures':badge_fixture,'fixtures':fixture,'fixtures_sha256':fixture['sha256'],'checks':checks,'android':android,
                'source_revision':revision,'source_tree':tree,'source_worktree_clean_before':not before,'source_worktree_clean_after':not after,
-               'cpp_link_passed':True,'full_update_complete':False,'acknowledgments_enabled':False,'real_server_interoperability':False,'thor_accepted':False,'source_sha256':source_hashes}
+               'cpp_link_passed':True,'source_unchanged_during_qualification':True,'leak_sanitizer_enabled':False,'full_update_complete':False,'acknowledgments_enabled':False,'real_server_interoperability':False,'thor_accepted':False,'source_sha256':source_hashes}
         args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(proof,indent=2)+'\n')
         print(json.dumps({'passed':True,'checks':checks,'fixtures':fixture,'cpp_link_passed':True,'android_built':list(android)}))
 if __name__=='__main__':main()

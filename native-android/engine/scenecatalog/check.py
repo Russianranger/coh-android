@@ -20,7 +20,7 @@ def prepare(root,d):
     lib=C.CDLL(str(library));lib.catalog_original.argtypes=[C.c_uint32]*4+[C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p]
     lib.catalog_record_original.argtypes=[C.c_uint32,C.c_uint32,C.c_void_p,C.POINTER(C.c_uint32)]
     compared=0
-    fixtures=[];lines=['typedef struct {const unsigned char *catalog,*wire;size_t bytes,wire_bytes,wire_bits;unsigned which,aligned,legacy;unsigned counts[7];} CatalogFixture;\n'];rows=[]
+    fixtures=[];lines=['typedef struct {const unsigned char *catalog,*wire;size_t bytes,wire_bytes,wire_bits;unsigned which,aligned,legacy;unsigned counts[7];unsigned char sha256[32];} CatalogFixture;\n'];rows=[]
     for which in (0,1,2,7,8,9,10,20,21,22):
         variants=((1,0),) if which in (20,21,22) else ((0,0),(1,0),(1,1))
         for aligned,legacy in variants:
@@ -39,7 +39,7 @@ def prepare(root,d):
                         at+=rbytes;compared+=1
                 assert at==len(raw)
             for suffix,payload in [('catalog',raw),('wire',w)]:lines.append('static const unsigned char catalog_fixture_'+str(idx)+'_'+suffix+'[]={'+','.join(map(str,payload))+'};\n')
-            rows.append('{catalog_fixture_%d_catalog,catalog_fixture_%d_wire,%d,%d,%d,%d,%d,%d,{%s}}'%(idx,idx,len(raw),len(w),bits.value,which,aligned,legacy,','.join(map(str,counts))))
+            rows.append('{catalog_fixture_%d_catalog,catalog_fixture_%d_wire,%d,%d,%d,%d,%d,%d,{%s},{%s}}'%(idx,idx,len(raw),len(w),bits.value,which,aligned,legacy,','.join(map(str,counts)),','.join(map(str,hashlib.sha256(raw).digest()))))
             fixtures.append(dict(which=which,aligned=aligned,legacy=legacy,catalog_bytes=len(raw),catalog_sha256=hashlib.sha256(raw).hexdigest(),wire_bytes=len(w),wire_bits=bits.value,wire_sha256=hashlib.sha256(w).hexdigest(),source_counts=list(counts)))
     # Real producer output rejection/change controls produce partial, unaccepted
     # envelopes and prove callback errors are observable without packet sending.
@@ -63,8 +63,8 @@ def main():
         if a.prepare_only:
             if not a.fixtures_output:p.error('--prepare-only requires --fixtures-output')
             return
-        sources=[HERE/'coh_scenecatalog.c',HERE.parent/'scenegraph/coh_scenegraph.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenecatalog.c']
-        hashed=[*sources,HERE/'coh_scenecatalog.h',HERE/'source_export.inc',HERE/'tests/source_catalog_harness.c',HERE/'tests/test_walk.c.inc',HERE/'check.py',HERE/'CMakeLists.txt',HERE.parent/'scenegraph/coh_scenegraph.h',HERE.parent/'replication/groups-source-pins.json']
+        sources=[HERE/'coh_scenecatalog.c',HERE/'coh_catalog_owner.c',HERE.parent/'scenegraph/coh_scenegraph.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenecatalog.c']
+        hashed=[*sources,HERE/'coh_scenecatalog.h',HERE/'coh_catalog_owner.h',HERE/'source_export.inc',HERE/'tests/source_catalog_harness.c',HERE/'tests/test_walk.c.inc',HERE/'tests/test_owner.c.inc',HERE/'check.py',HERE/'CMakeLists.txt',HERE.parent/'scenegraph/coh_scenegraph.h',HERE.parent/'replication/groups-source-pins.json']
         source_hashes={str(x.relative_to(REPO)):hashlib.sha256(x.read_bytes()).hexdigest() for x in hashed}
         flags=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(d),'-I'+str(HERE),'-Wl,--wrap=malloc,--wrap=calloc,--wrap=free']
         modes=[('release',['-O2'])]

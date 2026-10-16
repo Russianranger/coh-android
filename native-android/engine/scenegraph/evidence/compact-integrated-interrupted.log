@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph/check.py", line 174, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph/check.py", line 151, in main
+    binary=d/name;run([os.environ.get('CC','cc'),*flags,*extra,*map(str,sources),'-lm','-o',str(binary)])
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph/check.py", line 9, in run
+    if p.returncode: raise RuntimeError(repr(cmd)+'\n'+p.stdout+p.stderr)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: ['cc', '-std=c99', '-Wall', '-Wextra', '-Werror', '-pedantic', '-I/tmp/coh-sg-4fdcinqw', '-I/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph', '-Wl,--wrap=malloc,--wrap=calloc,--wrap=free', '-O2', '/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph/coh_scene_compact.c', '/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph/tests/test_scene_compact.c', '/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph/coh_scenegraph.c', '/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph/coh_scene_metadata.c', '/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph/coh_scene_lookup.c', '/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph/tests/test_scene_lookup.c', '/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenecatalog/coh_scenecatalog.c', '/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/replication/coh_replication.c', '/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/replication/coh_groups.c', '/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph/tests/test_scenegraph.c', '-lm', '-o', '/tmp/coh-sg-4fdcinqw/release']
+/usr/bin/ld: /tmp/ccPtGUJo.o: in function `coh_scene_compact_tests':
+test_scene_compact.c:(.text+0xeaf): undefined reference to `coh_compact_test_fail_next'
+/usr/bin/ld: test_scene_compact.c:(.text+0xee3): undefined reference to `coh_compact_test_fail_next'
+collect2: error: ld returned 1 exit status
+

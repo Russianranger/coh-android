@@ -1,0 +1,15 @@
+native-android/engine/scenegraph/coh_scene_compact.c:17:12:same	8	static
+native-android/engine/scenegraph/coh_scene_compact.c:96:18:visit	80	static
+native-android/engine/scenegraph/coh_scene_compact.c:108:18:build	592	static
+native-android/engine/scenegraph/coh_scene_compact.c:43:18:file_view	48	static
+native-android/engine/scenegraph/coh_scene_compact.c:24:11:coh_sg_compact_name	80	static
+native-android/engine/scenegraph/coh_scene_compact.c:51:18:slot_view	176	static
+native-android/engine/scenegraph/coh_scene_compact.c:162:11:coh_sg_compact_build	48	dynamic,bounded
+native-android/engine/scenegraph/coh_scene_compact.c:166:11:coh_sg_compact_audit	12768	dynamic,bounded
+native-android/engine/scenegraph/coh_scene_compact.c:177:11:coh_sg_compact_publish	8	static
+native-android/engine/scenegraph/coh_scene_compact.c:184:6:coh_sg_compact_free	8	static
+native-android/engine/scenegraph/coh_scene_compact.c:185:11:coh_sg_compact_report	8	static
+native-android/engine/scenegraph/coh_scene_compact.c:186:11:coh_sg_compact_file	8	static
+native-android/engine/scenegraph/coh_scene_compact.c:191:11:coh_sg_compact_slot	8	static
+native-android/engine/scenegraph/coh_scene_compact.c:196:11:coh_sg_compact_definition	8	static
+native-android/engine/scenegraph/coh_scene_compact.c:201:11:coh_sg_compact_child	8	static

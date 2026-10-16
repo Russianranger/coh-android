@@ -1,0 +1,22 @@
+{
+  "recovery_base": "66146bbee161304ba4e4e14cbb53cba6958fb03b",
+  "prior_worker_git_metadata": "unavailable: linked common gitdir was not restored",
+  "prior_owned_source_matches_published_base": true,
+  "source": {
+    "coh_world_render.c": {
+      "preserved_old_worker_sha256": "ce136724a5050fdef054126ad503962fe2e99e1e810edbd343243965e7db771c",
+      "recovery_base_sha256": "ce136724a5050fdef054126ad503962fe2e99e1e810edbd343243965e7db771c",
+      "identical": true
+    },
+    "coh_world_render.h": {
+      "preserved_old_worker_sha256": "78f569a6b556d4104b45bed10ecae2f50de3b976abb688286ba7fbac415884c5",
+      "recovery_base_sha256": "78f569a6b556d4104b45bed10ecae2f50de3b976abb688286ba7fbac415884c5",
+      "identical": true
+    },
+    "tests/test_world_render.c": {
+      "preserved_old_worker_sha256": "bb46f7596c24e4a668ca928f35a08703c858ee33108bea49359ef3505d220cac",
+      "recovery_base_sha256": "bb46f7596c24e4a668ca928f35a08703c858ee33108bea49359ef3505d220cac",
+      "identical": true
+    }
+  }
+}

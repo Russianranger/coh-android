@@ -10,6 +10,8 @@ typedef struct {
 } Fixture;
 #include "fixtures.h"
 static unsigned checks,truncations,random_cases;
+unsigned coh_badges_run_tests(void);
+void coh_badges_print_report(void);
 #define CHECK(expr) do {checks++;if(!(expr)){fprintf(stderr,"globals check failed line %d: %s\n",__LINE__,#expr);exit(1);}} while(0)
 static void init(CohRepReader *r,const unsigned char *data,size_t bytes,size_t bits,unsigned aligned,unsigned prefix) {
     CHECK(coh_rep_reader(r,(CohBytes){data,bytes},bits,(int)aligned)==COH_OK);
@@ -115,6 +117,8 @@ static void fuzz(void) {
 int main(void) {
     CHECK(sizeof(CohPowerModes)==4100);CHECK(sizeof(CohPowerModeEvent)==4);
     source_fixtures();malformed();alias_refusals();fuzz();
-    printf("{\"passed\":true,\"checks\":%u,\"source_fixtures\":%u,\"truncation_cases\":%u,\"random_cases\":%u,\"mode_limit\":%u,\"state_bytes\":%u,\"full_update_complete\":false,\"acknowledgments_enabled\":false}\n",checks,(unsigned)(sizeof(fixtures)/sizeof(fixtures[0])),truncations,random_cases,COH_GLOBAL_POWER_MODE_MAX,(unsigned)sizeof(CohPowerModes));
+    checks+=coh_badges_run_tests();
+    printf("{\"passed\":true,\"checks\":%u,\"source_fixtures\":%u,\"truncation_cases\":%u,\"random_cases\":%u,\"mode_limit\":%u,\"state_bytes\":%u,\"full_update_complete\":false,\"acknowledgments_enabled\":false,\"badges\":",checks,(unsigned)(sizeof(fixtures)/sizeof(fixtures[0])),truncations,random_cases,COH_GLOBAL_POWER_MODE_MAX,(unsigned)sizeof(CohPowerModes));
+    coh_badges_print_report();puts("}");
     return 0;
 }

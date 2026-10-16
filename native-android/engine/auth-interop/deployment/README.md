@@ -1,5 +1,12 @@
 # Isolated encrypted-auth deployment candidate
 
+The additive [auth-only service continuation](AUTH-ONLY-LOGIN.md) now provides a
+runnable exact-original AuthServer encrypted-account experiment. Its recovered
+native Windows transport, source profile and driver are host/source/sanitizer
+qualified; actual Windows service execution remains a separate hosted gate.
+The completed SQL-only ODBC results below are reused without repeating that job.
+The auth-only profile supplies no DbServer, MapServer or checksum-policy exception.
+
 This directory adds read-only metadata admission and original-source audit. It
 does not change native authentication. The original metadata/audit tools do not
 connect to SQL. The additional [hosted staging candidate](HOSTED-STAGING.md) can

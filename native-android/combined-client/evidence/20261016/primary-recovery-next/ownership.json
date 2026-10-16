@@ -1,0 +1,54 @@
+{
+  "base_revision": "66146bbee161304ba4e4e14cbb53cba6958fb03b",
+  "workers_started_concurrently": 6,
+  "coordinator_owned": [
+    "shared qualification drivers/workflows",
+    "Combined JNI/build/lifecycle after prerequisites",
+    "publication and handoff"
+  ],
+  "workers": {
+    "A": [
+      "engine/scenecatalog",
+      "engine/scenecatalog-server"
+    ],
+    "B": [
+      "engine/scenegraph"
+    ],
+    "C": [
+      "engine/entities",
+      "engine/entity-control",
+      "engine/character-data",
+      "engine/entity-globals",
+      "engine/world-capture"
+    ],
+    "D": [
+      "engine/auth-interop"
+    ],
+    "E": [
+      "engine/world-render-adapter"
+    ],
+    "F": [
+      "combined-client/tools/*startup*",
+      "combined-client/evidence/20261016/startup-diagnostics"
+    ]
+  },
+  "protected": [
+    "Support Client",
+    "accepted renderer implementation",
+    "offline-world",
+    "appearance",
+    "audio",
+    "physics",
+    "sequencer",
+    "UI",
+    "existing APKs/profiles/databases"
+  ],
+  "isolated_worktrees": {
+    "A": "/workspace/scratch/8749ec34cd9b/worker-a",
+    "B": "/workspace/scratch/8749ec34cd9b/worker-b",
+    "C": "/workspace/scratch/8749ec34cd9b/worker-c",
+    "D": "/workspace/scratch/8749ec34cd9b/worker-d",
+    "E": "/workspace/scratch/8749ec34cd9b/worker-e",
+    "F": "/workspace/scratch/8749ec34cd9b/worker-f"
+  }
+}

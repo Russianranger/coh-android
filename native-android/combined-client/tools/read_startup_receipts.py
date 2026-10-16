@@ -194,6 +194,7 @@ def map_rows(value):
         graph = base.obj(row.get('collision_input_proof'))
         projection = a.projected_caches({'atlas_beacon_graph': graph})
         out.append({'map_id': int(key), 'beacon': projection['beacon'],
+            'cache_operations': a.cache_operations(projection),
             'beacon_outcome': cache_outcome(projection)['beacon'],
             'prepared_mapserver': file_pin(row.get('actual_installed_mapserver')),
             'launched_mapserver': file_pin(row.get('actual_launched_mapserver')),
@@ -238,6 +239,7 @@ def analyze_document(document):
     return {'kind': kind, 'wrapper_present': wrapped,
         'session_binding': 'internal_receipt_session_only_not_android_wrapper_acceptance',
         'cache_outcomes': cache_outcome(projection), 'cache_projection': projection,
+        'cache_operations': a.cache_operations(projection),
         'maps': map_rows(maps), 'stage_intervals': stage_intervals(stages),
         'source_report_warm_phase_present': 'warm_schema_restore' in base.obj(creation.get('server_preparation_phase_seconds')),
         'source_report_cold_phase_present': 'cold_server_data_mirror' in base.obj(creation.get('server_preparation_phase_seconds')),

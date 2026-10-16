@@ -17,6 +17,7 @@ struct CohWrSnapshot {
     size_t bytes, count;
     CohWrReceipt receipt;
     CohWrActor player;
+    CohWrMetrics metrics;
     CohWrDrawInput *draws;
 };
 struct CohWrMailbox { pthread_mutex_t mutex; CohWrBudget *budget; CohWrSnapshot *current; };
@@ -120,12 +121,37 @@ static int valid_material(const CohRenderMaterial *m) {
     }
     return 1;
 }
+/* Indexed only during off-thread preparation. No lookup ownership is retained
+ * by the snapshot, and all scratch is reserved against its shared budget. */
+static size_t geometry_hash(uint64_t identity, uint32_t generation, size_t mask) {
+    uint64_t h = identity ^ ((uint64_t)generation << 32);
+    h ^= h >> 30; h *= UINT64_C(0xbf58476d1ce4e5b9);
+    h ^= h >> 27; h *= UINT64_C(0x94d049bb133111eb);
+    h ^= h >> 31;
+    return (size_t)h & mask;
+}
+static CohStatus same_bytes(const void *left, const void *right, size_t bytes,
+                            CohCancel cancel) {
+    const unsigned char *a=left, *b=right;
+    if (left == right) return COH_OK; /* immutable borrowed span contract */
+    while (bytes) {
+        size_t part=bytes<16384u?bytes:16384u;
+        if (cancelled(cancel)) return COH_CANCELLED;
+        if (memcmp(a,b,part)) return COH_INVALID;
+        a+=part; b+=part; bytes-=part;
+    }
+    return COH_OK;
+}
 static CohStatus prepare(const CohWrInput *in, CohWrBudget *b, CohCancel cancel,
                          CohWrSnapshot **out, int fixture) {
     const CohWrReceipt *r;
     const CohWrActor *a;
-    CohWrSnapshot *s;
+    CohWrSnapshot *s=NULL;
+    CohWrMetrics metrics={0};
+    CohStatus status=COH_INVALID;
     size_t bytes = sizeof(*s), i, j, world = 0, player = 0;
+    size_t capacity=1, scratch_bytes=0;
+    uint32_t *scratch=NULL, *owners;
     unsigned char *cursor;
     float qnorm;
     if (!in || !b || !out) return COH_INVALID;
@@ -144,57 +170,106 @@ static CohStatus prepare(const CohWrInput *in, CohWrBudget *b, CohCancel cancel,
     if (fixture && r->source != COH_WR_FIXTURE) return COH_STATE;
     if (!in->draws || !in->draw_count) return COH_INVALID;
     if (in->draw_count > COH_WR_MAX_DRAWS || !add(&bytes,in->draw_count,sizeof(*in->draws))) return COH_LIMIT;
+    while (capacity<2*in->draw_count) capacity*=2;
+    if (!add(&scratch_bytes,capacity+in->draw_count,sizeof(*scratch)) ||
+        !reserve(b,scratch_bytes)) return COH_LIMIT;
+    scratch=calloc(1,scratch_bytes);
+    if (!scratch) { unreserve(b,scratch_bytes); return COH_LIMIT; }
+    owners=scratch+capacity;
+    metrics.draws=in->draw_count; metrics.prepare_scratch_bytes=scratch_bytes;
     for (i=0;i<in->draw_count;++i) {
         const CohWrDrawInput *d=in->draws+i;
-        if (cancelled(cancel)) return COH_CANCELLED;
-        if (!d->geometry.vertices || !d->geometry.indices || !d->geometry.vertex_count || !d->geometry.index_count ||
-            !d->geometry.identity || d->geometry.generation != r->asset_generation || d->geometry.index_count%3 ||
+        const CohRenderGeometry *g=&d->geometry;
+        size_t slot;
+        if (cancelled(cancel)) { status=COH_CANCELLED; goto done; }
+        if (!g->vertices || !g->indices || !g->vertex_count || !g->index_count ||
+            !g->identity || g->generation != r->asset_generation || g->index_count%3 ||
             !valid_material(&d->material) || !finite_n(d->world,16) ||
-            d->world[3] != 0 || d->world[7] != 0 || d->world[11] != 0 || d->world[15] != 1) return COH_INVALID;
+            d->world[3] != 0 || d->world[7] != 0 || d->world[11] != 0 || d->world[15] != 1) goto invalid;
         if (d->kind == COH_WR_WORLD_DRAW && !d->actor_entity) ++world;
         else if (d->kind == COH_WR_PLAYER_DRAW && d->actor_entity == a->entity_id) ++player;
-        else return COH_INVALID;
-        if (d->geometry.vertex_count > COH_WR_MAX_VERTICES || d->geometry.index_count > COH_WR_MAX_INDICES ||
-            !add(&bytes,d->geometry.vertex_count,sizeof(CohRenderVertex)) ||
-            !add(&bytes,d->geometry.index_count,sizeof(uint32_t)) || bytes>b->limit) return COH_LIMIT;
-        for (j=0;j<d->geometry.vertex_count;++j) {
-            const CohRenderVertex *v=d->geometry.vertices+j;
-            if ((j&255u)==0 && cancelled(cancel)) return COH_CANCELLED;
+        else goto invalid;
+        if (g->vertex_count > COH_WR_MAX_VERTICES || g->index_count > COH_WR_MAX_INDICES ||
+            !add(&metrics.instanced_vertices,g->vertex_count,1) ||
+            !add(&metrics.instanced_indices,g->index_count,1) ||
+            !add(&metrics.instanced_geometry_bytes,g->vertex_count,sizeof(CohRenderVertex)) ||
+            !add(&metrics.instanced_geometry_bytes,g->index_count,sizeof(uint32_t))) goto limit;
+        slot=geometry_hash(g->identity,g->generation,capacity-1);
+        while (scratch[slot]) {
+            const CohRenderGeometry *prior=&in->draws[scratch[slot]-1].geometry;
+            if (prior->identity==g->identity && prior->generation==g->generation) break;
+            slot=(slot+1)&(capacity-1);
+        }
+        if (scratch[slot]) {
+            const CohRenderGeometry *prior=&in->draws[scratch[slot]-1].geometry;
+            if (prior->vertex_count!=g->vertex_count || prior->index_count!=g->index_count) goto invalid;
+            status=same_bytes(prior->vertices,g->vertices,g->vertex_count*sizeof(CohRenderVertex),cancel);
+            if (status!=COH_OK) goto done;
+            status=same_bytes(prior->indices,g->indices,g->index_count*sizeof(uint32_t),cancel);
+            if (status!=COH_OK) goto done;
+            owners[i]=scratch[slot]-1;
+            continue;
+        }
+        if (!add(&bytes,g->vertex_count,sizeof(CohRenderVertex)) ||
+            !add(&bytes,g->index_count,sizeof(uint32_t)) || bytes>b->limit) goto limit;
+        for (j=0;j<g->vertex_count;++j) {
+            const CohRenderVertex *v=g->vertices+j;
+            if ((j&255u)==0 && cancelled(cancel)) { status=COH_CANCELLED; goto done; }
             if (!finite_n(v->position,3) || !finite_n(v->normal,3) || !finite_n(v->uv0,2) ||
-                !finite_n(v->uv1,2) || !finite_n(v->color,4)) return COH_INVALID;
+                !finite_n(v->uv1,2) || !finite_n(v->color,4)) goto invalid;
         }
-        for (j=0;j<d->geometry.index_count;++j) {
-            if ((j&255u)==0 && cancelled(cancel)) return COH_CANCELLED;
-            if (d->geometry.indices[j] >= d->geometry.vertex_count) return COH_INVALID;
+        for (j=0;j<g->index_count;++j) {
+            if ((j&255u)==0 && cancelled(cancel)) { status=COH_CANCELLED; goto done; }
+            if (g->indices[j] >= g->vertex_count) goto invalid;
         }
+        scratch[slot]=(uint32_t)i+1; owners[i]=(uint32_t)i;
+        ++metrics.unique_geometries;
+        metrics.unique_vertices+=g->vertex_count; metrics.unique_indices+=g->index_count;
+        metrics.geometry_bytes+=g->vertex_count*sizeof(CohRenderVertex)+g->index_count*sizeof(uint32_t);
     }
-    if (!world || !player) return COH_STATE;
-    if (!reserve(b,bytes)) return COH_LIMIT;
+    if (!world || !player) { status=COH_STATE; goto done; }
+    if (!reserve(b,bytes)) goto limit;
     s=calloc(1,bytes);
-    if (!s) { unreserve(b,bytes); return COH_LIMIT; }
+    if (!s) { unreserve(b,bytes); goto limit; }
     atomic_init(&s->references,1); s->budget=b; s->bytes=bytes;
     s->receipt=*r; s->player=*a; s->count=in->draw_count;
+    metrics.snapshot_bytes=bytes; s->metrics=metrics;
     if (fixture) s->receipt.prerequisites=0;
     s->draws=(CohWrDrawInput *)(s+1);
     cursor=(unsigned char *)(s->draws+in->draw_count);
     for (i=0;i<in->draw_count;++i) {
         CohWrDrawInput *d=s->draws+i;
         size_t vbytes, ibytes;
-        if (cancelled(cancel)) { free(s); unreserve(b,bytes); return COH_CANCELLED; }
+        if (cancelled(cancel)) { status=COH_CANCELLED; goto done; }
         *d=in->draws[i];
+        if (owners[i]!=i) { d->geometry=s->draws[owners[i]].geometry; continue; }
         vbytes=d->geometry.vertex_count*sizeof(CohRenderVertex);
         ibytes=d->geometry.index_count*sizeof(uint32_t);
         memcpy(cursor,d->geometry.vertices,vbytes); d->geometry.vertices=(const CohRenderVertex *)cursor; cursor+=vbytes;
         memcpy(cursor,d->geometry.indices,ibytes); d->geometry.indices=(const uint32_t *)cursor; cursor+=ibytes;
     }
-    if (cancelled(cancel)) { free(s); unreserve(b,bytes); return COH_CANCELLED; }
-    *out=s; return COH_OK;
+    if (cancelled(cancel)) { status=COH_CANCELLED; goto done; }
+    *out=s; s=NULL; status=COH_OK;
+    goto done;
+invalid:
+    status=COH_INVALID;
+    goto done;
+limit:
+    status=COH_LIMIT;
+done:
+    if (s) { free(s); unreserve(b,bytes); }
+    free(scratch); unreserve(b,scratch_bytes);
+    return status;
 }
 CohStatus coh_wr_prepare(const CohWrInput *i,CohWrBudget *b,CohCancel c,CohWrSnapshot **o) { return prepare(i,b,c,o,0); }
 CohStatus coh_wr_prepare_fixture(const CohWrInput *i,CohWrBudget *b,CohCancel c,CohWrSnapshot **o) { return prepare(i,b,c,o,1); }
 const CohWrReceipt *coh_wr_receipt(const CohWrSnapshot *s) { return s?&s->receipt:NULL; }
 const CohWrActor *coh_wr_actor(const CohWrSnapshot *s) { return s?&s->player:NULL; }
 size_t coh_wr_draw_count(const CohWrSnapshot *s) { return s?s->count:0; }
+CohWrMetrics coh_wr_metrics(const CohWrSnapshot *s) {
+    const CohWrMetrics empty={0};
+    return s?s->metrics:empty;
+}
 CohStatus coh_wr_retain(CohWrSnapshot *s) {
     unsigned old;
     if (!s) return COH_INVALID;

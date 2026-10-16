@@ -138,9 +138,9 @@ def main():
         if a.prepare_only:
             if not a.fixtures_output:ap.error('--prepare-only requires --fixtures-output')
             return
-        sources=[HERE/'coh_scenegraph.c',HERE/'coh_scene_metadata.c',HERE/'coh_scene_lookup.c',HERE/'tests/test_scene_lookup.c',HERE.parent/'scenecatalog/coh_scenecatalog.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenegraph.c']
+        sources=[HERE/'coh_scene_compact.c',HERE/'tests/test_scene_compact.c',HERE/'coh_scenegraph.c',HERE/'coh_scene_metadata.c',HERE/'coh_scene_lookup.c',HERE/'tests/test_scene_lookup.c',HERE.parent/'scenecatalog/coh_scenecatalog.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenegraph.c']
         hashed_sources=[*sources,HERE/'coh_scenegraph.h',HERE/'coh_scene_metadata.h',HERE/'tests/metadata_source_harness.inc',HERE/'tests/reader_padding_control.c',HERE/'check.py',HERE.parent/'replication/coh_replication.h',HERE.parent/'replication/coh_groups.h',HERE.parent/'replication/groups-source-pins.json',HERE.parent/'scenecatalog/coh_scenecatalog.h',HERE.parent/'scenecatalog/check.py',HERE.parent/'scenecatalog/source_export.inc',HERE.parent/'scenecatalog/tests/source_catalog_harness.c']
-        hashed_sources += [HERE/'coh_scene_lookup.h',HERE/'tests/lookup_oracle_shim.h',HERE/'check_lookup.py',HERE/'lookup-source-pins.json',HERE/'CMakeLists.txt',HERE.parent/'coh_contracts.h']
+        hashed_sources += [HERE/'coh_scene_compact.h',HERE/'check_compact.py',HERE/'tests/compact_missing_audit.c',HERE/'coh_scene_lookup.h',HERE/'tests/lookup_oracle_shim.h',HERE/'check_lookup.py',HERE/'lookup-source-pins.json',HERE/'CMakeLists.txt',HERE.parent/'coh_contracts.h']
         source_hashes={str(p.relative_to(REPO)):hashlib.sha256(p.read_bytes()).hexdigest() for p in hashed_sources}
         fixture_sha=hashlib.sha256((d/'scenegraph_fixtures.h').read_bytes()).hexdigest()
         flags=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(d),'-I'+str(HERE),'-Wl,--wrap=malloc,--wrap=calloc,--wrap=free']

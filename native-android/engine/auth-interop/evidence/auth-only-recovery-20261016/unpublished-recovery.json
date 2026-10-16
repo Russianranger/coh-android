@@ -1,0 +1,62 @@
+{
+  "schema": "coh-auth-only-unpublished-recovery-v1",
+  "source_worktree": "/workspace/scratch/78494e933b7f/worker-d",
+  "prior_committed_tip": "06c256f771d0b2b794e53b444839f99e455ae397",
+  "source_worktree_git_metadata_accessible": false,
+  "original_files_modified": false,
+  "files": {
+    "auth_service_profile.py": {
+      "bytes": 5366,
+      "sha256": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4"
+    },
+    "qualify_windows_adapter.py": {
+      "bytes": 2456,
+      "sha256": "d412943acb74b913d99bc93545445cd6e663241fc21f07b31b4738e1995608d8"
+    },
+    "windows/winsock_compat.h": {
+      "bytes": 2194,
+      "sha256": "27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e"
+    },
+    "windows/auth_only_probe.c": {
+      "bytes": 4361,
+      "sha256": "9bf261ba6cd927ba1d4923c7bbd9c5fb05129dbef9a17e80310489aac537271c"
+    },
+    "windows/test_winsock_api.h": {
+      "bytes": 1699,
+      "sha256": "246f32d8ffb2a04c593fcafddb64c47e127acc8e6328e567018edbd2e91fc019"
+    },
+    "windows/winsock_compat.c": {
+      "bytes": 5866,
+      "sha256": "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad"
+    },
+    "windows/wrapped_login.c": {
+      "bytes": 250,
+      "sha256": "4163131d9f76f0a96a490820587018900a780d30738e278d1057c6afcee36e02"
+    },
+    "windows/test_winsock_compat.c": {
+      "bytes": 5840,
+      "sha256": "eef165af9e013c6e354d98b7d8c6ede53125e099e15b81e55bc873025fa448e9"
+    },
+    "windows/compat/fcntl.h": {
+      "bytes": 69,
+      "sha256": "7ac3471f298351ed7df5d81829ec07f97fd13dcc34f214ebf739d31b40932402"
+    },
+    "windows/compat/poll.h": {
+      "bytes": 73,
+      "sha256": "7e7c4481497ad68233f402199758d4202c5fd995c64b33901bbae10da4c673c5"
+    },
+    "windows/compat/unistd.h": {
+      "bytes": 72,
+      "sha256": "29690125951c12f239a664848651c83b438132252037e959c67a00581d588646"
+    },
+    "windows/compat/sys/socket.h": {
+      "bytes": 75,
+      "sha256": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+    },
+    "windows/compat/arpa/inet.h": {
+      "bytes": 75,
+      "sha256": "34b9bd9e1d719cfb0c0fe126a638087191c3098d5e74b94e8747b9adc902a6c8"
+    }
+  },
+  "prior_host_controls": "46 release and ASan/UBSan syscall-shell controls; no Windows execution or service login"
+}

@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "passed": true,
+  "scope": "GCC production-O2 emitted native compact frames only; callback and decoder reserve separate",
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "flags": [
+    "-std=c99",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-pedantic",
+    "-O2",
+    "-fstack-usage"
+  ],
+  "source_sha256": {
+    "coh_scene_compact.c": "f1e8abfed10fd67b72771887ee50228d201894bae52b2f3d71fb64cea69cc3c8",
+    "coh_scene_compact.h": "3c358131944a0dfa89a3dbb86cef962806cb12b00882e349eb6425e81017cd3d"
+  },
+  "frames": {
+    "same": {
+      "bytes": 8,
+      "kind": "static"
+    },
+    "visit": {
+      "bytes": 80,
+      "kind": "static"
+    },
+    "build": {
+      "bytes": 592,
+      "kind": "static"
+    },
+    "file_view": {
+      "bytes": 48,
+      "kind": "static"
+    },
+    "coh_sg_compact_name": {
+      "bytes": 80,
+      "kind": "static"
+    },
+    "slot_view": {
+      "bytes": 176,
+      "kind": "static"
+    },
+    "coh_sg_compact_build": {
+      "bytes": 48,
+      "kind": "dynamic,bounded"
+    },
+    "coh_sg_compact_audit": {
+      "bytes": 12768,
+      "kind": "dynamic,bounded"
+    },
+    "coh_sg_compact_publish": {
+      "bytes": 8,
+      "kind": "static"
+    },
+    "coh_sg_compact_free": {
+      "bytes": 8,
+      "kind": "static"
+    },
+    "coh_sg_compact_report": {
+      "bytes": 8,
+      "kind": "static"
+    },
+    "coh_sg_compact_file": {
+      "bytes": 8,
+      "kind": "static"
+    },
+    "coh_sg_compact_slot": {
+      "bytes": 8,
+      "kind": "static"
+    },
+    "coh_sg_compact_definition": {
+      "bytes": 8,
+      "kind": "static"
+    },
+    "coh_sg_compact_child": {
+      "bytes": 8,
+      "kind": "static"
+    }
+  },
+  "max_recursive_visit_frames": 129,
+  "audit_build_visit_bytes": 23680,
+  "compact_stack_reserve": 32768,
+  "walker_stack_reserve": 65536,
+  "android_stack_measured": false,
+  "test_harness_stack_in_scope": false
+}

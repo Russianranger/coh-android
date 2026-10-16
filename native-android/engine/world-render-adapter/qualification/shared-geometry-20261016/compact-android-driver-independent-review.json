@@ -1,0 +1,131 @@
+{
+  "reviewer": "Worker E independent read-only review of coordinator compact Android capture driver",
+  "passed": true,
+  "blocking_findings": [],
+  "source_revision_context": "db17f47d3411b9b467849709dfe79eda7eaf06e5",
+  "scope": "Exact reviewed working-source byte hashes; coordinator/B integration commit pending. No Android build/execution or live authority claimed.",
+  "reviewed_source_sha256": {
+    "native-android/engine/scenecatalog-qualification/compact_android.py": "e2c503f2667ca28fee28e730277c319930eae539ec3324dc36ba3f987cf00a18",
+    "native-android/engine/scenecatalog-qualification/tests/test_compact_android.py": "47fec6ba123fd96a3712ced8f5c613f69282e3755365a3deefa546f6793f8a5c",
+    "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e",
+    "native-android/engine/scenecatalog-qualification/capture_android.py": "fa09333434a8304d54d62a4655994702021a66c42a6df208292702a9923f1be5",
+    "native-android/engine/scenegraph/check_compact.py": "6dab7ec107964b308526c5b1330ebff0699d12d1cdd06d23b5e2c318dd9c5771",
+    "native-android/engine/scenecatalog/check_file.py": "15494d92af5236110d93f4e0d2dd2de3a1eefe7e7e56181d06c44ed3b660b9bb",
+    "native-android/engine/scenecatalog-server/evidence/capture-38948147691/external-capture.json": "df67b6c680d6ed1e74fb6ef66e4eae4124a3c5000a42020121da6f8b33055260",
+    ".github/workflows/native-scene-catalog.yml": "faa7b886ff5c3914e11b1545176cdbf4df85f55d6e750b59520bc47c10bbeb7d"
+  },
+  "reviewed_source_locations": {
+    "native-android/engine/scenecatalog-qualification/compact_android.py": "/workspace/scratch/8749ec34cd9b/coh-recovery/native-android/engine/scenecatalog-qualification/compact_android.py",
+    "native-android/engine/scenecatalog-qualification/tests/test_compact_android.py": "/workspace/scratch/8749ec34cd9b/coh-recovery/native-android/engine/scenecatalog-qualification/tests/test_compact_android.py",
+    "native-android/engine/scenecatalog-qualification/common.py": "/workspace/scratch/8749ec34cd9b/coh-recovery/native-android/engine/scenecatalog-qualification/common.py",
+    "native-android/engine/scenecatalog-qualification/capture_android.py": "/workspace/scratch/8749ec34cd9b/coh-recovery/native-android/engine/scenecatalog-qualification/capture_android.py",
+    "native-android/engine/scenegraph/check_compact.py": "/workspace/scratch/8749ec34cd9b/worker-b/native-android/engine/scenegraph/check_compact.py",
+    "native-android/engine/scenecatalog/check_file.py": "/workspace/scratch/8749ec34cd9b/coh-recovery/native-android/engine/scenecatalog/check_file.py",
+    "native-android/engine/scenecatalog-server/evidence/capture-38948147691/external-capture.json": "/workspace/scratch/8749ec34cd9b/coh-recovery/native-android/engine/scenecatalog-server/evidence/capture-38948147691/external-capture.json",
+    ".github/workflows/native-scene-catalog.yml": "/workspace/scratch/8749ec34cd9b/coh-recovery/.github/workflows/native-scene-catalog.yml"
+  },
+  "source_bytes_unchanged_during_final_tests": true,
+  "findings_resolved": [
+    {
+      "finding": "Required native/oracle/header/capture closure could be omitted consistently from proof, host and ABI maps",
+      "resolution": "Required set now contains complete check_compact included closure; omission-from-all-rehashed-maps negative test passes"
+    },
+    {
+      "finding": "Python false could satisfy integer-zero live allocation test",
+      "resolution": "Type-sensitive json_equal rejects boolean substitution; explicit negative test passes"
+    },
+    {
+      "finding": "Authentic diagnostic counts/names/peak needed explicit admission",
+      "resolution": "130314 references, seven exact ordered missing names, seven stored, zero truncation and bounded named audit peak required"
+    }
+  ],
+  "review_checks": [
+    "Pinned ZIP bytes/SHA, per-member bounds and ZIP CRC verification feed exact capture receipt and catalog admission",
+    "Both ARM64 and x86_64 PIE headers, binary SHA/size, ABI receipt SHA, fixture SHA and complete source maps validated before and after execution",
+    "All expected native results match release/ASan/UBSan with type-sensitive comparison",
+    "Clean source revision required for build and execution; exact present input hashes rechecked and bothABI artifacts verified even when ARM64 unexecuted",
+    "Android13 x86_64 emulator identity required; transferred executable/catalog hashes checked before executable launch",
+    "Native device timeout120 seconds plus adb host timeout180 seconds; other commands60 seconds; workflow job bounds independent",
+    "Remote cleanup targets only strictly validated unique mktemp path and cleanup failure revokes emulator acceptance",
+    "No server startup or accepted APK rebuild; missing dependency audit does not authorize roots/assets/renderer/physical world entry"
+  ],
+  "unit_tests": {
+    "passed": true,
+    "count": 16,
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "/workspace/scratch/8749ec34cd9b/coh-recovery/native-android/engine/scenecatalog-qualification/tests",
+      "-p",
+      "test_compact_android.py",
+      "-v"
+    ],
+    "output": "test_abi_relabelled (test_compact_android.CompactAdmission.test_abi_relabelled) ... ok\ntest_changed_source_file (test_compact_android.CompactAdmission.test_changed_source_file) ... ok\ntest_complete (test_compact_android.CompactAdmission.test_complete) ... ok\ntest_dependency_omitted_from_every_rehashed_map (test_compact_android.CompactAdmission.test_dependency_omitted_from_every_rehashed_map) ... ok\ntest_exact_missing_identity_required (test_compact_android.CompactAdmission.test_exact_missing_identity_required) ... ok\ntest_fixture_changed (test_compact_android.CompactAdmission.test_fixture_changed) ... ok\ntest_host_authority_claims (test_compact_android.CompactAdmission.test_host_authority_claims) ... ok\ntest_host_source_mismatch (test_compact_android.CompactAdmission.test_host_source_mismatch) ... ok\ntest_live_authority_and_dirty_source_refused (test_compact_android.CompactAdmission.test_live_authority_and_dirty_source_refused) ... ok\ntest_missing_abi (test_compact_android.CompactAdmission.test_missing_abi) ... ok\ntest_refusal_memory_and_cleanup_required (test_compact_android.CompactAdmission.test_refusal_memory_and_cleanup_required) ... ok\ntest_sanitizer_result_mismatch (test_compact_android.CompactAdmission.test_sanitizer_result_mismatch) ... ok\ntest_source_omission (test_compact_android.CompactAdmission.test_source_omission) ... ok\ntest_unexecuted_abi_binary_changed_same_length (test_compact_android.CompactAdmission.test_unexecuted_abi_binary_changed_same_length) ... ok\ntest_unexecuted_abi_fixture_receipt_changed (test_compact_android.CompactAdmission.test_unexecuted_abi_fixture_receipt_changed) ... ok\ntest_wrong_revision (test_compact_android.CompactAdmission.test_wrong_revision) ... ok\n\n----------------------------------------------------------------------\nRan 16 tests in 0.112s\n\nOK\n"
+  },
+  "execution_driver_controls": [
+    {
+      "scenario": "success",
+      "passed": true,
+      "commands": 14,
+      "native_execution_simulated": true,
+      "receipt_passed": true,
+      "cleanup_attempted": true
+    },
+    {
+      "scenario": "device_timeout",
+      "passed": true,
+      "commands": 14,
+      "native_execution_simulated": true,
+      "receipt_passed": false,
+      "cleanup_attempted": true
+    },
+    {
+      "scenario": "transfer_mismatch",
+      "passed": true,
+      "commands": 10,
+      "native_execution_simulated": true,
+      "receipt_passed": false,
+      "cleanup_attempted": true
+    },
+    {
+      "scenario": "cleanup_failure",
+      "passed": true,
+      "commands": 13,
+      "native_execution_simulated": true,
+      "receipt_passed": false,
+      "cleanup_attempted": true
+    },
+    {
+      "scenario": "wrong_sdk",
+      "passed": true,
+      "commands": 3,
+      "native_execution_simulated": true,
+      "receipt_passed": false,
+      "cleanup_attempted": false
+    }
+  ],
+  "actual_capture_admission": {
+    "passed": true,
+    "archive_bytes": 2145443,
+    "archive_sha256": "6f45437efd8fe7c16b7468634f2ad1914ba446b739632e59d65dc6912624ade3",
+    "catalog_bytes": 12179670,
+    "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+    "capture_manifest_exact": true,
+    "server_started": false,
+    "same_length_catalog_mutation_refused": true,
+    "original_capture_modified": false,
+    "mutation_scope": "Only temporary extracted copy, removed on test completion"
+  },
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "real_world_entry": false,
+  "limitations": [
+    "Five lifecycle controls mock adb execution and cannot establish Android runtime success",
+    "Actual preserved capture is disposable-source data, not physical Thor matching-generation authority",
+    "Standalone compact corpus still refuses seven unresolved names; no graph is published",
+    "Full integration must include reviewed B check_compact code before CI; source bytes were reviewed in B separate worktree"
+  ]
+}

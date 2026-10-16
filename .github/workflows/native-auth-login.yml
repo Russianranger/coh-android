@@ -1,0 +1,103 @@
+name: Nonshipping original AuthServer encrypted login
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/engine/auth-interop/deployment/**
+      - .github/workflows/native-auth-login.yml
+  workflow_dispatch:
+    inputs:
+      execute_login:
+        description: Run exact original AuthServer against a disposable LocalDB account; no DbServer or MapServer
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-auth-login-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-controls:
+    if: >-
+      github.repository == 'Russianranger/coh-android' &&
+      github.ref == 'refs/heads/native-android' &&
+      ((github.event_name == 'workflow_dispatch' && inputs.execute_login) ||
+       (github.event_name == 'push' && contains(github.event.head_commit.message, '[auth-login]')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Test isolated service admission and socket cleanup
+        run: |
+          mkdir -p out/auth-login-controls
+          python3 native-android/engine/auth-interop/deployment/qualify_auth_only.py --source-root . --sanitize --output out/auth-login-controls/qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-auth-login-source-controls
+          path: out/auth-login-controls/
+          if-no-files-found: error
+          retention-days: 90
+  original-authserver-login:
+    needs: source-controls
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 35
+    steps:
+      - name: Preserve original LF source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Recover exact original AuthServer and completed ODBC evidence
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import hashlib, os, subprocess, zipfile
+          root = Path(os.environ['RUNNER_TEMP'])
+          specs = (
+              (12064402579, 428036, 'eda726ddc281b2e6b29e8c4d3c0f5e0805f505a8542c0ef80f5dad6208eb570d', 'auth-original-reuse'),
+              (12066189514, 872480, '0f032ce2232e0501b47918db55c41a3f35a92fda290252bd18d4c1c9ff209c4b', 'auth-odbc-reuse'),
+          )
+          for artifact, size, sha, name in specs:
+              archive = root / (name + '.zip')
+              with archive.open('xb') as target:
+                  subprocess.run(['gh','api',f'repos/Russianranger/coh-android/actions/artifacts/{artifact}/zip'], stdout=target, check=True, timeout=180)
+              assert archive.stat().st_size == size
+              assert hashlib.sha256(archive.read_bytes()).hexdigest() == sha
+              output = root / name
+              output.mkdir()
+              with zipfile.ZipFile(archive) as source:
+                  infos = source.infolist()
+                  assert len(infos) <= 128 and len({x.filename for x in infos}) == len(infos)
+                  assert sum(x.file_size for x in infos) <= 32 * 1024**2
+                  assert all(not PurePosixPath(x.filename).is_absolute() and '..' not in PurePosixPath(x.filename).parts and '\\' not in x.filename and ':' not in x.filename and ((x.external_attr >> 16) & 0o170000) != 0o120000 for x in infos)
+                  source.extractall(output)
+          print('Exact original server and completed ODBC evidence recovered; no server rebuilt')
+          PY
+      - name: Download checksum-pinned public OpenSSL source for the native test probe
+        shell: pwsh
+        run: |
+          $archive = "$env:RUNNER_TEMP/openssl-3.5.9.tar.gz"
+          curl.exe --fail --silent --show-error --location --output $archive https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz
+          if ($LASTEXITCODE -ne 0) { throw 'Pinned probe crypto source download failed' }
+          if ((Get-FileHash -Algorithm SHA256 $archive).Hash.ToLowerInvariant() -ne '603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a') { throw 'Probe crypto source identity mismatch' }
+      - name: Execute isolated original AuthServer encrypted account positive and negative controls
+        shell: pwsh
+        run: |
+          python native-android/engine/auth-interop/deployment/hosted_auth_login.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-auth-login" --reuse-auth-stage "$env:RUNNER_TEMP/auth-original-reuse" --reuse-odbc-stage "$env:RUNNER_TEMP/auth-odbc-reuse" --openssl-archive "$env:RUNNER_TEMP/openssl-3.5.9.tar.gz"
+          if ($LASTEXITCODE -ne 0) { throw 'Auth-only encrypted login did not qualify; retain bounded sanitized diagnostics' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-original-authserver-encrypted-login
+          path: ${{ runner.temp }}/coh-auth-login/
+          if-no-files-found: warn
+          retention-days: 90

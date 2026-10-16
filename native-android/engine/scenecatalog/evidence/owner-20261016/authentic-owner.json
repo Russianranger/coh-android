@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "passed": true,
+  "authentic_catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+  "source_evidence_sha256": "df67b6c680d6ed1e74fb6ef66e4eae4124a3c5000a42020121da6f8b33055260",
+  "inventory_sha256": "6ca8b1fb442b62b8dfcb22052d0520a788f09473d25272a63cbf7ffb79130430",
+  "checks": {
+    "release": {
+      "authentic_owner": {
+        "schema": 1,
+        "status": 0,
+        "owner_created": true,
+        "generation": 20261016,
+        "files": 508,
+        "slots": 40225,
+        "definitions": 40225,
+        "children": 130314,
+        "tombstones": 0,
+        "owned_bytes": 12511918,
+        "index_bytes": 331960,
+        "peak_record_owned_bytes": 1654842,
+        "peak_aggregate_bytes": 26477502,
+        "provider_reserve_bytes": 65536,
+        "map_binding_present": false,
+        "graph_published": false,
+        "renderer_authorized": false
+      },
+      "negative_controls": 8,
+      "binary_sha256": "1e6ef08256bad697dcaf6dcf653e329067543091567c301d824df27a74b5d083"
+    },
+    "asan": {
+      "authentic_owner": {
+        "schema": 1,
+        "status": 0,
+        "owner_created": true,
+        "generation": 20261016,
+        "files": 508,
+        "slots": 40225,
+        "definitions": 40225,
+        "children": 130314,
+        "tombstones": 0,
+        "owned_bytes": 12511918,
+        "index_bytes": 331960,
+        "peak_record_owned_bytes": 1654842,
+        "peak_aggregate_bytes": 26477502,
+        "provider_reserve_bytes": 65536,
+        "map_binding_present": false,
+        "graph_published": false,
+        "renderer_authorized": false
+      },
+      "negative_controls": 8,
+      "binary_sha256": "b1415afcef7e480950e17e5ee94a3558d74b4c9b4cadaf579041562dff5630a9"
+    },
+    "ubsan": {
+      "authentic_owner": {
+        "schema": 1,
+        "status": 0,
+        "owner_created": true,
+        "generation": 20261016,
+        "files": 508,
+        "slots": 40225,
+        "definitions": 40225,
+        "children": 130314,
+        "tombstones": 0,
+        "owned_bytes": 12511918,
+        "index_bytes": 331960,
+        "peak_record_owned_bytes": 1654842,
+        "peak_aggregate_bytes": 26477502,
+        "provider_reserve_bytes": 65536,
+        "map_binding_present": false,
+        "graph_published": false,
+        "renderer_authorized": false
+      },
+      "negative_controls": 8,
+      "binary_sha256": "7dcf7ebfdf07db8b98445b27fad9778e3e6275f71129445a3ed2be3ab297a594"
+    }
+  },
+  "source_sha256": {
+    "native-android/engine/scenecatalog/validate_owner_file.c": "02ad0d7c628a24ef49dcebd9c161ceb21ee8dbf94464886c3f1fe177f6ee54c5",
+    "native-android/engine/scenecatalog/coh_catalog_owner.c": "f002aa63a989fa4bc48a9bba072db7afbf90131fd8be32ef870b3783263515a7",
+    "native-android/engine/scenecatalog/coh_scenecatalog.c": "1d5371e28188d1bbb7bb974581feb1c03035cc4d7486b6bf30475e7b6ff7ee66",
+    "native-android/engine/scenegraph/coh_scenegraph.c": "9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+    "native-android/engine/scenecatalog/coh_catalog_owner.h": "4ae3806d3cafd269f3366f4d59f58b97f72f3824ce3c6a3ca3ee13436409aa1f",
+    "native-android/engine/scenecatalog/coh_scenecatalog.h": "e7c89ad7b5f646a8d529846122a9927df69d8f5b057c4ee90fb9f0360ca90c0c",
+    "native-android/engine/scenecatalog/check_owner_file.py": "a088979eb62b2f00f41a205921d5efe4071ed838b9fc118c8e6a82056fe41571",
+    "native-android/engine/scenecatalog/check_file.py": "15494d92af5236110d93f4e0d2dd2de3a1eefe7e7e56181d06c44ed3b660b9bb",
+    "native-android/engine/scenecatalog-server/evidence/capture-38948147691/external-capture.json": "df67b6c680d6ed1e74fb6ef66e4eae4124a3c5000a42020121da6f8b33055260"
+  },
+  "openssl_version": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)",
+  "digest_provider": "explicit host OpenSSL SHA256_Init/Update/Final; not an Android/library dependency",
+  "leak_sanitizer": false,
+  "map_binding_present": false,
+  "matching_groups_captured": false,
+  "android_executed": false,
+  "server_started": false,
+  "graph_published": false,
+  "renderer_authorized": false,
+  "physical_thor_accepted": false
+}

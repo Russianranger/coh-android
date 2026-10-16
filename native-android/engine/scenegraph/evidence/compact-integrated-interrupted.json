@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "passed": false,
+  "stage": "release link",
+  "reason": "Recovered tracked test_scenegraph.c reverted to remote baseline during source fixture preparation; compact test-hook declaration then lacked its definition. Reversion was observed repeatedly; the actor performing it was not identified.",
+  "previous_source_checkpoint": "66146bbee161304ba4e4e14cbb53cba6958fb03b",
+  "preserved_log_sha256": "ea97917c541a30ad9e5a1766ea133322c1ab569822a1ae4d32001e7bc2e791eb",
+  "recovery": "Exact tracked recovery edits committed locally before retry; no prior worktree changed, no accepted APK rebuilt."
+}

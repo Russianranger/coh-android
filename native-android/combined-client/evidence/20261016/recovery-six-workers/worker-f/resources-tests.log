@@ -1,0 +1,33 @@
+test_exact_source_shared_proof_refusal_reasons (test_startup_resources.OriginalOperationTests.test_exact_source_shared_proof_refusal_reasons) ... ok
+test_original_beacon_counters_match_independent_file_operations (test_startup_resources.OriginalOperationTests.test_original_beacon_counters_match_independent_file_operations) ... ok
+test_original_resource_producer_never_sums_reaped_children_with_self (test_startup_resources.OriginalOperationTests.test_original_resource_producer_never_sums_reaped_children_with_self) ... ok
+test_retained_graph_files_do_not_mean_archive_work_skipped (test_startup_resources.OriginalOperationTests.test_retained_graph_files_do_not_mean_archive_work_skipped) ... ok
+test_benchmark_cli_error_path_redacted (test_startup_resources.ResourceTests.test_benchmark_cli_error_path_redacted) ... ok
+test_benchmark_rejects_unbounded_work_before_opening_input (test_startup_resources.ResourceTests.test_benchmark_rejects_unbounded_work_before_opening_input) ... ok
+test_boundary_clock_and_ring_bounds (test_startup_resources.ResourceTests.test_boundary_clock_and_ring_bounds) ... ok
+test_boundary_self_delta_is_not_combined_memory (test_startup_resources.ResourceTests.test_boundary_self_delta_is_not_combined_memory) ... ok
+test_boundary_unknown_or_mismatched_row_breaks_pair (test_startup_resources.ResourceTests.test_boundary_unknown_or_mismatched_row_breaks_pair) ... ok
+test_cli_error_path_redacted (test_startup_resources.ResourceTests.test_cli_error_path_redacted) ... ok
+test_conflicting_cache_receipts_refused (test_startup_resources.ResourceTests.test_conflicting_cache_receipts_refused) ... ok
+test_duplicate_stage_is_not_summed (test_startup_resources.ResourceTests.test_duplicate_stage_is_not_summed) ... ok
+test_geometry_exact_status (test_startup_resources.ResourceTests.test_geometry_exact_status) ... ok
+test_guest_elapsed_cannot_be_nonfinite_or_negative (test_startup_resources.ResourceTests.test_guest_elapsed_cannot_be_nonfinite_or_negative) ... ok
+test_history_remains_separate_and_cross_version (test_startup_resources.ResourceTests.test_history_remains_separate_and_cross_version) ... ok
+test_input_documents_unchanged (test_startup_resources.ResourceTests.test_input_documents_unchanged) ... ok
+test_missing_and_boolean_memory_never_become_zero (test_startup_resources.ResourceTests.test_missing_and_boolean_memory_never_become_zero) ... ok
+test_missing_output_bytes_rejected (test_startup_resources.ResourceTests.test_missing_output_bytes_rejected) ... ok
+test_observed_warm_does_not_prove_beacon_reuse (test_startup_resources.ResourceTests.test_observed_warm_does_not_prove_beacon_reuse) ... ok
+test_operation_unknowns_remain_unknown (test_startup_resources.ResourceTests.test_operation_unknowns_remain_unknown) ... ok
+test_operations_never_export_unknown_proof_or_fallback_text (test_startup_resources.ResourceTests.test_operations_never_export_unknown_proof_or_fallback_text) ... ok
+test_oversize_output_rejected (test_startup_resources.ResourceTests.test_oversize_output_rejected) ... ok
+test_private_values_and_ids_absent (test_startup_resources.ResourceTests.test_private_values_and_ids_absent) ... ok
+test_ready_uses_boundary_not_age (test_startup_resources.ResourceTests.test_ready_uses_boundary_not_age) ... ok
+test_refusal_is_fixed_allowlist (test_startup_resources.ResourceTests.test_refusal_is_fixed_allowlist) ... ok
+test_stale_receipt_not_bound (test_startup_resources.ResourceTests.test_stale_receipt_not_bound) ... ok
+test_sum_does_not_establish_aggregate_live_peak (test_startup_resources.ResourceTests.test_sum_does_not_establish_aggregate_live_peak) ... ok
+test_typed_refusals_not_echoed (test_startup_resources.ResourceTests.test_typed_refusals_not_echoed) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.043s
+
+OK

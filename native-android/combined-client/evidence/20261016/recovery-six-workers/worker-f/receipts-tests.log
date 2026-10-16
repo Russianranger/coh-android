@@ -1,0 +1,28 @@
+test_cache_hits_and_refusal_are_explicit (test_startup_receipts.ExistingReceiptTests.test_cache_hits_and_refusal_are_explicit) ... ok
+test_cli_errors_do_not_echo_private_path (test_startup_receipts.ExistingReceiptTests.test_cli_errors_do_not_echo_private_path) ... ok
+test_combined_missing_detail_stays_unknown (test_startup_receipts.ExistingReceiptTests.test_combined_missing_detail_stays_unknown) ... ok
+test_cross_session_nested_receipt_rejected (test_startup_receipts.ExistingReceiptTests.test_cross_session_nested_receipt_rejected) ... ok
+test_duplicate_map_id_or_unbounded_map_rejected (test_startup_receipts.ExistingReceiptTests.test_duplicate_map_id_or_unbounded_map_rejected) ... ok
+test_embedded_nul_name_rejected_before_zipinfo_truncates_it (test_startup_receipts.ExistingReceiptTests.test_embedded_nul_name_rejected_before_zipinfo_truncates_it) ... ok
+test_forged_count_does_not_allocate_unbounded_zip_metadata (test_startup_receipts.ExistingReceiptTests.test_forged_count_does_not_allocate_unbounded_zip_metadata) ... ok
+test_interleaved_stage_does_not_close_previous_stage (test_startup_receipts.ExistingReceiptTests.test_interleaved_stage_does_not_close_previous_stage) ... ok
+test_invalid_json_and_nonfinite_rejected (test_startup_receipts.ExistingReceiptTests.test_invalid_json_and_nonfinite_rejected) ... ok
+test_log_missing_finish_is_unknown (test_startup_receipts.ExistingReceiptTests.test_log_missing_finish_is_unknown) ... ok
+test_negative_wall_duration_rejected (test_startup_receipts.ExistingReceiptTests.test_negative_wall_duration_rejected) ... ok
+test_nested_zip_bounded (test_startup_receipts.ExistingReceiptTests.test_nested_zip_bounded) ... ok
+test_no_wall_duration_without_both_timestamps (test_startup_receipts.ExistingReceiptTests.test_no_wall_duration_without_both_timestamps) ... ok
+test_original_file_producer_is_projected (test_startup_receipts.ExistingReceiptTests.test_original_file_producer_is_projected) ... ok
+test_original_retry_does_not_reuse_failed_start (test_startup_receipts.ExistingReceiptTests.test_original_retry_does_not_reuse_failed_start) ... ok
+test_original_timestamp_rows_and_log_pairs (test_startup_receipts.ExistingReceiptTests.test_original_timestamp_rows_and_log_pairs) ... ok
+test_raw_log_does_not_guess_clock_or_cache (test_startup_receipts.ExistingReceiptTests.test_raw_log_does_not_guess_clock_or_cache) ... ok
+test_repeated_running_uses_latest_observation_with_explicit_scope (test_startup_receipts.ExistingReceiptTests.test_repeated_running_uses_latest_observation_with_explicit_scope) ... ok
+test_terminal_interruption_prevents_later_pass_pair (test_startup_receipts.ExistingReceiptTests.test_terminal_interruption_prevents_later_pass_pair) ... ok
+test_unzoned_clock_unknown (test_startup_receipts.ExistingReceiptTests.test_unzoned_clock_unknown) ... ok
+test_zip64_multidisk_and_directory_bounds_admitted_before_constructor (test_startup_receipts.ExistingReceiptTests.test_zip64_multidisk_and_directory_bounds_admitted_before_constructor) ... ok
+test_zip_bad_names_duplicates_links_rejected (test_startup_receipts.ExistingReceiptTests.test_zip_bad_names_duplicates_links_rejected) ... ok
+test_zip_member_selected_and_hashed_without_extracting (test_startup_receipts.ExistingReceiptTests.test_zip_member_selected_and_hashed_without_extracting) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.210s
+
+OK

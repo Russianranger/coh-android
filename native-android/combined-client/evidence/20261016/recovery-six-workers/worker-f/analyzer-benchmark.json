@@ -1,0 +1,56 @@
+{
+  "deterministic_output": {
+    "bytes": 36762,
+    "sha256": "fcc0f9f5e5be63c3579d47850ae3cf076951554be5e87a21bad737896ae604b5"
+  },
+  "device_execution": false,
+  "elapsed_ms_per_analysis": [
+    18.735549,
+    18.252103,
+    18.505089,
+    20.22867,
+    19.408341
+  ],
+  "input": {
+    "archive_bytes": 37864,
+    "archive_sha256": "e802501bce9738d538d8438cdcdbdb304810a9d7854d45a0dbb47a7188542b73",
+    "members": [
+      {
+        "bytes": 39251,
+        "member": "combined-report.json",
+        "sha256": "d96686ac209f4c33122061028db4440be12e5493fd080a8d711d65d8ddb618d3"
+      },
+      {
+        "bytes": 269418,
+        "member": "native-client-report.json",
+        "sha256": "fa99330f68e324eba4523a92b4f928b06490c6acfc1daa197ea199e20e56e81a"
+      },
+      {
+        "bytes": 30283,
+        "member": "combined-server-latest-report.json",
+        "sha256": "a5a1526dcefdb308d303953e8484069f61e66acfbcdb8ed3253b6df1ba7447bb"
+      },
+      {
+        "bytes": 197417,
+        "member": "combined-server-previous-attempts.json",
+        "sha256": "d3345f0a83d30b9314a7c90fe70ffd28ec5f5b82990d9c22b9acd8571790f0cd"
+      }
+    ]
+  },
+  "iterations_per_repeat": 10,
+  "maximum_python_traced_peak_bytes": 16809154,
+  "median_elapsed_ms": 18.735549,
+  "production_startup_speedup_measured": false,
+  "python_traced_peak_bytes_per_repeat": [
+    16809154,
+    16807041,
+    16806171,
+    16805552,
+    16805495
+  ],
+  "repeats": 5,
+  "runtime_modified": false,
+  "schema": "coh-startup-offline-analysis-benchmark-v1",
+  "scope": "host_archive_read_json_analysis_and_encoding_with_tracemalloc_overhead",
+  "whole_process_rss_measured": false
+}

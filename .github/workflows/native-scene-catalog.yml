@@ -73,6 +73,12 @@ jobs:
           python3 native-android/engine/scenecatalog-server/check.py
           --source-root . --sanitize
           --output native-android/results/scene-catalog/server-export/host.json
+      - name: Qualify compact topology against the retained authentic catalog and build both ABIs
+        run: >-
+          python3 native-android/engine/scenecatalog-qualification/compact_android.py build
+          --source-root . --ndk /tmp/scene-catalog-ndk/android-ndk-r28c
+          --archive native-android/corpus/server-catalog/capture-38948147691/evidence.zip
+          --output native-android/results/scene-catalog/compact-capture
       - name: Check external catalog transport and read-only startup attribution
         run: |
           # The executed original diagnostic methods are pinned to this historical
@@ -189,7 +195,9 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
-          script: python3 native-android/engine/scenecatalog-qualification/run_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --require-clean --artifacts native-android/results/scene-catalog --output native-android/results/scene-catalog/android-execution/receipt.json
+          script: |
+            python3 native-android/engine/scenecatalog-qualification/run_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --require-clean --artifacts native-android/results/scene-catalog --output native-android/results/scene-catalog/android-execution/receipt.json
+            python3 native-android/engine/scenecatalog-qualification/compact_android.py run --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --artifacts native-android/results/scene-catalog/compact-capture --output native-android/results/scene-catalog/android-execution/compact-capture
       - uses: actions/upload-artifact@v4
         if: always()
         with:

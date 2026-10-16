@@ -1,0 +1,153 @@
+{
+  "schema": "coh-auth-only-host-qualification-v1",
+  "passed": true,
+  "repository_base": "f77ec501c997029187d43be63047d6764cd71c45",
+  "unit_test_log": "test_account_seed_does_not_register_shards_or_override_policy (test_auth_login_stage.AuthLoginStageTests.test_account_seed_does_not_register_shards_or_override_policy) ... ok\ntest_all_four_exact_receipts_have_narrow_scope (test_auth_login_stage.AuthLoginStageTests.test_all_four_exact_receipts_have_narrow_scope) ... ok\ntest_build_script_refuses_shell_and_expansion_tokens (test_auth_login_stage.AuthLoginStageTests.test_build_script_refuses_shell_and_expansion_tokens) ... ok\ntest_config_explicit_encryption_normal_payment_and_no_debug (test_auth_login_stage.AuthLoginStageTests.test_config_explicit_encryption_normal_payment_and_no_debug) ... ok\ntest_config_rejects_remote_instances_ports_driver_and_injection (test_auth_login_stage.AuthLoginStageTests.test_config_rejects_remote_instances_ports_driver_and_injection) ... ok\ntest_each_negative_requires_source_failure (test_auth_login_stage.AuthLoginStageTests.test_each_negative_requires_source_failure) ... ok\ntest_every_missing_and_extra_receipt_field_refused (test_auth_login_stage.AuthLoginStageTests.test_every_missing_and_extra_receipt_field_refused) ... ok\ntest_false_success_credential_retention_or_handoff_refused (test_auth_login_stage.AuthLoginStageTests.test_false_success_credential_retention_or_handoff_refused) ... ok\ntest_firewall_cleanup_requires_exact_owned_program (test_auth_login_stage.AuthLoginStageTests.test_firewall_cleanup_requires_exact_owned_program) ... ok\ntest_generated_project_uses_unchanged_controller_and_only_isolated_adapter (test_auth_login_stage.AuthLoginStageTests.test_generated_project_uses_unchanged_controller_and_only_isolated_adapter) ... ok\ntest_known_openssl_fixture_admission_is_exact (test_auth_login_stage.AuthLoginStageTests.test_known_openssl_fixture_admission_is_exact) ... ok\ntest_native_windows_perl_required_for_msvc_openssl (test_auth_login_stage.AuthLoginStageTests.test_native_windows_perl_required_for_msvc_openssl) ... ok\ntest_positive_needs_three_frames_and_shards_ready (test_auth_login_stage.AuthLoginStageTests.test_positive_needs_three_frames_and_shards_ready) ... ok\ntest_private_log_growth_refused_without_reading_contents (test_auth_login_stage.AuthLoginStageTests.test_private_log_growth_refused_without_reading_contents) ... ok\ntest_private_sql_command_discards_all_output (test_auth_login_stage.AuthLoginStageTests.test_private_sql_command_discards_all_output) ... ok\ntest_probe_pe64_identity_is_header_only (test_auth_login_stage.AuthLoginStageTests.test_probe_pe64_identity_is_header_only) ... ok\ntest_real_prior_odbc_receipt_retained_without_reexecution (test_auth_login_stage.AuthLoginStageTests.test_real_prior_odbc_receipt_retained_without_reexecution) ... ok\ntest_state_constants_still_match_original_native_header (test_auth_login_stage.AuthLoginStageTests.test_state_constants_still_match_original_native_header) ... ok\ntest_tampered_odbc_receipts_fail (test_auth_login_stage.AuthLoginStageTests.test_tampered_odbc_receipts_fail) ... ok\ntest_typed_fields_cannot_claim_with_booleans (test_auth_login_stage.AuthLoginStageTests.test_typed_fields_cannot_claim_with_booleans) ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 0.010s\n\nOK\n",
+  "winsock_adapter": {
+    "schema": "coh-winsock-adapter-host-v1",
+    "passed": true,
+    "executions": {
+      "release": {
+        "binary_sha256": "95f1864a8412d00e5e0944ce6e41023620bd58ffa4d8a2b69f0f1e9df3965625",
+        "result": {
+          "passed": true,
+          "checks": 46,
+          "real_windows_execution": false,
+          "real_account_login_verified": false
+        }
+      },
+      "asan_ubsan": {
+        "binary_sha256": "bed321c29dfc248cca69b719018a44388193e9a320ef1153291e5cf643ea898e",
+        "result": {
+          "passed": true,
+          "checks": 46,
+          "real_windows_execution": false,
+          "real_account_login_verified": false
+        }
+      }
+    },
+    "inputs_sha256": {
+      "windows/winsock_compat.h": "27c26d4d8a40cb975a45c349a330073d0961c0bb9dee9a76cb5c41c27351db0e",
+      "windows/winsock_compat.c": "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad",
+      "windows/test_winsock_api.h": "246f32d8ffb2a04c593fcafddb64c47e127acc8e6328e567018edbd2e91fc019",
+      "windows/test_winsock_compat.c": "eef165af9e013c6e354d98b7d8c6ede53125e099e15b81e55bc873025fa448e9"
+    },
+    "real_windows_execution": false,
+    "real_account_login_verified": false,
+    "leak_sanitizer_enabled": false
+  },
+  "original_profile_parser": {
+    "passed": true,
+    "scope": "Unchanged original GetToken/helpers, Config::Load token/map block and three getters; file IO/platform/date assignments are not executed.",
+    "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+    "original_source_sha256_utf8_lf": {
+      "Config.cpp": "07e090aeab0911ecec950109c1bdfc49bda8532e818dd005f4d091fea0898ff0",
+      "Parser.cpp": "bebe55f96eca88add613d9433eb58dd837841a291b563abc384c02a86164dd42",
+      "Parser.h": "0760c15200421d7545c7046ffef272dd8996176ffffdc7cb4fdbf8076ee46a82"
+    },
+    "function_sha256": {
+      "IsDigit": "8eef01c650a325563bd0d1239d23fa65f899102a879cfbbe81c6cc2ca89eaaf8",
+      "IsSpace": "cfbc63d645b1a6223a5eacafde1c69bfd1562e3c2abbe2383015451b9f0111d5",
+      "IsWhiteSpace": "0b8d7e386ccef5b539860d4e7e72c23bb913caaa5c2e1572d642e4d2021ac6b1",
+      "IsAlpha": "b5f9b1b1500d27b7d49cb125e49cf0203617a73592cabc7c83b10295abe6d78e",
+      "GetToken": "a1f0b5b805056e4483f99559de112b196329c4fb832091266e70deec629ef180",
+      "Get": "1509553dbfd8f8fa5347b36b10917a5928825f1fc2ede6580973c3d293a59ffd",
+      "GetInt": "76313436ecda8ef833b72e89d23fa7e58c2fd022d2f040b12cdfca34235eb637",
+      "GetBool": "45e493c4679d92d175cbac21efe8e70b772896c6bfd856db825c3b03cf8b6a23"
+    },
+    "original_load_parser_block_sha256": "9c9c068ed42e7603a1fde5d5b5d8dc756dab9bdf842d7dba67d1cf1983467e51",
+    "generated_oracle_sha256": "32317a5901718ae5aeb0c89d33a4c7151313fd3491ce8eb0ceb98f4591b83a23",
+    "profile_keys": 42,
+    "executions": {
+      "release": {
+        "binary_sha256": "31346715234ce2ca0c60d5d87565f7adf6a6e68f76474aea22061a5d0dfe8613",
+        "result": {
+          "passed": true,
+          "checks": 56,
+          "full_config_load_executed": false,
+          "real_account_login_verified": false
+        }
+      },
+      "asan_ubsan": {
+        "binary_sha256": "98b2ae93fbe299643aec8d48e1d2b9bace635aa796e79683d048007be50f2522",
+        "result": {
+          "passed": true,
+          "checks": 56,
+          "full_config_load_executed": false,
+          "real_account_login_verified": false
+        }
+      }
+    }
+  },
+  "native_probe": {
+    "passed": true,
+    "scope": "POSIX build of exact probe/core; invalid-argument and owned loopback refused-connection cleanup only.",
+    "source_sha256": {
+      "native-android/engine/auth-interop/deployment/windows/auth_only_probe.c": "9bf261ba6cd927ba1d4923c7bbd9c5fb05129dbef9a17e80310489aac537271c",
+      "native-android/engine/login/coh_login.c": "7031aa597bcea818b36dabd1b745b4ea54897ce3478705054c9cf6b426f8972e",
+      "native-android/engine/auth/coh_auth.c": "637ad08f32eb5cb8fe4fc582ed90858ec1e572cc302b3d29d9be240fb3f0639d",
+      "native-android/engine/auth/coh_auth_openssl.c": "f43196a6a78f906c16e59625e10aad518c20942d6c3ac8f4218c06b8d7a766a1",
+      "native-android/src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+      "native-android/protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea"
+    },
+    "executions": {
+      "release": {
+        "binary_sha256": "be1c46571925fc1f9251044c87c4386204b3adaac76ef2eb6b1a6a5acd5b53ef",
+        "checks": 8,
+        "connection_refusal_receipt": {
+          "schema": "coh-auth-only-probe-v1",
+          "passed": false,
+          "case": "valid",
+          "state": 12,
+          "protocol": 0,
+          "shards": 0,
+          "received_frames": 0,
+          "sent_bytes": 0,
+          "failure_command": 0,
+          "failure_reason": 0,
+          "system_error": 111,
+          "elapsed_ms": 0,
+          "socket_cleanup_complete": true,
+          "password_retained_after_close": false,
+          "db_handoff_attempted": false,
+          "real_server_provenance_verified_by_probe": false,
+          "openssl_runtime": "OpenSSL 3.0.13 30 Jan 2024"
+        },
+        "real_windows_execution": false,
+        "real_account_login_verified": false
+      },
+      "asan_ubsan": {
+        "binary_sha256": "e613be9a61dc7cc2485a66cbb257a39bb63abb2b9771b400c46996b83fa26b02",
+        "checks": 8,
+        "connection_refusal_receipt": {
+          "schema": "coh-auth-only-probe-v1",
+          "passed": false,
+          "case": "valid",
+          "state": 12,
+          "protocol": 0,
+          "shards": 0,
+          "received_frames": 0,
+          "sent_bytes": 0,
+          "failure_command": 0,
+          "failure_reason": 0,
+          "system_error": 111,
+          "elapsed_ms": 0,
+          "socket_cleanup_complete": true,
+          "password_retained_after_close": false,
+          "db_handoff_attempted": false,
+          "real_server_provenance_verified_by_probe": false,
+          "openssl_runtime": "OpenSSL 3.0.13 30 Jan 2024"
+        },
+        "real_windows_execution": false,
+        "real_account_login_verified": false
+      }
+    }
+  },
+  "driver_sha256": "01b6c67e32d2c3301f1039e40887220141bcf5d5bece45c4505bdcfb9d373b4d",
+  "profile_sha256": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4",
+  "real_windows_execution": false,
+  "real_account_login_verified": false,
+  "authenticated_db_map_handoff_verified": false,
+  "physical_thor_accepted": false,
+  "leak_sanitizer_enabled": false
+}

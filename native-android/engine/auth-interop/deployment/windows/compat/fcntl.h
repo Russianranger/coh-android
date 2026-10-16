@@ -1,0 +1,1 @@
+/* Only nonblocking and noninheritable socket flags are admitted. */

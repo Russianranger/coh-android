@@ -1,0 +1,13 @@
+{
+  "source_import": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "sha256_lf": {
+    "MapServer/src/player/badges_server.c": "d4c8913ebdbc26e911f6fb07e09269e67e8b636dd1ef902266e69df62aa7d677",
+    "Game/src/player/badges_client.c": "3959968a1d593706d8569062d1a3080496dbb5cdb9ae4beb39fca03940c54e6d",
+    "Common/player/badges.c": "ae401ec7e7b3897ef128f7f9a1cf04be6276f96cd3350171c9332389b4320673",
+    "Common/player/badges.h": "c45c938ab679a0d158a3e79dbc421202b848413be440d008d84ff41b1d392f4b",
+    "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+  }
+}

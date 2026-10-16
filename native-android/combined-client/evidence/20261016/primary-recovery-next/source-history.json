@@ -1,0 +1,37 @@
+{
+  "base": "66146bbee161304ba4e4e14cbb53cba6958fb03b",
+  "tips": {
+    "a": "07d378a3108735f258cdd3b45953dd9498f587ce",
+    "b": "5f992900466555f2e562858a6e4395058327c12a",
+    "c": "e50407d48f8561cd28aec100bf6daf01e693099c",
+    "d": "2db7ebe42eb02083a5168656563c7f19782ab0f1",
+    "e": "d20690056b9dd9bf4724090225cf81a7c05363c5",
+    "f": "f4b415871f22cb73030a3026766d21a42d847c89",
+    "coordinator": "baf7fb1af8d9d60a3669c2db553be3cf02ac9e98"
+  },
+  "bundle_bytes": 297118,
+  "bundle_sha256": "9ec460f80f9d51aae85bff317877d5103d472d3eb15ce5920745d265d3a100c9",
+  "bundle_verify": "The bundle contains these 7 refs:\n07d378a3108735f258cdd3b45953dd9498f587ce refs/coordinator/recovery-next/a\n5f992900466555f2e562858a6e4395058327c12a refs/coordinator/recovery-next/b\ne50407d48f8561cd28aec100bf6daf01e693099c refs/coordinator/recovery-next/c\n2db7ebe42eb02083a5168656563c7f19782ab0f1 refs/coordinator/recovery-next/d\nd20690056b9dd9bf4724090225cf81a7c05363c5 refs/coordinator/recovery-next/e\nf4b415871f22cb73030a3026766d21a42d847c89 refs/coordinator/recovery-next/f\nbaf7fb1af8d9d60a3669c2db553be3cf02ac9e98 refs/coordinator/recovery-next/coordinator\nThe bundle requires this ref:\n66146bbee161304ba4e4e14cbb53cba6958fb03b \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/8749ec34cd9b/coh-recovery/native-android/combined-client/evidence/20261016/primary-recovery-next/six-worker-next-history.bundle is okay\n",
+  "local_integrations": [
+    "baf7fb1af8d9d60a3669c2db553be3cf02ac9e98 Preserve recovered protocol source, qualification receipts and continuation handoff",
+    "3a6b722196a8b16898e79e104145b577a41a1a45 Clarify badge review memory accounting text",
+    "e3e1c14acec5e14f41ce9c99a8e7fd0d838c162d Review source-qualified badge grammar ownership and rollback",
+    "9600b534398343c89f2878d29fdfdb79cc4d5ff8 Bind recovered GROUPS probe receipts to native headers and source tree",
+    "a1d5dc4e5824bf06f5115df69872ffc24033c133 Complete bounded badge wire staging and recover diagnostic GROUPS capture",
+    "60aa6e9f653f7f55157ac8150ead7374eb03c6f7 Record independent original AuthServer deployment review",
+    "30e8f275692908381e20bec4c9b7b1d2feee9623 Require native Windows Perl for pinned auth probe crypto build",
+    "6aec85a8941ea1f44ae8731eb87738240ca98059 Review exact captured compact Android qualification admission",
+    "60e5d52e4187992f407093ff75ca8003ce2fb6a1 Record original auth service launch before job attachment",
+    "a4f7d809e6513e65334f65002351c8c72ef19055 Bind native auth probe to pinned OpenSSL Windows link dependencies",
+    "ffe3d6197143bee145da4f0ef9bf95a3c87cfe73 Recover auth-only probe and add exact original encrypted service experiment",
+    "6116686452656417b280636acb9a61777c073cff Preserve exact compact graph qualification and interrupted-check evidence",
+    "f08608a777104b8ac162259418b3da10ee64e75f Recover compact catalog ownership and add bounded unresolved-name diagnostics",
+    "80d0deddb4ddb79ff8b6a4730eaf32a8fd2c3308 Retain immutable catalog generations and diagnose original future-name dependencies",
+    "db17f47d3411b9b467849709dfe79eda7eaf06e5 Record independent render adapter ownership review",
+    "3263075db27a1b5f7d12204289418b761dd2463b Attribute startup cache operations and bounded memory observations",
+    "ca6640e5760acc59aa382745abd3c88763e42dd5 Record independent compact topology and budget review",
+    "ca2cfb7759a581aed6bf473f17923d96ea89a07b Retain clean shared-geometry qualification and recovery evidence",
+    "84a47946f71951eefa604feb942af87ea2cba353 Bound immutable world geometry ownership by exact mesh identity",
+    "e6b9cf72e9c2c0b3bac856315549cdc1f74140fe Preserve primary recovery and qualify exact compact corpus on Android"
+  ]
+}
