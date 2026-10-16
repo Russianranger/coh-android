@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "checkpoint": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+  "workers_started_concurrently": 6,
+  "isolated_worktrees": {
+    "A": "/workspace/scratch/78494e933b7f/worker-a",
+    "B": "/workspace/scratch/78494e933b7f/worker-b",
+    "C": "/workspace/scratch/78494e933b7f/worker-c",
+    "D": "/workspace/scratch/78494e933b7f/worker-d",
+    "E": "/workspace/scratch/78494e933b7f/worker-e",
+    "F": "/workspace/scratch/78494e933b7f/worker-f"
+  },
+  "exclusive_paths": {
+    "A": [
+      "native-android/engine/scenecatalog/",
+      "native-android/engine/scenecatalog-server/"
+    ],
+    "B": [
+      "native-android/engine/scenegraph/"
+    ],
+    "C": [
+      "native-android/engine/entities/"
+    ],
+    "D": [
+      "native-android/engine/auth-interop/"
+    ],
+    "E": [
+      "native-android/engine/world-render-adapter/"
+    ],
+    "F": [
+      "native-android/combined-client/tools/analyze_startup_resources.py",
+      "native-android/combined-client/tools/test_startup_resources.py",
+      "native-android/combined-client/evidence/20261016/startup-diagnostics/",
+      "native-android/combined-client/tools/bench_startup_console.py"
+    ]
+  },
+  "coordinator": [
+    "shared qualification workflows and drivers",
+    "Combined JNI and lifecycle (only after prerequisites)",
+    "integration publication and handoff"
+  ],
+  "protected_read_only": [
+    "support-client",
+    "appearance",
+    "offline-world",
+    "physics",
+    "sequencer",
+    "ui",
+    "audio",
+    "perf",
+    "third-batch",
+    "renderer",
+    "Session accepted package"
+  ],
+  "gameplay_contact": "No cross-chat coordinator address available; existing recorded ownership plus explicit user boundary honored, no API mutation/integration attempted."
+}

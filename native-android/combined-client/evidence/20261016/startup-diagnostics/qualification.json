@@ -1,0 +1,63 @@
+{
+  "accepted_export_reanalysis": {
+    "bytes": 37864,
+    "current_cache_classification": "warm_schema_restore_observed",
+    "current_ready_ms": 387340,
+    "input_hash_unchanged": true,
+    "matches_accepted_ready_and_memory_record": true,
+    "new_runtime_execution": false,
+    "sha256": "e802501bce9738d538d8438cdcdbdb304810a9d7854d45a0dbb47a7188542b73"
+  },
+  "artifact_sha256": {
+    "native-android/combined-client/evidence/20261016/startup-diagnostics/README.md": "a2e378f8b5337b40295f58a78409fba0e119a9c4570f3df6ef57688c3da8131d",
+    "native-android/combined-client/evidence/20261016/startup-diagnostics/console-experiment.json": "d2ff530707f440365d5c4408ebbd0b4b5135b630f2182557cfbac96919cc499a",
+    "native-android/combined-client/evidence/20261016/startup-diagnostics/thor-017-resources.json": "f94738476797b12b0e44a29f99ec533d568013bc7b654c98c87ee1206134b9a5",
+    "native-android/combined-client/tools/analyze_startup_resources.py": "312530e9780fa2e51b1425b54d303a3409a267b26c8264cb18105e9853251832",
+    "native-android/combined-client/tools/bench_startup_console.py": "41f7d53f465a5b80a23051df51a170a2c604bace479082f091e9a7c9ce0ae56e",
+    "native-android/combined-client/tools/test_startup_resources.py": "0104c45524eeaeab67af5985760cf420448a98f06013c737d0c61573e5362e7d"
+  },
+  "base_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+  "base_tree": "b5b4d2614a25cda1e9e9b1322031f5dda3a61003",
+  "host_tests": {
+    "existing_parser_passed": 26,
+    "failed": 0,
+    "new_resource_tests_passed": 15
+  },
+  "python_version": "3.12.14",
+  "qualification_status": {
+    "android_arm64_built": false,
+    "android_emulator_qualified": false,
+    "genuine_server_interoperability_verified": false,
+    "host_source_qualified": true,
+    "implemented": true,
+    "native_sanitizers_applicable": false,
+    "physical_thor_accepted": false
+  },
+  "schema": "coh-offline-startup-continuation-qualification-v1",
+  "scope": {
+    "historic_low_memory_cause_identified": false,
+    "new_apk_built": false,
+    "production_source_changed": false,
+    "read_only_offline_tools": true,
+    "runtime_or_profile_mutated": false,
+    "startup_improvement_claimed": false,
+    "whole_guest_peak_measured": false
+  },
+  "source_console_experiment": {
+    "append_cases": 6,
+    "exact_comparisons": 51,
+    "measured_on_android": false,
+    "original_methods_executed": true,
+    "production_candidate_qualified": false
+  },
+  "source_sha256": {
+    "android/guest/atlas_beacon_package.py": "37a8db39c4af994bcd5b4fd077319801bacfe90c70d4414d06929408b010d981",
+    "android/guest/character_server_data_cache.py": "1cb7fa789fd26dd8463dd01cd40555aac6f276fa6defbfc84c6239c35ebe0ac3",
+    "android/guest/client_startup_diagnostic.py": "8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53",
+    "android/guest/diagnostic.py": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf",
+    "android/guest/local_character_server.py": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180",
+    "android/guest/server_cache_package.py": "8a923225b1f9cbd7fe0ac13a700be6a1c372235cf7703db9b87cf80268b53e54",
+    "native-android/combined-client/diagnostics/continuation-20261016/analyze_startup.py": "a136aefdc0d9db35955aa870b0171191bb3d57321954d264528b5d856a115727",
+    "native-android/combined-client/runtime/server_runtime.py": "36d4853bfd696254a326f8fd6b9595b1dbac3a9c761808b2a9654ceae91b5895"
+  }
+}

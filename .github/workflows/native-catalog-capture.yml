@@ -1,0 +1,102 @@
+name: Nonshipping native saved-catalog disposable capture
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - .github/workflows/native-catalog-capture.yml
+      - native-android/engine/scenecatalog-server/capture_disposable.py
+      - native-android/engine/scenecatalog-server/test_capture_disposable.py
+      - native-android/engine/scenecatalog/validate_file.c
+      - native-android/engine/scenecatalog/check_file.py
+  workflow_dispatch:
+    inputs:
+      execute_capture:
+        description: Run only the isolated public-fixture shard; never an installed profile
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-catalog-capture-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  disposable-public-fixture:
+    if: >-
+      github.repository == 'Russianranger/coh-android' &&
+      github.ref == 'refs/heads/native-android' &&
+      ((github.event_name == 'workflow_dispatch' && inputs.execute_capture) ||
+       (github.event_name == 'push' && contains(github.event.head_commit.message, '[catalog-capture]')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Qualify isolated driver controls before deployment
+        run: |
+          python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_capture_disposable.py -v
+          python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_delivery.py -v
+      - name: Admit disposable hosted environment and native runtime dependencies
+        run: |
+          test "${RUNNER_ENVIRONMENT:-}" = github-hosted
+          test "$(id -u)" != 0
+          sudo rm -rf -- /usr/share/dotnet /usr/share/swift /usr/local/.ghcup /opt/ghc /opt/hostedtoolcache/CodeQL
+          python3 -c "import shutil; assert shutil.disk_usage('.').free >= 30*1024**3"
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends wine wine32:i386 xvfb xauth postgresql-16 postgresql-client-16 gcc zlib1g-dev
+      - name: Reuse the exact admitted nonshipping exporter without rebuilding it
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p out/catalog-inputs out/catalog-evidence
+          gh api repos/Russianranger/coh-android/actions/artifacts/12058121070/zip > out/catalog-inputs/export-compile.zip
+          python3 native-android/engine/scenecatalog-server/delivery.py candidate --compile-archive out/catalog-inputs/export-compile.zip --source-root . --output out/catalog-candidate
+      - name: Stage exact public donor assets and a separate disposable DbServer
+        run: |
+          python3 tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, 'tools/android/interactive')
+          import qualify_runtime_asset_preflight as preflight
+          preflight.ensure_assets('out/asset-cache')
+          PY
+          python3 tools/android/atlasgame/prepare_server_fx_control_fixture.py --donor-apk out/native-inputs/COH-Atlas-Gameplay-0.13.31.apk --payloads out/asset-cache/payloads --output out/catalog-control
+          python3 tools/android/interactive/build_client_manual_session_apk.py download-donor --output out/catalog-inputs/db-donor.apk
+      - name: Build and bind the off-device catalog validator to exact source
+        run: |
+          python3 native-android/engine/scenecatalog/check_file.py --source-root . --output out/catalog-evidence/validator-qualification.json --binary out/catalog-inputs/catalog-validator --sanitize
+      - name: Execute one isolated normal Atlas startup and capture original saved definitions
+        run: |
+          df -h . /tmp
+          catalog_runtime=$(python3 -c "import json; print(json.load(open('out/catalog-control/control-fixture.json'))['runtime_host_path'])")
+          xvfb-run -a python3 native-android/engine/scenecatalog-server/capture_disposable.py \
+            --runtime "$catalog_runtime" --control-fixture out/catalog-control/control-fixture.json \
+            --db-donor-apk out/catalog-inputs/db-donor.apk --candidate-directory out/catalog-candidate \
+            --native-validator out/catalog-inputs/catalog-validator --pg-bin /usr/lib/postgresql/16/bin \
+            --work /tmp/coh-catalog-capture --output out/catalog-evidence/capture --generation 20261016 --timeout-seconds 2400
+      - name: Preserve capture input provenance separately from runtime acceptance
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, shutil, subprocess
+          output = Path('out/catalog-evidence'); output.mkdir(parents=True, exist_ok=True)
+          for source in ('out/catalog-control/control-fixture.json', 'out/native-inputs/map-startup-inputs.json', 'out/catalog-candidate/deployment-plan.json'):
+              path = Path(source)
+              if path.is_file() and path.stat().st_size <= 8*1024**2:
+                  shutil.copyfile(path, output/path.name)
+          (output/'scope.json').write_text(json.dumps({'scope':'nonshipping_disposable_public_fixture_only',
+              'orchestration_source_revision':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+              'orchestration_source_tree':subprocess.check_output(['git','rev-parse','HEAD^{tree}'],text=True).strip(),
+              'accepted_apks_rebuilt':False,'physical_thor_accepted':False,'full_live_world_verified':False,
+              'gates25_27_complete':False,'profile_or_database_from_user_device_used':False},indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-catalog-disposable-capture-evidence
+          path: out/catalog-evidence/
+          if-no-files-found: error
+          retention-days: 90

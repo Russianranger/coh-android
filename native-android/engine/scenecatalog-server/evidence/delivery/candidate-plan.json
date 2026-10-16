@@ -1,0 +1,25 @@
+{
+  "accepted_runtime_modified": false,
+  "actual_profile_compatibility_verified": false,
+  "authentic_catalog_captured": false,
+  "binary_rebuilt": false,
+  "compile_archive_sha256": "a57cb97659db151d66941fa8c00baadb1c70eeedd1c37d46565e687a778b6529",
+  "deployed": false,
+  "exporter_sha256": "f96f5d51467083a58523187760458ad77e6a48d7b696b0d090aafa8e94e95f39",
+  "generation_environment": "COH_NATIVE_SCENE_CATALOG_GENERATION",
+  "maximum_catalog_bytes": 33554432,
+  "nonshipping": true,
+  "output_environment": "COH_NATIVE_SCENE_CATALOG_OUTPUT",
+  "requirements": [
+    "approved isolated copy of complete matching server assets and profile",
+    "independent Windows or compatible Win32 runtime and server dependencies",
+    "separate DB service and ports; no connection to production DB",
+    "private exclusively owned output directory and stable loaded world",
+    "independent source, asset, map and profile identity inventory",
+    "complete capture and GROUPS receipts before catalog admission"
+  ],
+  "rollback": "stop only the disposable owned processes; discard only the owned candidate/capture directories",
+  "runtime_executed": false,
+  "schema": "coh-disposable-catalog-candidate-v1",
+  "source_revision": "887bef22f5f6403d8589ac00a1269c9438e263a6"
+}

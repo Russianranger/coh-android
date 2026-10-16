@@ -2,14 +2,15 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#define INDEX_PROBES_MAX 256u
 #define TRY(x) do { CohStatus s_=(x); if(s_!=COH_OK)return s_; } while(0)
 typedef struct { CohSceneGraph *g; CohRepReader r; CohSgFailure f; const CohSgImports *imports; } Build;
 static void *owned(CohSceneGraph *g,size_t n,size_t size) {
     size_t bytes;
     if(!n)return NULL;
-    if(size>COH_SG_MEMORY_MAX/n)return NULL;
-    bytes=n*size;if(bytes>COH_SG_MEMORY_MAX-g->owned_bytes)return NULL;
-    void *p=calloc(n,size);if(p)g->owned_bytes+=bytes;return p;
+    if(size>g->allocation_limit/n)return NULL;
+    bytes=n*size;if(g->owned_bytes>g->allocation_limit||bytes>g->allocation_limit-g->owned_bytes)return NULL;
+    void *p=calloc(n,size);if(p){g->owned_bytes+=bytes;if(g->owned_bytes>g->peak_bytes)g->peak_bytes=g->owned_bytes;}return p;
 }
 static void release(CohSceneGraph *g,void *p,size_t n){if(p){free(p);g->owned_bytes-=n;}}
 static void clear_def(CohSceneGraph *g,CohSgDefinition *d) {
@@ -20,14 +21,60 @@ static void clear_def(CohSceneGraph *g,CohSgDefinition *d) {
 void coh_scenegraph_free(CohSceneGraph *g) {
     if(!g)return;
     for(uint32_t i=0;i<g->definition_count;i++)clear_def(g,&g->definitions[i]);
-    free(g->definitions);free(g->roots);free(g->files);free(g);
+    free(g->definitions);free(g->roots);free(g->files);
+    free(g->definition_index);free(g->root_index);free(g->name_index);free(g);
 }
-static CohSceneGraph *create(void) {
-    CohSceneGraph *g=calloc(1,sizeof(*g));if(!g)return NULL;g->owned_bytes=sizeof(*g);
-    g->files=owned(g,COH_GROUPS_FILE_MAX,sizeof(*g->files));
-    g->definitions=owned(g,COH_SG_DEFS_MAX,sizeof(*g->definitions));
-    g->roots=owned(g,COH_SG_ROOTS_MAX,sizeof(*g->roots));
-    if(!g->files||!g->definitions||!g->roots){coh_scenegraph_free(g);return NULL;}return g;
+/* Open addressing uses integer identity/hash keys and index+1 occupancy.
+ * Tables never exceed half occupancy; all loops have explicit capacity bounds. */
+static uint32_t hash32(uint32_t n){n^=n>>16;n*=0x7feb352du;n^=n>>15;n*=0x846ca68bu;return n^(n>>16);}
+static uint32_t index_capacity(uint32_t count){uint32_t n=16;while(n<count*2u)n*=2u;return n;}
+static int index_get(const CohSgIndexEntry *table,uint32_t capacity,uint32_t key,uint32_t *out){
+    if(!capacity)return 0;
+    uint32_t at=hash32(key)&(capacity-1);
+    for(uint32_t n=0;n<capacity&&n<INDEX_PROBES_MAX;n++,at=(at+1)&(capacity-1)){
+        if(!table[at].value)return 0;
+        if(table[at].key==key){*out=table[at].value-1;return 1;}
+    }return 0;
+}
+static CohStatus index_put(CohSgIndexEntry *table,uint32_t capacity,uint32_t key,uint32_t value){
+    uint32_t at=hash32(key)&(capacity-1);
+    for(uint32_t n=0;n<capacity&&n<INDEX_PROBES_MAX;n++,at=(at+1)&(capacity-1))if(!table[at].value){table[at]=(CohSgIndexEntry){key,value+1};return COH_OK;}
+    return COH_LIMIT;
+}
+static CohStatus reserve_index(CohSceneGraph *g,CohSgIndexEntry **table,uint32_t *capacity,uint32_t count){
+    uint32_t need=index_capacity(count);if(*capacity>=need)return COH_OK;
+    CohSgIndexEntry *next=owned(g,need,sizeof(*next));if(!next)return COH_LIMIT;
+    for(uint32_t i=0;i<*capacity;i++)if((*table)[i].value){CohStatus status=index_put(next,need,(*table)[i].key,(*table)[i].value-1);if(status!=COH_OK){release(g,next,(size_t)need*sizeof(*next));return status;}}
+    release(g,*table,(size_t)*capacity*sizeof(**table));*table=next;*capacity=need;return COH_OK;
+}
+static CohStatus reserve_defs(CohSceneGraph *g,uint32_t count,int exact){
+    if(count>COH_SG_DEFS_MAX)return COH_LIMIT;
+    if(count<=g->definition_capacity)return COH_OK;
+    uint32_t need=exact?count:g->definition_capacity?g->definition_capacity:16;
+    while(need<count)need=need>COH_SG_DEFS_MAX/2?COH_SG_DEFS_MAX:need*2;
+    CohSgDefinition *next=owned(g,need,sizeof(*next));if(!next)return COH_LIMIT;
+    if(g->definition_count)memcpy(next,g->definitions,(size_t)g->definition_count*sizeof(*next));
+    release(g,g->definitions,(size_t)g->definition_capacity*sizeof(*next));g->definitions=next;g->definition_capacity=need;return COH_OK;
+}
+static CohStatus reserve_roots(CohSceneGraph *g,uint32_t count,int exact){
+    if(count>COH_SG_ROOTS_MAX)return COH_LIMIT;
+    if(count<=g->root_capacity)return COH_OK;
+    uint32_t need=exact?count:g->root_capacity?g->root_capacity:16;
+    while(need<count)need=need>COH_SG_ROOTS_MAX/2?COH_SG_ROOTS_MAX:need*2;
+    CohSgRoot *next=owned(g,need,sizeof(*next));if(!next)return COH_LIMIT;
+    if(g->root_count)memcpy(next,g->roots,(size_t)g->root_count*sizeof(*next));
+    release(g,g->roots,(size_t)g->root_capacity*sizeof(*next));g->roots=next;g->root_capacity=need;return COH_OK;
+}
+static CohSceneGraph *create(uint32_t files,size_t limit,uint32_t defs,uint32_t roots,size_t *peak) {
+    if(limit<sizeof(CohSceneGraph))return NULL;
+    CohSceneGraph *g=calloc(1,sizeof(*g));if(!g)return NULL;
+    g->owned_bytes=g->peak_bytes=sizeof(*g);g->allocation_limit=limit;
+    if(files){g->files=owned(g,files,sizeof(*g->files));if(!g->files)goto fail;}
+    if(reserve_defs(g,defs,1)!=COH_OK||reserve_roots(g,roots,1)!=COH_OK||
+       reserve_index(g,&g->definition_index,&g->definition_index_capacity,defs)!=COH_OK||
+       reserve_index(g,&g->root_index,&g->root_index_capacity,roots)!=COH_OK)goto fail;
+    *peak=g->peak_bytes;return g;
+fail:*peak=g->peak_bytes;coh_scenegraph_free(g);return NULL;
 }
 static int valid_name(const char *s,int empty) {
     for(size_t i=0;i<COH_REP_NAME_MAX;i++) {
@@ -52,19 +99,43 @@ static CohStatus clone_def(CohSceneGraph *g,CohSgDefinition *d,const CohSgDefini
     return COH_OK;
 }
 static CohStatus clone_graph(CohSceneGraph *g,const CohSceneGraph *s) {
+    TRY(reserve_defs(g,s->definition_count,1));TRY(reserve_roots(g,s->root_count,1));
+    TRY(reserve_index(g,&g->definition_index,&g->definition_index_capacity,s->definition_count));
+    TRY(reserve_index(g,&g->root_index,&g->root_index_capacity,s->root_count));
     g->file_count=s->file_count;g->root_count=s->root_count;
-    memcpy(g->files,s->files,s->file_count*sizeof(*s->files));memcpy(g->roots,s->roots,s->root_count*sizeof(*s->roots));
-    for(uint32_t i=0;i<s->definition_count;i++){g->definition_count++;TRY(clone_def(g,&g->definitions[i],&s->definitions[i]));}return COH_OK;
+    if(s->file_count)memcpy(g->files,s->files,s->file_count*sizeof(*s->files));
+    if(s->root_count)memcpy(g->roots,s->roots,s->root_count*sizeof(*s->roots));
+    for(uint32_t i=0;i<s->definition_count;i++){
+        g->definition_count++;TRY(clone_def(g,&g->definitions[i],&s->definitions[i]));
+        TRY(index_put(g->definition_index,g->definition_index_capacity,(s->definitions[i].file<<16)|s->definitions[i].id,i));
+    }
+    for(uint32_t i=0;i<s->root_count;i++)TRY(index_put(g->root_index,g->root_index_capacity,s->roots[i].id,i));
+    return COH_OK;
+}
+CohStatus coh_scenegraph_find_definition(const CohSceneGraph *g,uint32_t file,uint32_t id,uint32_t *out){
+    if(!g||!out||file>=COH_GROUPS_FILE_MAX||id>COH_GROUPS_DEF_ID_MAX)return COH_INVALID;
+    return index_get(g->definition_index,g->definition_index_capacity,(file<<16)|id,out)?COH_OK:COH_NOT_FOUND;
+}
+CohStatus coh_scenegraph_find_root(const CohSceneGraph *g,uint32_t id,uint32_t *out){
+    if(!g||!out)return COH_INVALID;
+    return index_get(g->root_index,g->root_index_capacity,id,out)?COH_OK:COH_NOT_FOUND;
 }
 static CohSgDefinition *slot(CohSceneGraph *g,uint32_t file,uint32_t id) {
-    for(uint32_t i=0;i<g->definition_count;i++)if(g->definitions[i].file==file&&g->definitions[i].id==id)return &g->definitions[i];
-    if(g->definition_count==COH_SG_DEFS_MAX)return NULL;
-    CohSgDefinition *d=&g->definitions[g->definition_count++];d->file=file;d->id=id;return d;
+    uint32_t index,key=(file<<16)|id;
+    if(coh_scenegraph_find_definition(g,file,id,&index)==COH_OK)return &g->definitions[index];
+    if(file>=COH_GROUPS_FILE_MAX||id>COH_GROUPS_DEF_ID_MAX||g->definition_count==COH_SG_DEFS_MAX)return NULL;
+    if(reserve_defs(g,g->definition_count+1,0)!=COH_OK||reserve_index(g,&g->definition_index,&g->definition_index_capacity,g->definition_count+1)!=COH_OK)return NULL;
+    index=g->definition_count++;CohSgDefinition *d=&g->definitions[index];d->file=file;d->id=id;
+    if(index_put(g->definition_index,g->definition_index_capacity,key,index)!=COH_OK)return NULL;
+    return d;
 }
 static CohSgRoot *root_slot(CohSceneGraph *g,uint32_t id) {
-    for(uint32_t i=0;i<g->root_count;i++)if(g->roots[i].id==id)return &g->roots[i];
+    uint32_t index;if(coh_scenegraph_find_root(g,id,&index)==COH_OK)return &g->roots[index];
     if(g->root_count==COH_SG_ROOTS_MAX)return NULL;
-    CohSgRoot *r=&g->roots[g->root_count++];r->id=id;return r;
+    if(reserve_roots(g,g->root_count+1,0)!=COH_OK||reserve_index(g,&g->root_index,&g->root_index_capacity,g->root_count+1)!=COH_OK)return NULL;
+    index=g->root_count++;CohSgRoot *r=&g->roots[index];r->id=id;
+    if(index_put(g->root_index,g->root_index_capacity,id,index)!=COH_OK)return NULL;
+    return r;
 }
 static CohStatus bit(Build *b,unsigned w,uint32_t *v){TRY(coh_rep_read(&b->r,w,v));return w<32&&(*v>>w)?COH_INVALID:COH_OK;}
 static CohStatus pack(Build *b,unsigned w,uint32_t *v){return coh_rep_pack(&b->r,w,v);}
@@ -109,8 +180,7 @@ static CohStatus tricks(Build *b,CohSgDefinition *d) {
     if(u){uint32_t n;char key[64];TRY(bit(b,32,&n));if(n>COH_GROUPS_PROPERTY_MAX)return COH_LIMIT;for(uint32_t i=0;i<n;i++){TRY(coh_rep_string(&b->r,key,sizeof(key)));for(uint32_t j=0;j<COH_GROUPS_VALUE_MAX;j++){uint32_t c;TRY(bit(b,8,&c));if(!c)break;if(j+1==COH_GROUPS_VALUE_MAX)return COH_LIMIT;}TRY(flag(b,&u));}}
     return COH_OK;
 }
-static CohStatus decode_def(Build *b,uint32_t file,uint32_t id) {
-    CohSgDefinition *d=slot(b->g,file,id);if(!d)return COH_LIMIT;
+static CohStatus decode_record(Build *b,CohSgDefinition *d,uint32_t file,uint32_t id) {
     clear_def(b->g,d);d->file=file;d->id=id;b->f.definition=id;
     size_t start=b->r.cursor;uint32_t u;TRY(flag(b,&d->in_use));
     if(d->in_use) {
@@ -130,6 +200,10 @@ static CohStatus decode_def(Build *b,uint32_t file,uint32_t id) {
     d->wire=owned(b->g,d->wire_bytes,1);if(!d->wire)return COH_LIMIT;
     memcpy(d->wire,b->r.bytes.data+start/8,d->wire_bytes);return COH_OK;
 }
+static CohStatus decode_def(Build *b,uint32_t file,uint32_t id) {
+    CohSgDefinition *d=slot(b->g,file,id);if(!d)return COH_LIMIT;
+    return decode_record(b,d,file,id);
+}
 void coh_scenegraph_definition_dispose(CohSgDefinition *d) {
     if(!d)return;
     free(d->children);free(d->swaps);free(d->wire);memset(d,0,sizeof(*d));
@@ -138,13 +212,13 @@ CohStatus coh_scenegraph_definition_read(CohSgDefinition *out,CohRepReader *read
     CohSgDefinition candidate={0};CohSceneGraph graph={0};Build b={0};uint32_t id;CohStatus s;
     if(!out||!reader||!bytes||file>=COH_GROUPS_FILE_MAX||available>COH_SG_MEMORY_MAX)return COH_INVALID;
     b.r=*reader;b.g=&graph;graph.definitions=&candidate;graph.definition_count=1;
-    graph.owned_bytes=COH_SG_MEMORY_MAX-available;
+    graph.allocation_limit=available;
     s=pack(&b,1,&id);if(s!=COH_OK)return s;
     if(!id||id>COH_GROUPS_DEF_ID_MAX+1u)return COH_INVALID;
     candidate.file=file;candidate.id=id-1;
-    s=decode_def(&b,file,id-1);
+    s=decode_record(&b,&candidate,file,id-1);
     if(s!=COH_OK){coh_scenegraph_definition_dispose(&candidate);return s;}
-    *out=candidate;*reader=b.r;*bytes=graph.owned_bytes-(COH_SG_MEMORY_MAX-available);return COH_OK;
+    *out=candidate;*reader=b.r;*bytes=graph.owned_bytes;return COH_OK;
 }
 static CohStatus imported(Build *b,uint32_t index,const char *name,uint32_t checksum) {
     CohSgFile *f=&b->g->files[index];b->f.stage=COH_SG_IMPORT;b->f.file=index;
@@ -157,7 +231,7 @@ static CohStatus imported(Build *b,uint32_t index,const char *name,uint32_t chec
     if(source.definition_count&&!source.definitions)return COH_INVALID;
     for(uint32_t i=0;i<source.definition_count;i++) {
         const CohSgDefinition *s=&source.definitions[i];
-        for(uint32_t j=0;j<i;j++)if(source.definitions[j].id==s->id)return COH_INVALID;
+        uint32_t duplicate;if(coh_scenegraph_find_definition(b->g,index,s->id,&duplicate)==COH_OK)return COH_INVALID;
         CohSgDefinition *d=slot(b->g,index,s->id);if(!d)return COH_LIMIT;
         TRY(clone_def(b->g,d,s));d->file=index;
     }
@@ -190,18 +264,56 @@ static CohStatus asset(Build *b,CohSgAssetKind kind,const char *name) {
     if(!b->imports->asset)return COH_NOT_FOUND;
     return b->imports->asset(b->imports->context,kind,name,b->imports->generation);
 }
-static CohStatus lookup(const CohSceneGraph *g,const char *name,uint32_t *out) {
+static uint32_t name_hash(const char *s){uint32_t h=2166136261u;for(;*s;s++){h^=lower((unsigned char)*s);h*=16777619u;}return h;}
+CohStatus coh_scenegraph_find_name(const CohSceneGraph *g,const char *name,uint32_t *out) {
+    if(!g||!name||!out)return COH_INVALID;
     if(!valid_name(name,0))return COH_UNSUPPORTED;
     name=basename_(name);if(!*name||strchr(name,'\\'))return COH_UNSUPPORTED;
-    for(uint32_t i=0;i<g->definition_count;i++)if(g->definitions[i].in_use&&same_name(g->definitions[i].name,name)){*out=i;return COH_OK;}
-    return COH_NOT_FOUND;
+    if(!g->name_index_capacity)return COH_NOT_FOUND;
+    uint32_t hash=name_hash(name),at=hash32(hash)&(g->name_index_capacity-1);
+    for(uint32_t n=0;n<g->name_index_capacity&&n<INDEX_PROBES_MAX;n++,at=(at+1)&(g->name_index_capacity-1)){
+        const CohSgIndexEntry *e=&g->name_index[at];if(!e->value)return COH_NOT_FOUND;
+        if(e->key==hash&&same_name(g->definitions[e->value-1].name,name)){*out=e->value-1;return COH_OK;}
+    }return COH_NOT_FOUND;
 }
-static int by_slot(const void *aa,const void *bb) {
-    const CohSgDefinition *a=aa,*b=bb;
-    if(a->file!=b->file)return a->file<b->file?-1:1;
-    return a->id<b->id?-1:a->id>b->id;
+static CohStatus build_names(CohSceneGraph *g){
+    if(!g->definition_count)return COH_OK;
+    g->name_index_capacity=index_capacity(g->definition_count);
+    g->name_index=owned(g,g->name_index_capacity,sizeof(*g->name_index));if(!g->name_index)return COH_LIMIT;
+    for(uint32_t i=0;i<g->definition_count;i++)if(g->definitions[i].in_use){
+        const char *name=g->definitions[i].name;uint32_t duplicate;
+        if(!valid_name(name,0)||strchr(name,'/')||strchr(name,'\\'))return COH_UNSUPPORTED;
+        if(coh_scenegraph_find_name(g,name,&duplicate)==COH_OK)return COH_INVALID;
+        TRY(index_put(g->name_index,g->name_index_capacity,name_hash(name),i));
+    }return COH_OK;
 }
-static int by_root(const void *aa,const void *bb) {const CohSgRoot *a=aa,*b=bb;return a->id<b->id?-1:a->id>b->id;}
+static int def_less(const CohSgDefinition *a,const CohSgDefinition *b){return a->file!=b->file?a->file<b->file:a->id<b->id;}
+/* In-place heapsort avoids libc qsort's implementation-dependent temporary
+ * allocation. These sorts have O(n log n) work and constant auxiliary storage. */
+static void sift_defs(CohSgDefinition *a,uint32_t count,uint32_t root){
+    CohSgDefinition value=a[root];
+    while(root<count/2){uint32_t child=root*2+1;
+        if(child+1<count&&def_less(&a[child],&a[child+1]))child++;
+        if(!def_less(&value,&a[child]))break;
+        a[root]=a[child];root=child;
+    }a[root]=value;
+}
+static void sort_defs(CohSgDefinition *a,uint32_t n){
+    for(uint32_t i=n/2;i>0;i--)sift_defs(a,n,i-1);
+    for(uint32_t i=n;i>1;i--){CohSgDefinition t=a[0];a[0]=a[i-1];a[i-1]=t;sift_defs(a,i-1,0);}
+}
+static void sift_roots(CohSgRoot *a,uint32_t count,uint32_t root){
+    CohSgRoot value=a[root];
+    while(root<count/2){uint32_t child=root*2+1;
+        if(child+1<count&&a[child].id<a[child+1].id)child++;
+        if(value.id>=a[child].id)break;
+        a[root]=a[child];root=child;
+    }a[root]=value;
+}
+static void sort_roots(CohSgRoot *a,uint32_t n){
+    for(uint32_t i=n/2;i>0;i--)sift_roots(a,n,i-1);
+    for(uint32_t i=n;i>1;i--){CohSgRoot t=a[0];a[0]=a[i-1];a[i-1]=t;sift_roots(a,i-1,0);}
+}
 static CohStatus visit(CohSceneGraph *g,uint32_t index,uint8_t *colors_,uint16_t *height,uint32_t depth) {
     if(depth>COH_SG_DEPTH_MAX)return COH_LIMIT;
     if(colors_[index]==1)return COH_INVALID;
@@ -215,20 +327,25 @@ static uint32_t adler_string(uint32_t crc,const char *s) {
 }
 static uint32_t digest_order(uint32_t x){return (x>>24)|((x>>8)&0xff00u)|((x<<8)&0xff0000u)|(x<<24);}
 static CohStatus resolve(Build *b,const CohGroupsInspection *expected) {
-    CohSceneGraph *g=b->g;uint32_t children=0,dc=1,rc=1;uint8_t colors_[COH_SG_DEFS_MAX]={0};uint16_t height[COH_SG_DEFS_MAX]={0};
+    CohSceneGraph *g=b->g;uint32_t children=0,dc=1,rc=1;uint8_t *colors_;uint16_t *height;
     b->f.stage=COH_SG_RESOLVE;
-    qsort(g->definitions,g->definition_count,sizeof(*g->definitions),by_slot);qsort(g->roots,g->root_count,sizeof(*g->roots),by_root);
+    if(g->definition_count)sort_defs(g->definitions,g->definition_count);
+    if(g->root_count)sort_roots(g->roots,g->root_count);
+    memset(g->definition_index,0,(size_t)g->definition_index_capacity*sizeof(*g->definition_index));
+    memset(g->root_index,0,(size_t)g->root_index_capacity*sizeof(*g->root_index));
+    for(uint32_t i=0;i<g->definition_count;i++)TRY(index_put(g->definition_index,g->definition_index_capacity,(g->definitions[i].file<<16)|g->definitions[i].id,i));
+    for(uint32_t i=0;i<g->root_count;i++)TRY(index_put(g->root_index,g->root_index_capacity,g->roots[i].id,i));
+    TRY(build_names(g));
     for(uint32_t i=0;i<g->definition_count;i++) {
         CohSgDefinition *d=&g->definitions[i];b->f.file=d->file;b->f.definition=d->id;
         if(!d->in_use){dc=adler_string(dc,"NAMELESS");continue;}
         if(!valid_name(d->name,0)||strchr(d->name,'/')||strchr(d->name,'\\'))return COH_UNSUPPORTED;
-        for(uint32_t j=0;j<i;j++)if(g->definitions[j].in_use&&same_name(d->name,g->definitions[j].name))return COH_INVALID;
         dc=adler_string(dc,d->name);
         if(d->child_count>COH_SG_CHILDREN_MAX-children)return COH_LIMIT;
         children+=d->child_count;
         for(uint32_t j=0;j<d->child_count;j++) {
             for(unsigned k=0;k<4;k++)for(unsigned l=0;l<3;l++)if(!isfinite(d->children[j].matrix[k][l]))return COH_INVALID;
-            TRY(lookup(g,d->children[j].name,&d->children[j].resolved));
+            TRY(coh_scenegraph_find_name(g,d->children[j].name,&d->children[j].resolved));
         }
         TRY(asset(b,COH_SG_GEOMETRY,d->geometry));
         for(unsigned j=0;j<2;j++)TRY(asset(b,COH_SG_TEXTURE,d->textures[j]));
@@ -238,9 +355,15 @@ static CohStatus resolve(Build *b,const CohGroupsInspection *expected) {
             TRY(asset(b,kind,d->swaps[j].original));TRY(asset(b,kind,d->swaps[j].replacement));
         }
     }
-    for(uint32_t i=0;i<g->definition_count;i++)if(g->definitions[i].in_use)TRY(visit(g,i,colors_,height,0));
+    /* One bounded scratch block; every failure releases it before rollback. */
+    size_t scratch=(size_t)g->definition_count*(sizeof(*colors_)+sizeof(*height));
+    colors_=scratch?owned(g,scratch,1):NULL;if(scratch&&!colors_)return COH_LIMIT;
+    height=scratch?(uint16_t *)colors_:NULL;colors_=scratch?(uint8_t *)(height+g->definition_count):NULL;
+    CohStatus traversal=COH_OK;
+    for(uint32_t i=0;i<g->definition_count;i++)if(g->definitions[i].in_use){traversal=visit(g,i,colors_,height,0);if(traversal!=COH_OK)break;}
+    release(g,height,scratch);if(traversal!=COH_OK)return traversal;
     for(uint32_t i=0;i<g->root_count;i++)if(g->roots[i].active) {
-        CohSgRoot *r=&g->roots[i];b->f.reference=r->id;TRY(lookup(g,r->name,&r->resolved));
+        CohSgRoot *r=&g->roots[i];b->f.reference=r->id;TRY(coh_scenegraph_find_name(g,r->name,&r->resolved));
         CohSgDefinition *d=&g->definitions[r->resolved];rc=adler_string(rc,d->name);
         if(d->child_count)rc=adler_string(rc,g->definitions[d->children[0].resolved].name);
         g->active_roots++;
@@ -249,24 +372,44 @@ static CohStatus resolve(Build *b,const CohGroupsInspection *expected) {
     if(g->active_roots!=expected->footer_active_roots||g->definitions_crc!=expected->footer_defs_crc||g->references_crc!=expected->footer_refs_crc)return COH_INVALID;
     return COH_OK;
 }
-CohStatus coh_scenegraph_apply(CohSceneGraph **published,CohRepReader *reader,const CohSgImports *imports,uint32_t generation,CohSgFailure *failure) {
-    Build b={0};CohGroupsInspection inspection;CohGroupsFailure inspect_failure;CohStatus status=COH_INVALID;b.f.stage=COH_SG_INSPECT;
-    if(!published||!reader||!imports||!imports->generation||!generation)goto done;
+CohStatus coh_scenegraph_apply_bounded(CohSceneGraph **published,CohRepReader *reader,const CohSgImports *imports,uint32_t generation,const CohSgBudget *budget,CohSgMemoryReport *memory,CohSgFailure *failure) {
+    Build b={0};CohGroupsInspection inspection;CohGroupsFailure inspect_failure;CohSgMemoryReport report={0};
+    CohStatus status=COH_INVALID;size_t base=0,limit=0;b.f.stage=COH_SG_INSPECT;
+    if(!published||!reader||!imports||!imports->generation||!generation||!budget)goto done;
     if((*published&&((*published)->generation==UINT32_MAX||generation!=(*published)->generation+1))||(!*published&&generation!=1)){status=COH_STATE;goto done;}
-    b.r=*reader;status=coh_rep_groups(&b.r,&inspection,&inspect_failure);
+    b.f.stage=COH_SG_BUDGET;report.aggregate_limit=budget->aggregate_limit;report.external_bytes=budget->external_bytes;
+    report.fixed_scratch_bytes=COH_SG_FIXED_SCRATCH_BYTES;
+    report.input_bytes=reader->bytes.size;report.prior_bytes=*published?(*published)->owned_bytes:0;
+    if(!budget->aggregate_limit||budget->aggregate_limit>COH_SG_TRANSACTION_MAX||budget->reserve_definitions>COH_SG_DEFS_MAX||budget->reserve_roots>COH_SG_ROOTS_MAX)goto done;
+    status=COH_LIMIT;
+    if(report.external_bytes>budget->aggregate_limit||report.input_bytes>budget->aggregate_limit-report.external_bytes||
+       report.prior_bytes>budget->aggregate_limit-report.external_bytes-report.input_bytes||
+       report.fixed_scratch_bytes>budget->aggregate_limit-report.external_bytes-report.input_bytes-report.prior_bytes)goto done;
+    base=report.external_bytes+report.input_bytes+report.prior_bytes+report.fixed_scratch_bytes;report.aggregate_peak_bytes=base;
+    limit=budget->aggregate_limit-base;if(limit>COH_SG_MEMORY_MAX)limit=COH_SG_MEMORY_MAX;
+    b.f.stage=COH_SG_INSPECT;b.r=*reader;status=coh_rep_groups(&b.r,&inspection,&inspect_failure);
     if(status!=COH_OK){b.f.bit=inspect_failure.bit_offset;goto done;}
     if(!inspection.new_world&&!*published){status=COH_STATE;goto done;}
     if(!inspection.new_world&&(*published)->asset_generation!=imports->generation){status=COH_STATE;goto done;}
-    b.r=*reader;b.imports=imports;b.g=create();if(!b.g){status=COH_LIMIT;goto done;}
+    if(!inspection.new_world&&inspection.files<(*published)->file_count){status=COH_UNSUPPORTED;goto done;}
+    b.r=*reader;b.imports=imports;b.f.stage=COH_SG_BUDGET;
+    b.g=create(inspection.files,limit,budget->reserve_definitions,budget->reserve_roots,&report.candidate_peak_bytes);if(!b.g){report.aggregate_peak_bytes=base+report.candidate_peak_bytes;status=COH_LIMIT;goto done;}
     b.g->generation=generation;b.g->asset_generation=imports->generation;
     if(!inspection.new_world){status=clone_graph(b.g,*published);if(status!=COH_OK)goto done;}
     status=decode(&b);if(status!=COH_OK)goto done;
     status=resolve(&b,&inspection);if(status!=COH_OK)goto done;
+    report.candidate_peak_bytes=b.g->peak_bytes;report.aggregate_peak_bytes=base+b.g->peak_bytes;
     {CohSceneGraph *old=*published;*published=b.g;b.g=NULL;reader->cursor=inspection.consumed_bits;coh_scenegraph_free(old);}
 done:
+    if(b.g){report.candidate_peak_bytes=b.g->peak_bytes;report.aggregate_peak_bytes=base+b.g->peak_bytes;}
+    if(memory)*memory=report;
     if(status!=COH_OK){b.f.status=status;if(!b.f.bit)b.f.bit=b.r.cursor;if(failure)*failure=b.f;}
     else if(failure)memset(failure,0,sizeof(*failure));
     coh_scenegraph_free(b.g);return status;
+}
+CohStatus coh_scenegraph_apply(CohSceneGraph **published,CohRepReader *reader,const CohSgImports *imports,uint32_t generation,CohSgFailure *failure){
+    const CohSgBudget budget={COH_SG_TRANSACTION_MAX,0,0,0};
+    return coh_scenegraph_apply_bounded(published,reader,imports,generation,&budget,NULL,failure);
 }
 CohStatus coh_scenegraph_compose(const CohSgMatrix p,const CohSgMatrix c,CohSgMatrix out) {
     if(!p||!c||!out)return COH_INVALID;

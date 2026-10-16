@@ -1,0 +1,116 @@
+# Initial authoritative update closure ledger
+
+Checkpoint: additive entity continuation from remote
+`cda93d96f8696e6a0f2ec6940a0c96e5b852f281`. Original source import:
+`0b75ade0c801735e10c5798f641948a45cc50488`; exact source hashes are in
+`source-pins.json`. This ledger records implementation boundaries, not acceptance.
+
+## Entity record, original `Game/src/entity/entrecv.c:entReceive` order
+
+| Step | Boundary | Status / remaining work |
+|---|---|---|
+| 1 | Delta index and `checkEntCreate` | Supported create metadata including pet power CRC; dictionary references unresolved |
+| 2 | rare / medium / very-rare flags | Read; very-rare continuation still rejects |
+| 3 | state mode | Supported |
+| 4 | position and quaternion | Supported absolute/accepted position kernel; non-instant interpolated offsets still reject |
+| 5 | sequence movement | Supported numeric sequence/tick/bits; no resolved animation resource |
+| 6 | triggered moves and AI animation list | Bounded metadata; no FX execution |
+| 7 | pchar flag and NetFX flag | Complete bounded NetFX event grammar supported; event handles/resources remain unresolved, list inspection does not retain events |
+| 8 | costume and translucency | NPC index and sequence-name references supported; entire, owned and custom NPC costumes unsupported |
+| 9 | power customization and titles if very rare | Unsupported |
+| 10 | ragdoll | Bounded scalar consumption; not skeleton-qualified publication |
+| 11 | basic character stats if pchar | Complete pinned basic absolute non-debug schema supported |
+| 12 | vision phases, exclusive phase, yellow con | Supported numeric values |
+| 13 | combat-mod shift if pchar | Supported numeric value |
+| 14 | target/assist/taunter/placaters | Supported bounded metadata |
+| 15 | status effects | Supported mask/vision/status-string metadata |
+| 16 | self inventory sizes | Supported pinned five-type schema; does not contain inventory contents |
+| 17 | self taskforce architect information and parameters if very rare | Unsupported |
+| 18 | odd-send, ally ID, ignore-combat flags/offset level | Unsupported very-rare stream |
+| 19 | player type/subtype/praetorian/location | Unsupported very-rare stream (create metadata already supported) |
+| 20 | PvP, collision, selectable, no-draw, map visibility, contact/PNPC, con/walls | Unsupported very-rare stream |
+| 21 | name, pet metadata, AFK | Unsupported very-rare update stream (create variants already supported) |
+| 22 | supergroup mission/tokens/recipes/details, leveling pact, logout | Unsupported very-rare stream |
+| 23 | teammate buff stream | Unsupported |
+| 24 | canonical list sentinel; global unique self ownership | Supported across caller's complete supplied staging table |
+
+## ALLENTS outer tail, original `entReceiveUpdate` order
+
+The existing replication header parser is separate. Entity-list success does not
+validate any row below. `coh_ent_full_update_tail` rejects without consuming data.
+
+| Step | Boundary | Status / dependency |
+|---|---|---|
+| 1 | optional per-entity debug and global entity debug | Unsupported; transport/debug-profile contract required |
+| 2 | `playerReceiveControlState` | Unsupported; control/physics source and original producer must be pinned/executed |
+| 3 | `entReceiveDeletes` | Standalone parser and staging apply supported; correct outer offset not established |
+| 4 | `receiveCharacterFromServer` for full update | Unsupported composition; expanded below |
+| 4a | otherwise `SendCharacterToSelf` stats | Standalone complete absolute schema supported; correct outer offset not established |
+| 5 | power-info update, power-mode update | Unsupported; power dictionary and bounded metadata ownership required |
+| 6 | badge update and full-update badge monitor | Unsupported |
+| 7 | generic inventory and invention updates | Unsupported |
+| 8 | workshop string | Unsupported in outer transaction |
+| 9 | conditional team, super stats, conditional league | Unsupported |
+| 10 | optional attribute descriptions | Unsupported |
+| 11 | dynamic groups and sky fade | Unsupported |
+| 12 | optional slave pitch/yaw/roll | Unsupported |
+| 13 | exact packet end and complete transactional admission | Absent; acknowledgments must remain disabled |
+
+## Full character tail, original `receiveCharacterFromServer` order
+
+1. Five packed server-state flags; auth-user-data bytes; player type/subtype,
+   praetorian progress and location.
+2. `character_Receive`: class/origin **names** and dictionary lookup; packed
+   level, combat-mod shift, build, location; complete power builds/sets/powers;
+   inspirations; boosts; inventory contents. Numeric create class/origin indices
+   alone do not satisfy this name/dictionary identity.
+3. Original power-set names; ally and PvP; `SendCharacterToSelf` statistics
+   (only this standalone statistic substructure is implemented).
+4. Tray and tray mode; entity name; entity strings; full help state;
+   all original window records (source count and field grammar must be pinned).
+5. Reward-token list and active-player-token list; LFG and hidden masks;
+   supergroup mode/emblem; skills; team-buff/dock/inspiration modes; features.
+6. Chat settings; titles; description; comment; keybinds/profile; options or
+   mouse settings; dividers; control-first/nocoll; friends; combat-monitor stats;
+   rename flag.
+
+All six groups still require a bounded transactional owner. Apparent optional
+absence cannot be assumed; native parsing must validate the actual wire flags.
+Unknown data must never be skipped by scanning for a plausible later sentinel.
+
+## Smallest next authentic closure
+
+First close complete **selected self create**, then the global initial tail:
+
+1. Import/version the exact costume string dictionaries and body-part metadata;
+   implement original cached indexed strings/colors, full costume/rewards/
+   fallthrough, and power customization. Consume through read-only additive
+   contracts with gameplay appearance ownership; do not edit its internals.
+2. Retain/resolve staged NetFX events and implement the entire very-rare per-entity stream, plus interpolation
+   and buffs encountered by the actual source profile. Independent original
+   producer/consumer comparisons and later-record rollback are required.
+3. Implement control state and complete `character_Receive` power/inventory
+   payloads with pinned class/origin/basepower dictionaries, then remaining
+   character UI/account fields and post-character global tails.
+4. Execute original complete initial-update producer in a disposable source
+   environment; bind synthetic oracle and authentic capture identities separately.
+   Apply exact-end, selected DBID/entity ownership, dictionary generations, stale
+   packet/session and delete validation in one transaction.
+
+This is not blocked solely on server access: the unimplemented client grammars
+remain substantial. Source substructures can continue without server access;
+final complete qualification needs authentic source/profile dictionaries and
+actual complete packets. A capture alone cannot make an incomplete parser safe.
+
+## Immutable actor boundary
+
+Current PODs are mutable staging, not actor snapshots. There is deliberately no
+public conversion that certifies a `CohEntSlot` or `CohEntList` as complete. The
+renderer adapter may use deterministic fixtures under its fixture policy.
+Production publication must be owned by a future complete transaction layer and
+must bind selected DBID, unique slot/entity generation, exact packet/session,
+position/orientation, basic/self stats, class/origin/costume/sequence dictionaries
+and resource generation. All global tails and exact message end must pass before
+minting its receipt. Failed preparation leaves the previous published generation
+untouched. No READY/RECEIVED_CHARACTER/full-update ACK may depend on these staging
+APIs or user-supplied booleans alone.

@@ -1,0 +1,151 @@
+#!/usr/bin/env python3
+"""Pure hosted-runner controls only; never claim local Windows/server execution."""
+import json
+import os
+from pathlib import Path
+import struct
+import tempfile
+import unittest
+from unittest import mock
+import capture_disposable as c
+import delivery as d
+
+
+class CaptureControls(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix='coh-catalog-capture-')
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def test_requires_actual_hosted_environment_before_mutations(self):
+        with mock.patch.dict(os.environ, {'RUNNER_ENVIRONMENT': 'local'}, clear=True):
+            with self.assertRaises(d.Refused): c.capture(None)
+        self.assertEqual(list(self.root.iterdir()), [])
+
+    def test_inventory_dereferences_into_separate_private_files(self):
+        source = self.root / 'source'; source.mkdir()
+        original = self.root / 'immutable'; original.write_bytes(b'original')
+        (source / 'linked').symlink_to(original)
+        (source / 'real').write_bytes(b'real')
+        target = self.root / 'target'
+        first = c.inventory(source, target)
+        self.assertEqual(first, c.inventory(source))
+        self.assertEqual(first, c.inventory(target))
+        self.assertFalse((target / 'linked').is_symlink())
+        (target / 'linked').write_bytes(b'changed')
+        self.assertEqual(original.read_bytes(), b'original')
+        self.assertEqual(first, c.inventory(source))
+
+    def test_linked_directories_refused(self):
+        source = self.root / 'source'; source.mkdir()
+        (source / 'linked-dir').symlink_to(self.root, target_is_directory=True)
+        with self.assertRaises(d.Refused): c.inventory(source)
+
+    def test_existing_copy_target_preserved(self):
+        source = self.root / 'source'; source.mkdir()
+        target = self.root / 'target'; target.mkdir()
+        (target / 'keep').write_bytes(b'keep')
+        with self.assertRaises(FileExistsError): c.inventory(source, target)
+        self.assertEqual((target / 'keep').read_bytes(), b'keep')
+
+    def test_file_limit_before_payload(self):
+        source = self.root / 'source'; source.mkdir(); (source / 'a').write_bytes(b'a')
+        with mock.patch.object(c, 'MAX_FILES', 0):
+            with self.assertRaises(d.Refused): c.inventory(source)
+
+    def test_byte_limit_before_payload(self):
+        source = self.root / 'source'; source.mkdir(); (source / 'a').write_bytes(b'a')
+        with mock.patch.object(c, 'MAX_BYTES', 0):
+            with self.assertRaises(d.Refused): c.inventory(source)
+
+    def test_stable_order(self):
+        a = self.root / 'a'; a.mkdir(); b = self.root / 'b'; b.mkdir()
+        for name in ('c', 'b', 'a'): (a / name).write_text(name)
+        for name in ('a', 'b', 'c'): (b / name).write_text(name)
+        self.assertEqual(c.inventory(a), c.inventory(b))
+
+    def dispatch(self, **changes):
+        value = dict(magic=b'COHDBP1\0', version=1, size=128, pid=42, tid=43,
+                     seq=2, stage=1, loops=1, flags=0, count=1)
+        value.update(changes)
+        raw = struct.pack('<8s9I', *value.values()) + bytes(4096-44)
+        path = self.root / 'dispatch'; path.write_bytes(raw)
+        return path
+
+    def test_actual_format_dispatch_admission(self):
+        self.assertTrue(c.dispatch_ready(self.dispatch(), {'1': 'READY'}))
+        self.assertFalse(c.dispatch_ready(self.dispatch(seq=1), {'1': 'READY'}))
+        self.assertFalse(c.dispatch_ready(self.dispatch(seq=0), {'1': 'READY'}))
+        self.assertFalse(c.dispatch_ready(self.dispatch(loops=0), {'1': 'READY'}))
+
+    def test_bad_dispatch_rejected(self):
+        for key, bad in (('magic', b'BADMAGIC'), ('version', 2), ('size', 127),
+                         ('pid', 0), ('tid', 0), ('stage', 2), ('flags', 1), ('count', 2)):
+            with self.subTest(field=key):
+                with self.assertRaises(d.Refused): c.dispatch_ready(self.dispatch(**{key: bad}), {'1': 'READY'})
+
+    def test_missing_dispatch(self):
+        self.assertFalse(c.dispatch_ready(self.root/'absent', {'1': 'READY'}))
+
+    def test_dispatch_reserved_tail(self):
+        path = self.dispatch(); raw = bytearray(path.read_bytes()); raw[127] = 1; path.write_bytes(raw)
+        with self.assertRaises(d.Refused): c.dispatch_ready(path, {'1': 'READY'})
+
+    @staticmethod
+    def sink(**changes):
+        values = dict(status=1, producer_status=0, failure_file=0, failure_slot=0, files=508,
+                      definitions=12000, slots=12005, children=35000, wire_bytes=1000,
+                      total_bytes=2048, emitted_bytes=2048, written_bytes=2048,
+                      partial_remaining=0, partial_removed=0)
+        values.update(changes)
+        return ('COH_NATIVE_SCENE_CATALOG_V1 ' + ' '.join('%s=%d'%row for row in values.items())+'\n').encode()
+
+    def test_sink_observation_exact_scope(self):
+        self.assertEqual(c.sink_observation(self.sink())['files'], 508)
+        self.assertIsNone(c.sink_observation(b'unrelated log'))
+
+    def test_failed_duplicate_truncated_sink(self):
+        for raw in (self.sink(status=2), self.sink(producer_status=1), self.sink(partial_remaining=1),
+                    self.sink(written_bytes=1), self.sink()+self.sink()):
+            with self.assertRaises(d.Refused): c.sink_observation(raw)
+        self.assertIsNone(c.sink_observation(self.sink()[:40]))
+
+    def test_log_limit(self):
+        path = self.root/'log'; path.write_bytes(b'123')
+        with mock.patch.object(c, 'MAX_LOG', 2):
+            with self.assertRaises(d.Refused): c.bounded_logs([path])
+
+    def test_partial_pg_init_recovers_owned_cluster_and_stops(self):
+        pg_root = self.root/'pg'; pg_root.mkdir()
+        (pg_root/'cluster.json').write_text('{}'); (pg_root/'credentials.json').write_text('{}')
+        cluster = mock.Mock(root=pg_root)
+        cluster.run.side_effect = [mock.Mock(returncode=0), mock.Mock(returncode=3)]
+        module = mock.Mock(); module.Cluster.return_value = cluster
+        self.assertTrue(c.cleanup_postgresql(None, pg_root, module))
+        module.Cluster.assert_called_once_with(pg_root); cluster.stop.assert_called_once()
+
+    def test_partial_pg_unknown_or_running_never_passes_cleanup(self):
+        pg_root = self.root/'pg'; pg_root.mkdir()
+        with self.assertRaises(d.Refused): c.cleanup_postgresql(None, pg_root, mock.Mock())
+        for codes in ((4,), (0, 0)):
+            cluster = mock.Mock(root=pg_root)
+            cluster.run.side_effect = [mock.Mock(returncode=n) for n in codes]
+            with self.assertRaises(d.Refused): c.cleanup_postgresql(cluster, pg_root, mock.Mock())
+
+    def test_exited_leader_never_proves_descendant_group_cleanup(self):
+        process = mock.Mock(pid=12345)
+        with mock.patch.object(os, 'killpg', return_value=None) as probe:
+            self.assertFalse(c.process_group_absent(process))
+            probe.assert_called_once_with(12345, 0)
+        with mock.patch.object(os, 'killpg', side_effect=ProcessLookupError):
+            self.assertTrue(c.process_group_absent(process))
+        with mock.patch.object(os, 'killpg', side_effect=PermissionError):
+            self.assertFalse(c.process_group_absent(process))
+
+    def test_windows_path(self):
+        self.assertEqual(c.windows_path(self.root/'file'), 'Z:'+str(self.root/'file').replace('/', '\\'))
+        with self.assertRaises(d.Refused): c.windows_path(self.root/'ads:stream')
+
+
+
+if __name__ == '__main__': unittest.main()

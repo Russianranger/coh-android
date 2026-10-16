@@ -29,7 +29,8 @@ def qualify(root, sanitize):
     producer = stage.regular(root / 'native-android/engine/scenecatalog/source_export.inc')
     source = {name: (HERE / name).read_bytes() for name in
               ('stage_export.py', 'source_sink.inc', 'test_sink.c',
-               'test_stage_export.py', 'check.py')}
+               'test_stage_export.py', 'delivery.py', 'test_delivery.py',
+               'capture_disposable.py', 'test_capture_disposable.py', 'check.py')}
     source['producer/source_export.inc'] = producer.read_bytes()
     for name in (stage.GROUP, stage.INIT):
         source['original/' + name] = stage.lf(stage.regular(root / 'upstream/ouroboros' / name).read_bytes())
@@ -38,6 +39,14 @@ def qualify(root, sanitize):
     match = re.search(r'Ran ([0-9]+) tests', tests.stderr)
     if not match or not re.search(r'^OK$', tests.stderr, re.MULTILINE):
         raise ValueError('STAGER_CHECK_FAILED')
+    delivery_tests = run([sys.executable, 'test_delivery.py'])
+    delivery_match = re.search(r'Ran ([0-9]+) tests', delivery_tests.stderr)
+    if not delivery_match or not re.search(r'^OK$', delivery_tests.stderr, re.MULTILINE):
+        raise ValueError('DELIVERY_CHECK_FAILED')
+    capture_tests = run([sys.executable, 'test_capture_disposable.py'])
+    capture_match = re.search(r'Ran ([0-9]+) tests', capture_tests.stderr)
+    if not capture_match or not re.search(r'^OK$', capture_tests.stderr, re.MULTILINE):
+        raise ValueError('CAPTURE_CONTROL_CHECK_FAILED')
     modes = [('release', ['-O2'])]
     if sanitize:
         modes += [('asan', ['-O1', '-g', '-fsanitize=address', '-fno-omit-frame-pointer', '-no-pie']),
@@ -67,7 +76,8 @@ def qualify(root, sanitize):
         'schema': 'coh-nonshipping-scene-catalog-server-host-v1', 'passed': True,
         'scope': 'actual_sink_include_with_mock_source_producer_local_winapi_shim_and_stager_refusals',
         'source_sha256': {name: hashlib.sha256(raw).hexdigest() for name, raw in source.items()},
-        'stager_tests': int(match.group(1)), 'sink_modes': outcomes,
+        'stager_tests': int(match.group(1)), 'delivery_tests': int(delivery_match.group(1)),
+        'capture_control_tests': int(capture_match.group(1)), 'sink_modes': outcomes,
         'nonwindows_disabled_noop_checked': True,
         'nonshipping': True, 'disabled_by_default': True,
         'maximum_output_bytes': 32 * 1024 * 1024,
@@ -101,6 +111,8 @@ def main():
         return 2
     print(json.dumps({'schema': 1, 'status': 0, 'passed': True,
                       'stager_tests': result['stager_tests'],
+                      'delivery_tests': result['delivery_tests'],
+                      'capture_control_tests': result['capture_control_tests'],
                       'sink_checks_per_mode': [row['checks'] for row in result['sink_modes']],
                       'mapserver_executed': False, 'deployed': False}))
     return 0

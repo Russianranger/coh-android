@@ -34,13 +34,14 @@ Implemented behavior:
 
 ## Exact limitations and integration boundary
 
-`CohSgImportFn` is an interface for a future qualified importer, **not an existing
-live imported-asset adapter**. The tests supply synthetic trusted catalogs. Each
-catalog must match its exact original filename, bounds checksum, asset generation
-and all original definition slots. It includes allocated tombstones and excludes
-null slots. The catalog may not infer definitions merely from wire references.
-The bounds checksum is checked against the importer receipt; this module does
-not recompute it from original `.geo`/bounds bytes.
+`CohSgImportFn` is implemented by `coh_scenecatalog_file`. Qualification imports
+source-produced synthetic catalogs through this real decoder; no matching live
+Atlas catalog has been captured. Each catalog must match its exact original
+filename, bounds checksum, asset generation and all original definition slots.
+It includes allocated tombstones and excludes null slots. The catalog may not
+infer definitions merely from wire references. The bounds checksum is checked
+against the importer receipt; this module does not recompute it from original
+`.geo`/bounds bytes.
 
 The existing support module `engine/offline-world/tools/prepare_zones.py` reuses
 original source-map parsing, but its pinned i24 offline subset does not establish
@@ -71,14 +72,64 @@ effects; they may return cancellation or missing dependency errors. The owner
 must serialize readers while swapping snapshots: this function frees the old
 snapshot on success and is not an RCU/multithreaded publication primitive.
 
-The resolver admits 1,024 files, 4,096 definition slots, 4,096 sparse root records,
-16,384 total child edges and depth 128. Each snapshot is capped at 32 MiB including
-all allocations; the prior and candidate snapshots coexist during preparation,
-so combined worst-case graph ownership is 64 MiB. Work is finite under these
-limits; name resolution currently uses bounded linear lookup and should stay
-off the render thread. Shrinking/reordering file tables and same-index identity
-changes within incremental updates require a new-world update and are rejected.
-No imported strings become filesystem paths here.
+The resolver admits at most 1,024 files, 65,536 definitions, 65,536 sparse root
+records, 262,144 child edges and depth 128, subject to a stricter 32 MiB candidate
+allocation limit. Definitions and roots grow dynamically; known catalog counts
+can reserve exact capacity once. Original file/slot identity, root identity and
+case-folded names use separately owned indexes with at most half occupancy.
+Every insertion/lookup admits at most 256 probes; pathological collision chains
+reject transactionally instead of allowing quadratic scans. In-place heapsort
+restores original checksum order in O(n log n) time without libc temporary
+allocations. DFS scratch is dynamically bounded and freed before publication.
+All preparation remains off the render thread. Immutable index lookups allocate
+nothing and invoke no callbacks.
+
+Use `coh_scenegraph_apply_bounded` for catalog integration. Set
+`CohSgBudget.external_bytes` to the catalog report's `owned_bytes`, any retained
+catalog envelope, all retained asset generations/views and external callback
+scratch/reservations. The API adds GROUPS input bytes, old graph ownership and a
+64 KiB internal stack reserve, then admits every candidate allocation including
+simultaneously live growth arrays/indexes and DFS scratch under a caller-selected
+limit of at most 96 MiB. Callbacks must not retain allocations beyond their
+reservation. Graph output is immutable and must be serialized during publication;
+old graph is freed only on complete success. Reserve definitions from the exact
+catalog count (plus any qualified new slots), and roots from its source root
+count; hints never replace count/identity/checksum validation. Without hints,
+geometric array growth may correctly refuse a large graph whose final size
+alone fits. The legacy `coh_scenegraph_apply` wrapper reserves zero external
+bytes and is compatibility-only, not a complete working-set admission contract.
+
+Memory receipts count allocation payload and reserved external/scratch bytes,
+not allocator metadata, GPU allocation or whole-process RSS. Account these
+separately in the caller's process budget. Host GCC `-O2 -fstack-usage` measures
+96 bytes per recursive visit, at most 129 frames including a rejected depth,
+and 1,904 bytes for the apply frame; the 64 KiB internal reserve exceeds that
+measured path. Android compiler frames require their own qualification. Caller
+and arbitrary importer callback stack usage belong to the external reservation.
+Shrinking/reordering file tables or changing same-index identities during an
+incremental update requires a new-world update and rejects before cloning. No
+imported strings become filesystem paths.
+
+## Dynamic stress qualification
+
+The source-produced stress fixture has 508 files, 12,192 allocated definitions,
+36,567 child links and 33 roots. These are synthetic original-source inputs, not
+a captured Atlas world. The fixture generator independently invokes unchanged
+original `sendDef` for **all 12,192 records** and compares exact bytes, then runs
+the actual catalog importer and graph resolver against the original GROUPS footer.
+Every file/slot/name/root index, all child resolutions, tombstones, CRCs and
+owned lifetime after catalog release are checked. Full replacement retains the
+old graph until success. Budget underflow/overflow, a limit one byte below the
+observed peak, invalid hints and representative large allocation failures leave
+the published object and reader unchanged. Existing small-world tests exhaust
+every candidate and clone allocation failure and retain incremental coverage.
+
+On 64-bit host builds the stress graph owns **26,806,591 bytes**. Candidate heap
+peak is **26,843,167 bytes**. The complete replacement reservation (catalog,
+retained envelope, old graph, candidate peak, GROUPS input, internal stack)
+peaks at **81,706,049 bytes**, below 96 MiB. These are deterministic ownership
+measurements, not process RSS or Android latency measurements. No authentic
+world, imported material semantics or render authorization is inferred.
 
 ## Qualification
 
@@ -86,7 +137,7 @@ No imported strings become filesystem paths here.
 files, 41 functions). Eight additional trusted-input cases exercise an actual
 original-produced baseline before an incremental deletion and 1,023-byte property
 values. Original function bodies stay unchanged. The receipt hashes both the
-extension and generated fixture header. All 52 fixtures run in packed/aligned
+extension and generated fixture header. All 52 original graph fixtures run in packed/aligned
 and modern/legacy-command variants; 44 resolve, four base headers are unsupported,
 and four deliberately cyclic/depth-exceeding source graphs reject.
 
@@ -96,8 +147,10 @@ deletions, malformed/truncated inputs, missing/canceled catalog/asset loads,
 wrong generations/checksums, duplicate identities, imported nonfinite matrices,
 prefix identity mismatch, wrapped per-allocation failure rollback, ownership
 past input/catalog lifetime, noncommuting composition, aliasing and finite
-overflow. It runs identically under release, ASan and UBSan and as Android
-standalone executables. LSan cannot enumerate `/proc` threads in this host's
+overflow. The same original fixtures and large stress controls compile into the single
+standalone executable used for release, ASan, UBSan and Android qualification.
+Local release/ASan/UBSan run **124,804 checks per mode**, including 34 exhaustive
+small allocation failure points and 18 large rollback/budget controls. LSan cannot enumerate `/proc` threads in this host's
 ptrace environment; leak checks use wrapped allocation ownership counters and
 failure injection at every candidate/clone allocation instead.
 
@@ -112,5 +165,7 @@ ctest --test-dir /tmp/scenegraph-cmake --output-on-failure
 ```
 
 Android receipts distinguish builds from execution. The local receipts do not
-claim Android emulator execution or physical Thor acceptance. Existing Combined
+claim Android emulator execution or physical Thor acceptance. This continuation
+host has no CMake/CTest or Android NDK executable, so the direct compiler driver
+is qualified locally; CMake and Android builds/execution remain hosted gates. Existing Combined
 0.1.7 bytes remain unchanged; the new module is not linked into that APK.

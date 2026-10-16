@@ -67,8 +67,9 @@ static void creation(Parse *p,uint32_t selected,CohEntCreate *c) {
         c->owner_index=pack(p,12);c->creator_index=pack(p,12);
         require(p,c->owner_index>0&&c->owner_index<=COH_ENT_INDEX_MAX&&c->creator_index<=COH_ENT_INDEX_MAX,COH_LIMIT);
         stage(p,COH_ENT_STAGE_PET_POWER);
-        /* basepower_Receive references a separately negotiated dictionary. */
-        if(flag(p)){require(p,0,COH_UNSUPPORTED);return;}
+        /* Original basepower_Send sends its full-name CRC using BitsAuto.
+         * Preserve the unresolved reference; never send BASEPOWER_NOT_FOUND. */
+        if(flag(p))c->pet_power_crc=auto_bits(p);
         c->commandable_pet=flag(p);c->visible_pet=flag(p);c->dismissable_pet=flag(p);
         optional_string(p,1000);c->special_power_state=pack(p,1);optional_string(p,128);
     }
@@ -138,6 +139,173 @@ void coh_ent_slot_init(CohEntSlot *s,uint32_t idx){
     memset(s,0,sizeof(*s));s->index=idx;
     coh_rep_position_init(&s->position);coh_ent_orientation_init(&s->orientation);
 }
+static float float32(Parse *p){
+    uint32_t bits=scalar(p,32);float value;memcpy(&value,&bits,sizeof(value));
+    require(p,isfinite(value),COH_INVALID);return value;
+}
+static float optional_float32(Parse *p){return flag(p)?float32(p):0;}
+static void netfx(Parse *p,CohEntNetFxList *list){
+    uint32_t i,j;stage(p,COH_ENT_STAGE_NETFX);list->count=pack(p,1);
+    require(p,list->count<=COH_ENT_NETFX_MAX,COH_LIMIT);
+    for(i=0;i<list->count&&p->status==COH_OK;i++){
+        CohEntNetFx *fx=&list->entries[i];
+        fx->command=scalar(p,2);fx->net_id=scalar(p,32);fx->pitch_to_target=flag(p);
+        require(p,fx->command>0&&fx->net_id>0,COH_INVALID);
+        fx->power_type_flags=opt_bits(p,4);fx->handle=opt_pack(p,12);fx->has_color_tint=flag(p);
+        if(fx->has_color_tint){fx->primary_color=scalar(p,32);fx->secondary_color=scalar(p,32);}
+        fx->client_timer=opt_pack(p,4);fx->trigger_fx=opt_bits(p,32);
+        fx->duration=optional_float32(p);fx->radius=optional_float32(p);
+        fx->power=opt_bits(p,4);fx->debris=opt_bits(p,32);fx->origin_type=opt_bits(p,2);
+        require(p,fx->client_timer<=INT32_MAX&&fx->origin_type<=1,COH_LIMIT);
+        if(fx->origin_type==1)for(j=0;j<3;j++)fx->origin_position[j]=float32(p);
+        else{
+            fx->origin_entity=opt_pack(p,8);fx->bone_id=pack(p,2);
+            require(p,fx->origin_entity<=COH_ENT_INDEX_MAX&&fx->bone_id<=255,COH_LIMIT);
+        }
+        fx->target_type=opt_bits(p,2);require(p,fx->target_type<=1,COH_LIMIT);
+        if(fx->target_type==1)for(j=0;j<3;j++)fx->target_position[j]=float32(p);
+        fx->target_entity=opt_pack(p,12);require(p,fx->target_entity<=COH_ENT_INDEX_MAX,COH_LIMIT);
+    }
+    list->end_bit=p->r.cursor;
+}
+CohStatus coh_ent_netfx(CohRepReader *r,CohEntNetFxList *out,CohEntFailure *failure){
+    Parse p;CohEntNetFxList s={0};if(check_reader(r)!=COH_OK||!out)return COH_INVALID;
+    p=(Parse){*r,COH_ENT_STAGE_NETFX,COH_OK};netfx(&p,&s);
+    if(p.status!=COH_OK)return fail(&p,failure);
+    *r=p.r;*out=s;clear_failure(failure);return COH_OK;
+}
+static void appearance(Parse *p,uint32_t id,CohEntAppearance *state) {
+    CohEntAppearance a=*state;uint32_t type;stage(p,COH_ENT_STAGE_APPEARANCE);
+    type=opt_pack(p,2);
+    if(type){
+        memset(a.sequence_name,0,sizeof(a.sequence_name));
+        a.type=type;a.npc_index=a.costume_index=0;
+        if(type==3){
+            a.npc_index=pack(p,12);a.costume_index=pack(p,1);
+            require(p,a.npc_index<=INT32_MAX&&a.costume_index<=65535,COH_LIMIT);
+            if(flag(p)){char group[260]={0};string(p,group,sizeof(group));if(p->status==COH_OK&&group[0])memcpy(a.world_group,group,sizeof(group));}
+            if(pack(p,1))require(p,0,COH_UNSUPPORTED); /* Custom NPC colors. */
+        }else if(type==4){
+            string(p,a.sequence_name,sizeof(a.sequence_name));
+            if(flag(p)){char group[260]={0};string(p,group,sizeof(group));if(p->status==COH_OK&&group[0])memcpy(a.world_group,group,sizeof(group));}
+        }else require(p,0,COH_UNSUPPORTED); /* Full/owned costume or unknown type. */
+        if(p->status==COH_OK&&id>=state->packet_id){a.packet_id=id;*state=a;}
+    }
+    if(p->status==COH_OK){
+        uint32_t value=opt_bits(p,8);
+        /* entReceiveXlucency always applies, including absent -> opaque. */
+        if(id>=state->translucency_packet){state->translucency=value;state->translucency_packet=id;}
+    }
+}
+/* All supported source schema scalars use packed absolute values. Original
+ * packed writers send signed values through U32; decode two's complement
+ * explicitly without implementation-defined uint32_t-to-int32_t conversion. */
+static int32_t signed_bits(uint32_t v){return v<=INT32_MAX?(int32_t)v:-1-(int32_t)(UINT32_MAX-v);}
+static void stats_leaf(Parse *p,uint32_t id,uint32_t self,uint32_t group,CohEntCharacterStats *s){
+    static const unsigned low_map[]={0,1,2,3,5};
+    static const unsigned low_bits[]={7,7,5,6,7};
+    static const float low_scale[]={1,1,5,.1f,1};
+    static const unsigned high_bits[]={6,6,6,8,7,7,6,8};
+    static const float high_scale[]={.1f,.1f,.1f,.01f,1,1,.1f,.01f};
+    uint32_t mask=0,limit=group==2?2:(self?(group==0?8:7):5);
+    require(p,flag(p)==1,COH_UNSUPPORTED); /* embedded struct must exist */
+    require(p,flag(p)==1,COH_UNSUPPORTED); /* absolute nested values */
+    while(p->status==COH_OK&&flag(p)){
+        uint32_t field=pack(p,1),slot;int32_t raw;
+        require(p,field<limit,COH_UNSUPPORTED);if(p->status!=COH_OK)return;
+        require(p,!(mask&(1u<<field)),COH_INVALID);mask|=1u<<field;
+        if(group==2){
+            raw=signed_bits(pack(p,4));
+            if(p->status==COH_OK&&id>=s->integer_packets[field]){
+                s->integers[field]=raw;s->integer_packets[field]=id;s->integer_valid|=1u<<field;
+            }
+        }else{
+            float value;float *out=group?s->maximum:s->current;uint32_t *ids=group?s->maximum_packets:s->current_packets;
+            raw=signed_bits(pack(p,self?high_bits[field]:low_bits[field]));
+            slot=self?field:low_map[field];value=(float)raw*(self?high_scale[field]:low_scale[field]);
+            if(p->status==COH_OK&&id>=ids[slot]){
+                out[slot]=value;ids[slot]=id;
+                if(group)s->maximum_valid|=1u<<slot;else s->current_valid|=1u<<slot;
+            }
+        }
+    }
+}
+static void character_stats(Parse *p,uint32_t id,uint32_t self,CohEntCharacterStats *s){
+    uint32_t mask=0;stage(p,COH_ENT_STAGE_ATTRIBUTE_SCHEMA);
+    while(p->status==COH_OK&&flag(p)){
+        uint32_t field=pack(p,1);require(p,field<(self?7u:3u),COH_UNSUPPORTED);
+        if(p->status!=COH_OK)return;
+        require(p,!(mask&(1u<<field)),COH_INVALID);mask|=1u<<field;
+        if(field<3)stats_leaf(p,id,self,field,s);
+        else{
+            int32_t raw=signed_bits(pack(p,16));uint32_t slot=field-1;
+            if(p->status==COH_OK&&id>=s->integer_packets[slot]){
+                s->integers[slot]=raw;s->integer_packets[slot]=id;s->integer_valid|=1u<<slot;
+            }
+        }
+    }
+}
+CohStatus coh_ent_character_stats(CohRepReader *r,uint32_t id,uint32_t self,CohEntCharacterStats *out,CohEntFailure *failure){
+    Parse p;CohEntCharacterStats s;if(check_reader(r)!=COH_OK||!id||self>1||!out)return COH_INVALID;
+    p=(Parse){*r,COH_ENT_STAGE_ATTRIBUTE_SCHEMA,COH_OK};s=*out;character_stats(&p,id,self,&s);
+    if(p.status!=COH_OK)return fail(&p,failure);
+    *r=p.r;*out=s;clear_failure(failure);return COH_OK;
+}
+CohStatus coh_ent_appearance(CohRepReader *r,uint32_t id,CohEntAppearance *out,CohEntFailure *failure){
+    Parse p;CohEntAppearance s;if(check_reader(r)!=COH_OK||!id||!out)return COH_INVALID;
+    p=(Parse){*r,COH_ENT_STAGE_APPEARANCE,COH_OK};s=*out;appearance(&p,id,&s);
+    if(p.status!=COH_OK)return fail(&p,failure);
+    *r=p.r;*out=s;clear_failure(failure);return COH_OK;
+}
+static void target(Parse *p,uint32_t id,uint32_t self,CohEntTarget *state) {
+    CohEntTarget t={0};uint32_t i;stage(p,COH_ENT_STAGE_TARGET);
+    if(!flag(p))return;
+    t.target=opt_pack(p,12);t.assist=opt_pack(p,12);t.taunter=opt_pack(p,12);
+    t.clear_target=flag(p)&&self;t.count=pack(p,2);
+    require(p,t.target<=COH_ENT_INDEX_MAX&&t.assist<=COH_ENT_INDEX_MAX&&
+        t.taunter<=COH_ENT_INDEX_MAX&&t.count<=COH_ENT_PLACATE_MAX,COH_LIMIT);
+    for(i=0;i<t.count&&p->status==COH_OK;i++){
+        t.placates[i]=pack(p,12);require(p,t.placates[i]<=COH_ENT_INDEX_MAX,COH_LIMIT);
+    }
+    if(p->status==COH_OK&&id>=state->packet_id){t.packet_id=id;*state=t;}
+}
+static void status_effects(Parse *p,uint32_t id,CohEntStatusEffects *state) {
+    CohEntStatusEffects s={0};uint32_t i;stage(p,COH_ENT_STAGE_STATUS);
+    s.effects=scalar(p,10);s.vision_phases=auto_bits(p);s.exclusive_vision_phase=auto_bits(p);s.count=auto_bits(p);
+    require(p,s.count<=COH_ENT_STATUS_MAX,COH_LIMIT);
+    for(i=0;i<s.count&&p->status==COH_OK;i++)string(p,s.descriptions[i],sizeof(s.descriptions[i]));
+    if(p->status==COH_OK&&id>=state->packet_id){s.packet_id=id;*state=s;}
+}
+static void inventory_sizes(Parse *p,CohEntInventorySizes *state) {
+    CohEntInventorySizes s={0};uint32_t i;stage(p,COH_ENT_STAGE_INVENTORY);
+    s.valid=pack(p,1);require(p,s.valid<=1,COH_INVALID);if(!s.valid)return;
+    s.count=pack(p,3);require(p,s.count==COH_ENT_INVENTORY_TYPES,COH_UNSUPPORTED);
+    for(i=0;i<s.count&&p->status==COH_OK;i++){
+        s.total[i]=pack(p,8);s.used[i]=pack(p,8);
+        require(p,s.total[i]<=INT32_MAX&&s.used[i]<=INT32_MAX,COH_LIMIT);
+    }
+    s.auction_total=pack(p,8);s.boost_total=pack(p,8);
+    require(p,s.auction_total<=INT32_MAX&&s.boost_total<=INT32_MAX,COH_LIMIT);
+    if(p->status==COH_OK)*state=s;
+}
+CohStatus coh_ent_target(CohRepReader *r,uint32_t id,uint32_t self,CohEntTarget *out,CohEntFailure *failure){
+    Parse p;CohEntTarget t;if(check_reader(r)!=COH_OK||!id||self>1||!out)return COH_INVALID;
+    p=(Parse){*r,COH_ENT_STAGE_TARGET,COH_OK};t=*out;target(&p,id,self,&t);
+    if(p.status!=COH_OK)return fail(&p,failure);
+    *r=p.r;*out=t;clear_failure(failure);return COH_OK;
+}
+CohStatus coh_ent_status_effects(CohRepReader *r,uint32_t id,CohEntStatusEffects *out,CohEntFailure *failure){
+    Parse p;CohEntStatusEffects s;if(check_reader(r)!=COH_OK||!id||!out)return COH_INVALID;
+    p=(Parse){*r,COH_ENT_STAGE_STATUS,COH_OK};s=*out;status_effects(&p,id,&s);
+    if(p.status!=COH_OK)return fail(&p,failure);
+    *r=p.r;*out=s;clear_failure(failure);return COH_OK;
+}
+CohStatus coh_ent_inventory_sizes(CohRepReader *r,CohEntInventorySizes *out,CohEntFailure *failure){
+    Parse p;CohEntInventorySizes s;if(check_reader(r)!=COH_OK||!out)return COH_INVALID;
+    p=(Parse){*r,COH_ENT_STAGE_INVENTORY,COH_OK};s=*out;inventory_sizes(&p,&s);
+    if(p.status!=COH_OK)return fail(&p,failure);
+    *r=p.r;*out=s;clear_failure(failure);return COH_OK;
+}
 static void pose(Parse *p,uint32_t id,uint32_t create,uint32_t interp,CohEntSlot *slot){
     CohRepReader look=p->r;uint32_t changed=0;
     stage(p,COH_ENT_STAGE_POSITION);
@@ -196,19 +364,28 @@ CohStatus coh_ent_record(CohRepReader *r,uint32_t selected,uint32_t id,uint32_t 
         if(flag(&p))optional_string(&p,1000);
     }
     c.pchar_things=flag(&p);v=flag(&p);stage(&p,COH_ENT_STAGE_NETFX);
-    if(v&&c.pchar_things){require(&p,0,COH_UNSUPPORTED);return fail(&p,failure);}
+    if(v&&c.pchar_things){netfx(&p,&c.netfx);if(p.status!=COH_OK)return fail(&p,failure);}
     if(c.medium_rare){
-        stage(&p,COH_ENT_STAGE_APPEARANCE);c.appearance_type=opt_pack(&p,2);
-        if(c.appearance_type){require(&p,0,COH_UNSUPPORTED);return fail(&p,failure);}
-        (void)opt_bits(&p,8); /* Translucency; inspection does not publish rendering. */
+        appearance(&p,id,&s.appearance);c.appearance_type=s.appearance.type;
+        if(p.status!=COH_OK)return fail(&p,failure);
     }
     if(c.very_rare){
         stage(&p,COH_ENT_STAGE_POWER_CUSTOM);require(&p,0,COH_UNSUPPORTED);return fail(&p,failure);
     }
     stage(&p,COH_ENT_STAGE_RAGDOLL);c.ragdoll_bones=opt_bits(&p,5);
     for(i=0;i<c.ragdoll_bones*3&&p.status==COH_OK;i++)(void)scalar(&p,10);
-    if(c.pchar_things){stage(&p,COH_ENT_STAGE_CHARACTER_STATS);require(&p,0,COH_UNSUPPORTED);return fail(&p,failure);}
+    if(c.pchar_things){
+        stage(&p,COH_ENT_STAGE_CHARACTER_STATS);
+        if(flag(&p)&&flag(&p))character_stats(&p,id,0,&s.stats);
+        if(p.status!=COH_OK)return fail(&p,failure);
+    }
     stage(&p,COH_ENT_STAGE_VISION);s.vision_phases=auto_bits(&p);s.exclusive_vision_phase=auto_bits(&p);s.con_yellow=auto_bits(&p);
+    if(c.pchar_things){
+        s.combat_mod_shift=auto_bits(&p);target(&p,id,s.identity.is_self,&s.target);
+        if(flag(&p))status_effects(&p,id,&s.status_effects);
+        if(s.identity.is_self)inventory_sizes(&p,&s.inventory);
+        if(p.status!=COH_OK)return fail(&p,failure);
+    }
     stage(&p,COH_ENT_STAGE_BUFFS);
     if(flag(&p)){require(&p,0,COH_UNSUPPORTED);return fail(&p,failure);}
     if(p.status!=COH_OK)return fail(&p,failure);

@@ -4,6 +4,10 @@ on:
     branches: [native-android]
     paths:
       - native-android/combined-client/**
+      - "!native-android/combined-client/evidence/**"
+      - "!native-android/combined-client/tools/analyze_startup_resources.py"
+      - "!native-android/combined-client/tools/test_startup_resources.py"
+      - "!native-android/combined-client/tools/bench_startup_console.py"
       - native-android/engine/local/**
       - .github/workflows/native-combined-client.yml
   workflow_dispatch:
@@ -15,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   package:
-    if: github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[combined-requalify]') && !contains(github.event.head_commit.message, '[combined-017-requalify]')
+    if: github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[combined-requalify]') && !contains(github.event.head_commit.message, '[combined-017-requalify]') && !contains(github.event.head_commit.message, '[native-contracts-only]')
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:

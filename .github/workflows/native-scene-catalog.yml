@@ -10,6 +10,9 @@ on:
       - native-android/engine/replication/**
       - native-android/engine/scenecatalog-qualification/**
       - native-android/engine/coh_contracts.h
+      - native-android/combined-client/tools/analyze_startup_resources.py
+      - native-android/combined-client/tools/test_startup_resources.py
+      - native-android/combined-client/tools/bench_startup_console.py
       - native-android/include/**
       - native-android/tools/protocol_fixture/**
       - upstream/ouroboros/Common/**
@@ -62,6 +65,11 @@ jobs:
           python3 native-android/engine/scenecatalog-server/check.py
           --source-root . --sanitize
           --output native-android/results/scene-catalog/server-export/host.json
+      - name: Check external catalog transport and read-only startup attribution
+        run: |
+          python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_delivery.py -v
+          python3 -m unittest discover -s native-android/combined-client/tools -p test_startup_resources.py -v
+          python3 -m unittest discover -s native-android/combined-client/diagnostics/continuation-20261016 -p 'test_*.py' -v
       - uses: actions/upload-artifact@v4
         if: always()
         with:

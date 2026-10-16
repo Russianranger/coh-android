@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "source_checkpoint": "fbc1aa0718c9a6d02a32cd6e14cfdff560dadbbd",
+  "sha256_utf8_lf": {
+    "upstream/ouroboros/AuthServer/src/Account.cpp": "3e959ac3aa3fcef281fecdf8104c5da297c1b216a7c2553a3d33c4ee15c097d5",
+    "upstream/ouroboros/AuthServer/src/AccountDB.cpp": "b00306c11f77fdce7d02ba07202ee6bb7ca963f3ceca66731e22ae6b5c34d9bd",
+    "upstream/ouroboros/AuthServer/src/ServerList.cpp": "17ec8216324d817fb38691ecbcf96fd161592a4799935ee562a5c37d590ecd7a",
+    "upstream/ouroboros/AuthServer/src/Config.cpp": "07e090aeab0911ecec950109c1bdfc49bda8532e818dd005f4d091fea0898ff0",
+    "upstream/ouroboros/Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+    "upstream/ouroboros/DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+    "upstream/ouroboros/AuthServer/src/schema/Auth_DB_account_procedures.sql": "588330419abf37602ba05eb73320a509ec39e1f83b1d8d44d0e6c719f5c1ff76",
+    "upstream/ouroboros/AuthServer/src/schema/Auth_DB_objects.sql": "cf1d4e0f292882f366c522853ea426ab884174a2a5a27a8692037ee0ee0799f0",
+    "upstream/ouroboros/AuthServer/src/schema/Auth_DB_objects_additional.sql": "6ef71179e32703d40bb8d92c37fc22525102d0eebe3ba192894ae90c39f47326",
+    "upstream/ouroboros/AuthServer/src/schema/Auth_DB_procedures_additional.sql": "238676f86d556dd3204a4597e016bce5b7d8e57005751db9f5d2d2ebcb63f058",
+    "upstream/ouroboros/AuthServer/src/schema/Auth_DB_triggers.sql": "81feda1c0216834f6e7ecfade87d7a04582b8c740ef666f5cc861530af2502f3",
+    "upstream/ouroboros/AuthServer/src/schema/patch_1.sql": "21548bc60dae5d60769155c4bacc21f669c4dc54dd637f07d1f0aa3f95088916",
+    "upstream/ouroboros/AuthServer/src/schema/patch_2.sql": "e0f3dec1e84f58d4d8ef2c664ee1722d04e2a76a1870059ee59d9a9628f15b5d",
+    "upstream/ouroboros/AuthServer/src/schema/patch_3.sql": "65eb2fc1d12992d7021232f6a51640e1ffa60e44c0b8ce4247d3edeb12f7f5ca",
+    "upstream/ouroboros/AuthServer/src/schema/patch_4.sql": "aaa3289d2db1d0e963e984ce33cb1a2f32e33fb748842eea8d45c70d2a6672cd",
+    "upstream/ouroboros/AuthServer/src/schema/patch_5.sql": "8081189ab4bdb908f87e3735133faeaf903bb774b1c9f37ffe86e37f8ae43138",
+    "upstream/ouroboros/AuthServer/src/schema/patch_6.sql": "da30bb688b128305e360d86d65c4cd98797b8c0d8d0e8699d0d51a112c393eb9",
+    "upstream/ouroboros/AuthServer/src/schema/patch_7.sql": "7621c3c4760d54b332bbfd370113cb754180febe826f7941fa7d453d9a49af20",
+    "upstream/ouroboros/AuthServer/src/schema/patch_8.sql": "aec460cf0c4517479603eec5bf997b4aad252cf283b66fef2d4ac75b551727cf",
+    "upstream/ouroboros/Assets/DBSchemas/cohauth.sql": "d18756ba04f9f16d40a5f6d55772d19ed430a6438316327aa51fde818a349cbf"
+  }
+}

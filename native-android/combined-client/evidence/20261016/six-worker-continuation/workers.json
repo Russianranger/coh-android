@@ -1,0 +1,36 @@
+{
+  "A": {
+    "commits": [
+      "0cf7a45bd",
+      "e2becd19c",
+      "c305d55bd"
+    ],
+    "status": "delivery, exact-PE staging, isolated capture controls and retained source-qualified native validator host/ASan/UBSan qualified; hosted execution pending"
+  },
+  "B": {
+    "commit": "c147e36ac",
+    "status": "dynamic indexed graph host/source/ASan/UBSan qualified;124804 checks per mode"
+  },
+  "C": {
+    "status": "stats, appearance references and bounded NetFX host/source/ASan/UBSan qualified;550302 checks per mode; complete character/global transaction still unavailable",
+    "commits": [
+      "e5bb08d493c68f5faf80caf397aa25691d084502",
+      "8c742201412316acd0fa0e325596fde676ca48bc"
+    ]
+  },
+  "D": {
+    "commit": "1286ec2cff8c1a420e92ba74f2ef0d56ced4e023",
+    "status": "read-only deployment admission and19-input source audit qualified; real encrypted login unavailable"
+  },
+  "E": {
+    "commits": [
+      "641424d3e5ad8fdccc799fbe33cb680789453eec",
+      "121400b57"
+    ],
+    "status": "immutable renderer adapter host/source/ASan/UBSan qualified;16720 checks per mode; no live activation"
+  },
+  "F": {
+    "commit": "732f118cf",
+    "status": "offline startup analysis15 added+26 existing tests and51 source-function comparisons qualified; no device speedup claim"
+  }
+}

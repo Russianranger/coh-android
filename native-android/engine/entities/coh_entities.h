@@ -9,6 +9,10 @@ extern "C" {
 #define COH_ENT_DELETE_MAX 256u
 #define COH_ENT_TRIGGER_MAX 16u
 #define COH_ENT_LIST_MAX 256u
+#define COH_ENT_PLACATE_MAX 32u
+#define COH_ENT_STATUS_MAX 16u
+#define COH_ENT_INVENTORY_TYPES 5u
+#define COH_ENT_NETFX_MAX 32u
 /* All state here is uncommitted inspection/staging state. A valid record is not
  * a valid ALLENTS/UPDATE packet, resolved appearance, or a renderable actor. */
 typedef enum {
@@ -19,13 +23,14 @@ typedef enum {
     COH_ENT_STAGE_TITLES, COH_ENT_STAGE_RAGDOLL, COH_ENT_STAGE_CHARACTER_STATS,
     COH_ENT_STAGE_VISION, COH_ENT_STAGE_RARE_TAIL, COH_ENT_STAGE_BUFFS,
     COH_ENT_STAGE_DELETES, COH_ENT_STAGE_LIST, COH_ENT_STAGE_FULL_UPDATE_TAIL,
-    COH_ENT_STAGE_OWNERSHIP
+    COH_ENT_STAGE_OWNERSHIP, COH_ENT_STAGE_TARGET, COH_ENT_STAGE_STATUS,
+    COH_ENT_STAGE_INVENTORY, COH_ENT_STAGE_ATTRIBUTE_SCHEMA
 } CohEntStage;
 typedef struct { CohStatus status; CohEntStage stage; size_t bit; } CohEntFailure;
 typedef struct {
     uint32_t create, end, entity_id, type, is_self, access_level, dbid,
         owner_index, creator_index, commandable_pet, visible_pet, dismissable_pet,
-        special_power_state, critter_form, class_index, origin_index,
+        special_power_state, pet_power_crc, critter_form, class_index, origin_index,
         player_type, player_subtype, praetorian_progress, player_type_location,
         fade_in, in_phase, random_seed, rank, detail_id, contact_handle;
     char name[256];
@@ -34,8 +39,41 @@ typedef struct {
 typedef struct { float quaternion[4]; uint32_t packet_ids[3], valid; } CohEntOrientation;
 typedef struct { uint32_t index, entity_id; } CohEntDelete;
 typedef struct { uint32_t count; CohEntDelete entries[COH_ENT_DELETE_MAX]; size_t end_bit; } CohEntDeletes;
+/* Values remain unresolved references. A known costume index or power CRC
+ * does not validate its dictionary or any rig/material resource generation. */
+typedef struct {
+    uint32_t type, npc_index, costume_index, packet_id, translucency, translucency_packet;
+    char sequence_name[260], world_group[260];
+} CohEntAppearance;
+typedef struct {
+    uint32_t packet_id, target, assist, taunter, clear_target, count;
+    uint32_t placates[COH_ENT_PLACATE_MAX];
+} CohEntTarget;
+typedef struct {
+    uint32_t packet_id, effects, vision_phases, exclusive_vision_phase, count;
+    char descriptions[COH_ENT_STATUS_MAX][128];
+} CohEntStatusEffects;
+typedef struct {
+    uint32_t valid, count, total[COH_ENT_INVENTORY_TYPES], used[COH_ENT_INVENTORY_TYPES],
+        auction_total, boost_total;
+} CohEntInventorySizes;
+/* Source schema order is translated to these stable named offsets.
+ * Attribute IDs: HP, absorb, endurance, meter, perception, stealth, confused,
+ * to-hit. Integer IDs: level, combat level, XP, debt, rested XP, influence. */
+typedef struct {
+    float current[8], maximum[8];
+    uint32_t current_packets[8], maximum_packets[8], integer_packets[6];
+    uint32_t current_valid, maximum_valid, integer_valid;
+    int32_t integers[6];
+} CohEntCharacterStats;
 typedef struct {
     CohEntCreate identity;
+    CohEntCharacterStats stats;
+    CohEntAppearance appearance;
+    CohEntTarget target;
+    CohEntStatusEffects status_effects;
+    CohEntInventorySizes inventory;
+    uint32_t combat_mod_shift;
     CohRepPosition position;
     CohEntOrientation orientation;
     uint32_t index, present, create_packet, delete_packet, deleted_entity_id,
@@ -43,7 +81,18 @@ typedef struct {
         sequence_packet, vision_phases, exclusive_vision_phase, con_yellow;
 } CohEntSlot;
 typedef struct { uint32_t index, ticks, fx_id; } CohEntTrigger;
+/* Unresolved network effect events, not live renderer effect instances.
+ * Origin/target type 0=entity, 1=position; zero entity means source/no target.
+ * Packet ownership must retain these in its transaction if effects are used. */
 typedef struct {
+    uint32_t command, net_id, pitch_to_target, power_type_flags, handle,
+        has_color_tint, primary_color, secondary_color, client_timer, trigger_fx,
+        power, debris, origin_type, origin_entity, bone_id, target_type, target_entity;
+    float duration, radius, origin_position[3], target_position[3];
+} CohEntNetFx;
+typedef struct {uint32_t count;CohEntNetFx entries[COH_ENT_NETFX_MAX];size_t end_bit;} CohEntNetFxList;
+typedef struct {
+    CohEntNetFxList netfx;
     CohEntCreate identity; uint32_t rare, medium_rare, very_rare,
         pchar_things, trigger_count, appearance_type, ragdoll_bones;
     CohEntTrigger triggers[COH_ENT_TRIGGER_MAX]; size_t end_bit;
@@ -52,7 +101,7 @@ typedef struct {
     uint32_t count, self_index, self_entity_id, self_dbid;
     size_t end_bit;
 } CohEntList;
-/* Caller-owned scratch: roughly 150 KiB, intended for an arena/heap/static
+/* Caller-owned bounded scratch (sizeof must be queried), intended for an arena/heap/static
  * owner rather than the call stack. Its contents are unspecified on failure;
  * it never contains committed game or render state. */
 typedef struct {
@@ -72,6 +121,27 @@ void coh_ent_orientation_init(CohEntOrientation *);
 CohStatus coh_ent_orientation(CohRepReader *, uint32_t packet_id,
     CohEntOrientation *, CohEntFailure *);
 void coh_ent_slot_init(CohEntSlot *, uint32_t index);
+/* Standalone source substructures; transactional and unresolved staging only.
+ * Target includes its update flag, status starts at character_ReceiveStatusEffects
+ * (after its outer update flag), inventory includes the packed valid flag.
+ * Stale target/status packets are fully consumed but leave prior values intact.
+ * Inventory follows the original unversioned stream semantics. */
+/* Complete bounded original NetFX substructure, including zero count.
+ * Atomic output; no event execution, dictionary resolution or acknowledgments. */
+CohStatus coh_ent_netfx(CohRepReader *, CohEntNetFxList *, CohEntFailure *);
+CohStatus coh_ent_appearance(CohRepReader *, uint32_t packet_id,
+    CohEntAppearance *, CohEntFailure *);
+/* Decodes pinned basic (self_schema=0) or self (self_schema=1) absolute
+ * non-debug ParserRecv schema. Unknown fields, duplicate fields, removed
+ * embedded structs and relative substructures fail closed. Atomic per-field
+ * packet ordering; this is statistics only, never a character transaction. */
+CohStatus coh_ent_character_stats(CohRepReader *, uint32_t packet_id,
+    uint32_t self_schema, CohEntCharacterStats *, CohEntFailure *);
+CohStatus coh_ent_target(CohRepReader *, uint32_t packet_id, uint32_t is_self,
+    CohEntTarget *, CohEntFailure *);
+CohStatus coh_ent_status_effects(CohRepReader *, uint32_t packet_id,
+    CohEntStatusEffects *, CohEntFailure *);
+CohStatus coh_ent_inventory_sizes(CohRepReader *, CohEntInventorySizes *, CohEntFailure *);
 /* Reads one complete supported entity record. In/out slot is STAGING ONLY.
  * Unsupported branch, malformed input, or identity failure leaves reader,
  * slot and record unchanged; failure receipt is diagnostic only.

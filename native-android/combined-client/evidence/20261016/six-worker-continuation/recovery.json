@@ -1,0 +1,94 @@
+{
+  "schema": "coh-six-worker-recovery-v1",
+  "observed_utc": "2026-10-16T17:01:19.996425+00:00",
+  "remote_head": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+  "source_tree": "b5b4d2614a25cda1e9e9b1322031f5dda3a61003",
+  "integration_branch": "native-android",
+  "accessible_prior_worktrees": [
+    {
+      "path": "/workspace/scratch/9c69943dc291/coh-next",
+      "head": "8a12f010d5d7b756058c1ec5c4dc8d792e167af7",
+      "dirty": false,
+      "tree_identical_to_checkpoint": false
+    },
+    {
+      "path": "/workspace/scratch/9c69943dc291/acceptance",
+      "head": "c761f861dc9f3d9cbd560bcdd0c253fbd462888f",
+      "dirty": false,
+      "tree_identical_to_checkpoint": false
+    },
+    {
+      "path": "/workspace/scratch/9c69943dc291/build-next",
+      "head": "d759538b86cc7cc7b395216e1e4b9df83e5a6b9e",
+      "dirty": false,
+      "tree_identical_to_checkpoint": false
+    },
+    {
+      "path": "/workspace/scratch/9c69943dc291/catalog",
+      "head": "3d0b89b07e9aef6bc08e06a736e54b3eacd01a80",
+      "dirty": false,
+      "tree_identical_to_checkpoint": false
+    },
+    {
+      "path": "/workspace/scratch/9c69943dc291/compile-fix",
+      "head": "d49282bb6b46a105e240c1033936c41d1b89d3f7",
+      "dirty": false,
+      "tree_identical_to_checkpoint": false
+    },
+    {
+      "path": "/workspace/scratch/9c69943dc291/entity-next",
+      "head": "e549823031b59a8414842a85ba9ec4773dc35c96",
+      "dirty": false,
+      "tree_identical_to_checkpoint": false
+    },
+    {
+      "path": "/workspace/scratch/9c69943dc291/next-integration",
+      "head": "5a183c68c9273a66135b54d097e033ade836764b",
+      "dirty": false,
+      "tree_identical_to_checkpoint": false
+    },
+    {
+      "path": "/workspace/scratch/9c69943dc291/primary-current",
+      "head": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+      "dirty": false,
+      "tree_identical_to_checkpoint": true
+    },
+    {
+      "path": "/workspace/scratch/9c69943dc291/qualified-compile-fix",
+      "head": "887bef22f5f6403d8589ac00a1269c9438e263a6",
+      "dirty": false,
+      "tree_identical_to_checkpoint": false
+    },
+    {
+      "path": "/workspace/scratch/9c69943dc291/qualified-next",
+      "head": "c4971a15f21f4ca3731e0a0dee274534d13a08ac",
+      "dirty": false,
+      "tree_identical_to_checkpoint": false
+    },
+    {
+      "path": "/workspace/scratch/9c69943dc291/report-next",
+      "head": "6a0edb10aa4dcbcbf28a6ab90a9f4b26d60825c3",
+      "dirty": false,
+      "tree_identical_to_checkpoint": true
+    },
+    {
+      "path": "/workspace/scratch/9c69943dc291/server-export-next",
+      "head": "3ceb14ace520bec198d353e9fa061cd31d963fa8",
+      "dirty": false,
+      "tree_identical_to_checkpoint": false
+    }
+  ],
+  "prior_worktrees_reset_or_modified": false,
+  "prior_uncommitted_changes_found": false,
+  "prior_report_tree_identical": true,
+  "all_prior_implementation_bytes_already_published": true,
+  "prior_live_agent_status": "No cross-chat agent control is exposed. No compiler/build process was observed; this does not establish whether a separate coordinator is active.",
+  "latest_qualification": {
+    "run_id": 38926873046,
+    "status": "completed",
+    "conclusion": "success",
+    "updated_utc": "2026-10-16T15:59:00Z"
+  },
+  "accepted_apks_rebuilt": false,
+  "gates25_27_complete": false
+}

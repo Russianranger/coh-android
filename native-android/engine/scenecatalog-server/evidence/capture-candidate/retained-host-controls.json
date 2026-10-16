@@ -1,0 +1,65 @@
+{
+  "schema": "coh-nonshipping-scene-catalog-server-host-v1",
+  "passed": true,
+  "scope": "actual_sink_include_with_mock_source_producer_local_winapi_shim_and_stager_refusals",
+  "source_sha256": {
+    "stage_export.py": "032f22bb582245cc0de10e97b80c0667602fedd3feb9b13e07d7ee8493c10ba3",
+    "source_sink.inc": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d",
+    "test_sink.c": "d9f116a00414de8bb99bddcde48652e56c832a853e46a4bce30362fb57ba3f62",
+    "test_stage_export.py": "a94d93ca2d17266e9a49b102244ef86637af030628b53397d7e9e83566747cc4",
+    "delivery.py": "c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8",
+    "test_delivery.py": "a797b3a5df180bb8ac55f83f84d08911a3bf56dd529603e7059f921a21e844e0",
+    "capture_disposable.py": "2d1e8f9a4beca1c29a77be90f227c6ea4e3958c545fd3e8266f403deff295506",
+    "test_capture_disposable.py": "aa7e6c23c659083803d2f18a96ace13a634548129c72e58d86b887aff30bb450",
+    "check.py": "5c73613c9508233c141ee6eccc59c3443bf289b655e055bd50bbecfd0039fdd3",
+    "producer/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+    "original/MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+    "original/MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d"
+  },
+  "stager_tests": 41,
+  "delivery_tests": 22,
+  "capture_control_tests": 18,
+  "sink_modes": [
+    {
+      "mode": "release",
+      "passed": true,
+      "checks": 193,
+      "actual_sink_include": true,
+      "mock_producer": true,
+      "winapi_shim": true,
+      "server_executed": false
+    },
+    {
+      "mode": "asan",
+      "passed": true,
+      "checks": 193,
+      "actual_sink_include": true,
+      "mock_producer": true,
+      "winapi_shim": true,
+      "server_executed": false
+    },
+    {
+      "mode": "ubsan",
+      "passed": true,
+      "checks": 193,
+      "actual_sink_include": true,
+      "mock_producer": true,
+      "winapi_shim": true,
+      "server_executed": false
+    }
+  ],
+  "nonwindows_disabled_noop_checked": true,
+  "nonshipping": true,
+  "disabled_by_default": true,
+  "maximum_output_bytes": 33554432,
+  "process_peak_memory_cap_established": false,
+  "leak_sanitizer": false,
+  "host_shim_executed": true,
+  "mapserver_compiled": false,
+  "mapserver_executed": false,
+  "windows_executed": false,
+  "android_executed": false,
+  "physical_thor_accepted": false,
+  "deployed": false,
+  "apk_changed": false
+}

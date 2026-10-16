@@ -150,3 +150,7 @@ provenance. The authentic 508-file/33-root Thor GROUPS alone contains none of
 these saved definitions. This module cannot manufacture that missing catalog.
 A larger dynamically sized graph and qualified geometry/material/entity state
 remain subsequent work. No accepted renderer/support/audio path is changed.
+
+## External deployment and delivery
+
+The [disposable deployment and external delivery contract](../scenecatalog-server/DEPLOYMENT.md) reuses the exact compile-qualified PE and defines independently pinned catalog transport admission. Storage admission does not establish native record validity or authentic world authority. No shipping runtime or accepted APK changes.

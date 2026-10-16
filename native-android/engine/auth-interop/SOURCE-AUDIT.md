@@ -76,3 +76,21 @@ A compatible test environment needs:
 AuthServer's existing verbose/debug messages can include account/challenge data;
 set up suitable log redaction before recording a real test. Merely inventing an
 AuthServer-success peer or changing local UseFakeAuth cannot meet this boundary.
+
+## October 16 deployment continuation
+
+The expanded [source and schema audit](deployment/README.md) also checks
+`Assets/DBSchemas/cohauth.sql`, which is in the repository tree even when hidden
+by sparse checkout. It supplies the current 13-parameter `ap_GStat` and loyalty
+columns; the older `AuthServer/src/schema/patch_2.sql` supplies only 11. The
+existing 2019 candidate therefore avoids inventing a new account schema.
+Its `int` hash-type output and `datetime2(3)` timestamp still require actual
+x86 ODBC conversion tests against the original bindings. The read-only metadata
+inspector refuses these unqualified conversions and never claims a complete
+schema/login from column/parameter shapes alone.
+
+An independent object experiment compiles the unchanged original checksum
+function for 32- and 64-bit x86 and verifies an unconditional-zero return with
+no `memcmp` reference. These generated experiment objects are not the deployed
+DbServer binary. Source, version/checksum policy and login acceptance remain
+distinct; neither checksum policy nor production source was changed.

@@ -1,4 +1,5 @@
 #include "coh_scenegraph.h"
+#include "../../scenecatalog/coh_scenecatalog.h"
 #include <assert.h>
 #include <math.h>
 #include <float.h>
@@ -7,13 +8,21 @@
 #include <string.h>
 #include "scenegraph_fixtures.h"
 static unsigned checks;
-static size_t live_allocations, allocation_calls, fail_at;
+static size_t live_allocations, allocation_calls, fail_at, live_bytes, peak_bytes;
 void *__real_malloc(size_t);
 void *__real_calloc(size_t,size_t);
 void __real_free(void *);
-void *__wrap_malloc(size_t n){allocation_calls++;if(fail_at&&allocation_calls==fail_at)return NULL;void *p=__real_malloc(n);if(p)live_allocations++;return p;}
-void *__wrap_calloc(size_t n,size_t z){allocation_calls++;if(fail_at&&allocation_calls==fail_at)return NULL;void *p=__real_calloc(n,z);if(p)live_allocations++;return p;}
-void __wrap_free(void *p){if(p){assert(live_allocations);live_allocations--;__real_free(p);}}
+typedef struct {void *p;size_t n;} Allocation;
+static Allocation allocations[131072];
+static size_t allocation_index(void *p){return ((uintptr_t)p>>4u)%131072u;}
+static void track(void *p,size_t n){
+    if(!p)return;
+    size_t i=allocation_index(p);while(allocations[i].p&&allocations[i].p!=(void *)(uintptr_t)1)i=(i+1)%131072;
+    allocations[i]=(Allocation){p,n};live_allocations++;live_bytes+=n;if(live_bytes>peak_bytes)peak_bytes=live_bytes;
+}
+void *__wrap_malloc(size_t n){allocation_calls++;if(fail_at&&allocation_calls==fail_at)return NULL;void *p=__real_malloc(n);track(p,n);return p;}
+void *__wrap_calloc(size_t n,size_t z){allocation_calls++;if(fail_at&&allocation_calls==fail_at)return NULL;void *p=__real_calloc(n,z);track(p,n*z);return p;}
+void __wrap_free(void *p){if(p){size_t i=allocation_index(p);while(allocations[i].p!=p){assert(allocations[i].p);i=(i+1)%131072;}assert(live_allocations);live_allocations--;live_bytes-=allocations[i].n;allocations[i].p=(void *)(uintptr_t)1;__real_free(p);}}
 #define CHECK(x) do{checks++;if(!(x)){fprintf(stderr,"check failed %s:%d: %s\n",__FILE__,__LINE__,#x);abort();}}while(0)
 typedef struct {int missing_file,missing_asset,bad_checksum,bad_generation,duplicate,cycle,missing_child,bad_matrix,cancel,extra_tombstone;unsigned imported,assets;} Control;
 static CohSgDefinition imported_def[2];static CohSgChild imported_child;
@@ -51,6 +60,74 @@ static CohStatus apply(CohSceneGraph **g,const Fixture *f,Control *control,CohSg
     CohStatus status=coh_scenegraph_apply(g,&r,&imports,generation,failure);
     if(status!=COH_OK){CHECK(*g==old);CHECK(memcmp(&r,&before,sizeof(r))==0);}else{CHECK(r.cursor==f->bits);CHECK((*g)->generation==generation);CHECK((*g)->owned_bytes<=COH_SG_MEMORY_MAX);}
     return status;
+}
+static CohRepReader stress_reader(void){
+    CohRepReader r;uint32_t command;
+    CHECK(coh_rep_reader_bounded(&r,(CohBytes){stress_wire,sizeof(stress_wire)},stress_wire_bits,1,COH_REP_BOUNDED_MESSAGE_MAX)==COH_OK);
+    CHECK(coh_rep_pack(&r,1,&command)==COH_OK&&command==6);return r;
+}
+static size_t stress_graph_bytes,stress_candidate_peak,stress_aggregate_peak;
+static unsigned stress_controls;
+static void stress(void){
+    CohSceneCatalog *catalog=NULL;CohCatalogReport cr;CohSceneGraph *g=NULL;CohSgFailure failure;CohSgMemoryReport report;
+    CHECK(coh_scenecatalog_load(&catalog,(CohBytes){stress_catalog,sizeof(stress_catalog)},7,&cr)==COH_OK);
+    CHECK(cr.files==508&&cr.definitions==12192&&cr.children==36567&&cr.source_active_roots==33);
+    CHECK(live_bytes==cr.owned_bytes);
+    CohSgImports imports={catalog,coh_scenecatalog_file,NULL,7};
+    CohSgBudget budget={COH_SG_TRANSACTION_MAX,cr.owned_bytes+sizeof(stress_catalog),cr.definitions,cr.source_active_roots};
+    CohRepReader r=stress_reader();CohGroupsInspection inspection;CohRepReader check=r;
+    CHECK(coh_rep_groups(&check,&inspection,NULL)==COH_OK&&coh_scenecatalog_match(catalog,&inspection)==COH_OK);
+    peak_bytes=live_bytes;
+    CHECK(coh_scenegraph_apply_bounded(&g,&r,&imports,1,&budget,&report,&failure)==COH_OK);
+    CHECK(r.cursor==stress_wire_bits&&g->definition_count==12192&&g->root_count==33&&g->active_roots==33);
+    CHECK(g->definitions_crc==cr.source_defs_crc&&g->references_crc==cr.source_refs_crc);
+    CHECK(report.candidate_peak_bytes==peak_bytes-cr.owned_bytes);
+    CHECK(report.aggregate_peak_bytes==peak_bytes+sizeof(stress_catalog)+sizeof(stress_wire)+COH_SG_FIXED_SCRATCH_BYTES);
+    CHECK(live_bytes==cr.owned_bytes+g->owned_bytes&&report.aggregate_peak_bytes<=budget.aggregate_limit);
+    stress_graph_bytes=g->owned_bytes;stress_candidate_peak=report.candidate_peak_bytes;
+    for(uint32_t i=0;i<g->definition_count;i++){
+        CohSgDefinition *d=&g->definitions[i];uint32_t found;char mixed[COH_REP_NAME_MAX];
+        CHECK(d->file==i/24&&d->id==i%24);
+        CHECK(coh_scenegraph_find_definition(g,d->file,d->id,&found)==COH_OK&&found==i);
+        if(d->in_use){
+            snprintf(mixed,sizeof(mixed),"object_library/CATALOG_STRESS_%05u",i);
+            CHECK(coh_scenegraph_find_name(g,mixed,&found)==COH_OK&&found==i);
+            for(uint32_t j=0;j<d->child_count;j++){CHECK(d->children[j].resolved==12191);CHECK(d->children[j].matrix[0][0]==1);}
+        }
+    }
+    for(uint32_t i=0;i<g->root_count;i++){uint32_t found;CHECK(coh_scenegraph_find_root(g,g->roots[i].id,&found)==COH_OK&&found==i);CHECK(g->roots[i].resolved==i*24);}
+    /* New-world replacement accounts for simultaneously retained catalog, old
+     * graph, candidate, transient indexes/DFS scratch and both input buffers. */
+    size_t prior_bytes=g->owned_bytes;peak_bytes=live_bytes;r=stress_reader();
+    CHECK(coh_scenegraph_apply_bounded(&g,&r,&imports,2,&budget,&report,&failure)==COH_OK);
+    CHECK(report.prior_bytes==prior_bytes&&report.aggregate_peak_bytes==peak_bytes+sizeof(stress_catalog)+sizeof(stress_wire)+COH_SG_FIXED_SCRATCH_BYTES);
+    CHECK(report.aggregate_peak_bytes<=COH_SG_TRANSACTION_MAX);stress_aggregate_peak=report.aggregate_peak_bytes;
+    /* Refuse one byte below measured peak, malformed external reservations and
+     * adversarial preallocation hints without changing any published bytes. */
+    CohSceneGraph *old=g;CohSceneGraph snapshot=*g;size_t retained=live_bytes;
+    for(unsigned kind=0;kind<6;kind++){
+        CohSgBudget bad=budget;CohRepReader before=stress_reader();r=before;
+        if(kind==0)bad.aggregate_limit=stress_aggregate_peak-1;
+        if(kind==1)bad.external_bytes=SIZE_MAX;
+        if(kind==2)bad.aggregate_limit=COH_SG_TRANSACTION_MAX+1u;
+        if(kind==3)bad.reserve_definitions=COH_SG_DEFS_MAX+1u;
+        if(kind==4)bad.reserve_roots=COH_SG_ROOTS_MAX+1u;
+        if(kind==5)bad.aggregate_limit=bad.external_bytes+sizeof(stress_wire)+g->owned_bytes;
+        CHECK(coh_scenegraph_apply_bounded(&g,&r,&imports,3,&bad,&report,&failure)!=COH_OK);
+        CHECK(g==old&&memcmp(g,&snapshot,sizeof(snapshot))==0&&memcmp(&r,&before,sizeof(r))==0&&live_bytes==retained);stress_controls++;
+    }
+    /* Fail representative growth/import/resolve allocations across large world
+     * preparation. Small-world tests exhaust every allocation separately. */
+    const size_t points[]={1,2,3,4,5,6,7,31,511,4096,16000,24000};
+    for(size_t i=0;i<sizeof(points)/sizeof(*points);i++){
+        CohRepReader before=stress_reader();r=before;allocation_calls=0;fail_at=points[i];
+        CohStatus status=coh_scenegraph_apply_bounded(&g,&r,&imports,3,&budget,&report,&failure);fail_at=0;
+        CHECK(status==COH_LIMIT&&g==old&&live_bytes==retained&&memcmp(g,&snapshot,sizeof(snapshot))==0&&memcmp(&r,&before,sizeof(r))==0);stress_controls++;
+    }
+    /* Graph retains all consumed catalog records after catalog release. */
+    coh_scenecatalog_free(catalog);CHECK(live_bytes==g->owned_bytes);
+    CHECK(strcmp(g->definitions[12191].name,"catalog_stress_12191")==0&&g->definitions[0].children[0].resolved==12191);
+    coh_scenegraph_free(g);CHECK(live_allocations==0&&live_bytes==0);
 }
 int main(void) {
     unsigned accepted=0,rejected=0;
@@ -135,6 +212,13 @@ int main(void) {
      CHECK(coh_scenegraph_compose((const float (*)[3])p,(const float (*)[3])c,out)==COH_OK);CHECK(memcmp(out,expected,sizeof(out))==0);
      p[0][0]=FLT_MAX;c[0][0]=2;CHECK(coh_scenegraph_compose((const float (*)[3])p,(const float (*)[3])c,out)==COH_INVALID);CHECK(memcmp(out,expected,sizeof(out))==0);}
     CHECK(live_allocations==0);CHECK(allocation_failures>0);
-    printf("{\"passed\":true,\"checks\":%u,\"allocation_failure_points\":%u,\"source_fixtures_accepted\":%u,\"source_fixtures_rejected\":%u,\"live_world\":false}\n",checks,allocation_failures,accepted,rejected);
+    /* A smaller incremental file table must reject before copying old files
+     * into the smaller candidate allocation. */
+    {CohSceneGraph *g=NULL;Control c={0};CohSgFailure failure;
+     CHECK(apply(&g,fixture(2,1,0),&c,&failure)==COH_OK);
+     CHECK(apply(&g,fixture(4,1,0),&c,&failure)==COH_UNSUPPORTED);
+     CHECK(g->file_count==3);coh_scenegraph_free(g);CHECK(!live_bytes);}
+    stress();
+    printf("{\"passed\":true,\"checks\":%u,\"allocation_failure_points\":%u,\"source_fixtures_accepted\":%u,\"source_fixtures_rejected\":%u,\"stress_controls\":%u,\"stress_definitions\":12192,\"stress_children\":36567,\"stress_graph_bytes\":%zu,\"stress_candidate_peak_bytes\":%zu,\"stress_aggregate_peak_bytes\":%zu,\"live_world\":false}\n",checks,allocation_failures,accepted,rejected,stress_controls,stress_graph_bytes,stress_candidate_peak,stress_aggregate_peak);
     return 0;
 }

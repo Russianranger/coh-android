@@ -1,171 +1,142 @@
 # Bounded native entity inspection and staging
 
-This optional C99 module advances original-source entity parsing beyond the
-existing update-header and standalone position inspection. It is **not wired
-into Combined**, does not alter the accepted APK, and does not acknowledge a
-full update or publish an authoritative actor. Gates 25–27 remain open.
+This optional C99 module parses original-source entity substructures. It is
+**not wired into Combined**, does not modify accepted APKs, and cannot admit a
+complete ALLENTS/UPDATE transaction or publish a server-authoritative actor.
+`coh_ent_full_update_tail` remains unconditionally unsupported. No API emits
+READY, RECEIVED_CHARACTER, ACK_FULL_UPDATE, BASEPOWER_NOT_FOUND or other packets.
+Gates 25–27 remain open.
 
-## Implemented boundaries
+## Current boundaries
 
-| Entry point | Source-qualified scope |
+| Entry point | Implemented scope |
 |---|---|
-| `coh_ent_next_index` | Original `previous + packed_delta + 1` sparse list candidates with explicit modulo-2^32 arithmetic and bounded result; starts at -1 and supports source append passes that descend |
-| `coh_ent_create` | `checkEntCreate` create/sentinel bits, entity generation, player/self/DBID, optional pet metadata without basepower, class/origin indices, titles, name/phase/seed, villain/group/definition references, optional animation and persistent-NPC names, contact handle |
-| `coh_ent_orientation` | Original nonlinear 9-bit quaternion reconstruction and per-component packet ordering, recomputed nonnegative W and normalization |
-| `coh_ent_record` | Complete **supported individual** create/update records through trailing teammate flag, using the accepted 24-bit scale-64 position kernel; modes, movement sequence values, bounded triggered moves, AI list, absent costume, translucency, bounded ragdoll values, numeric vision metadata |
-| `coh_ent_list` | Atomic complete **supported list substructure** through the canonical end sentinel, including descending indices and the sentinel after the maximum entity slot; validates selected/self ownership across the caller's entire bounded staging table |
-| `coh_ent_deletes` | Complete standalone delete count and index/generation pairs, at a known source-defined substructure boundary |
-| `coh_ent_stage_deletes` | Atomic batch application to caller-owned staging slots/tombstones with original creation/deletion packet ordering |
-| `coh_ent_full_update_tail` | Always returns `COH_UNSUPPORTED` at the supplied boundary; no attempt to skip opaque character/global tails |
+| `coh_ent_next_index` | Original modular sparse-list index arithmetic; descending passes supported |
+| `coh_ent_create` | Full audited create-header branches including player/self/DBID, pet basepower full-name CRC, class/origin indices, titles/name/phase/seed and other bounded references |
+| `coh_ent_orientation` | Original nonlinear 9-bit XYZ quaternion reconstruction and per-component packet ordering |
+| `coh_ent_appearance` | NPC dictionary index/costume index and sequence-name appearances, world-group string, translucency; full, owned and custom NPC costumes fail closed |
+| `coh_ent_character_stats` | Complete pinned basic/self absolute non-debug stat schemas: current/max attributes, levels, XP/debt/rest/influence, per-scalar packet ordering |
+| `coh_ent_netfx` | Complete bounded original NetFX grammar, including entity/position origins and targets; unresolved events only |
+| `coh_ent_target` | Target, assist, taunter, self clear-target and bounded placater list |
+| `coh_ent_status_effects` | Crowd-control mask, vision metadata and bounded designer-status strings |
+| `coh_ent_inventory_sizes` | Pinned five inventory types, used/total capacities, auction and boost capacities |
+| `coh_ent_record` | Atomic supported individual records including NetFX events, basic stats, target/status and self inventory sizes; supported NPC/sequence references and prior movement/sequence/ragdoll/vision branches |
+| `coh_ent_list` | Atomic supported list through canonical sentinel; selected/self ownership over supplied complete bounded table |
+| `coh_ent_deletes`, `coh_ent_stage_deletes` | Standalone delete grammar and atomic staging with original creation/deletion packet ordering |
+| `coh_ent_full_update_tail` | Always unsupported; consumes nothing and cannot unlock rendering/acknowledgment |
 
-`coh_ent_create` is a metadata-only entry point and does not prove an entity
-record is complete. Its diagnostic class, origin, owner, creator and contact
-identities are **unresolved numeric references**. Optional strings besides the
-entity name are bounded and discarded; they do not create valid appearance or
-asset state. The selected DBID must match a self-player create. A nonself player
-claiming the selected DBID is rejected. Other-player DBIDs are validated positive
-signed values and retained as their own identities.
+All references remain **unresolved staging metadata**. A power CRC, NPC index,
+class/origin index, sequence or world-group string is not an admitted dictionary,
+rig, texture or resource generation. Optional create strings other than entity
+name remain bounded/discarded. No offline preview data establishes identity.
 
-A successful `coh_ent_record` is one supported record in a **staging buffer**.
-It does not mean a whole ALLENTS/UPDATE is valid. Production integration must
-support the necessary entity branches, parse global debugging/control state, deletes,
-character/full-stats, powers, badges, inventories, teams/leagues, dynamic groups,
-sky and embedded commands; resolve all necessary class/origin/appearance/data
-schemas; validate global unique self ownership; then commit the whole packet
-transaction. That complete tail is not implemented here. No executable code in
-this module sends `READY`, `RECEIVED_CHARACTER`, `ACK_FULL_UPDATE`, or any socket
-message. No offline preview data participates.
+A self player must match the selected DBID; a nonself player cannot claim it.
+The list validates at most one self across the entire supplied table, including
+untouched slots. An empty list or zero-self fragment is valid syntax and provides
+no player authority. Missing indexed capacity never creates a dummy entity.
+The canonical delta=0/create=1/end=1 sentinel is checked before ordinary slot
+bounds, including after entity 10239. Duplicate records are rejected, including
+when an append pass descends. Table, result and reader commit together only after
+all supported records and ownership checks succeed.
 
-`coh_ent_list` starts at the first source delta and consumes only the entity-list
-substructure. It accepts a caller-owned table of at most 256 uniquely indexed
-slots/tombstones and a separate `CohEntListWorkspace`. The workspace is scratch
-(150,528 bytes on the host ABI); use an arena, heap or static owner, rather than
-putting it on the call stack. The caller must supply its complete staging table;
-ownership checks cover that supplied table and cannot detect omitted entities.
-Each referenced slot must already be indexed in the table, including creates.
-Missing capacity is `COH_NOT_FOUND`, never a new dummy entity. The workspace may
-contain partially parsed values after failure; it must never be published.
-The reader, input table and list receipt change only after the full supported
-list and ownership checks succeed. All API objects must be nonaliasing and have
-one owner thread. Unmentioned slots retain their values.
+## Statistic schemas and source comparison
 
-The list owner rejects duplicate record indices, including after a descending
-append, and requires the original producer's canonical packed delta 0 / create
-1 / end 1 sentinel. It probes this sentinel before applying ordinary entity
-slot bounds: after entity 10239 its synthetic index is 10240. The sentinel is
-not an entity or a duplicate record, even if its synthetic index equals an
-earlier entity index. The delta helper alone retains its candidate bound of
-0..10239; the list owner handles the maximum-slot sentinel separately.
+`Common/entity/attrib_net.c` is pinned and its unchanged declarations are compiled
+in the source oracle. `SendBasicCharacter` maps low-resolution attributes into
+stable named slots; `SendCharacterToSelf` maps highest-resolution current and
+high-resolution maximum attributes. The public arrays use this order:
 
-Both the seeded table and completed staged table must have at most one live
-self player. A live self must have player type and the selected DBID; a live
-nonself player cannot claim that DBID. These are explicit native admission
-guards: the old client simply selected the last `make_player` object, and did
-not validate packet-wide uniqueness. Empty lists and fragments with no self
-remain valid grammar and report `self_index=0`; they establish no selected
-character authority. A self receipt also remains unresolved staging metadata,
-with no appearance, character-tail, actor or ACK authority.
+- Attributes: hit points, absorb, endurance, meter, perception radius, player
+  stealth radius, confusion, to-hit.
+- Integers: level, combat level, XP, debt, rested XP, influence.
 
-## Exact unsupported boundaries
+Absolute packed signed values are decoded explicitly, including negative stats.
+The original quantization and original consumer produce the expected values.
+Every scalar has its own packet ID and valid bit. A stale scalar is consumed
+without replacing newer state; equal IDs retain original acceptance semantics.
+The schema walker rejects unknown/duplicate fields, removed embedded structs
+and relative nested values. These APIs require non-debug packets and absolute
+`ParserRecv(..., sendAbsoluteOverride=true)` framing. The session owner must
+check the transport debug flag; `CohRepReader` does not carry it.
 
-These branches fail closed with numeric stage and last completed scalar bit
-position. Public reader, staging slot and output structures remain unchanged:
+An important source detail: `ParserSendEmptyDiff` calls `ParserSend` with the
+same old/new object, **but a forced full update still serializes all fields**.
+It cannot safely be treated as a single zero bit. The record parser now accepts
+the full basic schema, and the self schema is available at its standalone
+source boundary. Neither means `receiveCharacterFromServer` is complete.
 
-- Pet creation with a basepower dictionary reference.
-- Interpolated position offsets when interpolation is active and movement is
-  not instantaneous. The accepted standalone position kernel is reused only
-  after authentic preceding record fields have been read.
-- Network FX with character state, any nonzero appearance type, and every
-  `very_rare_bits` continuation (starting at power customization).
-- Character-stat schema (`pchar_things`), therefore real player full updates,
-  targeting/status/inventory and self taskforce state.
-- Teammate/buff payloads and the entire full-update/global/character tail.
+## Limits, ownership and rollback
 
-A known staging slot with no live entity returns `COH_STATE` on update; an
-index absent from the list caller's table returns `COH_NOT_FOUND`. Unlike the
-original client, this module does not fabricate a dummy entity. An older create/update cannot
-replace a newer slot generation or bypass a newer deletion tombstone. Duplicate
-create packets with the same creation packet ID are rejected as a conservative
-admission rule, even though the old client can reuse the existing object.
-Orientation updates use the original strict greater-than per component rule;
-position retains the original per-bit ordering including equality. Deletion
-uses source packet ordering rather than requiring generation IDs to match: a
-newer deletion removes the older occupant even if the slot was reused. Equal
-create/delete packet IDs retain that occupant, matching the original source.
+No parser allocates memory or retains packet pointers. NetFX is copied into
+`CohEntRecord` as bounded unresolved event metadata. The existing list inspection
+API does not retain per-record event lists; a future complete transaction owner
+must explicitly retain them before publishing or executing any effects. List
+validation is not event delivery (the same applies to triggered moves). The
+NetFX client timer is retained as its packed wire integer; the original engine
+converts that integer to `F32` when populating its runtime NetFx object. API objects must not alias
+one another and have one owner thread. Workspace contents after failure are
+unspecified and must never be published. On the current 64-bit ABI:
 
-Packet IDs use the original unsigned comparisons; wraparound recovery is not
-implemented. A transport/session owner must reset staging on a new session and
-must not use this module to admit a wrapped sequence silently. Every index in a
-delete batch must already have a staging slot or tombstone; missing capacity
-rejects the entire batch without mutation.
+- `CohEntSlot`: 3,600 bytes.
+- 256-slot caller table: 921,600 bytes.
+- `CohEntListWorkspace`: 922,624 bytes.
+- Table plus scratch: 1,844,224 bytes, excluding packet and caller metadata.
 
-Source slot indices are bounded to `1..10239` (`MAX_ENTITIES_PRIVATE=10240`).
-Index zero is admitted only as the empty-list terminator; a create/update using
-it fails. Entity generations are separate positive signed
-IDs up to `INT32_MAX`, **not** capped to the slot index: fixtures include generation
-70001. Generations are derived from the original server `++ent_id`; positive
-signed range is this module's explicit admission budget. Class/origin indices
-are capped at 65535 pending actual dictionary admission. Delete batches have a
-native 256-record limit (original server can emit more), triggered moves a
-16-record budget, entity lists and supplied tables a 256-slot budget, and
-strings retain the bounded original receiving capacities
-(up to 1000 bytes including NUL). Exceeding a limit is reported, never silently
-truncated. No parser allocates heap memory or stores borrowed packet pointers.
-All APIs require a single owner thread and nonaliasing input/output structures.
+Allocate the table and scratch on the heap, arena or static owner, never the
+Android thread stack. Query `sizeof` on the target ABI. Record-local temporaries
+are bounded. Slot count remains 256; this is an explicit admission ceiling,
+not whole-zone scalability acceptance. Definitions and graphs have separate
+budgets owned by their modules.
 
-## Source oracle and evidence
+Additional budgets: slots 1..10239; positive signed entity IDs and DBIDs;
+16 triggered moves; 32 NetFX events; 256 deletes; 32 placaters; 16 designer statuses of at most
+127 non-NUL bytes; 259-byte sequence/world-group strings; exactly five inventory
+types. Inventory capacities admit signed-positive integer range and do not
+assume used <= capacity (source inventories may be over capacity). Exceeding
+bounds fails rather than truncates. Packet IDs use source unsigned comparisons;
+transport must reset state for a new session and refuse silent wraparound.
 
-`source-pins.json` pins 14 original files from the imported Thunderspies source
-at `0b75ade0c801735e10c5798f641948a45cc50488`. The checker compiles 24 unchanged
-original functions: BitStream writers/reader, optional scalar/string/auto
-writers, `entSendCreate`, `entSendPetInfo`, `entSendPosUpdate`,
-`entSendQrotUpdate`, `entSendModes`, `entSendSeqTriggeredMoves`,
-`entSendAiAnimList`, `entSendDeletes`, `unpackQuatElem`, quaternion helpers and
-`entGetOrientation`. `oracle_shim.h` supplies explicitly synthetic engine data
-and lookup adapters. It does not emulate a MapServer, a real account, or a
-complete class/power/appearance dictionary. The unsupported generic collision
-prediction adapter aborts if the fixture accidentally exercises it.
+Creation cannot replace a newer generation/tombstone. Duplicate create packet
+IDs are conservatively rejected. Deletes compare source packet order, not delete
+entity-ID equality; equal creation/delete packet IDs preserve the live occupant.
+Generation replacement resets appearance, stat channels, inventory and target
+state together through `coh_ent_slot_init`.
 
-Individual create and deletion fixtures execute the complete original producer.
-Quaternion expected values execute the original client consumer, including
-partial, stale and duplicate-component updates. Complete supported record
-fixtures compose the original create/position/quaternion/mode/trigger/AI
-producers in the audited outer source field order, with explicit field writes
-for other flags and sequence/ragdoll/vision values. They are **not** produced by
-the entire original `entSend` outer function. Separate manual source-layout
-fixtures, every-bit truncation, malformed counts/identity/ranges, unsupported
-branches, rollback, tombstone ordering and 20,000 randomized bodies cover the
-native parser. All fixtures are synthetic; none proves actual server traffic.
+## Source oracles and evidence
 
-List fixtures compose those same unchanged original component functions into a
-single original BitStream. Cases include ascending and descending NPC records,
-entity 10239 followed by the sentinel, and synthetic self metadata. The self
-fixtures deliberately suppress `pchar_things` and other unsupported player
-branches; they are not real complete player creates. This fixture composer
-does not execute the original complete `sendEntity` or `entSendUpdate` function.
-Manual list fixtures separately cover malformed sentinels, duplicate/zero
-indices, missing slots, unknown updates and a later unsupported appearance.
-Tests check every-bit truncation with table/reader/receipt rollback, seeded
-global ownership conflicts, untouched self slots, stale creates/updates and
-deletion tombstones. Release, ASan and UBSan run the same fixture/test set.
+`check.py` pins 23 original files imported at
+`0b75ade0c801735e10c5798f641948a45cc50488`. It compiles unchanged original BitStream
+functions, create/pet/position/quaternion/sequence/AI/delete/costume/target and
+inventory producers. Exact original `ParserSend`, `sdPackStruct`, scalar/struct
+senders, `ParserRecv`, `sdUnpackStruct`, scalar/struct receivers and the original
+schema declarations independently produce and consume basic/self statistics.
+Original quaternion consumption remains independently compared. Original
+`entSendNetFx` and `entReceiveNetFx` independently verify all event fields, both
+origin/target modes, forced/incremental source filtering and zero counts.
+
+`oracle_shim.h` and `stats_oracle_shim.h` adapt deterministic synthetic engine
+objects/storage. Unsupported engine callbacks abort. Original NPC/sequence
+costume producer paths are executed; full/owned costume paths are not. Target
+and inventory fixtures execute complete original component producers. Status
+strings are manual source-layout fixtures, not executed original status
+producers/consumers. Complete supported record/list fixtures compose original
+components plus audited outer flags; they do not execute complete original
+`sendEntity`, `entSendUpdate` or a MapServer. No synthetic fixture is actual
+server traffic.
+
+Tests include every-bit truncation/rollback, malformed and duplicate fields,
+negative statistics, per-field stale packets, tombstones, ownership conflicts,
+and 20,000 randomized bodies. Release, ASan and UBSan run the same native tests.
+The historical source oracle runs trusted padded inputs at `-O0` outside
+sanitizers; LeakSanitizer is disabled because sandbox `/proc` walking is
+unavailable. Cross-build receipts are not emulator or physical acceptance.
 
 ```sh
 python native-android/engine/entities/check.py --source-root . --sanitize \
-  --fixtures-output /tmp/entities-fixtures.h \
-  --output /tmp/entities-host.json \
+  --fixtures-output /tmp/entities-fixtures.h --output /tmp/entities-host.json \
   --ndk /path/to/android-ndk-r28c --android-output /tmp/entities-android
-cmake -S native-android/engine/entities -B /tmp/entities-cmake
-cmake --build /tmp/entities-cmake
 ```
 
-The Android output contains one retained `fixtures.h`, per-ABI executables and
-receipts binding fixture/source/binary SHA256 values. Host release, ASan and
-UBSan execute the same new code and fixture set. The historical x86 original
-oracle runs at `-O0` on trusted aligned/padded inputs outside sanitizer coverage.
-LeakSanitizer is disabled because its `/proc` walk is unavailable in this
-sandbox; ASan memory-access and UBSan checks remain enabled. Android cross-build
-receipts say `executed:false`; execution requires a separate Android 13 x86_64
-qualification receipt. Cross-building ARM64 is not physical Thor acceptance.
-
-Rollback is removal/revert of this additive directory. There is no APK, profile,
-asset, character, account, launcher or saved-data migration.
+See `INITIAL_UPDATE_CLOSURE.md` for precise remaining source-ordered branches and
+actor admission rules. Rollback is reverting this additive module change; no
+APK, asset, profile, account, database or saved-character migration exists.

@@ -5,11 +5,13 @@
 extern "C" {
 #endif
 /* Explicit admission budgets, not original engine maxima. */
-#define COH_SG_DEFS_MAX 4096u
-#define COH_SG_ROOTS_MAX 4096u
-#define COH_SG_CHILDREN_MAX 16384u
+#define COH_SG_DEFS_MAX 65536u
+#define COH_SG_ROOTS_MAX 65536u
+#define COH_SG_CHILDREN_MAX 262144u
 #define COH_SG_DEPTH_MAX 128u
 #define COH_SG_MEMORY_MAX (32u*1024u*1024u)
+#define COH_SG_TRANSACTION_MAX (96u*1024u*1024u)
+#define COH_SG_FIXED_SCRATCH_BYTES (64u*1024u)
 typedef float CohSgMatrix[4][3]; /* Original engine column basis, position [3]. */
 typedef struct { char name[COH_REP_NAME_MAX]; CohSgMatrix matrix; uint32_t resolved; } CohSgChild;
 typedef struct { char original[COH_REP_NAME_MAX], replacement[COH_REP_NAME_MAX]; uint32_t composite; } CohSgSwap;
@@ -24,10 +26,16 @@ typedef struct {
 } CohSgDefinition;
 typedef struct { char name[COH_REP_NAME_MAX]; uint32_t bounds_checksum, loaded; } CohSgFile;
 typedef struct { uint32_t id, active, resolved; char name[COH_REP_NAME_MAX]; CohSgMatrix matrix; } CohSgRoot;
+typedef struct { uint32_t key, value; } CohSgIndexEntry; /* value is index+1. */
 typedef struct {
     uint32_t generation, asset_generation, file_count, definition_count, root_count;
     uint32_t definitions_crc, references_crc, active_roots;
     size_t owned_bytes;
+    /* Private allocation/index bookkeeping; immutable after publication. */
+    size_t allocation_limit, peak_bytes;
+    uint32_t definition_capacity, root_capacity;
+    uint32_t definition_index_capacity, root_index_capacity, name_index_capacity;
+    CohSgIndexEntry *definition_index, *root_index, *name_index;
     CohSgFile *files; CohSgDefinition *definitions; CohSgRoot *roots;
     /* This is a resolved topology snapshot, NOT a live world/render permit. */
 } CohSceneGraph;
@@ -43,7 +51,7 @@ typedef CohStatus (*CohSgImportFn)(void *, const char *, uint32_t, uint32_t, Coh
 typedef enum { COH_SG_GEOMETRY=1, COH_SG_TEXTURE=2, COH_SG_COMPOSITE_TEXTURE=3 } CohSgAssetKind;
 typedef CohStatus (*CohSgAssetFn)(void *, CohSgAssetKind, const char *, uint32_t);
 typedef struct { void *context; CohSgImportFn file; CohSgAssetFn asset; uint32_t generation; } CohSgImports;
-typedef enum { COH_SG_INSPECT=1, COH_SG_IMPORT=2, COH_SG_DECODE=3, COH_SG_RESOLVE=4, COH_SG_CHECKSUM=5 } CohSgStage;
+typedef enum { COH_SG_INSPECT=1, COH_SG_IMPORT=2, COH_SG_DECODE=3, COH_SG_RESOLVE=4, COH_SG_CHECKSUM=5, COH_SG_BUDGET=6 } CohSgStage;
 typedef struct { CohSgStage stage; CohStatus status; size_t bit; uint32_t file, definition, reference; } CohSgFailure;
 /* Start immediately after GROUPS command. Pure synchronous preparation: call
  * off rendering thread. On any failure reader and *published remain unchanged.
@@ -52,8 +60,31 @@ typedef struct { CohSgStage stage; CohStatus status; size_t bit; uint32_t file, 
  * exactly one; incremental asset generation must match previous snapshot.
  * Existing prefix/structural inspector runs first. All topology/name/checksum,
  * explicit geometry/texture identities, cycle/depth/count bounds must pass.
- * This function sends no packets and does not admit any authoritative actor. */
+ * This function sends no packets and does not admit any authoritative actor.
+ * Compatibility wrapper: external catalog/asset reservations are zero. It is
+ * NOT a whole working-set guarantee; production import uses apply_bounded. */
 CohStatus coh_scenegraph_apply(CohSceneGraph **published, CohRepReader *, const CohSgImports *, uint32_t next_generation, CohSgFailure *);
+/* Aggregate working-set admission. external_bytes must include the complete
+ * retained catalog, asset pins and caller scratch while applying. Input bytes
+ * and the published graph plus 64KiB internal stack reserve are added automatically. Callback allocations must
+ * fit that reservation; callbacks may not acquire unaccounted retained memory.
+ * Optional exact capacity hints avoid geometric-growth transient peaks for a
+ * known catalog; they never alter identity/count/checksum validation. Counts
+ * measure allocation payload, not allocator metadata or whole-process RSS. */
+typedef struct {
+    size_t aggregate_limit, external_bytes;
+    uint32_t reserve_definitions, reserve_roots;
+} CohSgBudget;
+typedef struct {
+    size_t external_bytes, input_bytes, prior_bytes, fixed_scratch_bytes, candidate_peak_bytes;
+    size_t aggregate_peak_bytes, aggregate_limit;
+} CohSgMemoryReport;
+CohStatus coh_scenegraph_apply_bounded(CohSceneGraph **, CohRepReader *, const CohSgImports *,
+    uint32_t next_generation, const CohSgBudget *, CohSgMemoryReport *, CohSgFailure *);
+/* Indexed immutable lookup, with no allocation or callback. */
+CohStatus coh_scenegraph_find_definition(const CohSceneGraph *, uint32_t file, uint32_t slot, uint32_t *index);
+CohStatus coh_scenegraph_find_name(const CohSceneGraph *, const char *, uint32_t *index);
+CohStatus coh_scenegraph_find_root(const CohSceneGraph *, uint32_t id, uint32_t *index);
 void coh_scenegraph_free(CohSceneGraph *);
 /* Decode one original sendDef record, INCLUDING its id+1 prefix, without
  * publishing a graph or checking assets. This is the catalog adapter boundary.

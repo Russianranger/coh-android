@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Original producer graph fixtures + bounded native ownership/negative checks."""
 from pathlib import Path
-import argparse, ctypes as C, hashlib, importlib.util, json, os, shutil, subprocess, tempfile
+import argparse, ctypes as C, hashlib, importlib.util, json, os, shutil, subprocess, tempfile, struct
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
 def run(cmd,**kw):
@@ -59,6 +59,32 @@ void scenegraph_source_roots(float *out) {memcpy(out,oracle_refs[0].mat,48);memc
     lines.append('static const Fixture fixtures[]={'+',\n'.join(rows)+'};\n')
     lines.append('static const float source_matrices[3][4][3]={'+','.join('{'+','.join('{'+','.join(float(mat[k*12+i*3+j]).hex()+'f' for j in range(3))+'}' for i in range(4))+'}' for k in range(3))+'};\n')
     (directory/'scenegraph_fixtures.h').write_text(''.join(lines))
+    # Reuse the exact catalog producer and independently invoke unchanged sendDef
+    # for every stress record. Separate temporary scope is safe under parallel CI.
+    catdir=directory/'catalog-source';catdir.mkdir()
+    cspec=importlib.util.spec_from_file_location('graph_catalog_oracle',HERE.parent/'scenecatalog/check.py')
+    catalog=importlib.util.module_from_spec(cspec);cspec.loader.exec_module(catalog)
+    catreceipt,_=catalog.prepare(source_root,catdir)
+    clib=C.CDLL(str(catdir/'catalog-original.so'))
+    clib.catalog_original.argtypes=[C.c_uint32]*4+[C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p]
+    clib.catalog_record_original.argtypes=[C.c_uint32,C.c_uint32,C.c_void_p,C.POINTER(C.c_uint32)]
+    buf=(C.c_uint8*(32<<20))();wire=(C.c_uint8*(1<<20))();size=C.c_uint32();bits=C.c_uint32();counts=(C.c_uint32*7)()
+    assert clib.catalog_original(20,1,0,0,buf,C.byref(size),wire,C.byref(bits),counts)==0
+    raw=bytes(buf[:size.value]);w=bytes(wire[:(bits.value+7)//8]);at=48;compared=0
+    direct=(C.c_uint8*(4<<20))();direct_size=C.c_uint32()
+    for f in range(struct.unpack_from('<I',raw,24)[0]):
+        index,checksum,slots,records,length=struct.unpack_from('<5I',raw,at);assert index==f;at+=20+length
+        for _ in range(records):
+            slot,rbits,rbytes,ralign=struct.unpack_from('<4I',raw,at);at+=16
+            assert clib.catalog_record_original(f,slot,direct,C.byref(direct_size))==1
+            assert direct_size.value==rbytes and bytes(direct[:rbytes])==raw[at:at+rbytes]
+            at+=rbytes;compared+=1
+    assert at==len(raw) and compared==12192
+    with (directory/'scenegraph_fixtures.h').open('a') as f:
+        for name,payload in [('stress_catalog',raw),('stress_wire',w)]:
+            f.write('static const unsigned char '+name+'[]={'+','.join(map(str,payload))+'};\n')
+        f.write('static const size_t stress_wire_bits='+str(bits.value)+';\n')
+    receipt['stress_catalog']={'producer':catreceipt,'source_counts':list(counts),'catalog_sha256':hashlib.sha256(raw).hexdigest(),'wire_sha256':hashlib.sha256(w).hexdigest(),'independent_record_comparisons':compared,'real_server_capture':False}
     receipt['graph_extension_sha256']=hashlib.sha256(extra.encode()).hexdigest()
     receipt['graph_fixture_header_sha256']=hashlib.sha256((directory/'scenegraph_fixtures.h').read_bytes()).hexdigest()
     return receipt,len(fixtures)
@@ -72,8 +98,8 @@ def main():
         if a.prepare_only:
             if not a.fixtures_output:ap.error('--prepare-only requires --fixtures-output')
             return
-        sources=[HERE/'coh_scenegraph.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenegraph.c']
-        hashed_sources=[*sources,HERE/'coh_scenegraph.h',HERE/'check.py',HERE.parent/'replication/coh_replication.h',HERE.parent/'replication/coh_groups.h',HERE.parent/'replication/groups-source-pins.json']
+        sources=[HERE/'coh_scenegraph.c',HERE.parent/'scenecatalog/coh_scenecatalog.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenegraph.c']
+        hashed_sources=[*sources,HERE/'coh_scenegraph.h',HERE/'check.py',HERE.parent/'replication/coh_replication.h',HERE.parent/'replication/coh_groups.h',HERE.parent/'replication/groups-source-pins.json',HERE.parent/'scenecatalog/coh_scenecatalog.h',HERE.parent/'scenecatalog/check.py',HERE.parent/'scenecatalog/source_export.inc',HERE.parent/'scenecatalog/tests/source_catalog_harness.c']
         source_hashes={str(p.relative_to(REPO)):hashlib.sha256(p.read_bytes()).hexdigest() for p in hashed_sources}
         fixture_sha=hashlib.sha256((d/'scenegraph_fixtures.h').read_bytes()).hexdigest()
         flags=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(d),'-I'+str(HERE),'-Wl,--wrap=malloc,--wrap=calloc,--wrap=free']
@@ -94,7 +120,7 @@ def main():
                 run([str(cc),*flags,'-O2',*map(str,sources),'-lm','-o',str(binary)])
                 r={'passed':True,'abi':abi,'binary':binary.name,'binary_sha256':hashlib.sha256(binary.read_bytes()).hexdigest(),'execution_qualified':False,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes}
                 (out/'receipt.json').write_text(json.dumps(r,indent=2)+'\n');android.append(r)
-        result={'schema':1,'passed':True,'scope':'owned transactional GROUPS topology; pinned synthetic original producers and supplied fixture catalogs, not imported live world','source_oracle':receipt,'fixtures':n,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes,'checks':checks,'android_builds':android,'leak_sanitizer':False,'leak_sanitizer_reason':'host ptrace environment denies /proc thread enumeration; every module allocation is independently wrapped/counted and failures injected','real_import_adapter':False,'renderer_authorized':False,'real_server_capture':False,'thor_accepted':False}
+        result={'schema':1,'passed':True,'scope':'dynamic indexed GROUPS topology; source-produced synthetic 508-file catalog imported with aggregate ownership admission, not live server world','source_oracle':receipt,'fixtures':n,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes,'checks':checks,'android_builds':android,'leak_sanitizer':False,'leak_sanitizer_reason':'host ptrace environment denies /proc thread enumeration; every module allocation is independently wrapped/counted and failures injected','catalog_import_adapter_tested':True,'real_import_adapter':False,'renderer_authorized':False,'real_server_capture':False,'thor_accepted':False}
         if a.output:a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(result,indent=2)+'\n')
         print(json.dumps(result,indent=2))
 if __name__=='__main__':main()

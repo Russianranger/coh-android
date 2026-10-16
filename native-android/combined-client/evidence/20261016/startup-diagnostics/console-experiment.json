@@ -1,0 +1,114 @@
+{
+  "equivalence": {
+    "append_boundary_cases": 6,
+    "concurrent_reader_races_qualified": false,
+    "exact_result_comparisons": 51,
+    "same_length_mutations_supported": false,
+    "source_overflow_drop_policy_checked": true,
+    "split_marker_checked": true,
+    "utf8_replacement_and_completion_checked": true
+  },
+  "host": {
+    "machine": "x86_64",
+    "python": "3.12.14"
+  },
+  "limits": {
+    "maximum_iterations": 10000,
+    "maximum_output_bytes": 2097152,
+    "maximum_repeats": 10,
+    "peak_process_rss_measured": false
+  },
+  "measurements": [
+    {
+      "decoded_bytes_avoided_after_initial_observation": 36503000,
+      "original_median_ms": 146.087763,
+      "original_ms": [
+        146.087763,
+        154.11997,
+        140.378094,
+        158.430802,
+        133.973183
+      ],
+      "output_bytes": 36503,
+      "polls_per_repeat": 1000,
+      "prototype_median_ms": 0.076535,
+      "prototype_ms": [
+        0.076835,
+        0.075884,
+        0.075935,
+        0.077036,
+        0.076535
+      ],
+      "repeats": 5,
+      "unchanged_no_crash_output": true
+    },
+    {
+      "decoded_bytes_avoided_after_initial_observation": 65536000,
+      "original_median_ms": 255.752492,
+      "original_ms": [
+        252.675101,
+        258.159063,
+        234.123538,
+        255.752492,
+        336.709925
+      ],
+      "output_bytes": 65536,
+      "polls_per_repeat": 1000,
+      "prototype_median_ms": 0.076405,
+      "prototype_ms": [
+        0.076505,
+        0.076154,
+        0.076405,
+        0.076365,
+        0.117737
+      ],
+      "repeats": 5,
+      "unchanged_no_crash_output": true
+    },
+    {
+      "decoded_bytes_avoided_after_initial_observation": 2097152000,
+      "original_median_ms": 7849.588406,
+      "original_ms": [
+        7779.254531,
+        7959.365541,
+        7678.891514,
+        7999.312667,
+        7849.588406
+      ],
+      "output_bytes": 2097152,
+      "polls_per_repeat": 1000,
+      "prototype_median_ms": 0.078498,
+      "prototype_ms": [
+        0.077547,
+        0.077136,
+        0.078498,
+        0.104147,
+        0.078748
+      ],
+      "repeats": 5,
+      "unchanged_no_crash_output": true
+    }
+  ],
+  "schema": "coh-startup-console-host-experiment-v1",
+  "scope": {
+    "android_or_thor_executed": false,
+    "deployable_candidate": false,
+    "original_methods_executed": true,
+    "production_modified": false,
+    "startup_improvement_measured": false,
+    "synthetic_output_only": true
+  },
+  "source_commit": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+  "source_methods": {
+    "android/guest/diagnostic.py": {
+      "file_sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf",
+      "method": "text",
+      "method_source_sha256": "6070d7302ef9b35f6d19d08670fab8ed9c95c31ea41241b59af6af0a747cabb9"
+    },
+    "android/guest/local_character_server.py": {
+      "file_sha256": "82915cdab3573843c32961478f4e015c27a72e180d75db177e439a081305e180",
+      "method": "map_crash_observation",
+      "method_source_sha256": "3963df53c414bd72f2f2317d90f6baf4d8cab94fa48f26ff6b7815afcc2c95aa"
+    }
+  }
+}

@@ -13,14 +13,14 @@ FILES=['MapServer/src/entity/entsend.c','Game/src/entity/entrecv.c',
        'Common/entity/entity_enum.h','Common/entity/entVarUpdate.h','Common/entity/entity.h','Common/entity/ragdoll.h',
        'libs/UtilitiesLib/src/components/BitStream.c','libs/UtilitiesLib/src/network/netcomp.c',
        'libs/UtilitiesLib/src/network/net_packetutil.c','libs/UtilitiesLib/src/utils/Quat.c',
-       'libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h','Common/entity/gametypes.h','MapServer/src/entity/entserver.c','MapServer/src/entity/entsend.h']
+       'libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h','Common/entity/gametypes.h','MapServer/src/entity/entserver.c','MapServer/src/entity/entsend.h','Common/entity/character_net.c','Common/entity/character_inventory.h','Common/comm_game.h','libs/UtilitiesLib/src/utils/structNet.c','Game/src/entity/character_net_client.c','Common/entity/attrib_net.c','libs/UtilitiesLib/src/utils/textparser.c','libs/UtilitiesLib/include/utilitieslib/utils/textparser.h','Common/entity/netfx.h']
 def run(cmd,**kw):
     p=subprocess.run([str(c) for c in cmd],text=True,capture_output=True,**kw)
     if p.returncode:raise RuntimeError(repr(cmd)+'\n'+p.stdout+p.stderr)
     return p
 
 def extract(text,name):
-    m=re.search(r'^(?:static\s+)?(?:unsigned\s+int|void|int|U32|F32)\s+(?:INLINEDBG\s+)?'+name+r'\s*\([^;{}]*\)\s*\{',text,re.M)
+    m=re.search(r'^(?:static\s+)?(?:unsigned\s+int|void|int|U32|F32|float|bool)\s+(?:INLINEDBG\s+)?'+name+r'\s*\([^;{}]*\)\s*\{',text,re.M)
     if not m:raise ValueError('Missing original function '+name)
     start=text.index('{',m.start());at=start+1;depth=1
     while depth:
@@ -38,20 +38,62 @@ def oracle(repo,directory):
     bit=source[FILES[6]];util=source[FILES[8]];send=source[FILES[0]];recv=source[FILES[1]]
     names=[]
     def get(text,name):names.append(name);return extract(text,name)
-    code=pre+'\n'+''.join(get(bit,n) for n in ['initBitStream','bsWriteBits','bsWriteBitsPack','bsReadBits','bsAlignByte','bsGetCursorBitPosition','bsWriteString'])
+    code=pre+'\n'+''.join(get(bit,n) for n in ['initBitStream','bsWriteBits','bsWriteBitsPack','bsReadBits','bsReadBitsPack','bsAlignByte','bsGetCursorBitPosition','bsWriteString'])
     code+='''
 static void pktSendBits(Packet *p,int n,U32 v){bsWriteBits(&p->stream,n,v);}
 static void pktSendBitsPack(Packet *p,int n,U32 v){bsWriteBitsPack(&p->stream,n,v);}
 static U32 pktGetBits(Packet *p,int n){return bsReadBits(&p->stream,n);}
+static U32 pktGetBitsPack(Packet *p,int n){return bsReadBitsPack(&p->stream,n);}
+static void pktSendF32(Packet *p,float f){U32 u;memcpy(&u,&f,4);pktSendBits(p,32,u);}
+static float pktGetF32(Packet *p){U32 u=pktGetBits(p,32);float f;memcpy(&f,&u,4);return f;}
 static void pktSendString(Packet *p,const char *s){bsWriteString(&p->stream,s?s:"");}
 static int auto_bins[]={2,10,24,32};
 '''
     code+=''.join(get(util,n) for n in ['pktSendIfSetBitsPack','pktSendIfSetBits','pktGetIfSetBits','pktSendIfSetString','pktSendBitsAuto'])
+    code+='typedef float F32;typedef float Vec3[3];typedef struct {struct {U32 integer;} primary,secondary;} ColorPair;\n'
+    fxheader=source['Common/entity/netfx.h'];code+=fxheader[fxheader.index('//2 bits'):fxheader.index('/*Header info')]
     code+=(HERE/'oracle_shim.h').read_text()
-    code+=''.join(get(send,n) for n in ['entSendPetInfo','entSendCreate','entSendPosUpdate','entSendQrotUpdate','entSendModes','entSendSeqTriggeredMoves','entSendAiAnimList','entSendDeletes'])
+    code+=''.join(get(util,n) for n in ['pktSendIfSetF32','pktGetIfSetF32','pktGetIfSetBitsPack'])
+    code+=get(source['Common/entity/character_net.c'],'basepower_Send')
+    code+=get(source['Common/entity/character_net.c'],'character_SendInventorySizes')
+    code+=''.join(get(send,n) for n in ['entSendPetInfo','entSendCreate','entSendPosUpdate','entSendQrotUpdate','entSendModes','entSendSeqTriggeredMoves','entSendAiAnimList','entSendDeletes','entSendCostume','entSendTargetUpdate','entSendNetFx'])
     code+=get(source[FILES[7]],'unpackQuatElem')
     code+=''.join(get(source[FILES[9]],n) for n in ['quatCalcWFromXYZ','quatNormalize'])
     code+=get(recv,'entGetOrientation')
+    code+=get(recv,'entReceiveNetFx')
+    code+=(HERE/'stats_oracle_shim.h').read_text()
+    structnet=source['libs/UtilitiesLib/src/utils/structNet.c']
+    code+=structnet[structnet.index('typedef struct FloatAccuracyTable'):structnet.index('float ParserUnpackFloat')]
+    code+=''.join(get(structnet,n) for n in ['ParserUnpackFloat','ParserPackFloat','ParserFloatMinBits'])
+    code+=''.join(get(source['libs/UtilitiesLib/src/utils/textparser.c'],n) for n in ['int_senddiff','float_senddiff','struct_senddiff','int_recvdiff','float_recvdiff','struct_recvdiff'])
+    code+=''.join(get(structnet,n) for n in ['sdPackStruct','ParserSend','sdUnpackStruct','ParserRecv'])
+    schema=source['Common/entity/attrib_net.c']
+    code+='\n#define Character StatsCharacter\n'+schema[schema.index('TokenizerParseInfo ParseBasicCharacterAttributesLowRes'):schema.index('/* End of File */')]+'\n#undef Character\n'
+    code+='''
+void original_receive_stats(const U8 *data,U32 bits,int aligned,int self,float *values,int *integers){
+ U32 storage[8192]={0};Packet p={0};StatsCharacter c={0};
+ initBitStream(&p.stream,(U8*)storage,sizeof(storage),Read,aligned,0);memcpy(storage,data,(bits+7)/8);p.stream.bitLength=bits;p.id=10;
+ stats_ops[1].recvdiff=int_recvdiff;stats_ops[2].recvdiff=float_recvdiff;stats_ops[3].recvdiff=struct_recvdiff;
+ assert(ParserRecv(self?SendCharacterToSelf:SendBasicCharacter,&p,&c,NULL,true));assert(bsGetCursorBitPosition(&p.stream)==bits);
+ memcpy(values,&c.attrCur,sizeof(c.attrCur));memcpy(values+8,&c.attrMax,sizeof(c.attrMax));memcpy(integers,&c.iLevel,6*sizeof(int));
+}
+void original_stats(int self,int aligned,U8 *out,U32 *length,float *expected){
+ U32 storage[8192]={0};Packet p={0};StatsCharacter c={0};
+ initBitStream(&p.stream,(U8*)storage,sizeof(storage),Write,aligned,0);
+ stats_ops[1]=(StatsOps){fixture_compare,int_senddiff};stats_ops[2]=(StatsOps){fixture_compare,float_senddiff};stats_ops[3]=(StatsOps){fixture_compare,struct_senddiff};
+ c.attrCur=(CharacterAttributes){123.45f,45.5f,91.2f,.753f,300.f,8.75f,-3.3f,.656f};
+ c.attrMax=(CharacterAttributes){200.25f,55.5f,100.f,.853f,400.f,9.75f,2.4f,.757f};
+ c.iLevel=12;c.iCombatLevel=14;c.iExperiencePoints=123456;c.iExperienceDebt=-123;c.iExperienceRest=1000;c.iInfluencePoints=7654321;
+ ParserSend(self?SendCharacterToSelf:SendBasicCharacter,&p,&c,&c,true,false,true,0,0);
+ expected[0]=ParserUnpackFloat(ParserPackFloat(c.attrCur.fHitPoints,self?FLOAT_TENTHS:FLOAT_ONES),self?FLOAT_TENTHS:FLOAT_ONES);
+ expected[1]=ParserUnpackFloat(ParserPackFloat(c.attrCur.fEndurance,self?FLOAT_TENTHS:FLOAT_FIVES),self?FLOAT_TENTHS:FLOAT_FIVES);
+ expected[2]=ParserUnpackFloat(ParserPackFloat(c.attrCur.fStealthRadiusPlayer,FLOAT_ONES),FLOAT_ONES);
+ expected[3]=ParserUnpackFloat(ParserPackFloat(c.attrCur.fConfused,FLOAT_TENTHS),FLOAT_TENTHS);
+ expected[4]=ParserUnpackFloat(ParserPackFloat(c.attrCur.fToHit,FLOAT_HUNDRETHS),FLOAT_HUNDRETHS);
+ *length=p.stream.bitLength;memcpy(out,storage,(*length+7)/8);
+}
+'''
+
     code+='''
 void original_fields(const int *widths,const U32 *values,U32 count,int aligned,U8 *out,U32 *length){
  U32 storage[8192]={0};BitStream s;initBitStream(&s,(U8*)storage,sizeof(storage),Write,aligned,0);
@@ -60,7 +102,7 @@ void original_fields(const int *widths,const U32 *values,U32 count,int aligned,U
 }
 void original_create(int scenario,int aligned,U8 *out,U32 *length){
  U32 storage[8192]={0};Packet p={0};Entity e={0},owner={0},creator={0};
- Character ch={3,1,1,NULL};Player pl={0};Villain v={"fixture.def","FixtureCritter","FixtureOverride"};
+ BasePower power={0xa1b2c3d4};Character ch={3,1,1,NULL};Player pl={0};Villain v={"fixture.def","FixtureCritter","FixtureOverride"};
  PNPCDef pn={"FixturePNPC"};PNPCInfo pi={&pn,1025};
  initBitStream(&p.stream,(U8*)storage,sizeof(storage),Write,aligned,0);
  e.type=scenario==0||scenario==1||scenario>=6?2:(scenario==2||scenario==3||scenario==4?4:1);
@@ -72,14 +114,17 @@ void original_create(int scenario,int aligned,U8 *out,U32 *length){
  if(scenario==1)pl.isBeingCritter=1;
  if(scenario==2||scenario==3||scenario==4){e.villainDef=&v;e.villainRank=3;e.idDetail=7;e.favoriteWeaponAnimList="FixtureAnim";server_state.clickToSource=1;}
  if(scenario==3||scenario==4){owner.owner=12;creator.owner=13;e.erOwner=&owner;e.erCreator=&creator;e.commandablePet=1;e.petDismissable=1;e.petName="FixturePet";e.specialPowerDisplayName="FixturePower";e.specialPowerState=4;}
- if(scenario==4)ch.ppowCreatedMe=(void*)1;
+ if(scenario==4)ch.ppowCreatedMe=&power;
  if(scenario==5){e.persistentNPCInfo=&pi;e.name=NULL;}
  pktSendBits(&p,1,1);entSendCreate(&p,&e,scenario==0||scenario==1?&e:NULL,1);
  *length=p.stream.bitLength;memcpy(out,storage,(*length+7)/8);
 }
 /* Fixture composition only: component functions above remain unchanged. The
- * pchar/appearance body flags below are deliberately suppressed, including
- * for self fixtures; these bytes are not a complete real-player update. */
+ * pchar/appearance body flags below are normally suppressed, including
+ * for self fixtures; the dedicated NPC stat fixture enables only supported
+ * pchar fields. These bytes are not a complete real-player update. */
+static void original_netfx_fields(Packet *p,int scenario);
+static int fixture_record_stats;
 static void original_record_fields(Packet *p,Entity *e,Entity *self,int medium){
  pktSendBits(p,1,1);entSendCreate(p,e,self,1);
  pktSendBits(p,1,medium);if(medium){pktSendBits(p,1,1);pktSendBits(p,1,0);entSendModes(p,e,1);}
@@ -88,10 +133,17 @@ static void original_record_fields(Packet *p,Entity *e,Entity *self,int medium){
   pktSendBits(p,1,1);pktSendIfSetBitsPack(p,8,33);pktSendIfSetBitsPack(p,4,4);pktSendIfSetBits(p,11,3);
   entSendSeqTriggeredMoves(p,e);entSendAiAnimList(p,e,1);
  }
- pktSendBits(p,1,0);pktSendBits(p,1,0);
+ pktSendBits(p,1,fixture_record_stats!=0);pktSendBits(p,1,fixture_record_stats==2);
+ if(fixture_record_stats==2)original_netfx_fields(p,0);
  if(medium){pktSendIfSetBitsPack(p,2,0);pktSendIfSetBits(p,8,20);}
  pktSendIfSetBits(p,5,medium);if(medium)for(int i=0;i<3;i++)pktSendBits(p,10,256);
- pktSendBitsAuto(p,1);pktSendBitsAuto(p,0);pktSendBitsAuto(p,0);pktSendBits(p,1,0);
+ if(fixture_record_stats){
+  StatsCharacter c={0};c.attrCur.fHitPoints=123.45f;c.attrCur.fEndurance=91.2f;c.iLevel=12;c.iCombatLevel=14;
+  pktSendBits(p,1,1);pktSendBits(p,1,1);ParserSend(SendBasicCharacter,p,&c,&c,true,false,true,0,0);
+ }
+ pktSendBitsAuto(p,1);pktSendBitsAuto(p,0);pktSendBitsAuto(p,0);
+ if(fixture_record_stats){pktSendBitsAuto(p,8);pktSendBits(p,1,0);pktSendBits(p,1,0);}
+ pktSendBits(p,1,0);
 }
 static void original_record_entity(Entity *e,U32 id){
  e->type=1;e->id=id;e->name="FixtureNPC";e->randSeed=123;
@@ -102,7 +154,7 @@ static void original_record_entity(Entity *e,U32 id){
 void original_record(int medium,int aligned,U8 *out,U32 *length){
  U32 storage[8192]={0};Packet p={0};Entity e={0};
  initBitStream(&p.stream,(U8*)storage,sizeof(storage),Write,aligned,0);
- original_record_entity(&e,91);original_record_fields(&p,&e,NULL,medium);
+ original_record_entity(&e,91);fixture_record_stats=medium>=2?medium-1:0;original_record_fields(&p,&e,NULL,medium==1);fixture_record_stats=0;
  *length=p.stream.bitLength;memcpy(out,storage,(*length+7)/8);
 }
 void original_list(int scenario,int aligned,U8 *out,U32 *length){
@@ -122,6 +174,64 @@ void original_list(int scenario,int aligned,U8 *out,U32 *length){
  }
  pktSendBitsPack(&p,1,0);pktSendBits(&p,1,1);pktSendBits(&p,1,1);
  *length=p.stream.bitLength;memcpy(out,storage,(*length+7)/8);
+}
+static void original_netfx_fields(Packet *p,int scenario){
+ NetFx fx[4]={{0}};Entity e={0};e.netfx_list=fx;e.netfx_count=scenario==2?0:4;e.netfx_effective=2;e.lastTimeEntSent=1;
+ for(int i=0;i<4;i++){
+  fx[i].command=(i%3)+1;fx[i].net_id=100+i;fx[i].commandStatus=i==3?NEW_FX_COMMAND:(i==0?OLD_FX_COMMAND:NEW_FX_COMMAND_TO_SEND);
+  fx[i].originType=i%2;fx[i].targetType=1-i%2;fx[i].originEnt=4;fx[i].targetEnt=7;fx[i].bone_id=12;
+  fx[i].originPos[0]=1.25f;fx[i].originPos[1]=-2.5f;fx[i].originPos[2]=3.75f;
+  fx[i].targetPos[0]=4.25f;fx[i].targetPos[1]=-5.5f;fx[i].targetPos[2]=6.75f;
+ }
+ fx[0].pitchToTarget=1;fx[0].powerTypeflags=15;fx[0].handle=12345;fx[0].hasColorTint=1;
+ fx[0].colorTint.primary.integer=0x11223344;fx[0].colorTint.secondary.integer=0x55667788;
+ fx[0].clientTimer=2;fx[0].timeCalled=5;fx[0].duration=1.5f;fx[0].radius=12.25f;fx[0].power=9;fx[0].debris=0xdeadbeef;
+ fx[1].clientTimer=2;fx[1].clientTriggerFx=123;fx[1].duration=-1;fx[1].radius=0;
+ entSendNetFx(p,&e,scenario!=1,&e);
+}
+void original_netfx(int scenario,int aligned,U8 *out,U32 *length){
+ U32 storage[8192]={0};Packet p={0};initBitStream(&p.stream,(U8*)storage,sizeof(storage),Write,aligned,0);
+ original_netfx_fields(&p,scenario);*length=p.stream.bitLength;memcpy(out,storage,(*length+7)/8);
+}
+void original_receive_netfx(const U8 *data,U32 bits,int aligned,U32 *values,float *positions){
+ U32 storage[8192]={0};Packet p={0};NetFx fx[32]={{0}};Entity e={0};e.netfx_list=fx;
+ initBitStream(&p.stream,(U8*)storage,sizeof(storage),Read,aligned,0);memcpy(storage,data,(bits+7)/8);p.stream.bitLength=bits;
+ entReceiveNetFx(&p,&e);assert(bsGetCursorBitPosition(&p.stream)==bits);values[0]=e.netfx_count;
+ for(int i=0;i<e.netfx_count;i++){
+  U32 fields[]={fx[i].command,fx[i].net_id,fx[i].pitchToTarget,fx[i].powerTypeflags,fx[i].handle,fx[i].hasColorTint,fx[i].colorTint.primary.integer,fx[i].colorTint.secondary.integer,(U32)fx[i].clientTimer,fx[i].clientTriggerFx,fx[i].power,fx[i].debris,fx[i].originType,fx[i].originEnt,fx[i].bone_id,fx[i].targetType,fx[i].targetEnt};
+  memcpy(values+1+i*17,fields,sizeof(fields));positions[i*8]=fx[i].duration;positions[i*8+1]=fx[i].radius;
+  memcpy(positions+i*8+2,fx[i].originPos,12);memcpy(positions+i*8+5,fx[i].targetPos,12);
+ }
+}
+void original_appearance(int scenario,int aligned,U8 *out,U32 *length){
+ U32 storage[8192]={0};Packet p={0};Entity e={0};
+ struct {char *name;} seqtype={"FixtureSequence"};struct {void *type;} seq={&seqtype};
+ initBitStream(&p.stream,(U8*)storage,sizeof(storage),Write,aligned,0);
+ e.type=scenario==1?ENTTYPE_MISSION_ITEM:1;e.npcIndex=12345;e.costumeIndex=3;
+ e.costumeWorldGroup="FixtureWorldGroup";e.seq=(void*)&seq;
+ entSendCostume(&p,&e,NULL,scenario!=2);
+ pktSendIfSetBits(&p,8,44);
+ *length=p.stream.bitLength;memcpy(out,storage,(*length+7)/8);
+}
+static void original_target_fields(Packet *p,int scenario){
+ Entity e={0},target={0},assist={0},taunter={0};Character ch={0};
+ AttribMod taunt={&taunter,1},placate1={&target,1},placate2={&assist,0};AttribMod *placates[]={&placate1,&placate2};
+ e.pchar=&ch;target.owner=4;assist.owner=7;taunter.owner=9;
+ ch.erAssist=&assist;ch.erTargetInstantaneous=&target;ch.pmodTaunt=&taunt;ch.ppmodPlacates=placates;
+ e.clear_target=scenario==1;fixture_placates=2;entSendTargetUpdate(p,&e,scenario!=2);fixture_placates=0;
+}
+void original_target(int scenario,int aligned,U8 *out,U32 *length){
+ U32 storage[8192]={0};Packet p={0};initBitStream(&p.stream,(U8*)storage,sizeof(storage),Write,aligned,0);
+ original_target_fields(&p,scenario);*length=p.stream.bitLength;memcpy(out,storage,(*length+7)/8);
+}
+static void original_inventory_fields(Packet *p,int valid){
+ Entity e={0};Player pl={0};Character ch={0};ch.entParent=&e;e.pl=valid?&pl:NULL;
+ for(int i=0;i<5;i++){ch.inventory_total[i]=100+i;ch.inventory_used[i]=50+i;}
+ ch.auction_total=999;ch.boost_total=70;character_SendInventorySizes(&ch,p);
+}
+void original_inventory(int valid,int aligned,U8 *out,U32 *length){
+ U32 storage[8192]={0};Packet p={0};initBitStream(&p.stream,(U8*)storage,sizeof(storage),Write,aligned,0);
+ original_inventory_fields(&p,valid);*length=p.stream.bitLength;memcpy(out,storage,(*length+7)/8);
 }
 void original_deletes(int aligned,U8 *out,U32 *length){
  U32 storage[8192]={0},visible[320]={0};Packet p={0};EntNetLink link={0};Entity e={0};
@@ -146,9 +256,14 @@ void original_receive_orientation(const U8 *data,U32 bits,int aligned,U32 id,U32
     run([os.environ.get('CC','cc'),'-std=c99','-O0','-shared','-fPIC','-w','-I'+str(repo/'native-android/include'),cfile,'-lm','-o',so])
     lib=C.CDLL(str(so))
     lib.original_fields.argtypes=[C.c_void_p,C.c_void_p,C.c_uint32,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
+    lib.original_receive_stats.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_int,C.c_void_p,C.c_void_p]
+    lib.original_stats.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p]
     lib.original_create.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_record.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_list.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
+    lib.original_receive_netfx.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_void_p,C.c_void_p]
+    for name in ['original_appearance','original_target','original_inventory','original_netfx']:
+        getattr(lib,name).argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_deletes.argtypes=[C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_orientation.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_receive_orientation.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_uint32,C.c_void_p,C.c_void_p]
@@ -169,10 +284,27 @@ def fixtures(lib,directory):
         widths=[2,10,24,32];i=next(i for i,w in enumerate(widths) if v<1<<w);return u(2,i)+u(widths[i],v)
     def string(s):return sum((u(8,v) for v in s.encode()+b'\0'),[])
     for mode in [0,1]:
+        for self in [0,1]:
+            out=(C.c_uint8*32768)();bits=C.c_uint32();expected=(C.c_float*5)();lib.original_stats(self,mode,out,C.byref(bits),expected)
+            label=f'stats_{self}_{mode}';emit(label,bytes(out[:(bits.value+7)//8]),bits.value)
+            content.append('static const float '+label+'_expected[]={'+','.join(float(v).hex()+'f' for v in expected)+'};\n')
+            values=(C.c_float*16)();integers=(C.c_int*6)();lib.original_receive_stats(out,bits.value,mode,self,values,integers)
+            content.append('static const float '+label+'_received[]={'+','.join(float(v).hex()+'f' for v in values)+'};\n')
+            content.append('static const int '+label+'_integers[]={'+','.join(str(v) for v in integers)+'};\n')
+        for scenario in range(3):
+            out=(C.c_uint8*32768)();bits=C.c_uint32();lib.original_netfx(scenario,mode,out,C.byref(bits))
+            label=f'netfx_{scenario}_{mode}';emit(label,bytes(out[:(bits.value+7)//8]),bits.value)
+            vals=(C.c_uint32*(1+32*17))();positions=(C.c_float*(32*8))();lib.original_receive_netfx(out,bits.value,mode,vals,positions)
+            content.append('static const unsigned int '+label+'_values[]={'+','.join(str(v)+'u' for v in vals[:1+vals[0]*17])+'};\n')
+            content.append('static const float '+label+'_positions[]={'+','.join(float(v).hex()+'f' for v in positions[:max(1,vals[0]*8)])+'};\n')
+        for prefix,scenarios in [('appearance',3),('target',3),('inventory',2)]:
+            for scenario in range(scenarios):
+                out=(C.c_uint8*32768)();bits=C.c_uint32();getattr(lib,'original_'+prefix)(scenario,mode,out,C.byref(bits))
+                emit(f'{prefix}_{scenario}_{mode}',bytes(out[:(bits.value+7)//8]),bits.value)
         for scenario in range(8):
             out=(C.c_uint8*32768)();bits=C.c_uint32();lib.original_create(scenario,mode,out,C.byref(bits))
             emit('create_'+str(scenario)+'_'+str(mode),bytes(out[:(bits.value+7)//8]),bits.value)
-        for medium in [0,1]:
+        for medium in [0,1,2,3]:
             out=(C.c_uint8*32768)();bits=C.c_uint32();lib.original_record(medium,mode,out,C.byref(bits))
             emit(f'source_record_{medium}_{mode}',bytes(out[:(bits.value+7)//8]),bits.value)
         for scenario,label in enumerate(['source_list_0','source_list_1','source_list_2','source_list_self','source_list_duplicate_self']):
@@ -203,8 +335,22 @@ def fixtures(lib,directory):
         emit('unsupported_interp'+str(mode),*fields(unsupported_interp,mode))
         unsupported_appearance=npc+u(1,1)+u(1,1)+u(1,0)+u(1,0)+pos+qrot+u(1,0)+p(1,0)+u(1,0)+u(1,0)*2+opt(2,1,True)
         emit('unsupported_appearance'+str(mode),*fields(unsupported_appearance,mode))
-        unsupported_pchar=npc+u(1,0)+pos+qrot+u(1,1)+u(1,0)*2
+        unsupported_pchar=npc+u(1,0)+pos+qrot+u(1,1)+u(1,0)*2+u(1,1)*3+p(1,3)
         emit('unsupported_pchar'+str(mode),*fields(unsupported_pchar,mode))
+        status=u(10,0x305)+auto(3)+auto(7)+auto(2)+string('Held')+string('SyntheticStatus')
+        emit('status'+str(mode),*fields(status,mode))
+        for name,seq in [('target_overflow',u(1,1)+opt(12,10240,True)+u(1,0)*3+p(2,0)),('target_limit',u(1,1)+u(1,0)*4+p(2,33)),('status_limit',u(10,0)+auto(1)+auto(0)+auto(17)),('status_long',u(10,0)+auto(1)+auto(0)+auto(1)+string('x'*128)),('inventory_unknown',p(1,1)+p(3,6)),('inventory_invalid',p(1,2)),('netfx_limit',p(1,33)),('netfx_zero_command',p(1,1)+u(2,0)+u(32,100)+u(1,0)),('netfx_zero_id',p(1,1)+u(2,1)+u(32,0)+u(1,0)),('netfx_nan',p(1,1)+u(2,1)+u(32,100)+u(1,0)*6+u(1,1)+u(32,0x7fc00000)),('stats_unknown',u(1,1)+p(1,7)),('stats_duplicate',u(1,1)+p(1,3)+p(16,100)+u(1,1)+p(1,3)),('stats_relative',u(1,1)+p(1,0)+u(1,1)+u(1,0)),('stats_nested_unknown',u(1,1)+p(1,0)+u(1,1)*3+p(1,8)),('appearance_absent_group',opt(2,3,True)+p(12,555)+p(1,2)+u(1,0)+p(1,0)+opt(8,9)),('appearance_empty_group',opt(2,4,True)+string('SecondSequence')+u(1,1)+string('')+opt(8,8))]:
+            emit(name+str(mode),*fields(seq,mode))
+        fxprefix=p(1,1)+u(2,1)+u(32,100)+u(1,0)*10
+        for name,seq in [('netfx_origin_type',fxprefix+opt(2,3)),('netfx_bone_limit',fxprefix+u(1,0)*2+p(2,256)),('netfx_target_limit',fxprefix+u(1,0)*2+p(2,0)+u(1,0)+opt(12,10240,True)),('netfx_infinite_position',fxprefix+opt(2,1)+u(32,0x7f800000))]:
+            emit(name+str(mode),*fields(seq,mode))
+        # Manual zero-field fixture complements original nonempty stats.
+        pchar=npc+u(1,0)+pos+qrot+u(1,1)+u(1,0)*2+u(1,1)*2+u(1,0)+vision+auto(8)+u(1,0)+u(1,1)+status+u(1,0)
+        emit('record_pchar'+str(mode),*fields(pchar,mode))
+        # NPC and sequence appearances in the audited outer record ordering.
+        for typ,appearance in [(3,opt(2,3,True)+p(12,12345)+p(1,3)+u(1,1)+string('FixtureWorldGroup')+p(1,0)),(4,opt(2,4,True)+string('FixtureSequence')+u(1,1)+string('FixtureWorldGroup'))]:
+            body=npc+u(1,1)+u(1,1)+u(1,0)+u(1,0)+pos+qrot+u(1,0)+p(1,0)+u(1,0)+u(1,0)*2+appearance+opt(8,44)+u(1,0)+vision+u(1,0)
+            emit('record_appearance_'+str(typ)+'_'+str(mode),*fields(body,mode))
         # Independent grammar constructions complement the source-function
         # compositions. Each complete list ends at the canonical delta0/1/1.
         sentinel=p(1,0)+u(1,1)+u(1,1)
@@ -243,7 +389,7 @@ def main():
             env=os.environ.copy();env['ASAN_OPTIONS']='detect_leaks=0:halt_on_error=1';env['UBSAN_OPTIONS']='halt_on_error=1:print_stacktrace=1'
             checks[name]=json.loads(run([exe],env=env).stdout)
         fixture_sha=hashlib.sha256((directory/'fixtures.h').read_bytes()).hexdigest()
-        source_hashes={str(p.resolve().relative_to(REPO.resolve())):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*sources,HERE/'coh_entities.h',HERE/'check.py',HERE/'oracle_shim.h',HERE/'source-pins.json',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',REPO/'native-android/tools/protocol_fixture/prepare.py']}
+        source_hashes={str(p.resolve().relative_to(REPO.resolve())):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*sources,HERE/'coh_entities.h',HERE/'check.py',HERE/'oracle_shim.h',HERE/'stats_oracle_shim.h',HERE/'source-pins.json',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',REPO/'native-android/tools/protocol_fixture/prepare.py']}
         android={}
         if args.ndk:
             args.android_output.mkdir(parents=True,exist_ok=True)
@@ -254,7 +400,7 @@ def main():
                 run([tc/target,*common,'-O2',*sources,'-lm','-o',exe]);sha=hashlib.sha256(exe.read_bytes()).hexdigest()
                 receipt={'passed':True,'abi':abi,'binary':exe.name,'binary_sha256':sha,'executed':False,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes}
                 (dest/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');android[abi]=receipt
-        proof={'schema':1,'passed':True,'scope':'original create/pose/quaternion/modes/trigger/AI/delete component functions; synthetic source-function list compositions and bounded staged entity lists; no original complete sendEntity/entSendUpdate execution','source_files':len(pins),'original_functions':names,'fixtures':n,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes,'checks':checks,'android':android,'full_update_tail_supported':False,'real_server_interoperability':False,'renderable_authoritative_actor':False,'emulator_qualified':False,'thor_accepted':False}
+        proof={'schema':1,'passed':True,'scope':'original create/pet CRC, NPC/sequence costume, target, inventory, pose/sequence/delete component producers; original NetFX producer/consumer parity; exact original basic/self schema producer and consumer comparisons; synthetic record/list compositions; no original complete sendEntity/entSendUpdate execution','source_files':len(pins),'original_functions':names,'fixtures':n,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes,'checks':checks,'android':android,'full_update_tail_supported':False,'real_server_interoperability':False,'renderable_authoritative_actor':False,'emulator_qualified':False,'thor_accepted':False}
         if args.output:args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(proof,indent=2)+'\n')
         print(json.dumps(proof,indent=2))
 if __name__=='__main__':main()

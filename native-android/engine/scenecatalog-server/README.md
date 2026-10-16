@@ -102,3 +102,7 @@ compile/run verifies the sink's no-op branch. LeakSanitizer is not claimed.
 
 These tests do not execute a real MapServer, Win32/Wine filesystem or live game
 assets. Native catalog decoder/source-producer qualification remains separate.
+
+## External deployment and delivery
+
+The [disposable deployment and external delivery contract](DEPLOYMENT.md) reuses the exact compile-qualified PE and defines independently pinned catalog transport admission. Storage admission does not establish native record validity or authentic world authority. No shipping runtime or accepted APK changes.

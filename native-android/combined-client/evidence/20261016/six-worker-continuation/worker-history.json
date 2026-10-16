@@ -1,0 +1,16 @@
+{
+  "base": "cda93d96f8696e6a0f2ec6940a0c96e5b852f281",
+  "coordinator_head": "becbff99e52dc197c787bfeaf2583da081d3d2e1",
+  "original_worker_tips": [
+    "c305d55bd72e990f97f1651c4ca2606583ad87ae",
+    "c147e36ace2c40cd4d632a1841488f661386ea31",
+    "8c742201412316acd0fa0e325596fde676ca48bc",
+    "1286ec2cff8c1a420e92ba74f2ef0d56ced4e023",
+    "121400b57a7402b5bdb68d5a9c7d5e257e80bcf1",
+    "732f118cf2299c64ac509d6402e5b5448b754867"
+  ],
+  "all_worker_tips_in_bundle": true,
+  "bundle_sha256": "ebe728f3018caa60a0f1a32250f18dd574414946a0d9f22ea47ee99d2125ed32",
+  "bundle_bytes": 179282,
+  "reason": "Connected GitHub object API publication has new commit identities; exact original commits/trees/blobs are retained in this prerequisite-bound bundle. No branch history is rewritten."
+}

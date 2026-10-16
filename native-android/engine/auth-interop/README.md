@@ -85,3 +85,9 @@ has been performed by this continuation.
 
 Rollback is omission of this additive directory and its qualification workflow
 step; no APK/runtime/server/profile/database modification needs to be reversed.
+
+The [isolated deployment audit](deployment/README.md) now identifies the existing
+2019 `Assets/DBSchemas/cohauth.sql` candidate, distinguishes it from obsolete
+11-parameter schema patches, and supplies a bounded read-only metadata inspector.
+It independently checks source ODBC bindings and the checksum function's 32-/64-bit
+object code. These controls do not establish a real SQL connection or login.

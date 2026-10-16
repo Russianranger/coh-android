@@ -7,6 +7,7 @@ on:
       - native-android/engine/entities/**
       - native-android/engine/auth-interop/**
       - native-android/engine/continuation/**
+      - native-android/engine/world-render-adapter/**
       - .github/workflows/native-primary-continuation.yml
   workflow_dispatch:
 permissions:
@@ -39,6 +40,17 @@ jobs:
           --source-root . --sanitize --require-clean --workers 3
           --ndk /tmp/native-primary-ndk/android-ndk-r28c
           --output native-android/results/primary-continuation
+      - name: Qualify source-bound read-only encrypted-auth deployment admission
+        run: >-
+          python3 native-android/engine/auth-interop/deployment/check.py
+          --source-root . --output native-android/results/primary-continuation/auth-deployment.json
+      - name: Qualify immutable renderer adapter and build standalone ABI contracts
+        run: >-
+          python3 native-android/engine/world-render-adapter/check.py
+          --source-root . --sanitize
+          --ndk /tmp/native-primary-ndk/android-ndk-r28c
+          --output native-android/results/primary-continuation/world-adapter/qualification.json
+          --android-output native-android/results/primary-continuation/world-adapter/android
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -79,7 +91,9 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
-          script: python3 native-android/engine/continuation/run_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --require-clean --artifacts native-android/results/primary-continuation --output native-android/results/primary-continuation/android-execution/receipt.json
+          script: |
+            python3 native-android/engine/continuation/run_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --require-clean --artifacts native-android/results/primary-continuation --output native-android/results/primary-continuation/android-execution/receipt.json
+            python3 native-android/engine/continuation/run_adapter_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --artifacts native-android/results/primary-continuation/world-adapter --output native-android/results/primary-continuation/android-execution/world-adapter/receipt.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:

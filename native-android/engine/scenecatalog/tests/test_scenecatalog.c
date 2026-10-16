@@ -29,7 +29,8 @@ int main(void){
         CHECK(coh_scenecatalog_preflight(input(f),7,&pre)==COH_OK);
         CHECK(pre.files==f->counts[0]&&pre.definitions==f->counts[1]&&pre.slots==f->counts[2]&&pre.children==f->counts[3]&&pre.wire_bytes==f->counts[4]);
         if(f->which==22){
-            CHECK(pre.children==60945&&pre.exceeds_graph_definitions&&pre.exceeds_graph_children);
+            CHECK(pre.children==60945);
+            CHECK(pre.exceeds_graph_definitions==(pre.definitions>COH_SG_DEFS_MAX)&&pre.exceeds_graph_children==(pre.children>COH_SG_CHILDREN_MAX));
             CHECK(coh_scenecatalog_load(&c,input(fixture(1)),7,&r)==COH_OK);CohSceneCatalog *prior=c;size_t retained=live_bytes;
             CHECK(coh_scenecatalog_load(&c,input(f),7,&r)==COH_LIMIT&&c==prior&&r.stage==COH_CATALOG_DECODE);
             CHECK(live_bytes==retained&&r.owned_bytes<=COH_CATALOG_MEMORY_MAX);coh_scenecatalog_free(c);CHECK(!live&&!live_bytes);accepted++;continue;
@@ -37,7 +38,7 @@ int main(void){
         CHECK(coh_scenecatalog_load(&c,input(f),7,&r)==COH_OK);CHECK(r.owned_bytes<=COH_CATALOG_MEMORY_MAX);CHECK(live_bytes==r.owned_bytes);
         if(f->which==20){
             CHECK(r.files==508&&r.definitions==12192&&r.slots==12192&&r.source_active_roots==33&&r.children==36567);
-            CHECK(r.exceeds_graph_definitions&&r.exceeds_graph_children);large_owned=r.owned_bytes;peak_bytes=live_bytes;
+            CHECK(r.exceeds_graph_definitions==(r.definitions>COH_SG_DEFS_MAX)&&r.exceeds_graph_children==(r.children>COH_SG_CHILDREN_MAX));large_owned=r.owned_bytes;peak_bytes=live_bytes;
             CHECK(coh_scenecatalog_load(&c,input(f),7,&r)==COH_OK);large_peak=peak_bytes;CHECK(large_peak<=2u*COH_CATALOG_MEMORY_MAX);
             CHECK(apply(c,f,&g)==COH_LIMIT&&g==NULL);
         }else if(f->which!=21){
