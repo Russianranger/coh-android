@@ -1,3 +1,12 @@
+# Current physical result — Combined 0.1.7 accepted
+
+Your October 16 reports and confirmation establish complete supported normal
+GROUPS structural reception, accepted preview input/lifecycle and clean Return/
+server cleanup on AYN Thor. [Acceptance record](evidence/20261016/thor-0.1.7-acceptance/THOR-017-ACCEPTANCE.md).
+No repeat 0.1.7 physical test is required. Saved-library catalog resolution,
+complete character state, real AuthServer and live world remain future stages.
+The procedure below is retained as the accepted package's historical handoff.
+
 # AYN Thor — combined server and native client test
 
 This is a new, separate app named **CoH Native Combined**
@@ -47,7 +56,7 @@ are still pending. `SCENE_INCOMPLETE` remains the expected endpoint.
    startup details can be collected. A ZIP exported while running may contain
    detailed guest data labelled as a previous session. Keep the saved character.
 
-Physical 0.1.7 structural reception is pending this test. Base/raid and additional
+Physical 0.1.7 structural reception is now accepted within the record above. Base/raid and additional
 variants may still need implementation. Full scene assets, encrypted AuthServer
 login and server-authoritative world rendering are not accepted by this build.
 

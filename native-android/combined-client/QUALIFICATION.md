@@ -1,3 +1,20 @@
+# Physical Combined 0.1.7 acceptance — October 16, 2026
+
+**Physically accepted on AYN Thor within its complete normal GROUPS structure
+and preview/lifecycle scope.** The exact qualified 0.1.7 APK decoded the authentic
+42,889-byte message: 508 present files, 33 roots and all 343,112 bits consumed,
+with zero scene failures. The final ZIP proves explicit Return, 4/4 completed
+contexts, 2/2 closed sockets, released GPU resources, clean server stop and
+preserved profile. Matching current guest detail establishes a warm start of
+387,340 ms. The zero definition records reflect original saved-library omission;
+this is not imported scene resolution or an authoritative world.
+
+[Physical acceptance and precise limits](evidence/20261016/thor-0.1.7-acceptance/THOR-017-ACCEPTANCE.md).
+The user's current requested continuation advances exact saved-definition
+catalog loading and atomic entity-list staging. Existing 0.1.7 testing does not
+need to be repeated. Real AuthServer, complete entity tails and live-world
+rendering remain unaccepted.
+
 # Primary protocol continuation — October 16, 2026
 
 Published source `f7e53e401567f89ac219bb7bfef3b2b603c1df62` adds isolated owned
@@ -12,7 +29,7 @@ Real AuthServer deployment/account qualification remains blocked.
 
 **The delivery APK is still the exact existing Combined 0.1.7 below.** Its code
 and native libraries were not rebuilt or changed. Its physical Thor acceptance
-is still pending; accepted 0.1.6 and gates 1–24 remain preserved. New standalone
+is recorded above; accepted 0.1.6 and gates 1–24 remain preserved. New standalone
 module tests do not establish an authenticated or server-authoritative world.
 
 # Combined server/native client — October 16, 2026

@@ -1,3 +1,12 @@
+# Subsequent physical acceptance
+
+The October 16 physical 0.1.7 JSON and later matching ZIP are now reviewed and
+accepted: complete 508-file/33-root normal GROUPS, exact consumption, Return and
+clean server/profile cleanup. [New acceptance record](../thor-0.1.7-acceptance/THOR-017-ACCEPTANCE.md).
+The earlier pending-test statements below describe the prior checkpoint and are
+superseded by that record. Imported catalogs, full character tails and genuine
+world rendering remain unaccepted. No repeat 0.1.7 test is requested.
+
 # Primary recovery and independent gates 25–27 continuation
 
 Integration target is `native-android` only. This batch preserves the accepted
