@@ -28,10 +28,11 @@
     "physical_ayn_thor_qualified": false,
     "android_arm64_built_hosted": true,
     "android_x86_64_companion_built_hosted": true,
-    "changed_modules_arm64_compiled_locally": true
+    "changed_modules_arm64_compiled_locally": true,
+    "physical_ayn_thor_execution_verified": true
   },
   "hosted_result": "success: 23 Android13 x86_64 scenarios, two screenshot proofs, independent report and manual visual review",
-  "physical_acceptance": "pending actual AYN Thor report and observations",
+  "physical_acceptance": "Physical execution and exercised functional subset verified from2026-10-15 report/screenshots; full consolidated physical checklist remains open",
   "scope": "bounded offline support application, authentic custom Male neutral preview; no live-server or full-zone qualification",
   "attempts": [
     {
@@ -90,11 +91,16 @@
   "android_api_level": 33,
   "arm64_execution": "physical AYN Thor pending",
   "additional_device_checks_pending": [
-    "audible focus and output route recovery",
-    "physical controller",
-    "Android external report export flow",
-    "ten active minute endurance",
-    "Adreno frame pacing and thermal behavior"
+    "Ten active minutes and multiple memory snapshots/endurance",
+    "Android Home/pause/resume: one initial resume and no pause events recorded",
+    "Valid joined audio callback diagnostics: audio was never stopped",
+    "Audible playback quality, focus interruption and alternate output route recovery",
+    "Nonempty keyboard/chat submission: chat_submits=0 despite a mock_chat event",
+    "Male-specific Surface recreation and portrait preview: one Male upload, landscape screenshot only",
+    "Explicit mock-animation selector/jump/reaction checks: animation.triggers=0",
+    "Obstacle/wall/sliding coverage: recorded wall/blocked/sliding counters are zero",
+    "Full panel coverage and character selection: screenshot shows Details; character_selections=0",
+    "Full source face/material/morphology/lighting parity, Female/Huge completion and full zones"
   ],
   "artifacts": {
     "arm64": {
@@ -167,5 +173,15 @@
     "audio_scope": "Retained joined snapshots; no continuous live/platform xrun or physical audibility guarantee",
     "full_game_performance_qualified": false,
     "sustained_endurance_qualified": false
+  },
+  "physical_evidence": {
+    "assessment": "physical-thor-20261015/assessment.json",
+    "report_sha256": "4800a279dd6ec59fa05eff42b6405c12bb621f4c7901198c41f1d9ba2ec32d2e",
+    "observed_subset_verified": true,
+    "full_checklist_verified": false,
+    "frames": 11660,
+    "active_foreground_ms": 195104,
+    "observed_frames_per_foreground_second": 59.762998195834015,
+    "scope": "bounded offline support only; no full gate closure"
   }
 }

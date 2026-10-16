@@ -1,0 +1,226 @@
+{
+  "schema": 1,
+  "status": "physical_execution_and_observed_subset_verified",
+  "user_reported_blanket_acceptance": false,
+  "report_timestamp": "2026-10-15T22:18:28.774-05:00",
+  "source_apk_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "qualification_driver_commit": "c610cefbd55144238e88849bd54591c907561061",
+  "app": {
+    "package": "org.coh.nativesupport",
+    "version_name": "0.2.0-gameplay",
+    "version_code": 201,
+    "installed_apk": {
+      "bytes": 2917815,
+      "sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc"
+    }
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "renderer": "Adreno (TM) 740",
+  "inputs": [
+    {
+      "file": "COH-NativeSupport-20261015-221828.json",
+      "bytes": 363539,
+      "sha256": "4800a279dd6ec59fa05eff42b6405c12bb621f4c7901198c41f1d9ba2ec32d2e",
+      "stored_as": "COH-NativeSupport-20261015-221828.json.gz"
+    },
+    {
+      "file": "Screenshot_20261015-221802.png",
+      "bytes": 965604,
+      "sha256": "47b1c887062c1872fe848f31fe190d609f2c063140b4ab127b1779d1737ea1a8",
+      "source": "User attachment; original unchanged"
+    },
+    {
+      "file": "Screenshot_20261015-221709.png",
+      "bytes": 951610,
+      "sha256": "cdc0a66ead4d6f3396a87d60ac544208867e3daa7cdad08515a8b6cb7b878127",
+      "source": "User attachment; original unchanged"
+    },
+    {
+      "file": "Screenshot_20261015-221659.png",
+      "bytes": 167782,
+      "sha256": "c061390ee0c9c81818aa6c9986729a8387fdb88ef259518a3be0f8a333b459f3",
+      "source": "User attachment; original unchanged"
+    },
+    {
+      "file": "Screenshot_20261015-221531.png",
+      "bytes": 960599,
+      "sha256": "abf0dd6dbfcb4d0f6ea9da9f5abd2c6871b4fe6d7a05d4f5accf1f92260a13bb",
+      "source": "User attachment; original unchanged"
+    }
+  ],
+  "scoped_checks_verified": [
+    "Exact signed ARM64 code201 identity and packaged asset pins",
+    "Physical AYN Thor Android13 Adreno740 execution",
+    "Wretch/bounded station rendering, grounded movement and locomotion counters",
+    "External controller and touchscreen framework inputs",
+    "Eight-part neutral Male landscape rendering and switching back to Wretch",
+    "Native HUD, power intents and local mock presentation/animation cues",
+    "Repeated Surface/context recreation and clean reported retirement",
+    "Near/Far selection requests and bounded scene selection",
+    "Exported JSON with actual process RSS/PSS observations"
+  ],
+  "remaining_checks": [
+    "Ten active minutes and multiple memory snapshots/endurance",
+    "Android Home/pause/resume: one initial resume and no pause events recorded",
+    "Valid joined audio callback diagnostics: audio was never stopped",
+    "Audible playback quality, focus interruption and alternate output route recovery",
+    "Nonempty keyboard/chat submission: chat_submits=0 despite a mock_chat event",
+    "Male-specific Surface recreation and portrait preview: one Male upload, landscape screenshot only",
+    "Explicit mock-animation selector/jump/reaction checks: animation.triggers=0",
+    "Obstacle/wall/sliding coverage: recorded wall/blocked/sliding counters are zero",
+    "Full panel coverage and character selection: screenshot shows Details; character_selections=0",
+    "Full source face/material/morphology/lighting parity, Female/Huge completion and full zones"
+  ],
+  "measurements": {
+    "frames": 11660,
+    "active_foreground_ms": 195104,
+    "observed_frames_per_foreground_second": 59.762998195834015,
+    "frame_observation_mean_ms": 15.551948220926244,
+    "frame_p95_bucket_upper_ms": 17.999999,
+    "frame_p99_bucket_upper_ms": 22.999999,
+    "frame_max_ms": 40.913125,
+    "over_33_33ms": 6,
+    "over_100ms": 0,
+    "contexts_started": 9,
+    "contexts_completed": 8,
+    "male": {
+      "available": true,
+      "active": false,
+      "body": "Male",
+      "neutral_morphology": true,
+      "frames": 576,
+      "draws": 4608,
+      "surface_uploads": 1,
+      "failures": 0,
+      "parts": 8,
+      "vertices": 943,
+      "indices": 3792,
+      "cpu_accounted_partial_bytes": 153536,
+      "package_bytes": 1673302,
+      "gpu_buffer_bytes": 0,
+      "source_texture_bytes": 1572868,
+      "memory_scope": "Partial preview owner arenas exclude generic renderer CPU allocations; source texture payload is not GPU residency. GPU buffer bytes are cached renderer accounting, not total driver memory.",
+      "upload_bytes_measured": false,
+      "full_gate_accepted": false
+    },
+    "external_android_input": {
+      "key_down": 2,
+      "key_up": 2,
+      "key_repeat": 0,
+      "motion": 1718,
+      "touch_begin": 7,
+      "touch_move": 191,
+      "touch_end": 7,
+      "touch_cancel": 0,
+      "focus_clear": 11,
+      "device_removed": 0,
+      "controller_events": 1722,
+      "left_axis_directions": 15,
+      "right_axis_directions": 11,
+      "button_down_mask": 1280,
+      "touch_motion_directions": 15
+    },
+    "movement_ticks": 5537,
+    "animation_transitions": 141,
+    "power_uses": 31,
+    "presentation": {
+      "visible": false,
+      "tab": 0,
+      "events": 33,
+      "intents": 8,
+      "cues": 33,
+      "missing_audio": 33,
+      "missing_animation": 0,
+      "animation_bindings": 33,
+      "cue_drops": 0,
+      "audio_binding_available": false,
+      "queue_limits": 0,
+      "builds": 11660,
+      "target_health": 88,
+      "offline_only": true
+    },
+    "rss_bytes": 189427712,
+    "pss_bytes": 76183552,
+    "memory_sample_age_ms": 197,
+    "audio": {
+      "initialized": 1,
+      "running": 1,
+      "last_status": 0,
+      "device_error": 0,
+      "opens": 1,
+      "closes": 0,
+      "decode_calls": 23912,
+      "diagnostics_valid": 0,
+      "rendered_frames": 0,
+      "underrun_frames": 0,
+      "callback_calls": 0,
+      "maximum_callback_ns": 0
+    },
+    "audio_environment": {
+      "active": true,
+      "focus_granted": true,
+      "request_result": 1,
+      "focus_changes": 0,
+      "route_changes": 1,
+      "route_generation": 2,
+      "route_policy": "close/join then reopen on native backend owner"
+    },
+    "event_counts": {
+      "session_created": 1,
+      "resume": 1,
+      "surface_changed": 9,
+      "assets_loaded": 1,
+      "key_down": 2,
+      "key_up": 2,
+      "input_clear_requested": 11,
+      "render_returned": 8,
+      "presentation_panel": 2,
+      "presentation_hit": 2,
+      "appearance_preview": 2,
+      "view_distance_requested": 2,
+      "ui_navigation": 2,
+      "mock_chat": 1,
+      "export_requested": 1
+    },
+    "transform_mismatches": {
+      "actor": 0,
+      "walkable": 0,
+      "static_world": 0
+    }
+  },
+  "visual_review": {
+    "reviewers": [
+      "coordinator",
+      "appearance worker"
+    ],
+    "male_full_body_visible": true,
+    "male_no_hud_obstruction": true,
+    "wretch_world_hud_visible": true,
+    "open_issues": [
+      "Blue triangular lower-face/neck region, angular facial markings and thin costume join seams are visible on both Thor and emulator; original-client material parity remains unverified.",
+      "Black terrain gaps/outer void are bounded scene coverage; no complete Atlas claim.",
+      "Power-specific icons remain unimplemented; tray frame assets are authentic."
+    ],
+    "static_screenshots_prove_absence_of_flicker": false
+  },
+  "full_consolidated_physical_checklist_qualified": false,
+  "full_numbered_gates_closed": [],
+  "primary_gate_25_27_scope_changed": false,
+  "limitations": [
+    "About195seconds of one offline session, not ten-minute endurance or full-game performance.",
+    "Current RSS/PSS is one process sample; no leak-free or memory-trend claim.",
+    "Frame observer is a CPU/wall observation and its reciprocal is not presented as measured FPS.",
+    "Audio diagnostics_valid=0: zero callback/underrun/latency fields are unavailable, not clean playback evidence.",
+    "Report compile-time full_gate_accepted/new_body_gpu_qualified flags are conservative scope flags, not runtime failures."
+  ]
+}

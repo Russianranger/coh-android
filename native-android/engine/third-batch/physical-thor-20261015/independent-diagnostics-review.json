@@ -1,0 +1,310 @@
+{
+  "schema": "coh-third-batch-independent-thor-diagnostics-v1",
+  "reviewer": "worker-f-audio-perf",
+  "scope": "Read-only independent review of one user-returned physical report; no source edits, uploads, or gate closure.",
+  "input": {
+    "path": "/workspace/scratch/9acd650bfafa/upload/COH-NativeSupport-20261015-221828.json",
+    "bytes": 363539,
+    "sha256": "4800a279dd6ec59fa05eff42b6405c12bb621f4c7901198c41f1d9ba2ec32d2e",
+    "report_updated_at": "2026-10-15T22:18:28.774-05:00",
+    "session_id": "1a142b4e43e"
+  },
+  "identity": {
+    "app": {
+      "package": "org.coh.nativesupport",
+      "version_name": "0.2.0-gameplay",
+      "version_code": 201,
+      "installed_apk": {
+        "bytes": 2917815,
+        "sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc"
+      }
+    },
+    "release_apk_sha256_matches": true,
+    "bound_source_revision": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+    "source_binding_basis": "Installed APK hash equals independently audited final release ARM64 APK; report itself does not contain a source revision. No signature/build tests repeated.",
+    "device_reported": {
+      "manufacturer": "AYN",
+      "model": "AYN Thor",
+      "sdk": 33,
+      "abis": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "armeabi"
+      ],
+      "emulator_detected": false
+    },
+    "android_release_for_sdk": 13,
+    "native_pointer_bytes": 8,
+    "gl_renderer": "Adreno (TM) 740",
+    "shader_language_version": 320,
+    "shader_precise": true,
+    "viewport": [
+      1920,
+      881
+    ],
+    "chipset_scope": "Adreno 740 is reported by GLES; Snapdragon model is not separately identified in this report."
+  },
+  "timing": {
+    "active_foreground_ms": 195104,
+    "event_span_ms": 195157,
+    "rendered_frames": 11660,
+    "frames_per_active_foreground_second": 59.762998195834015,
+    "observed_frame_mean_ms": 15.551948220926244,
+    "frame_max_ms": 40.913125,
+    "p50_upper_ms": 15.999999,
+    "p95_upper_ms": 17.999999,
+    "p99_upper_ms": 22.999999,
+    "frames_over_33_333333_ms": 6,
+    "over_budget_percent": 0.051457975986277875,
+    "stalls_over_100_ms": 0,
+    "invalid_samples": 0,
+    "dropped_frames": 0,
+    "scope": "Approximately 3m15s in the bounded offline scene. Mean is elapsed time within render-thread observations, including stage/driver work, not thread CPU cycles. Explicit outer 1ms sleep and startup are outside each frame timing; inverse mean is not actual FPS. Foreground frame count rate is an aggregate, not a per-second minimum. Histogram percentiles are bucket upper bounds.",
+    "native_total_ms": 5349,
+    "native_total_ms_scope": "Current render/context interval only; not total session duration.",
+    "stages": {
+      "animation": {
+        "samples": 7406,
+        "mean_ms_per_observation": 0.04401493154199298,
+        "aggregate_ms_per_rendered_frame": 0.027956653773584906,
+        "max_ms": 0.604427
+      },
+      "skinning": {
+        "samples": 121935,
+        "mean_ms_per_observation": 0.0688474408414319,
+        "aggregate_ms_per_rendered_frame": 0.7199753601200687,
+        "max_ms": 4.719688
+      },
+      "collision": {
+        "samples": 5537,
+        "mean_ms_per_observation": 0.13256016723857683,
+        "aggregate_ms_per_rendered_frame": 0.06294902624356775,
+        "max_ms": 1.273073
+      },
+      "asset_loading": {
+        "samples": 0,
+        "mean_ms_per_observation": null,
+        "aggregate_ms_per_rendered_frame": null,
+        "max_ms": null
+      },
+      "render_submit": {
+        "samples": 11660,
+        "mean_ms_per_observation": 14.110484313636364,
+        "aggregate_ms_per_rendered_frame": 14.110484313636364,
+        "max_ms": 40.127396
+      },
+      "present": {
+        "samples": 11660,
+        "mean_ms_per_observation": 0.5385895390222984,
+        "aggregate_ms_per_rendered_frame": 0.5385895390222984,
+        "max_ms": 4.270416
+      },
+      "audio_control": {
+        "samples": 0,
+        "mean_ms_per_observation": null,
+        "aggregate_ms_per_rendered_frame": null,
+        "max_ms": null
+      }
+    },
+    "stage_scope": "Per-stage means use their own sample counts. Zero-sample asset_loading and audio_control are unmeasured, not zero-cost. render_submit is host elapsed time, not a GPU duration.",
+    "gpu_duration_measured": false,
+    "gpu_unavailable_observations": 9
+  },
+  "memory": {
+    "process_sample": {
+      "java_used_bytes": 19814200,
+      "native_heap_allocated_bytes": 27450944,
+      "rss_measured": true,
+      "pss_measured": true,
+      "native": {
+        "schema": 1,
+        "scope": "process_memory_sample",
+        "unit": "bytes",
+        "rss": {
+          "known": true,
+          "bytes": 189427712,
+          "source": "proc_self_smaps_rollup",
+          "status": 0,
+          "errno": 0
+        },
+        "pss": {
+          "known": true,
+          "bytes": 76183552,
+          "source": "proc_self_smaps_rollup",
+          "status": 0,
+          "errno": 0
+        },
+        "rollup_status": 0,
+        "rollup_errno": 0,
+        "status_file_status": 3,
+        "status_file_errno": 0,
+        "files_opened": 1,
+        "read_calls": 2,
+        "bytes_read": 642
+      },
+      "sampled_elapsed_ms": 626610860,
+      "sample_duration_ms": 6,
+      "sample_age_ms": 197,
+      "scope": "Independent process sample on report worker; performance bridge process gauges remain unsubmitted",
+      "thermal_measured": false
+    },
+    "rss_mib": 180.65234375,
+    "pss_mib": 72.654296875,
+    "module_accounted": {
+      "known": true,
+      "current_bytes": 2274480,
+      "peak_bytes": 2274480,
+      "observations": 212
+    },
+    "physics_owned_bytes": 562232,
+    "skin_cache": {
+      "hits": 23073,
+      "misses": 99159,
+      "bytes": 332928
+    },
+    "world_stream": {
+      "catalog_instances": 11,
+      "selected_instances": 4,
+      "resident_bytes": 157491,
+      "budget_bytes": 524288,
+      "peak_resident_bytes": 157491,
+      "selection_updates": 39,
+      "cache_hits": 313,
+      "cache_misses": 8,
+      "evictions": 0,
+      "generation": 9,
+      "draws": 121154,
+      "view_radius": 24
+    },
+    "preview_accounting": {
+      "cpu_accounted_partial_bytes": 153536,
+      "package_bytes": 1673302,
+      "gpu_buffer_bytes": 0,
+      "source_texture_bytes": 1572868,
+      "memory_scope": "Partial preview owner arenas exclude generic renderer CPU allocations; source texture payload is not GPU residency. GPU buffer bytes are cached renderer accounting, not total driver memory."
+    },
+    "scope": "RSS/PSS are one current sample, not a time series or high-water mark. Bridge process gauges remain intentionally unsubmitted; read independent process sample. Partial module-accounted peak is not total process or GPU memory. Preview GPU buffer accounting zero follows later Surface cleanup, not absence of the earlier preview. No process leak, thermal, or long endurance conclusion can be drawn."
+  },
+  "audio": {
+    "backend": {
+      "initialized": 1,
+      "running": 1,
+      "last_status": 0,
+      "device_error": 0,
+      "opens": 1,
+      "closes": 0,
+      "decode_calls": 23912,
+      "diagnostics_valid": 0,
+      "rendered_frames": 0,
+      "underrun_frames": 0,
+      "callback_calls": 0,
+      "maximum_callback_ns": 0
+    },
+    "environment": {
+      "active": true,
+      "focus_granted": true,
+      "request_result": 1,
+      "focus_changes": 0,
+      "route_changes": 1,
+      "route_generation": 2,
+      "route_policy": "close/join then reopen on native backend owner"
+    },
+    "native_environment": {
+      "focus_allowed": true,
+      "route_generation": 2,
+      "route_reopens": 0,
+      "listener_updates": 919,
+      "recovered_device_errors": 0,
+      "last_device_error": 0,
+      "listener_position": [
+        586.509277,
+        88.6890335,
+        -1344.55786
+      ],
+      "listener_right": [
+        0.986361325,
+        0,
+        0.164594293
+      ]
+    },
+    "preview_scope": "Camera-relative Wretch scene music/ambient",
+    "callback_statistics_available": false,
+    "scope": "Backend has remained open (opens=1, closes=0); diagnostics_valid=0. Rendered/underrun/callback/maximum-duration zero fields are unavailable quiescent diagnostics, not clean-playback evidence. Decoder work, listener updates and focus granted are observed; actual audibility, callback latency, underruns and continuous output quality are unverified. Initial route enumeration does not prove route recovery; route_reopens=0 and focus_changes=0.",
+    "next_evidence": "Perform actual Home/resume and focus/route transitions, obtain joined backend diagnostics through a completed pause/export path, and user-confirm music/ambient/effect audibility."
+  },
+  "lifecycle": {
+    "event_count": 47,
+    "event_types": {
+      "session_created": 1,
+      "resume": 1,
+      "surface_changed": 9,
+      "assets_loaded": 1,
+      "key_down": 2,
+      "key_up": 2,
+      "input_clear_requested": 11,
+      "render_returned": 8,
+      "presentation_panel": 2,
+      "presentation_hit": 2,
+      "appearance_preview": 2,
+      "view_distance_requested": 2,
+      "ui_navigation": 2,
+      "mock_chat": 1,
+      "export_requested": 1
+    },
+    "contexts_started": 9,
+    "contexts_completed": 8,
+    "running": true,
+    "objects_released": false,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "scope": "Eight render/context returns and nine Surface contexts are observed with no cleanup GL/EGL errors. Current ninth context remains live, so objects_released=false is expected. Only initial resume is recorded; no pause/Home-background cycle or final full teardown is evidenced. Male preview had one Surface upload; global context count does not prove recreation while preview was active."
+  },
+  "error_signals": {
+    "native_valid": true,
+    "native_failed": false,
+    "native_failure": "",
+    "application_failure": null,
+    "report_write_failed": false,
+    "support_failures": 0,
+    "gl_errors": 0,
+    "egl_error": 0,
+    "asset_errors": 0,
+    "appearance_failures": 0,
+    "transform_mismatches": {
+      "actor": 0,
+      "walkable": 0,
+      "static": 0
+    },
+    "depth_order_mismatches": 0,
+    "non_tie_depth_mismatches": 0,
+    "qualified_equal_depth_ties": 2
+  },
+  "observability_limits": {
+    "unknown_perf_counters": [
+      "state_binds",
+      "readbacks",
+      "explicit_waits",
+      "allocations"
+    ],
+    "counter_scope": "Zero unknown allocations, waits, readbacks and state binds must not be interpreted as measured zero. Native stream has 8 initial cache misses while profiled per-frame cache miss delta is zero; these are different scopes. No cached-versus-uncached benchmark is present."
+  },
+  "physically_evidenced_scope": [
+    "Exact released ARM64 Support Client running offline on reported AYN Thor API33 / Adreno 740.",
+    "Bounded Wretch/world rendering and source transform/depth checks; no non-tie mismatch or GL/EGL errors.",
+    "About 59.76 frames per active foreground second over 195.104 seconds, with 6 observed frames above 33.33ms.",
+    "Eight Surface/context returns and continued rendering; no cleanup graphics errors.",
+    "Male neutral-morphology preview rendered 576 frames and 4608 draws from eight parts, then returned to Wretch.",
+    "Grounded movement, actual controller/touch ingestion, Near/Far requests and local presentation activity appear in counters/events.",
+    "RSS/PSS observer produced a valid recent self-process sample on device."
+  ],
+  "not_established": [
+    "Full Support Client physical checklist or closure of any whole numbered gate.",
+    "Home/background recovery, final teardown, audio focus interruption or output-route recovery.",
+    "Audible audio quality, measured callback underruns/latency, zero audio-thread allocations from this report.",
+    "Long-duration stability, leak freedom, thermal behavior, minimum sustained full-game FPS or GPU timing.",
+    "Full Atlas/Kings Row loading, complete Male/Female/Huge acceptance, GPU palette skinning, or live/server-authoritative gameplay.",
+    "Obstacle blocking/wall sliding: recorded wall hits, blocked ticks and sliding ticks are zero.",
+    "Successful chat submission: chat_submits is zero; a mock_chat event alone is insufficient."
+  ],
+  "decision": "Useful partial physical evidence within the stated offline scope. Keep full physical checklist and gates open."
+}

@@ -12,6 +12,16 @@ were unavailable. Worker/local commits remain preserved. GitHub received additiv
 integration commits, not rewritten history. `release.json` records both runtime
 and qualification-driver revisions, release attempts and exact artifact identities.
 
+## Physical Thor follow-up received October 15
+
+[Physical assessment and remaining checks](physical-thor-20261015/README.md) now
+records the exact ARM64 build on AYN Thor/Adreno 740: 11,660 frames over 195.104
+foreground seconds (about 59.76 frames/s), nine graphics contexts, controller/touch
+input, full-body landscape Male preview and zero reported graphics/support errors.
+This verifies the exercised physical subset. One short report does not complete
+the ten-minute/audio/Home/chat/Male-recreation checklist or close full numbered
+gates. The earlier emulator measurements below remain historical emulator evidence.
+
 ## Repository, recovery and ownership
 
 The actual fetched starting remote HEAD was
@@ -296,12 +306,12 @@ this batch.
 
 | Worker | Source/host evidence | ARM64 | Android 13 emulator | Integration / limits |
 | --- | --- | --- | --- | --- |
-| A | App/source/lifecycle/JSON/controller checks and sanitizers | Signed package built | 23/23 scenarios; package/report verification | Code201 runtime; Thor pending |
-| B | Original geometry/selection/rig comparison; GLES and sanitizer checks | Linked into signed package | Landscape/portrait proof and manual review | One neutral custom Male; Female/Huge and full visual parity open |
+| A | App/source/lifecycle/JSON/controller checks and sanitizers | Signed package built | 23/23 scenarios; package/report verification | Code201 runtime; physical subset verified, full checklist open |
+| B | Original geometry/selection/rig comparison; GLES and sanitizer checks | Linked into signed package | Landscape/portrait proof and manual review | Neutral Male landscape verified on Thor; Female/Huge and full visual parity open |
 | C | 4,047 checks; source-matrix oracle; 1,000 bounded selection cycles | Object compilation | Not run | Source integrated; larger scene not in APK |
 | D | Source color comparison, malformed inputs, bounded GLES/UI and sanitizers | Linked into signed package | Integrated panel/mock-state checks passed | Mock local presentation; full FX/icons/combat open |
 | E | 4,737 neighborhood checks; 532 source states; 80 concurrent preparations | Shared-library linkage | New neighborhood adapter not run | Source integrated; adapter remains out of APK |
-| F | 114,112 checks; independent memory oracle/fault cases and sanitizers | Linked into signed package | Integrated diagnostics observed; limits below | Audible routes, sustained performance and Thor open |
+| F | 114,112 checks; independent memory oracle/fault cases and sanitizers | Linked into signed package | Integrated diagnostics observed; limits below | Physical diagnostics observed; audible routes/endurance remain open |
 
 ## Acceptance boundaries and next batch
 
@@ -313,7 +323,7 @@ this batch.
 | Gates 32–33 | Source/host/ARM64 neighborhood module and rig recovery; larger-world/multi-actor acceptance open |
 | Gates 34–38 | Local mock UI/combat preparation; no authoritative combat or complete FX |
 | Gates 43–45 | Reused bounded audio/perf plus new memory diagnostics; physical endurance/performance open |
-| Support code 201 | Signed ARM64 built; 23-case x86_64 Android13 companion qualified; Thor pending |
+| Support code 201 | Signed ARM64 built; 23-case emulator qualification; Thor physical subset verified |
 
 Recommended next parallel work: complete Female/Huge asset and morphology closure;
 qualify GEO v8/material decoding and conservative streamed bounds/pages; recover
