@@ -249,6 +249,56 @@ class AuthLoginStageTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, '^reused_probe_generated_input_mismatch$'):
                 stage.admit_probe_source(ROOT, pins)
 
+    def test_intact_project_changes_only_probe_translation_unit(self):
+        pins = json.loads((stage.HERE / 'probe-build-reuse-pins.json').read_text())
+        stage.admit_probe_source(ROOT,pins)
+        original, intact = self.base/'original',self.base/'intact'
+        stage.prepare_probe_project(ROOT,original,self.base/'openssl')
+        sources = stage.prepare_intact_probe_project(ROOT,intact,self.base/'openssl')
+        old = (original/'CMakeLists.txt').read_text().replace(str(original),str(intact))
+        expected = old.replace('/windows/auth_only_probe.c','/windows/intact_probe.c')
+        self.assertEqual((intact/'CMakeLists.txt').read_text(),expected)
+        self.assertEqual(sources[0],stage.HERE/'windows/intact_probe.c')
+        self.assertEqual((original/'fixture_constants.h').read_bytes(),(intact/'fixture_constants.h').read_bytes())
+        self.assertEqual(stage.admit_probe_source(ROOT,pins),pins['generated_inputs'])
+
+    def test_fragmented_observation_retains_failure_scope(self):
+        result = fixture('valid')
+        result.update(passed=False,state=12,received_frames=1,system_error=108)
+        admitted = stage.admit_fragmented_observation(result)
+        self.assertEqual(admitted['observation'],'reset_after_encrypted_login_request')
+        self.assertFalse(admitted['general_tcp_segmentation_accepted'])
+        for key, value in [('received_frames',2),('system_error',0),('sent_bytes',169),('password_retained_after_close',True),('state',True)]:
+            with self.subTest(key=key),self.assertRaises(ValueError):
+                stage.admit_fragmented_observation(dict(result,**{key:value}))
+        with self.assertRaises(ValueError):
+            stage.admit_fragmented_observation(dict(result,private_key='forbidden'))
+
+    def test_capped_send_login_does_not_claim_receiver_fragmentation(self):
+        result = stage.admit_fragmented_observation(fixture('valid'))
+        self.assertEqual(result['observation'],'login_under_capped_sends')
+        self.assertFalse(result['general_tcp_segmentation_accepted'])
+
+    def test_owned_sql_snapshot_only_accepts_known_pid_identity(self):
+        value={'pid':1234,'exists':True,'name':'sqlservr','started_utc_ticks':123456789}
+        with patch.object(stage.prior,'capture',return_value=json.dumps(value)) as capture:
+            self.assertEqual(stage.owned_process_snapshot(1234),value)
+            self.assertIn('Get-Process -Id 1234',capture.call_args.args[0][-1])
+        for changed in ({'pid':1234,'exists':False},):
+            with patch.object(stage.prior,'capture',return_value=json.dumps(changed)):
+                self.assertEqual(stage.owned_process_snapshot(1234),changed)
+        for changed in (dict(value,pid=1235),dict(value,name='other'),dict(value,started_utc_ticks=True),dict(value,exists=1),dict(value,extra='forbidden')):
+            with patch.object(stage.prior,'capture',return_value=json.dumps(changed)):
+                with self.assertRaises(ValueError):stage.owned_process_snapshot(1234)
+        for invalid in (True,0,-1,2**32):
+            with self.assertRaises(ValueError):stage.owned_process_snapshot(invalid)
+
+    def test_owned_job_members_require_bounded_complete_numeric_inventory(self):
+        for members in ([],[1234],[1234,5678]):
+            self.assertEqual(stage.decode_job_members(len(members),len(members),members),members)
+        for values in ((1,0,[]),(0,1,[1234]),(2,2,[1234,1234]),(1,1,[True]),(1,1,[0]),(1,1,[2**32]),(65,65,list(range(1,66)))):
+            with self.assertRaises(ValueError):stage.decode_job_members(*values)
+
     def test_private_sql_command_discards_all_output(self):
         with patch.object(stage.subprocess, 'run') as run:
             run.return_value.returncode = 0

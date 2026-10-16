@@ -1,0 +1,13 @@
+{
+  "schema": "coh-coordinator-receipt-review-v1",
+  "reviewer": "/root/startup_f",
+  "scope": "Docs and retained receipts only; no rerun or new acceptance",
+  "findings_addressed": [
+    "28 retained startup observations; ring capacity32",
+    "32MiB catalog cap and96MiB aggregate transaction cap unchanged",
+    "23,703,771-byte compact audit phase distinguished from26,543,038-byte owner creation lifecycle maximum including harness"
+  ],
+  "remaining_blocking_findings": [],
+  "new_physical_acceptance": false,
+  "new_world_entry": false
+}

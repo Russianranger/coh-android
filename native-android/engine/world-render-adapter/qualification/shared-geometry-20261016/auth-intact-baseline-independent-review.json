@@ -1,0 +1,78 @@
+{
+  "reviewer": "Worker E independent read-only review of separate intact-write AuthServer baseline",
+  "passed": true,
+  "blocking_findings": [],
+  "worker_commit": "7d569a51452a0de07bb3a14fac417386544738b6",
+  "worker_worktree_clean": true,
+  "coordinator_workflow_revision_context": "6b46c4cb963513fa966d176a8882de1cdd749947",
+  "reviewed_source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_auth_login.py": "bc938831afd621b5018572827352c2a66aec84635859d0857885c91591f9262e",
+    "native-android/engine/auth-interop/deployment/windows/intact_probe.c": "c26859b5afb68000929759d32399520d152ff29f84c10c067104dffa43755bfe",
+    "native-android/engine/auth-interop/deployment/windows/auth_only_probe.c": "9bf261ba6cd927ba1d4923c7bbd9c5fb05129dbef9a17e80310489aac537271c",
+    "native-android/engine/auth-interop/deployment/windows/winsock_compat.c": "eb2f583915cac2830d928eaf182b9496aef91ea9d204ae0b218eb958a7022bad",
+    "native-android/engine/auth-interop/deployment/probe-build-reuse-pins.json": "9679717846ffeae42963e87af458b26ff136a0701ae33fc8a72ee201c54da4ef",
+    "native-android/engine/auth-interop/deployment/qualify_auth_only.py": "1aeb26e564a6bc1dcd7adc03cc514075c87e59e0be8a5c14cafcd7d5dd6c5400",
+    "native-android/engine/auth-interop/deployment/test_auth_login_stage.py": "8b08ddf862e8ff48eb72ee0336d030935544885c738c8a8d444f881092d3efed",
+    "native-android/engine/auth-interop/deployment/qualify_original_receive.py": "500c417967baae54511f016f596a87ef602f4421add1be1211b041b460e98b58",
+    "native-android/engine/auth-interop/deployment/original_receive_fixture.cpp": "5454f743ab4a2e5b99fe3808bdb3f03d03057d32075c311b926eb1e15e4e2c40",
+    "native-android/engine/auth-interop/deployment/AUTH-ONLY-LOGIN.md": "5ec37b97e191303e8a3bf022d7307a9a30e638792205cd81c63dfb5994bb9efb",
+    ".github/workflows/native-auth-login.yml": "17ce34f005c840f103dca409715a773a592f4daf3dad9aae4575b7c2b70cfda3"
+  },
+  "host_evidence_reused": {
+    "receipt_sha256": "c04561080512bdcd5f2f9d36156314a28a3759da074d45d4fda3b9058eec54a9",
+    "driver_sha256_matches_reviewed_source": true,
+    "passed": true,
+    "unit_suites": 31,
+    "intact_wrapper_checks_per_mode": 23,
+    "modes": [
+      "release",
+      "asan_ubsan"
+    ],
+    "actual_historical_probe_admitted_again_by_review": true,
+    "full_native_tests_repeated_by_review": false
+  },
+  "original_receive_oracle_review": {
+    "source_commit": "c854a0a4d",
+    "receipt_sha256": "b999320ed43c93025f2eddbed4d2e418168b4e40f2148c50936b73549b397d0b",
+    "exact_original_function_and_generated_fixture_hashes_recomputed": true,
+    "retained_checks_per_mode": 344,
+    "body_split_offsets_wrong": 167,
+    "cryptography_executed": false,
+    "live_service_executed": false,
+    "interpretation": "Offset defect is source-reproduced; consistent with hosted reset but intentionally removed private logs do not prove its exact live close cause."
+  },
+  "findings_resolved": [
+    {
+      "finding": "New probe identity initially described build-tree binary while execution used an unchecked copied output.",
+      "resolution": "Full PE/SHA/size identities must match after copy, and recorded identity now describes the exact executed output."
+    },
+    {
+      "finding": "Initial baseline could pass after recording an unexpected original-service exit during the historical fragmented-input control.",
+      "resolution": "Original process liveness and all three listener owners are checked after the historical observation; loss revokes aggregate pass while preserving any earlier positive-exchange evidence."
+    }
+  ],
+  "review_checks": [
+    "New wrapper includes original probe source unchanged. It admits only the existing requested caps 7/11 and fault 0/1, redirects outgoing cap to 1024, and passes through errors and corruption selection.",
+    "Historical prepare_probe_project bytes, 27 pinned source inputs and existing reused executable still pass exact admission at final reviewed source. New generator changes only the main translation unit to the wrapper.",
+    "New build records all historical inputs plus wrapper, fixture and generator hashes, build function, project, native binary, compiler identity, OpenSSL source/static library and policy. Existing crypto/version/checksum/account/server code remains unchanged.",
+    "One necessary OpenSSL build links the new wrapper because previous artifact omitted libcrypto.lib. Workflow download size 53,279,637 and SHA match retained original archive; network calls have explicit deadlines.",
+    "Future crypto reuse material is retained under a 128 MiB / 2048-file bound with hashes and manifest; it contains public source/build inputs and requires separate future admission.",
+    "New schema declares loopback normal-send-cap-1024 scope, forced partial sends false, receiver segmentation uncontrolled and general TCP segmentation unaccepted. Full send calls do not guarantee a single server receive.",
+    "All four fresh baseline cases retain strict original probe result admission. Existing seven-byte probe separately records either exact known reset or narrowly admitted success; neither grants general TCP fragmentation acceptance.",
+    "No prior login, service cleanup or failed fragmentation acceptance is inherited. Whole-run pass still requires baseline cases, historical observation, service/lifetime checks and unchanged sources.",
+    "New process diagnostics query only numeric owned SQL PID, process name/start ticks and bounded unique Job-member PIDs; they record before/after cleanup state without killing or mutating an extra process.",
+    "Process/listener, firewall, SQL schema/instance and private-file cleanup requirements remain unchanged. Diagnostic failure revokes baseline aggregate acceptance; previous SQL DROP failure remains a failure.",
+    "Original receive-offset source oracle is a workflow precondition and retains known failure evidence. No accepted APK, Android renderer or production server binary is rebuilt or patched."
+  ],
+  "limitations": [
+    "New Windows wrapper compile and live baseline execution are pending at review time; host adapter tests do not establish Windows or real encrypted login.",
+    "A positive loopback baseline would not resolve the original partial-body receive defect, arbitrary TCP segmentation, nondevelopment DbServer checksum policy or full AuthServer-to-DbServer-to-MapServer handoff.",
+    "Original source/OS fixtures do not recover the private live-server reset reason. No physical Thor qualification or native world entry is claimed."
+  ],
+  "real_windows_execution_by_review": false,
+  "encrypted_account_login_verified_by_review": false,
+  "general_tcp_segmentation_accepted": false,
+  "authenticated_db_map_handoff_verified": false,
+  "physical_thor_accepted": false,
+  "real_world_entry": false
+}

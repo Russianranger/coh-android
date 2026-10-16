@@ -1,0 +1,18 @@
+{
+  "schema": "coh-auth-baseline-worker-history-v1",
+  "tips": {
+    "c": "d862000843e30cf9fc8c9deb78ca3a06a72a57aa",
+    "d": "7d569a51452a0de07bb3a14fac417386544738b6",
+    "e": "a78b8eebb6a36aa37b2aff907df07fc3b47ef7a1"
+  },
+  "prerequisites": {
+    "c": "e50407d48f8561cd28aec100bf6daf01e693099c",
+    "d": "263007090af37fac4d578e26618616cb3240da5c",
+    "e": "e76df614ad1693a6afa575f99d12900e0bde1af4"
+  },
+  "bundle": "auth-baseline-history.bundle",
+  "bytes": 38555,
+  "sha256": "a9f24355c7f098b96f573bdf2cb58b670e9c7d628a71b6539b9ffbcf88436f21",
+  "verified": true,
+  "verify_output": "The bundle contains these 3 refs:\nd862000843e30cf9fc8c9deb78ca3a06a72a57aa refs/recovery-next-auth-baseline/c\n7d569a51452a0de07bb3a14fac417386544738b6 refs/recovery-next-auth-baseline/d\na78b8eebb6a36aa37b2aff907df07fc3b47ef7a1 refs/recovery-next-auth-baseline/e\nThe bundle requires these 3 refs:\ne50407d48f8561cd28aec100bf6daf01e693099c \n263007090af37fac4d578e26618616cb3240da5c \ne76df614ad1693a6afa575f99d12900e0bde1af4 \nThe bundle uses this hash algorithm: sha1"
+}

@@ -5,6 +5,15 @@ Checkpoint: additive entity continuation from remote
 `0b75ade0c801735e10c5798f641948a45cc50488`; exact source hashes are in
 `source-pins.json`. This ledger records implementation boundaries, not acceptance.
 
+Qualification update: primary run
+[38970381196](https://github.com/Russianranger/coh-android/actions/runs/38970381196)
+at source `41b4f585f90023e06ea2c8e7c50f4d505deb8e4f` passed host/sanitizers,
+ARM64 and x86_64 builds, and Android 13 x86_64 execution. Globals passed 6,968,876
+checks including 1,038,766 badge checks. Evidence:
+`native-android/combined-client/evidence/20261016/primary-recovery-next/primary-android13-41b4f585/`.
+These are standalone source-oracle contracts; ARM64 execution, physical Thor,
+complete initial transaction and authoritative actor acceptance are not implied.
+
 ## Entity record, original `Game/src/entity/entrecv.c:entReceive` order
 
 | Step | Boundary | Status / remaining work |
@@ -47,7 +56,7 @@ validate any row below. `coh_ent_full_update_tail` rejects without consuming dat
 | 4 | `receiveCharacterFromServer` for full update | Unsupported composition; expanded below |
 | 4a | otherwise `SendCharacterToSelf` stats | Standalone complete absolute schema supported; correct outer offset not established |
 | 5 | power-info update, power-mode update | PowerInfoUpdate remains unsupported. Complete standalone power-mode replacement/retain wire grammar is source/Android qualified in `engine/entity-globals/`; enclosing offsets, dictionary resolution and transaction composition remain open |
-| 6 | badge update and full-update badge monitor | Complete bounded standalone badge/player/supergroup/history and ten monitor-ID wire bodies source/host/sanitizer qualified in `engine/entity-globals/coh_badges.*`; dictionary/UI application, original monitor filtering/sorting and enclosing transaction remain open. Fresh Android qualification required |
+| 6 | badge update and full-update badge monitor | Complete bounded standalone badge/player/supergroup/history and ten monitor-ID wire bodies source/host/sanitizer qualified in `engine/entity-globals/coh_badges.*`; both Android ABI builds and Android 13 x86_64 execution passed in run 38970381196. Dictionary/UI application, original monitor filtering/sorting and enclosing transaction remain open; no physical or authoritative actor acceptance |
 | 7 | generic inventory and invention updates | Unsupported |
 | 8 | workshop string | Unsupported in outer transaction |
 | 9 | conditional team, super stats, conditional league | Unsupported |
@@ -102,9 +111,11 @@ First close complete **selected self create**, then the global initial tail:
    and buffs encountered by the actual source profile. Independent original
    producer/consumer comparisons and later-record rollback are required.
 3. Compose the separately qualified control-state block, retain/deduplicate its
-   future-push events, and implement complete `character_Receive` power/inventory
-   payloads with pinned class/origin/basepower dictionaries, then remaining
-   character UI/account fields and post-character global tails.
+   future-push events, and reuse the qualified complete `character_Send` wire
+   metadata. Implement dictionary-bound `character_Receive` state application
+   with pinned class/origin/basepower identities and the still-missing outer
+   character UI/account grammars and post-character global tails, including
+   PowerInfoUpdate. Standalone wire metadata is not that whole transaction.
 4. Execute original complete initial-update producer in a disposable source
    environment; bind synthetic oracle and authentic capture identities separately.
    Apply exact-end, selected DBID/entity ownership, dictionary generations, stale
@@ -114,6 +125,9 @@ This is not blocked solely on server access: the unimplemented client grammars
 remain substantial. Source substructures can continue without server access;
 final complete qualification needs authentic source/profile dictionaries and
 actual complete packets. A capture alone cannot make an incomplete parser safe.
+The unsupported very-rare/buff continuations, outer character fields,
+PowerInfoUpdate and later global tails are missing source implementations or
+composition, not merely runtime-data admission failures.
 
 ## Immutable actor boundary
 

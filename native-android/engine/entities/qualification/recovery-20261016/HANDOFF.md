@@ -53,9 +53,19 @@ The existing globals checker emits one guarded `fixtures.h` for both suites:
 SHA256 `31ab9c4aed3756c15006d4d4ff4c00e4727a73bf805a5b18378e53d386030dc1`.
 Its existing ABI build path includes both production parsers and both test
 sources, with exact source maps and nested badge results. No separate fixture
-binding is needed. A local NDK/emulator was unavailable, so fresh ARM64/x86_64
-builds and Android 13 execution are coordinator work. Prior Android acceptance
-for unchanged modules is preserved but does not qualify these new badge bytes.
+binding is needed. Subsequent primary run
+[38970381196](https://github.com/Russianranger/coh-android/actions/runs/38970381196)
+passed at integrated source `41b4f585f90023e06ea2c8e7c50f4d505deb8e4f`:
+host/sanitizers, ARM64 and x86_64 builds, and Android 13 x86_64 emulator execution.
+The executed globals binary passed 6,968,876 checks, including 1,038,766 badge
+checks; its SHA256 is
+`bbfbfa8ab4314eef0d7539b2b6af04d986239954fb23a36682f16a566aa565c9`.
+Exact hosted/build/execution evidence is retained under
+`native-android/combined-client/evidence/20261016/primary-recovery-next/primary-android13-41b4f585/`.
+ARM64 is build-qualified, not execution-qualified. This standalone fixture
+execution does not qualify complete ALLENTS, dictionary binding, authoritative
+actors, actual server interoperability or physical Thor acceptance. No accepted
+APK was rebuilt. The recovered capture below remains independently host-qualified.
 
 ## Recovered capture qualification
 
@@ -91,6 +101,10 @@ remain optional strengthening for future deployment, as noted by A's review.
 ## Remaining authoritative transaction work
 
 `entities/INITIAL_UPDATE_CLOSURE.md` remains the source-order ledger. Specifically:
+
+Substantial source implementation and transaction composition remain unfinished,
+independently of unavailable runtime data. Matching GROUPS, dictionaries or a new
+server capture cannot by themselves close the unsupported grammars below.
 
 1. Compose already qualified costume/power/title/taskforce/rare metadata with
    actual dictionary generations and exact retain/clear/stale semantics in the

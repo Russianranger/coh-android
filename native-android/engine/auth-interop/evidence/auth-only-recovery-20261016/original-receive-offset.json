@@ -1,0 +1,47 @@
+{
+  "schema": "coh-original-authserver-receive-offset-v1",
+  "passed": true,
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "source_sha256": {
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp": "7ba1ae3f483a4b32b57d609c007f7049e16684d8aa875165b40a462ef7d1a1cb",
+    "upstream/ouroboros/AuthServer/src/IOSocket.cpp": "bdf40132e33e1280b9a7f3cce32eb33a8ebcede2838673959fc317c78097d319"
+  },
+  "function_sha256_utf8_lf": {
+    "CSocketServerEx::OnRead": "683333c4a6130db7ff34ec318b5c0a57f436936bbf14bfc18743c8ba7e9799d1",
+    "CIOSocket::Read": "09c5f914e7571b64a54b6cbb30bd054c9875e35149d114f8e14dc347fddf4b75"
+  },
+  "generated_oracle_sha256": "d243175b99f6de5c9563dd2e079f3580dfb3f9e0da7f356bceba581379445553",
+  "executions": {
+    "release": {
+      "binary_sha256": "7926db3954182cbfaaf70d0d3510b33985b16513fe6aa74cf652b022caa0c62a",
+      "result": {
+        "passed": true,
+        "checks": 344,
+        "complete_body_matches": true,
+        "one_and_two_byte_header_splits_match": true,
+        "body_split_offsets_wrong": 167,
+        "seven_byte_schedule_rejected": true,
+        "cryptography_executed": false,
+        "live_service_executed": false
+      }
+    },
+    "asan_ubsan": {
+      "binary_sha256": "8dc783e43d0269ff5f3336ea328a5e13bf5bf3cc86a19844011d826adf2e44d0",
+      "result": {
+        "passed": true,
+        "checks": 344,
+        "complete_body_matches": true,
+        "one_and_two_byte_header_splits_match": true,
+        "body_split_offsets_wrong": 167,
+        "seven_byte_schedule_rejected": true,
+        "cryptography_executed": false,
+        "live_service_executed": false
+      }
+    }
+  },
+  "scope": "Exact original OnRead and Read; deterministic opaque 168-byte body and exact-byte decoder-boundary stub. OS IO/dispatch are bounded fixtures, not Windows or cryptographic execution.",
+  "inference": "Consistent with hosted run38972290813 reset after deliberate seven-byte sends; private server logs were removed, so the live close reason is not directly proven.",
+  "original_service_changed": false,
+  "encrypted_account_login_verified": false,
+  "leak_sanitizer_enabled": false
+}

@@ -34,6 +34,7 @@ jobs:
         run: |
           mkdir -p out/auth-login-controls
           python3 native-android/engine/auth-interop/deployment/qualify_auth_only.py --source-root . --sanitize --output out/auth-login-controls/qualification.json
+          python3 native-android/engine/auth-interop/deployment/qualify_original_receive.py --source-root . --output out/auth-login-controls/original-receive-offset.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -83,10 +84,18 @@ jobs:
                   source.extractall(output)
           print('Exact original server, completed ODBC evidence and native probe recovered; no binaries rebuilt')
           PY
-      - name: Execute isolated original AuthServer encrypted account positive and negative controls
+      - name: Download pinned OpenSSL source for the separate intact-write probe
         shell: pwsh
         run: |
-          python native-android/engine/auth-interop/deployment/hosted_auth_login.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-auth-login" --reuse-auth-stage "$env:RUNNER_TEMP/auth-original-reuse" --reuse-odbc-stage "$env:RUNNER_TEMP/auth-odbc-reuse" --reuse-probe-stage "$env:RUNNER_TEMP/auth-probe-reuse"
+          $archive = "$env:RUNNER_TEMP/openssl-3.5.9.tar.gz"
+          curl.exe --fail --silent --show-error --location --connect-timeout 20 --max-time 180 --output $archive https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz
+          if ($LASTEXITCODE -ne 0) { throw 'Pinned probe crypto source download failed' }
+          if ((Get-Item $archive).Length -ne 53279637) { throw 'Probe crypto source size mismatch' }
+          if ((Get-FileHash -Algorithm SHA256 $archive).Hash.ToLowerInvariant() -ne '603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a') { throw 'Probe crypto source identity mismatch' }
+      - name: Execute intact-write baseline and retain the fragmented-input failure control
+        shell: pwsh
+        run: |
+          python native-android/engine/auth-interop/deployment/hosted_auth_login.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-auth-login" --reuse-auth-stage "$env:RUNNER_TEMP/auth-original-reuse" --reuse-odbc-stage "$env:RUNNER_TEMP/auth-odbc-reuse" --reuse-probe-stage "$env:RUNNER_TEMP/auth-probe-reuse" --openssl-archive "$env:RUNNER_TEMP/openssl-3.5.9.tar.gz" --intact-baseline
           if ($LASTEXITCODE -ne 0) { throw 'Auth-only encrypted login did not qualify; retain bounded sanitized diagnostics' }
       - uses: actions/upload-artifact@v4
         if: always()

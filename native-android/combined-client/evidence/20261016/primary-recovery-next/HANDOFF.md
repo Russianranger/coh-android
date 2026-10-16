@@ -32,6 +32,17 @@ completed successfully. `reused-hosted-runs.json` preserves their source and res
 identities. This continuation does not rebuild accepted Session 0.3.0,
 Combined 0.1.7 or Support 0.2.0 code201 packages.
 
+| Preserved physically accepted package | SHA256 | Acceptance scope |
+|---|---|---|
+| Session Client 0.3.0 | `75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639` | Gates 1–24 within documented offline scopes |
+| Combined Client 0.1.7 | `58c45d44501373309788d70e2483786e412d9b0593e86ba1bae94140a8147475` | Local server, DB selection, Map connection, complete bounded GROUPS structural decode and cleanup; `SCENE_INCOMPLETE`, no authoritative rendering |
+| Support Client 0.2.0 code 201 | `ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc` | User-approved offline execution; portrait/audio-output/audio-focus tests remain deferred |
+
+Combined 0.1.7's qualified runtime source remains
+`fe037348c9a184d98aff96f0803b2afc0e631b71`, artifact
+[12018934207](https://github.com/Russianranger/coh-android/actions/runs/38836479975/artifacts/12018934207).
+This continuation neither rebuilds those bytes nor expands their acceptance.
+
 The original catalog remains 12,179,670 bytes, SHA256
 `61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763`.
 Its exact committed ZIP remains 2,145,443 bytes, SHA256
@@ -106,7 +117,8 @@ validation scratch and two 64 KiB provider/stack reserves. B's compact pool is
 all-reference diagnostics reserve 23,305,987 bytes. These are named accounting
 boundaries, not whole-process RSS. They are separately measured components;
 combined lifetime ownership must account for every retained resource and avoid
-double-counting the catalog span. No 96 MB eager materializer cap was increased.
+double-counting the catalog span. The existing 32 MiB catalog cap and 96 MiB
+aggregate scene transaction cap remain unchanged.
 
 Definition CRC is recomputed. Reference CRC cannot be recomputed from a catalog
 which lacks root transforms; matching roots remain mandatory. Source order,
@@ -161,8 +173,9 @@ The exact accepted export `COH-NativeCombined-1792163012982.zip` was reused,
 SHA256 `e802501bce9738d538d8438cdcdbdb304810a9d7854d45a0dbb47a7188542b73`.
 Its readiness remains 387,340 ms, DB 70,678 ms and Atlas 271,736 ms. Coordinator
 VmRSS changed from 49,520 to 114,976 KiB across DB (+65,456), then 114,976 to
-114,232 KiB across Atlas (-744). Thirty-two boundary samples leave a 271,718 ms
-largest gap; these cannot establish server/Android overlap or peak memory.
+114,232 KiB across Atlas (-744). Twenty-eight retained boundary samples (ring
+capacity 32) leave a 271,718 ms largest gap; these cannot establish server/Android
+overlap or peak memory.
 
 Source controls distinguish graph payload writes from archive decoding and
 marker rewrites: zero graph writes alone does not prove a warm reuse hit.
@@ -249,13 +262,18 @@ The accepted export comparison is now recorded independently in
 actual root matrices or exact GROUPS payload occur in its four exported members.
 
 A subsequently measured the composed retained catalog owner and compact audit
-against this published source: native heap peak 23,527,315 bytes; including compact
+against this published source. During the compact-audit phase, native heap peak
+is 23,527,315 bytes; including compact
 stack and audit-output reservations 23,638,235 bytes; including the independent
 64 KiB test-harness reserve 23,703,771 bytes. Owner index/descriptor is charged
 once, original input is released before compact preparation, all 130,314 links
 are audited, exactly seven are unresolved and every allocation is released.
-All three host modes pass 39 composition controls. This strict refusal experiment
-does not publish a graph or measure application RSS. See A's composition receipt.
+All three host modes pass 39 composition controls. Earlier owner creation in this
+same fixture peaks at 26,346,430 payload bytes and 26,543,038 accounted bytes,
+including its separate test-harness reserve. Thus the compact-audit phase figure
+is not the complete create-then-audit lifecycle maximum. This strict refusal
+experiment does not publish a graph or measure application RSS. See A's
+composition receipt.
 
 Hosted catalog run 38970381218 completed its three original module host/sanitizer
 suites, both ABI builds and exporter controls, then failed the newly added compact
@@ -329,3 +347,53 @@ local C/header dependencies), exact build outputs, generated project/fixture,
 OpenSSL source/library identity and original build policy. The corrected driver
 reuses the executable and does not repeat the 255-second OpenSSL build or download.
 Fresh encrypted positive/negative exchanges and full cleanup remain required.
+
+### Original service fragmented-input failure retained
+
+The listener/probe-reuse correction was published as
+`194895e720aa9670a01496bd0f2851e8f1e8f99d`, tree
+`67dff9e5556e5aaf355611ca9282e5c196ade170`, guarded parent 8a55a883.
+Run 38972290813 passed its source controls and exact artifact recovery. Actual
+PowerShell controls reproduced the former `[null]` empty projection and verified
+the corrected `[]`, one-port and three-port forms. The original service owned
+all three expected listeners, and the unchanged native probe received protocol
+191021 before sending a 170-byte login through deliberate seven-byte writes.
+The connection then reset after one received frame; encrypted account login
+remained false. This is a real service failure, not a synthetic fixture result.
+
+Artifact 12077123568 is 1,444,434 bytes, SHA256
+`24a1aca2216620b942e2df3baaf5ae886ed06940cf6a41beace4fcae2ee40cf5`.
+The AuthServer job terminated, its listeners disappeared, and firewall/private
+file cleanup passed. LocalDB schema DROP could not reconnect because its
+prelogin pipe closed; instance stop and delete succeeded, but the aggregate
+SQL-cleanup flag correctly remained false. No complete cleanup or login success
+is inherited by a later attempt.
+
+D's exact original `CSocketServerEx::OnRead` and `CIOSocket::Read` source experiment
+reproduces an input-offset defect: after a partial body read, retained body bytes
+move to offset zero while the next decoder still starts at offset two. Complete
+170-byte delivery and header-only splits work; all 167 body split positions and
+the deliberate seven-byte schedule fail the byte-exact decoder-boundary test.
+All 344 controls agree in release and combined ASan/UBSan. The decoder is a boundary stub;
+this proves source behavior consistent with the reset, not the private service's
+specific failure cause or full encrypted interoperability.
+
+A separately labeled intact-write baseline is being prepared using an isolated
+wrapper around the unchanged probe and the unchanged original server binary.
+The exact seven-byte binary and failure control remain retained. No checksum,
+version, encryption or production runtime policy is relaxed. General TCP
+segmentation acceptance remains false even if an intact loopback exchange passes.
+
+### Cumulative acceptance boundary
+
+`qualification-checkpoints.json` distinguishes exact sources, retained binaries,
+successful runs and failed runs. Both Android ABIs were built where applicable;
+new standalone Android execution is Android 13 x86_64, not ARM64 device execution.
+The full-update ledger now records the successful Android badge/global tests,
+while retaining substantial missing source grammar and enclosing transaction
+work. Missing runtime dictionaries are only one of those remaining dependencies.
+
+No new Combined APK exists. No new physical Thor test, authoritative world/actor
+publication, complete initial update or AuthServer-to-DB-to-Map handoff has been
+accepted. Existing accepted APK bytes and their scoped physical acceptance remain
+unchanged. The protected shared renderer/JNI/app paths have no continuation edits.

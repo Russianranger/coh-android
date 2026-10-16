@@ -229,6 +229,126 @@ def prepare_probe_project(root, directory, openssl_source):
     return sources
 
 
+def prepare_intact_probe_project(root, directory, openssl_source):
+    """Separate generator preserves historical project admission byte-for-byte."""
+    sources = prepare_probe_project(root, directory, openssl_source)
+    old, new = HERE / 'windows/auth_only_probe.c', HERE / 'windows/intact_probe.c'
+    project = directory / 'CMakeLists.txt'
+    text = project.read_text()
+    old_line, new_line = '"' + old.as_posix() + '"', '"' + new.as_posix() + '"'
+    if text.count(old_line) != 1:
+        raise ValueError('intact_probe_project_source_mismatch')
+    project.write_text(text.replace(old_line, new_line), encoding='utf-8')
+    return [new if path == old else path for path in sources]
+
+
+def build_intact_probe(root, temporary, output, archive, runner, proof):
+    """Necessary new probe link; no original server or accepted APK is rebuilt."""
+    with tarfile.open(archive) as value:
+        value.extractall(temporary / 'openssl', filter='data')
+    ssl_source = temporary / 'openssl/openssl-3.5.9'
+    vswhere = Path(os.environ['ProgramFiles(x86)']) / 'Microsoft Visual Studio/Installer/vswhere.exe'
+    vs = Path(prior.capture([vswhere, '-latest', '-products', '*', '-requires', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64', '-property', 'installationPath']))
+    vcvars = vs / 'VC/Auxiliary/Build/vcvarsall.bat'
+    if not vcvars.is_file():
+        raise ValueError('native_probe_build_tools_unavailable')
+    perl = select_native_perl([shutil.which('perl'), 'C:/Strawberry/perl/bin/perl.exe'])
+    build_tools = {'native_perl_sha256':prior.sha(perl), 'perl_osname':'MSWin32', 'vcvarsall_sha256':prior.sha(vcvars)}
+    for name, arguments, timeout in (
+            ('configure-intact-openssl', [str(perl), 'Configure', *PROBE_BUILD_POLICY['openssl_configuration']], 180),
+            ('build-intact-openssl', PROBE_BUILD_POLICY['openssl_build'], 900)):
+        script = temporary / (name + '.cmd')
+        command_script(script, vcvars, arguments)
+        runner.run(name, ['cmd.exe','/d','/c',script], cwd=ssl_source, timeout=timeout)
+    project, build = temporary / 'intact-project', temporary / 'intact-build'
+    prepare_intact_probe_project(root, project, ssl_source)
+    runner.run('configure-intact-probe', ['cmake','-S',project,'-B',build,'-G',PROBE_BUILD_POLICY['cmake_generator'],'-A',PROBE_BUILD_POLICY['architecture']], timeout=180)
+    runner.run('build-intact-probe', ['cmake','--build',build,'--config',PROBE_BUILD_POLICY['configuration'],'--parallel',PROBE_BUILD_POLICY['parallel']], timeout=180)
+    binary = build / 'Release/coh-auth-only.exe'
+    shutil.copy2(binary, output / 'coh-auth-intact.exe')
+    if probe_identity(binary) != probe_identity(output / 'coh-auth-intact.exe'):
+        raise ValueError('intact_probe_changed_during_copy')
+    shutil.copy2(build / 'CMakeCache.txt', output / 'intact-probe-CMakeCache.txt')
+    shutil.copy2(project / 'CMakeLists.txt', output / 'intact-probe-CMakeLists.txt')
+    pins = json.loads((HERE / 'probe-build-reuse-pins.json').read_text())
+    inputs = {name:prior.sha(root / name) for name in pins['source_files_sha256']}
+    inputs[(HERE / 'windows/intact_probe.c').relative_to(root).as_posix()] = prior.sha(HERE / 'windows/intact_probe.c')
+    details = {'binary':probe_identity(output / 'coh-auth-intact.exe'),'source_files_sha256':inputs,
+        'fixture_header_sha256':prior.sha(project / 'fixture_constants.h'),
+        'historical_project_generator_sha256':hashlib.sha256(inspect.getsource(prepare_probe_project).encode()).hexdigest(),
+        'intact_project_generator_sha256':hashlib.sha256(inspect.getsource(prepare_intact_probe_project).encode()).hexdigest(),
+        'build_function_sha256':hashlib.sha256(inspect.getsource(build_intact_probe).encode()).hexdigest(),
+        'generated_project_sha256':prior.sha(project / 'CMakeLists.txt'), 'build_policy':PROBE_BUILD_POLICY,
+        'openssl_source':admit_openssl(archive),'openssl_static_library_sha256':prior.sha(ssl_source / 'libcrypto.lib'),
+        'build_tools':build_tools,'send_cap':1024,'receive_cap':11,'forced_partial_send_calls':False,
+        'receiver_segmentation_controlled':False,'general_tcp_segmentation_accepted':False}
+    retained = {'openssl-3.5.9.tar.gz':archive, 'libcrypto.lib':ssl_source / 'libcrypto.lib',
+                'configdata.pm':ssl_source / 'configdata.pm'}
+    retained.update({path.relative_to(ssl_source).as_posix():path for path in (ssl_source / 'include').rglob('*') if path.is_file()})
+    total = sum(path.stat().st_size for path in retained.values())
+    if total <= 128 * 1024 * 1024 and len(retained) <= 2048 and not any(path.is_symlink() for path in retained.values()):
+        retained_root = output / 'intact-openssl-reuse'
+        for name, source in retained.items():
+            destination = retained_root / name
+            destination.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copy2(source,destination)
+            if prior.sha(destination) != prior.sha(source):
+                raise ValueError('retained_crypto_copy_mismatch')
+        manifest = {'schema':'coh-intact-openssl-build-ownership-v1','total_bytes':total,
+                    'source':details['openssl_source'],'build_policy':PROBE_BUILD_POLICY,'build_tools':build_tools,
+                    'files':{name:{'bytes':path.stat().st_size,'sha256':prior.sha(path)} for name,path in retained.items()},
+                    'future_reuse_requires_separate_exact_admission':True}
+        (retained_root / 'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+        details['crypto_retained'] = {'retained':True,'files':len(retained),'bytes':total,'manifest_sha256':prior.sha(retained_root / 'manifest.json')}
+    else:
+        details['crypto_retained'] = {'retained':False,'bytes':total,'reason':'bounded_artifact_limit'}
+    proof['intact_probe_build'] = details
+    return output / 'coh-auth-intact.exe'
+
+
+def admit_fragmented_observation(result):
+    """Retain known partial-send behavior without declaring TCP support."""
+    if result.get('passed') is True:
+        admit_probe_result(result, 'valid')
+        return {'observation':'login_under_capped_sends','receipt':result,'general_tcp_segmentation_accepted':False}
+    expected = {'schema':'coh-auth-only-probe-v1','passed':False,'case':'valid','state':12,'protocol':profile.PROTOCOL,
+                'shards':0,'received_frames':1,'sent_bytes':170,'failure_command':0,'failure_reason':0,'system_error':108,
+                'socket_cleanup_complete':True,'password_retained_after_close':False,'db_handoff_attempted':False,
+                'real_server_provenance_verified_by_probe':False}
+    if (set(result) != set(expected) | {'elapsed_ms','openssl_runtime'}
+            or any(type(result.get(key)) is not type(value) or result.get(key) != value for key,value in expected.items())
+            or type(result.get('elapsed_ms')) is not int or not 0 <= result['elapsed_ms'] <= 20000
+            or not re.fullmatch(r'OpenSSL 3\.5\.9 [A-Za-z0-9 -]{1,32}',str(result.get('openssl_runtime','')))):
+        raise ValueError('fragmented_probe_observation_changed')
+    return {'observation':'reset_after_encrypted_login_request','receipt':result,'general_tcp_segmentation_accepted':False}
+
+
+def owned_process_snapshot(pid):
+    if type(pid) is not int or not 1 <= pid <= 0xffffffff:
+        raise ValueError('owned_process_id_invalid')
+    code = ("$ErrorActionPreference='Stop';$p=Get-Process -Id " + str(pid) +
+            " -ErrorAction SilentlyContinue; if($p){ConvertTo-Json -Compress -InputObject @{pid=[long]$p.Id;exists=$true;name=$p.ProcessName;started_utc_ticks=$p.StartTime.ToUniversalTime().Ticks}}" +
+            " else {ConvertTo-Json -Compress -InputObject @{pid=" + str(pid) + ";exists=$false}}")
+    value = json.loads(prior.capture(['pwsh','-NoProfile','-NonInteractive','-Command',code]))
+    if not isinstance(value,dict) or type(value.get('pid')) is not int or value['pid'] != pid or type(value.get('exists')) is not bool:
+        raise ValueError('owned_process_snapshot_shape')
+    if value['exists']:
+        if (set(value) != {'pid','exists','name','started_utc_ticks'} or type(value.get('name')) is not str or value['name'].lower() != 'sqlservr'
+                or type(value['started_utc_ticks']) is not int or value['started_utc_ticks'] <= 0):
+            raise ValueError('owned_sql_process_identity_mismatch')
+    elif set(value) != {'pid','exists'}:
+        raise ValueError('owned_process_snapshot_shape')
+    return value
+
+
+def decode_job_members(assigned, listed, members):
+    if (type(assigned) is not int or type(listed) is not int or assigned != listed or not 0 <= listed <= 64
+            or len(members) != listed or len(set(members)) != listed
+            or any(type(pid) is not int or not 1 <= pid <= 0xffffffff for pid in members)):
+        raise ValueError('owned_job_member_inventory_shape')
+    return members
+
+
 class OwnedJob:
     """Kill-on-close Job Object prevents an interrupted coordinator orphaning AuthServer."""
     def __init__(self):
@@ -263,6 +383,17 @@ class OwnedJob:
     def assign(self, process):
         if not self.kernel.AssignProcessToJobObject(self.handle, int(process._handle)):
             raise ValueError('auth_process_job_assignment_failed')
+
+    def process_ids(self):
+        from ctypes import wintypes as w
+        class Members(ctypes.Structure):
+            _fields_ = [('assigned',w.DWORD),('listed',w.DWORD),('pids',ctypes.c_size_t*64)]
+        self.kernel.QueryInformationJobObject.argtypes = (w.HANDLE,ctypes.c_int,ctypes.c_void_p,w.DWORD,ctypes.POINTER(w.DWORD))
+        self.kernel.QueryInformationJobObject.restype = w.BOOL
+        value, returned = Members(), w.DWORD()
+        if not self.kernel.QueryInformationJobObject(self.handle,3,ctypes.byref(value),ctypes.sizeof(value),ctypes.byref(returned)):
+            raise ValueError('owned_job_member_query_failed')
+        return decode_job_members(value.assigned,value.listed,list(value.pids[:min(value.listed,64)]))
 
     def stop(self, process):
         terminated = bool(self.kernel.TerminateJobObject(self.handle, 0))
@@ -389,6 +520,7 @@ def main():
     parser.add_argument('--reuse-odbc-stage', type=Path, required=True)
     parser.add_argument('--reuse-probe-stage', type=Path)
     parser.add_argument('--openssl-archive', type=Path)
+    parser.add_argument('--intact-baseline', action='store_true')
     args = parser.parse_args()
     root, output = args.source_root.resolve(), args.output.resolve()
     identity = prior.require_hosted(root, output, args.expected_commit)
@@ -397,9 +529,11 @@ def main():
     original = prior.admit_original_reuse(args.reuse_auth_stage.resolve(), identity['original_source_tree'])
     odbc = admit_odbc_receipt(args.reuse_odbc_stage.resolve())
     reused_probe = admit_probe_reuse(args.reuse_probe_stage.resolve(), root) if args.reuse_probe_stage else None
-    if not reused_probe and args.openssl_archive is None:
+    if args.intact_baseline and not reused_probe:
+        raise ValueError('intact_baseline_requires_historical_probe_control')
+    if (not reused_probe or args.intact_baseline) and args.openssl_archive is None:
         raise ValueError('openssl_archive_required_for_probe_build')
-    openssl = reused_probe['openssl_source'] if reused_probe else admit_openssl(args.openssl_archive)
+    openssl = admit_openssl(args.openssl_archive) if not reused_probe or args.intact_baseline else reused_probe['openssl_source']
     output.mkdir(parents=True)
     runner = prior.Commands(output)
     proof = {'schema': 'coh-hosted-auth-only-login-v1', **identity, 'passed': False,
@@ -410,10 +544,18 @@ def main():
              'native_live_world': False, 'physical_thor_accepted': False, 'commands': runner.records,
              'probe_results': {}, 'private_service_logs_exported': False, 'private_credential_files_exported': False,
              'probe_contains_public_disposable_fixture': True,
-             'openssl_source_archive_revalidated_this_run': reused_probe is None}
+             'openssl_source_archive_revalidated_this_run': reused_probe is None or args.intact_baseline,
+             'intact_write_baseline_requested':args.intact_baseline,
+             'general_tcp_segmentation_accepted':False,
+             'receiver_segmentation_controlled':False,
+             'probe_observations':{}}
+    if args.intact_baseline:
+        proof['schema'] = 'coh-hosted-auth-only-intact-baseline-v1'
+        proof['qualification_scope'] = 'loopback_normal_send_cap_1024_only'
+        proof['forced_partial_send_calls'] = False
     instance = 'cohauth-ci-' + secrets.token_hex(12)
     created, firewall_attempted, child, job = False, False, None, None
-    localdb, sqlcmd = None, None
+    localdb, sqlcmd, sql_pid, fragment_probe = None, None, None, None
     cleanup_ok = True
     temporary = Path(tempfile.mkdtemp(prefix='coh-auth-only-', dir=os.environ['RUNNER_TEMP']))
     try:
@@ -482,6 +624,9 @@ def main():
             proof['native_probe_inputs_sha256'] = {str(path.relative_to(root)): prior.sha(path) for path in inputs}
             shutil.copy2(probe, output / 'coh-auth-only.exe')
             shutil.copy2(build / 'CMakeCache.txt', output / 'native-probe-CMakeCache.txt')
+        if args.intact_baseline:
+            fragment_probe = probe
+            probe = build_intact_probe(root,temporary,output,args.openssl_archive,runner,proof)
         if instance.casefold() in {value.casefold().strip() for value in prior.capture([localdb, 'info']).splitlines()}:
             raise ValueError('generated_instance_already_exists')
         created = True
@@ -493,6 +638,15 @@ def main():
             raise ValueError('qualified_localdb_version_changed')
         runner.run('localdb-memory-bound', [*sql, '-Q', "EXEC sp_configure 'show advanced options',1;RECONFIGURE;EXEC sp_configure 'max server memory (MB)',256;RECONFIGURE;"], timeout=150)
         runner.run('original-schema', [*sql, '-i', source / 'Assets/DBSchemas/cohauth.sql'], timeout=150)
+        if args.intact_baseline:
+            runner.run('localdb-owned-process-id', [*sql,'-h','-1','-W','-Q',"SET NOCOUNT ON;SELECT CONVERT(int,SERVERPROPERTY('ProcessID'));"],timeout=150)
+            value = (output / 'localdb-owned-process-id.log').read_text().strip()
+            if not re.fullmatch(r'[1-9][0-9]{0,9}',value) or int(value)>0xffffffff:
+                raise ValueError('owned_sql_process_id_shape')
+            sql_pid = int(value)
+            proof['owned_sql_process_before_authserver'] = owned_process_snapshot(sql_pid)
+            if proof['owned_sql_process_before_authserver']['exists'] is not True:
+                raise ValueError('owned_sql_process_not_running')
         credentials = temporary / 'credentials'
         password_fixture.write_private_fixture(credentials)
         (credentials / 'account.sql').write_text(profile.account_sql(), encoding='ascii')
@@ -538,23 +692,46 @@ def main():
                 raise ValueError('original_authserver_listener_deadline')
             time.sleep(.25)
         proof['owned_listener_ports'] = ports
-        for case in CASES:
-            private_logs_bounded(runtime / 'logs')
-            if child.poll() is not None or inspect_listeners(child.pid) != set(ports):
-                raise ValueError('original_authserver_lost_listener_ownership')
-            name = 'probe-' + case
-            runner.run(name, [probe, str(ports[1]), case], cwd=runtime, timeout=25, allowed=(0, 1, 2, 3))
-            result = json.loads((output / (name + '.log')).read_text())
-            proof['probe_results'][case] = admit_probe_result(result, case)
-            if case == 'valid':
+        baseline_error = None
+        try:
+            for case in CASES:
+                private_logs_bounded(runtime / 'logs')
                 if child.poll() is not None or inspect_listeners(child.pid) != set(ports):
-                    raise ValueError('original_authserver_failed_during_positive_login')
-                # Preserve an actual positive exchange even if a later negative
-                # control exposes a separate server failure. Overall passed
-                # remains false until all controls and cleanup finish.
-                proof['encrypted_account_login_verified'] = True
-        if child.poll() is not None or inspect_listeners(child.pid) != set(ports):
-            raise ValueError('original_authserver_failed_after_probes')
+                    raise ValueError('original_authserver_lost_listener_ownership')
+                name = ('probe-intact-' if args.intact_baseline else 'probe-') + case
+                runner.run(name, [probe, str(ports[1]), case], cwd=runtime, timeout=25, allowed=(0, 1, 2, 3))
+                proof['authserver_exit_code_after_' + case] = child.poll()
+                result = json.loads((output / (name + '.log')).read_text())
+                # The numeric native output remains evidence even if it cannot
+                # be admitted as a completed encrypted transaction.
+                proof['probe_observations'][case] = result
+                proof['probe_results'][case] = admit_probe_result(result, case)
+                if case == 'valid':
+                    if child.poll() is not None or inspect_listeners(child.pid) != set(ports):
+                        raise ValueError('original_authserver_failed_during_positive_login')
+                    proof['encrypted_account_login_verified'] = True
+            if child.poll() is not None or inspect_listeners(child.pid) != set(ports):
+                raise ValueError('original_authserver_failed_after_probes')
+        except Exception as error:
+            baseline_error = error
+        if args.intact_baseline:
+            try:
+                if child.poll() is not None or inspect_listeners(child.pid) != set(ports):
+                    raise ValueError('fragmented_control_service_unavailable')
+                runner.run('probe-historical-fragmented-valid', [fragment_probe,str(ports[1]),'valid'],cwd=runtime,timeout=25,allowed=(0,1,2,3))
+                result = json.loads((output / 'probe-historical-fragmented-valid.log').read_text())
+                proof['historical_fragmented_probe_observation'] = admit_fragmented_observation(result)
+                proof['authserver_exit_code_after_fragmented_control'] = child.poll()
+                if child.poll() is not None or inspect_listeners(child.pid) != set(ports):
+                    raise ValueError('original_authserver_failed_after_fragmented_control')
+            except Exception as error:
+                proof['fragmented_control_completed'] = False
+                if baseline_error is None:
+                    baseline_error = error
+            else:
+                proof['fragmented_control_completed'] = True
+        if baseline_error is not None:
+            raise baseline_error
         proof['passed'] = True
     except Exception as error:
         # Only our symbolic ValueError codes are exportable. Never serialize a
@@ -562,6 +739,17 @@ def main():
         proof['failure'] = str(error) if isinstance(error, ValueError) and re.fullmatch('[a-z0-9_]+', str(error)) else type(error).__name__
     finally:
         if child is not None:
+            proof['authserver_exit_code_before_owned_stop'] = child.poll()
+            if args.intact_baseline:
+                try:
+                    proof['authserver_owned_job_members_before_stop'] = job.process_ids()
+                    if sql_pid is not None:
+                        proof['owned_sql_process_before_authserver_stop'] = owned_process_snapshot(sql_pid)
+                        proof['owned_sql_pid_in_authserver_job'] = sql_pid in proof['authserver_owned_job_members_before_stop']
+                except Exception:
+                    proof['owned_process_diagnostics_complete'] = False
+                else:
+                    proof['owned_process_diagnostics_complete'] = True
             try:
                 proof['owned_authserver_job_stop_complete'] = job.stop(child)
                 proof['owned_authserver_listeners_absent'] = not inspect_listeners(child.pid)
@@ -577,6 +765,11 @@ def main():
             cleanup_ok = bool(job.kernel.CloseHandle(job.handle))
             job.handle = None
         proof['owned_authserver_cleanup_complete'] = cleanup_ok
+        if args.intact_baseline and sql_pid is not None:
+            try:
+                proof['owned_sql_process_after_authserver_stop'] = owned_process_snapshot(sql_pid)
+            except Exception:
+                proof['owned_process_diagnostics_complete'] = False
         if firewall_attempted:
             try:
                 firewall_rule(runner, instance, auth, False)
@@ -604,10 +797,13 @@ def main():
         except Exception:
             proof['source_inputs_unchanged'] = False
         proof['passed'] = proof['passed'] and cleanup_ok and proof['private_files_removed'] and proof['source_inputs_unchanged']
+        if args.intact_baseline:
+            proof['passed'] = proof['passed'] and proof.get('owned_process_diagnostics_complete',False) and proof.get('fragmented_control_completed',False)
         (output / 'receipt.json').write_text(json.dumps(proof, indent=2) + '\n')
     print(json.dumps({'passed': proof['passed'], 'failure': proof.get('failure'),
                       'encrypted_account_login_verified': proof['encrypted_account_login_verified'],
-                      'authenticated_db_map_handoff_verified': False}))
+                      'authenticated_db_map_handoff_verified': False,
+                      'intact_write_baseline':args.intact_baseline,'general_tcp_segmentation_accepted':False}))
     return 0 if proof['passed'] else 1
 
 

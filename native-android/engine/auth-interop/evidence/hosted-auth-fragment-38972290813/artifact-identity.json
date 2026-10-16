@@ -1,0 +1,114 @@
+{
+  "run_id": 38972290813,
+  "artifact_id": 12077123568,
+  "repository_commit": "194895e720aa9670a01496bd0f2851e8f1e8f99d",
+  "artifact_bytes": 1444434,
+  "artifact_sha256": "24a1aca2216620b942e2df3baaf5ae886ed06940cf6a41beace4fcae2ee40cf5",
+  "files": {
+    "archive-original-source.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "coh-auth-only.exe": {
+      "bytes": 3185664,
+      "sha256": "454814a2659944cf7958d10d89f2bdf49a7e5a778ad75d941077ef8d17d672ec"
+    },
+    "firewall-add.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "firewall-remove.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "localdb-create.log": {
+      "bytes": 91,
+      "sha256": "d700583151a14d357ec4e646ccc3781ae4db541ab6ea1671199fc8b107462623"
+    },
+    "localdb-delete-owned-instance.log": {
+      "bytes": 66,
+      "sha256": "b3127228a9589de80b7bacedd266f6e5ba9bd10faae2efc9fe1d5de505982aaf"
+    },
+    "localdb-drop-owned-schema.log": {
+      "bytes": 721,
+      "sha256": "b93cdf780d32cf310a6a9f008ef4befcc8fa9d68da096a2ab02e2d479c1c7d4e"
+    },
+    "localdb-memory-bound.log": {
+      "bytes": 230,
+      "sha256": "db52144897915b17529a7fc6a9bf1f640a94cb23d6bb37536512e02e01d5ef1a"
+    },
+    "localdb-start.log": {
+      "bytes": 66,
+      "sha256": "4ab376addf15f8835636b0d30767f8cee4befc839516daa75895b2837579a30a"
+    },
+    "localdb-stop-owned-instance.log": {
+      "bytes": 66,
+      "sha256": "ebe16942ee9252a90c0c1ede5e75c5a2d2625dfb13d32e960f3afda7963d63fb"
+    },
+    "localdb-version.log": {
+      "bytes": 306,
+      "sha256": "48e0b114d081d0e178cb06f07afae2179e952df5a9e57da71d660c4c451af6a0"
+    },
+    "original-schema.log": {
+      "bytes": 118,
+      "sha256": "fb5ee7d86f7964f6a9c277744d1461915d92cd57b1ab0ef0617e88b3ef095fd7"
+    },
+    "probe-valid.log": {
+      "bytes": 412,
+      "sha256": "0e40d1bb2cff83f4c24c08a5b5bc90ea14922bc4c6c4a12f1c397e35bcfdcf22"
+    },
+    "receipt.json": {
+      "bytes": 21579,
+      "sha256": "f8d2794d757c6984d1da94b138e5a9dcb055d93fbd1e6c7d1aecf2c98391b199"
+    },
+    "reused-probe-build-native-probe.log": {
+      "bytes": 521,
+      "sha256": "21fc1eaa0f89c2c53e0aff189b2277e7af42988734b958cbc9859e364003b146"
+    },
+    "reused-probe-build-openssl.log": {
+      "bytes": 1618513,
+      "sha256": "58b5b5479bf5e237b8d969ccc71ad482c157a56306218c43c3d653050d6b48cd"
+    },
+    "reused-probe-configure-native-probe.log": {
+      "bytes": 482,
+      "sha256": "27af95158fdfaf92798114bec70f4043dd632d712b8342005c035716ff3b3488"
+    },
+    "reused-probe-configure-openssl.log": {
+      "bytes": 1230,
+      "sha256": "9aadcb8e6676992d6c4a3a67ec5df1fdf6ff51d3f08c4f43d1de0260b7802ddd"
+    },
+    "reused-probe-native-probe-CMakeCache.txt": {
+      "bytes": 13363,
+      "sha256": "655d8674cb10a39c7e389c789f681e05bc4b0c42e71c8cf89b7835e87859a22e"
+    },
+    "reused-probe-receipt.json": {
+      "bytes": 14617,
+      "sha256": "c8c93dce83ecdfb5287ee2e80cab2c0023b5feab853e149c7fd706c5650b9db5"
+    }
+  },
+  "zip_entries_crc32": {
+    "archive-original-source.log": 0,
+    "coh-auth-only.exe": 1668346418,
+    "firewall-add.log": 0,
+    "firewall-remove.log": 0,
+    "localdb-create.log": 2862731040,
+    "localdb-delete-owned-instance.log": 3007847494,
+    "localdb-drop-owned-schema.log": 3215300406,
+    "localdb-memory-bound.log": 840141189,
+    "localdb-start.log": 2077817021,
+    "localdb-stop-owned-instance.log": 91226177,
+    "localdb-version.log": 641365153,
+    "original-schema.log": 920511002,
+    "probe-valid.log": 552393198,
+    "receipt.json": 3631188738,
+    "reused-probe-build-native-probe.log": 2483779435,
+    "reused-probe-build-openssl.log": 3334340099,
+    "reused-probe-configure-native-probe.log": 2740140901,
+    "reused-probe-configure-openssl.log": 2539858529,
+    "reused-probe-native-probe-CMakeCache.txt": 2514643129,
+    "reused-probe-receipt.json": 1610164852
+  },
+  "archive_crc_verified": true,
+  "reused_files_retained_in_original_artifact": true,
+  "original_failure_preserved": true
+}

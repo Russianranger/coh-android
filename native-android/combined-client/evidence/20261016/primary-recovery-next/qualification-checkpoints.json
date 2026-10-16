@@ -1,0 +1,74 @@
+{
+  "schema": "coh-six-worker-qualification-checkpoints-v1",
+  "integration_branch": "native-android",
+  "recovered_head": "66146bbee161304ba4e4e14cbb53cba6958fb03b",
+  "runs": [
+    {
+      "id": 38970381196,
+      "source": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f",
+      "result": "success",
+      "scope": "Primary source, host sanitizers, ARM64/x86_64 standalone builds and Android13 x86_64 execution; fixture adapter only",
+      "artifacts": [
+        12076238264,
+        12076861749
+      ]
+    },
+    {
+      "id": 38970381544,
+      "source": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f",
+      "result": "success",
+      "scope": "Portable native core",
+      "artifacts": [
+        12075894871
+      ]
+    },
+    {
+      "id": 38970381218,
+      "source": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f",
+      "result": "failure",
+      "scope": "Three existing module host/sanitizer/both-ABI build suites passed. New compact test empty loop rejected by NDK Clang. Retained evidence, narrow recovery below.",
+      "artifacts": [
+        12076985837
+      ]
+    },
+    {
+      "id": 38971531596,
+      "source": "8a55a883706e4e7a92741d27175350f874357009",
+      "result": "success",
+      "scope": "Corrected compact host/sanitizer/both-ABI/Android13 authentic catalog; retained source41 module binaries executed on Android13; startup tests",
+      "retained_binary_source": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f",
+      "artifacts": [
+        12077532044,
+        12077106855
+      ]
+    },
+    {
+      "id": 38970381430,
+      "source": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f",
+      "result": "failure",
+      "scope": "Original AuthServer launched; empty-listener JSON shape blocked login and complete service-cleanup verification. No login claim.",
+      "artifacts": [
+        12076876614
+      ]
+    },
+    {
+      "id": 38972290813,
+      "source": "194895e720aa9670a01496bd0f2851e8f1e8f99d",
+      "result": "failure",
+      "scope": "Original service owned listeners and protocol191021 handshake. Fragmented170-byte login reset; no encrypted login. Service/firewall/private cleanup passed; SQL drop failed though stop/delete passed.",
+      "artifacts": [
+        12077123568,
+        12076439275
+      ]
+    }
+  ],
+  "acceptance": {
+    "new_physical_thor_execution": false,
+    "genuine_world_entry": false,
+    "complete_initial_character_transaction": false,
+    "general_auth_tcp_fragmentation": false,
+    "authenticated_db_map_handoff": false,
+    "new_combined_apk": false,
+    "prior_physical_acceptances_preserved": true
+  }
+}

@@ -120,7 +120,7 @@ python3 native-android/engine/auth-interop/deployment/qualify_auth_only.py \
   --source-root . --sanitize --output /tmp/auth-only-qualification.json
 ```
 
-Current local result: 26 admission suites; 46 WinSock syscall-shell controls,
+Current local result: 31 admission suites; 46 WinSock syscall-shell controls,
 56 unchanged-original tokenizer/getter comparisons, and eight compiled native
 probe argument/refused-loopback cleanup controls per release and ASan/UBSan run.
 The whole Config::Load filesystem/platform/date logic is not executed by the
@@ -161,9 +161,113 @@ binary is rebuilt if any source or policy has changed: admission fails instead.
 The exact archive passed ZIP CRC and SHA256 checks; seven one-byte artifact
 mutations were rejected. See `listener-recovery-host-qualification.json`.
 
-Windows compilation and initial original-process launch are established, but
-listener ownership, actual encrypted account login and complete service cleanup
+The narrow retry [38972290813](https://github.com/Russianranger/coh-android/actions/runs/38972290813)
+ran source `194895e720aa9670a01496bd0f2851e8f1e8f99d`, reused every binary and
+completed in the service step in about 38 seconds. Actual PowerShell established
+`[null]` from the old empty projection and `[]` from the corrected pipeline; all
+three original AuthServer listeners belonged to the spawned process. The native
+probe executed against that process, received protocol 191021, sent 170 bytes
+using the deliberate seven-byte send cap, then received a reset after 375 ms.
+It had one received frame and no login response. The positive case failed;
+wrong-password, missing-account and corruption probes were not reached.
+
+This second failure and its exact numeric probe output are preserved under
+`../evidence/hosted-auth-fragment-38972290813/`. Artifact 12077123568 is 1,444,434
+bytes, ZIP SHA256
+`24a1aca2216620b942e2df3baaf5ae886ed06940cf6a41beace4fcae2ee40cf5`.
+Its CRC check passed. AuthServer Job Object stop, listener absence, firewall and
+private-file cleanup all passed. SQL schema DROP could not reconnect because the
+LocalDB prelogin pipe had closed; instance stop and deletion both succeeded.
+The aggregate SQL cleanup flag remains false; deletion is not retroactive proof
+that schema DROP ran. No raw private service log, account row or key was exported.
+
+A focused source oracle, `qualify_original_receive.py`, compiles the exact
+original `CSocketServerEx::OnRead` and `CIOSocket::Read` with bounded platform
+fixtures. It proves the original fragmented-body offset defect: `Read(ri-pi)`
+compacts the body to offset zero after consuming the header, but the next
+`OnRead` decrypts from `inBuf+2`. The decoder-boundary fixture compares every byte
+of a deterministic opaque 168-byte body. A complete 170-byte frame and splits
+after the first or second header byte match. Every one of the 167 body splits
+at positions 3 through 169 and the seven-byte delivery schedule present incorrect
+bytes to the decoder. Release and ASan/UBSan each passed 344 checks. The oracle
+runs neither cryptography nor a live service, and makes no encrypted-login claim.
+The source defect is consistent with the hosted reset; the exact live close
+reason cannot be recovered from the intentionally removed private server logs.
+
+```sh
+python3 native-android/engine/auth-interop/deployment/qualify_original_receive.py \
+  --source-root . --output /tmp/original-auth-receive-offset.json
+```
+
+Next diagnostics must keep this failed fragmentation test visible. A separately
+labeled normal-send baseline can determine whether the remaining native crypto,
+account schema and empty-shard exchange interoperate on loopback, but cannot
+qualify arbitrary TCP segmentation. Full transport acceptance requires an
+independently reviewed original-server receive fix or other source-proven
+resolution; it must not be hidden by changing account/version/checksum policy.
+The next owned service run should also record numeric AuthServer exit status,
+LocalDB process identity and Job Object process membership before termination to
+distinguish a service failure from SQL process cleanup interaction. Existing
+receipts do not establish that cause.
+
+Windows compilation, owned listeners, real protocol handshake and AuthServer
+cleanup are established. Actual encrypted account login and complete SQL cleanup
 remain **pending**. No desktop control establishes Android/Thor qualification.
+
+## Normal-send baseline continuation
+
+The next isolated experiment uses `--intact-baseline`. It retains the exact
+historical seven-byte-cap probe and adds `windows/intact_probe.c`, a checked
+wrapper around the unchanged original probe translation unit. Only the expected
+`coh_win_limits(7,11,fault)` request changes to `(1024,11,fault)`. Unknown caps and
+fault values are rejected; no native protocol, credential, return value, server
+executable, encryption or version policy is rewritten. The separate project
+generator preserves the old generator and its historical reuse hash unchanged.
+
+```powershell
+python native-android/engine/auth-interop/deployment/hosted_auth_login.py `
+  --source-root . --expected-commit "$env:GITHUB_SHA" `
+  --output "$env:RUNNER_TEMP/coh-auth-login" `
+  --reuse-auth-stage "$env:RUNNER_TEMP/auth-original-reuse" `
+  --reuse-odbc-stage "$env:RUNNER_TEMP/auth-odbc-reuse" `
+  --reuse-probe-stage "$env:RUNNER_TEMP/auth-probe-reuse" `
+  --openssl-archive "$env:RUNNER_TEMP/openssl-3.5.9.tar.gz" `
+  --intact-baseline
+```
+
+A 1024-byte syscall cap does **not** guarantee one server receive or prevent TCP
+segmentation. The schema is `coh-hosted-auth-only-intact-baseline-v1`, scope is
+loopback normal sends, and `receiver_segmentation_controlled` and
+`general_tcp_segmentation_accepted` remain false. The fresh baseline runs all four
+positive/negative account cases. The exact old binary then retains a capped-send
+observation, whether it resets as before or happens to receive a valid login
+response under that run's TCP delivery. Neither outcome repairs the proven
+original receive defect. An unexpected server exit or lost listener revokes
+overall success; an actual positive encrypted exchange remains separate evidence.
+
+The necessary new link requires the pinned OpenSSL build once because no prior
+artifact retained `libcrypto.lib`. The original AuthServer and accepted APKs are
+not rebuilt. New receipts bind all 27 unchanged inputs plus the wrapper, both
+project-generator functions, fixture header, generated CMake project, build
+policy, original OpenSSL archive, static library and exact executed output binary.
+Built and copied binary identities must match. Crypto source, generated headers,
+static library, configuration and per-file manifest are retained for later exact
+reuse if their aggregate is at most 128 MiB and 2048 files; a future reuse still
+requires independent admission. Ordinary build logs and receipts are retained
+alongside that bounded directory.
+
+The same run records the owned SQL process ID obtained from that instance,
+process name/start identity, original AuthServer exit status, and the AuthServer
+Job Object's bounded process-ID list before termination. SQL presence is checked
+again after that Job Object stops. These diagnostics determine whether the closed
+SQL pipe is associated with the owned process lifetime; they do not silently
+convert a failed schema DROP into cleanup success.
+
+Local qualification passed 31 suites, 23 extracted wrapper controls per release
+and ASan/UBSan mode, and the retained 46 WinSock, 56 original-parser and eight
+native cleanup controls. The original receive oracle separately passed 344
+checks per mode. The new normal-send executable and service baseline remain
+pending their exact-source Windows run.
 
 Even after an AuthServer-only success, the complete authentication path still
 requires a separately admitted nondevelopment version/reference policy, the

@@ -152,6 +152,40 @@ def qualify_probe(root, directory, sanitize):
             'source_sha256':{str(path.relative_to(root)):prior.sha(path) for path in sources},'executions':results}
 
 
+def qualify_intact_wrapper(directory,sanitize):
+    source = (HERE/'windows/intact_probe.c').read_text()
+    function = extract(source,'coh_intact_limits')
+    code = r'''#include <errno.h>
+#include <stdio.h>
+static unsigned calls,last_out,last_in;static int last_fault,result;
+static int coh_win_limits(unsigned outgoing,unsigned incoming,int fault){calls++;last_out=outgoing;last_in=incoming;last_fault=fault;return result;}
+''' + function + r'''
+static unsigned checks;
+#define CHECK(x) do{checks++;if(!(x))return 1;}while(0)
+int main(void){
+ for(int fault=0;fault<=1;fault++){result=0;unsigned before=calls;CHECK(coh_intact_limits(7,11,fault)==0);CHECK(calls==before+1&&last_out==1024&&last_in==11&&last_fault==fault);}
+ result=-1;errno=EAGAIN;CHECK(coh_intact_limits(7,11,0)==-1);CHECK(errno==EAGAIN);
+ unsigned before=calls;unsigned out[]={0,6,8,1024};for(unsigned i=0;i<4;i++){errno=0;CHECK(coh_intact_limits(out[i],11,0)==-1&&errno==EINVAL);CHECK(calls==before);}
+ unsigned in[]={0,7,12};for(unsigned i=0;i<3;i++){errno=0;CHECK(coh_intact_limits(7,in[i],0)==-1&&errno==EINVAL);CHECK(calls==before);}
+ CHECK(coh_intact_limits(7,11,-1)==-1);CHECK(coh_intact_limits(7,11,2)==-1);CHECK(calls==before);
+ printf("{\"passed\":true,\"checks\":%u,\"original_probe_modified\":false,\"real_windows_execution\":false}\n",checks);return 0;}
+'''
+    generated=directory/'intact-wrapper.c'
+    generated.write_text(code)
+    executions={}
+    for mode in (('release','asan_ubsan') if sanitize else ('release',)):
+        flags=['-O2'] if mode=='release' else ['-O1','-g','-fsanitize=address,undefined','-fno-omit-frame-pointer','-fno-pie','-no-pie']
+        binary=directory/('intact-wrapper-'+mode)
+        run(['cc','-std=c11',*flags,generated,'-o',binary])
+        result=json.loads(run([binary],env=dict(os.environ,ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1')))
+        if result!={'passed':True,'checks':23,'original_probe_modified':False,'real_windows_execution':False}:
+            raise ValueError('intact_wrapper_control_mismatch')
+        executions[mode]={'binary_sha256':prior.sha(binary),'result':result}
+    return {'passed':True,'source_sha256':prior.sha(HERE/'windows/intact_probe.c'),
+            'function_sha256':hashlib.sha256(function.encode()).hexdigest(),'generated_oracle_sha256':prior.sha(generated),
+            'executions':executions,'scope':'Exact intact-cap redirect with syscall fixture; original probe and Windows runtime are not executed.'}
+
+
 def qualify_reused_probe(root, artifact, directory):
     """Check the recovered real build and reject every mutated admitted file."""
     pins = json.loads((HERE / 'probe-build-reuse-pins.json').read_text())
@@ -206,6 +240,7 @@ def main():
                 'winsock_adapter':qualify_windows_adapter.qualify(args.sanitize),
                 'original_profile_parser':qualify_profile(root,directory,args.sanitize),
                 'native_probe':qualify_probe(root,directory,args.sanitize),
+                'intact_wrapper':qualify_intact_wrapper(directory,args.sanitize),
                 'driver_sha256':prior.sha(HERE/'hosted_auth_login.py'),
                 'profile_sha256':prior.sha(HERE/'auth_service_profile.py'),
                 'real_windows_execution':False,'real_account_login_verified':False,
