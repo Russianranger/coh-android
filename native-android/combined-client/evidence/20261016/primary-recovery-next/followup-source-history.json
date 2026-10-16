@@ -1,0 +1,9 @@
+{
+  "tips": {
+    "a-composition": "eb360d71fcb3b3d0fd22efef7619b6d60f21d770",
+    "b-clang": "0dbb0ffc03266e298eade859985040390ea32fb0"
+  },
+  "bundle_sha256": "460999675a10aee4ae987e13775009dc6e54f780a23ce12ea3c02ac24c6ab99a",
+  "bundle_bytes": 10625,
+  "verification": "The bundle contains these 2 refs:\neb360d71fcb3b3d0fd22efef7619b6d60f21d770 refs/coordinator/recovery-next/a-composition\n0dbb0ffc03266e298eade859985040390ea32fb0 refs/coordinator/recovery-next/b-clang\nThe bundle requires these 2 refs:\n5f992900466555f2e562858a6e4395058327c12a \n07d378a3108735f258cdd3b45953dd9498f587ce \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/8749ec34cd9b/coh-recovery/native-android/combined-client/evidence/20261016/primary-recovery-next/six-worker-followup-history.bundle is okay\n"
+}

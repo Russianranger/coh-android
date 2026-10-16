@@ -1,0 +1,20 @@
+{
+  "source": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f",
+  "run_id": 38970381196,
+  "host_artifact": {
+    "id": 12076238264,
+    "bytes": 2925125,
+    "sha256": "0cb4714bfc3390ed6ed8bfdefb8068f654656fc1714d1df110a6f5e2225738cb"
+  },
+  "execution_artifact": {
+    "id": 12076861749,
+    "bytes": 12495,
+    "sha256": "b969d8945fca50dfac698d51d07c6a76ef90b5d40c0dc493cb66544eb61421c6"
+  },
+  "host_sanitizers_and_both_abis_passed": true,
+  "android13_x86_64_executed": true,
+  "physical_thor_executed": false,
+  "core_run": 38970381544,
+  "core_artifact_id": 12075894871,
+  "core_artifact_sha256": "780e8e63caf6d8759469f894cee2987beb7f0ce6f8177974c4a1d4862ba9c16c"
+}

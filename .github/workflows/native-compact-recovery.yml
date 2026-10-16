@@ -1,0 +1,131 @@
+name: Exact compact Android and retained catalog recovery
+on:
+  push:
+    branches: [native-android]
+    paths: [.github/workflows/native-compact-recovery.yml]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-compact-recovery-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  retained-catalog-android:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && contains(github.event.head_commit.message, '[compact-recovery]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out the exact already-built catalog source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 41b4f585f90023e06ea2c8e7c50f4d505deb8e4f
+          persist-credentials: false
+      - name: Recover checksum-pinned successful module builds from the failed enclosing job
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import hashlib, json, os, subprocess, zipfile
+          archive = Path(os.environ['RUNNER_TEMP']) / 'retained-catalog.zip'
+          with archive.open('xb') as target:
+              subprocess.run(['gh','api','repos/Russianranger/coh-android/actions/artifacts/12076985837/zip'], stdout=target, check=True, timeout=180)
+          assert archive.stat().st_size == 4181919
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == '45d6577d997cb678a48558a4a232c9680e7366a5c6b43a04d66673d71ff4b8c1'
+          output = Path('native-android/results/retained-catalog')
+          output.mkdir(parents=True)
+          with zipfile.ZipFile(archive) as source:
+              infos = source.infolist()
+              assert len(infos) == 36 and len({x.filename for x in infos}) == len(infos)
+              assert sum(x.file_size for x in infos) == 79677765
+              assert all(not PurePosixPath(x.filename).is_absolute() and '..' not in PurePosixPath(x.filename).parts and '\\' not in x.filename and ':' not in x.filename and ((x.external_attr >> 16) & 0o170000) != 0o120000 for x in infos)
+              source.extractall(output)
+          qualified = json.loads((output/'qualification.json').read_text())
+          assert qualified['passed'] is True and qualified['android_built'] is True
+          assert qualified['source_revision'] == '41b4f585f90023e06ea2c8e7c50f4d505deb8e4f'
+          print('Retained exact catalog/scene/entity modules; no native module rebuilt')
+          PY
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: Enable emulator acceleration
+        run: test -c /dev/kvm && sudo chmod 666 /dev/kvm
+      - name: Execute retained exact-source modules on Android 13
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/engine/scenecatalog-qualification/run_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --require-clean --artifacts native-android/results/retained-catalog --output native-android/results/retained-catalog-execution/receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-retained-catalog-android13-execution
+          path: native-android/results/retained-catalog-execution/
+          if-no-files-found: error
+          retention-days: 90
+  compact-build-and-android:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && contains(github.event.head_commit.message, '[compact-recovery]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Install original source oracle dependencies and pinned NDK
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends zlib1g-dev curl unzip
+          curl --fail --silent --show-error --location --output /tmp/ndk.zip https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+          echo 'dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f  /tmp/ndk.zip' | sha256sum -c -
+          unzip -q /tmp/ndk.zip -d /tmp/compact-ndk
+      - name: Build only the corrected compact contract against the exact retained catalog
+        run: >-
+          python3 native-android/engine/scenecatalog-qualification/compact_android.py build
+          --source-root . --ndk /tmp/compact-ndk/android-ndk-r28c
+          --archive native-android/corpus/server-catalog/capture-38948147691/evidence.zip
+          --output native-android/results/compact-recovery
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with: {packages: platform-tools, log-accepted-android-sdk-licenses: false}
+      - name: Enable emulator acceleration
+        run: test -c /dev/kvm && sudo chmod 666 /dev/kvm
+      - name: Execute corrected compact contract with authentic captured bytes on Android 13
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/engine/scenecatalog-qualification/compact_android.py run --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --artifacts native-android/results/compact-recovery --output native-android/results/compact-recovery/android-execution
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-compact-recovery-host-arm64-x86_64-android13
+          path: native-android/results/compact-recovery/
+          if-no-files-found: error
+          retention-days: 90
+  previously-skipped-startup-controls:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/native-android' && contains(github.event.head_commit.message, '[compact-recovery]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Complete the previously skipped read-only diagnostic checks
+        run: |
+          git fetch --no-tags --depth=1 origin cda93d96f8696e6a0f2ec6940a0c96e5b852f281
+          python3 -m unittest discover -s native-android/engine/scenecatalog-server -p test_delivery.py -v
+          python3 -m unittest discover -s native-android/combined-client/tools -p test_startup_resources.py -v
+          python3 -m unittest discover -s native-android/combined-client/tools -p test_startup_receipts.py -v
+          python3 -m unittest discover -s native-android/combined-client/diagnostics/continuation-20261016 -p 'test_*.py' -v

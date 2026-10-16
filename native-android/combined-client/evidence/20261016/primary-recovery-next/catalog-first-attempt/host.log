@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/home/runner/work/coh-android/coh-android/native-android/engine/scenegraph/check_compact.py", line 83, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/home/runner/work/coh-android/coh-android/native-android/engine/scenegraph/check_compact.py", line 75, in main
+    run([cc,'-std=c99','-O2','-Wall','-Wextra','-Werror','-pedantic','-DCOH_COMPACT_STANDALONE','-I'+str(work),'-I'+str(HERE),*sources,'-Wl,--wrap=malloc,--wrap=calloc,--wrap=free','-lm','-o',binary])
+  File "/home/runner/work/coh-android/coh-android/native-android/engine/scenegraph/check_compact.py", line 11, in run
+    if result.returncode:raise RuntimeError(result.stdout+result.stderr)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: /home/runner/work/coh-android/coh-android/native-android/engine/scenegraph/tests/test_scene_compact.c:15:82: error: for loop has empty body [-Werror,-Wempty-body]
+   15 | void __wrap_free(void*p){if(p){unsigned i;for(i=0;i<256&&allocations[i].p!=p;i++);if(i==256||!live)abort();live--;live_bytes-=allocations[i].bytes;allocations[i].p=NULL;}__real_free(p);}
+      |                                                                                  ^
+/home/runner/work/coh-android/coh-android/native-android/engine/scenegraph/tests/test_scene_compact.c:15:82: note: put the semicolon on a separate line to silence this warning
+1 error generated.
+

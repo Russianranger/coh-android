@@ -27,17 +27,17 @@ neither completed world entry nor reached a final integration-ready checkpoint.
 
 ## Reused qualification and accepted boundary
 
-The four exact-HEAD runs 38953090075, 38953089898, 38953090330 and38953090176 all
+The four exact-HEAD runs 38953090075, 38953089898, 38953090330 and 38953090176 all
 completed successfully. `reused-hosted-runs.json` preserves their source and result
-identities. This continuation does not rebuild accepted Session0.3.0,
-Combined0.1.7 or Support0.2.0 code201 packages.
+identities. This continuation does not rebuild accepted Session 0.3.0,
+Combined 0.1.7 or Support 0.2.0 code201 packages.
 
-The original catalog remains12179670bytes, SHA256
+The original catalog remains 12,179,670 bytes, SHA256
 `61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763`.
-Its exact committed ZIP remains2145443bytes, SHA256
+Its exact committed ZIP remains 2,145,443 bytes, SHA256
 `6f45437efd8fe7c16b7468634f2ad1914ba446b739632e59d65dc6912624ade3`.
-It contains508files,40225slots,130314links and33root-count metadata, with original
-definition/reference CRCs3173822562/3649375123. No new MapServer catalog capture is
+It contains 508 files, 40,225 slots, 130,314 links and 33 root-count metadata, with original
+definition/reference CRCs 3173822562/3649375123. No new MapServer catalog capture is
 needed or started. Root matrices, matching physical generation, asset mappings,
 complete actor transaction and renderer publication remain distinct requirements.
 
@@ -232,3 +232,59 @@ archive SHA256 and verification. The integrated compact release replay passes
 493373 checks against the exact authentic catalog after A/B source composition;
 `compact-integrated-release.json` preserves it. Hosted sanitizer/Android and
 Windows AuthServer results are recorded in a later checkpoint below.
+
+## Published source and narrow Android recovery
+
+Reviewed source is published as `41b4f585f90023e06ea2c8e7c50f4d505deb8e4f`,
+with exact tree `f81188cb544b1365bee81cf0c7afb87304401ac7`; the guarded parent
+was the recovered `66146bbee161304ba4e4e14cbb53cba6958fb03b`.
+`source-publication.json` and `protected-runtime-audit.json` retain this boundary.
+No prior server/compiler process was observable and the older linked Git metadata
+was missing. The evidence establishes the prior published streaming checkpoint
+and three unpublished candidates; it cannot establish why the previous UI stopped
+or whether the old session was actively interrupted at its final instant.
+
+The accepted export comparison is now recorded independently in
+`accepted-017-catalog-comparison.json`. Its count/CRC match is genuine, but no
+actual root matrices or exact GROUPS payload occur in its four exported members.
+
+A subsequently measured the composed retained catalog owner and compact audit
+against this published source: native heap peak 23,527,315 bytes; including compact
+stack and audit-output reservations 23,638,235 bytes; including the independent
+64 KiB test-harness reserve 23,703,771 bytes. Owner index/descriptor is charged
+once, original input is released before compact preparation, all 130,314 links
+are audited, exactly seven are unresolved and every allocation is released.
+All three host modes pass 39 composition controls. This strict refusal experiment
+does not publish a graph or measure application RSS. See A's composition receipt.
+
+Hosted catalog run 38970381218 completed its three original module host/sanitizer
+suites, both ABI builds and exporter controls, then failed the newly added compact
+standalone NDK compile: Clang rejects the test allocator's semicolon-only empty
+loop under `-Werror,-Wempty-body`. The failed ZIP is artifact 12076985837,
+SHA256 `45d6577d997cb678a48558a4a232c9680e7366a5c6b43a04d66673d71ff4b8c1`.
+The exact failed receipt/log is retained in `catalog-first-attempt/`.
+
+B's one-line brace correction preserves the entire 493,373-check release result.
+The explicit `[compact-recovery]` workflow runs three independent jobs: execute
+already-built modules with exact original source 41 checkout and artifact checks;
+qualify/build/execute only corrected compact contracts; complete previously
+skipped startup checks. Ordinary broad jobs skip that narrowly marked recovery
+commit, while normal future source commits retain their original behavior.
+No successful module build, accepted APK or expensive server capture is repeated.
+Original A/B follow-up commit IDs and prerequisite tips are preserved in the
+separate `six-worker-followup-history.bundle` and its integrity receipt.
+
+### Confirmed Android primary checkpoint
+
+Primary run 38970381196 passed host/original-source/sanitizer qualification,
+both Android ABI builds and Android 13 x86_64 execution at source 41b4f585.
+The protocol batch and fixture renderer adapter independently passed. Globals
+execute 6,968,876 checks including 1,038,766 badge controls; adapter executes 29,148
+checks with 4,096 draw capacity and zero render-thread allocations/frees.
+Full-update/actor/live-world flags remain false. Exact 12,495-byte execution ZIP
+and receipts are retained under `primary-android13-41b4f585/`; its artifact is
+12076861749, SHA256 `b969d8945fca50dfac698d51d07c6a76ef90b5d40c0dc493cb66544eb61421c6`.
+Host/both-ABI artifact 12076238264 is 2,925,125 bytes, SHA256
+`0cb4714bfc3390ed6ed8bfdefb8068f654656fc1714d1df110a6f5e2225738cb`.
+Portable-core run 38970381544 also passed. These are standalone qualifications,
+not a Combined APK, physical Thor run or real account/world transaction.

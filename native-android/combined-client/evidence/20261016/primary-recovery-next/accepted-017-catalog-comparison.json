@@ -1,0 +1,68 @@
+{
+  "schema": "coh-accepted-017-catalog-comparison-v1",
+  "accepted_apk_sha256": "58c45d44501373309788d70e2483786e412d9b0593e86ba1bae94140a8147475",
+  "accepted_runtime_source": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+  "zip_sha256": "e802501bce9738d538d8438cdcdbdb304810a9d7854d45a0dbb47a7188542b73",
+  "native_report_sha256": "fa99330f68e324eba4523a92b4f928b06490c6acfc1daa197ea199e20e56e81a",
+  "members": [
+    {
+      "name": "combined-report.json",
+      "bytes": 39251,
+      "crc32": 2054450289
+    },
+    {
+      "name": "native-client-report.json",
+      "bytes": 269418,
+      "crc32": 3850010797
+    },
+    {
+      "name": "combined-server-latest-report.json",
+      "bytes": 30283,
+      "crc32": 3490336279
+    },
+    {
+      "name": "combined-server-previous-attempts.json",
+      "bytes": 197417,
+      "crc32": 3495190502
+    }
+  ],
+  "physical_scene_inspection": {
+    "new_world": 1,
+    "files": 508,
+    "present_files": 508,
+    "defs": 0,
+    "removed_defs": 0,
+    "children": 0,
+    "roots": 33,
+    "removed_roots": 0,
+    "properties": 0,
+    "swaps": 0,
+    "raw_matrices": 33,
+    "packed_matrices": 0,
+    "strings": 541,
+    "string_bytes": 35957,
+    "work_units": 38457,
+    "max_def_id": 0,
+    "max_root_id": 32,
+    "footer_file_count": 508,
+    "footer_active_roots": 33,
+    "footer_defs_crc": 3173822562,
+    "footer_refs_crc": 3649375123,
+    "prefix_bits": 632,
+    "consumed_bits": 343112
+  },
+  "scene_decoded_bytes": 42889,
+  "last_payload_bits": 343112,
+  "scene_failure": {
+    "stage": 0,
+    "bit_offset": 0,
+    "status": 0
+  },
+  "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+  "count_crc_metadata_matches": true,
+  "world_generation_match_verified": false,
+  "matching_root_payload_available": false,
+  "new_server_capture_executed": false,
+  "physical_test_repeated": false,
+  "finding": "Accepted export contains structural counters including33 raw matrices but not their values, root identities or exact GROUPS bytes. Numeric checksum/count parity cannot establish a generation transaction or reconstruct root reachability."
+}

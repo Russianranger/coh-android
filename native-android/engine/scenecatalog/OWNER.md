@@ -86,3 +86,54 @@ New owner Android execution remains pending that exact-source run. Previously
 successful standalone streaming run **38953090330** is reused for its unchanged
 streaming scope; its passing artifact identities are recorded in the evidence.
 No accepted APK is rebuilt and no new physical test is requested.
+
+## Composed owner and compact audit
+
+A separate host test now measures the actual owner-to-compact handoff against
+published integration `41b4f585f90023e06ea2c8e7c50f4d505deb8e4f` and the unchanged
+authentic catalog. It retains an owner pin, releases the caller's original
+12,179,670-byte buffer, obtains the immutable span and constructs compact binding
+identities from the successfully admitted binding. The compact retained reservation adds
+**332,248 bytes** for the owner's descriptor/index; the already charged catalog
+span is not counted twice.
+
+The complete diagnostic audit checks all 130,314 references and records the same
+seven missing names. The strict compact constructor independently refuses the
+incomplete graph, leaves its candidate/report outputs unchanged and releases
+every temporary allocation. Releasing the last owner pin then frees all native
+allocations. The catalog SHA256 is unchanged after both operations.
+
+Release, ASan and UBSan each pass 39 controls with identical measurements:
+
+| Accounted item | Bytes |
+|---|---:|
+| Retained immutable owner, including catalog span | 12,511,918 |
+| Temporary compact candidate | 9,360,555 |
+| Largest temporary decoded record | 1,654,842 |
+| **Allocator-tracked native payload peak** | **23,527,315** |
+| Compact/walk stack reservations | 98,304 |
+| Caller audit output | 12,616 |
+| **Composed payload and stack/output accounting** | **23,638,235** |
+| Separate test harness reservation | 65,536 |
+| **Complete test admission total** | **23,703,771** |
+
+The additional test reservation covers its fixed allocation tracker and caller
+locals. Maximum simultaneous tracked native allocations were eight. Actual
+allocator metadata, loaded executable/shared-library pages, graphics, the server
+and process RSS are outside these named-data measurements. This is a measured
+failed-admission/audit composition, not a completed compact graph or live scene.
+Root transforms, graph reachability, assets and actor authority remain absent.
+
+```sh
+python3 native-android/engine/scenecatalog/check_owner_compact.py \
+  --source-root /checkout/with-integrated-components \
+  --source-revision 41b4f585f90023e06ea2c8e7c50f4d505deb8e4f \
+  --capture-directory /private/extracted-capture \
+  --output /private/owner-compact.json
+```
+
+The driver verifies only its explicit read-only source/header dependencies
+against that exact Git commit before and after execution, so unrelated worktree
+evidence updates do not invalidate the test. It retains every dependency/driver
+hash and all three exact tested binary hashes. No server process, accepted APK,
+previous successful streaming-only workflow or physical test is repeated.

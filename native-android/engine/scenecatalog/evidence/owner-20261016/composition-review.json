@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "reviewer": "Worker B",
+  "result": "no production defect; source-receipt hardening corrected before final qualification",
+  "checked": [
+    "retained owner pin outlives borrowed compact span",
+    "external original input freed before compact preparation",
+    "owner extra equals owned_bytes minus already charged input span",
+    "all seven missing edge identities and retained parent identity match",
+    "strict compact build refusal leaves output unchanged",
+    "every native allocation freed after last owner release"
+  ],
+  "finding": "Driver/helper hashes were originally captured only after compilation, permitting a changed harness to receive a misleading source receipt",
+  "correction": "Driver/helper/manifest hashes captured before compilation, compared afterward, and original hashes retained",
+  "fresh_final_qualification": {
+    "source_revision": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f",
+    "checks_each_mode": 39,
+    "release": true,
+    "asan": true,
+    "ubsan": true,
+    "identical_mode_measurements": true
+  },
+  "receipt_sha256": "3342ae5b3d852758a6414a8a7f9a3ed9701ca0a7a1362e935e0b95eb73f28c3c",
+  "production_source_changed": false,
+  "server_started": false,
+  "graph_published": false,
+  "android_executed": false
+}

@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   host-and-android-build:
-    if: github.ref == 'refs/heads/native-android'
+    if: github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[compact-recovery]')
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:

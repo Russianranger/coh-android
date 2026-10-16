@@ -1,0 +1,66 @@
+{
+  "reviewer": "Worker E independent read-only review of narrow compact and retained catalog recovery workflow",
+  "passed": true,
+  "blocking_findings": [],
+  "source_revision_context": "6e74fcaf6fb810312d098882f80f333ba690c313",
+  "scope": "Exact reviewed working-source hashes; coordinator publication pending. No shared files changed and no native tests, builds or Android runs repeated.",
+  "reviewed_source_sha256": {
+    ".github/workflows/native-compact-recovery.yml": "379cb084cb0a711189432f47b286e8fda67c6062dc412908eba5030940357905",
+    ".github/workflows/native-android-core.yml": "24d1aa3ed61902d3fc5dc2aacc07893ebd2124c2674dbd5e71537d8f32cdce4f",
+    ".github/workflows/native-primary-continuation.yml": "72a229e94357f08384781b7ad805371b6927cb1a0398752b355817e7bdd59dd7",
+    ".github/workflows/native-scene-catalog.yml": "d650fd45a307f05f9dc437a94cf13499f82fc6749591e4cf01a3524919880303",
+    "native-android/engine/scenecatalog-qualification/compact_android.py": "7059f34a9fafa28daedb3a9871195cce975ac36dc089a0a96cb8fad443049784",
+    "native-android/engine/scenecatalog-qualification/run_android.py": "a0b54e7013359d425b2d88d8cdbd46b8b939694187018f0618bdadc25e7b1dad",
+    "native-android/engine/scenecatalog-qualification/common.py": "4ab4204f4d0ba6b9d7eb8d29aecf4072fe4d572fe6906ff0fa779f6e51b4162e"
+  },
+  "retained_artifact_validation": {
+    "passed": true,
+    "zip_bytes": 4181919,
+    "zip_sha256": "45d6577d997cb678a48558a4a232c9680e7366a5c6b43a04d66673d71ff4b8c1",
+    "source_revision": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f",
+    "retained_aggregate_passed": true,
+    "retained_both_abi_built": true,
+    "source_files_matched_exact_git_blobs": 163,
+    "artifact_entries": 36,
+    "artifact_uncompressed_bytes": 79677765,
+    "validated_modules": [
+      "scenecatalog",
+      "scenegraph",
+      "entities"
+    ],
+    "module_checks": {
+      "scenecatalog": 370752,
+      "scenegraph": 473979,
+      "entities": 2570029
+    },
+    "both_abis_revalidated": true,
+    "native_tests_reexecuted": false,
+    "android_executed": false,
+    "current_runner_common_equal_pinned_checkout": true
+  },
+  "finding_resolved": {
+    "finding": "Initial 64 MiB expansion ceiling rejected the exact retained ZIP because its uncompressed members total 79,677,765 bytes.",
+    "resolution": "Final workflow requires exactly 36 unique members and exactly 79,677,765 expanded bytes, in addition to the unchanged complete ZIP SHA256 and 4,181,919-byte size. Native compact heap budgets are unchanged."
+  },
+  "review_checks": [
+    "Pinned retained artifact 12076985837 is recovered from enclosing run 38970381218; successful module qualification and both ABI builds do not inherit the enclosing later compact build failure.",
+    "All 163 retained source-file hashes match exact Git blobs at checkout 41b4f585f90023e06ea2c8e7c50f4d505deb8e4f; manifest closure, module fixtures, both ABI binaries and receipts validate using unchanged retained runner.",
+    "Pinned checkout contains the same module qualification workflow bytes named in retained source receipts; current recovery orchestration does not relabel retained modules as newly compiled source.",
+    "SHA-pinned ZIP and bounded safe unique member paths precede extraction into ignored results paths; clean-source precondition remains enforceable.",
+    "Corrected compact test builds separately from current clean source with pinned NDK r28c; compact driver source closure now includes this new recovery workflow.",
+    "Compact uses original checked-in captured catalog ZIP and its established capture receipt; both ABIs build, x86_64 runs on pinned Android 13 emulator, and exact source/artifact validation controls remain intact.",
+    "Three existing broad job guards suppress only pushes whose commit message contains the explicit compact-recovery marker; dependent broad execution jobs skip through needs. Existing manual dispatch behavior is preserved.",
+    "Current intended publication includes the newly added recovery workflow, satisfying its narrow path trigger as well as branch/repository/marker guards.",
+    "The independent startup-controls job executes the four checks skipped after the original compact build failure and fetches only the required historical source checkpoint.",
+    "Job deadlines, cancel-in-progress false and distinct output artifact paths preserve failure evidence without canceling other worker workflows.",
+    "No accepted APK is rebuilt; diagnostics remain non-authoritative and do not establish live graph, complete actor transaction, physical acceptance or first world entry."
+  ],
+  "limitations": [
+    "This is a one-off push-triggered recovery workflow; later source-only fixes would need an intentional workflow-path change to trigger it again.",
+    "Review validates artifact lineage and job preconditions; GitHub Android execution remains the job responsibility.",
+    "Previously skipped startup checks retain their results in workflow logs rather than a separate artifact."
+  ],
+  "android_executed_by_this_review": false,
+  "physical_thor_accepted": false,
+  "real_world_entry": false
+}

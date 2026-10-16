@@ -24,7 +24,8 @@ REQUIRED = {ENGINE + p for p in (
 DRIVERS = (ENGINE + "scenecatalog-qualification/compact_android.py",
            ENGINE + "scenecatalog-qualification/common.py",
            ENGINE + "scenecatalog-qualification/capture_android.py",
-           ".github/workflows/native-scene-catalog.yml")
+           ".github/workflows/native-scene-catalog.yml",
+           ".github/workflows/native-compact-recovery.yml")
 MISSING_NAMES = ["_cot_warpgate_base", "_cot_warpgate_glow", "_mmayhem_curtain_8_01c",
                  "_mmayhem_curtain_8_02c", "_mmayhem_curtain_8_03c",
                  "_mmayhem_curtain_16_01c", "_mmayhem_curtain_16_02c"]

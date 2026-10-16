@@ -1,0 +1,14 @@
+{
+  "accepted_apks_rebuilt": false,
+  "actual_server_interoperability_verified": false,
+  "android_executed": false,
+  "error": "Command exited 1; diagnostic log: host.log",
+  "full_live_world_verified": false,
+  "gates25_27_complete": false,
+  "passed": false,
+  "physical_thor_accepted": false,
+  "real_account_login_verified": false,
+  "schema": "coh-authentic-compact-android-build-v1",
+  "source_revision": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f",
+  "source_worktree_dirty": false
+}

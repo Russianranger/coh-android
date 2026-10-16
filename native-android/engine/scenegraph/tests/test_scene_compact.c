@@ -12,7 +12,7 @@ static struct {void*p;size_t bytes;} allocations[256];
 static void track(void*p,size_t n){if(!p)return;for(unsigned i=0;i<256;i++)if(!allocations[i].p){allocations[i].p=p;allocations[i].bytes=n;live++;live_bytes+=n;if(live_bytes>peak_bytes)peak_bytes=live_bytes;return;}abort();}
 void*__wrap_malloc(size_t n){calls++;if(calls==fail_at)return NULL;void*p=__real_malloc(n);track(p,n);if(calls==capture_call)captured_bytes=n;return p;}
 void*__wrap_calloc(size_t n,size_t z){calls++;if(calls==fail_at)return NULL;void*p=__real_calloc(n,z);track(p,n*z);if(calls==capture_call)captured_bytes=n*z;return p;}
-void __wrap_free(void*p){if(p){unsigned i;for(i=0;i<256&&allocations[i].p!=p;i++);if(i==256||!live)abort();live--;live_bytes-=allocations[i].bytes;allocations[i].p=NULL;}__real_free(p);}
+void __wrap_free(void*p){if(p){unsigned i;for(i=0;i<256&&allocations[i].p!=p;i++){}if(i==256||!live)abort();live--;live_bytes-=allocations[i].bytes;allocations[i].p=NULL;}__real_free(p);}
 static void coh_compact_test_fail_next(void){fail_at=calls+1;}
 #else
 void coh_compact_test_fail_next(void);

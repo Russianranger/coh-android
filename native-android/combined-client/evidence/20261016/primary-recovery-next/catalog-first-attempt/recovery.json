@@ -1,0 +1,15 @@
+{
+  "source": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f",
+  "run_id": 38970381218,
+  "job_id": 117207006733,
+  "artifact_id": 12076985837,
+  "zip_bytes": 4181919,
+  "zip_sha256": "45d6577d997cb678a48558a4a232c9680e7366a5c6b43a04d66673d71ff4b8c1",
+  "existing_module_host_and_both_abis_passed": true,
+  "compact_host_modes_completed_before_ndk_error": true,
+  "compact_android_built": false,
+  "failure": "Clang -Werror,-Wempty-body in standalone test allocator loop; no production defect indicated",
+  "fix_worker_commit": "0dbb0ffc03266e298eade859985040390ea32fb0",
+  "fix_scope": "Explicit empty loop braces only; identical release493373check JSON",
+  "recovery": "Reuse complete existing catalog/scene/entity builds against pinned41 checkout for Android; build corrected standalone compact separately; run skipped startup controls independently."
+}
