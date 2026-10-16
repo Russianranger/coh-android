@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "workflow": 38838677592,
+  "job": 116773454044,
+  "artifact_id": 12020004551,
+  "runtime_source": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+  "driver_source": "8e237b984c188dd19c171387914e795916712556",
+  "images": [
+    {
+      "file": "return-picker-visible.png",
+      "bytes": 403467,
+      "sha256": "5c919b7d65da6959baaaa2038f0f45869b6ccf4dcb114d86f4f3ceb2efb179d3",
+      "independently_viewed": true
+    },
+    {
+      "file": "character-picker-visible.png",
+      "bytes": 404137,
+      "sha256": "71fab16fe05ce33ea2bc49b0e60b41e0cc77448347330ead0f9296f6fa1fbb46",
+      "independently_viewed": true
+    },
+    {
+      "file": "native-preview.png",
+      "bytes": 596356,
+      "sha256": "39b3670208e394b15fa4cd43f327b2378bc8c0c7fb938186e7f4df26caeae7ad",
+      "independently_viewed": true
+    }
+  ],
+  "observations": [
+    "Both landscape character pickers show the explicit Return button, existing fixture character choice, textured character, authored floors and benches within the accepted preview.",
+    "The portrait foreground shows the same textured preview, Far 11/11 selection and accessible Return/Recreate/Export controls after Surface/Home recovery.",
+    "The screenshots label the scene as the offline preview. They do not show a server-authoritative world.",
+    "The final screenshot reports 1275 frames; the preceding numeric foreground report has1249 frames. These are distinct capture instants.",
+    "No after-selection PNG was emitted; complete scene traversal is established by its exact numeric app report and strict checks, not by these screenshots."
+  ],
+  "server_world_visually_verified": false,
+  "physical_thor_verified": false
+}

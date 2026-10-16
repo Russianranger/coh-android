@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "concurrent_commit_preserved": "bae8cca2b4ae0e43070d5e86ca1c6f1df668bc00",
+  "concurrent_tree": "8643e57b40f423c7e1e6efca905a5d1eb01ce1bb",
+  "continuation_driver": "8e237b984c188dd19c171387914e795916712556",
+  "qualified_apk_source": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+  "concurrent_changed_paths": 116,
+  "handoff_path_overlap": [],
+  "compiler_dependency_source": "Actual qualified local0.1.7 ARM64 Ninja depfile database and compile_commands.json",
+  "tracked_compiler_and_build_inputs_checked": 80,
+  "compiler_build_input_overlap": [],
+  "tracked_input_paths_sha256": "e681ecfb421edb9635953278c206cda260c2ffc3e92a3ad8b129f68888714b00",
+  "all_checked_inputs_identical_to_qualified_apk_source": true,
+  "combined_and_session_source_prefixes_unchanged_by_concurrent_commit": true,
+  "concurrent_support_artifacts_qualified_by_this_batch": false,
+  "new_apk_build_required_for_this_evidence_handoff": false,
+  "method": "Fresh fetch rejected stale publication base. Preserve concurrent commit as parent, cherry-pick only completed handoff/evidence commits, re-fetch before guarded non-force publication.",
+  "scope": "Does not rerun or grant qualification to concurrent support code201. Existing0.1.7 APK and its pinned fe037 source/8e237 driver remain the delivery."
+}

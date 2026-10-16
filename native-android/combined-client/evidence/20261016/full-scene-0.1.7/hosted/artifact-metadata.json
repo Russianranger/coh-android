@@ -1,0 +1,42 @@
+{
+  "format": 1,
+  "application_source": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+  "qualification_driver_source": "8e237b984c188dd19c171387914e795916712556",
+  "package": {
+    "run": 38836479975,
+    "original_job": 116766658246,
+    "copied_attempt2_job_identity": 116769092093,
+    "artifact": 12018934207,
+    "bytes": 11084577,
+    "sha256": "18057b8aa24df3457cc4fc6c547abc8c66a3d8973fd3bc44c6fbe87ac1d44970",
+    "zip_crc_verified": true
+  },
+  "failed_framework_attempts": [
+    {
+      "run": 38836479975,
+      "attempt": 1,
+      "job": 116767483175,
+      "artifact": 12019024634,
+      "bytes": 225626,
+      "sha256": "1dc1fd01e8cef8612c516a37e688ccbd853b209ca8b12b06b32b3141e365af88"
+    },
+    {
+      "run": 38836479975,
+      "attempt": 2,
+      "job": 116769091201,
+      "artifact": 12019193723,
+      "bytes": 921396,
+      "sha256": "a85b507d9e199433d5f440ad6ade6c9e0fcf25d192f47be17644b26f4ade16a0"
+    }
+  ],
+  "qualified_framework": {
+    "run": 38838677592,
+    "job": 116773454044,
+    "artifact": 12020004551,
+    "bytes": 2078136,
+    "sha256": "99d52db03995364705d12c7d40f476a41eccbe003cab6442452eba8b023a17f9",
+    "members": 458,
+    "zip_crc_verified": true
+  },
+  "exact_APKs_rebuilt": false
+}

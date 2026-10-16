@@ -5,7 +5,53 @@ This is a new, separate app named **CoH Native Combined**
 0.1.0/0.2.0/0.3.0 apps and all existing assets and reports. Do not uninstall or
 clear their storage. Gates 22–24 remain accepted within their documented scope.
 
-## Current update: 0.1.6 bounded scene reception
+## Current update: 0.1.7 complete scene-message structure
+
+Exact ARM64 APK: **11,536,171 bytes**, SHA256 `58c45d44501373309788d70e2483786e412d9b0593e86ba1bae94140a8147475`.
+[Package artifact](https://github.com/Russianranger/coh-android/actions/runs/38836479975/artifacts/12018934207) · [Package workflow](https://github.com/Russianranger/coh-android/actions/runs/38836479975) ·
+[Exact-package Android continuation](https://github.com/Russianranger/coh-android/actions/runs/38838677592).
+APK runtime source: `fe037348c9a184d98aff96f0803b2afc0e631b71`.
+Qualification driver: `8e237b984c188dd19c171387914e795916712556`.
+Fourteen host suites, both ABI builds/audits and
+34/34 Android13 app checks pass. Actual emulator tests use a complete
+139,794-byte original-producer message and explicitly scripted UDP peers; the
+ARM64 game server and physical 0.1.7 scene are separate qualification.
+
+Your **0.1.6 success is recorded**: real 42,889-byte scene reception, buffer
+release, explicit Return and the server still reported ready. Keep that accepted
+APK. This update advances from prefix inspection to complete normal-world scene
+structure. The visible character/scene remains the accepted offline preview;
+imported-library resolution, checksum verification and authoritative entities
+are still pending. `SCENE_INCOMPLETE` remains the expected endpoint.
+
+1. Stop any active Combined server normally. Install
+   **CoH-Native-Combined-0.1.7-arm64.apk over Combined**. Reuse imports, runtime
+   and saved test character. Do not uninstall, clear data or repeat setup.
+2. Start the server, wait for **Server ready**, then launch the native client
+   manually. Record displayed startup timings without assuming a warm cache.
+3. Connect and select the same existing character. Expected supported result:
+   **SCENE_INCOMPLETE — Scene structure decoded; server world rendering is
+   pending.** The report should contain `scene_structures >= 1`, zero scene
+   failure status, and consumed bits equal to that decoded message's bit count.
+   Definition/root counts and observed checksums are diagnostics, not proof of
+   complete assets or a live world.
+4. If it reports an unsupported format or fails, export the native JSON and
+   launcher ZIP before retrying. Its numeric stage/checkpoint distinguishes a
+   grammar branch, truncation or policy limit. No packet capture or credential
+   entry is needed for this local development test.
+5. Verify preview movement, Near/Far, Recreate, Home/return with held input and
+   explicit reconnect. Tap **Return to launcher** and confirm the server remains
+   accessible. Reopening the native client must require explicit Connect.
+6. Export native JSON, Return to launcher and stop the server normally when
+   finished. Then export the combined **report ZIP** so current guest cleanup and
+   startup details can be collected. A ZIP exported while running may contain
+   detailed guest data labelled as a previous session. Keep the saved character.
+
+Physical 0.1.7 structural reception is pending this test. Base/raid and additional
+variants may still need implementation. Full scene assets, encrypted AuthServer
+login and server-authoritative world rendering are not accepted by this build.
+
+## Previous accepted 0.1.6 bounded scene reception
 
 **Physically accepted on AYN Thor.** The new
 [acceptance record](evidence/20261016/thor-0.1.6-acceptance/THOR-016-ACCEPTANCE.md)
@@ -55,11 +101,12 @@ character rendering are pending; the visible scene remains the offline preview.
 The same full scene may still exceed the compressed-wire or 4 MiB decoded bound,
 or require later scene-tail support. Keep the report so the next change follows
 actual evidence. Do not clear data to get past a failure. Encrypted authentication,
-authoritative character spawning and physical 0.1.6 acceptance remain pending.
+authoritative character spawning remain pending. Physical 0.1.6 acceptance is
+recorded above within its documented scope.
 
 ## Previous qualified 0.1.5 Return to launcher
 
-Historical handoff; use the current 0.1.6 procedure above.
+Historical handoff; use the current 0.1.7 procedure above.
 
 Current ARM64 APK: **11,528,591 bytes**, SHA256
 `71e2f272bfadfc1076b3fcf832b41eba8d83c5541db7198ab69f4f38b2cb5671`.
@@ -98,7 +145,7 @@ preserves the exact acceptance scope and numeric failure checkpoint.
 
 ## Previous qualified 0.1.4 interrupted-start recovery
 
-Historical handoff; use the current 0.1.6 procedure above. The new physical report
+Historical handoff; use the current 0.1.7 procedure above. The new physical report
 records successful startup and a clean manual stop. It does not test a separate
 force-stop/recover/restart cycle or identify the earlier Android memory-kill cause.
 
@@ -161,7 +208,7 @@ explains the current failure and the stale 0.1.2 client report. The qualified
 
 ## Previous qualified 0.1.3 connection repair
 
-Historical handoff; use the current 0.1.6 procedure above.
+Historical handoff; use the current 0.1.7 procedure above.
 
 Install `CoH-Native-Combined-0.1.3-arm64.apk` **over the existing Combined app**.
 

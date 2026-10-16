@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "workflow_run": 38836479975,
+  "attempt": 2,
+  "android_job": 116769091201,
+  "result": "failed",
+  "qualification_accepted": false,
+  "artifact": {
+    "id": 12019193723,
+    "bytes": 921396,
+    "sha256": "a85b507d9e199433d5f440ad6ade6c9e0fcf25d192f47be17644b26f4ade16a0",
+    "zip_crc_verified": true
+  },
+  "checks_before_failure": 19,
+  "failure": {
+    "type": "AssertionError",
+    "message": "",
+    "actual_server_interoperability_verified": false
+  },
+  "cause": "Driver required a complete JNI protocol report before the lazily-created native controller existed. The fresh Activity correctly reported exactly phase IDLE until explicit Connect.",
+  "correction_commit": "fc4ecbd075",
+  "strict_active_session_schema_changed": false,
+  "controller_reset_check_moved_to": "first complete CHARACTERS_READY report after explicit Connect",
+  "pristine_preview_required_report": {
+    "phase": "IDLE"
+  },
+  "application_source_changed": false,
+  "package_rebuilt": false,
+  "exact_x86_64_apk_sha256": "9ff5c3393477f71175729b6f9e4e3bae1c8860b4e63a9f4436cefe570ec6165f",
+  "official_qualification_driver_source": "8e237b984c188dd19c171387914e795916712556"
+}

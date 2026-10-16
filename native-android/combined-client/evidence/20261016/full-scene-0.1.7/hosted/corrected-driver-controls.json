@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "checks": 185,
+  "capture_controls": 13,
+  "activity_inventory_controls": 16,
+  "identity_resource_controls": 28,
+  "viewport_protocol_controls": 111,
+  "scope": "Host regressions for document selection, strict fresh capture, native fault rejection, scene/viewport admission, bounded scrolling, exact APK identity and numeric protocol/resource privacy; no Android execution claim.",
+  "driver_commit": "fc4ecbd075",
+  "application_source_commit": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+  "apk_rebuilt": false,
+  "official_qualification_driver_source": "8e237b984c188dd19c171387914e795916712556"
+}

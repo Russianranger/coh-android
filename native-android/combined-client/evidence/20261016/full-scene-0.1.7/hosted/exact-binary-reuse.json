@@ -1,0 +1,92 @@
+{
+  "format": 1,
+  "status": "passed",
+  "qualified_apk_source": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+  "qualified_workflow": "38836479975",
+  "artifact_id": "12018934207",
+  "archive_sha256": "18057b8aa24df3457cc4fc6c547abc8c66a3d8973fd3bc44c6fbe87ac1d44970",
+  "driver_source": "8e237b984c188dd19c171387914e795916712556",
+  "driver_source_clean": true,
+  "changed_paths_since_qualified_apk": [
+    ".github/workflows/native-combined-client.yml",
+    ".github/workflows/native-combined-requalify-017.yml",
+    "native-android/combined-client/evidence/20261016/full-scene-0.1.7/related-workflows.json",
+    "native-android/combined-client/evidence/20261016/full-scene-0.1.7/review/REVIEW.md",
+    "native-android/combined-client/evidence/20261016/full-scene-0.1.7/review/independent-probe.json",
+    "native-android/combined-client/evidence/20261016/full-scene-0.1.7/review/independent_probe.py",
+    "native-android/combined-client/evidence/20261016/full-scene-0.1.7/review/jni-probe.json",
+    "native-android/combined-client/evidence/20261016/full-scene-0.1.7/review/jni_probe.py",
+    "native-android/combined-client/evidence/20261016/full-scene-0.1.7/review/repeated-source-oracle.json",
+    "native-android/combined-client/evidence/20261016/full-scene-0.1.7/review/review-binding.json",
+    "native-android/combined-client/tools/driver_controls.py",
+    "native-android/combined-client/tools/emulator_check.py",
+    "native-android/combined-client/tools/reuse_packages_017.py",
+    "native-android/combined-client/tools/reuse_packages_017_controls.py"
+  ],
+  "qualified_source_tree": "93390b9fb6f765e4b864669eac66995e56c1f955",
+  "unchanged_production_build_paths": 165488,
+  "unchanged_production_build_manifest_sha256": "af856c4c61199ad3e8c453efa23c87cec11ccadaec9baa5221345d4cea28f3ab",
+  "packages": {
+    "arm64-v8a": {
+      "apk": {
+        "name": "CoH-Native-Combined-0.1.7-arm64.apk",
+        "bytes": 11536171,
+        "sha256": "58c45d44501373309788d70e2483786e412d9b0593e86ba1bae94140a8147475"
+      },
+      "build_receipt": "arm64-package.json",
+      "build_receipt_sha256": "889eac88a12710e9cefebad0fd3ac67233900c5a833f4c614cd9c3ceb7aee9f6"
+    },
+    "x86_64": {
+      "apk": {
+        "name": "CoH-Native-Combined-0.1.7-emulator-x86_64.apk",
+        "bytes": 11132732,
+        "sha256": "9ff5c3393477f71175729b6f9e4e3bae1c8860b4e63a9f4436cefe570ec6165f"
+      },
+      "build_receipt": "x86_64-package.json",
+      "build_receipt_sha256": "7e1022bd3a97741f6ba6e64c9d8f696a61225926428e2a3eaa1e8fa364ed3f75"
+    }
+  },
+  "android_executables": {
+    "host/local-android/coh-local-arm64-v8a": {
+      "file": "coh-local-arm64-v8a",
+      "bytes": 152560,
+      "sha256": "66c820b8357a7e650c4f5d6adc6c41eaea8d59ab513cc8728dcc062361e2816c"
+    },
+    "host/local-android/coh-local-x86_64": {
+      "file": "coh-local-x86_64",
+      "bytes": 159040,
+      "sha256": "7e416df430b8b3415a6a06d490140aa93c0ca69c092e1c1af14f36ca3a389f0c"
+    },
+    "host/local-android/coh-local-peer-arm64-v8a": {
+      "file": "coh-local-peer-arm64-v8a",
+      "bytes": 302480,
+      "sha256": "ed88e8052a31258963d158e1c9df031cef87250f8070c1a3a1598171661ad587"
+    },
+    "host/local-android/coh-local-peer-x86_64": {
+      "file": "coh-local-peer-x86_64",
+      "bytes": 309496,
+      "sha256": "ae563a528cb9b039d991d82c69683f4e77ee24b2aa9931f555485a71d6e77332"
+    },
+    "host/map-android/arm64-v8a/test_mapclient_android": {
+      "file": "test_mapclient_android",
+      "bytes": 325776,
+      "sha256": "d19cfada59e09eb3840016ce5643c71767d6ac363290d0a2a63579ccd29c9db7"
+    },
+    "host/map-android/x86_64/test_mapclient_android": {
+      "file": "test_mapclient_android",
+      "bytes": 325608,
+      "sha256": "34484dffd7b90071ba8f450f333362145ab68136e65d7cec9d08f6f17ed98bf8"
+    }
+  },
+  "checked_source_pin_entries": 57,
+  "generated_fixture_pins": {
+    "fixtures.h": "99c70180c021fcb109c3abc1bdff5bc39a331f0eed22652bf1b39588c0449783",
+    "groups-fixtures.h": "727a31288a648a8e7d3276aa4ce085be76a5144366713da0911645aef635910f",
+    "server-command-fixtures.h": "d3f3a2a67e0354cf0c369caa310ed4cf9b514e545881467a880950a9f03b2a35",
+    "source-oracle.c": "22f6c1676d8efde100de33f5dc3f26097b7608c317b85261af31ea3fab0f3b81"
+  },
+  "rebuilt": false,
+  "actual_server_interoperability_verified": false,
+  "source_closure_boundary": "Every tracked production/build blob is unchanged; only exact driver/helper/test, documentation/evidence and continuation workflow paths are admitted.",
+  "scope": "Exact archived ARM64/x86 APKs, native ELF libraries, Android local protocol/UI peer/Map binaries and source/header pins reused for framework-driver continuation only."
+}

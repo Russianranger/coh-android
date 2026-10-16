@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "status": "passed",
+  "driver_commit": "fc4ecbd075",
+  "source_artifact": 12019193723,
+  "scope": "Replay corrected driver contracts against exact archived actual Android reports, without accepting the incomplete framework attempt.",
+  "minimal_idle": {
+    "phase": "IDLE"
+  },
+  "connected_phase": "CHARACTERS_READY",
+  "scene_structures": 0,
+  "inspection_all_zero": true,
+  "actual_framework_qualification_complete": false,
+  "apk_rebuilt": false,
+  "official_qualification_driver_source": "8e237b984c188dd19c171387914e795916712556"
+}

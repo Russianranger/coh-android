@@ -1,0 +1,362 @@
+{
+  "format": 1,
+  "status": "passed",
+  "checks": [
+    {
+      "check": "fresh install and exact main Activity",
+      "passed": true,
+      "apk_sha256": "9ff5c3393477f71175729b6f9e4e3bae1c8860b4e63a9f4436cefe570ec6165f"
+    },
+    {
+      "check": "current launcher APK identity matches exact installed package",
+      "passed": true,
+      "installed_apk_status": "ready",
+      "installed_apk_bytes": 11132732,
+      "installed_apk_sha256": "9ff5c3393477f71175729b6f9e4e3bae1c8860b4e63a9f4436cefe570ec6165f"
+    },
+    {
+      "check": "fresh app initialized for external imports without failures",
+      "passed": true
+    },
+    {
+      "check": "bounded public memory and Android exit diagnostics",
+      "passed": true,
+      "retained_guest_resource_samples": 0,
+      "guest_resource_scope": "Bounded numeric report schema; empty x86 samples do not qualify ARM64 guest RSS or an Android kill cause.",
+      "memory_samples": 0,
+      "memory_status": "not_started",
+      "retained_memory_samples": 0,
+      "android_exit_records": 0,
+      "scope": "Actual combined-report schema and numeric privacy bounds; zero samples do not qualify ARM64 server memory admission or guest execution."
+    },
+    {
+      "check": "framework SAF cancellation and app return",
+      "passed": true,
+      "control": "Import launcher APK"
+    },
+    {
+      "check": "framework SAF cancellation and app return",
+      "passed": true,
+      "control": "Import game asset part"
+    },
+    {
+      "check": "missing imports refuse setup and server start",
+      "passed": true,
+      "runtime_ready": false,
+      "server_ready": false
+    },
+    {
+      "check": "failed attempt survives actual force-stop and relaunch",
+      "passed": true,
+      "retained_attempts": 1,
+      "android_exit_records": 1,
+      "scope": "Framework force-stop retention with data preserved; this does not simulate or qualify Android low-memory killing or guest startup."
+    },
+    {
+      "check": "actual pinned donor APK imported through SAF",
+      "passed": true,
+      "bytes": 42076692,
+      "sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f"
+    },
+    {
+      "check": "actual imported donor payload sealed with original FX bytes",
+      "passed": true,
+      "payload_files": 71,
+      "write_permission_bits": 0,
+      "fx_bytes": 3380680,
+      "fx_sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+    },
+    {
+      "check": "repeated donor import descriptor observation",
+      "passed": true,
+      "before": {
+        "available": true,
+        "pid": 5505,
+        "count": 114
+      },
+      "after_first": {
+        "available": true,
+        "pid": 5505,
+        "count": 115
+      },
+      "after_repeat": {
+        "available": true,
+        "pid": 5505,
+        "count": 115
+      },
+      "complete_imports": 2,
+      "first_import_growth_limit": 32,
+      "repeat_growth_limit": 8,
+      "scope": "Actual app descriptor counts across two complete SAF donor imports, allowing bounded framework/provider cache growth; no guest server execution.",
+      "bounded_growth_verified": true
+    },
+    {
+      "check": "untrusted donor refused and previous accepted payload preserved",
+      "passed": true
+    },
+    {
+      "check": "bounded native viewport: initial-preview",
+      "passed": true,
+      "surface_width": 1080,
+      "surface_height": 902,
+      "host_width": 1080,
+      "host_height": 902,
+      "native_camera_aspect_valid": true,
+      "controls_height": 892
+    },
+    {
+      "check": "native connection refuses absent server lease",
+      "passed": true,
+      "actual_server_interoperability_verified": false
+    },
+    {
+      "check": "native preview actual GLES frames",
+      "passed": true,
+      "frames": 43,
+      "gl_errors": 0
+    },
+    {
+      "check": "bounded native viewport: landscape-preview",
+      "passed": true,
+      "surface_width": 1920,
+      "surface_height": 382,
+      "host_width": 1920,
+      "host_height": 382,
+      "native_camera_aspect_valid": true,
+      "controls_height": 572
+    },
+    {
+      "check": "bounded native viewport: return-picker-visible",
+      "passed": true,
+      "surface_width": 1920,
+      "surface_height": 382,
+      "host_width": 1920,
+      "host_height": 382,
+      "native_camera_aspect_valid": true,
+      "controls_height": 572
+    },
+    {
+      "check": "explicit Return to launcher: active-character-picker",
+      "passed": true,
+      "same_app_process": true,
+      "retained_main_activity": true,
+      "active_main_instances": 1,
+      "active_native_instances": 0,
+      "native_network_phase": "SUSPENDED",
+      "opened_sockets": 1,
+      "closed_sockets": 1,
+      "source_held_input_cleared": true,
+      "actual_framework_held_key_across_click": true,
+      "service_state_unchanged": true,
+      "actual_arm64_server_liveness_qualified": false,
+      "scope": "Actual existing launcher/task/process and client suspend/report capture; post-destruction render teardown and ARM64 guest server execution are not established by this report."
+    },
+    {
+      "check": "bounded native viewport: reopened-before-explicit-reconnect",
+      "passed": true,
+      "surface_width": 1920,
+      "surface_height": 382,
+      "host_width": 1920,
+      "host_height": 382,
+      "native_camera_aspect_valid": true,
+      "controls_height": 572
+    },
+    {
+      "check": "native relaunch requires explicit reconnect",
+      "passed": true,
+      "new_preview_session": true,
+      "source_input_clear": true,
+      "protocol_phase": "IDLE",
+      "server_policy_preserved": true,
+      "independent_peer_survived_return": true,
+      "actual_server_interoperability_verified": false
+    },
+    {
+      "check": "scripted UI peer lifecycle cleanup",
+      "passed": true,
+      "scenario": "return-picker-peer",
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "fixture_policy_removed": true,
+      "real_server_interoperability": false
+    },
+    {
+      "check": "bounded native viewport: character-picker-visible",
+      "passed": true,
+      "surface_width": 1920,
+      "surface_height": 382,
+      "host_width": 1920,
+      "host_height": 382,
+      "native_camera_aspect_valid": true,
+      "controls_height": 572
+    },
+    {
+      "check": "bounded native viewport: after-character-selection",
+      "passed": true,
+      "surface_width": 1920,
+      "surface_height": 382,
+      "host_width": 1920,
+      "host_height": 382,
+      "native_camera_aspect_valid": true,
+      "controls_height": 572
+    },
+    {
+      "check": "actual app character picker and native DB-to-Map scene boundary",
+      "passed": true,
+      "phase": "SCENE_INCOMPLETE",
+      "map_stage": 10,
+      "last_status": 2,
+      "accepted_messages": 2,
+      "scene_prefixes": 1,
+      "numeric_privacy_bounds_verified": true,
+      "scene_decoded_bytes": 139794,
+      "scene_compressed_bytes": 3575,
+      "decoded_budget_bytes": 4194304,
+      "owned_retained_bytes": 0,
+      "owned_high_water_bytes": 139794,
+      "large_body_fixture": true,
+      "scene_tail_parsed": true,
+      "peer_binary_sha256": "ae563a528cb9b039d991d82c69683f4e77ee24b2aa9931f555485a71d6e77332",
+      "scripted_source_layout": true,
+      "real_server_interoperability": false,
+      "real_authenticated_session": false,
+      "preview_is_server_world": false
+    },
+    {
+      "check": "actual app complete source-layout GROUPS structure consumes exact logical body",
+      "passed": true,
+      "phase": "SCENE_INCOMPLETE",
+      "map_stage": 10,
+      "last_status": 2,
+      "accepted_messages": 2,
+      "scene_prefixes": 1,
+      "numeric_privacy_bounds_verified": true,
+      "scene_decoded_bytes": 139794,
+      "scene_compressed_bytes": 3575,
+      "decoded_budget_bytes": 4194304,
+      "owned_retained_bytes": 0,
+      "owned_high_water_bytes": 139794,
+      "large_body_fixture": true,
+      "scene_tail_parsed": true,
+      "scene_structures": 1,
+      "scene_inspection": {
+        "new_world": 1,
+        "files": 1,
+        "present_files": 1,
+        "defs": 192,
+        "removed_defs": 0,
+        "children": 384,
+        "roots": 4,
+        "removed_roots": 0,
+        "properties": 384,
+        "swaps": 384,
+        "raw_matrices": 194,
+        "packed_matrices": 194,
+        "strings": 3461,
+        "string_bytes": 92446,
+        "work_units": 114974,
+        "max_def_id": 191,
+        "max_root_id": 3,
+        "footer_file_count": 1,
+        "footer_active_roots": 4,
+        "footer_defs_crc": 1837505798,
+        "footer_refs_crc": 154190089,
+        "prefix_bits": 944,
+        "consumed_bits": 1118352
+      },
+      "scene_assets_resolved": false,
+      "scene_crc_verified": false,
+      "authserver_authenticated": false,
+      "live_world_rendered": false,
+      "scripted_source_layout": true,
+      "real_server_interoperability": false,
+      "real_authenticated_session": false,
+      "preview_is_server_world": false
+    },
+    {
+      "check": "bounded scene disconnect closes client sockets and releases owned body",
+      "passed": true,
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "owned_retained_bytes": 0,
+      "numeric_scene_inspection_retained": true,
+      "actual_server_interoperability_verified": false
+    },
+    {
+      "check": "scripted UI peer lifecycle cleanup",
+      "passed": true,
+      "scenario": "scripted-ui-peer",
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "fixture_policy_removed": true,
+      "real_server_interoperability": false
+    },
+    {
+      "check": "framework view distance, Surface recreation and Home recovery",
+      "passed": true
+    },
+    {
+      "check": "actual framework JSON document export",
+      "passed": true,
+      "bytes": 123027,
+      "sha256": "c06440b7ed7142ae04c19da07d439a15cb15df3f3bc80a3782e5ab2fd517584e"
+    },
+    {
+      "check": "current foreground GPU resources and actual on-screen scene pixels",
+      "passed": true,
+      "frames": 1249,
+      "context": 4,
+      "gpu_bytes": 557056,
+      "bright_pixels": 478874,
+      "distinct_colors_at_least": 12515,
+      "screenshot_sha256": "39b3670208e394b15fa4cd43f327b2378bc8c0c7fb938186e7f4df26caeae7ad"
+    },
+    {
+      "check": "explicit Return to launcher: before-launcher-zip-export",
+      "passed": true,
+      "same_app_process": true,
+      "retained_main_activity": true,
+      "active_main_instances": 1,
+      "active_native_instances": 0,
+      "native_network_phase": "SUSPENDED",
+      "opened_sockets": 2,
+      "closed_sockets": 2,
+      "source_held_input_cleared": true,
+      "actual_framework_held_key_across_click": false,
+      "service_state_unchanged": true,
+      "actual_arm64_server_liveness_qualified": false,
+      "scope": "Actual existing launcher/task/process and client suspend/report capture; post-destruction render teardown and ARM64 guest server execution are not established by this report."
+    },
+    {
+      "check": "actual SAF ZIP separates scripted retained native report from current APK",
+      "passed": true,
+      "historical_entry": "previous-app-native-client-report.json",
+      "scripted_fixture": true,
+      "historical_version_code": 3,
+      "current_version_code": 8,
+      "bytes": 11779,
+      "sha256": "75cfbc9677848d9ecb25492a98356784d35dcb98d5e7a7e5a38f16f7d6de2f65",
+      "physical_device_evidence": false
+    },
+    {
+      "check": "Android native UDP DB-to-Map controller",
+      "passed": true,
+      "checks": 1078,
+      "socket_scenarios": 9,
+      "real_server_interoperability": false
+    },
+    {
+      "check": "no app crash or ANR recorded",
+      "passed": true
+    }
+  ],
+  "device": {
+    "api": "33",
+    "abi": "x86_64",
+    "emulator": true
+  },
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false,
+  "real_authenticated_session": false,
+  "scope": "Consolidated app Android framework imports, native preview GLES, landscape viewport and lifecycle; optional source-layout UDP peer drives the actual app character picker through complete bounded normal-world GROUPS structural inspection. This does not qualify asset resolution, CRC verification, ARM64 guest execution, a real authenticated session or live-world rendering."
+}

@@ -1,0 +1,43 @@
+{
+  "format": 1,
+  "workflow_run": 38836479975,
+  "attempt": 1,
+  "android_job": 116767483175,
+  "result": "failed",
+  "qualification_accepted": false,
+  "artifact": {
+    "id": 12019024634,
+    "bytes": 225626,
+    "sha256": "1dc1fd01e8cef8612c516a37e688ccbd853b209ca8b12b06b32b3141e365af88",
+    "zip_crc_verified": true
+  },
+  "checks_before_failure": 5,
+  "failure": {
+    "type": "RuntimeError",
+    "message": "UI capture failed; raw stdout/stderr preserved: ui-capture-6-attempt-1; returncode=137; diagnostic=UI hierchary dumped to: /data/local/tmp/combined-ui.xml",
+    "actual_server_interoperability_verified": false
+  },
+  "capture": {
+    "number": 6,
+    "attempt": 1,
+    "returncode": 137,
+    "stdout": "UI hierchary dumped to: /data/local/tmp/combined-ui.xml",
+    "stderr_empty": true,
+    "remote_file_read": false,
+    "stale_xml_used": false
+  },
+  "observed_exception": {
+    "thread": "UiAutomation",
+    "message": "java.lang.RuntimeException: Bad file descriptor",
+    "location": "Android accessibility/Binder framework",
+    "app_crash_signature_present": false,
+    "app_anr_since_boot": false,
+    "app_process_exit_records": 0,
+    "app_main_activity_remained_focused": true
+  },
+  "exact_apk_sha256": "9ff5c3393477f71175729b6f9e4e3bae1c8860b4e63a9f4436cefe570ec6165f",
+  "driver_guard_changed": false,
+  "application_source_changed": false,
+  "package_rebuilt": false,
+  "next_action": "Rerun only failed Android job with identical source and exact package artifacts; retain strict UI capture failure guard."
+}

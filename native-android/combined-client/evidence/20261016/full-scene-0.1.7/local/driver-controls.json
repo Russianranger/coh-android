@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "checks": 170,
+  "capture_controls": 13,
+  "activity_inventory_controls": 16,
+  "identity_resource_controls": 28,
+  "viewport_protocol_controls": 96,
+  "scope": "Host regressions for document selection, strict fresh capture, native fault rejection, scene/viewport admission, bounded scrolling, exact APK identity and numeric protocol/resource privacy; no Android execution claim."
+}

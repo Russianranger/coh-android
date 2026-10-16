@@ -1,0 +1,43 @@
+{
+  "format": 1,
+  "status": "passed",
+  "source_commit": "127ce7292297aebb55b3b1dbeb59000a1cab91dc",
+  "steps": [
+    {
+      "name": "host",
+      "returncode": 0,
+      "elapsed_seconds": 119.575,
+      "reused_completed_host_receipt": true
+    },
+    {
+      "name": "gradle-arm64",
+      "returncode": 0,
+      "elapsed_seconds": 63.153
+    },
+    {
+      "name": "package-arm64",
+      "returncode": 0,
+      "elapsed_seconds": 0.77
+    },
+    {
+      "name": "gradle-x86",
+      "returncode": 0,
+      "elapsed_seconds": 19.206
+    },
+    {
+      "name": "package-x86",
+      "returncode": 0,
+      "elapsed_seconds": 0.667
+    }
+  ],
+  "local_emulator_executed": false,
+  "actual_server_interoperability_verified": false,
+  "source_tree": "93390b9fb6f765e4b864669eac66995e56c1f955",
+  "host_suites": 14,
+  "driver_controls": 170,
+  "local_packages_are_delivery_binaries": false,
+  "notes": [
+    "Three sparse oracle inputs hydrated from exact tracked HEAD before the successful complete host pass.",
+    "Initial empty AGP worktree cache resolved by using the existing verified Gradle distribution/cache. Completed host suites were reused; no application source changes."
+  ]
+}

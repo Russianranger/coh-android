@@ -1,0 +1,34 @@
+[
+  {
+    "check": "fresh install and exact main Activity",
+    "passed": true,
+    "apk_sha256": "9ff5c3393477f71175729b6f9e4e3bae1c8860b4e63a9f4436cefe570ec6165f"
+  },
+  {
+    "check": "current launcher APK identity matches exact installed package",
+    "passed": true,
+    "installed_apk_status": "ready",
+    "installed_apk_bytes": 11132732,
+    "installed_apk_sha256": "9ff5c3393477f71175729b6f9e4e3bae1c8860b4e63a9f4436cefe570ec6165f"
+  },
+  {
+    "check": "fresh app initialized for external imports without failures",
+    "passed": true
+  },
+  {
+    "check": "bounded public memory and Android exit diagnostics",
+    "passed": true,
+    "retained_guest_resource_samples": 0,
+    "guest_resource_scope": "Bounded numeric report schema; empty x86 samples do not qualify ARM64 guest RSS or an Android kill cause.",
+    "memory_samples": 0,
+    "memory_status": "not_started",
+    "retained_memory_samples": 0,
+    "android_exit_records": 0,
+    "scope": "Actual combined-report schema and numeric privacy bounds; zero samples do not qualify ARM64 server memory admission or guest execution."
+  },
+  {
+    "check": "framework SAF cancellation and app return",
+    "passed": true,
+    "control": "Import launcher APK"
+  }
+]

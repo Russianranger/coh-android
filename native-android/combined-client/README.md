@@ -7,11 +7,17 @@ accepted native Session Client remain installed with their private data intact.
 
 Follow [THOR-TEST.md](THOR-TEST.md) for the consolidated device test.
 
-Current **0.1.6** adds bounded compressed Map scene reception. One owned decoded
-body may use up to 4 MiB; ordinary 16 KiB messages, wire/fragment queues and DB/Auth
-delivery keep their existing limits. Numeric reports distinguish decode limits,
-allocation failures and malformed streams. Complete scene/entity decoding and
-server-authoritative rendering remain pending.
+Current **0.1.7** traverses the complete bounded normal-world Map scene-message
+structure: files, definitions, child/root matrices, properties, texture swaps,
+removals and footer. Numeric reports record successful structure counts and the
+current failure checkpoint. The parser retains no graph or packet body. Imported
+library resolution, checksum verification, authoritative entities and server-world
+rendering remain pending; `SCENE_INCOMPLETE` is the expected endpoint.
+
+The accepted 0.1.6 owned-buffer receive path remains: one decoded body up to
+4 MiB, with ordinary 16 KiB messages, wire/fragment queues and DB/Auth delivery
+keeping their existing limits. This update reuses imports and preserves the
+runtime and accepted preview assets.
 
 **Return to launcher** is retained: it closes the native client and leaves the
 owned server accessible for status, Stop and report export. Install over Combined
@@ -29,7 +35,8 @@ unexplained; no memory protection or asset check is weakened. See the current
 * The explicit loopback development session can request an existing character
   list, select a character, and follow the real DB-to-Map handoff. It uses the
   local server's `UseFakeAuth` policy, not a fabricated authenticated receipt.
-* Full scene/entity decoding and server-position rendering are incomplete.
+* Complete normal-world message structure is decoded; imported-library graph
+  resolution, checksums, entities and server-position rendering are incomplete.
   `SCENE_INCOMPLETE` is the current bounded endpoint, not a live-world success.
 * Physical Thor evidence confirms actual server boot and native DbServer
   list/selection. The new exact 0.1.4 report additionally proves initial Map
@@ -39,8 +46,8 @@ unexplained; no memory protection or asset check is weakened. See the current
   receive path passes host/build checks and 33 Android13 framework checks. The
   new [0.1.6 Thor report](evidence/20261016/thor-0.1.6-acceptance/THOR-016-ACCEPTANCE.md)
   physically accepts real 42,889-byte scene reception, prefix inspection, buffer
-  release and Return with the server still reported ready. Complete scene
-  transfer, encrypted AuthServer authentication and server-authoritative
+  release and Return with the server still reported ready. Resolved scene assets,
+  encrypted AuthServer authentication and server-authoritative
   rendering remain pending. Deterministic socket peers do not prove a real
   server session.
 

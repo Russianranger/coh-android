@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "status": "passed",
+  "previous_apk": {
+    "bytes": 11532139,
+    "sha256": "c41000d95573e5ed7baa73dabce0baa3d5c85d75bff6b88a3253385384f6345d"
+  },
+  "new_apk": {
+    "bytes": 11536175,
+    "sha256": "96674ab5b85ffabbd8c255991237df15179cd8f8c1f39e44febe946b853689c5"
+  },
+  "changed_asset_or_native_entries": [
+    "lib/arm64-v8a/libcoh_combined_network.so",
+    "lib/arm64-v8a/libcoh_session_client.so"
+  ],
+  "unchanged_asset_entries": 74,
+  "accepted_scene_renderer_source_unchanged": true,
+  "renderer_elf_equivalence": {
+    "exact_bytes_identical": false,
+    "only_gnu_build_id_may_differ": true,
+    "gnu_build_id_descriptor_offset": 736,
+    "gnu_build_id_descriptor_bytes": 20,
+    "old_build_id": "564449153aa485d60362d6c00d71bd2f6d396484",
+    "new_build_id": "3700232d6d6be9b3d801ac51be53df65fe96490f",
+    "other_bytes_identical": 369460
+  },
+  "proot_cores_unchanged": true,
+  "runtime_and_import_helpers_unchanged": true,
+  "scope": "Exact ZIP byte comparison against qualified 0.1.6. New network JNI and DEX/version resources are expected to change."
+}

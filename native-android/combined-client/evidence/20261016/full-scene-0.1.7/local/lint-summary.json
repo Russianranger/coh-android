@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "status": "passed",
+  "results": {
+    "arm64": {
+      "errors": 0,
+      "warnings": 75,
+      "issue_ids": {
+        "ApplySharedPref": 2,
+        "DataExtractionRules": 1,
+        "UsableSpace": 15,
+        "MissingApplicationIcon": 1,
+        "ClickableViewAccessibility": 5,
+        "SetTextI18n": 51
+      }
+    },
+    "x86": {
+      "errors": 0,
+      "warnings": 75,
+      "issue_ids": {
+        "ApplySharedPref": 2,
+        "DataExtractionRules": 1,
+        "UsableSpace": 15,
+        "MissingApplicationIcon": 1,
+        "ClickableViewAccessibility": 5,
+        "SetTextI18n": 51
+      }
+    }
+  }
+}

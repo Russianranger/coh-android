@@ -1,5 +1,170 @@
 # Combined server/native client — October 16, 2026
 
+## Complete normal-world scene structure 0.1.7
+
+APK runtime source: `fe037348c9a184d98aff96f0803b2afc0e631b71`, tree `93390b9fb6f765e4b864669eac66995e56c1f955`, on `native-android`.
+Local integration `127ce7292297aebb55b3b1dbeb59000a1cab91dc` has the same tree.
+Publication uses a fresh remote check and guarded non-force update. The user's
+[physical 0.1.6 acceptance](evidence/20261016/thor-0.1.6-acceptance/THOR-016-ACCEPTANCE.md)
+is preserved: real 42,889-byte GROUPS reception, prefix inspection, owned-buffer
+release and explicit Return with the server still reported ready. The accepted
+0.1.6 APK was not rebuilt. This section describes a separate new implementation
+and does not extend physical acceptance to 0.1.7.
+
+The new zero-allocation inspector traverses the complete bounded normal-world
+GROUPS grammar: prefix, group files, definitions and all supported optional
+blocks, child/root matrices, properties, texture swaps, removals, sparse ordered
+identities and the four-field footer. Exact logical end is required. Packed and
+byte-aligned representations use the existing reader kernels. Floats must be
+finite. File/definition/root/string/work budgets reject oversized input before
+unbounded work; base/raid and unknown texture-mask branches remain unsupported.
+Source producers traverse definition/root identities in ascending order; the
+inspector rejects duplicate/decreasing records without allocating an identity set.
+
+Reader/output changes are transactional. Map keeps the last successful numeric
+inspection and a separate current failure checkpoint, then releases the owned
+body on every path. Begin clears the receipts; cleanup preserves them. Full
+supported structure increments `scene_structures`; malformed supported tails
+fail and close the client, while unsupported variants remain incomplete. The
+JNI report adds 23 numeric inspection fields and a three-field failure receipt.
+The UI distinguishes the latest unsupported variant from an earlier successful
+inspection instead of showing a stale success hint. Failure bit offsets are the
+last completed read boundary; prefix failures retain the accepted prefix parser's
+rollback boundary rather than locating an exact malformed field.
+
+This is structural decoding, not a resolved scene graph. Footer checksums are
+observed, not verified against imported definitions. Matrices are traversed, not
+reconstructed or compared to renderer transforms. Saved library definitions may
+be omitted by the authentic producer, so the wire packet alone need not contain
+the whole world. No entity request, READY/full-update acknowledgement, selected
+character identity, authoritative position or world render is introduced. The
+endpoint stays `SCENE_INCOMPLETE`; DB server/generation binding is distinct from
+verified character identity. Encrypted AuthServer login remains pending.
+
+Six workers actually ran concurrently in isolated worktrees with nonoverlapping
+ownership: physical evidence, parser, original-source oracle, Map/local
+integration, Android qualification and independent review. The coordinator owns
+JNI/UI/release, common build linkage and handoff. Independent review corrected a
+test-oracle compression-mode adapter and a driver interpretation of DB binding
+before integration. Every corrected fixture payload remained bit-identical.
+
+The faithful oracle executes 41 unchanged original functions, with 16 original
+source files pinned, with controlled graph objects and explicit packet-factory/profile
+adapters. It emits 44 deterministic fixtures: 40 complete normal-world bodies
+and four deliberately partial unsupported-base headers. Coverage includes raw
+and original-packed matrices with PYR/scale, optional property/trick blocks,
+saved-library omission, force reload, deletion and incremental updates. Original
+compression/alignment helpers execute; packed fixtures use the source incremental
+path and full updates use byte alignment. A one-byte source mutation is refused.
+The source producer/checksum traversal and independent expected metadata agree;
+this is not execution of the complete MapServer or Game client.
+
+Release, ASan and UBSan each pass 2,473,492 parser checks, 172,422 negative cases,
+138,722 every-bit truncations, 1,028 large-boundary truncations and 40,000 fuzz
+cases, with zero wrapped allocation/free calls. Independent probes separately
+pass 22,188 assertions/2,775 cases/2,728 truncations per mode. The independent
+host object's largest emitted parser frame is 912 bytes, not a measurement of
+the whole Android call stack. The exact JNI report function passes host serialization and strict format
+checks through a JNI shim, including all 23+3 positional mappings; its worst numeric report is 3,656 bytes
+within the unchanged 6,144-byte buffer. Map passes 31,480 checks/10,665 negatives/
+33 UDP scenarios per mode. Local passes 1,078 checks/nine UDP scenarios and a
+separate complete headless DB-to-Map peer flow per mode. Earlier replication and
+transport kernels remain covered by their preserved suites.
+
+All fourteen consolidated host suites pass, including the original 170 strict driver controls.
+Local release, ASan and UBSan receipts are retained. Both ABI packages assemble,
+lint with zero errors and the unchanged 75 warnings, and pass clean-source audits.
+Local runtime tests pass 36/38 methods with two sandbox AF_UNIX skips; hosted
+current and donor runtime tests each pass 38/38 with zero skips. The first local
+source pass lacked three pinned original files; exact tracked blobs were hydrated
+and the complete batch then passed. The initial isolated Gradle cache setup stop
+preceded compilation; the existing cached toolchain completed both builds.
+Local APKs are not the delivery binaries.
+
+The package job in [workflow 38836479975](https://github.com/Russianranger/coh-android/actions/runs/38836479975)
+passes all fourteen hosted suites and both ABI builds/lint/audits. Its exact
+[package artifact](https://github.com/Russianranger/coh-android/actions/runs/38836479975/artifacts/12018934207)
+has 43 CRC-verified members, 11,084,577 bytes, SHA256
+`18057b8aa24df3457cc4fc6c547abc8c66a3d8973fd3bc44c6fbe87ac1d44970`.
+The ARM64 APK is **11,536,171 bytes**, SHA256
+`58c45d44501373309788d70e2483786e412d9b0593e86ba1bae94140a8147475`;
+the x86_64 companion is 11,132,732 bytes, SHA256
+`9ff5c3393477f71175729b6f9e4e3bae1c8860b4e63a9f4436cefe570ec6165f`.
+Both have versionCode 8 and the unchanged package/signing identity. Against the
+accepted exact 0.1.6 CI packages, all 74 assets, PRoot/runtime helpers and both
+renderer ELFs are byte-identical; only `libcoh_combined_network.so` changes among
+native/asset payloads. Large game or server archives are not embedded.
+
+The original Android job stopped when Android UIAutomation crashed with a bad
+file descriptor and returned 137. The driver rejected its capture; no CoH app
+fault was evidenced. Retrying only that failed job reused the successful package.
+Its next attempt passed 19 checks, then exposed a new driver assumption: a fresh
+Activity deliberately reports exactly `IDLE` until explicit Connect creates its
+native controller. The correction requires that exact minimal report before
+Connect and the complete zeroed scene schema at `CHARACTERS_READY` after Connect.
+Active-session guards are unchanged. It passes 185 host driver controls and
+replays correctly against both archived real framework reports. Both incomplete
+attempts remain recorded as failures rather than qualified runs.
+
+The [exact-package continuation 38838677592](https://github.com/Russianranger/coh-android/actions/runs/38838677592)
+uses qualification driver `8e237b984c188dd19c171387914e795916712556`, tree
+`06d7627e2b70608201db9bb3afa0200d06d5c72d`. Its 38 reuse controls cover source,
+archive, APK, ELF, receipt and generated-header mutations. Admission pins all
+165,488 production/build paths, both APK identities, six standalone Android
+protocol/peer/Map ELFs and 57 source-pin entries. Only exact driver/helper,
+documentation/evidence and continuation-workflow changes are allowed. The main
+package build and old continuation are skipped. No APK or native peer is rebuilt.
+
+All **34/34 actual Android13 app checks pass** in the continuation, including
+complete GROUPS traversal in the JNI-backed app, actual SAF donor imports/refusal,
+protected donor bytes, held framework input across Return, retained launcher/task/
+process, disconnected fresh preview, Near/Far, Surface recreation, Home recovery,
+JSON and ZIP exports, and the Android local controller's 1,078 checks/nine socket
+scenarios. The final foreground has 1,249 frames, four contexts, 557,056 GPU bytes,
+478,874 bright pixels and at least 12,515 colors. No CoH crash/ANR or GL/transform
+failure is recorded. The [successful framework artifact](https://github.com/Russianranger/coh-android/actions/runs/38838677592/artifacts/12020004551)
+is 2,078,136 bytes, SHA256
+`99d52db03995364705d12c7d40f476a41eccbe003cab6442452eba8b023a17f9`.
+All 458 archive members pass CRC verification. Three saved picker/preview frames
+were independently viewed and hash-bound in `visual-review.json`; they show the
+accepted offline preview rather than a server world. The complete scene-message
+receipt is separately bound by the actual after-selection numeric report.
+
+Supplemental [portable-core](https://github.com/Russianranger/coh-android/actions/runs/38836479966),
+[session-protocol](https://github.com/Russianranger/coh-android/actions/runs/38836479985)
+and [live-protocol](https://github.com/Russianranger/coh-android/actions/runs/38836479986)
+workflows all pass on the runtime source. Five live Android native suites total
+130,830 checks; the separate UDP owner passes 1,194 checks/22 socket scenarios.
+These controlled peers do not execute the ARM64 game server or establish real
+encrypted authentication or a server-authoritative world. The actual 0.1.6 Thor
+server evidence remains separately accepted.
+
+The actual app's peer message is a complete original-producer fixture, not the
+previous prefix plus unparsed zero tail: 139,794 decoded bytes, 1,118,352 bits and
+3,575 compressed wire bytes over three sibling datagrams. It contains 192
+definition records, 384 children/properties/swaps, four root updates, 194 raw
+and 194 packed matrices. The fixture's expected counts and footer values are
+independently bound. These synthetic graph records do not represent a complete
+imported Atlas world or an authentic captured session. Live-world/authentication
+flags remain false, retained owned bytes return to zero, and disconnect closes
+both client sockets.
+
+Install the exact qualified CI ARM64 package over Combined, keeping imports,
+runtime, saved test character, reports and earlier APKs/fallback apps. Do not
+repeat setup or clear storage. New physical full-structure reception awaits the
+Thor report. Complete imported-library resolution/checksums and authoritative
+entity identity/position remain the next dependencies. Startup/cache ownership
+and memory protections are unchanged; no startup-speed or prior kill-cause
+claim is made. Final evidence/documentation does not rebuild or repack the APK.
+
+Final publication preserves the concurrent offline-support commit
+`bae8cca2b4ae0e43070d5e86ca1c6f1df668bc00`. Its 116 paths do not overlap this
+handoff, the Combined/Session source prefixes, or 80 checked tracked ARM64
+compiler/build inputs. Those inputs still match the qualified APK source. The
+[concurrent integration audit](evidence/20261016/full-scene-0.1.7/concurrent-integration.json)
+keeps that separate support batch's qualification distinct; no new support code
+is silently included in this exact APK or newly accepted by these results.
+
 ## Physical Thor acceptance of 0.1.6
 
 The user declared the exact code-7 APK successful. The new
@@ -31,8 +196,9 @@ The accepted endpoint remains `SCENE_INCOMPLETE`: its full `GROUPS` tail is
 unsupported, zero entity prefixes were inspected, and AuthServer authentication
 and server-world rendering remain false. This does not accept complete Gates
 25–27. Gates 1–24 retain their earlier documented physical scope. The next
-milestone is complete bounded normal-world scene-message structural decoding,
-followed by imported-library resolution and authoritative entities.
+milestone was complete bounded normal-world scene-message structural decoding,
+implemented separately in 0.1.7 above. Imported-library resolution and authoritative
+entities remain subsequent dependencies; 0.1.7 has its own pending physical test.
 
 ## Bounded compressed scene receive 0.1.6
 
@@ -157,10 +323,10 @@ entity identity/position and authoritative rendering remain pending. The source
 definitions, sparse root updates and unsupported base/raid branches for the next
 decoder. No REQALLENTS/READY shortcut or fabricated spawn is introduced.
 
-Physical 0.1.6 large-scene reception and Return/server continuity need the new
-Thor report. Encrypted AuthServer authentication and a live native world are not
-accepted. Gates 1–24 retain their documented physical scope. The prior low-memory
-exit cause and warm-start performance are unresolved; this batch does not change
+Physical 0.1.6 large-scene reception and Return/server continuity were accepted
+by the October 16 report above within its documented scope. Encrypted AuthServer
+authentication and a live native world are not accepted. Gates 1–24 retain their
+documented physical scope. The prior low-memory exit cause and warm-start performance are unresolved; this batch does not change
 server startup/cache ownership or claim a speed improvement.
 
 ## Return to launcher 0.1.5

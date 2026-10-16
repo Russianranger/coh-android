@@ -1,0 +1,226 @@
+{
+  "format": 1,
+  "artifact_id": 12018934207,
+  "workflow_run": 38836479975,
+  "source_commit": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+  "source_tree": "93390b9fb6f765e4b864669eac66995e56c1f955",
+  "archive_bytes": 11084577,
+  "archive_sha256": "18057b8aa24df3457cc4fc6c547abc8c66a3d8973fd3bc44c6fbe87ac1d44970",
+  "members": [
+    {
+      "path": "CoH-Native-Combined-0.1.7-arm64.apk",
+      "bytes": 11536171,
+      "sha256": "58c45d44501373309788d70e2483786e412d9b0593e86ba1bae94140a8147475"
+    },
+    {
+      "path": "CoH-Native-Combined-0.1.7-emulator-x86_64.apk",
+      "bytes": 11132732,
+      "sha256": "9ff5c3393477f71175729b6f9e4e3bae1c8860b4e63a9f4436cefe570ec6165f"
+    },
+    {
+      "path": "arm64-package.json",
+      "bytes": 1703,
+      "sha256": "889eac88a12710e9cefebad0fd3ac67233900c5a833f4c614cd9c3ceb7aee9f6"
+    },
+    {
+      "path": "build-inputs.json",
+      "bytes": 9581,
+      "sha256": "b59a8cca6d3334a40fcfd641682ad81256eaf8faaefa0ab9b9fecc12c0fe3b17"
+    },
+    {
+      "path": "crypto-reuse.json",
+      "bytes": 2600,
+      "sha256": "3c85c908dc21bca7f7e86c5eff67a8c80a8b358f4b9121ba4524e38a03f17f46"
+    },
+    {
+      "path": "host/db-protocol.json",
+      "bytes": 1839,
+      "sha256": "22f29a65ffd7cceca0f72601f0a4b3338cb7baa08f5844b2b5cec02172ac34d6"
+    },
+    {
+      "path": "host/db-protocol.log",
+      "bytes": 1839,
+      "sha256": "22f29a65ffd7cceca0f72601f0a4b3338cb7baa08f5844b2b5cec02172ac34d6"
+    },
+    {
+      "path": "host/framework-driver-controls.log",
+      "bytes": 389,
+      "sha256": "b04da634f9235e0104ba533e918684446818e3a043a6f86278a42fbe652a0087"
+    },
+    {
+      "path": "host/guest-diagnostics.log",
+      "bytes": 86,
+      "sha256": "6d1f0f9ed9099baa7e9e403e51dc7a9d6f7dcc49e46f96a39d39de74f6f65917"
+    },
+    {
+      "path": "host/imports.log",
+      "bytes": 271,
+      "sha256": "2afa47e12c707c3bf609583ab5ac6db5be129877d35f819c02e3c197b8a0adfd"
+    },
+    {
+      "path": "host/installed-apk-identity.log",
+      "bytes": 626,
+      "sha256": "e259680dc839c519ea6f147cb76eaaf461d7ae7e9415eaea40b5a66972de163b"
+    },
+    {
+      "path": "host/lease-admission.log",
+      "bytes": 55,
+      "sha256": "05636287e86c6b14f32014ca0deb29de660695d2af465a8e40e6fc98333be762"
+    },
+    {
+      "path": "host/local-android/android-build.json",
+      "bytes": 1166,
+      "sha256": "ad08e9eeac1024c28233893089c0b9fe073ddf2c26d92eb73c5eb2b87c65cb60"
+    },
+    {
+      "path": "host/local-android/coh-local-arm64-v8a",
+      "bytes": 152560,
+      "sha256": "66c820b8357a7e650c4f5d6adc6c41eaea8d59ab513cc8728dcc062361e2816c"
+    },
+    {
+      "path": "host/local-android/coh-local-peer-arm64-v8a",
+      "bytes": 302480,
+      "sha256": "ed88e8052a31258963d158e1c9df031cef87250f8070c1a3a1598171661ad587"
+    },
+    {
+      "path": "host/local-android/coh-local-peer-x86_64",
+      "bytes": 309496,
+      "sha256": "ae563a528cb9b039d991d82c69683f4e77ee24b2aa9931f555485a71d6e77332"
+    },
+    {
+      "path": "host/local-android/coh-local-x86_64",
+      "bytes": 159040,
+      "sha256": "7e416df430b8b3415a6a06d490140aa93c0ca69c092e1c1af14f36ca3a389f0c"
+    },
+    {
+      "path": "host/local-protocol.json",
+      "bytes": 15093,
+      "sha256": "3e0dabbbd6cfa48c06d4c2861d5c0b142f850f47d809d5f0190f79fdc34b73c0"
+    },
+    {
+      "path": "host/local-protocol.log",
+      "bytes": 15093,
+      "sha256": "3e0dabbbd6cfa48c06d4c2861d5c0b142f850f47d809d5f0190f79fdc34b73c0"
+    },
+    {
+      "path": "host/map-android/android-build.json",
+      "bytes": 2228,
+      "sha256": "9e752863603660a030ed9ad5d002b334989573861fb2375e32f4fdbf63304e3e"
+    },
+    {
+      "path": "host/map-android/arm64-v8a/receipt.json",
+      "bytes": 502,
+      "sha256": "14299c7e17fa52d8fa5dd8fcdcd1b1866c3f8dbf2da16f2804169b4a78dfab04"
+    },
+    {
+      "path": "host/map-android/arm64-v8a/test_mapclient_android",
+      "bytes": 325776,
+      "sha256": "d19cfada59e09eb3840016ce5643c71767d6ac363290d0a2a63579ccd29c9db7"
+    },
+    {
+      "path": "host/map-android/fixtures.h",
+      "bytes": 13113,
+      "sha256": "99c70180c021fcb109c3abc1bdff5bc39a331f0eed22652bf1b39588c0449783"
+    },
+    {
+      "path": "host/map-android/groups-fixtures.h",
+      "bytes": 458718,
+      "sha256": "727a31288a648a8e7d3276aa4ce085be76a5144366713da0911645aef635910f"
+    },
+    {
+      "path": "host/map-android/server-command-fixtures.h",
+      "bytes": 105761,
+      "sha256": "d3f3a2a67e0354cf0c369caa310ed4cf9b514e545881467a880950a9f03b2a35"
+    },
+    {
+      "path": "host/map-android/source-oracle.c",
+      "bytes": 14627,
+      "sha256": "22f6c1676d8efde100de33f5dc3f26097b7608c317b85261af31ea3fab0f3b81"
+    },
+    {
+      "path": "host/map-android/x86_64/receipt.json",
+      "bytes": 499,
+      "sha256": "ebb4f19c2dbd750412af8c8845bfa3877c0124378bbb0ba6fbb70a4fb2ce0099"
+    },
+    {
+      "path": "host/map-android/x86_64/test_mapclient_android",
+      "bytes": 325608,
+      "sha256": "34484dffd7b90071ba8f450f333362145ab68136e65d7cec9d08f6f17ed98bf8"
+    },
+    {
+      "path": "host/map-protocol.json",
+      "bytes": 6781,
+      "sha256": "eed76f01b0fef6a12f8f07105e0f1bc27bfb3e837078417338d86a3d082d4016"
+    },
+    {
+      "path": "host/map-protocol.log",
+      "bytes": 6781,
+      "sha256": "eed76f01b0fef6a12f8f07105e0f1bc27bfb3e837078417338d86a3d082d4016"
+    },
+    {
+      "path": "host/network-protocol.json",
+      "bytes": 2575,
+      "sha256": "06fc6dffbd7cb3bcf6a8fde80937772d0eba72c9e8d90baf716914945103f2c8"
+    },
+    {
+      "path": "host/network-protocol.log",
+      "bytes": 2415,
+      "sha256": "6376e93ffc57678813f727c55c7c21b6af8e3e632bdfa3c85ad5b5b19ec99d83"
+    },
+    {
+      "path": "host/progress.json",
+      "bytes": 5659,
+      "sha256": "f96fd8d3d525561be8d8b5b9cda34e7fcd3e6ff829dd3c15d272ce470bc91785"
+    },
+    {
+      "path": "host/receipt.json",
+      "bytes": 6261,
+      "sha256": "b13e1b9e3271fd15516970ae7cfd0c36851b7dea0507bbff2485d75d23fb59ec"
+    },
+    {
+      "path": "host/replication.json",
+      "bytes": 1068,
+      "sha256": "3d880ddf16d77d2f481b23efb89a1244275c63371e78fe913417830a74d70bd7"
+    },
+    {
+      "path": "host/replication.log",
+      "bytes": 1068,
+      "sha256": "3d880ddf16d77d2f481b23efb89a1244275c63371e78fe913417830a74d70bd7"
+    },
+    {
+      "path": "host/scene-structure.json",
+      "bytes": 3280,
+      "sha256": "01b9366ec7c5433cd9873c8b0fb0e690662cb284ad87e7c720225825517c7315"
+    },
+    {
+      "path": "host/scene-structure.log",
+      "bytes": 3280,
+      "sha256": "01b9366ec7c5433cd9873c8b0fb0e690662cb284ad87e7c720225825517c7315"
+    },
+    {
+      "path": "host/server-memory-policy.log",
+      "bytes": 137,
+      "sha256": "e4a05e4ad97e7fa1fb9b5ac650f8f7eb2ced5add29f3db80e070672715342a76"
+    },
+    {
+      "path": "host/server-runtime.json",
+      "bytes": 2939,
+      "sha256": "facdd7fc505b12dd8113dcf80b9053ec8364505ab2a902e4ea327297ed1fa89e"
+    },
+    {
+      "path": "host/server-runtime.log",
+      "bytes": 11183,
+      "sha256": "659cc010fab4b24c76adeffa5ef7fecfa0eff991afc385f5542526cfdb71e2b1"
+    },
+    {
+      "path": "host/viewport-policy.log",
+      "bytes": 638,
+      "sha256": "02d13bb03a10e2b8d51e190b5844b2de0cbe9cce9201347bd3a05f677257e33c"
+    },
+    {
+      "path": "x86_64-package.json",
+      "bytes": 1402,
+      "sha256": "7e1022bd3a97741f6ba6e64c9d8f696a61225926428e2a3eaa1e8fa364ed3f75"
+    }
+  ]
+}

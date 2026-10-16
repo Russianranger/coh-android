@@ -103,7 +103,7 @@
       "sha256": "63f99bb8dd352c36107b90e3da0113e2f425b3c5147cbfbd7c4b442c8746c506"
     }
   },
-  "scope": "One bounded decoded Map GROUPS body and prefix inspection, not full GROUPS/entity replication or live world. Actual app/emulator peers are synthetic; real Thor reception, Return/server continuity and encrypted login need separate evidence. Runtime/import/profile and accepted preview remain preserved.",
+  "scope": "One bounded decoded Map GROUPS body and prefix inspection, not full GROUPS/entity replication or live world. Actual app/emulator peers are synthetic. The separate exact Thor reports accept real reception and explicit Return with reported server continuity within the linked scope; encrypted login and authoritative world remain pending. Runtime/import/profile and accepted preview remain preserved.",
   "physical_acceptance": {
     "record": "../thor-0.1.6-acceptance/THOR-016-ACCEPTANCE.md",
     "summary": "../thor-0.1.6-acceptance/thor-016-sanitized.json",

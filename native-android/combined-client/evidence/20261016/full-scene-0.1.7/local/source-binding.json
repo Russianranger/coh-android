@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "qualified_source": "127ce7292297aebb55b3b1dbeb59000a1cab91dc",
+  "source_tree": "93390b9fb6f765e4b864669eac66995e56c1f955",
+  "accepted_016_commit": "bf653dd4ef5372c921b049a76f902a4a921e8c4d",
+  "unchanged_source_closure": [
+    {
+      "path": "native-android/session-client",
+      "tree": "7272cb283cef5726d7c23fb65832b77efe9abac5",
+      "unchanged": true
+    },
+    {
+      "path": "native-android/combined-client/runtime",
+      "tree": "35232b995447a6c6a1811b0fe080deb7ac55a2b9",
+      "unchanged": true
+    },
+    {
+      "path": "native-android/combined-client/imports",
+      "tree": "63a73b424d7aadd107cb1511316d23bb71efd7d0",
+      "unchanged": true
+    }
+  ],
+  "local_packages_are_delivery_binaries": false,
+  "actual_server_interoperability_verified": false,
+  "official_published_source": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+  "qualification_source_identical": true,
+  "official_qualification_driver_source": "8e237b984c188dd19c171387914e795916712556",
+  "qualified_application_source_closure_unchanged": true
+}

@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "production_java_fit_cases": 5021,
+  "production_java_controls_cases": 1441,
+  "unchanged_source_camera_comparisons": 4904,
+  "exhaustive_maximum_area_cases": 625,
+  "reported_failure_reproduced": {
+    "size": [
+      1920,
+      137
+    ],
+    "source_result": -2
+  },
+  "reported_size_fitted": [
+    1096,
+    137
+  ],
+  "production_policy_sha256": "14b2c0df05e84fb16d64e8ef7738d4beb9d63fcb5850e0d8502dac8015551498",
+  "source_camera_sha256": "9a914b7326e4852bd55827c58bab360cef2516f85268a25cdd4ede2cdfe39c92",
+  "scope": "Host layout policy and unchanged source camera only; Android framework qualification is separate",
+  "actual_server_interoperability_verified": false
+}

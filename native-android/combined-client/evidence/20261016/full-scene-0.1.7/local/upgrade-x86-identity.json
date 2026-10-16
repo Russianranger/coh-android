@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "status": "passed",
+  "old_apk": {
+    "bytes": 11128916,
+    "sha256": "f757499766d507dc3df26d00e720c243a665fab962ccb624f543b3c5869d0c1e"
+  },
+  "new_apk": {
+    "bytes": 11132728,
+    "sha256": "5f3eb53887440dfc1c137a00ffc36716f027413b1e31eff12cd74eb881154f3e"
+  },
+  "unchanged_asset_entries": 74,
+  "changed_asset_or_native_entries": [
+    "lib/x86_64/libcoh_combined_network.so",
+    "lib/x86_64/libcoh_session_client.so"
+  ],
+  "renderer_elf_equivalence": {
+    "exact_bytes_identical": false,
+    "only_gnu_build_id_may_differ": true,
+    "gnu_build_id_descriptor_offset": 736,
+    "gnu_build_id_descriptor_bytes": 20,
+    "old_build_id": "b31b31d056ca34e10655631b2aec69c5d90aacf8",
+    "new_build_id": "57a2da47e7a3f1261f0f7633e14c0b0ab614e7d5",
+    "other_bytes_identical": 389692
+  }
+}
