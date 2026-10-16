@@ -56,8 +56,8 @@ static CohNetUdpConfig config(Peer p,unsigned ver) {
     c.peer=p.endpoint;c.local.address[0]=127;c.local.address[3]=1;c.receive_budget=8;return c;
 }
 static CohNetEndpoint local(CohNetUdp *u) {CohNetEndpoint e;CHECK(coh_net_udp_local_endpoint(u,&e)==COH_OK);CHECK(e.port);return e;}
-static void connected(CohNetUdp *u,Peer peer,unsigned ver,uint32_t id,uint64_t now) {
-    CHECK(coh_net_udp_begin(u,id,now)==COH_OK);CHECK(coh_net_udp_service(u,now,(CohCancel){0})==COH_OK);
+static void connected_after_begin(CohNetUdp *u,Peer peer,unsigned ver,uint64_t now) {
+    CHECK(coh_net_udp_service(u,now,(CohCancel){0})==COH_OK);
     CohNetPacket first=peer_read(peer,ver,1);CHECK(first.id==1&&packet_command(first,ver,1)==1);
     CohNetEndpoint target=local(u);CohNetPacket p=command(ver,100,2,1,0);p.ack_count=1;p.acks[0]=first.id;
     peer_frame(peer,target,ver,p);CHECK(coh_net_udp_service(u,now+1,(CohCancel){0})==COH_OK);
@@ -65,6 +65,9 @@ static void connected(CohNetUdp *u,Peer peer,unsigned ver,uint32_t id,uint64_t n
     p=command(ver,101,4,0,0);p.ack_count=1;p.acks[0]=reply.id;peer_frame(peer,target,ver,p);
     CHECK(coh_net_udp_service(u,now+2,(CohCancel){0})==COH_OK);reply=peer_read(peer,ver,0);CHECK(packet_command(reply,ver,1)==0);
     CohNetUdpDiagnostics d;coh_net_udp_diagnostics(u,&d);CHECK(d.state==COH_UDP_ACTIVE&&d.link_state==COH_NET_CONNECTED);scenarios++;
+}
+static void connected(CohNetUdp *u,Peer peer,unsigned ver,uint32_t id,uint64_t now) {
+    CHECK(coh_net_udp_begin(u,id,now)==COH_OK);connected_after_begin(u,peer,ver,now);
 }
 static unsigned descriptor_count(void) {
     DIR *dir=opendir("/proc/self/fd");CHECK(dir);unsigned count=0;struct dirent *item;
@@ -154,7 +157,57 @@ static void test_rejections_cleanup(void) {
     for(unsigned i=0;i<64;i++){c=config(peer,5);u=coh_net_udp_create(&c);CHECK(u);CHECK(coh_net_udp_begin(u,12,i)==COH_OK);coh_net_udp_suspend(u);coh_net_udp_destroy(u);}
     CHECK(before==descriptor_count());peer_close(peer);scenarios++;
 }
+static CohNetOwnedMessage owned_message(CohNetUdp *u,Peer peer,uint32_t id,uint64_t now) {
+    CohNetPacket p;memset(&p,0,sizeof(p));p.id=id;CohProtocolBits bits;
+    CHECK(coh_protocol_bits_init(&bits,p.payload,sizeof(p.payload),0,1)==COH_OK);
+    CHECK(coh_protocol_write_pack(&bits,1,10)==COH_OK);
+    CHECK(coh_protocol_write(&bits,32,0x12345678)==COH_OK);p.payload_bits=(uint32_t)bits.bit_length;
+    peer_frame(peer,local(u),5,p);CHECK(coh_net_udp_service(u,now,(CohCancel){0})==COH_OK);
+    CohNetPacket ack=peer_read(peer,5,0);CHECK(ack.ack_count==1&&ack.acks[0]==id);
+    CohNetOwnedMessage view;memset(&view,0,sizeof(view));CHECK(coh_net_udp_next_owned(u,&view)==COH_OK);
+    CHECK(view.id==id&&view.payload_bits==p.payload_bits&&view.payload_bytes==(p.payload_bits+7)/8);
+    CHECK(view.payload&&view.generation&&!memcmp(view.payload,p.payload,view.payload_bytes));return view;
+}
+static void no_owned(CohNetUdp *u) {
+    CohNetUdpDiagnostics d;coh_net_udp_diagnostics(u,&d);CHECK(!d.link.owned_retained_bytes);
+}
+static void test_owned_lifecycle(void) {
+    Peer peer=peer_open();CohNetUdpConfig c=config(peer,5);CohNetUdp *u=coh_net_udp_create(&c);CHECK(u);
+    CHECK(coh_net_udp_set_decoded_budget(u,COH_NET_MESSAGE_MAX-1)==COH_INVALID);
+    CHECK(coh_net_udp_set_decoded_budget(u,COH_NET_DECODED_MAX+1)==COH_INVALID);
+    CHECK(coh_net_udp_set_decoded_budget(u,COH_NET_DECODED_MAX)==COH_OK);negative+=2;
+    connected(u,peer,5,400,100);CHECK(coh_net_udp_set_decoded_budget(u,COH_NET_MESSAGE_MAX)==COH_STATE);negative++;
+    CohNetOwnedMessage first=owned_message(u,peer,102,103),stale=first;
+    CohNetOwnedMessage untouched;memset(&untouched,0xa5,sizeof(untouched));CohNetOwnedMessage saved=untouched;
+    CHECK(coh_net_udp_next_owned(u,&untouched)==COH_STATE&&!memcmp(&untouched,&saved,sizeof(saved)));
+    CohNetMessage legacy;CHECK(coh_net_udp_next(u,&legacy)==COH_STATE);negative+=2;
+    coh_net_udp_suspend(u);no_owned(u);
+    CHECK(coh_net_udp_owned_release(u,&first)==COH_STATE&&!first.payload&&!first.generation);negative++;
+    CHECK(coh_net_udp_resume(u,401,104)==COH_OK);connected_after_begin(u,peer,5,104);
+    CohNetOwnedMessage current=owned_message(u,peer,102,107);
+    CHECK(current.generation>stale.generation);
+    /* Deliberately model allocator address reuse across the fresh NetLink.
+     * Its older wrapper generation must never release the current lease. */
+    stale.payload=current.payload;
+    CHECK(coh_net_udp_owned_release(u,&stale)==COH_STATE&&!stale.payload&&!stale.generation);negative++;
+    CohNetUdpDiagnostics d;coh_net_udp_diagnostics(u,&d);CHECK(d.link.owned_retained_bytes==current.payload_bytes);
+    CHECK(current.payload[0]!=0);CHECK(coh_net_udp_owned_release(u,&current)==COH_OK);no_owned(u);
+    CHECK(coh_net_udp_owned_release(u,&current)==COH_STATE);negative++;
+    current=owned_message(u,peer,103,108);coh_net_udp_close(u);no_owned(u);
+    CHECK(coh_net_udp_owned_release(u,&current)==COH_STATE);negative++;
+    connected(u,peer,5,402,110);current=owned_message(u,peer,102,113);
+    coh_net_udp_cancel(u);no_owned(u);CHECK(coh_net_udp_owned_release(u,&current)==COH_STATE);negative++;
+    CHECK(coh_net_udp_resume(u,403,114)==COH_OK);connected_after_begin(u,peer,5,114);
+    current=owned_message(u,peer,102,117);CHECK(coh_net_udp_disconnect(u,118)==COH_OK);no_owned(u);
+    CHECK(coh_net_udp_owned_release(u,&current)==COH_STATE);negative++;
+    coh_net_udp_close(u);connected(u,peer,5,404,120);current=owned_message(u,peer,102,123);
+    CHECK(coh_net_udp_service(u,123+c.link.idle_timeout_ms,(CohCancel){0})==COH_STATE);
+    CHECK(coh_net_udp_state(u)==COH_UDP_TIMED_OUT);no_owned(u);
+    CHECK(coh_net_udp_owned_release(u,&current)==COH_STATE);negative++;
+    coh_net_udp_diagnostics(u,&d);CHECK(d.sockets_opened==d.sockets_closed&&d.sockets_opened==5);
+    coh_net_udp_destroy(u);peer_close(peer);scenarios++;
+}
 int main(void) {
-    unsigned before=descriptor_count();test_configuration();test_exchange();test_lifecycle();test_rejections_cleanup();CHECK(before==descriptor_count());
+    unsigned before=descriptor_count();test_configuration();test_exchange();test_lifecycle();test_rejections_cleanup();test_owned_lifecycle();CHECK(before==descriptor_count());
     printf("{\"checks\":%u,\"negative_cases\":%u,\"socket_scenarios\":%u,\"actual_os_udp\":true,\"socket_leak_check\":true,\"live_server_interoperability\":false}\n",checks,negative,scenarios);return 0;
 }

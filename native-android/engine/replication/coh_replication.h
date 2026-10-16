@@ -9,6 +9,9 @@ extern "C" {
 enum { COH_REP_UPDATE=2, COH_REP_ALLENTS=3, COH_REP_SHORTCUTS=4,
     COH_REP_CONNECT_MSG=5, COH_REP_GROUPS=6 };
 #define COH_REP_MESSAGE_MAX 16384u
+/* Explicit opt-in ceiling for a borrowed, already inflated scene body. It is
+ * not a new ordinary message limit or an allocation/queue capacity. */
+#define COH_REP_BOUNDED_MESSAGE_MAX (4u*1024u*1024u)
 #define COH_REP_SHORTCUT_MAX 256u
 /* This list is sent separately from the 35-entry source shortcut schema.
  * The pinned server_cmds producer contains at most 915 command names. Stream
@@ -18,7 +21,10 @@ enum { COH_REP_UPDATE=2, COH_REP_ALLENTS=3, COH_REP_SHORTCUTS=4,
 /* Decompressed payload, including the command. compressed=1 means the source
  * byteAlignedMode (rounded scalar widths and 32-bit packed integers), not zlib
  * input. No pointers, socket handles or secrets are retained. */
-typedef struct { CohBytes bytes; size_t bits, cursor; unsigned compressed; } CohRepReader;
+typedef struct {
+    CohBytes bytes; size_t bits, cursor; unsigned compressed;
+    size_t max_bytes; /* Zero retains the original 16KiB reader contract. */
+} CohRepReader;
 typedef struct { uint16_t id; uint8_t kind; } CohRepShortcut;
 typedef struct { CohRepShortcut entries[COH_REP_SHORTCUT_MAX]; size_t count, accessible_commands; } CohRepSchema;
 typedef struct { uint32_t accepted; float timezone_delta; } CohRepConnect;
@@ -54,6 +60,13 @@ typedef struct {
     CohRepScenePrefix scene; CohRepUpdatePrefix update;
 } CohRepSession;
 CohStatus coh_rep_reader(CohRepReader *, CohBytes, size_t bits, int compressed);
+/* max_bytes must be in [1, COH_REP_BOUNDED_MESSAGE_MAX]. No allocation or
+ * copying occurs; the caller owns the input until the synchronous read ends.
+ * Invalid arguments return COH_INVALID; a valid body above max_bytes returns
+ * COH_LIMIT. Reader and subsequent parser outputs/cursors are transactional.
+ * The existing scene_prefix parser honors this initialized reader budget. */
+CohStatus coh_rep_reader_bounded(CohRepReader *, CohBytes, size_t bits,
+    int compressed, size_t max_bytes);
 CohStatus coh_rep_read(CohRepReader *, unsigned width, uint32_t *);
 CohStatus coh_rep_pack(CohRepReader *, unsigned width, uint32_t *);
 CohStatus coh_rep_string(CohRepReader *, char *, size_t capacity);
@@ -76,6 +89,11 @@ void coh_rep_session_disconnect(CohRepSession *);
  * value always rejects. This is an integration guard, never authentication. */
 CohStatus coh_rep_session_message(CohRepSession *, CohRepSchema *, CohBytes,
     size_t bits, int compressed, int legacy_commands, int link_authenticated);
+/* Only GROUPS may exceed the ordinary 16KiB message limit. This remains a
+ * prefix inspector, with no LIVE state, acknowledgement or render handoff. */
+CohStatus coh_rep_session_message_bounded(CohRepSession *, CohRepSchema *, CohBytes,
+    size_t bits, int compressed, int legacy_commands, int link_authenticated,
+    size_t max_bytes);
 #ifdef __cplusplus
 }
 #endif

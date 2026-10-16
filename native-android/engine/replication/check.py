@@ -140,7 +140,7 @@ def main():
    # no heap memory; AddressSanitizer still checks all memory accesses.
    env=os.environ.copy();env['ASAN_OPTIONS']='detect_leaks=0:halt_on_error=1';env['UBSAN_OPTIONS']='halt_on_error=1:print_stacktrace=1'
    checks[name]=json.loads(run([str(binary)],env=env).stdout)
-  proof={'schema':1,'passed':True,'scope':'synthetic source-layout fixtures and original position consumer; no real server/capture/device','source_files':len(pins),'fixtures':n,'checks':checks,'actual_server_interoperability':False,'full_entity_parser':False,'render_spawn_handoff':False,'android_built':False,'emulator_qualified':False,'thor_accepted':False}
+  proof={'schema':1,'passed':True,'scope':'synthetic source-layout fixtures and original position consumer; no real server/capture/device','source_files':len(pins),'fixtures':n,'checks':checks,'ordinary_message_max_bytes':16384,'explicit_scene_max_bytes':4*1024*1024,'large_scene_tail_parsed':False,'reader_allocates':False,'actual_server_interoperability':False,'full_entity_parser':False,'render_spawn_handoff':False,'android_built':False,'emulator_qualified':False,'thor_accepted':False}
   if args.output:args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(proof,indent=2)+'\n')
   print(json.dumps(proof,indent=2))
 if __name__=='__main__':main()

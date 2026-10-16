@@ -5,6 +5,27 @@ existing Android loopback PostgreSQL / DbServer / MapServer stack. It accepts
 no password and creates no `CohDbAuthReceipt`. Full AuthServer authentication
 and live-world rendering remain separate, unfinished milestones.
 
+The 0.1.6 Map role opts into a bounded owned decoded body (4 MiB maximum).
+The DB role retains its accepted ordinary 16 KiB path. The local owner still
+reports `SCENE_INCOMPLETE` after a valid GROUPS prefix; it never promotes the
+accepted offline preview into server-authoritative rendering.
+
+The qualification-only UI peer now sends a fragmented compressed source
+GROUPS body that expands to 128 KiB. Its prefix comes from the unchanged
+original BitStream writer and its remaining tail is explicitly synthetic
+and unparsed. Peer receipts mark `large_body_fixture=true`,
+`scene_tail_parsed=false`, and `real_server_interoperability=false`. The
+headless local client verifies the decoded size and release of every owned
+body; Android UI qualification independently executes the same fixture.
+
+`evidence/scene-owned-016-host.json` records 659 local-owner checks in seven
+socket scenarios per release, ASan and UBSan mode, plus a separate complete
+headless DB-to-Map peer flow in every mode. Each large fixture expanded from
+8,745 wire bytes to 131,072 decoded bytes, retained zero owned body bytes
+after inspection, and closed both sockets. The linked library and complete
+local/peer tests were cross-built for ARM64 and x86_64; Android execution and
+physical device acceptance require their own evidence.
+
 The caller must explicitly enable development mode and authorize a loopback
 DB endpoint before creation. The bind address and every selected MapServer
 handoff must be IPv4 loopback. Remote, wildcard, multicast and ambiguous

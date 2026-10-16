@@ -2,9 +2,11 @@
 #include "fixtures.h"
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static unsigned checks, truncations, fuzz_cases;
+static unsigned bounded_cases;
 #define CHECK(x) do { assert(x);checks++; } while(0)
 #define BYTES(a) (CohBytes){a,sizeof(a)}
 static CohRepReader body(CohBytes bytes,size_t bits,int mode) {
@@ -153,6 +155,111 @@ static void source_command_catalog(int mode,CohBytes source,size_t source_bits,
     CHECK(coh_rep_shortcuts(&r,&schema)==COH_LIMIT);
     CHECK(!memcmp(&r,&old,sizeof(r))&&!memcmp(&schema,&saved,sizeof(schema)));
 }
+static void bounded_scene(int mode,CohBytes source,size_t source_bits,
+    CohBytes connect,size_t connect_bits,CohBytes shortcuts,size_t shortcut_bits) {
+    const size_t cap=COH_REP_BOUNDED_MESSAGE_MAX;
+    unsigned char *large=calloc(cap+1,1);CHECK(large!=NULL);
+    memcpy(large,source.data,source.size);
+    CohRepReader r=body(source,source_bits,mode);CohRepScenePrefix expected;
+    CHECK(coh_rep_scene_prefix(&r,&expected)==COH_OK);
+    /* Only the authentic source-written prefix is asserted. The large zero
+     * tail is deliberately unparsed, never evidence of a valid full scene. */
+    const size_t sizes[]={COH_REP_MESSAGE_MAX+1,65536,1024*1024,COH_REP_BOUNDED_MESSAGE_MAX};
+    for(unsigned i=0;i<sizeof(sizes)/sizeof(sizes[0]);i++) {
+        CohBytes input={large,sizes[i]};CohRepReader old=r;
+        CHECK(coh_rep_reader(&r,input,input.size*8,mode)==COH_INVALID);
+        CHECK(!memcmp(&r,&old,sizeof(r)));
+        CHECK(coh_rep_reader_bounded(&r,input,input.size*8,mode,cap)==COH_OK);
+        uint32_t command;CHECK(coh_rep_pack(&r,1,&command)==COH_OK&&command==COH_REP_GROUPS);
+        CohRepScenePrefix scene;CHECK(coh_rep_scene_prefix(&r,&scene)==COH_OK);
+        CHECK(!memcmp(&scene,&expected,sizeof(scene))&&r.cursor==expected.group_tail_bit);
+        /* The reader still enforces the exact logical bit end at a large
+         * backing-buffer boundary, including final-bit and unaligned reads. */
+        r.cursor=r.bits-8;CHECK(coh_rep_read(&r,8,&command)==COH_OK&&r.cursor==r.bits);
+        old=r;command=0xa5a5a5a5;CHECK(coh_rep_read(&r,1,&command)==COH_INVALID);
+        CHECK(command==0xa5a5a5a5&&!memcmp(&r,&old,sizeof(r)));
+        CohRepSession session;coh_rep_session_init(&session);CohRepSchema schema={0};
+        CHECK(coh_rep_session_begin(&session,101)==COH_OK);
+        CHECK(coh_rep_session_message(&session,&schema,connect,connect_bits,mode,0,1)==COH_OK);
+        CHECK(coh_rep_session_message(&session,&schema,shortcuts,shortcut_bits,mode,0,1)==COH_OK);
+        uint64_t messages=session.messages;
+        CHECK(coh_rep_session_message_bounded(&session,&schema,input,input.size*8,mode,0,0,cap)==COH_STATE);
+        CHECK(session.messages==messages&&session.phase==COH_REP_MAP_CONNECTED);
+        CHECK(coh_rep_session_message_bounded(&session,&schema,input,input.size*8,mode,0,1,cap)==COH_OK);
+        CHECK(session.phase==COH_REP_SCENE_PREFIX_SEEN&&session.messages==messages+1);
+        CHECK(!memcmp(&session.scene,&expected,sizeof(expected))&&session.selected_dbid==101);
+        CHECK(!session.update.command);coh_rep_session_disconnect(&session);
+        CHECK(!session.scene.map_path[0]&&!session.selected_dbid);
+        bounded_cases++;
+    }
+    /* Byte-aligned legacy remapping must also honor the explicit budget. */
+    if(mode) {
+        large[0]=COH_REP_GROUPS+5;
+        CohRepSession session;coh_rep_session_init(&session);CohRepSchema schema={0};
+        CHECK(coh_rep_session_begin(&session,101)==COH_OK);
+        CHECK(coh_rep_session_message(&session,&schema,connect,connect_bits,mode,0,1)==COH_OK);
+        CHECK(coh_rep_session_message_bounded(&session,&schema,(CohBytes){large,cap},cap*8,mode,1,1,cap)==COH_OK);
+        CHECK(session.phase==COH_REP_SCENE_PREFIX_SEEN&&!memcmp(&session.scene,&expected,sizeof(expected)));
+        memcpy(large,source.data,source.size);bounded_cases++;
+    }
+    CHECK(coh_rep_reader_bounded(&r,(CohBytes){large,cap},cap*8,mode,cap)==COH_OK);
+    uint32_t command;CHECK(coh_rep_pack(&r,1,&command)==COH_OK);
+    CohRepReader start=r;CohRepScenePrefix scene=expected;
+    for(size_t bits=r.cursor;bits<expected.group_tail_bit;bits++) {
+        r=start;r.bits=bits;CohRepReader old=r;CohRepScenePrefix before=scene;
+        CHECK(coh_rep_scene_prefix(&r,&scene)!=COH_OK);
+        CHECK(!memcmp(&r,&old,sizeof(r))&&!memcmp(&scene,&before,sizeof(scene)));
+        truncations++;bounded_cases++;
+    }
+    /* Reject an over-budget body or nonsensical logical length before any
+     * memory access, preserving caller state even for SIZE_MAX claims. */
+    r=start;CohRepReader old=r;
+    CHECK(coh_rep_reader_bounded(&r,(CohBytes){large,cap+1},1,mode,cap)==COH_LIMIT);
+    CHECK(!memcmp(&r,&old,sizeof(r)));
+    CHECK(coh_rep_reader_bounded(&r,(CohBytes){large,SIZE_MAX},SIZE_MAX,mode,cap)==COH_LIMIT);
+    CHECK(coh_rep_reader_bounded(&r,(CohBytes){large,cap},SIZE_MAX,mode,cap)==COH_INVALID);
+    CHECK(coh_rep_reader_bounded(&r,(CohBytes){large,cap},cap*8,mode,0)==COH_INVALID);
+    CHECK(coh_rep_reader_bounded(&r,(CohBytes){large,cap},cap*8,mode,cap+1)==COH_INVALID);
+    CHECK(coh_rep_reader_bounded(&r,(CohBytes){NULL,1},0,mode,cap)==COH_INVALID);
+    CHECK(coh_rep_reader_bounded(&r,(CohBytes){large,1},1,2,cap)==COH_INVALID);
+    CHECK(!memcmp(&r,&old,sizeof(r)));
+    CHECK(coh_rep_reader_bounded(&r,(CohBytes){large,1},8,mode,1)==COH_OK);
+    CHECK(coh_rep_reader_bounded(&r,(CohBytes){NULL,0},0,mode,1)==COH_OK);
+    r=start;r.max_bytes=cap+1;old=r;command=0xa5a5a5a5;
+    CHECK(coh_rep_read(&r,1,&command)==COH_INVALID);
+    CHECK(command==0xa5a5a5a5&&!memcmp(&r,&old,sizeof(r)));
+    r=start;r.bytes.size=SIZE_MAX;old=r;
+    CHECK(coh_rep_read(&r,1,&command)==COH_INVALID&&!memcmp(&r,&old,sizeof(r)));
+    /* Opting in to large scene inspection cannot enlarge other commands or
+     * silently turn malformed/unsupported commands into accepted scenes. */
+    const CohBytes others[]={connect,shortcuts};
+    for(unsigned i=0;i<sizeof(others)/sizeof(others[0]);i++) {
+        memset(large,0,cap);memcpy(large,others[i].data,others[i].size);
+        CohRepSession session;coh_rep_session_init(&session);CohRepSchema schema={0};
+        CHECK(coh_rep_session_begin(&session,101)==COH_OK);CohRepSession before=session;
+        CohRepSchema saved=schema;
+        CHECK(coh_rep_session_message_bounded(&session,&schema,(CohBytes){large,cap},cap*8,mode,0,1,cap)==COH_LIMIT);
+        before.malformed++;CHECK(!memcmp(&session,&before,sizeof(session))&&!memcmp(&schema,&saved,sizeof(schema)));
+        bounded_cases++;
+    }
+    free(large);
+}
+static void bounded_fuzz(void) {
+    const size_t cap=COH_REP_BOUNDED_MESSAGE_MAX;
+    unsigned char *buffer=calloc(cap,1);CHECK(buffer!=NULL);uint32_t seed=0x7ab5c341;
+    for(unsigned i=0;i<4000;i++) {
+        for(unsigned j=0;j<512;j++){seed=seed*1664525u+1013904223u;buffer[j]=(unsigned char)(seed>>24);}
+        size_t bytes=COH_REP_MESSAGE_MAX+1+seed%(cap-COH_REP_MESSAGE_MAX);
+        CohRepReader reader;
+        CHECK(coh_rep_reader_bounded(&reader,(CohBytes){buffer,bytes},bytes*8,i&1,cap)==COH_OK);
+        CohRepReader saved=reader;CohRepScenePrefix out,before;memset(&out,0xa5,sizeof(out));before=out;
+        CohStatus status=coh_rep_scene_prefix(&reader,&out);
+        if(status!=COH_OK)CHECK(!memcmp(&reader,&saved,sizeof(reader))&&!memcmp(&out,&before,sizeof(out)));
+        else CHECK(reader.cursor<=reader.bits&&reader.cursor==out.group_tail_bit);
+        bounded_cases++;fuzz_cases++;
+    }
+    free(buffer);
+}
 static void fuzz(void) {
     uint32_t seed=0x12345678;unsigned char buffer[257];CohRepSchema schema={0};
     for(unsigned n=0;n<30000;n++) {
@@ -174,9 +281,11 @@ int main(void) {
     EXTRA(0);EXTRA(1);
 #define CATALOG(n) source_command_catalog(n,BYTES(source_commands##n),source_commands##n##_bits,BYTES(maximum_commands##n),maximum_commands##n##_bits,BYTES(overflow_commands##n),overflow_commands##n##_bits)
     CATALOG(0);CATALOG(1);
+#define BOUNDED(n) bounded_scene(n,BYTES(scene##n),scene##n##_bits,BYTES(connect##n),connect##n##_bits,BYTES(shortcuts##n),shortcuts##n##_bits)
+    BOUNDED(0);BOUNDED(1);bounded_fuzz();
     CohRepReader invalid;CHECK(coh_rep_reader(&invalid,(CohBytes){NULL,1},8,0)==COH_INVALID);
     CHECK(coh_rep_reader(&invalid,(CohBytes){NULL,0},1,0)==COH_INVALID);
     CHECK(coh_rep_reader(&invalid,(CohBytes){connect0,COH_REP_MESSAGE_MAX+1},1,0)==COH_INVALID);
-    printf("{\"passed\":true,\"checks\":%u,\"truncations\":%u,\"fuzz_cases\":%u,\"live_server\":false}\n",checks,truncations,fuzz_cases);
+    printf("{\"passed\":true,\"checks\":%u,\"truncations\":%u,\"fuzz_cases\":%u,\"bounded_cases\":%u,\"live_server\":false}\n",checks,truncations,fuzz_cases,bounded_cases);
     return 0;
 }

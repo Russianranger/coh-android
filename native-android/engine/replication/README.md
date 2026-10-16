@@ -42,7 +42,7 @@ cmake -S native-android/engine/replication -B /tmp/coh-replication-build
 cmake --build /tmp/coh-replication-build
 ```
 
-The source checker verifies 18 SHA256-pinned original files. It compiles the
+The source checker verifies 19 SHA256-pinned original files. It compiles the
 unchanged original `initBitStream`, bit writer/reader and packed writer as the
 fixture producer. It separately compiles the original `entGetPosition` client
 consumer to produce expected full/partial/out-of-order position state. The old
@@ -89,6 +89,37 @@ at most 256 shortcuts, 1,024 separately streamed accessible command names,
 NUL-terminated strings, and 16,384 message bytes. Exceeding a bound rejects the
 input; production admission must treat that as unsupported rather than omit
 data and continue.
+
+### Explicit larger scene inspection
+
+`coh_rep_reader_bounded(reader, bytes, bits, compressed, max_bytes)` adds a
+caller-selected finite budget from 1 byte through 4 MiB. It borrows the already
+inflated body for synchronous parsing; it does not allocate, copy, retain a
+queue or change `COH_REP_MESSAGE_MAX`. The existing reader still rejects bodies
+above 16 KiB. A zero `CohRepReader.max_bytes` retains that original limit, so a
+manually zero-initialized reader cannot silently gain the larger budget. All
+parsers check the effective reader budget before multiplying bytes by eight.
+Invalid budgets/arguments return `COH_INVALID`; an input above an explicit
+valid budget returns `COH_LIMIT`, leaving the reader untouched.
+
+The existing `coh_rep_scene_prefix` consumes a bounded reader without a second
+grammar. `coh_rep_session_message_bounded` accepts the same explicit budget,
+but only a `SERVER_GROUPS` body may exceed 16 KiB. Larger shortcuts, connect,
+update or unknown command bodies return `COH_LIMIT` without changing copied
+schema, phase or scene state. Session diagnostic counters may increment.
+The original command profile remapping and authorization/order guards remain
+required. Neither bounded entry point declares the unparsed tail valid.
+
+Source-written scene prefixes are tested with 16,385, 65,536, 1,048,576 and
+4,194,304-byte borrowed buffers in both bit profiles, plus the legacy command
+remap. Their zero-filled tails are synthetic, unparsed and never asserted to
+be authentic complete scenes. Tests cover prefix truncation at every bit,
+logical-end reads, 4 MiB + 1 rejection, `SIZE_MAX` claims, invalid budgets,
+reader corruption and 4,000 additional randomized large-buffer prefix cases.
+Release, ASan and UBSan exercise the same cases. Complete GROUPS files/defs,
+reference transforms and footer validation remain future decoder work; no
+readiness, full-update acknowledgement or authoritative actor follows from
+accepting a larger prefix.
 
 ## Exact source sequence and remaining work
 

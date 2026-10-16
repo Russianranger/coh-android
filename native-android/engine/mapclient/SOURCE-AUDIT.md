@@ -4,6 +4,20 @@ All files below are SHA256-pinned after LF normalization in `source-pins.json`
 against the `365bc1f` integration source. There is no live packet capture or
 real-server evidence in this module.
 
+The 0.1.6 capacity regression uses `scene1` from the independently pinned
+replication source oracle. Its aligned command and scene prefix are produced
+by unchanged `BitStream.c` functions, with field ordering audited against
+`groupnetsend.c` / `groupnetrecv.c`. A deterministic synthetic tail expands
+the body to 128 KiB without claiming valid complete group data. Test-only
+zlib output follows `net_packet.c`'s original convention: 32-bit aligned
+command, 32-bit decoded tail length, then compressed tail; ordered data uses
+`Z_SYNC_FLUSH`, unordered data uses a complete zlib stream. The existing
+source compression oracle remains the separate transport qualification.
+
+Only the Map owned-receive path opts into the 4 MiB decoded budget. This
+neither changes the source wire layout nor makes a prefix sufficient to send
+REQALLENTS/READY or bind a server character to the renderer.
+
 | Source | Recovered contract |
 | --- | --- |
 | `Common/comm_game.h` | Normalized client IDs: input2, scene3, shortcuts4, allentities5, ready6, connect9; normalized server update2, allentities3, shortcuts4, connect5, groups6 |

@@ -24,12 +24,18 @@ int main(int argc,char **argv){
     }
     int ok=status==COH_UNSUPPORTED&&d.phase==COH_LOCAL_SCENE_INCOMPLETE&&d.character_lists==1&&d.character_choices==1&&
         d.map_handoffs==1&&d.map_protocol.scene_prefixes==1&&d.map_protocol.accepted_messages==2&&
-        !d.map_protocol.character_identity_verified&&d.map_protocol.last_command==COH_REP_GROUPS;
+        !d.map_protocol.character_identity_verified&&d.map_protocol.last_command==COH_REP_GROUPS&&
+        d.map_protocol.last_decoded_bytes==128u*1024u&&d.map_protocol.scene_decoded_bytes==128u*1024u&&
+        d.map_protocol.last_payload_bits==128u*1024u*8&&d.map_protocol.last_byte_aligned==1&&
+        !d.map_protocol.udp.link.owned_retained_bytes&&d.map_protocol.udp.link.owned_high_water_bytes==128u*1024u;
     coh_local_close(local);coh_local_diagnostics(local,&d);
     ok=ok&&d.opened_sockets==2&&d.closed_sockets==2;
     printf("{\"passed\":%s,\"status\":%u,\"stage\":%u,\"command\":%u,\"phase\":%u,\"scripted_source_layout\":true,"
-        "\"source_command_count\":915,\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"real_server_interoperability\":false}\n",
+        "\"source_command_count\":915,\"large_body_fixture\":true,\"scene_tail_parsed\":false,"
+        "\"scene_decoded_bytes\":%u,\"scene_compressed_bytes\":%zu,\"owned_retained_bytes\":%zu,"
+        "\"opened_sockets\":%llu,\"closed_sockets\":%llu,\"real_server_interoperability\":false}\n",
         ok?"true":"false",(unsigned)status,(unsigned)d.map_protocol.stage,d.map_protocol.last_command,
-        (unsigned)d.phase,(unsigned long long)d.opened_sockets,(unsigned long long)d.closed_sockets);
+        (unsigned)d.phase,d.map_protocol.scene_decoded_bytes,d.map_protocol.udp.link.decode.compressed_bytes,
+        d.map_protocol.udp.link.owned_retained_bytes,(unsigned long long)d.opened_sockets,(unsigned long long)d.closed_sockets);
     coh_local_destroy(local);return ok?0:1;
 }

@@ -1,4 +1,5 @@
 #include "coh_net.h"
+#include "coh_net_zip_internal.h"
 #include <stdlib.h>
 #include <string.h>
 #include <zlib.h>
@@ -78,4 +79,56 @@ CohStatus coh_net_zip_decode(CohNetZip *z,int stream,CohBytes in,uint8_t *out,si
     if(!stream)inflateEnd(s);
     if(!good) { if(stream)z->poison=1;return COH_INVALID; }
     memcpy(out,scratch,(size_t)tail+4);*bytes=(size_t)tail+4;return COH_OK;
+}
+
+CohStatus coh_net_zip_decode_owned(CohNetZip *z,int stream,CohBytes in,size_t budget,
+    uint8_t **out,size_t *bytes,CohNetDecodeReceipt *receipt) {
+    if(!receipt)return COH_INVALID;
+    receipt->compressed_bytes=in.size;receipt->output_budget=budget;
+    receipt->declared_raw_bytes=0;receipt->failure_kind=COH_NET_DECODE_HEADER;
+    if(!z||z->poison||!in.data||in.size<4||in.size>COH_NET_MESSAGE_MAX||
+       !out||!bytes||budget<COH_NET_MESSAGE_MAX||budget>COH_NET_DECODED_MAX||
+       (stream!=0&&stream!=1))return COH_INVALID;
+    size_t total=in.size;uint32_t tail=0;
+    if(in.size-4>=12) {
+        tail=le32(in.data+4);
+        if(tail<12)return COH_INVALID;
+        uint64_t declared=(uint64_t)tail+4;
+        receipt->declared_raw_bytes=declared;
+        /* Compare in 64 bits before size_t conversion or allocation. */
+        if(declared>budget){receipt->failure_kind=COH_NET_DECODE_BUDGET;return COH_LIMIT;}
+        total=(size_t)declared;
+    }
+    receipt->declared_raw_bytes=total;
+    if(total>budget){receipt->failure_kind=COH_NET_DECODE_BUDGET;return COH_LIMIT;}
+    /* Source bsCompress uses Z_SYNC_FLUSH for persistent streams. Requiring
+     * its completed empty stored-block suffix also detects a truncated flush
+     * that otherwise yields all declared output before the final marker. */
+    if(tail&&stream&&(in.data[in.size-4]||in.data[in.size-3]||
+       in.data[in.size-2]!=0xff||in.data[in.size-1]!=0xff)) {
+        z->poison=1;receipt->failure_kind=COH_NET_DECODE_STREAM;return COH_INVALID;
+    }
+    uint8_t *data=malloc(total);
+    if(!data){receipt->failure_kind=COH_NET_DECODE_ALLOCATION;return COH_LIMIT;}
+    memcpy(data,in.data,4);
+    if(!tail)memcpy(data,in.data,total);
+    else {
+        z_stream temporary;memset(&temporary,0,sizeof(temporary));
+        temporary.zalloc=alloc_z;temporary.zfree=free_z;temporary.opaque=z;
+        z_stream *s=stream?&z->decode:&temporary;
+        if(!stream&&inflateInit(s)!=Z_OK) {
+            free(data);receipt->failure_kind=COH_NET_DECODE_ALLOCATION;return COH_LIMIT;
+        }
+        s->next_in=(Bytef*)in.data+8;s->avail_in=(uInt)in.size-8;
+        s->next_out=data+4;s->avail_out=tail;
+        int r=inflate(s,stream?Z_SYNC_FLUSH:Z_FINISH);
+        int good=(stream?r==Z_OK:r==Z_STREAM_END)&&!s->avail_in&&!s->avail_out;
+        if(!stream)inflateEnd(s);
+        if(!good) {
+            if(stream)z->poison=1;
+            free(data);receipt->failure_kind=r==Z_MEM_ERROR?COH_NET_DECODE_ALLOCATION:COH_NET_DECODE_STREAM;
+            return r==Z_MEM_ERROR?COH_LIMIT:COH_INVALID;
+        }
+    }
+    receipt->failure_kind=COH_NET_DECODE_NONE;*out=data;*bytes=total;return COH_OK;
 }

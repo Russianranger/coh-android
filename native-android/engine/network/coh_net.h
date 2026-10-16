@@ -11,6 +11,9 @@ extern "C" {
 #define COH_NET_PAYLOAD_MAX 1440u
 #define COH_NET_FRAGMENT_MAX 16u
 #define COH_NET_MESSAGE_MAX 16384u
+/* Opt-in decoded receive ceiling only. Wire/reassembly, TX and legacy next()
+ * remain 16 KiB. No queue slot or stack buffer uses this expanded bound. */
+#define COH_NET_DECODED_MAX (4u*1024u*1024u)
 #define COH_NET_TX_MAX 32u
 #define COH_NET_RX_MAX 16u
 #define COH_NET_GROUP_MAX 4u
@@ -46,11 +49,22 @@ typedef enum { COH_NET_IDLE, COH_NET_CONNECTING, COH_NET_WAIT_FINAL,
     COH_NET_CONNECTED, COH_NET_ENCRYPTION_REQUIRED, COH_NET_CLOSED,
     COH_NET_TIMED_OUT, COH_NET_CANCELLED, COH_NET_FAILED,
     COH_NET_DISCONNECTING } CohNetState;
+typedef enum { COH_NET_DECODE_NONE, COH_NET_DECODE_HEADER,
+    COH_NET_DECODE_BUDGET, COH_NET_DECODE_ALLOCATION,
+    COH_NET_DECODE_STREAM } CohNetDecodeFailure;
+typedef struct {
+    CohNetDecodeFailure failure_kind;
+    uint64_t compressed_bytes, declared_raw_bytes, output_budget;
+    uint32_t normalized_command;
+    uint8_t command_valid;
+} CohNetDecodeReceipt;
 typedef struct {
     uint64_t sent, received, retransmits, acknowledged, duplicates, malformed;
     uint64_t queue_limits, fragment_expirations, timeouts, unsupported;
     uint32_t tx_pending, rx_pending, fragment_groups;
     size_t storage_bytes, codec_bytes, high_water_retained_bytes;
+    size_t owned_retained_bytes, owned_high_water_bytes;
+    CohNetDecodeReceipt decode;
 } CohNetDiagnostics;
 typedef struct {
     unsigned version, ping_ms, max_retries;
@@ -62,6 +76,13 @@ typedef struct {
     uint8_t compressed, ordered;
     uint8_t payload[COH_NET_MESSAGE_MAX];
 } CohNetMessage;
+typedef struct {
+    uint32_t id, ordered_id, payload_bits;
+    uint8_t compressed, ordered;
+    const uint8_t *payload;
+    size_t payload_bytes;
+    uint64_t generation;
+} CohNetOwnedMessage;
 /* callback borrows the frame for the call; success means the complete
  * datagram was accepted. It must not call back into this link. */
 typedef CohStatus (*CohNetSend)(void *context, CohBytes datagram);
@@ -75,6 +96,9 @@ typedef CohStatus (*CohNetKeyExchange)(void *context,
     const uint8_t peer_public[64], uint8_t own_public[64], CohBlowfish *key);
 CohNetConfig coh_net_default_config(void);
 CohNet *coh_net_create(const CohNetConfig *);
+/* IDLE only, 16 KiB..4 MiB inclusive. Default remains 16 KiB. This affects
+ * next_owned() only and never permits a larger compressed wire message. */
+CohStatus coh_net_set_decoded_budget(CohNet *, size_t bytes);
 void coh_net_destroy(CohNet *);
 CohNetState coh_net_state(const CohNet *);
 /* IDLE only. required=1 rejects a clear SERVER_ACK; no fallback negotiation.
@@ -94,6 +118,14 @@ CohStatus coh_net_receive(CohNet *, CohBytes frame, uint64_t now_ms);
 /* Output unchanged when no message. Decompression happens after sibling
  * merge and ordered delivery, matching source streaming dictionary order. */
 CohStatus coh_net_next(CohNet *, CohNetMessage *);
+/* One link-owned decoded allocation, published only after complete validation.
+ * Release before another next call. Output is unchanged on every error.
+ * Any close/cancel/timeout/disconnect/destroy invalidates and frees the view;
+ * the owner thread must not retain or access it across another link call. */
+CohStatus coh_net_next_owned(CohNet *, CohNetOwnedMessage *);
+/* Clears the caller view even if cleanup already invalidated it (COH_STATE).
+ * A stale/wrong generation can never release another outstanding allocation. */
+CohStatus coh_net_owned_release(CohNet *, CohNetOwnedMessage *);
 /* Source COMMCONTROL_DISCONNECT / ACK. Drops gameplay queues, then retries one
  * reliable disconnect until ACK or the configured connect-timeout budget.
  * The socket owner must continue pumping until CLOSED/TIMED_OUT. */

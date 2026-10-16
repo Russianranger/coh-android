@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from unittest.mock import patch
 from emulator_check import (Check, PACKAGE, scene_pixels, settled_preview, viewport_contract,
                             map_report_contract, installed_apk_contract, guest_resources_contract,
-                            activity_inventory, retained_launcher)
+                            activity_inventory, retained_launcher, large_scene_contract)
 
 FILE = 'native-test-donor.apk'
 BACKGROUND = f'<node package="com.google.android.documentsui" text="{FILE}" bounds="[189,899][583,956]"/>'
@@ -155,12 +155,14 @@ def viewport_protocol_controls(path):
     fitted=copy.deepcopy(preview);fitted['input_area'].update(width=1096,height=137)
     fitted['native'].update(width=1096,height=137);viewport_contract(fitted);count+=1
     mapping_fields = ('phase stage last_status last_command_valid last_command last_payload_bits last_byte_aligned '
-        'accepted_messages rejected_messages malformed unsupported scene_prefixes entity_prefixes disconnects suspends timeouts').split()
+        'accepted_messages rejected_messages malformed unsupported scene_prefixes entity_prefixes disconnects suspends timeouts '
+        'last_decoded_bytes scene_decoded_bytes').split()
     udp_fields = ('state link_state sockets_opened sockets_closed datagrams_sent datagrams_received peer_rejects '
         'truncated empty malformed unsupported send_would_block interrupted io_errors receive_budget_exhausted '
         'suspends resumes cancellations timeouts last_system_error').split()
     link_fields = ('sent received retransmits acknowledged duplicates malformed queue_limits fragment_expirations '
-        'timeouts unsupported tx_pending rx_pending fragment_groups storage_bytes codec_bytes high_water_retained_bytes').split()
+        'timeouts unsupported tx_pending rx_pending fragment_groups storage_bytes codec_bytes high_water_retained_bytes '
+        'owned_retained_bytes owned_high_water_bytes').split()
     top_fields = ('local_development_auth server_identity_bound generation selection_generation db_phase map_phase '
         'last_status attempts character_lists character_choices map_handoffs policy_rejections failures suspends '
         'cancellations opened_sockets closed_sockets terminal_failure terminal_db_phase terminal_map_phase').split()
@@ -169,6 +171,8 @@ def viewport_protocol_controls(path):
         live_world_rendered=False,map_protocol=dict.fromkeys(mapping_fields,0))
     protocol['map_protocol']['udp']=dict.fromkeys(udp_fields,0)
     protocol['map_protocol']['udp']['link']=dict.fromkeys(link_fields,0)
+    protocol['map_protocol']['udp']['link']['decode']=dict.fromkeys(
+        ('failure_kind','compressed_bytes','declared_raw_bytes','output_budget','normalized_command','command_valid'),0)
     map_report_contract(protocol);count+=1
     for mutate in (
         lambda v:v.update(password='must never appear'),
@@ -179,10 +183,51 @@ def viewport_protocol_controls(path):
         lambda v:v['map_protocol']['udp'].update(datagrams_received=-1),
         lambda v:v.update(authserver_authenticated=True),
         lambda v:v.update(live_world_rendered=True),
+        lambda v:v['map_protocol'].update(last_decoded_bytes=4194305),
+        lambda v:v['map_protocol'].update(scene_decoded_bytes=True),
+        lambda v:v['map_protocol']['udp']['link'].update(owned_retained_bytes=1),
+        lambda v:v['map_protocol']['udp']['link'].update(owned_high_water_bytes=4194305),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(payload='private'),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(failure_kind=5),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(compressed_bytes=16385),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(declared_raw_bytes=4294967300),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(output_budget=4194305),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(output_budget=1),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(command_valid=2),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(normalized_command=6),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(output_budget=4194304,command_valid=1,normalized_command=7),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(failure_kind=True),
     ):
         value=copy.deepcopy(protocol);mutate(value);reject(map_report_contract,value)
     protocol['map_protocol']['udp']['last_system_error']=-11
     map_report_contract(protocol);count+=1
+    peer=dict(scripted_source_layout=True,real_server_interoperability=False,large_body_fixture=True,
+        scene_tail_parsed=False,scene_compressed=True,scene_ordered=False,scene_decoded_bytes=131072,
+        scene_payload_bits=1048576,scene_compressed_bytes=200,decoded_budget_bytes=4194304)
+    expanded=copy.deepcopy(protocol);mapping=expanded['map_protocol'];link=mapping['udp']['link']
+    mapping.update(last_payload_bits=1048576,last_decoded_bytes=131072,scene_decoded_bytes=131072)
+    link.update(owned_retained_bytes=0,owned_high_water_bytes=131072)
+    link['decode'].update(failure_kind=0,compressed_bytes=200,declared_raw_bytes=131072,
+        output_budget=4194304,normalized_command=6,command_valid=1)
+    large_scene_contract(expanded,peer);count+=1
+    for mutate in (
+        lambda v:v.update(phase='FAILED'),
+        lambda v:v.update(terminal_failure=1),
+        lambda v:v['map_protocol'].update(last_payload_bits=131072),
+        lambda v:v['map_protocol'].update(scene_decoded_bytes=16384),
+        lambda v:v['map_protocol']['udp']['link'].update(owned_retained_bytes=131072),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(declared_raw_bytes=131068),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(compressed_bytes=201),
+        lambda v:v['map_protocol']['udp']['link']['decode'].update(failure_kind=2),
+    ):
+        value=copy.deepcopy(expanded);mutate(value)
+        reject(lambda report:large_scene_contract(report,peer),value)
+    for change in ({'real_server_interoperability':True},{'scene_tail_parsed':True},
+                   {'large_body_fixture':False},{'scene_compressed':False},{'scene_ordered':True},
+                   {'scene_decoded_bytes':16384},{'scene_payload_bits':True},
+                   {'scene_compressed_bytes':16384},{'decoded_budget_bytes':8388608}):
+        value=copy.deepcopy(peer);value.update(change)
+        reject(lambda fixture:large_scene_contract(expanded,fixture),value)
     class ScrollDriver(Check):
         def __init__(self):
             super().__init__(SimpleNamespace(output=path/'scroll'))

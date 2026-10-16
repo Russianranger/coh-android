@@ -6,7 +6,8 @@
 #define PACK(r,n,v) do { CohStatus s_=coh_rep_pack((r),(n),&(v)); if(s_!=COH_OK)return s_; } while(0)
 #define CALL(expr) do { CohStatus s_=(expr); if(s_!=COH_OK)return s_; } while(0)
 static int valid(const CohRepReader *r) {
-    return r && r->bytes.size<=COH_REP_MESSAGE_MAX &&
+    size_t cap=r&&r->max_bytes?r->max_bytes:COH_REP_MESSAGE_MAX;
+    return r && cap<=COH_REP_BOUNDED_MESSAGE_MAX && r->bytes.size<=cap &&
         (r->bytes.data || !r->bytes.size) && r->bits<=r->bytes.size*8 &&
         r->cursor<=r->bits && r->compressed<=1 &&
         (!r->compressed || !(r->cursor&7));
@@ -14,7 +15,16 @@ static int valid(const CohRepReader *r) {
 CohStatus coh_rep_reader(CohRepReader *r,CohBytes b,size_t bits,int compressed) {
     if(!r || b.size>COH_REP_MESSAGE_MAX || (!b.data && b.size) ||
         bits>b.size*8 || (compressed!=0 && compressed!=1))return COH_INVALID;
-    CohRepReader q={b,bits,0,(unsigned)compressed};*r=q;return COH_OK;
+    CohRepReader q={b,bits,0,(unsigned)compressed,COH_REP_MESSAGE_MAX};*r=q;return COH_OK;
+}
+CohStatus coh_rep_reader_bounded(CohRepReader *r,CohBytes b,size_t bits,int compressed,size_t max_bytes) {
+    if(!r || !max_bytes || max_bytes>COH_REP_BOUNDED_MESSAGE_MAX ||
+        (!b.data && b.size) || (compressed!=0 && compressed!=1))return COH_INVALID;
+    /* Compare bytes before multiplying. Both the ordinary and explicit
+     * ceilings fit SIZE_MAX/8, including on the 32-bit host boundary. */
+    if(b.size>max_bytes)return COH_LIMIT;
+    if(bits>b.size*8)return COH_INVALID;
+    CohRepReader q={b,bits,0,(unsigned)compressed,max_bytes};*r=q;return COH_OK;
 }
 CohStatus coh_rep_read(CohRepReader *r,unsigned width,uint32_t *out) {
     if(!valid(r)||!out||width>32)return COH_INVALID;
@@ -185,13 +195,15 @@ void coh_rep_session_disconnect(CohRepSession *s) {
     s->disconnects++;s->phase=COH_REP_DISCONNECTED;s->selected_dbid=0;s->schema_generation=0;
     memset(&s->scene,0,sizeof(s->scene));memset(&s->update,0,sizeof(s->update));
 }
-CohStatus coh_rep_session_message(CohRepSession *s,CohRepSchema *schema,CohBytes b,size_t bits,int compressed,int legacy,int authorized) {
+static CohStatus session_message(CohRepSession *s,CohRepSchema *schema,CohBytes b,size_t bits,int compressed,int legacy,int authorized,size_t max_bytes,int bounded) {
     if(!s||!schema||(legacy!=0&&legacy!=1)||(authorized!=0&&authorized!=1))return COH_INVALID;
     if(!authorized||s->phase==COH_REP_DISCONNECTED)return COH_STATE;
-    CohRepReader r;CohStatus result=coh_rep_reader(&r,b,bits,compressed);
+    CohRepReader r;CohStatus result=bounded?
+        coh_rep_reader_bounded(&r,b,bits,compressed,max_bytes):coh_rep_reader(&r,b,bits,compressed);
     if(result!=COH_OK){s->malformed++;return result;}
     uint32_t cmd;result=coh_rep_pack(&r,1,&cmd);
     if(result==COH_OK&&legacy){if(cmd<7)result=COH_UNSUPPORTED;else cmd-=5;}
+    if(result==COH_OK&&b.size>COH_REP_MESSAGE_MAX&&cmd!=COH_REP_GROUPS)result=COH_LIMIT;
     if(result==COH_OK)switch(cmd) {
         case COH_REP_CONNECT_MSG: {
             CohRepConnect v;result=coh_rep_connect(&r,&v);
@@ -222,4 +234,11 @@ CohStatus coh_rep_session_message(CohRepSession *s,CohRepSchema *schema,CohBytes
     else if(result==COH_UNSUPPORTED)s->unsupported++;
     else if(result==COH_INVALID||result==COH_LIMIT)s->malformed++;
     return result;
+}
+CohStatus coh_rep_session_message(CohRepSession *s,CohRepSchema *schema,CohBytes b,size_t bits,int compressed,int legacy,int authorized) {
+    return session_message(s,schema,b,bits,compressed,legacy,authorized,COH_REP_MESSAGE_MAX,0);
+}
+CohStatus coh_rep_session_message_bounded(CohRepSession *s,CohRepSchema *schema,CohBytes b,size_t bits,int compressed,int legacy,int authorized,size_t max_bytes) {
+    if(!max_bytes||max_bytes>COH_REP_BOUNDED_MESSAGE_MAX)return COH_INVALID;
+    return session_message(s,schema,b,bits,compressed,legacy,authorized,max_bytes,1);
 }

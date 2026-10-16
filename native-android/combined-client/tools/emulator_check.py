@@ -125,24 +125,61 @@ def map_report_contract(value):
         'policy_rejections failures suspends cancellations opened_sockets closed_sockets '
         'terminal_failure terminal_db_phase terminal_map_phase').split()
     fields = ('phase stage last_status last_command_valid last_command last_payload_bits last_byte_aligned '
-        'accepted_messages rejected_messages malformed unsupported scene_prefixes entity_prefixes disconnects suspends timeouts').split()
+        'accepted_messages rejected_messages malformed unsupported scene_prefixes entity_prefixes disconnects suspends timeouts '
+        'last_decoded_bytes scene_decoded_bytes').split()
     udp_fields = ('state link_state sockets_opened sockets_closed datagrams_sent datagrams_received peer_rejects '
         'truncated empty malformed unsupported send_would_block interrupted io_errors receive_budget_exhausted '
         'suspends resumes cancellations timeouts last_system_error').split()
     link_fields = ('sent received retransmits acknowledged duplicates malformed queue_limits fragment_expirations '
-        'timeouts unsupported tx_pending rx_pending fragment_groups storage_bytes codec_bytes high_water_retained_bytes').split()
+        'timeouts unsupported tx_pending rx_pending fragment_groups storage_bytes codec_bytes high_water_retained_bytes '
+        'owned_retained_bytes owned_high_water_bytes').split()
     def exact(data, numeric, extras=(), signed=()):
         assert isinstance(data, dict) and set(data) == set(numeric) | set(extras), 'Unexpected public protocol fields'
         assert all(type(data[k]) is int and (k in signed or data[k] >= 0) for k in numeric)
     exact(value, numbers, ('schema', 'phase', 'map_protocol', 'authserver_authenticated', 'live_world_rendered'))
     mapping = value['map_protocol']; exact(mapping, fields, ('udp',))
     udp = mapping['udp']; exact(udp, udp_fields, ('link',), ('last_system_error',))
-    exact(udp['link'], link_fields)
+    link = udp['link']; exact(link, link_fields, ('decode',))
+    decode_fields = ('failure_kind compressed_bytes declared_raw_bytes output_budget normalized_command command_valid').split()
+    decode = link['decode']; exact(decode, decode_fields)
+    assert 0 <= decode['failure_kind'] <= 4 and 0 <= decode['compressed_bytes'] <= 16384
+    assert 0 <= decode['declared_raw_bytes'] <= 4294967299
+    assert 0 <= decode['output_budget'] <= 4194304
+    assert decode['output_budget'] >= 16384 or all(v == 0 for v in decode.values())
+    assert decode['command_valid'] in (0, 1)
+    assert decode['normalized_command'] in ((2,3,4,5,6) if decode['command_valid'] else (0,))
+    assert 0 <= link['owned_retained_bytes'] <= link['owned_high_water_bytes'] <= 4194304
+    assert all(0 <= mapping[k] <= 4194304 for k in ('last_decoded_bytes', 'scene_decoded_bytes'))
     assert all(value[k] in (0, 1) for k in ('local_development_auth', 'server_identity_bound', 'terminal_failure'))
     assert all(mapping[k] in (0, 1) for k in ('last_command_valid', 'last_byte_aligned'))
     return {'phase': value['phase'], 'map_stage': mapping['stage'], 'last_status': mapping['last_status'],
             'accepted_messages': mapping['accepted_messages'], 'scene_prefixes': mapping['scene_prefixes'],
             'numeric_privacy_bounds_verified': True}
+
+
+def large_scene_contract(value, peer):
+    """Bind real app diagnostics to one explicitly scripted compressed body."""
+    proof = map_report_contract(value)
+    assert value['phase'] == 'SCENE_INCOMPLETE' and value['terminal_failure'] == 0
+    assert peer.get('scripted_source_layout') is True and peer.get('real_server_interoperability') is False
+    assert peer.get('large_body_fixture') is True and peer.get('scene_tail_parsed') is False
+    assert peer.get('scene_compressed') is True and peer.get('scene_ordered') is False
+    assert type(peer.get('scene_decoded_bytes')) is int and peer['scene_decoded_bytes'] == 131072
+    assert type(peer.get('scene_payload_bits')) is int and peer['scene_payload_bits'] == peer['scene_decoded_bytes']*8
+    assert type(peer.get('scene_compressed_bytes')) is int and 8 < peer['scene_compressed_bytes'] < 16384
+    assert type(peer.get('decoded_budget_bytes')) is int and peer['decoded_budget_bytes'] == 4194304
+    mapping = value['map_protocol']; link = mapping['udp']['link']; decode = link['decode']
+    assert mapping['last_payload_bits'] == peer['scene_payload_bits']
+    assert mapping['last_decoded_bytes'] == mapping['scene_decoded_bytes'] == peer['scene_decoded_bytes']
+    assert decode == {'failure_kind':0, 'compressed_bytes':peer['scene_compressed_bytes'],
+        'declared_raw_bytes':peer['scene_decoded_bytes'], 'output_budget':peer['decoded_budget_bytes'],
+        'normalized_command':6, 'command_valid':1}
+    assert link['queue_limits'] == 0 and link['owned_retained_bytes'] == 0
+    assert link['owned_high_water_bytes'] == peer['scene_decoded_bytes']
+    return {**proof, 'scene_decoded_bytes':mapping['scene_decoded_bytes'],
+        'scene_compressed_bytes':decode['compressed_bytes'], 'decoded_budget_bytes':decode['output_budget'],
+        'owned_retained_bytes':link['owned_retained_bytes'], 'owned_high_water_bytes':link['owned_high_water_bytes'],
+        'large_body_fixture':True, 'scene_tail_parsed':False}
 
 
 def memory_report_contract(value):
@@ -586,7 +623,7 @@ class Check:
             else:
                 self.tap('Native Fixture', prefix=True)
                 selected = self.wait_report('native-client-report.json', lambda x:x.get('server_protocol',{}).get('phase') == 'SCENE_INCOMPLETE', 'actual character selection and bounded Map scene prefix', seconds=60)
-                protocol = selected['server_protocol']; proof = map_report_contract(protocol)
+                protocol = selected['server_protocol']; map_report_contract(protocol)
                 assert protocol['character_lists'] == 1 and protocol['character_choices'] == 1 and protocol['map_handoffs'] == 1
                 assert protocol['terminal_failure'] == 0 and protocol['map_protocol']['scene_prefixes'] >= 1
                 mapping = protocol['map_protocol']
@@ -601,12 +638,22 @@ class Check:
                 assert peer.get('authserver_authenticated') is False and peer.get('live_world') is False and peer.get('failed') is False
                 assert all(peer.get(k) == 1 for k in ('character_lists','character_choices','map_handoffs','map_connects','source_command_catalogs','scene_prefixes'))
                 assert peer.get('source_command_count') == 915 and peer.get('selected_wire_slot') == 0
+                proof = large_scene_contract(protocol, peer)
                 (self.args.output/(peer_prefix+'-report.json')).write_bytes(peer_raw)
                 assert not errors, 'Scripted policy refresh failed: '+repr(errors)
                 self.record('actual app character picker and native DB-to-Map scene boundary', **proof,
                     peer_binary_sha256=hashlib.sha256(data).hexdigest(), scripted_source_layout=True,
                     real_server_interoperability=False, real_authenticated_session=False, preview_is_server_world=False)
                 self.tap('Disconnect client')
+                disconnected = self.wait_report('native-client-report.json',lambda x:
+                    x.get('session_id') == selected['session_id'] and x.get('server_protocol',{}).get('phase') == 'CLOSED',
+                    'explicit client disconnect after bounded large scene')
+                stopped = disconnected['server_protocol']; map_report_contract(stopped)
+                assert stopped['opened_sockets'] == stopped['closed_sockets'] == 2
+                assert stopped['map_protocol']['udp']['link']['owned_retained_bytes'] == 0
+                self.record('bounded scene disconnect closes client sockets and releases owned body',
+                    opened_sockets=stopped['opened_sockets'], closed_sockets=stopped['closed_sockets'],
+                    owned_retained_bytes=0, actual_server_interoperability_verified=False)
             completed = True
         finally:
             stop.set()

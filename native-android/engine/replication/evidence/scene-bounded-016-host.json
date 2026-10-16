@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "passed": true,
+  "scope": "synthetic source-layout fixtures and original position consumer; no real server/capture/device",
+  "source_files": 19,
+  "fixtures": 44,
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 86632,
+      "truncations": 6947,
+      "fuzz_cases": 34000,
+      "bounded_cases": 5642,
+      "live_server": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 86632,
+      "truncations": 6947,
+      "fuzz_cases": 34000,
+      "bounded_cases": 5642,
+      "live_server": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 86632,
+      "truncations": 6947,
+      "fuzz_cases": 34000,
+      "bounded_cases": 5642,
+      "live_server": false
+    }
+  },
+  "ordinary_message_max_bytes": 16384,
+  "explicit_scene_max_bytes": 4194304,
+  "large_scene_tail_parsed": false,
+  "reader_allocates": false,
+  "actual_server_interoperability": false,
+  "full_entity_parser": false,
+  "render_spawn_handoff": false,
+  "android_built": false,
+  "emulator_qualified": false,
+  "thor_accepted": false
+}

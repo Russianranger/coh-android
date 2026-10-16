@@ -132,7 +132,7 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_LocalNative_report(JNIEnv 
         "\"suspends\":%llu,\"cancellations\":%llu,\"opened_sockets\":%llu,\"closed_sockets\":%llu,"
         "\"terminal_failure\":%u,\"terminal_db_phase\":%u,\"terminal_map_phase\":%u,"
         "\"map_protocol\":{\"phase\":%u,\"stage\":%u,\"last_status\":%u,\"last_command_valid\":%u,"
-        "\"last_command\":%u,\"last_payload_bits\":%u,\"last_byte_aligned\":%u,"
+        "\"last_command\":%u,\"last_payload_bits\":%u,\"last_decoded_bytes\":%u,\"scene_decoded_bytes\":%u,\"last_byte_aligned\":%u,"
         "\"accepted_messages\":%llu,\"rejected_messages\":%llu,\"malformed\":%llu,\"unsupported\":%llu,"
         "\"scene_prefixes\":%llu,\"entity_prefixes\":%llu,\"disconnects\":%llu,\"suspends\":%llu,\"timeouts\":%llu,"
         "\"udp\":{\"state\":%u,\"link_state\":%u,\"sockets_opened\":%llu,\"sockets_closed\":%llu,"
@@ -143,7 +143,10 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_LocalNative_report(JNIEnv 
         "\"link\":{\"sent\":%llu,\"received\":%llu,\"retransmits\":%llu,\"acknowledged\":%llu,"
         "\"duplicates\":%llu,\"malformed\":%llu,\"queue_limits\":%llu,\"fragment_expirations\":%llu,"
         "\"timeouts\":%llu,\"unsupported\":%llu,\"tx_pending\":%u,\"rx_pending\":%u,\"fragment_groups\":%u,"
-        "\"storage_bytes\":%llu,\"codec_bytes\":%llu,\"high_water_retained_bytes\":%llu}}},"
+        "\"storage_bytes\":%llu,\"codec_bytes\":%llu,\"high_water_retained_bytes\":%llu,"
+        "\"owned_retained_bytes\":%llu,\"owned_high_water_bytes\":%llu,"
+        "\"decode\":{\"failure_kind\":%u,\"compressed_bytes\":%llu,\"declared_raw_bytes\":%llu,"
+        "\"output_budget\":%llu,\"normalized_command\":%u,\"command_valid\":%u}}}},"
         "\"authserver_authenticated\":false,\"live_world_rendered\":false}",phase_name(d.phase),
         d.local_development_auth,d.server_identity_bound,d.generation,d.selection_generation,
         (unsigned)d.db_phase,(unsigned)d.map_phase,(unsigned)d.last_status,
@@ -152,7 +155,8 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_LocalNative_report(JNIEnv 
         COUNT(d.opened_sockets),COUNT(d.closed_sockets),d.terminal_failure,
         (unsigned)d.terminal_db_phase,(unsigned)d.terminal_map_phase,
         (unsigned)m->phase,(unsigned)m->stage,(unsigned)m->last_status,m->last_command_valid,
-        m->last_command,m->last_payload_bits,m->last_byte_aligned,COUNT(m->accepted_messages),
+        m->last_command,m->last_payload_bits,m->last_decoded_bytes,m->scene_decoded_bytes,
+        m->last_byte_aligned,COUNT(m->accepted_messages),
         COUNT(m->rejected_messages),COUNT(m->malformed),COUNT(m->unsupported),COUNT(m->scene_prefixes),
         COUNT(m->entity_prefixes),COUNT(m->disconnects),COUNT(m->suspends),COUNT(m->timeouts),
         (unsigned)u->state,(unsigned)u->link_state,COUNT(u->sockets_opened),COUNT(u->sockets_closed),
@@ -162,7 +166,10 @@ JNIEXPORT jstring JNICALL Java_org_coh_nativecombined_LocalNative_report(JNIEnv 
         COUNT(u->cancellations),COUNT(u->timeouts),u->last_system_error,COUNT(n->sent),COUNT(n->received),
         COUNT(n->retransmits),COUNT(n->acknowledged),COUNT(n->duplicates),COUNT(n->malformed),COUNT(n->queue_limits),
         COUNT(n->fragment_expirations),COUNT(n->timeouts),COUNT(n->unsupported),n->tx_pending,n->rx_pending,
-        n->fragment_groups,COUNT(n->storage_bytes),COUNT(n->codec_bytes),COUNT(n->high_water_retained_bytes));
+        n->fragment_groups,COUNT(n->storage_bytes),COUNT(n->codec_bytes),COUNT(n->high_water_retained_bytes),
+        COUNT(n->owned_retained_bytes),COUNT(n->owned_high_water_bytes),
+        (unsigned)n->decode.failure_kind,COUNT(n->decode.compressed_bytes),COUNT(n->decode.declared_raw_bytes),
+        COUNT(n->decode.output_budget),n->decode.normalized_command,(unsigned)n->decode.command_valid);
 #undef COUNT
     if(written<0||(size_t)written>=sizeof(json))return (*env)->NewStringUTF(env,"{\"phase\":\"REPORT_LIMIT\"}");
     return (*env)->NewStringUTF(env,json);

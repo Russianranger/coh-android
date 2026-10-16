@@ -35,6 +35,7 @@ typedef struct CohNetUdp CohNetUdp;
  * request a wildcard ephemeral bind; other non-unicast local IPs are invalid. */
 CohStatus coh_net_udp_config_validate(const CohNetUdpConfig *);
 CohNetUdp *coh_net_udp_create(const CohNetUdpConfig *);
+CohStatus coh_net_udp_set_decoded_budget(CohNetUdp *, size_t bytes);
 void coh_net_udp_destroy(CohNetUdp *);
 /* Begin sends nothing until service(). Only IDLE/CLOSED may begin; a cancelled,
  * timed-out, failed or suspended session requires resume() with a fresh ID. */
@@ -47,6 +48,8 @@ CohStatus coh_net_udp_service(CohNetUdp *, uint64_t now_ms, CohCancel);
 CohStatus coh_net_udp_queue(CohNetUdp *, CohBytes, uint32_t bits,
     int reliable, int ordered, int compressed, uint64_t now_ms);
 CohStatus coh_net_udp_next(CohNetUdp *, CohNetMessage *);
+CohStatus coh_net_udp_next_owned(CohNetUdp *, CohNetOwnedMessage *);
+CohStatus coh_net_udp_owned_release(CohNetUdp *, CohNetOwnedMessage *);
 CohStatus coh_net_udp_disconnect(CohNetUdp *, uint64_t now_ms);
 /* Suspend closes only on the owner thread, clears pending gameplay/reliability
  * and compression state, and leaves diagnostics. Resume recreates everything:

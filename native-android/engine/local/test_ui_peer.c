@@ -5,6 +5,7 @@
 #undef main
 #include "../mapclient/coh_mapclient.h"
 #include "server-command-fixtures.h"
+#include "../mapclient/tests/large_scene_fixture.h"
 #include <signal.h>
 #include <time.h>
 
@@ -13,6 +14,7 @@ typedef struct {
     CohNetEndpoint db_target,map_target;
     unsigned db_phase,map_phase,lists,choices,handoffs,connects,catalogs,scenes;
     uint32_t selected_slot;
+    size_t scene_compressed_bytes,scene_decoded_bytes;
     unsigned closed,failed;
     const char *report;
 } UiPeer;
@@ -25,11 +27,11 @@ static void ui_frame_send(Peer *p,CohNetEndpoint target,unsigned version,const C
     if(recording){CHECK(recording->count<16);recording->replies[recording->count++]=*packet;}
     frame_send(p,target,version,packet);
 }
-static void ui_message(Peer *p,CohNetEndpoint target,const uint8_t *data,size_t bits,uint32_t ack){
+static void ui_message(Peer *p,CohNetEndpoint target,const uint8_t *data,size_t bits,uint32_t ack,unsigned compressed){
     size_t bytes=(bits+7)/8,count=(bytes+1199)/1200;CHECK(count<=16);
     uint32_t sibling=count>1?++p->sibling:0;
     for(size_t part=0;part<count;part++){
-        CohNetPacket m={0};m.id=++p->id;
+        CohNetPacket m={0};m.id=++p->id;m.compressed=(uint8_t)compressed;
         if(sibling){m.sibling_id=sibling;m.sibling_count=(uint32_t)count;m.sibling_part=(uint32_t)part;}
         m.payload_bits=(uint32_t)(bits-part*1200*8);if(m.payload_bits>1200*8)m.payload_bits=1200*8;
         memcpy(m.payload,data+part*1200,(m.payload_bits+7)/8);m.ack_count=1;m.acks[0]=ack;
@@ -48,10 +50,14 @@ static void write_report(const UiPeer *u){
         "\"db_port\":%u,\"map_port\":%u,\"db_phase\":%u,\"map_phase\":%u,"
         "\"character_lists\":%u,\"character_choices\":%u,\"map_handoffs\":%u,\"map_connects\":%u,"
         "\"source_command_catalogs\":%u,\"source_command_count\":%u,\"scene_prefixes\":%u,"
+        "\"large_body_fixture\":true,\"scene_tail_parsed\":false,\"scene_decoded_bytes\":%zu,"
+        "\"scene_compressed_bytes\":%zu,\"scene_payload_bits\":%zu,\"scene_compressed\":%s,"
+        "\"scene_ordered\":false,\"decoded_budget_bytes\":%u,"
         "\"selected_wire_slot\":%u,\"opened_sockets\":2,\"closed_sockets\":%u}\n",
         u->failed?"true":"false",(long)getpid(),u->db.endpoint.port,u->map.endpoint.port,
         u->db_phase,u->map_phase,u->lists,u->choices,u->handoffs,u->connects,u->catalogs,
-        SOURCE_ACCESSIBLE_COMMAND_COUNT,u->scenes,u->selected_slot,u->closed)>0);
+        SOURCE_ACCESSIBLE_COMMAND_COUNT,u->scenes,u->scene_decoded_bytes,u->scene_compressed_bytes,
+        u->scene_decoded_bytes*8,u->scenes?"true":"false",COH_NET_DECODED_MAX,u->selected_slot,u->closed)>0);
     CHECK(!fclose(f));CHECK(!rename(temporary,u->report));
 }
 static void response(Peer *p,unsigned cmd,CohNetPacket *out,CohProtocolBits *b){
@@ -103,7 +109,7 @@ static void handle(UiPeer *u,unsigned map){
             ui_frame_send(p,*target,5,&reply);*phase=9;
         }else CHECK(control_id==0);
     }else if(!map&&*phase==2){
-        CHECK(cmd==COH_DB_LOGIN);ui_message(p,*target,players0,players0_bits,packet.id);
+        CHECK(cmd==COH_DB_LOGIN);ui_message(p,*target,players0,players0_bits,packet.id,0);
         *phase=3;u->lists++;
     }else if(!map&&*phase==3){
         uint32_t slot,local_ip,location;CHECK(cmd==COH_DB_CHOOSE_PLAYER);
@@ -134,15 +140,14 @@ static void handle(UiPeer *u,unsigned map){
         ui_frame_send(p,*target,5,&reply);u->connects++;*phase=3;
     }else if(map&&*phase==3){
         CHECK(cmd==COH_MAP_REQSHORTCUTS);
-        ui_message(p,*target,source_commands0,source_commands0_bits,packet.id);
+        ui_message(p,*target,source_commands0,source_commands0_bits,packet.id,0);
         u->catalogs++;*phase=4;
     }else if(map&&*phase==4){
         uint32_t stealth;CHECK(cmd==COH_MAP_REQSCENE&&coh_protocol_read(&b,1,&stealth)==COH_OK&&!stealth);
-        CohProtocolBits out_bits;CohNetPacket reply;response(p,COH_REP_GROUPS,&reply,&out_bits);
-        CHECK(coh_protocol_write_pack(&out_bits,1,0)==COH_OK&&coh_protocol_write_pack(&out_bits,1,0)==COH_OK);
-        CHECK(coh_protocol_write(&out_bits,1,0)==COH_OK&&coh_protocol_write(&out_bits,1,0)==COH_OK);
-        reply.payload_bits=(uint32_t)out_bits.bit_length;reply.ack_count=1;reply.acks[0]=packet.id;
-        ui_frame_send(p,*target,5,&reply);u->scenes++;*phase=5;
+        uint8_t encoded[COH_NET_MESSAGE_MAX];
+        u->scene_compressed_bytes=scene_fixture_encode(SCENE_FIXTURE_DECODED_BYTES,COH_REP_GROUPS,0,encoded,sizeof(encoded));
+        u->scene_decoded_bytes=SCENE_FIXTURE_DECODED_BYTES;
+        ui_message(p,*target,encoded,u->scene_compressed_bytes*8,packet.id,1);u->scenes++;*phase=5;
     }else {u->failed=1;stopped=1;}
     recording=NULL;write_report(u);
 }

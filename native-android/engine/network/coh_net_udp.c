@@ -12,6 +12,8 @@ struct CohNetUdp {
     struct sockaddr_in peer;CohNetEndpoint local;
     CohNetUdpDiagnostics diagnostics;
     uint32_t connect_id;uint64_t clock_ms;int begun;
+    size_t decoded_budget;
+    uint64_t owned_generation,link_owned_generation;
 };
 static int wildcard(const uint8_t a[4]) { return !(a[0]|a[1]|a[2]|a[3]); }
 static int unicast(const uint8_t a[4]) {
@@ -46,7 +48,12 @@ static CohStatus io_failure(CohNetUdp *u) {
 CohNetUdp *coh_net_udp_create(const CohNetUdpConfig *c) {
     if(coh_net_udp_config_validate(c)!=COH_OK)return NULL;
     CohNetUdp *u=calloc(1,sizeof(*u));if(!u)return NULL;
-    u->config=*c;u->peer=address(c->peer);u->fd=-1;return u;
+    u->config=*c;u->peer=address(c->peer);u->fd=-1;u->decoded_budget=COH_NET_MESSAGE_MAX;return u;
+}
+CohStatus coh_net_udp_set_decoded_budget(CohNetUdp *u,size_t bytes) {
+    if(!u||u->diagnostics.state!=COH_UDP_IDLE)return COH_STATE;
+    if(bytes<COH_NET_MESSAGE_MAX||bytes>COH_NET_DECODED_MAX)return COH_INVALID;
+    u->decoded_budget=bytes;return COH_OK;
 }
 void coh_net_udp_destroy(CohNetUdp *u) {
     if(u){close_fd(u);discard_link(u);memset(u,0,sizeof(*u));free(u);}
@@ -55,6 +62,8 @@ static CohStatus start(CohNetUdp *u,uint32_t id,uint64_t now) {
     if(u->begun&&(now<u->clock_ms||id==u->connect_id))return COH_INVALID;
     close_fd(u);discard_link(u);
     u->link=coh_net_create(&u->config.link);if(!u->link){u->diagnostics.state=COH_UDP_FAILED;return COH_LIMIT;}
+    CohStatus budget_status=coh_net_set_decoded_budget(u->link,u->decoded_budget);
+    if(budget_status!=COH_OK){u->diagnostics.state=COH_UDP_FAILED;return budget_status;}
     CohStatus configured=coh_net_set_key_exchange(u->link,u->config.key_exchange,u->config.key_context,u->config.encryption_required);
     if(configured!=COH_OK){u->diagnostics.state=COH_UDP_FAILED;return configured;}
     u->fd=socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);if(u->fd<0)return io_failure(u);
@@ -147,6 +156,27 @@ CohStatus coh_net_udp_next(CohNetUdp *u,CohNetMessage *out) {
     if(!u||!out)return COH_INVALID;
     if(u->diagnostics.state!=COH_UDP_ACTIVE)return COH_STATE;
     CohStatus s=coh_net_next(u->link,out);(void)terminal(u);return s;
+}
+CohStatus coh_net_udp_next_owned(CohNetUdp *u,CohNetOwnedMessage *out) {
+    if(!u||!out)return COH_INVALID;
+    if(u->diagnostics.state!=COH_UDP_ACTIVE)return COH_STATE;
+    if(u->owned_generation==UINT64_MAX)return COH_LIMIT;
+    CohNetOwnedMessage view;CohStatus s=coh_net_next_owned(u->link,&view);
+    if(s==COH_OK) {
+        /* Preserve lease identity across suspend/resume's fresh NetLink, even
+         * when malloc reuses the previous decoded buffer's address. */
+        u->link_owned_generation=view.generation;view.generation=++u->owned_generation;*out=view;
+    }
+    (void)terminal(u);return s;
+}
+CohStatus coh_net_udp_owned_release(CohNetUdp *u,CohNetOwnedMessage *out) {
+    if(!out)return COH_INVALID;
+    CohStatus s=COH_STATE;
+    if(u&&out->generation==u->owned_generation) {
+        CohNetOwnedMessage view=*out;view.generation=u->link_owned_generation;
+        s=coh_net_owned_release(u->link,&view);
+    }
+    memset(out,0,sizeof(*out));return s;
 }
 CohStatus coh_net_udp_disconnect(CohNetUdp *u,uint64_t now) {
     if(!u||u->diagnostics.state!=COH_UDP_ACTIVE)return COH_STATE;

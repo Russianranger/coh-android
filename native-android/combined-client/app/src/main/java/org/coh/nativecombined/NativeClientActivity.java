@@ -332,10 +332,22 @@ public final class NativeClientActivity extends Activity implements SurfaceHolde
                     ||"MAP_CONNECTING".equals(phase)||"SCENE_INCOMPLETE".equals(phase);
             connectButton.setEnabled(!active&&!networkConnecting);
             String detail="SCENE_INCOMPLETE".equals(phase)
-                    ? " • MapServer replied; complete server scene/entity rendering is pending."
+                    ? " • Scene data received; full server world decoding is pending."
                     : "CHARACTERS_READY".equals(phase) ? " • Select an existing disposable-profile character."
                     : "POLICY_UNAVAILABLE".equals(phase) ? " • Start/verify the server in the launcher, then reconnect."
                     : "SUSPENDED".equals(phase) ? " • Connect again after returning; no background reconnection." : "";
+            JSONObject map=report.optJSONObject("map_protocol");
+            JSONObject udp=map==null?null:map.optJSONObject("udp");
+            JSONObject link=udp==null?null:udp.optJSONObject("link");
+            JSONObject decode=link==null?null:link.optJSONObject("decode");
+            if("FAILED".equals(phase)&&map!=null&&map.optInt("stage")==2&&decode!=null) {
+                switch(decode.optInt("failure_kind")) {
+                    case 2: detail=" • Server data exceeds the current receive limit. Export the report.";break;
+                    case 3: detail=" • Server receive memory is unavailable. Export the report.";break;
+                    case 1: case 4: detail=" • Server data could not be decoded. Export the report.";break;
+                    default: break;
+                }
+            }
             networkStatus.setText("Server protocol: "+phase+detail);
             if(!"CHARACTERS_READY".equals(phase)){characterButtons.removeAllViews();charactersScroll.setVisibility(android.view.View.GONE);}
         } catch(Exception impossible) {networkStatus.setText("Server protocol report unavailable");}

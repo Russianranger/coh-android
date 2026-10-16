@@ -1,4 +1,5 @@
 #include "coh_net.h"
+#include "coh_net_zip_internal.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -16,6 +17,7 @@ struct CohNet {
     uint32_t seen[COH_NET_WINDOW],acks[COH_NET_ACK_MAX],ack_count;
     uint32_t next_id,next_sibling,next_ordered,last_ordered;
     uint64_t start_ms,last_rx_ms,last_clock_ms;
+    size_t decoded_budget,owned_bytes;uint8_t *owned;uint64_t owned_generation;
     CohNetDiagnostics diagnostics;
 };
 static void erase(void *data,size_t size) {volatile uint8_t *p=data;while(size--)*p++=0;}
@@ -29,6 +31,9 @@ static void occupancy(CohNet *n) {
     }
     n->diagnostics.tx_pending=tx;n->diagnostics.rx_pending=rx;n->diagnostics.fragment_groups=g;
     n->diagnostics.storage_bytes=sizeof(*n);n->diagnostics.codec_bytes=coh_net_zip_memory(n->zip);
+    n->diagnostics.owned_retained_bytes=n->owned_bytes;
+    if(n->owned_bytes>n->diagnostics.owned_high_water_bytes)n->diagnostics.owned_high_water_bytes=n->owned_bytes;
+    bytes+=n->owned_bytes;
     if(bytes>n->diagnostics.high_water_retained_bytes)n->diagnostics.high_water_retained_bytes=bytes;
 }
 CohNetConfig coh_net_default_config(void) {
@@ -39,10 +44,18 @@ CohNet *coh_net_create(const CohNetConfig *config) {
     if(c.version>5||!c.max_retries||c.max_retries>64||!c.connect_timeout_ms||
        !c.idle_timeout_ms||!c.fragment_timeout_ms)return NULL;
     CohNet *n=calloc(1,sizeof(*n));if(!n)return NULL;
-    n->config=c;n->zip=coh_net_zip_create();
+    n->config=c;n->decoded_budget=COH_NET_MESSAGE_MAX;n->zip=coh_net_zip_create();
     if(!n->zip){free(n);return NULL;}occupancy(n);return n;
 }
-void coh_net_destroy(CohNet *n) { if(n){coh_net_zip_destroy(n->zip);erase(n,sizeof(*n));free(n);} }
+static void free_owned(CohNet *n) {
+    if(n->owned){erase(n->owned,n->owned_bytes);free(n->owned);n->owned=NULL;n->owned_bytes=0;}
+}
+void coh_net_destroy(CohNet *n) { if(n){free_owned(n);coh_net_zip_destroy(n->zip);erase(n,sizeof(*n));free(n);} }
+CohStatus coh_net_set_decoded_budget(CohNet *n,size_t bytes) {
+    if(!n||n->state!=COH_NET_IDLE)return COH_STATE;
+    if(bytes<COH_NET_MESSAGE_MAX||bytes>COH_NET_DECODED_MAX)return COH_INVALID;
+    n->decoded_budget=bytes;return COH_OK;
+}
 CohNetState coh_net_state(const CohNet *n) { return n?n->state:COH_NET_FAILED; }
 CohStatus coh_net_set_key_exchange(CohNet *n,CohNetKeyExchange exchange,void *context,int required) {
     if(!n||n->state!=COH_NET_IDLE)return COH_STATE;
@@ -104,6 +117,7 @@ CohStatus coh_net_queue(CohNet *n,CohBytes data,uint32_t bits,int reliable,int o
     return queue_raw(n,data,bits,reliable,ordered,compressed,0,now);
 }
 static void clear_queues(CohNet *n) {
+    free_owned(n);
     memset(n->tx,0,sizeof(n->tx));memset(n->rx,0,sizeof(n->rx));memset(n->groups,0,sizeof(n->groups));n->ack_count=0;occupancy(n);
 }
 CohStatus coh_net_disconnect(CohNet *n,uint64_t now) {
@@ -317,6 +331,7 @@ CohStatus coh_net_receive(CohNet *n,CohBytes frame,uint64_t now) {
 }
 CohStatus coh_net_next(CohNet *n,CohNetMessage *out) {
     if(!n||!out)return COH_INVALID;
+    if(n->owned)return COH_STATE;
     Rx *r=NULL;
     for(unsigned i=0;i<COH_NET_RX_MAX;i++)if(n->rx[i].used) {
         CohNetMessage *m=&n->rx[i].message;
@@ -333,5 +348,57 @@ CohStatus coh_net_next(CohNet *n,CohNetMessage *out) {
     }
     if(m.ordered)n->last_ordered=m.ordered_id;
     r->used=0;*out=m;occupancy(n);return COH_OK;
+}
+CohStatus coh_net_next_owned(CohNet *n,CohNetOwnedMessage *out) {
+    if(!n||!out)return COH_INVALID;
+    if(n->owned)return COH_STATE;
+    Rx *r=NULL;
+    for(unsigned i=0;i<COH_NET_RX_MAX;i++)if(n->rx[i].used) {
+        CohNetMessage *m=&n->rx[i].message;
+        if(m->ordered&&m->ordered_id!=n->last_ordered+1)continue;
+        if(!r||m->id<r->message.id)r=&n->rx[i];
+    }
+    if(!r)return COH_NOT_FOUND;
+    CohNetMessage *m=&r->message;size_t bytes=(m->payload_bits+7)/8;
+    CohNetDecodeReceipt receipt;memset(&receipt,0,sizeof(receipt));
+    receipt.output_budget=n->decoded_budget;
+    if(m->compressed&&bytes>=4) {
+        uint32_t cmd=(uint32_t)m->payload[0]|(uint32_t)m->payload[1]<<8|
+            (uint32_t)m->payload[2]<<16|(uint32_t)m->payload[3]<<24;
+        if(n->config.version<4&&cmd>=7&&cmd<=11){receipt.command_valid=1;receipt.normalized_command=cmd-5;}
+        else if(n->config.version>=4&&cmd>=2&&cmd<=6){receipt.command_valid=1;receipt.normalized_command=cmd;}
+    }
+    uint8_t *data=NULL;size_t decoded=bytes;CohStatus status=COH_OK;
+    if(m->compressed) {
+        if(m->payload_bits&7){receipt.compressed_bytes=bytes;receipt.failure_kind=COH_NET_DECODE_HEADER;status=COH_INVALID;}
+        else status=coh_net_zip_decode_owned(n->zip,m->ordered,
+            (CohBytes){m->payload,bytes},n->decoded_budget,&data,&decoded,&receipt);
+    }
+    else {
+        receipt.declared_raw_bytes=bytes;
+        data=malloc(bytes);
+        if(!data){receipt.failure_kind=COH_NET_DECODE_ALLOCATION;status=COH_LIMIT;}
+        else memcpy(data,m->payload,bytes);
+    }
+    n->diagnostics.decode=receipt;
+    if(status!=COH_OK) {
+        clear_queues(n);forget_key(n);n->state=COH_NET_FAILED;n->diagnostics.malformed++;return status;
+    }
+    if(n->owned_generation==UINT64_MAX) {
+        free(data);clear_queues(n);forget_key(n);n->state=COH_NET_FAILED;return COH_LIMIT;
+    }
+    n->owned=data;n->owned_bytes=decoded;n->owned_generation++;
+    CohNetOwnedMessage result={m->id,m->ordered_id,m->compressed?(uint32_t)decoded*8:m->payload_bits,
+        m->compressed,m->ordered,data,decoded,n->owned_generation};
+    if(m->ordered)n->last_ordered=m->ordered_id;
+    r->used=0;*out=result;occupancy(n);return COH_OK;
+}
+CohStatus coh_net_owned_release(CohNet *n,CohNetOwnedMessage *message) {
+    if(!message)return COH_INVALID;
+    CohStatus status=COH_STATE;
+    if(n&&n->owned&&message->payload==n->owned&&message->generation==n->owned_generation) {
+        free_owned(n);occupancy(n);status=COH_OK;
+    }
+    memset(message,0,sizeof(*message));return status;
 }
 void coh_net_diagnostics(const CohNet *n,CohNetDiagnostics *out) { if(n&&out){*out=n->diagnostics;out->codec_bytes=coh_net_zip_memory(n->zip);} }

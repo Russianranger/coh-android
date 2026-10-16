@@ -82,7 +82,9 @@ def command_fixtures(repo,directory):
  target=directory/'replication';target.mkdir()
  lib,_=helper.oracle(repo,target);helper.fixtures(lib,target,repo)
  lines=(target/'fixtures.h').read_text().splitlines()
- (directory/'server-command-fixtures.h').write_text('\n'.join(line for line in lines if line.startswith(('#define SOURCE_ACCESSIBLE','static const unsigned char source_commands','#define source_commands')))+'\n')
+ # Keep the original source writer's aligned GROUPS prefix alongside the
+ # catalog. Large-scene tests append an explicitly synthetic unparsed tail.
+ (directory/'server-command-fixtures.h').write_text('\n'.join(line for line in lines if line.startswith(('#define SOURCE_ACCESSIBLE','static const unsigned char source_commands','#define source_commands','static const unsigned char scene1[','#define scene1_bits')))+'\n')
  return 915
 
 def main():
@@ -110,6 +112,8 @@ def main():
    run(['cc',*flags,*objects,'-lz','-lm','-o',binary])
    checks[name]=json.loads(run([binary],env=env))
   proof={'schema':1,'passed':True,'scope':'source producer parity plus actual OS UDP with scripted synthetic peer; no real server/authentication/capture','source_files':len(pins),'source_golden_packets':count,'source_accessible_command_upper_count':catalog_count,'checks':checks,'leak_sanitizer_enabled':False,'leak_sanitizer_note':'ASan addresses checked; descriptor lifetime checked through /proc/self/fd. LeakSanitizer process inspection is unavailable in this execution environment.','android_arm64_object_built':False,'emulator_qualified':False,'thor_accepted':False,'actual_server_interoperability':False,'full_scene_parser':False,'full_entity_parser':False,'render_spawn_handoff':False,'login_verified':False}
+  proof['implementation_sha256']={str(source.relative_to(native)):hashlib.sha256(source.read_bytes()).hexdigest() for source in [*sources,HERE/'coh_mapclient.h',HERE/'tests/large_scene_fixture.h',HERE/'check.py']}
+  proof['server_command_fixtures_sha256']=hashlib.sha256((directory/'server-command-fixtures.h').read_bytes()).hexdigest()
   if args.ndk:
    compiler=args.ndk/'toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang'
    run([compiler,'-std=c99','-Wall','-Wextra','-Werror','-pedantic','-fPIC','-I'+str(native/'include'),'-c',HERE/'coh_mapclient.c','-o',directory/'mapclient-arm64.o'])

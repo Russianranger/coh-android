@@ -12,6 +12,8 @@ typedef struct { unsigned version;CohNetPacket packet;const uint8_t *payload,*wi
 #include "retry_goldens.h"
 typedef struct { int streaming;const uint8_t *input;size_t input_bytes;const uint8_t *wire;size_t wire_bytes; } ZipGolden;
 #include "zip_goldens.h"
+typedef struct { int streaming;unsigned pattern;size_t raw_bytes;const uint8_t *wire;size_t wire_bytes; } LargeGolden;
+#include "large_zip_goldens.h"
 typedef struct { uint8_t frames[COH_NET_TX_MAX][COH_PROTOCOL_FRAME_MAX];size_t sizes[COH_NET_TX_MAX];unsigned count;CohStatus status; } Captured;
 static CohStatus capture(void *context,CohBytes b) {
     Captured *c=context;if(c->status!=COH_OK)return c->status;
@@ -29,8 +31,9 @@ static CohNetPacket command(unsigned ver,uint32_t id,uint32_t cmd,uint32_t value
     if(has_value)CHECK(!coh_protocol_write_pack(&b,1,value));
     p.payload_bits=(uint32_t)b.bit_length;return p;
 }
-static CohNet *connected(unsigned ver) {
+static CohNet *connected_budget(unsigned ver,size_t budget) {
     CohNetConfig config=coh_net_default_config();config.version=ver;CohNet *n=coh_net_create(&config);CHECK(n);
+    if(budget)CHECK(coh_net_set_decoded_budget(n,budget)==COH_OK);
     CHECK(coh_net_begin(n,0x12345678,100)==COH_OK);CHECK(coh_net_begin(n,1,100)==COH_STATE);
     Captured c={0};CHECK(coh_net_pump(n,100,capture,&c,(CohCancel){0})==COH_OK);CHECK(c.count==1);
     CohNetPacket p;CHECK(coh_net_frame_decode(ver,NULL,0,1,(CohBytes){c.frames[0],c.sizes[0]},&p)==COH_OK);CHECK(p.connect&&p.id==1);
@@ -46,6 +49,7 @@ static CohNet *connected(unsigned ver) {
     CHECK(coh_net_receive(n,frame(ver,&p,raw),102)==COH_OK);CHECK(coh_net_state(n)==COH_NET_CONNECTED);session_cases++;
     return n;
 }
+static CohNet *connected(unsigned ver) {return connected_budget(ver,0);}
 static void test_frames(void) {
     uint8_t key_data[16];for(unsigned i=0;i<16;i++)key_data[i]=(uint8_t)i;CohBlowfish key;CHECK(!coh_bf_init(&key,key_data,16));
     for(size_t i=0;i<sizeof(goldens)/sizeof(goldens[0]);i++) {
@@ -161,6 +165,138 @@ static void test_compressed_session(void) {
     for(unsigned i=c.count;i>0;i--)CHECK(coh_net_receive(receiver,(CohBytes){c.frames[i-1],c.sizes[i-1]},104)==COH_OK);
     for(unsigned i=0;i<3;i++) { CohNetMessage m;CHECK(coh_net_next(receiver,&m)==COH_OK);CHECK(m.payload_bits==sizeof(input)*8&&m.payload[50]==i&&m.ordered_id==i+1); }
     coh_net_destroy(sender);coh_net_destroy(receiver);session_cases++;
+}
+
+/* Linker-local test allocator seam; production builds do not expose hooks. */
+static int refuse_owned_allocation;
+void *__real_malloc(size_t bytes);
+void *__wrap_malloc(size_t bytes) {
+    if(refuse_owned_allocation&&bytes>COH_NET_MESSAGE_MAX)return NULL;
+    return __real_malloc(bytes);
+}
+static void deliver_zip(CohNet *n,CohBytes body,unsigned order,uint32_t *id,uint64_t now) {
+    CHECK(body.size&&body.size<=COH_NET_MESSAGE_MAX);
+    unsigned count=(unsigned)((body.size+COH_PROTOCOL_PAYLOAD_MAX-1)/COH_PROTOCOL_PAYLOAD_MAX);
+    uint32_t first=*id;*id+=count;
+    for(unsigned part=count;part>0;part--) {
+        unsigned i=part-1;size_t offset=i*COH_PROTOCOL_PAYLOAD_MAX;
+        size_t bytes=body.size-offset;if(bytes>COH_PROTOCOL_PAYLOAD_MAX)bytes=COH_PROTOCOL_PAYLOAD_MAX;
+        CohNetPacket p;memset(&p,0,sizeof(p));p.id=first+i;p.ordered=(uint8_t)!!order;p.ordered_id=order;p.compressed=1;
+        if(count>1){p.sibling_id=first;p.sibling_count=count;p.sibling_part=i;}
+        p.payload_bits=(uint32_t)bytes*8;memcpy(p.payload,body.data+offset,bytes);
+        uint8_t raw[COH_PROTOCOL_FRAME_MAX];CHECK(coh_net_receive(n,frame(5,&p,raw),now)==COH_OK);
+    }
+}
+static void assert_large(const CohNetOwnedMessage *m,const LargeGolden *g) {
+    CHECK(m->payload_bytes==g->raw_bytes&&m->payload_bits==g->raw_bytes*8);
+    CHECK(m->payload[0]==6&&!m->payload[1]&&!m->payload[2]&&!m->payload[3]);
+    int valid=1;for(size_t i=4;i<g->raw_bytes;i++)if(m->payload[i]!=(uint8_t)(65+((i-4+g->pattern)%16))){valid=0;break;}
+    CHECK(valid);
+}
+static void test_owned_large(void) {
+    CohNet *n=coh_net_create(NULL);CHECK(n);
+    CHECK(coh_net_set_decoded_budget(n,COH_NET_MESSAGE_MAX-1)==COH_INVALID);
+    CHECK(coh_net_set_decoded_budget(n,COH_NET_DECODED_MAX+1)==COH_INVALID);
+    coh_net_destroy(n);n=connected_budget(5,COH_NET_DECODED_MAX);
+    CHECK(coh_net_set_decoded_budget(n,COH_NET_DECODED_MAX)==COH_STATE);
+    uint32_t id=102,order=0;size_t max=0;
+    for(size_t i=0;i<sizeof(large_goldens)/sizeof(large_goldens[0]);i++) {
+        const LargeGolden *g=&large_goldens[i];if(g->streaming)order++;
+        deliver_zip(n,(CohBytes){g->wire,g->wire_bytes},g->streaming?order:0,&id,103+i);
+        CohNetOwnedMessage m,before,empty;memset(&empty,0xa5,sizeof(empty));before=empty;
+        CHECK(coh_net_next_owned(n,&m)==COH_OK);assert_large(&m,g);
+        CHECK(coh_net_next_owned(n,&empty)==COH_STATE&&!memcmp(&empty,&before,sizeof(empty)));
+        CohNetMessage legacy;CHECK(coh_net_next(n,&legacy)==COH_STATE);
+        CohNetDiagnostics d;coh_net_diagnostics(n,&d);
+        if(g->raw_bytes>max)max=g->raw_bytes;
+        CHECK(d.owned_retained_bytes==g->raw_bytes&&d.owned_high_water_bytes==max);
+        CHECK(d.decode.failure_kind==COH_NET_DECODE_NONE&&d.decode.compressed_bytes==g->wire_bytes);
+        CHECK(d.decode.declared_raw_bytes==g->raw_bytes&&d.decode.output_budget==COH_NET_DECODED_MAX);
+        CHECK(d.decode.command_valid&&d.decode.normalized_command==6);
+        CHECK(coh_net_owned_release(n,&m)==COH_OK&&!m.payload&&!m.payload_bytes&&!m.generation);
+        coh_net_diagnostics(n,&d);CHECK(!d.owned_retained_bytes&&d.owned_high_water_bytes==max);
+        CHECK(coh_net_next_owned(n,&empty)==COH_NOT_FOUND&&!memcmp(&empty,&before,sizeof(empty)));
+    }
+    CohNetDiagnostics d;coh_net_diagnostics(n,&d);CHECK(!d.queue_limits&&d.owned_high_water_bytes==COH_NET_DECODED_MAX);
+    coh_net_destroy(n);session_cases++;
+    /* Ordered dictionary consumers cannot inflate order2 before order1. */
+    n=connected_budget(5,COH_NET_DECODED_MAX);id=102;
+    const LargeGolden *one=&large_goldens[1],*two=&large_goldens[3];
+    deliver_zip(n,(CohBytes){two->wire,two->wire_bytes},2,&id,103);
+    CohNetOwnedMessage m,before;memset(&m,0xa5,sizeof(m));before=m;
+    CHECK(coh_net_next_owned(n,&m)==COH_NOT_FOUND&&!memcmp(&m,&before,sizeof(m)));
+    deliver_zip(n,(CohBytes){one->wire,one->wire_bytes},1,&id,104);
+    CHECK(coh_net_next_owned(n,&m)==COH_OK);assert_large(&m,one);CHECK(coh_net_owned_release(n,&m)==COH_OK);
+    CHECK(coh_net_next_owned(n,&m)==COH_OK);assert_large(&m,two);CHECK(coh_net_owned_release(n,&m)==COH_OK);
+    coh_net_destroy(n);session_cases++;
+}
+static void owned_failure(CohBytes body,size_t budget,CohNetDecodeFailure why,CohStatus expected,int stream) {
+    CohNet *n=connected_budget(5,budget);uint32_t id=102;
+    deliver_zip(n,body,stream?1:0,&id,103);
+    CohNetOwnedMessage m,before;memset(&m,0xa5,sizeof(m));before=m;
+    CHECK(coh_net_next_owned(n,&m)==expected&&!memcmp(&m,&before,sizeof(m)));
+    CohNetDiagnostics d;coh_net_diagnostics(n,&d);
+    CHECK(coh_net_state(n)==COH_NET_FAILED&&d.decode.failure_kind==why);
+    CHECK(!d.owned_retained_bytes&&!d.owned_high_water_bytes&&!d.rx_pending&&!d.tx_pending&&!d.fragment_groups);
+    coh_net_destroy(n);negative++;
+}
+static void test_owned_failures(void) {
+    const LargeGolden *g=&large_goldens[0];
+    owned_failure((CohBytes){g->wire,g->wire_bytes},COH_NET_MESSAGE_MAX,COH_NET_DECODE_BUDGET,COH_LIMIT,0);
+    /* Opting in never changes legacy next's accepted16KiB output contract. */
+    CohNet *n=connected_budget(5,COH_NET_DECODED_MAX);uint32_t id=102;
+    deliver_zip(n,(CohBytes){g->wire,g->wire_bytes},0,&id,103);
+    CohNetMessage legacy,before;memset(&legacy,0xa5,sizeof(legacy));before=legacy;
+    CHECK(coh_net_next(n,&legacy)==COH_LIMIT&&!memcmp(&legacy,&before,sizeof(legacy)));
+    CHECK(coh_net_state(n)==COH_NET_FAILED);coh_net_destroy(n);negative++;
+    uint8_t invalid[COH_NET_MESSAGE_MAX];memcpy(invalid,g->wire,g->wire_bytes);
+    memset(invalid+4,0xff,4);
+    n=connected_budget(5,COH_NET_DECODED_MAX);id=102;
+    deliver_zip(n,(CohBytes){invalid,g->wire_bytes},0,&id,103);CohNetOwnedMessage m;
+    CHECK(coh_net_next_owned(n,&m)==COH_LIMIT);CohNetDiagnostics d;coh_net_diagnostics(n,&d);
+    CHECK(d.decode.declared_raw_bytes==UINT64_C(4294967299)&&d.decode.failure_kind==COH_NET_DECODE_BUDGET);
+    CHECK(!d.owned_retained_bytes&&!d.owned_high_water_bytes);coh_net_destroy(n);negative++;
+    memcpy(invalid,g->wire,g->wire_bytes);memset(invalid+4,0,4);
+    owned_failure((CohBytes){invalid,g->wire_bytes},COH_NET_DECODED_MAX,COH_NET_DECODE_HEADER,COH_INVALID,0);
+    memcpy(invalid,g->wire,g->wire_bytes);invalid[8]^=0x55;
+    owned_failure((CohBytes){invalid,g->wire_bytes},COH_NET_DECODED_MAX,COH_NET_DECODE_STREAM,COH_INVALID,0);
+    memcpy(invalid,g->wire,g->wire_bytes);invalid[g->wire_bytes]=0x7f;
+    owned_failure((CohBytes){invalid,g->wire_bytes+1},COH_NET_DECODED_MAX,COH_NET_DECODE_STREAM,COH_INVALID,0);
+    for(size_t cut=16;cut<g->wire_bytes;cut++)owned_failure((CohBytes){g->wire,cut},COH_NET_DECODED_MAX,COH_NET_DECODE_STREAM,COH_INVALID,0);
+    g=&large_goldens[1];
+    for(size_t cut=16;cut<g->wire_bytes;cut++)owned_failure((CohBytes){g->wire,cut},COH_NET_DECODED_MAX,COH_NET_DECODE_STREAM,COH_INVALID,1);
+    /* Exact allocation failure leaves dictionary unpublished and fails closed. */
+    g=&large_goldens[0];n=connected_budget(5,COH_NET_DECODED_MAX);id=102;
+    deliver_zip(n,(CohBytes){g->wire,g->wire_bytes},0,&id,103);
+    refuse_owned_allocation=1;CHECK(coh_net_next_owned(n,&m)==COH_LIMIT);refuse_owned_allocation=0;
+    coh_net_diagnostics(n,&d);CHECK(d.decode.failure_kind==COH_NET_DECODE_ALLOCATION&&!d.owned_retained_bytes&&!d.owned_high_water_bytes);
+    coh_net_destroy(n);negative++;
+    /* No decoded secret-looking command word becomes a public command receipt. */
+    uint8_t tiny[4]={0xef,0xbe,0xad,0xde};n=connected_budget(5,COH_NET_DECODED_MAX);id=102;
+    deliver_zip(n,(CohBytes){tiny,4},0,&id,103);CHECK(coh_net_next_owned(n,&m)==COH_OK);
+    coh_net_diagnostics(n,&d);CHECK(!d.decode.command_valid&&!d.decode.normalized_command);
+    CHECK(coh_net_owned_release(n,&m)==COH_OK);coh_net_destroy(n);negative++;
+    n=connected_budget(1,COH_NET_DECODED_MAX);CohNetPacket normalized;memset(&normalized,0,sizeof(normalized));
+    normalized.id=102;normalized.compressed=1;normalized.payload_bits=32;normalized.payload[0]=11;
+    uint8_t encoded[COH_PROTOCOL_FRAME_MAX];CHECK(coh_net_receive(n,frame(1,&normalized,encoded),103)==COH_OK);
+    CHECK(coh_net_next_owned(n,&m)==COH_OK);coh_net_diagnostics(n,&d);
+    CHECK(d.decode.command_valid&&d.decode.normalized_command==6);
+    CHECK(coh_net_owned_release(n,&m)==COH_OK);coh_net_destroy(n);negative++;
+    /* Cleanup invalidates all aliases; an old generation cannot release a new one. */
+    for(unsigned method=0;method<5;method++) {
+        n=connected_budget(5,COH_NET_DECODED_MAX);id=102;g=&large_goldens[0];
+        deliver_zip(n,(CohBytes){g->wire,g->wire_bytes},0,&id,103);CHECK(coh_net_next_owned(n,&m)==COH_OK);
+        CohNetOwnedMessage stale=m;
+        if(method==0)coh_net_close(n);
+        else if(method==1)coh_net_cancel(n);
+        else if(method==2)CHECK(coh_net_disconnect(n,104)==COH_OK);
+        else if(method==3){Captured captured={0};CHECK(coh_net_pump(n,30103,capture,&captured,(CohCancel){0})==COH_STATE);}
+        else {coh_net_destroy(n);n=NULL;}
+        if(n){coh_net_diagnostics(n,&d);CHECK(!d.owned_retained_bytes&&d.owned_high_water_bytes==g->raw_bytes);}
+        CHECK(coh_net_owned_release(n,&stale)==COH_STATE&&!stale.payload&&!stale.generation);
+        coh_net_destroy(n);
+    }
+    session_cases++;
 }
 static int cancelled(void *context) { return *(int*)context; }
 static void test_negative_lifecycle(void) {
@@ -281,7 +417,7 @@ static void test_fuzz(void) {
     }
 }
 int main(void) {
-    clock_t start=clock();test_frames();test_zip();test_session();test_compressed_session();test_negative_lifecycle();test_key_exchange();test_fuzz();
+    clock_t start=clock();test_frames();test_zip();test_session();test_compressed_session();test_owned_large();test_owned_failures();test_negative_lifecycle();test_key_exchange();test_fuzz();
     CohNet *n=coh_net_create(NULL);CHECK(n);CohNetDiagnostics d;coh_net_diagnostics(n,&d);coh_net_destroy(n);
     printf("{\"checks\":%u,\"negative_cases\":%u,\"wire_cases\":%u,\"session_scenarios\":%u,\"fixed_link_bytes\":%zu,\"codec_initial_bytes\":%zu,\"cpu_test_ms\":%.3f,\"server_interoperability\":false}\n",checks,negative,wire_cases,session_cases,d.storage_bytes,d.codec_bytes,1000.0*(clock()-start)/CLOCKS_PER_SEC);return 0;
 }

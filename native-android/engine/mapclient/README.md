@@ -100,5 +100,38 @@ its checkpoint. This does not relax malformed or unsupported-message policy.
 The source command-catalog regression sends all 915 pinned static names over
 actual fragmented UDP datagrams in bitpacked and compressed/byte-aligned
 profiles. This is a scripted source-layout peer; it is not a server capture
-or authenticated live session. No transport kernel or 16KiB message bound is
-changed. Larger real scene messages remain a separate bounded-capacity issue.
+or authenticated live session.
+
+### Bounded owned GROUPS inspection (0.1.6)
+
+The Map role now explicitly opts into the transport's owned decoded-message
+API with a **4 MiB** decoded-body budget before connection. Wire frames,
+sibling storage, ordinary receive messages, and DB/Auth roles retain their
+existing limits. A decoded body is borrowed for one synchronous inspection
+and released before another receive; refusal/close also invalidates the
+lease. Large non-GROUPS messages fail with `COH_LIMIT`. A valid large GROUPS
+prefix still returns `COH_UNSUPPORTED` and remains `SCENE_INCOMPLETE`.
+
+`last_decoded_bytes` records the inspected body's actual byte count, while
+`scene_decoded_bytes` changes only after a valid GROUPS prefix. The transport
+adds bounded numeric decode receipts and current/high-water ownership counts.
+These diagnostics retain neither message bodies nor credentials. The decoded
+bytes are not proof that the unparsed group tail is valid.
+
+The large-body fixture is a 128 KiB decoded body beginning with the pinned
+original BitStream writer's GROUPS prefix. Its appended data is an explicitly
+synthetic, unparsed tail. The compressed wire body remains below 16 KiB but
+spans multiple actual UDP siblings. Tests exercise nonstream and ordered
+streaming profiles, known/unknown DBID inspection, unsupported large commands,
+over-budget declarations, truncated zlib input, wrong-state delivery, and
+close/suspend/cancel/disconnect cleanup. The Android qualification-only peer
+uses the same fixture and marks `large_body_fixture=true`,
+`scene_tail_parsed=false`, and `real_server_interoperability=false`.
+
+No complete scene/entity parser, authoritative spawn, AuthServer login, or
+live-world acceptance is established by this change.
+
+`evidence/scene-owned-016-host.json` records 31,007 checks, 10,661 negative
+cases and 29 actual-socket scenarios in each release, ASan and UBSan run.
+Complete ARM64 and x86_64 API26 test executables were cross-built; that receipt
+does not claim Android execution or physical Thor acceptance.

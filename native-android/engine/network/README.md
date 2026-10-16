@@ -1,5 +1,43 @@
 # Gate 25: bounded native NetLink continuation
 
+## 0.1.6 owned decoded receive continuation
+
+The Combined client now uses this module; the original baseline discussion
+below records the earlier standalone boundary. Physical 0.1.4 evidence reaches
+the initial Map handshake and then a decode limit. It does not establish the
+size of the refused scene or complete world entry.
+
+`coh_net_set_decoded_budget` and `coh_net_udp_set_decoded_budget` opt in while
+IDLE to a decoded receive budget from 16 KiB through 4 MiB. This affects only
+`coh_net_next_owned` / `coh_net_udp_next_owned`. Default configuration, legacy
+`next`, send limits, compressed input, reassembly arrays and the 16-sibling
+ceiling stay unchanged. A compressed wire body is still at most 16 KiB.
+
+One decoded heap body is allocated after command/length/budget preflight and
+published only after complete inflation. No expanded stack or queue array is
+introduced. Ordered delivery uses the same persistent source zlib dictionary;
+unordered messages use independent contexts. Source `Z_SYNC_FLUSH` completion,
+declared output size and complete input consumption are checked. Any failure
+fails the link and clears acknowledged queues rather than retrying a changed
+dictionary. Diagnostics expose only bounded byte counts, a five-value failure
+kind and an allowlisted normalized command 2..6.
+
+The view remains link-owned. Release it synchronously with `owned_release`
+before another delivery; legacy `next` also refuses while it is outstanding.
+Release clears the caller view. Close, cancel, timeout, disconnect and destroy
+free and invalidate it. UDP suspend destroys the old link; a UDP-wide monotonic
+lease prevents a copied view from an earlier session freeing a new body when
+the allocator reuses an address. Neither view nor owner can outlive destroy.
+Current and high-water owned byte counts are separate from fixed queue storage.
+
+The new deterministic fixtures compare eight 64 KiB..4 MiB source-convention
+messages against unchanged original `bsCompress` and independent Python zlib.
+Host tests cover reverse fragment arrival, persistent dictionary ordering,
+exact budget and 32-bit declaration overflow, malformed/truncated/trailing
+streams, allocation failure, one-view ownership and lifecycle cleanup. These
+are controlled protocol tests; authentic large-scene server acceptance and
+physical Thor qualification remain pending.
+
 This opt-in C99 library extends the accepted bitstream/Blowfish kernels with
 source-compatible NetLink framing, reliable queues and a client session state
 machine, plus an opt-in POSIX/Android nonblocking UDP owner. It has no Wine,

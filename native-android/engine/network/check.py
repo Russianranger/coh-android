@@ -74,10 +74,11 @@ void reference_wrap(U32 version,U32 id,U32 sibcount,U32 part,U32 sibid,U32 compr
  (void)connect;*length=blowfishPad((stream.bitLength+7)/8);memcpy(out,output,*length);
 }
 void reference_zip(U32 streaming,const U8 *data,U32 bytes,U8 *out,U32 *length){
- static z_stream persistent={0};static int ready=0;U32 memory[8192]={0};BitStream stream;
+ static z_stream persistent={0};static int ready=0;U32 *memory=calloc((bytes+65539)/4,4);BitStream stream;assert(memory);
  if(!ready){assert(deflateInit(&persistent,Z_DEFAULT_COMPRESSION)==Z_OK);ready=1;}
- initBitStream(&stream,(U8*)memory,sizeof(memory),Write,1,0);memcpy(memory,data,bytes);stream.bitLength=bytes*8;stream.size=bytes;
- bsCompress(&stream,0,streaming?&persistent:NULL);assert(!stream.errorFlags);*length=stream.bitLength/8;memcpy(out,memory,*length);
+ if(streaming==2){assert(deflateReset(&persistent)==Z_OK);streaming=1;}
+ initBitStream(&stream,(U8*)memory,bytes+65536,Write,1,0);memcpy(memory,data,bytes);stream.bitLength=bytes*8;stream.size=bytes;
+ bsCompress(&stream,0,streaming?&persistent:NULL);assert(!stream.errorFlags);*length=stream.bitLength/8;memcpy(out,memory,*length);free(memory);
 }
 '''
  source=directory/'original.c';source.write_text(pre+snippets+wrapper)
@@ -147,7 +148,20 @@ void reference_zip(U32 streaming,const U8 *data,U32 bytes,U8 *out,U32 *length){
  zip_lines.append('static const ZipGolden zip_goldens[]={')
  for i,stream in zip_cases:zip_lines.append('{%d,zip%d_input,sizeof(zip%d_input),zip%d_wire,sizeof(zip%d_wire)},'%(stream,i,i,i,i))
  zip_lines.append('};');(directory/'zip_goldens.h').write_text('\n'.join(zip_lines)+'\n')
- return {'original_producer_cases':len(cases),'plaintext_bytes_compared':compared,'timeout_source_cases':len(retries),'original_compression_cases':len(zip_cases),'source_file_count':len(pins),'source_revision':expected['source_revision'],'fixture_sha256':sha(json.dumps(cases,sort_keys=True).encode()),'oracle':'unchanged original pktWrap/ACK/bit/auto/bsCompress/calcTimeout bodies; trusted aligned O0 host, never shipped'}
+ large_lines=[];large_cases=[];large_compressor=zlib.compressobj()
+ for index,tail in enumerate([65532,131068,1048572,4194300]):
+  data=struct.pack('<I',6)+bytes(((j+index)%16)+65 for j in range(tail))
+  for streaming in [0,1]:
+   packed=data[:4]+struct.pack('<I',tail)+(large_compressor.compress(data[4:])+large_compressor.flush(zlib.Z_SYNC_FLUSH) if streaming else zlib.compress(data[4:]))
+   out=C.create_string_buffer(32768);size=C.c_uint32();lib.reference_zip(2 if streaming and index==0 else streaming,data,len(data),out,C.byref(size))
+   if out.raw[:size.value]!=packed:raise ValueError('Large original bsCompress differs')
+   if len(packed)>16384:raise ValueError('Large fixture exceeds unchanged wire bound')
+   i=len(large_cases);large_lines.append('static const uint8_t large%d_wire[]={%s};'%(i,','.join(str(v) for v in packed)))
+   large_cases.append((i,index,streaming,tail))
+ large_lines.append('static const LargeGolden large_goldens[]={')
+ for i,index,streaming,tail in large_cases:large_lines.append('{%d,%d,%d,large%d_wire,sizeof(large%d_wire)},'%(streaming,index,tail+4,i,i))
+ large_lines.append('};');(directory/'large_zip_goldens.h').write_text('\n'.join(large_lines)+'\n')
+ return {'original_large_compression_cases':len(large_cases),'original_large_raw_bytes':sum(v[3]+4 for v in large_cases),'original_producer_cases':len(cases),'plaintext_bytes_compared':compared,'timeout_source_cases':len(retries),'original_compression_cases':len(zip_cases),'source_file_count':len(pins),'source_revision':expected['source_revision'],'fixture_sha256':sha(json.dumps(cases,sort_keys=True).encode()),'oracle':'unchanged original pktWrap/ACK/bit/auto/bsCompress/calcTimeout bodies; trusted aligned O0 host, never shipped'}
 def main():
  p=argparse.ArgumentParser();p.add_argument('--source-root',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--sanitize',action='store_true');p.add_argument('--cc',default='cc');a=p.parse_args()
  with tempfile.TemporaryDirectory(prefix='coh-gate25-') as tmp:
@@ -156,12 +170,12 @@ def main():
   sources=[*library,HERE/'tests/test_net.c']
   flags=['-std=c99','-Wall','-Wextra','-Werror','-O1','-g','-I'+str(ROOT/'include'),'-I'+str(ROOT/'protocol'),'-I'+str(HERE),'-I'+str(d)]
   if a.sanitize:flags+=['-fno-omit-frame-pointer','-fsanitize=address,undefined','-fno-pie','-no-pie']
-  binary=d/'net-test';build=run([a.cc,*flags,*map(str,sources),'-lz','-o',str(binary)])
+  binary=d/'net-test';build=run([a.cc,*flags,*map(str,sources),'-Wl,--wrap=malloc','-lz','-o',str(binary)])
   env=dict(os.environ,ASAN_OPTIONS='detect_leaks=0:abort_on_error=1',UBSAN_OPTIONS='halt_on_error=1:print_stacktrace=1')
   result=run([str(binary)],env=env);native=json.loads(result.stdout)
   udp_binary=d/'udp-test';run([a.cc,*flags,*map(str,[*library,HERE/'tests/test_udp.c']),'-lz','-o',str(udp_binary)])
   udp=json.loads(run([str(udp_binary)],env=env).stdout)
-  qualified=[*sources,HERE/'tests/test_udp.c',HERE/'coh_net.h',HERE/'coh_net_udp.h',HERE/'check.py',ROOT/'engine/coh_contracts.h']
+  qualified=[*sources,HERE/'coh_net_zip_internal.h',HERE/'tests/test_udp.c',HERE/'coh_net.h',HERE/'coh_net_udp.h',HERE/'check.py',ROOT/'engine/coh_contracts.h']
   proof.update(schema='coh-native-gate25-host-v2',passed=True,native=native,udp_adapter=udp,native_sources_sha256={str(path.relative_to(ROOT)):sha(path.read_bytes()) for path in qualified},sanitizers='ASan+UBSan; leak sanitizer disabled on restricted host' if a.sanitize else 'not requested',android_build=False,android_execution=False,live_server_interoperability=False)
   a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(proof,indent=2)+'\n')
   print(json.dumps(proof))

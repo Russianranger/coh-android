@@ -61,6 +61,9 @@ typedef struct {
     CohMapStage stage;
     CohStatus last_status;
     uint32_t last_command, last_payload_bits;
+    /* Bounded owned Map-body diagnostics only; no bytes are retained here.
+     * scene_decoded_bytes changes only after a valid GROUPS prefix. */
+    uint32_t last_decoded_bytes, scene_decoded_bytes;
     unsigned last_command_valid, last_byte_aligned;
     uint32_t selected_slot, selection_generation, selected_dbid;
     uint32_t map_id, map_link_id, generation;

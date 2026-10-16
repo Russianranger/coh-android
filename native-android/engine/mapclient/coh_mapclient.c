@@ -84,6 +84,10 @@ CohStatus coh_map_client_begin(CohMapClient *m,const CohMapAuthorization *a,uint
     if(!id||id==m->last_connect_id||now<m->last_ms)return COH_INVALID;
     if(m->diag.generation==UINT32_MAX)return COH_LIMIT;
     CohNetUdp *udp=coh_net_udp_create(&m->config.udp);if(!udp)return COH_LIMIT;
+    /* Only this Map role opts into a bounded owned expanded body. Ordinary
+     * DB/Auth messages, frames, fragment queues and legacy APIs stay 16KiB. */
+    s=coh_net_udp_set_decoded_budget(udp,COH_NET_DECODED_MAX);
+    if(s!=COH_OK){coh_net_udp_destroy(udp);return s;}
     s=coh_net_udp_begin(udp,id,now);if(s!=COH_OK){coh_net_udp_destroy(udp);return s;}
     coh_net_udp_destroy(m->udp);m->udp=udp;
     clear_authorization(m);
@@ -100,6 +104,7 @@ CohStatus coh_map_client_begin(CohMapClient *m,const CohMapAuthorization *a,uint
     m->cookie=a->handoff.cookie;m->authorized=1;m->last_connect_id=id;
     m->diag.stage=COH_MAP_STAGE_NONE;m->diag.last_status=COH_OK;
     m->diag.last_command=m->diag.last_payload_bits=0;
+    m->diag.last_decoded_bytes=m->diag.scene_decoded_bytes=0;
     m->diag.last_command_valid=m->diag.last_byte_aligned=0;
     m->diag.generation++;m->diag.phase=COH_MAP_NET_CONNECTING;m->phase_ms=m->last_ms=now;return COH_OK;
 }
@@ -112,18 +117,22 @@ static CohStatus send_command(CohMapClient *m,unsigned command,uint64_t now) {
     if(s==COH_OK)s=coh_net_udp_queue(m->udp,(CohBytes){packet.data,(packet.bits+7)/8},packet.bits,1,0,0,now);
     coh_map_packet_wipe(&packet);return s;
 }
-static CohStatus inspect(CohMapClient *m,const CohNetMessage *message,uint64_t now) {
+static CohStatus inspect(CohMapClient *m,const CohNetOwnedMessage *message,uint64_t now) {
     if(!m->authorized)return COH_STATE;
     m->diag.stage=COH_MAP_STAGE_COMMAND;
     m->diag.last_command_valid=0;
     m->diag.last_payload_bits=message->payload_bits;
+    m->diag.last_decoded_bytes=(uint32_t)message->payload_bytes;
     m->diag.last_byte_aligned=message->compressed;
-    CohBytes b={message->payload,(message->payload_bits+7)/8};CohRepReader reader;uint32_t cmd;
-    CohStatus s=coh_rep_reader(&reader,b,message->payload_bits,message->compressed);
+    CohBytes b={message->payload,message->payload_bytes};CohRepReader reader;uint32_t cmd;
+    CohStatus s=coh_rep_reader_bounded(&reader,b,message->payload_bits,message->compressed,COH_NET_DECODED_MAX);
     if(s==COH_OK)s=coh_rep_pack(&reader,1,&cmd);
     if(s!=COH_OK)goto rejected;
     if(m->config.udp.link.version<4){if(cmd<7){s=COH_UNSUPPORTED;goto rejected;}cmd-=5;}
     m->diag.last_command=cmd;m->diag.last_command_valid=1;
+    /* A large envelope is not a license for unsupported oversized commands.
+     * This milestone only expands the source GROUPS prefix inspection path. */
+    if(message->payload_bytes>COH_REP_MESSAGE_MAX&&cmd!=COH_REP_GROUPS){s=COH_LIMIT;goto rejected;}
     if(cmd==COH_REP_CONNECT_MSG) {
         m->diag.stage=COH_MAP_STAGE_CONNECT;
         CohRepConnect v;s=coh_rep_connect(&reader,&v);
@@ -142,8 +151,8 @@ static CohStatus inspect(CohMapClient *m,const CohNetMessage *message,uint64_t n
         if(m->diag.phase!=COH_MAP_SCENE_INCOMPLETE){s=COH_STATE;goto rejected;}
     } else {s=COH_UNSUPPORTED;goto rejected;}
     if(m->diag.selected_dbid) {
-        s=coh_rep_session_message(&m->inspector,&m->schema,b,message->payload_bits,
-            message->compressed,m->config.udp.link.version<4,(int)m->authorized);
+        s=coh_rep_session_message_bounded(&m->inspector,&m->schema,b,message->payload_bits,
+            message->compressed,m->config.udp.link.version<4,(int)m->authorized,COH_NET_DECODED_MAX);
     } else if(cmd==COH_REP_CONNECT_MSG) {
         /* Already completely parsed above. Identity remains unverified. */
         s=COH_OK;
@@ -158,6 +167,7 @@ static CohStatus inspect(CohMapClient *m,const CohNetMessage *message,uint64_t n
     }
     if(s!=COH_OK)goto rejected;
     if(cmd==COH_REP_GROUPS) {
+        m->diag.scene_decoded_bytes=(uint32_t)message->payload_bytes;
         m->diag.scene_prefixes++;m->diag.phase=COH_MAP_SCENE_INCOMPLETE;
         /* Group filename/reference records are unparsed even if their bytes
          * happen to be empty. A prefix never proves a complete scene. */
@@ -205,10 +215,17 @@ CohStatus coh_map_client_service(CohMapClient *m,uint64_t now,CohCancel cancel) 
     }
     CohStatus result=COH_OK;
     for(unsigned i=0;i<m->config.message_budget;i++) {
-        CohNetMessage message;s=coh_net_udp_next(m->udp,&message);
+        CohNetOwnedMessage message;s=coh_net_udp_next_owned(m->udp,&message);
         if(s==COH_NOT_FOUND)break;
         if(s!=COH_OK){m->diag.stage=COH_MAP_STAGE_MESSAGE_NEXT;m->diag.last_status=s;return s;}
-        s=inspect(m,&message,now);wipe(&message,sizeof(message));
+        s=inspect(m,&message,now);
+        CohStatus released=coh_net_udp_owned_release(m->udp,&message);
+        /* inspect may close the link on refusal; close has already destroyed
+         * that lease. Preserve its original application failure checkpoint. */
+        if(s==COH_OK&&released!=COH_OK){
+            coh_map_client_close(m);m->diag.phase=COH_MAP_FAILED;
+            m->diag.stage=COH_MAP_STAGE_MESSAGE_NEXT;m->diag.last_status=released;return released;
+        }
         /* Preserve the first rejected message's numeric checkpoint. Continue
          * draining only on a later service call, never over a failed parse. */
         if(s!=COH_OK){result=s;break;}
