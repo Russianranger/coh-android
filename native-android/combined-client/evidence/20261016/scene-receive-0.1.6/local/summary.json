@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "status": "passed",
+  "source_commit": "648ebf2d0c2cca9dfa5ef9acf9b1fe705ffe9c01",
+  "source_tree": "15cce2275e7d6c55b4b4f0acddd62c6803174e76",
+  "host_suites": 13,
+  "arm64_assemble_lint": "passed",
+  "x86_64_assemble_lint": "passed",
+  "package_audits": "both_passed",
+  "upgrade_014_015_assets": "all74_unchanged",
+  "renderer_equivalence": "all bytes except20-byte GNU build ID unchanged",
+  "local_emulator_executed": false,
+  "actual_server_interoperability_verified": false,
+  "notes": [
+    "Initial missing sparse original-source oracle input hydrated exactly; tracked source unchanged.",
+    "Original external audit helper expected exact renderer binary SHA; corrected after proving only GNU build-ID descriptor differs; passed builds were reused."
+  ]
+}

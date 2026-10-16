@@ -1,0 +1,42 @@
+{
+  "format": 1,
+  "workflow_run": 38830583681,
+  "framework_artifact": 12016899930,
+  "qualified_source": "7c9cfdb9d5f87c2297f8772fc3aeff528577728f",
+  "images": [
+    {
+      "name": "return-picker-visible.png",
+      "bytes": 404508,
+      "sha256": "bee142fe463afddfe9271dde8b67c054d73198e252b4b7e78fca3bab90b9ae0f",
+      "pixels": [
+        1920,
+        1080
+      ],
+      "independently_viewed": true,
+      "observation": "Viewed full-width Return button above scripted character picker; accepted character and authored bench/floor preview remain visible. Source-layout peer only."
+    },
+    {
+      "name": "native-preview-surface.png",
+      "bytes": 419731,
+      "sha256": "cd28580842e49ac69b806bb508a122058d57940ade4e4a1351a7c0f1122ccfaa",
+      "pixels": [
+        1080,
+        859
+      ],
+      "independently_viewed": true,
+      "observation": "Viewed reconstructed preview Surface with textured character, benches and floor; no blank or corrupt render in this saved frame."
+    },
+    {
+      "name": "native-preview.png",
+      "bytes": 596108,
+      "sha256": "5d05c3cdcdb4653e57affacb9a0c7c3dec249c3211e1025ac2b4fd1a6abacc76",
+      "pixels": [
+        1080,
+        1920
+      ],
+      "independently_viewed": true,
+      "observation": "Viewed foreground portrait app with Return visible, SUSPENDED explicit-reconnect text and rendered Far11/11 preview. This is the offline preview."
+    }
+  ],
+  "scope": "Saved actual x86_64 Android app frames, scripted peer and accepted offline preview; no real server, authenticated login, Thor or authoritative world claim."
+}

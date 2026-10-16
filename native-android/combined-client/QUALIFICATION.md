@@ -1,6 +1,135 @@
-# Combined server/native client — October 15, 2026
+# Combined server/native client — October 16, 2026
+
+## Bounded compressed scene receive 0.1.6
+
+Qualified runtime and driver source: `7c9cfdb9d5f87c2297f8772fc3aeff528577728f`, tree `15cce2275e7d6c55b4b4f0acddd62c6803174e76`, on
+`native-android`. Local integration pin `648ebf2d0c2cca9dfa5ef9acf9b1fe705ffe9c01`
+has the same tree. Fresh remote checks and guarded non-force publication preserve
+concurrent development. Earlier worktrees, unpublished changes and qualified APKs
+remain preserved. Recovery reached the qualified 0.1.5 handoff; no actual stalled
+build was established. Process enumeration was unavailable in this environment.
+
+The exact 0.1.4 Thor report establishes server startup, DB character selection,
+initial Map CONNECT/SHORTCUTS acceptance and REQSCENE, followed by a queued decode
+`COH_LIMIT` before scene-prefix inspection. Its failed declared size was unknown.
+This batch removes the default decoded-body bound from the Map GROUPS path using
+an explicit per-session 4 MiB budget. The ordinary 16 KiB message/queue and
+compressed-wire bounds, 16-sibling bound, transport framing, Blowfish, ACK,
+reliability and ordering contracts remain. DB/Auth continue using ordinary
+delivery. This is not evidence that every possible real scene fits those bounds.
+
+One owned decoded body may be outstanding. Declared size is checked before
+allocation, decoding retains the persistent zlib stream, and inspection is
+synchronous. Every inspected body is released; close, cancel, suspend and destroy
+invalidate retained views. A monotonic UDP lease generation rejects an old view
+across link recreation, including address reuse. Non-GROUPS messages remain
+limited to 16 KiB at Map dispatch. Replication's bounded entry point allows only
+GROUPS bodies above that limit; ordinary APIs retain their existing contract.
+
+Reports add numeric decode reason, compressed/declared bytes, output budget,
+allowlisted normalized command, and owned allocation/retention high-water data.
+Map records actual last decoded and successfully inspected scene-prefix bytes.
+If inflation fails, those Map last-message fields still describe the preceding
+success; the decoder receipt describes the failed body. No packet payload,
+credential, cookie, account name or server-provided text is added to diagnostics.
+The UI provides a bounded failure hint and retains Return to launcher.
+
+Workers actually ran concurrently in isolated worktrees with separate network,
+replication, Map/local, Android tools and independent review ownership. The
+coordinator integrated release/JNI/UI and guarded publication. No runtime/cache
+implementation, imported data, accepted renderer or preview assets were changed.
+
+Host evidence includes release and ASan/UBSan runs: network 127,218 checks with
+53,808 negative cases, UDP 1,194 checks/22 actual socket scenarios, Map 31,007
+checks/10,661 negative cases/29 scenarios, local 659 checks/seven socket chains,
+and replication 86,632 assertions/6,947 truncations/34,000 fuzz cases. Original
+compression fixtures cover decoded bodies up to 4 MiB. An independent 49-check
+source oracle verifies streaming compatibility and rejection of a hostile
+4,294,967,299-byte declaration before allocation. Eight actual-JNI serialization
+cases pass strict format checking and sanitizers, with a maximum 2,804/6,144 bytes.
+
+All thirteen consolidated host suites pass, including 126 driver controls.
+Both ARM64 and x86_64 assemble, lint and pass clean-source/package audits; lint
+has zero errors and the same 75 warnings. All 74 assets retain qualified 0.1.4
+and 0.1.5 bytes. Local renderer binaries differ only in their generated 20-byte
+GNU build-ID descriptors; all other bytes are identical. These local APKs are
+not the delivery binaries. The initial isolated checkout lacked a pinned oracle
+source file; it was hydrated exactly and the full batch then passed.
+
+The package and Android13 jobs in [workflow 38830583681](https://github.com/Russianranger/coh-android/actions/runs/38830583681)
+both pass. The [package artifact](https://github.com/Russianranger/coh-android/actions/runs/38830583681/artifacts/12016524031)
+has 40 CRC-verified members, 11,018,789 bytes, SHA256
+`5977465de145377c756f40a305caf16e1ef4aa407577c526bc1ddd5daefae4ce`.
+Hosted current/exact-donor runtime tests pass 76/76 methods, zero skips, including
+the AF_UNIX interruption and numeric-resource capture controls. This does not
+execute the ARM64 game server.
+
+The exact CI ARM64 APK is **11,532,139 bytes**, SHA256 `c41000d95573e5ed7baa73dabce0baa3d5c85d75bff6b88a3253385384f6345d`.
+The x86_64 companion is 11,128,916 bytes, SHA256
+`f757499766d507dc3df26d00e720c243a665fab962ccb624f543b3c5869d0c1e`.
+Both hosted packages retain all 74 assets, PRoot and renderer binaries exactly
+from qualified 0.1.4/0.1.5; only the native network library changes among those
+payloads. The local build-ID difference is absent in the CI-to-CI comparison.
+Package/signing identity and external import contract remain; versionCode is 7.
+No large game/runtime archive is added.
+
+The [framework artifact](https://github.com/Russianranger/coh-android/actions/runs/38830583681/artifacts/12016899930)
+has 455 CRC-verified members, 2,064,737 bytes, SHA256
+`ecd08f0cdd69e9080caba13f17e2ce33872dcd25b5ef36da2b8d7c6839802cc6`.
+All **33/33 Android13 checks** pass. The actual app receives the expanded scene
+fixture, records `SCENE_INCOMPLETE`, one scene prefix, 131,072 decoded bytes,
+8,745 compressed bytes, a 4,194,304-byte budget, zero current owned bytes and
+131,072 high-water bytes. Explicit Disconnect closes both client sockets.
+Held framework input clears on Return from the character picker; the same
+retained launcher/task/process resumes, and reopening remains IDLE until explicit
+Connect. Actual SAF imports/refusal, protected donor files, Near/Far, Surface
+recreation, Home/return, native JSON and launcher ZIP exports also pass. The
+final foreground has 1,121 frames, four contexts, 557,056 GPU bytes, 478,903 bright
+pixels and at least 12,535 colors, with no app crash/ANR or GL/transform failure.
+Three saved picker/preview frames were independently viewed and hash-bound.
+
+Independent [portable-core 38830583564](https://github.com/Russianranger/coh-android/actions/runs/38830583564)
+and [live-protocol 38830583527](https://github.com/Russianranger/coh-android/actions/runs/38830583527)
+workflows pass, including all five actual Android native crypto/TCP/UDP contract
+suites. Those peers remain explicitly synthetic. The separate session socket
+binary also reported 1,194 checks/61 negatives/22 scenarios on Android, but its
+old strict validator expected 886/49/16. A reviewed qualification-only correction
+at `a724487ecf774151ad73cd004023341e7d18381d` adds 55 strict controls and a
+[narrow continuation](https://github.com/Russianranger/coh-android/actions/runs/38831867730)
+using the exact archived binary, archive/ELF/source/header pins and unchanged
+production closure. The successful original host/build jobs are skipped; the
+consolidated APK is not rebuilt. The continuation passes all steps, including
+the same binary's 1,194 checks/61 negatives/22 socket scenarios on Android13.
+Its [artifact 12018335330](https://github.com/Russianranger/coh-android/actions/runs/38831867730/artifacts/12018335330)
+is 76,352 bytes, SHA256
+`63f99bb8dd352c36107b90e3da0113e2f425b3c5147cbfbd7c4b442c8746c506`.
+
+Deliver the exact qualified CI **CoH-Native-Combined-0.1.6-arm64.apk** without
+repacking or rebuilding it. Install over Combined and reuse imports/runtime/test
+profile. Keep the conventional launcher and accepted native APKs/data. This
+documentation/evidence handoff does not trigger a second build.
+
+The Android peer intentionally supplies a source-layout GROUPS prefix with an
+unparsed synthetic tail: 131,072 decoded bytes from 8,745 compressed wire bytes,
+eight UI-peer fragments, and 1,048,576 payload bits. It is not an authentic server
+capture or a complete GROUPS fixture. Expected state is `SCENE_INCOMPLETE`, one
+scene prefix, zero owned bytes retained, and no authenticated/world success flag.
+Complete tail validation, imported-library graph resolution, checksums, initial
+entity identity/position and authoritative rendering remain pending. The source
+[GROUPS audit](../engine/replication/GROUPS-AUDIT.md) records omitted library
+definitions, sparse root updates and unsupported base/raid branches for the next
+decoder. No REQALLENTS/READY shortcut or fabricated spawn is introduced.
+
+Physical 0.1.6 large-scene reception and Return/server continuity need the new
+Thor report. Encrypted AuthServer authentication and a live native world are not
+accepted. Gates 1–24 retain their documented physical scope. The prior low-memory
+exit cause and warm-start performance are unresolved; this batch does not change
+server startup/cache ownership or claim a speed improvement.
 
 ## Return to launcher 0.1.5
+
+Historical qualification at delivery. The 0.1.6 section above supersedes its
+then-pending scene-receive implementation; physical acceptance stays separate.
 
 Runtime/UI and qualification source:
 `5bf8d954190d3e924d3c23b51735eebe7a07c0e3`, Git tree

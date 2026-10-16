@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "status": "passed",
+  "workflow_run": 38830583527,
+  "android_job": 116749432045,
+  "source_commit": "7c9cfdb9d5f87c2297f8772fc3aeff528577728f",
+  "artifact": {
+    "id": 12016729975,
+    "bytes": 3251,
+    "sha256": "054cd01bcc27515daddc7470bc0cc95b32f0621ad813ae3ea50ef7cebeaa396d",
+    "members": 6,
+    "all_member_crcs_verified": true
+  },
+  "receipt_matches_all_five_members": true,
+  "actual_server_interoperability_verified": false
+}

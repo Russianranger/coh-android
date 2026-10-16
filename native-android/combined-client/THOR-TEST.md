@@ -5,7 +5,53 @@ This is a new, separate app named **CoH Native Combined**
 0.1.0/0.2.0/0.3.0 apps and all existing assets and reports. Do not uninstall or
 clear their storage. Gates 22–24 remain accepted within their documented scope.
 
-## Current update: 0.1.5 Return to launcher
+## Current update: 0.1.6 bounded scene reception
+
+ARM64 APK: **11,532,139 bytes**, SHA256 `c41000d95573e5ed7baa73dabce0baa3d5c85d75bff6b88a3253385384f6345d`.
+[Download package artifact](https://github.com/Russianranger/coh-android/actions/runs/38830583681/artifacts/12016524031).
+[Qualification workflow](https://github.com/Russianranger/coh-android/actions/runs/38830583681): thirteen host suites, both ABI packages
+and 33 Android13 framework checks. The Android test receives a
+128 KiB compressed source-layout scene-prefix fixture in the actual native app;
+it does not run the ARM64 server or prove complete world rendering.
+
+Install **CoH-Native-Combined-0.1.6-arm64.apk over Combined**. Stop any active
+Combined server through its launcher before updating. Keep existing imports,
+runtime, saved test character and reports. Do not uninstall, clear storage or
+repeat setup. The conventional launcher and earlier accepted apps remain useful
+fallbacks. This update retains Return to launcher and the accepted preview.
+
+Your 0.1.4 report already proves server boot and the initial native Map handshake.
+This update permits a single Map scene body up to 4 MiB after decompression,
+while preserving ordinary queues and wire limits. It also records the exact
+numeric decode limit/reason if reception still fails. Complete server scene and
+character rendering are pending; the visible scene remains the offline preview.
+
+1. Start the server, wait for **Server ready**, then open the native client
+   manually. Record stage timings; this update makes no startup-speed claim.
+2. Tap **Connect local server**, then select the same existing test character.
+   Record the final protocol state. **SCENE_INCOMPLETE** with a received scene
+   prefix is the expected implemented boundary. It is not a live-world success.
+3. Export the native JSON before another attempt. A failure report must retain
+   the decoder reason, compressed/declared bytes and output budget. The last
+   accepted message can still be SHORTCUTS if the next body failed to decode.
+4. Tap **Return to launcher**, including once from the character picker and once
+   after the resulting scene/failure state. Client input and sockets must clear;
+   the existing server must remain accessible from its retained launcher.
+5. Open the native client again. The preview must render and remain disconnected
+   until explicit **Connect local server**. Check Near/Far, movement, Recreate
+   and Home/return with held input. Reconnect explicitly after backgrounding.
+6. Export the combined launcher **report ZIP** after success or the first failure,
+   before retrying. Stop the server normally when finished. If practical, start
+   once more to measure warm-start timing and verify the saved character persists.
+
+The same full scene may still exceed the compressed-wire or 4 MiB decoded bound,
+or require later scene-tail support. Keep the report so the next change follows
+actual evidence. Do not clear data to get past a failure. Encrypted authentication,
+authoritative character spawning and physical 0.1.6 acceptance remain pending.
+
+## Previous qualified 0.1.5 Return to launcher
+
+Historical handoff; use the current 0.1.6 procedure above.
 
 Current ARM64 APK: **11,528,591 bytes**, SHA256
 `71e2f272bfadfc1076b3fcf832b41eba8d83c5541db7198ab69f4f38b2cb5671`.
@@ -44,7 +90,7 @@ preserves the exact acceptance scope and numeric failure checkpoint.
 
 ## Previous qualified 0.1.4 interrupted-start recovery
 
-Historical handoff; use the current 0.1.5 procedure above. The new physical report
+Historical handoff; use the current 0.1.6 procedure above. The new physical report
 records successful startup and a clean manual stop. It does not test a separate
 force-stop/recover/restart cycle or identify the earlier Android memory-kill cause.
 
@@ -107,7 +153,7 @@ explains the current failure and the stale 0.1.2 client report. The qualified
 
 ## Previous qualified 0.1.3 connection repair
 
-Historical handoff; use the current 0.1.5 procedure above.
+Historical handoff; use the current 0.1.6 procedure above.
 
 Install `CoH-Native-Combined-0.1.3-arm64.apk` **over the existing Combined app**.
 

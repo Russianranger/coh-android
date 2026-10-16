@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "status": "passed",
+  "variants": {
+    "arm64": {
+      "Warning": 75
+    },
+    "x86": {
+      "Warning": 75
+    }
+  },
+  "errors": 0,
+  "baseline_warnings": 75
+}

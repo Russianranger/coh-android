@@ -1,0 +1,51 @@
+{
+  "original_large_compression_cases": 8,
+  "original_large_raw_bytes": 10878976,
+  "original_producer_cases": 80,
+  "plaintext_bytes_compared": 41456,
+  "timeout_source_cases": 70,
+  "original_compression_cases": 40,
+  "source_file_count": 12,
+  "source_revision": "9ee2f8c74e3efdd2593d514bf8d32a75dcbc8de9",
+  "fixture_sha256": "56878e6a9fd35aad40ead70bc6cd717466f7cc83343570aefc3ac2e3bb7ae3aa",
+  "oracle": "unchanged original pktWrap/ACK/bit/auto/bsCompress/calcTimeout bodies; trusted aligned O0 host, never shipped",
+  "schema": "coh-native-gate25-host-v2",
+  "passed": true,
+  "native": {
+    "checks": 127218,
+    "negative_cases": 53808,
+    "wire_cases": 640,
+    "session_scenarios": 361,
+    "fixed_link_bytes": 486576,
+    "codec_initial_bytes": 275504,
+    "cpu_test_ms": 582.067,
+    "server_interoperability": false
+  },
+  "udp_adapter": {
+    "checks": 1194,
+    "negative_cases": 61,
+    "socket_scenarios": 22,
+    "actual_os_udp": true,
+    "socket_leak_check": true,
+    "live_server_interoperability": false
+  },
+  "native_sources_sha256": {
+    "engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+    "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+    "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "engine/network/tests/test_net.c": "3a327e7762097d3a1796f46681afdfc084c06f90b88f002cd7fd1cbb531af8c7",
+    "engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd",
+    "engine/network/tests/test_udp.c": "3321729647edf084898467110a55b2f03737b21b478c1321122a6f84e7061286",
+    "engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+    "engine/network/check.py": "ddff8cb0111083471ed3586689deb1624daa32fda8f14bac36efe5fcb57df15d",
+    "engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832"
+  },
+  "sanitizers": "ASan+UBSan; leak sanitizer disabled on restricted host",
+  "android_build": false,
+  "android_execution": false,
+  "live_server_interoperability": false
+}

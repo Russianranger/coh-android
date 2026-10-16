@@ -1,0 +1,27 @@
+{
+  "schema": "coh-native-socket-boundary-continuation-review-v1",
+  "passed": true,
+  "reviewed_commit": "3a1a4d202dc9205fe4e0af43ebf011f1257e9930",
+  "files_sha256": {
+    "native-android/engine/session/android_boundary.py": "3c7dc9656bb7a6163790e70116edf717217b3110e3aa3dd6366e5c2e4a747a82",
+    ".github/workflows/native-session-protocol.yml": "7fed46eba2c60f27954808315f76a1daa9b2a8d8a4b57ae092253416a2d13600",
+    ".github/workflows/native-socket-boundary-requalify.yml": "8c668c5b7d6275925d8833923ba2b5149bb024db651070602818890f31bd7774"
+  },
+  "validator_self_controls": 55,
+  "independent_value_and_type_mutations": 54,
+  "stale_counter_rejected": true,
+  "strict_exact_keyset_and_type_equality": true,
+  "pinned_source": "7c9cfdb9d5f87c2297f8772fc3aeff528577728f",
+  "pinned_source_run": 38830583695,
+  "pinned_artifact": 12016554135,
+  "pinned_archive_sha256": "22aee991e1f5f0d2dfb0cece75f4fe48d889cebd8f53b87e263789906d12de00",
+  "pinned_archive_bytes": 74084,
+  "source_and_header_pins": 14,
+  "pinned_elf_count": 2,
+  "zip_metadata_checked_before_inflate": true,
+  "apk_rebuild": false,
+  "ndk_rebuild": false,
+  "android_execution_by_reviewer": false,
+  "actual_server_interoperability": false,
+  "blocking_findings_remaining": 0
+}

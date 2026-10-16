@@ -1,0 +1,40 @@
+{
+  "schema": "coh-native-socket-boundary-reuse-v1",
+  "passed": true,
+  "source_commit": "7c9cfdb9d5f87c2297f8772fc3aeff528577728f",
+  "source_run": 38830583695,
+  "source_artifact": 12016554135,
+  "archive_sha256": "22aee991e1f5f0d2dfb0cece75f4fe48d889cebd8f53b87e263789906d12de00",
+  "archive_bytes": 74084,
+  "binaries": {
+    "arm64": {
+      "sha256": "94fcac187db8895caaae5480121911f50835a7eb7290fc7a6bd6d40840cb0c88",
+      "bytes": 68672
+    },
+    "x86_64": {
+      "sha256": "e141cb6055fd43d008269cf54187301fad1068cf90e635a39f9b619cc9920108",
+      "bytes": 72176
+    }
+  },
+  "production_closure_unchanged": true,
+  "source_sha256": {
+    "engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+    "engine/network/coh_net_frame.c": "44d439583ce6e41cb4a5546dcf5a206af5511af9e22feb5f4b28b39a56ce7bbc",
+    "engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+    "engine/network/tests/test_udp.c": "3321729647edf084898467110a55b2f03737b21b478c1321122a6f84e7061286",
+    "protocol/coh_protocol.c": "6a209d824141c6c97ba60ac5888b3e2953b33a06f086ec8df5fa038b83f74eea",
+    "src/coh_blowfish.c": "ee89821fd473ba06b7e34e4350bb624cc6092dc59903a25179ded5a2bfbfc470",
+    "engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "engine/network/coh_net_udp.h": "7309f2b2bd431bb620ea0980b456bd3373fa0f1d369654a3702167cd11cff1e4",
+    "engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd",
+    "engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "protocol/coh_protocol.h": "61312a886aca0f8ff5275950497375477cc158d4ed9c5b7af6aa019f51f3d3d4",
+    "include/coh_native_core.h": "48c4e1fcbe4380778066aa1257159503883773e3b7e250fafcc61abc28818106",
+    "src/byte_reader.h": "c00f1ab7cce5e15fb7d693041bec751ddc8dbe06d9ff86c131f677cdb55238e1"
+  },
+  "previous_stdout_sha256": "e08a17429632eb455ee7103fea60b50a6d7a2d0e892bd1559bab334dbfc05a28",
+  "rebuilt": false,
+  "apk_rebuilt": false,
+  "android_executed": false
+}

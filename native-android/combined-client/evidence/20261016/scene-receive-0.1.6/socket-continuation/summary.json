@@ -1,0 +1,117 @@
+{
+  "schema": "coh-native-scene-016-socket-continuation-summary-v1",
+  "passed": true,
+  "observed_at_utc": "2026-10-16T00:57:54.204575+00:00",
+  "qualification_commit": "a724487ecf774151ad73cd004023341e7d18381d",
+  "original_source_commit": "7c9cfdb9d5f87c2297f8772fc3aeff528577728f",
+  "original_failure": {
+    "run_id": 38830583695,
+    "job_id": 116748693404,
+    "artifact_id": 12016554135,
+    "artifact_bytes": 74084,
+    "artifact_sha256": "22aee991e1f5f0d2dfb0cece75f4fe48d889cebd8f53b87e263789906d12de00",
+    "kind": "strict-qualification-counter-drift",
+    "expected_then": {
+      "checks": 886,
+      "negative_cases": 49,
+      "socket_scenarios": 16
+    },
+    "observed": {
+      "checks": 1194,
+      "negative_cases": 61,
+      "socket_scenarios": 22,
+      "actual_os_udp": true,
+      "socket_leak_check": true,
+      "live_server_interoperability": false
+    },
+    "native_executable_returned_zero": true,
+    "production_failure": false
+  },
+  "continuation": {
+    "run_id": 38831867730,
+    "job_id": 116752234079,
+    "conclusion": "success",
+    "artifact_id": 12018335330,
+    "artifact_bytes": 76352,
+    "artifact_sha256": "63f99bb8dd352c36107b90e3da0113e2f425b3c5147cbfbd7c4b442c8746c506",
+    "strict_validator_controls": 55,
+    "actual_android_execution": true,
+    "android_api": 33,
+    "abi": "x86_64"
+  },
+  "reuse": {
+    "identical_original_binaries": {
+      "arm64": {
+        "sha256": "94fcac187db8895caaae5480121911f50835a7eb7290fc7a6bd6d40840cb0c88",
+        "bytes": 68672
+      },
+      "x86_64": {
+        "sha256": "e141cb6055fd43d008269cf54187301fad1068cf90e635a39f9b619cc9920108",
+        "bytes": 72176
+      }
+    },
+    "identical_original_build_receipt_sha256": "0247ea4fd49e7f5b24d7e13381cd4815ab23c6e368575a57b62811483fe48478",
+    "identical_original_and_continuation_stdout_sha256": "e08a17429632eb455ee7103fea60b50a6d7a2d0e892bd1559bab334dbfc05a28",
+    "source_and_header_pins": 14,
+    "production_closure_unchanged": true,
+    "native_rebuilt": false,
+    "apk_rebuilt": false
+  },
+  "workflow_observations": {
+    "runs": [
+      {
+        "id": 38831867936,
+        "name": "Native Android live-session protocol foundations",
+        "path": ".github/workflows/native-live-session.yml",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 38831867854,
+        "name": "Native Android portable core",
+        "path": ".github/workflows/native-android-core.yml",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 38831867807,
+        "name": "Native Android session protocol contracts",
+        "path": ".github/workflows/native-session-protocol.yml",
+        "status": "completed",
+        "conclusion": "skipped"
+      },
+      {
+        "id": 38831867730,
+        "name": "Native socket boundary exact-binary continuation",
+        "path": ".github/workflows/native-socket-boundary-requalify.yml",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "skipped_jobs": [
+      {
+        "id": 116752235091,
+        "name": "host-and-arm64",
+        "status": "completed",
+        "conclusion": "skipped"
+      },
+      {
+        "id": 116752236140,
+        "name": "android-socket-boundary",
+        "status": "completed",
+        "conclusion": "skipped"
+      }
+    ]
+  },
+  "scope": {
+    "controlled_actual_os_udp": true,
+    "actual_game_server_interoperability": false,
+    "arm64_executed": false,
+    "physical_thor_accepted": false
+  },
+  "receipt_sha256": {
+    "android-udp-proof.json": "d3191640cca77db2efd4059231aad7f17f23702042b3381ee79e7a40573cfb97",
+    "exact-binary-reuse.json": "6d5064899a5d51d7de31367b3dc4ec41fa84b580128923b1be0a1368a44a0b75",
+    "validator-controls.json": "f9b937f5919f28a7a83fcd340d0724c909c006dd38999ee525cc069c7b80fc7d"
+  }
+}

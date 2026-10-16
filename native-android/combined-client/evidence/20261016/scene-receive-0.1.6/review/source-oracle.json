@@ -1,0 +1,76 @@
+{
+  "schema": "coh-native-scene-owned-independent-review-v1",
+  "passed": true,
+  "assertions": 49,
+  "source_large_fixtures": [
+    {
+      "streaming": true,
+      "decoded_bytes": 65536,
+      "compressed_bytes": 592,
+      "wire_sha256": "0843fba2ce0926527ec908ce0758974d4f5a7da5eb7811358ee38fe2fb59399b"
+    },
+    {
+      "streaming": true,
+      "decoded_bytes": 1048576,
+      "compressed_bytes": 1045,
+      "wire_sha256": "8f97183910fcd9660579b2105afe11de1a7dec36a79c8956f062c015a525067d"
+    },
+    {
+      "streaming": true,
+      "decoded_bytes": 4194304,
+      "compressed_bytes": 4091,
+      "wire_sha256": "3c9b93addc0793fb87631defe238f819da8853997c20e0053b0fa0c1c841851e"
+    },
+    {
+      "streaming": true,
+      "decoded_bytes": 15,
+      "compressed_bytes": 15,
+      "wire_sha256": "5e78d6395d3608a780b0435dffc0fdb551eaf8580b31033fadd7899393af379e"
+    },
+    {
+      "streaming": false,
+      "decoded_bytes": 65536,
+      "compressed_bytes": 592,
+      "wire_sha256": "511045c47562454a699ddbca8ed3fce370f094fce27e574cea06c90a70b946e7"
+    },
+    {
+      "streaming": true,
+      "decoded_bytes": 16385,
+      "compressed_bytes": 44,
+      "wire_sha256": "f280848988f3acb86b5d8e825f22c5614f6635095bedcaa79ef3ea90287d26aa"
+    },
+    {
+      "streaming": false,
+      "decoded_bytes": 4194304,
+      "compressed_bytes": 4094,
+      "wire_sha256": "2a1f55d5f9a1c396009077863221878c53dad32e1fe717c98dd1bc5c3baf8064"
+    }
+  ],
+  "source_revision": "9ee2f8c74e3efdd2593d514bf8d32a75dcbc8de9",
+  "source_file_count": 12,
+  "over_budget_malloc_calls": 0,
+  "truncated_stream_poison_verified": true,
+  "wire_limit_unchanged": 16384,
+  "decoded_budget": 4194304,
+  "actual_server_interoperability": false,
+  "android_execution": false,
+  "producer": "Unchanged source bsCompress function; test storage wrapper expanded only",
+  "native_sources_sha256": {
+    "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "native-android/engine/network/coh_net_zip_internal.h": "a84bf15c49556643459cb0c43cdae3abd27eb9fb05c5e9387d1684df239a7ffd",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb"
+  },
+  "independent_probe_sha256": "37a05008b6cd512edd9abe0ce705af5a52b33d9ce392aa656a6b069793678750",
+  "source_binding": {
+    "source_commit": "648ebf2d0c2cca9dfa5ef9acf9b1fe705ffe9c01",
+    "source_tree": "15cce2275e7d6c55b4b4f0acddd62c6803174e76",
+    "binding_method": "Reviewed draft production and delegated UDP test SHA256 values are identical to the clean integrated source; all listed hashes independently rechecked before recording."
+  },
+  "scope": {
+    "actual_server_interoperability": false,
+    "android_execution": false,
+    "complete_groups_tail_parsed": false,
+    "authoritative_character_spawn": false,
+    "synthetic_fixture_only": true
+  }
+}

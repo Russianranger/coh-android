@@ -1,0 +1,52 @@
+[
+  {
+    "previous_version": "0.1.5",
+    "previous_apk": {
+      "bytes": 11125424,
+      "sha256": "49163fcaa39708a462bb375ea13df9b4f8e266a1c9a2bd3143386a0c67d05144"
+    },
+    "new_apk": {
+      "bytes": 11128916,
+      "sha256": "2feb10299611634580244bcd8b3b322d6500fcfe9d2926f56e4f150c425b6bcc"
+    },
+    "changed_asset_or_native_entries": [
+      "lib/x86_64/libcoh_combined_network.so",
+      "lib/x86_64/libcoh_session_client.so"
+    ],
+    "unchanged_asset_entries": 74,
+    "renderer_elf_equivalence": {
+      "exact_bytes_identical": false,
+      "only_gnu_build_id_may_differ": true,
+      "gnu_build_id_descriptor_offset": 736,
+      "gnu_build_id_descriptor_bytes": 20,
+      "old_build_id": "b31b31d056ca34e10655631b2aec69c5d90aacf8",
+      "new_build_id": "adf8b938c8017221c33f0ddc0baa0acabc8f5549",
+      "other_bytes_identical": 389692
+    }
+  },
+  {
+    "previous_version": "0.1.4",
+    "previous_apk": {
+      "bytes": 11124648,
+      "sha256": "c090590092c638508fbd5a17235a63604ae8757d809b0fc70fc1e2b16805e0ee"
+    },
+    "new_apk": {
+      "bytes": 11128916,
+      "sha256": "2feb10299611634580244bcd8b3b322d6500fcfe9d2926f56e4f150c425b6bcc"
+    },
+    "changed_asset_or_native_entries": [
+      "lib/x86_64/libcoh_combined_network.so",
+      "lib/x86_64/libcoh_session_client.so"
+    ],
+    "unchanged_asset_entries": 74,
+    "renderer_elf_equivalence": {
+      "exact_bytes_identical": false,
+      "only_gnu_build_id_may_differ": true,
+      "gnu_build_id_descriptor_offset": 736,
+      "gnu_build_id_descriptor_bytes": 20,
+      "old_build_id": "b31b31d056ca34e10655631b2aec69c5d90aacf8",
+      "new_build_id": "adf8b938c8017221c33f0ddc0baa0acabc8f5549",
+      "other_bytes_identical": 389692
+    }
+  }
+]

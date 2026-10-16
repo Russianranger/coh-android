@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "official_source": "7c9cfdb9d5f87c2297f8772fc3aeff528577728f",
+  "source_tree": "15cce2275e7d6c55b4b4f0acddd62c6803174e76",
+  "workflow_run": 38830583681,
+  "package_job": 116748198070,
+  "package_artifact": {
+    "id": 12016524031,
+    "bytes": 11018789,
+    "sha256": "5977465de145377c756f40a305caf16e1ef4aa407577c526bc1ddd5daefae4ce",
+    "members": 40,
+    "all_member_crcs_verified": true,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38830583681/artifacts/12016524031"
+  },
+  "independent_package_audits": "both_passed",
+  "android13_framework_status": "passed",
+  "actual_server_interoperability_verified": false,
+  "android13_job": 116749310417,
+  "framework_artifact": {
+    "id": 12016899930,
+    "bytes": 2064737,
+    "sha256": "ecd08f0cdd69e9080caba13f17e2ce33872dcd25b5ef36da2b8d7c6839802cc6",
+    "members": 455,
+    "all_member_crcs_verified": true,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38830583681/artifacts/12016899930"
+  }
+}

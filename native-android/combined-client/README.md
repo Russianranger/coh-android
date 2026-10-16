@@ -7,12 +7,17 @@ accepted native Session Client remain installed with their private data intact.
 
 Follow [THOR-TEST.md](THOR-TEST.md) for the consolidated device test.
 
-Current **0.1.5** adds **Return to launcher** to the native client. Returning closes
-the native client through its existing lifecycle and leaves the owned server
-running so its status, stop control and report export are accessible. Install over
-Combined without repeating imports or setup. The 0.1.4 interrupted-start repair
-and diagnostics are retained. The separate earlier Android low-memory exit
-remains unexplained; no memory protection or asset check is weakened. See the current
+Current **0.1.6** adds bounded compressed Map scene reception. One owned decoded
+body may use up to 4 MiB; ordinary 16 KiB messages, wire/fragment queues and DB/Auth
+delivery keep their existing limits. Numeric reports distinguish decode limits,
+allocation failures and malformed streams. Complete scene/entity decoding and
+server-authoritative rendering remain pending.
+
+**Return to launcher** is retained: it closes the native client and leaves the
+owned server accessible for status, Stop and report export. Install over Combined
+without repeating imports or setup. The 0.1.4 interrupted-start repair and
+diagnostics are retained. The separate earlier Android low-memory exit remains
+unexplained; no memory protection or asset check is weakened. See the current
 [Thor procedure](THOR-TEST.md) and [qualification record](QUALIFICATION.md).
 
 ## Scope
@@ -29,10 +34,13 @@ remains unexplained; no memory protection or asset check is weakened. See the cu
 * Physical Thor evidence confirms actual server boot and native DbServer
   list/selection. The new exact 0.1.4 report additionally proves initial Map
   application connection and shortcut-catalog acceptance, followed by a scene
-  request. Scene reception then fails with `COH_LIMIT` in queued decompression;
-  the rejected declared size is not recorded. Complete scene transfer, encrypted
-  AuthServer authentication and server-authoritative rendering remain pending.
-  Deterministic socket peers do not prove a real server session.
+  request. That 0.1.4 scene reception failed with `COH_LIMIT` in queued
+  decompression; its rejected declared size was not recorded. The 0.1.6 bounded
+  receive path passes host/build checks and 33 Android13 framework checks against
+  explicit source-layout fixtures; actual Thor scene reception needs a new report. Complete scene
+  transfer, encrypted AuthServer authentication and server-authoritative
+  rendering remain pending. Deterministic socket peers do not prove a real
+  server session.
 
 ## External inputs
 

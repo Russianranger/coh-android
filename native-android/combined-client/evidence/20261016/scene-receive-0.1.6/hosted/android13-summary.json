@@ -1,0 +1,41 @@
+{
+  "format": 1,
+  "status": "passed",
+  "official_source": "7c9cfdb9d5f87c2297f8772fc3aeff528577728f",
+  "workflow_run": 38830583681,
+  "android_job": 116749310417,
+  "checks_passed": 33,
+  "exact_installed_x86_64_apk_sha256": "f757499766d507dc3df26d00e720c243a665fab962ccb624f543b3c5869d0c1e",
+  "expanded_scene_delivery": {
+    "phase": "SCENE_INCOMPLETE",
+    "map_stage": 6,
+    "last_status": 2,
+    "accepted_messages": 2,
+    "scene_prefixes": 1,
+    "numeric_privacy_bounds_verified": true,
+    "scene_decoded_bytes": 131072,
+    "scene_compressed_bytes": 8745,
+    "decoded_budget_bytes": 4194304,
+    "owned_retained_bytes": 0,
+    "owned_high_water_bytes": 131072,
+    "large_body_fixture": true,
+    "scene_tail_parsed": false
+  },
+  "final_foreground_gpu": {
+    "check": "current foreground GPU resources and actual on-screen scene pixels",
+    "passed": true,
+    "frames": 1121,
+    "context": 4,
+    "gpu_bytes": 557056,
+    "bright_pixels": 478903,
+    "distinct_colors_at_least": 12535,
+    "screenshot_sha256": "5d05c3cdcdb4653e57affacb9a0c7c3dec249c3211e1025ac2b4fd1a6abacc76"
+  },
+  "source_command_count": 915,
+  "peer_opened_sockets": 2,
+  "peer_closed_sockets": 2,
+  "preview_is_server_world": false,
+  "real_authenticated_session": false,
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false
+}

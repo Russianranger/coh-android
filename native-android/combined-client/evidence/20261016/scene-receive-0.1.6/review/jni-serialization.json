@@ -1,0 +1,35 @@
+{
+  "schema": "coh-native-bounded-scene-jni-review-v1",
+  "passed": true,
+  "json_cases": 8,
+  "numeric_receipt_fields": 6,
+  "largest_json_bytes": 2804,
+  "report_buffer_bytes": 6144,
+  "printf_compile_flags": [
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-Wformat=2"
+  ],
+  "sanitizers": [
+    "ASan",
+    "UBSan"
+  ],
+  "source_sha256": "d77b854d2f59054fafc3330781e77418933f4546f1fa53831f1b2394ff6fa7bd",
+  "map_headers_sha256": "f3ac9260639689335b1e5cf184dac809a8cf4a58836e2dd4b772dcd004562f97",
+  "actual_android_execution": false,
+  "actual_server_interoperability": false,
+  "synthetic_numeric_diagnostics_only": true,
+  "source_binding": {
+    "source_commit": "648ebf2d0c2cca9dfa5ef9acf9b1fe705ffe9c01",
+    "source_tree": "15cce2275e7d6c55b4b4f0acddd62c6803174e76",
+    "binding_method": "Reviewed draft production and delegated UDP test SHA256 values are identical to the clean integrated source; all listed hashes independently rechecked before recording."
+  },
+  "scope": {
+    "actual_server_interoperability": false,
+    "android_execution": false,
+    "complete_groups_tail_parsed": false,
+    "authoritative_character_spawn": false,
+    "synthetic_fixture_only": true
+  }
+}

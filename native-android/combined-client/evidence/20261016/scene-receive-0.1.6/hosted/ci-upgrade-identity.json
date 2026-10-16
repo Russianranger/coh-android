@@ -1,0 +1,74 @@
+[
+  {
+    "previous_version": "0.1.5",
+    "abi": "arm64-v8a",
+    "previous_apk": {
+      "bytes": 11528591,
+      "sha256": "71e2f272bfadfc1076b3fcf832b41eba8d83c5541db7198ab69f4f38b2cb5671"
+    },
+    "new_apk": {
+      "bytes": 11532139,
+      "sha256": "c41000d95573e5ed7baa73dabce0baa3d5c85d75bff6b88a3253385384f6345d"
+    },
+    "changed_asset_or_native_entries": [
+      "lib/arm64-v8a/libcoh_combined_network.so"
+    ],
+    "unchanged_asset_entries": 74,
+    "renderer_exact_bytes_identical": true,
+    "prerequisite_assets_and_runtime_exactly_unchanged": true
+  },
+  {
+    "previous_version": "0.1.5",
+    "abi": "x86_64",
+    "previous_apk": {
+      "bytes": 11125424,
+      "sha256": "49163fcaa39708a462bb375ea13df9b4f8e266a1c9a2bd3143386a0c67d05144"
+    },
+    "new_apk": {
+      "bytes": 11128916,
+      "sha256": "f757499766d507dc3df26d00e720c243a665fab962ccb624f543b3c5869d0c1e"
+    },
+    "changed_asset_or_native_entries": [
+      "lib/x86_64/libcoh_combined_network.so"
+    ],
+    "unchanged_asset_entries": 74,
+    "renderer_exact_bytes_identical": true,
+    "prerequisite_assets_and_runtime_exactly_unchanged": true
+  },
+  {
+    "previous_version": "0.1.4",
+    "abi": "arm64-v8a",
+    "previous_apk": {
+      "bytes": 11527815,
+      "sha256": "18b06672a11af3a50bd2ece77ce41bc2fecec7f8ebe6037408245119ca21ad2c"
+    },
+    "new_apk": {
+      "bytes": 11532139,
+      "sha256": "c41000d95573e5ed7baa73dabce0baa3d5c85d75bff6b88a3253385384f6345d"
+    },
+    "changed_asset_or_native_entries": [
+      "lib/arm64-v8a/libcoh_combined_network.so"
+    ],
+    "unchanged_asset_entries": 74,
+    "renderer_exact_bytes_identical": true,
+    "prerequisite_assets_and_runtime_exactly_unchanged": true
+  },
+  {
+    "previous_version": "0.1.4",
+    "abi": "x86_64",
+    "previous_apk": {
+      "bytes": 11124648,
+      "sha256": "c090590092c638508fbd5a17235a63604ae8757d809b0fc70fc1e2b16805e0ee"
+    },
+    "new_apk": {
+      "bytes": 11128916,
+      "sha256": "f757499766d507dc3df26d00e720c243a665fab962ccb624f543b3c5869d0c1e"
+    },
+    "changed_asset_or_native_entries": [
+      "lib/x86_64/libcoh_combined_network.so"
+    ],
+    "unchanged_asset_entries": 74,
+    "renderer_exact_bytes_identical": true,
+    "prerequisite_assets_and_runtime_exactly_unchanged": true
+  }
+]

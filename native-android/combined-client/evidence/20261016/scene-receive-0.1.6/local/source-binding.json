@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "status": "passed",
+  "local_qualified_source": "648ebf2d0c2cca9dfa5ef9acf9b1fe705ffe9c01",
+  "official_published_source": "7c9cfdb9d5f87c2297f8772fc3aeff528577728f",
+  "identical_source_tree": "15cce2275e7d6c55b4b4f0acddd62c6803174e76",
+  "qualification_source_identical": true,
+  "unchanged_source_closure_from_qualified_015": [
+    "native-android/session-client",
+    "native-android/combined-client/runtime",
+    "native-android/combined-client/imports"
+  ],
+  "local_packages_are_delivery_binaries": false,
+  "actual_server_interoperability_verified": false,
+  "scope": "Exact Git tree binding; local packages qualify local clean source, delivery will use exact official workflow artifacts."
+}

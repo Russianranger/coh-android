@@ -1,0 +1,33 @@
+{
+  "abi": "x86_64",
+  "accepted_scene_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+  "actual_server_interoperability_verified": false,
+  "apk": {
+    "bytes": 11128916,
+    "name": "CoH-Native-Combined-0.1.6-emulator-x86_64.apk",
+    "sha256": "2feb10299611634580244bcd8b3b322d6500fcfe9d2926f56e4f150c425b6bcc"
+  },
+  "donor_apk_sha256": "14d88da1796d155dc1b98e45ac642c7702ff3286e7ef0f2a0772f8e48693b12f",
+  "embedded_asset_bytes": 9540457,
+  "embedded_asset_files": 74,
+  "format": 1,
+  "large_runtime_game_payloads_embedded": false,
+  "native_libraries": {
+    "lib/x86_64/libcoh_combined_network.so": {
+      "bytes": 5835832,
+      "sha256": "0fa55cdd9337e33e5f89f0a9da8c911f9379bbbd5ca74fea6e214647343e7081"
+    },
+    "lib/x86_64/libcoh_session_client.so": {
+      "bytes": 389712,
+      "sha256": "bbe8ae9b9df2f63150d3c4551e240d1c6db1ed0b036fbfec531d8ddcc72681c1"
+    }
+  },
+  "package": "org.coh.nativecombined",
+  "scope": "Package identity, exact bounded scene and donor metadata, native ELF architecture, signer and absence of embedded large runtime/game payloads.",
+  "signer_certificate_sha256": "9aec9a8635d33dabd676748c3287e035e00d676546b4da18469dd48eecf5c522",
+  "source_commit": "648ebf2d0c2cca9dfa5ef9acf9b1fe705ffe9c01",
+  "status": "passed",
+  "tracked_source_clean": true,
+  "version_code": "7",
+  "version_name": "0.1.6-local-server-native"
+}

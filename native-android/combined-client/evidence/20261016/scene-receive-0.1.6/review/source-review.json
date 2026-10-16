@@ -1,0 +1,77 @@
+{
+  "schema": "coh-native-bounded-scene-independent-source-review-v1",
+  "baseline": "131c806cfff7fc0e162a51f47999ea8e30f4e705",
+  "passed": true,
+  "blocking_findings_remaining": 0,
+  "findings": [
+    {
+      "topic": "Stale owned view across UDP resume and allocator address reuse",
+      "status": "fixed",
+      "validation": "Persistent UDP wrapper lease generation plus actual UDP regression with stale payload pointer deliberately set to new allocation address"
+    },
+    {
+      "topic": "Compressed payload byte alignment",
+      "status": "already guarded by accepted frame kernel; additive owned guard is defense in depth"
+    },
+    {
+      "topic": "Wire versus decoded allocation boundaries",
+      "status": "16KiB wire and original queue/sibling limits unchanged; one explicit decoded allocation at most4MiB"
+    },
+    {
+      "topic": "Scene and identity scope",
+      "status": "GROUPS prefix only; no complete scene, entity identity, READY or authoritative spawn claim"
+    }
+  ],
+  "independent_udp_sanitizer": {
+    "passed": true,
+    "checks": 1194,
+    "negative_cases": 61,
+    "socket_scenarios": 22,
+    "actual_os_udp": true,
+    "sanitizers": [
+      "ASan",
+      "UBSan"
+    ],
+    "leak_sanitizer": false,
+    "descriptor_balance": true
+  },
+  "oracle_receipt": "oracle-review.json",
+  "source_sha256": {
+    "native-android/engine/network/coh_net.c": "e242a386bc0981a6f1c7d2029e1c6d405d7d6ef49f65f44f3970781212d981e1",
+    "native-android/engine/network/coh_net.h": "fedddf3c7c83cc7636af027b3c0bd7c1cb8dbb919275b8ac6cd59cc7b7b6dddb",
+    "native-android/engine/network/coh_net_udp.c": "c0d8d598a8e748bccaa34a5e55392cf267c86b4ce05059aa1eef401cde8b3f4d",
+    "native-android/engine/network/coh_net_zip.c": "40fafbf3e1bbac6c0e3d8cdbb128de8fbad3342c1b4c5e5357027bbf95a20747",
+    "native-android/engine/network/tests/test_udp.c": "3321729647edf084898467110a55b2f03737b21b478c1321122a6f84e7061286",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/mapclient/coh_mapclient.c": "20c2823032c7d2bd7acb31a7b3a1c498f4648754da5b99223db769f34e9ad00d",
+    "native-android/engine/mapclient/coh_mapclient.h": "f3ac9260639689335b1e5cf184dac809a8cf4a58836e2dd4b772dcd004562f97",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java": "d2a74329dd9bdb399a4c56628278ec403d6d4c0c5df267650d103b9c65bf8fd6"
+  },
+  "actual_server_interoperability": false,
+  "android_execution": false,
+  "source_binding": {
+    "source_commit": "648ebf2d0c2cca9dfa5ef9acf9b1fe705ffe9c01",
+    "source_tree": "15cce2275e7d6c55b4b4f0acddd62c6803174e76",
+    "binding_method": "Reviewed draft production and delegated UDP test SHA256 values are identical to the clean integrated source; all listed hashes independently rechecked before recording."
+  },
+  "scope": {
+    "actual_server_interoperability": false,
+    "android_execution": false,
+    "complete_groups_tail_parsed": false,
+    "authoritative_character_spawn": false,
+    "synthetic_fixture_only": true
+  },
+  "ui_review": {
+    "failed_hint_phase": "FAILED",
+    "failed_hint_map_stage": 2,
+    "failure_kinds": {
+      "1": "malformed header",
+      "2": "decoded budget",
+      "3": "bounded allocation unavailable",
+      "4": "stream invalid"
+    },
+    "scene_incomplete_wording": "Scene data received; full server world decoding is pending.",
+    "literal_network_data_in_hint": false
+  }
+}
