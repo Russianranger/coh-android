@@ -55,6 +55,14 @@ typedef struct { CohSgStage stage; CohStatus status; size_t bit; uint32_t file, 
  * This function sends no packets and does not admit any authoritative actor. */
 CohStatus coh_scenegraph_apply(CohSceneGraph **published, CohRepReader *, const CohSgImports *, uint32_t next_generation, CohSgFailure *);
 void coh_scenegraph_free(CohSceneGraph *);
+/* Decode one original sendDef record, INCLUDING its id+1 prefix, without
+ * publishing a graph or checking assets. This is the catalog adapter boundary.
+ * Reader/output/owned_bytes are unchanged on failure. Output must not own prior
+ * allocations; dispose it after use. available_bytes bounds all allocations
+ * made for child/swap arrays and exact original metadata. */
+CohStatus coh_scenegraph_definition_read(CohSgDefinition *, CohRepReader *,
+    uint32_t file, size_t available_bytes, size_t *owned_bytes);
+void coh_scenegraph_definition_dispose(CohSgDefinition *);
 /* Pure original matrix composition; transactional on finite overflow. */
 CohStatus coh_scenegraph_compose(const CohSgMatrix parent, const CohSgMatrix child, CohSgMatrix out);
 #ifdef __cplusplus

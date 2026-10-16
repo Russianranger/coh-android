@@ -66,7 +66,7 @@ static CohSgRoot *root_slot(CohSceneGraph *g,uint32_t id) {
     if(g->root_count==COH_SG_ROOTS_MAX)return NULL;
     CohSgRoot *r=&g->roots[g->root_count++];r->id=id;return r;
 }
-static CohStatus bit(Build *b,unsigned w,uint32_t *v){return coh_rep_read(&b->r,w,v);}
+static CohStatus bit(Build *b,unsigned w,uint32_t *v){TRY(coh_rep_read(&b->r,w,v));return w<32&&(*v>>w)?COH_INVALID:COH_OK;}
 static CohStatus pack(Build *b,unsigned w,uint32_t *v){return coh_rep_pack(&b->r,w,v);}
 static CohStatus flag(Build *b,uint32_t *v){return bit(b,1,v);}
 static CohStatus string(Build *b,char *out){char tmp[COH_REP_NAME_MAX];TRY(coh_rep_string(&b->r,out?out:tmp,COH_REP_NAME_MAX));return COH_OK;}
@@ -103,9 +103,10 @@ static CohStatus tricks(Build *b,CohSgDefinition *d) {
     TRY(flag(b,&u));if(u)TRY(floats(b,3));
     TRY(flag(b,&u));if(u){TRY(string(b,NULL));TRY(floats(b,1));}
     TRY(flag(b,&u));if(u)TRY(colors(b,6));
-    TRY(pack(b,1,&u));if(u&1)TRY(string(b,d->textures[0]));if(u&2)TRY(string(b,d->textures[1]));
+    TRY(pack(b,1,&u));if(u&~3u)return COH_UNSUPPORTED;if(u&1)TRY(string(b,d->textures[0]));if(u&2)TRY(string(b,d->textures[1]));
     TRY(flag(b,&u));if(u)TRY(floats(b,1));TRY(pack(b,1,&u));
-    if(u){uint32_t n;char key[64];TRY(bit(b,32,&n));for(uint32_t i=0;i<n;i++){TRY(coh_rep_string(&b->r,key,sizeof(key)));for(uint32_t j=0;j<COH_GROUPS_VALUE_MAX;j++){uint32_t c;TRY(bit(b,8,&c));if(!c)break;if(j+1==COH_GROUPS_VALUE_MAX)return COH_LIMIT;}TRY(flag(b,&u));}}
+    if(u>1)return COH_INVALID;
+    if(u){uint32_t n;char key[64];TRY(bit(b,32,&n));if(n>COH_GROUPS_PROPERTY_MAX)return COH_LIMIT;for(uint32_t i=0;i<n;i++){TRY(coh_rep_string(&b->r,key,sizeof(key)));for(uint32_t j=0;j<COH_GROUPS_VALUE_MAX;j++){uint32_t c;TRY(bit(b,8,&c));if(!c)break;if(j+1==COH_GROUPS_VALUE_MAX)return COH_LIMIT;}TRY(flag(b,&u));}}
     return COH_OK;
 }
 static CohStatus decode_def(Build *b,uint32_t file,uint32_t id) {
@@ -128,6 +129,22 @@ static CohStatus decode_def(Build *b,uint32_t file,uint32_t id) {
     d->wire_start_bit=(unsigned)(start%8);d->wire_bits=b->r.cursor-start;d->wire_bytes=(d->wire_bits+d->wire_start_bit+7)/8;d->aligned=b->r.compressed;
     d->wire=owned(b->g,d->wire_bytes,1);if(!d->wire)return COH_LIMIT;
     memcpy(d->wire,b->r.bytes.data+start/8,d->wire_bytes);return COH_OK;
+}
+void coh_scenegraph_definition_dispose(CohSgDefinition *d) {
+    if(!d)return;
+    free(d->children);free(d->swaps);free(d->wire);memset(d,0,sizeof(*d));
+}
+CohStatus coh_scenegraph_definition_read(CohSgDefinition *out,CohRepReader *reader,uint32_t file,size_t available,size_t *bytes) {
+    CohSgDefinition candidate={0};CohSceneGraph graph={0};Build b={0};uint32_t id;CohStatus s;
+    if(!out||!reader||!bytes||file>=COH_GROUPS_FILE_MAX||available>COH_SG_MEMORY_MAX)return COH_INVALID;
+    b.r=*reader;b.g=&graph;graph.definitions=&candidate;graph.definition_count=1;
+    graph.owned_bytes=COH_SG_MEMORY_MAX-available;
+    s=pack(&b,1,&id);if(s!=COH_OK)return s;
+    if(!id||id>COH_GROUPS_DEF_ID_MAX+1u)return COH_INVALID;
+    candidate.file=file;candidate.id=id-1;
+    s=decode_def(&b,file,id-1);
+    if(s!=COH_OK){coh_scenegraph_definition_dispose(&candidate);return s;}
+    *out=candidate;*reader=b.r;*bytes=graph.owned_bytes-(COH_SG_MEMORY_MAX-available);return COH_OK;
 }
 static CohStatus imported(Build *b,uint32_t index,const char *name,uint32_t checksum) {
     CohSgFile *f=&b->g->files[index];b->f.stage=COH_SG_IMPORT;b->f.file=index;

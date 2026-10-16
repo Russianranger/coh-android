@@ -39,11 +39,14 @@ static CohStatus check_reader(CohRepReader *r) {
 }
 
 CohStatus coh_ent_next_index(CohRepReader *r,int32_t previous,uint32_t *out,CohEntFailure *failure){
-    Parse p;uint32_t delta;int64_t index;
+    Parse p;uint32_t delta,index;
     if(check_reader(r)!=COH_OK||!out||previous < -1||previous>(int32_t)COH_ENT_INDEX_MAX)return COH_INVALID;
     p=(Parse){*r,COH_ENT_STAGE_LIST,COH_OK};delta=pack(&p,1);
-    index=(int64_t)previous+(int64_t)delta+1;
-    require(&p,index>=0&&index<=COH_ENT_INDEX_MAX,COH_LIMIT);
+    /* sendEntity's signed negative deltas pass through the U32 writer. The
+     * original x86 consumer converts them back to int; unsigned addition gives
+     * the intended source result without implementation-defined conversion. */
+    index=(uint32_t)previous+delta+UINT32_C(1);
+    require(&p,index<=COH_ENT_INDEX_MAX,COH_LIMIT);
     if(p.status!=COH_OK)return fail(&p,failure);
     *r=p.r;*out=(uint32_t)index;clear_failure(failure);return COH_OK;
 }
@@ -210,6 +213,66 @@ CohStatus coh_ent_record(CohRepReader *r,uint32_t selected,uint32_t id,uint32_t 
     if(flag(&p)){require(&p,0,COH_UNSUPPORTED);return fail(&p,failure);}
     if(p.status!=COH_OK)return fail(&p,failure);
     c.end_bit=p.r.cursor;*r=p.r;*out=s;*record=c;clear_failure(failure);return COH_OK;
+}
+static void list_table(Parse *p,uint32_t selected,const CohEntSlot *slots,size_t count,CohEntList *result){
+    size_t i,j;stage(p,COH_ENT_STAGE_OWNERSHIP);
+    for(i=0;i<count&&p->status==COH_OK;i++){
+        const CohEntSlot *s=&slots[i];const CohEntCreate *c=&s->identity;
+        require(p,s->index>0&&s->index<=COH_ENT_INDEX_MAX&&s->present<=1&&
+            s->position.valid<=1&&s->orientation.valid<=7,COH_INVALID);
+        for(j=0;j<3;j++)require(p,s->position.packed[j]<=0xffffffu,COH_INVALID);
+        for(j=0;j<4;j++)require(p,isfinite(s->orientation.quaternion[j]),COH_INVALID);
+        for(j=0;j<i;j++)require(p,s->index!=slots[j].index,COH_INVALID);
+        if(!s->present)continue;
+        require(p,c->entity_id>0&&c->entity_id<=COH_ENT_GENERATION_MAX&&
+            c->type>0&&c->type<9&&c->is_self<=1,COH_INVALID);
+        if(c->type==2){
+            require(p,c->dbid>0&&c->dbid<=INT32_MAX,COH_INVALID);
+            require(p,c->is_self?c->dbid==selected:c->dbid!=selected,COH_STATE);
+        }else require(p,!c->is_self&&!c->dbid,COH_STATE);
+        if(c->is_self){
+            require(p,!result->self_index,COH_STATE);
+            result->self_index=s->index;result->self_entity_id=c->entity_id;result->self_dbid=c->dbid;
+        }
+    }
+}
+CohStatus coh_ent_list(CohRepReader *r,uint32_t selected,uint32_t id,uint32_t interp,
+    CohEntSlot *slots,size_t count,CohEntListWorkspace *workspace,CohEntList *out,CohEntFailure *failure){
+    Parse p;CohEntList result={0},baseline={0};int32_t previous=-1;
+    if(check_reader(r)!=COH_OK||!selected||selected>INT32_MAX||!id||interp>3||
+       (!slots&&count)||count>COH_ENT_LIST_MAX||!workspace||!out)return COH_INVALID;
+    p=(Parse){*r,COH_ENT_STAGE_OWNERSHIP,COH_OK};list_table(&p,selected,slots,count,&baseline);
+    if(p.status!=COH_OK)return fail(&p,failure);
+    if(count)memcpy(workspace->slots,slots,count*sizeof(*slots));
+    for(;;){
+        uint32_t delta,index,create,end=0;size_t i,j;Parse probe;CohEntRecord record;CohStatus status;
+        stage(&p,COH_ENT_STAGE_LIST);delta=pack(&p,1);
+        index=(uint32_t)previous+delta+UINT32_C(1);
+        if(p.status!=COH_OK)return fail(&p,failure);
+        /* The source tests end before dereferencing ent_xlat[idx]. In
+         * particular a terminator after slot MAX has synthetic index MAX+1. */
+        probe=p;create=flag(&probe);if(create)end=flag(&probe);
+        if(probe.status!=COH_OK)return fail(&probe,failure);
+        if(end){
+            p=probe;require(&p,delta==0,COH_INVALID);
+            if(p.status!=COH_OK)return fail(&p,failure);
+            list_table(&p,selected,workspace->slots,count,&result);
+            if(p.status!=COH_OK)return fail(&p,failure);
+            result.end_bit=p.r.cursor;
+            if(count)memcpy(slots,workspace->slots,count*sizeof(*slots));
+            *r=p.r;*out=result;clear_failure(failure);return COH_OK;
+        }
+        require(&p,index>0&&index<=COH_ENT_INDEX_MAX,COH_LIMIT);
+        require(&p,result.count<COH_ENT_LIST_MAX,COH_LIMIT);
+        if(p.status!=COH_OK)return fail(&p,failure);
+        for(i=0;i<result.count;i++)require(&p,index!=workspace->visited[i],COH_INVALID);
+        if(p.status!=COH_OK)return fail(&p,failure);
+        for(j=0;j<count;j++)if(workspace->slots[j].index==index)break;
+        require(&p,j<count,COH_NOT_FOUND);if(p.status!=COH_OK)return fail(&p,failure);
+        status=coh_ent_record(&p.r,selected,id,interp,&workspace->slots[j],&record,failure);
+        if(status!=COH_OK)return status;
+        workspace->visited[result.count++]=index;previous=(int32_t)index;
+    }
 }
 CohStatus coh_ent_deletes(CohRepReader *r,CohEntDeletes *out,CohEntFailure *failure){
     Parse p;CohEntDeletes d={0};uint32_t i,j;

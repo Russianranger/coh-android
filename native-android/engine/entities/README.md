@@ -9,10 +9,11 @@ full update or publish an authoritative actor. Gates 25–27 remain open.
 
 | Entry point | Source-qualified scope |
 |---|---|
-| `coh_ent_next_index` | Original `previous + packed_delta + 1` sparse list indices, overflow checked; starts at -1 |
+| `coh_ent_next_index` | Original `previous + packed_delta + 1` sparse list candidates with explicit modulo-2^32 arithmetic and bounded result; starts at -1 and supports source append passes that descend |
 | `coh_ent_create` | `checkEntCreate` create/sentinel bits, entity generation, player/self/DBID, optional pet metadata without basepower, class/origin indices, titles, name/phase/seed, villain/group/definition references, optional animation and persistent-NPC names, contact handle |
 | `coh_ent_orientation` | Original nonlinear 9-bit quaternion reconstruction and per-component packet ordering, recomputed nonnegative W and normalization |
 | `coh_ent_record` | Complete **supported individual** create/update records through trailing teammate flag, using the accepted 24-bit scale-64 position kernel; modes, movement sequence values, bounded triggered moves, AI list, absent costume, translucency, bounded ragdoll values, numeric vision metadata |
+| `coh_ent_list` | Atomic complete **supported list substructure** through the canonical end sentinel, including descending indices and the sentinel after the maximum entity slot; validates selected/self ownership across the caller's entire bounded staging table |
 | `coh_ent_deletes` | Complete standalone delete count and index/generation pairs, at a known source-defined substructure boundary |
 | `coh_ent_stage_deletes` | Atomic batch application to caller-owned staging slots/tombstones with original creation/deletion packet ordering |
 | `coh_ent_full_update_tail` | Always returns `COH_UNSUPPORTED` at the supplied boundary; no attempt to skip opaque character/global tails |
@@ -27,13 +28,43 @@ signed values and retained as their own identities.
 
 A successful `coh_ent_record` is one supported record in a **staging buffer**.
 It does not mean a whole ALLENTS/UPDATE is valid. Production integration must
-parse the complete entity list, global debugging/control state, deletes,
+support the necessary entity branches, parse global debugging/control state, deletes,
 character/full-stats, powers, badges, inventories, teams/leagues, dynamic groups,
 sky and embedded commands; resolve all necessary class/origin/appearance/data
 schemas; validate global unique self ownership; then commit the whole packet
 transaction. That complete tail is not implemented here. No executable code in
 this module sends `READY`, `RECEIVED_CHARACTER`, `ACK_FULL_UPDATE`, or any socket
 message. No offline preview data participates.
+
+`coh_ent_list` starts at the first source delta and consumes only the entity-list
+substructure. It accepts a caller-owned table of at most 256 uniquely indexed
+slots/tombstones and a separate `CohEntListWorkspace`. The workspace is scratch
+(150,528 bytes on the host ABI); use an arena, heap or static owner, rather than
+putting it on the call stack. The caller must supply its complete staging table;
+ownership checks cover that supplied table and cannot detect omitted entities.
+Each referenced slot must already be indexed in the table, including creates.
+Missing capacity is `COH_NOT_FOUND`, never a new dummy entity. The workspace may
+contain partially parsed values after failure; it must never be published.
+The reader, input table and list receipt change only after the full supported
+list and ownership checks succeed. All API objects must be nonaliasing and have
+one owner thread. Unmentioned slots retain their values.
+
+The list owner rejects duplicate record indices, including after a descending
+append, and requires the original producer's canonical packed delta 0 / create
+1 / end 1 sentinel. It probes this sentinel before applying ordinary entity
+slot bounds: after entity 10239 its synthetic index is 10240. The sentinel is
+not an entity or a duplicate record, even if its synthetic index equals an
+earlier entity index. The delta helper alone retains its candidate bound of
+0..10239; the list owner handles the maximum-slot sentinel separately.
+
+Both the seeded table and completed staged table must have at most one live
+self player. A live self must have player type and the selected DBID; a live
+nonself player cannot claim that DBID. These are explicit native admission
+guards: the old client simply selected the last `make_player` object, and did
+not validate packet-wide uniqueness. Empty lists and fragments with no self
+remain valid grammar and report `self_index=0`; they establish no selected
+character authority. A self receipt also remains unresolved staging metadata,
+with no appearance, character-tail, actor or ACK authority.
 
 ## Exact unsupported boundaries
 
@@ -50,8 +81,9 @@ position. Public reader, staging slot and output structures remain unchanged:
   targeting/status/inventory and self taskforce state.
 - Teammate/buff payloads and the entire full-update/global/character tail.
 
-An unknown entity update index returns `COH_STATE`; unlike the original client,
-this module does not fabricate a dummy entity. An older create/update cannot
+A known staging slot with no live entity returns `COH_STATE` on update; an
+index absent from the list caller's table returns `COH_NOT_FOUND`. Unlike the
+original client, this module does not fabricate a dummy entity. An older create/update cannot
 replace a newer slot generation or bypass a newer deletion tombstone. Duplicate
 create packets with the same creation packet ID are rejected as a conservative
 admission rule, even though the old client can reuse the existing object.
@@ -69,14 +101,14 @@ rejects the entire batch without mutation.
 
 Source slot indices are bounded to `1..10239` (`MAX_ENTITIES_PRIVATE=10240`).
 Index zero is admitted only as the empty-list terminator; a create/update using
-it fails. A terminator after the maximum admitted index is conservatively
-rejected by the index helper. Entity generations are separate positive signed
+it fails. Entity generations are separate positive signed
 IDs up to `INT32_MAX`, **not** capped to the slot index: fixtures include generation
 70001. Generations are derived from the original server `++ent_id`; positive
 signed range is this module's explicit admission budget. Class/origin indices
 are capped at 65535 pending actual dictionary admission. Delete batches have a
 native 256-record limit (original server can emit more), triggered moves a
-16-record budget, and strings retain the bounded original receiving capacities
+16-record budget, entity lists and supplied tables a 256-slot budget, and
+strings retain the bounded original receiving capacities
 (up to 1000 bytes including NUL). Exceeding a limit is reported, never silently
 truncated. No parser allocates heap memory or stores borrowed packet pointers.
 All APIs require a single owner thread and nonaliasing input/output structures.
@@ -105,8 +137,21 @@ fixtures, every-bit truncation, malformed counts/identity/ranges, unsupported
 branches, rollback, tombstone ordering and 20,000 randomized bodies cover the
 native parser. All fixtures are synthetic; none proves actual server traffic.
 
+List fixtures compose those same unchanged original component functions into a
+single original BitStream. Cases include ascending and descending NPC records,
+entity 10239 followed by the sentinel, and synthetic self metadata. The self
+fixtures deliberately suppress `pchar_things` and other unsupported player
+branches; they are not real complete player creates. This fixture composer
+does not execute the original complete `sendEntity` or `entSendUpdate` function.
+Manual list fixtures separately cover malformed sentinels, duplicate/zero
+indices, missing slots, unknown updates and a later unsupported appearance.
+Tests check every-bit truncation with table/reader/receipt rollback, seeded
+global ownership conflicts, untouched self slots, stale creates/updates and
+deletion tombstones. Release, ASan and UBSan run the same fixture/test set.
+
 ```sh
 python native-android/engine/entities/check.py --source-root . --sanitize \
+  --fixtures-output /tmp/entities-fixtures.h \
   --output /tmp/entities-host.json \
   --ndk /path/to/android-ndk-r28c --android-output /tmp/entities-android
 cmake -S native-android/engine/entities -B /tmp/entities-cmake

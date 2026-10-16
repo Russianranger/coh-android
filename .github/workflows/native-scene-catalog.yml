@@ -1,0 +1,179 @@
+name: Native scene catalog and entity transaction contracts
+on:
+  push:
+    branches: [native-android]
+    paths:
+      - native-android/engine/scenecatalog/**
+      - native-android/engine/scenecatalog-server/**
+      - native-android/engine/scenegraph/**
+      - native-android/engine/entities/**
+      - native-android/engine/replication/**
+      - native-android/engine/scenecatalog-qualification/**
+      - native-android/engine/coh_contracts.h
+      - native-android/include/**
+      - native-android/tools/protocol_fixture/**
+      - upstream/ouroboros/Common/**
+      - upstream/ouroboros/MapServer/src/group/**
+      - upstream/ouroboros/MapServer/src/entity/**
+      - upstream/ouroboros/MapServer/src/svr/svr_init.c
+      - upstream/ouroboros/Game/src/group/**
+      - upstream/ouroboros/Game/src/entity/**
+      - upstream/ouroboros/libs/UtilitiesLib/**
+      - .github/workflows/native-scene-catalog.yml
+  workflow_dispatch:
+    inputs:
+      experimental_export_compile:
+        description: Compile the isolated nonshipping Win32 MapServer export overlay (large inputs; no execution or deployment)
+        type: boolean
+        required: false
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: native-scene-catalog-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-host-and-android-build:
+    if: github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Install original-source oracle dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends zlib1g-dev curl unzip
+      - name: Install checksum-pinned public Android NDK r28c
+        run: |
+          curl --fail --silent --show-error --location --retry 2 --output /tmp/scene-catalog-ndk.zip https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+          echo 'dfb20d396df28ca02a8c708314b814a4d961dc9074f9a161932746f815aa552f  /tmp/scene-catalog-ndk.zip' | sha256sum -c -
+          unzip -q /tmp/scene-catalog-ndk.zip -d /tmp/scene-catalog-ndk
+      - name: Reject incomplete, mixed, malformed and overclaiming artifacts
+        run: python3 -m unittest discover -s native-android/engine/scenecatalog-qualification/tests -v
+      - name: Run original-source oracles, host release/ASan/UBSan and build both ABI standalone ELFs
+        run: >-
+          python3 native-android/engine/scenecatalog-qualification/qualify.py
+          --source-root . --sanitize --require-clean --workers 3
+          --ndk /tmp/scene-catalog-ndk/android-ndk-r28c
+          --output native-android/results/scene-catalog
+      - name: Qualify nonshipping export source staging and sink host controls
+        run: >-
+          python3 native-android/engine/scenecatalog-server/check.py
+          --source-root . --sanitize
+          --output native-android/results/scene-catalog/server-export/host.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-scene-catalog-host-arm64-x86_64
+          path: native-android/results/scene-catalog/
+          if-no-files-found: error
+          retention-days: 90
+  experimental-win32-export-compile:
+    needs: source-host-and-android-build
+    if: >-
+      github.ref == 'refs/heads/native-android' &&
+      ((github.event_name == 'workflow_dispatch' && inputs.experimental_export_compile) ||
+      (github.event_name == 'push' && contains(github.event.head_commit.message, '[catalog-export-compile]')))
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 90
+    steps:
+      - name: Preserve exact LF source and overlay bytes before checkout
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Stage exact published startup inputs without rebuilding the donor or assets
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path out/scene-catalog-export-diagnostics -Force | Out-Null
+          python tools/android/interactive/map_startup_inputs.py --output out/native-inputs --cache out/asset-cache
+          if ($LASTEXITCODE -ne 0) { throw 'Exact startup inputs failed; no export compile admitted' }
+      - name: Stage a private MapServer source and apply the explicit nonshipping export overlay
+        shell: pwsh
+        run: |
+          python tools/prepare_map_startup_source.py --output C:/scene-catalog-export-src --animations-pigg out/native-inputs/server-animations.pigg --animation-manifest out/native-inputs/server-animation-manifest.json
+          if ($LASTEXITCODE -ne 0) { throw 'Map startup source prerequisite failed' }
+          python native-android/engine/scenecatalog-server/stage_export.py --source-root . --already-staged C:/scene-catalog-export-src
+          if ($LASTEXITCODE -ne 0) { throw 'Nonshipping scene catalog export source admission failed' }
+      - name: Configure the same VS2026 Win32 MapServer build role
+        working-directory: C:/scene-catalog-export-src
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF 2>&1 | Tee-Object "$env:GITHUB_WORKSPACE/out/scene-catalog-export-diagnostics/configure.log"
+          if ($LASTEXITCODE -ne 0) { throw 'Experimental Win32 MapServer configure failed' }
+      - name: Compile only the isolated nonshipping MapServer target; do not execute or deploy
+        working-directory: C:/scene-catalog-export-src
+        shell: pwsh
+        run: |
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target MapServer 2>&1 | Tee-Object "$env:GITHUB_WORKSPACE/out/scene-catalog-export-diagnostics/build.log"
+          if ($LASTEXITCODE -ne 0) { throw 'Experimental Win32 MapServer compile failed' }
+      - name: Reverify exact staged source and retain PE32 compile-only provenance
+        shell: pwsh
+        run: |
+          python native-android/engine/scenecatalog-qualification/record_export_compile.py --source-root . --staged-source C:/scene-catalog-export-src --inputs-receipt out/native-inputs/map-startup-inputs.json --output out/scene-catalog-export-compile --require-clean
+          if ($LASTEXITCODE -ne 0) { throw 'Experimental MapServer compile evidence failed admission' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-scene-catalog-nonshipping-win32-compile-only
+          path: out/scene-catalog-export-compile/
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Retain unaccepted bounded compile diagnostics
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path out/scene-catalog-export-diagnostics -Force | Out-Null
+          foreach ($file in @('C:/scene-catalog-export-src/native-scene-catalog-server-build-input.json', 'C:/scene-catalog-export-src/map-startup-build-input.json', 'C:/scene-catalog-export-src/out/build/vs2026/CMakeCache.txt', 'out/native-inputs/map-startup-inputs.json')) {
+            if (Test-Path -PathType Leaf $file) { Copy-Item $file out/scene-catalog-export-diagnostics/ }
+          }
+          '{"scope":"unaccepted_compile_diagnostics_only","nonshipping":true,"runtime_executed":false,"deployed":false,"apk_changed":false}' | Set-Content -Encoding utf8 out/scene-catalog-export-diagnostics/diagnostic-scope.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-scene-catalog-nonshipping-win32-compile-diagnostics
+          path: out/scene-catalog-export-diagnostics/
+          if-no-files-found: warn
+          retention-days: 90
+  android13-contract-execution:
+    needs: source-host-and-android-build
+    if: github.ref == 'refs/heads/native-android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-scene-catalog-host-arm64-x86_64
+          path: native-android/results/scene-catalog
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Enable hosted Android emulator acceleration
+        run: |
+          test -c /dev/kvm
+          sudo chmod 666 /dev/kvm
+      - name: Execute exact catalog, scenegraph and entity contracts on Android 13 x86_64
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 33
+          emulator-build: '16428233'
+          channel: stable
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: python3 native-android/engine/scenecatalog-qualification/run_android.py --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --require-clean --artifacts native-android/results/scene-catalog --output native-android/results/scene-catalog/android-execution/receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-scene-catalog-android13-execution
+          path: native-android/results/scene-catalog/android-execution/
+          if-no-files-found: error
+          retention-days: 90

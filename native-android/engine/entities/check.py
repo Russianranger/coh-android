@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Run exact original create/quaternion producers and consumer, then native tests.
+"""Run exact original component producers and consumer, then native tests.
 The historical writer executes only trusted padded input at -O0; sanitizers
 cover new code and test harness. No source fixture is evidence of live traffic.
+List fixtures compose original component calls in a synthetic fixture shim;
+they do not execute the original sendEntity or complete entSendUpdate path.
 """
 from pathlib import Path
 import argparse, ctypes as C, hashlib, importlib.util, json, os, re, shutil, struct, subprocess, tempfile
@@ -75,24 +77,50 @@ void original_create(int scenario,int aligned,U8 *out,U32 *length){
  pktSendBits(&p,1,1);entSendCreate(&p,&e,scenario==0||scenario==1?&e:NULL,1);
  *length=p.stream.bitLength;memcpy(out,storage,(*length+7)/8);
 }
+/* Fixture composition only: component functions above remain unchanged. The
+ * pchar/appearance body flags below are deliberately suppressed, including
+ * for self fixtures; these bytes are not a complete real-player update. */
+static void original_record_fields(Packet *p,Entity *e,Entity *self,int medium){
+ pktSendBits(p,1,1);entSendCreate(p,e,self,1);
+ pktSendBits(p,1,medium);if(medium){pktSendBits(p,1,1);pktSendBits(p,1,0);entSendModes(p,e,1);}
+ entSendPosUpdate(p,e,7,1,0);entSendQrotUpdate(p,e,7);
+ if(medium){
+  pktSendBits(p,1,1);pktSendIfSetBitsPack(p,8,33);pktSendIfSetBitsPack(p,4,4);pktSendIfSetBits(p,11,3);
+  entSendSeqTriggeredMoves(p,e);entSendAiAnimList(p,e,1);
+ }
+ pktSendBits(p,1,0);pktSendBits(p,1,0);
+ if(medium){pktSendIfSetBitsPack(p,2,0);pktSendIfSetBits(p,8,20);}
+ pktSendIfSetBits(p,5,medium);if(medium)for(int i=0;i<3;i++)pktSendBits(p,10,256);
+ pktSendBitsAuto(p,1);pktSendBitsAuto(p,0);pktSendBitsAuto(p,0);pktSendBits(p,1,0);
+}
+static void original_record_entity(Entity *e,U32 id){
+ e->type=1;e->id=id;e->name="FixtureNPC";e->randSeed=123;
+ e->net_ipos[0]=(1<<23)+800;e->net_ipos[1]=(1<<23)-400;e->net_ipos[2]=(1<<23)+8192;
+ e->net_iqrot[0]=e->net_iqrot[2]=256;e->net_iqrot[1]=384;e->state.mode=1;
+ e->triggered_move_count=1;e->triggered_moves[0]=(TriggeredMove){42,6,1000,0};e->aiAnimList="FixtureAnim";
+}
 void original_record(int medium,int aligned,U8 *out,U32 *length){
  U32 storage[8192]={0};Packet p={0};Entity e={0};
  initBitStream(&p.stream,(U8*)storage,sizeof(storage),Write,aligned,0);
- e.type=1;e.id=91;e.name="FixtureNPC";e.randSeed=123;
- e.net_ipos[0]=(1<<23)+800;e.net_ipos[1]=(1<<23)-400;e.net_ipos[2]=(1<<23)+8192;
- e.net_iqrot[0]=e.net_iqrot[2]=256;e.net_iqrot[1]=384;e.state.mode=1;
- e.triggered_move_count=1;e.triggered_moves[0]=(TriggeredMove){42,6,1000,0};e.aiAnimList="FixtureAnim";
- pktSendBits(&p,1,1);entSendCreate(&p,&e,NULL,1);
- pktSendBits(&p,1,medium);if(medium){pktSendBits(&p,1,1);pktSendBits(&p,1,0);entSendModes(&p,&e,1);}
- entSendPosUpdate(&p,&e,7,1,0);entSendQrotUpdate(&p,&e,7);
- if(medium){
-  pktSendBits(&p,1,1);pktSendIfSetBitsPack(&p,8,33);pktSendIfSetBitsPack(&p,4,4);pktSendIfSetBits(&p,11,3);
-  entSendSeqTriggeredMoves(&p,&e);entSendAiAnimList(&p,&e,1);
+ original_record_entity(&e,91);original_record_fields(&p,&e,NULL,medium);
+ *length=p.stream.bitLength;memcpy(out,storage,(*length+7)/8);
+}
+void original_list(int scenario,int aligned,U8 *out,U32 *length){
+ U32 storage[8192]={0};Packet p={0};int indices[3]={4,7,0},count=2,last=-1;
+ initBitStream(&p.stream,(U8*)storage,sizeof(storage),Write,aligned,0);
+ if(scenario==1){indices[0]=7;indices[1]=4;indices[2]=9;count=3;}
+ if(scenario==2){indices[0]=10239;count=1;}
+ for(int i=0;i<count;i++){
+  Entity e={0};Character ch={3,1,1,NULL};Player pl={0};
+  original_record_entity(&e,91+i);e.owner=indices[i];
+  int self=scenario==4||(scenario==3&&i==0);
+  if(self){e.type=2;e.db_id=4242;e.pchar=&ch;e.pl=&pl;e.name="FixturePlayer";}
+  /* Same signed expression and U32 writer conversion as sendEntity. The
+   * descending scenario intentionally exercises its modular wire value. */
+  pktSendBitsPack(&p,1,indices[i]-last-1);last=indices[i];
+  original_record_fields(&p,&e,self?&e:NULL,0);
  }
- pktSendBits(&p,1,0);pktSendBits(&p,1,0);
- if(medium){pktSendIfSetBitsPack(&p,2,0);pktSendIfSetBits(&p,8,20);}
- pktSendIfSetBits(&p,5,medium);if(medium)for(int i=0;i<3;i++)pktSendBits(&p,10,256);
- pktSendBitsAuto(&p,1);pktSendBitsAuto(&p,0);pktSendBitsAuto(&p,0);pktSendBits(&p,1,0);
+ pktSendBitsPack(&p,1,0);pktSendBits(&p,1,1);pktSendBits(&p,1,1);
  *length=p.stream.bitLength;memcpy(out,storage,(*length+7)/8);
 }
 void original_deletes(int aligned,U8 *out,U32 *length){
@@ -120,6 +148,7 @@ void original_receive_orientation(const U8 *data,U32 bits,int aligned,U32 id,U32
     lib.original_fields.argtypes=[C.c_void_p,C.c_void_p,C.c_uint32,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_create.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_record.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
+    lib.original_list.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_deletes.argtypes=[C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_orientation.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_receive_orientation.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_uint32,C.c_void_p,C.c_void_p]
@@ -146,6 +175,9 @@ def fixtures(lib,directory):
         for medium in [0,1]:
             out=(C.c_uint8*32768)();bits=C.c_uint32();lib.original_record(medium,mode,out,C.byref(bits))
             emit(f'source_record_{medium}_{mode}',bytes(out[:(bits.value+7)//8]),bits.value)
+        for scenario,label in enumerate(['source_list_0','source_list_1','source_list_2','source_list_self','source_list_duplicate_self']):
+            out=(C.c_uint8*32768)();bits=C.c_uint32();lib.original_list(scenario,mode,out,C.byref(bits))
+            emit(f'{label}_{mode}',bytes(out[:(bits.value+7)//8]),bits.value)
         out=(C.c_uint8*32768)();bits=C.c_uint32();lib.original_deletes(mode,out,C.byref(bits))
         emit(f'source_deletes{mode}',bytes(out[:(bits.value+7)//8]),bits.value)
         ids=(C.c_uint32*3)();q=(C.c_float*4)(0,0,0,1)
@@ -173,15 +205,35 @@ def fixtures(lib,directory):
         emit('unsupported_appearance'+str(mode),*fields(unsupported_appearance,mode))
         unsupported_pchar=npc+u(1,0)+pos+qrot+u(1,1)+u(1,0)*2
         emit('unsupported_pchar'+str(mode),*fields(unsupported_pchar,mode))
-        for name,seq in [('delta_indices',p(1,4)+p(1,2)),('delta_overflow',p(1,0xffffffff)),('delta_zero',p(1,0)),('end',u(1,1)+u(1,1)),('update_flag',u(1,0)),('deletes',p(1,2)+p(12,4)+p(12,91)+p(12,7)+p(12,92)),('delete_large_generation',p(1,1)+p(12,4)+p(12,70001)),('delete_zero',p(1,1)+p(12,0)+p(12,91)),('delete_duplicate',p(1,2)+p(12,4)+p(12,91)+p(12,4)+p(12,92)),('delete_limit',p(1,257)),('bad_type',u(1,1)+u(1,0)+p(12,91)+p(2,99)),('bad_id',u(1,1)+u(1,0)+p(12,0)+p(2,1)),('long_name',u(1,1)+u(1,0)+p(12,91)+p(2,1)+u(1,0)+u(1,1)+string('x'*256))]:
+        # Independent grammar constructions complement the source-function
+        # compositions. Each complete list ends at the canonical delta0/1/1.
+        sentinel=p(1,0)+u(1,1)+u(1,1)
+        npc_next=u(1,1)+u(1,0)+p(12,92)+npc[3:]
+        simple_next=npc_next+simple[len(npc):]
+        unsupported_next=npc_next+unsupported_appearance[len(npc):]
+        for name,seq in [
+            ('list_empty',sentinel),
+            ('list_end_nonzero_delta',p(1,1)+u(1,1)+u(1,1)),
+            ('list_duplicate_index',p(1,4)+simple+p(1,0xffffffff)+simple_next+sentinel),
+            ('list_sentinel_collision',p(1,7)+simple+p(1,0xfffffffe)+simple_next+sentinel),
+            ('list_zero_normal',p(1,0)+simple+sentinel),
+            ('list_unknown_update',p(1,4)+update+sentinel),
+            ('list_capacity_missing',p(1,4)+simple+p(1,2)+simple_next+sentinel),
+            ('list_late_unsupported',p(1,4)+simple+p(1,2)+unsupported_next+sentinel),
+        ]:
+            emit(name+str(mode),*fields(seq,mode))
+        for name,seq in [('delta_indices',p(1,4)+p(1,2)),('delta_descending',p(1,7)+p(1,0xfffffffc)+p(1,4)),('delta_overflow',p(1,10240)),('delta_zero',p(1,0)),('end',u(1,1)+u(1,1)),('update_flag',u(1,0)),('deletes',p(1,2)+p(12,4)+p(12,91)+p(12,7)+p(12,92)),('delete_large_generation',p(1,1)+p(12,4)+p(12,70001)),('delete_zero',p(1,1)+p(12,0)+p(12,91)),('delete_duplicate',p(1,2)+p(12,4)+p(12,91)+p(12,4)+p(12,92)),('delete_limit',p(1,257)),('bad_type',u(1,1)+u(1,0)+p(12,91)+p(2,99)),('bad_id',u(1,1)+u(1,0)+p(12,0)+p(2,1)),('long_name',u(1,1)+u(1,0)+p(12,91)+p(2,1)+u(1,0)+u(1,1)+string('x'*256))]:
             emit(name+str(mode),*fields(seq,mode))
     (directory/'fixtures.h').write_text(''.join(content));return count
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--source-root',type=Path,default=REPO);ap.add_argument('--output',type=Path);ap.add_argument('--sanitize',action='store_true');ap.add_argument('--ndk',type=Path);ap.add_argument('--android-output',type=Path);args=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--source-root',type=Path,default=REPO);ap.add_argument('--output',type=Path);ap.add_argument('--fixtures-output',type=Path);ap.add_argument('--sanitize',action='store_true');ap.add_argument('--ndk',type=Path);ap.add_argument('--android-output',type=Path);args=ap.parse_args()
     if bool(args.ndk)!=bool(args.android_output):ap.error('--ndk and --android-output must be supplied together')
     with tempfile.TemporaryDirectory(prefix='coh-entities-') as d:
         directory=Path(d);lib,pins,names=oracle(args.source_root.resolve(),directory);n=fixtures(lib,directory)
+        if args.fixtures_output:
+            args.fixtures_output.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copyfile(directory/'fixtures.h',args.fixtures_output)
         common=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(directory),'-I'+str(HERE)]
         sources=[HERE/'coh_entities.c',HERE/'../replication/coh_replication.c',HERE/'test_entities.c']
         checks={};modes=[('release',['-O2'])]
@@ -202,7 +254,7 @@ def main():
                 run([tc/target,*common,'-O2',*sources,'-lm','-o',exe]);sha=hashlib.sha256(exe.read_bytes()).hexdigest()
                 receipt={'passed':True,'abi':abi,'binary':exe.name,'binary_sha256':sha,'executed':False,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes}
                 (dest/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');android[abi]=receipt
-        proof={'schema':1,'passed':True,'scope':'original create/pose/quaternion/modes/trigger/AI/delete functions; bounded independent staged entity records; synthetic fixtures only','source_files':len(pins),'original_functions':names,'fixtures':n,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes,'checks':checks,'android':android,'full_update_tail_supported':False,'real_server_interoperability':False,'renderable_authoritative_actor':False,'emulator_qualified':False,'thor_accepted':False}
+        proof={'schema':1,'passed':True,'scope':'original create/pose/quaternion/modes/trigger/AI/delete component functions; synthetic source-function list compositions and bounded staged entity lists; no original complete sendEntity/entSendUpdate execution','source_files':len(pins),'original_functions':names,'fixtures':n,'fixtures_sha256':fixture_sha,'source_sha256':source_hashes,'checks':checks,'android':android,'full_update_tail_supported':False,'real_server_interoperability':False,'renderable_authoritative_actor':False,'emulator_qualified':False,'thor_accepted':False}
         if args.output:args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(proof,indent=2)+'\n')
         print(json.dumps(proof,indent=2))
 if __name__=='__main__':main()

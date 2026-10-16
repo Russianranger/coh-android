@@ -8,6 +8,7 @@ extern "C" {
 #define COH_ENT_GENERATION_MAX 2147483647u
 #define COH_ENT_DELETE_MAX 256u
 #define COH_ENT_TRIGGER_MAX 16u
+#define COH_ENT_LIST_MAX 256u
 /* All state here is uncommitted inspection/staging state. A valid record is not
  * a valid ALLENTS/UPDATE packet, resolved appearance, or a renderable actor. */
 typedef enum {
@@ -17,7 +18,8 @@ typedef enum {
     COH_ENT_STAGE_NETFX, COH_ENT_STAGE_APPEARANCE, COH_ENT_STAGE_POWER_CUSTOM,
     COH_ENT_STAGE_TITLES, COH_ENT_STAGE_RAGDOLL, COH_ENT_STAGE_CHARACTER_STATS,
     COH_ENT_STAGE_VISION, COH_ENT_STAGE_RARE_TAIL, COH_ENT_STAGE_BUFFS,
-    COH_ENT_STAGE_DELETES, COH_ENT_STAGE_LIST, COH_ENT_STAGE_FULL_UPDATE_TAIL
+    COH_ENT_STAGE_DELETES, COH_ENT_STAGE_LIST, COH_ENT_STAGE_FULL_UPDATE_TAIL,
+    COH_ENT_STAGE_OWNERSHIP
 } CohEntStage;
 typedef struct { CohStatus status; CohEntStage stage; size_t bit; } CohEntFailure;
 typedef struct {
@@ -46,8 +48,20 @@ typedef struct {
         pchar_things, trigger_count, appearance_type, ragdoll_bones;
     CohEntTrigger triggers[COH_ENT_TRIGGER_MAX]; size_t end_bit;
 } CohEntRecord;
-/* Source delta-index grammar; previous starts at -1. Index 0 is admitted only
- * as an end sentinel by the record decoder, never as an entity. */
+typedef struct {
+    uint32_t count, self_index, self_entity_id, self_dbid;
+    size_t end_bit;
+} CohEntList;
+/* Caller-owned scratch: roughly 150 KiB, intended for an arena/heap/static
+ * owner rather than the call stack. Its contents are unspecified on failure;
+ * it never contains committed game or render state. */
+typedef struct {
+    CohEntSlot slots[COH_ENT_LIST_MAX];
+    uint32_t visited[COH_ENT_LIST_MAX];
+} CohEntListWorkspace;
+/* Source delta-index arithmetic, explicitly modulo 2^32; previous starts at
+ * -1. Source append passes can descend. This helper admits candidates 0..MAX;
+ * only coh_ent_list recognizes the sentinel after the maximum slot. */
 CohStatus coh_ent_next_index(CohRepReader *, int32_t previous, uint32_t *, CohEntFailure *);
 /* This is the checkEntCreate grammar including its create and sentinel bits.
  * It starts after the delta index. It does not read the entity's later body.
@@ -66,6 +80,19 @@ void coh_ent_slot_init(CohEntSlot *, uint32_t index);
 CohStatus coh_ent_record(CohRepReader *, uint32_t selected_dbid,
     uint32_t packet_id, uint32_t interp_level, CohEntSlot *,
     CohEntRecord *, CohEntFailure *);
+/* Complete supported entity-list substructure, starting at its first delta
+ * and ending immediately after the canonical delta=0/create=1/end=1 sentinel.
+ * slots is the caller's complete bounded staging table, with fixed unique
+ * indices (including tombstones); unmentioned slots retain their values.
+ * Missing slots fail rather than creating a dummy. Reader, slots, and result
+ * commit only when every record and global selected/self ownership validate.
+ * At most one live self player may exist; zero self is a valid list fragment,
+ * explicitly reported as self_index=0 and never establishes player authority.
+ * Workspace, reader, table, result, and failure must not alias one another.
+ * This does not read subsequent control/deletes/character/global tails. */
+CohStatus coh_ent_list(CohRepReader *, uint32_t selected_dbid,
+    uint32_t packet_id, uint32_t interp_level, CohEntSlot *, size_t count,
+    CohEntListWorkspace *, CohEntList *, CohEntFailure *);
 /* Complete standalone delete substructure. Input begins at entReceiveDeletes,
  * after control state. This function cannot find that offset in ALLENTS. */
 CohStatus coh_ent_deletes(CohRepReader *, CohEntDeletes *, CohEntFailure *);
