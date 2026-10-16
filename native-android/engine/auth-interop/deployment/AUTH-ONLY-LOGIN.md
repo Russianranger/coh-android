@@ -53,10 +53,13 @@ firewall with rule-management permission. Recover these flat artifact directorie
 | --- | --- | ---: | --- |
 | `auth-original-reuse` | 12064402579 | 428036 | `eda726ddc281b2e6b29e8c4d3c0f5e0805f505a8542c0ef80f5dad6208eb570d` |
 | `auth-odbc-reuse` | 12066189514 | 872480 | `0f032ce2232e0501b47918db55c41a3f35a92fda290252bd18d4c1c9ff209c4b` |
+| `auth-probe-reuse` | 12076876614 | 1437572 | `b02c3f81e6c77aa2c5f48df6f0adefccb88b66fe98624bd6eeebfd631b35d3c7` |
 
 The coordinator validates those archive identities before extraction. The driver
-independently validates the expected files and receipts inside both directories.
-No prior real-login claim is inherited from either artifact.
+independently validates the expected files and receipts inside all directories.
+No prior real-login claim is inherited from any artifact. The third artifact is
+the successful probe build from the failed first service experiment described
+below; it supplies no executed-probe or completed-service qualification.
 
 ```powershell
 python native-android/engine/auth-interop/deployment/hosted_auth_login.py `
@@ -64,8 +67,13 @@ python native-android/engine/auth-interop/deployment/hosted_auth_login.py `
   --output "$env:RUNNER_TEMP/coh-auth-login" `
   --reuse-auth-stage "$env:RUNNER_TEMP/auth-original-reuse" `
   --reuse-odbc-stage "$env:RUNNER_TEMP/auth-odbc-reuse" `
-  --openssl-archive "$env:RUNNER_TEMP/openssl-3.5.9.tar.gz"
+  --reuse-probe-stage "$env:RUNNER_TEMP/auth-probe-reuse"
 ```
+
+A fresh probe build instead omits `--reuse-probe-stage` and requires
+`--openssl-archive` pointing to the exact pinned OpenSSL archive. The narrow retry
+reuses the probe and does not download, extract or rebuild OpenSSL. Its receipt
+explicitly says that the source archive was not revalidated in that run.
 
 Only archive `coh-auth-login/`. It contains bounded build logs, the probe binary,
 native numeric receipts, source/binary identities and aggregate cleanup results.
@@ -112,17 +120,50 @@ python3 native-android/engine/auth-interop/deployment/qualify_auth_only.py \
   --source-root . --sanitize --output /tmp/auth-only-qualification.json
 ```
 
-Current local result: 20 admission suites; 46 WinSock syscall-shell controls,
+Current local result: 26 admission suites; 46 WinSock syscall-shell controls,
 56 unchanged-original tokenizer/getter comparisons, and eight compiled native
 probe argument/refused-loopback cleanup controls per release and ASan/UBSan run.
 The whole Config::Load filesystem/platform/date logic is not executed by the
 tokenizer oracle. The POSIX probe tests do not run Windows or an original service.
 LeakSanitizer is not claimed. Prior successful x86 SQL/ODBC evidence is reused.
 
-At this source checkpoint, Windows compilation, actual AuthServer execution and
-encrypted account login remain **pending**. The Linux environment has no usable
-Windows runtime/SDK; the hosted job is the next exact-source gate. Android/Thor
-qualification is not inherited from these desktop controls.
+The first hosted run, [38970381430](https://github.com/Russianranger/coh-android/actions/runs/38970381430),
+built the Windows x64 probe successfully, installed the exact original schema and
+started the unchanged original x86 AuthServer. Source commit was
+`41b4f585f90023e06ea2c8e7c50f4d505deb8e4f`. Windows service admission then failed
+with `listener_inventory_shape` before any native probe ran. Its complete receipt
+and small logs remain under `../evidence/hosted-auth-listeners-38970381430/`;
+the exact original artifact retains the executable and 1.6-MiB OpenSSL build log.
+The executable is 3,185,664 bytes, SHA256
+`454814a2659944cf7958d10d89f2bdf49a7e5a778ad75d941077ef8d17d672ec`.
+OpenSSL compilation took 255.359 seconds, so this successful build is reused.
+
+That failure left AuthServer cleanup **unverified** because cleanup also called
+the rejected listener projection; SQL, firewall, private-file and source cleanup
+checks passed. Do not retroactively turn the failed receipt into success. Empty
+PowerShell member projection was the suspected cause. The corrected code projects
+each existing pipeline object before building the JSON array, and a real
+PowerShell empty/single/three-object control now runs before starting any service.
+Only its next hosted result can establish the exact PowerShell behavior. Host
+controls reject `[null]`, scalar, Boolean, string, invalid-port and oversized
+inventories; they do not claim PowerShell execution. The retry records Job Object
+termination and listener absence separately.
+
+`probe-build-reuse-pins.json` binds seven artifact files, all 27 local native,
+adapter, profile and fixture inputs (including 15 headers), each exact historical
+Git blob, the unchanged generated CMake-project function, generated fixture
+header, original OpenSSL source hash, and compile/configuration policy. This
+covers the wrapped original login C file, its transitive native headers, every
+Windows compatibility header, `/MT`, Windows API defines, static link libraries,
+VS18 x64 Release, and OpenSSL VC-WIN64A options. Receipt C-input and profile-input
+maps are independently cross-checked after Windows path normalization. No
+binary is rebuilt if any source or policy has changed: admission fails instead.
+The exact archive passed ZIP CRC and SHA256 checks; seven one-byte artifact
+mutations were rejected. See `listener-recovery-host-qualification.json`.
+
+Windows compilation and initial original-process launch are established, but
+listener ownership, actual encrypted account login and complete service cleanup
+remain **pending**. No desktop control establishes Android/Thor qualification.
 
 Even after an AuthServer-only success, the complete authentication path still
 requires a separately admitted nondevelopment version/reference policy, the

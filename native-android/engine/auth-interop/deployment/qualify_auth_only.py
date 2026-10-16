@@ -10,6 +10,10 @@ import secrets
 import socket
 import subprocess
 import tempfile
+import shutil
+import zipfile
+
+import hosted_auth_login
 
 import auth_service_profile as profile
 import hosted_auth_stage as prior
@@ -148,11 +152,48 @@ def qualify_probe(root, directory, sanitize):
             'source_sha256':{str(path.relative_to(root)):prior.sha(path) for path in sources},'executions':results}
 
 
+def qualify_reused_probe(root, artifact, directory):
+    """Check the recovered real build and reject every mutated admitted file."""
+    pins = json.loads((HERE / 'probe-build-reuse-pins.json').read_text())
+    original = hosted_auth_login.admit_probe_reuse(artifact, root)
+    archive = artifact / 'artifact.zip'
+    if archive.stat().st_size != pins['archive_bytes'] or prior.sha(archive) != pins['archive_sha256']:
+        raise ValueError('reused_probe_archive_identity_mismatch')
+    with zipfile.ZipFile(archive) as value:
+        if value.testzip() is not None:
+            raise ValueError('reused_probe_archive_crc_mismatch')
+        zip_entries = {info.filename: {'bytes': info.file_size, 'crc32': info.CRC} for info in value.infolist()}
+    copied = directory / 'mutated-probe'
+    copied.mkdir()
+    for name in pins['files']:
+        shutil.copy2(artifact / name, copied / name)
+    checks = 0
+    for name in pins['files']:
+        path = copied / name
+        contents = path.read_bytes()
+        mutated = bytearray(contents)
+        mutated[len(mutated)//2] ^= 1
+        path.write_bytes(mutated)
+        try:
+            hosted_auth_login.admit_probe_reuse(copied, root)
+        except ValueError as error:
+            if str(error) != 'reused_probe_file_identity_mismatch':
+                raise
+        else:
+            raise ValueError('mutated_reused_probe_not_rejected')
+        path.write_bytes(contents)
+        checks += 1
+    return {'passed': True, 'exact_build_admitted': original, 'mutated_file_controls': checks,
+            'archive_crc_verified': True, 'zip_entries': zip_entries,
+            'binary_executed': False, 'real_account_login_verified': False}
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source-root',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--sanitize',action='store_true')
+    parser.add_argument('--reuse-probe-stage',type=Path)
     args=parser.parse_args()
     root=args.source_root.resolve()
     suite=subprocess.run(['python3','-m','unittest','-v','test_auth_login_stage'],cwd=HERE,capture_output=True,timeout=90)
@@ -170,9 +211,11 @@ def main():
                 'real_windows_execution':False,'real_account_login_verified':False,
                 'authenticated_db_map_handoff_verified':False,'physical_thor_accepted':False,
                 'leak_sanitizer_enabled':False}
+        if args.reuse_probe_stage:
+            result['reused_windows_probe'] = qualify_reused_probe(root,args.reuse_probe_stage.resolve(),directory)
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(result,indent=2)+'\n')
-    print(json.dumps({'passed':True,'unit_suites':20,'windows_syscall_controls_per_mode':46,
+    print(json.dumps({'passed':True,'unit_suites':int(re.search(r'Ran (\d+) tests',suite.stderr.decode()).group(1)),'windows_syscall_controls_per_mode':46,
                       'original_parser_controls_per_mode':result['original_profile_parser']['executions']['release']['result']['checks'],
                       'native_probe_controls_per_mode':8,'real_account_login_verified':False}))
 

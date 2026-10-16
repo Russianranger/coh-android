@@ -1,0 +1,11 @@
+{
+  "id": 12077532044,
+  "run_id": 38971531596,
+  "bytes": 2620622,
+  "sha256": "cd713c7f6ecc7f99539cefa3d3129030ceb100ab0bf3fda0185d1081ac5eb594",
+  "source_commit": "8a55a883706e4e7a92741d27175350f874357009",
+  "passed": true,
+  "apk_rebuilt": false,
+  "physical_execution": false,
+  "live_world": false
+}

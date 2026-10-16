@@ -7,6 +7,7 @@ exception, production account or accepted Android runtime is admitted.
 import argparse
 import ctypes
 import hashlib
+import inspect
 import json
 import os
 from pathlib import Path
@@ -28,6 +29,13 @@ HERE = Path(__file__).resolve().parent
 CASES = ('valid', 'wrong-password', 'missing-account', 'corrupt-frame')
 OPENSSL_SHA256 = '603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a'
 ODBC_IDENTITY = HERE.parent / 'evidence/hosted-odbc-38948147656/artifact-identity.json'
+PROBE_BUILD_POLICY = {
+    'openssl_configuration': ['VC-WIN64A', 'no-shared', 'no-asm', 'no-tests', 'no-module'],
+    'openssl_build': ['nmake', '/nologo', 'build_libs'],
+    'cmake_generator': 'Visual Studio 18 2026', 'architecture': 'x64',
+    'configuration': 'Release', 'parallel': '2',
+}
+
 
 
 def admit_odbc_receipt(directory):
@@ -74,6 +82,74 @@ def probe_identity(path):
         raise ValueError('probe_x64_console_identity_mismatch')
     return {'sha256': prior.sha(path), 'bytes': len(data), 'machine': 'AMD64', 'format': 'PE32+',
             'subsystem': 3, 'header_identity_only': True}
+
+
+def admit_probe_source(root, pins):
+    """Bind every transitive local header, profile, fixture and build policy."""
+    for name, expected in pins['source_files_sha256'].items():
+        path = root / name
+        if path.is_symlink() or not path.is_file() or prior.sha(path) != expected:
+            raise ValueError('reused_probe_source_identity_mismatch')
+    generated = {
+        'fixture_header_sha256': hashlib.sha256(profile.fixture_header().encode()).hexdigest(),
+        'project_generator_sha256': hashlib.sha256(inspect.getsource(prepare_probe_project).encode()).hexdigest(),
+        'build_policy': PROBE_BUILD_POLICY, 'openssl_archive_sha256': OPENSSL_SHA256,
+    }
+    if generated != pins['generated_inputs']:
+        raise ValueError('reused_probe_generated_input_mismatch')
+    return generated
+
+
+def admit_probe_reuse(directory, root):
+    """Reuse this exact built probe; preserve the failed service admission scope."""
+    pins = json.loads((HERE / 'probe-build-reuse-pins.json').read_text())
+    for name, expected in pins['files'].items():
+        path = directory / name
+        if (path.is_symlink() or not path.is_file() or path.stat().st_size != expected['bytes']
+                or path.stat().st_size > prior.LOG_LIMIT or prior.sha(path) != expected['sha256']):
+            raise ValueError('reused_probe_file_identity_mismatch')
+    generated = admit_probe_source(root, pins)
+    receipt = json.loads((directory / 'receipt.json').read_text())
+    if (receipt.get('schema') != 'coh-hosted-auth-only-login-v1'
+            or receipt.get('repository_commit') != pins['repository_commit']
+            or receipt.get('original_source_tree') != prior.ORIGINAL_TREE
+            or receipt.get('passed') is not False or receipt.get('failure') != 'listener_inventory_shape'
+            or receipt.get('original_authserver_started') is not True
+            or receipt.get('encrypted_account_login_verified') is not False
+            or receipt.get('authenticated_db_map_handoff_verified') is not False
+            or receipt.get('owned_authserver_cleanup_complete') is not False
+            or receipt.get('owned_localdb_cleanup_complete') is not True
+            or receipt.get('owned_firewall_cleanup_complete') is not True
+            or receipt.get('private_files_removed') is not True
+            or receipt.get('source_inputs_unchanged') is not True or receipt.get('probe_results') != {}):
+        raise ValueError('reused_probe_receipt_scope_mismatch')
+    for name in ('configure-openssl','build-openssl','configure-native-probe','build-native-probe'):
+        records = [row for row in receipt.get('commands', []) if row.get('name') == name]
+        if (len(records) != 1 or type(records[0].get('returncode')) is not int or records[0]['returncode'] != 0
+                or records[0].get('log_sha256') != pins['files'][name + '.log']['sha256']
+                or records[0].get('log_truncated') is not False):
+            raise ValueError('reused_probe_build_not_qualified')
+    normalize = lambda rows: {name.replace('\\', '/'): value for name, value in rows.items()}
+    if (normalize(receipt.get('native_probe_inputs_sha256', {})) != pins['probe_c_inputs_sha256']
+            or normalize(receipt.get('profile', {}).get('native_source_sha256', {})) != pins['profile_native_inputs_sha256']
+            or {key: value for key, value in receipt.get('profile', {}).items() if key != 'native_source_sha256'} != pins['original_profile']):
+        raise ValueError('reused_probe_profile_source_mismatch')
+    for name, expected in {**pins['probe_c_inputs_sha256'], **pins['profile_native_inputs_sha256']}.items():
+        if pins['source_files_sha256'].get(name) != expected:
+            raise ValueError('reused_probe_source_closure_incomplete')
+    binary = probe_identity(directory / 'coh-auth-only.exe')
+    if binary != receipt.get('native_probe') or receipt.get('openssl_source', {}).get('sha256') != OPENSSL_SHA256:
+        raise ValueError('reused_probe_binary_receipt_mismatch')
+    return {'run_id': pins['run_id'], 'artifact_id': pins['artifact_id'], 'archive_sha256': pins['archive_sha256'],
+            'repository_commit': pins['repository_commit'], 'files': pins['files'], 'native_probe': binary,
+            'native_probe_inputs_sha256': receipt['native_probe_inputs_sha256'],
+            'openssl_static_library_sha256': receipt['openssl_static_library_sha256'],
+            'openssl_source': receipt['openssl_source'],
+            'original_probe_build_tools': receipt['probe_build_tools'], 'rebuilt': False,
+            'source_files_sha256': pins['source_files_sha256'], 'generated_inputs': generated,
+            'original_build_driver_sha256': pins['original_build_driver_sha256'],
+            'prior_probe_executed': False, 'prior_original_authserver_started': True,
+            'prior_service_cleanup_verified': False, 'real_login_qualification_inherited': False}
 
 
 def admit_probe_result(result, case):
@@ -201,13 +277,42 @@ class OwnedJob:
         return terminated and closed and process.poll() is not None
 
 
-def inspect_listeners(pid):
-    expression = ("ConvertTo-Json -Compress -InputObject @((Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | "
-                  "Where-Object OwningProcess -eq " + str(int(pid)) + ").LocalPort)")
-    values = json.loads(prior.capture(['pwsh', '-NoProfile', '-NonInteractive', '-Command', expression]))
-    if not isinstance(values, list) or any(type(value) is not int for value in values):
+def decode_listener_ports(value):
+    values = json.loads(value)
+    if (not isinstance(values, list) or len(values) > 16
+            or any(type(port) is not int or not 1 <= port <= 65535 for port in values)):
         raise ValueError('listener_inventory_shape')
     return set(values)
+
+
+def inspect_listeners(pid):
+    # Member projection on an empty array may emit one null. Project each
+    # existing pipeline object before constructing the explicit result array.
+    expression = ("ConvertTo-Json -Compress -InputObject @(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | "
+                  "Where-Object OwningProcess -eq " + str(int(pid)) + " | ForEach-Object { [int]$_.LocalPort })")
+    return decode_listener_ports(prior.capture(['pwsh', '-NoProfile', '-NonInteractive', '-Command', expression]))
+
+
+def qualify_listener_projection():
+    # Execute the real PowerShell serialization rules before starting a service.
+    expression = """$ErrorActionPreference='Stop'; $empty=@();
+$one=@([pscustomobject]@{LocalPort=21000});
+$many=@([pscustomobject]@{LocalPort=21000},[pscustomobject]@{LocalPort=21001},[pscustomobject]@{LocalPort=21002});
+ConvertTo-Json -Compress -InputObject @{
+old_empty=(ConvertTo-Json -Compress -InputObject @($empty.LocalPort));
+empty=(ConvertTo-Json -Compress -InputObject @($empty | ForEach-Object { [int]$_.LocalPort }));
+one=(ConvertTo-Json -Compress -InputObject @($one | ForEach-Object { [int]$_.LocalPort }));
+many=(ConvertTo-Json -Compress -InputObject @($many | ForEach-Object { [int]$_.LocalPort }))}
+"""
+    result = json.loads(prior.capture(['pwsh','-NoProfile','-NonInteractive','-Command',expression]))
+    if (not isinstance(result, dict) or set(result) != {'old_empty','empty','one','many'}
+            or result['old_empty'] not in ('[]','[null]')
+            or decode_listener_ports(result['empty']) != set()
+            or decode_listener_ports(result['one']) != {21000}
+            or decode_listener_ports(result['many']) != {21000,21001,21002}):
+        raise ValueError('powershell_listener_projection_controls_failed')
+    return {'passed': True, 'old_empty_projection': result['old_empty'], 'explicit_pipeline_empty': result['empty'],
+            'single_port_verified': True, 'three_ports_verified': True, 'real_service_started_by_control': False}
 
 
 def reserve_ports():
@@ -282,7 +387,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--reuse-auth-stage', type=Path, required=True)
     parser.add_argument('--reuse-odbc-stage', type=Path, required=True)
-    parser.add_argument('--openssl-archive', type=Path, required=True)
+    parser.add_argument('--reuse-probe-stage', type=Path)
+    parser.add_argument('--openssl-archive', type=Path)
     args = parser.parse_args()
     root, output = args.source_root.resolve(), args.output.resolve()
     identity = prior.require_hosted(root, output, args.expected_commit)
@@ -290,7 +396,10 @@ def main():
         raise ValueError('tracked_native_source_inputs_modified')
     original = prior.admit_original_reuse(args.reuse_auth_stage.resolve(), identity['original_source_tree'])
     odbc = admit_odbc_receipt(args.reuse_odbc_stage.resolve())
-    openssl = admit_openssl(args.openssl_archive)
+    reused_probe = admit_probe_reuse(args.reuse_probe_stage.resolve(), root) if args.reuse_probe_stage else None
+    if not reused_probe and args.openssl_archive is None:
+        raise ValueError('openssl_archive_required_for_probe_build')
+    openssl = reused_probe['openssl_source'] if reused_probe else admit_openssl(args.openssl_archive)
     output.mkdir(parents=True)
     runner = prior.Commands(output)
     proof = {'schema': 'coh-hosted-auth-only-login-v1', **identity, 'passed': False,
@@ -300,13 +409,15 @@ def main():
              'authenticated_db_map_handoff_verified': False, 'db_checksum_policy_modified': False,
              'native_live_world': False, 'physical_thor_accepted': False, 'commands': runner.records,
              'probe_results': {}, 'private_service_logs_exported': False, 'private_credential_files_exported': False,
-             'probe_contains_public_disposable_fixture': True}
+             'probe_contains_public_disposable_fixture': True,
+             'openssl_source_archive_revalidated_this_run': reused_probe is None}
     instance = 'cohauth-ci-' + secrets.token_hex(12)
     created, firewall_attempted, child, job = False, False, None, None
     localdb, sqlcmd = None, None
     cleanup_ok = True
     temporary = Path(tempfile.mkdtemp(prefix='coh-auth-only-', dir=os.environ['RUNNER_TEMP']))
     try:
+        proof['listener_projection_controls'] = qualify_listener_projection()
         localdb_candidates = sorted(Path(os.environ['ProgramFiles']).glob('Microsoft SQL Server/*/Tools/Binn/SqlLocalDB.exe'), reverse=True)
         sqlcmd_candidates = sorted(Path(os.environ['ProgramFiles']).glob('Microsoft SQL Server/Client SDK/ODBC/*/Tools/Binn/SQLCMD.EXE'), reverse=True)
         localdb = Path(shutil.which('SqlLocalDB.exe') or (str(localdb_candidates[0]) if localdb_candidates else ''))
@@ -331,34 +442,46 @@ def main():
             archive.extractall(temporary / 'source', filter='data')
         source = temporary / 'source/upstream/ouroboros'
         proof['profile'] = profile.audit(root, source)
-        with tarfile.open(args.openssl_archive) as archive:
-            archive.extractall(temporary / 'openssl', filter='data')
-        ssl_source = temporary / 'openssl/openssl-3.5.9'
-        vswhere = Path(os.environ['ProgramFiles(x86)']) / 'Microsoft Visual Studio/Installer/vswhere.exe'
-        vs = Path(prior.capture([vswhere, '-latest', '-products', '*', '-requires', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64', '-property', 'installationPath']))
-        vcvars = vs / 'VC/Auxiliary/Build/vcvarsall.bat'
-        if not vcvars.is_file():
-            raise ValueError('native_probe_build_tools_unavailable')
-        perl = select_native_perl([shutil.which('perl'), 'C:/Strawberry/perl/bin/perl.exe'])
-        proof['probe_build_tools'] = {'native_perl_sha256': prior.sha(perl), 'perl_osname': 'MSWin32',
-                                      'vcvarsall_sha256': prior.sha(vcvars)}
-        for name, arguments, timeout in (
-                ('configure-openssl', [str(perl), 'Configure', 'VC-WIN64A', 'no-shared', 'no-asm', 'no-tests', 'no-module'], 180),
-                ('build-openssl', ['nmake', '/nologo', 'build_libs'], 900)):
-            script = temporary / (name + '.cmd')
-            command_script(script, vcvars, arguments)
-            runner.run(name, ['cmd.exe', '/d', '/c', script], cwd=ssl_source, timeout=timeout)
-        proof['openssl_static_library_sha256'] = prior.sha(ssl_source / 'libcrypto.lib')
-        project = temporary / 'probe-project'
-        inputs = prepare_probe_project(root, project, ssl_source)
-        build = temporary / 'probe-build'
-        runner.run('configure-native-probe', ['cmake', '-S', project, '-B', build, '-G', 'Visual Studio 18 2026', '-A', 'x64'], timeout=180)
-        runner.run('build-native-probe', ['cmake', '--build', build, '--config', 'Release', '--parallel', '2'], timeout=180)
-        probe = build / 'Release/coh-auth-only.exe'
-        proof['native_probe'] = probe_identity(probe)
-        proof['native_probe_inputs_sha256'] = {str(path.relative_to(root)): prior.sha(path) for path in inputs}
-        shutil.copy2(probe, output / 'coh-auth-only.exe')
-        shutil.copy2(build / 'CMakeCache.txt', output / 'native-probe-CMakeCache.txt')
+        if reused_probe:
+            proof['native_probe_build_reuse'] = reused_probe
+            for name, expected in reused_probe['files'].items():
+                destination = output / ('coh-auth-only.exe' if name == 'coh-auth-only.exe' else 'reused-probe-' + name)
+                shutil.copy2(args.reuse_probe_stage / name, destination)
+                if prior.sha(destination) != expected['sha256']:
+                    raise ValueError('reused_probe_changed_during_copy')
+            probe = output / 'coh-auth-only.exe'
+            proof['native_probe'] = probe_identity(probe)
+            proof['native_probe_inputs_sha256'] = reused_probe['native_probe_inputs_sha256']
+            proof['openssl_static_library_sha256'] = reused_probe['openssl_static_library_sha256']
+        else:
+            with tarfile.open(args.openssl_archive) as archive:
+                archive.extractall(temporary / 'openssl', filter='data')
+            ssl_source = temporary / 'openssl/openssl-3.5.9'
+            vswhere = Path(os.environ['ProgramFiles(x86)']) / 'Microsoft Visual Studio/Installer/vswhere.exe'
+            vs = Path(prior.capture([vswhere, '-latest', '-products', '*', '-requires', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64', '-property', 'installationPath']))
+            vcvars = vs / 'VC/Auxiliary/Build/vcvarsall.bat'
+            if not vcvars.is_file():
+                raise ValueError('native_probe_build_tools_unavailable')
+            perl = select_native_perl([shutil.which('perl'), 'C:/Strawberry/perl/bin/perl.exe'])
+            proof['probe_build_tools'] = {'native_perl_sha256': prior.sha(perl), 'perl_osname': 'MSWin32',
+                                          'vcvarsall_sha256': prior.sha(vcvars)}
+            for name, arguments, timeout in (
+                    ('configure-openssl', [str(perl), 'Configure', *PROBE_BUILD_POLICY['openssl_configuration']], 180),
+                    ('build-openssl', PROBE_BUILD_POLICY['openssl_build'], 900)):
+                script = temporary / (name + '.cmd')
+                command_script(script, vcvars, arguments)
+                runner.run(name, ['cmd.exe', '/d', '/c', script], cwd=ssl_source, timeout=timeout)
+            proof['openssl_static_library_sha256'] = prior.sha(ssl_source / 'libcrypto.lib')
+            project = temporary / 'probe-project'
+            inputs = prepare_probe_project(root, project, ssl_source)
+            build = temporary / 'probe-build'
+            runner.run('configure-native-probe', ['cmake', '-S', project, '-B', build, '-G', PROBE_BUILD_POLICY['cmake_generator'], '-A', PROBE_BUILD_POLICY['architecture']], timeout=180)
+            runner.run('build-native-probe', ['cmake', '--build', build, '--config', PROBE_BUILD_POLICY['configuration'], '--parallel', PROBE_BUILD_POLICY['parallel']], timeout=180)
+            probe = build / 'Release/coh-auth-only.exe'
+            proof['native_probe'] = probe_identity(probe)
+            proof['native_probe_inputs_sha256'] = {str(path.relative_to(root)): prior.sha(path) for path in inputs}
+            shutil.copy2(probe, output / 'coh-auth-only.exe')
+            shutil.copy2(build / 'CMakeCache.txt', output / 'native-probe-CMakeCache.txt')
         if instance.casefold() in {value.casefold().strip() for value in prior.capture([localdb, 'info']).splitlines()}:
             raise ValueError('generated_instance_already_exists')
         created = True
@@ -440,7 +563,9 @@ def main():
     finally:
         if child is not None:
             try:
-                cleanup_ok = job.stop(child) and not inspect_listeners(child.pid)
+                proof['owned_authserver_job_stop_complete'] = job.stop(child)
+                proof['owned_authserver_listeners_absent'] = not inspect_listeners(child.pid)
+                cleanup_ok = proof['owned_authserver_job_stop_complete'] and proof['owned_authserver_listeners_absent']
             except Exception:
                 cleanup_ok = False
                 try:

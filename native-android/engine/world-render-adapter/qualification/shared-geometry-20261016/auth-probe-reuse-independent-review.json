@@ -1,0 +1,76 @@
+{
+  "reviewer": "Worker E independent read-only review of AuthServer listener and exact native probe reuse retry",
+  "passed": true,
+  "blocking_findings": [],
+  "worker_source_commit": "263007090af37fac4d578e26618616cb3240da5c",
+  "worker_worktree_clean": true,
+  "coordinator_workflow_revision_context": "537074efeff88643c2cd033dbd284ac5269ea2d4",
+  "reviewed_source_sha256": {
+    "native-android/engine/auth-interop/deployment/hosted_auth_login.py": "76db438daa0469c8794feb21a06c2e3be4f0947a317e6922e28adac83041a11b",
+    "native-android/engine/auth-interop/deployment/probe-build-reuse-pins.json": "9679717846ffeae42963e87af458b26ff136a0701ae33fc8a72ee201c54da4ef",
+    "native-android/engine/auth-interop/deployment/qualify_auth_only.py": "6b32160f6c929882d5001510444d89ac1207b20cec3627df070e9dbccf48cd77",
+    "native-android/engine/auth-interop/deployment/test_auth_login_stage.py": "139c257fd8ce678c1b1bcba184219fe4f8f684b913178dc7b00a611696b9215c",
+    "native-android/engine/auth-interop/deployment/auth_service_profile.py": "6261d5e328df028dfc1332d5e00e94d5d23710dc35587db01e0b3f46f9c033c4",
+    "native-android/engine/auth-interop/deployment/hosted_auth_stage.py": "bcb222f63ffbbaf9645c47a119ddbdab6481d0675ec087fb471f7b7527d67155",
+    ".github/workflows/native-auth-login.yml": "f34fe0594a6317d5f512d2ab2cc0a7315585c2bc432f3f8b85bda14fd6933e67"
+  },
+  "actual_recovered_artifact_validation": {
+    "passed": true,
+    "archive_bytes": 1437572,
+    "archive_sha256": "b02c3f81e6c77aa2c5f48df6f0adefccb88b66fe98624bd6eeebfd631b35d3c7",
+    "archive_crc_verified": true,
+    "archive_entries": 18,
+    "archive_uncompressed_bytes": 4835333,
+    "pinned_artifact_files": 7,
+    "source_files_verified_against_current_and_original_commit": 27,
+    "source_headers_in_pins": 15,
+    "original_source_revision": "41b4f585f90023e06ea2c8e7c50f4d505deb8e4f",
+    "original_build_driver_sha256": "01b6c67e32d2c3301f1039e40887220141bcf5d5bece45c4505bdcfb9d373b4d",
+    "project_generator_byte_identical": true,
+    "native_probe": {
+      "sha256": "454814a2659944cf7958d10d89f2bdf49a7e5a778ad75d941077ef8d17d672ec",
+      "bytes": 3185664,
+      "machine": "AMD64",
+      "format": "PE32+",
+      "subsystem": 3,
+      "header_identity_only": true
+    },
+    "prior_probe_executed": false,
+    "prior_service_cleanup_verified": false,
+    "real_login_qualification_inherited": false,
+    "binary_executed_by_review": false,
+    "powershell_executed_by_review": false
+  },
+  "include_closure": {
+    "passed": true,
+    "transitive_local_C_and_header_inputs": 23,
+    "all_in_27_exact_pins": true,
+    "generated_fixture_pinned_separately": true,
+    "external_headers_scope": "Standard C/Windows SDK plus exact originally built OpenSSL. The reused executable and original successful build receipts are admitted; no compiler or external headers are reexecuted during this retry."
+  },
+  "review_checks": [
+    "Archive 12076876614 from failed service run 38970381430 matches exact size/SHA; all archive member CRCs verify and 18 members totaling 4,835,333 bytes fit existing workflow extraction bounds.",
+    "All seven reused artifact files match pinned bytes and SHA, including executable, original failed receipt, four successful build logs and CMakeCache.",
+    "All 27 current local inputs, including 15 headers, match exact Git blobs and SHA256 at original source commit 41b4f585f90023e06ea2c8e7c50f4d505deb8e4f. Recursive include traversal found no unpinned local input.",
+    "Original build driver hash and exact prepare_probe_project function bytes agree with historical source. Generated fixture, compiler configuration, architecture, OpenSSL configuration and source archive hash are separately pinned.",
+    "Probe admission preserves the prior listener_inventory_shape failure and prior unverified process cleanup. It explicitly does not inherit prior probe execution, authentication or service cleanup success.",
+    "Workflow reuses original AuthServer, ODBC evidence and exact native probe; OpenSSL download/build is omitted and openssl_source_archive_revalidated_this_run remains false.",
+    "Listener command projects actual pipeline objects before forming an explicit JSON array. Decoder rejects null/scalars/boolean/string/out-of-range ports and more than 16 entries.",
+    "Real PowerShell empty/one/many serialization control runs before new LocalDB/service setup. Python unit tests only mock that control and do not establish actual PowerShell execution.",
+    "New proof starts with no probe results and encrypted login false. Reused receipt is copied under a distinct name and cannot replace current receipt or four newly required positive/negative probe results.",
+    "Cleanup records job stop and listener absence separately; either failure revokes overall acceptance. Owned firewall, LocalDB, private-file removal and unchanged native-source checks remain mandatory.",
+    "No password/key/private service-log export introduced. Reused files are successful public build logs, binary, CMake metadata and bounded original symbolic receipt.",
+    "No accepted Android runtime or development-auth path is modified. Auth-only positive result would still not qualify DbServer/MapServer handoff or native world entry."
+  ],
+  "local_qualification_reused": "D preserved release/ASan/UBSan qualification and seven artifact mutation controls; no duplicate full native tests run for independent review.",
+  "limitations": [
+    "Native Windows probe and real PowerShell commands were not executed by this review; the hosted retry must establish their new execution results.",
+    "Original failed process cleanup remains unverified even though private files, SQL and firewall cleanup succeeded; no stronger prior cleanup claim is inherited.",
+    "Existing small process creation-to-Job-assignment interval remains the hosted runner outer interruption boundary, as documented in the prior independent deployment review."
+  ],
+  "real_windows_execution_by_review": false,
+  "encrypted_account_login_verified_by_review": false,
+  "authenticated_db_map_handoff_verified": false,
+  "physical_thor_accepted": false,
+  "real_world_entry": false
+}

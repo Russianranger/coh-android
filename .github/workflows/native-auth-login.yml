@@ -53,7 +53,7 @@ jobs:
         with: {persist-credentials: false}
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - name: Recover exact original AuthServer and completed ODBC evidence
+      - name: Recover exact original AuthServer, completed ODBC evidence and compiled native probe
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -65,6 +65,7 @@ jobs:
           specs = (
               (12064402579, 428036, 'eda726ddc281b2e6b29e8c4d3c0f5e0805f505a8542c0ef80f5dad6208eb570d', 'auth-original-reuse'),
               (12066189514, 872480, '0f032ce2232e0501b47918db55c41a3f35a92fda290252bd18d4c1c9ff209c4b', 'auth-odbc-reuse'),
+              (12076876614, 1437572, 'b02c3f81e6c77aa2c5f48df6f0adefccb88b66fe98624bd6eeebfd631b35d3c7', 'auth-probe-reuse'),
           )
           for artifact, size, sha, name in specs:
               archive = root / (name + '.zip')
@@ -80,19 +81,12 @@ jobs:
                   assert sum(x.file_size for x in infos) <= 32 * 1024**2
                   assert all(not PurePosixPath(x.filename).is_absolute() and '..' not in PurePosixPath(x.filename).parts and '\\' not in x.filename and ':' not in x.filename and ((x.external_attr >> 16) & 0o170000) != 0o120000 for x in infos)
                   source.extractall(output)
-          print('Exact original server and completed ODBC evidence recovered; no server rebuilt')
+          print('Exact original server, completed ODBC evidence and native probe recovered; no binaries rebuilt')
           PY
-      - name: Download checksum-pinned public OpenSSL source for the native test probe
-        shell: pwsh
-        run: |
-          $archive = "$env:RUNNER_TEMP/openssl-3.5.9.tar.gz"
-          curl.exe --fail --silent --show-error --location --output $archive https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz
-          if ($LASTEXITCODE -ne 0) { throw 'Pinned probe crypto source download failed' }
-          if ((Get-FileHash -Algorithm SHA256 $archive).Hash.ToLowerInvariant() -ne '603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a') { throw 'Probe crypto source identity mismatch' }
       - name: Execute isolated original AuthServer encrypted account positive and negative controls
         shell: pwsh
         run: |
-          python native-android/engine/auth-interop/deployment/hosted_auth_login.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-auth-login" --reuse-auth-stage "$env:RUNNER_TEMP/auth-original-reuse" --reuse-odbc-stage "$env:RUNNER_TEMP/auth-odbc-reuse" --openssl-archive "$env:RUNNER_TEMP/openssl-3.5.9.tar.gz"
+          python native-android/engine/auth-interop/deployment/hosted_auth_login.py --source-root . --expected-commit "$env:GITHUB_SHA" --output "$env:RUNNER_TEMP/coh-auth-login" --reuse-auth-stage "$env:RUNNER_TEMP/auth-original-reuse" --reuse-odbc-stage "$env:RUNNER_TEMP/auth-odbc-reuse" --reuse-probe-stage "$env:RUNNER_TEMP/auth-probe-reuse"
           if ($LASTEXITCODE -ne 0) { throw 'Auth-only encrypted login did not qualify; retain bounded sanitized diagnostics' }
       - uses: actions/upload-artifact@v4
         if: always()

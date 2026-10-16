@@ -1,0 +1,9 @@
+{
+  "tips": {
+    "d-listener-recovery": "263007090af37fac4d578e26618616cb3240da5c",
+    "e-recovery-reviews": "e76df614ad1693a6afa575f99d12900e0bde1af4"
+  },
+  "bundle_bytes": 35575,
+  "bundle_sha256": "808e166571c0c0c019c5658fcb556ed2c19f41de9617f38caefd3ead1a8ba7a5",
+  "verification": "The bundle contains these 2 refs:\n263007090af37fac4d578e26618616cb3240da5c refs/coordinator/recovery-next/d-listener-recovery\ne76df614ad1693a6afa575f99d12900e0bde1af4 refs/coordinator/recovery-next/e-recovery-reviews\nThe bundle requires these 2 refs:\nd20690056b9dd9bf4724090225cf81a7c05363c5 \n2db7ebe42eb02083a5168656563c7f19782ab0f1 \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/8749ec34cd9b/coh-recovery/native-android/combined-client/evidence/20261016/primary-recovery-next/auth-recovery-history.bundle is okay\n"
+}

@@ -145,7 +145,7 @@ independently reviewed source contracts. Costume body support does not complete
 its entity envelope, authentic dictionary import, full character or global tails.
 Raw scene metadata does not resolve inherited model/trick/material semantics.
 
-The private disposable catalog capture run38939438638 failed DB readiness after
+The private disposable catalog capture run 38939438638 failed DB readiness after
 600 seconds. MapServer did not launch and no catalog was captured. Cleanup,
 absence of owned process groups and unchanged source-runtime inventory passed.
 The hosted Wine9.0 ODBC manager cannot load the exact Windows PostgreSQL driver;
@@ -187,7 +187,7 @@ native/source/sanitizer and both Android ABI builds, then failed six startup
 reader source-oracle tests because the depth-one checkout lacked pinnedcda93d96.
 The original build artifact12063314717 is retained and independently admitted;
 a coordinator workflow fix fetches that exact historical object before tests.
-Primary run38943674280 executed auth2147 and entities1083422 checks successfully
+Primary run 38943674280 executed auth2147 and entities1083422 checks successfully
 on Android13, then failed a combined scene metadata status/rollback assertion.
 The adapter was **not attempted**. No new full workflow acceptance follows.
 
@@ -221,7 +221,7 @@ Wine10 source shows that Z:\ maps Linux filesystem root and receives reparse
 attributes rejected by the unchanged sink. A separate private C-drive path and
 read-only exact WinAPI preflight are being qualified. No real catalog exists yet.
 
-Authrun38943674226 successfully compiled unchanged original AuthServer:
+Authrun 38943674226 successfully compiled unchanged original AuthServer:
 864256 bytes, SHA2566d4d6a9f16104a8327fb90467f0d00fc1e3fad2a7af17ec839e7a8cfe3094ea8.
 Its later test-harness compile failed on a logger declaration collision; no SQL
 instance was created. Corrected staging reuses that exact executable, original
@@ -263,7 +263,7 @@ controls and independent review pass. The original MapServer/sink binary is
 unchanged. Probe executable/build receipt and native catalog validator are now
 retained in the capture artifact. No authentic catalog has yet been captured.
 
-Auth run38946462964 reused the exact original AuthServer without executing it,
+Auth run 38946462964 reused the exact original AuthServer without executing it,
 compiled the original ODBC and both checksum controls, executed135 policy checks
 per control and installed the unchanged source schema in unique LocalDB17.0.4025.3.
 The metadata query then failed because sqlcmd -h and -y0 conflict. No ODBC binding
@@ -375,3 +375,18 @@ requiring unpublished coordinator commit objects. Use its accompanying SHA256,
 refs and tips receipt instead of assembling incremental bundles, some of which
 also reference local coordinator commits. The published integration trees remain
 exact-byte verified and all local worktrees remain intact.
+
+
+## Primary recovery continuation after the original six-worker session
+
+A replacement primary recovered actual remote 66146bbee, preserved the original
+bundles and 28 unpublished files, and ran six new isolated workers. Reviewed source
+is published as 41b4f585f90023e06ea2c8e7c50f4d505deb8e4f; narrow Android recovery is
+8a55a883706e4e7a92741d27175350f874357009. The original text above remains historical.
+The complete current recovery/source/artifact/worker/gate handoff is
+[primary-recovery-next/HANDOFF.md](../primary-recovery-next/HANDOFF.md).
+It records successful primary Android run 38970381196, successful catalog/compact
+recovery 38971531596, authentic missing-name provenance, combined ownership cost,
+retained failures and the original AuthServer service experiment. Continue from
+that handoff and actual current remote HEAD; do not repeat the catalog capture or
+accepted APK tests. Authoritative world/actor publication and gates 25–27 remain open.

@@ -288,3 +288,44 @@ Host/both-ABI artifact 12076238264 is 2,925,125 bytes, SHA256
 `0cb4714bfc3390ed6ed8bfdefb8068f654656fc1714d1df110a6f5e2225738cb`.
 Portable-core run 38970381544 also passed. These are standalone qualifications,
 not a Combined APK, physical Thor run or real account/world transaction.
+
+### Confirmed catalog/compact Android recovery checkpoint
+
+Recovery source is `8a55a883706e4e7a92741d27175350f874357009`.
+Run 38971531596 passed all three independent jobs: retained module Android 13
+execution, corrected compact host/sanitizer/both-ABI/Android 13 qualification,
+and previously skipped startup controls. Retained modules execute exact source 41;
+compact executes exact source 8a55. Do not relabel the retained binaries as rebuilt.
+
+The authentic compact Android result agrees exactly with all host modes:
+493,373 checks, 130,314 links, seven named misses, 9,360,555-byte compact reservation,
+23,195,067-byte tracked payload peak, 23,305,987-byte diagnostic reservation and
+zero live allocations. World-ready stays false; temporary files were removed.
+Artifact 12077532044 is 2,620,622 bytes, SHA256
+`cd713c7f6ecc7f99539cefa3d3129030ceb100ab0bf3fda0185d1081ac5eb594`.
+Retained module execution artifact 12077106855 is 13,296 bytes, SHA256
+`b4547891d663174c096aafc1b93933674f7b158ba017514a6bcd5d7481ced1da`.
+Exact execution/build/source receipts are under `catalog-android13-recovery/`.
+
+### First original AuthServer service execution and narrow retry
+
+Auth run 38970381430 built the native Windows probe, reused the original x86
+AuthServer and qualified ODBC evidence, installed the disposable schema and
+actually launched the original service. It failed before any login probe because
+empty PowerShell listener-member projection did not meet the JSON-array contract.
+The same parser prevented complete cleanup verification; the original receipt
+correctly retains `owned_authserver_cleanup_complete=false`. SQL, firewall,
+private-file cleanup and source integrity passed. No prior authentication or
+service-cleanup success is inherited by the retry.
+
+The failed sanitized artifact 12076876614 is 1,437,572 bytes, SHA256
+`b02c3f81e6c77aa2c5f48df6f0adefccb88b66fe98624bd6eeebfd631b35d3c7`.
+The exact native probe is 3,185,664 bytes, SHA256
+`454814a2659944cf7958d10d89f2bdf49a7e5a778ad75d941077ef8d17d672ec`.
+D retained the first receipt and fixed explicit pipeline projection, with real
+PowerShell empty/single/three-port controls scheduled before another service.
+Reuse admission binds 27 source/profile/fixture files (including all 23 transitive
+local C/header dependencies), exact build outputs, generated project/fixture,
+OpenSSL source/library identity and original build policy. The corrected driver
+reuses the executable and does not repeat the 255-second OpenSSL build or download.
+Fresh encrypted positive/negative exchanges and full cleanup remain required.

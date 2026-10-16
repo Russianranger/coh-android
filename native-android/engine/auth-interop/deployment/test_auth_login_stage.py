@@ -181,6 +181,74 @@ class AuthLoginStageTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             stage.probe_identity(path)
 
+    def test_listener_inventory_preserves_empty_single_many(self):
+        for raw, expected in [('[]', set()), ('[21000]', {21000}), ('[21000,21001,21002]', {21000,21001,21002})]:
+            self.assertEqual(stage.decode_listener_ports(raw), expected)
+        for bad in ('[null]', 'null', '21000', '{}', '[true]', '["21000"]', '[0]', '[65536]', '[' + ','.join(['1']*17) + ']'):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                stage.decode_listener_ports(bad)
+
+    def test_actual_listener_command_projects_existing_objects(self):
+        with patch.object(stage.prior, 'capture', return_value='[]') as capture:
+            self.assertEqual(stage.inspect_listeners(1234), set())
+            command = capture.call_args.args[0][-1]
+            self.assertIn('Where-Object OwningProcess -eq 1234 | ForEach-Object { [int]$_.LocalPort }', command)
+            self.assertNotIn(').LocalPort', command)
+
+    def test_powershell_projection_control_admits_only_exact_serializations(self):
+        value = {'old_empty':'[null]', 'empty':'[]', 'one':'[21000]', 'many':'[21000,21001,21002]'}
+        with patch.object(stage.prior, 'capture', return_value=json.dumps(value)) as capture:
+            result = stage.qualify_listener_projection()
+            self.assertTrue(result['passed'])
+            self.assertFalse(result['real_service_started_by_control'])
+            self.assertEqual(capture.call_args.args[0][0], 'pwsh')
+        for key, wrong in [('empty','[null]'), ('one','[]'), ('many','[21000,21001]'), ('old_empty','null')]:
+            changed = dict(value, **{key:wrong})
+            with patch.object(stage.prior, 'capture', return_value=json.dumps(changed)):
+                with self.assertRaises(ValueError):
+                    stage.qualify_listener_projection()
+
+    def test_reuse_source_closure_includes_headers_and_generated_policy(self):
+        pins = json.loads((stage.HERE / 'probe-build-reuse-pins.json').read_text())
+        actual = stage.admit_probe_source(ROOT, pins)
+        self.assertEqual(actual, pins['generated_inputs'])
+        prefix = 'native-android/engine/auth-interop/deployment/'
+        required = ['windows/winsock_compat.h', 'windows/compat/arpa/inet.h', 'windows/compat/sys/socket.h',
+                    'windows/compat/fcntl.h', 'windows/compat/poll.h', 'windows/compat/unistd.h',
+                    'windows/wrapped_login.c', 'auth_service_profile.py', 'password_fixture.py']
+        self.assertTrue(all(prefix+name in pins['source_files_sha256'] for name in required))
+        self.assertIn('native-android/engine/login/coh_login.c', pins['source_files_sha256'])
+        self.assertIn('native-android/engine/login/coh_login.h', pins['source_files_sha256'])
+        self.assertIn('native-android/include/coh_native_core.h', pins['source_files_sha256'])
+        self.assertEqual(actual['build_policy']['openssl_configuration'], ['VC-WIN64A','no-shared','no-asm','no-tests','no-module'])
+
+    def test_reuse_rejects_transitive_header_change(self):
+        pins = json.loads((stage.HERE / 'probe-build-reuse-pins.json').read_text())
+        import shutil
+        for name in pins['source_files_sha256']:
+            destination = self.base / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(ROOT / name, destination)
+        for name in ('native-android/engine/auth-interop/deployment/windows/compat/sys/socket.h',
+                     'native-android/engine/login/coh_login.h'):
+            path = self.base / name
+            original = path.read_bytes()
+            path.write_bytes(original+b'\n/* changed */\n')
+            with self.assertRaisesRegex(ValueError, '^reused_probe_source_identity_mismatch$'):
+                stage.admit_probe_source(self.base, pins)
+            path.write_bytes(original)
+
+    def test_reuse_rejects_fixture_generator_and_compile_policy_change(self):
+        pins = json.loads((stage.HERE / 'probe-build-reuse-pins.json').read_text())
+        for target, name, value in ((stage.profile,'fixture_header','different header'),
+                                    (stage.inspect,'getsource','different project function')):
+            with patch.object(target, name, return_value=value):
+                with self.assertRaisesRegex(ValueError, '^reused_probe_generated_input_mismatch$'):
+                    stage.admit_probe_source(ROOT, pins)
+        with patch.dict(stage.PROBE_BUILD_POLICY, {'architecture':'ARM64'}):
+            with self.assertRaisesRegex(ValueError, '^reused_probe_generated_input_mismatch$'):
+                stage.admit_probe_source(ROOT, pins)
+
     def test_private_sql_command_discards_all_output(self):
         with patch.object(stage.subprocess, 'run') as run:
             run.return_value.returncode = 0
