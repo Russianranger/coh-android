@@ -5,12 +5,13 @@
       "e2becd19c",
       "c305d55bd",
       "b01db2e82772450379f28632a3a6468d2d7beeb4",
-      "edb7c1413b2eff4c8ac97d39775d7956de723305"
+      "edb7c1413b2eff4c8ac97d39775d7956de723305",
+      "f0d3eb93e119a26bbd0398d352378f73eb4e5a51"
     ],
-    "status": "Authentic isolated MapServer captured12179670bytes SHA61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763 in38948147691;508files40225slots130314children33roots. Scanned footer matches historical CRCs; eager native import refused32MiB capacity before comparison. Cleanup/source unchanged verified. Additive stream validation in progress; no matching liveGROUPS or Thor generation proof."
+    "status": "Authentic capture now fully streamed:40225records,130314children,508files,33rootcount, historicalCRCparity;173683fixturechecks perrelease/ASan/UBSan;actualcapture peak13900048B. F independentreview and root actual3mode replay pass. ExactZIPdurablyretained outsideAPK. Androidstreamvalidation pending; matchingGROUPS/Thor/roottransforms unresolved."
   },
   "B": {
-    "status": "Dynamic graph193219checks Android13 accepted at01fc; new source-qualified model/library index raises full graph265494checks per host/sanitizer mode, independently reviewed72274lookupchecks. Android lookup gate pending; authenticcompactcatalogtopology development follows measured real capture memory. Real loaded model/material mapping still absent.",
+    "status": "Indexed graph265494checks passed Android13 at97ba, ARM64 built. Compact authentic topology underqualification, exact7missingchild names cause atomic NOT_FOUND refusal; no actualworld publication/assets.",
     "commits": [
       "c147e36ac",
       "72b2518fb",
@@ -21,7 +22,7 @@
     ]
   },
   "C": {
-    "status": "Titles/taskforce2065314checks Android13 passed at01fc. New rare-prefix throughpet/AFK2570029checks per host/sanitizer mode andAindependentrelease/source review; Androidpending. Supergroup/leveling/logout/buffs, dictionary ownership and complete initialglobal transaction remain open.",
+    "status": "Rareprefix2570029checks passed Android13 at97ba. Fullinitialtransaction/dictionaryownership/remainingtails unresolved, noACK. Independent world-capture probe preparation started; requires disposable existingcharacter for actualclienttraffic.",
     "commits": [
       "e5bb08d493c68f5faf80caf397aa25691d084502",
       "8c742201412316acd0fa0e325596fde676ca48bc",
@@ -55,12 +56,13 @@
       "b24874e6a",
       "2bde7b1b1",
       "797f96b66e8c00874791d4d4c9611f5810e7ec9d",
-      "78c9c2ffa0f9c11c38d2084c9777fd88fe4054ee"
+      "78c9c2ffa0f9c11c38d2084c9777fd88fe4054ee",
+      "b8c10ab5db31c38cfd39c03f6ba040c10137c273"
     ],
-    "status": "Adapter lifecycle remains16745checks Android13 accepted at01fc; both01fc qualification workflows independently verified and preserved. New entity-globals power-mode grammar5930110checks per host/sanitizer mode andFindependentreview; Androidpending. Full outertail and badges unsupported, noJNIactivation."
+    "status": "Frozen adapter16745checks and globalpowermode5930110checks passed Android13 at97ba, ARM64built. Exact97ba workflows independently reviewed and retained. NoCombinedJNIactivation, nofullscene/actor prerequisites."
   },
   "F": {
-    "status": "Startup/resource work qualified with no measured Thor improvement. New isolated entity-control667138checks passed host/sanitizers and Android13 x86_64 atfd86; ARM64 built. Further exclusive character-data source grammar development underway; no protected module edits. Complete character_Send wire metadata232005checks per host/sanitizer mode with C/B independent review;30 original producerfixtures,25 original subconsumer comparisons. ARM64/emulator pending. Dictionary binding and whole character_Receive gameplay not qualified.",
+    "status": "Startupobservations unchanged387340ms warm DB70678/Atlas271736,no claimeddeviceimprovement. Character232005checks and control667138passedAndroid13at97ba. Independent Astreamreviewpass; Bcompactaccountingreviewinprogress.",
     "commits": [
       "732f118cf",
       "c608ed770",

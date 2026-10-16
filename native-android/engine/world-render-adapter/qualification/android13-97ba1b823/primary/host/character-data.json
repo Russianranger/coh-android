@@ -1,0 +1,161 @@
+{
+  "schema": "coh-character-data-qualification-v1",
+  "passed": true,
+  "original": {
+    "source_sha256_lf": {
+      "MapServer/src/entity/character_net_server.c": "fae15b785b984416edb7d0b450280da2b6993090c3b2412f8e1616fdf7b300f2",
+      "Game/src/entity/character_net_client.c": "2aadecf970abdce06c42780d567f9fad9e2c024d1d91e1775bd1133f0526d40a",
+      "Common/entity/character_net.c": "f284f3035b8e076bfb5d4c4e6ecb39a8f32afe7350ee00183ac1c021ebd5c091",
+      "Common/entity/character_base.h": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee",
+      "Common/entity/boost.h": "15048e49fa5e0a7673e55fbda8ca9889787a79ce60c596b06ca59731267e9fa9",
+      "Common/entity/powers.h": "9618cc4050e1002d9ea2c7d3a237ce0996f7c0036e21becf73ebdb11b75d112f",
+      "Common/entity/powers_load.c": "c5b7bbf32621922a36ba097d566840bdd9d4afc692d8e3baacd0e207dc1e12b8",
+      "Common/entity/Concept.h": "a4044781c55262f908610de9a8e2778e7d1203f791dac51cde849b16869ac959",
+      "Common/entity/character_inventory.h": "150b4ef111effb7fa2cea9f42b5ca96ac86db1cc7a536e703024c1130b9e8bde",
+      "Common/entity/RewardItemType.h": "f09c948de31ac9e2a26a6445fb24fa415f14bd0dd6ae6ee6823390d6dba5b9d3",
+      "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+      "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5"
+    },
+    "original_function_sha256": {
+      "initBitStream": "f3afd05e3576adbba2e7f688a2edca933b69845fdb4cd86b8b68dc5881081dc3",
+      "bsWriteBits": "877b4116301f328482bd19474e4b7255560e8f530a4d11270c5914bd453310d0",
+      "bsWriteBitsPack": "ac755e84d92b4420efa4d1e9e66bfc70e8981655baf36e56846691b29f61b8cb",
+      "bsReadBits": "66a1e8cbe5ab9e459cdfbda49051928621eeadb2e745c92c998bb8f0ad8600ea",
+      "bsReadBitsPack": "a3f6e4da8d6c45b7e9f672ad70b329084bbfa80dd12b73aae3eae63c40b1c620",
+      "bsAlignByte": "1eda7ea06dd2cc4ef72f379ce65c0d09896e1dadd09b640c884c905298817f40",
+      "bsGetCursorBitPosition": "7367ab6491548c1a4daec3b42d12140adeaf1678bc78e2a245b9bede8d0989ac",
+      "bsWriteF32": "38d78cadee1f9bc73c25ef1f0dfcb6249a3e101165151abb8d0f8ca7c76462c9",
+      "bsReadF32": "88adf74b188c3ce4fe4fa8076817a6735f5ec0d96f60a0d94ea2ec846d3881e4",
+      "bsWriteString": "2372093f7922b6925661f85d851e5538f9d657c4d26492e238f1de70b38e3f81",
+      "pktSendBitsAuto": "406b08dcbe8917e6a7820cb4de8759899d315def68b79fddfaef9fe1294230aa",
+      "pktGetBitsAuto": "24d347775510cb0e5cd093758aee6967bda392c99d0baf5c46c1a19de7897cd7",
+      "basepower_Send": "ce3f2ff7c7daee7ea15f144b7e7989742a12066fd3aa5df7b5353362f5731fe7",
+      "basepower_Receive": "e16bc06cdcc12cb1609dbbf305eca3735c8982f2a6c086e400b5f1379f167b95",
+      "boost_Send": "5cce4d19a77ae1739aba3d28e5845b3a7b301e03e3613c9db6aa26ff4a4277f0",
+      "character_SendBoosts": "c477a2090c1d3cf2bffb44ebe856d77b1f84d4d88e5df9df64b6d90434ce87ad",
+      "conceptitem_Send": "e7727f9ab5ef7fea46abfbfcc8a601a58d32cd0f148e9aa8f45bac420af5ff30",
+      "character_inventory_Send": "90d15a2f531158d11d86c2002e9ea6a41f21800064db21668cb439c30634158a",
+      "character_SendInventories": "dedd48e4d8512713565fe78c309a730691f7908b66fb9ee0399d240952cd2b31",
+      "character_inventory_Receive": "bf219bfa227460ca0125ce1dcca1b60494c5867b4a98eb43985b78dba3230c6a",
+      "character_ReceiveInventories": "77038e03060ea717c0a3dbed0136e7f9ff2cfe1614cbfed6c9f6f6da27818c4b",
+      "character_SendPowerBoost": "666e3f5307c03333866001c28a53f7bdbf9b50453b7dc2dcf4d9995f7af4e8ae",
+      "character_SendPowers": "09180c33c2458de745e770fe71c6f8aee09ffcbb76bd304eed0b7f4361297585",
+      "boost_Receive": "d28d41ccc537d5420f161469ec759336b3f48fb64aa262077db7b368b52edcf8",
+      "character_ReceiveBoosts": "c41549d5980572265c009b1ae006a5b10c90bc108d3b00a94ebd1ee2a02c396f",
+      "character_SendInspirations": "7c52fd5717dff10be315a8cced575a3d01c7b738451c07c6dcc701875e9f564a",
+      "character_ReceiveInspirations": "af536f3d86282397f597ca30bde8ad68548efc93a1e65415ffa610609897551f",
+      "character_Send": "64b3418b7dfea3055ee5f35a6e9b7b2902128905f7ec7656a84374378b1c5920"
+    },
+    "generated_oracle_sha256": "7fc8b410b626b945202bd89326926b9a18266cf68df3049e00b30eefa6cbde0c",
+    "whole_character_Send_executed": true,
+    "whole_character_Receive_executed": false,
+    "consumer_scope": "unchanged inspiration, boost and inventory consumers; owner/setter/dictionary fixtures; no character_CreatePartOne/Two or full powers consumer",
+    "source_writer_sanitized": false,
+    "dictionary_scope": "synthetic fixture CRC lookup only; no imported dictionary or server identity"
+  },
+  "fixtures": {
+    "count": 30,
+    "supported_fixtures": 25,
+    "profile_invariant_refusals": 5,
+    "original_tail_comparisons": 25,
+    "sha256": "ffc19c795eca9950048fb314a57627ea5189bd561b437bf248d11829e6081549"
+  },
+  "fixtures_sha256": "ffc19c795eca9950048fb314a57627ea5189bd561b437bf248d11829e6081549",
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 232005,
+      "random_malformed_inputs": 2000,
+      "data_bytes": 449688,
+      "scratch_bytes": 449688,
+      "ram_limit": 8388608,
+      "allocations": 0,
+      "acknowledgments": 0
+    },
+    "asan": {
+      "passed": true,
+      "checks": 232005,
+      "random_malformed_inputs": 2000,
+      "data_bytes": 449688,
+      "scratch_bytes": 449688,
+      "ram_limit": 8388608,
+      "allocations": 0,
+      "acknowledgments": 0
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 232005,
+      "random_malformed_inputs": 2000,
+      "data_bytes": 449688,
+      "scratch_bytes": 449688,
+      "ram_limit": 8388608,
+      "allocations": 0,
+      "acknowledgments": 0
+    }
+  },
+  "source_sha256": {
+    "native-android/engine/character-data/coh_character_data.c": "1067bb504b0d89dcf61c82f0be42856bc8e42856660d33a3ca0d382a3ac15aaf",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/character-data/test_character_data.c": "039762640efd303dbbd4a0a42b98b7a7def527f525cfa325400f4daf4cdae933",
+    "native-android/engine/character-data/coh_character_data.h": "20b88adebd62b984c12108b50a3ad0d0868cce04aaa5602d8dd2e324ba6ca5e0",
+    "native-android/engine/character-data/oracle_shim.h": "8f8f58527752d4302e88fab5de0db687061ee217a4cf5af9e2ef6276b6a49543",
+    "native-android/engine/character-data/oracle_fixture.c.inc": "6c0523f710dc80b864a0d2e885d847c5b5750c20b08330f493fd965b5a288480",
+    "native-android/engine/character-data/source-pins.json": "545dcd648ab3c938b14b80606b607cc02f96999d5da863bea7c3c1fac1fa3ddb",
+    "native-android/engine/character-data/check.py": "524eb7ea15e7a84d7b23354995b82d54e091eedb074e88c4639cc864a7db23a1",
+    "native-android/engine/character-data/CMakeLists.txt": "aadf14b62293839e98331eb08f49a91308e96bdb717af4effcc4d0b85c4e72f5",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "android": {
+    "arm64-v8a": {
+      "passed": true,
+      "abi": "arm64-v8a",
+      "binary": "coh_character_data_test",
+      "binary_sha256": "d8d57a1bcb15a4d016a06c00a731db408425d8b9236f0005126682fa227bbd8a",
+      "fixtures_sha256": "ffc19c795eca9950048fb314a57627ea5189bd561b437bf248d11829e6081549",
+      "source_sha256": {
+        "native-android/engine/character-data/coh_character_data.c": "1067bb504b0d89dcf61c82f0be42856bc8e42856660d33a3ca0d382a3ac15aaf",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/character-data/test_character_data.c": "039762640efd303dbbd4a0a42b98b7a7def527f525cfa325400f4daf4cdae933",
+        "native-android/engine/character-data/coh_character_data.h": "20b88adebd62b984c12108b50a3ad0d0868cce04aaa5602d8dd2e324ba6ca5e0",
+        "native-android/engine/character-data/oracle_shim.h": "8f8f58527752d4302e88fab5de0db687061ee217a4cf5af9e2ef6276b6a49543",
+        "native-android/engine/character-data/oracle_fixture.c.inc": "6c0523f710dc80b864a0d2e885d847c5b5750c20b08330f493fd965b5a288480",
+        "native-android/engine/character-data/source-pins.json": "545dcd648ab3c938b14b80606b607cc02f96999d5da863bea7c3c1fac1fa3ddb",
+        "native-android/engine/character-data/check.py": "524eb7ea15e7a84d7b23354995b82d54e091eedb074e88c4639cc864a7db23a1",
+        "native-android/engine/character-data/CMakeLists.txt": "aadf14b62293839e98331eb08f49a91308e96bdb717af4effcc4d0b85c4e72f5",
+        "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+      },
+      "executed": false
+    },
+    "x86_64": {
+      "passed": true,
+      "abi": "x86_64",
+      "binary": "coh_character_data_test",
+      "binary_sha256": "96f0ec046ce0c74d0e6e0373f9bfe3c849d43e2d9779716222989d24864893a1",
+      "fixtures_sha256": "ffc19c795eca9950048fb314a57627ea5189bd561b437bf248d11829e6081549",
+      "source_sha256": {
+        "native-android/engine/character-data/coh_character_data.c": "1067bb504b0d89dcf61c82f0be42856bc8e42856660d33a3ca0d382a3ac15aaf",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/character-data/test_character_data.c": "039762640efd303dbbd4a0a42b98b7a7def527f525cfa325400f4daf4cdae933",
+        "native-android/engine/character-data/coh_character_data.h": "20b88adebd62b984c12108b50a3ad0d0868cce04aaa5602d8dd2e324ba6ca5e0",
+        "native-android/engine/character-data/oracle_shim.h": "8f8f58527752d4302e88fab5de0db687061ee217a4cf5af9e2ef6276b6a49543",
+        "native-android/engine/character-data/oracle_fixture.c.inc": "6c0523f710dc80b864a0d2e885d847c5b5750c20b08330f493fd965b5a288480",
+        "native-android/engine/character-data/source-pins.json": "545dcd648ab3c938b14b80606b607cc02f96999d5da863bea7c3c1fac1fa3ddb",
+        "native-android/engine/character-data/check.py": "524eb7ea15e7a84d7b23354995b82d54e091eedb074e88c4639cc864a7db23a1",
+        "native-android/engine/character-data/CMakeLists.txt": "aadf14b62293839e98331eb08f49a91308e96bdb717af4effcc4d0b85c4e72f5",
+        "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+        "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+        "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+      },
+      "executed": false
+    }
+  },
+  "dictionaries_resolved": false,
+  "complete_full_update": false,
+  "acknowledgments_enabled": false,
+  "real_server_interoperability": false,
+  "physical_thor_accepted": false
+}

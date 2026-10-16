@@ -1,5 +1,13 @@
 # Opt-in disposable hosted native capture
 
+**Latest result:** run38948147691 captured the real isolated Atlas saved catalog.
+The original hosted eager-import step refused its fixed-array memory requirement;
+subsequent source-bound offline streaming validation decoded all40,225 records
+under release/ASan/UBSan without raising the32 MiB cap. See
+[the exact external artifact and streaming contract](../scenecatalog/STREAMING.md).
+The earlier failures below remain preserved historical evidence. Do not restart
+the successful capture or imply current Thor/GROUPS/render acceptance.
+
 `capture_disposable.py` prepares the missing runtime attempt using the exact
 existing nonshipping PE. The first hosted attempt, run38939438638 at source
 `cc92cad36eb8136274794a2beed9c6945647abbe`, executed DbServer but reached its

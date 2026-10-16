@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "abi": "x86_64",
+  "binary": "coh_character_data_test",
+  "binary_sha256": "96f0ec046ce0c74d0e6e0373f9bfe3c849d43e2d9779716222989d24864893a1",
+  "fixtures_sha256": "ffc19c795eca9950048fb314a57627ea5189bd561b437bf248d11829e6081549",
+  "source_sha256": {
+    "native-android/engine/character-data/coh_character_data.c": "1067bb504b0d89dcf61c82f0be42856bc8e42856660d33a3ca0d382a3ac15aaf",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/character-data/test_character_data.c": "039762640efd303dbbd4a0a42b98b7a7def527f525cfa325400f4daf4cdae933",
+    "native-android/engine/character-data/coh_character_data.h": "20b88adebd62b984c12108b50a3ad0d0868cce04aaa5602d8dd2e324ba6ca5e0",
+    "native-android/engine/character-data/oracle_shim.h": "8f8f58527752d4302e88fab5de0db687061ee217a4cf5af9e2ef6276b6a49543",
+    "native-android/engine/character-data/oracle_fixture.c.inc": "6c0523f710dc80b864a0d2e885d847c5b5750c20b08330f493fd965b5a288480",
+    "native-android/engine/character-data/source-pins.json": "545dcd648ab3c938b14b80606b607cc02f96999d5da863bea7c3c1fac1fa3ddb",
+    "native-android/engine/character-data/check.py": "524eb7ea15e7a84d7b23354995b82d54e091eedb074e88c4639cc864a7db23a1",
+    "native-android/engine/character-data/CMakeLists.txt": "aadf14b62293839e98331eb08f49a91308e96bdb717af4effcc4d0b85c4e72f5",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  },
+  "executed": false
+}

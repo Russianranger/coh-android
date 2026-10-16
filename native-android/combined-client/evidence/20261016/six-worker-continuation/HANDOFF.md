@@ -13,6 +13,42 @@ coordinator handoff address, so no protected interface implementation was edited
 The six worker commit identities and scope are in `workers.json`; recovery and
 path ownership are in the adjacent JSON receipts.
 
+## Current checkpoint: authentic catalog streaming and Android component qualification
+
+The historical sections below describe successive checkpoints. Current integration
+base is97ba1b82306858d0f6c4b2e226dfa435c8170c8a. Both workflows on that source
+passed host/source/sanitizers, ARM64+x86_64 builds and Android13x86_64 execution:
+primary38951436617 and catalog38951436564. Exact evidence is retained under
+world-render-adapter/qualification/android13-97ba1b823. This includes graph265494,
+entities2570029, character232005, globals5930110, control667138, auth2147,
+catalog21111 and adapter16745 checks. ARM64 execution/Thor acceptance is not
+implied by ARM64 build results.
+
+A commitf0d3eb93e119a26bbd0398d352378f73eb4e5a51 adds complete bounded stream
+validation of the real retained capture:40225records,130314children,508files,
+33root count, matching historical CRCs3173822562/3649375123. Release/ASan/UBSan
+pass173683 original-source fixture checks each and independently replay the real
+capture at13900048B named working memory. Existing eager32MiB materializer
+refusal remains unchanged. Actual GROUPS root transforms are absent.
+
+The exact2.1MBcapture ZIP is now retained under corpus/server-catalog outside
+all Android source sets/APKs, with source/identity/content-audit receipts. The
+new opt-in standalone capture workflow will validate these same bytes on Android;
+no server rerun or accepted APK rebuild is involved. Its driver passed40combined
+admission tests and independent A review. Android execution of this streaming
+change remains pending its new exact-source workflow.
+
+B's compact topology candidate remains under qualification. Strict admission
+finds7unresolved child names in this authentic catalog; it publishes nothing.
+The missing definitions may require the matching runtime GROUPS transaction;
+we do not invent placeholders or assume reachability. C is developing an isolated
+capture probe using the unchanged local-session owner. A real client handoff
+still needs an independently staged disposable existing character. D is preparing
+actual AuthServer-only encrypted login independently of the blocked DB checksum
+reference/version profile. Neither is yet a genuine login/world acceptance result.
+Gates25–27 remain open. Accepted APKs and gameplay-owned implementations remain
+unchanged; no new physical test is requested.
+
 ## Accepted boundary remains unchanged
 
 - Gates1–24 retain their documented physical acceptance.

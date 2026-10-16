@@ -1,0 +1,5 @@
+COH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode view=32 key_error=0 driver_error=0 type=1 path=C:\Program Files\psqlODBC\1800\bin\podbc35w.dll
+COH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode(x86) view=32 key_error=0 driver_error=0 type=1 path=C:\Program Files\psqlODBC\1800\bin\podbc35w.dll
+COH_ODBC_DRIVER_V1 NAME PostgreSQL Unicode
+COH_ODBC_DRIVER_V1 DLL C:\Program Files\psqlODBC\1800\bin\podbc35w.dll
+COH_ODBC_DRIVER_V1 PASS bits=32

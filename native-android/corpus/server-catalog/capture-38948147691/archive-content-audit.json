@@ -1,0 +1,235 @@
+{
+  "schema": 1,
+  "scope": "Read-only privacy/content audit of exact authentic isolated capture ZIP",
+  "archive_bytes": 2145443,
+  "archive_sha256": "6f45437efd8fe7c16b7468634f2ad1914ba446b739632e59d65dc6912624ade3",
+  "members": [
+    {
+      "path": "capture/capture-receipt.json",
+      "bytes": 12534,
+      "sha256": "e8a8db400482da3ef3b5f26093091da0ae166528e1a80b6e895deee631cf640e",
+      "kind": "json"
+    },
+    {
+      "path": "capture/diagnostic-00.txt",
+      "bytes": 10,
+      "sha256": "2a8ab5d2748f8aa4fbfe617d173064dd1147f44b880cf388c4be1391be14aa39",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/catalog.cohcat",
+      "bytes": 12179670,
+      "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+      "kind": "binary"
+    },
+    {
+      "path": "capture/diagnostic-01.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-02.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-04.txt",
+      "bytes": 234,
+      "sha256": "532839fb961456d2f58d000370c4d1d2f349befb2b7c537fd0c3d1604b6d84da",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-03.txt",
+      "bytes": 81,
+      "sha256": "21b26c2d076600553612de20416e9b024da954b539aa82f845d241751df10264",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-05.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-06.txt",
+      "bytes": 424,
+      "sha256": "4a11f29242c74c607dde0485e4108e165021cf656bb1bb3b1b0cebbd95c01d83",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-07.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-08.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-09.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-10.txt",
+      "bytes": 440,
+      "sha256": "8ea4b04334d67816d2c0475c533472456c6913809fe9d5052a4a826e85941f19",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-11.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-12.txt",
+      "bytes": 3115,
+      "sha256": "88ad30e73a70f4eb10c5126079b6037717a6225b4007cf670e38c227f7e44e55",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-13.txt",
+      "bytes": 2213,
+      "sha256": "a049d605368f512dd6538a3b41a5c0b0dc7d7c9dc4f8d293430943e474f7fae6",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-14.txt",
+      "bytes": 36915,
+      "sha256": "ee3f79d61d841ca973f699a7b55b7edf733bf7645bc5e5e638b5fb0787c31162",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-15.txt",
+      "bytes": 71,
+      "sha256": "d3dce0c9e2703a84cb65b62a0271f8bb2a1c62d9776024410d93874b1d892238",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-16.txt",
+      "bytes": 308,
+      "sha256": "4a9a7db3af51c067fe6f25dc4a61d278e3f087592788497597b2a689a022841f",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-17.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "capture/diagnostic-18.txt",
+      "bytes": 1369,
+      "sha256": "753af53dfd7ba24394fa53de99344e292528a6aa94053d25bf2cd7cd8f27369a",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "catalog-validator",
+      "bytes": 61168,
+      "sha256": "9589c9a4a0971a9a74ae9dba020da22867f452bdf65ef1eb1af8d55bdf23cd20",
+      "kind": "binary"
+    },
+    {
+      "path": "catalog-path-probe.exe",
+      "bytes": 240430,
+      "sha256": "56f6911cff6790952316107de40cf28167509aa7fc9d34560613b1635b04bd68",
+      "kind": "binary"
+    },
+    {
+      "path": "control-fixture.json",
+      "bytes": 16106,
+      "sha256": "8f5c9d7e8aecf6808b6e27e3e726356d033e5da9a6e2b0f7c308fedb8ef69bb8",
+      "kind": "json"
+    },
+    {
+      "path": "deployment-plan.json",
+      "bytes": 1267,
+      "sha256": "1ff7b36f072b5a364ded6d1c2eb7ceea3ed36e03d5a1bf9540027ee50b2eb8ff",
+      "kind": "json"
+    },
+    {
+      "path": "map-startup-inputs.json",
+      "bytes": 1166,
+      "sha256": "813b1d59d73295ec9a80766dfd5f707475e90f8813e30273ef7d0de911867ae4",
+      "kind": "json"
+    },
+    {
+      "path": "path-probe-build.json",
+      "bytes": 1017,
+      "sha256": "b58f5c5a17c913c306fbb453e0777040e0d9cb0e5c61fe2b4754f77f9d7efa03",
+      "kind": "json"
+    },
+    {
+      "path": "scope.json",
+      "bytes": 406,
+      "sha256": "648eee7d53ff52675e76207d09a0e37500b19bf26f8a4ae91d10e8360b08e075",
+      "kind": "json"
+    },
+    {
+      "path": "validator-qualification.json",
+      "bytes": 20300,
+      "sha256": "2d6a1e0d24d30732e2106a0c23aab4a4e7cd229065c98ee5f66715699d277a6e",
+      "kind": "json"
+    },
+    {
+      "path": "wine/installed-packages.tsv",
+      "bytes": 152,
+      "sha256": "7052f1a35d365074ec6342f944e98aed1972e646f2e310e2e57f402a05b35776",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "wine/packages.sha256",
+      "bytes": 432,
+      "sha256": "f29007e146adb82c7f47dcbef95fb3d492bf0bea8d4ea1b0d31ada3709c3381f",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "wine/version.txt",
+      "bytes": 10,
+      "sha256": "2a8ab5d2748f8aa4fbfe617d173064dd1147f44b880cf388c4be1391be14aa39",
+      "kind": "utf8_text"
+    },
+    {
+      "path": "wine/winehq.key",
+      "bytes": 3212,
+      "sha256": "d965d646defe94b3dfba6d5b4406900ac6c81065428bf9d9303ad7a72ee8d1b8",
+      "kind": "binary"
+    }
+  ],
+  "evidence": {
+    "source_capture_revision": "01fc46d78611ec9b55d086a2ac55166e13949c82",
+    "disposable_db_only": true,
+    "player_profile_opened": false,
+    "profile_or_database_from_user_device_used": false,
+    "player_database_used": false,
+    "cleanup_verified": true,
+    "source_runtime_unchanged": true,
+    "catalog_sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763",
+    "diagnostics_bounded_hash_verified": true
+  },
+  "content_categories": [
+    "Original saved scene-definition catalog serialized from public .31 source assets in isolated Atlas MapServer",
+    "Bounded Wine, DB, Map and path-probe diagnostics with generic hosted runner/private-prefix paths and loopback endpoints",
+    "Original source and public donor asset identities; schema/attribute counts and hashes, no SQL rows",
+    "Two source-bound nonshipping validator/path-probe executables",
+    "Public WineHQ repository signing key and package identities"
+  ],
+  "excluded_content_observed": [
+    "No database dump or user profile archive",
+    "No account/character row payload",
+    "No imported user archive or runtime persistence directory",
+    "No private signing key or credential configuration file"
+  ],
+  "secret_pattern_findings": [],
+  "verdict": "No credential or user-private/profile content observed; safe to preserve exact ZIP in the same project repository evidence/corpus scope.",
+  "limits": "Pattern scan is supplementary, not a guarantee of arbitrary-secret absence. Verdict also relies on exact member inventory, original catalog grammar, fresh disposable DB and public donor provenance.",
+  "recommended_repo_path": "native-android/corpus/server-catalog/capture-38948147691/evidence.zip",
+  "recommended_companion": "README.md plus exact external-capture.json source/identity manifest; corpus path is outside Android source sets and APK packaging."
+}

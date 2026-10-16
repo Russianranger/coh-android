@@ -14,7 +14,8 @@ REQUIRED_SOURCES = {name: {"native-android/engine/" + name + "/" + suffix for su
     ("check.py", "coh_" + name + ".c", "coh_" + name + ".h",
      ("" if name == "entities" else "tests/") + "test_" + name + ".c")} for name in MODULES}
 REQUIRED_SOURCES["scenecatalog"].update({"native-android/engine/scenecatalog/source_export.inc",
-                                       "native-android/engine/scenecatalog/tests/source_catalog_harness.c"})
+                                       "native-android/engine/scenecatalog/tests/source_catalog_harness.c",
+                                       "native-android/engine/scenecatalog/tests/test_walk.c.inc"})
 REQUIRED_SOURCES["entities"].update({"native-android/engine/entities/" + name for name in
     ("coh_costume.c", "coh_costume.h", "test_costume.c", "costume_oracle.py", "costume_oracle_shim.h",
      "costume_envelope_oracle_shim.h", "costume_envelope_oracle.c.inc", "costume_envelope_fixture.c.inc",

@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "bytes": 154757,
+  "sha256": "dffae8a14c7fb87abde91695943f7c7f82d99b56f98b3cd39dca96927a0324cc",
+  "requires_canonical_bundle": "six-source-history.bundle",
+  "prerequisites": [
+    "edb7c1413b2eff4c8ac97d39775d7956de723305",
+    "78c9c2ffa0f9c11c38d2084c9777fd88fe4054ee"
+  ],
+  "tips": [
+    "f0d3eb93e119a26bbd0398d352378f73eb4e5a51",
+    "b8c10ab5db31c38cfd39c03f6ba040c10137c273"
+  ],
+  "verified": true
+}

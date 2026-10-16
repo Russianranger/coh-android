@@ -1,0 +1,40 @@
+{
+  "artifact": {
+    "artifact_id": 12067129520,
+    "bytes": 2145443,
+    "run_id": 38948147691,
+    "sha256": "6f45437efd8fe7c16b7468634f2ad1914ba446b739632e59d65dc6912624ade3",
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38948147691/artifacts/12067129520"
+  },
+  "capture_receipt_sha256": "e8a8db400482da3ef3b5f26093091da0ae166528e1a80b6e895deee631cf640e",
+  "catalog": {
+    "bytes": 12179670,
+    "generation": 20261016,
+    "path": "capture/catalog.cohcat",
+    "sha256": "61c9408b02e366fa487acc857ffb89cde5d431e7dfcc2b2e01ecd0446bea3763"
+  },
+  "exporter_sha256": "f96f5d51467083a58523187760458ad77e6a48d7b696b0d090aafa8e94e95f39",
+  "exporter_source_revision": "887bef22f5f6403d8589ac00a1269c9438e263a6",
+  "matching_groups_transaction_captured": false,
+  "observations": {
+    "active_roots": 33,
+    "children": 130314,
+    "definitions": 40225,
+    "definitions_crc": 3173822562,
+    "files": 508,
+    "references_crc": 3649375123,
+    "slots": 40225
+  },
+  "orchestration_source_revision": "01fc46d78611ec9b55d086a2ac55166e13949c82",
+  "orchestration_source_tree": "c47ad370bfeb09e708e650c3e509e441b54cbff5",
+  "physical_thor_generation_verified": false,
+  "renderer_authorized": false,
+  "root_transforms_present": false,
+  "schema": "coh-external-source-catalog-v1",
+  "scope": "authentic isolated public-asset Atlas export; source-empty disposable database; not a captured live GROUPS transaction or physical Thor asset generation",
+  "source_runtime_inventory": {
+    "bytes": 4273657217,
+    "files": 176613,
+    "ordered_inventory_sha256": "6ca8b1fb442b62b8dfcb22052d0520a788f09473d25272a63cbf7ffb79130430"
+  }
+}

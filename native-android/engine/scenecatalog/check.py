@@ -64,7 +64,7 @@ def main():
             if not a.fixtures_output:p.error('--prepare-only requires --fixtures-output')
             return
         sources=[HERE/'coh_scenecatalog.c',HERE.parent/'scenegraph/coh_scenegraph.c',HERE.parent/'replication/coh_replication.c',HERE.parent/'replication/coh_groups.c',HERE/'tests/test_scenecatalog.c']
-        hashed=[*sources,HERE/'coh_scenecatalog.h',HERE/'source_export.inc',HERE/'tests/source_catalog_harness.c',HERE/'check.py',HERE/'CMakeLists.txt',HERE.parent/'scenegraph/coh_scenegraph.h',HERE.parent/'replication/groups-source-pins.json']
+        hashed=[*sources,HERE/'coh_scenecatalog.h',HERE/'source_export.inc',HERE/'tests/source_catalog_harness.c',HERE/'tests/test_walk.c.inc',HERE/'check.py',HERE/'CMakeLists.txt',HERE.parent/'scenegraph/coh_scenegraph.h',HERE.parent/'replication/groups-source-pins.json']
         source_hashes={str(x.relative_to(REPO)):hashlib.sha256(x.read_bytes()).hexdigest() for x in hashed}
         flags=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(d),'-I'+str(HERE),'-Wl,--wrap=malloc,--wrap=calloc,--wrap=free']
         modes=[('release',['-O2'])]

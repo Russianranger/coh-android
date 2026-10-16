@@ -1,0 +1,1 @@
+{"schema":"coh-win32-catalog-path-v1","read_only":true,"pointer_bits":32,"admitted":true,"root_attributes":16,"root_error":0,"target_attributes":4294967295,"target_error":2,"parents":[{"component_end":21,"attributes":16,"error":0}]}

@@ -139,7 +139,9 @@ Combined APK. The coordinator owns the eventual Java/JNI/storage implementation.
    SHA256 before passing bytes to the native decoder. Retain those identities
    with the generation; deny unknown/stale generations.
 3. Decode on a preparation thread using unchanged `coh_scenecatalog_preflight`
-   and `coh_scenecatalog_load`. Never publish based on the delivery header alone.
+   and complete record validation through `coh_scenecatalog_load` or the bounded
+   `coh_scenecatalog_walk` contract. Walk callbacks remain speculative and require
+   separate complete graph validation. Never publish based on the delivery header alone.
    Complete record/cursor/name-CRC validation and ownership limits still apply.
 4. Bind the matching complete GROUPS via `coh_scenecatalog_match`; apply the
    scenegraph with qualified generation-bound geometry/material callbacks and
@@ -160,3 +162,13 @@ The test suite covers bounded transport, context/footer mismatches, corruption
 between initial read and copy, no-replace behavior, link refusals and rollback.
 The existing native/source/ASan/UBSan catalog and sink suites remain separate.
 No new Android or physical acceptance is inferred from these Python tests.
+
+
+The authentic isolated run38948147691 capture now has a source-bound external
+manifest in `evidence/capture-38948147691/external-capture.json` and complete host
+streaming validation described in `../scenecatalog/STREAMING.md`. That manifest
+preserves the captured artifact identity; it is not a substitute for this
+Android delivery binding's matching live GROUPS/profile/asset-generation evidence.
+Keep its12,179,670-byte payload in external versioned storage. Do not insert it
+into an accepted APK, silently assign it to a Thor generation, or restart the
+successful server capture merely to qualify a native parser.

@@ -1,0 +1,531 @@
+
+COH_GAME_LOOPBACK_ONLY=1 active: IPv4 loopback binding policy
+Not using shared memory due to -nosharedmemory
+[2026-10-16 18:41:29.739] [INFO] Preloaded PhysX DLLs
+(600) Z:/tmp/coh-catalog-capture/map-runtime/MapServer.exe Z:\tmp\coh-catalog-capture\map-runtime\MapServer.exe  -db 127.0.0.1  -nostats -udp 7001 -tcp 0 -map_id 1 -donotautogroup 
+working dir: Z:\tmp\coh-catalog-capture\map-runtime
+SVN Revision: Unknown
+[2026-10-16 18:41:29.757] [INFO] Initialized error log ./logs/mapserver/errorLogLastRun.log
+Caching directory tree and misc startup...                            (0.02)
+Networking startup.. done                                             (0.00)
+serverStateInit.. done                                                (0.01)
+reserving shared heap space... failed: no shared heap                 (0.00)
+more miscellany..[2026-10-16 18:41:29.840] [DEBUG] 	Parsing .statebits from seqstatebits.bin
+[2026-10-16 18:41:29.841] [DEBUG] 	sequencers
+[2026-10-16 18:41:29.853] [DEBUG] 	Parsing specs/maps.spec from mapsspec.bin
+[2026-10-16 18:41:29.855] [DEBUG] 	Parsing specs/missions.spec from missionspecs.bin
+[2026-10-16 18:41:29.869] [DEBUG] 	Parsing defs/monorails.def from monorails.bin
+done                                                 (0.11)
+[2026-10-16 18:41:29.871] [DEBUG] 	Parsing .txt from sequencers.bin
+[2026-10-16 18:41:29.973] [DEBUG] 	sequencers
+COH_ANIM_CERT_V1 schema=1 pack=465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b opened=1024 certified=1024 fallback=0 crypto_failed=0 raw_bytes=19394893 hash_us=124863 stock_us=0 skipped_rot_keys=2848047 skipped_pos_keys=250299 scanned_rot_keys=0 scanned_pos_keys=0
+COH_ANIM_CERT_V1 schema=1 pack=465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b opened=2048 certified=2048 fallback=0 crypto_failed=0 raw_bytes=36129211 hash_us=229030 stock_us=0 skipped_rot_keys=5160151 skipped_pos_keys=483702 scanned_rot_keys=0 scanned_pos_keys=0
+COH_ANIM_CERT_V1 schema=1 pack=465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b opened=3072 certified=3072 fallback=0 crypto_failed=0 raw_bytes=45492415 hash_us=293039 stock_us=0 skipped_rot_keys=6206581 skipped_pos_keys=676869 scanned_rot_keys=0 scanned_pos_keys=0
+COH_ANIM_CERT_V1 schema=1 pack=465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b opened=4096 certified=4096 fallback=0 crypto_failed=0 raw_bytes=63207097 hash_us=403471 stock_us=0 skipped_rot_keys=8715769 skipped_pos_keys=935310 scanned_rot_keys=0 scanned_pos_keys=0
+COH_ANIM_CERT_V1 schema=1 pack=465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b opened=5120 certified=5120 fallback=0 crypto_failed=0 raw_bytes=78662741 hash_us=503489 stock_us=0 skipped_rot_keys=10793381 skipped_pos_keys=1155406 scanned_rot_keys=0 scanned_pos_keys=0
+Caching relevant folders.. [2026-10-16 18:41:38.918] [DEBUG] Caching relevant folders
+[2026-10-16 18:41:38.918] [DEBUG] 	Defs
+[2026-10-16 18:41:39.121] [DEBUG] 	Menu
+[2026-10-16 18:41:39.252] [DEBUG] 	player_library/animations/male
+[2026-10-16 18:41:39.283] [DEBUG] 	player_library/animations/huge
+[2026-10-16 18:41:39.289] [DEBUG] 	player_library/animations/fem
+[2026-10-16 18:41:39.296] [DEBUG] 	player_library/animations/Vahzilok
+done                                       (0.38)
+loading message stores.. [2026-10-16 18:41:39.297] [DEBUG] 	texts
+[2026-10-16 18:41:39.432] [DEBUG] 	texts
+[2026-10-16 18:41:39.432] [DEBUG] 	texts
+[2026-10-16 18:41:39.432] [DEBUG] 	texts
+[2026-10-16 18:41:39.432] [DEBUG] 	texts
+[2026-10-16 18:41:39.432] [DEBUG] 	texts
+[2026-10-16 18:41:39.432] [DEBUG] 	texts
+[2026-10-16 18:41:39.432] [DEBUG] 	texts
+[2026-10-16 18:41:39.432] [DEBUG] 	texts
+[2026-10-16 18:41:39.432] [DEBUG] 	texts
+[2026-10-16 18:41:39.432] [DEBUG] 	texts
+[2026-10-16 18:41:39.432] [DEBUG] 	texts
+[2026-10-16 18:41:39.433] [DEBUG] Reading from server/bin/messages-en.bin
+[2026-10-16 18:41:39.468] [DEBUG] 	Set folder cache callback for texts/English/*.ms
+[2026-10-16 18:41:39.468] [DEBUG] 	Set folder cache callback for texts/*.types
+done                                         (0.17)
+loading tricks.. [2026-10-16 18:41:39.468] [DEBUG] 	Parsing .txt from tricks.bin
+[2026-10-16 18:41:39.492] [DEBUG] 	tricks
+[2026-10-16 18:41:39.734] [DEBUG] 	Set folder cache callback for tricks/*.txt
+[2026-10-16 18:41:39.734] [DEBUG] 	Set folder cache callback for tricks/*
+done                                                 (0.27)
+Loading Loyalty Rewards.. [2026-10-16 18:41:39.734] [DEBUG] 	Parsing defs/account/LoyaltyRewardTree.def from LoyaltyReward.bin
+done                                        (0.00)
+[2026-10-16 18:41:39.737] [DEBUG] 	object_library
+[2026-10-16 18:41:40.909] [INFO] Loaded grouplibs: 3224 files, 75433 names
+[2026-10-16 18:41:40.909] [DEBUG] 	Set folder cache callback for object_library/*.geo
+[2026-10-16 18:41:40.909] [DEBUG] 	Set folder cache callback for player_library/*.geo
+[2026-10-16 18:41:40.909] [DEBUG] 	Set folder cache callback for player_library/*.anim
+loading defs.. [2026-10-16 18:41:40.909] [DEBUG] Loading attribute names
+[2026-10-16 18:41:40.909] [DEBUG] 	Parsing defs/attrib_names.def from attrib_names.bin
+[2026-10-16 18:41:40.911] [INFO] Loaded attribute names
+[2026-10-16 18:41:40.911] [DEBUG] 	Parsing defs/visionPhases.def from visionPhases.bin
+[2026-10-16 18:41:40.913] [DEBUG] Loading vision phase names
+[2026-10-16 18:41:40.913] [DEBUG] 	Parsing defs/visionPhasesExclusive.def from visionPhasesExclusive.bin
+[2026-10-16 18:41:40.914] [INFO] Loaded vision phase names
+[2026-10-16 18:41:40.914] [DEBUG] Loading hero origins
+[2026-10-16 18:41:40.914] [DEBUG] 	Parsing defs/origins.def from origins.bin
+[2026-10-16 18:41:40.916] [INFO] Loaded hero origins
+[2026-10-16 18:41:40.916] [DEBUG] Loading villain origins
+[2026-10-16 18:41:40.916] [DEBUG] 	Parsing defs/villain_origins.def from villain_origins.bin
+[2026-10-16 18:41:40.918] [INFO] Loaded villain origins
+[2026-10-16 18:41:40.918] [DEBUG] Loading badges
+[2026-10-16 18:41:40.918] [DEBUG] 	Parsing defs/badges.def from badges.bin
+[2026-10-16 18:41:40.930] [INFO] Loaded badges
+[2026-10-16 18:41:40.930] [DEBUG] Loading supergroup badges and pophelp
+[2026-10-16 18:41:40.930] [DEBUG] 	Parsing defs/supergroup_badges.def from supergroup_badges.bin
+[2026-10-16 18:41:40.932] [DEBUG] 	Parsing defs/PopHelp.def from PopHelp.bin
+[2026-10-16 18:41:40.935] [INFO] Loaded supergroup badges and pophelp
+
+  loading combat mods..[2026-10-16 18:41:40.935] [DEBUG] 	Parsing defs/combat_mods.def from combat_mods.bin
+[2026-10-16 18:41:40.937] [DEBUG] 	Parsing defs/combat_mods_villain.def from combat_mods_villain.bin
+done                                           (0.00)
+  loading damagedecay..[2026-10-16 18:41:40.939] [DEBUG] 	Parsing defs/damagedecay.def from damagedecay.bin
+done                                           (0.00)
+  loading inventory limits..[2026-10-16 18:41:40.940] [DEBUG] 	Parsing defs/inventory_sizes.def from inventory_sizes.bin
+[2026-10-16 18:41:40.942] [DEBUG] 	Parsing defs/inventory_tier_bonus.def from inventory_tier_bonus.bin
+done                                      (0.00)
+  loading day jobs..[2026-10-16 18:41:40.944] [DEBUG] 	Parsing .dayjobs from DayJobs.bin
+[2026-10-16 18:41:40.945] [DEBUG] 	defs
+done                                              (0.00)
+  loading zone event karma mods..[2026-10-16 18:41:40.947] [DEBUG] 	Parsing defs/zone_event_karma.def from zone_event_karma.bin
+done                                 (0.00)
+  loading designer contact tips..[2026-10-16 18:41:40.949] [DEBUG] 	Parsing defs/designer_contact_tip_types.def from designer_contact_tip_types.bin
+done                                 (0.00)
+  loading incarnate mods..[2026-10-16 18:41:40.951] [DEBUG] 	Parsing defs/incarnate.def from incarnate.bin
+done                                        (0.00)
+  loading votekick specs..[2026-10-16 18:41:40.952] [DEBUG] 	Parsing defs/tut_votekick.def from tut_votekick.bin
+done                                        (0.00)
+  loading MARTY level mods..[2026-10-16 18:41:40.954] [DEBUG] 	Parsing defs/MARTY_exp_mods.def from MARTY_exp_mods.bin
+done                                      (0.00)
+  loading New Features List..[2026-10-16 18:41:40.956] [DEBUG] 	Parsing defs/NewFeatures/NewFeatures.def from NewFeatures.bin
+done                                     (0.00)
+[2026-10-16 18:41:40.958] [DEBUG] Loading miscellaneous
+[2026-10-16 18:41:40.958] [DEBUG] 	Parsing defs/CustomCritterRewardMods.def from CustomCritterRewardMods.bin
+[2026-10-16 18:41:40.959] [DEBUG] 	Parsing defs/PowersetConversion.def from PowersetConversion.bin
+[2026-10-16 18:41:40.961] [DEBUG] 	Parsing defs/auctionconfig.def from auctionconfig.bin
+[2026-10-16 18:41:40.965] [DEBUG] 	Parsing defs/account/product_catalog.def from product_catalog.bin
+[2026-10-16 18:41:40.981] [DEBUG] 	Parsing defs/combine_chances.def from combine_chances.bin
+[2026-10-16 18:41:40.982] [DEBUG] 	Parsing defs/combine_same_set_chances.def from combine_same_set_chances.bin
+[2026-10-16 18:41:40.984] [DEBUG] 	Parsing defs/boost_effect_above.def from boost_effect_above.bin
+[2026-10-16 18:41:40.986] [DEBUG] 	Parsing defs/boost_effect_below.def from boost_effect_below.bin
+[2026-10-16 18:41:40.987] [DEBUG] 	Parsing defs/combine_booster_chances.def from combine_booster_chances.bin
+[2026-10-16 18:41:40.989] [DEBUG] 	Parsing defs/boost_effect_boosters.def from boost_effect_boosters.bin
+[2026-10-16 18:41:40.991] [DEBUG] 	Parsing defs/exemplar_handicaps.def from exemplar_handicaps.bin
+[2026-10-16 18:41:40.992] [DEBUG] 	Parsing defs/experience.def from experience.bin
+[2026-10-16 18:41:40.994] [DEBUG] 	Parsing defs/schedules.def from schedules.bin
+[2026-10-16 18:41:40.996] [DEBUG] 	Parsing defs/attrib_descriptions.def from attrib_descriptions.bin
+[2026-10-16 18:41:40.998] [INFO] Loaded miscellaneous
+[2026-10-16 18:41:40.998] [DEBUG] Adding defines
+[2026-10-16 18:41:40.998] [INFO] Added defines
+[2026-10-16 18:41:40.998] [DEBUG] Loading power dictionary and boost sets
+[2026-10-16 18:41:40.998] [DEBUG] 	Parsing defs/dim_returns.def from dim_returns.bin
+[2026-10-16 18:41:41.000] [DEBUG] 	Parsing .categories from powercats.bin
+[2026-10-16 18:41:41.002] [DEBUG] 	defs
+[2026-10-16 18:41:41.005] [DEBUG] 	Parsing .powersets from powersets.bin
+[2026-10-16 18:41:41.008] [DEBUG] 	defs
+[2026-10-16 18:41:41.033] [DEBUG] 	Parsing .powers from powers.bin
+[2026-10-16 18:41:41.051] [DEBUG] 	defs
+[2026-10-16 18:41:41.629] [DEBUG] 	Parsing defs/replacepowernames.def from replacepowernames.bin
+[2026-10-16 18:41:41.631] [DEBUG] 	Parsing defs/boostsets/boostsets.def from boostsets.bin
+[2026-10-16 18:41:41.715] [DEBUG] 	Parsing defs/boostsets/conversionsets.def from conversionsets.bin
+[2026-10-16 18:41:41.724] [DEBUG] 	Set folder cache callback for defs/powers/*.powers
+[2026-10-16 18:41:41.724] [DEBUG] 	Set folder cache callback for menu/Powers/AnimFX/*.pfx
+[2026-10-16 18:41:41.724] [INFO] Loaded power dictionary and boost sets
+[2026-10-16 18:41:41.724] [DEBUG] 	Parsing defs/emotes.def from emotes.bin
+[2026-10-16 18:41:41.727] [DEBUG] 	Parsing defs/petBattleCreatureInfo.def from petBattleCreatureInfo.bin
+[2026-10-16 18:41:41.729] [DEBUG] Loading hero classes
+[2026-10-16 18:41:41.729] [DEBUG] 	Parsing defs/classes.def from classes.bin
+[2026-10-16 18:41:41.745] [INFO] Loaded hero classes
+[2026-10-16 18:41:41.745] [DEBUG] Loaded inventory attribute files
+[2026-10-16 18:41:41.745] [DEBUG] 	Parsing defs/dbidmaps/InvSalvage.dbidmap from InvSalvage.bin
+[2026-10-16 18:41:41.748] [DEBUG] 	Parsing defs/dbidmaps/InvConcept.dbidmap from InvConcept.bin
+[2026-10-16 18:41:41.750] [DEBUG] 	Parsing defs/dbidmaps/InvRecipe.dbidmap from InvRecipe.bin
+[2026-10-16 18:41:41.797] [DEBUG] 	Parsing defs/dbidmaps/InvBaseDetail.dbidmap from InvBaseDetail.bin
+[2026-10-16 18:41:41.803] [DEBUG] 	Parsing defs/dbidmaps/InvStoredSalvage.dbidmap from InvStoredSalvage.bin
+[2026-10-16 18:41:41.806] [INFO] Loaded inventory attribute files
+[2026-10-16 18:41:41.806] [DEBUG] Loading base data
+[2026-10-16 18:41:41.806] [DEBUG] 	Parsing .details from details.bin
+[2026-10-16 18:41:41.808] [DEBUG] 	defs
+[2026-10-16 18:41:41.811] [DEBUG] 	Parsing .cats from detailcats.bin
+[2026-10-16 18:41:41.812] [DEBUG] 	defs
+[2026-10-16 18:41:41.813] [DEBUG] 	Parsing .category from roomcategories.bin
+[2026-10-16 18:41:41.814] [DEBUG] 	defs
+[2026-10-16 18:41:41.814] [DEBUG] 	Parsing .template from roomtemplates.bin
+[2026-10-16 18:41:41.815] [DEBUG] 	defs
+[2026-10-16 18:41:41.815] [DEBUG] 	Parsing .plot from plots.bin
+[2026-10-16 18:41:41.816] [DEBUG] 	defs
+[2026-10-16 18:41:41.816] [DEBUG] 	Parsing defs/v_bases/baseupkeep.def from baseupkeep.bin
+[2026-10-16 18:41:41.818] [INFO] Loaded base data
+[2026-10-16 18:41:41.818] [DEBUG] Loading villain classes
+[2026-10-16 18:41:41.818] [DEBUG] 	Parsing defs/villain_classes.def from villain_classes.bin
+[2026-10-16 18:41:41.867] [INFO] Loaded villain classes
+[2026-10-16 18:41:41.867] [DEBUG] Loading salvage
+[2026-10-16 18:41:41.867] [DEBUG] 	Parsing defs/Invention/Salvage.salvage from Salvage.bin
+[2026-10-16 18:41:41.869] [DEBUG] 	Parsing defs/ProficiencyIds.dbidmap from ProficiencyIds.bin
+[2026-10-16 18:41:41.872] [DEBUG] 	Parsing defs/Invention/Proficiencies.proficiency from Proficiencies.bin
+[2026-10-16 18:41:41.874] [DEBUG] 	Parsing defs/TrackedSalvage.def from TrackedSalvage.bin
+[2026-10-16 18:41:41.875] [INFO] Loaded salvage
+[2026-10-16 18:41:41.875] [DEBUG] Loading recipes
+[2026-10-16 18:41:41.875] [DEBUG] 	Parsing .recipe from baserecipes.bin
+[2026-10-16 18:41:41.881] [DEBUG] 	defs
+[2026-10-16 18:41:42.064] [INFO] Loaded recipes
+  done loading defs                                                   (1.16)
+loading badges.. done                                                 (0.01)
+loading skill objs.. [2026-10-16 18:41:42.078] [DEBUG] 	Parsing defs/MapObjectives.def from MapObjectives.bin
+                                                 (0.00)
+[2026-10-16 18:41:42.080] [DEBUG] Loading FX info
+[2026-10-16 18:41:42.080] [DEBUG] 	Parsing .fx from fxinfo.bin
+[2026-10-16 18:41:42.127] [DEBUG] 	fx
+[2026-10-16 18:41:43.919] [INFO] Loaded FX info
+[2026-10-16 18:41:43.919] [DEBUG] Generating FX string handles
+[2026-10-16 18:41:43.947] [INFO] Generated FX string handles
+[2026-10-16 18:41:43.948] [DEBUG] Loading loyalty reward tree
+[2026-10-16 18:41:43.948] [DEBUG] 	Parsing defs/account/LoyaltyRewardTree.def from LoyaltyReward.bin
+[2026-10-16 18:41:43.949] [INFO] Loaded loyalty reward tree
+[2026-10-16 18:41:43.949] [DEBUG] Loading body parts
+[2026-10-16 18:41:43.949] [DEBUG] 	Parsing .bp from BodyParts.bin
+[2026-10-16 18:41:43.950] [DEBUG] 	Defs
+[2026-10-16 18:41:43.950] [INFO] Loaded body parts
+[2026-10-16 18:41:43.950] [DEBUG] Loading NPC definitions
+[2026-10-16 18:41:43.950] [DEBUG] 	Parsing .nd from VillainCostume.bin
+[2026-10-16 18:41:43.973] [DEBUG] 	Defs
+[2026-10-16 18:41:44.235] [DEBUG] 	Set folder cache callback for Defs/*.nd
+[2026-10-16 18:41:44.235] [INFO] Loaded NPC definitions
+[2026-10-16 18:41:44.235] [DEBUG] Loading ent_types
+[2026-10-16 18:41:44.235] [DEBUG] 	Parsing .txt from ent_types.bin
+[2026-10-16 18:41:44.240] [DEBUG] 	ent_types
+[2026-10-16 18:41:44.291] [INFO] Loaded ent_types
+Loading villain defs.. [2026-10-16 18:41:44.291] [DEBUG] 	Parsing Defs/villainGroups.def from VillainGroups.bin
+[2026-10-16 18:41:44.292] [DEBUG] 	Parsing .villain from VillainDef.bin
+[2026-10-16 18:41:44.297] [DEBUG] 	Defs
+[2026-10-16 18:41:44.462] [DEBUG] 	Set folder cache callback for Defs/Villains/*.villain
+done                                           (0.17)
+Loading reward tables.. [2026-10-16 18:41:44.462] [DEBUG] 	Parsing .itemset from ItemSets.bin
+[2026-10-16 18:41:44.465] [DEBUG] 	defs
+[2026-10-16 18:41:44.489] [DEBUG] 	Parsing .reward from RewardTables.bin
+[2026-10-16 18:41:44.557] [DEBUG] 	defs
+[2026-10-16 18:41:45.298] [DEBUG] 	Parsing .choice from RewardChoiceTables.bin
+[2026-10-16 18:41:45.299] [DEBUG] 	defs
+[2026-10-16 18:41:45.301] [DEBUG] 	Parsing .merits from meritsRewards.bin
+[2026-10-16 18:41:45.302] [DEBUG] 	defs
+done                                          (0.84)
+Loading team reward mods.. [2026-10-16 18:41:45.303] [DEBUG] 	Parsing defs/Reward/team_xp_boost.def from TeamReward.bin
+[2026-10-16 18:41:45.307] [DEBUG] 	Parsing defs/Reward/level_bonus.def from LevelBonus.bin
+[2026-10-16 18:41:45.311] [DEBUG] 	Parsing defs/Reward/supergroup_mods.def from SupergroupMods.bin
+done                                       (0.01)
+loading items.. [2026-10-16 18:41:45.316] [DEBUG] 	Parsing defs/stores/depts.def from depts.bin
+[2026-10-16 18:41:45.318] [DEBUG] 	Parsing defs/stores/items.def from items.bin
+[2026-10-16 18:41:45.380] [DEBUG] 	Parsing defs/stores/stores.def from stores.bin
+done                                                  (0.22)
+Loading story arc text.. [2026-10-16 18:41:45.539] [DEBUG] 	texts
+[2026-10-16 18:41:45.564] [DEBUG] 	texts
+[2026-10-16 18:41:45.572] [DEBUG] 	texts
+[2026-10-16 18:41:45.572] [DEBUG] 	texts
+[2026-10-16 18:41:45.572] [DEBUG] 	texts
+[2026-10-16 18:41:45.572] [DEBUG] 	texts
+[2026-10-16 18:41:45.587] [DEBUG] 	texts
+[2026-10-16 18:41:45.589] [DEBUG] 	texts
+[2026-10-16 18:41:45.591] [DEBUG] 	texts
+[2026-10-16 18:41:45.591] [DEBUG] 	texts
+[2026-10-16 18:41:45.591] [DEBUG] 	texts
+[2026-10-16 18:41:45.591] [DEBUG] 	texts
+[2026-10-16 18:41:45.593] [DEBUG] 	texts
+[2026-10-16 18:41:45.595] [DEBUG] 	texts
+[2026-10-16 18:41:45.595] [DEBUG] 	texts
+[2026-10-16 18:41:45.596] [DEBUG] Reading from server/bin/storyarcmsg-en.bin
+[2026-10-16 18:41:45.652] [DEBUG] Reading from server/bin/staticmsg-en.bin
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/Contacts/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/V_Contacts/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/NotorietyContacts/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/NPCs/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/V_NPCs/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/spawndefs/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/StoryArcs/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/Alignment_Missions/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/SupergroupContacts/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/Player_Created/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/StrikeTeams/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/Test/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/scriptdefs/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/dialogdefs/*.ms
+[2026-10-16 18:41:45.654] [DEBUG] 	Set folder cache callback for texts/English/defs/*.ms
+                                             (0.11)
+Loading story arcs.. [2026-10-16 18:41:45.654] [DEBUG] 	Parsing .sc from SouvenirClues.bin
+[2026-10-16 18:41:45.655] [DEBUG] 	Scripts.loc
+[2026-10-16 18:41:46.205] [DEBUG] 	Parsing defs/DifficultyCost.def from DifficultyCost.bin
+[2026-10-16 18:41:46.214] [DEBUG] 	Parsing .mapstats from mapstats.bin
+[2026-10-16 18:41:46.218] [DEBUG] 	maps
+[2026-10-16 18:41:46.567] [DEBUG] 	Parsing .minimap from minimap.bin
+[2026-10-16 18:41:46.577] [DEBUG] 	maps
+[2026-10-16 18:41:46.712] [DEBUG] 	Parsing .mapspecs from mapspecs.bin
+[2026-10-16 18:41:46.714] [DEBUG] 	maps
+[2026-10-16 18:41:46.719] [DEBUG] 	Parsing .missionspawns from missionspawns.bin
+[2026-10-16 18:41:46.721] [DEBUG] 	SCRIPTS.LOC
+[2026-10-16 18:41:46.732] [DEBUG] 	Parsing .missionhostagespawns from missionhostagespawns.bin
+[2026-10-16 18:41:46.734] [DEBUG] 	SCRIPTS.LOC
+[2026-10-16 18:41:46.746] [DEBUG] 	Parsing .taskset from tasksets.bin
+[2026-10-16 18:41:46.775] [DEBUG] 	SCRIPTS.LOC
+[2026-10-16 18:41:47.256] [DEBUG] 	Set folder cache callback for scripts.loc/*.taskset
+[2026-10-16 18:41:47.256] [DEBUG] 	Parsing .storyarc from storyarc.bin
+[2026-10-16 18:41:47.294] [DEBUG] 	SCRIPTS.LOC
+[2026-10-16 18:41:47.859] [DEBUG] 	Set folder cache callback for scripts.loc/*.storyarc
+[2026-10-16 18:41:47.859] [DEBUG] 	Parsing .contact from contacts.bin
+[2026-10-16 18:41:47.865] [DEBUG] 	SCRIPTS.LOC
+[2026-10-16 18:41:47.960] [DEBUG] 	Set folder cache callback for scripts.loc/*.contact
+[2026-10-16 18:41:47.960] [DEBUG] 	Parsing .npc from npcs_server.bin
+[2026-10-16 18:41:47.963] [DEBUG] 	SCRIPTS.LOC
+470 arcs, 957 contacts, 3528 tasks               (2.33)
+Loading global dialog definitions.. [2026-10-16 18:41:47.981] [DEBUG] 	Parsing .dialogdef from dialogdefs.bin
+[2026-10-16 18:41:47.982] [DEBUG] 	SCRIPTS.LOC
+[2026-10-16 18:41:47.995] [DEBUG] 	Set folder cache callback for scripts.loc/*.dialogdef
+2 global dialog definitions       (0.01)
+Loading TF time limits
+[2026-10-16 18:41:47.995] [DEBUG] 	Parsing defs/TFTimeLimits.def from TFTimeLimits.bin
+Initializing stats.. done                                             (0.00)
+loading filters and names.. [2026-10-16 18:41:47.997] [DEBUG] 	/texts/English/cebsnar.txt
+[2026-10-16 18:41:47.998] [DEBUG] 	/texts/English/copyright.txt
+[2026-10-16 18:41:48.003] [DEBUG] 	texts
+done                                      (0.01)
+loading AI.. [2026-10-16 18:41:48.010] [DEBUG] 	Parsing .cfg from ai_config.bin
+[2026-10-16 18:41:48.011] [DEBUG] 	AIScript
+[2026-10-16 18:41:48.128] [DEBUG] 	Parsing .al from animlists.bin
+[2026-10-16 18:41:48.128] [DEBUG] 	sequencers
+[2026-10-16 18:41:48.131] [DEBUG] 	Set folder cache callback for sequencers/AnimLists/*.al
+[2026-10-16 18:41:48.131] [DEBUG] 	Parsing .bal from behavioralias.bin
+[2026-10-16 18:41:48.132] [DEBUG] 	AIScript
+[2026-10-16 18:41:48.134] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:48.134] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:48.138] [DEBUG] 	Set folder cache callback for AIScript/*.bal
+done                                                     (0.13)
+loading random def files.. [2026-10-16 18:41:48.138] [DEBUG] 	Parsing defs/generic/villainrandomgroupselection.def from villainrandomgroupselection.bin
+[2026-10-16 18:41:48.140] [DEBUG] 	Parsing defs/generic/villainrandommapselection.def from villainrandommapselection.bin
+[2026-10-16 18:41:48.141] [DEBUG] 	Parsing defs/generic/randomgroupselection.def from randomgroupselection.bin
+[2026-10-16 18:41:48.143] [DEBUG] 	Parsing defs/generic/randommapselection.def from randommapselection.bin
+done                                       (0.01)
+loading pvp task modifiers.. [2026-10-16 18:41:48.144] [DEBUG] 	Parsing defs/pvptaskmodifiers.def from pvptaskmodifiers.bin
+done                                     (0.00)
+loading broken task list.. done                                       (0.00)
+Loading Costume...[2026-10-16 18:41:48.146] [DEBUG] 	Parsing Menu/Costume/Localized/costume.ctm from costume.bin
+[2026-10-16 18:41:48.331] [DEBUG] 	Parsing Menu/Costume/ColorPalettes/supergroupColors.ctm from supergroupColors.bin
+[2026-10-16 18:41:48.333] [DEBUG] 	Parsing Menu/Costume/TailorCost.ctm from tailorcost.bin
+                                                    (0.23)
+Loading Power Customization...[2026-10-16 18:41:48.375] [DEBUG] 	Parsing Menu/PowerCustomization/powercustomizationcost.ctm from powercustomizationcost.bin
+[2026-10-16 18:41:48.377] [DEBUG] 	Parsing Defs/powercustomizationmenu.def from powercustomizationmenu.bin
+                                        (0.00)
+[2026-10-16 18:41:48.379] [DEBUG] 	Parsing defs/turnstile_server.def from turnstile_server.bin
+loading player created story arc files.. [2026-10-16 18:41:48.381] [DEBUG] 	Parsing PC_Rewards.txt from PC_Rewards.bin
+[2026-10-16 18:41:48.382] [DEBUG] 	scripts
+[2026-10-16 18:41:48.384] [DEBUG] 	scripts
+[2026-10-16 18:41:48.385] [DEBUG] 	Parsing PC_Def_Entities.txt from PC_Def_Entities.bin
+[2026-10-16 18:41:48.387] [DEBUG] 	scripts
+[2026-10-16 18:41:48.387] [DEBUG] 	scripts
+[2026-10-16 18:41:48.392] [DEBUG] 	Parsing PC_Def_NonSelectable_Entities.txt from PC_Def_NonSelectable_Entities.bin
+[2026-10-16 18:41:48.394] [DEBUG] 	scripts
+[2026-10-16 18:41:48.394] [DEBUG] 	scripts
+[2026-10-16 18:41:48.396] [DEBUG] 	Parsing PC_Def_List_Contacts.txt from PC_Def_Contacts.bin
+[2026-10-16 18:41:48.397] [DEBUG] 	scripts
+[2026-10-16 18:41:48.397] [DEBUG] 	scripts
+[2026-10-16 18:41:48.400] [DEBUG] 	Parsing PC_Def_List_Objects.txt from PC_Def_Objects.bin
+[2026-10-16 18:41:48.402] [DEBUG] 	scripts
+[2026-10-16 18:41:48.402] [DEBUG] 	scripts
+[2026-10-16 18:41:48.402] [DEBUG] 	Parsing PC_Def_List_Map_Sets.txt from PC_Def_MapSets.bin
+[2026-10-16 18:41:48.404] [DEBUG] 	scripts
+[2026-10-16 18:41:48.404] [DEBUG] 	scripts
+[2026-10-16 18:41:48.405] [DEBUG] 	Parsing PC_Def_List_Map_Unique.txt from PC_Def_MapUnique.bin
+[2026-10-16 18:41:48.406] [DEBUG] 	scripts
+[2026-10-16 18:41:48.406] [DEBUG] 	scripts
+[2026-10-16 18:41:48.408] [DEBUG] 	Parsing PC_Def_List_Animations.txt from PC_Def_Animation.bin
+[2026-10-16 18:41:48.409] [DEBUG] 	scripts
+[2026-10-16 18:41:48.409] [DEBUG] 	scripts
+[2026-10-16 18:41:48.410] [DEBUG] 	Parsing PC_Def_List_Destructible_Objects.txt from PC_Def_DestructObject.bin
+[2026-10-16 18:41:48.412] [DEBUG] 	scripts
+[2026-10-16 18:41:48.412] [DEBUG] 	scripts
+[2026-10-16 18:41:48.412] [DEBUG] 	Parsing PC_Def_Unlockable_Content.txt from PC_Def_Unlockable_Content.bin
+[2026-10-16 18:41:48.414] [DEBUG] 	scripts
+[2026-10-16 18:41:48.414] [DEBUG] 	scripts
+[2026-10-16 18:41:48.416] [DEBUG] 	Parsing PC_Def_Sequencer_Anims.txt from PC_Def_Sequencer_Anims.bin
+[2026-10-16 18:41:48.418] [DEBUG] 	scripts
+[2026-10-16 18:41:48.418] [DEBUG] 	scripts
+[2026-10-16 18:41:48.420] [DEBUG] 	Parsing uiTemplate.scrollset from PC_Def_UI.bin
+[2026-10-16 18:41:48.422] [DEBUG] 	scripts
+done                         (0.04)
+Loading spawn definitions.. [2026-10-16 18:41:48.423] [DEBUG] 	Parsing .dialog2 from dialog.bin
+[2026-10-16 18:41:48.425] [DEBUG] 	SCRIPTS.LOC
+[2026-10-16 18:41:48.447] [DEBUG] 	Parsing .spawndef from spawndefs.bin
+[2026-10-16 18:41:48.580] [DEBUG] 	SCRIPTS.LOC
+[2026-10-16 18:41:49.761] [DEBUG] 	Parsing defs/NictusHunterOptions.def from NictusHunterOptions.bin
+[2026-10-16 18:41:49.763] [DEBUG] 	Set folder cache callback for scripts.loc/*.dialog2
+[2026-10-16 18:41:49.763] [DEBUG] 	Set folder cache callback for scripts.loc/*.spawndef
+46930 spawn definitions                   (1.34)
+Loading script definitions.. [2026-10-16 18:41:49.763] [DEBUG] 	Parsing .scriptdef from scriptdefs.bin
+[2026-10-16 18:41:49.765] [DEBUG] 	SCRIPTS.LOC
+[2026-10-16 18:41:49.778] [DEBUG] 	Set folder cache callback for scripts.loc/*.scriptdef
+189 script definitions                   (0.02)
+loading sequencers...[2026-10-16 18:41:49.778] [DEBUG] 	Reading player.txt
+done                                             (0.00)
+Loading server/db/commands.cfg
+[2026-10-16 18:41:49.779] [DEBUG] 	Set folder cache callback for server/db/commands.cfg
+Listening for clients..
+COH_GAME_LOOPBACK_ONLY bind verified: protocol=udp address=127.0.0.1 port=7001
+ done                                          (0.00)
+Connecting to dbserver.. done                                         (0.01)
+Connecting to logserver.. done                                        (0.00)
+Registering with dbserver.. map id 1                                  (0.02)
+loading map: maps/City_Zones/City_01_01/City_01_01.txt..[2026-10-16 18:41:52.740] [DEBUG] 	Set folder cache callback for scenes/*.txt
+[2026-10-16 18:41:52.740] [DEBUG] 	Set folder cache callback for server/SpawnArea/*.txt
+done          (2.94)
+loading beacons.. done                                                (0.68)
+Doing initMap.. done                                                  (0.03)
+Loading persistent npcs.. [2026-10-16 18:41:53.466] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.466] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.467] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.467] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.467] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.467] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.467] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.467] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.467] [DEBUG] 	Reading Prop_Basic.txt
+[2026-10-16 18:41:53.468] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.468] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.468] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.468] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.468] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.469] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.469] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.470] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.470] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.470] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.470] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.471] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.471] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.471] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.471] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.471] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.471] [DEBUG] 	Reading Mannequin.txt
+[2026-10-16 18:41:53.472] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.472] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.473] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.473] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.473] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.473] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.473] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.473] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.473] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.473] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.474] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.474] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.474] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.474] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.474] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.474] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.474] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.474] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.475] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.475] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.475] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.475] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.475] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.475] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.475] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.475] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.476] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.476] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.476] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.476] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.476] [DEBUG] 	Reading Rikti_Player.txt
+[2026-10-16 18:41:53.476] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.476] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.476] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.476] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.477] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.477] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.477] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.477] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.477] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.477] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.477] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.477] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.478] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading Prop_basic.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading Prop_basic.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading Prop_basic.txt
+[2026-10-16 18:41:53.479] [DEBUG] 	Reading Prop_Basic.txt
+[2026-10-16 18:41:53.494] [DEBUG] 	Reading Prop_basic.txt
+[2026-10-16 18:41:53.502] [DEBUG] 	Reading Prop_basic.txt
+[2026-10-16 18:41:53.502] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.502] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.502] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.502] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.504] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.504] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.504] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.504] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.505] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.505] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.505] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.505] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.505] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.505] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.505] [DEBUG] 	Reading BF.txt
+[2026-10-16 18:41:53.505] [DEBUG] 	Reading bis.txt
+[2026-10-16 18:41:53.505] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.505] [DEBUG] 	Reading player.txt
+[2026-10-16 18:41:53.505] [DEBUG] 	Reading player.txt
+117 found                                   (0.04)
+Loading named patrol routes.. 0 patrol routes                         (0.00)
+Loading encounter groups.. 2784 found                                 (0.82)
+Loading script markers.. 155 markers, 44 volumes                      (0.01)
+Loading script locations.. 4 script locations                         (0.00)
+Load door animation points.. Warning: orphaned EmergeFromMe point at -640.00, 221.50, -640.00 (needs at least one ExitPoint)
+1382 found                               (0.01)
+Retrieving AutoCommands.. done                                        (0.00)
+Loading visit errand locations..56 locations found                    (0.00)
+Loading plaque locations.. [2026-10-16 18:41:54.352] [DEBUG] 	texts
+[2026-10-16 18:41:54.352] [DEBUG] Reading from server/bin/plaquemsg-en.bin
+25 found                                   (0.06)
+Loading kiosk locations.. 18 found                                    (0.00)
+Loading arena kiosk locations.. 0 found                               (0.00)
+Loading zowie locations.. [2026-10-16 18:41:54.423] [DEBUG] 	Reading Prop_Basic.txt
+[2026-10-16 18:41:54.423] [DEBUG] 	Reading Prop_Basic.txt
+[2026-10-16 18:41:54.423] [DEBUG] 	Reading Prop_Basic.txt
+[2026-10-16 18:41:54.423] [DEBUG] 	Reading Prop_Basic.txt
+[2026-10-16 18:41:54.423] [DEBUG] 	Reading Prop_Basic.txt
+[2026-10-16 18:41:54.423] [DEBUG] 	Reading Prop_Basic.txt
+[2026-10-16 18:41:54.423] [DEBUG] 	Reading Prop_Basic.txt
+7 zowies found                              (0.00)
+unpacking all collision triangles...done                              (0.95)
+Starting novodex...[2026-10-16 18:41:55.378] [DEBUG] Loading PhysX objects
+[2026-10-16 18:41:57.406] [INFO] Created 2311 PhysX objects
+[2026-10-16 18:41:57.406] [DEBUG] Loading actor spore grid
+[2026-10-16 18:41:57.407] [INFO] Loaded actor spore grid
+success                                            (2.03)
+freeing all .geo files...done                                         (0.00)
+COH_NATIVE_SCENE_CATALOG_V1 status=1 producer_status=0 failure_file=4294967295 failure_slot=4294967295 files=508 definitions=40225 slots=40225 children=130314 wire_bytes=11490485 total_bytes=12179670 emitted_bytes=12179670 written_bytes=12179670 partial_remaining=0 partial_removed=0
+Checking memory.. done                                                (0.09)
+Verifying SG permission tables.. 

@@ -35,6 +35,57 @@ CohStatus coh_scenecatalog_file(void *,const char *,uint32_t checksum,uint32_t g
  * CRC validation and may legitimately differ from the exported root snapshot. */
 CohStatus coh_scenecatalog_match(const CohSceneCatalog *,const CohGroupsInspection *);
 void coh_scenecatalog_report(const CohSceneCatalog *,CohCatalogReport *);
+/* Stream validation/walk owns at most one decoded record. The 64 KiB reserve
+ * includes stack descriptors and bounded preflight indexes; payload accounting
+ * is not process RSS or allocator bookkeeping. Existing eager cap is unchanged. */
+#define COH_CATALOG_WALK_STACK_RESERVE (64u*1024u)
+typedef struct {
+    size_t working_limit, aggregate_limit, retained_bytes;
+} CohCatalogWalkBudget;
+typedef struct {
+    const char *name;
+    uint32_t index, bounds_checksum, slots, records, generation;
+} CohCatalogFileView;
+typedef struct {
+    CohBytes catalog;
+    const CohCatalogFileView *file;
+    uint32_t slot, allocated, aligned;
+    size_t record_offset, wire_offset, wire_bytes, wire_bits;
+    const CohSgDefinition *definition;
+} CohCatalogSlotView;
+typedef CohStatus (*CohCatalogFileFn)(void *,const CohCatalogFileView *);
+typedef CohStatus (*CohCatalogSlotFn)(void *,const CohCatalogSlotView *);
+typedef struct { void *context; CohCatalogFileFn file; CohCatalogSlotFn slot; } CohCatalogVisitor;
+typedef struct {
+    CohCatalogReport catalog;
+    uint32_t files_visited, slots_visited, records_validated;
+    size_t peak_record_owned_bytes, peak_working_bytes, peak_aggregate_bytes;
+    /* Known peaks include successfully decoded records, even if their callback
+     * fails. A failed decoder frees partial allocations without a byte receipt;
+     * this flag marks that uncertainty and the admitted bounds remain valid. */
+    uint32_t failed_record_peak_unknown;
+    size_t working_upper_bound, aggregate_upper_bound;
+} CohCatalogWalkReport;
+/* Entire envelope/name-CRC/count preflight precedes callbacks. Every file is
+ * visited, including empty files; every original slot is visited in order.
+ * A hole has allocated=0, NULL definition and zero record/wire fields. An
+ * allocated tombstone has allocated=1 and definition->in_use=0. Exact offsets
+ * refer to the borrowed immutable input; record_offset includes the 16-byte
+ * record header, wire_offset starts its original serialized sendDef record.
+ * All views/decoded pointers expire on callback return. Callbacks must not
+ * mutate input or views. Budget/visitor remain immutable for the call; report,
+ * budget, visitor and caller control storage must be disjoint from input and
+ * each other. Caller must stage changes and discard on ANY failure;
+ * callbacks never grant publication/ACK authority. Returning non-OK cancels
+ * with that status. NULL visitor performs complete record validation only.
+ * Working input+reserve+one record <=32 MiB, aggregate adds caller's maximum
+ * retained bytes and is bounded by COH_SG_TRANSACTION_MAX. Caller must account
+ * for all external old/candidate state in retained_bytes, serialize access and
+ * keep input immutable for the call (longer if it retains offset views).
+ * SHA256/source generation authentication is external. Root transforms are
+ * absent from COHCAT01 and must come from the corresponding original GROUPS. */
+CohStatus coh_scenecatalog_walk(CohBytes,uint32_t generation,const CohCatalogWalkBudget *,
+    const CohCatalogVisitor *,CohCatalogWalkReport *);
 #ifdef __cplusplus
 }
 #endif

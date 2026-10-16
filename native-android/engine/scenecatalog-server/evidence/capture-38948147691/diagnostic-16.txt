@@ -1,0 +1,1 @@
+{"schema":1,"status":4,"native_decode_completed":false,"generation":20261016,"files":508,"definitions":40225,"slots":40225,"children":130314,"definitions_crc":3173822562,"references_crc":3649375123,"active_roots":33,"input_bytes":12179670,"owned_bytes":0,"graph_published":false,"renderer_authorized":false}

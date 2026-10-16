@@ -102,9 +102,10 @@ legitimately differ from the exported root snapshot and require the graph gate.
 Limits: 32 MiB borrowed input, 32 MiB ownership per catalog (64 MiB prior plus
 candidate), 1,024 files, 65,536 aggregate slots/non-null definitions, 262,144
 aggregate child edges, 4 MiB per record. The shared decoder additionally admits
-at most 16,384 children in a single definition. These are admission policies,
-not original engine maxima. Existing graph caps of 4,096 definitions/16,384 total
-children remain unchanged and can reject a successfully prepared catalog.
+at most 262,144 children in a single definition, subject to its byte budget.
+These are admission policies, not original engine maxima. Dynamic graph count
+limits now admit 65,536 definitions and262,144 total children; the 32 MiB graph
+ownership ceiling remains independent of catalog count admission.
 
 CRCs cover names and the first child's name for roots. They do not authenticate
 transforms, geometry, metadata, the producer or asset bytes. The integration
@@ -144,12 +145,13 @@ while retaining the prior catalog. These are synthetic count/memory fixtures,
 not recovered Atlas definitions. ASan and UBSan execute the native decoder;
 legacy original producers execute unsanitized at O0 as in the existing oracle.
 
-**Deployment remains open:** a catalog must be exported from the actual loaded
-MapServer, verified and delivered to the client with matching imported asset
-provenance. The authentic 508-file/33-root Thor GROUPS alone contains none of
-these saved definitions. This module cannot manufacture that missing catalog.
-A larger dynamically sized graph and qualified geometry/material/entity state
-remain subsequent work. No accepted renderer/support/audio path is changed.
+**Authentic isolated capture is now retained:** run38948147691 produced the
+complete508-file catalog with40,225 allocated definitions and130,314 child links.
+The [streaming contract and capture qualification](STREAMING.md) validate all
+records within32 MiB working memory and distinguish the still-open resolved
+graph, current GROUPS/asset generation, authoritative actor and physical gates.
+The source-produced stress fixture above remains synthetic and is not substituted
+for that capture. No accepted renderer/support/audio path is changed.
 
 ## External deployment and delivery
 
