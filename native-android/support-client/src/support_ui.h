@@ -2,6 +2,7 @@
 #define COH_SUPPORT_UI_H
 #include "../../engine/ui/coh_hud.h"
 #include "../../engine/ui/gameplay/coh_hud_gles.h"
+#include "../../engine/ui/gameplay/presentation/coh_presentation.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -12,6 +13,8 @@ typedef struct {
              menu_opens,menu_closes,intent_history_drops,surface_losses;
     uint32_t generation,last_power,last_character;
     uint64_t axis_actions,axis_repeats;
+    CohPresentationStats presentation;uint64_t presentation_intents,presentation_cues,presentation_cue_drops;
+    int presentation_visible;uint32_t presentation_tab;float target_health;
     int keyboard_requested,last_status;size_t arena_bytes;
     char chat_input[COH_UI_TEXT],last_intent[COH_UI_TEXT];
 } SupportUiStats;
@@ -45,6 +48,9 @@ int support_ui_keyboard_requested(SupportUi *ui);
 CohStatus support_ui_tick_mock(SupportUi *ui,uint64_t elapsed_ms);
 CohStatus support_ui_snapshot(SupportUi *ui,SupportUiStats *stats);
 int support_ui_poll_intent(SupportUi *ui,CohHudIntent *intent);
+void support_ui_preview_label(SupportUi *ui,int male);
+int support_ui_poll_presentation_cue(SupportUi *ui,CohPresentationCue *cue);
+CohStatus support_ui_presentation(SupportUi *ui,int action); /* 0 cycle panel, 1 local mock hit */
 #ifdef __cplusplus
 }
 #endif

@@ -19,10 +19,9 @@ static int selected(int held,float x,float y){
     if(held&&projected>=.35f&&(candidate==NEUTRAL||competing<=projected+.15f))return held;
     return candidate;
 }
-CohStatus coh_hud_axis_step(CohHud *h,CohHudAxisNavigation *n,float x,float y,uint64_t ms){
+CohStatus coh_ui_axis_step(CohHudAxisNavigation *n,float x,float y,uint64_t ms,CohUiAxisActionFn dispatch,void *context){
     int direction,edge,repeat;CohStatus status=COH_OK;CohUiAction action=COH_UI_LEFT;
-    if(!h||!h->initialized)return COH_STATE;
-    if(!n)return COH_INVALID;
+    if(!n||!dispatch)return COH_INVALID;
     if(!isfinite(x)||!isfinite(y)||x< -1||x>1||y< -1||y>1||
        (n->clock_seen&&ms<n->last_sample_ms)){n->rejected++;return COH_INVALID;}
     direction=selected(n->direction,x,y);edge=direction!=n->direction;
@@ -30,11 +29,17 @@ CohStatus coh_hud_axis_step(CohHud *h,CohHudAxisNavigation *n,float x,float y,ui
     if(direction&&(edge||repeat)){
         switch(direction){case LEFT:action=COH_UI_LEFT;break;case RIGHT:action=COH_UI_RIGHT;break;
         case UP:action=COH_UI_UP;break;case DOWN:action=COH_UI_DOWN;break;default:break;}
-        status=coh_hud_action(h,action);
+        status=dispatch(context,action);
         if(status!=COH_OK&&status!=COH_NOT_FOUND){n->rejected++;return status;}
         n->actions++;if(repeat)n->repeats++;if(status==COH_NOT_FOUND)n->blocked++;
         n->last_action_ms=ms;n->repeating=repeat;
     }else if(!direction)n->repeating=0;
     n->direction=direction;n->clock_seen=1;n->last_sample_ms=ms;n->samples++;
     return COH_OK;
+}
+
+static CohStatus hud_action(void *context,CohUiAction action){return coh_hud_action((CohHud *)context,action);}
+CohStatus coh_hud_axis_step(CohHud *h,CohHudAxisNavigation *n,float x,float y,uint64_t ms){
+    if(!h||!h->initialized)return COH_STATE;
+    return coh_ui_axis_step(n,x,y,ms,hud_action,h);
 }

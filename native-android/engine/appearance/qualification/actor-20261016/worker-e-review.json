@@ -1,0 +1,26 @@
+{
+  "schema": "coh-third-worker-e-appearance-targeted-review-v1",
+  "base_revision": "58caf1d4ab3b39757190f194100ccbc697d57857",
+  "reviewed_working_tree": "worker-b",
+  "review_type": "Read-only targeted source review and independent pinned source-mask assertions; no broad build rerun",
+  "blocking_findings": [],
+  "resolved": [
+    "Submit failure after successful begin now invokes cancel-flush, clearing queued draws and active state without rendering a partial frame.",
+    "Each dynamic mask None selection now verifies a pinned source Mask/Name none entry and corresponding menu Include relationship; independently checked Pants,Chest,Head,Gloves,Boots.",
+    "create rejects nonempty output ownership; package remains borrowed immutable; Surface generation changes dispose old names with context_alive=0."
+  ],
+  "scope_limits": [
+    "Preview uses private 32-bit local generation and private renderer, with no conversion of the sequencer 64-bit generation interface. Cross-actor cached geometry and future 64-to-32 generation adapter remain outside this single-actor preview.",
+    "Existing fault receipt read as supporting evidence; no claim that historical binary checksum equals current working-tree build."
+  ],
+  "files": {
+    "native-android/engine/appearance/coh_appearance_preview.c": "1ef9fb4357937dfc36e319881a316a71883da888b9fb9dcf96f0caac1382b142",
+    "native-android/engine/appearance/coh_appearance_preview.h": "d66deb5aad3bbd83638d96788062221cd25acb06777f365fec17bc89a7e8e276",
+    "native-android/engine/appearance/coh_appearance_actor.c": "010db88c2a8d02dd6a84b5e24f2cfe38b1d743b845f1527034ca1b212a62102a",
+    "native-android/engine/appearance/coh_appearance_actor.h": "a1743efc705904b99e83c47b4313a6b32c5939449cd3978dd78da3969aecb8d5",
+    "native-android/engine/appearance/tests/actor_gpu.py": "5894a43b37669a528f9f4cbaad2b5ecfbfb612ddd27c4b95a2e54e64294e201b",
+    "native-android/engine/appearance/tests/preview_faults.c": "dda4385eb980d33922652a1bee010833310ab077a280b0e4700d891645200669",
+    "native-android/engine/appearance/tests/preview_gpu.py": "054a2beb752a698a3781f654eeab73550a5e14fa94a60455b91f3635e4104304",
+    "native-android/engine/appearance/actor-pins.json": "7a19d8c32f84fda9fa3a50c1e37898d8b3b218514a33cfbefeba797444a948c9"
+  }
+}

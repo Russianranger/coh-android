@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "models": 789,
+  "compared_scalar_elements": 1160514,
+  "original_delta_function_sha256_lf": "6e111b02fecb0eb94f82887c5429ba9c3da58ecdee6a0d063261cae41e60f8c3",
+  "original_source_sha256_lf": "adcdfa2ae1a822c4aed10b0f41baeca5e94b8683e10ed78e3bb45d6bac7936bc",
+  "source_weight_sha256_lf": "23297301f34737585d65e39fc8b01445e5b4a8f665ac9cb49e9101f6f2cf299b",
+  "source_palette_sha256_lf": "e64ec178a7fc90b260da7c9be8aadbd5014c2dd0e909ae221630b5ea4ae74325",
+  "original_gpu_execution": false,
+  "original_full_client_execution": false,
+  "full_receipt_sha256": "c4b68c8e7052fa58adf12560497e0d212751e06d8e183ce29ef6f901afc12a5f",
+  "files": [
+    {
+      "file": "male_boot.geo",
+      "sha256": "40c0b72e845bb44e1b875044c8e5bb53819f428b248fa7d620bb1077c46e0e39",
+      "models": 102,
+      "source_channels_byte_exact": true
+    },
+    {
+      "file": "male_glove.geo",
+      "sha256": "e88c4f3e340766329b04b2a6544b277e4de312427fbf77badc828acbbfd3a16f",
+      "models": 150,
+      "source_channels_byte_exact": true
+    },
+    {
+      "file": "male_hair.geo",
+      "sha256": "48cd27799ffe17cfc0276c7bb0add6d469a03dba5ec1d6d6f74723ee4f98f121",
+      "models": 318,
+      "source_channels_byte_exact": true
+    },
+    {
+      "file": "male_pants.geo",
+      "sha256": "e13b9a7f7daec0d025a8cd38cd1f9a24c9ba97920abddc13859fc5b8a68e0c2a",
+      "models": 42,
+      "source_channels_byte_exact": true
+    },
+    {
+      "file": "male_shirt.geo",
+      "sha256": "269eb585d6000fb0c05e0fc27b3de1af8fb9a91ef8e0df2819d3a6ede11ec4f6",
+      "models": 60,
+      "source_channels_byte_exact": true
+    },
+    {
+      "file": "v_male_head.geo",
+      "sha256": "8a2b28f948d4cfbee83e75a1ac9cd11f6cf7a32770a5b9fac559431ca6b738de",
+      "models": 117,
+      "source_channels_byte_exact": true
+    }
+  ]
+}

@@ -1,0 +1,321 @@
+{
+  "schema": "coh-native-physics-neighborhood-v1",
+  "passed": true,
+  "starting_repository_revision": "58caf1d4ab3b39757190f194100ccbc697d57857",
+  "source_revision": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "source_sha256_lf": {
+    "upstream/ouroboros/Common/entity/entworldcoll.c": "e5c0cab8c310f36ec88c9a97190739af2612e524e487128d409cbb23f4cf71a4",
+    "upstream/ouroboros/Common/gridcoll/ctri.c": "506a32b5546ab24efa9ef8077c3bd197cb5e1a601f6a735cea0f38161bee6b46",
+    "upstream/ouroboros/Common/gridcoll/tritri_isectline.c": "fe3a730d7ac5b04c83d8f39f2a41aaedafe0248ffa5ba76793a08386cc25c7db",
+    "upstream/ouroboros/Common/gridcoll/gridcollobj.c": "a3c516bd673dfcea11829281faab091ef104fe04548327e6410a14fe98dde2d5",
+    "upstream/ouroboros/Common/gridcoll/gridcoll.h": "4ade01161636f8e87ca253a4a8a19926fee3006c5558ef75bf4fc08098546c8e"
+  },
+  "independently_compiled_original_ctri_parity": true,
+  "host": {
+    "passed": true,
+    "checks": 4737,
+    "failed": 0,
+    "exact_source_state_steps": 532,
+    "loader_thread_builds": 80,
+    "commits": 81,
+    "stale_preparation_rejections": 2,
+    "hot_allocator_calls": 0,
+    "outstanding_tracked_allocations": 0,
+    "snapshot_owned_bytes": 9008,
+    "request_bytes": 488,
+    "traversed_x_range": [
+      -202.087357,
+      37.170647
+    ],
+    "traversed_y_range": [
+      -4.041021,
+      1.244198
+    ],
+    "threaded_workload_cpu_seconds": 0.004244
+  },
+  "source_oracle": {
+    "passed": true,
+    "checks": 4737,
+    "failed": 0,
+    "exact_source_state_steps": 532,
+    "loader_thread_builds": 80,
+    "commits": 81,
+    "stale_preparation_rejections": 2,
+    "hot_allocator_calls": 0,
+    "outstanding_tracked_allocations": 0,
+    "snapshot_owned_bytes": 9008,
+    "request_bytes": 488,
+    "traversed_x_range": [
+      -202.087357,
+      37.170647
+    ],
+    "traversed_y_range": [
+      -4.041021,
+      1.244198
+    ],
+    "threaded_workload_cpu_seconds": 0.007854
+  },
+  "asan_ubsan": {
+    "passed": true,
+    "checks": 4737,
+    "failed": 0,
+    "exact_source_state_steps": 532,
+    "loader_thread_builds": 80,
+    "commits": 81,
+    "stale_preparation_rejections": 2,
+    "hot_allocator_calls": 0,
+    "outstanding_tracked_allocations": 0,
+    "snapshot_owned_bytes": 9008,
+    "request_bytes": 488,
+    "traversed_x_range": [
+      -202.087357,
+      37.170647
+    ],
+    "traversed_y_range": [
+      -4.041021,
+      1.244198
+    ],
+    "threaded_workload_cpu_seconds": 0.035239
+  },
+  "invocation": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "native-android/engine/physics/check_neighborhood.py",
+    "--source-root",
+    "/workspace/scratch/cd30b2fc1c9e/coh-native",
+    "--ndk",
+    "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c",
+    "--output",
+    "native-android/engine/physics/qualification/neighborhood-host-arm64.json",
+    "--disable-leak-sanitizer"
+  ],
+  "commands": [
+    [
+      "cc",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-fno-fast-math",
+      "-ffp-contract=off",
+      "-fno-strict-aliasing",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-variable",
+      "-Wno-unused-parameter",
+      "-Wno-unused-but-set-variable",
+      "-Wno-unused-function",
+      "-Wno-misleading-indentation",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/tests/test_neighborhood.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics_neighborhood.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics_snapshot.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/coh_walk.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/source_world.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/motion/coh_motion.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/source_ctri.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/source_tritri.c",
+      "-pthread",
+      "-Wl,--wrap=malloc,--wrap=calloc,--wrap=realloc,--wrap=free",
+      "-lm",
+      "-o",
+      "/tmp/coh-physics-neighborhood-2qog_vn_/host"
+    ],
+    [
+      "/tmp/coh-physics-neighborhood-2qog_vn_/host"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-fno-fast-math",
+      "-ffp-contract=off",
+      "-fno-strict-aliasing",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-variable",
+      "-Wno-unused-parameter",
+      "-Wno-unused-but-set-variable",
+      "-Wno-unused-function",
+      "-Wno-misleading-indentation",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/tests/test_neighborhood.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics_neighborhood.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics_snapshot.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/coh_walk.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/source_world.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/motion/coh_motion.c",
+      "/tmp/coh-physics-neighborhood-2qog_vn_/ctri.c",
+      "/tmp/coh-physics-neighborhood-2qog_vn_/tritri_isectline.c",
+      "-pthread",
+      "-Wl,--wrap=malloc,--wrap=calloc,--wrap=realloc,--wrap=free",
+      "-lm",
+      "-o",
+      "/tmp/coh-physics-neighborhood-2qog_vn_/source-oracle"
+    ],
+    [
+      "/tmp/coh-physics-neighborhood-2qog_vn_/source-oracle"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-fno-fast-math",
+      "-ffp-contract=off",
+      "-fno-strict-aliasing",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-variable",
+      "-Wno-unused-parameter",
+      "-Wno-unused-but-set-variable",
+      "-Wno-unused-function",
+      "-Wno-misleading-indentation",
+      "-fsanitize=address,undefined",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/tests/test_neighborhood.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics_neighborhood.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics_snapshot.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/coh_walk.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/source_world.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/motion/coh_motion.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/source_ctri.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/source_tritri.c",
+      "-pthread",
+      "-Wl,--wrap=malloc,--wrap=calloc,--wrap=realloc,--wrap=free",
+      "-lm",
+      "-o",
+      "/tmp/coh-physics-neighborhood-2qog_vn_/sanitizer"
+    ],
+    [
+      "/tmp/coh-physics-neighborhood-2qog_vn_/sanitizer"
+    ],
+    [
+      "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-fno-fast-math",
+      "-ffp-contract=off",
+      "-fno-strict-aliasing",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-variable",
+      "-Wno-unused-parameter",
+      "-Wno-unused-but-set-variable",
+      "-Wno-unused-function",
+      "-Wno-misleading-indentation",
+      "-shared",
+      "-fPIC",
+      "-Wl,--no-undefined",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics_neighborhood.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics_snapshot.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/engine/physics/coh_physics.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/coh_walk.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/source_world.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/motion/coh_motion.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/source_ctri.c",
+      "/workspace/scratch/9acd650bfafa/worker-e/native-android/walk/source_tritri.c",
+      "-lm",
+      "-o",
+      "/tmp/coh-physics-neighborhood-2qog_vn_/libcoh_physics_neighborhood.so"
+    ],
+    [
+      "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf",
+      "-h",
+      "/tmp/coh-physics-neighborhood-2qog_vn_/libcoh_physics_neighborhood.so"
+    ],
+    [
+      "/workspace/scratch/cd30b2fc1c9e/toolchains/android-ndk-r28c/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-nm",
+      "-g",
+      "--defined-only",
+      "/tmp/coh-physics-neighborhood-2qog_vn_/libcoh_physics_neighborhood.so"
+    ],
+    [
+      "git",
+      "-C",
+      "/workspace/scratch/9acd650bfafa/worker-e",
+      "rev-parse",
+      "HEAD"
+    ]
+  ],
+  "leak_sanitizer_enabled": false,
+  "android": {
+    "built": true,
+    "abi": "arm64-v8a",
+    "api": 26,
+    "ndk": "android-ndk-r28c",
+    "library": {
+      "bytes": 262184,
+      "sha256": "59b5806f80ceabc43a6bd9c709837afd9aae7441da77dbcd277cce2c0829ed59"
+    },
+    "exports": [
+      "coh_physics_neighborhood_build",
+      "coh_physics_neighborhood_capture",
+      "coh_physics_neighborhood_commit",
+      "coh_physics_neighborhood_destroy",
+      "coh_physics_neighborhood_info"
+    ],
+    "emulator_qualified": false,
+    "physical_thor_accepted": false
+  },
+  "runtime_source": {
+    "native-android/engine/physics/coh_physics_neighborhood.c": {
+      "bytes": 3435,
+      "sha256": "63a7d894fe2c194669a67ffd009593e3c8387fdcebb7b383e280d1a692ba978c"
+    },
+    "native-android/engine/physics/coh_physics_snapshot.c": {
+      "bytes": 6741,
+      "sha256": "f2079ec68f51c353bdf93fd0a5e18ebbb12a1db969f3607ae239a736534d531d"
+    },
+    "native-android/engine/physics/coh_physics.c": {
+      "bytes": 12503,
+      "sha256": "50bca0b54db61a6ac8318241c2e94ab9e0d347567f41c950dd3aaa4ee0837871"
+    },
+    "native-android/walk/coh_walk.c": {
+      "bytes": 15089,
+      "sha256": "998c64c472613cf6e8da38218a8d30bcbf49d29c273520180948d4a2e90c50be"
+    },
+    "native-android/walk/source_world.c": {
+      "bytes": 35313,
+      "sha256": "4225a8576a5a536cac44ab107cbfe9bdd7bd3d1ab04bbdb6c2679b375aec9d55"
+    },
+    "native-android/motion/coh_motion.c": {
+      "bytes": 6899,
+      "sha256": "857240b5eff8a0b88aa102826b03e1fb9318158b89c44487473e03f3a39a454b"
+    },
+    "native-android/walk/source_ctri.c": {
+      "bytes": 41795,
+      "sha256": "1862c65a355ddfa71d1264671effa36addc2a8a3497b7c0825465835603a5670"
+    },
+    "native-android/walk/source_tritri.c": {
+      "bytes": 25477,
+      "sha256": "c3fabb12b9a31baac2b6f0bf83b9c0f9456941f897167524e5dfcd88837005c3"
+    },
+    "native-android/engine/physics/coh_physics_snapshot.h": {
+      "bytes": 3037,
+      "sha256": "1b952bb7eba80fb3871cc4768447168d8efd7fef5e94ce0fdadbaadc39ac4fb7"
+    },
+    "native-android/engine/physics/coh_physics_neighborhood.h": {
+      "bytes": 2791,
+      "sha256": "6683030f9c38b033687107bcae51b3ec33a32c49fd3d605e3c618497c0625e24"
+    },
+    "native-android/engine/physics/tests/test_neighborhood.c": {
+      "bytes": 10318,
+      "sha256": "a69c603cd18df7f1fde15a9c5a3e64a6508ab2d5e548194a20906684c9b9aca4"
+    },
+    "native-android/engine/physics/check_neighborhood.py": {
+      "bytes": 6692,
+      "sha256": "7ad2ab6b86c41755ba33e5f322f3390a2db9b171661099961f6cdfc01e61a1f0"
+    }
+  },
+  "limits": [
+    "Coverage is an explicit loader attestation, not proof of completeness from triangle bounds.",
+    "Sixteen synthetic graded regions and a half-unit seam step; no newly qualified authentic map.",
+    "Capture/commit allocate nothing; loader construction and retired-cache disposal stay off the simulation owner. No jump, dynamic collision or live changes.",
+    "ARM64 linking does not establish Android runtime, Thor, full-map or performance acceptance."
+  ]
+}

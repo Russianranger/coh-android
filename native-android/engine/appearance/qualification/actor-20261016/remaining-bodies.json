@@ -1,0 +1,159 @@
+{
+  "gate31_complete": false,
+  "candidates": [
+    {
+      "candidate": "Model_Nightward_BurningBody_Talon",
+      "body_type": 1,
+      "source": "upstream/i24/data/defs/villaincostume/i23_unique_costumes.nd",
+      "source_sha256_lf": "af6a4f577dfdcaa56728b2a52dec756842181d3a9f132194c9ccc93cb8b18187",
+      "parts": [
+        {
+          "part": "Pants",
+          "original_geometry_selector": "Tight",
+          "original_texture_selectors": [
+            "!Hips_V_Talons_01",
+            "None"
+          ]
+        },
+        {
+          "part": "Chest",
+          "original_geometry_selector": "Jackets",
+          "original_texture_selectors": [
+            "!SF_CHEST_skin_tights",
+            "!Chest_bikini"
+          ]
+        },
+        {
+          "part": "Head",
+          "original_geometry_selector": "V_fem_Head.GEO/GEO_Head_V_Asym_Standard",
+          "original_texture_selectors": [
+            "!Face_Skin_V_Fem_Head_74",
+            "!Face_V_Mask_Talons_01"
+          ]
+        },
+        {
+          "part": "Gloves",
+          "original_geometry_selector": "Smooth",
+          "original_texture_selectors": [
+            "!Glove_V_Skin_Talons_04",
+            "!Glove_V_Skin_Talons_04_Mask"
+          ]
+        },
+        {
+          "part": "Boots",
+          "original_geometry_selector": "V_BOOT_Talons.GEO/GEO_Lleg*_Metal_Armored_Talon",
+          "original_texture_selectors": [
+            "!X_Boot_V_Talons_01",
+            "!Boot_V_Talons_01_Mask"
+          ]
+        },
+        {
+          "part": "Hair",
+          "original_geometry_selector": "V_Hair_Talons.GEO/GEO_Hood_Low_Talons",
+          "original_texture_selectors": [
+            "!Hair_V_Talons_Hood_02",
+            "None"
+          ]
+        },
+        {
+          "part": "ChestDetail",
+          "original_geometry_selector": "V_Emblem_Talons.GEO/GEO_Emblem_Talons_04",
+          "original_texture_selectors": [
+            "!X_Emblem_V_Talons_04",
+            "None"
+          ]
+        },
+        {
+          "part": "Top",
+          "original_geometry_selector": "V_Top_Talons.GEO/GEO_Top_Archer_Talons",
+          "original_texture_selectors": [
+            "!Top_V_Talons_01",
+            "None"
+          ]
+        }
+      ],
+      "status": "Source selectors audited, full geometry/material/morph closure not acquired or qualified in this batch",
+      "missing_claim_scope": "Not in the new Male fixture; not an assertion of absence from all original archives"
+    },
+    {
+      "candidate": "Arachnos_Archetype_03",
+      "body_type": 4,
+      "source": "upstream/i24/data/defs/v_villain_costumes/v_arachnos_henchmen.nd",
+      "source_sha256_lf": "db73b840f0339fb211ac75bcb3680f85de8ff60daf23793f9480fd6a5f02f419",
+      "parts": [
+        {
+          "part": "Pants",
+          "original_geometry_selector": "Tight",
+          "original_texture_selectors": [
+            "!Widow_Shader_Hips_03",
+            "none"
+          ]
+        },
+        {
+          "part": "Chest",
+          "original_geometry_selector": "Tight",
+          "original_texture_selectors": [
+            "!Widow_Shader_Chest_03",
+            "none"
+          ]
+        },
+        {
+          "part": "Head",
+          "original_geometry_selector": "V_HUGE_Head.GEO/GEO_Head_Widow_Helm_Round01",
+          "original_texture_selectors": [
+            "!Widow_Shader_Helm",
+            "none"
+          ]
+        },
+        {
+          "part": "Gloves",
+          "original_geometry_selector": "Smooth",
+          "original_texture_selectors": [
+            "!Widow_Shader_Glove_03",
+            "none"
+          ]
+        },
+        {
+          "part": "Boots",
+          "original_geometry_selector": "Smooth",
+          "original_texture_selectors": [
+            "!Widow_Shader_Boot_03",
+            "none"
+          ]
+        },
+        {
+          "part": "Belt",
+          "original_geometry_selector": "V_HUGE_BELT.GEO/GEO_Belt_Widow",
+          "original_texture_selectors": [
+            "!Widow_Shader_Emblem",
+            "none"
+          ]
+        },
+        {
+          "part": "ChestDetail",
+          "original_geometry_selector": "V_HUGE_EMBLEM.GEO/GEO_Emblem_Widow_Tight",
+          "original_texture_selectors": [
+            "!Widow_Shader_Emblem",
+            "none"
+          ]
+        },
+        {
+          "part": "Shoulders",
+          "original_geometry_selector": "V_HUGE_SPADR.GEO/GEO_SpadR_Widow_Tight",
+          "original_texture_selectors": [
+            "!Widow_Shader_Emblem",
+            "none"
+          ]
+        }
+      ],
+      "status": "Source selectors audited, full geometry/material/morph closure not acquired or qualified in this batch",
+      "missing_claim_scope": "Not in the new Male fixture; not an assertion of absence from all original archives"
+    }
+  ],
+  "blockers": [
+    "Female candidate requires original Talons geometry and original textures listed above; no generic or Male replacement is admitted.",
+    "Huge candidate uses Widow_Shader composite material aliases; alias/trick/layer closure is not a single-texture substitution and remains unimplemented in this owner.",
+    "Neutral family rigs are separately source-qualified, but their availability does not establish authored NPC/custom body morphology. Existing accepted Huge Wretch path is retained independently.",
+    "New owner intentionally admits complete one-material canonical meshes only; arbitrary original material groups must be split with full retained coverage by their asset owner."
+  ]
+}

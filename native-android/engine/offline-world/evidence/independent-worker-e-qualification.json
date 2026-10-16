@@ -1,0 +1,63 @@
+{
+  "schema": "coh-offline-world-qualification-v1",
+  "implemented": true,
+  "host_source_qualified": true,
+  "host": {
+    "passed": true,
+    "assertions": 4047,
+    "stream_cycles": 1000,
+    "spatial_scale_instances": 1024,
+    "spatial_scale_cells": 256,
+    "spatial_scale_instances_tested": 4,
+    "real_cache_misses": 2,
+    "peak_raw_residency_bytes": 8,
+    "runtime_allocations": 0,
+    "runtime_allocation_scope": "planner source has no allocation calls; loader uses bounded existing cache",
+    "exact_matrix_copy_checks": 1001
+  },
+  "source_parser_negative_cases": 14,
+  "reused_source_reference_self_check": {
+    "passed": true,
+    "row_matrix_reference": true,
+    "x_mirror_witness": true,
+    "clip_z_convention": true,
+    "near_far_plane_witnesses": 10,
+    "aspect_witnesses": 5
+  },
+  "sanitizers": {
+    "asan": true,
+    "ubsan": true,
+    "leak_sanitizer": false,
+    "result": {
+      "passed": true,
+      "assertions": 4047,
+      "stream_cycles": 1000,
+      "spatial_scale_instances": 1024,
+      "spatial_scale_cells": 256,
+      "spatial_scale_instances_tested": 4,
+      "real_cache_misses": 2,
+      "peak_raw_residency_bytes": 8,
+      "runtime_allocations": 0,
+      "runtime_allocation_scope": "planner source has no allocation calls; loader uses bounded existing cache",
+      "exact_matrix_copy_checks": 1001
+    }
+  },
+  "android_arm64": {
+    "compiled": true,
+    "executed": false,
+    "bytes": 5640,
+    "sha256": "43e9dd658198599a8e0d58b296c46667d237920f66b0ed132d3b9460cddfc9fb",
+    "api": 26
+  },
+  "android_emulator_qualified": false,
+  "physical_thor_qualified": false,
+  "full_zone_qualified": false,
+  "source_files": {
+    "engine/offline-world/coh_offline_world.c": "b40b29dbbea3bef91fe01d31148b0eed4b456e7d80b6dc4bc6672889b209bfa2",
+    "engine/offline-world/test_offline_world.c": "ddcb65df8e51c72c7f9b12afab28c6cecedc55df2d3f80004b5b8e794aaaff5e",
+    "engine/offline-world/coh_offline_world.h": "25584080115a8998f1da83dd3b3fea42950b33b75ddb47b5a1d772527d14c072",
+    "engine/offline-world/check.py": "87313532941ae164473c58af3812562a5b1e7b65c7d2e5d89cc7978653c1ee4b",
+    "engine/offline-world/tools/prepare_zones.py": "7b68c1d0e24c4af6e28b9915caed9602bdb7f6717a9f2b95264fc28be277b3bd",
+    "engine/offline-world/tools/source_math.py": "ce72b05bf9350822dfc0998c767f2ddbc4b9fc46d9a28e582690554604e3472c"
+  }
+}

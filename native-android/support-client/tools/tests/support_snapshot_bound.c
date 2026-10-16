@@ -3,7 +3,7 @@
 #include <float.h>
 #include <string.h>
 #include "native-android/support-client/src/support_bridge.c"
-CohStatus support_ui_snapshot(SupportUi *ui,SupportUiStats *out){(void)ui;memset(out,255,sizeof *out);return COH_OK;}
+CohStatus support_ui_snapshot(SupportUi *ui,SupportUiStats *out){(void)ui;memset(out,255,sizeof *out);out->target_health=-FLT_MAX;return COH_OK;}
 CohStatus coh_support_physics_snapshot(const CohSupportPhysics *physics,CohSupportPhysicsSnapshot *out){(void)physics;memset(out,255,sizeof *out);return COH_OK;}
 CohStatus coh_support_animation_snapshot(const CohSupportAnimation *animation,CohSupportAnimationSnapshot *out){(void)animation;memset(out,255,sizeof *out);return COH_OK;}
 int support_audio_snapshot(SupportAudio *audio,SupportAudioReport *out){(void)audio;memset(out,255,sizeof *out);out->listener=(CohAudioListenerPose){{-FLT_MAX,FLT_MAX,-FLT_MAX},{FLT_MAX,-FLT_MAX,FLT_MAX}};return COH_OK;}

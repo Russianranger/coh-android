@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "kind": "independent-read-only-integration-review",
+  "reviewer": "third-batch-worker-f",
+  "reviewed_source_revision": "b0626762fcd6c92399d288f4b483eba21e417a40",
+  "source_sha256": {
+    "native-android/support-client/java/org/coh/sessionclient/MainActivity.java": "d13ddff0b986b98cfad638dfab438aa2796085da72d14e465fedb481f02a8b78",
+    "native-android/support-client/java/org/coh/sessionclient/SupportNative.java": "f3ae145cec4e15ac6566b50af914210b793f3c9945582cd0ffca8cdf7336934a",
+    "native-android/support-client/src/offline_scene.c": "7e23686620cf3f2a75227c0507423c2664677522c6bf0d6a8f81d944599ba46c"
+  },
+  "scope": "A process-memory JNI and Java report-worker integration only; no Android execution or repeated standalone memory tests. Read-only A worktree.",
+  "findings": [
+    {
+      "id": "memory-json-time-publication",
+      "original_issue": "Separate volatile JSON and timestamp fields permitted mixed sample generations.",
+      "resolution": "One immutable MemorySample containing json, completedAt and durationMs is published through a single volatile reference, captured once when building the report.",
+      "status": "resolved"
+    },
+    {
+      "id": "report-writer-fairness",
+      "original_issue": "Repeated draining of the latest pending report within one executor task could starve already queued memory sampling/export work when writes were slow.",
+      "resolution": "One pending report is consumed per executor task; finally resubmits a successor, allowing previously queued tasks to run first.",
+      "status": "resolved"
+    }
+  ],
+  "review_checks": {
+    "native_collector_has_no_session_or_audio_or_renderer_pointer": true,
+    "filesystem_collection_runs_on_report_worker_not_ui_or_gl_or_audio_callback": true,
+    "snapshot_json_and_time_share_one_atomic_publication": true,
+    "report_captures_snapshot_once": true,
+    "completion_time_age_and_collection_duration_are_monotonic": true,
+    "pending_memory_job_bounded_by_atomic_boolean": true,
+    "rejected_submission_clears_pending_flag": true,
+    "permission_denied_or_unavailable_pss_not_inferred_from_rss": true,
+    "initial_unsampled_report_flags_false_and_age_null": true,
+    "historical_perf_bridge_process_gauges_remain_explicitly_unsubmitted": true,
+    "shutdown_allows_inflight_self_only_sample_without_using_retired_native_session": true,
+    "report_writer_processes_one_pending_value_per_task": true
+  },
+  "remaining_limitations": [
+    "Kernel proc read latency is not wall-time-bounded; sample age/duration expose delay.",
+    "The shared report executor can be delayed by a single slow storage/export operation; it does not block native rendering/audio.",
+    "New process observer still requires actual combined continuation APK emulator execution and physical Thor evidence.",
+    "No review of uncommitted optional character preview is claimed in this receipt."
+  ],
+  "remaining_blocking_findings": [],
+  "emulator_qualified": false,
+  "physical_thor_accepted": false
+}

@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "body_descriptors_exact": 9,
+  "authentic_costumes": [
+    {
+      "name": "Neutral Male source-menu custom costume",
+      "body_type": 0,
+      "parts": 6,
+      "draw_requests": 8,
+      "source": "actor-pins.json source-menu selections",
+      "source_sha256_lf": "per-file hashes recorded in actor-pins.json",
+      "all_names_sockets_colors_exact": true,
+      "actual_new_model_rendering": false
+    }
+  ],
+  "source_identity_comparisons": 137,
+  "color_bytes_compared": 192,
+  "branch_cases": 14,
+  "existence_inventories_mocked": true,
+  "original_gpu_or_fullclient_execution": false
+}

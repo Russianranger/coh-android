@@ -1,0 +1,18 @@
+{
+  "source_revision": "49420fc864",
+  "command": "python native-android/engine/appearance/prepare_actor.py --output <empty-dir> --source-root <sparse-checkout>",
+  "cache_inputs": false,
+  "package": {
+    "file": "appearance-male.bin",
+    "bytes": 1673302,
+    "sha256": "bda4a9f1098281d3ddc32842aeda792e83cebb0be3185d9458e3402032f77df9"
+  },
+  "acquisition": {
+    "strict_http206": true,
+    "archive_complete_hash_claim": false,
+    "network_bytes": 4010284,
+    "range_count": 12,
+    "asset_source_pins": "engine/appearance/actor-pins.json"
+  },
+  "same_package_as_gpu_qualified": true
+}

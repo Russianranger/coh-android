@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "observed_before_promotion": true,
+  "runs": [
+    {
+      "id": 38838677592,
+      "name": "Native combined 0.1.7 exact-package Android framework continuation",
+      "status": "in_progress",
+      "head_sha": "8e237b984c188dd19c171387914e795916712556"
+    },
+    {
+      "id": 38838677379,
+      "name": "Native Android portable core",
+      "status": "in_progress",
+      "head_sha": "8e237b984c188dd19c171387914e795916712556"
+    }
+  ],
+  "canceled_or_restarted": []
+}

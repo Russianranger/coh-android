@@ -1,0 +1,45 @@
+{
+  "schema": "coh-support-changed-native-compile-v1",
+  "passed": true,
+  "scope": "Strict API26 NDK compilation of three changed app translation units in ARM64 and x86_64; no full link/APK/emulator claim. Coordinator builds release once.",
+  "results": [
+    {
+      "abi": "arm64-v8a",
+      "source": "native-android/support-client/src/offline_scene.c",
+      "source_sha256": "3ced440645b98c8cc181de1320a2f016c8e2b948762da8cf9f782ec96c0eef11",
+      "object_sha256": "f36a13d6dfa0e262ce870248bee03bc2eee1443a9509a0ee3699fc7f9e5035fa"
+    },
+    {
+      "abi": "arm64-v8a",
+      "source": "native-android/support-client/src/support_bridge.c",
+      "source_sha256": "11933fc1a11965b21f24da2217c9e10d4a67eefb0326853ea916e0b39925fad2",
+      "object_sha256": "fd3fd57b9745708d9206c4d0b84bdb0c89876a39c3e220bd58b686897f53df54"
+    },
+    {
+      "abi": "arm64-v8a",
+      "source": "native-android/support-client/src/support_ui.c",
+      "source_sha256": "754fe9a051aaf16ef7bbb7d2518c9616e6dc440942b26535cbfbd8b821c17eac",
+      "object_sha256": "1656c1efbe9e03a906d19a9d61ded0e3e334ef39cb6644137a2fb06a7c815737"
+    },
+    {
+      "abi": "x86_64",
+      "source": "native-android/support-client/src/offline_scene.c",
+      "source_sha256": "3ced440645b98c8cc181de1320a2f016c8e2b948762da8cf9f782ec96c0eef11",
+      "object_sha256": "6e9fe0d91a33349466b201189bf1a5ae8b5cebee16860da0b2586d06b72b4133"
+    },
+    {
+      "abi": "x86_64",
+      "source": "native-android/support-client/src/support_bridge.c",
+      "source_sha256": "11933fc1a11965b21f24da2217c9e10d4a67eefb0326853ea916e0b39925fad2",
+      "object_sha256": "5a46ff5dcbee8c2c7b2c99258782c7a2ad75da1f31236e16fd29495f931e13eb"
+    },
+    {
+      "abi": "x86_64",
+      "source": "native-android/support-client/src/support_ui.c",
+      "source_sha256": "754fe9a051aaf16ef7bbb7d2518c9616e6dc440942b26535cbfbd8b821c17eac",
+      "object_sha256": "2b0ec9b6c837603c11dd7480d3a16ed73af72d8901e7d811aaf02077e580f9fb"
+    }
+  ],
+  "qualified_source_commit": "f3fe45117109c65afc4acb742e7b77e253553295",
+  "post_commit_byte_identity_verified": true
+}

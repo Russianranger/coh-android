@@ -2,6 +2,7 @@ package org.coh.sessionclient;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.hardware.input.InputManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -66,6 +68,12 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     private final ExecutorService reportWorker = Executors.newSingleThreadExecutor();
     private final AtomicReference<byte[]> pendingReport = new AtomicReference<>();
     private final AtomicBoolean writerQueued = new AtomicBoolean();
+    private final AtomicBoolean memoryQueued = new AtomicBoolean();
+    private static final class MemorySample {
+        final String json;final long completedAt,durationMs;
+        MemorySample(String json,long completedAt,long durationMs){this.json=json;this.completedAt=completedAt;this.durationMs=durationMs;}
+    }
+    private volatile MemorySample memorySample=new MemorySample("{}",0,0);
     private final JSONArray events = new JSONArray();
     private volatile long handle;
     private volatile boolean destroying, writeFailed;
@@ -79,6 +87,9 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
     private SurfaceHolder currentHolder;
     private SurfaceView view;
     private FrameLayout scene;
+    private LinearLayout rootLayout, controlsPanel;
+    private Button controlsToggle, navigationButton;
+    private boolean controlsExpanded, previewActive;
     private TextView status;
     private InputAdapter adapter;
     private InputManager inputManager;
@@ -105,15 +116,26 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
             public void clear() { if(!destroying&&handle!=0)SupportNative.navigation(handle,false,0,0); }
         });
         sessionStarted = System.currentTimeMillis();
-        LinearLayout layout = new LinearLayout(this);
+        LinearLayout layout = new LinearLayout(this); rootLayout=layout;
         layout.setOrientation(LinearLayout.VERTICAL);layout.setFocusableInTouchMode(true);layout.requestFocus();
+        LinearLayout compact = new LinearLayout(this);
+        controlsToggle=compactButton("Show controls", compact);
+        controlsToggle.setOnClickListener(v -> setControlsExpanded(!controlsExpanded));
+        Button panel=compactButton("Panels",compact);
+        panel.setOnClickListener(v -> {uiNavigation=true;if(navigationButton!=null)navigationButton.setText("UI navigation: ON");if(adapter!=null)adapter.clear();uiController.clear();rootLayout.requestFocus();if(handle!=0)SupportNative.presentation(handle,0);event("presentation_panel");saveReport();});
+        Button mockHit=compactButton("Mock hit",compact);
+        mockHit.setOnClickListener(v -> {if(handle!=0)SupportNative.presentation(handle,1);event("presentation_hit");saveReport();});
+        Button preview=compactButton("Preview: Wretch",compact);
+        preview.setOnClickListener(v -> {previewActive=!previewActive;preview.setText(previewActive?"Preview: Male":"Preview: Wretch");if(adapter!=null)adapter.clear();uiController.clear();if(handle!=0)SupportNative.preview(handle,previewActive);event("appearance_preview");saveReport();});
+        Button export=compactButton("Export report",compact);
+        export.setOnClickListener(v -> exportReport());
+        layout.addView(compact);
+        controlsPanel=new LinearLayout(this);controlsPanel.setOrientation(LinearLayout.VERTICAL);
         TextView title = new TextView(this);
-        title.setText("CoH Native Support • Offline mock HUD");
-        title.setTextSize(18); layout.addView(title);
-        TextView controls = new TextView(this);
-        controls.setText("Left stick / WASD / D-pad: move • Right stick / drag: look\n"
-                + "Original Wretch scene • New clips use neutral poses. Mock HUD and sound; no server.\nUI navigation routes left stick and D-pad/A to HUD focus; sticks control the scene when disabled.");
-        layout.addView(controls);
+        title.setText("CoH Native Support • Offline mock HUD");title.setTextSize(14);controlsPanel.addView(title);
+        TextView controls = new TextView(this);controls.setTextSize(12);
+        controls.setText("Left stick/WASD: move • Right stick/drag: look. Offline Wretch scene.\nUI navigation: left stick/D-pad/A controls HUD. Panels and hits are mock state.");
+        controlsPanel.addView(controls);
         LinearLayout buttons = new LinearLayout(this);
         Button reset = new Button(this); reset.setText("Reset actor");
         reset.setOnClickListener(v -> {
@@ -122,24 +144,23 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         Button recreate = new Button(this); recreate.setText("Recreate");
         recreate.setOnClickListener(v -> { event("recreate_requested"); newSurface(); });
         buttons.addView(recreate);
-        Button export = new Button(this); export.setText("Export report");
-        export.setOnClickListener(v -> exportReport()); buttons.addView(export);
         Button distance = new Button(this); distance.setText("View distance");
         distance.setOnClickListener(v -> {
             if (handle != 0) SessionNative.viewDistance(handle);
             event("view_distance_requested"); saveReport();
         });
-        layout.addView(buttons);
-        layout.addView(distance);
+        controlsPanel.addView(buttons);
+        controlsPanel.addView(distance);
         LinearLayout supportButtons = new LinearLayout(this);
         Button animation = new Button(this); animation.setText("Mock animation");
         animation.setOnClickListener(v -> {if(handle!=0)SupportNative.trigger(handle);event("mock_animation");saveReport();}); supportButtons.addView(animation);
-        Button navigation = new Button(this); navigation.setText("UI navigation: OFF");
-        navigation.setOnClickListener(v -> {uiNavigation=!uiNavigation;layout.requestFocus();navigation.setText("UI navigation: "+(uiNavigation?"ON":"OFF"));if(adapter!=null)adapter.clear();uiController.clear();event("ui_navigation");});supportButtons.addView(navigation);layout.addView(supportButtons);
+        Button navigation = new Button(this);navigationButton=navigation; navigation.setText("UI navigation: OFF");
+        navigation.setOnClickListener(v -> {uiNavigation=!uiNavigation;layout.requestFocus();navigation.setText("UI navigation: "+(uiNavigation?"ON":"OFF"));if(adapter!=null)adapter.clear();uiController.clear();event("ui_navigation");});supportButtons.addView(navigation);controlsPanel.addView(supportButtons);
         LinearLayout chatRow=new LinearLayout(this);chatText=new android.widget.EditText(this);
         chatText.setOnFocusChangeListener((v,focused) -> {if(focused){if(adapter!=null)adapter.clear();uiController.clear();if(handle!=0)SessionNative.controls(handle,0,0,0);}});chatText.setSingleLine(true);chatText.setHint("Chat text");chatText.setContentDescription("Chat text");chatRow.addView(chatText,new LinearLayout.LayoutParams(0,-2,1));
-        Button send=new Button(this);send.setText("Send");send.setOnClickListener(v -> {if(handle!=0){SupportNative.text(handle,chatText.getText().toString().getBytes(StandardCharsets.UTF_8));chatText.setText("");chatText.clearFocus();layout.requestFocus();android.view.inputmethod.InputMethodManager ime=(android.view.inputmethod.InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);if(ime!=null)ime.hideSoftInputFromWindow(chatText.getWindowToken(),0);event("mock_chat");saveReport();}});chatRow.addView(send);layout.addView(chatRow);
-        status = new TextView(this); status.setText("Preparing native scene…"); layout.addView(status);
+        Button send=new Button(this);send.setText("Send");send.setOnClickListener(v -> {if(handle!=0){SupportNative.text(handle,chatText.getText().toString().getBytes(StandardCharsets.UTF_8));chatText.setText("");chatText.clearFocus();layout.requestFocus();android.view.inputmethod.InputMethodManager ime=(android.view.inputmethod.InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);if(ime!=null)ime.hideSoftInputFromWindow(chatText.getWindowToken(),0);event("mock_chat");saveReport();}});chatRow.addView(send);controlsPanel.addView(chatRow);layout.addView(controlsPanel);
+        setControlsExpanded(getResources().getConfiguration().orientation!=Configuration.ORIENTATION_LANDSCAPE);
+        status = new TextView(this); status.setTextSize(11);status.setSingleLine(true);status.setEllipsize(android.text.TextUtils.TruncateAt.END);status.setText("Preparing native scene…"); layout.addView(status);
         scene = new FrameLayout(this); layout.addView(scene, new LinearLayout.LayoutParams(-1, 0, 1));
         setContentView(layout);
         adapter = new InputAdapter(new InputAdapter.Sink() {
@@ -190,12 +211,14 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
                 for(int i=0;i<extras.length;i++){byte[] data=readAsset(extras[i]);JSONObject pin=supportPins.getJSONObject(extras[i]);
                     if(pin.getLong("bytes")!=data.length||!pin.getString("sha256").equals(sha(data)))throw new IllegalStateException("Support asset integrity: "+extras[i]);
                     if(i<3)extraBytes[i]=data;}
+                byte[] appearance=readAsset("appearance-male.bin");JSONObject appearancePin=supportPins.getJSONObject("appearance-male.bin");
+                if(appearancePin.getLong("bytes")!=appearance.length||!appearancePin.getString("sha256").equals(sha(appearance)))throw new IllegalStateException("Male appearance package identity differs");
                 JSONObject apk = apkIdentity();
                 awaitNativeAdmission();
                 long result;try {result = SessionNative.createSession(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6]);}catch(Throwable ex){publishNative(0);throw ex;}
                 publishNative(result);
                 if (result == 0) throw new IllegalStateException("Native scene rejected its fixtures");
-                boolean initialized=false;try {initialized=SupportNative.initialize(result,getAssets(),extraBytes[0],extraBytes[1],extraBytes[2]);}
+                boolean initialized=false;try {initialized=SupportNative.initialize(result,getAssets(),extraBytes[0],extraBytes[1],extraBytes[2])&&SupportNative.initializeAppearance(result,appearance);}
                 finally {if(!initialized){retireNative(result);finishNativeCleanup();}}
                 if(!initialized)throw new IllegalStateException("Native support adapters rejected assets");
                 if(destroying){retireNative(result);finishNativeCleanup();return;}
@@ -203,7 +226,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
                 main.post(() -> {
                     if (destroying) return;
                     assetManifest=manifest; supportAssetManifest=supportManifest; apkIdentity=apk; assetsVerified=true;
-                    audioEnvironment.apply();
+                    audioEnvironment.apply();SupportNative.preview(handle,previewActive);
                     SessionNative.state(handle,epoch,resumed);
                     event("assets_loaded"); requestRender(); saveReport();
                 });
@@ -305,6 +328,29 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
             events.put(event); if(events.length()>128)events.remove(0);
         } catch(Exception ex) { failure=ex.toString(); }
     }
+    private Button compactButton(String label,LinearLayout bar) {
+        Button b=new Button(this);b.setText(label);b.setTextSize(11);b.setAllCaps(false);
+        b.setMinWidth(0);b.setMinimumWidth(0);b.setPadding(4,0,4,0);
+        bar.addView(b,new LinearLayout.LayoutParams(0,(int)(48*getResources().getDisplayMetrics().density),1));return b;
+    }
+    private void setControlsExpanded(boolean expanded) {
+        controlsExpanded=expanded;controlsPanel.setVisibility(expanded?View.VISIBLE:View.GONE);
+        controlsToggle.setText(expanded?"Hide controls":"Show controls");
+        if(!expanded&&chatText!=null){chatText.clearFocus();android.view.inputmethod.InputMethodManager ime=(android.view.inputmethod.InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);if(ime!=null)ime.hideSoftInputFromWindow(chatText.getWindowToken(),0);}
+        if(rootLayout!=null)rootLayout.requestFocus();
+    }
+    @Override public void onConfigurationChanged(Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+        setControlsExpanded(configuration.orientation!=Configuration.ORIENTATION_LANDSCAPE);
+        event("configuration_changed");saveReport();
+    }
+    private void queueMemorySample() {
+        if(reportWorker.isShutdown()||!memoryQueued.compareAndSet(false,true))return;
+        try {reportWorker.execute(() -> {
+            try {long start=android.os.SystemClock.elapsedRealtime();String value=SupportNative.processMemory();long end=android.os.SystemClock.elapsedRealtime();memorySample=new MemorySample(value,end,end-start);}
+            finally {memoryQueued.set(false);}
+        });} catch(RejectedExecutionException retired){memoryQueued.set(false);}
+    }
     private JSONObject report() throws Exception {
         JSONObject d=new JSONObject().put("manufacturer",Build.MANUFACTURER).put("model",Build.MODEL)
                 .put("sdk",Build.VERSION.SDK_INT).put("abis",new JSONArray(Build.SUPPORTED_ABIS))
@@ -313,9 +359,11 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         long versionCode=Build.VERSION.SDK_INT>=28?installed.getLongVersionCode():installed.versionCode;
         JSONObject app=new JSONObject().put("package",getPackageName()).put("version_name",installed.versionName)
                 .put("version_code",versionCode).put("installed_apk",apkIdentity);
+        MemorySample sample=memorySample;JSONObject measured=new JSONObject(sample.json);
         JSONObject j=new JSONObject().put("schema","coh-native-support-v1").put("phases",new JSONArray(new int[]{31,32,33,34,35,36,43,44,45}))
                 .put("session_id",Long.toHexString(sessionStarted)).put("updated_at",new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX",Locale.US).format(new Date()))
-                .put("scope","Separate offline support test. Source Wretch scene, static BVH WALK, mock authentic neutral animation clips, mock HUD and authentic audio. New character bodies have host assembly evidence only; no login, replication or full map.")
+                .put("scope","Separate offline support test. Source Wretch scene and optional complete neutral Male costume preview, static BVH WALK, authentic neutral animation previews, mock HUD and authentic music/ambient audio. Female/Huge costume closure incomplete; no login, replication, complete map or live combat.")
+                .put("audio_preview_scope",previewActive?"Background Wretch scene music/ambient; listener remains in that scene, not the costume camera":"Camera-relative Wretch scene music/ambient")
                 .put("app",app).put("device",d).put("assets_verified",assetsVerified).put("asset_manifest",assetManifest).put("support_asset_manifest",supportAssetManifest)
                 .put("events",new JSONArray(events.toString())).put("resumed",resumed).put("render_busy",renderQueued)
                 .put("report_write_failed",writeFailed).put("failure",failure==null?JSONObject.NULL:failure)
@@ -325,18 +373,25 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
                         .put("motion_samples",uiController.motionSamples()).put("hat_samples",uiController.hatSamples()).put("clears",uiController.clears()))
                 .put("process_memory",new JSONObject().put("java_used_bytes",Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())
                         .put("native_heap_allocated_bytes",android.os.Debug.getNativeHeapAllocatedSize())
-                        .put("rss_measured",false).put("pss_measured",false).put("thermal_measured",false));
+                        .put("rss_measured",measured.optJSONObject("rss")!=null&&measured.getJSONObject("rss").optBoolean("known"))
+                        .put("pss_measured",measured.optJSONObject("pss")!=null&&measured.getJSONObject("pss").optBoolean("known"))
+                        .put("native",measured).put("sampled_elapsed_ms",sample.completedAt).put("sample_duration_ms",sample.durationMs)
+                        .put("sample_age_ms",sample.completedAt==0?JSONObject.NULL:android.os.SystemClock.elapsedRealtime()-sample.completedAt)
+                        .put("scope","Independent process sample on report worker; performance bridge process gauges remain unsubmitted")
+                        .put("thermal_measured",false));
         if(handle!=0){j.put("native",new JSONObject(SessionNative.snapshot(handle)));j.put("support",new JSONObject(SupportNative.snapshot(handle)));}
         if(view!=null) {
             int[] location=new int[2];view.getLocationOnScreen(location);
             j.put("input_area",new JSONObject().put("left",location[0]).put("top",location[1])
                     .put("width",view.getWidth()).put("height",view.getHeight()).put("shown",view.isShown())
-                    .put("surface_ready",currentSurface!=null&&currentSurface.isValid()));
+                    .put("surface_ready",currentSurface!=null&&currentSurface.isValid())
+                    .put("controls_expanded",controlsExpanded).put("root_width",rootLayout.getWidth()).put("root_height",rootLayout.getHeight())
+                    .put("scene_fraction",rootLayout.getHeight()>0?(double)view.getHeight()/rootLayout.getHeight():0));
         }
         return j;
     }
     private final Runnable poll=new Runnable() {
-        public void run() { if(destroying)return; saveReport(); main.postDelayed(this,1000); }
+        public void run() { if(destroying)return; saveReport();queueMemorySample(); main.postDelayed(this,1000); }
     };
     private void saveReport() {
         if(destroying)return;
@@ -346,7 +401,7 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
             JSONObject stream=n==null ? null : n.optJSONObject("stream");
             String move=n==null ? "starting" : n.optString("animation_move","starting");
             status.setText(failure!=null ? failure : !assetsVerified ? "Preparing native scene…" :
-                    "Offline native session • " + move + " • " + (n==null ? "starting" : n.optLong("frames")+" frames")
+                    (previewActive?"Male costume preview • background scene audio • ":"Offline native session • ") + move + " • " + (n==null ? "starting" : n.optLong("frames")+" frames")
                     + (stream==null ? "" : " • " + (stream.optDouble("view_radius")<60 ? "Near" : "Far")
                         + " • " + stream.optLong("selected_instances") + "/" + stream.optLong("catalog_instances") + " objects")
                     + (writeFailed ? " • report save failed" : " • report ready"));
@@ -356,8 +411,8 @@ public final class MainActivity extends Activity implements SurfaceHolder.Callba
         if(reportWorker.isShutdown() || !writerQueued.compareAndSet(false,true))return;
         try { reportWorker.execute(() -> {
             try {
-                byte[] next;
-                while((next=pendingReport.getAndSet(null))!=null) {
+                byte[] next=pendingReport.getAndSet(null);
+                if(next!=null) {
                     AtomicFile file=new AtomicFile(new File(getFilesDir(),"session-report.json")); FileOutputStream output=null;
                     try { output=file.startWrite(); output.write(next); file.finishWrite(output); }
                     catch(Exception ex) { if(output!=null)file.failWrite(output); writeFailed=true; }

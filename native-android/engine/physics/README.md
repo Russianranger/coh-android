@@ -237,3 +237,78 @@ session, JNI, root-build or accepted APK changes.
   previous snapshot and retry on confirmed ground; never reset the actor.
 - Android emulator execution, actual Thor collision/movement and full Atlas
   Park/Kings Row streaming remain pending. Nothing here proves gates 25–27.
+
+## Third continuation: prepare neighborhoods while simulation continues
+
+`coh_physics_neighborhood.h` closes a specific threading gap in the retained
+snapshot adapter: synchronous preparation previously received and replaced the
+live mutable walker. The new API copies the logical state on its simulation
+owner, prepares an independent source WALK cache on a loader thread, and swaps
+ownership at a later simulation boundary. It does not duplicate or modify WALK,
+CTri, coverage admission, BVH selection or the accepted animation bridge.
+
+1. On the simulation thread, call `coh_physics_neighborhood_capture` with a
+   nonzero actor-lifetime generation. Transfer the 488-byte request by value
+   into an existing synchronized loader queue. Do not share the live walker.
+2. Give the loader an already-owned snapshot reference. Call
+   `coh_physics_neighborhood_build` with the requested center/extents and budget;
+   release the snapshot only after this synchronous call returns. Loader work,
+   allocation and cancellation never execute on the simulation thread.
+3. Publish a successful opaque prepared handle through the application's existing
+   synchronized queue. On the simulation owner call
+   `coh_physics_neighborhood_commit`. This performs no allocation, free or lock.
+   For the same scene generation, movement may have continued while preparation
+   ran: the exact latest state/counters are retained if inside the prepared
+   16-unit safety margin. A changed generation requires the exact captured
+   state, since source ground admission was checked at that pose. Stale scene,
+   actor lifetime, already consumed job and out-of-neighborhood commits reject
+   without changing the walker or consuming a tick.
+4. Return the handle to the loader and call
+   `coh_physics_neighborhood_destroy`. A committed handle owns the retired old
+   cache; an uncommitted handle owns its candidate. This keeps cache freeing off
+   the simulation thread. Do not access a handle concurrently. The actor's
+   lifetime identifier must change after a reset or reuse; scene generations
+   must continue to identify immutable geometry exactly.
+
+No hidden publication thread, global state, renderer generation or network
+interface is introduced. Callers bound the number of in-flight jobs (one per
+actor is recommended), retain their normal queue capacity limits, and keep the
+existing rule of pausing a tick at an uncovered boundary. A missing manifest
+cell remains `COH_NOT_FOUND`; this adapter never invents terrain. Logical WALK
+and animation state are independent of Surface recreation.
+
+Qualification command:
+
+```sh
+python3 native-android/engine/physics/check_neighborhood.py \
+  --source-root /path/to/full/source --ndk /path/to/android-ndk-r28c \
+  --output /path/to/neighborhood-proof.json
+```
+
+The committed receipt includes the exact invocation, compiler commands, source
+file hashes, host result, separately compiled original CTri result, ASan/UBSan
+result and API26 ARM64 shared-link/export evidence. It runs 80 actual pthread
+loader builds while the simulation keeps its old cache, 81 ownership swaps and
+532 byte-exact comparisons of source physical/control state against the accepted
+unsegmented WALK world. The 16 synthetic terrain sections include graded terrain
+and a half-unit step crossed in both directions, spanning X -202.09..37.17 and
+Y -4.04..1.24 source units. Query-count diagnostics are intentionally excluded
+from state equality because prepared subsets test fewer triangles. Existing
+snapshot/accepted source WALK regression is rerun without source changes.
+
+Negative cases include missing coverage, malformed extents, exhausted work
+budgets, wrong actor lifetime, consumed handles, stale replacement scenes,
+out-of-range prefetch, and cancellation at successive construction phases.
+Tracked allocations return to zero, and capture/step/commit make zero allocator
+calls. The request is 488 bytes on this host ABI; each test snapshot owns 9,008
+allocation-payload bytes. The original accepted WALK cache's private allocation
+is not misreported as triangle bytes. Build CPU measurements include thread and
+oracle overhead; they are not Android FPS or frame-time evidence. ASan/UBSan
+passed with LeakSanitizer explicitly disabled for the executor `/proc` limit.
+
+Android emulator integration and physical Thor qualification remain pending for
+this new adapter. Full-zone geometry, dynamic collision, jump law, server
+movement and authoritative replication remain outside this change. Roll back
+by omitting the new source from the opt-in physics target or ordinarily reverting
+this additive continuation and its consumers. Existing synchronous APIs, prior
+qualification receipts and accepted APKs remain available unchanged.

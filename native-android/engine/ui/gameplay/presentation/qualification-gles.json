@@ -1,0 +1,69 @@
+{
+  "status": "passed",
+  "scope": "Actual host software GLES3, existing authentic Montreal Heavy atlas, all five panels and bounded target/damage text; no real scene or Android/Adreno acceptance.",
+  "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "GL_version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+  "frames": 5,
+  "gl_errors": 0,
+  "font_sha256": "714351827092d0ed290a8625a75780636b66c66fcc91d575bb80a633ae0c4329",
+  "alpha_sha256": "3a51c975729b17201a48562434d11069d007d42279b43e5f52484d5ccd24bd43",
+  "font_header_sha256": "79b2bf96955bc1c87fd6f4f0504b22115a1a52973399663a9c66ec1e01b6e710",
+  "images": [
+    {
+      "tab": "details",
+      "panel_draws": 277,
+      "source_color_pixels": {
+        "source_health_green": 4227
+      },
+      "png_sha256": "9a6de59425106e036bcb82af3cbde31c34eb93d3ccd98280136860bed4e869ad",
+      "png_bytes": 110035
+    },
+    {
+      "tab": "inventory",
+      "panel_draws": 256,
+      "source_color_pixels": {
+        "source_health_green": 4227
+      },
+      "png_sha256": "f05c94994b84398daacc6b85db1d227a99ce76bdf2dd789e5bee870d2a50abac",
+      "png_bytes": 105418
+    },
+    {
+      "tab": "enhancements",
+      "panel_draws": 288,
+      "source_color_pixels": {
+        "source_health_green": 4227
+      },
+      "png_sha256": "b20772017a1957cfcecbe0bcbf25aee333603fae626a075e68ed4c50cfde8a15",
+      "png_bytes": 111313
+    },
+    {
+      "tab": "missions",
+      "panel_draws": 281,
+      "source_color_pixels": {
+        "source_health_green": 4227,
+        "source_mission_cyan": 2067,
+        "source_completed_mission_green": 351
+      },
+      "png_sha256": "c47146afa66a7eabfad300f2b82b704482d33992126454d51d85a6a2cab9d035",
+      "png_bytes": 107445
+    },
+    {
+      "tab": "contacts",
+      "panel_draws": 280,
+      "source_color_pixels": {
+        "source_health_green": 4227,
+        "source_completed_contact_green": 351
+      },
+      "png_sha256": "673610830cce7c46487174049029c19f22c5b31fb224c73b0a62ffd6e24c8d29",
+      "png_bytes": 108768
+    }
+  ],
+  "source_hashes": {
+    "gameplay/presentation/coh_presentation.c": "77db1f87fb555b84170238ae26356aae84cb1245ff8d82c479d768174259ed99",
+    "coh_ui.c": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676",
+    "coh_hud.c": "2a803451ba0ff34db41deadc7ced716554b0046889ae47786752413766ca8177",
+    "gameplay/coh_hud_axis_navigation.c": "0ead4a2d663e910a1eaf904542179a5579cbc5fbf52daabbd267e2af8f7c3ea7",
+    "gameplay/presentation/gles_demo.c": "2715753996b8fc843d60bad98f682d6108896df70ae566ffa3bb570bc66da9d9",
+    "gameplay/presentation/gles_check.py": "422043c4a09961e8a1fd6e57e3c688c33b784f6d223a96d70666acec853284dc"
+  }
+}

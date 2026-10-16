@@ -1,0 +1,118 @@
+{
+  "schema": "coh-appearance-authored-male-inputs-v1",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "source_files": {
+    "upstream/i24/data/menu/costume/localized/male/all/head/inc_heads_legacy.ctm": "832bf91897f9ebdfdb8647fe98121574f9af340ff8eac7d8908a5fce7959ffe6",
+    "upstream/i24/data/menu/costume/localized/male/all/head/inc_hair.ctm": "f39b91a97e15eb93261b43770748a18a1842c2ea565f3f556f6905be095e23ed",
+    "upstream/i24/data/menu/costume/localized/male/all/head/inc_heads_standard_patterns.ctm": "787fda388e917f66e34fdbdc3b01f07c750e58f4f34a17c3d6b4a15c39a5dd9d",
+    "upstream/i24/data/menu/costume/localized/male/all/upper/menu_tight.ctm": "703d6720fcaec918883808d13eaf189cc9e3c336e0bf7b9e2c82e86232264691",
+    "upstream/i24/data/menu/costume/localized/male/all/upper/inc_chest_patterns.ctm": "37cbd8793cba9f5f224e0e7a5fdb232ca7c59769cf4c55c8a34519635673e22c",
+    "upstream/i24/data/menu/costume/localized/male/all/lower/menu_tight.ctm": "ee16f5ae950884d2689c7dd2dd993c99826dad5e0fcd0aa643b6a36419e2c38f",
+    "upstream/i24/data/menu/costume/localized/male/all/lower/inc_tight_patterns.ctm": "a2f4f1373063686605093cdbd6f460a89ce1dc0b66f90723e7cc13e68d6e32df",
+    "upstream/i24/data/menu/costume/localized/common/male_gloves.ctm": "c191a4725ebfc32c606f86dcd63e805d2fb43bcb706f494d14e0a22e00406410",
+    "upstream/i24/data/menu/costume/localized/common/male_boots.ctm": "4903e6e94cdf37fc35805e1f287c5b7d6fe5bd430afb5bd48a1f99c7f4b6affb",
+    "upstream/i24/data/menu/costume/localized/common/patterns_boots_01.ctm": "caa14c5ce9a1170cae705914a711d2a983519c5cc0e760df15b5f7524f7cdcdb",
+    "upstream/i24/data/menu/costume/localized/common/patterns_gloves_01.ctm": "ac961ea949db618a86b6b2752506b77bc9fe2cf474802d9315e3076a66f59b03",
+    "upstream/i24/data/menu/costume/localized/male/all/head/menu_standard.ctm": "77a2adb4d0324b3fb35460fb6edd6117aee48356ae28696a0d2c7f0be6629406"
+  },
+  "supplement_manifest_sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7",
+  "supplement_zip": {
+    "bytes": 1842488,
+    "filename": "character-avatar-defaults.zip",
+    "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
+  },
+  "files": {
+    "data/player_library/male_boot.geo": {
+      "bytes": 156354,
+      "sha256": "40c0b72e845bb44e1b875044c8e5bb53819f428b248fa7d620bb1077c46e0e39"
+    },
+    "data/player_library/male_glove.geo": {
+      "bytes": 242558,
+      "sha256": "e88c4f3e340766329b04b2a6544b277e4de312427fbf77badc828acbbfd3a16f"
+    },
+    "data/player_library/male_hair.geo": {
+      "bytes": 478622,
+      "sha256": "48cd27799ffe17cfc0276c7bb0add6d469a03dba5ec1d6d6f74723ee4f98f121"
+    },
+    "data/player_library/male_pants.geo": {
+      "bytes": 126338,
+      "sha256": "e13b9a7f7daec0d025a8cd38cd1f9a24c9ba97920abddc13859fc5b8a68e0c2a"
+    },
+    "data/player_library/male_shirt.geo": {
+      "bytes": 222813,
+      "sha256": "269eb585d6000fb0c05e0fc27b3de1af8fb9a91ef8e0df2819d3a6ede11ec4f6"
+    },
+    "data/player_library/v_male_head.geo": {
+      "bytes": 426283,
+      "sha256": "8a2b28f948d4cfbee83e75a1ac9cd11f6cf7a32770a5b9fac559431ca6b738de"
+    },
+    "data/texture_library/players/avatar/male/chest/leather/chest_leather_03.texture": {
+      "bytes": 175127,
+      "sha256": "7e2bb5c59107528291ff3831e0cff9525e610ea72ef3b16de749cad7a78de7f4"
+    },
+    "data/texture_library/players/avatar/male/chest/leather/chest_leather_03_mask.texture": {
+      "bytes": 175132,
+      "sha256": "8ee6bb5d97e1b4cc5b01b5c3c26ba19092102fb7c63d1014f13db3ce30e49524"
+    },
+    "data/texture_library/players/avatar/male/chest/tights/chest_tights.texture": {
+      "bytes": 175122,
+      "sha256": "ef660db028f4bf7138ad43701190ef8ece8937cc57d8573efcab262a96070cb4"
+    },
+    "data/texture_library/players/avatar/male/hips/leather/hips_leather_03.texture": {
+      "bytes": 87765,
+      "sha256": "fad0d3d62bfbf6082628ecebc69efd6c70dc4eb660391f433a32c5811adbc6e8"
+    },
+    "data/texture_library/players/avatar/male/hips/leather/hips_leather_03_mask.texture": {
+      "bytes": 44010,
+      "sha256": "de99856a5548e19fb498f0de0869e2ed5f84c623e72beb099536d8f42cbbfc18"
+    },
+    "data/texture_library/players/avatar/male/hips/tights/hips_tights.texture": {
+      "bytes": 87760,
+      "sha256": "cf440577f6fd90e9ea287dab99ff0dc48e438d86203d45bf8844be5aa8cb950f"
+    },
+    "data/texture_library/players/avatar/super_shared/boots/boot_leather_03.texture": {
+      "bytes": 87766,
+      "sha256": "b6a43115b54051ca52e410c9e7126254fce3da8cb2d8e6fd9003cf1c9c741862"
+    },
+    "data/texture_library/players/avatar/super_shared/boots/boot_leather_03_mask.texture": {
+      "bytes": 87771,
+      "sha256": "e5bf27a331ca60864a5a71c877c534e5b85a1ba5c0a35e972d344d8e11bb87a2"
+    },
+    "data/texture_library/players/avatar/super_shared/boots/boot_smooth_01.texture": {
+      "bytes": 87765,
+      "sha256": "7916525785ffb2bd8c49fcf594031a1b98b114fbefe848772f35e082b3d1e5e6"
+    },
+    "data/texture_library/players/avatar/super_shared/gloves/glove_leather_03.texture": {
+      "bytes": 87768,
+      "sha256": "5faea4292552aef8b8d3a41ac9f09663ae21ad05c1dc88a8e6fddaa8b9a44fd7"
+    },
+    "data/texture_library/players/avatar/super_shared/gloves/glove_leather_03_mask.texture": {
+      "bytes": 87773,
+      "sha256": "b8df4147c6d62a006fcd0e5020da7de0b3b44c4eb16b414ed4d6bf92a06c261b"
+    },
+    "data/texture_library/players/avatar/super_shared/gloves/glove_smooth_01.texture": {
+      "bytes": 87767,
+      "sha256": "f202b49d35c92c943d1a9852985e68d6d762f49cec87cdbd7170c3ba8cd88363"
+    },
+    "data/texture_library/players/avatar/super_shared/hair/hair_style_01a.texture": {
+      "bytes": 22228,
+      "sha256": "b6321e1a282ec99986e21e83af49167d67b5a831fdff0ccbd2627d1ec8f0989d"
+    },
+    "data/texture_library/players/avatar/super_shared/hair/hair_style_01b.texture": {
+      "bytes": 11236,
+      "sha256": "fd7786d3379b51ad11c5aeb40f23bc9db60472f7ca2bfeb4fda61ef279d8bba6"
+    },
+    "data/texture_library/v_players/avatar/super_shared/patterns/face/face_v_asym_eyes_01.texture": {
+      "bytes": 22164,
+      "sha256": "650274105f4b980b762053f49ad9434dd67baef0012d4ec42f96ea1786e66cf9"
+    },
+    "data/texture_library/players/avatar/male/face/face_skin_head_01.texture": {
+      "bytes": 44047,
+      "sha256": "de6a8166e55959d80cb2cab420bad909b6553dc3f5c2f903fcfecd146ea071cf"
+    }
+  },
+  "neutral_rig_sha256": "ba01d0aeec66d269a43291f76b0d1dabbd4cc452fda648bcd9471699be04405f",
+  "head_source_manifest": "assets/client-appearance-manifest.json",
+  "head_source_manifest_envelope_sha256": "43fd89facd9bc8f3280b78b881a39e7ea406778bd91682f677bd8d174462494d"
+}

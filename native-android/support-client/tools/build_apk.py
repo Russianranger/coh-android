@@ -20,7 +20,7 @@ import zipfile
 
 PACKAGE='org.coh.nativesupport'
 VERSION='0.2.0-gameplay'
-VERSION_CODE=200
+VERSION_CODE=201
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
 TARGETS={'arm64-v8a':'aarch64-linux-android26-clang','x86_64':'x86_64-linux-android26-clang'}
@@ -171,7 +171,7 @@ def main():
                 z.write(so,'lib/'+abi+'/'+so.name,compress_type=zipfile.ZIP_STORED)
             aligned=build/(abi+'-aligned.apk');run([tools/'zipalign','-P','16','-f','4',unsigned,aligned])
             label='arm64' if abi=='arm64-v8a' else 'emulator-x86_64'
-            apk=a.output/('CoH-Native-Support-Client-'+VERSION+'-'+label+'.apk')
+            apk=a.output/('CoH-Native-Support-Client-'+VERSION+'-code'+str(VERSION_CODE)+'-'+label+'.apk')
             run([tools/'apksigner','sign','--ks',key,'--ks-key-alias',a.key_alias,'--ks-pass','pass:android',
                  '--key-pass','pass:android','--out',apk,aligned])
             signature=run([tools/'apksigner','verify','--verbose','--print-certs',apk])

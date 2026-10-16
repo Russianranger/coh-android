@@ -1,0 +1,35 @@
+{
+  "schema": "coh-support-recovery-negative-v1",
+  "passed": true,
+  "qualified_source_commit": "c14a831b55163dbcf2b3e63b4c52805785fceafa",
+  "tests": [
+    {
+      "case": "wrong_report_package",
+      "rejected": true
+    },
+    {
+      "case": "wrong_report_version_name",
+      "rejected": true
+    },
+    {
+      "case": "wrong_report_version_code",
+      "rejected": true
+    },
+    {
+      "case": "wrong_report_installed_apk.sha256",
+      "rejected": true
+    },
+    {
+      "case": "wrong_report_installed_apk.bytes",
+      "rejected": true
+    },
+    {
+      "case": "tampered_compiler_recorded_header",
+      "rejected": true
+    }
+  ],
+  "runtime_files_modified": false,
+  "android_build_performed": false,
+  "emulator_run_performed": false,
+  "physical_acceptance": false
+}

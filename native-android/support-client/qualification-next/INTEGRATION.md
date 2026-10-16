@@ -101,3 +101,66 @@ adding diagnostic fields warrants rerunning it. Both checkers pin tested source
 SHA256 identities in their receipts. `--listener-root` can explicitly reference
 the audio worker's isolated tree before coordinator integration; omit it after
 the header is integrated. They do not modify any tested runtime source.
+
+## Third coordinator recovery of the already-qualified 0.2.0
+
+The paragraphs above preserve the earlier 0.1.0 recovery history; their upcoming
+0.2.0 status is superseded. At pinned checkout
+`58caf1d4ab3b39757190f194100ccbc697d57857`, Worker A independently recovered the
+0.2.0 Actions archive and rechecked its exact ZIP, both APK signatures, installed
+package metadata in all 15 initial/step/final reports, native library identities,
+packaged assets and current tracked source/header/shader closure. The seven
+accepted Session Client asset payloads match byte for byte.
+
+- Qualified source: `c14a831b55163dbcf2b3e63b4c52805785fceafa`.
+- [Exact artifact 11990195263](https://github.com/Russianranger/coh-android/actions/runs/38765087744/artifacts/11990195263).
+- ARM64 SHA256: `26bad28b029fef86931108b531f883c9a948a16aff1dc2cdba9d8447c6c4d935`.
+- Version: `0.2.0-gameplay`, code `200`, package `org.coh.nativesupport`.
+- Android 13 x86_64 emulator: 13 retained scenarios; no new execution inferred.
+- Physical Thor acceptance: pending actual device report and observations.
+
+Use the checker command above with the additional argument
+`--pins native-android/support-client/qualification-next/gameplay-artifact-pins.json`.
+`gameplay-recovery.json` records 113 compared tracked inputs, 50 recursive quoted
+headers and 15 package identities. Compiler-recorded inputs additionally cover
+angle-bracket/macro includes; generated/external inputs remain identified by the
+retained receipt and artifact. `gameplay-recovery-negative.json` records six
+actual rejections: five report identity mutations and a forged compiler-recorded
+header digest. No runtime source or old artifact was modified for these checks.
+
+The original source build and emulator APK are preserved. New runtime integrations
+must receive a distinct manifest code and source-bound Android qualification.
+
+
+## Code201 third-batch continuation
+
+The third coordinator's runtime continuation stays in this standalone support
+package. It adds five offline presentation panels with copied typed intents,
+mock damage/target highlights, an authentic Huge punch cue, sampled process
+RSS/PSS diagnostics, compact landscape controls, and an optional complete
+authentic eight-part Male neutral costume preview. The default Wretch and seven
+accepted asset payloads remain unchanged. Female and other full Huge costumes,
+complete zones, multi-actor gameplay and authentic impact sound remain incomplete.
+
+The preview owns its immutable copied asset package until its GL owner has ended
+and resources are destroyed. Android controls publish only selection flags;
+preview rendering/statistics stay on the render owner, and reports consume copied
+statistics. Hidden Wretch WALK/skinning pauses during the fixed-camera preview.
+Music/ambience is explicitly labeled retained Wretch-scene background audio in
+this mode; camera-relative audio correctness is only evaluated in Wretch mode.
+
+`process_memory` reports the independent observer, including per-field known and
+error states, sample age, and collection duration. Java publishes the JSON and
+timestamps together in one immutable holder; each export task handles one report
+and reschedules, allowing memory sampling to interleave. This does not claim to
+fill legacy perf bridge process gauges or measure full device/driver memory.
+
+The code201 APK filenames include `gameplay-code201` to distinguish them from the
+retained qualified code200. `third-batch-presentation.json` and
+`third-batch-snapshot.json` record actual host GLES and sanitizer regression;
+`third-batch-integration.json` records actual forbidden-import rejections and
+protected-path checks. A fresh source-bound Android13 run must pass the expanded
+scenario, including landscape, typed panel interactions, mock impact binding,
+Male rendering, Male Home/resume and restoration of Wretch. Local compilation
+never establishes emulator or physical acceptance. The README procedure and
+physical review template describe the single consolidated Thor session.

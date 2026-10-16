@@ -1,0 +1,64 @@
+{
+  "schema": "coh-native-male-canonical-rig-recovery-v1",
+  "starting_revision": "58caf1d4ab3b39757190f194100ccbc697d57857",
+  "previous_source_qualification_receipt_sha256": "10edf33489d249f83f02325b361c65d721e779a4eebd8a7d71850382c35557a7",
+  "base_asset": {
+    "name": "male/skel_ready2.anim",
+    "bytes": 7112,
+    "sha256": "6757e276eae273d303ea945eaaa410b806f831ac0a869d017ab44a47a00372a7"
+  },
+  "raw_assets_and_canonical_rigs": [
+    {
+      "raw_asset": "male/1_2punch",
+      "raw_bytes": 13266,
+      "raw_sha256": "d3e1980892b43a0ff17adf49cd57c7d70626b3be4f63fa325f17e50e157d3051",
+      "canonical_rig": "male-1_2punch.bin",
+      "rig_bytes": 20510,
+      "rig_sha256": "0664ef6d3dd1adb584dbbf74af54428067c12787c322368b9569d9edca6a0601",
+      "matches_previously_qualified_raw_and_rig": true
+    },
+    {
+      "raw_asset": "male/jump_n_smash",
+      "raw_bytes": 21246,
+      "raw_sha256": "82e1e5cc509d52ad438c6229562d06adf4431a566e3bbca341035903e47fec5a",
+      "canonical_rig": "male-jump_n_smash.bin",
+      "rig_bytes": 28490,
+      "rig_sha256": "ba01d0aeec66d269a43291f76b0d1dabbd4cc452fda648bcd9471699be04405f",
+      "matches_previously_qualified_raw_and_rig": true
+    },
+    {
+      "raw_asset": "male/fallout",
+      "raw_bytes": 24218,
+      "raw_sha256": "062960991dfb7c1c34d9cfd1415825cbefc06934eb0ae6f87407306f971aa27c",
+      "canonical_rig": "male-fallout.bin",
+      "rig_bytes": 31462,
+      "rig_sha256": "dfdf82115ee2ff34bde5d052d48f15a2b664313bc8aa45f256a88bf59032f28a",
+      "matches_previously_qualified_raw_and_rig": true
+    },
+    {
+      "raw_asset": "male/comb_postjump",
+      "raw_bytes": 14632,
+      "raw_sha256": "8c108e755a3b958338fe6162a955fc34a5d5867d1eaaee42c387589d881a8248",
+      "canonical_rig": "male-comb_postjump.bin",
+      "rig_bytes": 21876,
+      "rig_sha256": "101724869bbc31c48abf0fade6dfe4687b43e0d19b3c63a38f1063f58bdd8ea2",
+      "matches_previously_qualified_raw_and_rig": true
+    },
+    {
+      "raw_asset": "male/a_yes_wave",
+      "raw_bytes": 27153,
+      "raw_sha256": "851c567a72e8cf6157c1e25cbae19811c8a745f873ddb989c80865481d66813d",
+      "canonical_rig": "male-a_yes_wave.bin",
+      "rig_bytes": 34397,
+      "rig_sha256": "2b2e3e0404e12cc76e86811b0cdfde10fc1f1b09814b0b53418fce02675bc3df",
+      "matches_previously_qualified_raw_and_rig": true
+    }
+  ],
+  "generator": "unchanged tools/animation_fixture/prepare.py make_rig(base, raw, [0], 0); float header range at byte48 set to (1, original raw length_frames, 30)",
+  "generator_sha256": "46f120758bae08c1c49958ceb72b1cd9325b996a36e9e33e892c4b01e0f1b411",
+  "scope": "Exact recovery of previously source-qualified inputs; no new animation implementation or acceptance. Use actual mesh bone IDs; canonical one-bone palette is test metadata.",
+  "limitations": [
+    "Original bounded HTTP206 acquisition completed male assets before proxy403 at Female base. No complete new three-body acquisition receipt claimed.",
+    "New GPU/emulator/Thor acceptance depends on appearance/support integration."
+  ]
+}

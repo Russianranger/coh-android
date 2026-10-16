@@ -1,0 +1,220 @@
+{
+  "module": "Offline presentation panel and combat visual cues",
+  "implemented": true,
+  "implementation_start_commit": "58caf1d4ab3b39757190f194100ccbc697d57857",
+  "host": {
+    "passed": true,
+    "snapshot_negative_cases": 16,
+    "event_negative_cases": 12,
+    "panel_tabs": 5,
+    "inspect_intent_types": 4,
+    "lifecycle_recreations": 64,
+    "arena_bytes": 337120,
+    "draw_high_water": 261,
+    "host_snapshot_build_1000_cpu_ms": 16.813
+  },
+  "source": {
+    "status": "passed",
+    "compiled_original_damage_color_comparisons": 72,
+    "source_color_fields_checked": 4,
+    "hashes": {
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "files": {
+        "Game/src/player/playerState.c": "c069987b6fc3e22eb780cc751aeae3c62e0dbdd78ee427d3c6269eebe237a5a9",
+        "Game/src/UI/uiMission.c": "18a33f79233ce588a206d3758f0dc50cf062669637681e0b5b64139394f85ddc",
+        "Game/src/UI/uiContact.c": "58c4c5499c2adead3acc25e33c3ec0420f396549be0fb59d6fb4d85267dd1012",
+        "Game/src/UI/uiEnhancement.c": "70493aeebd01bcf8d8e7f3d704a5771698c69d8ddffa9be8155d35274124c977"
+      }
+    },
+    "scope": "Original damage/healing RGB decision body and mission/contact text colors only. New layout, timing and mock state are explicit mobile policy."
+  },
+  "sanitizers": "ASan + UBSan passed; fixed arenas, LSan disabled",
+  "android_emulator": "not run by this isolated worker; integrated support build qualification required",
+  "physical_thor": "not run",
+  "live_combat": "not implemented or qualified",
+  "assets": {
+    "status": "not acquired; runtime has no icon substitutes",
+    "source": "assets/client-ui-repair-manifest.json",
+    "decoded_manifest_sha256": "e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3",
+    "known_authentic_inspiration_icons": {
+      "data/texture_library/gui/icons/inspirations/inspiration_health_lvl_1.texture": {
+        "bytes": 4324,
+        "cached_header_bytes": 100,
+        "cached_header_id": 2780,
+        "cached_header_sha256": "7b22d25f16c909fe63a6a45e61f6a0a38d93c552094ed7ec8927295cad734745",
+        "cached_header_verified": true,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "d3c5618fa3a47cbb6f74db561261f358",
+        "offset": 52562924,
+        "path": "texture_library/GUI/Icons/Inspirations/Inspiration_Health_Lvl_1.texture",
+        "sha256": "aa6d7df4122007f98e85013c7bd32837d509183921c0db6a5b3649064122190a",
+        "source_archive": "stage2.pigg",
+        "source_archive_bytes": 88673593,
+        "source_content_range": "bytes 52562924-52565154/88673593",
+        "source_download_receipt": "u0008",
+        "source_etag": "\"d265c6e5e6f18ec4cdf2462276d26698\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:25:57 GMT",
+        "source_member_range": "bytes 52562924-52565154/88673593",
+        "source_metadata_sha256": "e07f5731844206ba9348f2559feab2aaadabc15f26a18d888e7ddfedcb3df2af",
+        "source_url": "https://dists.thunderspy.org/piggs/stage2.pigg",
+        "stored_bytes": 2231,
+        "stored_sha256": "27ff5f39c4a889f0362805717c6cc35b5a099a093c15454dfafa998091b1ced4",
+        "texture_header": {
+          "data_bounds_verified": true,
+          "header_bytes": 100,
+          "height": 32,
+          "original_name": "texture_library/GUI/Icons/Inspirations/Inspiration_Health_Lvl_1.dds",
+          "struct_bytes": 32,
+          "width": 32
+        }
+      },
+      "data/texture_library/gui/icons/inspirations/inspiration_endurance_lvl_1.texture": {
+        "bytes": 4327,
+        "cached_header_bytes": 103,
+        "cached_header_id": 2775,
+        "cached_header_sha256": "a2cfcf102633aa60f7dfd2f1f8f44bfdc9fe9594aa9f8fad03cb775a2e2fe47b",
+        "cached_header_verified": true,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "d685bc60e84a58214bb6bf873564f87e",
+        "offset": 52548878,
+        "path": "texture_library/GUI/Icons/Inspirations/Inspiration_Endurance_Lvl_1.texture",
+        "sha256": "8982da5016a0958b45ef8077933839a25b44ad20ec66edfad64d89e7153f8ffb",
+        "source_archive": "stage2.pigg",
+        "source_archive_bytes": 88673593,
+        "source_content_range": "bytes 52548878-52551172/88673593",
+        "source_download_receipt": "u0008",
+        "source_etag": "\"d265c6e5e6f18ec4cdf2462276d26698\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:25:57 GMT",
+        "source_member_range": "bytes 52548878-52551172/88673593",
+        "source_metadata_sha256": "e07f5731844206ba9348f2559feab2aaadabc15f26a18d888e7ddfedcb3df2af",
+        "source_url": "https://dists.thunderspy.org/piggs/stage2.pigg",
+        "stored_bytes": 2295,
+        "stored_sha256": "f90a7c023b34a9b7adc646a429940021c23b3212868ec15410a51337e1533521",
+        "texture_header": {
+          "data_bounds_verified": true,
+          "header_bytes": 103,
+          "height": 32,
+          "original_name": "texture_library/GUI/Icons/Inspirations/Inspiration_Endurance_Lvl_1.dds",
+          "struct_bytes": 32,
+          "width": 32
+        }
+      },
+      "data/texture_library/gui/icons/inspirations/inspiration_damage_lvl_1.texture": {
+        "bytes": 4324,
+        "cached_header_bytes": 100,
+        "cached_header_id": 2743,
+        "cached_header_sha256": "0246a27ab24c047bca116e5774c94165bd32415f19f039c0bdd3c3744d5ab14a",
+        "cached_header_verified": true,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "8139c0e22c8ff5c68bcdfe39ad1e6b3d",
+        "offset": 52456260,
+        "path": "texture_library/GUI/Icons/Inspirations/Inspiration_Damage_Lvl_1.texture",
+        "sha256": "e5630c603f991030c560260a70fd56540af31494846172d3f6381aad19c9cc8a",
+        "source_archive": "stage2.pigg",
+        "source_archive_bytes": 88673593,
+        "source_content_range": "bytes 52456260-52458271/88673593",
+        "source_download_receipt": "u0007",
+        "source_etag": "\"d265c6e5e6f18ec4cdf2462276d26698\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:25:57 GMT",
+        "source_member_range": "bytes 52456260-52458271/88673593",
+        "source_metadata_sha256": "e07f5731844206ba9348f2559feab2aaadabc15f26a18d888e7ddfedcb3df2af",
+        "source_url": "https://dists.thunderspy.org/piggs/stage2.pigg",
+        "stored_bytes": 2012,
+        "stored_sha256": "e4c5a6605ba2bdcc8bbd54dab9cb7017c74ff4314a3a0ba069b0e902d29ca66f",
+        "texture_header": {
+          "data_bounds_verified": true,
+          "header_bytes": 100,
+          "height": 32,
+          "original_name": "texture_library/GUI/Icons/Inspirations/Inspiration_Damage_Lvl_1.dds",
+          "struct_bytes": 32,
+          "width": 32
+        }
+      }
+    },
+    "acquisition_attempt": "One exact health-icon HTTP range to original provenance source returned HTTP403 under current network policy. No bypass or alternate domains attempted.",
+    "power_specific_icons": "Brawl/Sprint/Archery named icons absent from delivered repair/sweep file inventories; definitions reference more icons than recovered files.",
+    "projectile_fx": "Original source FxInfo/particle/render closure not qualified here. Target text highlight and damage labels only."
+  },
+  "sanitizer_tests": {
+    "passed": true,
+    "snapshot_negative_cases": 16,
+    "event_negative_cases": 12,
+    "panel_tabs": 5,
+    "inspect_intent_types": 4,
+    "lifecycle_recreations": 64,
+    "arena_bytes": 337120,
+    "draw_high_water": 261,
+    "host_snapshot_build_1000_cpu_ms": 78.1
+  },
+  "android_builds": {
+    "aarch64": {
+      "status": "shared library linked",
+      "api": 26,
+      "bytes": 47648,
+      "sha256": "161ceb96897011d6a3ffa2b9707c0f4f754e258404ff601a8db26cb9933bd735",
+      "executed": false
+    },
+    "x86_64": {
+      "status": "shared library linked",
+      "api": 26,
+      "bytes": 50056,
+      "sha256": "f8ee3b6219ef9c264f8a3203655645a1d358b94aa1e75d445fa8b0e381ad50a2",
+      "executed": false
+    }
+  },
+  "reused_axis_regression": {
+    "module": "Additive mobile analog HUD-focus policy",
+    "host": "passed",
+    "tests": {
+      "focus_timing_hysteresis_groups": 7,
+      "invalid_samples": 5,
+      "overflow_and_same_timestamp": true,
+      "catchup_burst": false,
+      "gameplay_intents": 0,
+      "arena_bytes": 72
+    },
+    "source_policy": "New mobile focus hysteresis/repeat contract; original desktop stick timing parity is not claimed. Calls existing source-qualified coh_hud_action only.",
+    "source_baseline": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "implementation_start_commit": "e6f5d4b190d60480e178b9bf6ce33859e457ef46",
+    "emulator": "not run; coordinator must wire selected stick and frame ticks",
+    "physical_thor": "not run",
+    "sanitizers": "ASan + UBSan passed; LSan disabled; caller-owned fixed storage",
+    "sanitizer_tests": {
+      "focus_timing_hysteresis_groups": 7,
+      "invalid_samples": 5,
+      "overflow_and_same_timestamp": true,
+      "catchup_burst": false,
+      "gameplay_intents": 0,
+      "arena_bytes": 72
+    },
+    "android": {
+      "status": "ARM64 built",
+      "api": 26,
+      "bytes": 32472,
+      "sha256": "8f21f45087cc6a6c289137310ae48acfe2a9d78514d720b1afdcc02a15af27da",
+      "execution": "not run"
+    },
+    "no_direct_allocator_imports": true,
+    "source_hashes": {
+      "coh_ui.c": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676",
+      "coh_hud.c": "2a803451ba0ff34db41deadc7ced716554b0046889ae47786752413766ca8177",
+      "gameplay/coh_hud_axis_navigation.c": "0ead4a2d663e910a1eaf904542179a5579cbc5fbf52daabbd267e2af8f7c3ea7",
+      "gameplay/coh_hud_axis_navigation.h": "f3154df8d7d7abf600d67c9a338946aa48ff566a3809a1759328a2c662261c75",
+      "gameplay/tests/axis_navigation_test.c": "48a960e620f801b804403e3385fc46266d4b27030c847dc1947b0f1d1b52d870"
+    }
+  },
+  "no_direct_allocator_imports": true,
+  "source_hashes": {
+    "gameplay/presentation/coh_presentation.c": "77db1f87fb555b84170238ae26356aae84cb1245ff8d82c479d768174259ed99",
+    "coh_ui.c": "6602c1c7f85d276371fcb8b942467504607575fc1fdbf8eab14f86b64e99b676",
+    "coh_hud.c": "2a803451ba0ff34db41deadc7ced716554b0046889ae47786752413766ca8177",
+    "gameplay/coh_hud_axis_navigation.c": "0ead4a2d663e910a1eaf904542179a5579cbc5fbf52daabbd267e2af8f7c3ea7",
+    "gameplay/presentation/coh_presentation.h": "c70c4a9781fc733bf03dd1d5243430e5a40b3dc43ab665f74deec653ef9175a4",
+    "gameplay/presentation/test_presentation.c": "67d4f0825301d5a5cf55c7ee59ad378e8b6d01d16e99970ca0d56be1dd1bd61a",
+    "gameplay/presentation/check.py": "ae451d4695d96fd3585a2ff06a3a4de58f4d23d5ea0f0ae68f0e8462299c5238",
+    "gameplay/coh_hud_axis_navigation.h": "f3154df8d7d7abf600d67c9a338946aa48ff566a3809a1759328a2c662261c75"
+  }
+}

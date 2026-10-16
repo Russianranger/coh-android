@@ -29,6 +29,8 @@ void support_bridge_surface_end(SupportBridge*);
 void support_bridge_frame_begin(SupportBridge*);
 void support_bridge_frame_end(SupportBridge*);
 void support_bridge_trigger(SupportBridge*);
+void support_bridge_presentation(SupportBridge*,int);
+void support_bridge_preview_label(SupportBridge*,int);
 int support_bridge_touch(SupportBridge*,int,unsigned,float,float);
 void support_bridge_navigation(SupportBridge*,int,float,float);
 int support_bridge_key(SupportBridge*,int,int,int,int);

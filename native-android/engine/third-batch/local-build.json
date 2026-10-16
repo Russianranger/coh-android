@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "source_commit": "1a449dafe3d77bf2fbc1f5cd6bcc97b60a6f5e27",
+  "source_tree_clean": true,
+  "package": "org.coh.nativesupport",
+  "version_name": "0.2.0-gameplay",
+  "version_code": 201,
+  "signing": "separate disposable debug certificate",
+  "ndk": "Pkg.Desc = Android NDK\nPkg.Revision = 28.2.13676358\nPkg.BaseRevision = 28.2.13676358\nPkg.ReleaseName = r28c\n",
+  "build_tools": "35.0.0",
+  "platform": "android-35",
+  "artifacts": [
+    {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-code201-arm64.apk",
+      "bytes": 2917815,
+      "sha256": "08e4d85385931dec9c49e1a0e06312a52475811adac8600f4ee41a2d3ba94fee",
+      "signer_certificate_sha256": "e4f56432e1aa22de904a05a41c75fa7491a3aab1fe6248a070f5f86c170c1776",
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_assets_verified": true
+    },
+    {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-code201-emulator-x86_64.apk",
+      "bytes": 2966964,
+      "sha256": "bb2876b77874b7f43ebbe242c42c8c10cf4dbfc29283f9336eb80abd79feb1b6",
+      "signer_certificate_sha256": "e4f56432e1aa22de904a05a41c75fa7491a3aab1fe6248a070f5f86c170c1776",
+      "signature_verified": true,
+      "manifest_verified": true,
+      "packaged_assets_verified": true
+    }
+  ],
+  "android_emulator_qualified": false,
+  "physical_thor_accepted": false,
+  "distribution": "local build only; hosted source-bound qualification artifact is canonical when successful"
+}

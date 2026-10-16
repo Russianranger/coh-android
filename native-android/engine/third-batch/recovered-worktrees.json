@@ -1,0 +1,490 @@
+{
+  "schema": 1,
+  "remote_base": "58caf1d4ab3b39757190f194100ccbc697d57857",
+  "read_only_inspection": true,
+  "worktrees": [
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/coh-native",
+      "head": "127ce7292297aebb55b3b1dbeb59000a1cab91dc",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "127ce7292297aebb55b3b1dbeb59000a1cab91dc Bind Map structure qualification to faithful source compression oracle",
+        "ffba66803300ce19dd5617f747d3b65855cd37c7 Integrate complete scene structure diagnostics in combined native client 0.1.7",
+        "0346c32462f04c57cb4ab6f8edefb06681347ad4 Document faithful compression profiles in GROUPS source qualification",
+        "0ef0d606d83df47e20b67ba8438a61f5d9f3999e Enforce admitted GROUPS footer count bounds in Android evidence",
+        "23248869acd0bdffb0fe501dfc191c46e3a475a7 Use authentic compression mode transitions in GROUPS source oracle",
+        "1ab0ab774c46d4b72d3b2fcb8183a09a68afca49 Inspect complete bounded normal GROUPS bodies in native Map sessions",
+        "950896ce30a733c4648d49f42981bbe209a4abdb Qualify complete GROUPS traversal with source fixtures and bounded negatives",
+        "f82b8dde72b63936b4d5111bfe94b37d0e35e4dc Verify DB generation binding remains distinct from entity readiness",
+        "c71a0ff4cd45e28573cb294fe4b8adf0f3a1f73e Add bounded complete normal GROUPS structural inspection",
+        "ae4546c62be9ce9de6e01217fef805930f6dde29 Qualify original normal GROUPS producer fixtures and source pins",
+        "fda08ed0a3d79c8217d16e59156b87a2800f584a Keep compressed scene fixture bit count strictly byte aligned",
+        "3145baea9cb6ba2024b4714227aaa0013cc5f304 Verify numeric scene inspection survives disconnect and resets on relaunch",
+        "eacabae8a4ff9564092caaccd2f006a40339802d Qualify complete bounded GROUPS structure in combined Android driver"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/audit-combined-013-hosted",
+      "head": "a903bb9ffc01dd3f6336e367de2b1581820b5901",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "a903bb9ffc01dd3f6336e367de2b1581820b5901 Record independent audit of exact hosted 0.1.3 packages and update contracts [skip ci]"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-build",
+      "head": "b566c293a5bdbca750c9e22bc638c309b262e65c",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "b566c293a5bdbca750c9e22bc638c309b262e65c Require current foreground GPU ownership and visible Surface pixels [combined-requalify]",
+        "88de79c63d0b81136dc81615ca0650f21cc87c29 Classify ANRs by framework process identity rather than CPU table mentions",
+        "00d08764b30e420ab8886b8e4ea45e3273868e96 Wait for real SAF return and retain verified external provider ANR diagnostics [combined-requalify]",
+        "26c98055939f79275a8f9aa1ec9710449f4efacf Preserve independent offline support advances across exact-package continuation",
+        "9605a60035759c47a27a92b493bff2091884c87e Continue Android framework checks with exact qualified packages [combined-requalify]",
+        "a508de7c060e4ee8551fad17221da9b838cf0042 Guard the observed Android document drawer selection regression on host",
+        "3030379ac629199dda0e0ab29c93586a5803b947 Observe fresh import readiness and select only foreground SAF document rows",
+        "a4d37ae5abb46773c8d4e3baff0582a79a64575e Qualify real donor document import, refusal and lease admission",
+        "5bb0a6597e4689bc5505a0262445c93ef289ee0b Package the exact public crypto license with combined native binaries",
+        "43bac07a16456d412c5467b3d07b771a90c58a24 Qualify absent server lease and actual native report document export",
+        "ad6cb9553792705aff0cce79b5a1c6d459759aed Grant declared runtime permissions on the disposable app emulator",
+        "2b4aaa72d2842c0932614cd0d5982a45e42cae07 Add pinned combined client packaging and framework qualification tools"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-immutable",
+      "head": "0b6abf77370d152462c3e9ba267f27f634d908c0",
+      "tracked_dirty_paths": [
+        "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ImportStore.java",
+        "native-android/combined-client/app/src/main/java/org/coh/nativecombined/RuntimeSetup.java",
+        "native-android/combined-client/imports/tests/check_imports.py"
+      ],
+      "unpublished_commits": [],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-import",
+      "head": "44a6c2a12d87898b230ed7887526fb7484f07d2f",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "44a6c2a12d87898b230ed7887526fb7484f07d2f Canonicalize Android app files parent before native game import inspection",
+        "5339f76a0c352e678f270bd87316f3abbd222427 Add pinned donor and external asset import setup for combined native client"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-local",
+      "head": "57226043126a3c48dd7c314ec3839851fee04f43",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "57226043126a3c48dd7c314ec3839851fee04f43 Add explicit loopback native DB and Map development session owner",
+        "ca80ec95ecf4abb89a9fc5bbe983003bdef29fb5 Add explicit loopback development authorization to native Map entry"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-native-view",
+      "head": "337ebeb7a73c5b2d1165ca41c8953b6ba1e324de",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "337ebeb7a73c5b2d1165ca41c8953b6ba1e324de Add explicit loopback native DB and Map development session owner",
+        "3153b6ced061e25f32039b63684291c1cd7f2453 Add explicit loopback development authorization to native Map entry",
+        "99ca7e37c2065776bda4daf44492c3fda5f0ba43 Keep combined crypto admission effective under optimized Python",
+        "58a96a542efa8c667a390ce4e9cfb91029310a26 Add manual native local client view and bounded JNI owner"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/batch-server",
+      "head": "44b688112ab62a7326c913121476e148f1c222f9",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "44b688112ab62a7326c913121476e148f1c222f9 Check source-helper profile guards and receipt reuse on host",
+        "52771dda7d28619c5fb4173446fd9ee064ae78c3 Order provision receipt before profile activation and bound full startup children",
+        "fd3d487102c0641475b2518dc92afc3dc1cc987e Add owned server-only combined runtime and disposable source-character provisioning"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/coh-012-requal-proof",
+      "head": "9afb33f33cd4c0ab2a10b86f0767b913e5431ea2",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "9afb33f33cd4c0ab2a10b86f0767b913e5431ea2 Continue exact 0.1.2 APK qualification with fresh UI capture evidence [combined-requalify]"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/coh-camera-recovery",
+      "head": "f834e6cf02cb29d29f8f7c7c68100c25891c12ba",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "f834e6cf02cb29d29f8f7c7c68100c25891c12ba Bound combined client viewport to accepted source camera dimensions"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/coh-memory-policy",
+      "head": "0b6abf77370d152462c3e9ba267f27f634d908c0",
+      "tracked_dirty_paths": [
+        "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerMemoryPolicy.java",
+        "native-android/combined-client/qualification/check_server_memory.py"
+      ],
+      "unpublished_commits": [],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-apk-report-identity-014",
+      "head": "cef74c5f09875b342d0b54486c29ae8a632b6cb4",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "cef74c5f09875b342d0b54486c29ae8a632b6cb4 Add bounded installed APK identity and strict report version policy"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-client-protocol-013",
+      "head": "c6ad7e72f3589b453241f35c706cf227e29f7543",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "c6ad7e72f3589b453241f35c706cf227e29f7543 Qualify native character selection with a bounded scripted Android UI peer",
+        "9327e38edb11df5af1979e59aaaf003acae41e62 Admit source command catalogs and preserve native connection failure checkpoints"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-build-012",
+      "head": "0b6abf77370d152462c3e9ba267f27f634d908c0",
+      "tracked_dirty_paths": [
+        ".github/workflows/native-combined-client.yml",
+        "native-android/combined-client/README.md",
+        "native-android/combined-client/THOR-TEST.md",
+        "native-android/combined-client/app/build.gradle",
+        "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ImportStore.java",
+        "native-android/combined-client/app/src/main/java/org/coh/nativecombined/MainActivity.java",
+        "native-android/combined-client/app/src/main/java/org/coh/nativecombined/RuntimeSetup.java",
+        "native-android/combined-client/app/src/main/java/org/coh/nativecombined/ServerService.java",
+        "native-android/combined-client/imports/tests/check_imports.py",
+        "native-android/combined-client/runtime/server_runtime.py",
+        "native-android/combined-client/runtime/test_runtime.py",
+        "native-android/combined-client/tools/emulator_check.py",
+        "native-android/combined-client/tools/host_check.py"
+      ],
+      "unpublished_commits": [],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-build-012-qualified",
+      "head": "377584651471e748fbbd4a24cdf08bd2c48ca4a3",
+      "tracked_dirty_paths": [
+        "native-android/combined-client/tools/driver_controls.py",
+        "native-android/combined-client/tools/emulator_check.py"
+      ],
+      "unpublished_commits": [],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-build-013",
+      "head": "84d957675e5315f6227148fd829082aab78b83cf",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "84d957675e5315f6227148fd829082aab78b83cf Record local 0.1.3 build, protocol sanitizer and update-identity evidence [skip ci]"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-build-014",
+      "head": "8052b0edc2badc478ca492f38383e5d91ef8f2f5",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "8052b0edc2badc478ca492f38383e5d91ef8f2f5 Record qualified 0.1.4 package, interruption, provenance and Android framework evidence [skip ci]"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-driver-013",
+      "head": "4c89c343554416ddb179742ed522bb8fbac0dbe7",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "4c89c343554416ddb179742ed522bb8fbac0dbe7 Always remove scripted policy before evaluating cleanup receipts",
+        "85d6faad53137c68b3f332e307d98f5152d291d5 Retain and verify scripted Android peer cleanup evidence",
+        "13b6d3f99b97a5fdf02a72f8fd46c4d748913144 Qualify landscape character selection and bounded Map diagnostics through the real Android app",
+        "39c9912c7bcbfbd4aa6a724c01e9556a51ad0170 Qualify viewport policy, Map protocol and replication in the combined batch",
+        "67ea455c2dd56639c31b3b6434d29db8e60c2c37 Admit source command catalogs and preserve native connection failure checkpoints",
+        "a31a50a72a34e059791b1d739e7f4f15647fdcf5 Qualify manual native character selection through controlled Android UDP peer",
+        "a6a6a17f6297dea67d94d628033f1d8c3da3b6d2 Record confirmed Thor server boot and next native connection retry scope",
+        "ca6aebb54407952eca20f87815bcb871bf3f3a1e Record Thor server boot and bounded native connection failure",
+        "dfd92dfb5dacfc6cbabcc511e1b71f070c915fb6 Reserve native scene space while local character controls are shown",
+        "fb2afb94b67333c366d3907463ccd8d1c5c60589 Bound combined client viewport to accepted source camera dimensions"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-combined-driver-014",
+      "head": "a8436a3ce94bbed7c5912d83f58c3a69d8e48e81",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "a8436a3ce94bbed7c5912d83f58c3a69d8e48e81 Qualify current APK provenance, bounded guest resources and historical native report exports"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-display-restart-014",
+      "head": "34883c171c90f2a1360eff5e92acefcbf9019529",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "34883c171c90f2a1360eff5e92acefcbf9019529 Isolate headless display endpoints per server session and retain bounded guest resource observations"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-server-memory",
+      "head": "0b6abf77370d152462c3e9ba267f27f634d908c0",
+      "tracked_dirty_paths": [
+        "native-android/combined-client/runtime/server_runtime.py",
+        "native-android/combined-client/runtime/test_runtime.py"
+      ],
+      "unpublished_commits": [],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/fix-server-runtime",
+      "head": "e279f6c352328844eb7cc86fd8be8c68dc51c8bc",
+      "tracked_dirty_paths": [
+        "native-android/combined-client/runtime/check.py",
+        "native-android/combined-client/runtime/server_runtime.py",
+        "native-android/combined-client/runtime/test_runtime.py"
+      ],
+      "unpublished_commits": [],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/groups-build-017",
+      "head": "127ce7292297aebb55b3b1dbeb59000a1cab91dc",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "127ce7292297aebb55b3b1dbeb59000a1cab91dc Bind Map structure qualification to faithful source compression oracle",
+        "ffba66803300ce19dd5617f747d3b65855cd37c7 Integrate complete scene structure diagnostics in combined native client 0.1.7",
+        "0346c32462f04c57cb4ab6f8edefb06681347ad4 Document faithful compression profiles in GROUPS source qualification",
+        "0ef0d606d83df47e20b67ba8438a61f5d9f3999e Enforce admitted GROUPS footer count bounds in Android evidence",
+        "23248869acd0bdffb0fe501dfc191c46e3a475a7 Use authentic compression mode transitions in GROUPS source oracle",
+        "1ab0ab774c46d4b72d3b2fcb8183a09a68afca49 Inspect complete bounded normal GROUPS bodies in native Map sessions",
+        "950896ce30a733c4648d49f42981bbe209a4abdb Qualify complete GROUPS traversal with source fixtures and bounded negatives",
+        "f82b8dde72b63936b4d5111bfe94b37d0e35e4dc Verify DB generation binding remains distinct from entity readiness",
+        "c71a0ff4cd45e28573cb294fe4b8adf0f3a1f73e Add bounded complete normal GROUPS structural inspection",
+        "ae4546c62be9ce9de6e01217fef805930f6dde29 Qualify original normal GROUPS producer fixtures and source pins",
+        "fda08ed0a3d79c8217d16e59156b87a2800f584a Keep compressed scene fixture bit count strictly byte aligned",
+        "3145baea9cb6ba2024b4714227aaa0013cc5f304 Verify numeric scene inspection survives disconnect and resets on relaunch",
+        "eacabae8a4ff9564092caaccd2f006a40339802d Qualify complete bounded GROUPS structure in combined Android driver"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/groups-decoder-017",
+      "head": "dbf451253e639fa1e73940f86dc1b13570407d3a",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "dbf451253e639fa1e73940f86dc1b13570407d3a Document faithful compression profiles in GROUPS source qualification",
+        "c74e8591dad5c8903ca7347a2fe82ac974b3d63f Use authentic compression mode transitions in GROUPS source oracle",
+        "9d8e0aeccd51e520b3db3735fc896986b032d12f Qualify complete GROUPS traversal with source fixtures and bounded negatives",
+        "b8415c72cb18b4067fc836a8923fa1dd28926214 Qualify original normal GROUPS producer fixtures and source pins",
+        "2f4f4a2c3366b19a8826615114c6134a558109b4 Add bounded complete normal GROUPS structural inspection"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/groups-map-017",
+      "head": "edd582d7f98d5b04eeee7ab7542fd90cee72eb5f",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "edd582d7f98d5b04eeee7ab7542fd90cee72eb5f Bind Map structure qualification to faithful source compression oracle",
+        "fc14ecd7bf670e8e58412c2201615b01148c93ab Use authentic compression mode transitions in GROUPS source oracle",
+        "276f4d8e535062d04a0c05761b51a8dc5fd00809 Inspect complete bounded normal GROUPS bodies in native Map sessions",
+        "1c06b813cbb7424b3686834bb3ce6c492b2d6657 Qualify original normal GROUPS producer fixtures and source pins",
+        "10b3814aa593785d591bb0ddf046824c18263f45 Add bounded complete normal GROUPS structural inspection"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/groups-oracle-017",
+      "head": "dd318faf914614ca60ba170e38d0cb980245dd36",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "dd318faf914614ca60ba170e38d0cb980245dd36 Use authentic compression mode transitions in GROUPS source oracle",
+        "b2cc464defaba42ae4fbffee5554487827b1960f Qualify original normal GROUPS producer fixtures and source pins"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/groups-review-017",
+      "head": "b92d839bebedf48c2e5f6ae514a81d6382436016",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "b92d839bebedf48c2e5f6ae514a81d6382436016 Record independent bounded GROUPS integration review [skip ci]"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/return-launcher-build-015",
+      "head": "1d3f73170ae7f407cb371b9b37c3622bd2baff25",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "1d3f73170ae7f407cb371b9b37c3622bd2baff25 Record qualified 0.1.5 launcher return, held input and native payload continuity [skip ci]"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/return-launcher-ui-015",
+      "head": "813112ec27d243fb4cc9c915cfeb79285aba63ca",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "813112ec27d243fb4cc9c915cfeb79285aba63ca Add native client return to launcher with bounded suspension capture"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/scene-build-016",
+      "head": "d810b7f04f173a456b08aeca3f4fa0d7256ebc73",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "d810b7f04f173a456b08aeca3f4fa0d7256ebc73 Preserve exact 0.1.6 scene receive build and Android qualification receipts [skip ci]"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/scene-map-016",
+      "head": "ca9678736d6537e7fa4aa03e55e5b5bc2283623d",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "ca9678736d6537e7fa4aa03e55e5b5bc2283623d Integrate bounded owned Map scene receive and qualify expanded GROUPS fixtures",
+        "f2b9404d066963d4466a92c6e8d955e763c21cc0 Add opt-in owned decoded NetLink delivery with bounded scene budget",
+        "4a9b56b41ac1c0b0b35d1aba5c18981975880b6c Add explicit bounded scene replication inspection without enlarging ordinary messages"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/scene-replication-016",
+      "head": "b40250c3a060ee52195629e48b5b36f7e23ae9f2",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "b40250c3a060ee52195629e48b5b36f7e23ae9f2 Audit authentic GROUPS tails and bounded scene publication prerequisites",
+        "68e7edf3a1171ee1a7314a2ed9c3b1b566340709 Add explicit bounded scene replication inspection without enlarging ordinary messages"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/scene-review-record-016",
+      "head": "160566e62bfddb9fbf9373bd41eff711a00d7825",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "160566e62bfddb9fbf9373bd41eff711a00d7825 Record independent bounded scene receive source and JNI review",
+        "648ebf2d0c2cca9dfa5ef9acf9b1fe705ffe9c01 Expose bounded scene receive diagnostics in combined client 0.1.6",
+        "e1af3955fa038bfdab956ca2de3983305678f455 Integrate bounded owned Map scene receive and qualify expanded GROUPS fixtures",
+        "a3a63c46b753198bb9589c18cfc22be62487d0fc Add opt-in owned decoded NetLink delivery with bounded scene budget",
+        "ccb0c510ea6800916361a8118586e3a07679bd38 Include independent network source and sanitizer suite in combined qualification",
+        "3d46806590c94c9063fa10970725587c30055f36 Qualify bounded compressed scene delivery through actual Android app",
+        "881b28464fe60bcad0893f627d1f2ddd84f8be3e Audit authentic GROUPS tails and bounded scene publication prerequisites",
+        "8a5b2b92d641ffb81b22a7ffb9cc0de53be0dae4 Add explicit bounded scene replication inspection without enlarging ordinary messages"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/scene-transport-016",
+      "head": "ce7a14ff353a3b63192e80926257185cfecf2938",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "ce7a14ff353a3b63192e80926257185cfecf2938 Add opt-in owned decoded NetLink delivery with bounded scene budget"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/session-boundary-016",
+      "head": "9474ddbef371b3dc89aab6dc349f590264173bb8",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "9474ddbef371b3dc89aab6dc349f590264173bb8 Record exact Android socket boundary continuation without rebuilding binaries",
+        "3a1a4d202dc9205fe4e0af43ebf011f1257e9930 Qualify updated socket controls using exact existing Android boundary binaries",
+        "1ad4703270369ab3cfdf3edc83769607465a2c60 Record independent bounded scene receive source and JNI review"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/thor-evidence-013",
+      "head": "25b449fd5126ce5f530fef423215ec0b2e9ac8e8",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "25b449fd5126ce5f530fef423215ec0b2e9ac8e8 Record Thor server boot and bounded native connection failure"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/thor-evidence-014",
+      "head": "498f18c81d01afa1c80bd5bb71120fec4ebdf606",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "498f18c81d01afa1c80bd5bb71120fec4ebdf606 Record Thor low-memory interruption and display restart failure"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/thor-evidence-015",
+      "head": "8068f94ca696dcd0e31b91a687d297fdec4c8f93",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "8068f94ca696dcd0e31b91a687d297fdec4c8f93 Record Thor 0.1.4 server lifecycle and native Map decode failure"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/thor-evidence-017",
+      "head": "c36ceb0867bc4e30cd3f5594a44c3eaa4d463e0f",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "c36ceb0867bc4e30cd3f5594a44c3eaa4d463e0f Record physical Thor 0.1.6 bounded scene receive and launcher return acceptance [skip ci]"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/worker-crypto",
+      "head": "7d621abfcefd11f655aafb1bea3397dc4ef8612e",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "7d621abfcefd11f655aafb1bea3397dc4ef8612e Qualify native live-session foundations across host and Android contracts",
+        "b5674b3b3a83c239d166cc5c952b868350442d17 Add pinned public OpenSSL Android crypto provider build and contracts"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/worker-db",
+      "head": "ae6b9924b8f8d4125e21f67450c235395831e2d2",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "ae6b9924b8f8d4125e21f67450c235395831e2d2 Add bounded native DB socket session and authenticated receipt handoff controller",
+        "7e7a9e33cbcd4e55eb446083176e0a2a18ad34af Implement bounded source-authentic native DB login and character wire records"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/worker-map",
+      "head": "3ef5aceb0c2dd28ed86ef5861206d301663cc900",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "3ef5aceb0c2dd28ed86ef5861206d301663cc900 Cross-build complete native MapServer qualification for Android ABIs",
+        "1a2182e11a7b54e73afa1b3f6384640f728f56ce Add bounded native MapServer connection controller and source packet qualification"
+      ],
+      "read_only": true
+    },
+    {
+      "path": "/workspace/scratch/cd30b2fc1c9e/worker-server",
+      "head": "0dc6405f4e8aaa26f7879f334c14b96716d8b615",
+      "tracked_dirty_paths": [],
+      "unpublished_commits": [
+        "0dc6405f4e8aaa26f7879f334c14b96716d8b615 Integrate owned native authentication DB and Map session flow",
+        "cf52ec67c7cbee23b7a195d61a095d83c7e29779 Qualify native NetLink against original source UDP functions"
+      ],
+      "read_only": true
+    }
+  ]
+}

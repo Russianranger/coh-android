@@ -1,0 +1,465 @@
+{
+  "parts": [
+    {
+      "geometry": "data/player_library/male_pants.geo",
+      "source_sha256": "e13b9a7f7daec0d025a8cd38cd1f9a24c9ba97920abddc13859fc5b8a68e0c2a",
+      "model": "GEO_HIPS_Tight",
+      "socket": 0,
+      "vertices": 158,
+      "indices": 702,
+      "materials": 1,
+      "textures": [
+        "HIPS_tights",
+        "none"
+      ],
+      "canonical_sha256": "88ef1c6b53c51e9d5e0f661610212cb72f0b63fbcae29fc0e6138884d45ed4f8",
+      "colors": [
+        [
+          40,
+          100,
+          210,
+          255
+        ],
+        [
+          230,
+          175,
+          40,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ]
+      ]
+    },
+    {
+      "geometry": "data/player_library/male_shirt.geo",
+      "source_sha256": "269eb585d6000fb0c05e0fc27b3de1af8fb9a91ef8e0df2819d3a6ede11ec4f6",
+      "model": "GEO_CHEST_Tight",
+      "socket": 2,
+      "vertices": 234,
+      "indices": 1086,
+      "materials": 1,
+      "textures": [
+        "CHEST_tights",
+        "none"
+      ],
+      "canonical_sha256": "3b591668d9a9e3e44424e3ff85fe84c4e4e7c00ea3aef8612266fceb8d0406ab",
+      "colors": [
+        [
+          40,
+          100,
+          210,
+          255
+        ],
+        [
+          230,
+          175,
+          40,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ]
+      ]
+    },
+    {
+      "geometry": "data/player_library/v_male_head.geo",
+      "source_sha256": "8a2b28f948d4cfbee83e75a1ac9cd11f6cf7a32770a5b9fac559431ca6b738de",
+      "model": "GEO_Head_V_Asym_Standard",
+      "socket": 4,
+      "vertices": 106,
+      "indices": 546,
+      "materials": 1,
+      "textures": [
+        "FACE_skin_head_01",
+        "none"
+      ],
+      "canonical_sha256": "b50da3b9ab4d04035db4415eaf19802911e4c140460dde7b66b762c3bc41ca9f",
+      "colors": [
+        [
+          196,
+          154,
+          126,
+          255
+        ],
+        [
+          40,
+          100,
+          210,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ]
+      ]
+    },
+    {
+      "geometry": "data/player_library/male_glove.geo",
+      "source_sha256": "e88c4f3e340766329b04b2a6544b277e4de312427fbf77badc828acbbfd3a16f",
+      "model": "GEO_LARMR_Smooth",
+      "socket": 9,
+      "vertices": 77,
+      "indices": 291,
+      "materials": 1,
+      "textures": [
+        "GLOVE_smooth_01",
+        "none"
+      ],
+      "canonical_sha256": "5978c1674d874673cd75a46bccec7f90173c64234f2cbf2fcb2eae6f470679ea",
+      "colors": [
+        [
+          40,
+          100,
+          210,
+          255
+        ],
+        [
+          230,
+          175,
+          40,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ]
+      ]
+    },
+    {
+      "geometry": "data/player_library/male_glove.geo",
+      "source_sha256": "e88c4f3e340766329b04b2a6544b277e4de312427fbf77badc828acbbfd3a16f",
+      "model": "GEO_LARML_Smooth",
+      "socket": 10,
+      "vertices": 77,
+      "indices": 291,
+      "materials": 1,
+      "textures": [
+        "GLOVE_smooth_01",
+        "none"
+      ],
+      "canonical_sha256": "e05329c7b265b8763215ef21306edc35c7d368a22ed115bf0800383e07f6f588",
+      "colors": [
+        [
+          40,
+          100,
+          210,
+          255
+        ],
+        [
+          230,
+          175,
+          40,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ]
+      ]
+    },
+    {
+      "geometry": "data/player_library/male_boot.geo",
+      "source_sha256": "40c0b72e845bb44e1b875044c8e5bb53819f428b248fa7d620bb1077c46e0e39",
+      "model": "GEO_LLEGR_Smooth",
+      "socket": 25,
+      "vertices": 66,
+      "indices": 246,
+      "materials": 1,
+      "textures": [
+        "BOOT_smooth_01",
+        "none"
+      ],
+      "canonical_sha256": "9fa6ee41b32c7caeb78878197641b8a97292c8d602f04094c11564d72cfa2f42",
+      "colors": [
+        [
+          40,
+          100,
+          210,
+          255
+        ],
+        [
+          230,
+          175,
+          40,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ]
+      ]
+    },
+    {
+      "geometry": "data/player_library/male_boot.geo",
+      "source_sha256": "40c0b72e845bb44e1b875044c8e5bb53819f428b248fa7d620bb1077c46e0e39",
+      "model": "GEO_LLEGL_Smooth",
+      "socket": 26,
+      "vertices": 66,
+      "indices": 246,
+      "materials": 1,
+      "textures": [
+        "BOOT_smooth_01",
+        "none"
+      ],
+      "canonical_sha256": "727787938793003188199e8b75614672b526b5ad0bf788e52458e6db19bf2613",
+      "colors": [
+        [
+          40,
+          100,
+          210,
+          255
+        ],
+        [
+          230,
+          175,
+          40,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ]
+      ]
+    },
+    {
+      "geometry": "data/player_library/male_hair.geo",
+      "source_sha256": "48cd27799ffe17cfc0276c7bb0add6d469a03dba5ec1d6d6f74723ee4f98f121",
+      "model": "GEO_HAIR_Martial_Arts_01",
+      "socket": 43,
+      "vertices": 159,
+      "indices": 384,
+      "materials": 1,
+      "textures": [
+        "HAIR_Style_01a",
+        "HAIR_Style_01B"
+      ],
+      "canonical_sha256": "9281559addb916026b59b17c9cad21a9b89bd6f68d32312913ce9304d0656bd2",
+      "colors": [
+        [
+          50,
+          35,
+          22,
+          255
+        ],
+        [
+          85,
+          59,
+          32,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ],
+        [
+          0,
+          0,
+          0,
+          255
+        ]
+      ]
+    }
+  ],
+  "source_menu_selection": [
+    {
+      "part": "Pants",
+      "source": "upstream/i24/data/menu/costume/localized/male/all/lower/menu_tight.ctm",
+      "source_sha256": "ee16f5ae950884d2689c7dd2dd993c99826dad5e0fcd0aa643b6a36419e2c38f",
+      "authored_geometry": "Tight",
+      "authored_texture1": "tights",
+      "selected_texture2": "none",
+      "mask_source": "upstream/i24/data/menu/costume/localized/male/all/lower/inc_tight_patterns.ctm",
+      "legacy_selection": false
+    },
+    {
+      "part": "Chest",
+      "source": "upstream/i24/data/menu/costume/localized/male/all/upper/menu_tight.ctm",
+      "source_sha256": "703d6720fcaec918883808d13eaf189cc9e3c336e0bf7b9e2c82e86232264691",
+      "authored_geometry": "Tight",
+      "authored_texture1": "tights",
+      "selected_texture2": "none",
+      "mask_source": "upstream/i24/data/menu/costume/localized/male/all/upper/inc_chest_patterns.ctm",
+      "legacy_selection": false
+    },
+    {
+      "part": "Head",
+      "source": "upstream/i24/data/menu/costume/localized/male/all/head/inc_heads_legacy.ctm",
+      "source_sha256": "832bf91897f9ebdfdb8647fe98121574f9af340ff8eac7d8908a5fce7959ffe6",
+      "authored_geometry": "V_MALE_HEAD.GEO/GEO_Head_V_Asym_Standard",
+      "authored_texture1": "skin_head_01",
+      "selected_texture2": "none",
+      "mask_source": "upstream/i24/data/menu/costume/localized/male/all/head/inc_heads_standard_patterns.ctm",
+      "legacy_selection": true
+    },
+    {
+      "part": "Gloves",
+      "source": "upstream/i24/data/menu/costume/localized/common/male_gloves.ctm",
+      "source_sha256": "c191a4725ebfc32c606f86dcd63e805d2fb43bcb706f494d14e0a22e00406410",
+      "authored_geometry": "Smooth",
+      "authored_texture1": "smooth_01",
+      "selected_texture2": "none",
+      "mask_source": "upstream/i24/data/menu/costume/localized/common/patterns_gloves_01.ctm",
+      "legacy_selection": false
+    },
+    {
+      "part": "Boots",
+      "source": "upstream/i24/data/menu/costume/localized/common/male_boots.ctm",
+      "source_sha256": "4903e6e94cdf37fc35805e1f287c5b7d6fe5bd430afb5bd48a1f99c7f4b6affb",
+      "authored_geometry": "Smooth",
+      "authored_texture1": "smooth_01",
+      "selected_texture2": "none",
+      "mask_source": "upstream/i24/data/menu/costume/localized/common/patterns_boots_01.ctm",
+      "legacy_selection": false
+    },
+    {
+      "part": "Hair",
+      "source": "upstream/i24/data/menu/costume/localized/male/all/head/inc_hair.ctm",
+      "source_sha256": "f39b91a97e15eb93261b43770748a18a1842c2ea565f3f556f6905be095e23ed",
+      "authored_geometry": "Martial_Arts_01",
+      "authored_texture1": "Style_01a",
+      "selected_texture2": "Style_01b",
+      "mask_source": null,
+      "legacy_selection": false
+    }
+  ],
+  "body_type": 0,
+  "complete_body_geometry": true,
+  "complete_authored_texture_selection": true,
+  "morphology": "explicit source-qualified neutral Male rig; no custom body scales",
+  "rig_sha256": "ba01d0aeec66d269a43291f76b0d1dabbd4cc452fda648bcd9471699be04405f",
+  "negative_transaction_tests": 9,
+  "vertices": 943,
+  "indices": 3792,
+  "frame_vertex_bytes": 52808,
+  "frame_index_bytes": 15168,
+  "workspace_bytes": 48960,
+  "heap_allocations_in_adapter": 0,
+  "textures": {
+    "hips_tights": {
+      "path": "data/texture_library/players/avatar/male/hips/tights/hips_tights.texture",
+      "sha256": "cf440577f6fd90e9ea287dab99ff0dc48e438d86203d45bf8844be5aa8cb950f",
+      "rgba_sha256": "955ca748a023fbbc8dae04a5fbaf192743edbcc81db473e1a4ebe4e5039b17c0",
+      "width": 256,
+      "height": 256
+    },
+    "none": {
+      "engine_default": "original unbound/none white binding"
+    },
+    "chest_tights": {
+      "path": "data/texture_library/players/avatar/male/chest/tights/chest_tights.texture",
+      "sha256": "ef660db028f4bf7138ad43701190ef8ece8937cc57d8573efcab262a96070cb4",
+      "rgba_sha256": "8c603efdb2f5c627a155f464fb0fedcbd90efede4d42960806e97cf0850243ee",
+      "width": 256,
+      "height": 512
+    },
+    "face_skin_head_01": {
+      "path": "data/texture_library/players/avatar/male/face/face_skin_head_01.texture",
+      "sha256": "de6a8166e55959d80cb2cab420bad909b6553dc3f5c2f903fcfecd146ea071cf",
+      "rgba_sha256": "6aa4ec84de54eae1ef0e6fe91486cbf9d06d60cbf2ccc5528a3fe13d135909aa",
+      "width": 256,
+      "height": 128
+    },
+    "glove_smooth_01": {
+      "path": "data/texture_library/players/avatar/super_shared/gloves/glove_smooth_01.texture",
+      "sha256": "f202b49d35c92c943d1a9852985e68d6d762f49cec87cdbd7170c3ba8cd88363",
+      "rgba_sha256": "b77c007ad4afad6f98df991d663eb064394188335aeb4748bee99ca0d3395619",
+      "width": 256,
+      "height": 256
+    },
+    "boot_smooth_01": {
+      "path": "data/texture_library/players/avatar/super_shared/boots/boot_smooth_01.texture",
+      "sha256": "7916525785ffb2bd8c49fcf594031a1b98b114fbefe848772f35e082b3d1e5e6",
+      "rgba_sha256": "2602432cddb7a576a157b4994a68d1e22831f55168257781aeeef971a49d77de",
+      "width": 256,
+      "height": 256
+    },
+    "hair_style_01a": {
+      "path": "data/texture_library/players/avatar/super_shared/hair/hair_style_01a.texture",
+      "sha256": "b6321e1a282ec99986e21e83af49167d67b5a831fdff0ccbd2627d1ec8f0989d",
+      "rgba_sha256": "37b0884b27296013527a5dc04f789a46132fadcff6330dd26b489fe201f1f977",
+      "width": 128,
+      "height": 128
+    },
+    "hair_style_01b": {
+      "path": "data/texture_library/players/avatar/super_shared/hair/hair_style_01b.texture",
+      "sha256": "fd7786d3379b51ad11c5aeb40f23bc9db60472f7ca2bfeb4fda61ef279d8bba6",
+      "rgba_sha256": "55eb8eab17b90bfd059cf6a4a451bb18dd339f1e19cf0e3057f2f2f9ef3a623f",
+      "width": 128,
+      "height": 128
+    }
+  },
+  "full_gate31_accepted": false,
+  "package": {
+    "file": "appearance-male.bin",
+    "bytes": 1673302,
+    "sha256": "bda4a9f1098281d3ddc32842aeda792e83cebb0be3185d9458e3402032f77df9"
+  },
+  "acquisition": {
+    "strict_http206": true,
+    "archive_complete_hash_claim": false,
+    "network_bytes": 0,
+    "range_count": 0,
+    "asset_source_pins": "engine/appearance/actor-pins.json"
+  }
+}

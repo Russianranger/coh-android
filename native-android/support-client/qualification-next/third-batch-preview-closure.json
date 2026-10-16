@@ -1,0 +1,41 @@
+{
+  "schema": 2,
+  "passed": true,
+  "asset_identities": 14,
+  "java_asset_paths": [
+    "asset-manifest.json",
+    "support-asset-manifest.json",
+    "appearance-male.bin"
+  ],
+  "audio_asset_paths": [
+    "music.ogg",
+    "ambient.ogg"
+  ],
+  "forbidden_dependency_negative_cases": [
+    "native-android/engine/network/",
+    "native-android/engine/auth/",
+    "native-android/engine/dbclient/",
+    "native-android/engine/login/",
+    "native-android/engine/mapclient/",
+    "native-android/engine/live/",
+    "native-android/engine/local/",
+    "native-android/engine/session/",
+    "native-android/engine/replication/",
+    "native-android/combined-client/",
+    "transitive local protected header"
+  ],
+  "closure": {
+    "local_inputs_checked": 111,
+    "unresolved_quoted_external_or_generated_includes": [
+      "support_tray.h",
+      "world_shader_sources.h"
+    ],
+    "scope": "Literal local include closure; compiler-recorded closure is checked separately when a build receipt is supplied."
+  },
+  "compiler_inputs_checked": 0,
+  "protected_source_changes": [],
+  "network_protocol_linked": false,
+  "native_source_count": 78,
+  "android_execution": false,
+  "physical_acceptance": false
+}

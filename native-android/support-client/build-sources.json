@@ -73,7 +73,13 @@
     "{codec_root}/vorbis/lib/vorbisfile.c",
     "native-android/engine/audio/coh_audio_listener.c",
     "native-android/engine/perf/coh_perf_bridge.c",
-    "native-android/engine/ui/gameplay/coh_hud_axis_navigation.c"
+    "native-android/engine/ui/gameplay/coh_hud_axis_navigation.c",
+    "native-android/engine/perf/coh_process_memory.c",
+    "native-android/engine/ui/gameplay/presentation/coh_presentation.c",
+    "native-android/engine/appearance/coh_appearance_mesh.c",
+    "native-android/engine/appearance/coh_appearance_render.c",
+    "native-android/engine/appearance/coh_appearance_actor.c",
+    "native-android/engine/appearance/coh_appearance_preview.c"
   ],
   "include_dirs": [
     "native-android/support-client/src",

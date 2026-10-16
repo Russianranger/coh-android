@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "original_integration_base": "fe037348c9a184d98aff96f0803b2afc0e631b71",
+  "promotion_base": "8e237b984c188dd19c171387914e795916712556",
+  "commits": [
+    {
+      "prior_integration_commit": "a0b47cbf1a6feb26dd17fe01974ba006ab8dd0b0",
+      "promotion_commit": "6700314b6de2d95e3230c24378d41e773edf02f1",
+      "subject": "Record third concurrent offline batch ownership and recovered qualification"
+    },
+    {
+      "prior_integration_commit": "a914c158a64a8c487c40b8895a67a740a80b561e",
+      "promotion_commit": "39bf0a4966f48d25bb1dd8495784f77e578b49da",
+      "subject": "Audit primary worktree recovery and noninterfering workflow triggers"
+    },
+    {
+      "prior_integration_commit": "794ceefbb671cd15216c24c88cacbe08cf5de87e",
+      "promotion_commit": "b27d907f8a31e04a1f40171595fd49266a4d2056",
+      "subject": "Recover and independently verify qualified native support 0.2.0 artifact"
+    },
+    {
+      "prior_integration_commit": "1f8dc77f2627e9d1fa0ea780889fee3967283444",
+      "promotion_commit": "bb791302acf32c251617374d79dae62db135aa1b",
+      "subject": "Prepare collision neighborhoods off simulation thread with guarded publication"
+    },
+    {
+      "prior_integration_commit": "a1a6f051ec003f51673b68d47db3424cb3db9944",
+      "promotion_commit": "f193273c90291a02b8040b963e23abf8e7047a44",
+      "subject": "Add bounded process memory observer with explicit unavailable diagnostics"
+    },
+    {
+      "prior_integration_commit": "9b46b357269753d456f91d908338d04f25d7eea3",
+      "promotion_commit": "73298f5e511dcdc6448ad8375f7947318a93cead",
+      "subject": "Record bounded memory observer qualification and retained audio evidence"
+    },
+    {
+      "prior_integration_commit": "1b51ec79170b334243627a73e1cb84dc5bf5b5a1",
+      "promotion_commit": "02c1388ca14f2e3c3beb007a25cbff965bcf6842",
+      "subject": "Add bounded offline gameplay panels and source-qualified combat presentation"
+    },
+    {
+      "prior_integration_commit": "8204a5515bad6cf138840cdfd7b545fdb270a958",
+      "promotion_commit": "2537e7226d22af45c3256b784271489d086a7480",
+      "subject": "Qualify offline panel GPU composition and shared analog policy"
+    },
+    {
+      "prior_integration_commit": "da8b1abf3b1c02430266a6665cb563e6184e5dc7",
+      "promotion_commit": "cfdf1050486a4245d6b300102105d6a2c746f6d4",
+      "subject": "Integrate offline gameplay panels, animation cues and process diagnostics"
+    },
+    {
+      "prior_integration_commit": "c3bacb34e475396c11e4ba2f8c7d0e54ebb64cbc",
+      "promotion_commit": "b1926e930b519f7ad15b6c246e4bed13083b1b32",
+      "subject": "Select version-code201 support emulator artifact in isolated workflow"
+    },
+    {
+      "prior_integration_commit": "af94f84fd9b4eaebd8bd0fd44b855c4ac02fec50",
+      "promotion_commit": "9c0a167fe0eb2b3190efca4bf26c45dbad521e7c",
+      "subject": "Add bounded offline zone preparation and generation-aware streaming adapter"
+    },
+    {
+      "prior_integration_commit": "5cc61abd101be671565ab25ee8ba4757736233c6",
+      "promotion_commit": "cf419473029ba63564722cb1f27c647e910dac57",
+      "subject": "Record independent support memory publication and worker lifetime review"
+    },
+    {
+      "prior_integration_commit": "362d675246f75c6e32ca563d4393da35a4a3df2b",
+      "promotion_commit": "9bc62c9b12e40658415636557dc9f71b69cca44b",
+      "subject": "appearance: qualify complete textured Male preview and actor ownership"
+    },
+    {
+      "prior_integration_commit": "4c1bd73ed6de6c279e8a51a2a70a28247e9a0741",
+      "promotion_commit": "a9d2c2eb2c42fd39e450e53b2409453ccf8abeed",
+      "subject": "Add isolated authentic Male preview to offline support code201"
+    },
+    {
+      "prior_integration_commit": "a3265a3e7707c8206998fe8645ecd7291841eb77",
+      "promotion_commit": "6befa553d21ea6436287d5a09e548b9f2f8e120c",
+      "subject": "appearance: record clean preparation and remaining body closure"
+    },
+    {
+      "prior_integration_commit": "b0d71f3078c0743afe0bad03ace517f597be7e1c",
+      "promotion_commit": "ccf9e7be76a7bcf3caa7479b374852fd0af490de",
+      "subject": "Record code201 offline support host and Android compile qualification"
+    },
+    {
+      "prior_integration_commit": "a5631bd6bd804e63ff6dbdb6b7526a7ef7386bcd",
+      "promotion_commit": "33f12f05ea17b2f3052879ea5ccf6251673c0f89",
+      "subject": "Record concurrent gameplay results and consolidated Thor procedure"
+    },
+    {
+      "prior_integration_commit": "1a449dafe3d77bf2fbc1f5cd6bcc97b60a6f5e27",
+      "promotion_commit": "53457cf425d039fb4e108f3b42490373d0603e22",
+      "subject": "Align Thor review field references with code201 export"
+    }
+  ],
+  "history_rewritten": false,
+  "method": "new detached worktree; cherry-pick only this batch; original worktrees and commits retained"
+}

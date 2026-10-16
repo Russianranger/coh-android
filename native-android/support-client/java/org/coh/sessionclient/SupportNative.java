@@ -11,4 +11,8 @@ public final class SupportNative {
  public static native void navigation(long h,boolean active,float x,float y);
  public static native void audioEnvironment(long h,boolean allowed,long routeGeneration);
  public static native String snapshot(long h);
+ public static native void presentation(long h,int action);
+ public static native String processMemory();
+ public static native boolean initializeAppearance(long h,byte[] verifiedPackage);
+ public static native void preview(long h,boolean active);
 }

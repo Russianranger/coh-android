@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "starting_remote_head": "58caf1d4ab3b39757190f194100ccbc697d57857",
+  "historical_checkpoint": "bf653dd4ef5372c921b049a76f902a4a921e8c4d",
+  "started_utc": "2026-10-16T01:33:53.685566+00:00",
+  "primary_checkout_read_only": "/workspace/scratch/cd30b2fc1c9e/coh-native",
+  "primary_unpublished_head_observed": "1ab0ab774c46d4b72d3b2fcb8183a09a68afca49",
+  "primary_dirty_paths_observed": [
+    ".github/workflows/native-combined-client.yml",
+    "native-android/combined-client/app/build.gradle",
+    "native-android/combined-client/app/src/main/cpp/CMakeLists.txt",
+    "native-android/combined-client/app/src/main/cpp/combined_network.c",
+    "native-android/combined-client/app/src/main/java/org/coh/nativecombined/NativeClientActivity.java",
+    "native-android/engine/build.py",
+    "native-android/engine/live/check.py"
+  ],
+  "active_remote_runs_at_audit": [],
+  "queued_remote_runs_at_audit": [],
+  "six_concurrent_workers": true,
+  "worktrees": {
+    "a": "/workspace/scratch/9acd650bfafa/worker-a",
+    "b": "/workspace/scratch/9acd650bfafa/worker-b",
+    "c": "/workspace/scratch/9acd650bfafa/worker-c",
+    "d": "/workspace/scratch/9acd650bfafa/worker-d",
+    "e": "/workspace/scratch/9acd650bfafa/worker-e",
+    "f": "/workspace/scratch/9acd650bfafa/worker-f"
+  },
+  "recovered_support": {
+    "source": "c14a831b55163dbcf2b3e63b4c52805785fceafa",
+    "artifact_id": 11990195263,
+    "run_id": 38765087744,
+    "version": "0.2.0-gameplay",
+    "code": 200,
+    "arm64_sha256": "26bad28b029fef86931108b531f883c9a948a16aff1dc2cdba9d8447c6c4d935",
+    "emulator_scenarios": 13,
+    "physical_accepted": false
+  },
+  "primary_016_scope": "58caf1d4ab records physical bounded scene reception and return-to-launcher acceptance; full scene/entity/world/auth remain pending",
+  "local_emulator_kvm_available": false
+}

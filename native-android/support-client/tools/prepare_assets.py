@@ -135,6 +135,7 @@ def main():
  parser.add_argument('--family-dir', type=Path)
  parser.add_argument('--audio-dir', type=Path)
  parser.add_argument('--font-ttf', type=Path)
+ parser.add_argument('--appearance-package',type=Path,help='Optional exact pinned prebuilt neutral Male fixture')
  args = parser.parse_args()
  root = args.source_root.resolve()
  native = root / 'native-android'
@@ -205,9 +206,20 @@ def main():
     audio_acquisition = json.loads((audio_dir / 'corpus.json').read_text())
    for name, (destination, size, sha) in AUDIO.items():
     payload[destination] = checked((audio_dir / name).read_bytes(), size, sha, 'Original ' + name)
+   appearance_package=args.appearance_package
+   appearance_provenance={'scope':'Exact pinned complete neutral Male package; source provenance in appearance actor manifest.'}
+   if appearance_package is not None and (appearance_package.parent/'actor.json').is_file():
+    appearance_provenance=json.loads((appearance_package.parent/'actor.json').read_text())
+   if appearance_package is None:
+    appearance_dir=temp/'appearance'
+    subprocess.run([sys.executable,str(native/'engine/appearance/prepare_actor.py'),'--source-root',str(root),'--output',str(appearance_dir)],check=True,capture_output=True,text=True)
+    appearance_package=appearance_dir/'appearance-male.bin'
+    appearance_provenance=json.loads((appearance_dir/'actor.json').read_text())
+   appearance_raw=checked(appearance_package.read_bytes(),1673302,'bda4a9f1098281d3ddc32842aeda792e83cebb0be3185d9458e3402032f77df9','Complete neutral Male fixture')
+   payload['appearance-male.bin']=appearance_raw
    prepared = {'schema': 'coh-native-support-assets-v1', 'accepted_apk_sha256': APK_SHA,
                'assets': {name: {'bytes': len(raw), 'sha256': digest(raw)} for name, raw in sorted(payload.items())},
-               'scope': 'Accepted offline assets plus authentic raw Huge clip diagnostics and original-font/audio preparation; no new gate/device acceptance.'}
+               'scope': 'Accepted offline assets plus authentic neutral Male costume, raw Huge clip diagnostics and original-font/audio preparation; no new gate/device acceptance.'}
    # Publish only after every input and derived output has been admitted.
    output.mkdir(parents=True, exist_ok=True)
    generated.mkdir(parents=True, exist_ok=True)
@@ -226,7 +238,8 @@ def main():
              'accepted_asset_pins_verified': 7, 'output': str(output), 'generated': str(generated),
              'assets': prepared['assets'], 'clips': clips, 'reference_acquisition': reference.report(),
              'font': font_report, 'font_header_sha256': digest((generated / 'support_font.h').read_bytes()),
-             'audio_acquisition': audio_acquisition, 'physical_qualification': False,
+             'audio_acquisition': audio_acquisition, 'appearance':appearance_provenance,
+             'appearance_package_sha256':digest(appearance_raw),'physical_qualification': False,
              'limitations': ['Preparation validates identity and canonical envelopes; runtime, GPU, audio and Thor acceptance are separate.',
                              'Font rasterization uses host FreeType with source NOHINT policy; host FreeType versions may change generated mask bytes.',
                              'No whole Reference or Audio archive SHA was computed from partial ranges.']}

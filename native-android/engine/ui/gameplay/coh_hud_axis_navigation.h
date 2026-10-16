@@ -21,6 +21,11 @@ void coh_hud_axis_reset(CohHudAxisNavigation *navigation);
  * blocked. Other errors preserve the held direction/timing for a later retry.
  * Reset on navigation OFF, device/focus loss and lifecycle pause. */
 CohStatus coh_hud_axis_step(CohHud *hud,CohHudAxisNavigation *navigation,float x,float y,uint64_t monotonic_ms);
+/* The same qualified timing policy for additive owner-thread panels. Callback
+ * is synchronous; context is borrowed for this call only and is never stored. */
+typedef CohStatus (*CohUiAxisActionFn)(void *context,CohUiAction action);
+CohStatus coh_ui_axis_step(CohHudAxisNavigation *navigation,float x,float y,uint64_t monotonic_ms,
+                           CohUiAxisActionFn action,void *context);
 #ifdef __cplusplus
 }
 #endif

@@ -1,0 +1,9 @@
+{
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "files": {
+    "Game/src/player/playerState.c": "c069987b6fc3e22eb780cc751aeae3c62e0dbdd78ee427d3c6269eebe237a5a9",
+    "Game/src/UI/uiMission.c": "18a33f79233ce588a206d3758f0dc50cf062669637681e0b5b64139394f85ddc",
+    "Game/src/UI/uiContact.c": "58c4c5499c2adead3acc25e33c3ec0420f396549be0fb59d6fb4d85267dd1012",
+    "Game/src/UI/uiEnhancement.c": "70493aeebd01bcf8d8e7f3d704a5771698c69d8ddffa9be8155d35274124c977"
+  }
+}

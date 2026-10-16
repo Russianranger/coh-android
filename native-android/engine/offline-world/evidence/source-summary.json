@@ -1,0 +1,300 @@
+{
+  "schema": "coh-offline-world-source-summary-v1",
+  "zones": [
+    {
+      "zone": "city_01_01",
+      "source_revision": "58caf1d4ab3b39757190f194100ccbc697d57857",
+      "source_visits": 477073,
+      "instance_count": 322328,
+      "endpoint_count": 1940,
+      "top_level_geometry_refs": 1,
+      "map_local_definition_count": 4850,
+      "traversal_truncated": false,
+      "limits": {
+        "max_visits": 1000000,
+        "max_depth": 128,
+        "max_source_bytes": 134217728,
+        "max_single_source_bytes": 8388608
+      },
+      "definition_graph": {
+        "top_level_refs": 1,
+        "unique_reachable_definitions": 11204,
+        "resolved_definition_edges": 35315,
+        "symbolic_resolved_node_occurrences": 457516,
+        "symbolic_rootmod_occurrences": 322328,
+        "cycles": 0,
+        "all_text_definition_edges_resolved": false
+      },
+      "most_repeated_placed_rootmods": [
+        [
+          "upstream/i24/data/object_library/walls/neighborhood_walls/neighborhood_walls.txt#_nbrhood_wall_panel_32",
+          262144
+        ],
+        [
+          "upstream/i24/data/object_library/Omni/omni.txt#_Omni",
+          4571
+        ],
+        [
+          "upstream/i24/data/object_library/Omni/omni.txt#_DIR",
+          3602
+        ],
+        [
+          "upstream/i24/data/object_library/Buildings/Style/Filler_Shops/filler_shops.txt#_FLRSHPS_STACK_Window_Outter_Frames",
+          2560
+        ],
+        [
+          "upstream/i24/data/object_library/Buildings/Style/Filler_Shops/filler_shops.txt#_FLRSHPS_STACK_Window_Reflect",
+          2560
+        ],
+        [
+          "upstream/i24/data/object_library/Omni/omni.txt#_sound",
+          1529
+        ],
+        [
+          "upstream/i24/data/object_library/Omni/omni.txt#_NAV",
+          1385
+        ],
+        [
+          "upstream/i24/data/object_library/Nature/SmPlants/smplants.txt#wild_grass_short_sml",
+          915
+        ],
+        [
+          "upstream/i24/data/object_library/Omni/omni.txt#_NPC",
+          902
+        ],
+        [
+          "upstream/i24/data/object_library/Omni/omni.txt#_EmergeFromMe",
+          738
+        ],
+        [
+          "upstream/i24/data/object_library/city_zones/Praetoria/Nature/Bushes/praet_bushes_urban01.txt#P_Bush_WillowLongA",
+          733
+        ],
+        [
+          "upstream/i24/data/object_library/V_COV/Streets/elements/decals/decals.txt#str_ddrt_02c",
+          730
+        ]
+      ],
+      "count_semantics": "Placed source RootMods include editor markers, sound emitters, invisible bounds, recursively tiled walls, and LOD content; these are NOT admitted draw instances.",
+      "occupied_origin_cells": 312,
+      "instance_payload": {
+        "file": "city_01_01-instances.json",
+        "bytes": 110961545,
+        "sha256": "ef5329008bb3eefb7ede598b6b30d62a068eb1c69cf81c5202524911f00bfb7c",
+        "matrix_format": "original binary32 Mat4 columns 4x3; identical render/collision placement"
+      },
+      "asset_manifest_identity": [
+        {
+          "bytes": 4237139,
+          "sha256": "f466ad6c8ab6e84dabd16d404c3a05bcb9fbca3cfad5746852d53b04132d8f74",
+          "archive": {
+            "bytes": 1663681523,
+            "filename": "zones-world-supplement.zip",
+            "sha256": "f12a0994cec20ab6d13c158495fe01402e89113ae756e412357e9c4a04833ad3"
+          }
+        },
+        {
+          "bytes": 4258210,
+          "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86",
+          "archive": {
+            "bytes": 207803201,
+            "filename": "atlas-world-supplement.zip",
+            "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+          }
+        }
+      ],
+      "unavailable_source_blobs": {},
+      "source_file_count": 345,
+      "source_bytes": 8847106,
+      "missing_definition_keys": 714,
+      "parser_failures": {},
+      "geometry_versions_by_endpoint": {
+        "8": 738,
+        "0": 760,
+        "7": 315,
+        "5": 37,
+        "2": 18,
+        "uninspected": 62,
+        "4": 10
+      },
+      "unique_external_geometry_identities": 220,
+      "unique_external_geometry_bytes": 42856847,
+      "original_math_comparison": {
+        "passed": true,
+        "compared_nodes": 477073,
+        "binary32_components": 5724876,
+        "byte_differences": 0,
+        "scope": "Actual expanded geometry hierarchy inputs, unchanged original degrees/YPR/mulMat4Inline vs accepted engine/world kernels; original output retained including signed zero."
+      },
+      "dependencies": {
+        "file": "city_01_01-dependencies.json.gz",
+        "bytes": 215951,
+        "sha256": "8d8e13ec2fc75db6a59a1509ef06dffd1427c14ec65ff662a5aece67589dd882"
+      },
+      "complete_zone": false,
+      "gpu_qualified": false,
+      "collision_render_geometry_qualified": false,
+      "accepted_map_subset_regression": {
+        "passed": true,
+        "instances": 11,
+        "binary32_matrix_components": 132,
+        "byte_differences": 0,
+        "fixture_sha256": "37df8a6df3ba3963d21a30db0c6a1079517db70cdaaa967e3b613a7620e512fa"
+      }
+    },
+    {
+      "zone": "city_01_02",
+      "source_revision": "58caf1d4ab3b39757190f194100ccbc697d57857",
+      "source_visits": 1000000,
+      "instance_count": 672529,
+      "endpoint_count": 2128,
+      "top_level_geometry_refs": 1,
+      "map_local_definition_count": 3368,
+      "traversal_truncated": true,
+      "limits": {
+        "max_visits": 1000000,
+        "max_depth": 128,
+        "max_source_bytes": 134217728,
+        "max_single_source_bytes": 8388608
+      },
+      "definition_graph": {
+        "top_level_refs": 1,
+        "unique_reachable_definitions": 12415,
+        "resolved_definition_edges": 60878,
+        "symbolic_resolved_node_occurrences": 1085467,
+        "symbolic_rootmod_occurrences": 741387,
+        "cycles": 0,
+        "all_text_definition_edges_resolved": false
+      },
+      "most_repeated_placed_rootmods": [
+        [
+          "upstream/i24/data/object_library/walls/neighborhood_walls/neighborhood_walls.txt#_nbrhood_wall_panel_32",
+          298957
+        ],
+        [
+          "upstream/i24/data/object_library/Buildings/Style/Filler_Shops/filler_shops.txt#_FLRSHPS_STACK_Window_Outter_Frames3",
+          60464
+        ],
+        [
+          "upstream/i24/data/object_library/Buildings/Style/Filler_Shops/filler_shops.txt#_FLRSHPS_STACK_Window_Reflect3",
+          60464
+        ],
+        [
+          "upstream/i24/data/object_library/Omni/omni.txt#_DIR",
+          6827
+        ],
+        [
+          "upstream/i24/data/object_library/Buildings/Style/deco/Deco2/deco2.txt#_deco2_wdw_A_pane",
+          5988
+        ],
+        [
+          "upstream/i24/data/object_library/Buildings/Style/deco/Deco2/deco2.txt#_deco2_wdw_A_frame",
+          5988
+        ],
+        [
+          "upstream/i24/data/object_library/Buildings/Style/deco/Deco2/deco2.txt#_deco2_wdw_A_trim",
+          5496
+        ],
+        [
+          "upstream/i24/data/object_library/Omni/omni.txt#_NAV",
+          5168
+        ],
+        [
+          "upstream/i24/data/object_library/Streets/elements/Fence/Chainlink/chainlink.txt#_ChainLnk_vertpost_lo",
+          4478
+        ],
+        [
+          "upstream/i24/data/object_library/Streets/elements/Fence/Chainlink/chainlink.txt#_ChainLnk_vertpost_hi",
+          4478
+        ],
+        [
+          "upstream/i24/data/object_library/Buildings/Style/deco/Deco1/deco1.txt#_deco1A_wdw_b_frame",
+          4032
+        ],
+        [
+          "upstream/i24/data/object_library/Buildings/Style/deco/Deco1/deco1.txt#_deco1_wdw_B_pane",
+          4032
+        ]
+      ],
+      "count_semantics": "Placed source RootMods include editor markers, sound emitters, invisible bounds, recursively tiled walls, and LOD content; these are NOT admitted draw instances.",
+      "occupied_origin_cells": 454,
+      "instance_payload": {
+        "file": "city_01_02-instances.json",
+        "bytes": 192619052,
+        "sha256": "760211da7d6d6d37fd92b7795ae94703b497804e34807dcf882e928f3e727a4a",
+        "matrix_format": "original binary32 Mat4 columns 4x3; identical render/collision placement"
+      },
+      "asset_manifest_identity": [
+        {
+          "bytes": 4237139,
+          "sha256": "f466ad6c8ab6e84dabd16d404c3a05bcb9fbca3cfad5746852d53b04132d8f74",
+          "archive": {
+            "bytes": 1663681523,
+            "filename": "zones-world-supplement.zip",
+            "sha256": "f12a0994cec20ab6d13c158495fe01402e89113ae756e412357e9c4a04833ad3"
+          }
+        },
+        {
+          "bytes": 4258210,
+          "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86",
+          "archive": {
+            "bytes": 207803201,
+            "filename": "atlas-world-supplement.zip",
+            "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+          }
+        }
+      ],
+      "unavailable_source_blobs": {
+        "upstream/i24/data/object_library/V_COV/Streets/elements/street_lights/street_lights.txt": "c93016642368a4ab6d70175f762720738dc39624",
+        "upstream/i24/data/object_library/Omni/EncounterSpawns/Base_Missions/base_missions.txt": "68faff1fd45f7d4eb5d5d7c1633a575aad5f1158",
+        "upstream/i24/data/object_library/city_zones/Rikti_crash/anti-air_gun/anti-air_gun.txt": "db39bb57ddba68ab3cd40dd134cc5cc56a65aad2",
+        "upstream/i24/data/object_library/city_zones/Rikti_crash/tank_A/tank_a.txt": "bdb33e18447353879c5e45d52b620cd0b2246b36",
+        "upstream/i24/data/object_library/Omni/MissionLabels/missionlabels.txt": "3323adf3d3e670ad4ae59fc7d01bc66ed20662c2",
+        "upstream/i24/data/object_library/Villain_Lairs/abandoned_warehouse/elements/racks/racks.txt": "837e6a67bd246881532e7c1f2a5b5626f8a317ad",
+        "upstream/i24/data/object_library/Villain_Lairs/abandoned_warehouse/structure/walls/walls.txt": "4fefb08c3e45d81d1f603f39778c603569dd1493",
+        "upstream/i24/data/object_library/Villain_Lairs/Caves/elements/decor/decor.txt": "3838f564bb742cf0838d0b8c81d503d040f82fb5",
+        "upstream/i24/data/object_library/Villain_Lairs/abandoned_warehouse/elements/lights/lights.txt": "874190fb8ccd627d245625166710331419cef091",
+        "upstream/i24/data/object_library/V_COV/Bases/Details/lightsources/lightsources.txt": "7d6f0fc807c49072d55119f09246686daa6db433"
+      },
+      "source_file_count": 474,
+      "source_bytes": 15253757,
+      "missing_definition_keys": 497,
+      "parser_failures": {},
+      "geometry_versions_by_endpoint": {
+        "8": 635,
+        "0": 726,
+        "7": 307,
+        "2": 18,
+        "uninspected": 414,
+        "5": 19,
+        "4": 9
+      },
+      "unique_external_geometry_identities": 205,
+      "unique_external_geometry_bytes": 18665215,
+      "original_math_comparison": {
+        "passed": true,
+        "compared_nodes": 1000000,
+        "binary32_components": 12000000,
+        "byte_differences": 0,
+        "scope": "Actual expanded geometry hierarchy inputs, unchanged original degrees/YPR/mulMat4Inline vs accepted engine/world kernels; original output retained including signed zero."
+      },
+      "dependencies": {
+        "file": "city_01_02-dependencies.json.gz",
+        "bytes": 209309,
+        "sha256": "82c826c95549e0fc04987b337cc11d4d8ab595ca49d27e44888dbbfe55577c42"
+      },
+      "complete_zone": false,
+      "gpu_qualified": false,
+      "collision_render_geometry_qualified": false
+    }
+  ],
+  "pack": {
+    "filename": "COH-Offline-Zone-Preparation-58caf1d4.zip",
+    "bytes": 7151551,
+    "sha256": "abe01439226438561f288ec62e5ed3619d6f22a892e42da89060677799a6697f",
+    "contents": "Source metadata only. External original GEO/texture packs still required; no new rendered world APK."
+  },
+  "qualification_scope": "Source hierarchy and exact matrices plus independent bounded runtime adapter. Original model/material admission and conservative per-page geometry bounds remain open.",
+  "admitted_expanded_gpu_instances": 0,
+  "physical_qualified": false
+}

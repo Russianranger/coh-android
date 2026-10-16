@@ -41,3 +41,13 @@ comparing exact source-WALK/refreshed-window results. Coverage-cell declarations
 are loader metadata, not original map assets and not an assertion that a full
 City of Heroes map has been qualified. Refcount ownership does not confer
 thread safety on a shared mutable walker; each walker retains a single tick owner.
+
+`coh_physics_neighborhood.c` starts from integration revision
+`58caf1d4ab3b39757190f194100ccbc697d57857`. It adds copied state capture,
+independent off-thread prepared-cache ownership and guarded simulation-thread
+publication around the existing snapshot/WALK code. No original collision or
+movement arithmetic is changed. Its sixteen slope sections and half-unit step
+are explicitly synthetic source-comparison witnesses, not authentic city assets.
+The checker preserves original source pins, separately compiles the original
+CTri files, and compares accepted WALK physical/control state. No runtime asset
+acquisition, server/network hook, mutable global scene or renderer is added.

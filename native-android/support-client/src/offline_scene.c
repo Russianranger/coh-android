@@ -28,6 +28,7 @@
 #include "world_shader_sources.h"
 #include "session_stream_world.h"
 #include "support_bridge.h"
+#include "../../engine/appearance/coh_appearance_preview.h"
 #include <android/asset_manager_jni.h>
 
 #define MAX_ASSET (16u*1024u*1024u)
@@ -47,6 +48,8 @@ typedef struct {
 typedef struct {
     pthread_mutex_t mutex; SupportBridge *support; jobject manager_ref; Bytes assets[7]; int valid,failed,cancel,running;
     uint64_t epoch; int foreground;
+    CohAppearancePreview *appearance;Bytes appearance_package;CohAppearancePreviewStats appearance_stats;
+    int preview_enabled;double preview_seconds;
     CohWorldScene world; CohScene actor; CohAnimationRig rig;
     CohCharacterMorph morph; CohLocomotion locomotion; CohLocomotionState animation;
     CohLocomotionBlend blend; CohWalkableScene walkable; CohWalkWorld walk_world; CohWalkState walking;
@@ -150,7 +153,7 @@ static int copy_asset(JNIEnv *e,jbyteArray a,Bytes *out) {
 }
 /* session_owner_mutex held. Never release borrowed scene/AssetManager storage
  * while audio callbacks may still reference its owner after a failed close. */
-static int session_free_owned(Session *s) {if(!s)return 1;if(!support_bridge_destroy(&s->support))return 0;coh_session_world_destroy(&s->stream_world);for(unsigned i=0;i<7;i++)free(s->assets[i].p);
+static int session_free_owned(Session *s) {if(!s)return 1;if(!support_bridge_destroy(&s->support))return 0;coh_session_world_destroy(&s->stream_world);coh_appearance_preview_destroy(s->appearance,0);free(s->appearance_package.p);for(unsigned i=0;i<7;i++)free(s->assets[i].p);
     coh_walk_world_destroy(&s->walk_world);for(unsigned i=0;i<COH_WALKABLE_PARTS;i++)geometry_free(&s->walkable_geometry[i]);
     for(unsigned i=0;i<COH_WORLD_PARTS;i++)geometry_free(&s->world_geometry[i]);
     for(unsigned i=0;i<COH_SCENE_PARTS;i++)geometry_free(&s->actor_geometry[i]);pthread_mutex_destroy(&s->mutex);if(session_owner==s)session_owner=NULL;free(s);return 1; }
@@ -459,7 +462,7 @@ static int graphics_create(Session *s,Graphics *g) {
  * cancel calls remain responsive during GPU readbacks. Copy only graphics and
  * receipt fields back, never overwriting controls delivered during startup. */
 static void startup_commit(Session *s,const Session *copy) {
-    s->stream_stats=copy->stream_stats;
+    s->stream_stats=copy->stream_stats;s->appearance_stats=copy->appearance_stats;
     memcpy(s->walkable_geometry,copy->walkable_geometry,sizeof s->walkable_geometry);
     s->walkable_tf_components=copy->walkable_tf_components;s->walkable_tf_mismatches=copy->walkable_tf_mismatches;s->walkable_visible_pixels=copy->walkable_visible_pixels;s->walkable_draws=copy->walkable_draws;
     memcpy(s->world_geometry,copy->world_geometry,sizeof s->world_geometry);memcpy(s->actor_geometry,copy->actor_geometry,sizeof s->actor_geometry);
@@ -494,7 +497,7 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e
     for(;;){pthread_mutex_lock(&s->mutex);if(s->cancel||s->failed){pthread_mutex_unlock(&s->mutex);break;}support_bridge_frame_begin(s->support);
         uint64_t current=now_ms();float seconds=bounded((float)(current-previous)/1000,0,.066667f);previous=current;
         s->camera_yaw=wrap(s->camera_yaw+s->look_rate[0]*seconds+s->look_delta[0]);s->camera_pitch=bounded(s->camera_pitch+s->look_rate[1]*seconds+s->look_delta[1],-.5f,.8f);s->look_delta[0]=s->look_delta[1]=0;
-        s->accumulator+=seconds;while(s->accumulator>=1.f/30&&!s->failed){s->accumulator-=1.f/30;float old[3];memcpy(old,s->motion.position,sizeof old);
+        if(s->preview_enabled){s->preview_seconds+=seconds;s->accumulator=0;}else s->accumulator+=seconds;while(s->accumulator>=1.f/30&&!s->failed){s->accumulator-=1.f/30;float old[3];memcpy(old,s->motion.position,sizeof old);
             uint32_t directions=s->held_dirs,previous_bounds=s->walking.bounded_steps;
             if(s->input_edge_count){directions=s->input_edges[s->input_edge_head];s->input_edge_head=(s->input_edge_head+1u)%INPUT_EDGES;s->input_edge_count--;}
             if(!support_bridge_walk(s->support,directions,wrap(s->camera_yaw-PI),&s->walking)){fail(s,"Source grounded WALK movement failed");break;}
@@ -506,17 +509,17 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e
             if(s->animation.move<COH_LOCOMOTION_CLIPS)s->animation_move_samples[s->animation.move]++;
             if(s->animation.move==COH_LOCOMOTION_RUN||s->animation.move==COH_LOCOMOTION_PRE||s->animation.move>=COH_LOCOMOTION_BACK_PRE)s->run_samples++;else s->idle_samples++;
         }
-        s->render_dt_frames=seconds*30;if(!s->failed)skin(s);
+        s->render_dt_frames=seconds*30;if(!s->failed&&!s->preview_enabled)skin(s);
         *startup=*s;pthread_mutex_unlock(&s->mutex);
         /* No shared session mutex is held by any driver call, including swap,
          * readbacks or context teardown. Main-thread focus/tickets stay live. */
         int surface_failed=0;
         if(!startup->failed){
-            uint64_t actor_before=startup->actor_draws,world_before=startup->stream_stats.draws;
+            uint64_t actor_before=startup->actor_draws,world_before=startup->stream_stats.draws,appearance_before=startup->appearance_stats.draws;
             CohSessionWorldStats before=startup->stream_stats;
             uint64_t uploaded=0;
             support_bridge_stage(s->support,COH_PERF_RENDER_SUBMIT,1);
-            for(unsigned i=0;i<startup->actor.part_count;i++){
+            for(unsigned i=0;!startup->preview_enabled&&i<startup->actor.part_count;i++){
                 geometry_upload(&startup->actor_geometry[i],0);
                 uploaded+=(uint64_t)startup->actor_geometry[i].count*sizeof(Vertex);
             }
@@ -524,12 +527,17 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e
             if(!eglQuerySurface(g.display,g.surface,EGL_WIDTH,&width)||!eglQuerySurface(g.display,g.surface,EGL_HEIGHT,&height)){startup->egl_error=(unsigned)eglGetError();surface_failed=1;}
             else if(width<=0||height<=0||width>16384||height>16384)surface_failed=1;
             else {startup->width=width;startup->height=height;
-                if(scene_draw(startup,&g,0,width,height,0,0,NULL)){
-                    if(!support_bridge_draw(s->support,width,height,(unsigned)epoch))fail(startup,"Support HUD draw failed");
-                }
+                int rendered=0;
+                if(startup->preview_enabled){
+                    glBindFramebuffer(GL_FRAMEBUFFER,0);
+                    if(!startup->appearance||coh_appearance_preview_draw(startup->appearance,(uint32_t)width,(uint32_t)height,(uint32_t)epoch,startup->preview_seconds)!=COH_OK)fail(startup,"Authentic Male appearance preview failed");
+                    else rendered=1;
+                    startup->appearance_stats=coh_appearance_preview_stats(startup->appearance);
+                }else rendered=scene_draw(startup,&g,0,width,height,0,0,NULL);
+                if(rendered&&!support_bridge_draw(s->support,width,height,(unsigned)epoch))fail(startup,"Support HUD draw failed");
             }
             support_bridge_stage(s->support,COH_PERF_RENDER_SUBMIT,0);
-            support_bridge_render_metrics(s->support,startup->actor_draws-actor_before+startup->stream_stats.draws-world_before,
+            support_bridge_render_metrics(s->support,startup->actor_draws-actor_before+startup->stream_stats.draws-world_before+startup->appearance_stats.draws-appearance_before,
                 uploaded,startup->stream_stats.cache_hits-before.cache_hits,startup->stream_stats.cache_misses-before.cache_misses,
                 startup->stream_stats.evictions-before.evictions);
             if(!surface_failed&&!startup->failed){
@@ -546,7 +554,7 @@ JNIEXPORT jint JNICALL Java_org_coh_sessionclient_SessionNative_render(JNIEnv *e
         s->total_ms=now_ms()-started;int stopped=s->failed||s->cancel;pthread_mutex_unlock(&s->mutex);if(stopped)break;
         struct timespec sleep={0,1000000};nanosleep(&sleep,NULL);
     }
-    pthread_mutex_lock(&s->mutex);*startup=*s;pthread_mutex_unlock(&s->mutex);if(g.context_current)support_bridge_surface_end(s->support);graphics_delete(startup,&g);
+    pthread_mutex_lock(&s->mutex);*startup=*s;pthread_mutex_unlock(&s->mutex);if(g.context_current)support_bridge_surface_end(s->support);if(startup->appearance){coh_appearance_preview_surface_lost(startup->appearance,g.context_current);startup->appearance_stats=coh_appearance_preview_stats(startup->appearance);}graphics_delete(startup,&g);
     pthread_mutex_lock(&s->mutex);startup_commit(s,startup);s->running=0;s->contexts_completed++;int result=s->failed?-1:0;pthread_mutex_unlock(&s->mutex);free(startup);return result;
 }
 static void input_mask(Session *s,uint32_t mask) {
@@ -558,17 +566,17 @@ static void input_mask(Session *s,uint32_t mask) {
 }
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_input(JNIEnv *e,jclass c,jlong handle,jfloat forward,jfloat strafe,jfloat look_x,jfloat look_y) {
     (void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s||!isfinite(forward)||!isfinite(strafe)||!isfinite(look_x)||!isfinite(look_y))return;
-    pthread_mutex_lock(&s->mutex);if(s->foreground){s->forward=bounded(forward,-1,1);s->strafe=bounded(strafe,-1,1);s->look_rate[0]=bounded(look_x,-4,4);s->look_rate[1]=bounded(look_y,-4,4);input_mask(s,(forward>.15f?1u:0)|(forward<-.15f?2u:0)|(strafe<-.15f?4u:0)|(strafe>.15f?8u:0));}pthread_mutex_unlock(&s->mutex);
+    pthread_mutex_lock(&s->mutex);if(s->foreground&&!s->preview_enabled){s->forward=bounded(forward,-1,1);s->strafe=bounded(strafe,-1,1);s->look_rate[0]=bounded(look_x,-4,4);s->look_rate[1]=bounded(look_y,-4,4);input_mask(s,(forward>.15f?1u:0)|(forward<-.15f?2u:0)|(strafe<-.15f?4u:0)|(strafe>.15f?8u:0));}pthread_mutex_unlock(&s->mutex);
 }
 /* Preserve independent source binary directions, including opposing held keys.
  * pmotion resolves their ramp and per-frame tap state rather than Java summing
  * them to a vector before the source control kernel receives them. */
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_controls(JNIEnv *e,jclass c,jlong handle,jint dirs,jfloat look_x,jfloat look_y) {
     (void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s||dirs<0||dirs>15||!isfinite(look_x)||!isfinite(look_y))return;
-    pthread_mutex_lock(&s->mutex);if(s->foreground){input_mask(s,(uint32_t)dirs);s->look_rate[0]=bounded(look_x,-4,4);s->look_rate[1]=bounded(look_y,-4,4);}pthread_mutex_unlock(&s->mutex);
+    pthread_mutex_lock(&s->mutex);if(s->foreground&&!s->preview_enabled){input_mask(s,(uint32_t)dirs);s->look_rate[0]=bounded(look_x,-4,4);s->look_rate[1]=bounded(look_y,-4,4);}pthread_mutex_unlock(&s->mutex);
 }
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_look(JNIEnv *e,jclass c,jlong handle,jfloat dx,jfloat dy) {
-    (void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s||!isfinite(dx)||!isfinite(dy))return;pthread_mutex_lock(&s->mutex);if(s->foreground){s->look_delta[0]+=bounded(dx,-.5f,.5f);s->look_delta[1]+=bounded(dy,-.5f,.5f);}pthread_mutex_unlock(&s->mutex);
+    (void)e;(void)c;Session *s=(Session*)(intptr_t)handle;if(!s||!isfinite(dx)||!isfinite(dy))return;pthread_mutex_lock(&s->mutex);if(s->foreground&&!s->preview_enabled){s->look_delta[0]+=bounded(dx,-.5f,.5f);s->look_delta[1]+=bounded(dy,-.5f,.5f);}pthread_mutex_unlock(&s->mutex);
 }
 static void clear_input(Session *s) {support_bridge_clear(s->support);s->input_edge_head=s->input_edge_count=0;s->held_dirs=0;s->forward=s->strafe=0;memset(s->look_rate,0,sizeof s->look_rate);memset(s->look_delta,0,sizeof s->look_delta);coh_walk_clear(&s->walking);s->motion=s->walking.controls;memcpy(s->motion.position,s->walking.position,sizeof s->motion.position);}
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SessionNative_viewDistance(JNIEnv *e,jclass c,jlong handle) {
@@ -601,6 +609,8 @@ JNIEXPORT jstring JNICALL Java_org_coh_sessionclient_SessionNative_snapshot(JNIE
         jappend(&j,",\"walkable_tf_components\":%"PRIu64",\"walkable_tf_mismatches\":%"PRIu64",\"walkable_visible_pixels\":%"PRIu64",\"animation_move_samples\":[",s->walkable_tf_components,s->walkable_tf_mismatches,s->walkable_visible_pixels);
         for(unsigned i=0;i<COH_LOCOMOTION_CLIPS;i++)jappend(&j,"%s%"PRIu64,i?",":"",s->animation_move_samples[i]);jappend(&j,"]");
         jappend(&j,",\"walk_contact_hits\":%u,\"walk_wall_hits\":%u,\"walk_ground_hits\":%u",s->walking.contact_hits,s->walking.wall_hits,s->walking.ground_hits);
+        const CohAppearancePreviewStats *ap=&s->appearance_stats;
+        jappend(&j,",\"appearance_preview\":{\"available\":%s,\"active\":%s,\"body\":\"Male\",\"neutral_morphology\":true,\"frames\":%"PRIu64",\"draws\":%"PRIu64",\"surface_uploads\":%"PRIu64",\"failures\":%"PRIu64",\"parts\":%u,\"vertices\":%u,\"indices\":%u,\"cpu_accounted_partial_bytes\":%zu,\"package_bytes\":%zu,\"gpu_buffer_bytes\":%zu,\"source_texture_bytes\":%zu,\"memory_scope\":\"Partial preview owner arenas exclude generic renderer CPU allocations; source texture payload is not GPU residency. GPU buffer bytes are cached renderer accounting, not total driver memory.\",\"upload_bytes_measured\":false,\"full_gate_accepted\":false}",s->appearance?"true":"false",s->preview_enabled?"true":"false",ap->frames,ap->draws,ap->surface_uploads,ap->failures,ap->parts,ap->vertices,ap->indices,ap->owned_cpu_bytes,ap->borrowed_package_bytes,ap->gpu_buffer_bytes,ap->texture_bytes);
         const CohSessionWorldStats *t=&s->stream_stats;
         jappend(&j,",\"stream\":{\"catalog_instances\":%"PRIu64",\"selected_instances\":%"PRIu64",\"resident_bytes\":%"PRIu64",\"budget_bytes\":%"PRIu64",\"peak_resident_bytes\":%"PRIu64",\"selection_updates\":%"PRIu64",\"cache_hits\":%"PRIu64",\"cache_misses\":%"PRIu64",\"evictions\":%"PRIu64",\"generation\":%u,\"draws\":%"PRIu64",\"view_radius\":%.9g}",t->catalog_instances,t->selected_instances,t->resident_bytes,t->budget_bytes,t->peak_resident_bytes,t->selection_updates,t->cache_hits,t->cache_misses,t->evictions,t->generation,t->draws,t->view_radius);
         jappend(&j,",\"source_assets\":{\"geo_loads\":%"PRIu64",\"texture_loads\":%"PRIu64",\"errors\":%"PRIu64"},\"static_renderer\":{\"draw_packets\":%"PRIu64",\"tf_components\":%"PRIu64",\"tf_mismatches\":%"PRIu64",\"visible_pixels\":%"PRIu64",\"material_mode_mask\":%u,\"owned_cpu_bytes\":%"PRIu64",\"gpu_bytes\":%"PRIu64",\"tf_max_error\":%.9g}",t->geo_loads,t->texture_loads,t->errors,t->draw_packets,t->tf_components,t->tf_mismatches,t->visible_pixels,t->material_mode_mask,t->owned_cpu_bytes,t->gpu_bytes,t->tf_max_error);
@@ -643,4 +653,31 @@ JNIEXPORT void JNICALL Java_org_coh_sessionclient_SupportNative_audioEnvironment
 
 JNIEXPORT void JNICALL Java_org_coh_sessionclient_SupportNative_navigation(JNIEnv*e,jclass c,jlong h,jboolean active,jfloat x,jfloat y){
  (void)e;(void)c;Session*s=(Session*)(intptr_t)h;if(s)support_bridge_navigation(s->support,active?1:0,x,y);
+}
+
+/* Independent copied process diagnostics: called on the report worker, no
+ * Session handle and no lifecycle-owned object is accessed by this function. */
+#include "../../engine/perf/coh_process_memory.h"
+JNIEXPORT jstring JNICALL Java_org_coh_sessionclient_SupportNative_processMemory(JNIEnv*e,jclass c){
+ (void)c;CohProcessMemorySnapshot snapshot;char json[2048];size_t needed=0;
+ (void)coh_process_memory_sample(&snapshot);
+ if(coh_process_memory_json(&snapshot,json,sizeof json,&needed)!=COH_OK)strcpy(json,"{\"diagnostic_truncated\":true}");
+ return (*e)->NewStringUTF(e,json);
+}
+JNIEXPORT void JNICALL Java_org_coh_sessionclient_SupportNative_presentation(JNIEnv*e,jclass c,jlong h,jint action){
+ (void)e;(void)c;Session*s=(Session*)(intptr_t)h;if(s)support_bridge_presentation(s->support,action);
+}
+
+JNIEXPORT jboolean JNICALL Java_org_coh_sessionclient_SupportNative_initializeAppearance(JNIEnv*e,jclass c,jlong h,jbyteArray package){
+ (void)c;Session*s=(Session*)(intptr_t)h;if(!s||!package)return JNI_FALSE;
+ Bytes bytes={0};CohAppearancePreview *owner=NULL;
+ if(!copy_asset(e,package,&bytes)){free(bytes.p);return JNI_FALSE;}
+ if(coh_appearance_preview_create((CohBytes){bytes.p,bytes.n},&owner)!=COH_OK){free(bytes.p);return JNI_FALSE;}
+ pthread_mutex_lock(&s->mutex);
+ if(s->running||s->appearance){pthread_mutex_unlock(&s->mutex);coh_appearance_preview_destroy(owner,0);free(bytes.p);return JNI_FALSE;}
+ s->appearance=owner;s->appearance_package=bytes;s->appearance_stats=coh_appearance_preview_stats(owner);pthread_mutex_unlock(&s->mutex);return JNI_TRUE;
+}
+JNIEXPORT void JNICALL Java_org_coh_sessionclient_SupportNative_preview(JNIEnv*e,jclass c,jlong h,jboolean enabled){
+ (void)e;(void)c;Session*s=(Session*)(intptr_t)h;if(!s)return;pthread_mutex_lock(&s->mutex);
+ if(s->appearance){s->preview_enabled=!!enabled;s->accumulator=0;clear_input(s);support_bridge_preview_label(s->support,s->preview_enabled);}pthread_mutex_unlock(&s->mutex);
 }

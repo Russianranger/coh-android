@@ -109,6 +109,34 @@
       "machine_evidence": "schema; app.installed_apk; assets_verified; native; support",
       "human_observation_required": "Export readable nontruncated JSON and Near/Far screenshots",
       "status": "pending"
+    },
+    {
+      "id": "male_preview",
+      "coverage": "Eight authentic Male parts and neutral rig",
+      "machine_evidence": "native.appearance_preview; support_asset_manifest.assets[appearance-male.bin]",
+      "human_observation_required": "Inspect textures, attachments, poses; Home/recreate, return to Wretch; Female/Huge full closures remain incomplete",
+      "status": "pending"
+    },
+    {
+      "id": "landscape_panels",
+      "coverage": "Compact landscape controls and five offline panels",
+      "machine_evidence": "input_area.scene_fraction; support.presentation",
+      "human_observation_required": "Useful scene viewport; controller/touch selection and B close in all five panels",
+      "status": "pending"
+    },
+    {
+      "id": "mock_impact",
+      "coverage": "Local impact presentation and authentic Huge cue",
+      "machine_evidence": "support.presentation; support.animation",
+      "human_observation_required": "Damage/highlight and Huge punch in Wretch mode; no claim of authentic impact audio",
+      "status": "pending"
+    },
+    {
+      "id": "process_memory",
+      "coverage": "Observed process memory diagnostics",
+      "machine_evidence": "process_memory.native.rss; process_memory.native.pss; process_memory.sample_age_ms",
+      "human_observation_required": "Export parses and measured/unknown fields are explicit; this is not full driver/GPU memory",
+      "status": "pending"
     }
   ],
   "acceptance_rules": [
@@ -116,6 +144,11 @@
     "Do not accept a full gameplay gate from a bounded offline support scene.",
     "All relevant GL/transform/cleanup/support failures must remain zero; unavailable counters are not zero-cost observations.",
     "native.total_ms measures the latest render lifetime and resets after lifecycle restart; it cannot establish aggregate ten-minute foreground duration alone.",
-    "No physical acceptance exists until actual Thor reports and human observations are returned."
-  ]
+    "No physical acceptance exists until actual Thor reports and human observations are returned.",
+    "In Male preview, retained scene music and ambience is background audio, not tied to the fixed preview camera."
+  ],
+  "expected_version_name": "0.2.0-gameplay",
+  "expected_version_code": 201,
+  "male_screenshot": null,
+  "panel_landscape_screenshot": null
 }

@@ -2,8 +2,9 @@
 
 This separate test package exercises new opt-in support libraries without editing
 the accepted Session Client, production launcher or gates 25–27. Package identity
-is `org.coh.nativesupport`. The retained qualified artifact is `0.1.0-support-batch`;
-the next integrated build is `0.2.0-gameplay` (manifest code `200`). It coexists with the
+is `org.coh.nativesupport`. The latest retained qualified artifact is `0.2.0-gameplay` (manifest code `200`);
+its exact source/build/emulator recovery is recorded under `qualification-next/`.
+The original `0.1.0-support-batch` artifact is also preserved. It coexists with the
 physically accepted 0.3.0 client. It does not require a server.
 
 The coordinator-owned `offline_scene.c` is a test-harness derivative of the
@@ -11,9 +12,11 @@ accepted offline scene. The original renderer/JNI/Java files remain unchanged.
 It retains the original Wretch/Huge actor and bounded Atlas asset selection,
 adds static BVH-backed WALK, exact CPU skin-result caching, source-font GLES HUD,
 mock neutral authentic animation clips and streamed Atlas Plaza/steam audio.
-The tray uses authentic original ring and 1–9,0 numeral artwork; ability-specific icons remain unavailable. UI-navigation mode routes the left stick through bounded focus hysteresis/repeat, and D-pad/A continue to navigate. Character choices change mock data only. Male/Female/Huge costume assemblies
-have independent host evidence; this APK does not render their full resource
-closures. Jump-and-smash is an animation preview, not jump physics.
+The tray uses authentic original ring and 1–9,0 numeral artwork; ability-specific icons remain unavailable. UI-navigation mode routes the left stick through bounded focus hysteresis/repeat, and D-pad/A continue to navigate. Character choices change mock data only. The code201 continuation adds an explicit
+**Preview: Male** toggle for a complete eight-part authentic neutral Male costume,
+matching rig and textures. Wretch remains the default scene actor; Male is a separate
+fixed-camera preview without movement. Female and additional full Huge costumes
+remain incomplete. Jump-and-smash is an animation preview, not jump physics.
 
 `CohHudState` and `CohHudIntent` are copied game-state/intent boundaries. Future
 session integration must marshal them to the HUD owner, and marshal animation,
@@ -57,8 +60,10 @@ establish full-game FPS, full-map memory use or Adreno performance.
 
 1. Keep the accepted 0.3.0 APK installed. Install the separate ARM64 support APK
    from the named Actions artifact; check its SHA256 against `SHA256SUMS`.
-   The support release uses a separately verified disposable debug certificate;
-   export its report and uninstall only the previous support app first.
+   Export any existing support report before installation. Do not uninstall or
+   clear application data. If Android rejects an update because a previous support
+   APK uses a different signer, retain that installation and report the conflict.
+   Neither the accepted Session Client nor Combined Client is replaced.
 2. Open **CoH Native Support**. Confirm scene and source-font HUD render,
    mock health/endurance update, and music plus positional ambient audio play.
 3. With UI navigation OFF, use left/right sticks, short WASD/D-pad movement and touch dragging; check
@@ -69,27 +74,39 @@ establish full-game FPS, full-map memory use or Adreno performance.
 5. Touch a power slot, target and Characters. Select mock character data; the
    visible scene actor remains Wretch. Toggle **UI navigation: ON** and use
    left stick, D-pad/shoulders/A. Enter a short message with Android keyboard and **Send**.
-6. Press **Recreate** twice, Home/resume three times, and test an audio route
+6. Rotate to landscape. Confirm the compact controls leave a useful scene area;
+   **Controls** expands the additional test actions. Cycle **Panels** through
+   Details, Inventory, Enhancements, Missions and Contacts. Use touch, left stick,
+   D-pad and A to select rows, and B to close. **Mock hit** shows a target highlight,
+   damage text and a genuine Huge punch cue in Wretch mode. Inventory, missions,
+   health and combat state remain mock; authentic impact audio is unavailable.
+7. Toggle **Preview: Wretch** to Male. Inspect all eight genuine parts, head texture,
+   attachment transforms and neutral rig at several poses. Capture a screenshot,
+   recreate the Surface and Home/resume, then return to Wretch and confirm WALK.
+   Music/ambient remains explicitly background audio from the retained Wretch
+   scene; its listener does not follow the fixed Male preview camera.
+8. Press **Recreate** twice, Home/resume three times, and test an audio route
    change and another app briefly taking audio focus. Confirm HUD/chat persist, movement clears on focus loss, audio
    resumes, and no duplicate scene or sound remains.
-7. Run for 10 active minutes with movement, scene selection and simultaneous sound. The new `support.active_foreground_ms` accumulates foreground time across Surface lifetimes; background time is excluded.
+9. Run for 10 active minutes with movement, scene selection and simultaneous sound. The new `support.active_foreground_ms` accumulates foreground time across Surface lifetimes; background time is excluded.
    Home for several seconds so audio diagnostics become quiescent, resume,
-   and **Export report**. Share JSON, Far/Near screenshots and observed sound,
+   and **Export report**. Share JSON, Far/Near/Male/panel landscape screenshots and observed sound,
    input and visual issues in one consolidated session.
 
 Physical acceptance requires the exported device evidence, zero relevant
 source/GL/cleanup errors and explicit human visual/audio/input checks. No
-physical result is recorded yet. Remove only `org.coh.nativesupport` to roll
-back the test application; the accepted client and launcher remain installed.
+physical result is recorded yet. Rollback preserves all installed application data;
+retain the exact older APK and report any signer/version conflict before changing
+an installation. The accepted client and launcher remain installed.
 Opt-in library commits may be reverted additively in reverse dependency order;
 never reset or rewrite the shared branch.
 
 The source-bound artifact recovery checker and complete pending physical review
 matrix are documented in [qualification-next/INTEGRATION.md](qualification-next/INTEGRATION.md).
 The retained artifact passed 13 Android emulator scenarios; these have not been
-repeated. Its report incorrectly labels version code `1` although the verified
-APK manifest code is `100`. New builds must report installed package metadata
-and pass the stricter emulator identity checks. Original font glyphs are present;
+repeated. The older 0.1.0 report incorrectly labels version code `1` although its verified
+APK manifest code is `100`; the retained 0.2.0 report correctly identifies code
+`200` and passes installed-package identity checks. Original font glyphs are present;
 baseline original UI icon/skin closure remains incomplete.
 
 ## Gameplay continuation scope
@@ -103,12 +120,18 @@ Surface recreation currently pauses/reopens audio and is part of the test.
 
 The new generation-aware body-mesh render bridge, retained collision coverage
 snapshots and transactional multi-actor animation bridge are separately
-host/source/sanitizer/ARM64 qualified. Their complete character, streamed-map and
-multi-character GPU integrations remain pending; this APK keeps the accepted
-Wretch/Atlas regression scene. No new full gameplay gate is accepted.
+host/source/sanitizer/ARM64 qualified. The code201 continuation integrates the complete neutral Male preview while
+retaining Wretch/Atlas. Full multi-body character, streamed-map and multi-character
+GPU integrations remain pending. No new full gameplay gate is accepted.
 
-JSON now reads installed package version metadata, includes a monotonic
-foreground-duration observation, partial Java/native-heap bytes and explicit
-unknown RSS/PSS/thermal flags. No GPU timer, full-map FPS or physical qualification
-is inferred. Export must identify package org.coh.nativesupport, version
-0.2.0-gameplay/code200, the installed APK SHA and all original asset identities.
+JSON reads installed package version metadata and includes monotonic foreground
+duration, partial Java/native-heap bytes and a separately sampled process RSS/PSS
+observer with per-field known/error status, sample age and duration. Sampling and
+file export run off the render/audio/UI threads. Legacy perf bridge memory gauges
+remain explicitly unsubmitted; zero is not a measured value. Male memory counters
+are partial accounted owner/buffer bytes and source texture payload, not total
+CPU/GPU residency. GPU timing and thermal observations remain unavailable.
+Export must identify package org.coh.nativesupport, version 0.2.0-gameplay/code201,
+the installed APK SHA and all original asset identities. The historical qualified
+code200 artifact remains unchanged; code201 needs its own Android13 execution.
+No full-map FPS or physical qualification is inferred.

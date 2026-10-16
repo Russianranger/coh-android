@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "status": "host-qualified-and-android-libraries-built",
+  "starting_commit": "58caf1d4ab3b39757190f194100ccbc697d57857",
+  "source_revision": "af68933ffc4c21befb285f11115f926616743fe9",
+  "host": {
+    "status": "passed",
+    "checks": 114112,
+    "parser_property_cases": 4096,
+    "sample_stress_cycles": 10000,
+    "direct_allocator_calls": 0,
+    "snapshot_bytes": 80,
+    "read_buffer_bytes": 16385,
+    "actual_host_sample": {
+      "schema": 1,
+      "scope": "process_memory_sample",
+      "unit": "bytes",
+      "rss": {
+        "known": true,
+        "bytes": 651264,
+        "source": "proc_self_smaps_rollup",
+        "status": 0,
+        "errno": 0
+      },
+      "pss": {
+        "known": true,
+        "bytes": 209920,
+        "source": "proc_self_smaps_rollup",
+        "status": 0,
+        "errno": 0
+      },
+      "rollup_status": 0,
+      "rollup_errno": 0,
+      "status_file_status": 3,
+      "status_file_errno": 0,
+      "files_opened": 1,
+      "read_calls": 2,
+      "bytes_read": 698
+    }
+  },
+  "independent_parser_oracle": {
+    "cases": 2048,
+    "passed": true,
+    "snapshot_bytes": 80,
+    "largest_tested_json_including_nul": 420,
+    "scope": "Independent Python arbitrary-precision parser/export oracle; synthetic proc text, not Android memory"
+  },
+  "sanitizers": {
+    "address": "passed",
+    "undefined": "passed",
+    "checks": 114112,
+    "leak_detection": false,
+    "limitation": "Host denies LeakSanitizer /proc/PID/task inspection; linked allocator guard still verifies zero direct allocation calls"
+  },
+  "android_libraries": [
+    {
+      "abi": "arm64-v8a",
+      "api": 26,
+      "status": "built",
+      "elf_machine": "AArch64",
+      "sha256": "bc921322c81f2ab72a95c65b3e61986de541dac1604e398f75fb481f808a5908",
+      "bytes": 20032,
+      "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)"
+    },
+    {
+      "abi": "x86_64",
+      "api": 26,
+      "status": "built",
+      "elf_machine": "Advanced Micro Devices X86-64",
+      "sha256": "bba28d711c4e16a1fcd0174aeaea3fcd65929d1ec78222d9defd6f89dc5bd0ab",
+      "bytes": 19760,
+      "compiler": "Android (13624864, +pgo, +bolt, +lto, +mlgo, based on r530567e) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project 97a699bf4812a18fb657c2779f5296a4ab2694d2)"
+    }
+  ],
+  "retained_audio_listener_perf_evidence": [
+    {
+      "receipt": "native-android/engine/audio/lifecycle-host-proof.json",
+      "sha256": "ce64d27e1304cefd2846c5dfde2981b149336bf99ee59fa3ef41132fc4a3dcbf",
+      "source_files_verified_unchanged": 9
+    },
+    {
+      "receipt": "native-android/engine/audio/android-integration/host-proof.json",
+      "sha256": "9ae35d9eb4e9d05111cca6ccc32ad64c755f571d3c4b6e0cd501c2f6e6d14332",
+      "source_files_verified_unchanged": 7
+    },
+    {
+      "receipt": "native-android/engine/perf/evidence/bindings-qualification.json",
+      "sha256": "1439cf59b09922934c0345c3b218952a0bceaae54115c8010450dc095801995e",
+      "source_files_verified_unchanged": 10
+    }
+  ],
+  "scope": "New off-hot-path OS telemetry adapter. Original audio/source gain/codec/listener/perf algorithms unchanged; original-game oracle comparison not applicable to proc text parsing.",
+  "bounds": {
+    "snapshot_bytes": 80,
+    "fixed_read_buffer_bytes": 16385,
+    "maximum_files_opened": 2,
+    "maximum_read_attempts": 64,
+    "maximum_bytes_read": 32770,
+    "heap_allocations_in_adapter": 0,
+    "syscall_wall_time_bounded": false
+  },
+  "module_sha256": {
+    "native-android/engine/perf/coh_process_memory.c": "565a59b9788b9be0c338ac0ce6280628c24f56741c10bcd2d9cfb380fbe962f2",
+    "native-android/engine/perf/coh_perf_bridge.c": "5af98cd1bad62a43c5b8f577178d895236b90999b007ba1d91b60ceb1e57ad01",
+    "native-android/engine/perf/coh_perf.c": "63fbfb006497e897f80373c56dc45444ae7630db9c004bb04674314c5cd44970",
+    "native-android/engine/perf/coh_process_memory.h": "2ff15db4619044067b3c61bb664baff2b1aec0b61e5001afe56fa6472e0120ec",
+    "native-android/engine/perf/tests/test_process_memory.c": "06d1f1434968ce22f79347900d3f9a337cf50a85015a8d8338a1e6af41d08c75",
+    "native-android/engine/perf/check_process_memory.py": "c65ac8f0b5d1de655c4fa2b36f4406ce3e69e08ad714cb7c9b7b5a4b84b95619"
+  },
+  "emulator_qualified": false,
+  "physical_thor_accepted": false,
+  "limitations": [
+    "Current process sample is Linux host evidence only; it is not Android/Thor RAM or game-memory endurance evidence.",
+    "Android SELinux/kernel policy may make smaps_rollup unavailable; VmRSS fallback stays approximate and never fabricates PSS.",
+    "Bounded bytes/syscall count does not bound kernel scan latency. Call only on a low-frequency owner/export worker.",
+    "No new audio implementation: exact existing lifecycle, streaming and listener source hashes verified; their valid earlier receipts retained.",
+    "Real allocation hooks, GPU timing, physical audio routes/audibility/latency/xruns, thermal sustainability and representative full-game FPS remain unqualified.",
+    "Bridge high-water gauges retain old accepted values after failed samples; export latest snapshot + timestamp/age to expose staleness."
+  ]
+}

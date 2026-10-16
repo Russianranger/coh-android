@@ -59,7 +59,7 @@ def verify_report_identity(value,build,artifact):
 class Check:
     def __init__(self,a,scenario):
         self.a=a;self.scenario=scenario;self.commands=[];self.last=None;self.steps=[]
-        self.relay=None
+        self.relay=None;self.rotation_settings=None
         if a.relay:
             spec=importlib.util.spec_from_file_location('support_emulator_relay',Path(__file__).with_name('emulator_relay.py'))
             self.relay=importlib.util.module_from_spec(spec);spec.loader.exec_module(self.relay)
@@ -136,6 +136,12 @@ class Check:
         elif kind=='swipe':self.adb('shell','input','swipe',*[str(value[k]) for k in ('x0','y0','x1','y1','ms')])
         elif kind=='home':self.adb('shell','input','keyevent','KEYCODE_HOME')
         elif kind=='launch':self.adb('shell','am','start','-W','-n',ACTIVITY)
+        elif kind=='rotate':
+            rotation=value['rotation'];require(type(rotation) is int and rotation in (0,1,2,3),'Invalid display rotation')
+            if self.rotation_settings is None:
+                self.rotation_settings={k:self.adb('shell','settings','get','system',k).stdout.strip().decode() for k in ('accelerometer_rotation','user_rotation')}
+            self.adb('shell','settings','put','system','accelerometer_rotation','0')
+            self.adb('shell','settings','put','system','user_rotation',str(rotation))
         elif kind=='wait':time.sleep(min(10,float(value.get('seconds',1))))
         else:raise ValueError('Unsupported framework action: '+kind)
     def execute(self):
@@ -188,6 +194,12 @@ def main():
     require(scenario.get('schema')==1,'Unsupported emulator scenario schema');c=Check(a,scenario)
     try:c.execute()
     finally:
+        if c.rotation_settings:
+            for key,value in c.rotation_settings.items():
+                try:
+                    if value=='null':c.adb('shell','settings','delete','system',key)
+                    else:c.adb('shell','settings','put','system',key,value)
+                except Exception as error:c.save('emulator-rotation-restore-error.json',{'error':str(error)})
         try:(a.output/'emulator-logcat.txt').write_bytes(c.adb('logcat','-d',check=False).stdout)
         except Exception as error:c.save('emulator-logcat-error.json',{'error':str(error)})
         try:c.screenshot('emulator-last.png')

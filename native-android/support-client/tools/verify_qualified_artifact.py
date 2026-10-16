@@ -15,6 +15,8 @@ import struct
 import subprocess
 import zipfile
 
+from emulator_check import verify_report_identity
+
 
 def require(condition, message):
     if not condition:
@@ -56,11 +58,11 @@ def source_audit(root, receipt, pins):
         return run(['git', 'show', base + ':' + path], root, binary=True)
 
     def inspect(path, expected=None):
-        if path in checked:
-            return
         raw = original(path)
         if expected:
             check_identity(raw, expected, 'Qualified source ' + path)
+        if path in checked:
+            return raw
         current = root / path
         matches = current.is_file() and current.read_bytes() == raw
         checked[path] = {'sha256': sha(raw), 'bytes': len(raw), 'matches': matches}
@@ -81,6 +83,17 @@ def source_audit(root, receipt, pins):
         raw = inspect(path, item)
         if path.endswith(('.c', '.h')):
             pending.append((path, raw if raw is not None else original(path)))
+    # Modern receipts record compiler -MMD closure, including angle-bracket
+    # headers and macro includes that recursive quoted-include scans cannot see.
+    compiled_inputs = set()
+    for artifact in receipt['artifacts']:
+        for item in artifact['native'].get('compiled_inputs', []):
+            path = item['file']
+            if path in tracked:
+                inspect(path, item)
+                compiled_inputs.add(path)
+            else:
+                external.append(path)
     headers, unresolved = set(), set()
     scanned = set()
     while pending:
@@ -110,7 +123,8 @@ def source_audit(root, receipt, pins):
     return {'qualified_source_commit': base,
             'current_head': run(['git', 'rev-parse', 'HEAD'], root).strip(),
             'tracked_inputs_compared': len(checked), 'local_headers_compared': len(headers),
-            'runtime_drift': drift, 'external_codec_sources_not_locally_reverified': external,
+            'compiler_recorded_tracked_inputs_compared': len(compiled_inputs),
+            'runtime_drift': drift, 'external_codec_sources_not_locally_reverified': sorted(set(external)),
             'generated_or_external_includes': sorted(unresolved),
             'inputs': checked,
             'scope': 'Tracked build sources, Java, recursively quoted local headers, manifest, scenario and embedded shader inputs; external codec/generated content is bound by original artifact/native-library hashes.'}
@@ -193,30 +207,53 @@ def main():
                     'Native ELF architecture differs')
         apks.append({'abi': abi, **expected, 'signature_verified_now': True,
                      'signer_certificate_sha256': match[0], 'packaged_assets_verified_now': len(receipt['assets'])})
+    scenario_count = pins.get('emulator_scenarios', 13)
     require(summary['passed'] and summary['source_commit'] == pins['qualified_source_commit'] and
-            len(summary['steps']) == 13 and all(s['passed'] for s in summary['steps']),
-            'Retained 13-scenario emulator qualification differs')
+            len(summary['steps']) == scenario_count and all(s['passed'] for s in summary['steps']),
+            'Retained emulator qualification differs')
     check_identity((artifact / pins['apks']['x86_64']['file']).read_bytes(), summary['installed_apk'],
                    'Installed emulator APK')
     final = read_json(artifact / 'emulator-final-report.json')
     require(final['device']['emulator_detected'] is True and
             not summary['thor_device_execution_verified'], 'Emulator/device acceptance boundary differs')
+    report_count = 0
+    if pins.get('require_report_identity'):
+        require(summary.get('package') == pins['package'] and
+                summary.get('version_name') == pins['version_name'] and
+                summary.get('version_code') == pins['version_code'],
+                'Emulator summary package identity differs')
+        require(final['device'].get('sdk') == pins['emulator_api'],
+                'Retained emulator Android API differs')
+        scenario = args.source_root / 'native-android/support-client/emulator-scenario.json'
+        require(sha(scenario.read_bytes()) == summary['scenario_sha256'],
+                'Emulator scenario identity differs')
+        reports = [artifact / 'emulator-initial-report.json',
+                   artifact / 'emulator-final-report.json']
+        reports += [artifact / ('emulator-step-%02d-report.json' % i)
+                    for i in range(scenario_count)]
+        for path in reports:
+            verify_report_identity(read_json(path), receipt, pins['apks']['x86_64'])
+            report_count += 1
     result = {'schema': 'coh-support-artifact-recovery-v1', 'passed': True,
               'artifact_id': pins['artifact_id'], 'artifact_url': pins['artifact_url'],
               'archive_sha256': pins['archive_sha256'], 'source': source, 'apks': apks,
-              'retained_android_emulator_scenarios_passed': 13, 'new_emulator_run_performed': False,
+              'retained_android_emulator_scenarios_passed': scenario_count,
+              'retained_report_package_identities_verified': report_count,
+              'new_emulator_run_performed': False,
               'new_android_build_performed': False, 'physical_thor_accepted': False,
               'retained_accepted_apk_assets_independently_compared': len(accepted_assets) if accepted_assets else 0,
               'full_gates_accepted': False,
-              'known_diagnostic_limitations': [
+              'known_diagnostic_limitations': pins.get('known_diagnostic_limitations', [
                   'Baseline app report version_code=1 disagrees with verified manifest versionCode=100.',
                   'Authentic font glyphs are rendered; original icon/skin resource closure remains incomplete.',
-                  '10-minute sustained session, audible quality, real controller/touch/IME and route changes require Thor evidence.']}
+                  '10-minute sustained session, audible quality, real controller/touch/IME and route changes require Thor evidence.'])}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps({'passed': True, 'tracked_inputs_compared': source['tracked_inputs_compared'],
                       'local_headers_compared': source['local_headers_compared'],
-                      'retained_emulator_scenarios': 13, 'physical_thor_accepted': False}))
+                      'retained_emulator_scenarios': scenario_count,
+                      'retained_report_package_identities_verified': report_count,
+                      'physical_thor_accepted': False}))
 
 
 if __name__ == '__main__':

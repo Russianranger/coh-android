@@ -1,0 +1,35 @@
+{
+  "schema": "coh-support-qualified-artifact-pins-v1",
+  "qualified_source_commit": "c14a831b55163dbcf2b3e63b4c52805785fceafa",
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38765087744",
+  "artifact_url": "https://github.com/Russianranger/coh-android/actions/runs/38765087744/artifacts/11990195263",
+  "artifact_id": 11990195263,
+  "archive_sha256": "8cbf1be4b0fe880d341b3eb96f476f49db4879230349fda92cfe088e03181c81",
+  "package": "org.coh.nativesupport",
+  "version_name": "0.2.0-gameplay",
+  "version_code": 200,
+  "signer_certificate_sha256": "51c72fc0355533257734e5a6a7ea359e0bd59dcfb81d5e93ccd8171dbe0fba7b",
+  "apks": {
+    "arm64-v8a": {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-arm64.apk",
+      "bytes": 2413935,
+      "sha256": "26bad28b029fef86931108b531f883c9a948a16aff1dc2cdba9d8447c6c4d935"
+    },
+    "x86_64": {
+      "file": "CoH-Native-Support-Client-0.2.0-gameplay-emulator-x86_64.apk",
+      "bytes": 2463084,
+      "sha256": "cc05eee0c826c57f2d21b534a37d868fe8a9ea51986278b48d898a6f7069ce2c"
+    }
+  },
+  "accepted_session_apk_sha256": "75ff158c3e1387671ff2a47f0aa6a126b9c93389fd16685d78a9fcf4ed164639",
+  "require_report_identity": true,
+  "emulator_api": 33,
+  "emulator_scenarios": 13,
+  "physical_thor_accepted": false,
+  "full_gates_accepted": false,
+  "known_diagnostic_limitations": [
+    "Original tray rings/numerals and font glyphs are rendered; ability-specific icon/skin closure remains incomplete.",
+    "Ten-minute sustained session, audible quality, real controller/touch/IME and physical route changes require Thor evidence.",
+    "Full Male/Female/Huge, complete Atlas/Kings Row and multi-actor GPU integrations are not part of this retained APK."
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "schema": "coh-support-third-batch-qualified-source-v1",
+  "source_commit": "f3fe45117109c65afc4acb742e7b77e253553295",
+  "dependency_original_commits": {
+    "F_process_memory": "af68933ffc",
+    "D_presentation": "38f6e842df",
+    "B_appearance": "49420fc864"
+  },
+  "support_commits": [
+    "80896484a0",
+    "b0626762fc",
+    "f3fe45117109c65afc4acb742e7b77e253553295"
+  ],
+  "passed": true,
+  "qualification": {
+    "implemented": true,
+    "host_source": true,
+    "host_gles": true,
+    "asan_ubsan": true,
+    "changed_app_arm64_compiled": true,
+    "changed_app_x86_64_compiled": true,
+    "java_android35_compiled": true,
+    "full_apk_built_here": false,
+    "android_emulator_executed_here": false,
+    "physical_thor_accepted": false
+  },
+  "preparation": "External source-bound assets at support-build-inputs/preparation/preparation.json; seven accepted payloads unchanged; exact Male package bda4a9f1098281d3ddc32842aeda792e83cebb0be3185d9458e3402032f77df9",
+  "java_sources": [
+    {
+      "file": "native-android/support-client/java/org/coh/sessionclient/MainActivity.java",
+      "sha256": "dd1b57a16eaf8503f509aa8842031be3f9b3be0ec0304f602791ecd6c3218a89"
+    },
+    {
+      "file": "native-android/support-client/java/org/coh/sessionclient/SessionNative.java",
+      "sha256": "147f7c672193164415b26fc9a6380ef24f8462be4511ef8b2e0d8131f03967f9"
+    },
+    {
+      "file": "native-android/support-client/java/org/coh/sessionclient/SupportAudioEnvironment.java",
+      "sha256": "147d65dbe4a23750f28ed9e477ae4516775b62ba3103715722f649a62b4f8b63"
+    },
+    {
+      "file": "native-android/support-client/java/org/coh/sessionclient/SupportControllerNavigation.java",
+      "sha256": "3a152fba168451317f8d5eee0f69d1dcf93267d92160ed8a01bcd832f5da506c"
+    },
+    {
+      "file": "native-android/support-client/java/org/coh/sessionclient/SupportNative.java",
+      "sha256": "27eeed1e35334f8e72e8a06172fbbbd9939dfbfae2de6a71c9fa226f5a34a280"
+    }
+  ],
+  "reports": [
+    "third-batch-preview-presentation.json",
+    "third-batch-preview-snapshot.json",
+    "third-batch-preview-android-compile.json",
+    "third-batch-preview-closure.json"
+  ],
+  "limitations": [
+    "Actual code201 source-bound full APK/link/signature and Android13 execution are coordinator-owned pending steps.",
+    "Complete authentic neutral Male is a fixed-camera single costume preview; Female/full Huge costume closure and morph controls are incomplete.",
+    "Authentic impact sound and ability-specific icons are unavailable; panel/gameplay state is local mock.",
+    "No complete zone or multi-actor runtime integration, live commands, gates25-27 or physical acceptance.",
+    "Process RSS/PSS is independent sampled off-hot-path data, not legacy bridge values or total GPU memory."
+  ],
+  "rollback": "Additively revert support commits newest first; preserve qualified code200 artifact and all installed application data; never reset shared branch or primary paths."
+}

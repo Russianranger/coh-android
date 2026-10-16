@@ -18,7 +18,7 @@
     "support.audio.running": 1,
     "support.audio.last_status": 0,
     "app.version_name": "0.2.0-gameplay",
-    "app.version_code": 200,
+    "app.version_code": 201,
     "support.ui_extensions.authentic_tray_images": 11,
     "support.audio_environment.listener_updates": {
       "gt": 0
@@ -30,13 +30,24 @@
     "support.observations.counters.upload_bytes.known": true,
     "support.observations.counters.allocations.known": false,
     "support.observations.memory.process_rss.known": false,
-    "support.performance.invalid_samples": 0
+    "support.performance.invalid_samples": 0,
+    "process_memory.rss_measured": true,
+    "process_memory.native.rss.bytes": {
+      "gt": 0
+    },
+    "process_memory.sample_age_ms": {
+      "lte": 5000
+    },
+    "process_memory.sample_duration_ms": {
+      "gte": 0
+    }
   },
   "fatal_fields": [
     "native.failed",
     "support.failures",
     "support.hud.gl_errors",
-    "support.audio.device_error"
+    "support.audio.device_error",
+    "native.appearance_preview.failures"
   ],
   "steps": [
     {
@@ -297,6 +308,247 @@
         }
       },
       "screenshot": false
+    },
+    {
+      "label": "Landscape compact viewport preserves visible native scene",
+      "actions": [
+        {
+          "kind": "rotate",
+          "rotation": 1
+        }
+      ],
+      "assert": {
+        "input_area.controls_expanded": false,
+        "input_area.scene_fraction": {
+          "gte": 0.65
+        },
+        "input_area.width": {
+          "gt": 1000
+        },
+        "input_area.height": {
+          "gt": 400
+        },
+        "native.frames": {
+          "increases": true
+        }
+      },
+      "screenshot": true
+    },
+    {
+      "label": "Open native character details presentation",
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Panels"
+        }
+      ],
+      "assert": {
+        "support.presentation.visible": true,
+        "support.presentation.tab": 0,
+        "support.presentation.builds": {
+          "increases": true
+        }
+      },
+      "screenshot": true
+    },
+    {
+      "label": "Inventory panel and typed touch inspection",
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Panels"
+        },
+        {
+          "kind": "wait",
+          "seconds": 1
+        },
+        {
+          "kind": "hud_tap",
+          "x": 700,
+          "y": 230
+        }
+      ],
+      "assert": {
+        "support.presentation.tab": 1,
+        "support.presentation.intents": {
+          "increases": true
+        },
+        "native.camera_yaw": {
+          "same": true
+        }
+      },
+      "screenshot": true
+    },
+    {
+      "label": "Enhancement mission and contact panels",
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Panels"
+        },
+        {
+          "kind": "tap_text",
+          "text": "Panels"
+        },
+        {
+          "kind": "tap_text",
+          "text": "Panels"
+        }
+      ],
+      "assert": {
+        "support.presentation.tab": 4,
+        "support.presentation.visible": true
+      },
+      "screenshot": true
+    },
+    {
+      "label": "Controller closes presentation without scene input",
+      "actions": [
+        {
+          "kind": "key",
+          "source": "gamepad",
+          "key": "KEYCODE_BUTTON_B"
+        }
+      ],
+      "assert": {
+        "support.presentation.visible": false,
+        "support.presentation.intents": {
+          "increases": true
+        },
+        "native.camera_yaw": {
+          "same": true
+        }
+      }
+    },
+    {
+      "label": "Local damage presentation and copied event cues",
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Mock hit"
+        }
+      ],
+      "assert": {
+        "support.presentation.events": {
+          "increases": true
+        },
+        "support.presentation.cues": {
+          "increases": true
+        },
+        "support.presentation.target_health": {
+          "changes": true
+        },
+        "support.presentation.offline_only": true,
+        "support.presentation.animation_bindings": {
+          "increases": true
+        },
+        "support.presentation.audio_binding_available": false
+      },
+      "screenshot": true
+    },
+    {
+      "label": "Landscape Home resume retains mock presentation state",
+      "actions": [
+        {
+          "kind": "home"
+        },
+        {
+          "kind": "wait",
+          "seconds": 1
+        },
+        {
+          "kind": "launch"
+        }
+      ],
+      "assert": {
+        "support.audio.running": 1,
+        "support.presentation.events": {
+          "same": true
+        },
+        "input_area.controls_expanded": false,
+        "input_area.scene_fraction": {
+          "gte": 0.65
+        },
+        "native.frames": {
+          "increases": true
+        }
+      },
+      "screenshot": true
+    },
+    {
+      "label": "Complete authentic Male neutral costume preview",
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Preview: Wretch"
+        }
+      ],
+      "assert": {
+        "native.appearance_preview.available": true,
+        "native.appearance_preview.active": true,
+        "native.appearance_preview.parts": 8,
+        "native.appearance_preview.frames": {
+          "gt": 15
+        },
+        "native.appearance_preview.draws": {
+          "gt": 100
+        },
+        "native.appearance_preview.failures": 0,
+        "native.frames": {
+          "increases": true
+        }
+      },
+      "screenshot": true
+    },
+    {
+      "label": "Male preview survives background and Surface recovery",
+      "actions": [
+        {
+          "kind": "home"
+        },
+        {
+          "kind": "wait",
+          "seconds": 1
+        },
+        {
+          "kind": "launch"
+        }
+      ],
+      "assert": {
+        "native.appearance_preview.active": true,
+        "native.appearance_preview.frames": {
+          "increases": true
+        },
+        "native.appearance_preview.surface_uploads": {
+          "increases": true
+        },
+        "native.appearance_preview.failures": 0,
+        "native.contexts_started": {
+          "increases": true
+        },
+        "support.audio.running": 1
+      },
+      "screenshot": true
+    },
+    {
+      "label": "Return to accepted Wretch scene after Male preview",
+      "actions": [
+        {
+          "kind": "tap_text",
+          "text": "Preview: Male"
+        }
+      ],
+      "assert": {
+        "native.appearance_preview.active": false,
+        "native.actor_draws": {
+          "increases": true
+        },
+        "native.gl_errors": 0,
+        "native.frames": {
+          "increases": true
+        }
+      },
+      "screenshot": true
     }
   ]
 }

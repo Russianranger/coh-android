@@ -1,0 +1,87 @@
+{
+  "passed": true,
+  "identity": {
+    "vendor": "Mesa",
+    "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+    "version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+    "glsl": "OpenGL ES GLSL ES 3.20"
+  },
+  "package_sha256": "bda4a9f1098281d3ddc32842aeda792e83cebb0be3185d9458e3402032f77df9",
+  "contexts": [
+    {
+      "generation": 1,
+      "frames": [
+        {
+          "seconds": 0.0,
+          "visible_pixels": 56288,
+          "sha256": "43034dca2b307bbffb62e6b4a5dfc2ba2155100ac48bd571ffc65ef853731ff5",
+          "image": "preview-context1-pose1.png"
+        },
+        {
+          "seconds": 2.05,
+          "visible_pixels": 32225,
+          "sha256": "41f1574b116248a4e3442bfc30ab3dc1c43a5cef6cc81dca2b25a9a7f9646bc8",
+          "image": "preview-context1-pose2.png"
+        },
+        {
+          "seconds": 4.0,
+          "visible_pixels": 58072,
+          "sha256": "a608e142028c019f5c9314d39683648f950b70f94022d1883998fac1948d9b99",
+          "image": "preview-context1-pose3.png"
+        }
+      ],
+      "gl_errors": 0,
+      "steady_frame_allocated_bytes_unchanged": true,
+      "steady_frame_upload_counter_unchanged": true
+    },
+    {
+      "generation": 2,
+      "frames": [
+        {
+          "seconds": 0.0,
+          "visible_pixels": 56288,
+          "sha256": "43034dca2b307bbffb62e6b4a5dfc2ba2155100ac48bd571ffc65ef853731ff5",
+          "image": "preview-context2-pose1.png"
+        },
+        {
+          "seconds": 2.05,
+          "visible_pixels": 32225,
+          "sha256": "41f1574b116248a4e3442bfc30ab3dc1c43a5cef6cc81dca2b25a9a7f9646bc8",
+          "image": "preview-context2-pose2.png"
+        },
+        {
+          "seconds": 4.0,
+          "visible_pixels": 58072,
+          "sha256": "a608e142028c019f5c9314d39683648f950b70f94022d1883998fac1948d9b99",
+          "image": "preview-context2-pose3.png"
+        }
+      ],
+      "gl_errors": 0,
+      "steady_frame_allocated_bytes_unchanged": true,
+      "steady_frame_upload_counter_unchanged": true
+    }
+  ],
+  "recovery": [
+    "partial batch submission discarded; next frame succeeds",
+    "texture upload error releases staged GL objects; next frame succeeds",
+    "partial batch submission discarded; next frame succeeds",
+    "texture upload error releases staged GL objects; next frame succeeds"
+  ],
+  "stats": {
+    "frames": 110,
+    "draws": 880,
+    "surface_uploads": 4,
+    "failures": 4,
+    "owned_cpu_bytes": 153528,
+    "borrowed_package_bytes": 1673302,
+    "gpu_buffer_bytes": 67976,
+    "texture_bytes": 1572868,
+    "surface_generation": 2,
+    "parts": 8,
+    "vertices": 943,
+    "indices": 3792
+  },
+  "android": false,
+  "physical_thor": false,
+  "scope": "Complete source-menu neutral Male preview through production owner; not original full-client image equivalence, custom morphology, Female/Huge, or full Gate31"
+}

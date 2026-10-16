@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "source": "58caf1d4ab3b39757190f194100ccbc697d57857",
+  "candidate_paths": [
+    "native-android/support-client/src/offline_scene.c",
+    "native-android/engine/appearance/third.c",
+    "native-android/engine/offline-world/third.c",
+    "native-android/engine/ui/gameplay/presentation/third.c",
+    "native-android/engine/physics/third.c",
+    "native-android/engine/sequencer/third.c",
+    "native-android/engine/audio/third.c",
+    "native-android/engine/perf/third.c",
+    "native-android/engine/third-batch/CONTRACT.md"
+  ],
+  "triggered": [
+    {
+      "workflow": ".github/workflows/native-android-core.yml",
+      "name": "Native Android portable core",
+      "matching_scopes": [
+        "native-android/support-client/src/offline_scene.c",
+        "native-android/engine/appearance/third.c",
+        "native-android/engine/offline-world/third.c",
+        "native-android/engine/ui/gameplay/presentation/third.c",
+        "native-android/engine/physics/third.c",
+        "native-android/engine/sequencer/third.c",
+        "native-android/engine/audio/third.c",
+        "native-android/engine/perf/third.c",
+        "native-android/engine/third-batch/CONTRACT.md"
+      ],
+      "concurrency": null,
+      "primary_workflow": false
+    },
+    {
+      "workflow": ".github/workflows/native-session-protocol.yml",
+      "name": "Native Android session protocol contracts",
+      "matching_scopes": [
+        "native-android/engine/audio/third.c"
+      ],
+      "concurrency": {
+        "group": "native-session-protocol-${{ github.ref }}",
+        "cancel-in-progress": "false"
+      },
+      "primary_workflow": true
+    },
+    {
+      "workflow": ".github/workflows/native-support-client.yml",
+      "name": "Native offline support client consolidated qualification",
+      "matching_scopes": [
+        "native-android/support-client/src/offline_scene.c"
+      ],
+      "concurrency": {
+        "group": "native-support-client-${{ github.ref }}",
+        "cancel-in-progress": "false"
+      },
+      "primary_workflow": false
+    }
+  ],
+  "primary_workflow_triggered": true,
+  "cancels_primary": false
+}
