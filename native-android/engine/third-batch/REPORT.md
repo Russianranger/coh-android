@@ -14,13 +14,18 @@ and qualification-driver revisions, release attempts and exact artifact identiti
 
 ## Physical Thor follow-up received October 15
 
-[Physical assessment and remaining checks](physical-thor-20261015/README.md) now
-records the exact ARM64 build on AYN Thor/Adreno 740: 11,660 frames over 195.104
-foreground seconds (about 59.76 frames/s), nine graphics contexts, controller/touch
-input, full-body landscape Male preview and zero reported graphics/support errors.
-This verifies the exercised physical subset. One short report does not complete
-the ten-minute/audio/Home/chat/Male-recreation checklist or close full numbered
-gates. The earlier emulator measurements below remain historical emulator evidence.
+[Physical assessment and remaining checks](physical-thor-20261015/README.md) records
+the exact ARM64 build on AYN Thor/Adreno 740. The [22:31 follow-up](physical-thor-20261015/endurance-223100/README.md)
+extends the same session to **56,495 frames over 943.997 foreground seconds**
+(59.85 frames/s), including one 641.862-second completed render context. The
+bounded ten-minute endurance check passes. The user reports audible music/audio
+with no apparent defect. Two pause/resume pairs and two audio route reopens
+recover; unexpected graphics/support errors remain zero. RSS/PSS endpoints fall
+from 180.65/72.65 to 177.26/68.42 MiB. Two samples do not prove leak freedom.
+Retained closed-backend audio counters are useful but the currently running
+backend is uncheckpointed. Audio focus, nonempty chat, Male-active recreation/
+portrait and other enumerated checks remain open; no full numbered gate closes.
+The earlier emulator measurements below remain historical emulator evidence.
 
 ## Repository, recovery and ownership
 
@@ -311,7 +316,7 @@ this batch.
 | C | 4,047 checks; source-matrix oracle; 1,000 bounded selection cycles | Object compilation | Not run | Source integrated; larger scene not in APK |
 | D | Source color comparison, malformed inputs, bounded GLES/UI and sanitizers | Linked into signed package | Integrated panel/mock-state checks passed | Mock local presentation; full FX/icons/combat open |
 | E | 4,737 neighborhood checks; 532 source states; 80 concurrent preparations | Shared-library linkage | New neighborhood adapter not run | Source integrated; adapter remains out of APK |
-| F | 114,112 checks; independent memory oracle/fault cases and sanitizers | Linked into signed package | Integrated diagnostics observed; limits below | Physical diagnostics observed; audible routes/endurance remain open |
+| F | 114,112 checks; independent memory oracle/fault cases and sanitizers | Linked into signed package | Integrated diagnostics observed; limits below | Bounded 15m44s physical endurance and audibility verified; focus/thermal/full-game scope open |
 
 ## Acceptance boundaries and next batch
 
@@ -322,8 +327,8 @@ this batch.
 | Gate 31 | Complete authentic Male neutral preview; Female/Huge/morphology still open |
 | Gates 32–33 | Source/host/ARM64 neighborhood module and rig recovery; larger-world/multi-actor acceptance open |
 | Gates 34–38 | Local mock UI/combat preparation; no authoritative combat or complete FX |
-| Gates 43–45 | Reused bounded audio/perf plus new memory diagnostics; physical endurance/performance open |
-| Support code 201 | Signed ARM64 built; 23-case emulator qualification; Thor physical subset verified |
+| Gates 43–45 | Bounded physical endurance/audibility and ~60 FPS observed; focus/thermal/full-game qualification open |
+| Support code 201 | Signed ARM64 built; 23-case emulator qualification; Thor bounded endurance/audibility verified, full checklist open |
 
 Recommended next parallel work: complete Female/Huge asset and morphology closure;
 qualify GEO v8/material decoding and conservative streamed bounds/pages; recover

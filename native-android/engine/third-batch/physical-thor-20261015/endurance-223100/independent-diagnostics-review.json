@@ -1,0 +1,259 @@
+{
+  "schema": "coh-independent-thor-endurance-diagnostics-v1",
+  "reviewer": "worker-f-audio-perf",
+  "scope": "Read-only report comparison and pinned-source interpretation; no repository changes, upload or gate closure.",
+  "evidence": {
+    "current_file": "/workspace/scratch/9acd650bfafa/upload/COH-NativeSupport-20261015-223100.json",
+    "current_sha256": "f1ab649c65241079e942ed01dd7bdace7bb92956d45a4817914783a6a5f24460",
+    "current_bytes": 1002904,
+    "prior_file": "/workspace/scratch/9acd650bfafa/upload/COH-NativeSupport-20261015-221828.json",
+    "prior_sha256": "4800a279dd6ec59fa05eff42b6405c12bb621f4c7901198c41f1d9ba2ec32d2e",
+    "same_session": "1a142b4e43e",
+    "matching_overlapping_events": 46,
+    "asset_manifests_equal": true,
+    "human_audio_confirmation": "User explicitly reports hearing audio and music with no apparent audible defect; separate from machine counters."
+  },
+  "release_binding": {
+    "app": {
+      "package": "org.coh.nativesupport",
+      "version_name": "0.2.0-gameplay",
+      "version_code": 201,
+      "installed_apk": {
+        "bytes": 2917815,
+        "sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc"
+      }
+    },
+    "source_revision": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+    "basis": "Exact installed APK hash matches independently audited final ARM64 release; source identity is transitive via release receipt.",
+    "device": {
+      "manufacturer": "AYN",
+      "model": "AYN Thor",
+      "sdk": 33,
+      "abis": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "armeabi"
+      ],
+      "emulator_detected": false
+    },
+    "pointer_bytes": 8,
+    "gl_renderer": "Adreno (TM) 740"
+  },
+  "duration_and_frames": {
+    "foreground_ms": 943997,
+    "foreground_minutes": 15.733283333333333,
+    "event_span_from_prior_session_created_ms": 946797,
+    "rendered_frames": 56495,
+    "foreground_frames_per_second": 59.84658849551429,
+    "additional_foreground_ms_since_prior": 748893,
+    "additional_frames_since_prior": 44835,
+    "continuous_completed_context_ms": 641862,
+    "continuous_context_frame_delta": 38464,
+    "continuous_context_approx_frames_per_second": 59.925653800972796,
+    "continuous_context_evidence_sequences": [
+      55,
+      76
+    ],
+    "count_scope": "Native snapshot frames=56495, support calls=56496, completed timing samples=56494. Copied snapshots are not globally atomic and observer cancellations are separately counted; do not treat these small differences as failed rendering. Final native.total_ms=22357 is only the current context interval."
+  },
+  "frame_pacing": {
+    "samples": 56494,
+    "mean_observed_ms": 15.565821425425709,
+    "max_ms": 43.158698,
+    "p50_bucket_upper_ms": 15.999999,
+    "p95_bucket_upper_ms": 17.999999,
+    "p99_bucket_upper_ms": 20.999999,
+    "over_33_333333_ms": 18,
+    "over_budget_percent": 0.03186179063263355,
+    "stalls_over_100_ms": 0,
+    "invalid_samples": 0,
+    "abandoned_observer_frames": 2,
+    "stages": {
+      "animation": {
+        "samples": 48452,
+        "mean_ms_per_observation": 0.05108061351440601,
+        "aggregate_ms_per_rendered_frame": 0.0438092166601763
+      },
+      "skinning": {
+        "samples": 611820,
+        "mean_ms_per_observation": 0.10934197862279756,
+        "aggregate_ms_per_rendered_frame": 1.184154235157716
+      },
+      "collision": {
+        "samples": 27817,
+        "mean_ms_per_observation": 0.1605012722795413,
+        "aggregate_ms_per_rendered_frame": 0.07902899230006726
+      },
+      "asset_loading": {
+        "samples": 0,
+        "mean_ms_per_observation": null,
+        "aggregate_ms_per_rendered_frame": null
+      },
+      "render_submit": {
+        "samples": 56494,
+        "mean_ms_per_observation": 13.601612392979785,
+        "aggregate_ms_per_rendered_frame": 13.601612392979785
+      },
+      "present": {
+        "samples": 56494,
+        "mean_ms_per_observation": 0.5591943654370376,
+        "aggregate_ms_per_rendered_frame": 0.5591943654370376
+      },
+      "audio_control": {
+        "samples": 0,
+        "mean_ms_per_observation": null,
+        "aggregate_ms_per_rendered_frame": null
+      }
+    },
+    "gpu_timing_samples": 0,
+    "scope": "Render-thread elapsed observations exclude outer 1ms sleep/startup; inverse mean is not actual FPS. Percentiles are histogram upper bounds. dropped_frames means abandoned in-progress observations at lifecycle/generation boundaries, not compositor drops. Stage render_submit includes host/driver elapsed work, not GPU duration; zero-sample stages are unknown. No per-second minimum or full-game performance claim."
+  },
+  "memory": {
+    "comparison": {
+      "rss": {
+        "prior_bytes": 189427712,
+        "current_bytes": 185872384,
+        "delta_bytes": -3555328,
+        "current_mib": 177.26171875,
+        "delta_mib": -3.390625
+      },
+      "pss": {
+        "prior_bytes": 76183552,
+        "current_bytes": 71742464,
+        "delta_bytes": -4441088,
+        "current_mib": 68.4189453125,
+        "delta_mib": -4.2353515625
+      }
+    },
+    "sample_duration_ms": 6,
+    "sample_age_ms": 41,
+    "source": "proc_self_smaps_rollup",
+    "rss_pss_known": true,
+    "sample_statuses": [
+      0,
+      0
+    ],
+    "partial_module_accounted": {
+      "known": true,
+      "current_bytes": 2274480,
+      "peak_bytes": 2274480,
+      "observations": 981
+    },
+    "skin_cache_bytes": 332928,
+    "world_cache_current_bytes": 157491,
+    "world_cache_peak_bytes": 157491,
+    "world_cache_budget_bytes": 524288,
+    "world_cache_evictions": 0,
+    "native_heap_delta_bytes": 459504,
+    "java_used_delta_bytes": 9616848,
+    "scope": "Two endpoint RSS/PSS samples fell while partial module, skin and world-cache accounting remained unchanged. This supports bounded behavior in this run, not leak freedom or absence of intermediate peaks. Native/Java heap endpoints rose; no allocation trace, process high-water series, thermal or full-zone memory evidence."
+  },
+  "audio": {
+    "backend": {
+      "initialized": 1,
+      "running": 1,
+      "last_status": 0,
+      "device_error": 0,
+      "opens": 5,
+      "closes": 4,
+      "decode_calls": 115262,
+      "diagnostics_valid": 0,
+      "rendered_frames": 40178898,
+      "underrun_frames": 0,
+      "callback_calls": 92839,
+      "maximum_callback_ns": 7152031
+    },
+    "environment": {
+      "active": true,
+      "focus_granted": true,
+      "request_result": 1,
+      "focus_changes": 0,
+      "route_changes": 3,
+      "route_generation": 4,
+      "route_policy": "close/join then reopen on native backend owner"
+    },
+    "route_reopens": 2,
+    "listener_updates": 2522,
+    "recovered_device_errors": 0,
+    "last_device_error": 0,
+    "cached_maximum_callback_ms": 7.152031,
+    "validity": "Current backend is running and diagnostics_valid=0. Source suspend_backend closes/joins then accumulates callback_calls/max duration; checkpoint copies cumulative mixer frames/underruns only without a backend. Thus the retained 92839 callbacks, 7.152031ms maximum and zero stream-underrun frames are meaningful through the last joined checkpoint, not complete current-live-interval coverage.",
+    "human_audibility": "Confirmed by user: music/audio audible with no apparent defect.",
+    "limitations": "No platform xrun or deadline-overrun values exported; callback maximum is not end-to-end output latency. No external focus-loss callback recorded (focus_changes=0). Two route reopens prove backend response but not specific route devices or seamless transition quality. Current fifth backend remains uncheckpointed. Authentic local combat impact sounds remain unmapped."
+  },
+  "lifecycle": {
+    "event_counts": {
+      "resume": 3,
+      "surface_changed": 18,
+      "assets_loaded": 1,
+      "key_down": 7,
+      "key_up": 7,
+      "input_clear_requested": 23,
+      "render_returned": 17,
+      "presentation_panel": 3,
+      "presentation_hit": 24,
+      "appearance_preview": 6,
+      "view_distance_requested": 3,
+      "ui_navigation": 3,
+      "mock_chat": 1,
+      "export_requested": 2,
+      "pause_requested": 2,
+      "pause": 2,
+      "surface_destroyed": 2,
+      "export_complete": 1,
+      "reset_requested": 2,
+      "recreate_requested": 1
+    },
+    "pause_resume_pairs": [
+      {
+        "pause_sequence": 50,
+        "resume_sequence": 54,
+        "pause_to_resume_ms": 1374
+      },
+      {
+        "pause_sequence": 75,
+        "resume_sequence": 79,
+        "pause_to_resume_ms": 1384
+      }
+    ],
+    "contexts_started": 18,
+    "contexts_completed": 17,
+    "render_returns_with_objects_released": 17,
+    "explicit_recreate_requests": 1,
+    "expected_cancel_surface_errors": 1,
+    "expected_cancel_egl_error": 12301,
+    "expected_cancel_scope": "Single classified EGL_BAD_SURFACE during explicit Wretch Surface recreate; cleanup GL/EGL errors remain zero and subsequent contexts render successfully.",
+    "scope": "Two physical pause/Surface teardown/resume cycles observed, each about1.4s. First is adjacent to report export and may be document picker rather than Home; report does not identify pause cause. This supports foreground/background recovery but not three explicit Home tests or several-second dwell. One explicit Recreate request is below requested two. No recreation occurred while Male preview active; current context/backend remains live, not final app destruction."
+  },
+  "errors": {
+    "native_failed": false,
+    "application_failure": null,
+    "support_failures": 0,
+    "gl_errors": 0,
+    "egl_error": 0,
+    "cleanup_gl_errors": 0,
+    "cleanup_egl_errors": 0,
+    "source_asset_errors": 0,
+    "report_write_failed": false,
+    "transform_mismatches": [
+      0,
+      0,
+      0
+    ],
+    "depth_non_tie_mismatches": 0
+  },
+  "newly_supported_checklist_items": [
+    "More than ten active minutes in bounded offline gameplay, including one uninterrupted10m41.862s context and approximately59.85 aggregate rendered frames/s.",
+    "User confirms audible music/audio with no apparent defect.",
+    "Two pause/teardown/resume recoveries and two successful audio backend route reopens.",
+    "Prior joined callback/mixer counters show zero recorded stream-underrun frames through the last completed interval.",
+    "Endpoint process RSS/PSS lower than prior report with unchanged bounded module/cache accounting."
+  ],
+  "still_open": [
+    "Complete requested repetition counts: two explicit Recreate actions and three verified Home/resume cycles; report has one and two pause/resume pairs.",
+    "External audio-focus loss/recovery, precise route device/quality confirmation, current-live-interval callback statistics, platform xruns and output latency.",
+    "Surface/Home recovery while Male preview active, screenshots and remaining visual/input checks owned by coordinator review.",
+    "Longer-run leak/thermal evidence, per-second FPS minima, GPU timing, full-world performance or any full numbered gate closure."
+  ],
+  "decision": "Strong additional physical endurance, audible playback and lifecycle evidence for this exact offline release. Record these scoped checks; keep incomplete checklist items and broader gates open."
+}

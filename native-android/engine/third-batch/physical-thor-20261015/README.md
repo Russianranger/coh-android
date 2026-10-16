@@ -1,5 +1,7 @@
 # Support code 201 — AYN Thor physical evidence, October 15, 2026
 
+**Latest update:** [The 22:31 endurance follow-up](endurance-223100/README.md) verifies 15m44s of active execution at 59.85 frames/s, two pause/resume cycles, audio route reopens and user-confirmed normal music/audio. The bounded ten-minute endurance and audibility checks pass; the full consolidated checklist remains open. The assessment below is the preserved initial 22:18 report.
+
 **Physical execution and the exercised subset pass. The full consolidated physical checklist remains open.** The user supplied one JSON report and four screenshots, without a blanket statement that every requested test passed.
 
 The installed package is exactly the published ARM64 APK, `org.coh.nativesupport` version `0.2.0-gameplay`, code 201, SHA256 `ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc`. Both report asset manifests match the signed build receipt. Device: AYN Thor, Android 13/API 33, native 64-bit, Adreno 740; emulator=false.

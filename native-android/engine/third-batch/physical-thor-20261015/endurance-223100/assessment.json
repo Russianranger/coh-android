@@ -1,0 +1,229 @@
+{
+  "schema": 1,
+  "status": "physical_bounded_scene_ten_minute_endurance_and_audibility_verified",
+  "full_consolidated_physical_checklist_verified": false,
+  "full_numbered_gate_closed": false,
+  "report_timestamp": "2026-10-15T22:31:00.414-05:00",
+  "source_apk_commit": "e89f20c56619cbab87728bd49eff8f835b3b3c98",
+  "input": {
+    "file": "COH-NativeSupport-20261015-223100.json",
+    "bytes": 1002904,
+    "sha256": "f1ab649c65241079e942ed01dd7bdace7bb92956d45a4817914783a6a5f24460",
+    "stored_as": "COH-NativeSupport-20261015-223100.json.gz",
+    "compressed_bytes": 25041,
+    "compressed_sha256": "518f6a28116c2bd02aedef3ec592c317e80bd0e86455ad7acdd77260a6e30146"
+  },
+  "user_observation": {
+    "quote": "Audio and music is heard and no apparent defect from what I hear.",
+    "scope": "User confirms audible playback quality during this physical test; no specific route or audio-focus interruption is asserted"
+  },
+  "app": {
+    "package": "org.coh.nativesupport",
+    "version_name": "0.2.0-gameplay",
+    "version_code": 201,
+    "installed_apk": {
+      "bytes": 2917815,
+      "sha256": "ed280805188d82ffbb911e9799f43c42a5a0382fb8346ff97ffc794d85cc9ddc"
+    }
+  },
+  "device": {
+    "manufacturer": "AYN",
+    "model": "AYN Thor",
+    "sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "emulator_detected": false
+  },
+  "renderer": "Adreno (TM) 740",
+  "same_session_as_221828": true,
+  "both_asset_manifests_equal_previous_verified_report": true,
+  "scoped_checks_verified": [
+    "Exact released ARM64 package, native AYN Thor Android13/Adreno740 execution",
+    "At least ten active foreground minutes, including one completed 641.862-second render context",
+    "Sustained approximately 60 rendered frames per foreground second in the bounded offline scene",
+    "User-confirmed audible music/audio without an apparent defect",
+    "Two actual pause/resume pairs and repeated graphics retirement/recreation; the UI action causing each pause is not encoded",
+    "Two route-generation-triggered native audio close/join/reopen operations",
+    "Joined audio counters retained from closed backends now available; current running interval remains uncheckpointed",
+    "Two same-session process-memory samples over 12.48 additional active minutes, both RSS and PSS lower at the later endpoint",
+    "Fixed measured cache/module budgets remain bounded at both report endpoints",
+    "Three local character-selection intents and bounded collision blocking now observed"
+  ],
+  "measurements": {
+    "frames": 56495,
+    "active_foreground_ms": 943997,
+    "frames_per_foreground_second": 59.84658849551429,
+    "fps_formula": "native.frames * 1000 / support.active_foreground_ms",
+    "longest_completed_context_ms": 641862,
+    "frame_samples": 56494,
+    "frame_mean_ms": 15.565821425425709,
+    "p95_bucket_upper_ms": 17.999999,
+    "p99_bucket_upper_ms": 20.999999,
+    "frame_max_ms": 43.158698,
+    "over_33_33ms": 18,
+    "stalls_at_least_100ms": 0,
+    "abandoned_observer_intervals": 2,
+    "invalid_samples": 0,
+    "observer_scope": "Source frame observer excludes outer sleep; dropped_frames counts abandoned active observations, not Android compositor drops",
+    "contexts_started": 18,
+    "contexts_completed": 17,
+    "all_17_returned_contexts_objects_released": true,
+    "unexpected_gl_egl_cleanup_transform_support_errors": 0,
+    "expected_cancel_surface_errors": 1,
+    "expected_cancel_egl_error": 12301,
+    "expected_cancel_scope": "One EGL_BAD_SURFACE (0x300d) on explicitly canceled Wretch recreation; source only clears this for canceled/stale surfaces",
+    "event_counts": {
+      "resume": 3,
+      "surface_changed": 18,
+      "assets_loaded": 1,
+      "key_down": 7,
+      "key_up": 7,
+      "input_clear_requested": 23,
+      "render_returned": 17,
+      "presentation_panel": 3,
+      "presentation_hit": 24,
+      "appearance_preview": 6,
+      "view_distance_requested": 3,
+      "ui_navigation": 3,
+      "mock_chat": 1,
+      "export_requested": 2,
+      "pause_requested": 2,
+      "pause": 2,
+      "surface_destroyed": 2,
+      "export_complete": 1,
+      "reset_requested": 2,
+      "recreate_requested": 1
+    },
+    "memory_samples": [
+      {
+        "report_timestamp": "2026-10-15T22:18:28.774-05:00",
+        "active_foreground_ms": 195104,
+        "rss_bytes": 189427712,
+        "pss_bytes": 76183552,
+        "sample_age_ms": 197,
+        "sample_duration_ms": 6
+      },
+      {
+        "report_timestamp": "2026-10-15T22:31:00.414-05:00",
+        "active_foreground_ms": 943997,
+        "rss_bytes": 185872384,
+        "pss_bytes": 71742464,
+        "sample_age_ms": 41,
+        "sample_duration_ms": 6
+      }
+    ],
+    "rss_endpoint_delta_bytes": -3555328,
+    "pss_endpoint_delta_bytes": -4441088,
+    "memory_scope": "Two endpoints, no continuous trace, no general leak-freedom inference",
+    "audio": {
+      "initialized": 1,
+      "running": 1,
+      "last_status": 0,
+      "device_error": 0,
+      "opens": 5,
+      "closes": 4,
+      "decode_calls": 115262,
+      "diagnostics_valid": 0,
+      "rendered_frames": 40178898,
+      "underrun_frames": 0,
+      "callback_calls": 92839,
+      "maximum_callback_ns": 7152031
+    },
+    "audio_environment": {
+      "active": true,
+      "focus_granted": true,
+      "request_result": 1,
+      "focus_changes": 0,
+      "route_changes": 3,
+      "route_generation": 4,
+      "route_policy": "close/join then reopen on native backend owner"
+    },
+    "native_audio_environment": {
+      "focus_allowed": true,
+      "route_generation": 4,
+      "route_reopens": 2,
+      "listener_updates": 2522,
+      "recovered_device_errors": 0,
+      "last_device_error": 0,
+      "listener_position": [
+        594.413574,
+        86.6138535,
+        -1344.39246
+      ],
+      "listener_right": [
+        0.999946356,
+        0,
+        0.0103571443
+      ]
+    },
+    "audio_scope": "Callback_calls/max aggregate closed backends; rendered/underrun frames are retained cumulative mixer checkpoint. diagnostics_valid=0 means current fifth backend is live and these are not current-session-final diagnostics. Platform xruns and latency are unexported.",
+    "male_preview": {
+      "available": true,
+      "active": false,
+      "body": "Male",
+      "neutral_morphology": true,
+      "frames": 877,
+      "draws": 7016,
+      "surface_uploads": 2,
+      "failures": 0,
+      "parts": 8,
+      "vertices": 943,
+      "indices": 3792,
+      "cpu_accounted_partial_bytes": 153536,
+      "package_bytes": 1673302,
+      "gpu_buffer_bytes": 0,
+      "source_texture_bytes": 1572868,
+      "memory_scope": "Partial preview owner arenas exclude generic renderer CPU allocations; source texture payload is not GPU residency. GPU buffer bytes are cached renderer accounting, not total driver memory.",
+      "upload_bytes_measured": false,
+      "full_gate_accepted": false
+    },
+    "world_stream": {
+      "catalog_instances": 11,
+      "selected_instances": 11,
+      "resident_bytes": 157491,
+      "budget_bytes": 524288,
+      "peak_resident_bytes": 157491,
+      "selection_updates": 63,
+      "cache_hits": 505,
+      "cache_misses": 8,
+      "evictions": 0,
+      "generation": 18,
+      "draws": 503080,
+      "view_radius": 96
+    },
+    "partial_module_bytes": {
+      "known": true,
+      "current_bytes": 2274480,
+      "peak_bytes": 2274480,
+      "observations": 981
+    },
+    "skin_cache_bytes": 332928,
+    "character_selections": 3,
+    "power_uses": 40,
+    "blocked_ticks": 456,
+    "sliding_ticks": 0,
+    "wall_hits": 0
+  },
+  "remaining_checks": [
+    "Full lifecycle repetition count: checklist requests three Home cycles and two explicit Recreate actions; report records two brief pauses (about 1.4 s each) and one explicit Recreate, without identifying the Home action",
+    "Audio-focus interruption: focus_changes=0; alternate output-device identity and route-specific listening are not recorded",
+    "Current live audio interval, platform xruns, end-to-end latency and thermal behavior remain unmeasured; retained joined callback counters have a bounded scope",
+    "Nonempty keyboard/chat submission: chat_submits=0",
+    "Male-active Surface recreation and portrait proof: second upload follows recreation while Wretch was selected; all reported viewports remain landscape",
+    "Explicit mock-animation selector/jump/reaction: animation.triggers=0; jump physics unsupported",
+    "Wall/sliding geometry: bounded blocking is observed, but wall_hits and sliding_ticks remain zero",
+    "Full presentation panel coverage remains undocumented; character selections now number three",
+    "Longer leak/thermal stress and larger representative scenes: two process-memory endpoints are not a continuous memory trace",
+    "Original face/material/morphology/lighting parity, Female/Huge completion, complete zones and authoritative gameplay remain open"
+  ],
+  "source_semantics_reviewed": [
+    "support-client/src/support_audio.c: checkpoint/suspend_backend/start_backend",
+    "engine/perf/coh_perf.c: abandon and lifecycle boundaries",
+    "support-client/src/offline_scene.c: cancelled_surface_error and stale/canceled Surface recovery"
+  ],
+  "publication_scope": "Evidence/documents only under engine/third-batch; no APK rebuild or runtime/server/primary-agent modification",
+  "rollback": "Revert this evidence-only commit additively if necessary; preserve APK and original reports; never reset the shared branch"
+}
