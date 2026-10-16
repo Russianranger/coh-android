@@ -17,7 +17,7 @@ Checkpoint: additive entity continuation from remote
 | 6 | triggered moves and AI animation list | Bounded metadata; no FX execution |
 | 7 | pchar flag and NetFX flag | Complete bounded NetFX event grammar supported; event handles/resources remain unresolved, list inspection does not retain events |
 | 8 | costume and translucency | NPC index and sequence-name references supported. Complete appearance wire envelope and raw full/owned/custom bodies source-qualified standalone, including rewards/multiple/super/FX/NPC fallthrough. Entity records still reject these variants pending dictionary capture, complete transaction ownership and semantic state composition |
-| 9 | power customization and titles if very rare | Complete power-customization envelope source-qualified standalone, including list/slot/owned branches; unresolved power CRCs and entity-record composition remain open. Very-rare titles still unsupported |
+| 9 | power customization and titles if very rare | Complete power-customization envelope and complete bounded titles update source-qualified standalone. Titles use the unchanged inline sender block and full original consumer, not complete sendEntity. Unresolved power CRCs and entity-record composition remain open |
 | 10 | ragdoll | Bounded scalar consumption; not skeleton-qualified publication |
 | 11 | basic character stats if pchar | Complete pinned basic absolute non-debug schema supported |
 | 12 | vision phases, exclusive phase, yellow con | Supported numeric values |
@@ -25,7 +25,7 @@ Checkpoint: additive entity continuation from remote
 | 14 | target/assist/taunter/placaters | Supported bounded metadata |
 | 15 | status effects | Supported mask/vision/status-string metadata |
 | 16 | self inventory sizes | Supported pinned five-type schema; does not contain inventory contents |
-| 17 | self taskforce architect information and parameters if very rare | Unsupported |
+| 17 | self taskforce architect information and parameters if very rare | Complete bounded consecutive wire substructures qualified standalone, with cached/full/custom contact events and raw relative clock words. Prior-state application, retained contact resource identity and complete entity composition remain open |
 | 18 | odd-send, ally ID, ignore-combat flags/offset level | Unsupported very-rare stream |
 | 19 | player type/subtype/praetorian/location | Unsupported very-rare stream (create metadata already supported) |
 | 20 | PvP, collision, selectable, no-draw, map visibility, contact/PNPC, con/walls | Unsupported very-rare stream |
@@ -42,7 +42,7 @@ validate any row below. `coh_ent_full_update_tail` rejects without consuming dat
 | Step | Boundary | Status / dependency |
 |---|---|---|
 | 1 | optional per-entity debug and global entity debug | Unsupported; transport/debug-profile contract required |
-| 2 | `playerReceiveControlState` | Unsupported; control/physics source and original producer must be pinned/executed |
+| 2 | `playerReceiveControlState` | Worker F's independently qualified `engine/entity-control/` supplies standalone bounded control staging (original TEST_CLIENT oracle); no outer-tail composition, physics-history execution or diagnostic recording admission |
 | 3 | `entReceiveDeletes` | Standalone parser and staging apply supported; correct outer offset not established |
 | 4 | `receiveCharacterFromServer` for full update | Unsupported composition; expanded below |
 | 4a | otherwise `SendCharacterToSelf` stats | Standalone complete absolute schema supported; correct outer offset not established |
@@ -89,14 +89,15 @@ First close complete **selected self create**, then the global initial tail:
    events into the complete entity transaction: packet order, prior costume
    ownership, deferred intent, optional-field retain/clear rules and generation
    lifetimes. Compose the now source-qualified power-customization envelope with
-   an admitted power dictionary, and add very-rare titles. Preserve every
+   an admitted power dictionary and the now standalone-qualified title update. Preserve every
    candidate costume event across the complete record under an explicit aggregate
    budget; do not embed the large envelope in every slot. Consume through read-only additive
    contracts with gameplay appearance ownership; do not edit its internals.
 2. Retain/resolve staged NetFX events and implement the entire very-rare per-entity stream, plus interpolation
    and buffs encountered by the actual source profile. Independent original
    producer/consumer comparisons and later-record rollback are required.
-3. Implement control state and complete `character_Receive` power/inventory
+3. Compose the separately qualified control-state block, retain/deduplicate its
+   future-push events, and implement complete `character_Receive` power/inventory
    payloads with pinned class/origin/basepower dictionaries, then remaining
    character UI/account fields and post-character global tails.
 4. Execute original complete initial-update producer in a disposable source

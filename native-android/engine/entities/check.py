@@ -13,11 +13,15 @@ FILES=['MapServer/src/entity/entsend.c','Game/src/entity/entrecv.c',
        'Common/entity/entity_enum.h','Common/entity/entVarUpdate.h','Common/entity/entity.h','Common/entity/ragdoll.h',
        'libs/UtilitiesLib/src/components/BitStream.c','libs/UtilitiesLib/src/network/netcomp.c',
        'libs/UtilitiesLib/src/network/net_packetutil.c','libs/UtilitiesLib/src/utils/Quat.c',
-       'libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h','Common/entity/gametypes.h','MapServer/src/entity/entserver.c','MapServer/src/entity/entsend.h','Common/entity/character_net.c','Common/entity/character_inventory.h','Common/comm_game.h','libs/UtilitiesLib/src/utils/structNet.c','Game/src/entity/character_net_client.c','Common/entity/attrib_net.c','libs/UtilitiesLib/src/utils/textparser.c','libs/UtilitiesLib/include/utilitieslib/utils/textparser.h','Common/entity/netfx.h','Common/entity/costume.c','Common/entity/costume.h','Common/entity/entPlayer.h','Common/gameData/costume_data.c','Common/gameData/BodyPart.c','libs/UtilitiesLib/src/utils/mathutil.c','Common/entity/power_customization.c','Common/entity/power_customization.h']
+       'libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h','Common/entity/gametypes.h','MapServer/src/entity/entserver.c','MapServer/src/entity/entsend.h','Common/entity/character_net.c','Common/entity/character_inventory.h','Common/comm_game.h','libs/UtilitiesLib/src/utils/structNet.c','Game/src/entity/character_net_client.c','Common/entity/attrib_net.c','libs/UtilitiesLib/src/utils/textparser.c','libs/UtilitiesLib/include/utilitieslib/utils/textparser.h','Common/entity/netfx.h','Common/entity/costume.c','Common/entity/costume.h','Common/entity/entPlayer.h','Common/gameData/costume_data.c','Common/gameData/BodyPart.c','libs/UtilitiesLib/src/utils/mathutil.c','Common/entity/power_customization.c','Common/entity/power_customization.h','Common/entity/teamCommon.h','Common/entity/TaskforceParams.c']
 def run(cmd,**kw):
     p=subprocess.run([str(c) for c in cmd],text=True,capture_output=True,**kw)
     if p.returncode:raise RuntimeError(repr(cmd)+'\n'+p.stdout+p.stderr)
     return p
+
+def source_text(repo,name):
+    path=repo/'upstream/ouroboros'/name
+    return (path.read_text() if path.exists() else run(['git','show','HEAD:upstream/ouroboros/'+name],cwd=repo).stdout).replace('\r\n','\n')
 
 def extract(text,name):
     m=re.search(r'^(?:static\s+)?(?:unsigned\s+int|void|int|U32|F32|float|bool)\s+(?:INLINEDBG\s+)?'+name+r'\s*\([^;{}]*\)\s*\{',text,re.M)
@@ -30,7 +34,7 @@ def extract(text,name):
 def oracle(repo,directory):
     spec=importlib.util.spec_from_file_location('source_bit_adapter',repo/'native-android/tools/protocol_fixture/prepare.py')
     helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
-    source={f:(repo/'upstream/ouroboros'/f).read_text().replace('\r\n','\n') for f in FILES}
+    source={f:source_text(repo,f) for f in FILES}
     pins={f:hashlib.sha256(s.encode()).hexdigest() for f,s in source.items()}
     if pins!=json.loads((HERE/'source-pins.json').read_text())['sha256_lf']:raise ValueError('Entity source pin mismatch')
     pre=helper.PREAMBLE.replace('hasDebugInfo,compress,ordered,ordered_id;', 'hasDebugInfo,compress,ordered,ordered_id,id;')
@@ -252,8 +256,24 @@ void original_receive_orientation(const U8 *data,U32 bits,int aligned,U32 id,U32
  entGetOrientation(&p,&e);memcpy(ids,e.pkt_id_qrot,12);memcpy(q,e.net_qrot,16);
 }
 '''
+    # The title producer is an inline statement block inside sendEntity. Keep
+    # its exact bytes; explicitly do not claim complete sendEntity execution.
+    sender=extract(send,'sendEntity')
+    title_at=sender.index('        if(e->pl)',sender.index('entSendPowerCust(pak, e, send_ent.player_ent);'))
+    title_end=sender.index('\n    }\n\n#ifdef RAGDOLL',title_at)
+    title_block=sender[title_at:title_end]
+    assert title_block.count('pktSendBitsAuto(pak, e->pl->helperStatus);')==1
+    code+=(HERE/'titles_oracle_shim.h').read_text()
+    code+=get(util,'pktGetBitsAuto')
+    code+='\nstatic void original_titles_statement(Packet *pak,TitleEntity *e){\n'+title_block+'\n}\n'
+    code+='\n#define Entity TitleEntity\n'+get(recv,'entReceiveTitles')+'\n#undef Entity\n'
+    code+=(HERE/'titles_fixture.c.inc').read_text()
+    title_proof={'producer_scope':'unchanged inline sendEntity title statement block; not full sendEntity',
+                 'producer_statement_sha256_lf':hashlib.sha256(title_block.encode()).hexdigest(),
+                 'consumer_function_sha256_lf':hashlib.sha256(extract(recv,'entReceiveTitles').encode()).hexdigest(),
+                 'source_fields':{'name':128,'the_text':10,'common':32,'origin':32,'special':128}}
     cfile=directory/'source-oracle.c';cfile.write_text(code);so=directory/'source-oracle.so'
-    run([os.environ.get('CC','cc'),'-std=c99','-O0','-shared','-fPIC','-w','-I'+str(repo/'native-android/include'),cfile,'-lm','-o',so])
+    run([os.environ.get('CC','cc'),'-std=c99','-O0','-shared','-fPIC','-w','-I'+str(repo/'native-android/include'),'-I'+str(HERE),cfile,'-lm','-o',so])
     lib=C.CDLL(str(so))
     lib.original_fields.argtypes=[C.c_void_p,C.c_void_p,C.c_uint32,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_receive_stats.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_int,C.c_void_p,C.c_void_p]
@@ -267,7 +287,11 @@ void original_receive_orientation(const U8 *data,U32 bits,int aligned,U32 id,U32
     lib.original_deletes.argtypes=[C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_orientation.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_receive_orientation.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_uint32,C.c_void_p,C.c_void_p]
-    return lib,pins,names
+    lib.original_titles.argtypes=[C.c_int,C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.POINTER(C.c_uint32)]
+    lib.original_titles_seed.argtypes=[C.c_void_p]
+    lib.original_receive_titles.argtypes=[C.c_void_p,C.c_uint32,C.c_int,C.c_uint32,C.c_uint32,C.c_void_p]
+    title_proof['state_bytes']=lib.original_titles_size()
+    return lib,pins,names,title_proof
 
 def fixtures(lib,directory):
     content=[];count=0
@@ -283,7 +307,20 @@ def fixtures(lib,directory):
     def auto(v):
         widths=[2,10,24,32];i=next(i for i,w in enumerate(widths) if v<1<<w);return u(2,i)+u(widths[i],v)
     def string(s):return sum((u(8,v) for v in s.encode()+b'\0'),[])
+    title_size=lib.original_titles_size();seed=(C.c_uint8*title_size)();lib.original_titles_seed(seed)
+    content.append('static const unsigned char title_seed_bytes[]={'+','.join(map(str,seed))+'};\n')
+    title_rows=[]
     for mode in [0,1]:
+        for offset in (range(8) if mode==0 else [0]):
+            for scenario in range(6):
+                out=(C.c_uint8*32768)();bits=C.c_uint32();start=C.c_uint32()
+                lib.original_titles(scenario,mode,offset,out,C.byref(bits),C.byref(start))
+                label=f'titles_{mode}_{offset}_{scenario}';emit(label,bytes(out[:(bits.value+7)//8]),bits.value)
+                expected=[]
+                for packet in [9,10,11]:
+                    value=(C.c_uint8*title_size)();lib.original_receive_titles(out,bits.value,mode,start.value,packet,value)
+                    name=f'{label}_expected_{packet}';content.append('static const unsigned char '+name+'[]={'+','.join(map(str,value))+'};\n');expected.append(name)
+                title_rows.append('{'+','.join([label,str(bits.value),str(start.value),str(mode),str(scenario),'{'+','.join(expected)+'}'])+'}')
         for self in [0,1]:
             out=(C.c_uint8*32768)();bits=C.c_uint32();expected=(C.c_float*5)();lib.original_stats(self,mode,out,C.byref(bits),expected)
             label=f'stats_{self}_{mode}';emit(label,bytes(out[:(bits.value+7)//8]),bits.value)
@@ -344,6 +381,26 @@ def fixtures(lib,directory):
         fxprefix=p(1,1)+u(2,1)+u(32,100)+u(1,0)*10
         for name,seq in [('netfx_origin_type',fxprefix+opt(2,3)),('netfx_bone_limit',fxprefix+u(1,0)*2+p(2,256)),('netfx_target_limit',fxprefix+u(1,0)*2+p(2,0)+u(1,0)+opt(12,10240,True)),('netfx_infinite_position',fxprefix+opt(2,1)+u(32,0x7f800000))]:
             emit(name+str(mode),*fields(seq,mode))
+        # Adversarial title cases use original scalar writers only; they are
+        # not claimed as unchanged original producer output.
+        title_prefix=u(1,1)+string('')+p(5,0)
+        for field,limit in [('name',128),('the',10),('common',32),('origin',32),('special',128)]:
+            before={'name':u(1,1),'the':title_prefix+u(1,1),
+                    'common':title_prefix+u(1,0)+u(1,1),
+                    'origin':title_prefix+u(1,0)*2+u(1,1),
+                    'special':title_prefix+u(1,0)*3+auto(0)*2+u(32,0)+u(1,1)}[field]
+            emit('titles_long_'+field+str(mode),*fields(before+string('x'*limit),mode))
+        if mode:
+            for label,seq in [('presence',u(8,2)),('optional',title_prefix+u(8,2)),('auto',title_prefix+u(1,0)*3+u(8,4)),('late_flag',title_prefix+u(1,0)*3+auto(0)*2+u(32,0)+u(1,0)+u(8,2)),('gender',title_prefix+u(1,0)*3+auto(0)*2+u(32,0)+u(1,0)*2+u(8,4))]:
+                emit('titles_bad_'+label,*fields(seq,mode))
+        # Taskforce malformed fixtures are scalar constructions, separate from
+        # the complete unchanged component-function oracle.
+        task_head=u(1,1)*2+auto(0)*3
+        task_contact=task_head+string('')
+        task_review=task_contact+u(1,0)*2+u(1,1)
+        for label,seq in [('contact',task_head+string('x'*32)),('name',task_review+string('x'*256)),('author',task_review+string('')+string('x'*128)),('description',task_review+string('')*2+string('x'*4096)),('flashback',u(1,0)+p(1,2)),('hole',task_contact+u(1,1)*2+u(1,1)+u(1,0)+u(1,1)*2+p(4,2))]:
+            emit('task_bad_'+label+str(mode),*fields(seq,mode))
+        if mode:emit('task_bad_flag',*fields(u(8,2),mode))
         # Costume failure fixtures use original scalar writers in source field order.
         costume_head=u(1,0)*2+p(6,1)+u(32,0)+u(1,0)+u(3,0)+u(1,1)+u(32,0)*72
         costume_body=costume_head+u(32,0)*30
@@ -389,13 +446,15 @@ def fixtures(lib,directory):
             emit(name+str(mode),*fields(seq,mode))
         for name,seq in [('delta_indices',p(1,4)+p(1,2)),('delta_descending',p(1,7)+p(1,0xfffffffc)+p(1,4)),('delta_overflow',p(1,10240)),('delta_zero',p(1,0)),('end',u(1,1)+u(1,1)),('update_flag',u(1,0)),('deletes',p(1,2)+p(12,4)+p(12,91)+p(12,7)+p(12,92)),('delete_large_generation',p(1,1)+p(12,4)+p(12,70001)),('delete_zero',p(1,1)+p(12,0)+p(12,91)),('delete_duplicate',p(1,2)+p(12,4)+p(12,91)+p(12,4)+p(12,92)),('delete_limit',p(1,257)),('bad_type',u(1,1)+u(1,0)+p(12,91)+p(2,99)),('bad_id',u(1,1)+u(1,0)+p(12,0)+p(2,1)),('long_name',u(1,1)+u(1,0)+p(12,91)+p(2,1)+u(1,0)+u(1,1)+string('x'*256))]:
             emit(name+str(mode),*fields(seq,mode))
+    content.append('typedef struct {const unsigned char *data;unsigned bits,start,mode,scenario;const unsigned char *expected[3];} TitleFixture;\n')
+    content.append('static const TitleFixture title_fixtures[]={'+','.join(title_rows)+'};\n')
     (directory/'fixtures.h').write_text(''.join(content));return count
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--source-root',type=Path,default=REPO);ap.add_argument('--output',type=Path);ap.add_argument('--fixtures-output',type=Path);ap.add_argument('--sanitize',action='store_true');ap.add_argument('--ndk',type=Path);ap.add_argument('--android-output',type=Path);args=ap.parse_args()
     if bool(args.ndk)!=bool(args.android_output):ap.error('--ndk and --android-output must be supplied together')
     with tempfile.TemporaryDirectory(prefix='coh-entities-') as d:
-        directory=Path(d);lib,pins,names=oracle(args.source_root.resolve(),directory);n=fixtures(lib,directory)
+        directory=Path(d);lib,pins,names,title_proof=oracle(args.source_root.resolve(),directory);n=fixtures(lib,directory)
         spec=importlib.util.spec_from_file_location('costume_oracle',HERE/'costume_oracle.py');costume_module=importlib.util.module_from_spec(spec);spec.loader.exec_module(costume_module)
         spec=importlib.util.spec_from_file_location('costume_bit_adapter',args.source_root.resolve()/'native-android/tools/protocol_fixture/prepare.py');costume_helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(costume_helper)
         costume_proof=costume_module.generate(args.source_root.resolve(),directory,costume_helper,run)
@@ -404,7 +463,7 @@ def main():
             shutil.copyfile(directory/'fixtures.h',args.fixtures_output)
             shutil.copyfile(directory/'costume_fixtures.h',args.fixtures_output.parent/'costume_fixtures.h')
         common=['-std=c99','-Wall','-Wextra','-Werror','-pedantic','-I'+str(directory),'-I'+str(HERE)]
-        sources=[HERE/'coh_entities.c',HERE/'coh_costume.c',HERE/'../replication/coh_replication.c',HERE/'test_entities.c',HERE/'test_costume.c']
+        sources=[HERE/'coh_entities.c',HERE/'coh_costume.c',HERE/'coh_taskforce.c',HERE/'../replication/coh_replication.c',HERE/'test_entities.c',HERE/'test_costume.c']
         checks={};modes=[('release',['-O2'])]
         if args.sanitize:modes += [('asan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=address','-no-pie']),('ubsan',['-O1','-g','-fno-omit-frame-pointer','-fsanitize=undefined','-fno-sanitize-recover=all'])]
         for name,flags in modes:
@@ -412,7 +471,7 @@ def main():
             env=os.environ.copy();env['ASAN_OPTIONS']='detect_leaks=0:halt_on_error=1';env['UBSAN_OPTIONS']='halt_on_error=1:print_stacktrace=1'
             checks[name]=json.loads(run([exe],env=env).stdout)
         fixture_sha=hashlib.sha256((directory/'fixtures.h').read_bytes()).hexdigest()
-        source_hashes={str(p.resolve().relative_to(REPO.resolve())):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*sources,HERE/'CMakeLists.txt',HERE/'coh_entities.h',HERE/'coh_costume.h',HERE/'costume_oracle.py',HERE/'costume_oracle_shim.h',HERE/'costume_envelope_oracle_shim.h',HERE/'costume_envelope_oracle.c.inc',HERE/'costume_envelope_fixture.c.inc',HERE/'power_custom_oracle_shim.h',HERE/'power_custom_observer.c.inc',HERE/'power_custom_fixture.c.inc',HERE/'check.py',HERE/'oracle_shim.h',HERE/'stats_oracle_shim.h',HERE/'source-pins.json',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',REPO/'native-android/tools/protocol_fixture/prepare.py']}
+        source_hashes={str(p.resolve().relative_to(REPO.resolve())):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*sources,HERE/'CMakeLists.txt',HERE/'coh_entities.h',HERE/'coh_costume.h',HERE/'costume_oracle.py',HERE/'costume_oracle_shim.h',HERE/'costume_envelope_oracle_shim.h',HERE/'costume_envelope_oracle.c.inc',HERE/'costume_envelope_fixture.c.inc',HERE/'power_custom_oracle_shim.h',HERE/'power_custom_observer.c.inc',HERE/'power_custom_fixture.c.inc',HERE/'check.py',HERE/'oracle_shim.h',HERE/'stats_oracle_shim.h',HERE/'titles_oracle_shim.h',HERE/'titles_fixture.c.inc',HERE/'test_titles.c.inc',HERE/'coh_taskforce.h',HERE/'taskforce_oracle_shim.h',HERE/'taskforce_fixture.c.inc',HERE/'test_taskforce.c.inc',HERE/'source-pins.json',HERE/'../replication/coh_replication.h',HERE/'../coh_contracts.h',REPO/'native-android/tools/protocol_fixture/prepare.py']}
         android={}
         if args.ndk:
             args.android_output.mkdir(parents=True,exist_ok=True)
@@ -424,7 +483,7 @@ def main():
                 run([tc/target,*common,'-O2',*sources,'-lm','-o',exe]);sha=hashlib.sha256(exe.read_bytes()).hexdigest()
                 receipt={'passed':True,'abi':abi,'binary':exe.name,'binary_sha256':sha,'executed':False,'fixtures_sha256':fixture_sha,'costume_fixtures_sha256':costume_proof['fixtures_sha256'],'source_sha256':source_hashes}
                 (dest/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');android[abi]=receipt
-        proof={'schema':1,'passed':True,'scope':'original create/pet CRC, NPC/sequence costume, target, inventory, pose/sequence/delete component producers; original NetFX and standalone complete appearance/costume/reward producer/consumer parity; exact original basic/self schema producer and consumer comparisons; synthetic record/list compositions; no original complete sendEntity/entSendUpdate execution','source_files':len(pins),'original_functions':names,'fixtures':n,'fixtures_sha256':fixture_sha,'costume_fixtures_sha256':costume_proof['fixtures_sha256'],'source_sha256':source_hashes,'checks':checks,'costume_oracle':costume_proof,'android':android,'full_update_tail_supported':False,'real_server_interoperability':False,'renderable_authoritative_actor':False,'emulator_qualified':False,'thor_accepted':False}
+        proof={'schema':1,'passed':True,'scope':'original create/pet CRC, NPC/sequence costume, target, inventory, pose/sequence/delete component producers; original NetFX and standalone complete appearance/costume/reward producer/consumer parity; exact original basic/self schema producer and consumer comparisons; unchanged inline title producer block and full title consumer; synthetic record/list compositions; no original complete sendEntity/entSendUpdate execution','source_files':len(pins),'original_functions':names,'fixtures':n,'fixtures_sha256':fixture_sha,'costume_fixtures_sha256':costume_proof['fixtures_sha256'],'source_sha256':source_hashes,'checks':checks,'costume_oracle':costume_proof,'titles_oracle':dict(title_proof,producer_fixtures=54,consumer_comparisons=162),'android':android,'full_update_tail_supported':False,'real_server_interoperability':False,'renderable_authoritative_actor':False,'emulator_qualified':False,'thor_accepted':False}
         if args.output:args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(proof,indent=2)+'\n')
         print(json.dumps(proof,indent=2))
 if __name__=='__main__':main()

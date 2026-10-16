@@ -1,0 +1,20 @@
+{
+  "coordinator_head": "184752f9573693f2d88c1043218f9c7497d12c5f",
+  "original_worker_tips": [
+    "edb7c1413b2eff4c8ac97d39775d7956de723305",
+    "f9e8df44c8946f95e0b87d377a60c64006437478",
+    "ccc77e1e86f7be723ca5c9e391b76310df63234a",
+    "2bde7b1b1691045a4867b794af6ac8d53e58ce7a"
+  ],
+  "excluded_ancestors": [
+    "fd86ff196f172bf62cd24c7e0f807df39c33e0a5",
+    "b01db2e82772450379f28632a3a6468d2d7beeb4",
+    "4c1cd8153b32fafad6bc52a1e37188e5a4257316",
+    "c068e3321c2bb52c6b65686caceb0f5e0d02ae96",
+    "b24874e6a7a21fec86911d8218bffdb5584300aa"
+  ],
+  "all_worker_tip_objects_confirmed_in_pack": true,
+  "bundle_bytes": 89145,
+  "bundle_sha256": "092160212f481cb2f98314fc8d67c67d68c173eb53a5f8cde260a145aeaa959f",
+  "purpose": "Exact reviewed catalog path-probe, title, auth staging and Android evidence worker history; earlier bundles and published history supply prerequisites."
+}

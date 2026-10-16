@@ -34,7 +34,8 @@
       "native-android/combined-client/tools/bench_startup_console.py",
       "native-android/combined-client/tools/read_startup_receipts.py",
       "native-android/combined-client/tools/test_startup_receipts.py",
-      "native-android/engine/entity-control/"
+      "native-android/engine/entity-control/",
+      "native-android/engine/character-data/"
     ]
   },
   "coordinator": [
@@ -56,5 +57,5 @@
     "Session accepted package"
   ],
   "gameplay_contact": "No cross-chat coordinator address available; existing recorded ownership plus explicit user boundary honored, no API mutation/integration attempted.",
-  "followup_reassignment": "After completing read-only startup work, F owns new isolated entity-control grammar; C remains entity-record owner. No engine/physics or gameplay API edits."
+  "followup_reassignment": "After completing read-only startup work, F owns new isolated entity-control grammar; C remains entity-record owner. No engine/physics or gameplay API edits. After entity-control qualification, F owns new character-data source grammar with explicit version-bound shared-power-set wire profile; C retains taskforce and entity records."
 }

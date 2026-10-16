@@ -1,0 +1,86 @@
+{
+  "run_id": 38946462964,
+  "artifact_id": 12066431903,
+  "archive_sha256": "c6949ac8c534ff82a3260ab9ed385dc0a34f9d4ff8b8ec9a761cfd04a65d47c3",
+  "original_repository_commit": "fd86ff196f172bf62cd24c7e0f807df39c33e0a5",
+  "original_source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "files": {
+    "receipt.json": {
+      "bytes": 28631,
+      "sha256": "4b0b11c767d0adbf12b79bc03b1ff8583dd753647c081e0f38a73b8d1b15f19f"
+    },
+    "configure-controls.log": {
+      "bytes": 844,
+      "sha256": "7d6ebef0e60b00f0656ac8cc10d24afcaa898cf75f2f9cefcba175649aa93ab3"
+    },
+    "build-controls.log": {
+      "bytes": 804,
+      "sha256": "ba00c94d85b29e0a386143c1b1efa2de491d26e4b923da9b46613efea88f229d"
+    },
+    "original-policy.exe": {
+      "bytes": 122368,
+      "sha256": "2d7f9a56c5962359ca9eb906bcc30898a4adda248f1e7b65b1eb7e2cee6bdcc1"
+    },
+    "candidate-policy.exe": {
+      "bytes": 122368,
+      "sha256": "56680e359340e29d5515a423c138120c919070f8f78b4244469329bfb324208e"
+    },
+    "original-odbc.exe": {
+      "bytes": 125952,
+      "sha256": "6d5c93e5f6c81c40c060df21887791d0a41799f093769273e387293fbe3ebc86"
+    },
+    "original-policy.c": {
+      "bytes": 6148,
+      "sha256": "17dd9a11b35ae62306359b83a56c493ca9d1a35ef87baae8524a684cc52186d0"
+    },
+    "candidate-policy.c": {
+      "bytes": 6175,
+      "sha256": "c19064c6396f75ad7aa8b84f51ed59b43e80b47a7d37874e130168181c35c5dd"
+    },
+    "original-odbc.cpp": {
+      "bytes": 13244,
+      "sha256": "de2c979b70050ef4393ad599841014cea4ee97d5eb59cc8c4055d0fa239116df"
+    },
+    "odbc-fixture.sql": {
+      "bytes": 716,
+      "sha256": "d869132159833dbc0878982774df96406b5061de528e5493abeb4ec023a6dec8"
+    },
+    "checksum-failclosed.patch": {
+      "bytes": 659,
+      "sha256": "d31341f948fc5c3fce36b46461f7348a9cc8e5e6321e8ae13a9e5bf178e50bb1"
+    }
+  },
+  "binaries": {
+    "original-policy": {
+      "sha256": "2d7f9a56c5962359ca9eb906bcc30898a4adda248f1e7b65b1eb7e2cee6bdcc1",
+      "bytes": 122368,
+      "machine": "I386",
+      "format": "PE32",
+      "subsystem": 3,
+      "header_identity_only": true,
+      "executed": false
+    },
+    "candidate-policy": {
+      "sha256": "56680e359340e29d5515a423c138120c919070f8f78b4244469329bfb324208e",
+      "bytes": 122368,
+      "machine": "I386",
+      "format": "PE32",
+      "subsystem": 3,
+      "header_identity_only": true,
+      "executed": false
+    },
+    "original-odbc": {
+      "sha256": "6d5c93e5f6c81c40c060df21887791d0a41799f093769273e387293fbe3ebc86",
+      "bytes": 125952,
+      "machine": "I386",
+      "format": "PE32",
+      "subsystem": 3,
+      "header_identity_only": true,
+      "executed": false
+    }
+  },
+  "rebuilt": false,
+  "scope": "Exact compiled controls; execute anew. Prior stage did not execute ODBC.",
+  "odbc_qualification_inherited": false,
+  "real_account_login_verified": false
+}

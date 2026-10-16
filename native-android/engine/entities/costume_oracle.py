@@ -10,8 +10,8 @@ def extract(text,name):
     while depth:depth+=(text[at]=='{')-(text[at]=='}');at+=1
     return text[m.start():at]+'\n'
 def generate(repo,directory,helper,run):
-    paths=FILES+['libs/UtilitiesLib/src/network/net_packetutil.c','libs/UtilitiesLib/src/components/BitStream.c','Common/comm_game.h','Common/entity/entity_enum.h','MapServer/src/entity/entsend.c','Game/src/entity/entrecv.c','Common/entity/power_customization.c','Common/entity/power_customization.h']
-    source={f:(repo/'upstream/ouroboros'/f).read_text() for f in paths}
+    paths=FILES+['libs/UtilitiesLib/src/network/net_packetutil.c','libs/UtilitiesLib/src/components/BitStream.c','Common/comm_game.h','Common/entity/entity_enum.h','MapServer/src/entity/entsend.c','Game/src/entity/entrecv.c','Common/entity/power_customization.c','Common/entity/power_customization.h','Common/entity/teamCommon.h','Common/entity/TaskforceParams.c']
+    source={f:((repo/'upstream/ouroboros'/f).read_text() if (repo/'upstream/ouroboros'/f).exists() else run(['git','show','HEAD:upstream/ouroboros/'+f],cwd=repo).stdout).replace('\r\n','\n') for f in paths}
     pins=json.loads((HERE/'source-pins.json').read_text())['sha256_lf']
     for name,data in source.items():
         if pins[name]!=hashlib.sha256(data.encode()).hexdigest():raise ValueError('Costume pin mismatch '+name)
@@ -103,21 +103,34 @@ void original_custom(int aligned,U8 *out,U32 *length,U8 *expected,U32 *expected_
     code+=get(source['MapServer/src/entity/entsend.c'],'entSendPowerCust')
     code+=get(source['Game/src/entity/entrecv.c'],'entReceivePowerCust')
     code+=(HERE/'power_custom_fixture.c.inc').read_text()
+    code+=(HERE/'taskforce_oracle_shim.h').read_text()
+    team=source['Common/entity/teamCommon.h']
+    code+='\n#define MAX_TASKFORCE_PARAMETERS 32\n#define TF_NAME_LEN 64\ntypedef struct StoryInfo StoryInfo;\n'
+    if not re.search(r'#define\s+MAX_TASKFORCE_PARAMETERS\s+32',team):raise ValueError('Taskforce parameter count changed')
+    code+=team[team.index('typedef enum TaskForceParameter'):team.index('} TaskForceParameter;')+len('} TaskForceParameter;')]+'\n'
+    code+=team[team.index('typedef struct TaskForce\n'):team.index('} TaskForce;')+len('} TaskForce;')]+'\n'
+    parameter_source=source['Common/entity/TaskforceParams.c']
+    code+=get(parameter_source[parameter_source.index('bool TaskForceIsParameterEnabled('):],'TaskForceIsParameterEnabled')
+    code+=''.join(get(source['MapServer/src/entity/entsend.c'],n) for n in ['entSendTaskforceArchitectInfo','entSendTaskforceParameters'])
+    code+=''.join(get(source['Game/src/entity/entrecv.c'],n) for n in ['entRecieveTaskforceArchitectInfo','entReceiveTaskforceParameters'])
+    code+=(HERE/'taskforce_fixture.c.inc').read_text()
     cfile=directory/'costume-oracle.c';cfile.write_text(code);so=directory/'costume-oracle.so'
     run([os.environ.get('CC','cc'),'-std=c99','-O0','-shared','-fPIC','-w','-I'+str(repo/'native-android/include'),'-I'+str(HERE),cfile,'-lm','-o',so])
     lib=C.CDLL(str(so));lib.original_costume.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p,C.POINTER(C.c_uint32)];lib.original_custom.argtypes=[C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_envelope.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p,C.POINTER(C.c_uint32)]
     lib.original_power_custom.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p,C.POINTER(C.c_uint32)]
+    lib.original_taskforce.argtypes=[C.c_int,C.c_int,C.c_void_p,C.POINTER(C.c_uint32),C.c_void_p,C.POINTER(C.c_uint32)]
     content=['typedef struct {unsigned offset;unsigned char value;} CostumeExpectedByte;\n']
     for mode in [0,1]:
-        for scenario in range(22):
+        for scenario in range(33):
             data=(C.c_uint8*131072)();expected=(C.c_uint8*2097152)();bits=C.c_uint32();size=C.c_uint32()
             if scenario<3:lib.original_costume(scenario,mode,data,C.byref(bits),expected,C.byref(size))
             elif scenario==3:lib.original_custom(mode,data,C.byref(bits),expected,C.byref(size))
             elif scenario<14:lib.original_envelope(scenario-4,mode,data,C.byref(bits),expected,C.byref(size))
-            else:lib.original_power_custom(scenario-14,mode,data,C.byref(bits),expected,C.byref(size))
+            elif scenario<22:lib.original_power_custom(scenario-14,mode,data,C.byref(bits),expected,C.byref(size))
+            else:lib.original_taskforce(scenario-22,mode,data,C.byref(bits),expected,C.byref(size))
             label=f'costume_{scenario}_{mode}'
             content.append('static const unsigned char '+label+'[]={'+','.join(map(str,data[:(bits.value+7)//8]))+'};\n#define '+label+'_bits '+str(bits.value)+'u\n')
             content.append('static const CostumeExpectedByte '+label+'_expected[]={'+','.join('{'+str(i)+','+str(v)+'}' for i,v in enumerate(expected[:size.value]) if v)+'};\n#define '+label+'_size '+str(size.value)+'u\n')
     path=directory/'costume_fixtures.h';path.write_text(''.join(content))
-    return {'original_functions':functions,'fixtures':44,'fixtures_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'scope':'original full/owned/custom costume bodies and outer appearance/reward/powercustom producer and consumer functions with synthetic dictionary/storage/render adapters; no entity record integration or server dictionary capture'}
+    return {'original_functions':functions,'fixtures':66,'fixtures_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'scope':'original full/owned/custom costume bodies and outer appearance/reward/powercustom/taskforce producer and consumer functions with synthetic dictionary/storage/render adapters; no entity record integration or server dictionary capture'}

@@ -5,8 +5,11 @@ existing nonshipping PE. The first hosted attempt, run38939438638 at source
 `cc92cad36eb8136274794a2beed9c6945647abbe`, executed DbServer but reached its
 600-second readiness deadline before MapServer launch. No catalog was captured.
 Owned process/prefix/PostgreSQL cleanup and unchanged source inventory passed.
-Its local controls do not qualify Wine, PostgreSQL/ODBC, normal MapServer startup
-or authentic catalog capture.
+The second attempt, run38943674136 at source
+`140ee62d7b648de737fcec5e7d80b52bfbb9ae67`, qualified Wine10 Windows ODBC,
+started the disposable database and reached the real Atlas catalog hook. The
+unchanged sink refused its output path before serialization. No catalog was
+captured; its source inventory and owned cleanup checks passed.
 
 The reusable `.github/workflows/android-map-startup-native.yml` FX job already
 prepares complete public .31 Atlas assets and runs actual Win32 code under Wine.
@@ -30,7 +33,7 @@ Sparse local checkouts must include `android/guest`, `android/native` and
 
 Use a fresh nonroot GitHub-hosted Ubuntu24.04 runner, at least30GiB initial free
 space, a pinned Wine release supporting Windows ODBC drivers and PE32 execution,
-Xvfb/xauth and PostgreSQL16. Ubuntu24.04's default Wine9.0 is unsuitable: its
+Xvfb/xauth, PostgreSQL16 and `gcc-mingw-w64-i686` for the read-only path observer. Ubuntu24.04's default Wine9.0 is unsuitable: its
 [original ODBC manager](https://github.com/wine-mirror/wine/blob/wine-9.0/dlls/odbc32/proxyodbc.c)
 forwards to Unix libodbc, while
 [Wine9.13](https://github.com/wine-mirror/wine/blob/wine-9.13/dlls/odbc32/proxyodbc.c)
@@ -74,6 +77,13 @@ and work directories must be absent, private and separate from all inputs.
    every source/header digest and resulting executable SHA256 in workflow
    evidence. The runner observes binary identity; it cannot infer source
    provenance merely from a caller-supplied executable.
+6. Compile the separate read-only path observer with
+   `python3 native-android/engine/scenecatalog-server/build_path_probe.py
+   --binary /private/catalog-path-probe.exe --output /private/path-probe-build.json`
+   (one command). It compiles the exact unchanged sink path/reserved-name
+   functions and original 240-byte cap into a PE32/I386 observer. The small
+   executable and receipt bind the builder, observer and sink source hashes.
+   This does not rebuild or replace MapServer.
 
 Invoke the runner under `xvfb-run -a`, substituting actual prepared paths:
 
@@ -84,6 +94,8 @@ python native-android/engine/scenecatalog-server/capture_disposable.py \
   --db-donor-apk /private/donor-034.apk \
   --candidate-directory /private/catalog-candidate \
   --native-validator /private/coh_catalog_validate \
+  --path-probe /private/catalog-path-probe.exe \
+  --path-probe-receipt /private/path-probe-build.json \
   --pg-bin /usr/lib/postgresql/16/bin \
   --work /tmp/coh-catalog-attempt \
   --output /private/new-capture-output \
@@ -96,6 +108,15 @@ Android asset generation. Source identity and exact SHA256 facts are retained
 in `capture-receipt.json`.
 
 ## Isolation, validation and failure handling
+
+After fresh Wine initialization, the runner creates only its owned
+`drive_c/coh-native-catalog` directory. The hash-bound observer performs read-only
+Win32 attribute queries and executes the original sink path admission function.
+It requires the private C-drive destination to pass and the equivalent Z-drive
+spelling to fail with the observed root reparse flag. Both observations retain
+root/parent/target attributes and final error codes. These checks happen before
+the expensive asset copy or any database/MapServer launch. The existing sink's
+reparse policy and exact MapServer PE remain unchanged.
 
 The runner deep-copies the complete prepared namespace, dereferencing files into
 new private files. It refuses linked directories and limits source inventory to
@@ -159,4 +180,35 @@ On a later failure the receipt retains the validated dispatch stage and a
 three-second read-only query of private PostgreSQL session/activity/lock/DDL
 counts. SQL statements are not retained in that query. Redacted PostgreSQL log
 tails and labeled owned process logs accompany it. These controls are host
-qualified only until the corrected hosted attempt executes.
+qualified and were executed by the second hosted attempt described below.
+
+
+## Second hosted failure and private-drive preflight
+
+The second receipt and selected exact diagnostics are retained in
+`evidence/capture-38943674136/`. Full artifact12065056438 has SHA256
+`9e7dc17a0d3e96f402dda30a841e13abf10f7670768c5593d97a29ef6ff2123e`.
+Exact Wine10 loaded the original 32-bit PostgreSQL Unicode driver. DbServer
+reached its manual-map readiness acknowledgment with the complete expected
+schema. MapServer registered map1, loaded the original Atlas path, and reached
+`COH_NATIVE_SCENE_CATALOG_V1 status=3 producer_status=0`. All file/definition/
+byte counts were zero; this is sink destination refusal before serialization.
+No source catalog, live GROUPS transaction or Thor world-entry result exists.
+
+The destination used the Z-drive mapping to the Unix filesystem root. Original
+Wine10 `get_file_info` marks a directory as a reparse point when its inode equals
+its parent's, which holds for `/` and `/..`. The unchanged sink checks and refuses
+that drive-root flag. An independent execution of this unchanged Wine function
+against real Linux `stat`/`lstat` and fresh C/Z mappings observed attributes1040
+for Z and16 for C. Its deterministic helper shells and exact source provenance
+are recorded in `evidence/path-probe/`; this is a source control, not actual Wine
+WinAPI execution. The added observer will measure the actual APIs before a new
+expensive attempt. The new destination lies in the invocation's ordinary private
+C-drive directory; no guard is relaxed and no existing path is overwritten.
+
+The observer is separately PE32 compile qualified with strict GCC warnings.
+The runner's28 host controls include source-extraction identity, malformed
+observations, redirected drives, symlink refusal and destination non-overwrite.
+Actual observer execution, complete catalog serialization, native import and
+comparison to the historical508-file/33-root footer remain pending the next
+hosted attempt. These staging changes require no Android rebuild or device test.

@@ -1,0 +1,643 @@
+{
+  "schema": 1,
+  "passed": true,
+  "scope": "original-source catalog envelopes; no deployed server catalog or live world",
+  "source_oracle": {
+    "schema": 1,
+    "passed": true,
+    "scope": "deterministic trusted original-source producer execution; no server capture/login/world acceptance",
+    "source_files": 16,
+    "source_functions": 41,
+    "fixtures": 44,
+    "success_fixtures": 40,
+    "unsupported_base_fixtures": 4,
+    "source_pin_sha256": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c",
+    "original_harness_sha256": "265ec1a45f255df334adae872ab82a56f1da92a7d35b0f069a82d0517d8054af",
+    "original_producer_sanitized": false,
+    "compression_helpers": "unchanged pktSetCompression, pktSetByteAlignment and bsSetByteAlignment; trusted packet factory supplies controlled compressionDefault0/1 before any writes",
+    "packed_full_updates": 0,
+    "checksum_adapter": "zlib Adler32 with source Crypto++ digest-byte order; original groupInfoCrcDefs/Refs/RefCount executed",
+    "fixtures_sha256": "9aed9a199ed1854638d635055a62d7334770d2d55584a9092b9fd18b4905e49a",
+    "large_fixture": {
+      "name": "large_world_byte_aligned",
+      "payload_bits": 1118352,
+      "payload_bytes": 139794,
+      "sha256": "7bef42694975fa322319de16ef7d9c8c3328fd2e5173bec822a1fca4b21531fc",
+      "expected": {
+        "new_world": 1,
+        "files": 1,
+        "present_files": 1,
+        "defs": 192,
+        "removed_defs": 0,
+        "children": 384,
+        "roots": 4,
+        "removed_roots": 0,
+        "properties": 384,
+        "swaps": 384,
+        "raw_matrices": 194,
+        "packed_matrices": 194,
+        "max_def_id": 191,
+        "max_root_id": 3,
+        "footer_file_count": 1,
+        "footer_active_roots": 4,
+        "footer_defs_crc": 1837505798,
+        "footer_refs_crc": 154190089
+      }
+    },
+    "authentic_server_interoperability": false,
+    "authenticated_session": false,
+    "resolved_asset_graph": false,
+    "authoritative_spawn": false,
+    "catalog_exporter_sha256": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+    "catalog_harness_sha256": "f14b98edd0410260948fd9fa19baea50e01852b085414d1188f1a72a59d86fdf",
+    "catalog_fixtures": [
+      {
+        "which": 0,
+        "aligned": 0,
+        "legacy": 0,
+        "catalog_bytes": 48,
+        "catalog_sha256": "4e75b45eb4f69f8bed3035711ada1fa59410f1c799ce25d88d529d73ba7794f1",
+        "wire_bytes": 104,
+        "wire_bits": 826,
+        "wire_sha256": "6a55a30578fb3e8a3a85e2ef3a88dbd4c664c9a9c05190e73131a6a4a7e67714",
+        "source_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          48,
+          48
+        ]
+      },
+      {
+        "which": 0,
+        "aligned": 1,
+        "legacy": 0,
+        "catalog_bytes": 48,
+        "catalog_sha256": "4e75b45eb4f69f8bed3035711ada1fa59410f1c799ce25d88d529d73ba7794f1",
+        "wire_bytes": 142,
+        "wire_bits": 1136,
+        "wire_sha256": "6731572c75d41c74a2541fd46dd74a9efc70def0d4e3324973e122167e901ef8",
+        "source_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          48,
+          48
+        ]
+      },
+      {
+        "which": 0,
+        "aligned": 1,
+        "legacy": 1,
+        "catalog_bytes": 48,
+        "catalog_sha256": "4e75b45eb4f69f8bed3035711ada1fa59410f1c799ce25d88d529d73ba7794f1",
+        "wire_bytes": 142,
+        "wire_bits": 1136,
+        "wire_sha256": "8a743156bfcddbe24482ff405deb7c805e7aa883d79e7ee7b56251e9b03b637a",
+        "source_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          48,
+          48
+        ]
+      },
+      {
+        "which": 1,
+        "aligned": 0,
+        "legacy": 0,
+        "catalog_bytes": 142,
+        "catalog_sha256": "620a5bed0241a65650fa3ef549d4fe61cc869df3e0fc5a132a58909ae73eab93",
+        "wire_bytes": 161,
+        "wire_bits": 1285,
+        "wire_sha256": "9eafeac2380ab05c53d3ed8230bcbc20976c7f18b27fcd46ef0ad9537c018908",
+        "source_counts": [
+          1,
+          1,
+          1,
+          0,
+          36,
+          142,
+          142
+        ]
+      },
+      {
+        "which": 1,
+        "aligned": 1,
+        "legacy": 0,
+        "catalog_bytes": 142,
+        "catalog_sha256": "620a5bed0241a65650fa3ef549d4fe61cc869df3e0fc5a132a58909ae73eab93",
+        "wire_bytes": 230,
+        "wire_bits": 1840,
+        "wire_sha256": "5253978f252d28843d3fa1755dc74a6ce53c2ab92c201d7b7d47f54da29545bf",
+        "source_counts": [
+          1,
+          1,
+          1,
+          0,
+          36,
+          142,
+          142
+        ]
+      },
+      {
+        "which": 1,
+        "aligned": 1,
+        "legacy": 1,
+        "catalog_bytes": 142,
+        "catalog_sha256": "620a5bed0241a65650fa3ef549d4fe61cc869df3e0fc5a132a58909ae73eab93",
+        "wire_bytes": 230,
+        "wire_bits": 1840,
+        "wire_sha256": "1e91ba0447d6a7cc8c51c38379569d333a3c18ff94eef47b8d32aaac5865aa4a",
+        "source_counts": [
+          1,
+          1,
+          1,
+          0,
+          36,
+          142,
+          142
+        ]
+      },
+      {
+        "which": 2,
+        "aligned": 0,
+        "legacy": 0,
+        "catalog_bytes": 1123,
+        "catalog_sha256": "209fb5e047246b00d90e2f39beadaa518b9bf4de83f8366b27b0aa98d3441ff3",
+        "wire_bytes": 999,
+        "wire_bits": 7989,
+        "wire_sha256": "d793bbc3e756de827612faacd4686c160edbcaf6897e67b3b307ac03b0192309",
+        "source_counts": [
+          3,
+          5,
+          5,
+          2,
+          849,
+          1123,
+          1123
+        ]
+      },
+      {
+        "which": 2,
+        "aligned": 1,
+        "legacy": 0,
+        "catalog_bytes": 1123,
+        "catalog_sha256": "209fb5e047246b00d90e2f39beadaa518b9bf4de83f8366b27b0aa98d3441ff3",
+        "wire_bytes": 1197,
+        "wire_bits": 9576,
+        "wire_sha256": "62e32c767a45302f20d4c5473190e99150456d5d29e33b0860d6475fcd5055f3",
+        "source_counts": [
+          3,
+          5,
+          5,
+          2,
+          849,
+          1123,
+          1123
+        ]
+      },
+      {
+        "which": 2,
+        "aligned": 1,
+        "legacy": 1,
+        "catalog_bytes": 1123,
+        "catalog_sha256": "209fb5e047246b00d90e2f39beadaa518b9bf4de83f8366b27b0aa98d3441ff3",
+        "wire_bytes": 1197,
+        "wire_bits": 9576,
+        "wire_sha256": "e919608b5c4b20dfe235326737a783685c0a5de79d049e0aa2b77a9ad2a5a50a",
+        "source_counts": [
+          3,
+          5,
+          5,
+          2,
+          849,
+          1123,
+          1123
+        ]
+      },
+      {
+        "which": 7,
+        "aligned": 0,
+        "legacy": 0,
+        "catalog_bytes": 144,
+        "catalog_sha256": "37782c25250290b9ab8f221fb6a2b813e71417ac9fd4cc4b70a298d634dc3fdb",
+        "wire_bytes": 224,
+        "wire_bits": 1787,
+        "wire_sha256": "d4d11d642e955ef54c557ea80021c56c7c71965a2c49f1a0799891393fab1a69",
+        "source_counts": [
+          1,
+          1,
+          1,
+          0,
+          38,
+          144,
+          144
+        ]
+      },
+      {
+        "which": 7,
+        "aligned": 1,
+        "legacy": 0,
+        "catalog_bytes": 144,
+        "catalog_sha256": "37782c25250290b9ab8f221fb6a2b813e71417ac9fd4cc4b70a298d634dc3fdb",
+        "wire_bytes": 360,
+        "wire_bits": 2880,
+        "wire_sha256": "b13601cd9d642552f9c2cb75f2f734c61ee657e00b5b39ca708720dccecab9ee",
+        "source_counts": [
+          1,
+          1,
+          1,
+          0,
+          38,
+          144,
+          144
+        ]
+      },
+      {
+        "which": 7,
+        "aligned": 1,
+        "legacy": 1,
+        "catalog_bytes": 144,
+        "catalog_sha256": "37782c25250290b9ab8f221fb6a2b813e71417ac9fd4cc4b70a298d634dc3fdb",
+        "wire_bytes": 360,
+        "wire_bits": 2880,
+        "wire_sha256": "cdc3f52b8ee154051224fb0a38ea1c6bbb3d2a0b71a859fbbee71b95284053fa",
+        "source_counts": [
+          1,
+          1,
+          1,
+          0,
+          38,
+          144,
+          144
+        ]
+      },
+      {
+        "which": 8,
+        "aligned": 0,
+        "legacy": 0,
+        "catalog_bytes": 1123,
+        "catalog_sha256": "209fb5e047246b00d90e2f39beadaa518b9bf4de83f8366b27b0aa98d3441ff3",
+        "wire_bytes": 1026,
+        "wire_bits": 8202,
+        "wire_sha256": "c30f3699b68d2bd295c2fecbed0b6ac9d226503394db1ca6b16a2ebf24c3df4c",
+        "source_counts": [
+          3,
+          5,
+          5,
+          2,
+          849,
+          1123,
+          1123
+        ]
+      },
+      {
+        "which": 8,
+        "aligned": 1,
+        "legacy": 0,
+        "catalog_bytes": 1123,
+        "catalog_sha256": "209fb5e047246b00d90e2f39beadaa518b9bf4de83f8366b27b0aa98d3441ff3",
+        "wire_bytes": 1242,
+        "wire_bits": 9936,
+        "wire_sha256": "7ba93acd8b0a00742caafd4e03979643fa261bbae6b7d08075a2611e09454799",
+        "source_counts": [
+          3,
+          5,
+          5,
+          2,
+          849,
+          1123,
+          1123
+        ]
+      },
+      {
+        "which": 8,
+        "aligned": 1,
+        "legacy": 1,
+        "catalog_bytes": 1123,
+        "catalog_sha256": "209fb5e047246b00d90e2f39beadaa518b9bf4de83f8366b27b0aa98d3441ff3",
+        "wire_bytes": 1242,
+        "wire_bits": 9936,
+        "wire_sha256": "0777fb512bb7766d94f56a0fcc9421edd630bb8962fe65455c1ba29f39b9d84b",
+        "source_counts": [
+          3,
+          5,
+          5,
+          2,
+          849,
+          1123,
+          1123
+        ]
+      },
+      {
+        "which": 9,
+        "aligned": 0,
+        "legacy": 0,
+        "catalog_bytes": 405,
+        "catalog_sha256": "860d678dc9c7ccbed4aaeefdeb7529a94c739224cb41dc566f64cb967d992980",
+        "wire_bytes": 279,
+        "wire_bits": 2228,
+        "wire_sha256": "e6a8da8f610d46b485260e802745d386957e1dfc509201423478c9cf1bd93ed2",
+        "source_counts": [
+          1,
+          3,
+          3,
+          0,
+          267,
+          405,
+          405
+        ]
+      },
+      {
+        "which": 9,
+        "aligned": 1,
+        "legacy": 0,
+        "catalog_bytes": 405,
+        "catalog_sha256": "860d678dc9c7ccbed4aaeefdeb7529a94c739224cb41dc566f64cb967d992980",
+        "wire_bytes": 441,
+        "wire_bits": 3528,
+        "wire_sha256": "8ac15813e49dc56e109a4d2abf2aa98d27cb6a8a5c5013b80ea396f34a686a38",
+        "source_counts": [
+          1,
+          3,
+          3,
+          0,
+          267,
+          405,
+          405
+        ]
+      },
+      {
+        "which": 9,
+        "aligned": 1,
+        "legacy": 1,
+        "catalog_bytes": 405,
+        "catalog_sha256": "860d678dc9c7ccbed4aaeefdeb7529a94c739224cb41dc566f64cb967d992980",
+        "wire_bytes": 441,
+        "wire_bits": 3528,
+        "wire_sha256": "945e771d8ab245baf95872f8a61dd69b1c99adb144edc361eb8b319193a56a9d",
+        "source_counts": [
+          1,
+          3,
+          3,
+          0,
+          267,
+          405,
+          405
+        ]
+      },
+      {
+        "which": 10,
+        "aligned": 0,
+        "legacy": 0,
+        "catalog_bytes": 48,
+        "catalog_sha256": "4e75b45eb4f69f8bed3035711ada1fa59410f1c799ce25d88d529d73ba7794f1",
+        "wire_bytes": 45,
+        "wire_bits": 358,
+        "wire_sha256": "745647aa3ed9806aee5686874d61c0a06b731006bdc14e5b568e5dcaa54a713f",
+        "source_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          48,
+          48
+        ]
+      },
+      {
+        "which": 10,
+        "aligned": 1,
+        "legacy": 0,
+        "catalog_bytes": 48,
+        "catalog_sha256": "4e75b45eb4f69f8bed3035711ada1fa59410f1c799ce25d88d529d73ba7794f1",
+        "wire_bytes": 82,
+        "wire_bits": 656,
+        "wire_sha256": "0c9dfafc26c07e015a33535f636848eea9b9246b1c60f70a7bea0ffcc121f03e",
+        "source_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          48,
+          48
+        ]
+      },
+      {
+        "which": 10,
+        "aligned": 1,
+        "legacy": 1,
+        "catalog_bytes": 48,
+        "catalog_sha256": "4e75b45eb4f69f8bed3035711ada1fa59410f1c799ce25d88d529d73ba7794f1",
+        "wire_bytes": 82,
+        "wire_bits": 656,
+        "wire_sha256": "9e7c997b373e32b03a88fa6ffe12228e36c155796c033ebeff485c97adffdaa2",
+        "source_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          48,
+          48
+        ]
+      },
+      {
+        "which": 20,
+        "aligned": 1,
+        "legacy": 0,
+        "catalog_bytes": 1687850,
+        "catalog_sha256": "cb1ed608ad2b14247ecb207c1adfe30ca1508c370d8cb8ed100cca9f5a03ff75",
+        "wire_bytes": 25974,
+        "wire_bits": 207792,
+        "wire_sha256": "330a5da7f08b30b38e3a78fde6e3ac4bcdc56993c2d1aba485c3437870c70714",
+        "source_counts": [
+          508,
+          12192,
+          12192,
+          36567,
+          1462775,
+          1687850,
+          1687850
+        ]
+      },
+      {
+        "which": 21,
+        "aligned": 1,
+        "legacy": 0,
+        "catalog_bytes": 1102,
+        "catalog_sha256": "f08ff7cc95075e60677c67bbeffb77dccc2841f416005fec5d82aeb4fc31c6a2",
+        "wire_bytes": 1197,
+        "wire_bits": 9576,
+        "wire_sha256": "62e32c767a45302f20d4c5473190e99150456d5d29e33b0860d6475fcd5055f3",
+        "source_counts": [
+          3,
+          4,
+          5,
+          2,
+          844,
+          1102,
+          1102
+        ]
+      },
+      {
+        "which": 22,
+        "aligned": 1,
+        "legacy": 0,
+        "catalog_bytes": 2297300,
+        "catalog_sha256": "65de1304ebf3d8360cb1adcba7ed992eee9305936e91a34bca78230d33ec96f9",
+        "wire_bytes": 25974,
+        "wire_bits": 207792,
+        "wire_sha256": "330a5da7f08b30b38e3a78fde6e3ac4bcdc56993c2d1aba485c3437870c70714",
+        "source_counts": [
+          508,
+          12192,
+          12192,
+          60945,
+          2072225,
+          2297300,
+          2297300
+        ]
+      }
+    ],
+    "exact_record_comparisons": 49,
+    "source_shape_negative_controls": 7,
+    "exporter_negative_controls": [
+      {
+        "mode": 1,
+        "status": 6,
+        "partial_bytes": 48
+      },
+      {
+        "mode": 2,
+        "status": 5,
+        "partial_bytes": 48
+      },
+      {
+        "mode": 3,
+        "status": 6,
+        "partial_bytes": 1123
+      }
+    ]
+  },
+  "fixtures": 24,
+  "fixtures_sha256": "5847def2e284351737b31d6bb03359ec68db3e18dcf91fdbfb6470fb6a65a371",
+  "source_sha256": {
+    "native-android/engine/scenecatalog/coh_scenecatalog.c": "627cdbfa29529971287aace4e26d634d1584daa88d8fbe0356b6f09054974ebc",
+    "native-android/engine/scenegraph/coh_scenegraph.c": "9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+    "native-android/engine/scenecatalog/tests/test_scenecatalog.c": "0998a4c96181fd5e0f17b37b1aebd0aa95049cb54775b26eaecc61fc139ad842",
+    "native-android/engine/scenecatalog/coh_scenecatalog.h": "b49f094df3589c6325acc41befd5c21ffccb2727b25719a7855a89e694c6b2b9",
+    "native-android/engine/scenecatalog/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+    "native-android/engine/scenecatalog/tests/source_catalog_harness.c": "f14b98edd0410260948fd9fa19baea50e01852b085414d1188f1a72a59d86fdf",
+    "native-android/engine/scenecatalog/check.py": "90540e0441afce0a86628168fddab01e53a0aedf095eb6d6ecab23f8976ee8f9",
+    "native-android/engine/scenecatalog/CMakeLists.txt": "ef88029bac9e3c84aff69f5bc391b3fe4b65e42e20f404fb5c03af6291011006",
+    "native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+    "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c"
+  },
+  "checks": {
+    "release": {
+      "passed": true,
+      "checks": 21111,
+      "source_fixtures_accepted": 24,
+      "allocation_failure_points": 10,
+      "large_files": 508,
+      "large_definitions": 12192,
+      "large_children": 36567,
+      "large_owned_bytes": 26276931,
+      "large_replacement_peak_bytes": 52553862,
+      "catalog_budget_bytes": 33554432,
+      "graph_limit_preserved": true,
+      "live_world": false
+    },
+    "asan": {
+      "passed": true,
+      "checks": 21111,
+      "source_fixtures_accepted": 24,
+      "allocation_failure_points": 10,
+      "large_files": 508,
+      "large_definitions": 12192,
+      "large_children": 36567,
+      "large_owned_bytes": 26276931,
+      "large_replacement_peak_bytes": 52553862,
+      "catalog_budget_bytes": 33554432,
+      "graph_limit_preserved": true,
+      "live_world": false
+    },
+    "ubsan": {
+      "passed": true,
+      "checks": 21111,
+      "source_fixtures_accepted": 24,
+      "allocation_failure_points": 10,
+      "large_files": 508,
+      "large_definitions": 12192,
+      "large_children": 36567,
+      "large_owned_bytes": 26276931,
+      "large_replacement_peak_bytes": 52553862,
+      "catalog_budget_bytes": 33554432,
+      "graph_limit_preserved": true,
+      "live_world": false
+    }
+  },
+  "android_builds": [
+    {
+      "passed": true,
+      "abi": "arm64-v8a",
+      "binary": "coh_scenecatalog_test",
+      "binary_sha256": "e58219d37b167f2f96ed27d3faabb57fdee7033812be0a132a63c2abe089106d",
+      "fixtures_sha256": "5847def2e284351737b31d6bb03359ec68db3e18dcf91fdbfb6470fb6a65a371",
+      "source_sha256": {
+        "native-android/engine/scenecatalog/coh_scenecatalog.c": "627cdbfa29529971287aace4e26d634d1584daa88d8fbe0356b6f09054974ebc",
+        "native-android/engine/scenegraph/coh_scenegraph.c": "9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+        "native-android/engine/scenecatalog/tests/test_scenecatalog.c": "0998a4c96181fd5e0f17b37b1aebd0aa95049cb54775b26eaecc61fc139ad842",
+        "native-android/engine/scenecatalog/coh_scenecatalog.h": "b49f094df3589c6325acc41befd5c21ffccb2727b25719a7855a89e694c6b2b9",
+        "native-android/engine/scenecatalog/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+        "native-android/engine/scenecatalog/tests/source_catalog_harness.c": "f14b98edd0410260948fd9fa19baea50e01852b085414d1188f1a72a59d86fdf",
+        "native-android/engine/scenecatalog/check.py": "90540e0441afce0a86628168fddab01e53a0aedf095eb6d6ecab23f8976ee8f9",
+        "native-android/engine/scenecatalog/CMakeLists.txt": "ef88029bac9e3c84aff69f5bc391b3fe4b65e42e20f404fb5c03af6291011006",
+        "native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+        "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c"
+      },
+      "execution_qualified": false
+    },
+    {
+      "passed": true,
+      "abi": "x86_64",
+      "binary": "coh_scenecatalog_test",
+      "binary_sha256": "2379f4d9a12f98b3a723732b891a341009eec74162629a1e365e7b5cd60ffb4d",
+      "fixtures_sha256": "5847def2e284351737b31d6bb03359ec68db3e18dcf91fdbfb6470fb6a65a371",
+      "source_sha256": {
+        "native-android/engine/scenecatalog/coh_scenecatalog.c": "627cdbfa29529971287aace4e26d634d1584daa88d8fbe0356b6f09054974ebc",
+        "native-android/engine/scenegraph/coh_scenegraph.c": "9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933",
+        "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+        "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+        "native-android/engine/scenecatalog/tests/test_scenecatalog.c": "0998a4c96181fd5e0f17b37b1aebd0aa95049cb54775b26eaecc61fc139ad842",
+        "native-android/engine/scenecatalog/coh_scenecatalog.h": "b49f094df3589c6325acc41befd5c21ffccb2727b25719a7855a89e694c6b2b9",
+        "native-android/engine/scenecatalog/source_export.inc": "ab5690d6be457ee90aa468781709891f770eb55cee894c3c0546602fb26e739b",
+        "native-android/engine/scenecatalog/tests/source_catalog_harness.c": "f14b98edd0410260948fd9fa19baea50e01852b085414d1188f1a72a59d86fdf",
+        "native-android/engine/scenecatalog/check.py": "90540e0441afce0a86628168fddab01e53a0aedf095eb6d6ecab23f8976ee8f9",
+        "native-android/engine/scenecatalog/CMakeLists.txt": "ef88029bac9e3c84aff69f5bc391b3fe4b65e42e20f404fb5c03af6291011006",
+        "native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+        "native-android/engine/replication/groups-source-pins.json": "4f1d0f841cb89feb71d740cb751ce12f9e5a5e910e92c3e5107e3b50fa89ec2c"
+      },
+      "execution_qualified": false
+    }
+  ],
+  "real_server_capture": false,
+  "real_imported_library_assets": false,
+  "renderer_authorized": false,
+  "thor_accepted": false,
+  "leak_sanitizer": false,
+  "allocation_tracking": true
+}

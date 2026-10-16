@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "base": "35870d6f14fe388b8d51b3fcb496cfad77676bbd",
+  "unchanged_c_preprocessing": true,
+  "c_preprocessed_sha256": "66dad742c5098adfa55d29523b011b622edb68202f982d200d6fef14730178f0",
+  "binary_sha256": "ad587fd3f139c7e2a40c33fe65f0a2e70f0923f90e591b48513602ae3839bed8",
+  "cc": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "cxx": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "sources": {
+    "native-android/engine/entities/coh_costume.h": "ec87e59b554e18fd45ad2e3f051c8c680f285ff876fa3b5017ddbac90861312c",
+    "native-android/engine/entities/coh_costume.c": "2dd8878bee5d38f7baf4f3cfae66dfd559f6d02fe3e09d1ae91a409bb4972789",
+    "native-android/engine/entities/coh_taskforce.h": "0580284849d5027d27cb386ee17dc6ab27c7395c493863694bf799410755d73e",
+    "native-android/engine/entities/coh_taskforce.c": "341a9a36b3b0ab4441f7485119e8d059be0dee7a83777ef5abb2fc5814d10704",
+    "native-android/engine/entities/test_costume_cpp.cpp": "563c1910795af0174eaa30d4bdd1f3ac28ff81a725ff129efdd77ab340e4c426",
+    "native-android/engine/entities/check_cpp_link.py": "f128b621e178b14d19fd3881b4262f7199dcf746e819fee4253b5093c46595e9",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/entities/coh_entities.h": "e6e70345b23a2d3351cab47788e4d4f84a4f9dea3326a3b3fe00ad7d43ada52d",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/entities/qualification/power-custom-20261016/coh_costume-base.h": "e57791a875d3add9f7ac304209212e61c8a176496108a9a2cc11f7e7a5096e56",
+    "native-android/engine/entities/qualification/power-custom-20261016/host.json": "2337cad0f250aa59966680dd4c4b22f8450db5e91ba42c6bc95780eb69a90d6b"
+  },
+  "scope": "C++ linkage to separately C-compiled public APIs; no parser behavior change, Android execution or server acceptance"
+}

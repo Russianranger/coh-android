@@ -1,4 +1,5 @@
 #include "coh_costume.h"
+#include "coh_taskforce.h"
 /* C++ integration smoke: references every public costume/power API so missing
  * C linkage is caught at link time. Full parser behavior is tested in C99. */
 int main() {
@@ -10,5 +11,6 @@ int main() {
     if (coh_ent_custom_costume(nullptr, nullptr, nullptr) != COH_INVALID) return 4;
     if (coh_ent_costume_envelope(nullptr, nullptr, 0, 0, nullptr, nullptr, nullptr) != COH_INVALID) return 5;
     if (coh_ent_power_custom(nullptr, 0, nullptr, nullptr, nullptr) != COH_INVALID) return 6;
+    if (coh_ent_taskforce(nullptr, nullptr, 0, nullptr, nullptr, nullptr) != COH_INVALID) return 7;
     return 0;
 }

@@ -5,6 +5,12 @@ on:
     paths:
       - native-android/engine/scenecatalog/**
       - native-android/engine/scenecatalog-server/**
+      - '!native-android/engine/scenecatalog-server/capture_disposable.py'
+      - '!native-android/engine/scenecatalog-server/test_capture_disposable.py'
+      - '!native-android/engine/scenecatalog-server/build_path_probe.py'
+      - '!native-android/engine/scenecatalog-server/path_probe.c'
+      - '!native-android/engine/scenecatalog-server/HOSTED-CAPTURE.md'
+      - '!native-android/engine/scenecatalog-server/evidence/**'
       - native-android/engine/scenegraph/**
       - native-android/engine/entities/**
       - native-android/engine/replication/**

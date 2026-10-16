@@ -4,12 +4,13 @@
       "0cf7a45bd",
       "e2becd19c",
       "c305d55bd",
-      "b01db2e82772450379f28632a3a6468d2d7beeb4"
+      "b01db2e82772450379f28632a3a6468d2d7beeb4",
+      "edb7c1413b2eff4c8ac97d39775d7956de723305"
     ],
-    "status": "First disposable runtime attempt38939438638 failed DB readiness before MapServer; cleanup/source unchanged verified. Wine9.0 WindowsODBC mismatch identified. Version/driver preflight and bounded failure diagnostics23tests host-qualified; compatible pinned environment retry pending. No authentic catalog."
+    "status": "Second disposable runtime38943674136 reached real DB readiness and Atlas exporter hook; unchanged sink refused Z-root path before serialization. Private C-drive staging and unchanged-source PE32 WinAPI probe compile/source qualified with28 controls and independent review. Actual probe/capture pending; no authentic catalog."
   },
   "B": {
-    "status": "Dynamic graph124804checks Android13 qualified at2d94aad69; metadata extension failed combined rollbacktest on140ee Android. Test-only correction193219checks and controlledpaddingtest qualified; production unchanged; new Android gate pending. Asset generation mapping remains unavailable.",
+    "status": "Dynamic indexed graph and raw metadata193219checks passed host/sanitizers and Android13 x86_64 in38946462977. ARM64 built. Asset-generation model/GEO/trick/material resolution still incomplete; synthetic stress is not captured Atlas.",
     "commits": [
       "c147e36ac",
       "72b2518fb",
@@ -19,22 +20,26 @@
     ]
   },
   "C": {
-    "status": "Appearance envelope1083422checks Android13 executed at140ee. Power customization1142224checks host/source/sanitizer independently reviewed; C++linkage smoke passed. Complete initial record/global/character transaction still unavailable.",
+    "status": "Power/customization1142224checks passed Android13 x86_64 atfd86; ARM64 built. Titles1737939checks per host/sanitizer mode independently reproduced and reviewed; next Android gate pending. Taskforce prefix being developed separately. Complete initial record/character/global transaction and authoritative DBID publication still unavailable. Taskforce/architect standalone prefix now2065314checks per host/sanitizer mode, independently reviewed, awaiting Android; remaining very-rare prefix in development.",
     "commits": [
       "e5bb08d493c68f5faf80caf397aa25691d084502",
       "8c742201412316acd0fa0e325596fde676ca48bc",
       "8475ce3e5d641b393904dfdce61f4b486eca4a0e",
       "fe3cd7b52cde3ab029bec55a698f0d1348b35ed5",
       "35870d6f14fe388b8d51b3fcb496cfad77676bbd",
-      "4c1cd8153b32fafad6bc52a1e37188e5a4257316"
+      "4c1cd8153b32fafad6bc52a1e37188e5a4257316",
+      "294102f6750d41c35bfed0be61ba799f265448d0",
+      "f9e8df44c8946f95e0b87d377a60c64006437478",
+      "c0ac22609a8d0af440375d6062fd59c1a939ddae"
     ]
   },
   "D": {
-    "status": "Original unchangedAuthServer built onWindows in38943674226; unexecuted. ODBCharnesscompile failed beforeSQLcreation. Source-preservingloggerfix + exactpriorbinaryreuse30tests independently reviewed; realODBC/SQL/login remain unverified.",
+    "status": "Original AuthServer and checksum/ODBC executables built on Windows, original schema installed in isolated LocalDB38946462964; cleanup passed. ODBC execution stopped on sqlcmd metadata flag conflict. Corrected driver with exact prior binary reuse36tests and real-artifact independent review passed; fresh bindings/login remain unverified.",
     "commits": [
       "1286ec2cff8c1a420e92ba74f2ef0d56ced4e023",
       "81f0533da",
-      "c068e3321c2bb52c6b65686caceb0f5e0d02ae96"
+      "c068e3321c2bb52c6b65686caceb0f5e0d02ae96",
+      "ccc77e1e86f7be723ca5c9e391b76310df63234a"
     ]
   },
   "E": {
@@ -43,12 +48,13 @@
       "121400b57",
       "a23e693b7e34277009a1ef170c8332b824c94463",
       "afba82d12",
-      "b24874e6a"
+      "b24874e6a",
+      "2bde7b1b1"
     ],
-    "status": "16745host/source/sanitizerchecks and bothABIbuilds passed at140ee. Androidadapter notattempted because earliergraphsuitefailed. Coordinatorbatch nowattempts bothindependently; noJNIactivation."
+    "status": "Immutable adapter16745checks passed Android13 x86_64 in38946462977; both ABI builds and all five suite source/hash maps independently verified. Lifecycle/cleanup contract accepted only; no JNI activation, GLES server-world, Thor or real login acceptance."
   },
   "F": {
-    "status": "Startupreader/resource work qualified; noThor improvement. Reassignedexclusive new entity-control module667138checks release/ASan/UBSan,90originalproducerfixtures/280TEST_CLIENTconsumercomparisons, independentC/Breview. Android gate pending.",
+    "status": "Startup/resource work qualified with no measured Thor improvement. New isolated entity-control667138checks passed host/sanitizers and Android13 x86_64 atfd86; ARM64 built. Further exclusive character-data source grammar development underway; no protected module edits.",
     "commits": [
       "732f118cf",
       "c608ed770",

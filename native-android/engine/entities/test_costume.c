@@ -1,4 +1,5 @@
 #include "coh_costume.h"
+#include "coh_taskforce.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -137,7 +138,8 @@ static void fuzz(CohEntCostumeDictionary *d){
  bad(F(costume_bad_empty_cache##m),m,COH_INVALID,d);bad(F(costume_bad_hole##m),m,COH_NOT_FOUND,d);bad(F(costume_bad_index##m),m,COH_LIMIT,d);bad(F(costume_bad_long##m),m,COH_LIMIT,d); \
  bad(F(costume_bad_body##m),m,COH_LIMIT,d);bad(F(costume_bad_nan##m),m,COH_INVALID,d);bad(F(costume_bad_parts##m),m,COH_LIMIT,d);bad(F(costume_bad_color_cache##m),m,COH_INVALID,d);bad(F(costume_bad_color_hole##m),m,COH_NOT_FOUND,d); \
 }while(0)
+#include "test_taskforce.c.inc"
 void costume_run_tests(unsigned *allchecks,unsigned *alltruncations,unsigned *allrandomized){
-    CohEntCostumeDictionary *d=dictionary();MODE(0,d);MODE(1,d);fuzz(d);coh_ent_costume_dictionary_free(d);
+    CohEntCostumeDictionary *d=dictionary();MODE(0,d);MODE(1,d);fuzz(d);taskforce_run_tests(d);coh_ent_costume_dictionary_free(d);
     *allchecks+=checks;*alltruncations+=truncations;*allrandomized+=randomized;
 }

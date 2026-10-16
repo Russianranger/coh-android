@@ -202,6 +202,64 @@ class CaptureControls(unittest.TestCase):
         self.assertEqual(c.windows_path(self.root/'file'), 'Z:'+str(self.root/'file').replace('/', '\\'))
         with self.assertRaises(d.Refused): c.windows_path(self.root/'ads:stream')
 
+    def private_drive(self):
+        prefix = self.root/'wine-prefix'; prefix.mkdir()
+        drive = prefix/'drive_c'; drive.mkdir()
+        devices = prefix/'dosdevices'; devices.mkdir()
+        (devices/'c:').symlink_to('../drive_c', target_is_directory=True)
+        return prefix, drive
+
+    def test_capture_destination_is_private_c_drive_and_never_z(self):
+        _, drive = self.private_drive()
+        path, native = c.capture_destination(self.root)
+        self.assertEqual(path, drive/'coh-native-catalog'/'catalog.cohcat')
+        self.assertEqual(native, r'C:\coh-native-catalog\catalog.cohcat')
+        self.assertTrue(path.parent.is_dir())
+        self.assertEqual(path.parent.stat().st_mode & 0o777, 0o700)
+        self.assertFalse(path.exists())
+        with self.assertRaises(FileExistsError): c.capture_destination(self.root)
+
+    def test_capture_destination_rejects_redirected_drive(self):
+        prefix, drive = self.private_drive()
+        mapping = prefix/'dosdevices'/'c:'; mapping.unlink(); mapping.symlink_to(self.root)
+        with self.assertRaises(d.Refused): c.capture_destination(self.root)
+        self.assertFalse((drive/'coh-native-catalog').exists())
+
+    def test_capture_destination_rejects_linked_drive_directory(self):
+        prefix, drive = self.private_drive()
+        drive.rmdir(); drive.symlink_to(self.root)
+        with self.assertRaises(d.Refused): c.capture_destination(self.root)
+        self.assertFalse((self.root/'coh-native-catalog').exists())
+
+    def test_path_probe_extracts_exact_readonly_original_functions(self):
+        raw = (Path(c.__file__).parent/'source_sink.inc').read_bytes()
+        functions = c.path_probe_builder.original_path_functions(raw)
+        self.assertIn('coh_catalog_sink_path(', functions)
+        self.assertIn('COH_CATALOG_SINK_PATH_MAX 240u', functions)
+        self.assertEqual(functions.count('static int '), 2)
+        for forbidden in ('CreateFile', 'WriteFile', 'MoveFile', 'DeleteFile', 'coh_source_catalog_export'):
+            self.assertNotIn(forbidden, functions)
+        with self.assertRaises(d.Refused): c.path_probe_builder.original_path_functions(raw+b'\n')
+
+    def path_observation(self, admitted=True):
+        return dict(schema='coh-win32-catalog-path-v1',read_only=True,pointer_bits=32,admitted=admitted,
+                    root_attributes=16 if admitted else 1040,root_error=0,
+                    target_attributes=0xffffffff,target_error=2,
+                    parents=[dict(component_end=21,attributes=16,error=0)])
+
+    def test_path_probe_requires_positive_c_and_negative_root_reparse(self):
+        for admitted in (True, False):
+            value = self.path_observation(admitted)
+            self.assertEqual(c.validate_path_observation(json.dumps(value).encode(), admitted), value)
+        for key, bad in (('admitted',False),('read_only',False),('pointer_bits',64),('root_attributes',1040),
+                         ('root_error',5),('target_attributes',128),('target_error',3),('parents',[])):
+            value=self.path_observation();value[key]=bad
+            with self.subTest(field=key):
+                with self.assertRaises(d.Refused): c.validate_path_observation(json.dumps(value).encode(), True)
+        value=self.path_observation();value['parents'][0]['attributes']=1040
+        with self.assertRaises(d.Refused): c.validate_path_observation(json.dumps(value).encode(), True)
+        with self.assertRaises(d.Refused): c.validate_path_observation(b'{}', True)
+
 
 
 if __name__ == '__main__': unittest.main()

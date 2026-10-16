@@ -23,6 +23,7 @@ import sys
 import time
 import zipfile
 import delivery as d
+import build_path_probe as path_probe_builder
 
 ROOT = d.ROOT
 MAX_FILES, MAX_BYTES = 350000, 12 * 1024**3
@@ -32,6 +33,9 @@ EXPECTED = {'files': 508, 'active_roots': 33, 'definitions_crc': 3173822562,
 ODBC_SHA256 = '1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773'
 SOURCE_PATHS = ('native-android/engine/scenecatalog-server/capture_disposable.py',
                 'native-android/engine/scenecatalog-server/delivery.py',
+                'native-android/engine/scenecatalog-server/build_path_probe.py',
+                'native-android/engine/scenecatalog-server/path_probe.c',
+                'native-android/engine/scenecatalog-server/source_sink.inc',
                 'native-android/engine/scenecatalog/validate_file.c',
                 'native-android/engine/scenecatalog/coh_scenecatalog.c',
                 'native-android/engine/scenecatalog/coh_scenecatalog.h',
@@ -55,6 +59,48 @@ def windows_path(value):
     value = str(Path(value).resolve())
     d.require(value.startswith('/') and ':' not in value and '\\' not in value, 'WINDOWS_PATH')
     return 'Z:' + value.replace('/', '\\')
+
+
+def capture_destination(work):
+    """Keep the unchanged sink's no-reparse policy, including the drive root.
+
+    Wine marks Z:\\ (Unix filesystem root) as a mount-point reparse point.
+    C:\\ resolves to the ordinary directory in this invocation's fresh prefix.
+    """
+    prefix = work / 'wine-prefix'
+    drive = prefix / 'drive_c'
+    for path in (work, prefix, drive):
+        d.require(path.is_dir() and not path.is_symlink(), 'CAPTURE_DIRECTORY')
+    d.require(drive.resolve() == work.resolve()/'wine-prefix'/'drive_c', 'CAPTURE_DIRECTORY')
+    mapping = prefix/'dosdevices'/'c:'
+    d.require(mapping.is_symlink() and mapping.resolve() == drive.resolve(), 'CAPTURE_DRIVE_MAPPING')
+    current, parent = drive.stat(), prefix.stat()
+    d.require(current.st_dev == parent.st_dev and current.st_ino != parent.st_ino, 'CAPTURE_ROOT_MOUNT')
+    captures = drive / 'coh-native-catalog'
+    captures.mkdir(mode=0o700)
+    return captures/'catalog.cohcat', r'C:\coh-native-catalog\catalog.cohcat'
+
+
+def validate_path_observation(raw, admitted):
+    value = d.json_object(raw)
+    d.require(set(value) == {'schema','read_only','pointer_bits','admitted','root_attributes',
+                            'root_error','target_attributes','target_error','parents'} and
+              value['schema'] == 'coh-win32-catalog-path-v1' and value['read_only'] is True and
+              type(value['pointer_bits']) is int and value['pointer_bits'] == 32 and
+              value['admitted'] is admitted, 'PATH_PROBE_OBSERVATION')
+    for key in ('root_attributes','root_error','target_attributes','target_error'): d.uint(value[key])
+    d.require(value['root_attributes'] & 16 and value['root_error'] == 0 and
+              bool(value['root_attributes'] & 1024) is (not admitted) and
+              value['target_attributes'] == 0xffffffff and value['target_error'] == 2,
+              'PATH_PROBE_ATTRIBUTES')
+    d.require(type(value['parents']) is list and 1 <= len(value['parents']) <= 120, 'PATH_PROBE_PARENTS')
+    for row in value['parents']:
+        d.require(type(row) is dict and set(row) == {'component_end','attributes','error'}, 'PATH_PROBE_PARENTS')
+        for n in row.values(): d.uint(n)
+        d.require(3 < row['component_end'] <= 240 and row['attributes'] & 16 and row['error'] == 0,
+                  'PATH_PROBE_PARENTS')
+        if admitted: d.require(not row['attributes'] & 1024, 'PATH_PROBE_PARENTS')
+    return value
 
 
 def pins():
@@ -245,6 +291,18 @@ def capture(args):
               'CANDIDATE')
     validator = d.regular(args.native_validator)
     validator_identity = d.hash_file(validator, 16 * 1024**2)[1]
+    path_probe = d.regular(args.path_probe)
+    path_probe_size, path_probe_identity = d.hash_file(path_probe, 1024**2)
+    path_build = d.json_object(d.read(args.path_probe_receipt, d.JSON_MAX))
+    path_sources = {name:d.hash_file(Path(__file__).parent/name, 1024**2)[1]
+                    for name in ('build_path_probe.py','path_probe.c','source_sink.inc')}
+    d.require(path_build.get('schema') == 'coh-win32-catalog-path-build-v1' and
+              path_build.get('compiled') is True and path_build.get('read_only') is True and
+              path_build.get('source_sha256') == path_sources and
+              path_build.get('original_path_functions_sha256') == d.digest(path_probe_builder.original_path_functions(
+                  d.read(Path(__file__).parent/'source_sink.inc', 1024**2)).encode()) and
+              path_build.get('binary') == {'bytes':path_probe_size,'sha256':path_probe_identity,'machine':'I386','format':'PE32'},
+              'PATH_PROBE_IDENTITY')
     work, output = d.absent_directory(args.work), d.absent_directory(args.output)
     d.require(work != output and work not in output.parents and output not in work.parents and
               work not in source.parents and source not in work.parents and
@@ -259,6 +317,8 @@ def capture(args):
               'exporter_source_revision': d.SOURCE_REVISION,
               'orchestration_source_revision': source_revision, 'orchestration_source_tree': source_tree,
               'native_validator_sha256': validator_identity,
+              'path_probe_sha256': path_probe_identity,
+              'path_probe_build_receipt_sha256': d.hash_file(args.path_probe_receipt, d.JSON_MAX)[1],
               'generation': args.generation, 'control_fixture_sha256': d.hash_file(args.control_fixture, 8 * 1024**2)[1],
               'db_donor': inputs['donor_apk'], 'disposable_db_only': True,
               'player_profile_opened': False, 'accepted_runtime_modified': False,
@@ -280,16 +340,27 @@ def capture(args):
                                  stdout=out, stderr=err, start_new_session=True)
         children.append(child)
         return child, stdout, stderr
-    def run(label, command, cwd, env, timeout):
+    def run(label, command, cwd, env, timeout, expected=0):
         child, stdout, stderr = start(label, command, cwd, env)
         end = min(deadline, time.monotonic()+timeout)
         while child.poll() is None:
             health(); d.require(time.monotonic() < end, 'CHILD_TIMEOUT'); time.sleep(.2)
-        d.require(child.returncode == 0, 'CHILD_FAILED')
+        d.require(child.returncode == expected, 'CHILD_FAILED')
         return stdout, stderr
     try:
         out, err = run('wine-version', [args.wine, '--version'], work, os.environ.copy(), 15)
         report['wine_version'] = wine_version(d.read(out, 1024))
+        environment = {k: v for k, v in os.environ.items() if not k.startswith(('PG', 'COH_'))}
+        environment.update(WINEARCH='win32', WINEPREFIX=str(work / 'wine-prefix'), WINEDEBUG='-all',
+                           WINEDLLOVERRIDES='winemenubuilder.exe=d;mscoree=d;mshtml=d', TZ='UTC', LANG='C.UTF-8')
+        run('wineboot', [args.wine, 'wineboot', '--init'], work, environment, 180)
+        catalog, native_catalog_path = capture_destination(work)
+        report['capture_location'] = 'private_wine_c_drive'
+        for label, path, admitted in (('private-c', native_catalog_path, True), ('unix-root-z', windows_path(catalog), False)):
+            out, err = run('path-'+label, [args.wine, windows_path(path_probe), path], work, environment, 30,
+                           expected=0 if admitted else 2)
+            report['path_probe_'+label] = validate_path_observation(d.read(out, d.JSON_MAX), admitted)
+        d.require(d.hash_file(path_probe, 1024**2)[1] == path_probe_identity, 'PATH_PROBE_CHANGED')
         # Dereference into private files: native loader cannot write through to any input.
         runtime = work / 'map-runtime'
         report['source_runtime_inventory'] = inventory(source, runtime)
@@ -319,10 +390,6 @@ def capture(args):
             report['driver_probe'] = dict(probe_identity, exact_admitted_donor=True, rebuilt=False)
         d.require(d.digest(installer) == ODBC_SHA256, 'ODBC_IDENTITY')
         installer_path = work / 'psqlodbc_x86.msi'; installer_path.write_bytes(installer)
-        environment = {k: v for k, v in os.environ.items() if not k.startswith(('PG', 'COH_'))}
-        environment.update(WINEARCH='win32', WINEPREFIX=str(work / 'wine-prefix'), WINEDEBUG='-all',
-                           WINEDLLOVERRIDES='winemenubuilder.exe=d;mscoree=d;mshtml=d', TZ='UTC', LANG='C.UTF-8')
-        run('wineboot', [args.wine, 'wineboot', '--init'], work, environment, 180)
         run('odbc', [args.wine, 'msiexec', '/i', windows_path(installer_path), '/qn', '/norestart'], work, environment, 180)
         out, err = run('odbc-driver', [args.wine, windows_path(probe), '--odbc-driver'], work, environment, 60)
         validation = {'require': d.require, 're': re}
@@ -348,10 +415,8 @@ def capture(args):
                 break
             time.sleep(.2)
         report['db_schema'] = db.schema_snapshot(cluster, schema)
-        captures = work / 'captures'; captures.mkdir(mode=0o700)
-        catalog = captures / 'catalog.cohcat'
         map_env = dict(environment, COH_GAME_LOOPBACK_ONLY='1',
-                       COH_NATIVE_SCENE_CATALOG_OUTPUT=windows_path(catalog),
+                       COH_NATIVE_SCENE_CATALOG_OUTPUT=native_catalog_path,
                        COH_NATIVE_SCENE_CATALOG_GENERATION=str(args.generation))
         map_process, map_out, map_err = start('map', [args.wine, windows_path(executable),
             '-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0',
@@ -421,8 +486,9 @@ def capture(args):
         report['owned_process_groups_absent'] = all(process_group_absent(child) for child in children)
         cleanup.append(report['owned_process_groups_absent'])
         try:
-            report['source_runtime_unchanged'] = inventory(source) == report.get('source_runtime_inventory')
-            cleanup.append(report['source_runtime_unchanged'] and pins() == source_pins)
+            report['source_runtime_unchanged'] = (inventory(source) == report['source_runtime_inventory']
+                                                if 'source_runtime_inventory' in report else None)
+            cleanup.append(report['source_runtime_unchanged'] is not False and pins() == source_pins)
         except Exception: cleanup.append(False)
         report['cleanup_verified'] = all(cleanup) and bool(cleanup)
         report['passed'] = report['passed'] and report['cleanup_verified']
@@ -445,7 +511,7 @@ def capture(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('runtime', 'control-fixture', 'db-donor-apk', 'candidate-directory',
-                 'native-validator', 'pg-bin', 'work', 'output'):
+                 'native-validator', 'path-probe', 'path-probe-receipt', 'pg-bin', 'work', 'output'):
         parser.add_argument('--'+name, type=Path, required=True)
     parser.add_argument('--generation', type=int, required=True)
     parser.add_argument('--timeout-seconds', type=int, default=2400)

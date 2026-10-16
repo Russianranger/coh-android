@@ -1,0 +1,26 @@
+{
+  "actual_wine_winapi_executed": false,
+  "android_rebuild_required": false,
+  "authentic_catalog_captured": false,
+  "evidence": {
+    "WINE-LGPL-2.1.txt": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551",
+    "host-controls.log": "1a5189041d17d65bacbf3d8f6ac8af2e0a0a82cb15f3f4b075a334c9459d31e5",
+    "packages.json": "fb04b60c5a61fcc5232d36e51e5c87782e8f731f162b254c807a6c5ed77a413b",
+    "path-probe-build.json": "e2da066ef8f65ea28e8aca0b71e15849636cf7b02cad2f9cedcddf8870b9e170",
+    "wine10-source-control.c": "51a7caef87fa437f9920709c43089b1ac5d7051cd7138cbc600a37292a96292b",
+    "wine10-source-control.log": "aa26b2cd39f35bb6a76542fe0608d0730957d1faeebaf9cae1f6fb78fa9190de",
+    "wine10-source-provenance.json": "0f6f8e94b3daad39a2b305c5ec67f604f180ad2464668080b91bec723c49025c"
+  },
+  "host_controls_passed": true,
+  "host_test_count": 28,
+  "pe32_compiled": true,
+  "schema": "coh-catalog-path-probe-qualification-v1",
+  "sources": {
+    "build_path_probe.py": "ed5b983f7df0026874db3218fceb1c5a990b5204571bdc4182e1ea62b3b3834e",
+    "capture_disposable.py": "cc714446fff59e712970bd4b0c4247715d837b18be4d559fbc8017a98a807d00",
+    "path_probe.c": "b5c5f0c6fa4e166ef7319b0f16e18ad64881b16e5914d93f1f146f51566e7829",
+    "source_sink.inc": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d",
+    "test_capture_disposable.py": "c2d745cedd848429c30931e295d027dc75576870e6d1c71252294d6c58549c51"
+  },
+  "unchanged_mapserver_sha256": "f96f5d51467083a58523187760458ad77e6a48d7b696b0d090aafa8e94e95f39"
+}

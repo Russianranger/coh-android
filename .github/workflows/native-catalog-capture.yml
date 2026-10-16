@@ -6,6 +6,8 @@ on:
       - .github/workflows/native-catalog-capture.yml
       - native-android/engine/scenecatalog-server/capture_disposable.py
       - native-android/engine/scenecatalog-server/test_capture_disposable.py
+      - native-android/engine/scenecatalog-server/build_path_probe.py
+      - native-android/engine/scenecatalog-server/path_probe.c
       - native-android/engine/scenecatalog/validate_file.c
       - native-android/engine/scenecatalog/check_file.py
   workflow_dispatch:
@@ -45,7 +47,7 @@ jobs:
           python3 -c "import shutil; assert shutil.disk_usage('.').free >= 30*1024**3"
           sudo dpkg --add-architecture i386
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends ca-certificates gnupg xvfb xauth postgresql-16 postgresql-client-16 gcc zlib1g-dev
+          sudo apt-get install -y --no-install-recommends ca-certificates gnupg xvfb xauth postgresql-16 postgresql-client-16 gcc gcc-mingw-w64-i686 zlib1g-dev
       - name: Install exact classic Win32 Wine with native Windows ODBC support
         run: |
           mkdir -p out/catalog-inputs/wine-packages out/catalog-evidence/wine
@@ -89,7 +91,8 @@ jobs:
           python3 tools/android/interactive/build_client_manual_session_apk.py download-donor --output out/catalog-inputs/db-donor.apk
       - name: Build and bind the off-device catalog validator to exact source
         run: |
-          python3 native-android/engine/scenecatalog/check_file.py --source-root . --output out/catalog-evidence/validator-qualification.json --binary out/catalog-inputs/catalog-validator --sanitize
+          python3 native-android/engine/scenecatalog/check_file.py --source-root . --output out/catalog-evidence/validator-qualification.json --binary out/catalog-evidence/catalog-validator --sanitize
+          python3 native-android/engine/scenecatalog-server/build_path_probe.py --binary out/catalog-evidence/catalog-path-probe.exe --output out/catalog-evidence/path-probe-build.json
       - name: Execute one isolated normal Atlas startup and capture original saved definitions
         run: |
           df -h . /tmp
@@ -97,7 +100,8 @@ jobs:
           xvfb-run -a python3 native-android/engine/scenecatalog-server/capture_disposable.py \
             --runtime "$catalog_runtime" --control-fixture out/catalog-control/control-fixture.json \
             --db-donor-apk out/catalog-inputs/db-donor.apk --candidate-directory out/catalog-candidate \
-            --native-validator out/catalog-inputs/catalog-validator --pg-bin /usr/lib/postgresql/16/bin \
+            --native-validator out/catalog-evidence/catalog-validator --pg-bin /usr/lib/postgresql/16/bin \
+            --path-probe out/catalog-evidence/catalog-path-probe.exe --path-probe-receipt out/catalog-evidence/path-probe-build.json \
             --wine /opt/wine-stable/bin/wine --wineserver /opt/wine-stable/bin/wineserver \
             --work /tmp/coh-catalog-capture --output out/catalog-evidence/capture --generation 20261016 --timeout-seconds 2400
       - name: Preserve capture input provenance separately from runtime acceptance

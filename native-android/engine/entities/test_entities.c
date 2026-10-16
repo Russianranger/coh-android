@@ -183,6 +183,8 @@ static void fuzz(void){
         if(status!=COH_OK){same_reader(&r,&oldr);CHECK(!memcmp(&stats,&oldstats,sizeof(stats)));CHECK(d.bit<=bits);}else CHECK(r.cursor<=bits);
         r=oldr;CohEntNetFxList effects={0},oldeffects=effects;status=coh_ent_netfx(&r,&effects,&d);
         if(status!=COH_OK){same_reader(&r,&oldr);CHECK(!memcmp(&effects,&oldeffects,sizeof(effects)));CHECK(d.bit<=bits);}else CHECK(r.cursor<=bits);
+        r=oldr;CohRepReader title_reader;memcpy(&title_reader,&r,sizeof(r));CohEntTitles titles={0},oldtitles;memcpy(&oldtitles,&titles,sizeof(titles));status=coh_ent_titles(&r,100,&titles,&d);
+        if(status!=COH_OK){same_reader(&r,&title_reader);CHECK(!memcmp(&titles,&oldtitles,sizeof(titles)));CHECK(d.bit<=bits);}else CHECK(r.cursor<=bits);
         r=oldr;CohEntDeletes deletes={0},olddeletes=deletes;status=coh_ent_deletes(&r,&deletes,&d);
         if(status!=COH_OK){same_reader(&r,&oldr);CHECK(!memcmp(&deletes,&olddeletes,sizeof(deletes)));CHECK(d.bit<=bits);}else CHECK(r.cursor<=bits);
         r=oldr;CohEntSlot slots[4],previous[4];list_slots(slots);memcpy(previous,slots,sizeof(slots));CohEntList list={0},oldlist=list;
@@ -336,10 +338,11 @@ static void expanded_record(Fixture f,unsigned mode,unsigned type){
     list_bad(F(list_capacity_missing##m),m,COH_NOT_FOUND,COH_ENT_STAGE_LIST); \
     list_bad(F(list_late_unsupported##m),m,COH_UNSUPPORTED,COH_ENT_STAGE_APPEARANCE); \
 }while(0)
+#include "test_titles.c.inc"
 void costume_run_tests(unsigned *,unsigned *,unsigned *);
 int main(void){
     costume_run_tests(&checks,&truncations,&randomized);
-    RUN_MODE(0);RUN_MODE(1);fuzz();
+    RUN_MODE(0);RUN_MODE(1);titles_run_tests();fuzz();
     CohRepReader r=reader(F(end0),0),oldr=r;CohEntFailure d;
     CHECK(coh_ent_full_update_tail(&r,&d)==COH_UNSUPPORTED);CHECK(d.stage==COH_ENT_STAGE_FULL_UPDATE_TAIL&&d.bit==0);same_reader(&r,&oldr);
     CohEntSlot invalid;CohEntRecord rec;coh_ent_slot_init(&invalid,4);invalid.position.packed[0]=0x80000000u;

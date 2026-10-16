@@ -1,0 +1,30 @@
+{
+  "binary": {
+    "bytes": 240430,
+    "format": "PE32",
+    "machine": "I386",
+    "sha256": "7fa4b9e28c5e0001453e78a2cbd8695caf0683364883e5b8c1c0e069685ff6cf"
+  },
+  "command": [
+    "/workspace/scratch/78494e933b7f/catalog-mingw/root/usr/bin/i686-w64-mingw32-gcc-posix",
+    "-std=c99",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-I/tmp/coh-path-probe-oecadbox",
+    "/workspace/scratch/78494e933b7f/worker-a/native-android/engine/scenecatalog-server/path_probe.c",
+    "-o",
+    "/tmp/coh-path-probe-oecadbox/catalog-path-probe.exe"
+  ],
+  "compiled": true,
+  "original_path_functions_sha256": "e979100939cf86997b03f56d7fbf47926b4697fe0a59be2d334845a4ab31d099",
+  "read_only": true,
+  "runtime_executed": false,
+  "schema": "coh-win32-catalog-path-build-v1",
+  "source_sha256": {
+    "build_path_probe.py": "ed5b983f7df0026874db3218fceb1c5a990b5204571bdc4182e1ea62b3b3834e",
+    "path_probe.c": "b5c5f0c6fa4e166ef7319b0f16e18ad64881b16e5914d93f1f146f51566e7829",
+    "source_sink.inc": "7bbaeaa669e652fea58e926250cff19a6c6eec5f234599842ffc9ae41c623f2d"
+  }
+}

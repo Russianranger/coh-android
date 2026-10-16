@@ -7,6 +7,8 @@ on:
       - native-android/engine/entities/**
       - native-android/engine/entity-control/**
       - native-android/engine/auth-interop/**
+      - '!native-android/engine/auth-interop/deployment/**'
+      - '!native-android/engine/auth-interop/evidence/**'
       - native-android/engine/continuation/**
       - native-android/engine/world-render-adapter/**
       - .github/workflows/native-primary-continuation.yml

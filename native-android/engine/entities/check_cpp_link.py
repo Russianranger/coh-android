@@ -35,14 +35,14 @@ def main():
             preprocessed.append(run([cc, '-std=c99', '-E', '-P', '-I'+str(HERE), folder/'coh_costume.c']))
         assert preprocessed[0] == preprocessed[1], 'C preprocessing differs from qualified base'
         objects = []
-        for source in [HERE/'coh_costume.c', HERE/'../replication/coh_replication.c']:
+        for source in [HERE/'coh_costume.c', HERE/'coh_taskforce.c', HERE/'../replication/coh_replication.c']:
             obj = directory/(source.stem+'.o')
             run([cc, '-std=c99', '-O2', '-Wall', '-Wextra', '-Werror', '-pedantic', '-c', source, '-o', obj])
             objects.append(obj)
         binary = directory/'cpp-link'
         run([cxx, '-std=c++11', '-Wall', '-Wextra', '-Werror', '-pedantic', HERE/'test_costume_cpp.cpp', *objects, '-lm', '-o', binary])
         run([binary])
-        files = ['coh_costume.h', 'coh_costume.c', 'test_costume_cpp.cpp', 'check_cpp_link.py', '../replication/coh_replication.c', '../replication/coh_replication.h', 'coh_entities.h', '../coh_contracts.h', 'qualification/power-custom-20261016/coh_costume-base.h', 'qualification/power-custom-20261016/host.json']
+        files = ['coh_costume.h', 'coh_costume.c', 'coh_taskforce.h', 'coh_taskforce.c', 'test_costume_cpp.cpp', 'check_cpp_link.py', '../replication/coh_replication.c', '../replication/coh_replication.h', 'coh_entities.h', '../coh_contracts.h', 'qualification/power-custom-20261016/coh_costume-base.h', 'qualification/power-custom-20261016/host.json']
         receipt = dict(passed=True, base=BASE, unchanged_c_preprocessing=True,
                        c_preprocessed_sha256=sha(preprocessed[0].encode()),
                        binary_sha256=sha(binary.read_bytes()),

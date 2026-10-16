@@ -1,0 +1,18 @@
+{
+  "scope": "independent_standalone_driver_outcomes",
+  "passed": true,
+  "suites": {
+    "protocol": {
+      "driver_attempted": true,
+      "driver_exit_code": 0,
+      "receipt": "receipt.json"
+    },
+    "world-adapter": {
+      "driver_attempted": true,
+      "driver_exit_code": 0,
+      "receipt": "world-adapter/receipt.json"
+    }
+  },
+  "physical_thor_accepted": false,
+  "actual_server_interoperability_verified": false
+}

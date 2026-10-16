@@ -1,0 +1,15 @@
+{
+  "coordinator_head": "8773353454daa43f0780d0d3c4e1dcb02f364e3d",
+  "worker_tips": [
+    "c0ac22609a8d0af440375d6062fd59c1a939ddae",
+    "8e19b9e1316b75af00ff88a993f63f464fe0df99"
+  ],
+  "prerequisites": [
+    "b764d79e921851982263426e3d46df23680f72b1",
+    "f9e8df44c8946f95e0b87d377a60c64006437478",
+    "2bde7b1b1691045a4867b794af6ac8d53e58ce7a"
+  ],
+  "bundle_bytes": 60676,
+  "all_worker_tips_verified": true,
+  "sha256": "bb1ca5a2ff0beb6c4bcfe7922ac455b0dfaa294c695b4870131e658ee89b4b88"
+}

@@ -38,6 +38,28 @@ static CohStatus check_reader(CohRepReader *r) {
     return coh_rep_read(&copy,0,&unused);
 }
 
+CohStatus coh_ent_titles(CohRepReader *r,uint32_t packet_id,CohEntTitles *out,CohEntFailure *failure){
+    Parse p;CohEntTitles next={0};uint32_t present;
+    if(check_reader(r)!=COH_OK||!out||!packet_id||out->valid>1)return COH_INVALID;
+    p=(Parse){*r,COH_ENT_STAGE_TITLES,COH_OK};present=flag(&p);
+    if(present){
+        next.valid=1;next.packet_id=packet_id;
+        string(&p,next.name,sizeof(next.name));next.title_the=pack(&p,5);
+        if(flag(&p))string(&p,next.the_text,sizeof(next.the_text));
+        if(flag(&p))string(&p,next.common,sizeof(next.common));
+        if(flag(&p))string(&p,next.origin,sizeof(next.origin));
+        next.colors[0]=auto_bits(&p);next.colors[1]=auto_bits(&p);next.badge=scalar(&p,32);
+        if(flag(&p))string(&p,next.special,sizeof(next.special));
+        next.glowie_unlocked=flag(&p);next.gender=scalar(&p,2);next.name_gender=scalar(&p,2);
+        next.attach_article=flag(&p);next.respec_tokens=scalar(&p,32);
+        next.turnstile_event=scalar(&p,32);next.turnstile_mission=scalar(&p,32);
+        next.helper_status=auto_bits(&p);
+    }
+    if(p.status!=COH_OK)return fail(&p,failure);
+    if(present&&(!out->valid||packet_id>=out->packet_id))*out=next;
+    *r=p.r;clear_failure(failure);return COH_OK;
+}
+
 CohStatus coh_ent_next_index(CohRepReader *r,int32_t previous,uint32_t *out,CohEntFailure *failure){
     Parse p;uint32_t delta,index;
     if(check_reader(r)!=COH_OK||!out||previous < -1||previous>(int32_t)COH_ENT_INDEX_MAX)return COH_INVALID;

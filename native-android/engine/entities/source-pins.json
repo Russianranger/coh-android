@@ -31,6 +31,8 @@
     "Common/gameData/BodyPart.c": "ae27506a8f5ceec5c1f89ed0bd37379b74a27c8f932a512c7731826ec6846d24",
     "libs/UtilitiesLib/src/utils/mathutil.c": "77f4468858066f854d060338dae41c31e44a7318fad363baae9b28b98b36cb1f",
     "Common/entity/power_customization.c": "7cad6c8e8184fc45b2457b35da0cc71a3fbb47c92ba003954cb423816baf8883",
-    "Common/entity/power_customization.h": "f8b5ffca5740b9dbc7e2359d6bbaec9802b5ed39951c31d998ae2baea780be62"
+    "Common/entity/power_customization.h": "f8b5ffca5740b9dbc7e2359d6bbaec9802b5ed39951c31d998ae2baea780be62",
+    "Common/entity/teamCommon.h": "db0018467ae696e3cd6f6b4183e932560cc427f812850331b69987cda740a0fc",
+    "Common/entity/TaskforceParams.c": "ca5a9331764db9a7d5c5af4738f7ad429f5629cbc3fcd71f30c00b00723d93a1"
   }
 }

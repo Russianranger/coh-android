@@ -6,7 +6,10 @@ but there is no currently recoverable AuthServer binary artifact from that run.
 This candidate builds it again without changing any accepted APK or server.
 The first hosted attempt built original AuthServer successfully, then stopped at
 an ODBC harness compile error. No LocalDB instance was created or attempted.
-The corrected ODBC harness is **not yet Windows compiled or ODBC qualified**.
+The corrected ODBC harness subsequently compiled, and both x86 checksum-policy
+executables passed. The second attempt loaded original SQL and its fixture but
+stopped at incompatible metadata-output flags before ODBC execution. The ODBC
+harness is **Windows compiled, not yet ODBC runtime qualified**.
 Linux qualification covers source extraction, admission and checksum policy
 controls only. The stage does not start AuthServer or attempt a real login.
 
@@ -64,6 +67,39 @@ It copies and rehashes those inputs before use and skips original AuthServer
 configuration and compilation entirely. It inherits no SQL, AuthServer execution,
 login or handoff qualification from the failed overall stage. The corrected
 controls and disposable SQL stage still must execute independently.
+
+## Second attempt and exact control reuse
+
+[Run 38946462964](https://github.com/Russianranger/coh-android/actions/runs/38946462964)
+at `fd86ff196f172bf62cd24c7e0f807df39c33e0a5` reused the original AuthServer
+without rebuilding it. All three controls compiled as Win32 PE32. Original and
+corrected checksum-policy executables each passed 135 checks. SQL LocalDB
+`17.0.4025.3` Express created a new private instance, loaded the unchanged original
+schema and fixture, then sqlcmd rejected mutually exclusive `-h` and `-y 0`
+metadata-output flags. The correction removes `-h -1`; the raw diagnostic output
+may retain headers. Original ODBC did not execute. Database drop, instance stop
+and instance deletion all completed successfully. Source remained unchanged.
+
+The [retained artifact 12066431903](https://github.com/Russianranger/coh-android/actions/runs/38946462964/artifacts/12066431903)
+is 646,099 bytes, ZIP SHA256
+`c6949ac8c534ff82a3260ab9ed385dc0a34f9d4ff8b8ec9a761cfd04a65d47c3`.
+The receipt and relevant logs are under
+`../evidence/hosted-sql-metadata-38946462964/`. Preserve the original AuthServer
+reuse argument above and append this independent control-artifact directory:
+
+```powershell
+--reuse-controls-stage "$env:RUNNER_TEMP/auth-controls-reuse"
+```
+
+The coordinator verifies that outer archive before extraction. Admission binds
+the exact compiled binaries, prior receipt and successful configure/build logs,
+requires the same original source subtree, and compares newly generated control
+sources and fixture to the retained files (only LF/CRLF normalization is allowed).
+Copies are rehashed, controls are not rebuilt, and both policies execute again.
+The actual ODBC executable SHA256 is
+`6d5c93e5f6c81c40c060df21887791d0a41799f093769273e387293fbe3ebc86`;
+it will run against a newly created disposable SQL instance. No ODBC or real-login
+qualification is inherited from the prior failed overall stage.
 
 ## Run contract for coordinator-owned CI
 

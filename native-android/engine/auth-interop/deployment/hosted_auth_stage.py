@@ -123,6 +123,70 @@ def admit_original_reuse(directory, current_original_tree):
             'real_account_login_verified': False}
 
 
+def admit_control_reuse(directory, generated, current_original_tree):
+    """Bind exact compiled controls, then execute them afresh in this stage."""
+    pins = json.loads((HERE / 'control-build-reuse-pins.json').read_text())
+    if current_original_tree != ORIGINAL_TREE or pins['original_source_tree'] != current_original_tree:
+        raise ValueError('reused_control_source_tree_mismatch')
+    for name, expected in pins['files'].items():
+        file = directory / name
+        if (file.is_symlink() or not file.is_file() or file.stat().st_size != expected['bytes']
+                or expected['bytes'] > LOG_LIMIT or sha(file) != expected['sha256']):
+            raise ValueError('reused_control_file_identity_mismatch')
+    # Generated source is normalized only for the platform's LF/CRLF writing.
+    # Exact retained bytes remain independently pinned above.
+    for name in pins['generated_sources']:
+        if (generated / name).read_text(encoding='utf-8') != (directory / name).read_text(encoding='utf-8'):
+            raise ValueError('reused_control_generated_source_mismatch')
+    receipt = json.loads((directory / 'receipt.json').read_text())
+    if (receipt.get('schema') != 'coh-hosted-auth-stage-v1'
+            or receipt.get('repository_commit') != pins['repository_commit']
+            or receipt.get('original_source_tree') != current_original_tree
+            or receipt.get('source_inputs_unchanged') is not True or receipt.get('passed') is not False
+            or receipt.get('failure') != 'stage_command_failed_schema-metadata'
+            or receipt.get('owned_localdb_cleanup_complete') is not True
+            or any(receipt.get(key) is not False for key in ('original_authserver_started', 'patched_dbserver_built',
+                    'real_account_login_verified', 'authenticated_db_map_handoff_verified', 'native_live_world',
+                    'physical_thor_accepted'))):
+        raise ValueError('reused_control_receipt_scope_mismatch')
+    for name in ('configure-controls', 'build-controls'):
+        records = [row for row in receipt.get('commands', []) if row.get('name') == name]
+        if (len(records) != 1 or type(records[0].get('returncode')) is not int or records[0]['returncode'] != 0
+                or records[0].get('log_sha256') != pins['files'][name + '.log']['sha256']
+                or records[0].get('log_truncated') is not False):
+            raise ValueError('reused_control_target_not_qualified')
+    binaries = {}
+    for name in ('original-policy', 'candidate-policy', 'original-odbc'):
+        binaries[name] = pe_identity(directory / (name + '.exe'), 3)
+        expected = dict(receipt.get('control_executions', {}).get(name, {}))
+        if name != 'original-odbc':
+            result = expected.pop('result', {})
+            if (expected.get('executed') is not True or result.get('passed') is not True
+                    or result.get('checks') != 135 or result.get('network_execution') is not False
+                    or result.get('real_account_login_verified') is not False):
+                raise ValueError('reused_control_execution_scope_mismatch')
+            expected['executed'] = False
+        if expected != binaries[name]:
+            raise ValueError('reused_control_binary_receipt_mismatch')
+    return {'run_id': pins['run_id'], 'artifact_id': pins['artifact_id'], 'archive_sha256': pins['archive_sha256'],
+            'original_repository_commit': pins['repository_commit'], 'original_source_tree': current_original_tree,
+            'files': pins['files'], 'binaries': binaries, 'rebuilt': False,
+            'scope': 'Exact compiled controls; execute anew. Prior stage did not execute ODBC.',
+            'odbc_qualification_inherited': False, 'real_account_login_verified': False}
+
+
+def materialize_control(binary, output, name):
+    """Use one verified, conventional output path for fresh and reused controls."""
+    if name not in ('original-policy', 'candidate-policy', 'original-odbc'):
+        raise ValueError('unknown_control_name')
+    identity = pe_identity(binary, 3)
+    destination = output / (name + '.exe')
+    shutil.copy2(binary, destination)
+    if pe_identity(destination, 3) != identity:
+        raise ValueError('control_changed_during_copy')
+    return destination
+
+
 class Commands:
     def __init__(self, output):
         self.output, self.records = output, []
@@ -197,6 +261,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--reuse-auth-stage', type=Path,
                         help='Extracted exact pinned run38943674226 artifact12064402579; never rebuild original target')
+    parser.add_argument('--reuse-controls-stage', type=Path,
+                        help='Extracted exact pinned run38946462964 artifact12066431903; never rebuild unchanged controls')
     args = parser.parse_args()
     root, output = args.source_root.resolve(), args.output.resolve()
     identity = require_hosted(root, output, args.expected_commit)
@@ -274,13 +340,23 @@ def main():
                 'add_executable(original-odbc original-odbc.cpp)\ntarget_link_libraries(original-odbc PRIVATE odbc32)\n'
                 f'target_include_directories(original-odbc PRIVATE "{auth_include}")\n')
             hb = temporary / 'harness-build'
-            runner.run('configure-controls', ['cmake', '-S', harness, '-B', hb, '-G', 'Visual Studio 18 2026', '-A', 'Win32'], timeout=180)
-            runner.run('build-controls', ['cmake', '--build', hb, '--config', 'Release', '--parallel', '2'], timeout=180)
+            if args.reuse_controls_stage:
+                reused_controls = admit_control_reuse(args.reuse_controls_stage.resolve(), harness, identity['original_source_tree'])
+                for name, expected in reused_controls['files'].items():
+                    destination = output / ('reused-controls-receipt.json' if name == 'receipt.json' else 'reused-controls-' + name)
+                    shutil.copy2(args.reuse_controls_stage / name, destination)
+                    if destination.stat().st_size != expected['bytes'] or sha(destination) != expected['sha256']:
+                        raise ValueError('reused_control_changed_during_copy')
+                proof['control_build_reuse'] = reused_controls
+            else:
+                runner.run('configure-controls', ['cmake', '-S', harness, '-B', hb, '-G', 'Visual Studio 18 2026', '-A', 'Win32'], timeout=180)
+                runner.run('build-controls', ['cmake', '--build', hb, '--config', 'Release', '--parallel', '2'], timeout=180)
             proof['control_executions'] = {}
             for name in ('original-policy', 'candidate-policy', 'original-odbc'):
-                binary = hb / 'Release' / (name + '.exe')
+                binary = (output / ('reused-controls-' + name + '.exe') if args.reuse_controls_stage
+                          else hb / 'Release' / (name + '.exe'))
+                binary = materialize_control(binary, output, name)
                 proof['control_executions'][name] = pe_identity(binary, 3)
-                shutil.copy2(binary, output / binary.name)
                 if name != 'original-odbc':
                     runner.run(name, [binary], timeout=30)
                     record = json.loads((output / (name + '.log')).read_text())
@@ -305,8 +381,8 @@ def main():
             runner.run('binding-fixture', [*sql, '-i', harness / 'odbc-fixture.sql'], timeout=150)
             # Raw metadata stays diagnostic; known conversion differences remain
             # refused by admit_schema.py until independent results are reviewed.
-            runner.run('schema-metadata', [*sql, '-d', 'cohauth', '-i', HERE / 'inspect_schema.sql', '-h', '-1', '-y', '0', '-w', '65535'], timeout=150)
-            runner.run('original-odbc', [hb / 'Release/original-odbc.exe', instance, driver], timeout=120, allowed=(0, 1, 3))
+            runner.run('schema-metadata', [*sql, '-d', 'cohauth', '-i', HERE / 'inspect_schema.sql', '-y', '0', '-w', '65535'], timeout=150)
+            runner.run('original-odbc', [output / 'original-odbc.exe', instance, driver], timeout=120, allowed=(0, 1, 3))
             record = json.loads((output / 'original-odbc.log').read_text())
             proof['control_executions']['original-odbc'].update(executed=True, result=record)
             if record.get('passed') is not True:

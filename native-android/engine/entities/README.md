@@ -20,6 +20,8 @@ Gates 25–27 remain open.
 | `coh_ent_custom_costume` | Complete pinned raw `NPCcostume_receive` custom color body; standalone and reused by the appearance envelope, outside entity record integration |
 | `coh_ent_costume_envelope` | Standalone complete pinned appearance wire envelope: self rewards, full/single/multiple/deferred, supergroup, FX, NPC/custom fallthrough, owned and sequence variants; not yet composed into entity records |
 | `coh_ent_power_custom` | Standalone complete pinned power-customization wire envelope and lists: self/other/owned, slot metadata, raw power CRC/color/token events; no power dictionary or entity-record admission |
+| `coh_ent_titles` | Standalone complete title/name/player-metadata update, bounded original string sizes and exact stale/equal packet behavior; not yet composed into entity records |
+| `coh_ent_taskforce` | Complete bounded consecutive selected-self architect and taskforce-parameter substructures, optional contact costume reuse, raw time deltas and retain/clear event flags; no taskforce state application or record admission |
 | `coh_ent_character_stats` | Complete pinned basic/self absolute non-debug stat schemas: current/max attributes, levels, XP/debt/rest/influence, per-scalar packet ordering |
 | `coh_ent_netfx` | Complete bounded original NetFX grammar, including entity/position origins and targets; unresolved events only |
 | `coh_ent_target` | Target, assist, taunter, self clear-target and bounded placater list |
@@ -92,6 +94,11 @@ unspecified and must never be published. On the current 64-bit ABI:
 - `CohEntCostumeEnvelope`: 692,064 bytes; separate workspace: 772,984 bytes.
 - `CohEntPowerCustomEnvelope` and workspace: 1,114,392 bytes each; at most 512
   items per list and 4,096 across ten lists. See `POWER_CUSTOM_CONTRACT.md`.
+- `CohEntTitles`: 388 bytes, including a single bounded local candidate during
+  parsing; not embedded into every existing entity slot. See `TITLES_CONTRACT.md`.
+- `CohEntTaskforce`: 70,632 bytes; off-stack workspace: 151,552 bytes. One prior
+  event, candidate event and workspace total 292,816 bytes before shared costume
+  dictionaries/other session data. See `TASKFORCE_CONTRACT.md`.
 - Immutable costume dictionary: at most 4,194,304 bytes, including slot tables,
   palette, strings and owner metadata. A generation swap retaining the old owner
   may temporarily require two dictionaries; see `COSTUME_IMPORT_CONTRACT.md`.
@@ -118,7 +125,7 @@ state together through `coh_ent_slot_init`.
 
 ## Source oracles and evidence
 
-`check.py` pins 31 original files imported at
+`check.py` pins 33 original files imported at
 `0b75ade0c801735e10c5798f641948a45cc50488`. It compiles unchanged original BitStream
 functions, create/pet/position/quaternion/sequence/AI/delete/costume/target and
 inventory producers. Exact original `ParserSend`, `sdPackStruct`, scalar/struct
@@ -146,6 +153,15 @@ producers/consumers. Complete supported record/list fixtures compose original
 components plus audited outer flags; they do not execute complete original
 `sendEntity`, `entSendUpdate` or a MapServer. No synthetic fixture is actual
 server traffic.
+
+The title oracle extracts the unchanged `if(e->pl)` title statement block from
+the very-rare section of `sendEntity`; it **does not execute complete
+`sendEntity`**. The complete unchanged `entReceiveTitles` consumer executes
+against array-backed fixture entity/player storage. Both source fragment hashes
+and scope are recorded separately. Packet string and storage adapters are
+explicit; the source bit writer/reader and automatic integer functions execute
+unchanged. This compares all fields over 54 producer fixtures and 162
+fresh/equal/stale consumer applications. See `TITLES_CONTRACT.md`.
 
 Original power-customization list/envelope producers and consumers, sort
 comparator, auto-sized packet functions and actual slot-count function also

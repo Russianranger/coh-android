@@ -199,3 +199,57 @@ material generations and bounds provenance. The existing rigid bridge only
 supports v0/v7, while existing offline metadata includes v8 assets. No guessing
 of geometry paths or unsupported material semantics is permitted. These remain
 independent blockers to genuine rendered server world entry.
+
+
+## Android contract milestone and independently staged retries
+
+The actual remote source before this integration is fd86ff196f172bf62cd24c7e0f807df39c33e0a5,
+tree645c6741a1cd2e95a3da4778fe7c770fc08d4ea6. Both native qualification runs
+38946462977 and38946463029 succeeded. The first independently verifies Android13
+x86_64 graph193219, entities1142224, entity-control667138, auth2147 and adapter16745
+checks matching sanitized hosts, both ABI binary identities, source maps and clean
+resource teardown. ARM64 is build-qualified only. Adapter evidence is retained
+under engine/world-render-adapter/qualification/android13-fd86ff196. No APK was
+built, no physical gate advanced and no live scene or actor was published.
+
+This integration adds independently reviewed title metadata contracts:1737939
+checks per release/ASan/UBSan run,360725 truncations,54 original title fixtures and
+162 fresh/equal/stale cases. The exact sender block and complete original title
+consumer execute; the complete entity producer/transaction does not. Padding-safe
+rollback tests change no parser behavior. Source admission now includes all three
+title oracle files. Taskforce and character-data work remain separate candidates.
+
+The next catalog run uses a fresh private C:\coh-native-catalog destination and
+read-only PE32 path probe before copying the runtime or starting DB/MapServer.
+The probe extracts hash-pinned unchanged sink path functions, checks the admitted
+C path and rejected Z-root control, and verifies no target was created. Host28
+controls and independent review pass. The original MapServer/sink binary is
+unchanged. Probe executable/build receipt and native catalog validator are now
+retained in the capture artifact. No authentic catalog has yet been captured.
+
+Auth run38946462964 reused the exact original AuthServer without executing it,
+compiled the original ODBC and both checksum controls, executed135 policy checks
+per control and installed the unchanged source schema in unique LocalDB17.0.4025.3.
+The metadata query then failed because sqlcmd -h and -y0 conflict. No ODBC binding
+or real login result follows. SQL drop/stop/delete and source-integrity checks
+passed. The corrected driver removes -h and reuses the exact qualified control
+binaries; source regeneration, receipt, original tree, PE hashes and conventional
+execution paths must all match.36 tests and actual-artifact independent review
+pass. All controls execute again; no prior SQL or ODBC acceptance is inherited.
+
+Deployment-only path changes now avoid unrelated core ABI qualification. New
+native title source still triggers both native qualification workflows. Capture
+and authentication remain isolated hosted experiments; accepted production
+server, Thor profile, DB, characters and three accepted APKs remain untouched.
+Gates25–27 remain open. Real catalog, source asset mapping, full initial entity/
+character/global grammar, actual login and final Thor session are still required.
+
+
+Taskforce checkpointc0ac22609a8d0af440375d6062fd59c1a939ddae also passed independent
+source/hash/lifetime review before publication. Four unchanged original architect/
+parameter producer/consumer functions and TaskForceIsParameterEnabled produce22
+fixtures. Each host/sanitizer mode passes2065314checks,453646truncations and30000
+random inputs. The pointer-free event is70632bytes and workspace151552bytes;
+composed old/new/scratch budget and clock/cache application remain explicit future
+owner duties. Source admission includes the new native and three oracle files.
+This is a standalone prefix, not a complete character transaction or ACK permit.

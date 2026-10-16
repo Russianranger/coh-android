@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "source_url": "https://github.com/wine-mirror/wine/blob/wine-10.0/dlls/ntdll/unix/file.c",
+  "ref": "wine-10.0",
+  "source_git_blob": "8bc69557057ebad408e3ddbd126702c2eb182ecd",
+  "unchanged_function": "get_file_info",
+  "function_sha256": "98eb3275e247847d2873ca2d85c703b7f1d695a7ce999eb163d6a053cc29bea9",
+  "command": "cc -std=c99 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 /tmp/coh-wine10-reparse-source-control.c -o /tmp/coh-wine10-reparse-source-control",
+  "filesystem_control": "fresh temporary drive_c/dosdevices directories; dosdevices/z: symlink to / and c: symlink to ../drive_c; original lookup_unix_name adds trailing slash to both drive roots",
+  "real_calls": [
+    "lstat",
+    "stat",
+    "malloc",
+    "free"
+  ],
+  "deterministic_helper_shells": [
+    "get_file_attributes returns DIRECTORY for dirs and NORMAL otherwise",
+    "xattr_get returns ENODATA",
+    "WARN ignores logging",
+    "parse_samba_dos_attrib_data aborts if unexpectedly reached",
+    "is_hidden_file returns false"
+  ],
+  "observed_attributes": {
+    "z_root": 1040,
+    "c_root": 16,
+    "direct_drive_c": 16
+  },
+  "actual_wine_winapi_execution": false,
+  "source_sink_modified": false,
+  "log_sha256": "aa26b2cd39f35bb6a76542fe0608d0730957d1faeebaf9cae1f6fb78fa9190de",
+  "original_generated_control_sha256": "5c67e476779a03572a64482c72a4db732454c6862312cb5fd2cb18dd86f9bc55",
+  "preserved_control_sha256": "51a7caef87fa437f9920709c43089b1ac5d7051cd7138cbc600a37292a96292b",
+  "preserved_copyright_notice": true,
+  "preserved_control_rerun_command": [
+    "cc",
+    "-std=c99",
+    "-D_POSIX_C_SOURCE=200809L",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-O2",
+    "native-android/engine/scenecatalog-server/evidence/path-probe/wine10-source-control.c",
+    "-o",
+    "/tmp/coh-wine10-source-control-q9x58e_n/control"
+  ],
+  "preserved_control_rerun_log_identical": true
+}

@@ -25,7 +25,8 @@ typedef enum {
     COH_ENT_STAGE_DELETES, COH_ENT_STAGE_LIST, COH_ENT_STAGE_FULL_UPDATE_TAIL,
     COH_ENT_STAGE_OWNERSHIP, COH_ENT_STAGE_TARGET, COH_ENT_STAGE_STATUS,
     COH_ENT_STAGE_INVENTORY, COH_ENT_STAGE_ATTRIBUTE_SCHEMA, COH_ENT_STAGE_COSTUME_DICTIONARY,
-    COH_ENT_STAGE_COSTUME_BODY, COH_ENT_STAGE_CUSTOM_COSTUME
+    COH_ENT_STAGE_COSTUME_BODY, COH_ENT_STAGE_CUSTOM_COSTUME,
+    COH_ENT_STAGE_TASKFORCE_ARCHITECT, COH_ENT_STAGE_TASKFORCE_PARAMETERS
 } CohEntStage;
 typedef struct { CohStatus status; CohEntStage stage; size_t bit; } CohEntFailure;
 typedef struct {
@@ -58,6 +59,15 @@ typedef struct {
     uint32_t valid, count, total[COH_ENT_INVENTORY_TYPES], used[COH_ENT_INVENTORY_TYPES],
         auction_total, boost_total;
 } CohEntInventorySizes;
+/* Standalone title metadata; exact source string capacities. Integer fields
+ * preserve wire bits and do not resolve badge/title dictionaries. The owning
+ * entity generation must reset this state; packet_id alone is not identity. */
+typedef struct {
+    uint32_t valid, packet_id, title_the, colors[2], badge, glowie_unlocked,
+        gender, name_gender, attach_article, respec_tokens, turnstile_event,
+        turnstile_mission, helper_status;
+    char name[128], the_text[10], common[32], origin[32], special[128];
+} CohEntTitles;
 /* Source schema order is translated to these stable named offsets.
  * Attribute IDs: HP, absorb, endurance, meter, perception, stealth, confused,
  * to-hit. Integer IDs: level, combat level, XP, debt, rested XP, influence. */
@@ -143,6 +153,12 @@ CohStatus coh_ent_target(CohRepReader *, uint32_t packet_id, uint32_t is_self,
 CohStatus coh_ent_status_effects(CohRepReader *, uint32_t packet_id,
     CohEntStatusEffects *, CohEntFailure *);
 CohStatus coh_ent_inventory_sizes(CohRepReader *, CohEntInventorySizes *, CohEntFailure *);
+/* Includes the source presence flag. Absent titles retain prior state; present
+ * stale packets are fully validated then discarded. Equal packet IDs apply,
+ * matching entReceive's titles-specific '<' test. Rejects oversized strings
+ * instead of legacy truncation. Reader/state are atomic on every error.
+ * Only caller-owned transaction staging; no record or actor publication. */
+CohStatus coh_ent_titles(CohRepReader *, uint32_t packet_id, CohEntTitles *, CohEntFailure *);
 /* Reads one complete supported entity record. In/out slot is STAGING ONLY.
  * Unsupported branch, malformed input, or identity failure leaves reader,
  * slot and record unchanged; failure receipt is diagnostic only.

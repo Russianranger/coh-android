@@ -1,0 +1,102 @@
+{
+  "abi": "x86_64",
+  "accepted_apks_rebuilt": false,
+  "actual_server_interoperability_verified": false,
+  "android_executed": true,
+  "android_release": "13",
+  "android_sdk": 33,
+  "device_is_emulator": true,
+  "device_model": "sdk_gphone64_x86_64",
+  "emulator_qualified": true,
+  "errors": {},
+  "full_live_world_verified": false,
+  "gates25_27_complete": false,
+  "manifest_sha256": "55b53124b744811ba5c0a460a4bb73954aa0b88762fb0aa290f55689f89b4e5b",
+  "passed": true,
+  "physical_android_executed": false,
+  "physical_thor_accepted": false,
+  "real_account_login_verified": false,
+  "schema": "coh-primary-continuation-android-execution-v1",
+  "scope": "Standalone source-oracle contracts; no Combined APK, server, accounts or live world",
+  "source_revision": "fd86ff196f172bf62cd24c7e0f807df39c33e0a5",
+  "suites": {
+    "auth-interop": {
+      "android_executed": true,
+      "binary_sha256": "f8de181ad74bd23ca2c05475279bd26f7395a276fdcfa4f399ffd23c7cd5d0c1",
+      "build_receipt_sha256": "05ea15a66cb16de0c0b7940131f2b2ee19849aed7f65336b519f6e9a43cef7dc",
+      "passed": true,
+      "result": {
+        "checks": 2147,
+        "native_live_world": false,
+        "network_connections": 0,
+        "passed": true,
+        "policy_only": true,
+        "real_account_login_verified": false
+      }
+    },
+    "entities": {
+      "android_executed": true,
+      "binary_sha256": "d4a1d25de7801f4de9a3e7a28b9dd3922770e03d76612564d4edfd96c4ee200c",
+      "build_receipt_sha256": "d4aa625cf89b164adfb9d060b71155d1d0bacbde173de1388b4aa0ac5170874d",
+      "passed": true,
+      "result": {
+        "checks": 1142224,
+        "costume_bytes": 49008,
+        "costume_envelope_bytes": 692064,
+        "costume_envelope_workspace_bytes": 772984,
+        "costume_workspace_bytes": 80920,
+        "custom_costume_bytes": 16904,
+        "every_bit_truncations": 227549,
+        "full_update_accepted": false,
+        "list_cases": 50,
+        "list_every_bit_truncations": 9084,
+        "passed": true,
+        "power_custom_envelope_bytes": 1114392,
+        "power_custom_workspace_bytes": 1114392,
+        "randomized_cases": 25000,
+        "record_bytes": 3824,
+        "render_spawn": false,
+        "slot_bytes": 3600,
+        "workspace_bytes": 922624
+      }
+    },
+    "entity-control": {
+      "android_executed": true,
+      "binary_sha256": "c35c5df6c74cfd306612681e4cc3a95d0755655c96febea17e4788c23cf67d32",
+      "build_receipt_sha256": "efe4501866b1272a3b44d23c8bcd8f8b2947afd96c69807332d8a0985826f020",
+      "passed": true,
+      "result": {
+        "acknowledgments": 0,
+        "allocations": 0,
+        "checks": 667138,
+        "passed": true,
+        "random_malformed_inputs": 20000,
+        "state_bytes": 176,
+        "update_bytes": 1064
+      }
+    },
+    "scenegraph": {
+      "android_executed": true,
+      "binary_sha256": "1c89d2d7477bd66f67dd61cd48881629f0e5ca8fec3f2ab1aaf5c08b70694be7",
+      "build_receipt_sha256": "391b390f65295a7d6acbc5bc98ae296d986d756385d45bd574728979f72a5333",
+      "passed": true,
+      "result": {
+        "allocation_failure_points": 34,
+        "checks": 193219,
+        "live_world": false,
+        "metadata_checks": 68415,
+        "metadata_truncations": 33623,
+        "passed": true,
+        "source_fixtures_accepted": 44,
+        "source_fixtures_rejected": 8,
+        "stress_aggregate_peak_bytes": 81706049,
+        "stress_candidate_peak_bytes": 26843167,
+        "stress_children": 36567,
+        "stress_controls": 18,
+        "stress_definitions": 12192,
+        "stress_graph_bytes": 26806591
+      }
+    }
+  },
+  "temporary_files_removed": true
+}

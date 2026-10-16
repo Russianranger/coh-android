@@ -1,0 +1,58 @@
+
+COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required
+Warning: couldn't find window named TempConsoleTitle: 372
+Loading ./data/server/db/servers.cfg
+  Loading ./data/server/db/servers.cfg done
+Loading server/db/weeklyTF.cfg
+[2026-10-16 18:07:17.361] [DEBUG] 	Set folder cache callback for server/db/WeeklyTF.cfg
+Loading ./data/server/db/loadBalanceDefault.cfg... done.
+Loading ./data/server/db/loadBalanceShardSpecific.cfg... done.
+Loaded load balancing config: 1 roles specified.
+Warning: No launcher specified to start the following server applications:
+     StatServer, ArenaServer, RaidServer
+[2026-10-16 18:07:17.363] [DEBUG] 	Set folder cache callback for server/db/loadBalance*.cfg
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6989
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6997
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6971
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6996
+No auth server specified in servers.cfg - allowing all logins
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6992
+Loading templates...                                                  (1.31)
+Update tables...                                                      (9.00)
+Clearing teamups and invalid characters...                            (2.77)
+Moving old characters to offline (non-sql) storage...                 (0.00)
+Reading Backup Files...                                               (0.00)
+Reading stats...
+  Reading player names...                                             (0.00)
+  Reading last 30 days of event history records...
+	Loaded 0 records  (0.00)
+[2026-10-16 18:07:31.384] [DEBUG] 	Parsing defs/account/LoyaltyRewardTree.def from LoyaltyReward.bin
+ParserLoadFiles: couldn't find LoyaltyReward.bin, loading text files instead
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6998
+
+COH_WINE_DB_MANUAL_ATLAS=1 active: unused Launcher connection wait skipped; manual Atlas launch; ordinary DbServer readiness required
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6984
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6982
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6980
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6979
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6977
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6976
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=tcp address=127.0.0.1 port=6974
+[2026-10-16 18:07:31.393] [DEBUG] 	Parsing defs/account/product_catalog.def from product_catalog.bin
+ParserLoadFiles: couldn't find product_catalog.bin, loading text files instead
+game checksum = 0, assuming dev mode
+
+COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=udp address=127.0.0.1 port=7000

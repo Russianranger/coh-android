@@ -18,7 +18,10 @@ REQUIRED_SOURCES["scenecatalog"].update({"native-android/engine/scenecatalog/sou
 REQUIRED_SOURCES["entities"].update({"native-android/engine/entities/" + name for name in
     ("coh_costume.c", "coh_costume.h", "test_costume.c", "costume_oracle.py", "costume_oracle_shim.h",
      "costume_envelope_oracle_shim.h", "costume_envelope_oracle.c.inc", "costume_envelope_fixture.c.inc",
-     "power_custom_oracle_shim.h", "power_custom_observer.c.inc", "power_custom_fixture.c.inc")})
+     "power_custom_oracle_shim.h", "power_custom_observer.c.inc", "power_custom_fixture.c.inc",
+     "titles_oracle_shim.h", "titles_fixture.c.inc", "test_titles.c.inc",
+     "taskforce_oracle_shim.h", "taskforce_fixture.c.inc", "test_taskforce.c.inc",
+     "coh_taskforce.c", "coh_taskforce.h")})
 REQUIRED_SOURCES["scenegraph"].update({"native-android/engine/scenegraph/" + name for name in
     ("coh_scene_metadata.c", "coh_scene_metadata.h", "tests/metadata_source_harness.inc")})
 CLAIMS = ("physical_thor_accepted", "actual_server_interoperability_verified",

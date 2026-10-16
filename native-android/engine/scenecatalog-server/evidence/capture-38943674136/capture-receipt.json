@@ -1,0 +1,199 @@
+{
+  "accepted_runtime_modified": false,
+  "catalog_captured": false,
+  "cleanup_verified": true,
+  "control_fixture_sha256": "8f5c9d7e8aecf6808b6e27e3e726356d033e5da9a6e2b0f7c308fedb8ef69bb8",
+  "db_activity_at_failure": {
+    "active": 0,
+    "raw_sql_included": false,
+    "schema_ddl": 0,
+    "sessions": 65,
+    "waiting_locks": 0
+  },
+  "db_dispatch_at_failure": {
+    "loop_count": 7696,
+    "present": true,
+    "process_id": 372,
+    "sequence": 430948,
+    "stable": true,
+    "stage": 13,
+    "stage_name": "NM_MONITOR",
+    "thread_id": 376
+  },
+  "db_donor": {
+    "bytes": 42048020,
+    "sha256": "c2d859621476e22add673a76c4b6aae65c2143671e50c085d020108b6e19d95e"
+  },
+  "db_schema": {
+    "attribute_counts": {
+      "attributes": 56411,
+      "badgestatsattributes": 1771,
+      "pophelpattributes": 90
+    },
+    "attribute_sha256": {
+      "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+      "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+      "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+    },
+    "catalog_sha256": {
+      "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+      "constraints": "08082f84bc07e1bd8b125b198b87c46ef6934adfdf79d4b79a7e030294ac23f6",
+      "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580"
+    },
+    "column_count": 5935,
+    "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+    "table_count": 99
+  },
+  "diagnostics": [
+    {
+      "bytes": 10,
+      "file": "diagnostic-00.txt",
+      "owned_source": "wine-version-stdout.log",
+      "sha256": "2a8ab5d2748f8aa4fbfe617d173064dd1147f44b880cf388c4be1391be14aa39"
+    },
+    {
+      "bytes": 0,
+      "file": "diagnostic-01.txt",
+      "owned_source": "wine-version-stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "file": "diagnostic-02.txt",
+      "owned_source": "wineboot-stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 81,
+      "file": "diagnostic-03.txt",
+      "owned_source": "wineboot-stderr.log",
+      "sha256": "21b26c2d076600553612de20416e9b024da954b539aa82f845d241751df10264"
+    },
+    {
+      "bytes": 0,
+      "file": "diagnostic-04.txt",
+      "owned_source": "odbc-stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "file": "diagnostic-05.txt",
+      "owned_source": "odbc-stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 440,
+      "file": "diagnostic-06.txt",
+      "owned_source": "odbc-driver-stdout.log",
+      "sha256": "8ea4b04334d67816d2c0475c533472456c6913809fe9d5052a4a826e85941f19"
+    },
+    {
+      "bytes": 0,
+      "file": "diagnostic-07.txt",
+      "owned_source": "odbc-driver-stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3115,
+      "file": "diagnostic-08.txt",
+      "owned_source": "db-stdout.log",
+      "sha256": "445ebf78f4fbc194f5651ad6656e2ae59ec55cbfa15ff541b29076c730c98a3f"
+    },
+    {
+      "bytes": 2213,
+      "file": "diagnostic-09.txt",
+      "owned_source": "db-stderr.log",
+      "sha256": "66001254f3514ebd8e875363705f9d3f18be89a8300506a7295889ead1cfda37"
+    },
+    {
+      "bytes": 36779,
+      "file": "diagnostic-10.txt",
+      "owned_source": "map-stdout.log",
+      "sha256": "598e9712dc5cc5a5683a16238f9c41d4450e69e37203079e66a9e8a863dddb40"
+    },
+    {
+      "bytes": 71,
+      "file": "diagnostic-11.txt",
+      "owned_source": "map-stderr.log",
+      "sha256": "0974bcbdc20eebe6f8941dd7fc19d11c0b1146a7dcfad506e2669c6ba81819c0"
+    },
+    {
+      "bytes": 1369,
+      "file": "diagnostic-12.txt",
+      "owned_source": "pg/postgres.log",
+      "sha256": "6a2913a39c71cf6b5811edbdb16720c7adb4bde1621477f70645f32f1ccc3424"
+    }
+  ],
+  "disposable_db_only": true,
+  "driver_probe": {
+    "bytes": 245968,
+    "exact_admitted_donor": true,
+    "rebuilt": false,
+    "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+  },
+  "exporter_sha256": "f96f5d51467083a58523187760458ad77e6a48d7b696b0d090aafa8e94e95f39",
+  "exporter_source_revision": "887bef22f5f6403d8589ac00a1269c9438e263a6",
+  "failure_code": "SINK_FAILED",
+  "failure_type": "Refused",
+  "generation": 20261016,
+  "hard_process_memory_cap_established": false,
+  "historical_thor_footer_matches": false,
+  "log_limits_polled_not_kernel_enforced": true,
+  "matching_groups_transaction_captured": false,
+  "native_decode_completed": false,
+  "native_dependency_closure_sha256": "852f4f7e8748ddc9f8a693e403cb12c7d5e5a16031e5a2900b4f82a6c5263d81",
+  "native_validator_sha256": "9589c9a4a0971a9a74ae9dba020da22867f452bdf65ef1eb1af8d55bdf23cd20",
+  "odbc_driver": {
+    "driver_dll_loaded": true,
+    "driver_name": "PostgreSQL Unicode",
+    "driver_path": "C:\\Program Files\\psqlODBC\\1800\\bin\\podbc35w.dll",
+    "pointer_bits": 32,
+    "registry_view": 32
+  },
+  "orchestration_source_revision": "140ee62d7b648de737fcec5e7d80b52bfbb9ae67",
+  "orchestration_source_tree": "1564740084820438298a580040e1382ae21ed1fe",
+  "owned_process_groups_absent": true,
+  "passed": false,
+  "physical_thor_generation_verified": false,
+  "player_profile_opened": false,
+  "renderer_authorized": false,
+  "runtime_executed": true,
+  "schema": "coh-disposable-native-capture-v1",
+  "source_runtime_inventory": {
+    "bytes": 4273662812,
+    "files": 176613,
+    "ordered_inventory_sha256": "1485d86fd64c00cc519474f22feb2339bc598cb33c137f0d1ad384d17cc5eb23"
+  },
+  "source_runtime_unchanged": true,
+  "source_sha256": {
+    "android/guest/dbserver_diagnostic.py": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2",
+    "android/guest/diagnostic.py": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf",
+    "android/guest/game_diagnostic.py": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737",
+    "android/guest/game_evidence.py": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d",
+    "android/native/runtime-probe.c": "9e7a412b02bc547624588d4d29611aa521380a886e429b8b23e32388ea3a6b07",
+    "database/postgresql/001-coh-compat.sql": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a",
+    "database/postgresql/pg_local.py": "d2665940bd0f932691c8a78c8b2aceaf638fba7550257ad31a089f79672689a0",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/engine/replication/coh_groups.c": "df7205201f9e420947becccca22319c422f3263ef35209332993ae1cf15f495f",
+    "native-android/engine/replication/coh_groups.h": "58d1d99d2efc8f5a49ad98f4e2efd3215f649fd0ea91ab42c836b6ee99a46ca3",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/scenecatalog-server/capture_disposable.py": "fddad8c870105e848683e6d44d317fcdc6a320c4373087c09b055fbb5b460a54",
+    "native-android/engine/scenecatalog-server/delivery.py": "c87524719519c5749e11603e446af9a3c2efd5e44a7b2b6d7b0c72d9ac24a6d8",
+    "native-android/engine/scenecatalog/coh_scenecatalog.c": "627cdbfa29529971287aace4e26d634d1584daa88d8fbe0356b6f09054974ebc",
+    "native-android/engine/scenecatalog/coh_scenecatalog.h": "b49f094df3589c6325acc41befd5c21ffccb2727b25719a7855a89e694c6b2b9",
+    "native-android/engine/scenecatalog/validate_file.c": "6267834ec1372a429fe54513d1dfcf57624c4f3af781535afedefd8bcf6ea7c1",
+    "native-android/engine/scenegraph/coh_scenegraph.c": "9534bcfdf1f88c2fdd4cc17b516a26737424008a50a8d4b89c4347fb76dc6933",
+    "native-android/engine/scenegraph/coh_scenegraph.h": "45178c66cadb9b2777ae53262c7df328f17d5be3bbb258d9462d76043cb1d5cc",
+    "tools/android/atlasgame/prepare_server_fx_catalog.py": "dfe73c626b1a1722baf001f449e6d8185eda2322335afac937b6aa98658593f3",
+    "tools/android/atlasgame/prepare_server_fx_control_fixture.py": "dba537cde48a595e20c127b1f22fb83525205dbf6b12568ca4d3c762dbb50383",
+    "tools/android/interactive/qualify_minimal_db_runtime.py": "3830dcdd5d1cdae4506d30b6d4d46bbc79b4f950de09c1104da0dc82132eb5a9",
+    "tools/package_reference_runtime.py": "53de7076e7798b527e8d6cb823d877693668c3474b32cad810ac4fe752f3dd59"
+  },
+  "wine_prefix_cleanup": {
+    "kill_exit_code": 0,
+    "private_fresh_prefix": true,
+    "wait_exit_code": 0
+  },
+  "wine_version": "wine-10.0"
+}
