@@ -1,0 +1,19 @@
+{
+  "original_import_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "sha256_lf": {
+    "MapServer/src/entity/entsend.c": "045a5ecb5b64b956229583143fc61316dd8113d8eacf92183ad4756abad0a054",
+    "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+    "Common/entity/entity_enum.h": "52a800d3947ea34ca1fddc35dd76fccf117907f627a06369fe8f6e988a0a374d",
+    "Common/entity/entVarUpdate.h": "93ac3cf2e1aa851dfdc98516b93f460b32881be29661a2dd5dd6a9bc77be8e0e",
+    "Common/entity/entity.h": "cec10eda0f25c8be2ef62215aa17f9e927e9eaeb441ce0be7dff15dd4ef27e2d",
+    "Common/entity/ragdoll.h": "9a93c71d31de0ea319dc1cb7776a4ba5044dc479fa9b7354c85705fa7c6405cd",
+    "libs/UtilitiesLib/src/components/BitStream.c": "69ebbcb2cba3bc47477b8edba60eea94329c4d56c56e6c11fdbd275c3b8fe0e4",
+    "libs/UtilitiesLib/src/network/netcomp.c": "cddb9d5176cdf1b05b434395ebd16247f9f12001948885b4bd0a86143fd30370",
+    "libs/UtilitiesLib/src/network/net_packetutil.c": "11c4178f74b11bc3b8f3b296e51a36cd10051ae5e46093e81f5e4ba8860a23d5",
+    "libs/UtilitiesLib/src/utils/Quat.c": "146d0e8993dacf74e2bba9c25eb78e68f3d8aadb5cea4752eb70c093699d270b",
+    "libs/UtilitiesLib/include/utilitieslib/utils/mathutil.h": "05a5e09cf45e2a23b1e99bf640745082320da8e56315e68efde18677196ec111",
+    "Common/entity/gametypes.h": "8cbc41b721a6357e1e3c5846258cbb1a2c3c0bfefb7e997e0593f3beb0ae16f6",
+    "MapServer/src/entity/entserver.c": "01da7bf37f633c98a39cd65176810e7b9c4bef4f834b896ed888ec6c52f47806",
+    "MapServer/src/entity/entsend.h": "48cb0e645e452ba697051de1fc61c80267934801c636a6b5345d165ae7876a4c"
+  }
+}

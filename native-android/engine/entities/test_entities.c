@@ -1,0 +1,142 @@
+#include "coh_entities.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "fixtures.h"
+static unsigned checks, truncations, randomized;
+#define CHECK(x) do{checks++;if(!(x)){fprintf(stderr,"entity test failed %s:%d: %s\n",__FILE__,__LINE__,#x);exit(1);}}while(0)
+typedef struct {const unsigned char *data;size_t bits;} Fixture;
+#define F(x) (Fixture){x,x##_bits}
+static CohRepReader reader(Fixture f,unsigned mode){CohRepReader r;CHECK(coh_rep_reader(&r,(CohBytes){f.data,(f.bits+7)/8},f.bits,(int)mode)==COH_OK);return r;}
+static void same_reader(const CohRepReader *a,const CohRepReader *b){CHECK(!memcmp(a,b,sizeof(*a)));}
+static void test_create(Fixture f,unsigned mode,unsigned scenario){
+    CohRepReader r=reader(f,mode),before=r;CohEntCreate c={0};CohEntFailure failure={0};
+    memset(&c,0xa5,sizeof(c));CohEntCreate previous=c;
+    CohStatus status=coh_ent_create(&r,4242,&c,&failure);
+    if(scenario==4){CHECK(status==COH_UNSUPPORTED);CHECK(failure.stage==COH_ENT_STAGE_PET_POWER);CHECK(failure.bit<=f.bits);same_reader(&r,&before);CHECK(!memcmp(&c,&previous,sizeof(c)));return;}
+    CHECK(status==COH_OK);CHECK(c.create==1&&!c.end);CHECK(c.entity_id==(scenario==6?70001u:91u));CHECK(r.cursor==f.bits);CHECK(c.end_bit==f.bits);
+    if(scenario==0||scenario==1||scenario==6){CHECK(c.type==2);CHECK(c.is_self==(scenario<2));CHECK(c.dbid==(scenario==6?4243u:4242u));CHECK(c.class_index==3&&c.origin_index==1);CHECK(c.critter_form==(scenario==1));}
+    if(scenario==3){CHECK(c.owner_index==12&&c.creator_index==13);CHECK(c.commandable_pet&&c.visible_pet&&c.dismissable_pet);CHECK(c.special_power_state==4);}
+    if(scenario==5){CHECK(c.name[0]==0);CHECK(c.contact_handle==1025);}
+    else CHECK(!strcmp(c.name,"FixtureName"));
+    if(scenario==0){r=before;c=previous;CHECK(coh_ent_create(&r,4343,&c,&failure)==COH_STATE);same_reader(&r,&before);CHECK(!memcmp(&c,&previous,sizeof(c)));CHECK(failure.stage==COH_ENT_STAGE_IDENTITY);}
+    for(size_t n=0;n<f.bits;n++){
+        r=before;r.bits=n;CohRepReader save=r;c=previous;truncations++;
+        CHECK(coh_ent_create(&r,4242,&c,&failure)!=COH_OK);same_reader(&r,&save);CHECK(!memcmp(&c,&previous,sizeof(c)));CHECK(failure.bit<=n);
+    }
+}
+static void bad_create(Fixture f,unsigned mode,CohStatus expected){CohRepReader r=reader(f,mode),save=r;CohEntCreate c={0},old=c;CohEntFailure d={0};CHECK(coh_ent_create(&r,4242,&c,&d)==expected);same_reader(&r,&save);CHECK(!memcmp(&c,&old,sizeof(c)));CHECK(d.bit<=f.bits);}
+static void orientation_sequence(Fixture *fs,unsigned mode,const float **expected,const unsigned int **expected_ids){
+    CohEntOrientation q;coh_ent_orientation_init(&q);CohEntFailure d={0};const unsigned ids[]={10,12,11,12,20};
+    for(unsigned i=0;i<5;i++){
+        CohRepReader r=reader(fs[i],mode),original=r;CohEntOrientation prior=q;
+        CHECK(coh_ent_orientation(&r,ids[i],&q,&d)==COH_OK);CHECK(r.cursor==fs[i].bits);
+        for(unsigned j=0;j<4;j++)CHECK(fabsf(q.quaternion[j]-expected[i][j])<0.000002f);
+        for(unsigned j=0;j<3;j++)CHECK(q.packet_ids[j]==expected_ids[i][j]);
+        for(size_t n=0;n<fs[i].bits;n++){
+            r=original;r.bits=n;CohRepReader oldr=r;CohEntOrientation old=prior;truncations++;
+            CHECK(coh_ent_orientation(&r,ids[i],&old,&d)!=COH_OK);same_reader(&r,&oldr);CHECK(!memcmp(&old,&prior,sizeof(old)));CHECK(d.bit<=n);
+        }
+    }
+}
+static void record_case(Fixture f,unsigned mode,unsigned medium){
+    CohRepReader r=reader(f,mode),start=r;CohEntSlot slot;CohEntRecord record={0};CohEntFailure failure={0};
+    coh_ent_slot_init(&slot,4);CohEntSlot empty=slot;CohEntRecord old=record;
+    CHECK(coh_ent_record(&r,4242,10,2,&slot,&record,&failure)==COH_OK);CHECK(r.cursor==f.bits);CHECK(record.end_bit==f.bits);
+    CHECK(slot.present&&slot.create_packet==10&&slot.identity.entity_id==91);CHECK(slot.position.valid);
+    CHECK(slot.position.position.x==12.5f&&slot.position.position.y==-6.25f&&slot.position.position.z==128.f);
+    CHECK(fabsf(slot.orientation.quaternion[1]-0.70710678f)<0.000002f);CHECK(slot.orientation.valid==7);
+    if(medium){CHECK(slot.state_mode==1);CHECK(slot.sequence_index==33&&slot.sequence_ticks==4&&slot.sequence_bits==3);CHECK(record.trigger_count==1&&record.triggers[0].index==42&&record.triggers[0].fx_id==1000);CHECK(record.ragdoll_bones==1);}
+    for(size_t n=0;n<f.bits;n++){
+        r=start;r.bits=n;CohRepReader oldr=r;CohEntSlot copy=empty;record=old;truncations++;
+        CHECK(coh_ent_record(&r,4242,10,2,&copy,&record,&failure)!=COH_OK);same_reader(&r,&oldr);CHECK(!memcmp(&copy,&empty,sizeof(copy)));CHECK(!memcmp(&record,&old,sizeof(old)));CHECK(failure.bit<=n);
+    }
+}
+static void bad_record(Fixture f,unsigned mode,CohEntStage stage){
+    CohRepReader r=reader(f,mode),oldr=r;CohEntSlot s;coh_ent_slot_init(&s,4);s.present=1;s.create_packet=1;s.identity.entity_id=91;s.identity.type=1;
+    CohEntSlot old=s;CohEntRecord rec={0},oldrec=rec;CohEntFailure d={0};
+    CHECK(coh_ent_record(&r,4242,10,2,&s,&rec,&d)==COH_UNSUPPORTED);CHECK(d.stage==stage);CHECK(d.bit<=f.bits);same_reader(&r,&oldr);CHECK(!memcmp(&s,&old,sizeof(s)));CHECK(!memcmp(&rec,&oldrec,sizeof(rec)));
+}
+static void update_case(Fixture f,unsigned mode){
+    CohRepReader r=reader(f,mode),oldr=r;CohEntSlot s;coh_ent_slot_init(&s,4);CohEntRecord rec={0};CohEntFailure d;
+    CHECK(coh_ent_record(&r,4242,20,2,&s,&rec,&d)==COH_STATE);same_reader(&r,&oldr);
+    s.present=1;s.create_packet=10;s.identity.type=1;s.identity.entity_id=91;
+    CHECK(coh_ent_record(&r,4242,20,2,&s,&rec,&d)==COH_OK);CHECK(r.cursor==f.bits);CHECK(s.position.position.x==12.5f);
+    r=oldr;CohEntSlot prev=s;CHECK(coh_ent_record(&r,4242,9,2,&s,&rec,&d)==COH_STATE);same_reader(&r,&oldr);CHECK(!memcmp(&s,&prev,sizeof(s)));
+    s.identity.is_self=1;s.identity.dbid=4243;CHECK(coh_ent_record(&r,4242,20,2,&s,&rec,&d)==COH_STATE);same_reader(&r,&oldr);
+}
+static void deletes_case(Fixture f,unsigned mode){
+    CohRepReader r=reader(f,mode),original=r;CohEntDeletes d={0},old=d;CohEntFailure failure;
+    CHECK(coh_ent_deletes(&r,&d,&failure)==COH_OK);CHECK(d.count==2&&d.entries[0].index==4&&d.entries[1].index==7);CHECK(r.cursor==f.bits);
+    CohEntSlot slots[2];coh_ent_slot_init(&slots[0],4);coh_ent_slot_init(&slots[1],7);
+    slots[0].present=slots[1].present=1;slots[0].create_packet=10;slots[1].create_packet=30;
+    CHECK(coh_ent_stage_deletes(slots,2,&d,20)==COH_OK);CHECK(!slots[0].present&&slots[1].present);CHECK(slots[0].delete_packet==20&&slots[1].delete_packet==20);
+    CHECK(coh_ent_stage_deletes(slots,2,&d,15)==COH_OK);CHECK(slots[0].delete_packet==20&&slots[1].delete_packet==20);
+    CHECK(coh_ent_stage_deletes(slots,2,&d,30)==COH_OK);CHECK(slots[1].present);
+    CHECK(coh_ent_stage_deletes(slots,2,&d,31)==COH_OK);CHECK(!slots[1].present);
+    CohEntSlot saved[2];memcpy(saved,slots,sizeof(slots));CohEntDeletes bad=d;bad.entries[1].index=9;
+    CHECK(coh_ent_stage_deletes(slots,2,&bad,100)==COH_NOT_FOUND);CHECK(!memcmp(saved,slots,sizeof(slots)));
+    bad=d;bad.entries[1].index=4;CHECK(coh_ent_stage_deletes(slots,2,&bad,100)==COH_INVALID);CHECK(!memcmp(saved,slots,sizeof(slots)));
+    for(size_t n=0;n<f.bits;n++){r=original;r.bits=n;CohRepReader oldr=r;CohEntDeletes copy=old;truncations++;CHECK(coh_ent_deletes(&r,&copy,&failure)!=COH_OK);same_reader(&r,&oldr);CHECK(!memcmp(&copy,&old,sizeof(old)));CHECK(failure.bit<=n);}
+}
+static void delete_bad(Fixture f,unsigned mode,CohStatus expected){CohRepReader r=reader(f,mode),oldr=r;CohEntDeletes d={0},old=d;CohEntFailure err;CHECK(coh_ent_deletes(&r,&d,&err)==expected);same_reader(&r,&oldr);CHECK(!memcmp(&d,&old,sizeof(d)));CHECK(err.bit<=f.bits);}
+static unsigned random_state=0x172391ac;
+static unsigned rand32(void){random_state^=random_state<<13;random_state^=random_state>>17;random_state^=random_state<<5;return random_state;}
+static void fuzz(void){
+    for(unsigned i=0;i<20000;i++){
+        unsigned char data[192];for(unsigned j=0;j<sizeof(data);j++)data[j]=(unsigned char)rand32();
+        unsigned mode=rand32()&1;size_t bits=rand32()%(sizeof(data)*8+1);CohRepReader r;CHECK(coh_rep_reader(&r,(CohBytes){data,sizeof(data)},bits,(int)mode)==COH_OK);CohRepReader oldr=r;
+        CohEntCreate c={0},oldc=c;CohEntFailure d;CohStatus status=coh_ent_create(&r,4242,&c,&d);randomized++;
+        if(status!=COH_OK){same_reader(&r,&oldr);CHECK(!memcmp(&c,&oldc,sizeof(c)));CHECK(d.bit<=bits);}else CHECK(r.cursor<=bits);
+        r=oldr;CohEntSlot slot;coh_ent_slot_init(&slot,4);slot.present=1;slot.create_packet=1;CohEntSlot oldslot=slot;CohEntRecord record={0},oldrec=record;
+        status=coh_ent_record(&r,4242,100,2,&slot,&record,&d);
+        if(status!=COH_OK){same_reader(&r,&oldr);CHECK(!memcmp(&slot,&oldslot,sizeof(slot)));CHECK(!memcmp(&record,&oldrec,sizeof(record)));CHECK(d.bit<=bits);}else CHECK(r.cursor<=bits);
+        r=oldr;CohEntDeletes deletes={0},olddeletes=deletes;status=coh_ent_deletes(&r,&deletes,&d);
+        if(status!=COH_OK){same_reader(&r,&oldr);CHECK(!memcmp(&deletes,&olddeletes,sizeof(deletes)));CHECK(d.bit<=bits);}else CHECK(r.cursor<=bits);
+    }
+}
+static void delta_cases(Fixture f,Fixture overflow,Fixture zero,unsigned mode){
+    CohRepReader r=reader(f,mode);uint32_t idx=999;CohEntFailure failure;
+    CHECK(coh_ent_next_index(&r,-1,&idx,&failure)==COH_OK);CHECK(idx==4);
+    CHECK(coh_ent_next_index(&r,(int32_t)idx,&idx,&failure)==COH_OK);CHECK(idx==7);CHECK(r.cursor==f.bits);
+    r=reader(overflow,mode);CohRepReader oldr=r;idx=999;
+    CHECK(coh_ent_next_index(&r,7,&idx,&failure)==COH_LIMIT);CHECK(idx==999);same_reader(&r,&oldr);
+    r=reader(zero,mode);CHECK(coh_ent_next_index(&r,-1,&idx,&failure)==COH_OK);CHECK(idx==0);
+}
+static void tombstone_cases(Fixture f,unsigned mode){
+    CohRepReader r=reader(f,mode),oldr=r;CohEntSlot s;CohEntRecord rec;CohEntFailure d;
+    coh_ent_slot_init(&s,4);s.delete_packet=20;s.deleted_entity_id=91;CohEntSlot old=s;
+    CHECK(coh_ent_record(&r,4242,19,2,&s,&rec,&d)==COH_STATE);same_reader(&r,&oldr);CHECK(!memcmp(&s,&old,sizeof(s)));
+    CHECK(coh_ent_record(&r,4242,21,2,&s,&rec,&d)==COH_OK);CHECK(s.present&&s.delete_packet==20&&s.create_packet==21);
+    r=oldr;old=s;CHECK(coh_ent_record(&r,4242,21,2,&s,&rec,&d)==COH_STATE);same_reader(&r,&oldr);CHECK(!memcmp(&s,&old,sizeof(s)));
+}
+#define RUN_MODE(m) do { \
+    delta_cases(F(delta_indices##m),F(delta_overflow##m),F(delta_zero##m),m);tombstone_cases(F(record_simple##m),m); \
+    Fixture creates[]={F(create_0_##m),F(create_1_##m),F(create_2_##m),F(create_3_##m),F(create_4_##m),F(create_5_##m),F(create_6_##m)}; \
+    for(unsigned i=0;i<7;i++)test_create(creates[i],m,i); \
+    bad_create(F(create_7_##m),m,COH_STATE); \
+    bad_create(F(bad_type##m),m,COH_UNSUPPORTED);bad_create(F(bad_id##m),m,COH_LIMIT);bad_create(F(long_name##m),m,COH_LIMIT); \
+    Fixture orientations[]={F(orientation_0_##m),F(orientation_1_##m),F(orientation_2_##m),F(orientation_3_##m),F(orientation_4_##m)}; \
+    const float *expected[]={orientation_0_##m##_expected,orientation_1_##m##_expected,orientation_2_##m##_expected,orientation_3_##m##_expected,orientation_4_##m##_expected}; \
+    const unsigned int *ids[]={orientation_0_##m##_ids,orientation_1_##m##_ids,orientation_2_##m##_ids,orientation_3_##m##_ids,orientation_4_##m##_ids}; \
+    orientation_sequence(orientations,m,expected,ids); \
+    record_case(F(source_record_0_##m),m,0);record_case(F(source_record_1_##m),m,1);deletes_case(F(source_deletes##m),m); \
+    record_case(F(record_simple##m),m,0);record_case(F(record_medium##m),m,1);update_case(F(record_update##m),m); \
+    bad_record(F(unsupported_interp##m),m,COH_ENT_STAGE_INTERPOLATION);bad_record(F(unsupported_appearance##m),m,COH_ENT_STAGE_APPEARANCE);bad_record(F(unsupported_pchar##m),m,COH_ENT_STAGE_CHARACTER_STATS); \
+    deletes_case(F(deletes##m),m);delete_bad(F(delete_zero##m),m,COH_LIMIT);delete_bad(F(delete_duplicate##m),m,COH_INVALID);delete_bad(F(delete_limit##m),m,COH_LIMIT); \
+    CohRepReader dr=reader(F(delete_large_generation##m),m);CohEntDeletes dd;CHECK(coh_ent_deletes(&dr,&dd,NULL)==COH_OK);CHECK(dd.entries[0].entity_id==70001); \
+    CohRepReader endr=reader(F(end##m),m);CohEntCreate endc;CHECK(coh_ent_create(&endr,4242,&endc,NULL)==COH_OK);CHECK(endc.end); \
+    CohRepReader ur=reader(F(update_flag##m),m);CHECK(coh_ent_create(&ur,4242,&endc,NULL)==COH_OK);CHECK(!endc.create); \
+}while(0)
+int main(void){
+    RUN_MODE(0);RUN_MODE(1);fuzz();
+    CohRepReader r=reader(F(end0),0),oldr=r;CohEntFailure d;
+    CHECK(coh_ent_full_update_tail(&r,&d)==COH_UNSUPPORTED);CHECK(d.stage==COH_ENT_STAGE_FULL_UPDATE_TAIL&&d.bit==0);same_reader(&r,&oldr);
+    CohEntSlot invalid;CohEntRecord rec;coh_ent_slot_init(&invalid,4);invalid.position.packed[0]=0x80000000u;
+    CHECK(coh_ent_record(&r,4242,5,2,&invalid,&rec,&d)==COH_INVALID);same_reader(&r,&oldr);
+    coh_ent_slot_init(&invalid,0);CHECK(coh_ent_record(&r,4242,5,2,&invalid,&rec,&d)==COH_OK);CHECK(rec.identity.end);
+    CHECK(coh_ent_create(NULL,4242,NULL,NULL)==COH_INVALID);CHECK(coh_ent_deletes(NULL,NULL,NULL)==COH_INVALID);
+    printf("{\"passed\":true,\"checks\":%u,\"every_bit_truncations\":%u,\"randomized_cases\":%u,\"full_update_accepted\":false,\"render_spawn\":false}\n",checks,truncations,randomized);
+    return 0;
+}

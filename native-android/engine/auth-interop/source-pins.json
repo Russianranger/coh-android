@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "source_checkpoint": "fbc1aa0718c9a6d02a32cd6e14cfdff560dadbbd",
+  "sha256_lf": {
+    "upstream/ouroboros/AuthServer/src/Config.cpp": "07e090aeab0911ecec950109c1bdfc49bda8532e818dd005f4d091fea0898ff0",
+    "upstream/ouroboros/AuthServer/src/Config.h": "e8c0c2f2bac90a4bb505c6226f9adcca0ae6efce24b97e34a981f3003ff0ca0a",
+    "upstream/ouroboros/AuthServer/src/SocketServerEx.cpp": "7ba1ae3f483a4b32b57d609c007f7049e16684d8aa875165b40a462ef7d1a1cb",
+    "upstream/ouroboros/AuthServer/src/Account.cpp": "3e959ac3aa3fcef281fecdf8104c5da297c1b216a7c2553a3d33c4ee15c097d5",
+    "upstream/ouroboros/AuthServer/src/DBConn.cpp": "9b2715d756e6b51a170fa2c544bab3bd8d84a396bd5b8e9d70a5a766cf036dd9",
+    "upstream/ouroboros/AuthServer/src/schema/patch_7.sql": "7621c3c4760d54b332bbfd370113cb754180febe826f7941fa7d453d9a49af20",
+    "upstream/ouroboros/DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+    "upstream/ouroboros/DBServer/src/authcomm.c": "a3a4349047e08fc3285c22d231fe9d467ee26f6360e125db3845ede50f1fc1b2",
+    "upstream/ouroboros/Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+    "upstream/ouroboros/AuthServer/src/schema/patch_8.sql": "aec460cf0c4517479603eec5bf997b4aad252cf283b66fef2d4ac75b551727cf"
+  }
+}

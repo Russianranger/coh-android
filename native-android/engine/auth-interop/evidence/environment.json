@@ -1,0 +1,21 @@
+{
+  "schema": "coh-auth-disposable-environment-inspection-v1",
+  "tools_available": {
+    "cc": true,
+    "c++": true,
+    "cmake": false,
+    "wine": false,
+    "wine64": false,
+    "docker": false,
+    "podman": false,
+    "sqlcmd": false,
+    "psql": false,
+    "adb": false
+  },
+  "real_auth_endpoint_supplied": false,
+  "account_credentials_supplied": false,
+  "account_schema_deployed": false,
+  "production_runtime_modified": false,
+  "active_process_inventory": "Not established: host ps reports fatal library error; missing process visibility is not proof no other session is active.",
+  "blocker": "No supplied authorized AuthServer endpoint/account, Windows runtime or SQL Server/ODBC account deployment. PostgreSQL UseFakeAuth runtime is not AuthServer evidence."
+}

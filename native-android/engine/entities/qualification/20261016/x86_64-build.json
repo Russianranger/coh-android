@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "abi": "x86_64",
+  "binary": "coh_entities_test",
+  "binary_sha256": "6bc544cdaea695c3f38c539806c1f30eb9ebb24e39a3b06c2b08a52acc109b18",
+  "executed": false,
+  "fixtures_sha256": "ee4e80f3d3f42c81009b92b8e2ba46b6614aed8134312e929acc985ca5b0857d",
+  "source_sha256": {
+    "native-android/engine/entities/coh_entities.c": "670269c11e0821879c367ea249f3d7768ec17da473014494039767675c9421f9",
+    "native-android/engine/replication/coh_replication.c": "9633724aeba77533516ea32405ea594379d95ce70a362a9023b3a57ec8f90dd4",
+    "native-android/engine/entities/test_entities.c": "ceef289dd03f1ebea03ea3ed4136a140ce6bcf6097d0f7bebaf060f9b70da6a5",
+    "native-android/engine/entities/coh_entities.h": "d5d5d89cafb497abf71a7a297c177a648cf2adc9a14a538fbed702ed6a5fc050",
+    "native-android/engine/entities/check.py": "6b904ff2abaa7495458cf68291d443fbefab915fb362817cf5240c73d16e7f93",
+    "native-android/engine/entities/oracle_shim.h": "598e3e47ba77bd8d628f6929bdf92d1f663c957d877823e00471c742335a557f",
+    "native-android/engine/entities/source-pins.json": "9a8baca4a54fe42a2e4b1036733dfc683a307333617cd0644308b0e5a70b9319",
+    "native-android/engine/replication/coh_replication.h": "85817eedf8d3ce2e887037b48f16c13f8b305adae9701a717e82944e3694e84b",
+    "native-android/engine/coh_contracts.h": "2a43032fc97c7aa7042224431a4b90f1ec3d27566bed7ff2fe9070e72cb37832",
+    "native-android/tools/protocol_fixture/prepare.py": "3739f5ac245e92e668507179f281d14afceff5f7d3f82b1859fcfc44fcdf724a"
+  }
+}
