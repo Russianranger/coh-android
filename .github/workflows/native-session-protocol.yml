@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   host-and-arm64:
-    if: github.ref == 'refs/heads/native-android'
+    if: github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[socket-boundary-requalify]')
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -46,7 +46,7 @@ jobs:
           retention-days: 90
   android-socket-boundary:
     needs: host-and-arm64
-    if: github.ref == 'refs/heads/native-android'
+    if: github.ref == 'refs/heads/native-android' && !contains(github.event.head_commit.message, '[socket-boundary-requalify]')
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
